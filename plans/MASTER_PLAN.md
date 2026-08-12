@@ -94,6 +94,9 @@ incident-to-HALT coupling and recovery sequence tests. Remaining: one atomic
 external gateway reconciliation/replay and PostgreSQL multi-process adapter.
 Inbound fill APPLIED + projected account/OMS/reservations now commit atomically;
 a crash-after-commit test restores exactly one economic effect.
+Ordinary account/runtime snapshots also commit in one transaction and injected
+database failure latches HALTED. The composition root is tracked in Git after
+repairing an over-broad `runtime/` ignore rule.
 
 ### M6 — Control plane, dashboard, and observability
 

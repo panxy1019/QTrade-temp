@@ -12,5 +12,4 @@ build/
 .env
 *.parquet
 *.duckdb
-runtime/
-
+/runtime/

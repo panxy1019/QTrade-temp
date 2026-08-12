@@ -41,6 +41,13 @@ def test_sqlite_journal_rejects_fill_key_conflict_and_persists_audit(tmp_path):
     )
 
 
+def test_sqlite_runtime_snapshots_commit_as_one_transaction(tmp_path):
+    journal = SQLiteOperationalJournal(tmp_path / "runtime.db")
+    journal.save_states({"account": {"cash": "10"}, "runtime": {"orders": []}})
+    assert journal.load_state("account") == {"cash": "10"}
+    assert journal.load_state("runtime") == {"orders": []}
+
+
 def test_paper_gateway_restart_refuses_pending_fill_replay(tmp_path):
     from decimal import Decimal
 

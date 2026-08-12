@@ -192,14 +192,21 @@ class SQLiteOperationalJournal:
             )
 
     def save_state(self, state_key: str, payload: dict[str, object]) -> None:
-        serialized = json.dumps(payload, sort_keys=True)
+        self.save_states({state_key: payload})
+
+    def save_states(self, states: dict[str, dict[str, object]]) -> None:
+        if not states:
+            raise ValueError("at least one runtime state is required")
+        serialized = {key: json.dumps(payload, sort_keys=True) for key, payload in states.items()}
+        now = datetime.now(UTC).isoformat()
         with self._lock, self._connect() as connection:
-            connection.execute(
-                "INSERT INTO runtime_state(state_key,payload,updated_at) VALUES(?,?,?) "
-                "ON CONFLICT(state_key) DO UPDATE SET payload=excluded.payload, "
-                "updated_at=excluded.updated_at",
-                (state_key, serialized, datetime.now(UTC).isoformat()),
-            )
+            for state_key, payload in serialized.items():
+                connection.execute(
+                    "INSERT INTO runtime_state(state_key,payload,updated_at) VALUES(?,?,?) "
+                    "ON CONFLICT(state_key) DO UPDATE SET payload=excluded.payload, "
+                    "updated_at=excluded.updated_at",
+                    (state_key, payload, now),
+                )
 
     def load_state(self, state_key: str) -> dict[str, object] | None:
         with self._connect() as connection:

@@ -10,7 +10,7 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Current phase: integrated paper/shadow platform hardening.
 - Current milestone: M5/M6 failure recovery, control, and observability.
-- Acceptance evidence: 95 tests passed, Ruff clean, strict mypy
+- Acceptance evidence: 97 tests passed, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); end-to-end synthetic workflow executed.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
@@ -64,4 +64,8 @@ Last updated: 2026-08-12
   sorted unique sessions and held-out chronological windows. Momentum, reversal,
   volatility and liquidity baselines plus multi-period ICIR are tested without
   any execution-layer dependency.
+- Persistence failure safety: account and OMS/reservation snapshots commit in
+  one SQLite transaction. A snapshot write failure latches reconciliation FAILED
+  and HALTED before propagating. The source runtime package is now explicitly
+  tracked; `/runtime/` alone is ignored for generated artifacts.
 - Live trading: disabled and structurally unavailable.

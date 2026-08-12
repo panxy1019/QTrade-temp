@@ -210,3 +210,21 @@ def test_runtime_metrics_count_unique_submissions_rejections_and_fills(tmp_path)
     assert metrics["reject_rate"] == "0.5"
     assert metrics["fill_rate"] == "0.5"
     assert metrics["orders_per_minute"] == 2
+
+
+def test_runtime_state_persistence_failure_latches_halt(tmp_path, monkeypatch):
+    bundle = build(tmp_path)
+    attest(bundle)
+    bundle.runtime.start(actor="operator")
+
+    def fail_snapshot(states):
+        raise OSError("simulated database failure")
+
+    monkeypatch.setattr(bundle.journal, "save_states", fail_snapshot)
+    with pytest.raises(OSError, match="database failure"):
+        submit(bundle, "database-failure")
+
+    assert bundle.risk.state.value == "HALTED"
+    assert bundle.metrics.reconciliation_status == "FAILED"
+    with pytest.raises(RuntimeError, match="risk state HALTED"):
+        submit(bundle, "blocked-after-database-failure")

@@ -1,0 +1,345 @@
+from __future__ import annotations
+
+from copy import deepcopy
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
+from decimal import Decimal
+from pathlib import Path
+
+from qtrade.accounting import Ledger
+from qtrade.audit import AuditLog
+from qtrade.control import PlatformRuntime
+from qtrade.domain import (
+    AccountSnapshot,
+    Order,
+    OrderRequest,
+    OrderStatus,
+    RuntimeMode,
+    Side,
+    Trade,
+)
+from qtrade.domain.models import Position
+from qtrade.execution import FeeSchedule, PaperGateway, ReservationBook
+from qtrade.execution.reservations import Reservation
+from qtrade.monitoring import MetricsRegistry
+from qtrade.oms import OrderManager
+from qtrade.persistence import SQLiteOperationalJournal
+from qtrade.reconciliation import Reconciler, ReconciliationResult
+from qtrade.risk import KillState, RiskEngine, RiskLimits
+from qtrade.service import TradingService
+
+
+@dataclass(slots=True)
+class PaperRuntimeBundle:
+    runtime: PlatformRuntime
+    service: TradingService
+    gateway: PaperGateway
+    risk: RiskEngine
+    oms: OrderManager
+    ledger: Ledger
+    metrics: MetricsRegistry
+    audit: AuditLog
+    journal: SQLiteOperationalJournal
+
+    def reconcile_and_recover(self, *, actor: str) -> None:
+        uncertain_fills = len(self.journal.uncertain_fills())
+        uncertain_orders = sum(
+            order.status is OrderStatus.SUBMISSION_UNKNOWN for order in self.oms.orders
+        )
+        result = ReconciliationResult(
+            ok=uncertain_fills == 0 and uncertain_orders == 0,
+            differences=(
+                ()
+                if uncertain_fills == 0 and uncertain_orders == 0
+                else ("uncertain_fills_or_submissions",)
+            ),
+        )
+        if not result.ok:
+            raise ValueError("paper reconciliation found uncertain state")
+        self.gateway.reconnect()
+        attestation = Reconciler().issue_attestation(
+            result,
+            gateway_connected=True,
+            uncertain_fills=uncertain_fills,
+            now=datetime.now(UTC),
+            validity=timedelta(minutes=5),
+        )
+        if self.risk.state is KillState.HALTED:
+            self.risk.set_state(
+                KillState.NORMAL,
+                actor=actor,
+                reason="explicit paper recovery after reconciliation",
+                reconciliation_ok=True,
+            )
+        self.runtime.attest_readiness(attestation)
+
+
+def build_paper_runtime(
+    *,
+    mode: RuntimeMode,
+    opening_cash: Decimal,
+    limits: RiskLimits,
+    fees: FeeSchedule,
+    journal_path: Path,
+) -> PaperRuntimeBundle:
+    if mode not in {RuntimeMode.PAPER, RuntimeMode.SHADOW}:
+        raise ValueError("runnable runtime must be PAPER or SHADOW")
+    journal = SQLiteOperationalJournal(journal_path)
+    audit = AuditLog(journal)
+    metrics = MetricsRegistry()
+    ledger = Ledger(opening_cash, audit)
+    oms = OrderManager(audit)
+    reservations = ReservationBook()
+    risk = RiskEngine(limits, audit)
+    runtime = PlatformRuntime(mode, risk, audit, metrics)
+
+    restored = journal.load_state("account")
+    if restored is not None:
+        ledger.account.cash = Decimal(str(restored["cash"]))
+        raw_positions = restored.get("positions", {})
+        if isinstance(raw_positions, dict):
+            for symbol, raw in raw_positions.items():
+                if isinstance(raw, dict):
+                    ledger.account.positions[str(symbol)] = Position(
+                        symbol=str(symbol),
+                        quantity=int(raw["quantity"]),
+                        average_cost=Decimal(str(raw["average_cost"])),
+                        realized_pnl=Decimal(str(raw["realized_pnl"])),
+                    )
+        risk.set_state(
+            KillState.HALTED,
+            actor="restart-recovery",
+            reason="restored durable account; OMS reconciliation required",
+        )
+        metrics.reconciliation_status = "UNKNOWN"
+
+    restored_runtime = journal.load_state("runtime")
+    if restored_runtime is not None:
+        raw_orders = restored_runtime.get("orders", [])
+        if isinstance(raw_orders, list):
+            for raw in raw_orders:
+                if not isinstance(raw, dict):
+                    continue
+                request_data = raw["request"]
+                if not isinstance(request_data, dict):
+                    continue
+                request = OrderRequest(
+                    idempotency_key=str(request_data["idempotency_key"]),
+                    strategy_id=str(request_data["strategy_id"]),
+                    portfolio_id=str(request_data["portfolio_id"]),
+                    symbol=str(request_data["symbol"]),
+                    side=Side(str(request_data["side"])),
+                    price=Decimal(str(request_data["price"])),
+                    quantity=int(request_data["quantity"]),
+                    created_at=datetime.fromisoformat(str(request_data["created_at"])),
+                )
+                oms.restore(
+                    Order(
+                        internal_order_id=str(raw["internal_order_id"]),
+                        request=request,
+                        status=OrderStatus(str(raw["status"])),
+                        broker_order_id=(
+                            None if raw["broker_order_id"] is None else str(raw["broker_order_id"])
+                        ),
+                        filled_quantity=int(raw["filled_quantity"]),
+                        rejection_reason=(
+                            None
+                            if raw["rejection_reason"] is None
+                            else str(raw["rejection_reason"])
+                        ),
+                        created_at=datetime.fromisoformat(str(raw["created_at"])),
+                        updated_at=datetime.fromisoformat(str(raw["updated_at"])),
+                    )
+                )
+        raw_reservations = restored_runtime.get("reservations", [])
+        if isinstance(raw_reservations, list):
+            for raw in raw_reservations:
+                if isinstance(raw, dict):
+                    reservations.restore(
+                        Reservation(
+                            str(raw["order_id"]),
+                            str(raw["symbol"]),
+                            Side(str(raw["side"])),
+                            int(raw["remaining_quantity"]),
+                            Decimal(str(raw["remaining_cash"])),
+                        )
+                    )
+
+    def incident(reason: str) -> None:
+        metrics.gateway_connected = False
+        metrics.reconciliation_status = "FAILED"
+        risk.set_state(KillState.HALTED, actor="operational-incident", reason=reason)
+
+    def persist_account() -> None:
+        account_payload, runtime_payload = state_payloads()
+        try:
+            journal.save_states({"account": account_payload, "runtime": runtime_payload})
+        except Exception:
+            incident("runtime state persistence failed")
+            raise
+
+    def state_payloads(
+        *,
+        account_override: AccountSnapshot | None = None,
+        order_override: Order | None = None,
+        reservations_override: list[dict[str, object]] | None = None,
+    ) -> tuple[dict[str, object], dict[str, object]]:
+        account = ledger.account if account_override is None else account_override
+        positions = account.positions
+        cash = account.cash
+        orders = [
+            (
+                order_override
+                if order_override
+                and item.internal_order_id == order_override.internal_order_id
+                else item
+            )
+            for item in oms.orders
+        ]
+        account_payload: dict[str, object] = {
+                "cash": str(cash),
+                "positions": {
+                    symbol: {
+                        "quantity": position.quantity,
+                        "average_cost": str(position.average_cost),
+                        "realized_pnl": str(position.realized_pnl),
+                    }
+                    for symbol, position in positions.items()
+                },
+            }
+        runtime_payload: dict[str, object] = {
+                "orders": [
+                    serialize_order(order) for order in orders
+                ],
+                "reservations": reservations_override if reservations_override is not None else [
+                    {
+                        "order_id": item.order_id,
+                        "symbol": item.symbol,
+                        "side": item.side.value,
+                        "remaining_quantity": item.remaining_quantity,
+                        "remaining_cash": str(item.remaining_cash),
+                    }
+                    for item in reservations.snapshot()
+                ],
+            }
+        return account_payload, runtime_payload
+
+    def serialize_order(order: Order) -> dict[str, object]:
+        return {
+                        "internal_order_id": order.internal_order_id,
+                        "request": {
+                            "idempotency_key": order.request.idempotency_key,
+                            "strategy_id": order.request.strategy_id,
+                            "portfolio_id": order.request.portfolio_id,
+                            "symbol": order.request.symbol,
+                            "side": order.request.side.value,
+                            "price": str(order.request.price),
+                            "quantity": order.request.quantity,
+                            "created_at": order.request.created_at.isoformat(),
+                        },
+                        "status": order.status.value,
+                        "broker_order_id": order.broker_order_id,
+                        "filled_quantity": order.filled_quantity,
+                        "rejection_reason": order.rejection_reason,
+                        "created_at": order.created_at.isoformat(),
+                        "updated_at": order.updated_at.isoformat(),
+                    }
+
+    def durable_fill(fill_key: str, trade: Trade, order: Order) -> None:
+        projected_account = deepcopy(ledger.account)
+        position = projected_account.positions.setdefault(
+            trade.symbol, Position(symbol=trade.symbol)
+        )
+        notional = trade.price * trade.quantity
+        if trade.side is Side.BUY:
+            old_cost = position.average_cost * position.quantity
+            position.quantity += trade.quantity
+            position.average_cost = (old_cost + notional + trade.fee) / position.quantity
+            projected_account.cash -= notional + trade.fee
+        else:
+            position.quantity -= trade.quantity
+            position.realized_pnl += (
+                (trade.price - position.average_cost) * trade.quantity - trade.fee
+            )
+            projected_account.cash += notional - trade.fee
+            if position.quantity == 0:
+                position.average_cost = Decimal("0")
+        projected_order = deepcopy(order)
+        projected_order.filled_quantity += trade.quantity
+        projected_order.status = (
+            OrderStatus.FILLED
+            if projected_order.filled_quantity == projected_order.request.quantity
+            else OrderStatus.PARTIALLY_FILLED
+        )
+        projected_order.updated_at = trade.timestamp
+        projected_reservations: list[dict[str, object]] = []
+        for item in reservations.snapshot():
+            if item.order_id != order.internal_order_id:
+                projected_reservations.append(
+                    {
+                        "order_id": item.order_id,
+                        "symbol": item.symbol,
+                        "side": item.side.value,
+                        "remaining_quantity": item.remaining_quantity,
+                        "remaining_cash": str(item.remaining_cash),
+                    }
+                )
+                continue
+            remaining_quantity = item.remaining_quantity - trade.quantity
+            if remaining_quantity > 0:
+                fraction = Decimal(trade.quantity) / item.remaining_quantity
+                projected_reservations.append(
+                    {
+                        "order_id": item.order_id,
+                        "symbol": item.symbol,
+                        "side": item.side.value,
+                        "remaining_quantity": remaining_quantity,
+                        "remaining_cash": str(
+                            item.remaining_cash * (Decimal("1") - fraction)
+                        ),
+                    }
+                )
+        account_payload, runtime_payload = state_payloads(
+            account_override=projected_account,
+            order_override=projected_order,
+            reservations_override=projected_reservations,
+        )
+        journal.commit_fill_effect(
+            fill_key,
+            account_state=account_payload,
+            runtime_state=runtime_payload,
+        )
+
+    def observe_submission(order: Order, completed_at: datetime) -> None:
+        metrics.record_order(created_at=order.created_at, completed_at=completed_at)
+        if order.status in {OrderStatus.RISK_REJECTED, OrderStatus.REJECTED}:
+            metrics.record_reject()
+
+    gateway = PaperGateway(
+        oms,
+        ledger,
+        audit,
+        fees,
+        reservations=reservations,
+        journal=journal,
+        incident_handler=incident,
+        state_change_handler=persist_account,
+        durable_fill_handler=durable_fill,
+        fill_observer=lambda _trade: metrics.record_fill(),
+    )
+    for restored_order in oms.orders:
+        if restored_order.status is not OrderStatus.SUBMISSION_UNKNOWN:
+            gateway.restore_submission(restored_order)
+    service = TradingService(
+        risk,
+        oms,
+        gateway,
+        mode,
+        reservations=reservations,
+        submission_guard=runtime.ensure_submission_allowed,
+        state_change_handler=persist_account,
+        submission_observer=observe_submission,
+    )
+    return PaperRuntimeBundle(
+        runtime, service, gateway, risk, oms, ledger, metrics, audit, journal
+    )
