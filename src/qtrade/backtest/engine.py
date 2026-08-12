@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date
 from decimal import Decimal
 from typing import Protocol
 
 from qtrade.accounting import Ledger, SellabilityLedger
 from qtrade.audit import AuditLog
 from qtrade.data import Bar, DataManifest, QualityStatus
-from qtrade.domain import Instrument, OrderRequest, Side
+from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
 from qtrade.execution import FeeSchedule, PaperGateway
 from qtrade.instruments import TradingRule
 from qtrade.oms import OrderManager
@@ -50,7 +51,12 @@ class BacktestEngine:
         self.ledger = Ledger(opening_cash, self.audit)
         self.oms = OrderManager(self.audit)
         self.gateway = PaperGateway(self.oms, self.ledger, self.audit, fees)
-        self.service = TradingService(RiskEngine(limits, self.audit), self.oms, self.gateway)
+        self.service = TradingService(
+            RiskEngine(limits, self.audit),
+            self.oms,
+            self.gateway,
+            RuntimeMode.BACKTEST,
+        )
         self._trades = 0
         self._fees = Decimal("0")
         self._sellability = SellabilityLedger()
@@ -76,7 +82,17 @@ class BacktestEngine:
             current = self.ledger.account.position_quantity(bar.symbol)
             delta = 0 if pending_target is None else pending_target - current
             if delta != 0 and pending_target is not None:
-                self._execute(sequence, bar, pending_target, type(strategy).__name__)
+                target_index = sequence + self._trading_rule.sellability_lag_days
+                sellable_on = (
+                    date.max if target_index >= len(bars) else bars[target_index].trading_day
+                )
+                self._execute(
+                    sequence,
+                    bar,
+                    pending_target,
+                    type(strategy).__name__,
+                    sellable_on,
+                )
             current = self.ledger.account.position_quantity(bar.symbol)
             pending_target = strategy.on_bar(bar, current)
         return BacktestResult(
@@ -87,7 +103,9 @@ class BacktestEngine:
             data_version=manifest.data_version,
         )
 
-    def _execute(self, sequence: int, bar: Bar, target: int, strategy_id: str) -> None:
+    def _execute(
+        self, sequence: int, bar: Bar, target: int, strategy_id: str, sellable_on: date
+    ) -> None:
         current = self.ledger.account.position_quantity(bar.symbol)
         delta = target - current
         side = Side.BUY if delta > 0 else Side.SELL
@@ -131,7 +149,7 @@ class BacktestEngine:
                     bar.symbol,
                     quantity,
                     bar.trading_day,
-                    self._trading_rule.sellability_lag_days,
+                    sellable_on,
                 )
             else:
                 self._sellability.dispose(bar.symbol, quantity, bar.trading_day)

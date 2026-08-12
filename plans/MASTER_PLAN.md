@@ -74,7 +74,8 @@ fills, cancellation, rejection, accounting, benchmark evaluation.
 
 Current evidence: shared pipeline integrated, signals execute at the following
 bar open, input ordering/identity and single-use behavior tested. Remaining:
-dataset manifest gate, broader metrics, liquidity/matching models and report.
+broader metrics, liquidity/matching models and report. T+N sellability advances
+over the observed open-session bar sequence rather than calendar days.
 
 ### M5 — Durable paper runtime and recovery
 
@@ -123,10 +124,10 @@ implementation → independent review → test review → main-agent integration
 
 ## Current work queue
 
-1. Complete instrument master, calendars/status, and sellability accounting.
-2. Build a reproducible import → research → backtest → report workflow.
+1. Route authenticated cancellation through the application service.
+2. Wire runtime order/reject/fill metrics and structured operational events.
 3. Expand failure injection and deterministic paper execution plans.
-4. Add vn.py process adapter and canonical event protocol.
+4. Add historical CSV ingestion and further research baselines.
 
 ## Blockers
 

@@ -4,7 +4,7 @@ import pytest
 
 from qtrade.accounting import Ledger
 from qtrade.audit import AuditEvent, AuditLog
-from qtrade.domain import Instrument, OrderRequest, Side
+from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
 from qtrade.execution import FeeSchedule, PaperGateway
 from qtrade.oms import OrderManager
 from qtrade.persistence import SQLiteOperationalJournal
@@ -49,7 +49,7 @@ def test_paper_gateway_restart_refuses_pending_fill_replay(tmp_path):
     fees = FeeSchedule("test", Decimal("0"), Decimal("0"))
     gateway = PaperGateway(oms, ledger, audit, fees)
     risk = RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit)
-    service = TradingService(risk, oms, gateway)
+    service = TradingService(risk, oms, gateway, RuntimeMode.BACKTEST)
     order, _ = service.submit(
         OrderRequest("key", "strategy", "portfolio", "510300", Side.BUY, Decimal("10"), 100, now),
         RiskContext(

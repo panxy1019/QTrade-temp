@@ -74,8 +74,19 @@ def test_calendar_fails_closed_and_sellability_distinguishes_t0_t1():
         calendar.status("SSE", date(2026, 8, 13), known_on=date(2026, 8, 13))
 
     lots = SellabilityLedger()
-    lots.acquire("DOMESTIC", 100, date(2026, 8, 12), sellability_lag_days=1)
-    lots.acquire("MONEY_ETF", 100, date(2026, 8, 12), sellability_lag_days=0)
+    lots.acquire("DOMESTIC", 100, date(2026, 8, 12), date(2026, 8, 13))
+    lots.acquire("MONEY_ETF", 100, date(2026, 8, 12), date(2026, 8, 12))
     assert lots.sellable_quantity("DOMESTIC", date(2026, 8, 12)) == 0
     assert lots.sellable_quantity("DOMESTIC", date(2026, 8, 13)) == 100
     assert lots.sellable_quantity("MONEY_ETF", date(2026, 8, 12)) == 100
+
+
+def test_calendar_advances_sellability_by_open_sessions_not_weekends():
+    entries = tuple(
+        TradingDayStatus("SSE", day, TradingStatus.OPEN, date(2026, 1, 1), "exchange-calendar")
+        for day in (date(2026, 8, 14), date(2026, 8, 17), date(2026, 8, 18))
+    )
+    calendar = TradingCalendar(entries)
+    assert calendar.advance_open_days(
+        "SSE", date(2026, 8, 14), 1, known_on=date(2026, 8, 14)
+    ) == date(2026, 8, 17)

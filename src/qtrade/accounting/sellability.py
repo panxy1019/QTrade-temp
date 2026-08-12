@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date
 
 
 @dataclass(frozen=True, slots=True)
@@ -17,16 +17,10 @@ class SellabilityLedger:
     def __init__(self) -> None:
         self._lots: dict[str, list[AcquisitionLot]] = {}
 
-    def acquire(
-        self, symbol: str, quantity: int, trading_day: date, sellability_lag_days: int
-    ) -> None:
-        if quantity <= 0 or sellability_lag_days < 0:
+    def acquire(self, symbol: str, quantity: int, trading_day: date, sellable_on: date) -> None:
+        if quantity <= 0 or sellable_on < trading_day:
             raise ValueError("invalid acquisition lot")
-        self._lots.setdefault(symbol, []).append(
-            AcquisitionLot(
-                quantity, trading_day, trading_day + timedelta(days=sellability_lag_days)
-            )
-        )
+        self._lots.setdefault(symbol, []).append(AcquisitionLot(quantity, trading_day, sellable_on))
 
     def sellable_quantity(self, symbol: str, trading_day: date) -> int:
         return sum(

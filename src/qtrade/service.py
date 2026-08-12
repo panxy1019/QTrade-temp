@@ -6,6 +6,7 @@ from collections.abc import Callable
 from dataclasses import replace
 from datetime import datetime
 
+from qtrade.domain import RuntimeMode
 from qtrade.domain.models import Order, OrderRequest, OrderStatus
 from qtrade.execution.paper import PaperGateway
 from qtrade.execution.reservations import ReservationBook
@@ -19,6 +20,7 @@ class TradingService:
         risk: RiskEngine,
         oms: OrderManager,
         gateway: PaperGateway,
+        runtime_mode: RuntimeMode,
         reservations: ReservationBook | None = None,
         submission_guard: Callable[[], None] | None = None,
         state_change_handler: Callable[[], None] | None = None,
@@ -30,6 +32,9 @@ class TradingService:
             raise ValueError("external order transmission is unavailable in this build")
         self._reservations = reservations or gateway.reservations
         self._submission_guard = submission_guard
+        self._runtime_mode = runtime_mode
+        if runtime_mode in {RuntimeMode.PAPER, RuntimeMode.SHADOW} and submission_guard is None:
+            raise ValueError("PAPER/SHADOW TradingService requires a runtime submission guard")
         self._state_change_handler = state_change_handler
 
     def submit(

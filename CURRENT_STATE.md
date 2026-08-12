@@ -10,7 +10,7 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Current phase: integrated paper/shadow platform hardening.
 - Current milestone: M5/M6 failure recovery, control, and observability.
-- Acceptance evidence: 78 tests passed, 92% coverage, Ruff clean, strict mypy
+- Acceptance evidence: 81 tests passed, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); end-to-end synthetic workflow executed.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
@@ -20,8 +20,8 @@ Last updated: 2026-08-12
   to be integrated; paper matching remains deliberately simple.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: integrate durable SQLite journal into fill processing; metrics/factor
-  evaluation; paper runtime failure replay and orchestration.
+- Next: authenticated application-service cancellation; metrics wiring;
+  paper runtime failure replay and orchestration.
 - Analytical persistence: checksum-verified Parquet/DuckDB bar storage and
   immutable hashed experiment records implemented; 51 tests pass at 93% coverage.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
@@ -44,4 +44,8 @@ Last updated: 2026-08-12
   post-fill reservations commit in one SQLite transaction. Failure immediately
   after that commit restores exactly one effect. Reconciliation issues an
   expiring readiness attestation; mutable health metrics cannot authorize start.
+- Mode boundary: runnable PAPER/SHADOW services require a runtime submission
+  guard; strategy/portfolio imports cannot reach execution adapters. Backtest
+  T+N sellability advances over observed open sessions, and the authoritative
+  calendar exposes an explicit open-session advance operation.
 - Live trading: disabled and structurally unavailable.

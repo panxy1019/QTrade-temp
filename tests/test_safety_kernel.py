@@ -42,7 +42,14 @@ def build_system(opening_cash: Decimal = Decimal("100000")):
             sell_tax_rate=Decimal("0.0005"),
         ),
     )
-    return TradingService(risk, oms, gateway), risk, oms, gateway, ledger, audit
+    return (
+        TradingService(risk, oms, gateway, RuntimeMode.BACKTEST),
+        risk,
+        oms,
+        gateway,
+        ledger,
+        audit,
+    )
 
 
 def request(
@@ -109,7 +116,7 @@ def test_external_gateway_capability_is_rejected():
         external_order_transmission = True
 
     with pytest.raises(ValueError, match="external order transmission"):
-        TradingService(risk, oms, UnsafeGateway())  # type: ignore[arg-type]
+        TradingService(risk, oms, UnsafeGateway(), RuntimeMode.BACKTEST)  # type: ignore[arg-type]
 
 
 def test_end_to_end_partial_fill_is_idempotent_and_books_cash():
@@ -231,7 +238,7 @@ def test_open_buy_orders_count_toward_position_and_gross_limits():
     oms = OrderManager(audit)
     risk = RiskEngine(RiskLimits(Decimal("10000"), 150, Decimal("1500")), audit)
     gateway = PaperGateway(oms, ledger, audit, FeeSchedule("v1", Decimal("0"), Decimal("0")))
-    service = TradingService(risk, oms, gateway)
+    service = TradingService(risk, oms, gateway, RuntimeMode.BACKTEST)
     first, _ = service.submit(request(key="one"), context(ledger), now=NOW)
     second, _ = service.submit(request(key="two"), context(ledger), now=NOW)
     assert first.status is OrderStatus.ACCEPTED
