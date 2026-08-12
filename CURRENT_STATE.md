@@ -12,7 +12,7 @@ Last updated: 2026-08-12
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 186 tests passed, Ruff clean, strict mypy clean on
+- Acceptance evidence: 195 tests passed, Ruff clean, strict mypy clean on
   Python 3.14.6 (2026-08-12); frontend Vitest, ESLint and production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
@@ -37,6 +37,10 @@ Last updated: 2026-08-12
   `WAITING_FOR_DATA_PROVIDER_AUTH` and
   `WAITING_FOR_BROKER_SELECTION`; they do not block mock adapters, replay,
   strategy research, UI or read-only protocol work.
+- Snapshot blocker evidence: Eastmoney and THS ETF snapshots fail TLS on this
+  host; Tencent bulk A-share polling is slow/intermittent and lacks proven ETF
+  coverage; Xueqiu per-symbol quotes require a session token. Historical closes
+  are never relabeled as realtime observations.
 - Provider selection: AKShare 1.18.84 is the credential-free noncommercial
   research/PAPER bootstrap and has a fail-closed ETF adapter plus one-shot probe.
   This host's Eastmoney snapshot/history probes failed before data receipt. The

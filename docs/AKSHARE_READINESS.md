@@ -80,6 +80,17 @@ were excluded instead of being silently adjusted without sourced corporate-actio
 factors. This dataset is suitable for exploratory noncommercial research, but it
 does not authorize snapshot-driven PAPER execution.
 
+Additional bounded snapshot alternatives were rejected on 2026-08-12:
+
+- `fund_etf_spot_ths()` failed with the same TLS EOF class;
+- `stock_zh_a_spot_tx()` required 27 paginated requests, took over a minute on
+  one run, failed partway on another, and did not establish ETF coverage;
+- `stock_individual_spot_xq()` required a valid Xueqiu session token.
+
+None satisfies the controlled polling, bounded timeout, ETF schema, freshness
+and stability requirements. The platform therefore remains fail-closed instead
+of silently substituting last historical closes for observable quotes.
+
 Run the one-shot diagnostic in an isolated environment:
 
 ```powershell

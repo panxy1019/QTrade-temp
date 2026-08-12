@@ -54,9 +54,10 @@ npm --prefix web run lint
 npm --prefix web run build
 ```
 
-Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12:
+Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12 (latest
+AKShare amendment checkpoint):
 
-- 186 Python tests passed;
+- 195 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 84 source files;
 - no broken Python requirements;
