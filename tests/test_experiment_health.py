@@ -5,6 +5,7 @@ from decimal import Decimal
 import pytest
 
 from qtrade.data import DataManifest, QualityStatus
+from qtrade.persistence import SQLiteMetadataCatalog
 from qtrade.research import (
     ExperimentOutput,
     ExperimentRunner,
@@ -51,12 +52,18 @@ def manifest(status: QualityStatus = QualityStatus.PASSED) -> DataManifest:
 
 def test_experiment_runner_requires_passed_matching_data_and_is_immutable(tmp_path):
     runner = ExperimentRunner(tmp_path)
+    artifact_paths = tuple(
+        tmp_path / f"{name}.json"
+        for name in ("equity", "drawdown", "trades", "positions", "risk", "logs")
+    )
+    for path in artifact_paths:
+        path.write_text(f'{{"kind":"{path.stem}"}}', encoding="utf-8")
 
     def evaluator(spec):
         assert spec.seed == 7
         return ExperimentOutput(
             (("sharpe", Decimal("1.2")), ("maximum_drawdown", Decimal("-0.1"))),
-            ("equity.parquet", "trades.parquet"),
+            artifact_paths,
         )
 
     completed = datetime(2026, 8, 12, 18, tzinfo=UTC)
@@ -66,6 +73,9 @@ def test_experiment_runner_requires_passed_matching_data_and_is_immutable(tmp_pa
     assert result.strategy_id == "ETF_MOM_V1"
     assert result.artifact_path.is_file()
     assert len(result.spec_hash) == 64 and len(result.result_hash) == 64
+    catalog = SQLiteMetadataCatalog(tmp_path / "metadata.db")
+    assert catalog.dataset_versions() == ("etf-v1",)
+    assert catalog.experiments()[0].experiment_id == "exp-1"
     with pytest.raises(FileExistsError, match="immutable"):
         runner.run(run_spec(), manifest=manifest(), evaluator=evaluator, completed_at=completed)
     with pytest.raises(ValueError, match="PASSED"):
@@ -76,6 +86,69 @@ def test_experiment_runner_requires_passed_matching_data_and_is_immutable(tmp_pa
             manifest=manifest(),
             evaluator=evaluator,
         )
+
+
+def test_experiment_runner_requires_complete_confined_artifact_bundle(tmp_path):
+    runner = ExperimentRunner(tmp_path)
+    equity = tmp_path / "equity.json"
+    equity.write_text("{}", encoding="utf-8")
+    with pytest.raises(ValueError, match="missing required artifacts"):
+        runner.run(
+            run_spec("incomplete"),
+            manifest=manifest(),
+            evaluator=lambda _spec: ExperimentOutput(
+                (("sharpe", Decimal("1")),), (equity,)
+            ),
+        )
+
+
+def test_experiment_result_hash_ignores_wall_clock_but_tracks_artifact_content(tmp_path):
+    def prepare(root):
+        paths = tuple(
+            root / f"{name}.json"
+            for name in ("equity", "drawdown", "trades", "positions", "risk", "logs")
+        )
+        for path in paths:
+            path.write_text(f'{{"kind":"{path.stem}"}}', encoding="utf-8")
+        return paths
+
+    first_root = tmp_path / "first"
+    second_root = tmp_path / "second"
+    first_root.mkdir()
+    second_root.mkdir()
+    first_paths = prepare(first_root)
+    second_paths = prepare(second_root)
+
+    def output(paths):
+        def evaluator(_spec):
+            return ExperimentOutput((("sharpe", Decimal("1")),), paths)
+
+        return evaluator
+
+    first = ExperimentRunner(first_root).run(
+        run_spec(),
+        manifest=manifest(),
+        evaluator=output(first_paths),
+        completed_at=datetime(2026, 8, 12, tzinfo=UTC),
+    )
+    second = ExperimentRunner(second_root).run(
+        run_spec(),
+        manifest=manifest(),
+        evaluator=output(second_paths),
+        completed_at=datetime(2026, 8, 13, tzinfo=UTC),
+    )
+    assert first.result_hash == second.result_hash
+    third_root = tmp_path / "third"
+    third_root.mkdir()
+    third_paths = prepare(third_root)
+    third_paths[0].write_text('{"kind":"equity","changed":true}', encoding="utf-8")
+    third = ExperimentRunner(third_root).run(
+        run_spec(),
+        manifest=manifest(),
+        evaluator=output(third_paths),
+        completed_at=datetime(2026, 8, 12, tzinfo=UTC),
+    )
+    assert third.result_hash != first.result_hash
 
 
 def health(**changes):

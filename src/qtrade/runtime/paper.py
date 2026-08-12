@@ -25,6 +25,7 @@ from qtrade.monitoring import MetricsRegistry
 from qtrade.oms import OrderManager
 from qtrade.persistence import SQLiteOperationalJournal
 from qtrade.reconciliation import Reconciler, ReconciliationResult
+from qtrade.reporting import DailyPaperReport, DailyReportStore
 from qtrade.risk import KillState, RiskEngine, RiskLimits
 from qtrade.service import TradingService
 
@@ -45,6 +46,71 @@ class PaperRuntimeBundle:
 
     def report_incident(self, reason: str) -> None:
         self._incident_handler(reason)
+
+    def generate_daily_report(
+        self,
+        *,
+        trading_day: date,
+        data_version: str,
+        strategy_versions: tuple[str, ...],
+        report_root: Path,
+        generated_at: datetime | None = None,
+    ) -> tuple[Path, str]:
+        timestamp = generated_at or datetime.now(UTC)
+        positions: tuple[dict[str, object], ...] = tuple(
+            {
+                "instrument": position.symbol,
+                "quantity": position.quantity,
+                "average_cost": str(position.average_cost),
+                "realized_pnl": str(position.realized_pnl),
+            }
+            for position in sorted(
+                self.ledger.account.positions.values(), key=lambda item: item.symbol
+            )
+        )
+        trades: tuple[dict[str, object], ...] = tuple(
+            {
+                "trade_id": trade.trade_id,
+                "order_id": trade.internal_order_id,
+                "instrument": trade.symbol,
+                "side": trade.side.value,
+                "price": str(trade.price),
+                "quantity": trade.quantity,
+                "fee": str(trade.fee),
+                "timestamp": trade.timestamp.isoformat(),
+            }
+            for trade in self.gateway.applied_trades
+            if trade.timestamp.date() == trading_day
+        )
+        incidents = tuple(
+            event.message
+            for event in self.audit.events
+            if event.timestamp.date() == trading_day and event.severity in {"ERROR", "CRITICAL"}
+        )
+        realized = sum(
+            (position.realized_pnl for position in self.ledger.account.positions.values()),
+            start=Decimal("0"),
+        )
+        report = DailyPaperReport(
+            f"paper-{trading_day.isoformat()}",
+            trading_day,
+            timestamp,
+            data_version,
+            strategy_versions,
+            (
+                ("gateway_connected", str(self.metrics.gateway_connected)),
+                ("reconciliation", self.metrics.reconciliation_status),
+            ),
+            (),
+            trades,
+            positions,
+            (("cash", str(self.ledger.account.cash)), ("realized", str(realized))),
+            (("kill_state", self.risk.state.value),),
+            (("status", "PASSED" if self.metrics.reconciliation_status == "OK" else "FAILED"),),
+            incidents,
+            tuple((version, "UNASSESSED") for version in strategy_versions),
+        )
+        return DailyReportStore(report_root).save(report)
 
     def reconcile_and_recover(self, *, actor: str) -> None:
         uncertain_fills = len(self.journal.uncertain_fills())

@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+import pytest
+
 from qtrade.portfolio import PortfolioConstraints
 from qtrade.strategies import (
     CrossSectionalFactorRanking,
@@ -77,3 +79,14 @@ def test_cross_sectional_factor_ranking_uses_portfolio_constraints():
         equity=Decimal("100000"),
     )
     assert [item.symbol for item in targets] == ["600000", "600519"]
+
+
+def test_cross_sectional_factor_ranking_fails_on_missing_factor():
+    strategy = CrossSectionalFactorRanking(
+        (("momentum", Decimal("1")), ("volatility", Decimal("-0.5"))),
+        PortfolioConstraints(
+            top_k=1, max_weight=Decimal("0.5"), cash_reserve_fraction=Decimal("0.1")
+        ),
+    )
+    with pytest.raises(ValueError, match="incomplete"):
+        strategy.scores({"600000": {"momentum": Decimal("0.3")}})

@@ -1,6 +1,7 @@
 from dataclasses import replace
 from datetime import date
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
@@ -67,7 +68,7 @@ def test_robustness_suite_is_bounded_deterministic_and_detects_cliff():
 
     def evaluator(spec):
         sharpe = Decimal("1.0") if dict(spec.parameters)["lookback"] == "20" else Decimal("-0.1")
-        return ExperimentOutput((("sharpe", sharpe),), ())
+        return ExperimentOutput((("sharpe", sharpe),), (Path("unused"),))
 
     result = suite.run(run_spec(), evaluator)
     assert result.worst_sharpe == Decimal("-0.1")
@@ -95,6 +96,18 @@ def test_research_loop_enforces_review_budgets_uniqueness_and_test_holdout():
     )
     with pytest.raises(ValueError, match="held-out test"):
         loop.record(ResearchIteration("reuse-test", hypothesis("hyp-2"), (reused,), passed))
+    overlapping = replace(
+        run_spec("overlap"),
+        split=replace(
+            run_spec().split,
+            test_start=date(2024, 12, 1),
+            test_end=date(2025, 6, 30),
+        ),
+    )
+    with pytest.raises(ValueError, match="held-out test"):
+        loop.record(
+            ResearchIteration("overlap-test", hypothesis("hyp-overlap"), (overlapping,), passed)
+        )
     with pytest.raises(ValueError, match="leakage review"):
         BoundedResearchLoop().record(
             ResearchIteration(

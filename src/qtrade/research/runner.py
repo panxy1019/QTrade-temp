@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Protocol
 
 from qtrade.data import DataManifest, QualityStatus
+from qtrade.persistence import ExperimentCatalogEntry, SQLiteMetadataCatalog
 from qtrade.research.artifacts import ExperimentArtifactStore
 from qtrade.research.experiment import ExperimentRecord, TimeSplit
 
@@ -51,7 +52,7 @@ class ExperimentRunSpec:
 @dataclass(frozen=True, slots=True)
 class ExperimentOutput:
     metrics: tuple[tuple[str, Decimal], ...]
-    artifacts: tuple[str, ...]
+    artifacts: tuple[Path, ...]
 
     def __post_init__(self) -> None:
         keys = [key for key, _ in self.metrics]
@@ -79,9 +80,14 @@ class ExperimentEvaluator(Protocol):
 class ExperimentRunner:
     """Deterministic experiment orchestration; it evaluates but never promotes."""
 
-    def __init__(self, root: Path) -> None:
+    _REQUIRED_ARTIFACTS = frozenset(
+        {"equity", "drawdown", "trades", "positions", "risk", "logs"}
+    )
+
+    def __init__(self, root: Path, *, catalog: SQLiteMetadataCatalog | None = None) -> None:
         self._root = root.resolve()
         self._store = ExperimentArtifactStore(self._root)
+        self._catalog = catalog or SQLiteMetadataCatalog(self._root / "metadata.db")
 
     def run(
         self,
@@ -95,7 +101,9 @@ class ExperimentRunner:
             raise ValueError("experiment runner requires a PASSED data manifest")
         if manifest.data_version != spec.data_version:
             raise ValueError("experiment data_version does not match manifest")
+        self._catalog.register_dataset(manifest)
         output = evaluator(spec)
+        artifact_manifest = self._validate_artifacts(output.artifacts)
         timestamp = completed_at or datetime.now(UTC)
         if timestamp.tzinfo is None:
             raise ValueError("experiment completion timestamp must be timezone-aware")
@@ -112,17 +120,26 @@ class ExperimentRunner:
             seed=spec.seed,
             transaction_cost=spec.transaction_cost,
             metrics=dict(output.metrics),
-            artifacts=output.artifacts,
+            artifacts=tuple(f"{name}:{digest}" for name, digest in artifact_manifest),
         )
         artifact_path, record_hash = self._store.save(record)
         spec_hash = self._hash(spec)
         result_hash = self._hash(
             {
-                "completed_at": timestamp.isoformat(),
+                "artifact_manifest": artifact_manifest,
                 "metrics": output.metrics,
                 "record_hash": record_hash,
                 "strategy_id": spec.strategy_id,
             }
+        )
+        self._catalog.register_experiment(
+            ExperimentCatalogEntry(
+                spec.experiment_id,
+                spec_hash,
+                spec.git_commit,
+                spec.data_version,
+                str(artifact_path),
+            )
         )
         return ExperimentRunResult(
             spec.experiment_id,
@@ -133,6 +150,23 @@ class ExperimentRunner:
             output.metrics,
             timestamp,
         )
+
+    def _validate_artifacts(self, artifacts: tuple[Path, ...]) -> tuple[tuple[str, str], ...]:
+        manifest: list[tuple[str, str]] = []
+        for path in artifacts:
+            resolved = path.resolve()
+            if not resolved.is_relative_to(self._root):
+                raise ValueError("experiment artifact escapes runner root")
+            if not resolved.is_file():
+                raise ValueError(f"experiment artifact is missing: {path.name}")
+            manifest.append((resolved.stem, sha256(resolved.read_bytes()).hexdigest()))
+        names = {name for name, _ in manifest}
+        missing = self._REQUIRED_ARTIFACTS - names
+        if missing:
+            raise ValueError(
+                "experiment output is missing required artifacts: " + ",".join(sorted(missing))
+            )
+        return tuple(sorted(manifest))
 
     @staticmethod
     def _hash(value: object) -> str:

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import Callable
 from dataclasses import dataclass, replace
+from datetime import date
 from decimal import Decimal
 from enum import StrEnum
 from hashlib import sha256
@@ -136,7 +137,7 @@ class BoundedResearchLoop:
         self._maximum_candidates = maximum_candidates
         self._iterations: list[ResearchIteration] = []
         self._hypotheses: set[str] = set()
-        self._test_periods: set[tuple[object, object]] = set()
+        self._test_periods: set[tuple[date, date]] = set()
 
     def record(self, iteration: ResearchIteration) -> None:
         if len(self._iterations) >= self._maximum_iterations:
@@ -155,7 +156,11 @@ class BoundedResearchLoop:
             (candidate.split.test_start, candidate.split.test_end)
             for candidate in iteration.candidate_specs
         }
-        if self._test_periods & test_periods:
+        if any(
+            not (end < existing_start or start > existing_end)
+            for start, end in test_periods
+            for existing_start, existing_end in self._test_periods
+        ):
             raise ValueError("held-out test period cannot be reused for candidate selection")
         self._hypotheses.add(iteration.hypothesis.hypothesis_id)
         self._test_periods.update(test_periods)

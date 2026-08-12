@@ -56,7 +56,7 @@ npm --prefix web run build
 
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12:
 
-- 161 Python tests passed;
+- 165 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 80 source files;
 - no broken Python requirements;
@@ -79,14 +79,14 @@ Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12:
   are not yet executable. Do not claim comprehensive China-rule simulation.
 - Baseline families are deterministic signal/target primitives. They have not
   passed licensed point-in-time multi-asset validation.
-- Experiment, robustness, research loop and health contracts are useful local
-  primitives, but full artifact orchestration, durable loop/task execution and
-  broad metric policy remain future work.
+- Experiment artifacts and catalog lineage are checksum-bound, while robustness,
+  research loop and health contracts remain useful local primitives. Durable
+  loop/task execution and broad metric policy remain future work.
 - The Chinese web application has twelve routes and honest empty states; several
   pages await richer catalog/analytics APIs. It is not a claim of completed
   provider-backed analytics.
-- Daily reports are immutable/hash-verified when produced, but automatic
-  end-of-day generation is not wired.
+- Daily reports are runtime-generated and hash-verified, but automatic scheduling
+  and restart-complete trade history are not wired.
 - The control plane remains loopback-only; non-loopback deployment requires read
   authentication, operator identity, TLS/proxy, pagination/rate/body limits and
   security headers.

@@ -339,4 +339,5 @@ def context_from_runtime(bundle: object) -> AppContext:
         bundle.audit,
         recover=lambda actor: bundle.reconcile_and_recover(actor=actor),
         cancel=bundle.service.cancel,
+        daily_report_root=Path("runtime/reports"),
     )

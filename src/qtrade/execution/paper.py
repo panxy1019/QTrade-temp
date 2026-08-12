@@ -231,6 +231,14 @@ class PaperGateway:
         entry = self._orders_by_client_id.get(client_order_id)
         return None if entry is None else entry[0]
 
+    @property
+    def applied_trades(self) -> tuple[Trade, ...]:
+        return tuple(
+            record.trade
+            for _, record in sorted(self._fills.items())
+            if record.state is FillProcessingState.APPLIED
+        )
+
     def restore_submission(self, order: Order) -> None:
         if order.status is OrderStatus.SUBMISSION_UNKNOWN:
             raise ValueError("uncertain submissions require external reconciliation")

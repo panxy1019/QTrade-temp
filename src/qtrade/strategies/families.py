@@ -128,10 +128,18 @@ class CrossSectionalFactorRanking:
     def scores(self, factors: dict[str, dict[str, Decimal]]) -> dict[str, Decimal]:
         if not factors:
             raise ValueError("factor cross-section cannot be empty")
+        required = {name for name, _ in self._factor_weights}
+        missing = {
+            symbol: sorted(required - values.keys())
+            for symbol, values in factors.items()
+            if required - values.keys()
+        }
+        if missing:
+            raise ValueError(f"factor cross-section is incomplete: {missing}")
         return {
             symbol: sum(
                 (
-                    values.get(factor_name, Decimal("0")) * weight
+                    values[factor_name] * weight
                     for factor_name, weight in self._factor_weights
                 ),
                 start=Decimal("0"),

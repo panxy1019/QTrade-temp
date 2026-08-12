@@ -34,6 +34,8 @@ focused regression and independent safety review.
 - [x] Parent/child lineage with hypothesis, rationale, changes, results.
 - [x] Champion/challenger roles with explicit promotion history.
 - [x] Unified `ExperimentRunner` and immutable experiment registry/artifacts.
+- [x] Required evidence artifacts are confined, checksum-bound and automatically
+  registered with their PASSED dataset lineage.
 - [x] Promotion gate using OOS, risk, cost, robustness, sensitivity and
   walk-forward evidence; outcomes PASS/REJECT/NEEDS_REVIEW.
 - [x] Strategy health monitor and traceable research-task feedback.
