@@ -29,10 +29,13 @@ class TickQualityGate:
 
     def validate(self, ticks: tuple[CanonicalTick, ...]) -> tuple[TickQualityIssue, ...]:
         issues: list[TickQualityIssue] = []
+        seen = set(self._seen)
+        previous_by_stream = dict(self._previous)
+        reconnects = dict(self._reconnect_id)
         for tick in ticks:
-            if tick.event_id in self._seen:
+            if tick.event_id in seen:
                 issues.append(TickQualityIssue("DUPLICATE", "duplicate event id", tick.event_id))
-            self._seen.add(tick.event_id)
+            seen.add(tick.event_id)
             if tick.timestamp_received < tick.timestamp_exchange - self._maximum_clock_skew:
                 issues.append(
                     TickQualityIssue(
@@ -42,7 +45,7 @@ class TickQualityGate:
             if tick.timestamp_received - tick.timestamp_exchange > self._maximum_staleness:
                 issues.append(TickQualityIssue("STALE_QUOTE", "tick is stale", tick.event_id))
             key = (tick.provider, tick.instrument, tick.reconnect_id)
-            prior = self._previous.get(key)
+            prior = previous_by_stream.get(key)
             if prior is not None:
                 if tick.timestamp_exchange < prior.timestamp_exchange:
                     issues.append(
@@ -62,9 +65,9 @@ class TickQualityGate:
                             "MISSING_SEQUENCE", "sequence gap detected", tick.event_id
                         )
                     )
-            self._previous[key] = tick
+            previous_by_stream[key] = tick
             source = (tick.provider, tick.instrument)
-            prior_reconnect = self._reconnect_id.get(source)
+            prior_reconnect = reconnects.get(source)
             if (
                 prior_reconnect is not None
                 and prior_reconnect != tick.reconnect_id
@@ -77,8 +80,12 @@ class TickQualityGate:
                         tick.event_id,
                     )
                 )
-            self._reconnect_id[source] = tick.reconnect_id
-        self._persist_state()
+            reconnects[source] = tick.reconnect_id
+        if not issues:
+            self._seen = seen
+            self._previous = previous_by_stream
+            self._reconnect_id = reconnects
+            self._persist_state()
         return tuple(issues)
 
     def _persist_state(self) -> None:

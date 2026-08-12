@@ -26,19 +26,24 @@ class RawTickArchive:
         self._ordinal = 0
         self._previous_hash = ""
         if self._path.is_file():
+            if not self.verify_chain():
+                raise ValueError("raw tick archive hash chain verification failed")
             lines = self._path.read_text(encoding="utf-8").splitlines()
             if lines:
                 last = json.loads(lines[-1])
                 self._ordinal = int(last["ingest_ordinal"]) + 1
                 self._previous_hash = str(last["hash"])
 
-    def append(self, provider: str, payload: dict[str, object], received_at: datetime) -> None:
+    def append(
+        self, provider: str, payload: dict[str, object], received_at: datetime
+    ) -> int:
         if not provider or received_at.tzinfo is None:
             raise ValueError("raw tick archive identity and receipt time are required")
         self._path.parent.mkdir(parents=True, exist_ok=True)
         with self._lock:
+            ingest_ordinal = self._ordinal
             envelope = {
-                "ingest_ordinal": self._ordinal,
+                "ingest_ordinal": ingest_ordinal,
                 "provider": provider,
                 "received_at": received_at.isoformat(),
                 "payload": payload,
@@ -53,8 +58,11 @@ class RawTickArchive:
                 os.fsync(handle.fileno())
             self._ordinal += 1
             self._previous_hash = digest
+            return ingest_ordinal
 
     def verify_chain(self) -> bool:
+        if not self._path.is_file():
+            return True
         previous_hash = ""
         for expected_ordinal, line in enumerate(
             self._path.read_text(encoding="utf-8").splitlines()
@@ -71,6 +79,16 @@ class RawTickArchive:
             previous_hash = digest
         return True
 
+    def read(self) -> tuple[dict[str, object], ...]:
+        if not self.verify_chain():
+            raise ValueError("raw tick archive hash chain verification failed")
+        if not self._path.is_file():
+            return ()
+        return tuple(
+            json.loads(line)
+            for line in self._path.read_text(encoding="utf-8").splitlines()
+        )
+
 
 class CanonicalTickStore:
     def __init__(self, root: Path) -> None:
@@ -81,6 +99,7 @@ class CanonicalTickStore:
         ticks: tuple[CanonicalTick, ...],
         *,
         quality_gate: TickQualityGate | None = None,
+        segment_id: str | None = None,
     ) -> tuple[Path, str]:
         if not ticks:
             raise ValueError("canonical tick recording cannot be empty")
@@ -98,7 +117,15 @@ class CanonicalTickStore:
             raise ValueError("canonical tick data_version must be an opaque identifier")
         if version in {".", ".."}:
             raise ValueError("canonical tick data_version must be an opaque identifier")
-        target_dir = (self._root / version).resolve()
+        if segment_id is not None and not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", segment_id
+        ):
+            raise ValueError("canonical tick segment_id must be an opaque identifier")
+        target_dir = (
+            self._root / version
+            if segment_id is None
+            else self._root / version / "segments" / segment_id
+        ).resolve()
         if not target_dir.is_relative_to(self._root):
             raise ValueError("canonical tick target escapes recording root")
         target_dir.mkdir(parents=True, exist_ok=False)
@@ -125,6 +152,7 @@ class CanonicalTickStore:
             json.dumps(
                 {
                     "data_version": next(iter(versions)),
+                    "segment_id": segment_id,
                     "row_count": len(ticks),
                     "checksum": checksum,
                 },

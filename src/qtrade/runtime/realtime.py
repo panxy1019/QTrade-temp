@@ -13,7 +13,9 @@ from qtrade.data import Bar
 from qtrade.domain import Instrument, Order, OrderRequest, OrderStatus, Side, Trade
 from qtrade.domain.models import utc_now
 from qtrade.instruments import TradingCalendar, TradingRule, TradingStatus
-from qtrade.market_data import AvailableBar, CanonicalTick, MarketDataReadinessGate
+from qtrade.market_data.models import CanonicalTick
+from qtrade.market_data.readiness import MarketDataReadinessGate
+from qtrade.market_data.recording import AvailableBar
 from qtrade.risk import RiskContext
 from qtrade.runtime.paper import PaperRuntimeBundle
 
@@ -98,6 +100,9 @@ class RealDataPaperRunner:
         self._checkpoint_key = f"real_data_paper:{digest}"
         self._restore_checkpoint(identity)
 
+    def report_market_incident(self, reason: str) -> None:
+        self._bundle.report_incident(reason)
+
     def on_finalized_bar(self, value: AvailableBar) -> PendingTarget:
         with self._lock:
             try:
@@ -152,7 +157,7 @@ class RealDataPaperRunner:
         self._last_tick_ordinal = tick.ingest_ordinal
         self._persist_checkpoint()
         pending = self._pending
-        if pending is None or tick.timestamp_received < pending.decided_at:
+        if pending is None or tick.timestamp_received <= pending.decided_at:
             return RealDataPaperResult(None, None, pending)
         current = self._bundle.ledger.account.position_quantity(tick.instrument)
         delta = pending.quantity - current

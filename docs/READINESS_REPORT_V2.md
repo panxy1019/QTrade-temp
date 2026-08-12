@@ -56,9 +56,9 @@ npm --prefix web run build
 
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12:
 
-- 168 Python tests passed;
+- 186 Python tests passed;
 - Ruff clean;
-- strict mypy clean across 80 source files;
+- strict mypy clean across 84 source files;
 - no broken Python requirements;
 - Vitest, ESLint and Vite production build passed;
 - one external Starlette/httpx deprecation warning;
@@ -99,3 +99,13 @@ recording, gap/reconnect/heartbeat tests, deterministic replay comparison and a
 multi-session PAPER soak. Broker work must remain read-only until the user selects
 a supported broker and supplies a sandbox. Real order transmission remains
 structurally absent regardless of either selection.
+
+## AKShare amendment
+
+The current goal selects AKShare as the first credential-free provider. The
+repository now has an optional pinned 1.18.84 ETF adapter with explicit
+noncommercial-use acknowledgement, upstream probe-before-connect, polling rate
+limits, timeouts/retries, staleness and duplicate checks, health/circuit state,
+canonical recording and causal PAPER replay tests. This does not upgrade the
+earlier authenticated-provider decision: bounded live probes failed before data
+receipt on this host, so real-data PAPER and multi-day acceptance remain open.

@@ -1,5 +1,10 @@
 """Provider-neutral realtime/historical market data, recording and replay."""
 
+from qtrade.market_data.akshare import (
+    AkshareMarketDataProvider,
+    AksharePollingPolicy,
+    NativeAkshareClient,
+)
 from qtrade.market_data.models import (
     CanonicalTick,
     MarketSnapshot,
@@ -8,6 +13,7 @@ from qtrade.market_data.models import (
     ProviderStatus,
     TickQualityIssue,
 )
+from qtrade.market_data.paper_session import RecordedPaperEvent, RecordedPaperSession
 from qtrade.market_data.provider import (
     HistoricalDataProvider,
     MarketDataProvider,
@@ -35,6 +41,8 @@ from qtrade.market_data.selection import (
 from qtrade.market_data.xtdata import XtDataProvider
 
 __all__ = [
+    "AkshareMarketDataProvider",
+    "AksharePollingPolicy",
     "AvailableBar",
     "CanonicalTick",
     "CanonicalTickStore",
@@ -43,6 +51,7 @@ __all__ = [
     "MarketDataReadinessAttestation",
     "MarketDataReadinessGate",
     "MarketSnapshot",
+    "NativeAkshareClient",
     "ProviderBridgeClient",
     "ProviderCapabilities",
     "ProviderConnectionStatus",
@@ -50,6 +59,8 @@ __all__ = [
     "ProviderSelectionStatus",
     "ProviderStatus",
     "RawTickArchive",
+    "RecordedPaperEvent",
+    "RecordedPaperSession",
     "RealtimeMarketDataProvider",
     "RqDataProvider",
     "TickBarAggregator",

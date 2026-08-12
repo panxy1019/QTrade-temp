@@ -104,6 +104,18 @@ npm --prefix web run build
 
 ## Current work
 
-V2-M6 local checkpoint closure. Authenticated real-provider validation cannot be
-cleared without the user's licensed data entitlement. Native broker work remains
-blocked on broker selection and sandbox access.
+### V2-M7 — AKShare credential-free real-data acceptance
+
+- [x] Pin and isolate AKShare 1.18.84 behind a provider adapter.
+- [x] Require explicit noncommercial research-use acknowledgement.
+- [x] Add controlled ETF snapshot/history polling, normalization, health and circuit tests.
+- [x] Add record -> DQ -> finalized bar -> causal PAPER -> replay integration test.
+- [ ] Obtain a successful endpoint/schema/freshness probe on the operating host.
+- [ ] Freeze a 20-50 liquid ETF universe from recorded real data.
+- [ ] Normalize A-share and major-index history/snapshots.
+- [ ] Run the first complete real trading-day PAPER acceptance and replay comparison.
+- [ ] Produce real-data strategy Champion/Challenger evidence.
+- [ ] Bind all required Chinese dashboard pages to those backend records.
+
+Authenticated RQData/XT validation remains a later authoritative-feed option.
+Native broker work remains blocked on broker selection and sandbox access.

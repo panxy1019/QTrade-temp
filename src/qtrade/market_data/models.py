@@ -30,6 +30,8 @@ class ProviderCapabilities:
     corporate_actions: bool
     external_order_transmission: bool = False
     account_access: bool = False
+    snapshot_polling: bool = False
+    production_grade: bool = False
 
     def __post_init__(self) -> None:
         if not all(

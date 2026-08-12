@@ -7,6 +7,7 @@ from pathlib import Path
 
 
 class ProviderChoice(StrEnum):
+    AKSHARE = "AKSHARE"
     RQDATA = "RQDATA"
     XTDATA = "XTDATA"
 
@@ -17,13 +18,31 @@ class ProviderSelectionStatus:
     ready_for_authorized_bridge: bool
     missing_configuration: tuple[str, ...]
     required_user_actions: tuple[str, ...]
+    operational_probe_required: bool = False
 
 
 def inspect_provider_selection(
     provider: ProviderChoice, *, environment: dict[str, str] | None = None
 ) -> ProviderSelectionStatus:
     values = dict(os.environ if environment is None else environment)
-    if provider is ProviderChoice.RQDATA:
+    required: tuple[str, ...]
+    actions: tuple[str, ...]
+    missing: tuple[str, ...]
+    operational_probe_required = False
+    if provider is ProviderChoice.AKSHARE:
+        required = ("QTRADE_AKSHARE_NONCOMMERCIAL_ACK",)
+        actions = (
+            "Review AKShare's official data-use statement for noncommercial research.",
+            "Set QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true only after accepting that boundary.",
+            "Install pinned AKShare 1.18.84 in an isolated provider environment.",
+        )
+        missing = (
+            ()
+            if values.get("QTRADE_AKSHARE_NONCOMMERCIAL_ACK", "").lower() == "true"
+            else ("QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true",)
+        )
+        operational_probe_required = True
+    elif provider is ProviderChoice.RQDATA:
         required = ("QTRADE_RQDATA_USERNAME", "QTRADE_RQDATA_TOKEN")
         actions = (
             "Obtain a licensed RQData account with realtime A-share/ETF/index entitlement.",
@@ -45,4 +64,10 @@ def inspect_provider_selection(
         if values.get("QTRADE_XTDATA_ENTITLEMENT_CONFIRMED", "").lower() != "true":
             missing_list.append("QTRADE_XTDATA_ENTITLEMENT_CONFIRMED=true")
         missing = tuple(dict.fromkeys(missing_list))
-    return ProviderSelectionStatus(provider, not missing, missing, actions)
+    return ProviderSelectionStatus(
+        provider,
+        not missing and not operational_probe_required,
+        missing,
+        actions,
+        operational_probe_required,
+    )

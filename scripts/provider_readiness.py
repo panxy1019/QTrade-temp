@@ -14,6 +14,8 @@ def main() -> int:
     print(f"ready_for_authorized_bridge={str(status.ready_for_authorized_bridge).lower()}")
     if status.missing_configuration:
         print("missing_configuration=" + ",".join(status.missing_configuration))
+    if status.operational_probe_required:
+        print("operational_probe_required=true")
     for index, action in enumerate(status.required_user_actions, start=1):
         print(f"action_{index}={action}")
     return 0 if status.ready_for_authorized_bridge else 2

@@ -1,3 +1,4 @@
+import json
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -342,6 +343,16 @@ def test_xtdata_adapter_uses_data_only_verified_bridge_session():
 
 
 def test_provider_selection_reports_minimum_actions_without_secret_values(tmp_path):
+    akshare = inspect_provider_selection(ProviderChoice.AKSHARE, environment={})
+    assert akshare.ready_for_authorized_bridge is False
+    assert akshare.missing_configuration == (
+        "QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true",
+    )
+    assert inspect_provider_selection(
+        ProviderChoice.AKSHARE,
+        environment={"QTRADE_AKSHARE_NONCOMMERCIAL_ACK": "true"},
+    ).operational_probe_required
+
     rq = inspect_provider_selection(ProviderChoice.RQDATA, environment={})
     assert rq.ready_for_authorized_bridge is False
     assert rq.missing_configuration == (
@@ -365,6 +376,33 @@ def test_tick_store_rejects_path_like_data_versions_without_filesystem_effect(
     with pytest.raises(ValueError, match="opaque identifier"):
         store.write((replace(tick(1), data_version=version),))
     assert not (tmp_path / "escaped").exists()
+
+
+def test_rejected_tick_does_not_poison_quality_cursor():
+    gate = TickQualityGate()
+    first = replace(tick(5), sequence=5, event_id="first")
+    rejected = replace(tick(3), sequence=3, event_id="rejected")
+    next_value = replace(tick(6), sequence=6, event_id="next")
+    assert gate.validate((first,)) == ()
+    assert {issue.code for issue in gate.validate((rejected,))} == {
+        "SEQUENCE_DISORDER",
+        "TIMESTAMP_DISORDER",
+    }
+    assert gate.validate((next_value,)) == ()
+
+
+def test_raw_archive_refuses_to_extend_a_tampered_chain(tmp_path):
+    path = tmp_path / "raw.jsonl"
+    archive = RawTickArchive(path)
+    archive.append("mock", {"value": 1}, datetime(2026, 8, 12, tzinfo=UTC))
+    archive.append("mock", {"value": 2}, datetime(2026, 8, 12, tzinfo=UTC))
+    lines = path.read_text(encoding="utf-8").splitlines()
+    row = json.loads(lines[0])
+    row["payload"]["value"] = 999
+    lines[0] = json.dumps(row, sort_keys=True)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="verification"):
+        RawTickArchive(path)
 
 
 def test_tick_store_read_is_confined_to_its_root(tmp_path):

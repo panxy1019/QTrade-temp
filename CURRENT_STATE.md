@@ -11,8 +11,8 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
-- Current milestone: V2-M6 integrated PAPER/SHADOW readiness review.
-- Acceptance evidence: 168 tests passed, Ruff clean, strict mypy clean on
+- Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
+- Acceptance evidence: 186 tests passed, Ruff clean, strict mypy clean on
   Python 3.14.6 (2026-08-12); frontend Vitest, ESLint and production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
@@ -24,16 +24,22 @@ Last updated: 2026-08-12
   vn.py and broker adapters require external provider/broker selection.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: perform the authenticated provider bridge/UAT and real-market PAPER soak
-  test after licensed data access is supplied; select a broker before building a
-  native read-only reconciliation bridge. Local research/UI depth remains an
-  explicit continuation backlog rather than a readiness claim.
-- External blockers: `WAITING_FOR_DATA_PROVIDER_AUTH` and
+- Next: complete a successful bounded AKShare endpoint/schema/freshness probe,
+  archive a 20-50 ETF universe, then run the recorded causal PAPER workflow.
+  Select a broker before building a native read-only reconciliation bridge.
+- External blockers: `WAITING_FOR_AKSHARE_ENDPOINT_ACCESS`,
+  `WAITING_FOR_DATA_PROVIDER_AUTH` and
   `WAITING_FOR_BROKER_SELECTION`; they do not block mock adapters, replay,
   strategy research, UI or read-only protocol work.
-- Provider selection: RQData remains the conditional first choice; XtData is the
-  QMT-entitled fallback. Both have fail-closed injected bridge adapters and a
-  credential-name-only readiness diagnostic. Neither has an authorized session.
+- Provider selection: AKShare 1.18.84 is the credential-free noncommercial
+  research/PAPER bootstrap and has a fail-closed ETF adapter plus one-shot probe.
+  This host's Eastmoney snapshot/history probes failed before data receipt, so no
+  real-market connection is claimed. RQData remains the conditional authoritative
+  choice; XtData is the QMT-entitled fallback.
+- Recorded-session recovery: the raw archive owns durable ingest ordinals and a
+  checksum-protected per-event journal recovers pre-runner crashes. Any crash after
+  entering the strategy/PAPER boundary is treated as ambiguous, latches HALTED and
+  requires explicit runtime reconciliation rather than silently skipping an event.
 - Analytical persistence: checksum-verified Parquet/DuckDB bar storage and
   immutable hashed experiment records implemented; 51 tests pass at 93% coverage.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED

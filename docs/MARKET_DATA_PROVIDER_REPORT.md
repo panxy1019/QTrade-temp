@@ -1,20 +1,23 @@
 # Market data provider report
 
-Source snapshot: 2026-08-12. This report is a static package/source audit. No
-credential, token, QMT installation, vendor session, or licensed feed was used.
+Source snapshot: 2026-08-12. RQData/XT findings are static package/source audits.
+AKShare 1.18.84 was installed in an isolated environment and bounded one-shot ETF
+snapshot/history probes were attempted; both failed before any data was returned.
 
 ## Recommendation
 
-QTrade remains `WAITING_FOR_DATA_PROVIDER_AUTH`. The conditional first choice is
-RQData when the user supplies a valid commercial entitlement because its vn.py
-adapter is data-only. XT is the fallback where the user already has QMT/XT data
-rights, but it must run in a hard data-only subprocess and must never instantiate
-its trading API.
+AKShare is the first credential-free bootstrap provider for noncommercial research
+and low-frequency `REAL_DATA_PAPER`. It is explicitly not production-grade and is
+currently `WAITING_FOR_AKSHARE_ENDPOINT_ACCESS` on this host. RQData remains the
+conditional authoritative-provider choice when the user supplies a valid
+commercial entitlement. XT is the QMT-entitled fallback.
 
 The repository now provides both `RqDataProvider` and `XtDataProvider` over the
 same injected, data-only bridge protocol. Run the credential-free diagnostic:
 
 ```powershell
+python scripts/provider_readiness.py AKSHARE
+python scripts/akshare_probe.py --universe-size 30
 python scripts/provider_readiness.py RQDATA
 python scripts/provider_readiness.py XTDATA
 ```
@@ -26,17 +29,22 @@ set `QTRADE_XTDATA_PATH`, and set
 `QTRADE_XTDATA_ENTITLEMENT_CONFIRMED=true` only after verifying the entitlement.
 The diagnostic prints variable names and actions only, never values.
 
-| Capability | vnpy_rqdata 3.4.7.8 | vnpy_xt 1.4.6 |
-|---|---|---|
-| Adapter license | MIT; RQData service is commercial/proprietary | MIT; XT/QMT access is proprietary/broker-entitled |
-| Realtime | Tick channels | Tick subscription |
-| History | Tick, 1m, 60m, daily | Tick, 1m, daily in adapter; more in vendor API |
-| ETF/index | Supported, subject to entitlement | Supported, including ETF auxiliary data |
-| Corporate actions/PIT | Vendor supports data; adapter does not expose complete PIT entities | Vendor has factors/sectors; adapter does not expose complete PIT entities |
-| Adjustment caveat | Adapter requests `pre_volume` | Adapter requests `front_ratio` |
-| Python/Windows | rqdatac 3.6.2 has CPython 3.14 Windows wheels; adapter metadata ends at 3.13 | Pure Python adapter, local QMT/XT service; isolate operationally |
-| Reconnect/heartbeat | No complete observable contract in standard adapter | Vendor has reconnect primitives; standard adapter lacks full supervision |
-| Public SLA/price | Not established; commercial quotation required | Not established; broker/vendor entitlement required |
+AKShare requires `QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true` after the operator reviews
+its official data-use statement. It does not require credentials. See
+`docs/AKSHARE_READINESS.md` for the exact implemented scope and failed endpoint
+probe evidence.
+
+| Capability | AKShare 1.18.84 | vnpy_rqdata 3.4.7.8 | vnpy_xt 1.4.6 |
+|---|---|---|---|
+| Adapter license/access | MIT software; official statement limits data use to academic research | MIT; RQData service is commercial/proprietary | MIT; XT/QMT access is proprietary/broker-entitled |
+| Realtime | Delayed/public-web polling snapshots; no SLA | Tick channels | Tick subscription |
+| History | ETF daily and recent 1/5/15/30/60m in first slice | Tick, 1m, 60m, daily | Tick, 1m, daily in adapter; more in vendor API |
+| ETF/index | ETF implemented; stocks/index next | Supported, subject to entitlement | Supported, including ETF auxiliary data |
+| Corporate actions/PIT | Not implemented; current-universe selection has survivorship bias | Vendor supports data; adapter does not expose complete PIT entities | Vendor has factors/sectors; adapter does not expose complete PIT entities |
+| Adjustment caveat | RAW only; recent minute coverage is limited | Adapter requests `pre_volume` | Adapter requests `front_ratio` |
+| Python/Windows | Pure Python 3.9-3.14; isolated runtime recommended | rqdatac 3.6.2 has CPython 3.14 Windows wheels; adapter metadata ends at 3.13 | Pure Python adapter, local QMT/XT service; isolate operationally |
+| Reconnect/heartbeat | Polling cache/health/circuit only; no stream reconnect | No complete observable contract in standard adapter | Vendor has reconnect primitives; standard adapter lacks full supervision |
+| Public SLA/price | No SLA; credential-free; upstream interfaces unstable | Not established; commercial quotation required | Not established; broker/vendor entitlement required |
 
 ## Required QTrade contract
 
