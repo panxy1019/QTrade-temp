@@ -30,6 +30,13 @@ reused or overlapped for candidate selection; an independent leakage-review pass
 Robustness scenarios are predeclared and bounded and include parameter neighbours,
 cost stress and regimes with deterministic hashes and cliff detection.
 
+The first real AKShare ETF walk-forward evidence uses three complete, disjoint
+folds. Candidate simulations stop at validation before selection; only the fixed
+winner then reaches the held-out test. The result is negative in all three folds
+and remains `NOT_ELIGIBLE`. The report includes the exact data checksum, source
+commit, candidate specifications, validation scores, test metrics, observed trade
+counts and deterministic hashes; the dashboard rejects a tampered envelope.
+
 Strategy health accepts a typed metric snapshot and currently enforces sample,
 Sharpe, drawdown, factor-drift, execution-deviation and staleness thresholds.
 HEALTHY, WATCH, DEGRADED and HALTED are distinct from the global capital kill

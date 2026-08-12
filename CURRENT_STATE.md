@@ -12,7 +12,7 @@ Last updated: 2026-08-12
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 195 tests passed, Ruff clean, strict mypy clean on
+- Acceptance evidence: 200 tests passed, Ruff clean, strict mypy clean on
   Python 3.14.6 (2026-08-12); frontend Vitest, ESLint and production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
@@ -27,11 +27,13 @@ Last updated: 2026-08-12
 - Real-data research: causal close-decision/next-open multi-asset experiments now
   emit immutable equity/drawdown/trade/position/risk/log artifacts. Results are
   explicitly NOT_ELIGIBLE for promotion because the universe is current/non-PIT
-  and PAPER/SHADOW and full walk-forward evidence are absent.
+  and PAPER/SHADOW evidence is absent. A real-data three-fold walk-forward run
+  now selects candidates using validation data only, keeps every full fold
+  disjoint, and exposes checksum-verified evidence to the Chinese dashboard.
 - Historical provider coverage: ETF, A-share and major-index raw daily paths are
   canonicalized and live-probed; stock/index snapshots and minute endpoints remain open.
-- Next: complete walk-forward/subperiod robustness while seeking a working
-  snapshot endpoint for the recorded PAPER workflow.
+- Next: complete subperiod/universe robustness while seeking a working snapshot
+  endpoint for the recorded PAPER workflow.
   Select a broker before building a native read-only reconciliation bridge.
 - External blockers: `WAITING_FOR_AKSHARE_SNAPSHOT_ENDPOINT_ACCESS`,
   `WAITING_FOR_DATA_PROVIDER_AUTH` and
@@ -93,6 +95,11 @@ Last updated: 2026-08-12
   sorted unique sessions and held-out chronological windows. Momentum, reversal,
   volatility and liquidity baselines plus multi-period ICIR are tested without
   any execution-layer dependency.
+- Real ETF walk-forward evidence: commit `0438232`, dataset checksum
+  `70e3abf151b88382430ce82b333702243618a5eccc0b9deb71f30b19e694ac98`,
+  three disjoint held-out folds, aggregate return `-0.2044119541`, Sharpe
+  `-1.1004932854`, 14 test-window trades, and fold pass ratio `0`. The result is
+  `NOT_ELIGIBLE`; no strategy role or Champion was assigned.
 - Persistence failure safety: account and OMS/reservation snapshots commit in
   one SQLite transaction. A snapshot write failure latches reconciliation FAILED
   and HALTED before propagating. The source runtime package is now explicitly

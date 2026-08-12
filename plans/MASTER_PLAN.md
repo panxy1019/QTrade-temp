@@ -171,6 +171,13 @@ market-data, research-governance, report and Chinese-web foundations are tracked
 in `plans/V2_MASTER_PLAN.md`; their maturity limits are recorded in
 `docs/READINESS_REPORT_V2.md`. Further real-market integration is externally gated:
 
+The credential-free research path now includes a checksum-bound 30-ETF AKShare
+dataset and a real-data, three-fold held-out walk-forward result. Selection stops
+at each validation boundary, complete fold ranges are disjoint, and only the
+selected candidate is evaluated on its test window. The negative result remains
+promotion-ineligible; this is evidence against the current candidates, not a
+reason to weaken thresholds or assign a Champion.
+
 1. select and license a realtime/historical data provider;
 2. select a broker and compatible isolated native-gateway Python ABI;
 3. certify provider/broker normalization and reconciliation in a sandbox;

@@ -57,7 +57,7 @@ npm --prefix web run build
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12 (latest
 AKShare amendment checkpoint):
 
-- 195 Python tests passed;
+- 200 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 84 source files;
 - no broken Python requirements;
@@ -119,5 +119,14 @@ single/multi-horizon momentum, trend, volatility scaling, rebalance sensitivity
 and cost stress. It enforces close-decision/next-open execution, whole lots,
 cash bounds, declared split end dates, bounded stale valuation and test-window
 cost/turnover metrics. The strongest exploratory variant still fails the default
-Sharpe threshold and lacks PIT, walk-forward and PAPER/SHADOW evidence; the
+Sharpe threshold and lacks PIT and PAPER/SHADOW evidence; the
 machine-readable verdict is `NOT_ELIGIBLE`, with no Champion assigned.
+
+A subsequent three-fold AKShare walk-forward run uses validation Sharpe for
+selection, stops candidate evaluation before the held-out test, and makes full
+fold ranges disjoint so a prior test cannot become later selection data. Its
+checksum-verified result is bound to source commit `0438232` and dataset checksum
+`70e3abf151b88382430ce82b333702243618a5eccc0b9deb71f30b19e694ac98`.
+All three tests lost money: aggregate total return `-0.2044119541`, Sharpe
+`-1.1004932854`, 14 observed trades, and fold pass ratio `0`. The Chinese
+research page reads this evidence through a hash-verifying, fail-closed API.
