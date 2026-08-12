@@ -76,6 +76,16 @@ class PlatformRuntime:
             reconciliation_status=self._metrics.reconciliation_status,
         )
 
+    def ensure_submission_allowed(self) -> None:
+        if not self._running:
+            raise RuntimeError("runtime is not started")
+        if self._risk.state is not KillState.NORMAL:
+            raise RuntimeError(f"risk state {self._risk.state.value} blocks submission")
+        if not self._metrics.gateway_connected:
+            raise RuntimeError("gateway is not connected")
+        if self._metrics.reconciliation_status != "OK":
+            raise RuntimeError("reconciliation is not OK")
+
     def _record(self, event_type: str, actor: str, reason: str = "") -> None:
         self._audit.record(
             AuditEvent(

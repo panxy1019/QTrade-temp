@@ -251,6 +251,35 @@ def test_cancel_and_invalid_transition_are_enforced():
         oms.transition(order, OrderStatus.FILLED, now=NOW)
 
 
+def test_cancel_is_idempotent_and_gateway_lookup_recovers_submission():
+    service, _, _, gateway, ledger, audit = build_system()
+    order, _ = service.submit(request(), context(ledger), now=NOW)
+    assert gateway.lookup(order.internal_order_id) is order
+    first = gateway.cancel(order, idempotency_key="cancel-1", now=NOW)
+    second = gateway.cancel(order, idempotency_key="cancel-1", now=NOW)
+    assert first is second
+    assert (
+        sum(
+            event.event_type == "ORDER_TRANSITION" and "CANCELLED" in event.message
+            for event in audit.events
+        )
+        == 1
+    )
+
+
+def test_disconnected_paper_gateway_does_not_accept_submission():
+    _, _, oms, gateway, _, _ = build_system()
+    order, _ = oms.create(request(), now=NOW)
+    oms.transition(order, OrderStatus.RISK_PENDING, now=NOW)
+    oms.transition(order, OrderStatus.RISK_PASSED, now=NOW)
+    gateway.disconnect()
+    with pytest.raises(ConnectionError, match="disconnected"):
+        gateway.submit(order, now=NOW)
+    assert gateway.lookup(order.internal_order_id) is None
+    gateway.reconnect()
+    assert gateway.submit(order, now=NOW).status is OrderStatus.ACCEPTED
+
+
 def test_invalid_overfill_does_not_mutate_accounting():
     service, _, _, gateway, ledger, _ = build_system()
     order, _ = service.submit(request(), context(ledger), now=NOW)
@@ -294,6 +323,27 @@ def test_halted_recovery_requires_explicit_reconciliation():
         now=NOW,
     )
     assert risk.state is KillState.NORMAL
+
+
+def test_halt_latches_on_audit_failure_and_resume_remains_blocked():
+    class FailingSink:
+        def append(self, event):
+            raise OSError("disk failure")
+
+    audit = AuditLog(FailingSink())
+    risk = RiskEngine(RiskLimits(Decimal("1"), 1, Decimal("1")), audit)
+    with pytest.raises(OSError, match="disk failure"):
+        risk.set_state(KillState.HALTED, actor="operator", reason="incident", now=NOW)
+    assert risk.state is KillState.HALTED
+    assert audit.degraded is True
+    with pytest.raises(ValueError, match="audit is degraded"):
+        risk.set_state(
+            KillState.NORMAL,
+            actor="operator",
+            reason="resume",
+            reconciliation_ok=True,
+            now=NOW,
+        )
 
 
 def test_buy_then_sell_accounting_realizes_pnl_and_fees():

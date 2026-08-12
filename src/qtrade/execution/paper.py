@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal
 from enum import StrEnum
+from hashlib import sha256
 from uuid import uuid4
 
 from qtrade.accounting.ledger import Ledger
@@ -11,6 +12,7 @@ from qtrade.audit.log import AuditEvent, AuditLog
 from qtrade.domain.models import Order, OrderStatus, Side, Trade, utc_now
 from qtrade.execution.reservations import ReservationBook
 from qtrade.oms.manager import OrderManager
+from qtrade.persistence import SQLiteOperationalJournal
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,16 +61,34 @@ class PaperGateway:
         audit: AuditLog,
         fees: FeeSchedule,
         reservations: ReservationBook | None = None,
+        journal: SQLiteOperationalJournal | None = None,
     ) -> None:
         self._oms = oms
         self._ledger = ledger
         self._audit = audit
         self._fees = fees
         self.reservations = reservations or ReservationBook()
+        self._journal = journal
         self._fills: dict[str, FillRecord] = {}
+        self._orders_by_client_id: dict[str, tuple[Order, tuple[object, ...]]] = {}
+        self._cancel_results: dict[str, Order] = {}
+        self.connected = True
 
     def submit(self, order: Order, *, now: datetime | None = None) -> Order:
         timestamp = now or utc_now()
+        fingerprint = (
+            order.request.symbol,
+            order.request.side,
+            order.request.price,
+            order.request.quantity,
+        )
+        existing = self._orders_by_client_id.get(order.internal_order_id)
+        if existing is not None:
+            if existing[1] != fingerprint:
+                raise ValueError("client order ID conflicts with prior submission")
+            return existing[0]
+        if not self.connected:
+            raise ConnectionError("paper gateway disconnected")
         if order.status is not OrderStatus.RISK_PASSED:
             raise ValueError("only a risk-passed order can be submitted")
         broker_order_id = f"PAPER-{uuid4()}"
@@ -85,7 +105,18 @@ class PaperGateway:
                 timestamp=timestamp,
             )
         )
+        self._orders_by_client_id[order.internal_order_id] = (order, fingerprint)
         return order
+
+    def lookup(self, client_order_id: str) -> Order | None:
+        entry = self._orders_by_client_id.get(client_order_id)
+        return None if entry is None else entry[0]
+
+    def disconnect(self) -> None:
+        self.connected = False
+
+    def reconnect(self) -> None:
+        self.connected = True
 
     def fill(
         self,
@@ -130,6 +161,18 @@ class PaperGateway:
             fee=self._fees.calculate(order.request.side, price, quantity),
             timestamp=timestamp,
         )
+        payload_hash = sha256(f"{order.internal_order_id}|{price}|{quantity}".encode()).hexdigest()
+        if self._journal is not None:
+            created = self._journal.begin_fill(fill_key, order.internal_order_id, payload_hash)
+            if not created:
+                durable = self._journal.get_fill(fill_key)
+                if durable is not None and durable.state == "APPLIED":
+                    raise RuntimeError(
+                        "durable fill was already applied; recover trade state before replay"
+                    )
+                raise RuntimeError(
+                    "durable fill processing is incomplete; reconciliation is required"
+                )
         record = FillRecord(FillProcessingState.PENDING, trade)
         self._fills[fill_key] = record
         try:
@@ -139,6 +182,8 @@ class PaperGateway:
         except Exception as exc:
             record.state = FillProcessingState.FAILED
             record.error = type(exc).__name__
+            if self._journal is not None:
+                self._journal.mark_fill(fill_key, "FAILED", type(exc).__name__)
             self._audit.record(
                 AuditEvent(
                     event_type="FILL_PROCESSING_FAILED",
@@ -151,11 +196,26 @@ class PaperGateway:
             )
             raise
         record.state = FillProcessingState.APPLIED
+        if self._journal is not None:
+            self._journal.mark_fill(fill_key, "APPLIED")
         return trade, True
 
-    def cancel(self, order: Order, *, now: datetime | None = None) -> Order:
+    def cancel(
+        self,
+        order: Order,
+        *,
+        idempotency_key: str | None = None,
+        now: datetime | None = None,
+    ) -> Order:
+        key = idempotency_key or f"cancel:{order.internal_order_id}"
+        existing = self._cancel_results.get(key)
+        if existing is not None:
+            if existing.internal_order_id != order.internal_order_id:
+                raise ValueError("cancel idempotency key conflict")
+            return existing
         timestamp = now or utc_now()
         self._oms.transition(order, OrderStatus.CANCEL_PENDING, now=timestamp)
         cancelled = self._oms.transition(order, OrderStatus.CANCELLED, now=timestamp)
         self.reservations.release(order.internal_order_id)
+        self._cancel_results[key] = cancelled
         return cancelled

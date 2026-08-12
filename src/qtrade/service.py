@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import replace
 from datetime import datetime
 
@@ -19,6 +20,7 @@ class TradingService:
         oms: OrderManager,
         gateway: PaperGateway,
         reservations: ReservationBook | None = None,
+        submission_guard: Callable[[], None] | None = None,
     ) -> None:
         self._risk = risk
         self._oms = oms
@@ -26,11 +28,14 @@ class TradingService:
         if gateway.external_order_transmission:
             raise ValueError("external order transmission is unavailable in this build")
         self._reservations = reservations or gateway.reservations
+        self._submission_guard = submission_guard
 
     def submit(
         self, request: OrderRequest, context: RiskContext, *, now: datetime | None = None
     ) -> tuple[Order, bool]:
         with self._risk.dispatch_gate:
+            if self._submission_guard is not None:
+                self._submission_guard()
             order, created = self._oms.create(request, now=now)
             if not created:
                 return order, False

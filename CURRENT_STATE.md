@@ -27,4 +27,8 @@ Last updated: 2026-08-12
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
   fill markers across restart and durable audit events; backtests require a
   PASSED data manifest and record `data_version`; 54 tests pass.
+- Runtime integration: PAPER/SHADOW composition gates real submissions on
+  verified start/reconciliation; stop blocks writes; durable fill markers,
+  gateway lookup/reconnect, idempotent cancel, audit redaction/degradation, and
+  expanded portfolio/factor metrics are tested. Current suite: 63 passed.
 - Live trading: disabled and structurally unavailable.

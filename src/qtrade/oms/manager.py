@@ -20,7 +20,12 @@ _ALLOWED_TRANSITIONS: dict[OrderStatus, frozenset[OrderStatus]] = {
     OrderStatus.CREATED: frozenset({OrderStatus.RISK_PENDING}),
     OrderStatus.RISK_PENDING: frozenset({OrderStatus.RISK_PASSED, OrderStatus.RISK_REJECTED}),
     OrderStatus.RISK_PASSED: frozenset({OrderStatus.SUBMITTED}),
-    OrderStatus.SUBMITTED: frozenset({OrderStatus.ACCEPTED, OrderStatus.REJECTED}),
+    OrderStatus.SUBMITTED: frozenset(
+        {OrderStatus.ACCEPTED, OrderStatus.REJECTED, OrderStatus.SUBMISSION_UNKNOWN}
+    ),
+    OrderStatus.SUBMISSION_UNKNOWN: frozenset(
+        {OrderStatus.ACCEPTED, OrderStatus.REJECTED, OrderStatus.CANCEL_PENDING}
+    ),
     OrderStatus.ACCEPTED: frozenset(
         {OrderStatus.PARTIALLY_FILLED, OrderStatus.FILLED, OrderStatus.CANCEL_PENDING}
     ),

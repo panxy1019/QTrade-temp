@@ -103,17 +103,28 @@ class RiskEngine:
                 and not reconciliation_ok
             ):
                 raise ValueError("leaving HALTED requires successful reconciliation")
+            if state is KillState.NORMAL and self._audit.degraded:
+                raise ValueError("cannot resume while audit is degraded")
             prior = self._state
-            self._state = state
-            self._audit.record(
-                AuditEvent(
-                    event_type="RISK_STATE_CHANGED",
-                    service="risk",
-                    message=f"{prior.value}->{state.value}; actor={actor}; reason={reason}",
-                    severity="WARNING" if state is not KillState.NORMAL else "INFO",
-                    timestamp=now or utc_now(),
-                )
+            event = AuditEvent(
+                event_type="RISK_STATE_CHANGED",
+                service="risk",
+                message=f"{prior.value}->{state.value}; actor={actor}; reason={reason}",
+                severity="WARNING" if state is not KillState.NORMAL else "INFO",
+                timestamp=now or utc_now(),
             )
+            safety_rank = {
+                KillState.NORMAL: 0,
+                KillState.REDUCE_ONLY: 1,
+                KillState.PAUSED: 2,
+                KillState.HALTED: 3,
+            }
+            if safety_rank[state] >= safety_rank[prior]:
+                self._state = state
+                self._audit.record(event)
+            else:
+                self._audit.record(event)
+                self._state = state
 
     def assess(self, request: OrderRequest, context: RiskContext) -> RiskDecision:
         reason = self._rejection_reason(request, context)

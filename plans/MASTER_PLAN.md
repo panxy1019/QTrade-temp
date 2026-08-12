@@ -101,9 +101,9 @@ implementation → independent review → test review → main-agent integration
 
 ## Current work queue
 
-1. Integrate durable journal into fill processing and recovery.
-2. Complete performance/factor metrics and a reproducible sample workflow.
-3. Expand failure injection and paper runtime orchestration.
+1. Complete instrument master, calendars/status, and sellability accounting.
+2. Build a reproducible import → research → backtest → report workflow.
+3. Expand failure injection and deterministic paper execution plans.
 4. Add vn.py process adapter and canonical event protocol.
 
 ## Blockers

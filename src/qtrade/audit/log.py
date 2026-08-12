@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass, field
+import re
+from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
@@ -85,12 +86,29 @@ class AuditLog:
     def __init__(self, sink: AuditSink | None = None) -> None:
         self._events: list[AuditEvent] = []
         self._sink = sink
+        self._degraded = False
 
     @property
     def events(self) -> tuple[AuditEvent, ...]:
         return tuple(self._events)
 
+    @property
+    def degraded(self) -> bool:
+        return self._degraded
+
     def record(self, event: AuditEvent) -> None:
-        self._events.append(event)
-        if self._sink is not None:
-            self._sink.append(event)
+        safe_event = replace(event, message=self._redact(event.message))
+        try:
+            if self._sink is not None:
+                self._sink.append(safe_event)
+        except Exception:
+            self._degraded = True
+            raise
+        self._events.append(safe_event)
+
+    @staticmethod
+    def _redact(message: str) -> str:
+        pattern = re.compile(
+            r"(?i)(password|passwd|token|api[_-]?key|secret|credential)\s*[=:]\s*([^\s;,]+)"
+        )
+        return pattern.sub(lambda match: f"{match.group(1)}=[REDACTED]", message)

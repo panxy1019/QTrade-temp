@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from qtrade.audit import AuditEvent, JsonlAuditSink
+from qtrade.audit import AuditEvent, AuditLog, JsonlAuditSink
 
 
 def test_jsonl_audit_sink_appends_complete_records(tmp_path):
@@ -38,3 +38,17 @@ def test_jsonl_audit_chain_detects_mutation(tmp_path):
         encoding="utf-8",
     )
     assert sink.verify_chain() is False
+
+
+def test_audit_redacts_secret_shaped_values():
+    audit = AuditLog()
+    audit.record(
+        AuditEvent(
+            event_type="CONFIG",
+            message="token=abc123 password: hunter2 api_key=xyz",
+            service="control",
+        )
+    )
+    message = audit.events[0].message
+    assert "abc123" not in message and "hunter2" not in message and "xyz" not in message
+    assert message.count("[REDACTED]") == 3
