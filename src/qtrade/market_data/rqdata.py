@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import suppress
 from datetime import datetime
 
 from qtrade.data import Bar
@@ -51,11 +52,10 @@ class RqDataProvider:
             capabilities = self._client.handshake()
             self._verify_capabilities(capabilities)
         except Exception:
-            try:
-                self._client.disconnect()
-            finally:
-                self._capabilities = None
+            self._capabilities = None
             self._connection = ProviderConnectionStatus.DISCONNECTED
+            with suppress(Exception):
+                self._client.disconnect()
             raise
         self._capabilities = capabilities
         self._connection = ProviderConnectionStatus.CONNECTED

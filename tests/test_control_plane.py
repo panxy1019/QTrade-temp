@@ -13,6 +13,7 @@ from qtrade.execution import FeeSchedule
 from qtrade.monitoring import MetricsRegistry
 from qtrade.oms import OrderManager
 from qtrade.reconciliation import Reconciler, ReconciliationResult
+from qtrade.reporting import DailyPaperReport, DailyReportStore
 from qtrade.risk import RiskContext, RiskEngine, RiskLimits
 from qtrade.runtime import build_paper_runtime
 
@@ -109,6 +110,57 @@ def test_required_read_surfaces_exist():
         "/system",
     ):
         assert api.get(path).status_code == 200
+
+
+def test_daily_report_history_exposes_verified_summary(tmp_path):
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("100000"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit)
+    runtime = PlatformRuntime(RuntimeMode.PAPER, risk, audit, metrics)
+    report_root = tmp_path / "reports"
+    report = DailyPaperReport(
+        "paper-20260812",
+        datetime(2026, 8, 12, tzinfo=UTC).date(),
+        datetime(2026, 8, 12, 16, tzinfo=UTC),
+        "ticks-v1",
+        ("trend@1.0.0",),
+        (),
+        (),
+        (),
+        (),
+        (),
+        (),
+        (),
+        (),
+        (),
+    )
+    _, digest = DailyReportStore(report_root).save(report)
+    api = TestClient(
+        create_app(
+            AppContext(runtime, metrics, oms, ledger, audit, daily_report_root=report_root),
+            ApiAuthConfig(),
+        )
+    )
+    response = api.get("/reports")
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "report_id": "paper-20260812",
+            "trading_day": "2026-08-12",
+            "generated_at": "2026-08-12T16:00:00+00:00",
+            "data_version": "ticks-v1",
+            "strategy_versions": ["trend@1.0.0"],
+            "sha256": digest,
+        }
+    ]
+    artifact = next(report_root.glob("*.json"))
+    artifact.write_text(
+        artifact.read_text(encoding="utf-8").replace("ticks-v1", "tampered"),
+        encoding="utf-8",
+    )
+    assert api.get("/reports").json() == []
 
 
 def test_api_context_uses_canonical_paper_runtime(tmp_path):

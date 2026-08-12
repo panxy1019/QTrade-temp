@@ -155,7 +155,18 @@ def test_champion_and_challenger_require_validation_and_multi_metric_gate(tmp_pa
     )
     for strategy_id in ("ETF_MOM_V1", "ETF_MOM_V2"):
         advance_to_validated(registry, strategy_id)
-    decision = PromotionGate().evaluate(passing_evidence())
+    for target in (StrategyStatus.PAPER, StrategyStatus.SHADOW):
+        registry.transition("ETF_MOM_V1", target, actor="research", reason="validated")
+    registry.transition(
+        "ETF_MOM_V1",
+        StrategyStatus.APPROVED,
+        actor="review-board",
+        reason="human approval",
+        human_authorized=True,
+    )
+    decision = registry.evaluate_promotion(
+        "ETF_MOM_V1", passing_evidence(), actor="review-board"
+    )
     assert decision.outcome is PromotionOutcome.PASS
     champion = registry.assign_research_role(
         "ETF_MOM_V1",
@@ -163,7 +174,6 @@ def test_champion_and_challenger_require_validation_and_multi_metric_gate(tmp_pa
         actor="review-board",
         reason="multi-metric gate passed",
         evidence_id=decision.evidence_id,
-        promotion_passed=True,
     )
     assert champion.role is StrategyRole.CHAMPION
     challenger = registry.assign_research_role(
@@ -172,17 +182,84 @@ def test_champion_and_challenger_require_validation_and_multi_metric_gate(tmp_pa
         actor="review-board",
         reason="comparison candidate",
         evidence_id="evidence-2",
-        promotion_passed=True,
     )
     assert challenger.role is StrategyRole.CHALLENGER
+    for target in (StrategyStatus.PAPER, StrategyStatus.SHADOW):
+        registry.transition("ETF_MOM_V2", target, actor="research", reason="validated")
+    registry.transition(
+        "ETF_MOM_V2",
+        StrategyStatus.APPROVED,
+        actor="review-board",
+        reason="human approval",
+        human_authorized=True,
+    )
+    second_decision = registry.evaluate_promotion(
+        "ETF_MOM_V2", passing_evidence("evidence-2"), actor="review-board"
+    )
     with pytest.raises(ValueError, match="already has a champion"):
         registry.assign_research_role(
             "ETF_MOM_V2",
             StrategyRole.CHAMPION,
             actor="review-board",
             reason="invalid second champion",
-            evidence_id="evidence-2",
-            promotion_passed=True,
+            evidence_id=second_decision.evidence_id,
+        )
+
+
+def test_champion_rejects_caller_claim_without_persisted_pass(tmp_path):
+    registry = StrategyRegistry(tmp_path / "strategies.db")
+    registry.register(spec("ETF_MOM_V1", "1"))
+    advance_to_validated(registry, "ETF_MOM_V1")
+    with pytest.raises(ValueError, match="persisted passing"):
+        registry.assign_research_role(
+            "ETF_MOM_V1",
+            StrategyRole.CHAMPION,
+            actor="caller",
+            reason="unverified claim",
+            evidence_id="not-recorded",
+        )
+
+
+def test_promotion_evidence_identity_is_immutable(tmp_path):
+    registry = StrategyRegistry(tmp_path / "strategies.db")
+    evidence = passing_evidence()
+    registry.register(spec("ETF_MOM_V1", "1"))
+    registry.evaluate_promotion("ETF_MOM_V1", evidence, actor="review-board")
+    with pytest.raises(ValueError, match="immutable"):
+        registry.evaluate_promotion(
+            "ETF_MOM_V1",
+            PromotionEvidence(
+                **{
+                    **{name: getattr(evidence, name) for name in evidence.__dataclass_fields__},
+                    "sharpe": Decimal("0.9"),
+                }
+            ),
+            actor="review-board",
+        )
+
+
+def test_passing_decision_cannot_be_reused_for_another_strategy(tmp_path):
+    registry = StrategyRegistry(tmp_path / "strategies.db")
+    registry.register(spec("ETF_MOM_V1", "1"))
+    registry.register(
+        spec("ETF_MOM_V2", "2", parent="ETF_MOM_V1"),
+        lineage=StrategyLineage(
+            "ETF_MOM_V2", "ETF_MOM_V1", "change", "hypothesis", "summary",
+            "experiment", "promotion", datetime(2026, 8, 12, tzinfo=UTC)
+        ),
+    )
+    registry.evaluate_promotion("ETF_MOM_V1", passing_evidence(), actor="board")
+    advance_to_validated(registry, "ETF_MOM_V2")
+    for target in (StrategyStatus.PAPER, StrategyStatus.SHADOW):
+        registry.transition("ETF_MOM_V2", target, actor="research", reason="validated")
+    registry.transition(
+        "ETF_MOM_V2", StrategyStatus.APPROVED, actor="board", reason="approved",
+        human_authorized=True,
+    )
+    with pytest.raises(ValueError, match="persisted passing"):
+        registry.assign_research_role(
+            "ETF_MOM_V2", StrategyRole.CHAMPION, actor="board", reason="reuse",
+            evidence_id="evidence-1",
         )
 
 

@@ -24,6 +24,15 @@ python -m pytest
 python scripts/run_control_plane.py
 ```
 
+Build and verify the Simplified-Chinese React dashboard separately:
+
+```powershell
+npm --prefix web install
+npm --prefix web test -- --run
+npm --prefix web run lint
+npm --prefix web run build
+```
+
 The local dashboard is then available at `http://127.0.0.1:8000`. It boots
 fail-closed (gateway disconnected and reconciliation unknown); the page is an
 operational status surface, not authorization for external order transmission.
@@ -48,12 +57,17 @@ It writes ignored runtime artifacts under `runtime/sample`: checksum-verified
 Parquet bars and an immutable experiment record containing `git_commit` and
 `data_version`.
 
-`qtrade.runtime.PaperBarRunner` consumes strictly ordered bars, executes a
+`qtrade.runtime.PaperBarRunner` consumes strictly ordered historical/replay bars, executes a
 strategy's previous target through the durable PAPER pipeline at the next bar
 open, and checkpoints the pending target and last consumed event. Dated fills
 persist acquisition lots and enforce date-effective T+N sellability across
 restart. The runner is intentionally single-process; licensed realtime feeds
 belong behind the read-only SHADOW adapter after a provider is selected.
+
+Completed realtime bars use `qtrade.runtime.RealDataPaperRunner`: a finalized bar
+may decide a target, but execution can occur only on a later received tick under
+a fresh provider/session/data-version readiness attestation. This prevents using
+an already historical bar open as a PAPER fill.
 
 Historical vendor exports can enter through `qtrade.data.CsvBarImporter`. The
 canonical UTF-8 CSV schema is exactly `symbol,exchange,timestamp,trading_day,open,high,low,close,volume`;
@@ -62,4 +76,5 @@ the grouped quality gate before Parquet storage. Vendor-specific column mapping
 belongs in a separate licensed-data adapter.
 
 Project status and exact continuation steps are maintained in
-[`CURRENT_STATE.md`](CURRENT_STATE.md) and [`plans/MASTER_PLAN.md`](plans/MASTER_PLAN.md).
+[`CURRENT_STATE.md`](CURRENT_STATE.md), [`plans/MASTER_PLAN.md`](plans/MASTER_PLAN.md),
+and [`plans/V2_MASTER_PLAN.md`](plans/V2_MASTER_PLAN.md).

@@ -79,8 +79,8 @@ class PromotionThresholds:
     minimum_stability: Decimal = Decimal("0.6")
     minimum_parameter_sensitivity: Decimal = Decimal("0.6")
     minimum_walk_forward_consistency: Decimal = Decimal("0.6")
-    minimum_paper_sessions: int = 0
-    minimum_shadow_sessions: int = 0
+    minimum_paper_sessions: int = 20
+    minimum_shadow_sessions: int = 5
 
 
 @dataclass(frozen=True, slots=True)

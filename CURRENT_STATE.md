@@ -9,10 +9,10 @@ Last updated: 2026-08-12
   kernel; versioned data/PIT contracts; research/portfolio baselines; shared-path
   next-bar backtest; control plane/dashboard; reconciliation/recovery contracts;
   authoritative China rule-source registry; vn.py gap analysis.
-- Stable baseline: `b502852`, QTrade Platform v0.1 â€” Stable PAPER/SHADOW Core.
+- Stable baseline: `b502852`, QTrade Platform v0.1 â€?Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M6 integrated PAPER/SHADOW readiness review.
-- Acceptance evidence: 148 tests passed, Ruff clean, strict mypy clean on
+- Acceptance evidence: 161 tests passed, Ruff clean, strict mypy clean on
   Python 3.14.6 (2026-08-12); frontend Vitest, ESLint and production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
@@ -24,9 +24,10 @@ Last updated: 2026-08-12
   vn.py and broker adapters require external provider/broker selection.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: complete independent safety/research review, fix blocking findings,
-  finalize V2 readiness documentation, and wait for licensed provider data to
-  perform the authenticated real-market PAPER soak test.
+- Next: perform the authenticated provider bridge/UAT and real-market PAPER soak
+  test after licensed data access is supplied; select a broker before building a
+  native read-only reconciliation bridge. Local research/UI depth remains an
+  explicit continuation backlog rather than a readiness claim.
 - External blockers: `WAITING_FOR_DATA_PROVIDER_AUTH` and
   `WAITING_FOR_BROKER_SELECTION`; they do not block mock adapters, replay,
   strategy research, UI or read-only protocol work.
@@ -41,8 +42,7 @@ Last updated: 2026-08-12
   expanded portfolio/factor metrics are tested. Current suite: 63 passed.
 - Instrument/research integration: point-in-time instrument master,
   fail-closed calendar, T+0/T+1 sellability lots, deterministic paper failure
-  injection, bearer-token control authentication, and reproducible import â†’
-  backtest â†’ metrics â†’ immutable experiment workflow are implemented.
+  injection, bearer-token control authentication, and reproducible import â†?  backtest â†?metrics â†?immutable experiment workflow are implemented.
 - Recovery hardening: restart restores cash, positions, accepted/open orders and
   reservations, then always boots HALTED with reconciliation unknown. Gateway
   incidents latch HALTED; open BUYs aggregate into exposure/position risk;

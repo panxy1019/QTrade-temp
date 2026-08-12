@@ -51,3 +51,7 @@ It does not claim an authenticated real-provider connection.
 - [vnpy_xt PyPI](https://pypi.org/project/vnpy-xt/)
 - [XT native data API](https://dict.thinktrader.net/nativeApi/xtdata.html)
 - [RQData solution overview](https://assets.ricequant.com/welcome/%E7%B1%B3%E7%AD%90RQData%E9%87%91%E8%9E%8D%E6%95%B0%E6%8D%AE%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E7%AE%80%E4%BB%8B.a528f1bd.pdf)
+The repository adapter is deliberately a protocol adapter over an injected bridge,
+not an `rqdatac` process implementation. Its connection becomes CONNECTED only
+after a bridge-returned, session-bound data-only capability handshake passes.
+Authenticated vendor transport and entitlement validation remain external work.

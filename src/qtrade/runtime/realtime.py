@@ -11,7 +11,7 @@ from typing import Protocol
 from qtrade.data import Bar
 from qtrade.domain import Instrument, Order, OrderRequest, OrderStatus, Side, Trade
 from qtrade.instruments import TradingCalendar, TradingRule, TradingStatus
-from qtrade.market_data import AvailableBar, CanonicalTick
+from qtrade.market_data import AvailableBar, CanonicalTick, MarketDataReadinessGate
 from qtrade.risk import RiskContext
 from qtrade.runtime.paper import PaperRuntimeBundle
 
@@ -46,19 +46,42 @@ class RealDataPaperRunner:
         calendar: TradingCalendar,
         strategy: FinalizedBarStrategy,
         strategy_id: str,
+        strategy_version: str,
+        strategy_spec_hash: str,
         portfolio_id: str,
+        data_version: str,
+        provider: str,
+        bar_interval: str,
+        market_readiness: MarketDataReadinessGate,
     ) -> None:
         if trading_rule.venue != instrument.exchange:
             raise ValueError("trading rule venue does not match instrument")
-        if not strategy_id or not portfolio_id:
-            raise ValueError("strategy and portfolio identity are required")
+        if not all(
+            value.strip()
+            for value in (
+                strategy_id,
+                strategy_version,
+                strategy_spec_hash,
+                portfolio_id,
+                data_version,
+                provider,
+                bar_interval,
+            )
+        ):
+            raise ValueError("strategy, portfolio, and market-data identity are required")
         self._bundle = bundle
         self._instrument = instrument
         self._rule = trading_rule
         self._calendar = calendar
         self._strategy = strategy
         self._strategy_id = strategy_id
+        self._strategy_version = strategy_version
+        self._strategy_spec_hash = strategy_spec_hash
         self._portfolio_id = portfolio_id
+        self._data_version = data_version
+        self._provider = provider
+        self._bar_interval = bar_interval
+        self._market_readiness = market_readiness
         self._pending: PendingTarget | None = None
         self._inflight_order_id: str | None = None
         self._last_bar: datetime | None = None
@@ -109,6 +132,7 @@ class RealDataPaperRunner:
                 raise
 
     def _on_tick_locked(self, tick: CanonicalTick) -> RealDataPaperResult:
+        self._market_readiness.require(tick)
         if (
             tick.instrument != self._instrument.symbol
             or tick.exchange != self._instrument.exchange
@@ -196,7 +220,14 @@ class RealDataPaperRunner:
             "exchange": self._instrument.exchange,
             "portfolio_id": self._portfolio_id,
             "strategy_id": self._strategy_id,
+            "strategy_version": self._strategy_version,
+            "strategy_spec_hash": self._strategy_spec_hash,
             "symbol": self._instrument.symbol,
+            "data_version": self._data_version,
+            "provider": self._provider,
+            "bar_interval": self._bar_interval,
+            "rule_id": self._rule.rule_id,
+            "rule_source_version": self._rule.source_version,
         }
 
     def _persist_checkpoint(self) -> None:

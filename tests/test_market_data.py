@@ -226,6 +226,14 @@ class MockRqBridge:
         self.bar_handler = handler
 
 
+class FailingCleanupRqBridge(MockRqBridge):
+    def handshake(self):
+        raise ValueError("invalid handshake")
+
+    def disconnect(self):
+        raise OSError("cleanup failed")
+
+
 def test_rqdata_adapter_uses_injected_bridge_and_never_contains_credentials():
     bridge = MockRqBridge()
     provider = RqDataProvider(bridge)
@@ -249,6 +257,15 @@ def test_rqdata_adapter_uses_injected_bridge_and_never_contains_credentials():
     ) == 1
     provider.disconnect()
     assert provider.get_status().connection is ProviderConnectionStatus.DISCONNECTED
+
+
+def test_rqdata_failed_handshake_stays_disconnected_when_cleanup_also_fails():
+    provider = RqDataProvider(FailingCleanupRqBridge())
+    with pytest.raises(ValueError, match="invalid handshake"):
+        provider.connect()
+    assert provider.get_status().connection is ProviderConnectionStatus.DISCONNECTED
+    with pytest.raises(RuntimeError, match="handshake"):
+        _ = provider.capabilities
 
 
 def test_rqdata_adapter_rejects_unverified_or_unentitled_capabilities():

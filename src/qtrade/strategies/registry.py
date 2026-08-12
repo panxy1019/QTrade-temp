@@ -7,9 +7,16 @@ from contextlib import contextmanager
 from dataclasses import asdict, dataclass, replace
 from datetime import UTC, date, datetime
 from enum import StrEnum
+from hashlib import sha256
 from pathlib import Path
 
 from qtrade.research import TimeSplit
+from qtrade.strategies.promotion import (
+    PromotionDecision,
+    PromotionEvidence,
+    PromotionGate,
+    PromotionOutcome,
+)
 
 
 class StrategyStatus(StrEnum):
@@ -191,6 +198,15 @@ class StrategyRegistry:
                     evidence_id TEXT NOT NULL,
                     occurred_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS promotion_decisions (
+                    evidence_id TEXT PRIMARY KEY,
+                    strategy_id TEXT NOT NULL REFERENCES strategies(strategy_id),
+                    evidence_hash TEXT NOT NULL,
+                    outcome TEXT NOT NULL,
+                    reasons_json TEXT NOT NULL,
+                    actor TEXT NOT NULL,
+                    occurred_at TEXT NOT NULL
+                );
                 """
             )
 
@@ -312,13 +328,10 @@ class StrategyRegistry:
         actor: str,
         reason: str,
         evidence_id: str,
-        promotion_passed: bool,
         occurred_at: datetime | None = None,
     ) -> StrategyRecord:
         if not all(value.strip() for value in (actor, reason, evidence_id)):
             raise ValueError("role assignment requires actor, reason, and evidence")
-        if role is StrategyRole.CHAMPION and not promotion_passed:
-            raise ValueError("champion assignment requires a passing promotion decision")
         timestamp = occurred_at or datetime.now(UTC)
         with self._connect() as connection:
             row = connection.execute(
@@ -338,6 +351,17 @@ class StrategyRegistry:
                 raise ValueError("research roles require a validated strategy")
             before = StrategyRole(row[2])
             if role is StrategyRole.CHAMPION:
+                decision = connection.execute(
+                    "SELECT outcome FROM promotion_decisions "
+                    "WHERE evidence_id=? AND strategy_id=?",
+                    (evidence_id, strategy_id),
+                ).fetchone()
+                if decision is None or PromotionOutcome(decision[0]) is not PromotionOutcome.PASS:
+                    raise ValueError(
+                        "champion assignment requires a persisted passing promotion decision"
+                    )
+                if status not in {StrategyStatus.APPROVED, StrategyStatus.CHAMPION}:
+                    raise ValueError("champion assignment requires an approved strategy")
                 existing = connection.execute(
                     "SELECT strategy_id FROM strategies WHERE family=? AND role=?",
                     (row[3], StrategyRole.CHAMPION.value),
@@ -363,6 +387,56 @@ class StrategyRegistry:
                 ),
             )
         return StrategyRecord(self._decode_spec(row[0]), status, role)
+
+    def evaluate_promotion(
+        self,
+        strategy_id: str,
+        evidence: PromotionEvidence,
+        *,
+        actor: str,
+        occurred_at: datetime | None = None,
+    ) -> PromotionDecision:
+        """Evaluate with the repository policy and durably bind the immutable evidence."""
+        if not actor.strip():
+            raise ValueError("promotion decision requires an actor")
+        timestamp = occurred_at or datetime.now(UTC)
+        if timestamp.tzinfo is None:
+            raise ValueError("promotion decision timestamp must be timezone-aware")
+        decision = PromotionGate().evaluate(evidence)
+        evidence_json = json.dumps(
+            asdict(evidence), sort_keys=True, separators=(",", ":"), default=str
+        )
+        evidence_hash = sha256(evidence_json.encode()).hexdigest()
+        reasons_json = json.dumps(decision.reasons, separators=(",", ":"))
+        with self._connect() as connection:
+            if connection.execute(
+                "SELECT 1 FROM strategies WHERE strategy_id=?", (strategy_id,)
+            ).fetchone() is None:
+                raise KeyError(strategy_id)
+            existing = connection.execute(
+                "SELECT strategy_id,evidence_hash,outcome,reasons_json "
+                "FROM promotion_decisions "
+                "WHERE evidence_id=?",
+                (evidence.evidence_id,),
+            ).fetchone()
+            expected = (strategy_id, evidence_hash, decision.outcome.value, reasons_json)
+            if existing is not None:
+                if tuple(existing) != expected:
+                    raise ValueError("promotion evidence identity is immutable")
+                return decision
+            connection.execute(
+                "INSERT INTO promotion_decisions VALUES(?,?,?,?,?,?,?)",
+                (
+                    evidence.evidence_id,
+                    strategy_id,
+                    evidence_hash,
+                    decision.outcome.value,
+                    reasons_json,
+                    actor,
+                    timestamp.isoformat(),
+                ),
+            )
+        return decision
 
     def get(self, strategy_id: str) -> StrategyRecord:
         with self._connect() as connection:

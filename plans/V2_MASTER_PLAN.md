@@ -26,7 +26,7 @@ focused regression and independent safety review.
 - [x] Read the v0.1 readiness/current/master-plan records.
 - [x] Verify clean `b502852` baseline and toolchain.
 - [x] Record the stable-core boundary and V2 living plan.
-- [ ] Commit/tag the stable baseline documentation.
+- [x] Commit/tag the stable baseline documentation.
 
 ### V2-M2 — Strategy and experiment platform
 
@@ -71,10 +71,12 @@ focused regression and independent safety review.
 
 - [x] Market data -> strategy -> portfolio -> risk -> OMS -> paper -> accounting
   integration test with recording and deterministic replay.
-- [ ] Daily traceable research/PAPER report and dashboard history endpoint.
-- [ ] Full pytest, Ruff, strict mypy, frontend build/tests, secret scan.
-- [ ] Independent leakage, safety and security review with no open Critical/P0.
-- [ ] `READINESS_REPORT_V2.md` and all requested architecture/research reports.
+- [x] Daily traceable research/PAPER report schema/store and hash-verified dashboard
+  history endpoint. Automatic end-of-day generation remains backlog.
+- [x] Full pytest, Ruff, strict mypy, frontend build/tests, dependency and secret scan.
+- [x] Independent leakage/correctness review with no open Critical/P0; P1 maturity
+  limitations remain recorded in the reports.
+- [x] `READINESS_REPORT_V2.md` and all requested architecture/research reports.
 
 ## External blockers
 
@@ -98,6 +100,6 @@ npm --prefix web run build
 
 ## Current work
 
-V2-M6: independent review, readiness reports, dashboard report-history endpoint,
-and an authenticated real-provider validation blocker that cannot be cleared
-without the user's licensed data entitlement.
+V2-M6 local checkpoint closure. Authenticated real-provider validation cannot be
+cleared without the user's licensed data entitlement. Native broker work remains
+blocked on broker selection and sandbox access.

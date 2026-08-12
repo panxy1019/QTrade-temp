@@ -166,8 +166,10 @@ implementation → independent review → test review → main-agent integration
 
 ## Current work queue
 
-The locally executable PAPER/SHADOW checkpoint is complete. Further integration
-is externally gated:
+The locally executable PAPER/SHADOW safety checkpoint is complete. V2 strategy,
+market-data, research-governance, report and Chinese-web foundations are tracked
+in `plans/V2_MASTER_PLAN.md`; their maturity limits are recorded in
+`docs/READINESS_REPORT_V2.md`. Further real-market integration is externally gated:
 
 1. select and license a realtime/historical data provider;
 2. select a broker and compatible isolated native-gateway Python ABI;

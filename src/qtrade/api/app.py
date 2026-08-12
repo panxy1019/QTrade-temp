@@ -5,6 +5,7 @@ from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from decimal import Decimal
 from enum import StrEnum
+from hashlib import sha256
 from pathlib import Path
 from secrets import compare_digest
 from typing import Any
@@ -204,9 +205,16 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             return []
         summaries: list[dict[str, object]] = []
         for path in sorted(state.daily_report_root.glob("*.json"), reverse=True):
-            envelope = json.loads(path.read_text(encoding="utf-8"))
+            raw = path.read_text(encoding="utf-8")
+            envelope = json.loads(raw)
             report = envelope.get("report", {})
-            if not isinstance(report, dict):
+            digest = envelope.get("sha256")
+            if not isinstance(report, dict) or not isinstance(digest, str):
+                continue
+            canonical = json.dumps(
+                report, sort_keys=True, separators=(",", ":"), default=str
+            )
+            if sha256(canonical.encode()).hexdigest() != digest:
                 continue
             summaries.append(
                 {
@@ -215,7 +223,7 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
                     "generated_at": report.get("generated_at"),
                     "data_version": report.get("data_version"),
                     "strategy_versions": report.get("strategy_versions", []),
-                    "sha256": envelope.get("sha256"),
+                    "sha256": digest,
                 }
             )
         return summaries

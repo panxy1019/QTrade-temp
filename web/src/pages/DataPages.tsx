@@ -15,12 +15,11 @@ export function StrategyPage() {
     { title: 'Family', dataIndex: 'family' }, { title: '状态', dataIndex: 'status', render: (value: string) => <Tag color="blue">{value}</Tag> },
     { title: '角色', dataIndex: 'role' }, { title: 'Sharpe', dataIndex: 'sharpe' }, { title: '最大回撤', dataIndex: 'mdd' },
   ]
-  const data = [{ key: '1', name: 'ETF动量轮动', version: 'V1', family: 'ETF_MOMENTUM', status: '研究中', role: '候选', sharpe: '—', mdd: '—' }]
-  return <Page title="策略中心" subtitle="策略版本、运行状态与研究角色"><Table columns={columns} dataSource={data} pagination={false} /></Page>
+  return <Page title="策略中心" subtitle="策略版本、运行状态与研究角色"><Table columns={columns} dataSource={[]} pagination={false} locale={{ emptyText: '暂无已注册策略' }} /></Page>
 }
 
 export function ResearchPage() {
-  return <Page title="策略研究" subtitle="血缘、候选与 Champion/Challenger"><Card><Tabs items={[{ key: 'registry', label: '策略注册表', children: <Empty description="策略版本将从注册表加载" /> }, { key: 'lineage', label: '演化树', children: <div className="lineage">ETF_MOM_V1 → ETF_MOM_VOL_V2 → ETF_MOM_VOL_RISK_V4</div> }, { key: 'rejected', label: '已拒绝', children: <Empty description="暂无已拒绝策略" /> }]} /></Card></Page>
+  return <Page title="策略研究" subtitle="血缘、候选与 Champion/Challenger"><Card><Tabs items={[{ key: 'registry', label: '策略注册表', children: <Empty description="策略版本将从注册表加载" /> }, { key: 'lineage', label: '演化树', children: <Empty description="暂无可验证策略血缘" /> }, { key: 'rejected', label: '已拒绝', children: <Empty description="暂无已拒绝策略" /> }]} /></Card></Page>
 }
 
 export function ExperimentPage() {

@@ -75,3 +75,23 @@ Vendor SDKs and native vn.py gateways must not be imported into the Python 3.14
 core. Provider/broker bridges use isolated environments and versioned canonical
 protocols. The broker protocol in this goal is read-only and deliberately has no
 order-submit or cancel operation.
+
+## ADR-009 — Realtime PAPER dispatch requires revocable market-data authority
+
+Status: accepted, 2026-08-12.
+
+Provider connection alone does not authorize a signal-driven PAPER write. A
+session/reconnect/data-version-bound readiness attestation must remain fresh at
+the tick dispatch point. Disconnect, data-quality failure or identity mismatch
+invalidates that authority and incident-latches the PAPER runtime. Runner
+checkpoints bind exact strategy version/spec hash, provider, data version, bar
+interval and trading-rule source identity.
+
+## ADR-010 — Promotion evidence is durable authority, not a caller boolean
+
+Status: accepted, 2026-08-12.
+
+Champion assignment cannot trust a supplied `promotion_passed` flag. Promotion
+evidence is evaluated by the repository policy, hashed and persisted under an
+immutable evidence ID. Only an APPROVED strategy with a stored PASS decision may
+be assigned CHAMPION; post-SHADOW lifecycle transitions remain human-authorized.
