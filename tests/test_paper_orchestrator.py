@@ -2,6 +2,8 @@ from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from threading import Event, Thread
 
+import pytest
+
 from qtrade.data import Bar
 from qtrade.domain import Instrument, RuntimeMode
 from qtrade.execution import FeeSchedule
@@ -421,3 +423,65 @@ def test_same_identity_runner_instances_share_serialization(tmp_path):
     assert not errors
     assert bundle.ledger.account.position_quantity("510300") == 100
     assert len([order for order in bundle.oms.orders if order.filled_quantity == 100]) == 1
+
+
+def test_strategy_exception_after_fill_records_failed_event_and_halts(tmp_path):
+    days = (date(2026, 8, 12), date(2026, 8, 13))
+    calendar = TradingCalendar(
+        tuple(
+            TradingDayStatus("SSE", day, TradingStatus.OPEN, date(2026, 1, 1), "fixture")
+            for day in days
+        )
+    )
+    bundle = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("100000"),
+        limits=RiskLimits(Decimal("50000"), 10000, Decimal("100000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=tmp_path / "strategy-failure.db",
+    )
+    bundle.reconcile_and_recover(actor="operator")
+    bundle.runtime.start(actor="operator")
+
+    class FailingAfterSignal:
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def on_bar(self, bar, current_quantity):
+            self.calls += 1
+            if self.calls == 1:
+                return 100
+            raise RuntimeError("injected strategy failure")
+
+    runner = PaperBarRunner(
+        bundle=bundle,
+        instrument=Instrument("510300", "SSE", "ETF", 100, Decimal("0.001")),
+        trading_rule=TradingRule(
+            "domestic-etf",
+            "SSE",
+            "DOMESTIC_EQUITY_ETF",
+            date(2026, 1, 1),
+            None,
+            100,
+            100,
+            Decimal("0.001"),
+            Decimal("0.1"),
+            1,
+            "fixture://rule",
+            "1",
+        ),
+        calendar=calendar,
+        strategy=FailingAfterSignal(),
+        strategy_id="failing",
+        portfolio_id="paper",
+    )
+    run_bar(runner, make_bar(days[0], 1))
+    with pytest.raises(RuntimeError, match="injected strategy failure"):
+        run_bar(runner, make_bar(days[0], 2))
+    assert bundle.ledger.account.position_quantity("510300") == 100
+    assert bundle.risk.state.value == "HALTED"
+    assert bundle.metrics.reconciliation_status == "FAILED"
+    failure_states = bundle.journal.states_with_prefix("paper_runner:")
+    failure = next(value for key, value in failure_states if key.endswith(":failure"))
+    assert failure["status"] == "FAILED"
+    assert failure["error_type"] == "RuntimeError"

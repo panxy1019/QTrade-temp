@@ -86,7 +86,12 @@ class PaperBarRunner:
         self, bar: Bar, *, received_at: datetime | None = None
     ) -> PaperBarResult:
         with self._lock:
-            return self._on_bar_locked(bar, received_at or utc_now())
+            receipt_time = received_at or utc_now()
+            try:
+                return self._on_bar_locked(bar, receipt_time)
+            except Exception as exc:
+                self._record_event_failure(bar, receipt_time, exc)
+                raise
 
     def _on_bar_locked(self, bar: Bar, received_at: datetime) -> PaperBarResult:
         self._restore_checkpoint(self._identity())
@@ -230,3 +235,26 @@ class PaperBarRunner:
             "strategy_id": self._strategy_id,
             "symbol": self._instrument.symbol,
         }
+
+    def _record_event_failure(
+        self, bar: Bar, received_at: datetime, error: Exception
+    ) -> None:
+        try:
+            self._bundle.journal.save_state(
+                f"{self._checkpoint_key}:failure",
+                {
+                    "schema_version": 1,
+                    "status": "FAILED",
+                    "identity": self._identity(),
+                    "event_timestamp": bar.timestamp.isoformat(),
+                    "received_at": received_at.isoformat(),
+                    "error_type": type(error).__name__,
+                    "last_checkpoint_timestamp": (
+                        None
+                        if self._last_timestamp is None
+                        else self._last_timestamp.isoformat()
+                    ),
+                },
+            )
+        finally:
+            self._bundle.report_incident("paper orchestrator event processing failed")

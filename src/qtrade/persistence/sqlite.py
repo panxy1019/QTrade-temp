@@ -311,3 +311,16 @@ class SQLiteOperationalJournal:
                 "SELECT payload FROM runtime_state WHERE state_key=?", (state_key,)
             ).fetchone()
         return None if row is None else dict(json.loads(row[0]))
+
+    def states_with_prefix(
+        self, prefix: str
+    ) -> tuple[tuple[str, dict[str, object]], ...]:
+        if not prefix:
+            raise ValueError("runtime state prefix is required")
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT state_key,payload FROM runtime_state "
+                "WHERE state_key LIKE ? ORDER BY state_key",
+                (f"{prefix}%",),
+            ).fetchall()
+        return tuple((row[0], dict(json.loads(row[1]))) for row in rows)
