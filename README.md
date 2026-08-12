@@ -31,6 +31,11 @@ process environment. Send it as `Authorization: Bearer <token>`. Read endpoints
 do not accept a caller-provided role escalation. Bind the development server to
 loopback unless a separately reviewed TLS/authentication proxy is deployed.
 
+After a restart the PAPER runtime is HALTED. `POST /system/recover` (authenticated)
+must complete local reconciliation and issue a fresh readiness attestation before
+`POST /system/start` can succeed. Pending/failed fills or uncertain submissions
+make recovery fail closed.
+
 Run the complete synthetic provenance workflow with:
 
 ```powershell

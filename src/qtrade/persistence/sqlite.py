@@ -102,6 +102,36 @@ class SQLiteOperationalJournal:
             if cursor.rowcount != 1:
                 raise KeyError(fill_key)
 
+    def commit_fill_effect(
+        self,
+        fill_key: str,
+        *,
+        account_state: dict[str, object],
+        runtime_state: dict[str, object],
+    ) -> None:
+        """Atomically mark a fill APPLIED with recoverable economic/OMS state."""
+        now = datetime.now(UTC).isoformat()
+        account_json = json.dumps(account_state, sort_keys=True)
+        runtime_json = json.dumps(runtime_state, sort_keys=True)
+        with self._lock, self._connect() as connection:
+            row = connection.execute(
+                "SELECT state FROM fill_journal WHERE fill_key=?", (fill_key,)
+            ).fetchone()
+            if row is None or row[0] != "PENDING":
+                raise ValueError("fill must be PENDING before atomic effect commit")
+            connection.execute(
+                "UPDATE fill_journal SET state='APPLIED', updated_at=?, error=NULL "
+                "WHERE fill_key=?",
+                (now, fill_key),
+            )
+            for key, payload in (("account", account_json), ("runtime", runtime_json)):
+                connection.execute(
+                    "INSERT INTO runtime_state(state_key,payload,updated_at) VALUES(?,?,?) "
+                    "ON CONFLICT(state_key) DO UPDATE SET payload=excluded.payload, "
+                    "updated_at=excluded.updated_at",
+                    (key, payload, now),
+                )
+
     def get_fill(self, fill_key: str) -> FillJournalRecord | None:
         with self._connect() as connection:
             row = connection.execute(

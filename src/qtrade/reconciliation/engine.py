@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from decimal import Decimal
+from uuid import uuid4
 
 from qtrade.audit import AuditEvent, AuditLog
+from qtrade.control import ReadinessAttestation
 from qtrade.monitoring import MetricsRegistry
 from qtrade.risk import KillState, RiskEngine
 
@@ -65,3 +68,25 @@ class Reconciler:
                 reason=f"state mismatch: {','.join(result.differences)}",
             )
         return result
+
+    def issue_attestation(
+        self,
+        result: ReconciliationResult,
+        *,
+        gateway_connected: bool,
+        uncertain_fills: int,
+        now: datetime,
+        validity: timedelta = timedelta(minutes=5),
+    ) -> ReadinessAttestation:
+        if not result.ok:
+            raise ValueError("failed reconciliation cannot attest readiness")
+        attestation = ReadinessAttestation(
+            str(uuid4()),
+            now,
+            now + validity,
+            gateway_connected,
+            result.ok,
+            uncertain_fills,
+        )
+        attestation.validate(now)
+        return attestation

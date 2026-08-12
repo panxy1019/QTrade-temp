@@ -54,6 +54,7 @@ class AppContext:
     oms: OrderManager
     ledger: Ledger
     audit: AuditLog
+    recover: Callable[[str], None] | None = None
 
 
 def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
@@ -229,8 +230,37 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
         state.runtime.kill(actor=actor, reason=payload.reason)
         return asdict(state.runtime.status)
 
+    @app.post("/system/recover")
+    def recover(
+        _: ControlRequest,
+        actor: str = Depends(_require_role(Role.CONTROL, auth_config)),
+    ) -> dict[str, Any]:
+        if state.recover is None:
+            raise HTTPException(status_code=503, detail="recovery is not configured")
+        try:
+            state.recover(actor)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return asdict(state.runtime.status)
+
     @app.get("/", response_class=HTMLResponse)
     def dashboard() -> str:
         return Path(__file__).with_name("dashboard.html").read_text(encoding="utf-8")
 
     return app
+
+
+def context_from_runtime(bundle: object) -> AppContext:
+    """Build API state from the canonical PAPER/SHADOW runtime bundle."""
+    from qtrade.runtime import PaperRuntimeBundle
+
+    if not isinstance(bundle, PaperRuntimeBundle):
+        raise TypeError("expected PaperRuntimeBundle")
+    return AppContext(
+        bundle.runtime,
+        bundle.metrics,
+        bundle.oms,
+        bundle.ledger,
+        bundle.audit,
+        recover=lambda actor: bundle.reconcile_and_recover(actor=actor),
+    )

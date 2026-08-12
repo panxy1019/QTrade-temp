@@ -1,14 +1,27 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 import pytest
 
 from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
 from qtrade.execution import FeeSchedule, PaperAction
+from qtrade.reconciliation import Reconciler, ReconciliationResult
 from qtrade.risk import RiskContext, RiskLimits
 from qtrade.runtime import build_paper_runtime
 
 NOW = datetime(2026, 8, 12, tzinfo=UTC)
+
+
+def attest(bundle):
+    bundle.runtime.attest_readiness(
+        Reconciler().issue_attestation(
+            ReconciliationResult(True, ()),
+            gateway_connected=True,
+            uncertain_fills=0,
+            now=datetime.now(UTC),
+            validity=timedelta(minutes=10),
+        )
+    )
 
 
 def build(tmp_path, mode=RuntimeMode.PAPER):
@@ -42,8 +55,7 @@ def test_runtime_rejects_orders_before_readiness_and_after_stop(tmp_path):
     bundle = build(tmp_path)
     with pytest.raises(RuntimeError, match="not started"):
         submit(bundle)
-    bundle.metrics.gateway_connected = True
-    bundle.metrics.reconciliation_status = "OK"
+    attest(bundle)
     bundle.runtime.start(actor="operator")
     order, _ = submit(bundle)
     assert order.broker_order_id is not None
@@ -60,8 +72,7 @@ def test_shadow_runtime_has_simulated_gateway_only(tmp_path):
 
 def test_gateway_incident_halts_runtime_and_blocks_next_submit(tmp_path):
     bundle = build(tmp_path)
-    bundle.metrics.gateway_connected = True
-    bundle.metrics.reconciliation_status = "OK"
+    attest(bundle)
     bundle.runtime.start(actor="operator")
     bundle.gateway.inject_next_action(PaperAction.DISCONNECT)
     with pytest.raises(ConnectionError):
@@ -74,8 +85,7 @@ def test_gateway_incident_halts_runtime_and_blocks_next_submit(tmp_path):
 
 def test_restart_restores_account_and_stays_halted_for_reconciliation(tmp_path):
     first = build(tmp_path)
-    first.metrics.gateway_connected = True
-    first.metrics.reconciliation_status = "OK"
+    attest(first)
     first.runtime.start(actor="operator")
     order, _ = submit(first, "buy")
     first.gateway.fill(order, fill_key="fill", price=Decimal("10"), quantity=100, now=NOW)
@@ -91,8 +101,7 @@ def test_restart_restores_account_and_stays_halted_for_reconciliation(tmp_path):
 
 def test_restart_restores_open_order_and_reservation(tmp_path):
     first = build(tmp_path)
-    first.metrics.gateway_connected = True
-    first.metrics.reconciliation_status = "OK"
+    attest(first)
     first.runtime.start(actor="operator")
     order, _ = submit(first, "open-buy")
     assert order.status.value == "ACCEPTED"
@@ -102,4 +111,37 @@ def test_restart_restores_open_order_and_reservation(tmp_path):
     assert len(restarted.oms.orders) == 1
     assert restarted.oms.orders[0].internal_order_id == order.internal_order_id
     assert restarted.gateway.reservations.reserved_cash == Decimal("1000")
+    assert restarted.risk.state.value == "HALTED"
+    restarted.reconcile_and_recover(actor="operator")
+    assert restarted.risk.state.value == "NORMAL"
+    restarted.runtime.start(actor="operator")
+
+
+def test_recovery_refuses_uncertain_fill(tmp_path):
+    bundle = build(tmp_path)
+    bundle.journal.begin_fill("pending", "order", "hash")
+    with pytest.raises(ValueError, match="uncertain"):
+        bundle.reconcile_and_recover(actor="operator")
+
+
+def test_crash_after_atomic_fill_commit_restores_exactly_one_effect(tmp_path, monkeypatch):
+    bundle = build(tmp_path)
+    attest(bundle)
+    bundle.runtime.start(actor="operator")
+    order, _ = submit(bundle, "buy-crash")
+
+    def crash_after_commit(trade):
+        raise RuntimeError("simulated process crash")
+
+    monkeypatch.setattr(bundle.ledger, "book", crash_after_commit)
+    with pytest.raises(RuntimeError, match="simulated process crash"):
+        bundle.gateway.fill(
+            order, fill_key="fill-crash", price=Decimal("10"), quantity=100, now=NOW
+        )
+
+    restarted = build(tmp_path)
+    assert restarted.ledger.account.cash == Decimal("99000")
+    assert restarted.ledger.account.position_quantity("510300") == 100
+    assert restarted.oms.orders[0].filled_quantity == 100
+    assert restarted.gateway.reservations.reserved_cash == Decimal("0")
     assert restarted.risk.state.value == "HALTED"

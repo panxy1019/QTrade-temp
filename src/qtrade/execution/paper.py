@@ -71,6 +71,7 @@ class PaperGateway:
         journal: SQLiteOperationalJournal | None = None,
         incident_handler: Callable[[str], None] | None = None,
         state_change_handler: Callable[[], None] | None = None,
+        durable_fill_handler: Callable[[str, Trade, Order], None] | None = None,
     ) -> None:
         self._oms = oms
         self._ledger = ledger
@@ -85,6 +86,7 @@ class PaperGateway:
         self._next_action = PaperAction.ACCEPT
         self._incident_handler = incident_handler
         self._state_change_handler = state_change_handler
+        self._durable_fill_handler = durable_fill_handler
 
     def inject_next_action(self, action: PaperAction) -> None:
         self._next_action = action
@@ -140,6 +142,25 @@ class PaperGateway:
     def lookup(self, client_order_id: str) -> Order | None:
         entry = self._orders_by_client_id.get(client_order_id)
         return None if entry is None else entry[0]
+
+    def restore_submission(self, order: Order) -> None:
+        if order.status is OrderStatus.SUBMISSION_UNKNOWN:
+            raise ValueError("uncertain submissions require external reconciliation")
+        if order.status in {
+            OrderStatus.ACCEPTED,
+            OrderStatus.PARTIALLY_FILLED,
+            OrderStatus.FILLED,
+            OrderStatus.CANCEL_PENDING,
+            OrderStatus.CANCELLED,
+            OrderStatus.REJECTED,
+        }:
+            fingerprint = (
+                order.request.symbol,
+                order.request.side,
+                order.request.price,
+                order.request.quantity,
+            )
+            self._orders_by_client_id[order.internal_order_id] = (order, fingerprint)
 
     def disconnect(self) -> None:
         self.connected = False
@@ -210,6 +231,8 @@ class PaperGateway:
         record = FillRecord(FillProcessingState.PENDING, trade)
         self._fills[fill_key] = record
         try:
+            if self._durable_fill_handler is not None:
+                self._durable_fill_handler(fill_key, trade, order)
             self._ledger.book(trade)
             self._oms.apply_fill(order, quantity, now=timestamp)
             self.reservations.consume(order.internal_order_id, quantity)
@@ -231,7 +254,7 @@ class PaperGateway:
             self._report_incident("fill processing failed")
             raise
         record.state = FillProcessingState.APPLIED
-        if self._journal is not None:
+        if self._journal is not None and self._durable_fill_handler is None:
             self._journal.mark_fill(fill_key, "APPLIED")
         self._report_state_change()
         return trade, True

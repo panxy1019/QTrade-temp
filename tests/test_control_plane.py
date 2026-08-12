@@ -1,29 +1,39 @@
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 import pytest
 from fastapi.testclient import TestClient
 
 from qtrade.accounting import Ledger
-from qtrade.api import ApiAuthConfig, AppContext, create_app
+from qtrade.api import ApiAuthConfig, AppContext, context_from_runtime, create_app
 from qtrade.audit import AuditLog
 from qtrade.control import PlatformRuntime
 from qtrade.domain import RuntimeMode
+from qtrade.execution import FeeSchedule
 from qtrade.monitoring import MetricsRegistry
 from qtrade.oms import OrderManager
+from qtrade.reconciliation import Reconciler, ReconciliationResult
 from qtrade.risk import RiskEngine, RiskLimits
+from qtrade.runtime import build_paper_runtime
 
 
 def client() -> TestClient:
     audit = AuditLog()
     metrics = MetricsRegistry()
-    metrics.gateway_connected = True
-    metrics.reconciliation_status = "OK"
     ledger = Ledger(Decimal("100000"), audit)
     oms = OrderManager(audit)
     risk = RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit)
-    context = AppContext(
-        PlatformRuntime(RuntimeMode.SHADOW, risk, audit, metrics), metrics, oms, ledger, audit
+    runtime = PlatformRuntime(RuntimeMode.SHADOW, risk, audit, metrics)
+    runtime.attest_readiness(
+        Reconciler().issue_attestation(
+            ReconciliationResult(True, ()),
+            gateway_connected=True,
+            uncertain_fills=0,
+            now=datetime.now(UTC),
+            validity=timedelta(minutes=10),
+        )
     )
+    context = AppContext(runtime, metrics, oms, ledger, audit)
     return TestClient(create_app(context, ApiAuthConfig(control_token="control-test")))
 
 
@@ -39,7 +49,7 @@ def test_bootstrap_runtime_fails_closed_until_readiness_is_verified():
     from qtrade.api.app import bootstrap_context
 
     runtime = bootstrap_context().runtime
-    with pytest.raises(ValueError, match="verified gateway"):
+    with pytest.raises(ValueError, match="readiness attestation"):
         runtime.start(actor="operator")
 
 
@@ -96,3 +106,23 @@ def test_required_read_surfaces_exist():
         "/system",
     ):
         assert api.get(path).status_code == 200
+
+
+def test_api_context_uses_canonical_paper_runtime(tmp_path):
+    bundle = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("100"),
+        limits=RiskLimits(Decimal("10"), 100, Decimal("100")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=tmp_path / "runtime.db",
+    )
+    context = context_from_runtime(bundle)
+    assert context.runtime is bundle.runtime
+    assert context.ledger is bundle.ledger
+    api = TestClient(create_app(context, ApiAuthConfig(control_token="control-test")))
+    response = api.post(
+        "/system/recover",
+        headers={"Authorization": "Bearer control-test"},
+        json={},
+    )
+    assert response.status_code == 200

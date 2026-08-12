@@ -3,7 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from qtrade.audit import AuditEvent, AuditLog
+from qtrade.control.readiness import ReadinessAttestation
 from qtrade.domain import RuntimeMode
+from qtrade.domain.models import utc_now
 from qtrade.monitoring import HealthStatus, MetricsRegistry
 from qtrade.risk import KillState, RiskEngine
 
@@ -28,6 +30,13 @@ class PlatformRuntime:
         self._audit = audit
         self._metrics = metrics
         self._running = False
+        self._readiness: ReadinessAttestation | None = None
+
+    def attest_readiness(self, attestation: ReadinessAttestation) -> None:
+        attestation.validate(utc_now())
+        self._readiness = attestation
+        self._metrics.gateway_connected = attestation.gateway_connected
+        self._metrics.reconciliation_status = "OK"
 
     @property
     def status(self) -> RuntimeStatus:
@@ -36,15 +45,15 @@ class PlatformRuntime:
     def start(self, *, actor: str) -> None:
         if self._risk.state is KillState.HALTED:
             raise ValueError("cannot start while halted")
-        if not self._metrics.gateway_connected:
-            raise ValueError("cannot start without a verified gateway connection")
-        if self._metrics.reconciliation_status != "OK":
-            raise ValueError("cannot start before successful reconciliation")
+        if self._readiness is None:
+            raise ValueError("cannot start without a readiness attestation")
+        self._readiness.validate(utc_now())
         self._running = True
         self._record("SYSTEM_START", actor)
 
     def stop(self, *, actor: str) -> None:
         self._running = False
+        self._readiness = None
         self._record("SYSTEM_STOP", actor)
 
     def pause(self, *, actor: str) -> None:
@@ -81,10 +90,12 @@ class PlatformRuntime:
             raise RuntimeError("runtime is not started")
         if self._risk.state is not KillState.NORMAL:
             raise RuntimeError(f"risk state {self._risk.state.value} blocks submission")
-        if not self._metrics.gateway_connected:
-            raise RuntimeError("gateway is not connected")
-        if self._metrics.reconciliation_status != "OK":
-            raise RuntimeError("reconciliation is not OK")
+        if self._readiness is None:
+            raise RuntimeError("readiness is not attested")
+        try:
+            self._readiness.validate(utc_now())
+        except ValueError as exc:
+            raise RuntimeError(str(exc)) from exc
 
     def _record(self, event_type: str, actor: str, reason: str = "") -> None:
         self._audit.record(

@@ -84,8 +84,9 @@ events, disconnect/freeze/database failure injection.
 Current evidence: SQLite FULL/WAL journal, durable account/order/reservation/fill
 markers, restart restoration, mandatory HALTED restart, uncertain fill blocking,
 incident-to-HALT coupling and recovery sequence tests. Remaining: one atomic
-durable transaction for inbound fill + OMS + ledger + reservation effects,
 external gateway reconciliation/replay and PostgreSQL multi-process adapter.
+Inbound fill APPLIED + projected account/OMS/reservations now commit atomically;
+a crash-after-commit test restores exactly one economic effect.
 
 ### M6 — Control plane, dashboard, and observability
 
@@ -96,6 +97,10 @@ Current evidence: required read surfaces, control commands, prominent mode,
 metrics/audit views and environment bearer-token authentication implemented.
 Remaining: external identity/TLS integration, Prometheus export and richer alert
 routing. Keep server loopback-only until those are reviewed.
+
+The control runner now uses the canonical durable PAPER runtime bundle. Recovery
+is an authenticated explicit action that refuses uncertain fills/submissions,
+issues a short-lived reconciliation attestation, and never auto-resumes.
 
 ### M7 — Shadow/live-readiness
 

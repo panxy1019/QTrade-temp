@@ -10,7 +10,7 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Current phase: integrated paper/shadow platform hardening.
 - Current milestone: M5/M6 failure recovery, control, and observability.
-- Acceptance evidence: 75 tests passed, 93% coverage, Ruff clean, strict mypy
+- Acceptance evidence: 78 tests passed, 92% coverage, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); end-to-end synthetic workflow executed.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
@@ -40,4 +40,8 @@ Last updated: 2026-08-12
   incidents latch HALTED; open BUYs aggregate into exposure/position risk;
   sellability is enforced by date-effective lots. Full external gateway/OMS
   reconciliation is still required before any post-restart resume.
+- Atomic recovery: fill APPLIED marker, projected account/OMS state, and
+  post-fill reservations commit in one SQLite transaction. Failure immediately
+  after that commit restores exactly one effect. Reconciliation issues an
+  expiring readiness attestation; mutable health metrics cannot authorize start.
 - Live trading: disabled and structurally unavailable.
