@@ -72,6 +72,7 @@ class PaperGateway:
         incident_handler: Callable[[str], None] | None = None,
         state_change_handler: Callable[[], None] | None = None,
         durable_fill_handler: Callable[[str, Trade, Order], None] | None = None,
+        fill_observer: Callable[[Trade], None] | None = None,
     ) -> None:
         self._oms = oms
         self._ledger = ledger
@@ -87,6 +88,7 @@ class PaperGateway:
         self._incident_handler = incident_handler
         self._state_change_handler = state_change_handler
         self._durable_fill_handler = durable_fill_handler
+        self._fill_observer = fill_observer
 
     def inject_next_action(self, action: PaperAction) -> None:
         self._next_action = action
@@ -259,6 +261,8 @@ class PaperGateway:
         if self._journal is not None and self._durable_fill_handler is None:
             self._journal.mark_fill(fill_key, "APPLIED")
         self._report_state_change()
+        if self._fill_observer is not None:
+            self._fill_observer(trade)
         return trade, True
 
     def cancel(

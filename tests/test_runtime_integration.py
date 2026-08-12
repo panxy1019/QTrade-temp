@@ -163,3 +163,50 @@ def test_cancel_remains_available_after_halt_and_is_idempotent(tmp_path):
     assert first is second
     assert first.status.value == "CANCELLED"
     assert bundle.gateway.reservations.reserved_cash == Decimal("0")
+
+
+def test_runtime_metrics_count_unique_submissions_rejections_and_fills(tmp_path):
+    bundle = build(tmp_path)
+    attest(bundle)
+    bundle.runtime.start(actor="operator")
+
+    accepted, created = submit(bundle, "metric-order")
+    replayed, replay_created = submit(bundle, "metric-order")
+    bundle.gateway.fill(
+        accepted, fill_key="metric-fill", price=Decimal("10"), quantity=100, now=NOW
+    )
+    bundle.gateway.fill(
+        accepted, fill_key="metric-fill", price=Decimal("10"), quantity=100, now=NOW
+    )
+    rejected, _ = bundle.service.submit(
+        OrderRequest(
+            "metric-reject",
+            "strategy",
+            "portfolio",
+            "510300",
+            Side.BUY,
+            Decimal("10"),
+            99,
+            NOW,
+        ),
+        RiskContext(
+            bundle.ledger.account,
+            {"510300": Instrument("510300", "SSE", "ETF", 100, Decimal("0.001"))},
+            {"510300": Decimal("10")},
+            NOW,
+            True,
+            True,
+            NOW,
+        ),
+        now=NOW,
+    )
+
+    metrics = bundle.metrics.snapshot(now=NOW)
+    assert created is True and replay_created is False and replayed is accepted
+    assert rejected.status.value == "RISK_REJECTED"
+    assert metrics["orders_total"] == 2
+    assert metrics["rejects_total"] == 1
+    assert metrics["fills_total"] == 1
+    assert metrics["reject_rate"] == "0.5"
+    assert metrics["fill_rate"] == "0.5"
+    assert metrics["orders_per_minute"] == 2

@@ -24,6 +24,7 @@ class TradingService:
         reservations: ReservationBook | None = None,
         submission_guard: Callable[[], None] | None = None,
         state_change_handler: Callable[[], None] | None = None,
+        submission_observer: Callable[[Order, datetime], None] | None = None,
     ) -> None:
         self._risk = risk
         self._oms = oms
@@ -36,6 +37,7 @@ class TradingService:
         if runtime_mode in {RuntimeMode.PAPER, RuntimeMode.SHADOW} and submission_guard is None:
             raise ValueError("PAPER/SHADOW TradingService requires a runtime submission guard")
         self._state_change_handler = state_change_handler
+        self._submission_observer = submission_observer
 
     def submit(
         self, request: OrderRequest, context: RiskContext, *, now: datetime | None = None
@@ -65,6 +67,7 @@ class TradingService:
                 self._oms.transition(
                     order, OrderStatus.RISK_REJECTED, now=now, reason=decision.reason
                 )
+                self._observe_submission(order, now)
                 return order, True
             self._oms.transition(order, OrderStatus.RISK_PASSED, now=now)
             self._reservations.reserve(
@@ -74,9 +77,11 @@ class TradingService:
                 submitted = self._gateway.submit(order, now=now)
             except ConnectionError:
                 self._oms.transition(order, OrderStatus.SUBMISSION_UNKNOWN, now=now)
+                self._observe_submission(order, now)
                 raise
             except Exception:
                 self._reservations.release(order.internal_order_id)
+                self._observe_submission(order, now)
                 raise
             finally:
                 if self._state_change_handler is not None:
@@ -85,6 +90,7 @@ class TradingService:
                 self._reservations.release(order.internal_order_id)
                 if self._state_change_handler is not None:
                     self._state_change_handler()
+            self._observe_submission(order, now)
             return order, True
 
     def cancel(self, command: CancelCommand, *, now: datetime | None = None) -> Order:
@@ -102,3 +108,7 @@ class TradingService:
                 idempotency_key=command.idempotency_key,
                 now=now,
             )
+
+    def _observe_submission(self, order: Order, now: datetime | None) -> None:
+        if self._submission_observer is not None:
+            self._submission_observer(order, now or order.updated_at)
