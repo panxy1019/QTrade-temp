@@ -68,7 +68,9 @@ baselines; top-K/weight/cash constraints; portfolio metrics and factor
 IC/RankIC/quantiles/turnover/spread; immutable hashed experiment record; tested
 synthetic end-to-end workflow. Rolling/expanding walk-forward splits, momentum,
 reversal, realized-volatility, liquidity baselines and multi-period ICIR are now
-tested. Remaining: model training orchestration and vnpy.alpha adapter.
+tested. Multi-period evaluation uses instrument-keyed, as-of/known-at observations
+so membership turnover cannot depend on array position. Remaining: model training
+orchestration and vnpy.alpha adapter.
 
 ### M4 — Integrated event-driven backtest
 
@@ -81,7 +83,8 @@ broader metrics, liquidity/matching models and report. T+N sellability advances
 over the observed open-session bar sequence rather than calendar days.
 Fee schedules now carry source identity and explicit all-in/decomposed policy;
 all-in broker commission cannot be combined with separately added handling or
-regulatory components, preventing a common backtest double-counting error.
+regulatory components, preventing a common backtest double-counting error. Named
+fee breakdowns preserve handling/regulatory charges below broker minimums.
 
 ### M5 — Durable paper runtime and recovery
 

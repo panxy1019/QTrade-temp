@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date, datetime
 from decimal import Decimal
 from math import sqrt
 from statistics import mean, pstdev
@@ -35,6 +36,25 @@ class FactorMetrics:
     quantile_returns: tuple[Decimal, ...]
     factor_turnover: Decimal
     long_short_spread: Decimal
+
+
+@dataclass(frozen=True, slots=True)
+class FactorObservation:
+    instrument_id: str
+    factor_value: Decimal
+    forward_return: Decimal
+    as_of: date
+    known_at: datetime
+
+    def __post_init__(self) -> None:
+        if not self.instrument_id:
+            raise ValueError("factor observation requires instrument identity")
+        if self.known_at.tzinfo is None:
+            raise ValueError("factor known_at must be timezone-aware")
+        if self.known_at.date() > self.as_of:
+            raise ValueError("factor observation cannot be future-known")
+        if not self.factor_value.is_finite() or not self.forward_return.is_finite():
+            raise ValueError("factor observation values must be finite")
 
 
 def _decimal(value: float) -> Decimal:
@@ -159,6 +179,8 @@ def evaluate_factor(
     previous_factor_values: list[Decimal] | None = None,
     quantiles: int = 5,
 ) -> FactorMetrics:
+    if len(factor_values) != len(forward_returns):
+        raise ValueError("factor values and forward returns must align")
     if quantiles < 2 or len(factor_values) < quantiles:
         raise ValueError("quantiles require at least two nonempty groups")
     if any(not item.is_finite() for item in factor_values + forward_returns):
@@ -203,17 +225,38 @@ def evaluate_factor(
 
 
 def evaluate_factor_periods(
-    factor_periods: list[list[Decimal]],
-    return_periods: list[list[Decimal]],
-    *,
-    quantiles: int = 5,
+    observations: list[list[FactorObservation]], *, quantiles: int = 5
 ) -> FactorMetrics:
-    if len(factor_periods) != len(return_periods) or len(factor_periods) < 2:
+    if len(observations) < 2:
         raise ValueError("ICIR requires at least two aligned periods")
-    periods = [
-        evaluate_factor(factors, returns, quantiles=quantiles)
-        for factors, returns in zip(factor_periods, return_periods, strict=True)
-    ]
+    periods: list[FactorMetrics] = []
+    top_buckets: list[set[str]] = []
+    for period in observations:
+        if not period:
+            raise ValueError("factor periods cannot be empty")
+        as_of_dates = {item.as_of for item in period}
+        identities = [item.instrument_id for item in period]
+        if len(as_of_dates) != 1 or len(set(identities)) != len(identities):
+            raise ValueError("each factor period needs one as_of and unique instruments")
+        ordered = sorted(period, key=lambda item: item.instrument_id)
+        periods.append(
+            evaluate_factor(
+                [item.factor_value for item in ordered],
+                [item.forward_return for item in ordered],
+                quantiles=quantiles,
+            )
+        )
+        bucket_size = len(ordered) // quantiles
+        if bucket_size == 0:
+            raise ValueError("quantiles require nonempty top buckets")
+        top_buckets.append(
+            {
+                item.instrument_id
+                for item in sorted(
+                    ordered, key=lambda item: (item.factor_value, item.instrument_id)
+                )[-bucket_size:]
+            }
+        )
     count = Decimal(len(periods))
     ics = [period.ic for period in periods]
     average_ic = sum(ics, start=Decimal("0")) / count
@@ -230,8 +273,14 @@ def evaluate_factor_periods(
         icir=Decimal("0") if ic_deviation == 0 else average_ic / ic_deviation,
         quantile_returns=quantile_returns,
         factor_turnover=sum(
-            (period.factor_turnover for period in periods), start=Decimal("0")
+            (
+                Decimal(len(current - previous)) / len(current)
+                for previous, current in zip(
+                    top_buckets[:-1], top_buckets[1:], strict=True
+                )
+            ),
+            start=Decimal("0"),
         )
-        / count,
+        / Decimal(len(top_buckets) - 1),
         long_short_spread=quantile_returns[-1] - quantile_returns[0],
     )

@@ -1,10 +1,11 @@
-from datetime import date
+from datetime import UTC, date, datetime
 from decimal import Decimal
 
 import pytest
 
 from qtrade.portfolio import PortfolioConstraints, construct_targets
 from qtrade.research import (
+    FactorObservation,
     TimeSplit,
     WalkForwardConfig,
     build_walk_forward_splits,
@@ -123,12 +124,43 @@ def test_baseline_factors_are_deterministic_and_input_validated():
 
 
 def test_multi_period_factor_evaluation_computes_nonzero_icir():
+    def period(day: int, values: list[tuple[str, str, str]]) -> list[FactorObservation]:
+        return [
+            FactorObservation(
+                symbol,
+                Decimal(factor),
+                Decimal(forward_return),
+                date(2026, 1, day),
+                datetime(2026, 1, day, tzinfo=UTC),
+            )
+            for symbol, factor, forward_return in values
+        ]
+
     result = evaluate_factor_periods(
-        [[Decimal("1"), Decimal("2"), Decimal("3"), Decimal("4")]] * 2,
         [
-            [Decimal("0.01"), Decimal("0.02"), Decimal("0.03"), Decimal("0.04")],
-            [Decimal("0.01"), Decimal("0.02"), Decimal("0.04"), Decimal("0.03")],
+            period(
+                1,
+                [("A", "1", ".01"), ("B", "2", ".02"), ("C", "3", ".03"), ("D", "4", ".04")],
+            ),
+            period(
+                2,
+                [("A", "4", ".01"), ("B", "3", ".02"), ("C", "2", ".04"), ("D", "1", ".03")],
+            ),
         ],
         quantiles=2,
     )
-    assert result.icir > 0
+    assert result.icir != 0
+    assert result.factor_turnover == Decimal("1")
+
+
+def test_factor_observation_rejects_future_known_data_and_length_mismatch():
+    with pytest.raises(ValueError, match="future-known"):
+        FactorObservation(
+            "A",
+            Decimal("1"),
+            Decimal(".01"),
+            date(2026, 1, 1),
+            datetime(2026, 1, 2, tzinfo=UTC),
+        )
+    with pytest.raises(ValueError, match="must align"):
+        evaluate_factor([Decimal("1"), Decimal("2")], [Decimal(".01")], quantiles=2)

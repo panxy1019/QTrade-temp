@@ -55,16 +55,52 @@ class FeeSchedule:
             raise ValueError("all-in commission cannot add handling or regulatory fees")
 
     def calculate(self, side: Side, price: Decimal, quantity: int) -> Decimal:
+        return self.breakdown(side, price, quantity).total
+
+    def breakdown(self, side: Side, price: Decimal, quantity: int) -> FeeBreakdown:
         notional = price * quantity
-        commission_rate = self.commission_rate
-        if self.commission_policy is CommissionPolicy.DECOMPOSED:
-            commission_rate += self.exchange_handling_rate + self.regulatory_rate
-        commission = max(notional * commission_rate, self.minimum_commission)
+        commission = max(notional * self.commission_rate, self.minimum_commission)
+        handling = (
+            notional * self.exchange_handling_rate
+            if self.commission_policy is CommissionPolicy.DECOMPOSED
+            else Decimal("0")
+        )
+        regulatory = (
+            notional * self.regulatory_rate
+            if self.commission_policy is CommissionPolicy.DECOMPOSED
+            else Decimal("0")
+        )
         transfer = notional * self.transfer_rate
         tax = notional * self.sell_tax_rate if side is Side.SELL else Decimal("0")
-        return (commission + transfer + tax).quantize(
-            Decimal("0.01"), rounding=ROUND_HALF_UP
+        rounded = tuple(
+            value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            for value in (commission, handling, regulatory, transfer, tax)
         )
+        return FeeBreakdown(*rounded)
+
+
+@dataclass(frozen=True, slots=True)
+class FeeBreakdown:
+    broker_commission: Decimal
+    exchange_handling: Decimal
+    regulatory: Decimal
+    transfer: Decimal
+    stamp_tax: Decimal
+
+    @property
+    def total(self) -> Decimal:
+        return sum(
+            (
+                self.broker_commission,
+                self.exchange_handling,
+                self.regulatory,
+                self.transfer,
+                self.stamp_tax,
+            ),
+            start=Decimal("0"),
+        )
+
+
 class FillProcessingState(StrEnum):
     PENDING = "PENDING"
     APPLIED = "APPLIED"

@@ -35,6 +35,23 @@ def test_decomposed_commission_adds_explicit_components_once():
     assert schedule.calculate(Side.SELL, Decimal("10"), 1000) == Decimal("8.10")
 
 
+def test_decomposed_minimum_applies_only_to_broker_commission():
+    schedule = FeeSchedule(
+        "small-trade",
+        commission_rate=Decimal("0.0001"),
+        sell_tax_rate=Decimal("0"),
+        minimum_commission=Decimal("5"),
+        commission_policy=CommissionPolicy.DECOMPOSED,
+        exchange_handling_rate=Decimal("0.0001"),
+        regulatory_rate=Decimal("0.0001"),
+    )
+    breakdown = schedule.breakdown(Side.BUY, Decimal("1"), 1000)
+    assert breakdown.broker_commission == Decimal("5.00")
+    assert breakdown.exchange_handling == Decimal("0.10")
+    assert breakdown.regulatory == Decimal("0.10")
+    assert breakdown.total == Decimal("5.20")
+
+
 def test_all_in_policy_rejects_separately_added_included_components():
     with pytest.raises(ValueError, match="all-in commission"):
         FeeSchedule(

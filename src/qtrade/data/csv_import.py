@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import csv
+import re
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 from hashlib import sha256
 from pathlib import Path
@@ -21,6 +22,9 @@ _COLUMNS = (
     "close",
     "volume",
 )
+_SYMBOL_PATTERN = re.compile(r"^[0-9]{6}$")
+_VENUES = {"SSE", "SZSE"}
+_CHINA_TZ = timezone(timedelta(hours=8), "Asia/Shanghai")
 
 
 @dataclass(frozen=True, slots=True)
@@ -57,15 +61,24 @@ class CsvBarImporter:
             if None in row or any(value is None or not value.strip() for value in row.values()):
                 raise ValueError(f"CSV row {row_number} has missing or extra values")
             try:
+                symbol = row["symbol"]
+                exchange = row["exchange"]
+                if symbol != symbol.strip() or not _SYMBOL_PATTERN.fullmatch(symbol):
+                    raise ValueError("symbol must be a canonical six-digit code")
+                if exchange != exchange.strip() or exchange not in _VENUES:
+                    raise ValueError("exchange must be SSE or SZSE")
                 timestamp = datetime.fromisoformat(row["timestamp"])
                 if timestamp.tzinfo is None:
                     raise ValueError("timestamp must be timezone-aware")
+                trading_day = datetime.strptime(row["trading_day"], "%Y-%m-%d").date()
+                if timestamp.astimezone(_CHINA_TZ).date() != trading_day:
+                    raise ValueError("timestamp does not belong to trading_day in Asia/Shanghai")
                 bars.append(
                     Bar(
-                        symbol=row["symbol"],
-                        exchange=row["exchange"],
+                        symbol=symbol,
+                        exchange=exchange,
                         timestamp=timestamp,
-                        trading_day=datetime.strptime(row["trading_day"], "%Y-%m-%d").date(),
+                        trading_day=trading_day,
                         open=Decimal(row["open"]),
                         high=Decimal(row["high"]),
                         low=Decimal(row["low"]),

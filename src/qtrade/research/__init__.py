@@ -4,6 +4,7 @@ from qtrade.research.artifacts import ExperimentArtifactStore
 from qtrade.research.experiment import ExperimentRecord, TimeSplit
 from qtrade.research.metrics import (
     FactorMetrics,
+    FactorObservation,
     PerformanceMetrics,
     evaluate_factor,
     evaluate_factor_periods,
@@ -18,6 +19,7 @@ __all__ = [
     "ExperimentArtifactStore",
     "ExperimentRecord",
     "FactorMetrics",
+    "FactorObservation",
     "PerformanceMetrics",
     "TimeSplit",
     "WalkForwardConfig",

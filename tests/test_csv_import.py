@@ -45,3 +45,27 @@ def test_csv_import_fails_closed_on_malformed_or_invalid_data(tmp_path, body, ma
     source.write_text(HEADER + body, encoding="utf-8")
     with pytest.raises(ValueError, match=match):
         CsvBarImporter().import_file(source, data_version="bad", source="fixture")
+
+
+@pytest.mark.parametrize(
+    "row,match",
+    [
+        (
+            "510300,SSE,2026-08-11T07:00:00+00:00,2026-08-10,10,11,9,10,100\n",
+            "does not belong to trading_day",
+        ),
+        (
+            " 510300,SSE,2026-08-10T07:00:00+00:00,2026-08-10,10,11,9,10,100\n",
+            "canonical six-digit",
+        ),
+        (
+            "510300,UNKNOWN,2026-08-10T07:00:00+00:00,2026-08-10,10,11,9,10,100\n",
+            "SSE or SZSE",
+        ),
+    ],
+)
+def test_csv_import_rejects_identifier_or_china_trading_day_mismatch(tmp_path, row, match):
+    source = tmp_path / "bars.csv"
+    source.write_text(HEADER + row, encoding="utf-8")
+    with pytest.raises(ValueError, match=match):
+        CsvBarImporter().import_file(source, data_version="bad", source="fixture")
