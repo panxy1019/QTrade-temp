@@ -10,6 +10,12 @@ from qtrade.research.metrics import (
     evaluate_factor_periods,
     evaluate_returns,
 )
+from qtrade.research.runner import (
+    ExperimentOutput,
+    ExperimentRunner,
+    ExperimentRunResult,
+    ExperimentRunSpec,
+)
 from qtrade.research.walk_forward import (
     WalkForwardConfig,
     build_walk_forward_splits,
@@ -26,5 +32,9 @@ __all__ = [
     "evaluate_factor",
     "evaluate_factor_periods",
     "evaluate_returns",
+    "ExperimentOutput",
+    "ExperimentRunner",
+    "ExperimentRunResult",
+    "ExperimentRunSpec",
     "build_walk_forward_splits",
 ]
