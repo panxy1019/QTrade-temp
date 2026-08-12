@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import json
+import os
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from hashlib import sha256
 from pathlib import Path
+from threading import Lock
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
@@ -19,18 +21,54 @@ from qtrade.market_data.quality import TickQualityGate
 class RawTickArchive:
     def __init__(self, path: Path) -> None:
         self._path = path.resolve()
+        self._lock = Lock()
+        self._ordinal = 0
+        self._previous_hash = ""
+        if self._path.is_file():
+            lines = self._path.read_text(encoding="utf-8").splitlines()
+            if lines:
+                last = json.loads(lines[-1])
+                self._ordinal = int(last["ingest_ordinal"]) + 1
+                self._previous_hash = str(last["hash"])
 
     def append(self, provider: str, payload: dict[str, object], received_at: datetime) -> None:
         if not provider or received_at.tzinfo is None:
             raise ValueError("raw tick archive identity and receipt time are required")
         self._path.parent.mkdir(parents=True, exist_ok=True)
-        envelope = {
-            "provider": provider,
-            "received_at": received_at.isoformat(),
-            "payload": payload,
-        }
-        with self._path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(envelope, sort_keys=True, default=str) + "\n")
+        with self._lock:
+            envelope = {
+                "ingest_ordinal": self._ordinal,
+                "provider": provider,
+                "received_at": received_at.isoformat(),
+                "payload": payload,
+                "previous_hash": self._previous_hash,
+            }
+            canonical = json.dumps(envelope, sort_keys=True, default=str)
+            digest = sha256(canonical.encode()).hexdigest()
+            envelope["hash"] = digest
+            with self._path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(envelope, sort_keys=True, default=str) + "\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+            self._ordinal += 1
+            self._previous_hash = digest
+
+    def verify_chain(self) -> bool:
+        previous_hash = ""
+        for expected_ordinal, line in enumerate(
+            self._path.read_text(encoding="utf-8").splitlines()
+        ):
+            row = json.loads(line)
+            digest = str(row.pop("hash"))
+            if int(row["ingest_ordinal"]) != expected_ordinal:
+                return False
+            if row["previous_hash"] != previous_hash:
+                return False
+            canonical = json.dumps(row, sort_keys=True, default=str)
+            if sha256(canonical.encode()).hexdigest() != digest:
+                return False
+            previous_hash = digest
+        return True
 
 
 class CanonicalTickStore:
@@ -70,8 +108,23 @@ class CanonicalTickStore:
                     else value
                 )
                 payload[field].append(serialized)
-        pq.write_table(pa.table(payload), target, compression="zstd")
-        return target, sha256(target.read_bytes()).hexdigest()
+        temporary = target.with_suffix(".parquet.tmp")
+        pq.write_table(pa.table(payload), temporary, compression="zstd")
+        checksum = sha256(temporary.read_bytes()).hexdigest()
+        temporary.replace(target)
+        manifest = target_dir / "manifest.json"
+        manifest.write_text(
+            json.dumps(
+                {
+                    "data_version": next(iter(versions)),
+                    "row_count": len(ticks),
+                    "checksum": checksum,
+                },
+                sort_keys=True,
+            ),
+            encoding="utf-8",
+        )
+        return target, checksum
 
     def read(self, path: Path, checksum: str) -> tuple[CanonicalTick, ...]:
         target = path.resolve()
@@ -97,6 +150,9 @@ class CanonicalTickStore:
                 data_version=row["data_version"],
                 ingestion_time=datetime.fromisoformat(row["ingestion_time"]),
                 reconnect_id=row["reconnect_id"],
+                ingest_ordinal=(
+                    None if row["ingest_ordinal"] is None else int(row["ingest_ordinal"])
+                ),
             )
             for row in rows
         )
@@ -115,20 +171,32 @@ class TickBarAggregator:
         if interval <= timedelta(0):
             raise ValueError("bar interval must be positive")
         self._interval = interval
+        self._pending: dict[tuple[str, str, datetime], list[CanonicalTick]] = {}
+        self._finalized: set[tuple[str, str, datetime]] = set()
 
-    def aggregate(self, ticks: tuple[CanonicalTick, ...]) -> tuple[AvailableBar, ...]:
-        if not ticks:
-            return ()
+    def aggregate(
+        self, ticks: tuple[CanonicalTick, ...], *, watermark: datetime
+    ) -> tuple[AvailableBar, ...]:
+        if watermark.tzinfo is None:
+            raise ValueError("bar watermark must be timezone-aware")
         ordered = sorted(ticks, key=lambda tick: (tick.timestamp_exchange, tick.sequence))
-        groups: dict[tuple[str, str, datetime], list[CanonicalTick]] = {}
         seconds = int(self._interval.total_seconds())
         for tick in ordered:
             epoch = int(tick.timestamp_exchange.timestamp())
             start = datetime.fromtimestamp(epoch - epoch % seconds, tz=UTC)
-            groups.setdefault((tick.instrument, tick.exchange, start), []).append(tick)
+            key = (tick.instrument, tick.exchange, start)
+            if key in self._finalized:
+                raise ValueError("late tick arrived after bar finalization")
+            self._pending.setdefault(key, []).append(tick)
         result: list[AvailableBar] = []
-        ordered_groups = sorted(groups.items(), key=lambda item: item[0][2])
+        closable = {
+            key: values
+            for key, values in self._pending.items()
+            if key[2] + self._interval <= watermark
+        }
+        ordered_groups = sorted(closable.items(), key=lambda item: item[0][2])
         for (instrument, exchange, start), values in ordered_groups:
+            values.sort(key=lambda tick: (tick.timestamp_exchange, tick.sequence))
             prices = [item.price for item in values]
             result.append(
                 AvailableBar(
@@ -143,11 +211,14 @@ class TickBarAggregator:
                         prices[-1],
                         values[-1].volume - values[0].volume,
                     ),
-                    max(item.timestamp_received for item in values),
+                    max(max(item.timestamp_received for item in values), start + self._interval),
                     values[0].sequence,
                     values[-1].sequence,
                 )
             )
+            key = (instrument, exchange, start)
+            self._finalized.add(key)
+            del self._pending[key]
         return tuple(result)
 
 
@@ -156,7 +227,15 @@ class TickReplay:
         issues = TickQualityGate().validate(ticks)
         if issues:
             raise ValueError("replay input failed quality gate")
-        self._ticks = tuple(sorted(ticks, key=lambda tick: (tick.sequence, tick.event_id)))
+        ordinals = [tick.ingest_ordinal for tick in ticks]
+        if any(value is not None for value in ordinals):
+            if any(value is None for value in ordinals) or len(set(ordinals)) != len(ordinals):
+                raise ValueError("replay ingest ordinals must be complete and unique")
+            self._ticks = tuple(
+                sorted(ticks, key=lambda tick: tick.ingest_ordinal or 0)
+            )
+        else:
+            self._ticks = ticks
 
     def run(self, handler: Callable[[CanonicalTick], None]) -> None:
         for tick in self._ticks:

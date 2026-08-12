@@ -71,6 +71,7 @@ class CanonicalTick:
     data_version: str
     ingestion_time: datetime
     reconnect_id: str = "initial"
+    ingest_ordinal: int | None = None
 
     def __post_init__(self) -> None:
         required = (
@@ -92,6 +93,8 @@ class CanonicalTick:
             raise ValueError("canonical tick timestamps must be timezone-aware")
         if self.sequence < 0:
             raise ValueError("canonical tick sequence cannot be negative")
+        if self.ingest_ordinal is not None and self.ingest_ordinal < 0:
+            raise ValueError("canonical tick ingest ordinal cannot be negative")
         numeric = (self.price, self.volume, self.turnover)
         optional = (
             self.bid_price,
