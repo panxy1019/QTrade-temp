@@ -70,7 +70,8 @@ synthetic end-to-end workflow. Rolling/expanding walk-forward splits, momentum,
 reversal, realized-volatility, liquidity baselines and multi-period ICIR are now
 tested. Multi-period evaluation uses instrument-keyed, as-of/known-at observations
 so membership turnover cannot depend on array position. Remaining: model training
-orchestration and vnpy.alpha adapter.
+orchestration and vnpy.alpha adapter. Walk-forward boundaries support session-based
+label embargo and reject overlapping held-out test windows.
 
 ### M4 — Integrated event-driven backtest
 

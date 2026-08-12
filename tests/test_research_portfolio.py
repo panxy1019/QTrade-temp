@@ -112,6 +112,20 @@ def test_walk_forward_rejects_unsorted_or_insufficient_sessions():
         build_walk_forward_splits([date(2026, 1, 1)], config)
 
 
+def test_walk_forward_embargo_purges_label_horizon_and_tests_do_not_overlap():
+    sessions = [date(2026, 1, day) for day in range(1, 16)]
+    splits = build_walk_forward_splits(
+        sessions,
+        WalkForwardConfig(4, 2, 2, 2, embargo_sessions=1),
+    )
+    assert splits[0].train_end == date(2026, 1, 4)
+    assert splits[0].validation_start == date(2026, 1, 6)
+    assert splits[0].validation_end == date(2026, 1, 7)
+    assert splits[0].test_start == date(2026, 1, 9)
+    with pytest.raises(ValueError, match="cannot overlap"):
+        WalkForwardConfig(4, 2, 3, 2)
+
+
 def test_baseline_factors_are_deterministic_and_input_validated():
     closes = [Decimal("10"), Decimal("11"), Decimal("10"), Decimal("12")]
     volumes = [Decimal("100"), Decimal("200"), Decimal("100"), Decimal("400")]
