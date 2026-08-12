@@ -22,6 +22,8 @@ def test_sqlite_journal_persists_uncertain_fill_across_restart(tmp_path):
     assert restarted.uncertain_fills()[0].state == "PENDING"
     restarted.mark_fill("fill-1", "APPLIED")
     assert restarted.uncertain_fills() == ()
+    with pytest.raises(ValueError, match="immutable"):
+        restarted.mark_fill("fill-1", "FAILED", "late-error")
 
 
 def test_sqlite_journal_rejects_fill_key_conflict_and_persists_audit(tmp_path):

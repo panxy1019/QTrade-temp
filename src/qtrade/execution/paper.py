@@ -240,7 +240,9 @@ class PaperGateway:
             record.state = FillProcessingState.FAILED
             record.error = type(exc).__name__
             if self._journal is not None:
-                self._journal.mark_fill(fill_key, "FAILED", type(exc).__name__)
+                durable = self._journal.get_fill(fill_key)
+                if durable is not None and durable.state == "PENDING":
+                    self._journal.mark_fill(fill_key, "FAILED", type(exc).__name__)
             self._audit.record(
                 AuditEvent(
                     event_type="FILL_PROCESSING_FAILED",

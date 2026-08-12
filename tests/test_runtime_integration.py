@@ -139,6 +139,9 @@ def test_crash_after_atomic_fill_commit_restores_exactly_one_effect(tmp_path, mo
             order, fill_key="fill-crash", price=Decimal("10"), quantity=100, now=NOW
         )
 
+    assert bundle.journal.get_fill("fill-crash").state == "APPLIED"  # type: ignore[union-attr]
+    assert bundle.journal.uncertain_fills() == ()
+
     restarted = build(tmp_path)
     assert restarted.ledger.account.cash == Decimal("99000")
     assert restarted.ledger.account.position_quantity("510300") == 100

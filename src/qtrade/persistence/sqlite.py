@@ -95,12 +95,22 @@ class SQLiteOperationalJournal:
         if state not in {"APPLIED", "FAILED"}:
             raise ValueError("fill terminal journal state must be APPLIED or FAILED")
         with self._lock, self._connect() as connection:
+            row = connection.execute(
+                "SELECT state FROM fill_journal WHERE fill_key=?", (fill_key,)
+            ).fetchone()
+            if row is None:
+                raise KeyError(fill_key)
+            if row[0] == state:
+                return
+            if row[0] != "PENDING":
+                raise ValueError(f"fill terminal state is immutable: {row[0]}")
             cursor = connection.execute(
-                "UPDATE fill_journal SET state=?, updated_at=?, error=? WHERE fill_key=?",
+                "UPDATE fill_journal SET state=?, updated_at=?, error=? "
+                "WHERE fill_key=? AND state='PENDING'",
                 (state, datetime.now(UTC).isoformat(), error, fill_key),
             )
             if cursor.rowcount != 1:
-                raise KeyError(fill_key)
+                raise RuntimeError("fill state changed concurrently")
 
     def commit_fill_effect(
         self,
