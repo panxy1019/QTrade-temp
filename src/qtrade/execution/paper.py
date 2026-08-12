@@ -343,19 +343,32 @@ class PaperGateway:
         idempotency_key: str | None = None,
         now: datetime | None = None,
     ) -> Order:
+        cancelled, created = self.cancel_with_result(
+            order, idempotency_key=idempotency_key, now=now
+        )
+        if created:
+            self._report_state_change()
+        return cancelled
+
+    def cancel_with_result(
+        self,
+        order: Order,
+        *,
+        idempotency_key: str | None = None,
+        now: datetime | None = None,
+    ) -> tuple[Order, bool]:
         key = idempotency_key or f"cancel:{order.internal_order_id}"
         existing = self._cancel_results.get(key)
         if existing is not None:
             if existing.internal_order_id != order.internal_order_id:
                 raise ValueError("cancel idempotency key conflict")
-            return existing
+            return existing, False
         timestamp = now or utc_now()
         self._oms.transition(order, OrderStatus.CANCEL_PENDING, now=timestamp)
         cancelled = self._oms.transition(order, OrderStatus.CANCELLED, now=timestamp)
         self.reservations.release(order.internal_order_id)
         self._cancel_results[key] = cancelled
-        self._report_state_change()
-        return cancelled
+        return cancelled, True
 
     def _report_state_change(self) -> None:
         if self._state_change_handler is not None:

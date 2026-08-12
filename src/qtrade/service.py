@@ -26,6 +26,7 @@ class TradingService:
         submission_guard: Callable[[], None] | None = None,
         state_change_handler: Callable[[], None] | None = None,
         submission_observer: Callable[[Order, datetime], None] | None = None,
+        cancel_observer: Callable[[Order], None] | None = None,
         observer_failure_handler: Callable[[], None] | None = None,
     ) -> None:
         self._risk = risk
@@ -40,7 +41,9 @@ class TradingService:
             raise ValueError("PAPER/SHADOW TradingService requires a runtime submission guard")
         self._state_change_handler = state_change_handler
         self._submission_observer = submission_observer
+        self._cancel_observer = cancel_observer
         self._observer_failure_handler = observer_failure_handler
+        self._observed_cancel_keys: set[str] = set()
 
     def submit(
         self, request: OrderRequest, context: RiskContext, *, now: datetime | None = None
@@ -106,16 +109,31 @@ class TradingService:
         """
         with self._risk.dispatch_gate:
             order = self._oms.get(command.internal_order_id)
-            return self._gateway.cancel(
+            cancelled, _ = self._gateway.cancel_with_result(
                 order,
                 idempotency_key=command.idempotency_key,
                 now=now,
             )
+            if self._state_change_handler is not None:
+                self._state_change_handler()
+            if command.idempotency_key not in self._observed_cancel_keys:
+                self._observe_cancel(cancelled)
+                self._observed_cancel_keys.add(command.idempotency_key)
+            return cancelled
 
     def _observe_submission(self, order: Order, now: datetime | None) -> None:
         if self._submission_observer is not None:
             try:
                 self._submission_observer(order, now or order.updated_at)
+            except Exception:
+                if self._observer_failure_handler is not None:
+                    with suppress(Exception):
+                        self._observer_failure_handler()
+
+    def _observe_cancel(self, order: Order) -> None:
+        if self._cancel_observer is not None:
+            try:
+                self._cancel_observer(order)
             except Exception:
                 if self._observer_failure_handler is not None:
                     with suppress(Exception):

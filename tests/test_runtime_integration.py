@@ -163,6 +163,34 @@ def test_cancel_remains_available_after_halt_and_is_idempotent(tmp_path):
     assert first is second
     assert first.status.value == "CANCELLED"
     assert bundle.gateway.reservations.reserved_cash == Decimal("0")
+    assert bundle.metrics.cancels_total == 1
+
+
+def test_cancel_persistence_failure_halts_and_retry_can_persist(tmp_path, monkeypatch):
+    bundle = build(tmp_path)
+    attest(bundle)
+    bundle.runtime.start(actor="operator")
+    order, _ = submit(bundle, "cancel-persistence")
+    original_save = bundle.journal.save_states
+
+    monkeypatch.setattr(
+        bundle.journal,
+        "save_states",
+        lambda _states: (_ for _ in ()).throw(OSError("cancel database failure")),
+    )
+    command = CancelCommand(order.internal_order_id, "cancel-persistence-key")
+    with pytest.raises(OSError, match="cancel database failure"):
+        bundle.service.cancel(command, now=NOW)
+    assert bundle.risk.state.value == "HALTED"
+
+    monkeypatch.setattr(bundle.journal, "save_states", original_save)
+    retried = bundle.service.cancel(command, now=NOW)
+    assert retried.status.value == "CANCELLED"
+    assert bundle.metrics.cancels_total == 1
+
+    restarted = build(tmp_path)
+    assert restarted.oms.orders[0].status.value == "CANCELLED"
+    assert restarted.gateway.reservations.reserved_cash == Decimal("0")
 
 
 def test_runtime_metrics_count_unique_submissions_rejections_and_fills(tmp_path):

@@ -105,6 +105,9 @@ successful order/fill effects.
 Ordinary account/runtime snapshots also commit in one transaction and injected
 database failure latches HALTED. The composition root is tracked in Git after
 repairing an over-broad `runtime/` ignore rule.
+Terminal cancellation persistence is application-service owned and retryable by
+its idempotency key; injected persistence failure halts and a successful retry
+restores CANCELLED without a leaked reservation.
 
 ### M6 — Control plane, dashboard, and observability
 

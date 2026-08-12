@@ -300,6 +300,7 @@ def build_paper_runtime(
         submission_guard=runtime.ensure_submission_allowed,
         state_change_handler=persist_account,
         submission_observer=observe_submission,
+        cancel_observer=lambda _order: metrics.record_cancel(),
         observer_failure_handler=metrics.mark_degraded,
     )
     return PaperRuntimeBundle(

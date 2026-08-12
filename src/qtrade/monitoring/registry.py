@@ -22,6 +22,7 @@ class MetricsRegistry:
     orders_total: int = 0
     rejects_total: int = 0
     fills_total: int = 0
+    cancels_total: int = 0
     gateway_connected: bool = False
     account_sync_age_seconds: Decimal = Decimal("0")
     reconciliation_status: str = "UNKNOWN"
@@ -47,6 +48,10 @@ class MetricsRegistry:
     def record_fill(self) -> None:
         with self._lock:
             self.fills_total += 1
+
+    def record_cancel(self) -> None:
+        with self._lock:
+            self.cancels_total += 1
 
     def mark_degraded(self) -> None:
         with self._lock:
@@ -74,6 +79,7 @@ class MetricsRegistry:
                 "orders_total": self.orders_total,
                 "rejects_total": self.rejects_total,
                 "fills_total": self.fills_total,
+                "cancels_total": self.cancels_total,
                 "orders_per_minute": len(self._order_times),
                 "reject_rate": str(reject_rate),
                 "fill_rate": str(fill_rate),
