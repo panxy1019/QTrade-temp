@@ -10,7 +10,7 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Current phase: integrated paper/shadow platform hardening.
 - Current milestone: M5/M6 failure recovery, control, and observability.
-- Acceptance evidence: 109 tests passed, Ruff clean, strict mypy
+- Acceptance evidence: 111 tests passed, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); end-to-end synthetic workflow executed.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
@@ -84,4 +84,7 @@ Last updated: 2026-08-12
 - Shadow boundary: a process adapter capability check runs before connector
   invocation, accepts only hash-verified strictly sequenced observation events,
   deduplicates IDs, rejects command event types, and exposes no order-send API.
+- Corporate actions: backward-adjusted bars consume only sourced normalized
+  factors known at the requested point in time, apply only before effective date,
+  adjust price/volume consistently, and record the exact adjustment IDs used.
 - Live trading: disabled and structurally unavailable.

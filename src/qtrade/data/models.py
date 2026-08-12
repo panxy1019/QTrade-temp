@@ -60,6 +60,24 @@ class CorporateAction:
 
 
 @dataclass(frozen=True, slots=True)
+class PriceAdjustment:
+    adjustment_id: str
+    symbol: str
+    effective_date: date
+    known_at: datetime
+    price_factor: Decimal
+    source: str
+
+    def __post_init__(self) -> None:
+        if not self.adjustment_id or not self.symbol or not self.source:
+            raise ValueError("adjustment identity, symbol, and source are required")
+        if self.known_at.tzinfo is None:
+            raise ValueError("adjustment known_at must be timezone-aware")
+        if not self.price_factor.is_finite() or self.price_factor <= 0:
+            raise ValueError("adjustment factor must be finite and positive")
+
+
+@dataclass(frozen=True, slots=True)
 class QualityIssue:
     code: str
     message: str

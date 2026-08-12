@@ -1,12 +1,16 @@
 from datetime import UTC, date, datetime
 from decimal import Decimal
 
+import pytest
+
 from qtrade.data import (
     Bar,
     BarQualityGate,
     CorporateAction,
     IndexMembership,
     PointInTimeStore,
+    PriceAdjustment,
+    apply_backward_adjustments,
 )
 
 
@@ -106,3 +110,49 @@ def test_point_in_time_corporate_actions_hide_future_announcements():
         )
         == ()
     )
+
+
+def test_sourced_point_in_time_adjustments_apply_only_to_prior_history():
+    bars = [bar(10, "20"), bar(11, "10", open=Decimal("10"))]
+    adjustment = PriceAdjustment(
+        "split-510300-20260811",
+        "510300",
+        date(2026, 8, 11),
+        datetime(2026, 8, 9, tzinfo=UTC),
+        Decimal("0.5"),
+        "licensed-vendor://corporate-actions/v1",
+    )
+    result = apply_backward_adjustments(
+        bars, [adjustment], known_at=datetime(2026, 8, 12, tzinfo=UTC)
+    )
+    assert result.bars[0].close == Decimal("10.0")
+    assert result.bars[0].volume == Decimal("2000")
+    assert result.bars[1].close == Decimal("10")
+    assert result.adjustment_ids == ("split-510300-20260811",)
+
+
+def test_future_known_adjustment_is_not_applied_and_bad_factor_rejects():
+    adjustment = PriceAdjustment(
+        "future",
+        "510300",
+        date(2026, 8, 11),
+        datetime(2026, 8, 12, tzinfo=UTC),
+        Decimal("0.5"),
+        "licensed-vendor://corporate-actions/v1",
+    )
+    result = apply_backward_adjustments(
+        [bar(10, "20"), bar(11, "10", open=Decimal("10"))],
+        [adjustment],
+        known_at=datetime(2026, 8, 11, tzinfo=UTC),
+    )
+    assert result.bars[0].close == Decimal("20")
+    assert result.adjustment_ids == ()
+    with pytest.raises(ValueError, match="finite and positive"):
+        PriceAdjustment(
+            "bad",
+            "510300",
+            date(2026, 8, 11),
+            datetime(2026, 8, 10, tzinfo=UTC),
+            Decimal("NaN"),
+            "source",
+        )

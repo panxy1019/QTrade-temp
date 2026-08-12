@@ -55,8 +55,9 @@ Current evidence: source-backed effective-date rule model, PIT memberships and
 corporate actions, multi-check quality gate, checksum-verified Parquet/DuckDB
 bar adapter, and strict checksum-versioned canonical CSV importer. Temporal and
 jump validation is grouped per instrument and rejects non-finite values.
-Remaining: durable metadata catalog, calendars/status, normalized
-corporate-action adjustments and larger fixture coverage.
+Sourced normalized corporate-action factors produce point-in-time backward-
+adjusted bars with explicit adjustment lineage. Remaining: durable metadata
+catalog, broader calendars/status and larger fixture coverage.
 
 ### M3 — Research, factors, portfolio, and evaluation
 
@@ -154,7 +155,7 @@ implementation → independent review → test review → main-agent integration
 ## Current work queue
 
 1. Expand failure injection and deterministic paper execution plans.
-2. Add normalized corporate-action adjustment tests and metadata catalog.
+2. Add durable metadata catalog.
 3. Add model-training experiment adapter after baseline reports are complete.
 4. Extend deterministic matching/session simulation and alerts.
 
