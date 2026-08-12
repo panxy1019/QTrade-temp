@@ -47,3 +47,31 @@ events only after declaring `external_order_transmission=false`. The capability
 is checked before connection, and the bridge rejects mutation, protocol mismatch,
 out-of-order sequence, duplicate IDs and command event types. SHADOW orders remain
 inside Q's `PaperGateway`; no adapter send operation exists.
+
+## ADR-006 — Freeze b502852 as the v0.1 stable core
+
+Status: accepted, 2026-08-12.
+
+Risk, OMS, accounting, paper execution, recovery, persistence fencing,
+idempotency and reconciliation at commit `b502852` form the stable core. QTrade
+v0.2 work is additive around explicit protocols. Core changes require a
+reproduced defect or contract/safety/data-consistency need, focused regression,
+and independent review.
+
+## ADR-007 — Real market data never changes execution authority
+
+Status: accepted, 2026-08-12.
+
+`REAL_DATA_PAPER` is a configuration of `RuntimeMode.PAPER`, not a new runtime
+authority. Authentic ticks/bars may drive strategies, but orders still traverse
+portfolio, risk, OMS, `PaperGateway`, accounting and recovery. `RuntimeMode.LIVE`
+and externally transmitting broker commands remain absent.
+
+## ADR-008 — Native providers and brokers live behind process protocols
+
+Status: accepted, 2026-08-12.
+
+Vendor SDKs and native vn.py gateways must not be imported into the Python 3.14
+core. Provider/broker bridges use isolated environments and versioned canonical
+protocols. The broker protocol in this goal is read-only and deliberately has no
+order-submit or cancel operation.

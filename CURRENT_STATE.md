@@ -2,14 +2,16 @@
 
 Last updated: 2026-08-12
 
-- Goal: deliver a tested A-share/ETF research, backtest, paper, and shadow
-  platform while real-money trading remains disabled.
+- Goal: evolve the v0.1 stable PAPER/SHADOW core into a real-market-data strategy
+  research/evolution platform with a professional Chinese web application and
+  isolated read-only broker architecture. Real-money trading remains disabled.
 - Completed: environment audit; architecture/safety decisions; durable safety
   kernel; versioned data/PIT contracts; research/portfolio baselines; shared-path
   next-bar backtest; control plane/dashboard; reconciliation/recovery contracts;
   authoritative China rule-source registry; vn.py gap analysis.
-- Current phase: validated PAPER/SHADOW software checkpoint.
-- Current milestone: complete; external provider/broker integration remains gated.
+- Stable baseline: `b502852`, QTrade Platform v0.1 — Stable PAPER/SHADOW Core.
+- Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
+- Current milestone: V2-M2 strategy registry and experiment platform.
 - Acceptance evidence: 122 tests passed, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); 92% statement coverage; end-to-end
   synthetic workflow reran successfully with immutable unique artifact IDs.
@@ -21,8 +23,11 @@ Last updated: 2026-08-12
   vn.py and broker adapters require external provider/broker selection.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: choose a licensed realtime data provider and broker/ABI before adding
-  external adapters; keep all external order transmission structurally disabled.
+- Next: implement strategy registry/lineage/experiments while provider, UI and
+  broker compatibility research proceed in parallel.
+- External blockers: `WAITING_FOR_DATA_PROVIDER_AUTH` and
+  `WAITING_FOR_BROKER_SELECTION`; they do not block mock adapters, replay,
+  strategy research, UI or read-only protocol work.
 - Analytical persistence: checksum-verified Parquet/DuckDB bar storage and
   immutable hashed experiment records implemented; 51 tests pass at 93% coverage.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
