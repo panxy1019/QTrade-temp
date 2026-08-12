@@ -11,6 +11,7 @@ from qtrade.workflows import BaselineWorkflow
 
 
 def main() -> None:
+    run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
     start = date(2026, 1, 5)
     bars = [
         Bar(
@@ -27,7 +28,7 @@ def main() -> None:
         for index in range(8)
     ]
     manifest = DataManifest(
-        "synthetic-v1",
+        f"synthetic-{run_id}",
         "generated-fixture",
         "1",
         datetime.now(UTC),
@@ -40,7 +41,7 @@ def main() -> None:
         manifest=manifest,
         instrument=Instrument("510300", "SSE", "ETF", 100, Decimal("0.001")),
         git_commit=commit,
-        experiment_id="synthetic-buy-hold-v1",
+        experiment_id=f"synthetic-buy-hold-{run_id}",
     )
     print(result)
 

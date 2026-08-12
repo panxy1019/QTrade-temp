@@ -11,7 +11,8 @@ Last updated: 2026-08-12
 - Current phase: integrated paper/shadow platform hardening.
 - Current milestone: M5/M6 failure recovery, control, and observability.
 - Acceptance evidence: 111 tests passed, Ruff clean, strict mypy
-  clean on Python 3.14.6 (2026-08-12); end-to-end synthetic workflow executed.
+  clean on Python 3.14.6 (2026-08-12); 92% statement coverage; end-to-end
+  synthetic workflow reran successfully with immutable unique artifact IDs.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
 - Known limitations: current OMS/ledger/reservations are in-process and do not
