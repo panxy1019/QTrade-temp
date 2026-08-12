@@ -81,6 +81,12 @@ dataset manifest gate, broader metrics, liquidity/matching models and report.
 Persistence, reconciliation, replay, restart protocol, duplicate/out-of-order
 events, disconnect/freeze/database failure injection.
 
+Current evidence: SQLite FULL/WAL journal, durable account/order/reservation/fill
+markers, restart restoration, mandatory HALTED restart, uncertain fill blocking,
+incident-to-HALT coupling and recovery sequence tests. Remaining: one atomic
+durable transaction for inbound fill + OMS + ledger + reservation effects,
+external gateway reconciliation/replay and PostgreSQL multi-process adapter.
+
 ### M6 — Control plane, dashboard, and observability
 
 FastAPI with read/control/trade-sensitive role separation, prominent mode,

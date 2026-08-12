@@ -60,6 +60,7 @@ def test_paper_gateway_restart_refuses_pending_fill_replay(tmp_path):
             True,
             True,
             now,
+            sellable_quantities={},
         ),
         now=now,
     )

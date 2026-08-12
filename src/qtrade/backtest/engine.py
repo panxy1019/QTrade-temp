@@ -4,11 +4,12 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Protocol
 
-from qtrade.accounting import Ledger
+from qtrade.accounting import Ledger, SellabilityLedger
 from qtrade.audit import AuditLog
 from qtrade.data import Bar, DataManifest, QualityStatus
 from qtrade.domain import Instrument, OrderRequest, Side
 from qtrade.execution import FeeSchedule, PaperGateway
+from qtrade.instruments import TradingRule
 from qtrade.oms import OrderManager
 from qtrade.risk import RiskContext, RiskEngine, RiskLimits
 from qtrade.service import TradingService
@@ -35,11 +36,15 @@ class BacktestEngine:
         opening_cash: Decimal,
         fees: FeeSchedule,
         limits: RiskLimits,
+        trading_rule: TradingRule,
         slippage: Decimal = Decimal("0"),
     ) -> None:
         if slippage < 0:
             raise ValueError("slippage cannot be negative")
         self._instrument = instrument
+        if trading_rule.venue != instrument.exchange:
+            raise ValueError("trading rule venue does not match instrument")
+        self._trading_rule = trading_rule
         self._slippage = slippage
         self.audit = AuditLog()
         self.ledger = Ledger(opening_cash, self.audit)
@@ -48,6 +53,7 @@ class BacktestEngine:
         self.service = TradingService(RiskEngine(limits, self.audit), self.oms, self.gateway)
         self._trades = 0
         self._fees = Decimal("0")
+        self._sellability = SellabilityLedger()
         self._has_run = False
 
     def run(
@@ -105,6 +111,9 @@ class BacktestEngine:
             gateway_connected=True,
             reconciliation_ok=True,
             now=bar.timestamp,
+            sellable_quantities={
+                bar.symbol: self._sellability.sellable_quantity(bar.symbol, bar.trading_day)
+            },
         )
         order, _ = self.service.submit(request, context, now=bar.timestamp)
         if order.rejection_reason is not None:
@@ -117,5 +126,14 @@ class BacktestEngine:
             now=bar.timestamp,
         )
         if created:
+            if side is Side.BUY:
+                self._sellability.acquire(
+                    bar.symbol,
+                    quantity,
+                    bar.trading_day,
+                    self._trading_rule.sellability_lag_days,
+                )
+            else:
+                self._sellability.dispose(bar.symbol, quantity, bar.trading_day)
             self._trades += 1
             self._fees += trade.fee

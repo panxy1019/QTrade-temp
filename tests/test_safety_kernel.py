@@ -81,6 +81,9 @@ def context(ledger: Ledger, **overrides: object) -> RiskContext:
         "gateway_connected": True,
         "reconciliation_ok": True,
         "now": NOW,
+        "sellable_quantities": {
+            symbol: position.quantity for symbol, position in ledger.account.positions.items()
+        },
     }
     values.update(overrides)
     return RiskContext(**values)  # type: ignore[arg-type]
@@ -222,6 +225,20 @@ def test_open_buy_order_reserves_cash_against_competing_order():
     assert second.rejection_reason == "insufficient cash"
 
 
+def test_open_buy_orders_count_toward_position_and_gross_limits():
+    audit = AuditLog()
+    ledger = Ledger(Decimal("100000"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("10000"), 150, Decimal("1500")), audit)
+    gateway = PaperGateway(oms, ledger, audit, FeeSchedule("v1", Decimal("0"), Decimal("0")))
+    service = TradingService(risk, oms, gateway)
+    first, _ = service.submit(request(key="one"), context(ledger), now=NOW)
+    second, _ = service.submit(request(key="two"), context(ledger), now=NOW)
+    assert first.status is OrderStatus.ACCEPTED
+    assert second.status is OrderStatus.RISK_REJECTED
+    assert second.rejection_reason in {"position limit exceeded", "gross exposure limit exceeded"}
+
+
 def test_open_sell_order_reserves_position_against_competing_order():
     service, _, _, gateway, ledger, _ = build_system()
     buy, _ = service.submit(request(key="buy"), context(ledger), now=NOW)
@@ -231,6 +248,16 @@ def test_open_sell_order_reserves_position_against_competing_order():
     assert first.status is OrderStatus.ACCEPTED
     assert second.status is OrderStatus.RISK_REJECTED
     assert second.rejection_reason == "insufficient position"
+
+
+def test_sell_fails_closed_without_verified_sellability():
+    service, _, _, gateway, ledger, _ = build_system()
+    buy, _ = service.submit(request(key="buy"), context(ledger), now=NOW)
+    gateway.fill(buy, fill_key="buy", price=Decimal("10"), quantity=100, now=NOW)
+    unavailable = context(ledger, sellable_quantities=None)
+    sell, _ = service.submit(request(key="sell", side=Side.SELL), unavailable, now=NOW)
+    assert sell.status is OrderStatus.RISK_REJECTED
+    assert sell.rejection_reason == "sellability data unavailable"
 
 
 @pytest.mark.parametrize("invalid", [Decimal("-1"), Decimal("NaN"), Decimal("Infinity")])
@@ -286,10 +313,11 @@ def test_deterministic_paper_reject_and_disconnect_injection():
     rejected, _ = service.submit(request(key="reject"), context(ledger), now=NOW)
     assert rejected.status is OrderStatus.REJECTED
     assert rejected.rejection_reason == "injected paper rejection"
+    assert gateway.reservations.reserved_cash == Decimal("0")
 
     gateway.inject_next_action(PaperAction.DISCONNECT)
     with pytest.raises(ConnectionError, match="injected"):
-        service.submit(request(key="disconnect"), context(ledger), now=NOW)
+        uncertain, _ = service.submit(request(key="disconnect"), context(ledger), now=NOW)
     assert gateway.connected is False
 
 

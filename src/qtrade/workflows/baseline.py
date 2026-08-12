@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date
 from decimal import Decimal
 from pathlib import Path
 
@@ -8,6 +9,7 @@ from qtrade.backtest import BacktestEngine
 from qtrade.data import Bar, DataManifest, ParquetBarStore
 from qtrade.domain import Instrument
 from qtrade.execution import FeeSchedule
+from qtrade.instruments import TradingRule
 from qtrade.research import (
     ExperimentArtifactStore,
     ExperimentRecord,
@@ -49,6 +51,20 @@ class BaselineWorkflow:
             opening_cash=Decimal("100000"),
             fees=FeeSchedule("workflow-v1", Decimal("0.0003"), Decimal("0.0005")),
             limits=RiskLimits(Decimal("100000"), 100000, Decimal("100000")),
+            trading_rule=TradingRule(
+                "workflow-rule",
+                instrument.exchange,
+                "WORKFLOW_FIXTURE",
+                date(2000, 1, 1),
+                None,
+                instrument.lot_size,
+                instrument.lot_size,
+                instrument.price_tick,
+                None,
+                1,
+                "fixture://workflow-rule",
+                "1",
+            ),
         )
         result = engine.run(verified_bars, BuyAndHoldStrategy(100), manifest=stored_manifest)
         returns = [

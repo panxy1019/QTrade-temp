@@ -66,6 +66,11 @@ class SQLiteOperationalJournal:
                     order_id TEXT,
                     payload TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS runtime_state (
+                    state_key TEXT PRIMARY KEY,
+                    payload TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
                 """
             )
 
@@ -145,3 +150,20 @@ class SQLiteOperationalJournal:
                     payload,
                 ),
             )
+
+    def save_state(self, state_key: str, payload: dict[str, object]) -> None:
+        serialized = json.dumps(payload, sort_keys=True)
+        with self._lock, self._connect() as connection:
+            connection.execute(
+                "INSERT INTO runtime_state(state_key,payload,updated_at) VALUES(?,?,?) "
+                "ON CONFLICT(state_key) DO UPDATE SET payload=excluded.payload, "
+                "updated_at=excluded.updated_at",
+                (state_key, serialized, datetime.now(UTC).isoformat()),
+            )
+
+    def load_state(self, state_key: str) -> dict[str, object] | None:
+        with self._connect() as connection:
+            row = connection.execute(
+                "SELECT payload FROM runtime_state WHERE state_key=?", (state_key,)
+            ).fetchone()
+        return None if row is None else dict(json.loads(row[0]))

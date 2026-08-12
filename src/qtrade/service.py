@@ -21,6 +21,7 @@ class TradingService:
         gateway: PaperGateway,
         reservations: ReservationBook | None = None,
         submission_guard: Callable[[], None] | None = None,
+        state_change_handler: Callable[[], None] | None = None,
     ) -> None:
         self._risk = risk
         self._oms = oms
@@ -29,6 +30,7 @@ class TradingService:
             raise ValueError("external order transmission is unavailable in this build")
         self._reservations = reservations or gateway.reservations
         self._submission_guard = submission_guard
+        self._state_change_handler = state_change_handler
 
     def submit(
         self, request: OrderRequest, context: RiskContext, *, now: datetime | None = None
@@ -43,10 +45,15 @@ class TradingService:
             reserved_sell = {
                 request.symbol: self._reservations.reserved_sell_quantity(request.symbol)
             }
+            reserved_buy = {
+                request.symbol: self._reservations.reserved_buy_quantity(request.symbol)
+            }
             reservation_context = replace(
                 context,
                 reserved_cash=self._reservations.reserved_cash,
                 reserved_sell_quantities=reserved_sell,
+                reserved_buy_quantities=reserved_buy,
+                reserved_buy_notional=self._reservations.reserved_buy_notional,
             )
             decision = self._risk.assess(request, reservation_context)
             if not decision.passed:
@@ -58,5 +65,19 @@ class TradingService:
             self._reservations.reserve(
                 order.internal_order_id, request, self._risk.required_buy_cash(request)
             )
-            self._gateway.submit(order, now=now)
+            try:
+                submitted = self._gateway.submit(order, now=now)
+            except ConnectionError:
+                self._oms.transition(order, OrderStatus.SUBMISSION_UNKNOWN, now=now)
+                raise
+            except Exception:
+                self._reservations.release(order.internal_order_id)
+                raise
+            finally:
+                if self._state_change_handler is not None:
+                    self._state_change_handler()
+            if submitted.status is OrderStatus.REJECTED:
+                self._reservations.release(order.internal_order_id)
+                if self._state_change_handler is not None:
+                    self._state_change_handler()
             return order, True

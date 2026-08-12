@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal
@@ -68,6 +69,8 @@ class PaperGateway:
         fees: FeeSchedule,
         reservations: ReservationBook | None = None,
         journal: SQLiteOperationalJournal | None = None,
+        incident_handler: Callable[[str], None] | None = None,
+        state_change_handler: Callable[[], None] | None = None,
     ) -> None:
         self._oms = oms
         self._ledger = ledger
@@ -80,6 +83,8 @@ class PaperGateway:
         self._cancel_results: dict[str, Order] = {}
         self.connected = True
         self._next_action = PaperAction.ACCEPT
+        self._incident_handler = incident_handler
+        self._state_change_handler = state_change_handler
 
     def inject_next_action(self, action: PaperAction) -> None:
         self._next_action = action
@@ -105,6 +110,7 @@ class PaperGateway:
         self._next_action = PaperAction.ACCEPT
         if action is PaperAction.DISCONNECT:
             self.connected = False
+            self._report_incident("gateway disconnected during submission")
             raise ConnectionError("injected gateway disconnect")
         broker_order_id = f"PAPER-{uuid4()}"
         self._oms.transition(order, OrderStatus.SUBMITTED, now=timestamp)
@@ -137,9 +143,14 @@ class PaperGateway:
 
     def disconnect(self) -> None:
         self.connected = False
+        self._report_incident("gateway disconnected")
 
     def reconnect(self) -> None:
         self.connected = True
+
+    def _report_incident(self, reason: str) -> None:
+        if self._incident_handler is not None:
+            self._incident_handler(reason)
 
     def fill(
         self,
@@ -217,10 +228,12 @@ class PaperGateway:
                     timestamp=timestamp,
                 )
             )
+            self._report_incident("fill processing failed")
             raise
         record.state = FillProcessingState.APPLIED
         if self._journal is not None:
             self._journal.mark_fill(fill_key, "APPLIED")
+        self._report_state_change()
         return trade, True
 
     def cancel(
@@ -241,4 +254,9 @@ class PaperGateway:
         cancelled = self._oms.transition(order, OrderStatus.CANCELLED, now=timestamp)
         self.reservations.release(order.internal_order_id)
         self._cancel_results[key] = cancelled
+        self._report_state_change()
         return cancelled
+
+    def _report_state_change(self) -> None:
+        if self._state_change_handler is not None:
+            self._state_change_handler()

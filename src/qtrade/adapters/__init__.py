@@ -1,0 +1,1 @@
+"""External-process adapter contracts."""

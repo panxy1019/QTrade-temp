@@ -19,7 +19,7 @@ class DuplicateOrderConflict(ValueError):
 _ALLOWED_TRANSITIONS: dict[OrderStatus, frozenset[OrderStatus]] = {
     OrderStatus.CREATED: frozenset({OrderStatus.RISK_PENDING}),
     OrderStatus.RISK_PENDING: frozenset({OrderStatus.RISK_PASSED, OrderStatus.RISK_REJECTED}),
-    OrderStatus.RISK_PASSED: frozenset({OrderStatus.SUBMITTED}),
+    OrderStatus.RISK_PASSED: frozenset({OrderStatus.SUBMITTED, OrderStatus.SUBMISSION_UNKNOWN}),
     OrderStatus.SUBMITTED: frozenset(
         {OrderStatus.ACCEPTED, OrderStatus.REJECTED, OrderStatus.SUBMISSION_UNKNOWN}
     ),
@@ -54,6 +54,15 @@ class OrderManager:
 
     def get(self, internal_order_id: str) -> Order:
         return self._orders[internal_order_id]
+
+    def restore(self, order: Order) -> None:
+        if order.internal_order_id in self._orders:
+            raise ValueError("order already restored")
+        existing = self._by_idempotency_key.get(order.request.idempotency_key)
+        if existing is not None:
+            raise DuplicateOrderConflict("restored idempotency key conflicts")
+        self._orders[order.internal_order_id] = order
+        self._by_idempotency_key[order.request.idempotency_key] = order.internal_order_id
 
     def create(self, request: OrderRequest, *, now: datetime | None = None) -> tuple[Order, bool]:
         existing_id = self._by_idempotency_key.get(request.idempotency_key)

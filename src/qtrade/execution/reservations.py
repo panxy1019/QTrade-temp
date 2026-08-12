@@ -35,6 +35,20 @@ class ReservationBook:
             if item.side is Side.SELL and item.symbol == symbol
         )
 
+    def reserved_buy_quantity(self, symbol: str) -> int:
+        return sum(
+            item.remaining_quantity
+            for item in self._reservations.values()
+            if item.side is Side.BUY and item.symbol == symbol
+        )
+
+    @property
+    def reserved_buy_notional(self) -> Decimal:
+        return sum(
+            (item.remaining_cash for item in self._reservations.values() if item.side is Side.BUY),
+            start=Decimal("0"),
+        )
+
     def reserve(self, order_id: str, request: OrderRequest, required_cash: Decimal) -> None:
         if order_id in self._reservations:
             raise ValueError("order already has a reservation")
@@ -66,3 +80,11 @@ class ReservationBook:
 
     def release(self, order_id: str) -> None:
         self._reservations.pop(order_id, None)
+
+    def snapshot(self) -> tuple[Reservation, ...]:
+        return tuple(self._reservations.values())
+
+    def restore(self, reservation: Reservation) -> None:
+        if reservation.order_id in self._reservations:
+            raise ValueError("reservation already exists")
+        self._reservations[reservation.order_id] = reservation

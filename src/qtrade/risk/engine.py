@@ -56,6 +56,9 @@ class RiskContext:
     now: datetime
     reserved_cash: Decimal = Decimal("0")
     reserved_sell_quantities: dict[str, int] | None = None
+    sellable_quantities: dict[str, int] | None = None
+    reserved_buy_quantities: dict[str, int] | None = None
+    reserved_buy_notional: Decimal = Decimal("0")
 
 
 @dataclass(frozen=True, slots=True)
@@ -161,8 +164,16 @@ class RiskEngine:
         if request.price % instrument.price_tick != 0:
             return "price is not aligned to date-effective tick size"
         current_quantity = context.account.position_quantity(request.symbol)
+        if request.side is Side.SELL and context.sellable_quantities is None:
+            return "sellability data unavailable"
+        verified_sellable = (
+            current_quantity
+            if context.sellable_quantities is None
+            else context.sellable_quantities.get(request.symbol, 0)
+        )
         reserved_sell = (context.reserved_sell_quantities or {}).get(request.symbol, 0)
-        sellable_quantity = current_quantity - reserved_sell
+        sellable_quantity = min(current_quantity, verified_sellable) - reserved_sell
+        reserved_buy = (context.reserved_buy_quantities or {}).get(request.symbol, 0)
         if self._state is KillState.REDUCE_ONLY and (
             request.side is Side.BUY or request.quantity > sellable_quantity
         ):
@@ -182,8 +193,10 @@ class RiskEngine:
         order_value = request.price * request.quantity
         if order_value > self._limits.max_order_value:
             return "order value limit exceeded"
-        projected_quantity = current_quantity + (
-            request.quantity if request.side is Side.BUY else -request.quantity
+        projected_quantity = (
+            current_quantity
+            + reserved_buy
+            + (request.quantity if request.side is Side.BUY else -request.quantity)
         )
         if projected_quantity > self._limits.max_position_quantity:
             return "position limit exceeded"
@@ -193,7 +206,11 @@ class RiskEngine:
         ):
             return "insufficient cash"
         gross = context.account.gross_market_value(context.market_prices)
-        projected_gross = gross + (order_value if request.side is Side.BUY else -order_value)
+        projected_gross = (
+            gross
+            + context.reserved_buy_notional
+            + (order_value if request.side is Side.BUY else -order_value)
+        )
         if projected_gross > self._limits.max_gross_exposure:
             return "gross exposure limit exceeded"
         return None

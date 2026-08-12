@@ -7,6 +7,7 @@ from qtrade.backtest import BacktestEngine
 from qtrade.data import Bar, DataManifest, QualityStatus
 from qtrade.domain import Instrument
 from qtrade.execution import FeeSchedule
+from qtrade.instruments import TradingRule
 from qtrade.risk import RiskLimits
 from qtrade.strategies import BuyAndHoldStrategy, MovingAverageTrendStrategy
 
@@ -34,6 +35,20 @@ def engine(slippage: str = "0") -> BacktestEngine:
         opening_cash=Decimal("100000"),
         fees=FeeSchedule("test", Decimal("0.0003"), Decimal("0.0005")),
         limits=RiskLimits(Decimal("100000"), 10000, Decimal("100000")),
+        trading_rule=TradingRule(
+            "test-etf",
+            "SSE",
+            "DOMESTIC_EQUITY_ETF",
+            date(2020, 1, 1),
+            None,
+            100,
+            100,
+            Decimal("0.001"),
+            Decimal("0.10"),
+            1,
+            "https://example.test/rule",
+            "test",
+        ),
         slippage=Decimal(slippage),
     )
 
