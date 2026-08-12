@@ -9,6 +9,7 @@ from qtrade.market_data import (
     CanonicalTick,
     CanonicalTickStore,
     MarketSnapshot,
+    ProviderCapabilities,
     ProviderConnectionStatus,
     RawTickArchive,
     RqDataProvider,
@@ -209,8 +210,12 @@ class MockRqBridge:
 
 def test_rqdata_adapter_uses_injected_bridge_and_never_contains_credentials():
     bridge = MockRqBridge()
-    provider = RqDataProvider(bridge)
+    capabilities = ProviderCapabilities(
+        "RQData", True, True, True, True, True, True, True, False
+    )
+    provider = RqDataProvider(bridge, capabilities)
     assert provider.get_status().connection is ProviderConnectionStatus.DISCONNECTED
+    assert provider.capabilities.corporate_actions is False
     with pytest.raises(RuntimeError, match="not connected"):
         provider.subscribe(("510300",))
     provider.connect()
@@ -227,3 +232,19 @@ def test_rqdata_adapter_uses_injected_bridge_and_never_contains_credentials():
     ) == 1
     provider.disconnect()
     assert provider.get_status().connection is ProviderConnectionStatus.DISCONNECTED
+
+
+def test_rqdata_adapter_rejects_unverified_or_unentitled_capabilities():
+    bridge = MockRqBridge()
+    with pytest.raises(ValueError, match="identity mismatch"):
+        RqDataProvider(
+            bridge,
+            ProviderCapabilities("XT", True, True, True, True, True, True, True, True),
+        )
+    provider = RqDataProvider(
+        bridge,
+        ProviderCapabilities("RQData", True, False, False, False, True, True, True, False),
+    )
+    provider.connect()
+    with pytest.raises(RuntimeError, match="not entitled"):
+        provider.subscribe(("510300",))
