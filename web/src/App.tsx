@@ -45,10 +45,10 @@ function Shell() {
           <Routes>
             <Route path="/" element={<OverviewPage data={data} dark={dark} />} />
             <Route path="/market" element={<MarketPage />} />
-            <Route path="/strategies" element={<StrategyPage />} />
-            <Route path="/research" element={<ResearchPage />} />
-            <Route path="/experiments" element={<ExperimentPage />} />
-            <Route path="/backtest" element={<BacktestPage />} />
+            <Route path="/strategies" element={<StrategyPage data={data} />} />
+            <Route path="/research" element={<ResearchPage data={data} />} />
+            <Route path="/experiments" element={<ExperimentPage data={data} />} />
+            <Route path="/backtest" element={<BacktestPage data={data} />} />
             <Route path="/paper" element={<PaperPage data={data} />} />
             <Route path="/positions" element={<PositionsPage data={data} />} />
             <Route path="/orders" element={<OrdersPage data={data} />} />

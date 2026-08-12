@@ -1,5 +1,7 @@
+import json
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from hashlib import sha256
 
 import pytest
 from fastapi.testclient import TestClient
@@ -100,6 +102,7 @@ def test_required_read_surfaces_exist():
         "/market",
         "/instruments",
         "/strategies",
+        "/experiments",
         "/portfolio",
         "/positions",
         "/orders",
@@ -110,6 +113,46 @@ def test_required_read_surfaces_exist():
         "/system",
     ):
         assert api.get(path).status_code == 200
+
+
+def test_verified_research_results_are_exposed_and_tampering_fails_closed(tmp_path):
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("100000"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit)
+    runtime = PlatformRuntime(RuntimeMode.PAPER, risk, audit, metrics)
+    report = {
+        "classification": "exploratory_noncommercial_current_universe_not_pit",
+        "data_version": "akshare-bars-v1",
+        "promotion": "NOT_ELIGIBLE",
+        "promotion_reasons": ["NO_PAPER_OR_SHADOW_SESSIONS"],
+        "experiments": [
+            {
+                "experiment_id": "momentum-v1",
+                "metrics": {"sharpe": "0.44"},
+                "scenario_type": "PRIMARY",
+            }
+        ],
+    }
+    canonical = json.dumps(report, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    target = tmp_path / "comparison.json"
+    target.write_text(
+        json.dumps({"sha256": sha256(canonical.encode()).hexdigest(), "report": report}),
+        encoding="utf-8",
+    )
+    api = TestClient(
+        create_app(
+            AppContext(
+                runtime, metrics, oms, ledger, audit, research_comparison_path=target
+            ),
+            ApiAuthConfig(),
+        )
+    )
+    assert api.get("/experiments").json()["data_version"] == "akshare-bars-v1"
+    assert api.get("/strategies").json()[0]["metrics"]["sharpe"] == "0.44"
+    target.write_text(target.read_text().replace("0.44", "9.99"), encoding="utf-8")
+    assert api.get("/strategies").json() == []
 
 
 def test_daily_report_history_exposes_verified_summary(tmp_path):

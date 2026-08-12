@@ -24,8 +24,12 @@ Last updated: 2026-08-12
   vn.py and broker adapters require external provider/broker selection.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: evaluate the canonical 30-ETF historical dataset with causal multi-asset
-  baselines while seeking a working snapshot endpoint for the recorded PAPER workflow.
+- Real-data research: causal close-decision/next-open multi-asset experiments now
+  emit immutable equity/drawdown/trade/position/risk/log artifacts. Results are
+  explicitly NOT_ELIGIBLE for promotion because the universe is current/non-PIT
+  and PAPER/SHADOW and full walk-forward evidence are absent.
+- Next: complete walk-forward/subperiod robustness while seeking a working
+  snapshot endpoint for the recorded PAPER workflow.
   Select a broker before building a native read-only reconciliation bridge.
 - External blockers: `WAITING_FOR_AKSHARE_SNAPSHOT_ENDPOINT_ACCESS`,
   `WAITING_FOR_DATA_PROVIDER_AUTH` and

@@ -9,26 +9,37 @@ export function MarketPage() {
   return <Page title="行情中心" subtitle="A股、ETF 与指数 Level-1 行情"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Input.Search placeholder="搜索证券代码或名称" /><Empty description="授权并连接行情供应商后显示实时行情与K线" /></Space></Page>
 }
 
-export function StrategyPage() {
+export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
   const columns = [
     { title: '策略名称', dataIndex: 'name' }, { title: '版本', dataIndex: 'version' },
     { title: 'Family', dataIndex: 'family' }, { title: '状态', dataIndex: 'status', render: (value: string) => <Tag color="blue">{value}</Tag> },
-    { title: '角色', dataIndex: 'role' }, { title: 'Sharpe', dataIndex: 'sharpe' }, { title: '最大回撤', dataIndex: 'mdd' },
+    { title: '角色', dataIndex: 'role' },
+    { title: 'Sharpe', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.sharpe ?? '—' },
+    { title: '最大回撤', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.maximum_drawdown ?? '—' },
   ]
-  return <Page title="策略中心" subtitle="策略版本、运行状态与研究角色"><Table columns={columns} dataSource={[]} pagination={false} locale={{ emptyText: '暂无已注册策略' }} /></Page>
+  return <Page title="策略中心" subtitle="策略版本、运行状态与研究角色"><Alert showIcon type="info" title="研究实验，不是已批准策略" description="所有 AKShare 结果均为当前样本池探索，角色保持 NONE，不可视为 Champion。" /><Table rowKey="strategy_id" columns={columns} dataSource={data?.strategies ?? []} pagination={false} locale={{ emptyText: '暂无已验证研究记录' }} /></Page>
 }
 
-export function ResearchPage() {
-  return <Page title="策略研究" subtitle="血缘、候选与 Champion/Challenger"><Card><Tabs items={[{ key: 'registry', label: '策略注册表', children: <Empty description="策略版本将从注册表加载" /> }, { key: 'lineage', label: '演化树', children: <Empty description="暂无可验证策略血缘" /> }, { key: 'rejected', label: '已拒绝', children: <Empty description="暂无已拒绝策略" /> }]} /></Card></Page>
+export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
+  const report = data?.experiments
+  return <Page title="策略研究" subtitle="血缘、候选与 Champion/Challenger"><Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} /><Card><Tabs items={[{ key: 'registry', label: '策略注册表', children: <Typography.Text>已加载 {report?.experiments.length ?? 0} 个不可变实验记录。</Typography.Text> }, { key: 'lineage', label: '演化树', children: <Empty description="当前实验尚未形成已批准血缘" /> }, { key: 'rejected', label: '未晋级', children: <Typography.Text type="secondary">当前样本池存在幸存者偏差，且缺少 PAPER/SHADOW 证据。</Typography.Text> }]} /></Card></Page>
 }
 
-export function ExperimentPage() {
-  const columns = ['实验ID', '策略', 'Git提交', '数据版本', '训练期', '验证期', '测试期', '状态'].map((title) => ({ title, dataIndex: title }))
-  return <Page title="实验中心" subtitle="可复现实验、指标与产物"><Table columns={columns} dataSource={[]} locale={{ emptyText: '尚未运行正式实验' }} /></Page>
+export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
+  const columns = [
+    { title: '实验ID', dataIndex: 'experiment_id' },
+    { title: '类型', dataIndex: 'scenario_type' },
+    { title: '测试期收益', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.total_return ?? '—' },
+    { title: 'Sharpe', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.sharpe ?? '—' },
+    { title: '最大回撤', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.maximum_drawdown ?? '—' },
+  ]
+  return <Page title="实验中心" subtitle="真实 AKShare 历史数据上的可复现实验"><Alert showIcon type="info" title={data?.experiments.classification ?? '尚无验证产物'} description={`数据版本：${data?.experiments.data_version ?? '—'}`} /><Table rowKey="experiment_id" columns={columns} dataSource={data?.experiments.experiments ?? []} locale={{ emptyText: '尚未运行验证实验' }} /></Page>
 }
 
-export function BacktestPage() {
-  return <Page title="回测分析" subtitle="资金曲线、超额收益、回撤与成本"><Card title="回测结果"><Typography.Text type="secondary">完成实验后显示资金曲线、滚动 Sharpe、敞口、换手和成交明细。</Typography.Text></Card></Page>
+export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
+  const rows = [...(data?.experiments.experiments ?? [])].sort((left, right) => Number(right.metrics.sharpe ?? -999) - Number(left.metrics.sharpe ?? -999))
+  const leader = rows[0]
+  return <Page title="回测分析" subtitle="资金曲线、回撤、敞口、换手与成本"><Alert showIcon type="warning" title="探索性领先者，不是 Champion" description={leader ? `${leader.experiment_id}：测试期收益 ${leader.metrics.total_return}，Sharpe ${leader.metrics.sharpe}，最大回撤 ${leader.metrics.maximum_drawdown}` : '暂无已验证结果'} /><Card title="证据状态"><Typography.Text type="secondary">已有不可变资金曲线、回撤、成交、持仓、风险与日志产物；因当前样本池非 PIT 且缺少 PAPER/SHADOW 观察，禁止晋级。</Typography.Text></Card></Page>
 }
 
 export function PaperPage({ data }: { data: PlatformSnapshot | null }) {

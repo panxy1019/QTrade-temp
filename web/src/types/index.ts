@@ -43,6 +43,34 @@ export interface DailyReportSummary {
   sha256: string
 }
 
+export interface ResearchStrategyRow {
+  strategy_id: string
+  name: string
+  family: string
+  status: string
+  role: string
+  metrics: Record<string, string>
+  scenario_type: string
+  data_version: string
+}
+
+export interface ResearchExperiment {
+  experiment_id: string
+  spec_hash: string
+  result_hash: string
+  metrics: Record<string, string>
+  scenario_type: string
+}
+
+export interface ResearchReport {
+  classification: string
+  data_version?: string
+  git_commit?: string
+  promotion: string
+  promotion_reasons: string[]
+  experiments: ResearchExperiment[]
+}
+
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
@@ -52,4 +80,6 @@ export interface PlatformSnapshot {
   orders: OrderRow[]
   metrics: MetricsSnapshot
   reports: DailyReportSummary[]
+  strategies: ResearchStrategyRow[]
+  experiments: ResearchReport
 }

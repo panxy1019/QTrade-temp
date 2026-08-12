@@ -116,8 +116,10 @@ npm --prefix web run build
 - [ ] Obtain a successful snapshot endpoint/schema/freshness probe.
 - [ ] Normalize A-share and major-index history/snapshots.
 - [ ] Run the first complete real trading-day PAPER acceptance and replay comparison.
-- [ ] Produce real-data strategy Champion/Challenger evidence.
-- [ ] Bind all required Chinese dashboard pages to those backend records.
+- [x] Produce bounded real-data baseline/sensitivity evidence; no strategy met
+  promotion requirements, so no Champion/Challenger role was assigned.
+- [x] Bind strategy/research/experiment/backtest Chinese dashboard pages to
+  checksum-verified backend records with explicit NOT_ELIGIBLE labeling.
 
 Authenticated RQData/XT validation remains a later authoritative-feed option.
 Native broker work remains blocked on broker selection and sandbox access.

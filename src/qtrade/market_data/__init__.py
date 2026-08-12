@@ -1,5 +1,7 @@
 """Provider-neutral realtime/historical market data, recording and replay."""
 
+from typing import TYPE_CHECKING, Any
+
 from qtrade.market_data.akshare import (
     AkshareMarketDataProvider,
     AksharePollingPolicy,
@@ -13,7 +15,6 @@ from qtrade.market_data.models import (
     ProviderStatus,
     TickQualityIssue,
 )
-from qtrade.market_data.paper_session import RecordedPaperEvent, RecordedPaperSession
 from qtrade.market_data.provider import (
     HistoricalDataProvider,
     MarketDataProvider,
@@ -39,6 +40,20 @@ from qtrade.market_data.selection import (
     inspect_provider_selection,
 )
 from qtrade.market_data.xtdata import XtDataProvider
+
+if TYPE_CHECKING:
+    from qtrade.market_data.paper_session import RecordedPaperEvent, RecordedPaperSession
+
+
+def __getattr__(name: str) -> Any:
+    if name in {"RecordedPaperEvent", "RecordedPaperSession"}:
+        from qtrade.market_data.paper_session import RecordedPaperEvent, RecordedPaperSession
+
+        return {
+            "RecordedPaperEvent": RecordedPaperEvent,
+            "RecordedPaperSession": RecordedPaperSession,
+        }[name]
+    raise AttributeError(name)
 
 __all__ = [
     "AkshareMarketDataProvider",

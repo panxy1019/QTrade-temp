@@ -9,7 +9,7 @@ async function getJson<T>(path: string): Promise<T> {
 }
 
 export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
-  const [system, health, account, pnl, positions, orders, metrics, reports] = await Promise.all([
+  const [system, health, account, pnl, positions, orders, metrics, reports, strategies, experiments] = await Promise.all([
     getJson<PlatformSnapshot['system']>('/system'),
     getJson<PlatformSnapshot['health']>('/health'),
     getJson<PlatformSnapshot['account']>('/account'),
@@ -18,6 +18,8 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getJson<PlatformSnapshot['orders']>('/orders'),
     getJson<PlatformSnapshot['metrics']>('/metrics'),
     getJson<PlatformSnapshot['reports']>('/reports'),
+    getJson<PlatformSnapshot['strategies']>('/strategies'),
+    getJson<PlatformSnapshot['experiments']>('/experiments'),
   ])
-  return { system, health, account, pnl, positions, orders, metrics, reports }
+  return { system, health, account, pnl, positions, orders, metrics, reports, strategies, experiments }
 }

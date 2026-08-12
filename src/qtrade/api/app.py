@@ -65,6 +65,7 @@ class AppContext:
     recover: Callable[[str], None] | None = None
     cancel: Callable[[CancelCommand], Order] | None = None
     daily_report_root: Path | None = None
+    research_comparison_path: Path | None = None
 
 
 def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
@@ -162,7 +163,35 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
 
     @app.get("/strategies")
     def strategies(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
-        return []
+        report = _load_verified_research_report(state.research_comparison_path)
+        if report is None:
+            return []
+        raw_experiments = report.get("experiments", [])
+        experiments = raw_experiments if isinstance(raw_experiments, list) else []
+        return [
+            {
+                "strategy_id": value.get("experiment_id"),
+                "name": value.get("experiment_id"),
+                "family": "ETF_ROTATION",
+                "status": "EXPERIMENT",
+                "role": "NONE",
+                "metrics": value.get("metrics", {}),
+                "scenario_type": value.get("scenario_type"),
+                "data_version": report.get("data_version"),
+            }
+            for value in experiments
+            if isinstance(value, dict)
+        ]
+
+    @app.get("/experiments")
+    def experiments(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:
+        report = _load_verified_research_report(state.research_comparison_path)
+        return report or {
+            "classification": "NO_VERIFIED_RESEARCH_RESULT",
+            "experiments": [],
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": ["MISSING_VERIFIED_RESEARCH_ARTIFACT"],
+        }
 
     @app.get("/portfolio")
     def portfolio(
@@ -340,4 +369,28 @@ def context_from_runtime(bundle: object) -> AppContext:
         recover=lambda actor: bundle.reconcile_and_recover(actor=actor),
         cancel=bundle.service.cancel,
         daily_report_root=Path("runtime/reports"),
+        research_comparison_path=Path("runtime/research/akshare-v4/comparison.json"),
     )
+
+
+def _load_verified_research_report(path: Path | None) -> dict[str, object] | None:
+    if path is None or not path.is_file():
+        return None
+    try:
+        envelope = json.loads(path.read_text(encoding="utf-8"))
+        report = envelope.get("report")
+        digest = envelope.get("sha256")
+        if not isinstance(report, dict) or not isinstance(digest, str):
+            return None
+        canonical = json.dumps(
+            report,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            default=str,
+        )
+        if sha256(canonical.encode("utf-8")).hexdigest() != digest:
+            return None
+        return report
+    except (OSError, json.JSONDecodeError):
+        return None

@@ -1,3 +1,5 @@
+import subprocess
+import sys
 from decimal import Decimal
 from pathlib import Path
 
@@ -30,3 +32,13 @@ def test_strategies_and_portfolio_do_not_import_execution_layer():
             source = path.read_text(encoding="utf-8")
             assert "qtrade.execution" not in source
             assert "PaperGateway" not in source
+
+
+def test_runtime_imports_in_a_clean_interpreter_without_market_data_cycle():
+    result = subprocess.run(
+        [sys.executable, "-c", "import qtrade.runtime; import qtrade.market_data"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr

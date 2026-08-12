@@ -20,6 +20,14 @@ from qtrade.research.metrics import (
     evaluate_factor_periods,
     evaluate_returns,
 )
+from qtrade.research.multi_asset import (
+    DailyMultiAssetBacktester,
+    EqualWeightBuyHold,
+    MomentumAllocation,
+    MultiAssetBacktestResult,
+    ResearchTrade,
+    write_experiment_artifacts,
+)
 from qtrade.research.runner import (
     ExperimentOutput,
     ExperimentRunner,
@@ -38,6 +46,11 @@ __all__ = [
     "FactorMetrics",
     "FactorObservation",
     "PerformanceMetrics",
+    "DailyMultiAssetBacktester",
+    "EqualWeightBuyHold",
+    "MomentumAllocation",
+    "MultiAssetBacktestResult",
+    "ResearchTrade",
     "TimeSplit",
     "LeakageReview",
     "ResearchHypothesis",
@@ -50,6 +63,7 @@ __all__ = [
     "evaluate_factor",
     "evaluate_factor_periods",
     "evaluate_returns",
+    "write_experiment_artifacts",
     "ExperimentOutput",
     "ExperimentRunner",
     "ExperimentRunResult",

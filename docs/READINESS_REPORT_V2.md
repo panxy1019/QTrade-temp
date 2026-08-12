@@ -112,3 +112,11 @@ data receipt on this host. A Sina-backed historical probe and 30-ETF canonical
 ingest succeeded (18,960 quality-passed daily bars, 2024-01-02 through
 2026-08-12), enabling real-data research. Snapshot authority, real-data PAPER,
 and multi-day acceptance remain open.
+
+The first causal multi-asset research comparison now covers buy-and-hold,
+single/multi-horizon momentum, trend, volatility scaling, rebalance sensitivity
+and cost stress. It enforces close-decision/next-open execution, whole lots,
+cash bounds, declared split end dates, bounded stale valuation and test-window
+cost/turnover metrics. The strongest exploratory variant still fails the default
+Sharpe threshold and lacks PIT, walk-forward and PAPER/SHADOW evidence; the
+machine-readable verdict is `NOT_ELIGIBLE`, with no Champion assigned.
