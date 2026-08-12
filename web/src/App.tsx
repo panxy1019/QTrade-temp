@@ -53,7 +53,7 @@ function Shell() {
             <Route path="/positions" element={<PositionsPage data={data} />} />
             <Route path="/orders" element={<OrdersPage data={data} />} />
             <Route path="/risk" element={<RiskPage data={data} />} />
-            <Route path="/data" element={<DataCenterPage />} />
+            <Route path="/data" element={<DataCenterPage data={data} />} />
             <Route path="/monitor" element={<MonitorPage data={data} />} />
           </Routes>
         </Layout.Content>

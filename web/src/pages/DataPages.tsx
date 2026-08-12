@@ -50,8 +50,9 @@ export function RiskPage({ data }: { data: PlatformSnapshot | null }) {
   return <Page title="风控中心" subtitle="风险状态、敞口与数据新鲜度"><Alert type={state === 'HALTED' ? 'error' : 'success'} showIcon title={<Space>当前风险状态 <StatusTag value={state} prominent /></Space>} /><Card className="risk-grid"><Descriptions values={[['Kill State', state], ['Gateway', data?.health.gateway_connected ? 'CONNECTED' : 'DISCONNECTED'], ['Reconciliation', data?.health.reconciliation_status ?? 'UNKNOWN'], ['Exposure', '—'], ['Concentration', '—'], ['Drawdown', '—']]}/></Card></Page>
 }
 
-export function DataCenterPage() {
-  return <Page title="数据中心" subtitle="供应商、质量、存储与回放"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Descriptions values={[['Provider', '未配置'], ['连接状态', 'DISCONNECTED'], ['订阅数量', '0'], ['数据版本', '—'], ['质量状态', '等待数据'], ['Replay', '可用']]}/></Space></Page>
+export function DataCenterPage({ data }: { data: PlatformSnapshot | null }) {
+  const reportCount = data?.reports.length ?? 0
+  return <Page title="数据中心" subtitle="供应商、质量、存储与回放"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Descriptions values={[['Provider', '未配置'], ['连接状态', 'DISCONNECTED'], ['订阅数量', '0'], ['数据版本', '—'], ['质量状态', '等待数据'], ['Replay', '可用'], ['每日报告', String(reportCount)]]}/></Space></Page>
 }
 
 export function MonitorPage({ data }: { data: PlatformSnapshot | null }) {

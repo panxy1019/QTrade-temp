@@ -21,12 +21,16 @@ class RqDataProvider:
     """
 
     def __init__(
-        self, client: ProviderBridgeClient, capabilities: ProviderCapabilities
+        self,
+        client: ProviderBridgeClient,
+        *,
+        required_protocol: str = "1",
+        required_schema: str = "canonical-tick-v1",
     ) -> None:
-        if capabilities.provider != "RQData":
-            raise ValueError("RQData bridge capability identity mismatch")
         self._client = client
-        self._capabilities = capabilities
+        self._capabilities: ProviderCapabilities | None = None
+        self._required_protocol = required_protocol
+        self._required_schema = required_schema
         self._connection = ProviderConnectionStatus.DISCONNECTED
         self._subscriptions: set[str] = set()
         self._last_event_at: datetime | None = None
@@ -34,6 +38,8 @@ class RqDataProvider:
 
     @property
     def capabilities(self) -> ProviderCapabilities:
+        if self._capabilities is None:
+            raise RuntimeError("RQData bridge capability handshake is not verified")
         return self._capabilities
 
     def connect(self) -> None:
@@ -42,19 +48,27 @@ class RqDataProvider:
         self._connection = ProviderConnectionStatus.CONNECTING
         try:
             self._client.connect()
+            capabilities = self._client.handshake()
+            self._verify_capabilities(capabilities)
         except Exception:
+            try:
+                self._client.disconnect()
+            finally:
+                self._capabilities = None
             self._connection = ProviderConnectionStatus.DISCONNECTED
             raise
+        self._capabilities = capabilities
         self._connection = ProviderConnectionStatus.CONNECTED
 
     def disconnect(self) -> None:
         self._client.disconnect()
+        self._capabilities = None
         self._connection = ProviderConnectionStatus.DISCONNECTED
         self._subscriptions.clear()
 
     def subscribe(self, instruments: tuple[str, ...]) -> None:
         self._require_connected()
-        if not self._capabilities.realtime or not self._capabilities.ticks:
+        if not self.capabilities.realtime or not self.capabilities.ticks:
             raise RuntimeError("RQData bridge is not entitled for realtime ticks")
         if not instruments or any(not item for item in instruments):
             raise ValueError("provider subscription instruments are required")
@@ -112,7 +126,7 @@ class RqDataProvider:
     ) -> tuple[Bar, ...]:
         if start.tzinfo is None or end.tzinfo is None or start >= end or not interval:
             raise ValueError("provider history query is invalid")
-        if not self._capabilities.historical:
+        if not self.capabilities.historical:
             raise RuntimeError("RQData bridge is not entitled for history")
         self._require_connected()
         return tuple(self._client.history(instruments, start, end, interval))
@@ -120,3 +134,13 @@ class RqDataProvider:
     def _require_connected(self) -> None:
         if self._connection is not ProviderConnectionStatus.CONNECTED:
             raise RuntimeError("RQData provider is not connected")
+
+    def _verify_capabilities(self, value: ProviderCapabilities) -> None:
+        if value.provider != "RQData":
+            raise ValueError("RQData bridge capability identity mismatch")
+        if value.protocol_version != self._required_protocol:
+            raise ValueError("RQData bridge protocol mismatch")
+        if value.schema_version != self._required_schema:
+            raise ValueError("RQData bridge schema mismatch")
+        if value.external_order_transmission or value.account_access:
+            raise ValueError("RQData bridge must be data-only")

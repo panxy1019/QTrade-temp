@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime, timedelta
@@ -92,7 +93,14 @@ class CanonicalTickStore:
         versions = {tick.data_version for tick in ticks}
         if len(versions) != 1:
             raise ValueError("canonical tick recording requires one data_version")
-        target_dir = self._root / next(iter(versions))
+        version = next(iter(versions))
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", version):
+            raise ValueError("canonical tick data_version must be an opaque identifier")
+        if version in {".", ".."}:
+            raise ValueError("canonical tick data_version must be an opaque identifier")
+        target_dir = (self._root / version).resolve()
+        if not target_dir.is_relative_to(self._root):
+            raise ValueError("canonical tick target escapes recording root")
         target_dir.mkdir(parents=True, exist_ok=False)
         target = target_dir / "ticks.parquet"
         payload: dict[str, list[object]] = {
@@ -128,6 +136,8 @@ class CanonicalTickStore:
 
     def read(self, path: Path, checksum: str) -> tuple[CanonicalTick, ...]:
         target = path.resolve()
+        if not target.is_relative_to(self._root):
+            raise ValueError("canonical tick path escapes recording root")
         if sha256(target.read_bytes()).hexdigest() != checksum:
             raise ValueError("canonical tick checksum mismatch")
         rows = pq.read_table(target).to_pylist()

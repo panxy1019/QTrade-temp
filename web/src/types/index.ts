@@ -34,6 +34,15 @@ export interface MetricsSnapshot {
   [key: string]: string | number | boolean
 }
 
+export interface DailyReportSummary {
+  report_id: string
+  trading_day: string
+  generated_at: string
+  data_version: string
+  strategy_versions: string[]
+  sha256: string
+}
+
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
@@ -42,4 +51,5 @@ export interface PlatformSnapshot {
   positions: PositionRow[]
   orders: OrderRow[]
   metrics: MetricsSnapshot
+  reports: DailyReportSummary[]
 }

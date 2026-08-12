@@ -11,10 +11,11 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Stable baseline: `b502852`, QTrade Platform v0.1 — Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
-- Current milestone: V2-M2 strategy registry and experiment platform.
-- Acceptance evidence: 122 tests passed, Ruff clean, strict mypy
-  clean on Python 3.14.6 (2026-08-12); 92% statement coverage; end-to-end
-  synthetic workflow reran successfully with immutable unique artifact IDs.
+- Current milestone: V2-M6 integrated PAPER/SHADOW readiness review.
+- Acceptance evidence: 148 tests passed, Ruff clean, strict mypy clean on
+  Python 3.14.6 (2026-08-12); frontend Vitest, ESLint and production build pass.
+  The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
+  accounting path is integration tested without a real-provider credential.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
 - Known limitations: the local SQLite runtime is single-process and does not
@@ -23,8 +24,9 @@ Last updated: 2026-08-12
   vn.py and broker adapters require external provider/broker selection.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: implement strategy registry/lineage/experiments while provider, UI and
-  broker compatibility research proceed in parallel.
+- Next: complete independent safety/research review, fix blocking findings,
+  finalize V2 readiness documentation, and wait for licensed provider data to
+  perform the authenticated real-market PAPER soak test.
 - External blockers: `WAITING_FOR_DATA_PROVIDER_AUTH` and
   `WAITING_FOR_BROKER_SELECTION`; they do not block mock adapters, replay,
   strategy research, UI or read-only protocol work.

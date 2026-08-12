@@ -30,46 +30,46 @@ focused regression and independent safety review.
 
 ### V2-M2 — Strategy and experiment platform
 
-- [ ] Durable `StrategyRegistry` with versioning and constrained lifecycle.
-- [ ] Parent/child lineage with hypothesis, rationale, changes, results.
-- [ ] Champion/challenger roles with explicit promotion history.
-- [ ] Unified `ExperimentRunner` and immutable experiment registry/artifacts.
-- [ ] Promotion gate using OOS, risk, cost, robustness, sensitivity and
+- [x] Durable `StrategyRegistry` with versioning and constrained lifecycle.
+- [x] Parent/child lineage with hypothesis, rationale, changes, results.
+- [x] Champion/challenger roles with explicit promotion history.
+- [x] Unified `ExperimentRunner` and immutable experiment registry/artifacts.
+- [x] Promotion gate using OOS, risk, cost, robustness, sensitivity and
   walk-forward evidence; outcomes PASS/REJECT/NEEDS_REVIEW.
-- [ ] Strategy health monitor and traceable research-task feedback.
-- [ ] Baseline families: buy-and-hold, ETF momentum rotation, trend+risk, and
+- [x] Strategy health monitor and traceable research-task feedback.
+- [x] Baseline families: buy-and-hold, ETF momentum rotation, trend+risk, and
   cross-sectional factor ranking.
 
 ### V2-M3 — Real-market data and replay
 
-- [ ] Provider-neutral historical/realtime protocols and capability model.
-- [ ] Canonical ticks with exchange/receipt times, sequence and L1 fields.
-- [ ] Duplicate/order/staleness/session/clock/gap/reconnect quality checks.
-- [ ] Raw archive, canonical Parquet persistence, configurable bar aggregation.
-- [ ] Deterministic replay into the same PAPER/SHADOW strategy runtime.
-- [ ] At least one real-provider adapter package completed without claiming a
+- [x] Provider-neutral historical/realtime protocols and capability model.
+- [x] Canonical ticks with exchange/receipt times, sequence and L1 fields.
+- [x] Duplicate/order/staleness/session/clock/gap/reconnect quality checks.
+- [x] Raw archive, canonical Parquet persistence, configurable bar aggregation.
+- [x] Deterministic replay into the same PAPER/SHADOW strategy runtime.
+- [x] At least one real-provider adapter package completed without claiming a
   successful connection before legal credentials/SDK are available.
-- [ ] `REAL_DATA_PAPER` configuration remains `RuntimeMode.PAPER`.
+- [x] `REAL_DATA_PAPER` configuration remains `RuntimeMode.PAPER`.
 
 ### V2-M4 — Professional Chinese web platform
 
-- [ ] React + TypeScript + Vite + Ant Design + ECharts application under `web/`.
-- [ ] Twelve required pages with Simplified-Chinese terminology and no real-order UI.
-- [ ] Dark/light themes, consistent status semantics, responsive desktop-first layout.
-- [ ] Typed API client and FastAPI read/control contracts.
-- [ ] Build, tests and browser screenshot/interaction verification.
+- [x] React + TypeScript + Vite + Ant Design + ECharts application under `web/`.
+- [x] Twelve required pages with Simplified-Chinese terminology and no real-order UI.
+- [x] Dark/light themes, consistent status semantics, responsive desktop-first layout.
+- [x] Typed API client and FastAPI read/control contracts.
+- [x] Build, tests and browser screenshot/interaction verification.
 
 ### V2-M5 — Isolated future broker integration
 
-- [ ] Canonical read-only broker protocol and capabilities/status/account/
+- [x] Canonical read-only broker protocol and capabilities/status/account/
   position/order/trade records.
-- [ ] Separate bridge-process contract suitable for broker-specific Python ABI.
-- [ ] Connect/disconnect/heartbeat/query operations only; no real-order method.
-- [ ] Provider and broker compatibility reports based on official/current sources.
+- [x] Separate bridge-process contract suitable for broker-specific Python ABI.
+- [x] Connect/disconnect/heartbeat/query operations only; no real-order method.
+- [x] Provider and broker compatibility reports based on official/current sources.
 
 ### V2-M6 — Integrated readiness
 
-- [ ] Market data -> strategy -> portfolio -> risk -> OMS -> paper -> accounting
+- [x] Market data -> strategy -> portfolio -> risk -> OMS -> paper -> accounting
   integration test with recording and deterministic replay.
 - [ ] Daily traceable research/PAPER report and dashboard history endpoint.
 - [ ] Full pytest, Ruff, strict mypy, frontend build/tests, secret scan.
@@ -98,5 +98,6 @@ npm --prefix web run build
 
 ## Current work
 
-V2-M2: durable strategy registry, lineage, experiments, promotion and health.
-
+V2-M6: independent review, readiness reports, dashboard report-history endpoint,
+and an authenticated real-provider validation blocker that cannot be cleared
+without the user's licensed data entitlement.

@@ -81,7 +81,7 @@ def test_gateway_incident_halts_runtime_and_blocks_next_submit(tmp_path):
         submit(bundle, "uncertain")
     assert bundle.risk.state.value == "HALTED"
     assert bundle.metrics.reconciliation_status == "FAILED"
-    with pytest.raises(RuntimeError, match="risk state HALTED"):
+    with pytest.raises(RuntimeError, match="not started"):
         submit(bundle, "blocked")
 
 
@@ -114,9 +114,9 @@ def test_restart_restores_open_order_and_reservation(tmp_path):
     assert restarted.oms.orders[0].internal_order_id == order.internal_order_id
     assert restarted.gateway.reservations.reserved_cash == Decimal("1000")
     assert restarted.risk.state.value == "HALTED"
-    restarted.reconcile_and_recover(actor="operator")
-    assert restarted.risk.state.value == "NORMAL"
-    restarted.runtime.start(actor="operator")
+    with pytest.raises(ValueError, match="uncertain"):
+        restarted.reconcile_and_recover(actor="operator")
+    assert restarted.risk.state.value == "HALTED"
 
 
 def test_recovery_refuses_uncertain_fill(tmp_path):
@@ -377,7 +377,7 @@ def test_runtime_state_persistence_failure_latches_halt(tmp_path, monkeypatch):
 
     assert bundle.risk.state.value == "HALTED"
     assert bundle.metrics.reconciliation_status == "FAILED"
-    with pytest.raises(RuntimeError, match="risk state HALTED"):
+    with pytest.raises(RuntimeError, match="not started"):
         submit(bundle, "blocked-after-database-failure")
 
 

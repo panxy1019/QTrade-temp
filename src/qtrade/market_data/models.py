@@ -16,6 +16,10 @@ class ProviderConnectionStatus(StrEnum):
 @dataclass(frozen=True, slots=True)
 class ProviderCapabilities:
     provider: str
+    protocol_version: str
+    sdk_version: str
+    schema_version: str
+    session_nonce: str
     historical: bool
     realtime: bool
     ticks: bool
@@ -24,10 +28,23 @@ class ProviderCapabilities:
     stocks: bool
     indices: bool
     corporate_actions: bool
+    external_order_transmission: bool = False
+    account_access: bool = False
 
     def __post_init__(self) -> None:
-        if not self.provider:
+        if not all(
+            value.strip()
+            for value in (
+                self.provider,
+                self.protocol_version,
+                self.sdk_version,
+                self.schema_version,
+                self.session_nonce,
+            )
+        ):
             raise ValueError("provider capability identity is required")
+        if self.external_order_transmission or self.account_access:
+            raise ValueError("market data provider must be data-only")
 
 
 @dataclass(frozen=True, slots=True)

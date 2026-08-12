@@ -158,16 +158,34 @@ def test_replay_uses_ingest_ordinal_across_instruments_and_streams():
 
 
 class MockRqBridge:
-    def __init__(self) -> None:
+    def __init__(self, capabilities: ProviderCapabilities | None = None) -> None:
         self.connected = False
         self.tick_handler = None
         self.bar_handler = None
+        self.capabilities = capabilities or ProviderCapabilities(
+            "RQData",
+            "1",
+            "rqdatac-test",
+            "canonical-tick-v1",
+            "session-1",
+            True,
+            True,
+            True,
+            True,
+            True,
+            True,
+            True,
+            False,
+        )
 
     def connect(self):
         self.connected = True
 
     def disconnect(self):
         self.connected = False
+
+    def handshake(self):
+        return self.capabilities
 
     def subscribe(self, instruments):
         self.subscribed = instruments
@@ -210,15 +228,14 @@ class MockRqBridge:
 
 def test_rqdata_adapter_uses_injected_bridge_and_never_contains_credentials():
     bridge = MockRqBridge()
-    capabilities = ProviderCapabilities(
-        "RQData", True, True, True, True, True, True, True, False
-    )
-    provider = RqDataProvider(bridge, capabilities)
+    provider = RqDataProvider(bridge)
     assert provider.get_status().connection is ProviderConnectionStatus.DISCONNECTED
-    assert provider.capabilities.corporate_actions is False
+    with pytest.raises(RuntimeError, match="handshake"):
+        _ = provider.capabilities
     with pytest.raises(RuntimeError, match="not connected"):
         provider.subscribe(("510300",))
     provider.connect()
+    assert provider.capabilities.corporate_actions is False
     provider.subscribe(("510300",))
     assert provider.get_status().subscriptions == ("510300",)
     assert provider.get_snapshot(("510300",))[0].price == Decimal("10")
@@ -235,16 +252,61 @@ def test_rqdata_adapter_uses_injected_bridge_and_never_contains_credentials():
 
 
 def test_rqdata_adapter_rejects_unverified_or_unentitled_capabilities():
-    bridge = MockRqBridge()
-    with pytest.raises(ValueError, match="identity mismatch"):
-        RqDataProvider(
-            bridge,
-            ProviderCapabilities("XT", True, True, True, True, True, True, True, True),
+    bridge = MockRqBridge(
+        ProviderCapabilities(
+            "XT",
+            "1",
+            "test",
+            "canonical-tick-v1",
+            "session",
+            True,
+            True,
+            True,
+            True,
+            True,
+            True,
+            True,
+            True,
         )
+    )
+    with pytest.raises(ValueError, match="identity mismatch"):
+        RqDataProvider(bridge).connect()
     provider = RqDataProvider(
-        bridge,
-        ProviderCapabilities("RQData", True, False, False, False, True, True, True, False),
+        MockRqBridge(
+            ProviderCapabilities(
+                "RQData",
+                "1",
+                "test",
+                "canonical-tick-v1",
+                "session",
+                True,
+                False,
+                False,
+                False,
+                True,
+                True,
+                True,
+                False,
+            )
+        )
     )
     provider.connect()
     with pytest.raises(RuntimeError, match="not entitled"):
         provider.subscribe(("510300",))
+
+
+@pytest.mark.parametrize("version", ("../escaped", "C:/absolute", "a/b", ".."))
+def test_tick_store_rejects_path_like_data_versions_without_filesystem_effect(
+    tmp_path, version
+):
+    store = CanonicalTickStore(tmp_path / "root")
+    with pytest.raises(ValueError, match="opaque identifier"):
+        store.write((replace(tick(1), data_version=version),))
+    assert not (tmp_path / "escaped").exists()
+
+
+def test_tick_store_read_is_confined_to_its_root(tmp_path):
+    outside = tmp_path / "outside.parquet"
+    outside.write_bytes(b"not parquet")
+    with pytest.raises(ValueError, match="escapes"):
+        CanonicalTickStore(tmp_path / "root").read(outside, "unused")

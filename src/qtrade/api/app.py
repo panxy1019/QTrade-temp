@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from decimal import Decimal
@@ -62,6 +63,7 @@ class AppContext:
     audit: AuditLog
     recover: Callable[[str], None] | None = None
     cancel: Callable[[CancelCommand], Order] | None = None
+    daily_report_root: Path | None = None
 
 
 def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
@@ -193,6 +195,30 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             }
             for event in state.audit.events
         ]
+
+    @app.get("/reports")
+    def reports(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> list[dict[str, object]]:
+        if state.daily_report_root is None or not state.daily_report_root.is_dir():
+            return []
+        summaries: list[dict[str, object]] = []
+        for path in sorted(state.daily_report_root.glob("*.json"), reverse=True):
+            envelope = json.loads(path.read_text(encoding="utf-8"))
+            report = envelope.get("report", {})
+            if not isinstance(report, dict):
+                continue
+            summaries.append(
+                {
+                    "report_id": report.get("report_id"),
+                    "trading_day": report.get("trading_day"),
+                    "generated_at": report.get("generated_at"),
+                    "data_version": report.get("data_version"),
+                    "strategy_versions": report.get("strategy_versions", []),
+                    "sha256": envelope.get("sha256"),
+                }
+            )
+        return summaries
 
     @app.post("/orders/cancel")
     def cancel_order(

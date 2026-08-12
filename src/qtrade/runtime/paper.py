@@ -49,7 +49,16 @@ class PaperRuntimeBundle:
     def reconcile_and_recover(self, *, actor: str) -> None:
         uncertain_fills = len(self.journal.uncertain_fills())
         uncertain_orders = sum(
-            order.status is OrderStatus.SUBMISSION_UNKNOWN for order in self.oms.orders
+            order.status
+            in {
+                OrderStatus.RISK_PASSED,
+                OrderStatus.SUBMITTED,
+                OrderStatus.SUBMISSION_UNKNOWN,
+                OrderStatus.ACCEPTED,
+                OrderStatus.PARTIALLY_FILLED,
+                OrderStatus.CANCEL_PENDING,
+            }
+            for order in self.oms.orders
         )
         result = ReconciliationResult(
             ok=uncertain_fills == 0 and uncertain_orders == 0,
@@ -196,7 +205,7 @@ def build_paper_runtime(
     def incident(reason: str) -> None:
         metrics.gateway_connected = False
         metrics.reconciliation_status = "FAILED"
-        risk.set_state(KillState.HALTED, actor="operational-incident", reason=reason)
+        runtime.kill(actor="operational-incident", reason=reason)
 
     def persist_account() -> None:
         account_payload, runtime_payload = state_payloads()
