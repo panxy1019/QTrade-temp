@@ -38,6 +38,19 @@ class FakeAkshareClient:
             }
         ]
 
+    def etf_daily_sina_rows(self, symbol):
+        return [
+            {
+                "date": "2026-08-11",
+                "open": 4.0,
+                "high": 4.2,
+                "low": 3.9,
+                "close": 4.1,
+                "volume": 1000,
+                "amount": 4100,
+            }
+        ]
+
     def etf_minute_rows(self, symbol, start_at, end_at, period):
         return [
             {
@@ -174,6 +187,23 @@ def test_raw_etf_daily_and_minute_history_are_canonicalized():
     assert daily[0].exchange == "SSE" and daily[0].close == Decimal("4.1")
     assert minute[0].timestamp.tzinfo is not None
     assert minute[0].close == Decimal("4.15")
+
+
+def test_sina_history_can_be_ready_while_snapshot_polling_remains_disconnected():
+    value = provider(FakeAkshareClient([spot_row()]))
+    value.connect_history()
+    status = value.get_status()
+    assert status.connection is ProviderConnectionStatus.DISCONNECTED
+    assert "history ready" in status.detail
+    bars = value.query_history(
+        ("510300",),
+        start=datetime(2026, 8, 10, tzinfo=UTC),
+        end=datetime(2026, 8, 13, tzinfo=UTC),
+        interval="1d",
+    )
+    assert len(bars) == 1 and bars[0].close == Decimal("4.1")
+    with pytest.raises(RuntimeError, match="not connected"):
+        value.get_snapshot(("510300",))
 
 
 def test_liquidity_universe_is_bounded_and_excludes_non_domestic_exposures():

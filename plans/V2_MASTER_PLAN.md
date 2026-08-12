@@ -110,8 +110,10 @@ npm --prefix web run build
 - [x] Require explicit noncommercial research-use acknowledgement.
 - [x] Add controlled ETF snapshot/history polling, normalization, health and circuit tests.
 - [x] Add record -> DQ -> finalized bar -> causal PAPER -> replay integration test.
-- [ ] Obtain a successful endpoint/schema/freshness probe on the operating host.
-- [ ] Freeze a 20-50 liquid ETF universe from recorded real data.
+- [x] Obtain a successful daily-history endpoint/schema/quality probe on the operating host.
+- [x] Freeze a 20-50 liquid ETF universe from recorded real data, explicitly
+  classified as current/survivorship-biased rather than PIT.
+- [ ] Obtain a successful snapshot endpoint/schema/freshness probe.
 - [ ] Normalize A-share and major-index history/snapshots.
 - [ ] Run the first complete real trading-day PAPER acceptance and replay comparison.
 - [ ] Produce real-data strategy Champion/Challenger evidence.

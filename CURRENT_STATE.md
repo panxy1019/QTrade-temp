@@ -24,18 +24,19 @@ Last updated: 2026-08-12
   vn.py and broker adapters require external provider/broker selection.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: complete a successful bounded AKShare endpoint/schema/freshness probe,
-  archive a 20-50 ETF universe, then run the recorded causal PAPER workflow.
+- Next: evaluate the canonical 30-ETF historical dataset with causal multi-asset
+  baselines while seeking a working snapshot endpoint for the recorded PAPER workflow.
   Select a broker before building a native read-only reconciliation bridge.
-- External blockers: `WAITING_FOR_AKSHARE_ENDPOINT_ACCESS`,
+- External blockers: `WAITING_FOR_AKSHARE_SNAPSHOT_ENDPOINT_ACCESS`,
   `WAITING_FOR_DATA_PROVIDER_AUTH` and
   `WAITING_FOR_BROKER_SELECTION`; they do not block mock adapters, replay,
   strategy research, UI or read-only protocol work.
 - Provider selection: AKShare 1.18.84 is the credential-free noncommercial
   research/PAPER bootstrap and has a fail-closed ETF adapter plus one-shot probe.
-  This host's Eastmoney snapshot/history probes failed before data receipt, so no
-  real-market connection is claimed. RQData remains the conditional authoritative
-  choice; XtData is the QMT-entitled fallback.
+  This host's Eastmoney snapshot/history probes failed before data receipt. The
+  Sina daily-history endpoint succeeded and produced a quality-passed 18,960-bar,
+  30-ETF canonical dataset; no snapshot/PAPER connection is claimed. RQData remains
+  the conditional authoritative choice; XtData is the QMT-entitled fallback.
 - Recorded-session recovery: the raw archive owns durable ingest ordinals and a
   checksum-protected per-event journal recovers pre-runner crashes. Any crash after
   entering the strategy/PAPER boundary is treated as ambiguous, latches HALTED and

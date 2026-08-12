@@ -29,6 +29,8 @@ Primary sources:
 - Exact dependency pin: `akshare==1.18.84` in the optional `akshare` extra.
 - `connect()` becomes healthy only after a nonempty upstream ETF snapshot probe.
 - ETF raw daily and 1/5/15/30/60-minute history normalization.
+- A historical-only connection path through `fund_etf_hist_sina`; it cannot
+  attest snapshot polling or `REAL_DATA_PAPER` readiness.
 - ETF polling snapshot normalization, including source update time and Bid1/Ask1
   when present.
 - One cached all-ETF snapshot per configured interval; no per-symbol polling fanout.
@@ -50,7 +52,7 @@ history/snapshot normalization is still required before those capabilities can b
 claimed. Corporate actions and point-in-time constituents are not provided by this
 adapter.
 
-## Live probe result
+## Endpoint acceptance result
 
 Two bounded one-shot probes were attempted from this Windows host:
 
@@ -58,10 +60,23 @@ Two bounded one-shot probes were attempted from this Windows host:
 2. `fund_etf_hist_em(symbol="510300", adjust="")` against
    `push2his.eastmoney.com`.
 
-Both failed before data receipt with an upstream Python TLS/connection error
+Both Eastmoney-backed calls failed before data receipt with an upstream Python TLS/connection error
 (`UNEXPECTED_EOF_WHILE_READING`; direct bypass subsequently closed without a
 response). No certificate verification was disabled, no rapid retry loop was
 started, no data was fabricated, and the provider remained disconnected.
+
+The independent Sina-backed `fund_etf_hist_sina` daily-history endpoint did
+return real data. A bounded 30-ETF ingest covering 2024-01-02 through 2026-08-12
+produced 18,960 canonical daily bars and passed the quality gate. The resulting
+Parquet checksum was
+`70e3abf151b88382430ce82b333702243618a5eccc0b9deb71f30b19e694ac98`.
+The frozen universe is `configs/akshare_etf_universe_v1.json`; it is explicitly
+a current candidate universe with survivorship bias, not PIT membership.
+
+Five initially selected series with recent greater-than-50% raw discontinuities
+were excluded instead of being silently adjusted without sourced corporate-action
+factors. This dataset is suitable for exploratory noncommercial research, but it
+does not authorize snapshot-driven PAPER execution.
 
 Run the one-shot diagnostic in an isolated environment:
 
@@ -69,7 +84,10 @@ Run the one-shot diagnostic in an isolated environment:
 $env:QTRADE_AKSHARE_NONCOMMERCIAL_ACK = "true"
 python -m pip install -e ".[akshare]"
 python scripts/akshare_probe.py --universe-size 30
+python scripts/akshare_history_ingest.py --start 2024-01-01 --end 2026-08-12
 ```
 
-Readiness remains `WAITING_FOR_AKSHARE_ENDPOINT_ACCESS` until this command returns
-`ready=true` and a subsequent schema/freshness/recording acceptance test passes.
+Status is `AKSHARE_HISTORICAL_READY` and
+`WAITING_FOR_AKSHARE_SNAPSHOT_ENDPOINT_ACCESS`. Snapshot-driven PAPER readiness
+remains false until the snapshot command returns `ready=true` and a subsequent
+schema/freshness/recording acceptance test passes.

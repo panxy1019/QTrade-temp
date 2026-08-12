@@ -1,14 +1,16 @@
 # Market data provider report
 
 Source snapshot: 2026-08-12. RQData/XT findings are static package/source audits.
-AKShare 1.18.84 was installed in an isolated environment and bounded one-shot ETF
-snapshot/history probes were attempted; both failed before any data was returned.
+AKShare 1.18.84 was installed in an isolated environment. Bounded Eastmoney-backed
+ETF snapshot/history probes failed before data receipt; the independent Sina ETF
+daily-history endpoint succeeded and produced a quality-passed canonical dataset.
 
 ## Recommendation
 
 AKShare is the first credential-free bootstrap provider for noncommercial research
-and low-frequency `REAL_DATA_PAPER`. It is explicitly not production-grade and is
-currently `WAITING_FOR_AKSHARE_ENDPOINT_ACCESS` on this host. RQData remains the
+and low-frequency `REAL_DATA_PAPER`. It is explicitly not production-grade.
+Historical research is `AKSHARE_HISTORICAL_READY`; snapshot-driven PAPER is
+`WAITING_FOR_AKSHARE_SNAPSHOT_ENDPOINT_ACCESS`. RQData remains the
 conditional authoritative-provider choice when the user supplies a valid
 commercial entitlement. XT is the QMT-entitled fallback.
 

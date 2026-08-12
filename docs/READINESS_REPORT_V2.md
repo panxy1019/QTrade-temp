@@ -107,5 +107,8 @@ repository now has an optional pinned 1.18.84 ETF adapter with explicit
 noncommercial-use acknowledgement, upstream probe-before-connect, polling rate
 limits, timeouts/retries, staleness and duplicate checks, health/circuit state,
 canonical recording and causal PAPER replay tests. This does not upgrade the
-earlier authenticated-provider decision: bounded live probes failed before data
-receipt on this host, so real-data PAPER and multi-day acceptance remain open.
+earlier authenticated-provider decision: bounded Eastmoney probes failed before
+data receipt on this host. A Sina-backed historical probe and 30-ETF canonical
+ingest succeeded (18,960 quality-passed daily bars, 2024-01-02 through
+2026-08-12), enabling real-data research. Snapshot authority, real-data PAPER,
+and multi-day acceptance remain open.

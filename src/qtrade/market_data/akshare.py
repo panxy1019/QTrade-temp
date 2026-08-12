@@ -13,7 +13,7 @@ from threading import Lock, Thread
 from typing import Protocol, cast
 from uuid import uuid4
 
-from qtrade.data import Bar
+from qtrade.data import Bar, BarQualityGate
 from qtrade.market_data.models import (
     CanonicalTick,
     MarketSnapshot,
@@ -36,6 +36,8 @@ class AkshareClient(Protocol):
     def etf_daily_rows(
         self, symbol: str, start_date: str, end_date: str
     ) -> Iterable[Mapping[str, object]]: ...
+
+    def etf_daily_sina_rows(self, symbol: str) -> Iterable[Mapping[str, object]]: ...
 
     def etf_minute_rows(
         self, symbol: str, start_at: str, end_at: str, period: str
@@ -72,6 +74,11 @@ class NativeAkshareClient:
             end_date=end_date,
             adjust="",
         )
+        return cast(list[dict[str, object]], frame.to_dict(orient="records"))
+
+    def etf_daily_sina_rows(self, symbol: str) -> Iterable[Mapping[str, object]]:
+        prefix = "sh" if symbol.startswith("5") else "sz"
+        frame = self._module.fund_etf_hist_sina(symbol=f"{prefix}{symbol}")
         return cast(list[dict[str, object]], frame.to_dict(orient="records"))
 
     def etf_minute_rows(
@@ -143,6 +150,7 @@ class AkshareMarketDataProvider:
         self._sleep = sleep
         self._session_nonce_factory = session_nonce_factory
         self._connection = ProviderConnectionStatus.DISCONNECTED
+        self._history_ready = False
         self._subscriptions: set[str] = set()
         self._tick_handlers: list[TickHandler] = []
         self._bar_handlers: list[BarHandler] = []
@@ -208,11 +216,28 @@ class AkshareMarketDataProvider:
             self._last_snapshot_identity.clear()
             self._connection = ProviderConnectionStatus.CONNECTED
 
+    def connect_history(self, *, probe_symbol: str = "510300") -> None:
+        if not _is_etf_symbol(probe_symbol):
+            raise ValueError("AKShare history probe requires an exchange ETF")
+        rows = self._request(lambda: self._client.etf_daily_sina_rows(probe_symbol))
+        bars = self._bars_sina(probe_symbol, rows)
+        if not bars:
+            raise RuntimeError("AKShare Sina ETF history probe returned no canonical bars")
+        issues = BarQualityGate().validate(bars, expected_symbol=probe_symbol)
+        if issues:
+            raise ValueError(
+                "AKShare Sina ETF history failed quality gate: "
+                + ",".join(sorted({issue.code for issue in issues}))
+            )
+        self._history_ready = True
+        self._session_nonce = self._session_nonce_factory()
+
     def disconnect(self) -> None:
         with self._lock:
             self._connection = ProviderConnectionStatus.DISCONNECTED
             self._subscriptions.clear()
             self._session_nonce = None
+            self._history_ready = False
 
     def close(self) -> None:
         self.disconnect()
@@ -339,7 +364,6 @@ class AkshareMarketDataProvider:
         end: datetime,
         interval: str,
     ) -> tuple[Bar, ...]:
-        self._require_connected()
         _validate_instruments(instruments)
         if start.tzinfo is None or end.tzinfo is None or start >= end:
             raise ValueError("AKShare history query window is invalid")
@@ -348,13 +372,33 @@ class AkshareMarketDataProvider:
         result: list[Bar] = []
         for symbol in instruments:
             if interval == "1d":
-                def daily_operation(symbol: str = symbol) -> Iterable[Mapping[str, object]]:
+                if (
+                    self._history_ready
+                    and self._connection is not ProviderConnectionStatus.CONNECTED
+                ):
+                    def sina_operation(
+                        symbol: str = symbol,
+                    ) -> Iterable[Mapping[str, object]]:
+                        return self._client.etf_daily_sina_rows(symbol)
+
+                    rows = self._request(sina_operation)
+                    result.extend(
+                        bar
+                        for bar in self._bars_sina(symbol, rows)
+                        if start <= bar.timestamp < end
+                    )
+                    continue
+                self._require_connected()
+                def daily_operation(
+                    symbol: str = symbol,
+                ) -> Iterable[Mapping[str, object]]:
                     return self._client.etf_daily_rows(
                         symbol, start.strftime("%Y%m%d"), end.strftime("%Y%m%d")
                     )
 
                 rows = self._request(daily_operation)
             else:
+                self._require_connected()
                 def minute_operation(
                     symbol: str = symbol,
                 ) -> Iterable[Mapping[str, object]]:
@@ -368,6 +412,12 @@ class AkshareMarketDataProvider:
                 rows = self._request(minute_operation)
             result.extend(self._bars(symbol, rows, interval))
         result.sort(key=lambda value: (value.timestamp, value.exchange, value.symbol))
+        issues = BarQualityGate().validate(result)
+        if issues:
+            raise ValueError(
+                "AKShare ETF history failed quality gate: "
+                + ",".join(sorted({issue.code for issue in issues}))
+            )
         return tuple(result)
 
     def get_status(self) -> ProviderStatus:
@@ -375,7 +425,11 @@ class AkshareMarketDataProvider:
         if self._circuit_opened_at is not None:
             detail = "circuit open after repeated upstream failures"
         elif self._connection is ProviderConnectionStatus.DISCONNECTED:
-            detail = "AKShare public endpoint has not been probed"
+            detail = (
+                "history ready; snapshot polling endpoint not connected"
+                if self._history_ready
+                else "AKShare public endpoint has not been probed"
+            )
         return ProviderStatus(
             AKSHARE_PROVIDER,
             self._connection,
@@ -562,6 +616,22 @@ class AkshareMarketDataProvider:
                 )
             )
         return tuple(result)
+
+    def _bars_sina(
+        self, symbol: str, rows: tuple[Mapping[str, object], ...]
+    ) -> tuple[Bar, ...]:
+        normalized = tuple(
+            {
+                "日期": row.get("date"),
+                "开盘": row.get("open"),
+                "最高": row.get("high"),
+                "最低": row.get("low"),
+                "收盘": row.get("close"),
+                "成交量": row.get("volume"),
+            }
+            for row in rows
+        )
+        return self._bars(symbol, normalized, "1d")
 
     def _require_connected(self) -> None:
         if self._connection is not ProviderConnectionStatus.CONNECTED:
