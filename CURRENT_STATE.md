@@ -22,4 +22,6 @@ Last updated: 2026-08-12
   separate broker-specific Python ABI after the user selects a broker.
 - Next: Parquet/DuckDB data adapter and experiment artifacts; durable SQLite or
   PostgreSQL operational journal; failure replay; metrics/factor evaluation.
+- Analytical persistence: checksum-verified Parquet/DuckDB bar storage and
+  immutable hashed experiment records implemented; 51 tests pass at 93% coverage.
 - Live trading: disabled and structurally unavailable.

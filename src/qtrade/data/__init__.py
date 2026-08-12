@@ -10,14 +10,17 @@ from qtrade.data.models import (
 )
 from qtrade.data.pit import PointInTimeStore
 from qtrade.data.quality import BarQualityGate
+from qtrade.data.storage import DatasetIntegrityError, ParquetBarStore
 
 __all__ = [
     "Bar",
     "BarQualityGate",
     "CorporateAction",
     "DataManifest",
+    "DatasetIntegrityError",
     "IndexMembership",
     "PointInTimeStore",
+    "ParquetBarStore",
     "QualityIssue",
     "QualityStatus",
 ]

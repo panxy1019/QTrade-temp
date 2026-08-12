@@ -51,6 +51,11 @@ Instrument master, date-effective trading rules, calendars, bars, corporate
 actions, memberships, checksums, quality gates, point-in-time queries, local
 Parquet/DuckDB adapter and fixtures with provenance.
 
+Current evidence: source-backed effective-date rule model, PIT memberships and
+corporate actions, multi-check quality gate, checksum-verified Parquet/DuckDB
+bar adapter. Remaining: durable metadata catalog, calendars/status, normalized
+corporate-action adjustments and larger fixture coverage.
+
 ### M3 — Research, factors, portfolio, and evaluation
 
 Chronological splits/walk-forward experiment records, baseline factors and
@@ -96,8 +101,8 @@ implementation → independent review → test review → main-agent integration
 
 ## Current work queue
 
-1. Implement Parquet/DuckDB adapter and immutable experiment artifacts.
-2. Add durable operational journal and crash/replay integration.
+1. Add durable operational journal and crash/replay integration.
+2. Couple dataset provenance/quality to backtest and experiment execution.
 3. Complete performance/factor metrics and a reproducible sample workflow.
 4. Expand failure injection and paper runtime orchestration.
 
