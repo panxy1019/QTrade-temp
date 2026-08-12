@@ -378,6 +378,8 @@ def _load_verified_research_report(path: Path | None) -> dict[str, object] | Non
         return None
     try:
         envelope = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(envelope, dict):
+            return None
         report = envelope.get("report")
         digest = envelope.get("sha256")
         if not isinstance(report, dict) or not isinstance(digest, str):

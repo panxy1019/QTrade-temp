@@ -153,6 +153,12 @@ def test_verified_research_results_are_exposed_and_tampering_fails_closed(tmp_pa
     assert api.get("/strategies").json()[0]["metrics"]["sharpe"] == "0.44"
     target.write_text(target.read_text().replace("0.44", "9.99"), encoding="utf-8")
     assert api.get("/strategies").json() == []
+    for malformed in ("[]", "null", '"scalar"'):
+        target.write_text(malformed, encoding="utf-8")
+        assert api.get("/strategies").json() == []
+        assert api.get("/experiments").json()["classification"] == (
+            "NO_VERIFIED_RESEARCH_RESULT"
+        )
 
 
 def test_daily_report_history_exposes_verified_summary(tmp_path):
