@@ -1,0 +1,107 @@
+# Master plan
+
+This is the living execution record for the long-horizon engineering goal.
+
+## Objective
+
+Build a runnable, maintainable, tested platform for Shanghai/Shenzhen A-shares,
+on-exchange ETFs, and benchmark indices: ingestion → point-in-time universe →
+research → signals → portfolio → backtest → risk → OMS → paper execution →
+accounting → monitoring/control → recovery → shadow mode. Real trading stays
+off until a separate explicit human authorization gate.
+
+## Environment evidence
+
+Audit date: 2026-08-12.
+
+- `E:\Q` was empty and was not a Git repository.
+- Python 3.14.6 and Git 2.53.0 are installed.
+- Docker/uv/database services are unavailable.
+- vn.py, pytest, FastAPI, Pydantic, DuckDB, PyArrow, pandas, and PostgreSQL
+  drivers were not installed.
+
+## Milestones
+
+### M1 — Deterministic safety kernel (in-process acceptance complete)
+
+Scope: domain contracts, operational modes, kill switch, pre-trade checks,
+OMS state machine, idempotent paper gateway, accounting, append-only audit.
+
+Acceptance:
+
+- [x] implementation follows the mandatory order pipeline;
+- [x] duplicate submission cannot create a second paper order/fill;
+- [x] partial fill/cancel/reject and invalid transitions are tested;
+- [x] HALTED/PAUSED/REDUCE_ONLY behavior is tested;
+- [x] insufficient cash, reservations, and invalid/stale orders fail closed;
+- [x] accounting balances and PnL are deterministic;
+- [x] no live mode or real gateway is executable;
+- [x] unit and end-to-end tests pass;
+- [x] two independent safety reviews completed; blocking in-process issues fixed.
+
+Reproduce: `python -m pytest`
+
+Known limitations: in-memory state cannot provide crash-safe exactly-once
+semantics; uncertain fill replay blocks for reconciliation. JSONL chaining is
+tamper-evident but not WORM storage. Durable completion continues under M5.
+
+### M2 — Versioned data and instrument foundation (contracts complete; adapters in progress)
+
+Instrument master, date-effective trading rules, calendars, bars, corporate
+actions, memberships, checksums, quality gates, point-in-time queries, local
+Parquet/DuckDB adapter and fixtures with provenance.
+
+### M3 — Research, factors, portfolio, and evaluation
+
+Chronological splits/walk-forward experiment records, baseline factors and
+strategies, portfolio constraints, cost-aware metrics, reproducibility.
+
+### M4 — Integrated event-driven backtest
+
+Same strategy/portfolio/risk/OMS/execution contracts; costs, slippage, partial
+fills, cancellation, rejection, accounting, benchmark evaluation.
+
+Current evidence: shared pipeline integrated, signals execute at the following
+bar open, input ordering/identity and single-use behavior tested. Remaining:
+dataset manifest gate, broader metrics, liquidity/matching models and report.
+
+### M5 — Durable paper runtime and recovery
+
+Persistence, reconciliation, replay, restart protocol, duplicate/out-of-order
+events, disconnect/freeze/database failure injection.
+
+### M6 — Control plane, dashboard, and observability
+
+FastAPI with read/control/trade-sensitive role separation, prominent mode,
+structured logs, metrics, audit views, alerts.
+
+### M7 — Shadow/live-readiness
+
+Live-data/shadow execution without external order transmission, broker adapter
+contracts/mocks, readiness checklist and independent safety audit. Live remains
+disabled.
+
+## Architecture and dependency research
+
+- vn.py source/gap analysis: in progress.
+- China trading rules: must use authoritative, date-effective exchange/tax
+  sources before implementation; no model-memory constants.
+- Infrastructure escalation requires benchmark evidence.
+
+## Global validation gates
+
+Format/lint, type checks, unit tests, integration tests, deterministic replay,
+failure injection, secret scan, independent review. High-risk modules require
+implementation → independent review → test review → main-agent integration.
+
+## Current work queue
+
+1. Implement Parquet/DuckDB adapter and immutable experiment artifacts.
+2. Add durable operational journal and crash/replay integration.
+3. Complete performance/factor metrics and a reproducible sample workflow.
+4. Expand failure injection and paper runtime orchestration.
+
+## Blockers
+
+No external blocker for paper/shadow development. Real broker access remains an
+intentional human gate and is not needed for current milestones.

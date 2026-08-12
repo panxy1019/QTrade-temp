@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Q Trading Control</title>
+  <style>
+    :root { color-scheme: dark; font: 15px system-ui; background:#0b1020; color:#e5e7eb }
+    body { max-width:1100px; margin:auto; padding:24px }
+    #mode { font-size:32px; font-weight:800; padding:20px; border:3px solid #38bdf8;
+      background:#082f49; text-align:center; letter-spacing:.2em }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:16px }
+    section { background:#151d31; border:1px solid #334155; border-radius:8px; padding:16px }
+    h1,h2 { margin-top:0 } .danger { color:#fca5a5 } pre { white-space:pre-wrap }
+  </style>
+</head>
+<body>
+  <div id="mode">LOADING</div>
+  <div class="grid">
+    <section><h2>System Health</h2><pre id="health"></pre></section>
+    <section><h2>Risk</h2><pre id="risk"></pre></section>
+    <section><h2>Account / PnL</h2><pre id="account"></pre></section>
+    <section><h2>Market / Metrics</h2><pre id="metrics"></pre></section>
+    <section><h2>Positions</h2><pre id="positions"></pre></section>
+    <section><h2>Orders / Trades</h2><pre id="orders"></pre></section>
+    <section><h2>Alerts / Audit</h2><pre id="audit"></pre></section>
+  </div>
+  <script>
+    async function get(path){ const r=await fetch(path,{headers:{'X-QTrade-Role':'read'}}); return r.json() }
+    async function refresh(){
+      const [system,health,risk,account,metrics,positions,orders,audit]=await Promise.all(
+        ['/system','/health','/risk','/account','/metrics','/positions','/orders','/audit'].map(get));
+      document.querySelector('#mode').textContent=system.mode;
+      for(const [id,data] of Object.entries({health,risk,account,metrics,positions,orders,audit}))
+        document.querySelector('#'+id).textContent=JSON.stringify(data,null,2);
+    }
+    refresh(); setInterval(refresh,5000);
+  </script>
+</body>
+</html>
+
