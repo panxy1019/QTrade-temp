@@ -10,7 +10,7 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Current phase: integrated paper/shadow platform hardening.
 - Current milestone: M5/M6 failure recovery, control, and observability.
-- Acceptance evidence: 88 tests passed, Ruff clean, strict mypy
+- Acceptance evidence: 91 tests passed, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); end-to-end synthetic workflow executed.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
@@ -57,4 +57,7 @@ Last updated: 2026-08-12
 - Historical ingestion: strict canonical CSV import validates schema, UTF-8,
   offset-aware timestamps, finite values and grouped per-instrument chronology;
   source checksums flow into the downstream versioned Parquet manifest.
+- Transaction costs: versioned schedules distinguish broker all-in commission
+  from decomposed service/handling/regulatory fees, reject double counting,
+  and model independent transfer fees plus seller-only stamp tax.
 - Live trading: disabled and structurally unavailable.

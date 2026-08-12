@@ -78,6 +78,9 @@ Current evidence: shared pipeline integrated, signals execute at the following
 bar open, input ordering/identity and single-use behavior tested. Remaining:
 broader metrics, liquidity/matching models and report. T+N sellability advances
 over the observed open-session bar sequence rather than calendar days.
+Fee schedules now carry source identity and explicit all-in/decomposed policy;
+all-in broker commission cannot be combined with separately added handling or
+regulatory components, preventing a common backtest double-counting error.
 
 ### M5 — Durable paper runtime and recovery
 
@@ -133,7 +136,7 @@ implementation → independent review → test review → main-agent integration
 1. Add further research baselines and walk-forward orchestration.
 2. Expand failure injection and deterministic paper execution plans.
 3. Add vn.py shadow-process integration tests without external transmission.
-4. Add versioned China transaction-cost components and source tests.
+4. Add normalized corporate-action adjustment tests and metadata catalog.
 
 ## Blockers
 

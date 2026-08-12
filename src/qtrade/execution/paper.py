@@ -16,27 +16,54 @@ from qtrade.oms.manager import OrderManager
 from qtrade.persistence import SQLiteOperationalJournal
 
 
+class CommissionPolicy(StrEnum):
+    ALL_IN = "ALL_IN"
+    DECOMPOSED = "DECOMPOSED"
+
+
 @dataclass(frozen=True, slots=True)
 class FeeSchedule:
     version: str
     commission_rate: Decimal
     sell_tax_rate: Decimal
     minimum_commission: Decimal = Decimal("0")
+    commission_policy: CommissionPolicy = CommissionPolicy.ALL_IN
+    exchange_handling_rate: Decimal = Decimal("0")
+    regulatory_rate: Decimal = Decimal("0")
+    transfer_rate: Decimal = Decimal("0")
+    source_url: str = "configured://fee-schedule"
 
     def __post_init__(self) -> None:
         if not self.version:
             raise ValueError("fee schedule version is required")
-        values = (self.commission_rate, self.sell_tax_rate, self.minimum_commission)
+        values = (
+            self.commission_rate,
+            self.sell_tax_rate,
+            self.minimum_commission,
+            self.exchange_handling_rate,
+            self.regulatory_rate,
+            self.transfer_rate,
+        )
         if any(not value.is_finite() or value < 0 for value in values):
             raise ValueError("fee values must be finite and nonnegative")
+        if not self.source_url:
+            raise ValueError("fee source is required")
+        if self.commission_policy is CommissionPolicy.ALL_IN and (
+            self.exchange_handling_rate or self.regulatory_rate
+        ):
+            raise ValueError("all-in commission cannot add handling or regulatory fees")
 
     def calculate(self, side: Side, price: Decimal, quantity: int) -> Decimal:
         notional = price * quantity
-        commission = max(notional * self.commission_rate, self.minimum_commission)
+        commission_rate = self.commission_rate
+        if self.commission_policy is CommissionPolicy.DECOMPOSED:
+            commission_rate += self.exchange_handling_rate + self.regulatory_rate
+        commission = max(notional * commission_rate, self.minimum_commission)
+        transfer = notional * self.transfer_rate
         tax = notional * self.sell_tax_rate if side is Side.SELL else Decimal("0")
-        return (commission + tax).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-
-
+        return (commission + transfer + tax).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
 class FillProcessingState(StrEnum):
     PENDING = "PENDING"
     APPLIED = "APPLIED"
