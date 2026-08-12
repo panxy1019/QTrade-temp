@@ -10,7 +10,7 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Current phase: integrated paper/shadow platform hardening.
 - Current milestone: M5/M6 failure recovery, control, and observability.
-- Acceptance evidence: 91 tests passed, Ruff clean, strict mypy
+- Acceptance evidence: 95 tests passed, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); end-to-end synthetic workflow executed.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
@@ -20,8 +20,8 @@ Last updated: 2026-08-12
   to be integrated; paper matching remains deliberately simple.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: additional research baselines and walk-forward evaluation; paper runtime
-  failure replay and orchestration; shadow-process integration testing.
+- Next: paper runtime failure replay and orchestration; shadow-process
+  integration testing; normalized corporate-action adjustment.
 - Analytical persistence: checksum-verified Parquet/DuckDB bar storage and
   immutable hashed experiment records implemented; 51 tests pass at 93% coverage.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
@@ -60,4 +60,8 @@ Last updated: 2026-08-12
 - Transaction costs: versioned schedules distinguish broker all-in commission
   from decomposed service/handling/regulatory fees, reject double counting,
   and model independent transfer fees plus seller-only stamp tax.
+- Research validity: deterministic rolling/expanding walk-forward splits enforce
+  sorted unique sessions and held-out chronological windows. Momentum, reversal,
+  volatility and liquidity baselines plus multi-period ICIR are tested without
+  any execution-layer dependency.
 - Live trading: disabled and structurally unavailable.

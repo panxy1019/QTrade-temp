@@ -66,8 +66,9 @@ strategies, portfolio constraints, cost-aware metrics, reproducibility.
 Current evidence: chronological non-overlap gates; buy/hold and moving-average
 baselines; top-K/weight/cash constraints; portfolio metrics and factor
 IC/RankIC/quantiles/turnover/spread; immutable hashed experiment record; tested
-synthetic end-to-end workflow. Remaining: walk-forward orchestrator, additional
-baselines, ICIR over periods, and vnpy.alpha adapter.
+synthetic end-to-end workflow. Rolling/expanding walk-forward splits, momentum,
+reversal, realized-volatility, liquidity baselines and multi-period ICIR are now
+tested. Remaining: model training orchestration and vnpy.alpha adapter.
 
 ### M4 — Integrated event-driven backtest
 
@@ -133,10 +134,10 @@ implementation → independent review → test review → main-agent integration
 
 ## Current work queue
 
-1. Add further research baselines and walk-forward orchestration.
-2. Expand failure injection and deterministic paper execution plans.
-3. Add vn.py shadow-process integration tests without external transmission.
-4. Add normalized corporate-action adjustment tests and metadata catalog.
+1. Expand failure injection and deterministic paper execution plans.
+2. Add vn.py shadow-process integration tests without external transmission.
+3. Add normalized corporate-action adjustment tests and metadata catalog.
+4. Add model-training experiment adapter after baseline reports are complete.
 
 ## Blockers
 

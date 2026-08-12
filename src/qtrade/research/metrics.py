@@ -200,3 +200,38 @@ def evaluate_factor(
         factor_turnover=turnover_value,
         long_short_spread=groups[-1] - groups[0],
     )
+
+
+def evaluate_factor_periods(
+    factor_periods: list[list[Decimal]],
+    return_periods: list[list[Decimal]],
+    *,
+    quantiles: int = 5,
+) -> FactorMetrics:
+    if len(factor_periods) != len(return_periods) or len(factor_periods) < 2:
+        raise ValueError("ICIR requires at least two aligned periods")
+    periods = [
+        evaluate_factor(factors, returns, quantiles=quantiles)
+        for factors, returns in zip(factor_periods, return_periods, strict=True)
+    ]
+    count = Decimal(len(periods))
+    ics = [period.ic for period in periods]
+    average_ic = sum(ics, start=Decimal("0")) / count
+    ic_deviation = Decimal(str(pstdev(float(value) for value in ics)))
+    group_count = len(periods[0].quantile_returns)
+    quantile_returns = tuple(
+        sum((period.quantile_returns[index] for period in periods), start=Decimal("0"))
+        / count
+        for index in range(group_count)
+    )
+    return FactorMetrics(
+        ic=average_ic,
+        rank_ic=sum((period.rank_ic for period in periods), start=Decimal("0")) / count,
+        icir=Decimal("0") if ic_deviation == 0 else average_ic / ic_deviation,
+        quantile_returns=quantile_returns,
+        factor_turnover=sum(
+            (period.factor_turnover for period in periods), start=Decimal("0")
+        )
+        / count,
+        long_short_spread=quantile_returns[-1] - quantile_returns[0],
+    )
