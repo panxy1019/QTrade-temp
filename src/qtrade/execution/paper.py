@@ -7,6 +7,9 @@ from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal
 from enum import StrEnum
 from hashlib import sha256
+from threading import RLock
+from types import TracebackType
+from typing import Protocol
 from uuid import uuid4
 
 from qtrade.accounting.ledger import Ledger
@@ -114,6 +117,17 @@ class FillRecord:
     error: str | None = None
 
 
+class MutationGate(Protocol):
+    def __enter__(self) -> object: ...
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> bool | None: ...
+
+
 class PaperAction(StrEnum):
     ACCEPT = "ACCEPT"
     REJECT = "REJECT"
@@ -138,6 +152,7 @@ class PaperGateway:
         durable_fill_handler: Callable[[str, Trade, Order], bool] | None = None,
         fill_observer: Callable[[Trade], None] | None = None,
         observer_failure_handler: Callable[[], None] | None = None,
+        mutation_gate: MutationGate | None = None,
     ) -> None:
         self._oms = oms
         self._ledger = ledger
@@ -155,11 +170,16 @@ class PaperGateway:
         self._durable_fill_handler = durable_fill_handler
         self._fill_observer = fill_observer
         self._observer_failure_handler = observer_failure_handler
+        self._mutation_gate = mutation_gate or RLock()
 
     def inject_next_action(self, action: PaperAction) -> None:
         self._next_action = action
 
     def submit(self, order: Order, *, now: datetime | None = None) -> Order:
+        with self._mutation_gate:
+            return self._submit(order, now=now)
+
+    def _submit(self, order: Order, *, now: datetime | None = None) -> Order:
         timestamp = now or utc_now()
         fingerprint = (
             order.request.symbol,
@@ -242,6 +262,24 @@ class PaperGateway:
             self._incident_handler(reason)
 
     def fill(
+        self,
+        order: Order,
+        *,
+        fill_key: str,
+        price: Decimal,
+        quantity: int,
+        now: datetime | None = None,
+    ) -> tuple[Trade, bool]:
+        with self._mutation_gate:
+            return self._fill(
+                order,
+                fill_key=fill_key,
+                price=price,
+                quantity=quantity,
+                now=now,
+            )
+
+    def _fill(
         self,
         order: Order,
         *,
@@ -359,6 +397,18 @@ class PaperGateway:
         return cancelled
 
     def cancel_with_result(
+        self,
+        order: Order,
+        *,
+        idempotency_key: str | None = None,
+        now: datetime | None = None,
+    ) -> tuple[Order, bool]:
+        with self._mutation_gate:
+            return self._cancel_with_result(
+                order, idempotency_key=idempotency_key, now=now
+            )
+
+    def _cancel_with_result(
         self,
         order: Order,
         *,

@@ -1,5 +1,7 @@
+from contextlib import suppress
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from threading import Barrier, BrokenBarrierError, Thread
 
 import pytest
 
@@ -183,6 +185,91 @@ def test_audit_failure_after_applied_commit_converges_and_halts(tmp_path, monkey
     assert restarted.ledger.account.cash == Decimal("99000")
     assert restarted.ledger.account.position_quantity("510300") == 100
     assert restarted.oms.orders[0].status.value == "FILLED"
+    assert restarted.gateway.reservations.reserved_cash == Decimal("0")
+
+
+def test_concurrent_multi_symbol_fills_commit_one_serial_account_state(
+    tmp_path, monkeypatch
+):
+    bundle = build(tmp_path)
+    attest(bundle)
+    bundle.runtime.start(actor="operator")
+
+    def submit_symbol(key: str, symbol: str, quantity: int):
+        return bundle.service.submit(
+            OrderRequest(
+                key,
+                "strategy",
+                "portfolio",
+                symbol,
+                Side.BUY,
+                Decimal("10"),
+                quantity,
+                NOW,
+            ),
+            RiskContext(
+                bundle.ledger.account,
+                {symbol: Instrument(symbol, "SSE", "ETF", 100, Decimal("0.001"))},
+                {symbol: Decimal("10")},
+                NOW,
+                True,
+                True,
+                NOW,
+                sellable_quantities={},
+            ),
+            now=NOW,
+        )[0]
+
+    first = submit_symbol("multi-fill-1", "510300", 100)
+    second = submit_symbol("multi-fill-2", "510500", 200)
+    original_project = bundle.ledger.project
+    projection_barrier = Barrier(2)
+
+    def synchronized_project(trade):
+        projected = original_project(trade)
+        with suppress(BrokenBarrierError):
+            projection_barrier.wait(timeout=0.2)
+        return projected
+
+    monkeypatch.setattr(bundle.ledger, "project", synchronized_project)
+    errors: list[BaseException] = []
+
+    def fill(order, key: str, quantity: int) -> None:
+        try:
+            bundle.gateway.fill(
+                order,
+                fill_key=key,
+                price=Decimal("10"),
+                quantity=quantity,
+                now=NOW,
+            )
+        except BaseException as exc:
+            errors.append(exc)
+
+    threads = [
+        Thread(target=fill, args=(first, "multi-fill-event-1", 100)),
+        Thread(target=fill, args=(second, "multi-fill-event-2", 200)),
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=3)
+
+    assert all(not thread.is_alive() for thread in threads)
+    assert errors == []
+    assert bundle.ledger.account.cash == Decimal("97000")
+    assert bundle.ledger.account.position_quantity("510300") == 100
+    assert bundle.ledger.account.position_quantity("510500") == 200
+    assert {order.status.value for order in bundle.oms.orders} == {"FILLED"}
+    assert bundle.gateway.reservations.reserved_cash == Decimal("0")
+    assert bundle.journal.get_fill("multi-fill-event-1").state == "APPLIED"  # type: ignore[union-attr]
+    assert bundle.journal.get_fill("multi-fill-event-2").state == "APPLIED"  # type: ignore[union-attr]
+
+    restarted = build(tmp_path)
+    assert restarted.ledger.account.cash == Decimal("97000")
+    assert restarted.ledger.account.position_quantity("510300") == 100
+    assert restarted.ledger.account.position_quantity("510500") == 200
+    assert {order.status.value for order in restarted.oms.orders} == {"FILLED"}
     assert restarted.gateway.reservations.reserved_cash == Decimal("0")
 
 

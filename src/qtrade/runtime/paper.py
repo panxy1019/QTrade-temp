@@ -298,65 +298,66 @@ def build_paper_runtime(
                     }
 
     def durable_fill(fill_key: str, trade: Trade, order: Order) -> bool:
-        projected_account = ledger.project(trade)
-        projected_order = oms.project_fill(order, trade.quantity, now=trade.timestamp)
-        reservation_projection = reservations.project_consume(
-            order.internal_order_id, trade.quantity
-        )
-        sellability_projection = sellability.snapshot()
-        if order.request.trading_day is not None:
-            sellability_projection = sellability.project_fill(
-                trade.symbol,
-                trade.side,
-                trade.quantity,
-                order.request.trading_day,
-                order.request.sellable_on,
+        with risk.dispatch_gate:
+            projected_account = ledger.project(trade)
+            projected_order = oms.project_fill(order, trade.quantity, now=trade.timestamp)
+            reservation_projection = reservations.project_consume(
+                order.internal_order_id, trade.quantity
             )
-        projected_reservations: list[dict[str, object]] = [
-            {
-                "order_id": item.order_id,
-                "symbol": item.symbol,
-                "side": item.side.value,
-                "remaining_quantity": item.remaining_quantity,
-                "remaining_cash": str(item.remaining_cash),
-            }
-            for item in reservation_projection
-        ]
-        account_payload, runtime_payload = state_payloads(
-            account_override=projected_account,
-            order_override=projected_order,
-            reservations_override=projected_reservations,
-            sellability_override=sellability_projection,
-        )
-        journal.commit_fill_effect(
-            fill_key,
-            account_state=account_payload,
-            runtime_state=runtime_payload,
-        )
-        ledger.commit_projection(projected_account, trade)
-        oms.commit_projection(order, projected_order)
-        reservations.replace(reservation_projection)
-        sellability.replace(sellability_projection)
-        audit.record(
-            AuditEvent(
-                event_type="TRADE_BOOKED",
-                service="accounting",
-                message=f"trade_id={trade.trade_id}; quantity={trade.quantity}",
-                order_id=trade.internal_order_id,
-                timestamp=trade.timestamp,
+            sellability_projection = sellability.snapshot()
+            if order.request.trading_day is not None:
+                sellability_projection = sellability.project_fill(
+                    trade.symbol,
+                    trade.side,
+                    trade.quantity,
+                    order.request.trading_day,
+                    order.request.sellable_on,
+                )
+            projected_reservations: list[dict[str, object]] = [
+                {
+                    "order_id": item.order_id,
+                    "symbol": item.symbol,
+                    "side": item.side.value,
+                    "remaining_quantity": item.remaining_quantity,
+                    "remaining_cash": str(item.remaining_cash),
+                }
+                for item in reservation_projection
+            ]
+            account_payload, runtime_payload = state_payloads(
+                account_override=projected_account,
+                order_override=projected_order,
+                reservations_override=projected_reservations,
+                sellability_override=sellability_projection,
             )
-        )
-        audit.record(
-            AuditEvent(
-                event_type="ORDER_TRANSITION",
-                service="oms",
-                message=f"status={projected_order.status.value}; reason=",
-                strategy_id=order.request.strategy_id,
-                portfolio_id=order.request.portfolio_id,
-                order_id=order.internal_order_id,
-                timestamp=projected_order.updated_at,
+            journal.commit_fill_effect(
+                fill_key,
+                account_state=account_payload,
+                runtime_state=runtime_payload,
             )
-        )
+            ledger.commit_projection(projected_account, trade)
+            oms.commit_projection(order, projected_order)
+            reservations.replace(reservation_projection)
+            sellability.replace(sellability_projection)
+            audit.record(
+                AuditEvent(
+                    event_type="TRADE_BOOKED",
+                    service="accounting",
+                    message=f"trade_id={trade.trade_id}; quantity={trade.quantity}",
+                    order_id=trade.internal_order_id,
+                    timestamp=trade.timestamp,
+                )
+            )
+            audit.record(
+                AuditEvent(
+                    event_type="ORDER_TRANSITION",
+                    service="oms",
+                    message=f"status={projected_order.status.value}; reason=",
+                    strategy_id=order.request.strategy_id,
+                    portfolio_id=order.request.portfolio_id,
+                    order_id=order.internal_order_id,
+                    timestamp=projected_order.updated_at,
+                )
+            )
         return True
 
     def observe_submission(order: Order, completed_at: datetime) -> None:
@@ -376,6 +377,7 @@ def build_paper_runtime(
         durable_fill_handler=durable_fill,
         fill_observer=lambda _trade: metrics.record_fill(),
         observer_failure_handler=metrics.mark_degraded,
+        mutation_gate=risk.dispatch_gate,
     )
     for restored_order in oms.orders:
         if restored_order.status is not OrderStatus.SUBMISSION_UNKNOWN:
