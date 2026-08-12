@@ -38,6 +38,12 @@ from qtrade.research.walk_forward import (
     WalkForwardConfig,
     build_walk_forward_splits,
 )
+from qtrade.research.walk_forward_runner import (
+    MultiAssetWalkForwardRunner,
+    WalkForwardCandidate,
+    WalkForwardFoldResult,
+    WalkForwardResult,
+)
 
 __all__ = [
     "ExperimentArtifactStore",
@@ -60,6 +66,10 @@ __all__ = [
     "RobustnessScenario",
     "RobustnessSuite",
     "WalkForwardConfig",
+    "MultiAssetWalkForwardRunner",
+    "WalkForwardCandidate",
+    "WalkForwardFoldResult",
+    "WalkForwardResult",
     "evaluate_factor",
     "evaluate_factor_periods",
     "evaluate_returns",
