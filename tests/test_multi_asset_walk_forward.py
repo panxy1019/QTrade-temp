@@ -76,6 +76,9 @@ def test_walk_forward_selects_on_validation_and_scores_nonoverlapping_tests():
     assert len(result.folds) == 2
     assert result.folds[0].split.test_end < result.folds[1].split.test_start
     assert result.folds[0].validation_scores
+    assert result.aggregate_metrics.number_of_trades == sum(
+        fold.test_metrics.number_of_trades for fold in result.folds
+    )
     assert len(result.result_hash) == 64
 
 

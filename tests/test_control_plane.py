@@ -161,6 +161,49 @@ def test_verified_research_results_are_exposed_and_tampering_fails_closed(tmp_pa
         )
 
 
+def test_walk_forward_endpoint_exposes_only_verified_evidence(tmp_path):
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("100000"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit)
+    runtime = PlatformRuntime(RuntimeMode.PAPER, risk, audit, metrics)
+    report = {
+        "classification": "exploratory_noncommercial_current_universe_not_pit",
+        "promotion": "NOT_ELIGIBLE",
+        "promotion_reasons": ["CURRENT_UNIVERSE_SURVIVORSHIP_BIAS"],
+        "result": {
+            "fold_pass_ratio": "0",
+            "aggregate_metrics": {"sharpe": "-1.1"},
+            "folds": [{"fold": 1, "selected_candidate_id": "buy-hold"}],
+        },
+    }
+    canonical = json.dumps(report, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    target = tmp_path / "walk-forward.json"
+    target.write_text(
+        json.dumps({"sha256": sha256(canonical.encode()).hexdigest(), "report": report}),
+        encoding="utf-8",
+    )
+    api = TestClient(
+        create_app(
+            AppContext(
+                runtime,
+                metrics,
+                oms,
+                ledger,
+                audit,
+                walk_forward_report_path=target,
+            ),
+            ApiAuthConfig(),
+        )
+    )
+    assert api.get("/walk-forward").json()["result"]["aggregate_metrics"]["sharpe"] == "-1.1"
+    target.write_text(target.read_text().replace("-1.1", "9.9"), encoding="utf-8")
+    response = api.get("/walk-forward").json()
+    assert response["classification"] == "NO_VERIFIED_WALK_FORWARD_RESULT"
+    assert response["result"]["folds"] == []
+
+
 def test_daily_report_history_exposes_verified_summary(tmp_path):
     audit = AuditLog()
     metrics = MetricsRegistry()

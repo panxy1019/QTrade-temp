@@ -69,6 +69,7 @@ def evaluate_returns(
     turnover: Decimal = Decimal("0"),
     exposure: Decimal = Decimal("0"),
     trade_pnls: list[Decimal] | None = None,
+    trade_count: int | None = None,
     transaction_costs: Decimal = Decimal("0"),
 ) -> PerformanceMetrics:
     if not returns:
@@ -81,6 +82,8 @@ def evaluate_returns(
         raise ValueError("turnover must be nonnegative and exposure in [0, 1]")
     if transaction_costs < 0:
         raise ValueError("transaction costs cannot be negative")
+    if trade_count is not None and trade_count < 0:
+        raise ValueError("trade count cannot be negative")
     benchmark = [Decimal("0")] * len(returns) if benchmark_returns is None else benchmark_returns
     if len(benchmark) != len(returns):
         raise ValueError("benchmark length must match returns")
@@ -113,6 +116,8 @@ def evaluate_returns(
     information_ratio = Decimal("0") if tracking_error == 0 else active_return / tracking_error
     wins = sum(item > 0 for item in returns)
     pnl_values = trade_pnls or []
+    if trade_count is not None and trade_pnls is not None and trade_count != len(pnl_values):
+        raise ValueError("trade count must match supplied trade P&Ls")
     gains = [item for item in pnl_values if item > 0]
     losses = [abs(item) for item in pnl_values if item < 0]
     profit_loss_ratio = (
@@ -137,7 +142,7 @@ def evaluate_returns(
         turnover=turnover,
         profit_loss_ratio=profit_loss_ratio,
         exposure=exposure,
-        number_of_trades=len(pnl_values),
+        number_of_trades=len(pnl_values) if trade_count is None else trade_count,
         transaction_costs=transaction_costs,
     )
 

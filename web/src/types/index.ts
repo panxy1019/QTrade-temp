@@ -71,6 +71,27 @@ export interface ResearchReport {
   experiments: ResearchExperiment[]
 }
 
+export interface WalkForwardFold {
+  fold: number
+  selected_candidate_id: string
+  validation_sharpe: string
+  test_metrics: Record<string, string | number>
+}
+
+export interface WalkForwardReport {
+  classification: string
+  data_version?: string
+  git_commit?: string
+  promotion: string
+  promotion_reasons: string[]
+  result: {
+    aggregate_metrics?: Record<string, string | number>
+    fold_pass_ratio?: string
+    folds: WalkForwardFold[]
+    result_hash?: string
+  }
+}
+
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
@@ -82,4 +103,5 @@ export interface PlatformSnapshot {
   reports: DailyReportSummary[]
   strategies: ResearchStrategyRow[]
   experiments: ResearchReport
+  walkForward: WalkForwardReport
 }

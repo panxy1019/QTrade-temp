@@ -69,10 +69,12 @@ def _window_metrics(
         (result.turnover_curve[index] for index in indices), start=Decimal("0")
     )
     costs = sum((result.cost_curve[index] for index in indices), start=Decimal("0"))
+    trade_count = sum(start <= trade.trading_day <= end for trade in result.trades)
     return evaluate_returns(
         returns,
         exposure=exposure,
         turnover=turnover,
+        trade_count=trade_count,
         transaction_costs=costs,
     )
 
@@ -164,6 +166,7 @@ class MultiAssetWalkForwardRunner:
             aggregate_returns,
             exposure=exposure,
             turnover=total_turnover,
+            trade_count=sum(fold.test_metrics.number_of_trades for fold in folds),
             transaction_costs=total_cost,
         )
         pass_ratio = Decimal(

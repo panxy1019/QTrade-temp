@@ -22,7 +22,9 @@ export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
 
 export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const report = data?.experiments
-  return <Page title="策略研究" subtitle="血缘、候选与 Champion/Challenger"><Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} /><Card><Tabs items={[{ key: 'registry', label: '策略注册表', children: <Typography.Text>已加载 {report?.experiments.length ?? 0} 个不可变实验记录。</Typography.Text> }, { key: 'lineage', label: '演化树', children: <Empty description="当前实验尚未形成已批准血缘" /> }, { key: 'rejected', label: '未晋级', children: <Typography.Text type="secondary">当前样本池存在幸存者偏差，且缺少 PAPER/SHADOW 证据。</Typography.Text> }]} /></Card></Page>
+  const walkForward = data?.walkForward
+  const aggregate = walkForward?.result.aggregate_metrics
+  return <Page title="策略研究" subtitle="血缘、候选与 Champion/Challenger"><Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} /><Card><Tabs items={[{ key: 'registry', label: '策略注册表', children: <Typography.Text>已加载 {report?.experiments.length ?? 0} 个不可变实验记录。</Typography.Text> }, { key: 'walk-forward', label: '滚动样本外', children: <Space orientation="vertical"><Typography.Text>独立测试折数：{walkForward?.result.folds.length ?? 0}；正收益折比例：{walkForward?.result.fold_pass_ratio ?? '—'}</Typography.Text><Typography.Text>聚合 Sharpe：{String(aggregate?.sharpe ?? '—')}；聚合收益：{String(aggregate?.total_return ?? '—')}</Typography.Text><Typography.Text type="secondary">仅验证期选择候选；完整折区间互不重叠。结论：{walkForward?.promotion ?? '未评估'}。</Typography.Text></Space> }, { key: 'lineage', label: '演化树', children: <Empty description="当前实验尚未形成已批准血缘" /> }, { key: 'rejected', label: '未晋级', children: <Typography.Text type="secondary">当前样本池存在幸存者偏差，且缺少 PAPER/SHADOW 证据。</Typography.Text> }]} /></Card></Page>
 }
 
 export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {

@@ -66,6 +66,7 @@ class AppContext:
     cancel: Callable[[CancelCommand], Order] | None = None
     daily_report_root: Path | None = None
     research_comparison_path: Path | None = None
+    walk_forward_report_path: Path | None = None
 
 
 def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
@@ -191,6 +192,18 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             "experiments": [],
             "promotion": "NOT_EVALUATED",
             "promotion_reasons": ["MISSING_VERIFIED_RESEARCH_ARTIFACT"],
+        }
+
+    @app.get("/walk-forward")
+    def walk_forward(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        report = _load_verified_research_report(state.walk_forward_report_path)
+        return report or {
+            "classification": "NO_VERIFIED_WALK_FORWARD_RESULT",
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": ["MISSING_VERIFIED_WALK_FORWARD_ARTIFACT"],
+            "result": {"folds": []},
         }
 
     @app.get("/portfolio")
@@ -370,6 +383,9 @@ def context_from_runtime(bundle: object) -> AppContext:
         cancel=bundle.service.cancel,
         daily_report_root=Path("runtime/reports"),
         research_comparison_path=Path("runtime/research/akshare-v4/comparison.json"),
+        walk_forward_report_path=Path(
+            "runtime/research/akshare-walk-forward-v1.json"
+        ),
     )
 
 

@@ -69,7 +69,13 @@ def test_metrics_include_cost_aware_return_drawdown_and_benchmark():
     assert metrics.win_rate == Decimal("2") / Decimal("3")
     assert metrics.profit_loss_ratio == Decimal("2")
     assert metrics.number_of_trades == 2
-    assert metrics.transaction_costs == Decimal("2")
+
+
+def test_metrics_can_report_observed_trade_count_without_fabricated_trade_pnls():
+    metrics = evaluate_returns([Decimal("0.01")], trade_count=3)
+    assert metrics.number_of_trades == 3
+    assert metrics.profit_loss_ratio == 0
+    assert metrics.transaction_costs == 0
 
 
 def test_empty_benchmark_is_not_silently_replaced():
