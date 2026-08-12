@@ -96,6 +96,8 @@ structured logs, metrics, audit views, alerts.
 
 Current evidence: required read surfaces, control commands, prominent mode,
 metrics/audit views and environment bearer-token authentication implemented.
+Order cancellation now uses a typed idempotent application-service command and
+the separate trade-sensitive bearer role; it remains available under HALT.
 Remaining: external identity/TLS integration, Prometheus export and richer alert
 routing. Keep server loopback-only until those are reviewed.
 
@@ -124,10 +126,10 @@ implementation → independent review → test review → main-agent integration
 
 ## Current work queue
 
-1. Route authenticated cancellation through the application service.
-2. Wire runtime order/reject/fill metrics and structured operational events.
-3. Expand failure injection and deterministic paper execution plans.
-4. Add historical CSV ingestion and further research baselines.
+1. Wire runtime order/reject/fill metrics and structured operational events.
+2. Expand failure injection and deterministic paper execution plans.
+3. Add historical CSV ingestion and further research baselines.
+4. Add vn.py shadow-process integration tests without external transmission.
 
 ## Blockers
 

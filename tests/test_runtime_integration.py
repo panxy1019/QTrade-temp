@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import pytest
 
-from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
+from qtrade.domain import CancelCommand, Instrument, OrderRequest, RuntimeMode, Side
 from qtrade.execution import FeeSchedule, PaperAction
 from qtrade.reconciliation import Reconciler, ReconciliationResult
 from qtrade.risk import RiskContext, RiskLimits
@@ -145,3 +145,18 @@ def test_crash_after_atomic_fill_commit_restores_exactly_one_effect(tmp_path, mo
     assert restarted.oms.orders[0].filled_quantity == 100
     assert restarted.gateway.reservations.reserved_cash == Decimal("0")
     assert restarted.risk.state.value == "HALTED"
+
+
+def test_cancel_remains_available_after_halt_and_is_idempotent(tmp_path):
+    bundle = build(tmp_path)
+    attest(bundle)
+    bundle.runtime.start(actor="operator")
+    order, _ = submit(bundle, "open-before-halt")
+    bundle.runtime.kill(actor="operator", reason="test halt")
+
+    first = bundle.service.cancel(CancelCommand(order.internal_order_id, "cancel-key"), now=NOW)
+    second = bundle.service.cancel(CancelCommand(order.internal_order_id, "cancel-key"), now=NOW)
+
+    assert first is second
+    assert first.status.value == "CANCELLED"
+    assert bundle.gateway.reservations.reserved_cash == Decimal("0")

@@ -2,6 +2,7 @@
 
 from qtrade.domain.models import (
     AccountSnapshot,
+    CancelCommand,
     Instrument,
     Order,
     OrderRequest,
@@ -14,6 +15,7 @@ from qtrade.domain.models import (
 
 __all__ = [
     "AccountSnapshot",
+    "CancelCommand",
     "Instrument",
     "Order",
     "OrderRequest",

@@ -78,6 +78,16 @@ class OrderRequest:
             raise ValueError("created_at must be timezone-aware")
 
 
+@dataclass(frozen=True, slots=True)
+class CancelCommand:
+    internal_order_id: str
+    idempotency_key: str
+
+    def __post_init__(self) -> None:
+        if not self.internal_order_id or not self.idempotency_key:
+            raise ValueError("internal_order_id and idempotency_key are required")
+
+
 @dataclass(slots=True)
 class Order:
     internal_order_id: str

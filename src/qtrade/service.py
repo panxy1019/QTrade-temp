@@ -7,7 +7,7 @@ from dataclasses import replace
 from datetime import datetime
 
 from qtrade.domain import RuntimeMode
-from qtrade.domain.models import Order, OrderRequest, OrderStatus
+from qtrade.domain.models import CancelCommand, Order, OrderRequest, OrderStatus
 from qtrade.execution.paper import PaperGateway
 from qtrade.execution.reservations import ReservationBook
 from qtrade.oms.manager import OrderManager
@@ -86,3 +86,19 @@ class TradingService:
                 if self._state_change_handler is not None:
                     self._state_change_handler()
             return order, True
+
+    def cancel(self, command: CancelCommand, *, now: datetime | None = None) -> Order:
+        """Cancel through the single write entrance, even while trading is stopped.
+
+        Cancels deliberately do not use the submission guard: PAUSED and HALTED
+        prevent new exposure but must not prevent reducing outstanding exposure.
+        The dispatch gate still serializes cancellation with kill transitions and
+        new-order dispatch.
+        """
+        with self._risk.dispatch_gate:
+            order = self._oms.get(command.internal_order_id)
+            return self._gateway.cancel(
+                order,
+                idempotency_key=command.idempotency_key,
+                now=now,
+            )

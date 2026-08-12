@@ -15,7 +15,7 @@ from pydantic import BaseModel
 from qtrade.accounting import Ledger
 from qtrade.audit import AuditLog
 from qtrade.control import PlatformRuntime
-from qtrade.domain import RuntimeMode
+from qtrade.domain import CancelCommand, Order, RuntimeMode
 from qtrade.execution import FeeSchedule, PaperGateway
 from qtrade.monitoring import MetricsRegistry
 from qtrade.oms import OrderManager
@@ -30,6 +30,11 @@ class Role(StrEnum):
 
 class ControlRequest(BaseModel):
     reason: str = "manual control"
+
+
+class CancelRequest(BaseModel):
+    internal_order_id: str
+    idempotency_key: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,6 +60,7 @@ class AppContext:
     ledger: Ledger
     audit: AuditLog
     recover: Callable[[str], None] | None = None
+    cancel: Callable[[CancelCommand], Order] | None = None
 
 
 def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
@@ -184,6 +190,26 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             for event in state.audit.events
         ]
 
+    @app.post("/orders/cancel")
+    def cancel_order(
+        payload: CancelRequest,
+        _: str = Depends(_require_role(Role.TRADE, auth_config)),
+    ) -> dict[str, object]:
+        if state.cancel is None:
+            raise HTTPException(status_code=503, detail="order cancellation is not configured")
+        try:
+            cancelled = state.cancel(
+                CancelCommand(payload.internal_order_id, payload.idempotency_key)
+            )
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail="order not found") from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return {
+            "internal_order_id": cancelled.internal_order_id,
+            "status": cancelled.status.value,
+        }
+
     @app.post("/system/start")
     def start(
         _: ControlRequest,
@@ -263,4 +289,5 @@ def context_from_runtime(bundle: object) -> AppContext:
         bundle.ledger,
         bundle.audit,
         recover=lambda actor: bundle.reconcile_and_recover(actor=actor),
+        cancel=bundle.service.cancel,
     )

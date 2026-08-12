@@ -8,12 +8,12 @@ from qtrade.accounting import Ledger
 from qtrade.api import ApiAuthConfig, AppContext, context_from_runtime, create_app
 from qtrade.audit import AuditLog
 from qtrade.control import PlatformRuntime
-from qtrade.domain import RuntimeMode
+from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
 from qtrade.execution import FeeSchedule
 from qtrade.monitoring import MetricsRegistry
 from qtrade.oms import OrderManager
 from qtrade.reconciliation import Reconciler, ReconciliationResult
-from qtrade.risk import RiskEngine, RiskLimits
+from qtrade.risk import RiskContext, RiskEngine, RiskLimits
 from qtrade.runtime import build_paper_runtime
 
 
@@ -126,3 +126,65 @@ def test_api_context_uses_canonical_paper_runtime(tmp_path):
         json={},
     )
     assert response.status_code == 200
+
+
+def test_trade_role_can_cancel_but_control_role_cannot(tmp_path):
+    bundle = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("100000"),
+        limits=RiskLimits(Decimal("50000"), 10000, Decimal("100000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=tmp_path / "runtime.db",
+    )
+    bundle.reconcile_and_recover(actor="operator")
+    bundle.runtime.start(actor="operator")
+    now = datetime.now(UTC)
+    order, _ = bundle.service.submit(
+        OrderRequest(
+            "submit-key",
+            "strategy",
+            "portfolio",
+            "510300",
+            Side.BUY,
+            Decimal("10"),
+            100,
+            now,
+        ),
+        RiskContext(
+            bundle.ledger.account,
+            {"510300": Instrument("510300", "SSE", "ETF", 100, Decimal("0.001"))},
+            {"510300": Decimal("10")},
+            now,
+            True,
+            True,
+            now,
+        ),
+        now=now,
+    )
+    api = TestClient(
+        create_app(
+            context_from_runtime(bundle),
+            ApiAuthConfig(control_token="control-test", trade_token="trade-test"),
+        )
+    )
+    payload = {"internal_order_id": order.internal_order_id, "idempotency_key": "cancel-1"}
+    control_response = api.post(
+        "/orders/cancel",
+        headers={"Authorization": "Bearer control-test"},
+        json=payload,
+    )
+    assert control_response.status_code == 403
+    trade_response = api.post(
+        "/orders/cancel",
+        headers={"Authorization": "Bearer trade-test"},
+        json=payload,
+    )
+    assert trade_response.status_code == 200
+    assert trade_response.json()["status"] == "CANCELLED"
+    retry = api.post(
+        "/orders/cancel",
+        headers={"Authorization": "Bearer trade-test"},
+        json=payload,
+    )
+    assert retry.status_code == 200
+    assert bundle.gateway.reservations.reserved_cash == Decimal("0")
