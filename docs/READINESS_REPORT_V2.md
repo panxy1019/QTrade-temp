@@ -56,7 +56,7 @@ npm --prefix web run build
 
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12:
 
-- 166 Python tests passed;
+- 168 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 80 source files;
 - no broken Python requirements;

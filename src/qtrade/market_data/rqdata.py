@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import suppress
+from dataclasses import replace
 from datetime import datetime
 
 from qtrade.data import Bar
@@ -108,8 +109,11 @@ class RqDataProvider:
 
     def on_tick(self, handler: TickHandler) -> None:
         def observed(tick: CanonicalTick) -> None:
+            capabilities = self.capabilities
+            if tick.provider != "RQData" or tick.session_nonce != capabilities.session_nonce:
+                raise ValueError("RQData tick identity does not match verified bridge session")
             self._last_event_at = tick.timestamp_received
-            handler(tick)
+            handler(replace(tick, provider="RQData"))
 
         self._client.set_tick_handler(observed)
 

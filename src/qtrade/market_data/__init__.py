@@ -27,6 +27,12 @@ from qtrade.market_data.recording import (
     TickReplay,
 )
 from qtrade.market_data.rqdata import RqDataProvider
+from qtrade.market_data.selection import (
+    ProviderChoice,
+    ProviderSelectionStatus,
+    inspect_provider_selection,
+)
+from qtrade.market_data.xtdata import XtDataProvider
 
 __all__ = [
     "AvailableBar",
@@ -40,6 +46,8 @@ __all__ = [
     "ProviderBridgeClient",
     "ProviderCapabilities",
     "ProviderConnectionStatus",
+    "ProviderChoice",
+    "ProviderSelectionStatus",
     "ProviderStatus",
     "RawTickArchive",
     "RealtimeMarketDataProvider",
@@ -48,4 +56,6 @@ __all__ = [
     "TickQualityGate",
     "TickQualityIssue",
     "TickReplay",
+    "XtDataProvider",
+    "inspect_provider_selection",
 ]

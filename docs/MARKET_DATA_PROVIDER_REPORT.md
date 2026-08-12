@@ -11,6 +11,21 @@ adapter is data-only. XT is the fallback where the user already has QMT/XT data
 rights, but it must run in a hard data-only subprocess and must never instantiate
 its trading API.
 
+The repository now provides both `RqDataProvider` and `XtDataProvider` over the
+same injected, data-only bridge protocol. Run the credential-free diagnostic:
+
+```powershell
+python scripts/provider_readiness.py RQDATA
+python scripts/provider_readiness.py XTDATA
+```
+
+Minimum user action for RQData: obtain licensed realtime A-share/ETF/index access,
+then set `QTRADE_RQDATA_USERNAME` and `QTRADE_RQDATA_TOKEN` in the isolated bridge
+process environment. Minimum user action for XT: install an entitled QMT/XT client,
+set `QTRADE_XTDATA_PATH`, and set
+`QTRADE_XTDATA_ENTITLEMENT_CONFIRMED=true` only after verifying the entitlement.
+The diagnostic prints variable names and actions only, never values.
+
 | Capability | vnpy_rqdata 3.4.7.8 | vnpy_xt 1.4.6 |
 |---|---|---|
 | Adapter license | MIT; RQData service is commercial/proprietary | MIT; XT/QMT access is proprietary/broker-entitled |
@@ -38,7 +53,7 @@ its trading API.
   watermark. A signal emitted at bar N close can execute only on a later observable
   quote/tick.
 
-Current implementation provides provider-neutral protocols, an injected RQData
+Current implementation provides provider-neutral protocols, injected RQData and XtData
 bridge adapter, cross-restart quality cursors, hash-chained raw recording,
 atomic Parquet/manifests, finalized bars, and deterministic ingestion-order replay.
 It does not claim an authenticated real-provider connection.

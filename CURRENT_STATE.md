@@ -12,7 +12,7 @@ Last updated: 2026-08-12
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M6 integrated PAPER/SHADOW readiness review.
-- Acceptance evidence: 166 tests passed, Ruff clean, strict mypy clean on
+- Acceptance evidence: 168 tests passed, Ruff clean, strict mypy clean on
   Python 3.14.6 (2026-08-12); frontend Vitest, ESLint and production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
@@ -31,6 +31,9 @@ Last updated: 2026-08-12
 - External blockers: `WAITING_FOR_DATA_PROVIDER_AUTH` and
   `WAITING_FOR_BROKER_SELECTION`; they do not block mock adapters, replay,
   strategy research, UI or read-only protocol work.
+- Provider selection: RQData remains the conditional first choice; XtData is the
+  QMT-entitled fallback. Both have fail-closed injected bridge adapters and a
+  credential-name-only readiness diagnostic. Neither has an authorized session.
 - Analytical persistence: checksum-verified Parquet/DuckDB bar storage and
   immutable hashed experiment records implemented; 51 tests pass at 93% coverage.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED

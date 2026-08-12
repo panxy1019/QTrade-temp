@@ -51,6 +51,8 @@ focused regression and independent safety review.
 - [x] Deterministic replay into the same PAPER/SHADOW strategy runtime.
 - [x] At least one real-provider adapter package completed without claiming a
   successful connection before legal credentials/SDK are available.
+- [x] Symmetric RQData/XtData data-only bridge adapters and credential-free
+  provider-selection diagnostic.
 - [x] `REAL_DATA_PAPER` configuration remains `RuntimeMode.PAPER`.
 
 ### V2-M4 — Professional Chinese web platform

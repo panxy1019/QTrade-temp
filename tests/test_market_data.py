@@ -10,12 +10,15 @@ from qtrade.market_data import (
     CanonicalTickStore,
     MarketSnapshot,
     ProviderCapabilities,
+    ProviderChoice,
     ProviderConnectionStatus,
     RawTickArchive,
     RqDataProvider,
     TickBarAggregator,
     TickQualityGate,
     TickReplay,
+    XtDataProvider,
+    inspect_provider_selection,
 )
 
 
@@ -226,6 +229,16 @@ class MockRqBridge:
         self.bar_handler = handler
 
 
+class MockXtBridge(MockRqBridge):
+    def __init__(self) -> None:
+        super().__init__(
+            ProviderCapabilities(
+                "XtData", "1", "xtquant-test", "canonical-tick-v1", "xt-session",
+                True, True, True, True, True, True, True, True,
+            )
+        )
+
+
 class FailingCleanupRqBridge(MockRqBridge):
     def handshake(self):
         raise ValueError("invalid handshake")
@@ -310,6 +323,38 @@ def test_rqdata_adapter_rejects_unverified_or_unentitled_capabilities():
     provider.connect()
     with pytest.raises(RuntimeError, match="not entitled"):
         provider.subscribe(("510300",))
+
+
+def test_xtdata_adapter_uses_data_only_verified_bridge_session():
+    bridge = MockXtBridge()
+    provider = XtDataProvider(bridge)
+    provider.connect()
+    provider.subscribe(("510300",))
+    observed: list[CanonicalTick] = []
+    provider.on_tick(observed.append)
+    value = replace(
+        tick(1), provider="XtData", session_nonce="xt-session"
+    )
+    bridge.tick_handler(value)
+    assert observed == [value]
+    with pytest.raises(ValueError, match="session"):
+        bridge.tick_handler(replace(value, session_nonce="wrong"))
+
+
+def test_provider_selection_reports_minimum_actions_without_secret_values(tmp_path):
+    rq = inspect_provider_selection(ProviderChoice.RQDATA, environment={})
+    assert rq.ready_for_authorized_bridge is False
+    assert rq.missing_configuration == (
+        "QTRADE_RQDATA_USERNAME", "QTRADE_RQDATA_TOKEN"
+    )
+    xt = inspect_provider_selection(
+        ProviderChoice.XTDATA,
+        environment={
+            "QTRADE_XTDATA_PATH": str(tmp_path),
+            "QTRADE_XTDATA_ENTITLEMENT_CONFIRMED": "true",
+        },
+    )
+    assert xt.ready_for_authorized_bridge is True
 
 
 @pytest.mark.parametrize("version", ("../escaped", "C:/absolute", "a/b", ".."))
