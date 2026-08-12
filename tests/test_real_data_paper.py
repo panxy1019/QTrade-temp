@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 
@@ -50,6 +51,7 @@ def runner_identity(decided_at: datetime) -> dict[str, object]:
         "provider": "mock",
         "bar_interval": "1m",
         "market_readiness": ready(decided_at),
+        "clock": lambda: decided_at + timedelta(seconds=1),
     }
 
 
@@ -105,6 +107,7 @@ def test_finalized_bar_signal_executes_only_on_later_observed_tick(tmp_path):
             "ticks-v1",
             received_at,
             ingest_ordinal=ordinal,
+            session_nonce="session-1",
         )
 
     before = make_tick("before", decided_at - timedelta(milliseconds=1), 10)
@@ -193,6 +196,7 @@ def test_post_submit_fill_start_failure_halts_and_blocks_restart_recovery(
         "ticks-v1",
         decided_at + timedelta(milliseconds=1),
         ingest_ordinal=10,
+        session_nonce="session-1",
     )
     monkeypatch.setattr(
         bundle.journal,
@@ -290,6 +294,7 @@ def test_market_data_readiness_is_required_and_revocable(tmp_path):
         provider="mock",
         bar_interval="1m",
         market_readiness=gate,
+        clock=lambda: decided_at + timedelta(seconds=1),
     )
     value.on_finalized_bar(
         AvailableBar(
@@ -309,8 +314,37 @@ def test_market_data_readiness_is_required_and_revocable(tmp_path):
         Decimal("10"), Decimal("100"), Decimal("1000"), Decimal("9.999"),
         Decimal("10.001"), Decimal("10"), Decimal("10"), "ticks-v1", decided_at,
         ingest_ordinal=1,
+        session_nonce="session-1",
     )
     with pytest.raises(RuntimeError, match="provider disconnected"):
         value.on_tick(tick_value)
     assert bundle.risk.state.value == "HALTED"
     assert bundle.oms.orders == ()
+
+
+def test_expired_or_wrong_session_market_authority_is_rejected(tmp_path):
+    gate = MarketDataReadinessGate()
+    now = datetime(2026, 8, 12, 2, tzinfo=UTC)
+    gate.attest(
+        MarketDataReadinessAttestation(
+            "mock", "session-1", "initial", "ticks-v1",
+            now - timedelta(minutes=3), now - timedelta(minutes=1),
+        )
+    )
+    delayed = CanonicalTick(
+        "delayed", "mock", "510300", "SSE", now - timedelta(minutes=2),
+        now - timedelta(minutes=2), 1, Decimal("10"), Decimal("1"), Decimal("10"),
+        None, None, None, None, "ticks-v1", now - timedelta(minutes=2),
+        ingest_ordinal=1, session_nonce="session-1",
+    )
+    with pytest.raises(RuntimeError, match="stale"):
+        gate.require(delayed, now=now)
+
+    gate.attest(
+        MarketDataReadinessAttestation(
+            "mock", "session-1", "initial", "ticks-v1", now, now + timedelta(minutes=1)
+        )
+    )
+    wrong_session = replace(delayed, timestamp_received=now, session_nonce="session-2")
+    with pytest.raises(RuntimeError, match="identity"):
+        gate.require(wrong_session, now=now)

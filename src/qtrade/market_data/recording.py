@@ -163,6 +163,7 @@ class CanonicalTickStore:
                 ingest_ordinal=(
                     None if row["ingest_ordinal"] is None else int(row["ingest_ordinal"])
                 ),
+                session_nonce=row.get("session_nonce", "unattested"),
             )
             for row in rows
         )

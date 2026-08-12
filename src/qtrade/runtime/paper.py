@@ -68,19 +68,10 @@ class PaperRuntimeBundle:
                 self.ledger.account.positions.values(), key=lambda item: item.symbol
             )
         )
-        trades: tuple[dict[str, object], ...] = tuple(
-            {
-                "trade_id": trade.trade_id,
-                "order_id": trade.internal_order_id,
-                "instrument": trade.symbol,
-                "side": trade.side.value,
-                "price": str(trade.price),
-                "quantity": trade.quantity,
-                "fee": str(trade.fee),
-                "timestamp": trade.timestamp.isoformat(),
-            }
-            for trade in self.gateway.applied_trades
-            if trade.timestamp.date() == trading_day
+        trades = tuple(
+            payload
+            for payload in self.journal.applied_trade_payloads()
+            if datetime.fromisoformat(str(payload["timestamp"])).date() == trading_day
         )
         incidents = tuple(
             event.message
@@ -408,6 +399,16 @@ def build_paper_runtime(
                 fill_key,
                 account_state=account_payload,
                 runtime_state=runtime_payload,
+                trade_payload={
+                    "trade_id": trade.trade_id,
+                    "order_id": trade.internal_order_id,
+                    "instrument": trade.symbol,
+                    "side": trade.side.value,
+                    "price": str(trade.price),
+                    "quantity": trade.quantity,
+                    "fee": str(trade.fee),
+                    "timestamp": trade.timestamp.isoformat(),
+                },
             )
             ledger.commit_projection(projected_account, trade)
             oms.commit_projection(order, projected_order)

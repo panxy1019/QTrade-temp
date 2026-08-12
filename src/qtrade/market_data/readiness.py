@@ -53,17 +53,22 @@ class MarketDataReadinessGate:
             self._attestation = None
             self._reason = reason
 
-    def require(self, tick: CanonicalTick) -> None:
+    def require(self, tick: CanonicalTick, *, now: datetime) -> None:
+        if now.tzinfo is None:
+            raise ValueError("market-data readiness check time must be timezone-aware")
         with self._lock:
             value = self._attestation
             reason = self._reason
         if value is None:
             raise RuntimeError(reason)
+        if now > value.expires_at:
+            raise RuntimeError("market-data readiness attestation is stale")
         if not value.issued_at <= tick.timestamp_received <= value.expires_at:
             raise RuntimeError("market-data readiness attestation is stale")
         if (
             tick.provider != value.provider
             or tick.reconnect_id != value.reconnect_id
             or tick.data_version != value.data_version
+            or tick.session_nonce != value.session_nonce
         ):
             raise RuntimeError("tick does not match market-data readiness identity")

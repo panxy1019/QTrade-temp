@@ -78,6 +78,7 @@ class FillJournalRecord:
     state: str
     updated_at: datetime
     error: str | None
+    trade_payload: dict[str, object] | None
 
 
 class SQLiteOperationalJournal:
@@ -149,6 +150,11 @@ class SQLiteOperationalJournal:
                 );
                 """
             )
+            columns = {
+                str(row[1]) for row in connection.execute("PRAGMA table_info(fill_journal)")
+            }
+            if "trade_payload" not in columns:
+                connection.execute("ALTER TABLE fill_journal ADD COLUMN trade_payload TEXT")
 
     def _claim_runtime_lease(self) -> None:
         with self._lock, self._connect() as connection:
@@ -179,7 +185,9 @@ class SQLiteOperationalJournal:
                     raise ValueError("fill key conflicts with durable journal")
                 return False
             connection.execute(
-                "INSERT INTO fill_journal VALUES (?, ?, ?, 'PENDING', ?, NULL)",
+                "INSERT INTO fill_journal"
+                "(fill_key,order_id,payload_hash,state,updated_at,error,trade_payload) "
+                "VALUES (?, ?, ?, 'PENDING', ?, NULL, NULL)",
                 (fill_key, order_id, payload_hash, now),
             )
             return True
@@ -212,11 +220,13 @@ class SQLiteOperationalJournal:
         *,
         account_state: dict[str, object],
         runtime_state: dict[str, object],
+        trade_payload: dict[str, object],
     ) -> None:
         """Atomically mark a fill APPLIED with recoverable economic/OMS state."""
         now = datetime.now(UTC).isoformat()
         account_json = json.dumps(account_state, sort_keys=True)
         runtime_json = json.dumps(runtime_state, sort_keys=True)
+        trade_json = json.dumps(trade_payload, sort_keys=True)
         with self._lock, self._connect() as connection:
             self._assert_active_lease(connection)
             row = connection.execute(
@@ -225,9 +235,10 @@ class SQLiteOperationalJournal:
             if row is None or row[0] != "PENDING":
                 raise ValueError("fill must be PENDING before atomic effect commit")
             connection.execute(
-                "UPDATE fill_journal SET state='APPLIED', updated_at=?, error=NULL "
+                "UPDATE fill_journal SET state='APPLIED', updated_at=?, error=NULL, "
+                "trade_payload=? "
                 "WHERE fill_key=?",
-                (now, fill_key),
+                (now, trade_json, fill_key),
             )
             for key, payload in (("account", account_json), ("runtime", runtime_json)):
                 connection.execute(
@@ -240,28 +251,40 @@ class SQLiteOperationalJournal:
     def get_fill(self, fill_key: str) -> FillJournalRecord | None:
         with self._connect() as connection:
             row = connection.execute(
-                "SELECT fill_key, order_id, payload_hash, state, updated_at, error "
+                "SELECT fill_key, order_id, payload_hash, state, updated_at, error, "
+                "trade_payload "
                 "FROM fill_journal WHERE fill_key=?",
                 (fill_key,),
             ).fetchone()
         if row is None:
             return None
         return FillJournalRecord(
-            row[0], row[1], row[2], row[3], datetime.fromisoformat(row[4]), row[5]
+            row[0], row[1], row[2], row[3], datetime.fromisoformat(row[4]), row[5],
+            None if row[6] is None else dict(json.loads(row[6]))
         )
 
     def uncertain_fills(self) -> tuple[FillJournalRecord, ...]:
         with self._connect() as connection:
             rows = connection.execute(
-                "SELECT fill_key, order_id, payload_hash, state, updated_at, error "
+                "SELECT fill_key, order_id, payload_hash, state, updated_at, error, "
+                "trade_payload "
                 "FROM fill_journal WHERE state != 'APPLIED' ORDER BY fill_key"
             ).fetchall()
         return tuple(
             FillJournalRecord(
-                row[0], row[1], row[2], row[3], datetime.fromisoformat(row[4]), row[5]
+                row[0], row[1], row[2], row[3], datetime.fromisoformat(row[4]), row[5],
+                None if row[6] is None else dict(json.loads(row[6]))
             )
             for row in rows
         )
+
+    def applied_trade_payloads(self) -> tuple[dict[str, object], ...]:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT trade_payload FROM fill_journal "
+                "WHERE state='APPLIED' AND trade_payload IS NOT NULL ORDER BY fill_key"
+            ).fetchall()
+        return tuple(dict(json.loads(row[0])) for row in rows)
 
     def append(self, event: AuditEvent) -> None:
         payload = json.dumps(

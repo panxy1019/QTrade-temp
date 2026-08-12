@@ -56,7 +56,7 @@ npm --prefix web run build
 
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12:
 
-- 165 Python tests passed;
+- 166 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 80 source files;
 - no broken Python requirements;
@@ -85,8 +85,8 @@ Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12:
 - The Chinese web application has twelve routes and honest empty states; several
   pages await richer catalog/analytics APIs. It is not a claim of completed
   provider-backed analytics.
-- Daily reports are runtime-generated and hash-verified, but automatic scheduling
-  and restart-complete trade history are not wired.
+- Daily reports are runtime-generated, hash-verified, and use trades persisted in
+  the atomic fill journal across restart. Automatic scheduling is not wired.
 - The control plane remains loopback-only; non-loopback deployment requires read
   authentication, operator identity, TLS/proxy, pagination/rate/body limits and
   security headers.

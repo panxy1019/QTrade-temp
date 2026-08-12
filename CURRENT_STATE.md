@@ -12,7 +12,7 @@ Last updated: 2026-08-12
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M6 integrated PAPER/SHADOW readiness review.
-- Acceptance evidence: 165 tests passed, Ruff clean, strict mypy clean on
+- Acceptance evidence: 166 tests passed, Ruff clean, strict mypy clean on
   Python 3.14.6 (2026-08-12); frontend Vitest, ESLint and production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.

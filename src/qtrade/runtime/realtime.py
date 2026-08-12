@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -10,6 +11,7 @@ from typing import Protocol
 
 from qtrade.data import Bar
 from qtrade.domain import Instrument, Order, OrderRequest, OrderStatus, Side, Trade
+from qtrade.domain.models import utc_now
 from qtrade.instruments import TradingCalendar, TradingRule, TradingStatus
 from qtrade.market_data import AvailableBar, CanonicalTick, MarketDataReadinessGate
 from qtrade.risk import RiskContext
@@ -53,6 +55,7 @@ class RealDataPaperRunner:
         provider: str,
         bar_interval: str,
         market_readiness: MarketDataReadinessGate,
+        clock: Callable[[], datetime] = utc_now,
     ) -> None:
         if trading_rule.venue != instrument.exchange:
             raise ValueError("trading rule venue does not match instrument")
@@ -82,6 +85,7 @@ class RealDataPaperRunner:
         self._provider = provider
         self._bar_interval = bar_interval
         self._market_readiness = market_readiness
+        self._clock = clock
         self._pending: PendingTarget | None = None
         self._inflight_order_id: str | None = None
         self._last_bar: datetime | None = None
@@ -132,7 +136,7 @@ class RealDataPaperRunner:
                 raise
 
     def _on_tick_locked(self, tick: CanonicalTick) -> RealDataPaperResult:
-        self._market_readiness.require(tick)
+        self._market_readiness.require(tick, now=self._clock())
         if (
             tick.instrument != self._instrument.symbol
             or tick.exchange != self._instrument.exchange

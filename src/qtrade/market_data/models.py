@@ -89,6 +89,7 @@ class CanonicalTick:
     ingestion_time: datetime
     reconnect_id: str = "initial"
     ingest_ordinal: int | None = None
+    session_nonce: str = "unattested"
 
     def __post_init__(self) -> None:
         required = (
@@ -98,6 +99,7 @@ class CanonicalTick:
             self.exchange,
             self.data_version,
             self.reconnect_id,
+            self.session_nonce,
         )
         if not all(value.strip() for value in required):
             raise ValueError("canonical tick identity fields are required")
