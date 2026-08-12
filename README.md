@@ -3,8 +3,10 @@
 Q is a safety-first personal quantitative trading platform for Shanghai and
 Shenzhen A-shares, exchange-traded funds, and index benchmarks.
 
-The project is under active construction. The first executable milestone is a
-deterministic paper-trading safety kernel. Real-money trading is not enabled.
+The repository contains a runnable local PAPER/SHADOW platform checkpoint with
+versioned data, research, event-driven backtesting, portfolio construction,
+risk/OMS/accounting, recovery, monitoring, and a control plane. Real-money
+trading is not enabled.
 
 ## Safety invariant
 
@@ -45,6 +47,13 @@ python scripts/run_baseline_workflow.py
 It writes ignored runtime artifacts under `runtime/sample`: checksum-verified
 Parquet bars and an immutable experiment record containing `git_commit` and
 `data_version`.
+
+`qtrade.runtime.PaperBarRunner` consumes strictly ordered bars, executes a
+strategy's previous target through the durable PAPER pipeline at the next bar
+open, and checkpoints the pending target and last consumed event. Dated fills
+persist acquisition lots and enforce date-effective T+N sellability across
+restart. The runner is intentionally single-process; licensed realtime feeds
+belong behind the read-only SHADOW adapter after a provider is selected.
 
 Historical vendor exports can enter through `qtrade.data.CsvBarImporter`. The
 canonical UTF-8 CSV schema is exactly `symbol,exchange,timestamp,trading_day,open,high,low,close,volume`;

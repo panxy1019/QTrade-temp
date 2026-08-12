@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
-from qtrade.accounting import Ledger
+from qtrade.accounting import AcquisitionLot, Ledger, SellabilityLedger
 from qtrade.audit import AuditEvent, AuditLog
 from qtrade.control import PlatformRuntime
 from qtrade.domain import (
@@ -39,6 +40,11 @@ class PaperRuntimeBundle:
     metrics: MetricsRegistry
     audit: AuditLog
     journal: SQLiteOperationalJournal
+    sellability: SellabilityLedger
+    _incident_handler: Callable[[str], None] = field(repr=False)
+
+    def report_incident(self, reason: str) -> None:
+        self._incident_handler(reason)
 
     def reconcile_and_recover(self, *, actor: str) -> None:
         uncertain_fills = len(self.journal.uncertain_fills())
@@ -89,6 +95,7 @@ def build_paper_runtime(
     ledger = Ledger(opening_cash, audit)
     oms = OrderManager(audit)
     reservations = ReservationBook()
+    sellability = SellabilityLedger()
     risk = RiskEngine(limits, audit)
     runtime = PlatformRuntime(mode, risk, audit, metrics)
 
@@ -131,6 +138,16 @@ def build_paper_runtime(
                     price=Decimal(str(request_data["price"])),
                     quantity=int(request_data["quantity"]),
                     created_at=datetime.fromisoformat(str(request_data["created_at"])),
+                    trading_day=(
+                        None
+                        if request_data.get("trading_day") is None
+                        else date.fromisoformat(str(request_data["trading_day"]))
+                    ),
+                    sellable_on=(
+                        None
+                        if request_data.get("sellable_on") is None
+                        else date.fromisoformat(str(request_data["sellable_on"]))
+                    ),
                 )
                 oms.restore(
                     Order(
@@ -163,6 +180,18 @@ def build_paper_runtime(
                             Decimal(str(raw["remaining_cash"])),
                         )
                     )
+        raw_lots = restored_runtime.get("sellability_lots", [])
+        if isinstance(raw_lots, list):
+            for raw in raw_lots:
+                if isinstance(raw, dict):
+                    sellability.restore(
+                        str(raw["symbol"]),
+                        AcquisitionLot(
+                            int(raw["quantity"]),
+                            date.fromisoformat(str(raw["acquired_on"])),
+                            date.fromisoformat(str(raw["sellable_on"])),
+                        ),
+                    )
 
     def incident(reason: str) -> None:
         metrics.gateway_connected = False
@@ -182,6 +211,7 @@ def build_paper_runtime(
         account_override: AccountSnapshot | None = None,
         order_override: Order | None = None,
         reservations_override: list[dict[str, object]] | None = None,
+        sellability_override: tuple[tuple[str, AcquisitionLot], ...] | None = None,
     ) -> tuple[dict[str, object], dict[str, object]]:
         account = ledger.account if account_override is None else account_override
         positions = account.positions
@@ -220,6 +250,19 @@ def build_paper_runtime(
                     }
                     for item in reservations.snapshot()
                 ],
+                "sellability_lots": [
+                    {
+                        "symbol": symbol,
+                        "quantity": lot.quantity,
+                        "acquired_on": lot.acquired_on.isoformat(),
+                        "sellable_on": lot.sellable_on.isoformat(),
+                    }
+                    for symbol, lot in (
+                        sellability.snapshot()
+                        if sellability_override is None
+                        else sellability_override
+                    )
+                ],
             }
         return account_payload, runtime_payload
 
@@ -235,6 +278,16 @@ def build_paper_runtime(
                             "price": str(order.request.price),
                             "quantity": order.request.quantity,
                             "created_at": order.request.created_at.isoformat(),
+                            "trading_day": (
+                                None
+                                if order.request.trading_day is None
+                                else order.request.trading_day.isoformat()
+                            ),
+                            "sellable_on": (
+                                None
+                                if order.request.sellable_on is None
+                                else order.request.sellable_on.isoformat()
+                            ),
                         },
                         "status": order.status.value,
                         "broker_order_id": order.broker_order_id,
@@ -250,6 +303,15 @@ def build_paper_runtime(
         reservation_projection = reservations.project_consume(
             order.internal_order_id, trade.quantity
         )
+        sellability_projection = sellability.snapshot()
+        if order.request.trading_day is not None:
+            sellability_projection = sellability.project_fill(
+                trade.symbol,
+                trade.side,
+                trade.quantity,
+                order.request.trading_day,
+                order.request.sellable_on,
+            )
         projected_reservations: list[dict[str, object]] = [
             {
                 "order_id": item.order_id,
@@ -264,6 +326,7 @@ def build_paper_runtime(
             account_override=projected_account,
             order_override=projected_order,
             reservations_override=projected_reservations,
+            sellability_override=sellability_projection,
         )
         journal.commit_fill_effect(
             fill_key,
@@ -273,6 +336,7 @@ def build_paper_runtime(
         ledger.commit_projection(projected_account, trade)
         oms.commit_projection(order, projected_order)
         reservations.replace(reservation_projection)
+        sellability.replace(sellability_projection)
         audit.record(
             AuditEvent(
                 event_type="TRADE_BOOKED",
@@ -329,5 +393,15 @@ def build_paper_runtime(
         observer_failure_handler=metrics.mark_degraded,
     )
     return PaperRuntimeBundle(
-        runtime, service, gateway, risk, oms, ledger, metrics, audit, journal
+        runtime,
+        service,
+        gateway,
+        risk,
+        oms,
+        ledger,
+        metrics,
+        audit,
+        journal,
+        sellability,
+        incident,
     )

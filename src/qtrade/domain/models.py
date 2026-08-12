@@ -7,7 +7,7 @@ not hard-coded here because rules must be versioned and sourced by date.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from enum import StrEnum
 
@@ -68,6 +68,8 @@ class OrderRequest:
     price: Decimal
     quantity: int
     created_at: datetime = field(default_factory=utc_now)
+    trading_day: date | None = None
+    sellable_on: date | None = None
 
     def __post_init__(self) -> None:
         if not self.idempotency_key:
@@ -76,6 +78,18 @@ class OrderRequest:
             raise ValueError("strategy_id, portfolio_id, and symbol are required")
         if self.created_at.tzinfo is None:
             raise ValueError("created_at must be timezone-aware")
+        if self.sellable_on is not None and self.trading_day is None:
+            raise ValueError("sellable_on requires trading_day")
+        if self.side is Side.BUY and self.trading_day is not None and self.sellable_on is None:
+            raise ValueError("dated buy orders require sellable_on")
+        if self.side is Side.SELL and self.sellable_on is not None:
+            raise ValueError("sell orders cannot define sellable_on")
+        if (
+            self.trading_day is not None
+            and self.sellable_on is not None
+            and self.sellable_on < self.trading_day
+        ):
+            raise ValueError("sellable_on cannot precede trading_day")
 
 
 @dataclass(frozen=True, slots=True)

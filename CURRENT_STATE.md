@@ -4,25 +4,25 @@ Last updated: 2026-08-12
 
 - Goal: deliver a tested A-share/ETF research, backtest, paper, and shadow
   platform while real-money trading remains disabled.
-- Completed: environment audit; architecture/safety decisions; in-process safety
+- Completed: environment audit; architecture/safety decisions; durable safety
   kernel; versioned data/PIT contracts; research/portfolio baselines; shared-path
   next-bar backtest; control plane/dashboard; reconciliation/recovery contracts;
   authoritative China rule-source registry; vn.py gap analysis.
-- Current phase: integrated paper/shadow platform hardening.
-- Current milestone: M5/M6 failure recovery, control, and observability.
-- Acceptance evidence: 114 tests passed, Ruff clean, strict mypy
+- Current phase: validated PAPER/SHADOW software checkpoint.
+- Current milestone: complete; external provider/broker integration remains gated.
+- Acceptance evidence: 122 tests passed, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); 92% statement coverage; end-to-end
   synthetic workflow reran successfully with immutable unique artifact IDs.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
-- Known limitations: current OMS/ledger/reservations are in-process and do not
-  claim crash-safe exactly-once semantics; audit hash chain is tamper-evident but
-  lacks an external tail anchor; data adapters and operational database remain
-  to be integrated; paper matching remains deliberately simple.
+- Known limitations: the local SQLite runtime is single-process and does not
+  claim distributed exactly-once semantics; audit hashes lack an external/WORM
+  tail anchor; matching is deliberately simple; licensed realtime data, native
+  vn.py and broker adapters require external provider/broker selection.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: paper runtime failure replay and orchestration; shadow-process
-  integration testing; normalized corporate-action adjustment.
+- Next: choose a licensed realtime data provider and broker/ABI before adding
+  external adapters; keep all external order transmission structurally disabled.
 - Analytical persistence: checksum-verified Parquet/DuckDB bar storage and
   immutable hashed experiment records implemented; 51 tests pass at 93% coverage.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
@@ -92,6 +92,9 @@ Last updated: 2026-08-12
   ledger, OMS and reservations before audit I/O. An audit-sink failure after
   APPLIED leaves one converged fill, latches HALT/reconciliation FAILED, and
   restart restores the identical state.
+- Paper orchestration: a serialized next-bar runner checkpoints pending targets
+  and last event identity, persists T+N lots with fills, shares its lock across
+  same-identity instances, and fences duplicate processes/stale runtime writers.
 - Metadata lineage: an immutable SQLite catalog registers PASSED manifests and
   experiment spec hashes with foreign-keyed data versions; the baseline workflow
   now populates and verifies this catalog.

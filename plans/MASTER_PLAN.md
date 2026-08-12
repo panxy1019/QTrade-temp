@@ -22,7 +22,7 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
-### M1 — Deterministic safety kernel (in-process acceptance complete)
+### M1 — Deterministic safety kernel (acceptance complete)
 
 Scope: domain contracts, operational modes, kill switch, pre-trade checks,
 OMS state machine, idempotent paper gateway, accounting, append-only audit.
@@ -41,9 +41,9 @@ Acceptance:
 
 Reproduce: `python -m pytest`
 
-Known limitations: in-memory state cannot provide crash-safe exactly-once
-semantics; uncertain fill replay blocks for reconciliation. JSONL chaining is
-tamper-evident but not WORM storage. Durable completion continues under M5.
+Known limitations: the SQLite checkpoint is single-process rather than
+distributed exactly-once. Uncertain fill replay blocks for reconciliation.
+Audit chaining is tamper-evident but not externally/WORM anchored.
 
 ### M2 — Versioned data and instrument foundation (contracts complete; adapters in progress)
 
@@ -113,6 +113,14 @@ repairing an over-broad `runtime/` ignore rule.
 Terminal cancellation persistence is application-service owned and retryable by
 its idempotency key; injected persistence failure halts and a successful retry
 restores CANCELLED without a leaked reservation.
+The PAPER bar runner serializes callbacks, checkpoints last-event/pending-target
+identity, executes targets at the next bar open through the mandatory risk/OMS
+path, and persists T+N acquisition lots in the atomic fill projection. Concurrent
+callback and restart regressions prove no duplicated target exposure and restored
+sellability state.
+The SQLite composition claims a single-process owner and rotates a runtime lease;
+same-identity runners share a journal-scoped lock and superseded runtime instances
+are fenced from writes. Cross-process ownership and stale-owner recovery are tested.
 
 ### M6 — Control plane, dashboard, and observability
 
@@ -158,12 +166,16 @@ implementation → independent review → test review → main-agent integration
 
 ## Current work queue
 
-1. Expand failure injection and deterministic paper execution plans.
-2. Add model-training experiment adapter after baseline reports are complete.
-3. Extend deterministic matching/session simulation and alerts.
-4. Integrate licensed live-data adapter only after an external provider is chosen.
+The locally executable PAPER/SHADOW checkpoint is complete. Further integration
+is externally gated:
+
+1. select and license a realtime/historical data provider;
+2. select a broker and compatible isolated native-gateway Python ABI;
+3. certify provider/broker normalization and reconciliation in a sandbox;
+4. retain external order transmission disabled until a separate human review.
 
 ## Blockers
 
-No external blocker for paper/shadow development. Real broker access remains an
-intentional human gate and is not needed for current milestones.
+Licensed realtime data and a broker/native ABI selection are required for the
+next integration milestone. Credentials and real order transmission remain an
+intentional human gate and were not used.
