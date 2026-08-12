@@ -53,7 +53,9 @@ Parquet/DuckDB adapter and fixtures with provenance.
 
 Current evidence: source-backed effective-date rule model, PIT memberships and
 corporate actions, multi-check quality gate, checksum-verified Parquet/DuckDB
-bar adapter. Remaining: durable metadata catalog, calendars/status, normalized
+bar adapter, and strict checksum-versioned canonical CSV importer. Temporal and
+jump validation is grouped per instrument and rejects non-finite values.
+Remaining: durable metadata catalog, calendars/status, normalized
 corporate-action adjustments and larger fixture coverage.
 
 ### M3 — Research, factors, portfolio, and evaluation
@@ -128,10 +130,10 @@ implementation → independent review → test review → main-agent integration
 
 ## Current work queue
 
-1. Add historical CSV ingestion and harden grouped data-quality validation.
-2. Add further research baselines and walk-forward orchestration.
-3. Expand failure injection and deterministic paper execution plans.
-4. Add vn.py shadow-process integration tests without external transmission.
+1. Add further research baselines and walk-forward orchestration.
+2. Expand failure injection and deterministic paper execution plans.
+3. Add vn.py shadow-process integration tests without external transmission.
+4. Add versioned China transaction-cost components and source tests.
 
 ## Blockers
 

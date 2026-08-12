@@ -43,6 +43,26 @@ def test_quality_gate_reports_multiple_failures():
     assert {"TIMESTAMP_DISORDER", "ABNORMAL_JUMP"} <= codes
 
 
+def test_quality_gate_groups_temporal_checks_by_instrument_and_rejects_nonfinite():
+    def other(day: int, close: str) -> Bar:
+        price = Decimal(close)
+        return bar(
+            day,
+            close,
+            symbol="000001",
+            exchange="SZSE",
+            timestamp=datetime(2026, 8, day, 7, tzinfo=UTC),
+            open=price,
+            high=price + 1,
+            low=price - 1,
+        )
+
+    interleaved = [bar(10, "10"), other(10, "1000"), bar(11, "10.1"), other(11, "1001")]
+    assert BarQualityGate().validate(interleaved) == ()
+    issues = BarQualityGate().validate([bar(12, close="NaN")])
+    assert {issue.code for issue in issues} == {"NON_FINITE_VALUE"}
+
+
 def test_point_in_time_universe_hides_future_known_membership():
     store = PointInTimeStore()
     store.add_membership(

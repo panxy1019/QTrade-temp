@@ -10,7 +10,7 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Current phase: integrated paper/shadow platform hardening.
 - Current milestone: M5/M6 failure recovery, control, and observability.
-- Acceptance evidence: 84 tests passed, Ruff clean, strict mypy
+- Acceptance evidence: 88 tests passed, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); end-to-end synthetic workflow executed.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
@@ -20,8 +20,8 @@ Last updated: 2026-08-12
   to be integrated; paper matching remains deliberately simple.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: historical ingestion and data-quality hardening; additional research
-  baselines; paper runtime failure replay and orchestration.
+- Next: additional research baselines and walk-forward evaluation; paper runtime
+  failure replay and orchestration; shadow-process integration testing.
 - Analytical persistence: checksum-verified Parquet/DuckDB bar storage and
   immutable hashed experiment records implemented; 51 tests pass at 93% coverage.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
@@ -54,4 +54,7 @@ Last updated: 2026-08-12
 - Observability: thread-safe runtime counters record unique order attempts,
   rejections, applied fills, rolling orders/minute and dispatch latency. Replay
   and duplicate fill retries do not inflate rates.
+- Historical ingestion: strict canonical CSV import validates schema, UTF-8,
+  offset-aware timestamps, finite values and grouped per-instrument chronology;
+  source checksums flow into the downstream versioned Parquet manifest.
 - Live trading: disabled and structurally unavailable.

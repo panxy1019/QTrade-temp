@@ -24,7 +24,7 @@ class BarQualityGate:
         issues: list[QualityIssue] = []
         identities = [(bar.symbol, bar.exchange, bar.timestamp) for bar in records]
         duplicates = {identity for identity, count in Counter(identities).items() if count > 1}
-        previous: Bar | None = None
+        previous_by_instrument: dict[tuple[str, str], Bar] = {}
         observed_days: set[object] = set()
         for row, bar in enumerate(records):
             observed_days.add(bar.trading_day)
@@ -34,6 +34,10 @@ class BarQualityGate:
                 issues.append(QualityIssue("MISSING_TIMEZONE", "timestamp is naive", row))
             if expected_symbol is not None and bar.symbol != expected_symbol:
                 issues.append(QualityIssue("SYMBOL_MISMATCH", "unexpected symbol", row))
+            numeric_values = (bar.open, bar.high, bar.low, bar.close, bar.volume)
+            if any(not value.is_finite() for value in numeric_values):
+                issues.append(QualityIssue("NON_FINITE_VALUE", "numeric value is not finite", row))
+                continue
             if bar.volume < 0:
                 issues.append(QualityIssue("NEGATIVE_VOLUME", "volume is negative", row))
             if min(bar.open, bar.high, bar.low, bar.close) <= 0:
@@ -42,6 +46,8 @@ class BarQualityGate:
                 bar.open, bar.high, bar.close
             ):
                 issues.append(QualityIssue("INVALID_OHLC", "OHLC relationship is invalid", row))
+            key = (bar.symbol, bar.exchange)
+            previous = previous_by_instrument.get(key)
             if previous is not None:
                 if bar.timestamp <= previous.timestamp:
                     issues.append(
@@ -54,7 +60,7 @@ class BarQualityGate:
                     issues.append(
                         QualityIssue("ABNORMAL_JUMP", "close-to-close jump exceeded", row)
                     )
-            previous = bar
+            previous_by_instrument[key] = bar
         if expected_trading_days is not None:
             missing = expected_trading_days - observed_days
             if missing:

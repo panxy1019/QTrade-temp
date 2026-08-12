@@ -1,5 +1,6 @@
 """Versioned data contracts, point-in-time stores, and quality gates."""
 
+from qtrade.data.csv_import import CsvBarImporter, CsvImportResult
 from qtrade.data.models import (
     Bar,
     CorporateAction,
@@ -16,6 +17,8 @@ __all__ = [
     "Bar",
     "BarQualityGate",
     "CorporateAction",
+    "CsvBarImporter",
+    "CsvImportResult",
     "DataManifest",
     "DatasetIntegrityError",
     "IndexMembership",

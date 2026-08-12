@@ -46,5 +46,11 @@ It writes ignored runtime artifacts under `runtime/sample`: checksum-verified
 Parquet bars and an immutable experiment record containing `git_commit` and
 `data_version`.
 
+Historical vendor exports can enter through `qtrade.data.CsvBarImporter`. The
+canonical UTF-8 CSV schema is exactly `symbol,exchange,timestamp,trading_day,open,high,low,close,volume`;
+timestamps must include an offset. Imports are checksum-versioned and must pass
+the grouped quality gate before Parquet storage. Vendor-specific column mapping
+belongs in a separate licensed-data adapter.
+
 Project status and exact continuation steps are maintained in
 [`CURRENT_STATE.md`](CURRENT_STATE.md) and [`plans/MASTER_PLAN.md`](plans/MASTER_PLAN.md).
