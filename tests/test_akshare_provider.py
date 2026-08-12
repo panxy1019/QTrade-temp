@@ -63,6 +63,22 @@ class FakeAkshareClient:
             }
         ]
 
+    def stock_daily_tx_rows(self, symbol, start_date, end_date):
+        return [
+            {
+                "date": "2026-08-11", "open": 10, "high": 11,
+                "low": 9, "close": 10.5, "volume": 1000,
+            }
+        ]
+
+    def index_daily_sina_rows(self, symbol):
+        return [
+            {
+                "date": "2026-08-11", "open": 4000, "high": 4100,
+                "low": 3900, "close": 4050, "volume": 100000,
+            }
+        ]
+
 
 class BlockingAkshareClient(FakeAkshareClient):
     def etf_spot_rows(self):
@@ -204,6 +220,17 @@ def test_sina_history_can_be_ready_while_snapshot_polling_remains_disconnected()
     assert len(bars) == 1 and bars[0].close == Decimal("4.1")
     with pytest.raises(RuntimeError, match="not connected"):
         value.get_snapshot(("510300",))
+
+
+def test_historical_only_path_normalizes_a_share_and_major_index_daily_bars():
+    value = provider(FakeAkshareClient([spot_row()]))
+    value.connect_history()
+    start = datetime(2026, 8, 10, tzinfo=UTC)
+    end = datetime(2026, 8, 13, tzinfo=UTC)
+    stock = value.query_stock_history(("600000",), start=start, end=end)
+    index = value.query_index_history(("000300",), start=start, end=end)
+    assert stock[0].exchange == "SSE" and stock[0].close == Decimal("10.5")
+    assert index[0].exchange == "INDEX" and index[0].close == Decimal("4050")
 
 
 def test_liquidity_universe_is_bounded_and_excludes_non_domestic_exposures():

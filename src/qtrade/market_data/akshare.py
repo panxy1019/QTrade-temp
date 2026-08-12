@@ -43,6 +43,12 @@ class AkshareClient(Protocol):
         self, symbol: str, start_at: str, end_at: str, period: str
     ) -> Iterable[Mapping[str, object]]: ...
 
+    def stock_daily_tx_rows(
+        self, symbol: str, start_date: str, end_date: str
+    ) -> Iterable[Mapping[str, object]]: ...
+
+    def index_daily_sina_rows(self, symbol: str) -> Iterable[Mapping[str, object]]: ...
+
 
 class NativeAkshareClient:
     """Thin optional SDK boundary. Importing QTrade never imports AKShare."""
@@ -91,6 +97,24 @@ class NativeAkshareClient:
             period=period,
             adjust="",
         )
+        return cast(list[dict[str, object]], frame.to_dict(orient="records"))
+
+    def stock_daily_tx_rows(
+        self, symbol: str, start_date: str, end_date: str
+    ) -> Iterable[Mapping[str, object]]:
+        prefix = "sh" if symbol.startswith("6") else "sz"
+        frame = self._module.stock_zh_a_hist_tx(
+            symbol=f"{prefix}{symbol}",
+            start_date=start_date,
+            end_date=end_date,
+            adjust="",
+            timeout=15,
+        )
+        return cast(list[dict[str, object]], frame.to_dict(orient="records"))
+
+    def index_daily_sina_rows(self, symbol: str) -> Iterable[Mapping[str, object]]:
+        prefix = "sh" if symbol.startswith(("0", "9")) else "sz"
+        frame = self._module.stock_zh_index_daily(symbol=f"{prefix}{symbol}")
         return cast(list[dict[str, object]], frame.to_dict(orient="records"))
 
 
@@ -420,6 +444,72 @@ class AkshareMarketDataProvider:
             )
         return tuple(result)
 
+    def query_stock_history(
+        self,
+        instruments: tuple[str, ...],
+        *,
+        start: datetime,
+        end: datetime,
+    ) -> tuple[Bar, ...]:
+        return self._query_non_etf_daily(instruments, start=start, end=end, kind="stock")
+
+    def query_index_history(
+        self,
+        instruments: tuple[str, ...],
+        *,
+        start: datetime,
+        end: datetime,
+    ) -> tuple[Bar, ...]:
+        return self._query_non_etf_daily(instruments, start=start, end=end, kind="index")
+
+    def _query_non_etf_daily(
+        self,
+        instruments: tuple[str, ...],
+        *,
+        start: datetime,
+        end: datetime,
+        kind: str,
+    ) -> tuple[Bar, ...]:
+        if not self._history_ready:
+            raise RuntimeError("AKShare historical endpoint has not passed its probe")
+        if not instruments or any(len(value) != 6 or not value.isdigit() for value in instruments):
+            raise ValueError("AKShare historical symbols must be six digits")
+        if start.tzinfo is None or end.tzinfo is None or start >= end:
+            raise ValueError("AKShare history query window is invalid")
+        result: list[Bar] = []
+        for symbol in instruments:
+            if kind == "stock":
+                def stock_operation(
+                    symbol: str = symbol,
+                ) -> Iterable[Mapping[str, object]]:
+                    return self._client.stock_daily_tx_rows(
+                        symbol, start.strftime("%Y%m%d"), end.strftime("%Y%m%d")
+                    )
+
+                rows = self._request(stock_operation)
+            elif kind == "index":
+                def index_operation(
+                    symbol: str = symbol,
+                ) -> Iterable[Mapping[str, object]]:
+                    return self._client.index_daily_sina_rows(symbol)
+
+                rows = self._request(index_operation)
+            else:
+                raise ValueError("AKShare historical instrument kind is unsupported")
+            result.extend(
+                bar
+                for bar in self._bars_english(symbol, rows, kind=kind)
+                if start <= bar.timestamp < end
+            )
+        result.sort(key=lambda value: (value.timestamp, value.exchange, value.symbol))
+        issues = BarQualityGate().validate(result)
+        if issues:
+            raise ValueError(
+                f"AKShare {kind} history failed quality gate: "
+                + ",".join(sorted({issue.code for issue in issues}))
+            )
+        return tuple(result)
+
     def get_status(self) -> ProviderStatus:
         detail = ""
         if self._circuit_opened_at is not None:
@@ -633,6 +723,32 @@ class AkshareMarketDataProvider:
         )
         return self._bars(symbol, normalized, "1d")
 
+    def _bars_english(
+        self,
+        symbol: str,
+        rows: tuple[Mapping[str, object], ...],
+        *,
+        kind: str,
+    ) -> tuple[Bar, ...]:
+        exchange = _stock_exchange(symbol) if kind == "stock" else "INDEX"
+        result: list[Bar] = []
+        for row in rows:
+            trading_day = _date(row.get("date"))
+            result.append(
+                Bar(
+                    symbol,
+                    exchange,
+                    datetime.combine(trading_day, datetime_time(15), SHANGHAI),
+                    trading_day,
+                    _decimal(row.get("open"), field="open"),
+                    _decimal(row.get("high"), field="high"),
+                    _decimal(row.get("low"), field="low"),
+                    _decimal(row.get("close"), field="close"),
+                    _decimal(row.get("volume"), field="volume", allow_zero=True),
+                )
+            )
+        return tuple(result)
+
     def _require_connected(self) -> None:
         if self._connection is not ProviderConnectionStatus.CONNECTED:
             raise RuntimeError("AKShare provider is not connected and healthy")
@@ -655,6 +771,16 @@ def _is_etf_symbol(symbol: str) -> bool:
 
 def _exchange(symbol: str) -> str:
     return "SSE" if symbol.startswith("5") else "SZSE"
+
+
+def _stock_exchange(symbol: str) -> str:
+    if symbol.startswith("6"):
+        return "SSE"
+    if symbol.startswith(("0", "3")):
+        return "SZSE"
+    if symbol.startswith(("4", "8")):
+        return "BSE"
+    raise ValueError("AKShare A-share symbol has an unknown venue prefix")
 
 
 def _decimal(value: object, *, field: str, allow_zero: bool = False) -> Decimal:

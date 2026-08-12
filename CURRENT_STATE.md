@@ -28,6 +28,8 @@ Last updated: 2026-08-12
   emit immutable equity/drawdown/trade/position/risk/log artifacts. Results are
   explicitly NOT_ELIGIBLE for promotion because the universe is current/non-PIT
   and PAPER/SHADOW and full walk-forward evidence are absent.
+- Historical provider coverage: ETF, A-share and major-index raw daily paths are
+  canonicalized and live-probed; stock/index snapshots and minute endpoints remain open.
 - Next: complete walk-forward/subperiod robustness while seeking a working
   snapshot endpoint for the recorded PAPER workflow.
   Select a broker before building a native read-only reconciliation bridge.

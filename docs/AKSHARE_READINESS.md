@@ -47,10 +47,12 @@ Primary sources:
   boundary; ambiguous crashes after entering that boundary halt and require explicit
   reconciliation. New events cannot silently skip a durably archived predecessor.
 
-The first acceptance universe is deliberately ETF-only. A-share and major-index
-history/snapshot normalization is still required before those capabilities can be
-claimed. Corporate actions and point-in-time constituents are not provided by this
-adapter.
+The first acceptance universe remains ETF-only for portfolio research. Historical
+daily normalization now also covers raw A-share bars through
+`stock_zh_a_hist_tx` and major-index bars through `stock_zh_index_daily`; bounded
+live probes for 600000 and CSI 300 passed. Their snapshot/minute paths are not yet
+accepted. Corporate actions and point-in-time constituents are not provided by
+this adapter.
 
 ## Endpoint acceptance result
 

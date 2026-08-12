@@ -41,7 +41,7 @@ probe evidence.
 | Adapter license/access | MIT software; official statement limits data use to academic research | MIT; RQData service is commercial/proprietary | MIT; XT/QMT access is proprietary/broker-entitled |
 | Realtime | Delayed/public-web polling snapshots; no SLA | Tick channels | Tick subscription |
 | History | ETF daily and recent 1/5/15/30/60m in first slice | Tick, 1m, 60m, daily | Tick, 1m, daily in adapter; more in vendor API |
-| ETF/index | ETF implemented; stocks/index next | Supported, subject to entitlement | Supported, including ETF auxiliary data |
+| ETF/index | ETF daily/minute/snapshot adapter; A-share and major-index raw daily historical adapters accepted | Supported, subject to entitlement | Supported, including ETF auxiliary data |
 | Corporate actions/PIT | Not implemented; current-universe selection has survivorship bias | Vendor supports data; adapter does not expose complete PIT entities | Vendor has factors/sectors; adapter does not expose complete PIT entities |
 | Adjustment caveat | RAW only; recent minute coverage is limited | Adapter requests `pre_volume` | Adapter requests `front_ratio` |
 | Python/Windows | Pure Python 3.9-3.14; isolated runtime recommended | rqdatac 3.6.2 has CPython 3.14 Windows wheels; adapter metadata ends at 3.13 | Pure Python adapter, local QMT/XT service; isolate operationally |

@@ -114,7 +114,8 @@ npm --prefix web run build
 - [x] Freeze a 20-50 liquid ETF universe from recorded real data, explicitly
   classified as current/survivorship-biased rather than PIT.
 - [ ] Obtain a successful snapshot endpoint/schema/freshness probe.
-- [ ] Normalize A-share and major-index history/snapshots.
+- [x] Normalize and live-probe raw A-share and major-index daily history.
+- [ ] Normalize and accept A-share and major-index snapshots/minute endpoints.
 - [ ] Run the first complete real trading-day PAPER acceptance and replay comparison.
 - [x] Produce bounded real-data baseline/sensitivity evidence; no strategy met
   promotion requirements, so no Champion/Challenger role was assigned.
