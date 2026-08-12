@@ -133,6 +133,11 @@ Live-data/shadow execution without external order transmission, broker adapter
 contracts/mocks, readiness checklist and independent safety audit. Live remains
 disabled.
 
+Current evidence: isolated read-only Shadow bridge with pre-connect capability
+gate, canonical event integrity/protocol/sequence/dedup checks and no external
+order-send operation. Native vn.py/broker process installation remains gated by
+Python ABI, data/broker choice and later human authorization.
+
 ## Architecture and dependency research
 
 - vn.py source/gap analysis: in progress.
@@ -149,9 +154,9 @@ implementation → independent review → test review → main-agent integration
 ## Current work queue
 
 1. Expand failure injection and deterministic paper execution plans.
-2. Add vn.py shadow-process integration tests without external transmission.
-3. Add normalized corporate-action adjustment tests and metadata catalog.
-4. Add model-training experiment adapter after baseline reports are complete.
+2. Add normalized corporate-action adjustment tests and metadata catalog.
+3. Add model-training experiment adapter after baseline reports are complete.
+4. Extend deterministic matching/session simulation and alerts.
 
 ## Blockers
 

@@ -37,3 +37,13 @@ cash, fee, partial-fill, idempotency, and recovery requirements, so it is a
 reference rather than the authoritative paper ledger. Broker gateways are
 future adapters behind Q risk/OMS/reconciliation. See
 `docs/VNPY_GAP_ANALYSIS.md`.
+
+## ADR-005 — Shadow integration is read-only and capability-gated
+
+Status: accepted, 2026-08-12.
+
+An isolated vn.py process may provide versioned canonical market/account/status
+events only after declaring `external_order_transmission=false`. The capability
+is checked before connection, and the bridge rejects mutation, protocol mismatch,
+out-of-order sequence, duplicate IDs and command event types. SHADOW orders remain
+inside Q's `PaperGateway`; no adapter send operation exists.

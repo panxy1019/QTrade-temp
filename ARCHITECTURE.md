@@ -30,6 +30,11 @@ shadow mode also routes to simulation and never transmits an external order.
 Domain and safety modules have no web/database/framework dependency. Adapters
 depend inward on protocols. vn.py integration is an adapter, not a fork.
 
+The vn.py boundary is process-isolated. `ShadowEventBridge` validates a declared
+non-transmitting capability before invoking its connector, then accepts only
+hash-verified, strictly sequenced market/account/status observation events. It
+does not expose an order-send method.
+
 ## Persistence plan
 
 Parquet plus DuckDB is the local analytical path. PostgreSQL is planned for
