@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from copy import deepcopy
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -246,59 +245,20 @@ def build_paper_runtime(
                     }
 
     def durable_fill(fill_key: str, trade: Trade, order: Order) -> None:
-        projected_account = deepcopy(ledger.account)
-        position = projected_account.positions.setdefault(
-            trade.symbol, Position(symbol=trade.symbol)
-        )
-        notional = trade.price * trade.quantity
-        if trade.side is Side.BUY:
-            old_cost = position.average_cost * position.quantity
-            position.quantity += trade.quantity
-            position.average_cost = (old_cost + notional + trade.fee) / position.quantity
-            projected_account.cash -= notional + trade.fee
-        else:
-            position.quantity -= trade.quantity
-            position.realized_pnl += (
-                (trade.price - position.average_cost) * trade.quantity - trade.fee
+        projected_account = ledger.project(trade)
+        projected_order = oms.project_fill(order, trade.quantity, now=trade.timestamp)
+        projected_reservations: list[dict[str, object]] = [
+            {
+                "order_id": item.order_id,
+                "symbol": item.symbol,
+                "side": item.side.value,
+                "remaining_quantity": item.remaining_quantity,
+                "remaining_cash": str(item.remaining_cash),
+            }
+            for item in reservations.project_consume(
+                order.internal_order_id, trade.quantity
             )
-            projected_account.cash += notional - trade.fee
-            if position.quantity == 0:
-                position.average_cost = Decimal("0")
-        projected_order = deepcopy(order)
-        projected_order.filled_quantity += trade.quantity
-        projected_order.status = (
-            OrderStatus.FILLED
-            if projected_order.filled_quantity == projected_order.request.quantity
-            else OrderStatus.PARTIALLY_FILLED
-        )
-        projected_order.updated_at = trade.timestamp
-        projected_reservations: list[dict[str, object]] = []
-        for item in reservations.snapshot():
-            if item.order_id != order.internal_order_id:
-                projected_reservations.append(
-                    {
-                        "order_id": item.order_id,
-                        "symbol": item.symbol,
-                        "side": item.side.value,
-                        "remaining_quantity": item.remaining_quantity,
-                        "remaining_cash": str(item.remaining_cash),
-                    }
-                )
-                continue
-            remaining_quantity = item.remaining_quantity - trade.quantity
-            if remaining_quantity > 0:
-                fraction = Decimal(trade.quantity) / item.remaining_quantity
-                projected_reservations.append(
-                    {
-                        "order_id": item.order_id,
-                        "symbol": item.symbol,
-                        "side": item.side.value,
-                        "remaining_quantity": remaining_quantity,
-                        "remaining_cash": str(
-                            item.remaining_cash * (Decimal("1") - fraction)
-                        ),
-                    }
-                )
+        ]
         account_payload, runtime_payload = state_payloads(
             account_override=projected_account,
             order_override=projected_order,
@@ -326,6 +286,7 @@ def build_paper_runtime(
         state_change_handler=persist_account,
         durable_fill_handler=durable_fill,
         fill_observer=lambda _trade: metrics.record_fill(),
+        observer_failure_handler=metrics.mark_degraded,
     )
     for restored_order in oms.orders:
         if restored_order.status is not OrderStatus.SUBMISSION_UNKNOWN:
@@ -339,6 +300,7 @@ def build_paper_runtime(
         submission_guard=runtime.ensure_submission_allowed,
         state_change_handler=persist_account,
         submission_observer=observe_submission,
+        observer_failure_handler=metrics.mark_degraded,
     )
     return PaperRuntimeBundle(
         runtime, service, gateway, risk, oms, ledger, metrics, audit, journal

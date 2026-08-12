@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import replace
 from datetime import datetime
 from uuid import uuid4
@@ -113,6 +114,29 @@ class OrderManager:
             OrderStatus.FILLED if order.remaining_quantity == 0 else OrderStatus.PARTIALLY_FILLED
         )
         return self.transition(order, target, now=now)
+
+    def project_fill(
+        self, order: Order, quantity: int, *, now: datetime | None = None
+    ) -> Order:
+        """Validate a fill transition on a detached order without auditing."""
+        if quantity <= 0 or quantity > order.remaining_quantity:
+            raise ValueError(
+                "fill quantity must be positive and no greater than remaining quantity"
+            )
+        projected = deepcopy(order)
+        projected.filled_quantity += quantity
+        target = (
+            OrderStatus.FILLED
+            if projected.remaining_quantity == 0
+            else OrderStatus.PARTIALLY_FILLED
+        )
+        if target not in _ALLOWED_TRANSITIONS[projected.status]:
+            raise InvalidTransition(
+                f"{projected.status.value} cannot transition to {target.value}"
+            )
+        projected.status = target
+        projected.updated_at = now or utc_now()
+        return projected
 
     def _record(self, order: Order, event_type: str, message: str) -> None:
         self._audit.record(

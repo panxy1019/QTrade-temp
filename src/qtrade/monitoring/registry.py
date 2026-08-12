@@ -27,6 +27,7 @@ class MetricsRegistry:
     reconciliation_status: str = "UNKNOWN"
     strategy_heartbeats: dict[str, str] = field(default_factory=dict)
     last_order_latency_seconds: Decimal = Decimal("0")
+    monitoring_degraded: bool = False
     _order_times: list[datetime] = field(default_factory=list, repr=False)
     _lock: Lock = field(default_factory=Lock, repr=False)
 
@@ -46,6 +47,10 @@ class MetricsRegistry:
     def record_fill(self) -> None:
         with self._lock:
             self.fills_total += 1
+
+    def mark_degraded(self) -> None:
+        with self._lock:
+            self.monitoring_degraded = True
 
     def snapshot(self, *, now: datetime | None = None) -> dict[str, object]:
         with self._lock:
@@ -73,6 +78,7 @@ class MetricsRegistry:
                 "reject_rate": str(reject_rate),
                 "fill_rate": str(fill_rate),
                 "last_order_latency_seconds": str(self.last_order_latency_seconds),
+                "monitoring_degraded": self.monitoring_degraded,
                 "gateway_connected": self.gateway_connected,
                 "account_sync_age_seconds": str(self.account_sync_age_seconds),
                 "reconciliation_status": self.reconciliation_status,

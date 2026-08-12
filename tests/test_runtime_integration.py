@@ -228,3 +228,72 @@ def test_runtime_state_persistence_failure_latches_halt(tmp_path, monkeypatch):
     assert bundle.metrics.reconciliation_status == "FAILED"
     with pytest.raises(RuntimeError, match="risk state HALTED"):
         submit(bundle, "blocked-after-database-failure")
+
+
+def test_invalid_adverse_fill_never_becomes_durable_applied_state(tmp_path):
+    bundle = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("1000"),
+        limits=RiskLimits(Decimal("5000"), 10000, Decimal("5000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=tmp_path / "runtime.db",
+    )
+    attest(bundle)
+    bundle.runtime.start(actor="operator")
+    order, _ = submit(bundle, "adverse-fill")
+
+    with pytest.raises(ValueError, match="cash negative"):
+        bundle.gateway.fill(
+            order,
+            fill_key="adverse-fill",
+            price=Decimal("20"),
+            quantity=100,
+            now=NOW,
+        )
+
+    marker = bundle.journal.get_fill("adverse-fill")
+    assert marker is not None and marker.state == "FAILED"
+    restarted = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("1000"),
+        limits=RiskLimits(Decimal("5000"), 10000, Decimal("5000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=tmp_path / "runtime.db",
+    )
+    assert restarted.ledger.account.cash == Decimal("1000")
+    assert restarted.ledger.account.position_quantity("510300") == 0
+    assert restarted.risk.state.value == "HALTED"
+
+
+def test_monitoring_failure_cannot_turn_successful_effect_into_failure(tmp_path, monkeypatch):
+    bundle = build(tmp_path)
+    attest(bundle)
+    bundle.runtime.start(actor="operator")
+
+    metrics_type = type(bundle.metrics)
+    original_record_order = metrics_type.record_order
+    monkeypatch.setattr(
+        metrics_type,
+        "record_order",
+        lambda _self, **_kwargs: (_ for _ in ()).throw(RuntimeError("metrics down")),
+    )
+    order, created = submit(bundle, "metrics-submit-failure")
+    assert created is True and order.status.value == "ACCEPTED"
+    assert bundle.metrics.monitoring_degraded is True
+
+    monkeypatch.setattr(metrics_type, "record_order", original_record_order)
+    monkeypatch.setattr(
+        metrics_type,
+        "record_fill",
+        lambda _self: (_ for _ in ()).throw(RuntimeError("metrics down")),
+    )
+    trade, fill_created = bundle.gateway.fill(
+        order,
+        fill_key="metrics-fill-failure",
+        price=Decimal("10"),
+        quantity=100,
+        now=NOW,
+    )
+    assert fill_created is True and trade.internal_order_id == order.internal_order_id
+    assert order.status.value == "FILLED"
+    assert bundle.ledger.account.position_quantity("510300") == 100

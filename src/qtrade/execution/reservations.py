@@ -62,21 +62,38 @@ class ReservationBook:
 
     def consume(self, order_id: str, quantity: int) -> None:
         reservation = self._reservations[order_id]
+        replacement = self._consume_one(reservation, quantity)
+        if replacement is None:
+            del self._reservations[order_id]
+        else:
+            self._reservations[order_id] = replacement
+
+    def project_consume(self, order_id: str, quantity: int) -> tuple[Reservation, ...]:
+        """Validate consumption and return a detached post-fill snapshot."""
+        reservation = self._reservations[order_id]
+        replacement = self._consume_one(reservation, quantity)
+        return tuple(
+            replacement if item.order_id == order_id and replacement is not None else item
+            for item in self._reservations.values()
+            if item.order_id != order_id or replacement is not None
+        )
+
+    @staticmethod
+    def _consume_one(reservation: Reservation, quantity: int) -> Reservation | None:
         if quantity <= 0 or quantity > reservation.remaining_quantity:
             raise ValueError("invalid reservation consumption")
         fraction = Decimal(quantity) / reservation.remaining_quantity
         remaining_cash = reservation.remaining_cash * (Decimal("1") - fraction)
         remaining_quantity = reservation.remaining_quantity - quantity
         if remaining_quantity == 0:
-            del self._reservations[order_id]
-        else:
-            self._reservations[order_id] = Reservation(
-                order_id=reservation.order_id,
-                symbol=reservation.symbol,
-                side=reservation.side,
-                remaining_quantity=remaining_quantity,
-                remaining_cash=remaining_cash,
-            )
+            return None
+        return Reservation(
+            order_id=reservation.order_id,
+            symbol=reservation.symbol,
+            side=reservation.side,
+            remaining_quantity=remaining_quantity,
+            remaining_cash=remaining_cash,
+        )
 
     def release(self, order_id: str) -> None:
         self._reservations.pop(order_id, None)

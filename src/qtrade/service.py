@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import replace
 from datetime import datetime
 
@@ -25,6 +26,7 @@ class TradingService:
         submission_guard: Callable[[], None] | None = None,
         state_change_handler: Callable[[], None] | None = None,
         submission_observer: Callable[[Order, datetime], None] | None = None,
+        observer_failure_handler: Callable[[], None] | None = None,
     ) -> None:
         self._risk = risk
         self._oms = oms
@@ -38,6 +40,7 @@ class TradingService:
             raise ValueError("PAPER/SHADOW TradingService requires a runtime submission guard")
         self._state_change_handler = state_change_handler
         self._submission_observer = submission_observer
+        self._observer_failure_handler = observer_failure_handler
 
     def submit(
         self, request: OrderRequest, context: RiskContext, *, now: datetime | None = None
@@ -111,4 +114,9 @@ class TradingService:
 
     def _observe_submission(self, order: Order, now: datetime | None) -> None:
         if self._submission_observer is not None:
-            self._submission_observer(order, now or order.updated_at)
+            try:
+                self._submission_observer(order, now or order.updated_at)
+            except Exception:
+                if self._observer_failure_handler is not None:
+                    with suppress(Exception):
+                        self._observer_failure_handler()

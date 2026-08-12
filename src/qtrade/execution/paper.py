@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal
@@ -100,6 +101,7 @@ class PaperGateway:
         state_change_handler: Callable[[], None] | None = None,
         durable_fill_handler: Callable[[str, Trade, Order], None] | None = None,
         fill_observer: Callable[[Trade], None] | None = None,
+        observer_failure_handler: Callable[[], None] | None = None,
     ) -> None:
         self._oms = oms
         self._ledger = ledger
@@ -116,6 +118,7 @@ class PaperGateway:
         self._state_change_handler = state_change_handler
         self._durable_fill_handler = durable_fill_handler
         self._fill_observer = fill_observer
+        self._observer_failure_handler = observer_failure_handler
 
     def inject_next_action(self, action: PaperAction) -> None:
         self._next_action = action
@@ -289,7 +292,12 @@ class PaperGateway:
             self._journal.mark_fill(fill_key, "APPLIED")
         self._report_state_change()
         if self._fill_observer is not None:
-            self._fill_observer(trade)
+            try:
+                self._fill_observer(trade)
+            except Exception:
+                if self._observer_failure_handler is not None:
+                    with suppress(Exception):
+                        self._observer_failure_handler()
         return trade, True
 
     def cancel(

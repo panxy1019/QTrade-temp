@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from decimal import Decimal
 
 from qtrade.audit.log import AuditEvent, AuditLog
@@ -21,28 +22,7 @@ class Ledger:
     def book(self, trade: Trade) -> bool:
         if trade.trade_id in self._trade_ids:
             return False
-        if trade.quantity <= 0 or trade.price <= 0 or trade.fee < 0:
-            raise AccountingError("invalid trade")
-        position = self.account.positions.setdefault(trade.symbol, Position(symbol=trade.symbol))
-        notional = trade.price * trade.quantity
-        if trade.side is Side.BUY:
-            total_cash = notional + trade.fee
-            if total_cash > self.account.cash:
-                raise AccountingError("trade would make cash negative")
-            old_cost = position.average_cost * position.quantity
-            position.quantity += trade.quantity
-            position.average_cost = (old_cost + notional + trade.fee) / position.quantity
-            self.account.cash -= total_cash
-        else:
-            if trade.quantity > position.quantity:
-                raise AccountingError("trade would make position negative")
-            position.quantity -= trade.quantity
-            position.realized_pnl += (
-                trade.price - position.average_cost
-            ) * trade.quantity - trade.fee
-            self.account.cash += notional - trade.fee
-            if position.quantity == 0:
-                position.average_cost = Decimal("0")
+        self._apply(self.account, trade)
         self._trade_ids.add(trade.trade_id)
         self._audit.record(
             AuditEvent(
@@ -54,3 +34,34 @@ class Ledger:
             )
         )
         return True
+
+    def project(self, trade: Trade) -> AccountSnapshot:
+        """Validate and apply a trade to a detached account snapshot."""
+        projected = deepcopy(self.account)
+        self._apply(projected, trade)
+        return projected
+
+    @staticmethod
+    def _apply(account: AccountSnapshot, trade: Trade) -> None:
+        if trade.quantity <= 0 or trade.price <= 0 or trade.fee < 0:
+            raise AccountingError("invalid trade")
+        position = account.positions.setdefault(trade.symbol, Position(symbol=trade.symbol))
+        notional = trade.price * trade.quantity
+        if trade.side is Side.BUY:
+            total_cash = notional + trade.fee
+            if total_cash > account.cash:
+                raise AccountingError("trade would make cash negative")
+            old_cost = position.average_cost * position.quantity
+            position.quantity += trade.quantity
+            position.average_cost = (old_cost + notional + trade.fee) / position.quantity
+            account.cash -= total_cash
+        else:
+            if trade.quantity > position.quantity:
+                raise AccountingError("trade would make position negative")
+            position.quantity -= trade.quantity
+            position.realized_pnl += (
+                trade.price - position.average_cost
+            ) * trade.quantity - trade.fee
+            account.cash += notional - trade.fee
+            if position.quantity == 0:
+                position.average_cost = Decimal("0")
