@@ -6,7 +6,7 @@ from typing import Protocol
 
 from qtrade.accounting import Ledger
 from qtrade.audit import AuditLog
-from qtrade.data import Bar
+from qtrade.data import Bar, DataManifest, QualityStatus
 from qtrade.domain import Instrument, OrderRequest, Side
 from qtrade.execution import FeeSchedule, PaperGateway
 from qtrade.oms import OrderManager
@@ -24,6 +24,7 @@ class BacktestResult:
     final_position: int
     trades: int
     total_fees: Decimal
+    data_version: str
 
 
 class BacktestEngine:
@@ -49,9 +50,13 @@ class BacktestEngine:
         self._fees = Decimal("0")
         self._has_run = False
 
-    def run(self, bars: list[Bar], strategy: TargetStrategy) -> BacktestResult:
+    def run(
+        self, bars: list[Bar], strategy: TargetStrategy, *, manifest: DataManifest
+    ) -> BacktestResult:
         if self._has_run:
             raise ValueError("BacktestEngine is single-use; create a new instance per run")
+        if manifest.quality_status is not QualityStatus.PASSED:
+            raise ValueError("backtest requires a PASSED data manifest")
         self._has_run = True
         previous_timestamp = None
         for bar in bars:
@@ -73,6 +78,7 @@ class BacktestEngine:
             final_position=self.ledger.account.position_quantity(self._instrument.symbol),
             trades=self._trades,
             total_fees=self._fees,
+            data_version=manifest.data_version,
         )
 
     def _execute(self, sequence: int, bar: Bar, target: int, strategy_id: str) -> None:

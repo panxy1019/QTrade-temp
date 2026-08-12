@@ -20,8 +20,11 @@ Last updated: 2026-08-12
   to be integrated; paper matching remains deliberately simple.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
-- Next: Parquet/DuckDB data adapter and experiment artifacts; durable SQLite or
-  PostgreSQL operational journal; failure replay; metrics/factor evaluation.
+- Next: integrate durable SQLite journal into fill processing; metrics/factor
+  evaluation; paper runtime failure replay and orchestration.
 - Analytical persistence: checksum-verified Parquet/DuckDB bar storage and
   immutable hashed experiment records implemented; 51 tests pass at 93% coverage.
+- Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
+  fill markers across restart and durable audit events; backtests require a
+  PASSED data manifest and record `data_version`; 54 tests pass.
 - Live trading: disabled and structurally unavailable.

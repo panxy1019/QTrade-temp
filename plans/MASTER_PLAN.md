@@ -101,10 +101,10 @@ implementation → independent review → test review → main-agent integration
 
 ## Current work queue
 
-1. Add durable operational journal and crash/replay integration.
-2. Couple dataset provenance/quality to backtest and experiment execution.
-3. Complete performance/factor metrics and a reproducible sample workflow.
-4. Expand failure injection and paper runtime orchestration.
+1. Integrate durable journal into fill processing and recovery.
+2. Complete performance/factor metrics and a reproducible sample workflow.
+3. Expand failure injection and paper runtime orchestration.
+4. Add vn.py process adapter and canonical event protocol.
 
 ## Blockers
 
