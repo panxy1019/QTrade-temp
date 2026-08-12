@@ -13,3 +13,5 @@ build/
 *.parquet
 *.duckdb
 /runtime/
+web/node_modules/
+web/.vite-*.log

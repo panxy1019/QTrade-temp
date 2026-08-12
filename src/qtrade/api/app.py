@@ -10,6 +10,7 @@ from typing import Any
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from qtrade.accounting import Ledger
@@ -101,6 +102,9 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
     state = context or bootstrap_context()
     auth_config = auth or ApiAuthConfig.from_environment()
     app = FastAPI(title="Q Control Plane", version="0.1.0")
+    web_dist = Path(__file__).parents[3] / "web" / "dist"
+    if (web_dist / "assets").is_dir():
+        app.mount("/web/assets", StaticFiles(directory=web_dist / "assets"), name="web-assets")
 
     @app.get("/health")
     def health(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, Any]:
@@ -269,9 +273,20 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             raise HTTPException(status_code=409, detail=str(exc)) from exc
         return asdict(state.runtime.status)
 
+    def web_index() -> str:
+        index = web_dist / "index.html"
+        if index.is_file():
+            return index.read_text(encoding="utf-8")
+        return Path(__file__).with_name("dashboard.html").read_text(encoding="utf-8")
+
     @app.get("/", response_class=HTMLResponse)
     def dashboard() -> str:
-        return Path(__file__).with_name("dashboard.html").read_text(encoding="utf-8")
+        return web_index()
+
+    @app.get("/web/{path:path}", response_class=HTMLResponse)
+    def web_dashboard(path: str) -> str:
+        del path
+        return web_index()
 
     return app
 

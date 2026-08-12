@@ -39,7 +39,10 @@ def client() -> TestClient:
 
 def test_dashboard_and_health_make_shadow_mode_explicit():
     api = client()
-    assert 'id="mode"' in api.get("/").text
+    dashboard = api.get("/")
+    assert dashboard.status_code == 200
+    assert 'lang="zh-CN"' in dashboard.text
+    assert api.get("/web/").status_code == 200
     response = api.get("/health")
     assert response.status_code == 200
     assert response.json()["runtime_mode"] == "SHADOW"

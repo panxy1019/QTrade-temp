@@ -1,0 +1,21 @@
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+.app { min-height: 100vh; }
+.dark { background: #07111f; }
+.light { background: #f3f6fa; }
+.brand { height: 72px; display: flex; align-items: center; gap: 11px; padding: 14px 18px; color: #fff; }
+.brand-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; background: linear-gradient(145deg, #2f81f7, #06b6d4); font-weight: 900; font-size: 22px; }
+.brand b { display: block; font-size: 17px; letter-spacing: .04em; }.brand span { display: block; color: #8ea2bd; font-size: 11px; margin-top: 2px; }
+.live-boundary { position: absolute; bottom: 58px; left: 18px; right: 18px; padding: 12px; border: 1px solid #7f1d1d; border-radius: 8px; background: #2a1015; color: #fecaca; font-weight: 600; }.live-boundary small { color: #bf8f97; font-weight: 400; }
+.topbar { height: 64px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(127,145,170,.18); background: rgba(9,22,38,.92); backdrop-filter: blur(16px); }
+.light .topbar { background: rgba(255,255,255,.94); }
+.content { padding: 24px 28px 40px; overflow: auto; }
+.page-title-row { display: flex; align-items: flex-start; justify-content: space-between; }.page-title-row h2, .content h2 { margin: 0 0 4px !important; }
+.mode-tag { padding: 5px 12px; font-size: 14px; font-weight: 700; border-radius: 6px; }
+.metric-card { min-height: 132px; background: linear-gradient(145deg, rgba(36,58,86,.82), rgba(18,34,55,.82)); border: 1px solid rgba(92,123,160,.18); }
+.light .metric-card { background: #fff; }
+.description-grid { display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 1px; background: rgba(128,145,165,.16); border: 1px solid rgba(128,145,165,.16); border-radius: 8px; overflow: hidden; }
+.description-grid > div { padding: 17px 18px; background: #101d2d; display: flex; flex-direction: column; gap: 7px; }.light .description-grid > div { background: #fff; }.description-grid span { color: #8190a5; font-size: 12px; }.description-grid strong { font-size: 15px; }
+.lineage { min-height: 210px; display: grid; place-items: center; font: 600 17px ui-monospace, monospace; color: #60a5fa; }
+@media (max-width: 1280px) { .content { padding: 20px; }.description-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px) { .content { padding: 14px; }.topbar { padding: 0 12px; }.description-grid { grid-template-columns: 1fr; }.page-title-row { gap: 12px; flex-direction: column; } }
