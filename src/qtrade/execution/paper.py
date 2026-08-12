@@ -49,6 +49,12 @@ class FillRecord:
     error: str | None = None
 
 
+class PaperAction(StrEnum):
+    ACCEPT = "ACCEPT"
+    REJECT = "REJECT"
+    DISCONNECT = "DISCONNECT"
+
+
 class PaperGateway:
     """Simulation-only gateway. It contains no external transport."""
 
@@ -73,6 +79,10 @@ class PaperGateway:
         self._orders_by_client_id: dict[str, tuple[Order, tuple[object, ...]]] = {}
         self._cancel_results: dict[str, Order] = {}
         self.connected = True
+        self._next_action = PaperAction.ACCEPT
+
+    def inject_next_action(self, action: PaperAction) -> None:
+        self._next_action = action
 
     def submit(self, order: Order, *, now: datetime | None = None) -> Order:
         timestamp = now or utc_now()
@@ -91,8 +101,21 @@ class PaperGateway:
             raise ConnectionError("paper gateway disconnected")
         if order.status is not OrderStatus.RISK_PASSED:
             raise ValueError("only a risk-passed order can be submitted")
+        action = self._next_action
+        self._next_action = PaperAction.ACCEPT
+        if action is PaperAction.DISCONNECT:
+            self.connected = False
+            raise ConnectionError("injected gateway disconnect")
         broker_order_id = f"PAPER-{uuid4()}"
         self._oms.transition(order, OrderStatus.SUBMITTED, now=timestamp)
+        if action is PaperAction.REJECT:
+            return self._oms.transition(
+                order,
+                OrderStatus.REJECTED,
+                now=timestamp,
+                reason="injected paper rejection",
+                broker_order_id=broker_order_id,
+            )
         self._oms.transition(
             order, OrderStatus.ACCEPTED, now=timestamp, broker_order_id=broker_order_id
         )

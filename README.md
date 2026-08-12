@@ -26,5 +26,20 @@ The local dashboard is then available at `http://127.0.0.1:8000`. It boots
 fail-closed (gateway disconnected and reconciliation unknown); the page is an
 operational status surface, not authorization for external order transmission.
 
+Control endpoints are disabled unless `QTRADE_CONTROL_TOKEN` is supplied in the
+process environment. Send it as `Authorization: Bearer <token>`. Read endpoints
+do not accept a caller-provided role escalation. Bind the development server to
+loopback unless a separately reviewed TLS/authentication proxy is deployed.
+
+Run the complete synthetic provenance workflow with:
+
+```powershell
+python scripts/run_baseline_workflow.py
+```
+
+It writes ignored runtime artifacts under `runtime/sample`: checksum-verified
+Parquet bars and an immutable experiment record containing `git_commit` and
+`data_version`.
+
 Project status and exact continuation steps are maintained in
 [`CURRENT_STATE.md`](CURRENT_STATE.md) and [`plans/MASTER_PLAN.md`](plans/MASTER_PLAN.md).

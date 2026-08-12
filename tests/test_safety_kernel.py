@@ -9,7 +9,7 @@ from qtrade.accounting import Ledger
 from qtrade.audit import AuditLog
 from qtrade.config import SafetyConfig, UnsafeConfiguration
 from qtrade.domain import Instrument, OrderRequest, OrderStatus, RuntimeMode, Side
-from qtrade.execution import FeeSchedule, PaperGateway
+from qtrade.execution import FeeSchedule, PaperAction, PaperGateway
 from qtrade.oms import DuplicateOrderConflict, InvalidTransition, OrderManager
 from qtrade.risk import KillState, RiskContext, RiskEngine, RiskLimits
 from qtrade.service import TradingService
@@ -278,6 +278,19 @@ def test_disconnected_paper_gateway_does_not_accept_submission():
     assert gateway.lookup(order.internal_order_id) is None
     gateway.reconnect()
     assert gateway.submit(order, now=NOW).status is OrderStatus.ACCEPTED
+
+
+def test_deterministic_paper_reject_and_disconnect_injection():
+    service, _, _, gateway, ledger, _ = build_system()
+    gateway.inject_next_action(PaperAction.REJECT)
+    rejected, _ = service.submit(request(key="reject"), context(ledger), now=NOW)
+    assert rejected.status is OrderStatus.REJECTED
+    assert rejected.rejection_reason == "injected paper rejection"
+
+    gateway.inject_next_action(PaperAction.DISCONNECT)
+    with pytest.raises(ConnectionError, match="injected"):
+        service.submit(request(key="disconnect"), context(ledger), now=NOW)
+    assert gateway.connected is False
 
 
 def test_invalid_overfill_does_not_mutate_accounting():

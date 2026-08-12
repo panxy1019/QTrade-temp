@@ -61,6 +61,12 @@ corporate-action adjustments and larger fixture coverage.
 Chronological splits/walk-forward experiment records, baseline factors and
 strategies, portfolio constraints, cost-aware metrics, reproducibility.
 
+Current evidence: chronological non-overlap gates; buy/hold and moving-average
+baselines; top-K/weight/cash constraints; portfolio metrics and factor
+IC/RankIC/quantiles/turnover/spread; immutable hashed experiment record; tested
+synthetic end-to-end workflow. Remaining: walk-forward orchestrator, additional
+baselines, ICIR over periods, and vnpy.alpha adapter.
+
 ### M4 — Integrated event-driven backtest
 
 Same strategy/portfolio/risk/OMS/execution contracts; costs, slippage, partial
@@ -79,6 +85,11 @@ events, disconnect/freeze/database failure injection.
 
 FastAPI with read/control/trade-sensitive role separation, prominent mode,
 structured logs, metrics, audit views, alerts.
+
+Current evidence: required read surfaces, control commands, prominent mode,
+metrics/audit views and environment bearer-token authentication implemented.
+Remaining: external identity/TLS integration, Prometheus export and richer alert
+routing. Keep server loopback-only until those are reviewed.
 
 ### M7 — Shadow/live-readiness
 

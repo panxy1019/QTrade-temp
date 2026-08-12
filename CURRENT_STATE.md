@@ -8,10 +8,10 @@ Last updated: 2026-08-12
   kernel; versioned data/PIT contracts; research/portfolio baselines; shared-path
   next-bar backtest; control plane/dashboard; reconciliation/recovery contracts;
   authoritative China rule-source registry; vn.py gap analysis.
-- Current phase: persistence and integrated paper runtime.
-- Current milestone: M2/M5 durable analytical and operational state.
-- Acceptance evidence: 49 tests passed, 93% coverage, Ruff clean, strict mypy
-  clean on Python 3.14.6 (2026-08-12).
+- Current phase: integrated paper/shadow platform hardening.
+- Current milestone: M5/M6 failure recovery, control, and observability.
+- Acceptance evidence: 68 tests passed, 92% coverage, Ruff clean, strict mypy
+  clean on Python 3.14.6 (2026-08-12); end-to-end synthetic workflow executed.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
   database service, vn.py, or project dependencies detected.
 - Known limitations: current OMS/ledger/reservations are in-process and do not
@@ -31,4 +31,8 @@ Last updated: 2026-08-12
   verified start/reconciliation; stop blocks writes; durable fill markers,
   gateway lookup/reconnect, idempotent cancel, audit redaction/degradation, and
   expanded portfolio/factor metrics are tested. Current suite: 63 passed.
+- Instrument/research integration: point-in-time instrument master,
+  fail-closed calendar, T+0/T+1 sellability lots, deterministic paper failure
+  injection, bearer-token control authentication, and reproducible import →
+  backtest → metrics → immutable experiment workflow are implemented.
 - Live trading: disabled and structurally unavailable.

@@ -5,6 +5,7 @@ from dataclasses import asdict, dataclass
 from decimal import Decimal
 from enum import StrEnum
 from pathlib import Path
+from secrets import compare_digest
 from typing import Any
 
 from fastapi import Depends, FastAPI, Header, HTTPException
@@ -29,6 +30,21 @@ class Role(StrEnum):
 
 class ControlRequest(BaseModel):
     reason: str = "manual control"
+
+
+@dataclass(frozen=True, slots=True)
+class ApiAuthConfig:
+    control_token: str | None = None
+    trade_token: str | None = None
+
+    @classmethod
+    def from_environment(cls) -> ApiAuthConfig:
+        import os
+
+        return cls(
+            control_token=os.getenv("QTRADE_CONTROL_TOKEN"),
+            trade_token=os.getenv("QTRADE_TRADE_TOKEN"),
+        )
 
 
 @dataclass(slots=True)
@@ -57,43 +73,44 @@ def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
     return AppContext(PlatformRuntime(mode, risk, audit, metrics), metrics, oms, ledger, audit)
 
 
-def _require_role(required: Role) -> Callable[[str], str]:
-    allowed = {
-        Role.READ: {Role.READ, Role.CONTROL, Role.TRADE},
-        Role.CONTROL: {Role.CONTROL, Role.TRADE},
-        Role.TRADE: {Role.TRADE},
-    }
-
-    def dependency(x_qtrade_role: str = Header(default="read")) -> str:
-        try:
-            role = Role(x_qtrade_role.lower())
-        except ValueError as exc:
-            raise HTTPException(status_code=403, detail="unknown role") from exc
-        if role not in allowed[required]:
-            raise HTTPException(status_code=403, detail="insufficient role")
-        return role.value
+def _require_role(required: Role, auth: ApiAuthConfig) -> Callable[[str | None], str]:
+    def dependency(authorization: str | None = Header(default=None)) -> str:
+        if required is Role.READ:
+            return Role.READ.value
+        expected = auth.trade_token if required is Role.TRADE else auth.control_token
+        if expected is None:
+            raise HTTPException(status_code=503, detail="control authentication is not configured")
+        supplied = ""
+        if authorization is not None and authorization.startswith("Bearer "):
+            supplied = authorization.removeprefix("Bearer ")
+        if not supplied or not compare_digest(supplied, expected):
+            raise HTTPException(status_code=403, detail="invalid credentials")
+        return required.value
 
     return dependency
 
 
-def create_app(context: AppContext | None = None) -> FastAPI:
+def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = None) -> FastAPI:
     state = context or bootstrap_context()
+    auth_config = auth or ApiAuthConfig.from_environment()
     app = FastAPI(title="Q Control Plane", version="0.1.0")
 
     @app.get("/health")
-    def health(_: str = Depends(_require_role(Role.READ))) -> dict[str, Any]:
+    def health(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, Any]:
         return asdict(state.runtime.health())
 
     @app.get("/system")
-    def system(_: str = Depends(_require_role(Role.READ))) -> dict[str, Any]:
+    def system(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, Any]:
         return asdict(state.runtime.status)
 
     @app.get("/risk")
-    def risk(_: str = Depends(_require_role(Role.READ))) -> dict[str, str]:
+    def risk(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, str]:
         return {"state": state.runtime.status.risk_state.value}
 
     @app.get("/orders")
-    def orders(_: str = Depends(_require_role(Role.READ))) -> list[dict[str, object]]:
+    def orders(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> list[dict[str, object]]:
         return [
             {
                 "internal_order_id": order.internal_order_id,
@@ -106,39 +123,45 @@ def create_app(context: AppContext | None = None) -> FastAPI:
         ]
 
     @app.get("/positions")
-    def positions(_: str = Depends(_require_role(Role.READ))) -> list[dict[str, Any]]:
+    def positions(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> list[dict[str, Any]]:
         return [asdict(position) for position in state.ledger.account.positions.values()]
 
     @app.get("/account")
-    def account(_: str = Depends(_require_role(Role.READ))) -> dict[str, str]:
+    def account(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, str]:
         return {"cash": str(state.ledger.account.cash)}
 
     @app.get("/metrics")
-    def metrics(_: str = Depends(_require_role(Role.READ))) -> dict[str, object]:
+    def metrics(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:
         return state.metrics.snapshot()
 
     @app.get("/market")
-    def market(_: str = Depends(_require_role(Role.READ))) -> dict[str, object]:
+    def market(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
         return {"connected": state.metrics.gateway_connected, "mode": state.runtime.status.mode}
 
     @app.get("/instruments")
-    def instruments(_: str = Depends(_require_role(Role.READ))) -> list[object]:
+    def instruments(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
         return []
 
     @app.get("/strategies")
-    def strategies(_: str = Depends(_require_role(Role.READ))) -> list[object]:
+    def strategies(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
         return []
 
     @app.get("/portfolio")
-    def portfolio(_: str = Depends(_require_role(Role.READ))) -> dict[str, object]:
+    def portfolio(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
         return {"positions": len(state.ledger.account.positions)}
 
     @app.get("/trades")
-    def trades(_: str = Depends(_require_role(Role.READ))) -> list[object]:
+    def trades(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
         return []
 
     @app.get("/pnl")
-    def pnl(_: str = Depends(_require_role(Role.READ))) -> dict[str, str]:
+    def pnl(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, str]:
         realized = sum(
             (position.realized_pnl for position in state.ledger.account.positions.values()),
             start=Decimal("0"),
@@ -146,7 +169,9 @@ def create_app(context: AppContext | None = None) -> FastAPI:
         return {"realized": str(realized)}
 
     @app.get("/audit")
-    def audit(_: str = Depends(_require_role(Role.READ))) -> list[dict[str, object]]:
+    def audit(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> list[dict[str, object]]:
         return [
             {
                 "timestamp": event.timestamp.isoformat(),
@@ -160,7 +185,8 @@ def create_app(context: AppContext | None = None) -> FastAPI:
 
     @app.post("/system/start")
     def start(
-        _: ControlRequest, actor: str = Depends(_require_role(Role.CONTROL))
+        _: ControlRequest,
+        actor: str = Depends(_require_role(Role.CONTROL, auth_config)),
     ) -> dict[str, Any]:
         try:
             state.runtime.start(actor=actor)
@@ -170,21 +196,24 @@ def create_app(context: AppContext | None = None) -> FastAPI:
 
     @app.post("/system/stop")
     def stop(
-        _: ControlRequest, actor: str = Depends(_require_role(Role.CONTROL))
+        _: ControlRequest,
+        actor: str = Depends(_require_role(Role.CONTROL, auth_config)),
     ) -> dict[str, Any]:
         state.runtime.stop(actor=actor)
         return asdict(state.runtime.status)
 
     @app.post("/system/pause")
     def pause(
-        _: ControlRequest, actor: str = Depends(_require_role(Role.CONTROL))
+        _: ControlRequest,
+        actor: str = Depends(_require_role(Role.CONTROL, auth_config)),
     ) -> dict[str, Any]:
         state.runtime.pause(actor=actor)
         return asdict(state.runtime.status)
 
     @app.post("/system/resume")
     def resume(
-        _: ControlRequest, actor: str = Depends(_require_role(Role.CONTROL))
+        _: ControlRequest,
+        actor: str = Depends(_require_role(Role.CONTROL, auth_config)),
     ) -> dict[str, Any]:
         try:
             state.runtime.resume(actor=actor)
@@ -194,7 +223,8 @@ def create_app(context: AppContext | None = None) -> FastAPI:
 
     @app.post("/system/kill")
     def kill(
-        payload: ControlRequest, actor: str = Depends(_require_role(Role.CONTROL))
+        payload: ControlRequest,
+        actor: str = Depends(_require_role(Role.CONTROL, auth_config)),
     ) -> dict[str, Any]:
         state.runtime.kill(actor=actor, reason=payload.reason)
         return asdict(state.runtime.status)

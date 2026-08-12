@@ -36,3 +36,14 @@ Parquet plus DuckDB is the local analytical path. PostgreSQL is planned for
 metadata and runtime state when an available supported environment exists.
 Append-only JSONL is acceptable for the bootstrap audit/event journal.
 
+The implemented local runtime uses SQLite WAL with `synchronous=FULL` for
+durable fill-processing markers and audit events. A restart with PENDING/FAILED
+fills is not allowed to trade through the uncertainty: it requires explicit
+reconciliation. PostgreSQL remains the multi-process deployment target.
+
+## Security boundaries
+
+No LIVE runtime enum or externally transmitting gateway exists. PAPER and
+SHADOW both compose `PaperGateway`. Control APIs require a bearer token from the
+environment; role headers are not trusted. Tokens and broker credentials never
+have source-code defaults and audit text is centrally redacted.

@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from qtrade.accounting import Ledger
-from qtrade.api import AppContext, create_app
+from qtrade.api import ApiAuthConfig, AppContext, create_app
 from qtrade.audit import AuditLog
 from qtrade.control import PlatformRuntime
 from qtrade.domain import RuntimeMode
@@ -24,7 +24,7 @@ def client() -> TestClient:
     context = AppContext(
         PlatformRuntime(RuntimeMode.SHADOW, risk, audit, metrics), metrics, oms, ledger, audit
     )
-    return TestClient(create_app(context))
+    return TestClient(create_app(context, ApiAuthConfig(control_token="control-test")))
 
 
 def test_dashboard_and_health_make_shadow_mode_explicit():
@@ -48,9 +48,21 @@ def test_read_role_cannot_control_runtime():
     assert response.status_code == 403
 
 
+def test_unconfigured_control_authentication_fails_closed():
+    from qtrade.api.app import bootstrap_context
+
+    api = TestClient(create_app(bootstrap_context(), ApiAuthConfig()))
+    response = api.post(
+        "/system/start",
+        headers={"Authorization": "Bearer anything"},
+        json={},
+    )
+    assert response.status_code == 503
+
+
 def test_control_role_can_pause_and_kill_but_cannot_resume_halt():
     api = client()
-    headers = {"X-QTrade-Role": "control"}
+    headers = {"Authorization": "Bearer control-test"}
     assert api.post("/system/pause", headers=headers, json={}).json()["risk_state"] == "PAUSED"
     assert api.post("/system/resume", headers=headers, json={}).json()["risk_state"] == "NORMAL"
     assert (
@@ -62,7 +74,7 @@ def test_control_role_can_pause_and_kill_but_cannot_resume_halt():
 
 def test_control_events_are_auditable():
     api = client()
-    headers = {"X-QTrade-Role": "control"}
+    headers = {"Authorization": "Bearer control-test"}
     api.post("/system/start", headers=headers, json={})
     events = api.get("/audit").json()
     assert events[-1]["event_type"] == "SYSTEM_START"
