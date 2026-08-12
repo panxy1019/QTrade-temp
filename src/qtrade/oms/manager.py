@@ -138,6 +138,16 @@ class OrderManager:
         projected.updated_at = now or utc_now()
         return projected
 
+    def commit_projection(self, order: Order, projected: Order) -> None:
+        """Install an already validated/durable order projection without audit I/O."""
+        if order.internal_order_id != projected.internal_order_id:
+            raise ValueError("projected order identity mismatch")
+        order.status = projected.status
+        order.broker_order_id = projected.broker_order_id
+        order.filled_quantity = projected.filled_quantity
+        order.rejection_reason = projected.rejection_reason
+        order.updated_at = projected.updated_at
+
     def _record(self, order: Order, event_type: str, message: str) -> None:
         self._audit.record(
             AuditEvent(

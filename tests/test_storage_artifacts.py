@@ -10,6 +10,7 @@ from qtrade.data import (
     ParquetBarStore,
     QualityStatus,
 )
+from qtrade.persistence import ExperimentCatalogEntry, SQLiteMetadataCatalog
 from qtrade.research import ExperimentArtifactStore, ExperimentRecord, TimeSplit
 
 
@@ -74,3 +75,39 @@ def test_experiment_artifacts_are_hashed_and_immutable(tmp_path):
     assert digest in target.read_text(encoding="utf-8")
     with pytest.raises(FileExistsError):
         store.save(record)
+
+
+def test_sqlite_metadata_catalog_preserves_dataset_experiment_lineage(tmp_path):
+    catalog = SQLiteMetadataCatalog(tmp_path / "metadata.db")
+    passed = DataManifest(
+        "bars-v1",
+        "licensed-vendor",
+        "1",
+        datetime(2026, 8, 12, tzinfo=UTC),
+        "checksum-1",
+        QualityStatus.PASSED,
+    )
+    catalog.register_dataset(passed)
+    catalog.register_dataset(passed)
+    entry = ExperimentCatalogEntry("exp-1", "spec-hash", "abc123", "bars-v1", "exp-1.json")
+    catalog.register_experiment(entry)
+    catalog.register_experiment(entry)
+
+    restarted = SQLiteMetadataCatalog(tmp_path / "metadata.db")
+    assert restarted.dataset_versions() == ("bars-v1",)
+    assert restarted.experiments() == (entry,)
+    with pytest.raises(ValueError, match="conflicts"):
+        restarted.register_dataset(
+            DataManifest(
+                "bars-v1",
+                "licensed-vendor",
+                "1",
+                datetime(2026, 8, 12, tzinfo=UTC),
+                "changed",
+                QualityStatus.PASSED,
+            )
+        )
+    with pytest.raises(ValueError, match="unknown data_version"):
+        restarted.register_experiment(
+            ExperimentCatalogEntry("bad", "hash", "abc", "missing", "bad.json")
+        )

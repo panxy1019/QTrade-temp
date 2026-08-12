@@ -41,6 +41,15 @@ class Ledger:
         self._apply(projected, trade)
         return projected
 
+    def commit_projection(self, projected: AccountSnapshot, trade: Trade) -> bool:
+        """Install an already validated/durable projection without performing I/O."""
+        if trade.trade_id in self._trade_ids:
+            return False
+        self.account.cash = projected.cash
+        self.account.positions = deepcopy(projected.positions)
+        self._trade_ids.add(trade.trade_id)
+        return True
+
     @staticmethod
     def _apply(account: AccountSnapshot, trade: Trade) -> None:
         if trade.quantity <= 0 or trade.price <= 0 or trade.fee < 0:

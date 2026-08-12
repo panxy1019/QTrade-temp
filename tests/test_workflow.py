@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from qtrade.data import Bar, DataManifest, QualityStatus
 from qtrade.domain import Instrument
+from qtrade.persistence import SQLiteMetadataCatalog
 from qtrade.workflows import BaselineWorkflow
 
 
@@ -43,3 +44,6 @@ def test_reproducible_baseline_workflow_writes_versioned_report(tmp_path):
     assert result.report_path.is_file()
     text = result.report_path.read_text(encoding="utf-8")
     assert "test-commit" in text and "workflow-v1" in text
+    catalog = SQLiteMetadataCatalog(tmp_path / "metadata.db")
+    assert catalog.dataset_versions() == ("workflow-v1",)
+    assert catalog.experiments()[0].experiment_id == "exp-workflow"

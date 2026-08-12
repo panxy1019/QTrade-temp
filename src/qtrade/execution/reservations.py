@@ -105,3 +105,10 @@ class ReservationBook:
         if reservation.order_id in self._reservations:
             raise ValueError("reservation already exists")
         self._reservations[reservation.order_id] = reservation
+
+    def replace(self, reservations: tuple[Reservation, ...]) -> None:
+        """Install an already validated/durable reservation snapshot."""
+        replacement = {item.order_id: item for item in reservations}
+        if len(replacement) != len(reservations):
+            raise ValueError("reservation snapshot contains duplicate order IDs")
+        self._reservations = replacement

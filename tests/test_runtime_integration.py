@@ -130,10 +130,10 @@ def test_crash_after_atomic_fill_commit_restores_exactly_one_effect(tmp_path, mo
     bundle.runtime.start(actor="operator")
     order, _ = submit(bundle, "buy-crash")
 
-    def crash_after_commit(trade):
+    def crash_after_commit(projected, trade):
         raise RuntimeError("simulated process crash")
 
-    monkeypatch.setattr(bundle.ledger, "book", crash_after_commit)
+    monkeypatch.setattr(bundle.ledger, "commit_projection", crash_after_commit)
     with pytest.raises(RuntimeError, match="simulated process crash"):
         bundle.gateway.fill(
             order, fill_key="fill-crash", price=Decimal("10"), quantity=100, now=NOW
@@ -148,6 +148,42 @@ def test_crash_after_atomic_fill_commit_restores_exactly_one_effect(tmp_path, mo
     assert restarted.oms.orders[0].filled_quantity == 100
     assert restarted.gateway.reservations.reserved_cash == Decimal("0")
     assert restarted.risk.state.value == "HALTED"
+
+
+def test_audit_failure_after_applied_commit_converges_and_halts(tmp_path, monkeypatch):
+    bundle = build(tmp_path)
+    attest(bundle)
+    bundle.runtime.start(actor="operator")
+    order, _ = submit(bundle, "audit-after-commit")
+
+    monkeypatch.setattr(
+        bundle.journal,
+        "append",
+        lambda _event: (_ for _ in ()).throw(OSError("audit sink failure")),
+    )
+    with pytest.raises(OSError, match="audit sink failure"):
+        bundle.gateway.fill(
+            order,
+            fill_key="audit-after-commit-fill",
+            price=Decimal("10"),
+            quantity=100,
+            now=NOW,
+        )
+
+    marker = bundle.journal.get_fill("audit-after-commit-fill")
+    assert marker is not None and marker.state == "APPLIED"
+    assert bundle.ledger.account.cash == Decimal("99000")
+    assert bundle.ledger.account.position_quantity("510300") == 100
+    assert order.status.value == "FILLED" and order.filled_quantity == 100
+    assert bundle.gateway.reservations.reserved_cash == Decimal("0")
+    assert bundle.risk.state.value == "HALTED"
+    assert bundle.metrics.reconciliation_status == "FAILED"
+
+    restarted = build(tmp_path)
+    assert restarted.ledger.account.cash == Decimal("99000")
+    assert restarted.ledger.account.position_quantity("510300") == 100
+    assert restarted.oms.orders[0].status.value == "FILLED"
+    assert restarted.gateway.reservations.reserved_cash == Decimal("0")
 
 
 def test_cancel_remains_available_after_halt_and_is_idempotent(tmp_path):

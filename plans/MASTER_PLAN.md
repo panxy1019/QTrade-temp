@@ -56,8 +56,9 @@ corporate actions, multi-check quality gate, checksum-verified Parquet/DuckDB
 bar adapter, and strict checksum-versioned canonical CSV importer. Temporal and
 jump validation is grouped per instrument and rejects non-finite values.
 Sourced normalized corporate-action factors produce point-in-time backward-
-adjusted bars with explicit adjustment lineage. Remaining: durable metadata
-catalog, broader calendars/status and larger fixture coverage.
+adjusted bars with explicit adjustment lineage. A durable immutable SQLite
+catalog links PASSED data manifests to experiment hashes and is populated by the
+baseline workflow. Remaining: broader calendars/status and larger fixture coverage.
 
 ### M3 — Research, factors, portfolio, and evaluation
 
@@ -103,6 +104,9 @@ The projected effect is validated through the same Ledger/OMS/reservation domain
 invariants before APPLIED. Adverse-price/insufficient-cash fills remain FAILED
 with no restored economic effect. Monitoring observers are non-throwing after
 successful order/fill effects.
+After durable APPLIED, the validated projection is installed across all in-memory
+economic/order/reservation state before audit I/O. Injected audit failure then
+latches HALTED/FAILED and both live and restarted state converge to one fill.
 Ordinary account/runtime snapshots also commit in one transaction and injected
 database failure latches HALTED. The composition root is tracked in Git after
 repairing an over-broad `runtime/` ignore rule.
@@ -155,9 +159,9 @@ implementation → independent review → test review → main-agent integration
 ## Current work queue
 
 1. Expand failure injection and deterministic paper execution plans.
-2. Add durable metadata catalog.
-3. Add model-training experiment adapter after baseline reports are complete.
-4. Extend deterministic matching/session simulation and alerts.
+2. Add model-training experiment adapter after baseline reports are complete.
+3. Extend deterministic matching/session simulation and alerts.
+4. Integrate licensed live-data adapter only after an external provider is chosen.
 
 ## Blockers
 

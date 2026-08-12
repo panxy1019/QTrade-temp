@@ -135,7 +135,7 @@ class PaperGateway:
         journal: SQLiteOperationalJournal | None = None,
         incident_handler: Callable[[str], None] | None = None,
         state_change_handler: Callable[[], None] | None = None,
-        durable_fill_handler: Callable[[str, Trade, Order], None] | None = None,
+        durable_fill_handler: Callable[[str, Trade, Order], bool] | None = None,
         fill_observer: Callable[[Trade], None] | None = None,
         observer_failure_handler: Callable[[], None] | None = None,
     ) -> None:
@@ -299,29 +299,37 @@ class PaperGateway:
         record = FillRecord(FillProcessingState.PENDING, trade)
         self._fills[fill_key] = record
         try:
+            projection_committed = False
             if self._durable_fill_handler is not None:
-                self._durable_fill_handler(fill_key, trade, order)
-            self._ledger.book(trade)
-            self._oms.apply_fill(order, quantity, now=timestamp)
-            self.reservations.consume(order.internal_order_id, quantity)
+                projection_committed = self._durable_fill_handler(fill_key, trade, order)
+            if not projection_committed:
+                self._ledger.book(trade)
+                self._oms.apply_fill(order, quantity, now=timestamp)
+                self.reservations.consume(order.internal_order_id, quantity)
         except Exception as exc:
-            record.state = FillProcessingState.FAILED
-            record.error = type(exc).__name__
+            durable_applied = False
             if self._journal is not None:
                 durable = self._journal.get_fill(fill_key)
                 if durable is not None and durable.state == "PENDING":
                     self._journal.mark_fill(fill_key, "FAILED", type(exc).__name__)
-            self._audit.record(
-                AuditEvent(
-                    event_type="FILL_PROCESSING_FAILED",
-                    service="paper_gateway",
-                    message="fill processing failed; reconciliation required",
-                    severity="ERROR",
-                    order_id=order.internal_order_id,
-                    timestamp=timestamp,
-                )
+                durable_applied = durable is not None and durable.state == "APPLIED"
+            record.state = (
+                FillProcessingState.APPLIED if durable_applied else FillProcessingState.FAILED
             )
-            self._report_incident("fill processing failed")
+            record.error = type(exc).__name__
+            with suppress(Exception):
+                self._report_incident("fill processing failed")
+            with suppress(Exception):
+                self._audit.record(
+                    AuditEvent(
+                        event_type="FILL_PROCESSING_FAILED",
+                        service="paper_gateway",
+                        message="fill processing failed; reconciliation required",
+                        severity="ERROR",
+                        order_id=order.internal_order_id,
+                        timestamp=timestamp,
+                    )
+                )
             raise
         record.state = FillProcessingState.APPLIED
         if self._journal is not None and self._durable_fill_handler is None:

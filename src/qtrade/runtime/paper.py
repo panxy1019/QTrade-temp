@@ -6,7 +6,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from qtrade.accounting import Ledger
-from qtrade.audit import AuditLog
+from qtrade.audit import AuditEvent, AuditLog
 from qtrade.control import PlatformRuntime
 from qtrade.domain import (
     AccountSnapshot,
@@ -244,9 +244,12 @@ def build_paper_runtime(
                         "updated_at": order.updated_at.isoformat(),
                     }
 
-    def durable_fill(fill_key: str, trade: Trade, order: Order) -> None:
+    def durable_fill(fill_key: str, trade: Trade, order: Order) -> bool:
         projected_account = ledger.project(trade)
         projected_order = oms.project_fill(order, trade.quantity, now=trade.timestamp)
+        reservation_projection = reservations.project_consume(
+            order.internal_order_id, trade.quantity
+        )
         projected_reservations: list[dict[str, object]] = [
             {
                 "order_id": item.order_id,
@@ -255,9 +258,7 @@ def build_paper_runtime(
                 "remaining_quantity": item.remaining_quantity,
                 "remaining_cash": str(item.remaining_cash),
             }
-            for item in reservations.project_consume(
-                order.internal_order_id, trade.quantity
-            )
+            for item in reservation_projection
         ]
         account_payload, runtime_payload = state_payloads(
             account_override=projected_account,
@@ -269,6 +270,30 @@ def build_paper_runtime(
             account_state=account_payload,
             runtime_state=runtime_payload,
         )
+        ledger.commit_projection(projected_account, trade)
+        oms.commit_projection(order, projected_order)
+        reservations.replace(reservation_projection)
+        audit.record(
+            AuditEvent(
+                event_type="TRADE_BOOKED",
+                service="accounting",
+                message=f"trade_id={trade.trade_id}; quantity={trade.quantity}",
+                order_id=trade.internal_order_id,
+                timestamp=trade.timestamp,
+            )
+        )
+        audit.record(
+            AuditEvent(
+                event_type="ORDER_TRANSITION",
+                service="oms",
+                message=f"status={projected_order.status.value}; reason=",
+                strategy_id=order.request.strategy_id,
+                portfolio_id=order.request.portfolio_id,
+                order_id=order.internal_order_id,
+                timestamp=projected_order.updated_at,
+            )
+        )
+        return True
 
     def observe_submission(order: Order, completed_at: datetime) -> None:
         metrics.record_order(created_at=order.created_at, completed_at=completed_at)

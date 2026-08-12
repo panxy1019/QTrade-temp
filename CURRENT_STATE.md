@@ -10,7 +10,7 @@ Last updated: 2026-08-12
   authoritative China rule-source registry; vn.py gap analysis.
 - Current phase: integrated paper/shadow platform hardening.
 - Current milestone: M5/M6 failure recovery, control, and observability.
-- Acceptance evidence: 111 tests passed, Ruff clean, strict mypy
+- Acceptance evidence: 114 tests passed, Ruff clean, strict mypy
   clean on Python 3.14.6 (2026-08-12); 92% statement coverage; end-to-end
   synthetic workflow reran successfully with immutable unique artifact IDs.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
@@ -88,4 +88,11 @@ Last updated: 2026-08-12
 - Corporate actions: backward-adjusted bars consume only sourced normalized
   factors known at the requested point in time, apply only before effective date,
   adjust price/volume consistently, and record the exact adjustment IDs used.
+- Post-commit convergence: validated durable fill projections are installed in
+  ledger, OMS and reservations before audit I/O. An audit-sink failure after
+  APPLIED leaves one converged fill, latches HALT/reconciliation FAILED, and
+  restart restores the identical state.
+- Metadata lineage: an immutable SQLite catalog registers PASSED manifests and
+  experiment spec hashes with foreign-keyed data versions; the baseline workflow
+  now populates and verifies this catalog.
 - Live trading: disabled and structurally unavailable.

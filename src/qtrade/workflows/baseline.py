@@ -10,6 +10,7 @@ from qtrade.data import Bar, DataManifest, ParquetBarStore
 from qtrade.domain import Instrument
 from qtrade.execution import FeeSchedule
 from qtrade.instruments import TradingRule
+from qtrade.persistence import ExperimentCatalogEntry, SQLiteMetadataCatalog
 from qtrade.research import (
     ExperimentArtifactStore,
     ExperimentRecord,
@@ -43,6 +44,8 @@ class BaselineWorkflow:
         experiment_id: str,
     ) -> WorkflowResult:
         stored_manifest = ParquetBarStore(self._workspace / "datasets").write(bars, manifest)
+        catalog = SQLiteMetadataCatalog(self._workspace / "metadata.db")
+        catalog.register_dataset(stored_manifest)
         verified_bars = ParquetBarStore(self._workspace / "datasets").read(
             stored_manifest, symbol=instrument.symbol
         )
@@ -91,7 +94,16 @@ class BaselineWorkflow:
             },
             artifacts=("experiment.json",),
         )
-        path, _ = ExperimentArtifactStore(self._workspace / "experiments").save(record)
+        path, digest = ExperimentArtifactStore(self._workspace / "experiments").save(record)
+        catalog.register_experiment(
+            ExperimentCatalogEntry(
+                experiment_id,
+                digest,
+                git_commit,
+                stored_manifest.data_version,
+                str(path.relative_to(self._workspace)),
+            )
+        )
         return WorkflowResult(
             stored_manifest.data_version,
             experiment_id,
