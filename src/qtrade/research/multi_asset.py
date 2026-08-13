@@ -337,6 +337,34 @@ class DailyMultiAssetBacktester:
         )
 
 
+def evaluate_backtest_window(
+    result: MultiAssetBacktestResult,
+    start: date,
+    end: date,
+) -> PerformanceMetrics:
+    indices = [
+        index for index, session in enumerate(result.sessions) if start <= session <= end
+    ]
+    if not indices:
+        raise ValueError("backtest evaluation window has no observations")
+    returns = [result.returns[index] for index in indices]
+    exposure = sum(
+        (result.exposure_curve[index] for index in indices), start=Decimal("0")
+    ) / len(indices)
+    turnover = sum(
+        (result.turnover_curve[index] for index in indices), start=Decimal("0")
+    )
+    costs = sum((result.cost_curve[index] for index in indices), start=Decimal("0"))
+    trade_count = sum(start <= trade.trading_day <= end for trade in result.trades)
+    return evaluate_returns(
+        returns,
+        exposure=exposure,
+        turnover=turnover,
+        trade_count=trade_count,
+        transaction_costs=costs,
+    )
+
+
 def write_experiment_artifacts(
     result: MultiAssetBacktestResult,
     root: Path,

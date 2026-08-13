@@ -26,6 +26,7 @@ from qtrade.research.multi_asset import (
     MomentumAllocation,
     MultiAssetBacktestResult,
     ResearchTrade,
+    evaluate_backtest_window,
     write_experiment_artifacts,
 )
 from qtrade.research.runner import (
@@ -57,6 +58,7 @@ __all__ = [
     "MomentumAllocation",
     "MultiAssetBacktestResult",
     "ResearchTrade",
+    "evaluate_backtest_window",
     "TimeSplit",
     "LeakageReview",
     "ResearchHypothesis",
