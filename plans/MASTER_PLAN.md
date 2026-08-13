@@ -141,6 +141,9 @@ remain unavailable until an authorized fresh market-price source exists.
 The web client reads these PAPER fields from one dispatch-gated atomic snapshot;
 concurrent fill/read regression proves it cannot observe a half-installed
 account/OMS projection.
+The overview page distinguishes PAPER cash/realized PnL from account equity and
+uses only verified historical research analytics for its chart, with an explicit
+non-PIT/NOT_ELIGIBLE/non-PAPER label.
 Remaining: external identity/TLS integration, Prometheus export and richer alert
 routing. Keep server loopback-only until those are reviewed.
 

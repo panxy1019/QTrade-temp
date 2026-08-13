@@ -98,6 +98,10 @@ Last updated: 2026-08-13
   substituted as current valuation. The web client consumes these six fields
   from one dispatch-gated `/paper-snapshot`, preventing a fill from being shown
   halfway through its in-memory account/OMS projection.
+- Dashboard overview honesty: the top cards now say PAPER cash and cumulative
+  realized PnL rather than portfolio equity/today PnL. Its chart consumes only
+  verified historical backtest analytics and is explicitly labelled as
+  non-PIT, NOT_ELIGIBLE research evidence—not current PAPER equity.
 - Selection-bias guard: the backtest page now places that exploratory positive
   leader beside all three disjoint held-out walk-forward folds. All three folds
   lost money (aggregate return `-20.4412%`, Sharpe `-1.1005`, fold pass ratio

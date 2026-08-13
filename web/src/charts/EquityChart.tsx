@@ -5,7 +5,7 @@ import type { BacktestAnalytics } from '../types'
 const ReactECharts = lazy(() => import('echarts-for-react'))
 
 export function EquityChart({ dark, analytics }: { dark: boolean; analytics?: BacktestAnalytics | null }) {
-  if (!analytics?.curve.length) return <Empty description="暂无经校验的净值与回撤数据" style={{ padding: 72 }} />
+  if (!analytics?.curve?.length) return <Empty description="暂无经校验的净值与回撤数据" style={{ padding: 72 }} />
   const initial = Number(analytics.curve[0].equity)
   const benchmarkInitial = Number(analytics.curve[0].benchmark_equity)
   const hasBenchmark = analytics.curve.every((point) => point.benchmark_equity !== undefined)
