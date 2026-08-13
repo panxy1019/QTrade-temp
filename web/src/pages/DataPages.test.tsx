@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { PlatformSnapshot } from '../types'
-import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
+import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('echarts-for-react', () => ({ default: () => <div data-testid="equity-chart" /> }))
 vi.mock('../api/client', () => ({
@@ -25,6 +25,7 @@ const data = {
   trades: [{ trade_id: 'PAPER-TRADE-1', internal_order_id: 'ORDER-1', strategy_id: 'trend@1.0.0', portfolio_id: 'paper-etf', symbol: '510300', side: 'BUY', price: '10', quantity: 100, fee: '1', timestamp: '2026-08-12T09:32:00+08:00', execution_type: 'PAPER_SIMULATED_FILL' }],
   risk: { state: 'NORMAL', cash: '98999', position_cost_basis: '1001', open_buy_notional: '0', gross_exposure: '1001', exposure_basis: 'COST_BASIS_PLUS_OPEN_BUY_LIMIT_PRICE', largest_position_concentration: '1', open_order_count: 0, realized_pnl: '0', drawdown: null, valuation_status: 'MARKET_PRICE_UNAVAILABLE', gateway_connected: true, reconciliation_status: 'OK' },
   metrics: {},
+  audit: [{ timestamp: '2026-08-12T09:32:00+08:00', event_type: 'PAPER_INCIDENT', severity: 'ERROR', message: 'gateway disconnected', order_id: 'ORDER-1' }],
   strategies: [{
     strategy_id: 'momentum-vol-slow', name: 'momentum-volatility', version: 'abc123def456',
     family: 'ETF_MOMENTUM_VOLATILITY', status: 'NOT_ELIGIBLE', role: 'NONE',
@@ -127,6 +128,27 @@ const data = {
     run_metadata: { engine: 'DailyMultiAssetBacktester', timing: 'close decision, next open execution', session_count: 632 },
   },
 } as unknown as PlatformSnapshot
+
+describe('durable monitoring', () => {
+  it('shows persisted audit alerts without claiming hash-chain integrity', () => {
+    render(<MonitorPage data={data} />)
+    expect(screen.getByText('PAPER_INCIDENT')).toBeInTheDocument()
+    expect(screen.getByText('gateway disconnected')).toBeInTheDocument()
+    expect(screen.getByText(/不是哈希链或 WORM/)).toBeInTheDocument()
+  })
+
+  it('distinguishes unavailable audit history from zero alerts', () => {
+    render(<MonitorPage data={{ ...data, audit: null }} />)
+    expect(screen.getAllByText('持久化审计历史不可用').length).toBeGreaterThan(0)
+    expect(screen.getByText(/不能据此声称当前没有告警/)).toBeInTheDocument()
+  })
+
+  it('does not report zero alerts before the first platform snapshot', () => {
+    render(<MonitorPage data={null} />)
+    expect(screen.getAllByText('持久化审计历史不可用').length).toBeGreaterThan(0)
+    expect(screen.queryByText('暂无持久化审计事件')).not.toBeInTheDocument()
+  })
+})
 
 describe('persistent PAPER account pages', () => {
   it('shows persistent PAPER account facts without inventing equity', () => {

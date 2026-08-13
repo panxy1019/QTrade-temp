@@ -13,7 +13,7 @@ export function loadHistoricalBarSeries(symbol: string): Promise<HistoricalBarSe
 }
 
 export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
-  const [system, health, paper, metrics, reports, strategies, experiments, walkForward, robustness, backtestAnalytics, market, historicalBars] = await Promise.all([
+  const [system, health, paper, metrics, reports, strategies, experiments, walkForward, robustness, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
     getJson<PlatformSnapshot['system']>('/system'),
     getJson<PlatformSnapshot['health']>('/health'),
     getJson<Pick<PlatformSnapshot, 'account' | 'pnl' | 'positions' | 'orders' | 'trades' | 'risk'>>('/paper-snapshot'),
@@ -26,6 +26,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getJson<PlatformSnapshot['backtestAnalytics']>('/backtest-analytics'),
     getJson<PlatformSnapshot['market']>('/market'),
     getJson<PlatformSnapshot['historicalBars']>('/historical-bars/latest'),
+    getJson<PlatformSnapshot['audit']>('/audit').catch(() => null),
   ])
-  return { system, health, ...paper, metrics, reports, strategies, experiments, walkForward, robustness, backtestAnalytics, market, historicalBars }
+  return { system, health, ...paper, metrics, reports, strategies, experiments, walkForward, robustness, backtestAnalytics, market, historicalBars, audit }
 }

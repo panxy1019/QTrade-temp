@@ -154,7 +154,13 @@ export function DataCenterPage({ data }: { data: PlatformSnapshot | null }) {
 
 export function MonitorPage({ data }: { data: PlatformSnapshot | null }) {
   const entries = Object.entries(data?.metrics ?? {})
-  return <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化"><Card><Descriptions values={[['Service Health', data?.health.healthy ? 'HEALTHY' : 'DEGRADED'], ['Event Queue', String(data?.metrics.event_queue_depth ?? 0)], ['Market Data Lag', String(data?.metrics.market_data_lag ?? '—')], ['Order Rate', String(data?.metrics.orders_per_min ?? 0)], ['Reject Rate', String(data?.metrics.reject_rate ?? 0)], ['Fill Rate', String(data?.metrics.fill_rate ?? 0)], ['Runtime Owner', 'SQLite 单进程租约'], ['指标数量', String(entries.length)]]}/></Card></Page>
+  const audit = data?.audit ?? []
+  const auditAvailable = data?.audit != null
+  const alerts = audit.filter((event) => event.severity === 'ERROR' || event.severity === 'CRITICAL')
+  if (!auditAvailable) {
+    return <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化"><Alert showIcon type="error" title="持久化审计历史不可用" description="其他运行时快照仍可查看，但不能据此声称当前没有告警。" /><Card title="最近持久化审计与告警"><Empty description="审计历史不可用" /></Card></Page>
+  }
+  return <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化"><Space orientation="vertical" style={{ width: '100%' }}><Card><Descriptions values={[['Service Health', data?.health.healthy ? 'HEALTHY' : 'DEGRADED'], ['Event Queue', String(data?.metrics.event_queue_depth ?? 0)], ['Market Data Lag', String(data?.metrics.market_data_lag ?? '—')], ['Order Rate', String(data?.metrics.orders_per_min ?? 0)], ['Reject Rate', String(data?.metrics.reject_rate ?? 0)], ['Fill Rate', String(data?.metrics.fill_rate ?? 0)], ['Runtime Owner', 'SQLite 单进程租约'], ['指标数量', String(entries.length)], ['持久化告警', data?.audit === null ? '不可用' : String(alerts.length)]]}/></Card>{data?.audit === null && <Alert showIcon type="error" title="持久化审计历史不可用" description="其他运行时快照仍可查看，但不能据此声称当前没有告警。" />}<Card title="最近持久化审计与告警"><Table rowKey={(row) => `${row.timestamp}-${row.event_type}-${row.order_id ?? ''}`} size="small" dataSource={audit} columns={[{ title: '时间', dataIndex: 'timestamp' }, { title: '级别', dataIndex: 'severity' }, { title: '事件', dataIndex: 'event_type' }, { title: '订单', dataIndex: 'order_id', render: (value: string | null) => value ?? '—' }, { title: '消息', dataIndex: 'message' }]} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} locale={{ emptyText: data?.audit === null ? '审计历史不可用' : '暂无持久化审计事件' }} /><Typography.Text type="secondary">最多显示最近 500 条严格校验的 SQLite 审计记录；ERROR/CRITICAL 计入告警。SQLite 表不是哈希链或 WORM 存储。</Typography.Text></Card></Space></Page>
 }
 
 function Descriptions({ values }: { values: [string, string][] }) {

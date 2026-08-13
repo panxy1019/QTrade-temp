@@ -13,7 +13,7 @@ Last updated: 2026-08-13
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
 - Acceptance evidence: 229 tests passed, Ruff clean, strict mypy clean across
-  86 source files on Python 3.14.6 (2026-08-13); 15 frontend Vitest tests,
+  86 source files on Python 3.14.6 (2026-08-13); 17 frontend Vitest tests,
   ESLint and the production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
@@ -114,6 +114,9 @@ Last updated: 2026-08-13
   from the SQLite audit journal in chronological order, so restart no longer
   erases visible control/risk history. Daily incident summaries use the same
   durable source, and report assembly is serialized with PAPER mutations.
+  The monitor page renders these events and counts ERROR/CRITICAL alerts;
+  audit unavailability is isolated from other dashboard reads and shown as
+  unavailable rather than zero alerts.
 - Selection-bias guard: the backtest page now places that exploratory positive
   leader beside all three disjoint held-out walk-forward folds. All three folds
   lost money (aggregate return `-20.4412%`, Sharpe `-1.1005`, fold pass ratio

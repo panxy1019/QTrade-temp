@@ -264,4 +264,11 @@ export interface PlatformSnapshot {
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]
+  audit: Array<{
+    timestamp: string
+    event_type: string
+    severity: 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL'
+    message: string
+    order_id: string | null
+  }> | null
 }
