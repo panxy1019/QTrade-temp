@@ -78,6 +78,16 @@ Last updated: 2026-08-13
   next-open timing metadata; the dashboard labels this historical research risk,
   not current PAPER account risk. Engine-reported exposure/staleness fields are
   intentionally not shown as verified without independently recomputable series.
+- Verified experiment catalog: `/strategies` and `/experiments` now expose all
+  11 v4 candidates only after the comparison envelope, immutable record,
+  deterministic result hash and every declared artifact validate. Duplicate
+  experiment IDs, unknown scenarios and split/curve mismatches fail closed;
+  current spec hashes are format-checked but cannot be independently rebuilt
+  from the legacy report fields. The Chinese
+  strategy/research/experiment pages show the real model, parameters, held-out
+  split, record hash and `NOT_ELIGIBLE` result. They explicitly state that these
+  are not registered `StrategyVersion` entities, have no lineage, and are not
+  Champion/Challenger or running PAPER strategies.
 - Selection-bias guard: the backtest page now places that exploratory positive
   leader beside all three disjoint held-out walk-forward folds. All three folds
   lost money (aggregate return `-20.4412%`, Sharpe `-1.1005`, fold pass ratio

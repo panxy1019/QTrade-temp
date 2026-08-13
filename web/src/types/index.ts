@@ -46,12 +46,16 @@ export interface DailyReportSummary {
 export interface ResearchStrategyRow {
   strategy_id: string
   name: string
+  version: string
   family: string
   status: string
   role: string
   metrics: Record<string, string>
   scenario_type: string
   data_version: string
+  git_commit: string
+  evidence_status: string
+  lineage_status: string
 }
 
 export interface ResearchExperiment {
@@ -60,6 +64,16 @@ export interface ResearchExperiment {
   result_hash: string
   metrics: Record<string, string>
   scenario_type: string
+  model?: string
+  parameters?: Record<string, string>
+  split?: { train_start: string; train_end: string; validation_start: string; validation_end: string; test_start: string; test_end: string }
+  factor_set?: string[]
+  transaction_cost?: string
+  universe_size?: number
+  git_commit?: string
+  data_version?: string
+  record_hash?: string
+  evidence_status?: string
 }
 
 export interface ResearchReport {
@@ -69,6 +83,8 @@ export interface ResearchReport {
   promotion: string
   promotion_reasons: string[]
   experiments: ResearchExperiment[]
+  lineage?: Array<{ parent: string; child: string }>
+  lineage_status?: string
 }
 
 export interface WalkForwardFold {

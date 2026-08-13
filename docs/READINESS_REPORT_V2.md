@@ -101,6 +101,15 @@ AKShare amendment checkpoint):
 - The backtest page explicitly contrasts the positive exploratory sensitivity
   winner with the three negative, disjoint held-out walk-forward folds. This is
   a selection-bias disclosure, not evidence that either result is promotable.
+- Strategy and experiment endpoints now fail closed unless every comparison row
+  resolves to a valid immutable record, deterministic result and complete
+  artifact bundle. The current 11 records are displayed as verified,
+  promotion-ineligible experiment candidates with model parameters and held-out
+  splits. They are not registered `StrategyVersion` entities, so the dashboard
+  deliberately shows no Champion/Challenger role or lineage. The legacy
+  comparison's spec hashes are format-checked but not independently recomputed
+  because cost-model and strategy-identity inputs are absent from its records;
+  the UI states this limitation.
 - It now also independently verifies and aligns the Buy-and-Hold benchmark's
   immutable record and curve artifacts before rendering strategy, benchmark and
   excess returns. The 632-session full-period terminal excess is `-12.5456%`;

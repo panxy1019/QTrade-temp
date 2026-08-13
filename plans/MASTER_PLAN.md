@@ -203,6 +203,14 @@ notional-derived turnover. The UI presents full-period
 drawdown/turnover/cost and the causal next-open engine contract
 as historical research diagnostics only.
 
+The strategy, research and experiment surfaces now require the same
+comparison -> immutable record -> deterministic result -> artifact hash chain
+for all 11 v4 candidates. The UI exposes real models, parameters, held-out
+splits and record hashes while explicitly refusing to call these unregistered
+records Champion, Challenger, deployed strategy or lineage. Legacy spec hashes
+remain format-checked rather than independently recomputed because their full
+run-spec fields are absent from the report.
+
 1. select and license a realtime/historical data provider;
 2. select a broker and compatible isolated native-gateway Python ABI;
 3. certify provider/broker normalization and reconciliation in a sandbox;

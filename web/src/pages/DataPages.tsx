@@ -55,13 +55,14 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
 
 export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
   const columns = [
-    { title: '策略名称', dataIndex: 'name' }, { title: '版本', dataIndex: 'version' },
+    { title: '策略名称', dataIndex: 'name' }, { title: 'Record 哈希', dataIndex: 'version' },
     { title: 'Family', dataIndex: 'family' }, { title: '状态', dataIndex: 'status', render: (value: string) => <Tag color="blue">{value}</Tag> },
     { title: '角色', dataIndex: 'role' },
+    { title: '证据', dataIndex: 'evidence_status', render: () => <Tag color="orange">已验证·不可晋级</Tag> },
     { title: 'Sharpe', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.sharpe ?? '—' },
     { title: '最大回撤', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.maximum_drawdown ?? '—' },
   ]
-  return <Page title="策略中心" subtitle="策略版本、运行状态与研究角色"><Alert showIcon type="info" title="研究实验，不是已批准策略" description="所有 AKShare 结果均为当前样本池探索，角色保持 NONE，不可视为 Champion。" /><Table rowKey="strategy_id" columns={columns} dataSource={data?.strategies ?? []} pagination={false} locale={{ emptyText: '暂无已验证研究记录' }} /></Page>
+  return <Page title="策略中心" subtitle="不可变记录与结果验证过的实验候选"><Alert showIcon type="warning" title="实验候选，不是已注册或已批准策略" description="每行均通过 comparison、record、result 与 artifact 哈希校验；spec_hash 仅校验格式，当前产物未携带足够字段供 API 独立复算。当前样本池非 PIT，状态 NOT_ELIGIBLE、角色 NONE，也没有已注册谱系，不是 Champion 或运行中 PAPER 策略。" /><Table rowKey="strategy_id" columns={columns} dataSource={data?.strategies ?? []} pagination={{ pageSize: 8, showSizeChanger: false }} locale={{ emptyText: '暂无 record/result/artifact 验证通过的实验候选' }} /></Page>
 }
 
 export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
@@ -69,18 +70,22 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const walkForward = data?.walkForward
   const robustness = data?.robustness
   const aggregate = walkForward?.result.aggregate_metrics
-  return <Page title="策略研究" subtitle="血缘、候选与 Champion/Challenger"><Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} /><Card><Tabs items={[{ key: 'registry', label: '策略注册表', children: <Typography.Text>已加载 {report?.experiments.length ?? 0} 个不可变实验记录。</Typography.Text> }, { key: 'walk-forward', label: '滚动样本外', children: <Space orientation="vertical"><Typography.Text>独立测试折数：{walkForward?.result.folds.length ?? 0}；正收益折比例：{walkForward?.result.fold_pass_ratio ?? '—'}</Typography.Text><Typography.Text>聚合 Sharpe：{String(aggregate?.sharpe ?? '—')}；聚合收益：{String(aggregate?.total_return ?? '—')}</Typography.Text><Typography.Text type="secondary">仅验证期选择候选；完整折区间互不重叠。结论：{walkForward?.promotion ?? '未评估'}。</Typography.Text></Space> }, { key: 'robustness', label: '稳健性诊断', children: <Space orientation="vertical"><Typography.Text>场景数：{robustness?.result.scenario_metrics.length ?? 0}；最差 Sharpe：{robustness?.result.worst_sharpe ?? '—'}</Typography.Text><Typography.Text>离散度：{robustness?.result.dispersion ?? '—'}；存在负 Sharpe 场景：{robustness?.result.any_negative_sharpe ? '是' : '否'}</Typography.Text><Typography.Text type="secondary">这是复用样本的拒绝后诊断，不是新的独立测试证据。结论：{robustness?.promotion ?? '未评估'}。</Typography.Text></Space> }, { key: 'lineage', label: '演化树', children: <Empty description="当前实验尚未形成已批准血缘" /> }, { key: 'rejected', label: '未晋级', children: <Typography.Text type="secondary">当前样本池存在幸存者偏差，且缺少 PAPER/SHADOW 证据。</Typography.Text> }]} /></Card></Page>
+  return <Page title="策略研究" subtitle="实验候选、独立样本外证据与晋级边界"><Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} /><Card><Tabs items={[{ key: 'registry', label: '实验候选', children: <Space orientation="vertical"><Typography.Text>record/result/artifact 验证通过：{report?.experiments.length ?? 0} 个不可变实验记录。</Typography.Text><Typography.Text type="secondary">spec_hash 未独立复算；这些记录尚未注册为 StrategyVersion，也不存在可展示的 Champion、Challenger 或演化血缘。</Typography.Text></Space> }, { key: 'walk-forward', label: '滚动样本外', children: <Space orientation="vertical"><Typography.Text>独立测试折数：{walkForward?.result.folds.length ?? 0}；正收益折比例：{walkForward?.result.fold_pass_ratio ?? '—'}</Typography.Text><Typography.Text>聚合 Sharpe：{String(aggregate?.sharpe ?? '—')}；聚合收益：{String(aggregate?.total_return ?? '—')}</Typography.Text><Typography.Text type="secondary">仅验证期选择候选；完整折区间互不重叠。结论：{walkForward?.promotion ?? '未评估'}。</Typography.Text></Space> }, { key: 'robustness', label: '稳健性诊断', children: <Space orientation="vertical"><Typography.Text>场景数：{robustness?.result.scenario_metrics.length ?? 0}；最差 Sharpe：{robustness?.result.worst_sharpe ?? '—'}</Typography.Text><Typography.Text>离散度：{robustness?.result.dispersion ?? '—'}；存在负 Sharpe 场景：{robustness?.result.any_negative_sharpe ? '是' : '否'}</Typography.Text><Typography.Text type="secondary">这是复用样本的拒绝后诊断，不是新的独立测试证据。结论：{robustness?.promotion ?? '未评估'}。</Typography.Text></Space> }, { key: 'lineage', label: '演化树', children: <Empty description="当前实验尚未注册策略血缘" /> }, { key: 'rejected', label: '未晋级', children: <Typography.Text type="secondary">当前样本池存在幸存者偏差，且缺少 PAPER/SHADOW 证据。</Typography.Text> }]} /></Card></Page>
 }
 
 export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
   const columns = [
     { title: '实验ID', dataIndex: 'experiment_id' },
+    { title: '模型', dataIndex: 'model' },
     { title: '类型', dataIndex: 'scenario_type' },
+    { title: '参数', dataIndex: 'parameters', render: (value: Record<string, string>) => Object.entries(value ?? {}).map(([key, item]) => `${key}=${item}`).join(', ') || '基准' },
+    { title: '样本划分', dataIndex: 'split', render: (value: { test_start: string; test_end: string }) => value ? `${value.test_start} 至 ${value.test_end}` : '—' },
+    { title: 'Universe', dataIndex: 'universe_size' },
     { title: '测试期收益', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.total_return ?? '—' },
     { title: 'Sharpe', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.sharpe ?? '—' },
     { title: '最大回撤', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.maximum_drawdown ?? '—' },
   ]
-  return <Page title="实验中心" subtitle="真实 AKShare 历史数据上的可复现实验"><Alert showIcon type="info" title={data?.experiments.classification ?? '尚无验证产物'} description={`数据版本：${data?.experiments.data_version ?? '—'}`} /><Table rowKey="experiment_id" columns={columns} dataSource={data?.experiments.experiments ?? []} locale={{ emptyText: '尚未运行验证实验' }} /></Page>
+  return <Page title="实验中心" subtitle="真实 AKShare 历史数据上的可复现实验"><Alert showIcon type="warning" title={data?.experiments.classification ?? '尚无验证产物'} description={`数据版本：${data?.experiments.data_version ?? '—'}；每行已验证 record/result/artifact 哈希，但当前结论仍为 ${data?.experiments.promotion ?? '未评估'}。`} /><Table rowKey="experiment_id" columns={columns} dataSource={data?.experiments.experiments ?? []} pagination={{ pageSize: 8, showSizeChanger: false }} scroll={{ x: 1400 }} locale={{ emptyText: '尚未运行验证实验' }} /></Page>
 }
 
 export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {

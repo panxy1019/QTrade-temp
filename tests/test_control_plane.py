@@ -12,7 +12,9 @@ from qtrade.accounting import Ledger
 from qtrade.api import ApiAuthConfig, AppContext, context_from_runtime, create_app
 from qtrade.api.app import (
     _load_verified_backtest_analytics,
+    _load_verified_experiment_catalog,
     _load_verified_robustness_report,
+    _validated_artifact_manifest,
     _validated_backtest_positions,
     _validated_backtest_trades,
 )
@@ -356,7 +358,7 @@ def test_latest_historical_bars_rechecks_the_bytes_it_decodes(tmp_path, monkeypa
     ) == []
 
 
-def test_verified_research_results_are_exposed_and_tampering_fails_closed(tmp_path):
+def test_unbound_research_summary_is_not_exposed_as_verified_catalog(tmp_path):
     audit = AuditLog()
     metrics = MetricsRegistry()
     ledger = Ledger(Decimal("100000"), audit)
@@ -390,8 +392,10 @@ def test_verified_research_results_are_exposed_and_tampering_fails_closed(tmp_pa
             ApiAuthConfig(),
         )
     )
-    assert api.get("/experiments").json()["data_version"] == "akshare-bars-v1"
-    assert api.get("/strategies").json()[0]["metrics"]["sharpe"] == "0.44"
+    assert api.get("/strategies").json() == []
+    assert api.get("/experiments").json()["classification"] == (
+        "NO_VERIFIED_RESEARCH_RESULT"
+    )
     target.write_text(target.read_text().replace("0.44", "9.99"), encoding="utf-8")
     assert api.get("/strategies").json() == []
     for malformed in ("[]", "null", '"scalar"'):
@@ -638,7 +642,17 @@ def test_backtest_analytics_verifies_comparison_record_and_curve_hashes(tmp_path
         "git_commit": "abc123",
         "universe": ["510300"],
         "metrics": metrics,
-        "split": {"test_start": "2026-01-01", "test_end": "2026-01-31"},
+        "hyperparameters": {},
+        "factor_set": [],
+        "transaction_cost": "0.001428571428571428571428571429",
+        "split": {
+            "train_start": "2026-01-02",
+            "train_end": "2026-01-02",
+            "validation_start": "2026-01-03",
+            "validation_end": "2026-01-03",
+            "test_start": "2026-01-04",
+            "test_end": "2026-01-05",
+        },
         "artifacts": [f"{name}:{digest}" for name, digest in artifact_hashes.items()],
     }
     canonical_record = json.dumps(record, sort_keys=True, separators=(",", ":"))
@@ -661,7 +675,16 @@ def test_backtest_analytics_verifies_comparison_record_and_curve_hashes(tmp_path
         "classification": "exploratory_noncommercial_current_universe_not_pit",
         "data_version": "bars-v1",
         "git_commit": "abc123",
+        "split": {
+            "train_start": "2026-01-02",
+            "train_end": "2026-01-02",
+            "validation_start": "2026-01-03",
+            "validation_end": "2026-01-03",
+            "test_start": "2026-01-04",
+            "test_end": "2026-01-05",
+        },
         "promotion": "NOT_ELIGIBLE",
+        "promotion_reasons": ["CURRENT_UNIVERSE_SURVIVORSHIP_BIAS"],
         "experiments": [{
             "experiment_id": experiment_id,
             "spec_hash": "f" * 64,
@@ -686,8 +709,46 @@ def test_backtest_analytics_verifies_comparison_record_and_curve_hashes(tmp_path
     assert set(verified["artifact_hashes"]) == {
         "equity", "drawdown", "trades", "positions"
     }
+    catalog = _load_verified_experiment_catalog(comparison, root)
+    assert catalog is not None
+    assert catalog["strategies"] == [{
+        "strategy_id": experiment_id,
+        "name": "buy-hold",
+        "version": record_hash[:12],
+        "family": "BUY_AND_HOLD_BENCHMARK",
+        "status": "NOT_ELIGIBLE",
+        "role": "NONE",
+        "metrics": metrics,
+        "scenario_type": "SENSITIVITY",
+        "data_version": "bars-v1",
+        "git_commit": "abc123",
+        "evidence_status": "VERIFIED_NOT_ELIGIBLE",
+        "lineage_status": "NOT_REGISTERED",
+    }]
+    catalog_report = catalog["report"]
+    assert isinstance(catalog_report, dict)
+    assert catalog_report["lineage"] == []
+    assert catalog_report["experiments"][0]["model"] == "buy-hold"
+    assert catalog_report["experiments"][0]["universe_size"] == 1
+    duplicated_report = {**report, "experiments": [report["experiments"][0]] * 2}
+    duplicated = json.dumps(duplicated_report, sort_keys=True, separators=(",", ":"))
+    comparison.write_text(
+        json.dumps(
+            {
+                "sha256": sha256(duplicated.encode()).hexdigest(),
+                "report": duplicated_report,
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert _load_verified_experiment_catalog(comparison, root) is None
+    comparison.write_text(
+        json.dumps({"sha256": sha256(canonical_report.encode()).hexdigest(), "report": report}),
+        encoding="utf-8",
+    )
     (artifacts / "equity.json").write_text("[]", encoding="utf-8")
     assert _load_verified_backtest_analytics(comparison, root) is None
+    assert _load_verified_experiment_catalog(comparison, root) is None
 
 
 def test_backtest_analytics_aligns_verified_buy_hold_benchmark(tmp_path):
@@ -770,6 +831,18 @@ def test_backtest_analytics_aligns_verified_buy_hold_benchmark(tmp_path):
     assert verified["curve"][-1]["excess_return"] == "0.05"
     (root / "plain-baseline-artifacts" / "equity.json").write_text("[]", encoding="utf-8")
     assert _load_verified_backtest_analytics(comparison, root) is None
+
+
+def test_backtest_artifact_manifest_rejects_unsigned_extra_files():
+    core = [
+        f"{name}:{'a' * 64}"
+        for name in ("equity", "drawdown", "trades", "positions")
+    ]
+    assert set(_validated_artifact_manifest(core)) == {
+        "equity", "drawdown", "trades", "positions"
+    }
+    with pytest.raises(ValueError, match="missing analytics artifacts"):
+        _validated_artifact_manifest([*core, f"unverified:{'b' * 64}"])
 
 
 def test_backtest_trade_and_position_artifacts_require_experiment_universe():

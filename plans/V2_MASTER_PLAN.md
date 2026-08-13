@@ -120,7 +120,8 @@ npm --prefix web run build
 - [x] Produce bounded real-data baseline/sensitivity evidence; no strategy met
   promotion requirements, so no Champion/Challenger role was assigned.
 - [x] Bind strategy/research/experiment/backtest Chinese dashboard pages to
-  checksum-verified backend records with explicit NOT_ELIGIBLE labeling.
+  comparison/record/result/artifact-verified backend records with explicit
+  NOT_ELIGIBLE labeling and no invented StrategyVersion lineage.
 
 Authenticated RQData/XT validation remains a later authoritative-feed option.
 Native broker work remains blocked on broker selection and sandbox access.

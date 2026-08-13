@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { PlatformSnapshot } from '../types'
-import { BacktestPage, DataCenterPage, MarketPage, ResearchPage } from './DataPages'
+import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, ResearchPage, StrategyPage } from './DataPages'
 
 vi.mock('echarts-for-react', () => ({ default: () => <div data-testid="equity-chart" /> }))
 vi.mock('../api/client', () => ({
@@ -16,6 +16,25 @@ vi.mock('../api/client', () => ({
 }))
 
 const data = {
+  strategies: [{
+    strategy_id: 'momentum-vol-slow', name: 'momentum-volatility', version: 'abc123def456',
+    family: 'ETF_MOMENTUM_VOLATILITY', status: 'NOT_ELIGIBLE', role: 'NONE',
+    metrics: { sharpe: '0.4412', maximum_drawdown: '-0.0909' }, scenario_type: 'SENSITIVITY',
+    data_version: 'akshare-bars-v1', git_commit: '3bdd29f', evidence_status: 'VERIFIED_NOT_ELIGIBLE',
+    lineage_status: 'NOT_REGISTERED',
+  }],
+  experiments: {
+    classification: 'exploratory_noncommercial_current_universe_not_pit',
+    data_version: 'akshare-bars-v1', git_commit: '3bdd29f', promotion: 'NOT_ELIGIBLE',
+    promotion_reasons: ['CURRENT_UNIVERSE_SURVIVORSHIP_BIAS'], lineage: [], lineage_status: 'NOT_REGISTERED',
+    experiments: [{
+      experiment_id: 'momentum-vol-slow', spec_hash: 'a', result_hash: 'b', scenario_type: 'SENSITIVITY',
+      metrics: { total_return: '0.0335', sharpe: '0.4412', maximum_drawdown: '-0.0909' },
+      model: 'momentum-volatility', parameters: { lookback: '120' },
+      split: { train_start: '2024-01-02', train_end: '2024-12-31', validation_start: '2025-01-01', validation_end: '2025-12-31', test_start: '2026-01-01', test_end: '2026-08-12' },
+      universe_size: 30, evidence_status: 'VERIFIED_NOT_ELIGIBLE',
+    }],
+  },
   market: {
     provider_connected: false,
     execution_gateway_connected: true,
@@ -177,12 +196,41 @@ describe('verified backtest analytics', () => {
 })
 
 describe('verified robustness evidence', () => {
+  it('does not present experiment records as a registered lineage', () => {
+    render(<ResearchPage data={data} />)
+    expect(screen.getByRole('tab', { name: '实验候选' })).toBeInTheDocument()
+    expect(screen.getByText(/spec_hash 未独立复算/)).toBeInTheDocument()
+    expect(screen.getByText(/不存在可展示的 Champion、Challenger 或演化血缘/)).toBeInTheDocument()
+  })
+
   it('labels reused observations as diagnostics rather than independent evidence', () => {
+    cleanup()
     render(<ResearchPage data={data} />)
     fireEvent.click(screen.getByRole('tab', { name: '稳健性诊断' }))
     expect(screen.getByText(/复用样本的拒绝后诊断/)).toBeInTheDocument()
     expect(screen.getByText(/不是新的独立测试证据/)).toBeInTheDocument()
     expect(screen.getByText(/-1.1429/)).toBeInTheDocument()
     expect(screen.getAllByText(/结论：NOT_ELIGIBLE/).length).toBeGreaterThan(0)
+  })
+})
+
+describe('verified experiment candidates', () => {
+  it('labels full-chain records as ineligible candidates rather than registered strategies', () => {
+    render(<StrategyPage data={data} />)
+    expect(screen.getByText('实验候选，不是已注册或已批准策略')).toBeInTheDocument()
+    expect(screen.getByText('abc123def456')).toBeInTheDocument()
+    expect(screen.getByText('NOT_ELIGIBLE')).toBeInTheDocument()
+    expect(screen.getByText('已验证·不可晋级')).toBeInTheDocument()
+    expect(screen.getByText(/也没有已注册谱系/)).toBeInTheDocument()
+  })
+
+  it('shows immutable model parameters and held-out split without claiming promotion', () => {
+    cleanup()
+    render(<ExperimentPage data={data} />)
+    expect(screen.getByText('momentum-volatility')).toBeInTheDocument()
+    expect(screen.getByText('lookback=120')).toBeInTheDocument()
+    expect(screen.getByText('2026-01-01 至 2026-08-12')).toBeInTheDocument()
+    expect(screen.getByText(/每行已验证 record\/result\/artifact 哈希/)).toBeInTheDocument()
+    expect(screen.getByText(/当前结论仍为 NOT_ELIGIBLE/)).toBeInTheDocument()
   })
 })

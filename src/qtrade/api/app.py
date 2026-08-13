@@ -258,30 +258,21 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
 
     @app.get("/strategies")
     def strategies(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
-        report = _load_verified_research_report(state.research_comparison_path)
-        if report is None:
+        catalog = _load_verified_experiment_catalog(
+            state.research_comparison_path, state.research_artifact_root
+        )
+        if catalog is None or not isinstance(catalog["strategies"], list):
             return []
-        raw_experiments = report.get("experiments", [])
-        experiments = raw_experiments if isinstance(raw_experiments, list) else []
-        return [
-            {
-                "strategy_id": value.get("experiment_id"),
-                "name": value.get("experiment_id"),
-                "family": "ETF_ROTATION",
-                "status": "EXPERIMENT",
-                "role": "NONE",
-                "metrics": value.get("metrics", {}),
-                "scenario_type": value.get("scenario_type"),
-                "data_version": report.get("data_version"),
-            }
-            for value in experiments
-            if isinstance(value, dict)
-        ]
+        return catalog["strategies"]
 
     @app.get("/experiments")
     def experiments(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:
-        report = _load_verified_research_report(state.research_comparison_path)
-        return report or {
+        catalog = _load_verified_experiment_catalog(
+            state.research_comparison_path, state.research_artifact_root
+        )
+        if catalog is not None and isinstance(catalog["report"], dict):
+            return catalog["report"]
+        return {
             "classification": "NO_VERIFIED_RESEARCH_RESULT",
             "experiments": [],
             "promotion": "NOT_EVALUATED",
@@ -795,6 +786,164 @@ def _load_verified_backtest_analytics(
         return None
 
 
+def _load_verified_experiment_catalog(
+    comparison_path: Path | None,
+    artifact_root: Path | None,
+) -> dict[str, object] | None:
+    report = _load_verified_research_report(comparison_path)
+    if report is None or artifact_root is None:
+        return None
+    try:
+        if (
+            report.get("classification")
+            != "exploratory_noncommercial_current_universe_not_pit"
+            or report.get("promotion") != "NOT_ELIGIBLE"
+        ):
+            return None
+        rows = report["experiments"]
+        reasons = report["promotion_reasons"]
+        report_split = _validated_experiment_split(report["split"])
+        if (
+            not isinstance(rows, list)
+            or not rows
+            or not isinstance(reasons, list)
+            or not reasons
+            or not all(isinstance(reason, str) and reason for reason in reasons)
+        ):
+            return None
+        root = artifact_root.resolve()
+        experiments: list[dict[str, object]] = []
+        strategies: list[dict[str, object]] = []
+        experiment_ids: set[str] = set()
+        for row in rows:
+            if not isinstance(row, dict):
+                return None
+            experiment_id = row.get("experiment_id")
+            scenario_type = row.get("scenario_type")
+            if (
+                not isinstance(experiment_id, str)
+                or experiment_id in experiment_ids
+                or not _is_sha256(row.get("spec_hash"))
+                or scenario_type not in {"PRIMARY", "SENSITIVITY", "COST_STRESS"}
+            ):
+                return None
+            experiment_ids.add(experiment_id)
+            verified = _load_verified_experiment_analytics(row, report, root)
+            if verified is None:
+                return None
+            record = verified["record"]
+            if not isinstance(record, dict):
+                return None
+            model = record["model"]
+            parameters = record["hyperparameters"]
+            split = _validated_experiment_split(record["split"])
+            factors = record["factor_set"]
+            universe = record["universe"]
+            cost = Decimal(str(record["transaction_cost"]))
+            if (
+                not isinstance(model, str)
+                or not model
+                or not isinstance(parameters, dict)
+                or not all(
+                    isinstance(key, str) and isinstance(value, str)
+                    for key, value in parameters.items()
+                )
+                or not isinstance(factors, list)
+                or not all(isinstance(value, str) and value for value in factors)
+                or not isinstance(universe, list)
+                or not cost.is_finite()
+                or cost < 0
+                or split != report_split
+            ):
+                return None
+            curve = verified["curve"]
+            if (
+                not isinstance(curve, list)
+                or not curve
+                or not (
+                    split["train_start"]
+                    <= curve[0].get("session", "")
+                    <= split["train_end"]
+                )
+                or curve[-1].get("session") != split["test_end"]
+            ):
+                return None
+            experiment = {
+                **row,
+                "model": model,
+                "parameters": parameters,
+                "split": split,
+                "factor_set": factors,
+                "transaction_cost": str(cost),
+                "universe_size": len(universe),
+                "git_commit": record["git_commit"],
+                "data_version": record["data_version"],
+                "record_hash": verified["record_hash"],
+                "artifact_hashes": verified["artifact_hashes"],
+                "evidence_status": "VERIFIED_NOT_ELIGIBLE",
+            }
+            experiments.append(experiment)
+            strategies.append(
+                {
+                    "strategy_id": record["experiment_id"],
+                    "name": model,
+                    "version": str(verified["record_hash"])[:12],
+                    "family": _research_family(model),
+                    "status": "NOT_ELIGIBLE",
+                    "role": "NONE",
+                    "metrics": record["metrics"],
+                    "scenario_type": row["scenario_type"],
+                    "data_version": record["data_version"],
+                    "git_commit": record["git_commit"],
+                    "evidence_status": "VERIFIED_NOT_ELIGIBLE",
+                    "lineage_status": "NOT_REGISTERED",
+                }
+            )
+        enriched = dict(report)
+        enriched["experiments"] = experiments
+        enriched["lineage"] = []
+        enriched["lineage_status"] = "NOT_REGISTERED"
+        return {"report": enriched, "strategies": strategies}
+    except (InvalidOperation, KeyError, OSError, TypeError, ValueError):
+        return None
+
+
+def _research_family(model: str) -> str:
+    if model == "buy-hold":
+        return "BUY_AND_HOLD_BENCHMARK"
+    if "trend" in model:
+        return "ETF_MOMENTUM_TREND"
+    if "vol" in model:
+        return "ETF_MOMENTUM_VOLATILITY"
+    return "ETF_MOMENTUM_ROTATION"
+
+
+def _validated_experiment_split(value: object) -> dict[str, str]:
+    keys = (
+        "train_start",
+        "train_end",
+        "validation_start",
+        "validation_end",
+        "test_start",
+        "test_end",
+    )
+    if not isinstance(value, dict) or set(value) != set(keys):
+        raise ValueError("invalid experiment split")
+    raw = [value[key] for key in keys]
+    if not all(isinstance(item, str) for item in raw):
+        raise ValueError("invalid experiment split")
+    boundaries = [date.fromisoformat(item) for item in raw]
+    if not (
+        boundaries[0] <= boundaries[1]
+        < boundaries[2]
+        <= boundaries[3]
+        < boundaries[4]
+        <= boundaries[5]
+    ):
+        raise ValueError("invalid experiment split")
+    return {key: item for key, item in zip(keys, raw, strict=True)}
+
+
 def _load_verified_experiment_analytics(
     row: dict[str, object], report: dict[str, object], root: Path
 ) -> dict[str, object] | None:
@@ -968,7 +1117,8 @@ def _validated_artifact_manifest(value: object) -> dict[str, str]:
         if name in result or not _is_safe_identifier(name) or not _is_sha256(digest):
             raise ValueError("invalid experiment artifact manifest")
         result[name] = digest
-    if not {"equity", "drawdown", "trades", "positions"}.issubset(result):
+    core = {"equity", "drawdown", "trades", "positions"}
+    if set(result) not in (core, core | {"risk", "logs"}):
         raise ValueError("missing analytics artifacts")
     return result
 
