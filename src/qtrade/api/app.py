@@ -9,6 +9,7 @@ from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from hashlib import sha256
+from itertools import islice
 from pathlib import Path
 from secrets import compare_digest
 from typing import Any, cast
@@ -357,29 +358,15 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
     ) -> list[dict[str, object]]:
         if state.daily_report_root is None or not state.daily_report_root.is_dir():
             return []
+        paths = list(islice(state.daily_report_root.glob("*.json"), 367))
+        if len(paths) > 366:
+            return []
+        paths.sort(reverse=True)
         summaries: list[dict[str, object]] = []
-        for path in sorted(state.daily_report_root.glob("*.json"), reverse=True):
-            raw = path.read_text(encoding="utf-8")
-            envelope = json.loads(raw)
-            report = envelope.get("report", {})
-            digest = envelope.get("sha256")
-            if not isinstance(report, dict) or not isinstance(digest, str):
-                continue
-            canonical = json.dumps(
-                report, sort_keys=True, separators=(",", ":"), default=str
-            )
-            if sha256(canonical.encode()).hexdigest() != digest:
-                continue
-            summaries.append(
-                {
-                    "report_id": report.get("report_id"),
-                    "trading_day": report.get("trading_day"),
-                    "generated_at": report.get("generated_at"),
-                    "data_version": report.get("data_version"),
-                    "strategy_versions": report.get("strategy_versions", []),
-                    "sha256": digest,
-                }
-            )
+        for path in paths:
+            summary = _verified_daily_report_summary(path)
+            if summary is not None:
+                summaries.append(summary)
         return summaries
 
     @app.post("/orders/cancel")
@@ -698,6 +685,61 @@ def _paper_snapshot(state: AppContext) -> dict[str, Any]:
             "trades": _paper_trade_rows(state),
             "risk": _paper_risk_summary(state),
         }
+
+
+def _verified_daily_report_summary(path: Path) -> dict[str, object] | None:
+    try:
+        with path.open("rb") as handle:
+            raw = handle.read(4 * 1024 * 1024 + 1)
+        if len(raw) > 4 * 1024 * 1024:
+            return None
+        envelope = json.loads(raw.decode("utf-8"))
+        if not isinstance(envelope, dict):
+            return None
+        report = envelope.get("report")
+        digest = envelope.get("sha256")
+        if not isinstance(report, dict) or not _is_sha256(digest):
+            return None
+        canonical = json.dumps(report, sort_keys=True, separators=(",", ":"), default=str)
+        if sha256(canonical.encode()).hexdigest() != digest:
+            return None
+        report_id = report.get("report_id")
+        trading_day = report.get("trading_day")
+        generated_at = report.get("generated_at")
+        data_version = report.get("data_version")
+        versions = report.get("strategy_versions")
+        if (
+            not isinstance(report_id, str)
+            or not report_id
+            or len(report_id) > 128
+            or path.stem != report_id
+            or not isinstance(trading_day, str)
+            or date.fromisoformat(trading_day).isoformat() != trading_day
+            or not isinstance(generated_at, str)
+            or len(generated_at) > 64
+            or datetime.fromisoformat(generated_at).tzinfo is None
+            or not isinstance(data_version, str)
+            or not data_version
+            or len(data_version) > 256
+            or not isinstance(versions, list)
+            or not versions
+            or len(versions) > 128
+            or any(
+                not isinstance(version, str) or not version or len(version) > 256
+                for version in versions
+            )
+        ):
+            return None
+        return {
+            "report_id": report_id,
+            "trading_day": trading_day,
+            "generated_at": generated_at,
+            "data_version": data_version,
+            "strategy_versions": versions,
+            "sha256": digest,
+        }
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError):
+        return None
 
 
 def _load_verified_research_report(path: Path | None) -> dict[str, object] | None:

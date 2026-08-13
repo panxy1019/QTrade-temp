@@ -12,7 +12,7 @@ Last updated: 2026-08-13
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 221 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 223 tests passed, Ruff clean, strict mypy clean across
   86 source files on Python 3.14.6 (2026-08-13); 15 frontend Vitest tests,
   ESLint and the production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -102,6 +102,13 @@ Last updated: 2026-08-13
   realized PnL rather than portfolio equity/today PnL. Its chart consumes only
   verified historical backtest analytics and is explicitly labelled as
   non-PIT, NOT_ELIGIBLE research evidence—not current PAPER equity.
+- PAPER report history: `/reports` now fails closed on invalid UTF-8/JSON,
+  envelope hash, filename/report identity, date/timestamp, data-version and
+  strategy-version schema. The Chinese data-center page lists only reports that
+  pass those checks and explicitly says automatic end-of-day generation is not
+  enabled yet. Scans are bounded to 366 files, 4 MiB per artifact and bounded
+  identity/version fields to prevent the five-second dashboard poll from
+  amplifying oversized or unbounded report directories.
 - Selection-bias guard: the backtest page now places that exploratory positive
   leader beside all three disjoint held-out walk-forward folds. All three folds
   lost money (aggregate return `-20.4412%`, Sharpe `-1.1005`, fold pass ratio

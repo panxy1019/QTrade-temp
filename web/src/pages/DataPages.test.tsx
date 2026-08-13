@@ -64,7 +64,7 @@ const data = {
       universe: { point_in_time: false, symbols: ['510300'] },
     },
   },
-  reports: [],
+  reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
   historicalBars: [
     {
       symbol: '510300', exchange: 'SSE', timestamp: '2026-08-12T07:00:00+00:00',
@@ -199,6 +199,8 @@ describe('verified historical data pages', () => {
     expect(screen.queryByText('CONNECTED')).not.toBeInTheDocument()
     expect(screen.getByText('PASSED')).toBeInTheDocument()
     expect(screen.getAllByText('NO')).toHaveLength(2)
+    expect(screen.getByText('paper-20260812')).toBeInTheDocument()
+    expect(screen.getByText('SHA-256 已验证')).toBeInTheDocument()
   })
 })
 

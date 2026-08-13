@@ -964,6 +964,64 @@ def test_daily_report_history_exposes_verified_summary(tmp_path):
         encoding="utf-8",
     )
     assert api.get("/reports").json() == []
+    artifact.write_bytes(b"\xff\xfe")
+    assert api.get("/reports").json() == []
+    artifact.write_text("[]", encoding="utf-8")
+    assert api.get("/reports").json() == []
+
+
+def test_daily_report_history_rejects_hash_valid_schema_and_identity_mismatch(tmp_path):
+    report_root = tmp_path / "reports"
+    report_root.mkdir()
+    report = {
+        "report_id": "paper-20260812",
+        "trading_day": "not-a-date",
+        "generated_at": "2026-08-12T16:00:00+00:00",
+        "data_version": "ticks-v1",
+        "strategy_versions": ["trend@1.0.0"],
+    }
+    canonical = json.dumps(report, sort_keys=True, separators=(",", ":"))
+    (report_root / "different-name.json").write_text(
+        json.dumps({"report": report, "sha256": sha256(canonical.encode()).hexdigest()}),
+        encoding="utf-8",
+    )
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("0"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("0"), 0, Decimal("0")), audit)
+    runtime = PlatformRuntime(RuntimeMode.PAPER, risk, audit, metrics)
+    api = TestClient(
+        create_app(
+            AppContext(runtime, metrics, oms, ledger, audit, daily_report_root=report_root),
+            ApiAuthConfig(),
+        )
+    )
+    assert api.get("/reports").json() == []
+
+
+def test_daily_report_history_has_bounded_files_and_directory(tmp_path):
+    report_root = tmp_path / "reports"
+    report_root.mkdir()
+    oversized = report_root / "oversized.json"
+    oversized.write_bytes(b" " * (4 * 1024 * 1024 + 1))
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("0"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("0"), 0, Decimal("0")), audit)
+    runtime = PlatformRuntime(RuntimeMode.PAPER, risk, audit, metrics)
+    api = TestClient(
+        create_app(
+            AppContext(runtime, metrics, oms, ledger, audit, daily_report_root=report_root),
+            ApiAuthConfig(),
+        )
+    )
+    assert api.get("/reports").json() == []
+    oversized.unlink()
+    for index in range(367):
+        (report_root / f"invalid-{index:03}.json").write_text("{}", encoding="utf-8")
+    assert api.get("/reports").json() == []
 
 
 def test_api_context_uses_canonical_paper_runtime(tmp_path):
