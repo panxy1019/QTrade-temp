@@ -18,7 +18,9 @@ Last updated: 2026-08-13
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
-  database service, vn.py, or project dependencies detected.
+  database service or vn.py. The pinned optional `akshare==1.18.84` environment
+  with NumPy 2.4.6 is now installed; `pip check` and Python 3.11-targeted strict
+  mypy pass.
 - Known limitations: the local SQLite runtime is single-process and does not
   claim distributed exactly-once semantics; audit hashes lack an external/WORM
   tail anchor; matching is deliberately simple; licensed realtime data, native
@@ -62,6 +64,11 @@ Last updated: 2026-08-13
   host; Tencent bulk A-share polling is slow/intermittent and lacks proven ETF
   coverage; Xueqiu per-symbol quotes require a session token. Historical closes
   are never relabeled as realtime observations.
+- Snapshot recheck: after installing the exact pinned AKShare extra on
+  2026-08-13, one bounded 30-ETF probe still returned `ready=false` with
+  `AKShare upstream request failed`. The installed release exposes no third ETF
+  snapshot source beyond the already-failed Eastmoney and THS families; Sina is
+  daily-history/list only. No additional retries were made.
 - Provider selection: AKShare 1.18.84 is the credential-free noncommercial
   research/PAPER bootstrap and has a fail-closed ETF adapter plus one-shot probe.
   This host's Eastmoney snapshot/history probes failed before data receipt. The

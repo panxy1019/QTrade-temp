@@ -91,6 +91,17 @@ None satisfies the controlled polling, bounded timeout, ETF schema, freshness
 and stability requirements. The platform therefore remains fail-closed instead
 of silently substituting last historical closes for observable quotes.
 
+On 2026-08-13 the exact pinned optional environment was installed successfully
+(`akshare==1.18.84`, `numpy==2.4.6`, `pip check` and strict mypy clean) and the
+one-shot 30-ETF probe was run
+once with the noncommercial acknowledgement. It again returned
+`ready=false`, `RuntimeError`, `AKShare upstream request failed`. Static
+inspection of that installed release exposes only `fund_etf_spot_em()` and
+`fund_etf_spot_ths()` as ETF snapshot functions; both endpoint families have
+already failed the bounded probe. Sina offers ETF lists and daily history, not
+a timestamped snapshot contract. No further retry or historical-price fallback
+was attempted.
+
 Run the one-shot diagnostic in an isolated environment:
 
 ```powershell

@@ -71,7 +71,7 @@ describe('verified historical data pages', () => {
 })
 
 describe('verified backtest analytics', () => {
-  it('shows the verified leader without presenting it as Champion', () => {
+  it('shows the verified leader without presenting it as Champion', async () => {
     render(<BacktestPage data={data} />)
     expect(screen.getByText('探索性领先者，不是 Champion')).toBeInTheDocument()
     expect(screen.getByText(/记录、资金曲线和回撤文件的哈希均已验证/)).toBeInTheDocument()
@@ -79,7 +79,7 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText('45.00%')).toBeInTheDocument()
     expect(screen.getByText('2.010')).toBeInTheDocument()
     expect(screen.getByText('0.30%')).toBeInTheDocument()
-    expect(screen.getByTestId('equity-chart')).toBeInTheDocument()
+    expect(await screen.findByTestId('equity-chart')).toBeInTheDocument()
   })
 })
 

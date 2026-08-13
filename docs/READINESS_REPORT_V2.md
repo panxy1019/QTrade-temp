@@ -63,8 +63,8 @@ AKShare amendment checkpoint):
 - no broken Python requirements;
 - Vitest, ESLint and Vite production build passed;
 - one external Starlette/httpx deprecation warning;
-- one non-blocking frontend chunk-size warning (approximately 2.14 MB minified)
-  after enabling ECharts on the backtest page.
+- non-blocking frontend chunk-size warnings: the main bundle is approximately
+  985 kB minified and the lazy-loaded ECharts chunk approximately 1.14 MB.
 
 ## Honest maturity limits
 
@@ -114,6 +114,14 @@ data receipt on this host. A Sina-backed historical probe and 30-ETF canonical
 ingest succeeded (18,960 quality-passed daily bars, 2024-01-02 through
 2026-08-12), enabling real-data research. Snapshot authority, real-data PAPER,
 and multi-day acceptance remain open.
+
+On 2026-08-13 the pinned AKShare 1.18.84 optional environment installed cleanly
+with NumPy 2.4.6 (`pip check` and Python 3.11-targeted strict mypy clean),
+but one bounded 30-ETF snapshot probe still returned `ready=false` with
+`AKShare upstream request failed`. The installed package exposes only the
+already-failed Eastmoney and THS ETF snapshot functions; its Sina ETF functions
+are list/daily-history surfaces. Snapshot PAPER therefore remains blocked, with
+no historical-price substitution or repeated upstream probing.
 
 The first causal multi-asset research comparison now covers buy-and-hold,
 single/multi-horizon momentum, trend, volatility scaling, rebalance sensitivity
