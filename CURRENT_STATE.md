@@ -12,7 +12,7 @@ Last updated: 2026-08-13
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 215 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 217 tests passed, Ruff clean, strict mypy clean across
   86 source files on Python 3.14.6 (2026-08-13); frontend Vitest, ESLint and
   production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -63,6 +63,12 @@ Last updated: 2026-08-13
   dashboard now plots strategy, benchmark, excess and drawdown together; full-
   period terminal excess is `-12.5456%`, reinforcing rather than softening the
   negative held-out conclusion.
+- Backtest detail artifacts: the verified exploratory leader additionally exposes
+  32 month-end returns, 56 historical simulated trades and 3 terminal positions.
+  The API verifies each artifact checksum, validates every security against the
+  experiment's immutable 30-ETF universe, and rejects malformed chronology,
+  prices, quantities or costs. The UI explicitly labels these as research
+  simulation—not market executions or current PAPER positions.
 - Selection-bias guard: the backtest page now places that exploratory positive
   leader beside all three disjoint held-out walk-forward folds. All three folds
   lost money (aggregate return `-20.4412%`, Sharpe `-1.1005`, fold pass ratio

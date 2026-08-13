@@ -191,6 +191,12 @@ curve artifacts independently from the exploratory leader, requires exact
 session alignment, and displays strategy, benchmark, excess return and drawdown.
 This real comparison remains non-PIT and promotion-ineligible.
 
+The same fail-closed artifact chain now exposes the exploratory leader's monthly
+returns, simulated trade ledger and terminal positions. Artifact hashes, trade
+chronology, finite positive economics and experiment-universe membership are
+validated before the Chinese dashboard renders them; they are not broker trades
+or current PAPER state.
+
 1. select and license a realtime/historical data provider;
 2. select a broker and compatible isolated native-gateway Python ABI;
 3. certify provider/broker normalization and reconciliation in a sandbox;

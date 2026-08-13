@@ -777,6 +777,9 @@ def _load_verified_backtest_analytics(
             "artifact_hashes": leader_artifacts["artifact_hashes"],
             "benchmark_artifact_hashes": benchmark["artifact_hashes"],
             "curve": combined_curve,
+            "monthly_returns": leader_artifacts["monthly_returns"],
+            "trades": leader_artifacts["trades"],
+            "positions": leader_artifacts["positions"],
         }
     except (
         InvalidOperation,
@@ -818,6 +821,21 @@ def _load_verified_experiment_analytics(
             or record.get("metrics") != row.get("metrics")
         ):
             return None
+        universe = record.get("universe")
+        if (
+            not isinstance(universe, list)
+            or not universe
+            or any(
+                not isinstance(symbol, str)
+                or len(symbol) != 6
+                or not symbol.isascii()
+                or not symbol.isdigit()
+                for symbol in universe
+            )
+            or len(set(universe)) != len(universe)
+        ):
+            return None
+        allowed_symbols = frozenset(universe)
         artifact_manifest = _validated_artifact_manifest(record["artifacts"])
         metrics = tuple(
             sorted((key, Decimal(value)) for key, value in record["metrics"].items())
@@ -843,15 +861,31 @@ def _load_verified_experiment_analytics(
             artifacts_dir / "drawdown.json", artifact_manifest["drawdown"]
         )
         curve = _validated_equity_drawdown_curve(equity, drawdown)
+        curve_sessions = frozenset(point["session"] for point in curve)
+        trades = _validated_backtest_trades(
+            _load_hashed_json(artifacts_dir / "trades.json", artifact_manifest["trades"]),
+            allowed_symbols,
+            curve_sessions,
+        )
+        positions = _validated_backtest_positions(
+            _load_hashed_json(
+                artifacts_dir / "positions.json", artifact_manifest["positions"]
+            ),
+            allowed_symbols,
+        )
+        _reconcile_backtest_trades_and_positions(trades, positions)
         return {
             "row": row,
             "record": record,
             "record_hash": record_hash,
             "artifact_hashes": {
-                "equity": artifact_manifest["equity"],
-                "drawdown": artifact_manifest["drawdown"],
+                name: artifact_manifest[name]
+                for name in ("equity", "drawdown", "trades", "positions")
             },
             "curve": curve,
+            "trades": trades,
+            "positions": positions,
+            "monthly_returns": _monthly_returns(curve),
         }
     except (
         InvalidOperation,
@@ -914,7 +948,7 @@ def _validated_artifact_manifest(value: object) -> dict[str, str]:
         if name in result or not _is_safe_identifier(name) or not _is_sha256(digest):
             raise ValueError("invalid experiment artifact manifest")
         result[name] = digest
-    if not {"equity", "drawdown"}.issubset(result):
+    if not {"equity", "drawdown", "trades", "positions"}.issubset(result):
         raise ValueError("missing analytics artifacts")
     return result
 
@@ -949,8 +983,14 @@ def _validated_equity_drawdown_curve(
         drawdown_value = Decimal(drawdown_item["drawdown"])
         peak = max(peak, equity_value)
         expected_drawdown = equity_value / peak - 1
+        if not isinstance(session, str):
+            raise ValueError("invalid analytics curve")
+        try:
+            session_date = date.fromisoformat(session)
+        except ValueError as exc:
+            raise ValueError("invalid analytics curve") from exc
         if (
-            not isinstance(session, str)
+            session_date.isoformat() != session
             or session != drawdown_item.get("session")
             or session <= previous_session
             or not equity_value.is_finite()
@@ -969,6 +1009,130 @@ def _validated_equity_drawdown_curve(
             }
         )
         previous_session = session
+    return result
+
+
+def _validated_backtest_trades(
+    value: object,
+    allowed_symbols: frozenset[str],
+    curve_sessions: frozenset[str],
+) -> list[dict[str, object]]:
+    if not isinstance(value, list) or len(value) > 10000:
+        raise ValueError("invalid backtest trades")
+    result: list[dict[str, object]] = []
+    previous_day = ""
+    for item in value:
+        if not isinstance(item, dict):
+            raise ValueError("invalid backtest trades")
+        symbol = item.get("symbol")
+        side = item.get("side")
+        trading_day = item.get("trading_day")
+        quantity = item.get("quantity")
+        price = Decimal(str(item.get("price")))
+        cost = Decimal(str(item.get("cost")))
+        if (
+            not isinstance(symbol, str)
+            or len(symbol) != 6
+            or not symbol.isascii()
+            or not symbol.isdigit()
+            or symbol not in allowed_symbols
+            or side not in {"BUY", "SELL"}
+            or not isinstance(trading_day, str)
+            or trading_day not in curve_sessions
+            or not isinstance(quantity, int)
+            or isinstance(quantity, bool)
+            or quantity <= 0
+            or not price.is_finite()
+            or price <= 0
+            or not cost.is_finite()
+            or cost < 0
+        ):
+            raise ValueError("invalid backtest trades")
+        date.fromisoformat(trading_day)
+        if trading_day < previous_day:
+            raise ValueError("invalid backtest trades")
+        previous_day = trading_day
+        result.append(
+            {
+                "symbol": symbol,
+                "side": side,
+                "trading_day": trading_day,
+                "quantity": quantity,
+                "price": str(price),
+                "cost": str(cost),
+                "notional": str(price * quantity),
+            }
+        )
+    return result
+
+
+def _reconcile_backtest_trades_and_positions(
+    trades: list[dict[str, object]], positions: list[dict[str, object]]
+) -> None:
+    quantities: dict[str, int] = {}
+    for trade in trades:
+        symbol = trade["symbol"]
+        quantity = trade["quantity"]
+        if not isinstance(symbol, str) or not isinstance(quantity, int):
+            raise ValueError("invalid backtest trades")
+        updated = quantities.get(symbol, 0)
+        updated += quantity if trade["side"] == "BUY" else -quantity
+        if updated < 0:
+            raise ValueError("backtest trades create a negative position")
+        quantities[symbol] = updated
+    expected: dict[str, int] = {}
+    for position in positions:
+        symbol = position["symbol"]
+        quantity = position["quantity"]
+        if not isinstance(symbol, str) or not isinstance(quantity, int):
+            raise ValueError("invalid backtest positions")
+        expected[symbol] = quantity
+    observed = {symbol: quantity for symbol, quantity in quantities.items() if quantity}
+    if observed != expected:
+        raise ValueError("backtest trades do not reconcile to positions")
+
+
+def _validated_backtest_positions(
+    value: object, allowed_symbols: frozenset[str]
+) -> list[dict[str, object]]:
+    if not isinstance(value, dict) or len(value) > 1000:
+        raise ValueError("invalid backtest positions")
+    result: list[dict[str, object]] = []
+    for symbol, quantity in sorted(value.items()):
+        if (
+            not isinstance(symbol, str)
+            or len(symbol) != 6
+            or not symbol.isascii()
+            or not symbol.isdigit()
+            or symbol not in allowed_symbols
+            or not isinstance(quantity, int)
+            or isinstance(quantity, bool)
+            or quantity <= 0
+        ):
+            raise ValueError("invalid backtest positions")
+        result.append({"symbol": symbol, "quantity": quantity})
+    return result
+
+
+def _monthly_returns(curve: object) -> list[dict[str, str]]:
+    if not isinstance(curve, list) or not curve:
+        raise ValueError("invalid analytics curve")
+    first = curve[0]
+    if not isinstance(first, dict):
+        raise ValueError("invalid analytics curve")
+    last_by_month: dict[str, Decimal] = {}
+    initial = Decimal(str(first["equity"]))
+    for point in curve:
+        if not isinstance(point, dict):
+            raise ValueError("invalid analytics curve")
+        month = str(point["session"])[:7]
+        equity = Decimal(str(point["equity"]))
+        last_by_month[month] = equity
+    result: list[dict[str, str]] = []
+    previous = initial
+    for month in sorted(last_by_month):
+        result.append({"month": month, "return": str(last_by_month[month] / previous - 1)})
+        previous = last_by_month[month]
     return result
 
 

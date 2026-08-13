@@ -92,6 +92,9 @@ const data = {
       { session: '2024-01-02', equity: '1000000', drawdown: '0', benchmark_equity: '1000000', benchmark_drawdown: '0', excess_return: '0' },
       { session: '2024-01-03', equity: '999000', drawdown: '-0.001', benchmark_equity: '998000', benchmark_drawdown: '-0.002', excess_return: '0.001' },
     ],
+    monthly_returns: [{ month: '2024-01', return: '-0.001' }],
+    trades: [{ symbol: '510300', side: 'BUY', trading_day: '2024-01-03', quantity: 100, price: '4.1', cost: '1.0', notional: '410' }],
+    positions: [{ symbol: '510300', quantity: 100 }],
   },
 } as unknown as PlatformSnapshot
 
@@ -145,6 +148,9 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText('2.010')).toBeInTheDocument()
     expect(screen.getByText('0.30%')).toBeInTheDocument()
     expect(screen.getByText('-2.89%')).toBeInTheDocument()
+    expect(screen.getByText('研究回测模拟成交')).toBeInTheDocument()
+    expect(screen.getByText(/不是市场真实成交/)).toBeInTheDocument()
+    expect(screen.getByText('2024-01')).toBeInTheDocument()
     expect(screen.getByText('三折独立样本外：0/3 折正收益')).toBeInTheDocument()
     expect(screen.getByText(/聚合收益 -20.44%/)).toBeInTheDocument()
     expect(screen.getByText(/不得因探索性领先者的正收益覆盖样本外败绩/)).toBeInTheDocument()

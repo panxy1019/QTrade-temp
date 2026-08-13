@@ -13,6 +13,8 @@ from qtrade.api import ApiAuthConfig, AppContext, context_from_runtime, create_a
 from qtrade.api.app import (
     _load_verified_backtest_analytics,
     _load_verified_robustness_report,
+    _validated_backtest_positions,
+    _validated_backtest_trades,
 )
 from qtrade.audit import AuditLog
 from qtrade.control import PlatformRuntime
@@ -609,7 +611,22 @@ def test_backtest_analytics_verifies_comparison_record_and_curve_hashes(tmp_path
         {"session": "2026-01-05", "drawdown": "-0.01"},
     ]
     artifact_hashes = {}
-    for name, payload in (("equity", equity), ("drawdown", drawdown)):
+    for name, payload in (
+        ("equity", equity),
+        ("drawdown", drawdown),
+        (
+            "trades",
+            [{
+                "trading_day": "2026-01-05",
+                "symbol": "510300",
+                "side": "BUY",
+                "price": "3.5",
+                "quantity": 100,
+                "cost": "0.5",
+            }],
+        ),
+        ("positions", {"510300": 100}),
+    ):
         target = artifacts / f"{name}.json"
         target.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         artifact_hashes[name] = sha256(target.read_bytes()).hexdigest()
@@ -619,6 +636,7 @@ def test_backtest_analytics_verifies_comparison_record_and_curve_hashes(tmp_path
         "model": "buy-hold",
         "data_version": "bars-v1",
         "git_commit": "abc123",
+        "universe": ["510300"],
         "metrics": metrics,
         "split": {"test_start": "2026-01-01", "test_end": "2026-01-31"},
         "artifacts": [f"{name}:{digest}" for name, digest in artifact_hashes.items()],
@@ -662,6 +680,12 @@ def test_backtest_analytics_verifies_comparison_record_and_curve_hashes(tmp_path
     assert verified is not None
     assert verified["leader"]["experiment_id"] == experiment_id
     assert verified["curve"][-1]["drawdown"] == "-0.01"
+    assert verified["monthly_returns"] == [{"month": "2026-01", "return": "-0.01"}]
+    assert verified["trades"][0]["notional"] == "350.0"
+    assert verified["positions"] == [{"symbol": "510300", "quantity": 100}]
+    assert set(verified["artifact_hashes"]) == {
+        "equity", "drawdown", "trades", "positions"
+    }
     (artifacts / "equity.json").write_text("[]", encoding="utf-8")
     assert _load_verified_backtest_analytics(comparison, root) is None
 
@@ -681,7 +705,12 @@ def test_backtest_analytics_aligns_verified_buy_hold_benchmark(tmp_path):
             {"session": "2026-01-05", "drawdown": "0"},
         ]
         hashes = {}
-        for name, payload in (("equity", equity), ("drawdown", drawdown)):
+        for name, payload in (
+            ("equity", equity),
+            ("drawdown", drawdown),
+            ("trades", []),
+            ("positions", {}),
+        ):
             target = artifacts / f"{name}.json"
             target.write_text(json.dumps(payload), encoding="utf-8")
             hashes[name] = sha256(target.read_bytes()).hexdigest()
@@ -691,6 +720,7 @@ def test_backtest_analytics_aligns_verified_buy_hold_benchmark(tmp_path):
             "model": model,
             "data_version": "bars-v1",
             "git_commit": "abc123",
+            "universe": ["510300"],
             "metrics": metrics,
             "split": {"test_start": "2026-01-01", "test_end": "2026-01-31"},
             "artifacts": [f"{name}:{digest}" for name, digest in hashes.items()],
@@ -740,6 +770,56 @@ def test_backtest_analytics_aligns_verified_buy_hold_benchmark(tmp_path):
     assert verified["curve"][-1]["excess_return"] == "0.05"
     (root / "plain-baseline-artifacts" / "equity.json").write_text("[]", encoding="utf-8")
     assert _load_verified_backtest_analytics(comparison, root) is None
+
+
+def test_backtest_trade_and_position_artifacts_require_experiment_universe():
+    allowed = frozenset({"510300"})
+    with pytest.raises(ValueError, match="invalid backtest trades"):
+        _validated_backtest_trades(
+            [{
+                "trading_day": "2026-01-05",
+                "symbol": "510500",
+                "side": "BUY",
+                "price": "3.5",
+                "quantity": 100,
+                "cost": "0.5",
+            }],
+            allowed,
+            frozenset({"2026-01-05"}),
+        )
+    with pytest.raises(ValueError, match="invalid backtest positions"):
+        _validated_backtest_positions({"510500": 100}, allowed)
+
+
+def test_backtest_artifacts_reject_off_curve_trades_and_non_iso_sessions():
+    from qtrade.api.app import (
+        _reconcile_backtest_trades_and_positions,
+        _validated_equity_drawdown_curve,
+    )
+
+    with pytest.raises(ValueError, match="invalid backtest trades"):
+        _validated_backtest_trades(
+            [{
+                "trading_day": "2030-01-01",
+                "symbol": "510300",
+                "side": "BUY",
+                "price": "10",
+                "quantity": 1,
+                "cost": "0",
+            }],
+            frozenset({"510300"}),
+            frozenset({"2026-01-05"}),
+        )
+    with pytest.raises(ValueError, match="do not reconcile"):
+        _reconcile_backtest_trades_and_positions(
+            [{"symbol": "510300", "side": "BUY", "quantity": 1}],
+            [{"symbol": "510300", "quantity": 999}],
+        )
+    with pytest.raises(ValueError, match="invalid analytics curve"):
+        _validated_equity_drawdown_curve(
+            [{"session": "not-a-date", "equity": "100"}],
+            [{"session": "not-a-date", "drawdown": "0"}],
+        )
 
 
 def test_backtest_curve_rejects_drawdown_inconsistent_with_equity():

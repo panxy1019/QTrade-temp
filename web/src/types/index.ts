@@ -129,8 +129,11 @@ export interface BacktestAnalytics {
   benchmark?: ResearchExperiment | null
   split?: { test_start: string; test_end: string }
   record_hash?: string
-  artifact_hashes?: { equity: string; drawdown: string }
+  artifact_hashes?: { equity: string; drawdown: string; trades: string; positions: string }
   curve: Array<{ session: string; equity: string; drawdown: string; benchmark_equity?: string; benchmark_drawdown?: string; excess_return?: string }>
+  monthly_returns?: Array<{ month: string; return: string }>
+  trades?: Array<{ symbol: string; side: 'BUY' | 'SELL'; trading_day: string; quantity: number; price: string; cost: string; notional: string }>
+  positions?: Array<{ symbol: string; quantity: number }>
 }
 
 export interface HistoricalDataset {

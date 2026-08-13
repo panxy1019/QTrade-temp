@@ -105,6 +105,12 @@ AKShare amendment checkpoint):
   immutable record and curve artifacts before rendering strategy, benchmark and
   excess returns. The 632-session full-period terminal excess is `-12.5456%`;
   this comparison is not a promotion override.
+- The same endpoint verifies the leader's trade and terminal-position artifacts
+  and derives month-end returns from the validated equity curve. The current
+  v4 evidence contains 32 months, 56 historical simulated trades and 3 terminal
+  positions. Every symbol must belong to the immutable experiment universe;
+  the dashboard labels all of this research simulation rather than real market
+  execution or live/PAPER account state.
 - Daily reports are runtime-generated, hash-verified, and use trades persisted in
   the atomic fill journal across restart. Automatic scheduling is not wired.
 - The control plane remains loopback-only; non-loopback deployment requires read
