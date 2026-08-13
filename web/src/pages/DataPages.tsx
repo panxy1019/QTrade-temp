@@ -86,6 +86,7 @@ export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
 export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const analytics = data?.backtestAnalytics
   const leader = analytics?.leader
+  const benchmark = analytics?.benchmark
   const walkForward = data?.walkForward
   const aggregate = walkForward?.result.aggregate_metrics
   const folds = walkForward?.result.folds ?? []
@@ -102,7 +103,7 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   ]
   return <Page title="回测分析" subtitle="资金曲线、回撤、敞口、换手与成本">
     <Alert showIcon type="warning" title="探索性领先者，不是 Champion" description={leader ? `${leader.experiment_id}：测试窗 ${analytics?.split?.test_start ?? '—'} 至 ${analytics?.split?.test_end ?? '—'}，收益 ${formatPercent(leader.metrics.total_return)}，Sharpe ${formatNumber(leader.metrics.sharpe)}，最大回撤 ${formatPercent(leader.metrics.maximum_drawdown)}` : '暂无已验证结果'} />
-    <Card title="已验证全期资金曲线与回撤"><EquityChart dark analytics={analytics} />{leader && <Descriptions values={[["测试窗平均敞口", formatPercent(leader.metrics.test_exposure)], ["测试窗换手", formatNumber(leader.metrics.test_turnover)], ["测试窗交易成本", formatPercent(leader.metrics.test_transaction_cost)]]} />}<Typography.Text type="secondary">图为完整模拟期，测试窗指标在上方单列。记录、资金曲线和回撤文件的哈希均已验证；当前样本池非 PIT，且缺少 PAPER/SHADOW 观察，禁止晋级。</Typography.Text></Card>
+    <Card title="已验证全期策略、基准、超额收益与回撤"><EquityChart dark analytics={analytics} />{leader && <Descriptions values={[["测试窗平均敞口", formatPercent(leader.metrics.test_exposure)], ["测试窗换手", formatNumber(leader.metrics.test_turnover)], ["测试窗交易成本", formatPercent(leader.metrics.test_transaction_cost)], ["Buy-and-Hold 测试收益", benchmark ? formatPercent(benchmark.metrics.total_return) : '—']]} />}<Typography.Text type="secondary">图为完整模拟期；Buy-and-Hold 仅在记录、资金曲线、回撤 checksum 全部通过且交易日逐点对齐时展示。测试窗指标在上方单列；当前样本池非 PIT，且缺少 PAPER/SHADOW 观察，禁止晋级。</Typography.Text></Card>
     <Alert showIcon type={hasWalkForwardEvidence ? 'error' : 'info'} title={hasWalkForwardEvidence ? `三折独立样本外：${positiveFolds}/${folds.length} 折正收益` : '暂无已验证滚动样本外证据'} description={hasWalkForwardEvidence ? `聚合收益 ${formatPercent(String(aggregate?.total_return ?? ''))}，聚合 Sharpe ${formatNumber(String(aggregate?.sharpe ?? ''))}，最大回撤 ${formatPercent(String(aggregate?.maximum_drawdown ?? ''))}。这组预先分折证据优先于上方事后挑选的探索性领先者。` : '滚动样本外报告缺失或未通过校验；不能据此声称策略通过或失败。'} />
     <Card title="验证期选择后的独立测试结果"><Table rowKey="fold" size="small" columns={foldColumns} dataSource={folds} pagination={false} scroll={{ x: 920 }} locale={{ emptyText: '暂无已验证滚动样本外结果' }} />{hasWalkForwardEvidence && <Typography.Text type="secondary">候选只按验证期 Sharpe 选择，选择前不可读取对应测试窗；三个测试区间互不重叠。当前结论：{walkForward?.promotion ?? '未评估'}，不得因探索性领先者的正收益覆盖样本外败绩。</Typography.Text>}</Card>
   </Page>

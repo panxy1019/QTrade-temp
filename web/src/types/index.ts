@@ -126,10 +126,11 @@ export interface BacktestAnalytics {
   data_version?: string
   git_commit?: string
   leader: ResearchExperiment | null
+  benchmark?: ResearchExperiment | null
   split?: { test_start: string; test_end: string }
   record_hash?: string
   artifact_hashes?: { equity: string; drawdown: string }
-  curve: Array<{ session: string; equity: string; drawdown: string }>
+  curve: Array<{ session: string; equity: string; drawdown: string; benchmark_equity?: string; benchmark_drawdown?: string; excess_return?: string }>
 }
 
 export interface HistoricalDataset {

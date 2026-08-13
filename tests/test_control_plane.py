@@ -616,6 +616,7 @@ def test_backtest_analytics_verifies_comparison_record_and_curve_hashes(tmp_path
     metrics = {"sharpe": "0.2", "total_return": "0.01"}
     record = {
         "experiment_id": experiment_id,
+        "model": "buy-hold",
         "data_version": "bars-v1",
         "git_commit": "abc123",
         "metrics": metrics,
@@ -662,6 +663,82 @@ def test_backtest_analytics_verifies_comparison_record_and_curve_hashes(tmp_path
     assert verified["leader"]["experiment_id"] == experiment_id
     assert verified["curve"][-1]["drawdown"] == "-0.01"
     (artifacts / "equity.json").write_text("[]", encoding="utf-8")
+    assert _load_verified_backtest_analytics(comparison, root) is None
+
+
+def test_backtest_analytics_aligns_verified_buy_hold_benchmark(tmp_path):
+    root = tmp_path / "experiments"
+
+    def record_experiment(experiment_id, model, equities, sharpe):
+        artifacts = root / f"{experiment_id}-artifacts"
+        artifacts.mkdir(parents=True)
+        equity = [
+            {"session": "2026-01-02", "equity": str(equities[0])},
+            {"session": "2026-01-05", "equity": str(equities[1])},
+        ]
+        drawdown = [
+            {"session": "2026-01-02", "drawdown": "0"},
+            {"session": "2026-01-05", "drawdown": "0"},
+        ]
+        hashes = {}
+        for name, payload in (("equity", equity), ("drawdown", drawdown)):
+            target = artifacts / f"{name}.json"
+            target.write_text(json.dumps(payload), encoding="utf-8")
+            hashes[name] = sha256(target.read_bytes()).hexdigest()
+        metrics = {"sharpe": sharpe, "total_return": "0.1"}
+        record = {
+            "experiment_id": experiment_id,
+            "model": model,
+            "data_version": "bars-v1",
+            "git_commit": "abc123",
+            "metrics": metrics,
+            "split": {"test_start": "2026-01-01", "test_end": "2026-01-31"},
+            "artifacts": [f"{name}:{digest}" for name, digest in hashes.items()],
+        }
+        record_hash = sha256(
+            json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        (root / f"{experiment_id}.json").write_text(
+            json.dumps({"spec_hash": record_hash, "record": record}), encoding="utf-8"
+        )
+        result_payload = {
+            "artifact_manifest": tuple(sorted(hashes.items())),
+            "metrics": tuple(sorted((key, Decimal(value)) for key, value in metrics.items())),
+            "record_hash": record_hash,
+            "strategy_id": experiment_id,
+        }
+        result_hash = sha256(
+            json.dumps(result_payload, sort_keys=True, separators=(",", ":"), default=str).encode()
+        ).hexdigest()
+        return {
+            "experiment_id": experiment_id,
+            "spec_hash": "f" * 64,
+            "result_hash": result_hash,
+            "metrics": metrics,
+            "scenario_type": "PRIMARY",
+        }
+
+    benchmark = record_experiment("plain-baseline", "buy-hold", (100, 105), "0.1")
+    leader = record_experiment("verified-leader", "momentum", (100, 110), "0.2")
+    report = {
+        "classification": "exploratory_noncommercial_current_universe_not_pit",
+        "data_version": "bars-v1",
+        "git_commit": "abc123",
+        "promotion": "NOT_ELIGIBLE",
+        "experiments": [benchmark, leader],
+    }
+    canonical = json.dumps(report, sort_keys=True, separators=(",", ":"))
+    comparison = tmp_path / "comparison.json"
+    comparison.write_text(
+        json.dumps({"sha256": sha256(canonical.encode()).hexdigest(), "report": report}),
+        encoding="utf-8",
+    )
+    verified = _load_verified_backtest_analytics(comparison, root)
+    assert verified is not None
+    assert verified["benchmark"]["experiment_id"] == "plain-baseline"
+    assert verified["curve"][-1]["benchmark_equity"] == "105"
+    assert verified["curve"][-1]["excess_return"] == "0.05"
+    (root / "plain-baseline-artifacts" / "equity.json").write_text("[]", encoding="utf-8")
     assert _load_verified_backtest_analytics(comparison, root) is None
 
 

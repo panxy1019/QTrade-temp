@@ -83,10 +83,14 @@ const data = {
       experiment_id: 'momentum-vol-slow', spec_hash: 'a', result_hash: 'b', scenario_type: 'SENSITIVITY',
       metrics: { total_return: '0.0335', sharpe: '0.4412', maximum_drawdown: '-0.0909', test_exposure: '0.45', test_turnover: '2.01', test_transaction_cost: '0.003' },
     },
+    benchmark: {
+      experiment_id: 'buy-hold', spec_hash: 'c', result_hash: 'd', scenario_type: 'PRIMARY',
+      metrics: { total_return: '-0.0289', sharpe: '-0.1559', maximum_drawdown: '-0.1499' },
+    },
     split: { test_start: '2026-01-01', test_end: '2026-08-12' },
     curve: [
-      { session: '2024-01-02', equity: '1000000', drawdown: '0' },
-      { session: '2024-01-03', equity: '999000', drawdown: '-0.001' },
+      { session: '2024-01-02', equity: '1000000', drawdown: '0', benchmark_equity: '1000000', benchmark_drawdown: '0', excess_return: '0' },
+      { session: '2024-01-03', equity: '999000', drawdown: '-0.001', benchmark_equity: '998000', benchmark_drawdown: '-0.002', excess_return: '0.001' },
     ],
   },
 } as unknown as PlatformSnapshot
@@ -135,11 +139,12 @@ describe('verified backtest analytics', () => {
   it('shows the verified leader without presenting it as Champion', async () => {
     render(<BacktestPage data={data} />)
     expect(screen.getByText('探索性领先者，不是 Champion')).toBeInTheDocument()
-    expect(screen.getByText(/记录、资金曲线和回撤文件的哈希均已验证/)).toBeInTheDocument()
-    expect(screen.getByText(/图为完整模拟期，测试窗指标在上方单列/)).toBeInTheDocument()
+    expect(screen.getByText(/Buy-and-Hold 仅在记录、资金曲线、回撤 checksum 全部通过/)).toBeInTheDocument()
+    expect(screen.getByText(/测试窗指标在上方单列/)).toBeInTheDocument()
     expect(screen.getByText('45.00%')).toBeInTheDocument()
     expect(screen.getByText('2.010')).toBeInTheDocument()
     expect(screen.getByText('0.30%')).toBeInTheDocument()
+    expect(screen.getByText('-2.89%')).toBeInTheDocument()
     expect(screen.getByText('三折独立样本外：0/3 折正收益')).toBeInTheDocument()
     expect(screen.getByText(/聚合收益 -20.44%/)).toBeInTheDocument()
     expect(screen.getByText(/不得因探索性领先者的正收益覆盖样本外败绩/)).toBeInTheDocument()

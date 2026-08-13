@@ -57,7 +57,7 @@ npm --prefix web run build
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12 (latest
 AKShare amendment checkpoint):
 
-- 214 Python tests passed;
+- 215 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 86 source files;
 - no broken Python requirements;
@@ -101,6 +101,10 @@ AKShare amendment checkpoint):
 - The backtest page explicitly contrasts the positive exploratory sensitivity
   winner with the three negative, disjoint held-out walk-forward folds. This is
   a selection-bias disclosure, not evidence that either result is promotable.
+- It now also independently verifies and aligns the Buy-and-Hold benchmark's
+  immutable record and curve artifacts before rendering strategy, benchmark and
+  excess returns. The 632-session full-period terminal excess is `-12.5456%`;
+  this comparison is not a promotion override.
 - Daily reports are runtime-generated, hash-verified, and use trades persisted in
   the atomic fill journal across restart. Automatic scheduling is not wired.
 - The control plane remains loopback-only; non-loopback deployment requires read

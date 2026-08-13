@@ -186,6 +186,11 @@ Selecting a row also loads a bounded, checksum-bound historical series and
 renders real daily candlesticks plus volume. Physical per-symbol disorder is
 rejected and stale charts disappear when the verified dataset identity changes.
 
+The backtest analytics surface now validates the Buy-and-Hold record/result and
+curve artifacts independently from the exploratory leader, requires exact
+session alignment, and displays strategy, benchmark, excess return and drawdown.
+This real comparison remains non-PIT and promotion-ineligible.
+
 1. select and license a realtime/historical data provider;
 2. select a broker and compatible isolated native-gateway Python ABI;
 3. certify provider/broker normalization and reconciliation in a sandbox;

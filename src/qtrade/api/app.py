@@ -740,10 +740,63 @@ def _load_verified_backtest_analytics(
                 return None
             verified_rows.append((sharpe, value))
         leader = max(verified_rows, key=lambda item: item[0])[1]
-        experiment_id = leader["experiment_id"]
+        root = artifact_root.resolve()
+        leader_artifacts = _load_verified_experiment_analytics(leader, report, root)
+        if leader_artifacts is None:
+            return None
+        benchmark_candidates = []
+        for _, row in verified_rows:
+            candidate = _load_verified_experiment_analytics(row, report, root)
+            if candidate is None:
+                return None
+            candidate_record = candidate.get("record") if candidate is not None else None
+            if isinstance(candidate_record, dict) and candidate_record.get("model") == "buy-hold":
+                benchmark_candidates.append(candidate)
+        if len(benchmark_candidates) != 1:
+            return None
+        benchmark = benchmark_candidates[0]
+        benchmark_curve = benchmark.get("curve")
+        if benchmark_curve is None:
+            return None
+        combined_curve = _aligned_strategy_benchmark_curve(
+            leader_artifacts["curve"], benchmark_curve
+        )
+        leader_record = leader_artifacts["record"]
+        if not isinstance(leader_record, dict):
+            return None
+        return {
+            "classification": report["classification"],
+            "promotion": "NOT_ELIGIBLE",
+            "data_version": report["data_version"],
+            "git_commit": report["git_commit"],
+            "leader": leader,
+            "benchmark": benchmark["row"],
+            "split": leader_record["split"],
+            "record_hash": leader_artifacts["record_hash"],
+            "benchmark_record_hash": benchmark["record_hash"],
+            "artifact_hashes": leader_artifacts["artifact_hashes"],
+            "benchmark_artifact_hashes": benchmark["artifact_hashes"],
+            "curve": combined_curve,
+        }
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _load_verified_experiment_analytics(
+    row: dict[str, object], report: dict[str, object], root: Path
+) -> dict[str, object] | None:
+    try:
+        experiment_id = row["experiment_id"]
         if not isinstance(experiment_id, str) or not _is_safe_identifier(experiment_id):
             return None
-        root = artifact_root.resolve()
         record_path = (root / f"{experiment_id}.json").resolve()
         artifacts_dir = (root / f"{experiment_id}-artifacts").resolve()
         if not record_path.is_relative_to(root) or not artifacts_dir.is_relative_to(root):
@@ -762,7 +815,7 @@ def _load_verified_backtest_analytics(
             record.get("experiment_id") != experiment_id
             or record.get("data_version") != report.get("data_version")
             or record.get("git_commit") != report.get("git_commit")
-            or record.get("metrics") != leader.get("metrics")
+            or record.get("metrics") != row.get("metrics")
         ):
             return None
         artifact_manifest = _validated_artifact_manifest(record["artifacts"])
@@ -783,7 +836,7 @@ def _load_verified_backtest_analytics(
                 default=str,
             ).encode()
         ).hexdigest()
-        if calculated_result_hash != leader.get("result_hash"):
+        if calculated_result_hash != row.get("result_hash"):
             return None
         equity = _load_hashed_json(artifacts_dir / "equity.json", artifact_manifest["equity"])
         drawdown = _load_hashed_json(
@@ -791,12 +844,8 @@ def _load_verified_backtest_analytics(
         )
         curve = _validated_equity_drawdown_curve(equity, drawdown)
         return {
-            "classification": report["classification"],
-            "promotion": "NOT_ELIGIBLE",
-            "data_version": report["data_version"],
-            "git_commit": report["git_commit"],
-            "leader": leader,
-            "split": record["split"],
+            "row": row,
+            "record": record,
             "record_hash": record_hash,
             "artifact_hashes": {
                 "equity": artifact_manifest["equity"],
@@ -814,6 +863,37 @@ def _load_verified_backtest_analytics(
         json.JSONDecodeError,
     ):
         return None
+
+
+def _aligned_strategy_benchmark_curve(
+    strategy: object, benchmark: object
+) -> list[dict[str, str]]:
+    if (
+        not isinstance(strategy, list)
+        or not isinstance(benchmark, list)
+        or not strategy
+        or len(strategy) != len(benchmark)
+    ):
+        raise ValueError("benchmark curve does not align")
+    first_strategy = Decimal(strategy[0]["equity"])
+    first_benchmark = Decimal(benchmark[0]["equity"])
+    if first_strategy <= 0 or first_benchmark <= 0:
+        raise ValueError("benchmark curve does not align")
+    result: list[dict[str, str]] = []
+    for strategy_point, benchmark_point in zip(strategy, benchmark, strict=True):
+        if strategy_point["session"] != benchmark_point["session"]:
+            raise ValueError("benchmark curve does not align")
+        strategy_return = Decimal(strategy_point["equity"]) / first_strategy - 1
+        benchmark_return = Decimal(benchmark_point["equity"]) / first_benchmark - 1
+        result.append(
+            {
+                **strategy_point,
+                "benchmark_equity": benchmark_point["equity"],
+                "benchmark_drawdown": benchmark_point["drawdown"],
+                "excess_return": str(strategy_return - benchmark_return),
+            }
+        )
+    return result
 
 
 def _is_safe_identifier(value: str) -> bool:
