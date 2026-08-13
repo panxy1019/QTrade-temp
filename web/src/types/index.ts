@@ -155,6 +155,20 @@ export interface MarketStatus {
   historical: HistoricalDataset | null
 }
 
+export interface HistoricalBarRow {
+  symbol: string
+  exchange: string
+  timestamp: string
+  trading_day: string
+  open: string
+  high: string
+  low: string
+  close: string
+  volume: string
+  data_version: string
+  observation_type: 'HISTORICAL_DAILY_CLOSE'
+}
+
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
@@ -170,4 +184,5 @@ export interface PlatformSnapshot {
   robustness: RobustnessReport
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
+  historicalBars: HistoricalBarRow[]
 }

@@ -178,6 +178,11 @@ selected candidate is evaluated on its test window. The negative result remains
 promotion-ineligible; this is evidence against the current candidates, not a
 reason to weaken thresholds or assign a Champion.
 
+The Chinese market page now displays the latest complete historical daily bar
+for every symbol in that verified dataset, with search and pagination. The API
+fails closed on manifest/checksum/schema/symbol/OHLC validation and labels the
+rows historical-only; this does not satisfy realtime snapshot or PAPER readiness.
+
 1. select and license a realtime/historical data provider;
 2. select a broker and compatible isolated native-gateway Python ABI;
 3. certify provider/broker normalization and reconciliation in a sandbox;

@@ -1,5 +1,6 @@
 ﻿import { Alert, Card, Empty, Input, Space, Table, Tabs, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import { useState } from 'react'
 import type { OrderRow, PlatformSnapshot, PositionRow } from '../types'
 import { StatusTag } from '../components/StatusTag'
 import { EquityChart } from '../charts/EquityChart'
@@ -8,7 +9,20 @@ const waiting = <Alert showIcon type="info" title="等待实时数据授权" des
 
 export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const historical = data?.market?.historical
-  return <Page title="行情中心" subtitle="A股、ETF 与指数 Level-1 行情"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Alert showIcon type={historical ? 'success' : 'warning'} title={historical ? `已验证历史数据：${historical.provider} ${historical.provider_version}` : '尚无校验通过的历史数据'} description={historical ? `${historical.bar_count} 根日线，${historical.observed_start} 至 ${historical.observed_end}；当前样本池非 PIT。` : '需要 checksum 与质量状态同时通过。'} /><Input.Search placeholder="搜索证券代码或名称" /><Empty description="实时 snapshot 仍不可用；不会用历史收盘价冒充行情" /></Space></Page>
+  const [query, setQuery] = useState('')
+  const bars = (data?.historicalBars ?? []).filter((row) => row.symbol.includes(query.trim()))
+  const columns = [
+    { title: '代码', dataIndex: 'symbol', fixed: 'left' as const },
+    { title: '交易所', dataIndex: 'exchange' },
+    { title: '交易日', dataIndex: 'trading_day' },
+    { title: '开盘', dataIndex: 'open' },
+    { title: '最高', dataIndex: 'high' },
+    { title: '最低', dataIndex: 'low' },
+    { title: '收盘', dataIndex: 'close' },
+    { title: '成交量', dataIndex: 'volume', render: (value: string) => formatInteger(value) },
+    { title: '数据性质', render: () => <Tag color="blue">历史日线收盘</Tag> },
+  ]
+  return <Page title="行情中心" subtitle="已验证历史日线与未来 Level-1 接入状态"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Alert showIcon type={historical ? 'success' : 'warning'} title={historical ? `已验证历史数据：${historical.provider} ${historical.provider_version}` : '尚无校验通过的历史数据'} description={historical ? `${historical.bar_count} 根日线，${historical.observed_start} 至 ${historical.observed_end}；当前样本池非 PIT。` : '需要 checksum 与质量状态同时通过。'} /><Alert showIcon type="warning" title="以下是历史日线，不是实时行情" description="仅展示 checksum 验证通过的数据集内每只 ETF 的最新完整日线；没有 Bid/Ask、实时价格或实时延迟，不参与 REAL_DATA_PAPER。" /><Input.Search placeholder="搜索 ETF 代码" value={query} onChange={(event) => setQuery(event.target.value)} allowClear /><Table rowKey="symbol" size="small" columns={columns} dataSource={bars} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 920 }} locale={{ emptyText: <Empty description="暂无校验通过的历史日线；实时 snapshot 仍不可用" /> }} /></Space></Page>
 }
 
 export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
@@ -111,4 +125,9 @@ function formatNumber(value?: string) {
 function formatPercent(value?: string) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? `${(parsed * 100).toFixed(2)}%` : '—'
+}
+
+function formatInteger(value?: string) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? Math.round(parsed).toLocaleString('zh-CN') : '—'
 }

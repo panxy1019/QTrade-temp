@@ -57,7 +57,7 @@ npm --prefix web run build
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12 (latest
 AKShare amendment checkpoint):
 
-- 211 Python tests passed;
+- 213 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 86 source files;
 - no broken Python requirements;
@@ -87,6 +87,13 @@ AKShare amendment checkpoint):
 - The Chinese web application has twelve routes and honest empty states; several
   pages await richer catalog/analytics APIs. It is not a claim of completed
   provider-backed analytics.
+- The market page is data-backed for the verified 30-ETF historical dataset. It
+  shows each symbol's latest complete OHLCV daily row only after manifest and
+  Parquet checksum verification, and labels it historical rather than realtime;
+  Bid/Ask and REAL_DATA_PAPER remain unavailable.
+  Reproduce after starting the control plane with
+  `Invoke-RestMethod http://127.0.0.1:8000/historical-bars/latest`; the verified
+  artifact currently returns 30 rows dated 2026-08-12.
 - The backtest page explicitly contrasts the positive exploratory sensitivity
   winner with the three negative, disjoint held-out walk-forward folds. This is
   a selection-bias disclosure, not evidence that either result is promotable.

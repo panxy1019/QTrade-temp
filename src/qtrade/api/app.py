@@ -3,13 +3,17 @@ from __future__ import annotations
 import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
+from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from hashlib import sha256
 from pathlib import Path
 from secrets import compare_digest
 from typing import Any
+from zoneinfo import ZoneInfo
 
+import pyarrow as pa  # type: ignore[import-untyped]
+import pyarrow.parquet as pq  # type: ignore[import-untyped]
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -23,6 +27,11 @@ from qtrade.execution import FeeSchedule, PaperGateway
 from qtrade.monitoring import MetricsRegistry
 from qtrade.oms import OrderManager
 from qtrade.risk import RiskEngine, RiskLimits
+
+_MAX_MARKET_PARQUET_BYTES = 64 * 1024 * 1024
+_MAX_MARKET_PARQUET_ROWS = 2_000_000
+_MAX_MARKET_PARQUET_ROW_GROUPS = 1024
+_MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
 
 
 class Role(StrEnum):
@@ -190,6 +199,22 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             for symbol in symbols
             if isinstance(symbol, str)
         ]
+
+    @app.get("/historical-bars/latest")
+    def latest_historical_bars(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> list[dict[str, str]]:
+        dataset = _load_verified_market_dataset(state.historical_manifest_path)
+        if dataset is None:
+            return []
+        return _load_latest_historical_bars(
+            state.historical_manifest_path,
+            data_version=str(dataset["data_version"]),
+            expected_checksum=str(dataset["checksum"]),
+            expected_universe=dataset["universe"],
+            expected_bar_count=dataset["bar_count"],
+            expected_observed_end=dataset["observed_end"],
+        )
 
     @app.get("/strategies")
     def strategies(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
@@ -866,8 +891,10 @@ def _load_verified_market_dataset(path: Path | None) -> dict[str, object] | None
             or not isinstance(universe.get("point_in_time"), bool)
         ):
             return None
-        bars = path.parent / "bars.parquet"
-        if not bars.is_file() or sha256(bars.read_bytes()).hexdigest() != checksum:
+        bars_content = _read_bounded_file(
+            path.parent / "bars.parquet", _MAX_MARKET_PARQUET_BYTES
+        )
+        if bars_content is None or sha256(bars_content).hexdigest() != checksum:
             return None
         return {
             "provider": universe.get("provider"),
@@ -884,4 +911,147 @@ def _load_verified_market_dataset(path: Path | None) -> dict[str, object] | None
             "universe": universe,
         }
     except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+
+
+def _load_latest_historical_bars(
+    manifest_path: Path | None,
+    *,
+    data_version: str,
+    expected_checksum: str,
+    expected_universe: object,
+    expected_bar_count: object,
+    expected_observed_end: object,
+) -> list[dict[str, str]]:
+    if manifest_path is None or not isinstance(expected_universe, dict):
+        return []
+    symbols = expected_universe.get("symbols")
+    if (
+        not isinstance(symbols, list)
+        or not all(isinstance(value, str) for value in symbols)
+        or len(set(symbols)) != len(symbols)
+        or not isinstance(expected_bar_count, int)
+        or expected_bar_count <= 0
+        or not isinstance(expected_observed_end, str)
+    ):
+        return []
+    try:
+        observed_end = datetime.fromisoformat(expected_observed_end)
+        if observed_end.tzinfo is None:
+            return []
+        expected_latest_day = observed_end.astimezone(ZoneInfo("Asia/Shanghai")).date().isoformat()
+        content = _read_bounded_file(
+            manifest_path.parent / "bars.parquet", _MAX_MARKET_PARQUET_BYTES
+        )
+        if content is None:
+            return []
+        if sha256(content).hexdigest() != expected_checksum:
+            return []
+        source = pa.BufferReader(content)
+        parquet = pq.ParquetFile(source)
+        metadata = parquet.metadata
+        uncompressed_bytes = sum(
+            metadata.row_group(index).total_byte_size
+            for index in range(metadata.num_row_groups)
+        )
+        if (
+            metadata.num_rows != expected_bar_count
+            or metadata.num_rows > _MAX_MARKET_PARQUET_ROWS
+            or metadata.num_row_groups > _MAX_MARKET_PARQUET_ROW_GROUPS
+            or uncompressed_bytes > _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES
+        ):
+            return []
+        latest: dict[str, dict[str, str]] = {}
+        latest_instants: dict[str, datetime] = {}
+        allowed = set(symbols)
+        columns = [
+            "symbol",
+            "exchange",
+            "timestamp",
+            "trading_day",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "data_version",
+        ]
+        rows = (
+            raw
+            for batch in parquet.iter_batches(batch_size=8192, columns=columns)
+            for raw in batch.to_pylist()
+        )
+        for raw in rows:
+            symbol = raw.get("symbol")
+            exchange = raw.get("exchange")
+            timestamp = raw.get("timestamp")
+            row_data_version = raw.get("data_version")
+            if (
+                not isinstance(symbol, str)
+                or symbol not in allowed
+                or exchange not in {"SSE", "SZSE"}
+                or not isinstance(timestamp, str)
+                or row_data_version != data_version
+            ):
+                return []
+            trading_day_value = raw.get("trading_day")
+            trading_day = (
+                trading_day_value.isoformat()
+                if hasattr(trading_day_value, "isoformat")
+                else str(trading_day_value)
+            )
+            parsed_timestamp = datetime.fromisoformat(timestamp)
+            if parsed_timestamp.tzinfo is None:
+                return []
+            date.fromisoformat(trading_day)
+            local_trading_day = (
+                parsed_timestamp.astimezone(ZoneInfo("Asia/Shanghai")).date().isoformat()
+            )
+            if local_trading_day != trading_day:
+                return []
+            values = {
+                name: Decimal(str(raw.get(name)))
+                for name in ("open", "high", "low", "close", "volume")
+            }
+            if (
+                any(not value.is_finite() for value in values.values())
+                or any(values[name] <= 0 for name in ("open", "high", "low", "close"))
+                or values["volume"] < 0
+                or values["low"] > min(values["open"], values["close"])
+                or values["high"] < max(values["open"], values["close"])
+            ):
+                return []
+            candidate = {
+                "symbol": symbol,
+                "exchange": exchange,
+                "timestamp": timestamp,
+                "trading_day": trading_day,
+                "open": str(values["open"]),
+                "high": str(values["high"]),
+                "low": str(values["low"]),
+                "close": str(values["close"]),
+                "volume": str(values["volume"]),
+                "data_version": data_version,
+                "observation_type": "HISTORICAL_DAILY_CLOSE",
+            }
+            previous = latest.get(symbol)
+            previous_instant = latest_instants.get(symbol)
+            if previous is None or previous_instant is None or parsed_timestamp > previous_instant:
+                latest[symbol] = candidate
+                latest_instants[symbol] = parsed_timestamp
+        if set(latest) != allowed:
+            return []
+        if any(row["trading_day"] != expected_latest_day for row in latest.values()):
+            return []
+        return [latest[symbol] for symbol in symbols]
+    except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
+        return []
+
+
+def _read_bounded_file(path: Path, limit: int) -> bytes | None:
+    try:
+        with path.open("rb") as stream:
+            content = stream.read(limit + 1)
+        return content if len(content) <= limit else None
+    except OSError:
         return None

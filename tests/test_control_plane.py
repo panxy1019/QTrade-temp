@@ -3,6 +3,8 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from hashlib import sha256
 
+import pyarrow as pa  # type: ignore[import-untyped]
+import pyarrow.parquet as pq  # type: ignore[import-untyped]
 import pytest
 from fastapi.testclient import TestClient
 
@@ -197,6 +199,117 @@ def test_market_dataset_requires_matching_parquet_checksum(tmp_path):
     assert api.get("/market").json()["historical"] is None
     assert api.get("/instruments").status_code == 200
     assert api.get("/instruments").json() == []
+
+
+def test_latest_historical_bars_are_verified_and_never_labeled_realtime(tmp_path):
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("100000"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit)
+    runtime = PlatformRuntime(RuntimeMode.PAPER, risk, audit, metrics)
+    bars = tmp_path / "bars.parquet"
+    pq.write_table(
+        pa.table(
+            {
+                "symbol": ["510300", "510300"],
+                "exchange": ["SSE", "SSE"],
+                "timestamp": ["2026-08-12T15:00:00+08:00", "2026-08-12T08:00:00+00:00"],
+                "trading_day": ["2026-08-12", "2026-08-12"],
+                "open": ["4.0", "4.1"],
+                "high": ["4.2", "4.3"],
+                "low": ["3.9", "4.0"],
+                "close": ["4.1", "4.2"],
+                "volume": ["100", "200"],
+                "data_version": ["akshare-test", "akshare-test"],
+            }
+        ),
+        bars,
+    )
+    evidence = {
+        "classification": "noncommercial_research_historical_only",
+        "bar_count": 2,
+        "observed_start": "2026-08-11T15:00:00+08:00",
+        "observed_end": "2026-08-12T15:00:00+08:00",
+        "snapshot_readiness": False,
+        "real_data_paper_readiness": False,
+        "manifest": {
+            "data_version": "akshare-test",
+            "checksum": sha256(bars.read_bytes()).hexdigest(),
+            "quality_status": "PASSED",
+        },
+        "universe": {
+            "provider": "AKShare",
+            "provider_version": "1.18.84",
+            "point_in_time": False,
+            "symbols": ["510300"],
+        },
+    }
+    evidence["evidence_sha256"] = sha256(
+        json.dumps(evidence, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    target = tmp_path / "manifest.json"
+    target.write_text(json.dumps(evidence), encoding="utf-8")
+    api = TestClient(
+        create_app(
+            AppContext(runtime, metrics, oms, ledger, audit, historical_manifest_path=target),
+            ApiAuthConfig(),
+        )
+    )
+    latest = api.get("/historical-bars/latest").json()
+    assert latest == [
+        {
+            "symbol": "510300",
+            "exchange": "SSE",
+            "timestamp": "2026-08-12T08:00:00+00:00",
+            "trading_day": "2026-08-12",
+            "open": "4.1",
+            "high": "4.3",
+            "low": "4.0",
+            "close": "4.2",
+            "volume": "200",
+            "data_version": "akshare-test",
+            "observation_type": "HISTORICAL_DAILY_CLOSE",
+        }
+    ]
+    evidence["universe"]["symbols"] = ["510300", "510500"]
+    evidence["evidence_sha256"] = sha256(
+        json.dumps(
+            {key: value for key, value in evidence.items() if key != "evidence_sha256"},
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    target.write_text(json.dumps(evidence), encoding="utf-8")
+    assert api.get("/historical-bars/latest").json() == []
+    evidence["universe"]["symbols"] = ["510300"]
+    evidence["bar_count"] = 3
+    evidence["evidence_sha256"] = sha256(
+        json.dumps(
+            {key: value for key, value in evidence.items() if key != "evidence_sha256"},
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    target.write_text(json.dumps(evidence), encoding="utf-8")
+    assert api.get("/historical-bars/latest").json() == []
+
+
+def test_latest_historical_bars_rechecks_the_bytes_it_decodes(tmp_path, monkeypatch):
+    from qtrade.api import app as api_app
+
+    verified = b"verified"
+    replaced = b"replaced"
+    monkeypatch.setattr(api_app, "_read_bounded_file", lambda _path, _limit: replaced)
+    monkeypatch.setattr(api_app.pq, "ParquetFile", lambda _source: pytest.fail("must not decode"))
+    assert api_app._load_latest_historical_bars(
+        tmp_path / "manifest.json",
+        data_version="akshare-test",
+        expected_checksum=sha256(verified).hexdigest(),
+        expected_universe={"symbols": ["510300"]},
+        expected_bar_count=1,
+        expected_observed_end="2026-08-12T15:00:00+08:00",
+    ) == []
 
 
 def test_verified_research_results_are_exposed_and_tampering_fails_closed(tmp_path):

@@ -27,6 +27,14 @@ const data = {
     },
   },
   reports: [],
+  historicalBars: [
+    {
+      symbol: '510300', exchange: 'SSE', timestamp: '2026-08-12T07:00:00+00:00',
+      trading_day: '2026-08-12', open: '4.1', high: '4.3', low: '4.0', close: '4.2',
+      volume: '200000000', data_version: 'akshare-bars-v1',
+      observation_type: 'HISTORICAL_DAILY_CLOSE',
+    },
+  ],
   robustness: {
     classification: 'post_rejection_diagnostic_reuses_observations_not_new_heldout',
     promotion: 'NOT_ELIGIBLE',
@@ -78,7 +86,19 @@ describe('verified historical data pages', () => {
     render(<MarketPage data={data} />)
     expect(screen.getByText('已验证历史数据：AKShare 1.18.84')).toBeInTheDocument()
     expect(screen.getByText(/18960 根日线/)).toBeInTheDocument()
-    expect(screen.getByText(/实时 snapshot 仍不可用/)).toBeInTheDocument()
+    expect(screen.getByText(/没有 Bid\/Ask、实时价格或实时延迟/)).toBeInTheDocument()
+    expect(screen.getByText('以下是历史日线，不是实时行情')).toBeInTheDocument()
+    expect(screen.getByText('510300')).toBeInTheDocument()
+    expect(screen.getByText('200,000,000')).toBeInTheDocument()
+    expect(screen.queryByText('Bid')).not.toBeInTheDocument()
+  })
+
+  it('filters verified historical rows without inventing snapshots', () => {
+    cleanup()
+    render(<MarketPage data={data} />)
+    fireEvent.change(screen.getByPlaceholderText('搜索 ETF 代码'), { target: { value: '510500' } })
+    expect(screen.queryByText('510300')).not.toBeInTheDocument()
+    expect(screen.getByText(/暂无校验通过的历史日线/)).toBeInTheDocument()
   })
 
   it('keeps provider connectivity separate from execution gateway health', () => {
