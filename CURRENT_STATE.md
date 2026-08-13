@@ -12,7 +12,7 @@ Last updated: 2026-08-13
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 209 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 211 tests passed, Ruff clean, strict mypy clean across
   86 source files on Python 3.14.6 (2026-08-13); frontend Vitest, ESLint and
   production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -38,6 +38,12 @@ Last updated: 2026-08-13
   evidence envelope and Parquet checksum verify. Provider snapshot connectivity
   remains explicitly `DISCONNECTED` and is no longer conflated with the simulated
   execution-gateway metric.
+- Backtest analytics: `/backtest-analytics` and the Chinese backtest page now
+  select the exploratory leader only from the verified comparison report, then
+  verify its immutable record, deterministic result hash, equity/drawdown file
+  hashes and pointwise drawdown arithmetic before rendering 632 full-period
+  observations. Test-window metrics remain explicitly separate; the result is
+  not PIT, not Champion and not eligible for promotion.
 - Robustness evidence: 14 bounded cost, parameter, subperiod and deterministic
   current-universe perturbations are hash-verified and exposed fail-closed in
   the Chinese research page. Worst Sharpe is `-1.1429123433`, Sharpe dispersion

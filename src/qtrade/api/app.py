@@ -68,6 +68,7 @@ class AppContext:
     research_comparison_path: Path | None = None
     walk_forward_report_path: Path | None = None
     robustness_report_path: Path | None = None
+    research_artifact_root: Path | None = None
     historical_manifest_path: Path | None = None
 
 
@@ -244,6 +245,21 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             "promotion": "NOT_EVALUATED",
             "promotion_reasons": ["MISSING_VERIFIED_ROBUSTNESS_ARTIFACT"],
             "result": {"scenario_metrics": []},
+        }
+
+    @app.get("/backtest-analytics")
+    def backtest_analytics(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        analytics = _load_verified_backtest_analytics(
+            state.research_comparison_path,
+            state.research_artifact_root,
+        )
+        return analytics or {
+            "classification": "NO_VERIFIED_BACKTEST_ANALYTICS",
+            "promotion": "NOT_EVALUATED",
+            "leader": None,
+            "curve": [],
         }
 
     @app.get("/portfolio")
@@ -429,6 +445,7 @@ def context_from_runtime(bundle: object) -> AppContext:
         robustness_report_path=Path(
             "runtime/research/akshare-robustness-v1.json"
         ),
+        research_artifact_root=Path("runtime/research/akshare-v4"),
         historical_manifest_path=Path(
             "runtime/data/akshare/"
             "akshare-sina-etf30-current-20260812-v1-raw-daily-20240101-20260812/"
@@ -627,6 +644,187 @@ def _is_sha256(value: object) -> bool:
     except ValueError:
         return False
     return True
+
+
+def _load_verified_backtest_analytics(
+    comparison_path: Path | None,
+    artifact_root: Path | None,
+) -> dict[str, object] | None:
+    report = _load_verified_research_report(comparison_path)
+    if report is None or artifact_root is None:
+        return None
+    try:
+        if (
+            report.get("classification")
+            != "exploratory_noncommercial_current_universe_not_pit"
+            or report.get("promotion") != "NOT_ELIGIBLE"
+        ):
+            return None
+        experiments = report["experiments"]
+        if not isinstance(experiments, list) or not experiments:
+            return None
+        verified_rows: list[tuple[Decimal, dict[str, object]]] = []
+        for value in experiments:
+            if not isinstance(value, dict):
+                return None
+            metrics = value["metrics"]
+            if not isinstance(metrics, dict):
+                return None
+            sharpe = Decimal(metrics["sharpe"])
+            if not sharpe.is_finite():
+                return None
+            verified_rows.append((sharpe, value))
+        leader = max(verified_rows, key=lambda item: item[0])[1]
+        experiment_id = leader["experiment_id"]
+        if not isinstance(experiment_id, str) or not _is_safe_identifier(experiment_id):
+            return None
+        root = artifact_root.resolve()
+        record_path = (root / f"{experiment_id}.json").resolve()
+        artifacts_dir = (root / f"{experiment_id}-artifacts").resolve()
+        if not record_path.is_relative_to(root) or not artifacts_dir.is_relative_to(root):
+            return None
+        envelope = json.loads(record_path.read_text(encoding="utf-8"))
+        if not isinstance(envelope, dict):
+            return None
+        record = envelope["record"]
+        record_hash = envelope["spec_hash"]
+        if not isinstance(record, dict) or not _is_sha256(record_hash):
+            return None
+        canonical = json.dumps(record, sort_keys=True, separators=(",", ":"), default=str)
+        if sha256(canonical.encode()).hexdigest() != record_hash:
+            return None
+        if (
+            record.get("experiment_id") != experiment_id
+            or record.get("data_version") != report.get("data_version")
+            or record.get("git_commit") != report.get("git_commit")
+            or record.get("metrics") != leader.get("metrics")
+        ):
+            return None
+        artifact_manifest = _validated_artifact_manifest(record["artifacts"])
+        metrics = tuple(
+            sorted((key, Decimal(value)) for key, value in record["metrics"].items())
+        )
+        result_payload = {
+            "artifact_manifest": tuple(sorted(artifact_manifest.items())),
+            "metrics": metrics,
+            "record_hash": record_hash,
+            "strategy_id": experiment_id,
+        }
+        calculated_result_hash = sha256(
+            json.dumps(
+                result_payload,
+                sort_keys=True,
+                separators=(",", ":"),
+                default=str,
+            ).encode()
+        ).hexdigest()
+        if calculated_result_hash != leader.get("result_hash"):
+            return None
+        equity = _load_hashed_json(artifacts_dir / "equity.json", artifact_manifest["equity"])
+        drawdown = _load_hashed_json(
+            artifacts_dir / "drawdown.json", artifact_manifest["drawdown"]
+        )
+        curve = _validated_equity_drawdown_curve(equity, drawdown)
+        return {
+            "classification": report["classification"],
+            "promotion": "NOT_ELIGIBLE",
+            "data_version": report["data_version"],
+            "git_commit": report["git_commit"],
+            "leader": leader,
+            "split": record["split"],
+            "record_hash": record_hash,
+            "artifact_hashes": {
+                "equity": artifact_manifest["equity"],
+                "drawdown": artifact_manifest["drawdown"],
+            },
+            "curve": curve,
+        }
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _is_safe_identifier(value: str) -> bool:
+    return 1 <= len(value) <= 160 and all(
+        character.isascii() and (character.isalnum() or character in "-_")
+        for character in value
+    )
+
+
+def _validated_artifact_manifest(value: object) -> dict[str, str]:
+    if not isinstance(value, list):
+        raise ValueError("invalid experiment artifact manifest")
+    result: dict[str, str] = {}
+    for item in value:
+        if not isinstance(item, str) or item.count(":") != 1:
+            raise ValueError("invalid experiment artifact manifest")
+        name, digest = item.split(":")
+        if name in result or not _is_safe_identifier(name) or not _is_sha256(digest):
+            raise ValueError("invalid experiment artifact manifest")
+        result[name] = digest
+    if not {"equity", "drawdown"}.issubset(result):
+        raise ValueError("missing analytics artifacts")
+    return result
+
+
+def _load_hashed_json(path: Path, expected_hash: str) -> object:
+    raw = path.read_bytes()
+    if sha256(raw).hexdigest() != expected_hash:
+        raise ValueError("experiment artifact hash mismatch")
+    return json.loads(raw.decode("utf-8"))
+
+
+def _validated_equity_drawdown_curve(
+    equity: object,
+    drawdown: object,
+) -> list[dict[str, str]]:
+    if (
+        not isinstance(equity, list)
+        or not isinstance(drawdown, list)
+        or not equity
+        or len(equity) != len(drawdown)
+        or len(equity) > 5000
+    ):
+        raise ValueError("invalid analytics curve")
+    result: list[dict[str, str]] = []
+    previous_session = ""
+    peak = Decimal("0")
+    for equity_item, drawdown_item in zip(equity, drawdown, strict=True):
+        if not isinstance(equity_item, dict) or not isinstance(drawdown_item, dict):
+            raise ValueError("invalid analytics curve")
+        session = equity_item["session"]
+        equity_value = Decimal(equity_item["equity"])
+        drawdown_value = Decimal(drawdown_item["drawdown"])
+        peak = max(peak, equity_value)
+        expected_drawdown = equity_value / peak - 1
+        if (
+            not isinstance(session, str)
+            or session != drawdown_item.get("session")
+            or session <= previous_session
+            or not equity_value.is_finite()
+            or equity_value <= 0
+            or not drawdown_value.is_finite()
+            or drawdown_value < -1
+            or drawdown_value > 0
+            or drawdown_value != expected_drawdown
+        ):
+            raise ValueError("invalid analytics curve")
+        result.append(
+            {
+                "session": session,
+                "equity": str(equity_value),
+                "drawdown": str(drawdown_value),
+            }
+        )
+        previous_session = session
+    return result
 
 
 def _load_verified_market_dataset(path: Path | None) -> dict[str, object] | None:

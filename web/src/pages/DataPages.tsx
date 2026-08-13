@@ -2,6 +2,7 @@
 import type { ColumnsType } from 'antd/es/table'
 import type { OrderRow, PlatformSnapshot, PositionRow } from '../types'
 import { StatusTag } from '../components/StatusTag'
+import { EquityChart } from '../charts/EquityChart'
 
 const waiting = <Alert showIcon type="info" title="等待实时数据授权" description="适配器与回放链路已准备；当前未配置任何供应商令牌或真实连接。" />
 
@@ -41,9 +42,9 @@ export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
 }
 
 export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
-  const rows = [...(data?.experiments.experiments ?? [])].sort((left, right) => Number(right.metrics.sharpe ?? -999) - Number(left.metrics.sharpe ?? -999))
-  const leader = rows[0]
-  return <Page title="回测分析" subtitle="资金曲线、回撤、敞口、换手与成本"><Alert showIcon type="warning" title="探索性领先者，不是 Champion" description={leader ? `${leader.experiment_id}：测试期收益 ${leader.metrics.total_return}，Sharpe ${leader.metrics.sharpe}，最大回撤 ${leader.metrics.maximum_drawdown}` : '暂无已验证结果'} /><Card title="证据状态"><Typography.Text type="secondary">已有不可变资金曲线、回撤、成交、持仓、风险与日志产物；因当前样本池非 PIT 且缺少 PAPER/SHADOW 观察，禁止晋级。</Typography.Text></Card></Page>
+  const analytics = data?.backtestAnalytics
+  const leader = analytics?.leader
+  return <Page title="回测分析" subtitle="资金曲线、回撤、敞口、换手与成本"><Alert showIcon type="warning" title="探索性领先者，不是 Champion" description={leader ? `${leader.experiment_id}：测试窗 ${analytics?.split?.test_start ?? '—'} 至 ${analytics?.split?.test_end ?? '—'}，收益 ${formatPercent(leader.metrics.total_return)}，Sharpe ${formatNumber(leader.metrics.sharpe)}，最大回撤 ${formatPercent(leader.metrics.maximum_drawdown)}` : '暂无已验证结果'} /><Card title="已验证全期资金曲线与回撤"><EquityChart dark analytics={analytics} />{leader && <Descriptions values={[["测试窗平均敞口", formatPercent(leader.metrics.test_exposure)], ["测试窗换手", formatNumber(leader.metrics.test_turnover)], ["测试窗交易成本", formatPercent(leader.metrics.test_transaction_cost)]]} />}<Typography.Text type="secondary">图为完整模拟期，测试窗指标在上方单列。记录、资金曲线和回撤文件的哈希均已验证；当前样本池非 PIT，且缺少 PAPER/SHADOW 观察，禁止晋级。</Typography.Text></Card></Page>
 }
 
 export function PaperPage({ data }: { data: PlatformSnapshot | null }) {
@@ -81,4 +82,14 @@ function Descriptions({ values }: { values: [string, string][] }) {
 
 function Page({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return <Space orientation="vertical" size={18} style={{ width: '100%' }}><div><Typography.Title level={2}>{title}</Typography.Title><Typography.Text type="secondary">{subtitle}</Typography.Text></div>{children}</Space>
+}
+
+function formatNumber(value?: string) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed.toFixed(3) : '—'
+}
+
+function formatPercent(value?: string) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? `${(parsed * 100).toFixed(2)}%` : '—'
 }

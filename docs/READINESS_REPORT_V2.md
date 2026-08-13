@@ -57,13 +57,14 @@ npm --prefix web run build
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12 (latest
 AKShare amendment checkpoint):
 
-- 209 Python tests passed;
+- 211 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 86 source files;
 - no broken Python requirements;
 - Vitest, ESLint and Vite production build passed;
 - one external Starlette/httpx deprecation warning;
-- one non-blocking frontend chunk-size warning (approximately 983 kB minified).
+- one non-blocking frontend chunk-size warning (approximately 2.14 MB minified)
+  after enabling ECharts on the backtest page.
 
 ## Honest maturity limits
 
@@ -146,3 +147,10 @@ perturbations. Worst Sharpe is `-1.1429123433`, dispersion is `1.6703725093`,
 and at least one scenario has negative Sharpe. The artifact explicitly classifies itself as a
 post-rejection diagnostic that reuses observations, not a new independent test;
 it cannot alter the `NOT_ELIGIBLE` promotion result.
+
+The backtest-analysis page now renders the verified exploratory leader's 632
+full-period equity and drawdown points. The API verifies the comparison envelope,
+immutable experiment record, result hash, artifact hashes, chronology, numeric
+domains, and drawdown arithmetic before returning a curve. The UI keeps the
+2026 test-window metrics separate from the 2024-2026 full simulation curve and
+labels the result non-PIT, non-Champion and `NOT_ELIGIBLE`.

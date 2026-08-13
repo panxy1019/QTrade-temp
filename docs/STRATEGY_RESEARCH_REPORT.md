@@ -47,6 +47,15 @@ survivorship bias, so the result is diagnostic only and cannot be counted as a
 fresh held-out test or promotion evidence. Its signed envelope is verified by
 the API before the Chinese research page displays it.
 
+For visualization, the API selects the best exploratory Sharpe only from the
+verified comparison report and follows its evidence chain through the immutable
+experiment record and deterministic result hash to the equity and drawdown file
+hashes. It rechecks chronology, finite positive equity and each drawdown against
+the running equity peak before exposing the 632-point curve. The dashboard
+states that the chart is the full simulation period while the displayed return,
+Sharpe and maximum drawdown belong to the declared 2026 test window; neither is
+Champion or promotion evidence.
+
 Strategy health accepts a typed metric snapshot and currently enforces sample,
 Sharpe, drawdown, factor-drift, execution-deviation and staleness thresholds.
 HEALTHY, WATCH, DEGRADED and HALTED are distinct from the global capital kill

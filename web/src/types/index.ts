@@ -106,6 +106,18 @@ export interface RobustnessReport {
   }
 }
 
+export interface BacktestAnalytics {
+  classification: string
+  promotion: string
+  data_version?: string
+  git_commit?: string
+  leader: ResearchExperiment | null
+  split?: { test_start: string; test_end: string }
+  record_hash?: string
+  artifact_hashes?: { equity: string; drawdown: string }
+  curve: Array<{ session: string; equity: string; drawdown: string }>
+}
+
 export interface HistoricalDataset {
   provider: string
   provider_version: string
@@ -142,5 +154,6 @@ export interface PlatformSnapshot {
   experiments: ResearchReport
   walkForward: WalkForwardReport
   robustness: RobustnessReport
+  backtestAnalytics: BacktestAnalytics
   market: MarketStatus
 }

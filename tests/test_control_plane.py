@@ -8,7 +8,10 @@ from fastapi.testclient import TestClient
 
 from qtrade.accounting import Ledger
 from qtrade.api import ApiAuthConfig, AppContext, context_from_runtime, create_app
-from qtrade.api.app import _load_verified_robustness_report
+from qtrade.api.app import (
+    _load_verified_backtest_analytics,
+    _load_verified_robustness_report,
+)
 from qtrade.audit import AuditLog
 from qtrade.control import PlatformRuntime
 from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
@@ -435,6 +438,92 @@ def test_robustness_endpoint_rejects_malformed_parameter_overrides(tmp_path):
         encoding="utf-8",
     )
     assert _load_verified_robustness_report(target) is None
+
+
+def test_backtest_analytics_verifies_comparison_record_and_curve_hashes(tmp_path):
+    experiment_id = "verified-leader"
+    root = tmp_path / "experiments"
+    artifacts = root / f"{experiment_id}-artifacts"
+    artifacts.mkdir(parents=True)
+    equity = [
+        {"session": "2026-01-02", "equity": "100000"},
+        {"session": "2026-01-05", "equity": "99000"},
+    ]
+    drawdown = [
+        {"session": "2026-01-02", "drawdown": "0"},
+        {"session": "2026-01-05", "drawdown": "-0.01"},
+    ]
+    artifact_hashes = {}
+    for name, payload in (("equity", equity), ("drawdown", drawdown)):
+        target = artifacts / f"{name}.json"
+        target.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        artifact_hashes[name] = sha256(target.read_bytes()).hexdigest()
+    metrics = {"sharpe": "0.2", "total_return": "0.01"}
+    record = {
+        "experiment_id": experiment_id,
+        "data_version": "bars-v1",
+        "git_commit": "abc123",
+        "metrics": metrics,
+        "split": {"test_start": "2026-01-01", "test_end": "2026-01-31"},
+        "artifacts": [f"{name}:{digest}" for name, digest in artifact_hashes.items()],
+    }
+    canonical_record = json.dumps(record, sort_keys=True, separators=(",", ":"))
+    record_hash = sha256(canonical_record.encode()).hexdigest()
+    (root / f"{experiment_id}.json").write_text(
+        json.dumps({"spec_hash": record_hash, "record": record}), encoding="utf-8"
+    )
+    result_payload = {
+        "artifact_manifest": tuple(sorted(artifact_hashes.items())),
+        "metrics": tuple(sorted((key, Decimal(value)) for key, value in metrics.items())),
+        "record_hash": record_hash,
+        "strategy_id": experiment_id,
+    }
+    result_hash = sha256(
+        json.dumps(
+            result_payload, sort_keys=True, separators=(",", ":"), default=str
+        ).encode()
+    ).hexdigest()
+    report = {
+        "classification": "exploratory_noncommercial_current_universe_not_pit",
+        "data_version": "bars-v1",
+        "git_commit": "abc123",
+        "promotion": "NOT_ELIGIBLE",
+        "experiments": [{
+            "experiment_id": experiment_id,
+            "spec_hash": "f" * 64,
+            "result_hash": result_hash,
+            "metrics": metrics,
+            "scenario_type": "SENSITIVITY",
+        }],
+    }
+    canonical_report = json.dumps(report, sort_keys=True, separators=(",", ":"))
+    comparison = tmp_path / "comparison.json"
+    comparison.write_text(
+        json.dumps({"sha256": sha256(canonical_report.encode()).hexdigest(), "report": report}),
+        encoding="utf-8",
+    )
+    verified = _load_verified_backtest_analytics(comparison, root)
+    assert verified is not None
+    assert verified["leader"]["experiment_id"] == experiment_id
+    assert verified["curve"][-1]["drawdown"] == "-0.01"
+    (artifacts / "equity.json").write_text("[]", encoding="utf-8")
+    assert _load_verified_backtest_analytics(comparison, root) is None
+
+
+def test_backtest_curve_rejects_drawdown_inconsistent_with_equity():
+    from qtrade.api.app import _validated_equity_drawdown_curve
+
+    with pytest.raises(ValueError, match="invalid analytics curve"):
+        _validated_equity_drawdown_curve(
+            [
+                {"session": "2026-01-02", "equity": "100"},
+                {"session": "2026-01-05", "equity": "90"},
+            ],
+            [
+                {"session": "2026-01-02", "drawdown": "0"},
+                {"session": "2026-01-05", "drawdown": "0"},
+            ],
+        )
 
 
 def test_daily_report_history_exposes_verified_summary(tmp_path):
