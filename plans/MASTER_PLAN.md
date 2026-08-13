@@ -43,7 +43,8 @@ Reproduce: `python -m pytest`
 
 Known limitations: the SQLite checkpoint is single-process rather than
 distributed exactly-once. Uncertain fill replay blocks for reconciliation.
-Audit chaining is tamper-evident but not externally/WORM anchored.
+The optional JSONL audit sink is hash-chained but not externally/WORM anchored;
+the operational SQLite audit table is durable and schema-validated, not hash-chained.
 
 ### M2 — Versioned data and instrument foundation (contracts complete; adapters in progress)
 
@@ -150,6 +151,10 @@ end-of-day generation remains backlog because exact data and strategy versions
 must come from trusted runtime configuration, not caller-supplied strings.
 Report scans are bounded by directory count, artifact bytes and identity/version
 field sizes so periodic dashboard polling cannot amplify malformed report data.
+Audit reads now use a bounded, chronological SQLite journal view rather than the
+process-local `AuditLog` cache. Restart regressions prove both the control-plane
+history and daily incident summaries retain durable events; report assembly is
+performed under the account-wide dispatch gate to avoid a half-applied fill.
 Remaining: external identity/TLS integration, Prometheus export and richer alert
 routing. Keep server loopback-only until those are reviewed.
 

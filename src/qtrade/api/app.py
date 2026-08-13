@@ -23,7 +23,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from qtrade.accounting import Ledger
-from qtrade.audit import AuditLog
+from qtrade.audit import AuditEvent, AuditLog
 from qtrade.control import PlatformRuntime
 from qtrade.domain import CancelCommand, Order, OrderStatus, RuntimeMode
 from qtrade.execution import FeeSchedule, PaperGateway
@@ -87,6 +87,7 @@ class AppContext:
     sellable_quantity_reader: Callable[[str, date], int] | None = None
     operational_date: date | None = None
     operational_gate: Any = None
+    audit_reader: Callable[[int], tuple[AuditEvent, ...]] | None = None
 
 
 def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
@@ -341,6 +342,16 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
     def audit(
         _: str = Depends(_require_role(Role.READ, auth_config)),
     ) -> list[dict[str, object]]:
+        try:
+            events = (
+                state.audit.events[-500:]
+                if state.audit_reader is None
+                else state.audit_reader(500)
+            )
+        except (OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
+            raise HTTPException(
+                status_code=503, detail="durable audit history unavailable"
+            ) from exc
         return [
             {
                 "timestamp": event.timestamp.isoformat(),
@@ -349,7 +360,7 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
                 "message": event.message,
                 "order_id": event.order_id,
             }
-            for event in state.audit.events
+            for event in events
         ]
 
     @app.get("/reports")
@@ -497,6 +508,7 @@ def context_from_runtime(bundle: object) -> AppContext:
         applied_trade_reader=bundle.journal.applied_trade_payloads,
         sellable_quantity_reader=bundle.sellability.sellable_quantity,
         operational_gate=bundle.risk.dispatch_gate,
+        audit_reader=bundle.journal.recent_audit_events,
     )
 
 

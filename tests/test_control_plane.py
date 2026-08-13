@@ -1,4 +1,5 @@
 import json
+import sqlite3
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from hashlib import sha256
@@ -22,7 +23,7 @@ from qtrade.api.app import (
     _validated_backtest_positions,
     _validated_backtest_trades,
 )
-from qtrade.audit import AuditLog
+from qtrade.audit import AuditEvent, AuditLog
 from qtrade.control import PlatformRuntime
 from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
 from qtrade.execution import FeeSchedule
@@ -108,6 +109,50 @@ def test_control_events_are_auditable():
     api.post("/system/start", headers=headers, json={})
     events = api.get("/audit").json()
     assert events[-1]["event_type"] == "SYSTEM_START"
+
+
+def test_audit_endpoint_reads_bounded_durable_history_after_restart(tmp_path):
+    journal_path = tmp_path / "runtime.db"
+    first = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("100000"),
+        limits=RiskLimits(Decimal("50000"), 10000, Decimal("100000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=journal_path,
+    )
+    first.audit.record(
+        AuditEvent(
+            event_type="DURABLE_TEST",
+            service="test",
+            message="persisted",
+        )
+    )
+    restarted = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("100000"),
+        limits=RiskLimits(Decimal("50000"), 10000, Decimal("100000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=journal_path,
+    )
+    response = TestClient(create_app(context_from_runtime(restarted))).get("/audit")
+    assert response.status_code == 200
+    assert response.json()[-1]["event_type"] == "DURABLE_TEST"
+
+
+def test_audit_endpoint_fails_closed_on_corrupt_durable_row(tmp_path):
+    journal_path = tmp_path / "runtime.db"
+    bundle = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("100000"),
+        limits=RiskLimits(Decimal("50000"), 10000, Decimal("100000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=journal_path,
+    )
+    bundle.audit.record(AuditEvent(event_type="TEST", service="test", message="valid"))
+    with sqlite3.connect(journal_path) as connection:
+        connection.execute("UPDATE audit_events SET severity='FORGED'")
+    response = TestClient(create_app(context_from_runtime(bundle))).get("/audit")
+    assert response.status_code == 503
 
 
 def test_required_read_surfaces_exist():

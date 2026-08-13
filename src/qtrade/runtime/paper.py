@@ -56,6 +56,24 @@ class PaperRuntimeBundle:
         report_root: Path,
         generated_at: datetime | None = None,
     ) -> tuple[Path, str]:
+        with self.risk.dispatch_gate:
+            return self._generate_daily_report(
+                trading_day=trading_day,
+                data_version=data_version,
+                strategy_versions=strategy_versions,
+                report_root=report_root,
+                generated_at=generated_at,
+            )
+
+    def _generate_daily_report(
+        self,
+        *,
+        trading_day: date,
+        data_version: str,
+        strategy_versions: tuple[str, ...],
+        report_root: Path,
+        generated_at: datetime | None,
+    ) -> tuple[Path, str]:
         timestamp = generated_at or datetime.now(UTC)
         positions: tuple[dict[str, object], ...] = tuple(
             {
@@ -75,8 +93,7 @@ class PaperRuntimeBundle:
         )
         incidents = tuple(
             event.message
-            for event in self.audit.events
-            if event.timestamp.date() == trading_day and event.severity in {"ERROR", "CRITICAL"}
+            for event in self.journal.audit_incidents_for_day(trading_day, limit=1000)
         )
         realized = sum(
             (position.realized_pnl for position in self.ledger.account.positions.values()),

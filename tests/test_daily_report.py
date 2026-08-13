@@ -4,6 +4,7 @@ from decimal import Decimal
 
 import pytest
 
+from qtrade.audit import AuditEvent
 from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
 from qtrade.execution import FeeSchedule
 from qtrade.reporting import DailyPaperReport, DailyReportStore
@@ -80,6 +81,15 @@ def test_runtime_generates_traceable_daily_report(tmp_path):
         fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
         journal_path=journal_path,
     )
+    restarted.audit.record(
+        AuditEvent(
+            event_type="POST_RESTART_INCIDENT",
+            service="test",
+            severity="ERROR",
+            message="durable incident",
+            timestamp=datetime(2026, 8, 12, 15, 45, tzinfo=UTC),
+        )
+    )
     restarted_path, _ = restarted.generate_daily_report(
         trading_day=date(2026, 8, 12),
         data_version="ticks-v1",
@@ -89,3 +99,4 @@ def test_runtime_generates_traceable_daily_report(tmp_path):
     )
     restored = json.loads(restarted_path.read_text(encoding="utf-8"))
     assert restored["report"]["trades"] == first["report"]["trades"]
+    assert restored["report"]["incidents"] == ["durable incident"]

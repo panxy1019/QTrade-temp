@@ -7,14 +7,18 @@ import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from threading import Lock
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 from qtrade.audit import AuditEvent
 
 _PROCESS_OWNER_TOKEN = str(uuid4())
+_AUDIT_SEVERITIES = {"INFO", "WARNING", "ERROR", "CRITICAL"}
+_MAX_AUDIT_FIELD_LENGTH = 1024
+_CHINA_ZONE = ZoneInfo("Asia/Shanghai")
 
 
 def _process_is_alive(process_id: int) -> bool:
@@ -309,6 +313,119 @@ class SQLiteOperationalJournal:
                     payload,
                 ),
             )
+
+    def recent_audit_events(self, limit: int = 500) -> tuple[AuditEvent, ...]:
+        """Return a bounded chronological view of the durable audit journal."""
+        if isinstance(limit, bool) or not 1 <= limit <= 1000:
+            raise ValueError("audit read limit must be between 1 and 1000")
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT timestamp,event_type,service,severity,order_id,payload "
+                "FROM (SELECT sequence,timestamp,event_type,service,severity,order_id,payload "
+                "FROM audit_events ORDER BY sequence DESC LIMIT ?) "
+                "ORDER BY sequence",
+                (limit,),
+            ).fetchall()
+        return self._deserialize_audit_rows(rows)
+
+    def audit_incidents_for_day(
+        self, trading_day: date, limit: int = 1000
+    ) -> tuple[AuditEvent, ...]:
+        """Return bounded ERROR/CRITICAL events for one Asia/Shanghai report day."""
+        if isinstance(limit, bool) or not 1 <= limit <= 1000:
+            raise ValueError("audit incident limit must be between 1 and 1000")
+        start = datetime.combine(trading_day, datetime.min.time(), tzinfo=_CHINA_ZONE)
+        end = start + timedelta(days=1)
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT timestamp,event_type,service,severity,order_id,payload "
+                "FROM audit_events WHERE julianday(timestamp) IS NULL OR "
+                "(julianday(timestamp)>=julianday(?) "
+                "AND julianday(timestamp)<julianday(?)) "
+                "ORDER BY sequence LIMIT 10001",
+                (
+                    start.astimezone(UTC).isoformat(),
+                    end.astimezone(UTC).isoformat(),
+                ),
+            ).fetchall()
+        if len(rows) > 10000:
+            raise ValueError("daily audit event scan limit exceeded")
+        events = self._deserialize_audit_rows(rows)
+        incidents = tuple(
+            event for event in events if event.severity in {"ERROR", "CRITICAL"}
+        )
+        if len(incidents) > limit:
+            raise ValueError("daily audit incident limit exceeded")
+        return incidents
+
+    @staticmethod
+    def _deserialize_audit_rows(rows: list[tuple[object, ...]]) -> tuple[AuditEvent, ...]:
+        events: list[AuditEvent] = []
+        for timestamp, event_type, service, severity, order_id, payload_json in rows:
+            if not (
+                isinstance(timestamp, str)
+                and timestamp
+                and isinstance(event_type, str)
+                and event_type
+                and isinstance(service, str)
+                and service
+                and isinstance(severity, str)
+                and severity
+            ):
+                raise ValueError("durable audit identity fields must be nonempty strings")
+            required = (timestamp, event_type, service, severity)
+            if not all(len(value) <= _MAX_AUDIT_FIELD_LENGTH for value in required):
+                raise ValueError("durable audit identity field is too long")
+            if severity not in _AUDIT_SEVERITIES:
+                raise ValueError("durable audit severity is invalid")
+            timestamp_text = timestamp
+            event_type_text = event_type
+            service_text = service
+            severity_text = severity
+            parsed_timestamp = datetime.fromisoformat(timestamp_text)
+            if parsed_timestamp.tzinfo is None:
+                raise ValueError("durable audit timestamp must be timezone-aware")
+            if order_id is not None and (
+                not isinstance(order_id, str)
+                or not order_id
+                or len(order_id) > _MAX_AUDIT_FIELD_LENGTH
+            ):
+                raise ValueError("durable audit order id is invalid")
+            if not isinstance(payload_json, str):
+                raise ValueError("durable audit payload must be JSON text")
+            payload = json.loads(payload_json)
+            if not isinstance(payload, dict):
+                raise ValueError("durable audit payload must be an object")
+            if set(payload) != {"message", "strategy_id", "portfolio_id"}:
+                raise ValueError("durable audit payload schema is invalid")
+            message = payload["message"]
+            if (
+                not isinstance(message, str)
+                or not message
+                or len(message) > _MAX_AUDIT_FIELD_LENGTH
+            ):
+                raise ValueError("durable audit message is invalid")
+            for field in ("strategy_id", "portfolio_id"):
+                value = payload[field]
+                if value is not None and (
+                    not isinstance(value, str)
+                    or not value
+                    or len(value) > _MAX_AUDIT_FIELD_LENGTH
+                ):
+                    raise ValueError(f"durable audit {field} is invalid")
+            events.append(
+                AuditEvent(
+                    event_type=event_type_text,
+                    message=message,
+                    service=service_text,
+                    severity=severity_text,
+                    strategy_id=payload["strategy_id"],
+                    portfolio_id=payload["portfolio_id"],
+                    order_id=order_id,
+                    timestamp=parsed_timestamp,
+                )
+            )
+        return tuple(events)
 
     def save_state(self, state_key: str, payload: dict[str, object]) -> None:
         self.save_states({state_key: payload})

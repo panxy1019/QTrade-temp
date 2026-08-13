@@ -1,4 +1,5 @@
-from datetime import UTC, datetime
+import sqlite3
+from datetime import UTC, date, datetime
 
 import pytest
 
@@ -39,6 +40,80 @@ def test_sqlite_journal_rejects_fill_key_conflict_and_persists_audit(tmp_path):
             timestamp=datetime(2026, 8, 12, tzinfo=UTC),
         )
     )
+    events = SQLiteOperationalJournal(tmp_path / "runtime.db").recent_audit_events()
+    assert [(event.event_type, event.message) for event in events] == [("TEST", "durable")]
+
+
+def test_sqlite_audit_reader_is_bounded_and_chronological(tmp_path):
+    journal = SQLiteOperationalJournal(tmp_path / "runtime.db")
+    for index in range(3):
+        journal.append(
+            AuditEvent(
+                event_type=f"TEST_{index}",
+                service="test",
+                message=str(index),
+                timestamp=datetime(2026, 8, 12, index, tzinfo=UTC),
+            )
+        )
+    assert [event.message for event in journal.recent_audit_events(2)] == ["1", "2"]
+    with pytest.raises(ValueError, match="between 1 and 1000"):
+        journal.recent_audit_events(1001)
+
+
+def test_sqlite_daily_incidents_are_filtered_before_the_bound(tmp_path):
+    journal = SQLiteOperationalJournal(tmp_path / "runtime.db")
+    for index in range(4):
+        journal.append(
+            AuditEvent(
+                event_type=f"INFO_{index}",
+                service="test",
+                message="noise",
+                timestamp=datetime(2026, 8, 12, index, tzinfo=UTC),
+            )
+        )
+    journal.append(
+        AuditEvent(
+            event_type="INCIDENT",
+            service="test",
+            severity="ERROR",
+            message="kept",
+            timestamp=datetime(2026, 8, 12, 5, tzinfo=UTC),
+        )
+    )
+    assert [
+        event.message for event in journal.audit_incidents_for_day(date(2026, 8, 12), 1)
+    ] == ["kept"]
+
+
+def test_sqlite_daily_incidents_use_shanghai_day_boundary(tmp_path):
+    journal = SQLiteOperationalJournal(tmp_path / "runtime.db")
+    journal.append(
+        AuditEvent(
+            event_type="INCIDENT",
+            service="test",
+            severity="ERROR",
+            message="shanghai-day",
+            timestamp=datetime(2026, 8, 11, 16, 30, tzinfo=UTC),
+        )
+    )
+    assert [
+        event.message for event in journal.audit_incidents_for_day(date(2026, 8, 12))
+    ] == ["shanghai-day"]
+
+
+def test_sqlite_audit_reader_rejects_corrupt_payload_schema(tmp_path):
+    path = tmp_path / "runtime.db"
+    journal = SQLiteOperationalJournal(path)
+    journal.append(
+        AuditEvent(event_type="TEST", service="test", message="valid")
+    )
+    with sqlite3.connect(path) as connection:
+        connection.execute(
+            "UPDATE audit_events SET payload=?",
+            ('{"message":{"forged":1},"portfolio_id":null,"strategy_id":null}',),
+        )
+    with pytest.raises(ValueError, match="message is invalid"):
+        journal.recent_audit_events()
 
 
 def test_sqlite_runtime_snapshots_commit_as_one_transaction(tmp_path):

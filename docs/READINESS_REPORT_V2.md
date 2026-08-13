@@ -73,8 +73,9 @@ AKShare amendment checkpoint):
   vendor UAT.
 - The broker package is a read-only protocol only. Candidate native gateways need
   the selected broker, sandbox and ABI-isolated environment.
-- SQLite is deliberately single-process; audit hashes lack an external/WORM tail
-  anchor.
+- SQLite is deliberately single-process. Its operational audit table is durable
+  and strictly schema-validated but is not hash-chained or externally/WORM anchored;
+  the optional JSONL sink provides only local tamper evidence.
 - TradingRule stores sourced/effective lot, step, tick and price-limit fields, but
   the full A-share execution semantics (instrument suspension/resumption, price
   cages/no-limit periods, STAR/ChiNext quantity nuances and odd-lot liquidation)
@@ -129,7 +130,15 @@ AKShare amendment checkpoint):
   omitted because this artifact set lacks the daily series/configuration needed
   for independent recomputation.
 - Daily reports are runtime-generated, hash-verified, and use trades persisted in
-  the atomic fill journal across restart. Automatic scheduling is not wired.
+  the atomic fill journal across restart. Incident summaries now read the same
+  durable SQLite audit journal, and report assembly holds the PAPER dispatch
+  gate. Automatic scheduling is not wired because a trusted completed-session
+  boundary is not yet available.
+- The control-plane audit view is bounded to the latest 500 durable events and
+  retains chronological history across process reconstruction. This is still a
+  local durable journal. Corrupt rows make the view unavailable rather than being
+  coerced into plausible events, but the SQLite table is not tamper-evident and
+  still lacks an external/WORM anchor.
 - The control plane remains loopback-only; non-loopback deployment requires read
   authentication, operator identity, TLS/proxy, pagination/rate/body limits and
   security headers.

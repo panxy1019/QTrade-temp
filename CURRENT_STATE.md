@@ -12,7 +12,7 @@ Last updated: 2026-08-13
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 223 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 229 tests passed, Ruff clean, strict mypy clean across
   86 source files on Python 3.14.6 (2026-08-13); 15 frontend Vitest tests,
   ESLint and the production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -22,8 +22,9 @@ Last updated: 2026-08-13
   with NumPy 2.4.6 is now installed; `pip check` and Python 3.11-targeted strict
   mypy pass.
 - Known limitations: the local SQLite runtime is single-process and does not
-  claim distributed exactly-once semantics; audit hashes lack an external/WORM
-  tail anchor; matching is deliberately simple; licensed realtime data, native
+  claim distributed exactly-once semantics; its durable audit rows are strictly
+  schema-validated but are not hash-chained or externally/WORM anchored; matching
+  is deliberately simple; licensed realtime data, native
   vn.py and broker adapters require external provider/broker selection.
 - vn.py: core 4.4.0 selected behind adapters; native broker wheels require a
   separate broker-specific Python ABI after the user selects a broker.
@@ -109,6 +110,10 @@ Last updated: 2026-08-13
   enabled yet. Scans are bounded to 366 files, 4 MiB per artifact and bounded
   identity/version fields to prevent the five-second dashboard poll from
   amplifying oversized or unbounded report directories.
+- Durable audit observability: `/audit` now reads the most recent 500 events
+  from the SQLite audit journal in chronological order, so restart no longer
+  erases visible control/risk history. Daily incident summaries use the same
+  durable source, and report assembly is serialized with PAPER mutations.
 - Selection-bias guard: the backtest page now places that exploratory positive
   leader beside all three disjoint held-out walk-forward folds. All three folds
   lost money (aggregate return `-20.4412%`, Sharpe `-1.1005`, fold pass ratio
