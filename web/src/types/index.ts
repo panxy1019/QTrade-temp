@@ -166,7 +166,17 @@ export interface HistoricalBarRow {
   close: string
   volume: string
   data_version: string
-  observation_type: 'HISTORICAL_DAILY_CLOSE'
+  observation_type: 'HISTORICAL_DAILY_CLOSE' | 'HISTORICAL_DAILY_BAR'
+}
+
+export interface HistoricalBarSeries {
+  symbol: string
+  data_version: string | null
+  dataset_checksum: string | null
+  observation_type: 'HISTORICAL_DAILY_BAR_SERIES'
+  total_count: number
+  truncated: boolean
+  bars: HistoricalBarRow[]
 }
 
 export interface PlatformSnapshot {

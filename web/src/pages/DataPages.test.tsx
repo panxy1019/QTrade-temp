@@ -1,9 +1,19 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { PlatformSnapshot } from '../types'
 import { BacktestPage, DataCenterPage, MarketPage, ResearchPage } from './DataPages'
 
 vi.mock('echarts-for-react', () => ({ default: () => <div data-testid="equity-chart" /> }))
+vi.mock('../api/client', () => ({
+  loadHistoricalBarSeries: vi.fn(async (symbol: string) => ({
+    symbol, data_version: 'akshare-bars-v1', dataset_checksum: 'abc', observation_type: 'HISTORICAL_DAILY_BAR_SERIES',
+    total_count: 2, truncated: false,
+    bars: [
+      { symbol, exchange: 'SSE', timestamp: '2026-08-11T15:00:00+08:00', trading_day: '2026-08-11', open: '4', high: '4.2', low: '3.9', close: '4.1', volume: '100', data_version: 'akshare-bars-v1', observation_type: 'HISTORICAL_DAILY_BAR' },
+      { symbol, exchange: 'SSE', timestamp: '2026-08-12T15:00:00+08:00', trading_day: '2026-08-12', open: '4.1', high: '4.3', low: '4', close: '4.2', volume: '200', data_version: 'akshare-bars-v1', observation_type: 'HISTORICAL_DAILY_BAR' },
+    ],
+  })),
+}))
 
 const data = {
   market: {
@@ -82,7 +92,7 @@ const data = {
 } as unknown as PlatformSnapshot
 
 describe('verified historical data pages', () => {
-  it('shows verified history without claiming realtime readiness', () => {
+  it('shows verified history without claiming realtime readiness', async () => {
     render(<MarketPage data={data} />)
     expect(screen.getByText('已验证历史数据：AKShare 1.18.84')).toBeInTheDocument()
     expect(screen.getByText(/18960 根日线/)).toBeInTheDocument()
@@ -91,6 +101,8 @@ describe('verified historical data pages', () => {
     expect(screen.getByText('510300')).toBeInTheDocument()
     expect(screen.getByText('200,000,000')).toBeInTheDocument()
     expect(screen.queryByText('Bid')).not.toBeInTheDocument()
+    expect(await screen.findByText(/2\/2 个完整交易日/)).toBeInTheDocument()
+    expect(screen.getByText(/图表来自同一 checksum 绑定的历史 Parquet/)).toBeInTheDocument()
   })
 
   it('filters verified historical rows without inventing snapshots', () => {
@@ -99,6 +111,15 @@ describe('verified historical data pages', () => {
     fireEvent.change(screen.getByPlaceholderText('搜索 ETF 代码'), { target: { value: '510500' } })
     expect(screen.queryByText('510300')).not.toBeInTheDocument()
     expect(screen.getByText(/暂无校验通过的历史日线/)).toBeInTheDocument()
+  })
+
+  it('removes the chart immediately when verified evidence disappears', async () => {
+    cleanup()
+    const view = render(<MarketPage data={data} />)
+    expect(await screen.findByText(/2\/2 个完整交易日/)).toBeInTheDocument()
+    view.rerender(<MarketPage data={{ ...data, market: { ...data.market, historical: null }, historicalBars: [] }} />)
+    await waitFor(() => expect(screen.queryByText(/2\/2 个完整交易日/)).not.toBeInTheDocument())
+    expect(screen.getByText('暂无校验通过的历史 K 线')).toBeInTheDocument()
   })
 
   it('keeps provider connectivity separate from execution gateway health', () => {

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections import deque
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
@@ -32,6 +33,7 @@ _MAX_MARKET_PARQUET_BYTES = 64 * 1024 * 1024
 _MAX_MARKET_PARQUET_ROWS = 2_000_000
 _MAX_MARKET_PARQUET_ROW_GROUPS = 1024
 _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
+_MAX_HISTORICAL_SERIES_ROWS = 2000
 
 
 class Role(StrEnum):
@@ -215,6 +217,44 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             expected_bar_count=dataset["bar_count"],
             expected_observed_end=dataset["observed_end"],
         )
+
+    @app.get("/historical-bars/{symbol}")
+    def historical_bar_series(
+        symbol: str,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_market_dataset(state.historical_manifest_path)
+        empty: dict[str, object] = {
+            "symbol": symbol,
+            "data_version": None,
+            "dataset_checksum": None,
+            "observation_type": "HISTORICAL_DAILY_BAR_SERIES",
+            "total_count": 0,
+            "truncated": False,
+            "bars": [],
+        }
+        if dataset is None:
+            return empty
+        series = _load_historical_bar_series(
+            state.historical_manifest_path,
+            symbol=symbol,
+            data_version=str(dataset["data_version"]),
+            expected_checksum=str(dataset["checksum"]),
+            expected_universe=dataset["universe"],
+            expected_bar_count=dataset["bar_count"],
+        )
+        if series is None:
+            return empty
+        bars, total_count = series
+        return {
+            "symbol": symbol,
+            "data_version": dataset["data_version"],
+            "dataset_checksum": dataset["checksum"],
+            "observation_type": "HISTORICAL_DAILY_BAR_SERIES",
+            "total_count": total_count,
+            "truncated": total_count > len(bars),
+            "bars": bars,
+        }
 
     @app.get("/strategies")
     def strategies(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
@@ -940,26 +980,12 @@ def _load_latest_historical_bars(
         if observed_end.tzinfo is None:
             return []
         expected_latest_day = observed_end.astimezone(ZoneInfo("Asia/Shanghai")).date().isoformat()
-        content = _read_bounded_file(
-            manifest_path.parent / "bars.parquet", _MAX_MARKET_PARQUET_BYTES
+        parquet = _open_verified_market_parquet(
+            manifest_path,
+            expected_checksum=expected_checksum,
+            expected_bar_count=expected_bar_count,
         )
-        if content is None:
-            return []
-        if sha256(content).hexdigest() != expected_checksum:
-            return []
-        source = pa.BufferReader(content)
-        parquet = pq.ParquetFile(source)
-        metadata = parquet.metadata
-        uncompressed_bytes = sum(
-            metadata.row_group(index).total_byte_size
-            for index in range(metadata.num_row_groups)
-        )
-        if (
-            metadata.num_rows != expected_bar_count
-            or metadata.num_rows > _MAX_MARKET_PARQUET_ROWS
-            or metadata.num_row_groups > _MAX_MARKET_PARQUET_ROW_GROUPS
-            or uncompressed_bytes > _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES
-        ):
+        if parquet is None:
             return []
         latest: dict[str, dict[str, str]] = {}
         latest_instants: dict[str, datetime] = {}
@@ -982,58 +1008,11 @@ def _load_latest_historical_bars(
             for raw in batch.to_pylist()
         )
         for raw in rows:
-            symbol = raw.get("symbol")
-            exchange = raw.get("exchange")
-            timestamp = raw.get("timestamp")
-            row_data_version = raw.get("data_version")
-            if (
-                not isinstance(symbol, str)
-                or symbol not in allowed
-                or exchange not in {"SSE", "SZSE"}
-                or not isinstance(timestamp, str)
-                or row_data_version != data_version
-            ):
+            validated = _validated_historical_bar(raw, data_version, allowed)
+            if validated is None:
                 return []
-            trading_day_value = raw.get("trading_day")
-            trading_day = (
-                trading_day_value.isoformat()
-                if hasattr(trading_day_value, "isoformat")
-                else str(trading_day_value)
-            )
-            parsed_timestamp = datetime.fromisoformat(timestamp)
-            if parsed_timestamp.tzinfo is None:
-                return []
-            date.fromisoformat(trading_day)
-            local_trading_day = (
-                parsed_timestamp.astimezone(ZoneInfo("Asia/Shanghai")).date().isoformat()
-            )
-            if local_trading_day != trading_day:
-                return []
-            values = {
-                name: Decimal(str(raw.get(name)))
-                for name in ("open", "high", "low", "close", "volume")
-            }
-            if (
-                any(not value.is_finite() for value in values.values())
-                or any(values[name] <= 0 for name in ("open", "high", "low", "close"))
-                or values["volume"] < 0
-                or values["low"] > min(values["open"], values["close"])
-                or values["high"] < max(values["open"], values["close"])
-            ):
-                return []
-            candidate = {
-                "symbol": symbol,
-                "exchange": exchange,
-                "timestamp": timestamp,
-                "trading_day": trading_day,
-                "open": str(values["open"]),
-                "high": str(values["high"]),
-                "low": str(values["low"]),
-                "close": str(values["close"]),
-                "volume": str(values["volume"]),
-                "data_version": data_version,
-                "observation_type": "HISTORICAL_DAILY_CLOSE",
-            }
+            candidate, parsed_timestamp = validated
+            symbol = candidate["symbol"]
             previous = latest.get(symbol)
             previous_instant = latest_instants.get(symbol)
             if previous is None or previous_instant is None or parsed_timestamp > previous_instant:
@@ -1046,6 +1025,170 @@ def _load_latest_historical_bars(
         return [latest[symbol] for symbol in symbols]
     except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
         return []
+
+
+def _load_historical_bar_series(
+    manifest_path: Path | None,
+    *,
+    symbol: str,
+    data_version: str,
+    expected_checksum: str,
+    expected_universe: object,
+    expected_bar_count: object,
+) -> tuple[list[dict[str, str]], int] | None:
+    if manifest_path is None or not isinstance(expected_universe, dict):
+        return None
+    symbols = expected_universe.get("symbols")
+    if (
+        not isinstance(symbols, list)
+        or not all(isinstance(value, str) for value in symbols)
+        or len(set(symbols)) != len(symbols)
+        or symbol not in symbols
+        or not isinstance(expected_bar_count, int)
+        or expected_bar_count <= 0
+    ):
+        return None
+    try:
+        parquet = _open_verified_market_parquet(
+            manifest_path,
+            expected_checksum=expected_checksum,
+            expected_bar_count=expected_bar_count,
+        )
+        if parquet is None:
+            return None
+        allowed = set(symbols)
+        selected: deque[dict[str, str]] = deque(maxlen=_MAX_HISTORICAL_SERIES_ROWS)
+        previous_instants: dict[str, datetime] = {}
+        previous_days: dict[str, str] = {}
+        total_count = 0
+        columns = [
+            "symbol",
+            "exchange",
+            "timestamp",
+            "trading_day",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "data_version",
+        ]
+        for batch in parquet.iter_batches(batch_size=8192, columns=columns):
+            for raw in batch.to_pylist():
+                validated = _validated_historical_bar(raw, data_version, allowed)
+                if validated is None:
+                    return None
+                candidate, instant = validated
+                candidate_symbol = candidate["symbol"]
+                previous_instant = previous_instants.get(candidate_symbol)
+                previous_day = previous_days.get(candidate_symbol)
+                if (
+                    previous_instant is not None
+                    and (
+                        instant <= previous_instant
+                        or candidate["trading_day"] <= str(previous_day)
+                    )
+                ):
+                    return None
+                previous_instants[candidate_symbol] = instant
+                previous_days[candidate_symbol] = candidate["trading_day"]
+                if candidate["symbol"] == symbol:
+                    total_count += 1
+                    selected.append(candidate)
+        if total_count == 0:
+            return None
+        bars = [
+            {**candidate, "observation_type": "HISTORICAL_DAILY_BAR"}
+            for candidate in selected
+        ]
+        return bars, total_count
+    except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
+        return None
+
+
+def _open_verified_market_parquet(
+    manifest_path: Path,
+    *,
+    expected_checksum: str,
+    expected_bar_count: int,
+) -> pq.ParquetFile | None:
+    content = _read_bounded_file(
+        manifest_path.parent / "bars.parquet", _MAX_MARKET_PARQUET_BYTES
+    )
+    if content is None or sha256(content).hexdigest() != expected_checksum:
+        return None
+    parquet = pq.ParquetFile(pa.BufferReader(content))
+    metadata = parquet.metadata
+    uncompressed_bytes = sum(
+        metadata.row_group(index).total_byte_size for index in range(metadata.num_row_groups)
+    )
+    if (
+        metadata.num_rows != expected_bar_count
+        or metadata.num_rows > _MAX_MARKET_PARQUET_ROWS
+        or metadata.num_row_groups > _MAX_MARKET_PARQUET_ROW_GROUPS
+        or uncompressed_bytes > _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES
+    ):
+        return None
+    return parquet
+
+
+def _validated_historical_bar(
+    raw: dict[str, object], data_version: str, allowed: set[str]
+) -> tuple[dict[str, str], datetime] | None:
+    symbol = raw.get("symbol")
+    exchange = raw.get("exchange")
+    timestamp = raw.get("timestamp")
+    if (
+        not isinstance(symbol, str)
+        or symbol not in allowed
+        or exchange not in {"SSE", "SZSE"}
+        or not isinstance(timestamp, str)
+        or raw.get("data_version") != data_version
+    ):
+        return None
+    trading_day_value = raw.get("trading_day")
+    trading_day = (
+        trading_day_value.isoformat()
+        if hasattr(trading_day_value, "isoformat")
+        else str(trading_day_value)
+    )
+    parsed_timestamp = datetime.fromisoformat(timestamp)
+    if parsed_timestamp.tzinfo is None:
+        return None
+    date.fromisoformat(trading_day)
+    local_trading_day = (
+        parsed_timestamp.astimezone(ZoneInfo("Asia/Shanghai")).date().isoformat()
+    )
+    if local_trading_day != trading_day:
+        return None
+    values = {
+        name: Decimal(str(raw.get(name)))
+        for name in ("open", "high", "low", "close", "volume")
+    }
+    if (
+        any(not value.is_finite() for value in values.values())
+        or any(values[name] <= 0 for name in ("open", "high", "low", "close"))
+        or values["volume"] < 0
+        or values["low"] > min(values["open"], values["close"])
+        or values["high"] < max(values["open"], values["close"])
+    ):
+        return None
+    return (
+        {
+            "symbol": symbol,
+            "exchange": str(exchange),
+            "timestamp": timestamp,
+            "trading_day": trading_day,
+            "open": str(values["open"]),
+            "high": str(values["high"]),
+            "low": str(values["low"]),
+            "close": str(values["close"]),
+            "volume": str(values["volume"]),
+            "data_version": data_version,
+            "observation_type": "HISTORICAL_DAILY_CLOSE",
+        },
+        parsed_timestamp,
+    )
 
 
 def _read_bounded_file(path: Path, limit: int) -> bytes | None:

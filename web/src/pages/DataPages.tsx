@@ -1,16 +1,44 @@
 ﻿import { Alert, Card, Empty, Input, Space, Table, Tabs, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useState } from 'react'
-import type { OrderRow, PlatformSnapshot, PositionRow } from '../types'
+import { useEffect, useState } from 'react'
+import type { HistoricalBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
 import { StatusTag } from '../components/StatusTag'
 import { EquityChart } from '../charts/EquityChart'
+import { MarketHistoryChart } from '../charts/MarketHistoryChart'
+import { loadHistoricalBarSeries } from '../api/client'
 
 const waiting = <Alert showIcon type="info" title="等待实时数据授权" description="适配器与回放链路已准备；当前未配置任何供应商令牌或真实连接。" />
 
 export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const historical = data?.market?.historical
   const [query, setQuery] = useState('')
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
+  const [series, setSeries] = useState<HistoricalBarSeries | null>(null)
+  const [seriesError, setSeriesError] = useState<string | null>(null)
   const bars = (data?.historicalBars ?? []).filter((row) => row.symbol.includes(query.trim()))
+  const activeSymbol = selectedSymbol ?? data?.historicalBars?.[0]?.symbol ?? null
+  const datasetIdentity = historical ? `${historical.data_version}:${historical.checksum}` : null
+  const displayedSeries = datasetIdentity
+    && series?.symbol === activeSymbol
+    && `${series.data_version}:${series.dataset_checksum}` === datasetIdentity ? series : null
+  useEffect(() => {
+    let active = true
+    if (!activeSymbol || !datasetIdentity) {
+      return () => { active = false }
+    }
+    void loadHistoricalBarSeries(activeSymbol).then((result) => {
+      if (active) {
+        setSeries(result)
+        setSeriesError(null)
+      }
+    }).catch(() => {
+      if (active) {
+        setSeries(null)
+        setSeriesError('历史 K 线加载失败；未使用缓存或合成数据替代。')
+      }
+    })
+    return () => { active = false }
+  }, [activeSymbol, datasetIdentity])
   const columns = [
     { title: '代码', dataIndex: 'symbol', fixed: 'left' as const },
     { title: '交易所', dataIndex: 'exchange' },
@@ -22,7 +50,7 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     { title: '成交量', dataIndex: 'volume', render: (value: string) => formatInteger(value) },
     { title: '数据性质', render: () => <Tag color="blue">历史日线收盘</Tag> },
   ]
-  return <Page title="行情中心" subtitle="已验证历史日线与未来 Level-1 接入状态"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Alert showIcon type={historical ? 'success' : 'warning'} title={historical ? `已验证历史数据：${historical.provider} ${historical.provider_version}` : '尚无校验通过的历史数据'} description={historical ? `${historical.bar_count} 根日线，${historical.observed_start} 至 ${historical.observed_end}；当前样本池非 PIT。` : '需要 checksum 与质量状态同时通过。'} /><Alert showIcon type="warning" title="以下是历史日线，不是实时行情" description="仅展示 checksum 验证通过的数据集内每只 ETF 的最新完整日线；没有 Bid/Ask、实时价格或实时延迟，不参与 REAL_DATA_PAPER。" /><Input.Search placeholder="搜索 ETF 代码" value={query} onChange={(event) => setQuery(event.target.value)} allowClear /><Table rowKey="symbol" size="small" columns={columns} dataSource={bars} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 920 }} locale={{ emptyText: <Empty description="暂无校验通过的历史日线；实时 snapshot 仍不可用" /> }} /></Space></Page>
+  return <Page title="行情中心" subtitle="已验证历史日线与未来 Level-1 接入状态"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Alert showIcon type={historical ? 'success' : 'warning'} title={historical ? `已验证历史数据：${historical.provider} ${historical.provider_version}` : '尚无校验通过的历史数据'} description={historical ? `${historical.bar_count} 根日线，${historical.observed_start} 至 ${historical.observed_end}；当前样本池非 PIT。` : '需要 checksum 与质量状态同时通过。'} /><Alert showIcon type="warning" title="以下是历史日线，不是实时行情" description="仅展示 checksum 验证通过的数据集；没有 Bid/Ask、实时价格或实时延迟，不参与 REAL_DATA_PAPER。" />{seriesError && <Alert showIcon type="error" title={seriesError} />}<Card title={`${activeSymbol ?? '—'} 已验证历史日 K 与成交量`}><MarketHistoryChart series={displayedSeries} /><Typography.Text type="secondary">{displayedSeries?.bars.length ? `${displayedSeries.bars.length}/${displayedSeries.total_count} 个完整交易日；数据版本 ${displayedSeries.data_version}。` : '点击下方 ETF 行切换标的。'} 图表来自同一 checksum 绑定的历史 Parquet，不是实时 K 线。</Typography.Text></Card><Input.Search placeholder="搜索 ETF 代码" value={query} onChange={(event) => setQuery(event.target.value)} allowClear /><Table rowKey="symbol" size="small" columns={columns} dataSource={bars} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 920 }} onRow={(row) => ({ onClick: () => setSelectedSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的历史日线；实时 snapshot 仍不可用" /> }} /></Space></Page>
 }
 
 export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {

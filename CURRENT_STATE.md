@@ -12,7 +12,7 @@ Last updated: 2026-08-13
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 213 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 214 tests passed, Ruff clean, strict mypy clean across
   86 source files on Python 3.14.6 (2026-08-13); frontend Vitest, ESLint and
   production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -46,6 +46,11 @@ Last updated: 2026-08-13
   pagination and real OHLCV values while labelling every row
   `HISTORICAL_DAILY_CLOSE`; it explicitly has no Bid/Ask, realtime price or
   REAL_DATA_PAPER authority.
+- Historical chart: `/historical-bars/{symbol}` streams and validates the same
+  checksum-bound Parquet, rejects physical per-symbol disorder, and returns at
+  most 2,000 complete daily bars with the dataset checksum. The market page
+  renders real candlesticks and volume for the selected ETF, and removes the
+  chart immediately if the verified dataset identity disappears or changes.
 - Backtest analytics: `/backtest-analytics` and the Chinese backtest page now
   select the exploratory leader only from the verified comparison report, then
   verify its immutable record, deterministic result hash, equity/drawdown file

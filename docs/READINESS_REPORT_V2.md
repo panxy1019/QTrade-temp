@@ -57,7 +57,7 @@ npm --prefix web run build
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12 (latest
 AKShare amendment checkpoint):
 
-- 213 Python tests passed;
+- 214 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 86 source files;
 - no broken Python requirements;
@@ -94,6 +94,10 @@ AKShare amendment checkpoint):
   Reproduce after starting the control plane with
   `Invoke-RestMethod http://127.0.0.1:8000/historical-bars/latest`; the verified
   artifact currently returns 30 rows dated 2026-08-12.
+- Selecting an ETF now loads `/historical-bars/{symbol}` on demand and renders
+  its real historical daily candlesticks and volume. The response is bounded,
+  stream-validated, checksum-bound, and invalidated when the current dataset
+  identity changes. It remains historical-only and does not authorize PAPER.
 - The backtest page explicitly contrasts the positive exploratory sensitivity
   winner with the three negative, disjoint held-out walk-forward folds. This is
   a selection-bias disclosure, not evidence that either result is promotable.

@@ -182,6 +182,9 @@ The Chinese market page now displays the latest complete historical daily bar
 for every symbol in that verified dataset, with search and pagination. The API
 fails closed on manifest/checksum/schema/symbol/OHLC validation and labels the
 rows historical-only; this does not satisfy realtime snapshot or PAPER readiness.
+Selecting a row also loads a bounded, checksum-bound historical series and
+renders real daily candlesticks plus volume. Physical per-symbol disorder is
+rejected and stale charts disappear when the verified dataset identity changes.
 
 1. select and license a realtime/historical data provider;
 2. select a broker and compatible isolated native-gateway Python ABI;

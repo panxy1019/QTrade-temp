@@ -214,8 +214,8 @@ def test_latest_historical_bars_are_verified_and_never_labeled_realtime(tmp_path
             {
                 "symbol": ["510300", "510300"],
                 "exchange": ["SSE", "SSE"],
-                "timestamp": ["2026-08-12T15:00:00+08:00", "2026-08-12T08:00:00+00:00"],
-                "trading_day": ["2026-08-12", "2026-08-12"],
+                "timestamp": ["2026-08-12T03:30:00+12:00", "2026-08-11T08:30:00-08:00"],
+                "trading_day": ["2026-08-11", "2026-08-12"],
                 "open": ["4.0", "4.1"],
                 "high": ["4.2", "4.3"],
                 "low": ["3.9", "4.0"],
@@ -261,7 +261,7 @@ def test_latest_historical_bars_are_verified_and_never_labeled_realtime(tmp_path
         {
             "symbol": "510300",
             "exchange": "SSE",
-            "timestamp": "2026-08-12T08:00:00+00:00",
+            "timestamp": "2026-08-11T08:30:00-08:00",
             "trading_day": "2026-08-12",
             "open": "4.1",
             "high": "4.3",
@@ -272,6 +272,17 @@ def test_latest_historical_bars_are_verified_and_never_labeled_realtime(tmp_path
             "observation_type": "HISTORICAL_DAILY_CLOSE",
         }
     ]
+    series = api.get("/historical-bars/510300").json()
+    assert series["symbol"] == "510300"
+    assert series["data_version"] == "akshare-test"
+    assert series["dataset_checksum"] == evidence["manifest"]["checksum"]
+    assert series["total_count"] == 2
+    assert series["truncated"] is False
+    assert [bar["close"] for bar in series["bars"]] == ["4.1", "4.2"]
+    assert all(
+        bar["observation_type"] == "HISTORICAL_DAILY_BAR" for bar in series["bars"]
+    )
+    assert api.get("/historical-bars/510500").json()["bars"] == []
     evidence["universe"]["symbols"] = ["510300", "510500"]
     evidence["evidence_sha256"] = sha256(
         json.dumps(
@@ -293,6 +304,37 @@ def test_latest_historical_bars_are_verified_and_never_labeled_realtime(tmp_path
     ).hexdigest()
     target.write_text(json.dumps(evidence), encoding="utf-8")
     assert api.get("/historical-bars/latest").json() == []
+
+
+def test_historical_series_rejects_physical_source_disorder(tmp_path):
+    from qtrade.api.app import _load_historical_bar_series
+
+    bars = tmp_path / "bars.parquet"
+    pq.write_table(
+        pa.table(
+            {
+                "symbol": ["510300", "510300"],
+                "exchange": ["SSE", "SSE"],
+                "timestamp": ["2026-08-12T15:00:00+08:00", "2026-08-11T15:00:00+08:00"],
+                "trading_day": ["2026-08-12", "2026-08-11"],
+                "open": ["4.1", "4.0"],
+                "high": ["4.3", "4.2"],
+                "low": ["4.0", "3.9"],
+                "close": ["4.2", "4.1"],
+                "volume": ["200", "100"],
+                "data_version": ["akshare-test", "akshare-test"],
+            }
+        ),
+        bars,
+    )
+    assert _load_historical_bar_series(
+        tmp_path / "manifest.json",
+        symbol="510300",
+        data_version="akshare-test",
+        expected_checksum=sha256(bars.read_bytes()).hexdigest(),
+        expected_universe={"symbols": ["510300"]},
+        expected_bar_count=2,
+    ) is None
 
 
 def test_latest_historical_bars_rechecks_the_bytes_it_decodes(tmp_path, monkeypatch):

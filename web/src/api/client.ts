@@ -1,4 +1,4 @@
-import type { PlatformSnapshot } from '../types'
+import type { HistoricalBarSeries, PlatformSnapshot } from '../types'
 
 const API_BASE = import.meta.env.DEV ? '/api' : ''
 
@@ -6,6 +6,10 @@ async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`)
   if (!response.ok) throw new Error(`请求失败：${response.status}`)
   return response.json() as Promise<T>
+}
+
+export function loadHistoricalBarSeries(symbol: string): Promise<HistoricalBarSeries> {
+  return getJson<HistoricalBarSeries>(`/historical-bars/${encodeURIComponent(symbol)}`)
 }
 
 export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
