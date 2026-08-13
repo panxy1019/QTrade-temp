@@ -75,6 +75,14 @@ export interface WalkForwardFold {
   fold: number
   selected_candidate_id: string
   validation_sharpe: string
+  split: {
+    train_start: string
+    train_end: string
+    validation_start: string
+    validation_end: string
+    test_start: string
+    test_end: string
+  }
   test_metrics: Record<string, string | number>
 }
 
@@ -84,6 +92,12 @@ export interface WalkForwardReport {
   git_commit?: string
   promotion: string
   promotion_reasons: string[]
+  selection_contract?: {
+    candidate_selection: string
+    candidate_test_access_before_selection: boolean
+    fold_ranges_disjoint: boolean
+    execution_timing: string
+  }
   result: {
     aggregate_metrics?: Record<string, string | number>
     fold_pass_ratio?: string

@@ -46,6 +46,11 @@ Last updated: 2026-08-13
   hashes and pointwise drawdown arithmetic before rendering 632 full-period
   observations. Test-window metrics remain explicitly separate; the result is
   not PIT, not Champion and not eligible for promotion.
+- Selection-bias guard: the backtest page now places that exploratory positive
+  leader beside all three disjoint held-out walk-forward folds. All three folds
+  lost money (aggregate return `-20.4412%`, Sharpe `-1.1005`, fold pass ratio
+  `0/3`); the UI states that this predeclared out-of-sample evidence takes
+  precedence over the ex-post sensitivity winner.
 - Robustness evidence: 14 bounded cost, parameter, subperiod and deterministic
   current-universe perturbations are hash-verified and exposed fail-closed in
   the Chinese research page. Worst Sharpe is `-1.1429123433`, Sharpe dispersion

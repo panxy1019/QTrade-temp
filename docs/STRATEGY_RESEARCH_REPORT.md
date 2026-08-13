@@ -37,6 +37,12 @@ winner then reaches the held-out test. The result is negative in all three folds
 and remains `NOT_ELIGIBLE`. The report includes the exact data checksum, source
 commit, candidate specifications, validation scores, test metrics, observed trade
 counts and deterministic hashes; the dashboard rejects a tampered envelope.
+The backtest page now renders those three held-out failures directly beneath the
+exploratory leader: `0/3` positive folds, aggregate return `-20.4412%`, aggregate
+Sharpe `-1.1005`, and maximum drawdown `-28.6241%`. It explicitly gives this
+predeclared evidence priority over the positive result selected after observing
+the sensitivity comparison, reducing the chance that an operator mistakes
+selection bias for strategy validation.
 
 The rejected candidate also has a bounded 14-scenario diagnostic covering cost,
 parameter, subperiod and deterministic current-universe perturbations. It finds

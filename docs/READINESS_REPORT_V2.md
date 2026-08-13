@@ -87,6 +87,9 @@ AKShare amendment checkpoint):
 - The Chinese web application has twelve routes and honest empty states; several
   pages await richer catalog/analytics APIs. It is not a claim of completed
   provider-backed analytics.
+- The backtest page explicitly contrasts the positive exploratory sensitivity
+  winner with the three negative, disjoint held-out walk-forward folds. This is
+  a selection-bias disclosure, not evidence that either result is promotable.
 - Daily reports are runtime-generated, hash-verified, and use trades persisted in
   the atomic fill journal across restart. Automatic scheduling is not wired.
 - The control plane remains loopback-only; non-loopback deployment requires read
