@@ -780,6 +780,8 @@ def _load_verified_backtest_analytics(
             "monthly_returns": leader_artifacts["monthly_returns"],
             "trades": leader_artifacts["trades"],
             "positions": leader_artifacts["positions"],
+            "risk_summary": leader_artifacts["risk_summary"],
+            "run_metadata": leader_artifacts["run_metadata"],
         }
     except (
         InvalidOperation,
@@ -874,18 +876,36 @@ def _load_verified_experiment_analytics(
             allowed_symbols,
         )
         _reconcile_backtest_trades_and_positions(trades, positions)
+        risk_summary = None
+        run_metadata = None
+        if "risk" in artifact_manifest or "logs" in artifact_manifest:
+            if "risk" not in artifact_manifest or "logs" not in artifact_manifest:
+                raise ValueError("incomplete backtest diagnostics")
+            risk_summary = _validated_backtest_risk(
+                _load_hashed_json(artifacts_dir / "risk.json", artifact_manifest["risk"]),
+                curve,
+                trades,
+                Decimal(str(record.get("transaction_cost"))),
+            )
+            run_metadata = _validated_backtest_run_metadata(
+                _load_hashed_json(artifacts_dir / "logs.json", artifact_manifest["logs"]),
+                len(curve),
+            )
         return {
             "row": row,
             "record": record,
             "record_hash": record_hash,
             "artifact_hashes": {
                 name: artifact_manifest[name]
-                for name in ("equity", "drawdown", "trades", "positions")
+                for name in ("equity", "drawdown", "trades", "positions", "risk", "logs")
+                if name in artifact_manifest
             },
             "curve": curve,
             "trades": trades,
             "positions": positions,
             "monthly_returns": _monthly_returns(curve),
+            "risk_summary": risk_summary,
+            "run_metadata": run_metadata,
         }
     except (
         InvalidOperation,
@@ -1134,6 +1154,66 @@ def _monthly_returns(curve: object) -> list[dict[str, str]]:
         result.append({"month": month, "return": str(last_by_month[month] / previous - 1)})
         previous = last_by_month[month]
     return result
+
+
+def _validated_backtest_risk(
+    value: object,
+    curve: list[dict[str, str]],
+    trades: list[dict[str, object]],
+    transaction_cost_rate: Decimal,
+) -> dict[str, object]:
+    if not isinstance(value, dict):
+        raise ValueError("invalid backtest risk artifact")
+    drawdown = Decimal(str(value.get("maximum_drawdown")))
+    costs = Decimal(str(value.get("transaction_costs")))
+    turnover = Decimal(str(value.get("turnover")))
+    observed_drawdown = min(Decimal(point["drawdown"]) for point in curve)
+    observed_costs = sum((Decimal(str(trade["cost"])) for trade in trades), Decimal("0"))
+    observed_notional = sum(
+        (Decimal(str(trade["notional"])) for trade in trades), Decimal("0")
+    )
+    initial_equity = Decimal(curve[0]["equity"])
+    if (
+        not transaction_cost_rate.is_finite()
+        or transaction_cost_rate < 0
+        or any(
+            Decimal(str(trade["cost"]))
+            != Decimal(str(trade["notional"])) * transaction_cost_rate
+            for trade in trades
+        )
+    ):
+        raise ValueError("invalid backtest cost policy")
+    if (
+        not drawdown.is_finite()
+        or abs(drawdown - observed_drawdown) > Decimal("1e-24")
+        or not costs.is_finite()
+        or costs < 0
+        or costs != observed_costs
+        or not turnover.is_finite()
+        or turnover < 0
+        or turnover != observed_notional / initial_equity
+    ):
+        raise ValueError("invalid backtest risk artifact")
+    return {
+        "maximum_drawdown": str(drawdown),
+        "transaction_costs": str(costs),
+        "turnover": str(turnover),
+    }
+
+
+def _validated_backtest_run_metadata(value: object, session_count: int) -> dict[str, object]:
+    if (
+        not isinstance(value, dict)
+        or value.get("engine") != "DailyMultiAssetBacktester"
+        or value.get("timing") != "close decision, next open execution"
+        or value.get("session_count") != session_count
+    ):
+        raise ValueError("invalid backtest run metadata")
+    return {
+        "engine": value["engine"],
+        "timing": value["timing"],
+        "session_count": session_count,
+    }
 
 
 def _load_verified_market_dataset(path: Path | None) -> dict[str, object] | None:

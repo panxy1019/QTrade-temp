@@ -111,6 +111,14 @@ AKShare amendment checkpoint):
   positions. Every symbol must belong to the immutable experiment universe;
   the dashboard labels all of this research simulation rather than real market
   execution or live/PAPER account state.
+- The leader's risk and run metadata are independently checksum-verified:
+  drawdown reconciles to the validated curve, each transaction cost reconciles
+  to the record's immutable fee rate, turnover reconciles to total notional over
+  initial equity, and engine/session/timing fields bind the 632-session causal
+  close-decision/next-open run. These are historical research diagnostics, not
+  runtime PAPER risk observations. Engine-reported exposure and staleness are
+  omitted because this artifact set lacks the daily series/configuration needed
+  for independent recomputation.
 - Daily reports are runtime-generated, hash-verified, and use trades persisted in
   the atomic fill journal across restart. Automatic scheduling is not wired.
 - The control plane remains loopback-only; non-loopback deployment requires read

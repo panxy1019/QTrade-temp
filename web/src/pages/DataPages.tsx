@@ -118,6 +118,7 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
     <Card title="已验证月度收益"><Table rowKey="month" size="small" columns={monthlyColumns} dataSource={analytics?.monthly_returns ?? []} pagination={{ pageSize: 12, showSizeChanger: false }} locale={{ emptyText: '暂无已验证月度收益' }} /><Typography.Text type="secondary">月末对上月末计算；首月相对完整模拟期首个净值点。</Typography.Text></Card>
     <Card title="研究回测模拟成交"><Alert showIcon type="info" title="以下成交均为历史回测模拟成交，不是市场真实成交" /><Table rowKey={(row) => `${row.trading_day}-${row.symbol}-${row.side}-${row.quantity}`} size="small" columns={tradeColumns} dataSource={analytics?.trades ?? []} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} locale={{ emptyText: '暂无已验证模拟成交' }} /></Card>
     <Card title="研究回测期末持仓"><Table rowKey="symbol" size="small" columns={positionColumns} dataSource={analytics?.positions ?? []} pagination={false} locale={{ emptyText: '期末无持仓或暂无已验证持仓产物' }} /></Card>
+    <Card title="研究回测风险与运行契约"><Descriptions values={analytics?.risk_summary && analytics?.run_metadata ? [["全期最大回撤", formatPercent(analytics.risk_summary.maximum_drawdown)], ["全期换手", formatNumber(analytics.risk_summary.turnover)], ["模拟交易成本", formatNumber(analytics.risk_summary.transaction_costs)], ["因果时序", "收盘决策，下一开盘执行"], ["模拟会话数", String(analytics.run_metadata.session_count)]] : []} /><Typography.Text type="secondary">这是可从资金曲线与模拟成交独立重算的历史研究风险摘要，以及 checksum 绑定的运行契约；不是当前 PAPER 账户风险。未提供逐日证据的引擎自报字段不会展示为已验证。</Typography.Text></Card>
   </Page>
 }
 

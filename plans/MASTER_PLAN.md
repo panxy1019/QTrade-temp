@@ -197,6 +197,12 @@ chronology, finite positive economics and experiment-universe membership are
 validated before the Chinese dashboard renders them; they are not broker trades
 or current PAPER state.
 
+Risk and run metadata are also checksum-bound and cross-validated against the
+equity/drawdown curve, the immutable fee rate, each simulated trade cost and
+notional-derived turnover. The UI presents full-period
+drawdown/turnover/cost and the causal next-open engine contract
+as historical research diagnostics only.
+
 1. select and license a realtime/historical data provider;
 2. select a broker and compatible isolated native-gateway Python ABI;
 3. certify provider/broker normalization and reconciliation in a sandbox;

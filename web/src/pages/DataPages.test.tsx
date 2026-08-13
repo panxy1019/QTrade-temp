@@ -95,6 +95,8 @@ const data = {
     monthly_returns: [{ month: '2024-01', return: '-0.001' }],
     trades: [{ symbol: '510300', side: 'BUY', trading_day: '2024-01-03', quantity: 100, price: '4.1', cost: '1.0', notional: '410' }],
     positions: [{ symbol: '510300', quantity: 100 }],
+    risk_summary: { maximum_drawdown: '-0.1', transaction_costs: '100', turnover: '2' },
+    run_metadata: { engine: 'DailyMultiAssetBacktester', timing: 'close decision, next open execution', session_count: 632 },
   },
 } as unknown as PlatformSnapshot
 
@@ -151,6 +153,8 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText('研究回测模拟成交')).toBeInTheDocument()
     expect(screen.getByText(/不是市场真实成交/)).toBeInTheDocument()
     expect(screen.getByText('2024-01')).toBeInTheDocument()
+    expect(screen.getByText('研究回测风险与运行契约')).toBeInTheDocument()
+    expect(screen.getByText(/不是当前 PAPER 账户风险/)).toBeInTheDocument()
     expect(screen.getByText('三折独立样本外：0/3 折正收益')).toBeInTheDocument()
     expect(screen.getByText(/聚合收益 -20.44%/)).toBeInTheDocument()
     expect(screen.getByText(/不得因探索性领先者的正收益覆盖样本外败绩/)).toBeInTheDocument()

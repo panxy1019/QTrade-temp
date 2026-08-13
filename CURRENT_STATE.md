@@ -12,7 +12,7 @@ Last updated: 2026-08-13
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 217 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 218 tests passed, Ruff clean, strict mypy clean across
   86 source files on Python 3.14.6 (2026-08-13); frontend Vitest, ESLint and
   production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -69,6 +69,15 @@ Last updated: 2026-08-13
   experiment's immutable 30-ETF universe, and rejects malformed chronology,
   prices, quantities or costs. The UI explicitly labels these as research
   simulation—not market executions or current PAPER positions.
+- Backtest risk contract: the same artifact chain now verifies full-period
+  drawdown, turnover and transaction costs,
+  cross-checking drawdown against the curve, each trade cost against the
+  immutable experiment fee rate, aggregate costs against all simulated trades,
+  and turnover against total notional/initial equity. It also binds the engine,
+  632-session count and close-decision/
+  next-open timing metadata; the dashboard labels this historical research risk,
+  not current PAPER account risk. Engine-reported exposure/staleness fields are
+  intentionally not shown as verified without independently recomputable series.
 - Selection-bias guard: the backtest page now places that exploratory positive
   leader beside all three disjoint held-out walk-forward folds. All three folds
   lost money (aggregate return `-20.4412%`, Sharpe `-1.1005`, fold pass ratio
