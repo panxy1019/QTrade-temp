@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from qtrade.accounting import Ledger
 from qtrade.api import ApiAuthConfig, AppContext, context_from_runtime, create_app
+from qtrade.api.app import _load_verified_robustness_report
 from qtrade.audit import AuditLog
 from qtrade.control import PlatformRuntime
 from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
@@ -282,6 +283,158 @@ def test_walk_forward_endpoint_exposes_only_verified_evidence(tmp_path):
     response = api.get("/walk-forward").json()
     assert response["classification"] == "NO_VERIFIED_WALK_FORWARD_RESULT"
     assert response["result"]["folds"] == []
+
+
+def test_robustness_endpoint_exposes_only_verified_diagnostic(tmp_path):
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("100000"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit)
+    runtime = PlatformRuntime(RuntimeMode.PAPER, risk, audit, metrics)
+    report = {
+        "classification": "post_rejection_diagnostic_reuses_observations_not_new_heldout",
+        "data_checksum": "a" * 64,
+        "data_version": "bars-v1",
+        "git_commit": "abcdef0",
+        "known_biases": [
+            "CURRENT_UNIVERSE_SURVIVORSHIP_BIAS",
+            "POST_REJECTION_OBSERVATIONS_REUSED_FOR_DIAGNOSTICS",
+        ],
+        "promotion": "NOT_ELIGIBLE",
+        "promotion_reasons": ["NEGATIVE_HELD_OUT_WALK_FORWARD"],
+        "scenarios": [
+            {
+                "scenario_id": "base",
+                "parameter_overrides": [],
+                "cost_multiplier": "1",
+                "regime": "ALL",
+                "universe_override": None,
+            }
+        ],
+        "result": {
+            "worst_sharpe": "-0.10",
+            "dispersion": "0.00",
+            "any_negative_sharpe": True,
+            "scenario_metrics": [["base", [["sharpe", "-0.10"]]]],
+        },
+    }
+    result_payload = {
+        "scenarios": report["scenarios"],
+        "results": report["result"]["scenario_metrics"],
+        "worst_sharpe": "-0.10",
+        "dispersion": "0.00",
+        "any_negative_sharpe": True,
+    }
+    report["result"]["result_hash"] = sha256(
+        json.dumps(result_payload, sort_keys=True, default=str).encode()
+    ).hexdigest()
+    canonical = json.dumps(report, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    target = tmp_path / "robustness.json"
+    target.write_text(
+        json.dumps({"sha256": sha256(canonical.encode()).hexdigest(), "report": report}),
+        encoding="utf-8",
+    )
+    api = TestClient(
+        create_app(
+            AppContext(
+                runtime,
+                metrics,
+                oms,
+                ledger,
+                audit,
+                robustness_report_path=target,
+            ),
+            ApiAuthConfig(),
+        )
+    )
+    assert api.get("/robustness").json()["result"]["any_negative_sharpe"] is True
+    target.write_text(target.read_text().replace("-0.10", "9.99"), encoding="utf-8")
+    response = api.get("/robustness").json()
+    assert response["classification"] == "NO_VERIFIED_ROBUSTNESS_RESULT"
+    assert response["result"]["scenario_metrics"] == []
+
+
+def test_robustness_endpoint_rejects_hash_valid_malformed_or_promoted_report(tmp_path):
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    runtime = PlatformRuntime(
+        RuntimeMode.PAPER,
+        RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit),
+        audit,
+        metrics,
+    )
+    target = tmp_path / "robustness.json"
+    api = TestClient(
+        create_app(
+            AppContext(
+                runtime,
+                metrics,
+                OrderManager(audit),
+                Ledger(Decimal("100000"), audit),
+                audit,
+                robustness_report_path=target,
+            ),
+            ApiAuthConfig(),
+        )
+    )
+    for report in (
+        {"unexpected": "shape"},
+        {"classification": "forged", "promotion": "APPROVED", "result": "bad"},
+    ):
+        canonical = json.dumps(report, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        target.write_text(
+            json.dumps({"sha256": sha256(canonical.encode()).hexdigest(), "report": report}),
+            encoding="utf-8",
+        )
+        assert api.get("/robustness").json()["classification"] == (
+            "NO_VERIFIED_ROBUSTNESS_RESULT"
+        )
+
+
+def test_robustness_endpoint_rejects_malformed_parameter_overrides(tmp_path):
+    malformed = {
+        "classification": "post_rejection_diagnostic_reuses_observations_not_new_heldout",
+        "data_checksum": "a" * 64,
+        "data_version": "bars-v1",
+        "git_commit": "abcdef0",
+        "known_biases": [
+            "CURRENT_UNIVERSE_SURVIVORSHIP_BIAS",
+            "POST_REJECTION_OBSERVATIONS_REUSED_FOR_DIAGNOSTICS",
+        ],
+        "promotion": "NOT_ELIGIBLE",
+        "promotion_reasons": ["NEGATIVE_HELD_OUT_WALK_FORWARD"],
+        "scenarios": [{
+            "scenario_id": "base",
+            "parameter_overrides": [["only-one"]],
+            "cost_multiplier": "1",
+            "regime": "ALL",
+            "universe_override": None,
+        }],
+        "result": {
+            "worst_sharpe": "-0.1",
+            "dispersion": "0",
+            "any_negative_sharpe": True,
+            "scenario_metrics": [["base", [["sharpe", "-0.1"]]]],
+        },
+    }
+    payload = {
+        "scenarios": malformed["scenarios"],
+        "results": malformed["result"]["scenario_metrics"],
+        "worst_sharpe": "-0.1",
+        "dispersion": "0",
+        "any_negative_sharpe": True,
+    }
+    malformed["result"]["result_hash"] = sha256(
+        json.dumps(payload, sort_keys=True, default=str).encode()
+    ).hexdigest()
+    canonical = json.dumps(malformed, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    target = tmp_path / "malformed.json"
+    target.write_text(
+        json.dumps({"sha256": sha256(canonical.encode()).hexdigest(), "report": malformed}),
+        encoding="utf-8",
+    )
+    assert _load_verified_robustness_report(target) is None
 
 
 def test_daily_report_history_exposes_verified_summary(tmp_path):

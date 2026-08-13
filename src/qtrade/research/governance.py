@@ -61,7 +61,7 @@ class RobustnessResult:
     scenario_metrics: tuple[tuple[str, tuple[tuple[str, Decimal], ...]], ...]
     worst_sharpe: Decimal
     dispersion: Decimal
-    cliff_detected: bool
+    any_negative_sharpe: bool
     result_hash: str
 
 
@@ -98,16 +98,16 @@ class RobustnessSuite:
             results.append((scenario.scenario_id, output.metrics))
         worst = min(sharpes)
         dispersion = max(sharpes) - min(sharpes)
-        cliff = any(value < Decimal("0") for value in sharpes)
+        any_negative = any(value < Decimal("0") for value in sharpes)
         payload = {
             "scenarios": [asdict(scenario) for scenario in self._scenarios],
             "results": results,
             "worst_sharpe": str(worst),
             "dispersion": str(dispersion),
-            "cliff_detected": cliff,
+            "any_negative_sharpe": any_negative,
         }
         digest = sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()
-        return RobustnessResult(tuple(results), worst, dispersion, cliff, digest)
+        return RobustnessResult(tuple(results), worst, dispersion, any_negative, digest)
 
 
 class ReviewOutcome(StrEnum):

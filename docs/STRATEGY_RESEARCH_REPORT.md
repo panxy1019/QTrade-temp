@@ -28,7 +28,8 @@ intuition, regimes, failure modes, required data and evaluation criteria. Candid
 and iteration budgets prevent brute-force search; held-out test windows cannot be
 reused or overlapped for candidate selection; an independent leakage-review pass is mandatory.
 Robustness scenarios are predeclared and bounded and include parameter neighbours,
-cost stress and regimes with deterministic hashes and cliff detection.
+cost stress and regimes with deterministic hashes and explicit negative-Sharpe
+scenario detection.
 
 The first real AKShare ETF walk-forward evidence uses three complete, disjoint
 folds. Candidate simulations stop at validation before selection; only the fixed
@@ -36,6 +37,15 @@ winner then reaches the held-out test. The result is negative in all three folds
 and remains `NOT_ELIGIBLE`. The report includes the exact data checksum, source
 commit, candidate specifications, validation scores, test metrics, observed trade
 counts and deterministic hashes; the dashboard rejects a tampered envelope.
+
+The rejected candidate also has a bounded 14-scenario diagnostic covering cost,
+parameter, subperiod and deterministic current-universe perturbations. It finds
+a worst Sharpe of `-1.1429123433`, Sharpe dispersion of `1.6703725093`, and at
+least one negative-Sharpe scenario. These scenarios reuse already observed data
+and retain current-universe
+survivorship bias, so the result is diagnostic only and cannot be counted as a
+fresh held-out test or promotion evidence. Its signed envelope is verified by
+the API before the Chinese research page displays it.
 
 Strategy health accepts a typed metric snapshot and currently enforces sample,
 Sharpe, drawdown, factor-drift, execution-deviation and staleness thresholds.

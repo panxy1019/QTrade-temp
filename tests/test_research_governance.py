@@ -56,7 +56,7 @@ def hypothesis(identity: str = "hyp-1") -> ResearchHypothesis:
     )
 
 
-def test_robustness_suite_is_bounded_deterministic_and_detects_cliff():
+def test_robustness_suite_is_bounded_deterministic_and_detects_negative_sharpe():
     suite = RobustnessSuite(
         (
             RobustnessScenario("base"),
@@ -76,11 +76,22 @@ def test_robustness_suite_is_bounded_deterministic_and_detects_cliff():
     result = suite.run(run_spec(), evaluator)
     assert result.worst_sharpe == Decimal("-0.1")
     assert result.dispersion == Decimal("1.1")
-    assert result.cliff_detected is True
+    assert result.any_negative_sharpe is True
     assert seen == [("ALL", ("510300", "510500")), ("ALL", ("510300", "510500"))]
     assert len(result.result_hash) == 64
     with pytest.raises(ValueError, match="bounded"):
         RobustnessSuite(tuple(RobustnessScenario(str(index)) for index in range(21)))
+
+
+def test_negative_sharpe_flag_does_not_claim_parameter_cliff():
+    suite = RobustnessSuite((RobustnessScenario("base"), RobustnessScenario("nearby")))
+
+    def evaluator(spec, scenario):
+        return ExperimentOutput((("sharpe", Decimal("-0.1")),), (Path("unused"),))
+
+    result = suite.run(run_spec(), evaluator)
+    assert result.dispersion == 0
+    assert result.any_negative_sharpe is True
 
 
 def test_robustness_scenario_binds_regime_universe_and_definition_hash():

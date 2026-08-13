@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from hashlib import sha256
 from pathlib import Path
@@ -67,6 +67,7 @@ class AppContext:
     daily_report_root: Path | None = None
     research_comparison_path: Path | None = None
     walk_forward_report_path: Path | None = None
+    robustness_report_path: Path | None = None
     historical_manifest_path: Path | None = None
 
 
@@ -231,6 +232,18 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             "promotion": "NOT_EVALUATED",
             "promotion_reasons": ["MISSING_VERIFIED_WALK_FORWARD_ARTIFACT"],
             "result": {"folds": []},
+        }
+
+    @app.get("/robustness")
+    def robustness(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        report = _load_verified_robustness_report(state.robustness_report_path)
+        return report or {
+            "classification": "NO_VERIFIED_ROBUSTNESS_RESULT",
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": ["MISSING_VERIFIED_ROBUSTNESS_ARTIFACT"],
+            "result": {"scenario_metrics": []},
         }
 
     @app.get("/portfolio")
@@ -413,6 +426,9 @@ def context_from_runtime(bundle: object) -> AppContext:
         walk_forward_report_path=Path(
             "runtime/research/akshare-walk-forward-v1.json"
         ),
+        robustness_report_path=Path(
+            "runtime/research/akshare-robustness-v1.json"
+        ),
         historical_manifest_path=Path(
             "runtime/data/akshare/"
             "akshare-sina-etf30-current-20260812-v1-raw-daily-20240101-20260812/"
@@ -444,6 +460,173 @@ def _load_verified_research_report(path: Path | None) -> dict[str, object] | Non
         return report
     except (OSError, UnicodeDecodeError, json.JSONDecodeError):
         return None
+
+
+def _load_verified_robustness_report(path: Path | None) -> dict[str, object] | None:
+    report = _load_verified_research_report(path)
+    if report is None:
+        return None
+    try:
+        if (
+            report.get("classification")
+            != "post_rejection_diagnostic_reuses_observations_not_new_heldout"
+            or report.get("promotion") != "NOT_ELIGIBLE"
+        ):
+            return None
+        required_biases = {
+            "CURRENT_UNIVERSE_SURVIVORSHIP_BIAS",
+            "POST_REJECTION_OBSERVATIONS_REUSED_FOR_DIAGNOSTICS",
+        }
+        biases = report["known_biases"]
+        reasons = report["promotion_reasons"]
+        scenarios = report["scenarios"]
+        result = report["result"]
+        if (
+            not isinstance(report["data_version"], str)
+            or not _is_sha256(report["data_checksum"])
+            or not isinstance(report["git_commit"], str)
+            or not isinstance(biases, list)
+            or not required_biases.issubset(biases)
+            or not isinstance(reasons, list)
+            or not reasons
+            or not all(isinstance(reason, str) for reason in reasons)
+            or not isinstance(scenarios, list)
+            or not 1 <= len(scenarios) <= 20
+            or not isinstance(result, dict)
+        ):
+            return None
+        scenario_ids = _validated_robustness_scenario_ids(scenarios)
+        metrics = result["scenario_metrics"]
+        if not isinstance(metrics, list) or len(metrics) != len(scenario_ids):
+            return None
+        sharpes: list[Decimal] = []
+        for expected_id, scenario_metrics in zip(scenario_ids, metrics, strict=True):
+            if (
+                not isinstance(scenario_metrics, list)
+                or len(scenario_metrics) != 2
+                or scenario_metrics[0] != expected_id
+                or not isinstance(scenario_metrics[1], list)
+            ):
+                return None
+            values: dict[str, Decimal] = {}
+            for item in scenario_metrics[1]:
+                if (
+                    not isinstance(item, list)
+                    or len(item) != 2
+                    or not isinstance(item[0], str)
+                    or not isinstance(item[1], str)
+                ):
+                    return None
+                value = Decimal(item[1])
+                if not value.is_finite() or item[0] in values:
+                    return None
+                values[item[0]] = value
+            sharpes.append(values["sharpe"])
+        worst = Decimal(result["worst_sharpe"])
+        dispersion = Decimal(result["dispersion"])
+        legacy_flag = "any_negative_sharpe" not in result and "cliff_detected" in result
+        any_negative = result[
+            "cliff_detected" if legacy_flag else "any_negative_sharpe"
+        ]
+        digest = result["result_hash"]
+        if (
+            not worst.is_finite()
+            or not dispersion.is_finite()
+            or not isinstance(any_negative, bool)
+            or not _is_sha256(digest)
+            or worst != min(sharpes)
+            or dispersion != max(sharpes) - min(sharpes)
+            or any_negative != any(value < 0 for value in sharpes)
+        ):
+            return None
+        payload = {
+            "scenarios": scenarios,
+            "results": metrics,
+            "worst_sharpe": str(worst),
+            "dispersion": str(dispersion),
+            "cliff_detected" if legacy_flag else "any_negative_sharpe": any_negative,
+        }
+        calculated = sha256(
+            json.dumps(payload, sort_keys=True, default=str).encode()
+        ).hexdigest()
+        if calculated != digest:
+            return None
+        if legacy_flag:
+            normalized = dict(report)
+            normalized_result = dict(result)
+            normalized_result.pop("cliff_detected")
+            normalized_result["any_negative_sharpe"] = any_negative
+            normalized_result["source_result_hash"] = digest
+            normalized_payload = {
+                "scenarios": scenarios,
+                "results": metrics,
+                "worst_sharpe": str(worst),
+                "dispersion": str(dispersion),
+                "any_negative_sharpe": any_negative,
+            }
+            normalized_result["result_hash"] = sha256(
+                json.dumps(normalized_payload, sort_keys=True, default=str).encode()
+            ).hexdigest()
+            normalized["result"] = normalized_result
+            return normalized
+        return report
+    except (InvalidOperation, KeyError, TypeError, ValueError):
+        return None
+
+
+def _validated_robustness_scenario_ids(scenarios: list[object]) -> list[str]:
+    identities: list[str] = []
+    for scenario in scenarios:
+        if not isinstance(scenario, dict):
+            raise ValueError("invalid robustness scenario")
+        identity = scenario["scenario_id"]
+        overrides = scenario["parameter_overrides"]
+        multiplier = Decimal(scenario["cost_multiplier"])
+        regime = scenario["regime"]
+        universe = scenario["universe_override"]
+        if not isinstance(overrides, list):
+            raise ValueError("invalid robustness scenario")
+        override_keys: list[str] = []
+        for override in overrides:
+            if (
+                not isinstance(override, list)
+                or len(override) != 2
+                or not all(isinstance(value, str) and value for value in override)
+                or override[0] in override_keys
+            ):
+                raise ValueError("invalid robustness scenario")
+            override_keys.append(override[0])
+        if (
+            not isinstance(identity, str)
+            or not identity
+            or identity in identities
+            or not multiplier.is_finite()
+            or multiplier <= 0
+            or not isinstance(regime, str)
+            or not regime
+            or (
+                universe is not None
+                and (
+                    not isinstance(universe, list)
+                    or not universe
+                    or not all(isinstance(symbol, str) and symbol for symbol in universe)
+                    or len(universe) != len(set(universe))
+                )
+            )
+        ):
+            raise ValueError("invalid robustness scenario")
+        identities.append(identity)
+    return identities
+
+
+def _is_sha256(value: object) -> bool:
+    if not isinstance(value, str) or len(value) != 64:
+        return False
+    try:
+        int(value, 16)
+    except ValueError:
+        return False
+    return True
 
 
 def _load_verified_market_dataset(path: Path | None) -> dict[str, object] | None:

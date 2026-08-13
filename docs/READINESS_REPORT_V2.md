@@ -1,6 +1,6 @@
 # QTrade v0.2 readiness report
 
-Assessment date: 2026-08-12. Assessed checkpoint: the commit created after this
+Assessment date: 2026-08-13. Assessed checkpoint: the commit created after this
 report and its validation evidence.
 
 ## Decision
@@ -57,13 +57,13 @@ npm --prefix web run build
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12 (latest
 AKShare amendment checkpoint):
 
-- 202 Python tests passed;
+- 209 Python tests passed;
 - Ruff clean;
-- strict mypy clean across 84 source files;
+- strict mypy clean across 86 source files;
 - no broken Python requirements;
 - Vitest, ESLint and Vite production build passed;
 - one external Starlette/httpx deprecation warning;
-- one non-blocking frontend chunk-size warning (approximately 979 kB minified).
+- one non-blocking frontend chunk-size warning (approximately 983 kB minified).
 
 ## Honest maturity limits
 
@@ -138,3 +138,11 @@ universe and instrument rows. It separately reports provider snapshot
 connectivity as false; the simulated execution gateway cannot make the market
 feed appear connected. Tampered metadata or Parquet bytes yield an empty,
 fail-closed historical view.
+
+A bounded 14-scenario robustness diagnostic is now bound to source commit
+`442a48b` and exposed through the same fail-closed evidence boundary. It covers
+cost, parameter, calendar subperiod and deterministic current-universe
+perturbations. Worst Sharpe is `-1.1429123433`, dispersion is `1.6703725093`,
+and at least one scenario has negative Sharpe. The artifact explicitly classifies itself as a
+post-rejection diagnostic that reuses observations, not a new independent test;
+it cannot alter the `NOT_ELIGIBLE` promotion result.

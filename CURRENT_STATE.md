@@ -1,6 +1,6 @@
 # Current state
 
-Last updated: 2026-08-12
+Last updated: 2026-08-13
 
 - Goal: evolve the v0.1 stable PAPER/SHADOW core into a real-market-data strategy
   research/evolution platform with a professional Chinese web application and
@@ -12,8 +12,9 @@ Last updated: 2026-08-12
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 202 tests passed, Ruff clean, strict mypy clean on
-  Python 3.14.6 (2026-08-12); frontend Vitest, ESLint and production build pass.
+- Acceptance evidence: 209 tests passed, Ruff clean, strict mypy clean across
+  86 source files on Python 3.14.6 (2026-08-13); frontend Vitest, ESLint and
+  production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
@@ -37,8 +38,15 @@ Last updated: 2026-08-12
   evidence envelope and Parquet checksum verify. Provider snapshot connectivity
   remains explicitly `DISCONNECTED` and is no longer conflated with the simulated
   execution-gateway metric.
-- Next: complete subperiod/universe robustness while seeking a working snapshot
-  endpoint for the recorded PAPER workflow.
+- Robustness evidence: 14 bounded cost, parameter, subperiod and deterministic
+  current-universe perturbations are hash-verified and exposed fail-closed in
+  the Chinese research page. Worst Sharpe is `-1.1429123433`, Sharpe dispersion
+  is `1.6703725093`, and at least one scenario has negative Sharpe. This reuses
+  observed periods as a
+  post-rejection diagnostic; it is not new held-out or promotion evidence.
+- Next: seek a working snapshot endpoint for the recorded PAPER workflow and
+  improve verified, data-backed research analytics without weakening the
+  `NOT_ELIGIBLE` conclusion.
   Select a broker before building a native read-only reconciliation bridge.
 - External blockers: `WAITING_FOR_AKSHARE_SNAPSHOT_ENDPOINT_ACCESS`,
   `WAITING_FOR_DATA_PROVIDER_AUTH` and

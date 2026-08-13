@@ -89,6 +89,20 @@ export interface WalkForwardReport {
     fold_pass_ratio?: string
     folds: WalkForwardFold[]
     result_hash?: string
+    source_result_hash?: string
+  }
+}
+
+export interface RobustnessReport {
+  classification: string
+  promotion: string
+  promotion_reasons: string[]
+  result: {
+    worst_sharpe?: string
+    dispersion?: string
+    any_negative_sharpe?: boolean
+    scenario_metrics: Array<[string, Array<[string, string]>]>
+    result_hash?: string
   }
 }
 
@@ -127,5 +141,6 @@ export interface PlatformSnapshot {
   strategies: ResearchStrategyRow[]
   experiments: ResearchReport
   walkForward: WalkForwardReport
+  robustness: RobustnessReport
   market: MarketStatus
 }
