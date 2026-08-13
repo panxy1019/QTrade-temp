@@ -104,3 +104,9 @@ Status is `AKSHARE_HISTORICAL_READY` and
 `WAITING_FOR_AKSHARE_SNAPSHOT_ENDPOINT_ACCESS`. Snapshot-driven PAPER readiness
 remains false until the snapshot command returns `ready=true` and a subsequent
 schema/freshness/recording acceptance test passes.
+
+The historical ingest now signs the complete metadata envelope independently of
+the Parquet checksum. The control plane requires both hashes and `PASSED` quality
+before exposing the dataset or its 30 ETF instrument rows. The Chinese market
+and data-center pages show the verified bar count and date range while retaining
+`Snapshot DISCONNECTED`, `Snapshot ready NO`, and `PIT universe NO` labels.

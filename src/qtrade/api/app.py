@@ -67,6 +67,7 @@ class AppContext:
     daily_report_root: Path | None = None
     research_comparison_path: Path | None = None
     walk_forward_report_path: Path | None = None
+    historical_manifest_path: Path | None = None
 
 
 def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
@@ -156,11 +157,37 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
     def market(
         _: str = Depends(_require_role(Role.READ, auth_config)),
     ) -> dict[str, object]:
-        return {"connected": state.metrics.gateway_connected, "mode": state.runtime.status.mode}
+        dataset = _load_verified_market_dataset(state.historical_manifest_path)
+        return {
+            "provider_connected": False,
+            "execution_gateway_connected": state.metrics.gateway_connected,
+            "mode": state.runtime.status.mode,
+            "snapshot_readiness": False,
+            "historical": dataset,
+        }
 
     @app.get("/instruments")
     def instruments(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
-        return []
+        dataset = _load_verified_market_dataset(state.historical_manifest_path)
+        if dataset is None:
+            return []
+        universe = dataset.get("universe")
+        if not isinstance(universe, dict):
+            return []
+        symbols = universe.get("symbols")
+        if not isinstance(symbols, list):
+            return []
+        return [
+            {
+                "symbol": symbol,
+                "security_type": "ETF",
+                "provider": universe.get("provider"),
+                "point_in_time": universe.get("point_in_time"),
+                "data_version": dataset.get("data_version"),
+            }
+            for symbol in symbols
+            if isinstance(symbol, str)
+        ]
 
     @app.get("/strategies")
     def strategies(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
@@ -386,6 +413,11 @@ def context_from_runtime(bundle: object) -> AppContext:
         walk_forward_report_path=Path(
             "runtime/research/akshare-walk-forward-v1.json"
         ),
+        historical_manifest_path=Path(
+            "runtime/data/akshare/"
+            "akshare-sina-etf30-current-20260812-v1-raw-daily-20240101-20260812/"
+            "manifest.json"
+        ),
     )
 
 
@@ -410,5 +442,65 @@ def _load_verified_research_report(path: Path | None) -> dict[str, object] | Non
         if sha256(canonical.encode("utf-8")).hexdigest() != digest:
             return None
         return report
-    except (OSError, json.JSONDecodeError):
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+
+
+def _load_verified_market_dataset(path: Path | None) -> dict[str, object] | None:
+    if path is None or not path.is_file():
+        return None
+    try:
+        evidence = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(evidence, dict):
+            return None
+        evidence_digest = evidence.get("evidence_sha256")
+        unsigned = {key: value for key, value in evidence.items() if key != "evidence_sha256"}
+        canonical = json.dumps(
+            unsigned,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            default=str,
+        )
+        if (
+            not isinstance(evidence_digest, str)
+            or sha256(canonical.encode("utf-8")).hexdigest() != evidence_digest
+        ):
+            return None
+        manifest = evidence.get("manifest")
+        universe = evidence.get("universe")
+        if not isinstance(manifest, dict) or not isinstance(universe, dict):
+            return None
+        checksum = manifest.get("checksum")
+        data_version = manifest.get("data_version")
+        symbols = universe.get("symbols")
+        if (
+            not isinstance(checksum, str)
+            or not isinstance(data_version, str)
+            or manifest.get("quality_status") != "PASSED"
+            or not isinstance(symbols, list)
+            or not all(isinstance(symbol, str) for symbol in symbols)
+            or not isinstance(evidence.get("bar_count"), int)
+            or evidence["bar_count"] <= 0
+            or not isinstance(universe.get("point_in_time"), bool)
+        ):
+            return None
+        bars = path.parent / "bars.parquet"
+        if not bars.is_file() or sha256(bars.read_bytes()).hexdigest() != checksum:
+            return None
+        return {
+            "provider": universe.get("provider"),
+            "provider_version": universe.get("provider_version"),
+            "classification": evidence.get("classification"),
+            "data_version": data_version,
+            "quality_status": manifest.get("quality_status"),
+            "checksum": checksum,
+            "bar_count": evidence.get("bar_count"),
+            "observed_start": evidence.get("observed_start"),
+            "observed_end": evidence.get("observed_end"),
+            "snapshot_readiness": evidence.get("snapshot_readiness") is True,
+            "real_data_paper_readiness": evidence.get("real_data_paper_readiness") is True,
+            "universe": universe,
+        }
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
         return None

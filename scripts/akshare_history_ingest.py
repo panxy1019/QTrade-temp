@@ -11,6 +11,7 @@ import json
 import os
 import re
 from datetime import UTC, datetime, timedelta
+from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
@@ -33,6 +34,17 @@ def _load_universe(path: Path) -> tuple[dict[str, Any], tuple[str, ...]]:
     if payload.get("point_in_time") is not False:
         raise ValueError("current-universe ingest must explicitly disclose PIT=false")
     return payload, symbols
+
+
+def _sign_evidence(evidence: dict[str, Any]) -> dict[str, Any]:
+    canonical = json.dumps(
+        evidence,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    )
+    return {**evidence, "evidence_sha256": sha256(canonical.encode("utf-8")).hexdigest()}
 
 
 def main() -> int:
@@ -106,6 +118,7 @@ def main() -> int:
         "snapshot_readiness": False,
         "real_data_paper_readiness": False,
     }
+    evidence = _sign_evidence(evidence)
     (dataset_dir / "manifest.json").write_text(
         json.dumps(evidence, ensure_ascii=False, indent=2, sort_keys=True),
         encoding="utf-8",

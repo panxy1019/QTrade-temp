@@ -115,6 +115,86 @@ def test_required_read_surfaces_exist():
         assert api.get(path).status_code == 200
 
 
+def test_market_dataset_requires_matching_parquet_checksum(tmp_path):
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("100000"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit)
+    runtime = PlatformRuntime(RuntimeMode.PAPER, risk, audit, metrics)
+    bars = tmp_path / "bars.parquet"
+    bars.write_bytes(b"verified-bars")
+    evidence = {
+        "classification": "noncommercial_research_historical_only",
+        "bar_count": 1,
+        "observed_start": "2026-08-12T15:00:00+08:00",
+        "observed_end": "2026-08-12T15:00:00+08:00",
+        "snapshot_readiness": False,
+        "real_data_paper_readiness": False,
+        "manifest": {
+            "data_version": "akshare-test",
+            "checksum": sha256(bars.read_bytes()).hexdigest(),
+            "quality_status": "PASSED",
+        },
+        "universe": {
+            "provider": "AKShare",
+            "provider_version": "1.18.84",
+            "point_in_time": False,
+            "symbols": ["510300"],
+        },
+    }
+    evidence["evidence_sha256"] = sha256(
+        json.dumps(
+            evidence,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    target = tmp_path / "manifest.json"
+    target.write_text(json.dumps(evidence), encoding="utf-8")
+    api = TestClient(
+        create_app(
+            AppContext(
+                runtime,
+                metrics,
+                oms,
+                ledger,
+                audit,
+                historical_manifest_path=target,
+            ),
+            ApiAuthConfig(),
+        )
+    )
+    market = api.get("/market").json()
+    assert market["provider_connected"] is False
+    assert market["execution_gateway_connected"] is False
+    assert market["snapshot_readiness"] is False
+    assert market["historical"]["data_version"] == "akshare-test"
+    assert api.get("/instruments").json()[0]["point_in_time"] is False
+    evidence["universe"]["symbols"] = ["510500"]
+    target.write_text(json.dumps(evidence), encoding="utf-8")
+    assert api.get("/instruments").json() == []
+    evidence["universe"]["symbols"] = ["510300"]
+    evidence["evidence_sha256"] = sha256(
+        json.dumps(
+            {key: value for key, value in evidence.items() if key != "evidence_sha256"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    target.write_text(json.dumps(evidence), encoding="utf-8")
+    bars.write_bytes(b"tampered")
+    assert api.get("/market").json()["historical"] is None
+    assert api.get("/instruments").json() == []
+    target.write_bytes(b"\xff\xfe\xfd")
+    assert api.get("/market").status_code == 200
+    assert api.get("/market").json()["historical"] is None
+    assert api.get("/instruments").status_code == 200
+    assert api.get("/instruments").json() == []
+
+
 def test_verified_research_results_are_exposed_and_tampering_fails_closed(tmp_path):
     audit = AuditLog()
     metrics = MetricsRegistry()

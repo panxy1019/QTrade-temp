@@ -12,7 +12,7 @@ Last updated: 2026-08-12
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 200 tests passed, Ruff clean, strict mypy clean on
+- Acceptance evidence: 202 tests passed, Ruff clean, strict mypy clean on
   Python 3.14.6 (2026-08-12); frontend Vitest, ESLint and production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
@@ -32,6 +32,11 @@ Last updated: 2026-08-12
   disjoint, and exposes checksum-verified evidence to the Chinese dashboard.
 - Historical provider coverage: ETF, A-share and major-index raw daily paths are
   canonicalized and live-probed; stock/index snapshots and minute endpoints remain open.
+- Dashboard historical data: `/market`, `/instruments`, the market page and the
+  data-center page now expose the real 30-ETF AKShare dataset only after both its
+  evidence envelope and Parquet checksum verify. Provider snapshot connectivity
+  remains explicitly `DISCONNECTED` and is no longer conflated with the simulated
+  execution-gateway metric.
 - Next: complete subperiod/universe robustness while seeking a working snapshot
   endpoint for the recorded PAPER workflow.
   Select a broker before building a native read-only reconciliation bridge.
@@ -127,9 +132,6 @@ Last updated: 2026-08-12
   ledger, OMS and reservations before audit I/O. An audit-sink failure after
   APPLIED leaves one converged fill, latches HALT/reconciliation FAILED, and
   restart restores the identical state.
-- Paper orchestration: a serialized next-bar runner checkpoints pending targets
-  and last event identity, persists T+N lots with fills, shares its lock across
-  same-identity instances, and fences duplicate processes/stale runtime writers.
 - Metadata lineage: an immutable SQLite catalog registers PASSED manifests and
   experiment spec hashes with foreign-keyed data versions; the baseline workflow
   now populates and verifies this catalog.

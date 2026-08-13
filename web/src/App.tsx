@@ -44,7 +44,7 @@ function Shell() {
         <Layout.Content className="content">
           <Routes>
             <Route path="/" element={<OverviewPage data={data} dark={dark} />} />
-            <Route path="/market" element={<MarketPage />} />
+            <Route path="/market" element={<MarketPage data={data} />} />
             <Route path="/strategies" element={<StrategyPage data={data} />} />
             <Route path="/research" element={<ResearchPage data={data} />} />
             <Route path="/experiments" element={<ExperimentPage data={data} />} />

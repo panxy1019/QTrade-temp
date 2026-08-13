@@ -92,6 +92,29 @@ export interface WalkForwardReport {
   }
 }
 
+export interface HistoricalDataset {
+  provider: string
+  provider_version: string
+  classification: string
+  data_version: string
+  quality_status: string
+  checksum: string
+  bar_count: number
+  observed_start: string
+  observed_end: string
+  snapshot_readiness: boolean
+  real_data_paper_readiness: boolean
+  universe: { point_in_time: boolean; symbols: string[] }
+}
+
+export interface MarketStatus {
+  provider_connected: boolean
+  execution_gateway_connected: boolean
+  mode: RuntimeMode
+  snapshot_readiness: boolean
+  historical: HistoricalDataset | null
+}
+
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
@@ -104,4 +127,5 @@ export interface PlatformSnapshot {
   strategies: ResearchStrategyRow[]
   experiments: ResearchReport
   walkForward: WalkForwardReport
+  market: MarketStatus
 }

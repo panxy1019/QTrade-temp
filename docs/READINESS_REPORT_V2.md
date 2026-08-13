@@ -57,7 +57,7 @@ npm --prefix web run build
 Validation on Windows 11, Python 3.14.6 and Node.js on 2026-08-12 (latest
 AKShare amendment checkpoint):
 
-- 200 Python tests passed;
+- 202 Python tests passed;
 - Ruff clean;
 - strict mypy clean across 84 source files;
 - no broken Python requirements;
@@ -130,3 +130,11 @@ checksum-verified result is bound to source commit `0438232` and dataset checksu
 All three tests lost money: aggregate total return `-0.2044119541`, Sharpe
 `-1.1004932854`, 14 observed trades, and fold pass ratio `0`. The Chinese
 research page reads this evidence through a hash-verifying, fail-closed API.
+
+The market and data-center pages also consume the actual 18,960-bar historical
+dataset manifest. The API verifies a deterministic evidence-envelope hash plus
+the Parquet SHA-256 before exposing provider, version, observed range, quality,
+universe and instrument rows. It separately reports provider snapshot
+connectivity as false; the simulated execution gateway cannot make the market
+feed appear connected. Tampered metadata or Parquet bytes yield an empty,
+fail-closed historical view.

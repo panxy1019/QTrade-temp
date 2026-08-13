@@ -5,8 +5,9 @@ import { StatusTag } from '../components/StatusTag'
 
 const waiting = <Alert showIcon type="info" title="等待实时数据授权" description="适配器与回放链路已准备；当前未配置任何供应商令牌或真实连接。" />
 
-export function MarketPage() {
-  return <Page title="行情中心" subtitle="A股、ETF 与指数 Level-1 行情"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Input.Search placeholder="搜索证券代码或名称" /><Empty description="授权并连接行情供应商后显示实时行情与K线" /></Space></Page>
+export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
+  const historical = data?.market?.historical
+  return <Page title="行情中心" subtitle="A股、ETF 与指数 Level-1 行情"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Alert showIcon type={historical ? 'success' : 'warning'} title={historical ? `已验证历史数据：${historical.provider} ${historical.provider_version}` : '尚无校验通过的历史数据'} description={historical ? `${historical.bar_count} 根日线，${historical.observed_start} 至 ${historical.observed_end}；当前样本池非 PIT。` : '需要 checksum 与质量状态同时通过。'} /><Input.Search placeholder="搜索证券代码或名称" /><Empty description="实时 snapshot 仍不可用；不会用历史收盘价冒充行情" /></Space></Page>
 }
 
 export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
@@ -64,7 +65,8 @@ export function RiskPage({ data }: { data: PlatformSnapshot | null }) {
 
 export function DataCenterPage({ data }: { data: PlatformSnapshot | null }) {
   const reportCount = data?.reports.length ?? 0
-  return <Page title="数据中心" subtitle="供应商、质量、存储与回放"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Descriptions values={[['Provider', '未配置'], ['连接状态', 'DISCONNECTED'], ['订阅数量', '0'], ['数据版本', '—'], ['质量状态', '等待数据'], ['Replay', '可用'], ['每日报告', String(reportCount)]]}/></Space></Page>
+  const historical = data?.market?.historical
+  return <Page title="数据中心" subtitle="供应商、质量、存储与回放"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Descriptions values={[['Provider', historical ? `${historical.provider} ${historical.provider_version}` : '未配置'], ['Snapshot 连接', data?.market.provider_connected ? 'CONNECTED' : 'DISCONNECTED'], ['Snapshot 就绪', data?.market.snapshot_readiness ? 'YES' : 'NO'], ['数据版本', historical?.data_version ?? '—'], ['质量状态', historical?.quality_status ?? '等待数据'], ['历史 Bar', String(historical?.bar_count ?? 0)], ['PIT 样本池', historical?.universe.point_in_time ? 'YES' : 'NO'], ['Replay', '可用'], ['每日报告', String(reportCount)]]}/></Space></Page>
 }
 
 export function MonitorPage({ data }: { data: PlatformSnapshot | null }) {
