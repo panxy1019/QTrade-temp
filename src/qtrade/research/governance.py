@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 from datetime import date
 from decimal import Decimal
 from enum import StrEnum
@@ -39,6 +39,7 @@ class RobustnessScenario:
     parameter_overrides: tuple[tuple[str, str], ...] = ()
     cost_multiplier: Decimal = Decimal("1")
     regime: str = "ALL"
+    universe_override: tuple[str, ...] | None = None
 
     def __post_init__(self) -> None:
         if not self.scenario_id or not self.regime:
@@ -48,6 +49,11 @@ class RobustnessScenario:
         keys = [key for key, _ in self.parameter_overrides]
         if len(keys) != len(set(keys)):
             raise ValueError("robustness parameter overrides must be unique")
+        if self.universe_override is not None and (
+            not self.universe_override
+            or len(set(self.universe_override)) != len(self.universe_override)
+        ):
+            raise ValueError("robustness universe override must be nonempty and unique")
 
 
 @dataclass(frozen=True, slots=True)
@@ -71,7 +77,7 @@ class RobustnessSuite:
     def run(
         self,
         spec: ExperimentRunSpec,
-        evaluator: Callable[[ExperimentRunSpec], ExperimentOutput],
+        evaluator: Callable[[ExperimentRunSpec, RobustnessScenario], ExperimentOutput],
     ) -> RobustnessResult:
         results: list[tuple[str, tuple[tuple[str, Decimal], ...]]] = []
         sharpes: list[Decimal] = []
@@ -82,8 +88,9 @@ class RobustnessSuite:
                 spec,
                 parameters=tuple(sorted(parameters.items())),
                 transaction_cost=spec.transaction_cost * scenario.cost_multiplier,
+                universe=scenario.universe_override or spec.universe,
             )
-            output: ExperimentOutput = evaluator(varied)
+            output: ExperimentOutput = evaluator(varied, scenario)
             metrics = dict(output.metrics)
             if "sharpe" not in metrics:
                 raise ValueError("robustness evaluation requires sharpe")
@@ -93,6 +100,7 @@ class RobustnessSuite:
         dispersion = max(sharpes) - min(sharpes)
         cliff = any(value < Decimal("0") for value in sharpes)
         payload = {
+            "scenarios": [asdict(scenario) for scenario in self._scenarios],
             "results": results,
             "worst_sharpe": str(worst),
             "dispersion": str(dispersion),

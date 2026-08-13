@@ -66,7 +66,10 @@ def test_robustness_suite_is_bounded_deterministic_and_detects_cliff():
         )
     )
 
-    def evaluator(spec):
+    seen = []
+
+    def evaluator(spec, scenario):
+        seen.append((scenario.regime, spec.universe))
         sharpe = Decimal("1.0") if dict(spec.parameters)["lookback"] == "20" else Decimal("-0.1")
         return ExperimentOutput((("sharpe", sharpe),), (Path("unused"),))
 
@@ -74,9 +77,34 @@ def test_robustness_suite_is_bounded_deterministic_and_detects_cliff():
     assert result.worst_sharpe == Decimal("-0.1")
     assert result.dispersion == Decimal("1.1")
     assert result.cliff_detected is True
+    assert seen == [("ALL", ("510300", "510500")), ("ALL", ("510300", "510500"))]
     assert len(result.result_hash) == 64
     with pytest.raises(ValueError, match="bounded"):
         RobustnessSuite(tuple(RobustnessScenario(str(index)) for index in range(21)))
+
+
+def test_robustness_scenario_binds_regime_universe_and_definition_hash():
+    spec = run_spec()
+
+    def evaluator(varied, scenario):
+        return ExperimentOutput(
+            (
+                ("sharpe", Decimal("1")),
+                ("universe_size", Decimal(len(varied.universe))),
+                ("regime_seen", Decimal("1") if scenario.regime == "BEAR" else Decimal("0")),
+            ),
+            (Path("unused"),),
+        )
+
+    base = RobustnessSuite(
+        (RobustnessScenario("subset", regime="BEAR", universe_override=("510300",)),)
+    ).run(spec, evaluator)
+    changed = RobustnessSuite(
+        (RobustnessScenario("subset", regime="BULL", universe_override=("510300",)),)
+    ).run(spec, evaluator)
+    assert dict(base.scenario_metrics[0][1])["universe_size"] == 1
+    assert dict(base.scenario_metrics[0][1])["regime_seen"] == 1
+    assert base.result_hash != changed.result_hash
 
 
 def test_research_loop_enforces_review_budgets_uniqueness_and_test_holdout():
