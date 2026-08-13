@@ -133,6 +133,14 @@ Order cancellation now uses a typed idempotent application-service command and
 the separate trade-sensitive bearer role; it remains available under HALT.
 Runtime metrics are wired to newly-created submissions and newly-applied fills,
 with duplicate retries excluded from counters and rates.
+The Chinese PAPER, positions, orders/trades and risk pages now bind to the
+durable runtime. API contracts expose strategy/portfolio/order identity,
+restart-stable APPLIED simulated fills, dated sellability and recomputable
+cost-basis exposure. Current equity, market value, unrealized PnL and drawdown
+remain unavailable until an authorized fresh market-price source exists.
+The web client reads these PAPER fields from one dispatch-gated atomic snapshot;
+concurrent fill/read regression proves it cannot observe a half-installed
+account/OMS projection.
 Remaining: external identity/TLS integration, Prometheus export and richer alert
 routing. Keep server loopback-only until those are reviewed.
 

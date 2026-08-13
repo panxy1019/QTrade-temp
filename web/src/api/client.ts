@@ -13,13 +13,10 @@ export function loadHistoricalBarSeries(symbol: string): Promise<HistoricalBarSe
 }
 
 export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
-  const [system, health, account, pnl, positions, orders, metrics, reports, strategies, experiments, walkForward, robustness, backtestAnalytics, market, historicalBars] = await Promise.all([
+  const [system, health, paper, metrics, reports, strategies, experiments, walkForward, robustness, backtestAnalytics, market, historicalBars] = await Promise.all([
     getJson<PlatformSnapshot['system']>('/system'),
     getJson<PlatformSnapshot['health']>('/health'),
-    getJson<PlatformSnapshot['account']>('/account'),
-    getJson<PlatformSnapshot['pnl']>('/pnl'),
-    getJson<PlatformSnapshot['positions']>('/positions'),
-    getJson<PlatformSnapshot['orders']>('/orders'),
+    getJson<Pick<PlatformSnapshot, 'account' | 'pnl' | 'positions' | 'orders' | 'trades' | 'risk'>>('/paper-snapshot'),
     getJson<PlatformSnapshot['metrics']>('/metrics'),
     getJson<PlatformSnapshot['reports']>('/reports'),
     getJson<PlatformSnapshot['strategies']>('/strategies'),
@@ -30,5 +27,5 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getJson<PlatformSnapshot['market']>('/market'),
     getJson<PlatformSnapshot['historicalBars']>('/historical-bars/latest'),
   ])
-  return { system, health, account, pnl, positions, orders, metrics, reports, strategies, experiments, walkForward, robustness, backtestAnalytics, market, historicalBars }
+  return { system, health, ...paper, metrics, reports, strategies, experiments, walkForward, robustness, backtestAnalytics, market, historicalBars }
 }

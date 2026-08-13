@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from collections import deque
 from collections.abc import Callable
+from contextlib import nullcontext
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
@@ -10,7 +11,7 @@ from enum import StrEnum
 from hashlib import sha256
 from pathlib import Path
 from secrets import compare_digest
-from typing import Any
+from typing import Any, cast
 from zoneinfo import ZoneInfo
 
 import pyarrow as pa  # type: ignore[import-untyped]
@@ -23,7 +24,7 @@ from pydantic import BaseModel
 from qtrade.accounting import Ledger
 from qtrade.audit import AuditLog
 from qtrade.control import PlatformRuntime
-from qtrade.domain import CancelCommand, Order, RuntimeMode
+from qtrade.domain import CancelCommand, Order, OrderStatus, RuntimeMode
 from qtrade.execution import FeeSchedule, PaperGateway
 from qtrade.monitoring import MetricsRegistry
 from qtrade.oms import OrderManager
@@ -81,6 +82,10 @@ class AppContext:
     robustness_report_path: Path | None = None
     research_artifact_root: Path | None = None
     historical_manifest_path: Path | None = None
+    applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
+    sellable_quantity_reader: Callable[[str, date], int] | None = None
+    operational_date: date | None = None
+    operational_gate: Any = None
 
 
 def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
@@ -134,33 +139,30 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
         return asdict(state.runtime.status)
 
     @app.get("/risk")
-    def risk(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, str]:
-        return {"state": state.runtime.status.risk_state.value}
+    def risk(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:
+        return cast(dict[str, object], _paper_snapshot(state)["risk"])
 
     @app.get("/orders")
     def orders(
         _: str = Depends(_require_role(Role.READ, auth_config)),
     ) -> list[dict[str, object]]:
-        return [
-            {
-                "internal_order_id": order.internal_order_id,
-                "symbol": order.request.symbol,
-                "status": order.status.value,
-                "quantity": order.request.quantity,
-                "filled_quantity": order.filled_quantity,
-            }
-            for order in state.oms.orders
-        ]
+        return cast(list[dict[str, object]], _paper_snapshot(state)["orders"])
 
     @app.get("/positions")
     def positions(
         _: str = Depends(_require_role(Role.READ, auth_config)),
     ) -> list[dict[str, Any]]:
-        return [asdict(position) for position in state.ledger.account.positions.values()]
+        return cast(list[dict[str, Any]], _paper_snapshot(state)["positions"])
 
     @app.get("/account")
-    def account(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, str]:
-        return {"cash": str(state.ledger.account.cash)}
+    def account(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:
+        return cast(dict[str, object], _paper_snapshot(state)["account"])
+
+    @app.get("/paper-snapshot")
+    def paper_snapshot(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        return _paper_snapshot(state)
 
     @app.get("/metrics")
     def metrics(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:
@@ -325,16 +327,14 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
         return {"positions": len(state.ledger.account.positions)}
 
     @app.get("/trades")
-    def trades(_: str = Depends(_require_role(Role.READ, auth_config))) -> list[object]:
-        return []
+    def trades(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> list[dict[str, object]]:
+        return cast(list[dict[str, object]], _paper_snapshot(state)["trades"])
 
     @app.get("/pnl")
     def pnl(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, str]:
-        realized = sum(
-            (position.realized_pnl for position in state.ledger.account.positions.values()),
-            start=Decimal("0"),
-        )
-        return {"realized": str(realized)}
+        return cast(dict[str, str], _paper_snapshot(state)["pnl"])
 
     @app.get("/audit")
     def audit(
@@ -507,7 +507,197 @@ def context_from_runtime(bundle: object) -> AppContext:
             "akshare-sina-etf30-current-20260812-v1-raw-daily-20240101-20260812/"
             "manifest.json"
         ),
+        applied_trade_reader=bundle.journal.applied_trade_payloads,
+        sellable_quantity_reader=bundle.sellability.sellable_quantity,
+        operational_gate=bundle.risk.dispatch_gate,
     )
+
+
+def _paper_trade_rows(state: AppContext) -> list[dict[str, object]]:
+    if state.applied_trade_reader is None:
+        return []
+    orders = {order.internal_order_id: order for order in state.oms.orders}
+    rows: list[dict[str, object]] = []
+    filled_by_order: dict[str, int] = {}
+    trade_ids: set[str] = set()
+    try:
+        for payload in state.applied_trade_reader():
+            order_id = payload["order_id"]
+            if not isinstance(order_id, str):
+                return []
+            order = orders.get(order_id)
+            if order is None:
+                return []
+            trade_id = payload["trade_id"]
+            symbol = payload["instrument"]
+            side = payload["side"]
+            if (
+                not isinstance(trade_id, str)
+                or not trade_id
+                or trade_id in trade_ids
+                or symbol != order.request.symbol
+                or side != order.request.side.value
+            ):
+                return []
+            price = Decimal(str(payload["price"]))
+            fee = Decimal(str(payload["fee"]))
+            raw_quantity = payload["quantity"]
+            if not isinstance(raw_quantity, int) or isinstance(raw_quantity, bool):
+                return []
+            quantity = raw_quantity
+            timestamp = datetime.fromisoformat(str(payload["timestamp"]))
+            if (
+                not price.is_finite()
+                or price <= 0
+                or not fee.is_finite()
+                or fee < 0
+                or quantity <= 0
+                or timestamp.tzinfo is None
+                or timestamp < order.created_at
+                or timestamp > order.updated_at
+            ):
+                return []
+            trade_ids.add(trade_id)
+            filled_by_order[order_id] = filled_by_order.get(order_id, 0) + quantity
+            if filled_by_order[order_id] > order.request.quantity:
+                return []
+            rows.append(
+                {
+                    "trade_id": trade_id,
+                    "internal_order_id": order_id,
+                    "strategy_id": order.request.strategy_id,
+                    "portfolio_id": order.request.portfolio_id,
+                    "symbol": symbol,
+                    "side": side,
+                    "price": str(price),
+                    "quantity": quantity,
+                    "fee": str(fee),
+                    "timestamp": timestamp.isoformat(),
+                    "execution_type": "PAPER_SIMULATED_FILL",
+                }
+            )
+        filled_statuses = {
+            OrderStatus.PARTIALLY_FILLED,
+            OrderStatus.FILLED,
+            OrderStatus.CANCEL_PENDING,
+            OrderStatus.CANCELLED,
+        }
+        for order in orders.values():
+            applied_quantity = filled_by_order.get(order.internal_order_id, 0)
+            if order.filled_quantity != applied_quantity:
+                return []
+            if applied_quantity > 0 and order.status not in filled_statuses:
+                return []
+            if order.status is OrderStatus.FILLED and applied_quantity != order.request.quantity:
+                return []
+        return sorted(rows, key=lambda item: (str(item["timestamp"]), str(item["trade_id"])))
+    except (ArithmeticError, KeyError, TypeError, ValueError):
+        return []
+
+
+def _paper_risk_summary(state: AppContext) -> dict[str, object]:
+    positions = tuple(state.ledger.account.positions.values())
+    position_values = tuple(
+        position.average_cost * position.quantity for position in positions
+    )
+    position_cost_basis = sum(position_values, start=Decimal("0"))
+    terminal = {
+        OrderStatus.RISK_REJECTED,
+        OrderStatus.FILLED,
+        OrderStatus.CANCELLED,
+        OrderStatus.REJECTED,
+    }
+    open_orders = tuple(order for order in state.oms.orders if order.status not in terminal)
+    open_buy_notional = sum(
+        (
+            order.request.price * order.remaining_quantity
+            for order in open_orders
+            if order.request.side.value == "BUY"
+        ),
+        start=Decimal("0"),
+    )
+    concentration = (
+        None
+        if position_cost_basis <= 0
+        else str(max(position_values, default=Decimal("0")) / position_cost_basis)
+    )
+    realized = sum(
+        (position.realized_pnl for position in positions), start=Decimal("0")
+    )
+    return {
+        "state": state.runtime.status.risk_state.value,
+        "cash": str(state.ledger.account.cash),
+        "position_cost_basis": str(position_cost_basis),
+        "open_buy_notional": str(open_buy_notional),
+        "gross_exposure": str(position_cost_basis + open_buy_notional),
+        "exposure_basis": "COST_BASIS_PLUS_OPEN_BUY_LIMIT_PRICE",
+        "largest_position_concentration": concentration,
+        "open_order_count": len(open_orders),
+        "realized_pnl": str(realized),
+        "drawdown": None,
+        "valuation_status": "MARKET_PRICE_UNAVAILABLE",
+        "gateway_connected": state.metrics.gateway_connected,
+        "reconciliation_status": state.metrics.reconciliation_status,
+    }
+
+
+def _paper_snapshot(state: AppContext) -> dict[str, Any]:
+    gate = state.operational_gate if state.operational_gate is not None else nullcontext()
+    with gate:
+        as_of = state.operational_date or datetime.now(ZoneInfo("Asia/Shanghai")).date()
+        positions = [
+            {
+                **asdict(position),
+                "sellable_quantity": (
+                    None
+                    if state.sellable_quantity_reader is None
+                    else state.sellable_quantity_reader(position.symbol, as_of)
+                ),
+                "as_of_date": as_of.isoformat(),
+                "cost_basis_value": str(position.average_cost * position.quantity),
+                "market_price": None,
+                "market_value": None,
+                "unrealized_pnl": None,
+                "valuation_status": "MARKET_PRICE_UNAVAILABLE",
+            }
+            for position in sorted(
+                state.ledger.account.positions.values(), key=lambda item: item.symbol
+            )
+        ]
+        orders = [
+            {
+                "internal_order_id": order.internal_order_id,
+                "broker_order_id": order.broker_order_id,
+                "strategy_id": order.request.strategy_id,
+                "portfolio_id": order.request.portfolio_id,
+                "symbol": order.request.symbol,
+                "side": order.request.side.value,
+                "price": str(order.request.price),
+                "status": order.status.value,
+                "quantity": order.request.quantity,
+                "filled_quantity": order.filled_quantity,
+                "rejection_reason": order.rejection_reason,
+                "created_at": order.created_at.isoformat(),
+                "updated_at": order.updated_at.isoformat(),
+            }
+            for order in state.oms.orders
+        ]
+        realized = sum(
+            (position.realized_pnl for position in state.ledger.account.positions.values()),
+            start=Decimal("0"),
+        )
+        return {
+            "account": {
+                "cash": str(state.ledger.account.cash),
+                "equity": None,
+                "valuation_status": "MARKET_PRICE_UNAVAILABLE",
+            },
+            "pnl": {"realized": str(realized)},
+            "positions": positions,
+            "orders": orders,
+            "trades": _paper_trade_rows(state),
+            "risk": _paper_risk_summary(state),
+        }
 
 
 def _load_verified_research_report(path: Path | None) -> dict[str, object] | None:

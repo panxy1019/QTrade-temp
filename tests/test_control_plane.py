@@ -1,7 +1,9 @@
 import json
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from hashlib import sha256
+from threading import Event, Thread
+from typing import Any
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
@@ -14,6 +16,8 @@ from qtrade.api.app import (
     _load_verified_backtest_analytics,
     _load_verified_experiment_catalog,
     _load_verified_robustness_report,
+    _paper_snapshot,
+    _paper_trade_rows,
     _validated_artifact_manifest,
     _validated_backtest_positions,
     _validated_backtest_trades,
@@ -980,6 +984,240 @@ def test_api_context_uses_canonical_paper_runtime(tmp_path):
         json={},
     )
     assert response.status_code == 200
+
+
+def test_paper_account_endpoints_are_traceable_and_restart_consistent(tmp_path):
+    journal_path = tmp_path / "paper-account.db"
+    now = datetime(2026, 8, 12, 1, 31, tzinfo=UTC)
+    limits = RiskLimits(Decimal("50000"), 10000, Decimal("100000"))
+    fees = FeeSchedule("test", Decimal("0"), Decimal("0"))
+    instruments = {
+        symbol: Instrument(symbol, "SSE", "ETF", 100, Decimal("0.001"))
+        for symbol in ("510300", "510500")
+    }
+
+    def build():
+        return build_paper_runtime(
+            mode=RuntimeMode.PAPER,
+            opening_cash=Decimal("100000"),
+            limits=limits,
+            fees=fees,
+            journal_path=journal_path,
+        )
+
+    bundle = build()
+    bundle.reconcile_and_recover(actor="operator")
+    bundle.runtime.start(actor="operator")
+    context = RiskContext(
+        bundle.ledger.account,
+        instruments,
+        {"510300": Decimal("10"), "510500": Decimal("5")},
+        now,
+        True,
+        True,
+        now,
+    )
+    filled_order, _ = bundle.service.submit(
+        OrderRequest(
+            "paper-buy-filled",
+            "trend@1.0.0",
+            "paper-etf",
+            "510300",
+            Side.BUY,
+            Decimal("10"),
+            100,
+            now,
+            trading_day=date(2026, 8, 12),
+            sellable_on=date(2026, 8, 13),
+        ),
+        context,
+        now=now,
+    )
+    bundle.gateway.fill(
+        filled_order,
+        fill_key="paper-fill-1",
+        price=Decimal("10"),
+        quantity=100,
+        now=now + timedelta(seconds=1),
+    )
+    open_order, _ = bundle.service.submit(
+        OrderRequest(
+            "paper-buy-open",
+            "rotation@1.0.0",
+            "paper-etf",
+            "510500",
+            Side.BUY,
+            Decimal("5"),
+            100,
+            now + timedelta(seconds=2),
+            trading_day=date(2026, 8, 12),
+            sellable_on=date(2026, 8, 13),
+        ),
+        context,
+        now=now + timedelta(seconds=2),
+    )
+
+    def assertions(runtime_bundle) -> None:
+        app_context = context_from_runtime(runtime_bundle)
+        app_context.operational_date = date(2026, 8, 12)
+        api = TestClient(create_app(app_context, ApiAuthConfig()))
+
+        orders = api.get("/orders").json()
+        assert [(row["strategy_id"], row["side"], row["price"]) for row in orders] == [
+            ("trend@1.0.0", "BUY", "10"),
+            ("rotation@1.0.0", "BUY", "5"),
+        ]
+        assert orders[0]["internal_order_id"] == filled_order.internal_order_id
+        assert orders[1]["internal_order_id"] == open_order.internal_order_id
+
+        trades = api.get("/trades").json()
+        assert trades == [
+            {
+                "trade_id": trades[0]["trade_id"],
+                "internal_order_id": filled_order.internal_order_id,
+                "strategy_id": "trend@1.0.0",
+                "portfolio_id": "paper-etf",
+                "symbol": "510300",
+                "side": "BUY",
+                "price": "10",
+                "quantity": 100,
+                "fee": "0.00",
+                "timestamp": "2026-08-12T01:31:01+00:00",
+                "execution_type": "PAPER_SIMULATED_FILL",
+            }
+        ]
+        positions = api.get("/positions").json()
+        assert len(positions) == 1
+        assert positions[0]["symbol"] == "510300"
+        assert positions[0]["quantity"] == 100
+        assert Decimal(positions[0]["average_cost"]) == Decimal("10")
+        assert positions[0]["sellable_quantity"] == 0
+        assert positions[0]["as_of_date"] == "2026-08-12"
+        assert Decimal(positions[0]["cost_basis_value"]) == Decimal("1000")
+        assert positions[0]["market_price"] is None
+        assert positions[0]["market_value"] is None
+        assert positions[0]["unrealized_pnl"] is None
+        assert positions[0]["valuation_status"] == "MARKET_PRICE_UNAVAILABLE"
+        account = api.get("/account").json()
+        assert Decimal(account["cash"]) == Decimal("99000")
+        assert account["equity"] is None
+        assert account["valuation_status"] == "MARKET_PRICE_UNAVAILABLE"
+        risk = api.get("/risk").json()
+        assert Decimal(risk["position_cost_basis"]) == Decimal("1000")
+        assert Decimal(risk["open_buy_notional"]) == Decimal("500")
+        assert Decimal(risk["gross_exposure"]) == Decimal("1500")
+        assert Decimal(risk["largest_position_concentration"]) == Decimal("1")
+        assert risk["open_order_count"] == 1
+        assert risk["drawdown"] is None
+        assert risk["valuation_status"] == "MARKET_PRICE_UNAVAILABLE"
+
+    assertions(bundle)
+    assertions(build())
+
+    corrupt_context = context_from_runtime(bundle)
+    valid_payload = dict(bundle.journal.applied_trade_payloads()[0])
+    corrupt_context.applied_trade_reader = lambda: (
+        {**valid_payload, "quantity": 1000},
+    )
+    assert _paper_trade_rows(corrupt_context) == []
+    corrupt_context.applied_trade_reader = lambda: (
+        {
+            **valid_payload,
+            "timestamp": (filled_order.created_at - timedelta(seconds=1)).isoformat(),
+        },
+    )
+    assert _paper_trade_rows(corrupt_context) == []
+    original_filled = filled_order.filled_quantity
+    filled_order.filled_quantity = 0
+    corrupt_context.applied_trade_reader = lambda: (valid_payload,)
+    assert _paper_trade_rows(corrupt_context) == []
+    filled_order.filled_quantity = original_filled
+
+
+def test_paper_snapshot_waits_for_atomic_fill_projection(tmp_path, monkeypatch):
+    bundle = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("100000"),
+        limits=RiskLimits(Decimal("50000"), 10000, Decimal("100000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=tmp_path / "atomic-read.db",
+    )
+    bundle.reconcile_and_recover(actor="operator")
+    bundle.runtime.start(actor="operator")
+    now = datetime(2026, 8, 12, 1, 31, tzinfo=UTC)
+    order, _ = bundle.service.submit(
+        OrderRequest(
+            "atomic-read",
+            "strategy",
+            "portfolio",
+            "510300",
+            Side.BUY,
+            Decimal("10"),
+            100,
+            now,
+        ),
+        RiskContext(
+            bundle.ledger.account,
+            {"510300": Instrument("510300", "SSE", "ETF", 100, Decimal("0.001"))},
+            {"510300": Decimal("10")},
+            now,
+            True,
+            True,
+            now,
+        ),
+        now=now,
+    )
+    entered = Event()
+    release = Event()
+    read_done = Event()
+    original_commit = bundle.oms.commit_projection
+
+    def blocked_commit(current, projected):
+        entered.set()
+        assert release.wait(timeout=5)
+        original_commit(current, projected)
+
+    monkeypatch.setattr(bundle.oms, "commit_projection", blocked_commit)
+    fill_errors: list[BaseException] = []
+
+    def fill() -> None:
+        try:
+            bundle.gateway.fill(
+                order,
+                fill_key="atomic-fill",
+                price=Decimal("12"),
+                quantity=100,
+                now=now + timedelta(seconds=1),
+            )
+        except BaseException as exc:  # pragma: no cover - assertion reports details
+            fill_errors.append(exc)
+
+    context = context_from_runtime(bundle)
+    snapshots: list[dict[str, Any]] = []
+
+    def read() -> None:
+        snapshots.append(_paper_snapshot(context))
+        read_done.set()
+
+    fill_thread = Thread(target=fill)
+    read_thread = Thread(target=read)
+    fill_thread.start()
+    assert entered.wait(timeout=5)
+    read_thread.start()
+    assert not read_done.wait(timeout=0.1)
+    release.set()
+    fill_thread.join(timeout=5)
+    read_thread.join(timeout=5)
+    assert not fill_errors
+    assert read_done.is_set()
+    snapshot = snapshots[0]
+    assert snapshot["account"]["cash"] == "98800.00"
+    assert snapshot["positions"][0]["quantity"] == 100
+    assert snapshot["orders"][0]["filled_quantity"] == 100
+    assert len(snapshot["trades"]) == 1
+    assert Decimal(snapshot["risk"]["position_cost_basis"]) == Decimal("1200")
+    assert Decimal(snapshot["risk"]["open_buy_notional"]) == Decimal("0")
+    assert Decimal(snapshot["risk"]["gross_exposure"]) == Decimal("1200")
 
 
 def test_trade_role_can_cancel_but_control_role_cannot(tmp_path):

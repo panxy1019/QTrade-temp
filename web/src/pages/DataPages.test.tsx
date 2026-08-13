@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { PlatformSnapshot } from '../types'
-import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, ResearchPage, StrategyPage } from './DataPages'
+import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('echarts-for-react', () => ({ default: () => <div data-testid="equity-chart" /> }))
 vi.mock('../api/client', () => ({
@@ -16,6 +16,15 @@ vi.mock('../api/client', () => ({
 }))
 
 const data = {
+  system: { mode: 'PAPER', running: true, risk_state: 'NORMAL' },
+  health: { healthy: true, runtime_mode: 'PAPER', risk_state: 'NORMAL', gateway_connected: true, reconciliation_status: 'OK' },
+  account: { cash: '98999', equity: null, valuation_status: 'MARKET_PRICE_UNAVAILABLE' },
+  pnl: { realized: '0' },
+  positions: [{ symbol: '510300', quantity: 100, sellable_quantity: 0, as_of_date: '2026-08-12', average_cost: '10.01', realized_pnl: '0', cost_basis_value: '1001', market_price: null, market_value: null, unrealized_pnl: null, valuation_status: 'MARKET_PRICE_UNAVAILABLE' }],
+  orders: [{ internal_order_id: 'ORDER-1', broker_order_id: 'PAPER-1', strategy_id: 'trend@1.0.0', portfolio_id: 'paper-etf', symbol: '510300', side: 'BUY', price: '10', status: 'FILLED', quantity: 100, filled_quantity: 100, rejection_reason: null, created_at: '2026-08-12T09:31:00+08:00', updated_at: '2026-08-12T09:32:00+08:00' }],
+  trades: [{ trade_id: 'PAPER-TRADE-1', internal_order_id: 'ORDER-1', strategy_id: 'trend@1.0.0', portfolio_id: 'paper-etf', symbol: '510300', side: 'BUY', price: '10', quantity: 100, fee: '1', timestamp: '2026-08-12T09:32:00+08:00', execution_type: 'PAPER_SIMULATED_FILL' }],
+  risk: { state: 'NORMAL', cash: '98999', position_cost_basis: '1001', open_buy_notional: '0', gross_exposure: '1001', exposure_basis: 'COST_BASIS_PLUS_OPEN_BUY_LIMIT_PRICE', largest_position_concentration: '1', open_order_count: 0, realized_pnl: '0', drawdown: null, valuation_status: 'MARKET_PRICE_UNAVAILABLE', gateway_connected: true, reconciliation_status: 'OK' },
+  metrics: {},
   strategies: [{
     strategy_id: 'momentum-vol-slow', name: 'momentum-volatility', version: 'abc123def456',
     family: 'ETF_MOMENTUM_VOLATILITY', status: 'NOT_ELIGIBLE', role: 'NONE',
@@ -118,6 +127,40 @@ const data = {
     run_metadata: { engine: 'DailyMultiAssetBacktester', timing: 'close decision, next open execution', session_count: 632 },
   },
 } as unknown as PlatformSnapshot
+
+describe('persistent PAPER account pages', () => {
+  it('shows persistent PAPER account facts without inventing equity', () => {
+    render(<PaperPage data={data} />)
+    expect(screen.getByText('98999')).toBeInTheDocument()
+    expect(screen.getByText('实时市价不可用')).toBeInTheDocument()
+    expect(screen.getByText(/没有实时市价时不计算或展示虚构权益/)).toBeInTheDocument()
+  })
+
+  it('shows dated sellability and keeps market valuation unavailable', () => {
+    cleanup()
+    render(<PositionsPage data={data} />)
+    expect(screen.getByText('2026-08-12')).toBeInTheDocument()
+    expect(screen.getByText('1001')).toBeInTheDocument()
+    expect(screen.getByText(/不会用历史收盘价冒充当前估值/)).toBeInTheDocument()
+  })
+
+  it('shows traceable PAPER orders and simulated fills', () => {
+    cleanup()
+    render(<OrdersPage data={data} />)
+    expect(screen.getAllByText('trend@1.0.0').length).toBeGreaterThan(0)
+    expect(screen.getByText('PAPER-TRADE-1')).toBeInTheDocument()
+    expect(screen.getByText(/不是交易所或券商回报/)).toBeInTheDocument()
+  })
+
+  it('labels recomputable cost-basis exposure and unavailable drawdown', () => {
+    cleanup()
+    render(<RiskPage data={data} />)
+    expect(screen.getByText('成本口径总敞口')).toBeInTheDocument()
+    expect(screen.getAllByText('1001')).toHaveLength(2)
+    expect(screen.getByText(/不是实时市值风险/)).toBeInTheDocument()
+    expect(screen.getByText('市价不可用')).toBeInTheDocument()
+  })
+})
 
 describe('verified historical data pages', () => {
   it('shows verified history without claiming realtime readiness', async () => {

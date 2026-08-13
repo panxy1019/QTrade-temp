@@ -95,3 +95,15 @@ Champion assignment cannot trust a supplied `promotion_passed` flag. Promotion
 evidence is evaluated by the repository policy, hashed and persisted under an
 immutable evidence ID. Only an APPROVED strategy with a stored PASS decision may
 be assigned CHAMPION; post-SHADOW lifecycle transitions remain human-authorized.
+
+## ADR-011 — PAPER valuation remains unavailable without a fresh price authority
+
+Status: accepted, 2026-08-13.
+
+Persistent PAPER cash, quantities, cost basis, realized PnL, orders, fills and
+date-effective sellability may be shown directly from the operational journal.
+Without an authorized fresh market-price source, account equity, market value,
+unrealized PnL, weights and drawdown must remain explicitly unavailable.
+Historical research closes cannot be relabelled or substituted as current PAPER
+valuation. The interim risk summary is named and documented as position cost
+basis plus remaining BUY limit-price notional, not realtime market exposure.

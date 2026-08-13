@@ -17,17 +17,62 @@ export interface HealthStatus {
 
 export interface OrderRow {
   internal_order_id: string
+  broker_order_id: string | null
+  strategy_id: string
+  portfolio_id: string
   symbol: string
+  side: 'BUY' | 'SELL'
+  price: string
   status: string
   quantity: number
   filled_quantity: number
+  rejection_reason: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface PositionRow {
   symbol: string
   quantity: number
+  sellable_quantity: number | null
+  as_of_date: string
   average_cost: string
   realized_pnl: string
+  cost_basis_value: string
+  market_price: string | null
+  market_value: string | null
+  unrealized_pnl: string | null
+  valuation_status: 'MARKET_PRICE_UNAVAILABLE'
+}
+
+export interface PaperTradeRow {
+  trade_id: string
+  internal_order_id: string
+  strategy_id: string | null
+  portfolio_id: string | null
+  symbol: string
+  side: 'BUY' | 'SELL'
+  price: string
+  quantity: number
+  fee: string
+  timestamp: string
+  execution_type: 'PAPER_SIMULATED_FILL'
+}
+
+export interface PaperRiskSummary {
+  state: RiskState
+  cash: string
+  position_cost_basis: string
+  open_buy_notional: string
+  gross_exposure: string
+  exposure_basis: 'COST_BASIS_PLUS_OPEN_BUY_LIMIT_PRICE'
+  largest_position_concentration: string | null
+  open_order_count: number
+  realized_pnl: string
+  drawdown: null
+  valuation_status: 'MARKET_PRICE_UNAVAILABLE'
+  gateway_connected: boolean
+  reconciliation_status: string
 }
 
 export interface MetricsSnapshot {
@@ -204,10 +249,12 @@ export interface HistoricalBarSeries {
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
-  account: { cash: string }
+  account: { cash: string; equity: null; valuation_status: 'MARKET_PRICE_UNAVAILABLE' }
   pnl: { realized: string }
   positions: PositionRow[]
   orders: OrderRow[]
+  trades: PaperTradeRow[]
+  risk: PaperRiskSummary
   metrics: MetricsSnapshot
   reports: DailyReportSummary[]
   strategies: ResearchStrategyRow[]

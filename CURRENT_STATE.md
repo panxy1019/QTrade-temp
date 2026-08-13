@@ -12,9 +12,9 @@ Last updated: 2026-08-13
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 218 tests passed, Ruff clean, strict mypy clean across
-  86 source files on Python 3.14.6 (2026-08-13); frontend Vitest, ESLint and
-  production build pass.
+- Acceptance evidence: 221 tests passed, Ruff clean, strict mypy clean across
+  86 source files on Python 3.14.6 (2026-08-13); 15 frontend Vitest tests,
+  ESLint and the production build pass.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
 - Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
@@ -88,6 +88,16 @@ Last updated: 2026-08-13
   split, record hash and `NOT_ELIGIBLE` result. They explicitly state that these
   are not registered `StrategyVersion` entities, have no lineage, and are not
   Champion/Challenger or running PAPER strategies.
+- PAPER account observability: `/orders`, `/trades`, `/positions`, `/account`
+  and `/risk` now expose the canonical persistent PAPER runtime rather than
+  dashboard placeholders. Applied fills retain strategy/portfolio traceability
+  across restart, positions include date-effective sellable quantity, and the
+  risk summary recomputes position cost basis plus open BUY limit notional.
+  Because no authorized realtime price exists, equity, market value, unrealized
+  PnL and drawdown remain explicitly unavailable; historical closes are not
+  substituted as current valuation. The web client consumes these six fields
+  from one dispatch-gated `/paper-snapshot`, preventing a fill from being shown
+  halfway through its in-memory account/OMS projection.
 - Selection-bias guard: the backtest page now places that exploratory positive
   leader beside all three disjoint held-out walk-forward folds. All three folds
   lost money (aggregate return `-20.4412%`, Sharpe `-1.1005`, fold pass ratio
