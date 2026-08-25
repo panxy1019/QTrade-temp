@@ -121,6 +121,28 @@ reports `UNCONFIGURED`, `NOT_ELIGIBLE` and `external_order_transmission=false`;
 AKShare daily history is not relabelled as realtime. A licensed RQData or XtData
 read-only bridge must be selected and validated before forward SHADOW/PAPER use.
 
+Recent historical minute research uses a separate bounded Sina HTTP reader. It
+keeps only complete provider-native sessions and never invents the source's
+omitted 14:58/14:59 timestamps. The frozen universe combines 30 ETF candidates
+with one current CSI 300 representative from each of 15 sectors; incomplete ETFs
+are excluded with their missing days retained in the signed manifest.
+
+```bash
+QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true .venv/bin/python \
+  scripts/sina_minute_history_ingest.py \
+  --data-version sina-minute-multiasset-20260825-v2
+
+.venv/bin/python scripts/run_sina_minute_overlay_backtest.py \
+  --data-version sina-minute-multiasset-20260825-v2
+```
+
+The minute diagnostic observes each signal at bar close and changes exposure
+only at the next bar open. Seven policies are ranked on the first three sessions;
+the chosen policy is then read once on the final two sessions, with 0/5/10/20 bps
+cost stress, ETF/stock subgroups and 15 leave-one-sector-out checks. Five recent
+sessions are far too short for promotion, so the report is always
+`NOT_ELIGIBLE` and cannot authorize PAPER or live market access.
+
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and
 `QTRADE_RQDATA_TOKEN` only inside the bridge process, and claims a session only

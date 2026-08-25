@@ -415,3 +415,11 @@ Last updated: 2026-08-26
   `3d13e9743101a5acceefc4ffec4c3895f1d8c05c0398d538a1e589ac0964046b`;
   classification remains recent historical, non-PIT and `NOT_ELIGIBLE` for
   realtime/PAPER readiness.
+- Causal minute backtest: seven frozen reduction-only policies were ranked on
+  2026-08-19 through 2026-08-21 and `drawdown-tight-v1` was read once on the
+  2026-08-24/25 holdout. At 5 bps the base returned `-0.7587%` with `-1.5874%`
+  maximum drawdown; the overlay returned `-0.3492%` with `-0.5026%` drawdown.
+  Excess return stayed positive at 0/5/10 bps but turned negative at 20 bps;
+  both ETF and stock subgroups and all 15 leave-one-sector-out variants remained
+  negative in absolute return. This is useful risk-reduction diagnostics, not a
+  profitable or promotion-eligible strategy result.

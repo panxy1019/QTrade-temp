@@ -367,3 +367,21 @@ exclusion and missing day is retained in the signed manifest. This creates an
 availability-filtered, current non-PIT research sample, not promotion evidence
 or realtime readiness. No snapshot, PAPER or external-order authority follows
 from successful historical HTTP access.
+
+## ADR-026 — Minute decisions execute on the next open and use a locked two-day read
+
+Status: accepted, 2026-08-26.
+
+The minute overlay simulator observes signal inputs only at close `t` and applies
+the resulting exposure at open `t+1`. Gap P&L belongs to the previously effective
+exposure, costs are charged when the next-open exposure changes, and a signal
+cannot avoid the same bar that created it. A constant unit daily target is known
+before each session and the overlay remains bounded to `[0, 1]` exposure.
+
+Seven policies are frozen before evaluation. The first three sessions select one
+policy using excess return plus twice the drawdown improvement; the last two
+sessions are then read once. Cost stress, instrument subgroups, daily partitions
+and leave-one-sector-out results are diagnostics around that locked read, not new
+independent samples. Five recent current-universe sessions, two test sessions and
+no PAPER/SHADOW record make the report permanently `NOT_ELIGIBLE`, even when the
+overlay reduces loss or drawdown relative to the always-exposed baseline.

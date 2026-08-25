@@ -22,6 +22,11 @@ from qtrade.research.metrics import (
     evaluate_factor_periods,
     evaluate_returns,
 )
+from qtrade.research.minute_backtest import (
+    MinuteBacktestResult,
+    MinuteCurveMetrics,
+    run_minute_overlay_backtest,
+)
 from qtrade.research.multi_asset import (
     DailyMultiAssetBacktester,
     EqualWeightBuyHold,
@@ -78,6 +83,8 @@ __all__ = [
     "EqualWeightBuyHold",
     "MomentumAllocation",
     "MultiAssetBacktestResult",
+    "MinuteBacktestResult",
+    "MinuteCurveMetrics",
     "RankedFactorAllocation",
     "ResearchTrade",
     "evaluate_backtest_window",
@@ -101,6 +108,7 @@ __all__ = [
     "write_experiment_artifacts",
     "BacktestPreviewSpec",
     "run_backtest_preview",
+    "run_minute_overlay_backtest",
     "BootstrapSummary",
     "CandidateRobustnessEvaluation",
     "CandidateRobustnessSummary",
