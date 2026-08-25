@@ -406,3 +406,12 @@ Last updated: 2026-08-26
   experiment spec hashes with foreign-keyed data versions; the baseline workflow
   now populates and verifies this catalog.
 - Live trading: disabled and structurally unavailable.
+- Historical minute ingestion: a bounded Sina reader now fetches raw 1-minute
+  bars through a retrying `httpx` boundary, validates positive OHLCV and the
+  provider-native A-share session grid, and never synthesizes omitted minutes.
+  The first synchronized dataset contains 44,030 bars across 22 ETFs and 15
+  stocks spanning 15 sectors for the five latest common completed sessions
+  (2026-08-19 through 2026-08-25). Its Parquet checksum is
+  `3d13e9743101a5acceefc4ffec4c3895f1d8c05c0398d538a1e589ac0964046b`;
+  classification remains recent historical, non-PIT and `NOT_ELIGIBLE` for
+  realtime/PAPER readiness.

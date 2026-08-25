@@ -18,6 +18,7 @@ dependencies = [
 [project.optional-dependencies]
 akshare = [
   "akshare==1.18.84",
+  "httpx>=0.28,<1",
   "numpy>=2.3.3,<2.5",
 ]
 rqdata = [

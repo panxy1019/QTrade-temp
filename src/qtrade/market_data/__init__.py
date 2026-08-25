@@ -40,6 +40,11 @@ from qtrade.market_data.selection import (
     ProviderSelectionStatus,
     inspect_provider_selection,
 )
+from qtrade.market_data.sina_minute import (
+    SINA_COMPLETE_SESSION_TIMES,
+    SinaMinuteHistoryClient,
+    complete_session_days,
+)
 from qtrade.market_data.xtdata import XtDataProvider
 
 if TYPE_CHECKING:
@@ -99,10 +104,13 @@ __all__ = [
     "RecordedPaperSession",
     "RealtimeMarketDataProvider",
     "RqDataProvider",
+    "SINA_COMPLETE_SESSION_TIMES",
+    "SinaMinuteHistoryClient",
     "TickBarAggregator",
     "TickQualityGate",
     "TickQualityIssue",
     "TickReplay",
     "XtDataProvider",
+    "complete_session_days",
     "inspect_provider_selection",
 ]

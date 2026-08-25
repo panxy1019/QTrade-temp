@@ -349,3 +349,21 @@ is a read-only API/UI surface and adds no order action. Stateless public Vercel
 has neither the trusted bindings nor writable runtime storage, so it remains
 explicitly `UNCONFIGURED`; enabling a real session still requires authorized
 market data and the actual PAPER strategy identities.
+
+## ADR-025 — Minute history preserves the provider grid and synchronizes on stocks
+
+Status: accepted, 2026-08-26.
+
+The recent 1-minute research source is Sina
+`CN_MarketDataService.getKLineData`, accessed through a bounded retrying HTTP
+client. A completed provider-native session has 238 timestamps: 09:31–11:30,
+13:01–14:57 and the 15:00 close. QTrade records the source omission of 14:58 and
+14:59 and does not interpolate or relabel those minutes. Every included
+symbol/session must match that grid and pass the canonical OHLCV quality gate.
+
+The 15 sector representatives define the latest five common completed sessions.
+An ETF is included only when it has all five of those exact sessions; every
+exclusion and missing day is retained in the signed manifest. This creates an
+availability-filtered, current non-PIT research sample, not promotion evidence
+or realtime readiness. No snapshot, PAPER or external-order authority follows
+from successful historical HTTP access.
