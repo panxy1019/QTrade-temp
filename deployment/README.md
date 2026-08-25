@@ -5,6 +5,9 @@ React application at `/` and mounts a FastAPI function at `/api`.
 
 Production URL: `https://qtrade.erapi0neer.xyz`
 
+Aliyun DNS owns the zone. The dedicated `qtrade` CNAME targets Vercel's
+project-specific DNS name; the root A record and wildcard CNAME remain unchanged.
+
 - `api/index.py` is the Vercel entrypoint.
 - `deployment/evidence/` contains the checksum-bound subset displayed online.
 - `web` uses `/api` only for the `vercel` Vite build mode.
