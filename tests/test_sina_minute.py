@@ -5,6 +5,7 @@ import pytest
 
 from qtrade.market_data import (
     SINA_COMPLETE_SESSION_TIMES,
+    SINA_FIVE_MINUTE_SESSION_TIMES,
     SinaMinuteHistoryClient,
     complete_session_days,
 )
@@ -51,6 +52,13 @@ def complete_rows(day: date) -> list[dict[str, str]]:
     ]
 
 
+def complete_five_minute_rows(day: date) -> list[dict[str, str]]:
+    return [
+        source_row(datetime.combine(day, minute, tzinfo=SHANGHAI))
+        for minute in SINA_FIVE_MINUTE_SESSION_TIMES
+    ]
+
+
 def test_fetch_retries_and_canonicalizes_a_complete_etf_session() -> None:
     client = FakeClient(
         [TimeoutError("temporary"), FakeResponse(complete_rows(date(2026, 8, 25)))]
@@ -87,6 +95,20 @@ def test_fetch_supports_stock_exchange_prefix_and_excludes_partial_session() -> 
     assert client.calls[0][1]["symbol"] == "sz300059"
 
 
+def test_fetch_supports_provider_native_five_minute_grid() -> None:
+    client = FakeClient(
+        [FakeResponse(complete_five_minute_rows(date(2026, 8, 25)))]
+    )
+
+    bars = SinaMinuteHistoryClient(client, scale_minutes=5).fetch("600036")
+
+    assert len(bars) == 48
+    assert client.calls[0][1]["scale"] == "5"
+    assert complete_session_days(
+        bars, expected_times=SINA_FIVE_MINUTE_SESSION_TIMES
+    ) == (date(2026, 8, 25),)
+
+
 def test_fetch_rejects_out_of_session_or_non_positive_prices() -> None:
     outside = source_row(datetime(2026, 8, 25, 12, 0, tzinfo=SHANGHAI))
     with pytest.raises(RuntimeError, match="request failed"):
@@ -100,5 +122,9 @@ def test_fetch_rejects_out_of_session_or_non_positive_prices() -> None:
 def test_fetch_is_bounded_and_rejects_unknown_symbols() -> None:
     with pytest.raises(ValueError, match="datalen"):
         SinaMinuteHistoryClient(FakeClient([]), datalen=100)
+    with pytest.raises(ValueError, match="provider limit 1970"):
+        SinaMinuteHistoryClient(FakeClient([]), datalen=1971)
+    with pytest.raises(ValueError, match="scale"):
+        SinaMinuteHistoryClient(FakeClient([]), scale_minutes=15)  # type: ignore[arg-type]
     with pytest.raises(ValueError, match="exchange prefix"):
         SinaMinuteHistoryClient(FakeClient([])).fetch("900000")

@@ -1,0 +1,38 @@
+from datetime import date, timedelta
+
+import pytest
+
+from scripts.run_sina_five_minute_walk_forward import (
+    FIVE_MINUTE_POLICIES,
+    _curve_metrics,
+    _walk_forward_folds,
+)
+
+
+def test_walk_forward_uses_four_disjoint_six_session_test_windows() -> None:
+    first = date(2026, 1, 1)
+    days = tuple(first + timedelta(days=offset) for offset in range(40))
+
+    folds = _walk_forward_folds(days)
+
+    assert len(folds) == 4
+    assert [len(fold["train_days"]) for fold in folds] == [16, 22, 28, 34]
+    assert [len(fold["test_days"]) for fold in folds] == [6, 6, 6, 6]
+    test_days = [day for fold in folds for day in fold["test_days"]]
+    assert test_days == list(days[16:])
+    assert len(set(test_days)) == 24
+
+
+def test_walk_forward_rejects_wrong_session_count() -> None:
+    with pytest.raises(ValueError, match="exactly 40"):
+        _walk_forward_folds((date(2026, 1, 1),) * 39)
+
+
+def test_stitched_curve_metrics_are_content_bound() -> None:
+    metrics = _curve_metrics((1.1, 0.99, 1.2))
+
+    assert metrics["total_return"] == pytest.approx(0.2)
+    assert metrics["maximum_drawdown"] == pytest.approx(-0.1)
+    assert metrics["point_count"] == 3
+    assert len(FIVE_MINUTE_POLICIES) == 7
+    assert len({policy_id for policy_id, _ in FIVE_MINUTE_POLICIES}) == 7

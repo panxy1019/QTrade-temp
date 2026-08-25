@@ -19,6 +19,7 @@ from typing import Any
 from qtrade.data import DataManifest, ParquetBarStore, QualityStatus
 from qtrade.market_data import (
     SINA_COMPLETE_SESSION_TIMES,
+    SINA_FIVE_MINUTE_SESSION_TIMES,
     SinaMinuteHistoryClient,
     complete_session_days,
 )
@@ -149,13 +150,18 @@ def main() -> int:
         "--output-root", type=Path, default=Path("runtime/data/sina-minute")
     )
     parser.add_argument("--sessions", type=int, default=5)
+    parser.add_argument("--interval-minutes", type=int, choices=(1, 5), default=1)
     parser.add_argument("--data-version")
     args = parser.parse_args()
 
     if os.environ.get("QTRADE_AKSHARE_NONCOMMERCIAL_ACK", "").lower() != "true":
         raise ValueError("minute ingest requires explicit noncommercial research acknowledgement")
-    if not 2 <= args.sessions <= 8:
-        raise ValueError("minute ingest requires between 2 and 8 complete sessions")
+    maximum_sessions = 8 if args.interval_minutes == 1 else 40
+    if not 2 <= args.sessions <= maximum_sessions:
+        raise ValueError(
+            f"{args.interval_minutes}-minute ingest requires between 2 and "
+            f"{maximum_sessions} complete sessions"
+        )
     universe, symbols = _load_universe(args.universe)
     if args.stock_universe is not None:
         stock_universe, stock_symbols = _load_balanced_stock_universe(args.stock_universe)
@@ -164,15 +170,22 @@ def main() -> int:
         if len(set(symbols)) != len(symbols):
             raise ValueError("combined minute universe contains duplicate symbols")
     data_version = args.data_version or (
-        f"{universe['universe_id']}-sina-raw-1m-{args.sessions}s"
+        f"{universe['universe_id']}-sina-raw-{args.interval_minutes}m-"
+        f"{args.sessions}s"
     )
     if _OPAQUE_ID.fullmatch(data_version) is None:
         raise ValueError("data-version must be a bounded opaque identifier")
 
-    client = SinaMinuteHistoryClient()
+    client = SinaMinuteHistoryClient(scale_minutes=args.interval_minutes)
+    session_times = (
+        SINA_COMPLETE_SESSION_TIMES
+        if args.interval_minutes == 1
+        else SINA_FIVE_MINUTE_SESSION_TIMES
+    )
     raw_by_symbol = {symbol: client.fetch(symbol) for symbol in symbols}
     complete_by_symbol = {
-        symbol: set(complete_session_days(bars)) for symbol, bars in raw_by_symbol.items()
+        symbol: set(complete_session_days(bars, expected_times=session_times))
+        for symbol, bars in raw_by_symbol.items()
     }
     requested_etfs = tuple(universe["etfs"])
     requested_stocks = tuple(row["symbol"] for row in universe["stocks"])
@@ -219,12 +232,12 @@ def main() -> int:
         key=lambda bar: (bar.timestamp, bar.exchange, bar.symbol),
     )
     expected_count = (
-        len(eligible_symbols) * len(selected_days) * len(SINA_COMPLETE_SESSION_TIMES)
+        len(eligible_symbols) * len(selected_days) * len(session_times)
     )
     if len(bars) != expected_count:
         raise RuntimeError("minute synchronized dataset bar count is inconsistent")
     counts = Counter((bar.symbol, bar.trading_day) for bar in bars)
-    if set(counts.values()) != {len(SINA_COMPLETE_SESSION_TIMES)}:
+    if set(counts.values()) != {len(session_times)}:
         raise RuntimeError("minute synchronized dataset contains an incomplete session")
 
     ingestion_time = datetime.now(UTC)
@@ -232,8 +245,9 @@ def main() -> int:
     pending = DataManifest(
         data_version=data_version,
         source=(
-            "Sina CN_MarketDataService.getKLineData raw 1-minute; "
-            "238 provider-native timestamps per completed session"
+            "Sina CN_MarketDataService.getKLineData raw "
+            f"{args.interval_minutes}-minute; {len(session_times)} provider-native "
+            "timestamps per completed session"
         ),
         schema_version="qtrade.bar.v1",
         ingestion_time=ingestion_time,
@@ -273,18 +287,32 @@ def main() -> int:
                 for symbol, detail in sorted(excluded_etfs.items())
             ],
             "bar_count": len(bars),
+            "bar_interval": f"{args.interval_minutes}m",
             "session_count": len(selected_days),
-            "session_bar_count_per_symbol": len(SINA_COMPLETE_SESSION_TIMES),
+            "session_bar_count_per_symbol": len(session_times),
             "trading_days": [trading_day.isoformat() for trading_day in selected_days],
             "observed_start": bars[0].timestamp.isoformat(),
             "observed_end": bars[-1].timestamp.isoformat(),
-            "source_interval_disclosure": {
-                "morning": "09:31-11:30",
-                "afternoon": "13:01-14:57 plus 15:00 close",
-                "synthetic_bars": False,
-                "omitted_by_source": ["14:58", "14:59"],
-            },
-            "classification": "noncommercial_recent_historical_1m_non_pit_not_eligible",
+            "source_interval_disclosure": (
+                {
+                    "morning": "09:31-11:30",
+                    "afternoon": "13:01-14:57 plus 15:00 close",
+                    "synthetic_bars": False,
+                    "omitted_by_source": ["14:58", "14:59"],
+                }
+                if args.interval_minutes == 1
+                else {
+                    "morning": "09:35-11:30 at provider-native 5-minute closes",
+                    "afternoon": "13:05-15:00 at provider-native 5-minute closes",
+                    "synthetic_bars": False,
+                    "omitted_by_source": [],
+                }
+            ),
+            "classification": (
+                "noncommercial_recent_historical_1m_non_pit_not_eligible"
+                if args.interval_minutes == 1
+                else "noncommercial_recent_historical_5m_non_pit_not_eligible"
+            ),
             "snapshot_readiness": False,
             "realtime_readiness": False,
             "real_data_paper_readiness": False,

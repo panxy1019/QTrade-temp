@@ -42,6 +42,7 @@ from qtrade.market_data.selection import (
 )
 from qtrade.market_data.sina_minute import (
     SINA_COMPLETE_SESSION_TIMES,
+    SINA_FIVE_MINUTE_SESSION_TIMES,
     SinaMinuteHistoryClient,
     complete_session_days,
 )
@@ -105,6 +106,7 @@ __all__ = [
     "RealtimeMarketDataProvider",
     "RqDataProvider",
     "SINA_COMPLETE_SESSION_TIMES",
+    "SINA_FIVE_MINUTE_SESSION_TIMES",
     "SinaMinuteHistoryClient",
     "TickBarAggregator",
     "TickQualityGate",

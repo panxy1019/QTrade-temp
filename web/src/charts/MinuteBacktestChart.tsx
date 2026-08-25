@@ -1,10 +1,13 @@
 import { Empty } from 'antd'
 import { lazy, Suspense } from 'react'
-import type { MinuteResearchReport } from '../types'
+
+interface MinuteCurveReport {
+  curve: Array<{ timestamp: string; base_equity: number; overlay_equity: number }>
+}
 
 const ChartRenderer = lazy(() => import('./ChartRenderer'))
 
-export function MinuteBacktestChart({ report }: { report: MinuteResearchReport | null }) {
+export function MinuteBacktestChart({ report }: { report: MinuteCurveReport | null }) {
   if (!report?.curve.length) {
     return <Empty description="暂无已验证分钟回测曲线" style={{ padding: 72 }} />
   }

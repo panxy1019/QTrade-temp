@@ -1,0 +1,84 @@
+{
+  "aggregate": {
+    "base": {
+      "maximum_drawdown": -0.04451257438712719,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.0012233505323351206,
+      "total_return": -0.019248518584896845
+    },
+    "cost_bps": 5,
+    "excess_return": -0.02698509705832286,
+    "overlay": {
+      "maximum_drawdown": -0.04977578737777599,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.0006709671245271868,
+      "total_return": -0.046233615643219705
+    },
+    "positive_test_fold_count": 1
+  },
+  "artifacts": {
+    "candidates.json": "927cc975531bbd5d5b882701964c7422a007d758863f87adfb564bd0e366f0ee",
+    "cost_stress.json": "2e1e770fa11c3c088e0c92d2c70fdbf7cb00f9a5e0a4b3eeb8b56612871bf074",
+    "curve.json": "2a99af7e679704f4579e5ef857aec91b840a012807cd8ae6161d1dedbbc1f93a",
+    "daily.json": "19b53b2f20001308cdaf270707f28635474d26bfc8687ba2ce0226598a890057",
+    "folds.json": "a581db6c1cef1c97688c6ee51a27446d7afc571262ee9f02b5f0116e3cd941e5",
+    "leave_one_sector_out.json": "8b5412f940d0c4d6f0970fd09d0cfc9a631c570ae3d28c869d1a039b912db4c8",
+    "subgroups.json": "29fb9718c7c2c1019e7251d4be8498388d7d76ac83e6e14200d87b1b34850d8f"
+  },
+  "causal_contract": {
+    "candidate_state": "ALL_CANDIDATES_CAUSALLY_SHADOW_WARMED",
+    "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+    "external_order_transmission": false,
+    "maximum_exposure": 1.0,
+    "same_bar_signal_execution": false,
+    "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T"
+  },
+  "dataset": {
+    "bar_count": 193920,
+    "bar_interval": "5m",
+    "checksum": "48d660f23663b946d2f22ad65c86f8c09e25484d51b96ac0ea34e68712b70075",
+    "classification": "noncommercial_recent_historical_5m_non_pit_not_eligible",
+    "data_version": "sina-five-minute-multiasset-sw15x5-20260825-v1",
+    "etf_count": 26,
+    "evidence_sha256": "46b0f0795a7a47359230ae1537e1bf9d57e778e3a0aa73fb383a215c7229ccab",
+    "sector_count": 15,
+    "session_count": 40,
+    "stock_count": 75,
+    "symbol_count": 101
+  },
+  "evidence_sha256": "91da6e788d08d1abb311acee15b13374667a528dc04d11c9319bdd22220b5ba5",
+  "external_order_transmission": false,
+  "generated_at": "2026-08-26T04:43:21.325529+08:00",
+  "promotion": "NOT_ELIGIBLE",
+  "promotion_reasons": [
+    "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",
+    "ONLY_FORTY_RECENT_SESSIONS",
+    "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+    "PUBLIC_WEB_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
+    "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE"
+  ],
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "report_id": "sina-five-minute-expanding-walk-forward-v1",
+  "robustness": {
+    "cost_scenarios": 4,
+    "leave_one_sector_out_scenarios": 15,
+    "subgroups": 2,
+    "test_daily_partitions": 24
+  },
+  "schema_version": 1,
+  "walk_forward": {
+    "candidate_count": 7,
+    "fold_count": 4,
+    "initial_train_sessions": 16,
+    "selected_policy_sequence": [
+      "five-drawdown-tight-v1",
+      "five-reduction-soft-v1",
+      "five-reduction-soft-v1",
+      "five-reduction-soft-v1"
+    ],
+    "selection_objective": "overlay_return_minus_base_return_plus_twice_drawdown_improvement",
+    "test_sessions_per_fold": 6,
+    "test_windows_disjoint": true
+  }
+}

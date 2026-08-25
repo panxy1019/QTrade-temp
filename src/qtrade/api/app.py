@@ -6,10 +6,12 @@ from collections.abc import Awaitable, Callable
 from contextlib import nullcontext
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
+from datetime import time as datetime_time
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from hashlib import sha256
 from itertools import islice
+from math import isclose
 from pathlib import Path
 from secrets import compare_digest
 from statistics import median
@@ -29,7 +31,10 @@ from qtrade.control import PlatformRuntime
 from qtrade.data import Bar
 from qtrade.domain import CancelCommand, Order, OrderStatus, RuntimeMode
 from qtrade.execution import FeeSchedule, PaperGateway
-from qtrade.market_data import SINA_COMPLETE_SESSION_TIMES
+from qtrade.market_data import (
+    SINA_COMPLETE_SESSION_TIMES,
+    SINA_FIVE_MINUTE_SESSION_TIMES,
+)
 from qtrade.monitoring import MetricsRegistry, render_prometheus_metrics
 from qtrade.oms import OrderManager
 from qtrade.research import BacktestPreviewSpec, run_backtest_preview
@@ -112,6 +117,8 @@ class AppContext:
     historical_manifest_path: Path | None = None
     minute_manifest_path: Path | None = None
     minute_research_report_path: Path | None = None
+    five_minute_manifest_path: Path | None = None
+    five_minute_research_report_path: Path | None = None
     minute_overlay_reader: Callable[[], dict[str, object]] | None = None
     applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
     sellable_quantity_reader: Callable[[str, date], int] | None = None
@@ -305,6 +312,87 @@ def create_app(
             "dataset_checksum": dataset["checksum"],
             "observation_type": "HISTORICAL_MINUTE_BAR_SERIES",
             "interval": "1m",
+            "total_count": total_count,
+            "truncated": total_count > len(bars),
+            "bars": bars,
+        }
+
+    @app.get("/five-minute-research")
+    def five_minute_research(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.five_minute_manifest_path,
+            expected_classification=(
+                "noncommercial_recent_historical_5m_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=40,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        report = _load_verified_five_minute_report(
+            state.five_minute_research_report_path, dataset
+        )
+        return report or {
+            "classification": "NO_VERIFIED_FIVE_MINUTE_RESEARCH_RESULT",
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": ["MISSING_VERIFIED_FIVE_MINUTE_RESEARCH_ARTIFACT"],
+            "minute_dataset": None,
+            "folds": [],
+            "candidates": [],
+            "cost_stress": [],
+            "subgroups": [],
+            "leave_one_sector_out": [],
+            "daily": [],
+            "curve": [],
+        }
+
+    @app.get("/five-minute-bars/{symbol}")
+    def five_minute_bar_series(
+        symbol: str,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.five_minute_manifest_path,
+            expected_classification=(
+                "noncommercial_recent_historical_5m_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=40,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        empty: dict[str, object] = {
+            "symbol": symbol,
+            "data_version": None,
+            "dataset_checksum": None,
+            "observation_type": "HISTORICAL_FIVE_MINUTE_BAR_SERIES",
+            "interval": "5m",
+            "total_count": 0,
+            "truncated": False,
+            "bars": [],
+        }
+        if dataset is None:
+            return empty
+        series = _load_minute_bar_series(
+            state.five_minute_manifest_path,
+            symbol=symbol,
+            data_version=str(dataset["data_version"]),
+            expected_checksum=str(dataset["checksum"]),
+            expected_symbols=dataset["eligible_symbols"],
+            expected_bar_count=dataset["bar_count"],
+            expected_trading_days=dataset["trading_days"],
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+            observation_type="HISTORICAL_FIVE_MINUTE_BAR",
+        )
+        if series is None:
+            return empty
+        bars, total_count = series
+        return {
+            "symbol": symbol,
+            "data_version": dataset["data_version"],
+            "dataset_checksum": dataset["checksum"],
+            "observation_type": "HISTORICAL_FIVE_MINUTE_BAR_SERIES",
+            "interval": "5m",
             "total_count": total_count,
             "truncated": total_count > len(bars),
             "bars": bars,
@@ -787,6 +875,13 @@ def context_from_runtime(
         ),
         minute_research_report_path=Path(
             "runtime/research/sina-minute-overlay-v1/report.json"
+        ),
+        five_minute_manifest_path=Path(
+            "runtime/data/sina-minute/"
+            "sina-five-minute-multiasset-sw15x5-20260825-v1/manifest.json"
+        ),
+        five_minute_research_report_path=Path(
+            "runtime/research/sina-five-minute-walk-forward-v1/report.json"
         ),
         applied_trade_reader=bundle.journal.applied_trade_payloads,
         sellable_quantity_reader=bundle.sellability.sellable_quantity,
@@ -2910,7 +3005,16 @@ def _load_verified_market_dataset(path: Path | None) -> dict[str, object] | None
         return None
 
 
-def _load_verified_minute_dataset(path: Path | None) -> dict[str, object] | None:
+def _load_verified_minute_dataset(
+    path: Path | None,
+    *,
+    expected_classification: str = (
+        "noncommercial_recent_historical_1m_non_pit_not_eligible"
+    ),
+    expected_interval: str = "1m",
+    expected_session_count: int = 5,
+    expected_times: tuple[datetime_time, ...] = SINA_COMPLETE_SESSION_TIMES,
+) -> dict[str, object] | None:
     if path is None or not path.is_file():
         return None
     try:
@@ -2940,11 +3044,11 @@ def _load_verified_minute_dataset(path: Path | None) -> dict[str, object] | None
             or not all(isinstance(symbol, str) for symbol in eligible)
             or len(set(eligible)) != len(eligible)
             or not isinstance(trading_days, list)
-            or len(trading_days) != 5
+            or len(trading_days) != expected_session_count
             or sorted(trading_days) != trading_days
             or not all(isinstance(value, str) for value in trading_days)
-            or evidence.get("classification")
-            != "noncommercial_recent_historical_1m_non_pit_not_eligible"
+            or evidence.get("classification") != expected_classification
+            or (evidence.get("bar_interval") or "1m") != expected_interval
             or evidence.get("realtime_readiness") is not False
             or evidence.get("real_data_paper_readiness") is not False
             or evidence.get("external_order_transmission") is not False
@@ -2966,7 +3070,7 @@ def _load_verified_minute_dataset(path: Path | None) -> dict[str, object] | None
             or not isinstance(symbol_count, int)
             or symbol_count != len(eligible)
             or session_count != len(parsed_days)
-            or session_bars != len(SINA_COMPLETE_SESSION_TIMES)
+            or session_bars != len(expected_times)
             or bar_count != symbol_count * session_count * session_bars
         ):
             return None
@@ -3035,6 +3139,7 @@ def _load_verified_minute_dataset(path: Path | None) -> dict[str, object] | None
         return {
             "provider": "Sina public web historical endpoint",
             "classification": evidence["classification"],
+            "bar_interval": expected_interval,
             "data_version": data_version,
             "quality_status": manifest["quality_status"],
             "checksum": checksum,
@@ -3226,6 +3331,254 @@ def _load_verified_minute_report(
             **report,
             "minute_dataset": dataset,
             "candidates": candidates,
+            "cost_stress": cost_stress,
+            "subgroups": subgroups,
+            "leave_one_sector_out": sector_rows,
+            "daily": daily,
+            "curve": curve,
+        }
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _load_verified_five_minute_report(
+    path: Path | None, dataset: dict[str, object] | None
+) -> dict[str, object] | None:
+    if path is None or dataset is None or not path.is_file():
+        return None
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {key: value for key, value in report.items() if key != "evidence_sha256"}
+        canonical = json.dumps(
+            unsigned,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            default=str,
+        )
+        report_dataset = report.get("dataset")
+        causal = report.get("causal_contract")
+        walk_forward = report.get("walk_forward")
+        aggregate = report.get("aggregate")
+        artifacts = report.get("artifacts")
+        expected_artifacts = {
+            "candidates.json",
+            "folds.json",
+            "cost_stress.json",
+            "subgroups.json",
+            "leave_one_sector_out.json",
+            "daily.json",
+            "curve.json",
+        }
+        if (
+            not _is_sha256(digest)
+            or sha256(canonical.encode("utf-8")).hexdigest() != digest
+            or report.get("schema_version") != 1
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("external_order_transmission") is not False
+            or not isinstance(report_dataset, dict)
+            or report_dataset.get("data_version") != dataset["data_version"]
+            or report_dataset.get("checksum") != dataset["checksum"]
+            or report_dataset.get("evidence_sha256") != dataset["evidence_sha256"]
+            or report_dataset.get("bar_interval") != "5m"
+            or report_dataset.get("bar_count") != dataset["bar_count"]
+            or report_dataset.get("symbol_count") != dataset["symbol_count"]
+            or report_dataset.get("etf_count") != dataset["etf_count"]
+            or report_dataset.get("stock_count") != dataset["stock_count"]
+            or report_dataset.get("sector_count") != dataset["sector_count"]
+            or report_dataset.get("session_count") != 40
+            or not isinstance(causal, dict)
+            or causal.get("signal_observed_at") != "FIVE_MINUTE_BAR_CLOSE_T"
+            or causal.get("exposure_change_at") != "NEXT_FIVE_MINUTE_BAR_OPEN"
+            or causal.get("same_bar_signal_execution") is not False
+            or causal.get("candidate_state")
+            != "ALL_CANDIDATES_CAUSALLY_SHADOW_WARMED"
+            or causal.get("external_order_transmission") is not False
+            or not isinstance(walk_forward, dict)
+            or walk_forward.get("initial_train_sessions") != 16
+            or walk_forward.get("test_sessions_per_fold") != 6
+            or walk_forward.get("fold_count") != 4
+            or walk_forward.get("candidate_count") != 7
+            or walk_forward.get("test_windows_disjoint") is not True
+            or not isinstance(aggregate, dict)
+            or aggregate.get("cost_bps") != 5
+            or not isinstance(artifacts, dict)
+            or set(artifacts) != expected_artifacts
+            or not all(_is_sha256(value) for value in artifacts.values())
+        ):
+            return None
+
+        loaded: dict[str, object] = {}
+        for name in expected_artifacts:
+            content = _read_bounded_file(
+                path.parent / name, _MAX_MINUTE_EVIDENCE_JSON_BYTES
+            )
+            if content is None or sha256(content).hexdigest() != artifacts[name]:
+                return None
+            loaded[name] = json.loads(content)
+        candidates = loaded["candidates.json"]
+        folds = loaded["folds.json"]
+        cost_stress = loaded["cost_stress.json"]
+        subgroups = loaded["subgroups.json"]
+        sector_rows = loaded["leave_one_sector_out.json"]
+        daily = loaded["daily.json"]
+        curve = loaded["curve.json"]
+        trading_days = cast(list[str], dataset["trading_days"])
+        if (
+            not isinstance(candidates, list)
+            or len(candidates) != 28
+            or not all(isinstance(row, dict) for row in candidates)
+            or not isinstance(folds, list)
+            or len(folds) != 4
+            or not all(isinstance(row, dict) for row in folds)
+            or not isinstance(cost_stress, list)
+            or [Decimal(str(row.get("cost_bps"))) for row in cost_stress]
+            != [Decimal("0"), Decimal("5"), Decimal("10"), Decimal("20")]
+            or not isinstance(subgroups, list)
+            or {row.get("group") for row in subgroups} != {"ETF", "STOCK"}
+            or {row.get("symbol_count") for row in subgroups}
+            != {dataset["etf_count"], dataset["stock_count"]}
+            or not isinstance(sector_rows, list)
+            or len(sector_rows) != dataset["sector_count"]
+            or len({row.get("excluded_sector_code") for row in sector_rows})
+            != dataset["sector_count"]
+            or not isinstance(daily, list)
+            or len(daily) != 24
+            or not isinstance(curve, list)
+            or len(curve) != 24 * len(SINA_FIVE_MINUTE_SESSION_TIMES)
+        ):
+            return None
+
+        candidates_by_fold: dict[int, list[dict[str, object]]] = defaultdict(list)
+        for row in candidates:
+            fold_number = row.get("fold")
+            if not isinstance(fold_number, int):
+                return None
+            candidates_by_fold[fold_number].append(row)
+        selected_sequence = []
+        expected_test_days: list[str] = []
+        for index, fold in enumerate(folds):
+            fold_number = index + 1
+            train_end = 16 + index * 6
+            test_end = train_end + 6
+            rows = candidates_by_fold.get(fold_number, [])
+            ranks = [row.get("rank") for row in rows]
+            if (
+                fold.get("fold") != fold_number
+                or fold.get("train_days") != trading_days[:train_end]
+                or fold.get("test_days") != trading_days[train_end:test_end]
+                or len(rows) != 7
+                or not all(isinstance(rank, int) for rank in ranks)
+            ):
+                return None
+            ranked = sorted(rows, key=lambda row: cast(int, row["rank"]))
+            if (
+                [row["rank"] for row in ranked] != list(range(1, 8))
+                or len({row.get("policy_id") for row in rows}) != 7
+                or fold.get("selected_policy_id") != ranked[0].get("policy_id")
+                or fold.get("selected_policy_hash") != ranked[0].get("policy_hash")
+            ):
+                return None
+            selected_sequence.append(fold["selected_policy_id"])
+            expected_test_days.extend(cast(list[str], fold["test_days"]))
+        if (
+            walk_forward.get("selected_policy_sequence") != selected_sequence
+            or expected_test_days != trading_days[16:]
+            or [row.get("trading_day") for row in daily] != expected_test_days
+            or [row.get("fold") for row in daily]
+            != [fold for fold in range(1, 5) for _ in range(6)]
+        ):
+            return None
+
+        stocks_by_sector: dict[str, list[str]] = defaultdict(list)
+        for instrument in cast(list[dict[str, object]], dataset["instruments"]):
+            if instrument.get("instrument_type") == "STOCK":
+                code = instrument.get("sector_code")
+                symbol = instrument.get("symbol")
+                if not isinstance(code, str) or not isinstance(symbol, str):
+                    return None
+                stocks_by_sector[code].append(symbol)
+        sector_row_by_code = {
+            row.get("excluded_sector_code"): row for row in sector_rows
+        }
+        if set(sector_row_by_code) != set(stocks_by_sector):
+            return None
+        for code, symbols in stocks_by_sector.items():
+            row = sector_row_by_code[code]
+            if (
+                row.get("excluded_symbols") != symbols
+                or row.get("excluded_symbol_count") != len(symbols)
+                or row.get("retained_symbol_count")
+                != cast(int, dataset["symbol_count"]) - len(symbols)
+            ):
+                return None
+
+        previous: datetime | None = None
+        base_values = []
+        overlay_values = []
+        allowed_times = set(SINA_FIVE_MINUTE_SESSION_TIMES)
+        allowed_days = set(expected_test_days)
+        for row in curve:
+            if not isinstance(row, dict):
+                return None
+            instant = datetime.fromisoformat(str(row.get("timestamp")))
+            local = instant.astimezone(ZoneInfo("Asia/Shanghai"))
+            base = float(str(row.get("base_equity")))
+            overlay = float(str(row.get("overlay_equity")))
+            if (
+                instant.tzinfo is None
+                or previous is not None
+                and instant <= previous
+                or local.date().isoformat() not in allowed_days
+                or local.time() not in allowed_times
+                or base <= 0
+                or overlay <= 0
+            ):
+                return None
+            previous = instant
+            base_values.append(base)
+            overlay_values.append(overlay)
+        aggregate_base = aggregate.get("base")
+        aggregate_overlay = aggregate.get("overlay")
+        if (
+            not isinstance(aggregate_base, dict)
+            or not isinstance(aggregate_overlay, dict)
+            or aggregate_base.get("point_count") != len(curve)
+            or aggregate_overlay.get("point_count") != len(curve)
+            or not isclose(
+                float(str(aggregate_base.get("total_return"))), base_values[-1] - 1
+            )
+            or not isclose(
+                float(str(aggregate_overlay.get("total_return"))),
+                overlay_values[-1] - 1,
+            )
+            or not isclose(
+                float(str(aggregate.get("excess_return"))),
+                float(aggregate_overlay["total_return"])
+                - float(aggregate_base["total_return"]),
+            )
+            or aggregate.get("positive_test_fold_count")
+            != sum(float(row["test_overlay"]["total_return"]) > 0 for row in folds)
+        ):
+            return None
+        return {
+            **report,
+            "minute_dataset": dataset,
+            "candidates": candidates,
+            "folds": folds,
             "cost_stress": cost_stress,
             "subgroups": subgroups,
             "leave_one_sector_out": sector_rows,
@@ -3493,6 +3846,8 @@ def _load_minute_bar_series(
     expected_symbols: object,
     expected_bar_count: object,
     expected_trading_days: object,
+    expected_times: tuple[datetime_time, ...] = SINA_COMPLETE_SESSION_TIMES,
+    observation_type: str = "HISTORICAL_MINUTE_BAR",
 ) -> tuple[list[dict[str, str]], int] | None:
     if (
         manifest_path is None
@@ -3517,7 +3872,7 @@ def _load_minute_bar_series(
             return None
         allowed = set(expected_symbols)
         allowed_days = set(expected_trading_days)
-        allowed_times = set(SINA_COMPLETE_SESSION_TIMES)
+        allowed_times = set(expected_times)
         selected: deque[dict[str, str]] = deque(maxlen=_MAX_HISTORICAL_SERIES_ROWS)
         previous_instants: dict[str, datetime] = {}
         counts: Counter[tuple[str, str]] = Counter()
@@ -3559,7 +3914,7 @@ def _load_minute_bar_series(
                     selected.append(
                         {
                             **candidate,
-                            "observation_type": "HISTORICAL_MINUTE_BAR",
+                            "observation_type": observation_type,
                         }
                     )
         expected_sessions = {
@@ -3570,9 +3925,9 @@ def _load_minute_bar_series(
         if (
             observed != allowed
             or set(counts) != expected_sessions
-            or set(counts.values()) != {len(SINA_COMPLETE_SESSION_TIMES)}
+            or set(counts.values()) != {len(expected_times)}
             or total_count
-            != len(expected_trading_days) * len(SINA_COMPLETE_SESSION_TIMES)
+            != len(expected_trading_days) * len(expected_times)
         ):
             return None
         return list(selected), total_count

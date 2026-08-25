@@ -510,6 +510,7 @@ export interface MinuteResearchReport {
   minute_dataset: null | {
     provider: string
     data_version: string
+    bar_interval: '1m' | '5m'
     checksum: string
     evidence_sha256: string
     bar_count: number
@@ -592,6 +593,85 @@ export interface MinuteResearchReport {
   curve: Array<{ timestamp: string; base_equity: number; overlay_equity: number }>
 }
 
+export interface FiveMinuteResearchReport {
+  classification?: string
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  promotion_reasons: string[]
+  minute_dataset: MinuteResearchReport['minute_dataset']
+  causal_contract?: {
+    signal_observed_at: 'FIVE_MINUTE_BAR_CLOSE_T'
+    exposure_change_at: 'NEXT_FIVE_MINUTE_BAR_OPEN'
+    same_bar_signal_execution: false
+    candidate_state: 'ALL_CANDIDATES_CAUSALLY_SHADOW_WARMED'
+    maximum_exposure: number
+    external_order_transmission: false
+  }
+  walk_forward?: {
+    initial_train_sessions: number
+    test_sessions_per_fold: number
+    fold_count: number
+    candidate_count: number
+    test_windows_disjoint: boolean
+    selection_objective: string
+    selected_policy_sequence: string[]
+  }
+  aggregate?: {
+    cost_bps: number
+    base: MinuteCurveMetrics
+    overlay: MinuteCurveMetrics
+    excess_return: number
+    positive_test_fold_count: number
+  }
+  candidates: Array<{
+    fold: number
+    policy_id: string
+    policy_hash: string
+    rank: number
+    selection_score: number
+    train_base: MinuteCurveMetrics
+    train_overlay: MinuteCurveMetrics
+  }>
+  folds: Array<{
+    fold: number
+    train_days: string[]
+    test_days: string[]
+    selected_policy_id: string
+    selected_policy_hash: string
+    test_base: MinuteCurveMetrics
+    test_overlay: MinuteCurveMetrics
+    test_excess_return: number
+  }>
+  cost_stress: Array<{
+    cost_bps: number
+    base: MinuteCurveMetrics
+    overlay: MinuteCurveMetrics
+    excess_return: number
+  }>
+  subgroups: Array<{
+    group: 'ETF' | 'STOCK'
+    symbol_count: number
+    base: MinuteCurveMetrics
+    overlay: MinuteCurveMetrics
+  }>
+  leave_one_sector_out: Array<{
+    excluded_sector_code: string
+    excluded_sector_name: string
+    excluded_symbols: string[]
+    excluded_symbol_count: number
+    retained_symbol_count: number
+    overlay: MinuteCurveMetrics
+    return_delta_vs_all: number
+  }>
+  daily: Array<{
+    fold: number
+    trading_day: string
+    selected_policy_id: string
+    base: MinuteCurveMetrics
+    overlay: MinuteCurveMetrics
+  }>
+  curve: Array<{ timestamp: string; base_equity: number; overlay_equity: number }>
+}
+
 export interface DailyReportAutomationStatus {
   classification: 'TRUSTED_PAPER_EOD_REPORTING'
   readiness: 'CONFIGURED' | 'UNCONFIGURED'
@@ -632,6 +712,7 @@ export interface PlatformSnapshot {
   stockSectorTransfer: StockSectorTransferReport
   minuteOverlay: MinuteOverlayStatus
   minuteResearch: MinuteResearchReport
+  fiveMinuteResearch: FiveMinuteResearchReport
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]

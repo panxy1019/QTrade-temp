@@ -61,7 +61,11 @@ def _canonical_sha256(value: object) -> str:
 
 
 def _load_dataset(
-    root: Path, version: str
+    root: Path,
+    version: str,
+    *,
+    expected_classification: str = "noncommercial_recent_historical_1m_non_pit_not_eligible",
+    expected_interval: str | None = None,
 ) -> tuple[dict[str, Any], DataManifest, list[Any]]:
     path = root / version / "manifest.json"
     signed = json.loads(path.read_text(encoding="utf-8"))
@@ -83,8 +87,9 @@ def _load_dataset(
     if (
         manifest.data_version != version
         or manifest.quality_status is not QualityStatus.PASSED
-        or unsigned.get("classification")
-        != "noncommercial_recent_historical_1m_non_pit_not_eligible"
+        or unsigned.get("classification") != expected_classification
+        or expected_interval is not None
+        and unsigned.get("bar_interval") != expected_interval
     ):
         raise ValueError("minute dataset identity is not eligible for this diagnostic")
     bars = ParquetBarStore(root).read(manifest)

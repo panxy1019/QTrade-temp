@@ -1,0 +1,66 @@
+[
+  {
+    "base": {
+      "maximum_drawdown": -0.0445125743871263,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.001223350532335116,
+      "total_return": -0.01924851858489618
+    },
+    "cost_bps": 0.0,
+    "excess_return": -0.0006495468162506235,
+    "overlay": {
+      "maximum_drawdown": -0.033230954906249055,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.000670354475636404,
+      "total_return": -0.019898065401146803
+    }
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.04451257438712719,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.0012233505323351206,
+      "total_return": -0.019248518584896845
+    },
+    "cost_bps": 5.0,
+    "excess_return": -0.02698509705832286,
+    "overlay": {
+      "maximum_drawdown": -0.04977578737777599,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.0006709671245271868,
+      "total_return": -0.046233615643219705
+    }
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.044512574387126524,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.0012233505323351144,
+      "total_return": -0.01924851858489618
+    },
+    "cost_bps": 10.0,
+    "excess_return": -0.052573157639869916,
+    "overlay": {
+      "maximum_drawdown": -0.07412959690968535,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.0006719051779042518,
+      "total_return": -0.0718216762247661
+    }
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.044512574387126747,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.0012233505323351232,
+      "total_return": -0.01924851858489629
+    },
+    "cost_bps": 20.0,
+    "excess_return": -0.10159410493945642,
+    "overlay": {
+      "maximum_drawdown": -0.12160877227749023,
+      "point_count": 1152,
+      "realized_minute_volatility": 0.0006747487622394847,
+      "total_return": -0.12084262352435271
+    }
+  }
+]

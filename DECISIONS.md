@@ -440,3 +440,29 @@ packages every signed public evidence artifact and the Parquet libraries needed
 to recompute metadata and rows. A production build must pass locally before a
 prebuilt deployment is uploaded; bundle reduction cannot replace evidence
 verification or enable mutable/public trading controls.
+
+## ADR-030 — Native 5-minute walk-forward is a falsification gate, not a substitute
+
+Status: accepted, 2026-08-26.
+
+The public Sina endpoint exposes at most 1,970 observations per request. That
+limit covers only eight complete provider-native 1-minute sessions, so QTrade
+must not fabricate a 20- or 40-day 1-minute history by interpolation, relabeling
+5-minute bars or silently joining incompatible sources. A separate 40-session
+study may use the provider's native 5-minute bars only when the interval and its
+48-timestamp session grid are embedded in the signed manifest and every API/UI
+label says 5-minute historical data.
+
+The 5-minute study uses four expanding folds: 16 initial training sessions,
+then four frozen selections followed by mutually disjoint six-session test
+windows. All seven candidate states are advanced causally before selection;
+signals observed at the current 5-minute close affect exposure only at the next
+5-minute open. Cost stress, ETF/stock splits and 15 whole-sector exclusions are
+diagnostics, while the 24-session stitched test is the decision evidence.
+
+The observed failure—negative relative return even at zero modeled cost and only
+one positive test fold—must be published as a robustness veto. It may not be
+hidden by the favorable five-day 1-minute relative result or tuned on the four
+already viewed test windows. Because interval transfer failed, the strategy
+remains `NOT_ELIGIBLE`; authorized realtime 1-minute data and new forward
+PAPER/SHADOW sessions are still required before any later promotion review.

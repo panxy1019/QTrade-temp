@@ -19,6 +19,10 @@ context.stock_sector_transfer_report_path = EVIDENCE_ROOT / "stock-sector-transf
 context.historical_manifest_path = EVIDENCE_ROOT / "market-data" / "manifest.json"
 context.minute_manifest_path = EVIDENCE_ROOT / "minute-market-data" / "manifest.json"
 context.minute_research_report_path = EVIDENCE_ROOT / "minute-overlay" / "report.json"
+context.five_minute_manifest_path = EVIDENCE_ROOT / "five-minute-market-data" / "manifest.json"
+context.five_minute_research_report_path = (
+    EVIDENCE_ROOT / "five-minute-walk-forward" / "report.json"
+)
 
 
 class VercelQueryPathApp:

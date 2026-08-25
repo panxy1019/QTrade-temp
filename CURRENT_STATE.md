@@ -430,3 +430,20 @@ Last updated: 2026-08-26
   historical series. The market page switches between daily K and 1-minute
   lines; the backtest page shows the locked minute curve, daily partitions and
   cost stress. All labels remain historical, public read-only and not realtime.
+- Longer cross-scale falsification: the provider-native 5-minute dataset contains
+  193,920 bars across 101 symbols (26 ETFs plus 75 stocks in 15 sectors) and 40
+  complete sessions from 2026-07-01 through 2026-08-25. Four expanding folds use
+  16/22/28/34 training sessions and four mutually disjoint six-session test
+  windows. At 5 bps the stitched 24-session baseline returned `-1.9249%`, while
+  the overlay returned `-4.6234%` with `-4.9776%` drawdown and `-2.6985%`
+  relative return; only one of four folds had positive overlay return. At 0 bps
+  the overlay still trailed by `-0.0650%`, and ETF, stock and every whole-sector
+  exclusion remained negative in absolute overlay return. This rejects transfer
+  of the encouraging five-day 1-minute diagnostic; it is not tuned away.
+- Public 5-minute evidence: `/five-minute-research` independently checks the
+  report signature, seven artifact hashes, expanding split arithmetic, candidate
+  ranks/selections, costs, subgroups, sector exclusions and all 1,152 causal curve
+  points. `/five-minute-bars/{symbol}` rechecks the 101 × 40 × 48 Parquet grid and
+  returns a bounded historical series. The Chinese backtest page displays the
+  failed folds and cross-scale veto. `NOT_ELIGIBLE`, no PAPER/SHADOW authority and
+  `external_order_transmission=false` remain mandatory.

@@ -93,7 +93,7 @@ const data = {
     classification: 'noncommercial_recent_historical_1m_non_pit_not_eligible', promotion: 'NOT_ELIGIBLE',
     promotion_reasons: ['ONLY_FIVE_RECENT_SESSIONS'],
     minute_dataset: {
-      provider: 'Sina public web historical endpoint', data_version: 'sina-minute-v2', checksum: 'minute-checksum', evidence_sha256: 'e'.repeat(64),
+      provider: 'Sina public web historical endpoint', data_version: 'sina-minute-v2', bar_interval: '1m', checksum: 'minute-checksum', evidence_sha256: 'e'.repeat(64),
       bar_count: 115430, symbol_count: 97, etf_count: 22, stock_count: 75, sector_count: 15,
       session_count: 5, session_bar_count_per_symbol: 238,
       trading_days: ['2026-08-19', '2026-08-20', '2026-08-21', '2026-08-24', '2026-08-25'],
@@ -127,6 +127,37 @@ const data = {
       { trading_day: '2026-08-24', partition: 'TEST', base: { total_return: -0.009, maximum_drawdown: -0.01, realized_minute_volatility: 0, point_count: 238 }, overlay: { total_return: -0.0015, maximum_drawdown: -0.003, realized_minute_volatility: 0, point_count: 238 } },
     ],
     curve: [{ timestamp: '2026-08-24T09:31:00+08:00', base_equity: 1, overlay_equity: 1 }],
+  },
+  fiveMinuteResearch: {
+    promotion: 'NOT_ELIGIBLE',
+    promotion_reasons: ['FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS'],
+    minute_dataset: {
+      provider: 'Sina public web historical endpoint', data_version: 'sina-five-minute-v1', bar_interval: '5m', checksum: 'five-minute-checksum', evidence_sha256: 'f'.repeat(64),
+      bar_count: 193920, symbol_count: 101, etf_count: 26, stock_count: 75, sector_count: 15,
+      session_count: 40, session_bar_count_per_symbol: 48,
+      trading_days: ['2026-07-01', '2026-08-25'], observed_start: '2026-07-01T09:35:00+08:00', observed_end: '2026-08-25T15:00:00+08:00',
+      eligible_symbols: ['601166'], instruments: [{ symbol: '601166', instrument_type: 'STOCK', name: '兴业银行', sector_code: '801780', sector_name: '银行' }],
+      point_in_time: false, realtime_readiness: false, real_data_paper_readiness: false, external_order_transmission: false,
+    },
+    causal_contract: { signal_observed_at: 'FIVE_MINUTE_BAR_CLOSE_T', exposure_change_at: 'NEXT_FIVE_MINUTE_BAR_OPEN', same_bar_signal_execution: false, candidate_state: 'ALL_CANDIDATES_CAUSALLY_SHADOW_WARMED', maximum_exposure: 1, external_order_transmission: false },
+    walk_forward: { initial_train_sessions: 16, test_sessions_per_fold: 6, fold_count: 4, candidate_count: 7, test_windows_disjoint: true, selection_objective: 'frozen', selected_policy_sequence: ['five-drawdown-tight-v1', 'five-reduction-soft-v1', 'five-reduction-soft-v1', 'five-reduction-soft-v1'] },
+    aggregate: {
+      cost_bps: 5,
+      base: { total_return: -0.0192485, maximum_drawdown: -0.0445126, realized_minute_volatility: 0.00122, point_count: 1152 },
+      overlay: { total_return: -0.0462336, maximum_drawdown: -0.0497758, realized_minute_volatility: 0.00067, point_count: 1152 },
+      excess_return: -0.0269851, positive_test_fold_count: 1,
+    },
+    candidates: [],
+    folds: [
+      { fold: 1, train_days: ['2026-07-01'], test_days: ['2026-07-23', '2026-07-30'], selected_policy_id: 'five-drawdown-tight-v1', selected_policy_hash: 'a'.repeat(64), test_base: { total_return: -0.0120448, maximum_drawdown: -0.02931, realized_minute_volatility: 0.00146, point_count: 288 }, test_overlay: { total_return: -0.0111291, maximum_drawdown: -0.0155, realized_minute_volatility: 0.00054, point_count: 288 }, test_excess_return: 0.0009157 },
+      { fold: 2, train_days: ['2026-07-01'], test_days: ['2026-07-31', '2026-08-07'], selected_policy_id: 'five-reduction-soft-v1', selected_policy_hash: 'b'.repeat(64), test_base: { total_return: 0.0241142, maximum_drawdown: -0.01, realized_minute_volatility: 0.001, point_count: 288 }, test_overlay: { total_return: 0.0004566, maximum_drawdown: -0.01, realized_minute_volatility: 0.0006, point_count: 288 }, test_excess_return: -0.0236576 },
+      { fold: 3, train_days: ['2026-07-01'], test_days: ['2026-08-10', '2026-08-17'], selected_policy_id: 'five-reduction-soft-v1', selected_policy_hash: 'b'.repeat(64), test_base: { total_return: 0.0004818, maximum_drawdown: -0.01, realized_minute_volatility: 0.001, point_count: 288 }, test_overlay: { total_return: -0.0052247, maximum_drawdown: -0.01, realized_minute_volatility: 0.0006, point_count: 288 }, test_excess_return: -0.0057065 },
+      { fold: 4, train_days: ['2026-07-01'], test_days: ['2026-08-18', '2026-08-25'], selected_policy_id: 'five-reduction-soft-v1', selected_policy_hash: 'b'.repeat(64), test_base: { total_return: -0.0311331, maximum_drawdown: -0.04, realized_minute_volatility: 0.001, point_count: 288 }, test_overlay: { total_return: -0.0308764, maximum_drawdown: -0.04, realized_minute_volatility: 0.0006, point_count: 288 }, test_excess_return: 0.0002567 },
+    ],
+    cost_stress: [{ cost_bps: 0, base: { total_return: -0.0192485, maximum_drawdown: -0.0445, realized_minute_volatility: 0.0012, point_count: 1152 }, overlay: { total_return: -0.0198981, maximum_drawdown: -0.0332, realized_minute_volatility: 0.00067, point_count: 1152 }, excess_return: -0.0006495 }],
+    subgroups: [{ group: 'ETF', symbol_count: 26, base: { total_return: 0.0017161, maximum_drawdown: -0.0416, realized_minute_volatility: 0.00127, point_count: 1152 }, overlay: { total_return: -0.0400335, maximum_drawdown: -0.0515, realized_minute_volatility: 0.00079, point_count: 1152 } }],
+    leave_one_sector_out: [], daily: [],
+    curve: [{ timestamp: '2026-07-23T09:35:00+08:00', base_equity: 1, overlay_equity: 1 }],
   },
   reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
   reporting: {
@@ -503,8 +534,11 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/分钟修正锁定测试：NOT_ELIGIBLE/)).toBeInTheDocument()
     expect(screen.getByText(/两者绝对收益均为负/)).toBeInTheDocument()
     expect(screen.getByText(/20 bps 优势消失/)).toBeInTheDocument()
-    expect(screen.getByTestId('minute-backtest-chart')).toBeInTheDocument()
-    expect(screen.getByText('样本组')).toBeInTheDocument()
+    expect(screen.getAllByTestId('minute-backtest-chart')).toHaveLength(2)
+    expect(screen.getByText('跨时间尺度否证：1/4 折绝对正收益')).toBeInTheDocument()
+    expect(screen.getByText(/短窗口 1 分钟结果未跨时间尺度复现/)).toBeInTheDocument()
+    expect(screen.getByText(/0 bps 起已跑输基准/)).toBeInTheDocument()
+    expect(screen.getAllByText('样本组')).toHaveLength(2)
     expect(screen.getByText('整行业剔除')).toBeInTheDocument()
     expect(screen.getByText('基础化工')).toBeInTheDocument()
     expect(screen.getByText('92')).toBeInTheDocument()

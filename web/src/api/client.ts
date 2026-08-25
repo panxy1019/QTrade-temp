@@ -83,7 +83,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getJson<PlatformSnapshot['health']>('/health'),
     getJson<Pick<PlatformSnapshot, 'account' | 'pnl' | 'positions' | 'orders' | 'trades' | 'risk'>>('/paper-snapshot'),
   ])
-  const [metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
+  const [metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
     getOptional<PlatformSnapshot['metrics']>('/metrics', {}),
     getOptional<PlatformSnapshot['reports']>('/reports', []),
     getOptional<PlatformSnapshot['reporting']>('/reporting-status', {
@@ -120,6 +120,10 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
       classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', promotion_reasons: ['REQUEST_FAILED'], minute_dataset: null,
       candidates: [], cost_stress: [], subgroups: [], leave_one_sector_out: [], daily: [], curve: [],
     }),
+    getOptional<PlatformSnapshot['fiveMinuteResearch']>('/five-minute-research', {
+      classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', promotion_reasons: ['REQUEST_FAILED'], minute_dataset: null,
+      candidates: [], folds: [], cost_stress: [], subgroups: [], leave_one_sector_out: [], daily: [], curve: [],
+    }),
     getOptional<PlatformSnapshot['backtestAnalytics']>('/backtest-analytics', {
       classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', leader: null, curve: [],
     }),
@@ -129,7 +133,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getOptional<PlatformSnapshot['historicalBars']>('/historical-bars/latest', []),
     getOptional<PlatformSnapshot['audit']>('/audit', null),
   ])
-  const sections = { metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, backtestAnalytics, market, historicalBars, audit }
+  const sections = { metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, backtestAnalytics, market, historicalBars, audit }
   const failures = Object.fromEntries(Object.entries(sections).flatMap(([name, result]) => result.error ? [[name, result.error]] : []))
   return {
     system, health, ...paper,
@@ -138,6 +142,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     factorSearch: factorSearch.value, robustFactorSearch: robustFactorSearch.value,
     stockSectorTransfer: stockSectorTransfer.value, minuteOverlay: minuteOverlay.value,
     minuteResearch: minuteResearch.value,
+    fiveMinuteResearch: fiveMinuteResearch.value,
     backtestAnalytics: backtestAnalytics.value, market: market.value,
     historicalBars: historicalBars.value, audit: audit.value, availability: { failures },
   }

@@ -7,7 +7,7 @@ from datetime import date, datetime
 from datetime import time as datetime_time
 from decimal import Decimal, InvalidOperation
 from importlib import import_module
-from typing import Protocol, cast
+from typing import Literal, Protocol, cast
 
 from qtrade.data import Bar, BarQualityGate
 from qtrade.market_data.akshare import SHANGHAI
@@ -59,11 +59,19 @@ class NativeHttpxClient:
 
 
 def _minute_range(
-    start_hour: int, start_minute: int, end_hour: int, end_minute: int
+    start_hour: int,
+    start_minute: int,
+    end_hour: int,
+    end_minute: int,
+    *,
+    step: int = 1,
 ) -> tuple[datetime_time, ...]:
     start = start_hour * 60 + start_minute
     end = end_hour * 60 + end_minute
-    return tuple(datetime_time(value // 60, value % 60) for value in range(start, end + 1))
+    return tuple(
+        datetime_time(value // 60, value % 60)
+        for value in range(start, end + 1, step)
+    )
 
 
 # The source exposes 238 stable observations per completed A-share session. It
@@ -73,6 +81,14 @@ SINA_COMPLETE_SESSION_TIMES = (
     *_minute_range(9, 31, 11, 30),
     *_minute_range(13, 1, 14, 57),
     datetime_time(15, 0),
+)
+
+# The provider's native 5-minute bars close on the five-minute marks. Unlike
+# its 1-minute response, the afternoon grid is continuous through the 15:00
+# close and contains 48 observations per completed session.
+SINA_FIVE_MINUTE_SESSION_TIMES = (
+    *_minute_range(9, 35, 11, 30, step=5),
+    *_minute_range(13, 5, 15, 0, step=5),
 )
 
 
@@ -87,19 +103,30 @@ class SinaMinuteHistoryClient:
         maximum_attempts: int = 3,
         initial_backoff_seconds: float = 0.5,
         datalen: int = 1970,
+        scale_minutes: Literal[1, 5] = 1,
         sleep: Callable[[float], None] = time.sleep,
     ) -> None:
         if timeout_seconds <= 0 or initial_backoff_seconds < 0:
             raise ValueError("Sina minute request timings are invalid")
         if maximum_attempts < 1:
             raise ValueError("Sina minute request attempts must be positive")
-        if not 238 <= datalen <= 10000:
-            raise ValueError("Sina minute datalen must be between 238 and 10000")
+        if scale_minutes not in {1, 5}:
+            raise ValueError("Sina minute scale must be 1 or 5")
+        minimum = len(
+            SINA_COMPLETE_SESSION_TIMES
+            if scale_minutes == 1
+            else SINA_FIVE_MINUTE_SESSION_TIMES
+        )
+        if not minimum <= datalen <= 1970:
+            raise ValueError(
+                f"Sina minute datalen must be between {minimum} and provider limit 1970"
+            )
         self._client = client or NativeHttpxClient()
         self._timeout = timeout_seconds
         self._maximum_attempts = maximum_attempts
         self._initial_backoff = initial_backoff_seconds
         self._datalen = datalen
+        self._scale_minutes = scale_minutes
         self._sleep = sleep
 
     def fetch(self, symbol: str) -> tuple[Bar, ...]:
@@ -111,7 +138,7 @@ class SinaMinuteHistoryClient:
                     SINA_MINUTE_URL,
                     params={
                         "symbol": source_symbol,
-                        "scale": "1",
+                        "scale": str(self._scale_minutes),
                         "ma": "no",
                         "datalen": str(self._datalen),
                     },
@@ -121,7 +148,17 @@ class SinaMinuteHistoryClient:
                     raise RuntimeError(
                         f"Sina minute endpoint returned HTTP {response.status_code}"
                     )
-                bars = _parse_rows(symbol, exchange, response.json())
+                expected_times = (
+                    SINA_COMPLETE_SESSION_TIMES
+                    if self._scale_minutes == 1
+                    else SINA_FIVE_MINUTE_SESSION_TIMES
+                )
+                bars = _parse_rows(
+                    symbol,
+                    exchange,
+                    response.json(),
+                    allowed_times=frozenset(expected_times),
+                )
                 issues = BarQualityGate().validate(bars, expected_symbol=symbol)
                 if issues:
                     raise ValueError(
@@ -137,18 +174,28 @@ class SinaMinuteHistoryClient:
         raise RuntimeError(f"Sina minute history request failed for {symbol}") from failure
 
 
-def complete_session_days(bars: tuple[Bar, ...]) -> tuple[date, ...]:
+def complete_session_days(
+    bars: tuple[Bar, ...],
+    *,
+    expected_times: tuple[datetime_time, ...] = SINA_COMPLETE_SESSION_TIMES,
+) -> tuple[date, ...]:
     by_day: dict[date, list[datetime_time]] = defaultdict(list)
     for bar in bars:
         by_day[bar.trading_day].append(bar.timestamp.astimezone(SHANGHAI).time())
     return tuple(
         day
         for day, observed in sorted(by_day.items())
-        if tuple(observed) == SINA_COMPLETE_SESSION_TIMES
+        if tuple(observed) == expected_times
     )
 
 
-def _parse_rows(symbol: str, exchange: str, payload: object) -> tuple[Bar, ...]:
+def _parse_rows(
+    symbol: str,
+    exchange: str,
+    payload: object,
+    *,
+    allowed_times: frozenset[datetime_time] = frozenset(SINA_COMPLETE_SESSION_TIMES),
+) -> tuple[Bar, ...]:
     if not isinstance(payload, list) or not payload:
         raise ValueError("Sina minute response must contain rows")
     result: list[Bar] = []
@@ -161,7 +208,7 @@ def _parse_rows(symbol: str, exchange: str, payload: object) -> tuple[Bar, ...]:
             )
         except (KeyError, ValueError) as error:
             raise ValueError("Sina minute timestamp is malformed") from error
-        if timestamp.second != 0 or not _in_source_session(timestamp.time()):
+        if timestamp.second != 0 or timestamp.time() not in allowed_times:
             raise ValueError("Sina minute timestamp is outside the disclosed session grid")
         result.append(
             Bar(
@@ -189,14 +236,6 @@ def _decimal(
     if not value.is_finite() or value < 0 or (value == 0 and not allow_zero):
         raise ValueError(f"Sina minute {key} is invalid")
     return value
-
-
-def _in_source_session(value: datetime_time) -> bool:
-    return (
-        datetime_time(9, 31) <= value <= datetime_time(11, 30)
-        or datetime_time(13, 1) <= value <= datetime_time(14, 57)
-        or value == datetime_time(15, 0)
-    )
 
 
 def _source_identity(symbol: str) -> tuple[str, str]:

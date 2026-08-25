@@ -40,6 +40,25 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
         bar["observation_type"] == "HISTORICAL_MINUTE_BAR"
         for bar in minute_bars["bars"]
     )
+    five_minute = client.get(_api("/five-minute-research")).json()
+    assert five_minute["promotion"] == "NOT_ELIGIBLE"
+    assert five_minute["minute_dataset"]["bar_interval"] == "5m"
+    assert five_minute["minute_dataset"]["bar_count"] == 193_920
+    assert five_minute["minute_dataset"]["symbol_count"] == 101
+    assert five_minute["minute_dataset"]["session_count"] == 40
+    assert len(five_minute["folds"]) == 4
+    assert five_minute["aggregate"]["positive_test_fold_count"] == 1
+    assert five_minute["aggregate"]["excess_return"] < 0
+    five_minute_bars = client.get(_api("/five-minute-bars/601166")).json()
+    assert five_minute_bars["observation_type"] == (
+        "HISTORICAL_FIVE_MINUTE_BAR_SERIES"
+    )
+    assert five_minute_bars["interval"] == "5m"
+    assert five_minute_bars["total_count"] == 1_920
+    assert all(
+        bar["observation_type"] == "HISTORICAL_FIVE_MINUTE_BAR"
+        for bar in five_minute_bars["bars"]
+    )
     analytics = client.get(_api("/backtest-analytics")).json()
     assert analytics["leader"]["experiment_id"].endswith("momentum-vol-slow-20260812-v4")
     assert len(analytics["curve"]) == 632

@@ -147,6 +147,34 @@ cost stress, ETF/stock subgroups and 15 whole-sector leave-one-out checks. Five 
 sessions are far too short for promotion, so the report is always
 `NOT_ELIGIBLE` and cannot authorize PAPER or live market access.
 
+The same frozen cross-section also has a separate provider-native 5-minute
+falsification study. It is not a resample of the five-day 1-minute file and is
+not evidence of 1-minute realtime readiness:
+
+```bash
+QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true .venv/bin/python \
+  scripts/sina_minute_history_ingest.py \
+  --interval-minutes 5 \
+  --sessions 40 \
+  --stock-universe runtime/universes/akshare-csi300-sw15x5-current-20260731-v1.json \
+  --data-version sina-five-minute-multiasset-sw15x5-20260825-v1
+
+.venv/bin/python scripts/run_sina_five_minute_walk_forward.py \
+  --data-version sina-five-minute-multiasset-sw15x5-20260825-v1 \
+  --output runtime/research/sina-five-minute-walk-forward-v1
+```
+
+The signed dataset contains 193,920 bars for 26 ETFs and 75 stocks across 40
+sessions. Four expanding folds start with 16 training sessions and each consume
+six disjoint test sessions; every candidate is causally shadow-warmed and the
+selected exposure changes only at the next 5-minute open. At 5 bps the stitched
+24-session baseline returned `-1.9249%`, while the overlay returned `-4.6234%`
+(`-2.6985%` relative), with only one of four folds positive in absolute terms.
+Even the 0 bps overlay trailed the baseline. This failure is retained as a
+cross-time-scale robustness veto rather than tuned away. `/five-minute-research`
+and `/five-minute-bars/{symbol}` expose only hash-verified, historical, read-only
+evidence; promotion, realtime/PAPER readiness and external orders remain disabled.
+
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and
 `QTRADE_RQDATA_TOKEN` only inside the bridge process, and claims a session only
@@ -299,10 +327,12 @@ shows it.
 ## Public read-only web deployment
 
 `vercel.json` builds the React application for `/` and exposes the stateless
-FastAPI entrypoint at `/api`. The committed deployment evidence is limited to
-the 30-ETF signed Parquet dataset and the accepted factor, robustness and stock
-transfer reports. The cloud context has zero trading capacity and no control or
-trade token, so mutation endpoints fail closed with HTTP 503.
+FastAPI entrypoint at `/api`. The committed deployment evidence contains the
+checksum-bound daily, 1-minute and native 5-minute historical datasets plus the
+accepted research, walk-forward, robustness and transfer reports. Packaging
+these immutable artifacts does not add realtime identity or data authority. The
+cloud context has zero trading capacity and no control or trade token, so
+mutation endpoints fail closed with HTTP 503.
 
 Low-cardinality runtime counters and gauges are available in Prometheus 0.0.4
 text format at `/metrics/prometheus` locally and `/api/metrics/prometheus` on the
