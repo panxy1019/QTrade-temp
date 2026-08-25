@@ -68,6 +68,8 @@ def test_packaged_long_five_minute_evidence_fails_closed_after_tampering(
     assert report is not None
     assert len(report["folds"]) == 6
     assert report["walk_forward"]["unused_trailing_sessions"] == 8
+    assert report["walk_forward"]["processed_bar_count"] == 1_296_000
+    assert report["walk_forward"]["trailing_sessions_entered_backtest"] is False
     assert report["aggregate"]["excess_return"] < 0
 
     with (report_root / "folds.json").open("ab") as stream:

@@ -15,6 +15,7 @@ from math import sqrt
 from pathlib import Path
 from typing import Literal
 
+from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.research import MinuteBacktestResult, run_minute_overlay_backtest
 from qtrade.runtime import MinuteOverlayPolicy
 
@@ -285,6 +286,19 @@ def main() -> int:
         test_sessions_per_fold=profile.test_sessions_per_fold,
         fold_count=profile.fold_count,
     )
+    used_session_count = (
+        profile.initial_train_sessions
+        + profile.test_sessions_per_fold * profile.fold_count
+    )
+    backtest_days = frozenset(trading_days[:used_session_count])
+    bars = tuple(bar for bar in bars if bar.trading_day in backtest_days)
+    expected_processed_bars = (
+        int(evidence["symbol_count"])
+        * used_session_count
+        * len(SINA_FIVE_MINUTE_SESSION_TIMES)
+    )
+    if len(bars) != expected_processed_bars:
+        raise ValueError("5-minute study bar subset is inconsistent")
     policy_by_id = dict(FIVE_MINUTE_POLICIES)
     five_bps_results = {
         policy_id: run_minute_overlay_backtest(
@@ -501,10 +515,10 @@ def main() -> int:
             "initial_train_sessions": profile.initial_train_sessions,
             "test_sessions_per_fold": profile.test_sessions_per_fold,
             "fold_count": profile.fold_count,
-            "used_session_count": (
-                profile.initial_train_sessions
-                + profile.test_sessions_per_fold * profile.fold_count
-            ),
+            "used_session_count": used_session_count,
+            "processed_session_count": used_session_count,
+            "processed_bar_count": len(bars),
+            "trailing_sessions_entered_backtest": False,
             "unused_trailing_sessions": (
                 len(trading_days)
                 - profile.initial_train_sessions

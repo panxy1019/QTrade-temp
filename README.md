@@ -197,7 +197,8 @@ uv run python scripts/run_sina_five_minute_walk_forward.py \
 The signed dataset contains 1,324,800 bars for 75 stocks across 368 common
 complete sessions. The predeclared study reads the first 360 sessions only:
 120 initial training sessions followed by six disjoint 40-session test folds;
-the final eight sessions remain unused. At 5 bps, the stitched 240-session
+the final eight sessions are excluded before records enter the strategy engine.
+At 5 bps, the stitched 240-session
 baseline returned `+40.8285%`, while the overlay returned `+1.0438%`
 (`-39.7847%` relative). The overlay reduced maximum drawdown from `-15.1086%`
 to `-12.1806%`, but even at 0 bps it lagged the baseline by `-10.0946%`.

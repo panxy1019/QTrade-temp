@@ -179,7 +179,7 @@ const data = {
       point_in_time: false, future_adjustment_knowledge_possible: true, realtime_readiness: false, real_data_paper_readiness: false, external_order_transmission: false,
     },
     causal_contract: { signal_observed_at: 'FIVE_MINUTE_BAR_CLOSE_T', exposure_change_at: 'NEXT_FIVE_MINUTE_BAR_OPEN', same_bar_signal_execution: false, candidate_state: 'ALL_CANDIDATES_CAUSALLY_SHADOW_WARMED', maximum_exposure: 1, external_order_transmission: false },
-    walk_forward: { initial_train_sessions: 120, test_sessions_per_fold: 40, fold_count: 6, candidate_count: 7, test_windows_disjoint: true, selection_objective: 'frozen', selected_policy_sequence: Array(6).fill('five-reduction-soft-v1'), used_session_count: 360, unused_trailing_sessions: 8 },
+    walk_forward: { initial_train_sessions: 120, test_sessions_per_fold: 40, fold_count: 6, candidate_count: 7, test_windows_disjoint: true, selection_objective: 'frozen', selected_policy_sequence: Array(6).fill('five-reduction-soft-v1'), used_session_count: 360, unused_trailing_sessions: 8, processed_session_count: 360, processed_bar_count: 1296000, trailing_sessions_entered_backtest: false },
     aggregate: {
       cost_bps: 5,
       base: { total_return: 0.4082847, maximum_drawdown: -0.1510855, realized_minute_volatility: 0.00223, point_count: 11520 },
@@ -589,7 +589,7 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/短窗口 1 分钟结果未跨时间尺度复现/)).toBeInTheDocument()
     expect(screen.getByText(/0 bps 起已跑输基准/)).toBeInTheDocument()
     expect(screen.getByText(/长历史复核：2\/6 折绝对正收益/)).toBeInTheDocument()
-    expect(screen.getByText(/尾部 8 日未读/)).toBeInTheDocument()
+    expect(screen.getByText(/尾部 8 日未进入回测/)).toBeInTheDocument()
     expect(screen.getByText(/前复权，可能含未来复权知识/)).toBeInTheDocument()
     expect(screen.getAllByText('样本组')).toHaveLength(2)
     expect(screen.getByText('整行业剔除')).toBeInTheDocument()

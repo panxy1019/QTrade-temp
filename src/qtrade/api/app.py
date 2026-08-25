@@ -3509,6 +3509,12 @@ def _load_verified_five_minute_report(
         daily = loaded["daily.json"]
         curve = loaded["curve.json"]
         trading_days = cast(list[str], dataset["trading_days"])
+        expected_used_session_count = (
+            initial_train_sessions + test_sessions_per_fold * fold_count
+        )
+        expected_unused_session_count = (
+            len(trading_days) - expected_used_session_count
+        )
         if (
             not isinstance(candidates, list)
             or len(candidates) != 7 * fold_count
@@ -3590,18 +3596,24 @@ def _load_verified_five_minute_report(
             ]
             or walk_forward.get(
                 "used_session_count",
-                initial_train_sessions + test_sessions_per_fold * fold_count,
+                expected_used_session_count,
             )
-            != initial_train_sessions + test_sessions_per_fold * fold_count
+            != expected_used_session_count
             or walk_forward.get(
                 "unused_trailing_sessions",
-                len(trading_days)
-                - initial_train_sessions
-                - test_sessions_per_fold * fold_count,
+                expected_unused_session_count,
             )
-            != len(trading_days)
-            - initial_train_sessions
-            - test_sessions_per_fold * fold_count
+            != expected_unused_session_count
+            or expected_unused_session_count > 0
+            and (
+                walk_forward.get("processed_session_count")
+                != expected_used_session_count
+                or walk_forward.get("processed_bar_count")
+                != expected_used_session_count
+                * cast(int, dataset["symbol_count"])
+                * len(SINA_FIVE_MINUTE_SESSION_TIMES)
+                or walk_forward.get("trailing_sessions_entered_backtest") is not False
+            )
             or [row.get("trading_day") for row in daily] != expected_test_days
             or [row.get("fold") for row in daily]
             != [

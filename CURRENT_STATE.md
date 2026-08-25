@@ -119,8 +119,9 @@ Last updated: 2026-08-26
 - Long native-5-minute falsification: the optional BaoStock 0.9.3 ingest produced
   a signed 1,324,800-bar dataset for the frozen 75-stock/15-sector universe over
   368 common complete sessions. The predeclared expanding study used 120 initial
-  training sessions plus six disjoint 40-session test folds and left eight tail
-  sessions unused. At 5 bps, the stitched 240-session baseline returned
+  training sessions plus six disjoint 40-session test folds and excluded eight
+  tail sessions before records entered the strategy engine. At 5 bps, the
+  stitched 240-session baseline returned
   `40.8285%`; the reduction-only overlay returned `1.0438%`, an excess of
   `-39.7847%`. Maximum drawdown improved from `-15.1086%` to `-12.1806%`, but
   the 0-bps overlay still lagged by `-10.0946%`. The result is retained as a

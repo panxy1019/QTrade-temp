@@ -427,7 +427,7 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
         ['来源', `${longFiveMinuteResearch?.minute_dataset?.provider ?? '—'} ${longFiveMinuteResearch?.minute_dataset?.provider_version ?? ''}`],
         ['标的 / 板块', `${longFiveMinuteResearch?.minute_dataset?.symbol_count ?? 0} / ${longFiveMinuteResearch?.minute_dataset?.sector_count ?? 0}`],
         ['数据范围', `${longFiveMinuteResearch?.minute_dataset?.trading_days[0] ?? '—'} 至 ${longFiveMinuteResearch?.minute_dataset?.trading_days.at(-1) ?? '—'}`],
-        ['滚动切分', `${longFiveMinuteResearch?.walk_forward?.initial_train_sessions ?? 0} 日初始训练；${longFiveMinuteResearch?.walk_forward?.fold_count ?? 0} 折 × ${longFiveMinuteResearch?.walk_forward?.test_sessions_per_fold ?? 0} 日独立测试；尾部 ${longFiveMinuteResearch?.walk_forward?.unused_trailing_sessions ?? 0} 日未读`],
+        ['滚动切分', `${longFiveMinuteResearch?.walk_forward?.initial_train_sessions ?? 0} 日初始训练；${longFiveMinuteResearch?.walk_forward?.fold_count ?? 0} 折 × ${longFiveMinuteResearch?.walk_forward?.test_sessions_per_fold ?? 0} 日独立测试；尾部 ${longFiveMinuteResearch?.walk_forward?.unused_trailing_sessions ?? 0} 日未进入回测`],
         ['基准收益', formatPercent(String(longFiveMinuteAggregate.base.total_return))],
         ['修正后收益', formatPercent(String(longFiveMinuteAggregate.overlay.total_return))],
         ['相对基准', formatPercent(String(longFiveMinuteAggregate.excess_return))],

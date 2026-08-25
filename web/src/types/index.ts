@@ -618,6 +618,9 @@ export interface FiveMinuteResearchReport {
     selected_policy_sequence: string[]
     used_session_count?: number
     unused_trailing_sessions?: number
+    processed_session_count?: number
+    processed_bar_count?: number
+    trailing_sessions_entered_backtest?: false
   }
   aggregate?: {
     cost_bps: number

@@ -57,6 +57,11 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert long_five_minute["minute_dataset"]["session_count"] == 368
     assert len(long_five_minute["folds"]) == 6
     assert long_five_minute["walk_forward"]["unused_trailing_sessions"] == 8
+    assert long_five_minute["walk_forward"]["processed_bar_count"] == 1_296_000
+    assert (
+        long_five_minute["walk_forward"]["trailing_sessions_entered_backtest"]
+        is False
+    )
     assert long_five_minute["aggregate"]["excess_return"] < 0
     five_minute_bars = client.get(_api("/five-minute-bars/601166")).json()
     assert five_minute_bars["observation_type"] == (

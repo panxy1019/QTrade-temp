@@ -57,9 +57,9 @@
     "stock_count": 75,
     "symbol_count": 75
   },
-  "evidence_sha256": "7959ec6dcbd8ade9149594c152a7afcd450f6ba71efa61fb6ec05fbc9e01c9cf",
+  "evidence_sha256": "6c12e27067e89fa9c04aa6bddbd8a1c41fd124d5eff24fe4dddb4d6523e90bb7",
   "external_order_transmission": false,
-  "generated_at": "2026-08-26T05:40:19.827827+08:00",
+  "generated_at": "2026-08-26T06:05:15.792336+08:00",
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
     "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",
@@ -83,6 +83,8 @@
     "candidate_count": 7,
     "fold_count": 6,
     "initial_train_sessions": 120,
+    "processed_bar_count": 1296000,
+    "processed_session_count": 360,
     "selected_policy_sequence": [
       "five-reduction-soft-v1",
       "five-reduction-soft-v1",
@@ -94,6 +96,7 @@
     "selection_objective": "overlay_return_minus_base_return_plus_twice_drawdown_improvement",
     "test_sessions_per_fold": 40,
     "test_windows_disjoint": true,
+    "trailing_sessions_entered_backtest": false,
     "unused_trailing_sessions": 8,
     "used_session_count": 360
   }
