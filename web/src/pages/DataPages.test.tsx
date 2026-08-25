@@ -6,6 +6,7 @@ import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, 
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
 vi.mock('../api/client', () => ({
+  prometheusMetricsUrl: '/metrics/prometheus',
   loadHistoricalBarSeries: vi.fn(async (symbol: string) => ({
     symbol, data_version: 'akshare-bars-v1', dataset_checksum: 'abc', observation_type: 'HISTORICAL_DAILY_BAR_SERIES',
     total_count: 2, truncated: false,
@@ -28,8 +29,11 @@ const data = {
   orders: [{ internal_order_id: 'ORDER-1', broker_order_id: 'PAPER-1', strategy_id: 'trend@1.0.0', portfolio_id: 'paper-etf', symbol: '510300', side: 'BUY', price: '10', status: 'FILLED', quantity: 100, filled_quantity: 100, rejection_reason: null, created_at: '2026-08-12T09:31:00+08:00', updated_at: '2026-08-12T09:32:00+08:00' }],
   trades: [{ trade_id: 'PAPER-TRADE-1', internal_order_id: 'ORDER-1', strategy_id: 'trend@1.0.0', portfolio_id: 'paper-etf', symbol: '510300', side: 'BUY', price: '10', quantity: 100, fee: '1', timestamp: '2026-08-12T09:32:00+08:00', execution_type: 'PAPER_SIMULATED_FILL' }],
   risk: { state: 'NORMAL', cash: '98999', position_cost_basis: '1001', open_buy_notional: '0', gross_exposure: '1001', exposure_basis: 'COST_BASIS_PLUS_OPEN_BUY_LIMIT_PRICE', largest_position_concentration: '1', open_order_count: 0, realized_pnl: '0', drawdown: null, valuation_status: 'MARKET_PRICE_UNAVAILABLE', gateway_connected: true, reconciliation_status: 'OK' },
-  metrics: {},
-  audit: [{ timestamp: '2026-08-12T09:32:00+08:00', event_type: 'PAPER_INCIDENT', severity: 'ERROR', message: 'gateway disconnected', order_id: 'ORDER-1' }],
+  metrics: { market_data_lag_seconds: '1.25', event_queue_depth: 2, orders_per_minute: 3, reject_rate: '0.1', fill_rate: '0.9', last_order_latency_seconds: '0.04', gateway_connected: false, reconciliation_status: 'UNKNOWN', monitoring_degraded: false },
+  audit: [
+    { timestamp: '2026-08-12T09:32:00+08:00', event_type: 'PAPER_INCIDENT', severity: 'ERROR', message: 'gateway disconnected', order_id: 'ORDER-1' },
+    { timestamp: '2026-08-12T09:33:00+08:00', event_type: 'RISK_LIMIT', severity: 'CRITICAL', message: 'drawdown threshold reached', order_id: null },
+  ],
   strategies: [{
     strategy_id: 'momentum-vol-slow', name: 'momentum-volatility', version: 'abc123def456',
     family: 'ETF_MOMENTUM_VOLATILITY', status: 'NOT_ELIGIBLE', role: 'NONE',
@@ -236,6 +240,20 @@ describe('durable monitoring', () => {
     expect(screen.getByText('只减仓，不加仓')).toBeInTheDocument()
     expect(screen.getByText('封闭分钟线后的下一 Tick')).toBeInTheDocument()
     expect(screen.getByText('禁止')).toBeInTheDocument()
+    expect(screen.getByText('1.25')).toBeInTheDocument()
+    expect(screen.getByText('3')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Prometheus 指标' })).toHaveAttribute('href', '/metrics/prometheus')
+    expect(screen.getByRole('button', { name: /导出当前审计视图/ })).toBeInTheDocument()
+  })
+
+  it('filters durable audit events without changing the source snapshot', () => {
+    render(<MonitorPage data={data} />)
+    fireEvent.change(screen.getByLabelText('搜索审计事件'), { target: { value: 'drawdown' } })
+
+    expect(screen.getByText('RISK_LIMIT')).toBeInTheDocument()
+    expect(screen.getByText('drawdown threshold reached')).toBeInTheDocument()
+    expect(screen.queryByText('gateway disconnected')).not.toBeInTheDocument()
+    expect(screen.getByText('显示 1/2')).toBeInTheDocument()
   })
 
   it('distinguishes unavailable audit history from zero alerts', () => {

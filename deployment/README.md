@@ -23,6 +23,9 @@ project-specific DNS name; the root A record and wildcard CNAME remain unchanged
   retains its five-second cadence.
 - `ApiAuthConfig()` is intentionally empty, so every control or trade-sensitive
   route fails closed with HTTP 503.
+- `/api/metrics/prometheus` is a read-only, low-cardinality Prometheus 0.0.4
+  export. It excludes credentials, account/order identifiers and dynamic
+  strategy-heartbeat labels; non-finite metrics fail closed.
 - No SQLite runtime, provider credential, broker adapter, PAPER session or live
   order authority is deployed.
 
@@ -31,6 +34,7 @@ Local verification:
 ```bash
 .venv/bin/pytest -q tests/test_vercel_entry.py
 npm --prefix web run build:vercel
+curl -fsS https://qtrade.erapi0neer.xyz/api/metrics/prometheus
 ```
 
 The evidence bundle is copied byte-for-byte from the accepted local artifacts;

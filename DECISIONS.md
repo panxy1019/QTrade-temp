@@ -313,3 +313,20 @@ tooltip, data-zoom and canvas modules used by QTrade. React and zrender are stab
 transport chunks so ordinary and Vercel builds remain below Vite's 500 KB warning
 boundary. This changes loading and caching only; it does not change evidence
 validation, strategy state, credentials, persistence or trading authority.
+
+## ADR-023 — Prometheus export is finite, low-cardinality and read-only
+
+Status: accepted, 2026-08-26.
+
+The existing JSON `/metrics` contract remains the dashboard snapshot. A separate
+`/metrics/prometheus` read endpoint exposes only predefined runtime counters and
+gauges plus bounded mode/risk/reconciliation labels in Prometheus 0.0.4 text.
+Non-numeric or non-finite values fail closed with 503. Strategy-heartbeat maps,
+symbols, order identifiers, account identifiers and credentials are excluded to
+avoid cardinality growth and information leakage.
+
+The browser monitor reads the canonical JSON field names and may search or filter
+the already bounded 500-row durable audit snapshot, then export only that current
+view. These controls do not acknowledge alerts, mutate the journal, route messages
+externally or change runtime/trading authority; outbound delivery requires a
+separate authenticated integration decision.

@@ -7,7 +7,7 @@ import { BacktestLab } from '../components/BacktestLab'
 import { EquityChart } from '../charts/EquityChart'
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
 import { loadHistoricalBarSeries } from '../api/client'
-import { cancelPaperOrder, controlRuntime } from '../api/client'
+import { cancelPaperOrder, controlRuntime, prometheusMetricsUrl } from '../api/client'
 import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
 
@@ -298,26 +298,42 @@ export function DataCenterPage({ data }: { data: PlatformSnapshot | null }) {
 }
 
 export function MonitorPage({ data }: { data: PlatformSnapshot | null }) {
+  const [auditQuery, setAuditQuery] = useState("");
+  const [auditSeverity, setAuditSeverity] = useState<string | undefined>();
+  const [auditEventType, setAuditEventType] = useState<string | undefined>();
   const entries = Object.entries(data?.metrics ?? {});
   const audit = data?.audit ?? [];
   const auditAvailable = data?.audit != null;
   const alerts = audit.filter(
     (event) => event.severity === "ERROR" || event.severity === "CRITICAL",
   );
+  const eventTypes = [...new Set(audit.map((event) => event.event_type))]
+    .sort()
+    .map((value) => ({ value, label: value }));
+  const normalizedAuditQuery = auditQuery.trim().toLowerCase();
+  const filteredAudit = audit.filter((event) =>
+    (!auditSeverity || event.severity === auditSeverity)
+    && (!auditEventType || event.event_type === auditEventType)
+    && (!normalizedAuditQuery || `${event.event_type} ${event.message} ${event.order_id ?? ""}`.toLowerCase().includes(normalizedAuditQuery))
+  );
   const minute = data?.minuteOverlay;
   const minuteRows = minute?.symbols ?? [];
   return (
     <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化">
       <Space orientation="vertical" style={{ width: "100%" }}>
-        <Card>
+        <Card extra={<Button href={prometheusMetricsUrl} target="_blank" rel="noreferrer">Prometheus 指标</Button>}>
           <Descriptions
             values={[
               ["Service Health", data?.health.healthy ? "HEALTHY" : "DEGRADED"],
               ["Event Queue", String(data?.metrics.event_queue_depth ?? 0)],
-              ["Market Data Lag", String(data?.metrics.market_data_lag ?? "—")],
-              ["Order Rate", String(data?.metrics.orders_per_min ?? 0)],
+              ["Market Data Lag", String(data?.metrics.market_data_lag_seconds ?? "—")],
+              ["Order Rate", String(data?.metrics.orders_per_minute ?? 0)],
               ["Reject Rate", String(data?.metrics.reject_rate ?? 0)],
               ["Fill Rate", String(data?.metrics.fill_rate ?? 0)],
+              ["Order Latency", String(data?.metrics.last_order_latency_seconds ?? "—")],
+              ["Gateway", data?.metrics.gateway_connected ? "CONNECTED" : "DISCONNECTED"],
+              ["Reconciliation", String(data?.metrics.reconciliation_status ?? "UNKNOWN")],
+              ["Monitoring", data?.metrics.monitoring_degraded ? "DEGRADED" : "NORMAL"],
               ["Runtime Owner", "SQLite 单进程租约"],
               ["指标数量", String(entries.length)],
               [
@@ -398,12 +414,46 @@ export function MonitorPage({ data }: { data: PlatformSnapshot | null }) {
           />
         )}
         <Card title="最近持久化审计与告警">
+          <Space wrap style={{ marginBottom: 16 }}>
+            <Input.Search
+              aria-label="搜索审计事件"
+              placeholder="搜索事件、消息或订单 ID"
+              allowClear
+              value={auditQuery}
+              onChange={(event) => setAuditQuery(event.target.value)}
+              style={{ width: 320 }}
+            />
+            <Select
+              aria-label="筛选审计级别"
+              allowClear
+              placeholder="全部级别"
+              value={auditSeverity}
+              onChange={setAuditSeverity}
+              options={["INFO", "WARNING", "ERROR", "CRITICAL"].map((value) => ({ value, label: value }))}
+              style={{ width: 150 }}
+            />
+            <Select
+              aria-label="筛选事件类型"
+              allowClear
+              placeholder="全部事件"
+              value={auditEventType}
+              onChange={setAuditEventType}
+              options={eventTypes}
+              style={{ width: 210 }}
+            />
+            <Tag color="blue">显示 {filteredAudit.length}/{audit.length}</Tag>
+            <JsonExportButton
+              filename="qtrade-filtered-audit.json"
+              value={auditAvailable ? filteredAudit : null}
+              label="导出当前审计视图"
+            />
+          </Space>
           <Table
             rowKey={(row) =>
               `${row.timestamp}-${row.event_type}-${row.order_id ?? ""}`
             }
             size="small"
-            dataSource={audit}
+            dataSource={filteredAudit}
             columns={[
               { title: "时间", dataIndex: "timestamp" },
               { title: "级别", dataIndex: "severity" },

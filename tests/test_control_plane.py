@@ -68,6 +68,34 @@ def test_dashboard_and_health_make_shadow_mode_explicit():
     assert response.json()["runtime_mode"] == "SHADOW"
 
 
+def test_prometheus_metrics_export_is_numeric_bounded_and_read_only():
+    api = client()
+    response = api.get("/metrics/prometheus")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/plain; version=0.0.4")
+    assert "# TYPE qtrade_orders_total counter" in response.text
+    assert "qtrade_orders_total 0" in response.text
+    assert "qtrade_gateway_connected 1" in response.text
+    assert "qtrade_runtime_healthy 1" in response.text
+    assert (
+        'qtrade_runtime_info{mode="SHADOW",risk_state="NORMAL",'
+        'reconciliation_status="OK"} 1'
+    ) in response.text
+    assert "strategy_heartbeats" not in response.text
+
+
+def test_prometheus_metrics_fail_closed_on_non_finite_values():
+    from qtrade.api.app import bootstrap_context
+
+    context = bootstrap_context()
+    context.metrics.market_data_lag_seconds = Decimal("NaN")
+    response = TestClient(create_app(context, ApiAuthConfig())).get("/metrics/prometheus")
+
+    assert response.status_code == 503
+    assert response.json() == {"detail": "runtime metrics unavailable"}
+
+
 def test_built_dashboard_assets_are_served_at_root_and_web_paths(tmp_path):
     assets = tmp_path / "assets"
     assets.mkdir()
@@ -95,6 +123,7 @@ def test_built_dashboard_assets_are_served_at_root_and_web_paths(tmp_path):
     assert api.get("/assets/app.js").text == "export default true"
     assert api.get("/web/assets/app.js").text == "export default true"
     assert api.get("/api/health").status_code == 200
+    assert api.get("/api/metrics/prometheus").status_code == 200
 
 
 def test_bootstrap_runtime_fails_closed_until_readiness_is_verified():

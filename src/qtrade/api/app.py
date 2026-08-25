@@ -29,7 +29,7 @@ from qtrade.control import PlatformRuntime
 from qtrade.data import Bar
 from qtrade.domain import CancelCommand, Order, OrderStatus, RuntimeMode
 from qtrade.execution import FeeSchedule, PaperGateway
-from qtrade.monitoring import MetricsRegistry
+from qtrade.monitoring import MetricsRegistry, render_prometheus_metrics
 from qtrade.oms import OrderManager
 from qtrade.research import BacktestPreviewSpec, run_backtest_preview
 from qtrade.risk import RiskEngine, RiskLimits
@@ -214,6 +214,28 @@ def create_app(
     @app.get("/metrics")
     def metrics(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:
         return state.metrics.snapshot()
+
+    @app.get("/metrics/prometheus", response_class=Response)
+    def prometheus_metrics(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> Response:
+        status = state.runtime.status
+        health_status = state.runtime.health()
+        try:
+            content = render_prometheus_metrics(
+                state.metrics.snapshot(),
+                runtime_mode=status.mode.value,
+                risk_state=status.risk_state.value,
+                reconciliation_status=health_status.reconciliation_status,
+                runtime_running=status.running,
+                healthy=health_status.healthy,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=503, detail="runtime metrics unavailable") from exc
+        return Response(
+            content=content,
+            headers={"Content-Type": "text/plain; version=0.0.4; charset=utf-8"},
+        )
 
     @app.get("/minute-overlay")
     def minute_overlay(

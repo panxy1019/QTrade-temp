@@ -258,6 +258,13 @@ the 30-ETF signed Parquet dataset and the accepted factor, robustness and stock
 transfer reports. The cloud context has zero trading capacity and no control or
 trade token, so mutation endpoints fail closed with HTTP 503.
 
+Low-cardinality runtime counters and gauges are available in Prometheus 0.0.4
+text format at `/metrics/prometheus` locally and `/api/metrics/prometheus` on the
+Vercel deployment. The export omits strategy heartbeat identities and contains
+no credential, account identifier or order mutation path. The system-monitor
+page links to that read-only endpoint and can search, filter and export the
+current bounded audit view.
+
 ```bash
 PYTHONPATH=. .venv/bin/pytest -q tests/test_vercel_entry.py
 npm --prefix web run build:vercel

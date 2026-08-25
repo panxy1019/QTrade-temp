@@ -163,9 +163,12 @@ history and daily incident summaries retain durable events; report assembly is
 performed under the account-wide dispatch gate to avoid a half-applied fill.
 The monitor page consumes that durable view, separates ERROR/CRITICAL alerts,
 and preserves the rest of the dashboard when audit validation returns 503 while
-displaying an explicit unavailable state instead of a misleading zero.
-Remaining: external identity/TLS integration, Prometheus export and richer alert
-routing. Keep server loopback-only until those are reviewed.
+displaying an explicit unavailable state instead of a misleading zero. It now
+binds the canonical metric names, supports bounded audit search/severity/event
+triage and exports the filtered view. `/metrics/prometheus` provides finite,
+low-cardinality Prometheus 0.0.4 counters/gauges and deliberately omits strategy
+heartbeat identities. Remaining: external identity/TLS integration and outbound
+alert routing. Keep server loopback-only until those are reviewed.
 
 The control runner now uses the canonical durable PAPER runtime bundle. Recovery
 is an authenticated explicit action that refuses uncertain fills/submissions,

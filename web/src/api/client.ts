@@ -2,6 +2,8 @@ import type { BacktestPreview, BacktestPreviewRequest, HistoricalBarSeries, Plat
 
 const API_BASE = import.meta.env.DEV || import.meta.env.MODE === 'vercel' ? '/api' : ''
 
+export const prometheusMetricsUrl = `${API_BASE}/metrics/prometheus`
+
 async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`)
   if (!response.ok) throw new Error(`请求失败：${response.status}`)
