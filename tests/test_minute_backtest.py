@@ -81,6 +81,26 @@ def test_multi_symbol_curves_are_equal_weighted_and_cost_bound() -> None:
     assert costly.base_equity[-1] < free.base_equity[-1]
     assert costly.overlay_equity[-1] < free.overlay_equity[-1]
     assert costly.metrics()["overlay"].point_count == len(first)
+    diagnostics = costly.execution_metrics()
+    assert diagnostics["symbol_count"] == 2
+    assert diagnostics["observation_count"] == len(first) * 2
+    assert 0 <= diagnostics["mean_exposure"] <= 1
+    assert 0 <= diagnostics["reduced_exposure_ratio"] <= 1
+    assert diagnostics["mean_turnover_per_symbol"] > 0
+    assert diagnostics["mean_transaction_cost_per_symbol"] > 0
+    assert diagnostics["reason_counts"]
+
+
+def test_execution_diagnostics_reject_days_outside_the_backtest() -> None:
+    result = run_minute_overlay_backtest(
+        bars_for("510300", ["10"] * 20 + ["9", "8"]),
+        policy_id="diagnostic",
+        policy=policy(),
+        cost_bps=5,
+    )
+
+    with pytest.raises(ValueError, match="outside the observation window"):
+        result.execution_metrics(days={date(2026, 8, 26)})
 
 
 def test_backtest_rejects_unsynchronized_symbols() -> None:

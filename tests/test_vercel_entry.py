@@ -63,6 +63,15 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
         is False
     )
     assert long_five_minute["aggregate"]["excess_return"] < 0
+    assert long_five_minute["aggregate"]["execution"]["observation_count"] == 864_000
+    assert long_five_minute["aggregate"]["execution"]["mean_exposure"] < 0.64
+    assert (
+        long_five_minute["aggregate"]["execution"]["reduced_exposure_ratio"]
+        > 0.8
+    )
+    assert len(
+        {fold["execution"]["observation_count"] for fold in long_five_minute["folds"]}
+    ) == 1
     five_minute_bars = client.get(_api("/five-minute-bars/601166")).json()
     assert five_minute_bars["observation_type"] == (
         "HISTORICAL_FIVE_MINUTE_BAR_SERIES"

@@ -258,6 +258,40 @@ def _aggregate_selected(
     return _curve_metrics(base), _curve_metrics(overlay), timestamps, base, overlay
 
 
+def _combine_execution_metrics(rows: list[dict[str, object]]) -> dict[str, object]:
+    if not rows:
+        raise ValueError("5-minute execution diagnostics cannot be empty")
+    symbol_count = int(rows[0]["symbol_count"])
+    if symbol_count <= 0 or any(int(row["symbol_count"]) != symbol_count for row in rows):
+        raise ValueError("5-minute execution diagnostics require one symbol universe")
+    observation_count = sum(int(row["observation_count"]) for row in rows)
+    reduced_count = sum(
+        int(row["reduced_exposure_observation_count"]) for row in rows
+    )
+    exposure_sum = sum(float(row["exposure_sum"]) for row in rows)
+    turnover = sum(float(row["turnover"]) for row in rows)
+    transaction_cost = sum(float(row["transaction_cost"]) for row in rows)
+    reason_counts: dict[str, int] = {}
+    for row in rows:
+        raw_reasons = row["reason_counts"]
+        assert isinstance(raw_reasons, dict)
+        for reason, count in raw_reasons.items():
+            reason_counts[str(reason)] = reason_counts.get(str(reason), 0) + int(count)
+    return {
+        "symbol_count": symbol_count,
+        "observation_count": observation_count,
+        "reduced_exposure_observation_count": reduced_count,
+        "exposure_sum": exposure_sum,
+        "mean_exposure": exposure_sum / observation_count,
+        "reduced_exposure_ratio": reduced_count / observation_count,
+        "turnover": turnover,
+        "mean_turnover_per_symbol": turnover / symbol_count,
+        "transaction_cost": transaction_cost,
+        "mean_transaction_cost_per_symbol": transaction_cost / symbol_count,
+        "reason_counts": dict(sorted(reason_counts.items())),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -340,6 +374,7 @@ def main() -> int:
         selected_id = str(rows[0]["policy_id"])
         selected_ids.append(selected_id)
         test_metrics = five_bps_results[selected_id].metrics(days=test_days)
+        execution = five_bps_results[selected_id].execution_metrics(days=test_days)
         fold_rows.append(
             {
                 "fold": fold["fold"],
@@ -353,9 +388,13 @@ def main() -> int:
                     test_metrics["overlay"].total_return
                     - test_metrics["base"].total_return
                 ),
+                "execution": execution,
             }
         )
     selected_sequence = tuple(selected_ids)
+    aggregate_execution = _combine_execution_metrics(
+        [row["execution"] for row in fold_rows]
+    )
 
     result_cache: dict[tuple[str, float], MinuteBacktestResult] = {
         (policy_id, 5.0): result for policy_id, result in five_bps_results.items()
@@ -542,6 +581,7 @@ def main() -> int:
             "positive_test_fold_count": sum(
                 float(row["test_overlay"]["total_return"]) > 0 for row in fold_rows
             ),
+            "execution": aggregate_execution,
         },
         "robustness": {
             "cost_scenarios": len(cost_rows),

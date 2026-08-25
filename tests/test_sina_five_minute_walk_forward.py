@@ -5,6 +5,7 @@ import pytest
 from scripts.run_sina_five_minute_walk_forward import (
     FIVE_MINUTE_POLICIES,
     WALK_FORWARD_PROFILES,
+    _combine_execution_metrics,
     _curve_metrics,
     _walk_forward_folds,
 )
@@ -56,3 +57,35 @@ def test_stitched_curve_metrics_are_content_bound() -> None:
     assert metrics["point_count"] == 3
     assert len(FIVE_MINUTE_POLICIES) == 7
     assert len({policy_id for policy_id, _ in FIVE_MINUTE_POLICIES}) == 7
+
+
+def test_execution_diagnostics_combine_from_disjoint_folds() -> None:
+    combined = _combine_execution_metrics(
+        [
+            {
+                "symbol_count": 2,
+                "observation_count": 8,
+                "reduced_exposure_observation_count": 2,
+                "exposure_sum": 6.0,
+                "turnover": 1.0,
+                "transaction_cost": 0.01,
+                "reason_counts": {"WEAK_TREND": 2},
+            },
+            {
+                "symbol_count": 2,
+                "observation_count": 12,
+                "reduced_exposure_observation_count": 6,
+                "exposure_sum": 7.0,
+                "turnover": 2.0,
+                "transaction_cost": 0.02,
+                "reason_counts": {"WEAK_TREND": 1, "HIGH_VOLATILITY": 3},
+            },
+        ]
+    )
+
+    assert combined["observation_count"] == 20
+    assert combined["mean_exposure"] == pytest.approx(0.65)
+    assert combined["reduced_exposure_ratio"] == pytest.approx(0.4)
+    assert combined["mean_turnover_per_symbol"] == pytest.approx(1.5)
+    assert combined["mean_transaction_cost_per_symbol"] == pytest.approx(0.015)
+    assert combined["reason_counts"] == {"HIGH_VOLATILITY": 3, "WEAK_TREND": 3}

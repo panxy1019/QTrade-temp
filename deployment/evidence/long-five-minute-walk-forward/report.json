@@ -8,6 +8,24 @@
     },
     "cost_bps": 5,
     "excess_return": -0.3978466369601448,
+    "execution": {
+      "exposure_sum": 544471.25,
+      "mean_exposure": 0.6301750578703704,
+      "mean_transaction_cost_per_symbol": 0.2687438995224207,
+      "mean_turnover_per_symbol": 511.89,
+      "observation_count": 864000,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 127941,
+        "MINUTE_TREND_WEAK": 433024,
+        "MINUTE_VOLATILITY_LIMIT": 68314,
+        "RECOVERY_COOLDOWN": 184646
+      },
+      "reduced_exposure_observation_count": 691486,
+      "reduced_exposure_ratio": 0.8003310185185185,
+      "symbol_count": 75,
+      "transaction_cost": 20.155792464181555,
+      "turnover": 38391.75
+    },
     "overlay": {
       "maximum_drawdown": -0.1218057245758617,
       "point_count": 11520,
@@ -21,7 +39,7 @@
     "cost_stress.json": "8755dd08ec98a9e748c469742cae95ca813dd56b050d20709a1a145ffba6f8ac",
     "curve.json": "727b39c997f9cbf63df77f7c3b09af3d196b22871c06c0e9d364b090b4a4611d",
     "daily.json": "b81ec936da971d03ec90922276e5b4f2097ddf1e1245a576e24eb5665c46b590",
-    "folds.json": "9f17540ff61abb7d503fd8771884fe2622594a86f8dcaf86025503d4914f91ea",
+    "folds.json": "a6d8e90edbe42024daf530ff45d4b3748255c0bacff79e61541f4daed1f8bdb6",
     "leave_one_sector_out.json": "2a65aa04e80986f5c39e70244035ec46deb3ed7fcb11ec2313c38078ec8c6b8a",
     "subgroups.json": "d3d6721090dcc66848bde478ae6207ef0cb128ca3110429dafcd9ba27ca64a87"
   },
@@ -57,9 +75,9 @@
     "stock_count": 75,
     "symbol_count": 75
   },
-  "evidence_sha256": "6c12e27067e89fa9c04aa6bddbd8a1c41fd124d5eff24fe4dddb4d6523e90bb7",
+  "evidence_sha256": "e16b377ddd3f8d841d258db6c8cde37c07caf8d86f4b034f208224a41e8cfc93",
   "external_order_transmission": false,
-  "generated_at": "2026-08-26T06:05:15.792336+08:00",
+  "generated_at": "2026-08-26T07:08:47.053418+08:00",
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
     "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",

@@ -202,6 +202,13 @@ At 5 bps, the stitched 240-session
 baseline returned `+40.8285%`, while the overlay returned `+1.0438%`
 (`-39.7847%` relative). The overlay reduced maximum drawdown from `-15.1086%`
 to `-12.1806%`, but even at 0 bps it lagged the baseline by `-10.0946%`.
+The causally aligned execution diagnostics cover all 864,000 symbol-bars in the
+six test folds: mean exposure was only `63.0175%`, `80.0331%` of observations
+were below full exposure, mean cumulative turnover was `511.89` per symbol, and
+the 5 bps equity deduction averaged `26.8744%` of one initial-equity unit per
+symbol. Weak minute trend was the most frequent overlapping trigger. This
+explains the veto as persistent under-exposure plus turnover drag; it is not a
+new parameter search.
 `/long-five-minute-research` exposes the checksum- and artifact-verified result
 as a second, stronger robustness veto. The read-only
 `/long-five-minute-bars/{symbol}?trading_day=YYYY-MM-DD` endpoint verifies the

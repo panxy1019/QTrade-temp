@@ -1,4 +1,6 @@
+import json
 import shutil
+from hashlib import sha256
 from pathlib import Path
 
 from qtrade.api.app import (
@@ -43,6 +45,7 @@ def _load_report(
         test_sessions_per_fold=40,
         fold_count=6,
         expected_promotion_reasons=PROMOTION_REASONS,
+        require_execution_diagnostics=True,
     )
 
 
@@ -71,6 +74,9 @@ def test_packaged_long_five_minute_evidence_fails_closed_after_tampering(
     assert report["walk_forward"]["processed_bar_count"] == 1_296_000
     assert report["walk_forward"]["trailing_sessions_entered_backtest"] is False
     assert report["aggregate"]["excess_return"] < 0
+    assert report["aggregate"]["execution"]["observation_count"] == 864_000
+    assert report["aggregate"]["execution"]["mean_exposure"] < 0.64
+    assert report["aggregate"]["execution"]["reduced_exposure_ratio"] > 0.8
 
     with (report_root / "folds.json").open("ab") as stream:
         stream.write(b" ")
@@ -79,3 +85,48 @@ def test_packaged_long_five_minute_evidence_fails_closed_after_tampering(
     with (dataset_root / "bars.parquet").open("ab") as stream:
         stream.write(b"tampered")
     assert _load_dataset(dataset_root / "manifest.json") is None
+
+
+def test_long_execution_diagnostics_reject_resigned_arithmetic_tampering(
+    tmp_path: Path,
+) -> None:
+    dataset_root = tmp_path / "long-five-minute-market-data"
+    report_root = tmp_path / "long-five-minute-walk-forward"
+    shutil.copytree(
+        PROJECT_ROOT / "deployment/evidence/long-five-minute-market-data",
+        dataset_root,
+    )
+    shutil.copytree(
+        PROJECT_ROOT / "deployment/evidence/long-five-minute-walk-forward",
+        report_root,
+    )
+    dataset = _load_dataset(dataset_root / "manifest.json")
+    assert dataset is not None
+
+    folds_path = report_root / "folds.json"
+    folds = json.loads(folds_path.read_text(encoding="utf-8"))
+    folds[0]["execution"]["mean_exposure"] = 0.99
+    folds_content = json.dumps(
+        folds, ensure_ascii=False, indent=2, sort_keys=True, default=str
+    ).encode("utf-8")
+    folds_path.write_bytes(folds_content)
+
+    report_path = report_root / "report.json"
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    report["artifacts"]["folds.json"] = sha256(folds_content).hexdigest()
+    unsigned = {key: value for key, value in report.items() if key != "evidence_sha256"}
+    canonical = json.dumps(
+        unsigned,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    )
+    report["evidence_sha256"] = sha256(canonical.encode("utf-8")).hexdigest()
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True, default=str)
+        + "\n",
+        encoding="utf-8",
+    )
+
+    assert _load_report(report_path, dataset) is None

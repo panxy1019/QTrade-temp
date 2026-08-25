@@ -14,6 +14,12 @@ import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
 
 const waiting = <Alert showIcon type="info" title="等待实时数据授权" description="适配器与回放链路已准备；当前未配置任何供应商令牌或真实连接。" />
+const minuteReasonLabels: Record<string, string> = {
+  INTRADAY_DRAWDOWN_LIMIT: '日内回撤限制',
+  MINUTE_TREND_WEAK: '分钟趋势弱',
+  MINUTE_VOLATILITY_LIMIT: '分钟波动限制',
+  RECOVERY_COOLDOWN: '恢复冷却',
+}
 
 export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const historical = data?.market?.historical
@@ -346,6 +352,11 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const fiveMinuteAggregate = fiveMinuteResearch?.aggregate
   const longFiveMinuteResearch = data?.longFiveMinuteResearch
   const longFiveMinuteAggregate = longFiveMinuteResearch?.aggregate
+  const longExecution = longFiveMinuteAggregate?.execution
+  const longReasonSummary = Object.entries(longExecution?.reason_counts ?? {})
+    .sort((left, right) => right[1] - left[1])
+    .map(([reason, count]) => `${minuteReasonLabels[reason] ?? reason} ${count.toLocaleString('zh-CN')}`)
+    .join('；')
   const leader = analytics?.leader
   const benchmark = analytics?.benchmark
   const walkForward = data?.walkForward
@@ -471,7 +482,7 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
       showIcon
       type="error"
       title={longFiveMinuteAggregate ? `长历史复核：${longFiveMinuteAggregate.positive_test_fold_count}/${longFiveMinuteResearch?.folds.length ?? 0} 折绝对正收益，仍未战胜基准` : '暂无已验证的长历史 5 分钟复核'}
-      description={longFiveMinuteAggregate ? `BaoStock 75 只股票、368 个共同完整交易日；预先锁定前 360 日，其中 240 日为六折独立测试。${longFiveMinuteAggregate.cost_bps} bps 下基准 ${formatPercent(String(longFiveMinuteAggregate.base.total_return))}，分钟修正 ${formatPercent(String(longFiveMinuteAggregate.overlay.total_return))}，相对基准 ${formatPercent(String(longFiveMinuteAggregate.excess_return))}。回撤虽降低，但收益损失过大。` : '报告、数据集 checksum 或任一签名 artifact 未通过校验，保持失败关闭。'}
+      description={longFiveMinuteAggregate ? `BaoStock 75 只股票、368 个共同完整交易日；预先锁定前 360 日，其中 240 日为六折独立测试。${longFiveMinuteAggregate.cost_bps} bps 下基准 ${formatPercent(String(longFiveMinuteAggregate.base.total_return))}，分钟修正 ${formatPercent(String(longFiveMinuteAggregate.overlay.total_return))}，相对基准 ${formatPercent(String(longFiveMinuteAggregate.excess_return))}。${longExecution ? `平均暴露仅 ${formatPercent(String(longExecution.mean_exposure))}，${formatPercent(String(longExecution.reduced_exposure_ratio))} 的标的-Bar 处于减仓，低暴露与高换手共同解释收益损失。` : '回撤虽降低，但收益损失过大。'}` : '报告、数据集 checksum 或任一签名 artifact 未通过校验，保持失败关闭。'}
     />
     <Card title="368 日原生 5 分钟长历史复核：保留否证，不追涨调参" extra={<JsonExportButton filename="qtrade-long-five-minute-walk-forward-evidence.json" value={longFiveMinuteResearch ?? {}} />}>
       <MinuteBacktestChart report={longFiveMinuteResearch ?? null} />
@@ -484,6 +495,10 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
         ['修正后收益', formatPercent(String(longFiveMinuteAggregate.overlay.total_return))],
         ['相对基准', formatPercent(String(longFiveMinuteAggregate.excess_return))],
         ['基准 / 修正回撤', `${formatPercent(String(longFiveMinuteAggregate.base.maximum_drawdown))} / ${formatPercent(String(longFiveMinuteAggregate.overlay.maximum_drawdown))}`],
+        ['平均暴露', longExecution ? formatPercent(String(longExecution.mean_exposure)) : '—'],
+        ['减仓标的-Bar', longExecution ? formatPercent(String(longExecution.reduced_exposure_ratio)) : '—'],
+        ['平均换手 / 标的', longExecution ? formatNumber(String(longExecution.mean_turnover_per_symbol)) : '—'],
+        ['累计成本扣减 / 标的', longExecution ? `${formatPercent(String(longExecution.mean_transaction_cost_per_symbol))} 初始权益单位` : '—'],
         ['复权边界', longFiveMinuteResearch?.minute_dataset?.future_adjustment_knowledge_possible ? '前复权，可能含未来复权知识；非 PIT' : '—'],
         ['外部订单', 'DISABLED'],
       ]} />}
@@ -494,13 +509,18 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
         { title: '基准收益', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => formatPercent(String(row.test_base.total_return)) },
         { title: '修正后收益', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => formatPercent(String(row.test_overlay.total_return)) },
         { title: '相对基准', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => formatPercent(String(row.test_excess_return)) },
-      ]} />
+        { title: '平均暴露', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => row.execution ? formatPercent(String(row.execution.mean_exposure)) : '—' },
+        { title: '减仓 Bar', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => row.execution ? formatPercent(String(row.execution.reduced_exposure_ratio)) : '—' },
+        { title: '换手 / 标的', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => row.execution ? formatNumber(String(row.execution.mean_turnover_per_symbol)) : '—' },
+        { title: '成本扣减 / 标的', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => row.execution ? formatPercent(String(row.execution.mean_transaction_cost_per_symbol)) : '—' },
+      ]} scroll={{ x: 1380 }} />
       <Table rowKey="cost_bps" size="small" pagination={false} dataSource={longFiveMinuteResearch?.cost_stress ?? []} columns={[
         { title: '单边成本 bps', dataIndex: 'cost_bps' },
         { title: '基准收益', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['cost_stress'][number]) => formatPercent(String(row.base.total_return)) },
         { title: '修正后收益', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['cost_stress'][number]) => formatPercent(String(row.overlay.total_return)) },
         { title: '相对基准', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['cost_stress'][number]) => formatPercent(String(row.excess_return)) },
       ]} />
+      {longReasonSummary && <Typography.Text>独立测试段重叠触发计数：{longReasonSummary}。同一标的-Bar 可以同时命中多个风险原因。</Typography.Text>}
       <Typography.Text type="secondary">这批数据只用于历史研究：当前成分股样本池非 PIT，前复权可能使用未来复权知识，免费历史源不等于获授权的实时源。即使 0 bps，修正层仍落后基准，因此保持 {longFiveMinuteResearch?.promotion ?? 'NOT_EVALUATED'}，不启动 PAPER/LIVE。</Typography.Text>
     </Card>
     <Alert showIcon type="warning" title="探索性领先者，不是 Champion" description={leader ? `${leader.experiment_id}：测试窗 ${analytics?.split?.test_start ?? '—'} 至 ${analytics?.split?.test_end ?? '—'}，收益 ${formatPercent(leader.metrics.total_return)}，Sharpe ${formatNumber(leader.metrics.sharpe)}，最大回撤 ${formatPercent(leader.metrics.maximum_drawdown)}` : '暂无已验证结果'} />

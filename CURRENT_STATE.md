@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 308 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 311 tests passed, Ruff clean, strict mypy clean across
   97 source files on Python 3.12.13 (macOS, 2026-08-26); 39 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
@@ -126,6 +126,13 @@ Last updated: 2026-08-26
   `-39.7847%`. Maximum drawdown improved from `-15.1086%` to `-12.1806%`, but
   the 0-bps overlay still lagged by `-10.0946%`. The result is retained as a
   stronger veto at `/long-five-minute-research`, not tuned away.
+- Long-study execution diagnosis: all 864,000 symbol-bars in the six independent
+  folds are now causally attributed to the bar where exposure actually applies.
+  Mean exposure was `63.0175%`; `80.0331%` of observations were reduced; mean
+  cumulative turnover was `511.89` per symbol and 5-bps cost deduction averaged
+  `26.8744%` of an initial-equity unit per symbol. Fold totals and overlapping
+  trigger counts are signed, arithmetically revalidated by the API, and displayed
+  without changing candidates, folds, returns, curves or the reserved tail.
 - Long-history intraday browser: the public read-only market page can select any
   of the 75 stocks and 368 complete sessions. The
   `/long-five-minute-bars/{symbol}?trading_day=YYYY-MM-DD` endpoint rechecks the

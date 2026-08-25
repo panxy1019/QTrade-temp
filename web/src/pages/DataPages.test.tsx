@@ -46,6 +46,34 @@ vi.mock('../api/client', () => ({
   cancelPaperOrder: vi.fn(),
 }))
 
+const longExecutionFixture = {
+  symbol_count: 75,
+  observation_count: 864000,
+  reduced_exposure_observation_count: 691486,
+  exposure_sum: 544471.25,
+  mean_exposure: 0.6301750579,
+  reduced_exposure_ratio: 0.8003310185,
+  turnover: 38391.75,
+  mean_turnover_per_symbol: 511.89,
+  transaction_cost: 20.15579246,
+  mean_transaction_cost_per_symbol: 0.2687438995,
+  reason_counts: { INTRADAY_DRAWDOWN_LIMIT: 127941, MINUTE_TREND_WEAK: 433024, MINUTE_VOLATILITY_LIMIT: 68314, RECOVERY_COOLDOWN: 184646 },
+}
+
+const foldExecutionFixture = {
+  ...longExecutionFixture,
+  observation_count: 144000,
+  reduced_exposure_observation_count: 113824,
+  exposure_sum: 94259.5,
+  mean_exposure: 0.6545798611,
+  reduced_exposure_ratio: 0.7848888889,
+  turnover: 6572.75,
+  mean_turnover_per_symbol: 87.63666667,
+  transaction_cost: 3.457655249,
+  mean_transaction_cost_per_symbol: 0.04610207,
+  reason_counts: { INTRADAY_DRAWDOWN_LIMIT: 18398, MINUTE_TREND_WEAK: 70334, MINUTE_VOLATILITY_LIMIT: 11252, RECOVERY_COOLDOWN: 31443 },
+}
+
 const data = {
   system: { mode: 'PAPER', running: true, risk_state: 'NORMAL' },
   health: { healthy: true, runtime_mode: 'PAPER', risk_state: 'NORMAL', gateway_connected: true, reconciliation_status: 'OK' },
@@ -192,13 +220,13 @@ const data = {
       cost_bps: 5,
       base: { total_return: 0.4082847, maximum_drawdown: -0.1510855, realized_minute_volatility: 0.00223, point_count: 11520 },
       overlay: { total_return: 0.010438, maximum_drawdown: -0.1218057, realized_minute_volatility: 0.00097, point_count: 11520 },
-      excess_return: -0.3978466, positive_test_fold_count: 2,
+      excess_return: -0.3978466, positive_test_fold_count: 2, execution: longExecutionFixture,
     },
     candidates: [],
     folds: Array.from({ length: 6 }, (_, index) => ({
       fold: index + 1, train_days: ['2025-01-02'], test_days: [`2025-0${index + 2}-01`, `2025-0${index + 2}-28`], selected_policy_id: 'five-reduction-soft-v1', selected_policy_hash: '2'.repeat(64),
       test_base: { total_return: 0.05, maximum_drawdown: -0.05, realized_minute_volatility: 0.001, point_count: 1920 },
-      test_overlay: { total_return: 0.01, maximum_drawdown: -0.03, realized_minute_volatility: 0.0005, point_count: 1920 }, test_excess_return: -0.04,
+      test_overlay: { total_return: 0.01, maximum_drawdown: -0.03, realized_minute_volatility: 0.0005, point_count: 1920 }, test_excess_return: -0.04, execution: foldExecutionFixture,
     })),
     cost_stress: [{ cost_bps: 0, base: { total_return: 0.4082847, maximum_drawdown: -0.151, realized_minute_volatility: 0.0022, point_count: 11520 }, overlay: { total_return: 0.3073387, maximum_drawdown: -0.12, realized_minute_volatility: 0.001, point_count: 11520 }, excess_return: -0.100946 }],
     subgroups: [{ group: 'STOCK', symbol_count: 75, base: { total_return: 0.4082847, maximum_drawdown: -0.151, realized_minute_volatility: 0.0022, point_count: 11520 }, overlay: { total_return: 0.010438, maximum_drawdown: -0.1218, realized_minute_volatility: 0.001, point_count: 11520 } }],
@@ -611,6 +639,12 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/长历史复核：2\/6 折绝对正收益/)).toBeInTheDocument()
     expect(screen.getByText(/尾部 8 日未进入回测/)).toBeInTheDocument()
     expect(screen.getByText(/前复权，可能含未来复权知识/)).toBeInTheDocument()
+    expect(screen.getAllByText('63.02%').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('80.03%').length).toBeGreaterThan(0)
+    expect(screen.getByText('511.890')).toBeInTheDocument()
+    expect(screen.getByText(/26.87% 初始权益单位/)).toBeInTheDocument()
+    expect(screen.getByText(/分钟趋势弱 433,024/)).toBeInTheDocument()
+    expect(screen.getByText(/同一标的-Bar 可以同时命中多个风险原因/)).toBeInTheDocument()
     expect(screen.getAllByText('样本组')).toHaveLength(2)
     expect(screen.getByText('整行业剔除')).toBeInTheDocument()
     expect(screen.getByText('基础化工')).toBeInTheDocument()

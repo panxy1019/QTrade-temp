@@ -504,6 +504,20 @@ export interface MinuteCurveMetrics {
   point_count: number
 }
 
+export interface MinuteExecutionDiagnostics {
+  symbol_count: number
+  observation_count: number
+  reduced_exposure_observation_count: number
+  exposure_sum: number
+  mean_exposure: number
+  reduced_exposure_ratio: number
+  turnover: number
+  mean_turnover_per_symbol: number
+  transaction_cost: number
+  mean_transaction_cost_per_symbol: number
+  reason_counts: Record<string, number>
+}
+
 export interface MinuteResearchReport {
   classification?: string
   promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
@@ -629,6 +643,7 @@ export interface FiveMinuteResearchReport {
     overlay: MinuteCurveMetrics
     excess_return: number
     positive_test_fold_count: number
+    execution?: MinuteExecutionDiagnostics
   }
   candidates: Array<{
     fold: number
@@ -648,6 +663,7 @@ export interface FiveMinuteResearchReport {
     test_base: MinuteCurveMetrics
     test_overlay: MinuteCurveMetrics
     test_excess_return: number
+    execution?: MinuteExecutionDiagnostics
   }>
   cost_stress: Array<{
     cost_bps: number

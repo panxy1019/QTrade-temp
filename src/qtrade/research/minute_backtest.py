@@ -26,6 +26,16 @@ class MinuteCurveMetrics:
 
 
 @dataclass(frozen=True, slots=True)
+class MinuteDayExecution:
+    observation_count: int
+    reduced_exposure_observation_count: int
+    exposure_sum: float
+    turnover: float
+    transaction_cost: float
+    reason_counts: Mapping[str, int]
+
+
+@dataclass(frozen=True, slots=True)
 class MinuteBacktestResult:
     policy_id: str
     policy_hash: str
@@ -40,6 +50,7 @@ class MinuteBacktestResult:
     turnover_by_symbol: Mapping[str, float]
     transaction_cost_by_symbol: Mapping[str, float]
     reason_counts: Mapping[str, int]
+    execution_by_day: Mapping[date, MinuteDayExecution]
     maximum_exposure: float
 
     def metrics(
@@ -59,6 +70,41 @@ class MinuteBacktestResult:
         return {
             "base": _curve_metrics(self.trading_days, base, days=days),
             "overlay": _curve_metrics(self.trading_days, overlay, days=days),
+        }
+
+    def execution_metrics(self, *, days: set[date] | None = None) -> dict[str, object]:
+        if days is not None and not days.issubset(self.execution_by_day):
+            raise ValueError("minute execution days are outside the observation window")
+        selected = [
+            row
+            for trading_day, row in self.execution_by_day.items()
+            if days is None or trading_day in days
+        ]
+        if not selected:
+            raise ValueError("minute execution day selection cannot be empty")
+        observation_count = sum(row.observation_count for row in selected)
+        reduced_count = sum(
+            row.reduced_exposure_observation_count for row in selected
+        )
+        exposure_sum = sum(row.exposure_sum for row in selected)
+        turnover = sum(row.turnover for row in selected)
+        transaction_cost = sum(row.transaction_cost for row in selected)
+        reasons: Counter[str] = Counter()
+        for row in selected:
+            reasons.update(row.reason_counts)
+        symbol_count = len(self.symbols)
+        return {
+            "symbol_count": symbol_count,
+            "observation_count": observation_count,
+            "reduced_exposure_observation_count": reduced_count,
+            "exposure_sum": exposure_sum,
+            "mean_exposure": exposure_sum / observation_count,
+            "reduced_exposure_ratio": reduced_count / observation_count,
+            "turnover": turnover,
+            "mean_turnover_per_symbol": turnover / symbol_count,
+            "transaction_cost": transaction_cost,
+            "mean_transaction_cost_per_symbol": transaction_cost / symbol_count,
+            "reason_counts": dict(sorted(reasons.items())),
         }
 
 
@@ -110,6 +156,12 @@ def run_minute_overlay_backtest(
     turnover: dict[str, float] = {}
     transaction_cost: dict[str, float] = {}
     reasons: Counter[str] = Counter()
+    daily_observations: Counter[date] = Counter()
+    daily_reduced_observations: Counter[date] = Counter()
+    daily_exposure_sums: defaultdict[date, float] = defaultdict(float)
+    daily_turnover: defaultdict[date, float] = defaultdict(float)
+    daily_transaction_cost: defaultdict[date, float] = defaultdict(float)
+    daily_reasons: defaultdict[date, Counter[str]] = defaultdict(Counter)
     maximum_exposure = 0.0
     for symbol in symbols:
         simulation = _simulate_symbol(
@@ -125,6 +177,26 @@ def run_minute_overlay_backtest(
         transaction_cost[symbol] = simulation[3]
         reasons.update(simulation[4])
         maximum_exposure = max(maximum_exposure, simulation[5])
+        for trading_day, row in simulation[6].items():
+            daily_observations[trading_day] += row.observation_count
+            daily_reduced_observations[trading_day] += (
+                row.reduced_exposure_observation_count
+            )
+            daily_exposure_sums[trading_day] += row.exposure_sum
+            daily_turnover[trading_day] += row.turnover
+            daily_transaction_cost[trading_day] += row.transaction_cost
+            daily_reasons[trading_day].update(row.reason_counts)
+    execution_by_day = {
+        trading_day: MinuteDayExecution(
+            observation_count=daily_observations[trading_day],
+            reduced_exposure_observation_count=daily_reduced_observations[trading_day],
+            exposure_sum=daily_exposure_sums[trading_day],
+            turnover=daily_turnover[trading_day],
+            transaction_cost=daily_transaction_cost[trading_day],
+            reason_counts=dict(sorted(daily_reasons[trading_day].items())),
+        )
+        for trading_day in sorted(daily_observations)
+    }
     return MinuteBacktestResult(
         policy_id=policy_id,
         policy_hash=policy_hash,
@@ -139,6 +211,7 @@ def run_minute_overlay_backtest(
         turnover_by_symbol=turnover,
         transaction_cost_by_symbol=transaction_cost,
         reason_counts=dict(sorted(reasons.items())),
+        execution_by_day=execution_by_day,
         maximum_exposure=maximum_exposure,
     )
 
@@ -157,6 +230,7 @@ def _simulate_symbol(
     float,
     Counter[str],
     float,
+    Mapping[date, MinuteDayExecution],
 ]:
     targets = CausalDailyTargetBook()
     first_by_day: dict[date, datetime] = {}
@@ -190,6 +264,12 @@ def _simulate_symbol(
     base_curve: list[float] = []
     overlay_curve: list[float] = []
     reasons: Counter[str] = Counter()
+    daily_observations: Counter[date] = Counter()
+    daily_reduced_observations: Counter[date] = Counter()
+    daily_exposure_sums: defaultdict[date, float] = defaultdict(float)
+    daily_turnover: defaultdict[date, float] = defaultdict(float)
+    daily_transaction_cost: defaultdict[date, float] = defaultdict(float)
+    daily_reasons: defaultdict[date, Counter[str]] = defaultdict(Counter)
     previous_close: float | None = None
     for index, bar in enumerate(bars):
         open_price = float(bar.open)
@@ -208,7 +288,13 @@ def _simulate_symbol(
                 overlay_equity -= cost
                 transaction_cost += cost
                 turnover += change
+                daily_transaction_cost[bar.trading_day] += cost
+                daily_turnover[bar.trading_day] += change
             current_exposure = pending_exposure
+        daily_observations[bar.trading_day] += 1
+        daily_exposure_sums[bar.trading_day] += current_exposure
+        if current_exposure < 1:
+            daily_reduced_observations[bar.trading_day] += 1
         base_equity *= close_price / open_price
         overlay_equity *= 1 + current_exposure * (close_price / open_price - 1)
         if base_equity <= 0 or overlay_equity <= 0:
@@ -220,6 +306,7 @@ def _simulate_symbol(
         maximum_exposure = max(maximum_exposure, pending_exposure)
         if strategy.snapshot is not None:
             reasons.update(strategy.snapshot.reasons)
+            daily_reasons[bar.trading_day].update(strategy.snapshot.reasons)
         base_curve.append(base_equity)
         overlay_curve.append(overlay_equity)
         previous_close = close_price
@@ -230,6 +317,19 @@ def _simulate_symbol(
         transaction_cost,
         reasons,
         maximum_exposure,
+        {
+            trading_day: MinuteDayExecution(
+                observation_count=daily_observations[trading_day],
+                reduced_exposure_observation_count=daily_reduced_observations[
+                    trading_day
+                ],
+                exposure_sum=daily_exposure_sums[trading_day],
+                turnover=daily_turnover[trading_day],
+                transaction_cost=daily_transaction_cost[trading_day],
+                reason_counts=dict(sorted(daily_reasons[trading_day].items())),
+            )
+            for trading_day in sorted(daily_observations)
+        },
     )
 
 

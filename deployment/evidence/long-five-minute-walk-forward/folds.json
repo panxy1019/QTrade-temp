@@ -1,5 +1,23 @@
 [
   {
+    "execution": {
+      "exposure_sum": 94259.5,
+      "mean_exposure": 0.6545798611111111,
+      "mean_transaction_cost_per_symbol": 0.046102069992242894,
+      "mean_turnover_per_symbol": 87.63666666666667,
+      "observation_count": 144000,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 18398,
+        "MINUTE_TREND_WEAK": 70334,
+        "MINUTE_VOLATILITY_LIMIT": 11252,
+        "RECOVERY_COOLDOWN": 31443
+      },
+      "reduced_exposure_observation_count": 113024,
+      "reduced_exposure_ratio": 0.7848888888888889,
+      "symbol_count": 75,
+      "transaction_cost": 3.457655249418217,
+      "turnover": 6572.75
+    },
     "fold": 1,
     "selected_policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
     "selected_policy_id": "five-reduction-soft-v1",
@@ -182,6 +200,24 @@
     ]
   },
   {
+    "execution": {
+      "exposure_sum": 95048.5,
+      "mean_exposure": 0.6600590277777778,
+      "mean_transaction_cost_per_symbol": 0.04710336507453285,
+      "mean_turnover_per_symbol": 85.68666666666667,
+      "observation_count": 144000,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 17981,
+        "MINUTE_TREND_WEAK": 71718,
+        "MINUTE_VOLATILITY_LIMIT": 9248,
+        "RECOVERY_COOLDOWN": 31666
+      },
+      "reduced_exposure_observation_count": 113540,
+      "reduced_exposure_ratio": 0.7884722222222222,
+      "symbol_count": 75,
+      "transaction_cost": 3.532752380589964,
+      "turnover": 6426.5
+    },
     "fold": 2,
     "selected_policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
     "selected_policy_id": "five-reduction-soft-v1",
@@ -404,6 +440,24 @@
     ]
   },
   {
+    "execution": {
+      "exposure_sum": 93423.0,
+      "mean_exposure": 0.6487708333333333,
+      "mean_transaction_cost_per_symbol": 0.04677250928733687,
+      "mean_turnover_per_symbol": 86.35666666666667,
+      "observation_count": 144000,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 19314,
+        "MINUTE_TREND_WEAK": 72144,
+        "MINUTE_VOLATILITY_LIMIT": 9158,
+        "RECOVERY_COOLDOWN": 31906
+      },
+      "reduced_exposure_observation_count": 115050,
+      "reduced_exposure_ratio": 0.7989583333333333,
+      "symbol_count": 75,
+      "transaction_cost": 3.5079381965502656,
+      "turnover": 6476.75
+    },
     "fold": 3,
     "selected_policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
     "selected_policy_id": "five-reduction-soft-v1",
@@ -666,6 +720,24 @@
     ]
   },
   {
+    "execution": {
+      "exposure_sum": 94686.0,
+      "mean_exposure": 0.6575416666666667,
+      "mean_transaction_cost_per_symbol": 0.043977042004263146,
+      "mean_turnover_per_symbol": 85.09333333333333,
+      "observation_count": 144000,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 17429,
+        "MINUTE_TREND_WEAK": 72945,
+        "MINUTE_VOLATILITY_LIMIT": 8914,
+        "RECOVERY_COOLDOWN": 32041
+      },
+      "reduced_exposure_observation_count": 114819,
+      "reduced_exposure_ratio": 0.7973541666666667,
+      "symbol_count": 75,
+      "transaction_cost": 3.298278150319736,
+      "turnover": 6382.0
+    },
     "fold": 4,
     "selected_policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
     "selected_policy_id": "five-reduction-soft-v1",
@@ -968,6 +1040,24 @@
     ]
   },
   {
+    "execution": {
+      "exposure_sum": 87997.75,
+      "mean_exposure": 0.6110954861111111,
+      "mean_transaction_cost_per_symbol": 0.04387363455768838,
+      "mean_turnover_per_symbol": 84.81,
+      "observation_count": 144000,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 23161,
+        "MINUTE_TREND_WEAK": 73217,
+        "MINUTE_VOLATILITY_LIMIT": 11796,
+        "RECOVERY_COOLDOWN": 30133
+      },
+      "reduced_exposure_observation_count": 116810,
+      "reduced_exposure_ratio": 0.8111805555555556,
+      "symbol_count": 75,
+      "transaction_cost": 3.2905225918266288,
+      "turnover": 6360.75
+    },
     "fold": 5,
     "selected_policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
     "selected_policy_id": "five-reduction-soft-v1",
@@ -1310,6 +1400,24 @@
     ]
   },
   {
+    "execution": {
+      "exposure_sum": 79056.5,
+      "mean_exposure": 0.5490034722222222,
+      "mean_transaction_cost_per_symbol": 0.040915278606356596,
+      "mean_turnover_per_symbol": 82.30666666666667,
+      "observation_count": 144000,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 31658,
+        "MINUTE_TREND_WEAK": 72666,
+        "MINUTE_VOLATILITY_LIMIT": 17946,
+        "RECOVERY_COOLDOWN": 27457
+      },
+      "reduced_exposure_observation_count": 118243,
+      "reduced_exposure_ratio": 0.8211319444444445,
+      "symbol_count": 75,
+      "transaction_cost": 3.068645895476745,
+      "turnover": 6173.0
+    },
     "fold": 6,
     "selected_policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
     "selected_policy_id": "five-reduction-soft-v1",

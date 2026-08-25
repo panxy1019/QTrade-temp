@@ -11,7 +11,7 @@ from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from hashlib import sha256
 from itertools import islice
-from math import isclose
+from math import isclose, isfinite
 from pathlib import Path
 from secrets import compare_digest
 from statistics import median
@@ -380,6 +380,7 @@ def create_app(
                 "FREE_HISTORICAL_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
                 "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
             ),
+            require_execution_diagnostics=True,
         )
         return report or {
             "classification": "NO_VERIFIED_LONG_FIVE_MINUTE_RESEARCH_RESULT",
@@ -3484,6 +3485,7 @@ def _load_verified_five_minute_report(
     test_sessions_per_fold: int = 6,
     fold_count: int = 4,
     expected_promotion_reasons: tuple[str, ...] | None = None,
+    require_execution_diagnostics: bool = False,
 ) -> dict[str, object] | None:
     if path is None or dataset is None or not path.is_file():
         return None
@@ -3551,6 +3553,8 @@ def _load_verified_five_minute_report(
             or walk_forward.get("test_windows_disjoint") is not True
             or not isinstance(aggregate, dict)
             or aggregate.get("cost_bps") != 5
+            or require_execution_diagnostics
+            and not isinstance(aggregate.get("execution"), dict)
             or not isinstance(artifacts, dict)
             or set(artifacts) != expected_artifacts
             or not all(_is_sha256(value) for value in artifacts.values())
@@ -3627,6 +3631,7 @@ def _load_verified_five_minute_report(
             candidates_by_fold[fold_number].append(row)
         selected_sequence = []
         expected_test_days: list[str] = []
+        fold_execution_rows: list[dict[str, object]] = []
         for index, fold in enumerate(folds):
             fold_number = index + 1
             train_end = initial_train_sessions + index * test_sessions_per_fold
@@ -3651,6 +3656,20 @@ def _load_verified_five_minute_report(
                 return None
             selected_sequence.append(fold["selected_policy_id"])
             expected_test_days.extend(cast(list[str], fold["test_days"]))
+            if require_execution_diagnostics:
+                execution = fold.get("execution")
+                expected_observations = (
+                    test_sessions_per_fold
+                    * len(SINA_FIVE_MINUTE_SESSION_TIMES)
+                    * cast(int, dataset["symbol_count"])
+                )
+                if not _valid_minute_execution_diagnostics(
+                    execution,
+                    expected_symbol_count=cast(int, dataset["symbol_count"]),
+                    expected_observation_count=expected_observations,
+                ):
+                    return None
+                fold_execution_rows.append(cast(dict[str, object], execution))
         if (
             walk_forward.get("selected_policy_sequence") != selected_sequence
             or expected_test_days
@@ -3738,6 +3757,7 @@ def _load_verified_five_minute_report(
             overlay_values.append(overlay)
         aggregate_base = aggregate.get("base")
         aggregate_overlay = aggregate.get("overlay")
+        aggregate_execution = aggregate.get("execution")
         if (
             not isinstance(aggregate_base, dict)
             or not isinstance(aggregate_overlay, dict)
@@ -3757,6 +3777,23 @@ def _load_verified_five_minute_report(
             )
             or aggregate.get("positive_test_fold_count")
             != sum(float(row["test_overlay"]["total_return"]) > 0 for row in folds)
+            or require_execution_diagnostics
+            and (
+                not _valid_minute_execution_diagnostics(
+                    aggregate_execution,
+                    expected_symbol_count=cast(int, dataset["symbol_count"]),
+                    expected_observation_count=(
+                        test_sessions_per_fold
+                        * fold_count
+                        * len(SINA_FIVE_MINUTE_SESSION_TIMES)
+                        * cast(int, dataset["symbol_count"])
+                    ),
+                )
+                or not _execution_diagnostics_match_folds(
+                    cast(dict[str, object], aggregate_execution),
+                    fold_execution_rows,
+                )
+            )
         ):
             return None
         return {
@@ -3780,6 +3817,114 @@ def _load_verified_five_minute_report(
         json.JSONDecodeError,
     ):
         return None
+
+
+def _valid_minute_execution_diagnostics(
+    value: object,
+    *,
+    expected_symbol_count: int,
+    expected_observation_count: int,
+) -> bool:
+    if not isinstance(value, dict) or set(value) != {
+        "symbol_count",
+        "observation_count",
+        "reduced_exposure_observation_count",
+        "exposure_sum",
+        "mean_exposure",
+        "reduced_exposure_ratio",
+        "turnover",
+        "mean_turnover_per_symbol",
+        "transaction_cost",
+        "mean_transaction_cost_per_symbol",
+        "reason_counts",
+    }:
+        return False
+    symbol_count = value.get("symbol_count")
+    observation_count = value.get("observation_count")
+    reduced_count = value.get("reduced_exposure_observation_count")
+    reasons = value.get("reason_counts")
+    if (
+        symbol_count != expected_symbol_count
+        or observation_count != expected_observation_count
+        or not isinstance(reduced_count, int)
+        or not 0 <= reduced_count <= expected_observation_count
+        or not isinstance(reasons, dict)
+        or not all(
+            isinstance(reason, str)
+            and reason
+            and isinstance(count, int)
+            and 0 <= count <= expected_observation_count
+            for reason, count in reasons.items()
+        )
+    ):
+        return False
+    exposure_sum = float(str(value.get("exposure_sum")))
+    mean_exposure = float(str(value.get("mean_exposure")))
+    reduced_ratio = float(str(value.get("reduced_exposure_ratio")))
+    turnover = float(str(value.get("turnover")))
+    mean_turnover = float(str(value.get("mean_turnover_per_symbol")))
+    transaction_cost = float(str(value.get("transaction_cost")))
+    mean_transaction_cost = float(
+        str(value.get("mean_transaction_cost_per_symbol"))
+    )
+    return (
+        all(
+            isfinite(metric)
+            for metric in (
+                exposure_sum,
+                mean_exposure,
+                reduced_ratio,
+                turnover,
+                mean_turnover,
+                transaction_cost,
+                mean_transaction_cost,
+            )
+        )
+        and 0 <= exposure_sum <= expected_observation_count
+        and 0 <= mean_exposure <= 1
+        and 0 <= reduced_ratio <= 1
+        and turnover >= 0
+        and transaction_cost >= 0
+        and isclose(mean_exposure, exposure_sum / expected_observation_count)
+        and isclose(reduced_ratio, reduced_count / expected_observation_count)
+        and isclose(mean_turnover, turnover / expected_symbol_count)
+        and isclose(
+            mean_transaction_cost,
+            transaction_cost / expected_symbol_count,
+        )
+    )
+
+
+def _execution_diagnostics_match_folds(
+    aggregate: dict[str, object], folds: list[dict[str, object]]
+) -> bool:
+    if not folds:
+        return False
+    summed_reasons: Counter[str] = Counter()
+    for fold in folds:
+        summed_reasons.update(cast(dict[str, int], fold["reason_counts"]))
+    return (
+        aggregate["observation_count"]
+        == sum(cast(int, fold["observation_count"]) for fold in folds)
+        and aggregate["reduced_exposure_observation_count"]
+        == sum(
+            cast(int, fold["reduced_exposure_observation_count"])
+            for fold in folds
+        )
+        and isclose(
+            float(str(aggregate["exposure_sum"])),
+            sum(float(str(fold["exposure_sum"])) for fold in folds),
+        )
+        and isclose(
+            float(str(aggregate["turnover"])),
+            sum(float(str(fold["turnover"])) for fold in folds),
+        )
+        and isclose(
+            float(str(aggregate["transaction_cost"])),
+            sum(float(str(fold["transaction_cost"])) for fold in folds),
+        )
+        and aggregate["reason_counts"] == dict(sorted(summed_reasons.items()))
+    )
 
 
 def _load_backtest_preview_bars(
