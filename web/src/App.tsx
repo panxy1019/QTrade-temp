@@ -36,6 +36,7 @@ function Shell() {
   const [dark, setDark] = useState(true)
   const [collapsed, setCollapsed] = useState(false)
   const { data, error } = usePlatformSnapshot()
+  const runtimeLabel = import.meta.env.MODE === 'vercel' ? '公开只读研究节点' : '本地安全核心'
   const location = useLocation()
   const navigate = useNavigate()
   const algorithm = dark ? theme.darkAlgorithm : theme.defaultAlgorithm
@@ -49,7 +50,7 @@ function Shell() {
       </Layout.Sider>
       <Layout>
         <Layout.Header className="topbar">
-          <Space><StatusTag value={data?.system.mode ?? 'PAPER'} prominent /><Typography.Text type="secondary">{error ?? '本地安全核心'}</Typography.Text></Space>
+          <Space><StatusTag value={data?.system.mode ?? 'PAPER'} prominent /><Typography.Text type="secondary">{error ?? runtimeLabel}</Typography.Text></Space>
           <Space><span>深色模式</span><Switch checked={dark} onChange={setDark} /></Space>
         </Layout.Header>
         <Layout.Content className="content">

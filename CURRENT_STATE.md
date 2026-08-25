@@ -19,6 +19,10 @@ Last updated: 2026-08-25
   authentication is deliberately absent, so control/trade-sensitive routes fail
   closed; no SQLite PAPER runtime, provider credential, broker adapter or live
   order authority is included in the cloud bundle.
+  The production project is linked to the user's private GitHub repository and
+  is available at `https://qtrade.erapi0neer.xyz` through the existing Aliyun
+  wildcard CNAME. Vercel verifies that configuration as valid; no root-domain or
+  wildcard DNS record was changed.
 - Acceptance evidence: 276 tests passed, Ruff clean, strict mypy clean across
   92 source files on Python 3.12.13 (macOS, 2026-08-25); 22 frontend Vitest
   tests, ESLint and the production build pass. Route-level lazy loading reduces

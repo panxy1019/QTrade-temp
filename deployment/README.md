@@ -3,9 +3,13 @@
 The Vercel deployment is a public, stateless research surface. It serves the
 React application at `/` and mounts a FastAPI function at `/api`.
 
+Production URL: `https://qtrade.erapi0neer.xyz`
+
 - `api/index.py` is the Vercel entrypoint.
 - `deployment/evidence/` contains the checksum-bound subset displayed online.
 - `web` uses `/api` only for the `vercel` Vite build mode.
+- Vercel rewrites `/api/:path*` to the single Python function while preserving
+  the inner FastAPI path through a bounded query-path adapter.
 - `ApiAuthConfig()` is intentionally empty, so every control or trade-sensitive
   route fails closed with HTTP 503.
 - No SQLite runtime, provider credential, broker adapter, PAPER session or live

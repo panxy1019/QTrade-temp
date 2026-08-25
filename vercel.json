@@ -1,10 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
   "buildCommand": "npm --prefix web ci && npm --prefix web run build:vercel",
   "outputDirectory": "web/dist",
   "functions": {
     "api/index.py": {
       "maxDuration": 30
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api?route=/:path*"
+    }
+  ]
 }

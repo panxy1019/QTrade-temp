@@ -16,3 +16,5 @@ build/
 /runtime/
 web/node_modules/
 web/.vite-*.log
+/.vercel/
+/.env.local

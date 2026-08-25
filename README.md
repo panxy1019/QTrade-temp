@@ -265,3 +265,5 @@ The hosted application is a public research dashboard, not the persistent local
 PAPER runtime. It has no provider credential, realtime minute feed, SQLite
 account state, broker adapter or external order-transmission capability. See
 `deployment/README.md` for the packaged-evidence boundary.
+
+Production: <https://qtrade.erapi0neer.xyz>
