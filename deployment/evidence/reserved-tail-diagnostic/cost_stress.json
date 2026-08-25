@@ -1,0 +1,230 @@
+[
+  {
+    "base": {
+      "maximum_drawdown": -0.06768729219955127,
+      "point_count": 384,
+      "realized_minute_volatility": 0.00220192120999888,
+      "total_return": -0.03095982949226095
+    },
+    "candidate": {
+      "maximum_drawdown": -0.050170466415749404,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0015510420819767785,
+      "total_return": -0.02931332801858333
+    },
+    "candidate_execution": {
+      "exposure_sum": 23761.79999999999,
+      "mean_exposure": 0.8250624999999996,
+      "mean_transaction_cost_per_symbol": 0.0,
+      "mean_turnover_per_symbol": 3.0826666666666673,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 1359,
+        "MINUTE_TREND_WEAK": 15608,
+        "MINUTE_VOLATILITY_LIMIT": 251,
+        "RECOVERY_COOLDOWN": 3983
+      },
+      "reduced_exposure_observation_count": 19863,
+      "reduced_exposure_ratio": 0.6896875,
+      "symbol_count": 75,
+      "transaction_cost": 0.0,
+      "turnover": 231.20000000000005
+    },
+    "comparator": {
+      "maximum_drawdown": -0.03332572543720669,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0009069833373712153,
+      "total_return": -0.021242290260141683
+    },
+    "comparator_execution": {
+      "exposure_sum": 18537.0,
+      "mean_exposure": 0.6436458333333334,
+      "mean_transaction_cost_per_symbol": 0.0,
+      "mean_turnover_per_symbol": 18.04,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 4255,
+        "MINUTE_TREND_WEAK": 14347,
+        "MINUTE_VOLATILITY_LIMIT": 1577,
+        "RECOVERY_COOLDOWN": 6336
+      },
+      "reduced_exposure_observation_count": 22887,
+      "reduced_exposure_ratio": 0.7946875,
+      "symbol_count": 75,
+      "transaction_cost": 0.0,
+      "turnover": 1353.0
+    },
+    "cost_bps": 0.0
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.06768729219955139,
+      "point_count": 384,
+      "realized_minute_volatility": 0.002201921209998892,
+      "total_return": -0.03095982949226117
+    },
+    "candidate": {
+      "maximum_drawdown": -0.05033707474415705,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0015149858752376256,
+      "total_return": -0.030655317444869046
+    },
+    "candidate_execution": {
+      "exposure_sum": 23761.79999999999,
+      "mean_exposure": 0.8250624999999996,
+      "mean_transaction_cost_per_symbol": 0.002958016412185247,
+      "mean_turnover_per_symbol": 3.0826666666666673,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 1359,
+        "MINUTE_TREND_WEAK": 15608,
+        "MINUTE_VOLATILITY_LIMIT": 251,
+        "RECOVERY_COOLDOWN": 3983
+      },
+      "reduced_exposure_observation_count": 19863,
+      "reduced_exposure_ratio": 0.6896875,
+      "symbol_count": 75,
+      "transaction_cost": 0.2218512309138935,
+      "turnover": 231.20000000000005
+    },
+    "comparator": {
+      "maximum_drawdown": -0.039187271428248516,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0009051799012629887,
+      "total_return": -0.030157464593192573
+    },
+    "comparator_execution": {
+      "exposure_sum": 18537.0,
+      "mean_exposure": 0.6436458333333334,
+      "mean_transaction_cost_per_symbol": 0.008982491164805654,
+      "mean_turnover_per_symbol": 18.04,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 4255,
+        "MINUTE_TREND_WEAK": 14347,
+        "MINUTE_VOLATILITY_LIMIT": 1577,
+        "RECOVERY_COOLDOWN": 6336
+      },
+      "reduced_exposure_observation_count": 22887,
+      "reduced_exposure_ratio": 0.7946875,
+      "symbol_count": 75,
+      "transaction_cost": 0.673686837360424,
+      "turnover": 1353.0
+    },
+    "cost_bps": 5.0
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.06768729219955127,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0022019212099988806,
+      "total_return": -0.03095982949226106
+    },
+    "candidate": {
+      "maximum_drawdown": -0.0504711070679732,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0014801178413475645,
+      "total_return": -0.03193774790518822
+    },
+    "candidate_execution": {
+      "exposure_sum": 23761.79999999999,
+      "mean_exposure": 0.8250624999999996,
+      "mean_transaction_cost_per_symbol": 0.0053961300599741505,
+      "mean_turnover_per_symbol": 3.0826666666666673,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 1359,
+        "MINUTE_TREND_WEAK": 15608,
+        "MINUTE_VOLATILITY_LIMIT": 251,
+        "RECOVERY_COOLDOWN": 3983
+      },
+      "reduced_exposure_observation_count": 19863,
+      "reduced_exposure_ratio": 0.6896875,
+      "symbol_count": 75,
+      "transaction_cost": 0.4047097544980613,
+      "turnover": 231.20000000000005
+    },
+    "comparator": {
+      "maximum_drawdown": -0.04502919493445012,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0009035661885823373,
+      "total_return": -0.03897234846315056
+    },
+    "comparator_execution": {
+      "exposure_sum": 18537.0,
+      "mean_exposure": 0.6436458333333334,
+      "mean_transaction_cost_per_symbol": 0.01216684666823662,
+      "mean_turnover_per_symbol": 18.04,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 4255,
+        "MINUTE_TREND_WEAK": 14347,
+        "MINUTE_VOLATILITY_LIMIT": 1577,
+        "RECOVERY_COOLDOWN": 6336
+      },
+      "reduced_exposure_observation_count": 22887,
+      "reduced_exposure_ratio": 0.7946875,
+      "symbol_count": 75,
+      "transaction_cost": 0.9125135001177466,
+      "turnover": 1353.0
+    },
+    "cost_bps": 10.0
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.06768729219955105,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0022019212099988928,
+      "total_return": -0.030959829492260615
+    },
+    "candidate": {
+      "maximum_drawdown": -0.050649135896415176,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0014138774381728374,
+      "total_return": -0.034334549497870404
+    },
+    "candidate_execution": {
+      "exposure_sum": 23761.79999999999,
+      "mean_exposure": 0.8250624999999996,
+      "mean_transaction_cost_per_symbol": 0.009008355845842699,
+      "mean_turnover_per_symbol": 3.0826666666666673,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 1359,
+        "MINUTE_TREND_WEAK": 15608,
+        "MINUTE_VOLATILITY_LIMIT": 251,
+        "RECOVERY_COOLDOWN": 3983
+      },
+      "reduced_exposure_observation_count": 19863,
+      "reduced_exposure_ratio": 0.6896875,
+      "symbol_count": 75,
+      "transaction_cost": 0.6756266884382024,
+      "turnover": 231.20000000000005
+    },
+    "comparator": {
+      "maximum_drawdown": -0.05774910921740428,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0009009023037576414,
+      "total_return": -0.056307464568211896
+    },
+    "comparator_execution": {
+      "exposure_sum": 18537.0,
+      "mean_exposure": 0.6436458333333334,
+      "mean_transaction_cost_per_symbol": 0.011171401312118587,
+      "mean_turnover_per_symbol": 18.04,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 4255,
+        "MINUTE_TREND_WEAK": 14347,
+        "MINUTE_VOLATILITY_LIMIT": 1577,
+        "RECOVERY_COOLDOWN": 6336
+      },
+      "reduced_exposure_observation_count": 22887,
+      "reduced_exposure_ratio": 0.7946875,
+      "symbol_count": 75,
+      "transaction_cost": 0.837855098408894,
+      "turnover": 1353.0
+    },
+    "cost_bps": 20.0
+  }
+]

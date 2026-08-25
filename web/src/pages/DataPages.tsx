@@ -8,6 +8,7 @@ import { EquityChart } from '../charts/EquityChart'
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
 import { MinuteHistoryChart } from '../charts/MinuteHistoryChart'
 import { MinuteBacktestChart } from '../charts/MinuteBacktestChart'
+import { ReservedTailChart } from '../charts/ReservedTailChart'
 import { loadFiveMinuteBarSeries, loadHistoricalBarSeries, loadLongFiveMinuteBarSeries, loadMinuteBarSeries } from '../api/client'
 import { cancelPaperOrder, controlRuntime, prometheusMetricsUrl } from '../api/client'
 import type { RuntimeControlAction } from '../api/client'
@@ -19,6 +20,14 @@ const minuteReasonLabels: Record<string, string> = {
   MINUTE_TREND_WEAK: '分钟趋势弱',
   MINUTE_VOLATILITY_LIMIT: '分钟波动限制',
   RECOVERY_COOLDOWN: '恢复冷却',
+}
+const reservedTailGateLabels: Record<string, string> = {
+  CANDIDATE_BEATS_COMPARATOR_AT_5_BPS: '5 bps 战胜原低暴露对照',
+  CANDIDATE_DRAWDOWN_NOT_WORSE_THAN_BASELINE_AT_5_BPS: '5 bps 回撤不劣于全暴露基准',
+  MEAN_EXPOSURE_AT_LEAST_85_PERCENT: '平均暴露至少 85%',
+  TURNOVER_AT_MOST_HALF_COMPARATOR: '换手不超过对照的一半',
+  POSITIVE_AT_ZERO_AND_FIVE_BPS: '0/5 bps 均为正收益',
+  LEAVE_ONE_SECTOR_OUT_MAJORITY: '15 个整行业剔除中至少胜 12 个',
 }
 
 export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
@@ -353,6 +362,9 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const longFiveMinuteResearch = data?.longFiveMinuteResearch
   const longFiveMinuteAggregate = longFiveMinuteResearch?.aggregate
   const longExecution = longFiveMinuteAggregate?.execution
+  const reservedTail = data?.reservedTailDiagnostic
+  const reservedFiveBps = reservedTail?.five_bps
+  const reservedPassedGateCount = reservedTail?.gates.filter((gate) => gate.passed).length ?? 0
   const longReasonSummary = Object.entries(longExecution?.reason_counts ?? {})
     .sort((left, right) => right[1] - left[1])
     .map(([reason, count]) => `${minuteReasonLabels[reason] ?? reason} ${count.toLocaleString('zh-CN')}`)
@@ -490,7 +502,7 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
         ['来源', `${longFiveMinuteResearch?.minute_dataset?.provider ?? '—'} ${longFiveMinuteResearch?.minute_dataset?.provider_version ?? ''}`],
         ['标的 / 板块', `${longFiveMinuteResearch?.minute_dataset?.symbol_count ?? 0} / ${longFiveMinuteResearch?.minute_dataset?.sector_count ?? 0}`],
         ['数据范围', `${longFiveMinuteResearch?.minute_dataset?.trading_days[0] ?? '—'} 至 ${longFiveMinuteResearch?.minute_dataset?.trading_days.at(-1) ?? '—'}`],
-        ['滚动切分', `${longFiveMinuteResearch?.walk_forward?.initial_train_sessions ?? 0} 日初始训练；${longFiveMinuteResearch?.walk_forward?.fold_count ?? 0} 折 × ${longFiveMinuteResearch?.walk_forward?.test_sessions_per_fold ?? 0} 日独立测试；尾部 ${longFiveMinuteResearch?.walk_forward?.unused_trailing_sessions ?? 0} 日未进入回测`],
+        ['滚动切分', `${longFiveMinuteResearch?.walk_forward?.initial_train_sessions ?? 0} 日初始训练；${longFiveMinuteResearch?.walk_forward?.fold_count ?? 0} 折 × ${longFiveMinuteResearch?.walk_forward?.test_sessions_per_fold ?? 0} 日独立测试；尾部 ${longFiveMinuteResearch?.walk_forward?.unused_trailing_sessions ?? 0} 日未进入回测（该六折流程），随后仅进入一次预注册诊断`],
         ['基准收益', formatPercent(String(longFiveMinuteAggregate.base.total_return))],
         ['修正后收益', formatPercent(String(longFiveMinuteAggregate.overlay.total_return))],
         ['相对基准', formatPercent(String(longFiveMinuteAggregate.excess_return))],
@@ -522,6 +534,45 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
       ]} />
       {longReasonSummary && <Typography.Text>独立测试段重叠触发计数：{longReasonSummary}。同一标的-Bar 可以同时命中多个风险原因。</Typography.Text>}
       <Typography.Text type="secondary">这批数据只用于历史研究：当前成分股样本池非 PIT，前复权可能使用未来复权知识，免费历史源不等于获授权的实时源。即使 0 bps，修正层仍落后基准，因此保持 {longFiveMinuteResearch?.promotion ?? 'NOT_EVALUATED'}，不启动 PAPER/LIVE。</Typography.Text>
+    </Card>
+    <Alert
+      showIcon
+      type="error"
+      title={reservedFiveBps ? `预注册尾部诊断被拒绝：仅通过 ${reservedPassedGateCount}/${reservedTail?.gates.length ?? 0} 个门槛` : '暂无校验通过的预注册尾部诊断'}
+      description={reservedFiveBps ? `冻结候选在 5 bps 下收益 ${formatPercent(String(reservedFiveBps.candidate.total_return))}，低于原低暴露对照 ${formatPercent(String(reservedFiveBps.comparator.total_return))}；平均暴露 ${formatPercent(String(reservedFiveBps.candidate_execution.mean_exposure))} 也未达到 85%。结论固定为 ${reservedTail?.promotion ?? 'NOT_EVALUATED'}。` : '预注册签名、数据身份、前置长历史报告、明细 artifact 或门槛重算任一失败时均拒绝展示。'}
+    />
+    <Card title="保留尾部 8 日一次性诊断：失败后不二次调参" extra={<JsonExportButton filename="qtrade-reserved-tail-diagnostic-evidence.json" value={reservedTail ?? {}} />}>
+      <ReservedTailChart report={reservedTail ?? null} />
+      {reservedFiveBps && <Descriptions values={[
+        ['候选 / 对照', `${reservedTail?.candidate?.policy_id ?? '—'} / ${reservedTail?.comparator?.policy_id ?? '—'}`],
+        ['因果预热 / 计分', `${reservedTail?.warmup_session_count ?? 0} 日 / ${reservedTail?.test_session_count ?? 0} 日`],
+        ['一次性计分窗', `${reservedTail?.test_days?.[0] ?? '—'} 至 ${reservedTail?.test_days?.at(-1) ?? '—'}`],
+        ['5 bps 基准收益', formatPercent(String(reservedFiveBps.base.total_return))],
+        ['5 bps 候选 / 对照', `${formatPercent(String(reservedFiveBps.candidate.total_return))} / ${formatPercent(String(reservedFiveBps.comparator.total_return))}`],
+        ['基准 / 候选 / 对照回撤', `${formatPercent(String(reservedFiveBps.base.maximum_drawdown))} / ${formatPercent(String(reservedFiveBps.candidate.maximum_drawdown))} / ${formatPercent(String(reservedFiveBps.comparator.maximum_drawdown))}`],
+        ['候选 / 对照平均暴露', `${formatPercent(String(reservedFiveBps.candidate_execution.mean_exposure))} / ${formatPercent(String(reservedFiveBps.comparator_execution.mean_exposure))}`],
+        ['候选 / 对照换手（每标的）', `${formatNumber(String(reservedFiveBps.candidate_execution.mean_turnover_per_symbol))} / ${formatNumber(String(reservedFiveBps.comparator_execution.mean_turnover_per_symbol))}`],
+        ['候选 / 对照成本扣减（每标的）', `${formatPercent(String(reservedFiveBps.candidate_execution.mean_transaction_cost_per_symbol))} / ${formatPercent(String(reservedFiveBps.comparator_execution.mean_transaction_cost_per_symbol))}`],
+        ['整行业剔除胜数', `${reservedTail?.sector_win_count ?? 0} / ${reservedTail?.leave_one_sector_out.length ?? 0}`],
+        ['外部订单', 'DISABLED'],
+      ]} />}
+      <Table rowKey="gate_id" size="small" pagination={false} dataSource={reservedTail?.gates ?? []} columns={[
+        { title: '预注册门槛', render: (_: unknown, row: NonNullable<typeof reservedTail>['gates'][number]) => reservedTailGateLabels[row.gate_id] ?? row.gate_id },
+        { title: '结果', render: (_: unknown, row: NonNullable<typeof reservedTail>['gates'][number]) => <Tag color={row.passed ? 'success' : 'error'}>{row.passed ? 'PASS' : 'FAIL'}</Tag> },
+      ]} />
+      <Table rowKey="cost_bps" size="small" pagination={false} dataSource={reservedTail?.cost_stress ?? []} columns={[
+        { title: '单边成本 bps', dataIndex: 'cost_bps' },
+        { title: '基准收益', render: (_: unknown, row: NonNullable<typeof reservedTail>['cost_stress'][number]) => formatPercent(String(row.base.total_return)) },
+        { title: '冻结候选', render: (_: unknown, row: NonNullable<typeof reservedTail>['cost_stress'][number]) => formatPercent(String(row.candidate.total_return)) },
+        { title: '原低暴露对照', render: (_: unknown, row: NonNullable<typeof reservedTail>['cost_stress'][number]) => formatPercent(String(row.comparator.total_return)) },
+      ]} />
+      <Table rowKey="trading_day" size="small" pagination={false} dataSource={reservedTail?.daily ?? []} columns={[
+        { title: '尾部交易日', dataIndex: 'trading_day' },
+        { title: '基准收益', render: (_: unknown, row: NonNullable<typeof reservedTail>['daily'][number]) => formatPercent(String(row.base.total_return)) },
+        { title: '冻结候选', render: (_: unknown, row: NonNullable<typeof reservedTail>['daily'][number]) => formatPercent(String(row.candidate.total_return)) },
+        { title: '原低暴露对照', render: (_: unknown, row: NonNullable<typeof reservedTail>['daily'][number]) => formatPercent(String(row.comparator.total_return)) },
+      ]} />
+      <Typography.Text type="secondary">这 8 日价格曾在分时线前端 QA 中被部分查看，因此不是全盲独立测试；参数、门槛和“失败后不使用同一尾部二次调参”规则均在策略引擎读取尾部前锁定。结果不能覆盖前述长历史否证，也不授权 PAPER/LIVE。</Typography.Text>
     </Card>
     <Alert showIcon type="warning" title="探索性领先者，不是 Champion" description={leader ? `${leader.experiment_id}：测试窗 ${analytics?.split?.test_start ?? '—'} 至 ${analytics?.split?.test_end ?? '—'}，收益 ${formatPercent(leader.metrics.total_return)}，Sharpe ${formatNumber(leader.metrics.sharpe)}，最大回撤 ${formatPercent(leader.metrics.maximum_drawdown)}` : '暂无已验证结果'} />
     <Card title="已验证全期策略、基准、超额收益与回撤"><EquityChart dark analytics={analytics} />{leader && <Descriptions values={[["测试窗平均敞口", formatPercent(leader.metrics.test_exposure)], ["测试窗换手", formatNumber(leader.metrics.test_turnover)], ["测试窗交易成本", formatPercent(leader.metrics.test_transaction_cost)], ["Buy-and-Hold 测试收益", benchmark ? formatPercent(benchmark.metrics.total_return) : '—']]} />}<Typography.Text type="secondary">图为完整模拟期；Buy-and-Hold 仅在记录、资金曲线、回撤 checksum 全部通过且交易日逐点对齐时展示。测试窗指标在上方单列；当前样本池非 PIT，且缺少 PAPER/SHADOW 观察，禁止晋级。</Typography.Text></Card>
@@ -617,6 +668,7 @@ export function DataCenterPage({ data }: { data: PlatformSnapshot | null }) {
     { id: 'five-minute-walk-forward', name: '5 分钟滚动样本外否证', status: data?.fiveMinuteResearch?.folds.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.fiveMinuteResearch?.folds.length ?? 0, identity: data?.fiveMinuteResearch?.promotion ?? '—' },
     { id: 'long-five-minute-history', name: '368 日 BaoStock 原生 5 分钟数据', status: data?.longFiveMinuteResearch?.minute_dataset ? 'VERIFIED' : 'UNAVAILABLE', count: data?.longFiveMinuteResearch?.minute_dataset?.bar_count ?? 0, identity: data?.longFiveMinuteResearch?.minute_dataset ? `${data.longFiveMinuteResearch.minute_dataset.data_version} · ${data.longFiveMinuteResearch.minute_dataset.checksum}` : '—' },
     { id: 'long-five-minute-walk-forward', name: '240 日长历史滚动样本外否证', status: data?.longFiveMinuteResearch?.folds.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.longFiveMinuteResearch?.folds.length ?? 0, identity: data?.longFiveMinuteResearch?.promotion ?? '—' },
+    { id: 'reserved-tail-diagnostic', name: '尾部 8 日预注册一次性诊断', status: data?.reservedTailDiagnostic?.five_bps ? 'VERIFIED' : 'UNAVAILABLE', count: data?.reservedTailDiagnostic?.gates.length ?? 0, identity: data?.reservedTailDiagnostic?.promotion ?? '—' },
     { id: 'experiments', name: '基线实验与 artifacts', status: data?.experiments.experiments.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.experiments.experiments.length ?? 0, identity: data?.experiments.data_version ?? '—' },
     { id: 'walk-forward', name: '滚动样本外', status: data?.walkForward.result.folds.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.walkForward.result.folds.length ?? 0, identity: data?.walkForward.data_version ?? '—' },
     { id: 'robustness', name: '拒绝后稳健性', status: data?.robustness.result.scenario_metrics.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.robustness.result.scenario_metrics.length ?? 0, identity: data?.robustness.promotion ?? '—' },

@@ -1,0 +1,170 @@
+[
+  {
+    "base": {
+      "maximum_drawdown": -0.007570403994701991,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015626758191472968,
+      "total_return": 0.006324381244950494
+    },
+    "candidate": {
+      "maximum_drawdown": -0.0055584786016184,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008335274810037834,
+      "total_return": -0.00018115449139499695
+    },
+    "comparator": {
+      "maximum_drawdown": -0.006099143325640877,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006690127569944621,
+      "total_return": -0.0030798129157989518
+    },
+    "trading_day": "2026-08-14"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0028819065871303895,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015203451860591405,
+      "total_return": 0.024329500328986953
+    },
+    "candidate": {
+      "maximum_drawdown": -0.0022628633278417576,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010833023024010308,
+      "total_return": 0.015513707533641563
+    },
+    "comparator": {
+      "maximum_drawdown": -0.0017210699276416497,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006513080678629463,
+      "total_return": 0.008947493036906229
+    },
+    "trading_day": "2026-08-17"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015600024520966094,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001635113921570251,
+      "total_return": -0.005116150059076396
+    },
+    "candidate": {
+      "maximum_drawdown": -0.013716266419062095,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012343505472707478,
+      "total_return": -0.005798117922890089
+    },
+    "comparator": {
+      "maximum_drawdown": -0.011121383393011275,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007856950700315614,
+      "total_return": -0.008481837835926154
+    },
+    "trading_day": "2026-08-18"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.045308488616178755,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0039430063380286985,
+      "total_return": -0.039734900393249006
+    },
+    "candidate": {
+      "maximum_drawdown": -0.03244730134449769,
+      "point_count": 48,
+      "realized_minute_volatility": 0.003149554941916814,
+      "total_return": -0.030888289873193253
+    },
+    "comparator": {
+      "maximum_drawdown": -0.017299376771199526,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016493691076309722,
+      "total_return": -0.01593748910739623
+    },
+    "trading_day": "2026-08-19"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015507857258540647,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018225650434924591,
+      "total_return": 0.003447466103005059
+    },
+    "candidate": {
+      "maximum_drawdown": -0.01086878037241834,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012705935194689876,
+      "total_return": -0.0006265688700854977
+    },
+    "comparator": {
+      "maximum_drawdown": -0.009591902304452726,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008413861149040439,
+      "total_return": -0.003441018819913433
+    },
+    "trading_day": "2026-08-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007695318806092533,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015827638331337992,
+      "total_return": 0.008275734835336834
+    },
+    "candidate": {
+      "maximum_drawdown": -0.005602216694278184,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010321467830175172,
+      "total_return": 0.004271214394183431
+    },
+    "comparator": {
+      "maximum_drawdown": -0.005548495481411897,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008378663070924156,
+      "total_return": 0.00021443631806095098
+    },
+    "trading_day": "2026-08-21"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.03545138496726863,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00211854526158398,
+      "total_return": -0.02503400886647633
+    },
+    "candidate": {
+      "maximum_drawdown": -0.014936549116762898,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009310452994657263,
+      "total_return": -0.01312941042424387
+    },
+    "comparator": {
+      "maximum_drawdown": -0.009282481809847476,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005693993690970594,
+      "total_return": -0.009049092516039692
+    },
+    "trading_day": "2026-08-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009463527440161101,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0020625442370218834,
+      "total_return": -0.0024442957977494073
+    },
+    "candidate": {
+      "maximum_drawdown": -0.004873648689382115,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009655847135161426,
+      "total_return": 0.0004230310422335126
+    },
+    "comparator": {
+      "maximum_drawdown": -0.0036195195103921884,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006628491681272275,
+      "total_return": 0.00046210893687193
+    },
+    "trading_day": "2026-08-25"
+  }
+]

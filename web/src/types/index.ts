@@ -696,6 +696,54 @@ export interface FiveMinuteResearchReport {
   curve: Array<{ timestamp: string; base_equity: number; overlay_equity: number }>
 }
 
+export interface ReservedTailDiagnosticReport {
+  classification?: string
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  promotion_reasons: string[]
+  minute_dataset: MinuteResearchReport['minute_dataset']
+  candidate?: { policy_id: string; policy_hash: string }
+  comparator?: { policy_id: string; policy_hash: string }
+  warmup_session_count?: number
+  test_session_count?: number
+  test_days?: string[]
+  all_required_gates_passed?: false
+  sector_win_count?: number
+  five_bps?: ReservedTailCostStressRow
+  gates: Array<{ gate_id: string; passed: boolean }>
+  cost_stress: ReservedTailCostStressRow[]
+  daily: Array<{
+    trading_day: string
+    base: MinuteCurveMetrics
+    candidate: MinuteCurveMetrics
+    comparator: MinuteCurveMetrics
+  }>
+  leave_one_sector_out: Array<{
+    excluded_sector_code: string
+    excluded_sector_name: string
+    excluded_symbol_count: number
+    retained_symbol_count: number
+    candidate: MinuteCurveMetrics
+    comparator: MinuteCurveMetrics
+    candidate_beats_comparator: boolean
+  }>
+  curve: Array<{
+    timestamp: string
+    base_equity: number
+    candidate_equity: number
+    comparator_equity: number
+  }>
+  external_order_transmission?: false
+}
+
+export interface ReservedTailCostStressRow {
+  cost_bps: number
+  base: MinuteCurveMetrics
+  candidate: MinuteCurveMetrics
+  comparator: MinuteCurveMetrics
+  candidate_execution: MinuteExecutionDiagnostics
+  comparator_execution: MinuteExecutionDiagnostics
+}
+
 export interface DailyReportAutomationStatus {
   classification: 'TRUSTED_PAPER_EOD_REPORTING'
   readiness: 'CONFIGURED' | 'UNCONFIGURED'
@@ -738,6 +786,7 @@ export interface PlatformSnapshot {
   minuteResearch: MinuteResearchReport
   fiveMinuteResearch: FiveMinuteResearchReport
   longFiveMinuteResearch: FiveMinuteResearchReport
+  reservedTailDiagnostic: ReservedTailDiagnosticReport
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]

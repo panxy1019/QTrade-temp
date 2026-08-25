@@ -1,0 +1,2306 @@
+[
+  {
+    "base_equity": 1.0026997221673808,
+    "candidate_equity": 1.0003946911837476,
+    "comparator_equity": 0.9992973913716239,
+    "timestamp": "2026-08-14T01:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0040080037882184,
+    "candidate_equity": 0.9998706955687099,
+    "comparator_equity": 0.9990799391397832,
+    "timestamp": "2026-08-14T01:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0025873064939492,
+    "candidate_equity": 0.9991362121470205,
+    "comparator_equity": 0.9993598155060278,
+    "timestamp": "2026-08-14T01:45:00+00:00"
+  },
+  {
+    "base_equity": 1.002744595616291,
+    "candidate_equity": 0.9994082725524347,
+    "comparator_equity": 0.9993433978163692,
+    "timestamp": "2026-08-14T01:50:00+00:00"
+  },
+  {
+    "base_equity": 1.000731748569591,
+    "candidate_equity": 1.0002706788201923,
+    "comparator_equity": 0.9999452178273962,
+    "timestamp": "2026-08-14T01:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0015197550490975,
+    "candidate_equity": 0.9998478903872585,
+    "comparator_equity": 0.9997631457460319,
+    "timestamp": "2026-08-14T02:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0002380870643073,
+    "candidate_equity": 0.9993865934779753,
+    "comparator_equity": 0.9991729278115912,
+    "timestamp": "2026-08-14T02:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9983252568512547,
+    "candidate_equity": 0.9986971867732161,
+    "comparator_equity": 0.9986827293417506,
+    "timestamp": "2026-08-14T02:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9998136597486587,
+    "candidate_equity": 0.9985150278787195,
+    "comparator_equity": 0.9985227560175217,
+    "timestamp": "2026-08-14T02:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9989178273084632,
+    "candidate_equity": 0.9977911768437021,
+    "comparator_equity": 0.9981378489482822,
+    "timestamp": "2026-08-14T02:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9989844740099074,
+    "candidate_equity": 0.9970885409343935,
+    "comparator_equity": 0.9976218828782843,
+    "timestamp": "2026-08-14T02:25:00+00:00"
+  },
+  {
+    "base_equity": 1.0006098561026109,
+    "candidate_equity": 0.9967911269295603,
+    "comparator_equity": 0.9977420047435853,
+    "timestamp": "2026-08-14T02:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0035641464551994,
+    "candidate_equity": 0.9976961920765406,
+    "comparator_equity": 0.9986379708620453,
+    "timestamp": "2026-08-14T02:35:00+00:00"
+  },
+  {
+    "base_equity": 1.004835575072528,
+    "candidate_equity": 0.997453892494602,
+    "comparator_equity": 0.9986437415041125,
+    "timestamp": "2026-08-14T02:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0040550966058552,
+    "candidate_equity": 0.997505200158614,
+    "comparator_equity": 0.9983600475548117,
+    "timestamp": "2026-08-14T02:45:00+00:00"
+  },
+  {
+    "base_equity": 1.0024567257161585,
+    "candidate_equity": 0.9968124434038472,
+    "comparator_equity": 0.9975743293160684,
+    "timestamp": "2026-08-14T02:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9999665434106297,
+    "candidate_equity": 0.9958693496131251,
+    "comparator_equity": 0.9961572890275326,
+    "timestamp": "2026-08-14T02:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9993031116574728,
+    "candidate_equity": 0.9957377106030592,
+    "comparator_equity": 0.9958010547262599,
+    "timestamp": "2026-08-14T03:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9974175488801101,
+    "candidate_equity": 0.9948981707297373,
+    "comparator_equity": 0.9950763650881321,
+    "timestamp": "2026-08-14T03:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9977887847960363,
+    "candidate_equity": 0.9949245012609227,
+    "comparator_equity": 0.9952251407630982,
+    "timestamp": "2026-08-14T03:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9975767076930044,
+    "candidate_equity": 0.9949217919405478,
+    "comparator_equity": 0.9951969938972287,
+    "timestamp": "2026-08-14T03:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9998917107204001,
+    "candidate_equity": 0.9962384651914769,
+    "comparator_equity": 0.9958308111964983,
+    "timestamp": "2026-08-14T03:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9994571691523144,
+    "candidate_equity": 0.9960657613028436,
+    "comparator_equity": 0.9957463443800656,
+    "timestamp": "2026-08-14T03:25:00+00:00"
+  },
+  {
+    "base_equity": 1.0024930998169732,
+    "candidate_equity": 0.9979365376581174,
+    "comparator_equity": 0.9970486885536838,
+    "timestamp": "2026-08-14T03:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9994654125293254,
+    "candidate_equity": 0.9961601256365511,
+    "comparator_equity": 0.9952895796146005,
+    "timestamp": "2026-08-14T05:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9991860699476107,
+    "candidate_equity": 0.9959575168127918,
+    "comparator_equity": 0.9948508142092032,
+    "timestamp": "2026-08-14T05:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9973918702384598,
+    "candidate_equity": 0.9949420153839154,
+    "comparator_equity": 0.9940691898626542,
+    "timestamp": "2026-08-14T05:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9972285638209802,
+    "candidate_equity": 0.9948340186996301,
+    "comparator_equity": 0.9939008566743591,
+    "timestamp": "2026-08-14T05:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9974164931567099,
+    "candidate_equity": 0.9948956566151301,
+    "comparator_equity": 0.994188307096526,
+    "timestamp": "2026-08-14T05:25:00+00:00"
+  },
+  {
+    "base_equity": 1.0005430893124707,
+    "candidate_equity": 0.9967583166913964,
+    "comparator_equity": 0.9955710227609935,
+    "timestamp": "2026-08-14T05:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0011575394869896,
+    "candidate_equity": 0.9968926607230131,
+    "comparator_equity": 0.9954812951114883,
+    "timestamp": "2026-08-14T05:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0025795815386487,
+    "candidate_equity": 0.997772351336527,
+    "comparator_equity": 0.9960207265730782,
+    "timestamp": "2026-08-14T05:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0025222395260855,
+    "candidate_equity": 0.9975934924345378,
+    "comparator_equity": 0.9956319095617641,
+    "timestamp": "2026-08-14T05:45:00+00:00"
+  },
+  {
+    "base_equity": 1.0014707636271356,
+    "candidate_equity": 0.997036835853745,
+    "comparator_equity": 0.9950634524314028,
+    "timestamp": "2026-08-14T05:50:00+00:00"
+  },
+  {
+    "base_equity": 1.0040248650972992,
+    "candidate_equity": 0.9986774835527854,
+    "comparator_equity": 0.9963719032365492,
+    "timestamp": "2026-08-14T05:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0064276026077454,
+    "candidate_equity": 1.0000414301913338,
+    "comparator_equity": 0.9974209733796862,
+    "timestamp": "2026-08-14T06:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0041780820876665,
+    "candidate_equity": 0.9986792965002191,
+    "comparator_equity": 0.9963235282231092,
+    "timestamp": "2026-08-14T06:05:00+00:00"
+  },
+  {
+    "base_equity": 1.0050736079723868,
+    "candidate_equity": 0.9991983703443644,
+    "comparator_equity": 0.9970148572599173,
+    "timestamp": "2026-08-14T06:10:00+00:00"
+  },
+  {
+    "base_equity": 1.0065107223561758,
+    "candidate_equity": 1.0001996824641606,
+    "comparator_equity": 0.9976209792202613,
+    "timestamp": "2026-08-14T06:15:00+00:00"
+  },
+  {
+    "base_equity": 1.0065657843526403,
+    "candidate_equity": 1.000108618604218,
+    "comparator_equity": 0.9976774727701806,
+    "timestamp": "2026-08-14T06:20:00+00:00"
+  },
+  {
+    "base_equity": 1.0058107482756045,
+    "candidate_equity": 0.9994879746790771,
+    "comparator_equity": 0.9972862528107267,
+    "timestamp": "2026-08-14T06:25:00+00:00"
+  },
+  {
+    "base_equity": 1.006909003523045,
+    "candidate_equity": 1.0003062576375985,
+    "comparator_equity": 0.9977176759827326,
+    "timestamp": "2026-08-14T06:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0050485713268498,
+    "candidate_equity": 0.9988113458052867,
+    "comparator_equity": 0.9967312588452999,
+    "timestamp": "2026-08-14T06:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0043328822214406,
+    "candidate_equity": 0.9981808131680153,
+    "comparator_equity": 0.9963334664712991,
+    "timestamp": "2026-08-14T06:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0045318680638968,
+    "candidate_equity": 0.9983542027993704,
+    "comparator_equity": 0.9963498703585711,
+    "timestamp": "2026-08-14T06:45:00+00:00"
+  },
+  {
+    "base_equity": 1.0053526892458227,
+    "candidate_equity": 0.9990955530400956,
+    "comparator_equity": 0.996659872689345,
+    "timestamp": "2026-08-14T06:50:00+00:00"
+  },
+  {
+    "base_equity": 1.0060295439250446,
+    "candidate_equity": 0.9996757250411218,
+    "comparator_equity": 0.9969097720124414,
+    "timestamp": "2026-08-14T06:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0063243812449505,
+    "candidate_equity": 0.999818845508605,
+    "comparator_equity": 0.996920187084201,
+    "timestamp": "2026-08-14T07:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0127326765036047,
+    "candidate_equity": 1.0042234835508614,
+    "comparator_equity": 0.9991424792036259,
+    "timestamp": "2026-08-17T01:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0106139048492866,
+    "candidate_equity": 1.0027072212963888,
+    "comparator_equity": 0.99825549111082,
+    "timestamp": "2026-08-17T01:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0118007702281786,
+    "candidate_equity": 1.0040477185141767,
+    "comparator_equity": 0.9992724298900333,
+    "timestamp": "2026-08-17T01:45:00+00:00"
+  },
+  {
+    "base_equity": 1.013326138314866,
+    "candidate_equity": 1.0053141738315892,
+    "comparator_equity": 0.99997020630358,
+    "timestamp": "2026-08-17T01:50:00+00:00"
+  },
+  {
+    "base_equity": 1.0114862742783817,
+    "candidate_equity": 1.0040521123227386,
+    "comparator_equity": 0.9996911623400013,
+    "timestamp": "2026-08-17T01:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0104058270419447,
+    "candidate_equity": 1.0032101269730334,
+    "comparator_equity": 0.9998481619112258,
+    "timestamp": "2026-08-17T02:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0114386643169735,
+    "candidate_equity": 1.0040580643359103,
+    "comparator_equity": 1.0004963264560172,
+    "timestamp": "2026-08-17T02:05:00+00:00"
+  },
+  {
+    "base_equity": 1.013966039291209,
+    "candidate_equity": 1.0046429245160873,
+    "comparator_equity": 1.0000402732666693,
+    "timestamp": "2026-08-17T02:10:00+00:00"
+  },
+  {
+    "base_equity": 1.014499624974495,
+    "candidate_equity": 1.0048420753734562,
+    "comparator_equity": 1.0000212926025058,
+    "timestamp": "2026-08-17T02:15:00+00:00"
+  },
+  {
+    "base_equity": 1.0140144378085993,
+    "candidate_equity": 1.0038023906143083,
+    "comparator_equity": 0.9991521539083265,
+    "timestamp": "2026-08-17T02:20:00+00:00"
+  },
+  {
+    "base_equity": 1.0146785969651635,
+    "candidate_equity": 1.0037986784948325,
+    "comparator_equity": 0.9992286500918439,
+    "timestamp": "2026-08-17T02:25:00+00:00"
+  },
+  {
+    "base_equity": 1.0127655798938584,
+    "candidate_equity": 1.0030392852546663,
+    "comparator_equity": 0.9988484256504575,
+    "timestamp": "2026-08-17T02:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0145800162923546,
+    "candidate_equity": 1.0032720619260265,
+    "comparator_equity": 0.9987744023158377,
+    "timestamp": "2026-08-17T02:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0167043054151,
+    "candidate_equity": 1.0040350549487889,
+    "comparator_equity": 0.9992301683848901,
+    "timestamp": "2026-08-17T02:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0164437397356432,
+    "candidate_equity": 1.0043789992179588,
+    "comparator_equity": 0.9992827650065677,
+    "timestamp": "2026-08-17T02:45:00+00:00"
+  },
+  {
+    "base_equity": 1.01701455322985,
+    "candidate_equity": 1.0043350274598706,
+    "comparator_equity": 0.99924728315229,
+    "timestamp": "2026-08-17T02:50:00+00:00"
+  },
+  {
+    "base_equity": 1.0186397883938407,
+    "candidate_equity": 1.0049145429589128,
+    "comparator_equity": 0.999633390824818,
+    "timestamp": "2026-08-17T02:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0204168638214859,
+    "candidate_equity": 1.0061815753055927,
+    "comparator_equity": 1.0006622563289742,
+    "timestamp": "2026-08-17T03:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0208268907951517,
+    "candidate_equity": 1.0062588949412081,
+    "comparator_equity": 1.0010048929094537,
+    "timestamp": "2026-08-17T03:05:00+00:00"
+  },
+  {
+    "base_equity": 1.0214242924741692,
+    "candidate_equity": 1.0070754446717411,
+    "comparator_equity": 1.001272867960385,
+    "timestamp": "2026-08-17T03:10:00+00:00"
+  },
+  {
+    "base_equity": 1.0197729637457,
+    "candidate_equity": 1.0060242467630547,
+    "comparator_equity": 1.000238463163158,
+    "timestamp": "2026-08-17T03:15:00+00:00"
+  },
+  {
+    "base_equity": 1.0212233522460568,
+    "candidate_equity": 1.006942836611592,
+    "comparator_equity": 1.0009508281684312,
+    "timestamp": "2026-08-17T03:20:00+00:00"
+  },
+  {
+    "base_equity": 1.0211374509116207,
+    "candidate_equity": 1.007096932803265,
+    "comparator_equity": 1.0010653163439533,
+    "timestamp": "2026-08-17T03:25:00+00:00"
+  },
+  {
+    "base_equity": 1.0209840850868246,
+    "candidate_equity": 1.006916242014597,
+    "comparator_equity": 1.0006941794509125,
+    "timestamp": "2026-08-17T03:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0247723612139032,
+    "candidate_equity": 1.009598505602143,
+    "comparator_equity": 1.0018018889848004,
+    "timestamp": "2026-08-17T05:05:00+00:00"
+  },
+  {
+    "base_equity": 1.0283521682609673,
+    "candidate_equity": 1.0124935096450498,
+    "comparator_equity": 1.003544658544064,
+    "timestamp": "2026-08-17T05:10:00+00:00"
+  },
+  {
+    "base_equity": 1.0276167335979127,
+    "candidate_equity": 1.0121664119032632,
+    "comparator_equity": 1.003555687331036,
+    "timestamp": "2026-08-17T05:15:00+00:00"
+  },
+  {
+    "base_equity": 1.0280731872912179,
+    "candidate_equity": 1.0122752134199133,
+    "comparator_equity": 1.0035339758865838,
+    "timestamp": "2026-08-17T05:20:00+00:00"
+  },
+  {
+    "base_equity": 1.0267007897361868,
+    "candidate_equity": 1.0112949021362558,
+    "comparator_equity": 1.0029038218954152,
+    "timestamp": "2026-08-17T05:25:00+00:00"
+  },
+  {
+    "base_equity": 1.0257319393092328,
+    "candidate_equity": 1.0103064345327097,
+    "comparator_equity": 1.002114954882485,
+    "timestamp": "2026-08-17T05:30:00+00:00"
+  },
+  {
+    "base_equity": 1.027585398552531,
+    "candidate_equity": 1.011982413891455,
+    "comparator_equity": 1.003234482713702,
+    "timestamp": "2026-08-17T05:35:00+00:00"
+  },
+  {
+    "base_equity": 1.027421402498562,
+    "candidate_equity": 1.0117640675500656,
+    "comparator_equity": 1.003087806629867,
+    "timestamp": "2026-08-17T05:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0267994441810973,
+    "candidate_equity": 1.0113776359850173,
+    "comparator_equity": 1.0029858870186479,
+    "timestamp": "2026-08-17T05:45:00+00:00"
+  },
+  {
+    "base_equity": 1.0273709396432606,
+    "candidate_equity": 1.0119946277108818,
+    "comparator_equity": 1.0034936439991202,
+    "timestamp": "2026-08-17T05:50:00+00:00"
+  },
+  {
+    "base_equity": 1.028231274734413,
+    "candidate_equity": 1.0126522384407675,
+    "comparator_equity": 1.0037589777184028,
+    "timestamp": "2026-08-17T05:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0278012022577967,
+    "candidate_equity": 1.0123832182473402,
+    "comparator_equity": 1.0037258134315727,
+    "timestamp": "2026-08-17T06:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0279588358204887,
+    "candidate_equity": 1.012639529097936,
+    "comparator_equity": 1.0039886998170304,
+    "timestamp": "2026-08-17T06:05:00+00:00"
+  },
+  {
+    "base_equity": 1.0283385288511309,
+    "candidate_equity": 1.0129802727942876,
+    "comparator_equity": 1.0041974957150108,
+    "timestamp": "2026-08-17T06:10:00+00:00"
+  },
+  {
+    "base_equity": 1.0279419447318978,
+    "candidate_equity": 1.0127398921987165,
+    "comparator_equity": 1.0040712055581782,
+    "timestamp": "2026-08-17T06:15:00+00:00"
+  },
+  {
+    "base_equity": 1.0284769778271954,
+    "candidate_equity": 1.013185249490988,
+    "comparator_equity": 1.0043942833637922,
+    "timestamp": "2026-08-17T06:20:00+00:00"
+  },
+  {
+    "base_equity": 1.0277038389027593,
+    "candidate_equity": 1.0124020983339483,
+    "comparator_equity": 1.003663999789078,
+    "timestamp": "2026-08-17T06:25:00+00:00"
+  },
+  {
+    "base_equity": 1.027829863655638,
+    "candidate_equity": 1.0125274935737754,
+    "comparator_equity": 1.0037010248799527,
+    "timestamp": "2026-08-17T06:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0271060926484805,
+    "candidate_equity": 1.0118436621677502,
+    "comparator_equity": 1.0032159278914152,
+    "timestamp": "2026-08-17T06:35:00+00:00"
+  },
+  {
+    "base_equity": 1.02841682143914,
+    "candidate_equity": 1.0129995835082222,
+    "comparator_equity": 1.0040980861084796,
+    "timestamp": "2026-08-17T06:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0288998328611187,
+    "candidate_equity": 1.0134956093934084,
+    "comparator_equity": 1.0044860179348027,
+    "timestamp": "2026-08-17T06:45:00+00:00"
+  },
+  {
+    "base_equity": 1.030103471928102,
+    "candidate_equity": 1.0146602328384724,
+    "comparator_equity": 1.0053115606026783,
+    "timestamp": "2026-08-17T06:50:00+00:00"
+  },
+  {
+    "base_equity": 1.0307892071632245,
+    "candidate_equity": 1.0152932726433868,
+    "comparator_equity": 1.0058563367343987,
+    "timestamp": "2026-08-17T06:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0308077506095172,
+    "candidate_equity": 1.0153297426644488,
+    "comparator_equity": 1.0058401235164884,
+    "timestamp": "2026-08-17T07:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0281521240844564,
+    "candidate_equity": 1.0127104426235265,
+    "comparator_equity": 1.0028561861725518,
+    "timestamp": "2026-08-18T01:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0299280266926447,
+    "candidate_equity": 1.0144468870039736,
+    "comparator_equity": 1.0039983917780513,
+    "timestamp": "2026-08-18T01:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0270536077395078,
+    "candidate_equity": 1.0118104201582727,
+    "comparator_equity": 1.0018354813319343,
+    "timestamp": "2026-08-18T01:45:00+00:00"
+  },
+  {
+    "base_equity": 1.0233759672293548,
+    "candidate_equity": 1.008432572711763,
+    "comparator_equity": 0.9992486607925771,
+    "timestamp": "2026-08-18T01:50:00+00:00"
+  },
+  {
+    "base_equity": 1.0241476807552843,
+    "candidate_equity": 1.0088525187408286,
+    "comparator_equity": 0.9994655242372055,
+    "timestamp": "2026-08-18T01:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0231993420185728,
+    "candidate_equity": 1.0081639746979292,
+    "comparator_equity": 0.9990958812592247,
+    "timestamp": "2026-08-18T02:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0244672047226093,
+    "candidate_equity": 1.0090174525653584,
+    "comparator_equity": 0.9991189854042308,
+    "timestamp": "2026-08-18T02:05:00+00:00"
+  },
+  {
+    "base_equity": 1.024478548155282,
+    "candidate_equity": 1.009176310810254,
+    "comparator_equity": 0.9995927802462601,
+    "timestamp": "2026-08-18T02:10:00+00:00"
+  },
+  {
+    "base_equity": 1.0248319970571502,
+    "candidate_equity": 1.009422091373884,
+    "comparator_equity": 0.999661643790775,
+    "timestamp": "2026-08-18T02:15:00+00:00"
+  },
+  {
+    "base_equity": 1.0235894484577388,
+    "candidate_equity": 1.008435376631984,
+    "comparator_equity": 0.9993074247452881,
+    "timestamp": "2026-08-18T02:20:00+00:00"
+  },
+  {
+    "base_equity": 1.020561533037667,
+    "candidate_equity": 1.0059727657674646,
+    "comparator_equity": 0.9979774053116702,
+    "timestamp": "2026-08-18T02:25:00+00:00"
+  },
+  {
+    "base_equity": 1.0203338049437634,
+    "candidate_equity": 1.0057796304679214,
+    "comparator_equity": 0.9971928171749809,
+    "timestamp": "2026-08-18T02:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0217340363355119,
+    "candidate_equity": 1.0067685283043168,
+    "comparator_equity": 0.9966685732234226,
+    "timestamp": "2026-08-18T02:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0207524180245044,
+    "candidate_equity": 1.0062090497835408,
+    "comparator_equity": 0.9969325391321426,
+    "timestamp": "2026-08-18T02:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0203981853266635,
+    "candidate_equity": 1.0060137233217543,
+    "comparator_equity": 0.997053492788838,
+    "timestamp": "2026-08-18T02:45:00+00:00"
+  },
+  {
+    "base_equity": 1.0193968109809142,
+    "candidate_equity": 1.005045811179813,
+    "comparator_equity": 0.9964852992063425,
+    "timestamp": "2026-08-18T02:50:00+00:00"
+  },
+  {
+    "base_equity": 1.0173939871970576,
+    "candidate_equity": 1.0035986091660678,
+    "comparator_equity": 0.995960532831276,
+    "timestamp": "2026-08-18T02:55:00+00:00"
+  },
+  {
+    "base_equity": 1.016555713772896,
+    "candidate_equity": 1.0029624451680033,
+    "comparator_equity": 0.9957071338426883,
+    "timestamp": "2026-08-18T03:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0171835481757276,
+    "candidate_equity": 1.0034675002720188,
+    "comparator_equity": 0.9958164918366709,
+    "timestamp": "2026-08-18T03:05:00+00:00"
+  },
+  {
+    "base_equity": 1.0147271244236067,
+    "candidate_equity": 1.0014032094108654,
+    "comparator_equity": 0.9954210776421899,
+    "timestamp": "2026-08-18T03:10:00+00:00"
+  },
+  {
+    "base_equity": 1.018285140894437,
+    "candidate_equity": 1.0033543810677403,
+    "comparator_equity": 0.9956678818512744,
+    "timestamp": "2026-08-18T03:15:00+00:00"
+  },
+  {
+    "base_equity": 1.01937697705155,
+    "candidate_equity": 1.0040254711820693,
+    "comparator_equity": 0.995675223780094,
+    "timestamp": "2026-08-18T03:20:00+00:00"
+  },
+  {
+    "base_equity": 1.0201266653847199,
+    "candidate_equity": 1.0045168310977843,
+    "comparator_equity": 0.9955791546272359,
+    "timestamp": "2026-08-18T03:25:00+00:00"
+  },
+  {
+    "base_equity": 1.021162316966366,
+    "candidate_equity": 1.0050006472612103,
+    "comparator_equity": 0.9952021395272201,
+    "timestamp": "2026-08-18T03:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0181912487423619,
+    "candidate_equity": 1.0035590491211446,
+    "comparator_equity": 0.9950169158557682,
+    "timestamp": "2026-08-18T05:05:00+00:00"
+  },
+  {
+    "base_equity": 1.0185954937785457,
+    "candidate_equity": 1.0039061091100379,
+    "comparator_equity": 0.995001640633646,
+    "timestamp": "2026-08-18T05:10:00+00:00"
+  },
+  {
+    "base_equity": 1.0167160292342334,
+    "candidate_equity": 1.0027967934574389,
+    "comparator_equity": 0.9946537898707877,
+    "timestamp": "2026-08-18T05:15:00+00:00"
+  },
+  {
+    "base_equity": 1.0201227387404892,
+    "candidate_equity": 1.0049090539472243,
+    "comparator_equity": 0.9953962613015036,
+    "timestamp": "2026-08-18T05:20:00+00:00"
+  },
+  {
+    "base_equity": 1.018039921249095,
+    "candidate_equity": 1.0037827308451832,
+    "comparator_equity": 0.9948812862690584,
+    "timestamp": "2026-08-18T05:25:00+00:00"
+  },
+  {
+    "base_equity": 1.0182415334159742,
+    "candidate_equity": 1.0041704768055228,
+    "comparator_equity": 0.995240342333797,
+    "timestamp": "2026-08-18T05:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0192895520579903,
+    "candidate_equity": 1.0049985413295224,
+    "comparator_equity": 0.9957872172225208,
+    "timestamp": "2026-08-18T05:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0188614977263721,
+    "candidate_equity": 1.0046837026343274,
+    "comparator_equity": 0.9955423672005173,
+    "timestamp": "2026-08-18T05:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0197218846288107,
+    "candidate_equity": 1.0051364210595841,
+    "comparator_equity": 0.9956255399839822,
+    "timestamp": "2026-08-18T05:45:00+00:00"
+  },
+  {
+    "base_equity": 1.020861143120956,
+    "candidate_equity": 1.005869756656466,
+    "comparator_equity": 0.9959797419502052,
+    "timestamp": "2026-08-18T05:50:00+00:00"
+  },
+  {
+    "base_equity": 1.021646954829801,
+    "candidate_equity": 1.0064059670438201,
+    "comparator_equity": 0.9962552873519765,
+    "timestamp": "2026-08-18T05:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0212641215510263,
+    "candidate_equity": 1.0060144318940267,
+    "comparator_equity": 0.9959957990675046,
+    "timestamp": "2026-08-18T06:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0225561950393536,
+    "candidate_equity": 1.006762942573796,
+    "comparator_equity": 0.9962815346430006,
+    "timestamp": "2026-08-18T06:05:00+00:00"
+  },
+  {
+    "base_equity": 1.019693620369205,
+    "candidate_equity": 1.0050371845546073,
+    "comparator_equity": 0.995404789181135,
+    "timestamp": "2026-08-18T06:10:00+00:00"
+  },
+  {
+    "base_equity": 1.0211300061621977,
+    "candidate_equity": 1.0060993825825253,
+    "comparator_equity": 0.9959549918246959,
+    "timestamp": "2026-08-18T06:15:00+00:00"
+  },
+  {
+    "base_equity": 1.0210369914338013,
+    "candidate_equity": 1.0062120115881912,
+    "comparator_equity": 0.9961420946314576,
+    "timestamp": "2026-08-18T06:20:00+00:00"
+  },
+  {
+    "base_equity": 1.0233991205776847,
+    "candidate_equity": 1.0077694149296437,
+    "comparator_equity": 0.9970276832350115,
+    "timestamp": "2026-08-18T06:25:00+00:00"
+  },
+  {
+    "base_equity": 1.024511504873871,
+    "candidate_equity": 1.0086355904510678,
+    "comparator_equity": 0.9974340315225927,
+    "timestamp": "2026-08-18T06:30:00+00:00"
+  },
+  {
+    "base_equity": 1.0265800412017223,
+    "candidate_equity": 1.0104997149395714,
+    "comparator_equity": 0.99824941153855,
+    "timestamp": "2026-08-18T06:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0265200513972323,
+    "candidate_equity": 1.0103665985501271,
+    "comparator_equity": 0.9979398187421317,
+    "timestamp": "2026-08-18T06:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0263298933640819,
+    "candidate_equity": 1.01028185942549,
+    "comparator_equity": 0.9979530640445621,
+    "timestamp": "2026-08-18T06:45:00+00:00"
+  },
+  {
+    "base_equity": 1.0249174451571488,
+    "candidate_equity": 1.009057967635322,
+    "comparator_equity": 0.9971306263478735,
+    "timestamp": "2026-08-18T06:50:00+00:00"
+  },
+  {
+    "base_equity": 1.0254324528410332,
+    "candidate_equity": 1.009474212305886,
+    "comparator_equity": 0.997328264153736,
+    "timestamp": "2026-08-18T06:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0255339834753399,
+    "candidate_equity": 1.0094427410858626,
+    "comparator_equity": 0.9973087506999535,
+    "timestamp": "2026-08-18T07:00:00+00:00"
+  },
+  {
+    "base_equity": 1.0015246684658645,
+    "candidate_equity": 0.9887437896119116,
+    "comparator_equity": 0.9866790228995816,
+    "timestamp": "2026-08-19T01:35:00+00:00"
+  },
+  {
+    "base_equity": 1.0058499993629761,
+    "candidate_equity": 0.9921452763166966,
+    "comparator_equity": 0.9883439543779152,
+    "timestamp": "2026-08-19T01:40:00+00:00"
+  },
+  {
+    "base_equity": 1.0073908988405094,
+    "candidate_equity": 0.9927012817269502,
+    "comparator_equity": 0.9884978640411879,
+    "timestamp": "2026-08-19T01:45:00+00:00"
+  },
+  {
+    "base_equity": 1.0062011778078024,
+    "candidate_equity": 0.9915034740768625,
+    "comparator_equity": 0.9873958221036324,
+    "timestamp": "2026-08-19T01:50:00+00:00"
+  },
+  {
+    "base_equity": 1.0054881556929633,
+    "candidate_equity": 0.9911268324999775,
+    "comparator_equity": 0.9873085766148327,
+    "timestamp": "2026-08-19T01:55:00+00:00"
+  },
+  {
+    "base_equity": 1.0055505187031548,
+    "candidate_equity": 0.990710029339762,
+    "comparator_equity": 0.9869588060365367,
+    "timestamp": "2026-08-19T02:00:00+00:00"
+  },
+  {
+    "base_equity": 1.00587439517401,
+    "candidate_equity": 0.9904636054490922,
+    "comparator_equity": 0.9866041670926257,
+    "timestamp": "2026-08-19T02:05:00+00:00"
+  },
+  {
+    "base_equity": 1.003595220720512,
+    "candidate_equity": 0.9886985462328712,
+    "comparator_equity": 0.9854038261738385,
+    "timestamp": "2026-08-19T02:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9987113359958688,
+    "candidate_equity": 0.984944592987485,
+    "comparator_equity": 0.9833592084528383,
+    "timestamp": "2026-08-19T02:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9973831487473719,
+    "candidate_equity": 0.9837637017333717,
+    "comparator_equity": 0.983086008947602,
+    "timestamp": "2026-08-19T02:20:00+00:00"
+  },
+  {
+    "base_equity": 1.0013673811421795,
+    "candidate_equity": 0.9874087433656018,
+    "comparator_equity": 0.9853911707739746,
+    "timestamp": "2026-08-19T02:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9988271195732663,
+    "candidate_equity": 0.9853573526559078,
+    "comparator_equity": 0.9847809464725356,
+    "timestamp": "2026-08-19T02:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9964969341387472,
+    "candidate_equity": 0.9836330334416232,
+    "comparator_equity": 0.9840888330149526,
+    "timestamp": "2026-08-19T02:35:00+00:00"
+  },
+  {
+    "base_equity": 0.99458525094698,
+    "candidate_equity": 0.9821495027533438,
+    "comparator_equity": 0.9836238172263327,
+    "timestamp": "2026-08-19T02:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9946867037226012,
+    "candidate_equity": 0.982065976726524,
+    "comparator_equity": 0.9835284034558209,
+    "timestamp": "2026-08-19T02:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9997235589137277,
+    "candidate_equity": 0.9843127866830842,
+    "comparator_equity": 0.9841043235950767,
+    "timestamp": "2026-08-19T02:50:00+00:00"
+  },
+  {
+    "base_equity": 0.997438813196477,
+    "candidate_equity": 0.9831382129061274,
+    "comparator_equity": 0.9837172497316328,
+    "timestamp": "2026-08-19T02:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9961963436232443,
+    "candidate_equity": 0.982884089693333,
+    "comparator_equity": 0.9835216743372036,
+    "timestamp": "2026-08-19T03:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9948077993854257,
+    "candidate_equity": 0.9820534549211388,
+    "comparator_equity": 0.9832545930140177,
+    "timestamp": "2026-08-19T03:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9944175483954931,
+    "candidate_equity": 0.9819794424512277,
+    "comparator_equity": 0.9833023781148552,
+    "timestamp": "2026-08-19T03:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9937283787457758,
+    "candidate_equity": 0.9813395573993753,
+    "comparator_equity": 0.9830712255215265,
+    "timestamp": "2026-08-19T03:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9925057919928731,
+    "candidate_equity": 0.9808252108996431,
+    "comparator_equity": 0.9830814774745563,
+    "timestamp": "2026-08-19T03:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9917606936332183,
+    "candidate_equity": 0.9805311048813525,
+    "comparator_equity": 0.982875861396271,
+    "timestamp": "2026-08-19T03:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9919804660230672,
+    "candidate_equity": 0.9808330600010507,
+    "comparator_equity": 0.9830791209376587,
+    "timestamp": "2026-08-19T03:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9885262365330136,
+    "candidate_equity": 0.9795800562207082,
+    "comparator_equity": 0.9825519725262741,
+    "timestamp": "2026-08-19T05:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9872211190874669,
+    "candidate_equity": 0.978967888723459,
+    "comparator_equity": 0.9821494480010177,
+    "timestamp": "2026-08-19T05:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9851104447067498,
+    "candidate_equity": 0.978196540079623,
+    "comparator_equity": 0.9815092539983044,
+    "timestamp": "2026-08-19T05:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9849261439436914,
+    "candidate_equity": 0.9780429554985106,
+    "comparator_equity": 0.9812561821530671,
+    "timestamp": "2026-08-19T05:20:00+00:00"
+  },
+  {
+    "base_equity": 0.990507936585977,
+    "candidate_equity": 0.9794024734089066,
+    "comparator_equity": 0.9819279645671629,
+    "timestamp": "2026-08-19T05:25:00+00:00"
+  },
+  {
+    "base_equity": 0.989562601021835,
+    "candidate_equity": 0.9792733093684161,
+    "comparator_equity": 0.9818456026385308,
+    "timestamp": "2026-08-19T05:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9901658957625157,
+    "candidate_equity": 0.9789180679109709,
+    "comparator_equity": 0.9814932700137431,
+    "timestamp": "2026-08-19T05:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9910569879729532,
+    "candidate_equity": 0.9790869733262045,
+    "comparator_equity": 0.9816300293093545,
+    "timestamp": "2026-08-19T05:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9896453838246065,
+    "candidate_equity": 0.9785292162077,
+    "comparator_equity": 0.9811734984436221,
+    "timestamp": "2026-08-19T05:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9881134908904123,
+    "candidate_equity": 0.9780102549505714,
+    "comparator_equity": 0.9807017956882351,
+    "timestamp": "2026-08-19T05:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9868925623794248,
+    "candidate_equity": 0.9779751713638698,
+    "comparator_equity": 0.9806963958311976,
+    "timestamp": "2026-08-19T05:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9855491049643679,
+    "candidate_equity": 0.9778547318452021,
+    "comparator_equity": 0.9806777152959315,
+    "timestamp": "2026-08-19T06:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9854194193257653,
+    "candidate_equity": 0.977604296151884,
+    "comparator_equity": 0.980392255769401,
+    "timestamp": "2026-08-19T06:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9845376410824574,
+    "candidate_equity": 0.9773804673118838,
+    "comparator_equity": 0.980282555456157,
+    "timestamp": "2026-08-19T06:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9864680525430358,
+    "candidate_equity": 0.9785544968750615,
+    "comparator_equity": 0.9810662220135579,
+    "timestamp": "2026-08-19T06:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9853364436442151,
+    "candidate_equity": 0.978637362089303,
+    "comparator_equity": 0.9812704992502419,
+    "timestamp": "2026-08-19T06:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9843702401121582,
+    "candidate_equity": 0.9783929260702762,
+    "comparator_equity": 0.9810850017924022,
+    "timestamp": "2026-08-19T06:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9832050032054329,
+    "candidate_equity": 0.9781061610510409,
+    "comparator_equity": 0.980893277449826,
+    "timestamp": "2026-08-19T06:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9824260142430686,
+    "candidate_equity": 0.9775140844618964,
+    "comparator_equity": 0.9803995385759228,
+    "timestamp": "2026-08-19T06:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9810146872278331,
+    "candidate_equity": 0.9770828678727151,
+    "comparator_equity": 0.9801655365621431,
+    "timestamp": "2026-08-19T06:40:00+00:00"
+  },
+  {
+    "base_equity": 0.979068588659543,
+    "candidate_equity": 0.9766890482758338,
+    "comparator_equity": 0.9800559308643808,
+    "timestamp": "2026-08-19T06:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9842825500689079,
+    "candidate_equity": 0.9781323834344587,
+    "comparator_equity": 0.9807980678869518,
+    "timestamp": "2026-08-19T06:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9828914026194846,
+    "candidate_equity": 0.9774758546246993,
+    "comparator_equity": 0.9805091599782622,
+    "timestamp": "2026-08-19T06:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9847844927920554,
+    "candidate_equity": 0.9782627810888116,
+    "comparator_equity": 0.9814141533489621,
+    "timestamp": "2026-08-19T07:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9915036212044215,
+    "candidate_equity": 0.9851107664534948,
+    "comparator_equity": 0.9855030352383217,
+    "timestamp": "2026-08-20T01:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9924828664584127,
+    "candidate_equity": 0.9842459320114362,
+    "comparator_equity": 0.9851160090702005,
+    "timestamp": "2026-08-20T01:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9969534605942556,
+    "candidate_equity": 0.9857238905912435,
+    "comparator_equity": 0.9860911853890446,
+    "timestamp": "2026-08-20T01:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9951988297064899,
+    "candidate_equity": 0.9857562760927214,
+    "comparator_equity": 0.9856012703234303,
+    "timestamp": "2026-08-20T01:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9958466321872501,
+    "candidate_equity": 0.9854181112790218,
+    "comparator_equity": 0.985171421941149,
+    "timestamp": "2026-08-20T01:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9970058131107727,
+    "candidate_equity": 0.9847166442229202,
+    "comparator_equity": 0.9849977903996492,
+    "timestamp": "2026-08-20T02:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9976927892043292,
+    "candidate_equity": 0.9851969921133591,
+    "comparator_equity": 0.9854153874277727,
+    "timestamp": "2026-08-20T02:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9976886619889092,
+    "candidate_equity": 0.9842574174294362,
+    "comparator_equity": 0.9848658090803277,
+    "timestamp": "2026-08-20T02:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9943724917786129,
+    "candidate_equity": 0.9837320404045774,
+    "comparator_equity": 0.9832659900355015,
+    "timestamp": "2026-08-20T02:15:00+00:00"
+  },
+  {
+    "base_equity": 0.990809168858612,
+    "candidate_equity": 0.9823145589373249,
+    "comparator_equity": 0.9818468603862903,
+    "timestamp": "2026-08-20T02:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9902677830122487,
+    "candidate_equity": 0.9818607974758636,
+    "comparator_equity": 0.9816341073373819,
+    "timestamp": "2026-08-20T02:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9912166958501962,
+    "candidate_equity": 0.9819574312071897,
+    "comparator_equity": 0.9817777181409186,
+    "timestamp": "2026-08-20T02:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9898697502349045,
+    "candidate_equity": 0.981151834702756,
+    "comparator_equity": 0.9817300215362492,
+    "timestamp": "2026-08-20T02:35:00+00:00"
+  },
+  {
+    "base_equity": 0.989024319808797,
+    "candidate_equity": 0.9802283129344217,
+    "comparator_equity": 0.9810101539633432,
+    "timestamp": "2026-08-20T02:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9906504517337469,
+    "candidate_equity": 0.9806274067754079,
+    "comparator_equity": 0.9809648896039926,
+    "timestamp": "2026-08-20T02:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9928820143012915,
+    "candidate_equity": 0.9814425138692271,
+    "comparator_equity": 0.9814431059662341,
+    "timestamp": "2026-08-20T02:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9939264666692407,
+    "candidate_equity": 0.982098218489622,
+    "comparator_equity": 0.9819138374195436,
+    "timestamp": "2026-08-20T02:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9929727400371318,
+    "candidate_equity": 0.9816796051815647,
+    "comparator_equity": 0.9813891673987741,
+    "timestamp": "2026-08-20T03:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9914455189686406,
+    "candidate_equity": 0.9814067360986309,
+    "comparator_equity": 0.980962849358949,
+    "timestamp": "2026-08-20T03:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9905754061711268,
+    "candidate_equity": 0.980513000796194,
+    "comparator_equity": 0.9805574721663627,
+    "timestamp": "2026-08-20T03:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9891540485106344,
+    "candidate_equity": 0.9793460874868135,
+    "comparator_equity": 0.9796433340149434,
+    "timestamp": "2026-08-20T03:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9893917045820073,
+    "candidate_equity": 0.9794786187118182,
+    "comparator_equity": 0.9796814873260831,
+    "timestamp": "2026-08-20T03:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9897173541457595,
+    "candidate_equity": 0.9798470692373461,
+    "comparator_equity": 0.979781248363173,
+    "timestamp": "2026-08-20T03:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9913436948236961,
+    "candidate_equity": 0.9809912718686061,
+    "comparator_equity": 0.9805167502953015,
+    "timestamp": "2026-08-20T03:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9915495616713814,
+    "candidate_equity": 0.9811054458478153,
+    "comparator_equity": 0.9807284237821833,
+    "timestamp": "2026-08-20T05:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9899908008261016,
+    "candidate_equity": 0.9799611001912181,
+    "comparator_equity": 0.9795807250547882,
+    "timestamp": "2026-08-20T05:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9881928799532174,
+    "candidate_equity": 0.9788927576109507,
+    "comparator_equity": 0.9786901956313598,
+    "timestamp": "2026-08-20T05:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9883929993663683,
+    "candidate_equity": 0.97893695410301,
+    "comparator_equity": 0.9789843621133378,
+    "timestamp": "2026-08-20T05:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9897537634074554,
+    "candidate_equity": 0.9798719367119729,
+    "comparator_equity": 0.9794557312530139,
+    "timestamp": "2026-08-20T05:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9882709890626284,
+    "candidate_equity": 0.9787261748719288,
+    "comparator_equity": 0.9788283511216566,
+    "timestamp": "2026-08-20T05:30:00+00:00"
+  },
+  {
+    "base_equity": 0.986855573330942,
+    "candidate_equity": 0.977795173466462,
+    "comparator_equity": 0.9782751723008126,
+    "timestamp": "2026-08-20T05:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9852553090159973,
+    "candidate_equity": 0.976636194521682,
+    "comparator_equity": 0.9771749495585127,
+    "timestamp": "2026-08-20T05:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9866281900605155,
+    "candidate_equity": 0.9774829974510167,
+    "comparator_equity": 0.9779021437589054,
+    "timestamp": "2026-08-20T05:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9873451959882893,
+    "candidate_equity": 0.9778586402242323,
+    "comparator_equity": 0.9780362839824495,
+    "timestamp": "2026-08-20T05:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9842912849520521,
+    "candidate_equity": 0.9760212158110232,
+    "comparator_equity": 0.9771249317524291,
+    "timestamp": "2026-08-20T05:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9829852127868339,
+    "candidate_equity": 0.9755029445178015,
+    "comparator_equity": 0.9770016102436161,
+    "timestamp": "2026-08-20T06:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9822861194155224,
+    "candidate_equity": 0.9751010291615898,
+    "comparator_equity": 0.9767668880834217,
+    "timestamp": "2026-08-20T06:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9823762332233503,
+    "candidate_equity": 0.9750423076271367,
+    "comparator_equity": 0.976632695075511,
+    "timestamp": "2026-08-20T06:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9833054583242149,
+    "candidate_equity": 0.9755724205069135,
+    "comparator_equity": 0.9768123588119827,
+    "timestamp": "2026-08-20T06:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9828692263815529,
+    "candidate_equity": 0.9756423215407825,
+    "comparator_equity": 0.9769671832113226,
+    "timestamp": "2026-08-20T06:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9822207118414732,
+    "candidate_equity": 0.9753805619954429,
+    "comparator_equity": 0.9768867503364962,
+    "timestamp": "2026-08-20T06:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9827827070109559,
+    "candidate_equity": 0.9758784904822747,
+    "comparator_equity": 0.9772157766226468,
+    "timestamp": "2026-08-20T06:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9850383964663266,
+    "candidate_equity": 0.9768625227604675,
+    "comparator_equity": 0.9777207807693449,
+    "timestamp": "2026-08-20T06:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9851105442522137,
+    "candidate_equity": 0.9768618037553372,
+    "comparator_equity": 0.9777275810061561,
+    "timestamp": "2026-08-20T06:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9862466252214113,
+    "candidate_equity": 0.9772939946428464,
+    "comparator_equity": 0.9778146243322946,
+    "timestamp": "2026-08-20T06:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9876678058061359,
+    "candidate_equity": 0.9777081572336589,
+    "comparator_equity": 0.9779420775573876,
+    "timestamp": "2026-08-20T06:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9871184250723926,
+    "candidate_equity": 0.9774048967627385,
+    "comparator_equity": 0.9776006731221758,
+    "timestamp": "2026-08-20T06:55:00+00:00"
+  },
+  {
+    "base_equity": 0.988179503949721,
+    "candidate_equity": 0.9776498320834182,
+    "comparator_equity": 0.9780370887771588,
+    "timestamp": "2026-08-20T07:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9864667139571863,
+    "candidate_equity": 0.9769203588794906,
+    "comparator_equity": 0.9771024829179039,
+    "timestamp": "2026-08-21T01:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9876965126451837,
+    "candidate_equity": 0.9771333852301539,
+    "comparator_equity": 0.9770045593354516,
+    "timestamp": "2026-08-21T01:40:00+00:00"
+  },
+  {
+    "base_equity": 0.994555832642169,
+    "candidate_equity": 0.9805906801160214,
+    "comparator_equity": 0.9801721708239365,
+    "timestamp": "2026-08-21T01:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9955025384311861,
+    "candidate_equity": 0.9809374354896744,
+    "comparator_equity": 0.9800829500147556,
+    "timestamp": "2026-08-21T01:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9955702948170635,
+    "candidate_equity": 0.9805582106660963,
+    "comparator_equity": 0.9795521526715879,
+    "timestamp": "2026-08-21T01:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9971921570669762,
+    "candidate_equity": 0.9817466175758113,
+    "comparator_equity": 0.9806594856703849,
+    "timestamp": "2026-08-21T02:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9964578456441843,
+    "candidate_equity": 0.9811420011047496,
+    "comparator_equity": 0.9804373729392778,
+    "timestamp": "2026-08-21T02:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9977975343664681,
+    "candidate_equity": 0.9820813594692286,
+    "comparator_equity": 0.9809786000718818,
+    "timestamp": "2026-08-21T02:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9983123495549725,
+    "candidate_equity": 0.9823020669348281,
+    "comparator_equity": 0.980774557813832,
+    "timestamp": "2026-08-21T02:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9974885416269006,
+    "candidate_equity": 0.9819345716797256,
+    "comparator_equity": 0.9803248478527091,
+    "timestamp": "2026-08-21T02:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9967122185212915,
+    "candidate_equity": 0.9813813266536441,
+    "comparator_equity": 0.9801299462553769,
+    "timestamp": "2026-08-21T02:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9966472364807382,
+    "candidate_equity": 0.9816225676420651,
+    "comparator_equity": 0.9804594669067412,
+    "timestamp": "2026-08-21T02:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9944770775193835,
+    "candidate_equity": 0.9797745259385834,
+    "comparator_equity": 0.9792565116517117,
+    "timestamp": "2026-08-21T02:35:00+00:00"
+  },
+  {
+    "base_equity": 0.994397431792518,
+    "candidate_equity": 0.9799456019890563,
+    "comparator_equity": 0.9798423239107916,
+    "timestamp": "2026-08-21T02:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9958674312721028,
+    "candidate_equity": 0.9811383944625981,
+    "comparator_equity": 0.980201818968119,
+    "timestamp": "2026-08-21T02:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9954442315925558,
+    "candidate_equity": 0.9807659179275054,
+    "comparator_equity": 0.9798949507133162,
+    "timestamp": "2026-08-21T02:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9984594888970302,
+    "candidate_equity": 0.9830288703859609,
+    "comparator_equity": 0.9811730399483939,
+    "timestamp": "2026-08-21T02:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9979512494302395,
+    "candidate_equity": 0.982568663959477,
+    "comparator_equity": 0.9805852812394354,
+    "timestamp": "2026-08-21T03:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9965834790227824,
+    "candidate_equity": 0.9817238010331049,
+    "comparator_equity": 0.9797335727995509,
+    "timestamp": "2026-08-21T03:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9954542201459581,
+    "candidate_equity": 0.9807248432791086,
+    "comparator_equity": 0.9787258450108889,
+    "timestamp": "2026-08-21T03:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9942463084175109,
+    "candidate_equity": 0.9796755427189363,
+    "comparator_equity": 0.9777118744513066,
+    "timestamp": "2026-08-21T03:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9942521078466036,
+    "candidate_equity": 0.9800241040972896,
+    "comparator_equity": 0.9781244570952805,
+    "timestamp": "2026-08-21T03:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9956447264655826,
+    "candidate_equity": 0.9808499609373623,
+    "comparator_equity": 0.9787766906174457,
+    "timestamp": "2026-08-21T03:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9949381525097268,
+    "candidate_equity": 0.9801227257600204,
+    "comparator_equity": 0.9782257594468395,
+    "timestamp": "2026-08-21T03:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9943896462878884,
+    "candidate_equity": 0.9797012701034431,
+    "comparator_equity": 0.9777788533410005,
+    "timestamp": "2026-08-21T05:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9918756887126311,
+    "candidate_equity": 0.9775217296373273,
+    "comparator_equity": 0.9759389962724228,
+    "timestamp": "2026-08-21T05:10:00+00:00"
+  },
+  {
+    "base_equity": 0.993903336267773,
+    "candidate_equity": 0.9790820010961049,
+    "comparator_equity": 0.977111154811093,
+    "timestamp": "2026-08-21T05:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9950450329006308,
+    "candidate_equity": 0.9800141364508517,
+    "comparator_equity": 0.9779179685016391,
+    "timestamp": "2026-08-21T05:20:00+00:00"
+  },
+  {
+    "base_equity": 0.994522944490839,
+    "candidate_equity": 0.9799019971111232,
+    "comparator_equity": 0.9777272907518082,
+    "timestamp": "2026-08-21T05:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9942346200779252,
+    "candidate_equity": 0.9796218699275637,
+    "comparator_equity": 0.9774637561656438,
+    "timestamp": "2026-08-21T05:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9927376908534169,
+    "candidate_equity": 0.9788685650137123,
+    "comparator_equity": 0.9770316430376683,
+    "timestamp": "2026-08-21T05:35:00+00:00"
+  },
+  {
+    "base_equity": 0.991870291508135,
+    "candidate_equity": 0.9781689166267424,
+    "comparator_equity": 0.9764629410498424,
+    "timestamp": "2026-08-21T05:40:00+00:00"
+  },
+  {
+    "base_equity": 0.991997894279162,
+    "candidate_equity": 0.9782325381053575,
+    "comparator_equity": 0.9764682537240806,
+    "timestamp": "2026-08-21T05:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9933116743685754,
+    "candidate_equity": 0.9792119973990968,
+    "comparator_equity": 0.9770363673653805,
+    "timestamp": "2026-08-21T05:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9917362452620535,
+    "candidate_equity": 0.9781270514242693,
+    "comparator_equity": 0.9762277029449078,
+    "timestamp": "2026-08-21T05:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9928485411554859,
+    "candidate_equity": 0.9791244723060716,
+    "comparator_equity": 0.9766650488113221,
+    "timestamp": "2026-08-21T06:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9907760248149994,
+    "candidate_equity": 0.977992121793332,
+    "comparator_equity": 0.975729005769757,
+    "timestamp": "2026-08-21T06:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9930300932098299,
+    "candidate_equity": 0.9792699310991984,
+    "comparator_equity": 0.9766435195043424,
+    "timestamp": "2026-08-21T06:10:00+00:00"
+  },
+  {
+    "base_equity": 0.994873317624481,
+    "candidate_equity": 0.9805976586025105,
+    "comparator_equity": 0.977633861674922,
+    "timestamp": "2026-08-21T06:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9949820973411044,
+    "candidate_equity": 0.9806919287896939,
+    "comparator_equity": 0.977676835684937,
+    "timestamp": "2026-08-21T06:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9961171187629809,
+    "candidate_equity": 0.9813989887364448,
+    "comparator_equity": 0.9781435499011243,
+    "timestamp": "2026-08-21T06:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9969516697708083,
+    "candidate_equity": 0.981957539340335,
+    "comparator_equity": 0.9786211507681096,
+    "timestamp": "2026-08-21T06:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9975105816896069,
+    "candidate_equity": 0.9825287889535262,
+    "comparator_equity": 0.9791367113907512,
+    "timestamp": "2026-08-21T06:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9967629736393633,
+    "candidate_equity": 0.9823596554727625,
+    "comparator_equity": 0.9789227892631823,
+    "timestamp": "2026-08-21T06:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9961670260087889,
+    "candidate_equity": 0.9818453579170098,
+    "comparator_equity": 0.9784340252459439,
+    "timestamp": "2026-08-21T06:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9957118773136406,
+    "candidate_equity": 0.9814105891150016,
+    "comparator_equity": 0.9779363790463828,
+    "timestamp": "2026-08-21T06:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9960112219127804,
+    "candidate_equity": 0.9817046874142988,
+    "comparator_equity": 0.9781903975145718,
+    "timestamp": "2026-08-21T06:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9963574154941235,
+    "candidate_equity": 0.9818255841186838,
+    "comparator_equity": 0.9782468154494033,
+    "timestamp": "2026-08-21T07:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9916396452240004,
+    "candidate_equity": 0.9813307810708854,
+    "comparator_equity": 0.9779852663998486,
+    "timestamp": "2026-08-24T01:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9869952526439418,
+    "candidate_equity": 0.9785964573482004,
+    "comparator_equity": 0.9760431539422795,
+    "timestamp": "2026-08-24T01:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9822775454091979,
+    "candidate_equity": 0.9751607435147528,
+    "comparator_equity": 0.9739797642871645,
+    "timestamp": "2026-08-24T01:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9824342811321548,
+    "candidate_equity": 0.9747566712195842,
+    "comparator_equity": 0.9732917062929317,
+    "timestamp": "2026-08-24T01:50:00+00:00"
+  },
+  {
+    "base_equity": 0.980166026822141,
+    "candidate_equity": 0.9744098988879922,
+    "comparator_equity": 0.9734824865466815,
+    "timestamp": "2026-08-24T01:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9773308171338752,
+    "candidate_equity": 0.9723125626940535,
+    "comparator_equity": 0.9725693906955578,
+    "timestamp": "2026-08-24T02:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9804768468168547,
+    "candidate_equity": 0.9733993888643524,
+    "comparator_equity": 0.9729935954885695,
+    "timestamp": "2026-08-24T02:05:00+00:00"
+  },
+  {
+    "base_equity": 0.98338759473001,
+    "candidate_equity": 0.9748109087686548,
+    "comparator_equity": 0.9738547764842628,
+    "timestamp": "2026-08-24T02:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9826028194158988,
+    "candidate_equity": 0.9751923715503787,
+    "comparator_equity": 0.9743619848877638,
+    "timestamp": "2026-08-24T02:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9804450399165168,
+    "candidate_equity": 0.9750167499275308,
+    "comparator_equity": 0.9745968936762639,
+    "timestamp": "2026-08-24T02:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9807121720499938,
+    "candidate_equity": 0.9752132159870583,
+    "comparator_equity": 0.9747061039038771,
+    "timestamp": "2026-08-24T02:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9780169127635201,
+    "candidate_equity": 0.9742426081184912,
+    "comparator_equity": 0.974109598522644,
+    "timestamp": "2026-08-24T02:30:00+00:00"
+  },
+  {
+    "base_equity": 0.975686661768136,
+    "candidate_equity": 0.9725603818785499,
+    "comparator_equity": 0.9727043390524447,
+    "timestamp": "2026-08-24T02:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9739861960988733,
+    "candidate_equity": 0.971507168941954,
+    "comparator_equity": 0.971908103352044,
+    "timestamp": "2026-08-24T02:40:00+00:00"
+  },
+  {
+    "base_equity": 0.972177298045714,
+    "candidate_equity": 0.9705334823318913,
+    "comparator_equity": 0.9714990333002167,
+    "timestamp": "2026-08-24T02:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9715219678949099,
+    "candidate_equity": 0.969355387104061,
+    "comparator_equity": 0.9706841683475079,
+    "timestamp": "2026-08-24T02:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9710472561730595,
+    "candidate_equity": 0.9696015829463474,
+    "comparator_equity": 0.9706810316873546,
+    "timestamp": "2026-08-24T02:55:00+00:00"
+  },
+  {
+    "base_equity": 0.970344191617121,
+    "candidate_equity": 0.9693289525562152,
+    "comparator_equity": 0.970625965715187,
+    "timestamp": "2026-08-24T03:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9683048253205202,
+    "candidate_equity": 0.9688023302597171,
+    "comparator_equity": 0.9704517988343443,
+    "timestamp": "2026-08-24T03:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9705854263953471,
+    "candidate_equity": 0.9700386819556596,
+    "comparator_equity": 0.9709506779083371,
+    "timestamp": "2026-08-24T03:10:00+00:00"
+  },
+  {
+    "base_equity": 0.970980981259726,
+    "candidate_equity": 0.9701548356235803,
+    "comparator_equity": 0.9709864560852897,
+    "timestamp": "2026-08-24T03:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9716178673965541,
+    "candidate_equity": 0.9698760197442944,
+    "comparator_equity": 0.9706000735337604,
+    "timestamp": "2026-08-24T03:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9696128650691648,
+    "candidate_equity": 0.9695403974138344,
+    "comparator_equity": 0.9705369892042492,
+    "timestamp": "2026-08-24T03:25:00+00:00"
+  },
+  {
+    "base_equity": 0.970316097540613,
+    "candidate_equity": 0.9699778024905968,
+    "comparator_equity": 0.97062582997971,
+    "timestamp": "2026-08-24T03:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9650115805461318,
+    "candidate_equity": 0.9684617799656365,
+    "comparator_equity": 0.9698757384168836,
+    "timestamp": "2026-08-24T05:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9677939104400486,
+    "candidate_equity": 0.9690412238097319,
+    "comparator_equity": 0.9699192517452646,
+    "timestamp": "2026-08-24T05:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9672689046336154,
+    "candidate_equity": 0.9689497004673762,
+    "comparator_equity": 0.9700185270248456,
+    "timestamp": "2026-08-24T05:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9656526573108286,
+    "candidate_equity": 0.9688168299108881,
+    "comparator_equity": 0.9700527951250014,
+    "timestamp": "2026-08-24T05:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9667696745086487,
+    "candidate_equity": 0.9689052796771906,
+    "comparator_equity": 0.9700974619733894,
+    "timestamp": "2026-08-24T05:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9647721597672182,
+    "candidate_equity": 0.9683009054709232,
+    "comparator_equity": 0.9699858793723335,
+    "timestamp": "2026-08-24T05:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9630528756638543,
+    "candidate_equity": 0.967912840912221,
+    "comparator_equity": 0.9697975323160695,
+    "timestamp": "2026-08-24T05:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9629739934537873,
+    "candidate_equity": 0.9676660364419493,
+    "comparator_equity": 0.9694498140476147,
+    "timestamp": "2026-08-24T05:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9623910474571536,
+    "candidate_equity": 0.9677577524714968,
+    "comparator_equity": 0.9694277605807907,
+    "timestamp": "2026-08-24T05:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9613073192052277,
+    "candidate_equity": 0.9674648678647239,
+    "comparator_equity": 0.9693573079487159,
+    "timestamp": "2026-08-24T05:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9610351651924486,
+    "candidate_equity": 0.9672324258098128,
+    "comparator_equity": 0.9692493590583736,
+    "timestamp": "2026-08-24T05:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9613456443132068,
+    "candidate_equity": 0.9671604980574008,
+    "comparator_equity": 0.9691662571794529,
+    "timestamp": "2026-08-24T06:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9634788484385538,
+    "candidate_equity": 0.9681793348027102,
+    "comparator_equity": 0.9696418094103585,
+    "timestamp": "2026-08-24T06:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9662196009678414,
+    "candidate_equity": 0.9684849392779553,
+    "comparator_equity": 0.9695709995660818,
+    "timestamp": "2026-08-24T06:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9669495042846014,
+    "candidate_equity": 0.9689227146880262,
+    "comparator_equity": 0.9697793304492781,
+    "timestamp": "2026-08-24T06:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9680901776953152,
+    "candidate_equity": 0.9694208826514812,
+    "comparator_equity": 0.9701020316189158,
+    "timestamp": "2026-08-24T06:20:00+00:00"
+  },
+  {
+    "base_equity": 0.96998372690049,
+    "candidate_equity": 0.9690949602566078,
+    "comparator_equity": 0.9698555263849343,
+    "timestamp": "2026-08-24T06:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9684865366984327,
+    "candidate_equity": 0.968657373030593,
+    "comparator_equity": 0.9694996946465776,
+    "timestamp": "2026-08-24T06:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9666353016755883,
+    "candidate_equity": 0.9681819316261421,
+    "comparator_equity": 0.9691676781273484,
+    "timestamp": "2026-08-24T06:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9684452187233915,
+    "candidate_equity": 0.9684172627875113,
+    "comparator_equity": 0.9692357713253934,
+    "timestamp": "2026-08-24T06:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9688519321535262,
+    "candidate_equity": 0.9682597739602842,
+    "comparator_equity": 0.969169173739561,
+    "timestamp": "2026-08-24T06:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9712966659610697,
+    "candidate_equity": 0.9688079466697036,
+    "comparator_equity": 0.9693535359946881,
+    "timestamp": "2026-08-24T06:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9713770155948652,
+    "candidate_equity": 0.9688199291319456,
+    "comparator_equity": 0.9693948745855048,
+    "timestamp": "2026-08-24T06:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9714145951204641,
+    "candidate_equity": 0.9689347930597666,
+    "comparator_equity": 0.9693945695128804,
+    "timestamp": "2026-08-24T07:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9641106471554692,
+    "candidate_equity": 0.967443899600885,
+    "comparator_equity": 0.968772969909847,
+    "timestamp": "2026-08-25T01:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9655720505617014,
+    "candidate_equity": 0.9689433027756408,
+    "comparator_equity": 0.9696212040301169,
+    "timestamp": "2026-08-25T01:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9622215864437688,
+    "candidate_equity": 0.966935512348501,
+    "comparator_equity": 0.9686716430447909,
+    "timestamp": "2026-08-25T01:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9631455803148047,
+    "candidate_equity": 0.9672106913631756,
+    "comparator_equity": 0.9686735137889719,
+    "timestamp": "2026-08-25T01:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9667668269913553,
+    "candidate_equity": 0.9673633553976029,
+    "comparator_equity": 0.9689802000638695,
+    "timestamp": "2026-08-25T01:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9679700305319782,
+    "candidate_equity": 0.9669710249858405,
+    "comparator_equity": 0.9687713214019865,
+    "timestamp": "2026-08-25T02:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9707349488656805,
+    "candidate_equity": 0.9683325968712189,
+    "comparator_equity": 0.9695799128022267,
+    "timestamp": "2026-08-25T02:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9707668252114047,
+    "candidate_equity": 0.9678068925068974,
+    "comparator_equity": 0.969466121785056,
+    "timestamp": "2026-08-25T02:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9688721587846116,
+    "candidate_equity": 0.9668323855353393,
+    "comparator_equity": 0.9685921209215262,
+    "timestamp": "2026-08-25T02:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9697137980093555,
+    "candidate_equity": 0.9674847730384987,
+    "comparator_equity": 0.9688250698643152,
+    "timestamp": "2026-08-25T02:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9713588842232163,
+    "candidate_equity": 0.9686232563573501,
+    "comparator_equity": 0.9699503255764995,
+    "timestamp": "2026-08-25T02:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9679806661912346,
+    "candidate_equity": 0.967028935562774,
+    "comparator_equity": 0.968100253796029,
+    "timestamp": "2026-08-25T02:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9656985771604755,
+    "candidate_equity": 0.9660430832745082,
+    "comparator_equity": 0.9675115985145298,
+    "timestamp": "2026-08-25T02:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9666020342948025,
+    "candidate_equity": 0.9663986911092384,
+    "comparator_equity": 0.9679435008323763,
+    "timestamp": "2026-08-25T02:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9646114589343703,
+    "candidate_equity": 0.9654587577208078,
+    "comparator_equity": 0.9670758635158943,
+    "timestamp": "2026-08-25T02:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9644202083940948,
+    "candidate_equity": 0.9650382833916782,
+    "comparator_equity": 0.9668508486388662,
+    "timestamp": "2026-08-25T02:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9642515173112682,
+    "candidate_equity": 0.9650456629419334,
+    "comparator_equity": 0.9669708594789735,
+    "timestamp": "2026-08-25T02:55:00+00:00"
+  },
+  {
+    "base_equity": 0.962735021490103,
+    "candidate_equity": 0.9642210135179826,
+    "comparator_equity": 0.9664395714489641,
+    "timestamp": "2026-08-25T03:00:00+00:00"
+  },
+  {
+    "base_equity": 0.9633518157913564,
+    "candidate_equity": 0.9647269181276351,
+    "comparator_equity": 0.9667740959175612,
+    "timestamp": "2026-08-25T03:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9642738631120188,
+    "candidate_equity": 0.9653584182232444,
+    "comparator_equity": 0.9671563229759209,
+    "timestamp": "2026-08-25T03:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9651364085230885,
+    "candidate_equity": 0.9659437482058054,
+    "comparator_equity": 0.9674936811315193,
+    "timestamp": "2026-08-25T03:15:00+00:00"
+  },
+  {
+    "base_equity": 0.962883492696833,
+    "candidate_equity": 0.964984163383287,
+    "comparator_equity": 0.9668668405554542,
+    "timestamp": "2026-08-25T03:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9644454616576867,
+    "candidate_equity": 0.965603444246254,
+    "comparator_equity": 0.9671457163425698,
+    "timestamp": "2026-08-25T03:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9649927235638086,
+    "candidate_equity": 0.9660311416369064,
+    "comparator_equity": 0.967509109067774,
+    "timestamp": "2026-08-25T03:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9689787010170026,
+    "candidate_equity": 0.9677511630251396,
+    "comparator_equity": 0.9688639563114341,
+    "timestamp": "2026-08-25T05:05:00+00:00"
+  },
+  {
+    "base_equity": 0.972488509725108,
+    "candidate_equity": 0.9697351706818362,
+    "comparator_equity": 0.97008534828478,
+    "timestamp": "2026-08-25T05:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9748287853768361,
+    "candidate_equity": 0.9711879321274457,
+    "comparator_equity": 0.971181366376741,
+    "timestamp": "2026-08-25T05:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9733516686967488,
+    "candidate_equity": 0.9709429427847319,
+    "comparator_equity": 0.9711158495039458,
+    "timestamp": "2026-08-25T05:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9731556541392533,
+    "candidate_equity": 0.9706270287133539,
+    "comparator_equity": 0.9709864829868374,
+    "timestamp": "2026-08-25T05:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9711669940968597,
+    "candidate_equity": 0.9697717936179283,
+    "comparator_equity": 0.9703667764936952,
+    "timestamp": "2026-08-25T05:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9699623214259046,
+    "candidate_equity": 0.9692593416694945,
+    "comparator_equity": 0.9699094034254022,
+    "timestamp": "2026-08-25T05:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9688656008875426,
+    "candidate_equity": 0.9686135080241361,
+    "comparator_equity": 0.9695964721029466,
+    "timestamp": "2026-08-25T05:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9673306760939935,
+    "candidate_equity": 0.9675769009899359,
+    "comparator_equity": 0.9690748194971065,
+    "timestamp": "2026-08-25T05:45:00+00:00"
+  },
+  {
+    "base_equity": 0.966475444537502,
+    "candidate_equity": 0.966856190622022,
+    "comparator_equity": 0.9687296791468265,
+    "timestamp": "2026-08-25T05:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9672859015108438,
+    "candidate_equity": 0.9677800925937681,
+    "comparator_equity": 0.9693037335719218,
+    "timestamp": "2026-08-25T05:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9673833689264624,
+    "candidate_equity": 0.967862225387682,
+    "comparator_equity": 0.9693306411986655,
+    "timestamp": "2026-08-25T06:00:00+00:00"
+  },
+  {
+    "base_equity": 0.969353689076017,
+    "candidate_equity": 0.9693847296787228,
+    "comparator_equity": 0.970104356856768,
+    "timestamp": "2026-08-25T06:05:00+00:00"
+  },
+  {
+    "base_equity": 0.9688945367987882,
+    "candidate_equity": 0.9689686842546539,
+    "comparator_equity": 0.9698267966385117,
+    "timestamp": "2026-08-25T06:10:00+00:00"
+  },
+  {
+    "base_equity": 0.9684316711808796,
+    "candidate_equity": 0.9687277918029503,
+    "comparator_equity": 0.9698357350072098,
+    "timestamp": "2026-08-25T06:15:00+00:00"
+  },
+  {
+    "base_equity": 0.9691969355790045,
+    "candidate_equity": 0.9693323688566108,
+    "comparator_equity": 0.9703973887478237,
+    "timestamp": "2026-08-25T06:20:00+00:00"
+  },
+  {
+    "base_equity": 0.9690842764234662,
+    "candidate_equity": 0.969387518217411,
+    "comparator_equity": 0.9703170530432131,
+    "timestamp": "2026-08-25T06:25:00+00:00"
+  },
+  {
+    "base_equity": 0.9689604830938825,
+    "candidate_equity": 0.9692815926249161,
+    "comparator_equity": 0.9702749859414791,
+    "timestamp": "2026-08-25T06:30:00+00:00"
+  },
+  {
+    "base_equity": 0.9716216138856664,
+    "candidate_equity": 0.9710239688505885,
+    "comparator_equity": 0.9712704190553867,
+    "timestamp": "2026-08-25T06:35:00+00:00"
+  },
+  {
+    "base_equity": 0.9703594905408246,
+    "candidate_equity": 0.9701185455325624,
+    "comparator_equity": 0.9705091704869371,
+    "timestamp": "2026-08-25T06:40:00+00:00"
+  },
+  {
+    "base_equity": 0.9700124058448799,
+    "candidate_equity": 0.9699929743220354,
+    "comparator_equity": 0.9704315644735377,
+    "timestamp": "2026-08-25T06:45:00+00:00"
+  },
+  {
+    "base_equity": 0.9688455128748522,
+    "candidate_equity": 0.9692132615023343,
+    "comparator_equity": 0.9698783450656311,
+    "timestamp": "2026-08-25T06:50:00+00:00"
+  },
+  {
+    "base_equity": 0.9689490974737037,
+    "candidate_equity": 0.969096938652759,
+    "comparator_equity": 0.9697166758302297,
+    "timestamp": "2026-08-25T06:55:00+00:00"
+  },
+  {
+    "base_equity": 0.9690401705077388,
+    "candidate_equity": 0.969344682555131,
+    "comparator_equity": 0.9698425354068074,
+    "timestamp": "2026-08-25T07:00:00+00:00"
+  }
+]

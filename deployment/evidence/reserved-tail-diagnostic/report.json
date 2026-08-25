@@ -1,0 +1,139 @@
+{
+  "all_required_gates_passed": false,
+  "artifacts": {
+    "cost_stress.json": "d7cb071acd8e8617cd12d6b96cabf512a393d53f64d442541fe5879e5023d438",
+    "curve.json": "135ed4e1dce230a5f4c8da93f9da1f517c87094d5b322c03b08f7a2a3c580a06",
+    "daily.json": "12b7d2059445cd311892499146bd9c244f692884922386e491a3f6298cdf5914",
+    "leave_one_sector_out.json": "44fe993b9048180ff8dd9182ba9205a90028c37d273700aec7e25b9052e30c67"
+  },
+  "candidate": {
+    "policy_hash": "4a1a49938b0075d556371cb5e4a83db355ac54c41e0513875d2c93a0a084dba4",
+    "policy_id": "five-conservative-high-exposure-v1"
+  },
+  "classification": "PREREGISTERED_PARTIALLY_OBSERVED_RESERVED_TAIL_DIAGNOSTIC",
+  "comparator": {
+    "policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
+    "policy_id": "five-reduction-soft-v1"
+  },
+  "dataset": {
+    "bar_interval": "5m",
+    "checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
+    "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
+    "evidence_sha256": "531f8077caf6849d25ecca960d613c113c3dab25ee630b45e72cbce1252429bb",
+    "future_adjustment_knowledge_possible": true,
+    "point_in_time": false,
+    "sector_count": 15,
+    "symbol_count": 75
+  },
+  "evidence_sha256": "96b9a95b4826dfcf6eab4f04e22428a375c9f6ff9dd331799ca7d75fce488d79",
+  "external_order_transmission": false,
+  "five_bps": {
+    "base": {
+      "maximum_drawdown": -0.06768729219955139,
+      "point_count": 384,
+      "realized_minute_volatility": 0.002201921209998892,
+      "total_return": -0.03095982949226117
+    },
+    "candidate": {
+      "maximum_drawdown": -0.05033707474415705,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0015149858752376256,
+      "total_return": -0.030655317444869046
+    },
+    "candidate_execution": {
+      "exposure_sum": 23761.79999999999,
+      "mean_exposure": 0.8250624999999996,
+      "mean_transaction_cost_per_symbol": 0.002958016412185247,
+      "mean_turnover_per_symbol": 3.0826666666666673,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 1359,
+        "MINUTE_TREND_WEAK": 15608,
+        "MINUTE_VOLATILITY_LIMIT": 251,
+        "RECOVERY_COOLDOWN": 3983
+      },
+      "reduced_exposure_observation_count": 19863,
+      "reduced_exposure_ratio": 0.6896875,
+      "symbol_count": 75,
+      "transaction_cost": 0.2218512309138935,
+      "turnover": 231.20000000000005
+    },
+    "comparator": {
+      "maximum_drawdown": -0.039187271428248516,
+      "point_count": 384,
+      "realized_minute_volatility": 0.0009051799012629887,
+      "total_return": -0.030157464593192573
+    },
+    "comparator_execution": {
+      "exposure_sum": 18537.0,
+      "mean_exposure": 0.6436458333333334,
+      "mean_transaction_cost_per_symbol": 0.008982491164805654,
+      "mean_turnover_per_symbol": 18.04,
+      "observation_count": 28800,
+      "reason_counts": {
+        "INTRADAY_DRAWDOWN_LIMIT": 4255,
+        "MINUTE_TREND_WEAK": 14347,
+        "MINUTE_VOLATILITY_LIMIT": 1577,
+        "RECOVERY_COOLDOWN": 6336
+      },
+      "reduced_exposure_observation_count": 22887,
+      "reduced_exposure_ratio": 0.7946875,
+      "symbol_count": 75,
+      "transaction_cost": 0.673686837360424,
+      "turnover": 1353.0
+    },
+    "cost_bps": 5.0
+  },
+  "gates": [
+    {
+      "gate_id": "CANDIDATE_BEATS_COMPARATOR_AT_5_BPS",
+      "passed": false
+    },
+    {
+      "gate_id": "CANDIDATE_DRAWDOWN_NOT_WORSE_THAN_BASELINE_AT_5_BPS",
+      "passed": true
+    },
+    {
+      "gate_id": "MEAN_EXPOSURE_AT_LEAST_85_PERCENT",
+      "passed": false
+    },
+    {
+      "gate_id": "TURNOVER_AT_MOST_HALF_COMPARATOR",
+      "passed": true
+    },
+    {
+      "gate_id": "POSITIVE_AT_ZERO_AND_FIVE_BPS",
+      "passed": false
+    },
+    {
+      "gate_id": "LEAVE_ONE_SECTOR_OUT_MAJORITY",
+      "passed": false
+    }
+  ],
+  "generated_at": "2026-08-26T07:33:22.641035+08:00",
+  "preregistration_sha256": "03c1aaf16c7f2de513b48d3f4ed7f6aa968eea93f2d2bc4f65b338eca1406f9c",
+  "processed_bar_count": 1324800,
+  "promotion": "NOT_ELIGIBLE",
+  "promotion_reasons": [
+    "ONLY_EIGHT_RESERVED_SESSIONS",
+    "TAIL_PRICES_PARTIALLY_OBSERVED_DURING_FRONTEND_QA",
+    "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+    "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+    "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE"
+  ],
+  "report_id": "baostock-reserved-tail-high-exposure-v1",
+  "schema_version": 1,
+  "sector_win_count": 6,
+  "test_days": [
+    "2026-08-14",
+    "2026-08-17",
+    "2026-08-18",
+    "2026-08-19",
+    "2026-08-20",
+    "2026-08-21",
+    "2026-08-24",
+    "2026-08-25"
+  ],
+  "test_session_count": 8,
+  "warmup_session_count": 360
+}

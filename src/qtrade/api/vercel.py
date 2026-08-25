@@ -29,6 +29,12 @@ context.long_five_minute_manifest_path = (
 context.long_five_minute_research_report_path = (
     EVIDENCE_ROOT / "long-five-minute-walk-forward" / "report.json"
 )
+context.reserved_tail_preregistration_path = (
+    EVIDENCE_ROOT / "reserved-tail-diagnostic" / "preregistration.json"
+)
+context.reserved_tail_diagnostic_report_path = (
+    EVIDENCE_ROOT / "reserved-tail-diagnostic" / "report.json"
+)
 
 
 class VercelQueryPathApp:

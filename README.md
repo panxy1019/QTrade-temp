@@ -213,9 +213,24 @@ new parameter search.
 as a second, stronger robustness veto. The read-only
 `/long-five-minute-bars/{symbol}?trading_day=YYYY-MM-DD` endpoint verifies the
 same Parquet checksum and returns exactly the selected session's 48 native bars;
-the market page provides stock and date selectors without reading the reserved
-tail into the strategy engine. Neither endpoint authorizes realtime data, PAPER,
-strategy promotion or external orders.
+the market page provides stock and date selectors. The final eight sessions did
+not enter that six-fold study. They were later read exactly once by a separately
+committed preregistered diagnostic: the candidate policy was fixed before the
+read, all prior 360 sessions were used only for causal state warmup, and only the
+eight reserved sessions were scored.
+
+At 5 bps the reserved-tail baseline, high-exposure candidate and prior
+low-exposure comparator returned `-3.0960%`, `-3.0655%` and `-3.0157%`.
+The candidate improved drawdown versus the baseline and cut turnover below half
+the comparator, but missed the 85% exposure floor, lost to the comparator, stayed
+negative at 0/5 bps, and won only 6 of 15 leave-one-sector-out comparisons. It
+therefore passed only 2 of 6 locked gates and remains `NOT_ELIGIBLE`; the same
+tail must not be used for a second tuning iteration. The tail was partially
+viewed during frontend chart QA, so this is a diagnostic rather than a blind
+independent confirmation. `/reserved-tail-diagnostic` recomputes the gates and
+verifies the preregistration, dataset, prior report, curve and artifact hashes
+before returning the evidence. None of these endpoints authorizes realtime data,
+PAPER, strategy promotion or external orders.
 
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and

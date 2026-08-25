@@ -122,6 +122,8 @@ class AppContext:
     five_minute_research_report_path: Path | None = None
     long_five_minute_manifest_path: Path | None = None
     long_five_minute_research_report_path: Path | None = None
+    reserved_tail_preregistration_path: Path | None = None
+    reserved_tail_diagnostic_report_path: Path | None = None
     minute_overlay_reader: Callable[[], dict[str, object]] | None = None
     applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
     sellable_quantity_reader: Callable[[str, date], int] | None = None
@@ -396,6 +398,37 @@ def create_app(
             "leave_one_sector_out": [],
             "daily": [],
             "curve": [],
+        }
+
+    @app.get("/reserved-tail-diagnostic")
+    def reserved_tail_diagnostic(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        report = _load_verified_reserved_tail_diagnostic(
+            state.reserved_tail_diagnostic_report_path,
+            state.reserved_tail_preregistration_path,
+            state.long_five_minute_research_report_path,
+            dataset,
+        )
+        return report or {
+            "classification": "NO_VERIFIED_RESERVED_TAIL_DIAGNOSTIC",
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": ["MISSING_VERIFIED_RESERVED_TAIL_ARTIFACT"],
+            "gates": [],
+            "cost_stress": [],
+            "daily": [],
+            "leave_one_sector_out": [],
+            "curve": [],
+            "external_order_transmission": False,
         }
 
     @app.get("/five-minute-bars/{symbol}")
@@ -1004,6 +1037,14 @@ def context_from_runtime(
         ),
         long_five_minute_research_report_path=Path(
             "runtime/research/baostock-five-minute-long-walk-forward-v1/"
+            "report.json"
+        ),
+        reserved_tail_preregistration_path=Path(
+            "docs/preregistrations/"
+            "baostock-reserved-tail-high-exposure-v1.json"
+        ),
+        reserved_tail_diagnostic_report_path=Path(
+            "runtime/research/baostock-reserved-tail-high-exposure-v1/"
             "report.json"
         ),
         applied_trade_reader=bundle.journal.applied_trade_payloads,
@@ -3925,6 +3966,284 @@ def _execution_diagnostics_match_folds(
         )
         and aggregate["reason_counts"] == dict(sorted(summed_reasons.items()))
     )
+
+
+def _load_verified_reserved_tail_diagnostic(
+    path: Path | None,
+    preregistration_path: Path | None,
+    prior_report_path: Path | None,
+    dataset: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if (
+        path is None
+        or preregistration_path is None
+        or dataset is None
+        or not path.is_file()
+        or not preregistration_path.is_file()
+    ):
+        return None
+    try:
+        preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+        report = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(preregistration, dict) or not isinstance(report, dict):
+            return None
+        preregistration_digest = preregistration.get("preregistration_sha256")
+        preregistration_unsigned = {
+            key: value
+            for key, value in preregistration.items()
+            if key != "preregistration_sha256"
+        }
+        report_digest = report.get("evidence_sha256")
+        report_unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        preregistration_dataset = preregistration.get("dataset")
+        evaluation = preregistration.get("evaluation_lock")
+        interpretation = preregistration.get("interpretation_lock")
+        candidate_lock = preregistration.get("candidate")
+        comparator_lock = preregistration.get("comparator")
+        prior_lock = preregistration.get("prior_evidence")
+        prior_report = _load_verified_five_minute_report(
+            prior_report_path,
+            dataset,
+            expected_report_id=(
+                "baostock-five-minute-long-expanding-walk-forward-v1"
+            ),
+            initial_train_sessions=120,
+            test_sessions_per_fold=40,
+            fold_count=6,
+            expected_promotion_reasons=(
+                "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",
+                "LONGER_PROVIDER_CROSSCHECK_REUSES_PREVIOUSLY_OBSERVED_CALENDAR",
+                "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+                "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+                "FREE_HISTORICAL_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
+                "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
+            ),
+            require_execution_diagnostics=True,
+        )
+        expected_reasons = [
+            "ONLY_EIGHT_RESERVED_SESSIONS",
+            "TAIL_PRICES_PARTIALLY_OBSERVED_DURING_FRONTEND_QA",
+            "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+            "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+            "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
+        ]
+        if (
+            not _is_sha256(preregistration_digest)
+            or _canonical_dict_sha256(preregistration_unsigned)
+            != preregistration_digest
+            or preregistration.get("status")
+            != "LOCKED_BEFORE_RESERVED_TAIL_ENGINE_READ"
+            or not isinstance(preregistration_dataset, dict)
+            or preregistration_dataset.get("data_version") != dataset["data_version"]
+            or preregistration_dataset.get("checksum") != dataset["checksum"]
+            or preregistration_dataset.get("evidence_sha256")
+            != dataset["evidence_sha256"]
+            or not isinstance(evaluation, dict)
+            or evaluation.get("selection_after_tail_read") is not False
+            or evaluation.get("parameter_changes_after_tail_read") is not False
+            or not isinstance(interpretation, dict)
+            or interpretation.get("promotion") != "NOT_ELIGIBLE"
+            or interpretation.get("no_second_tail_tuning_iteration") is not True
+            or not isinstance(candidate_lock, dict)
+            or not isinstance(comparator_lock, dict)
+            or not isinstance(prior_lock, dict)
+            or prior_report is None
+            or prior_lock.get("evidence_sha256")
+            != prior_report.get("evidence_sha256")
+            or not _is_sha256(report_digest)
+            or _canonical_dict_sha256(report_unsigned) != report_digest
+            or report.get("schema_version") != 1
+            or report.get("report_id")
+            != "baostock-reserved-tail-high-exposure-v1"
+            or report.get("classification")
+            != "PREREGISTERED_PARTIALLY_OBSERVED_RESERVED_TAIL_DIAGNOSTIC"
+            or report.get("preregistration_sha256") != preregistration_digest
+            or report.get("dataset") != preregistration_dataset
+            or report.get("candidate")
+            != {
+                "policy_id": candidate_lock.get("policy_id"),
+                "policy_hash": candidate_lock.get("policy_hash"),
+            }
+            or report.get("comparator") != comparator_lock
+            or report.get("warmup_session_count") != 360
+            or report.get("test_session_count") != 8
+            or report.get("processed_bar_count") != dataset["bar_count"]
+            or report.get("test_days") != evaluation.get("reserved_tail_days")
+            or report.get("test_days") != cast(list[str], dataset["trading_days"])[-8:]
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("promotion_reasons") != expected_reasons
+            or report.get("external_order_transmission") is not False
+        ):
+            return None
+        artifacts = report.get("artifacts")
+        expected_artifacts = {
+            "cost_stress.json",
+            "daily.json",
+            "leave_one_sector_out.json",
+            "curve.json",
+        }
+        if (
+            not isinstance(artifacts, dict)
+            or set(artifacts) != expected_artifacts
+            or not all(_is_sha256(value) for value in artifacts.values())
+        ):
+            return None
+        loaded: dict[str, object] = {}
+        for name in expected_artifacts:
+            content = _read_bounded_file(path.parent / name, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+            if content is None or sha256(content).hexdigest() != artifacts[name]:
+                return None
+            loaded[name] = json.loads(content)
+        costs = loaded["cost_stress.json"]
+        daily = loaded["daily.json"]
+        sectors = loaded["leave_one_sector_out.json"]
+        curve = loaded["curve.json"]
+        if (
+            not isinstance(costs, list)
+            or [float(row.get("cost_bps")) for row in costs]
+            != [0.0, 5.0, 10.0, 20.0]
+            or not isinstance(daily, list)
+            or len(daily) != 8
+            or [row.get("trading_day") for row in daily] != report["test_days"]
+            or not isinstance(sectors, list)
+            or len(sectors) != dataset["sector_count"]
+            or not isinstance(curve, list)
+            or len(curve) != 8 * len(SINA_FIVE_MINUTE_SESSION_TIMES)
+        ):
+            return None
+        expected_observations = 8 * len(SINA_FIVE_MINUTE_SESSION_TIMES) * cast(
+            int, dataset["symbol_count"]
+        )
+        for row in costs:
+            if (
+                not isinstance(row, dict)
+                or not _valid_minute_execution_diagnostics(
+                    row.get("candidate_execution"),
+                    expected_symbol_count=cast(int, dataset["symbol_count"]),
+                    expected_observation_count=expected_observations,
+                )
+                or not _valid_minute_execution_diagnostics(
+                    row.get("comparator_execution"),
+                    expected_symbol_count=cast(int, dataset["symbol_count"]),
+                    expected_observation_count=expected_observations,
+                )
+            ):
+                return None
+        five = next(row for row in costs if row["cost_bps"] == 5)
+        zero = next(row for row in costs if row["cost_bps"] == 0)
+        sector_wins = sum(bool(row.get("candidate_beats_comparator")) for row in sectors)
+        expected_gates = [
+            {
+                "gate_id": "CANDIDATE_BEATS_COMPARATOR_AT_5_BPS",
+                "passed": float(five["candidate"]["total_return"])
+                > float(five["comparator"]["total_return"]),
+            },
+            {
+                "gate_id": "CANDIDATE_DRAWDOWN_NOT_WORSE_THAN_BASELINE_AT_5_BPS",
+                "passed": float(five["candidate"]["maximum_drawdown"])
+                >= float(five["base"]["maximum_drawdown"]),
+            },
+            {
+                "gate_id": "MEAN_EXPOSURE_AT_LEAST_85_PERCENT",
+                "passed": float(five["candidate_execution"]["mean_exposure"])
+                >= 0.85,
+            },
+            {
+                "gate_id": "TURNOVER_AT_MOST_HALF_COMPARATOR",
+                "passed": float(
+                    five["candidate_execution"]["mean_turnover_per_symbol"]
+                )
+                <= 0.5
+                * float(five["comparator_execution"]["mean_turnover_per_symbol"]),
+            },
+            {
+                "gate_id": "POSITIVE_AT_ZERO_AND_FIVE_BPS",
+                "passed": float(zero["candidate"]["total_return"]) > 0
+                and float(five["candidate"]["total_return"]) > 0,
+            },
+            {
+                "gate_id": "LEAVE_ONE_SECTOR_OUT_MAJORITY",
+                "passed": sector_wins >= 12 and len(sectors) == 15,
+            },
+        ]
+        if (
+            report.get("five_bps") != five
+            or report.get("sector_win_count") != sector_wins
+            or report.get("gates") != expected_gates
+            or report.get("all_required_gates_passed")
+            is not all(bool(row["passed"]) for row in expected_gates)
+        ):
+            return None
+        previous: datetime | None = None
+        base_values: list[float] = []
+        candidate_values: list[float] = []
+        comparator_values: list[float] = []
+        allowed_days = set(cast(list[str], report["test_days"]))
+        allowed_times = set(SINA_FIVE_MINUTE_SESSION_TIMES)
+        for row in curve:
+            instant = datetime.fromisoformat(str(row.get("timestamp")))
+            local = instant.astimezone(ZoneInfo("Asia/Shanghai"))
+            values = [
+                float(row.get("base_equity")),
+                float(row.get("candidate_equity")),
+                float(row.get("comparator_equity")),
+            ]
+            if (
+                instant.tzinfo is None
+                or previous is not None
+                and instant <= previous
+                or local.date().isoformat() not in allowed_days
+                or local.time() not in allowed_times
+                or not all(isfinite(value) and value > 0 for value in values)
+            ):
+                return None
+            previous = instant
+            base_values.append(values[0])
+            candidate_values.append(values[1])
+            comparator_values.append(values[2])
+        if not (
+            isclose(base_values[-1] - 1, float(five["base"]["total_return"]))
+            and isclose(
+                candidate_values[-1] - 1,
+                float(five["candidate"]["total_return"]),
+            )
+            and isclose(
+                comparator_values[-1] - 1,
+                float(five["comparator"]["total_return"]),
+            )
+        ):
+            return None
+        return {
+            **report,
+            "minute_dataset": dataset,
+            "cost_stress": costs,
+            "daily": daily,
+            "leave_one_sector_out": sectors,
+            "curve": curve,
+        }
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _canonical_dict_sha256(value: dict[str, object]) -> str:
+    canonical = json.dumps(
+        value,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    )
+    return sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def _load_backtest_preview_bars(

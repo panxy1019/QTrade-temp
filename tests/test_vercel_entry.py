@@ -72,6 +72,21 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert len(
         {fold["execution"]["observation_count"] for fold in long_five_minute["folds"]}
     ) == 1
+    reserved_tail = client.get(_api("/reserved-tail-diagnostic")).json()
+    assert reserved_tail["promotion"] == "NOT_ELIGIBLE"
+    assert reserved_tail["all_required_gates_passed"] is False
+    assert sum(bool(gate["passed"]) for gate in reserved_tail["gates"]) == 2
+    assert reserved_tail["test_session_count"] == 8
+    assert reserved_tail["five_bps"]["candidate"]["total_return"] < 0
+    assert (
+        reserved_tail["five_bps"]["candidate"]["total_return"]
+        < reserved_tail["five_bps"]["comparator"]["total_return"]
+    )
+    assert reserved_tail["five_bps"]["candidate_execution"]["mean_exposure"] < 0.85
+    assert reserved_tail["sector_win_count"] == 6
+    assert len(reserved_tail["daily"]) == 8
+    assert len(reserved_tail["curve"]) == 384
+    assert reserved_tail["external_order_transmission"] is False
     five_minute_bars = client.get(_api("/five-minute-bars/601166")).json()
     assert five_minute_bars["observation_type"] == (
         "HISTORICAL_FIVE_MINUTE_BAR_SERIES"

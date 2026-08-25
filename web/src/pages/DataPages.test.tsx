@@ -6,6 +6,7 @@ import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, 
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
 vi.mock('../charts/MinuteBacktestChart', () => ({ MinuteBacktestChart: () => <div data-testid="minute-backtest-chart" /> }))
+vi.mock('../charts/ReservedTailChart', () => ({ ReservedTailChart: () => <div data-testid="reserved-tail-chart" /> }))
 vi.mock('../charts/MinuteHistoryChart', () => ({ MinuteHistoryChart: () => <div data-testid="minute-history-chart" /> }))
 vi.mock('../api/client', () => ({
   prometheusMetricsUrl: '/metrics/prometheus',
@@ -232,6 +233,51 @@ const data = {
     subgroups: [{ group: 'STOCK', symbol_count: 75, base: { total_return: 0.4082847, maximum_drawdown: -0.151, realized_minute_volatility: 0.0022, point_count: 11520 }, overlay: { total_return: 0.010438, maximum_drawdown: -0.1218, realized_minute_volatility: 0.001, point_count: 11520 } }],
     leave_one_sector_out: [], daily: [],
     curve: [{ timestamp: '2025-07-01T09:35:00+08:00', base_equity: 1, overlay_equity: 1 }],
+  },
+  reservedTailDiagnostic: {
+    classification: 'PREREGISTERED_PARTIALLY_OBSERVED_RESERVED_TAIL_DIAGNOSTIC',
+    promotion: 'NOT_ELIGIBLE',
+    promotion_reasons: ['ONLY_EIGHT_RESERVED_SESSIONS', 'TAIL_PRICES_PARTIALLY_OBSERVED_DURING_FRONTEND_QA'],
+    minute_dataset: null,
+    candidate: { policy_id: 'five-conservative-high-exposure-v1', policy_hash: '3'.repeat(64) },
+    comparator: { policy_id: 'five-reduction-soft-v1', policy_hash: '4'.repeat(64) },
+    warmup_session_count: 360,
+    test_session_count: 8,
+    test_days: ['2026-08-14', '2026-08-17', '2026-08-18', '2026-08-19', '2026-08-20', '2026-08-21', '2026-08-24', '2026-08-25'],
+    all_required_gates_passed: false,
+    sector_win_count: 6,
+    five_bps: {
+      cost_bps: 5,
+      base: { total_return: -0.0309598, maximum_drawdown: -0.0676873, realized_minute_volatility: 0.0022, point_count: 384 },
+      candidate: { total_return: -0.0306553, maximum_drawdown: -0.0503371, realized_minute_volatility: 0.00151, point_count: 384 },
+      comparator: { total_return: -0.0301575, maximum_drawdown: -0.0391873, realized_minute_volatility: 0.00091, point_count: 384 },
+      candidate_execution: { ...longExecutionFixture, observation_count: 28800, mean_exposure: 0.8250625, reduced_exposure_ratio: 0.6896875, mean_turnover_per_symbol: 3.0826667, mean_transaction_cost_per_symbol: 0.002958 },
+      comparator_execution: { ...longExecutionFixture, observation_count: 28800, mean_exposure: 0.6436458, reduced_exposure_ratio: 0.7946875, mean_turnover_per_symbol: 18.04, mean_transaction_cost_per_symbol: 0.0089825 },
+    },
+    gates: [
+      { gate_id: 'CANDIDATE_BEATS_COMPARATOR_AT_5_BPS', passed: false },
+      { gate_id: 'CANDIDATE_DRAWDOWN_NOT_WORSE_THAN_BASELINE_AT_5_BPS', passed: true },
+      { gate_id: 'MEAN_EXPOSURE_AT_LEAST_85_PERCENT', passed: false },
+      { gate_id: 'TURNOVER_AT_MOST_HALF_COMPARATOR', passed: true },
+      { gate_id: 'POSITIVE_AT_ZERO_AND_FIVE_BPS', passed: false },
+      { gate_id: 'LEAVE_ONE_SECTOR_OUT_MAJORITY', passed: false },
+    ],
+    cost_stress: [],
+    daily: [{
+      trading_day: '2026-08-14',
+      base: { total_return: 0.00632, maximum_drawdown: -0.00757, realized_minute_volatility: 0.00156, point_count: 48 },
+      candidate: { total_return: -0.00018, maximum_drawdown: -0.00556, realized_minute_volatility: 0.00083, point_count: 48 },
+      comparator: { total_return: -0.00308, maximum_drawdown: -0.00610, realized_minute_volatility: 0.00067, point_count: 48 },
+    }],
+    leave_one_sector_out: Array.from({ length: 15 }, (_, index) => ({
+      excluded_sector_code: String(801000 + index), excluded_sector_name: `行业${index + 1}`,
+      excluded_symbol_count: 5, retained_symbol_count: 70,
+      candidate: { total_return: -0.03, maximum_drawdown: -0.05, realized_minute_volatility: 0.0015, point_count: 384 },
+      comparator: { total_return: -0.029, maximum_drawdown: -0.04, realized_minute_volatility: 0.0009, point_count: 384 },
+      candidate_beats_comparator: index < 6,
+    })),
+    curve: [{ timestamp: '2026-08-14T09:35:00+08:00', base_equity: 1, candidate_equity: 1, comparator_equity: 1 }],
+    external_order_transmission: false,
   },
   reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
   reporting: {
@@ -612,7 +658,7 @@ describe('verified backtest analytics', () => {
     fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
     expect(await screen.findByText('已完成 632 个会话、30 个标的 · 动量')).toBeInTheDocument()
     expect(screen.getByText(/即时预览，不是策略晋级证据/)).toBeInTheDocument()
-    expect(screen.getByText(/结论固定为 NOT_ELIGIBLE/)).toBeInTheDocument()
+    expect(screen.getAllByText(/结论固定为 NOT_ELIGIBLE/).length).toBeGreaterThan(0)
     expect(runBacktestPreview).toHaveBeenCalledWith(expect.objectContaining({
       factor: 'momentum', horizons: [20, 60, 120], top_k: 3, rebalance_every: 20,
     }))
@@ -645,6 +691,12 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/26.87% 初始权益单位/)).toBeInTheDocument()
     expect(screen.getByText(/分钟趋势弱 433,024/)).toBeInTheDocument()
     expect(screen.getByText(/同一标的-Bar 可以同时命中多个风险原因/)).toBeInTheDocument()
+    expect(screen.getByText(/预注册尾部诊断被拒绝：仅通过 2\/6 个门槛/)).toBeInTheDocument()
+    expect(screen.getByText(/失败后不二次调参/)).toBeInTheDocument()
+    expect(screen.getAllByText(/82.51%/).length).toBeGreaterThan(0)
+    expect(screen.getByText(/15 个整行业剔除中至少胜 12 个/)).toBeInTheDocument()
+    expect(screen.getByText(/不是全盲独立测试/)).toBeInTheDocument()
+    expect(screen.getByTestId('reserved-tail-chart')).toBeInTheDocument()
     expect(screen.getAllByText('样本组')).toHaveLength(2)
     expect(screen.getByText('整行业剔除')).toBeInTheDocument()
     expect(screen.getByText('基础化工')).toBeInTheDocument()
