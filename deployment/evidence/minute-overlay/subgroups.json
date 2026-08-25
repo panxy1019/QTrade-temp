@@ -17,18 +17,18 @@
   },
   {
     "base": {
-      "maximum_drawdown": -0.015312081683394041,
+      "maximum_drawdown": -0.017616474899473822,
       "point_count": 476,
-      "realized_minute_volatility": 0.0005090475009605661,
-      "total_return": -0.005990254446207266
+      "realized_minute_volatility": 0.0004614759782020154,
+      "total_return": -0.010402803703248642
     },
     "group": "STOCK",
     "overlay": {
-      "maximum_drawdown": -0.004364007241611456,
+      "maximum_drawdown": -0.0033840890348724173,
       "point_count": 476,
-      "realized_minute_volatility": 0.0001324590279357199,
-      "total_return": -0.0012268197336304798
+      "realized_minute_volatility": 0.00010167533718877268,
+      "total_return": -0.0026373928347822595
     },
-    "symbol_count": 15
+    "symbol_count": 75
   }
 ]

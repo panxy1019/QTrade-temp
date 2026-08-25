@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from collections import Counter, deque
+from collections import Counter, defaultdict, deque
 from collections.abc import Awaitable, Callable
 from contextlib import nullcontext
 from dataclasses import asdict, dataclass
@@ -2991,12 +2991,17 @@ def _load_verified_minute_dataset(path: Path | None) -> dict[str, object] | None
             ):
                 return None
             stock_metadata[symbol] = row
+        stock_count_by_sector = Counter(
+            str(row["sector_code"]) for row in stock_metadata.values()
+        )
         if (
             evidence.get("etf_count")
             != len(set(eligible) & set(cast(list[str], etfs)))
             or evidence.get("stock_count") != len(stock_metadata)
             or evidence.get("sector_count")
-            != len({row["sector_code"] for row in stock_metadata.values()})
+            != len(stock_count_by_sector)
+            or evidence.get("stock_count_by_sector")
+            != dict(sorted(stock_count_by_sector.items()))
             or not set(stock_metadata).issubset(eligible)
         ):
             return None
@@ -3106,6 +3111,11 @@ def _load_verified_minute_report(
             or report_dataset.get("data_version") != dataset["data_version"]
             or report_dataset.get("checksum") != dataset["checksum"]
             or report_dataset.get("evidence_sha256") != dataset["evidence_sha256"]
+            or report_dataset.get("bar_count") != dataset["bar_count"]
+            or report_dataset.get("symbol_count") != dataset["symbol_count"]
+            or report_dataset.get("etf_count") != dataset["etf_count"]
+            or report_dataset.get("stock_count") != dataset["stock_count"]
+            or report_dataset.get("sector_count") != dataset["sector_count"]
             or not isinstance(causal, dict)
             or causal.get("signal_observed_at") != "BAR_CLOSE_T"
             or causal.get("exposure_change_at") != "BAR_OPEN_T_PLUS_1"
@@ -3167,6 +3177,28 @@ def _load_verified_minute_report(
             * len(SINA_COMPLETE_SESSION_TIMES)
         ):
             return None
+        stocks_by_sector: dict[str, list[str]] = defaultdict(list)
+        for instrument in cast(list[dict[str, object]], dataset["instruments"]):
+            if instrument.get("instrument_type") == "STOCK":
+                code = instrument.get("sector_code")
+                symbol = instrument.get("symbol")
+                if not isinstance(code, str) or not isinstance(symbol, str):
+                    return None
+                stocks_by_sector[code].append(symbol)
+        sector_row_by_code = {
+            row.get("excluded_sector_code"): row for row in sector_rows
+        }
+        if set(sector_row_by_code) != set(stocks_by_sector):
+            return None
+        for code, symbols in stocks_by_sector.items():
+            row = sector_row_by_code[code]
+            if (
+                row.get("excluded_symbols") != symbols
+                or row.get("excluded_symbol_count") != len(symbols)
+                or row.get("retained_symbol_count")
+                != cast(int, dataset["symbol_count"]) - len(symbols)
+            ):
+                return None
         previous: datetime | None = None
         allowed_days = set(cast(list[str], dataset["trading_days"]))
         allowed_times = set(SINA_COMPLETE_SESSION_TIMES)

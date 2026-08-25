@@ -124,22 +124,26 @@ read-only bridge must be selected and validated before forward SHADOW/PAPER use.
 Recent historical minute research uses a separate bounded Sina HTTP reader. It
 keeps only complete provider-native sessions and never invents the source's
 omitted 14:58/14:59 timestamps. The frozen universe combines 30 ETF candidates
-with one current CSI 300 representative from each of 15 sectors; incomplete ETFs
-are excluded with their missing days retained in the signed manifest.
+with five current CSI 300 stocks from each of 15 sectors; incomplete ETFs are
+excluded with their missing days retained in the signed manifest.
 
 ```bash
+.venv/bin/python scripts/build_akshare_sector_stock_universe.py
+
 QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true .venv/bin/python \
   scripts/sina_minute_history_ingest.py \
-  --data-version sina-minute-multiasset-20260825-v2
+  --stock-universe runtime/universes/akshare-csi300-sw15x5-current-20260731-v1.json \
+  --data-version sina-minute-multiasset-sw15x5-20260825-v3
 
 .venv/bin/python scripts/run_sina_minute_overlay_backtest.py \
-  --data-version sina-minute-multiasset-20260825-v2
+  --data-version sina-minute-multiasset-sw15x5-20260825-v3 \
+  --output runtime/research/sina-minute-overlay-sw15x5-v2
 ```
 
 The minute diagnostic observes each signal at bar close and changes exposure
 only at the next bar open. Seven policies are ranked on the first three sessions;
 the chosen policy is then read once on the final two sessions, with 0/5/10/20 bps
-cost stress, ETF/stock subgroups and 15 leave-one-sector-out checks. Five recent
+cost stress, ETF/stock subgroups and 15 whole-sector leave-one-out checks. Five recent
 sessions are far too short for promotion, so the report is always
 `NOT_ELIGIBLE` and cannot authorize PAPER or live market access.
 

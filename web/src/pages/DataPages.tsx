@@ -112,7 +112,7 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
         {
           key: 'minute', label: `历史分时 · ${minuteDataset?.bar_count ?? 0}`,
           children: <Space orientation="vertical" style={{ width: '100%' }}>
-            <Alert showIcon type={minuteDataset ? 'success' : 'warning'} title={minuteDataset ? `已验证 1 分钟数据：${minuteDataset.symbol_count} 标的 × ${minuteDataset.session_count} 日` : '尚无校验通过的历史分时数据'} description={minuteDataset ? `${minuteDataset.observed_start} 至 ${minuteDataset.observed_end}；22 ETF + 15 行业股。来源原生每个完整日 238 点，不合成 14:58/14:59。` : '签名清单、Parquet checksum 或完整交易日网格未通过。'} />
+            <Alert showIcon type={minuteDataset ? 'success' : 'warning'} title={minuteDataset ? `已验证 1 分钟数据：${minuteDataset.symbol_count} 标的 × ${minuteDataset.session_count} 日` : '尚无校验通过的历史分时数据'} description={minuteDataset ? `${minuteDataset.observed_start} 至 ${minuteDataset.observed_end}；${minuteDataset.etf_count} ETF + ${minuteDataset.stock_count} 行业股，覆盖 ${minuteDataset.sector_count} 个行业。来源原生每个完整日 238 点，不合成 14:58/14:59。` : '签名清单、Parquet checksum 或完整交易日网格未通过。'} />
             <Card title={`${activeMinuteSymbol ?? '—'} 已验证历史分时线`}><MinuteHistoryChart series={displayedMinuteSeries} /><Typography.Text type="secondary">{displayedMinuteSeries?.bars.length ? `${displayedMinuteSeries.bars.length}/${displayedMinuteSeries.total_count} 根 1 分钟 Bar；版本 ${displayedMinuteSeries.data_version}。` : '点击下方 ETF 或股票切换标的。'} 这是最近历史分时，不是盘中实时跟踪。</Typography.Text></Card>
             <Table rowKey="symbol" size="small" columns={minuteColumns} dataSource={minuteInstruments} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} onRow={(row) => ({ onClick: () => setSelectedMinuteSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeMinuteSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的历史分时标的" /> }} />
           </Space>,
@@ -296,6 +296,21 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
         { title: '修正后收益', render: (_: unknown, row: NonNullable<typeof minuteResearch>['cost_stress'][number]) => formatPercent(String(row.overlay.total_return)) },
         { title: '相对基准', render: (_: unknown, row: NonNullable<typeof minuteResearch>['cost_stress'][number]) => formatPercent(String(row.overlay.total_return - row.base.total_return)) },
         { title: '最大回撤', render: (_: unknown, row: NonNullable<typeof minuteResearch>['cost_stress'][number]) => formatPercent(String(row.overlay.maximum_drawdown)) },
+      ]} />
+      <Table rowKey="group" size="small" pagination={false} dataSource={minuteResearch?.subgroups ?? []} columns={[
+        { title: '样本组', dataIndex: 'group' },
+        { title: '标的数', dataIndex: 'symbol_count' },
+        { title: '基准收益', render: (_: unknown, row: NonNullable<typeof minuteResearch>['subgroups'][number]) => formatPercent(String(row.base.total_return)) },
+        { title: '修正后收益', render: (_: unknown, row: NonNullable<typeof minuteResearch>['subgroups'][number]) => formatPercent(String(row.overlay.total_return)) },
+        { title: '修正后回撤', render: (_: unknown, row: NonNullable<typeof minuteResearch>['subgroups'][number]) => formatPercent(String(row.overlay.maximum_drawdown)) },
+      ]} />
+      <Table rowKey="excluded_sector_code" size="small" pagination={{ pageSize: 8, showSizeChanger: false }} dataSource={minuteResearch?.leave_one_sector_out ?? []} columns={[
+        { title: '整行业剔除', dataIndex: 'excluded_sector_name' },
+        { title: '剔除股票数', dataIndex: 'excluded_symbol_count' },
+        { title: '保留标的数', dataIndex: 'retained_symbol_count' },
+        { title: '修正后收益', render: (_: unknown, row: NonNullable<typeof minuteResearch>['leave_one_sector_out'][number]) => formatPercent(String(row.overlay.total_return)) },
+        { title: '相对全样本', render: (_: unknown, row: NonNullable<typeof minuteResearch>['leave_one_sector_out'][number]) => formatPercent(String(row.return_delta_vs_all)) },
+        { title: '修正后回撤', render: (_: unknown, row: NonNullable<typeof minuteResearch>['leave_one_sector_out'][number]) => formatPercent(String(row.overlay.maximum_drawdown)) },
       ]} />
       <Typography.Text type="secondary">7 个冻结参数只在前三日排序；后两日不回填选择。0/5/10 bps 相对基准改善，20 bps 优势消失；只有五个最近交易日、当前非 PIT 样本池且没有 PAPER/SHADOW，会永久保持 NOT_ELIGIBLE。</Typography.Text>
     </Card>

@@ -9,7 +9,6 @@ description = "Safety-first A-share and ETF quantitative trading platform"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-  "duckdb>=1.4,<2",
   "fastapi>=0.116,<1",
   "pyarrow>=21,<24",
   "uvicorn>=0.35,<1",

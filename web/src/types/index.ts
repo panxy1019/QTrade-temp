@@ -577,7 +577,9 @@ export interface MinuteResearchReport {
   leave_one_sector_out: Array<{
     excluded_sector_code: string
     excluded_sector_name: string
-    excluded_symbol: string
+    excluded_symbols: string[]
+    excluded_symbol_count: number
+    retained_symbol_count: number
     overlay: MinuteCurveMetrics
     return_delta_vs_all: number
   }>

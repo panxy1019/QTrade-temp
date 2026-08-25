@@ -17,4 +17,5 @@ build/
 web/node_modules/
 web/.vite-*.log
 /.vercel/
+/_uv/
 /.env.local

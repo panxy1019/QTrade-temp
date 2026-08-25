@@ -6,7 +6,6 @@ from decimal import Decimal
 from hashlib import sha256
 from pathlib import Path
 
-import duckdb
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
 
@@ -68,19 +67,22 @@ class ParquetBarStore:
         checksum = sha256(target.read_bytes()).hexdigest()
         if checksum != manifest.checksum:
             raise DatasetIntegrityError("dataset checksum mismatch")
-        relation = duckdb.read_parquet(str(target))
-        rows = relation.order("timestamp").fetchall()
+        rows = sorted(pq.read_table(target).to_pylist(), key=lambda row: row["timestamp"])
         records = [
             Bar(
-                symbol=row[0],
-                exchange=row[1],
-                timestamp=datetime.fromisoformat(row[2]),
-                trading_day=row[3] if isinstance(row[3], date) else date.fromisoformat(row[3]),
-                open=Decimal(row[4]),
-                high=Decimal(row[5]),
-                low=Decimal(row[6]),
-                close=Decimal(row[7]),
-                volume=Decimal(row[8]),
+                symbol=row["symbol"],
+                exchange=row["exchange"],
+                timestamp=datetime.fromisoformat(row["timestamp"]),
+                trading_day=(
+                    row["trading_day"]
+                    if isinstance(row["trading_day"], date)
+                    else date.fromisoformat(row["trading_day"])
+                ),
+                open=Decimal(row["open"]),
+                high=Decimal(row["high"]),
+                low=Decimal(row["low"]),
+                close=Decimal(row["close"]),
+                volume=Decimal(row["volume"]),
             )
             for row in rows
         ]

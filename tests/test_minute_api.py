@@ -16,10 +16,15 @@ def test_packaged_minute_evidence_fails_closed_after_artifact_tampering(
 
     dataset = _load_verified_minute_dataset(dataset_root / "manifest.json")
     assert dataset is not None
-    assert dataset["bar_count"] == 44_030
+    assert dataset["bar_count"] == 115_430
+    assert dataset["symbol_count"] == 97
+    assert dataset["stock_count"] == 75
     report = _load_verified_minute_report(report_root / "report.json", dataset)
     assert report is not None
     assert report["selected"]["policy_id"] == "drawdown-tight-v1"
+    assert {row["excluded_symbol_count"] for row in report["leave_one_sector_out"]} == {
+        5
+    }
 
     with (report_root / "curve.json").open("ab") as stream:
         stream.write(b" ")

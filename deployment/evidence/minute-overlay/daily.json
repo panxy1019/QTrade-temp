@@ -1,80 +1,80 @@
 [
   {
     "base": {
-      "maximum_drawdown": -0.021313471405567386,
+      "maximum_drawdown": -0.019748640793931793,
       "point_count": 238,
-      "realized_minute_volatility": 0.0005649781649675018,
-      "total_return": -0.01788700578442881
+      "realized_minute_volatility": 0.0005883619810556517,
+      "total_return": -0.01600493497581712
     },
     "overlay": {
-      "maximum_drawdown": -0.0009167539222785237,
+      "maximum_drawdown": -0.0011060184682629703,
       "point_count": 238,
-      "realized_minute_volatility": 4.774653556857187e-05,
-      "total_return": -0.0003139394569446896
+      "realized_minute_volatility": 5.0075313644930426e-05,
+      "total_return": -0.0007160604102273149
     },
     "partition": "TRAIN",
     "trading_day": "2026-08-19"
   },
   {
     "base": {
-      "maximum_drawdown": -0.011769277631938913,
+      "maximum_drawdown": -0.011037074611798037,
       "point_count": 238,
-      "realized_minute_volatility": 0.0006263236791956227,
-      "total_return": 0.0036546396752297206
+      "realized_minute_volatility": 0.0006289812183169953,
+      "total_return": 0.0030963064851159405
     },
     "overlay": {
-      "maximum_drawdown": -0.005164224161007924,
+      "maximum_drawdown": -0.003681365697886685,
       "point_count": 238,
-      "realized_minute_volatility": 9.9481279477756e-05,
-      "total_return": -0.004765568587972613
+      "realized_minute_volatility": 7.766425364557527e-05,
+      "total_return": -0.0034586228692603527
     },
     "partition": "TRAIN",
     "trading_day": "2026-08-20"
   },
   {
     "base": {
-      "maximum_drawdown": -0.0053171438110496405,
+      "maximum_drawdown": -0.005716966514375477,
       "point_count": 238,
-      "realized_minute_volatility": 0.0004934109966636845,
-      "total_return": 0.002120326135159445
+      "realized_minute_volatility": 0.0004690697923656388,
+      "total_return": 0.0006825160522945239
     },
     "overlay": {
-      "maximum_drawdown": -0.0026120716985040815,
+      "maximum_drawdown": -0.003360485150277648,
       "point_count": 238,
-      "realized_minute_volatility": 0.00014560823705895236,
-      "total_return": -0.0018655687818572853
+      "realized_minute_volatility": 0.00011505147615384057,
+      "total_return": -0.0030278669296260885
     },
     "partition": "TRAIN",
     "trading_day": "2026-08-21"
   },
   {
     "base": {
-      "maximum_drawdown": -0.015874363098799305,
+      "maximum_drawdown": -0.017255634173152012,
       "point_count": 238,
-      "realized_minute_volatility": 0.000479851389002891,
-      "total_return": -0.009011113018396855
+      "realized_minute_volatility": 0.00047753499174639437,
+      "total_return": -0.010784920712560875
     },
     "overlay": {
-      "maximum_drawdown": -0.002480672842203435,
+      "maximum_drawdown": -0.001897849318857947,
       "point_count": 238,
-      "realized_minute_volatility": 0.00010889128273632387,
-      "total_return": -0.001583203819075285
+      "realized_minute_volatility": 8.851447743780515e-05,
+      "total_return": -0.001299662616229602
     },
     "partition": "TEST",
     "trading_day": "2026-08-24"
   },
   {
     "base": {
-      "maximum_drawdown": -0.005542632431012384,
+      "maximum_drawdown": -0.006413677368213966,
       "point_count": 238,
-      "realized_minute_volatility": 0.0004564093087257204,
-      "total_return": 0.0014367913497477236
+      "realized_minute_volatility": 0.00044797309833937316,
+      "total_return": 0.0007756854714999761
     },
     "overlay": {
-      "maximum_drawdown": -0.003316702799956772,
+      "maximum_drawdown": -0.0027846108081338583,
       "point_count": 238,
-      "realized_minute_volatility": 0.00015364386779327476,
-      "total_return": -0.0019120154772931386
+      "realized_minute_volatility": 0.00012011186848344858,
+      "total_return": -0.001885275578225598
     },
     "partition": "TEST",
     "trading_day": "2026-08-25"

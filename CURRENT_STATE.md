@@ -409,23 +409,24 @@ Last updated: 2026-08-26
 - Historical minute ingestion: a bounded Sina reader now fetches raw 1-minute
   bars through a retrying `httpx` boundary, validates positive OHLCV and the
   provider-native A-share session grid, and never synthesizes omitted minutes.
-  The first synchronized dataset contains 44,030 bars across 22 ETFs and 15
-  stocks spanning 15 sectors for the five latest common completed sessions
+  The current synchronized dataset contains 115,430 bars across 22 ETFs and 75
+  stocks spanning 15 sectors with five stocks per sector for the five latest common completed sessions
   (2026-08-19 through 2026-08-25). Its Parquet checksum is
-  `3d13e9743101a5acceefc4ffec4c3895f1d8c05c0398d538a1e589ac0964046b`;
+  `ef25bdff090b8756e1c862c77f75263919ad1272a7fe19e8cf5687f9b94e1f9c`;
   classification remains recent historical, non-PIT and `NOT_ELIGIBLE` for
   realtime/PAPER readiness.
 - Causal minute backtest: seven frozen reduction-only policies were ranked on
   2026-08-19 through 2026-08-21 and `drawdown-tight-v1` was read once on the
-  2026-08-24/25 holdout. At 5 bps the base returned `-0.7587%` with `-1.5874%`
-  maximum drawdown; the overlay returned `-0.3492%` with `-0.5026%` drawdown.
+  2026-08-24/25 holdout. At 5 bps the base returned `-1.0018%` with `-1.7256%`
+  maximum drawdown; the overlay returned `-0.3182%` with `-0.3933%` drawdown.
   Excess return stayed positive at 0/5/10 bps but turned negative at 20 bps;
-  both ETF and stock subgroups and all 15 leave-one-sector-out variants remained
-  negative in absolute return. This is useful risk-reduction diagnostics, not a
+  both ETF and stock subgroups and all 15 whole-sector leave-one-out variants remained
+  negative in absolute return. Each sector check removes all five constituent
+  stocks. This is useful risk-reduction diagnostics, not a
   profitable or promotion-eligible strategy result.
 - Public minute evidence: `/minute-research` verifies the signed report plus all
-  six artifact hashes, while `/minute-bars/{symbol}` revalidates the 548 KB
-  Parquet checksum and the complete 37 × 5 × 238 grid before returning a bounded
+  six artifact hashes, while `/minute-bars/{symbol}` revalidates the packaged
+  Parquet checksum and the complete 97 × 5 × 238 grid before returning a bounded
   historical series. The market page switches between daily K and 1-minute
   lines; the backtest page shows the locked minute curve, daily partitions and
   cost stress. All labels remain historical, public read-only and not realtime.

@@ -5,7 +5,8 @@
   "outputDirectory": "web/dist",
   "functions": {
     "api/index.py": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "excludeFiles": "{{tests,scripts,docs,plans,runtime,build,web,.venv,.vercel,_uv,.mypy_cache,.pytest_cache,.ruff_cache}/**,**/pyarrow/{tests/**,include/**,src/**,*flight*}}"
     }
   },
   "rewrites": [

@@ -1,11 +1,11 @@
 {
   "artifacts": {
-    "candidates.json": "2cc30481a87379109ea2c702ce59da7ad1cb15c4b19c7671893e45cff2d1f1a3",
-    "cost_stress.json": "59dc3c74b5559a9ed852867413f2bd826c69cef98d116fcbcb0cabdf539a49f5",
-    "curve.json": "10134d5ffbe381f48c018264ae738f40a918e3428c9b0c98bdf3b31e01257877",
-    "daily.json": "f821a9f270424b2c886feb67652e43f8cf219c277034376a107f01b1f407899c",
-    "leave_one_sector_out.json": "d0abf5369200b178c942ad688bdf127be49504331ab73299a9d92cbc024e4901",
-    "subgroups.json": "cfff35913bad379b8c7ab1b2db96230ce103e93ce8f899b2afbe1846759d5932"
+    "candidates.json": "928f84b8500f2504d6344ec0daa3311930c43a7df41c9f1266e4f98d6c456d69",
+    "cost_stress.json": "6d7a740876be4d84b8c600f1225303576070f0c71955fac6eb68b8c30bf856bd",
+    "curve.json": "7242fd5adf6b225577ae21f56bd1815f1c71a9696df8b1e24d1c212b8ed54c6a",
+    "daily.json": "f284d1fba905e0548410f5996acd42b6291b41771ae37d78ade353a5d0d108bc",
+    "leave_one_sector_out.json": "8096589567fdc39ae0236a35fa6b8488fd590191b373bfd7a79609855b167d3c",
+    "subgroups.json": "1b09ad65d27aec4f4c76447b1a6f99c2113f8c3ef3d69915fb4d0d418b8d18b4"
   },
   "causal_contract": {
     "daily_target": "constant unit target known before each session",
@@ -16,19 +16,19 @@
     "signal_observed_at": "BAR_CLOSE_T"
   },
   "dataset": {
-    "bar_count": 44030,
-    "checksum": "3d13e9743101a5acceefc4ffec4c3895f1d8c05c0398d538a1e589ac0964046b",
+    "bar_count": 115430,
+    "checksum": "ef25bdff090b8756e1c862c77f75263919ad1272a7fe19e8cf5687f9b94e1f9c",
     "classification": "noncommercial_recent_historical_1m_non_pit_not_eligible",
-    "data_version": "sina-minute-multiasset-20260825-v2",
+    "data_version": "sina-minute-multiasset-sw15x5-20260825-v3",
     "etf_count": 22,
-    "evidence_sha256": "a990284760d0f189f5067a7a44a471e5e90aa54e9e7a9951a80c5fb72c0f9a4e",
+    "evidence_sha256": "d841d22ffb6e18f539e2ae1deaacb9fbad15daae04169757a2f52ccc10f92398",
     "sector_count": 15,
-    "stock_count": 15,
-    "symbol_count": 37
+    "stock_count": 75,
+    "symbol_count": 97
   },
-  "evidence_sha256": "318a411302d3eea5f7679bed0a0a0780c46705a954748066b75399044081359b",
+  "evidence_sha256": "94313073102ced1527501c084143b2219d3b2f6e2cd93b3c89c57dde8f06588f",
   "external_order_transmission": false,
-  "generated_at": "2026-08-26T03:55:29.949810+08:00",
+  "generated_at": "2026-08-26T04:20:00.383147+08:00",
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
     "ONLY_FIVE_RECENT_SESSIONS",
@@ -39,7 +39,7 @@
   ],
   "real_data_paper_readiness": false,
   "realtime_readiness": false,
-  "report_id": "sina-minute-overlay-five-session-v1",
+  "report_id": "sina-minute-overlay-five-session-v2",
   "robustness": {
     "cost_scenarios": 4,
     "daily_partitions": 5,
@@ -49,8 +49,8 @@
   "schema_version": 1,
   "selected": {
     "cost_bps": 5,
-    "mean_transaction_cost": 0.006334412392191372,
-    "mean_turnover": 12.743243243243244,
+    "mean_transaction_cost": 0.00598609013158205,
+    "mean_turnover": 12.04639175257732,
     "policy": {
       "cooldown_bars": "15",
       "long_window": "20",
@@ -63,24 +63,24 @@
     "policy_hash": "3e0ee1f7fd860243aee5d601dc8831b2260e51f7deccedbdb233b2a861c8a42c",
     "policy_id": "drawdown-tight-v1",
     "reason_counts": {
-      "INSUFFICIENT_MINUTE_HISTORY": 740,
-      "INTRADAY_DRAWDOWN_LIMIT": 17110,
-      "MINUTE_TREND_WEAK": 23372,
-      "MINUTE_VOLATILITY_LIMIT": 1838,
-      "RECOVERY_COOLDOWN": 9573
+      "INSUFFICIENT_MINUTE_HISTORY": 1940,
+      "INTRADAY_DRAWDOWN_LIMIT": 49795,
+      "MINUTE_TREND_WEAK": 60711,
+      "MINUTE_VOLATILITY_LIMIT": 6986,
+      "RECOVERY_COOLDOWN": 24245
     },
     "test_base": {
-      "maximum_drawdown": -0.015874363098799305,
+      "maximum_drawdown": -0.017255634173152012,
       "point_count": 476,
-      "realized_minute_volatility": 0.0004687948408114336,
-      "total_return": -0.0075872687578856235
+      "realized_minute_volatility": 0.0004636326600131315,
+      "total_return": -0.010017600947368921
     },
-    "test_excess_return": 0.004095076571723033,
+    "test_excess_return": 0.006835112975103974,
     "test_overlay": {
-      "maximum_drawdown": -0.005025987099303908,
+      "maximum_drawdown": -0.003933090679497875,
       "point_count": 476,
-      "realized_minute_volatility": 0.00013316286858541394,
-      "total_return": -0.0034921921861625904
+      "realized_minute_volatility": 0.00010550995770070744,
+      "total_return": -0.003182487972264947
     }
   },
   "split": {

@@ -6,6 +6,7 @@ import pytest
 from qtrade.data import Bar
 from qtrade.research import run_minute_overlay_backtest
 from qtrade.runtime import MinuteOverlayPolicy
+from scripts.run_sina_minute_overlay_backtest import _stock_sector_groups
 
 SHANGHAI = timezone(timedelta(hours=8))
 
@@ -90,3 +91,22 @@ def test_backtest_rejects_unsynchronized_symbols() -> None:
         run_minute_overlay_backtest(
             [*first, *second], policy_id="bad", policy=policy(), cost_bps=0
         )
+
+
+def test_stock_sector_groups_remove_every_stock_in_each_sector() -> None:
+    evidence = {
+        "universe": {
+            "stocks": [
+                {"symbol": "600001", "sector_code": "s1", "sector_name": "one"},
+                {"symbol": "600002", "sector_code": "s1", "sector_name": "one"},
+                {"symbol": "600003", "sector_code": "s2", "sector_name": "two"},
+            ]
+        }
+    }
+
+    groups = _stock_sector_groups(evidence, {"510300", "600001", "600002", "600003"})
+
+    assert groups == (
+        ("s1", "one", ("600001", "600002")),
+        ("s2", "two", ("600003",)),
+    )

@@ -65,6 +65,70 @@ def _load_universe(path: Path) -> tuple[dict[str, Any], tuple[str, ...]]:
     return payload, symbols
 
 
+def _load_balanced_stock_universe(
+    path: Path,
+) -> tuple[dict[str, Any], tuple[str, ...]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("balanced stock universe must be an object")
+    supplied_digest = payload.get("evidence_sha256")
+    unsigned = {key: value for key, value in payload.items() if key != "evidence_sha256"}
+    if supplied_digest != _canonical_sha256(unsigned):
+        raise ValueError("balanced stock universe evidence signature mismatch")
+    symbols = tuple(payload.get("symbols", ()))
+    stocks = payload.get("stocks")
+    if (
+        not isinstance(stocks, list)
+        or len(symbols) != 75
+        or len(stocks) != 75
+        or not all(isinstance(row, dict) for row in stocks)
+        or len(set(symbols)) != 75
+        or tuple(row.get("symbol") for row in stocks) != symbols
+    ):
+        raise ValueError("balanced stock universe must contain 75 ordered stocks")
+    if any(
+        not isinstance(symbol, str) or re.fullmatch(r"\d{6}", symbol) is None for symbol in symbols
+    ):
+        raise ValueError("balanced stock universe contains a malformed symbol")
+    if any(
+        not isinstance(row.get(key), str) or not row[key]
+        for row in stocks
+        for key in ("name", "sector_code", "sector_name")
+    ):
+        raise ValueError("balanced stock universe metadata is malformed")
+    sector_counts = Counter(row["sector_code"] for row in stocks)
+    selection = payload.get("selection")
+    if (
+        len(sector_counts) != 15
+        or set(sector_counts.values()) != {5}
+        or payload.get("point_in_time") is not False
+        or not isinstance(selection, dict)
+        or selection.get("candidate_data_access_before_freeze") is not False
+    ):
+        raise ValueError("balanced stock universe must be frozen, non-PIT, and contain 15x5 stocks")
+    return payload, symbols
+
+
+def _combine_universes(base: dict[str, Any], stock_universe: dict[str, Any]) -> dict[str, Any]:
+    return {
+        **base,
+        "universe_id": "sina-minute-etf30-stock-sw15x5-current-v2",
+        "classification": "current_etf30_csi300_sw15x5_non_pit_historical_research",
+        "survivorship_bias_warning": (
+            "Current ETF candidates and current CSI 300 sector-balanced stocks "
+            "are not point-in-time membership."
+        ),
+        "stocks": stock_universe["stocks"],
+        "stock_universe_provenance": {
+            "universe_id": stock_universe["universe_id"],
+            "evidence_sha256": stock_universe["evidence_sha256"],
+            "known_at": stock_universe["known_at"],
+            "constituent_as_of": stock_universe["constituent_as_of"],
+            "selection": stock_universe["selection"],
+        },
+    }
+
+
 def _sign(value: dict[str, Any]) -> dict[str, Any]:
     return {**value, "evidence_sha256": _canonical_sha256(value)}
 
@@ -75,6 +139,11 @@ def main() -> int:
         "--universe",
         type=Path,
         default=Path("configs/sina_minute_universe_v1.json"),
+    )
+    parser.add_argument(
+        "--stock-universe",
+        type=Path,
+        help="optional signed CSI 300 SW 15x5 universe replacing the 15 representatives",
     )
     parser.add_argument(
         "--output-root", type=Path, default=Path("runtime/data/sina-minute")
@@ -88,6 +157,12 @@ def main() -> int:
     if not 2 <= args.sessions <= 8:
         raise ValueError("minute ingest requires between 2 and 8 complete sessions")
     universe, symbols = _load_universe(args.universe)
+    if args.stock_universe is not None:
+        stock_universe, stock_symbols = _load_balanced_stock_universe(args.stock_universe)
+        universe = _combine_universes(universe, stock_universe)
+        symbols = (*tuple(universe["etfs"]), *stock_symbols)
+        if len(set(symbols)) != len(symbols):
+            raise ValueError("combined minute universe contains duplicate symbols")
     data_version = args.data_version or (
         f"{universe['universe_id']}-sina-raw-1m-{args.sessions}s"
     )
@@ -186,6 +261,9 @@ def main() -> int:
             "etf_count": len(eligible_etfs),
             "stock_count": len(universe["stocks"]),
             "sector_count": len({row["sector_code"] for row in universe["stocks"]}),
+            "stock_count_by_sector": dict(
+                sorted(Counter(row["sector_code"] for row in universe["stocks"]).items())
+            ),
             "excluded_etfs": [
                 {
                     "symbol": symbol,

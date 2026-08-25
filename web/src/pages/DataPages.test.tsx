@@ -94,7 +94,7 @@ const data = {
     promotion_reasons: ['ONLY_FIVE_RECENT_SESSIONS'],
     minute_dataset: {
       provider: 'Sina public web historical endpoint', data_version: 'sina-minute-v2', checksum: 'minute-checksum', evidence_sha256: 'e'.repeat(64),
-      bar_count: 44030, symbol_count: 37, etf_count: 22, stock_count: 15, sector_count: 15,
+      bar_count: 115430, symbol_count: 97, etf_count: 22, stock_count: 75, sector_count: 15,
       session_count: 5, session_bar_count_per_symbol: 238,
       trading_days: ['2026-08-19', '2026-08-20', '2026-08-21', '2026-08-24', '2026-08-25'],
       observed_start: '2026-08-19T09:31:00+08:00', observed_end: '2026-08-25T15:00:00+08:00',
@@ -104,13 +104,20 @@ const data = {
     },
     selected: {
       policy_id: 'drawdown-tight-v1', policy_hash: 'a'.repeat(64), policy: {}, cost_bps: 5,
-      test_base: { total_return: -0.007587, maximum_drawdown: -0.015874, realized_minute_volatility: 0.00046, point_count: 476 },
-      test_overlay: { total_return: -0.003492, maximum_drawdown: -0.005026, realized_minute_volatility: 0.00013, point_count: 476 },
-      test_excess_return: 0.004095, mean_turnover: 12.74, mean_transaction_cost: 0.0063, reason_counts: {},
+      test_base: { total_return: -0.0100176, maximum_drawdown: -0.0172556, realized_minute_volatility: 0.00046, point_count: 476 },
+      test_overlay: { total_return: -0.0031825, maximum_drawdown: -0.0039331, realized_minute_volatility: 0.00011, point_count: 476 },
+      test_excess_return: 0.0068351, mean_turnover: 12.046, mean_transaction_cost: 0.00599, reason_counts: {},
     },
     split: { train_days: ['2026-08-19', '2026-08-20', '2026-08-21'], test_days: ['2026-08-24', '2026-08-25'], candidate_count: 7 },
     causal_contract: { signal_observed_at: 'BAR_CLOSE_T', exposure_change_at: 'BAR_OPEN_T_PLUS_1', same_bar_signal_execution: false, maximum_exposure: 1, external_order_transmission: false },
-    candidates: [], subgroups: [], leave_one_sector_out: [],
+    candidates: [],
+    subgroups: [
+      { group: 'ETF', symbol_count: 22, base: { total_return: -0.00869, maximum_drawdown: -0.01, realized_minute_volatility: 0, point_count: 476 }, overlay: { total_return: -0.00505, maximum_drawdown: -0.00632, realized_minute_volatility: 0, point_count: 476 } },
+      { group: 'STOCK', symbol_count: 75, base: { total_return: -0.0104, maximum_drawdown: -0.02, realized_minute_volatility: 0, point_count: 476 }, overlay: { total_return: -0.00264, maximum_drawdown: -0.00338, realized_minute_volatility: 0, point_count: 476 } },
+    ],
+    leave_one_sector_out: [
+      { excluded_sector_code: '801030', excluded_sector_name: '基础化工', excluded_symbols: ['600309', '000792', '000408', '600160', '600989'], excluded_symbol_count: 5, retained_symbol_count: 92, overlay: { total_return: -0.00337, maximum_drawdown: -0.00395, realized_minute_volatility: 0, point_count: 476 }, return_delta_vs_all: -0.00019 },
+    ],
     cost_stress: [
       { cost_bps: 0, base: { total_return: -0.007587, maximum_drawdown: -0.015, realized_minute_volatility: 0, point_count: 476 }, overlay: { total_return: -0.000814, maximum_drawdown: -0.0031, realized_minute_volatility: 0, point_count: 476 }, mean_turnover: 12, mean_transaction_cost: 0 },
       { cost_bps: 20, base: { total_return: -0.007587, maximum_drawdown: -0.015, realized_minute_volatility: 0, point_count: 476 }, overlay: { total_return: -0.011464, maximum_drawdown: -0.012, realized_minute_volatility: 0, point_count: 476 }, mean_turnover: 12, mean_transaction_cost: 0.02 },
@@ -415,8 +422,9 @@ describe('verified historical data pages', () => {
   it('shows checksum-bound multi-asset minute history without calling it realtime', async () => {
     cleanup()
     render(<MarketPage data={data} />)
-    fireEvent.click(screen.getByRole('tab', { name: /历史分时 · 44030/ }))
-    expect(screen.getByText(/已验证 1 分钟数据：37 标的 × 5 日/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: /历史分时 · 115430/ }))
+    expect(screen.getByText(/已验证 1 分钟数据：97 标的 × 5 日/)).toBeInTheDocument()
+    expect(screen.getByText(/22 ETF \+ 75 行业股，覆盖 15 个行业/)).toBeInTheDocument()
     expect(screen.getByText(/不合成 14:58\/14:59/)).toBeInTheDocument()
     expect(await screen.findByText(/2\/2 根 1 分钟 Bar/)).toBeInTheDocument()
     expect(screen.getByText(/不是盘中实时跟踪/)).toBeInTheDocument()
@@ -496,6 +504,10 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/两者绝对收益均为负/)).toBeInTheDocument()
     expect(screen.getByText(/20 bps 优势消失/)).toBeInTheDocument()
     expect(screen.getByTestId('minute-backtest-chart')).toBeInTheDocument()
+    expect(screen.getByText('样本组')).toBeInTheDocument()
+    expect(screen.getByText('整行业剔除')).toBeInTheDocument()
+    expect(screen.getByText('基础化工')).toBeInTheDocument()
+    expect(screen.getByText('92')).toBeInTheDocument()
     expect(screen.getByText(/Buy-and-Hold 仅在记录、资金曲线、回撤 checksum 全部通过/)).toBeInTheDocument()
     expect(screen.getByText(/测试窗指标在上方单列/)).toBeInTheDocument()
     expect(screen.getByText('45.00%')).toBeInTheDocument()

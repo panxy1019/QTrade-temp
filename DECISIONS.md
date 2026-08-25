@@ -404,3 +404,39 @@ from the `UNCONFIGURED` realtime minute monitor. Missing or tampered evidence
 removes the affected chart rather than using browser cache, interpolation or a
 partial file. Public responses remain read-only and cannot change runtime state,
 strategy role or external-order permissions.
+
+## ADR-028 — Minute cross-section uses a frozen 15×5 stock design
+
+Status: accepted, 2026-08-26.
+
+The synchronized minute study now replaces the single representative per sector
+with the already signed CSI 300 / SW level-1 universe: 15 sectors and the five
+highest-current-weight members in each sector. The universe proves it was frozen
+before candidate minute data access, but remains current and non-PIT. All 75
+stocks must contain the same latest five complete 238-point sessions; the ingest
+fails rather than silently substituting another stock or partially filling a
+sector. Eligible ETFs must contain those same sessions.
+
+Leave-one-sector-out now removes all five stocks in the selected sector and
+records the exact excluded symbol list, excluded count and retained universe
+count. The public verifier recomputes sector membership from the signed dataset
+and rejects a report if those fields disagree. This supersedes the packaged
+44,030-row count in ADR-027 with 115,430 rows and 97 synchronized symbols without
+changing the historical-only, `NOT_ELIGIBLE`, next-open or no-order boundaries.
+
+## ADR-029 — Public API keeps one Parquet engine and a bounded Vercel bundle
+
+Status: accepted, 2026-08-26.
+
+The Parquet store now uses its existing PyArrow dependency for both writes and
+reads instead of loading DuckDB for one read path. Dataset checksums, PASSED-only
+reads, timestamp ordering and symbol filtering are unchanged. Python 3.12 and
+the resolved dependency graph are committed so a clean deployment cannot
+silently restore the removed binary dependency.
+
+The Vercel function excludes tests, research runtime state, web build sources
+and unused PyArrow Flight/development files from the function bundle. It still
+packages every signed public evidence artifact and the Parquet libraries needed
+to recompute metadata and rows. A production build must pass locally before a
+prebuilt deployment is uploaded; bundle reduction cannot replace evidence
+verification or enable mutable/public trading controls.

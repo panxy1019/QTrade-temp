@@ -107,6 +107,28 @@ def _write_json(path: Path, value: object) -> str:
     return sha256(encoded).hexdigest()
 
 
+def _stock_sector_groups(
+    evidence: dict[str, Any], available_symbols: set[str]
+) -> tuple[tuple[str, str, tuple[str, ...]], ...]:
+    grouped: dict[str, dict[str, object]] = {}
+    for stock in evidence["universe"]["stocks"]:
+        code = str(stock["sector_code"])
+        name = str(stock["sector_name"])
+        symbol = str(stock["symbol"])
+        if symbol not in available_symbols:
+            raise ValueError(f"minute stock is absent from synchronized bars: {symbol}")
+        value = grouped.setdefault(code, {"name": name, "symbols": []})
+        if value["name"] != name:
+            raise ValueError(f"minute sector name is inconsistent: {code}")
+        symbols = value["symbols"]
+        assert isinstance(symbols, list)
+        symbols.append(symbol)
+    return tuple(
+        (code, str(value["name"]), tuple(value["symbols"]))
+        for code, value in sorted(grouped.items())
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -201,14 +223,18 @@ def main() -> int:
 
     all_test_overlay = test_metrics["overlay"].total_return
     sector_rows = []
-    for stock in evidence["universe"]["stocks"]:
-        remaining = set(selected.symbols) - {stock["symbol"]}
+    for sector_code, sector_name, excluded_symbols in _stock_sector_groups(
+        evidence, set(selected.symbols)
+    ):
+        remaining = set(selected.symbols) - set(excluded_symbols)
         sector_metrics = selected.metrics(days=test_days, symbols=remaining)["overlay"]
         sector_rows.append(
             {
-                "excluded_sector_code": stock["sector_code"],
-                "excluded_sector_name": stock["sector_name"],
-                "excluded_symbol": stock["symbol"],
+                "excluded_sector_code": sector_code,
+                "excluded_sector_name": sector_name,
+                "excluded_symbols": list(excluded_symbols),
+                "excluded_symbol_count": len(excluded_symbols),
+                "retained_symbol_count": len(remaining),
                 "overlay": _metrics(sector_metrics),
                 "return_delta_vs_all": sector_metrics.total_return - all_test_overlay,
             }
@@ -254,7 +280,7 @@ def main() -> int:
     }
     report = {
         "schema_version": 1,
-        "report_id": "sina-minute-overlay-five-session-v1",
+        "report_id": "sina-minute-overlay-five-session-v2",
         "generated_at": datetime.now().astimezone().isoformat(),
         "dataset": {
             "data_version": manifest.data_version,
