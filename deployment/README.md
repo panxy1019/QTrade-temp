@@ -13,6 +13,11 @@ project-specific DNS name; the root A record and wildcard CNAME remain unchanged
 - `web` uses `/api` only for the `vercel` Vite build mode.
 - Vercel rewrites `/api/:path*` to the single Python function while preserving
   the inner FastAPI path through a bounded query-path adapter.
+- Anonymous successful GET responses use a 15-second browser cache and a
+  60-second Vercel CDN cache with stale-while-revalidate. Requests carrying an
+  authorization header or cookie, every POST and every non-2xx response remain
+  uncached. The production dashboard refreshes once per minute; local operation
+  retains its five-second cadence.
 - `ApiAuthConfig()` is intentionally empty, so every control or trade-sensitive
   route fails closed with HTTP 503.
 - No SQLite runtime, provider credential, broker adapter, PAPER session or live

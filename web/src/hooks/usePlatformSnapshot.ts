@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { loadPlatformSnapshot } from '../api/client'
 import type { PlatformSnapshot } from '../types'
 
-export function usePlatformSnapshot(refreshMs = 5000) {
+const DEFAULT_REFRESH_MS = import.meta.env.MODE === 'vercel' ? 60_000 : 5_000
+
+export function usePlatformSnapshot(refreshMs = DEFAULT_REFRESH_MS) {
   const [data, setData] = useState<PlatformSnapshot | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)

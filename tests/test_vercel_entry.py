@@ -30,3 +30,26 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     blocked = client.post(_api("/system/kill"), json={"reason": "must stay disabled"})
     assert blocked.status_code == 503
     assert client.get(_api("/system")).json()["mode"] == "PAPER"
+
+
+def test_vercel_entry_caches_only_anonymous_successful_gets() -> None:
+    client = TestClient(app)
+
+    public_get = client.get(_api("/market"))
+    assert public_get.headers["cache-control"] == "public, max-age=15"
+    assert public_get.headers["vercel-cdn-cache-control"] == (
+        "public, max-age=60, stale-while-revalidate=300"
+    )
+
+    authorized_get = client.get(
+        _api("/market"), headers={"Authorization": "Bearer ignored-read-token"}
+    )
+    assert "cache-control" not in authorized_get.headers
+    preview = client.post(
+        _api("/backtest-preview"),
+        json={"start": "2025-01-01", "end": "2025-12-31"},
+    )
+    assert "cache-control" not in preview.headers
+    blocked = client.post(_api("/system/kill"), json={"reason": "must stay disabled"})
+    assert blocked.status_code == 503
+    assert "cache-control" not in blocked.headers

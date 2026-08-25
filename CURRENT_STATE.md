@@ -1,6 +1,6 @@
 # Current state
 
-Last updated: 2026-08-25
+Last updated: 2026-08-26
 
 - Goal: evolve the v0.1 stable PAPER/SHADOW core into a real-market-data strategy
   research/evolution platform with a professional Chinese web application and
@@ -23,8 +23,11 @@ Last updated: 2026-08-25
   is available at `https://qtrade.erapi0neer.xyz` through a dedicated Aliyun
   CNAME to Vercel's project-specific DNS target. Vercel reports the domain as
   `configured-correctly`; no root-domain or wildcard DNS record was changed.
-- Acceptance evidence: 276 tests passed, Ruff clean, strict mypy clean across
-  92 source files on Python 3.12.13 (macOS, 2026-08-25); 22 frontend Vitest
+  Anonymous successful GET responses are cached at the Vercel edge for 60
+  seconds and the production dashboard polls once per minute. Authorized/cookie
+  requests, POSTs and error responses remain uncached.
+- Acceptance evidence: 277 tests passed, Ruff clean, strict mypy clean across
+  92 source files on Python 3.12.13 (macOS, 2026-08-26); 22 frontend Vitest
   tests, ESLint and the production build pass. Route-level lazy loading reduces
   the initial application chunk while ECharts remains an on-demand large chunk.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->

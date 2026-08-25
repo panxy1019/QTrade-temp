@@ -236,3 +236,10 @@ packaged signed Parquet dataset. The public deployment is a research and
 observability surface, not the realtime PAPER process. Realtime minute tracking
 continues to require an authorized provider and a separately operated persistent
 runtime; it cannot be inferred from a healthy Vercel page.
+
+The public bootstrap state and packaged evidence are identical for every
+anonymous visitor, so successful GET responses may use a short shared CDN cache.
+Requests with authorization/cookies, mutation methods and error responses must
+not be cached. Interactive backtest POST responses remain uncached. This boundary
+reduces serverless load without turning stale public research data into PAPER or
+realtime authority.
