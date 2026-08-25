@@ -482,15 +482,15 @@ export interface MinuteBarRow {
   close: string
   volume: string
   data_version: string
-  observation_type: 'HISTORICAL_MINUTE_BAR'
+  observation_type: 'HISTORICAL_MINUTE_BAR' | 'HISTORICAL_FIVE_MINUTE_BAR'
 }
 
 export interface MinuteBarSeries {
   symbol: string
   data_version: string | null
   dataset_checksum: string | null
-  observation_type: 'HISTORICAL_MINUTE_BAR_SERIES'
-  interval: '1m'
+  observation_type: 'HISTORICAL_MINUTE_BAR_SERIES' | 'HISTORICAL_FIVE_MINUTE_BAR_SERIES'
+  interval: '1m' | '5m'
   total_count: number
   truncated: boolean
   bars: MinuteBarRow[]

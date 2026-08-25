@@ -8,7 +8,7 @@ import { EquityChart } from '../charts/EquityChart'
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
 import { MinuteHistoryChart } from '../charts/MinuteHistoryChart'
 import { MinuteBacktestChart } from '../charts/MinuteBacktestChart'
-import { loadHistoricalBarSeries, loadMinuteBarSeries } from '../api/client'
+import { loadFiveMinuteBarSeries, loadHistoricalBarSeries, loadMinuteBarSeries } from '../api/client'
 import { cancelPaperOrder, controlRuntime, prometheusMetricsUrl } from '../api/client'
 import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
@@ -18,12 +18,18 @@ const waiting = <Alert showIcon type="info" title="等待实时数据授权" des
 export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const historical = data?.market?.historical
   const minuteDataset = data?.minuteResearch.minute_dataset
+  const fiveMinuteDataset = data?.fiveMinuteResearch?.minute_dataset
+  const [activeMarketTab, setActiveMarketTab] = useState('daily')
   const [query, setQuery] = useState('')
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
   const [selectedMinuteSymbol, setSelectedMinuteSymbol] = useState<string | null>(null)
+  const [selectedFiveMinuteSymbol, setSelectedFiveMinuteSymbol] = useState<string | null>(null)
   const [series, setSeries] = useState<HistoricalBarSeries | null>(null)
   const [minuteSeries, setMinuteSeries] = useState<MinuteBarSeries | null>(null)
-  const [seriesError, setSeriesError] = useState<string | null>(null)
+  const [fiveMinuteSeries, setFiveMinuteSeries] = useState<MinuteBarSeries | null>(null)
+  const [dailySeriesError, setDailySeriesError] = useState<string | null>(null)
+  const [minuteSeriesError, setMinuteSeriesError] = useState<string | null>(null)
+  const [fiveMinuteSeriesError, setFiveMinuteSeriesError] = useState<string | null>(null)
   const bars = (data?.historicalBars ?? []).filter((row) => row.symbol.includes(query.trim()))
   const activeSymbol = selectedSymbol ?? data?.historicalBars?.[0]?.symbol ?? null
   const minuteInstruments = (minuteDataset?.instruments ?? []).filter((row) => `${row.symbol} ${row.name} ${row.sector_name ?? ''}`.includes(query.trim()))
@@ -31,50 +37,77 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     ? '510300'
     : minuteDataset?.eligible_symbols[0] ?? null
   const activeMinuteSymbol = selectedMinuteSymbol ?? defaultMinuteSymbol
+  const fiveMinuteInstruments = (fiveMinuteDataset?.instruments ?? []).filter((row) => `${row.symbol} ${row.name} ${row.sector_name ?? ''}`.includes(query.trim()))
+  const defaultFiveMinuteSymbol = fiveMinuteDataset?.eligible_symbols.includes('510300')
+    ? '510300'
+    : fiveMinuteDataset?.eligible_symbols[0] ?? null
+  const activeFiveMinuteSymbol = selectedFiveMinuteSymbol ?? defaultFiveMinuteSymbol
   const datasetIdentity = historical ? `${historical.data_version}:${historical.checksum}` : null
   const minuteDatasetIdentity = minuteDataset ? `${minuteDataset.data_version}:${minuteDataset.checksum}` : null
+  const fiveMinuteDatasetIdentity = fiveMinuteDataset ? `${fiveMinuteDataset.data_version}:${fiveMinuteDataset.checksum}` : null
   const displayedSeries = datasetIdentity
     && series?.symbol === activeSymbol
     && `${series.data_version}:${series.dataset_checksum}` === datasetIdentity ? series : null
   const displayedMinuteSeries = minuteDatasetIdentity
     && minuteSeries?.symbol === activeMinuteSymbol
     && `${minuteSeries.data_version}:${minuteSeries.dataset_checksum}` === minuteDatasetIdentity ? minuteSeries : null
+  const displayedFiveMinuteSeries = fiveMinuteDatasetIdentity
+    && fiveMinuteSeries?.symbol === activeFiveMinuteSymbol
+    && `${fiveMinuteSeries.data_version}:${fiveMinuteSeries.dataset_checksum}` === fiveMinuteDatasetIdentity ? fiveMinuteSeries : null
   useEffect(() => {
     let active = true
-    if (!activeSymbol || !datasetIdentity) {
+    if (activeMarketTab !== 'daily' || !activeSymbol || !datasetIdentity) {
       return () => { active = false }
     }
     void loadHistoricalBarSeries(activeSymbol).then((result) => {
       if (active) {
         setSeries(result)
-        setSeriesError(null)
+        setDailySeriesError(null)
       }
     }).catch(() => {
       if (active) {
         setSeries(null)
-        setSeriesError('历史 K 线加载失败；未使用缓存或合成数据替代。')
+        setDailySeriesError('历史 K 线加载失败；未使用缓存或合成数据替代。')
       }
     })
     return () => { active = false }
-  }, [activeSymbol, datasetIdentity])
+  }, [activeMarketTab, activeSymbol, datasetIdentity])
   useEffect(() => {
     let active = true
-    if (!activeMinuteSymbol || !minuteDatasetIdentity) {
+    if (activeMarketTab !== 'minute' || !activeMinuteSymbol || !minuteDatasetIdentity) {
       return () => { active = false }
     }
     void loadMinuteBarSeries(activeMinuteSymbol).then((result) => {
       if (active) {
         setMinuteSeries(result)
-        setSeriesError(null)
+        setMinuteSeriesError(null)
       }
     }).catch(() => {
       if (active) {
         setMinuteSeries(null)
-        setSeriesError('历史分时线加载失败；未使用缓存、插值或合成数据替代。')
+        setMinuteSeriesError('历史 1 分钟线加载失败；未使用缓存、插值或合成数据替代。')
       }
     })
     return () => { active = false }
-  }, [activeMinuteSymbol, minuteDatasetIdentity])
+  }, [activeMarketTab, activeMinuteSymbol, minuteDatasetIdentity])
+  useEffect(() => {
+    let active = true
+    if (activeMarketTab !== 'five-minute' || !activeFiveMinuteSymbol || !fiveMinuteDatasetIdentity) {
+      return () => { active = false }
+    }
+    void loadFiveMinuteBarSeries(activeFiveMinuteSymbol).then((result) => {
+      if (active) {
+        setFiveMinuteSeries(result)
+        setFiveMinuteSeriesError(null)
+      }
+    }).catch(() => {
+      if (active) {
+        setFiveMinuteSeries(null)
+        setFiveMinuteSeriesError('历史 5 分钟线加载失败；未使用 1 分钟降采样、缓存或合成数据替代。')
+      }
+    })
+    return () => { active = false }
+  }, [activeMarketTab, activeFiveMinuteSymbol, fiveMinuteDatasetIdentity])
   const columns = [
     { title: '代码', dataIndex: 'symbol', fixed: 'left' as const },
     { title: '交易所', dataIndex: 'exchange' },
@@ -94,16 +127,24 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     { title: '完整交易日', render: () => String(minuteDataset?.session_count ?? 0) },
     { title: '每日日内点', render: () => String(minuteDataset?.session_bar_count_per_symbol ?? 0) },
   ]
-  return <Page title="行情中心" subtitle="校验通过的历史日线与 1 分钟分时线">
+  const fiveMinuteColumns = [
+    { title: '代码', dataIndex: 'symbol', fixed: 'left' as const },
+    { title: '名称', dataIndex: 'name' },
+    { title: '类型', dataIndex: 'instrument_type', render: (value: string) => <Tag color={value === 'ETF' ? 'blue' : 'purple'}>{value}</Tag> },
+    { title: '板块', dataIndex: 'sector_name', render: (value: string | null) => value ?? 'ETF' },
+    { title: '完整交易日', render: () => String(fiveMinuteDataset?.session_count ?? 0) },
+    { title: '每日日内点', render: () => String(fiveMinuteDataset?.session_bar_count_per_symbol ?? 0) },
+  ]
+  return <Page title="行情中心" subtitle="校验通过的历史日线、1 分钟与原生 5 分钟分时线">
     <Space orientation="vertical" style={{ width: '100%' }}>
       {waiting}
       <Alert showIcon type="warning" title="历史数据不等于实时行情" description="日线和分时线均来自 checksum 绑定的历史 Parquet；没有 Bid/Ask、实时价格、实时延迟或实盘权限，不参与 REAL_DATA_PAPER。" />
-      {seriesError && <Alert showIcon type="error" title={seriesError} />}
       <Input.Search placeholder="搜索代码、名称或板块" value={query} onChange={(event) => setQuery(event.target.value)} allowClear />
-      <Card><Tabs items={[
+      <Card><Tabs activeKey={activeMarketTab} onChange={setActiveMarketTab} items={[
         {
           key: 'daily', label: `历史日线 · ${historical?.bar_count ?? 0}`,
           children: <Space orientation="vertical" style={{ width: '100%' }}>
+            {dailySeriesError && <Alert showIcon type="error" title={dailySeriesError} />}
             <Alert showIcon type={historical ? 'success' : 'warning'} title={historical ? `已验证：${historical.provider} ${historical.provider_version}` : '尚无校验通过的历史日线'} description={historical ? `${historical.observed_start} 至 ${historical.observed_end}；当前样本池非 PIT。` : '需要 checksum 与质量状态同时通过。'} />
             <Card title={`${activeSymbol ?? '—'} 历史日 K 与成交量`}><MarketHistoryChart series={displayedSeries} /><Typography.Text type="secondary">{displayedSeries?.bars.length ? `${displayedSeries.bars.length}/${displayedSeries.total_count} 个完整交易日；版本 ${displayedSeries.data_version}。` : '点击下方 ETF 行切换标的。'}</Typography.Text></Card>
             <Table rowKey="symbol" size="small" columns={columns} dataSource={bars} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 920 }} onRow={(row) => ({ onClick: () => setSelectedSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的历史日线" /> }} />
@@ -112,9 +153,19 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
         {
           key: 'minute', label: `历史分时 · ${minuteDataset?.bar_count ?? 0}`,
           children: <Space orientation="vertical" style={{ width: '100%' }}>
+            {minuteSeriesError && <Alert showIcon type="error" title={minuteSeriesError} />}
             <Alert showIcon type={minuteDataset ? 'success' : 'warning'} title={minuteDataset ? `已验证 1 分钟数据：${minuteDataset.symbol_count} 标的 × ${minuteDataset.session_count} 日` : '尚无校验通过的历史分时数据'} description={minuteDataset ? `${minuteDataset.observed_start} 至 ${minuteDataset.observed_end}；${minuteDataset.etf_count} ETF + ${minuteDataset.stock_count} 行业股，覆盖 ${minuteDataset.sector_count} 个行业。来源原生每个完整日 238 点，不合成 14:58/14:59。` : '签名清单、Parquet checksum 或完整交易日网格未通过。'} />
             <Card title={`${activeMinuteSymbol ?? '—'} 已验证历史分时线`}><MinuteHistoryChart series={displayedMinuteSeries} /><Typography.Text type="secondary">{displayedMinuteSeries?.bars.length ? `${displayedMinuteSeries.bars.length}/${displayedMinuteSeries.total_count} 根 1 分钟 Bar；版本 ${displayedMinuteSeries.data_version}。` : '点击下方 ETF 或股票切换标的。'} 这是最近历史分时，不是盘中实时跟踪。</Typography.Text></Card>
             <Table rowKey="symbol" size="small" columns={minuteColumns} dataSource={minuteInstruments} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} onRow={(row) => ({ onClick: () => setSelectedMinuteSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeMinuteSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的历史分时标的" /> }} />
+          </Space>,
+        },
+        {
+          key: 'five-minute', label: `原生 5 分钟 · ${fiveMinuteDataset?.bar_count ?? 0}`,
+          children: <Space orientation="vertical" style={{ width: '100%' }}>
+            {fiveMinuteSeriesError && <Alert showIcon type="error" title={fiveMinuteSeriesError} />}
+            <Alert showIcon type={fiveMinuteDataset ? 'success' : 'warning'} title={fiveMinuteDataset ? `已验证原生 5 分钟数据：${fiveMinuteDataset.symbol_count} 标的 × ${fiveMinuteDataset.session_count} 日` : '尚无校验通过的原生 5 分钟数据'} description={fiveMinuteDataset ? `${fiveMinuteDataset.observed_start} 至 ${fiveMinuteDataset.observed_end}；${fiveMinuteDataset.etf_count} ETF + ${fiveMinuteDataset.stock_count} 行业股，覆盖 ${fiveMinuteDataset.sector_count} 个行业。每个完整交易日严格为供应商原生 48 点。` : '签名清单、Parquet checksum 或原生 5 分钟交易日网格未通过。'} />
+            <Card title={`${activeFiveMinuteSymbol ?? '—'} 已验证原生 5 分钟分时线`}><MinuteHistoryChart series={displayedFiveMinuteSeries} /><Typography.Text type="secondary">{displayedFiveMinuteSeries?.bars.length ? `${displayedFiveMinuteSeries.bars.length}/${displayedFiveMinuteSeries.total_count} 根原生 5 分钟 Bar；版本 ${displayedFiveMinuteSeries.data_version}。` : '点击下方 ETF 或股票切换标的。'} 这不是 1 分钟线降采样，也不是盘中实时跟踪。</Typography.Text></Card>
+            <Table rowKey="symbol" size="small" columns={fiveMinuteColumns} dataSource={fiveMinuteInstruments} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} onRow={(row) => ({ onClick: () => setSelectedFiveMinuteSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeFiveMinuteSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的原生 5 分钟标的" /> }} />
           </Space>,
         },
       ]} /></Card>

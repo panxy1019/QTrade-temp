@@ -444,6 +444,9 @@ Last updated: 2026-08-26
   report signature, seven artifact hashes, expanding split arithmetic, candidate
   ranks/selections, costs, subgroups, sector exclusions and all 1,152 causal curve
   points. `/five-minute-bars/{symbol}` rechecks the 101 × 40 × 48 Parquet grid and
-  returns a bounded historical series. The Chinese backtest page displays the
-  failed folds and cross-scale veto. `NOT_ELIGIBLE`, no PAPER/SHADOW authority and
-  `external_order_transmission=false` remain mandatory.
+  returns a bounded historical series. The Chinese market page exposes the
+  checksum-bound 1,920-point series per symbol in a separate, lazily loaded
+  native-5-minute tab; its failures cannot hide the daily or 1-minute tabs. The
+  backtest page displays the failed folds and cross-scale veto. `NOT_ELIGIBLE`,
+  no PAPER/SHADOW authority and `external_order_transmission=false` remain
+  mandatory.

@@ -173,7 +173,9 @@ selected exposure changes only at the next 5-minute open. At 5 bps the stitched
 Even the 0 bps overlay trailed the baseline. This failure is retained as a
 cross-time-scale robustness veto rather than tuned away. `/five-minute-research`
 and `/five-minute-bars/{symbol}` expose only hash-verified, historical, read-only
-evidence; promotion, realtime/PAPER readiness and external orders remain disabled.
+evidence, and the market page provides a separate native-5-minute symbol browser
+instead of relabeling the 1-minute tab. Promotion, realtime/PAPER readiness and
+external orders remain disabled.
 
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and

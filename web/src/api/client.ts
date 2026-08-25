@@ -60,6 +60,10 @@ export function loadMinuteBarSeries(symbol: string): Promise<MinuteBarSeries> {
   return getJson<MinuteBarSeries>(`/minute-bars/${encodeURIComponent(symbol)}`)
 }
 
+export function loadFiveMinuteBarSeries(symbol: string): Promise<MinuteBarSeries> {
+  return getJson<MinuteBarSeries>(`/five-minute-bars/${encodeURIComponent(symbol)}`)
+}
+
 export function runBacktestPreview(payload: BacktestPreviewRequest): Promise<BacktestPreview> {
   return postJson<BacktestPreview>('/backtest-preview', payload)
 }

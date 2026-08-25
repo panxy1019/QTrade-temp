@@ -25,6 +25,14 @@ vi.mock('../api/client', () => ({
       { symbol, exchange: 'SSE', timestamp: '2026-08-25T09:32:00+08:00', trading_day: '2026-08-25', open: '4.05', high: '4.1', low: '4', close: '4.08', volume: '120', data_version: 'sina-minute-v2', observation_type: 'HISTORICAL_MINUTE_BAR' },
     ],
   })),
+  loadFiveMinuteBarSeries: vi.fn(async (symbol: string) => ({
+    symbol, data_version: 'sina-five-minute-v1', dataset_checksum: 'five-minute-checksum',
+    observation_type: 'HISTORICAL_FIVE_MINUTE_BAR_SERIES', interval: '5m', total_count: 2, truncated: false,
+    bars: [
+      { symbol, exchange: 'SSE', timestamp: '2026-08-25T09:35:00+08:00', trading_day: '2026-08-25', open: '18', high: '18.1', low: '17.9', close: '18.05', volume: '100', data_version: 'sina-five-minute-v1', observation_type: 'HISTORICAL_FIVE_MINUTE_BAR' },
+      { symbol, exchange: 'SSE', timestamp: '2026-08-25T09:40:00+08:00', trading_day: '2026-08-25', open: '18.05', high: '18.2', low: '18', close: '18.1', volume: '120', data_version: 'sina-five-minute-v1', observation_type: 'HISTORICAL_FIVE_MINUTE_BAR' },
+    ],
+  })),
   runBacktestPreview: vi.fn(),
   controlRuntime: vi.fn(),
   cancelPaperOrder: vi.fn(),
@@ -459,6 +467,18 @@ describe('verified historical data pages', () => {
     expect(screen.getByText(/不合成 14:58\/14:59/)).toBeInTheDocument()
     expect(await screen.findByText(/2\/2 根 1 分钟 Bar/)).toBeInTheDocument()
     expect(screen.getByText(/不是盘中实时跟踪/)).toBeInTheDocument()
+    expect(screen.getByTestId('minute-history-chart')).toBeInTheDocument()
+  })
+
+  it('shows checksum-bound native five-minute history without presenting a resample', async () => {
+    cleanup()
+    render(<MarketPage data={data} />)
+    fireEvent.click(screen.getByRole('tab', { name: /原生 5 分钟 · 193920/ }))
+    expect(screen.getByText(/已验证原生 5 分钟数据：101 标的 × 40 日/)).toBeInTheDocument()
+    expect(screen.getByText(/26 ETF \+ 75 行业股，覆盖 15 个行业/)).toBeInTheDocument()
+    expect(screen.getByText(/供应商原生 48 点/)).toBeInTheDocument()
+    expect(await screen.findByText(/2\/2 根原生 5 分钟 Bar/)).toBeInTheDocument()
+    expect(screen.getByText(/不是 1 分钟线降采样，也不是盘中实时跟踪/)).toBeInTheDocument()
     expect(screen.getByTestId('minute-history-chart')).toBeInTheDocument()
   })
 
