@@ -1,0 +1,78 @@
+{
+  "record": {
+    "artifacts": [
+      "drawdown:3ddd961a063c406c989d0830eca949c3a9b0fcae8045ecb3203022c760532415",
+      "equity:b9810e19d9f9f063fdeee261cdb8868a9d3897d8b15c3370d7f87c821d2e5141",
+      "logs:0d36cce21b71970dc4829de2b51fde033038069a7db5319d10131e7b1b368221",
+      "positions:3ecf4c30ea68d1ac0c247a204a16c0035b311b98ba43ebd0d475655f36b53367",
+      "risk:718e1541f407ebe2b459ccb535d2fdcb900a812af1191b8ae601abb0254e3669",
+      "trades:0f2968b99087052701fb710348a3fa4dcd0c3ee79b624e763be8e20fa4179aca"
+    ],
+    "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+    "experiment_id": "akshare-etf30-momentum-vol-cost-high-20260812-v4",
+    "factor_set": [
+      "close_momentum"
+    ],
+    "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+    "hyperparameters": {
+      "cost_stress": "0.003"
+    },
+    "label": "daily_portfolio_close_to_close_return_with_next_open_rebalance",
+    "metrics": {
+      "annualized_return": "0.0000944150899950813",
+      "annualized_volatility": "0.14760489620709025",
+      "calmar": "0.0009707884456158495304461881770",
+      "maximum_drawdown": "-0.0972560916041663244689142389",
+      "sharpe": "0.07443163678294947432305902390",
+      "sortino": "0.1062880265387746517562868831",
+      "test_exposure": "0.4822625466443129754960449776",
+      "test_transaction_cost": "0.0138826677",
+      "test_turnover": "4.6275559",
+      "total_return": "0.000055074385888093074854420"
+    },
+    "model": "momentum-vol-cost-high",
+    "seed": 7,
+    "split": {
+      "test_end": "2026-08-12",
+      "test_start": "2026-01-01",
+      "train_end": "2024-12-31",
+      "train_start": "2024-01-02",
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01"
+    },
+    "transaction_cost": "0.003",
+    "universe": [
+      "510300",
+      "512100",
+      "510500",
+      "510050",
+      "512880",
+      "510210",
+      "512800",
+      "159915",
+      "512000",
+      "512400",
+      "512690",
+      "510880",
+      "510330",
+      "512760",
+      "512500",
+      "512170",
+      "512010",
+      "512070",
+      "510760",
+      "515790",
+      "512660",
+      "512710",
+      "510510",
+      "512290",
+      "510900",
+      "512980",
+      "510180",
+      "510230",
+      "510660",
+      "512580"
+    ]
+  },
+  "spec_hash": "1d17baf25440fecc8b1bf1b18cc7f14c5825c3b66004388fc9a157d66e34262c"
+}

@@ -68,6 +68,35 @@ def test_dashboard_and_health_make_shadow_mode_explicit():
     assert response.json()["runtime_mode"] == "SHADOW"
 
 
+def test_built_dashboard_assets_are_served_at_root_and_web_paths(tmp_path):
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    (assets / "app.js").write_text("export default true", encoding="utf-8")
+    (tmp_path / "index.html").write_text(
+        '<!doctype html><html lang="zh-CN"><body>'
+        '<script type="module" src="/assets/app.js"></script></body></html>',
+        encoding="utf-8",
+    )
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("100000"), audit)
+    oms = OrderManager(audit)
+    risk = RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit)
+    runtime = PlatformRuntime(RuntimeMode.PAPER, risk, audit, metrics)
+    api = TestClient(
+        create_app(
+            AppContext(runtime, metrics, oms, ledger, audit),
+            ApiAuthConfig(),
+            web_dist_path=tmp_path,
+        )
+    )
+
+    assert api.get("/").status_code == 200
+    assert api.get("/assets/app.js").text == "export default true"
+    assert api.get("/web/assets/app.js").text == "export default true"
+    assert api.get("/api/health").status_code == 200
+
+
 def test_bootstrap_runtime_fails_closed_until_readiness_is_verified():
     from qtrade.api.app import bootstrap_context
 

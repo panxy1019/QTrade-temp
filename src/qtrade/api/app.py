@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from collections import deque
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from contextlib import nullcontext
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
@@ -18,8 +18,8 @@ from zoneinfo import ZoneInfo
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
-from fastapi import Depends, FastAPI, Header, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict
 
@@ -150,12 +150,31 @@ def _require_role(required: Role, auth: ApiAuthConfig) -> Callable[[str | None],
     return dependency
 
 
-def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = None) -> FastAPI:
+def create_app(
+    context: AppContext | None = None,
+    auth: ApiAuthConfig | None = None,
+    *,
+    web_dist_path: Path | None = None,
+) -> FastAPI:
     state = context or bootstrap_context()
     auth_config = auth or ApiAuthConfig.from_environment()
     app = FastAPI(title="Q Control Plane", version="0.1.0")
-    web_dist = Path(__file__).parents[3] / "web" / "dist"
+
+    @app.middleware("http")
+    async def accept_built_web_api_prefix(
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        path = request.scope.get("path", "")
+        if path == "/api" or path.startswith("/api/"):
+            normalized = path.removeprefix("/api") or "/"
+            request.scope["path"] = normalized
+            request.scope["raw_path"] = normalized.encode("utf-8")
+        return await call_next(request)
+
+    web_dist = web_dist_path or Path(__file__).parents[3] / "web" / "dist"
     if (web_dist / "assets").is_dir():
+        app.mount("/assets", StaticFiles(directory=web_dist / "assets"), name="root-assets")
         app.mount("/web/assets", StaticFiles(directory=web_dist / "assets"), name="web-assets")
 
     @app.get("/health")

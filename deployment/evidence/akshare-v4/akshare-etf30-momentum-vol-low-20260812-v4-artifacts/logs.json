@@ -1,0 +1,5 @@
+{
+  "engine": "DailyMultiAssetBacktester",
+  "session_count": 632,
+  "timing": "close decision, next open execution"
+}

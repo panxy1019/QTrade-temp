@@ -260,3 +260,21 @@ only when its schema, result hash, data version and checksum validate, and it is
 shown only against that exact dataset identity. Browser records are not server
 experiments, strategy lineage, promotion evidence, PAPER targets or synchronized
 account state; corrupted or unavailable local storage fails closed.
+
+## ADR-020 — Frontend completeness is evidence parity plus graceful degradation
+
+Status: accepted, 2026-08-26.
+
+A route existing is not sufficient frontend completion. Each page must load its
+static assets, receive checksum/schema-verified data, expose the implemented
+interaction, preserve other successful sections when one optional evidence
+source fails, and show an explicit unavailable reason for external blockers.
+The gap inventory is maintained in `docs/FRONTEND_GAP_AUDIT.md`.
+
+The public read-only node may package the complete accepted research artifact
+chain when every file is content-bound and independently revalidated on read.
+This includes the baseline catalog/artifacts, walk-forward and robustness
+reports; packaging them does not create new evidence or change promotion state.
+Local serving accepts both ordinary and Vercel-mode frontend builds, but this
+transport compatibility does not add credentials, persistence or control
+authority to the public node.

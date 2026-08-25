@@ -65,6 +65,9 @@ focused regression and independent safety review.
 - [x] Dark/light themes, consistent status semantics, responsive desktop-first layout.
 - [x] Typed API client and FastAPI read/control contracts.
 - [x] Build, tests and browser screenshot/interaction verification.
+- [x] Audit all twelve routes and their API/evidence dependencies; restore local
+  static/API-prefix compatibility and publish the complete verified baseline,
+  walk-forward and robustness evidence set.
 
 ### V2-M5 — Isolated future broker integration
 

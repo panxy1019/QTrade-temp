@@ -20,6 +20,13 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert client.get(_api("/factor-search")).json()["promotion"] == "NOT_ELIGIBLE"
     assert client.get(_api("/factor-robustness")).json()["promotion"] == "NOT_ELIGIBLE"
     assert client.get(_api("/stock-sector-transfer")).json()["promotion"] == "NOT_ELIGIBLE"
+    assert len(client.get(_api("/strategies")).json()) == 11
+    assert len(client.get(_api("/experiments")).json()["experiments"]) == 11
+    assert len(client.get(_api("/walk-forward")).json()["result"]["folds"]) == 3
+    assert len(client.get(_api("/robustness")).json()["result"]["scenario_metrics"]) == 14
+    analytics = client.get(_api("/backtest-analytics")).json()
+    assert analytics["leader"]["experiment_id"].endswith("momentum-vol-slow-20260812-v4")
+    assert len(analytics["curve"]) == 632
     preview = client.post(
         _api("/backtest-preview"),
         json={"start": "2025-01-01", "end": "2025-12-31"},

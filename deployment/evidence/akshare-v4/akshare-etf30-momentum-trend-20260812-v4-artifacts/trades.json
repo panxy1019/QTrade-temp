@@ -1,0 +1,914 @@
+[
+  {
+    "cost": "474.8749500",
+    "price": "1.039",
+    "quantity": 304700,
+    "side": "BUY",
+    "symbol": "510230",
+    "trading_day": "2024-07-05"
+  },
+  {
+    "cost": "474.8880000",
+    "price": "0.842",
+    "quantity": 376000,
+    "side": "BUY",
+    "symbol": "510900",
+    "trading_day": "2024-07-05"
+  },
+  {
+    "cost": "474.9012000",
+    "price": "1.272",
+    "quantity": 248900,
+    "side": "BUY",
+    "symbol": "512800",
+    "trading_day": "2024-07-05"
+  },
+  {
+    "cost": "490.8717000",
+    "price": "1.074",
+    "quantity": 304700,
+    "side": "SELL",
+    "symbol": "510230",
+    "trading_day": "2024-08-02"
+  },
+  {
+    "cost": "438.7920000",
+    "price": "0.778",
+    "quantity": 376000,
+    "side": "SELL",
+    "symbol": "510900",
+    "trading_day": "2024-08-02"
+  },
+  {
+    "cost": "474.5278500",
+    "price": "1.271",
+    "quantity": 248900,
+    "side": "SELL",
+    "symbol": "512800",
+    "trading_day": "2024-08-02"
+  },
+  {
+    "cost": "467.7480000",
+    "price": "0.915",
+    "quantity": 340800,
+    "side": "BUY",
+    "symbol": "512660",
+    "trading_day": "2024-08-02"
+  },
+  {
+    "cost": "467.7898500",
+    "price": "0.561",
+    "quantity": 555900,
+    "side": "BUY",
+    "symbol": "512710",
+    "trading_day": "2024-08-02"
+  },
+  {
+    "cost": "467.7297000",
+    "price": "0.838",
+    "quantity": 372100,
+    "side": "BUY",
+    "symbol": "512760",
+    "trading_day": "2024-08-02"
+  },
+  {
+    "cost": "425.8296000",
+    "price": "0.833",
+    "quantity": 340800,
+    "side": "SELL",
+    "symbol": "512660",
+    "trading_day": "2024-08-30"
+  },
+  {
+    "cost": "430.2666000",
+    "price": "0.516",
+    "quantity": 555900,
+    "side": "SELL",
+    "symbol": "512710",
+    "trading_day": "2024-08-30"
+  },
+  {
+    "cost": "413.5891500",
+    "price": "0.741",
+    "quantity": 372100,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2024-08-30"
+  },
+  {
+    "cost": "636.1740000",
+    "price": "1.071",
+    "quantity": 396000,
+    "side": "BUY",
+    "symbol": "510230",
+    "trading_day": "2024-08-30"
+  },
+  {
+    "cost": "636.2887500",
+    "price": "1.275",
+    "quantity": 332700,
+    "side": "BUY",
+    "symbol": "512800",
+    "trading_day": "2024-08-30"
+  },
+  {
+    "cost": "868.4280000",
+    "price": "1.462",
+    "quantity": 396000,
+    "side": "SELL",
+    "symbol": "510230",
+    "trading_day": "2024-10-08"
+  },
+  {
+    "cost": "765.0436500",
+    "price": "1.533",
+    "quantity": 332700,
+    "side": "SELL",
+    "symbol": "512800",
+    "trading_day": "2024-10-08"
+  },
+  {
+    "cost": "537.2940000",
+    "price": "1.202",
+    "quantity": 298000,
+    "side": "BUY",
+    "symbol": "512000",
+    "trading_day": "2024-10-08"
+  },
+  {
+    "cost": "537.30000",
+    "price": "0.9",
+    "quantity": 398000,
+    "side": "BUY",
+    "symbol": "512070",
+    "trading_day": "2024-10-08"
+  },
+  {
+    "cost": "537.1380000",
+    "price": "1.218",
+    "quantity": 294000,
+    "side": "BUY",
+    "symbol": "512880",
+    "trading_day": "2024-10-08"
+  },
+  {
+    "cost": "15.66000",
+    "price": "1.2",
+    "quantity": 8700,
+    "side": "SELL",
+    "symbol": "512880",
+    "trading_day": "2024-11-05"
+  },
+  {
+    "cost": "1.7175000",
+    "price": "1.145",
+    "quantity": 1000,
+    "side": "BUY",
+    "symbol": "512000",
+    "trading_day": "2024-11-05"
+  },
+  {
+    "cost": "12.7108500",
+    "price": "0.839",
+    "quantity": 10100,
+    "side": "BUY",
+    "symbol": "512070",
+    "trading_day": "2024-11-05"
+  },
+  {
+    "cost": "3.1617000",
+    "price": "1.171",
+    "quantity": 1800,
+    "side": "SELL",
+    "symbol": "512000",
+    "trading_day": "2024-12-03"
+  },
+  {
+    "cost": "516.6546000",
+    "price": "0.844",
+    "quantity": 408100,
+    "side": "SELL",
+    "symbol": "512070",
+    "trading_day": "2024-12-03"
+  },
+  {
+    "cost": "3.4998000",
+    "price": "1.228",
+    "quantity": 1900,
+    "side": "SELL",
+    "symbol": "512880",
+    "trading_day": "2024-12-03"
+  },
+  {
+    "cost": "522.0130500",
+    "price": "1.131",
+    "quantity": 307700,
+    "side": "BUY",
+    "symbol": "512760",
+    "trading_day": "2024-12-03"
+  },
+  {
+    "cost": "13.8882000",
+    "price": "1.172",
+    "quantity": 7900,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2024-12-31"
+  },
+  {
+    "cost": "5.440500",
+    "price": "1.17",
+    "quantity": 3100,
+    "side": "BUY",
+    "symbol": "512000",
+    "trading_day": "2024-12-31"
+  },
+  {
+    "cost": "6.2475000",
+    "price": "1.225",
+    "quantity": 3400,
+    "side": "BUY",
+    "symbol": "512880",
+    "trading_day": "2024-12-31"
+  },
+  {
+    "cost": "466.6662000",
+    "price": "1.036",
+    "quantity": 300300,
+    "side": "SELL",
+    "symbol": "512000",
+    "trading_day": "2025-02-06"
+  },
+  {
+    "cost": "20.9250000",
+    "price": "1.116",
+    "quantity": 12500,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2025-02-06"
+  },
+  {
+    "cost": "467.1972000",
+    "price": "1.086",
+    "quantity": 286800,
+    "side": "SELL",
+    "symbol": "512880",
+    "trading_day": "2025-02-06"
+  },
+  {
+    "cost": "480.9090000",
+    "price": "0.988",
+    "quantity": 324500,
+    "side": "BUY",
+    "symbol": "510900",
+    "trading_day": "2025-02-06"
+  },
+  {
+    "cost": "480.9594000",
+    "price": "0.802",
+    "quantity": 399800,
+    "side": "BUY",
+    "symbol": "512980",
+    "trading_day": "2025-02-06"
+  },
+  {
+    "cost": "25.0755000",
+    "price": "1.145",
+    "quantity": 14600,
+    "side": "SELL",
+    "symbol": "510900",
+    "trading_day": "2025-03-06"
+  },
+  {
+    "cost": "11.5473000",
+    "price": "1.262",
+    "quantity": 6100,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2025-03-06"
+  },
+  {
+    "cost": "25.6035000",
+    "price": "0.845",
+    "quantity": 20200,
+    "side": "BUY",
+    "symbol": "512980",
+    "trading_day": "2025-03-06"
+  },
+  {
+    "cost": "7.42500",
+    "price": "1.1",
+    "quantity": 4500,
+    "side": "SELL",
+    "symbol": "510900",
+    "trading_day": "2025-04-03"
+  },
+  {
+    "cost": "511.5600000",
+    "price": "0.812",
+    "quantity": 420000,
+    "side": "SELL",
+    "symbol": "512980",
+    "trading_day": "2025-04-03"
+  },
+  {
+    "cost": "19.3032000",
+    "price": "1.149",
+    "quantity": 11200,
+    "side": "BUY",
+    "symbol": "512760",
+    "trading_day": "2025-04-03"
+  },
+  {
+    "cost": "503.8581000",
+    "price": "1.522",
+    "quantity": 220700,
+    "side": "BUY",
+    "symbol": "512800",
+    "trading_day": "2025-04-03"
+  },
+  {
+    "cost": "17.1855000",
+    "price": "1.206",
+    "quantity": 9500,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2025-05-07"
+  },
+  {
+    "cost": "504.8512500",
+    "price": "1.525",
+    "quantity": 220700,
+    "side": "SELL",
+    "symbol": "512800",
+    "trading_day": "2025-05-07"
+  },
+  {
+    "cost": "7.75500",
+    "price": "1.1",
+    "quantity": 4700,
+    "side": "BUY",
+    "symbol": "510900",
+    "trading_day": "2025-05-07"
+  },
+  {
+    "cost": "511.7040000",
+    "price": "0.828",
+    "quantity": 412000,
+    "side": "BUY",
+    "symbol": "512980",
+    "trading_day": "2025-05-07"
+  },
+  {
+    "cost": "18.5148000",
+    "price": "1.112",
+    "quantity": 11100,
+    "side": "SELL",
+    "symbol": "510900",
+    "trading_day": "2025-06-05"
+  },
+  {
+    "cost": "475.272000",
+    "price": "1.12",
+    "quantity": 282900,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2025-06-05"
+  },
+  {
+    "cost": "503.0520000",
+    "price": "0.814",
+    "quantity": 412000,
+    "side": "SELL",
+    "symbol": "512980",
+    "trading_day": "2025-06-05"
+  },
+  {
+    "cost": "498.5671500",
+    "price": "2.313",
+    "quantity": 143700,
+    "side": "BUY",
+    "symbol": "510660",
+    "trading_day": "2025-06-05"
+  },
+  {
+    "cost": "498.7575000",
+    "price": "1.642",
+    "quantity": 202500,
+    "side": "BUY",
+    "symbol": "512800",
+    "trading_day": "2025-06-05"
+  },
+  {
+    "cost": "492.5317500",
+    "price": "2.285",
+    "quantity": 143700,
+    "side": "SELL",
+    "symbol": "510660",
+    "trading_day": "2025-07-03"
+  },
+  {
+    "cost": "505.9080000",
+    "price": "1.128",
+    "quantity": 299000,
+    "side": "SELL",
+    "symbol": "510900",
+    "trading_day": "2025-07-03"
+  },
+  {
+    "cost": "21.4266000",
+    "price": "1.742",
+    "quantity": 8200,
+    "side": "SELL",
+    "symbol": "512800",
+    "trading_day": "2025-07-03"
+  },
+  {
+    "cost": "507.6382500",
+    "price": "1.169",
+    "quantity": 289500,
+    "side": "BUY",
+    "symbol": "512400",
+    "trading_day": "2025-07-03"
+  },
+  {
+    "cost": "507.7710000",
+    "price": "0.669",
+    "quantity": 506000,
+    "side": "BUY",
+    "symbol": "512710",
+    "trading_day": "2025-07-03"
+  },
+  {
+    "cost": "543.2467500",
+    "price": "1.251",
+    "quantity": 289500,
+    "side": "SELL",
+    "symbol": "512400",
+    "trading_day": "2025-07-31"
+  },
+  {
+    "cost": "540.4080000",
+    "price": "0.712",
+    "quantity": 506000,
+    "side": "SELL",
+    "symbol": "512710",
+    "trading_day": "2025-07-31"
+  },
+  {
+    "cost": "248.8983000",
+    "price": "0.854",
+    "quantity": 194300,
+    "side": "SELL",
+    "symbol": "512800",
+    "trading_day": "2025-07-31"
+  },
+  {
+    "cost": "446.3424000",
+    "price": "2.624",
+    "quantity": 113400,
+    "side": "BUY",
+    "symbol": "510660",
+    "trading_day": "2025-07-31"
+  },
+  {
+    "cost": "446.4549000",
+    "price": "0.422",
+    "quantity": 705300,
+    "side": "BUY",
+    "symbol": "512010",
+    "trading_day": "2025-07-31"
+  },
+  {
+    "cost": "446.4810000",
+    "price": "1.119",
+    "quantity": 266000,
+    "side": "BUY",
+    "symbol": "512290",
+    "trading_day": "2025-07-31"
+  },
+  {
+    "cost": "449.5743000",
+    "price": "2.643",
+    "quantity": 113400,
+    "side": "SELL",
+    "symbol": "510660",
+    "trading_day": "2025-08-28"
+  },
+  {
+    "cost": "443.2810500",
+    "price": "0.419",
+    "quantity": 705300,
+    "side": "SELL",
+    "symbol": "512010",
+    "trading_day": "2025-08-28"
+  },
+  {
+    "cost": "447.2790000",
+    "price": "1.121",
+    "quantity": 266000,
+    "side": "SELL",
+    "symbol": "512290",
+    "trading_day": "2025-08-28"
+  },
+  {
+    "cost": "445.416000",
+    "price": "2.68",
+    "quantity": 110800,
+    "side": "BUY",
+    "symbol": "159915",
+    "trading_day": "2025-08-28"
+  },
+  {
+    "cost": "445.3005000",
+    "price": "1.415",
+    "quantity": 209800,
+    "side": "BUY",
+    "symbol": "512400",
+    "trading_day": "2025-08-28"
+  },
+  {
+    "cost": "445.4332500",
+    "price": "1.465",
+    "quantity": 202700,
+    "side": "BUY",
+    "symbol": "512760",
+    "trading_day": "2025-08-28"
+  },
+  {
+    "cost": "20.317500",
+    "price": "3.15",
+    "quantity": 4300,
+    "side": "SELL",
+    "symbol": "159915",
+    "trading_day": "2025-09-25"
+  },
+  {
+    "cost": "481.1763000",
+    "price": "1.529",
+    "quantity": 209800,
+    "side": "SELL",
+    "symbol": "512400",
+    "trading_day": "2025-09-25"
+  },
+  {
+    "cost": "15.6190500",
+    "price": "1.707",
+    "quantity": 6100,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2025-09-25"
+  },
+  {
+    "cost": "503.5800000",
+    "price": "1.232",
+    "quantity": 272500,
+    "side": "BUY",
+    "symbol": "512580",
+    "trading_day": "2025-09-25"
+  },
+  {
+    "cost": "542.4112500",
+    "price": "1.327",
+    "quantity": 272500,
+    "side": "SELL",
+    "symbol": "512580",
+    "trading_day": "2025-10-31"
+  },
+  {
+    "cost": "498.0861000",
+    "price": "1.689",
+    "quantity": 196600,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2025-10-31"
+  },
+  {
+    "cost": "0.9705000",
+    "price": "3.235",
+    "quantity": 200,
+    "side": "BUY",
+    "symbol": "159915",
+    "trading_day": "2025-10-31"
+  },
+  {
+    "cost": "517.8816000",
+    "price": "1.776",
+    "quantity": 194400,
+    "side": "BUY",
+    "symbol": "512400",
+    "trading_day": "2025-10-31"
+  },
+  {
+    "cost": "517.95000",
+    "price": "1.0",
+    "quantity": 345300,
+    "side": "BUY",
+    "symbol": "515790",
+    "trading_day": "2025-10-31"
+  },
+  {
+    "cost": "3.5322000",
+    "price": "1.682",
+    "quantity": 1400,
+    "side": "SELL",
+    "symbol": "512400",
+    "trading_day": "2025-11-28"
+  },
+  {
+    "cost": "5.4144000",
+    "price": "3.008",
+    "quantity": 1200,
+    "side": "BUY",
+    "symbol": "159915",
+    "trading_day": "2025-11-28"
+  },
+  {
+    "cost": "0.141000",
+    "price": "0.94",
+    "quantity": 100,
+    "side": "BUY",
+    "symbol": "515790",
+    "trading_day": "2025-11-28"
+  },
+  {
+    "cost": "20.2284000",
+    "price": "1.873",
+    "quantity": 7200,
+    "side": "SELL",
+    "symbol": "512400",
+    "trading_day": "2025-12-26"
+  },
+  {
+    "cost": "0.4833000",
+    "price": "3.222",
+    "quantity": 100,
+    "side": "BUY",
+    "symbol": "159915",
+    "trading_day": "2025-12-26"
+  },
+  {
+    "cost": "14.259000",
+    "price": "0.98",
+    "quantity": 9700,
+    "side": "BUY",
+    "symbol": "515790",
+    "trading_day": "2025-12-26"
+  },
+  {
+    "cost": "536.220000",
+    "price": "3.31",
+    "quantity": 108000,
+    "side": "SELL",
+    "symbol": "159915",
+    "trading_day": "2026-01-27"
+  },
+  {
+    "cost": "72.6537000",
+    "price": "2.386",
+    "quantity": 20300,
+    "side": "SELL",
+    "symbol": "512400",
+    "trading_day": "2026-01-27"
+  },
+  {
+    "cost": "586.9803000",
+    "price": "1.102",
+    "quantity": 355100,
+    "side": "SELL",
+    "symbol": "515790",
+    "trading_day": "2026-01-27"
+  },
+  {
+    "cost": "592.1928000",
+    "price": "1.864",
+    "quantity": 211800,
+    "side": "BUY",
+    "symbol": "512760",
+    "trading_day": "2026-01-27"
+  },
+  {
+    "cost": "592.2960000",
+    "price": "1.184",
+    "quantity": 333500,
+    "side": "BUY",
+    "symbol": "512980",
+    "trading_day": "2026-01-27"
+  },
+  {
+    "cost": "20.0275500",
+    "price": "2.263",
+    "quantity": 5900,
+    "side": "SELL",
+    "symbol": "512400",
+    "trading_day": "2026-03-04"
+  },
+  {
+    "cost": "535.9599000",
+    "price": "1.687",
+    "quantity": 211800,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2026-03-04"
+  },
+  {
+    "cost": "523.2615000",
+    "price": "1.046",
+    "quantity": 333500,
+    "side": "SELL",
+    "symbol": "512980",
+    "trading_day": "2026-03-04"
+  },
+  {
+    "cost": "541.8738000",
+    "price": "0.837",
+    "quantity": 431600,
+    "side": "BUY",
+    "symbol": "512710",
+    "trading_day": "2026-03-04"
+  },
+  {
+    "cost": "541.839000",
+    "price": "1.09",
+    "quantity": 331400,
+    "side": "BUY",
+    "symbol": "515790",
+    "trading_day": "2026-03-04"
+  },
+  {
+    "cost": "497.2032000",
+    "price": "0.768",
+    "quantity": 431600,
+    "side": "SELL",
+    "symbol": "512710",
+    "trading_day": "2026-04-01"
+  },
+  {
+    "cost": "16.2552000",
+    "price": "1.042",
+    "quantity": 10400,
+    "side": "SELL",
+    "symbol": "515790",
+    "trading_day": "2026-04-01"
+  },
+  {
+    "cost": "15.2400000",
+    "price": "2.032",
+    "quantity": 5000,
+    "side": "BUY",
+    "symbol": "512400",
+    "trading_day": "2026-04-01"
+  },
+  {
+    "cost": "501.6105000",
+    "price": "1.343",
+    "quantity": 249000,
+    "side": "BUY",
+    "symbol": "512580",
+    "trading_day": "2026-04-01"
+  },
+  {
+    "cost": "525.4032000",
+    "price": "2.128",
+    "quantity": 164600,
+    "side": "SELL",
+    "symbol": "512400",
+    "trading_day": "2026-04-30"
+  },
+  {
+    "cost": "536.3460000",
+    "price": "1.436",
+    "quantity": 249000,
+    "side": "SELL",
+    "symbol": "512580",
+    "trading_day": "2026-04-30"
+  },
+  {
+    "cost": "508.4640000",
+    "price": "1.056",
+    "quantity": 321000,
+    "side": "SELL",
+    "symbol": "515790",
+    "trading_day": "2026-04-30"
+  },
+  {
+    "cost": "521.5675500",
+    "price": "3.703",
+    "quantity": 93900,
+    "side": "BUY",
+    "symbol": "159915",
+    "trading_day": "2026-04-30"
+  },
+  {
+    "cost": "521.4858000",
+    "price": "2.662",
+    "quantity": 130600,
+    "side": "BUY",
+    "symbol": "510510",
+    "trading_day": "2026-04-30"
+  },
+  {
+    "cost": "521.3421000",
+    "price": "4.659",
+    "quantity": 74600,
+    "side": "BUY",
+    "symbol": "512500",
+    "trading_day": "2026-04-30"
+  },
+  {
+    "cost": "29.8575000",
+    "price": "3.981",
+    "quantity": 5000,
+    "side": "SELL",
+    "symbol": "159915",
+    "trading_day": "2026-06-02"
+  },
+  {
+    "cost": "12.7008000",
+    "price": "2.646",
+    "quantity": 3200,
+    "side": "BUY",
+    "symbol": "510510",
+    "trading_day": "2026-06-02"
+  },
+  {
+    "cost": "11.1480000",
+    "price": "4.645",
+    "quantity": 1600,
+    "side": "BUY",
+    "symbol": "512500",
+    "trading_day": "2026-06-02"
+  },
+  {
+    "cost": "585.8433000",
+    "price": "2.919",
+    "quantity": 133800,
+    "side": "SELL",
+    "symbol": "510510",
+    "trading_day": "2026-07-01"
+  },
+  {
+    "cost": "4.617000",
+    "price": "5.13",
+    "quantity": 600,
+    "side": "SELL",
+    "symbol": "512500",
+    "trading_day": "2026-07-01"
+  },
+  {
+    "cost": "582.1608000",
+    "price": "1.588",
+    "quantity": 244400,
+    "side": "BUY",
+    "symbol": "512760",
+    "trading_day": "2026-07-01"
+  },
+  {
+    "cost": "446.1891000",
+    "price": "3.346",
+    "quantity": 88900,
+    "side": "SELL",
+    "symbol": "159915",
+    "trading_day": "2026-07-29"
+  },
+  {
+    "cost": "475.8264000",
+    "price": "4.196",
+    "quantity": 75600,
+    "side": "SELL",
+    "symbol": "512500",
+    "trading_day": "2026-07-29"
+  },
+  {
+    "cost": "413.1582000",
+    "price": "1.127",
+    "quantity": 244400,
+    "side": "SELL",
+    "symbol": "512760",
+    "trading_day": "2026-07-29"
+  },
+  {
+    "cost": "451.668000",
+    "price": "1.33",
+    "quantity": 226400,
+    "side": "BUY",
+    "symbol": "510230",
+    "trading_day": "2026-07-29"
+  },
+  {
+    "cost": "451.554000",
+    "price": "3.23",
+    "quantity": 93200,
+    "side": "BUY",
+    "symbol": "510880",
+    "trading_day": "2026-07-29"
+  },
+  {
+    "cost": "451.7194500",
+    "price": "0.819",
+    "quantity": 367700,
+    "side": "BUY",
+    "symbol": "512800",
+    "trading_day": "2026-07-29"
+  }
+]

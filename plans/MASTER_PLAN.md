@@ -139,6 +139,12 @@ durable runtime. API contracts expose strategy/portfolio/order identity,
 restart-stable APPLIED simulated fills, dated sellability and recomputable
 cost-basis exposure. Current equity, market value, unrealized PnL and drawdown
 remain unavailable until an authorized fresh market-price source exists.
+The frontend/API audit now has a tracked acceptance matrix. Local static serving
+supports both root and `/web` entrypoints plus the `/api` prefix emitted by a
+Vercel-mode build. The public evidence bundle also carries the complete verified
+v4 experiment catalog, three-fold walk-forward and 14-scenario robustness chain,
+so all research pages receive the same accepted evidence rather than silent
+empty placeholders.
 The web client reads these PAPER fields from one dispatch-gated atomic snapshot;
 concurrent fill/read regression proves it cannot observe a half-installed
 account/OMS projection.

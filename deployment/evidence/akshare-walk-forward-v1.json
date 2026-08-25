@@ -1,0 +1,239 @@
+{
+  "report": {
+    "classification": "exploratory_noncommercial_current_universe_not_pit",
+    "data_checksum": "39a25d71d2c77798c8d73b8b7b45634d229a22122c18a174d3f7be9ac50d59fd",
+    "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+    "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+    "promotion": "NOT_ELIGIBLE",
+    "promotion_reasons": [
+      "CURRENT_UNIVERSE_SURVIVORSHIP_BIAS",
+      "NO_PAPER_OR_SHADOW_SESSIONS"
+    ],
+    "result": {
+      "aggregate_metrics": {
+        "annualized_return": "-0.28329935341292434",
+        "annualized_volatility": "0.26940917829030886",
+        "benchmark_return": "0",
+        "calmar": "-0.9897231677938355439979163325",
+        "excess_return": "-0.2044119540671736370082310640",
+        "exposure": "0.9540417045423618635107658965",
+        "information_ratio": "-1.100493285399444887798263911",
+        "maximum_drawdown": "-0.2862410041834415872873346642",
+        "number_of_periods": 173,
+        "number_of_trades": 14,
+        "profit_loss_ratio": "0",
+        "sharpe": "-1.100493285399444887798263911",
+        "sortino": "-1.457553587658740805841339055",
+        "total_return": "-0.2044119540671736370082310640",
+        "transaction_costs": "0.00604360875",
+        "turnover": "4.0290725",
+        "win_rate": "0.5028901734104046242774566474"
+      },
+      "fold_pass_ratio": "0",
+      "folds": [
+        {
+          "fold": 1,
+          "selected_candidate_id": "buy-hold",
+          "split": {
+            "test_end": "2024-12-31",
+            "test_start": "2024-10-01",
+            "train_end": "2024-06-28",
+            "train_start": "2024-01-02",
+            "validation_end": "2024-09-30",
+            "validation_start": "2024-07-01"
+          },
+          "test_metrics": {
+            "annualized_return": "-0.08405784834151875",
+            "annualized_volatility": "0.29359364674969957",
+            "benchmark_return": "0",
+            "calmar": "-0.7295262791075036659862724724",
+            "excess_return": "-0.0210294078423129742562068290",
+            "exposure": "0.9542502789786277454591098834",
+            "information_ratio": "-0.1517607635061766863188437189",
+            "maximum_drawdown": "-0.1152225091114667136841833299",
+            "number_of_periods": 61,
+            "number_of_trades": 0,
+            "profit_loss_ratio": "0",
+            "sharpe": "-0.1517607635061766863188437189",
+            "sortino": "-0.2116740673781300560140033396",
+            "total_return": "-0.0210294078423129742562068290",
+            "transaction_costs": "0",
+            "turnover": "0",
+            "win_rate": "0.5245901639344262295081967213"
+          },
+          "test_transaction_cost": "0",
+          "test_turnover": "0",
+          "validation_scores": [
+            [
+              "buy-hold",
+              "2.784897637564899782521876560"
+            ],
+            [
+              "momentum-20",
+              "0.7536357833158892378781634809"
+            ],
+            [
+              "momentum-multi",
+              "0.8078935187119633827721335532"
+            ],
+            [
+              "momentum-trend",
+              "0.8078935187119633827721335532"
+            ],
+            [
+              "momentum-vol-0.10",
+              "1.881090500396886190192301141"
+            ],
+            [
+              "momentum-vol-0.15",
+              "1.707683972423247311236436188"
+            ],
+            [
+              "momentum-vol-0.20",
+              "1.233524312371809086733428474"
+            ]
+          ],
+          "validation_sharpe": "2.784897637564899782521876560"
+        },
+        {
+          "fold": 2,
+          "selected_candidate_id": "buy-hold",
+          "split": {
+            "test_end": "2025-12-31",
+            "test_start": "2025-10-01",
+            "train_end": "2025-06-30",
+            "train_start": "2025-01-01",
+            "validation_end": "2025-09-30",
+            "validation_start": "2025-07-01"
+          },
+          "test_metrics": {
+            "annualized_return": "-0.04523880672324743",
+            "annualized_volatility": "0.14719394914710296",
+            "benchmark_return": "0",
+            "calmar": "-0.6534373976393000791468217184",
+            "excess_return": "-0.0109618639564470618984608868",
+            "exposure": "0.9572945388082529567956275497",
+            "information_ratio": "-0.2406166366976205286572982377",
+            "maximum_drawdown": "-0.0692320440897376106772390542",
+            "number_of_periods": 60,
+            "number_of_trades": 0,
+            "profit_loss_ratio": "0",
+            "sharpe": "-0.2406166366976205286572982377",
+            "sortino": "-0.3158524153870891512398697793",
+            "total_return": "-0.0109618639564470618984608868",
+            "transaction_costs": "0",
+            "turnover": "0",
+            "win_rate": "0.5166666666666666666666666667"
+          },
+          "test_transaction_cost": "0",
+          "test_turnover": "0",
+          "validation_scores": [
+            [
+              "buy-hold",
+              "3.469207022914136413659663447"
+            ],
+            [
+              "momentum-20",
+              "0.2041772008583100197878480336"
+            ],
+            [
+              "momentum-multi",
+              "0.3218947795205687394976038138"
+            ],
+            [
+              "momentum-trend",
+              "0.3215477495904621159211974040"
+            ],
+            [
+              "momentum-vol-0.10",
+              "-0.6645645734432369557362127279"
+            ],
+            [
+              "momentum-vol-0.15",
+              "-0.4215008414627377199463201758"
+            ],
+            [
+              "momentum-vol-0.20",
+              "-0.1159202995679591228003232804"
+            ]
+          ],
+          "validation_sharpe": "3.469207022914136413659663447"
+        },
+        {
+          "fold": 3,
+          "selected_candidate_id": "momentum-trend",
+          "split": {
+            "test_end": "2026-08-12",
+            "test_start": "2026-06-01",
+            "train_end": "2026-03-31",
+            "train_start": "2026-01-01",
+            "validation_end": "2026-05-29",
+            "validation_start": "2026-04-01"
+          },
+          "test_metrics": {
+            "annualized_return": "-0.6139442305803341",
+            "annualized_volatility": "0.3366547914035254",
+            "benchmark_return": "0",
+            "calmar": "-2.825731884023465485659963280",
+            "excess_return": "-0.1783146095638436636394627857",
+            "exposure": "0.9500437603776371635888296954",
+            "information_ratio": "-2.653288736330552329364352753",
+            "maximum_drawdown": "-0.2172691025824287917434274618",
+            "number_of_periods": 52,
+            "number_of_trades": 14,
+            "profit_loss_ratio": "0",
+            "sharpe": "-2.653288736330552329364352753",
+            "sortino": "-3.348244025739919899899267536",
+            "total_return": "-0.1783146095638436636394627857",
+            "transaction_costs": "0.00604360875",
+            "turnover": "4.0290725",
+            "win_rate": "0.4615384615384615384615384615"
+          },
+          "test_transaction_cost": "0.00604360875",
+          "test_turnover": "4.0290725",
+          "validation_scores": [
+            [
+              "buy-hold",
+              "1.277377347871035938245462155"
+            ],
+            [
+              "momentum-20",
+              "0.7711206007594357051045777576"
+            ],
+            [
+              "momentum-multi",
+              "1.796048242332619568951724414"
+            ],
+            [
+              "momentum-trend",
+              "1.796048242332619568951724414"
+            ],
+            [
+              "momentum-vol-0.10",
+              "0.6922518337414594294049862504"
+            ],
+            [
+              "momentum-vol-0.15",
+              "0.6964544274209422772910939453"
+            ],
+            [
+              "momentum-vol-0.20",
+              "0.8951453982295528256261529546"
+            ]
+          ],
+          "validation_sharpe": "1.796048242332619568951724414"
+        }
+      ],
+      "result_hash": "c0eba63ef3fb75cd6b859a5f5bbcaf0188a86507f665d32defcc77e822cfb723"
+    },
+    "selection_contract": {
+      "candidate_selection": "validation_sharpe_only",
+      "candidate_test_access_before_selection": false,
+      "cost_model": "research-flat-rate-v1",
+      "execution_timing": "close_decision_next_observed_open",
+      "fold_ranges_disjoint": true,
+      "transaction_cost_rate": "0.0015"
+    }
+  },
+  "sha256": "b95fdbb4809a7acdc8aa1242e4eab1cd133e9f45087eb744b08e705b25b7c28a"
+}

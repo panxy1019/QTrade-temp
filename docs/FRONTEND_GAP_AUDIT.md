@@ -1,0 +1,72 @@
+# QTrade 前端功能缺口审计
+
+审计日期：2026-08-26
+
+范围：React 前端的 12 个路由、对应 FastAPI 读取/控制接口、本地构建运行、
+GitHub/Vercel 公开节点。判定标准不是“路由存在”，而是页面可加载、数据可验证、
+主要交互可完成、失败状态可定位、本地与线上边界一致。
+
+状态：`DONE` 已实现并有回归；`OPEN` 当前批次待补；`EXTERNAL_BLOCKED` 需要外部
+授权/选择/真实会话；`INTENTIONALLY_UNAVAILABLE` 是安全或研究有效性边界，不能用
+假数据填充。
+
+## 可由当前仓库补齐的缺口
+
+| ID | 页面/链路 | 缺口 | 状态 | 验收 |
+| --- | --- | --- | --- | --- |
+| FE-01 | 本地壳层 | 构建后的 HTML 引用 `/assets/*`，服务端仅挂载 `/web/assets/*`，本地页面空白 | DONE | `/assets/*` 与 `/web/assets/*` 均返回构建资源 |
+| FE-02 | 本地/线上兼容 | Vercel 模式构建残留在 `web/dist` 时，本地服务不接受 `/api/*` | DONE | 同一构建在本地 `/api/health` 可读，Vercel rewrite 不变 |
+| FE-03 | 公开证据 | 策略、实验、滚动样本外、稳健性、回测分析未进入公开证据包 | DONE | 线上 11 个实验、3 折、14 场景和 632 点曲线通过校验 |
+| FE-04 | 全局数据 | 任一非核心接口失败会使 12 页全部失去快照 | OPEN | 分区失败可见，其他已成功分区继续显示 |
+| FE-05 | 全局壳层 | 无手动刷新、最后更新时间、刷新中状态和分区错误入口 | OPEN | 顶栏可刷新并显示时间/失败数量 |
+| FE-06 | 全局路由 | 未知 hash 路由渲染空白 | OPEN | 自动回到总览，不出现空页面 |
+| FE-07 | 总览 | 缺少历史研究、实时数据、PAPER、分钟修正、实盘边界的能力矩阵 | OPEN | 首屏可区分 READY、BLOCKED、READ_ONLY、DISABLED |
+| FE-08 | 策略中心 | 缺少候选搜索、场景筛选、参数/证据详情和导出 | OPEN | 11 个候选可筛选、展开并导出 |
+| FE-09 | 策略研究 | 因子诊断与验证分数已由 API 返回但前端未展示 | OPEN | 因子与验证候选表完整显示 |
+| FE-10 | 策略研究 | 鲁棒候选、压力门槛只显示一行摘要 | OPEN | 候选排名和门槛明细可检查 |
+| FE-11 | 策略研究 | 7 年、15 板块、15 个留一板块结果未展示 | OPEN | 年度/板块/留一板块表可筛选和导出 |
+| FE-12 | 实验中心 | 缺少搜索、类型筛选、参数/哈希详情和导出 | OPEN | 11 个实验可筛选、展开并导出 |
+| FE-13 | 回测分析 | 正式证据此前为空；即时结果缺少 JSON 导出 | OPEN | 正式证据有数据，即时结果可导出且仍不持久化 |
+| FE-14 | 模拟交易 | 后端已有 recover/start/pause/resume/stop/kill，但本地前端无安全控制面 | OPEN | 仅本地显示、令牌仅驻留内存、危险动作二次确认、公开节点隐藏 |
+| FE-15 | 持仓 | 缺少证券筛选和当前快照导出 | OPEN | 可筛选并导出已验证 PAPER 字段 |
+| FE-16 | 委托与成交 | 后端已有幂等 PAPER 撤单，但前端无法操作；缺少筛选/导出 | OPEN | 仅本地、授权后可撤可撤委托，表格可筛选导出 |
+| FE-17 | 风控中心 | 只显示摘要，缺少显式运行边界与刷新/分区故障说明 | OPEN | 状态、敞口口径、外部订单边界和数据可用性同时可见 |
+| FE-18 | 数据中心 | 只有数据集摘要和日报表，缺少各证据链库存/可用状态 | OPEN | 数据版本、checksum、各研究报告状态一屏可审计 |
+| FE-19 | 系统监控 | 审计接口不可用时页面提前返回，健康与分钟状态也被隐藏 | OPEN | 审计失败不遮蔽其余监控数据 |
+| FE-20 | 系统监控 | API 已提供逐标的分钟状态，但页面未展示 | OPEN | 就绪、目标、修正倍数、波动/回撤、冷却和原因逐标的显示 |
+| FE-21 | 响应式 | 小屏仍长期占用固定侧栏，主要表格缺少统一可用操作区 | OPEN | 手机宽度可收起导航，表格保持横向可读 |
+
+## 外部阻塞，不能伪造为已完成
+
+| ID | 能力 | 状态 | 解除条件 |
+| --- | --- | --- | --- |
+| EXT-01 | 实时 L1 snapshot、Bid/Ask、延迟 | EXTERNAL_BLOCKED | 合法 RQData/XtData 授权并通过新鲜度/身份校验 |
+| EXT-02 | 多股票分钟实盘跟踪、首个完整前向 PAPER/SHADOW 会话 | EXTERNAL_BLOCKED | 授权 Tick 源、完整交易日记录与逐字节回放对账 |
+| EXT-03 | 券商账户/订单/成交只读对账 | EXTERNAL_BLOCKED | 用户选择券商、沙箱与兼容 SDK/ABI |
+| EXT-04 | PIT 成分股/行业与真正未见前向证据 | EXTERNAL_BLOCKED | 获得授权 PIT 数据并等待新时间样本 |
+| EXT-05 | 自动日终 PAPER 报告 | EXTERNAL_BLOCKED | 持久运行时获得可信数据版本和策略版本配置后启用调度 |
+| EXT-06 | 公网持久 PAPER 状态 | EXTERNAL_BLOCKED | 独立受认证、持久化的运行服务；Vercel 函数继续无状态只读 |
+
+## 有意不可用
+
+| ID | 能力 | 状态 | 原因 |
+| --- | --- | --- | --- |
+| SAFE-01 | 实盘下单/实盘撤单 | INTENTIONALLY_UNAVAILABLE | `LIVE_TRADING_ENABLED=false`，软件无 LIVE 模式与外部下单方法 |
+| SAFE-02 | 将当前研究候选设为 Champion/PAPER 策略 | INTENTIONALLY_UNAVAILABLE | 非 PIT、已查看测试窗且无新前向 PAPER/SHADOW 晋级证据 |
+| SAFE-03 | 用历史收盘价填充 PAPER 市值、浮盈、权益、回撤 | INTENTIONALLY_UNAVAILABLE | 没有授权新鲜市价时必须保持 unavailable |
+
+## 复现与发布门槛
+
+```bash
+.venv/bin/pytest -q
+.venv/bin/ruff check .
+.venv/bin/mypy src
+npm --prefix web test -- --run
+npm --prefix web run lint
+npm --prefix web run build
+npm --prefix web run build:vercel
+```
+
+每一批关闭缺口后：提交并推送 `personal/main`，部署 Vercel 生产环境，再对
+`https://qtrade.erapi0neer.xyz` 逐页验证。公开节点必须继续对所有控制/交易敏感
+POST 返回失败关闭。

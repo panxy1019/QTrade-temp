@@ -9,6 +9,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_ROOT = PROJECT_ROOT / "deployment" / "evidence"
 
 context = bootstrap_context()
+context.research_comparison_path = EVIDENCE_ROOT / "akshare-v4" / "comparison.json"
+context.research_artifact_root = EVIDENCE_ROOT / "akshare-v4"
+context.walk_forward_report_path = EVIDENCE_ROOT / "akshare-walk-forward-v1.json"
+context.robustness_report_path = EVIDENCE_ROOT / "akshare-robustness-v1.json"
 context.factor_search_report_path = EVIDENCE_ROOT / "factor-search" / "report.json"
 context.robust_factor_search_report_path = EVIDENCE_ROOT / "factor-robustness" / "report.json"
 context.stock_sector_transfer_report_path = EVIDENCE_ROOT / "stock-sector-transfer" / "report.json"

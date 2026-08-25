@@ -26,12 +26,23 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 278 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 279 tests passed, Ruff clean, strict mypy clean across
   92 source files on Python 3.12.13 (macOS, 2026-08-26); 27 frontend Vitest
   tests, ESLint and the production build pass. Route-level lazy loading reduces
   the initial application chunk while ECharts remains an on-demand large chunk.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
+- Frontend completeness audit: `docs/FRONTEND_GAP_AUDIT.md` tracks every
+  repository-feasible page gap separately from authorized-data/broker blockers
+  and intentional safety boundaries. The local control plane now serves both
+  root and `/web` asset paths and accepts the Vercel build's `/api` prefix, so a
+  deployment build left in `web/dist` no longer produces a blank or data-less
+  loopback page.
+- Public research evidence parity: the Vercel bundle now includes the verified
+  11-experiment v4 catalog and artifacts, three disjoint walk-forward folds and
+  14-scenario post-rejection robustness report in addition to factor, sector and
+  market evidence. Strategy, experiment, overview and backtest analytics no
+  longer fall back to empty `NOT_EVALUATED` placeholders online.
 - Environment: active verification uses Apple Silicon macOS and Python 3.12.13;
   Windows/QMT remains a future deployment target. No Docker, database service or
   vn.py is configured. The pinned optional `akshare==1.18.84` environment with
