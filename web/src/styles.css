@@ -20,3 +20,9 @@ body { margin: 0; min-width: 320px; }
 .lineage { min-height: 210px; display: grid; place-items: center; font: 600 17px ui-monospace, monospace; color: #60a5fa; }
 @media (max-width: 1280px) { .content { padding: 20px; }.description-grid, .backtest-lab-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 720px) { .content { padding: 14px; }.topbar { padding: 0 12px; }.description-grid, .backtest-lab-grid { grid-template-columns: 1fr; }.page-title-row { gap: 12px; flex-direction: column; } }
+@media (max-width: 720px) {
+  .topbar { height: auto; min-height: 64px; padding-top: 8px; padding-bottom: 8px; gap: 8px; flex-wrap: wrap; }
+  .topbar > .ant-space:last-child { margin-left: auto; }
+  .content .ant-card-body { padding: 14px; }
+  .content .ant-table-wrapper { max-width: calc(100vw - 108px); }
+}

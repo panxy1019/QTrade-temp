@@ -1,12 +1,15 @@
-﻿import { Alert, Card, Empty, Input, Space, Table, Tabs, Tag, Typography } from 'antd'
+﻿import { Alert, Button, Card, Empty, Input, Popconfirm, Select, Space, Table, Tabs, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { HistoricalBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
 import { StatusTag } from '../components/StatusTag'
 import { BacktestLab } from '../components/BacktestLab'
 import { EquityChart } from '../charts/EquityChart'
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
 import { loadHistoricalBarSeries } from '../api/client'
+import { cancelPaperOrder, controlRuntime } from '../api/client'
+import type { RuntimeControlAction } from '../api/client'
+import { JsonExportButton } from '../components/JsonExportButton'
 
 const waiting = <Alert showIcon type="info" title="等待实时数据授权" description="适配器与回放链路已准备；当前未配置任何供应商令牌或真实连接。" />
 
@@ -55,6 +58,14 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
 }
 
 export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
+  const [query, setQuery] = useState('')
+  const [scenario, setScenario] = useState<string | undefined>()
+  const rows = (data?.strategies ?? []).filter((row) => {
+    const text = query.trim().toLowerCase()
+    return (!text || `${row.name} ${row.family} ${row.strategy_id}`.toLowerCase().includes(text))
+      && (!scenario || row.scenario_type === scenario)
+  })
+  const scenarios = [...new Set((data?.strategies ?? []).map((row) => row.scenario_type))].map((value) => ({ value, label: value }))
   const columns = [
     { title: '策略名称', dataIndex: 'name' }, { title: 'Record 哈希', dataIndex: 'version' },
     { title: 'Family', dataIndex: 'family' }, { title: '状态', dataIndex: 'status', render: (value: string) => <Tag color="blue">{value}</Tag> },
@@ -63,7 +74,7 @@ export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
     { title: 'Sharpe', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.sharpe ?? '—' },
     { title: '最大回撤', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.maximum_drawdown ?? '—' },
   ]
-  return <Page title="策略中心" subtitle="不可变记录与结果验证过的实验候选"><Alert showIcon type="warning" title="实验候选，不是已注册或已批准策略" description="每行均通过 comparison、record、result 与 artifact 哈希校验；spec_hash 仅校验格式，当前产物未携带足够字段供 API 独立复算。当前样本池非 PIT，状态 NOT_ELIGIBLE、角色 NONE，也没有已注册谱系，不是 Champion 或运行中 PAPER 策略。" /><Table rowKey="strategy_id" columns={columns} dataSource={data?.strategies ?? []} pagination={{ pageSize: 8, showSizeChanger: false }} locale={{ emptyText: '暂无 record/result/artifact 验证通过的实验候选' }} /></Page>
+  return <Page title="策略中心" subtitle="不可变记录与结果验证过的实验候选"><Alert showIcon type="warning" title="实验候选，不是已注册或已批准策略" description="每行均通过 comparison、record、result 与 artifact 哈希校验；spec_hash 仅校验格式，当前产物未携带足够字段供 API 独立复算。当前样本池非 PIT，状态 NOT_ELIGIBLE、角色 NONE，也没有已注册谱系，不是 Champion 或运行中 PAPER 策略。" /><Space wrap><Input.Search aria-label="搜索策略候选" placeholder="搜索名称、Family 或 ID" allowClear value={query} onChange={(event) => setQuery(event.target.value)} style={{ width: 320 }} /><Select aria-label="筛选策略场景" allowClear placeholder="全部场景" value={scenario} onChange={setScenario} options={scenarios} style={{ width: 180 }} /><JsonExportButton filename="qtrade-strategy-candidates.json" value={rows} /></Space><Table rowKey="strategy_id" columns={columns} dataSource={rows} pagination={{ pageSize: 8, showSizeChanger: false }} scroll={{ x: 1100 }} expandable={{ expandedRowRender: (row) => <Descriptions values={[["策略 ID", row.strategy_id], ["数据版本", row.data_version], ["Git Commit", row.git_commit], ["Record 哈希", row.version], ["场景类型", row.scenario_type], ["谱系状态", row.lineage_status]]} /> }} locale={{ emptyText: '暂无 record/result/artifact 验证通过的实验候选' }} /></Page>
 }
 
 export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
@@ -96,24 +107,35 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const weakestSector = [...(stockTransfer?.sector_only ?? [])].sort(
     (left, right) => Number(left.metrics.total_return) - Number(right.metrics.total_return),
   )[0]
+  const factorDiagnostics = factorSearch?.factor_diagnostics ?? []
+  const validationRows = (factorSearch?.validation.scores ?? []).map(([candidate_id, sharpe]) => ({ candidate_id, sharpe }))
+  const robustRows = robustFactorSearch?.candidate_summaries ?? []
+  const yearlyRows = stockTransfer?.yearly ?? []
+  const sectorRows = stockTransfer?.sector_only ?? []
+  const leaveOneRows = stockTransfer?.leave_one_sector_out ?? []
   return <Page title="策略研究" subtitle="实验候选、独立样本外证据与晋级边界">
     <Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} />
+    <JsonExportButton filename="qtrade-verified-research-evidence.json" value={{ factorSearch, robustFactorSearch, stockTransfer, walkForward, robustness }} label="导出全部研究证据" />
     <Card><Tabs items={[
       { key: 'registry', label: '实验候选', children: <Space orientation="vertical"><Typography.Text>record/result/artifact 验证通过：{report?.experiments.length ?? 0} 个不可变实验记录。</Typography.Text><Typography.Text type="secondary">spec_hash 未独立复算；这些记录尚未注册为 StrategyVersion，也不存在可展示的 Champion、Challenger 或演化血缘。</Typography.Text></Space> },
-      { key: 'factor-search', label: '因子搜索', children: <Space orientation="vertical"><Typography.Text>发现期通过：{factorSearch?.factor_selection?.passing_factor_ids.join('、') || '无'}；验证候选：{factorSearch?.validation.candidate_count ?? 0} 个。</Typography.Text><Typography.Text>验证胜者：{factorSearch?.validation.selected_candidate_id ?? '—'}；确认段收益 {formatPercent(String(factorMetrics?.total_return ?? '0'))}，Sharpe {String(factorMetrics?.sharpe ?? '—')}，最大回撤 {formatPercent(String(factorMetrics?.maximum_drawdown ?? '0'))}。</Typography.Text><Typography.Text>同期 Buy-and-Hold：{formatPercent(String(benchmarkMetrics?.total_return ?? '0'))}；主动超额：{formatPercent(factorSearch?.test.terminal_excess_return ?? '0')}。</Typography.Text><Typography.Text type="secondary">因子 Rank IC 仅用于发现期筛选；参数只按验证期选择。确认期曾被项目历史实验查看，不是全新盲测，结果固定为 {factorSearch?.promotion ?? '未评估'}，不能接入 PAPER。</Typography.Text></Space> },
-      { key: 'factor-robustness', label: '因子鲁棒性', children: <Space orientation="vertical">
+      { key: 'factor-search', label: '因子搜索', children: <Space orientation="vertical" style={{ width: '100%' }}><Typography.Text>发现期通过：{factorSearch?.factor_selection?.passing_factor_ids.join('、') || '无'}；验证候选：{factorSearch?.validation.candidate_count ?? 0} 个。</Typography.Text><Typography.Text>验证胜者：{factorSearch?.validation.selected_candidate_id ?? '—'}；确认段收益 {formatPercent(String(factorMetrics?.total_return ?? '0'))}，Sharpe {String(factorMetrics?.sharpe ?? '—')}，最大回撤 {formatPercent(String(factorMetrics?.maximum_drawdown ?? '0'))}。</Typography.Text><Typography.Text>同期 Buy-and-Hold：{formatPercent(String(benchmarkMetrics?.total_return ?? '0'))}；主动超额：{formatPercent(factorSearch?.test.terminal_excess_return ?? '0')}。</Typography.Text><Table rowKey="factor_id" size="small" pagination={false} dataSource={factorDiagnostics} columns={[{ title: '因子', dataIndex: 'factor_id' }, { title: '周期', dataIndex: 'periods' }, { title: '最少标的', dataIndex: 'instruments_minimum' }, { title: 'IC', render: (_: unknown, row: typeof factorDiagnostics[number]) => formatNumber(String(row.metrics.ic ?? '')) }, { title: 'Rank IC', render: (_: unknown, row: typeof factorDiagnostics[number]) => formatNumber(String(row.metrics.rank_ic ?? '')) }, { title: 'ICIR', render: (_: unknown, row: typeof factorDiagnostics[number]) => formatNumber(String(row.metrics.icir ?? '')) }, { title: '多空收益差', render: (_: unknown, row: typeof factorDiagnostics[number]) => formatPercent(String(row.metrics.long_short_spread ?? '')) }]} scroll={{ x: 900 }} locale={{ emptyText: '暂无已验证因子诊断' }} /><Table rowKey="candidate_id" size="small" dataSource={validationRows} pagination={{ pageSize: 8, showSizeChanger: false }} columns={[{ title: '验证候选', dataIndex: 'candidate_id' }, { title: '验证 Sharpe', dataIndex: 'sharpe', render: (value: string) => formatNumber(value) }, { title: '是否选中', render: (_: unknown, row: typeof validationRows[number]) => row.candidate_id === factorSearch?.validation.selected_candidate_id ? <Tag color="blue">LOCKED</Tag> : '—' }]} /><Typography.Text type="secondary">因子 Rank IC 仅用于发现期筛选；参数只按验证期选择。确认期曾被项目历史实验查看，不是全新盲测，结果固定为 {factorSearch?.promotion ?? '未评估'}，不能接入 PAPER。</Typography.Text></Space> },
+      { key: 'factor-robustness', label: '因子鲁棒性', children: <Space orientation="vertical" style={{ width: '100%' }}>
         <Typography.Text>冻结候选：{robustFactorSearch?.selection?.candidate_count ?? 0} 个；季度窗口：{robustFactorSearch?.selection?.window_ids.length ?? 0} 个；季度硬门槛合格：{robustFactorSearch?.selection?.window_gate_eligible_candidate_ids.length ?? 0} 个。</Typography.Text>
         <Typography.Text>鲁棒候选：{robustCandidateId ?? '无'}；正收益窗口 {formatPercent(robustSummary?.positive_window_ratio ?? '0')}；中位 Sharpe {formatNumber(robustSummary?.median_window_sharpe)}；最差 Sharpe {formatNumber(robustSummary?.worst_window_sharpe)}。</Typography.Text>
         <Typography.Text>双倍成本收益 {formatPercent(String(doubledCost?.metrics.total_return ?? '0'))}；邻参正收益比例 {formatPercent(robustStress?.parameter_neighbors.positive_ratio ?? '0')}；股票池子样本正收益比例 {formatPercent(robustStress?.universe_subsets.positive_ratio ?? '0')}；Bootstrap 正收益概率 {formatPercent(robustBootstrap?.probability_positive ?? '0')}。</Typography.Text>
         <Typography.Text>2026 污染审计：收益 {formatPercent(String(pollutedAudit?.selected_metrics?.total_return ?? '0'))}；主动超额 {formatPercent(pollutedAudit?.terminal_excess_return ?? '0')}；最大回撤 {formatPercent(String(pollutedAudit?.selected_metrics?.maximum_drawdown ?? '0'))}。</Typography.Text>
+        <Table rowKey="candidate_id" size="small" dataSource={robustRows} pagination={{ pageSize: 8, showSizeChanger: false }} columns={[{ title: '排名', dataIndex: 'selection_rank' }, { title: '候选', dataIndex: 'candidate_id' }, { title: '正收益窗口', dataIndex: 'positive_window_ratio', render: (value: string) => formatPercent(value) }, { title: '中位 Sharpe', dataIndex: 'median_window_sharpe', render: (value: string) => formatNumber(value) }, { title: '最差 Sharpe', dataIndex: 'worst_window_sharpe', render: (value: string) => formatNumber(value) }, { title: '全期收益', dataIndex: 'full_period_return', render: (value: string) => formatPercent(value) }, { title: '结论', render: (_: unknown, row: typeof robustRows[number]) => row.candidate_id === robustCandidateId ? <Tag color="blue">ROBUST</Tag> : '未过完整门槛' }]} scroll={{ x: 980 }} />
         <Typography.Text type="secondary">通过的是复用 2024–2025 数据的预声明研究鲁棒门槛，不是新的独立样本外确认。2026 只做污染审计；当前结论仍为 {robustFactorSearch?.promotion ?? '未评估'}，不能接入 PAPER。</Typography.Text>
       </Space> },
-      { key: 'stock-sector-transfer', label: '多板块个股迁移', children: <Space orientation="vertical">
+      { key: 'stock-sector-transfer', label: '多板块个股迁移', children: <Space orientation="vertical" style={{ width: '100%' }}>
         <Typography.Text>数据：{stockTransfer?.data?.sector_count ?? 0} 个板块 × 每板块 {stockTransfer?.data?.stocks_per_sector ?? 0} 只，共 {stockTransfer?.data?.symbol_count ?? 0} 只股票、{stockTransfer?.data?.bar_count ?? 0} 根日线；统一 {stockTransfer?.data?.adjustment?.toUpperCase() ?? '—'}。</Typography.Text>
         <Typography.Text>锁定策略：{stockTransfer?.locked_strategy?.candidate_id ?? '—'}；2019–2025 正收益年份 {stockTransfer?.formal_period?.positive_year_count ?? 0}/7，单板块 {stockTransfer?.formal_period?.positive_sector_only_count ?? 0}/15，留一板块 {stockTransfer?.formal_period?.positive_leave_one_sector_out_count ?? 0}/15。</Typography.Text>
         <Typography.Text>全期收益 {formatPercent(String(transferFull?.total_return ?? '0'))}，年化 {formatPercent(String(transferFull?.annualized_return ?? '0'))}，Sharpe {formatNumber(String(transferFull?.sharpe ?? '0'))}，最大回撤 {formatPercent(String(transferFull?.maximum_drawdown ?? '0'))}；双倍成本收益 {formatPercent(String(transferDouble?.total_return ?? '0'))}。</Typography.Text>
         <Typography.Text>最弱单板块：{weakestSector?.sector_name ?? '—'}，收益 {formatPercent(String(weakestSector?.metrics.total_return ?? '0'))}；Bootstrap 正收益概率 {formatPercent(stockTransfer?.bootstrap.probability_positive ?? '0')}，5% 分位 {formatPercent(stockTransfer?.bootstrap.p05_total_return ?? '0')}。</Typography.Text>
         <Typography.Text>2026 污染审计：策略 {formatPercent(String(transferAudit?.strategy_metrics?.total_return ?? '0'))}，等权 {formatPercent(String(transferAudit?.equal_weight_metrics?.total_return ?? '0'))}，超额 {formatPercent(transferAudit?.terminal_excess_return ?? '0')}。</Typography.Text>
+        <Table rowKey="year" size="small" pagination={false} dataSource={yearlyRows} columns={[{ title: '年度', dataIndex: 'year' }, { title: '收益', render: (_: unknown, row: typeof yearlyRows[number]) => formatPercent(String(row.metrics.total_return ?? '')) }, { title: 'Sharpe', render: (_: unknown, row: typeof yearlyRows[number]) => formatNumber(String(row.metrics.sharpe ?? '')) }, { title: '最大回撤', render: (_: unknown, row: typeof yearlyRows[number]) => formatPercent(String(row.metrics.maximum_drawdown ?? '')) }, { title: '交易数', render: (_: unknown, row: typeof yearlyRows[number]) => String(row.metrics.number_of_trades ?? '—') }]} />
+        <Table rowKey="sector_code" size="small" dataSource={sectorRows} pagination={{ pageSize: 8, showSizeChanger: false }} columns={[{ title: '板块', dataIndex: 'sector_name' }, { title: '代码', dataIndex: 'sector_code' }, { title: '股票数', dataIndex: 'symbols', render: (value: string[]) => value.length }, { title: '收益', render: (_: unknown, row: typeof sectorRows[number]) => formatPercent(String(row.metrics.total_return ?? '')) }, { title: 'Sharpe', render: (_: unknown, row: typeof sectorRows[number]) => formatNumber(String(row.metrics.sharpe ?? '')) }, { title: '最大回撤', render: (_: unknown, row: typeof sectorRows[number]) => formatPercent(String(row.metrics.maximum_drawdown ?? '')) }]} />
+        <Table rowKey="excluded_sector_code" size="small" dataSource={leaveOneRows} pagination={{ pageSize: 8, showSizeChanger: false }} columns={[{ title: '剔除板块', dataIndex: 'excluded_sector_name' }, { title: '剔除代码', dataIndex: 'excluded_sector_code' }, { title: '收益', render: (_: unknown, row: typeof leaveOneRows[number]) => formatPercent(String(row.metrics.total_return ?? '')) }, { title: 'Sharpe', render: (_: unknown, row: typeof leaveOneRows[number]) => formatNumber(String(row.metrics.sharpe ?? '')) }, { title: '最大回撤', render: (_: unknown, row: typeof leaveOneRows[number]) => formatPercent(String(row.metrics.maximum_drawdown ?? '')) }]} />
         <Typography.Text type="secondary">研究硬门：{stockTransfer?.transfer_gate?.passed ? '通过' : '未通过'}；但股票池是 2026 当前成分股向历史回投、后复权也不是时点一致数据，且未模拟涨跌停成交，结论固定为 {stockTransfer?.promotion ?? '未评估'}，不能接入 PAPER。</Typography.Text>
       </Space> },
       { key: 'walk-forward', label: '滚动样本外', children: <Space orientation="vertical"><Typography.Text>独立测试折数：{walkForward?.result.folds.length ?? 0}；正收益折比例：{walkForward?.result.fold_pass_ratio ?? '—'}</Typography.Text><Typography.Text>聚合 Sharpe：{String(aggregate?.sharpe ?? '—')}；聚合收益：{String(aggregate?.total_return ?? '—')}</Typography.Text><Typography.Text type="secondary">仅验证期选择候选；完整折区间互不重叠。结论：{walkForward?.promotion ?? '未评估'}。</Typography.Text></Space> },
@@ -125,6 +147,15 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
 }
 
 export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
+  const [query, setQuery] = useState('')
+  const [scenario, setScenario] = useState<string | undefined>()
+  const experiments = data?.experiments.experiments ?? []
+  const rows = experiments.filter((row) => {
+    const text = query.trim().toLowerCase()
+    return (!text || `${row.experiment_id} ${row.model ?? ''}`.toLowerCase().includes(text))
+      && (!scenario || row.scenario_type === scenario)
+  })
+  const scenarios = [...new Set(experiments.map((row) => row.scenario_type))].map((value) => ({ value, label: value }))
   const columns = [
     { title: '实验ID', dataIndex: 'experiment_id' },
     { title: '模型', dataIndex: 'model' },
@@ -136,7 +167,7 @@ export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
     { title: 'Sharpe', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.sharpe ?? '—' },
     { title: '最大回撤', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.maximum_drawdown ?? '—' },
   ]
-  return <Page title="实验中心" subtitle="真实 AKShare 历史数据上的可复现实验"><Alert showIcon type="warning" title={data?.experiments.classification ?? '尚无验证产物'} description={`数据版本：${data?.experiments.data_version ?? '—'}；每行已验证 record/result/artifact 哈希，但当前结论仍为 ${data?.experiments.promotion ?? '未评估'}。`} /><Table rowKey="experiment_id" columns={columns} dataSource={data?.experiments.experiments ?? []} pagination={{ pageSize: 8, showSizeChanger: false }} scroll={{ x: 1400 }} locale={{ emptyText: '尚未运行验证实验' }} /></Page>
+  return <Page title="实验中心" subtitle="真实 AKShare 历史数据上的可复现实验"><Alert showIcon type="warning" title={data?.experiments.classification ?? '尚无验证产物'} description={`数据版本：${data?.experiments.data_version ?? '—'}；每行已验证 record/result/artifact 哈希，但当前结论仍为 ${data?.experiments.promotion ?? '未评估'}。`} /><Space wrap><Input.Search aria-label="搜索实验" placeholder="搜索实验 ID 或模型" allowClear value={query} onChange={(event) => setQuery(event.target.value)} style={{ width: 320 }} /><Select aria-label="筛选实验类型" allowClear placeholder="全部类型" value={scenario} onChange={setScenario} options={scenarios} style={{ width: 180 }} /><JsonExportButton filename="qtrade-experiments.json" value={rows} /></Space><Table rowKey="experiment_id" columns={columns} dataSource={rows} pagination={{ pageSize: 8, showSizeChanger: false }} scroll={{ x: 1400 }} expandable={{ expandedRowRender: (row) => <Descriptions values={[["Spec Hash", row.spec_hash], ["Result Hash", row.result_hash], ["Record Hash", row.record_hash ?? '—'], ["数据版本", row.data_version ?? data?.experiments.data_version ?? '—'], ["Git Commit", row.git_commit ?? data?.experiments.git_commit ?? '—'], ["交易成本", row.transaction_cost ?? '—'], ["参数", Object.entries(row.parameters ?? {}).map(([key, value]) => `${key}=${value}`).join('，') || '基准']]} /> }} locale={{ emptyText: '尚未运行验证实验' }} /></Page>
 }
 
 export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
@@ -179,41 +210,227 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   </Page>
 }
 
-export function PaperPage({ data }: { data: PlatformSnapshot | null }) {
-  return <Page title="模拟交易" subtitle="真实内核、模拟成交"><Space orientation="vertical" style={{ width: '100%' }}><Alert type="warning" showIcon title="仅模拟成交，不发送真实订单" description="账户现金、订单与成交来自当前持久化 PAPER 运行时；没有实时市价时不计算或展示虚构权益。" /><Descriptions values={[["现金", data?.account.cash ?? '—'], ["账户权益", data?.account.equity ?? '实时市价不可用'], ["持仓数", String(data?.positions.length ?? 0)], ["订单数", String(data?.orders.length ?? 0)], ["模拟成交数", String(data?.trades.length ?? 0)], ["已实现盈亏", data?.pnl.realized ?? '—']]} /><Table<OrderRow> rowKey="internal_order_id" dataSource={data?.orders ?? []} columns={[{ title: '内部委托ID', dataIndex: 'internal_order_id' }, { title: '策略', dataIndex: 'strategy_id' }, { title: '证券', dataIndex: 'symbol' }, { title: '方向', dataIndex: 'side' }, { title: '限价', dataIndex: 'price' }, { title: '状态', dataIndex: 'status' }, { title: '数量', dataIndex: 'quantity' }, { title: '已成交', dataIndex: 'filled_quantity' }]} pagination={{ pageSize: 10, showSizeChanger: false }} locale={{ emptyText: '当前 PAPER 运行时暂无委托' }} /></Space></Page>
+export function PaperPage({ data, publicNode = false, onRefresh }: { data: PlatformSnapshot | null; publicNode?: boolean; onRefresh?: () => Promise<void> }) {
+  const [token, setToken] = useState('')
+  const [reason, setReason] = useState('manual web control')
+  const [runningAction, setRunningAction] = useState<RuntimeControlAction | null>(null)
+  const [controlStatus, setControlStatus] = useState<string | null>(null)
+  const perform = async (action: RuntimeControlAction) => {
+    if (!token.trim()) {
+      setControlStatus('请输入本地控制令牌；令牌不会保存到浏览器存储。')
+      return
+    }
+    setRunningAction(action)
+    try {
+      const result = await controlRuntime(action, token.trim(), reason.trim() || 'manual web control')
+      setControlStatus(`${action.toUpperCase()} 已执行：${result.risk_state}`)
+      await onRefresh?.()
+    } catch (error) {
+      setControlStatus(error instanceof Error ? error.message : '控制操作失败')
+    } finally {
+      setRunningAction(null)
+    }
+  }
+  return <Page title="模拟交易" subtitle="真实内核、模拟成交"><Space orientation="vertical" style={{ width: '100%' }}><Alert type="warning" showIcon title="仅模拟成交，不发送真实订单" description="账户现金、订单与成交来自当前持久化 PAPER 运行时；没有实时市价时不计算或展示虚构权益。" /><Descriptions values={[["现金", data?.account.cash ?? '—'], ["账户权益", data?.account.equity ?? '实时市价不可用'], ["持仓数", String(data?.positions.length ?? 0)], ["订单数", String(data?.orders.length ?? 0)], ["模拟成交数", String(data?.trades.length ?? 0)], ["已实现盈亏", data?.pnl.realized ?? '—']]} />{publicNode ? <Alert showIcon type="info" title="公开节点只读" description="Vercel 不持有 SQLite 状态或控制令牌；运行控制只在 loopback 本地安全核心显示。" /> : <Card title="本地 PAPER/SHADOW 运行控制"><Space orientation="vertical" style={{ width: '100%' }}><Alert showIcon type="warning" title="控制令牌只驻留当前页面内存" description="不写入 localStorage、日志或仓库。恢复和启动仍需后端对账证明；停机与熔断需要二次确认。" /><Space wrap><Input.Password aria-label="本地控制令牌" value={token} onChange={(event) => setToken(event.target.value)} placeholder="QTRADE_CONTROL_TOKEN" style={{ width: 280 }} /><Input aria-label="控制操作原因" value={reason} onChange={(event) => setReason(event.target.value)} maxLength={200} style={{ width: 320 }} /></Space><Space wrap><Button loading={runningAction === 'recover'} onClick={() => { void perform('recover') }}>恢复并对账</Button><Button type="primary" loading={runningAction === 'start'} onClick={() => { void perform('start') }}>启动</Button><Button loading={runningAction === 'pause'} onClick={() => { void perform('pause') }}>暂停</Button><Button loading={runningAction === 'resume'} onClick={() => { void perform('resume') }}>继续</Button><Popconfirm title="确认停止当前 PAPER/SHADOW 运行时？" onConfirm={() => { void perform('stop') }}><Button danger loading={runningAction === 'stop'}>停止</Button></Popconfirm><Popconfirm title="确认触发安全熔断？恢复必须重新对账。" onConfirm={() => { void perform('kill') }}><Button danger type="primary" loading={runningAction === 'kill'}>安全熔断</Button></Popconfirm></Space>{controlStatus && <Alert showIcon type="info" title={controlStatus} />}</Space></Card>}<Table<OrderRow> rowKey="internal_order_id" dataSource={data?.orders ?? []} columns={[{ title: '内部委托ID', dataIndex: 'internal_order_id' }, { title: '策略', dataIndex: 'strategy_id' }, { title: '证券', dataIndex: 'symbol' }, { title: '方向', dataIndex: 'side' }, { title: '限价', dataIndex: 'price' }, { title: '状态', dataIndex: 'status' }, { title: '数量', dataIndex: 'quantity' }, { title: '已成交', dataIndex: 'filled_quantity' }]} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 980 }} locale={{ emptyText: '当前 PAPER 运行时暂无委托' }} /></Space></Page>
 }
 
 export function PositionsPage({ data }: { data: PlatformSnapshot | null }) {
+  const [query, setQuery] = useState('')
   const columns: ColumnsType<PositionRow> = [{ title: '证券', dataIndex: 'symbol' }, { title: '数量', dataIndex: 'quantity' }, { title: '可卖数量', dataIndex: 'sellable_quantity', render: (value: number | null) => value ?? '不可验证' }, { title: '平均成本', dataIndex: 'average_cost' }, { title: '成本口径持仓额', dataIndex: 'cost_basis_value' }, { title: '已实现盈亏', dataIndex: 'realized_pnl' }, { title: '实时估值', render: () => <Tag color="orange">市价不可用</Tag> }, { title: '可卖性日期', dataIndex: 'as_of_date' }]
-  return <Page title="持仓" subtitle="持久化 PAPER 数量、成本与日期有效可卖性"><Alert showIcon type="warning" title="当前没有可信实时市价" description="市值、浮动盈亏和持仓权重保持 unavailable；不会用历史收盘价冒充当前估值。可卖数量仅在运行时 SellabilityLedger 可用时展示。" /><Table rowKey="symbol" columns={columns} dataSource={data?.positions ?? []} locale={{ emptyText: '当前 PAPER 账户无持仓' }} /></Page>
+  const rows = (data?.positions ?? []).filter((row) => row.symbol.includes(query.trim()))
+  return <Page title="持仓" subtitle="持久化 PAPER 数量、成本与日期有效可卖性"><Alert showIcon type="warning" title="当前没有可信实时市价" description="市值、浮动盈亏和持仓权重保持 unavailable；不会用历史收盘价冒充当前估值。可卖数量仅在运行时 SellabilityLedger 可用时展示。" /><Space wrap><Input.Search aria-label="搜索持仓证券" placeholder="搜索证券代码" allowClear value={query} onChange={(event) => setQuery(event.target.value)} style={{ width: 280 }} /><JsonExportButton filename="qtrade-paper-positions.json" value={rows} /></Space><Table rowKey="symbol" columns={columns} dataSource={rows} scroll={{ x: 1000 }} locale={{ emptyText: '当前 PAPER 账户无持仓' }} /></Page>
 }
 
-export function OrdersPage({ data }: { data: PlatformSnapshot | null }) {
-  return <Page title="委托与成交" subtitle="持久化 PAPER 订单状态机与模拟成交"><Space orientation="vertical" style={{ width: '100%' }}><Alert showIcon type="info" title="以下成交均为 PAPER 模拟成交，不是交易所或券商回报" /><Card title="委托"><Table<OrderRow> rowKey="internal_order_id" dataSource={data?.orders ?? []} columns={[{ title: '内部委托ID', dataIndex: 'internal_order_id' }, { title: '策略', dataIndex: 'strategy_id' }, { title: '组合', dataIndex: 'portfolio_id' }, { title: '证券', dataIndex: 'symbol' }, { title: '方向', dataIndex: 'side' }, { title: '限价', dataIndex: 'price' }, { title: '数量', dataIndex: 'quantity' }, { title: '成交数量', dataIndex: 'filled_quantity' }, { title: '状态', dataIndex: 'status' }, { title: '更新时间', dataIndex: 'updated_at' }]} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 1300 }} locale={{ emptyText: '当前 PAPER 运行时暂无委托' }} /></Card><Card title="模拟成交"><Table rowKey="trade_id" dataSource={data?.trades ?? []} columns={[{ title: '成交ID', dataIndex: 'trade_id' }, { title: '策略', dataIndex: 'strategy_id' }, { title: '证券', dataIndex: 'symbol' }, { title: '方向', dataIndex: 'side' }, { title: '价格', dataIndex: 'price' }, { title: '数量', dataIndex: 'quantity' }, { title: '费用', dataIndex: 'fee' }, { title: '时间', dataIndex: 'timestamp' }, { title: '性质', render: () => <Tag color="orange">PAPER 模拟</Tag> }]} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 1200 }} locale={{ emptyText: '当前持久化运行时暂无已应用模拟成交' }} /></Card></Space></Page>
+export function OrdersPage({ data, publicNode = false, onRefresh }: { data: PlatformSnapshot | null; publicNode?: boolean; onRefresh?: () => Promise<void> }) {
+  const [query, setQuery] = useState('')
+  const [tradeToken, setTradeToken] = useState('')
+  const [cancelStatus, setCancelStatus] = useState<string | null>(null)
+  const [cancelling, setCancelling] = useState<string | null>(null)
+  const cancelKeys = useRef<Record<string, string>>({})
+  const text = query.trim().toLowerCase()
+  const orders = (data?.orders ?? []).filter((row) => !text || `${row.internal_order_id} ${row.strategy_id} ${row.portfolio_id} ${row.symbol} ${row.status}`.toLowerCase().includes(text))
+  const trades = (data?.trades ?? []).filter((row) => !text || `${row.trade_id} ${row.strategy_id ?? ''} ${row.portfolio_id ?? ''} ${row.symbol}`.toLowerCase().includes(text))
+  const cancel = async (order: OrderRow) => {
+    if (!tradeToken.trim()) {
+      setCancelStatus('请输入本地交易敏感令牌；令牌不会保存到浏览器存储。')
+      return
+    }
+    const key = cancelKeys.current[order.internal_order_id]
+      ?? `web-cancel-${order.internal_order_id}-${crypto.randomUUID()}`
+    cancelKeys.current[order.internal_order_id] = key
+    setCancelling(order.internal_order_id)
+    try {
+      const result = await cancelPaperOrder(order.internal_order_id, key, tradeToken.trim())
+      setCancelStatus(`${result.internal_order_id}：${result.status}`)
+      await onRefresh?.()
+    } catch (error) {
+      setCancelStatus(error instanceof Error ? error.message : '撤单失败')
+    } finally {
+      setCancelling(null)
+    }
+  }
+  const terminal = new Set(['FILLED', 'CANCELLED', 'REJECTED'])
+  const orderColumns = [{ title: '内部委托ID', dataIndex: 'internal_order_id' }, { title: '策略', dataIndex: 'strategy_id' }, { title: '组合', dataIndex: 'portfolio_id' }, { title: '证券', dataIndex: 'symbol' }, { title: '方向', dataIndex: 'side' }, { title: '限价', dataIndex: 'price' }, { title: '数量', dataIndex: 'quantity' }, { title: '成交数量', dataIndex: 'filled_quantity' }, { title: '状态', dataIndex: 'status' }, { title: '更新时间', dataIndex: 'updated_at' }, ...(!publicNode ? [{ title: '操作', render: (_: unknown, row: OrderRow) => terminal.has(row.status) ? '—' : <Popconfirm title="确认撤销这笔 PAPER 委托？" onConfirm={() => { void cancel(row) }}><Button type="link" danger loading={cancelling === row.internal_order_id}>撤单</Button></Popconfirm> }] : [])]
+  return <Page title="委托与成交" subtitle="持久化 PAPER 订单状态机与模拟成交"><Space orientation="vertical" style={{ width: '100%' }}><Alert showIcon type="info" title="以下成交均为 PAPER 模拟成交，不是交易所或券商回报" /><Space wrap><Input.Search aria-label="搜索委托成交" placeholder="搜索订单、策略、组合或证券" allowClear value={query} onChange={(event) => setQuery(event.target.value)} style={{ width: 340 }} /><JsonExportButton filename="qtrade-paper-orders-trades.json" value={{ orders, trades }} /></Space>{!publicNode && <Card size="small" title="本地 PAPER 撤单授权"><Space wrap><Input.Password aria-label="本地交易敏感令牌" value={tradeToken} onChange={(event) => setTradeToken(event.target.value)} placeholder="QTRADE_TRADE_TOKEN" style={{ width: 280 }} /><Typography.Text type="secondary">仅驻留当前页面内存；撤单使用每笔订单固定的幂等键。</Typography.Text></Space>{cancelStatus && <Alert showIcon type="info" title={cancelStatus} style={{ marginTop: 12 }} />}</Card>}<Card title="委托"><Table<OrderRow> rowKey="internal_order_id" dataSource={orders} columns={orderColumns} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 1400 }} locale={{ emptyText: '当前 PAPER 运行时暂无委托' }} /></Card><Card title="模拟成交"><Table rowKey="trade_id" dataSource={trades} columns={[{ title: '成交ID', dataIndex: 'trade_id' }, { title: '策略', dataIndex: 'strategy_id' }, { title: '证券', dataIndex: 'symbol' }, { title: '方向', dataIndex: 'side' }, { title: '价格', dataIndex: 'price' }, { title: '数量', dataIndex: 'quantity' }, { title: '费用', dataIndex: 'fee' }, { title: '时间', dataIndex: 'timestamp' }, { title: '性质', render: () => <Tag color="orange">PAPER 模拟</Tag> }]} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 1200 }} locale={{ emptyText: '当前持久化运行时暂无已应用模拟成交' }} /></Card></Space></Page>
 }
 
 export function RiskPage({ data }: { data: PlatformSnapshot | null }) {
   const risk = data?.risk
   const state = risk?.state ?? 'HALTED'
-  return <Page title="风控中心" subtitle="可从 PAPER 账本与订单重算的风险摘要"><Alert type={state === 'HALTED' ? 'error' : 'success'} showIcon title={<Space>当前风险状态 <StatusTag value={state} prominent /></Space>} description="敞口采用持仓成本加未成交 BUY 限价名义额，不是实时市值风险；没有可信实时市价时，回撤保持 unavailable。" /><Card className="risk-grid"><Descriptions values={[['Kill State', state], ['Gateway', risk?.gateway_connected ? 'CONNECTED' : 'DISCONNECTED'], ['Reconciliation', risk?.reconciliation_status ?? 'UNKNOWN'], ['成本口径持仓额', risk?.position_cost_basis ?? '—'], ['未成交买单名义额', risk?.open_buy_notional ?? '—'], ['成本口径总敞口', risk?.gross_exposure ?? '—'], ['最大持仓集中度', risk?.largest_position_concentration === null || risk?.largest_position_concentration === undefined ? '无持仓' : formatPercent(risk.largest_position_concentration)], ['未完成订单', String(risk?.open_order_count ?? 0)], ['已实现盈亏', risk?.realized_pnl ?? '—'], ['实时回撤', '市价不可用']]}/></Card></Page>
+  const paperFailure = data?.availability?.failures.paper ?? null
+  return <Page title="风控中心" subtitle="可从 PAPER 账本与订单重算的风险摘要">{paperFailure && <Alert showIcon type="error" title="PAPER 原子快照读取失败" description={paperFailure} />}<Alert type={state === 'HALTED' ? 'error' : 'success'} showIcon title={<Space>当前风险状态 <StatusTag value={state} prominent /></Space>} description="敞口采用持仓成本加未成交 BUY 限价名义额，不是实时市值风险；没有可信实时市价时，回撤保持 unavailable。" /><Card className="risk-grid"><Descriptions values={[['Kill State', state], ['Gateway', risk?.gateway_connected ? 'CONNECTED' : 'DISCONNECTED'], ['Reconciliation', risk?.reconciliation_status ?? 'UNKNOWN'], ['成本口径持仓额', risk?.position_cost_basis ?? '—'], ['未成交买单名义额', risk?.open_buy_notional ?? '—'], ['成本口径总敞口', risk?.gross_exposure ?? '—'], ['最大持仓集中度', risk?.largest_position_concentration === null || risk?.largest_position_concentration === undefined ? '无持仓' : formatPercent(risk.largest_position_concentration)], ['未完成订单', String(risk?.open_order_count ?? 0)], ['已实现盈亏', risk?.realized_pnl ?? '—'], ['实时回撤', '市价不可用'], ['分钟层权限', '只减仓，不加仓'], ['外部订单传输', 'DISABLED']]}/></Card><Alert showIcon type="info" title="运行边界" description="所有 PAPER 目标仍经过 Portfolio → Risk → OMS → PaperGateway；策略与分钟层都不能接触外部网关。" /></Page>
 }
 
 export function DataCenterPage({ data }: { data: PlatformSnapshot | null }) {
   const reportCount = data?.reports.length ?? 0
   const historical = data?.market?.historical
-  return <Page title="数据中心" subtitle="供应商、质量、存储与回放"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Descriptions values={[['Provider', historical ? `${historical.provider} ${historical.provider_version}` : '未配置'], ['Snapshot 连接', data?.market.provider_connected ? 'CONNECTED' : 'DISCONNECTED'], ['Snapshot 就绪', data?.market.snapshot_readiness ? 'YES' : 'NO'], ['数据版本', historical?.data_version ?? '—'], ['质量状态', historical?.quality_status ?? '等待数据'], ['历史 Bar', String(historical?.bar_count ?? 0)], ['PIT 样本池', historical?.universe.point_in_time ? 'YES' : 'NO'], ['Replay', '可用'], ['已验证每日报告', String(reportCount)]]}/><Card title="PAPER 每日报告历史"><Table rowKey="report_id" dataSource={data?.reports ?? []} columns={[{ title: '交易日', dataIndex: 'trading_day' }, { title: '报告ID', dataIndex: 'report_id' }, { title: '数据版本', dataIndex: 'data_version' }, { title: '策略版本', dataIndex: 'strategy_versions', render: (versions: string[]) => versions.join('、') }, { title: '生成时间', dataIndex: 'generated_at' }, { title: '完整性', render: () => <Tag color="green">SHA-256 已验证</Tag> }]} pagination={{ pageSize: 10, showSizeChanger: false }} locale={{ emptyText: '暂无经哈希与 schema 校验的 PAPER 每日报告；当前未启用自动日终生成' }} /></Card></Space></Page>
+  const evidence = [
+    { id: 'market', name: 'ETF 历史日线', status: historical ? 'VERIFIED' : 'UNAVAILABLE', count: historical?.bar_count ?? 0, identity: historical ? `${historical.data_version} · ${historical.checksum}` : '—' },
+    { id: 'experiments', name: '基线实验与 artifacts', status: data?.experiments.experiments.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.experiments.experiments.length ?? 0, identity: data?.experiments.data_version ?? '—' },
+    { id: 'walk-forward', name: '滚动样本外', status: data?.walkForward.result.folds.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.walkForward.result.folds.length ?? 0, identity: data?.walkForward.data_version ?? '—' },
+    { id: 'robustness', name: '拒绝后稳健性', status: data?.robustness.result.scenario_metrics.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.robustness.result.scenario_metrics.length ?? 0, identity: data?.robustness.promotion ?? '—' },
+    { id: 'factor-search', name: '因子搜索', status: data?.factorSearch.factor_diagnostics.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.factorSearch.factor_diagnostics.length ?? 0, identity: data?.factorSearch.promotion ?? '—' },
+    { id: 'factor-robustness', name: '因子重复鲁棒性', status: data?.robustFactorSearch.candidate_summaries.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.robustFactorSearch.candidate_summaries.length ?? 0, identity: data?.robustFactorSearch.promotion ?? '—' },
+    { id: 'stock-sector', name: '75 股票多板块迁移', status: data?.stockSectorTransfer.data?.symbol_count === 75 ? 'VERIFIED' : 'UNAVAILABLE', count: data?.stockSectorTransfer.data?.symbol_count ?? 0, identity: data?.stockSectorTransfer.promotion ?? '—' },
+    { id: 'minute', name: '分钟前向会话', status: data?.minuteOverlay.readiness ?? 'UNAVAILABLE', count: data?.minuteOverlay.ready_symbol_count ?? 0, identity: (data?.minuteOverlay.reasons ?? []).join(' / ') || '—' },
+  ]
+  return <Page title="数据中心" subtitle="供应商、质量、存储与回放"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Descriptions values={[['Provider', historical ? `${historical.provider} ${historical.provider_version}` : '未配置'], ['Snapshot 连接', data?.market.provider_connected ? 'CONNECTED' : 'DISCONNECTED'], ['Snapshot 就绪', data?.market.snapshot_readiness ? 'YES' : 'NO'], ['数据版本', historical?.data_version ?? '—'], ['质量状态', historical?.quality_status ?? '等待数据'], ['历史 Bar', String(historical?.bar_count ?? 0)], ['PIT 样本池', historical?.universe.point_in_time ? 'YES' : 'NO'], ['Replay', '可用'], ['已验证每日报告', String(reportCount)]]}/><Card title="校验通过的证据库存" extra={<JsonExportButton filename="qtrade-evidence-inventory.json" value={evidence} />}><Table rowKey="id" size="small" pagination={false} dataSource={evidence} columns={[{ title: '证据链', dataIndex: 'name' }, { title: '状态', dataIndex: 'status', render: (value: string) => <Tag color={value === 'VERIFIED' ? 'green' : 'orange'}>{value}</Tag> }, { title: '条目', dataIndex: 'count' }, { title: '版本 / checksum / 阻塞原因', dataIndex: 'identity' }]} scroll={{ x: 980 }} /></Card><Card title="PAPER 每日报告历史"><Table rowKey="report_id" dataSource={data?.reports ?? []} columns={[{ title: '交易日', dataIndex: 'trading_day' }, { title: '报告ID', dataIndex: 'report_id' }, { title: '数据版本', dataIndex: 'data_version' }, { title: '策略版本', dataIndex: 'strategy_versions', render: (versions: string[]) => versions.join('、') }, { title: '生成时间', dataIndex: 'generated_at' }, { title: '完整性', render: () => <Tag color="green">SHA-256 已验证</Tag> }]} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 1050 }} locale={{ emptyText: '暂无经哈希与 schema 校验的 PAPER 每日报告；当前未启用自动日终生成' }} /></Card></Space></Page>
 }
 
 export function MonitorPage({ data }: { data: PlatformSnapshot | null }) {
-  const entries = Object.entries(data?.metrics ?? {})
-  const audit = data?.audit ?? []
-  const auditAvailable = data?.audit != null
-  const alerts = audit.filter((event) => event.severity === 'ERROR' || event.severity === 'CRITICAL')
-  const minute = data?.minuteOverlay
-  if (!auditAvailable) {
-    return <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化"><Alert showIcon type="error" title="持久化审计历史不可用" description="其他运行时快照仍可查看，但不能据此声称当前没有告警。" /><Card title="最近持久化审计与告警"><Empty description="审计历史不可用" /></Card></Page>
-  }
-  return <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化"><Space orientation="vertical" style={{ width: '100%' }}><Card><Descriptions values={[['Service Health', data?.health.healthy ? 'HEALTHY' : 'DEGRADED'], ['Event Queue', String(data?.metrics.event_queue_depth ?? 0)], ['Market Data Lag', String(data?.metrics.market_data_lag ?? '—')], ['Order Rate', String(data?.metrics.orders_per_min ?? 0)], ['Reject Rate', String(data?.metrics.reject_rate ?? 0)], ['Fill Rate', String(data?.metrics.fill_rate ?? 0)], ['Runtime Owner', 'SQLite 单进程租约'], ['指标数量', String(entries.length)], ['持久化告警', data?.audit === null ? '不可用' : String(alerts.length)]]}/></Card><Alert showIcon type={minute?.readiness === 'READY' ? 'success' : 'warning'} title={`分钟修正：${minute?.readiness ?? 'UNAVAILABLE'}`} description={minute?.readiness === 'READY' ? `${minute.ready_symbol_count}/${minute.symbol_count} 个标的已完成 1 分钟预热，只允许降低日线基础仓位。` : '尚未接入授权实时 Tick 或分钟状态未完全预热；不会产生分钟 PAPER 目标。'} /><Card title="分钟级时间序列修正"><Descriptions values={[['行情 Provider', minute?.provider ?? '未配置'], ['分钟周期', minute?.bar_interval ?? '1m'], ['Provider 连接', minute?.provider_connected ? 'CONNECTED' : 'DISCONNECTED'], ['监控标的', String(minute?.symbol_count ?? 0)], ['已就绪标的', String(minute?.ready_symbol_count ?? 0)], ['仓位权限', '只减仓，不加仓'], ['执行边界', '封闭分钟线后的下一 Tick'], ['实盘订单', minute?.external_order_transmission ? '允许' : '禁止'], ['晋级状态', minute?.promotion ?? 'NOT_ELIGIBLE']]}/><Typography.Text type="secondary">分钟层不在盘中重搜因子参数；目标版本按交易日冻结，弱趋势、分钟波动、日内回撤及恢复冷却只负责收缩风险。</Typography.Text></Card>{data?.audit === null && <Alert showIcon type="error" title="持久化审计历史不可用" description="其他运行时快照仍可查看，但不能据此声称当前没有告警。" />}<Card title="最近持久化审计与告警"><Table rowKey={(row) => `${row.timestamp}-${row.event_type}-${row.order_id ?? ''}`} size="small" dataSource={audit} columns={[{ title: '时间', dataIndex: 'timestamp' }, { title: '级别', dataIndex: 'severity' }, { title: '事件', dataIndex: 'event_type' }, { title: '订单', dataIndex: 'order_id', render: (value: string | null) => value ?? '—' }, { title: '消息', dataIndex: 'message' }]} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} locale={{ emptyText: data?.audit === null ? '审计历史不可用' : '暂无持久化审计事件' }} /><Typography.Text type="secondary">最多显示最近 500 条严格校验的 SQLite 审计记录；ERROR/CRITICAL 计入告警。SQLite 表不是哈希链或 WORM 存储。</Typography.Text></Card></Space></Page>
+  const entries = Object.entries(data?.metrics ?? {});
+  const audit = data?.audit ?? [];
+  const auditAvailable = data?.audit != null;
+  const alerts = audit.filter(
+    (event) => event.severity === "ERROR" || event.severity === "CRITICAL",
+  );
+  const minute = data?.minuteOverlay;
+  const minuteRows = minute?.symbols ?? [];
+  return (
+    <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化">
+      <Space orientation="vertical" style={{ width: "100%" }}>
+        <Card>
+          <Descriptions
+            values={[
+              ["Service Health", data?.health.healthy ? "HEALTHY" : "DEGRADED"],
+              ["Event Queue", String(data?.metrics.event_queue_depth ?? 0)],
+              ["Market Data Lag", String(data?.metrics.market_data_lag ?? "—")],
+              ["Order Rate", String(data?.metrics.orders_per_min ?? 0)],
+              ["Reject Rate", String(data?.metrics.reject_rate ?? 0)],
+              ["Fill Rate", String(data?.metrics.fill_rate ?? 0)],
+              ["Runtime Owner", "SQLite 单进程租约"],
+              ["指标数量", String(entries.length)],
+              [
+                "持久化告警",
+                auditAvailable ? String(alerts.length) : "不可用",
+              ],
+            ]}
+          />
+        </Card>
+        <Alert
+          showIcon
+          type={minute?.readiness === "READY" ? "success" : "warning"}
+          title={`分钟修正：${minute?.readiness ?? "UNAVAILABLE"}`}
+          description={
+            minute?.readiness === "READY"
+              ? `${minute.ready_symbol_count}/${minute.symbol_count} 个标的已完成 1 分钟预热，只允许降低日线基础仓位。`
+              : "尚未接入授权实时 Tick 或分钟状态未完全预热；不会产生分钟 PAPER 目标。"
+          }
+        />
+        <Card title="分钟级时间序列修正">
+          <Descriptions
+            values={[
+              ["行情 Provider", minute?.provider ?? "未配置"],
+              ["分钟周期", minute?.bar_interval ?? "1m"],
+              [
+                "Provider 连接",
+                minute?.provider_connected ? "CONNECTED" : "DISCONNECTED",
+              ],
+              ["监控标的", String(minute?.symbol_count ?? 0)],
+              ["已就绪标的", String(minute?.ready_symbol_count ?? 0)],
+              ["仓位权限", "只减仓，不加仓"],
+              ["执行边界", "封闭分钟线后的下一 Tick"],
+              [
+                "实盘订单",
+                minute?.external_order_transmission ? "允许" : "禁止",
+              ],
+              ["晋级状态", minute?.promotion ?? "NOT_ELIGIBLE"],
+            ]}
+          />
+          <Table
+            rowKey="symbol"
+            size="small"
+            dataSource={minuteRows}
+            columns={[
+              { title: "标的", dataIndex: "symbol" },
+              {
+                title: "就绪",
+                dataIndex: "ready",
+                render: (value: boolean) => (value ? "READY" : "WARMING"),
+              },
+              { title: "基础目标", dataIndex: "base_target_quantity" },
+              { title: "修正目标", dataIndex: "corrected_target_quantity" },
+              { title: "缩放倍数", dataIndex: "multiplier" },
+              { title: "分钟波动", dataIndex: "minute_volatility", render: (value: string | null) => value ?? "—" },
+              { title: "日内回撤", dataIndex: "intraday_drawdown", render: (value: string | null) => value ?? "—" },
+              { title: "冷却 Bars", dataIndex: "cooldown_bars_remaining", render: (value: number | null) => value ?? "—" },
+              {
+                title: "封闭分钟",
+                dataIndex: "last_bar_timestamp",
+                render: (value: string | null) => value ?? "—",
+              },
+              { title: "原因", dataIndex: "reasons", render: (values: string[]) => values.join(" / ") || "—" },
+            ]}
+            pagination={{ pageSize: 10, showSizeChanger: false }}
+            scroll={{ x: 920 }}
+            locale={{ emptyText: "暂无已授权的分钟监控标的" }}
+          />
+          <Typography.Text type="secondary">
+            分钟层不在盘中重搜因子参数；目标版本按交易日冻结，弱趋势、分钟波动、日内回撤及恢复冷却只负责收缩风险。
+          </Typography.Text>
+        </Card>
+        {!auditAvailable && (
+          <Alert
+            showIcon
+            type="error"
+            title="持久化审计历史不可用"
+            description="其他运行时快照仍可查看，但不能据此声称当前没有告警。"
+          />
+        )}
+        <Card title="最近持久化审计与告警">
+          <Table
+            rowKey={(row) =>
+              `${row.timestamp}-${row.event_type}-${row.order_id ?? ""}`
+            }
+            size="small"
+            dataSource={audit}
+            columns={[
+              { title: "时间", dataIndex: "timestamp" },
+              { title: "级别", dataIndex: "severity" },
+              { title: "事件", dataIndex: "event_type" },
+              {
+                title: "订单",
+                dataIndex: "order_id",
+                render: (value: string | null) => value ?? "—",
+              },
+              { title: "消息", dataIndex: "message" },
+            ]}
+            pagination={{ pageSize: 10, showSizeChanger: false }}
+            scroll={{ x: 900 }}
+            locale={{
+              emptyText: auditAvailable
+                ? "暂无持久化审计事件"
+                : "审计历史不可用",
+            }}
+          />
+          <Typography.Text type="secondary">
+            最多显示最近 500 条严格校验的 SQLite 审计记录；ERROR/CRITICAL
+            计入告警。SQLite 表不是哈希链或 WORM 存储。
+          </Typography.Text>
+        </Card>
+      </Space>
+    </Page>
+  );
 }
 
 function Descriptions({ values }: { values: [string, string][] }) {

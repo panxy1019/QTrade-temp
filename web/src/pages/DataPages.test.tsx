@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { PlatformSnapshot } from '../types'
-import { runBacktestPreview } from '../api/client'
+import { cancelPaperOrder, controlRuntime, runBacktestPreview } from '../api/client'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('echarts-for-react', () => ({ default: () => <div data-testid="equity-chart" /> }))
@@ -15,6 +15,8 @@ vi.mock('../api/client', () => ({
     ],
   })),
   runBacktestPreview: vi.fn(),
+  controlRuntime: vi.fn(),
+  cancelPaperOrder: vi.fn(),
 }))
 
 const data = {
@@ -221,6 +223,7 @@ const data = {
     risk_summary: { maximum_drawdown: '-0.1', transaction_costs: '100', turnover: '2' },
     run_metadata: { engine: 'DailyMultiAssetBacktester', timing: 'close decision, next open execution', session_count: 632 },
   },
+  availability: { failures: {} },
 } as unknown as PlatformSnapshot
 
 describe('durable monitoring', () => {
@@ -239,12 +242,23 @@ describe('durable monitoring', () => {
     render(<MonitorPage data={{ ...data, audit: null }} />)
     expect(screen.getAllByText('持久化审计历史不可用').length).toBeGreaterThan(0)
     expect(screen.getByText(/不能据此声称当前没有告警/)).toBeInTheDocument()
+    expect(screen.getByText('Service Health')).toBeInTheDocument()
+    expect(screen.getByText('分钟级时间序列修正')).toBeInTheDocument()
   })
 
   it('does not report zero alerts before the first platform snapshot', () => {
     render(<MonitorPage data={null} />)
     expect(screen.getAllByText('持久化审计历史不可用').length).toBeGreaterThan(0)
     expect(screen.queryByText('暂无持久化审计事件')).not.toBeInTheDocument()
+  })
+
+  it('shows per-symbol causal minute corrections', () => {
+    render(<MonitorPage data={{ ...data, minuteOverlay: { ...data.minuteOverlay, symbol_count: 1, ready_symbol_count: 1, readiness: 'READY', symbols: [{ symbol: '510300', ready: true, trading_day: '2026-08-12', last_bar_timestamp: '2026-08-12T10:01:00+08:00', base_target_quantity: 1000, corrected_target_quantity: 600, multiplier: '0.6', reasons: ['WEAK_TREND'], minute_volatility: '0.012', intraday_drawdown: '-0.021', cooldown_bars_remaining: 3, strategy_version: 'minute-overlay-v1' }] } }} />)
+    expect(screen.getByText('510300')).toBeInTheDocument()
+    expect(screen.getByText('1000')).toBeInTheDocument()
+    expect(screen.getByText('600')).toBeInTheDocument()
+    expect(screen.getByText('WEAK_TREND')).toBeInTheDocument()
+    expect(screen.getByText('2026-08-12T10:01:00+08:00')).toBeInTheDocument()
   })
 })
 
@@ -254,6 +268,27 @@ describe('persistent PAPER account pages', () => {
     expect(screen.getByText('98999')).toBeInTheDocument()
     expect(screen.getByText('实时市价不可用')).toBeInTheDocument()
     expect(screen.getByText(/没有实时市价时不计算或展示虚构权益/)).toBeInTheDocument()
+  })
+
+  it('keeps runtime controls off the public read-only node', () => {
+    cleanup()
+    render(<PaperPage data={data} publicNode />)
+    expect(screen.getByText('公开节点只读')).toBeInTheDocument()
+    expect(screen.queryByLabelText('本地控制令牌')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '安全熔断' })).not.toBeInTheDocument()
+  })
+
+  it('sends a local runtime action only with an in-memory control token', async () => {
+    cleanup()
+    vi.mocked(controlRuntime).mockResolvedValueOnce({ mode: 'PAPER', running: true, risk_state: 'NORMAL' })
+    render(<PaperPage data={data} />)
+    fireEvent.click(screen.getByRole('button', { name: /启.*动/ }))
+    expect(screen.getByText(/请输入本地控制令牌/)).toBeInTheDocument()
+    expect(controlRuntime).not.toHaveBeenCalled()
+    fireEvent.change(screen.getByLabelText('本地控制令牌'), { target: { value: 'test-control-token' } })
+    fireEvent.click(screen.getByRole('button', { name: /启.*动/ }))
+    await waitFor(() => expect(controlRuntime).toHaveBeenCalledWith('start', 'test-control-token', 'manual web control'))
+    expect(await screen.findByText('START 已执行：NORMAL')).toBeInTheDocument()
   })
 
   it('shows dated sellability and keeps market valuation unavailable', () => {
@@ -270,6 +305,19 @@ describe('persistent PAPER account pages', () => {
     expect(screen.getAllByText('trend@1.0.0').length).toBeGreaterThan(0)
     expect(screen.getByText('PAPER-TRADE-1')).toBeInTheDocument()
     expect(screen.getByText(/不是交易所或券商回报/)).toBeInTheDocument()
+  })
+
+  it('cancels an eligible local PAPER order with a page-stable idempotency key', async () => {
+    cleanup()
+    const openOrder = { ...data.orders[0], status: 'SUBMITTED', filled_quantity: 0 }
+    vi.mocked(cancelPaperOrder).mockResolvedValue({ internal_order_id: 'ORDER-1', status: 'CANCELLED' })
+    render(<OrdersPage data={{ ...data, orders: [openOrder] }} />)
+    fireEvent.change(screen.getByLabelText('本地交易敏感令牌'), { target: { value: 'test-trade-token' } })
+    fireEvent.click(screen.getByRole('button', { name: '撤单' }))
+    expect(await screen.findByText('确认撤销这笔 PAPER 委托？')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'OK' }))
+    await waitFor(() => expect(cancelPaperOrder).toHaveBeenCalledWith('ORDER-1', expect.stringMatching(/^web-cancel-ORDER-1-/), 'test-trade-token'))
+    expect(await screen.findByText('ORDER-1：CANCELLED')).toBeInTheDocument()
   })
 
   it('labels recomputable cost-basis exposure and unavailable drawdown', () => {
@@ -356,6 +404,7 @@ describe('verified backtest analytics', () => {
     expect(screen.getAllByText('动量方案 A').length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: '载入参数' })).toBeInTheDocument()
     expect(screen.getByText(/记录严格绑定当前数据版本与 checksum/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /导出完整结果/ })).toBeInTheDocument()
   })
 
   it('shows the verified leader without presenting it as Champion', async () => {
@@ -416,7 +465,7 @@ describe('verified robustness evidence', () => {
     cleanup()
     render(<ResearchPage data={data} />)
     fireEvent.click(screen.getByRole('tab', { name: '因子搜索' }))
-    expect(screen.getByText(/reversal-20-top3-20/)).toBeInTheDocument()
+    expect(screen.getAllByText(/reversal-20-top3-20/).length).toBeGreaterThan(0)
     expect(screen.getByText(/确认段收益 -12.39%/)).toBeInTheDocument()
     expect(screen.getByText(/主动超额：-7.77%/)).toBeInTheDocument()
     expect(screen.getByText(/不是全新盲测/)).toBeInTheDocument()
@@ -428,7 +477,7 @@ describe('verified robustness evidence', () => {
     render(<ResearchPage data={data} />)
     fireEvent.click(screen.getByRole('tab', { name: '因子鲁棒性' }))
     expect(screen.getByText(/冻结候选：36 个；季度窗口：8 个/)).toBeInTheDocument()
-    expect(screen.getByText(/reversal-10-top3-20/)).toBeInTheDocument()
+    expect(screen.getAllByText(/reversal-10-top3-20/).length).toBeGreaterThan(0)
     expect(screen.getByText(/双倍成本收益 30.99%/)).toBeInTheDocument()
     expect(screen.getByText(/Bootstrap 正收益概率 85.30%/)).toBeInTheDocument()
     expect(screen.getByText(/2026 污染审计：收益 -0.44%/)).toBeInTheDocument()

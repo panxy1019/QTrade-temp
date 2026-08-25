@@ -27,7 +27,7 @@ Last updated: 2026-08-26
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 279 tests passed, Ruff clean, strict mypy clean across
-  92 source files on Python 3.12.13 (macOS, 2026-08-26); 27 frontend Vitest
+  92 source files on Python 3.12.13 (macOS, 2026-08-26); 33 frontend Vitest
   tests, ESLint and the production build pass. Route-level lazy loading reduces
   the initial application chunk while ECharts remains an on-demand large chunk.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -38,6 +38,17 @@ Last updated: 2026-08-26
   root and `/web` asset paths and accepts the Vercel build's `/api` prefix, so a
   deployment build left in `web/dist` no longer produces a blank or data-less
   loopback page.
+- Repository-feasible frontend gaps FE-01 through FE-21 are closed. Optional
+  evidence endpoints degrade independently with visible partition failures;
+  the shell adds manual refresh, update time, unknown-route recovery and a
+  phone breakpoint. Strategy, experiment, research, backtest, positions and
+  orders views now support the relevant search/filter/detail/JSON-export paths.
+  The monitor retains health/minute status when audit history is unavailable
+  and exposes every authorized symbol's causal correction state.
+- Loopback-only PAPER controls now cover recover/start/pause/resume/stop/kill
+  and idempotent cancel using memory-only tokens and confirmation for dangerous
+  actions. Public hostnames hide those controls and remain stateless read-only;
+  this adds no live order path.
 - Public research evidence parity: the Vercel bundle now includes the verified
   11-experiment v4 catalog and artifacts, three disjoint walk-forward folds and
   14-scenario post-rejection robustness report in addition to factor, sector and

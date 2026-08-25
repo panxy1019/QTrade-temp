@@ -2,6 +2,7 @@ import { Alert, Button, Card, Form, Input, InputNumber, Popconfirm, Select, Spac
 import { useState } from 'react'
 import { runBacktestPreview } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
+import { JsonExportButton } from './JsonExportButton'
 import {
   deleteLocalBacktestExperiment,
   loadLocalBacktestExperiments,
@@ -176,6 +177,7 @@ export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) 
         <Space wrap>
           <Input aria-label="本地实验名称" placeholder="为本次结果命名" value={experimentName} maxLength={80} onChange={(event) => setExperimentName(event.target.value)} style={{ width: 280 }} />
           <Button onClick={saveResult}>保存到本地实验</Button>
+          <JsonExportButton filename={`qtrade-backtest-${result.preview_hash.slice(0, 12)}.json`} value={result} label="导出完整结果" />
         </Space>
       </>}
       {saveStatus && <Alert showIcon type="info" title={saveStatus} />}

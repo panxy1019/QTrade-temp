@@ -248,6 +248,12 @@ export interface RobustFactorSearchReport {
     median_window_sharpe: string
     worst_window_sharpe: string
     full_period_return: string
+    full_period_sharpe?: string
+    full_period_turnover?: string
+    full_period_transaction_costs?: string
+    median_window_return?: string
+    sharpe_dispersion?: string
+    window_count?: number
   }>
   stress_tests: {
     evaluations: Array<{
@@ -494,4 +500,7 @@ export interface PlatformSnapshot {
     message: string
     order_id: string | null
   }> | null
+  availability: {
+    failures: Record<string, string>
+  }
 }

@@ -1,13 +1,14 @@
-import { lazy, Suspense, useMemo, useState } from 'react'
-import { ConfigProvider, Layout, Menu, Space, Switch, theme, Typography } from 'antd'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { Button, ConfigProvider, Layout, Menu, Space, Switch, Tag, theme, Typography } from 'antd'
 import {
   AreaChartOutlined, BarChartOutlined, DatabaseOutlined, ExperimentOutlined,
   FundOutlined, LineChartOutlined, MonitorOutlined, PieChartOutlined,
-  ReconciliationOutlined, SafetyCertificateOutlined, StockOutlined, ThunderboltOutlined,
+  ReconciliationOutlined, ReloadOutlined, SafetyCertificateOutlined, StockOutlined, ThunderboltOutlined,
 } from '@ant-design/icons'
-import { HashRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { usePlatformSnapshot } from './hooks/usePlatformSnapshot'
 import { StatusTag } from './components/StatusTag'
+import { isPublicResearchNode } from './runtime/environment'
 import './styles.css'
 
 const OverviewPage = lazy(() => import('./pages/OverviewPage').then((module) => ({ default: module.OverviewPage })))
@@ -35,12 +36,21 @@ const menu = [
 function Shell() {
   const [dark, setDark] = useState(true)
   const [collapsed, setCollapsed] = useState(false)
-  const { data, error } = usePlatformSnapshot()
-  const runtimeLabel = import.meta.env.MODE === 'vercel' ? '公开只读研究节点' : '本地安全核心'
+  const { data, error, loading, refreshing, lastUpdated, refresh } = usePlatformSnapshot()
+  const publicNode = isPublicResearchNode()
+  const runtimeLabel = publicNode ? '公开只读研究节点' : '本地安全核心'
   const location = useLocation()
   const navigate = useNavigate()
   const algorithm = dark ? theme.darkAlgorithm : theme.defaultAlgorithm
   const items = useMemo(() => menu.map(([key, label, icon]) => ({ key, label, icon })), [])
+  const failedSections = Object.keys(data?.availability?.failures ?? {})
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 720px)')
+    const update = () => setCollapsed(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
   return <ConfigProvider theme={{ algorithm, token: { colorPrimary: '#2f81f7', borderRadius: 8, fontFamily: 'Inter, "PingFang SC", "Microsoft YaHei", sans-serif' } }}>
     <Layout className={dark ? 'app dark' : 'app light'}>
       <Layout.Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} width={232} theme="dark">
@@ -50,24 +60,31 @@ function Shell() {
       </Layout.Sider>
       <Layout>
         <Layout.Header className="topbar">
-          <Space><StatusTag value={data?.system.mode ?? 'PAPER'} prominent /><Typography.Text type="secondary">{error ?? runtimeLabel}</Typography.Text></Space>
+          <Space wrap>
+            <StatusTag value={data?.system.mode ?? 'PAPER'} prominent />
+            <Typography.Text type={error ? 'danger' : 'secondary'}>{error ?? runtimeLabel}</Typography.Text>
+            {failedSections.length > 0 && <Tag color="orange">{failedSections.length} 个数据分区异常</Tag>}
+            <Typography.Text type="secondary">{lastUpdated ? `更新 ${lastUpdated.toLocaleTimeString('zh-CN', { hour12: false })}` : loading ? '首次加载中…' : '尚未更新'}</Typography.Text>
+            <Button aria-label="刷新平台快照" size="small" icon={<ReloadOutlined />} loading={refreshing} onClick={() => { void refresh() }}>刷新</Button>
+          </Space>
           <Space><span>深色模式</span><Switch checked={dark} onChange={setDark} /></Space>
         </Layout.Header>
         <Layout.Content className="content">
           <Suspense fallback={<Typography.Text type="secondary">页面加载中…</Typography.Text>}>
             <Routes>
-              <Route path="/" element={<OverviewPage data={data} dark={dark} />} />
+              <Route path="/" element={<OverviewPage data={data} dark={dark} publicNode={publicNode} />} />
               <Route path="/market" element={<MarketPage data={data} />} />
               <Route path="/strategies" element={<StrategyPage data={data} />} />
               <Route path="/research" element={<ResearchPage data={data} />} />
               <Route path="/experiments" element={<ExperimentPage data={data} />} />
               <Route path="/backtest" element={<BacktestPage data={data} />} />
-              <Route path="/paper" element={<PaperPage data={data} />} />
+              <Route path="/paper" element={<PaperPage data={data} publicNode={publicNode} onRefresh={refresh} />} />
               <Route path="/positions" element={<PositionsPage data={data} />} />
-              <Route path="/orders" element={<OrdersPage data={data} />} />
+              <Route path="/orders" element={<OrdersPage data={data} publicNode={publicNode} onRefresh={refresh} />} />
               <Route path="/risk" element={<RiskPage data={data} />} />
               <Route path="/data" element={<DataCenterPage data={data} />} />
               <Route path="/monitor" element={<MonitorPage data={data} />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
         </Layout.Content>

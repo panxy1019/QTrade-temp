@@ -278,3 +278,21 @@ reports; packaging them does not create new evidence or change promotion state.
 Local serving accepts both ordinary and Vercel-mode frontend builds, but this
 transport compatibility does not add credentials, persistence or control
 authority to the public node.
+
+## ADR-021 — Browser controls are host-bound and credentials stay ephemeral
+
+Status: accepted, 2026-08-26.
+
+The frontend determines control authority from the browser hostname: loopback
+may render the existing PAPER/SHADOW control and PAPER-cancel routes, while any
+non-loopback hostname is a read-only research node and must omit those controls.
+This is only a UI boundary; every backend mutation still requires its scoped
+bearer token and public Vercel functions retain no such token or state.
+
+Control and trade tokens may exist only in React component memory. They are not
+written to localStorage, query strings, telemetry, logs or exported JSON. Stop,
+kill and cancel require confirmation, cancel keeps a stable per-order idempotency
+key for the page lifetime, and no action creates a LIVE mode or external gateway.
+Optional read-only evidence failures are reported per partition without hiding
+successful sections, but system, health and the atomic PAPER snapshot remain the
+required core needed to replace the last good snapshot.

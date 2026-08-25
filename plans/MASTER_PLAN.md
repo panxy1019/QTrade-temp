@@ -212,6 +212,15 @@ explicit historical manifest path, so newly ingested versions can be evaluated
 without editing source. This usability path does not weaken immutable experiment,
 held-out or PAPER readiness gates.
 
+The twelve-route frontend completeness audit is closed for every capability the
+repository can implement without new authority. Optional evidence failures no
+longer erase the full snapshot; all research inventories and minute-symbol
+states are inspectable; results and PAPER snapshots can be exported; and local
+runtime/cancel controls require memory-only bearer tokens. The Vercel hostname
+continues to hide mutation controls and fail all sensitive POSTs closed. Licensed
+realtime data, persistent public PAPER, broker reconciliation and new PIT/forward
+evidence remain explicit external blockers rather than UI placeholders.
+
 The factor-research path now predeclares five causal price factors, keeps every
 forward label inside the discovery period, bounds the active validation grid and
 locks one validation winner before confirmatory access. The first active winner
