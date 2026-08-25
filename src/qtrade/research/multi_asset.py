@@ -73,6 +73,24 @@ class EqualWeightBuyHold:
         return {symbol: weight for symbol in eligible}
 
 
+def _target_volatility_scale(
+    closes: tuple[Decimal, ...], window: int, target: Decimal
+) -> Decimal:
+    values = [
+        closes[index] / closes[index - 1] - Decimal("1")
+        for index in range(len(closes) - window, len(closes))
+    ]
+    average_return = sum(values, start=Decimal("0")) / len(values)
+    variance = sum(
+        ((value - average_return) ** 2 for value in values),
+        start=Decimal("0"),
+    ) / len(values)
+    annual_volatility = Decimal(str(float(variance * 252) ** 0.5))
+    return Decimal("1") if annual_volatility == 0 else min(
+        Decimal("1"), target / annual_volatility
+    )
+
+
 class MomentumAllocation:
     def __init__(
         self,
@@ -137,21 +155,9 @@ class MomentumAllocation:
                 continue
             scale = Decimal("1")
             if self._volatility_window is not None and self._target_volatility is not None:
-                values = [
-                    closes[index] / closes[index - 1] - Decimal("1")
-                    for index in range(
-                        len(closes) - self._volatility_window,
-                        len(closes),
-                    )
-                ]
-                average_return = sum(values, start=Decimal("0")) / len(values)
-                variance = sum(
-                    ((value - average_return) ** 2 for value in values),
-                    start=Decimal("0"),
-                ) / len(values)
-                annual_volatility = Decimal(str(float(variance * 252) ** 0.5))
-                if annual_volatility > 0:
-                    scale = min(Decimal("1"), self._target_volatility / annual_volatility)
+                scale = _target_volatility_scale(
+                    closes, self._volatility_window, self._target_volatility
+                )
             ranked.append((symbol, score, scale))
         selected = sorted(ranked, key=lambda value: (-value[1], value[0]))[: self._top_k]
         if not selected:
@@ -188,6 +194,8 @@ class RankedFactorAllocation:
         rebalance_every: int = 20,
         reserve: Decimal = Decimal("0.05"),
         trend_window: int | None = None,
+        volatility_window: int | None = None,
+        target_annual_volatility: Decimal | None = None,
     ) -> None:
         factor_ids = [factor.factor_id for factor, _ in factor_weights]
         if not factor_weights or len(factor_ids) != len(set(factor_ids)):
@@ -200,11 +208,19 @@ class RankedFactorAllocation:
             raise ValueError("reserve must be in [0, 1)")
         if trend_window is not None and trend_window <= 1:
             raise ValueError("trend window must exceed one")
+        if (volatility_window is None) != (target_annual_volatility is None):
+            raise ValueError("volatility window and target must be configured together")
+        if volatility_window is not None and volatility_window <= 1:
+            raise ValueError("volatility window must exceed one")
+        if target_annual_volatility is not None and target_annual_volatility <= 0:
+            raise ValueError("target volatility must be positive")
         self._factor_weights = factor_weights
         self._top_k = top_k
         self._rebalance_every = rebalance_every
         self._reserve = reserve
         self._trend_window = trend_window
+        self._volatility_window = volatility_window
+        self._target_volatility = target_annual_volatility
 
     def weights(
         self,
@@ -217,6 +233,7 @@ class RankedFactorAllocation:
         required = max(
             *(factor.required_closes for factor, _ in self._factor_weights),
             self._trend_window or 1,
+            (self._volatility_window or 0) + 1,
         )
         eligible = {
             symbol: closes
@@ -240,7 +257,15 @@ class RankedFactorAllocation:
                 scores[symbol] += rank * weight
         selected = sorted(scores, key=lambda symbol: (-scores[symbol], symbol))[: self._top_k]
         allocation = (Decimal("1") - self._reserve) / len(selected)
-        return {symbol: allocation for symbol in selected}
+        if self._volatility_window is None or self._target_volatility is None:
+            return {symbol: allocation for symbol in selected}
+        return {
+            symbol: allocation
+            * _target_volatility_scale(
+                eligible[symbol], self._volatility_window, self._target_volatility
+            )
+            for symbol in selected
+        }
 
 
 class DailyMultiAssetBacktester:

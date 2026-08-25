@@ -26,8 +26,8 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 277 tests passed, Ruff clean, strict mypy clean across
-  92 source files on Python 3.12.13 (macOS, 2026-08-26); 22 frontend Vitest
+- Acceptance evidence: 278 tests passed, Ruff clean, strict mypy clean across
+  92 source files on Python 3.12.13 (macOS, 2026-08-26); 27 frontend Vitest
   tests, ESLint and the production build pass. Route-level lazy loading reduces
   the initial application chunk while ECharts remains an on-demand large chunk.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -183,6 +183,20 @@ Last updated: 2026-08-26
   dashboard now plots strategy, benchmark, excess and drawdown together; full-
   period terminal excess is `-12.5456%`, reinforcing rather than softening the
   negative held-out conclusion.
+- Interactive factor comparison: `/backtest-preview` now accepts only three
+  explicit causal price-factor families: momentum, reversal and low volatility.
+  Momentum preserves the existing multi-horizon allocation; reversal and low
+  volatility use bounded cross-sectional rank combinations, while all three
+  retain the same trend, target-volatility, transaction-cost, slippage and
+  close-decision/next-open contracts. A fixed 2024-2025 packaged-data smoke run
+  completed for all three families across 485 sessions and 30 ETFs; those ad hoc
+  outputs are usability evidence only, not a new selection or held-out result.
+- Browser-local experiment notebook: successful previews may be named, compared,
+  reloaded and deleted in the current browser. At most 30 curve-free summaries
+  are retained, duplicate result hashes replace their prior record, corrupt
+  storage fails closed, and records appear only for the exact data version and
+  checksum. They never become server records, `StrategyVersion` entities,
+  promotion evidence or PAPER inputs.
 - Backtest detail artifacts: the verified exploratory leader additionally exposes
   32 month-end returns, 56 historical simulated trades and 3 terminal positions.
   The API verifies each artifact checksum, validates every security against the

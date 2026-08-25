@@ -329,9 +329,9 @@ describe('verified backtest analytics', () => {
     vi.mocked(runBacktestPreview).mockResolvedValueOnce({
       classification: 'AD_HOC_PREVIEW_CURRENT_UNIVERSE_NOT_PIT', promotion: 'NOT_ELIGIBLE',
       promotion_reasons: ['AD_HOC_PARAMETERS_NOT_PREDECLARED'], data_version: 'akshare-bars-v1',
-      data_checksum: 'b'.repeat(64),
+      data_checksum: 'abc',
       parameters: {
-        start: '2024-01-02', end: '2026-08-12', horizons: [20, 60, 120], top_k: 3,
+        start: '2024-01-02', end: '2026-08-12', factor: 'momentum', horizons: [20, 60, 120], top_k: 3,
         rebalance_every: 20, reserve: '0.05', trend_window: 120, volatility_window: 20,
         target_annual_volatility: '0.15', initial_cash: '1000000',
         transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
@@ -344,12 +344,18 @@ describe('verified backtest analytics', () => {
     })
     render(<BacktestPage data={data} />)
     fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
-    expect(await screen.findByText('已完成 632 个会话、30 个标的')).toBeInTheDocument()
+    expect(await screen.findByText('已完成 632 个会话、30 个标的 · 动量')).toBeInTheDocument()
     expect(screen.getByText(/即时预览，不是策略晋级证据/)).toBeInTheDocument()
     expect(screen.getByText(/结论固定为 NOT_ELIGIBLE/)).toBeInTheDocument()
     expect(runBacktestPreview).toHaveBeenCalledWith(expect.objectContaining({
-      horizons: [20, 60, 120], top_k: 3, rebalance_every: 20,
+      factor: 'momentum', horizons: [20, 60, 120], top_k: 3, rebalance_every: 20,
     }))
+    fireEvent.change(screen.getByLabelText('本地实验名称'), { target: { value: '动量方案 A' } })
+    fireEvent.click(screen.getByRole('button', { name: '保存到本地实验' }))
+    expect(screen.getByText(/已保存“动量方案 A”/)).toBeInTheDocument()
+    expect(screen.getAllByText('动量方案 A').length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: '载入参数' })).toBeInTheDocument()
+    expect(screen.getByText(/记录严格绑定当前数据版本与 checksum/)).toBeInTheDocument()
   })
 
   it('shows the verified leader without presenting it as Champion', async () => {

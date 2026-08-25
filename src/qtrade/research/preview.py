@@ -7,7 +7,12 @@ from decimal import Decimal
 from hashlib import sha256
 
 from qtrade.data import Bar
-from qtrade.research.multi_asset import DailyMultiAssetBacktester, MomentumAllocation
+from qtrade.research.factors import PriceFactorSpec
+from qtrade.research.multi_asset import (
+    DailyMultiAssetBacktester,
+    MomentumAllocation,
+    RankedFactorAllocation,
+)
 
 _MAX_PREVIEW_BARS = 100_000
 _MAX_PREVIEW_SESSIONS = 2_500
@@ -17,6 +22,7 @@ _MAX_PREVIEW_SESSIONS = 2_500
 class BacktestPreviewSpec:
     start: date
     end: date
+    factor: str = "momentum"
     horizons: tuple[int, ...] = (20, 60, 120)
     top_k: int = 3
     rebalance_every: int = 20
@@ -31,12 +37,16 @@ class BacktestPreviewSpec:
     def __post_init__(self) -> None:
         if self.start >= self.end or (self.end - self.start).days > 3653:
             raise ValueError("preview date range must be positive and at most ten years")
+        if self.factor not in {"momentum", "reversal", "low_volatility"}:
+            raise ValueError("unsupported preview factor")
         if (
             not 1 <= len(self.horizons) <= 3
             or tuple(sorted(set(self.horizons))) != self.horizons
             or any(not 1 <= value <= 252 for value in self.horizons)
         ):
             raise ValueError("preview horizons must be 1-3 unique ascending values in [1, 252]")
+        if self.factor == "low_volatility" and any(value < 2 for value in self.horizons):
+            raise ValueError("low-volatility preview horizons must be at least two")
         if not 1 <= self.top_k <= 10 or not 1 <= self.rebalance_every <= 120:
             raise ValueError("preview top_k or rebalance interval is out of range")
         if not Decimal("0") <= self.reserve <= Decimal("0.5"):
@@ -87,15 +97,30 @@ def run_backtest_preview(
     if spec.top_k > len(symbols):
         raise ValueError("preview top_k exceeds the available universe")
 
-    model = MomentumAllocation(
-        spec.horizons,
-        top_k=spec.top_k,
-        rebalance_every=spec.rebalance_every,
-        reserve=spec.reserve,
-        trend_window=spec.trend_window,
-        volatility_window=spec.volatility_window,
-        target_annual_volatility=spec.target_annual_volatility,
-    )
+    model: MomentumAllocation | RankedFactorAllocation
+    if spec.factor == "momentum":
+        model = MomentumAllocation(
+            spec.horizons,
+            top_k=spec.top_k,
+            rebalance_every=spec.rebalance_every,
+            reserve=spec.reserve,
+            trend_window=spec.trend_window,
+            volatility_window=spec.volatility_window,
+            target_annual_volatility=spec.target_annual_volatility,
+        )
+    else:
+        model = RankedFactorAllocation(
+            tuple(
+                (PriceFactorSpec(spec.factor, horizon), Decimal("1"))
+                for horizon in spec.horizons
+            ),
+            top_k=spec.top_k,
+            rebalance_every=spec.rebalance_every,
+            reserve=spec.reserve,
+            trend_window=spec.trend_window,
+            volatility_window=spec.volatility_window,
+            target_annual_volatility=spec.target_annual_volatility,
+        )
     result = DailyMultiAssetBacktester(
         initial_cash=spec.initial_cash,
         transaction_cost_rate=spec.transaction_cost_rate,
@@ -138,6 +163,7 @@ def run_backtest_preview(
     parameters = {
         "start": spec.start.isoformat(),
         "end": spec.end.isoformat(),
+        "factor": spec.factor,
         "horizons": list(spec.horizons),
         "top_k": spec.top_k,
         "rebalance_every": spec.rebalance_every,

@@ -243,3 +243,20 @@ Requests with authorization/cookies, mutation methods and error responses must
 not be cached. Interactive backtest POST responses remain uncached. This boundary
 reduces serverless load without turning stale public research data into PAPER or
 realtime authority.
+
+## ADR-019 — Interactive factor comparison stays bounded and browser-local
+
+Status: accepted, 2026-08-26.
+
+The ad hoc preview may compare only the implemented causal price-factor families:
+momentum, reversal and low volatility. Factor periods remain bounded to one to
+three explicit horizons, and every family uses the same signed dataset,
+close-decision/next-open simulator, trend/risk controls and modeled costs. Adding
+a selector does not convert repeated parameter inspection into held-out evidence.
+
+The public application may keep up to 30 curve-free preview summaries in the
+current browser so a user can compare and reload parameters. A record is accepted
+only when its schema, result hash, data version and checksum validate, and it is
+shown only against that exact dataset identity. Browser records are not server
+experiments, strategy lineage, promotion evidence, PAPER targets or synchronized
+account state; corrupted or unavailable local storage fails closed.

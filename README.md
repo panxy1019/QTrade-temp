@@ -150,10 +150,13 @@ python scripts/run_control_plane.py \
 ```
 
 Open `http://127.0.0.1:8000/web/#/backtest`. The parameterized preview supports
-bounded date, momentum horizon, Top-K, rebalance, reserve, trend, volatility,
-capital, transaction-cost and slippage adjustments. It recomputes from verified
-Parquet and never mutates the strategy registry or PAPER runtime. Every preview
-is explicitly non-PIT, ad hoc and `NOT_ELIGIBLE`; it is not promotion evidence or
+bounded date, momentum/reversal/low-volatility factor family, factor horizons,
+Top-K, rebalance, reserve, trend, volatility, capital, transaction-cost and
+slippage adjustments. It recomputes from verified Parquet and never mutates the
+strategy registry or PAPER runtime. Results can be named and compared in the
+current browser, where records remain bound to the exact data version, checksum
+and result hash; this local notebook is not server persistence. Every preview is
+explicitly non-PIT, ad hoc and `NOT_ELIGIBLE`; it is not promotion evidence or
 investment advice.
 
 ## Bounded factor search

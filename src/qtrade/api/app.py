@@ -13,7 +13,7 @@ from itertools import islice
 from pathlib import Path
 from secrets import compare_digest
 from statistics import median
-from typing import Any, cast
+from typing import Any, Literal, cast
 from zoneinfo import ZoneInfo
 
 import pyarrow as pa  # type: ignore[import-untyped]
@@ -62,6 +62,7 @@ class BacktestPreviewRequest(BaseModel):
 
     start: date
     end: date
+    factor: Literal["momentum", "reversal", "low_volatility"] = "momentum"
     horizons: tuple[int, ...] = (20, 60, 120)
     top_k: int = 3
     rebalance_every: int = 20
@@ -424,6 +425,7 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             spec = BacktestPreviewSpec(
                 start=payload.start,
                 end=payload.end,
+                factor=payload.factor,
                 horizons=payload.horizons,
                 top_k=payload.top_k,
                 rebalance_every=payload.rebalance_every,

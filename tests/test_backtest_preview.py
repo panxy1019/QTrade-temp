@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
+import pytest
 from fastapi.testclient import TestClient
 
 from qtrade.api import ApiAuthConfig, create_app
@@ -41,11 +42,14 @@ def _bars() -> list[Bar]:
     return records
 
 
-def _spec(*, reserve: str = "0.05") -> BacktestPreviewSpec:
+def _spec(
+    *, reserve: str = "0.05", factor: str = "momentum", horizons: tuple[int, ...] = (2, 3)
+) -> BacktestPreviewSpec:
     return BacktestPreviewSpec(
         start=date(2026, 1, 1),
         end=date(2026, 3, 21),
-        horizons=(2, 3),
+        factor=factor,
+        horizons=horizons,
         top_k=1,
         rebalance_every=5,
         reserve=Decimal(reserve),
@@ -79,6 +83,30 @@ def test_preview_is_deterministic_and_parameter_changes_are_distinct() -> None:
     assert first["data_checksum"] == checksum
     assert int(first["metrics"]["number_of_trades"]) > 0  # type: ignore[index]
     assert len(first["curve"]) == 80  # type: ignore[arg-type]
+
+
+def test_preview_supports_only_bounded_factor_families() -> None:
+    checksum = "a" * 64
+    previews = {
+        factor: run_backtest_preview(
+            _bars(),
+            data_version="test-bars-v1",
+            data_checksum=checksum,
+            spec=_spec(factor=factor),
+        )
+        for factor in ("momentum", "reversal", "low_volatility")
+    }
+
+    assert {result["parameters"]["factor"] for result in previews.values()} == {  # type: ignore[index]
+        "momentum",
+        "reversal",
+        "low_volatility",
+    }
+    assert len({result["preview_hash"] for result in previews.values()}) == 3
+    with pytest.raises(ValueError, match="unsupported preview factor"):
+        _spec(factor="future_leak")
+    with pytest.raises(ValueError, match="low-volatility preview horizons"):
+        _spec(factor="low_volatility", horizons=(1,))
 
 
 def _write_dataset(tmp_path: Path) -> Path:
@@ -141,6 +169,7 @@ def test_preview_endpoint_uses_only_verified_bounded_history(tmp_path) -> None:
     payload = {
         "start": "2026-01-01",
         "end": "2026-03-21",
+        "factor": "reversal",
         "horizons": [2, 3],
         "top_k": 1,
         "rebalance_every": 5,
@@ -152,10 +181,13 @@ def test_preview_endpoint_uses_only_verified_bounded_history(tmp_path) -> None:
     response = api.post("/backtest-preview", json=payload)
     assert response.status_code == 200
     assert response.json()["data_version"] == "test-bars-v1"
+    assert response.json()["parameters"]["factor"] == "reversal"
     assert response.json()["execution_timing"] == "close decision, next open execution"
 
     invalid = api.post("/backtest-preview", json={**payload, "top_k": 11})
     assert invalid.status_code == 422
+    unsupported = api.post("/backtest-preview", json={**payload, "factor": "future_leak"})
+    assert unsupported.status_code == 422
 
     (tmp_path / "bars.parquet").write_bytes(b"tampered")
     assert api.post("/backtest-preview", json=payload).status_code == 409

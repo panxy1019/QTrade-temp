@@ -360,6 +360,7 @@ export interface BacktestAnalytics {
 export interface BacktestPreviewRequest {
   start: string
   end: string
+  factor: 'momentum' | 'reversal' | 'low_volatility'
   horizons: number[]
   top_k: number
   rebalance_every: number

@@ -129,6 +129,9 @@ npm --prefix web run build
 - [x] Add a bounded, ephemeral parameterized backtest preview over the verified
   historical Parquet dataset, with a Chinese web form, deterministic result hash,
   no registry/PAPER mutation and mandatory non-PIT/NOT_ELIGIBLE labelling.
+- [x] Extend the preview to bounded momentum/reversal/low-volatility comparison
+  and a checksum-bound browser-local experiment notebook with save, compare,
+  parameter reload and delete; keep all records outside formal strategy lineage.
 - [x] Allow `run_control_plane.py --historical-manifest` to bind a newly ingested
   signed dataset to the dashboard without a source edit.
 - [x] Run a bounded price-factor discovery and validation-only parameter search
