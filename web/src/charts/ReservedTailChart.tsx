@@ -1,6 +1,7 @@
 import { Empty } from 'antd'
 import { lazy, Suspense } from 'react'
 import type { ReservedTailDiagnosticReport } from '../types'
+import { formatChinaMinuteTimestamp } from './formatChinaMinuteTimestamp'
 
 const ChartRenderer = lazy(() => import('./ChartRenderer'))
 
@@ -8,7 +9,7 @@ export function ReservedTailChart({ report }: { report: ReservedTailDiagnosticRe
   if (!report?.curve.length) {
     return <Empty description="暂无已验证的尾部诊断曲线" style={{ padding: 72 }} />
   }
-  const timestamps = report.curve.map((row) => row.timestamp.slice(5, 16).replace('T', ' '))
+  const timestamps = report.curve.map((row) => formatChinaMinuteTimestamp(row.timestamp))
   return <Suspense fallback={<div style={{ height: 360 }} />}><ChartRenderer style={{ height: 360 }} option={{
     backgroundColor: 'transparent', animation: false,
     legend: { data: ['全暴露基准', '预注册候选', '原低暴露对照'] },
