@@ -64,6 +64,10 @@ export function loadFiveMinuteBarSeries(symbol: string): Promise<MinuteBarSeries
   return getJson<MinuteBarSeries>(`/five-minute-bars/${encodeURIComponent(symbol)}`)
 }
 
+export function loadLongFiveMinuteBarSeries(symbol: string, tradingDay: string): Promise<MinuteBarSeries> {
+  return getJson<MinuteBarSeries>(`/long-five-minute-bars/${encodeURIComponent(symbol)}?trading_day=${encodeURIComponent(tradingDay)}`)
+}
+
 export function runBacktestPreview(payload: BacktestPreviewRequest): Promise<BacktestPreview> {
   return postJson<BacktestPreview>('/backtest-preview', payload)
 }

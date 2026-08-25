@@ -19,6 +19,7 @@ from typing import Any, Literal, cast
 from zoneinfo import ZoneInfo
 
 import pyarrow as pa  # type: ignore[import-untyped]
+import pyarrow.compute as pc  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import HTMLResponse, Response
@@ -444,6 +445,69 @@ def create_app(
             "interval": "5m",
             "total_count": total_count,
             "truncated": total_count > len(bars),
+            "bars": bars,
+        }
+
+    @app.get("/long-five-minute-bars/{symbol}")
+    def long_five_minute_bar_series(
+        symbol: str,
+        trading_day: date | None = None,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        available_days = (
+            cast(list[str], dataset["trading_days"]) if dataset is not None else []
+        )
+        selected_day = (
+            trading_day.isoformat()
+            if trading_day is not None
+            else available_days[-1]
+            if available_days
+            else None
+        )
+        empty: dict[str, object] = {
+            "symbol": symbol,
+            "data_version": None,
+            "dataset_checksum": None,
+            "observation_type": "HISTORICAL_FIVE_MINUTE_BAR_SERIES",
+            "interval": "5m",
+            "selected_trading_day": selected_day,
+            "total_count": 0,
+            "truncated": False,
+            "bars": [],
+        }
+        if dataset is None or selected_day is None:
+            return empty
+        bars = _load_minute_bar_day_series(
+            state.long_five_minute_manifest_path,
+            symbol=symbol,
+            trading_day=selected_day,
+            data_version=str(dataset["data_version"]),
+            expected_checksum=str(dataset["checksum"]),
+            expected_symbols=dataset["eligible_symbols"],
+            expected_bar_count=dataset["bar_count"],
+            expected_trading_days=available_days,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        if bars is None:
+            return empty
+        return {
+            "symbol": symbol,
+            "data_version": dataset["data_version"],
+            "dataset_checksum": dataset["checksum"],
+            "observation_type": "HISTORICAL_FIVE_MINUTE_BAR_SERIES",
+            "interval": "5m",
+            "selected_trading_day": selected_day,
+            "total_count": len(bars),
+            "truncated": False,
             "bars": bars,
         }
 
@@ -4052,6 +4116,93 @@ def _load_minute_bar_series(
         ):
             return None
         return list(selected), total_count
+    except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
+        return None
+
+
+def _load_minute_bar_day_series(
+    manifest_path: Path | None,
+    *,
+    symbol: str,
+    trading_day: str,
+    data_version: str,
+    expected_checksum: str,
+    expected_symbols: object,
+    expected_bar_count: object,
+    expected_trading_days: object,
+    expected_times: tuple[datetime_time, ...],
+) -> list[dict[str, str]] | None:
+    if (
+        manifest_path is None
+        or not isinstance(expected_symbols, list)
+        or not expected_symbols
+        or not all(isinstance(value, str) for value in expected_symbols)
+        or len(set(expected_symbols)) != len(expected_symbols)
+        or symbol not in expected_symbols
+        or not isinstance(expected_bar_count, int)
+        or expected_bar_count <= 0
+        or not isinstance(expected_trading_days, list)
+        or trading_day not in expected_trading_days
+    ):
+        return None
+    try:
+        selected_date = date.fromisoformat(trading_day)
+        parquet = _open_verified_market_parquet(
+            manifest_path,
+            expected_checksum=expected_checksum,
+            expected_bar_count=expected_bar_count,
+        )
+        if parquet is None:
+            return None
+        columns = [
+            "symbol",
+            "exchange",
+            "timestamp",
+            "trading_day",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "data_version",
+        ]
+        table = parquet.read(columns=columns)
+        selected_table = table.filter(
+            pc.and_(
+                pc.equal(table["symbol"], symbol),
+                pc.equal(table["trading_day"], selected_date),
+            )
+        )
+        if selected_table.num_rows != len(expected_times):
+            return None
+        allowed = set(cast(list[str], expected_symbols))
+        bars: list[dict[str, str]] = []
+        observed_times: list[datetime_time] = []
+        previous: datetime | None = None
+        for raw in selected_table.to_pylist():
+            validated = _validated_historical_bar(raw, data_version, allowed)
+            if validated is None:
+                return None
+            candidate, instant = validated
+            local = instant.astimezone(ZoneInfo("Asia/Shanghai"))
+            if (
+                candidate["symbol"] != symbol
+                or candidate["trading_day"] != trading_day
+                or previous is not None
+                and instant <= previous
+            ):
+                return None
+            previous = instant
+            observed_times.append(local.time())
+            bars.append(
+                {
+                    **candidate,
+                    "observation_type": "HISTORICAL_FIVE_MINUTE_BAR",
+                }
+            )
+        if tuple(observed_times) != expected_times:
+            return None
+        return bars
     except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
         return None
 

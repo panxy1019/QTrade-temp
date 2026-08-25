@@ -73,6 +73,36 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
         bar["observation_type"] == "HISTORICAL_FIVE_MINUTE_BAR"
         for bar in five_minute_bars["bars"]
     )
+    long_five_minute_bars = client.get(
+        _api("/long-five-minute-bars/600036")
+    ).json()
+    assert long_five_minute_bars["observation_type"] == (
+        "HISTORICAL_FIVE_MINUTE_BAR_SERIES"
+    )
+    assert long_five_minute_bars["selected_trading_day"] == "2026-08-25"
+    assert long_five_minute_bars["total_count"] == 48
+    assert long_five_minute_bars["truncated"] is False
+    assert {bar["trading_day"] for bar in long_five_minute_bars["bars"]} == {
+        "2026-08-25"
+    }
+    assert all(
+        bar["observation_type"] == "HISTORICAL_FIVE_MINUTE_BAR"
+        for bar in long_five_minute_bars["bars"]
+    )
+    early_long_five_minute_bars = client.get(
+        f'{_api("/long-five-minute-bars/600036")}&trading_day=2025-01-02'
+    ).json()
+    assert early_long_five_minute_bars["selected_trading_day"] == "2025-01-02"
+    assert early_long_five_minute_bars["total_count"] == 48
+    assert {bar["trading_day"] for bar in early_long_five_minute_bars["bars"]} == {
+        "2025-01-02"
+    }
+    unavailable_long_five_minute_bars = client.get(
+        f'{_api("/long-five-minute-bars/600036")}&trading_day=2025-01-04'
+    ).json()
+    assert unavailable_long_five_minute_bars["data_version"] is None
+    assert unavailable_long_five_minute_bars["total_count"] == 0
+    assert unavailable_long_five_minute_bars["bars"] == []
     analytics = client.get(_api("/backtest-analytics")).json()
     assert analytics["leader"]["experiment_id"].endswith("momentum-vol-slow-20260812-v4")
     assert len(analytics["curve"]) == 632

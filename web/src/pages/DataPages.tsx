@@ -8,7 +8,7 @@ import { EquityChart } from '../charts/EquityChart'
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
 import { MinuteHistoryChart } from '../charts/MinuteHistoryChart'
 import { MinuteBacktestChart } from '../charts/MinuteBacktestChart'
-import { loadFiveMinuteBarSeries, loadHistoricalBarSeries, loadMinuteBarSeries } from '../api/client'
+import { loadFiveMinuteBarSeries, loadHistoricalBarSeries, loadLongFiveMinuteBarSeries, loadMinuteBarSeries } from '../api/client'
 import { cancelPaperOrder, controlRuntime, prometheusMetricsUrl } from '../api/client'
 import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
@@ -19,17 +19,22 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const historical = data?.market?.historical
   const minuteDataset = data?.minuteResearch.minute_dataset
   const fiveMinuteDataset = data?.fiveMinuteResearch?.minute_dataset
+  const longFiveMinuteDataset = data?.longFiveMinuteResearch?.minute_dataset
   const [activeMarketTab, setActiveMarketTab] = useState('daily')
   const [query, setQuery] = useState('')
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
   const [selectedMinuteSymbol, setSelectedMinuteSymbol] = useState<string | null>(null)
   const [selectedFiveMinuteSymbol, setSelectedFiveMinuteSymbol] = useState<string | null>(null)
+  const [selectedLongFiveMinuteSymbol, setSelectedLongFiveMinuteSymbol] = useState<string | null>(null)
+  const [selectedLongFiveMinuteDay, setSelectedLongFiveMinuteDay] = useState<string | null>(null)
   const [series, setSeries] = useState<HistoricalBarSeries | null>(null)
   const [minuteSeries, setMinuteSeries] = useState<MinuteBarSeries | null>(null)
   const [fiveMinuteSeries, setFiveMinuteSeries] = useState<MinuteBarSeries | null>(null)
+  const [longFiveMinuteSeries, setLongFiveMinuteSeries] = useState<MinuteBarSeries | null>(null)
   const [dailySeriesError, setDailySeriesError] = useState<string | null>(null)
   const [minuteSeriesError, setMinuteSeriesError] = useState<string | null>(null)
   const [fiveMinuteSeriesError, setFiveMinuteSeriesError] = useState<string | null>(null)
+  const [longFiveMinuteSeriesError, setLongFiveMinuteSeriesError] = useState<string | null>(null)
   const bars = (data?.historicalBars ?? []).filter((row) => row.symbol.includes(query.trim()))
   const activeSymbol = selectedSymbol ?? data?.historicalBars?.[0]?.symbol ?? null
   const minuteInstruments = (minuteDataset?.instruments ?? []).filter((row) => `${row.symbol} ${row.name} ${row.sector_name ?? ''}`.includes(query.trim()))
@@ -42,9 +47,13 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     ? '510300'
     : fiveMinuteDataset?.eligible_symbols[0] ?? null
   const activeFiveMinuteSymbol = selectedFiveMinuteSymbol ?? defaultFiveMinuteSymbol
+  const longFiveMinuteInstruments = (longFiveMinuteDataset?.instruments ?? []).filter((row) => `${row.symbol} ${row.name} ${row.sector_name ?? ''}`.includes(query.trim()))
+  const activeLongFiveMinuteSymbol = selectedLongFiveMinuteSymbol ?? longFiveMinuteDataset?.eligible_symbols[0] ?? null
+  const activeLongFiveMinuteDay = selectedLongFiveMinuteDay ?? longFiveMinuteDataset?.trading_days.at(-1) ?? null
   const datasetIdentity = historical ? `${historical.data_version}:${historical.checksum}` : null
   const minuteDatasetIdentity = minuteDataset ? `${minuteDataset.data_version}:${minuteDataset.checksum}` : null
   const fiveMinuteDatasetIdentity = fiveMinuteDataset ? `${fiveMinuteDataset.data_version}:${fiveMinuteDataset.checksum}` : null
+  const longFiveMinuteDatasetIdentity = longFiveMinuteDataset ? `${longFiveMinuteDataset.data_version}:${longFiveMinuteDataset.checksum}` : null
   const displayedSeries = datasetIdentity
     && series?.symbol === activeSymbol
     && `${series.data_version}:${series.dataset_checksum}` === datasetIdentity ? series : null
@@ -54,6 +63,10 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const displayedFiveMinuteSeries = fiveMinuteDatasetIdentity
     && fiveMinuteSeries?.symbol === activeFiveMinuteSymbol
     && `${fiveMinuteSeries.data_version}:${fiveMinuteSeries.dataset_checksum}` === fiveMinuteDatasetIdentity ? fiveMinuteSeries : null
+  const displayedLongFiveMinuteSeries = longFiveMinuteDatasetIdentity
+    && longFiveMinuteSeries?.symbol === activeLongFiveMinuteSymbol
+    && longFiveMinuteSeries.selected_trading_day === activeLongFiveMinuteDay
+    && `${longFiveMinuteSeries.data_version}:${longFiveMinuteSeries.dataset_checksum}` === longFiveMinuteDatasetIdentity ? longFiveMinuteSeries : null
   useEffect(() => {
     let active = true
     if (activeMarketTab !== 'daily' || !activeSymbol || !datasetIdentity) {
@@ -108,6 +121,24 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     })
     return () => { active = false }
   }, [activeMarketTab, activeFiveMinuteSymbol, fiveMinuteDatasetIdentity])
+  useEffect(() => {
+    let active = true
+    if (activeMarketTab !== 'long-five-minute' || !activeLongFiveMinuteSymbol || !activeLongFiveMinuteDay || !longFiveMinuteDatasetIdentity) {
+      return () => { active = false }
+    }
+    void loadLongFiveMinuteBarSeries(activeLongFiveMinuteSymbol, activeLongFiveMinuteDay).then((result) => {
+      if (active) {
+        setLongFiveMinuteSeries(result)
+        setLongFiveMinuteSeriesError(null)
+      }
+    }).catch(() => {
+      if (active) {
+        setLongFiveMinuteSeries(null)
+        setLongFiveMinuteSeriesError('长历史 5 分钟线加载失败；未使用缓存、插值或合成数据替代。')
+      }
+    })
+    return () => { active = false }
+  }, [activeMarketTab, activeLongFiveMinuteSymbol, activeLongFiveMinuteDay, longFiveMinuteDatasetIdentity])
   const columns = [
     { title: '代码', dataIndex: 'symbol', fixed: 'left' as const },
     { title: '交易所', dataIndex: 'exchange' },
@@ -134,6 +165,13 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     { title: '板块', dataIndex: 'sector_name', render: (value: string | null) => value ?? 'ETF' },
     { title: '完整交易日', render: () => String(fiveMinuteDataset?.session_count ?? 0) },
     { title: '每日日内点', render: () => String(fiveMinuteDataset?.session_bar_count_per_symbol ?? 0) },
+  ]
+  const longFiveMinuteColumns = [
+    { title: '代码', dataIndex: 'symbol', fixed: 'left' as const },
+    { title: '名称', dataIndex: 'name' },
+    { title: '板块', dataIndex: 'sector_name' },
+    { title: '完整交易日', render: () => String(longFiveMinuteDataset?.session_count ?? 0) },
+    { title: '每日日内点', render: () => String(longFiveMinuteDataset?.session_bar_count_per_symbol ?? 0) },
   ]
   return <Page title="行情中心" subtitle="校验通过的历史日线、1 分钟与原生 5 分钟分时线">
     <Space orientation="vertical" style={{ width: '100%' }}>
@@ -166,6 +204,20 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
             <Alert showIcon type={fiveMinuteDataset ? 'success' : 'warning'} title={fiveMinuteDataset ? `已验证原生 5 分钟数据：${fiveMinuteDataset.symbol_count} 标的 × ${fiveMinuteDataset.session_count} 日` : '尚无校验通过的原生 5 分钟数据'} description={fiveMinuteDataset ? `${fiveMinuteDataset.observed_start} 至 ${fiveMinuteDataset.observed_end}；${fiveMinuteDataset.etf_count} ETF + ${fiveMinuteDataset.stock_count} 行业股，覆盖 ${fiveMinuteDataset.sector_count} 个行业。每个完整交易日严格为供应商原生 48 点。` : '签名清单、Parquet checksum 或原生 5 分钟交易日网格未通过。'} />
             <Card title={`${activeFiveMinuteSymbol ?? '—'} 已验证原生 5 分钟分时线`}><MinuteHistoryChart series={displayedFiveMinuteSeries} /><Typography.Text type="secondary">{displayedFiveMinuteSeries?.bars.length ? `${displayedFiveMinuteSeries.bars.length}/${displayedFiveMinuteSeries.total_count} 根原生 5 分钟 Bar；版本 ${displayedFiveMinuteSeries.data_version}。` : '点击下方 ETF 或股票切换标的。'} 这不是 1 分钟线降采样，也不是盘中实时跟踪。</Typography.Text></Card>
             <Table rowKey="symbol" size="small" columns={fiveMinuteColumns} dataSource={fiveMinuteInstruments} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} onRow={(row) => ({ onClick: () => setSelectedFiveMinuteSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeFiveMinuteSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的原生 5 分钟标的" /> }} />
+          </Space>,
+        },
+        {
+          key: 'long-five-minute', label: `长历史 5 分钟 · ${longFiveMinuteDataset?.bar_count ?? 0}`,
+          children: <Space orientation="vertical" style={{ width: '100%' }}>
+            {longFiveMinuteSeriesError && <Alert showIcon type="error" title={longFiveMinuteSeriesError} />}
+            <Alert showIcon type={longFiveMinuteDataset ? 'success' : 'warning'} title={longFiveMinuteDataset ? `已验证长历史原生 5 分钟数据：${longFiveMinuteDataset.symbol_count} 只股票 × ${longFiveMinuteDataset.session_count} 日` : '尚无校验通过的长历史 5 分钟数据'} description={longFiveMinuteDataset ? `${longFiveMinuteDataset.observed_start} 至 ${longFiveMinuteDataset.observed_end}；覆盖 ${longFiveMinuteDataset.sector_count} 个行业，每日严格 48 点。当前前复权数据可能含未来复权知识、股票池非 PIT，只供研究查看。` : '签名清单、Parquet checksum 或完整交易日网格未通过。'} />
+            <Space wrap>
+              <Typography.Text>交易日</Typography.Text>
+              <Select aria-label="长历史交易日" showSearch value={activeLongFiveMinuteDay} onChange={setSelectedLongFiveMinuteDay} options={[...(longFiveMinuteDataset?.trading_days ?? [])].reverse().map((value) => ({ value, label: value }))} style={{ width: 180 }} />
+              <Tag color="orange">QFQ · 非 PIT</Tag>
+            </Space>
+            <Card title={`${activeLongFiveMinuteSymbol ?? '—'} · ${activeLongFiveMinuteDay ?? '—'} 原生 5 分钟分时线`}><MinuteHistoryChart series={displayedLongFiveMinuteSeries} /><Typography.Text type="secondary">{displayedLongFiveMinuteSeries?.bars.length ? `${displayedLongFiveMinuteSeries.bars.length}/${displayedLongFiveMinuteSeries.total_count} 根原生 5 分钟 Bar；版本 ${displayedLongFiveMinuteSeries.data_version}。` : '选择交易日并点击下方股票切换标的。'} 每次只返回所选交易日 48 点；保留尾部不会进入策略调参。</Typography.Text></Card>
+            <Table rowKey="symbol" size="small" columns={longFiveMinuteColumns} dataSource={longFiveMinuteInstruments} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 820 }} onRow={(row) => ({ onClick: () => setSelectedLongFiveMinuteSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeLongFiveMinuteSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的长历史 5 分钟股票" /> }} />
           </Space>,
         },
       ]} /></Card>

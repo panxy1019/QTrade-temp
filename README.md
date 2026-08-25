@@ -203,8 +203,12 @@ baseline returned `+40.8285%`, while the overlay returned `+1.0438%`
 (`-39.7847%` relative). The overlay reduced maximum drawdown from `-15.1086%`
 to `-12.1806%`, but even at 0 bps it lagged the baseline by `-10.0946%`.
 `/long-five-minute-research` exposes the checksum- and artifact-verified result
-as a second, stronger robustness veto. It does not authorize realtime data,
-PAPER, strategy promotion or external orders.
+as a second, stronger robustness veto. The read-only
+`/long-five-minute-bars/{symbol}?trading_day=YYYY-MM-DD` endpoint verifies the
+same Parquet checksum and returns exactly the selected session's 48 native bars;
+the market page provides stock and date selectors without reading the reserved
+tail into the strategy engine. Neither endpoint authorizes realtime data, PAPER,
+strategy promotion or external orders.
 
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and

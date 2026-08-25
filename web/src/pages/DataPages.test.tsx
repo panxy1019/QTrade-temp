@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { PlatformSnapshot } from '../types'
-import { cancelPaperOrder, controlRuntime, runBacktestPreview } from '../api/client'
+import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, runBacktestPreview } from '../api/client'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
@@ -31,6 +31,14 @@ vi.mock('../api/client', () => ({
     bars: [
       { symbol, exchange: 'SSE', timestamp: '2026-08-25T09:35:00+08:00', trading_day: '2026-08-25', open: '18', high: '18.1', low: '17.9', close: '18.05', volume: '100', data_version: 'sina-five-minute-v1', observation_type: 'HISTORICAL_FIVE_MINUTE_BAR' },
       { symbol, exchange: 'SSE', timestamp: '2026-08-25T09:40:00+08:00', trading_day: '2026-08-25', open: '18.05', high: '18.2', low: '18', close: '18.1', volume: '120', data_version: 'sina-five-minute-v1', observation_type: 'HISTORICAL_FIVE_MINUTE_BAR' },
+    ],
+  })),
+  loadLongFiveMinuteBarSeries: vi.fn(async (symbol: string, tradingDay: string) => ({
+    symbol, data_version: 'baostock-five-minute-long-v1', dataset_checksum: 'long-five-minute-checksum',
+    observation_type: 'HISTORICAL_FIVE_MINUTE_BAR_SERIES', interval: '5m', selected_trading_day: tradingDay, total_count: 2, truncated: false,
+    bars: [
+      { symbol, exchange: 'SSE', timestamp: `${tradingDay}T09:35:00+08:00`, trading_day: tradingDay, open: '41', high: '41.1', low: '40.9', close: '41.05', volume: '100', data_version: 'baostock-five-minute-long-v1', observation_type: 'HISTORICAL_FIVE_MINUTE_BAR' },
+      { symbol, exchange: 'SSE', timestamp: `${tradingDay}T09:40:00+08:00`, trading_day: tradingDay, open: '41.05', high: '41.2', low: '41', close: '41.1', volume: '120', data_version: 'baostock-five-minute-long-v1', observation_type: 'HISTORICAL_FIVE_MINUTE_BAR' },
     ],
   })),
   runBacktestPreview: vi.fn(),
@@ -509,6 +517,18 @@ describe('verified historical data pages', () => {
     expect(screen.getByText(/供应商原生 48 点/)).toBeInTheDocument()
     expect(await screen.findByText(/2\/2 根原生 5 分钟 Bar/)).toBeInTheDocument()
     expect(screen.getByText(/不是 1 分钟线降采样，也不是盘中实时跟踪/)).toBeInTheDocument()
+    expect(screen.getByTestId('minute-history-chart')).toBeInTheDocument()
+  })
+
+  it('shows a checksum-bound long five-minute day without presenting it as realtime or PIT', async () => {
+    cleanup()
+    render(<MarketPage data={data} />)
+    fireEvent.click(screen.getByRole('tab', { name: /长历史 5 分钟 · 1324800/ }))
+    expect(screen.getByText(/已验证长历史原生 5 分钟数据：75 只股票 × 368 日/)).toBeInTheDocument()
+    expect(screen.getByText(/当前前复权数据可能含未来复权知识、股票池非 PIT/)).toBeInTheDocument()
+    expect(await screen.findByText(/2\/2 根原生 5 分钟 Bar/)).toBeInTheDocument()
+    expect(loadLongFiveMinuteBarSeries).toHaveBeenCalledWith('600036', '2026-08-25')
+    expect(screen.getByText(/每次只返回所选交易日 48 点；保留尾部不会进入策略调参/)).toBeInTheDocument()
     expect(screen.getByTestId('minute-history-chart')).toBeInTheDocument()
   })
 

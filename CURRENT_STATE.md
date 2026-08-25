@@ -27,7 +27,7 @@ Last updated: 2026-08-26
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 308 tests passed, Ruff clean, strict mypy clean across
-  97 source files on Python 3.12.13 (macOS, 2026-08-26); 37 frontend Vitest
+  97 source files on Python 3.12.13 (macOS, 2026-08-26); 39 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 426.27 KB with no large-chunk warning.
@@ -126,6 +126,13 @@ Last updated: 2026-08-26
   `-39.7847%`. Maximum drawdown improved from `-15.1086%` to `-12.1806%`, but
   the 0-bps overlay still lagged by `-10.0946%`. The result is retained as a
   stronger veto at `/long-five-minute-research`, not tuned away.
+- Long-history intraday browser: the public read-only market page can select any
+  of the 75 stocks and 368 complete sessions. The
+  `/long-five-minute-bars/{symbol}?trading_day=YYYY-MM-DD` endpoint rechecks the
+  signed Parquet identity and returns exactly 48 provider-native bars for that
+  day. Viewing a reserved-tail session does not enter it into the backtest or
+  change the frozen research result; QFQ/non-PIT and non-realtime boundaries stay
+  visible.
 - BaoStock boundary: the stock-only dataset uses provider `qfq` (`adjustflag=2`)
   because the bounded ETF probe had materially shorter coverage. Current
   constituents are projected backward, adjustment factors are not versioned,

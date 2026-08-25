@@ -491,6 +491,7 @@ export interface MinuteBarSeries {
   dataset_checksum: string | null
   observation_type: 'HISTORICAL_MINUTE_BAR_SERIES' | 'HISTORICAL_FIVE_MINUTE_BAR_SERIES'
   interval: '1m' | '5m'
+  selected_trading_day?: string | null
   total_count: number
   truncated: boolean
   bars: MinuteBarRow[]
