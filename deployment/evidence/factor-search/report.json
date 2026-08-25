@@ -1,0 +1,74 @@
+{
+  "report": {
+    "artifacts": {
+      "factor_diagnostics.json": "a0f4fd7f949935fda2463bc29f6f4a6c53df639496a6a5f028fbd5a337d038d7",
+      "test_metrics.json": "6ad21d5e639380c89fc2beaa8ed20729fb0e81d717be3992d8fc213f6b6c2f75",
+      "validation_scores.json": "f8b65847bc39e5884d79620b52e3bf92f4990623551dd1821afa38ff1abfc78f"
+    },
+    "classification": "bounded_factor_search_current_universe_non_pit",
+    "confirmatory_test": {
+      "candidate_locked_before_access": true,
+      "end": "2026-08-21",
+      "period_previously_viewed_by_project": true,
+      "start": "2026-01-01"
+    },
+    "data": {
+      "bar_count": 28770,
+      "checksum": "39a25d71d2c77798c8d73b8b7b45634d229a22122c18a174d3f7be9ac50d59fd",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "observed_end": "2026-08-21",
+      "observed_start": "2022-09-06",
+      "universe_size": 30
+    },
+    "execution_contract": {
+      "long_only": true,
+      "slippage_rate": "0.0005",
+      "timing": "close_decision_next_observed_open",
+      "transaction_cost_rate": "0.001"
+    },
+    "factor_selection": {
+      "discovery_end": "2024-12-31",
+      "discovery_start": "2023-10-01",
+      "forward_sessions": 20,
+      "pass_rule": "rank_ic > 0 and long_short_spread > 0",
+      "passing_factor_ids": [
+        "momentum-120-skip-20",
+        "momentum-252-skip-20",
+        "reversal-5",
+        "low_volatility-60"
+      ],
+      "sample_every": 20
+    },
+    "portfolio_selection": {
+      "benchmark_excluded_from_active_selection": true,
+      "iterations": [
+        "factor_family_and_composite_screen",
+        "bounded_short_reversal_neighborhood_refinement"
+      ],
+      "selected_candidate_id": "reversal-20-top3-20",
+      "selection_metric": "validation_sharpe_only",
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01"
+    },
+    "promotion": "NOT_ELIGIBLE",
+    "promotion_reasons": [
+      "CURRENT_UNIVERSE_SURVIVORSHIP_BIAS",
+      "CONFIRMATORY_PERIOD_PREVIOUSLY_VIEWED_BY_PROJECT",
+      "SHORT_SINGLE_PROVIDER_HISTORY",
+      "NO_PAPER_OR_SHADOW_SESSIONS"
+    ],
+    "research_budget": {
+      "confirmatory_test_runs": 1,
+      "factor_trials": 5,
+      "validation_candidate_cap": 15,
+      "validation_candidates_run": 13
+    },
+    "source_state": {
+      "dirty_entry_count": 28,
+      "git_head": "df0a1b18e129c37da0eeec3fd52f4e1b0a910758",
+      "source_tree_dirty": true,
+      "source_tree_sha256": "a133a5f25d984244779d25a5dd57c9a7cc64ab8f6000205e763e5bff4aa7c51d"
+    }
+  },
+  "sha256": "f468c877f88380d1fdc96227a0d9aaeb1089761570e2054f0773752bf3dfba60"
+}

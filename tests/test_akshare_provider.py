@@ -19,6 +19,7 @@ class FakeAkshareClient:
         self.rows = list(rows or [])
         self.calls = 0
         self.fail = False
+        self.stock_adjustments = []
 
     def etf_spot_rows(self):
         self.calls += 1
@@ -63,7 +64,8 @@ class FakeAkshareClient:
             }
         ]
 
-    def stock_daily_tx_rows(self, symbol, start_date, end_date):
+    def stock_daily_tx_rows(self, symbol, start_date, end_date, adjust=""):
+        self.stock_adjustments.append(adjust)
         return [
             {
                 "date": "2026-08-11", "open": 10, "high": 11,
@@ -223,14 +225,106 @@ def test_sina_history_can_be_ready_while_snapshot_polling_remains_disconnected()
 
 
 def test_historical_only_path_normalizes_a_share_and_major_index_daily_bars():
-    value = provider(FakeAkshareClient([spot_row()]))
+    client = FakeAkshareClient([spot_row()])
+    value = provider(client)
     value.connect_history()
     start = datetime(2026, 8, 10, tzinfo=UTC)
     end = datetime(2026, 8, 13, tzinfo=UTC)
     stock = value.query_stock_history(("600000",), start=start, end=end)
+    adjusted = value.query_stock_history(
+        ("600000",), start=start, end=end, adjustment="qfq"
+    )
     index = value.query_index_history(("000300",), start=start, end=end)
     assert stock[0].exchange == "SSE" and stock[0].close == Decimal("10.5")
+    assert adjusted[0].close == Decimal("10.5")
+    assert client.stock_adjustments == ["", "qfq"]
     assert index[0].exchange == "INDEX" and index[0].close == Decimal("4050")
+
+
+def test_stock_history_rejects_unknown_adjustment_mode():
+    value = provider(FakeAkshareClient([spot_row()]))
+    value.connect_history()
+    with pytest.raises(ValueError, match="adjustment"):
+        value.query_stock_history(
+            ("600000",),
+            start=datetime(2026, 8, 10, tzinfo=UTC),
+            end=datetime(2026, 8, 13, tzinfo=UTC),
+            adjustment="invented",
+        )
+
+
+def test_stock_history_only_allows_initial_jump_for_stock_listed_in_window():
+    class JumpingStockClient(FakeAkshareClient):
+        def __init__(self, first_date):
+            super().__init__([spot_row()])
+            self.first_date = first_date
+
+        def stock_daily_tx_rows(self, symbol, start_date, end_date, adjust=""):
+            return [
+                {
+                    "date": self.first_date,
+                    "open": 10,
+                    "high": 10,
+                    "low": 10,
+                    "close": 10,
+                    "volume": 1000,
+                },
+                {
+                    "date": (
+                        "2025-02-04"
+                        if self.first_date.startswith("2025")
+                        else "2024-01-03"
+                    ),
+                    "open": 20,
+                    "high": 20,
+                    "low": 20,
+                    "close": 20,
+                    "volume": 1000,
+                },
+            ]
+
+    start = datetime(2024, 1, 1, tzinfo=UTC)
+    end = datetime(2026, 1, 1, tzinfo=UTC)
+    listed = provider(JumpingStockClient("2025-02-03"))
+    listed.connect_history()
+    assert len(listed.query_stock_history(("688000",), start=start, end=end)) == 2
+
+    established = provider(JumpingStockClient("2024-01-02"))
+    established.connect_history()
+    with pytest.raises(ValueError, match="ABNORMAL_JUMP"):
+        established.query_stock_history(("600000",), start=start, end=end)
+
+
+def test_stock_history_allows_jump_across_long_suspension_gap():
+    class ResumedStockClient(FakeAkshareClient):
+        def stock_daily_tx_rows(self, symbol, start_date, end_date, adjust=""):
+            return [
+                {
+                    "date": "2024-01-02",
+                    "open": 10,
+                    "high": 10,
+                    "low": 10,
+                    "close": 10,
+                    "volume": 1000,
+                },
+                {
+                    "date": "2025-01-02",
+                    "open": 20,
+                    "high": 20,
+                    "low": 20,
+                    "close": 20,
+                    "volume": 1000,
+                },
+            ]
+
+    value = provider(ResumedStockClient([spot_row()]))
+    value.connect_history()
+    bars = value.query_stock_history(
+        ("000792",),
+        start=datetime(2024, 1, 1, tzinfo=UTC),
+        end=datetime(2026, 1, 1, tzinfo=UTC),
+    )
+    assert len(bars) == 2
 
 
 def test_liquidity_universe_is_bounded_and_excludes_non_domestic_exposures():

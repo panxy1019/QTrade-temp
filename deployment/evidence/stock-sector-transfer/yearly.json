@@ -1,0 +1,156 @@
+[
+  {
+    "metrics": {
+      "annualized_return": "0.20213440732957455",
+      "annualized_volatility": "0.2925699888890364",
+      "benchmark_return": "0",
+      "calmar": "0.7963014727104338932224364122",
+      "excess_return": "0.195129141838607250024567123",
+      "exposure": "0.8909580729383903850823857529",
+      "information_ratio": "0.7757551391020862462871004086",
+      "maximum_drawdown": "-0.2538415590788169520324369980",
+      "number_of_periods": 244,
+      "number_of_trades": 67,
+      "profit_loss_ratio": "0",
+      "sharpe": "0.7757551391020862462871004086",
+      "sortino": "1.151336048294789931219529515",
+      "total_return": "0.195129141838607250024567123",
+      "transaction_costs": "0.0143412063890",
+      "turnover": "14.3412063890",
+      "win_rate": "0.5122950819672131147540983607"
+    },
+    "year": 2019
+  },
+  {
+    "metrics": {
+      "annualized_return": "0.20483263471369706",
+      "annualized_volatility": "0.31925864985590285",
+      "benchmark_return": "0",
+      "calmar": "0.8802157727616114113962942810",
+      "excess_return": "0.196841066450753070965924021",
+      "exposure": "0.8971234707624361403994797667",
+      "information_ratio": "0.7440596135535273037806952354",
+      "maximum_drawdown": "-0.2327072986559306117823547834",
+      "number_of_periods": 243,
+      "number_of_trades": 70,
+      "profit_loss_ratio": "0",
+      "sharpe": "0.7440596135535273037806952354",
+      "sortino": "1.052832007898894274826587648",
+      "total_return": "0.196841066450753070965924021",
+      "transaction_costs": "0.0161948686665",
+      "turnover": "16.1948686665",
+      "win_rate": "0.5514403292181069958847736626"
+    },
+    "year": 2020
+  },
+  {
+    "metrics": {
+      "annualized_return": "0.07428313551715537",
+      "annualized_volatility": "0.32120479053767637",
+      "benchmark_return": "0",
+      "calmar": "0.2268516148031900285326104549",
+      "excess_return": "0.071537498647378191602004739",
+      "exposure": "0.8572294010025669744067262955",
+      "information_ratio": "0.3833738765283889001636235070",
+      "maximum_drawdown": "-0.3274525313897425564272033590",
+      "number_of_periods": 243,
+      "number_of_trades": 64,
+      "profit_loss_ratio": "0",
+      "sharpe": "0.3833738765283889001636235070",
+      "sortino": "0.5649035059408005902771967645",
+      "total_return": "0.071537498647378191602004739",
+      "transaction_costs": "0.0174781279425",
+      "turnover": "17.4781279425",
+      "win_rate": "0.4938271604938271604938271605"
+    },
+    "year": 2021
+  },
+  {
+    "metrics": {
+      "annualized_return": "0.16910161359756715",
+      "annualized_volatility": "0.32044532243988505",
+      "benchmark_return": "0",
+      "calmar": "0.6230166903120676297144155487",
+      "excess_return": "0.161875810124049134417039373",
+      "exposure": "0.8758077998377812473716504269",
+      "information_ratio": "0.6476704764764311961827960136",
+      "maximum_drawdown": "-0.2714238899649133637347390262",
+      "number_of_periods": 242,
+      "number_of_trades": 66,
+      "profit_loss_ratio": "0",
+      "sharpe": "0.6476704764764311961827960136",
+      "sortino": "0.9425190053596364388501731020",
+      "total_return": "0.161875810124049134417039373",
+      "transaction_costs": "0.0182554809190",
+      "turnover": "18.2554809190",
+      "win_rate": "0.5413223140495867768595041322"
+    },
+    "year": 2022
+  },
+  {
+    "metrics": {
+      "annualized_return": "0.09789333622667451",
+      "annualized_volatility": "0.307809409146528",
+      "benchmark_return": "0",
+      "calmar": "0.4768030445251521607009011936",
+      "excess_return": "0.093831987109342711282272957",
+      "exposure": "0.8483933979189405801729387388",
+      "information_ratio": "0.4543279322029806981961413800",
+      "maximum_drawdown": "-0.2053118941892798091047944478",
+      "number_of_periods": 242,
+      "number_of_trades": 66,
+      "profit_loss_ratio": "0",
+      "sharpe": "0.4543279322029806981961413800",
+      "sortino": "0.7845895945001046407122781973",
+      "total_return": "0.093831987109342711282272957",
+      "transaction_costs": "0.0240815266020",
+      "turnover": "24.0815266020",
+      "win_rate": "0.4545454545454545454545454545"
+    },
+    "year": 2023
+  },
+  {
+    "metrics": {
+      "annualized_return": "0.3172631100808776",
+      "annualized_volatility": "0.3738548637050261",
+      "benchmark_return": "0",
+      "calmar": "1.550728218789029223639646715",
+      "excess_return": "0.302937607828030639964209732",
+      "exposure": "0.9049101120772193611866545079",
+      "information_ratio": "0.9209463428800979688472897072",
+      "maximum_drawdown": "-0.2045897574035441344830535017",
+      "number_of_periods": 242,
+      "number_of_trades": 70,
+      "profit_loss_ratio": "0",
+      "sharpe": "0.9209463428800979688472897072",
+      "sortino": "1.564940440694805943837436013",
+      "total_return": "0.302937607828030639964209732",
+      "transaction_costs": "0.0286281175595",
+      "turnover": "28.6281175595",
+      "win_rate": "0.4958677685950413223140495868"
+    },
+    "year": 2024
+  },
+  {
+    "metrics": {
+      "annualized_return": "0.6683167624970829",
+      "annualized_volatility": "0.3442264564725573",
+      "benchmark_return": "0",
+      "calmar": "2.159188675331656016345667605",
+      "excess_return": "0.638098433765289227675814545",
+      "exposure": "0.9201276535912980561171583901",
+      "information_ratio": "1.660130731438634989474294020",
+      "maximum_drawdown": "-0.3095221691983114955866551627",
+      "number_of_periods": 243,
+      "number_of_trades": 74,
+      "profit_loss_ratio": "0",
+      "sharpe": "1.660130731438634989474294020",
+      "sortino": "2.677453913618319851437972553",
+      "total_return": "0.638098433765289227675814545",
+      "transaction_costs": "0.0450437101870",
+      "turnover": "45.0437101870",
+      "win_rate": "0.5061728395061728395061728395"
+    },
+    "year": 2025
+  }
+]

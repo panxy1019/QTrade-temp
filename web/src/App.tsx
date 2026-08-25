@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { ConfigProvider, Layout, Menu, Space, Switch, theme, Typography } from 'antd'
 import {
   AreaChartOutlined, BarChartOutlined, DatabaseOutlined, ExperimentOutlined,
@@ -7,10 +7,21 @@ import {
 } from '@ant-design/icons'
 import { HashRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { usePlatformSnapshot } from './hooks/usePlatformSnapshot'
-import { OverviewPage } from './pages/OverviewPage'
-import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './pages/DataPages'
 import { StatusTag } from './components/StatusTag'
 import './styles.css'
+
+const OverviewPage = lazy(() => import('./pages/OverviewPage').then((module) => ({ default: module.OverviewPage })))
+const MarketPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.MarketPage })))
+const StrategyPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.StrategyPage })))
+const ResearchPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.ResearchPage })))
+const ExperimentPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.ExperimentPage })))
+const BacktestPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.BacktestPage })))
+const PaperPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.PaperPage })))
+const PositionsPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.PositionsPage })))
+const OrdersPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.OrdersPage })))
+const RiskPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.RiskPage })))
+const DataCenterPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.DataCenterPage })))
+const MonitorPage = lazy(() => import('./pages/DataPages').then((module) => ({ default: module.MonitorPage })))
 
 const menu = [
   ['/', '总览', <AreaChartOutlined />], ['/market', '行情中心', <StockOutlined />],
@@ -42,20 +53,22 @@ function Shell() {
           <Space><span>深色模式</span><Switch checked={dark} onChange={setDark} /></Space>
         </Layout.Header>
         <Layout.Content className="content">
-          <Routes>
-            <Route path="/" element={<OverviewPage data={data} dark={dark} />} />
-            <Route path="/market" element={<MarketPage data={data} />} />
-            <Route path="/strategies" element={<StrategyPage data={data} />} />
-            <Route path="/research" element={<ResearchPage data={data} />} />
-            <Route path="/experiments" element={<ExperimentPage data={data} />} />
-            <Route path="/backtest" element={<BacktestPage data={data} />} />
-            <Route path="/paper" element={<PaperPage data={data} />} />
-            <Route path="/positions" element={<PositionsPage data={data} />} />
-            <Route path="/orders" element={<OrdersPage data={data} />} />
-            <Route path="/risk" element={<RiskPage data={data} />} />
-            <Route path="/data" element={<DataCenterPage data={data} />} />
-            <Route path="/monitor" element={<MonitorPage data={data} />} />
-          </Routes>
+          <Suspense fallback={<Typography.Text type="secondary">页面加载中…</Typography.Text>}>
+            <Routes>
+              <Route path="/" element={<OverviewPage data={data} dark={dark} />} />
+              <Route path="/market" element={<MarketPage data={data} />} />
+              <Route path="/strategies" element={<StrategyPage data={data} />} />
+              <Route path="/research" element={<ResearchPage data={data} />} />
+              <Route path="/experiments" element={<ExperimentPage data={data} />} />
+              <Route path="/backtest" element={<BacktestPage data={data} />} />
+              <Route path="/paper" element={<PaperPage data={data} />} />
+              <Route path="/positions" element={<PositionsPage data={data} />} />
+              <Route path="/orders" element={<OrdersPage data={data} />} />
+              <Route path="/risk" element={<RiskPage data={data} />} />
+              <Route path="/data" element={<DataCenterPage data={data} />} />
+              <Route path="/monitor" element={<MonitorPage data={data} />} />
+            </Routes>
+          </Suspense>
         </Layout.Content>
       </Layout>
     </Layout>

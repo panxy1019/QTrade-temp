@@ -47,9 +47,11 @@ def inspect_provider_selection(
         actions = (
             "Obtain a licensed RQData account with realtime A-share/ETF/index entitlement.",
             "Set QTRADE_RQDATA_USERNAME and QTRADE_RQDATA_TOKEN in the bridge process only.",
-            "Install pinned rqdatac/vnpy_rqdata in the isolated provider environment.",
+            "Install the pinned qtrade rqdata extra in the isolated bridge environment.",
+            "Run the read-only authorization, snapshot, and heartbeat probe.",
         )
         missing = tuple(name for name in required if not values.get(name, "").strip())
+        operational_probe_required = not missing
     else:
         required = ("QTRADE_XTDATA_PATH", "QTRADE_XTDATA_ENTITLEMENT_CONFIRMED")
         actions = (
@@ -64,6 +66,7 @@ def inspect_provider_selection(
         if values.get("QTRADE_XTDATA_ENTITLEMENT_CONFIRMED", "").lower() != "true":
             missing_list.append("QTRADE_XTDATA_ENTITLEMENT_CONFIRMED=true")
         missing = tuple(dict.fromkeys(missing_list))
+        operational_probe_required = not missing
     return ProviderSelectionStatus(
         provider,
         not missing and not operational_probe_required,

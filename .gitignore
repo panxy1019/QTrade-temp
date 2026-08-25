@@ -11,6 +11,7 @@ dist/
 build/
 .env
 *.parquet
+!/deployment/evidence/**/*.parquet
 *.duckdb
 /runtime/
 web/node_modules/

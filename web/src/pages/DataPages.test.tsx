@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { PlatformSnapshot } from '../types'
+import { runBacktestPreview } from '../api/client'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('echarts-for-react', () => ({ default: () => <div data-testid="equity-chart" /> }))
@@ -13,6 +14,7 @@ vi.mock('../api/client', () => ({
       { symbol, exchange: 'SSE', timestamp: '2026-08-12T15:00:00+08:00', trading_day: '2026-08-12', open: '4.1', high: '4.3', low: '4', close: '4.2', volume: '200', data_version: 'akshare-bars-v1', observation_type: 'HISTORICAL_DAILY_BAR' },
     ],
   })),
+  runBacktestPreview: vi.fn(),
 }))
 
 const data = {
@@ -65,6 +67,12 @@ const data = {
       universe: { point_in_time: false, symbols: ['510300'] },
     },
   },
+  minuteOverlay: {
+    classification: 'CAUSAL_MINUTE_RISK_OVERLAY_PAPER_SHADOW_ONLY',
+    readiness: 'NOT_READY', provider: null, provider_connected: false, bar_interval: '1m',
+    symbol_count: 0, ready_symbol_count: 0, external_order_transmission: false,
+    promotion: 'NOT_ELIGIBLE', reasons: ['NO_AUTHORIZED_REALTIME_TICK_PROVIDER'], symbols: [],
+  },
   reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
   historicalBars: [
     {
@@ -84,6 +92,92 @@ const data = {
       any_negative_sharpe: true,
       scenario_metrics: [['base', [['sharpe', '-0.0964']]]],
     },
+  },
+  factorSearch: {
+    classification: 'bounded_factor_search_current_universe_non_pit',
+    promotion: 'NOT_ELIGIBLE',
+    promotion_reasons: ['CURRENT_UNIVERSE_SURVIVORSHIP_BIAS'],
+    factor_selection: {
+      passing_factor_ids: ['momentum-252-skip-20', 'reversal-5', 'low_volatility-60'],
+      discovery_start: '2023-10-01', discovery_end: '2024-12-31',
+    },
+    portfolio_selection: {
+      selected_candidate_id: 'reversal-20-top3-20', validation_start: '2025-01-01',
+      validation_end: '2025-12-31', benchmark_excluded_from_active_selection: true,
+    },
+    confirmatory_test: { start: '2026-01-01', end: '2026-08-21', period_previously_viewed_by_project: true },
+    factor_diagnostics: [],
+    validation: { selected_candidate_id: 'reversal-20-top3-20', candidate_count: 13, scores: [['reversal-20-top3-20', '0.7299']] },
+    test: {
+      selected_candidate_id: 'reversal-20-top3-20',
+      selected_metrics: { total_return: '-0.123894', sharpe: '-0.5513', maximum_drawdown: '-0.2418' },
+      buy_hold_metrics: { total_return: '-0.046176', sharpe: '-0.3055', maximum_drawdown: '-0.1490' },
+      terminal_excess_return: '-0.077718',
+    },
+  },
+  robustFactorSearch: {
+    classification: 'post_selection_robust_factor_search_current_universe_non_pit',
+    promotion: 'NOT_ELIGIBLE',
+    promotion_reasons: ['POST_SELECTION_REUSE_NOT_NEW_HELD_OUT_EVIDENCE'],
+    selection: {
+      candidate_count: 36,
+      window_ids: ['2024Q1', '2024Q2', '2024Q3', '2024Q4', '2025Q1', '2025Q2', '2025Q3', '2025Q4'],
+      best_observed_candidate_id: 'low-volatility-60-top3-40',
+      window_gate_eligible_candidate_ids: ['reversal-10-top3-20'],
+      robust_candidate_id: 'reversal-10-top3-20',
+      audited_candidate_id: 'reversal-10-top3-20',
+    },
+    robustness_gate: {
+      passed: true,
+      conclusion: 'ROBUST_CANDIDATE_PASSED_PREDECLARED_GATE',
+      candidate_results: [],
+    },
+    candidate_summaries: [{
+      candidate_id: 'reversal-10-top3-20', selection_rank: 5,
+      positive_window_ratio: '0.75', median_window_sharpe: '0.6362',
+      worst_window_sharpe: '-0.9007', full_period_return: '0.3884',
+    }],
+    stress_tests: {
+      evaluations: [{
+        candidate_id: 'reversal-10-top3-20',
+        cost_stresses: [{ scenario_id: 'double_cost', metrics: { total_return: '0.309869' } }],
+        parameter_neighbors: { positive_ratio: '0.888888' },
+        universe_subsets: { positive_ratio: '1' },
+      }],
+    },
+    bootstrap: {
+      evaluations: [{
+        candidate_id: 'reversal-10-top3-20', probability_positive: '0.853',
+        p05_total_return: '-0.1376', median_total_return: '0.3362', p95_total_return: '1.3802',
+      }],
+    },
+    polluted_audit: {
+      classification: 'POLLUTED_AUDIT_ONLY',
+      audited_candidate_id: 'reversal-10-top3-20',
+      selected_metrics: { total_return: '-0.004437', maximum_drawdown: '-0.178406' },
+      buy_hold_metrics: { total_return: '-0.046176' },
+      terminal_excess_return: '0.041739',
+    },
+  },
+  stockSectorTransfer: {
+    classification: 'locked_etf_factor_stock_sector_transfer_non_pit',
+    promotion: 'NOT_ELIGIBLE',
+    promotion_reasons: ['CURRENT_2026_CONSTITUENTS_PROJECTED_BACKWARD'],
+    data: { bar_count: 149903, symbol_count: 75, sector_count: 15, stocks_per_sector: 5, adjustment: 'hfq', point_in_time_universe: false },
+    locked_strategy: { candidate_id: 'reversal-10-top3-20', parameter_tuning_on_stock_results: false },
+    formal_period: {
+      start: '2019-01-01', end: '2025-12-31',
+      full_metrics: { total_return: '3.1575', annualized_return: '0.2353', sharpe: '0.8096', maximum_drawdown: '-0.3420' },
+      positive_year_count: 7, positive_sector_only_count: 15, positive_leave_one_sector_out_count: 15,
+      doubled_cost_metrics: { total_return: '2.5614' },
+    },
+    transfer_gate: { passed: true, criteria: {} },
+    yearly: [],
+    sector_only: [{ sector_code: '801120', sector_name: '食品饮料', symbols: ['a', 'b', 'c', 'd', 'e'], metrics: { total_return: '0.4628' } }],
+    leave_one_sector_out: [],
+    cost_stress: {},
+    bootstrap: { probability_positive: '0.969', p05_total_return: '0.201' },
+    polluted_audit: { strategy_metrics: { total_return: '0.0190' }, equal_weight_metrics: { total_return: '-0.0095' }, terminal_excess_return: '0.0285' },
   },
   walkForward: {
     classification: 'held_out_walk_forward',
@@ -135,6 +229,10 @@ describe('durable monitoring', () => {
     expect(screen.getByText('PAPER_INCIDENT')).toBeInTheDocument()
     expect(screen.getByText('gateway disconnected')).toBeInTheDocument()
     expect(screen.getByText(/不是哈希链或 WORM/)).toBeInTheDocument()
+    expect(screen.getByText('分钟修正：NOT_READY')).toBeInTheDocument()
+    expect(screen.getByText('只减仓，不加仓')).toBeInTheDocument()
+    expect(screen.getByText('封闭分钟线后的下一 Tick')).toBeInTheDocument()
+    expect(screen.getByText('禁止')).toBeInTheDocument()
   })
 
   it('distinguishes unavailable audit history from zero alerts', () => {
@@ -227,7 +325,35 @@ describe('verified historical data pages', () => {
 })
 
 describe('verified backtest analytics', () => {
+  it('runs an adjustable preview without presenting it as promotion evidence', async () => {
+    vi.mocked(runBacktestPreview).mockResolvedValueOnce({
+      classification: 'AD_HOC_PREVIEW_CURRENT_UNIVERSE_NOT_PIT', promotion: 'NOT_ELIGIBLE',
+      promotion_reasons: ['AD_HOC_PARAMETERS_NOT_PREDECLARED'], data_version: 'akshare-bars-v1',
+      data_checksum: 'b'.repeat(64),
+      parameters: {
+        start: '2024-01-02', end: '2026-08-12', horizons: [20, 60, 120], top_k: 3,
+        rebalance_every: 20, reserve: '0.05', trend_window: 120, volatility_window: 20,
+        target_annual_volatility: '0.15', initial_cash: '1000000',
+        transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
+      },
+      session_count: 632, universe_size: 30,
+      metrics: { total_return: '0.03', annualized_return: '0.01', sharpe: '0.4', maximum_drawdown: '-0.09', average_exposure: '0.5', number_of_trades: '42', turnover: '2', transaction_costs: '100' },
+      curve: [{ session: '2024-01-02', equity: '1000000', drawdown: '0' }],
+      terminal_positions: [], execution_timing: 'close decision, next open execution',
+      preview_hash: 'a'.repeat(64),
+    })
+    render(<BacktestPage data={data} />)
+    fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
+    expect(await screen.findByText('已完成 632 个会话、30 个标的')).toBeInTheDocument()
+    expect(screen.getByText(/即时预览，不是策略晋级证据/)).toBeInTheDocument()
+    expect(screen.getByText(/结论固定为 NOT_ELIGIBLE/)).toBeInTheDocument()
+    expect(runBacktestPreview).toHaveBeenCalledWith(expect.objectContaining({
+      horizons: [20, 60, 120], top_k: 3, rebalance_every: 20,
+    }))
+  })
+
   it('shows the verified leader without presenting it as Champion', async () => {
+    cleanup()
     render(<BacktestPage data={data} />)
     expect(screen.getByText('探索性领先者，不是 Champion')).toBeInTheDocument()
     expect(screen.getByText(/Buy-and-Hold 仅在记录、资金曲线、回撤 checksum 全部通过/)).toBeInTheDocument()
@@ -278,6 +404,43 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText(/不是新的独立测试证据/)).toBeInTheDocument()
     expect(screen.getByText(/-1.1429/)).toBeInTheDocument()
     expect(screen.getAllByText(/结论：NOT_ELIGIBLE/).length).toBeGreaterThan(0)
+  })
+
+  it('shows the bounded factor search and its negative locked result', () => {
+    cleanup()
+    render(<ResearchPage data={data} />)
+    fireEvent.click(screen.getByRole('tab', { name: '因子搜索' }))
+    expect(screen.getByText(/reversal-20-top3-20/)).toBeInTheDocument()
+    expect(screen.getByText(/确认段收益 -12.39%/)).toBeInTheDocument()
+    expect(screen.getByText(/主动超额：-7.77%/)).toBeInTheDocument()
+    expect(screen.getByText(/不是全新盲测/)).toBeInTheDocument()
+    expect(screen.getByText(/不能接入 PAPER/)).toBeInTheDocument()
+  })
+
+  it('shows the verified factor robustness gate without claiming promotion', () => {
+    cleanup()
+    render(<ResearchPage data={data} />)
+    fireEvent.click(screen.getByRole('tab', { name: '因子鲁棒性' }))
+    expect(screen.getByText(/冻结候选：36 个；季度窗口：8 个/)).toBeInTheDocument()
+    expect(screen.getByText(/reversal-10-top3-20/)).toBeInTheDocument()
+    expect(screen.getByText(/双倍成本收益 30.99%/)).toBeInTheDocument()
+    expect(screen.getByText(/Bootstrap 正收益概率 85.30%/)).toBeInTheDocument()
+    expect(screen.getByText(/2026 污染审计：收益 -0.44%/)).toBeInTheDocument()
+    expect(screen.getByText(/不是新的独立样本外确认/)).toBeInTheDocument()
+    expect(screen.getByText(/仍为 NOT_ELIGIBLE，不能接入 PAPER/)).toBeInTheDocument()
+  })
+
+  it('shows multi-sector stock transfer evidence and its survivorship boundary', () => {
+    cleanup()
+    render(<ResearchPage data={data} />)
+    fireEvent.click(screen.getByRole('tab', { name: '多板块个股迁移' }))
+    expect(screen.getByText(/15 个板块 × 每板块 5 只/)).toBeInTheDocument()
+    expect(screen.getByText(/共 75 只股票、149903 根日线/)).toBeInTheDocument()
+    expect(screen.getByText(/正收益年份 7\/7，单板块 15\/15，留一板块 15\/15/)).toBeInTheDocument()
+    expect(screen.getByText(/最大回撤 -34.20%/)).toBeInTheDocument()
+    expect(screen.getByText(/Bootstrap 正收益概率 96.90%/)).toBeInTheDocument()
+    expect(screen.getByText(/2026 当前成分股向历史回投/)).toBeInTheDocument()
+    expect(screen.getByText(/结论固定为 NOT_ELIGIBLE，不能接入 PAPER/)).toBeInTheDocument()
   })
 })
 

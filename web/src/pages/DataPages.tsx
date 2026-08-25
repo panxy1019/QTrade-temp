@@ -3,6 +3,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useState } from 'react'
 import type { HistoricalBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
 import { StatusTag } from '../components/StatusTag'
+import { BacktestLab } from '../components/BacktestLab'
 import { EquityChart } from '../charts/EquityChart'
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
 import { loadHistoricalBarSeries } from '../api/client'
@@ -69,8 +70,58 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const report = data?.experiments
   const walkForward = data?.walkForward
   const robustness = data?.robustness
+  const factorSearch = data?.factorSearch
+  const robustFactorSearch = data?.robustFactorSearch
+  const stockTransfer = data?.stockSectorTransfer
   const aggregate = walkForward?.result.aggregate_metrics
-  return <Page title="策略研究" subtitle="实验候选、独立样本外证据与晋级边界"><Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} /><Card><Tabs items={[{ key: 'registry', label: '实验候选', children: <Space orientation="vertical"><Typography.Text>record/result/artifact 验证通过：{report?.experiments.length ?? 0} 个不可变实验记录。</Typography.Text><Typography.Text type="secondary">spec_hash 未独立复算；这些记录尚未注册为 StrategyVersion，也不存在可展示的 Champion、Challenger 或演化血缘。</Typography.Text></Space> }, { key: 'walk-forward', label: '滚动样本外', children: <Space orientation="vertical"><Typography.Text>独立测试折数：{walkForward?.result.folds.length ?? 0}；正收益折比例：{walkForward?.result.fold_pass_ratio ?? '—'}</Typography.Text><Typography.Text>聚合 Sharpe：{String(aggregate?.sharpe ?? '—')}；聚合收益：{String(aggregate?.total_return ?? '—')}</Typography.Text><Typography.Text type="secondary">仅验证期选择候选；完整折区间互不重叠。结论：{walkForward?.promotion ?? '未评估'}。</Typography.Text></Space> }, { key: 'robustness', label: '稳健性诊断', children: <Space orientation="vertical"><Typography.Text>场景数：{robustness?.result.scenario_metrics.length ?? 0}；最差 Sharpe：{robustness?.result.worst_sharpe ?? '—'}</Typography.Text><Typography.Text>离散度：{robustness?.result.dispersion ?? '—'}；存在负 Sharpe 场景：{robustness?.result.any_negative_sharpe ? '是' : '否'}</Typography.Text><Typography.Text type="secondary">这是复用样本的拒绝后诊断，不是新的独立测试证据。结论：{robustness?.promotion ?? '未评估'}。</Typography.Text></Space> }, { key: 'lineage', label: '演化树', children: <Empty description="当前实验尚未注册策略血缘" /> }, { key: 'rejected', label: '未晋级', children: <Typography.Text type="secondary">当前样本池存在幸存者偏差，且缺少 PAPER/SHADOW 证据。</Typography.Text> }]} /></Card></Page>
+  const factorMetrics = factorSearch?.test.selected_metrics
+  const benchmarkMetrics = factorSearch?.test.buy_hold_metrics
+  const robustCandidateId = robustFactorSearch?.selection?.robust_candidate_id
+  const robustSummary = robustFactorSearch?.candidate_summaries.find(
+    (item) => item.candidate_id === robustCandidateId,
+  )
+  const robustStress = robustFactorSearch?.stress_tests.evaluations.find(
+    (item) => item.candidate_id === robustCandidateId,
+  )
+  const doubledCost = robustStress?.cost_stresses.find(
+    (item) => item.scenario_id === 'double_cost',
+  )
+  const robustBootstrap = robustFactorSearch?.bootstrap.evaluations.find(
+    (item) => item.candidate_id === robustCandidateId,
+  )
+  const pollutedAudit = robustFactorSearch?.polluted_audit
+  const transferFull = stockTransfer?.formal_period?.full_metrics
+  const transferDouble = stockTransfer?.formal_period?.doubled_cost_metrics
+  const transferAudit = stockTransfer?.polluted_audit
+  const weakestSector = [...(stockTransfer?.sector_only ?? [])].sort(
+    (left, right) => Number(left.metrics.total_return) - Number(right.metrics.total_return),
+  )[0]
+  return <Page title="策略研究" subtitle="实验候选、独立样本外证据与晋级边界">
+    <Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} />
+    <Card><Tabs items={[
+      { key: 'registry', label: '实验候选', children: <Space orientation="vertical"><Typography.Text>record/result/artifact 验证通过：{report?.experiments.length ?? 0} 个不可变实验记录。</Typography.Text><Typography.Text type="secondary">spec_hash 未独立复算；这些记录尚未注册为 StrategyVersion，也不存在可展示的 Champion、Challenger 或演化血缘。</Typography.Text></Space> },
+      { key: 'factor-search', label: '因子搜索', children: <Space orientation="vertical"><Typography.Text>发现期通过：{factorSearch?.factor_selection?.passing_factor_ids.join('、') || '无'}；验证候选：{factorSearch?.validation.candidate_count ?? 0} 个。</Typography.Text><Typography.Text>验证胜者：{factorSearch?.validation.selected_candidate_id ?? '—'}；确认段收益 {formatPercent(String(factorMetrics?.total_return ?? '0'))}，Sharpe {String(factorMetrics?.sharpe ?? '—')}，最大回撤 {formatPercent(String(factorMetrics?.maximum_drawdown ?? '0'))}。</Typography.Text><Typography.Text>同期 Buy-and-Hold：{formatPercent(String(benchmarkMetrics?.total_return ?? '0'))}；主动超额：{formatPercent(factorSearch?.test.terminal_excess_return ?? '0')}。</Typography.Text><Typography.Text type="secondary">因子 Rank IC 仅用于发现期筛选；参数只按验证期选择。确认期曾被项目历史实验查看，不是全新盲测，结果固定为 {factorSearch?.promotion ?? '未评估'}，不能接入 PAPER。</Typography.Text></Space> },
+      { key: 'factor-robustness', label: '因子鲁棒性', children: <Space orientation="vertical">
+        <Typography.Text>冻结候选：{robustFactorSearch?.selection?.candidate_count ?? 0} 个；季度窗口：{robustFactorSearch?.selection?.window_ids.length ?? 0} 个；季度硬门槛合格：{robustFactorSearch?.selection?.window_gate_eligible_candidate_ids.length ?? 0} 个。</Typography.Text>
+        <Typography.Text>鲁棒候选：{robustCandidateId ?? '无'}；正收益窗口 {formatPercent(robustSummary?.positive_window_ratio ?? '0')}；中位 Sharpe {formatNumber(robustSummary?.median_window_sharpe)}；最差 Sharpe {formatNumber(robustSummary?.worst_window_sharpe)}。</Typography.Text>
+        <Typography.Text>双倍成本收益 {formatPercent(String(doubledCost?.metrics.total_return ?? '0'))}；邻参正收益比例 {formatPercent(robustStress?.parameter_neighbors.positive_ratio ?? '0')}；股票池子样本正收益比例 {formatPercent(robustStress?.universe_subsets.positive_ratio ?? '0')}；Bootstrap 正收益概率 {formatPercent(robustBootstrap?.probability_positive ?? '0')}。</Typography.Text>
+        <Typography.Text>2026 污染审计：收益 {formatPercent(String(pollutedAudit?.selected_metrics?.total_return ?? '0'))}；主动超额 {formatPercent(pollutedAudit?.terminal_excess_return ?? '0')}；最大回撤 {formatPercent(String(pollutedAudit?.selected_metrics?.maximum_drawdown ?? '0'))}。</Typography.Text>
+        <Typography.Text type="secondary">通过的是复用 2024–2025 数据的预声明研究鲁棒门槛，不是新的独立样本外确认。2026 只做污染审计；当前结论仍为 {robustFactorSearch?.promotion ?? '未评估'}，不能接入 PAPER。</Typography.Text>
+      </Space> },
+      { key: 'stock-sector-transfer', label: '多板块个股迁移', children: <Space orientation="vertical">
+        <Typography.Text>数据：{stockTransfer?.data?.sector_count ?? 0} 个板块 × 每板块 {stockTransfer?.data?.stocks_per_sector ?? 0} 只，共 {stockTransfer?.data?.symbol_count ?? 0} 只股票、{stockTransfer?.data?.bar_count ?? 0} 根日线；统一 {stockTransfer?.data?.adjustment?.toUpperCase() ?? '—'}。</Typography.Text>
+        <Typography.Text>锁定策略：{stockTransfer?.locked_strategy?.candidate_id ?? '—'}；2019–2025 正收益年份 {stockTransfer?.formal_period?.positive_year_count ?? 0}/7，单板块 {stockTransfer?.formal_period?.positive_sector_only_count ?? 0}/15，留一板块 {stockTransfer?.formal_period?.positive_leave_one_sector_out_count ?? 0}/15。</Typography.Text>
+        <Typography.Text>全期收益 {formatPercent(String(transferFull?.total_return ?? '0'))}，年化 {formatPercent(String(transferFull?.annualized_return ?? '0'))}，Sharpe {formatNumber(String(transferFull?.sharpe ?? '0'))}，最大回撤 {formatPercent(String(transferFull?.maximum_drawdown ?? '0'))}；双倍成本收益 {formatPercent(String(transferDouble?.total_return ?? '0'))}。</Typography.Text>
+        <Typography.Text>最弱单板块：{weakestSector?.sector_name ?? '—'}，收益 {formatPercent(String(weakestSector?.metrics.total_return ?? '0'))}；Bootstrap 正收益概率 {formatPercent(stockTransfer?.bootstrap.probability_positive ?? '0')}，5% 分位 {formatPercent(stockTransfer?.bootstrap.p05_total_return ?? '0')}。</Typography.Text>
+        <Typography.Text>2026 污染审计：策略 {formatPercent(String(transferAudit?.strategy_metrics?.total_return ?? '0'))}，等权 {formatPercent(String(transferAudit?.equal_weight_metrics?.total_return ?? '0'))}，超额 {formatPercent(transferAudit?.terminal_excess_return ?? '0')}。</Typography.Text>
+        <Typography.Text type="secondary">研究硬门：{stockTransfer?.transfer_gate?.passed ? '通过' : '未通过'}；但股票池是 2026 当前成分股向历史回投、后复权也不是时点一致数据，且未模拟涨跌停成交，结论固定为 {stockTransfer?.promotion ?? '未评估'}，不能接入 PAPER。</Typography.Text>
+      </Space> },
+      { key: 'walk-forward', label: '滚动样本外', children: <Space orientation="vertical"><Typography.Text>独立测试折数：{walkForward?.result.folds.length ?? 0}；正收益折比例：{walkForward?.result.fold_pass_ratio ?? '—'}</Typography.Text><Typography.Text>聚合 Sharpe：{String(aggregate?.sharpe ?? '—')}；聚合收益：{String(aggregate?.total_return ?? '—')}</Typography.Text><Typography.Text type="secondary">仅验证期选择候选；完整折区间互不重叠。结论：{walkForward?.promotion ?? '未评估'}。</Typography.Text></Space> },
+      { key: 'robustness', label: '稳健性诊断', children: <Space orientation="vertical"><Typography.Text>场景数：{robustness?.result.scenario_metrics.length ?? 0}；最差 Sharpe：{robustness?.result.worst_sharpe ?? '—'}</Typography.Text><Typography.Text>离散度：{robustness?.result.dispersion ?? '—'}；存在负 Sharpe 场景：{robustness?.result.any_negative_sharpe ? '是' : '否'}</Typography.Text><Typography.Text type="secondary">这是复用样本的拒绝后诊断，不是新的独立测试证据。结论：{robustness?.promotion ?? '未评估'}。</Typography.Text></Space> },
+      { key: 'lineage', label: '演化树', children: <Empty description="当前实验尚未注册策略血缘" /> },
+      { key: 'rejected', label: '未晋级', children: <Typography.Text type="secondary">当前样本池存在幸存者偏差，且缺少 PAPER/SHADOW 证据。</Typography.Text> },
+    ]} /></Card>
+  </Page>
 }
 
 export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
@@ -116,6 +167,7 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const positionColumns = [{ title: '证券', dataIndex: 'symbol' }, { title: '期末数量', dataIndex: 'quantity' }]
   const monthlyColumns = [{ title: '月份', dataIndex: 'month' }, { title: '月收益', dataIndex: 'return', render: (value: string) => formatPercent(value) }]
   return <Page title="回测分析" subtitle="资金曲线、回撤、敞口、换手与成本">
+    <BacktestLab key={data?.market.historical ? `${data.market.historical.data_version}:${data.market.historical.checksum}` : 'no-dataset'} dataset={data?.market.historical ?? null} />
     <Alert showIcon type="warning" title="探索性领先者，不是 Champion" description={leader ? `${leader.experiment_id}：测试窗 ${analytics?.split?.test_start ?? '—'} 至 ${analytics?.split?.test_end ?? '—'}，收益 ${formatPercent(leader.metrics.total_return)}，Sharpe ${formatNumber(leader.metrics.sharpe)}，最大回撤 ${formatPercent(leader.metrics.maximum_drawdown)}` : '暂无已验证结果'} />
     <Card title="已验证全期策略、基准、超额收益与回撤"><EquityChart dark analytics={analytics} />{leader && <Descriptions values={[["测试窗平均敞口", formatPercent(leader.metrics.test_exposure)], ["测试窗换手", formatNumber(leader.metrics.test_turnover)], ["测试窗交易成本", formatPercent(leader.metrics.test_transaction_cost)], ["Buy-and-Hold 测试收益", benchmark ? formatPercent(benchmark.metrics.total_return) : '—']]} />}<Typography.Text type="secondary">图为完整模拟期；Buy-and-Hold 仅在记录、资金曲线、回撤 checksum 全部通过且交易日逐点对齐时展示。测试窗指标在上方单列；当前样本池非 PIT，且缺少 PAPER/SHADOW 观察，禁止晋级。</Typography.Text></Card>
     <Alert showIcon type={hasWalkForwardEvidence ? 'error' : 'info'} title={hasWalkForwardEvidence ? `三折独立样本外：${positiveFolds}/${folds.length} 折正收益` : '暂无已验证滚动样本外证据'} description={hasWalkForwardEvidence ? `聚合收益 ${formatPercent(String(aggregate?.total_return ?? ''))}，聚合 Sharpe ${formatNumber(String(aggregate?.sharpe ?? ''))}，最大回撤 ${formatPercent(String(aggregate?.maximum_drawdown ?? ''))}。这组预先分折证据优先于上方事后挑选的探索性领先者。` : '滚动样本外报告缺失或未通过校验；不能据此声称策略通过或失败。'} />
@@ -157,10 +209,11 @@ export function MonitorPage({ data }: { data: PlatformSnapshot | null }) {
   const audit = data?.audit ?? []
   const auditAvailable = data?.audit != null
   const alerts = audit.filter((event) => event.severity === 'ERROR' || event.severity === 'CRITICAL')
+  const minute = data?.minuteOverlay
   if (!auditAvailable) {
     return <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化"><Alert showIcon type="error" title="持久化审计历史不可用" description="其他运行时快照仍可查看，但不能据此声称当前没有告警。" /><Card title="最近持久化审计与告警"><Empty description="审计历史不可用" /></Card></Page>
   }
-  return <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化"><Space orientation="vertical" style={{ width: '100%' }}><Card><Descriptions values={[['Service Health', data?.health.healthy ? 'HEALTHY' : 'DEGRADED'], ['Event Queue', String(data?.metrics.event_queue_depth ?? 0)], ['Market Data Lag', String(data?.metrics.market_data_lag ?? '—')], ['Order Rate', String(data?.metrics.orders_per_min ?? 0)], ['Reject Rate', String(data?.metrics.reject_rate ?? 0)], ['Fill Rate', String(data?.metrics.fill_rate ?? 0)], ['Runtime Owner', 'SQLite 单进程租约'], ['指标数量', String(entries.length)], ['持久化告警', data?.audit === null ? '不可用' : String(alerts.length)]]}/></Card>{data?.audit === null && <Alert showIcon type="error" title="持久化审计历史不可用" description="其他运行时快照仍可查看，但不能据此声称当前没有告警。" />}<Card title="最近持久化审计与告警"><Table rowKey={(row) => `${row.timestamp}-${row.event_type}-${row.order_id ?? ''}`} size="small" dataSource={audit} columns={[{ title: '时间', dataIndex: 'timestamp' }, { title: '级别', dataIndex: 'severity' }, { title: '事件', dataIndex: 'event_type' }, { title: '订单', dataIndex: 'order_id', render: (value: string | null) => value ?? '—' }, { title: '消息', dataIndex: 'message' }]} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} locale={{ emptyText: data?.audit === null ? '审计历史不可用' : '暂无持久化审计事件' }} /><Typography.Text type="secondary">最多显示最近 500 条严格校验的 SQLite 审计记录；ERROR/CRITICAL 计入告警。SQLite 表不是哈希链或 WORM 存储。</Typography.Text></Card></Space></Page>
+  return <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化"><Space orientation="vertical" style={{ width: '100%' }}><Card><Descriptions values={[['Service Health', data?.health.healthy ? 'HEALTHY' : 'DEGRADED'], ['Event Queue', String(data?.metrics.event_queue_depth ?? 0)], ['Market Data Lag', String(data?.metrics.market_data_lag ?? '—')], ['Order Rate', String(data?.metrics.orders_per_min ?? 0)], ['Reject Rate', String(data?.metrics.reject_rate ?? 0)], ['Fill Rate', String(data?.metrics.fill_rate ?? 0)], ['Runtime Owner', 'SQLite 单进程租约'], ['指标数量', String(entries.length)], ['持久化告警', data?.audit === null ? '不可用' : String(alerts.length)]]}/></Card><Alert showIcon type={minute?.readiness === 'READY' ? 'success' : 'warning'} title={`分钟修正：${minute?.readiness ?? 'UNAVAILABLE'}`} description={minute?.readiness === 'READY' ? `${minute.ready_symbol_count}/${minute.symbol_count} 个标的已完成 1 分钟预热，只允许降低日线基础仓位。` : '尚未接入授权实时 Tick 或分钟状态未完全预热；不会产生分钟 PAPER 目标。'} /><Card title="分钟级时间序列修正"><Descriptions values={[['行情 Provider', minute?.provider ?? '未配置'], ['分钟周期', minute?.bar_interval ?? '1m'], ['Provider 连接', minute?.provider_connected ? 'CONNECTED' : 'DISCONNECTED'], ['监控标的', String(minute?.symbol_count ?? 0)], ['已就绪标的', String(minute?.ready_symbol_count ?? 0)], ['仓位权限', '只减仓，不加仓'], ['执行边界', '封闭分钟线后的下一 Tick'], ['实盘订单', minute?.external_order_transmission ? '允许' : '禁止'], ['晋级状态', minute?.promotion ?? 'NOT_ELIGIBLE']]}/><Typography.Text type="secondary">分钟层不在盘中重搜因子参数；目标版本按交易日冻结，弱趋势、分钟波动、日内回撤及恢复冷却只负责收缩风险。</Typography.Text></Card>{data?.audit === null && <Alert showIcon type="error" title="持久化审计历史不可用" description="其他运行时快照仍可查看，但不能据此声称当前没有告警。" />}<Card title="最近持久化审计与告警"><Table rowKey={(row) => `${row.timestamp}-${row.event_type}-${row.order_id ?? ''}`} size="small" dataSource={audit} columns={[{ title: '时间', dataIndex: 'timestamp' }, { title: '级别', dataIndex: 'severity' }, { title: '事件', dataIndex: 'event_type' }, { title: '订单', dataIndex: 'order_id', render: (value: string | null) => value ?? '—' }, { title: '消息', dataIndex: 'message' }]} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} locale={{ emptyText: data?.audit === null ? '审计历史不可用' : '暂无持久化审计事件' }} /><Typography.Text type="secondary">最多显示最近 500 条严格校验的 SQLite 审计记录；ERROR/CRITICAL 计入告警。SQLite 表不是哈希链或 WORM 存储。</Typography.Text></Card></Space></Page>
 }
 
 function Descriptions({ values }: { values: [string, string][] }) {

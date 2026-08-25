@@ -20,6 +20,9 @@ akshare = [
   "akshare==1.18.84",
   "numpy>=2.3.3,<2.5",
 ]
+rqdata = [
+  "rqdatac[subscribe]==3.6.3",
+]
 dev = [
   "pytest>=8.4,<10",
   "pytest-cov>=6,<8",

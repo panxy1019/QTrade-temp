@@ -1,0 +1,4430 @@
+[
+  {
+    "candidate_id": "reversal-5-top3-5",
+    "parameters": [
+      [
+        "factors",
+        "reversal-5"
+      ],
+      [
+        "rebalance_every",
+        "5"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-5-top3-5",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1744371348470449152383496303",
+        "number_of_trades": 66,
+        "sharpe": "-0.9890707073701077734778316857",
+        "start": "2024-01-01",
+        "total_return": "-0.0740328711960240203706128867",
+        "transaction_costs": "0.01159193807485",
+        "turnover": "11.59193807485",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top3-5",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1403186434564688879973886690",
+        "number_of_trades": 67,
+        "sharpe": "-2.869279282220611398314270197",
+        "start": "2024-04-01",
+        "total_return": "-0.1096843991148276286932518976",
+        "transaction_costs": "0.01162496437395",
+        "turnover": "11.62496437395",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top3-5",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1330473790871589622540557581",
+        "number_of_trades": 68,
+        "sharpe": "1.687631972903723383190312758",
+        "start": "2024-07-01",
+        "total_return": "0.125839650578211142907316814",
+        "transaction_costs": "0.01029073844610",
+        "turnover": "10.29073844610",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top3-5",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0910130882189091515791878410",
+        "number_of_trades": 74,
+        "sharpe": "0.2263828168020905146132803161",
+        "start": "2024-10-01",
+        "total_return": "0.006043772967430315291239943",
+        "transaction_costs": "0.01420102318420",
+        "turnover": "14.20102318420",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-5-top3-5",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0734848421862869934998602429",
+        "number_of_trades": 64,
+        "sharpe": "-0.7237092853199547963610556449",
+        "start": "2025-01-01",
+        "total_return": "-0.0314188333844372493275624563",
+        "transaction_costs": "0.01168061984235",
+        "turnover": "11.68061984235",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top3-5",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1024255973052646637326391393",
+        "number_of_trades": 65,
+        "sharpe": "-0.4868675593594483847842051599",
+        "start": "2025-04-01",
+        "total_return": "-0.0310825466898890396276273709",
+        "transaction_costs": "0.01062550592655",
+        "turnover": "10.62550592655",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top3-5",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0666712518608587468753683190",
+        "number_of_trades": 69,
+        "sharpe": "1.399041333690697678971962404",
+        "start": "2025-07-01",
+        "total_return": "0.054761521426970142485016623",
+        "transaction_costs": "0.01136463818920",
+        "turnover": "11.36463818920",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top3-5",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0758896819698065699028070888",
+        "number_of_trades": 65,
+        "sharpe": "0.9046320098693754394860648288",
+        "start": "2025-10-01",
+        "total_return": "0.034263892071592478597680175",
+        "transaction_costs": "0.01138479589095",
+        "turnover": "11.38479589095",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-5-top3-10",
+    "parameters": [
+      [
+        "factors",
+        "reversal-5"
+      ],
+      [
+        "rebalance_every",
+        "10"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-5-top3-10",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1836016546195457139021262503",
+        "number_of_trades": 34,
+        "sharpe": "-1.750731901980526791680951269",
+        "start": "2024-01-01",
+        "total_return": "-0.1157505599371081189988047323",
+        "transaction_costs": "0.00821365133765",
+        "turnover": "8.21365133765",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top3-10",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1057493475517574071199797069",
+        "number_of_trades": 34,
+        "sharpe": "-1.097688407969224064538370599",
+        "start": "2024-04-01",
+        "total_return": "-0.0478007515670541613505244271",
+        "transaction_costs": "0.00803216720675",
+        "turnover": "8.03216720675",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top3-10",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1241571427184109051692597563",
+        "number_of_trades": 31,
+        "sharpe": "1.895966580906763252088725426",
+        "start": "2024-07-01",
+        "total_return": "0.144614814086588852449139959",
+        "transaction_costs": "0.00593908967835",
+        "turnover": "5.93908967835",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top3-10",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.1071540015528876099252068784",
+        "number_of_trades": 39,
+        "sharpe": "-0.2710548826005580155363277595",
+        "start": "2024-10-01",
+        "total_return": "-0.0265427370033660216312249805",
+        "transaction_costs": "0.00977389159105",
+        "turnover": "9.77389159105",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-5-top3-10",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0635409579413298188535569992",
+        "number_of_trades": 28,
+        "sharpe": "-0.7205581770266187961808619400",
+        "start": "2025-01-01",
+        "total_return": "-0.0343279026722072022815054777",
+        "transaction_costs": "0.00674158140855",
+        "turnover": "6.74158140855",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top3-10",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1105581980880957052043378979",
+        "number_of_trades": 32,
+        "sharpe": "-0.3128622560744734048498908760",
+        "start": "2025-04-01",
+        "total_return": "-0.0219392362189142752944872508",
+        "transaction_costs": "0.00690484689065",
+        "turnover": "6.90484689065",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top3-10",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0448664046057280856528845752",
+        "number_of_trades": 38,
+        "sharpe": "3.036512823539103160584192577",
+        "start": "2025-07-01",
+        "total_return": "0.122041593262824514685058357",
+        "transaction_costs": "0.00873962006135",
+        "turnover": "8.73962006135",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top3-10",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0483366128735211790968345910",
+        "number_of_trades": 34,
+        "sharpe": "1.406329540458803883311139039",
+        "start": "2025-10-01",
+        "total_return": "0.055260367159627540415653400",
+        "transaction_costs": "0.00922730895480",
+        "turnover": "9.22730895480",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-5-top3-20",
+    "parameters": [
+      [
+        "factors",
+        "reversal-5"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-5-top3-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.2007138579495352197560127661",
+        "number_of_trades": 17,
+        "sharpe": "-0.6608215867128829989511524628",
+        "start": "2024-01-01",
+        "total_return": "-0.0499752841513209498465171536",
+        "transaction_costs": "0.00426081898685",
+        "turnover": "4.26081898685",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top3-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1269286016649636978486015786",
+        "number_of_trades": 17,
+        "sharpe": "-2.387585786773553220475277113",
+        "start": "2024-04-01",
+        "total_return": "-0.0757440437647393721979440505",
+        "transaction_costs": "0.00431807591845",
+        "turnover": "4.31807591845",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top3-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0986865786115682257662539870",
+        "number_of_trades": 16,
+        "sharpe": "2.785714925249332595598981708",
+        "start": "2024-07-01",
+        "total_return": "0.197376812740547643882460531",
+        "transaction_costs": "0.00352199261990",
+        "turnover": "3.52199261990",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top3-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0735919393870662233007191705",
+        "number_of_trades": 22,
+        "sharpe": "0.3073148154766237926720559417",
+        "start": "2024-10-01",
+        "total_return": "0.011215959490720852458956929",
+        "transaction_costs": "0.00609249674810",
+        "turnover": "6.09249674810",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-5-top3-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0709442537041500323876214068",
+        "number_of_trades": 10,
+        "sharpe": "-0.3114681344664750770338133109",
+        "start": "2025-01-01",
+        "total_return": "-0.0168050148297888203844103945",
+        "transaction_costs": "0.00240372156120",
+        "turnover": "2.40372156120",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top3-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1023588626781072516143976306",
+        "number_of_trades": 17,
+        "sharpe": "0.3770077032825070564921232180",
+        "start": "2025-04-01",
+        "total_return": "0.013838319277829632732062398",
+        "transaction_costs": "0.00463227351355",
+        "turnover": "4.63227351355",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top3-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0867902332057963227106378917",
+        "number_of_trades": 22,
+        "sharpe": "0.8572468866952755640437343419",
+        "start": "2025-07-01",
+        "total_return": "0.030944743801369115016913362",
+        "transaction_costs": "0.00620329480890",
+        "turnover": "6.20329480890",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top3-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0425541592356568467766187556",
+        "number_of_trades": 17,
+        "sharpe": "1.438929511548726273597898478",
+        "start": "2025-10-01",
+        "total_return": "0.047653352929111931858931560",
+        "transaction_costs": "0.00502846679245",
+        "turnover": "5.02846679245",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-5-top5-5",
+    "parameters": [
+      [
+        "factors",
+        "reversal-5"
+      ],
+      [
+        "rebalance_every",
+        "5"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-5-top5-5",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1469538127515499777878741888",
+        "number_of_trades": 107,
+        "sharpe": "-0.2682252877984984137759506031",
+        "start": "2024-01-01",
+        "total_return": "-0.0251685422675707906234402364",
+        "transaction_costs": "0.01145975003730",
+        "turnover": "11.45975003730",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top5-5",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1231293649550686090494983903",
+        "number_of_trades": 109,
+        "sharpe": "-2.102393418413432921726987548",
+        "start": "2024-04-01",
+        "total_return": "-0.0796207916201955867314585021",
+        "transaction_costs": "0.01206466772600",
+        "turnover": "12.06466772600",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top5-5",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1242277337484355581760532416",
+        "number_of_trades": 112,
+        "sharpe": "1.696363196666385739209914347",
+        "start": "2024-07-01",
+        "total_return": "0.123136278484696456239985445",
+        "transaction_costs": "0.01130747050275",
+        "turnover": "11.30747050275",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top5-5",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0799473800363513065034286740",
+        "number_of_trades": 121,
+        "sharpe": "0.2710240837115116732973017690",
+        "start": "2024-10-01",
+        "total_return": "0.008860058138984498276223848",
+        "transaction_costs": "0.01546935866845",
+        "turnover": "15.46935866845",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-5-top5-5",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0679787453746433126357595809",
+        "number_of_trades": 100,
+        "sharpe": "-0.4006039253075341634803964339",
+        "start": "2025-01-01",
+        "total_return": "-0.0190699517708634201396811287",
+        "transaction_costs": "0.01157066842070",
+        "turnover": "11.57066842070",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top5-5",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1063197690163827308730722900",
+        "number_of_trades": 105,
+        "sharpe": "-0.2419176511413480925896609741",
+        "start": "2025-04-01",
+        "total_return": "-0.0191407509226988905130466580",
+        "transaction_costs": "0.01133557795825",
+        "turnover": "11.33557795825",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top5-5",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0581679374189058546013807345",
+        "number_of_trades": 113,
+        "sharpe": "1.068275204816720470774690226",
+        "start": "2025-07-01",
+        "total_return": "0.034315301969320676755844125",
+        "transaction_costs": "0.01238406177395",
+        "turnover": "12.38406177395",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top5-5",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0844737514786535061833437379",
+        "number_of_trades": 109,
+        "sharpe": "0.1715175986319364302914995631",
+        "start": "2025-10-01",
+        "total_return": "0.003473624881855122334362911",
+        "transaction_costs": "0.01294259269470",
+        "turnover": "12.94259269470",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-5-top5-10",
+    "parameters": [
+      [
+        "factors",
+        "reversal-5"
+      ],
+      [
+        "rebalance_every",
+        "10"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-5-top5-10",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1608515975850788550730908246",
+        "number_of_trades": 54,
+        "sharpe": "-1.502202457117591958631882710",
+        "start": "2024-01-01",
+        "total_return": "-0.0931003084894447681724665604",
+        "transaction_costs": "0.00744480783410",
+        "turnover": "7.44480783410",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top5-10",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1086586172897928072593620230",
+        "number_of_trades": 54,
+        "sharpe": "-1.155595727264973934225378249",
+        "start": "2024-04-01",
+        "total_return": "-0.0489202078661442986908946777",
+        "transaction_costs": "0.00737092251115",
+        "turnover": "7.37092251115",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top5-10",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1105763283412035980248744612",
+        "number_of_trades": 51,
+        "sharpe": "1.948666515834662721780172711",
+        "start": "2024-07-01",
+        "total_return": "0.143791770249121917106021161",
+        "transaction_costs": "0.00637713438180",
+        "turnover": "6.37713438180",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top5-10",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0942694610889357187182660126",
+        "number_of_trades": 63,
+        "sharpe": "-0.02002434770513744469133027219",
+        "start": "2024-10-01",
+        "total_return": "-0.0108754569372256494543376651",
+        "transaction_costs": "0.00935091579215",
+        "turnover": "9.35091579215",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-5-top5-10",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0640218348441953658419022439",
+        "number_of_trades": 45,
+        "sharpe": "-0.8157286114460052377805494437",
+        "start": "2025-01-01",
+        "total_return": "-0.0374615990218855699070522664",
+        "transaction_costs": "0.00640612619090",
+        "turnover": "6.40612619090",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top5-10",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1052138425904393717902852378",
+        "number_of_trades": 51,
+        "sharpe": "-0.4358443565770770085484878464",
+        "start": "2025-04-01",
+        "total_return": "-0.0285505034724961025038702530",
+        "transaction_costs": "0.00636215791470",
+        "turnover": "6.36215791470",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top5-10",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0399246707505477874564835952",
+        "number_of_trades": 62,
+        "sharpe": "2.650576332156685065391596030",
+        "start": "2025-07-01",
+        "total_return": "0.087518867995094648175262326",
+        "transaction_costs": "0.00841575001060",
+        "turnover": "8.41575001060",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top5-10",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0569660732153313794288573691",
+        "number_of_trades": 53,
+        "sharpe": "-0.01127377753199009417314701947",
+        "start": "2025-10-01",
+        "total_return": "-0.0035242867156295206999953034",
+        "transaction_costs": "0.00762010576690",
+        "turnover": "7.62010576690",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-5-top5-20",
+    "parameters": [
+      [
+        "factors",
+        "reversal-5"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-5-top5-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1480396361470946884445008466",
+        "number_of_trades": 26,
+        "sharpe": "-0.2046794819567436570987075805",
+        "start": "2024-01-01",
+        "total_return": "-0.0192178137370851692802246289",
+        "transaction_costs": "0.00371542491625",
+        "turnover": "3.71542491625",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top5-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1136850881919234465152524480",
+        "number_of_trades": 27,
+        "sharpe": "-2.024496745536954923504804149",
+        "start": "2024-04-01",
+        "total_return": "-0.0670977623640980138714663733",
+        "transaction_costs": "0.0040753777155",
+        "turnover": "4.0753777155",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top5-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0885441606797470853030062423",
+        "number_of_trades": 27,
+        "sharpe": "3.034879832808145986477902173",
+        "start": "2024-07-01",
+        "total_return": "0.220042267489556463163903005",
+        "transaction_costs": "0.0038544493661",
+        "turnover": "3.8544493661",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top5-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0721388370511476709867227957",
+        "number_of_trades": 38,
+        "sharpe": "0.4192488845410587430436338744",
+        "start": "2024-10-01",
+        "total_return": "0.018717683256415537321937586",
+        "transaction_costs": "0.00717222179050",
+        "turnover": "7.17222179050",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-5-top5-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0640251414790365077707604457",
+        "number_of_trades": 16,
+        "sharpe": "-0.7124521701687208772466732546",
+        "start": "2025-01-01",
+        "total_return": "-0.0317887742598939958184341462",
+        "transaction_costs": "0.00232880300255",
+        "turnover": "2.32880300255",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-5-top5-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1018254461400086463438771096",
+        "number_of_trades": 27,
+        "sharpe": "0.2822476212914834688256663728",
+        "start": "2025-04-01",
+        "total_return": "0.008843955836654793911503052",
+        "transaction_costs": "0.00449470853310",
+        "turnover": "4.49470853310",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-5-top5-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0658132829300368086844179230",
+        "number_of_trades": 35,
+        "sharpe": "1.792057194378687189659482915",
+        "start": "2025-07-01",
+        "total_return": "0.061346100363621648269049352",
+        "transaction_costs": "0.00600877321635",
+        "turnover": "6.00877321635",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-5-top5-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0413453594119066874699746450",
+        "number_of_trades": 29,
+        "sharpe": "0.4043945958532092077279900719",
+        "start": "2025-10-01",
+        "total_return": "0.011119057906568107571105705",
+        "transaction_costs": "0.00566918141685",
+        "turnover": "5.66918141685",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-10-top3-5",
+    "parameters": [
+      [
+        "factors",
+        "reversal-10"
+      ],
+      [
+        "rebalance_every",
+        "5"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-10-top3-5",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1475422442544167141595541713",
+        "number_of_trades": 56,
+        "sharpe": "-0.1252271829080826489218644475",
+        "start": "2024-01-01",
+        "total_return": "-0.0171937360367738503474265308",
+        "transaction_costs": "0.00983482277990",
+        "turnover": "9.83482277990",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top3-5",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1054381560593407179469158761",
+        "number_of_trades": 59,
+        "sharpe": "-1.853947521882081985380840122",
+        "start": "2024-04-01",
+        "total_return": "-0.0713715117082949646881626327",
+        "transaction_costs": "0.01146303973240",
+        "turnover": "11.46303973240",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top3-5",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0783043177815950985183895849",
+        "number_of_trades": 60,
+        "sharpe": "2.861160719310810703840744141",
+        "start": "2024-07-01",
+        "total_return": "0.258081046145635891669692304",
+        "transaction_costs": "0.01093850086985",
+        "turnover": "10.93850086985",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top3-5",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0725942378116752323683154328",
+        "number_of_trades": 69,
+        "sharpe": "0.8752709686911882771731627580",
+        "start": "2024-10-01",
+        "total_return": "0.049950335485133605171365505",
+        "transaction_costs": "0.01881712927405",
+        "turnover": "18.81712927405",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-10-top3-5",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0699808379268419372701426724",
+        "number_of_trades": 52,
+        "sharpe": "-0.6150276714922191015742227000",
+        "start": "2025-01-01",
+        "total_return": "-0.0288906559430195274594625302",
+        "transaction_costs": "0.01162502802145",
+        "turnover": "11.62502802145",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top3-5",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1127811868470335530130944230",
+        "number_of_trades": 54,
+        "sharpe": "-1.108781682065235757054794422",
+        "start": "2025-04-01",
+        "total_return": "-0.0685970510199473035030303175",
+        "transaction_costs": "0.01023376290250",
+        "turnover": "10.23376290250",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top3-5",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0512079613886911490910577565",
+        "number_of_trades": 64,
+        "sharpe": "1.836594182835048487621725214",
+        "start": "2025-07-01",
+        "total_return": "0.065520565096040919281430043",
+        "transaction_costs": "0.01486955931485",
+        "turnover": "14.86955931485",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top3-5",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0801922446624678770388067961",
+        "number_of_trades": 61,
+        "sharpe": "0.6277371641365246870231468719",
+        "start": "2025-10-01",
+        "total_return": "0.023779847962986380928179716",
+        "transaction_costs": "0.01552222650090",
+        "turnover": "15.52222650090",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-10-top3-10",
+    "parameters": [
+      [
+        "factors",
+        "reversal-10"
+      ],
+      [
+        "rebalance_every",
+        "10"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-10-top3-10",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1756104238906662662281270300",
+        "number_of_trades": 34,
+        "sharpe": "-0.6193186379544312580683753145",
+        "start": "2024-01-01",
+        "total_return": "-0.0493887871748529691585084394",
+        "transaction_costs": "0.00854288731720",
+        "turnover": "8.54288731720",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top3-10",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1114127396706539324943844929",
+        "number_of_trades": 36,
+        "sharpe": "-1.136587953140769843034935160",
+        "start": "2024-04-01",
+        "total_return": "-0.0541284703846253609922888340",
+        "transaction_costs": "0.00966885358120",
+        "turnover": "9.66885358120",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top3-10",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1096740043466513073715351803",
+        "number_of_trades": 31,
+        "sharpe": "2.464540762483276984660831510",
+        "start": "2024-07-01",
+        "total_return": "0.178863835435544597514395038",
+        "transaction_costs": "0.00645169745450",
+        "turnover": "6.45169745450",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top3-10",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0725502136815477690464090622",
+        "number_of_trades": 41,
+        "sharpe": "0.7049642853068800972338727161",
+        "start": "2024-10-01",
+        "total_return": "0.037284517258057007547683067",
+        "transaction_costs": "0.01236692398880",
+        "turnover": "12.36692398880",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-10-top3-10",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0635479378074634898908367898",
+        "number_of_trades": 27,
+        "sharpe": "-0.7290669970787801972214784611",
+        "start": "2025-01-01",
+        "total_return": "-0.0315346923889965443849567193",
+        "transaction_costs": "0.00723803675160",
+        "turnover": "7.23803675160",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top3-10",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1112928027866461064530762051",
+        "number_of_trades": 31,
+        "sharpe": "-0.2467691118204564147094352439",
+        "start": "2025-04-01",
+        "total_return": "-0.0217401431875116347479358674",
+        "transaction_costs": "0.00764293177405",
+        "turnover": "7.64293177405",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top3-10",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0438091880434502225683398712",
+        "number_of_trades": 39,
+        "sharpe": "2.120850115040346257302740352",
+        "start": "2025-07-01",
+        "total_return": "0.079908505705655422444083214",
+        "transaction_costs": "0.01118976447865",
+        "turnover": "11.18976447865",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top3-10",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0525619893078894130046312219",
+        "number_of_trades": 36,
+        "sharpe": "1.255726240993957438811850170",
+        "start": "2025-10-01",
+        "total_return": "0.053290831150734106577248868",
+        "transaction_costs": "0.01213911384210",
+        "turnover": "12.13911384210",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-10-top3-20",
+    "parameters": [
+      [
+        "factors",
+        "reversal-10"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-10-top3-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1284772834914384672233265920",
+        "number_of_trades": 18,
+        "sharpe": "0.4211578982903588504128334860",
+        "start": "2024-01-01",
+        "total_return": "0.018078185864401876349198976",
+        "transaction_costs": "0.0053740781124",
+        "turnover": "5.3740781124",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top3-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0958850716498083816094875022",
+        "number_of_trades": 17,
+        "sharpe": "-0.9006548579709497198515802163",
+        "start": "2024-04-01",
+        "total_return": "-0.0449653482727075163712527581",
+        "transaction_costs": "0.00495775931670",
+        "turnover": "4.95775931670",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top3-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0952449631741665027638265763",
+        "number_of_trades": 17,
+        "sharpe": "3.023273783916831009604197756",
+        "start": "2024-07-01",
+        "total_return": "0.284627243447433241320638636",
+        "transaction_costs": "0.00481677669325",
+        "turnover": "4.81677669325",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top3-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0726168905313252738787236751",
+        "number_of_trades": 21,
+        "sharpe": "0.8239401868778174340008515499",
+        "start": "2024-10-01",
+        "total_return": "0.044394461207299726369908114",
+        "transaction_costs": "0.00731643331050",
+        "turnover": "7.31643331050",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-10-top3-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0635439723805564544459855208",
+        "number_of_trades": 12,
+        "sharpe": "-0.4400605045661944870280125329",
+        "start": "2025-01-01",
+        "total_return": "-0.0202261643569742952062798010",
+        "transaction_costs": "0.00474765162945",
+        "turnover": "4.74765162945",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top3-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1101335105151750173243219675",
+        "number_of_trades": 15,
+        "sharpe": "0.5277139588783225676729757096",
+        "start": "2025-04-01",
+        "total_return": "0.023711890624159278335357721",
+        "transaction_costs": "0.00471508955490",
+        "turnover": "4.71508955490",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top3-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0436478235877068910945871260",
+        "number_of_trades": 19,
+        "sharpe": "1.352594453024606432344840742",
+        "start": "2025-07-01",
+        "total_return": "0.035257287877201906651478554",
+        "transaction_costs": "0.00593315363720",
+        "turnover": "5.93315363720",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top3-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0506626204538729319202492078",
+        "number_of_trades": 17,
+        "sharpe": "0.7447362487982970924054105302",
+        "start": "2025-10-01",
+        "total_return": "0.025002690627530395809608624",
+        "transaction_costs": "0.00676671107520",
+        "turnover": "6.76671107520",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-10-top5-5",
+    "parameters": [
+      [
+        "factors",
+        "reversal-10"
+      ],
+      [
+        "rebalance_every",
+        "5"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-10-top5-5",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1607494741428288129476676907",
+        "number_of_trades": 94,
+        "sharpe": "0.07877710123384794751243333685",
+        "start": "2024-01-01",
+        "total_return": "-0.0036509343838482825957804341",
+        "transaction_costs": "0.01056113530265",
+        "turnover": "10.56113530265",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top5-5",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0927505842606388966801053860",
+        "number_of_trades": 94,
+        "sharpe": "-1.841409352944121518647399047",
+        "start": "2024-04-01",
+        "total_return": "-0.0680069443473580583135213592",
+        "transaction_costs": "0.01086839745450",
+        "turnover": "10.86839745450",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top5-5",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0751782328198856312206506388",
+        "number_of_trades": 99,
+        "sharpe": "2.768983494388163683026489456",
+        "start": "2024-07-01",
+        "total_return": "0.235721019429484991733946435",
+        "transaction_costs": "0.01108439068840",
+        "turnover": "11.08439068840",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top5-5",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0893119757763241413042417910",
+        "number_of_trades": 111,
+        "sharpe": "0.4899931771716350908786234752",
+        "start": "2024-10-01",
+        "total_return": "0.024409595018479587730805488",
+        "transaction_costs": "0.01775173459885",
+        "turnover": "17.75173459885",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-10-top5-5",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0554028405862527955638696370",
+        "number_of_trades": 89,
+        "sharpe": "-0.3108955708415129607115304666",
+        "start": "2025-01-01",
+        "total_return": "-0.0144600122862282572068189591",
+        "transaction_costs": "0.01297932941055",
+        "turnover": "12.97932941055",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top5-5",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1041935883457155595911401894",
+        "number_of_trades": 88,
+        "sharpe": "-0.005124658019321106121320639630",
+        "start": "2025-04-01",
+        "total_return": "-0.0069254432188627926852892850",
+        "transaction_costs": "0.01013941024395",
+        "turnover": "10.13941024395",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top5-5",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0458969280695403796151748441",
+        "number_of_trades": 102,
+        "sharpe": "2.021282501981865037408960421",
+        "start": "2025-07-01",
+        "total_return": "0.065073922178684669756223716",
+        "transaction_costs": "0.01416777275550",
+        "turnover": "14.16777275550",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top5-5",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0700900134386547796017671306",
+        "number_of_trades": 93,
+        "sharpe": "-0.1983194841881330187439271795",
+        "start": "2025-10-01",
+        "total_return": "-0.0108189326164613493084361483",
+        "transaction_costs": "0.01291247542810",
+        "turnover": "12.91247542810",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-10-top5-10",
+    "parameters": [
+      [
+        "factors",
+        "reversal-10"
+      ],
+      [
+        "rebalance_every",
+        "10"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-10-top5-10",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1904025293144888000494461491",
+        "number_of_trades": 53,
+        "sharpe": "-0.7573051360762848817913381146",
+        "start": "2024-01-01",
+        "total_return": "-0.0557845929922333106053802360",
+        "transaction_costs": "0.00772729830610",
+        "turnover": "7.72729830610",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top5-10",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1080442538597829107267688269",
+        "number_of_trades": 53,
+        "sharpe": "-1.800031354213923299945567435",
+        "start": "2024-04-01",
+        "total_return": "-0.0758850653671678296170058156",
+        "transaction_costs": "0.00772826688625",
+        "turnover": "7.72826688625",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top5-10",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0922087181844684225665196395",
+        "number_of_trades": 52,
+        "sharpe": "2.523158425122149831361191613",
+        "start": "2024-07-01",
+        "total_return": "0.172388938965392702533047802",
+        "transaction_costs": "0.00670681345590",
+        "turnover": "6.70681345590",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top5-10",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0892069640059869262973871473",
+        "number_of_trades": 66,
+        "sharpe": "0.4598987722268970626620100387",
+        "start": "2024-10-01",
+        "total_return": "0.022169711723882955415213138",
+        "transaction_costs": "0.01166847143840",
+        "turnover": "11.66847143840",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-10-top5-10",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0500190856219242095647356749",
+        "number_of_trades": 41,
+        "sharpe": "-0.6785707732539377427005643483",
+        "start": "2025-01-01",
+        "total_return": "-0.0254467058936811432083726223",
+        "transaction_costs": "0.00659916988755",
+        "turnover": "6.59916988755",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top5-10",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0990477319939313110813776771",
+        "number_of_trades": 53,
+        "sharpe": "0.2509138495632169550055918142",
+        "start": "2025-04-01",
+        "total_return": "0.007185540896160017275396737",
+        "transaction_costs": "0.00833801170620",
+        "turnover": "8.33801170620",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top5-10",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0404769194127946661879234755",
+        "number_of_trades": 63,
+        "sharpe": "2.570354919764867432792933510",
+        "start": "2025-07-01",
+        "total_return": "0.091754901055685502032420409",
+        "transaction_costs": "0.01090903848060",
+        "turnover": "10.90903848060",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top5-10",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0652618158640796000681849642",
+        "number_of_trades": 56,
+        "sharpe": "-0.1699643311364318604310684746",
+        "start": "2025-10-01",
+        "total_return": "-0.0098779083699183854131979316",
+        "transaction_costs": "0.01052201700200",
+        "turnover": "10.52201700200",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-10-top5-20",
+    "parameters": [
+      [
+        "factors",
+        "reversal-10"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-10-top5-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1566813820723780233536060835",
+        "number_of_trades": 29,
+        "sharpe": "0.1361441047683391693693424531",
+        "start": "2024-01-01",
+        "total_return": "0.000107196283131007324495488",
+        "transaction_costs": "0.00497918152655",
+        "turnover": "4.97918152655",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top5-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1059332074967978458311455654",
+        "number_of_trades": 27,
+        "sharpe": "-1.440613031405288359056855914",
+        "start": "2024-04-01",
+        "total_return": "-0.0634360080694718823583845843",
+        "transaction_costs": "0.00444598571020",
+        "turnover": "4.44598571020",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top5-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0923697922466177735694591790",
+        "number_of_trades": 28,
+        "sharpe": "2.849045849709184930081926513",
+        "start": "2024-07-01",
+        "total_return": "0.241679871661127643497277499",
+        "transaction_costs": "0.00445593423275",
+        "turnover": "4.45593423275",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top5-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0892704035919785742778853556",
+        "number_of_trades": 36,
+        "sharpe": "0.9885030722239004735274991658",
+        "start": "2024-10-01",
+        "total_return": "0.061720008254075191124068466",
+        "transaction_costs": "0.00731949482045",
+        "turnover": "7.31949482045",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-10-top5-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0500200776480551167841600951",
+        "number_of_trades": 18,
+        "sharpe": "-0.2184386502804273640837835487",
+        "start": "2025-01-01",
+        "total_return": "-0.0097476391900033810731140096",
+        "transaction_costs": "0.00364361471090",
+        "turnover": "3.64361471090",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-10-top5-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0998739204982522543407879398",
+        "number_of_trades": 25,
+        "sharpe": "0.9381767775869421234730392503",
+        "start": "2025-04-01",
+        "total_return": "0.046494068994017212503517293",
+        "transaction_costs": "0.00457253543095",
+        "turnover": "4.57253543095",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-10-top5-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0432625907612797405722992598",
+        "number_of_trades": 30,
+        "sharpe": "2.659682870704769420126005198",
+        "start": "2025-07-01",
+        "total_return": "0.070201112387232203001021775",
+        "transaction_costs": "0.00504178200025",
+        "turnover": "5.04178200025",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-10-top5-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0524921030687962546807392298",
+        "number_of_trades": 27,
+        "sharpe": "-0.08041292240180164759282021755",
+        "start": "2025-10-01",
+        "total_return": "-0.0048025611560038861092485069",
+        "transaction_costs": "0.00604611566270",
+        "turnover": "6.04611566270",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-20-top3-5",
+    "parameters": [
+      [
+        "factors",
+        "reversal-20"
+      ],
+      [
+        "rebalance_every",
+        "5"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-20-top3-5",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1720955352590040376925655591",
+        "number_of_trades": 54,
+        "sharpe": "0.2019489691121560908572264508",
+        "start": "2024-01-01",
+        "total_return": "0.003829633877865786181171439",
+        "transaction_costs": "0.01144677632020",
+        "turnover": "11.44677632020",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top3-5",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1087244494183999254196093646",
+        "number_of_trades": 55,
+        "sharpe": "-1.941122968963482572832415033",
+        "start": "2024-04-01",
+        "total_return": "-0.0949645101842099697502084611",
+        "transaction_costs": "0.01162329410235",
+        "turnover": "11.62329410235",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top3-5",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0800840058515894227069991274",
+        "number_of_trades": 57,
+        "sharpe": "2.650749997243434217127746755",
+        "start": "2024-07-01",
+        "total_return": "0.208790260811102787186033575",
+        "transaction_costs": "0.01192205767300",
+        "turnover": "11.92205767300",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top3-5",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0704948349148038068312553795",
+        "number_of_trades": 62,
+        "sharpe": "-0.4868183316435635856050519641",
+        "start": "2024-10-01",
+        "total_return": "-0.0384057732733402083055075109",
+        "transaction_costs": "0.01601355543820",
+        "turnover": "16.01355543820",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-20-top3-5",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0694777304704096661449401474",
+        "number_of_trades": 53,
+        "sharpe": "-0.1426639814588442138308934809",
+        "start": "2025-01-01",
+        "total_return": "-0.0091350463273982307964460111",
+        "transaction_costs": "0.01317752915120",
+        "turnover": "13.17752915120",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top3-5",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1076079610590205085982286425",
+        "number_of_trades": 48,
+        "sharpe": "-0.06221527316924292712306833820",
+        "start": "2025-04-01",
+        "total_return": "-0.0112349214351743206398592114",
+        "transaction_costs": "0.00777180171250",
+        "turnover": "7.77180171250",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top3-5",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0761526149547167070601560068",
+        "number_of_trades": 53,
+        "sharpe": "0.4126847315665146355133946004",
+        "start": "2025-07-01",
+        "total_return": "0.011815706017429640417868307",
+        "transaction_costs": "0.00928544996795",
+        "turnover": "9.28544996795",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top3-5",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0663859861210438702029500145",
+        "number_of_trades": 56,
+        "sharpe": "0.3425829047443250591089496307",
+        "start": "2025-10-01",
+        "total_return": "0.010032967118734466417852834",
+        "transaction_costs": "0.01329389389840",
+        "turnover": "13.29389389840",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-20-top3-10",
+    "parameters": [
+      [
+        "factors",
+        "reversal-20"
+      ],
+      [
+        "rebalance_every",
+        "10"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-20-top3-10",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1778402933917369854333572198",
+        "number_of_trades": 31,
+        "sharpe": "-0.3067148638300111384637735069",
+        "start": "2024-01-01",
+        "total_return": "-0.0284362131938516324666598259",
+        "transaction_costs": "0.00755152388380",
+        "turnover": "7.55152388380",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top3-10",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1263269969434649605478687636",
+        "number_of_trades": 28,
+        "sharpe": "-2.226853301746578756799359921",
+        "start": "2024-04-01",
+        "total_return": "-0.1047002701591249916111445659",
+        "transaction_costs": "0.0059028638911",
+        "turnover": "5.9028638911",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top3-10",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0784756338987035630419065402",
+        "number_of_trades": 30,
+        "sharpe": "2.774287541589611421209059298",
+        "start": "2024-07-01",
+        "total_return": "0.226164465954871048337768986",
+        "transaction_costs": "0.00691217502995",
+        "turnover": "6.91217502995",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top3-10",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0885212309256499890589287903",
+        "number_of_trades": 34,
+        "sharpe": "-0.8611778465226201248301861003",
+        "start": "2024-10-01",
+        "total_return": "-0.0604820827606915271252453409",
+        "transaction_costs": "0.00847462752615",
+        "turnover": "8.47462752615",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-20-top3-10",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0704677793006590461584746847",
+        "number_of_trades": 28,
+        "sharpe": "0.07926878429377310016809155822",
+        "start": "2025-01-01",
+        "total_return": "-0.0003658381610076767051098730",
+        "transaction_costs": "0.0079903150998",
+        "turnover": "7.9903150998",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top3-10",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1075934153996016687472063407",
+        "number_of_trades": 25,
+        "sharpe": "0.2100701897358353644630285567",
+        "start": "2025-04-01",
+        "total_return": "0.004714992110781421639468200",
+        "transaction_costs": "0.00490151229995",
+        "turnover": "4.90151229995",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top3-10",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0645007285291159036805252526",
+        "number_of_trades": 34,
+        "sharpe": "0.8865417870508061868139993708",
+        "start": "2025-07-01",
+        "total_return": "0.027838301867479384032204291",
+        "transaction_costs": "0.00814447955660",
+        "turnover": "8.14447955660",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top3-10",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0556025818763216261511212679",
+        "number_of_trades": 31,
+        "sharpe": "-0.06428219569021800017416280728",
+        "start": "2025-10-01",
+        "total_return": "-0.0057893095366399331982803258",
+        "transaction_costs": "0.00820354387650",
+        "turnover": "8.20354387650",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-20-top3-20",
+    "parameters": [
+      [
+        "factors",
+        "reversal-20"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-20-top3-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1540177238415541089121933158",
+        "number_of_trades": 18,
+        "sharpe": "-0.2683196556035045642321564701",
+        "start": "2024-01-01",
+        "total_return": "-0.0266399382392258530397238647",
+        "transaction_costs": "0.00582895771525",
+        "turnover": "5.82895771525",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top3-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1171238980508898680923926676",
+        "number_of_trades": 17,
+        "sharpe": "-1.805323504609565500601314261",
+        "start": "2024-04-01",
+        "total_return": "-0.0865547377745112823675248698",
+        "transaction_costs": "0.00521186418840",
+        "turnover": "5.21186418840",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top3-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1036726032665214554168717185",
+        "number_of_trades": 16,
+        "sharpe": "2.107581518431464013347714759",
+        "start": "2024-07-01",
+        "total_return": "0.161327360797790964894505413",
+        "transaction_costs": "0.00417191206145",
+        "turnover": "4.17191206145",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top3-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0841459856230800567361721239",
+        "number_of_trades": 22,
+        "sharpe": "-0.7095049890714570224697136920",
+        "start": "2024-10-01",
+        "total_return": "-0.0507884456193479238647811169",
+        "transaction_costs": "0.00708732497785",
+        "turnover": "7.08732497785",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-20-top3-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0704756656824691776384502899",
+        "number_of_trades": 11,
+        "sharpe": "0.2797971487459308879068099166",
+        "start": "2025-01-01",
+        "total_return": "0.008035934100081577853150621",
+        "transaction_costs": "0.00322573575700",
+        "turnover": "3.22573575700",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top3-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1067652941617767424108666795",
+        "number_of_trades": 17,
+        "sharpe": "0.4150922134609393904450257513",
+        "start": "2025-04-01",
+        "total_return": "0.017126918366137453918681726",
+        "transaction_costs": "0.00533963460200",
+        "turnover": "5.33963460200",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top3-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0720067359726486452793472242",
+        "number_of_trades": 19,
+        "sharpe": "1.514275426318210374640001708",
+        "start": "2025-07-01",
+        "total_return": "0.054362428006006807429424236",
+        "transaction_costs": "0.00574902478775",
+        "turnover": "5.74902478775",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top3-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0540889206624836211666815302",
+        "number_of_trades": 18,
+        "sharpe": "1.128573339286132812925731235",
+        "start": "2025-10-01",
+        "total_return": "0.037129202603853414155644815",
+        "transaction_costs": "0.00656877082380",
+        "turnover": "6.56877082380",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-20-top5-5",
+    "parameters": [
+      [
+        "factors",
+        "reversal-20"
+      ],
+      [
+        "rebalance_every",
+        "5"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-20-top5-5",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.2122840003375334376423527012",
+        "number_of_trades": 83,
+        "sharpe": "-1.117516739725898393624819571",
+        "start": "2024-01-01",
+        "total_return": "-0.0783680062878866624237662663",
+        "transaction_costs": "0.00775002847130",
+        "turnover": "7.75002847130",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top5-5",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0993580854194580417791695171",
+        "number_of_trades": 85,
+        "sharpe": "-1.842495457262124775561645145",
+        "start": "2024-04-01",
+        "total_return": "-0.0818749543525425433263935692",
+        "transaction_costs": "0.00850485552900",
+        "turnover": "8.50485552900",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top5-5",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0778207159801844482814386765",
+        "number_of_trades": 83,
+        "sharpe": "2.526547425876756168572085110",
+        "start": "2024-07-01",
+        "total_return": "0.182266752722670903651278063",
+        "transaction_costs": "0.00736070476720",
+        "turnover": "7.36070476720",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top5-5",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0909156130335119908588459909",
+        "number_of_trades": 100,
+        "sharpe": "-0.3222646881581534205686631851",
+        "start": "2024-10-01",
+        "total_return": "-0.0304690433442133984693653496",
+        "transaction_costs": "0.01329917004615",
+        "turnover": "13.29917004615",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-20-top5-5",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0552298320530370087306753524",
+        "number_of_trades": 76,
+        "sharpe": "0.03845572437325026197762601556",
+        "start": "2025-01-01",
+        "total_return": "-0.0013073847201282517905094551",
+        "transaction_costs": "0.00742416395035",
+        "turnover": "7.42416395035",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top5-5",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1027686090559115466204448022",
+        "number_of_trades": 83,
+        "sharpe": "0.5349896050006535353520318159",
+        "start": "2025-04-01",
+        "total_return": "0.023488759428101365965880321",
+        "transaction_costs": "0.00803165705050",
+        "turnover": "8.03165705050",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top5-5",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0587375371851490031433407828",
+        "number_of_trades": 85,
+        "sharpe": "1.330725672928048774920728111",
+        "start": "2025-07-01",
+        "total_return": "0.037843719529954095387366034",
+        "transaction_costs": "0.00824182526445",
+        "turnover": "8.24182526445",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top5-5",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0718758089194141734971006654",
+        "number_of_trades": 81,
+        "sharpe": "-0.2660845439129219404998414911",
+        "start": "2025-10-01",
+        "total_return": "-0.0118495401431630950655436400",
+        "transaction_costs": "0.00851181967285",
+        "turnover": "8.51181967285",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-20-top5-10",
+    "parameters": [
+      [
+        "factors",
+        "reversal-20"
+      ],
+      [
+        "rebalance_every",
+        "10"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-20-top5-10",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1947164625546441786055466813",
+        "number_of_trades": 48,
+        "sharpe": "-0.5249049124606989367254734203",
+        "start": "2024-01-01",
+        "total_return": "-0.0431771544557210006025273219",
+        "transaction_costs": "0.00605525577630",
+        "turnover": "6.05525577630",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top5-10",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1263511107480931185724089842",
+        "number_of_trades": 47,
+        "sharpe": "-2.402514283425717576235739441",
+        "start": "2024-04-01",
+        "total_return": "-0.1037500761868644208099463169",
+        "transaction_costs": "0.00601838599840",
+        "turnover": "6.01838599840",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top5-10",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0668716016637930699083065256",
+        "number_of_trades": 47,
+        "sharpe": "2.828092317390543914011418378",
+        "start": "2024-07-01",
+        "total_return": "0.226573233139748381972781401",
+        "transaction_costs": "0.00515615373355",
+        "turnover": "5.15615373355",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top5-10",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0868897328810369655123362955",
+        "number_of_trades": 56,
+        "sharpe": "-0.4057993533466861735476027204",
+        "start": "2024-10-01",
+        "total_return": "-0.0361788949507934347397788022",
+        "transaction_costs": "0.00796624093035",
+        "turnover": "7.96624093035",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-20-top5-10",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0527546541077871848413359225",
+        "number_of_trades": 41,
+        "sharpe": "0.3371226082350063229726516873",
+        "start": "2025-01-01",
+        "total_return": "0.008661297735201134356883639",
+        "transaction_costs": "0.00579647222645",
+        "turnover": "5.79647222645",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top5-10",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1029595877037247831852663395",
+        "number_of_trades": 47,
+        "sharpe": "0.4478817050994480252266689752",
+        "start": "2025-04-01",
+        "total_return": "0.018534996062714735909959926",
+        "transaction_costs": "0.00610926409590",
+        "turnover": "6.10926409590",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top5-10",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0583863936958494043373617869",
+        "number_of_trades": 53,
+        "sharpe": "1.271082616471148273953782357",
+        "start": "2025-07-01",
+        "total_return": "0.036180990196292272439582673",
+        "transaction_costs": "0.00683747344790",
+        "turnover": "6.83747344790",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top5-10",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0666657269675259803054892157",
+        "number_of_trades": 49,
+        "sharpe": "-0.09188990439332632135225862305",
+        "start": "2025-10-01",
+        "total_return": "-0.0060359556223017251539412227",
+        "transaction_costs": "0.00716733728920",
+        "turnover": "7.16733728920",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-20-top5-20",
+    "parameters": [
+      [
+        "factors",
+        "reversal-20"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-20-top5-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1835237170844045646290446518",
+        "number_of_trades": 28,
+        "sharpe": "-0.5561961347177841060007283011",
+        "start": "2024-01-01",
+        "total_return": "-0.0455039976074077036928794006",
+        "transaction_costs": "0.0047954199911",
+        "turnover": "4.7954199911",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top5-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1022258053228258260328206790",
+        "number_of_trades": 27,
+        "sharpe": "-1.601405998136474722645436297",
+        "start": "2024-04-01",
+        "total_return": "-0.0711529976342913475160767788",
+        "transaction_costs": "0.00441991463930",
+        "turnover": "4.41991463930",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top5-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0901235580321326079417439809",
+        "number_of_trades": 26,
+        "sharpe": "2.456172355705527118280458660",
+        "start": "2024-07-01",
+        "total_return": "0.212164104017398810497718193",
+        "transaction_costs": "0.00370778465790",
+        "turnover": "3.70778465790",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top5-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0856171013172721233429625398",
+        "number_of_trades": 36,
+        "sharpe": "0.03463592564274377718163997446",
+        "start": "2024-10-01",
+        "total_return": "-0.0082093762273652627398565494",
+        "transaction_costs": "0.00699373607915",
+        "turnover": "6.99373607915",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-20-top5-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0527534908882611342724949117",
+        "number_of_trades": 18,
+        "sharpe": "0.6240453921718404502368719866",
+        "start": "2025-01-01",
+        "total_return": "0.019015807232585965719909122",
+        "transaction_costs": "0.00325494433525",
+        "turnover": "3.25494433525",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-20-top5-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1024519434373922319402700391",
+        "number_of_trades": 28,
+        "sharpe": "0.7826860121541950619616423168",
+        "start": "2025-04-01",
+        "total_return": "0.038431647334301147117591186",
+        "transaction_costs": "0.00544651659905",
+        "turnover": "5.44651659905",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-20-top5-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0594208453198424960639953037",
+        "number_of_trades": 33,
+        "sharpe": "2.531330439307897482619071273",
+        "start": "2025-07-01",
+        "total_return": "0.087362609003828111024561371",
+        "transaction_costs": "0.00607036380945",
+        "turnover": "6.07036380945",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-20-top5-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0559812032550021485203152347",
+        "number_of_trades": 30,
+        "sharpe": "1.221572925082543643460581772",
+        "start": "2025-10-01",
+        "total_return": "0.039957155978966176668759821",
+        "transaction_costs": "0.00716683119315",
+        "turnover": "7.16683119315",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-40-top3-5",
+    "parameters": [
+      [
+        "factors",
+        "reversal-40"
+      ],
+      [
+        "rebalance_every",
+        "5"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-40-top3-5",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1926655235226382037025798921",
+        "number_of_trades": 47,
+        "sharpe": "-0.3325746395793606459762183354",
+        "start": "2024-01-01",
+        "total_return": "-0.0368450056053748406370263735",
+        "transaction_costs": "0.00760912371850",
+        "turnover": "7.60912371850",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top3-5",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1332785088255521892925384812",
+        "number_of_trades": 49,
+        "sharpe": "-1.518728122432927709661201932",
+        "start": "2024-04-01",
+        "total_return": "-0.0762088154268340581329993552",
+        "transaction_costs": "0.00835436057475",
+        "turnover": "8.35436057475",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top3-5",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1120853801474461490263355438",
+        "number_of_trades": 49,
+        "sharpe": "2.389150920708363869652517327",
+        "start": "2024-07-01",
+        "total_return": "0.204754545941951161477883652",
+        "transaction_costs": "0.00742213895875",
+        "turnover": "7.42213895875",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top3-5",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.1041684088471277395550183277",
+        "number_of_trades": 56,
+        "sharpe": "-0.1592359083426687600606020283",
+        "start": "2024-10-01",
+        "total_return": "-0.0197461031222078222919608821",
+        "transaction_costs": "0.01316171428060",
+        "turnover": "13.16171428060",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-40-top3-5",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0395016652918737889583373412",
+        "number_of_trades": 47,
+        "sharpe": "0.3328792209040988170046270496",
+        "start": "2025-01-01",
+        "total_return": "0.009481487282224674989764802",
+        "transaction_costs": "0.01049286768875",
+        "turnover": "10.49286768875",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top3-5",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0943143906030177646920932166",
+        "number_of_trades": 48,
+        "sharpe": "-0.1775839750390969873874874373",
+        "start": "2025-04-01",
+        "total_return": "-0.0164222916941309843073300849",
+        "transaction_costs": "0.00822182892260",
+        "turnover": "8.22182892260",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top3-5",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0864804875454645817380797733",
+        "number_of_trades": 45,
+        "sharpe": "-0.6781155052531296801957452276",
+        "start": "2025-07-01",
+        "total_return": "-0.0228020568853006041881340925",
+        "transaction_costs": "0.00432226248460",
+        "turnover": "4.32226248460",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top3-5",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0668933678461137790791539707",
+        "number_of_trades": 52,
+        "sharpe": "0.3727372539647608873728453640",
+        "start": "2025-10-01",
+        "total_return": "0.009822453492308064288337246",
+        "transaction_costs": "0.01112464446935",
+        "turnover": "11.12464446935",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-40-top3-10",
+    "parameters": [
+      [
+        "factors",
+        "reversal-40"
+      ],
+      [
+        "rebalance_every",
+        "10"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-40-top3-10",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1867655787110102968970935934",
+        "number_of_trades": 30,
+        "sharpe": "-0.4853222126563938423656632128",
+        "start": "2024-01-01",
+        "total_return": "-0.0465590892242850340698498996",
+        "transaction_costs": "0.00714447859545",
+        "turnover": "7.14447859545",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top3-10",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1210187022166605818559004671",
+        "number_of_trades": 28,
+        "sharpe": "-1.373181821237653210471940338",
+        "start": "2024-04-01",
+        "total_return": "-0.0660137262534541408699481448",
+        "transaction_costs": "0.00598617563475",
+        "turnover": "5.98617563475",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top3-10",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1408380946885029044625415808",
+        "number_of_trades": 27,
+        "sharpe": "2.152438229092973404031194467",
+        "start": "2024-07-01",
+        "total_return": "0.182879641805167611501632982",
+        "transaction_costs": "0.00486175981195",
+        "turnover": "4.86175981195",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top3-10",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0783383090229387073231525676",
+        "number_of_trades": 34,
+        "sharpe": "1.224801695489931550267255643",
+        "start": "2024-10-01",
+        "total_return": "0.083783881926909332439748175",
+        "transaction_costs": "0.00947261049340",
+        "turnover": "9.47261049340",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-40-top3-10",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0400900109795299633099667581",
+        "number_of_trades": 23,
+        "sharpe": "0.1066845561334040692782689592",
+        "start": "2025-01-01",
+        "total_return": "0.000911434683391110345892275",
+        "transaction_costs": "0.00565886409020",
+        "turnover": "5.65886409020",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top3-10",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0941747246058812948089483520",
+        "number_of_trades": 28,
+        "sharpe": "0.4902932756047028204351031856",
+        "start": "2025-04-01",
+        "total_return": "0.020698217422392360576207688",
+        "transaction_costs": "0.00705111470975",
+        "turnover": "7.05111470975",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top3-10",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0867790909829879366633460702",
+        "number_of_trades": 27,
+        "sharpe": "-0.6772767302785053111313395004",
+        "start": "2025-07-01",
+        "total_return": "-0.0227661396636023823665475810",
+        "transaction_costs": "0.00450358257850",
+        "turnover": "4.50358257850",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top3-10",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0667936191722430252948971815",
+        "number_of_trades": 27,
+        "sharpe": "-0.9182759077321266871555379213",
+        "start": "2025-10-01",
+        "total_return": "-0.0276927071847964381279360439",
+        "transaction_costs": "0.00643771657295",
+        "turnover": "6.43771657295",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-40-top3-20",
+    "parameters": [
+      [
+        "factors",
+        "reversal-40"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-40-top3-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1258664177596995008053845022",
+        "number_of_trades": 16,
+        "sharpe": "0.4950814544295657997899515654",
+        "start": "2024-01-01",
+        "total_return": "0.023608753725427124256487543",
+        "transaction_costs": "0.00396242184755",
+        "turnover": "3.96242184755",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top3-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1234816189658142736051639400",
+        "number_of_trades": 17,
+        "sharpe": "-1.704705669241745299960492198",
+        "start": "2024-04-01",
+        "total_return": "-0.0851269796179200470278440876",
+        "transaction_costs": "0.00473794708500",
+        "turnover": "4.73794708500",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top3-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1340222192678169087686687486",
+        "number_of_trades": 14,
+        "sharpe": "2.027112770503309260966082952",
+        "start": "2024-07-01",
+        "total_return": "0.157628725122769111319528545",
+        "transaction_costs": "0.00269076299030",
+        "turnover": "2.69076299030",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top3-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0784024958511102593069541266",
+        "number_of_trades": 23,
+        "sharpe": "1.091871002561946735026748220",
+        "start": "2024-10-01",
+        "total_return": "0.074943674292476496595783619",
+        "transaction_costs": "0.00766478175820",
+        "turnover": "7.66478175820",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-40-top3-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0401281701740260713052980196",
+        "number_of_trades": 10,
+        "sharpe": "0.2380254654968710993078379069",
+        "start": "2025-01-01",
+        "total_return": "0.005917953918997843048733097",
+        "transaction_costs": "0.0027336640572",
+        "turnover": "2.7336640572",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top3-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0946856396374343710021862592",
+        "number_of_trades": 14,
+        "sharpe": "0.06558158635171311512472818471",
+        "start": "2025-04-01",
+        "total_return": "-0.0030520263192174995345437713",
+        "transaction_costs": "0.00341191159950",
+        "turnover": "3.41191159950",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top3-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0766758691220252687532503320",
+        "number_of_trades": 19,
+        "sharpe": "0.6941819918993959359739780968",
+        "start": "2025-07-01",
+        "total_return": "0.020603563555091134294202484",
+        "transaction_costs": "0.00499868482955",
+        "turnover": "4.99868482955",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top3-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0542989363054596570305595744",
+        "number_of_trades": 15,
+        "sharpe": "-0.02167705000080584399607784932",
+        "start": "2025-10-01",
+        "total_return": "-0.0023651110277727388784462949",
+        "transaction_costs": "0.00426116544095",
+        "turnover": "4.26116544095",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-40-top5-5",
+    "parameters": [
+      [
+        "factors",
+        "reversal-40"
+      ],
+      [
+        "rebalance_every",
+        "5"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-40-top5-5",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1966887205743535408405404906",
+        "number_of_trades": 76,
+        "sharpe": "-0.7136975268903316685917616633",
+        "start": "2024-01-01",
+        "total_return": "-0.0608530712242810198850514871",
+        "transaction_costs": "0.00632402753835",
+        "turnover": "6.32402753835",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top5-5",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1297119225691752739386996958",
+        "number_of_trades": 77,
+        "sharpe": "-2.134021282002836185366989817",
+        "start": "2024-04-01",
+        "total_return": "-0.0909103850052402731921428360",
+        "transaction_costs": "0.00626715439010",
+        "turnover": "6.26715439010",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top5-5",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0851574517888839030717966623",
+        "number_of_trades": 79,
+        "sharpe": "2.755116530153259563443849947",
+        "start": "2024-07-01",
+        "total_return": "0.225747294539507986659452637",
+        "transaction_costs": "0.00632430171520",
+        "turnover": "6.32430171520",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top5-5",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0764651328256395824743836461",
+        "number_of_trades": 91,
+        "sharpe": "0.1763688106188908412421744699",
+        "start": "2024-10-01",
+        "total_return": "0.003262704333419294384046741",
+        "transaction_costs": "0.01096110028225",
+        "turnover": "10.96110028225",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-40-top5-5",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0527713661998490986745004857",
+        "number_of_trades": 80,
+        "sharpe": "0.05648680465374230939955345565",
+        "start": "2025-01-01",
+        "total_return": "-0.0011326933851677150874476954",
+        "transaction_costs": "0.01058198691860",
+        "turnover": "10.58198691860",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top5-5",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0998565749417469624598444723",
+        "number_of_trades": 77,
+        "sharpe": "-0.2541466215836347858004187072",
+        "start": "2025-04-01",
+        "total_return": "-0.0199829708669211526887996017",
+        "transaction_costs": "0.00752275685805",
+        "turnover": "7.52275685805",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top5-5",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0672836436988926568140547914",
+        "number_of_trades": 74,
+        "sharpe": "1.027194710878871561307188761",
+        "start": "2025-07-01",
+        "total_return": "0.026158838360448640754464714",
+        "transaction_costs": "0.00464971033990",
+        "turnover": "4.64971033990",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top5-5",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0589492076593520929973113300",
+        "number_of_trades": 74,
+        "sharpe": "-0.3961441479826759633361129644",
+        "start": "2025-10-01",
+        "total_return": "-0.0136861448573958831259668488",
+        "transaction_costs": "0.00593204060160",
+        "turnover": "5.93204060160",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-40-top5-10",
+    "parameters": [
+      [
+        "factors",
+        "reversal-40"
+      ],
+      [
+        "rebalance_every",
+        "10"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-40-top5-10",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1979318611895234791606161403",
+        "number_of_trades": 43,
+        "sharpe": "-0.7499903049046807610132408511",
+        "start": "2024-01-01",
+        "total_return": "-0.0623312378280896199840185830",
+        "transaction_costs": "0.00460796900945",
+        "turnover": "4.60796900945",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top5-10",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1215814474077932135215555927",
+        "number_of_trades": 45,
+        "sharpe": "-1.806015715804646152703457283",
+        "start": "2024-04-01",
+        "total_return": "-0.0767254229138719625598865307",
+        "transaction_costs": "0.00523021206345",
+        "turnover": "5.23021206345",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top5-10",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0944817756198844707988342078",
+        "number_of_trades": 41,
+        "sharpe": "2.620480921198133905261250021",
+        "start": "2024-07-01",
+        "total_return": "0.204323350874118622424903896",
+        "transaction_costs": "0.00352927403205",
+        "turnover": "3.52927403205",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top5-10",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0656799010281385214618784505",
+        "number_of_trades": 52,
+        "sharpe": "1.351732710288381005430495159",
+        "start": "2024-10-01",
+        "total_return": "0.076318604071279963287481063",
+        "transaction_costs": "0.00752771496810",
+        "turnover": "7.52771496810",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-40-top5-10",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0505889821796225450635375478",
+        "number_of_trades": 31,
+        "sharpe": "-0.3867242501219603639213958390",
+        "start": "2025-01-01",
+        "total_return": "-0.0175459906131909709953889815",
+        "transaction_costs": "0.00327002507120",
+        "turnover": "3.27002507120",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top5-10",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0973740861464075228416727218",
+        "number_of_trades": 43,
+        "sharpe": "0.1497930565668539677669221129",
+        "start": "2025-04-01",
+        "total_return": "0.001645452348833828606221501",
+        "transaction_costs": "0.00518578211410",
+        "turnover": "5.18578211410",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top5-10",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0620199689719053394395488243",
+        "number_of_trades": 41,
+        "sharpe": "1.386856800698761449103046036",
+        "start": "2025-07-01",
+        "total_return": "0.037165204253220178250271469",
+        "transaction_costs": "0.00426187745675",
+        "turnover": "4.26187745675",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top5-10",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0683264972289587039011207159",
+        "number_of_trades": 40,
+        "sharpe": "-1.429292904283095812295759077",
+        "start": "2025-10-01",
+        "total_return": "-0.0394861331084851450997530230",
+        "transaction_costs": "0.00464245483240",
+        "turnover": "4.64245483240",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "reversal-40-top5-20",
+    "parameters": [
+      [
+        "factors",
+        "reversal-40"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "reversal-40-top5-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1702729197865480835456984732",
+        "number_of_trades": 24,
+        "sharpe": "-0.2412700561656629364822243254",
+        "start": "2024-01-01",
+        "total_return": "-0.0263603493153624516328748869",
+        "transaction_costs": "0.00312142835065",
+        "turnover": "3.12142835065",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top5-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.1236391915504514100246201857",
+        "number_of_trades": 26,
+        "sharpe": "-2.266624912328126491776459728",
+        "start": "2024-04-01",
+        "total_return": "-0.0940903993504707550258645578",
+        "transaction_costs": "0.00382469946615",
+        "turnover": "3.82469946615",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top5-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1191560608872776161004421586",
+        "number_of_trades": 22,
+        "sharpe": "2.397461389198184087693621322",
+        "start": "2024-07-01",
+        "total_return": "0.207635424637419405509881334",
+        "transaction_costs": "0.0024924268011",
+        "turnover": "2.4924268011",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top5-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0657311831707722636726330636",
+        "number_of_trades": 34,
+        "sharpe": "0.9993771238269649597959467230",
+        "start": "2024-10-01",
+        "total_return": "0.059129857513873903534935758",
+        "transaction_costs": "0.00591709088125",
+        "turnover": "5.91709088125",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "reversal-40-top5-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0506242893126576039912946395",
+        "number_of_trades": 15,
+        "sharpe": "-0.2063264910934217847596028919",
+        "start": "2025-01-01",
+        "total_return": "-0.0110313351919007747151884950",
+        "transaction_costs": "0.0019941564066",
+        "turnover": "1.9941564066",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "reversal-40-top5-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0985568978241070560117191589",
+        "number_of_trades": 21,
+        "sharpe": "0.2932804527905146417855841582",
+        "start": "2025-04-01",
+        "total_return": "0.009534826037130906744882415",
+        "transaction_costs": "0.00239599319915",
+        "turnover": "2.39599319915",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "reversal-40-top5-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0601567589212749552429293861",
+        "number_of_trades": 28,
+        "sharpe": "1.967744951322514163582841755",
+        "start": "2025-07-01",
+        "total_return": "0.057400858462615895342029193",
+        "transaction_costs": "0.00386843459390",
+        "turnover": "3.86843459390",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "reversal-40-top5-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0701397505898035433194171644",
+        "number_of_trades": 24,
+        "sharpe": "-1.072945189269642705578889196",
+        "start": "2025-10-01",
+        "total_return": "-0.0306612210430921290308989140",
+        "transaction_costs": "0.00382950722175",
+        "turnover": "3.82950722175",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "momentum-252-skip20-top3-20",
+    "parameters": [
+      [
+        "factors",
+        "momentum-252-skip-20"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "momentum-252-skip20-top3-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1273370388776863546130055053",
+        "number_of_trades": 13,
+        "sharpe": "-0.008321460649405326687217986844",
+        "start": "2024-01-01",
+        "total_return": "-0.0076790939142375243961945766",
+        "transaction_costs": "0.00240299943670",
+        "turnover": "2.40299943670",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0425932374223004976256096700",
+        "number_of_trades": 10,
+        "sharpe": "0.7443701465388719676880977158",
+        "start": "2024-04-01",
+        "total_return": "0.018814471433751733976687932",
+        "transaction_costs": "0.00059631391595",
+        "turnover": "0.59631391595",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.1033130052780903000530106008",
+        "number_of_trades": 11,
+        "sharpe": "2.094967590771577086690401424",
+        "start": "2024-07-01",
+        "total_return": "0.110614884899480015390935024",
+        "transaction_costs": "0.00120612681720",
+        "turnover": "1.20612681720",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0945565262371240282347878164",
+        "number_of_trades": 16,
+        "sharpe": "-0.3161140428033256343327994350",
+        "start": "2024-10-01",
+        "total_return": "-0.0306581040555545663733558235",
+        "transaction_costs": "0.00274750684815",
+        "turnover": "2.74750684815",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0562410957963508216088027502",
+        "number_of_trades": 7,
+        "sharpe": "-1.266898916986778689100024666",
+        "start": "2025-01-01",
+        "total_return": "-0.0449393198276527034513326373",
+        "transaction_costs": "0.00129986585525",
+        "turnover": "1.29986585525",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0744907339633353575011079462",
+        "number_of_trades": 10,
+        "sharpe": "1.110098868659891808615664896",
+        "start": "2025-04-01",
+        "total_return": "0.047285389176629227133085518",
+        "transaction_costs": "0.00072015413570",
+        "turnover": "0.72015413570",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.2052414844616735165700709564",
+        "number_of_trades": 21,
+        "sharpe": "-2.081248020555324298362167915",
+        "start": "2025-07-01",
+        "total_return": "-0.1864578708325684744552791461",
+        "transaction_costs": "0.00525562739355",
+        "turnover": "5.25562739355",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.1187466940575053932276352732",
+        "number_of_trades": 11,
+        "sharpe": "-0.08036419113626887712430977088",
+        "start": "2025-10-01",
+        "total_return": "-0.0117215157385085968280531644",
+        "transaction_costs": "0.00106717289245",
+        "turnover": "1.06717289245",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "low-volatility-60-top3-20",
+    "parameters": [
+      [
+        "factors",
+        "low_volatility-60"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "low-volatility-60-top3-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.0453616412409244348977998682",
+        "number_of_trades": 12,
+        "sharpe": "1.464294046818061645382924118",
+        "start": "2024-01-01",
+        "total_return": "0.044481588747531704440547856",
+        "transaction_costs": "0.0017522236760",
+        "turnover": "1.7522236760",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0542094268625715089065237022",
+        "number_of_trades": 11,
+        "sharpe": "0.07756617665344428097940128357",
+        "start": "2024-04-01",
+        "total_return": "0.000645671901122668692017529",
+        "transaction_costs": "0.00120719800385",
+        "turnover": "1.20719800385",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0939127008366917516983674581",
+        "number_of_trades": 9,
+        "sharpe": "2.724310341166025250529801370",
+        "start": "2024-07-01",
+        "total_return": "0.160809098223257726814887202",
+        "transaction_costs": "0.00001409267615",
+        "turnover": "0.01409267615",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0778187365570436876604237624",
+        "number_of_trades": 17,
+        "sharpe": "0.2999817160407520157554163989",
+        "start": "2024-10-01",
+        "total_return": "0.010257167193116386225282614",
+        "transaction_costs": "0.00359870472040",
+        "turnover": "3.59870472040",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0614517717489186096607726805",
+        "number_of_trades": 9,
+        "sharpe": "-1.000418327916299991346454066",
+        "start": "2025-01-01",
+        "total_return": "-0.0290234116752072356987402329",
+        "transaction_costs": "0.00196997823205",
+        "turnover": "1.96997823205",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0652788544613489816801151222",
+        "number_of_trades": 13,
+        "sharpe": "1.713236940273168661916033660",
+        "start": "2025-04-01",
+        "total_return": "0.065231122772895931814872429",
+        "transaction_costs": "0.00269201446585",
+        "turnover": "2.69201446585",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.1636111831557681825542828456",
+        "number_of_trades": 15,
+        "sharpe": "-1.237972447202443809542771134",
+        "start": "2025-07-01",
+        "total_return": "-0.1126971115713670887342270785",
+        "transaction_costs": "0.00200172585165",
+        "turnover": "2.00172585165",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0488733184526918717984343926",
+        "number_of_trades": 10,
+        "sharpe": "1.429331409557940294766859982",
+        "start": "2025-10-01",
+        "total_return": "0.028404747420686169761067958",
+        "transaction_costs": "0.00068471012980",
+        "turnover": "0.68471012980",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "momentum-252-skip20-top3-40",
+    "parameters": [
+      [
+        "factors",
+        "momentum-252-skip-20"
+      ],
+      [
+        "rebalance_every",
+        "40"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "momentum-252-skip20-top3-40",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1247957834531352510714955023",
+        "number_of_trades": 10,
+        "sharpe": "-0.0008686032982770027634514407163",
+        "start": "2024-01-01",
+        "total_return": "-0.0071562462806766337490255090",
+        "transaction_costs": "0.00233865424835",
+        "turnover": "2.33865424835",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-40",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0426129243077221314791796997",
+        "number_of_trades": 4,
+        "sharpe": "0.7501982682436902128772277050",
+        "start": "2024-04-01",
+        "total_return": "0.018982915584910527343760946",
+        "transaction_costs": "0.00058907198415",
+        "turnover": "0.58907198415",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-40",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0964164284690792277332782076",
+        "number_of_trades": 8,
+        "sharpe": "2.246051496335802239767665589",
+        "start": "2024-07-01",
+        "total_return": "0.119381328972839930562717941",
+        "transaction_costs": "0.0012046785721",
+        "turnover": "1.2046785721",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-40",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.1032072693812467021338589889",
+        "number_of_trades": 7,
+        "sharpe": "-0.1637052499851167584107266869",
+        "start": "2024-10-01",
+        "total_return": "-0.0204490793485359865768998499",
+        "transaction_costs": "0.00068278687565",
+        "turnover": "0.68278687565",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-40",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0561844580438679361303461146",
+        "number_of_trades": 5,
+        "sharpe": "-1.270631784911549414594101566",
+        "start": "2025-01-01",
+        "total_return": "-0.0448913081458935451622089674",
+        "transaction_costs": "0.00128407660955",
+        "turnover": "1.28407660955",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-40",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0734080053377954600718750334",
+        "number_of_trades": 3,
+        "sharpe": "1.051727949309100540760754508",
+        "start": "2025-04-01",
+        "total_return": "0.041619882808800395824022935",
+        "transaction_costs": "0.0000224808506",
+        "turnover": "0.0224808506",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-40",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.1611138568067887211712753046",
+        "number_of_trades": 10,
+        "sharpe": "-0.9278381101023357821108188941",
+        "start": "2025-07-01",
+        "total_return": "-0.1018800163246754690049499603",
+        "transaction_costs": "0.00251755933075",
+        "turnover": "2.51755933075",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top3-40",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0930301091271452931441890540",
+        "number_of_trades": 11,
+        "sharpe": "0.0005085072690585999606120085031",
+        "start": "2025-10-01",
+        "total_return": "-0.0040846866326814244927312040",
+        "transaction_costs": "0.0029341003791",
+        "turnover": "2.9341003791",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "low-volatility-60-top3-40",
+    "parameters": [
+      [
+        "factors",
+        "low_volatility-60"
+      ],
+      [
+        "rebalance_every",
+        "40"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "low-volatility-60-top3-40",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.0453805190145409452579045626",
+        "number_of_trades": 9,
+        "sharpe": "1.810394040672075192038529644",
+        "start": "2024-01-01",
+        "total_return": "0.054620341426431906321822427",
+        "transaction_costs": "0.00185732022955",
+        "turnover": "1.85732022955",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-40",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0467174322375037971653980744",
+        "number_of_trades": 3,
+        "sharpe": "0.7033871336916552385701882403",
+        "start": "2024-04-01",
+        "total_return": "0.015141005820707238217177691",
+        "transaction_costs": "0.00065660052855",
+        "turnover": "0.65660052855",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-40",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0939557501455001041033881242",
+        "number_of_trades": 7,
+        "sharpe": "2.797120290368973462252818422",
+        "start": "2024-07-01",
+        "total_return": "0.165668073322328279742528726",
+        "transaction_costs": "0.00066434393310",
+        "turnover": "0.66434393310",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-40",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.1032486084866599819141570917",
+        "number_of_trades": 11,
+        "sharpe": "0.1525639880565008754841442620",
+        "start": "2024-10-01",
+        "total_return": "0.001556095378589561270675910",
+        "transaction_costs": "0.00365423451165",
+        "turnover": "3.65423451165",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-40",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0614561223402901714841989780",
+        "number_of_trades": 5,
+        "sharpe": "-1.229107644904935469134008697",
+        "start": "2025-01-01",
+        "total_return": "-0.0350260653467338713118304737",
+        "transaction_costs": "0.00142730354125",
+        "turnover": "1.42730354125",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-40",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0641444581459084657098578408",
+        "number_of_trades": 6,
+        "sharpe": "1.669777665104651908912821054",
+        "start": "2025-04-01",
+        "total_return": "0.062532770402482624708513593",
+        "transaction_costs": "0.0021415022046",
+        "turnover": "2.1415022046",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-40",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.1632306521391071450435046388",
+        "number_of_trades": 9,
+        "sharpe": "-1.504648551291657208053217230",
+        "start": "2025-07-01",
+        "total_return": "-0.1320456074858908080177221015",
+        "transaction_costs": "0.00211226501875",
+        "turnover": "2.11226501875",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "low-volatility-60-top3-40",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0489716526869396655785280492",
+        "number_of_trades": 7,
+        "sharpe": "1.406619111066200282722247154",
+        "start": "2025-10-01",
+        "total_return": "0.028004974111986624914051347",
+        "transaction_costs": "0.00070029109455",
+        "turnover": "0.70029109455",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "momentum-252-skip20-top5-20",
+    "parameters": [
+      [
+        "factors",
+        "momentum-252-skip-20"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "momentum-252-skip20-top5-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.0763618356618954002155532079",
+        "number_of_trades": 19,
+        "sharpe": "0.4808793798633560838647871383",
+        "start": "2024-01-01",
+        "total_return": "0.017137265326303505904793236",
+        "transaction_costs": "0.0014831734511",
+        "turnover": "1.4831734511",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0591885613272485942768447063",
+        "number_of_trades": 17,
+        "sharpe": "-0.06832339340958375741250750492",
+        "start": "2024-04-01",
+        "total_return": "-0.0030864973113868357399058514",
+        "transaction_costs": "0.00075636523875",
+        "turnover": "0.75636523875",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0875444635967586803082987496",
+        "number_of_trades": 17,
+        "sharpe": "2.790802967094044905371232944",
+        "start": "2024-07-01",
+        "total_return": "0.145772683376340055536293800",
+        "transaction_costs": "0.00110797668795",
+        "turnover": "1.10797668795",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0996393541942579132483605913",
+        "number_of_trades": 23,
+        "sharpe": "-0.3976579709600965539125885509",
+        "start": "2024-10-01",
+        "total_return": "-0.0357501312679344069200328206",
+        "transaction_costs": "0.00128300199455",
+        "turnover": "1.28300199455",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0704540657439126266932852515",
+        "number_of_trades": 12,
+        "sharpe": "-0.4625546607128936823167317503",
+        "start": "2025-01-01",
+        "total_return": "-0.0219448509401076713004684271",
+        "transaction_costs": "0.00083311661700",
+        "turnover": "0.83311661700",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0726301050204437585665423280",
+        "number_of_trades": 16,
+        "sharpe": "1.259938872144166687113910970",
+        "start": "2025-04-01",
+        "total_return": "0.053578345791009692239921357",
+        "transaction_costs": "0.00047783798555",
+        "turnover": "0.47783798555",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0960057839214917635586133336",
+        "number_of_trades": 26,
+        "sharpe": "-0.1700681372227257356182113829",
+        "start": "2025-07-01",
+        "total_return": "-0.0182872079652052452402634162",
+        "transaction_costs": "0.00266096060115",
+        "turnover": "2.66096060115",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0896751273831138765717182065",
+        "number_of_trades": 21,
+        "sharpe": "0.2377720293107588096044141865",
+        "start": "2025-10-01",
+        "total_return": "0.006585539689256204596188266",
+        "transaction_costs": "0.0024293768650",
+        "turnover": "2.4293768650",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "low-volatility-60-top5-20",
+    "parameters": [
+      [
+        "factors",
+        "low_volatility-60"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "low-volatility-60-top5-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.0338485591645319733255553693",
+        "number_of_trades": 18,
+        "sharpe": "1.989809740665353968214934357",
+        "start": "2024-01-01",
+        "total_return": "0.058830257763356291918658771",
+        "transaction_costs": "0.00110192288145",
+        "turnover": "1.10192288145",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0540447945930468660128142270",
+        "number_of_trades": 15,
+        "sharpe": "0.05841109232530233052538200618",
+        "start": "2024-04-01",
+        "total_return": "0.000231416453237379969794411",
+        "transaction_costs": "0.00076853849515",
+        "turnover": "0.76853849515",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0954368168303100180752870604",
+        "number_of_trades": 13,
+        "sharpe": "2.798625610200002357145150646",
+        "start": "2024-07-01",
+        "total_return": "0.177608166710309530279436208",
+        "transaction_costs": "0.00001649243725",
+        "turnover": "0.01649243725",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0835200164350565149683930038",
+        "number_of_trades": 25,
+        "sharpe": "-0.1166504042403593417388885836",
+        "start": "2024-10-01",
+        "total_return": "-0.0128115977252063051761859100",
+        "transaction_costs": "0.0023440652477",
+        "turnover": "2.3440652477",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0520767896064859562024560070",
+        "number_of_trades": 14,
+        "sharpe": "-0.5363278175990961411773615251",
+        "start": "2025-01-01",
+        "total_return": "-0.0167165440688067585554825347",
+        "transaction_costs": "0.00165366751825",
+        "turnover": "1.65366751825",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0665416279800267778386350222",
+        "number_of_trades": 19,
+        "sharpe": "1.238361927862410778929074128",
+        "start": "2025-04-01",
+        "total_return": "0.043776994005825844338604958",
+        "transaction_costs": "0.00169907728010",
+        "turnover": "1.69907728010",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0961086134126864828640102460",
+        "number_of_trades": 24,
+        "sharpe": "-0.2048428655215884110493030082",
+        "start": "2025-07-01",
+        "total_return": "-0.0175619484402514332447313780",
+        "transaction_costs": "0.00215676713235",
+        "turnover": "2.15676713235",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0384887564774673658414893808",
+        "number_of_trades": 14,
+        "sharpe": "1.644043107841325611230485672",
+        "start": "2025-10-01",
+        "total_return": "0.031835502804639035293829660",
+        "transaction_costs": "0.00004073148190",
+        "turnover": "0.04073148190",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "momentum-252-skip20-top5-40",
+    "parameters": [
+      [
+        "factors",
+        "momentum-252-skip-20"
+      ],
+      [
+        "rebalance_every",
+        "40"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "momentum-252-skip20-top5-40",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.0769308261109657680953935670",
+        "number_of_trades": 13,
+        "sharpe": "0.3463256737376004792792812581",
+        "start": "2024-01-01",
+        "total_return": "0.011352008201334216727492287",
+        "transaction_costs": "0.00109196600340",
+        "turnover": "1.09196600340",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-40",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0656792887125367243167266406",
+        "number_of_trades": 6,
+        "sharpe": "-0.2434229036141580599112866488",
+        "start": "2024-04-01",
+        "total_return": "-0.0077788570869632925731158483",
+        "transaction_costs": "0.00036288339725",
+        "turnover": "0.36288339725",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-40",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0898371174225623866980493193",
+        "number_of_trades": 12,
+        "sharpe": "2.631857678411248087046487511",
+        "start": "2024-07-01",
+        "total_return": "0.137275320327774434029571523",
+        "transaction_costs": "0.0007448296050",
+        "turnover": "0.7448296050",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-40",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0996373879891543242188581105",
+        "number_of_trades": 13,
+        "sharpe": "-0.2938026110232347799323942389",
+        "start": "2024-10-01",
+        "total_return": "-0.0292334429285062921765314972",
+        "transaction_costs": "0.0012176537167",
+        "turnover": "1.2176537167",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-40",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0704910303729651556383234501",
+        "number_of_trades": 7,
+        "sharpe": "-1.083544606138595171043770535",
+        "start": "2025-01-01",
+        "total_return": "-0.0446919837096688352243860825",
+        "transaction_costs": "0.00077156447605",
+        "turnover": "0.77156447605",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-40",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0718811232192459109521453214",
+        "number_of_trades": 5,
+        "sharpe": "1.216429237839700477467640248",
+        "start": "2025-04-01",
+        "total_return": "0.049021557124096930700256953",
+        "transaction_costs": "0.00001962179195",
+        "turnover": "0.01962179195",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-40",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0959194217534812475943843788",
+        "number_of_trades": 13,
+        "sharpe": "0.05657498745384408982492354649",
+        "start": "2025-07-01",
+        "total_return": "-0.0043838876979894993887035461",
+        "transaction_costs": "0.00121013450235",
+        "turnover": "1.21013450235",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "momentum-252-skip20-top5-40",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0866429827144638023449831242",
+        "number_of_trades": 15,
+        "sharpe": "-0.04124267896505873151844566216",
+        "start": "2025-10-01",
+        "total_return": "-0.0057981537912904832292571222",
+        "transaction_costs": "0.00194352267955",
+        "turnover": "1.94352267955",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "low-volatility-60-top5-40",
+    "parameters": [
+      [
+        "factors",
+        "low_volatility-60"
+      ],
+      [
+        "rebalance_every",
+        "40"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "low-volatility-60-top5-40",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.0338528349203573366601106015",
+        "number_of_trades": 13,
+        "sharpe": "1.860085049850076416879735502",
+        "start": "2024-01-01",
+        "total_return": "0.053572124864426935419658919",
+        "transaction_costs": "0.00111857872520",
+        "turnover": "1.11857872520",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-40",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0495132897055554963220953915",
+        "number_of_trades": 4,
+        "sharpe": "0.2617938875584024146221842430",
+        "start": "2024-04-01",
+        "total_return": "0.004847604357215179876123465",
+        "transaction_costs": "0.0003899615614",
+        "turnover": "0.3899615614",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-40",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0954492014528467469225730907",
+        "number_of_trades": 11,
+        "sharpe": "2.841901837327831548348219848",
+        "start": "2024-07-01",
+        "total_return": "0.180703602349415400258533786",
+        "transaction_costs": "0.00039763552155",
+        "turnover": "0.39763552155",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-40",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.1074672150169233443241681192",
+        "number_of_trades": 15,
+        "sharpe": "-0.3277168386882104377018215820",
+        "start": "2024-10-01",
+        "total_return": "-0.0270398903904507439281415558",
+        "transaction_costs": "0.00216728792720",
+        "turnover": "2.16728792720",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-40",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0520738062720642094000773683",
+        "number_of_trades": 8,
+        "sharpe": "-0.8617483806807074895651017460",
+        "start": "2025-01-01",
+        "total_return": "-0.0248926528191524047230884398",
+        "transaction_costs": "0.0012588711939",
+        "turnover": "1.2588711939",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-40",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0678171382661484365411075722",
+        "number_of_trades": 8,
+        "sharpe": "1.208770328312610293266872875",
+        "start": "2025-04-01",
+        "total_return": "0.043324191234572688161658428",
+        "transaction_costs": "0.00125304610125",
+        "turnover": "1.25304610125",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-40",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0961668666193111852255670936",
+        "number_of_trades": 14,
+        "sharpe": "-0.2620059021090438673701289097",
+        "start": "2025-07-01",
+        "total_return": "-0.0206952860200524901210514874",
+        "transaction_costs": "0.00173712537915",
+        "turnover": "1.73712537915",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "low-volatility-60-top5-40",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0384857939383218781674091602",
+        "number_of_trades": 11,
+        "sharpe": "1.224694509848835379872028499",
+        "start": "2025-10-01",
+        "total_return": "0.025439430304598094354547784",
+        "transaction_costs": "0.00047583474500",
+        "turnover": "0.47583474500",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "composite-top3-20",
+    "parameters": [
+      [
+        "factors",
+        "momentum-120-skip-20,momentum-252-skip-20,reversal-5,low_volatility-60"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "composite-top3-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.0695974526987334174075574041",
+        "number_of_trades": 17,
+        "sharpe": "0.9775924166368916690158402873",
+        "start": "2024-01-01",
+        "total_return": "0.047692712225614076888553082",
+        "transaction_costs": "0.00508315432305",
+        "turnover": "5.08315432305",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "composite-top3-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0429419893814146665733279501",
+        "number_of_trades": 12,
+        "sharpe": "1.507893115797106316353434526",
+        "start": "2024-04-01",
+        "total_return": "0.034951283247579940979734152",
+        "transaction_costs": "0.0020503139483",
+        "turnover": "2.0503139483",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "composite-top3-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0905044191258037470215465621",
+        "number_of_trades": 14,
+        "sharpe": "2.954493232933177470105610734",
+        "start": "2024-07-01",
+        "total_return": "0.159704163994514885220483767",
+        "transaction_costs": "0.0033872327838",
+        "turnover": "3.3872327838",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "composite-top3-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0733953973670857004281362182",
+        "number_of_trades": 17,
+        "sharpe": "0.2893085522370687037952971023",
+        "start": "2024-10-01",
+        "total_return": "0.009793772942109641209210379",
+        "transaction_costs": "0.00407804170115",
+        "turnover": "4.07804170115",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "composite-top3-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0636522351083732804687757783",
+        "number_of_trades": 11,
+        "sharpe": "-0.3749045900717356640910560972",
+        "start": "2025-01-01",
+        "total_return": "-0.0199577369882882972227367036",
+        "transaction_costs": "0.0039705810930",
+        "turnover": "3.9705810930",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "composite-top3-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1110635251049039725708738300",
+        "number_of_trades": 15,
+        "sharpe": "0.7551425313672114103656373898",
+        "start": "2025-04-01",
+        "total_return": "0.036161392784985175630605618",
+        "transaction_costs": "0.00463831467695",
+        "turnover": "4.63831467695",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "composite-top3-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.1625982347209422946476008334",
+        "number_of_trades": 18,
+        "sharpe": "-1.358243890398520595901839237",
+        "start": "2025-07-01",
+        "total_return": "-0.1261876116760666796685652926",
+        "transaction_costs": "0.00441790011795",
+        "turnover": "4.41790011795",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "composite-top3-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0548001422400520003633856525",
+        "number_of_trades": 16,
+        "sharpe": "0.6897159553420362391746811933",
+        "start": "2025-10-01",
+        "total_return": "0.022177050882357680091140489",
+        "transaction_costs": "0.00497246406895",
+        "turnover": "4.97246406895",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "composite-top5-20",
+    "parameters": [
+      [
+        "factors",
+        "momentum-120-skip-20,momentum-252-skip-20,reversal-5,low_volatility-60"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "5"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "composite-top5-20",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.0598602713865282205159099551",
+        "number_of_trades": 25,
+        "sharpe": "0.7634602850626918683819479193",
+        "start": "2024-01-01",
+        "total_return": "0.029774635098583105946114849",
+        "transaction_costs": "0.00408270266435",
+        "turnover": "4.08270266435",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "composite-top5-20",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0509184704147712868244719618",
+        "number_of_trades": 16,
+        "sharpe": "0.9036894041938478346614814658",
+        "start": "2024-04-01",
+        "total_return": "0.018615416616917311781506767",
+        "transaction_costs": "0.00042394002010",
+        "turnover": "0.42394002010",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "composite-top5-20",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0823922510794191858287262808",
+        "number_of_trades": 16,
+        "sharpe": "3.086047616627033300848181650",
+        "start": "2024-07-01",
+        "total_return": "0.166706064157230003670197271",
+        "transaction_costs": "0.00119129977315",
+        "turnover": "1.19129977315",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "composite-top5-20",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0917842519706877164146904927",
+        "number_of_trades": 28,
+        "sharpe": "-0.1913740700573854167102144774",
+        "start": "2024-10-01",
+        "total_return": "-0.0187254456421437494674696929",
+        "transaction_costs": "0.00365797401110",
+        "turnover": "3.65797401110",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "composite-top5-20",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0584578946512670665622973587",
+        "number_of_trades": 17,
+        "sharpe": "-0.1364431726342437767996677256",
+        "start": "2025-01-01",
+        "total_return": "-0.0092637941641167176506900333",
+        "transaction_costs": "0.00313455085480",
+        "turnover": "3.13455085480",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "composite-top5-20",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1033607521070208147675956084",
+        "number_of_trades": 24,
+        "sharpe": "0.6623621185598433260617130221",
+        "start": "2025-04-01",
+        "total_return": "0.029954847627558527149486595",
+        "transaction_costs": "0.00393126008475",
+        "turnover": "3.93126008475",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "composite-top5-20",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.0954183964692678075224550260",
+        "number_of_trades": 28,
+        "sharpe": "-0.3147890103103764866038088056",
+        "start": "2025-07-01",
+        "total_return": "-0.0247523143068884100983615481",
+        "transaction_costs": "0.00366855924260",
+        "turnover": "3.66855924260",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "composite-top5-20",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0572818406395102739254927133",
+        "number_of_trades": 27,
+        "sharpe": "1.171106613329185916604615309",
+        "start": "2025-10-01",
+        "total_return": "0.041575653929691104465778171",
+        "transaction_costs": "0.00539309401655",
+        "turnover": "5.39309401655",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "composite-top3-40",
+    "parameters": [
+      [
+        "factors",
+        "momentum-120-skip-20,momentum-252-skip-20,reversal-5,low_volatility-60"
+      ],
+      [
+        "rebalance_every",
+        "40"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "0"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "composite-top3-40",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.0443490100842070853090098631",
+        "number_of_trades": 9,
+        "sharpe": "1.086444103731288343541378493",
+        "start": "2024-01-01",
+        "total_return": "0.033775350694870142380501508",
+        "transaction_costs": "0.00189533087265",
+        "turnover": "1.89533087265",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "composite-top3-40",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0420306002519125890360439912",
+        "number_of_trades": 4,
+        "sharpe": "1.304925373892034007588036515",
+        "start": "2024-04-01",
+        "total_return": "0.029465483412987212164649490",
+        "transaction_costs": "0.0006777675273",
+        "turnover": "0.6777675273",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "composite-top3-40",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0868253796727304110005742374",
+        "number_of_trades": 9,
+        "sharpe": "3.017845303189612425133940276",
+        "start": "2024-07-01",
+        "total_return": "0.161156334823052344161013736",
+        "transaction_costs": "0.00200503417045",
+        "turnover": "2.00503417045",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "composite-top3-40",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.1010745293452141562422147283",
+        "number_of_trades": 9,
+        "sharpe": "0.1470485472547608100071268107",
+        "start": "2024-10-01",
+        "total_return": "0.000924903047868874448934550",
+        "transaction_costs": "0.00234396477710",
+        "turnover": "2.34396477710",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "composite-top3-40",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0556178527844293495069552604",
+        "number_of_trades": 5,
+        "sharpe": "0.5813117541590805965183856307",
+        "start": "2025-01-01",
+        "total_return": "0.019652873016824121068002368",
+        "transaction_costs": "0.00162893650845",
+        "turnover": "1.62893650845",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "composite-top3-40",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.0969938387116866287247111754",
+        "number_of_trades": 6,
+        "sharpe": "1.217808168064894233089173578",
+        "start": "2025-04-01",
+        "total_return": "0.060007876046498143299052659",
+        "transaction_costs": "0.00235427928505",
+        "turnover": "2.35427928505",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "composite-top3-40",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.1644388667025653135278501939",
+        "number_of_trades": 9,
+        "sharpe": "-1.401182207401010978601843004",
+        "start": "2025-07-01",
+        "total_return": "-0.1291535721515853696257949554",
+        "transaction_costs": "0.00225381232295",
+        "turnover": "2.25381232295",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "composite-top3-40",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0711261292235045582891717696",
+        "number_of_trades": 11,
+        "sharpe": "-1.072279730121353013507256530",
+        "start": "2025-10-01",
+        "total_return": "-0.0408263288133690063746289897",
+        "transaction_costs": "0.0035145610254",
+        "turnover": "3.5145610254",
+        "window_id": "2025Q4"
+      }
+    ]
+  },
+  {
+    "candidate_id": "composite-top3-20-trend120",
+    "parameters": [
+      [
+        "factors",
+        "momentum-120-skip-20,momentum-252-skip-20,reversal-5,low_volatility-60"
+      ],
+      [
+        "rebalance_every",
+        "20"
+      ],
+      [
+        "reserve",
+        "0.05"
+      ],
+      [
+        "top_k",
+        "3"
+      ],
+      [
+        "trend_window",
+        "120"
+      ]
+    ],
+    "windows": [
+      {
+        "candidate_id": "composite-top3-20-trend120",
+        "end": "2024-03-31",
+        "maximum_drawdown": "-0.1720558498566251095699703352",
+        "number_of_trades": 6,
+        "sharpe": "-3.623686878117370202404961772",
+        "start": "2024-01-01",
+        "total_return": "-0.1489619599338595713724630039",
+        "transaction_costs": "0.00248333139775",
+        "turnover": "2.48333139775",
+        "window_id": "2024Q1"
+      },
+      {
+        "candidate_id": "composite-top3-20-trend120",
+        "end": "2024-06-30",
+        "maximum_drawdown": "-0.0393827401255689685558292932",
+        "number_of_trades": 13,
+        "sharpe": "1.720843274740558458924967342",
+        "start": "2024-04-01",
+        "total_return": "0.040016640464307117101413663",
+        "transaction_costs": "0.00207257779590",
+        "turnover": "2.07257779590",
+        "window_id": "2024Q2"
+      },
+      {
+        "candidate_id": "composite-top3-20-trend120",
+        "end": "2024-09-30",
+        "maximum_drawdown": "-0.0752691353091205058641237595",
+        "number_of_trades": 11,
+        "sharpe": "3.517912273154365245443187619",
+        "start": "2024-07-01",
+        "total_return": "0.196328202200648542856860143",
+        "transaction_costs": "0.00161099642340",
+        "turnover": "1.61099642340",
+        "window_id": "2024Q3"
+      },
+      {
+        "candidate_id": "composite-top3-20-trend120",
+        "end": "2024-12-31",
+        "maximum_drawdown": "-0.0734627074148360049721267042",
+        "number_of_trades": 17,
+        "sharpe": "0.2316122070163515038826888755",
+        "start": "2024-10-01",
+        "total_return": "0.006448025447627372652827921",
+        "transaction_costs": "0.00387372994875",
+        "turnover": "3.87372994875",
+        "window_id": "2024Q4"
+      },
+      {
+        "candidate_id": "composite-top3-20-trend120",
+        "end": "2025-03-31",
+        "maximum_drawdown": "-0.0698107442520065256922641560",
+        "number_of_trades": 11,
+        "sharpe": "-0.5387882586308872231322941594",
+        "start": "2025-01-01",
+        "total_return": "-0.0264127859637433673811196246",
+        "transaction_costs": "0.0031418078218",
+        "turnover": "3.1418078218",
+        "window_id": "2025Q1"
+      },
+      {
+        "candidate_id": "composite-top3-20-trend120",
+        "end": "2025-06-30",
+        "maximum_drawdown": "-0.1032498077946444313317388966",
+        "number_of_trades": 13,
+        "sharpe": "1.099397454096261254318978834",
+        "start": "2025-04-01",
+        "total_return": "0.056021579009106427925986346",
+        "transaction_costs": "0.00251325146115",
+        "turnover": "2.51325146115",
+        "window_id": "2025Q2"
+      },
+      {
+        "candidate_id": "composite-top3-20-trend120",
+        "end": "2025-09-30",
+        "maximum_drawdown": "-0.1622612164594725648503610269",
+        "number_of_trades": 16,
+        "sharpe": "-1.178883868188988653405379366",
+        "start": "2025-07-01",
+        "total_return": "-0.1123142968390348023308662739",
+        "transaction_costs": "0.00231253635945",
+        "turnover": "2.31253635945",
+        "window_id": "2025Q3"
+      },
+      {
+        "candidate_id": "composite-top3-20-trend120",
+        "end": "2025-12-31",
+        "maximum_drawdown": "-0.0547998349684588422918006909",
+        "number_of_trades": 17,
+        "sharpe": "1.393647362882166281813057976",
+        "start": "2025-10-01",
+        "total_return": "0.050783637829277926948163484",
+        "transaction_costs": "0.00465785722080",
+        "turnover": "4.65785722080",
+        "window_id": "2025Q4"
+      }
+    ]
+  }
+]

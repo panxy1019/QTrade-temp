@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass, replace
 from datetime import datetime
 from decimal import Decimal
@@ -26,6 +27,12 @@ class RecordedPaperEvent:
     result: RealDataPaperResult
     canonical_path: Path
     canonical_checksum: str
+
+
+@dataclass(frozen=True, slots=True)
+class MultiAssetRecordedPaperEvent:
+    instrument: str
+    event: RecordedPaperEvent
 
 
 class RecordedPaperSession:
@@ -63,7 +70,14 @@ class RecordedPaperSession:
                 {"tick": asdict(tick), "watermark": watermark.isoformat()},
                 tick.timestamp_received,
             )
-            recorded_tick = replace(tick, ingest_ordinal=ingest_ordinal)
+            recorded_tick = replace(
+                tick,
+                ingest_ordinal=(
+                    ingest_ordinal
+                    if tick.ingest_ordinal is None
+                    else tick.ingest_ordinal
+                ),
+            )
             self._set_state(ingest_ordinal, "RAW_APPENDED")
             return self._process(recorded_tick, watermark, ingest_ordinal)
         except Exception:
@@ -71,6 +85,7 @@ class RecordedPaperSession:
                 "recorded market data quality or persistence failed"
             )
             raise
+
     def verify_raw_chain(self) -> bool:
         return self._raw.verify_chain()
 
@@ -200,6 +215,31 @@ class RecordedPaperSession:
         temporary.replace(self._state_path)
 
 
+class MultiAssetRecordedPaperSession:
+    """Serialize and route an authorized multi-instrument tick stream by symbol."""
+
+    def __init__(self, sessions: Mapping[str, RecordedPaperSession]) -> None:
+        if not sessions or any(not symbol for symbol in sessions):
+            raise ValueError("multi-asset PAPER sessions require named instruments")
+        self._sessions = dict(sessions)
+        self._lock = Lock()
+
+    @property
+    def instruments(self) -> tuple[str, ...]:
+        return tuple(sorted(self._sessions))
+
+    def on_tick(
+        self, tick: CanonicalTick, *, watermark: datetime
+    ) -> MultiAssetRecordedPaperEvent:
+        with self._lock:
+            session = self._sessions.get(tick.instrument)
+            if session is None:
+                raise ValueError("tick instrument has no configured PAPER session")
+            return MultiAssetRecordedPaperEvent(
+                tick.instrument, session.on_tick(tick, watermark=watermark)
+            )
+
+
 def _decode_raw_event(
     row: dict[str, object], ingest_ordinal: int
 ) -> tuple[CanonicalTick, datetime]:
@@ -228,7 +268,11 @@ def _decode_raw_event(
         data_version=str(value["data_version"]),
         ingestion_time=datetime.fromisoformat(str(value["ingestion_time"])),
         reconnect_id=str(value.get("reconnect_id", "initial")),
-        ingest_ordinal=ingest_ordinal,
+        ingest_ordinal=(
+            ingest_ordinal
+            if value.get("ingest_ordinal") is None
+            else int(value["ingest_ordinal"])
+        ),
         session_nonce=str(value.get("session_nonce", "unattested")),
     )
     watermark = datetime.fromisoformat(str(payload["watermark"]))

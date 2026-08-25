@@ -16,7 +16,9 @@ from qtrade.api import ApiAuthConfig, AppContext, context_from_runtime, create_a
 from qtrade.api.app import (
     _load_verified_backtest_analytics,
     _load_verified_experiment_catalog,
+    _load_verified_factor_search_report,
     _load_verified_robustness_report,
+    _minute_overlay_status,
     _paper_snapshot,
     _paper_trade_rows,
     _validated_artifact_manifest,
@@ -170,8 +172,51 @@ def test_required_read_surfaces_exist():
         "/risk",
         "/pnl",
         "/system",
+        "/minute-overlay",
     ):
         assert api.get(path).status_code == 200
+
+
+def test_minute_overlay_status_is_unconfigured_and_fails_closed() -> None:
+    unconfigured = client().get("/minute-overlay").json()
+    assert unconfigured["readiness"] == "UNCONFIGURED"
+    assert unconfigured["external_order_transmission"] is False
+    assert unconfigured["promotion"] == "NOT_ELIGIBLE"
+
+    valid: dict[str, object] = {
+        "classification": "CAUSAL_MINUTE_RISK_OVERLAY_PAPER_SHADOW_ONLY",
+        "readiness": "READY",
+        "provider": "mock",
+        "provider_connected": True,
+        "bar_interval": "1m",
+        "symbol_count": 1,
+        "ready_symbol_count": 1,
+        "external_order_transmission": False,
+        "promotion": "NOT_ELIGIBLE",
+        "reasons": [],
+        "symbols": [
+            {
+                "symbol": "510300",
+                "ready": True,
+                "last_bar_timestamp": "2026-08-12T09:31:00+08:00",
+                "base_target_quantity": 500,
+                "corrected_target_quantity": 200,
+                "multiplier": "0.5",
+                "reasons": ["MINUTE_TREND_WEAK"],
+            }
+        ],
+    }
+    assert _minute_overlay_status(lambda: valid) == valid
+    symbol = valid["symbols"]
+    assert isinstance(symbol, list) and isinstance(symbol[0], dict)
+    symbol[0]["corrected_target_quantity"] = 600
+    assert _minute_overlay_status(lambda: valid)["readiness"] == "STATUS_UNAVAILABLE"
+    assert (
+        _minute_overlay_status(lambda: (_ for _ in ()).throw(OSError("offline")))[
+            "readiness"
+        ]
+        == "STATUS_UNAVAILABLE"
+    )
 
 
 def test_market_dataset_requires_matching_parquet_checksum(tmp_path):
@@ -496,6 +541,108 @@ def test_walk_forward_endpoint_exposes_only_verified_evidence(tmp_path):
     response = api.get("/walk-forward").json()
     assert response["classification"] == "NO_VERIFIED_WALK_FORWARD_RESULT"
     assert response["result"]["folds"] == []
+
+
+def test_factor_search_endpoint_verifies_report_and_bound_artifacts(tmp_path):
+    diagnostics = [
+        {
+            "factor_id": "reversal-5",
+            "periods": 12,
+            "instruments_minimum": 30,
+            "metrics": {
+                "rank_ic": "0.2",
+                "icir": "0.7",
+                "long_short_spread": "0.01",
+                "factor_turnover": "0.5",
+            },
+        }
+    ]
+    validation = {
+        "selected_candidate_id": "reversal-20-top3-20",
+        "selection_metric": "validation_sharpe",
+        "scores": [["reversal-20-top3-20", "0.7"]],
+        "candidate_count": 1,
+        "candidates": [
+            {"candidate_id": "reversal-20-top3-20", "parameters": []}
+        ],
+    }
+    test = {
+        "selected_candidate_id": "reversal-20-top3-20",
+        "selected_metrics": {
+            "total_return": "-0.12",
+            "sharpe": "-0.5",
+            "maximum_drawdown": "-0.24",
+            "turnover": "11",
+            "transaction_costs": "0.01",
+        },
+        "buy_hold_metrics": {
+            "total_return": "-0.04",
+            "sharpe": "-0.3",
+            "maximum_drawdown": "-0.15",
+        },
+        "terminal_excess_return": "-0.08",
+        "walk_forward_result_hash": "a" * 64,
+    }
+    artifact_values = {
+        "factor_diagnostics.json": diagnostics,
+        "validation_scores.json": validation,
+        "test_metrics.json": test,
+    }
+    artifact_hashes = {}
+    for filename, payload in artifact_values.items():
+        encoded = json.dumps(payload, sort_keys=True, indent=2).encode()
+        (tmp_path / filename).write_bytes(encoded)
+        artifact_hashes[filename] = sha256(encoded).hexdigest()
+    report = {
+        "classification": "bounded_factor_search_current_universe_non_pit",
+        "promotion": "NOT_ELIGIBLE",
+        "promotion_reasons": ["CURRENT_UNIVERSE_SURVIVORSHIP_BIAS"],
+        "artifacts": artifact_hashes,
+        "research_budget": {
+            "validation_candidate_cap": 15,
+            "validation_candidates_run": 1,
+        },
+        "portfolio_selection": {
+            "selected_candidate_id": "reversal-20-top3-20",
+            "benchmark_excluded_from_active_selection": True,
+        },
+    }
+    canonical = json.dumps(report, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    target = tmp_path / "report.json"
+    target.write_text(
+        json.dumps({"sha256": sha256(canonical.encode()).hexdigest(), "report": report}),
+        encoding="utf-8",
+    )
+    assert _load_verified_factor_search_report(target) is not None
+
+    audit = AuditLog()
+    metrics = MetricsRegistry()
+    ledger = Ledger(Decimal("100000"), audit)
+    oms = OrderManager(audit)
+    runtime = PlatformRuntime(
+        RuntimeMode.PAPER,
+        RiskEngine(RiskLimits(Decimal("50000"), 10000, Decimal("100000")), audit),
+        audit,
+        metrics,
+    )
+    api = TestClient(
+        create_app(
+            AppContext(
+                runtime,
+                metrics,
+                oms,
+                ledger,
+                audit,
+                factor_search_report_path=target,
+            ),
+            ApiAuthConfig(),
+        )
+    )
+    assert api.get("/factor-search").json()["test"]["terminal_excess_return"] == "-0.08"
+    (tmp_path / "test_metrics.json").write_text("{}", encoding="utf-8")
+    assert api.get("/factor-search").json()["classification"] == (
+        "NO_VERIFIED_FACTOR_SEARCH_RESULT"
+    )
 
 
 def test_robustness_endpoint_exposes_only_verified_diagnostic(tmp_path):

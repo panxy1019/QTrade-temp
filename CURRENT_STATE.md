@@ -1,6 +1,6 @@
 # Current state
 
-Last updated: 2026-08-13
+Last updated: 2026-08-25
 
 - Goal: evolve the v0.1 stable PAPER/SHADOW core into a real-market-data strategy
   research/evolution platform with a professional Chinese web application and
@@ -11,16 +11,25 @@ Last updated: 2026-08-13
   authoritative China rule-source registry; vn.py gap analysis.
 - Stable baseline: `b502852`, QTrade Platform v0.1 - Stable PAPER/SHADOW Core.
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
-- Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap.
-- Acceptance evidence: 229 tests passed, Ruff clean, strict mypy clean across
-  86 source files on Python 3.14.6 (2026-08-13); 18 frontend Vitest tests,
-  ESLint and the production build pass.
+- Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap,
+  adjustable historical backtest preview and bounded factor search.
+- Deployment surface: a Vercel-compatible, stateless read-only application now
+  serves the Chinese React dashboard with a same-origin `/api` FastAPI function.
+  The packaged evidence subset retains its report and Parquet checksums. Control
+  authentication is deliberately absent, so control/trade-sensitive routes fail
+  closed; no SQLite PAPER runtime, provider credential, broker adapter or live
+  order authority is included in the cloud bundle.
+- Acceptance evidence: 276 tests passed, Ruff clean, strict mypy clean across
+  92 source files on Python 3.12.13 (macOS, 2026-08-25); 22 frontend Vitest
+  tests, ESLint and the production build pass. Route-level lazy loading reduces
+  the initial application chunk while ECharts remains an on-demand large chunk.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
-- Environment: Windows 11/PowerShell 5.1; Python 3.14.6; Git 2.53; no Docker,
-  database service or vn.py. The pinned optional `akshare==1.18.84` environment
-  with NumPy 2.4.6 is now installed; `pip check` and Python 3.11-targeted strict
-  mypy pass.
+- Environment: active verification uses Apple Silicon macOS and Python 3.12.13;
+  Windows/QMT remains a future deployment target. No Docker, database service or
+  vn.py is configured. The pinned optional `akshare==1.18.84` environment with
+  NumPy 2.4.6 and the optional `rqdatac[subscribe]==3.6.3` SDK are installed;
+  `pip check` and Python 3.11-targeted strict mypy pass.
 - Known limitations: the local SQLite runtime is single-process and does not
   claim distributed exactly-once semantics; its durable audit rows are strictly
   schema-validated but are not hash-chained or externally/WORM anchored; matching
@@ -35,7 +44,110 @@ Last updated: 2026-08-13
   now selects candidates using validation data only, keeps every full fold
   disjoint, and exposes checksum-verified evidence to the Chinese dashboard.
 - Historical provider coverage: ETF, A-share and major-index raw daily paths are
-  canonicalized and live-probed; stock/index snapshots and minute endpoints remain open.
+  canonicalized and live-probed; AKShare stock/index snapshots and minute
+  endpoints remain open, while the licensed RQData equivalents are implemented
+  but not authenticated.
+- Authoritative realtime bridge: a pinned optional `rqdatac 3.6.3` native bridge
+  now performs lazy SDK import, environment-only credential loading, SDK login,
+  realtime WebSocket entitlement exchange, data-only capability handshake,
+  A-share/ETF/explicit-index symbol normalization, L1 Tick and 1-minute callback
+  normalization, raw 1d/1m history, snapshots and an upstream heartbeat. Tick
+  callbacks carry a session-global ingest ordinal that the crash-safe per-symbol
+  PAPER recorder preserves. Invalid payloads or downstream callback failures
+  close the feed and require reconnect/reconciliation. The local SDK is installed,
+  but no RQData username/token was supplied, so the authenticated probe was not run
+  and current readiness remains `UNCONFIGURED` / `NOT_ELIGIBLE`.
+- Causal minute overlay: immutable per-session daily targets can now drive a
+  persistent one-minute risk overlay that fails closed during warmup and can
+  only preserve or reduce whole-lot target quantities. Weak short-term trend,
+  excessive minute volatility and intraday drawdown reduce exposure; recovery
+  requires a bounded cooldown. The minute history, session peak, multiplier and
+  cooldown survive restart, and multi-symbol tick routing is serialized through
+  the existing record -> quality -> finalized bar -> later tick PAPER chain.
+- Minute monitoring boundary: `/minute-overlay` validates live status arithmetic
+  before the Chinese monitor page displays provider connection, warm symbols and
+  the fixed no-external-order boundary. With no authorized RQData/XtData client,
+  it reports `UNCONFIGURED`, `NOT_ELIGIBLE` and zero ready symbols rather than
+  treating historical AKShare data as a live feed.
+- Adjustable backtest preview: `POST /backtest-preview` and the Chinese backtest
+  page now recompute the existing causal close-decision/next-open momentum model
+  from a checksum/schema-verified historical Parquet dataset. Date, horizon,
+  Top-K, rebalance, reserve, trend, volatility, capital, fee and slippage inputs
+  are bounded. Results include a deterministic hash, curve, drawdown, metrics and
+  positions, remain ephemeral, and are always labelled current-universe/non-PIT,
+  ad hoc and `NOT_ELIGIBLE`; they cannot mutate registered strategy or PAPER state.
+- Bounded price-factor search: medium-horizon momentum with an optional recent-
+  month skip, short reversal and low-volatility scores now use deterministic
+  cross-sectional percentile ranks. Discovery labels stay inside the discovery
+  window, factor values are known at the source close timestamp, validation alone
+  selects the portfolio candidate, and only that locked active candidate reaches
+  the confirmatory window. The research/API artifacts bind the source-tree hash,
+  dataset checksum, factor diagnostics, all validation scores and test metrics.
+- Factor-search evidence: a new quality-passed AKShare dataset contains 28,770
+  raw daily bars for the frozen current 30-ETF universe from 2022-09-06 through
+  2026-08-21 (`39a25d71...50d59fd`). An attempted 2015 start was rejected because
+  eight raw Sina series contained greater-than-50% price-scale breaks and no
+  authoritative adjustment factors were available; the common post-break start
+  was used instead of bypassing the quality gate.
+- Factor result: 5 predeclared factors and 13 bounded active validation candidates
+  were evaluated. Discovery passed 120-day and 252-day skip-20 momentum, 5-day
+  reversal and 60-day low volatility; 20-day reversal/Top3/20-session rebalance
+  won the 2025 validation window with Sharpe `0.729972`. Its locked 2026-01-01 to
+  2026-08-21 confirmation lost `12.3895%`, Sharpe was `-0.551348`, maximum drawdown
+  was `-24.1822%`, and it lagged Buy-and-Hold by `7.7719` percentage points after
+  modeled costs/slippage. It remains `NOT_ELIGIBLE`; the test period had also been
+  viewed by earlier project experiments and is not represented as a virgin blind test.
+- Factor UI/API: `/factor-search` verifies the report envelope plus all three
+  bound artifact hashes, candidate count/identity, validation winner arithmetic
+  and test excess-return arithmetic before the Chinese research page displays
+  the negative result. Malformed, promoted or tampered evidence fails closed.
+- Repeated factor robustness: a frozen 36-candidate grid was evaluated over eight
+  quarterly windows in 2024-2025. Only `reversal-10-top3-20` passed the
+  predeclared window gate: `6/8` positive quarters, median quarterly Sharpe
+  `0.636225`, worst quarterly Sharpe `-0.900655`, and full-period net return
+  `38.8414%` under base modeled costs.
+- Robustness stresses: the same locked candidate retained `30.9870%` return at
+  doubled transaction cost/slippage, `8/9` one-parameter neighbours and `6/6`
+  deterministic 80% universe subsets were positive, and a 1,000-replication
+  stationary bootstrap estimated `85.3%` probability of positive total return
+  (`5%` quantile `-13.7648%`). The negative lower tail is retained rather than
+  hidden by the point estimate.
+- Polluted audit and UI/API: 2026 was excluded from every selection calculation
+  and opened only after the robustness candidate was locked. Its audit return
+  was `-0.4437%`, maximum drawdown `-17.8407%`, and active excess versus
+  Buy-and-Hold `4.1739` percentage points. `/factor-robustness` independently
+  recomputes the 36-candidate ranking, quarterly gates, stress ratios, bootstrap
+  bounds, final robust identity and audit arithmetic; tampering fails closed.
+  The Chinese research page labels this post-selection/current-universe evidence
+  `NOT_ELIGIBLE` and does not connect it to PAPER.
+- Multi-sector stock dataset: a signed current CSI 300/SW level-1 universe was
+  frozen before stock-price access with 15 sectors and five current top-weight
+  members per sector. Resumable per-symbol caches recovered from upstream
+  failures; uniform HFQ ingest retained 149,903 PASSED bars from 2018-01-02 to
+  2026-08-21. Every one of the 75 stocks has at least 961 bars. Fifteen stocks
+  lost their first five listing-price-discovery sessions; history before the
+  last gap over 90 calendar days was removed for `000792` and `002602` before
+  any strategy outcome was produced.
+- Locked stock/sector transfer: ETF-selected `reversal-10-top3-20` was applied
+  without stock-side parameter tuning. The 2019-2025 formal run produced `7/7`
+  positive years, `15/15` positive sector-only runs, `15/15` positive
+  leave-one-sector-out runs, `315.7504%` full return, `23.5341%` annualized
+  return, Sharpe `0.809606`, doubled-cost return `256.1430%`, and bootstrap
+  positive-return probability `96.9%`. Maximum drawdown was `-34.2044%`, only
+  narrowly inside the predeclared `-35%` research threshold.
+- Stock-transfer boundary and UI/API: current 2026 constituents and current SW
+  membership are projected backward, HFQ can be revised, sector results are
+  visibly inflated by current winners, limit-up/down execution is not modeled,
+  and historical suspensions may use last-close valuation for up to 40 missing
+  sessions. The conclusion is therefore `NOT_ELIGIBLE` despite passing the
+  research gate. `/stock-sector-transfer` independently checks the envelope,
+  six artifacts, universe shape, yearly/sector/leave-one counts, cost/bootstrap
+  gates and polluted 2026 audit before the Chinese research tab renders it.
+- Dataset selection: `run_control_plane.py --historical-manifest` binds an
+  ingested data version to the UI without editing source. A 2026-08-24 macOS
+  verification ingested 1,140 PASSED bars for the frozen 30-ETF universe from
+  2026-07-01 through 2026-08-21, then reproduced an identical preview hash on
+  repeat and a distinct hash after changing Top-K/reserve parameters.
 - Dashboard historical data: `/market`, `/instruments`, the market page and the
   data-center page now expose the real 30-ETF AKShare dataset only after both its
   evidence envelope and Parquet checksum verify. Provider snapshot connectivity
@@ -128,9 +240,9 @@ Last updated: 2026-08-13
   is `1.6703725093`, and at least one scenario has negative Sharpe. This reuses
   observed periods as a
   post-rejection diagnostic; it is not new held-out or promotion evidence.
-- Next: seek a working snapshot endpoint for the recorded PAPER workflow and
-  improve verified, data-backed research analytics without weakening the
-  `NOT_ELIGIBLE` conclusion.
+- Next: stop tuning against the already viewed 2026 window. Seek a PIT/licensed
+  universe and a genuinely new forward PAPER/SHADOW period for the next factor
+  hypothesis; separately seek a working snapshot endpoint for recorded PAPER.
   Select a broker before building a native read-only reconciliation bridge.
 - External blockers: `WAITING_FOR_AKSHARE_SNAPSHOT_ENDPOINT_ACCESS`,
   `WAITING_FOR_DATA_PROVIDER_AUTH` and
@@ -141,10 +253,10 @@ Last updated: 2026-08-13
   coverage; Xueqiu per-symbol quotes require a session token. Historical closes
   are never relabeled as realtime observations.
 - Snapshot recheck: after installing the exact pinned AKShare extra on
-  2026-08-13, one bounded 30-ETF probe still returned `ready=false` with
-  `AKShare upstream request failed`. The installed release exposes no third ETF
-  snapshot source beyond the already-failed Eastmoney and THS families; Sina is
-  daily-history/list only. No additional retries were made.
+  2026-08-24, one bounded 20-ETF probe completed upstream work but still returned
+  `ready=false` with `AKShare ETF probe has no eligible fresh canonical row`.
+  Historical Sina daily data succeeded; snapshot/PAPER readiness remains false
+  and no additional retries were made.
 - Provider selection: AKShare 1.18.84 is the credential-free noncommercial
   research/PAPER bootstrap and has a fail-closed ETF adapter plus one-shot probe.
   This host's Eastmoney snapshot/history probes failed before data receipt. The

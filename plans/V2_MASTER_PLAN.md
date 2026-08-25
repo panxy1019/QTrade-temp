@@ -53,6 +53,9 @@ focused regression and independent safety review.
   successful connection before legal credentials/SDK are available.
 - [x] Symmetric RQData/XtData data-only bridge adapters and credential-free
   provider-selection diagnostic.
+- [x] Native optional `rqdatac 3.6.3` transport with authorized WebSocket
+  handshake, snapshots, raw 1d/1m history, Tick/minute normalization and a
+  read-only operational probe; authenticated evidence remains externally blocked.
 - [x] `REAL_DATA_PAPER` configuration remains `RuntimeMode.PAPER`.
 
 ### V2-M4 — Professional Chinese web platform
@@ -84,8 +87,9 @@ focused regression and independent safety review.
 
 ## External blockers
 
-- `WAITING_FOR_DATA_PROVIDER_AUTH`: no legal RQData/Xt realtime entitlement,
-  token, QMT installation or vendor SDK was supplied.
+- `WAITING_FOR_DATA_PROVIDER_AUTH`: the RQData SDK is installed locally, but no
+  legal RQData realtime entitlement/token was supplied; no entitled QMT/XT
+  installation was supplied.
 - `WAITING_FOR_BROKER_SELECTION`: no broker, sandbox, SDK or credential was supplied.
 
 These block only authenticated real-provider and broker validation. Protocols,
@@ -122,6 +126,35 @@ npm --prefix web run build
 - [x] Bind strategy/research/experiment/backtest Chinese dashboard pages to
   comparison/record/result/artifact-verified backend records with explicit
   NOT_ELIGIBLE labeling and no invented StrategyVersion lineage.
+- [x] Add a bounded, ephemeral parameterized backtest preview over the verified
+  historical Parquet dataset, with a Chinese web form, deterministic result hash,
+  no registry/PAPER mutation and mandatory non-PIT/NOT_ELIGIBLE labelling.
+- [x] Allow `run_control_plane.py --historical-manifest` to bind a newly ingested
+  signed dataset to the dashboard without a source edit.
+- [x] Run a bounded price-factor discovery and validation-only parameter search
+  on a longer quality-passed real ETF dataset, lock one active candidate for the
+  confirmatory window, retain its negative result and expose only hash-verified
+  factor/validation/test evidence in the Chinese research page.
+- [x] Freeze and run a 36-candidate repeated robustness search across eight
+  2024-2025 quarterly windows, then apply doubled-cost, one-parameter-neighbour,
+  deterministic-universe and stationary-bootstrap hard gates to every
+  window-eligible candidate. Keep 2026 structurally excluded until a labelled
+  polluted audit and expose only independently verified `NOT_ELIGIBLE` evidence.
+- [x] Freeze a current CSI 300/SW 15-by-5 stock universe before price access,
+  ingest 2018-2026 uniform adjusted history with signed resumable caches, and
+  transfer the locked ETF factor without stock-side tuning across annual,
+  sector-only, leave-one-sector-out, doubled-cost and stationary-bootstrap hard
+  gates. Expose the independently verified result while retaining the current-
+  universe/HFQ/suspension/price-limit `NOT_ELIGIBLE` boundary.
+- [x] Add immutable daily target publication, persistent one-minute risk-only
+  correction, recovery cooldown, multi-symbol recorded tick routing and a
+  fail-closed Chinese readiness monitor. Keep it `UNCONFIGURED` until an
+  authorized realtime RQData/XtData bridge is supplied.
+- [ ] Record and replay the first complete authorized multi-stock minute session,
+  then compare replay targets, orders and fills byte-for-byte with the forward
+  SHADOW/PAPER trace.
+- [ ] Obtain a PIT/licensed ETF universe and a genuinely unseen forward period
+  before starting another factor-tuning hypothesis.
 
 Authenticated RQData/XT validation remains a later authoritative-feed option.
 Native broker work remains blocked on broker selection and sandbox access.

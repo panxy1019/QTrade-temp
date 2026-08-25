@@ -12,6 +12,7 @@ from hashlib import sha256
 from itertools import islice
 from pathlib import Path
 from secrets import compare_digest
+from statistics import median
 from typing import Any, cast
 from zoneinfo import ZoneInfo
 
@@ -20,15 +21,17 @@ import pyarrow.parquet as pq  # type: ignore[import-untyped]
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from qtrade.accounting import Ledger
 from qtrade.audit import AuditEvent, AuditLog
 from qtrade.control import PlatformRuntime
+from qtrade.data import Bar
 from qtrade.domain import CancelCommand, Order, OrderStatus, RuntimeMode
 from qtrade.execution import FeeSchedule, PaperGateway
 from qtrade.monitoring import MetricsRegistry
 from qtrade.oms import OrderManager
+from qtrade.research import BacktestPreviewSpec, run_backtest_preview
 from qtrade.risk import RiskEngine, RiskLimits
 
 _MAX_MARKET_PARQUET_BYTES = 64 * 1024 * 1024
@@ -36,6 +39,7 @@ _MAX_MARKET_PARQUET_ROWS = 2_000_000
 _MAX_MARKET_PARQUET_ROW_GROUPS = 1024
 _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
 _MAX_HISTORICAL_SERIES_ROWS = 2000
+_MAX_BACKTEST_PREVIEW_SOURCE_ROWS = 250_000
 
 
 class Role(StrEnum):
@@ -51,6 +55,23 @@ class ControlRequest(BaseModel):
 class CancelRequest(BaseModel):
     internal_order_id: str
     idempotency_key: str
+
+
+class BacktestPreviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    start: date
+    end: date
+    horizons: tuple[int, ...] = (20, 60, 120)
+    top_k: int = 3
+    rebalance_every: int = 20
+    reserve: Decimal = Decimal("0.05")
+    trend_window: int | None = 120
+    volatility_window: int | None = 20
+    target_annual_volatility: Decimal | None = Decimal("0.15")
+    initial_cash: Decimal = Decimal("1000000")
+    transaction_cost_rate: Decimal = Decimal("0.0015")
+    slippage_rate: Decimal = Decimal("0.0005")
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,8 +102,12 @@ class AppContext:
     research_comparison_path: Path | None = None
     walk_forward_report_path: Path | None = None
     robustness_report_path: Path | None = None
+    factor_search_report_path: Path | None = None
+    robust_factor_search_report_path: Path | None = None
+    stock_sector_transfer_report_path: Path | None = None
     research_artifact_root: Path | None = None
     historical_manifest_path: Path | None = None
+    minute_overlay_reader: Callable[[], dict[str, object]] | None = None
     applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
     sellable_quantity_reader: Callable[[str, date], int] | None = None
     operational_date: date | None = None
@@ -169,6 +194,12 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
     @app.get("/metrics")
     def metrics(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:
         return state.metrics.snapshot()
+
+    @app.get("/minute-overlay")
+    def minute_overlay(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        return _minute_overlay_status(state.minute_overlay_reader)
 
     @app.get("/market")
     def market(
@@ -307,6 +338,56 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             "result": {"scenario_metrics": []},
         }
 
+    @app.get("/factor-search")
+    def factor_search(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        report = _load_verified_factor_search_report(state.factor_search_report_path)
+        return report or {
+            "classification": "NO_VERIFIED_FACTOR_SEARCH_RESULT",
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": ["MISSING_VERIFIED_FACTOR_SEARCH_ARTIFACT"],
+            "factor_diagnostics": [],
+            "validation": {"scores": []},
+            "test": {},
+        }
+
+    @app.get("/factor-robustness")
+    def factor_robustness(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        report = _load_verified_robust_factor_search_report(
+            state.robust_factor_search_report_path
+        )
+        return report or {
+            "classification": "NO_VERIFIED_ROBUST_FACTOR_RESULT",
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": ["MISSING_VERIFIED_ROBUST_FACTOR_ARTIFACT"],
+            "candidate_summaries": [],
+            "stress_tests": {"evaluations": []},
+            "bootstrap": {"evaluations": []},
+            "polluted_audit": {},
+        }
+
+    @app.get("/stock-sector-transfer")
+    def stock_sector_transfer(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        report = _load_verified_stock_sector_transfer_report(
+            state.stock_sector_transfer_report_path
+        )
+        return report or {
+            "classification": "NO_VERIFIED_STOCK_SECTOR_TRANSFER_RESULT",
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": ["MISSING_VERIFIED_STOCK_SECTOR_TRANSFER_ARTIFACT"],
+            "yearly": [],
+            "sector_only": [],
+            "leave_one_sector_out": [],
+            "cost_stress": {},
+            "bootstrap": {},
+            "polluted_audit": {},
+        }
+
     @app.get("/backtest-analytics")
     def backtest_analytics(
         _: str = Depends(_require_role(Role.READ, auth_config)),
@@ -321,6 +402,47 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
             "leader": None,
             "curve": [],
         }
+
+    @app.post("/backtest-preview")
+    def backtest_preview(
+        payload: BacktestPreviewRequest,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_market_dataset(state.historical_manifest_path)
+        if dataset is None:
+            raise HTTPException(status_code=409, detail="verified historical dataset unavailable")
+        bars = _load_backtest_preview_bars(
+            state.historical_manifest_path,
+            data_version=str(dataset["data_version"]),
+            expected_checksum=str(dataset["checksum"]),
+            expected_universe=dataset["universe"],
+            expected_bar_count=dataset["bar_count"],
+        )
+        if bars is None:
+            raise HTTPException(status_code=409, detail="historical dataset validation failed")
+        try:
+            spec = BacktestPreviewSpec(
+                start=payload.start,
+                end=payload.end,
+                horizons=payload.horizons,
+                top_k=payload.top_k,
+                rebalance_every=payload.rebalance_every,
+                reserve=payload.reserve,
+                trend_window=payload.trend_window,
+                volatility_window=payload.volatility_window,
+                target_annual_volatility=payload.target_annual_volatility,
+                initial_cash=payload.initial_cash,
+                transaction_cost_rate=payload.transaction_cost_rate,
+                slippage_rate=payload.slippage_rate,
+            )
+            return run_backtest_preview(
+                bars,
+                data_version=str(dataset["data_version"]),
+                data_checksum=str(dataset["checksum"]),
+                spec=spec,
+            )
+        except (ArithmeticError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     @app.get("/portfolio")
     def portfolio(
@@ -477,7 +599,9 @@ def create_app(context: AppContext | None = None, auth: ApiAuthConfig | None = N
     return app
 
 
-def context_from_runtime(bundle: object) -> AppContext:
+def context_from_runtime(
+    bundle: object, *, historical_manifest_path: Path | None = None
+) -> AppContext:
     """Build API state from the canonical PAPER/SHADOW runtime bundle."""
     from qtrade.runtime import PaperRuntimeBundle
 
@@ -499,17 +623,119 @@ def context_from_runtime(bundle: object) -> AppContext:
         robustness_report_path=Path(
             "runtime/research/akshare-robustness-v1.json"
         ),
+        factor_search_report_path=Path(
+            "runtime/research/akshare-factor-search-v3/report.json"
+        ),
+        robust_factor_search_report_path=Path(
+            "runtime/research/akshare-robust-factor-search-v4/report.json"
+        ),
+        stock_sector_transfer_report_path=Path(
+            "runtime/research/akshare-stock-sector-transfer-v3/report.json"
+        ),
         research_artifact_root=Path("runtime/research/akshare-v4"),
-        historical_manifest_path=Path(
-            "runtime/data/akshare/"
-            "akshare-sina-etf30-current-20260812-v1-raw-daily-20240101-20260812/"
-            "manifest.json"
+        historical_manifest_path=(
+            historical_manifest_path
+            or Path(
+                "runtime/data/akshare/"
+                "akshare-sina-etf30-current-20260812-v1-raw-daily-20240101-20260812/"
+                "manifest.json"
+            )
         ),
         applied_trade_reader=bundle.journal.applied_trade_payloads,
         sellable_quantity_reader=bundle.sellability.sellable_quantity,
         operational_gate=bundle.risk.dispatch_gate,
         audit_reader=bundle.journal.recent_audit_events,
     )
+
+
+def _minute_overlay_status(
+    reader: Callable[[], dict[str, object]] | None,
+) -> dict[str, object]:
+    unavailable: dict[str, object] = {
+        "classification": "CAUSAL_MINUTE_RISK_OVERLAY_PAPER_SHADOW_ONLY",
+        "readiness": "UNCONFIGURED",
+        "provider": None,
+        "provider_connected": False,
+        "bar_interval": "1m",
+        "symbol_count": 0,
+        "ready_symbol_count": 0,
+        "external_order_transmission": False,
+        "promotion": "NOT_ELIGIBLE",
+        "reasons": [
+            "NO_AUTHORIZED_REALTIME_TICK_PROVIDER",
+            "NO_ACTIVE_MINUTE_PAPER_SESSION",
+        ],
+        "symbols": [],
+    }
+    if reader is None:
+        return unavailable
+    try:
+        value = reader()
+        symbols = value.get("symbols")
+        reasons = value.get("reasons")
+        symbol_count = value.get("symbol_count")
+        ready_count = value.get("ready_symbol_count")
+        if (
+            value.get("classification")
+            != "CAUSAL_MINUTE_RISK_OVERLAY_PAPER_SHADOW_ONLY"
+            or value.get("bar_interval") != "1m"
+            or value.get("promotion") != "NOT_ELIGIBLE"
+            or value.get("external_order_transmission") is not False
+            or value.get("readiness") not in {"READY", "NOT_READY"}
+            or not isinstance(value.get("provider"), str)
+            or not isinstance(value.get("provider_connected"), bool)
+            or isinstance(symbol_count, bool)
+            or not isinstance(symbol_count, int)
+            or isinstance(ready_count, bool)
+            or not isinstance(ready_count, int)
+            or not isinstance(symbols, list)
+            or not isinstance(reasons, list)
+            or any(not isinstance(reason, str) for reason in reasons)
+            or symbol_count != len(symbols)
+            or not 0 <= ready_count <= symbol_count
+        ):
+            raise ValueError("minute overlay status envelope is invalid")
+        observed_ready = 0
+        for row in symbols:
+            if not isinstance(row, dict):
+                raise ValueError("minute overlay symbol status is invalid")
+            multiplier = Decimal(str(row.get("multiplier")))
+            base_quantity = row.get("base_target_quantity")
+            corrected_quantity = row.get("corrected_target_quantity")
+            timestamp = datetime.fromisoformat(str(row.get("last_bar_timestamp")))
+            row_reasons = row.get("reasons")
+            if (
+                not isinstance(row.get("symbol"), str)
+                or not isinstance(row.get("ready"), bool)
+                or timestamp.tzinfo is None
+                or not multiplier.is_finite()
+                or not Decimal("0") <= multiplier <= Decimal("1")
+                or isinstance(base_quantity, bool)
+                or not isinstance(base_quantity, int)
+                or isinstance(corrected_quantity, bool)
+                or not isinstance(corrected_quantity, int)
+                or not 0 <= corrected_quantity <= base_quantity
+                or not isinstance(row_reasons, list)
+                or any(not isinstance(reason, str) for reason in row_reasons)
+            ):
+                raise ValueError("minute overlay symbol arithmetic is invalid")
+            observed_ready += int(row["ready"])
+        if observed_ready != ready_count:
+            raise ValueError("minute overlay ready count is inconsistent")
+        expected_ready = (
+            value["provider_connected"] is True
+            and symbol_count > 0
+            and ready_count == symbol_count
+        )
+        if (value["readiness"] == "READY") != expected_ready:
+            raise ValueError("minute overlay readiness is inconsistent")
+        return value
+    except Exception:
+        return {
+            **unavailable,
+            "readiness": "STATUS_UNAVAILABLE",
+            "reasons": ["MINUTE_OVERLAY_STATUS_INVALID_OR_UNAVAILABLE"],
+        }
 
 
 def _paper_trade_rows(state: AppContext) -> list[dict[str, object]]:
@@ -776,6 +1002,871 @@ def _load_verified_research_report(path: Path | None) -> dict[str, object] | Non
             return None
         return report
     except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+
+
+def _load_verified_factor_search_report(path: Path | None) -> dict[str, object] | None:
+    report = _load_verified_research_report(path)
+    if report is None or path is None:
+        return None
+    try:
+        if (
+            report.get("classification")
+            != "bounded_factor_search_current_universe_non_pit"
+            or report.get("promotion") != "NOT_ELIGIBLE"
+        ):
+            return None
+        reasons = report["promotion_reasons"]
+        artifacts = report["artifacts"]
+        budget = report["research_budget"]
+        portfolio = report["portfolio_selection"]
+        if (
+            not isinstance(reasons, list)
+            or not reasons
+            or not all(isinstance(reason, str) and reason for reason in reasons)
+            or not isinstance(artifacts, dict)
+            or set(artifacts)
+            != {"factor_diagnostics.json", "validation_scores.json", "test_metrics.json"}
+            or not isinstance(budget, dict)
+            or not isinstance(portfolio, dict)
+        ):
+            return None
+        loaded: dict[str, object] = {}
+        for filename, expected_hash in artifacts.items():
+            if not isinstance(filename, str) or not _is_sha256(expected_hash):
+                return None
+            artifact_path = path.parent / filename
+            with artifact_path.open("rb") as handle:
+                raw = handle.read(2 * 1024 * 1024 + 1)
+            if len(raw) > 2 * 1024 * 1024 or sha256(raw).hexdigest() != expected_hash:
+                return None
+            loaded[filename] = json.loads(raw.decode("utf-8"))
+
+        diagnostics = loaded["factor_diagnostics.json"]
+        validation = loaded["validation_scores.json"]
+        test = loaded["test_metrics.json"]
+        if (
+            not isinstance(diagnostics, list)
+            or not 1 <= len(diagnostics) <= 5
+            or not isinstance(validation, dict)
+            or not isinstance(test, dict)
+        ):
+            return None
+        factor_ids: list[str] = []
+        for diagnostic in diagnostics:
+            if not isinstance(diagnostic, dict) or not isinstance(diagnostic.get("metrics"), dict):
+                return None
+            factor_id = diagnostic.get("factor_id")
+            periods = diagnostic.get("periods")
+            minimum = diagnostic.get("instruments_minimum")
+            metrics = diagnostic["metrics"]
+            if (
+                not isinstance(factor_id, str)
+                or not factor_id
+                or factor_id in factor_ids
+                or not isinstance(periods, int)
+                or isinstance(periods, bool)
+                or periods < 2
+                or not isinstance(minimum, int)
+                or isinstance(minimum, bool)
+                or minimum < 5
+                or not _finite_metric_fields(
+                    metrics,
+                    ("rank_ic", "icir", "long_short_spread", "factor_turnover"),
+                )
+            ):
+                return None
+            factor_ids.append(factor_id)
+
+        candidates = validation.get("candidates")
+        scores = validation.get("scores")
+        selected = validation.get("selected_candidate_id")
+        candidate_count = validation.get("candidate_count")
+        if (
+            not isinstance(candidates, list)
+            or not isinstance(scores, list)
+            or not isinstance(selected, str)
+            or not isinstance(candidate_count, int)
+            or isinstance(candidate_count, bool)
+            or not 1 <= candidate_count <= 15
+            or len(candidates) != candidate_count
+            or len(scores) != candidate_count
+        ):
+            return None
+        candidate_ids = []
+        for candidate in candidates:
+            if not isinstance(candidate, dict) or not isinstance(candidate.get("parameters"), list):
+                return None
+            candidate_id = candidate.get("candidate_id")
+            if (
+                not isinstance(candidate_id, str)
+                or not candidate_id
+                or candidate_id in candidate_ids
+                or candidate_id == "buy-hold"
+            ):
+                return None
+            candidate_ids.append(candidate_id)
+        score_values: list[tuple[Decimal, str]] = []
+        for score in scores:
+            if (
+                not isinstance(score, list)
+                or len(score) != 2
+                or not isinstance(score[0], str)
+                or score[0] not in candidate_ids
+                or not isinstance(score[1], str)
+            ):
+                return None
+            value = Decimal(score[1])
+            if not value.is_finite():
+                return None
+            score_values.append((value, score[0]))
+        if len({identity for _, identity in score_values}) != candidate_count:
+            return None
+        if selected != max(score_values)[1] or portfolio.get("selected_candidate_id") != selected:
+            return None
+        if (
+            budget.get("validation_candidates_run") != candidate_count
+            or budget.get("validation_candidate_cap") != 15
+            or portfolio.get("benchmark_excluded_from_active_selection") is not True
+        ):
+            return None
+
+        selected_metrics = test.get("selected_metrics")
+        benchmark_metrics = test.get("buy_hold_metrics")
+        if (
+            test.get("selected_candidate_id") != selected
+            or not isinstance(selected_metrics, dict)
+            or not isinstance(benchmark_metrics, dict)
+            or not _finite_metric_fields(
+                selected_metrics,
+                (
+                    "total_return",
+                    "sharpe",
+                    "maximum_drawdown",
+                    "turnover",
+                    "transaction_costs",
+                ),
+            )
+            or not _finite_metric_fields(
+                benchmark_metrics,
+                ("total_return", "sharpe", "maximum_drawdown"),
+            )
+            or not _is_sha256(test.get("walk_forward_result_hash"))
+        ):
+            return None
+        excess = Decimal(str(test.get("terminal_excess_return")))
+        if (
+            not excess.is_finite()
+            or excess
+            != Decimal(str(selected_metrics["total_return"]))
+            - Decimal(str(benchmark_metrics["total_return"]))
+        ):
+            return None
+        return {
+            **report,
+            "factor_diagnostics": diagnostics,
+            "validation": validation,
+            "test": test,
+        }
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _as_finite_decimal(value: object) -> Decimal:
+    if isinstance(value, bool):
+        raise ValueError("boolean is not a numeric research metric")
+    result = Decimal(str(value))
+    if not result.is_finite():
+        raise ValueError("research metric must be finite")
+    return result
+
+
+def _load_verified_robust_factor_search_report(
+    path: Path | None,
+) -> dict[str, object] | None:
+    report = _load_verified_research_report(path)
+    if report is None or path is None:
+        return None
+    try:
+        if (
+            report.get("classification")
+            != "post_selection_robust_factor_search_current_universe_non_pit"
+            or report.get("promotion") != "NOT_ELIGIBLE"
+        ):
+            return None
+        reasons = report.get("promotion_reasons")
+        artifacts = report.get("artifacts")
+        budget = report.get("research_budget")
+        selection = report.get("selection")
+        gate_report = report.get("robustness_gate")
+        expected_artifacts = {
+            "candidate_windows.json",
+            "candidate_summaries.json",
+            "stress_tests.json",
+            "bootstrap.json",
+            "polluted_audit_2026.json",
+        }
+        if (
+            not isinstance(reasons, list)
+            or not reasons
+            or not all(isinstance(reason, str) and reason for reason in reasons)
+            or not isinstance(artifacts, dict)
+            or set(artifacts) != expected_artifacts
+            or not isinstance(budget, dict)
+            or not isinstance(selection, dict)
+            or not isinstance(gate_report, dict)
+        ):
+            return None
+        loaded: dict[str, object] = {}
+        for filename, expected_hash in artifacts.items():
+            if not isinstance(filename, str) or not _is_sha256(expected_hash):
+                return None
+            artifact_path = path.parent / filename
+            with artifact_path.open("rb") as handle:
+                raw = handle.read(8 * 1024 * 1024 + 1)
+            if len(raw) > 8 * 1024 * 1024 or sha256(raw).hexdigest() != expected_hash:
+                return None
+            loaded[filename] = json.loads(raw.decode("utf-8"))
+
+        windows_payload = loaded["candidate_windows.json"]
+        summaries = loaded["candidate_summaries.json"]
+        stress = loaded["stress_tests.json"]
+        bootstrap = loaded["bootstrap.json"]
+        audit = loaded["polluted_audit_2026.json"]
+        window_ids = [
+            "2024Q1",
+            "2024Q2",
+            "2024Q3",
+            "2024Q4",
+            "2025Q1",
+            "2025Q2",
+            "2025Q3",
+            "2025Q4",
+        ]
+        window_ranges = {
+            "2024Q1": ("2024-01-01", "2024-03-31"),
+            "2024Q2": ("2024-04-01", "2024-06-30"),
+            "2024Q3": ("2024-07-01", "2024-09-30"),
+            "2024Q4": ("2024-10-01", "2024-12-31"),
+            "2025Q1": ("2025-01-01", "2025-03-31"),
+            "2025Q2": ("2025-04-01", "2025-06-30"),
+            "2025Q3": ("2025-07-01", "2025-09-30"),
+            "2025Q4": ("2025-10-01", "2025-12-31"),
+        }
+        if (
+            not isinstance(windows_payload, list)
+            or len(windows_payload) != 36
+            or not isinstance(summaries, list)
+            or len(summaries) != 36
+            or not isinstance(stress, dict)
+            or not isinstance(bootstrap, dict)
+            or not isinstance(audit, dict)
+            or budget.get("frozen_candidates_run") != 36
+            or budget.get("validation_windows_per_candidate") != 8
+            or selection.get("candidate_count") != 36
+            or selection.get("window_ids") != window_ids
+            or selection.get("start") != "2024-01-01"
+            or selection.get("end") != "2025-12-31"
+            or selection.get("benchmark_excluded_from_selection") is not True
+            or selection.get("polluted_2026_audit_excluded_from_selection") is not True
+            or selection.get("window_gate")
+            != {
+                "positive_window_ratio_minimum": "0.75",
+                "median_window_sharpe_strictly_above": "0",
+                "worst_window_sharpe_minimum": "-1",
+            }
+        ):
+            return None
+
+        windows_by_candidate: dict[str, list[dict[str, object]]] = {}
+        for candidate in windows_payload:
+            if not isinstance(candidate, dict) or not isinstance(
+                candidate.get("parameters"), list
+            ):
+                return None
+            candidate_id = candidate.get("candidate_id")
+            candidate_windows = candidate.get("windows")
+            if (
+                not isinstance(candidate_id, str)
+                or not candidate_id
+                or candidate_id in windows_by_candidate
+                or candidate_id == "buy-hold"
+                or not isinstance(candidate_windows, list)
+                or len(candidate_windows) != 8
+            ):
+                return None
+            parsed_windows: list[dict[str, object]] = []
+            for index, window in enumerate(candidate_windows):
+                if not isinstance(window, dict):
+                    return None
+                window_id = window.get("window_id")
+                if (
+                    window.get("candidate_id") != candidate_id
+                    or window_id != window_ids[index]
+                    or not isinstance(window_id, str)
+                    or (window.get("start"), window.get("end"))
+                    != window_ranges[window_id]
+                    or not _finite_metric_fields(
+                        window,
+                        (
+                            "total_return",
+                            "sharpe",
+                            "maximum_drawdown",
+                            "turnover",
+                            "transaction_costs",
+                        ),
+                    )
+                    or not isinstance(window.get("number_of_trades"), int)
+                    or isinstance(window.get("number_of_trades"), bool)
+                ):
+                    return None
+                parsed_windows.append(window)
+            windows_by_candidate[candidate_id] = parsed_windows
+
+        summary_by_id: dict[str, dict[str, object]] = {}
+        numeric_summary_fields = (
+            "positive_window_ratio",
+            "median_window_sharpe",
+            "worst_window_sharpe",
+            "sharpe_dispersion",
+            "median_window_return",
+            "full_period_return",
+            "full_period_sharpe",
+            "full_period_turnover",
+            "full_period_transaction_costs",
+        )
+        for rank, summary in enumerate(summaries, start=1):
+            if not isinstance(summary, dict):
+                return None
+            candidate_id = summary.get("candidate_id")
+            if (
+                not isinstance(candidate_id, str)
+                or candidate_id not in windows_by_candidate
+                or candidate_id in summary_by_id
+                or summary.get("selection_rank") != rank
+                or summary.get("window_count") != 8
+                or not _finite_metric_fields(summary, numeric_summary_fields)
+            ):
+                return None
+            candidate_windows = windows_by_candidate[candidate_id]
+            returns = [_as_finite_decimal(window["total_return"]) for window in candidate_windows]
+            sharpes = [_as_finite_decimal(window["sharpe"]) for window in candidate_windows]
+            if (
+                _as_finite_decimal(summary["positive_window_ratio"])
+                != Decimal(sum(value > 0 for value in returns)) / 8
+                or _as_finite_decimal(summary["median_window_sharpe"]) != median(sharpes)
+                or _as_finite_decimal(summary["worst_window_sharpe"]) != min(sharpes)
+                or _as_finite_decimal(summary["sharpe_dispersion"])
+                != max(sharpes) - min(sharpes)
+                or _as_finite_decimal(summary["median_window_return"]) != median(returns)
+            ):
+                return None
+            summary_by_id[candidate_id] = summary
+
+        ranked_ids = [
+            str(summary["candidate_id"])
+            for summary in sorted(
+                summaries,
+                key=lambda item: (
+                    -_as_finite_decimal(cast(dict[str, object], item)["positive_window_ratio"]),
+                    -_as_finite_decimal(cast(dict[str, object], item)["median_window_sharpe"]),
+                    -_as_finite_decimal(cast(dict[str, object], item)["worst_window_sharpe"]),
+                    _as_finite_decimal(cast(dict[str, object], item)["sharpe_dispersion"]),
+                    -_as_finite_decimal(cast(dict[str, object], item)["median_window_return"]),
+                    _as_finite_decimal(cast(dict[str, object], item)["full_period_turnover"]),
+                    str(cast(dict[str, object], item)["candidate_id"]),
+                ),
+            )
+        ]
+        if ranked_ids != [str(summary["candidate_id"]) for summary in summaries]:
+            return None
+        eligible_ids = [
+            candidate_id
+            for candidate_id in ranked_ids
+            if _as_finite_decimal(summary_by_id[candidate_id]["positive_window_ratio"])
+            >= Decimal("0.75")
+            and _as_finite_decimal(summary_by_id[candidate_id]["median_window_sharpe"])
+            > 0
+            and _as_finite_decimal(summary_by_id[candidate_id]["worst_window_sharpe"])
+            >= Decimal("-1")
+        ]
+        expected_best_summary = {
+            key: value for key, value in summaries[0].items() if key != "selection_rank"
+        }
+        if (
+            selection.get("best_observed_candidate_id") != ranked_ids[0]
+            or selection.get("best_observed_summary") != expected_best_summary
+            or selection.get("window_gate_eligible_candidate_ids") != eligible_ids
+            or budget.get("window_eligible_candidates") != len(eligible_ids)
+            or stress.get("window_eligible_candidate_ids") != eligible_ids
+        ):
+            return None
+
+        stress_evaluations = stress.get("evaluations")
+        bootstrap_evaluations = bootstrap.get("evaluations")
+        if (
+            not isinstance(stress_evaluations, list)
+            or not isinstance(bootstrap_evaluations, list)
+            or len(stress_evaluations) != len(eligible_ids)
+            or len(bootstrap_evaluations) != len(eligible_ids)
+            or budget.get("cost_scenarios_per_eligible_candidate") != 4
+            or budget.get("universe_subsets_per_eligible_candidate") != 6
+            or budget.get("bootstrap_replications_per_eligible_candidate") != 1000
+        ):
+            return None
+        bootstrap_by_id = {
+            item.get("candidate_id"): item
+            for item in bootstrap_evaluations
+            if isinstance(item, dict) and isinstance(item.get("candidate_id"), str)
+        }
+        if set(bootstrap_by_id) != set(eligible_ids):
+            return None
+
+        passed_ids: list[str] = []
+        gate_results: list[dict[str, object]] = []
+        for index, evaluation in enumerate(stress_evaluations):
+            if not isinstance(evaluation, dict):
+                return None
+            candidate_id = evaluation.get("candidate_id")
+            if candidate_id != eligible_ids[index] or not isinstance(candidate_id, str):
+                return None
+            costs = evaluation.get("cost_stresses")
+            neighbors = evaluation.get("parameter_neighbors")
+            universes = evaluation.get("universe_subsets")
+            if (
+                not isinstance(costs, list)
+                or not isinstance(neighbors, dict)
+                or not isinstance(universes, dict)
+                or [item.get("scenario_id") for item in costs if isinstance(item, dict)]
+                != ["half_cost", "base_cost", "double_cost", "triple_cost"]
+            ):
+                return None
+            double_return: Decimal | None = None
+            for cost in costs:
+                if not isinstance(cost, dict) or not isinstance(cost.get("metrics"), dict):
+                    return None
+                if not _finite_metric_fields(
+                    cost["metrics"], ("total_return", "sharpe", "maximum_drawdown")
+                ):
+                    return None
+                if cost.get("scenario_id") == "double_cost":
+                    double_return = _as_finite_decimal(cost["metrics"]["total_return"])
+            neighbor_rows = neighbors.get("results")
+            universe_rows = universes.get("results")
+            if (
+                double_return is None
+                or not isinstance(neighbor_rows, list)
+                or not neighbor_rows
+                or not isinstance(universe_rows, list)
+                or len(universe_rows) != 6
+            ):
+                return None
+            neighbor_returns = []
+            for row in neighbor_rows:
+                if not isinstance(row, dict):
+                    return None
+                neighbor_returns.append(_as_finite_decimal(row.get("full_period_return")))
+            universe_returns = []
+            for row in universe_rows:
+                metrics = row.get("metrics") if isinstance(row, dict) else None
+                if not isinstance(metrics, dict) or not _finite_metric_fields(
+                    metrics, ("total_return", "sharpe", "maximum_drawdown")
+                ):
+                    return None
+                universe_returns.append(_as_finite_decimal(metrics["total_return"]))
+            neighbor_ratio = Decimal(sum(value > 0 for value in neighbor_returns)) / len(
+                neighbor_returns
+            )
+            universe_ratio = Decimal(sum(value > 0 for value in universe_returns)) / 6
+            if (
+                _as_finite_decimal(neighbors.get("positive_ratio")) != neighbor_ratio
+                or _as_finite_decimal(universes.get("positive_ratio")) != universe_ratio
+            ):
+                return None
+            bootstrap_item = bootstrap_by_id[candidate_id]
+            if (
+                bootstrap_item.get("method") != "stationary_bootstrap"
+                or bootstrap_item.get("replications") != 1000
+                or bootstrap_item.get("expected_block_length") != 20
+                or bootstrap_item.get("seed") != 20260825
+            ):
+                return None
+            probability = _as_finite_decimal(bootstrap_item.get("probability_positive"))
+            p05 = _as_finite_decimal(bootstrap_item.get("p05_total_return"))
+            p50 = _as_finite_decimal(bootstrap_item.get("median_total_return"))
+            p95 = _as_finite_decimal(bootstrap_item.get("p95_total_return"))
+            if not Decimal("0") <= probability <= Decimal("1") or not p05 <= p50 <= p95:
+                return None
+            summary = summary_by_id[candidate_id]
+            expected_criteria = [
+                [
+                    "positive_window_ratio_at_least_0.75",
+                    _as_finite_decimal(summary["positive_window_ratio"])
+                    >= Decimal("0.75"),
+                ],
+                [
+                    "median_window_sharpe_above_zero",
+                    _as_finite_decimal(summary["median_window_sharpe"]) > 0,
+                ],
+                [
+                    "worst_window_sharpe_at_least_minus_1",
+                    _as_finite_decimal(summary["worst_window_sharpe"]) >= Decimal("-1"),
+                ],
+                ["doubled_cost_total_return_above_zero", double_return > 0],
+                [
+                    "parameter_neighbor_positive_ratio_at_least_0.5",
+                    neighbor_ratio >= Decimal("0.5"),
+                ],
+                [
+                    "universe_subset_positive_ratio_at_least_two_thirds",
+                    universe_ratio >= Decimal(2) / Decimal(3),
+                ],
+                ["bootstrap_probability_positive_at_least_0.75", probability >= Decimal("0.75")],
+            ]
+            passed = all(bool(item[1]) for item in expected_criteria)
+            if evaluation.get("gate") != {"passed": passed, "criteria": expected_criteria}:
+                return None
+            gate_result = {
+                "candidate_id": candidate_id,
+                "passed": passed,
+                "criteria": expected_criteria,
+            }
+            gate_results.append(gate_result)
+            if passed:
+                passed_ids.append(candidate_id)
+
+        robust_candidate_id = passed_ids[0] if passed_ids else None
+        audited_candidate_id = robust_candidate_id or (
+            eligible_ids[0] if eligible_ids else ranked_ids[0]
+        )
+        expected_conclusion = (
+            "ROBUST_CANDIDATE_PASSED_PREDECLARED_GATE"
+            if robust_candidate_id
+            else "NO_CANDIDATE_PASSED_PREDECLARED_ROBUSTNESS_GATE"
+        )
+        if (
+            selection.get("robust_candidate_id") != robust_candidate_id
+            or selection.get("audited_candidate_id") != audited_candidate_id
+            or gate_report.get("passed") is not (robust_candidate_id is not None)
+            or gate_report.get("candidate_results") != gate_results
+            or gate_report.get("conclusion") != expected_conclusion
+            or audit.get("classification") != "POLLUTED_AUDIT_ONLY"
+            or audit.get("excluded_from_selection") is not True
+            or audit.get("period_previously_viewed_by_project") is not True
+            or audit.get("audited_candidate_id") != audited_candidate_id
+            or audit.get("robust_candidate_id") != robust_candidate_id
+            or audit.get("start") != "2026-01-01"
+            or audit.get("end") != "2026-08-21"
+        ):
+            return None
+        selected_metrics = audit.get("selected_metrics")
+        benchmark_metrics = audit.get("buy_hold_metrics")
+        if (
+            not isinstance(selected_metrics, dict)
+            or not isinstance(benchmark_metrics, dict)
+            or not _finite_metric_fields(
+                selected_metrics,
+                ("total_return", "sharpe", "maximum_drawdown", "turnover", "transaction_costs"),
+            )
+            or not _finite_metric_fields(
+                benchmark_metrics, ("total_return", "sharpe", "maximum_drawdown")
+            )
+            or _as_finite_decimal(audit.get("terminal_excess_return"))
+            != _as_finite_decimal(selected_metrics["total_return"])
+            - _as_finite_decimal(benchmark_metrics["total_return"])
+        ):
+            return None
+        return {
+            **report,
+            "candidate_summaries": summaries,
+            "stress_tests": stress,
+            "bootstrap": bootstrap,
+            "polluted_audit": audit,
+        }
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _finite_metric_fields(value: dict[str, object], fields: tuple[str, ...]) -> bool:
+    try:
+        return all(Decimal(str(value[field])).is_finite() for field in fields)
+    except (InvalidOperation, KeyError, TypeError, ValueError):
+        return False
+
+
+def _load_verified_stock_sector_transfer_report(
+    path: Path | None,
+) -> dict[str, object] | None:
+    report = _load_verified_research_report(path)
+    if report is None or path is None:
+        return None
+    try:
+        artifacts = report.get("artifacts")
+        data = report.get("data")
+        strategy = report.get("locked_strategy")
+        formal = report.get("formal_period")
+        gate = report.get("transfer_gate")
+        execution = report.get("execution_contract")
+        reasons = report.get("promotion_reasons")
+        expected_artifacts = {
+            "yearly.json",
+            "sector_only.json",
+            "leave_one_sector_out.json",
+            "cost_stress.json",
+            "bootstrap.json",
+            "polluted_audit_2026.json",
+        }
+        if (
+            report.get("classification")
+            != "locked_etf_factor_stock_sector_transfer_non_pit"
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or not isinstance(reasons, list)
+            or not reasons
+            or not all(isinstance(reason, str) and reason for reason in reasons)
+            or not isinstance(artifacts, dict)
+            or set(artifacts) != expected_artifacts
+            or not isinstance(data, dict)
+            or not isinstance(strategy, dict)
+            or not isinstance(formal, dict)
+            or not isinstance(gate, dict)
+            or not isinstance(execution, dict)
+        ):
+            return None
+        if (
+            data.get("symbol_count") != 75
+            or data.get("sector_count") != 15
+            or data.get("stocks_per_sector") != 5
+            or data.get("adjustment") != "hfq"
+            or data.get("point_in_time_universe") is not False
+            or strategy
+            != {
+                "candidate_id": "reversal-10-top3-20",
+                "factor": "reversal",
+                "lookback_sessions": 10,
+                "top_k": 3,
+                "rebalance_every_sessions": 20,
+                "reserve": "0.05",
+                "chosen_before_stock_history_outcomes": True,
+                "parameter_tuning_on_stock_results": False,
+            }
+            or formal.get("start") != "2019-01-01"
+            or formal.get("end") != "2025-12-31"
+            or execution.get("maximum_stale_sessions") != 40
+            or execution.get("limit_up_down_execution_model") is not False
+        ):
+            return None
+
+        loaded: dict[str, object] = {}
+        for filename, expected_hash in artifacts.items():
+            if not isinstance(filename, str) or not _is_sha256(expected_hash):
+                return None
+            target = path.parent / filename
+            with target.open("rb") as handle:
+                raw = handle.read(8 * 1024 * 1024 + 1)
+            if len(raw) > 8 * 1024 * 1024 or sha256(raw).hexdigest() != expected_hash:
+                return None
+            loaded[filename] = json.loads(raw.decode("utf-8"))
+
+        yearly = loaded["yearly.json"]
+        sector_only = loaded["sector_only.json"]
+        leave_one = loaded["leave_one_sector_out.json"]
+        cost = loaded["cost_stress.json"]
+        bootstrap = loaded["bootstrap.json"]
+        audit = loaded["polluted_audit_2026.json"]
+        if (
+            not isinstance(yearly, list)
+            or len(yearly) != 7
+            or not isinstance(sector_only, list)
+            or len(sector_only) != 15
+            or not isinstance(leave_one, list)
+            or len(leave_one) != 15
+            or not isinstance(cost, dict)
+            or not isinstance(bootstrap, dict)
+            or not isinstance(audit, dict)
+        ):
+            return None
+
+        yearly_returns: list[Decimal] = []
+        if [item.get("year") for item in yearly if isinstance(item, dict)] != list(
+            range(2019, 2026)
+        ):
+            return None
+        for item in yearly:
+            metrics = item.get("metrics") if isinstance(item, dict) else None
+            if not isinstance(metrics, dict) or not _finite_metric_fields(
+                metrics, ("total_return", "sharpe", "maximum_drawdown")
+            ):
+                return None
+            yearly_returns.append(_as_finite_decimal(metrics["total_return"]))
+
+        sector_returns: list[Decimal] = []
+        sector_codes: list[str] = []
+        sector_symbols: set[str] = set()
+        for item in sector_only:
+            if not isinstance(item, dict):
+                return None
+            code = item.get("sector_code")
+            name = item.get("sector_name")
+            symbols = item.get("symbols")
+            metrics = item.get("metrics")
+            if (
+                not isinstance(code, str)
+                or not code
+                or not isinstance(name, str)
+                or not name
+                or not isinstance(symbols, list)
+                or len(symbols) != 5
+                or len(set(symbols)) != 5
+                or not all(isinstance(symbol, str) for symbol in symbols)
+                or sector_symbols.intersection(symbols)
+                or not isinstance(metrics, dict)
+                or not _finite_metric_fields(
+                    metrics, ("total_return", "sharpe", "maximum_drawdown")
+                )
+            ):
+                return None
+            sector_codes.append(code)
+            sector_symbols.update(symbols)
+            sector_returns.append(_as_finite_decimal(metrics["total_return"]))
+        if len(set(sector_codes)) != 15 or len(sector_symbols) != 75:
+            return None
+
+        leave_returns: list[Decimal] = []
+        excluded_codes: list[str] = []
+        for item in leave_one:
+            metrics = item.get("metrics") if isinstance(item, dict) else None
+            code = item.get("excluded_sector_code") if isinstance(item, dict) else None
+            if (
+                not isinstance(item, dict)
+                or not isinstance(code, str)
+                or item.get("retained_symbol_count") != 70
+                or not isinstance(metrics, dict)
+                or not _finite_metric_fields(
+                    metrics, ("total_return", "sharpe", "maximum_drawdown")
+                )
+            ):
+                return None
+            excluded_codes.append(code)
+            leave_returns.append(_as_finite_decimal(metrics["total_return"]))
+        if excluded_codes != sector_codes:
+            return None
+
+        base = cost.get("base")
+        doubled = cost.get("double")
+        if (
+            not isinstance(base, dict)
+            or not isinstance(doubled, dict)
+            or not _finite_metric_fields(
+                base, ("total_return", "sharpe", "maximum_drawdown")
+            )
+            or not _finite_metric_fields(
+                doubled, ("total_return", "sharpe", "maximum_drawdown")
+            )
+            or formal.get("full_metrics") != base
+            or formal.get("doubled_cost_metrics") != doubled
+            or formal.get("bootstrap") != bootstrap
+        ):
+            return None
+        if (
+            bootstrap.get("method") != "stationary_bootstrap"
+            or bootstrap.get("replications") != 1000
+            or bootstrap.get("expected_block_length") != 20
+            or bootstrap.get("seed") != 20260825
+        ):
+            return None
+        probability = _as_finite_decimal(bootstrap.get("probability_positive"))
+        p05 = _as_finite_decimal(bootstrap.get("p05_total_return"))
+        p50 = _as_finite_decimal(bootstrap.get("median_total_return"))
+        p95 = _as_finite_decimal(bootstrap.get("p95_total_return"))
+        if not Decimal("0") <= probability <= Decimal("1") or not p05 <= p50 <= p95:
+            return None
+
+        expected_counts = (
+            sum(value > 0 for value in yearly_returns),
+            sum(value > 0 for value in sector_returns),
+            sum(value > 0 for value in leave_returns),
+        )
+        if (
+            formal.get("positive_year_count") != expected_counts[0]
+            or formal.get("positive_sector_only_count") != expected_counts[1]
+            or formal.get("positive_leave_one_sector_out_count") != expected_counts[2]
+        ):
+            return None
+        expected_criteria = {
+            "positive_years_at_least_5_of_7": expected_counts[0] >= 5,
+            "positive_sector_only_at_least_9_of_15": expected_counts[1] >= 9,
+            "positive_leave_one_sector_out_at_least_12_of_15": expected_counts[2]
+            >= 12,
+            "doubled_cost_total_return_above_zero": (
+                _as_finite_decimal(doubled["total_return"]) > 0
+            ),
+            "bootstrap_probability_positive_at_least_0.75": probability
+            >= Decimal("0.75"),
+            "maximum_drawdown_at_least_minus_0.35": (
+                _as_finite_decimal(base["maximum_drawdown"]) >= Decimal("-0.35")
+            ),
+        }
+        passed = all(expected_criteria.values())
+        if gate != {"passed": passed, "criteria": expected_criteria}:
+            return None
+
+        strategy_metrics = audit.get("strategy_metrics")
+        benchmark_metrics = audit.get("equal_weight_metrics")
+        report_audit = report.get("polluted_2026_audit")
+        if (
+            audit.get("classification") != "POLLUTED_AUDIT_ONLY"
+            or audit.get("excluded_from_gate") is not True
+            or not isinstance(strategy_metrics, dict)
+            or not isinstance(benchmark_metrics, dict)
+            or not _finite_metric_fields(
+                strategy_metrics, ("total_return", "sharpe", "maximum_drawdown")
+            )
+            or not _finite_metric_fields(
+                benchmark_metrics, ("total_return", "sharpe", "maximum_drawdown")
+            )
+            or _as_finite_decimal(audit.get("terminal_excess_return"))
+            != _as_finite_decimal(strategy_metrics["total_return"])
+            - _as_finite_decimal(benchmark_metrics["total_return"])
+            or not isinstance(report_audit, dict)
+            or report_audit.get("strategy_metrics") != strategy_metrics
+            or report_audit.get("equal_weight_metrics") != benchmark_metrics
+            or report_audit.get("excluded_from_gate") is not True
+        ):
+            return None
+        return {
+            **report,
+            "yearly": yearly,
+            "sector_only": sector_only,
+            "leave_one_sector_out": leave_one,
+            "cost_stress": cost,
+            "bootstrap": bootstrap,
+            "polluted_audit": audit,
+        }
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
         return None
 
 
@@ -1669,6 +2760,94 @@ def _load_verified_market_dataset(path: Path | None) -> dict[str, object] | None
             "universe": universe,
         }
     except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+
+
+def _load_backtest_preview_bars(
+    manifest_path: Path | None,
+    *,
+    data_version: str,
+    expected_checksum: str,
+    expected_universe: object,
+    expected_bar_count: object,
+) -> list[Bar] | None:
+    if manifest_path is None or not isinstance(expected_universe, dict):
+        return None
+    symbols = expected_universe.get("symbols")
+    if (
+        not isinstance(symbols, list)
+        or not symbols
+        or not all(isinstance(value, str) for value in symbols)
+        or len(set(symbols)) != len(symbols)
+        or not isinstance(expected_bar_count, int)
+        or expected_bar_count <= 0
+        or expected_bar_count > _MAX_BACKTEST_PREVIEW_SOURCE_ROWS
+    ):
+        return None
+    try:
+        parquet = _open_verified_market_parquet(
+            manifest_path,
+            expected_checksum=expected_checksum,
+            expected_bar_count=expected_bar_count,
+        )
+        if parquet is None:
+            return None
+        allowed = set(symbols)
+        observed: set[str] = set()
+        previous_instants: dict[str, datetime] = {}
+        previous_days: dict[str, date] = {}
+        records: list[Bar] = []
+        columns = [
+            "symbol",
+            "exchange",
+            "timestamp",
+            "trading_day",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "data_version",
+        ]
+        for batch in parquet.iter_batches(batch_size=8192, columns=columns):
+            for raw in batch.to_pylist():
+                validated = _validated_historical_bar(raw, data_version, allowed)
+                if validated is None:
+                    return None
+                row, instant = validated
+                symbol = row["symbol"]
+                trading_day = date.fromisoformat(row["trading_day"])
+                previous = previous_instants.get(symbol)
+                previous_day = previous_days.get(symbol)
+                if (
+                    previous is not None
+                    and (
+                        previous_day is None
+                        or instant <= previous
+                        or trading_day <= previous_day
+                    )
+                ):
+                    return None
+                previous_instants[symbol] = instant
+                previous_days[symbol] = trading_day
+                observed.add(symbol)
+                records.append(
+                    Bar(
+                        symbol=symbol,
+                        exchange=row["exchange"],
+                        timestamp=instant,
+                        trading_day=trading_day,
+                        open=Decimal(row["open"]),
+                        high=Decimal(row["high"]),
+                        low=Decimal(row["low"]),
+                        close=Decimal(row["close"]),
+                        volume=Decimal(row["volume"]),
+                    )
+                )
+        if len(records) != expected_bar_count or observed != allowed:
+            return None
+        return records
+    except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
         return None
 
 

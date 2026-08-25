@@ -1,0 +1,153 @@
+{
+  "report": {
+    "artifacts": {
+      "bootstrap.json": "1ec736e5899fce779fe57c94aad80e84e6adcc6489abb7ece77c4c4c1ce2ebbd",
+      "candidate_summaries.json": "e21ef71e12ceadc21c2279cb8d5690aab44415d3242f4bdc822acf40eec5fcb2",
+      "candidate_windows.json": "17017561e0e03b8081c8fb9ca9397ac50879dc5e079c3d84099e566b6d9ac4d7",
+      "polluted_audit_2026.json": "7c144e53e928dba4b95d111e6576330964e7b589427dc9981d3e18a8cff0a54a",
+      "stress_tests.json": "03392cd56e4fb5c0cf3fa8f805f3912afd0a6008bb61ef7180bfff94b69117e9"
+    },
+    "classification": "post_selection_robust_factor_search_current_universe_non_pit",
+    "data": {
+      "bar_count": 28770,
+      "checksum": "39a25d71d2c77798c8d73b8b7b45634d229a22122c18a174d3f7be9ac50d59fd",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "observed_end": "2026-08-21",
+      "observed_start": "2022-09-06",
+      "point_in_time_universe": false,
+      "universe_size": 30
+    },
+    "execution_contract": {
+      "base_slippage_rate": "0.0005",
+      "base_transaction_cost_rate": "0.001",
+      "long_only": true,
+      "timing": "close_decision_next_observed_open"
+    },
+    "parent_factor_search": {
+      "file_sha256": "4ed1efefe7781e8b4999afc3496bbd534e1deebe6e2d554a0e9f2c9fe6eea73a",
+      "passing_factor_ids": [
+        "momentum-120-skip-20",
+        "momentum-252-skip-20",
+        "reversal-5",
+        "low_volatility-60"
+      ],
+      "path": "runtime/research/akshare-factor-search-v3/report.json"
+    },
+    "promotion": "NOT_ELIGIBLE",
+    "promotion_reasons": [
+      "POST_SELECTION_REUSE_NOT_NEW_HELD_OUT_EVIDENCE",
+      "CURRENT_UNIVERSE_SURVIVORSHIP_BIAS",
+      "CONFIRMATORY_PERIOD_PREVIOUSLY_VIEWED_BY_PROJECT",
+      "SHORT_SINGLE_PROVIDER_HISTORY",
+      "NO_PAPER_OR_SHADOW_SESSIONS"
+    ],
+    "research_budget": {
+      "bootstrap_replications_per_eligible_candidate": 1000,
+      "cost_scenarios_per_eligible_candidate": 4,
+      "frozen_candidates_run": 36,
+      "polluted_audit_runs": 1,
+      "prior_factor_trials": 5,
+      "prior_validation_candidates": 13,
+      "universe_subsets_per_eligible_candidate": 6,
+      "validation_windows_per_candidate": 8,
+      "window_eligible_candidates": 1
+    },
+    "robustness_gate": {
+      "candidate_results": [
+        {
+          "candidate_id": "reversal-10-top3-20",
+          "criteria": [
+            [
+              "positive_window_ratio_at_least_0.75",
+              true
+            ],
+            [
+              "median_window_sharpe_above_zero",
+              true
+            ],
+            [
+              "worst_window_sharpe_at_least_minus_1",
+              true
+            ],
+            [
+              "doubled_cost_total_return_above_zero",
+              true
+            ],
+            [
+              "parameter_neighbor_positive_ratio_at_least_0.5",
+              true
+            ],
+            [
+              "universe_subset_positive_ratio_at_least_two_thirds",
+              true
+            ],
+            [
+              "bootstrap_probability_positive_at_least_0.75",
+              true
+            ]
+          ],
+          "passed": true
+        }
+      ],
+      "conclusion": "ROBUST_CANDIDATE_PASSED_PREDECLARED_GATE",
+      "passed": true
+    },
+    "selection": {
+      "audited_candidate_id": "reversal-10-top3-20",
+      "benchmark_excluded_from_selection": true,
+      "best_observed_candidate_id": "low-volatility-60-top3-40",
+      "best_observed_summary": {
+        "candidate_id": "low-volatility-60-top3-40",
+        "full_period_return": "0.143464621507074472705490532",
+        "full_period_sharpe": "0.4590466088506122126570449691",
+        "full_period_transaction_costs": "0.01321386106200",
+        "full_period_turnover": "13.21386106200",
+        "median_window_return": "0.021572989966346931565614519",
+        "median_window_sharpe": "1.055003122378927760646217697",
+        "positive_window_ratio": "0.75",
+        "sharpe_dispersion": "4.301768841660630670306035652",
+        "window_count": 8,
+        "worst_window_sharpe": "-1.504648551291657208053217230"
+      },
+      "candidate_count": 36,
+      "end": "2025-12-31",
+      "polluted_2026_audit_excluded_from_selection": true,
+      "ranking_priority": [
+        "positive_window_ratio_desc",
+        "median_window_sharpe_desc",
+        "worst_window_sharpe_desc",
+        "sharpe_dispersion_asc",
+        "median_window_return_desc",
+        "full_period_turnover_asc",
+        "candidate_id_asc"
+      ],
+      "robust_candidate_id": "reversal-10-top3-20",
+      "start": "2024-01-01",
+      "window_gate": {
+        "median_window_sharpe_strictly_above": "0",
+        "positive_window_ratio_minimum": "0.75",
+        "worst_window_sharpe_minimum": "-1"
+      },
+      "window_gate_eligible_candidate_ids": [
+        "reversal-10-top3-20"
+      ],
+      "window_ids": [
+        "2024Q1",
+        "2024Q2",
+        "2024Q3",
+        "2024Q4",
+        "2025Q1",
+        "2025Q2",
+        "2025Q3",
+        "2025Q4"
+      ]
+    },
+    "source_state": {
+      "dirty_entry_count": 34,
+      "git_head": "df0a1b18e129c37da0eeec3fd52f4e1b0a910758",
+      "source_tree_dirty": true,
+      "source_tree_sha256": "d1ceddbd17bc8314d15ec3a22fd13e2a7916dd0ca92fdba1359f5cef6772ecf7"
+    }
+  },
+  "sha256": "a129448fc3eadda27d278b891a2ee4180318f78eaf9abe591dbcdfd68c0b2340"
+}

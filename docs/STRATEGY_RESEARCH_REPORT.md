@@ -53,6 +53,44 @@ survivorship bias, so the result is diagnostic only and cannot be counted as a
 fresh held-out test or promotion evidence. Its signed envelope is verified by
 the API before the Chinese research page displays it.
 
+A subsequent frozen robustness search evaluates 36 factor/parameter candidates
+over eight 2024-2025 quarterly windows. The ranking prioritizes positive-window
+frequency, median Sharpe and worst-window Sharpe before dispersion and turnover.
+Only `reversal-10-top3-20` met all three window hard gates. It then passed
+doubled-cost return, one-parameter-neighbour consistency, six deterministic 80%
+universe subsets and a 1,000-replication stationary bootstrap: base return was
+`38.8414%`, doubled-cost return `30.9870%`, `8/9` neighbours and `6/6` subsets
+were positive, and bootstrap positive-return probability was `85.3%`. The
+bootstrap 5% total-return quantile remained negative at `-13.7648%`, preserving
+the downside uncertainty hidden by the point estimate.
+
+The candidate was locked before any 2026 access. Its labelled polluted audit
+then returned `-0.4437%` with `-17.8407%` maximum drawdown, while Buy-and-Hold
+returned `-4.6176%`. These observations were previously visible to the project;
+they are neither a clean confirmation nor an input to tuning. The API therefore
+recomputes the complete selection/gate arithmetic but still returns
+`NOT_ELIGIBLE`, and the web application explicitly prevents interpreting a
+research-robust result as PAPER or promotion authority.
+
+The ETF-selected candidate was next transferred without stock-side tuning to a
+pre-frozen 75-stock universe spanning 15 current SW level-1 sectors. The quality-
+passed HFQ dataset retains 149,903 bars and at least 961 observations per stock.
+The formal 2019-2025 run was positive in all seven years, all 15 sector-only
+universes and all 15 leave-one-sector-out universes. Full return was `315.7504%`,
+annualized return `23.5341%`, Sharpe `0.809606`, maximum drawdown `-34.2044%`,
+and doubled-cost return `256.1430%`; a 1,000-replication stationary bootstrap
+estimated `96.9%` positive-return probability. The polluted 2026 audit returned
+`1.9020%` versus `-0.9483%` for the current-universe equal-weight comparison.
+
+Those figures are intentionally not treated as confirmation. The universe picks
+today's high-weight CSI 300 members and projects them into years before they were
+known, while several extreme sector returns visibly reflect current winners.
+HFQ factors may be revised, price-limit execution is absent, and suspended
+positions can retain their last close for up to 40 missing market sessions.
+The API recomputes every transfer gate from six hash-bound artifacts but returns
+`NOT_ELIGIBLE`; the web tab leads with both the passed research gate and these
+promotion blockers.
+
 For visualization, the API selects the best exploratory Sharpe only from the
 verified comparison report and follows its evidence chain through the immutable
 experiment record and deterministic result hash to the equity and drawdown file

@@ -34,6 +34,7 @@ from qtrade.market_data.recording import (
     TickReplay,
 )
 from qtrade.market_data.rqdata import RqDataProvider
+from qtrade.market_data.rqdata_native import NativeRqDataBridgeClient
 from qtrade.market_data.selection import (
     ProviderChoice,
     ProviderSelectionStatus,
@@ -42,14 +43,31 @@ from qtrade.market_data.selection import (
 from qtrade.market_data.xtdata import XtDataProvider
 
 if TYPE_CHECKING:
-    from qtrade.market_data.paper_session import RecordedPaperEvent, RecordedPaperSession
+    from qtrade.market_data.paper_session import (
+        MultiAssetRecordedPaperEvent,
+        MultiAssetRecordedPaperSession,
+        RecordedPaperEvent,
+        RecordedPaperSession,
+    )
 
 
 def __getattr__(name: str) -> Any:
-    if name in {"RecordedPaperEvent", "RecordedPaperSession"}:
-        from qtrade.market_data.paper_session import RecordedPaperEvent, RecordedPaperSession
+    if name in {
+        "MultiAssetRecordedPaperEvent",
+        "MultiAssetRecordedPaperSession",
+        "RecordedPaperEvent",
+        "RecordedPaperSession",
+    }:
+        from qtrade.market_data.paper_session import (
+            MultiAssetRecordedPaperEvent,
+            MultiAssetRecordedPaperSession,
+            RecordedPaperEvent,
+            RecordedPaperSession,
+        )
 
         return {
+            "MultiAssetRecordedPaperEvent": MultiAssetRecordedPaperEvent,
+            "MultiAssetRecordedPaperSession": MultiAssetRecordedPaperSession,
             "RecordedPaperEvent": RecordedPaperEvent,
             "RecordedPaperSession": RecordedPaperSession,
         }[name]
@@ -66,7 +84,10 @@ __all__ = [
     "MarketDataReadinessAttestation",
     "MarketDataReadinessGate",
     "MarketSnapshot",
+    "MultiAssetRecordedPaperEvent",
+    "MultiAssetRecordedPaperSession",
     "NativeAkshareClient",
+    "NativeRqDataBridgeClient",
     "ProviderBridgeClient",
     "ProviderCapabilities",
     "ProviderConnectionStatus",

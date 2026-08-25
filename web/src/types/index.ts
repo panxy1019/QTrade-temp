@@ -181,6 +181,164 @@ export interface RobustnessReport {
   }
 }
 
+export interface FactorSearchReport {
+  classification: string
+  promotion: string
+  promotion_reasons: string[]
+  factor_selection?: {
+    passing_factor_ids: string[]
+    discovery_start: string
+    discovery_end: string
+  }
+  portfolio_selection?: {
+    selected_candidate_id: string
+    validation_start: string
+    validation_end: string
+    benchmark_excluded_from_active_selection: boolean
+  }
+  confirmatory_test?: {
+    start: string
+    end: string
+    period_previously_viewed_by_project: boolean
+  }
+  factor_diagnostics: Array<{
+    factor_id: string
+    periods: number
+    instruments_minimum: number
+    metrics: Record<string, string | string[]>
+  }>
+  validation: {
+    selected_candidate_id?: string
+    candidate_count?: number
+    scores: Array<[string, string]>
+  }
+  test: {
+    selected_candidate_id?: string
+    selected_metrics?: Record<string, string | number>
+    buy_hold_metrics?: Record<string, string | number>
+    terminal_excess_return?: string
+  }
+}
+
+export interface RobustFactorSearchReport {
+  classification: string
+  promotion: string
+  promotion_reasons: string[]
+  selection?: {
+    candidate_count: number
+    window_ids: string[]
+    best_observed_candidate_id: string
+    window_gate_eligible_candidate_ids: string[]
+    robust_candidate_id: string | null
+    audited_candidate_id: string
+  }
+  robustness_gate?: {
+    passed: boolean
+    conclusion: string
+    candidate_results: Array<{
+      candidate_id: string
+      passed: boolean
+      criteria: Array<[string, boolean]>
+    }>
+  }
+  candidate_summaries: Array<{
+    candidate_id: string
+    selection_rank: number
+    positive_window_ratio: string
+    median_window_sharpe: string
+    worst_window_sharpe: string
+    full_period_return: string
+  }>
+  stress_tests: {
+    evaluations: Array<{
+      candidate_id: string
+      cost_stresses: Array<{
+        scenario_id: string
+        metrics: Record<string, string | number>
+      }>
+      parameter_neighbors: { positive_ratio: string }
+      universe_subsets: { positive_ratio: string }
+    }>
+  }
+  bootstrap: {
+    evaluations: Array<{
+      candidate_id: string
+      probability_positive: string
+      p05_total_return: string
+      median_total_return: string
+      p95_total_return: string
+    }>
+  }
+  polluted_audit: {
+    classification?: string
+    audited_candidate_id?: string
+    selected_metrics?: Record<string, string | number>
+    buy_hold_metrics?: Record<string, string | number>
+    terminal_excess_return?: string
+  }
+}
+
+export interface StockSectorTransferReport {
+  classification: string
+  promotion: string
+  promotion_reasons: string[]
+  data?: {
+    bar_count: number
+    symbol_count: number
+    sector_count: number
+    stocks_per_sector: number
+    adjustment: string
+    point_in_time_universe: boolean
+  }
+  locked_strategy?: {
+    candidate_id: string
+    parameter_tuning_on_stock_results: boolean
+  }
+  formal_period?: {
+    start: string
+    end: string
+    full_metrics: Record<string, string | number>
+    positive_year_count: number
+    positive_sector_only_count: number
+    positive_leave_one_sector_out_count: number
+    doubled_cost_metrics: Record<string, string | number>
+  }
+  transfer_gate?: {
+    passed: boolean
+    criteria: Record<string, boolean>
+  }
+  yearly: Array<{
+    year: number
+    metrics: Record<string, string | number>
+  }>
+  sector_only: Array<{
+    sector_code: string
+    sector_name: string
+    symbols: string[]
+    metrics: Record<string, string | number>
+  }>
+  leave_one_sector_out: Array<{
+    excluded_sector_code: string
+    excluded_sector_name: string
+    metrics: Record<string, string | number>
+  }>
+  cost_stress: {
+    base?: Record<string, string | number>
+    double?: Record<string, string | number>
+  }
+  bootstrap: {
+    probability_positive?: string
+    p05_total_return?: string
+    median_total_return?: string
+    p95_total_return?: string
+  }
+  polluted_audit: {
+    strategy_metrics?: Record<string, string | number>
+    equal_weight_metrics?: Record<string, string | number>
+    terminal_excess_return?: string
+  }
+}
+
 export interface BacktestAnalytics {
   classification: string
   promotion: string
@@ -197,6 +355,37 @@ export interface BacktestAnalytics {
   positions?: Array<{ symbol: string; quantity: number }>
   risk_summary?: { maximum_drawdown: string; transaction_costs: string; turnover: string }
   run_metadata?: { engine: string; timing: string; session_count: number }
+}
+
+export interface BacktestPreviewRequest {
+  start: string
+  end: string
+  horizons: number[]
+  top_k: number
+  rebalance_every: number
+  reserve: string
+  trend_window: number | null
+  volatility_window: number | null
+  target_annual_volatility: string | null
+  initial_cash: string
+  transaction_cost_rate: string
+  slippage_rate: string
+}
+
+export interface BacktestPreview {
+  classification: 'AD_HOC_PREVIEW_CURRENT_UNIVERSE_NOT_PIT'
+  promotion: 'NOT_ELIGIBLE'
+  promotion_reasons: string[]
+  data_version: string
+  data_checksum: string
+  parameters: BacktestPreviewRequest
+  session_count: number
+  universe_size: number
+  metrics: Record<string, string>
+  curve: Array<{ session: string; equity: string; drawdown: string }>
+  terminal_positions: Array<{ symbol: string; quantity: number }>
+  execution_timing: 'close decision, next open execution'
+  preview_hash: string
 }
 
 export interface HistoricalDataset {
@@ -246,6 +435,35 @@ export interface HistoricalBarSeries {
   bars: HistoricalBarRow[]
 }
 
+export interface MinuteOverlaySymbolStatus {
+  symbol: string
+  ready: boolean
+  trading_day?: string
+  last_bar_timestamp: string
+  base_target_quantity: number
+  corrected_target_quantity: number
+  multiplier: string
+  reasons: string[]
+  minute_volatility?: string | null
+  intraday_drawdown?: string
+  cooldown_bars_remaining?: number
+  strategy_version?: string | null
+}
+
+export interface MinuteOverlayStatus {
+  classification: 'CAUSAL_MINUTE_RISK_OVERLAY_PAPER_SHADOW_ONLY'
+  readiness: 'UNCONFIGURED' | 'NOT_READY' | 'READY' | 'STATUS_UNAVAILABLE'
+  provider: string | null
+  provider_connected: boolean
+  bar_interval: '1m'
+  symbol_count: number
+  ready_symbol_count: number
+  external_order_transmission: false
+  promotion: 'NOT_ELIGIBLE'
+  reasons: string[]
+  symbols: MinuteOverlaySymbolStatus[]
+}
+
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
@@ -261,6 +479,10 @@ export interface PlatformSnapshot {
   experiments: ResearchReport
   walkForward: WalkForwardReport
   robustness: RobustnessReport
+  factorSearch: FactorSearchReport
+  robustFactorSearch: RobustFactorSearchReport
+  stockSectorTransfer: StockSectorTransferReport
+  minuteOverlay: MinuteOverlayStatus
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]

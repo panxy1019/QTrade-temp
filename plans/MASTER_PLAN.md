@@ -196,6 +196,20 @@ market-data, research-governance, report and Chinese-web foundations are tracked
 in `plans/V2_MASTER_PLAN.md`; their maturity limits are recorded in
 `docs/READINESS_REPORT_V2.md`. Further real-market integration is externally gated:
 
+The historical research surface now also includes a bounded interactive preview.
+It accepts adjustable momentum/risk/cost parameters, rereads the selected signed
+Parquet dataset, returns a deterministic result hash and never persists or promotes
+the result. The control-plane runner accepts an explicit historical manifest path,
+so newly ingested versions can be evaluated without editing source. This usability
+path does not weaken immutable experiment, held-out or PAPER readiness gates.
+
+The factor-research path now predeclares five causal price factors, keeps every
+forward label inside the discovery period, bounds the active validation grid and
+locks one validation winner before confirmatory access. The first active winner
+failed the 2026 confirmation and lagged Buy-and-Hold after costs. The verified
+negative result is visible in the Chinese research page and remains
+`NOT_ELIGIBLE`; no further parameter search may use that viewed window.
+
 The credential-free research path now includes a checksum-bound 30-ETF AKShare
 dataset and a real-data, three-fold held-out walk-forward result. Selection stops
 at each validation boundary, complete fold ranges are disjoint, and only the

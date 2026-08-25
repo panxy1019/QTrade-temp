@@ -1,0 +1,483 @@
+{
+  "evaluations": [
+    {
+      "candidate_id": "reversal-10-top3-20",
+      "cost_stresses": [
+        {
+          "cost_multiplier": "0.5",
+          "metrics": {
+            "annualized_return": "0.2039209121345691",
+            "annualized_volatility": "0.23165657800339254",
+            "benchmark_return": "0",
+            "calmar": "1.294539026254451982221302784",
+            "excess_return": "0.429285823901501056907571500",
+            "exposure": "0.9508370554935129924013154503",
+            "information_ratio": "0.9168963470931353068102070244",
+            "maximum_drawdown": "-0.1575239587211075832456730428",
+            "number_of_periods": 485,
+            "number_of_trades": 136,
+            "profit_loss_ratio": "0",
+            "sharpe": "0.9168963470931353068102070244",
+            "sortino": "1.411854421068714847756169434",
+            "total_return": "0.429285823901501056907571500",
+            "transaction_costs": "0.0230940948017000",
+            "turnover": "46.188189603400",
+            "win_rate": "0.5278350515463917525773195876"
+          },
+          "scenario_id": "half_cost"
+        },
+        {
+          "cost_multiplier": "1",
+          "metrics": {
+            "annualized_return": "0.18590807005210586",
+            "annualized_volatility": "0.23174217274010353",
+            "benchmark_return": "0",
+            "calmar": "1.176264714091908515464309972",
+            "excess_return": "0.388413528414734886533563872",
+            "exposure": "0.9519576589986112904641244711",
+            "information_ratio": "0.8515590110017059387633969302",
+            "maximum_drawdown": "-0.1580495171068948375449220798",
+            "number_of_periods": 485,
+            "number_of_trades": 136,
+            "profit_loss_ratio": "0",
+            "sharpe": "0.8515590110017059387633969302",
+            "sortino": "1.305683085162944182217658036",
+            "total_return": "0.388413528414734886533563872",
+            "transaction_costs": "0.04462765332960",
+            "turnover": "44.62765332960",
+            "win_rate": "0.5257731958762886597938144330"
+          },
+          "scenario_id": "base_cost"
+        },
+        {
+          "cost_multiplier": "2",
+          "metrics": {
+            "annualized_return": "0.15056273730297387",
+            "annualized_volatility": "0.2321493638084225",
+            "benchmark_return": "0",
+            "calmar": "0.9462057775120054264242030239",
+            "excess_return": "0.309869909773761627025024177",
+            "exposure": "0.9542057253596897759594298975",
+            "information_ratio": "0.7200787452743398677706256650",
+            "maximum_drawdown": "-0.1591226146376637772723182473",
+            "number_of_periods": 485,
+            "number_of_trades": 136,
+            "profit_loss_ratio": "0",
+            "sharpe": "0.7200787452743398677706256650",
+            "sortino": "1.094747628326639052215987782",
+            "total_return": "0.309869909773761627025024177",
+            "transaction_costs": "0.0833224522302",
+            "turnover": "41.6612261151",
+            "win_rate": "0.5237113402061855670103092784"
+          },
+          "scenario_id": "double_cost"
+        },
+        {
+          "cost_multiplier": "3",
+          "metrics": {
+            "annualized_return": "0.11614700646375642",
+            "annualized_volatility": "0.2328675848505367",
+            "benchmark_return": "0",
+            "calmar": "0.7141073913223660238407983459",
+            "excess_return": "0.235505706483109423438286090",
+            "exposure": "0.9564049601461764505509642324",
+            "information_ratio": "0.5881216890657842243236473950",
+            "maximum_drawdown": "-0.1626464140760093914254877063",
+            "number_of_periods": 485,
+            "number_of_trades": 136,
+            "profit_loss_ratio": "0",
+            "sharpe": "0.5881216890657842243236473950",
+            "sortino": "0.8866478899363688787286154646",
+            "total_return": "0.235505706483109423438286090",
+            "transaction_costs": "0.11667496696650",
+            "turnover": "38.89165565550",
+            "win_rate": "0.5237113402061855670103092784"
+          },
+          "scenario_id": "triple_cost"
+        }
+      ],
+      "gate": {
+        "criteria": [
+          [
+            "positive_window_ratio_at_least_0.75",
+            true
+          ],
+          [
+            "median_window_sharpe_above_zero",
+            true
+          ],
+          [
+            "worst_window_sharpe_at_least_minus_1",
+            true
+          ],
+          [
+            "doubled_cost_total_return_above_zero",
+            true
+          ],
+          [
+            "parameter_neighbor_positive_ratio_at_least_0.5",
+            true
+          ],
+          [
+            "universe_subset_positive_ratio_at_least_two_thirds",
+            true
+          ],
+          [
+            "bootstrap_probability_positive_at_least_0.75",
+            true
+          ]
+        ],
+        "passed": true
+      },
+      "parameter_neighbors": {
+        "definition": "exactly_one_frozen_parameter_differs",
+        "positive_ratio": "0.8888888888888888888888888889",
+        "results": [
+          {
+            "candidate_id": "composite-top3-20",
+            "full_period_return": "0.151728914012605640333106834",
+            "full_period_sharpe": "0.4443398066175592971405554343"
+          },
+          {
+            "candidate_id": "low-volatility-60-top3-20",
+            "full_period_return": "0.156811046684394455994596123",
+            "full_period_sharpe": "0.4931473668595358167553630703"
+          },
+          {
+            "candidate_id": "momentum-252-skip20-top3-20",
+            "full_period_return": "-0.1247278334506325161132277970",
+            "full_period_sharpe": "-0.1699745983060484649942832426"
+          },
+          {
+            "candidate_id": "reversal-10-top3-10",
+            "full_period_return": "0.184868605992340719054266708",
+            "full_period_sharpe": "0.5008787859743906361430769723"
+          },
+          {
+            "candidate_id": "reversal-10-top3-5",
+            "full_period_return": "0.189491790887889600751718688",
+            "full_period_sharpe": "0.5000150484167187739682358945"
+          },
+          {
+            "candidate_id": "reversal-10-top5-20",
+            "full_period_return": "0.362890477103023380618444827",
+            "full_period_sharpe": "0.8284322493825746119774435163"
+          },
+          {
+            "candidate_id": "reversal-20-top3-20",
+            "full_period_return": "0.098873425746331218695197946",
+            "full_period_sharpe": "0.3281012568605167611857951960"
+          },
+          {
+            "candidate_id": "reversal-40-top3-20",
+            "full_period_return": "0.189908531883750303699489656",
+            "full_period_sharpe": "0.5021911231179317087496120754"
+          },
+          {
+            "candidate_id": "reversal-5-top3-20",
+            "full_period_return": "0.144625122527693392793530139",
+            "full_period_sharpe": "0.4349279701450259832391467407"
+          }
+        ]
+      },
+      "universe_subsets": {
+        "method": "sha256_ranked_deterministic_80_percent_subsets",
+        "positive_ratio": "1",
+        "results": [
+          {
+            "metrics": {
+              "annualized_return": "0.07559113031755516",
+              "annualized_volatility": "0.22380975135063427",
+              "benchmark_return": "0",
+              "calmar": "0.4190562561816928188166135773",
+              "excess_return": "0.150557493043948616155586533",
+              "exposure": "0.9517422203433807256707714623",
+              "information_ratio": "0.4373079387133883641380143965",
+              "maximum_drawdown": "-0.1803842066607416189529724930",
+              "number_of_periods": 485,
+              "number_of_trades": 136,
+              "profit_loss_ratio": "0",
+              "sharpe": "0.4373079387133883641380143965",
+              "sortino": "0.6600994000035315662699067475",
+              "total_return": "0.150557493043948616155586533",
+              "transaction_costs": "0.04051539780000",
+              "turnover": "40.51539780000",
+              "win_rate": "0.5216494845360824742268041237"
+            },
+            "scenario_id": "universe_80pct_1",
+            "symbols": [
+              "159915",
+              "510050",
+              "510180",
+              "510230",
+              "510300",
+              "510330",
+              "510500",
+              "510510",
+              "510660",
+              "510760",
+              "510880",
+              "510900",
+              "512000",
+              "512010",
+              "512070",
+              "512100",
+              "512170",
+              "512500",
+              "512580",
+              "512660",
+              "512690",
+              "512800",
+              "512880",
+              "515790"
+            ]
+          },
+          {
+            "metrics": {
+              "annualized_return": "0.1194071373414729",
+              "annualized_volatility": "0.23107711572545564",
+              "benchmark_return": "0",
+              "calmar": "0.7172864172422666118712319996",
+              "excess_return": "0.242460521623656242216992848",
+              "exposure": "0.9516915518557110258829604546",
+              "information_ratio": "0.6038861284569209815223899473",
+              "maximum_drawdown": "-0.1664706517105880442652797689",
+              "number_of_periods": 485,
+              "number_of_trades": 134,
+              "profit_loss_ratio": "0",
+              "sharpe": "0.6038861284569209815223899473",
+              "sortino": "0.8856178510235945459443924298",
+              "total_return": "0.242460521623656242216992848",
+              "transaction_costs": "0.03518452244855",
+              "turnover": "35.18452244855",
+              "win_rate": "0.5072164948453608247422680412"
+            },
+            "scenario_id": "universe_80pct_2",
+            "symbols": [
+              "159915",
+              "510050",
+              "510180",
+              "510230",
+              "510300",
+              "510330",
+              "510500",
+              "510510",
+              "510660",
+              "510760",
+              "510880",
+              "510900",
+              "512000",
+              "512010",
+              "512100",
+              "512170",
+              "512290",
+              "512400",
+              "512500",
+              "512580",
+              "512660",
+              "512710",
+              "512980",
+              "515790"
+            ]
+          },
+          {
+            "metrics": {
+              "annualized_return": "0.1902934097130633",
+              "annualized_volatility": "0.23391977278000958",
+              "benchmark_return": "0",
+              "calmar": "1.346682912788047438538866602",
+              "excess_return": "0.398311677368159504539383446",
+              "exposure": "0.9519357688118611859943601897",
+              "information_ratio": "0.8615066186302519319957143906",
+              "maximum_drawdown": "-0.1413052827106103755981223147",
+              "number_of_periods": 485,
+              "number_of_trades": 134,
+              "profit_loss_ratio": "0",
+              "sharpe": "0.8615066186302519319957143906",
+              "sortino": "1.324460567755809519626930260",
+              "total_return": "0.398311677368159504539383446",
+              "transaction_costs": "0.04537704531360",
+              "turnover": "45.37704531360",
+              "win_rate": "0.5113402061855670103092783505"
+            },
+            "scenario_id": "universe_80pct_3",
+            "symbols": [
+              "510050",
+              "510180",
+              "510210",
+              "510230",
+              "510300",
+              "510500",
+              "510510",
+              "510660",
+              "510760",
+              "510880",
+              "510900",
+              "512000",
+              "512010",
+              "512070",
+              "512100",
+              "512290",
+              "512400",
+              "512500",
+              "512690",
+              "512710",
+              "512760",
+              "512880",
+              "512980",
+              "515790"
+            ]
+          },
+          {
+            "metrics": {
+              "annualized_return": "0.15373284513771024",
+              "annualized_volatility": "0.243810026433145",
+              "benchmark_return": "0",
+              "calmar": "0.8976363190605452497569496345",
+              "excess_return": "0.316824729751269127299399985",
+              "exposure": "0.9518212581996577178625795635",
+              "information_ratio": "0.7082228402794176636820162435",
+              "maximum_drawdown": "-0.1712640652715624069949677803",
+              "number_of_periods": 485,
+              "number_of_trades": 134,
+              "profit_loss_ratio": "0",
+              "sharpe": "0.7082228402794176636820162435",
+              "sortino": "1.082983614108835467482674533",
+              "total_return": "0.316824729751269127299399985",
+              "transaction_costs": "0.04014392540540",
+              "turnover": "40.14392540540",
+              "win_rate": "0.5010309278350515463917525773"
+            },
+            "scenario_id": "universe_80pct_4",
+            "symbols": [
+              "159915",
+              "510050",
+              "510180",
+              "510230",
+              "510500",
+              "510510",
+              "510660",
+              "510760",
+              "510880",
+              "510900",
+              "512010",
+              "512070",
+              "512100",
+              "512170",
+              "512290",
+              "512400",
+              "512500",
+              "512660",
+              "512690",
+              "512710",
+              "512760",
+              "512880",
+              "512980",
+              "515790"
+            ]
+          },
+          {
+            "metrics": {
+              "annualized_return": "0.18595019196121698",
+              "annualized_volatility": "0.23289631249797646",
+              "benchmark_return": "0",
+              "calmar": "1.176467670232267227838588944",
+              "excess_return": "0.388508441084128206157516980",
+              "exposure": "0.9519180664234380489370290866",
+              "information_ratio": "0.8488115798841421509598128867",
+              "maximum_drawdown": "-0.1580580551988354033404146411",
+              "number_of_periods": 485,
+              "number_of_trades": 134,
+              "profit_loss_ratio": "0",
+              "sharpe": "0.8488115798841421509598128867",
+              "sortino": "1.286127795707525642457564311",
+              "total_return": "0.388508441084128206157516980",
+              "transaction_costs": "0.04726627301110",
+              "turnover": "47.26627301110",
+              "win_rate": "0.5319587628865979381443298969"
+            },
+            "scenario_id": "universe_80pct_5",
+            "symbols": [
+              "159915",
+              "510050",
+              "510210",
+              "510230",
+              "510300",
+              "510330",
+              "510510",
+              "510660",
+              "510760",
+              "510880",
+              "510900",
+              "512000",
+              "512010",
+              "512070",
+              "512100",
+              "512400",
+              "512580",
+              "512690",
+              "512710",
+              "512760",
+              "512800",
+              "512880",
+              "512980",
+              "515790"
+            ]
+          },
+          {
+            "metrics": {
+              "annualized_return": "0.17199695503360823",
+              "annualized_volatility": "0.23271863946569832",
+              "benchmark_return": "0",
+              "calmar": "1.088185029895441979817409148",
+              "excess_return": "0.357238369140695061088628002",
+              "exposure": "0.9519185238250177723640214365",
+              "information_ratio": "0.7982733339723340744884860513",
+              "maximum_drawdown": "-0.1580585565031477410977499829",
+              "number_of_periods": 485,
+              "number_of_trades": 136,
+              "profit_loss_ratio": "0",
+              "sharpe": "0.7982733339723340744884860513",
+              "sortino": "1.215879010083453607051486465",
+              "total_return": "0.357238369140695061088628002",
+              "transaction_costs": "0.04653602147495",
+              "turnover": "46.53602147495",
+              "win_rate": "0.5298969072164948453608247423"
+            },
+            "scenario_id": "universe_80pct_6",
+            "symbols": [
+              "159915",
+              "510050",
+              "510210",
+              "510230",
+              "510300",
+              "510330",
+              "510500",
+              "510760",
+              "510880",
+              "510900",
+              "512010",
+              "512070",
+              "512170",
+              "512290",
+              "512400",
+              "512500",
+              "512580",
+              "512660",
+              "512690",
+              "512760",
+              "512800",
+              "512880",
+              "512980",
+              "515790"
+            ]
+          }
+        ],
+        "seed": 20260825
+      }
+    }
+  ],
+  "window_eligible_candidate_ids": [
+    "reversal-10-top3-20"
+  ]
+}

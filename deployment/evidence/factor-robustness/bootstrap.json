@@ -1,0 +1,16 @@
+{
+  "evaluations": [
+    {
+      "candidate_id": "reversal-10-top3-20",
+      "expected_block_length": 20,
+      "median_total_return": "0.3362868438600104026984364880",
+      "method": "stationary_bootstrap",
+      "observed_total_return": "0.388413528414734886533563872",
+      "p05_total_return": "-0.1376478735217809560561881885",
+      "p95_total_return": "1.380282657396732095110474189",
+      "probability_positive": "0.853",
+      "replications": 1000,
+      "seed": 20260825
+    }
+  ]
+}

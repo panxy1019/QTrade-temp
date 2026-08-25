@@ -1,0 +1,43 @@
+{
+  "buy_hold_metrics": {
+    "annualized_return": "-0.07444432255586575",
+    "annualized_volatility": "0.1924123004606291",
+    "benchmark_return": "0",
+    "calmar": "-0.4993152181866398696848281679",
+    "excess_return": "-0.0461760470254039559923361949",
+    "exposure": "0.9534305491469810715784714429",
+    "information_ratio": "-0.3055657381493316645840088692",
+    "maximum_drawdown": "-0.1490928372386180352445076761",
+    "number_of_periods": 154,
+    "number_of_trades": 0,
+    "profit_loss_ratio": "0",
+    "sharpe": "-0.3055657381493316645840088692",
+    "sortino": "-0.4135911793619443878531279944",
+    "total_return": "-0.0461760470254039559923361949",
+    "transaction_costs": "0",
+    "turnover": "0",
+    "win_rate": "0.4870129870129870129870129870"
+  },
+  "selected_candidate_id": "reversal-20-top3-20",
+  "selected_metrics": {
+    "annualized_return": "-0.19461956418736848",
+    "annualized_volatility": "0.3050746038284137",
+    "benchmark_return": "0",
+    "calmar": "-0.8048065622367018185153331993",
+    "excess_return": "-0.1238948911457426606247944646",
+    "exposure": "0.9523938677256113076329197351",
+    "information_ratio": "-0.5513479826085596438183595827",
+    "maximum_drawdown": "-0.2418215423672562962595324141",
+    "number_of_periods": 154,
+    "number_of_trades": 38,
+    "profit_loss_ratio": "0",
+    "sharpe": "-0.5513479826085596438183595827",
+    "sortino": "-0.6816755870988772412496123539",
+    "total_return": "-0.1238948911457426606247944646",
+    "transaction_costs": "0.01115775122080",
+    "turnover": "11.15775122080",
+    "win_rate": "0.4935064935064935064935064935"
+  },
+  "terminal_excess_return": "-0.0777188441203387046324582697",
+  "walk_forward_result_hash": "1cf5d2e5bd3786ce40fce181f7936d3d830af37d3c82d74ecd3fd9956d2ca59a"
+}

@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Protocol
 
 from qtrade.data import Bar, BarQualityGate
+from qtrade.research.factors import PriceFactorSpec
 from qtrade.research.metrics import PerformanceMetrics, evaluate_returns
 
 
@@ -157,6 +158,89 @@ class MomentumAllocation:
             return {}
         base = (Decimal("1") - self._reserve) / len(selected)
         return {symbol: base * scale for symbol, _, scale in selected}
+
+
+def _percentile_ranks(values: dict[str, Decimal]) -> dict[str, Decimal]:
+    if len(values) == 1:
+        return {next(iter(values)): Decimal("0.5")}
+    ordered = sorted((value, symbol) for symbol, value in values.items())
+    ranks: dict[str, Decimal] = {}
+    position = 0
+    while position < len(ordered):
+        end = position + 1
+        while end < len(ordered) and ordered[end][0] == ordered[position][0]:
+            end += 1
+        average = Decimal(position + end - 1) / 2
+        for _, symbol in ordered[position:end]:
+            ranks[symbol] = average / Decimal(len(ordered) - 1)
+        position = end
+    return ranks
+
+
+class RankedFactorAllocation:
+    """Long-only cross-sectional price-factor model for bounded research."""
+
+    def __init__(
+        self,
+        factor_weights: tuple[tuple[PriceFactorSpec, Decimal], ...],
+        *,
+        top_k: int,
+        rebalance_every: int = 20,
+        reserve: Decimal = Decimal("0.05"),
+        trend_window: int | None = None,
+    ) -> None:
+        factor_ids = [factor.factor_id for factor, _ in factor_weights]
+        if not factor_weights or len(factor_ids) != len(set(factor_ids)):
+            raise ValueError("ranked factors must be nonempty and unique")
+        if any(not weight.is_finite() or weight <= 0 for _, weight in factor_weights):
+            raise ValueError("ranked factor weights must be finite and positive")
+        if top_k <= 0 or rebalance_every <= 0:
+            raise ValueError("top_k and rebalance interval must be positive")
+        if not Decimal("0") <= reserve < Decimal("1"):
+            raise ValueError("reserve must be in [0, 1)")
+        if trend_window is not None and trend_window <= 1:
+            raise ValueError("trend window must exceed one")
+        self._factor_weights = factor_weights
+        self._top_k = top_k
+        self._rebalance_every = rebalance_every
+        self._reserve = reserve
+        self._trend_window = trend_window
+
+    def weights(
+        self,
+        history: dict[str, tuple[Decimal, ...]],
+        *,
+        session_index: int,
+    ) -> dict[str, Decimal] | None:
+        if session_index % self._rebalance_every:
+            return None
+        required = max(
+            *(factor.required_closes for factor, _ in self._factor_weights),
+            self._trend_window or 1,
+        )
+        eligible = {
+            symbol: closes
+            for symbol, closes in history.items()
+            if len(closes) >= required
+            and (
+                self._trend_window is None
+                or closes[-1]
+                >= sum(closes[-self._trend_window :], start=Decimal("0"))
+                / self._trend_window
+            )
+        }
+        if not eligible:
+            return {}
+        scores = {symbol: Decimal("0") for symbol in eligible}
+        for factor, weight in self._factor_weights:
+            ranks = _percentile_ranks(
+                {symbol: factor.value(closes) for symbol, closes in eligible.items()}
+            )
+            for symbol, rank in ranks.items():
+                scores[symbol] += rank * weight
+        selected = sorted(scores, key=lambda symbol: (-scores[symbol], symbol))[: self._top_k]
+        allocation = (Decimal("1") - self._reserve) / len(selected)
+        return {symbol: allocation for symbol in selected}
 
 
 class DailyMultiAssetBacktester:

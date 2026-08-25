@@ -358,6 +358,15 @@ def test_provider_selection_reports_minimum_actions_without_secret_values(tmp_pa
     assert rq.missing_configuration == (
         "QTRADE_RQDATA_USERNAME", "QTRADE_RQDATA_TOKEN"
     )
+    rq_configured = inspect_provider_selection(
+        ProviderChoice.RQDATA,
+        environment={
+            "QTRADE_RQDATA_USERNAME": "configured",
+            "QTRADE_RQDATA_TOKEN": "configured",
+        },
+    )
+    assert rq_configured.ready_for_authorized_bridge is False
+    assert rq_configured.operational_probe_required is True
     xt = inspect_provider_selection(
         ProviderChoice.XTDATA,
         environment={
@@ -365,7 +374,8 @@ def test_provider_selection_reports_minimum_actions_without_secret_values(tmp_pa
             "QTRADE_XTDATA_ENTITLEMENT_CONFIRMED": "true",
         },
     )
-    assert xt.ready_for_authorized_bridge is True
+    assert xt.ready_for_authorized_bridge is False
+    assert xt.operational_probe_required is True
 
 
 @pytest.mark.parametrize("version", ("../escaped", "C:/absolute", "a/b", ".."))

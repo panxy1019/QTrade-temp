@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from threading import Barrier, Thread
@@ -15,6 +16,7 @@ from qtrade.instruments import (
 )
 from qtrade.market_data import (
     CanonicalTick,
+    CanonicalTickStore,
     MarketDataReadinessAttestation,
     MarketDataReadinessGate,
     RecordedPaperSession,
@@ -227,6 +229,19 @@ def test_recorder_owns_ingest_ordinal_across_session_restart(tmp_path):
     )
     assert "ingest-00000000000000000001" in str(second.canonical_path)
     assert bundle.ledger.account.position_quantity("510300") == 100
+
+
+def test_recorder_preserves_provider_global_ingest_order(tmp_path):
+    _, session, _ = build_session(tmp_path, "global-order")
+    observed_at = datetime(2026, 8, 12, 1, 30, 59, tzinfo=UTC)
+    result = session.on_tick(
+        replace(tick("global-order-1", 1, observed_at), ingest_ordinal=42),
+        watermark=datetime(2026, 8, 12, 1, 31, tzinfo=UTC),
+    )
+    restored = CanonicalTickStore(
+        tmp_path / "global-order" / "canonical"
+    ).read(result.canonical_path, result.canonical_checksum)
+    assert restored[0].ingest_ordinal == 42
 
 
 def test_restart_replays_raw_event_crash_before_session_state(tmp_path, monkeypatch):

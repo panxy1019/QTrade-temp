@@ -1,0 +1,40 @@
+{
+  "base": {
+    "annualized_return": "0.2353409277665799",
+    "annualized_volatility": "0.3266257592126749",
+    "benchmark_return": "0",
+    "calmar": "0.6880430201626141618139843032",
+    "excess_return": "3.157503625970801606071429969",
+    "exposure": "0.8849543698872055362963158582",
+    "information_ratio": "0.8096055662879015526459968091",
+    "maximum_drawdown": "-0.3420439142176876027111159153",
+    "number_of_periods": 1699,
+    "number_of_trades": 477,
+    "profit_loss_ratio": "0",
+    "sharpe": "0.8096055662879015526459968091",
+    "sortino": "1.253558595558271345429874306",
+    "total_return": "3.157503625970801606071429969",
+    "transaction_costs": "0.1640230382655",
+    "turnover": "164.0230382655",
+    "win_rate": "0.5079458505002942907592701589"
+  },
+  "double": {
+    "annualized_return": "0.20730872608394413",
+    "annualized_volatility": "0.32456932441785086",
+    "benchmark_return": "0",
+    "calmar": "0.5358782416468884788469919439",
+    "excess_return": "2.561430227212524739386974917",
+    "exposure": "0.8737326638580423898735369953",
+    "information_ratio": "0.7419219980888375792582938648",
+    "maximum_drawdown": "-0.3868578904171073028100821043",
+    "number_of_periods": 1699,
+    "number_of_trades": 475,
+    "profit_loss_ratio": "0",
+    "sharpe": "0.7419219980888375792582938648",
+    "sortino": "1.143581828431868983568288715",
+    "total_return": "2.561430227212524739386974917",
+    "transaction_costs": "0.281633777242",
+    "turnover": "140.816888621",
+    "win_rate": "0.5026486168334314302530900530"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "classification": "POLLUTED_AUDIT_ONLY",
+  "equal_weight_metrics": {
+    "annualized_return": "-0.015471281222158573",
+    "annualized_volatility": "0.03194185240136316",
+    "benchmark_return": "0",
+    "calmar": "-0.4558733582819609419150461360",
+    "excess_return": "-0.0094833200172801056006942224",
+    "exposure": "0.2058622837191677922209346080",
+    "information_ratio": "-0.4721569059214962308236091279",
+    "maximum_drawdown": "-0.0339376735689596376765908200",
+    "number_of_periods": 154,
+    "number_of_trades": 0,
+    "profit_loss_ratio": "0",
+    "sharpe": "-0.4721569059214962308236091279",
+    "sortino": "-0.6495095693302870975645323566",
+    "total_return": "-0.0094833200172801056006942224",
+    "transaction_costs": "0",
+    "turnover": "0",
+    "win_rate": "0.4935064935064935064935064935"
+  },
+  "excluded_from_gate": true,
+  "strategy_metrics": {
+    "annualized_return": "0.031311341819952654",
+    "annualized_volatility": "0.39203904606086787",
+    "benchmark_return": "0",
+    "calmar": "0.1049163789405093983724428407",
+    "excess_return": "0.019019868558915025635576916",
+    "exposure": "0.9010768407308781279787751110",
+    "information_ratio": "0.2739850648395430813577816962",
+    "maximum_drawdown": "-0.2984409311124537050803879959",
+    "number_of_periods": 154,
+    "number_of_trades": 41,
+    "profit_loss_ratio": "0",
+    "sharpe": "0.2739850648395430813577816962",
+    "sortino": "0.4022480719177566429197020359",
+    "total_return": "0.019019868558915025635576916",
+    "transaction_costs": "0.0299615184345",
+    "turnover": "29.9615184345",
+    "win_rate": "0.4805194805194805194805194805"
+  },
+  "terminal_excess_return": "0.0285031885761951312362711384"
+}

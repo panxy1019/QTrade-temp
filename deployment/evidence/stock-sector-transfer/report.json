@@ -1,0 +1,175 @@
+{
+  "report": {
+    "artifacts": {
+      "bootstrap.json": "bc5414eaca5c26c98b948502a69c370166807e3a0a0f2f3b8129997c23771ab8",
+      "cost_stress.json": "85685654764e440e62a493524c66fe6d26a73ad67e7d881961ffdd6598667b41",
+      "leave_one_sector_out.json": "9a89f5f098836d8d6fab0fd15a884e3d3585f57a7a2b346c8bce80f1a7596345",
+      "polluted_audit_2026.json": "6ada6b046bdced87c66a6d16ae17b7e2679cc49659d7b71774401ec6e21555e8",
+      "sector_only.json": "fc48be2e4987b8cbef436ea288196ce586904c60366a68cce956fe2cfd77670b",
+      "yearly.json": "08c73db18671ed0244c84508a84fcc2dd8d88d767c155e86abad1993fb353c2a"
+    },
+    "classification": "locked_etf_factor_stock_sector_transfer_non_pit",
+    "data": {
+      "adjustment": "hfq",
+      "bar_count": 149903,
+      "checksum": "df745abfe0c221f150051ed4380a2facb791fbea66c443097d06687239d792e3",
+      "data_version": "akshare-csi300-sw15x5-hfq-20180101-20260821-v1",
+      "observed_end": "2026-08-21",
+      "observed_start": "2018-01-02",
+      "point_in_time_universe": false,
+      "sector_count": 15,
+      "stocks_per_sector": 5,
+      "symbol_count": 75
+    },
+    "execution_contract": {
+      "base_slippage_rate": "0.0005",
+      "base_transaction_cost_rate": "0.001",
+      "limit_up_down_execution_model": false,
+      "long_only": true,
+      "lot_size": 100,
+      "maximum_stale_sessions": 40,
+      "stale_policy_revision": {
+        "made_before_strategy_outcomes": true,
+        "observed_maximum_missing_market_sessions": 39,
+        "reason": "Initial 20-session policy rejected a legal historical suspension before any result artifact was produced"
+      },
+      "timing": "close_decision_next_observed_open"
+    },
+    "formal_period": {
+      "bootstrap": {
+        "expected_block_length": 20,
+        "median_total_return": "2.842963135254476883164651104",
+        "method": "stationary_bootstrap",
+        "observed_total_return": "3.157503625970801606071429969",
+        "p05_total_return": "0.1475340484289006647011984867",
+        "p95_total_return": "12.33907351748773048055940926",
+        "probability_positive": "0.969",
+        "replications": 1000,
+        "seed": 20260825
+      },
+      "doubled_cost_metrics": {
+        "annualized_return": "0.20730872608394413",
+        "annualized_volatility": "0.32456932441785086",
+        "benchmark_return": "0",
+        "calmar": "0.5358782416468884788469919439",
+        "excess_return": "2.561430227212524739386974917",
+        "exposure": "0.8737326638580423898735369953",
+        "information_ratio": "0.7419219980888375792582938648",
+        "maximum_drawdown": "-0.3868578904171073028100821043",
+        "number_of_periods": 1699,
+        "number_of_trades": 475,
+        "profit_loss_ratio": "0",
+        "sharpe": "0.7419219980888375792582938648",
+        "sortino": "1.143581828431868983568288715",
+        "total_return": "2.561430227212524739386974917",
+        "transaction_costs": "0.281633777242",
+        "turnover": "140.816888621",
+        "win_rate": "0.5026486168334314302530900530"
+      },
+      "end": "2025-12-31",
+      "full_metrics": {
+        "annualized_return": "0.2353409277665799",
+        "annualized_volatility": "0.3266257592126749",
+        "benchmark_return": "0",
+        "calmar": "0.6880430201626141618139843032",
+        "excess_return": "3.157503625970801606071429969",
+        "exposure": "0.8849543698872055362963158582",
+        "information_ratio": "0.8096055662879015526459968091",
+        "maximum_drawdown": "-0.3420439142176876027111159153",
+        "number_of_periods": 1699,
+        "number_of_trades": 477,
+        "profit_loss_ratio": "0",
+        "sharpe": "0.8096055662879015526459968091",
+        "sortino": "1.253558595558271345429874306",
+        "total_return": "3.157503625970801606071429969",
+        "transaction_costs": "0.1640230382655",
+        "turnover": "164.0230382655",
+        "win_rate": "0.5079458505002942907592701589"
+      },
+      "positive_leave_one_sector_out_count": 15,
+      "positive_sector_only_count": 15,
+      "positive_year_count": 7,
+      "start": "2019-01-01"
+    },
+    "locked_strategy": {
+      "candidate_id": "reversal-10-top3-20",
+      "chosen_before_stock_history_outcomes": true,
+      "factor": "reversal",
+      "lookback_sessions": 10,
+      "parameter_tuning_on_stock_results": false,
+      "rebalance_every_sessions": 20,
+      "reserve": "0.05",
+      "top_k": 3
+    },
+    "polluted_2026_audit": {
+      "end": "2026-08-21",
+      "equal_weight_metrics": {
+        "annualized_return": "-0.015471281222158573",
+        "annualized_volatility": "0.03194185240136316",
+        "benchmark_return": "0",
+        "calmar": "-0.4558733582819609419150461360",
+        "excess_return": "-0.0094833200172801056006942224",
+        "exposure": "0.2058622837191677922209346080",
+        "information_ratio": "-0.4721569059214962308236091279",
+        "maximum_drawdown": "-0.0339376735689596376765908200",
+        "number_of_periods": 154,
+        "number_of_trades": 0,
+        "profit_loss_ratio": "0",
+        "sharpe": "-0.4721569059214962308236091279",
+        "sortino": "-0.6495095693302870975645323566",
+        "total_return": "-0.0094833200172801056006942224",
+        "transaction_costs": "0",
+        "turnover": "0",
+        "win_rate": "0.4935064935064935064935064935"
+      },
+      "excluded_from_gate": true,
+      "start": "2026-01-01",
+      "strategy_metrics": {
+        "annualized_return": "0.031311341819952654",
+        "annualized_volatility": "0.39203904606086787",
+        "benchmark_return": "0",
+        "calmar": "0.1049163789405093983724428407",
+        "excess_return": "0.019019868558915025635576916",
+        "exposure": "0.9010768407308781279787751110",
+        "information_ratio": "0.2739850648395430813577816962",
+        "maximum_drawdown": "-0.2984409311124537050803879959",
+        "number_of_periods": 154,
+        "number_of_trades": 41,
+        "profit_loss_ratio": "0",
+        "sharpe": "0.2739850648395430813577816962",
+        "sortino": "0.4022480719177566429197020359",
+        "total_return": "0.019019868558915025635576916",
+        "transaction_costs": "0.0299615184345",
+        "turnover": "29.9615184345",
+        "win_rate": "0.4805194805194805194805194805"
+      }
+    },
+    "promotion": "NOT_ELIGIBLE",
+    "promotion_reasons": [
+      "CURRENT_2026_CONSTITUENTS_PROJECTED_BACKWARD",
+      "HFQ_SERIES_NOT_POINT_IN_TIME",
+      "SINGLE_PUBLIC_DATA_SOURCE",
+      "NO_LIMIT_UP_DOWN_EXECUTION_MODEL",
+      "LAST_CLOSE_VALUATION_ALLOWED_FOR_UP_TO_40_MISSING_SESSIONS",
+      "NO_PAPER_OR_SHADOW_SESSIONS"
+    ],
+    "source_state": {
+      "dirty_entry_count": 43,
+      "git_head": "df0a1b18e129c37da0eeec3fd52f4e1b0a910758",
+      "source_tree_dirty": true,
+      "source_tree_sha256": "a59fdaaffd76fe32a831d6929ef65fe35590d66f05e71bdb8b48175e1aa20fa0"
+    },
+    "transfer_gate": {
+      "criteria": {
+        "bootstrap_probability_positive_at_least_0.75": true,
+        "doubled_cost_total_return_above_zero": true,
+        "maximum_drawdown_at_least_minus_0.35": true,
+        "positive_leave_one_sector_out_at_least_12_of_15": true,
+        "positive_sector_only_at_least_9_of_15": true,
+        "positive_years_at_least_5_of_7": true
+      },
+      "passed": true
+    }
+  },
+  "sha256": "92c568b79248a54a31a2feddd5fd579102d55661ab747efad471dc92c8cd2d30"
+}

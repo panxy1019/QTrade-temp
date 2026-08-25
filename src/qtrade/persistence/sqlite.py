@@ -30,7 +30,10 @@ def _process_is_alive(process_id: int) -> bool:
         except OSError:
             return False
         return True
-    kernel32 = ctypes.windll.kernel32
+    windll = getattr(ctypes, "windll", None)
+    if windll is None:
+        return True
+    kernel32 = windll.kernel32
     handle = kernel32.OpenProcess(0x1000, False, process_id)
     if not handle:
         return False

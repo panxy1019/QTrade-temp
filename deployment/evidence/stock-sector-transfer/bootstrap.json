@@ -1,0 +1,11 @@
+{
+  "expected_block_length": 20,
+  "median_total_return": "2.842963135254476883164651104",
+  "method": "stationary_bootstrap",
+  "observed_total_return": "3.157503625970801606071429969",
+  "p05_total_return": "0.1475340484289006647011984867",
+  "p95_total_return": "12.33907351748773048055940926",
+  "probability_positive": "0.969",
+  "replications": 1000,
+  "seed": 20260825
+}

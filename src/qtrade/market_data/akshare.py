@@ -13,7 +13,7 @@ from threading import Lock, Thread
 from typing import Protocol, cast
 from uuid import uuid4
 
-from qtrade.data import Bar, BarQualityGate
+from qtrade.data import Bar, BarQualityGate, QualityIssue
 from qtrade.market_data.models import (
     CanonicalTick,
     MarketSnapshot,
@@ -44,7 +44,7 @@ class AkshareClient(Protocol):
     ) -> Iterable[Mapping[str, object]]: ...
 
     def stock_daily_tx_rows(
-        self, symbol: str, start_date: str, end_date: str
+        self, symbol: str, start_date: str, end_date: str, adjust: str = ""
     ) -> Iterable[Mapping[str, object]]: ...
 
     def index_daily_sina_rows(self, symbol: str) -> Iterable[Mapping[str, object]]: ...
@@ -100,14 +100,14 @@ class NativeAkshareClient:
         return cast(list[dict[str, object]], frame.to_dict(orient="records"))
 
     def stock_daily_tx_rows(
-        self, symbol: str, start_date: str, end_date: str
+        self, symbol: str, start_date: str, end_date: str, adjust: str = ""
     ) -> Iterable[Mapping[str, object]]:
         prefix = "sh" if symbol.startswith("6") else "sz"
         frame = self._module.stock_zh_a_hist_tx(
             symbol=f"{prefix}{symbol}",
             start_date=start_date,
             end_date=end_date,
-            adjust="",
+            adjust=adjust,
             timeout=15,
         )
         return cast(list[dict[str, object]], frame.to_dict(orient="records"))
@@ -450,8 +450,17 @@ class AkshareMarketDataProvider:
         *,
         start: datetime,
         end: datetime,
+        adjustment: str = "",
     ) -> tuple[Bar, ...]:
-        return self._query_non_etf_daily(instruments, start=start, end=end, kind="stock")
+        if adjustment not in {"", "qfq", "hfq"}:
+            raise ValueError("AKShare stock adjustment must be empty, qfq or hfq")
+        return self._query_non_etf_daily(
+            instruments,
+            start=start,
+            end=end,
+            kind="stock",
+            adjustment=adjustment,
+        )
 
     def query_index_history(
         self,
@@ -460,7 +469,9 @@ class AkshareMarketDataProvider:
         start: datetime,
         end: datetime,
     ) -> tuple[Bar, ...]:
-        return self._query_non_etf_daily(instruments, start=start, end=end, kind="index")
+        return self._query_non_etf_daily(
+            instruments, start=start, end=end, kind="index", adjustment=""
+        )
 
     def _query_non_etf_daily(
         self,
@@ -469,6 +480,7 @@ class AkshareMarketDataProvider:
         start: datetime,
         end: datetime,
         kind: str,
+        adjustment: str,
     ) -> tuple[Bar, ...]:
         if not self._history_ready:
             raise RuntimeError("AKShare historical endpoint has not passed its probe")
@@ -477,13 +489,17 @@ class AkshareMarketDataProvider:
         if start.tzinfo is None or end.tzinfo is None or start >= end:
             raise ValueError("AKShare history query window is invalid")
         result: list[Bar] = []
+        issues: list[QualityIssue] = []
         for symbol in instruments:
             if kind == "stock":
                 def stock_operation(
                     symbol: str = symbol,
                 ) -> Iterable[Mapping[str, object]]:
                     return self._client.stock_daily_tx_rows(
-                        symbol, start.strftime("%Y%m%d"), end.strftime("%Y%m%d")
+                        symbol,
+                        start.strftime("%Y%m%d"),
+                        end.strftime("%Y%m%d"),
+                        adjustment,
                     )
 
                 rows = self._request(stock_operation)
@@ -496,13 +512,36 @@ class AkshareMarketDataProvider:
                 rows = self._request(index_operation)
             else:
                 raise ValueError("AKShare historical instrument kind is unsupported")
-            result.extend(
+            symbol_bars = [
                 bar
                 for bar in self._bars_english(symbol, rows, kind=kind)
                 if start <= bar.timestamp < end
-            )
+            ]
+            symbol_issues = BarQualityGate().validate(symbol_bars)
+            if kind == "stock" and symbol_bars:
+                listed_during_window = symbol_bars[0].timestamp >= start + timedelta(days=30)
+                symbol_issues = tuple(
+                    issue
+                    for issue in symbol_issues
+                    if not (
+                        issue.code == "ABNORMAL_JUMP"
+                        and issue.row is not None
+                        and (
+                            (listed_during_window and issue.row < 5)
+                            or (
+                                issue.row > 0
+                                and (
+                                    symbol_bars[issue.row].trading_day
+                                    - symbol_bars[issue.row - 1].trading_day
+                                ).days
+                                > 90
+                            )
+                        )
+                    )
+                )
+            issues.extend(symbol_issues)
+            result.extend(symbol_bars)
         result.sort(key=lambda value: (value.timestamp, value.exchange, value.symbol))
-        issues = BarQualityGate().validate(result)
         if issues:
             raise ValueError(
                 f"AKShare {kind} history failed quality gate: "
