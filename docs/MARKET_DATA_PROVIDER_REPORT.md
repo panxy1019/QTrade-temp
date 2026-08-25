@@ -6,6 +6,9 @@ credentials or an authenticated market-data request.
 AKShare 1.18.84 was installed in an isolated environment. Bounded Eastmoney-backed
 ETF snapshot/history probes failed before data receipt; the independent Sina ETF
 daily-history endpoint succeeded and produced a quality-passed canonical dataset.
+BaoStock 0.9.3 was separately probed and used only for free historical 5-minute
+research. Its anonymous login and native 5-minute stock history succeeded; it is
+not treated as a realtime entitlement or production feed.
 
 ## Recommendation
 
@@ -54,6 +57,23 @@ probe evidence.
 | Reconnect/heartbeat | Polling cache/health/circuit only; no stream reconnect | Snapshot round-trip heartbeat; SDK reconnect is not observable enough for production continuity | Vendor has reconnect primitives; standard adapter lacks full supervision |
 | Public SLA/price | No SLA; credential-free; upstream interfaces unstable | Not established; commercial quotation required | Not established; broker/vendor entitlement required |
 
+## BaoStock long-history research boundary
+
+The optional `baostock==0.9.3` extra is intentionally isolated from the Vercel
+runtime dependency set. A bounded probe found 399 complete native 5-minute days
+for a representative stock over the requested range but only 156 days for the
+ETF probe, so the signed long-history dataset excludes ETFs rather than mixing
+coverage regimes. Across the frozen 75-stock universe, intersection of complete
+48-bar sessions retained 368 days and 1,324,800 bars. Full-session all-zero rows
+on suspension days are treated as provider placeholders and omitted; prices are
+never forward-filled or synthesized.
+
+The source exposes `qfq` (`adjustflag=2`) rather than a versioned historical
+corporate-action factor stream. The evidence therefore records
+`future_adjustment_knowledge_possible=true`, `point_in_time=false`, and
+`realtime_readiness=false`. It is fit for a disclosed historical stress test,
+not for PIT promotion or minute PAPER readiness.
+
 ## Required QTrade contract
 
 - Vendor imports and credentials stay outside Core.
@@ -85,6 +105,8 @@ real-provider connection.
 - [RQData Python API](https://www.ricequant.com/doc/rqdata/python/index-rqdatac)
 - [RQData realtime market data](https://www.ricequant.com/doc/rqdata/python/generic-api)
 - [RQData solution overview](https://assets.ricequant.com/welcome/%E7%B1%B3%E7%AD%90RQData%E9%87%91%E8%9E%8D%E6%95%B0%E6%8D%AE%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E7%AE%80%E4%BB%8B.a528f1bd.pdf)
+- [BaoStock PyPI](https://pypi.org/project/baostock/)
+- [BaoStock data download plan](https://github.com/zxygithub/baostock/blob/master/docs/data_download_plan.md)
 `RqDataProvider` remains a protocol adapter over an injected bridge. The optional
 `NativeRqDataBridgeClient` now supplies the in-process SDK transport, but its
 connection becomes CONNECTED only after a session-bound, data-only capability

@@ -1,0 +1,4082 @@
+[
+  {
+    "base": {
+      "maximum_drawdown": -0.005538703100443021,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010015190510616716,
+      "total_return": 0.011463878082576429
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.0042981530951734515,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007694429542599854,
+      "total_return": 0.005509245330943768
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-07-29"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.013227220220742852,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001443162611631455,
+      "total_return": 0.0017261182355587934
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.008943128388269717,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000928322490736553,
+      "total_return": -0.0026104800904900305
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-07-30"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.018107664202339113,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014078180189472016,
+      "total_return": -0.01571430559771181
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.010812252169358105,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007714702716870034,
+      "total_return": -0.010352678025407847
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-07-31"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012026812255775954,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009573706929954803,
+      "total_return": -0.0053982976022453055
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.006161036869852254,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0004533240514871236,
+      "total_return": -0.003912808922686639
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-01"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0027308063533946214,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007846178260979166,
+      "total_return": 0.008735370332364045
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.0028313197874481055,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005296172059162914,
+      "total_return": 0.005587077597268397
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-04"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0033716811272216374,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000768804662555803,
+      "total_return": 0.008812673672164317
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.001961016378443148,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005864304541307162,
+      "total_return": 0.005174162725960052
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-05"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0027533680804447958,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005710379889507915,
+      "total_return": 0.003572818765144481
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.003154851033606576,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0004401867242544534,
+      "total_return": 0.0005629698213467371
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-06"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009582181965919534,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011363328989781156,
+      "total_return": 0.003196822838854141
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.005557046265791232,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008083201760693177,
+      "total_return": 0.0023221048974788605
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-07"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005391972723033156,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007713213737741608,
+      "total_return": -0.0005613093677409031
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.004229947855082905,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005197864262133443,
+      "total_return": -0.0014537093105522203
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-08"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.003790046974642136,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009143749557227169,
+      "total_return": 0.004875893242301643
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.0034086789431088116,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007364408718976116,
+      "total_return": 0.004107488015943295
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-11"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0039969310555750814,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008241645071286593,
+      "total_return": 0.008152841388715526
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.0029668711022288186,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005837261448446795,
+      "total_return": 0.005141872185412177
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01406424370574244,
+      "point_count": 48,
+      "realized_minute_volatility": 0.005788099581312889,
+      "total_return": 0.02951185026523473
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.00917726968610677,
+      "point_count": 48,
+      "realized_minute_volatility": 0.003996787171351484,
+      "total_return": 0.020325727411487415
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-19"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008024979859139858,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014460032537373883,
+      "total_return": 0.015748973027868596
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.005269165833101996,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008841536199786973,
+      "total_return": 0.009623036310666855
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009162650238913161,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017813397981810014,
+      "total_return": 0.007385781485490517
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.0062787274655825565,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012762565868348413,
+      "total_return": 0.0038440985977874487
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-21"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0029633333787469907,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011885190454726203,
+      "total_return": 0.027728792170456762
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.001861214229335939,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007328529015233964,
+      "total_return": 0.00946824626714382
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-22"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.013575954012300051,
+      "point_count": 48,
+      "realized_minute_volatility": 0.003414922119783474,
+      "total_return": 0.030969417174646408
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.006868058119713472,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0024593611833947154,
+      "total_return": 0.01596667907259164
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-25"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008903802474209188,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015594166578207244,
+      "total_return": -0.0033855218080494076
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.0061218485703010694,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007960764572564847,
+      "total_return": -0.005082502580401327
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-26"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.026147851527686616,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0024765776437025867,
+      "total_return": -0.008848317645680837
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.012316279677624387,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008113376553833599,
+      "total_return": -0.009444137669607278
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-27"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.019823010941961705,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0028604453887807082,
+      "total_return": 0.029016078746822327
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.01307928530619229,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012922651777776935,
+      "total_return": 0.003653268262022058
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-28"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009413492678408075,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018011160867604495,
+      "total_return": 0.011886829940604526
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.004861821176271319,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010748502641038898,
+      "total_return": 0.008719064391399689
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-08-29"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00728572517060877,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002351647686600332,
+      "total_return": 0.024472056271402254
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.003531656375101666,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001104002557308486,
+      "total_return": 0.010961149845090556
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-01"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.027900895236383172,
+      "point_count": 48,
+      "realized_minute_volatility": 0.003115811870192405,
+      "total_return": -0.013931250140864493
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.007296289348797891,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008884154125105789,
+      "total_return": -0.0027681836263027115
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-02"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.017748081429534213,
+      "point_count": 48,
+      "realized_minute_volatility": 0.003050808074959588,
+      "total_return": 0.0012479839286074768
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.00803694295525137,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007992028664880042,
+      "total_return": -0.0055209663756419225
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-03"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.053664552355270456,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0036909731364962455,
+      "total_return": -0.043465517470769766
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.005858563754722934,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00039718565038929167,
+      "total_return": -0.00439996873386117
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-04"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004018526950529511,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001761470252117814,
+      "total_return": 0.033973988483574136
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.003412607751284713,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010038584080311155,
+      "total_return": 0.011773506454151761
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-05"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01531313445281346,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002142396330700418,
+      "total_return": -0.0004496794076472854
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.005099721990921013,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008803957008553691,
+      "total_return": 0.002296781559291361
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-08"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.017323307250087794,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0019192390558394024,
+      "total_return": -0.007479609120317199
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.007764176900071473,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006541761620936517,
+      "total_return": -0.004406358689525769
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-09"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.013900274762005282,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001659294881818494,
+      "total_return": 0.010664441881944153
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.004956726982603632,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000614825259666274,
+      "total_return": -0.0004747742610909933
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.006196749267238011,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018160759450766566,
+      "total_return": 0.033112803284739645
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.005022750983001201,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001382630528321866,
+      "total_return": 0.01604110005363446
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-11"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007420351665293201,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015113710821922917,
+      "total_return": -0.004966695819229705
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.007400678467172517,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007971470863223008,
+      "total_return": -0.004394377179428366
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00924153999213273,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013854742939675238,
+      "total_return": 0.003471899758593855
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.006066559519616099,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006096809601011506,
+      "total_return": -0.0017777741497786437
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-15"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01602910634529664,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018426805556999426,
+      "total_return": -0.0042200871433072384
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.0075482279497033344,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006767317368678156,
+      "total_return": -0.004634640872270501
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-16"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010000928710641399,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014917216383080892,
+      "total_return": 0.007316010389044614
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.0027396764312642707,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006615649232775515,
+      "total_return": 0.003454313761002359
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-17"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.024331072244129448,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0021909569298786584,
+      "total_return": -0.00902297205924274
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.009424912885171777,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011291924337405355,
+      "total_return": -0.004946846552041473
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-18"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008669870708688299,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0020123663613810456,
+      "total_return": 0.003042975803449366
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.004367570003900867,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006309129249569396,
+      "total_return": -0.0011245415983959228
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-19"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005380213242075049,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016810141572459357,
+      "total_return": 0.007337538885626715
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.005636560778739863,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007546670993821622,
+      "total_return": -0.0006789239686713078
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-22"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.027435202054342467,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0024321935154529967,
+      "total_return": 0.0015956645604420228
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.011577495947407979,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009556183259542907,
+      "total_return": -0.0006876137738318633
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-23"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005740644623247082,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017537392245809864,
+      "total_return": 0.012983428885347648
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.0035116684062218573,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008978004561287935,
+      "total_return": 0.00743522183764056
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005417000841280162,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001951908873203423,
+      "total_return": 0.01666446977093039
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.003380408362909426,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010919806739243614,
+      "total_return": 0.00702443608122949
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-25"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01456889176900289,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015623493795003155,
+      "total_return": -0.01456889176900289
+    },
+    "fold": 1,
+    "overlay": {
+      "maximum_drawdown": -0.005449663175064123,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005862705254671943,
+      "total_return": -0.005449663175064123
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-26"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0068996185763645634,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017737822699352634,
+      "total_return": 0.018118352780984504
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.004765642497322253,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009612376648443408,
+      "total_return": 0.00860143599013874
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-29"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008066864954925035,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014099601133493113,
+      "total_return": 0.003738364683685713
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.002296145984038045,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007688511683820733,
+      "total_return": 0.006691700223743657
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-09-30"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0054948915557705424,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0020610119613653235,
+      "total_return": 0.013959443252742787
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.003248277381396991,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010500975576872493,
+      "total_return": 0.010084677164350131
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-09"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.028362248301646797,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001873488736757686,
+      "total_return": -0.02407930705635286
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.008424017611618484,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007350470161774128,
+      "total_return": -0.008057265902004618
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.023372858845607136,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002791260457559426,
+      "total_return": -0.004733752109176814
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.009660235381969029,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009691570422679751,
+      "total_return": -0.0031834222750383168
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-13"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.04191068149658783,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002812182347834068,
+      "total_return": -0.026552844101565998
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.008226099324375458,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00108393198154681,
+      "total_return": -0.0006344827249078477
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-14"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010234916951549322,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001862682026769853,
+      "total_return": 0.013432697855702669
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.005431531955294444,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000822055924021003,
+      "total_return": 0.008176224032260482
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-15"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.013168871072899213,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014219588095707978,
+      "total_return": 0.00135250831102951
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.008165771554501489,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009075486500817391,
+      "total_return": 0.00039291434701138606
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-16"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02751868968686233,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016981346280775203,
+      "total_return": -0.027075277356114258
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.011970017215295226,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005621464190979713,
+      "total_return": -0.011867868359410227
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-17"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.017289187214801993,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002209998956437389,
+      "total_return": 0.007932169977026282
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.008529722738135681,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0004840716929896174,
+      "total_return": -0.00688741931563297
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.003717416198246948,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016134445707290715,
+      "total_return": 0.02508799439888798
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.0024884938956757363,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009906442406996934,
+      "total_return": 0.010866554858802058
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-21"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007898294375610071,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014397252678888658,
+      "total_return": -0.00031492768025453977
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.004795318462502363,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008611788265508176,
+      "total_return": -0.0016533164643972587
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-22"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.017795564634790928,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017624163205873795,
+      "total_return": -0.0018408948851313944
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.008829259584007154,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009842703455174766,
+      "total_return": 0.0011544511783654343
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-23"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0050297952871221074,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016567440562756549,
+      "total_return": 0.021184615224278946
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.003895900163955912,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012754208975808258,
+      "total_return": 0.013052664446080442
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0059534816049561234,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0022899101503948507,
+      "total_return": 0.015398653234484083
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.0043169339947284335,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016845532961573151,
+      "total_return": 0.009518849652610406
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-27"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.013157591576250627,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001753175796601967,
+      "total_return": -0.009372269008587897
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.007664591264955223,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009799442285792386,
+      "total_return": -0.007321899824944578
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-28"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0052273749902299604,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016263826194687547,
+      "total_return": 0.01671787887196796
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.001358313132814759,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006461362131589759,
+      "total_return": 0.006854197702906406
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-29"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01833131832065915,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0024597048442060263,
+      "total_return": -0.018089875593593874
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.00837534956217334,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010640691260947034,
+      "total_return": -0.00820430429759822
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-30"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02102965480644403,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018030040794328086,
+      "total_return": -0.020978054783513667
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.008661296124195417,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005432612941060325,
+      "total_return": -0.008661296124195417
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-10-31"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012831560932240582,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014790518861822351,
+      "total_return": 0.0022614626082380074
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.003974002099457641,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006474660347395799,
+      "total_return": 0.0019463180708556571
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-03"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.019444474439704873,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001247076515821274,
+      "total_return": -0.008781621796632666
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.00943727992404464,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006633600461499015,
+      "total_return": -0.004380075896040503
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-04"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01606049510231289,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0027471620991020825,
+      "total_return": 0.000734751056272076
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.0063803347406288236,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010767677942342838,
+      "total_return": 0.0006089775778073125
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-05"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0034612310777021316,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0021191418501441185,
+      "total_return": 0.021884385463047717
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.0027949547256125307,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001435241378899394,
+      "total_return": 0.013065186055588818
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-06"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007384733214069628,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017475893269186772,
+      "total_return": -0.001646959010975002
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.006197876664861712,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010797636534264916,
+      "total_return": -0.006112578447171391
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-07"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015416645109666116,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0019129358898716347,
+      "total_return": -0.0024317150242324503
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.006027451522185201,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007130266893693946,
+      "total_return": -0.0016061968915618285
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.021639955960268242,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0028499108671426613,
+      "total_return": -0.013190956707106682
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.014743718569953823,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00157201403327488,
+      "total_return": -0.012929130499375607
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004048933718816983,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010369274000544715,
+      "total_return": 0.013556981225618436
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.002951049301332276,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007350524677723671,
+      "total_return": 0.008083437515238545
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-13"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.019515936411751977,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002146824929742763,
+      "total_return": -0.019515936411751977
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.015490301676218121,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015037533484620054,
+      "total_return": -0.015490301676218121
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-14"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.013856970106998046,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013787270860200424,
+      "total_return": -0.008224454046729446
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.009668677259098035,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000642609000439623,
+      "total_return": -0.008091364719469807
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-17"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.013125680310845156,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014806170977421263,
+      "total_return": -0.004497806285624573
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.008234435633239001,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007344546323340457,
+      "total_return": -0.005534354253888041
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-18"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010344885742867183,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015579474411092083,
+      "total_return": 0.0063756606320515274
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.007995646648752519,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009137711463716638,
+      "total_return": -0.0005462930067188232
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-19"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011970443806053166,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015961644884761748,
+      "total_return": -0.003601721099922295
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.008003179201920618,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008016073745348533,
+      "total_return": -0.00405146137981327
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.03202950750127298,
+      "point_count": 48,
+      "realized_minute_volatility": 0.003363942507351806,
+      "total_return": -0.03202950750127298
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.01474743967654113,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010743403649921992,
+      "total_return": -0.014671060914560718
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-21"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009268277141911363,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017942865472515546,
+      "total_return": 0.00459941254106111
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.0038086868526689965,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007069146194574078,
+      "total_return": 0.00256420635522403
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009610407245140729,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0020571059205681664,
+      "total_return": 0.01898386891903714
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.007319780154492528,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011033598165080141,
+      "total_return": 0.006572919448279313
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-25"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009263902588833361,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014432463186961437,
+      "total_return": 0.013098354148462166
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.005602792756040809,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006615862402649681,
+      "total_return": 0.001586420520994558
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-26"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.019495606317243896,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016298811856147607,
+      "total_return": -0.002007616054678918
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.0065020945270672925,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005781525984621806,
+      "total_return": -0.0006233635316615915
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-27"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0064211505525708645,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013984316017978836,
+      "total_return": 0.006632785410497055
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.003379754507013777,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007086479382971168,
+      "total_return": 0.0013894433345811308
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-11-28"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.006401295087758108,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013046028307230782,
+      "total_return": 0.016942895450566153
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.004049689395231759,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011800974700325768,
+      "total_return": 0.010754347062646552
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-01"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011441478007875316,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009394530714443532,
+      "total_return": -0.007890410179590801
+    },
+    "fold": 2,
+    "overlay": {
+      "maximum_drawdown": -0.008816242251834638,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005744846398672852,
+      "total_return": -0.0075981580778389235
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-02"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.013326482555849006,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001819082262921456,
+      "total_return": -0.0031591643885193754
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.006939579912743965,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000945727767796085,
+      "total_return": -0.0005465986648363064
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-03"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007347939600733322,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001574140597773842,
+      "total_return": 0.007988084344713986
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.003899509735483697,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008721940399102131,
+      "total_return": 0.003669638016457144
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-04"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00471444616219463,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012453025713680783,
+      "total_return": 0.011865926608444877
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.00300215315072605,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007860970425457315,
+      "total_return": 0.005810082336999534
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-05"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0059374268616426695,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001628765869937708,
+      "total_return": 0.017428597187852946
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.004281557384758772,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008602959702425353,
+      "total_return": 0.00460690430224453
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-08"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01184834843390603,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014329948175030942,
+      "total_return": -0.001623938087539245
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.01012693133211462,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000619363880482287,
+      "total_return": -0.008903178704057324
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-09"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011755826148991289,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018850882203299863,
+      "total_return": 0.003465093883159298
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.007034837919211778,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011932908836413448,
+      "total_return": 0.0019037987418437652
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.018008551557938235,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012414951634882544,
+      "total_return": -0.01378645398572309
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.0096243311836538,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006177645278287994,
+      "total_return": -0.005435149905360093
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-11"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008933651350111815,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016623253592079812,
+      "total_return": 0.006389322432751587
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.0028133621564300215,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006270423061164205,
+      "total_return": 0.001473207155471945
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012704811765817281,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012975739883045333,
+      "total_return": -0.008818104077058853
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.008989112080803774,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005894387332950903,
+      "total_return": -0.007030016142200446
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-15"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.025754194810776454,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0019121646206662743,
+      "total_return": -0.021183797590181852
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.009274629846094284,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006265125196962807,
+      "total_return": -0.009274629846094284
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-16"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004746556632043375,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016213374576134405,
+      "total_return": 0.028115538769467374
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.003412603579431517,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009935580609949097,
+      "total_return": 0.013714895706900654
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-17"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00894168457141109,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017505575067391318,
+      "total_return": -0.00894168457141109
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.007126036526827528,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011084963093891862,
+      "total_return": -0.007126036526827528
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2025-12-18"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007477330880958144,
+      "point_count": 48,
+      "realized_minute_volatility": 0.005442687827606979,
+      "total_return": 0.04725748935052576
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.0033486404738028996,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0028469476292023238,
+      "total_return": 0.022972246799224605
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-05"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00637775046422262,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016007852953332353,
+      "total_return": 0.014683192255279698
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.004498160463460854,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011190301053552302,
+      "total_return": 0.011592845565149501
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-06"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012104088155168169,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014441656778034445,
+      "total_return": 0.0029900283790127435
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.00865074040215641,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009010415252032582,
+      "total_return": -0.0043121608349758755
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-07"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012621598214884289,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016685145727852104,
+      "total_return": -0.006995319751772366
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.007377400195551553,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007942957752158951,
+      "total_return": -0.004752458752854238
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-08"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.006403628436486897,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001590675636930933,
+      "total_return": 0.011349987089177338
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.00515854501936075,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008976693577479299,
+      "total_return": 0.007208356478273226
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-09"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004394439474741607,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015849791530377461,
+      "total_return": 0.011218316286276675
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.0031815579737674016,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009367434107378201,
+      "total_return": 0.005309288953246227
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02075389914878878,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0020732710241214104,
+      "total_return": -0.0055883624922381525
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.011103589048245932,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010096434780292518,
+      "total_return": -0.005592767145108146
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-13"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02022654603652352,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002419377540626469,
+      "total_return": 0.00022671911148131052
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.012181280391774685,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009029590015546148,
+      "total_return": -0.007363109319144412
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-14"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00989390867894413,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015040106820907262,
+      "total_return": 0.0069696783091448555
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.00533210523335792,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007249421627923446,
+      "total_return": 0.0006474487661678463
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-15"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.019735073219008803,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0025772959092110782,
+      "total_return": -0.004196663552652802
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.010247980098440301,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011402665626294353,
+      "total_return": -0.003986299988190556
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-16"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00924449651304371,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015277123647758398,
+      "total_return": 0.011178578380602877
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.005952831413844839,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007624061991956061,
+      "total_return": -0.0001760910352716083
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-19"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01873780558384308,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016482822651798042,
+      "total_return": -0.009757929960151679
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.008409444357699969,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007161710641898712,
+      "total_return": -0.0043313401953762876
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.006224861405745519,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012565906212256004,
+      "total_return": 0.0037163106087865216
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.005584503538584973,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007061593883563353,
+      "total_return": -0.0038713262488810907
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-21"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.014722216653711095,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016120020238223761,
+      "total_return": 0.00047292787828312477
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.007649512211703402,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007279826013752241,
+      "total_return": -0.0022851797808914887
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-22"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010690923510062289,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013925826352144048,
+      "total_return": -0.006818060765346412
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.007871747472166901,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008535968922790032,
+      "total_return": -0.005316044724008817
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-23"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009752965646083855,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017221617740796153,
+      "total_return": 0.0020702506316994107
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.006454183574384764,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009141626813802663,
+      "total_return": -0.0032961486888969382
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-26"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008758153106382505,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017732665875948538,
+      "total_return": 0.0013364243764932837
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.0046625683597297796,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007930958905612431,
+      "total_return": 0.0018427559043339148
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-27"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007182392556264072,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013929375751240806,
+      "total_return": 0.006863856607142393
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.00586012246563572,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007915112382670962,
+      "total_return": -0.0045076342338024045
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-28"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010814655685556174,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018758334288190976,
+      "total_return": 0.004683988669835548
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.0035510074693103633,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008615582081480201,
+      "total_return": 0.006361361983354463
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-29"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.026983200344872227,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002315576479781309,
+      "total_return": -0.007933419345926618
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.00569045951781344,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007365523946924531,
+      "total_return": -0.0033590051831307033
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-01-30"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02933696730846591,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016869264307047738,
+      "total_return": -0.02659231435012932
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.010751174496631766,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007562904447963285,
+      "total_return": -0.005820668952984942
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-02"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.018947571727719437,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0024650989877640105,
+      "total_return": 0.022074847216189575
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.006558048918717807,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000714119897669033,
+      "total_return": 0.003678225138096236
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-03"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.014570485433553437,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016686121395635483,
+      "total_return": -0.004376181077374808
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.00595196201043191,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008269092566908187,
+      "total_return": 0.0019791260379731224
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-04"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02251588520355241,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018656446958965098,
+      "total_return": -0.01523779992846419
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.011995024525140008,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008619222894212703,
+      "total_return": -0.009830091769865712
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-05"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01584370141869962,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002822059275164795,
+      "total_return": -0.006405725832310805
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.005529625257649551,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011088235729472178,
+      "total_return": -0.0027548982500938957
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-06"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004873240976356774,
+      "point_count": 48,
+      "realized_minute_volatility": 0.003038478073497688,
+      "total_return": 0.02765100577153823
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.0035158278293503376,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013188112534812222,
+      "total_return": 0.00796975311210768
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-09"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004209329343929591,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010893632834171971,
+      "total_return": 0.006616620014989083
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.0028002766948224123,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007000189409126186,
+      "total_return": 0.004234250868804468
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004220572982684412,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010632527730168638,
+      "total_return": -0.0016055350760264542
+    },
+    "fold": 3,
+    "overlay": {
+      "maximum_drawdown": -0.0035449320453623256,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0004892551872778232,
+      "total_return": -0.0008166159815210516
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-11"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004169692706682104,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001093146235912738,
+      "total_return": 0.010209967449266832
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0012490711103848584,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005726036048543514,
+      "total_return": 0.0044680618080013
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012915759111551295,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016892191697953371,
+      "total_return": -0.012915759111551295
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.011037308784614841,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010810939205359985,
+      "total_return": -0.011037308784614841
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-13"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004463502211549453,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014288292233183013,
+      "total_return": 0.01407705899252698
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0029351904450171107,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005679337419741544,
+      "total_return": 0.003251727986296693
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008525364612861352,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008706557871057377,
+      "total_return": 0.0051763910890127995
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.006923303581522711,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000575739088648326,
+      "total_return": 0.00309510946201752
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-25"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0030245177080445718,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010027218588931092,
+      "total_return": 0.002568655456814062
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0062151392834058905,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007713650216069374,
+      "total_return": -0.003981315747712544
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-26"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010812809378758392,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017799081385052934,
+      "total_return": -0.003504746738747788
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.006669156718303704,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010217595758058697,
+      "total_return": -0.004817532455403284
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-02-27"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011526377809696675,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001767874355178919,
+      "total_return": 0.009634010570966023
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.00778591218908542,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010806583370926153,
+      "total_return": 0.0032684080771681057
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-02"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02752297923714342,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002315007825776236,
+      "total_return": -0.026380822133681203
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.012374978491200839,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007663415400840194,
+      "total_return": -0.012254644645415591
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-03"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015476383715245956,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0023066240758747893,
+      "total_return": -0.00937876546726557
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.009015478303535218,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007434172246034559,
+      "total_return": -0.008068407036406544
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-04"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010823135974341702,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0025705017149605792,
+      "total_return": 0.01751046731153294
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.006053545191012422,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008917220406858597,
+      "total_return": 0.003642707254472466
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-05"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009481354135289166,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001891747226211379,
+      "total_return": 0.001830752576762018
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0032823009693689897,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007616913974354028,
+      "total_return": 0.0018183677520833275
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-06"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.033245247792522914,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00421499892598069,
+      "total_return": -0.012030387050039448
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.014123764376980485,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018906872088966958,
+      "total_return": -0.0024343167257850906
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-09"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00338906034140396,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0019591389433777206,
+      "total_return": 0.0166477987557212
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.003636780660533745,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013712168590902607,
+      "total_return": 0.006875257143061253
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.006114492710809549,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008386464351268677,
+      "total_return": -0.0002867304270341986
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0031599264551077644,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00044139977684802014,
+      "total_return": 0.00020811320750846463
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-11"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.020388550951766837,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014314622338344914,
+      "total_return": -0.010661347403345678
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.006288790564631497,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005539986517997613,
+      "total_return": -0.002729125297831869
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01417875968997595,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013713079613595035,
+      "total_return": -0.009488905077957188
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.007468437017192908,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006297884410511097,
+      "total_return": -0.003711920813804448
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-13"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.021812750191539942,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0022813325121815516,
+      "total_return": -0.006684711187102899
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.003612920274804199,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008713522657740211,
+      "total_return": 0.0026321325293949815
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-16"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02116316705774335,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011868605158565579,
+      "total_return": -0.014225508152517441
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.008493938630164677,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006470099185542892,
+      "total_return": -0.0015692077730784515
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-17"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008611686029259324,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001590352317075727,
+      "total_return": 0.01271800031813397
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.006149777916597321,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009461263435835534,
+      "total_return": 0.0048137660858356135
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-18"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02424892969189263,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0021870445063913407,
+      "total_return": -0.019961154670606662
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.018033626505579936,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015066996521304983,
+      "total_return": -0.017188474211059623
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-19"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.016932848899346764,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0023226376702446664,
+      "total_return": -0.003030001121355985
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.009078679550830526,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006612070041331553,
+      "total_return": -0.007602624116189061
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.03738761782649591,
+      "point_count": 48,
+      "realized_minute_volatility": 0.004120473310596827,
+      "total_return": -0.032603563102277744
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.01233916193357043,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009145221715588408,
+      "total_return": -0.012202737495818239
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-23"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01474561802075991,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002600647306241449,
+      "total_return": 0.017059389444051387
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.006971088781195234,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001038695208906896,
+      "total_return": 0.006092333455030463
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009002694719669968,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0030926211541413046,
+      "total_return": 0.022979640319577443
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.003995302336208817,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0021936033164512043,
+      "total_return": 0.01592626148001508
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-25"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.019343725299230563,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013984688083895503,
+      "total_return": -0.017221277059853546
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.011095404920600682,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006199097901275404,
+      "total_return": -0.01077750006715772
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-26"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009566520895766484,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0019547977327202485,
+      "total_return": 0.005902821904047784
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.004962619723017703,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008625559478300371,
+      "total_return": 0.0056605286637800845
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-27"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.016474800581025573,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017280479714433456,
+      "total_return": -0.0035151759482605627
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.012261812829534535,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012247589816224195,
+      "total_return": -0.005986738687917992
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-30"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.018893597384957217,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0015272562790299394,
+      "total_return": -0.013295541822594514
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.012862168218845227,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008036085543549027,
+      "total_return": -0.006030772903625525
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-03-31"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.004653597932906872,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002544905458806589,
+      "total_return": 0.027117187616986227
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0038523846336446788,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006936004035872873,
+      "total_return": 0.005971551452022661
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-01"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.018104429632269325,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011835249377471178,
+      "total_return": -0.014265070155124349
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.01412531218749824,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008709409222857001,
+      "total_return": -0.013190420658771962
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-02"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009257241063279631,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001231490093697591,
+      "total_return": -0.004564150450381055
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.009482256440383807,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006623307737373742,
+      "total_return": -0.009264993979781422
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-03"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008743026338087212,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014377019466094668,
+      "total_return": -0.002257884062453641
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.00431673707773339,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006940727358304959,
+      "total_return": 0.0009872417846008563
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-07"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0035607364228449345,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0039434028053239,
+      "total_return": 0.046432428918008695
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.002768821604239191,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0020124056735954165,
+      "total_return": 0.025139692505156797
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-08"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011523443421599722,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0019958166526813583,
+      "total_return": -0.0026919288134992225
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.00996220845907081,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001555859961321488,
+      "total_return": -0.00498251603051636
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-09"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007809802397678589,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0019282054578588289,
+      "total_return": 0.018592826000694673
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.005425103929911801,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012360019785974936,
+      "total_return": 0.008926088562262402
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010898909521272149,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016004092722691587,
+      "total_return": -0.0036565385181358545
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0054930404674038424,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007878355763221887,
+      "total_return": -0.0022286021355416574
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-13"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011204979282250616,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013519793032695407,
+      "total_return": 0.009511852735068382
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.005032793838840366,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006942829749058679,
+      "total_return": 0.005364201368990518
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-14"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.019617992417424124,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016707792015395358,
+      "total_return": -0.007095225420892803
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0068871173035817135,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007429307178306704,
+      "total_return": -0.0014492343114613782
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-15"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0034278039590542875,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010183681507174834,
+      "total_return": 0.019112131541588973
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0027069823570327056,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005846741123638923,
+      "total_return": 0.0045191599867489
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-16"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00606633797873124,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001244483419344461,
+      "total_return": 0.00562651196684727
+    },
+    "fold": 4,
+    "overlay": {
+      "maximum_drawdown": -0.0049086765063888205,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006250898291819934,
+      "total_return": -0.002846286598840342
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-17"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007203606298449405,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013271739172798288,
+      "total_return": 0.004341234476061828
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.00422199147561475,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006667322426981792,
+      "total_return": 0.0028642661953750537
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012723220554765047,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017414521650614145,
+      "total_return": -0.004460060801383947
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.005417014373073181,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007095075195004986,
+      "total_return": -0.0017116896345483745
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-21"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0027929495637710744,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001087919732109462,
+      "total_return": 0.014194910187729004
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.0027256181158040738,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006883070301569753,
+      "total_return": 0.004850204328976648
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-22"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.022392249977450374,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0021945297777063565,
+      "total_return": -0.006699461110078686
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.009571769946724373,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010184106382072828,
+      "total_return": -0.004297949594663231
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-23"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.020251326244710377,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002525959962776398,
+      "total_return": -0.009983318629267046
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.004677436618694908,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009042810307030595,
+      "total_return": -0.00015377495937174412
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.006291556819948307,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009735174045027432,
+      "total_return": -0.0002532482167533212
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.004339735992269889,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005750934617705665,
+      "total_return": -0.0005896311285216171
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-27"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011706296792836968,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014889436747162394,
+      "total_return": -0.008317960357117293
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.007595933282656064,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006481074255627111,
+      "total_return": -0.0067879314182547335
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-28"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007146408725662856,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001218806475239487,
+      "total_return": 0.01594255547999701
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.0022505833253164687,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006626761157164532,
+      "total_return": 0.009699566794705072
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-29"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.006502569516944501,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010863460364616219,
+      "total_return": 0.0008993545740418885
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.005130561118702359,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005116294953761618,
+      "total_return": -0.0025692391814382542
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-04-30"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009418353850384031,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002068650416577085,
+      "total_return": 0.021390257156656878
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.0030515035318958716,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001048382154900638,
+      "total_return": 0.014708924961132075
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-06"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005265823563878946,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012581084200610452,
+      "total_return": 0.011169412505555476
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.0031268406613225164,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005940939577770973,
+      "total_return": 0.004101841920526983
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-07"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015910572842688042,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016157586306954387,
+      "total_return": -0.008531632221929875
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.008834526499723827,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010434377972192309,
+      "total_return": -0.004828951926660108
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-08"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005342493748666133,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014551072237696317,
+      "total_return": 0.013601247513822967
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.003010379375215866,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008392419705889004,
+      "total_return": 0.004332757752443017
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-11"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009297008823629493,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014575201944417564,
+      "total_return": 0.005182364064233003
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.006034751808058569,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005694911673218261,
+      "total_return": -0.002696902980414251
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00401585584780384,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001361427245839563,
+      "total_return": 0.019485965201613054
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.0026791099656114925,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006810730827229548,
+      "total_return": 0.00875492968792968
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-13"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.024950673393075995,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0022093600860095815,
+      "total_return": -0.024225586557870216
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.014169284202641297,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007011234579872804,
+      "total_return": -0.014169284202641297
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-14"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.024719431752265097,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002873036468795291,
+      "total_return": -0.010402505680231933
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.007812283428532685,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006744140362754249,
+      "total_return": -0.004960046482450631
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-15"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.014499563780257407,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002267775314879092,
+      "total_return": -0.009719635128038528
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.006671990644997461,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005630055798451737,
+      "total_return": -0.0053219694909385495
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-18"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.018363011461085876,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0022197760285002015,
+      "total_return": 0.0026213036002094015
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.005895096434640035,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008277176995199233,
+      "total_return": 0.0046120846287860395
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-19"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.00976335126260719,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0016655505639506163,
+      "total_return": 0.0005019170765936387
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.007055205332439196,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010394126873911288,
+      "total_return": -0.0037830123954740724
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0378932077627574,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002474124658520194,
+      "total_return": -0.022728311212298125
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.010994283182041653,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012664541931883876,
+      "total_return": 0.0006757852942957943
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-21"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008409963150003197,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0021417813894441663,
+      "total_return": 0.01849162618416411
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.00260366252556965,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007276475837185503,
+      "total_return": 0.0030882336546556033
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-22"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.006934679079621975,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001755869369574374,
+      "total_return": 0.02230950225203121
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.004953618640488933,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010511794264095088,
+      "total_return": 0.006205543718808437
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-25"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011839291158530219,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0026604164847509435,
+      "total_return": 0.009938330561506614
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.0059195880701966574,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010896530578516118,
+      "total_return": 0.001653744154796133
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-26"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.020738296760795527,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002281034583432913,
+      "total_return": -0.008275448519433959
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.009028544774050795,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006164565419354424,
+      "total_return": -0.007947005318370892
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-27"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015512222780727947,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00268455896038573,
+      "total_return": 0.00953343958765318
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.004591395288972566,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009631429373825886,
+      "total_return": 0.004133078599427575
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-28"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.023015959493571936,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0027306012690475247,
+      "total_return": -0.013257008290777028
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.008347443823650047,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008521943426029789,
+      "total_return": -0.005178933377277484
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-05-29"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.023234639765791543,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002418286092056784,
+      "total_return": -0.011117800666792688
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.005843287898188554,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00047257049671868713,
+      "total_return": -0.0029861659626418957
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-01"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015000211427638632,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0025275740122856255,
+      "total_return": 0.020561705371186845
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.004878784064963115,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000870646032405792,
+      "total_return": 0.006234534506317058
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-02"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02520301077137954,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0026222897806915265,
+      "total_return": 0.011986703622483663
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.007154923847954575,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011632129507431301,
+      "total_return": 0.004820511204656652
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-03"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011199423209652615,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0021998807578366363,
+      "total_return": -0.008185420418631795
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.013426502286080555,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010267909311631627,
+      "total_return": -0.011816471529113692
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-04"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.03663020187739907,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002164538271142976,
+      "total_return": -0.023424144700904592
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.0077039806636697294,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006827236830538513,
+      "total_return": -0.0014144407477214571
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-05"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.041033567727882136,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0043327020196010976,
+      "total_return": -0.031210650335130263
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.007910905224140952,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0004765422455375664,
+      "total_return": -0.007411491242497514
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-08"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011171686464839792,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002455444897503738,
+      "total_return": 0.021763367928768096
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.003341168346929768,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007423876707409715,
+      "total_return": 0.00821449697552179
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-09"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.021636483173740673,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0029844831784436375,
+      "total_return": -0.015716584106491793
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.008440854240517437,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011050604654688355,
+      "total_return": -0.005048748084871546
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.021309890619988003,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002412321685541215,
+      "total_return": -0.0031590285919902428
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.0040121656263978345,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007038758051693495,
+      "total_return": -0.001596536120932468
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-11"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01160941270181437,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002297006619061717,
+      "total_return": 0.01035024211254032
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.004545768805207295,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0011406777732367033,
+      "total_return": 0.013877711698945694
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005989591272857253,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018863855926871253,
+      "total_return": 0.03477534265557369
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.003921156060143427,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0013353582114215966,
+      "total_return": 0.011741561134926082
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-15"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010008704298037685,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001522114196037325,
+      "total_return": -0.004676996142909728
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.0077076058009361015,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009202360575895471,
+      "total_return": -0.006952130873457474
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-16"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007817040808699605,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018701430646411883,
+      "total_return": 0.010054434533854018
+    },
+    "fold": 5,
+    "overlay": {
+      "maximum_drawdown": -0.006957321044604781,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009417659498712851,
+      "total_return": 0.0007101311100277119
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-17"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.013257276739077506,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0024769665705212766,
+      "total_return": 0.011487258062071959
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.005512895626515801,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010380528199834124,
+      "total_return": 0.0049365392600817515
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-18"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.016577474045395224,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0024255196787389497,
+      "total_return": 0.02246755530131539
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.004531206100347629,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009240130850072452,
+      "total_return": 0.011895840295953919
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-22"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.04253144215411353,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0023171370861155716,
+      "total_return": -0.03645230662061061
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.014478349236714094,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005379732189040013,
+      "total_return": -0.014029951825518472
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-23"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01328204482862283,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018411025309720559,
+      "total_return": 0.006139461345985531
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.00494942834315848,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005369686092045519,
+      "total_return": -0.000931696948802907
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.009266295921970369,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0021932596082969405,
+      "total_return": 0.015663627410453795
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.007751617296156366,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000948527338822402,
+      "total_return": -0.005287301975194114
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-25"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.037993329016587696,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0031712641012511577,
+      "total_return": -0.0346012732245643
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.01799099746564703,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0012260677643325007,
+      "total_return": -0.01799099746564703
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-26"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.016626081522276848,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0028413000262045656,
+      "total_return": 0.008436007122507805
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.004497654612525603,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007171908258868188,
+      "total_return": 0.0014596562384738831
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-29"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005846260666354852,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001211508978661499,
+      "total_return": 0.018988702402451985
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.006812124981731671,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008405159564210633,
+      "total_return": -0.0006192740142866304
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-06-30"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.020150619985452978,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0021966599898787724,
+      "total_return": -0.012923375121177694
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.006471520996326863,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009278225371572965,
+      "total_return": -0.0004813591424023267
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-01"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0394108730011421,
+      "point_count": 48,
+      "realized_minute_volatility": 0.004133010200512604,
+      "total_return": -0.03745049298133618
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.007809774422306015,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007184757293442381,
+      "total_return": -0.0035929856289483864
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-02"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012412772946991502,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0023173279833383843,
+      "total_return": 0.011607051658539369
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.004034641010306372,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009121707839945579,
+      "total_return": 0.0018249670337042723
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-03"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.020949525966524107,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002420395399315792,
+      "total_return": 0.0029808177183183737
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.004287415936627181,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007690311834829113,
+      "total_return": 0.0016782325491087047
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-06"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01858279859988543,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002158073177469339,
+      "total_return": -0.005116618860043776
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.006724998731064358,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00043147232431993773,
+      "total_return": -0.0061389028399522205
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-07"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.018751697051061278,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0022682297777779884,
+      "total_return": -0.008418860590504451
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.007490582124946132,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007666683413909927,
+      "total_return": -0.0074389618772696675
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-08"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012985804714325755,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0023105176842183,
+      "total_return": 0.029938172172701893
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.0028876042281898995,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008245126880864467,
+      "total_return": 0.010400106326289738
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-09"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0298591906283614,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002376271572318521,
+      "total_return": -0.018764778438763563
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.005908400742919762,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009067932387835691,
+      "total_return": 0.005851139187456278
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.03018220096916946,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0030026030189091125,
+      "total_return": -0.021815640369749034
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.006341750835646476,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007023137251493353,
+      "total_return": -0.005212857271070348
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-13"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.019662509289447683,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0036421401627083154,
+      "total_return": 0.026467513875916726
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.0034357277437651046,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007587750850100735,
+      "total_return": 0.007097032029363293
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-14"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.012660458179377332,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0023373683429051173,
+      "total_return": -0.007110688386652408
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.0050277780941830885,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007426742138628181,
+      "total_return": -0.0021262562379605887
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-15"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.025317647323294556,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0038187033491111078,
+      "total_return": -0.018856717627424358
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.005079617157884075,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006746614563442947,
+      "total_return": -0.0038090900753524615
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-16"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.062358699441201426,
+      "point_count": 48,
+      "realized_minute_volatility": 0.006402774109254534,
+      "total_return": -0.05208272980719919
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.007271310052434532,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005105022072376385,
+      "total_return": -0.005744349195645482
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-17"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.027505152406538613,
+      "point_count": 48,
+      "realized_minute_volatility": 0.005453722185278694,
+      "total_return": 0.022823292559503106
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.0060300704203796185,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010468482784649642,
+      "total_return": 0.005044440050827381
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01781691752247816,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0032173903410350506,
+      "total_return": 0.04380379689389513
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.005420364231321306,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008691834871904417,
+      "total_return": 0.00570338761841227
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-21"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02178312899394963,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0022190462949093024,
+      "total_return": -0.008752752678916509
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.006547673547948829,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0010449691708708042,
+      "total_return": 0.005240200417129692
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-22"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.008721135080992926,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0018101703575725543,
+      "total_return": 0.004036310382218966
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.0024766769258316446,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007362123987640873,
+      "total_return": 0.007055034678207228
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-23"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0221289523453978,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0024294091818996924,
+      "total_return": -0.021453739474046052
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.013783246966124874,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007834789712775147,
+      "total_return": -0.013415570013198042
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011598393911042115,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017591512506961483,
+      "total_return": 0.016957678944498955
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.004868030404415302,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005591719595552542,
+      "total_return": 0.004481088418418988
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-27"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.04991158690938391,
+      "point_count": 48,
+      "realized_minute_volatility": 0.003363809606710102,
+      "total_return": -0.045158681760395614
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.019334104708448874,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0017377976485349281,
+      "total_return": -0.01731217111917993
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-28"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.02025997797627399,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0030800675585378034,
+      "total_return": 0.012171453826572476
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.0036241358713702265,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007398732541066509,
+      "total_return": 0.006300772279240308
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-29"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.045153007100254494,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0033663235013136586,
+      "total_return": -0.027586750688976647
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.006110780683356687,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0007512930057868741,
+      "total_return": 0.00037569910075108126
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-30"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015557079620131531,
+      "point_count": 48,
+      "realized_minute_volatility": 0.004415050700336576,
+      "total_return": 0.02041618980883264
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.004897879519764059,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008981075410602845,
+      "total_return": -0.002914788080143782
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-07-31"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01149908557021273,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0020081956166206408,
+      "total_return": -0.00844029596092788
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.0038643941630976952,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005835031994187081,
+      "total_return": -0.0016583343413749674
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-08-03"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005289280858516765,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00223562565963185,
+      "total_return": 0.031665086297383516
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.005237538155396404,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0008803839569889051,
+      "total_return": -0.00029726168948196463
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-08-04"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.010281559740412116,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0023170101490181862,
+      "total_return": 0.011560351958370907
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.0057950655114120675,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0009493728525974878,
+      "total_return": 0.00908500912302701
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-08-05"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01637242238405734,
+      "point_count": 48,
+      "realized_minute_volatility": 0.002997860745186555,
+      "total_return": -0.002213461894207014
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.007206201312451754,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00090176021499888,
+      "total_return": -0.0017169414644218062
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-08-06"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011479440304799304,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001670784341936778,
+      "total_return": 0.00954641006684298
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.002662237206181528,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006465613496164068,
+      "total_return": 0.0035618373512560364
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-08-07"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.016131307567059938,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00157193782973353,
+      "total_return": -0.0012585138476860491
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.00587654290863604,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006431435777507495,
+      "total_return": 0.0035292260655428453
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-08-10"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015014080158839094,
+      "point_count": 48,
+      "realized_minute_volatility": 0.00160518742442614,
+      "total_return": -0.012599828784171652
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.008662575202687761,
+      "point_count": 48,
+      "realized_minute_volatility": 0.000785193077123553,
+      "total_return": -0.00853352735086299
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-08-11"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.007107056585446525,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0014051750101746895,
+      "total_return": 0.008965089751579391
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.003823706934278581,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0005521202111257727,
+      "total_return": -0.0017609419357612621
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-08-12"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.016163748224430896,
+      "point_count": 48,
+      "realized_minute_volatility": 0.001822623342078365,
+      "total_return": -0.0032886866100186873
+    },
+    "fold": 6,
+    "overlay": {
+      "maximum_drawdown": -0.00586372855700068,
+      "point_count": 48,
+      "realized_minute_volatility": 0.0006051865079822673,
+      "total_return": -0.0021030238439789795
+    },
+    "selected_policy_id": "five-reduction-soft-v1",
+    "trading_day": "2026-08-13"
+  }
+]

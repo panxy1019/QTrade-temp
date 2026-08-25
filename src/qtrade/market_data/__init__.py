@@ -7,6 +7,10 @@ from qtrade.market_data.akshare import (
     AksharePollingPolicy,
     NativeAkshareClient,
 )
+from qtrade.market_data.baostock_five_minute import (
+    BAOSTOCK_FIVE_MINUTE_FIELDS,
+    fetch_baostock_five_minute_history,
+)
 from qtrade.market_data.models import (
     CanonicalTick,
     MarketSnapshot,
@@ -82,6 +86,7 @@ def __getattr__(name: str) -> Any:
 __all__ = [
     "AkshareMarketDataProvider",
     "AksharePollingPolicy",
+    "BAOSTOCK_FIVE_MINUTE_FIELDS",
     "AvailableBar",
     "CanonicalTick",
     "CanonicalTickStore",
@@ -114,5 +119,6 @@ __all__ = [
     "TickReplay",
     "XtDataProvider",
     "complete_session_days",
+    "fetch_baostock_five_minute_history",
     "inspect_provider_selection",
 ]

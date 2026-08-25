@@ -167,6 +167,36 @@ const data = {
     leave_one_sector_out: [], daily: [],
     curve: [{ timestamp: '2026-07-23T09:35:00+08:00', base_equity: 1, overlay_equity: 1 }],
   },
+  longFiveMinuteResearch: {
+    promotion: 'NOT_ELIGIBLE',
+    promotion_reasons: ['QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE'],
+    minute_dataset: {
+      provider: 'BaoStock', provider_version: '0.9.3', data_version: 'baostock-five-minute-long-v1', bar_interval: '5m', checksum: 'long-five-minute-checksum', evidence_sha256: '1'.repeat(64),
+      bar_count: 1324800, symbol_count: 75, etf_count: 0, stock_count: 75, sector_count: 15,
+      session_count: 368, session_bar_count_per_symbol: 48,
+      trading_days: ['2025-01-02', '2026-08-25'], observed_start: '2025-01-02T09:35:00+08:00', observed_end: '2026-08-25T15:00:00+08:00',
+      eligible_symbols: ['600036'], instruments: [{ symbol: '600036', instrument_type: 'STOCK', name: '招商银行', sector_code: '801780', sector_name: '银行' }],
+      point_in_time: false, future_adjustment_knowledge_possible: true, realtime_readiness: false, real_data_paper_readiness: false, external_order_transmission: false,
+    },
+    causal_contract: { signal_observed_at: 'FIVE_MINUTE_BAR_CLOSE_T', exposure_change_at: 'NEXT_FIVE_MINUTE_BAR_OPEN', same_bar_signal_execution: false, candidate_state: 'ALL_CANDIDATES_CAUSALLY_SHADOW_WARMED', maximum_exposure: 1, external_order_transmission: false },
+    walk_forward: { initial_train_sessions: 120, test_sessions_per_fold: 40, fold_count: 6, candidate_count: 7, test_windows_disjoint: true, selection_objective: 'frozen', selected_policy_sequence: Array(6).fill('five-reduction-soft-v1'), used_session_count: 360, unused_trailing_sessions: 8 },
+    aggregate: {
+      cost_bps: 5,
+      base: { total_return: 0.4082847, maximum_drawdown: -0.1510855, realized_minute_volatility: 0.00223, point_count: 11520 },
+      overlay: { total_return: 0.010438, maximum_drawdown: -0.1218057, realized_minute_volatility: 0.00097, point_count: 11520 },
+      excess_return: -0.3978466, positive_test_fold_count: 2,
+    },
+    candidates: [],
+    folds: Array.from({ length: 6 }, (_, index) => ({
+      fold: index + 1, train_days: ['2025-01-02'], test_days: [`2025-0${index + 2}-01`, `2025-0${index + 2}-28`], selected_policy_id: 'five-reduction-soft-v1', selected_policy_hash: '2'.repeat(64),
+      test_base: { total_return: 0.05, maximum_drawdown: -0.05, realized_minute_volatility: 0.001, point_count: 1920 },
+      test_overlay: { total_return: 0.01, maximum_drawdown: -0.03, realized_minute_volatility: 0.0005, point_count: 1920 }, test_excess_return: -0.04,
+    })),
+    cost_stress: [{ cost_bps: 0, base: { total_return: 0.4082847, maximum_drawdown: -0.151, realized_minute_volatility: 0.0022, point_count: 11520 }, overlay: { total_return: 0.3073387, maximum_drawdown: -0.12, realized_minute_volatility: 0.001, point_count: 11520 }, excess_return: -0.100946 }],
+    subgroups: [{ group: 'STOCK', symbol_count: 75, base: { total_return: 0.4082847, maximum_drawdown: -0.151, realized_minute_volatility: 0.0022, point_count: 11520 }, overlay: { total_return: 0.010438, maximum_drawdown: -0.1218, realized_minute_volatility: 0.001, point_count: 11520 } }],
+    leave_one_sector_out: [], daily: [],
+    curve: [{ timestamp: '2025-07-01T09:35:00+08:00', base_equity: 1, overlay_equity: 1 }],
+  },
   reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
   reporting: {
     classification: 'TRUSTED_PAPER_EOD_REPORTING', readiness: 'CONFIGURED', automatic: true,
@@ -554,10 +584,13 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/分钟修正锁定测试：NOT_ELIGIBLE/)).toBeInTheDocument()
     expect(screen.getByText(/两者绝对收益均为负/)).toBeInTheDocument()
     expect(screen.getByText(/20 bps 优势消失/)).toBeInTheDocument()
-    expect(screen.getAllByTestId('minute-backtest-chart')).toHaveLength(2)
+    expect(screen.getAllByTestId('minute-backtest-chart')).toHaveLength(3)
     expect(screen.getByText('跨时间尺度否证：1/4 折绝对正收益')).toBeInTheDocument()
     expect(screen.getByText(/短窗口 1 分钟结果未跨时间尺度复现/)).toBeInTheDocument()
     expect(screen.getByText(/0 bps 起已跑输基准/)).toBeInTheDocument()
+    expect(screen.getByText(/长历史复核：2\/6 折绝对正收益/)).toBeInTheDocument()
+    expect(screen.getByText(/尾部 8 日未读/)).toBeInTheDocument()
+    expect(screen.getByText(/前复权，可能含未来复权知识/)).toBeInTheDocument()
     expect(screen.getAllByText('样本组')).toHaveLength(2)
     expect(screen.getByText('整行业剔除')).toBeInTheDocument()
     expect(screen.getByText('基础化工')).toBeInTheDocument()

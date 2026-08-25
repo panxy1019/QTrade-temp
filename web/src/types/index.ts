@@ -532,6 +532,8 @@ export interface MinuteResearchReport {
       sector_name: string | null
     }>
     point_in_time: false
+    provider_version?: string | null
+    future_adjustment_knowledge_possible?: boolean
     realtime_readiness: false
     real_data_paper_readiness: false
     external_order_transmission: false
@@ -614,6 +616,8 @@ export interface FiveMinuteResearchReport {
     test_windows_disjoint: boolean
     selection_objective: string
     selected_policy_sequence: string[]
+    used_session_count?: number
+    unused_trailing_sessions?: number
   }
   aggregate?: {
     cost_bps: number
@@ -713,6 +717,7 @@ export interface PlatformSnapshot {
   minuteOverlay: MinuteOverlayStatus
   minuteResearch: MinuteResearchReport
   fiveMinuteResearch: FiveMinuteResearchReport
+  longFiveMinuteResearch: FiveMinuteResearchReport
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]

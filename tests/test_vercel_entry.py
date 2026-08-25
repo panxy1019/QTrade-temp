@@ -49,6 +49,15 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert len(five_minute["folds"]) == 4
     assert five_minute["aggregate"]["positive_test_fold_count"] == 1
     assert five_minute["aggregate"]["excess_return"] < 0
+    long_five_minute = client.get(_api("/long-five-minute-research")).json()
+    assert long_five_minute["promotion"] == "NOT_ELIGIBLE"
+    assert long_five_minute["minute_dataset"]["provider"] == "BaoStock"
+    assert long_five_minute["minute_dataset"]["bar_count"] == 1_324_800
+    assert long_five_minute["minute_dataset"]["symbol_count"] == 75
+    assert long_five_minute["minute_dataset"]["session_count"] == 368
+    assert len(long_five_minute["folds"]) == 6
+    assert long_five_minute["walk_forward"]["unused_trailing_sessions"] == 8
+    assert long_five_minute["aggregate"]["excess_return"] < 0
     five_minute_bars = client.get(_api("/five-minute-bars/601166")).json()
     assert five_minute_bars["observation_type"] == (
         "HISTORICAL_FIVE_MINUTE_BAR_SERIES"

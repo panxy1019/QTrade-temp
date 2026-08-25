@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal
 from math import sqrt
@@ -39,6 +40,59 @@ except ModuleNotFoundError:
 INITIAL_TRAIN_SESSIONS = 16
 TEST_SESSIONS_PER_FOLD = 6
 FOLD_COUNT = 4
+
+
+@dataclass(frozen=True, slots=True)
+class WalkForwardProfile:
+    dataset_root: Path
+    output: Path
+    expected_classification: str
+    report_id: str
+    initial_train_sessions: int
+    test_sessions_per_fold: int
+    fold_count: int
+    promotion_reasons: tuple[str, ...]
+
+
+WALK_FORWARD_PROFILES = {
+    "sina-recent": WalkForwardProfile(
+        dataset_root=Path("runtime/data/sina-minute"),
+        output=Path("runtime/research/sina-five-minute-walk-forward-v1"),
+        expected_classification=(
+            "noncommercial_recent_historical_5m_non_pit_not_eligible"
+        ),
+        report_id="sina-five-minute-expanding-walk-forward-v1",
+        initial_train_sessions=INITIAL_TRAIN_SESSIONS,
+        test_sessions_per_fold=TEST_SESSIONS_PER_FOLD,
+        fold_count=FOLD_COUNT,
+        promotion_reasons=(
+            "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",
+            "ONLY_FORTY_RECENT_SESSIONS",
+            "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+            "PUBLIC_WEB_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
+            "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
+        ),
+    ),
+    "baostock-long": WalkForwardProfile(
+        dataset_root=Path("runtime/data/baostock-five-minute"),
+        output=Path("runtime/research/baostock-five-minute-long-walk-forward-v1"),
+        expected_classification=(
+            "free_historical_qfq_5m_current_non_pit_not_eligible"
+        ),
+        report_id="baostock-five-minute-long-expanding-walk-forward-v1",
+        initial_train_sessions=120,
+        test_sessions_per_fold=40,
+        fold_count=6,
+        promotion_reasons=(
+            "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",
+            "LONGER_PROVIDER_CROSSCHECK_REUSES_PREVIOUSLY_OBSERVED_CALENDAR",
+            "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+            "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+            "FREE_HISTORICAL_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
+            "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
+        ),
+    ),
+}
 
 FIVE_MINUTE_POLICIES: tuple[tuple[str, MinuteOverlayPolicy], ...] = (
     (
@@ -72,14 +126,20 @@ FIVE_MINUTE_POLICIES: tuple[tuple[str, MinuteOverlayPolicy], ...] = (
 )
 
 
-def _walk_forward_folds(trading_days: tuple[date, ...]) -> tuple[dict[str, object], ...]:
-    expected = INITIAL_TRAIN_SESSIONS + TEST_SESSIONS_PER_FOLD * FOLD_COUNT
-    if len(trading_days) != expected:
-        raise ValueError(f"5-minute walk-forward requires exactly {expected} sessions")
+def _walk_forward_folds(
+    trading_days: tuple[date, ...],
+    *,
+    initial_train_sessions: int = INITIAL_TRAIN_SESSIONS,
+    test_sessions_per_fold: int = TEST_SESSIONS_PER_FOLD,
+    fold_count: int = FOLD_COUNT,
+) -> tuple[dict[str, object], ...]:
+    expected = initial_train_sessions + test_sessions_per_fold * fold_count
+    if len(trading_days) < expected:
+        raise ValueError(f"5-minute walk-forward requires at least {expected} sessions")
     folds = []
-    for index in range(FOLD_COUNT):
-        test_start = INITIAL_TRAIN_SESSIONS + index * TEST_SESSIONS_PER_FOLD
-        test_end = test_start + TEST_SESSIONS_PER_FOLD
+    for index in range(fold_count):
+        test_start = initial_train_sessions + index * test_sessions_per_fold
+        test_end = test_start + test_sessions_per_fold
         folds.append(
             {
                 "fold": index + 1,
@@ -200,24 +260,31 @@ def _aggregate_selected(
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--dataset-root", type=Path, default=Path("runtime/data/sina-minute")
+        "--profile", choices=tuple(WALK_FORWARD_PROFILES), default="sina-recent"
     )
+    parser.add_argument("--dataset-root", type=Path)
     parser.add_argument("--data-version", required=True)
-    parser.add_argument(
-        "--output", type=Path, default=Path("runtime/research/sina-five-minute-walk-forward-v1")
-    )
+    parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    if args.output.exists():
-        raise FileExistsError(f"refusing to overwrite 5-minute report: {args.output}")
+    profile = WALK_FORWARD_PROFILES[args.profile]
+    dataset_root = args.dataset_root or profile.dataset_root
+    output = args.output or profile.output
+    if output.exists():
+        raise FileExistsError(f"refusing to overwrite 5-minute report: {output}")
 
     evidence, manifest, bars = _load_dataset(
-        args.dataset_root,
+        dataset_root,
         args.data_version,
-        expected_classification="noncommercial_recent_historical_5m_non_pit_not_eligible",
+        expected_classification=profile.expected_classification,
         expected_interval="5m",
     )
     trading_days = tuple(date.fromisoformat(value) for value in evidence["trading_days"])
-    folds = _walk_forward_folds(trading_days)
+    folds = _walk_forward_folds(
+        trading_days,
+        initial_train_sessions=profile.initial_train_sessions,
+        test_sessions_per_fold=profile.test_sessions_per_fold,
+        fold_count=profile.fold_count,
+    )
     policy_by_id = dict(FIVE_MINUTE_POLICIES)
     five_bps_results = {
         policy_id: run_minute_overlay_backtest(
@@ -311,12 +378,14 @@ def main() -> int:
             }
         )
 
-    requested_etfs = set(evidence["universe"]["etfs"])
+    requested_etfs = set(evidence["universe"].get("etfs", ()))
     all_symbols = set(next(iter(five_bps_results.values())).symbols)
     etfs = all_symbols & requested_etfs
     stocks = all_symbols - etfs
     subgroup_rows = []
     for name, subset in (("ETF", etfs), ("STOCK", stocks)):
+        if not subset:
+            continue
         base_metrics, overlay_metrics, _, _, _ = _aggregate_selected(
             folds, selected_sequence, five_bps_results, symbols=subset
         )
@@ -370,18 +439,18 @@ def main() -> int:
                 }
             )
 
-    args.output.mkdir(parents=True)
+    output.mkdir(parents=True)
     artifact_hashes = {
-        "candidates.json": _write_json(args.output / "candidates.json", candidate_rows),
-        "folds.json": _write_json(args.output / "folds.json", fold_rows),
-        "cost_stress.json": _write_json(args.output / "cost_stress.json", cost_rows),
-        "subgroups.json": _write_json(args.output / "subgroups.json", subgroup_rows),
+        "candidates.json": _write_json(output / "candidates.json", candidate_rows),
+        "folds.json": _write_json(output / "folds.json", fold_rows),
+        "cost_stress.json": _write_json(output / "cost_stress.json", cost_rows),
+        "subgroups.json": _write_json(output / "subgroups.json", subgroup_rows),
         "leave_one_sector_out.json": _write_json(
-            args.output / "leave_one_sector_out.json", sector_rows
+            output / "leave_one_sector_out.json", sector_rows
         ),
-        "daily.json": _write_json(args.output / "daily.json", daily_rows),
+        "daily.json": _write_json(output / "daily.json", daily_rows),
         "curve.json": _write_json(
-            args.output / "curve.json",
+            output / "curve.json",
             [
                 {
                     "timestamp": timestamp.isoformat(),
@@ -396,7 +465,7 @@ def main() -> int:
     }
     report = {
         "schema_version": 1,
-        "report_id": "sina-five-minute-expanding-walk-forward-v1",
+        "report_id": profile.report_id,
         "generated_at": datetime.now().astimezone().isoformat(),
         "dataset": {
             "data_version": manifest.data_version,
@@ -410,6 +479,13 @@ def main() -> int:
             "sector_count": evidence["sector_count"],
             "session_count": evidence["session_count"],
             "classification": evidence["classification"],
+            "provider": evidence.get("provider"),
+            "provider_version": evidence.get("provider_version"),
+            "point_in_time": evidence.get("point_in_time"),
+            "future_adjustment_knowledge_possible": evidence.get(
+                "future_adjustment_knowledge_possible", False
+            ),
+            "request": evidence.get("request"),
         },
         "causal_contract": {
             "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
@@ -422,9 +498,18 @@ def main() -> int:
             "external_order_transmission": False,
         },
         "walk_forward": {
-            "initial_train_sessions": INITIAL_TRAIN_SESSIONS,
-            "test_sessions_per_fold": TEST_SESSIONS_PER_FOLD,
-            "fold_count": FOLD_COUNT,
+            "initial_train_sessions": profile.initial_train_sessions,
+            "test_sessions_per_fold": profile.test_sessions_per_fold,
+            "fold_count": profile.fold_count,
+            "used_session_count": (
+                profile.initial_train_sessions
+                + profile.test_sessions_per_fold * profile.fold_count
+            ),
+            "unused_trailing_sessions": (
+                len(trading_days)
+                - profile.initial_train_sessions
+                - profile.test_sessions_per_fold * profile.fold_count
+            ),
             "candidate_count": len(FIVE_MINUTE_POLICIES),
             "test_windows_disjoint": True,
             "selected_policy_sequence": list(selected_sequence),
@@ -452,19 +537,13 @@ def main() -> int:
         },
         "artifacts": artifact_hashes,
         "promotion": "NOT_ELIGIBLE",
-        "promotion_reasons": [
-            "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",
-            "ONLY_FORTY_RECENT_SESSIONS",
-            "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
-            "PUBLIC_WEB_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
-            "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
-        ],
+        "promotion_reasons": list(profile.promotion_reasons),
         "realtime_readiness": False,
         "real_data_paper_readiness": False,
         "external_order_transmission": False,
     }
     signed_report = {**report, "evidence_sha256": _canonical_sha256(report)}
-    _write_json(args.output / "report.json", signed_report)
+    _write_json(output / "report.json", signed_report)
     print(json.dumps(signed_report, ensure_ascii=False, sort_keys=True, default=str))
     return 0
 

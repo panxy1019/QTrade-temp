@@ -23,6 +23,12 @@ context.five_minute_manifest_path = EVIDENCE_ROOT / "five-minute-market-data" / 
 context.five_minute_research_report_path = (
     EVIDENCE_ROOT / "five-minute-walk-forward" / "report.json"
 )
+context.long_five_minute_manifest_path = (
+    EVIDENCE_ROOT / "long-five-minute-market-data" / "manifest.json"
+)
+context.long_five_minute_research_report_path = (
+    EVIDENCE_ROOT / "long-five-minute-walk-forward" / "report.json"
+)
 
 
 class VercelQueryPathApp:

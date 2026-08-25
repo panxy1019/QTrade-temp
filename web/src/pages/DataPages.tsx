@@ -292,6 +292,8 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const minuteSelected = minuteResearch?.selected
   const fiveMinuteResearch = data?.fiveMinuteResearch
   const fiveMinuteAggregate = fiveMinuteResearch?.aggregate
+  const longFiveMinuteResearch = data?.longFiveMinuteResearch
+  const longFiveMinuteAggregate = longFiveMinuteResearch?.aggregate
   const leader = analytics?.leader
   const benchmark = analytics?.benchmark
   const walkForward = data?.walkForward
@@ -413,6 +415,42 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
       ]} />
       <Typography.Text type="secondary">这是供应商原生 5 分钟线的跨尺度压力测试，不是把 1 分钟线降采样，也不证明 1 分钟实盘可用。24 个测试日互不重叠；0 bps 起已跑输基准，ETF、股票及 15 个整板块剔除样本均未得到可晋级的绝对收益，因此保持 {fiveMinuteResearch?.promotion ?? 'NOT_EVALUATED'}。</Typography.Text>
     </Card>
+    <Alert
+      showIcon
+      type="error"
+      title={longFiveMinuteAggregate ? `长历史复核：${longFiveMinuteAggregate.positive_test_fold_count}/${longFiveMinuteResearch?.folds.length ?? 0} 折绝对正收益，仍未战胜基准` : '暂无已验证的长历史 5 分钟复核'}
+      description={longFiveMinuteAggregate ? `BaoStock 75 只股票、368 个共同完整交易日；预先锁定前 360 日，其中 240 日为六折独立测试。${longFiveMinuteAggregate.cost_bps} bps 下基准 ${formatPercent(String(longFiveMinuteAggregate.base.total_return))}，分钟修正 ${formatPercent(String(longFiveMinuteAggregate.overlay.total_return))}，相对基准 ${formatPercent(String(longFiveMinuteAggregate.excess_return))}。回撤虽降低，但收益损失过大。` : '报告、数据集 checksum 或任一签名 artifact 未通过校验，保持失败关闭。'}
+    />
+    <Card title="368 日原生 5 分钟长历史复核：保留否证，不追涨调参" extra={<JsonExportButton filename="qtrade-long-five-minute-walk-forward-evidence.json" value={longFiveMinuteResearch ?? {}} />}>
+      <MinuteBacktestChart report={longFiveMinuteResearch ?? null} />
+      {longFiveMinuteAggregate && <Descriptions values={[
+        ['来源', `${longFiveMinuteResearch?.minute_dataset?.provider ?? '—'} ${longFiveMinuteResearch?.minute_dataset?.provider_version ?? ''}`],
+        ['标的 / 板块', `${longFiveMinuteResearch?.minute_dataset?.symbol_count ?? 0} / ${longFiveMinuteResearch?.minute_dataset?.sector_count ?? 0}`],
+        ['数据范围', `${longFiveMinuteResearch?.minute_dataset?.trading_days[0] ?? '—'} 至 ${longFiveMinuteResearch?.minute_dataset?.trading_days.at(-1) ?? '—'}`],
+        ['滚动切分', `${longFiveMinuteResearch?.walk_forward?.initial_train_sessions ?? 0} 日初始训练；${longFiveMinuteResearch?.walk_forward?.fold_count ?? 0} 折 × ${longFiveMinuteResearch?.walk_forward?.test_sessions_per_fold ?? 0} 日独立测试；尾部 ${longFiveMinuteResearch?.walk_forward?.unused_trailing_sessions ?? 0} 日未读`],
+        ['基准收益', formatPercent(String(longFiveMinuteAggregate.base.total_return))],
+        ['修正后收益', formatPercent(String(longFiveMinuteAggregate.overlay.total_return))],
+        ['相对基准', formatPercent(String(longFiveMinuteAggregate.excess_return))],
+        ['基准 / 修正回撤', `${formatPercent(String(longFiveMinuteAggregate.base.maximum_drawdown))} / ${formatPercent(String(longFiveMinuteAggregate.overlay.maximum_drawdown))}`],
+        ['复权边界', longFiveMinuteResearch?.minute_dataset?.future_adjustment_knowledge_possible ? '前复权，可能含未来复权知识；非 PIT' : '—'],
+        ['外部订单', 'DISABLED'],
+      ]} />}
+      <Table rowKey="fold" size="small" pagination={false} dataSource={longFiveMinuteResearch?.folds ?? []} columns={[
+        { title: '折', dataIndex: 'fold', width: 56 },
+        { title: '冻结策略', dataIndex: 'selected_policy_id' },
+        { title: '独立测试窗', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => `${row.test_days[0]} 至 ${row.test_days.at(-1)}` },
+        { title: '基准收益', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => formatPercent(String(row.test_base.total_return)) },
+        { title: '修正后收益', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => formatPercent(String(row.test_overlay.total_return)) },
+        { title: '相对基准', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['folds'][number]) => formatPercent(String(row.test_excess_return)) },
+      ]} />
+      <Table rowKey="cost_bps" size="small" pagination={false} dataSource={longFiveMinuteResearch?.cost_stress ?? []} columns={[
+        { title: '单边成本 bps', dataIndex: 'cost_bps' },
+        { title: '基准收益', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['cost_stress'][number]) => formatPercent(String(row.base.total_return)) },
+        { title: '修正后收益', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['cost_stress'][number]) => formatPercent(String(row.overlay.total_return)) },
+        { title: '相对基准', render: (_: unknown, row: NonNullable<typeof longFiveMinuteResearch>['cost_stress'][number]) => formatPercent(String(row.excess_return)) },
+      ]} />
+      <Typography.Text type="secondary">这批数据只用于历史研究：当前成分股样本池非 PIT，前复权可能使用未来复权知识，免费历史源不等于获授权的实时源。即使 0 bps，修正层仍落后基准，因此保持 {longFiveMinuteResearch?.promotion ?? 'NOT_EVALUATED'}，不启动 PAPER/LIVE。</Typography.Text>
+    </Card>
     <Alert showIcon type="warning" title="探索性领先者，不是 Champion" description={leader ? `${leader.experiment_id}：测试窗 ${analytics?.split?.test_start ?? '—'} 至 ${analytics?.split?.test_end ?? '—'}，收益 ${formatPercent(leader.metrics.total_return)}，Sharpe ${formatNumber(leader.metrics.sharpe)}，最大回撤 ${formatPercent(leader.metrics.maximum_drawdown)}` : '暂无已验证结果'} />
     <Card title="已验证全期策略、基准、超额收益与回撤"><EquityChart dark analytics={analytics} />{leader && <Descriptions values={[["测试窗平均敞口", formatPercent(leader.metrics.test_exposure)], ["测试窗换手", formatNumber(leader.metrics.test_turnover)], ["测试窗交易成本", formatPercent(leader.metrics.test_transaction_cost)], ["Buy-and-Hold 测试收益", benchmark ? formatPercent(benchmark.metrics.total_return) : '—']]} />}<Typography.Text type="secondary">图为完整模拟期；Buy-and-Hold 仅在记录、资金曲线、回撤 checksum 全部通过且交易日逐点对齐时展示。测试窗指标在上方单列；当前样本池非 PIT，且缺少 PAPER/SHADOW 观察，禁止晋级。</Typography.Text></Card>
     <Alert showIcon type={hasWalkForwardEvidence ? 'error' : 'info'} title={hasWalkForwardEvidence ? `三折独立样本外：${positiveFolds}/${folds.length} 折正收益` : '暂无已验证滚动样本外证据'} description={hasWalkForwardEvidence ? `聚合收益 ${formatPercent(String(aggregate?.total_return ?? ''))}，聚合 Sharpe ${formatNumber(String(aggregate?.sharpe ?? ''))}，最大回撤 ${formatPercent(String(aggregate?.maximum_drawdown ?? ''))}。这组预先分折证据优先于上方事后挑选的探索性领先者。` : '滚动样本外报告缺失或未通过校验；不能据此声称策略通过或失败。'} />
@@ -505,6 +543,8 @@ export function DataCenterPage({ data }: { data: PlatformSnapshot | null }) {
     { id: 'minute-backtest', name: '分钟因果修正回测', status: data?.minuteResearch.selected ? 'VERIFIED' : 'UNAVAILABLE', count: data?.minuteResearch.candidates.length ?? 0, identity: data?.minuteResearch.promotion ?? '—' },
     { id: 'five-minute-history', name: '40 日原生 5 分钟分时线', status: data?.fiveMinuteResearch?.minute_dataset ? 'VERIFIED' : 'UNAVAILABLE', count: data?.fiveMinuteResearch?.minute_dataset?.bar_count ?? 0, identity: data?.fiveMinuteResearch?.minute_dataset ? `${data.fiveMinuteResearch.minute_dataset.data_version} · ${data.fiveMinuteResearch.minute_dataset.checksum}` : '—' },
     { id: 'five-minute-walk-forward', name: '5 分钟滚动样本外否证', status: data?.fiveMinuteResearch?.folds.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.fiveMinuteResearch?.folds.length ?? 0, identity: data?.fiveMinuteResearch?.promotion ?? '—' },
+    { id: 'long-five-minute-history', name: '368 日 BaoStock 原生 5 分钟数据', status: data?.longFiveMinuteResearch?.minute_dataset ? 'VERIFIED' : 'UNAVAILABLE', count: data?.longFiveMinuteResearch?.minute_dataset?.bar_count ?? 0, identity: data?.longFiveMinuteResearch?.minute_dataset ? `${data.longFiveMinuteResearch.minute_dataset.data_version} · ${data.longFiveMinuteResearch.minute_dataset.checksum}` : '—' },
+    { id: 'long-five-minute-walk-forward', name: '240 日长历史滚动样本外否证', status: data?.longFiveMinuteResearch?.folds.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.longFiveMinuteResearch?.folds.length ?? 0, identity: data?.longFiveMinuteResearch?.promotion ?? '—' },
     { id: 'experiments', name: '基线实验与 artifacts', status: data?.experiments.experiments.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.experiments.experiments.length ?? 0, identity: data?.experiments.data_version ?? '—' },
     { id: 'walk-forward', name: '滚动样本外', status: data?.walkForward.result.folds.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.walkForward.result.folds.length ?? 0, identity: data?.walkForward.data_version ?? '—' },
     { id: 'robustness', name: '拒绝后稳健性', status: data?.robustness.result.scenario_metrics.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.robustness.result.scenario_metrics.length ?? 0, identity: data?.robustness.promotion ?? '—' },

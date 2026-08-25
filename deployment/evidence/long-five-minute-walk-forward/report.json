@@ -1,0 +1,100 @@
+{
+  "aggregate": {
+    "base": {
+      "maximum_drawdown": -0.15108553085613996,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.002225271023172743,
+      "total_return": 0.4082846829532176
+    },
+    "cost_bps": 5,
+    "excess_return": -0.3978466369601448,
+    "overlay": {
+      "maximum_drawdown": -0.1218057245758617,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009712394886327146,
+      "total_return": 0.010438045993072853
+    },
+    "positive_test_fold_count": 2
+  },
+  "artifacts": {
+    "candidates.json": "8367e3a1399f2ac67dacc50ddd3106eb5dc44eb616a02077fc7a6edc68b69ee4",
+    "cost_stress.json": "8755dd08ec98a9e748c469742cae95ca813dd56b050d20709a1a145ffba6f8ac",
+    "curve.json": "727b39c997f9cbf63df77f7c3b09af3d196b22871c06c0e9d364b090b4a4611d",
+    "daily.json": "b81ec936da971d03ec90922276e5b4f2097ddf1e1245a576e24eb5665c46b590",
+    "folds.json": "9f17540ff61abb7d503fd8771884fe2622594a86f8dcaf86025503d4914f91ea",
+    "leave_one_sector_out.json": "2a65aa04e80986f5c39e70244035ec46deb3ed7fcb11ec2313c38078ec8c6b8a",
+    "subgroups.json": "d3d6721090dcc66848bde478ae6207ef0cb128ca3110429dafcd9ba27ca64a87"
+  },
+  "causal_contract": {
+    "candidate_state": "ALL_CANDIDATES_CAUSALLY_SHADOW_WARMED",
+    "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+    "external_order_transmission": false,
+    "maximum_exposure": 1.0,
+    "same_bar_signal_execution": false,
+    "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T"
+  },
+  "dataset": {
+    "bar_count": 1324800,
+    "bar_interval": "5m",
+    "checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
+    "classification": "free_historical_qfq_5m_current_non_pit_not_eligible",
+    "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
+    "etf_count": 0,
+    "evidence_sha256": "531f8077caf6849d25ecca960d613c113c3dab25ee630b45e72cbce1252429bb",
+    "future_adjustment_knowledge_possible": true,
+    "point_in_time": false,
+    "provider": "BaoStock",
+    "provider_version": "0.9.3",
+    "request": {
+      "adjustflag": "2",
+      "adjustment": "qfq",
+      "end_date": "2026-08-25",
+      "frequency": "5",
+      "start_date": "2025-01-02"
+    },
+    "sector_count": 15,
+    "session_count": 368,
+    "stock_count": 75,
+    "symbol_count": 75
+  },
+  "evidence_sha256": "7959ec6dcbd8ade9149594c152a7afcd450f6ba71efa61fb6ec05fbc9e01c9cf",
+  "external_order_transmission": false,
+  "generated_at": "2026-08-26T05:40:19.827827+08:00",
+  "promotion": "NOT_ELIGIBLE",
+  "promotion_reasons": [
+    "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",
+    "LONGER_PROVIDER_CROSSCHECK_REUSES_PREVIOUSLY_OBSERVED_CALENDAR",
+    "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+    "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+    "FREE_HISTORICAL_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
+    "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE"
+  ],
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "report_id": "baostock-five-minute-long-expanding-walk-forward-v1",
+  "robustness": {
+    "cost_scenarios": 4,
+    "leave_one_sector_out_scenarios": 15,
+    "subgroups": 1,
+    "test_daily_partitions": 240
+  },
+  "schema_version": 1,
+  "walk_forward": {
+    "candidate_count": 7,
+    "fold_count": 6,
+    "initial_train_sessions": 120,
+    "selected_policy_sequence": [
+      "five-reduction-soft-v1",
+      "five-reduction-soft-v1",
+      "five-reduction-soft-v1",
+      "five-reduction-soft-v1",
+      "five-reduction-soft-v1",
+      "five-reduction-soft-v1"
+    ],
+    "selection_objective": "overlay_return_minus_base_return_plus_twice_drawdown_improvement",
+    "test_sessions_per_fold": 40,
+    "test_windows_disjoint": true,
+    "unused_trailing_sessions": 8,
+    "used_session_count": 360
+  }
+}

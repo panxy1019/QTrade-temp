@@ -177,6 +177,34 @@ evidence, and the market page provides a separate native-5-minute symbol browser
 instead of relabeling the 1-minute tab. Promotion, realtime/PAPER readiness and
 external orders remain disabled.
 
+For a longer provider cross-check, the optional BaoStock 0.9.3 path downloads
+provider-native 5-minute A-share history. It deliberately excludes ETFs because
+the bounded provider probe returned materially shorter ETF coverage, uses only
+the previously frozen 75-stock/15-sector universe, omits all-zero suspension
+placeholders without forward-filling, and records `qfq`/`adjustflag=2` as a
+non-PIT future-adjustment-knowledge risk:
+
+```bash
+QTRADE_BAOSTOCK_FREE_DATA_ACK=true uv run --extra baostock python \
+  scripts/baostock_five_minute_history_ingest.py \
+  --data-version baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1
+
+uv run python scripts/run_sina_five_minute_walk_forward.py \
+  --profile baostock-long \
+  --data-version baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1
+```
+
+The signed dataset contains 1,324,800 bars for 75 stocks across 368 common
+complete sessions. The predeclared study reads the first 360 sessions only:
+120 initial training sessions followed by six disjoint 40-session test folds;
+the final eight sessions remain unused. At 5 bps, the stitched 240-session
+baseline returned `+40.8285%`, while the overlay returned `+1.0438%`
+(`-39.7847%` relative). The overlay reduced maximum drawdown from `-15.1086%`
+to `-12.1806%`, but even at 0 bps it lagged the baseline by `-10.0946%`.
+`/long-five-minute-research` exposes the checksum- and artifact-verified result
+as a second, stronger robustness veto. It does not authorize realtime data,
+PAPER, strategy promotion or external orders.
+
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and
 `QTRADE_RQDATA_TOKEN` only inside the bridge process, and claims a session only

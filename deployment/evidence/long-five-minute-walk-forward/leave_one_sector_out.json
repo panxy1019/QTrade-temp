@@ -1,0 +1,302 @@
+[
+  {
+    "excluded_sector_code": "801030",
+    "excluded_sector_name": "基础化工",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "600309",
+      "000792",
+      "000408",
+      "600160",
+      "600989"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.13840906831349342,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009713626351576841,
+      "total_return": -0.006526678246574935
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": -0.016964724239647788
+  },
+  {
+    "excluded_sector_code": "801050",
+    "excluded_sector_name": "有色金属",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "601899",
+      "603993",
+      "600111",
+      "601600",
+      "600489"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.13759492056351874,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009250666931760994,
+      "total_return": -0.015331338464952937
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": -0.02576938445802579
+  },
+  {
+    "excluded_sector_code": "801080",
+    "excluded_sector_name": "电子",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "688256",
+      "002371",
+      "002475",
+      "688012",
+      "688041"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.12057496284381852,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009511924903411886,
+      "total_return": -0.011203618045140029
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": -0.021641664038212882
+  },
+  {
+    "excluded_sector_code": "801120",
+    "excluded_sector_name": "食品饮料",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "600519",
+      "600887",
+      "000858",
+      "000568",
+      "603288"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.12047376547398625,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0010062637445027373,
+      "total_return": 0.029305467625990067
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": 0.018867421632917214
+  },
+  {
+    "excluded_sector_code": "801150",
+    "excluded_sector_name": "医药生物",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "603259",
+      "600276",
+      "300760",
+      "688271",
+      "002422"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.11345903541281521,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.000991176265809918,
+      "total_return": 0.023371416787155708
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": 0.012933370794082855
+  },
+  {
+    "excluded_sector_code": "801160",
+    "excluded_sector_name": "公用事业",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "600900",
+      "601985",
+      "600905",
+      "600795",
+      "600886"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.12028775101223521,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.001013007476470188,
+      "total_return": 0.023485620719602585
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": 0.013047574726529731
+  },
+  {
+    "excluded_sector_code": "801730",
+    "excluded_sector_name": "电力设备",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "300750",
+      "300274",
+      "600089",
+      "600406",
+      "002028"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.122371621437115,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.000970689345223943,
+      "total_return": 0.010660539475825015
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": 0.00022249348275216185
+  },
+  {
+    "excluded_sector_code": "801740",
+    "excluded_sector_name": "国防军工",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "600150",
+      "002625",
+      "600760",
+      "600893",
+      "002179"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.12063966397729042,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009843056877796201,
+      "total_return": 0.020012945818441485
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": 0.009574899825368632
+  },
+  {
+    "excluded_sector_code": "801750",
+    "excluded_sector_name": "计算机",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "002415",
+      "603019",
+      "002230",
+      "000938",
+      "000977"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.12098475653914265,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009586907819537118,
+      "total_return": -0.007516309396776943
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": -0.017954355389849797
+  },
+  {
+    "excluded_sector_code": "801760",
+    "excluded_sector_name": "传媒",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "002602",
+      "002027",
+      "002558",
+      "300418",
+      "300251"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.12007529891642721,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0010027591568545365,
+      "total_return": 0.03062647825093867
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": 0.020188432257865818
+  },
+  {
+    "excluded_sector_code": "801770",
+    "excluded_sector_name": "通信",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "300308",
+      "300502",
+      "300394",
+      "000063",
+      "601728"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.13397582759432058,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009421200907010735,
+      "total_return": -0.019991754377438054
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": -0.030429800370510907
+  },
+  {
+    "excluded_sector_code": "801780",
+    "excluded_sector_name": "银行",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "600036",
+      "601166",
+      "601398",
+      "601288",
+      "601328"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.1202147882023471,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0010335575831466534,
+      "total_return": 0.02692836928434783
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": 0.016490323291274978
+  },
+  {
+    "excluded_sector_code": "801790",
+    "excluded_sector_name": "非银金融",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "601318",
+      "600030",
+      "300059",
+      "601211",
+      "601688"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.11684783083977102,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009711225759375169,
+      "total_return": 0.02557380270177423
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": 0.015135756708701376
+  },
+  {
+    "excluded_sector_code": "801880",
+    "excluded_sector_name": "汽车",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "002594",
+      "000338",
+      "600660",
+      "600104",
+      "601127"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.12178718020689727,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009832253494907325,
+      "total_return": 0.028663746188656525
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": 0.01822570019558367
+  },
+  {
+    "excluded_sector_code": "801890",
+    "excluded_sector_name": "机械设备",
+    "excluded_symbol_count": 5,
+    "excluded_symbols": [
+      "600031",
+      "300124",
+      "000988",
+      "002353",
+      "601766"
+    ],
+    "overlay": {
+      "maximum_drawdown": -0.1262997035923905,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0009740250248717179,
+      "total_return": -0.0017019246185292491
+    },
+    "retained_symbol_count": 70,
+    "return_delta_vs_all": -0.012139970611602102
+  }
+]

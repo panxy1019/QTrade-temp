@@ -119,6 +119,8 @@ class AppContext:
     minute_research_report_path: Path | None = None
     five_minute_manifest_path: Path | None = None
     five_minute_research_report_path: Path | None = None
+    long_five_minute_manifest_path: Path | None = None
+    long_five_minute_research_report_path: Path | None = None
     minute_overlay_reader: Callable[[], dict[str, object]] | None = None
     applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
     sellable_quantity_reader: Callable[[str, date], int] | None = None
@@ -337,6 +339,53 @@ def create_app(
             "classification": "NO_VERIFIED_FIVE_MINUTE_RESEARCH_RESULT",
             "promotion": "NOT_EVALUATED",
             "promotion_reasons": ["MISSING_VERIFIED_FIVE_MINUTE_RESEARCH_ARTIFACT"],
+            "minute_dataset": None,
+            "folds": [],
+            "candidates": [],
+            "cost_stress": [],
+            "subgroups": [],
+            "leave_one_sector_out": [],
+            "daily": [],
+            "curve": [],
+        }
+
+    @app.get("/long-five-minute-research")
+    def long_five_minute_research(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        report = _load_verified_five_minute_report(
+            state.long_five_minute_research_report_path,
+            dataset,
+            expected_report_id=(
+                "baostock-five-minute-long-expanding-walk-forward-v1"
+            ),
+            initial_train_sessions=120,
+            test_sessions_per_fold=40,
+            fold_count=6,
+            expected_promotion_reasons=(
+                "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",
+                "LONGER_PROVIDER_CROSSCHECK_REUSES_PREVIOUSLY_OBSERVED_CALENDAR",
+                "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+                "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+                "FREE_HISTORICAL_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
+                "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
+            ),
+        )
+        return report or {
+            "classification": "NO_VERIFIED_LONG_FIVE_MINUTE_RESEARCH_RESULT",
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": [
+                "MISSING_VERIFIED_LONG_FIVE_MINUTE_RESEARCH_ARTIFACT"
+            ],
             "minute_dataset": None,
             "folds": [],
             "candidates": [],
@@ -882,6 +931,15 @@ def context_from_runtime(
         ),
         five_minute_research_report_path=Path(
             "runtime/research/sina-five-minute-walk-forward-v1/report.json"
+        ),
+        long_five_minute_manifest_path=Path(
+            "runtime/data/baostock-five-minute/"
+            "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1/"
+            "manifest.json"
+        ),
+        long_five_minute_research_report_path=Path(
+            "runtime/research/baostock-five-minute-long-walk-forward-v1/"
+            "report.json"
         ),
         applied_trade_reader=bundle.journal.applied_trade_payloads,
         sellable_quantity_reader=bundle.sellability.sellable_quantity,
@@ -3074,7 +3132,7 @@ def _load_verified_minute_dataset(
             or bar_count != symbol_count * session_count * session_bars
         ):
             return None
-        etfs = universe.get("etfs")
+        etfs = universe.get("etfs", [])
         stocks = universe.get("stocks")
         if (
             not isinstance(etfs, list)
@@ -3137,7 +3195,8 @@ def _load_verified_minute_dataset(
             for symbol in eligible
         ]
         return {
-            "provider": "Sina public web historical endpoint",
+            "provider": evidence.get("provider", "Sina public web historical endpoint"),
+            "provider_version": evidence.get("provider_version"),
             "classification": evidence["classification"],
             "bar_interval": expected_interval,
             "data_version": data_version,
@@ -3157,6 +3216,9 @@ def _load_verified_minute_dataset(
             "eligible_symbols": eligible,
             "instruments": instruments,
             "point_in_time": False,
+            "future_adjustment_knowledge_possible": evidence.get(
+                "future_adjustment_knowledge_possible", False
+            ),
             "realtime_readiness": False,
             "real_data_paper_readiness": False,
             "external_order_transmission": False,
@@ -3350,7 +3412,14 @@ def _load_verified_minute_report(
 
 
 def _load_verified_five_minute_report(
-    path: Path | None, dataset: dict[str, object] | None
+    path: Path | None,
+    dataset: dict[str, object] | None,
+    *,
+    expected_report_id: str = "sina-five-minute-expanding-walk-forward-v1",
+    initial_train_sessions: int = 16,
+    test_sessions_per_fold: int = 6,
+    fold_count: int = 4,
+    expected_promotion_reasons: tuple[str, ...] | None = None,
 ) -> dict[str, object] | None:
     if path is None or dataset is None or not path.is_file():
         return None
@@ -3385,7 +3454,10 @@ def _load_verified_five_minute_report(
             not _is_sha256(digest)
             or sha256(canonical.encode("utf-8")).hexdigest() != digest
             or report.get("schema_version") != 1
+            or report.get("report_id") != expected_report_id
             or report.get("promotion") != "NOT_ELIGIBLE"
+            or expected_promotion_reasons is not None
+            and report.get("promotion_reasons") != list(expected_promotion_reasons)
             or report.get("realtime_readiness") is not False
             or report.get("real_data_paper_readiness") is not False
             or report.get("external_order_transmission") is not False
@@ -3399,7 +3471,7 @@ def _load_verified_five_minute_report(
             or report_dataset.get("etf_count") != dataset["etf_count"]
             or report_dataset.get("stock_count") != dataset["stock_count"]
             or report_dataset.get("sector_count") != dataset["sector_count"]
-            or report_dataset.get("session_count") != 40
+            or report_dataset.get("session_count") != dataset["session_count"]
             or not isinstance(causal, dict)
             or causal.get("signal_observed_at") != "FIVE_MINUTE_BAR_CLOSE_T"
             or causal.get("exposure_change_at") != "NEXT_FIVE_MINUTE_BAR_OPEN"
@@ -3408,9 +3480,9 @@ def _load_verified_five_minute_report(
             != "ALL_CANDIDATES_CAUSALLY_SHADOW_WARMED"
             or causal.get("external_order_transmission") is not False
             or not isinstance(walk_forward, dict)
-            or walk_forward.get("initial_train_sessions") != 16
-            or walk_forward.get("test_sessions_per_fold") != 6
-            or walk_forward.get("fold_count") != 4
+            or walk_forward.get("initial_train_sessions") != initial_train_sessions
+            or walk_forward.get("test_sessions_per_fold") != test_sessions_per_fold
+            or walk_forward.get("fold_count") != fold_count
             or walk_forward.get("candidate_count") != 7
             or walk_forward.get("test_windows_disjoint") is not True
             or not isinstance(aggregate, dict)
@@ -3439,26 +3511,41 @@ def _load_verified_five_minute_report(
         trading_days = cast(list[str], dataset["trading_days"])
         if (
             not isinstance(candidates, list)
-            or len(candidates) != 28
+            or len(candidates) != 7 * fold_count
             or not all(isinstance(row, dict) for row in candidates)
             or not isinstance(folds, list)
-            or len(folds) != 4
+            or len(folds) != fold_count
             or not all(isinstance(row, dict) for row in folds)
             or not isinstance(cost_stress, list)
             or [Decimal(str(row.get("cost_bps"))) for row in cost_stress]
             != [Decimal("0"), Decimal("5"), Decimal("10"), Decimal("20")]
             or not isinstance(subgroups, list)
-            or {row.get("group") for row in subgroups} != {"ETF", "STOCK"}
+            or {row.get("group") for row in subgroups}
+            != {
+                name
+                for name, count in (
+                    ("ETF", dataset["etf_count"]),
+                    ("STOCK", dataset["stock_count"]),
+                )
+                if count
+            }
             or {row.get("symbol_count") for row in subgroups}
-            != {dataset["etf_count"], dataset["stock_count"]}
+            != {
+                count
+                for count in (dataset["etf_count"], dataset["stock_count"])
+                if count
+            }
             or not isinstance(sector_rows, list)
             or len(sector_rows) != dataset["sector_count"]
             or len({row.get("excluded_sector_code") for row in sector_rows})
             != dataset["sector_count"]
             or not isinstance(daily, list)
-            or len(daily) != 24
+            or len(daily) != test_sessions_per_fold * fold_count
             or not isinstance(curve, list)
-            or len(curve) != 24 * len(SINA_FIVE_MINUTE_SESSION_TIMES)
+            or len(curve)
+            != test_sessions_per_fold
+            * fold_count
+            * len(SINA_FIVE_MINUTE_SESSION_TIMES)
         ):
             return None
 
@@ -3472,8 +3559,8 @@ def _load_verified_five_minute_report(
         expected_test_days: list[str] = []
         for index, fold in enumerate(folds):
             fold_number = index + 1
-            train_end = 16 + index * 6
-            test_end = train_end + 6
+            train_end = initial_train_sessions + index * test_sessions_per_fold
+            test_end = train_end + test_sessions_per_fold
             rows = candidates_by_fold.get(fold_number, [])
             ranks = [row.get("rank") for row in rows]
             if (
@@ -3496,10 +3583,32 @@ def _load_verified_five_minute_report(
             expected_test_days.extend(cast(list[str], fold["test_days"]))
         if (
             walk_forward.get("selected_policy_sequence") != selected_sequence
-            or expected_test_days != trading_days[16:]
+            or expected_test_days
+            != trading_days[
+                initial_train_sessions : initial_train_sessions
+                + test_sessions_per_fold * fold_count
+            ]
+            or walk_forward.get(
+                "used_session_count",
+                initial_train_sessions + test_sessions_per_fold * fold_count,
+            )
+            != initial_train_sessions + test_sessions_per_fold * fold_count
+            or walk_forward.get(
+                "unused_trailing_sessions",
+                len(trading_days)
+                - initial_train_sessions
+                - test_sessions_per_fold * fold_count,
+            )
+            != len(trading_days)
+            - initial_train_sessions
+            - test_sessions_per_fold * fold_count
             or [row.get("trading_day") for row in daily] != expected_test_days
             or [row.get("fold") for row in daily]
-            != [fold for fold in range(1, 5) for _ in range(6)]
+            != [
+                fold
+                for fold in range(1, fold_count + 1)
+                for _ in range(test_sessions_per_fold)
+            ]
         ):
             return None
 

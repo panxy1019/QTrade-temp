@@ -1,0 +1,1178 @@
+[
+  {
+    "fold": 1,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.75",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
+    "policy_id": "five-reduction-soft-v1",
+    "rank": 1,
+    "selection_score": -0.06529646160190672,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0015262078605659463,
+      "total_return": 0.15105611755687476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.10440453771883118,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0009575832775732369,
+      "total_return": -0.0027909714369900307
+    }
+  },
+  {
+    "fold": 1,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "6",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "3",
+      "volatility_window": "6"
+    },
+    "policy_hash": "7cf5f3005928b67c4f11dd3a7b59b2fd76f2f83a43699875ae7d5a21c43edfda",
+    "policy_id": "five-slow-v1",
+    "rank": 2,
+    "selection_score": -0.11174041982798122,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0015262078605659463,
+      "total_return": 0.15105611755687476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.09675839083896343,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0007287574605871934,
+      "total_return": -0.06452722342280004
+    }
+  },
+  {
+    "fold": 1,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.01",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "11817da0633637da5ac832d2f3d94f1f1e8dbf35d7b49e5041246ccc0dda5ac4",
+    "policy_id": "five-drawdown-tight-v1",
+    "rank": 3,
+    "selection_score": -0.14580499175576178,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0015262078605659463,
+      "total_return": 0.15105611755687476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.10059767621219196,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0004540100021051163,
+      "total_return": -0.09091322460412354
+    }
+  },
+  {
+    "fold": 1,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0035",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "4b101fde52fbb3237951b4b182be5f70a0d3987c12d677efb24d94db81f2f942",
+    "policy_id": "five-vol-tight-v1",
+    "rank": 4,
+    "selection_score": -0.2311918954827562,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0015262078605659463,
+      "total_return": 0.15105611755687476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.13281661187307847,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.000701643130336476,
+      "total_return": -0.11186225700934493
+    }
+  },
+  {
+    "fold": 1,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "cc7e889364e0ebfd8e58dedd49ef8d6f99699b7a0679eeaaf9421755b4728b14",
+    "policy_id": "five-balanced-v1",
+    "rank": 5,
+    "selection_score": -0.2569658104907673,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0015262078605659463,
+      "total_return": 0.15105611755687476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.14033282761355315,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.000748063488344294,
+      "total_return": -0.12260374053640666
+    }
+  },
+  {
+    "fold": 1,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0075",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "d519ceef5db5aef9cfc0e98dd96662aca01ad7348691902332a2d87fbfad27d9",
+    "policy_id": "five-vol-loose-v1",
+    "rank": 6,
+    "selection_score": -0.2757677691074444,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0015262078605659463,
+      "total_return": 0.15105611755687476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.1457905572039444,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0007617927926482275,
+      "total_return": -0.13049023997230125
+    }
+  },
+  {
+    "fold": 1,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.25",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "988750a339395f6b29182c43caab7a0ff3f9ee8b025be0ede566f182fd05be46",
+    "policy_id": "five-reduction-hard-v1",
+    "rank": 7,
+    "selection_score": -0.5398803683862681,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0015262078605659463,
+      "total_return": 0.15105611755687476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.22886204498615437,
+      "point_count": 5760,
+      "realized_minute_volatility": 0.0005558914839099289,
+      "total_return": -0.228459863686705
+    }
+  },
+  {
+    "fold": 2,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.75",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
+    "policy_id": "five-reduction-soft-v1",
+    "rank": 1,
+    "selection_score": -0.2633225879532741,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0016935926413646676,
+      "total_return": 0.4362502543890001
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.10440453771883118,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0009988292609810873,
+      "total_return": 0.08437703904376792
+    }
+  },
+  {
+    "fold": 2,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "6",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "3",
+      "volatility_window": "6"
+    },
+    "policy_hash": "7cf5f3005928b67c4f11dd3a7b59b2fd76f2f83a43699875ae7d5a21c43edfda",
+    "policy_id": "five-slow-v1",
+    "rank": 2,
+    "selection_score": -0.3448601410554424,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0016935926413646676,
+      "total_return": 0.4362502543890001
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.09675839083896343,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0007672938171482357,
+      "total_return": -0.012452807818135847
+    }
+  },
+  {
+    "fold": 2,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.01",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "11817da0633637da5ac832d2f3d94f1f1e8dbf35d7b49e5041246ccc0dda5ac4",
+    "policy_id": "five-drawdown-tight-v1",
+    "rank": 3,
+    "selection_score": -0.4021070976193143,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0016935926413646676,
+      "total_return": 0.4362502543890001
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.10059767621219196,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0004961940478632731,
+      "total_return": -0.0620211936355507
+    }
+  },
+  {
+    "fold": 2,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0035",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "4b101fde52fbb3237951b4b182be5f70a0d3987c12d677efb24d94db81f2f942",
+    "policy_id": "five-vol-tight-v1",
+    "rank": 4,
+    "selection_score": -0.4771859303025232,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0016935926413646676,
+      "total_return": 0.4362502543890001
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.13281661187307847,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0007309711469615648,
+      "total_return": -0.07266215499698658
+    }
+  },
+  {
+    "fold": 2,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "cc7e889364e0ebfd8e58dedd49ef8d6f99699b7a0679eeaaf9421755b4728b14",
+    "policy_id": "five-balanced-v1",
+    "rank": 5,
+    "selection_score": -0.5104755483665105,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0016935926413646676,
+      "total_return": 0.4362502543890001
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.14033282761355315,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0007807924097349772,
+      "total_return": -0.09091934158002457
+    }
+  },
+  {
+    "fold": 2,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0075",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "d519ceef5db5aef9cfc0e98dd96662aca01ad7348691902332a2d87fbfad27d9",
+    "policy_id": "five-vol-loose-v1",
+    "rank": 6,
+    "selection_score": -0.5296153426595658,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0016935926413646676,
+      "total_return": 0.4362502543890001
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.1457905572039444,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0007983570932029199,
+      "total_return": -0.09914367669229729
+    }
+  },
+  {
+    "fold": 2,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.25",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "988750a339395f6b29182c43caab7a0ff3f9ee8b025be0ede566f182fd05be46",
+    "policy_id": "five-reduction-hard-v1",
+    "rank": 7,
+    "selection_score": -0.8665207322376964,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.0016935926413646676,
+      "total_return": 0.4362502543890001
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.24466600749515244,
+      "point_count": 7680,
+      "realized_minute_volatility": 0.000582395331724723,
+      "total_return": -0.23829816568801188
+    }
+  },
+  {
+    "fold": 3,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.75",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
+    "policy_id": "five-reduction-soft-v1",
+    "rank": 1,
+    "selection_score": -0.2830950219352839,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0017447504759078552,
+      "total_return": 0.43735854345880476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.10440453771883118,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0009932339026273865,
+      "total_return": 0.06571289413156278
+    }
+  },
+  {
+    "fold": 3,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "6",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "3",
+      "volatility_window": "6"
+    },
+    "policy_hash": "7cf5f3005928b67c4f11dd3a7b59b2fd76f2f83a43699875ae7d5a21c43edfda",
+    "policy_id": "five-slow-v1",
+    "rank": 2,
+    "selection_score": -0.3676617979429141,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0017447504759078552,
+      "total_return": 0.43735854345880476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.09675839083896343,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0007581851458254991,
+      "total_return": -0.03414617563580291
+    }
+  },
+  {
+    "fold": 3,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.01",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "11817da0633637da5ac832d2f3d94f1f1e8dbf35d7b49e5041246ccc0dda5ac4",
+    "policy_id": "five-drawdown-tight-v1",
+    "rank": 3,
+    "selection_score": -0.4312745657728938,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0017447504759078552,
+      "total_return": 0.43735854345880476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.10059767621219196,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0004856453399199316,
+      "total_return": -0.09008037271932556
+    }
+  },
+  {
+    "fold": 3,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0035",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "4b101fde52fbb3237951b4b182be5f70a0d3987c12d677efb24d94db81f2f942",
+    "policy_id": "five-vol-tight-v1",
+    "rank": 4,
+    "selection_score": -0.5211636864684249,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0017447504759078552,
+      "total_return": 0.43735854345880476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.13281661187307847,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0007248037216137361,
+      "total_return": -0.11553162209308365
+    }
+  },
+  {
+    "fold": 3,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "cc7e889364e0ebfd8e58dedd49ef8d6f99699b7a0679eeaaf9421755b4728b14",
+    "policy_id": "five-balanced-v1",
+    "rank": 5,
+    "selection_score": -0.566669948353548,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0017447504759078552,
+      "total_return": 0.43735854345880476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.1437718388075202,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.00077778333142867,
+      "total_return": -0.13912743010932327
+    }
+  },
+  {
+    "fold": 3,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0075",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "d519ceef5db5aef9cfc0e98dd96662aca01ad7348691902332a2d87fbfad27d9",
+    "policy_id": "five-vol-loose-v1",
+    "rank": 6,
+    "selection_score": -0.5887945824862028,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0017447504759078552,
+      "total_return": 0.43735854345880476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.15181383992996533,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0007980235760920897,
+      "total_return": -0.14516806199708776
+    }
+  },
+  {
+    "fold": 3,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.25",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "988750a339395f6b29182c43caab7a0ff3f9ee8b025be0ede566f182fd05be46",
+    "policy_id": "five-reduction-hard-v1",
+    "rank": 7,
+    "selection_score": -1.0551588527785807,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0017447504759078552,
+      "total_return": 0.43735854345880476
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.30513896500359605,
+      "point_count": 9600,
+      "realized_minute_volatility": 0.0005831067416711428,
+      "total_return": -0.30488208214220425
+    }
+  },
+  {
+    "fold": 4,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.75",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
+    "policy_id": "five-reduction-soft-v1",
+    "rank": 1,
+    "selection_score": -0.4409332755475335,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.001787626854176806,
+      "total_return": 0.5881586839634998
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.10440453771883118,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.000990011975038719,
+      "total_return": 0.05867478102400825
+    }
+  },
+  {
+    "fold": 4,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "6",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "3",
+      "volatility_window": "6"
+    },
+    "policy_hash": "7cf5f3005928b67c4f11dd3a7b59b2fd76f2f83a43699875ae7d5a21c43edfda",
+    "policy_id": "five-slow-v1",
+    "rank": 2,
+    "selection_score": -0.5380796744444871,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.001787626854176806,
+      "total_return": 0.5881586839634998
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.09675839083896343,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0007480377191564845,
+      "total_return": -0.053763911632680905
+    }
+  },
+  {
+    "fold": 4,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.01",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "11817da0633637da5ac832d2f3d94f1f1e8dbf35d7b49e5041246ccc0dda5ac4",
+    "policy_id": "five-drawdown-tight-v1",
+    "rank": 3,
+    "selection_score": -0.6359829515326747,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.001787626854176806,
+      "total_return": 0.5881586839634998
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.11521107909407058,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.00047013153541749093,
+      "total_return": -0.11476181221065418
+    }
+  },
+  {
+    "fold": 4,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0035",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "4b101fde52fbb3237951b4b182be5f70a0d3987c12d677efb24d94db81f2f942",
+    "policy_id": "five-vol-tight-v1",
+    "rank": 4,
+    "selection_score": -0.7138960981729109,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.001787626854176806,
+      "total_return": 0.5881586839634998
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.1419974102381758,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.000720074768644382,
+      "total_return": -0.13910229656267992
+    }
+  },
+  {
+    "fold": 4,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "cc7e889364e0ebfd8e58dedd49ef8d6f99699b7a0679eeaaf9421755b4728b14",
+    "policy_id": "five-balanced-v1",
+    "rank": 5,
+    "selection_score": -0.8149956603139036,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.001787626854176806,
+      "total_return": 0.5881586839634998
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.1758141422490358,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0007713164485602115,
+      "total_return": -0.17256839468195262
+    }
+  },
+  {
+    "fold": 4,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0075",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "d519ceef5db5aef9cfc0e98dd96662aca01ad7348691902332a2d87fbfad27d9",
+    "policy_id": "five-vol-loose-v1",
+    "rank": 6,
+    "selection_score": -0.8406220856407206,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.001787626854176806,
+      "total_return": 0.5881586839634998
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.18470580291847527,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.0007924824418326146,
+      "total_return": -0.1804114986698907
+    }
+  },
+  {
+    "fold": 4,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.25",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "988750a339395f6b29182c43caab7a0ff3f9ee8b025be0ede566f182fd05be46",
+    "policy_id": "five-reduction-hard-v1",
+    "rank": 7,
+    "selection_score": -1.350928393488208,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.001787626854176806,
+      "total_return": 0.5881586839634998
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.3533764707847762,
+      "point_count": 11520,
+      "realized_minute_volatility": 0.000573569193247949,
+      "total_return": -0.3533764707847762
+    }
+  },
+  {
+    "fold": 5,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.75",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
+    "policy_id": "five-reduction-soft-v1",
+    "rank": 1,
+    "selection_score": -0.5556042961991654,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.001832769966833799,
+      "total_return": 0.6336379090748603
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.12180572457586158,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.0009956032584865833,
+      "total_return": 0.024285359197797618
+    }
+  },
+  {
+    "fold": 5,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "6",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "3",
+      "volatility_window": "6"
+    },
+    "policy_hash": "7cf5f3005928b67c4f11dd3a7b59b2fd76f2f83a43699875ae7d5a21c43edfda",
+    "policy_id": "five-slow-v1",
+    "rank": 2,
+    "selection_score": -0.6612722298135132,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.001832769966833799,
+      "total_return": 0.6336379090748603
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.11738857817012083,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.0007542962155866998,
+      "total_return": -0.09021686722803168
+    }
+  },
+  {
+    "fold": 5,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.01",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "11817da0633637da5ac832d2f3d94f1f1e8dbf35d7b49e5041246ccc0dda5ac4",
+    "policy_id": "five-drawdown-tight-v1",
+    "rank": 3,
+    "selection_score": -0.7976137487913716,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.001832769966833799,
+      "total_return": 0.6336379090748603
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.1538823103301451,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.0004767365988763286,
+      "total_return": -0.15357092188584154
+    }
+  },
+  {
+    "fold": 5,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0035",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "4b101fde52fbb3237951b4b182be5f70a0d3987c12d677efb24d94db81f2f942",
+    "policy_id": "five-vol-tight-v1",
+    "rank": 4,
+    "selection_score": -0.9247096934875744,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.001832769966833799,
+      "total_return": 0.6336379090748603
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.20118375472431593,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.000729352605908878,
+      "total_return": -0.18606397779370265
+    }
+  },
+  {
+    "fold": 5,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "cc7e889364e0ebfd8e58dedd49ef8d6f99699b7a0679eeaaf9421755b4728b14",
+    "policy_id": "five-balanced-v1",
+    "rank": 5,
+    "selection_score": -1.0316777202524958,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.001832769966833799,
+      "total_return": 0.6336379090748603
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.23630716112278283,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.000779774323035979,
+      "total_return": -0.22278519176169032
+    }
+  },
+  {
+    "fold": 5,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0075",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "d519ceef5db5aef9cfc0e98dd96662aca01ad7348691902332a2d87fbfad27d9",
+    "policy_id": "five-vol-loose-v1",
+    "rank": 6,
+    "selection_score": -1.055188351651851,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.001832769966833799,
+      "total_return": 0.6336379090748603
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.24477166813442686,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.0008005377462833078,
+      "total_return": -0.2293668091377573
+    }
+  },
+  {
+    "fold": 5,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.25",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "988750a339395f6b29182c43caab7a0ff3f9ee8b025be0ede566f182fd05be46",
+    "policy_id": "five-reduction-hard-v1",
+    "rank": 7,
+    "selection_score": -1.5685242716571466,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.001832769966833799,
+      "total_return": 0.6336379090748603
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.4109922549456403,
+      "point_count": 13440,
+      "realized_minute_volatility": 0.0005851752470627299,
+      "total_return": -0.41026155552062615
+    }
+  },
+  {
+    "fold": 6,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.75",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442",
+    "policy_id": "five-reduction-soft-v1",
+    "rank": 1,
+    "selection_score": -0.6272580040620457,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0018803973601002693,
+      "total_return": 0.7178479541770768
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.12180572457586158,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0009806224617377472,
+      "total_return": 0.036841696437133864
+    }
+  },
+  {
+    "fold": 6,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "6",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "3",
+      "volatility_window": "6"
+    },
+    "policy_hash": "7cf5f3005928b67c4f11dd3a7b59b2fd76f2f83a43699875ae7d5a21c43edfda",
+    "policy_id": "five-slow-v1",
+    "rank": 2,
+    "selection_score": -0.7891867644492031,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0018803973601002693,
+      "total_return": 0.7178479541770768
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.13118151793245125,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0007405415515629375,
+      "total_return": -0.10633547723684422
+    }
+  },
+  {
+    "fold": 6,
+    "policy": {
+      "cooldown_bars": "3",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.01",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "11817da0633637da5ac832d2f3d94f1f1e8dbf35d7b49e5041246ccc0dda5ac4",
+    "policy_id": "five-drawdown-tight-v1",
+    "rank": 3,
+    "selection_score": -0.9535330923894931,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0018803973601002693,
+      "total_return": 0.7178479541770768
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.17807984370617114,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.00046281879884461214,
+      "total_return": -0.17688515362969448
+    }
+  },
+  {
+    "fold": 6,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0035",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "4b101fde52fbb3237951b4b182be5f70a0d3987c12d677efb24d94db81f2f942",
+    "policy_id": "five-vol-tight-v1",
+    "rank": 4,
+    "selection_score": -1.0477072110586234,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0018803973601002693,
+      "total_return": 0.7178479541770768
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.2120577066520407,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0007155445814495922,
+      "total_return": -0.20310354640708572
+    }
+  },
+  {
+    "fold": 6,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "cc7e889364e0ebfd8e58dedd49ef8d6f99699b7a0679eeaaf9421755b4728b14",
+    "policy_id": "five-balanced-v1",
+    "rank": 5,
+    "selection_score": -1.1704539307421837,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0018803973601002693,
+      "total_return": 0.7178479541770768
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.2537434825406313,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0007679302563818618,
+      "total_return": -0.2424787143134648
+    }
+  },
+  {
+    "fold": 6,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0075",
+      "reduction_multiplier": "0.5",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "d519ceef5db5aef9cfc0e98dd96662aca01ad7348691902332a2d87fbfad27d9",
+    "policy_id": "five-vol-loose-v1",
+    "rank": 6,
+    "selection_score": -1.195498148438679,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0018803973601002693,
+      "total_return": 0.7178479541770768
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.26145873618911863,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0007905310271733094,
+      "total_return": -0.25209242471298543
+    }
+  },
+  {
+    "fold": 6,
+    "policy": {
+      "cooldown_bars": "2",
+      "long_window": "4",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0055",
+      "reduction_multiplier": "0.25",
+      "short_window": "2",
+      "volatility_window": "4"
+    },
+    "policy_hash": "988750a339395f6b29182c43caab7a0ff3f9ee8b025be0ede566f182fd05be46",
+    "policy_id": "five-reduction-hard-v1",
+    "rank": 7,
+    "selection_score": -1.7645698884360608,
+    "train_base": {
+      "maximum_drawdown": -0.14867985141481022,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0018803973601002693,
+      "total_return": 0.7178479541770768
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.44917813867143497,
+      "point_count": 15360,
+      "realized_minute_volatility": 0.0005766778011071727,
+      "total_return": -0.44572535974573446
+    }
+  }
+]
