@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "preregistration_id": "baostock-reserved-tail-high-exposure-v1",
+  "created_at": "2026-08-26T07:17:55+08:00",
+  "status": "LOCKED_BEFORE_RESERVED_TAIL_ENGINE_READ",
+  "dataset": {
+    "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
+    "checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
+    "evidence_sha256": "531f8077caf6849d25ecca960d613c113c3dab25ee630b45e72cbce1252429bb",
+    "symbol_count": 75,
+    "sector_count": 15,
+    "bar_interval": "5m",
+    "point_in_time": false,
+    "future_adjustment_knowledge_possible": true
+  },
+  "prior_evidence": {
+    "report_id": "baostock-five-minute-long-expanding-walk-forward-v1",
+    "evidence_sha256": "e16b377ddd3f8d841d258db6c8cde37c07caf8d86f4b034f208224a41e8cfc93",
+    "engine_sessions": 360,
+    "test_sessions": 240,
+    "mean_exposure": 0.6301750578703704,
+    "reduced_exposure_ratio": 0.8003310185185185,
+    "mean_turnover_per_symbol": 511.89,
+    "mean_transaction_cost_per_symbol": 0.2687438995224207
+  },
+  "hypothesis": {
+    "motivation": "The frozen reduction overlay lost return through persistent under-exposure and high turnover even before transaction costs.",
+    "economic_intuition": "A slower 5-minute filter with a 90 percent risk-on floor should preserve most market participation while retaining a fail-closed zero-exposure response to severe intraday drawdown.",
+    "expected_success_regime": "Short adverse intraday bursts inside an otherwise investable multi-sector market.",
+    "expected_failure_modes": [
+      "A persistent market decline where a 90 percent floor is insufficient protection.",
+      "Frequent slow-trend crossings that still create excessive turnover.",
+      "An eight-session tail too short to distinguish skill from noise."
+    ]
+  },
+  "candidate": {
+    "policy_id": "five-conservative-high-exposure-v1",
+    "policy_hash": "4a1a49938b0075d556371cb5e4a83db355ac54c41e0513875d2c93a0a084dba4",
+    "parameters": {
+      "short_window": 6,
+      "long_window": 24,
+      "volatility_window": 12,
+      "maximum_minute_volatility": "0.012",
+      "maximum_intraday_drawdown": "0.035",
+      "reduction_multiplier": "0.9",
+      "cooldown_bars": 6
+    }
+  },
+  "comparator": {
+    "policy_id": "five-reduction-soft-v1",
+    "policy_hash": "1190741e6983148e750338b8c4c918b1f467a8dee3b7100c03a89fe7474be442"
+  },
+  "evaluation_lock": {
+    "reserved_tail_days": [
+      "2026-08-14",
+      "2026-08-17",
+      "2026-08-18",
+      "2026-08-19",
+      "2026-08-20",
+      "2026-08-21",
+      "2026-08-24",
+      "2026-08-25"
+    ],
+    "cost_bps": [0, 5, 10, 20],
+    "selection_after_tail_read": false,
+    "parameter_changes_after_tail_read": false,
+    "required_gates": [
+      {
+        "gate_id": "CANDIDATE_BEATS_COMPARATOR_AT_5_BPS",
+        "rule": "candidate total return must exceed comparator total return at 5 bps"
+      },
+      {
+        "gate_id": "CANDIDATE_DRAWDOWN_NOT_WORSE_THAN_BASELINE_AT_5_BPS",
+        "rule": "candidate maximum drawdown must be greater than or equal to baseline maximum drawdown at 5 bps"
+      },
+      {
+        "gate_id": "MEAN_EXPOSURE_AT_LEAST_85_PERCENT",
+        "rule": "candidate mean exposure must be at least 0.85"
+      },
+      {
+        "gate_id": "TURNOVER_AT_MOST_HALF_COMPARATOR",
+        "rule": "candidate mean turnover per symbol must be at most 50 percent of comparator"
+      },
+      {
+        "gate_id": "POSITIVE_AT_ZERO_AND_FIVE_BPS",
+        "rule": "candidate total return must be positive at both 0 and 5 bps"
+      },
+      {
+        "gate_id": "LEAVE_ONE_SECTOR_OUT_MAJORITY",
+        "rule": "candidate must beat comparator at 5 bps in at least 12 of 15 whole-sector exclusions"
+      }
+    ]
+  },
+  "causal_contract": {
+    "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
+    "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+    "same_bar_signal_execution": false,
+    "maximum_exposure": 1,
+    "external_order_transmission": false
+  },
+  "contamination_disclosure": {
+    "reserved_tail_entered_previous_strategy_engine": false,
+    "tail_dates_were_visible_in_dataset_manifest": true,
+    "some_tail_price_charts_were_viewed_during_frontend_qa": true,
+    "claim_as_blind_independent_test": false
+  },
+  "interpretation_lock": {
+    "promotion": "NOT_ELIGIBLE",
+    "pass_does_not_authorize_paper_or_live": true,
+    "failure_must_be_retained": true,
+    "no_second_tail_tuning_iteration": true
+  },
+  "preregistration_sha256": "ddb0f72872cea65a2796065e96ebc5ca1792b2956ace50d6a2150a23204bd95f"
+}
