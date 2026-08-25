@@ -17,6 +17,8 @@ context.factor_search_report_path = EVIDENCE_ROOT / "factor-search" / "report.js
 context.robust_factor_search_report_path = EVIDENCE_ROOT / "factor-robustness" / "report.json"
 context.stock_sector_transfer_report_path = EVIDENCE_ROOT / "stock-sector-transfer" / "report.json"
 context.historical_manifest_path = EVIDENCE_ROOT / "market-data" / "manifest.json"
+context.minute_manifest_path = EVIDENCE_ROOT / "minute-market-data" / "manifest.json"
+context.minute_research_report_path = EVIDENCE_ROOT / "minute-overlay" / "report.json"
 
 
 class VercelQueryPathApp:

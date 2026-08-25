@@ -5,6 +5,8 @@ import { cancelPaperOrder, controlRuntime, runBacktestPreview } from '../api/cli
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
+vi.mock('../charts/MinuteBacktestChart', () => ({ MinuteBacktestChart: () => <div data-testid="minute-backtest-chart" /> }))
+vi.mock('../charts/MinuteHistoryChart', () => ({ MinuteHistoryChart: () => <div data-testid="minute-history-chart" /> }))
 vi.mock('../api/client', () => ({
   prometheusMetricsUrl: '/metrics/prometheus',
   loadHistoricalBarSeries: vi.fn(async (symbol: string) => ({
@@ -13,6 +15,14 @@ vi.mock('../api/client', () => ({
     bars: [
       { symbol, exchange: 'SSE', timestamp: '2026-08-11T15:00:00+08:00', trading_day: '2026-08-11', open: '4', high: '4.2', low: '3.9', close: '4.1', volume: '100', data_version: 'akshare-bars-v1', observation_type: 'HISTORICAL_DAILY_BAR' },
       { symbol, exchange: 'SSE', timestamp: '2026-08-12T15:00:00+08:00', trading_day: '2026-08-12', open: '4.1', high: '4.3', low: '4', close: '4.2', volume: '200', data_version: 'akshare-bars-v1', observation_type: 'HISTORICAL_DAILY_BAR' },
+    ],
+  })),
+  loadMinuteBarSeries: vi.fn(async (symbol: string) => ({
+    symbol, data_version: 'sina-minute-v2', dataset_checksum: 'minute-checksum',
+    observation_type: 'HISTORICAL_MINUTE_BAR_SERIES', interval: '1m', total_count: 2, truncated: false,
+    bars: [
+      { symbol, exchange: 'SSE', timestamp: '2026-08-25T09:31:00+08:00', trading_day: '2026-08-25', open: '4', high: '4.1', low: '3.9', close: '4.05', volume: '100', data_version: 'sina-minute-v2', observation_type: 'HISTORICAL_MINUTE_BAR' },
+      { symbol, exchange: 'SSE', timestamp: '2026-08-25T09:32:00+08:00', trading_day: '2026-08-25', open: '4.05', high: '4.1', low: '4', close: '4.08', volume: '120', data_version: 'sina-minute-v2', observation_type: 'HISTORICAL_MINUTE_BAR' },
     ],
   })),
   runBacktestPreview: vi.fn(),
@@ -78,6 +88,38 @@ const data = {
     readiness: 'NOT_READY', provider: null, provider_connected: false, bar_interval: '1m',
     symbol_count: 0, ready_symbol_count: 0, external_order_transmission: false,
     promotion: 'NOT_ELIGIBLE', reasons: ['NO_AUTHORIZED_REALTIME_TICK_PROVIDER'], symbols: [],
+  },
+  minuteResearch: {
+    classification: 'noncommercial_recent_historical_1m_non_pit_not_eligible', promotion: 'NOT_ELIGIBLE',
+    promotion_reasons: ['ONLY_FIVE_RECENT_SESSIONS'],
+    minute_dataset: {
+      provider: 'Sina public web historical endpoint', data_version: 'sina-minute-v2', checksum: 'minute-checksum', evidence_sha256: 'e'.repeat(64),
+      bar_count: 44030, symbol_count: 37, etf_count: 22, stock_count: 15, sector_count: 15,
+      session_count: 5, session_bar_count_per_symbol: 238,
+      trading_days: ['2026-08-19', '2026-08-20', '2026-08-21', '2026-08-24', '2026-08-25'],
+      observed_start: '2026-08-19T09:31:00+08:00', observed_end: '2026-08-25T15:00:00+08:00',
+      eligible_symbols: ['510300'],
+      instruments: [{ symbol: '510300', instrument_type: 'ETF', name: '沪深300ETF', sector_code: null, sector_name: null }],
+      point_in_time: false, realtime_readiness: false, real_data_paper_readiness: false, external_order_transmission: false,
+    },
+    selected: {
+      policy_id: 'drawdown-tight-v1', policy_hash: 'a'.repeat(64), policy: {}, cost_bps: 5,
+      test_base: { total_return: -0.007587, maximum_drawdown: -0.015874, realized_minute_volatility: 0.00046, point_count: 476 },
+      test_overlay: { total_return: -0.003492, maximum_drawdown: -0.005026, realized_minute_volatility: 0.00013, point_count: 476 },
+      test_excess_return: 0.004095, mean_turnover: 12.74, mean_transaction_cost: 0.0063, reason_counts: {},
+    },
+    split: { train_days: ['2026-08-19', '2026-08-20', '2026-08-21'], test_days: ['2026-08-24', '2026-08-25'], candidate_count: 7 },
+    causal_contract: { signal_observed_at: 'BAR_CLOSE_T', exposure_change_at: 'BAR_OPEN_T_PLUS_1', same_bar_signal_execution: false, maximum_exposure: 1, external_order_transmission: false },
+    candidates: [], subgroups: [], leave_one_sector_out: [],
+    cost_stress: [
+      { cost_bps: 0, base: { total_return: -0.007587, maximum_drawdown: -0.015, realized_minute_volatility: 0, point_count: 476 }, overlay: { total_return: -0.000814, maximum_drawdown: -0.0031, realized_minute_volatility: 0, point_count: 476 }, mean_turnover: 12, mean_transaction_cost: 0 },
+      { cost_bps: 20, base: { total_return: -0.007587, maximum_drawdown: -0.015, realized_minute_volatility: 0, point_count: 476 }, overlay: { total_return: -0.011464, maximum_drawdown: -0.012, realized_minute_volatility: 0, point_count: 476 }, mean_turnover: 12, mean_transaction_cost: 0.02 },
+    ],
+    daily: [
+      { trading_day: '2026-08-19', partition: 'TRAIN', base: { total_return: -0.01, maximum_drawdown: -0.01, realized_minute_volatility: 0, point_count: 238 }, overlay: { total_return: -0.001, maximum_drawdown: -0.002, realized_minute_volatility: 0, point_count: 238 } },
+      { trading_day: '2026-08-24', partition: 'TEST', base: { total_return: -0.009, maximum_drawdown: -0.01, realized_minute_volatility: 0, point_count: 238 }, overlay: { total_return: -0.0015, maximum_drawdown: -0.003, realized_minute_volatility: 0, point_count: 238 } },
+    ],
+    curve: [{ timestamp: '2026-08-24T09:31:00+08:00', base_equity: 1, overlay_equity: 1 }],
   },
   reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
   reporting: {
@@ -359,21 +401,32 @@ describe('persistent PAPER account pages', () => {
 describe('verified historical data pages', () => {
   it('shows verified history without claiming realtime readiness', async () => {
     render(<MarketPage data={data} />)
-    expect(screen.getByText('已验证历史数据：AKShare 1.18.84')).toBeInTheDocument()
-    expect(screen.getByText(/18960 根日线/)).toBeInTheDocument()
-    expect(screen.getByText(/没有 Bid\/Ask、实时价格或实时延迟/)).toBeInTheDocument()
-    expect(screen.getByText('以下是历史日线，不是实时行情')).toBeInTheDocument()
+    expect(screen.getByText('已验证：AKShare 1.18.84')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /历史日线 · 18960/ })).toBeInTheDocument()
+    expect(screen.getByText(/没有 Bid\/Ask、实时价格、实时延迟或实盘权限/)).toBeInTheDocument()
+    expect(screen.getByText('历史数据不等于实时行情')).toBeInTheDocument()
     expect(screen.getByText('510300')).toBeInTheDocument()
     expect(screen.getByText('200,000,000')).toBeInTheDocument()
     expect(screen.queryByText('Bid')).not.toBeInTheDocument()
     expect(await screen.findByText(/2\/2 个完整交易日/)).toBeInTheDocument()
-    expect(screen.getByText(/图表来自同一 checksum 绑定的历史 Parquet/)).toBeInTheDocument()
+    expect(screen.getByText(/2\/2 个完整交易日/)).toBeInTheDocument()
+  })
+
+  it('shows checksum-bound multi-asset minute history without calling it realtime', async () => {
+    cleanup()
+    render(<MarketPage data={data} />)
+    fireEvent.click(screen.getByRole('tab', { name: /历史分时 · 44030/ }))
+    expect(screen.getByText(/已验证 1 分钟数据：37 标的 × 5 日/)).toBeInTheDocument()
+    expect(screen.getByText(/不合成 14:58\/14:59/)).toBeInTheDocument()
+    expect(await screen.findByText(/2\/2 根 1 分钟 Bar/)).toBeInTheDocument()
+    expect(screen.getByText(/不是盘中实时跟踪/)).toBeInTheDocument()
+    expect(screen.getByTestId('minute-history-chart')).toBeInTheDocument()
   })
 
   it('filters verified historical rows without inventing snapshots', () => {
     cleanup()
     render(<MarketPage data={data} />)
-    fireEvent.change(screen.getByPlaceholderText('搜索 ETF 代码'), { target: { value: '510500' } })
+    fireEvent.change(screen.getByPlaceholderText('搜索代码、名称或板块'), { target: { value: '510500' } })
     expect(screen.queryByText('510300')).not.toBeInTheDocument()
     expect(screen.getByText(/暂无校验通过的历史日线/)).toBeInTheDocument()
   })
@@ -439,6 +492,10 @@ describe('verified backtest analytics', () => {
     cleanup()
     render(<BacktestPage data={data} />)
     expect(screen.getByText('探索性领先者，不是 Champion')).toBeInTheDocument()
+    expect(screen.getByText(/分钟修正锁定测试：NOT_ELIGIBLE/)).toBeInTheDocument()
+    expect(screen.getByText(/两者绝对收益均为负/)).toBeInTheDocument()
+    expect(screen.getByText(/20 bps 优势消失/)).toBeInTheDocument()
+    expect(screen.getByTestId('minute-backtest-chart')).toBeInTheDocument()
     expect(screen.getByText(/Buy-and-Hold 仅在记录、资金曲线、回撤 checksum 全部通过/)).toBeInTheDocument()
     expect(screen.getByText(/测试窗指标在上方单列/)).toBeInTheDocument()
     expect(screen.getByText('45.00%')).toBeInTheDocument()

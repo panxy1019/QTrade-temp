@@ -1,0 +1,99 @@
+{
+  "artifacts": {
+    "candidates.json": "2cc30481a87379109ea2c702ce59da7ad1cb15c4b19c7671893e45cff2d1f1a3",
+    "cost_stress.json": "59dc3c74b5559a9ed852867413f2bd826c69cef98d116fcbcb0cabdf539a49f5",
+    "curve.json": "10134d5ffbe381f48c018264ae738f40a918e3428c9b0c98bdf3b31e01257877",
+    "daily.json": "f821a9f270424b2c886feb67652e43f8cf219c277034376a107f01b1f407899c",
+    "leave_one_sector_out.json": "d0abf5369200b178c942ad688bdf127be49504331ab73299a9d92cbc024e4901",
+    "subgroups.json": "cfff35913bad379b8c7ab1b2db96230ce103e93ce8f899b2afbe1846759d5932"
+  },
+  "causal_contract": {
+    "daily_target": "constant unit target known before each session",
+    "exposure_change_at": "BAR_OPEN_T_PLUS_1",
+    "external_order_transmission": false,
+    "maximum_exposure": 1.0,
+    "same_bar_signal_execution": false,
+    "signal_observed_at": "BAR_CLOSE_T"
+  },
+  "dataset": {
+    "bar_count": 44030,
+    "checksum": "3d13e9743101a5acceefc4ffec4c3895f1d8c05c0398d538a1e589ac0964046b",
+    "classification": "noncommercial_recent_historical_1m_non_pit_not_eligible",
+    "data_version": "sina-minute-multiasset-20260825-v2",
+    "etf_count": 22,
+    "evidence_sha256": "a990284760d0f189f5067a7a44a471e5e90aa54e9e7a9951a80c5fb72c0f9a4e",
+    "sector_count": 15,
+    "stock_count": 15,
+    "symbol_count": 37
+  },
+  "evidence_sha256": "318a411302d3eea5f7679bed0a0a0780c46705a954748066b75399044081359b",
+  "external_order_transmission": false,
+  "generated_at": "2026-08-26T03:55:29.949810+08:00",
+  "promotion": "NOT_ELIGIBLE",
+  "promotion_reasons": [
+    "ONLY_FIVE_RECENT_SESSIONS",
+    "ONLY_TWO_HELD_OUT_SESSIONS",
+    "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+    "PUBLIC_WEB_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
+    "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE"
+  ],
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "report_id": "sina-minute-overlay-five-session-v1",
+  "robustness": {
+    "cost_scenarios": 4,
+    "daily_partitions": 5,
+    "leave_one_sector_out_scenarios": 15,
+    "subgroups": 2
+  },
+  "schema_version": 1,
+  "selected": {
+    "cost_bps": 5,
+    "mean_transaction_cost": 0.006334412392191372,
+    "mean_turnover": 12.743243243243244,
+    "policy": {
+      "cooldown_bars": "15",
+      "long_window": "20",
+      "maximum_intraday_drawdown": "0.01",
+      "maximum_minute_volatility": "0.0025",
+      "reduction_multiplier": "0.5",
+      "short_window": "5",
+      "volatility_window": "20"
+    },
+    "policy_hash": "3e0ee1f7fd860243aee5d601dc8831b2260e51f7deccedbdb233b2a861c8a42c",
+    "policy_id": "drawdown-tight-v1",
+    "reason_counts": {
+      "INSUFFICIENT_MINUTE_HISTORY": 740,
+      "INTRADAY_DRAWDOWN_LIMIT": 17110,
+      "MINUTE_TREND_WEAK": 23372,
+      "MINUTE_VOLATILITY_LIMIT": 1838,
+      "RECOVERY_COOLDOWN": 9573
+    },
+    "test_base": {
+      "maximum_drawdown": -0.015874363098799305,
+      "point_count": 476,
+      "realized_minute_volatility": 0.0004687948408114336,
+      "total_return": -0.0075872687578856235
+    },
+    "test_excess_return": 0.004095076571723033,
+    "test_overlay": {
+      "maximum_drawdown": -0.005025987099303908,
+      "point_count": 476,
+      "realized_minute_volatility": 0.00013316286858541394,
+      "total_return": -0.0034921921861625904
+    }
+  },
+  "split": {
+    "candidate_count": 7,
+    "selection_objective": "overlay_return_minus_base_return_plus_twice_drawdown_improvement",
+    "test_days": [
+      "2026-08-24",
+      "2026-08-25"
+    ],
+    "train_days": [
+      "2026-08-19",
+      "2026-08-20",
+      "2026-08-21"
+    ]
+  }
+}

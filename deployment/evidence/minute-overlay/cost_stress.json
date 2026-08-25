@@ -1,0 +1,70 @@
+[
+  {
+    "base": {
+      "maximum_drawdown": -0.015874363098799193,
+      "point_count": 476,
+      "realized_minute_volatility": 0.0004687948408114364,
+      "total_return": -0.0075872687578854014
+    },
+    "cost_bps": 0.0,
+    "mean_transaction_cost": 0.0,
+    "mean_turnover": 12.743243243243244,
+    "overlay": {
+      "maximum_drawdown": -0.0031477559229331487,
+      "point_count": 476,
+      "realized_minute_volatility": 0.00013229474107393535,
+      "total_return": -0.0008144517745606317
+    }
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015874363098799305,
+      "point_count": 476,
+      "realized_minute_volatility": 0.0004687948408114336,
+      "total_return": -0.0075872687578856235
+    },
+    "cost_bps": 5.0,
+    "mean_transaction_cost": 0.006334412392191372,
+    "mean_turnover": 12.743243243243244,
+    "overlay": {
+      "maximum_drawdown": -0.005025987099303908,
+      "point_count": 476,
+      "realized_minute_volatility": 0.00013316286858541394,
+      "total_return": -0.0034921921861625904
+    }
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015874363098799082,
+      "point_count": 476,
+      "realized_minute_volatility": 0.00046879484081143553,
+      "total_return": -0.007587268757884846
+    },
+    "cost_bps": 10.0,
+    "mean_transaction_cost": 0.012623408345657746,
+    "mean_turnover": 12.743243243243244,
+    "overlay": {
+      "maximum_drawdown": -0.006953745767810715,
+      "point_count": 476,
+      "realized_minute_volatility": 0.00013457976270215538,
+      "total_return": -0.006159717811337839
+    }
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.01587436309879897,
+      "point_count": 476,
+      "realized_minute_volatility": 0.00046879484081143146,
+      "total_return": -0.007587268757884957
+    },
+    "cost_bps": 20.0,
+    "mean_transaction_cost": 0.02506651403782098,
+    "mean_turnover": 12.743243243243244,
+    "overlay": {
+      "maximum_drawdown": -0.012070209346653371,
+      "point_count": 476,
+      "realized_minute_volatility": 0.00013898300422175516,
+      "total_return": -0.011464261783532104
+    }
+  }
+]

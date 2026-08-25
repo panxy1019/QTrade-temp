@@ -1,0 +1,300 @@
+{
+  "bar_count": 44030,
+  "classification": "noncommercial_recent_historical_1m_non_pit_not_eligible",
+  "eligible_symbols": [
+    "510300",
+    "512100",
+    "510500",
+    "510050",
+    "512880",
+    "510210",
+    "512800",
+    "159915",
+    "512000",
+    "512400",
+    "512690",
+    "510880",
+    "510330",
+    "512760",
+    "512500",
+    "512170",
+    "512010",
+    "512070",
+    "515790",
+    "512660",
+    "512710",
+    "512980",
+    "600036",
+    "601318",
+    "600519",
+    "603259",
+    "688256",
+    "002415",
+    "300750",
+    "002594",
+    "600031",
+    "601899",
+    "600309",
+    "600900",
+    "600150",
+    "300308",
+    "002602"
+  ],
+  "etf_count": 22,
+  "evidence_sha256": "a990284760d0f189f5067a7a44a471e5e90aa54e9e7a9951a80c5fb72c0f9a4e",
+  "excluded_etfs": [
+    {
+      "complete_session_count": 0,
+      "missing_selected_days": [
+        "2026-08-19",
+        "2026-08-20",
+        "2026-08-21",
+        "2026-08-24",
+        "2026-08-25"
+      ],
+      "reason": "MISSING_LATEST_STOCK_ANCHORED_SESSIONS",
+      "symbol": "510180"
+    },
+    {
+      "complete_session_count": 3,
+      "missing_selected_days": [
+        "2026-08-19",
+        "2026-08-25"
+      ],
+      "reason": "MISSING_LATEST_STOCK_ANCHORED_SESSIONS",
+      "symbol": "510230"
+    },
+    {
+      "complete_session_count": 3,
+      "missing_selected_days": [
+        "2026-08-19",
+        "2026-08-20",
+        "2026-08-21"
+      ],
+      "reason": "MISSING_LATEST_STOCK_ANCHORED_SESSIONS",
+      "symbol": "510510"
+    },
+    {
+      "complete_session_count": 0,
+      "missing_selected_days": [
+        "2026-08-19",
+        "2026-08-20",
+        "2026-08-21",
+        "2026-08-24",
+        "2026-08-25"
+      ],
+      "reason": "MISSING_LATEST_STOCK_ANCHORED_SESSIONS",
+      "symbol": "510660"
+    },
+    {
+      "complete_session_count": 4,
+      "missing_selected_days": [
+        "2026-08-20",
+        "2026-08-21",
+        "2026-08-25"
+      ],
+      "reason": "MISSING_LATEST_STOCK_ANCHORED_SESSIONS",
+      "symbol": "510760"
+    },
+    {
+      "complete_session_count": 0,
+      "missing_selected_days": [
+        "2026-08-19",
+        "2026-08-20",
+        "2026-08-21",
+        "2026-08-24",
+        "2026-08-25"
+      ],
+      "reason": "MISSING_LATEST_STOCK_ANCHORED_SESSIONS",
+      "symbol": "510900"
+    },
+    {
+      "complete_session_count": 5,
+      "missing_selected_days": [
+        "2026-08-25"
+      ],
+      "reason": "MISSING_LATEST_STOCK_ANCHORED_SESSIONS",
+      "symbol": "512290"
+    },
+    {
+      "complete_session_count": 0,
+      "missing_selected_days": [
+        "2026-08-19",
+        "2026-08-20",
+        "2026-08-21",
+        "2026-08-24",
+        "2026-08-25"
+      ],
+      "reason": "MISSING_LATEST_STOCK_ANCHORED_SESSIONS",
+      "symbol": "512580"
+    }
+  ],
+  "external_order_transmission": false,
+  "manifest": {
+    "checksum": "3d13e9743101a5acceefc4ffec4c3895f1d8c05c0398d538a1e589ac0964046b",
+    "data_version": "sina-minute-multiasset-20260825-v2",
+    "ingestion_time": "2026-08-25T19:49:01.166434+00:00",
+    "quality_status": "PASSED",
+    "schema_version": "qtrade.bar.v1",
+    "source": "Sina CN_MarketDataService.getKLineData raw 1-minute; 238 provider-native timestamps per completed session"
+  },
+  "observed_end": "2026-08-25T15:00:00+08:00",
+  "observed_start": "2026-08-19T09:31:00+08:00",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "requested_symbol_count": 45,
+  "sector_count": 15,
+  "session_bar_count_per_symbol": 238,
+  "session_count": 5,
+  "snapshot_readiness": false,
+  "source_interval_disclosure": {
+    "afternoon": "13:01-14:57 plus 15:00 close",
+    "morning": "09:31-11:30",
+    "omitted_by_source": [
+      "14:58",
+      "14:59"
+    ],
+    "synthetic_bars": false
+  },
+  "stock_count": 15,
+  "symbol_count": 37,
+  "trading_days": [
+    "2026-08-19",
+    "2026-08-20",
+    "2026-08-21",
+    "2026-08-24",
+    "2026-08-25"
+  ],
+  "universe": {
+    "classification": "current_multi_asset_multi_sector_non_pit_historical_research",
+    "etfs": [
+      "510300",
+      "512100",
+      "510500",
+      "510050",
+      "512880",
+      "510210",
+      "512800",
+      "159915",
+      "512000",
+      "512400",
+      "512690",
+      "510880",
+      "510330",
+      "512760",
+      "512500",
+      "512170",
+      "512010",
+      "512070",
+      "510760",
+      "515790",
+      "512660",
+      "512710",
+      "510510",
+      "512290",
+      "510900",
+      "512980",
+      "510180",
+      "510230",
+      "510660",
+      "512580"
+    ],
+    "known_at": "2026-08-26T03:55:00+08:00",
+    "point_in_time": false,
+    "stocks": [
+      {
+        "name": "招商银行",
+        "sector_code": "801780",
+        "sector_name": "银行",
+        "symbol": "600036"
+      },
+      {
+        "name": "中国平安",
+        "sector_code": "801790",
+        "sector_name": "非银金融",
+        "symbol": "601318"
+      },
+      {
+        "name": "贵州茅台",
+        "sector_code": "801120",
+        "sector_name": "食品饮料",
+        "symbol": "600519"
+      },
+      {
+        "name": "药明康德",
+        "sector_code": "801150",
+        "sector_name": "医药生物",
+        "symbol": "603259"
+      },
+      {
+        "name": "寒武纪",
+        "sector_code": "801080",
+        "sector_name": "电子",
+        "symbol": "688256"
+      },
+      {
+        "name": "海康威视",
+        "sector_code": "801750",
+        "sector_name": "计算机",
+        "symbol": "002415"
+      },
+      {
+        "name": "宁德时代",
+        "sector_code": "801730",
+        "sector_name": "电力设备",
+        "symbol": "300750"
+      },
+      {
+        "name": "比亚迪",
+        "sector_code": "801880",
+        "sector_name": "汽车",
+        "symbol": "002594"
+      },
+      {
+        "name": "三一重工",
+        "sector_code": "801890",
+        "sector_name": "机械设备",
+        "symbol": "600031"
+      },
+      {
+        "name": "紫金矿业",
+        "sector_code": "801050",
+        "sector_name": "有色金属",
+        "symbol": "601899"
+      },
+      {
+        "name": "万华化学",
+        "sector_code": "801030",
+        "sector_name": "基础化工",
+        "symbol": "600309"
+      },
+      {
+        "name": "长江电力",
+        "sector_code": "801160",
+        "sector_name": "公用事业",
+        "symbol": "600900"
+      },
+      {
+        "name": "中国船舶",
+        "sector_code": "801740",
+        "sector_name": "国防军工",
+        "symbol": "600150"
+      },
+      {
+        "name": "中际旭创",
+        "sector_code": "801770",
+        "sector_name": "通信",
+        "symbol": "300308"
+      },
+      {
+        "name": "世纪华通",
+        "sector_code": "801760",
+        "sector_name": "传媒",
+        "symbol": "002602"
+      }
+    ],
+    "survivorship_bias_warning": "Current ETF candidates and current CSI 300 sector representatives are not point-in-time membership.",
+    "universe_id": "sina-minute-etf30-stock-sw15-current-20260826-v1"
+  },
+  "universe_sha256": "843480fe918ae3b52d4111d06af067410695842febf45209f7790aa20a83c2a5"
+}

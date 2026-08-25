@@ -471,6 +471,125 @@ export interface MinuteOverlayStatus {
   symbols: MinuteOverlaySymbolStatus[]
 }
 
+export interface MinuteBarRow {
+  symbol: string
+  exchange: string
+  timestamp: string
+  trading_day: string
+  open: string
+  high: string
+  low: string
+  close: string
+  volume: string
+  data_version: string
+  observation_type: 'HISTORICAL_MINUTE_BAR'
+}
+
+export interface MinuteBarSeries {
+  symbol: string
+  data_version: string | null
+  dataset_checksum: string | null
+  observation_type: 'HISTORICAL_MINUTE_BAR_SERIES'
+  interval: '1m'
+  total_count: number
+  truncated: boolean
+  bars: MinuteBarRow[]
+}
+
+export interface MinuteCurveMetrics {
+  total_return: number
+  maximum_drawdown: number
+  realized_minute_volatility: number
+  point_count: number
+}
+
+export interface MinuteResearchReport {
+  classification?: string
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  promotion_reasons: string[]
+  minute_dataset: null | {
+    provider: string
+    data_version: string
+    checksum: string
+    evidence_sha256: string
+    bar_count: number
+    symbol_count: number
+    etf_count: number
+    stock_count: number
+    sector_count: number
+    session_count: number
+    session_bar_count_per_symbol: number
+    trading_days: string[]
+    observed_start: string
+    observed_end: string
+    eligible_symbols: string[]
+    instruments: Array<{
+      symbol: string
+      instrument_type: 'ETF' | 'STOCK'
+      name: string
+      sector_code: string | null
+      sector_name: string | null
+    }>
+    point_in_time: false
+    realtime_readiness: false
+    real_data_paper_readiness: false
+    external_order_transmission: false
+  }
+  selected?: {
+    policy_id: string
+    policy_hash: string
+    policy: Record<string, string>
+    cost_bps: number
+    test_base: MinuteCurveMetrics
+    test_overlay: MinuteCurveMetrics
+    test_excess_return: number
+    mean_turnover: number
+    mean_transaction_cost: number
+    reason_counts: Record<string, number>
+  }
+  split?: { train_days: string[]; test_days: string[]; candidate_count: number }
+  causal_contract?: {
+    signal_observed_at: 'BAR_CLOSE_T'
+    exposure_change_at: 'BAR_OPEN_T_PLUS_1'
+    same_bar_signal_execution: false
+    maximum_exposure: number
+    external_order_transmission: false
+  }
+  candidates: Array<{
+    policy_id: string
+    selection_score: number
+    train_base: MinuteCurveMetrics
+    train_overlay: MinuteCurveMetrics
+  }>
+  cost_stress: Array<{
+    cost_bps: number
+    base: MinuteCurveMetrics
+    overlay: MinuteCurveMetrics
+    mean_turnover: number
+    mean_transaction_cost: number
+  }>
+  subgroups: Array<{
+    group: 'ETF' | 'STOCK'
+    symbol_count: number
+    base: MinuteCurveMetrics
+    overlay: MinuteCurveMetrics
+  }>
+  leave_one_sector_out: Array<{
+    excluded_sector_code: string
+    excluded_sector_name: string
+    excluded_symbol: string
+    overlay: MinuteCurveMetrics
+    return_delta_vs_all: number
+  }>
+  daily: Array<{
+    trading_day: string
+    partition: 'TRAIN' | 'TEST'
+    base: MinuteCurveMetrics
+    overlay: MinuteCurveMetrics
+  }>
+  curve: Array<{ timestamp: string; base_equity: number; overlay_equity: number }>
+}
+
 export interface DailyReportAutomationStatus {
   classification: 'TRUSTED_PAPER_EOD_REPORTING'
   readiness: 'CONFIGURED' | 'UNCONFIGURED'
@@ -510,6 +629,7 @@ export interface PlatformSnapshot {
   robustFactorSearch: RobustFactorSearchReport
   stockSectorTransfer: StockSectorTransferReport
   minuteOverlay: MinuteOverlayStatus
+  minuteResearch: MinuteResearchReport
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]

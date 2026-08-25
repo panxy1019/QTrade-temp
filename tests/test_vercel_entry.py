@@ -24,6 +24,18 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert len(client.get(_api("/experiments")).json()["experiments"]) == 11
     assert len(client.get(_api("/walk-forward")).json()["result"]["folds"]) == 3
     assert len(client.get(_api("/robustness")).json()["result"]["scenario_metrics"]) == 14
+    minute = client.get(_api("/minute-research")).json()
+    assert minute["promotion"] == "NOT_ELIGIBLE"
+    assert minute["minute_dataset"]["bar_count"] == 44_030
+    assert minute["minute_dataset"]["symbol_count"] == 37
+    assert len(minute["leave_one_sector_out"]) == 15
+    minute_bars = client.get(_api("/minute-bars/510300")).json()
+    assert minute_bars["observation_type"] == "HISTORICAL_MINUTE_BAR_SERIES"
+    assert minute_bars["total_count"] == 1_190
+    assert all(
+        bar["observation_type"] == "HISTORICAL_MINUTE_BAR"
+        for bar in minute_bars["bars"]
+    )
     analytics = client.get(_api("/backtest-analytics")).json()
     assert analytics["leader"]["experiment_id"].endswith("momentum-vol-slow-20260812-v4")
     assert len(analytics["curve"]) == 632

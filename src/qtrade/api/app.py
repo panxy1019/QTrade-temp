@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from collections import deque
+from collections import Counter, deque
 from collections.abc import Awaitable, Callable
 from contextlib import nullcontext
 from dataclasses import asdict, dataclass
@@ -29,6 +29,7 @@ from qtrade.control import PlatformRuntime
 from qtrade.data import Bar
 from qtrade.domain import CancelCommand, Order, OrderStatus, RuntimeMode
 from qtrade.execution import FeeSchedule, PaperGateway
+from qtrade.market_data import SINA_COMPLETE_SESSION_TIMES
 from qtrade.monitoring import MetricsRegistry, render_prometheus_metrics
 from qtrade.oms import OrderManager
 from qtrade.research import BacktestPreviewSpec, run_backtest_preview
@@ -40,6 +41,7 @@ _MAX_MARKET_PARQUET_ROW_GROUPS = 1024
 _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
 _MAX_HISTORICAL_SERIES_ROWS = 2000
 _MAX_BACKTEST_PREVIEW_SOURCE_ROWS = 250_000
+_MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 
 
 class Role(StrEnum):
@@ -108,6 +110,8 @@ class AppContext:
     stock_sector_transfer_report_path: Path | None = None
     research_artifact_root: Path | None = None
     historical_manifest_path: Path | None = None
+    minute_manifest_path: Path | None = None
+    minute_research_report_path: Path | None = None
     minute_overlay_reader: Callable[[], dict[str, object]] | None = None
     applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
     sellable_quantity_reader: Callable[[str, date], int] | None = None
@@ -243,6 +247,68 @@ def create_app(
         _: str = Depends(_require_role(Role.READ, auth_config)),
     ) -> dict[str, object]:
         return _minute_overlay_status(state.minute_overlay_reader)
+
+    @app.get("/minute-research")
+    def minute_research(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(state.minute_manifest_path)
+        report = _load_verified_minute_report(
+            state.minute_research_report_path, dataset
+        )
+        return report or {
+            "classification": "NO_VERIFIED_MINUTE_RESEARCH_RESULT",
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": ["MISSING_VERIFIED_MINUTE_RESEARCH_ARTIFACT"],
+            "minute_dataset": None,
+            "candidates": [],
+            "cost_stress": [],
+            "subgroups": [],
+            "leave_one_sector_out": [],
+            "daily": [],
+            "curve": [],
+        }
+
+    @app.get("/minute-bars/{symbol}")
+    def minute_bar_series(
+        symbol: str,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(state.minute_manifest_path)
+        empty: dict[str, object] = {
+            "symbol": symbol,
+            "data_version": None,
+            "dataset_checksum": None,
+            "observation_type": "HISTORICAL_MINUTE_BAR_SERIES",
+            "interval": "1m",
+            "total_count": 0,
+            "truncated": False,
+            "bars": [],
+        }
+        if dataset is None:
+            return empty
+        series = _load_minute_bar_series(
+            state.minute_manifest_path,
+            symbol=symbol,
+            data_version=str(dataset["data_version"]),
+            expected_checksum=str(dataset["checksum"]),
+            expected_symbols=dataset["eligible_symbols"],
+            expected_bar_count=dataset["bar_count"],
+            expected_trading_days=dataset["trading_days"],
+        )
+        if series is None:
+            return empty
+        bars, total_count = series
+        return {
+            "symbol": symbol,
+            "data_version": dataset["data_version"],
+            "dataset_checksum": dataset["checksum"],
+            "observation_type": "HISTORICAL_MINUTE_BAR_SERIES",
+            "interval": "1m",
+            "total_count": total_count,
+            "truncated": total_count > len(bars),
+            "bars": bars,
+        }
 
     @app.get("/market")
     def market(
@@ -714,6 +780,13 @@ def context_from_runtime(
                 "akshare-sina-etf30-current-20260812-v1-raw-daily-20240101-20260812/"
                 "manifest.json"
             )
+        ),
+        minute_manifest_path=Path(
+            "runtime/data/sina-minute/"
+            "sina-minute-multiasset-20260825-v2/manifest.json"
+        ),
+        minute_research_report_path=Path(
+            "runtime/research/sina-minute-overlay-v1/report.json"
         ),
         applied_trade_reader=bundle.journal.applied_trade_payloads,
         sellable_quantity_reader=bundle.sellability.sellable_quantity,
@@ -2837,6 +2910,308 @@ def _load_verified_market_dataset(path: Path | None) -> dict[str, object] | None
         return None
 
 
+def _load_verified_minute_dataset(path: Path | None) -> dict[str, object] | None:
+    if path is None or not path.is_file():
+        return None
+    try:
+        evidence = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(evidence, dict):
+            return None
+        digest = evidence.get("evidence_sha256")
+        unsigned = {key: value for key, value in evidence.items() if key != "evidence_sha256"}
+        canonical = json.dumps(
+            unsigned,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            default=str,
+        )
+        manifest = evidence.get("manifest")
+        universe = evidence.get("universe")
+        eligible = evidence.get("eligible_symbols")
+        trading_days = evidence.get("trading_days")
+        if (
+            not _is_sha256(digest)
+            or sha256(canonical.encode("utf-8")).hexdigest() != digest
+            or not isinstance(manifest, dict)
+            or not isinstance(universe, dict)
+            or not isinstance(eligible, list)
+            or not eligible
+            or not all(isinstance(symbol, str) for symbol in eligible)
+            or len(set(eligible)) != len(eligible)
+            or not isinstance(trading_days, list)
+            or len(trading_days) != 5
+            or sorted(trading_days) != trading_days
+            or not all(isinstance(value, str) for value in trading_days)
+            or evidence.get("classification")
+            != "noncommercial_recent_historical_1m_non_pit_not_eligible"
+            or evidence.get("realtime_readiness") is not False
+            or evidence.get("real_data_paper_readiness") is not False
+            or evidence.get("external_order_transmission") is not False
+            or universe.get("point_in_time") is not False
+        ):
+            return None
+        parsed_days = [date.fromisoformat(value) for value in trading_days]
+        bar_count = evidence.get("bar_count")
+        symbol_count = evidence.get("symbol_count")
+        session_count = evidence.get("session_count")
+        session_bars = evidence.get("session_bar_count_per_symbol")
+        checksum = manifest.get("checksum")
+        data_version = manifest.get("data_version")
+        if (
+            manifest.get("quality_status") != "PASSED"
+            or not _is_sha256(checksum)
+            or not isinstance(data_version, str)
+            or not isinstance(bar_count, int)
+            or not isinstance(symbol_count, int)
+            or symbol_count != len(eligible)
+            or session_count != len(parsed_days)
+            or session_bars != len(SINA_COMPLETE_SESSION_TIMES)
+            or bar_count != symbol_count * session_count * session_bars
+        ):
+            return None
+        etfs = universe.get("etfs")
+        stocks = universe.get("stocks")
+        if (
+            not isinstance(etfs, list)
+            or not isinstance(stocks, list)
+            or not all(isinstance(symbol, str) for symbol in etfs)
+            or not all(isinstance(row, dict) for row in stocks)
+        ):
+            return None
+        stock_metadata: dict[str, dict[str, object]] = {}
+        for row in stocks:
+            symbol = row.get("symbol")
+            if (
+                not isinstance(symbol, str)
+                or not isinstance(row.get("name"), str)
+                or not isinstance(row.get("sector_code"), str)
+                or not isinstance(row.get("sector_name"), str)
+                or symbol in stock_metadata
+            ):
+                return None
+            stock_metadata[symbol] = row
+        if (
+            evidence.get("etf_count")
+            != len(set(eligible) & set(cast(list[str], etfs)))
+            or evidence.get("stock_count") != len(stock_metadata)
+            or evidence.get("sector_count")
+            != len({row["sector_code"] for row in stock_metadata.values()})
+            or not set(stock_metadata).issubset(eligible)
+        ):
+            return None
+        parquet = _open_verified_market_parquet(
+            path,
+            expected_checksum=cast(str, checksum),
+            expected_bar_count=bar_count,
+        )
+        if parquet is None:
+            return None
+        instruments = [
+            (
+                {
+                    "symbol": symbol,
+                    "instrument_type": "STOCK",
+                    "name": stock_metadata[symbol]["name"],
+                    "sector_code": stock_metadata[symbol]["sector_code"],
+                    "sector_name": stock_metadata[symbol]["sector_name"],
+                }
+                if symbol in stock_metadata
+                else {
+                    "symbol": symbol,
+                    "instrument_type": "ETF",
+                    "name": symbol,
+                    "sector_code": None,
+                    "sector_name": None,
+                }
+            )
+            for symbol in eligible
+        ]
+        return {
+            "provider": "Sina public web historical endpoint",
+            "classification": evidence["classification"],
+            "data_version": data_version,
+            "quality_status": manifest["quality_status"],
+            "checksum": checksum,
+            "evidence_sha256": digest,
+            "bar_count": bar_count,
+            "symbol_count": symbol_count,
+            "etf_count": evidence["etf_count"],
+            "stock_count": evidence["stock_count"],
+            "sector_count": evidence["sector_count"],
+            "session_count": session_count,
+            "session_bar_count_per_symbol": session_bars,
+            "trading_days": trading_days,
+            "observed_start": evidence.get("observed_start"),
+            "observed_end": evidence.get("observed_end"),
+            "eligible_symbols": eligible,
+            "instruments": instruments,
+            "point_in_time": False,
+            "realtime_readiness": False,
+            "real_data_paper_readiness": False,
+            "external_order_transmission": False,
+        }
+    except (
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+        pa.ArrowException,
+    ):
+        return None
+
+
+def _load_verified_minute_report(
+    path: Path | None, dataset: dict[str, object] | None
+) -> dict[str, object] | None:
+    if path is None or dataset is None or not path.is_file():
+        return None
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {key: value for key, value in report.items() if key != "evidence_sha256"}
+        canonical = json.dumps(
+            unsigned,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            default=str,
+        )
+        report_dataset = report.get("dataset")
+        causal = report.get("causal_contract")
+        selected = report.get("selected")
+        split = report.get("split")
+        artifacts = report.get("artifacts")
+        expected_artifacts = {
+            "candidates.json",
+            "cost_stress.json",
+            "subgroups.json",
+            "leave_one_sector_out.json",
+            "daily.json",
+            "curve.json",
+        }
+        if (
+            not _is_sha256(digest)
+            or sha256(canonical.encode("utf-8")).hexdigest() != digest
+            or report.get("schema_version") != 1
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("external_order_transmission") is not False
+            or not isinstance(report_dataset, dict)
+            or report_dataset.get("data_version") != dataset["data_version"]
+            or report_dataset.get("checksum") != dataset["checksum"]
+            or report_dataset.get("evidence_sha256") != dataset["evidence_sha256"]
+            or not isinstance(causal, dict)
+            or causal.get("signal_observed_at") != "BAR_CLOSE_T"
+            or causal.get("exposure_change_at") != "BAR_OPEN_T_PLUS_1"
+            or causal.get("same_bar_signal_execution") is not False
+            or causal.get("external_order_transmission") is not False
+            or not isinstance(selected, dict)
+            or not isinstance(selected.get("policy_id"), str)
+            or not _is_sha256(selected.get("policy_hash"))
+            or not isinstance(split, dict)
+            or split.get("candidate_count") != 7
+            or split.get("train_days") != cast(list[str], dataset["trading_days"])[:3]
+            or split.get("test_days") != cast(list[str], dataset["trading_days"])[3:]
+            or not isinstance(artifacts, dict)
+            or set(artifacts) != expected_artifacts
+            or not all(_is_sha256(value) for value in artifacts.values())
+        ):
+            return None
+        loaded: dict[str, object] = {}
+        for name in expected_artifacts:
+            content = _read_bounded_file(
+                path.parent / name, _MAX_MINUTE_EVIDENCE_JSON_BYTES
+            )
+            if content is None or sha256(content).hexdigest() != artifacts[name]:
+                return None
+            loaded[name] = json.loads(content)
+        candidates = loaded["candidates.json"]
+        cost_stress = loaded["cost_stress.json"]
+        subgroups = loaded["subgroups.json"]
+        sector_rows = loaded["leave_one_sector_out.json"]
+        daily = loaded["daily.json"]
+        curve = loaded["curve.json"]
+        if (
+            not isinstance(candidates, list)
+            or len(candidates) != 7
+            or not all(isinstance(row, dict) for row in candidates)
+            or len({row.get("policy_id") for row in candidates}) != 7
+            or candidates[0].get("policy_id") != selected["policy_id"]
+            or not isinstance(cost_stress, list)
+            or [Decimal(str(row.get("cost_bps"))) for row in cost_stress]
+            != [Decimal("0"), Decimal("5"), Decimal("10"), Decimal("20")]
+            or not isinstance(subgroups, list)
+            or {row.get("group") for row in subgroups} != {"ETF", "STOCK"}
+            or not isinstance(sector_rows, list)
+            or len(sector_rows) != dataset["sector_count"]
+            or len({row.get("excluded_sector_code") for row in sector_rows})
+            != dataset["sector_count"]
+            or not isinstance(daily, list)
+            or [row.get("trading_day") for row in daily] != dataset["trading_days"]
+            or [row.get("partition") for row in daily] != [
+                "TRAIN",
+                "TRAIN",
+                "TRAIN",
+                "TEST",
+                "TEST",
+            ]
+            or not isinstance(curve, list)
+            or len(curve)
+            != int(cast(int, dataset["session_count"]))
+            * len(SINA_COMPLETE_SESSION_TIMES)
+        ):
+            return None
+        previous: datetime | None = None
+        allowed_days = set(cast(list[str], dataset["trading_days"]))
+        allowed_times = set(SINA_COMPLETE_SESSION_TIMES)
+        for row in curve:
+            if not isinstance(row, dict):
+                return None
+            instant = datetime.fromisoformat(str(row.get("timestamp")))
+            local = instant.astimezone(ZoneInfo("Asia/Shanghai"))
+            base = Decimal(str(row.get("base_equity")))
+            overlay = Decimal(str(row.get("overlay_equity")))
+            if (
+                instant.tzinfo is None
+                or previous is not None
+                and instant <= previous
+                or local.date().isoformat() not in allowed_days
+                or local.time() not in allowed_times
+                or not base.is_finite()
+                or not overlay.is_finite()
+                or base <= 0
+                or overlay <= 0
+            ):
+                return None
+            previous = instant
+        return {
+            **report,
+            "minute_dataset": dataset,
+            "candidates": candidates,
+            "cost_stress": cost_stress,
+            "subgroups": subgroups,
+            "leave_one_sector_out": sector_rows,
+            "daily": daily,
+            "curve": curve,
+        }
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
 def _load_backtest_preview_bars(
     manifest_path: Path | None,
     *,
@@ -3073,6 +3448,102 @@ def _load_historical_bar_series(
             for candidate in selected
         ]
         return bars, total_count
+    except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
+        return None
+
+
+def _load_minute_bar_series(
+    manifest_path: Path | None,
+    *,
+    symbol: str,
+    data_version: str,
+    expected_checksum: str,
+    expected_symbols: object,
+    expected_bar_count: object,
+    expected_trading_days: object,
+) -> tuple[list[dict[str, str]], int] | None:
+    if (
+        manifest_path is None
+        or not isinstance(expected_symbols, list)
+        or not expected_symbols
+        or not all(isinstance(value, str) for value in expected_symbols)
+        or len(set(expected_symbols)) != len(expected_symbols)
+        or symbol not in expected_symbols
+        or not isinstance(expected_bar_count, int)
+        or expected_bar_count <= 0
+        or not isinstance(expected_trading_days, list)
+        or not all(isinstance(value, str) for value in expected_trading_days)
+    ):
+        return None
+    try:
+        parquet = _open_verified_market_parquet(
+            manifest_path,
+            expected_checksum=expected_checksum,
+            expected_bar_count=expected_bar_count,
+        )
+        if parquet is None:
+            return None
+        allowed = set(expected_symbols)
+        allowed_days = set(expected_trading_days)
+        allowed_times = set(SINA_COMPLETE_SESSION_TIMES)
+        selected: deque[dict[str, str]] = deque(maxlen=_MAX_HISTORICAL_SERIES_ROWS)
+        previous_instants: dict[str, datetime] = {}
+        counts: Counter[tuple[str, str]] = Counter()
+        observed: set[str] = set()
+        total_count = 0
+        columns = [
+            "symbol",
+            "exchange",
+            "timestamp",
+            "trading_day",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "data_version",
+        ]
+        for batch in parquet.iter_batches(batch_size=8192, columns=columns):
+            for raw in batch.to_pylist():
+                validated = _validated_historical_bar(raw, data_version, allowed)
+                if validated is None:
+                    return None
+                candidate, instant = validated
+                candidate_symbol = candidate["symbol"]
+                local = instant.astimezone(ZoneInfo("Asia/Shanghai"))
+                previous = previous_instants.get(candidate_symbol)
+                if (
+                    previous is not None
+                    and instant <= previous
+                    or candidate["trading_day"] not in allowed_days
+                    or local.time() not in allowed_times
+                ):
+                    return None
+                previous_instants[candidate_symbol] = instant
+                observed.add(candidate_symbol)
+                counts[(candidate_symbol, candidate["trading_day"])] += 1
+                if candidate_symbol == symbol:
+                    total_count += 1
+                    selected.append(
+                        {
+                            **candidate,
+                            "observation_type": "HISTORICAL_MINUTE_BAR",
+                        }
+                    )
+        expected_sessions = {
+            (candidate_symbol, trading_day)
+            for candidate_symbol in allowed
+            for trading_day in allowed_days
+        }
+        if (
+            observed != allowed
+            or set(counts) != expected_sessions
+            or set(counts.values()) != {len(SINA_COMPLETE_SESSION_TIMES)}
+            or total_count
+            != len(expected_trading_days) * len(SINA_COMPLETE_SESSION_TIMES)
+        ):
+            return None
+        return list(selected), total_count
     except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
         return None
 

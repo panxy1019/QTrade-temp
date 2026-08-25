@@ -1,0 +1,34 @@
+[
+  {
+    "base": {
+      "maximum_drawdown": -0.01897558866095672,
+      "point_count": 476,
+      "realized_minute_volatility": 0.0005458271307318919,
+      "total_return": -0.00869354077268214
+    },
+    "group": "ETF",
+    "overlay": {
+      "maximum_drawdown": -0.006320226415925445,
+      "point_count": 476,
+      "realized_minute_volatility": 0.00018003986781355314,
+      "total_return": -0.005045941184556035
+    },
+    "symbol_count": 22
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015312081683394041,
+      "point_count": 476,
+      "realized_minute_volatility": 0.0005090475009605661,
+      "total_return": -0.005990254446207266
+    },
+    "group": "STOCK",
+    "overlay": {
+      "maximum_drawdown": -0.004364007241611456,
+      "point_count": 476,
+      "realized_minute_volatility": 0.0001324590279357199,
+      "total_return": -0.0012268197336304798
+    },
+    "symbol_count": 15
+  }
+]

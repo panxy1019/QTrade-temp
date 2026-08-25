@@ -1,0 +1,184 @@
+[
+  {
+    "policy": {
+      "cooldown_bars": "15",
+      "long_window": "20",
+      "maximum_intraday_drawdown": "0.01",
+      "maximum_minute_volatility": "0.0025",
+      "reduction_multiplier": "0.5",
+      "short_window": "5",
+      "volatility_window": "20"
+    },
+    "policy_hash": "3e0ee1f7fd860243aee5d601dc8831b2260e51f7deccedbdb233b2a861c8a42c",
+    "policy_id": "drawdown-tight-v1",
+    "selection_score": 0.03265174336221943,
+    "train_base": {
+      "maximum_drawdown": -0.021313471405567386,
+      "point_count": 714,
+      "realized_minute_volatility": 0.0005657188700702309,
+      "total_return": -0.012207726399786067
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.007624409251249853,
+      "point_count": 714,
+      "realized_minute_volatility": 0.00010576577870850485,
+      "total_return": -0.006934107346201701
+    }
+  },
+  {
+    "policy": {
+      "cooldown_bars": "10",
+      "long_window": "20",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0015",
+      "reduction_multiplier": "0.5",
+      "short_window": "5",
+      "volatility_window": "20"
+    },
+    "policy_hash": "c30f9d7fd7143ae872afe45727e9cf01157a5d369dab4d9123e71b13fa4b16e0",
+    "policy_id": "vol-tight-v1",
+    "selection_score": 0.027914677148166422,
+    "train_base": {
+      "maximum_drawdown": -0.021313471405567386,
+      "point_count": 714,
+      "realized_minute_volatility": 0.0005657188700702309,
+      "total_return": -0.012207726399786067
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.009370777572149658,
+      "point_count": 714,
+      "realized_minute_volatility": 0.00014496209960303288,
+      "total_return": -0.008178436918455101
+    }
+  },
+  {
+    "policy": {
+      "cooldown_bars": "15",
+      "long_window": "30",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0025",
+      "reduction_multiplier": "0.5",
+      "short_window": "10",
+      "volatility_window": "30"
+    },
+    "policy_hash": "35bbc6d729a53f3c03ca6697b04e320960c27265dc157e8160edc931143608bd",
+    "policy_id": "slow-v1",
+    "selection_score": 0.02560108591665544,
+    "train_base": {
+      "maximum_drawdown": -0.021313471405567386,
+      "point_count": 714,
+      "realized_minute_volatility": 0.0005657188700702309,
+      "total_return": -0.012207726399786067
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.010008215689255917,
+      "point_count": 714,
+      "realized_minute_volatility": 0.00017732555523282382,
+      "total_return": -0.009217151915753563
+    }
+  },
+  {
+    "policy": {
+      "cooldown_bars": "10",
+      "long_window": "20",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0025",
+      "reduction_multiplier": "0.75",
+      "short_window": "5",
+      "volatility_window": "20"
+    },
+    "policy_hash": "0307f98c06feaee2b1fb93e4294a08e51e506881ef7fe95ee828434c4d512672",
+    "policy_id": "reduction-soft-v1",
+    "selection_score": 0.023701810764286346,
+    "train_base": {
+      "maximum_drawdown": -0.021313471405567386,
+      "point_count": 714,
+      "realized_minute_volatility": 0.0005657188700702309,
+      "total_return": -0.012207726399786067
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.011150845377979168,
+      "point_count": 714,
+      "realized_minute_volatility": 0.00023844523204823577,
+      "total_return": -0.008831167690676156
+    }
+  },
+  {
+    "policy": {
+      "cooldown_bars": "10",
+      "long_window": "20",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0025",
+      "reduction_multiplier": "0.5",
+      "short_window": "5",
+      "volatility_window": "20"
+    },
+    "policy_hash": "962b93c2489d3ca3aba43df0e07dea2ad86217c12781506592be42cfc1506bca",
+    "policy_id": "balanced-v1",
+    "selection_score": 0.019333358029926084,
+    "train_base": {
+      "maximum_drawdown": -0.021313471405567386,
+      "point_count": 714,
+      "realized_minute_volatility": 0.0005657188700702309,
+      "total_return": -0.012207726399786067
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.01232090794268137,
+      "point_count": 714,
+      "realized_minute_volatility": 0.00018500823631148485,
+      "total_return": -0.010859495295632016
+    }
+  },
+  {
+    "policy": {
+      "cooldown_bars": "10",
+      "long_window": "20",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0025",
+      "reduction_multiplier": "0.25",
+      "short_window": "5",
+      "volatility_window": "20"
+    },
+    "policy_hash": "a30ee6feb4291108ff33c920121e81613211e9c30927678fd5a801166ad0fa13",
+    "policy_id": "reduction-hard-v1",
+    "selection_score": 0.014849100745034871,
+    "train_base": {
+      "maximum_drawdown": -0.021313471405567386,
+      "point_count": 714,
+      "realized_minute_volatility": 0.0005657188700702309,
+      "total_return": -0.012207726399786067
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.013535736962098865,
+      "point_count": 714,
+      "realized_minute_volatility": 0.00014028885875592956,
+      "total_return": -0.012914094541688237
+    }
+  },
+  {
+    "policy": {
+      "cooldown_bars": "6",
+      "long_window": "12",
+      "maximum_intraday_drawdown": "0.02",
+      "maximum_minute_volatility": "0.0025",
+      "reduction_multiplier": "0.5",
+      "short_window": "3",
+      "volatility_window": "12"
+    },
+    "policy_hash": "53a37e7fccab33945a5ebd03a6137f1a97d205d3482d71442fa03f5a06b652da",
+    "policy_id": "fast-v1",
+    "selection_score": 0.006005242298001479,
+    "train_base": {
+      "maximum_drawdown": -0.021313471405567386,
+      "point_count": 714,
+      "realized_minute_volatility": 0.0005657188700702309,
+      "total_return": -0.012207726399786067
+    },
+    "train_overlay": {
+      "maximum_drawdown": -0.0166538966863351,
+      "point_count": 714,
+      "realized_minute_volatility": 0.00020813547968345688,
+      "total_return": -0.015521633540249158
+    }
+  }
+]

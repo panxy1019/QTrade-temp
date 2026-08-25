@@ -1,12 +1,14 @@
 ﻿import { Alert, Button, Card, Empty, Input, Popconfirm, Select, Space, Table, Tabs, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useRef, useState } from 'react'
-import type { HistoricalBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
+import type { HistoricalBarSeries, MinuteBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
 import { StatusTag } from '../components/StatusTag'
 import { BacktestLab } from '../components/BacktestLab'
 import { EquityChart } from '../charts/EquityChart'
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
-import { loadHistoricalBarSeries } from '../api/client'
+import { MinuteHistoryChart } from '../charts/MinuteHistoryChart'
+import { MinuteBacktestChart } from '../charts/MinuteBacktestChart'
+import { loadHistoricalBarSeries, loadMinuteBarSeries } from '../api/client'
 import { cancelPaperOrder, controlRuntime, prometheusMetricsUrl } from '../api/client'
 import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
@@ -15,16 +17,28 @@ const waiting = <Alert showIcon type="info" title="等待实时数据授权" des
 
 export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const historical = data?.market?.historical
+  const minuteDataset = data?.minuteResearch.minute_dataset
   const [query, setQuery] = useState('')
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
+  const [selectedMinuteSymbol, setSelectedMinuteSymbol] = useState<string | null>(null)
   const [series, setSeries] = useState<HistoricalBarSeries | null>(null)
+  const [minuteSeries, setMinuteSeries] = useState<MinuteBarSeries | null>(null)
   const [seriesError, setSeriesError] = useState<string | null>(null)
   const bars = (data?.historicalBars ?? []).filter((row) => row.symbol.includes(query.trim()))
   const activeSymbol = selectedSymbol ?? data?.historicalBars?.[0]?.symbol ?? null
+  const minuteInstruments = (minuteDataset?.instruments ?? []).filter((row) => `${row.symbol} ${row.name} ${row.sector_name ?? ''}`.includes(query.trim()))
+  const defaultMinuteSymbol = minuteDataset?.eligible_symbols.includes('510300')
+    ? '510300'
+    : minuteDataset?.eligible_symbols[0] ?? null
+  const activeMinuteSymbol = selectedMinuteSymbol ?? defaultMinuteSymbol
   const datasetIdentity = historical ? `${historical.data_version}:${historical.checksum}` : null
+  const minuteDatasetIdentity = minuteDataset ? `${minuteDataset.data_version}:${minuteDataset.checksum}` : null
   const displayedSeries = datasetIdentity
     && series?.symbol === activeSymbol
     && `${series.data_version}:${series.dataset_checksum}` === datasetIdentity ? series : null
+  const displayedMinuteSeries = minuteDatasetIdentity
+    && minuteSeries?.symbol === activeMinuteSymbol
+    && `${minuteSeries.data_version}:${minuteSeries.dataset_checksum}` === minuteDatasetIdentity ? minuteSeries : null
   useEffect(() => {
     let active = true
     if (!activeSymbol || !datasetIdentity) {
@@ -43,6 +57,24 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     })
     return () => { active = false }
   }, [activeSymbol, datasetIdentity])
+  useEffect(() => {
+    let active = true
+    if (!activeMinuteSymbol || !minuteDatasetIdentity) {
+      return () => { active = false }
+    }
+    void loadMinuteBarSeries(activeMinuteSymbol).then((result) => {
+      if (active) {
+        setMinuteSeries(result)
+        setSeriesError(null)
+      }
+    }).catch(() => {
+      if (active) {
+        setMinuteSeries(null)
+        setSeriesError('历史分时线加载失败；未使用缓存、插值或合成数据替代。')
+      }
+    })
+    return () => { active = false }
+  }, [activeMinuteSymbol, minuteDatasetIdentity])
   const columns = [
     { title: '代码', dataIndex: 'symbol', fixed: 'left' as const },
     { title: '交易所', dataIndex: 'exchange' },
@@ -54,7 +86,40 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     { title: '成交量', dataIndex: 'volume', render: (value: string) => formatInteger(value) },
     { title: '数据性质', render: () => <Tag color="blue">历史日线收盘</Tag> },
   ]
-  return <Page title="行情中心" subtitle="已验证历史日线与未来 Level-1 接入状态"><Space orientation="vertical" style={{ width: '100%' }}>{waiting}<Alert showIcon type={historical ? 'success' : 'warning'} title={historical ? `已验证历史数据：${historical.provider} ${historical.provider_version}` : '尚无校验通过的历史数据'} description={historical ? `${historical.bar_count} 根日线，${historical.observed_start} 至 ${historical.observed_end}；当前样本池非 PIT。` : '需要 checksum 与质量状态同时通过。'} /><Alert showIcon type="warning" title="以下是历史日线，不是实时行情" description="仅展示 checksum 验证通过的数据集；没有 Bid/Ask、实时价格或实时延迟，不参与 REAL_DATA_PAPER。" />{seriesError && <Alert showIcon type="error" title={seriesError} />}<Card title={`${activeSymbol ?? '—'} 已验证历史日 K 与成交量`}><MarketHistoryChart series={displayedSeries} /><Typography.Text type="secondary">{displayedSeries?.bars.length ? `${displayedSeries.bars.length}/${displayedSeries.total_count} 个完整交易日；数据版本 ${displayedSeries.data_version}。` : '点击下方 ETF 行切换标的。'} 图表来自同一 checksum 绑定的历史 Parquet，不是实时 K 线。</Typography.Text></Card><Input.Search placeholder="搜索 ETF 代码" value={query} onChange={(event) => setQuery(event.target.value)} allowClear /><Table rowKey="symbol" size="small" columns={columns} dataSource={bars} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 920 }} onRow={(row) => ({ onClick: () => setSelectedSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的历史日线；实时 snapshot 仍不可用" /> }} /></Space></Page>
+  const minuteColumns = [
+    { title: '代码', dataIndex: 'symbol', fixed: 'left' as const },
+    { title: '名称', dataIndex: 'name' },
+    { title: '类型', dataIndex: 'instrument_type', render: (value: string) => <Tag color={value === 'ETF' ? 'blue' : 'purple'}>{value}</Tag> },
+    { title: '板块', dataIndex: 'sector_name', render: (value: string | null) => value ?? 'ETF' },
+    { title: '完整交易日', render: () => String(minuteDataset?.session_count ?? 0) },
+    { title: '每日日内点', render: () => String(minuteDataset?.session_bar_count_per_symbol ?? 0) },
+  ]
+  return <Page title="行情中心" subtitle="校验通过的历史日线与 1 分钟分时线">
+    <Space orientation="vertical" style={{ width: '100%' }}>
+      {waiting}
+      <Alert showIcon type="warning" title="历史数据不等于实时行情" description="日线和分时线均来自 checksum 绑定的历史 Parquet；没有 Bid/Ask、实时价格、实时延迟或实盘权限，不参与 REAL_DATA_PAPER。" />
+      {seriesError && <Alert showIcon type="error" title={seriesError} />}
+      <Input.Search placeholder="搜索代码、名称或板块" value={query} onChange={(event) => setQuery(event.target.value)} allowClear />
+      <Card><Tabs items={[
+        {
+          key: 'daily', label: `历史日线 · ${historical?.bar_count ?? 0}`,
+          children: <Space orientation="vertical" style={{ width: '100%' }}>
+            <Alert showIcon type={historical ? 'success' : 'warning'} title={historical ? `已验证：${historical.provider} ${historical.provider_version}` : '尚无校验通过的历史日线'} description={historical ? `${historical.observed_start} 至 ${historical.observed_end}；当前样本池非 PIT。` : '需要 checksum 与质量状态同时通过。'} />
+            <Card title={`${activeSymbol ?? '—'} 历史日 K 与成交量`}><MarketHistoryChart series={displayedSeries} /><Typography.Text type="secondary">{displayedSeries?.bars.length ? `${displayedSeries.bars.length}/${displayedSeries.total_count} 个完整交易日；版本 ${displayedSeries.data_version}。` : '点击下方 ETF 行切换标的。'}</Typography.Text></Card>
+            <Table rowKey="symbol" size="small" columns={columns} dataSource={bars} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 920 }} onRow={(row) => ({ onClick: () => setSelectedSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的历史日线" /> }} />
+          </Space>,
+        },
+        {
+          key: 'minute', label: `历史分时 · ${minuteDataset?.bar_count ?? 0}`,
+          children: <Space orientation="vertical" style={{ width: '100%' }}>
+            <Alert showIcon type={minuteDataset ? 'success' : 'warning'} title={minuteDataset ? `已验证 1 分钟数据：${minuteDataset.symbol_count} 标的 × ${minuteDataset.session_count} 日` : '尚无校验通过的历史分时数据'} description={minuteDataset ? `${minuteDataset.observed_start} 至 ${minuteDataset.observed_end}；22 ETF + 15 行业股。来源原生每个完整日 238 点，不合成 14:58/14:59。` : '签名清单、Parquet checksum 或完整交易日网格未通过。'} />
+            <Card title={`${activeMinuteSymbol ?? '—'} 已验证历史分时线`}><MinuteHistoryChart series={displayedMinuteSeries} /><Typography.Text type="secondary">{displayedMinuteSeries?.bars.length ? `${displayedMinuteSeries.bars.length}/${displayedMinuteSeries.total_count} 根 1 分钟 Bar；版本 ${displayedMinuteSeries.data_version}。` : '点击下方 ETF 或股票切换标的。'} 这是最近历史分时，不是盘中实时跟踪。</Typography.Text></Card>
+            <Table rowKey="symbol" size="small" columns={minuteColumns} dataSource={minuteInstruments} pagination={{ pageSize: 10, showSizeChanger: false }} scroll={{ x: 900 }} onRow={(row) => ({ onClick: () => setSelectedMinuteSymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeMinuteSymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的历史分时标的" /> }} />
+          </Space>,
+        },
+      ]} /></Card>
+    </Space>
+  </Page>
 }
 
 export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
@@ -172,6 +237,8 @@ export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
 
 export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const analytics = data?.backtestAnalytics
+  const minuteResearch = data?.minuteResearch
+  const minuteSelected = minuteResearch?.selected
   const leader = analytics?.leader
   const benchmark = analytics?.benchmark
   const walkForward = data?.walkForward
@@ -199,6 +266,39 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const monthlyColumns = [{ title: '月份', dataIndex: 'month' }, { title: '月收益', dataIndex: 'return', render: (value: string) => formatPercent(value) }]
   return <Page title="回测分析" subtitle="资金曲线、回撤、敞口、换手与成本">
     <BacktestLab key={data?.market.historical ? `${data.market.historical.data_version}:${data.market.historical.checksum}` : 'no-dataset'} dataset={data?.market.historical ?? null} />
+    <Alert showIcon type="warning" title={`分钟修正锁定测试：${minuteResearch?.promotion ?? '未评估'}`} description={minuteSelected ? `${minuteSelected.policy_id} 在后两日、${minuteSelected.cost_bps} bps 下：基准 ${formatPercent(String(minuteSelected.test_base.total_return))}，分钟修正 ${formatPercent(String(minuteSelected.test_overlay.total_return))}，相对改善 ${formatPercent(String(minuteSelected.test_excess_return))}；两者绝对收益均为负。` : '暂无签名与 artifact 哈希均验证通过的分钟回测。'} />
+    <Card title="分钟级因果修正：前 3 日选择、后 2 日锁定验证" extra={<JsonExportButton filename="qtrade-minute-overlay-evidence.json" value={minuteResearch ?? {}} />}>
+      <MinuteBacktestChart report={minuteResearch ?? null} />
+      {minuteSelected && <Descriptions values={[
+        ['策略', minuteSelected.policy_id],
+        ['标的 / 板块', `${minuteResearch?.minute_dataset?.symbol_count ?? 0} / ${minuteResearch?.minute_dataset?.sector_count ?? 0}`],
+        ['测试日', minuteResearch?.split?.test_days.join('、') ?? '—'],
+        ['基准收益', formatPercent(String(minuteSelected.test_base.total_return))],
+        ['修正后收益', formatPercent(String(minuteSelected.test_overlay.total_return))],
+        ['基准最大回撤', formatPercent(String(minuteSelected.test_base.maximum_drawdown))],
+        ['修正后最大回撤', formatPercent(String(minuteSelected.test_overlay.maximum_drawdown))],
+        ['平均换手', formatNumber(String(minuteSelected.mean_turnover))],
+        ['时序', '本分钟收盘决策，下一分钟开盘生效'],
+        ['最大暴露', formatPercent(String(minuteResearch?.causal_contract?.maximum_exposure ?? 0))],
+        ['外部订单', 'DISABLED'],
+        ['结论', '降低风险，但未证明盈利'],
+      ]} />}
+      <Table rowKey="trading_day" size="small" pagination={false} dataSource={minuteResearch?.daily ?? []} columns={[
+        { title: '交易日', dataIndex: 'trading_day' },
+        { title: '分区', dataIndex: 'partition', render: (value: string) => <Tag color={value === 'TEST' ? 'orange' : 'blue'}>{value}</Tag> },
+        { title: '基准收益', render: (_: unknown, row: NonNullable<typeof minuteResearch>['daily'][number]) => formatPercent(String(row.base.total_return)) },
+        { title: '修正后收益', render: (_: unknown, row: NonNullable<typeof minuteResearch>['daily'][number]) => formatPercent(String(row.overlay.total_return)) },
+        { title: '修正后回撤', render: (_: unknown, row: NonNullable<typeof minuteResearch>['daily'][number]) => formatPercent(String(row.overlay.maximum_drawdown)) },
+      ]} />
+      <Table rowKey="cost_bps" size="small" pagination={false} dataSource={minuteResearch?.cost_stress ?? []} columns={[
+        { title: '单边成本 bps', dataIndex: 'cost_bps' },
+        { title: '基准收益', render: (_: unknown, row: NonNullable<typeof minuteResearch>['cost_stress'][number]) => formatPercent(String(row.base.total_return)) },
+        { title: '修正后收益', render: (_: unknown, row: NonNullable<typeof minuteResearch>['cost_stress'][number]) => formatPercent(String(row.overlay.total_return)) },
+        { title: '相对基准', render: (_: unknown, row: NonNullable<typeof minuteResearch>['cost_stress'][number]) => formatPercent(String(row.overlay.total_return - row.base.total_return)) },
+        { title: '最大回撤', render: (_: unknown, row: NonNullable<typeof minuteResearch>['cost_stress'][number]) => formatPercent(String(row.overlay.maximum_drawdown)) },
+      ]} />
+      <Typography.Text type="secondary">7 个冻结参数只在前三日排序；后两日不回填选择。0/5/10 bps 相对基准改善，20 bps 优势消失；只有五个最近交易日、当前非 PIT 样本池且没有 PAPER/SHADOW，会永久保持 NOT_ELIGIBLE。</Typography.Text>
+    </Card>
     <Alert showIcon type="warning" title="探索性领先者，不是 Champion" description={leader ? `${leader.experiment_id}：测试窗 ${analytics?.split?.test_start ?? '—'} 至 ${analytics?.split?.test_end ?? '—'}，收益 ${formatPercent(leader.metrics.total_return)}，Sharpe ${formatNumber(leader.metrics.sharpe)}，最大回撤 ${formatPercent(leader.metrics.maximum_drawdown)}` : '暂无已验证结果'} />
     <Card title="已验证全期策略、基准、超额收益与回撤"><EquityChart dark analytics={analytics} />{leader && <Descriptions values={[["测试窗平均敞口", formatPercent(leader.metrics.test_exposure)], ["测试窗换手", formatNumber(leader.metrics.test_turnover)], ["测试窗交易成本", formatPercent(leader.metrics.test_transaction_cost)], ["Buy-and-Hold 测试收益", benchmark ? formatPercent(benchmark.metrics.total_return) : '—']]} />}<Typography.Text type="secondary">图为完整模拟期；Buy-and-Hold 仅在记录、资金曲线、回撤 checksum 全部通过且交易日逐点对齐时展示。测试窗指标在上方单列；当前样本池非 PIT，且缺少 PAPER/SHADOW 观察，禁止晋级。</Typography.Text></Card>
     <Alert showIcon type={hasWalkForwardEvidence ? 'error' : 'info'} title={hasWalkForwardEvidence ? `三折独立样本外：${positiveFolds}/${folds.length} 折正收益` : '暂无已验证滚动样本外证据'} description={hasWalkForwardEvidence ? `聚合收益 ${formatPercent(String(aggregate?.total_return ?? ''))}，聚合 Sharpe ${formatNumber(String(aggregate?.sharpe ?? ''))}，最大回撤 ${formatPercent(String(aggregate?.maximum_drawdown ?? ''))}。这组预先分折证据优先于上方事后挑选的探索性领先者。` : '滚动样本外报告缺失或未通过校验；不能据此声称策略通过或失败。'} />
@@ -287,6 +387,8 @@ export function DataCenterPage({ data }: { data: PlatformSnapshot | null }) {
   const historical = data?.market?.historical
   const evidence = [
     { id: 'market', name: 'ETF 历史日线', status: historical ? 'VERIFIED' : 'UNAVAILABLE', count: historical?.bar_count ?? 0, identity: historical ? `${historical.data_version} · ${historical.checksum}` : '—' },
+    { id: 'minute-history', name: '多资产历史分时线', status: data?.minuteResearch.minute_dataset ? 'VERIFIED' : 'UNAVAILABLE', count: data?.minuteResearch.minute_dataset?.bar_count ?? 0, identity: data?.minuteResearch.minute_dataset ? `${data.minuteResearch.minute_dataset.data_version} · ${data.minuteResearch.minute_dataset.checksum}` : '—' },
+    { id: 'minute-backtest', name: '分钟因果修正回测', status: data?.minuteResearch.selected ? 'VERIFIED' : 'UNAVAILABLE', count: data?.minuteResearch.candidates.length ?? 0, identity: data?.minuteResearch.promotion ?? '—' },
     { id: 'experiments', name: '基线实验与 artifacts', status: data?.experiments.experiments.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.experiments.experiments.length ?? 0, identity: data?.experiments.data_version ?? '—' },
     { id: 'walk-forward', name: '滚动样本外', status: data?.walkForward.result.folds.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.walkForward.result.folds.length ?? 0, identity: data?.walkForward.data_version ?? '—' },
     { id: 'robustness', name: '拒绝后稳健性', status: data?.robustness.result.scenario_metrics.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.robustness.result.scenario_metrics.length ?? 0, identity: data?.robustness.promotion ?? '—' },

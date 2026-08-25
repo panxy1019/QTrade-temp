@@ -423,3 +423,9 @@ Last updated: 2026-08-26
   both ETF and stock subgroups and all 15 leave-one-sector-out variants remained
   negative in absolute return. This is useful risk-reduction diagnostics, not a
   profitable or promotion-eligible strategy result.
+- Public minute evidence: `/minute-research` verifies the signed report plus all
+  six artifact hashes, while `/minute-bars/{symbol}` revalidates the 548 KB
+  Parquet checksum and the complete 37 × 5 × 238 grid before returning a bounded
+  historical series. The market page switches between daily K and 1-minute
+  lines; the backtest page shows the locked minute curve, daily partitions and
+  cost stress. All labels remain historical, public read-only and not realtime.

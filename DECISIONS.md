@@ -385,3 +385,22 @@ and leave-one-sector-out results are diagnostics around that locked read, not ne
 independent samples. Five recent current-universe sessions, two test sessions and
 no PAPER/SHADOW record make the report permanently `NOT_ELIGIBLE`, even when the
 overlay reduces loss or drawdown relative to the always-exposed baseline.
+
+## ADR-027 — Public minute charts require full dataset and artifact verification
+
+Status: accepted, 2026-08-26.
+
+The public node packages the 44,030-row minute Parquet, its signed manifest and
+the six minute-backtest JSON artifacts. A minute series request verifies the
+manifest signature, Parquet checksum/metadata and every symbol/day count against
+the 238-timestamp source grid before returning one bounded series. The research
+endpoint separately verifies the report envelope and every named artifact hash,
+then checks the frozen split, candidate count, cost scenarios, sector exclusions
+and causal close-to-next-open contract.
+
+The frontend may render these verified historical artifacts as a selectable
+分时 line and a minute-overlay comparison, but must keep them visually distinct
+from the `UNCONFIGURED` realtime minute monitor. Missing or tampered evidence
+removes the affected chart rather than using browser cache, interpolation or a
+partial file. Public responses remain read-only and cannot change runtime state,
+strategy role or external-order permissions.

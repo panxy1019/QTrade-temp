@@ -1,0 +1,82 @@
+[
+  {
+    "base": {
+      "maximum_drawdown": -0.021313471405567386,
+      "point_count": 238,
+      "realized_minute_volatility": 0.0005649781649675018,
+      "total_return": -0.01788700578442881
+    },
+    "overlay": {
+      "maximum_drawdown": -0.0009167539222785237,
+      "point_count": 238,
+      "realized_minute_volatility": 4.774653556857187e-05,
+      "total_return": -0.0003139394569446896
+    },
+    "partition": "TRAIN",
+    "trading_day": "2026-08-19"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.011769277631938913,
+      "point_count": 238,
+      "realized_minute_volatility": 0.0006263236791956227,
+      "total_return": 0.0036546396752297206
+    },
+    "overlay": {
+      "maximum_drawdown": -0.005164224161007924,
+      "point_count": 238,
+      "realized_minute_volatility": 9.9481279477756e-05,
+      "total_return": -0.004765568587972613
+    },
+    "partition": "TRAIN",
+    "trading_day": "2026-08-20"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.0053171438110496405,
+      "point_count": 238,
+      "realized_minute_volatility": 0.0004934109966636845,
+      "total_return": 0.002120326135159445
+    },
+    "overlay": {
+      "maximum_drawdown": -0.0026120716985040815,
+      "point_count": 238,
+      "realized_minute_volatility": 0.00014560823705895236,
+      "total_return": -0.0018655687818572853
+    },
+    "partition": "TRAIN",
+    "trading_day": "2026-08-21"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.015874363098799305,
+      "point_count": 238,
+      "realized_minute_volatility": 0.000479851389002891,
+      "total_return": -0.009011113018396855
+    },
+    "overlay": {
+      "maximum_drawdown": -0.002480672842203435,
+      "point_count": 238,
+      "realized_minute_volatility": 0.00010889128273632387,
+      "total_return": -0.001583203819075285
+    },
+    "partition": "TEST",
+    "trading_day": "2026-08-24"
+  },
+  {
+    "base": {
+      "maximum_drawdown": -0.005542632431012384,
+      "point_count": 238,
+      "realized_minute_volatility": 0.0004564093087257204,
+      "total_return": 0.0014367913497477236
+    },
+    "overlay": {
+      "maximum_drawdown": -0.003316702799956772,
+      "point_count": 238,
+      "realized_minute_volatility": 0.00015364386779327476,
+      "total_return": -0.0019120154772931386
+    },
+    "partition": "TEST",
+    "trading_day": "2026-08-25"
+  }
+]
