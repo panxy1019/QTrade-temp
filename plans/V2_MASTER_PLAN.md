@@ -68,10 +68,11 @@ focused regression and independent safety review.
 - [x] Audit all twelve routes and their API/evidence dependencies; restore local
   static/API-prefix compatibility and publish the complete verified baseline,
   walk-forward and robustness evidence set.
-- [x] Close FE-01 through FE-21: isolate optional snapshot failures, add shell
+- [x] Close FE-01 through FE-23: isolate optional snapshot failures, add shell
   refresh/route/responsive behavior, expose complete research tables and JSON
   exports, and add loopback-only runtime/cancel controls while keeping the
-  public deployment read-only.
+  public deployment read-only. Isolate page render failures without losing the
+  shell and reduce every production JavaScript chunk below the warning boundary.
 
 ### V2-M5 — Isolated future broker integration
 

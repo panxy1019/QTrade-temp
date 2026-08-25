@@ -2,7 +2,7 @@ import { Empty } from 'antd'
 import { lazy, Suspense } from 'react'
 import type { HistoricalBarSeries } from '../types'
 
-const ReactECharts = lazy(() => import('echarts-for-react'))
+const ChartRenderer = lazy(() => import('./ChartRenderer'))
 
 export function MarketHistoryChart({ series }: { series: HistoricalBarSeries | null }) {
   if (!series?.bars.length) {
@@ -11,7 +11,7 @@ export function MarketHistoryChart({ series }: { series: HistoricalBarSeries | n
   const days = series.bars.map((bar) => bar.trading_day)
   const prices = series.bars.map((bar) => [bar.open, bar.close, bar.low, bar.high].map(Number))
   const volume = series.bars.map((bar) => Number(bar.volume))
-  return <Suspense fallback={<div style={{ height: 430 }} />}><ReactECharts style={{ height: 430 }} option={{
+  return <Suspense fallback={<div style={{ height: 430 }} />}><ChartRenderer style={{ height: 430 }} option={{
     backgroundColor: 'transparent', animation: false,
     legend: { data: ['日 K', '成交量'] },
     tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },

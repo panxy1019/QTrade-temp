@@ -296,3 +296,20 @@ key for the page lifetime, and no action creates a LIVE mode or external gateway
 Optional read-only evidence failures are reported per partition without hiding
 successful sections, but system, health and the atomic PAPER snapshot remain the
 required core needed to replace the last good snapshot.
+
+## ADR-022 — Page failures stay inside the shell and charts load only used modules
+
+Status: accepted, 2026-08-26.
+
+A runtime exception in one lazy page must not remove navigation, runtime mode or
+the visible no-live safety boundary. The route content is therefore wrapped in a
+page error boundary that shows a generic reload action without rendering error
+details. Navigating to another route remounts the boundary and provides a clean
+recovery path; API partition failures continue to use their existing data-level
+degradation instead of being converted into render exceptions.
+
+The chart runtime registers only the line, bar, candlestick, grid, legend,
+tooltip, data-zoom and canvas modules used by QTrade. React and zrender are stable
+transport chunks so ordinary and Vercel builds remain below Vite's 500 KB warning
+boundary. This changes loading and caching only; it does not change evidence
+validation, strategy state, credentials, persistence or trading authority.

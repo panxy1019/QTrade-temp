@@ -10,7 +10,7 @@ vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
   if (path.endsWith('/paper-snapshot')) return { ok: true, status: 200, json: async () => ({ account: { cash: '100000', equity: null }, pnl: { realized: '0' }, positions: [], orders: [], trades: [], risk: { state: 'HALTED' } }) }
   return { ok: false, status: 503, json: async () => ({ detail: 'optional partition unavailable' }) }
 }))
-vi.mock('echarts-for-react', () => ({ default: () => <div data-testid="equity-chart" /> }))
+vi.mock('./charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
 
 describe('QTrade web shell', () => {
   it('renders Chinese navigation and makes the no-live boundary explicit', async () => {

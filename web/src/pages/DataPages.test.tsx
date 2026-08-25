@@ -4,7 +4,7 @@ import type { PlatformSnapshot } from '../types'
 import { cancelPaperOrder, controlRuntime, runBacktestPreview } from '../api/client'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
-vi.mock('echarts-for-react', () => ({ default: () => <div data-testid="equity-chart" /> }))
+vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
 vi.mock('../api/client', () => ({
   loadHistoricalBarSeries: vi.fn(async (symbol: string) => ({
     symbol, data_version: 'akshare-bars-v1', dataset_checksum: 'abc', observation_type: 'HISTORICAL_DAILY_BAR_SERIES',

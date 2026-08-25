@@ -221,6 +221,13 @@ continues to hide mutation controls and fail all sensitive POSTs closed. License
 realtime data, persistent public PAPER, broker reconciliation and new PIT/forward
 evidence remain explicit external blockers rather than UI placeholders.
 
+The shell now also isolates page render failures inside the content region, so
+navigation and the explicit no-live boundary remain available during recovery.
+ECharts registers only the line, bar, candlestick and supporting components used
+by the product, while React and zrender are stable cache chunks; both production
+build modes complete without a chunk-size warning and keep the largest minified
+JavaScript asset at 426.27 KB.
+
 The factor-research path now predeclares five causal price factors, keeps every
 forward label inside the discovery period, bounds the active validation grid and
 locks one validation winner before confirmatory access. The first active winner

@@ -27,9 +27,10 @@ Last updated: 2026-08-26
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 279 tests passed, Ruff clean, strict mypy clean across
-  92 source files on Python 3.12.13 (macOS, 2026-08-26); 33 frontend Vitest
-  tests, ESLint and the production build pass. Route-level lazy loading reduces
-  the initial application chunk while ECharts remains an on-demand large chunk.
+  92 source files on Python 3.12.13 (macOS, 2026-08-26); 34 frontend Vitest
+  tests, ESLint and both production builds pass. Route-level lazy loading plus
+  modular ECharts registration and stable React/zrender chunks keep every
+  minified JavaScript asset at or below 426.27 KB with no large-chunk warning.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
 - Frontend completeness audit: `docs/FRONTEND_GAP_AUDIT.md` tracks every
@@ -38,11 +39,13 @@ Last updated: 2026-08-26
   root and `/web` asset paths and accepts the Vercel build's `/api` prefix, so a
   deployment build left in `web/dist` no longer produces a blank or data-less
   loopback page.
-- Repository-feasible frontend gaps FE-01 through FE-21 are closed. Optional
+- Repository-feasible frontend gaps FE-01 through FE-23 are closed. Optional
   evidence endpoints degrade independently with visible partition failures;
   the shell adds manual refresh, update time, unknown-route recovery and a
-  phone breakpoint. Strategy, experiment, research, backtest, positions and
-  orders views now support the relevant search/filter/detail/JSON-export paths.
+  phone breakpoint. Page rendering failures are isolated inside the content
+  region so navigation and the visible safety boundary survive. Strategy,
+  experiment, research, backtest, positions and orders views now support the
+  relevant search/filter/detail/JSON-export paths.
   The monitor retains health/minute status when audit history is unavailable
   and exposes every authorized symbol's causal correction state.
 - Loopback-only PAPER controls now cover recover/start/pause/resume/stop/kill

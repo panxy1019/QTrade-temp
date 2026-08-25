@@ -8,6 +8,7 @@ import {
 import { HashRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { usePlatformSnapshot } from './hooks/usePlatformSnapshot'
 import { StatusTag } from './components/StatusTag'
+import { PageErrorBoundary } from './components/PageErrorBoundary'
 import { isPublicResearchNode } from './runtime/environment'
 import './styles.css'
 
@@ -70,23 +71,25 @@ function Shell() {
           <Space><span>深色模式</span><Switch checked={dark} onChange={setDark} /></Space>
         </Layout.Header>
         <Layout.Content className="content">
-          <Suspense fallback={<Typography.Text type="secondary">页面加载中…</Typography.Text>}>
-            <Routes>
-              <Route path="/" element={<OverviewPage data={data} dark={dark} publicNode={publicNode} />} />
-              <Route path="/market" element={<MarketPage data={data} />} />
-              <Route path="/strategies" element={<StrategyPage data={data} />} />
-              <Route path="/research" element={<ResearchPage data={data} />} />
-              <Route path="/experiments" element={<ExperimentPage data={data} />} />
-              <Route path="/backtest" element={<BacktestPage data={data} />} />
-              <Route path="/paper" element={<PaperPage data={data} publicNode={publicNode} onRefresh={refresh} />} />
-              <Route path="/positions" element={<PositionsPage data={data} />} />
-              <Route path="/orders" element={<OrdersPage data={data} publicNode={publicNode} onRefresh={refresh} />} />
-              <Route path="/risk" element={<RiskPage data={data} />} />
-              <Route path="/data" element={<DataCenterPage data={data} />} />
-              <Route path="/monitor" element={<MonitorPage data={data} />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
+          <PageErrorBoundary key={location.pathname}>
+            <Suspense fallback={<Typography.Text type="secondary">页面加载中…</Typography.Text>}>
+              <Routes>
+                <Route path="/" element={<OverviewPage data={data} dark={dark} publicNode={publicNode} />} />
+                <Route path="/market" element={<MarketPage data={data} />} />
+                <Route path="/strategies" element={<StrategyPage data={data} />} />
+                <Route path="/research" element={<ResearchPage data={data} />} />
+                <Route path="/experiments" element={<ExperimentPage data={data} />} />
+                <Route path="/backtest" element={<BacktestPage data={data} />} />
+                <Route path="/paper" element={<PaperPage data={data} publicNode={publicNode} onRefresh={refresh} />} />
+                <Route path="/positions" element={<PositionsPage data={data} />} />
+                <Route path="/orders" element={<OrdersPage data={data} publicNode={publicNode} onRefresh={refresh} />} />
+                <Route path="/risk" element={<RiskPage data={data} />} />
+                <Route path="/data" element={<DataCenterPage data={data} />} />
+                <Route path="/monitor" element={<MonitorPage data={data} />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Suspense>
+          </PageErrorBoundary>
         </Layout.Content>
       </Layout>
     </Layout>
