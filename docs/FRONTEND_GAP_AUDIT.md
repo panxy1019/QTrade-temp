@@ -39,6 +39,7 @@ GitHub/Vercel 公开节点。判定标准不是“路由存在”，而是页面
 | FE-23 | 加载性能 | 默认 ECharts 入口和框架依赖形成 1.15 MB/617 KB 超大包 | DONE | ECharts 按需注册，React/zrender 稳定分包；普通与 Vercel 生产构建最大 JS 包 426.27 KB 且无大包告警 |
 | FE-24 | 系统监控 | 页面读取旧指标名，行情延迟长期显示“—”、订单速率长期显示 0；无机器采集格式 | DONE | 绑定 `market_data_lag_seconds`、`orders_per_minute` 等真实字段，并提供低基数 Prometheus 0.0.4 文本入口 |
 | FE-25 | 系统监控 | 最近 500 条审计只有分页，无法按消息、级别、事件类型定位或导出当前视图 | DONE | 支持全文搜索、级别/事件筛选、结果计数和筛选后 JSON 导出；原始快照不被修改 |
+| FE-26 | 数据中心 | 日终报告只有历史表，无法判断自动生成是否配置、等待、成功或失败 | DONE | 只读展示可信配置绑定状态、截止时间、版本身份与失败码；网页不能提交报告身份，公开节点保持 UNCONFIGURED |
 
 ## 外部阻塞，不能伪造为已完成
 
@@ -48,7 +49,7 @@ GitHub/Vercel 公开节点。判定标准不是“路由存在”，而是页面
 | EXT-02 | 多股票分钟实盘跟踪、首个完整前向 PAPER/SHADOW 会话 | EXTERNAL_BLOCKED | 授权 Tick 源、完整交易日记录与逐字节回放对账 |
 | EXT-03 | 券商账户/订单/成交只读对账 | EXTERNAL_BLOCKED | 用户选择券商、沙箱与兼容 SDK/ABI |
 | EXT-04 | PIT 成分股/行业与真正未见前向证据 | EXTERNAL_BLOCKED | 获得授权 PIT 数据并等待新时间样本 |
-| EXT-05 | 自动日终 PAPER 报告 | EXTERNAL_BLOCKED | 持久运行时获得可信数据版本和策略版本配置后启用调度 |
+| EXT-05 | 启用真实会话的自动日终 PAPER 报告 | EXTERNAL_BLOCKED | 调度链路已完成；仍需持久运行时获得授权数据版本、实际策略版本和经核验的开市日配置后才能启用 |
 | EXT-06 | 公网持久 PAPER 状态 | EXTERNAL_BLOCKED | 独立受认证、持久化的运行服务；Vercel 函数继续无状态只读 |
 
 ## 有意不可用

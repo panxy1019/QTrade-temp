@@ -153,8 +153,10 @@ uses only verified historical research analytics for its chart, with an explicit
 non-PIT/NOT_ELIGIBLE/non-PAPER label.
 Daily report history now validates envelope hash plus identity and summary
 schema before rendering; malformed/tampered artifacts are omitted. Automatic
-end-of-day generation remains backlog because exact data and strategy versions
-must come from trusted runtime configuration, not caller-supplied strings.
+end-of-day generation is now implemented as an optional local worker whose exact
+data/strategy identities and bounded open-session horizon are bound at process
+startup rather than supplied by an HTTP caller. Missing calendar coverage and
+identity conflicts fail closed; public Vercel remains unconfigured and read-only.
 Report scans are bounded by directory count, artifact bytes and identity/version
 field sizes so periodic dashboard polling cannot amplify malformed report data.
 Audit reads now use a bounded, chronological SQLite journal view rather than the

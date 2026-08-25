@@ -42,6 +42,26 @@ process environment. Send it as `Authorization: Bearer <token>`. Read endpoints
 do not accept a caller-provided role escalation. Bind the development server to
 loopback unless a separately reviewed TLS/authentication proxy is deployed.
 
+Automatic PAPER end-of-day reports are available only when the local process is
+started with trusted runtime identities and an explicit, operator-verified SSE
+open-session horizon. The HTTP API never accepts data or strategy versions for
+report generation. For example, after those identities have been verified by
+the PAPER operator:
+
+```bash
+python scripts/run_control_plane.py \
+  --report-data-version authorized-paper-session-v1 \
+  --report-strategy-version minute-risk@1.0.0 \
+  --report-open-day 2026-08-26 \
+  --report-cutoff 15:30
+```
+
+The worker polls locally and creates at most one immutable report per configured
+open day after the Asia/Shanghai cutoff. Missing calendar coverage, an existing
+report with a different identity, or write/hash verification failure stops that
+day's generation. `/reporting-status` exposes this state read-only; the public
+Vercel deployment remains `UNCONFIGURED` and cannot write reports.
+
 After a restart the PAPER runtime is HALTED. `POST /system/recover` (authenticated)
 must complete local reconciliation and issue a fresh readiness attestation before
 `POST /system/start` can succeed. Pending/failed fills or uncertain submissions

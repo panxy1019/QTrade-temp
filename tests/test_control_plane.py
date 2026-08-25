@@ -1220,6 +1220,30 @@ def test_daily_report_history_exposes_verified_summary(tmp_path):
     assert api.get("/reports").json() == []
 
 
+def test_daily_report_scheduler_status_is_explicit_and_read_only():
+    api = client()
+    unconfigured = api.get("/reporting-status")
+    assert unconfigured.status_code == 200
+    assert unconfigured.json() == {
+        "classification": "TRUSTED_PAPER_EOD_REPORTING",
+        "readiness": "UNCONFIGURED",
+        "automatic": False,
+        "state": "UNCONFIGURED",
+        "venue": None,
+        "timezone": "Asia/Shanghai",
+        "cutoff": None,
+        "data_version": None,
+        "strategy_versions": [],
+        "last_attempt_day": None,
+        "last_generated_day": None,
+        "last_report_id": None,
+        "last_sha256": None,
+        "error_code": "TRUSTED_RUNTIME_IDENTITY_NOT_CONFIGURED",
+        "caller_supplied_identity": False,
+        "external_order_transmission": False,
+    }
+
+
 def test_daily_report_history_rejects_hash_valid_schema_and_identity_mismatch(tmp_path):
     report_root = tmp_path / "reports"
     report_root.mkdir()

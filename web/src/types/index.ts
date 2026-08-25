@@ -471,6 +471,25 @@ export interface MinuteOverlayStatus {
   symbols: MinuteOverlaySymbolStatus[]
 }
 
+export interface DailyReportAutomationStatus {
+  classification: 'TRUSTED_PAPER_EOD_REPORTING'
+  readiness: 'CONFIGURED' | 'UNCONFIGURED'
+  automatic: boolean
+  state: 'UNCONFIGURED' | 'STATUS_UNAVAILABLE' | 'WAITING_FOR_CUTOFF' | 'CALENDAR_SESSION_UNAVAILABLE' | 'NON_TRADING_DAY' | 'GENERATED' | 'ALREADY_GENERATED' | 'FAILED'
+  venue: string | null
+  timezone: 'Asia/Shanghai'
+  cutoff: string | null
+  data_version: string | null
+  strategy_versions: string[]
+  last_attempt_day: string | null
+  last_generated_day: string | null
+  last_report_id: string | null
+  last_sha256: string | null
+  error_code: string | null
+  caller_supplied_identity: false
+  external_order_transmission: false
+}
+
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
@@ -482,6 +501,7 @@ export interface PlatformSnapshot {
   risk: PaperRiskSummary
   metrics: MetricsSnapshot
   reports: DailyReportSummary[]
+  reporting: DailyReportAutomationStatus
   strategies: ResearchStrategyRow[]
   experiments: ResearchReport
   walkForward: WalkForwardReport

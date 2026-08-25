@@ -79,9 +79,17 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getJson<PlatformSnapshot['health']>('/health'),
     getJson<Pick<PlatformSnapshot, 'account' | 'pnl' | 'positions' | 'orders' | 'trades' | 'risk'>>('/paper-snapshot'),
   ])
-  const [metrics, reports, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
+  const [metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
     getOptional<PlatformSnapshot['metrics']>('/metrics', {}),
     getOptional<PlatformSnapshot['reports']>('/reports', []),
+    getOptional<PlatformSnapshot['reporting']>('/reporting-status', {
+      classification: 'TRUSTED_PAPER_EOD_REPORTING', readiness: 'UNCONFIGURED', automatic: false,
+      state: 'STATUS_UNAVAILABLE', venue: null, timezone: 'Asia/Shanghai', cutoff: null,
+      data_version: null, strategy_versions: [], last_attempt_day: null,
+      last_generated_day: null, last_report_id: null, last_sha256: null,
+      error_code: 'STATUS_REQUEST_FAILED', caller_supplied_identity: false,
+      external_order_transmission: false,
+    }),
     getOptional<PlatformSnapshot['strategies']>('/strategies', []),
     getOptional<PlatformSnapshot['experiments']>('/experiments', {
       classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', promotion_reasons: ['REQUEST_FAILED'], experiments: [],
@@ -113,11 +121,11 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getOptional<PlatformSnapshot['historicalBars']>('/historical-bars/latest', []),
     getOptional<PlatformSnapshot['audit']>('/audit', null),
   ])
-  const sections = { metrics, reports, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, backtestAnalytics, market, historicalBars, audit }
+  const sections = { metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, backtestAnalytics, market, historicalBars, audit }
   const failures = Object.fromEntries(Object.entries(sections).flatMap(([name, result]) => result.error ? [[name, result.error]] : []))
   return {
     system, health, ...paper,
-    metrics: metrics.value, reports: reports.value, strategies: strategies.value,
+    metrics: metrics.value, reports: reports.value, reporting: reporting.value, strategies: strategies.value,
     experiments: experiments.value, walkForward: walkForward.value, robustness: robustness.value,
     factorSearch: factorSearch.value, robustFactorSearch: robustFactorSearch.value,
     stockSectorTransfer: stockSectorTransfer.value, minuteOverlay: minuteOverlay.value,

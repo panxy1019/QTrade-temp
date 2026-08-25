@@ -330,3 +330,22 @@ the already bounded 500-row durable audit snapshot, then export only that curren
 view. These controls do not acknowledge alerts, mutate the journal, route messages
 externally or change runtime/trading authority; outbound delivery requires a
 separate authenticated integration decision.
+
+## ADR-024 — Automatic PAPER reports use startup-bound identity and explicit sessions
+
+Status: accepted, 2026-08-26.
+
+Automatic daily reports may run only inside the persistent loopback PAPER
+process. Data version, every strategy version, the SSE venue and a bounded set
+of operator-verified open sessions are bound at process startup; an HTTP caller
+cannot provide or override them. The scheduler uses an Asia/Shanghai wall-clock
+cutoff, emits at most one immutable artifact per configured day and treats a
+missing/ambiguous session, conflicting existing identity or failed hash check as
+a closed failure rather than overwriting or fabricating a report.
+
+The report snapshot remains serialized by the existing account-wide dispatch
+gate, and trade attribution uses the Asia/Shanghai calendar day. Scheduler state
+is a read-only API/UI surface and adds no order action. Stateless public Vercel
+has neither the trusted bindings nor writable runtime storage, so it remains
+explicitly `UNCONFIGURED`; enabling a real session still requires authorized
+market data and the actual PAPER strategy identities.

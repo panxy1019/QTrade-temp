@@ -80,6 +80,14 @@ const data = {
     promotion: 'NOT_ELIGIBLE', reasons: ['NO_AUTHORIZED_REALTIME_TICK_PROVIDER'], symbols: [],
   },
   reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
+  reporting: {
+    classification: 'TRUSTED_PAPER_EOD_REPORTING', readiness: 'CONFIGURED', automatic: true,
+    state: 'GENERATED', venue: 'SSE', timezone: 'Asia/Shanghai', cutoff: '15:30',
+    data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'],
+    last_attempt_day: '2026-08-12', last_generated_day: '2026-08-12',
+    last_report_id: 'paper-20260812', last_sha256: 'a'.repeat(64), error_code: null,
+    caller_supplied_identity: false, external_order_transmission: false,
+  },
   historicalBars: [
     {
       symbol: '510300', exchange: 'SSE', timestamp: '2026-08-12T07:00:00+00:00',
@@ -387,6 +395,8 @@ describe('verified historical data pages', () => {
     expect(screen.getAllByText('NO')).toHaveLength(2)
     expect(screen.getByText('paper-20260812')).toBeInTheDocument()
     expect(screen.getByText('SHA-256 已验证')).toBeInTheDocument()
+    expect(screen.getByText('PAPER 日终自动报告：GENERATED')).toBeInTheDocument()
+    expect(screen.queryByText(/网页调用方不能提供这些身份/)).not.toBeInTheDocument()
   })
 })
 

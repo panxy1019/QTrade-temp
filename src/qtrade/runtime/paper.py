@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from qtrade.accounting import AcquisitionLot, Ledger, SellabilityLedger
 from qtrade.audit import AuditEvent, AuditLog
@@ -28,6 +29,8 @@ from qtrade.reconciliation import Reconciler, ReconciliationResult
 from qtrade.reporting import DailyPaperReport, DailyReportStore
 from qtrade.risk import KillState, RiskEngine, RiskLimits
 from qtrade.service import TradingService
+
+_CHINA_ZONE = ZoneInfo("Asia/Shanghai")
 
 
 @dataclass(slots=True)
@@ -89,7 +92,10 @@ class PaperRuntimeBundle:
         trades = tuple(
             payload
             for payload in self.journal.applied_trade_payloads()
-            if datetime.fromisoformat(str(payload["timestamp"])).date() == trading_day
+            if datetime.fromisoformat(str(payload["timestamp"]))
+            .astimezone(_CHINA_ZONE)
+            .date()
+            == trading_day
         )
         incidents = tuple(
             event.message

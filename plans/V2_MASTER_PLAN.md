@@ -88,7 +88,9 @@ focused regression and independent safety review.
 - [x] Market data -> strategy -> portfolio -> risk -> OMS -> paper -> accounting
   integration test with recording and deterministic replay.
 - [x] Daily traceable research/PAPER report schema/store and hash-verified dashboard
-  history endpoint. Automatic end-of-day generation remains backlog.
+  history endpoint, plus optional trusted-config local end-of-day scheduling with
+  explicit SSE sessions, Asia/Shanghai cutoff and read-only status. Public Vercel
+  remains unconfigured and cannot write reports.
 - [x] Low-cardinality Prometheus 0.0.4 runtime export with non-finite rejection,
   no strategy-heartbeat labels and no change to execution authority.
 - [x] Full pytest, Ruff, strict mypy, frontend build/tests, dependency and secret scan.

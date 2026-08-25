@@ -26,8 +26,8 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 281 tests passed, Ruff clean, strict mypy clean across
-  93 source files on Python 3.12.13 (macOS, 2026-08-26); 35 frontend Vitest
+- Acceptance evidence: 284 tests passed, Ruff clean, strict mypy clean across
+  94 source files on Python 3.12.13 (macOS, 2026-08-26); 35 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 426.27 KB with no large-chunk warning.
@@ -54,6 +54,15 @@ Last updated: 2026-08-26
   `market_data_lag_seconds` and `orders_per_minute` fields, links the read-only
   export, and supports audit text/severity/event filtering plus current-view
   JSON export. Outbound alert delivery remains separately unconfigured.
+- Automatic PAPER reporting: the loopback control-plane runner can bind exact
+  data/strategy identities and a bounded operator-verified SSE open-session
+  horizon at process startup. A local worker generates one immutable report
+  after the Asia/Shanghai cutoff, revalidates hash/identity for idempotency and
+  fails closed on missing calendar coverage or identity conflicts. Trade-day
+  attribution is Asia/Shanghai-based. `/reporting-status` and the Chinese data
+  center expose configured/unconfigured/generated/failed state without allowing
+  callers to submit version identities. Public Vercel remains unconfigured and
+  read-only.
 - Loopback-only PAPER controls now cover recover/start/pause/resume/stop/kill
   and idempotent cancel using memory-only tokens and confirmation for dangerous
   actions. Public hostnames hide those controls and remain stateless read-only;
@@ -270,8 +279,8 @@ Last updated: 2026-08-26
 - PAPER report history: `/reports` now fails closed on invalid UTF-8/JSON,
   envelope hash, filename/report identity, date/timestamp, data-version and
   strategy-version schema. The Chinese data-center page lists only reports that
-  pass those checks and explicitly says automatic end-of-day generation is not
-  enabled yet. Scans are bounded to 366 files, 4 MiB per artifact and bounded
+  pass those checks and separately renders the trusted automatic scheduler
+  state. Scans are bounded to 366 files, 4 MiB per artifact and bounded
   identity/version fields to prevent the five-second dashboard poll from
   amplifying oversized or unbounded report directories.
 - Durable audit observability: `/audit` now reads the most recent 500 events

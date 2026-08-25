@@ -114,6 +114,7 @@ class AppContext:
     operational_date: date | None = None
     operational_gate: Any = None
     audit_reader: Callable[[int], tuple[AuditEvent, ...]] | None = None
+    reporting_status_reader: Callable[[], dict[str, object]] | None = None
 
 
 def bootstrap_context(mode: RuntimeMode = RuntimeMode.PAPER) -> AppContext:
@@ -544,6 +545,36 @@ def create_app(
             if summary is not None:
                 summaries.append(summary)
         return summaries
+
+    @app.get("/reporting-status")
+    def reporting_status(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        if state.reporting_status_reader is None:
+            return {
+                "classification": "TRUSTED_PAPER_EOD_REPORTING",
+                "readiness": "UNCONFIGURED",
+                "automatic": False,
+                "state": "UNCONFIGURED",
+                "venue": None,
+                "timezone": "Asia/Shanghai",
+                "cutoff": None,
+                "data_version": None,
+                "strategy_versions": [],
+                "last_attempt_day": None,
+                "last_generated_day": None,
+                "last_report_id": None,
+                "last_sha256": None,
+                "error_code": "TRUSTED_RUNTIME_IDENTITY_NOT_CONFIGURED",
+                "caller_supplied_identity": False,
+                "external_order_transmission": False,
+            }
+        try:
+            return state.reporting_status_reader()
+        except Exception as exc:
+            raise HTTPException(
+                status_code=503, detail="daily report scheduler status unavailable"
+            ) from exc
 
     @app.post("/orders/cancel")
     def cancel_order(

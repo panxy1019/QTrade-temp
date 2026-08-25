@@ -1,5 +1,5 @@
 import json
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, time
 from decimal import Decimal
 
 import pytest
@@ -7,7 +7,13 @@ import pytest
 from qtrade.audit import AuditEvent
 from qtrade.domain import Instrument, OrderRequest, RuntimeMode, Side
 from qtrade.execution import FeeSchedule
-from qtrade.reporting import DailyPaperReport, DailyReportStore
+from qtrade.instruments import TradingCalendar, TradingDayStatus, TradingStatus
+from qtrade.reporting import (
+    DailyPaperReport,
+    DailyReportScheduleConfig,
+    DailyReportScheduler,
+    DailyReportStore,
+)
 from qtrade.risk import RiskContext, RiskLimits
 from qtrade.runtime import build_paper_runtime
 
@@ -47,7 +53,8 @@ def test_runtime_generates_traceable_daily_report(tmp_path):
     )
     bundle.reconcile_and_recover(actor="operator")
     bundle.runtime.start(actor="operator")
-    now = datetime(2026, 8, 12, 1, 30, tzinfo=UTC)
+    # 16:30 UTC on the prior date is 00:30 on this Asia/Shanghai report day.
+    now = datetime(2026, 8, 11, 16, 30, tzinfo=UTC)
     instrument = Instrument("510300", "SSE", "ETF", 100, Decimal("0.001"))
     order, _ = bundle.service.submit(
         OrderRequest(
@@ -100,3 +107,91 @@ def test_runtime_generates_traceable_daily_report(tmp_path):
     restored = json.loads(restarted_path.read_text(encoding="utf-8"))
     assert restored["report"]["trades"] == first["report"]["trades"]
     assert restored["report"]["incidents"] == ["durable incident"]
+
+
+def test_scheduler_generates_once_after_verified_open_session_cutoff(tmp_path):
+    day = date(2026, 8, 26)
+    bundle = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("100000"),
+        limits=RiskLimits(Decimal("50000"), 10000, Decimal("100000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=tmp_path / "runtime.db",
+    )
+    scheduler = DailyReportScheduler(
+        config=DailyReportScheduleConfig(
+            venue="SSE",
+            data_version="rq-session-20260826-v1",
+            strategy_versions=("minute-risk@1.0.0",),
+            report_root=tmp_path / "reports",
+        ),
+        calendar=TradingCalendar(
+            (TradingDayStatus("SSE", day, TradingStatus.OPEN, day, "fixture"),)
+        ),
+        generate=bundle.generate_daily_report,
+        clock=lambda: datetime(2026, 8, 26, 7, 29, tzinfo=UTC),
+    )
+
+    before = scheduler.poll()
+    assert before["state"] == "WAITING_FOR_CUTOFF"
+    assert not (tmp_path / "reports").exists()
+
+    generated = scheduler.poll(datetime(2026, 8, 26, 7, 30, tzinfo=UTC))
+    assert generated["state"] == "GENERATED"
+    assert generated["last_report_id"] == "paper-2026-08-26"
+    assert generated["caller_supplied_identity"] is False
+    target = tmp_path / "reports" / "paper-2026-08-26.json"
+    assert DailyReportStore(tmp_path / "reports").verify(target)
+
+    repeated = scheduler.poll(datetime(2026, 8, 26, 8, tzinfo=UTC))
+    assert repeated["state"] == "ALREADY_GENERATED"
+    assert list((tmp_path / "reports").glob("*.json")) == [target]
+
+
+def test_scheduler_fails_closed_without_calendar_or_with_conflicting_identity(tmp_path):
+    day = date(2026, 8, 26)
+    incidents: list[str] = []
+
+    def unexpected_generate(**_: object):
+        raise AssertionError("generator must not run")
+
+    config = DailyReportScheduleConfig(
+        venue="SSE",
+        data_version="trusted-data-v1",
+        strategy_versions=("trusted-strategy@1",),
+        report_root=tmp_path / "reports",
+        cutoff=time(15, 30),
+    )
+    missing = DailyReportScheduler(
+        config=config,
+        calendar=TradingCalendar(()),
+        generate=unexpected_generate,
+        clock=lambda: datetime(2026, 8, 26, 8, tzinfo=UTC),
+    )
+    assert missing.poll()["state"] == "CALENDAR_SESSION_UNAVAILABLE"
+
+    DailyReportStore(tmp_path / "reports").save(
+        DailyPaperReport(
+            "paper-2026-08-26",
+            day,
+            datetime(2026, 8, 26, 8, tzinfo=UTC),
+            "different-data-v1",
+            ("trusted-strategy@1",),
+            (), (), (), (), (), (), (), (), (),
+        )
+    )
+    conflicting = DailyReportScheduler(
+        config=config,
+        calendar=TradingCalendar(
+            (TradingDayStatus("SSE", day, TradingStatus.OPEN, day, "fixture"),)
+        ),
+        generate=unexpected_generate,
+        clock=lambda: datetime(2026, 8, 26, 8, tzinfo=UTC),
+        incident_handler=incidents.append,
+    )
+    status = conflicting.poll()
+    assert status["state"] == "FAILED"
+    assert status["error_code"] == "EXISTING_REPORT_IDENTITY_INVALID"
+    assert incidents == [
+        "PAPER daily report scheduler: EXISTING_REPORT_IDENTITY_INVALID"
+    ]
