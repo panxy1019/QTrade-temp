@@ -53,6 +53,17 @@ def test_reserved_tail_preregistration_is_signed_and_identity_bound() -> None:
         "trading_days"
     ][-8:]
     assert preregistration["evaluation_lock"]["selection_after_tail_read"] is False
+    assert (
+        preregistration["warmup_contract"][
+            "candidate_and_comparator_receive_identical_warmup"
+        ]
+        is True
+    )
+    assert preregistration["warmup_contract"]["warmup_returns_enter_tail_metrics"] is False
+    assert (
+        preregistration["warmup_contract"]["reserved_tail_enters_parameter_selection"]
+        is False
+    )
     assert preregistration["interpretation_lock"]["promotion"] == "NOT_ELIGIBLE"
     assert (
         preregistration["causal_contract"]["external_order_transmission"] is False

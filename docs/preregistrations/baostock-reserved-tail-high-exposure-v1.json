@@ -91,6 +91,13 @@
       }
     ]
   },
+  "warmup_contract": {
+    "state_warmup_days": "the first 360 sessions already used by the prior study",
+    "metric_days": "the final eight reserved sessions only",
+    "candidate_and_comparator_receive_identical_warmup": true,
+    "warmup_returns_enter_tail_metrics": false,
+    "reserved_tail_enters_parameter_selection": false
+  },
   "causal_contract": {
     "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
     "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
@@ -110,5 +117,5 @@
     "failure_must_be_retained": true,
     "no_second_tail_tuning_iteration": true
   },
-  "preregistration_sha256": "ddb0f72872cea65a2796065e96ebc5ca1792b2956ace50d6a2150a23204bd95f"
+  "preregistration_sha256": "03c1aaf16c7f2de513b48d3f4ed7f6aa968eea93f2d2bc4f65b338eca1406f9c"
 }
