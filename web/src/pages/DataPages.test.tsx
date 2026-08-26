@@ -353,7 +353,7 @@ const data = {
     dataset_checksum: 'long-five-minute-checksum', evidence_sha256: '5'.repeat(64),
     symbol_count: 15, sector_count: 15, same_day_symbol_count: 15,
     synchronized_finalized_timestamp_count: 1,
-    latest_synchronized_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+    latest_synchronized_finalized_timestamp: '2026-08-26T09:32:00+08:00',
     finalization_guard_seconds: 60,
     observations: Array.from({ length: 15 }, (_, index) => ({
       symbol: index === 0 ? '600036' : String(600100 + index), name: `代表股${index + 1}`,
@@ -375,28 +375,47 @@ const data = {
     session_phase: 'MORNING_SESSION', data_version: 'baostock-five-minute-long-v1',
     dataset_checksum: 'long-five-minute-checksum', evidence_sha256: '6'.repeat(64),
     symbol_count: 75, sector_count: 15, symbols_per_sector: 5,
-    same_day_symbol_count: 75, synchronized_finalized_timestamp_count: 1,
-    latest_synchronized_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+    same_day_symbol_count: 75, synchronized_finalized_timestamp_count: 2,
+    latest_synchronized_finalized_timestamp: '2026-08-26T09:32:00+08:00',
     source_request_window_seconds: 22, all_symbols_same_day_coverage: true,
     maximum_same_day_latest_age_seconds: 82, finalization_guard_seconds: 60,
+    directional_breadth: {
+      eligible_symbol_count: 75, above_open_count: 45,
+      unchanged_from_open_count: 5, below_open_count: 25,
+      latest_minute_eligible_symbol_count: 75, latest_minute_up_count: 40,
+      latest_minute_unchanged_count: 10, latest_minute_down_count: 25,
+      equal_weight_session_return: '0.0012',
+      equal_weight_latest_minute_return: '0.0003',
+    },
     observations: Array.from({ length: 75 }, (_, index) => ({
       symbol: String(600100 + index), name: `股票${index + 1}`,
       sector_code: String(801000 + Math.floor(index / 5)),
       sector_name: `行业${Math.floor(index / 5) + 1}`,
       observed_at: '2026-08-26T01:32:22+00:00', session_phase: 'MORNING_SESSION',
       source_row_count: 476, latest_observed_timestamp: '2026-08-26T09:32:00+08:00',
-      latest_finalized_timestamp: '2026-08-26T09:31:00+08:00',
-      same_day_finalized_bar_count: 1,
-      latest_same_day_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+      latest_finalized_timestamp: '2026-08-26T09:32:00+08:00',
+      same_day_finalized_bar_count: 2,
+      latest_same_day_finalized_timestamp: '2026-08-26T09:32:00+08:00',
       latest_same_day_finalized_age_seconds: 82,
       forming_or_uncertain_bar_excluded: true,
+      first_same_day_open: '10', previous_same_day_close: '10',
+      latest_same_day_close: '10.01', session_return: '0.001',
+      latest_minute_return: '0.001',
     })),
     sector_summaries: Array.from({ length: 15 }, (_, index) => ({
       sector_code: String(801000 + index), sector_name: `行业${index + 1}`,
       symbol_count: 5, same_day_symbol_count: 5,
-      synchronized_finalized_timestamp_count: 1,
-      latest_synchronized_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+      synchronized_finalized_timestamp_count: 2,
+      latest_synchronized_finalized_timestamp: '2026-08-26T09:32:00+08:00',
       maximum_same_day_latest_age_seconds: 82,
+      directional_breadth: {
+        eligible_symbol_count: 5, above_open_count: 3,
+        unchanged_from_open_count: 0, below_open_count: 2,
+        latest_minute_eligible_symbol_count: 5, latest_minute_up_count: 3,
+        latest_minute_unchanged_count: 0, latest_minute_down_count: 2,
+        equal_weight_session_return: '0.001',
+        equal_weight_latest_minute_return: '0.001',
+      },
     })),
     realtime_readiness: false, real_data_paper_readiness: false,
     promotion: 'NOT_ELIGIBLE', external_order_transmission: false,
@@ -756,8 +775,12 @@ describe('verified historical data pages', () => {
     expect(screen.getByText(/时间或共同分钟回退会被保留并标红/)).toBeInTheDocument()
     expect(screen.getByText('全股票宽度观测 · 75/75')).toBeInTheDocument()
     expect(screen.getByText('15 板块 × 每板块 5 只股票')).toBeInTheDocument()
-    expect(screen.getByText(/跨股票共同已结束分钟 1 个/)).toBeInTheDocument()
+    expect(screen.getByText(/跨股票共同已结束分钟 2 个/)).toBeInTheDocument()
     expect(screen.getByText(/后端从签名的逐股票时间集合重新计算共同覆盖/)).toBeInTheDocument()
+    expect(screen.getByText('盘中横截面方向因子 · 仅观察')).toBeInTheDocument()
+    expect(screen.getByText(/相对开盘上涨 45\/75、下跌 25/)).toBeInTheDocument()
+    expect(screen.getByText(/等权开盘至今 0.12%/)).toBeInTheDocument()
+    expect(screen.getByText(/不进入策略调参或 PAPER/)).toBeInTheDocument()
     expect(screen.getByText(/1 根同日已结束 Bar/)).toBeInTheDocument()
     expect(screen.getByTestId('minute-history-chart')).toBeInTheDocument()
   })

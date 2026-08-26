@@ -850,6 +850,7 @@ export interface IntradayBreadthObservationReport {
   all_symbols_same_day_coverage?: boolean
   maximum_same_day_latest_age_seconds?: number | null
   finalization_guard_seconds?: number
+  directional_breadth?: IntradayDirectionalBreadth
   observations: Array<{
     symbol: string
     name: string
@@ -864,6 +865,11 @@ export interface IntradayBreadthObservationReport {
     latest_same_day_finalized_timestamp: string | null
     latest_same_day_finalized_age_seconds: number | null
     forming_or_uncertain_bar_excluded: boolean
+    first_same_day_open: string | null
+    previous_same_day_close: string | null
+    latest_same_day_close: string | null
+    session_return: string | null
+    latest_minute_return: string | null
   }>
   sector_summaries: Array<{
     sector_code: string
@@ -873,11 +879,25 @@ export interface IntradayBreadthObservationReport {
     synchronized_finalized_timestamp_count: number
     latest_synchronized_finalized_timestamp: string | null
     maximum_same_day_latest_age_seconds: number | null
+    directional_breadth: IntradayDirectionalBreadth
   }>
   realtime_readiness: false
   real_data_paper_readiness: false
   promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
   external_order_transmission: false
+}
+
+export interface IntradayDirectionalBreadth {
+  eligible_symbol_count: number
+  above_open_count: number
+  unchanged_from_open_count: number
+  below_open_count: number
+  latest_minute_eligible_symbol_count: number
+  latest_minute_up_count: number
+  latest_minute_unchanged_count: number
+  latest_minute_down_count: number
+  equal_weight_session_return: string | null
+  equal_weight_latest_minute_return: string | null
 }
 
 export interface IntradayContinuityReport {

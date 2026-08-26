@@ -8,6 +8,7 @@ import os
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,39 @@ from scripts.probe_sina_intraday_observation import (
     _finalized_bars,
     _session_phase,
 )
+
+
+def _directional_breadth(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    session_returns = [
+        Decimal(str(row["session_return"]))
+        for row in rows
+        if row.get("session_return") is not None
+    ]
+    latest_returns = [
+        Decimal(str(row["latest_minute_return"]))
+        for row in rows
+        if row.get("latest_minute_return") is not None
+    ]
+    return {
+        "eligible_symbol_count": len(session_returns),
+        "above_open_count": sum(value > 0 for value in session_returns),
+        "unchanged_from_open_count": sum(value == 0 for value in session_returns),
+        "below_open_count": sum(value < 0 for value in session_returns),
+        "latest_minute_eligible_symbol_count": len(latest_returns),
+        "latest_minute_up_count": sum(value > 0 for value in latest_returns),
+        "latest_minute_unchanged_count": sum(value == 0 for value in latest_returns),
+        "latest_minute_down_count": sum(value < 0 for value in latest_returns),
+        "equal_weight_session_return": (
+            str(sum(session_returns, start=Decimal("0")) / len(session_returns))
+            if session_returns
+            else None
+        ),
+        "equal_weight_latest_minute_return": (
+            str(sum(latest_returns, start=Decimal("0")) / len(latest_returns))
+            if latest_returns
+            else None
+        ),
+    }
 
 
 def _load_frozen_stocks(path: Path) -> tuple[dict[str, Any], list[dict[str, str]]]:
@@ -81,6 +115,7 @@ def _sector_summaries(observations: list[dict[str, Any]]) -> list[dict[str, Any]
                     synchronized[-1] if synchronized else None
                 ),
                 "maximum_same_day_latest_age_seconds": max(ages) if ages else None,
+                "directional_breadth": _directional_breadth(rows),
             }
         )
     return result
@@ -124,6 +159,18 @@ def main() -> int:
         latest_observed = bars[-1]
         latest_finalized = finalized[-1] if finalized else None
         latest_same_day = same_day[-1] if same_day else None
+        first_same_day = same_day[0] if same_day else None
+        previous_same_day = same_day[-2] if len(same_day) >= 2 else None
+        session_return = (
+            latest_same_day.close / first_same_day.open - Decimal("1")
+            if latest_same_day is not None and first_same_day is not None
+            else None
+        )
+        latest_minute_return = (
+            latest_same_day.close / previous_same_day.close - Decimal("1")
+            if latest_same_day is not None and previous_same_day is not None
+            else None
+        )
         return {
             **instrument,
             "observed_at": observed_at.isoformat(),
@@ -150,6 +197,25 @@ def main() -> int:
                 latest_finalized is None
                 or latest_observed.timestamp > latest_finalized.timestamp
             ),
+            "first_same_day_open": (
+                str(first_same_day.open) if first_same_day is not None else None
+            ),
+            "previous_same_day_close": (
+                str(previous_same_day.close)
+                if previous_same_day is not None
+                else None
+            ),
+            "latest_same_day_close": (
+                str(latest_same_day.close) if latest_same_day is not None else None
+            ),
+            "session_return": (
+                str(session_return) if session_return is not None else None
+            ),
+            "latest_minute_return": (
+                str(latest_minute_return)
+                if latest_minute_return is not None
+                else None
+            ),
             "same_day_finalized_timestamps": [
                 bar.timestamp.isoformat() for bar in same_day
             ],
@@ -167,7 +233,7 @@ def main() -> int:
     ]
     sector_summaries = _sector_summaries(observations)
     unsigned: dict[str, Any] = {
-        "schema_version": 1,
+        "schema_version": 2,
         "classification": (
             "FREE_HISTORICAL_SOURCE_INTRADAY_BREADTH_NOT_REALTIME_ELIGIBLE"
         ),
@@ -201,6 +267,7 @@ def main() -> int:
         "finalization_guard_seconds": args.finalization_guard_seconds,
         "observations": observations,
         "sector_summaries": sector_summaries,
+        "directional_breadth": _directional_breadth(observations),
         "realtime_readiness": False,
         "real_data_paper_readiness": False,
         "promotion": "NOT_ELIGIBLE",
@@ -222,6 +289,7 @@ def main() -> int:
                     "latest_synchronized_finalized_timestamp",
                     "source_request_window_seconds",
                     "maximum_same_day_latest_age_seconds",
+                    "directional_breadth",
                     "evidence_sha256",
                 )
             },

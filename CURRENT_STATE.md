@@ -26,12 +26,12 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 339 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 352 tests passed, Ruff clean, strict mypy clean across
   the 97-package source baseline plus the breadth probe on Python 3.12.13
-  (macOS, 2026-08-26); 43 frontend Vitest
+  (macOS, 2026-08-26); 46 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 426.27 KB with no large-chunk warning.
+  minified JavaScript asset at or below 426.86 KB with no large-chunk warning.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
 - Frontend completeness audit: `docs/FRONTEND_GAP_AUDIT.md` tracks every
@@ -119,18 +119,23 @@ Last updated: 2026-08-26
   treating historical AKShare data as a live feed.
 - Intraday breadth evidence: a separate signed Sina point-in-time probe covers
   all 75 frozen stocks across 15 sectors with five stocks per sector. It records
-  each stock's finalized same-day timestamp set, request timing and latest-bar
-  age; `/intraday-breadth-observation` recomputes the 75-stock and per-sector
-  intersections before returning a bounded summary to the Chinese market page.
-  The full-stock probe remains historical-source availability evidence only and
-  cannot set realtime/PAPER readiness or transmit an external order.
+  each stock's finalized same-day timestamp set, request timing, latest-bar age,
+  first open, previous close and latest close. `/intraday-breadth-observation`
+  recomputes the 75-stock/per-sector intersections and exact relative-open,
+  latest-minute and equal-weight direction summaries before returning a bounded
+  result to the Chinese market page. The 12:35 China-time refresh retained 75/75
+  stock coverage and 120 common minutes through 11:30: 59 stocks were above
+  their first open, 12 rose in the latest finalized minute, and equal-weight
+  returns were `+1.0826%` session-to-date and `-0.0709%` latest-minute. These
+  observational fields remain outside strategy/PAPER state and cannot set
+  realtime readiness or transmit an external order.
 - Intraday continuity: each deployed checkpoint can bind the current 15-stock
   detail report and 75-stock breadth report into a bounded previous-hash chain.
   `/intraday-continuity` verifies every checkpoint digest, sequence, China trading
   day, monotonic common-minute arithmetic and exact latest-report identities.
   The market page displays regressions rather than silently correcting them;
   this remains deployment evidence and never enters strategy or PAPER state.
-  The 2026-08-26 midday chain has three checkpoints; its latest detail/breadth
+  The 2026-08-26 midday chain has four checkpoints; its latest detail/breadth
   pair covers 15/15 and 75/75 stocks with 120 common finalized minutes through
   11:30 and is monotonic versus the prior 63-minute checkpoint. Mutable intraday
   reports now use flushed, `fsync`-backed atomic publication, preventing a crash

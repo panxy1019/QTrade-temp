@@ -5569,6 +5569,41 @@ def _load_verified_intraday_observation(
         return None
 
 
+def _directional_breadth_summary(
+    rows: list[dict[str, object]],
+) -> dict[str, object]:
+    session_returns = [
+        Decimal(str(row["session_return"]))
+        for row in rows
+        if row.get("session_return") is not None
+    ]
+    latest_returns = [
+        Decimal(str(row["latest_minute_return"]))
+        for row in rows
+        if row.get("latest_minute_return") is not None
+    ]
+    return {
+        "eligible_symbol_count": len(session_returns),
+        "above_open_count": sum(value > 0 for value in session_returns),
+        "unchanged_from_open_count": sum(value == 0 for value in session_returns),
+        "below_open_count": sum(value < 0 for value in session_returns),
+        "latest_minute_eligible_symbol_count": len(latest_returns),
+        "latest_minute_up_count": sum(value > 0 for value in latest_returns),
+        "latest_minute_unchanged_count": sum(value == 0 for value in latest_returns),
+        "latest_minute_down_count": sum(value < 0 for value in latest_returns),
+        "equal_weight_session_return": (
+            str(sum(session_returns, start=Decimal("0")) / len(session_returns))
+            if session_returns
+            else None
+        ),
+        "equal_weight_latest_minute_return": (
+            str(sum(latest_returns, start=Decimal("0")) / len(latest_returns))
+            if latest_returns
+            else None
+        ),
+    }
+
+
 def _load_verified_intraday_breadth(
     path: Path | None,
     dataset: dict[str, object] | None,
@@ -5614,7 +5649,7 @@ def _load_verified_intraday_breadth(
             or set(expected_sector_counts.values()) != {5}
             or not _is_sha256(digest)
             or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
-            or report.get("schema_version") != 1
+            or report.get("schema_version") != 2
             or report.get("classification")
             != "FREE_HISTORICAL_SOURCE_INTRADAY_BREADTH_NOT_REALTIME_ELIGIBLE"
             or report.get("coverage_scope")
@@ -5648,7 +5683,10 @@ def _load_verified_intraday_breadth(
         same_day_count = 0
         same_day_ages: list[float] = []
         timestamp_sets: list[set[str]] = []
-        sector_rows: dict[str, list[tuple[set[str], float | None]]] = defaultdict(list)
+        directional_rows: list[dict[str, object]] = []
+        sector_rows: dict[
+            str, list[tuple[set[str], float | None, dict[str, object]]]
+        ] = defaultdict(list)
         sanitized_observations: list[dict[str, object]] = []
         for observation, identity in zip(observations, expected, strict=True):
             if not isinstance(observation, dict):
@@ -5675,6 +5713,11 @@ def _load_verified_intraday_breadth(
             latest_same_day_age = observation.get(
                 "latest_same_day_finalized_age_seconds"
             )
+            first_open_raw = observation.get("first_same_day_open")
+            previous_close_raw = observation.get("previous_same_day_close")
+            latest_close_raw = observation.get("latest_same_day_close")
+            session_return_raw = observation.get("session_return")
+            latest_minute_return_raw = observation.get("latest_minute_return")
             observed_identity = (
                 observation.get("symbol"),
                 observation.get("name"),
@@ -5725,14 +5768,41 @@ def _load_verified_intraday_breadth(
                 observed_timestamps.add(timestamp.isoformat())
             if len(observed_timestamps) != len(timestamp_values):
                 return None
+            directional_row: dict[str, object]
             if timestamp_values:
                 assert previous is not None
+                first_open = Decimal(str(first_open_raw))
+                latest_close = Decimal(str(latest_close_raw))
+                session_return = Decimal(str(session_return_raw))
+                latest_minute_return: Decimal | None = None
                 if (
                     latest_finalized != previous
                     or latest_same_day != previous
                     or not isinstance(latest_same_day_age, (int, float))
                     or isinstance(latest_same_day_age, bool)
                     or not isfinite(float(latest_same_day_age))
+                    or not first_open.is_finite()
+                    or first_open <= 0
+                    or not latest_close.is_finite()
+                    or latest_close <= 0
+                    or not session_return.is_finite()
+                    or session_return != latest_close / first_open - Decimal("1")
+                ):
+                    return None
+                if len(timestamp_values) >= 2:
+                    previous_close = Decimal(str(previous_close_raw))
+                    latest_minute_return = Decimal(str(latest_minute_return_raw))
+                    if (
+                        not previous_close.is_finite()
+                        or previous_close <= 0
+                        or not latest_minute_return.is_finite()
+                        or latest_minute_return
+                        != latest_close / previous_close - Decimal("1")
+                    ):
+                        return None
+                elif (
+                    previous_close_raw is not None
+                    or latest_minute_return_raw is not None
                 ):
                     return None
                 expected_age = round((observed_at - previous).total_seconds(), 3)
@@ -5743,12 +5813,35 @@ def _load_verified_intraday_breadth(
                 age = float(latest_same_day_age)
                 same_day_count += 1
                 same_day_ages.append(age)
+                directional_row = {
+                    "session_return": str(session_return),
+                    "latest_minute_return": (
+                        str(latest_minute_return)
+                        if latest_minute_return is not None
+                        else None
+                    ),
+                }
             else:
-                if latest_same_day is not None or latest_same_day_age is not None:
+                if (
+                    latest_same_day is not None
+                    or latest_same_day_age is not None
+                    or first_open_raw is not None
+                    or previous_close_raw is not None
+                    or latest_close_raw is not None
+                    or session_return_raw is not None
+                    or latest_minute_return_raw is not None
+                ):
                     return None
                 age = None
+                directional_row = {
+                    "session_return": None,
+                    "latest_minute_return": None,
+                }
             timestamp_sets.append(observed_timestamps)
-            sector_rows[identity[2]].append((observed_timestamps, age))
+            directional_rows.append(directional_row)
+            sector_rows[identity[2]].append(
+                (observed_timestamps, age, directional_row)
+            )
             sanitized_observations.append(
                 {
                     key: value
@@ -5785,6 +5878,9 @@ def _load_verified_intraday_breadth(
                     "maximum_same_day_latest_age_seconds": (
                         max(ages) if ages else None
                     ),
+                    "directional_breadth": _directional_breadth_summary(
+                        [row[2] for row in rows]
+                    ),
                 }
             )
         request_window_seconds = report.get("source_request_window_seconds")
@@ -5810,6 +5906,8 @@ def _load_verified_intraday_breadth(
             or report.get("latest_synchronized_finalized_timestamp")
             != (synchronized[-1] if synchronized else None)
             or sector_summaries != expected_sector_summaries
+            or report.get("directional_breadth")
+            != _directional_breadth_summary(directional_rows)
         ):
             return None
         return {

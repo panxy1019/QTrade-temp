@@ -173,6 +173,13 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     symbols_per_sector: 0, same_day_symbol_count: 0,
     synchronized_finalized_timestamp_count: 0,
     latest_synchronized_finalized_timestamp: null,
+    directional_breadth: {
+      eligible_symbol_count: 0, above_open_count: 0,
+      unchanged_from_open_count: 0, below_open_count: 0,
+      latest_minute_eligible_symbol_count: 0, latest_minute_up_count: 0,
+      latest_minute_unchanged_count: 0, latest_minute_down_count: 0,
+      equal_weight_session_return: null, equal_weight_latest_minute_return: null,
+    },
     observations: [], sector_summaries: [], realtime_readiness: false,
     real_data_paper_readiness: false, promotion: 'NOT_EVALUATED',
     external_order_transmission: false,

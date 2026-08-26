@@ -46,6 +46,7 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const longFiveMinuteDataset = data?.longFiveMinuteResearch?.minute_dataset
   const intraday = data?.intradayObservation
   const breadth = data?.intradayBreadth
+  const directionalBreadth = breadth?.directional_breadth
   const continuity = data?.intradayContinuity
   const latestContinuity = continuity?.checkpoints.at(-1)
   const [activeMarketTab, setActiveMarketTab] = useState('daily')
@@ -251,6 +252,15 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     { title: '同日已结束分钟', dataIndex: 'same_day_finalized_bar_count' },
     { title: '最新同日 Bar', dataIndex: 'latest_same_day_finalized_timestamp', render: (value: string | null) => value ? formatChinaMinuteTimestamp(value) : '尚无' },
     { title: '最新 Bar 年龄（秒）', dataIndex: 'latest_same_day_finalized_age_seconds', render: (value: number | null) => value ?? '—' },
+    { title: '开盘至今', dataIndex: 'session_return', render: renderSignedReturn },
+    { title: '最新分钟', dataIndex: 'latest_minute_return', render: renderSignedReturn },
+  ]
+  const sectorBreadthColumns = [
+    { title: '板块', dataIndex: 'sector_name', fixed: 'left' as const },
+    { title: '相对开盘上涨', render: (_: unknown, row: NonNullable<typeof breadth>['sector_summaries'][number]) => `${row.directional_breadth.above_open_count}/${row.directional_breadth.eligible_symbol_count}` },
+    { title: '最新分钟上涨', render: (_: unknown, row: NonNullable<typeof breadth>['sector_summaries'][number]) => `${row.directional_breadth.latest_minute_up_count}/${row.directional_breadth.latest_minute_eligible_symbol_count}` },
+    { title: '等权开盘至今', render: (_: unknown, row: NonNullable<typeof breadth>['sector_summaries'][number]) => renderSignedReturn(row.directional_breadth.equal_weight_session_return) },
+    { title: '等权最新分钟', render: (_: unknown, row: NonNullable<typeof breadth>['sector_summaries'][number]) => renderSignedReturn(row.directional_breadth.equal_weight_latest_minute_return) },
   ]
   const continuityColumns = [
     { title: '序号', dataIndex: 'sequence', width: 72 },
@@ -287,7 +297,9 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
             <Card title={`全股票宽度观测 · ${breadth?.same_day_symbol_count ?? 0}/${breadth?.symbol_count ?? 0}`}>
               <Space orientation="vertical" style={{ width: '100%' }}>
                 <Alert showIcon type={breadth?.all_symbols_same_day_coverage ? 'success' : 'warning'} title={`${breadth?.sector_count ?? 0} 板块 × 每板块 ${breadth?.symbols_per_sector ?? 0} 只股票`} description={`全股票完成时间 ${breadth?.completed_at ? formatChinaMinuteTimestamp(breadth.completed_at) : '—'}；跨股票共同已结束分钟 ${breadth?.synchronized_finalized_timestamp_count ?? 0} 个，最新 ${breadth?.latest_synchronized_finalized_timestamp ? formatChinaMinuteTimestamp(breadth.latest_synchronized_finalized_timestamp) : '尚无'}。75 股票请求窗口 ${breadth?.source_request_window_seconds ?? '—'} 秒，最大最新 Bar 年龄 ${breadth?.maximum_same_day_latest_age_seconds ?? '尚无'} 秒。后端从签名的逐股票时间集合重新计算共同覆盖；该宽度审计不进入策略或 PAPER。`} />
-                <Table rowKey="symbol" size="small" columns={breadthColumns} dataSource={breadthObservations} pagination={{ pageSize: 15, showSizeChanger: false }} scroll={{ x: 920 }} locale={{ emptyText: <Empty description="暂无校验通过的全股票分钟宽度观测" /> }} />
+                <Alert showIcon type="info" title="盘中横截面方向因子 · 仅观察" description={`相对开盘上涨 ${directionalBreadth?.above_open_count ?? 0}/${directionalBreadth?.eligible_symbol_count ?? 0}、下跌 ${directionalBreadth?.below_open_count ?? 0}；最新已结束分钟上涨 ${directionalBreadth?.latest_minute_up_count ?? 0}/${directionalBreadth?.latest_minute_eligible_symbol_count ?? 0}、下跌 ${directionalBreadth?.latest_minute_down_count ?? 0}。75 股等权开盘至今 ${formatPercent(directionalBreadth?.equal_weight_session_return ?? undefined)}，等权最新分钟 ${formatPercent(directionalBreadth?.equal_weight_latest_minute_return ?? undefined)}。这些值由签名的逐股首开、前收和最新收盘字段复算，只作方向广度观测，不进入策略调参或 PAPER。`} />
+                <Table rowKey="sector_code" size="small" columns={sectorBreadthColumns} dataSource={breadth?.sector_summaries ?? []} pagination={false} scroll={{ x: 820 }} locale={{ emptyText: <Empty description="暂无校验通过的板块方向广度" /> }} />
+                <Table rowKey="symbol" size="small" columns={breadthColumns} dataSource={breadthObservations} pagination={{ pageSize: 15, showSizeChanger: false }} scroll={{ x: 1120 }} locale={{ emptyText: <Empty description="暂无校验通过的全股票分钟宽度观测" /> }} />
               </Space>
             </Card>
             <Card title={`${activeIntradaySymbol ?? '—'} 当日已结束 1 分钟观测`}><MinuteHistoryChart series={displayedIntradaySeries} /><Typography.Text type="secondary">{displayedIntradaySeries?.bars.length ? `${displayedIntradaySeries.bars.length} 根同日已结束 Bar；观测签名 ${intraday?.evidence_sha256 ?? '—'}。` : '当前阶段尚无同日已结束分钟 Bar。'} 免费历史接口只作点时观测，不宣称流式、低延迟或实时授权。</Typography.Text></Card>
@@ -1000,6 +1012,13 @@ function formatNumber(value?: string) {
 function formatPercent(value?: string) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? `${(parsed * 100).toFixed(2)}%` : '—'
+}
+
+function renderSignedReturn(value: string | null) {
+  if (value === null) return '—'
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed)) return '—'
+  return <Tag color={parsed > 0 ? 'red' : parsed < 0 ? 'green' : 'default'}>{formatPercent(value)}</Tag>
 }
 
 function formatInteger(value?: string) {

@@ -348,13 +348,18 @@ QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true PYTHONPATH=. .venv/bin/python \
   --output deployment/evidence/intraday-breadth/report.json
 ```
 
-The signed artifact retains every stock's finalized same-day timestamp set. The
-API independently recomputes the 75-stock intersection, per-sector intersections,
-latest-bar ages and request window, then omits the raw timestamp sets from its
-response. The market page shows the resulting 15×5 coverage table beside the 15
-representative-stock charts. This is source-breadth and lag evidence only; it
-does not create realtime entitlement, strategy input, PAPER readiness or order
-authority.
+The signed artifact retains every stock's finalized same-day timestamp set plus
+its first open, previous close and latest close. The API independently recomputes
+the 75-stock intersection, per-sector intersections, latest-bar ages, request
+window, relative-open/latest-minute returns and equal-weight directional breadth,
+then omits the raw timestamp sets from its response. The market page shows the
+resulting 15×5 coverage and sector-direction tables beside the 15 representative
+stock charts. At the fourth 12:35 China-time checkpoint, all 75 stocks shared 120
+finalized morning minutes through 11:30; 59/75 were above their first open and
+12/75 rose in the latest finalized minute, while the equal-weight session and
+latest-minute returns were `+1.0826%` and `-0.0709%`. This is observable source
+breadth only; it does not create realtime entitlement, strategy input, PAPER
+readiness or order authority.
 
 Multiple detail/breadth refreshes can be chained into a bounded continuity
 artifact:
@@ -370,9 +375,9 @@ hash. `/intraday-continuity` recomputes the chain, monotonicity and latest-repor
 binding before the market page renders the timeline. A source regression remains
 visible instead of being repaired or dropped. The chain is deployment evidence,
 not a realtime subscription, strategy state or PAPER authorization.
-The current third checkpoint binds 15/15 detail and 75/75 breadth coverage at
+The current fourth checkpoint binds 15/15 detail and 75/75 breadth coverage at
 120 common finalized minutes through 11:30 and is monotonic versus the previous
-63-minute checkpoint. All three mutable report writers publish through a flushed,
+120-minute checkpoint. All three mutable report writers publish through a flushed,
 `fsync`-backed same-directory temporary file and atomic replacement, so an
 interrupted refresh cannot expose a half-written JSON document.
 

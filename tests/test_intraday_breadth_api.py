@@ -44,6 +44,17 @@ def test_intraday_breadth_endpoint_verifies_all_frozen_stocks() -> None:
     assert len(payload["observations"]) == 75
     assert len(payload["sector_summaries"]) == 15
     assert {row["symbol_count"] for row in payload["sector_summaries"]} == {5}
+    directional = payload["directional_breadth"]
+    assert (
+        directional["above_open_count"]
+        + directional["unchanged_from_open_count"]
+        + directional["below_open_count"]
+        == directional["eligible_symbol_count"]
+    )
+    assert all(
+        row["directional_breadth"]["eligible_symbol_count"] == 5
+        for row in payload["sector_summaries"]
+    )
     assert all(
         "same_day_finalized_timestamps" not in row
         for row in payload["observations"]
@@ -84,6 +95,22 @@ def test_intraday_breadth_endpoint_rejects_resigned_duplicate_timestamp(
     report = json.loads(source.read_text(encoding="utf-8"))
     timestamps = report["observations"][0]["same_day_finalized_timestamps"]
     timestamps[-1] = timestamps[-2]
+    _resign(report)
+    target = tmp_path / "report.json"
+    target.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(target).get("/intraday-breadth-observation").json()
+    assert rejected["classification"] == (
+        "NO_VERIFIED_INTRADAY_BREADTH_OBSERVATION"
+    )
+
+
+def test_intraday_breadth_endpoint_rejects_resigned_directional_return(
+    tmp_path: Path,
+) -> None:
+    source = EVIDENCE_ROOT / "intraday-breadth" / "report.json"
+    report = json.loads(source.read_text(encoding="utf-8"))
+    report["observations"][0]["session_return"] = "9"
     _resign(report)
     target = tmp_path / "report.json"
     target.write_text(json.dumps(report), encoding="utf-8")

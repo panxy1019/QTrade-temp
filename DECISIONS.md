@@ -604,3 +604,18 @@ refresh must not depend on an unrelated status string changing. Every successful
 save or delete increments a dedicated in-memory revision so repeated identical
 actions still update the comparison table immediately. The revision adds no
 server persistence, formal experiment registration or strategy promotion path.
+
+## ADR-039 — Intraday directional breadth is observable, not a strategy input
+
+Status: accepted, 2026-08-26.
+
+The signed 75-stock breadth report may retain each stock's first same-day open,
+previous finalized close and latest finalized close. The API must rederive every
+relative-open and latest-minute return, then recompute global and 15-sector
+direction counts and equal-weight means. A mismatched value fails the entire
+report closed even when its outer digest is regenerated.
+
+These fields describe a bounded point-in-time cross-section from a free
+historical endpoint. They cannot become a factor candidate, influence parameter
+selection, mutate minute-overlay/PAPER state, establish realtime entitlement or
+authorize external order transmission without a separately preregistered study.
