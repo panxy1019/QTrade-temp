@@ -831,3 +831,17 @@ later than collection, and collection no later than candidate generation. A
 same-day collection is valid only from 15:10 Asia/Shanghai onward. This binds
 the source artifact to the predeclared completed-session window before any
 public replacement or runtime interpretation occurs.
+
+## ADR-055 — Forward source sessions use the frozen provider version
+
+Status: accepted, 2026-08-26.
+
+The first formal forward-session publication accepts only BaoStock `0.9.3`, the
+same provider environment used to freeze and verify the long-history and anchor
+evidence. Requiring only a source string derived from the report's own provider
+version would let both fields drift together after resigning.
+
+Every constituent source report must therefore retain the exact provider
+version as well as the matching native five-minute `adjustflag=2` source string.
+A version drift fails before atomic replacement and cannot change public
+progress, strategy/PAPER authority, realtime readiness or external-order state.

@@ -231,7 +231,7 @@ navigation and the explicit no-live boundary remain available during recovery.
 ECharts registers only the line, bar, candlestick and supporting components used
 by the product, while React and zrender are stable cache chunks; both production
 build modes complete without a chunk-size warning and keep the largest minified
-JavaScript asset at 426.90 KB.
+JavaScript asset at 426.92 KB.
 
 The factor-research path now predeclares five causal price factors, keeps every
 forward label inside the discovery period, bounds the active validation grid and

@@ -26,12 +26,12 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 354 tests passed, Ruff clean, strict mypy clean across
-  the 97-package source baseline plus the breadth and continuity scripts on Python 3.12.13
+- Acceptance evidence: 368 tests passed, Ruff clean, strict mypy clean across
+  the 99-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 426.90 KB with no large-chunk warning.
+  minified JavaScript asset at or below 426.92 KB with no large-chunk warning.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
 - Frontend completeness audit: `docs/FRONTEND_GAP_AUDIT.md` tracks every
@@ -547,7 +547,10 @@ Last updated: 2026-08-26
   Each row must preserve the full 11-field execution diagnostic; reduced counts,
   exposure sums, turnover, transaction cost, per-symbol means and reason counts
   are all structurally and arithmetically revalidated. Reduced/reason counts must
-  be genuine integers; Python booleans are explicitly rejected.
+  be genuine integers; Python booleans are explicitly rejected. Formal source
+  sessions also bind the exact frozen BaoStock `0.9.3` provider version rather
+  than trusting a source string that could be rewritten together with its
+  self-reported version.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator

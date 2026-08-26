@@ -28,6 +28,7 @@ _FROZEN_FORWARD_ANCHOR_DAY = "2026-08-25"
 _FROZEN_FORWARD_ANCHOR_SHA256 = (
     "c5f74be0063c2aa0d518ebd77055909970e5216c6a5a2240ea2188f42b204f52"
 )
+_FROZEN_FORWARD_PROVIDER_VERSION = "0.9.3"
 _SHANGHAI = ZoneInfo("Asia/Shanghai")
 
 
@@ -78,6 +79,7 @@ def _valid_source_session_metadata(
         and report.get("preregistration_sha256")
         == candidate.get("preregistration_sha256")
         and report.get("provider") == "BaoStock"
+        and provider_version == _FROZEN_FORWARD_PROVIDER_VERSION
         and report.get("frequency") == "5"
         and report.get("adjustflag") == "2"
         and report.get("point_in_time") is False

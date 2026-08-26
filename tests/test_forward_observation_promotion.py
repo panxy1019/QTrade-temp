@@ -172,3 +172,11 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
     source_reports[0]["collected_at"] = "2026-09-01T15:09:59+08:00"
     with pytest.raises(ValueError, match="source sessions"):
         validate_source_sessions(candidate, source_reports)
+
+    source_reports[0]["collected_at"] = "2026-09-01T16:00:00+08:00"
+    source_reports[0]["provider_version"] = "0.9.4"
+    cast(dict[str, object], source_reports[0]["manifest"])[
+        "source"
+    ] = "BaoStock 0.9.4 native 5-minute; adjustflag=2"
+    with pytest.raises(ValueError, match="source sessions"):
+        validate_source_sessions(candidate, source_reports)
