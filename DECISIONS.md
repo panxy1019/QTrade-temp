@@ -1129,10 +1129,16 @@ erases whether provider completeness improved or regressed across repeated
 post-close probes. Treating the snapshots as formal sessions would instead
 contaminate the locked 0/20 evaluation with diagnostics that persist no Bars.
 
-Each independently signed coverage report is now summarized into a second
-signed, previous-hash-bound chain of at most 64 checkpoints. The public verifier
-recomputes every checkpoint hash, provider/preregistration identity, timestamp,
-count arithmetic, delta and monotonic flag, and requires the final checkpoint to
-match the current coverage report exactly. The chain is displayed as source
+Each independently signed coverage report is now retained as a complete,
+content-addressed immutable release and summarized into a second signed,
+previous-hash-bound chain of at most 64 checkpoints. Immutable release
+publication writes and synchronizes a private temporary file before atomically
+linking its final non-overwritable name. The public verifier rejects missing or
+symlinked releases, reruns the full 75-stock report contract, recomputes every
+checkpoint hash, provider/preregistration identity, timestamp, count arithmetic,
+delta and monotonic flag, and requires the final checkpoint to match the current
+coverage report exactly. Therefore resigning the whole summary cannot fabricate
+an old point without also supplying the original full report. The chain is
+displayed as source
 publication history only; it cannot increment formal forward metrics or grant
 realtime, PAPER, LIVE or external-order authority.

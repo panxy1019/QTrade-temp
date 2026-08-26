@@ -132,6 +132,7 @@ class AppContext:
     forward_observation_report_path: Path | None = None
     forward_source_coverage_path: Path | None = None
     forward_source_coverage_history_path: Path | None = None
+    forward_source_coverage_release_root: Path | None = None
     reserved_tail_preregistration_path: Path | None = None
     reserved_tail_diagnostic_report_path: Path | None = None
     public_minute_audit_path: Path | None = None
@@ -623,6 +624,9 @@ def create_app(
         report = _load_verified_forward_source_coverage_history(
             state.forward_source_coverage_history_path,
             coverage,
+            state.forward_source_coverage_release_root,
+            dataset,
+            preregistration,
         )
         return report or {
             "classification": "NO_VERIFIED_FORWARD_SOURCE_COVERAGE_HISTORY",
@@ -1395,6 +1399,9 @@ def context_from_runtime(
         ),
         forward_source_coverage_history_path=Path(
             "runtime/research/baostock-forward-source-coverage-v1/history.json"
+        ),
+        forward_source_coverage_release_root=Path(
+            "runtime/research/baostock-forward-source-coverage-v1/releases"
         ),
         reserved_tail_preregistration_path=Path(
             "docs/preregistrations/"
@@ -5764,10 +5771,23 @@ def _load_verified_forward_source_coverage(
 def _load_verified_forward_source_coverage_history(
     path: Path | None,
     coverage: dict[str, object] | None,
+    release_root: Path | None,
+    dataset: dict[str, object] | None,
+    preregistration: dict[str, object] | None,
 ) -> dict[str, object] | None:
-    if path is None or coverage is None or not path.is_file():
+    if (
+        path is None
+        or coverage is None
+        or release_root is None
+        or dataset is None
+        or preregistration is None
+        or not path.is_file()
+        or not release_root.is_dir()
+        or release_root.is_symlink()
+    ):
         return None
     try:
+        verified_release_root = release_root.resolve()
         content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
         if content is None:
             return None
@@ -5906,6 +5926,29 @@ def _load_verified_forward_source_coverage_history(
                 )
             ):
                 return None
+            release_path = verified_release_root / (
+                f"{value['report_evidence_sha256']}.json"
+            )
+            if release_path.is_symlink():
+                return None
+            release = _load_verified_forward_source_coverage(
+                release_path,
+                dataset,
+                preregistration,
+            )
+            if (
+                release is None
+                or release.get("evidence_sha256")
+                != value.get("report_evidence_sha256")
+                or release.get("generated_at") != value.get("generated_at")
+                or release.get("ready_symbol_count") != ready
+                or release.get("target_complete_symbol_count") != target_complete
+                or release.get("incomplete_symbol_count") != incomplete
+                or len(cast(list[object], release.get("fetch_error_symbols")))
+                != fetch_errors
+                or release.get("status") != value.get("status")
+            ):
+                return None
             monotonic = previous_ready is None or (
                 cast(int, ready) >= previous_ready
                 and cast(int, target_complete) >= cast(int, previous_target)
@@ -6004,6 +6047,9 @@ def _load_verified_minute_research_snapshot(
     forward_source_coverage_history = _load_verified_forward_source_coverage_history(
         state.forward_source_coverage_history_path,
         forward_source_coverage,
+        state.forward_source_coverage_release_root,
+        dataset,
+        preregistration,
     )
     public_audit = _load_verified_public_minute_audit(
         state.public_minute_audit_path,

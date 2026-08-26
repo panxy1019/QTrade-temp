@@ -44,6 +44,9 @@ context.forward_source_coverage_path = (
 context.forward_source_coverage_history_path = (
     EVIDENCE_ROOT / "forward-source-coverage" / "history.json"
 )
+context.forward_source_coverage_release_root = (
+    EVIDENCE_ROOT / "forward-source-coverage" / "releases"
+)
 context.reserved_tail_preregistration_path = (
     EVIDENCE_ROOT / "reserved-tail-diagnostic" / "preregistration.json"
 )

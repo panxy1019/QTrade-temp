@@ -1,6 +1,7 @@
 import json
 from copy import deepcopy
 from pathlib import Path
+from shutil import copy2, copytree
 
 from qtrade.api.app import (
     _canonical_dict_sha256,
@@ -14,6 +15,9 @@ REPORT_PATH = (
 )
 HISTORY_PATH = (
     PROJECT_ROOT / "deployment/evidence/forward-source-coverage/history.json"
+)
+RELEASE_ROOT = (
+    PROJECT_ROOT / "deployment/evidence/forward-source-coverage/releases"
 )
 
 
@@ -61,11 +65,14 @@ def test_forward_source_coverage_accepts_packaged_diagnostic() -> None:
 
 
 def test_forward_source_coverage_accepts_packaged_history() -> None:
-    coverage, _, _ = _inputs()
+    coverage, dataset, preregistration = _inputs()
 
     verified = _load_verified_forward_source_coverage_history(
         HISTORY_PATH,
         coverage,
+        RELEASE_ROOT,
+        dataset,
+        preregistration,
     )
 
     assert verified is not None
@@ -79,13 +86,100 @@ def test_forward_source_coverage_accepts_packaged_history() -> None:
 def test_forward_source_coverage_rejects_resigned_history_chain_tamper(
     tmp_path: Path,
 ) -> None:
-    coverage, _, _ = _inputs()
+    coverage, dataset, preregistration = _inputs()
     history = json.loads(HISTORY_PATH.read_text(encoding="utf-8"))
     history["checkpoints"][1]["ready_symbol_count"] = 74
     target = tmp_path / "history.json"
     _write_signed(target, history)
 
-    assert _load_verified_forward_source_coverage_history(target, coverage) is None
+    assert (
+        _load_verified_forward_source_coverage_history(
+            target,
+            coverage,
+            RELEASE_ROOT,
+            dataset,
+            preregistration,
+        )
+        is None
+    )
+
+
+def test_forward_source_coverage_rejects_fabricated_resigned_old_checkpoint(
+    tmp_path: Path,
+) -> None:
+    coverage, dataset, preregistration = _inputs()
+    history = json.loads(HISTORY_PATH.read_text(encoding="utf-8"))
+    checkpoints = history["checkpoints"]
+    checkpoints[0]["ready_symbol_count"] = 42
+    checkpoints[0]["target_complete_symbol_count"] = 42
+    checkpoints[0]["incomplete_symbol_count"] = 33
+    previous_hash = None
+    previous_ready = None
+    for checkpoint in checkpoints:
+        checkpoint["previous_checkpoint_sha256"] = previous_hash
+        checkpoint["ready_symbol_count_delta"] = (
+            None
+            if previous_ready is None
+            else checkpoint["ready_symbol_count"] - previous_ready
+        )
+        unsigned = {
+            key: value
+            for key, value in checkpoint.items()
+            if key != "checkpoint_sha256"
+        }
+        checkpoint["checkpoint_sha256"] = _canonical_dict_sha256(unsigned)
+        previous_hash = checkpoint["checkpoint_sha256"]
+        previous_ready = checkpoint["ready_symbol_count"]
+    target = tmp_path / "history.json"
+    _write_signed(target, history)
+
+    assert (
+        _load_verified_forward_source_coverage_history(
+            target,
+            coverage,
+            RELEASE_ROOT,
+            dataset,
+            preregistration,
+        )
+        is None
+    )
+
+
+def test_forward_source_coverage_history_rejects_missing_or_symlinked_release(
+    tmp_path: Path,
+) -> None:
+    coverage, dataset, preregistration = _inputs()
+    history = json.loads(HISTORY_PATH.read_text(encoding="utf-8"))
+    first_digest = history["checkpoints"][0]["report_evidence_sha256"]
+    release_root = tmp_path / "releases"
+    copytree(RELEASE_ROOT, release_root)
+    release_path = release_root / f"{first_digest}.json"
+    release_path.unlink()
+
+    assert (
+        _load_verified_forward_source_coverage_history(
+            HISTORY_PATH,
+            coverage,
+            release_root,
+            dataset,
+            preregistration,
+        )
+        is None
+    )
+
+    outside = tmp_path / "outside.json"
+    copy2(RELEASE_ROOT / f"{first_digest}.json", outside)
+    release_path.symlink_to(outside)
+    assert (
+        _load_verified_forward_source_coverage_history(
+            HISTORY_PATH,
+            coverage,
+            release_root,
+            dataset,
+            preregistration,
+        )
+        is None
+    )
 
 
 def test_forward_source_coverage_rejects_signed_inconsistent_arithmetic(

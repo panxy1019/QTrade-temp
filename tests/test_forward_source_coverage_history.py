@@ -8,6 +8,8 @@ import pytest
 
 from scripts.update_baostock_forward_coverage_history import (
     append_coverage_history,
+    publish_coverage_release,
+    verify_coverage_releases,
 )
 
 SHANGHAI = ZoneInfo("Asia/Shanghai")
@@ -116,3 +118,22 @@ def test_coverage_history_rejects_tamper_identity_drift_and_stale_time() -> None
 
     with pytest.raises(ValueError, match="strictly advance"):
         append_coverage_history(_coverage(hour=18, minute=14, ready=52), first)
+
+
+def test_coverage_release_is_immutable_and_content_addressed(tmp_path) -> None:
+    report = _coverage(hour=18, minute=47, ready=52)
+    root = tmp_path / "releases"
+
+    target = publish_coverage_release(report, root)
+
+    assert target.name == f"{report['evidence_sha256']}.json"
+    assert json.loads(target.read_text(encoding="utf-8")) == report
+    assert publish_coverage_release(report, root) == target
+    history, _ = append_coverage_history(report)
+    verify_coverage_releases(history, root)
+
+    target.write_text("{}\n", encoding="utf-8")
+    with pytest.raises(FileExistsError, match="identity already exists"):
+        publish_coverage_release(report, root)
+    with pytest.raises(ValueError):
+        verify_coverage_releases(history, root)

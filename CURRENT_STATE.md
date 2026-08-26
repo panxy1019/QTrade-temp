@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 405 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 409 tests passed, Ruff clean, strict mypy clean across
   101 checked source/publisher files on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -621,8 +621,10 @@ Last updated: 2026-08-26
   times more than five minutes ahead of its own clock; a recomputed self-hash
   cannot authorize unknown pass-through fields or future-date the observation.
   A separately signed, previous-hash-bound source-coverage history retains the
-  three independently published diagnostics at `41 → 47 → 52 READY`, verifies
-  every checkpoint and reports whether any coverage regression occurred. The
+  three independently published diagnostics at `41 → 47 → 52 READY`. Every
+  checkpoint is bound to a content-addressed, immutable full 75-stock release
+  and reruns the same report verifier, so a wholly resigned summary cannot
+  fabricate an old point. The chain reports whether any regression occurred. The
   API, bundled snapshot, research page and data center expose the bounded chain;
   it remains source diagnostics only and never becomes formal forward evidence.
   All mutable JSON evidence publishers now synchronize the replacement directory

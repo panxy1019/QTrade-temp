@@ -260,6 +260,8 @@ research page and data-center inventory. Its 52/75 ready snapshot remains outsid
 the 0/20 metric and cannot authorize PAPER, LIVE or external orders. A signed
 previous-hash chain preserves the
 41 → 47 → 52 publication sequence so a later coverage regression remains visible.
+Each point also binds a complete content-addressed 75-stock release; public reads
+fail closed if an archive is missing, replaced or routed through a symlink.
 
 The shell now also isolates page render failures inside the content region, so
 navigation and the explicit no-live boundary remain available during recovery.

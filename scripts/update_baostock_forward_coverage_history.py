@@ -9,7 +9,7 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Any, cast
 
-from scripts.atomic_json import write_json_atomic
+from scripts.atomic_json import write_json_atomic, write_json_immutable
 
 COVERAGE_CLASSIFICATION = "SOURCE_COVERAGE_DIAGNOSTIC_NOT_FORWARD_EVIDENCE"
 HISTORY_CLASSIFICATION = "SIGNED_SOURCE_COVERAGE_HISTORY_NOT_FORWARD_EVIDENCE"
@@ -356,6 +356,53 @@ def append_coverage_history(
     )
 
 
+def publish_coverage_release(report: object, root: Path) -> Path:
+    coverage = _verified_coverage(report)
+    if root.is_symlink():
+        raise ValueError("coverage release root cannot be a symlink")
+    resolved_root = root.resolve()
+    target = resolved_root / f"{coverage['evidence_sha256']}.json"
+    if target.is_symlink():
+        raise ValueError("coverage release cannot be a symlink")
+    if target.exists():
+        existing = json.loads(target.read_text(encoding="utf-8"))
+        if existing != coverage:
+            raise FileExistsError("coverage release identity already exists")
+        return target
+    write_json_immutable(target, coverage)
+    if json.loads(target.read_text(encoding="utf-8")) != coverage:
+        raise OSError("coverage release verification failed")
+    return target
+
+
+def verify_coverage_releases(history: object, root: Path) -> None:
+    verified_history = _verified_history(history)
+    if root.is_symlink() or not root.is_dir():
+        raise ValueError("coverage release root is unavailable")
+    resolved_root = root.resolve()
+    for checkpoint in verified_history["checkpoints"]:
+        target = resolved_root / f"{checkpoint['report_evidence_sha256']}.json"
+        if target.is_symlink() or not target.is_file():
+            raise ValueError("coverage release is unavailable")
+        release = _verified_coverage(
+            json.loads(target.read_text(encoding="utf-8"))
+        )
+        if (
+            release["evidence_sha256"]
+            != checkpoint["report_evidence_sha256"]
+            or release["generated_at"] != checkpoint["generated_at"]
+            or release["ready_symbol_count"] != checkpoint["ready_symbol_count"]
+            or release["target_complete_symbol_count"]
+            != checkpoint["target_complete_symbol_count"]
+            or release["incomplete_symbol_count"]
+            != checkpoint["incomplete_symbol_count"]
+            or len(release["fetch_error_symbols"])
+            != checkpoint["fetch_error_symbol_count"]
+            or release["status"] != checkpoint["status"]
+        ):
+            raise ValueError("coverage release does not match checkpoint")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--report", type=Path, action="append", required=True)
@@ -364,6 +411,11 @@ def main() -> int:
         type=Path,
         default=Path("deployment/evidence/forward-source-coverage/history.json"),
     )
+    parser.add_argument(
+        "--release-root",
+        type=Path,
+        default=Path("deployment/evidence/forward-source-coverage/releases"),
+    )
     args = parser.parse_args()
     history: object | None = None
     if args.output.is_file():
@@ -371,8 +423,11 @@ def main() -> int:
     status = "UNCHANGED"
     for path in args.report:
         report = json.loads(path.read_text(encoding="utf-8"))
-        history, status = append_coverage_history(report, history)
+        updated_history, status = append_coverage_history(report, history)
+        publish_coverage_release(report, args.release_root)
+        history = updated_history
     assert isinstance(history, dict)
+    verify_coverage_releases(history, args.release_root)
     if status != "UNCHANGED" or not args.output.is_file():
         write_json_atomic(args.output, history)
     print(
