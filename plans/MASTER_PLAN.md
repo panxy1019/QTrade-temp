@@ -256,10 +256,10 @@ evidence remain explicit external blockers rather than UI placeholders.
 The forward-data surface now separates provider availability from formal
 evaluation. A signed, no-Bar-persistence BaoStock diagnostic checks all 75 locked
 stocks after close and exposes exact anchor/target completeness through the API,
-research page and data-center inventory. Its 52/75 ready snapshot remains outside
+research page and data-center inventory. Its 69/75 ready snapshot remains outside
 the 0/20 metric and cannot authorize PAPER, LIVE or external orders. A signed
 previous-hash chain preserves the
-41 → 47 → 52 publication sequence so a later coverage regression remains visible.
+41 → 47 → 52 → 69 publication sequence so a later coverage regression remains visible.
 Each point also binds a complete content-addressed 75-stock release; public reads
 fail closed if an archive is missing, replaced or routed through a symlink.
 

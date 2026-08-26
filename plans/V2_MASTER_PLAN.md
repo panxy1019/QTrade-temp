@@ -175,7 +175,7 @@ npm --prefix web run build
   without dropping or repairing a detected regression.
 - [x] Preserve each signed 75-stock forward-source coverage diagnostic in a
   previous-hash chain, verify its exact provider/lock identity and expose the
-  `41 → 47 → 52` progression. Bind every checkpoint to a complete immutable
+  `41 → 47 → 52 → 69` progression. Bind every checkpoint to a complete immutable
   content-addressed report so a wholly resigned summary cannot invent an old
   point, without treating the chain as formal `0/20` evidence.
 - [x] Pre-register the locked development overlay's future complete-session

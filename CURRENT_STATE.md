@@ -611,8 +611,8 @@ Last updated: 2026-08-26
   verified preregistration and cannot alter the public `0/20` state.
 - Forward source coverage: an independent, signed BaoStock diagnostic checked
   the full 75-stock locked universe after 15:10 China time without saving fetched
-  Bars. At `2026-08-26T18:47:04+08:00`, 52 symbols had an exact frozen anchor and
-  a complete 48-point target grid; 23 still lacked the target grid and none had
+  Bars. At `2026-08-26T19:20:50+08:00`, 69 symbols had an exact frozen anchor and
+  a complete 48-point target grid; 6 still lacked the target grid and none had
   a fetch error or anchor revision. `/forward-source-coverage`, the bundled
   minute snapshot, the research page and the data-center inventory expose those
   facts. A UTC-loaded frozen anchor was also replayed against equivalent
@@ -623,7 +623,7 @@ Last updated: 2026-08-26
   times more than five minutes ahead of its own clock; a recomputed self-hash
   cannot authorize unknown pass-through fields or future-date the observation.
   A separately signed, previous-hash-bound source-coverage history retains the
-  three independently published diagnostics at `41 → 47 → 52 READY`. Every
+  four independently published diagnostics at `41 → 47 → 52 → 69 READY`. Every
   checkpoint is bound to a content-addressed, immutable full 75-stock release
   and reruns the same report verifier, so a wholly resigned summary cannot
   fabricate an old point. The chain reports whether any regression occurred. The

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "report_id": "baostock-forward-source-coverage-diagnostic-v1",
-  "generated_at": "2026-08-26T18:47:04.612341+08:00",
+  "generated_at": "2026-08-26T19:20:50.230290+08:00",
   "classification": "SOURCE_COVERAGE_DIAGNOSTIC_NOT_FORWARD_EVIDENCE",
   "provider": "BaoStock",
   "provider_version": "0.9.3",
@@ -16,56 +16,22 @@
   "warmup_evidence_sha256": "531f8077caf6849d25ecca960d613c113c3dab25ee630b45e72cbce1252429bb",
   "required_symbol_count": 75,
   "required_bars_per_symbol_session": 48,
-  "target_complete_symbol_count": 52,
-  "ready_symbol_count": 52,
-  "incomplete_symbol_count": 23,
+  "target_complete_symbol_count": 69,
+  "ready_symbol_count": 69,
+  "incomplete_symbol_count": 6,
   "incomplete_symbols": [
-    "000858",
-    "000568",
-    "300760",
-    "002422",
-    "002415",
-    "002230",
-    "000938",
     "300750",
-    "002594",
-    "000988",
-    "002353",
-    "000408",
-    "002625",
-    "002179",
     "300308",
     "300502",
     "300394",
-    "000063",
-    "002602",
-    "002027",
-    "002558",
     "300418",
     "300251"
   ],
   "target_incomplete_symbols": [
-    "000858",
-    "000568",
-    "300760",
-    "002422",
-    "002415",
-    "002230",
-    "000938",
     "300750",
-    "002594",
-    "000988",
-    "002353",
-    "000408",
-    "002625",
-    "002179",
     "300308",
     "300502",
     "300394",
-    "000063",
-    "002602",
-    "002027",
-    "002558",
     "300418",
     "300251"
   ],
@@ -232,30 +198,26 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "000568",
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "603288",
@@ -301,15 +263,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "688271",
@@ -329,15 +289,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "688256",
@@ -409,15 +367,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "603019",
@@ -437,30 +393,26 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "000938",
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "000977",
@@ -547,15 +499,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "000338",
@@ -640,30 +590,26 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "002353",
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "601766",
@@ -774,15 +720,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "600160",
@@ -893,15 +837,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "600760",
@@ -934,15 +876,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "300308",
@@ -994,15 +934,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "601728",
@@ -1022,45 +960,39 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "002027",
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "002558",
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "300418",
@@ -1100,5 +1032,5 @@
   "realtime_readiness": false,
   "real_data_paper_readiness": false,
   "external_order_transmission": false,
-  "evidence_sha256": "c0fc84e6bf2a25b19435fe4dd8b7b53de7ec3e8c288377216e68a189996b34b3"
+  "evidence_sha256": "fcee32d64438a333b851f066afb77289947eef8db313ddd3f045f1a357fb190f"
 }

@@ -17,7 +17,7 @@
     "required_symbol_count": 75,
     "required_bars_per_symbol_session": 48
   },
-  "checkpoint_count": 3,
+  "checkpoint_count": 4,
   "all_checkpoints_monotonic": true,
   "checkpoints": [
     {
@@ -61,6 +61,20 @@
       "monotonic_vs_previous": true,
       "previous_checkpoint_sha256": "2b674092dc85e2b902ad6fe9a5bd1ef3abf72c59d5b0f8ba40f4ce9cbf524cad",
       "checkpoint_sha256": "86391882a06bdae9712c9520f84365a126b2eefdefe4fa08483c33349732cb21"
+    },
+    {
+      "sequence": 4,
+      "generated_at": "2026-08-26T19:20:50.230290+08:00",
+      "report_evidence_sha256": "fcee32d64438a333b851f066afb77289947eef8db313ddd3f045f1a357fb190f",
+      "ready_symbol_count": 69,
+      "target_complete_symbol_count": 69,
+      "incomplete_symbol_count": 6,
+      "fetch_error_symbol_count": 0,
+      "status": "SOURCE_INCOMPLETE",
+      "ready_symbol_count_delta": 17,
+      "monotonic_vs_previous": true,
+      "previous_checkpoint_sha256": "86391882a06bdae9712c9520f84365a126b2eefdefe4fa08483c33349732cb21",
+      "checkpoint_sha256": "664704f60c359e6e5b60d22a7e8cfe5a37f1497e9b7badb2b8f7b786303b6dae"
     }
   ],
   "enters_forward_metrics": false,
@@ -68,5 +82,5 @@
   "realtime_readiness": false,
   "real_data_paper_readiness": false,
   "external_order_transmission": false,
-  "evidence_sha256": "86d03f4d95994a218243b3906cbf240f4882b8727456e5554570870d92c2ba36"
+  "evidence_sha256": "04a648ecdd62bbcadcd2376161585ed342d28ae5b899d44205e805ef08f5db6e"
 }
