@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from collections import Counter
 from collections.abc import Iterable
 from datetime import timedelta, timezone
@@ -8,6 +9,7 @@ from decimal import Decimal
 from qtrade.data.models import Bar, QualityIssue
 
 _CHINA_EXCHANGES = frozenset({"SSE", "SZSE"})
+_CHINA_SYMBOL_PATTERN = re.compile(r"\d{6}")
 _CHINA_TZ = timezone(timedelta(hours=8), "Asia/Shanghai")
 
 
@@ -32,6 +34,21 @@ class BarQualityGate:
         observed_days: set[object] = set()
         for row, bar in enumerate(records):
             observed_days.add(bar.trading_day)
+            if (
+                not bar.symbol
+                or bar.symbol != bar.symbol.strip()
+                or not bar.exchange
+                or bar.exchange != bar.exchange.strip()
+                or bar.exchange in _CHINA_EXCHANGES
+                and _CHINA_SYMBOL_PATTERN.fullmatch(bar.symbol) is None
+            ):
+                issues.append(
+                    QualityIssue(
+                        "INVALID_IDENTITY",
+                        "instrument identity is empty or non-canonical",
+                        row,
+                    )
+                )
             if identities[row] in duplicates:
                 issues.append(QualityIssue("DUPLICATE", "duplicate symbol timestamp", row))
             if bar.timestamp.tzinfo is None:

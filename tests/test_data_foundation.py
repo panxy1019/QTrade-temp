@@ -80,6 +80,20 @@ def test_quality_gate_rejects_china_trading_day_timestamp_mismatch():
     assert {issue.code for issue in issues} == {"TRADING_DAY_MISMATCH"}
 
 
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"symbol": ""},
+        {"symbol": "51030"},
+        {"exchange": " SZSE"},
+    ],
+)
+def test_quality_gate_rejects_invalid_instrument_identity(changes):
+    issues = BarQualityGate().validate([bar(10, **changes)])
+
+    assert {issue.code for issue in issues} == {"INVALID_IDENTITY"}
+
+
 def test_point_in_time_universe_hides_future_known_membership():
     store = PointInTimeStore()
     store.add_membership(

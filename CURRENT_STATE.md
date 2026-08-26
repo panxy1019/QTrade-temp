@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 380 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 383 tests passed, Ruff clean, strict mypy clean across
   the 99-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -416,6 +416,9 @@ Last updated: 2026-08-26
 - Empty-storage handling: a checksum-valid, schema-valid zero-row Parquet file is
   rejected on read, preserving the non-empty invariant already enforced at
   write time and preventing an empty backtest from appearing successful.
+- Instrument identity integrity: every Bar requires non-empty, whitespace-clean
+  symbol/exchange values, and SSE/SZSE symbols must be canonical six-digit
+  codes. All 105 distinct symbols across the 12 business Parquets pass.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
   fill markers across restart and durable audit events; backtests require a
   PASSED data manifest and record `data_version`; 54 tests pass.

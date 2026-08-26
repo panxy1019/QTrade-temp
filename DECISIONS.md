@@ -1008,3 +1008,16 @@ data with a successful query.
 Reads now reject zero rows after checksum and schema verification but before row
 lineage or quality validation. Symbol filtering may still legitimately return no
 matches from a non-empty verified dataset.
+
+## ADR-068 — Bar identity is validated before instrument grouping
+
+Status: accepted, 2026-08-26.
+
+Quality, factor and replay state are grouped by `(symbol, exchange)`. Empty or
+whitespace-padded values create artificial instruments, while a non-canonical
+China code can bypass the stricter CSV importer when it arrives through another
+adapter or a resigned Parquet file.
+
+The shared gate requires non-empty, whitespace-clean symbol and exchange values.
+For SSE and SZSE it additionally requires an exact six-digit symbol; other future
+venues remain free to define their own format instead of inheriting this rule.
