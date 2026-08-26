@@ -1142,3 +1142,17 @@ an old point without also supplying the original full report. The chain is
 displayed as source
 publication history only; it cannot increment formal forward metrics or grant
 realtime, PAPER, LIVE or external-order authority.
+
+## ADR-077 — CI actions use least privilege and immutable release identities
+
+Status: accepted, 2026-08-26.
+
+The hosted CI matrix warned that its checkout and Python setup actions still
+declared the retired Node 20 runtime and were being force-run on Node 24. Major
+version tags also remain movable references, which weakens reproducibility even
+when the action publisher is trusted.
+
+The workflow now grants only `contents: read` and pins the official checkout
+v7.0.1 and setup-python v7.0.0 releases to their full Git commit identities.
+Python 3.11 and 3.13 continue to run Ruff, strict mypy and the complete test
+suite; this CI maintenance does not change any runtime or trading authority.
