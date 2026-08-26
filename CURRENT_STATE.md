@@ -504,3 +504,10 @@ Last updated: 2026-08-26
   `/forward-observation` verifier currently reports `0/20`, `INCOMPLETE` and
   `NOT_ELIGIBLE`; no target data has entered metrics and no runtime authority
   changed.
+- Public minute read amplification: `/minute-research-snapshot` now verifies the
+  24 MB long-history Parquet once per dashboard refresh and reuses that immutable
+  identity across eight report validators. The React loader replaced eight
+  parallel heavy requests with this single bundle while retaining standalone
+  endpoints and per-section fail-closed fallbacks. A test instruments the Parquet
+  verifier and requires exactly one open; the bundle currently has zero
+  unavailable sections and preserves all realtime/PAPER/order prohibitions.

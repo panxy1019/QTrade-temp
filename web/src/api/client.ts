@@ -41,6 +41,24 @@ interface OptionalResult<T> {
   error: string | null
 }
 
+interface MinuteResearchSnapshot {
+  classification: string
+  data_version: string | null
+  dataset_checksum: string | null
+  longFiveMinuteResearch: PlatformSnapshot['longFiveMinuteResearch'] | null
+  reservedTailDiagnostic: PlatformSnapshot['reservedTailDiagnostic'] | null
+  developmentPolicySearch: NonNullable<PlatformSnapshot['developmentPolicySearch']> | null
+  forwardObservation: PlatformSnapshot['forwardObservation'] | null
+  publicMinuteAudit: PlatformSnapshot['publicMinuteAudit'] | null
+  intradayObservation: PlatformSnapshot['intradayObservation'] | null
+  intradayBreadth: PlatformSnapshot['intradayBreadth'] | null
+  intradayContinuity: PlatformSnapshot['intradayContinuity'] | null
+  unavailable_sections: string[]
+  realtime_readiness: false
+  real_data_paper_readiness: false
+  external_order_transmission: false
+}
+
 async function getOptional<T>(path: string, fallback: T): Promise<OptionalResult<T>> {
   try {
     return { value: await getJson<T>(path), error: null }
@@ -91,7 +109,62 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getJson<PlatformSnapshot['health']>('/health'),
     getJson<Pick<PlatformSnapshot, 'account' | 'pnl' | 'positions' | 'orders' | 'trades' | 'risk'>>('/paper-snapshot'),
   ])
-  const [metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, longFiveMinuteResearch, reservedTailDiagnostic, developmentPolicySearch, forwardObservation, publicMinuteAudit, intradayObservation, intradayBreadth, intradayContinuity, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
+  const longFiveMinuteFallback: PlatformSnapshot['longFiveMinuteResearch'] = {
+    classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', promotion_reasons: ['REQUEST_FAILED'], minute_dataset: null,
+    candidates: [], folds: [], cost_stress: [], subgroups: [], leave_one_sector_out: [], daily: [], curve: [],
+  }
+  const reservedTailFallback: PlatformSnapshot['reservedTailDiagnostic'] = {
+    classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', promotion_reasons: ['REQUEST_FAILED'], minute_dataset: null,
+    gates: [], cost_stress: [], daily: [], leave_one_sector_out: [], curve: [],
+  }
+  const developmentFallback: NonNullable<PlatformSnapshot['developmentPolicySearch']> = {
+    classification: 'UNAVAILABLE', candidate_count: 0, candidates: [],
+    promotion: 'NOT_EVALUATED', external_order_transmission: false,
+  }
+  const forwardFallback: PlatformSnapshot['forwardObservation'] = {
+    classification: 'UNAVAILABLE', observation_status: 'UNAVAILABLE',
+    future_session_count: 0, minimum_complete_future_sessions: 20,
+    gates: [], cost_stress: [], leave_one_sector_out: [],
+    promotion: 'NOT_EVALUATED', realtime_readiness: false,
+    real_data_paper_readiness: false, external_order_transmission: false,
+  }
+  const publicAuditFallback: PlatformSnapshot['publicMinuteAudit'] = {
+    classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', first_round: null,
+    repeat_round: null, all_valid: false, external_order_transmission: false,
+  }
+  const intradayFallback: PlatformSnapshot['intradayObservation'] = {
+    classification: 'UNAVAILABLE', session_phase: 'UNAVAILABLE', symbol_count: 0,
+    sector_count: 0, same_day_symbol_count: 0,
+    synchronized_finalized_timestamp_count: 0,
+    latest_synchronized_finalized_timestamp: null, observations: [],
+    realtime_readiness: false, real_data_paper_readiness: false,
+    promotion: 'NOT_EVALUATED', external_order_transmission: false,
+  }
+  const breadthFallback: PlatformSnapshot['intradayBreadth'] = {
+    classification: 'UNAVAILABLE', coverage_scope: 'UNAVAILABLE',
+    session_phase: 'UNAVAILABLE', symbol_count: 0, sector_count: 0,
+    symbols_per_sector: 0, same_day_symbol_count: 0,
+    synchronized_finalized_timestamp_count: 0,
+    latest_synchronized_finalized_timestamp: null,
+    observations: [], sector_summaries: [], realtime_readiness: false,
+    real_data_paper_readiness: false, promotion: 'NOT_EVALUATED',
+    external_order_transmission: false,
+  }
+  const continuityFallback: PlatformSnapshot['intradayContinuity'] = {
+    classification: 'UNAVAILABLE', trading_day: null, checkpoint_count: 0,
+    all_checkpoints_monotonic: false, checkpoints: [], realtime_readiness: false,
+    real_data_paper_readiness: false, promotion: 'NOT_EVALUATED',
+    external_order_transmission: false,
+  }
+  const minuteSnapshotFallback: MinuteResearchSnapshot = {
+    classification: 'UNAVAILABLE', data_version: null, dataset_checksum: null,
+    longFiveMinuteResearch: null, reservedTailDiagnostic: null,
+    developmentPolicySearch: null, forwardObservation: null,
+    publicMinuteAudit: null, intradayObservation: null, intradayBreadth: null,
+    intradayContinuity: null, unavailable_sections: [], realtime_readiness: false,
+    real_data_paper_readiness: false, external_order_transmission: false,
+  }
+  const [metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, minuteEvidence, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
     getOptional<PlatformSnapshot['metrics']>('/metrics', {}),
     getOptional<PlatformSnapshot['reports']>('/reports', []),
     getOptional<PlatformSnapshot['reporting']>('/reporting-status', {
@@ -132,53 +205,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
       classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', promotion_reasons: ['REQUEST_FAILED'], minute_dataset: null,
       candidates: [], folds: [], cost_stress: [], subgroups: [], leave_one_sector_out: [], daily: [], curve: [],
     }),
-    getOptional<PlatformSnapshot['longFiveMinuteResearch']>('/long-five-minute-research', {
-      classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', promotion_reasons: ['REQUEST_FAILED'], minute_dataset: null,
-      candidates: [], folds: [], cost_stress: [], subgroups: [], leave_one_sector_out: [], daily: [], curve: [],
-    }),
-    getOptional<PlatformSnapshot['reservedTailDiagnostic']>('/reserved-tail-diagnostic', {
-      classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', promotion_reasons: ['REQUEST_FAILED'], minute_dataset: null,
-      gates: [], cost_stress: [], daily: [], leave_one_sector_out: [], curve: [],
-    }),
-    getOptional<NonNullable<PlatformSnapshot['developmentPolicySearch']>>('/development-policy-search', {
-      classification: 'UNAVAILABLE', candidate_count: 0, candidates: [],
-      promotion: 'NOT_EVALUATED', external_order_transmission: false,
-    }),
-    getOptional<PlatformSnapshot['forwardObservation']>('/forward-observation', {
-      classification: 'UNAVAILABLE', observation_status: 'UNAVAILABLE',
-      future_session_count: 0, minimum_complete_future_sessions: 20,
-      gates: [], cost_stress: [], leave_one_sector_out: [],
-      promotion: 'NOT_EVALUATED', realtime_readiness: false,
-      real_data_paper_readiness: false, external_order_transmission: false,
-    }),
-    getOptional<PlatformSnapshot['publicMinuteAudit']>('/public-minute-audit', {
-      classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', first_round: null,
-      repeat_round: null, all_valid: false, external_order_transmission: false,
-    }),
-    getOptional<PlatformSnapshot['intradayObservation']>('/intraday-observation', {
-      classification: 'UNAVAILABLE', session_phase: 'UNAVAILABLE', symbol_count: 0,
-      sector_count: 0, same_day_symbol_count: 0,
-      synchronized_finalized_timestamp_count: 0,
-      latest_synchronized_finalized_timestamp: null, observations: [],
-      realtime_readiness: false, real_data_paper_readiness: false,
-      promotion: 'NOT_EVALUATED', external_order_transmission: false,
-    }),
-    getOptional<PlatformSnapshot['intradayBreadth']>('/intraday-breadth-observation', {
-      classification: 'UNAVAILABLE', coverage_scope: 'UNAVAILABLE',
-      session_phase: 'UNAVAILABLE', symbol_count: 0, sector_count: 0,
-      symbols_per_sector: 0, same_day_symbol_count: 0,
-      synchronized_finalized_timestamp_count: 0,
-      latest_synchronized_finalized_timestamp: null,
-      observations: [], sector_summaries: [], realtime_readiness: false,
-      real_data_paper_readiness: false, promotion: 'NOT_EVALUATED',
-      external_order_transmission: false,
-    }),
-    getOptional<PlatformSnapshot['intradayContinuity']>('/intraday-continuity', {
-      classification: 'UNAVAILABLE', trading_day: null, checkpoint_count: 0,
-      all_checkpoints_monotonic: false, checkpoints: [], realtime_readiness: false,
-      real_data_paper_readiness: false, promotion: 'NOT_EVALUATED',
-      external_order_transmission: false,
-    }),
+    getOptional<MinuteResearchSnapshot>('/minute-research-snapshot', minuteSnapshotFallback),
     getOptional<PlatformSnapshot['backtestAnalytics']>('/backtest-analytics', {
       classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', leader: null, curve: [],
     }),
@@ -188,6 +215,15 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getOptional<PlatformSnapshot['historicalBars']>('/historical-bars/latest', []),
     getOptional<PlatformSnapshot['audit']>('/audit', null),
   ])
+  const bundledError = minuteEvidence.error
+  const longFiveMinuteResearch = { value: minuteEvidence.value.longFiveMinuteResearch ?? longFiveMinuteFallback, error: bundledError }
+  const reservedTailDiagnostic = { value: minuteEvidence.value.reservedTailDiagnostic ?? reservedTailFallback, error: bundledError }
+  const developmentPolicySearch = { value: minuteEvidence.value.developmentPolicySearch ?? developmentFallback, error: bundledError }
+  const forwardObservation = { value: minuteEvidence.value.forwardObservation ?? forwardFallback, error: bundledError }
+  const publicMinuteAudit = { value: minuteEvidence.value.publicMinuteAudit ?? publicAuditFallback, error: bundledError }
+  const intradayObservation = { value: minuteEvidence.value.intradayObservation ?? intradayFallback, error: bundledError }
+  const intradayBreadth = { value: minuteEvidence.value.intradayBreadth ?? breadthFallback, error: bundledError }
+  const intradayContinuity = { value: minuteEvidence.value.intradayContinuity ?? continuityFallback, error: bundledError }
   const sections = { metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, longFiveMinuteResearch, reservedTailDiagnostic, developmentPolicySearch, forwardObservation, publicMinuteAudit, intradayObservation, intradayBreadth, intradayContinuity, backtestAnalytics, market, historicalBars, audit }
   const failures = Object.fromEntries(Object.entries(sections).flatMap(([name, result]) => result.error ? [[name, result.error]] : []))
   return {

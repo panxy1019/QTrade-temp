@@ -526,3 +526,22 @@ changes. Before 20 sessions the only valid conclusion is `INCOMPLETE`. A later
 pass remains research-only because the current universe is non-PIT, QFQ can
 contain future adjustment knowledge, and no authorized PAPER/SHADOW trace has
 been recorded. It cannot enable LIVE or external order transmission.
+
+## ADR-034 — The public dashboard shares one verified minute-dataset identity
+
+Status: accepted, 2026-08-26.
+
+The public dashboard previously requested eight research and intraday sections
+in parallel. Every endpoint independently read and hashed the same 24 MB long
+5-minute Parquet, creating avoidable serverless cold-start I/O. The read-only
+`/minute-research-snapshot` endpoint must open and checksum that dataset once,
+then pass the resulting immutable identity to the existing independent report
+validators.
+
+Aggregation cannot relax a verifier or substitute a failed section: invalid
+sections are returned as null and listed explicitly, while every standalone
+endpoint remains available for focused inspection. The frontend retains typed
+fail-closed defaults if the whole bundle request fails. Tests instrument the
+Parquet boundary and require one open for all eight sections. This is a read-path
+optimization only; it does not cache mutable runtime state, authorize realtime
+data, change strategy status or expose a write/order route.

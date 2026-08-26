@@ -23,6 +23,10 @@ describe('QTrade web shell', () => {
     expect(screen.getByText(/不是当前 PAPER 权益/)).toBeInTheDocument()
     expect(screen.getByText('25 个数据分区异常')).toBeInTheDocument()
     expect(screen.getByText(/已保留其余成功分区/)).toBeInTheDocument()
+    const requested = vi.mocked(fetch).mock.calls.map(([input]) => String(input))
+    expect(requested).toContain('/api/minute-research-snapshot')
+    expect(requested).not.toContain('/api/long-five-minute-research')
+    expect(requested).not.toContain('/api/intraday-breadth-observation')
   })
 
   it('redirects an unknown hash route back to the overview', async () => {

@@ -359,6 +359,15 @@ binding before the market page renders the timeline. A source regression remains
 visible instead of being repaired or dropped. The chain is deployment evidence,
 not a realtime subscription, strategy state or PAPER authorization.
 
+The dashboard reads the long 5-minute research, reserved-tail diagnostic,
+development lock, future observer, public audit and both intraday reports through
+one `/minute-research-snapshot` request. The server opens and SHA-256 verifies the
+24 MB / 1,324,800-row long-history Parquet once, then passes the same verified
+identity to all eight independent report validators. Standalone endpoints remain
+available for inspection. A missing or invalid report stays `null` in the bundle
+and cannot be replaced by an unverified value; the aggregation changes read
+amplification only, not evidence rules or runtime authority.
+
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and
 `QTRADE_RQDATA_TOKEN` only inside the bridge process, and claims a session only

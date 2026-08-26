@@ -17,6 +17,9 @@ project-specific DNS name; the root A record and wildcard CNAME remain unchanged
   bounded multi-checkpoint continuity chain, plus the code-bound locked future
   complete-session observation preregistration.
 - `web` uses `/api` only for the `vercel` Vite build mode.
+- `/api/minute-research-snapshot` shares one checksum-verified long-minute
+  dataset identity across eight read-only report validators, avoiding eight
+  separate 24 MB Parquet opens during each dashboard refresh.
 - Vercel rewrites `/api/:path*` to the single Python function while preserving
   the inner FastAPI path through a bounded query-path adapter.
 - Anonymous successful GET responses use a 15-second browser cache and a

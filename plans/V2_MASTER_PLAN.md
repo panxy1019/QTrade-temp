@@ -177,6 +177,9 @@ npm --prefix web run build
   collection and evaluation contract, bind it to collector/evaluator/engine
   hashes, require 75×48 bars plus an exact frozen-anchor match, and publish the
   honest `0/20 INCOMPLETE` state without granting runtime authority.
+- [x] Collapse eight public long-minute evidence reads into one verified bundle
+  that opens the 24 MB Parquet once, while retaining standalone endpoints,
+  independent report validation and typed fail-closed frontend sections.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

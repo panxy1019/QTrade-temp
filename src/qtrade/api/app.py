@@ -505,6 +505,12 @@ def create_app(
             "external_order_transmission": False,
         }
 
+    @app.get("/minute-research-snapshot")
+    def minute_research_snapshot(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        return _load_verified_minute_research_snapshot(state)
+
     @app.get("/public-minute-audit")
     def public_minute_audit(
         _: str = Depends(_require_role(Role.READ, auth_config)),
@@ -5266,6 +5272,99 @@ def _load_verified_forward_observation_report(
         json.JSONDecodeError,
     ):
         return None
+
+
+def _load_verified_minute_research_snapshot(
+    state: AppContext,
+) -> dict[str, object]:
+    dataset = _load_verified_minute_dataset(
+        state.long_five_minute_manifest_path,
+        expected_classification="free_historical_qfq_5m_current_non_pit_not_eligible",
+        expected_interval="5m",
+        expected_session_count=368,
+        expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+    )
+    long_report = _load_verified_five_minute_report(
+        state.long_five_minute_research_report_path,
+        dataset,
+        expected_report_id="baostock-five-minute-long-expanding-walk-forward-v1",
+        initial_train_sessions=120,
+        test_sessions_per_fold=40,
+        fold_count=6,
+        expected_promotion_reasons=(
+            "FIVE_MINUTE_INTERVAL_DOES_NOT_PROVE_ONE_MINUTE_READINESS",
+            "LONGER_PROVIDER_CROSSCHECK_REUSES_PREVIOUSLY_OBSERVED_CALENDAR",
+            "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+            "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+            "FREE_HISTORICAL_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
+            "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
+        ),
+        require_execution_diagnostics=True,
+    )
+    reserved_tail = _load_verified_reserved_tail_diagnostic(
+        state.reserved_tail_diagnostic_report_path,
+        state.reserved_tail_preregistration_path,
+        state.long_five_minute_research_report_path,
+        dataset,
+    )
+    development = _load_verified_development_policy_search(
+        state.development_policy_search_path,
+        dataset,
+    )
+    preregistration = _load_verified_forward_preregistration(
+        state.forward_observation_preregistration_path,
+        dataset,
+        development,
+    )
+    forward_report = _load_verified_forward_observation_report(
+        state.forward_observation_report_path,
+        preregistration,
+    )
+    forward = (
+        {**preregistration, **forward_report}
+        if preregistration is not None and forward_report is not None
+        else forward_report or preregistration
+    )
+    public_audit = _load_verified_public_minute_audit(
+        state.public_minute_audit_path,
+        dataset,
+    )
+    detail = _load_verified_intraday_observation(
+        state.intraday_observation_path,
+        dataset,
+    )
+    breadth = _load_verified_intraday_breadth(
+        state.intraday_breadth_path,
+        dataset,
+    )
+    continuity = _load_verified_intraday_continuity(
+        state.intraday_continuity_path,
+        detail,
+        breadth,
+    )
+    sections: dict[str, dict[str, object] | None] = {
+        "longFiveMinuteResearch": long_report,
+        "reservedTailDiagnostic": reserved_tail,
+        "developmentPolicySearch": development,
+        "forwardObservation": forward,
+        "publicMinuteAudit": public_audit,
+        "intradayObservation": detail,
+        "intradayBreadth": breadth,
+        "intradayContinuity": continuity,
+    }
+    return {
+        "schema_version": 1,
+        "classification": "VERIFIED_MINUTE_RESEARCH_READ_SNAPSHOT",
+        "data_version": dataset.get("data_version") if dataset is not None else None,
+        "dataset_checksum": dataset.get("checksum") if dataset is not None else None,
+        **sections,
+        "unavailable_sections": [
+            name for name, value in sections.items() if value is None
+        ],
+        "realtime_readiness": False,
+        "real_data_paper_readiness": False,
+        "external_order_transmission": False,
+    }
 
 
 def _load_verified_intraday_observation(
