@@ -2,9 +2,13 @@ from __future__ import annotations
 
 from collections import Counter
 from collections.abc import Iterable
+from datetime import timedelta, timezone
 from decimal import Decimal
 
 from qtrade.data.models import Bar, QualityIssue
+
+_CHINA_EXCHANGES = frozenset({"SSE", "SZSE"})
+_CHINA_TZ = timezone(timedelta(hours=8), "Asia/Shanghai")
 
 
 class BarQualityGate:
@@ -32,6 +36,17 @@ class BarQualityGate:
                 issues.append(QualityIssue("DUPLICATE", "duplicate symbol timestamp", row))
             if bar.timestamp.tzinfo is None:
                 issues.append(QualityIssue("MISSING_TIMEZONE", "timestamp is naive", row))
+            elif (
+                bar.exchange in _CHINA_EXCHANGES
+                and bar.timestamp.astimezone(_CHINA_TZ).date() != bar.trading_day
+            ):
+                issues.append(
+                    QualityIssue(
+                        "TRADING_DAY_MISMATCH",
+                        "timestamp is outside the declared China trading day",
+                        row,
+                    )
+                )
             if expected_symbol is not None and bar.symbol != expected_symbol:
                 issues.append(QualityIssue("SYMBOL_MISMATCH", "unexpected symbol", row))
             numeric_values = (bar.open, bar.high, bar.low, bar.close, bar.volume)

@@ -955,3 +955,17 @@ Reads compare the complete ordered ten-column Arrow schema before converting any
 row. Missing, extra, reordered and type-drifted columns now fail uniformly as a
 dataset-integrity error, so every chart, research job and replay sees the same
 versioned storage contract.
+
+## ADR-064 — China Bar timestamps are bound to the declared trading day
+
+Status: accepted, 2026-08-26.
+
+Session grouping, walk-forward splits and minute-overlay evaluation use
+`trading_day`, while causal ordering uses `timestamp`. If those fields describe
+different China calendar dates, a checksum-valid Bar can enter the wrong split
+or session without violating timestamp order.
+
+The shared quality gate now resolves timezone-aware SSE/SZSE timestamps at
+UTC+08:00 and requires the resulting date to equal `trading_day`. The rule is
+limited to exchanges whose timezone is known; it does not impose China time on
+future markets with a different calendar.

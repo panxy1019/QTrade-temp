@@ -67,6 +67,19 @@ def test_quality_gate_groups_temporal_checks_by_instrument_and_rejects_nonfinite
     assert {issue.code for issue in issues} == {"NON_FINITE_VALUE"}
 
 
+def test_quality_gate_rejects_china_trading_day_timestamp_mismatch():
+    issues = BarQualityGate().validate(
+        [
+            bar(
+                10,
+                timestamp=datetime(2026, 8, 10, 16, tzinfo=UTC),
+            )
+        ]
+    )
+
+    assert {issue.code for issue in issues} == {"TRADING_DAY_MISMATCH"}
+
+
 def test_point_in_time_universe_hides_future_known_membership():
     store = PointInTimeStore()
     store.add_membership(

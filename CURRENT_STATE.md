@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 375 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 376 tests passed, Ruff clean, strict mypy clean across
   the 99-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -403,6 +403,10 @@ Last updated: 2026-08-26
   on reader-side sorting. The exact ten-column Arrow schema is checked before
   row conversion, so missing, extra, reordered or type-drifted columns fail with
   a uniform dataset-integrity error.
+- China trading-day integrity: the shared quality gate rejects SSE/SZSE Bars
+  whose timezone-aware timestamp does not resolve to the declared `trading_day`
+  in UTC+08:00. A direct audit of all 12 business Parquet files found zero
+  mismatches across 3,566,133 rows.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
   fill markers across restart and durable audit events; backtests require a
   PASSED data manifest and record `data_version`; 54 tests pass.
