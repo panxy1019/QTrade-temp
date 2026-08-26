@@ -3,19 +3,19 @@
   "classification": "FREE_HISTORICAL_SOURCE_INTRADAY_OBSERVATION_NOT_REALTIME_ELIGIBLE",
   "provider": "Sina CN_MarketDataService.getKLineData",
   "bar_interval": "1m",
-  "started_at": "2026-08-26T01:46:15.797935+00:00",
-  "completed_at": "2026-08-26T01:46:16.547878+00:00",
+  "started_at": "2026-08-26T01:55:16.035946+00:00",
+  "completed_at": "2026-08-26T01:55:17.455425+00:00",
   "session_phase": "MORNING_SESSION",
   "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
   "dataset_checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
   "symbol_count": 15,
   "sector_count": 15,
   "same_day_symbol_count": 15,
-  "synchronized_finalized_timestamp_count": 15,
-  "latest_synchronized_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-  "source_request_window_seconds": 0.75,
+  "synchronized_finalized_timestamp_count": 24,
+  "latest_synchronized_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+  "source_request_window_seconds": 1.419,
   "all_symbols_same_day_coverage": true,
-  "maximum_same_day_latest_age_seconds": 76.547,
+  "maximum_same_day_latest_age_seconds": 77.455,
   "finalization_guard_seconds": 60,
   "observations": [
     {
@@ -23,13 +23,13 @@
       "name": "招商银行",
       "sector_code": "801780",
       "sector_name": "银行",
-      "observed_at": "2026-08-26T01:46:16.138939+00:00",
+      "observed_at": "2026-08-26T01:55:16.763296+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:46:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.139,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.763,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -196,6 +196,105 @@
           "low": "39.680",
           "close": "39.710",
           "volume": "642100"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.710",
+          "high": "39.710",
+          "low": "39.650",
+          "close": "39.670",
+          "volume": "236900"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.660",
+          "high": "39.680",
+          "low": "39.620",
+          "close": "39.630",
+          "volume": "152900"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.630",
+          "high": "39.670",
+          "low": "39.620",
+          "close": "39.640",
+          "volume": "212900"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.640",
+          "high": "39.660",
+          "low": "39.600",
+          "close": "39.620",
+          "volume": "183800"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.620",
+          "high": "39.630",
+          "low": "39.590",
+          "close": "39.600",
+          "volume": "215000"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.600",
+          "high": "39.680",
+          "low": "39.600",
+          "close": "39.670",
+          "volume": "249300"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.680",
+          "high": "39.680",
+          "low": "39.660",
+          "close": "39.670",
+          "volume": "247500"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.680",
+          "high": "39.700",
+          "low": "39.660",
+          "close": "39.680",
+          "volume": "220900"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.690",
+          "high": "39.700",
+          "low": "39.660",
+          "close": "39.680",
+          "volume": "253200"
         }
       ]
     },
@@ -204,13 +303,13 @@
       "name": "中国平安",
       "sector_code": "801790",
       "sector_name": "非银金融",
-      "observed_at": "2026-08-26T01:46:16.136434+00:00",
+      "observed_at": "2026-08-26T01:55:16.446440+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:46:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.136,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.446,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -377,6 +476,105 @@
           "low": "55.480",
           "close": "55.550",
           "volume": "1627876"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.550",
+          "high": "55.570",
+          "low": "55.530",
+          "close": "55.550",
+          "volume": "713701"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.550",
+          "high": "55.630",
+          "low": "55.540",
+          "close": "55.600",
+          "volume": "1580954"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.600",
+          "high": "55.600",
+          "low": "55.510",
+          "close": "55.510",
+          "volume": "418846"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.510",
+          "high": "55.560",
+          "low": "55.470",
+          "close": "55.500",
+          "volume": "506600"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.490",
+          "high": "55.550",
+          "low": "55.450",
+          "close": "55.460",
+          "volume": "409100"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.460",
+          "high": "55.570",
+          "low": "55.440",
+          "close": "55.560",
+          "volume": "491957"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.560",
+          "high": "55.600",
+          "low": "55.550",
+          "close": "55.580",
+          "volume": "732200"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.580",
+          "high": "55.640",
+          "low": "55.580",
+          "close": "55.630",
+          "volume": "864700"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.630",
+          "high": "55.650",
+          "low": "55.510",
+          "close": "55.530",
+          "volume": "452000"
         }
       ]
     },
@@ -385,13 +583,13 @@
       "name": "贵州茅台",
       "sector_code": "801120",
       "sector_name": "食品饮料",
-      "observed_at": "2026-08-26T01:46:16.120889+00:00",
+      "observed_at": "2026-08-26T01:55:16.772311+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:46:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.121,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.772,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -558,6 +756,105 @@
           "low": "1310.660",
           "close": "1313.670",
           "volume": "65152"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1313.890",
+          "high": "1314.450",
+          "low": "1312.680",
+          "close": "1313.490",
+          "volume": "25800"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1313.530",
+          "high": "1313.830",
+          "low": "1309.900",
+          "close": "1309.900",
+          "volume": "15700"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1310.000",
+          "high": "1313.570",
+          "low": "1310.000",
+          "close": "1311.980",
+          "volume": "21400"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1312.400",
+          "high": "1312.420",
+          "low": "1311.170",
+          "close": "1311.720",
+          "volume": "8600"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1311.730",
+          "high": "1312.410",
+          "low": "1310.270",
+          "close": "1310.680",
+          "volume": "12800"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1310.680",
+          "high": "1311.590",
+          "low": "1310.020",
+          "close": "1311.030",
+          "volume": "7100"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1311.470",
+          "high": "1312.460",
+          "low": "1310.910",
+          "close": "1312.020",
+          "volume": "11700"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1312.420",
+          "high": "1313.000",
+          "low": "1310.570",
+          "close": "1311.510",
+          "volume": "12009"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1311.510",
+          "high": "1311.580",
+          "low": "1310.650",
+          "close": "1311.300",
+          "volume": "8400"
         }
       ]
     },
@@ -566,13 +863,13 @@
       "name": "药明康德",
       "sector_code": "801150",
       "sector_name": "医药生物",
-      "observed_at": "2026-08-26T01:46:16.144817+00:00",
+      "observed_at": "2026-08-26T01:55:16.417511+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:46:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.145,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.418,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -739,6 +1036,105 @@
           "low": "158.890",
           "close": "159.020",
           "volume": "653030"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "159.020",
+          "high": "159.550",
+          "low": "158.900",
+          "close": "159.400",
+          "volume": "585956"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "159.400",
+          "high": "159.800",
+          "low": "159.090",
+          "close": "159.470",
+          "volume": "404900"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "159.520",
+          "high": "160.470",
+          "low": "159.470",
+          "close": "160.310",
+          "volume": "283600"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "160.320",
+          "high": "160.500",
+          "low": "160.020",
+          "close": "160.200",
+          "volume": "261400"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "160.200",
+          "high": "160.230",
+          "low": "159.710",
+          "close": "159.710",
+          "volume": "192600"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "159.740",
+          "high": "159.740",
+          "low": "159.140",
+          "close": "159.600",
+          "volume": "278600"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "159.620",
+          "high": "160.150",
+          "low": "159.360",
+          "close": "160.000",
+          "volume": "268285"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "160.070",
+          "high": "160.330",
+          "low": "159.600",
+          "close": "159.920",
+          "volume": "254900"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "159.920",
+          "high": "160.600",
+          "low": "159.870",
+          "close": "160.560",
+          "volume": "254428"
         }
       ]
     },
@@ -747,13 +1143,13 @@
       "name": "寒武纪",
       "sector_code": "801080",
       "sector_name": "电子",
-      "observed_at": "2026-08-26T01:46:16.150302+00:00",
+      "observed_at": "2026-08-26T01:55:16.779432+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:46:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.15,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.779,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -920,6 +1316,105 @@
           "low": "1014.610",
           "close": "1020.150",
           "volume": "133089"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1020.100",
+          "high": "1025.930",
+          "low": "1020.070",
+          "close": "1024.230",
+          "volume": "132682"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1024.810",
+          "high": "1030.000",
+          "low": "1024.230",
+          "close": "1029.270",
+          "volume": "172472"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1029.300",
+          "high": "1035.000",
+          "low": "1029.230",
+          "close": "1031.050",
+          "volume": "185086"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1031.050",
+          "high": "1033.990",
+          "low": "1030.000",
+          "close": "1033.880",
+          "volume": "177782"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1033.970",
+          "high": "1034.000",
+          "low": "1030.000",
+          "close": "1031.990",
+          "volume": "82300"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1031.500",
+          "high": "1032.000",
+          "low": "1028.220",
+          "close": "1028.990",
+          "volume": "74876"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1028.400",
+          "high": "1032.440",
+          "low": "1026.030",
+          "close": "1032.430",
+          "volume": "100786"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1032.440",
+          "high": "1033.000",
+          "low": "1027.080",
+          "close": "1028.800",
+          "volume": "131744"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1028.920",
+          "high": "1031.000",
+          "low": "1027.090",
+          "close": "1028.140",
+          "volume": "70576"
         }
       ]
     },
@@ -928,13 +1423,13 @@
       "name": "海康威视",
       "sector_code": "801750",
       "sector_name": "计算机",
-      "observed_at": "2026-08-26T01:46:16.320616+00:00",
+      "observed_at": "2026-08-26T01:55:16.677337+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:47:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.321,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.677,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -1101,6 +1596,105 @@
           "low": "34.670",
           "close": "34.700",
           "volume": "192000"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.700",
+          "high": "34.760",
+          "low": "34.680",
+          "close": "34.730",
+          "volume": "201600"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.740",
+          "high": "34.750",
+          "low": "34.690",
+          "close": "34.700",
+          "volume": "191500"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.700",
+          "high": "34.710",
+          "low": "34.650",
+          "close": "34.660",
+          "volume": "194400"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.660",
+          "high": "34.660",
+          "low": "34.620",
+          "close": "34.630",
+          "volume": "203300"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.640",
+          "high": "34.660",
+          "low": "34.630",
+          "close": "34.650",
+          "volume": "348100"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.650",
+          "high": "34.670",
+          "low": "34.590",
+          "close": "34.600",
+          "volume": "490300"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.600",
+          "high": "34.660",
+          "low": "34.590",
+          "close": "34.650",
+          "volume": "328500"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.650",
+          "high": "34.670",
+          "low": "34.630",
+          "close": "34.640",
+          "volume": "236600"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.650",
+          "high": "34.660",
+          "low": "34.630",
+          "close": "34.650",
+          "volume": "219300"
         }
       ]
     },
@@ -1109,13 +1703,13 @@
       "name": "宁德时代",
       "sector_code": "801730",
       "sector_name": "电力设备",
-      "observed_at": "2026-08-26T01:46:16.351920+00:00",
+      "observed_at": "2026-08-26T01:55:16.790408+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:46:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.352,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.79,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -1282,6 +1876,105 @@
           "low": "378.900",
           "close": "379.230",
           "volume": "82300"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "379.230",
+          "high": "379.500",
+          "low": "378.990",
+          "close": "379.310",
+          "volume": "125700"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "379.270",
+          "high": "379.730",
+          "low": "378.860",
+          "close": "379.060",
+          "volume": "152900"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "379.060",
+          "high": "380.500",
+          "low": "379.020",
+          "close": "380.500",
+          "volume": "239568"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "380.500",
+          "high": "380.880",
+          "low": "380.340",
+          "close": "380.840",
+          "volume": "172231"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "380.810",
+          "high": "382.420",
+          "low": "380.810",
+          "close": "381.580",
+          "volume": "259200"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "381.470",
+          "high": "382.840",
+          "low": "381.310",
+          "close": "382.610",
+          "volume": "243900"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "382.610",
+          "high": "383.500",
+          "low": "382.510",
+          "close": "383.390",
+          "volume": "411179"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "383.350",
+          "high": "383.880",
+          "low": "383.000",
+          "close": "383.330",
+          "volume": "313600"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "383.300",
+          "high": "383.950",
+          "low": "383.170",
+          "close": "383.530",
+          "volume": "343800"
         }
       ]
     },
@@ -1290,13 +1983,13 @@
       "name": "比亚迪",
       "sector_code": "801880",
       "sector_name": "汽车",
-      "observed_at": "2026-08-26T01:46:16.344793+00:00",
+      "observed_at": "2026-08-26T01:55:16.912735+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:46:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.345,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.913,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -1463,6 +2156,105 @@
           "low": "92.010",
           "close": "92.160",
           "volume": "279010"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.140",
+          "high": "92.390",
+          "low": "92.080",
+          "close": "92.350",
+          "volume": "176100"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.350",
+          "high": "92.390",
+          "low": "92.090",
+          "close": "92.130",
+          "volume": "153100"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.140",
+          "high": "92.360",
+          "low": "92.110",
+          "close": "92.250",
+          "volume": "272200"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.250",
+          "high": "92.300",
+          "low": "92.190",
+          "close": "92.210",
+          "volume": "108800"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.250",
+          "high": "92.560",
+          "low": "92.220",
+          "close": "92.550",
+          "volume": "296000"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.560",
+          "high": "92.650",
+          "low": "92.430",
+          "close": "92.620",
+          "volume": "192700"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.620",
+          "high": "92.760",
+          "low": "92.600",
+          "close": "92.700",
+          "volume": "279900"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.680",
+          "high": "92.700",
+          "low": "92.470",
+          "close": "92.500",
+          "volume": "151700"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.480",
+          "high": "92.550",
+          "low": "92.410",
+          "close": "92.410",
+          "volume": "124400"
         }
       ]
     },
@@ -1471,13 +2263,13 @@
       "name": "三一重工",
       "sector_code": "801890",
       "sector_name": "机械设备",
-      "observed_at": "2026-08-26T01:46:16.329102+00:00",
+      "observed_at": "2026-08-26T01:55:16.969143+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:46:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.329,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.969,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -1644,6 +2436,105 @@
           "low": "19.060",
           "close": "19.090",
           "volume": "294100"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "19.090",
+          "high": "19.100",
+          "low": "19.060",
+          "close": "19.070",
+          "volume": "134000"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "19.060",
+          "high": "19.080",
+          "low": "19.040",
+          "close": "19.040",
+          "volume": "179800"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "19.040",
+          "high": "19.080",
+          "low": "19.030",
+          "close": "19.070",
+          "volume": "197300"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "19.080",
+          "high": "19.090",
+          "low": "19.050",
+          "close": "19.070",
+          "volume": "155000"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "19.070",
+          "high": "19.090",
+          "low": "19.070",
+          "close": "19.080",
+          "volume": "155000"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "19.090",
+          "high": "19.100",
+          "low": "19.080",
+          "close": "19.100",
+          "volume": "189500"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "19.100",
+          "high": "19.110",
+          "low": "19.080",
+          "close": "19.080",
+          "volume": "373800"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "19.090",
+          "high": "19.100",
+          "low": "19.080",
+          "close": "19.080",
+          "volume": "243200"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "19.090",
+          "high": "19.090",
+          "low": "19.060",
+          "close": "19.070",
+          "volume": "129300"
         }
       ]
     },
@@ -1652,13 +2543,13 @@
       "name": "紫金矿业",
       "sector_code": "801050",
       "sector_name": "有色金属",
-      "observed_at": "2026-08-26T01:46:16.357921+00:00",
+      "observed_at": "2026-08-26T01:55:16.979940+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:47:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.358,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 76.98,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -1825,6 +2716,105 @@
           "low": "34.350",
           "close": "34.430",
           "volume": "2061801"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.430",
+          "high": "34.480",
+          "low": "34.430",
+          "close": "34.470",
+          "volume": "2148900"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.470",
+          "high": "34.480",
+          "low": "34.400",
+          "close": "34.440",
+          "volume": "2070300"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.440",
+          "high": "34.550",
+          "low": "34.420",
+          "close": "34.550",
+          "volume": "5017130"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.540",
+          "high": "34.680",
+          "low": "34.540",
+          "close": "34.600",
+          "volume": "3749115"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.600",
+          "high": "34.660",
+          "low": "34.580",
+          "close": "34.650",
+          "volume": "2301200"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.650",
+          "high": "34.800",
+          "low": "34.630",
+          "close": "34.790",
+          "volume": "4003100"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.790",
+          "high": "34.850",
+          "low": "34.730",
+          "close": "34.840",
+          "volume": "4374900"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.840",
+          "high": "34.870",
+          "low": "34.820",
+          "close": "34.860",
+          "volume": "3076200"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.860",
+          "high": "34.930",
+          "low": "34.740",
+          "close": "34.770",
+          "volume": "5373524"
         }
       ]
     },
@@ -1833,13 +2823,13 @@
       "name": "万华化学",
       "sector_code": "801030",
       "sector_name": "基础化工",
-      "observed_at": "2026-08-26T01:46:16.485090+00:00",
+      "observed_at": "2026-08-26T01:55:17.376646+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:47:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.485,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 77.377,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -2006,6 +2996,105 @@
           "low": "73.180",
           "close": "73.260",
           "volume": "506625"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.270",
+          "high": "73.440",
+          "low": "73.200",
+          "close": "73.270",
+          "volume": "197700"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.260",
+          "high": "73.390",
+          "low": "73.190",
+          "close": "73.350",
+          "volume": "203200"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.350",
+          "high": "73.780",
+          "low": "73.340",
+          "close": "73.720",
+          "volume": "711250"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.690",
+          "high": "73.850",
+          "low": "73.680",
+          "close": "73.750",
+          "volume": "526900"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.750",
+          "high": "73.860",
+          "low": "73.590",
+          "close": "73.710",
+          "volume": "270700"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.690",
+          "high": "73.750",
+          "low": "73.610",
+          "close": "73.710",
+          "volume": "262700"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.700",
+          "high": "73.790",
+          "low": "73.450",
+          "close": "73.530",
+          "volume": "275950"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.530",
+          "high": "73.560",
+          "low": "73.250",
+          "close": "73.300",
+          "volume": "154700"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.310",
+          "high": "73.470",
+          "low": "73.290",
+          "close": "73.310",
+          "volume": "167400"
         }
       ]
     },
@@ -2014,13 +3103,13 @@
       "name": "长江电力",
       "sector_code": "801160",
       "sector_name": "公用事业",
-      "observed_at": "2026-08-26T01:46:16.523136+00:00",
+      "observed_at": "2026-08-26T01:55:17.067677+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:47:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.523,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 77.068,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -2187,6 +3276,105 @@
           "low": "28.330",
           "close": "28.350",
           "volume": "359700"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.340",
+          "high": "28.360",
+          "low": "28.320",
+          "close": "28.350",
+          "volume": "753500"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.350",
+          "high": "28.350",
+          "low": "28.280",
+          "close": "28.290",
+          "volume": "720400"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.300",
+          "high": "28.340",
+          "low": "28.290",
+          "close": "28.310",
+          "volume": "404300"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.310",
+          "high": "28.330",
+          "low": "28.280",
+          "close": "28.280",
+          "volume": "369200"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.290",
+          "high": "28.300",
+          "low": "28.260",
+          "close": "28.260",
+          "volume": "355900"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.270",
+          "high": "28.300",
+          "low": "28.250",
+          "close": "28.290",
+          "volume": "572100"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.300",
+          "high": "28.320",
+          "low": "28.290",
+          "close": "28.290",
+          "volume": "265900"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.300",
+          "high": "28.330",
+          "low": "28.290",
+          "close": "28.300",
+          "volume": "424500"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.310",
+          "high": "28.330",
+          "low": "28.280",
+          "close": "28.310",
+          "volume": "420800"
         }
       ]
     },
@@ -2195,13 +3383,13 @@
       "name": "中国船舶",
       "sector_code": "801740",
       "sector_name": "国防军工",
-      "observed_at": "2026-08-26T01:46:16.510644+00:00",
+      "observed_at": "2026-08-26T01:55:17.090827+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:47:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.511,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 77.091,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -2368,6 +3556,105 @@
           "low": "34.110",
           "close": "34.120",
           "volume": "450383"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.120",
+          "high": "34.190",
+          "low": "34.110",
+          "close": "34.170",
+          "volume": "367265"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.180",
+          "high": "34.200",
+          "low": "34.170",
+          "close": "34.180",
+          "volume": "366767"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.190",
+          "high": "34.280",
+          "low": "34.180",
+          "close": "34.270",
+          "volume": "1167613"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.280",
+          "high": "34.280",
+          "low": "34.240",
+          "close": "34.240",
+          "volume": "821100"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.250",
+          "high": "34.250",
+          "low": "34.210",
+          "close": "34.220",
+          "volume": "403500"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.230",
+          "high": "34.240",
+          "low": "34.210",
+          "close": "34.240",
+          "volume": "462717"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.240",
+          "high": "34.280",
+          "low": "34.230",
+          "close": "34.250",
+          "volume": "981679"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.260",
+          "high": "34.290",
+          "low": "34.250",
+          "close": "34.280",
+          "volume": "746597"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.270",
+          "high": "34.290",
+          "low": "34.200",
+          "close": "34.210",
+          "volume": "610000"
         }
       ]
     },
@@ -2376,13 +3663,13 @@
       "name": "中际旭创",
       "sector_code": "801770",
       "sector_name": "通信",
-      "observed_at": "2026-08-26T01:46:16.504757+00:00",
+      "observed_at": "2026-08-26T01:55:17.454734+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:47:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.505,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 77.455,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -2549,6 +3836,105 @@
           "low": "843.690",
           "close": "847.080",
           "volume": "109700"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "847.180",
+          "high": "849.800",
+          "low": "846.910",
+          "close": "848.480",
+          "volume": "150400"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "848.480",
+          "high": "854.650",
+          "low": "847.340",
+          "close": "853.770",
+          "volume": "266850"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "853.980",
+          "high": "854.890",
+          "low": "851.350",
+          "close": "852.130",
+          "volume": "192800"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "852.130",
+          "high": "852.980",
+          "low": "850.000",
+          "close": "850.460",
+          "volume": "89700"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "850.710",
+          "high": "852.880",
+          "low": "850.010",
+          "close": "850.110",
+          "volume": "106098"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "850.500",
+          "high": "852.000",
+          "low": "848.780",
+          "close": "848.880",
+          "volume": "62400"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "848.880",
+          "high": "848.980",
+          "low": "847.580",
+          "close": "847.580",
+          "volume": "73000"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "847.770",
+          "high": "848.080",
+          "low": "844.750",
+          "close": "845.550",
+          "volume": "103600"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "845.550",
+          "high": "848.720",
+          "low": "845.550",
+          "close": "847.520",
+          "volume": "98300"
         }
       ]
     },
@@ -2557,13 +3943,13 @@
       "name": "世纪华通",
       "sector_code": "801760",
       "sector_name": "传媒",
-      "observed_at": "2026-08-26T01:46:16.547344+00:00",
+      "observed_at": "2026-08-26T01:55:17.149981+00:00",
       "session_phase": "MORNING_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T09:47:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T09:45:00+08:00",
-      "same_day_finalized_bar_count": 15,
-      "latest_same_day_finalized_age_seconds": 76.547,
+      "latest_observed_timestamp": "2026-08-26T09:56:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T09:54:00+08:00",
+      "same_day_finalized_bar_count": 24,
+      "latest_same_day_finalized_age_seconds": 77.15,
       "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
@@ -2730,6 +4116,105 @@
           "low": "14.030",
           "close": "14.040",
           "volume": "323100"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:46:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.040",
+          "high": "14.050",
+          "low": "14.030",
+          "close": "14.050",
+          "volume": "192265"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:47:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.040",
+          "high": "14.060",
+          "low": "14.040",
+          "close": "14.050",
+          "volume": "137200"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:48:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.040",
+          "high": "14.080",
+          "low": "14.040",
+          "close": "14.070",
+          "volume": "362600"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:49:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.070",
+          "high": "14.090",
+          "low": "14.060",
+          "close": "14.090",
+          "volume": "141500"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:50:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.090",
+          "high": "14.100",
+          "low": "14.080",
+          "close": "14.090",
+          "volume": "297900"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:51:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.090",
+          "high": "14.140",
+          "low": "14.090",
+          "close": "14.110",
+          "volume": "1017700"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:52:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.110",
+          "high": "14.140",
+          "low": "14.100",
+          "close": "14.120",
+          "volume": "478800"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:53:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.130",
+          "high": "14.160",
+          "low": "14.120",
+          "close": "14.120",
+          "volume": "1145300"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T09:54:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.120",
+          "high": "14.150",
+          "low": "14.100",
+          "close": "14.150",
+          "volume": "617800"
         }
       ]
     }
@@ -2738,5 +4223,5 @@
   "real_data_paper_readiness": false,
   "promotion": "NOT_ELIGIBLE",
   "external_order_transmission": false,
-  "evidence_sha256": "ad42c24260d80b9031f2c2f9cdf4573be3872d865ad04cb4eca21c4641228a6b"
+  "evidence_sha256": "4d58157057141704c0f819b62d98df4021bb7a1e017a46a94bea2b439984346c"
 }
