@@ -1187,3 +1187,20 @@ error, and always clears its timer and releases the concurrency slot. A fake-tim
 test stalls all six active requests, queues a seventh and proves that timeout
 failure cannot strand the queue. This is client-side availability control only;
 it sends no mutation and changes no trading authority.
+
+## ADR-080 — A successful bundle preserves internal partition failures
+
+Status: accepted, 2026-08-26.
+
+The minute research bundle can validly return HTTP 200 while one independently
+verified report is unavailable. Treating only transport failure as an error made
+the browser replace null values with fail-closed placeholders but still report
+zero failed partitions, suppressing both the operator warning and cold-start
+recovery retry.
+
+The client now binds all ten bundled values to the server's
+`unavailable_sections` contract. A null value or an explicitly unavailable name
+selects the existing fail-closed placeholder and records a stable partition
+failure; healthy siblings remain visible. The same failure map drives the one
+bounded initial retry. No missing evidence is promoted and no server mutation or
+trading authority is introduced.

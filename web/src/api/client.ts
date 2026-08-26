@@ -106,6 +106,20 @@ async function getOptional<T>(path: string, fallback: T): Promise<OptionalResult
   }
 }
 
+function getBundledSection<T>(
+  name: string,
+  value: T | null,
+  fallback: T,
+  bundleError: string | null,
+  unavailableSections: ReadonlySet<string>,
+): OptionalResult<T> {
+  const unavailable = value === null || value === undefined || unavailableSections.has(name)
+  return {
+    value: unavailable ? fallback : value,
+    error: bundleError ?? (unavailable ? '聚合快照分区不可用' : null),
+  }
+}
+
 export function loadHistoricalBarSeries(symbol: string): Promise<HistoricalBarSeries> {
   return getJson<HistoricalBarSeries>(`/historical-bars/${encodeURIComponent(symbol)}`)
 }
@@ -284,16 +298,17 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     getOptional<PlatformSnapshot['audit']>('/audit', null),
   ])
   const bundledError = minuteEvidence.error
-  const longFiveMinuteResearch = { value: minuteEvidence.value.longFiveMinuteResearch ?? longFiveMinuteFallback, error: bundledError }
-  const reservedTailDiagnostic = { value: minuteEvidence.value.reservedTailDiagnostic ?? reservedTailFallback, error: bundledError }
-  const developmentPolicySearch = { value: minuteEvidence.value.developmentPolicySearch ?? developmentFallback, error: bundledError }
-  const forwardObservation = { value: minuteEvidence.value.forwardObservation ?? forwardFallback, error: bundledError }
-  const forwardSourceCoverage = { value: minuteEvidence.value.forwardSourceCoverage ?? forwardSourceCoverageFallback, error: bundledError }
-  const forwardSourceCoverageHistory = { value: minuteEvidence.value.forwardSourceCoverageHistory ?? forwardSourceCoverageHistoryFallback, error: bundledError }
-  const publicMinuteAudit = { value: minuteEvidence.value.publicMinuteAudit ?? publicAuditFallback, error: bundledError }
-  const intradayObservation = { value: minuteEvidence.value.intradayObservation ?? intradayFallback, error: bundledError }
-  const intradayBreadth = { value: minuteEvidence.value.intradayBreadth ?? breadthFallback, error: bundledError }
-  const intradayContinuity = { value: minuteEvidence.value.intradayContinuity ?? continuityFallback, error: bundledError }
+  const bundledUnavailable = new Set(minuteEvidence.value.unavailable_sections)
+  const longFiveMinuteResearch = getBundledSection('longFiveMinuteResearch', minuteEvidence.value.longFiveMinuteResearch, longFiveMinuteFallback, bundledError, bundledUnavailable)
+  const reservedTailDiagnostic = getBundledSection('reservedTailDiagnostic', minuteEvidence.value.reservedTailDiagnostic, reservedTailFallback, bundledError, bundledUnavailable)
+  const developmentPolicySearch = getBundledSection('developmentPolicySearch', minuteEvidence.value.developmentPolicySearch, developmentFallback, bundledError, bundledUnavailable)
+  const forwardObservation = getBundledSection('forwardObservation', minuteEvidence.value.forwardObservation, forwardFallback, bundledError, bundledUnavailable)
+  const forwardSourceCoverage = getBundledSection('forwardSourceCoverage', minuteEvidence.value.forwardSourceCoverage, forwardSourceCoverageFallback, bundledError, bundledUnavailable)
+  const forwardSourceCoverageHistory = getBundledSection('forwardSourceCoverageHistory', minuteEvidence.value.forwardSourceCoverageHistory, forwardSourceCoverageHistoryFallback, bundledError, bundledUnavailable)
+  const publicMinuteAudit = getBundledSection('publicMinuteAudit', minuteEvidence.value.publicMinuteAudit, publicAuditFallback, bundledError, bundledUnavailable)
+  const intradayObservation = getBundledSection('intradayObservation', minuteEvidence.value.intradayObservation, intradayFallback, bundledError, bundledUnavailable)
+  const intradayBreadth = getBundledSection('intradayBreadth', minuteEvidence.value.intradayBreadth, breadthFallback, bundledError, bundledUnavailable)
+  const intradayContinuity = getBundledSection('intradayContinuity', minuteEvidence.value.intradayContinuity, continuityFallback, bundledError, bundledUnavailable)
   const sections = { deployment, metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, longFiveMinuteResearch, reservedTailDiagnostic, developmentPolicySearch, forwardObservation, forwardSourceCoverage, forwardSourceCoverageHistory, publicMinuteAudit, intradayObservation, intradayBreadth, intradayContinuity, backtestAnalytics, market, historicalBars, audit }
   const failures = Object.fromEntries(Object.entries(sections).flatMap(([name, result]) => result.error ? [[name, result.error]] : []))
   return {

@@ -80,4 +80,38 @@ describe('platform snapshot request fan-out', () => {
     expect(results.slice(0, 6).every((result) => result.status === 'rejected' && result.reason.message === '请求超时：30 秒')).toBe(true)
     expect(results[6]).toMatchObject({ status: 'fulfilled' })
   })
+
+  it('surfaces an unavailable section inside a successful minute bundle', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input)
+      if (path.endsWith('/system')) {
+        return { ok: true, status: 200, json: async () => ({ mode: 'PAPER', running: false, risk_state: 'HALTED' }) }
+      }
+      if (path.endsWith('/health')) {
+        return { ok: true, status: 200, json: async () => ({ healthy: false, runtime_mode: 'PAPER', risk_state: 'HALTED', gateway_connected: false, reconciliation_status: 'UNKNOWN' }) }
+      }
+      if (path.endsWith('/paper-snapshot')) {
+        return { ok: true, status: 200, json: async () => ({ account: { cash: '0', equity: null }, pnl: { realized: '0' }, positions: [], orders: [], trades: [], risk: { state: 'HALTED' } }) }
+      }
+      if (path.endsWith('/minute-research-snapshot')) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            longFiveMinuteResearch: {}, reservedTailDiagnostic: {}, developmentPolicySearch: {},
+            forwardObservation: {}, forwardSourceCoverage: null, forwardSourceCoverageHistory: {},
+            publicMinuteAudit: {}, intradayObservation: {}, intradayBreadth: {}, intradayContinuity: {},
+            unavailable_sections: ['forwardSourceCoverage'],
+          }),
+        }
+      }
+      return { ok: false, status: 503, json: async () => ({ detail: 'optional partition unavailable' }) }
+    }))
+
+    const snapshot = await loadPlatformSnapshot()
+
+    expect(snapshot.forwardSourceCoverage.classification).toBe('UNAVAILABLE')
+    expect(snapshot.availability.failures.forwardSourceCoverage).toBe('聚合快照分区不可用')
+    expect(snapshot.availability.failures.longFiveMinuteResearch).toBeUndefined()
+  })
 })
