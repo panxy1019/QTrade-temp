@@ -78,6 +78,22 @@ const foldExecutionFixture = {
   reason_counts: { INTRADAY_DRAWDOWN_LIMIT: 18398, MINUTE_TREND_WEAK: 70334, MINUTE_VOLATILITY_LIMIT: 11252, RECOVERY_COOLDOWN: 31443 },
 }
 
+const longIntradayFullMetrics = {
+  total_return: '-0.271715', annualized_return: '-0.474', annualized_volatility: '0.161',
+  sharpe: '-3.11', sortino: '-4.18', maximum_drawdown: '-0.284', calmar: '-1.67',
+  win_rate: '0.43', benchmark_return: '-0.212791', excess_return: '-0.058924',
+  information_ratio: '-0.52', number_of_periods: 120, turnover: '200.2',
+  profit_loss_ratio: '0.91', exposure: '1', number_of_trades: 1001,
+  transaction_costs: '0.102',
+}
+
+const longIntradayStitchedMetrics = {
+  ...longIntradayFullMetrics,
+  total_return: '-0.283060', annualized_return: '-0.725', maximum_drawdown: '-0.287245',
+  benchmark_return: '-0.158154', excess_return: '-0.124906', number_of_periods: 60,
+  number_of_trades: 506,
+}
+
 const data = {
   system: { mode: 'PAPER', running: true, risk_state: 'NORMAL' },
   health: { healthy: true, runtime_mode: 'PAPER', risk_state: 'NORMAL', gateway_connected: true, reconciliation_status: 'OK' },
@@ -237,6 +253,37 @@ const data = {
     subgroups: [{ group: 'STOCK', symbol_count: 75, base: { total_return: 0.4082847, maximum_drawdown: -0.151, realized_minute_volatility: 0.0022, point_count: 11520 }, overlay: { total_return: 0.010438, maximum_drawdown: -0.1218, realized_minute_volatility: 0.001, point_count: 11520 } }],
     leave_one_sector_out: [], daily: [],
     curve: [{ timestamp: '2025-07-01T09:35:00+08:00', base_equity: 1, overlay_equity: 1 }],
+  },
+  intradayFactorRobustness: {
+    schema_version: 1,
+    report_id: 'opening-triple-bullish-long-window-robustness-v1',
+    classification: 'SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC',
+    generated_at: '2026-08-26T23:30:00+08:00',
+    evaluation_contract: {
+      selected_session_count: 120, selected_start: '2026-03-03', selected_end: '2026-08-24', exit_completion_day: '2026-08-25',
+      candidate_thresholds_bps: ['0', '5', '10', '20'], initial_training_session_count: 60,
+      fold_count: 6, test_sessions_per_fold: 10, test_returns_enter_same_fold_selection: false,
+      reused_history_not_independent_confirmation: true,
+    },
+    result_preview_hash: '9'.repeat(64),
+    summary: {
+      observation_count: 9000, signal_count: 1001, rank_ic: '-0.0120601',
+      full_window_strategy_metrics: longIntradayFullMetrics,
+      fold_count: 6, positive_fold_count: 1, selected_thresholds_bps: ['10', '10', '5', '5', '5', '5'],
+      stitched_strategy_metrics: longIntradayStitchedMetrics,
+      threshold_sensitivity: [
+        { minimum_body_return_bps: '0', signal_count: 527, total_return: '-0.298072', excess_return: '-0.1401' },
+        { minimum_body_return_bps: '5', signal_count: 506, total_return: '-0.271319', excess_return: '-0.1132' },
+        { minimum_body_return_bps: '10', signal_count: 487, total_return: '-0.290270', excess_return: '-0.1321' },
+        { minimum_body_return_bps: '20', signal_count: 450, total_return: '-0.317723', excess_return: '-0.1596' },
+      ],
+      robustness_passed: false, research_gate_passed: false,
+    },
+    result: null,
+    promotion: 'NOT_ELIGIBLE',
+    promotion_reasons: ['REUSED_HISTORICAL_WINDOW_NOT_INDEPENDENT_CONFIRMATION'],
+    paper_readiness: 'NOT_ELIGIBLE', live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION',
+    state_mutation: false, external_order_transmission: false, evidence_sha256: '8'.repeat(64),
   },
   reservedTailDiagnostic: {
     classification: 'PREREGISTERED_PARTIALLY_OBSERVED_RESERVED_TAIL_DIAGNOSTIC',
@@ -910,6 +957,7 @@ describe('verified historical data pages', () => {
     expect(screen.getByText('15 行业代表股当日分钟点时观测')).toBeInTheDocument()
     expect(screen.getByText('75 股票全板块当日分钟宽度')).toBeInTheDocument()
     expect(screen.getByText('75 股票 BaoStock 前向来源覆盖')).toBeInTheDocument()
+    expect(screen.getByText('120 日三连阳因子稳健性否证')).toBeInTheDocument()
     expect(screen.getByText(/75\/75 READY · READY_FOR_FORMAL_COLLECTION/)).toBeInTheDocument()
     expect(screen.getByText('BaoStock 来源覆盖发布序列')).toBeInTheDocument()
     expect(screen.getByText(/MONOTONIC · 41 → 47 → 52 → 69 → 74 → 75 READY/)).toBeInTheDocument()
@@ -1089,6 +1137,18 @@ describe('verified backtest analytics', () => {
 })
 
 describe('verified robustness evidence', () => {
+  it('shows the signed 120-day intraday factor veto without claiming promotion', () => {
+    render(<ResearchPage data={data} />)
+    expect(screen.getByText('120 日固定因子稳健性证据')).toBeInTheDocument()
+    expect(screen.getByText('长期复核未通过：1/6 个测试折为正')).toBeInTheDocument()
+    expect(screen.getByText('全窗口收益').nextSibling).toHaveTextContent('-27.17%')
+    expect(screen.getAllByText('样本外收益')[0].nextSibling).toHaveTextContent('-28.31%')
+    expect(screen.getByText(/10 → 10 → 5 → 5 → 5 → 5 bps/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /导出长期证据/ })).toBeInTheDocument()
+    expect(screen.getByText(/PAPER NOT_ELIGIBLE/)).toBeInTheDocument()
+    expect(screen.getByText(/外部订单 DISABLED/)).toBeInTheDocument()
+  })
+
   it('runs the full intraday factor gate without promoting a losing rule', async () => {
     const metrics = {
       total_return: '-0.0408', annualized_return: '-0.4087', annualized_volatility: '0.1538',

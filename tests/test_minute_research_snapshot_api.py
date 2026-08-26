@@ -31,6 +31,17 @@ def test_minute_research_snapshot_reuses_one_verified_long_dataset(
     assert payload["longFiveMinuteResearch"]["minute_dataset"]["bar_count"] == (
         1_324_800
     )
+    assert payload["intradayFactorRobustness"]["report_id"] == (
+        "opening-triple-bullish-long-window-robustness-v1"
+    )
+    assert payload["intradayFactorRobustness"]["summary"]["fold_count"] == 6
+    assert payload["intradayFactorRobustness"]["summary"][
+        "positive_fold_count"
+    ] == 1
+    assert payload["intradayFactorRobustness"]["promotion"] == "NOT_ELIGIBLE"
+    assert payload["intradayFactorRobustness"][
+        "external_order_transmission"
+    ] is False
     assert payload["reservedTailDiagnostic"]["test_session_count"] == 8
     assert payload["developmentPolicySearch"]["candidate_count"] == 4
     assert payload["forwardObservation"]["future_session_count"] == 1

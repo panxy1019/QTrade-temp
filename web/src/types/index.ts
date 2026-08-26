@@ -699,6 +699,64 @@ export interface IntradayFactorBacktest {
   preview_hash: string
 }
 
+export interface IntradayFactorLongWindowReport {
+  schema_version: 1
+  report_id: 'opening-triple-bullish-long-window-robustness-v1' | null
+  classification: string
+  generated_at?: string
+  dataset?: {
+    data_version: string
+    checksum: string
+    evidence_sha256: string
+    bar_interval: '5m'
+    session_count: number
+    symbol_count: number
+    sector_count: number
+    point_in_time: false
+    future_adjustment_knowledge_possible: true
+  }
+  evaluation_contract?: {
+    selected_session_count: 120
+    selected_start: string
+    selected_end: string
+    exit_completion_day: string
+    candidate_thresholds_bps: string[]
+    initial_training_session_count: 60
+    fold_count: 6
+    test_sessions_per_fold: 10
+    test_returns_enter_same_fold_selection: false
+    reused_history_not_independent_confirmation: true
+  }
+  parameters?: IntradayFactorBacktestRequest
+  result_preview_hash?: string
+  summary: {
+    observation_count: number
+    signal_count: number
+    rank_ic: string
+    full_window_strategy_metrics: IntradayPerformanceMetrics
+    fold_count: number
+    positive_fold_count: number
+    selected_thresholds_bps: string[]
+    stitched_strategy_metrics: IntradayPerformanceMetrics
+    threshold_sensitivity: Array<{
+      minimum_body_return_bps: string
+      signal_count: number
+      total_return: string
+      excess_return: string
+    }>
+    robustness_passed: boolean
+    research_gate_passed: boolean
+  } | null
+  result: IntradayFactorBacktest | null
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  promotion_reasons: string[]
+  paper_readiness: 'NOT_ELIGIBLE'
+  live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION'
+  state_mutation: false
+  external_order_transmission: false
+  evidence_sha256?: string
+}
+
 export interface HistoricalDataset {
   provider: string
   provider_version: string
@@ -1455,6 +1513,7 @@ export interface PlatformSnapshot {
   minuteResearch: MinuteResearchReport
   fiveMinuteResearch: FiveMinuteResearchReport
   longFiveMinuteResearch: FiveMinuteResearchReport
+  intradayFactorRobustness: IntradayFactorLongWindowReport
   reservedTailDiagnostic: ReservedTailDiagnosticReport
   developmentPolicySearch?: DevelopmentPolicySearchReport
   forwardObservation: ForwardObservationReport

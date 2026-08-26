@@ -65,6 +65,9 @@ _MAX_SINGLE_STOCK_BACKTEST_SESSIONS = 120
 _MIN_INTRADAY_FACTOR_SESSIONS = 20
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
+_INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
+    "51a963305c5c5465bc90ba861b837f4cf55ed4f28ab83d0a339984a9cc4e063d"
+)
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
         ("symbol", pa.string()),
@@ -184,6 +187,7 @@ class AppContext:
     five_minute_research_report_path: Path | None = None
     long_five_minute_manifest_path: Path | None = None
     long_five_minute_research_report_path: Path | None = None
+    intraday_factor_robustness_path: Path | None = None
     development_policy_search_path: Path | None = None
     forward_observation_preregistration_path: Path | None = None
     forward_observation_report_path: Path | None = None
@@ -504,6 +508,38 @@ def create_app(
             "leave_one_sector_out": [],
             "daily": [],
             "curve": [],
+        }
+
+    @app.get("/intraday-factor-robustness")
+    def intraday_factor_robustness(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        report = _load_verified_intraday_factor_robustness(
+            state.intraday_factor_robustness_path,
+            dataset,
+        )
+        return report or {
+            "classification": "NO_VERIFIED_INTRADAY_FACTOR_LONG_WINDOW_EVIDENCE",
+            "report_id": None,
+            "summary": None,
+            "result": None,
+            "promotion": "NOT_EVALUATED",
+            "promotion_reasons": [
+                "MISSING_VERIFIED_INTRADAY_FACTOR_LONG_WINDOW_ARTIFACT"
+            ],
+            "paper_readiness": "NOT_ELIGIBLE",
+            "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
+            "state_mutation": False,
+            "external_order_transmission": False,
         }
 
     @app.get("/reserved-tail-diagnostic")
@@ -1653,6 +1689,9 @@ def context_from_runtime(
         long_five_minute_research_report_path=Path(
             "runtime/research/baostock-five-minute-long-walk-forward-v1/"
             "report.json"
+        ),
+        intraday_factor_robustness_path=Path(
+            "runtime/research/intraday-factor-long-window-v1/report.json"
         ),
         development_policy_search_path=Path(
             "runtime/research/baostock-development-policy-search-v1/report.json"
@@ -4893,6 +4932,258 @@ def _canonical_dict_sha256(value: dict[str, object]) -> str:
     return sha256(canonical.encode("utf-8")).hexdigest()
 
 
+def _load_verified_intraday_factor_robustness(
+    path: Path | None,
+    dataset: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if (
+        path is None
+        or dataset is None
+        or not path.is_file()
+        or path.is_symlink()
+    ):
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        result = report.get("result")
+        summary = report.get("summary")
+        implementation = report.get("implementation")
+        dataset_claim = report.get("dataset")
+        contract = report.get("evaluation_contract")
+        parameters = report.get("parameters")
+        generated_at = datetime.fromisoformat(str(report.get("generated_at")))
+        if not all(
+            isinstance(value, dict)
+            for value in (
+                result,
+                summary,
+                implementation,
+                dataset_claim,
+                contract,
+                parameters,
+            )
+        ):
+            return None
+        result = cast(dict[str, object], result)
+        summary = cast(dict[str, object], summary)
+        implementation = cast(dict[str, object], implementation)
+        dataset_claim = cast(dict[str, object], dataset_claim)
+        contract = cast(dict[str, object], contract)
+        parameters = cast(dict[str, object], parameters)
+        result_digest = result.get("preview_hash")
+        result_unsigned = {
+            key: value for key, value in result.items() if key != "preview_hash"
+        }
+        dataset_days = cast(list[str], dataset["trading_days"])
+        selected_days = dataset_days[-121:-1]
+        expected_parameters = {
+            "factor": "opening_three_ten_minute_bullish",
+            "start": selected_days[0],
+            "end": selected_days[-1],
+            "cost_bps": "5",
+            "minimum_body_return_bps": "0",
+        }
+        expected_dataset_claim = {
+            "data_version": dataset["data_version"],
+            "checksum": dataset["checksum"],
+            "evidence_sha256": dataset["evidence_sha256"],
+            "bar_interval": "5m",
+            "session_count": 368,
+            "symbol_count": 75,
+            "sector_count": 15,
+            "point_in_time": False,
+            "future_adjustment_knowledge_possible": True,
+        }
+        expected_contract = {
+            "selected_session_count": 120,
+            "selected_start": selected_days[0],
+            "selected_end": selected_days[-1],
+            "exit_completion_day": dataset_days[-1],
+            "candidate_thresholds_bps": ["0", "5", "10", "20"],
+            "initial_training_session_count": 60,
+            "fold_count": 6,
+            "test_sessions_per_fold": 10,
+            "test_returns_enter_same_fold_selection": False,
+            "reused_history_not_independent_confirmation": True,
+        }
+        factor_source = (
+            Path(__file__).resolve().parents[1]
+            / "research"
+            / "intraday_factor.py"
+        )
+        expected_implementation = {
+            "factor_module_sha256": sha256(factor_source.read_bytes()).hexdigest(),
+            "api_module_sha256": sha256(Path(__file__).read_bytes()).hexdigest(),
+        }
+        backtest = result.get("backtest")
+        robustness = result.get("robustness_validation")
+        research_gate = result.get("research_gate")
+        event = result.get("event_summary")
+        factor_validation = result.get("factor_validation")
+        if not all(
+            isinstance(value, dict)
+            for value in (
+                backtest,
+                robustness,
+                research_gate,
+                event,
+                factor_validation,
+            )
+        ):
+            return None
+        backtest = cast(dict[str, object], backtest)
+        robustness = cast(dict[str, object], robustness)
+        research_gate = cast(dict[str, object], research_gate)
+        event = cast(dict[str, object], event)
+        factor_validation = cast(dict[str, object], factor_validation)
+        folds = robustness.get("folds")
+        sensitivity = robustness.get("threshold_sensitivity")
+        if not isinstance(folds, list) or not isinstance(sensitivity, list):
+            return None
+        expected_training_counts = [60, 70, 80, 90, 100, 110]
+        fold_identities_valid = len(folds) == 6
+        selected_thresholds: list[str] = []
+        positive_fold_count = 0
+        for index, fold in enumerate(folds):
+            if not isinstance(fold, dict):
+                fold_identities_valid = False
+                break
+            known_at = datetime.fromisoformat(str(fold.get("selection_known_at")))
+            test_metrics = fold.get("test_strategy_metrics")
+            threshold = fold.get("selected_minimum_body_return_bps")
+            fold_valid = (
+                known_at.tzinfo is not None
+                and known_at.date().isoformat() == selected_days[60 + index * 10]
+                and known_at.astimezone(ZoneInfo("Asia/Shanghai")).time()
+                == datetime_time(9, 35)
+                and fold.get("fold_id") == f"WF-{index + 1:02d}"
+                and fold.get("training_start") == selected_days[0]
+                and fold.get("training_end")
+                == selected_days[59 + index * 10]
+                and fold.get("test_start") == selected_days[60 + index * 10]
+                and fold.get("test_end") == selected_days[69 + index * 10]
+                and fold.get("training_session_count")
+                == expected_training_counts[index]
+                and fold.get("test_session_count") == 10
+                and threshold in {"0", "5", "10", "20"}
+                and isinstance(fold.get("training_signal_count"), int)
+                and isinstance(fold.get("test_signal_count"), int)
+                and isinstance(test_metrics, dict)
+            )
+            if not fold_valid:
+                fold_identities_valid = False
+                break
+            selected_thresholds.append(cast(str, threshold))
+            positive_fold_count += Decimal(
+                str(cast(dict[str, object], test_metrics).get("total_return"))
+            ) > 0
+        threshold_rows = [
+            {
+                "minimum_body_return_bps": row.get("minimum_body_return_bps"),
+                "signal_count": row.get("signal_count"),
+                "total_return": cast(dict[str, object], row.get("strategy_metrics"))[
+                    "total_return"
+                ],
+                "excess_return": cast(dict[str, object], row.get("strategy_metrics"))[
+                    "excess_return"
+                ],
+            }
+            for row in sensitivity
+            if isinstance(row, dict) and isinstance(row.get("strategy_metrics"), dict)
+        ]
+        expected_reasons = [
+            "REUSED_HISTORICAL_WINDOW_NOT_INDEPENDENT_CONFIRMATION",
+            "CURRENT_UNIVERSE_NON_PIT",
+            "QFQ_MAY_CONTAIN_FUTURE_ADJUSTMENT_KNOWLEDGE",
+            "NO_AUTHORIZED_FORWARD_PAPER_EVIDENCE",
+            "NO_AUTHORIZED_REALTIME_OR_L2_PROVIDER",
+        ]
+        if (
+            not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("report_id")
+            != "opening-triple-bullish-long-window-robustness-v1"
+            or report.get("classification")
+            != "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC"
+            or generated_at.tzinfo is None
+            or implementation != expected_implementation
+            or dataset_claim != expected_dataset_claim
+            or contract != expected_contract
+            or parameters != expected_parameters
+            or result.get("parameters") != expected_parameters
+            or not _is_sha256(result_digest)
+            or _canonical_dict_sha256(result_unsigned) != result_digest
+            or result_digest != _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256
+            or report.get("result_preview_hash") != result_digest
+            or result.get("classification")
+            != "AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT"
+            or result.get("data_version") != dataset["data_version"]
+            or result.get("dataset_checksum") != dataset["checksum"]
+            or result.get("selected_trading_days") != selected_days
+            or result.get("exit_completion_day") != dataset_days[-1]
+            or result.get("selected_session_count") != 120
+            or result.get("source_bar_count") != 121 * 75 * 48
+            or result.get("symbol_count") != 75
+            or result.get("sector_count") != 15
+            or robustness.get("classification")
+            != "REUSED_CHRONOLOGICAL_WALK_FORWARD_DIAGNOSTIC_NOT_INDEPENDENT"
+            or robustness.get("candidate_thresholds_bps") != ["0", "5", "10", "20"]
+            or robustness.get("initial_training_session_count") != 60
+            or robustness.get("stitched_test_session_count") != 60
+            or robustness.get("passed") is not False
+            or not fold_identities_valid
+            or [row.get("minimum_body_return_bps") for row in sensitivity]
+            != ["0", "5", "10", "20"]
+            or summary.get("observation_count") != event.get("observation_count")
+            or summary.get("signal_count") != event.get("signal_count")
+            or summary.get("rank_ic") != factor_validation.get("rank_ic")
+            or summary.get("full_window_strategy_metrics")
+            != backtest.get("strategy_metrics")
+            or summary.get("fold_count") != 6
+            or summary.get("positive_fold_count") != positive_fold_count
+            or summary.get("selected_thresholds_bps") != selected_thresholds
+            or summary.get("stitched_strategy_metrics")
+            != robustness.get("stitched_strategy_metrics")
+            or summary.get("threshold_sensitivity") != threshold_rows
+            or summary.get("robustness_passed") is not False
+            or summary.get("research_gate_passed") is not False
+            or research_gate.get("passed") is not False
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("promotion_reasons") != expected_reasons
+            or report.get("paper_readiness") != "NOT_ELIGIBLE"
+            or report.get("live_readiness")
+            != "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION"
+            or report.get("state_mutation") is not False
+            or report.get("external_order_transmission") is not False
+            or result.get("promotion") != "NOT_ELIGIBLE"
+            or result.get("state_mutation") is not False
+            or result.get("external_order_transmission") is not False
+        ):
+            return None
+        return cast(dict[str, object], report)
+    except (
+        InvalidOperation,
+        IndexError,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
 def _load_verified_public_minute_audit(
     path: Path | None,
     dataset: dict[str, object] | None,
@@ -6295,6 +6586,10 @@ def _load_verified_minute_research_snapshot(
         ),
         require_execution_diagnostics=True,
     )
+    intraday_factor_robustness = _load_verified_intraday_factor_robustness(
+        state.intraday_factor_robustness_path,
+        dataset,
+    )
     reserved_tail = _load_verified_reserved_tail_diagnostic(
         state.reserved_tail_diagnostic_report_path,
         state.reserved_tail_preregistration_path,
@@ -6350,6 +6645,7 @@ def _load_verified_minute_research_snapshot(
     )
     sections: dict[str, dict[str, object] | None] = {
         "longFiveMinuteResearch": long_report,
+        "intradayFactorRobustness": intraday_factor_robustness,
         "reservedTailDiagnostic": reserved_tail,
         "developmentPolicySearch": development,
         "forwardObservation": forward,

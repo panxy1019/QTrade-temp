@@ -275,6 +275,21 @@ was `-4.6675%`, and every fixed threshold returned between `-4.4507%` and
 `-5.7885%`. Because these dates were already available, this is labelled reused
 historical evidence rather than a blind confirmation.
 
+The same rule now has a separately generated immutable 120-session robustness
+report. `scripts/build_intraday_factor_long_window_evidence.py` fixes the latest
+120 eligible sessions (2026-03-03 through 2026-08-24), an initial 60-session
+training prefix, six disjoint ten-session test folds and the same four body
+thresholds. It binds the BaoStock dataset identity, factor/API source hashes and
+the complete deterministic result hash. Across 9,000 stock-days it triggered
+1,001 signals; the full-window strategy returned `-27.1715%` with Rank IC
+`-0.0121`. Only one of six test folds was positive and the stitched sample-out
+return was `-28.3060%`, with `-28.7245%` maximum drawdown and `-12.4906%`
+excess return. Every fixed threshold also lost money. The read-only
+`/intraday-factor-robustness` endpoint and research/data-center pages expose this
+signed veto, while any digest, source, dataset, fold or fixed-result mismatch
+fails closed. This is reused viewed history, not independent confirmation, and
+it remains `NOT_ELIGIBLE` for PAPER or LIVE.
+
 The public deployment can be audited independently across one stock from every
 sector and three widely separated sessions. The script runs the same 45 requests
 twice, verifies the dataset checksum, 48 unique bars, trading day, observation

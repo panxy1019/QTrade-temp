@@ -26,9 +26,9 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 434 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 437 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-26); 54 frontend Vitest
+  (macOS, 2026-08-26); 55 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 429.12 KB with no large-chunk warning.
@@ -237,6 +237,16 @@ Last updated: 2026-08-26
   with -5.2240% maximum drawdown. All four fixed-threshold test returns were
   negative (-4.4507% to -5.7885%). This reused-history diagnostic therefore
   fails its robustness gate and is not represented as independent evidence.
+  A second immutable long-window report fixes the latest 120 eligible sessions,
+  a 60-session initial training prefix and six disjoint ten-session test folds.
+  It binds the 75-stock/15-sector dataset checksum, factor/API source hashes and
+  exact response hash. Across 9,000 stock-days the rule triggered 1,001 signals;
+  full-window return was -27.1715% with Rank IC -0.0121, while the stitched
+  sample-out return was -28.3060% with -28.7245% maximum drawdown and only one
+  of six positive folds. All four fixed thresholds were negative. The read-only
+  endpoint, research card and data-center inventory preserve this stronger veto;
+  it is viewed reused history, remains `NOT_ELIGIBLE`, and cannot authorize
+  PAPER, LIVE, state mutation or external orders.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

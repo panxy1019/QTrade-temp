@@ -75,6 +75,28 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert len(
         {fold["execution"]["observation_count"] for fold in long_five_minute["folds"]}
     ) == 1
+    intraday_factor_long = client.get(
+        _api("/intraday-factor-robustness")
+    ).json()
+    assert intraday_factor_long["report_id"] == (
+        "opening-triple-bullish-long-window-robustness-v1"
+    )
+    assert intraday_factor_long["summary"]["observation_count"] == 9_000
+    assert intraday_factor_long["summary"]["signal_count"] == 1_001
+    assert intraday_factor_long["summary"]["fold_count"] == 6
+    assert intraday_factor_long["summary"]["positive_fold_count"] == 1
+    assert float(
+        intraday_factor_long["summary"]["stitched_strategy_metrics"][
+            "total_return"
+        ]
+    ) < 0
+    assert intraday_factor_long["promotion"] == "NOT_ELIGIBLE"
+    assert intraday_factor_long["paper_readiness"] == "NOT_ELIGIBLE"
+    assert intraday_factor_long["live_readiness"] == (
+        "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION"
+    )
+    assert intraday_factor_long["state_mutation"] is False
+    assert intraday_factor_long["external_order_transmission"] is False
     reserved_tail = client.get(_api("/reserved-tail-diagnostic")).json()
     assert reserved_tail["promotion"] == "NOT_ELIGIBLE"
     assert reserved_tail["all_required_gates_passed"] is False

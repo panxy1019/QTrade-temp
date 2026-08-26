@@ -1393,3 +1393,29 @@ sensitivity rows are returned and hashed with the rest of the response. The
 current-universe QFQ history viewed after the hypothesis existed, so the result
 is classified as reused-history diagnostic evidence, remains `NOT_ELIGIBLE`,
 and cannot authorize PAPER, LIVE, state mutation or external orders.
+
+## ADR-092 — Long-window intraday factor evidence is immutable and result-bound
+
+Status: accepted, 2026-08-26.
+
+The 20-session interactive result is too short to establish stability, but
+repeatedly rerunning or selectively reporting a longer viewed window would make
+the evidence easier to rewrite after seeing it. The latest 120 eligible sessions
+are therefore evaluated once under a fixed contract: 60 initial training
+sessions, six disjoint ten-session tests, prior-only threshold selection and the
+pre-existing `0/5/10/20 bps` threshold set.
+
+The immutable report binds the exact 75-stock/15-sector BaoStock manifest and
+Parquet checksum, the factor and API source hashes, the evaluation contract and
+the complete deterministic preview hash. The loader independently verifies
+every fold identity, threshold sequence, summary arithmetic and safety field,
+and also pins the known result hash. A payload whose result is changed and then
+fully re-signed therefore still fails closed instead of becoming new accepted
+evidence.
+
+The fixed result is a veto: 9,000 stock-days, 1,001 signals, -27.1715% full-window
+return, -28.3060% stitched test return, -28.7245% stitched maximum drawdown and
+only one positive fold out of six. Every fixed threshold is negative. Because
+the history had already been viewed, it is a reused historical diagnostic, not
+independent confirmation; it remains `NOT_ELIGIBLE` and cannot mutate state or
+authorize PAPER, LIVE or external orders.

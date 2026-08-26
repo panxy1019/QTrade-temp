@@ -2,7 +2,7 @@ import { Alert, Button, Card, Form, InputNumber, Select, Space, Steps, Table, Ta
 import { useState } from 'react'
 import { runIntradayFactorBacktest } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
-import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorBacktestRequest } from '../types'
+import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorLongWindowReport } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
 type VerifiedFiveMinuteDataset = NonNullable<FiveMinuteResearchReport['minute_dataset']>
@@ -47,6 +47,45 @@ const gateLabels: Record<string, string> = {
   stitched_oos_excess_return_positive: '拼接样本外超额收益为正',
   positive_fold_ratio_at_least_60pct: '至少 60% 测试折为正',
   worst_threshold_total_return_non_negative: '最差固定阈值收益不为负',
+}
+
+export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
+  const summary = report.summary
+  if (!summary || !report.evaluation_contract) {
+    return <Card title="120 日固定因子稳健性证据"><Alert showIcon type="warning" title="长期因子报告不可用" description="报告缺失，或其签名、数据身份、源码哈希、固定结果哈希未通过校验。" /></Card>
+  }
+  const contract = report.evaluation_contract
+  return <Card
+    title="120 日固定因子稳健性证据"
+    extra={<JsonExportButton filename={`qtrade-intraday-factor-long-${report.evidence_sha256?.slice(0, 12) ?? 'unverified'}.json`} value={report} label="导出长期证据" />}
+  >
+    <Space orientation="vertical" size={16} style={{ width: '100%' }}>
+      <Alert
+        showIcon
+        type="error"
+        title={`长期复核未通过：${summary.positive_fold_count}/${summary.fold_count} 个测试折为正`}
+        description={`${contract.selected_start} 至 ${contract.selected_end} 共 ${contract.selected_session_count} 日；首段 ${contract.initial_training_session_count} 日训练，随后 ${contract.fold_count} 折 × ${contract.test_sessions_per_fold} 日互不重叠测试。该窗口已经被查看，只是固化的复用历史诊断，不是独立确认。`}
+      />
+      <div className="description-grid">
+        <Metric label="股票日观测" value={summary.observation_count.toLocaleString('zh-CN')} />
+        <Metric label="触发信号" value={summary.signal_count.toLocaleString('zh-CN')} />
+        <Metric label="全窗口收益" value={formatPercent(summary.full_window_strategy_metrics.total_return)} />
+        <Metric label="全窗口超额" value={formatPercent(summary.full_window_strategy_metrics.excess_return)} />
+        <Metric label="Rank IC" value={formatNumber(summary.rank_ic)} />
+        <Metric label="样本外收益" value={formatPercent(summary.stitched_strategy_metrics.total_return)} />
+        <Metric label="样本外超额" value={formatPercent(summary.stitched_strategy_metrics.excess_return)} />
+        <Metric label="样本外最大回撤" value={formatPercent(summary.stitched_strategy_metrics.maximum_drawdown)} />
+      </div>
+      <Typography.Text>逐折训练选择阈值：{summary.selected_thresholds_bps.join(' → ')} bps；固定结果哈希 <Typography.Text code>{report.result_preview_hash}</Typography.Text>。</Typography.Text>
+      <Table rowKey="minimum_body_return_bps" size="small" pagination={false} dataSource={summary.threshold_sensitivity} columns={[
+        { title: '固定阈值 bps', dataIndex: 'minimum_body_return_bps' },
+        { title: '样本外信号', dataIndex: 'signal_count' },
+        { title: '样本外收益', dataIndex: 'total_return', render: (value: string) => formatPercent(value) },
+        { title: '样本外超额', dataIndex: 'excess_return', render: (value: string) => formatPercent(value) },
+      ]} />
+      <Typography.Text type="secondary">报告绑定 75 股、15 行业、原生 5 分钟数据 checksum、因子实现源码和完整响应哈希；结论固定为 {report.promotion}，PAPER {report.paper_readiness}，LIVE {report.live_readiness}，外部订单 DISABLED。</Typography.Text>
+    </Space>
+  </Card>
 }
 
 export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMinuteDataset | null }) {
