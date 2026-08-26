@@ -2174,3 +2174,21 @@ This change does not alter the minute overlay engine, its signal timing or any
 preregistered collector/evaluator. The preview remains ad hoc, current-universe,
 QFQ/non-PIT, `NOT_ELIGIBLE`, stateless and unable to start PAPER/LIVE or transmit
 an external order.
+
+## ADR-125 — Current factor results can locate an individual stock
+
+Status: accepted, 2026-08-27.
+
+Each intraday factor run already produces independent per-stock group metrics for
+the same 75-stock causal replay, but the current-result tab only paginated them.
+That made checking a named stock unnecessarily difficult and obscured an existing
+individual-stock diagnostic capability.
+
+The stock tab now filters the already returned rows by six-digit identity or
+name, reports the displayed/total count and retains signal count, conditional
+mean, hit rate, strategy return, active excess and drawdown. Filtering is purely
+client-side and explicitly labelled as navigation within one result. It does not
+rerun the endpoint, alter the result hash, select a stock or tune a parameter.
+
+The filter adds no evidence, promotion, registry, PAPER/LIVE, state-mutation or
+external-order authority.

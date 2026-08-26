@@ -1752,7 +1752,10 @@ describe('verified robustness evidence', () => {
         strategy_metrics: metrics, benchmark_metrics: { ...metrics, total_return: '-0.0434', excess_return: '0' },
         cost_stress: { '5': { strategy_metrics: metrics, benchmark_metrics: metrics } },
         curve: [{ trading_day: '2026-07-28', signal_count: 10, eligible_symbol_count: 75, strategy_return: '-0.01', benchmark_return: '-0.011', strategy_equity: '0.99', benchmark_equity: '0.989', excess_equity: '0.001' }],
-        sectors: [group], symbols: [{ ...group, group_id: '600036', group_name: '600036' }], passed: false,
+        sectors: [group], symbols: [
+          { ...group, group_id: '600036', group_name: '600036' },
+          { ...group, group_id: '000001', group_name: '000001' },
+        ], passed: false,
       },
       research_gate: {
         passed: false,
@@ -1921,6 +1924,12 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getAllByRole('tab', { name: '时间稳定性 · 2/4' })[1])
     expect(screen.getAllByText('连续时间块 2/4 正向').length).toBeGreaterThan(0)
     expect(screen.getAllByText('单块绝对贡献占比低于 60%').length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole('tab', { name: '75 个股' }))
+    expect(screen.getByText('当前结果个股 2/2')).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('搜索本次因子个股'), { target: { value: '000001' } })
+    expect(screen.getByText('当前结果个股 1/2')).toBeInTheDocument()
+    expect(screen.getByText('000001')).toBeInTheDocument()
+    expect(screen.queryByText('600036')).not.toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('本地因子实验名称'), { target: { value: '三时段方向方案 A' } })
     fireEvent.click(screen.getByRole('button', { name: '保存到本地因子实验' }))
     expect(screen.getByText('已保存“三时段方向方案 A”；相同结果哈希会更新原记录。')).toBeInTheDocument()

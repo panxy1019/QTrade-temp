@@ -1162,7 +1162,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           {
             key: 'symbols',
             label: '75 个股',
-            children: <GroupTable rows={result.backtest.symbols} nameLabel="证券" />,
+            children: <GroupTable rows={result.backtest.symbols} nameLabel="证券" searchLabel="搜索本次因子个股" summaryLabel="当前结果个股" />,
           },
         ]} />
         <Alert
@@ -1335,23 +1335,42 @@ function StabilityPanel({ stability }: { stability: IntradayFactorBacktest['stab
   </Space>
 }
 
-function GroupTable({ rows, nameLabel }: { rows: IntradayFactorBacktest['backtest']['sectors']; nameLabel: string }) {
-  return <Table
-    rowKey="group_id"
-    size="small"
-    dataSource={rows}
-    pagination={{ pageSize: 8, showSizeChanger: false }}
-    columns={[
-      { title: nameLabel, dataIndex: 'group_name' },
-      { title: '信号数', dataIndex: 'signal_count' },
-      { title: '信号后均值', dataIndex: 'mean_signal_forward_return', render: (value: string) => formatPercent(value) },
-      { title: '信号胜率', dataIndex: 'signal_hit_rate', render: (value: string) => formatPercent(value) },
-      { title: '策略收益', render: (_: unknown, row: typeof rows[number]) => formatPercent(row.strategy_metrics.total_return) },
-      { title: '超额收益', render: (_: unknown, row: typeof rows[number]) => formatPercent(row.strategy_metrics.excess_return) },
-      { title: '最大回撤', render: (_: unknown, row: typeof rows[number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
-    ]}
-    scroll={{ x: 900 }}
-  />
+function GroupTable({ rows, nameLabel, searchLabel, summaryLabel }: {
+  rows: IntradayFactorBacktest['backtest']['sectors']
+  nameLabel: string
+  searchLabel?: string
+  summaryLabel?: string
+}) {
+  const [query, setQuery] = useState('')
+  const normalized = query.trim().toLowerCase()
+  const filteredRows = normalized
+    ? rows.filter((row) => row.group_id.toLowerCase().includes(normalized) || row.group_name.toLowerCase().includes(normalized))
+    : rows
+  return <Space orientation="vertical" style={{ width: '100%' }}>
+    {searchLabel && <>
+      <Space wrap>
+        <Input.Search aria-label={searchLabel} allowClear placeholder="输入六位股票代码" value={query} onChange={(event) => setQuery(event.target.value)} style={{ width: 280 }} />
+        <Typography.Text>{summaryLabel} {filteredRows.length}/{rows.length}</Typography.Text>
+      </Space>
+      <Typography.Text type="secondary">筛选只定位本次同一 75 股因果回放的逐股票结果，不重跑、不重选股票或参数。</Typography.Text>
+    </>}
+    <Table
+      rowKey="group_id"
+      size="small"
+      dataSource={filteredRows}
+      pagination={{ pageSize: 8, showSizeChanger: false }}
+      columns={[
+        { title: nameLabel, dataIndex: 'group_name' },
+        { title: '信号数', dataIndex: 'signal_count' },
+        { title: '信号后均值', dataIndex: 'mean_signal_forward_return', render: (value: string) => formatPercent(value) },
+        { title: '信号胜率', dataIndex: 'signal_hit_rate', render: (value: string) => formatPercent(value) },
+        { title: '策略收益', render: (_: unknown, row: typeof rows[number]) => formatPercent(row.strategy_metrics.total_return) },
+        { title: '超额收益', render: (_: unknown, row: typeof rows[number]) => formatPercent(row.strategy_metrics.excess_return) },
+        { title: '最大回撤', render: (_: unknown, row: typeof rows[number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+      ]}
+      scroll={{ x: 900 }}
+    />
+  </Space>
 }
 
 function buildChartCurve(result: IntradayFactorBacktest) {

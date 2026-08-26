@@ -257,7 +257,10 @@ the A-share T+1 exit is the open of the next session's Bar labelled `09:35`
 (interval start `09:30`). The response includes IC/Rank IC/ICIR, related-feature
 correlations, conditional event returns, standard performance metrics, an
 equal-weight same-horizon benchmark, 0/5/10/20 bps cost stress, daily curves and
-all 15 sector/75 stock breakdowns. Its robustness section fixes candidate body
+all 15 sector/75 stock breakdowns. The current-result stock tab can filter those
+same-run rows by six-digit code or name and keeps signal count, conditional mean,
+hit rate, strategy return, active excess and drawdown together; filtering never
+reruns the test or selects a new stock/parameter. Its robustness section fixes candidate body
 thresholds at `0/5/10/20 bps`, uses the first half as the initial training
 window, selects a threshold from prior sessions only, and evaluates disjoint
 expanding-window test folds. The training day's T+1 exit is known at the test
