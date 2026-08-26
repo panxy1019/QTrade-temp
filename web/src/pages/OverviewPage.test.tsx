@@ -29,6 +29,7 @@ describe('quant workflow overview', () => {
     render(<MemoryRouter><OverviewPage data={data} dark publicNode /></MemoryRouter>)
 
     expect(screen.getByText('当前阻断：因子有效性与稳健性未通过')).toBeInTheDocument()
+    expect(screen.getByText('数据与因子定义').closest('.ant-steps')).toHaveClass('ant-steps-vertical')
     expect(screen.getByText('75 股、15 板块的签名 5 分钟历史数据可用于研究。')).toBeInTheDocument()
     expect(screen.getByText('三连阳因子已完成检验，但结论为 NOT_ELIGIBLE。')).toBeInTheDocument()
     expect(screen.getByText('4 个主动模板可作诊断起点；当前因子不能注册或晋级。')).toBeInTheDocument()

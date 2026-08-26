@@ -1,4 +1,4 @@
-import { Alert, Card, Col, Row, Space, Steps, Table, Tag, Typography } from 'antd'
+import { Alert, Card, Col, Grid, Row, Space, Steps, Table, Tag, Typography } from 'antd'
 import { Link } from 'react-router-dom'
 import { EquityChart } from '../charts/EquityChart'
 import { MetricCard } from '../components/MetricCard'
@@ -6,6 +6,7 @@ import { StatusTag } from '../components/StatusTag'
 import type { PlatformSnapshot } from '../types'
 
 export function OverviewPage({ data, dark, publicNode }: { data: PlatformSnapshot | null; dark: boolean; publicNode: boolean }) {
+  const screens = Grid.useBreakpoint()
   const mode = data?.system.mode ?? 'PAPER'
   const risk = data?.system.risk_state ?? 'HALTED'
   const failures = Object.keys(data?.availability?.failures ?? {})
@@ -50,7 +51,8 @@ export function OverviewPage({ data, dark, publicNode }: { data: PlatformSnapsho
           style={{ marginBottom: 18 }}
         />
         <Steps
-          responsive
+          orientation={screens.xl ? 'horizontal' : 'vertical'}
+          responsive={false}
           items={[
             {
               title: <Link to="/research">数据与因子定义</Link>,

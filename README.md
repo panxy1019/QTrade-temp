@@ -40,7 +40,9 @@ Its overview presents the workflow as ordered gates: verified data and factor
 definition, factor effectiveness/correlation/robustness, strategy construction,
 causal backtest, PAPER/SHADOW, then separately authorized LIVE. Diagnostic pages
 remain navigable after a failure, but the overview keeps every downstream stage
-blocked and never treats visibility as promotion.
+blocked and never treats visibility as promotion. The six-stage path switches
+to a vertical layout below the large desktop breakpoint so stage labels and
+gate reasons remain readable without horizontal scrolling.
 
 Control endpoints are disabled unless `QTRADE_CONTROL_TOKEN` is supplied in the
 process environment. Send it as `Authorization: Bearer <token>`. Read endpoints

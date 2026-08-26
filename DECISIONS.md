@@ -2233,3 +2233,21 @@ diagnostic, and the public PAPER stage is read-only.
 The sequence is a read-only navigation and explanation surface. It does not
 change API admission, create a strategy or experiment, promote a result, start a
 runtime, enable LIVE, mutate state or transmit an external order.
+
+## ADR-128 — Six-stage workflow becomes vertical below 1200 pixels
+
+Status: accepted, 2026-08-27.
+
+The six-step promotion path fitted a wide desktop, but Ant Design's default
+responsive threshold kept it horizontal at 700 pixels. A real browser check
+showed compressed titles and gate reasons even though unit and build checks were
+green.
+
+The overview now uses the shared responsive breakpoint state and selects a
+vertical Steps orientation whenever the viewport is below `xl` (1200 pixels).
+The component's lower built-in switching threshold is disabled, so tablet and
+narrow desktop widths do not fall back to the unsuitable horizontal layout.
+The wide desktop layout remains unchanged.
+
+This is presentation-only. It does not modify research evidence, gate results,
+runtime state, PAPER/LIVE admission or external-order capability.
