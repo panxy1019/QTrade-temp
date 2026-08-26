@@ -1105,3 +1105,16 @@ The forward-coverage verifier now requires the exact v1 top-level field set and
 rejects generation times more than five minutes ahead of the server clock. These
 checks precede returning the report, so a resigned extension or future-dated
 payload fails closed as unavailable rather than being partially projected.
+
+## ADR-075 — Mutable JSON snapshots synchronize their directory entry
+
+Status: accepted, 2026-08-26.
+
+Flushing a temporary JSON file and atomically renaming it prevents readers from
+seeing partial content, but the replacement directory entry may still be lost
+after a host crash if the parent directory is not synchronized.
+
+The shared JSON publisher now fsyncs the completed temporary file, performs the
+same-directory replace, then fsyncs the parent directory before returning. The
+coverage, intraday detail, 75-stock breadth and continuity publishers inherit
+this durability order without changing their evidence or trading authority.
