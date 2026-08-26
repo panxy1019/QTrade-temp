@@ -2,7 +2,7 @@ import { Alert, Button, Card, Form, Input, InputNumber, Select, Space, Steps, Ta
 import { useState } from 'react'
 import { runIntradayFactorBacktest } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
-import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorLongWindowReport } from '../types'
+import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
 type VerifiedFiveMinuteDataset = NonNullable<FiveMinuteResearchReport['minute_dataset']>
@@ -13,7 +13,17 @@ interface FormValues {
   end: string
   cost_bps: string | number
   minimum_body_return_bps: string | number
+  first_direction: IntradayOpeningDirection
+  second_direction: IntradayOpeningDirection
+  third_direction: IntradayOpeningDirection
+  combination: 'ALL' | 'ANY'
 }
+
+const directionOptions = [
+  { value: 'BULLISH', label: '看涨（收盘高于开盘）' },
+  { value: 'BEARISH', label: '看跌（收盘低于开盘）' },
+  { value: 'IGNORE', label: '忽略该时段' },
+]
 
 const workflowLabels: Record<string, string> = {
   FACTOR_DEFINITION: '因子定义',
@@ -190,6 +200,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const [result, setResult] = useState<IntradayFactorBacktest | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
+  const [selectedFactor, setSelectedFactor] = useState<IntradayFactorBacktestRequest['factor']>('opening_three_ten_minute_bullish')
 
   if (!dataset) {
     return <Card title="分钟因子研究工作台"><Alert showIcon type="warning" title="长历史 5 分钟数据不可用" description="系统不会用合成行情或不完整缓存替代经过 checksum 验证的多股票数据。" /></Card>
@@ -203,12 +214,24 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     end: eligibleEndDays[defaultEndIndex],
     cost_bps: '5',
     minimum_body_return_bps: '0',
+    first_direction: 'BULLISH',
+    second_direction: 'BULLISH',
+    third_direction: 'BULLISH',
+    combination: 'ALL',
   }
   const submit = async (values: FormValues) => {
     const payload: IntradayFactorBacktestRequest = {
-      ...values,
+      factor: values.factor,
+      start: values.start,
+      end: values.end,
       cost_bps: String(values.cost_bps),
       minimum_body_return_bps: String(values.minimum_body_return_bps),
+      directions: values.factor === 'opening_three_ten_minute_bullish'
+        ? ['BULLISH', 'BULLISH', 'BULLISH']
+        : [values.first_direction, values.second_direction, values.third_direction],
+      combination: values.factor === 'opening_three_ten_minute_bullish'
+        ? 'ALL'
+        : values.combination,
     }
     setRunning(true)
     setError(null)
@@ -245,14 +268,24 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       <Alert showIcon type="info" title="从因子到模拟盘的完整门控" description="三根 10 分钟阳线在 10:00 才确认，最早取 10:05 标记的下一根 5 分钟 Bar 开盘价（区间起点 10:00）买入，并按 A 股 T+1 取下一交易日 09:35 标记 Bar 的开盘价（区间起点 09:30）退出。当前参数研究是事后非 PIT 检验，永远不会自动进入 PAPER 或 LIVE。" />
       <Form<FormValues> name="intraday-factor-research-backtest" layout="vertical" initialValues={initialValues} onFinish={(values) => { void submit(values) }}>
         <div className="backtest-lab-grid">
-          <Form.Item name="factor" label="因子" rules={[{ required: true }]}><Select options={[{ value: 'opening_three_ten_minute_bullish', label: '09:30 起三根 10 分钟阳线' }]} /></Form.Item>
+          <Form.Item name="factor" label="因子" rules={[{ required: true }]}><Select onChange={setSelectedFactor} options={[
+            { value: 'opening_three_ten_minute_bullish', label: '09:30 起三根 10 分钟阳线' },
+            { value: 'custom_opening_ten_minute_direction_rule', label: '自定义开盘十分钟方向规则' },
+          ]} /></Form.Item>
           <Form.Item name="start" label="开始交易日" rules={[{ required: true }]}><Select showSearch options={eligibleEndDays.map((value) => ({ value, label: value }))} /></Form.Item>
           <Form.Item name="end" label="结束交易日" rules={[{ required: true }]}><Select showSearch options={eligibleEndDays.map((value) => ({ value, label: value }))} /></Form.Item>
           <Form.Item name="cost_bps" label="单边成本（bps）" rules={[{ required: true }]}><InputNumber min={0} max={100} step={1} stringMode /></Form.Item>
           <Form.Item name="minimum_body_return_bps" label="每根 10 分钟实体下限（bps）" rules={[{ required: true }]}><InputNumber min={0} max={1000} step={1} stringMode /></Form.Item>
+          {selectedFactor === 'custom_opening_ten_minute_direction_rule' && <>
+            <Form.Item name="first_direction" label="第一段 09:30–09:40" rules={[{ required: true }]}><Select options={directionOptions} /></Form.Item>
+            <Form.Item name="second_direction" label="第二段 09:40–09:50" rules={[{ required: true }]}><Select options={directionOptions} /></Form.Item>
+            <Form.Item name="third_direction" label="第三段 09:50–10:00" rules={[{ required: true }]}><Select options={directionOptions} /></Form.Item>
+            <Form.Item name="combination" label="条件组合" rules={[{ required: true }]}><Select options={[{ value: 'ALL', label: '全部满足（AND）' }, { value: 'ANY', label: '任一满足（OR）' }]} /></Form.Item>
+          </>}
         </div>
         <Button type="primary" htmlType="submit" loading={running}>运行 75 股因子检验与回测</Button>
       </Form>
+      {selectedFactor === 'custom_opening_ten_minute_direction_rule' && <Alert showIcon type="warning" title="受限规则，不执行任意表达式" description="只允许三段已结束十分钟 K 线的看涨、看跌或忽略条件，以及 AND/OR 组合；10:00 收盘后才知道信号，10:05 下一根原生 5 分钟 Bar 开盘执行。禁止 eval、未来字段、同 Bar 成交和自动 PAPER 晋级。" />}
       {error && <Alert showIcon type="error" title="因子研究未完成" description={error} />}
       {result && <>
         <Alert

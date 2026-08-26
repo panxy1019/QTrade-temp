@@ -22,12 +22,21 @@ _ENTRY_TIME = time(10, 5)
 _EXIT_TIME = time(9, 35)
 _COST_STRESS_BPS = (0, 5, 10, 20)
 _ROBUSTNESS_THRESHOLDS_BPS = tuple(Decimal(value) for value in (0, 5, 10, 20))
+_OPENING_TEN_MINUTE_LABELS = (
+    "0930_0940",
+    "0940_0950",
+    "0950_1000",
+)
+_OPENING_DIRECTIONS = frozenset({"BULLISH", "BEARISH", "IGNORE"})
+_OPENING_COMBINATIONS = frozenset({"ALL", "ANY"})
 
 
 @dataclass(frozen=True, slots=True)
 class OpeningTripleBullishSpec:
     cost_bps: Decimal = Decimal("5")
     minimum_body_return_bps: Decimal = Decimal("0")
+    directions: tuple[str, str, str] = ("BULLISH", "BULLISH", "BULLISH")
+    combination: str = "ALL"
 
     def __post_init__(self) -> None:
         if (
@@ -44,10 +53,58 @@ class OpeningTripleBullishSpec:
             raise ValueError(
                 "minimum_body_return_bps must be finite and between 0 and 1000"
             )
+        if len(self.directions) != 3:
+            raise ValueError("opening directions must contain exactly three values")
+        if any(direction not in _OPENING_DIRECTIONS for direction in self.directions):
+            raise ValueError("unsupported opening direction")
+        if not any(direction != "IGNORE" for direction in self.directions):
+            raise ValueError(
+                "opening rule requires at least one completed ten-minute bar"
+            )
+        if self.combination not in _OPENING_COMBINATIONS:
+            raise ValueError("opening combination must be ALL or ANY")
 
     @property
     def factor_id(self) -> str:
-        return "opening-three-ten-minute-bullish-v1"
+        if self.directions == ("BULLISH", "BULLISH", "BULLISH") and (
+            self.combination == "ALL"
+        ):
+            return "opening-three-ten-minute-bullish-v1"
+        return "opening-ten-minute-direction-rule-v1"
+
+    @property
+    def factor_name(self) -> str:
+        if self.factor_id == "opening-three-ten-minute-bullish-v1":
+            return "09:30 起三根十分钟阳线"
+        return "自定义开盘十分钟方向规则"
+
+    @property
+    def factor_expression(self) -> str:
+        clauses = [
+            f"{direction.lower()}_10m_{label}"
+            for direction, label in zip(
+                self.directions,
+                _OPENING_TEN_MINUTE_LABELS,
+                strict=True,
+            )
+            if direction != "IGNORE"
+        ]
+        operator = "AND" if self.combination == "ALL" else "OR"
+        return f" {operator} ".join(clauses)
+
+    def directional_score(self, body_returns: tuple[Decimal, ...]) -> Decimal:
+        if len(body_returns) != 3:
+            raise ValueError("opening rule requires exactly three ten-minute returns")
+        scores = [
+            body_return if direction == "BULLISH" else -body_return
+            for direction, body_return in zip(
+                self.directions,
+                body_returns,
+                strict=True,
+            )
+            if direction != "IGNORE"
+        ]
+        return min(scores) if self.combination == "ALL" else max(scores)
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,6 +121,7 @@ class IntradayFactorObservation:
     entry_price: Decimal
     exit_price: Decimal
     minimum_ten_minute_body_return: Decimal
+    directional_rule_score: Decimal
     opening_30m_return: Decimal
     opening_30m_range_position: Decimal
     gross_forward_return: Decimal
@@ -176,6 +234,10 @@ class IntradayRobustnessValidation:
 @dataclass(frozen=True, slots=True)
 class IntradayFactorResearchResult:
     factor_id: str
+    factor_name: str
+    factor_expression: str
+    factor_directions: tuple[str, str, str]
+    factor_combination: str
     start: date
     end: date
     selected_session_count: int
@@ -256,7 +318,10 @@ def run_opening_triple_bullish_research(
                 for pair in (first_six[0:2], first_six[2:4], first_six[4:6])
             )
             minimum_ten_minute_body_return = min(ten_minute_returns)
-            signal = minimum_ten_minute_body_return > threshold
+            directional_rule_score = selected_spec.directional_score(
+                ten_minute_returns
+            )
+            signal = directional_rule_score > threshold
             signal_bar = first_six[-1]
             entry_bar = day_bars[6]
             exit_bar = exit_bars[0]
@@ -291,6 +356,7 @@ def run_opening_triple_bullish_research(
                     minimum_ten_minute_body_return=(
                         minimum_ten_minute_body_return
                     ),
+                    directional_rule_score=directional_rule_score,
                     opening_30m_return=(
                         signal_bar.close / first_six[0].open - Decimal("1")
                     ),
@@ -399,6 +465,10 @@ def run_opening_triple_bullish_research(
     }
     return IntradayFactorResearchResult(
         factor_id=selected_spec.factor_id,
+        factor_name=selected_spec.factor_name,
+        factor_expression=selected_spec.factor_expression,
+        factor_directions=selected_spec.directions,
+        factor_combination=selected_spec.combination,
         start=start,
         end=end,
         selected_session_count=len(selected_days),
@@ -625,7 +695,7 @@ def _threshold_observations(
     return [
         replace(
             item,
-            signal=item.minimum_ten_minute_body_return > threshold,
+            signal=item.directional_rule_score > threshold,
         )
         for item in observations
         if item.trading_day in selected_days

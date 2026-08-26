@@ -17,7 +17,7 @@ from math import isclose, isfinite
 from pathlib import Path
 from secrets import compare_digest
 from statistics import median
-from typing import Any, Literal, cast
+from typing import Any, Literal, Self, cast
 from zoneinfo import ZoneInfo
 
 import pyarrow as pa  # type: ignore[import-untyped]
@@ -26,7 +26,7 @@ import pyarrow.parquet as pq  # type: ignore[import-untyped]
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, StrictInt
+from pydantic import BaseModel, ConfigDict, StrictInt, model_validator
 
 from qtrade.accounting import Ledger
 from qtrade.audit import AuditEvent, AuditLog
@@ -66,7 +66,7 @@ _MIN_INTRADAY_FACTOR_SESSIONS = 20
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "51a963305c5c5465bc90ba861b837f4cf55ed4f28ab83d0a339984a9cc4e063d"
+    "a4ee8f9fb7e0a7f20e638021ffc3c4bc10ab1c2bd25196ffed094d364c4694d3"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -139,13 +139,35 @@ class SingleStockFiveMinuteBacktestRequest(BaseModel):
 class IntradayFactorBacktestRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    factor: Literal["opening_three_ten_minute_bullish"] = (
-        "opening_three_ten_minute_bullish"
-    )
+    factor: Literal[
+        "opening_three_ten_minute_bullish",
+        "custom_opening_ten_minute_direction_rule",
+    ] = "opening_three_ten_minute_bullish"
     start: date
     end: date
     cost_bps: Decimal = Decimal("5")
     minimum_body_return_bps: Decimal = Decimal("0")
+    directions: tuple[
+        Literal["BULLISH", "BEARISH", "IGNORE"],
+        Literal["BULLISH", "BEARISH", "IGNORE"],
+        Literal["BULLISH", "BEARISH", "IGNORE"],
+    ] = ("BULLISH", "BULLISH", "BULLISH")
+    combination: Literal["ALL", "ANY"] = "ALL"
+
+    @model_validator(mode="after")
+    def validate_factor_contract(self) -> Self:
+        if self.factor == "opening_three_ten_minute_bullish" and (
+            self.directions != ("BULLISH", "BULLISH", "BULLISH")
+            or self.combination != "ALL"
+        ):
+            raise ValueError(
+                "fixed three-bullish factor cannot override directions or combination"
+            )
+        if not any(direction != "IGNORE" for direction in self.directions):
+            raise ValueError(
+                "opening rule requires at least one completed ten-minute bar"
+            )
+        return self
 
 
 @dataclass(frozen=True, slots=True)
@@ -1342,6 +1364,8 @@ def create_app(
             spec = OpeningTripleBullishSpec(
                 cost_bps=payload.cost_bps,
                 minimum_body_return_bps=payload.minimum_body_return_bps,
+                directions=payload.directions,
+                combination=payload.combination,
             )
         except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -4991,6 +5015,8 @@ def _load_verified_intraday_factor_robustness(
             "end": selected_days[-1],
             "cost_bps": "5",
             "minimum_body_return_bps": "0",
+            "directions": ["BULLISH", "BULLISH", "BULLISH"],
+            "combination": "ALL",
         }
         expected_dataset_claim = {
             "data_version": dataset["data_version"],
@@ -8490,16 +8516,21 @@ def _intraday_factor_preview(
         "classification": "AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT",
         "factor_definition": {
             "factor_id": result.factor_id,
-            "name": "09:30 起三根十分钟阳线",
-            "expression": (
-                "bullish_10m_0930_0940 AND bullish_10m_0940_0950 "
-                "AND bullish_10m_0950_1000"
-            ),
+            "name": result.factor_name,
+            "expression": result.factor_expression,
             "source_interval": "NATIVE_5M_AGGREGATED_TO_10M",
             "source_timestamp_convention": "BAR_END_TIME",
             "source_bars": "09:35,09:40,09:45,09:50,09:55,10:00",
             "known_at": "10:00_BAR_CLOSE",
             "minimum_body_return_bps": str(payload.minimum_body_return_bps),
+            "directions": list(result.factor_directions),
+            "combination": result.factor_combination,
+            "allowed_features": [
+                "TEN_MINUTE_BODY_0930_0940",
+                "TEN_MINUTE_BODY_0940_0950",
+                "TEN_MINUTE_BODY_0950_1000",
+            ],
+            "arbitrary_code_execution": False,
         },
         "parameters": {
             "factor": payload.factor,
@@ -8507,6 +8538,8 @@ def _intraday_factor_preview(
             "end": payload.end.isoformat(),
             "cost_bps": str(payload.cost_bps),
             "minimum_body_return_bps": str(payload.minimum_body_return_bps),
+            "directions": list(payload.directions),
+            "combination": payload.combination,
         },
         "workflow": workflow,
         "factor_validation": {

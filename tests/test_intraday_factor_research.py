@@ -107,6 +107,71 @@ def test_three_ten_minute_bullish_signal_executes_next_bar_and_exits_t_plus_one(
     assert result.state_mutation is False
 
 
+def test_bounded_opening_direction_rule_uses_only_completed_ten_minute_bars() -> None:
+    days = tuple(date(2026, 8, 3) + timedelta(days=index) for index in range(6))
+    symbols = tuple(f"6004{index:02d}" for index in range(5))
+    records = _bars(days=days, symbols=symbols, signal_symbols=set())
+    mixed_symbol = symbols[0]
+    mixed: list[Bar] = []
+    for bar in records:
+        bar_time = bar.timestamp.timetz().replace(tzinfo=None)
+        if bar.symbol == mixed_symbol and bar_time == time(9, 40):
+            close = bar.open * Decimal("1.001")
+            mixed.append(replace(bar, close=close, high=max(bar.high, close)))
+        elif bar.symbol == mixed_symbol and bar_time == time(9, 50):
+            close = bar.open * Decimal("0.999")
+            mixed.append(replace(bar, close=close, low=min(bar.low, close)))
+        else:
+            mixed.append(bar)
+
+    result = run_opening_triple_bullish_research(
+        mixed,
+        sectors={symbol: (f"S{index}", f"板块{index}") for index, symbol in enumerate(symbols)},
+        start=days[0],
+        end=days[-2],
+        spec=OpeningTripleBullishSpec(
+            directions=("BULLISH", "BEARISH", "IGNORE"),
+            combination="ALL",
+        ),
+        quantiles=5,
+    )
+
+    selected = [item for item in result.observations if item.signal]
+    assert selected
+    assert {item.symbol for item in selected} == {mixed_symbol}
+    assert result.factor_id == "opening-ten-minute-direction-rule-v1"
+    assert result.factor_expression == (
+        "bullish_10m_0930_0940 AND bearish_10m_0940_0950"
+    )
+    assert result.factor_directions == ("BULLISH", "BEARISH", "IGNORE")
+    assert result.factor_combination == "ALL"
+    assert all(item.signal_at.time() == time(10, 0) for item in selected)
+    assert all(item.entry_at.time() == time(10, 5) for item in selected)
+    assert all(item.exit_at.date() > item.trading_day for item in selected)
+
+
+def test_bounded_opening_direction_rule_rejects_unsafe_or_empty_definitions() -> None:
+    with pytest.raises(ValueError, match="directions must contain exactly three"):
+        OpeningTripleBullishSpec(directions=("BULLISH", "BEARISH"))  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="unsupported opening direction"):
+        OpeningTripleBullishSpec(directions=("BULLISH", "FUTURE", "IGNORE"))
+    with pytest.raises(ValueError, match="at least one completed ten-minute bar"):
+        OpeningTripleBullishSpec(directions=("IGNORE", "IGNORE", "IGNORE"))
+    with pytest.raises(ValueError, match="combination must be ALL or ANY"):
+        OpeningTripleBullishSpec(combination="EVAL")
+
+    any_rule = OpeningTripleBullishSpec(
+        directions=("BULLISH", "BEARISH", "IGNORE"),
+        combination="ANY",
+    )
+    assert any_rule.factor_expression == (
+        "bullish_10m_0930_0940 OR bearish_10m_0940_0950"
+    )
+    assert any_rule.directional_score(
+        (Decimal("-0.001"), Decimal("-0.002"), Decimal("0"))
+    ) == Decimal("0.002")
+
+
 def test_research_reports_factor_effectiveness_correlation_cost_and_sector_stability() -> None:
     days = tuple(date(2026, 7, 1) + timedelta(days=index) for index in range(7))
     symbols = tuple(f"6001{index:02d}" for index in range(10))

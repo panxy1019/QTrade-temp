@@ -259,6 +259,14 @@ a separately locked forward evaluation; the viewed window cannot be relabelled
 as blind confirmation. Order-book buying intensity is only a data contract until
 an authorized five-level L2 source is selected.
 
+Factor construction now includes one deliberately bounded extension of that
+workflow: the three fixed completed intervals accept bullish, bearish or ignored
+direction predicates, joined by ALL/ANY with a shared body threshold. It neither
+evaluates arbitrary formulas nor changes the 10:00 decision, next-Bar entry or
+T+1 exit contract. The immutable three-bullish preset and every custom preview
+flow through the same diagnostics and hard gates; no browser selection can
+register a strategy or grant PAPER/LIVE authority.
+
 The factor veto is also persisted as an immutable 120-session report rather than
 left as a one-off API observation. It fixes a 60-session training prefix, six
 disjoint ten-session tests and thresholds `0/5/10/20 bps`, then binds the exact

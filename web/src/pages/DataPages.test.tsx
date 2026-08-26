@@ -1352,10 +1352,18 @@ describe('verified robustness evidence', () => {
     } as unknown as IntradayFactorBacktest
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce(result)
     render(<ResearchPage data={data} />)
+    fireEvent.mouseDown(screen.getByRole('combobox', { name: '因子' }))
+    fireEvent.click(await screen.findByText('自定义开盘十分钟方向规则'))
+    expect(screen.getByRole('combobox', { name: '第一段 09:30–09:40' })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: '第二段 09:40–09:50' })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: '第三段 09:50–10:00' })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: '条件组合' })).toBeInTheDocument()
+    expect(screen.getByText('受限规则，不执行任意表达式')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('回测已完成，研究硬门未通过')).toBeInTheDocument()
     expect(runIntradayFactorBacktest).toHaveBeenCalledWith(expect.objectContaining({
-      factor: 'opening_three_ten_minute_bullish', cost_bps: '5', minimum_body_return_bps: '0',
+      factor: 'custom_opening_ten_minute_direction_rule', cost_bps: '5', minimum_body_return_bps: '0',
+      directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL',
     }))
     expect(screen.getByText(/实际触发 192\/1500 次/)).toBeInTheDocument()
     expect(screen.getByText('累计收益').nextSibling).toHaveTextContent('-4.08%')

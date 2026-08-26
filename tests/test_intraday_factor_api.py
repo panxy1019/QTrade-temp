@@ -159,3 +159,75 @@ def test_intraday_factor_backtest_fails_closed_without_verified_data() -> None:
     assert response.json()["detail"] == (
         "verified long five-minute dataset unavailable"
     )
+
+
+def test_intraday_factor_backtest_accepts_a_bounded_custom_direction_rule() -> None:
+    response = _client().post(
+        "/intraday-factor-backtest",
+        json={
+            "factor": "custom_opening_ten_minute_direction_rule",
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+            "cost_bps": 5,
+            "minimum_body_return_bps": 0,
+            "directions": ["BULLISH", "BEARISH", "IGNORE"],
+            "combination": "ALL",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["factor_definition"] == {
+        "factor_id": "opening-ten-minute-direction-rule-v1",
+        "name": "自定义开盘十分钟方向规则",
+        "expression": "bullish_10m_0930_0940 AND bearish_10m_0940_0950",
+        "source_interval": "NATIVE_5M_AGGREGATED_TO_10M",
+        "source_timestamp_convention": "BAR_END_TIME",
+        "source_bars": "09:35,09:40,09:45,09:50,09:55,10:00",
+        "known_at": "10:00_BAR_CLOSE",
+        "minimum_body_return_bps": "0",
+        "directions": ["BULLISH", "BEARISH", "IGNORE"],
+        "combination": "ALL",
+        "allowed_features": [
+            "TEN_MINUTE_BODY_0930_0940",
+            "TEN_MINUTE_BODY_0940_0950",
+            "TEN_MINUTE_BODY_0950_1000",
+        ],
+        "arbitrary_code_execution": False,
+    }
+    assert payload["parameters"]["directions"] == [
+        "BULLISH",
+        "BEARISH",
+        "IGNORE",
+    ]
+    assert payload["causal_contract"]["same_bar_execution"] is False
+    assert payload["paper_readiness"] == "NOT_ELIGIBLE"
+    assert payload["state_mutation"] is False
+    assert payload["external_order_transmission"] is False
+
+
+def test_intraday_factor_backtest_rejects_empty_or_mutated_rule_contracts() -> None:
+    client = _client()
+    empty = client.post(
+        "/intraday-factor-backtest",
+        json={
+            "factor": "custom_opening_ten_minute_direction_rule",
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+            "directions": ["IGNORE", "IGNORE", "IGNORE"],
+        },
+    )
+    assert empty.status_code == 422
+    assert "at least one completed ten-minute bar" in empty.text
+
+    mutated_fixed = client.post(
+        "/intraday-factor-backtest",
+        json={
+            "factor": "opening_three_ten_minute_bullish",
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+            "directions": ["BULLISH", "BEARISH", "BULLISH"],
+        },
+    )
+    assert mutated_fixed.status_code == 422
+    assert "fixed three-bullish factor cannot override" in mutated_fixed.text

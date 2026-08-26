@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-26T23:42:40.712934+08:00",
+  "generated_at": "2026-08-27T00:21:39.806257+08:00",
   "implementation": {
-    "factor_module_sha256": "dbe8715506229ed9e7737400f08a0d3e4179673b279bb0c26ef1b874d072c522",
-    "api_module_sha256": "4a17b1fde646a4ef40595f042c753916790532565b6ef518a19e9c4648fac851"
+    "factor_module_sha256": "ada3203e364ed8ed0169eef8cd39caca6c099e07c78ad3200f66a917323209e9",
+    "api_module_sha256": "55f2b23d960a722efc1386198dd5c5035cc1453f3103f354dad7ece2ab23254b"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -40,9 +40,15 @@
     "start": "2026-03-03",
     "end": "2026-08-24",
     "cost_bps": "5",
-    "minimum_body_return_bps": "0"
+    "minimum_body_return_bps": "0",
+    "directions": [
+      "BULLISH",
+      "BULLISH",
+      "BULLISH"
+    ],
+    "combination": "ALL"
   },
-  "result_preview_hash": "51a963305c5c5465bc90ba861b837f4cf55ed4f28ab83d0a339984a9cc4e063d",
+  "result_preview_hash": "a4ee8f9fb7e0a7f20e638021ffc3c4bc10ab1c2bd25196ffed094d364c4694d3",
   "summary": {
     "observation_count": 9000,
     "signal_count": 1001,
@@ -134,14 +140,32 @@
       "source_timestamp_convention": "BAR_END_TIME",
       "source_bars": "09:35,09:40,09:45,09:50,09:55,10:00",
       "known_at": "10:00_BAR_CLOSE",
-      "minimum_body_return_bps": "0"
+      "minimum_body_return_bps": "0",
+      "directions": [
+        "BULLISH",
+        "BULLISH",
+        "BULLISH"
+      ],
+      "combination": "ALL",
+      "allowed_features": [
+        "TEN_MINUTE_BODY_0930_0940",
+        "TEN_MINUTE_BODY_0940_0950",
+        "TEN_MINUTE_BODY_0950_1000"
+      ],
+      "arbitrary_code_execution": false
     },
     "parameters": {
       "factor": "opening_three_ten_minute_bullish",
       "start": "2026-03-03",
       "end": "2026-08-24",
       "cost_bps": "5",
-      "minimum_body_return_bps": "0"
+      "minimum_body_return_bps": "0",
+      "directions": [
+        "BULLISH",
+        "BULLISH",
+        "BULLISH"
+      ],
+      "combination": "ALL"
     },
     "workflow": [
       {
@@ -7218,7 +7242,7 @@
     "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
     "state_mutation": false,
     "external_order_transmission": false,
-    "preview_hash": "51a963305c5c5465bc90ba861b837f4cf55ed4f28ab83d0a339984a9cc4e063d"
+    "preview_hash": "a4ee8f9fb7e0a7f20e638021ffc3c4bc10ab1c2bd25196ffed094d364c4694d3"
   },
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
@@ -7232,5 +7256,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "4603eb5710639f9f5a351f45719d4049d3e795c4464ae81c2124f7c2bf3ae213"
+  "evidence_sha256": "09da6fbc14f876a238049bc919ee58206d0206a40e5712ee4222008aa32afb30"
 }

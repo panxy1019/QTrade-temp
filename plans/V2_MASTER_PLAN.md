@@ -142,6 +142,10 @@ npm --prefix web run build
 - [x] Add a bounded, ephemeral parameterized backtest preview over the verified
   historical Parquet dataset, with a Chinese web form, deterministic result hash,
   no registry/PAPER mutation and mandatory non-PIT/NOT_ELIGIBLE labelling.
+- [x] Add a typed three-interval opening-direction factor builder with
+  bullish/bearish/ignore predicates, ALL/ANY combination and one body threshold;
+  preserve fixed timestamps, reject arbitrary code/features and route every
+  result through the existing causal diagnostics and promotion gates.
 - [x] Extend the preview to bounded momentum/reversal/low-volatility comparison
   and a checksum-bound browser-local experiment notebook with save, compare,
   parameter reload and delete; keep all records outside formal strategy lineage.

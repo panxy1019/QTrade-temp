@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { IntradayFactorBacktestRequest } from '../types'
 import { loadMinuteBarSeries, loadPlatformSnapshot, runIntradayFactorBacktest } from './client'
 
 describe('platform snapshot request fan-out', () => {
@@ -116,9 +117,11 @@ describe('platform snapshot request fan-out', () => {
   })
 
   it('retries only a network failure for the stateless intraday factor request', async () => {
-    const payload = {
-      factor: 'opening_three_ten_minute_bullish' as const,
+    const payload: IntradayFactorBacktestRequest = {
+      factor: 'opening_three_ten_minute_bullish',
       start: '2026-07-28', end: '2026-08-24', cost_bps: '5', minimum_body_return_bps: '0',
+      directions: ['BULLISH', 'BULLISH', 'BULLISH'],
+      combination: 'ALL',
     }
     const fetchMock = vi.fn()
       .mockRejectedValueOnce(new TypeError('Failed to fetch'))

@@ -260,6 +260,17 @@ expanding-window test folds. The training day's T+1 exit is known at the test
 day's `09:35` open before that day's `10:00` signal; test returns never enter the
 same fold's selection.
 
+The workbench also exposes a bounded opening-direction rule builder over those
+same three completed intervals. Each slot can be `BULLISH`, `BEARISH` or
+`IGNORE`, the non-ignored predicates can be joined with `ALL` or `ANY`, and one
+nonnegative body threshold applies to every active slot. This is a typed rule
+contract rather than an arbitrary expression evaluator: requests cannot select
+other fields, execute code, change the three time windows or move the decision,
+entry and T+1 exit timestamps. The original three-bullish factor remains an
+immutable preset. Custom runs reuse the same effectiveness, correlation,
+walk-forward, cost, sector, stock and promotion gates; they are stateless
+research previews and cannot create a PAPER candidate or external order.
+
 The first disclosed 20-session run from 2026-07-28 through 2026-08-24 produced
 192 signals across 1,500 stock-days. At 5 bps per side it returned `-4.0840%`,
 annualized `-40.8673%`, Sharpe `-3.3347` and maximum drawdown `-5.1038%`.

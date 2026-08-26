@@ -1,6 +1,6 @@
 # Current state
 
-Last updated: 2026-08-26
+Last updated: 2026-08-27
 
 - Goal: evolve the v0.1 stable PAPER/SHADOW core into a real-market-data strategy
   research/evolution platform with a professional Chinese web application and
@@ -252,6 +252,16 @@ Last updated: 2026-08-26
   breakdown, threshold stress and both hard-gate matrices. These are read-only
   views of the fixed response hash; filters cannot change the evaluated universe
   or create a new candidate.
+- Bounded intraday factor construction: the same endpoint and workbench now
+  accept a typed three-slot opening-direction rule. Each completed ten-minute
+  interval is `BULLISH`, `BEARISH` or `IGNORE`; active slots combine with `ALL`
+  or `ANY` under one bounded nonnegative body threshold. The default three-
+  bullish preset cannot be redefined, and custom requests cannot submit code,
+  arbitrary features or alternate timestamps. Every custom result remains
+  causal (10:00 decision, 10:05 next-Bar entry, T+1 09:35 exit), ephemeral,
+  current-universe/QFQ non-PIT and `NOT_ELIGIBLE`; it reuses all existing
+  effectiveness, correlation, robustness and promotion gates without mutating
+  strategy or PAPER state.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

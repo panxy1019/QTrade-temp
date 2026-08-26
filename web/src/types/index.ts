@@ -504,12 +504,16 @@ export interface SingleStockFiveMinuteBacktest {
 }
 
 export interface IntradayFactorBacktestRequest {
-  factor: 'opening_three_ten_minute_bullish'
+  factor: 'opening_three_ten_minute_bullish' | 'custom_opening_ten_minute_direction_rule'
   start: string
   end: string
   cost_bps: string
   minimum_body_return_bps: string
+  directions: [IntradayOpeningDirection, IntradayOpeningDirection, IntradayOpeningDirection]
+  combination: 'ALL' | 'ANY'
 }
+
+export type IntradayOpeningDirection = 'BULLISH' | 'BEARISH' | 'IGNORE'
 
 export interface IntradayPerformanceMetrics {
   total_return: string
@@ -553,6 +557,10 @@ export interface IntradayFactorBacktest {
     source_bars: string
     known_at: string
     minimum_body_return_bps: string
+    directions: [IntradayOpeningDirection, IntradayOpeningDirection, IntradayOpeningDirection]
+    combination: 'ALL' | 'ANY'
+    allowed_features: string[]
+    arbitrary_code_execution: false
   }
   parameters: IntradayFactorBacktestRequest
   workflow: Array<{ id: string; status: string; detail: string }>
