@@ -68,7 +68,7 @@ _MIN_INTRADAY_FACTOR_SESSIONS = 20
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d"
+    "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -8658,6 +8658,7 @@ def _intraday_factor_preview(
         "positive_conditional_excess_return",
         "minimum_ten_clustered_signal_sessions",
         "newey_west_t_statistic_above_1_96",
+        "temporal_stability_passed",
         "positive_rank_ic",
         "positive_sector_ratio_at_least_60pct",
     )
@@ -8682,8 +8683,8 @@ def _intraday_factor_preview(
             "id": "FACTOR_VALIDATION",
             "status": "PASSED" if factor_validation_passed else "FAILED",
             "detail": (
-                "Cross-sectional IC plus session-clustered Newey-West "
-                "conditional event tests completed."
+                "Cross-sectional IC, session-clustered Newey-West and four "
+                "contiguous-block stability tests completed."
             ),
         },
         {
@@ -8786,6 +8787,39 @@ def _intraday_factor_preview(
             "confidence_interval_95_upper": str(
                 event.confidence_interval_95_upper
             ),
+        },
+        "stability_validation": {
+            "classification": result.stability_validation.classification,
+            "blocks": [
+                {
+                    "block_id": block.block_id,
+                    "start": block.start.isoformat(),
+                    "end": block.end.isoformat(),
+                    "session_count": block.session_count,
+                    "observation_count": block.observation_count,
+                    "signal_count": block.signal_count,
+                    "signal_session_count": block.signal_session_count,
+                    "mean_session_conditional_excess_return": str(
+                        block.mean_session_conditional_excess_return
+                    ),
+                }
+                for block in result.stability_validation.blocks
+            ],
+            "block_count": result.stability_validation.block_count,
+            "positive_block_count": (
+                result.stability_validation.positive_block_count
+            ),
+            "worst_block_mean_conditional_excess_return": str(
+                result.stability_validation.worst_block_mean_conditional_excess_return
+            ),
+            "maximum_absolute_block_contribution_share": str(
+                result.stability_validation.maximum_absolute_block_contribution_share
+            ),
+            "contribution_share_threshold": str(
+                result.stability_validation.contribution_share_threshold
+            ),
+            "criteria": dict(result.stability_validation.criteria),
+            "passed": result.stability_validation.passed,
         },
         "correlation_validation": {
             "correlations": {

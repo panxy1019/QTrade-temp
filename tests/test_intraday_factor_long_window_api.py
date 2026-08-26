@@ -63,8 +63,15 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert float(payload["summary"]["full_window_strategy_metrics"]["total_return"]) < 0
     assert float(payload["summary"]["stitched_strategy_metrics"]["total_return"]) < 0
     assert len(payload["summary"]["threshold_sensitivity"]) == 4
+    stability = payload["result"]["stability_validation"]
+    assert stability["block_count"] == 4
+    assert stability["positive_block_count"] == 2
+    assert stability["passed"] is False
+    assert float(stability["worst_block_mean_conditional_excess_return"]) < 0
+    assert float(stability["maximum_absolute_block_contribution_share"]) < 0.60
+    assert stability["criteria"]["positive_block_ratio_at_least_75pct"] is False
     assert payload["result_preview_hash"] == (
-        "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d"
+        "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3"
     )
     assert payload["promotion"] == "NOT_ELIGIBLE"
     assert payload["paper_readiness"] == "NOT_ELIGIBLE"
@@ -112,7 +119,7 @@ def test_resigned_changed_result_cannot_replace_fixed_long_window_evidence(
     payload = _client(changed_path).get("/intraday-factor-robustness").json()
 
     assert changed_result_hash != (
-        "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d"
+        "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3"
     )
     assert payload["report_id"] is None
     assert payload["promotion"] == "NOT_EVALUATED"

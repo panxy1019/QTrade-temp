@@ -30,6 +30,8 @@ _OPENING_TEN_MINUTE_LABELS = (
 )
 _OPENING_DIRECTIONS = frozenset({"BULLISH", "BEARISH", "IGNORE"})
 _OPENING_COMBINATIONS = frozenset({"ALL", "ANY"})
+_TEMPORAL_STABILITY_BLOCK_COUNT = 4
+_MAX_TEMPORAL_BLOCK_CONTRIBUTION_SHARE = Decimal("0.60")
 
 
 @dataclass(frozen=True, slots=True)
@@ -162,6 +164,31 @@ class IntradayEventSummary:
 
 
 @dataclass(frozen=True, slots=True)
+class IntradayStabilityBlock:
+    block_id: str
+    start: date
+    end: date
+    session_count: int
+    observation_count: int
+    signal_count: int
+    signal_session_count: int
+    mean_session_conditional_excess_return: Decimal
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayFactorStability:
+    classification: str
+    blocks: tuple[IntradayStabilityBlock, ...]
+    block_count: int
+    positive_block_count: int
+    worst_block_mean_conditional_excess_return: Decimal
+    maximum_absolute_block_contribution_share: Decimal
+    contribution_share_threshold: Decimal
+    criteria: Mapping[str, bool]
+    passed: bool
+
+
+@dataclass(frozen=True, slots=True)
 class IntradayFactorDay:
     trading_day: date
     signal_count: int
@@ -273,6 +300,7 @@ class IntradayFactorResearchResult:
     observations: tuple[IntradayFactorObservation, ...]
     factor_metrics: IntradayFactorMetrics
     event_summary: IntradayEventSummary
+    stability_validation: IntradayFactorStability
     correlations: Mapping[str, Decimal]
     strategy_metrics: PerformanceMetrics
     benchmark_metrics: PerformanceMetrics
@@ -453,6 +481,7 @@ def run_opening_triple_bullish_research(
         key=lambda item: (item.symbol, item.symbol),
     )
     event_summary = _event_summary(observations, sector_groups)
+    stability = _temporal_stability_validation(observations, selected_days)
     robustness = _run_robustness_validation(
         observations,
         selected_days,
@@ -473,6 +502,7 @@ def run_opening_triple_bullish_research(
         "newey_west_t_statistic_above_1_96": (
             event_summary.newey_west_t_statistic > Decimal("1.96")
         ),
+        "temporal_stability_passed": stability.passed,
         "positive_rank_ic": factor_metrics.rank_ic > 0,
         "positive_sector_ratio_at_least_60pct": (
             event_summary.positive_sector_count * 5
@@ -512,6 +542,7 @@ def run_opening_triple_bullish_research(
         observations=tuple(observations),
         factor_metrics=factor_metrics,
         event_summary=event_summary,
+        stability_validation=stability,
         correlations=correlations,
         strategy_metrics=base_evaluation[0],
         benchmark_metrics=base_evaluation[1],
@@ -999,21 +1030,9 @@ def _event_summary(
         else sum(signals, start=Decimal("0")) / len(signals)
     )
     mean_universe = sum(universe, start=Decimal("0")) / len(universe)
-    by_day: dict[date, list[IntradayFactorObservation]] = defaultdict(list)
-    for observation in observations:
-        by_day[observation.trading_day].append(observation)
-    session_excess_returns: list[Decimal] = []
-    for rows in (by_day[trading_day] for trading_day in sorted(by_day)):
-        session_signals = [
-            item.gross_forward_return for item in rows if item.signal
-        ]
-        if not session_signals:
-            continue
-        session_universe = [item.gross_forward_return for item in rows]
-        session_excess_returns.append(
-            sum(session_signals, start=Decimal("0")) / len(session_signals)
-            - sum(session_universe, start=Decimal("0")) / len(session_universe)
-        )
+    session_excess_returns = [
+        value for _, value in _session_conditional_excess_returns(observations)
+    ]
     (
         session_excess_mean,
         newey_west_lag,
@@ -1046,6 +1065,119 @@ def _event_summary(
         confidence_interval_95_lower=confidence_lower,
         confidence_interval_95_upper=confidence_upper,
     )
+
+
+def _temporal_stability_validation(
+    observations: list[IntradayFactorObservation],
+    trading_days: list[date],
+) -> IntradayFactorStability:
+    if len(trading_days) < _TEMPORAL_STABILITY_BLOCK_COUNT:
+        raise ValueError("factor stability requires at least four sessions")
+    if trading_days != sorted(set(trading_days)):
+        raise ValueError("factor stability sessions must be unique and ordered")
+    rows_by_day: dict[date, list[IntradayFactorObservation]] = defaultdict(list)
+    for observation in observations:
+        rows_by_day[observation.trading_day].append(observation)
+    if set(rows_by_day) != set(trading_days):
+        raise ValueError("factor stability observations must cover every session")
+    session_excess = dict(_session_conditional_excess_returns(observations))
+    base_size, larger_block_count = divmod(
+        len(trading_days),
+        _TEMPORAL_STABILITY_BLOCK_COUNT,
+    )
+    block_sizes = [
+        base_size + int(index < larger_block_count)
+        for index in range(_TEMPORAL_STABILITY_BLOCK_COUNT)
+    ]
+    blocks: list[IntradayStabilityBlock] = []
+    offset = 0
+    for index, block_size in enumerate(block_sizes, start=1):
+        block_days = trading_days[offset : offset + block_size]
+        block_rows = [row for day in block_days for row in rows_by_day[day]]
+        block_session_excess = [
+            session_excess[day] for day in block_days if day in session_excess
+        ]
+        blocks.append(
+            IntradayStabilityBlock(
+                block_id=f"TS-{index:02d}",
+                start=block_days[0],
+                end=block_days[-1],
+                session_count=len(block_days),
+                observation_count=len(block_rows),
+                signal_count=sum(row.signal for row in block_rows),
+                signal_session_count=len(block_session_excess),
+                mean_session_conditional_excess_return=(
+                    Decimal("0")
+                    if not block_session_excess
+                    else sum(block_session_excess, start=Decimal("0"))
+                    / len(block_session_excess)
+                ),
+            )
+        )
+        offset += block_size
+    block_means = [
+        block.mean_session_conditional_excess_return for block in blocks
+    ]
+    absolute_sum = sum((abs(value) for value in block_means), start=Decimal("0"))
+    maximum_share = (
+        Decimal("0")
+        if absolute_sum == 0
+        else max(abs(value) for value in block_means) / absolute_sum
+    )
+    positive_block_count = sum(value > 0 for value in block_means)
+    criteria = {
+        "minimum_four_contiguous_blocks": len(blocks) == 4,
+        "every_block_has_signal_session": all(
+            block.signal_session_count > 0 for block in blocks
+        ),
+        "positive_block_ratio_at_least_75pct": (
+            positive_block_count * 4 >= len(blocks) * 3
+        ),
+        "maximum_absolute_block_contribution_share_below_0_60": (
+            maximum_share < _MAX_TEMPORAL_BLOCK_CONTRIBUTION_SHARE
+        ),
+    }
+    return IntradayFactorStability(
+        classification=(
+            "CONTIGUOUS_SESSION_BLOCK_FACTOR_STABILITY_DIAGNOSTIC"
+        ),
+        blocks=tuple(blocks),
+        block_count=len(blocks),
+        positive_block_count=positive_block_count,
+        worst_block_mean_conditional_excess_return=min(block_means),
+        maximum_absolute_block_contribution_share=maximum_share,
+        contribution_share_threshold=(
+            _MAX_TEMPORAL_BLOCK_CONTRIBUTION_SHARE
+        ),
+        criteria=criteria,
+        passed=all(criteria.values()),
+    )
+
+
+def _session_conditional_excess_returns(
+    observations: list[IntradayFactorObservation],
+) -> list[tuple[date, Decimal]]:
+    by_day: dict[date, list[IntradayFactorObservation]] = defaultdict(list)
+    for observation in observations:
+        by_day[observation.trading_day].append(observation)
+    output: list[tuple[date, Decimal]] = []
+    for trading_day in sorted(by_day):
+        rows = by_day[trading_day]
+        session_signals = [
+            item.gross_forward_return for item in rows if item.signal
+        ]
+        if not session_signals:
+            continue
+        session_universe = [item.gross_forward_return for item in rows]
+        output.append(
+            (
+                trading_day,
+                sum(session_signals, start=Decimal("0")) / len(session_signals)
+                - sum(session_universe, start=Decimal("0"))
+                / len(session_universe),
+            )
+        )
+    return output
 
 
 def _newey_west_mean_statistics(

@@ -49,6 +49,11 @@ const gateLabels: Record<string, string> = {
   positive_conditional_excess_return: '条件超额收益为正',
   minimum_ten_clustered_signal_sessions: '至少 10 个聚类信号交易日',
   newey_west_t_statistic_above_1_96: 'Newey-West t 大于 1.96',
+  temporal_stability_passed: '连续时间块稳定性通过',
+  minimum_four_contiguous_blocks: '四个连续互斥时间块完整',
+  every_block_has_signal_session: '每个时间块至少一个信号日',
+  positive_block_ratio_at_least_75pct: '至少 75% 时间块条件超额为正',
+  maximum_absolute_block_contribution_share_below_0_60: '单块绝对贡献占比低于 60%',
   positive_rank_ic: 'Rank IC 为正',
   positive_sector_ratio_at_least_60pct: '至少 60% 行业为正',
   maximum_absolute_factor_correlation_below_0_90: '相关性绝对值低于 0.90',
@@ -112,6 +117,8 @@ export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayF
         {result && <Metric label="聚类信号日" value={String(result.event_summary.clustered_signal_session_count)} />}
         {result && <Metric label="Newey-West t" value={formatNumber(result.event_summary.newey_west_t_statistic)} />}
         {result && <Metric label="聚类超额 95% 区间" value={`${formatPercent(result.event_summary.confidence_interval_95_lower)} ～ ${formatPercent(result.event_summary.confidence_interval_95_upper)}`} />}
+        {result && <Metric label="正向时间块" value={`${result.stability_validation.positive_block_count}/${result.stability_validation.block_count}`} />}
+        {result && <Metric label="最差时间块超额" value={formatPercent(result.stability_validation.worst_block_mean_conditional_excess_return)} />}
         <Metric label="样本外收益" value={formatPercent(summary.stitched_strategy_metrics.total_return)} />
         <Metric label="样本外超额" value={formatPercent(summary.stitched_strategy_metrics.excess_return)} />
         <Metric label="样本外最大回撤" value={formatPercent(summary.stitched_strategy_metrics.maximum_drawdown)} />
@@ -150,6 +157,11 @@ export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayF
             { title: '样本外收益', dataIndex: 'total_return', render: (value: string) => formatPercent(value) },
             { title: '样本外超额', dataIndex: 'excess_return', render: (value: string) => formatPercent(value) },
           ]} />,
+        },
+        {
+          key: 'stability',
+          label: `时间稳定性 · ${result.stability_validation.positive_block_count}/${result.stability_validation.block_count}`,
+          children: <StabilityPanel stability={result.stability_validation} />,
         },
         {
           key: 'sectors',
@@ -452,6 +464,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           <Metric label="日聚类超额均值" value={formatPercent(result.event_summary.mean_session_conditional_excess_return)} />
           <Metric label="Newey-West t" value={formatNumber(result.event_summary.newey_west_t_statistic)} />
           <Metric label="95% 置信区间" value={`${formatPercent(result.event_summary.confidence_interval_95_lower)} ～ ${formatPercent(result.event_summary.confidence_interval_95_upper)}`} />
+          <Metric label="正向时间块" value={`${result.stability_validation.positive_block_count}/${result.stability_validation.block_count}`} />
+          <Metric label="最差时间块超额" value={formatPercent(result.stability_validation.worst_block_mean_conditional_excess_return)} />
           <Metric label="滚动样本外收益" value={formatPercent(result.robustness_validation.stitched_strategy_metrics.total_return)} />
           <Metric label="滚动样本外超额" value={formatPercent(result.robustness_validation.stitched_strategy_metrics.excess_return)} />
         </div>
@@ -514,6 +528,11 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
                 { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
               ]} />
             </Space>,
+          },
+          {
+            key: 'stability',
+            label: `时间稳定性 · ${result.stability_validation.positive_block_count}/${result.stability_validation.block_count}`,
+            children: <StabilityPanel stability={result.stability_validation} />,
           },
           {
             key: 'stress',
@@ -615,6 +634,43 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       </Card>
     </Space>
   </Card>
+}
+
+function StabilityPanel({ stability }: { stability: IntradayFactorBacktest['stability_validation'] }) {
+  const gateRows = Object.entries(stability.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))
+  return <Space orientation="vertical" style={{ width: '100%' }}>
+    <Alert
+      showIcon
+      type={stability.passed ? 'success' : 'warning'}
+      title={`连续时间块 ${stability.positive_block_count}/${stability.block_count} 正向`}
+      description={`最差块日聚类条件超额 ${formatPercent(stability.worst_block_mean_conditional_excess_return)}；最大单块绝对贡献占比 ${formatPercent(stability.maximum_absolute_block_contribution_share)}，硬门要求低于 ${formatPercent(stability.contribution_share_threshold)}。四个块按日期固定且互不重叠，不参与参数重新选择。`}
+    />
+    <Table
+      rowKey="block_id"
+      size="small"
+      pagination={false}
+      dataSource={stability.blocks}
+      columns={[
+        { title: '时间块', dataIndex: 'block_id' },
+        { title: '区间', render: (_: unknown, row: typeof stability.blocks[number]) => `${row.start} → ${row.end}` },
+        { title: '交易日', dataIndex: 'session_count' },
+        { title: '信号日', dataIndex: 'signal_session_count' },
+        { title: '信号', dataIndex: 'signal_count' },
+        { title: '日聚类条件超额', dataIndex: 'mean_session_conditional_excess_return', render: (value: string) => formatPercent(value) },
+      ]}
+      scroll={{ x: 800 }}
+    />
+    <Table
+      rowKey="gate_id"
+      size="small"
+      pagination={false}
+      dataSource={gateRows}
+      columns={[
+        { title: '时间稳定性门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+        { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+      ]}
+    />
+  </Space>
 }
 
 function GroupTable({ rows, nameLabel }: { rows: IntradayFactorBacktest['backtest']['sectors']; nameLabel: string }) {

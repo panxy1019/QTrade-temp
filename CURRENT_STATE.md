@@ -26,9 +26,9 @@ Last updated: 2026-08-27
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 437 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 446 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-26); 55 frontend Vitest
+  (macOS, 2026-08-27); 62 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 429.12 KB with no large-chunk warning.
@@ -277,6 +277,16 @@ Last updated: 2026-08-27
   In the fixed 120-day report all 120 sessions had signals, but clustered excess
   averaged -0.0574%, Newey-West t was -0.4800 and the interval was
   [-0.2916%, 0.1769%]; the hypothesis remains `NOT_ELIGIBLE`.
+- Intraday factor time stability: every selected factor window is divided by
+  date into four fixed, contiguous and mutually exclusive blocks. Each block
+  reports signal days and the mean of its session-clustered conditional excess;
+  no block outcome can change the factor rule, threshold or split. The hard gate
+  requires signals in every block, at least three of four positive block means,
+  and less than 60% of absolute block contribution from any one period. The
+  disclosed 20-session run had two positive blocks and two negative blocks; the
+  signed 120-session result also had only 2/4 positive blocks, with a worst block
+  mean of -0.3125% and maximum contribution share 36.88%. Concentration passed,
+  but sign stability failed, strengthening the existing `NOT_ELIGIBLE` veto.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

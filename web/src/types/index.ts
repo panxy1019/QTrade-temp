@@ -657,6 +657,26 @@ export interface IntradayFactorBacktest {
     confidence_interval_95_lower: string
     confidence_interval_95_upper: string
   }
+  stability_validation: {
+    classification: 'CONTIGUOUS_SESSION_BLOCK_FACTOR_STABILITY_DIAGNOSTIC'
+    blocks: Array<{
+      block_id: string
+      start: string
+      end: string
+      session_count: number
+      observation_count: number
+      signal_count: number
+      signal_session_count: number
+      mean_session_conditional_excess_return: string
+    }>
+    block_count: number
+    positive_block_count: number
+    worst_block_mean_conditional_excess_return: string
+    maximum_absolute_block_contribution_share: string
+    contribution_share_threshold: string
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   correlation_validation: {
     correlations: Record<string, string>
     maximum_absolute_correlation: string

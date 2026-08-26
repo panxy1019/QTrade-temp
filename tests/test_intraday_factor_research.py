@@ -9,6 +9,7 @@ from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.research.intraday_factor import (
     OpeningTripleBullishSpec,
     _newey_west_mean_statistics,
+    _temporal_stability_validation,
     evaluate_opening_rule_correlations,
     run_opening_triple_bullish_research,
 )
@@ -233,6 +234,52 @@ def test_opening_rule_correlations_are_symmetric_and_flag_duplicate_scores() -> 
         evaluate_opening_rule_correlations(result.observations, (default,))
 
 
+def test_temporal_stability_uses_four_contiguous_blocks_and_flags_concentration() -> None:
+    days = tuple(date(2026, 7, 1) + timedelta(days=index) for index in range(9))
+    symbols = tuple(f"6006{index:02d}" for index in range(10))
+    selected_days = list(days[:-1])
+    result = run_opening_triple_bullish_research(
+        _bars(days=days, symbols=symbols, signal_symbols=set(symbols[:4])),
+        sectors={
+            symbol: (f"S{index // 2}", f"板块{index // 2}")
+            for index, symbol in enumerate(symbols)
+        },
+        start=selected_days[0],
+        end=selected_days[-1],
+    )
+    returns_by_day = {
+        trading_day: Decimal("0.10") if index < 2 else Decimal("-0.01")
+        for index, trading_day in enumerate(selected_days)
+    }
+    observations = [
+        replace(
+            observation,
+            gross_forward_return=(
+                returns_by_day[observation.trading_day]
+                if observation.signal
+                else Decimal("0")
+            ),
+        )
+        for observation in result.observations
+    ]
+
+    stability = _temporal_stability_validation(observations, selected_days)
+
+    assert stability.block_count == 4
+    assert [block.session_count for block in stability.blocks] == [2, 2, 2, 2]
+    assert [block.start for block in stability.blocks] == selected_days[::2]
+    assert [block.end for block in stability.blocks] == selected_days[1::2]
+    assert all(block.signal_session_count == 2 for block in stability.blocks)
+    assert stability.positive_block_count == 1
+    assert stability.worst_block_mean_conditional_excess_return < 0
+    assert stability.maximum_absolute_block_contribution_share > Decimal("0.60")
+    assert stability.criteria["positive_block_ratio_at_least_75pct"] is False
+    assert stability.criteria[
+        "maximum_absolute_block_contribution_share_below_0_60"
+    ] is False
+    assert stability.passed is False
+
+
 def test_research_reports_factor_effectiveness_correlation_cost_and_sector_stability() -> None:
     days = tuple(date(2026, 7, 1) + timedelta(days=index) for index in range(7))
     symbols = tuple(f"6001{index:02d}" for index in range(10))
@@ -277,6 +324,17 @@ def test_research_reports_factor_effectiveness_correlation_cost_and_sector_stabi
     assert len(result.daily) == 6
     assert len(result.sectors) == 5
     assert len(result.symbols) == 10
+    assert result.stability_validation.block_count == 4
+    assert result.stability_validation.blocks[0].start == days[0]
+    assert result.stability_validation.blocks[-1].end == days[-2]
+    assert all(
+        left.end < right.start
+        for left, right in zip(
+            result.stability_validation.blocks[:-1],
+            result.stability_validation.blocks[1:],
+            strict=True,
+        )
+    )
     assert result.robustness_validation.candidate_thresholds_bps == (
         Decimal("0"),
         Decimal("5"),
@@ -295,6 +353,7 @@ def test_research_reports_factor_effectiveness_correlation_cost_and_sector_stabi
     assert result.research_gate.criteria["minimum_signal_count"] is True
     assert "minimum_ten_clustered_signal_sessions" in result.research_gate.criteria
     assert "newey_west_t_statistic_above_1_96" in result.research_gate.criteria
+    assert "temporal_stability_passed" in result.research_gate.criteria
     assert result.promotion == "NOT_ELIGIBLE"
     assert "CURRENT_UNIVERSE_NON_PIT" in result.promotion_reasons
 

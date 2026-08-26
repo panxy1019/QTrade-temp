@@ -59,6 +59,24 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
     assert "newey_west_t_statistic_above_1_96" in payload["research_gate"][
         "criteria"
     ]
+    stability = payload["stability_validation"]
+    assert stability["classification"] == (
+        "CONTIGUOUS_SESSION_BLOCK_FACTOR_STABILITY_DIAGNOSTIC"
+    )
+    assert stability["block_count"] == 4
+    assert len(stability["blocks"]) == 4
+    assert sum(block["session_count"] for block in stability["blocks"]) == 20
+    assert all(
+        left["end"] < right["start"]
+        for left, right in zip(
+            stability["blocks"][:-1],
+            stability["blocks"][1:],
+            strict=True,
+        )
+    )
+    assert stability["contribution_share_threshold"] == "0.60"
+    assert "positive_block_ratio_at_least_75pct" in stability["criteria"]
+    assert "temporal_stability_passed" in payload["research_gate"]["criteria"]
     assert set(payload["correlation_validation"]["correlations"]) == {
         "opening_30m_return",
         "opening_30m_range_position",

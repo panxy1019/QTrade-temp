@@ -123,6 +123,28 @@ const longIntradaySymbolRows = Array.from({ length: 75 }, (_, index) => ({
   benchmark_metrics: { ...longIntradayFullMetrics, total_return: '-0.01', excess_return: '0' },
 }))
 
+const intradayStabilityFixture: IntradayFactorBacktest['stability_validation'] = {
+  classification: 'CONTIGUOUS_SESSION_BLOCK_FACTOR_STABILITY_DIAGNOSTIC',
+  blocks: [
+    { block_id: 'TS-01', start: '2026-03-03', end: '2026-04-14', session_count: 30, observation_count: 2250, signal_count: 249, signal_session_count: 30, mean_session_conditional_excess_return: '0.003492486' },
+    { block_id: 'TS-02', start: '2026-04-15', end: '2026-05-29', session_count: 30, observation_count: 2250, signal_count: 221, signal_session_count: 30, mean_session_conditional_excess_return: '0.000094796' },
+    { block_id: 'TS-03', start: '2026-06-01', end: '2026-07-13', session_count: 30, observation_count: 2250, signal_count: 239, signal_session_count: 30, mean_session_conditional_excess_return: '-0.003124842' },
+    { block_id: 'TS-04', start: '2026-07-14', end: '2026-08-24', session_count: 30, observation_count: 2250, signal_count: 292, signal_session_count: 30, mean_session_conditional_excess_return: '-0.002757048' },
+  ],
+  block_count: 4,
+  positive_block_count: 2,
+  worst_block_mean_conditional_excess_return: '-0.003124842',
+  maximum_absolute_block_contribution_share: '0.368827',
+  contribution_share_threshold: '0.60',
+  criteria: {
+    minimum_four_contiguous_blocks: true,
+    every_block_has_signal_session: true,
+    positive_block_ratio_at_least_75pct: false,
+    maximum_absolute_block_contribution_share_below_0_60: true,
+  },
+  passed: false,
+}
+
 const data = {
   system: { mode: 'PAPER', running: true, risk_state: 'NORMAL' },
   health: { healthy: true, runtime_mode: 'PAPER', risk_state: 'NORMAL', gateway_connected: true, reconciliation_status: 'OK' },
@@ -315,6 +337,7 @@ const data = {
         confidence_interval_95_lower: '-0.0029159',
         confidence_interval_95_upper: '0.0017686',
       },
+      stability_validation: intradayStabilityFixture,
       backtest: {
         curve: [
           { trading_day: '2026-03-03', signal_count: 3, eligible_symbol_count: 75, strategy_return: '0.01', benchmark_return: '0.005', strategy_equity: '1.01', benchmark_equity: '1.005', excess_equity: '0.005' },
@@ -1217,6 +1240,10 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText(/外部订单 DISABLED/)).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: '长期收益曲线' })).toBeInTheDocument()
     expect(screen.getByTestId('equity-chart')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: '时间稳定性 · 2/4' }))
+    expect(screen.getByText('连续时间块 2/4 正向')).toBeInTheDocument()
+    expect(screen.getByText(/四个块按日期固定且互不重叠/)).toBeInTheDocument()
+    expect(screen.getByText('至少 75% 时间块条件超额为正')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('tab', { name: '滚动测试折 · 6' }))
     expect(screen.getByText('WF-01')).toBeInTheDocument()
     expect(screen.getAllByText('-5.00%').length).toBeGreaterThan(0)
@@ -1290,6 +1317,7 @@ describe('verified robustness evidence', () => {
         newey_west_t_statistic: '-2.0', confidence_interval_95_lower: '-0.000396',
         confidence_interval_95_upper: '-0.000004',
       },
+      stability_validation: intradayStabilityFixture,
       correlation_validation: {
         correlations: { opening_30m_return: '0.4668', opening_30m_range_position: '0.4712' },
         maximum_absolute_correlation: '0.90', passed: true,
@@ -1400,6 +1428,9 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('tab', { name: '滚动样本外与阈值' }))
     expect(screen.getByText('复用历史样本的因果诊断，不是新的独立证据')).toBeInTheDocument()
     expect(screen.getByText(/固定候选阈值 0\/5\/10\/20 bps/)).toBeInTheDocument()
+    fireEvent.click(screen.getAllByRole('tab', { name: '时间稳定性 · 2/4' })[1])
+    expect(screen.getAllByText('连续时间块 2/4 正向').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('单块绝对贡献占比低于 60%').length).toBeGreaterThan(0)
     fireEvent.change(screen.getByLabelText('本地因子实验名称'), { target: { value: '三时段方向方案 A' } })
     fireEvent.click(screen.getByRole('button', { name: '保存到本地因子实验' }))
     expect(screen.getByText('已保存“三时段方向方案 A”；相同结果哈希会更新原记录。')).toBeInTheDocument()

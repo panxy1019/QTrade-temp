@@ -282,6 +282,18 @@ mandatory. The fixed 120-day result has t = -0.4800 and an interval spanning
 zero, adding another explicit veto rather than counting 9,000 stock-days as
 independent evidence.
 
+Rule de-duplication and time stability are now explicit gates rather than
+informal chart review. The browser can select two to eight checksum-bound local
+opening rules and rerun their continuous directional scores on one identical
+75-stock window; the read-only API returns a symmetric Pearson matrix and marks
+`|rho| >= 0.90` pairs as redundant. Separately, every factor run is divided into
+four fixed contiguous date blocks. The stability gate requires signals in every
+block, at least three positive session-clustered conditional-excess block means,
+and no single block above 60% of total absolute block contribution. Neither
+diagnostic may retune a rule, threshold or window. The 20-session and signed
+120-session three-bullish results both reached only two positive blocks, so the
+existing rejection is stronger rather than repaired by another parameter search.
+
 The factor veto is also persisted as an immutable 120-session report rather than
 left as a one-off API observation. It fixes a 60-session training prefix, six
 disjoint ten-session tests and thresholds `0/5/10/20 bps`, then binds the exact

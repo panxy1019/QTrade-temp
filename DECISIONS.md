@@ -1419,3 +1419,28 @@ only one positive fold out of six. Every fixed threshold is negative. Because
 the history had already been viewed, it is a reused historical diagnostic, not
 independent confirmation; it remains `NOT_ELIGIBLE` and cannot mutate state or
 authorize PAPER, LIVE or external orders.
+
+## ADR-093 — Intraday factor stability uses fixed contiguous time blocks
+
+Status: accepted, 2026-08-27.
+
+A full-window event mean can look favorable because one market regime dominates
+the sample, even when the factor reverses sign elsewhere. Random folds would
+blur this chronology, and selecting subperiod boundaries after reading returns
+would add another tuning degree of freedom. Every 20-120 session intraday factor
+request is therefore divided by date into exactly four contiguous, mutually
+exclusive blocks whose sizes differ by at most one session. The split is fixed
+before any block statistic is interpreted and block outcomes cannot change the
+rule, threshold, universe or evaluation window.
+
+Each block computes the mean of signal-stock minus same-day-universe forward
+returns at the trading-session level, consistent with the Newey-West event
+sample rather than treating 75 same-day stocks as independent. Stability
+requires at least one signal-bearing session in every block, at least three of
+four positive block means, and less than 60% of total absolute block-mean
+contribution from any one period. The disclosed 20-session and signed 120-session
+three-bullish results both produced only two positive blocks. The 120-session
+worst block was -0.3125% and its largest absolute contribution share was 36.88%;
+concentration passed but sign stability failed. This is a retrospective veto,
+not a new blind test or parameter search, and cannot authorize PAPER, LIVE,
+state mutation or external order transmission.

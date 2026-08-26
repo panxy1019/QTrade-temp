@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-27T01:03:01.143516+08:00",
+  "generated_at": "2026-08-27T01:14:46.481324+08:00",
   "implementation": {
-    "factor_module_sha256": "5d1536c9a78ad404d88c3e255de6200412ce2674118e55f4e56762fd48b264b5",
-    "api_module_sha256": "492231333b01684debb4cd93c352dfe5a92c01d4a0a07d4db826990c1ae678da"
+    "factor_module_sha256": "49bd0d65a5c955dfcbae387eb7f879952a447b674d92924f62dbc187178b859e",
+    "api_module_sha256": "8818caa7e4dae9ce92a1583a1ddebaa22a24ea420a4fd897a12771d19e167d19"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -48,7 +48,7 @@
     ],
     "combination": "ALL"
   },
-  "result_preview_hash": "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d",
+  "result_preview_hash": "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3",
   "summary": {
     "observation_count": 9000,
     "signal_count": 1001,
@@ -176,7 +176,7 @@
       {
         "id": "FACTOR_VALIDATION",
         "status": "FAILED",
-        "detail": "Cross-sectional IC plus session-clustered Newey-West conditional event tests completed."
+        "detail": "Cross-sectional IC, session-clustered Newey-West and four contiguous-block stability tests completed."
       },
       {
         "id": "CORRELATION_VALIDATION",
@@ -240,6 +240,63 @@
       "newey_west_t_statistic": "-0.4800295916440395692521105231",
       "confidence_interval_95_lower": "-0.002915918338003323120185594440",
       "confidence_interval_95_upper": "0.001768614966066759290477706504"
+    },
+    "stability_validation": {
+      "classification": "CONTIGUOUS_SESSION_BLOCK_FACTOR_STABILITY_DIAGNOSTIC",
+      "blocks": [
+        {
+          "block_id": "TS-01",
+          "start": "2026-03-03",
+          "end": "2026-04-14",
+          "session_count": 30,
+          "observation_count": 2250,
+          "signal_count": 249,
+          "signal_session_count": 30,
+          "mean_session_conditional_excess_return": "0.00349248623965600449114654343"
+        },
+        {
+          "block_id": "TS-02",
+          "start": "2026-04-15",
+          "end": "2026-05-29",
+          "session_count": 30,
+          "observation_count": 2250,
+          "signal_count": 221,
+          "signal_session_count": 30,
+          "mean_session_conditional_excess_return": "0.00009479638596822370474904642233"
+        },
+        {
+          "block_id": "TS-03",
+          "start": "2026-06-01",
+          "end": "2026-07-13",
+          "session_count": 30,
+          "observation_count": 2250,
+          "signal_count": 239,
+          "signal_session_count": 30,
+          "mean_session_conditional_excess_return": "-0.003124841852620698506557134439"
+        },
+        {
+          "block_id": "TS-04",
+          "start": "2026-07-14",
+          "end": "2026-08-24",
+          "session_count": 30,
+          "observation_count": 2250,
+          "signal_count": 292,
+          "signal_session_count": 30,
+          "mean_session_conditional_excess_return": "-0.002757047516876657348754231285"
+        }
+      ],
+      "block_count": 4,
+      "positive_block_count": 2,
+      "worst_block_mean_conditional_excess_return": "-0.003124841852620698506557134439",
+      "maximum_absolute_block_contribution_share": "0.3688269936859628254180551343",
+      "contribution_share_threshold": "0.60",
+      "criteria": {
+        "minimum_four_contiguous_blocks": true,
+        "every_block_has_signal_session": true,
+        "positive_block_ratio_at_least_75pct": false,
+        "maximum_absolute_block_contribution_share_below_0_60": true
+      },
+      "passed": false
     },
     "correlation_validation": {
       "correlations": {
@@ -7075,6 +7132,7 @@
         "positive_conditional_excess_return": false,
         "minimum_ten_clustered_signal_sessions": true,
         "newey_west_t_statistic_above_1_96": false,
+        "temporal_stability_passed": false,
         "positive_rank_ic": false,
         "positive_sector_ratio_at_least_60pct": false,
         "maximum_absolute_factor_correlation_below_0_90": true,
@@ -7251,7 +7309,7 @@
     "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
     "state_mutation": false,
     "external_order_transmission": false,
-    "preview_hash": "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d"
+    "preview_hash": "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3"
   },
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
@@ -7265,5 +7323,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "9c30cb7ec03fa5625749de251df59cce6c0bca3bc5b78d499a08e587eb24ce0c"
+  "evidence_sha256": "33e35e6e945195a3c466ad5e38fa93bf9360361f0cdd6892682d67abeac421d9"
 }

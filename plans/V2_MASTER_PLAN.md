@@ -152,6 +152,10 @@ npm --prefix web run build
 - [x] Cluster intraday event effectiveness by signal-bearing trading day and add
   automatic-bandwidth Newey-West standard error, t-statistic, 95% interval and
   minimum-session/significance hard gates across API, UI and signed evidence.
+- [x] Split each intraday factor window into four fixed contiguous blocks, report
+  session-clustered conditional excess by block, and gate on positive-block ratio
+  plus single-period contribution concentration without allowing block outcomes
+  to retune the rule or threshold.
 - [x] Extend the preview to bounded momentum/reversal/low-volatility comparison
   and a checksum-bound browser-local experiment notebook with save, compare,
   parameter reload and delete; keep all records outside formal strategy lineage.
