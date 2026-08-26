@@ -5196,22 +5196,31 @@ def _load_verified_forward_observation_report(
                 base = metric_values(row.get("base"))
                 overlay = metric_values(row.get("overlay"))
                 execution = row.get("execution")
+                if not isinstance(execution, dict):
+                    return None
+                mean_exposure = float(str(execution.get("mean_exposure")))
+                turnover = float(str(execution.get("turnover")))
+                mean_turnover = float(
+                    str(execution.get("mean_turnover_per_symbol"))
+                )
                 if (
                     cost not in {0, 5}
                     or base is None
                     or overlay is None
-                    or not isinstance(execution, dict)
                     or not isclose(
                         float(str(row.get("excess_return"))),
                         overlay[0] - base[0],
                     )
                     or execution.get("symbol_count") != 75
                     or execution.get("observation_count") != 75 * expected_points
-                    or not 0 <= float(str(execution.get("mean_exposure"))) <= 1
-                    or not isclose(
-                        float(str(execution.get("mean_turnover_per_symbol"))),
-                        float(str(execution.get("turnover"))) / 75,
+                    or not all(
+                        isfinite(value)
+                        for value in (mean_exposure, turnover, mean_turnover)
                     )
+                    or not 0 <= mean_exposure <= 1
+                    or turnover < 0
+                    or mean_turnover < 0
+                    or not isclose(mean_turnover, turnover / 75)
                 ):
                     return None
                 seen_costs.append(cast(int, cost))

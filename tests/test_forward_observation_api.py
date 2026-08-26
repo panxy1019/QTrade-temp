@@ -306,3 +306,56 @@ def test_forward_observation_endpoint_rejects_future_dated_session(
     ).json()
     assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
     assert rejected["future_session_count"] == 0
+
+
+def test_forward_observation_endpoint_rejects_negative_turnover(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _one_session_forward_report(
+        preregistration,
+        target_day="2026-08-26",
+        generated_at="2026-08-26T16:00:00+08:00",
+    )
+    execution = report["cost_stress"][1]["execution"]
+    execution["turnover"] = -75.0
+    execution["mean_turnover_per_symbol"] = -1.0
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert rejected["future_session_count"] == 0
+
+
+def test_forward_observation_endpoint_accepts_one_complete_session(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _one_session_forward_report(
+        preregistration,
+        target_day="2026-08-26",
+        generated_at="2026-08-26T16:00:00+08:00",
+    )
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    accepted = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert accepted["classification"] == (
+        "LOCKED_FUTURE_COMPLETE_SESSION_OBSERVATION"
+    )
+    assert accepted["accepted_future_session_count"] == 1
+    assert accepted["observation_status"] == "INCOMPLETE"
+    assert accepted["promotion"] == "NOT_ELIGIBLE"

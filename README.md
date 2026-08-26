@@ -318,7 +318,9 @@ session count and metric-exclusion flag to equal the preregistered identity, and
 requires its generation time to follow the lock. It rejects booleans in every
 integer session-count field even though Python normally treats them as integers,
 and rejects a target day that had not reached the locked 15:10 China-time
-collection boundary when the report was generated.
+collection boundary when the report was generated. Cost-stress execution rows
+must carry finite `[0,1]` exposure and finite non-negative total/per-symbol
+turnover whose arithmetic agrees.
 
 For a bounded same-day observation, the following probe selects one stock from
 each of the 15 frozen sectors and keeps only bars older than a conservative

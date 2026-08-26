@@ -667,3 +667,16 @@ deployment advances its intraday or forward chain.
 This changes only freshness of read requests. The six-request concurrency cap,
 optional-section fault isolation, public mutation failures and all no-realtime,
 no-PAPER and no-external-order boundaries remain unchanged.
+
+## ADR-043 — Forward cost metrics cannot use negative turnover
+
+Status: accepted, 2026-08-26.
+
+Every forward cost-stress row must contain finite exposure, total turnover and
+mean turnover per symbol. Exposure remains bounded to `[0, 1]`; both turnover
+values must be non-negative and the mean must equal total turnover divided by
+the frozen 75-symbol count.
+
+This prevents a resigned report from passing the maximum-turnover gate with a
+negative economic quantity. A one-complete-session report remains explicitly
+`INCOMPLETE` and `NOT_ELIGIBLE` even when all provisional gates are true.

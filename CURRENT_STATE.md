@@ -531,6 +531,9 @@ Last updated: 2026-08-26
   integer session counts. A target session cannot postdate the report's China
   market date or appear before the locked 15:10 same-day collection boundary;
   a resigned mismatch falls back to the independently verified `0/20` lock.
+  Cost-stress execution values also require finite bounded exposure and finite,
+  non-negative total/per-symbol turnover with exact arithmetic consistency; a
+  negative value cannot satisfy the predeclared maximum-turnover gate.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator
