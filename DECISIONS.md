@@ -982,3 +982,16 @@ or row-lineage validation rejects the content.
 Both reads and writes now resolve the candidate directory before any dataset I/O
 and require it to be a direct child of the resolved storage root. Path escape is
 reported as a dataset-integrity error and no outside file is created or read.
+
+## ADR-066 — Corrupt Parquet failures use the dataset-integrity boundary
+
+Status: accepted, 2026-08-26.
+
+A manifest checksum can intentionally bind bytes that are truncated, corrupted
+or not Parquet at all. Allowing Arrow or OS exceptions to escape makes API and
+research behavior depend on the storage backend and bypasses the error contract
+used for checksum, schema and quality failures.
+
+File-read and Arrow-decode failures are now wrapped as `DatasetIntegrityError`
+while retaining the original exception as the cause for local diagnostics. No
+malformed payload reaches row conversion or the backtest engine.

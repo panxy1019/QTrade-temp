@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 378 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 379 tests passed, Ruff clean, strict mypy clean across
   the 99-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -410,6 +410,9 @@ Last updated: 2026-08-26
 - Storage path containment: Parquet reads and writes resolve each `data_version`
   before touching disk and require one direct child under the configured root;
   traversal, absolute paths, nested paths and symlink escapes fail closed.
+- Corrupt-storage handling: a checksum-valid but undecodable Parquet payload and
+  low-level file read failures are normalized to `DatasetIntegrityError`, so
+  research/API callers do not receive backend-specific Arrow or OS exceptions.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
   fill markers across restart and durable audit events; backtests require a
   PASSED data manifest and record `data_version`; 54 tests pass.

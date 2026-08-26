@@ -86,10 +86,16 @@ class ParquetBarStore:
         target = self._dataset_dir(manifest.data_version) / "bars.parquet"
         if not target.is_file():
             raise DatasetIntegrityError("dataset file is missing")
-        checksum = sha256(target.read_bytes()).hexdigest()
+        try:
+            checksum = sha256(target.read_bytes()).hexdigest()
+        except OSError as error:
+            raise DatasetIntegrityError("dataset file read failed") from error
         if checksum != manifest.checksum:
             raise DatasetIntegrityError("dataset checksum mismatch")
-        table = pq.read_table(target)
+        try:
+            table = pq.read_table(target)
+        except (OSError, pa.ArrowException) as error:
+            raise DatasetIntegrityError("dataset parquet decoding failed") from error
         if not table.schema.equals(_BAR_PARQUET_SCHEMA, check_metadata=False):
             raise DatasetIntegrityError("dataset schema mismatch")
         rows = table.to_pylist()

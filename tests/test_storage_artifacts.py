@@ -179,6 +179,20 @@ def test_parquet_store_read_rejects_data_version_path_escape(tmp_path):
         ParquetBarStore(tmp_path / "root").read(escaped)
 
 
+def test_parquet_store_rejects_checksum_valid_invalid_parquet(tmp_path):
+    target = tmp_path / "bars-v1" / "bars.parquet"
+    target.parent.mkdir()
+    target.write_bytes(b"not-a-parquet-file")
+    passed = replace(
+        manifest(),
+        checksum=sha256(target.read_bytes()).hexdigest(),
+        quality_status=QualityStatus.PASSED,
+    )
+
+    with pytest.raises(DatasetIntegrityError, match="decoding"):
+        ParquetBarStore(tmp_path).read(passed)
+
+
 def test_experiment_artifacts_are_hashed_and_immutable(tmp_path):
     record = ExperimentRecord(
         experiment_id="exp-1",

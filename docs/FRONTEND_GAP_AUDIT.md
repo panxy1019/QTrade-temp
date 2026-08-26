@@ -84,6 +84,7 @@ GitHub/Vercel 公开节点。判定标准不是“路由存在”，而是页面
 | FE-68 | 数据中心 / 共享存储 | 重新签名的 Parquet 缺列或字段类型漂移时会泄漏底层 `KeyError` / `TypeError`，额外列还会被静默接受 | DONE | 行转换前严格核对十列 Arrow schema；缺失、额外、重排或类型漂移统一作为数据完整性错误失败关闭 |
 | FE-69 | 数据中心 / 共享质量门槛 | 非 CSV 数据可携带与中国市场时间不属于同一天的 `timestamp` / `trading_day`，污染按日切分和因果回放 | DONE | 共享质量门槛按 UTC+08:00 校验 SSE/SZSE 交易日归属；12 份业务 Parquet 共 3,566,133 行复核为 0 错配 |
 | FE-70 | 数据中心 / 共享存储 | `data_version` 可通过 `../`、绝对路径或符号链接让 Parquet 读写越出配置的数据根目录 | DONE | 每次 I/O 前解析路径并要求数据集目录是根目录的直接子级；遍历、嵌套、绝对路径和符号链接逃逸统一失败关闭 |
+| FE-71 | 数据中心 / 共享存储 | checksum 与 manifest 相符但载荷并非合法 Parquet 时，读取器向 API/回测泄漏 Arrow/OS 底层异常 | DONE | 文件读取和 Arrow 解码失败统一归一为 `DatasetIntegrityError`；损坏数据不会以实现相关异常穿透共享边界 |
 
 ## 外部阻塞，不能伪造为已完成
 
