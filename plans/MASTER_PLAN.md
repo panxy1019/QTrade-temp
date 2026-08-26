@@ -263,6 +263,8 @@ they are not candidates, tuning inputs, PAPER state or promotion evidence.
 The bounded continuity chain preserves those direction summaries from an
 explicit first sequence without rewriting older checkpoint hashes, so subsequent
 refreshes can be compared as a signed intraday time series.
+Latest-minute values use signed basis points in the browser to preserve the
+direction of sub-basis-percent moves that two-decimal percentages would hide.
 
 The backtest analytics surface now validates the Buy-and-Hold record/result and
 curve artifacts independently from the exploratory leader, requires exact

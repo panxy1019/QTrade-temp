@@ -141,7 +141,9 @@ Last updated: 2026-08-26
   all four prior checkpoint hashes and starts a direction-breadth timeline at
   checkpoint five; missing direction after that boundary fails closed. Mutable
   intraday reports now use flushed, `fsync`-backed atomic publication, preventing
-  a crash from exposing a partially written signed snapshot.
+  a crash from exposing a partially written signed snapshot. Latest-minute
+  returns render in signed basis points so small causal moves are not rounded to
+  a misleading `0.00%`.
 - Long native-5-minute falsification: the optional BaoStock 0.9.3 ingest produced
   a signed 1,324,800-bar dataset for the frozen 75-stock/15-sector universe over
   368 common complete sessions. The predeclared expanding study used 120 initial

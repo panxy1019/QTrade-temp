@@ -790,6 +790,7 @@ describe('verified historical data pages', () => {
     expect(screen.getByText('盘中横截面方向因子 · 仅观察')).toBeInTheDocument()
     expect(screen.getByText(/相对开盘上涨 45\/75、下跌 25/)).toBeInTheDocument()
     expect(screen.getByText(/等权开盘至今 0.12%/)).toBeInTheDocument()
+    expect(screen.getByText(/等权最新分钟 \+3.00 bp/)).toBeInTheDocument()
     expect(screen.getByText(/不进入策略调参或 PAPER/)).toBeInTheDocument()
     expect(screen.getByText(/1 根同日已结束 Bar/)).toBeInTheDocument()
     expect(screen.getByTestId('minute-history-chart')).toBeInTheDocument()
