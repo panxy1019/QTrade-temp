@@ -323,6 +323,15 @@ drawdown curve, six fold identities, 15 sector rows, searchable 75-stock rows,
 threshold stress and both gate matrices. The UI only filters presentation; it
 cannot submit a filtered universe or overwrite the fixed hypothesis.
 
+Strategy construction now includes a bounded sell-side factor rather than only
+a fixed exit. On T+1, three bearish ten-minute bodies are known at the 10:00
+close and can execute only at the following 10:05-labelled Bar open; otherwise
+the position exits at the final 15:00-labelled Bar open, whose interval begins
+at 14:55. The same rule is applied per symbol to the benchmark, and the response
+hash binds trigger/time-exit counts. In the viewed 20-session window the 5 bps
+variant returned +1.3245% full-window but -10.0783% in stitched walk-forward
+tests, so the research gate remains failed and no PAPER authority is created.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

@@ -42,6 +42,7 @@ from qtrade.monitoring import MetricsRegistry, render_prometheus_metrics
 from qtrade.oms import OrderManager
 from qtrade.research import (
     BacktestPreviewSpec,
+    IntradayExitSpec,
     IntradayFactorGroup,
     IntradayFactorResearchResult,
     IntradayRuleCorrelationResult,
@@ -152,6 +153,11 @@ class IntradayFactorBacktestRequest(BaseModel):
     end: date
     cost_bps: Decimal = Decimal("5")
     minimum_body_return_bps: Decimal = Decimal("0")
+    exit_rule: Literal[
+        "NEXT_SESSION_OPEN",
+        "NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP",
+    ] = "NEXT_SESSION_OPEN"
+    exit_minimum_body_return_bps: Decimal = Decimal("0")
     directions: tuple[
         Literal["BULLISH", "BEARISH", "IGNORE"],
         Literal["BULLISH", "BEARISH", "IGNORE"],
@@ -1496,6 +1502,12 @@ def create_app(
                 directions=payload.directions,
                 combination=payload.combination,
             )
+            exit_spec = IntradayExitSpec(
+                rule=payload.exit_rule,
+                minimum_body_return_bps=(
+                    payload.exit_minimum_body_return_bps
+                ),
+            )
         except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         dataset, sectors, required_trading_days, bars = (
@@ -1508,6 +1520,7 @@ def create_app(
                 start=payload.start,
                 end=payload.end,
                 spec=spec,
+                exit_spec=exit_spec,
             )
             return _intraday_factor_preview(
                 payload=payload,
@@ -8832,6 +8845,76 @@ def _intraday_factor_preview(
             "detail": "Separate explicit user authorization is required.",
         },
     ]
+    parameters: dict[str, object] = {
+        "factor": payload.factor,
+        "start": payload.start.isoformat(),
+        "end": payload.end.isoformat(),
+        "cost_bps": str(payload.cost_bps),
+        "minimum_body_return_bps": str(payload.minimum_body_return_bps),
+        "directions": list(payload.directions),
+        "combination": payload.combination,
+    }
+    strategy: dict[str, object] = {
+        "entry_rule": "NEXT_5M_OPEN_10_05",
+        "exit_rule": "NEXT_SESSION_OPEN_T_PLUS_ONE",
+        "entry_price_source": (
+            "OPEN_OF_BAR_LABELLED_10_05_INTERVAL_START_10_00"
+        ),
+        "exit_price_source": (
+            "OPEN_OF_NEXT_SESSION_BAR_LABELLED_09_35_INTERVAL_START_09_30"
+        ),
+        "position_rule": "EQUAL_WEIGHT_TRIGGERED_STOCKS_ELSE_CASH",
+        "benchmark_rule": "EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_HORIZON",
+        "single_side_cost_bps": str(payload.cost_bps),
+        "t_plus_one_compliant": True,
+    }
+    if payload.exit_rule != "NEXT_SESSION_OPEN":
+        parameters.update(
+            {
+                "exit_rule": payload.exit_rule,
+                "exit_minimum_body_return_bps": str(
+                    payload.exit_minimum_body_return_bps
+                ),
+            }
+        )
+        conditional_exit_count = sum(
+            item.signal and item.exit_condition_triggered
+            for item in result.observations
+        )
+        signal_count = sum(item.signal for item in result.observations)
+        strategy = {
+            "entry_rule": "NEXT_5M_OPEN_10_05",
+            "exit_rule": payload.exit_rule,
+            "exit_condition": (
+                "bearish_10m_0930_0940 AND bearish_10m_0940_0950 "
+                "AND bearish_10m_0950_1000"
+            ),
+            "exit_minimum_body_return_bps": str(
+                payload.exit_minimum_body_return_bps
+            ),
+            "exit_condition_known_at": (
+                "NEXT_SESSION_10_00_BAR_CLOSE_T_PLUS_ONE"
+            ),
+            "entry_price_source": (
+                "OPEN_OF_BAR_LABELLED_10_05_INTERVAL_START_10_00"
+            ),
+            "conditional_exit_price_source": (
+                "OPEN_OF_NEXT_SESSION_BAR_LABELLED_10_05_"
+                "INTERVAL_START_10_00"
+            ),
+            "fallback_exit_price_source": (
+                "OPEN_OF_NEXT_SESSION_BAR_LABELLED_15_00_"
+                "INTERVAL_START_14_55"
+            ),
+            "conditional_exit_count": conditional_exit_count,
+            "fallback_time_stop_count": signal_count - conditional_exit_count,
+            "position_rule": "EQUAL_WEIGHT_TRIGGERED_STOCKS_ELSE_CASH",
+            "benchmark_rule": (
+                "EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_PER_SYMBOL_EXIT_RULE"
+            ),
+            "single_side_cost_bps": str(payload.cost_bps),
+            "t_plus_one_compliant": True,
+        }
     unsigned: dict[str, object] = {
         "classification": "AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT",
         "factor_definition": {
@@ -8852,15 +8935,7 @@ def _intraday_factor_preview(
             ],
             "arbitrary_code_execution": False,
         },
-        "parameters": {
-            "factor": payload.factor,
-            "start": payload.start.isoformat(),
-            "end": payload.end.isoformat(),
-            "cost_bps": str(payload.cost_bps),
-            "minimum_body_return_bps": str(payload.minimum_body_return_bps),
-            "directions": list(payload.directions),
-            "combination": payload.combination,
-        },
+        "parameters": parameters,
         "workflow": workflow,
         "factor_validation": {
             "number_of_periods": factor_metrics.number_of_periods,
@@ -9016,20 +9091,7 @@ def _intraday_factor_preview(
             "criteria": dict(result.robustness_validation.criteria),
             "passed": robustness_passed,
         },
-        "strategy": {
-            "entry_rule": "NEXT_5M_OPEN_10_05",
-            "exit_rule": "NEXT_SESSION_OPEN_T_PLUS_ONE",
-            "entry_price_source": (
-                "OPEN_OF_BAR_LABELLED_10_05_INTERVAL_START_10_00"
-            ),
-            "exit_price_source": (
-                "OPEN_OF_NEXT_SESSION_BAR_LABELLED_09_35_INTERVAL_START_09_30"
-            ),
-            "position_rule": "EQUAL_WEIGHT_TRIGGERED_STOCKS_ELSE_CASH",
-            "benchmark_rule": "EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_HORIZON",
-            "single_side_cost_bps": str(payload.cost_bps),
-            "t_plus_one_compliant": True,
-        },
+        "strategy": strategy,
         "backtest": {
             "strategy_metrics": _performance_metrics_payload(
                 result.strategy_metrics

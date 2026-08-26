@@ -8,7 +8,7 @@ import {
   saveLocalIntradayFactorExperiment,
 } from '../research/localIntradayFactorExperiments'
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
-import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
+import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
 type VerifiedFiveMinuteDataset = NonNullable<FiveMinuteResearchReport['minute_dataset']>
@@ -23,6 +23,8 @@ interface FormValues {
   second_direction: IntradayOpeningDirection
   third_direction: IntradayOpeningDirection
   combination: 'ALL' | 'ANY'
+  exit_rule: IntradayExitRule
+  exit_minimum_body_return_bps: string | number
 }
 
 const directionOptions = [
@@ -228,6 +230,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const [error, setError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
   const [selectedFactor, setSelectedFactor] = useState<IntradayFactorBacktestRequest['factor']>('opening_three_ten_minute_bullish')
+  const [selectedExitRule, setSelectedExitRule] = useState<IntradayExitRule>('NEXT_SESSION_OPEN')
   const [experimentName, setExperimentName] = useState('')
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
   const [, setExperimentRevision] = useState(0)
@@ -254,6 +257,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     second_direction: 'BULLISH',
     third_direction: 'BULLISH',
     combination: 'ALL',
+    exit_rule: 'NEXT_SESSION_OPEN',
+    exit_minimum_body_return_bps: '0',
   }
   const submit = async (values: FormValues) => {
     const payload: IntradayFactorBacktestRequest = {
@@ -268,6 +273,12 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       combination: values.factor === 'opening_three_ten_minute_bullish'
         ? 'ALL'
         : values.combination,
+      ...(values.exit_rule === 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP'
+        ? {
+            exit_rule: values.exit_rule,
+            exit_minimum_body_return_bps: String(values.exit_minimum_body_return_bps),
+          }
+        : {}),
     }
     setRunning(true)
     setError(null)
@@ -309,8 +320,11 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       second_direction: parameters.directions[1],
       third_direction: parameters.directions[2],
       combination: parameters.combination,
+      exit_rule: parameters.exit_rule ?? 'NEXT_SESSION_OPEN',
+      exit_minimum_body_return_bps: parameters.exit_minimum_body_return_bps ?? '0',
     })
     setSelectedFactor(parameters.factor)
+    setSelectedExitRule(parameters.exit_rule ?? 'NEXT_SESSION_OPEN')
     setResult(null)
     setError(null)
     setCorrelationResult(null)
@@ -365,6 +379,14 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
         `${row.parameters.directions.map(directionLabel).join('/')} · ${row.parameters.combination} · ${row.parameters.minimum_body_return_bps} bps`
       ),
     },
+    {
+      title: '退出',
+      render: (_: unknown, row: LocalIntradayFactorExperiment) => (
+        row.parameters.exit_rule === 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP'
+          ? `T+1 三连阴 / 14:55 · ${row.parameters.exit_minimum_body_return_bps} bps`
+          : 'T+1 09:30 开盘'
+      ),
+    },
     { title: '信号', render: (_: unknown, row: LocalIntradayFactorExperiment) => `${row.signal_count}/${row.observation_count} · ${row.clustered_signal_session_count} 日` },
     { title: '收益', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.total_return) },
     { title: 'Sharpe', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatNumber(row.metrics.sharpe) },
@@ -415,7 +437,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
 
   return <Card title="分钟因子研究工作台" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · 原生 5 分钟</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
-      <Alert showIcon type="info" title="从因子到模拟盘的完整门控" description="三根 10 分钟阳线在 10:00 才确认，最早取 10:05 标记的下一根 5 分钟 Bar 开盘价（区间起点 10:00）买入，并按 A 股 T+1 取下一交易日 09:35 标记 Bar 的开盘价（区间起点 09:30）退出。当前参数研究是事后非 PIT 检验，永远不会自动进入 PAPER 或 LIVE。" />
+      <Alert showIcon type="info" title="从因子到模拟盘的完整门控" description="开仓因子在 10:00 确认，10:05 标记的下一根原生 5 分钟 Bar 开盘买入；平仓可固定为 T+1 09:30 开盘，或在 T+1 10:00 确认三根十分钟阴线后于下一 Bar 开盘退出，未触发则用 15:00 标记 Bar 的开盘价（区间起点 14:55）时间退出。当前事后非 PIT 研究永远不会自动进入 PAPER 或 LIVE。" />
       <Form<FormValues> form={form} name="intraday-factor-research-backtest" layout="vertical" initialValues={initialValues} onValuesChange={() => { setCorrelationResult(null); setCorrelationError(null) }} onFinish={(values) => { void submit(values) }}>
         <div className="backtest-lab-grid">
           <Form.Item name="factor" label="因子" rules={[{ required: true }]}><Select onChange={setSelectedFactor} options={[
@@ -426,6 +448,11 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           <Form.Item name="end" label="结束交易日" rules={[{ required: true }]}><Select showSearch options={eligibleEndDays.map((value) => ({ value, label: value }))} /></Form.Item>
           <Form.Item name="cost_bps" label="单边成本（bps）" rules={[{ required: true }]}><InputNumber min={0} max={100} step={1} stringMode /></Form.Item>
           <Form.Item name="minimum_body_return_bps" label="每根 10 分钟实体下限（bps）" rules={[{ required: true }]}><InputNumber min={0} max={1000} step={1} stringMode /></Form.Item>
+          <Form.Item name="exit_rule" label="平仓规则" rules={[{ required: true }]}><Select onChange={(value: IntradayExitRule) => setSelectedExitRule(value)} options={[
+            { value: 'NEXT_SESSION_OPEN', label: 'T+1 09:30 开盘退出（基准）' },
+            { value: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP', label: 'T+1 三根 10 分钟阴线退出，否则 14:55 时间退出' },
+          ]} /></Form.Item>
+          {selectedExitRule === 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP' && <Form.Item name="exit_minimum_body_return_bps" label="每根退出阴线实体下限（bps）" rules={[{ required: true }]}><InputNumber min={0} max={1000} step={1} stringMode /></Form.Item>}
           {selectedFactor === 'custom_opening_ten_minute_direction_rule' && <>
             <Form.Item name="first_direction" label="第一段 09:30–09:40" rules={[{ required: true }]}><Select options={directionOptions} /></Form.Item>
             <Form.Item name="second_direction" label="第二段 09:40–09:50" rules={[{ required: true }]}><Select options={directionOptions} /></Form.Item>
@@ -436,6 +463,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
         <Button type="primary" htmlType="submit" loading={running}>运行 75 股因子检验与回测</Button>
       </Form>
       {selectedFactor === 'custom_opening_ten_minute_direction_rule' && <Alert showIcon type="warning" title="受限规则，不执行任意表达式" description="只允许三段已结束十分钟 K 线的看涨、看跌或忽略条件，以及 AND/OR 组合；10:00 收盘后才知道信号，10:05 下一根原生 5 分钟 Bar 开盘执行。禁止 eval、未来字段、同 Bar 成交和自动 PAPER 晋级。" />}
+      {selectedExitRule === 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP' && <Alert showIcon type="warning" title="平仓因子严格遵守 T+1 与下一 Bar 执行" description="T+1 09:30–10:00 三根十分钟阴线全部超过阈值后，条件到 10:00 收盘才完整；成交取 10:05 标记 Bar 的开盘价。未触发时取 15:00 标记 Bar 的开盘价，即 14:55 区间起点，不使用同 Bar 收盘价。" />}
       {error && <Alert showIcon type="error" title="因子研究未完成" description={error} />}
       {result && <>
         <Alert
@@ -481,6 +509,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             children: <Space orientation="vertical" style={{ width: '100%' }}>
               <Typography.Text code>{result.factor_definition.expression}</Typography.Text>
               <Typography.Text>数据：{result.factor_definition.source_interval}；信号已知：{result.factor_definition.known_at}；入场：{result.strategy.entry_rule}；退出：{result.strategy.exit_rule}。</Typography.Text>
+              {result.strategy.conditional_exit_count !== undefined && <Typography.Text>平仓因子触发 {result.strategy.conditional_exit_count} 次；14:55 时间退出 {result.strategy.fallback_time_stop_count} 次。退出条件只统计已开仓信号，并与同期等权基准使用同一逐股票退出规则。</Typography.Text>}
               <Typography.Text type="secondary">响应哈希 {result.preview_hash}；数据 checksum {result.dataset_checksum}；读取 {result.source_bar_count.toLocaleString('zh-CN')} 根已验证 Bar，无状态写入、无外部订单。</Typography.Text>
             </Space>,
           },
@@ -594,7 +623,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
               disabled={selectedExperimentHashes.length < 2 || selectedExperimentHashes.length > 8}
               onClick={() => { void runSelectedCorrelation() }}
             >检验选中规则有效性与相关性（{selectedExperimentHashes.length}/8）</Button>
-            <Typography.Text type="secondary">按当前表单日期，在同一 75 股窗口重算 2–8 条规则各自阈值下的信号有效性与连续方向分数。</Typography.Text>
+            <Typography.Text type="secondary">按当前表单日期，在同一 75 股窗口重算 2–8 条开仓规则各自阈值下的信号有效性与连续方向分数；相关性标签固定使用 T+1 开盘收益，不混入平仓策略收益。</Typography.Text>
           </Space>
           {correlationError && <Alert showIcon type="error" title="规则相关性检验未完成" description={correlationError} />}
           {correlationResult && <>

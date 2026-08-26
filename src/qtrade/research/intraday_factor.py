@@ -22,6 +22,14 @@ _CHINA_TIME = timezone(timedelta(hours=8))
 _SIGNAL_TIME = time(10, 0)
 _ENTRY_TIME = time(10, 5)
 _EXIT_TIME = time(9, 35)
+_TIME_STOP_EXIT_TIME = time(15, 0)
+_NEXT_SESSION_OPEN_EXIT = "NEXT_SESSION_OPEN"
+_BEARISH_OR_TIME_STOP_EXIT = (
+    "NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP"
+)
+_INTRADAY_EXIT_RULES = frozenset(
+    {_NEXT_SESSION_OPEN_EXIT, _BEARISH_OR_TIME_STOP_EXIT}
+)
 _COST_STRESS_BPS = (0, 5, 10, 20)
 _ROBUSTNESS_THRESHOLDS_BPS = tuple(Decimal(value) for value in (0, 5, 10, 20))
 _OPENING_TEN_MINUTE_LABELS = (
@@ -112,6 +120,32 @@ class OpeningTripleBullishSpec:
 
 
 @dataclass(frozen=True, slots=True)
+class IntradayExitSpec:
+    rule: str = _NEXT_SESSION_OPEN_EXIT
+    minimum_body_return_bps: Decimal = Decimal("0")
+
+    def __post_init__(self) -> None:
+        if self.rule not in _INTRADAY_EXIT_RULES:
+            raise ValueError("unsupported intraday exit rule")
+        if (
+            not self.minimum_body_return_bps.is_finite()
+            or not Decimal("0")
+            <= self.minimum_body_return_bps
+            <= Decimal("1000")
+        ):
+            raise ValueError(
+                "exit minimum_body_return_bps must be finite and between 0 and 1000"
+            )
+        if (
+            self.rule == _NEXT_SESSION_OPEN_EXIT
+            and self.minimum_body_return_bps != 0
+        ):
+            raise ValueError(
+                "exit minimum_body_return_bps must be zero for NEXT_SESSION_OPEN"
+            )
+
+
+@dataclass(frozen=True, slots=True)
 class IntradayFactorObservation:
     symbol: str
     sector_code: str
@@ -124,6 +158,8 @@ class IntradayFactorObservation:
     signal_close: Decimal
     entry_price: Decimal
     exit_price: Decimal
+    exit_condition_score: Decimal
+    exit_condition_triggered: bool
     minimum_ten_minute_body_return: Decimal
     ten_minute_body_returns: tuple[Decimal, Decimal, Decimal]
     directional_rule_score: Decimal
@@ -358,9 +394,11 @@ def run_opening_triple_bullish_research(
     start: date,
     end: date,
     spec: OpeningTripleBullishSpec | None = None,
+    exit_spec: IntradayExitSpec | None = None,
     quantiles: int = 5,
 ) -> IntradayFactorResearchResult:
     selected_spec = spec or OpeningTripleBullishSpec()
+    selected_exit_spec = exit_spec or IntradayExitSpec()
     if start > end:
         raise ValueError("factor research start cannot follow end")
     if quantiles < 2:
@@ -395,6 +433,9 @@ def run_opening_triple_bullish_research(
     _validate_source_grid(grouped, symbols=symbols, trading_days=required_days)
 
     threshold = selected_spec.minimum_body_return_bps / Decimal("10000")
+    exit_threshold = (
+        selected_exit_spec.minimum_body_return_bps / Decimal("10000")
+    )
     observations: list[IntradayFactorObservation] = []
     for day_index, trading_day in enumerate(selected_days):
         exit_day = sessions[start_index + day_index + 1]
@@ -414,13 +455,53 @@ def run_opening_triple_bullish_research(
             signal = directional_rule_score > threshold
             signal_bar = first_six[-1]
             entry_bar = day_bars[6]
-            exit_bar = exit_bars[0]
             if _china_time(signal_bar.timestamp) != _SIGNAL_TIME:
                 raise ValueError("factor signal must be known at the 10:00 close")
             if _china_time(entry_bar.timestamp) != _ENTRY_TIME:
                 raise ValueError("factor entry must use the 10:05 source-bar open")
-            if _china_time(exit_bar.timestamp) != _EXIT_TIME:
-                raise ValueError("factor exit must use the next-session first open")
+            exit_condition_score = Decimal("0")
+            exit_condition_triggered = False
+            if selected_exit_spec.rule == _NEXT_SESSION_OPEN_EXIT:
+                exit_bar = exit_bars[0]
+                if _china_time(exit_bar.timestamp) != _EXIT_TIME:
+                    raise ValueError(
+                        "factor exit must use the next-session first open"
+                    )
+            else:
+                exit_first_six = exit_bars[:6]
+                exit_ten_minute_returns = (
+                    exit_first_six[1].close / exit_first_six[0].open
+                    - Decimal("1"),
+                    exit_first_six[3].close / exit_first_six[2].open
+                    - Decimal("1"),
+                    exit_first_six[5].close / exit_first_six[4].open
+                    - Decimal("1"),
+                )
+                exit_condition_score = min(
+                    -value for value in exit_ten_minute_returns
+                )
+                exit_condition_triggered = exit_condition_score > exit_threshold
+                exit_condition_bar = exit_first_six[-1]
+                if _china_time(exit_condition_bar.timestamp) != _SIGNAL_TIME:
+                    raise ValueError(
+                        "factor exit condition must be known at the next-session "
+                        "10:00 close"
+                    )
+                exit_bar = (
+                    exit_bars[6]
+                    if exit_condition_triggered
+                    else exit_bars[-1]
+                )
+                expected_exit_time = (
+                    _ENTRY_TIME
+                    if exit_condition_triggered
+                    else _TIME_STOP_EXIT_TIME
+                )
+                if _china_time(exit_bar.timestamp) != expected_exit_time:
+                    raise ValueError(
+                        "factor exit must use the next source open or 14:55 "
+                        "time-stop open"
+                    )
             opening_high = max(bar.high for bar in first_six)
             opening_low = min(bar.low for bar in first_six)
             opening_range = opening_high - opening_low
@@ -443,6 +524,8 @@ def run_opening_triple_bullish_research(
                     signal_close=signal_bar.close,
                     entry_price=entry_bar.open,
                     exit_price=exit_bar.open,
+                    exit_condition_score=exit_condition_score,
+                    exit_condition_triggered=exit_condition_triggered,
                     minimum_ten_minute_body_return=(
                         minimum_ten_minute_body_return
                     ),
@@ -562,6 +645,45 @@ def run_opening_triple_bullish_research(
             "threshold_sensitivity_majority_positive"
         ],
     }
+    causal_contract: Mapping[str, object]
+    if selected_exit_spec.rule == _NEXT_SESSION_OPEN_EXIT:
+        causal_contract = {
+            "factor_known_at": "THIRD_TEN_MINUTE_BAR_CLOSE_10_00",
+            "entry_at": "NEXT_SOURCE_FIVE_MINUTE_BAR_OPEN_10_05",
+            "exit_at": (
+                "NEXT_TRADING_SESSION_FIRST_FIVE_MINUTE_BAR_OPEN_T_PLUS_ONE"
+            ),
+            "source_bar_timestamp_convention": "BAR_END_TIME",
+            "entry_bar_label": "10_05",
+            "entry_interval_start": "10_00",
+            "exit_bar_label": "NEXT_SESSION_09_35",
+            "exit_interval_start": "NEXT_SESSION_09_30",
+            "same_bar_execution": False,
+            "t_plus_one_compliant": True,
+        }
+    else:
+        causal_contract = {
+            "factor_known_at": "THIRD_TEN_MINUTE_BAR_CLOSE_10_00",
+            "entry_at": "NEXT_SOURCE_FIVE_MINUTE_BAR_OPEN_10_05",
+            "exit_condition_known_at": (
+                "NEXT_SESSION_THIRD_TEN_MINUTE_BAR_CLOSE_10_00_T_PLUS_ONE"
+            ),
+            "conditional_exit_at": (
+                "NEXT_SOURCE_FIVE_MINUTE_BAR_OPEN_10_05_T_PLUS_ONE"
+            ),
+            "fallback_exit_at": (
+                "FINAL_SOURCE_FIVE_MINUTE_BAR_OPEN_14_55_T_PLUS_ONE"
+            ),
+            "source_bar_timestamp_convention": "BAR_END_TIME",
+            "entry_bar_label": "10_05",
+            "entry_interval_start": "10_00",
+            "conditional_exit_bar_label": "NEXT_SESSION_10_05",
+            "conditional_exit_interval_start": "NEXT_SESSION_10_00",
+            "fallback_exit_bar_label": "NEXT_SESSION_15_00",
+            "fallback_exit_interval_start": "NEXT_SESSION_14_55",
+            "same_bar_execution": False,
+            "t_plus_one_compliant": True,
+        }
     return IntradayFactorResearchResult(
         factor_id=selected_spec.factor_id,
         factor_name=selected_spec.factor_name,
@@ -589,20 +711,7 @@ def run_opening_triple_bullish_research(
             passed=all(criteria.values()),
             criteria=criteria,
         ),
-        causal_contract={
-            "factor_known_at": "THIRD_TEN_MINUTE_BAR_CLOSE_10_00",
-            "entry_at": "NEXT_SOURCE_FIVE_MINUTE_BAR_OPEN_10_05",
-            "exit_at": (
-                "NEXT_TRADING_SESSION_FIRST_FIVE_MINUTE_BAR_OPEN_T_PLUS_ONE"
-            ),
-            "source_bar_timestamp_convention": "BAR_END_TIME",
-            "entry_bar_label": "10_05",
-            "entry_interval_start": "10_00",
-            "exit_bar_label": "NEXT_SESSION_09_35",
-            "exit_interval_start": "NEXT_SESSION_09_30",
-            "same_bar_execution": False,
-            "t_plus_one_compliant": True,
-        },
+        causal_contract=causal_contract,
         promotion="NOT_ELIGIBLE",
         promotion_reasons=(
             "CURRENT_UNIVERSE_NON_PIT",

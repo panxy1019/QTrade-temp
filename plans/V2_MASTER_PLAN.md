@@ -146,6 +146,11 @@ npm --prefix web run build
   bullish/bearish/ignore predicates, ALL/ANY combination and one body threshold;
   preserve fixed timestamps, reject arbitrary code/features and route every
   result through the existing causal diagnostics and promotion gates.
+- [x] Add one typed T+1 exit factor: three completed ten-minute bearish bodies
+  known at 10:00, executed at the next 10:05-labelled Bar open, otherwise exited
+  at the final 15:00-labelled Bar open (14:55 interval start). Bound its threshold,
+  use the same per-symbol rule for the benchmark, persist its browser-local
+  identity and keep every result stateless and `NOT_ELIGIBLE`.
 - [x] Add a checksum-bound browser-local notebook for intraday factor summaries,
   comparison, deletion and parameter reload; reject malformed/safety-relaxed
   records and require a new run after reload without creating formal lineage.

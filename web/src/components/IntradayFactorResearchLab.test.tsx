@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { runIntradayFactorCorrelation } from '../api/client'
+import { runIntradayFactorBacktest, runIntradayFactorCorrelation } from '../api/client'
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
 import type { FiveMinuteResearchReport, IntradayFactorCorrelation } from '../types'
 import { IntradayFactorResearchLab } from './IntradayFactorResearchLab'
@@ -64,6 +64,8 @@ const experiments = [
       minimum_body_return_bps: '10',
       directions: ['BULLISH', 'BEARISH', 'IGNORE'],
       combination: 'ANY',
+      exit_rule: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP',
+      exit_minimum_body_return_bps: '5',
     },
   },
 ] as unknown as LocalIntradayFactorExperiment[]
@@ -168,5 +170,28 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getAllByText('R02 · 混合方向 B').length).toBeGreaterThan(0)
     expect(screen.getByText('冗余')).toBeInTheDocument()
     expect(screen.getByText(/无状态写入、无外部订单/)).toBeInTheDocument()
+  })
+
+  it('loads and submits the bounded bearish exit identity', async () => {
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce(
+      null as unknown as Awaited<ReturnType<typeof runIntradayFactorBacktest>>,
+    )
+    render(<IntradayFactorResearchLab dataset={dataset} />)
+
+    fireEvent.click(screen.getAllByRole('button', { name: '载入因子参数' })[1])
+    expect(screen.getByText('平仓因子严格遵守 T+1 与下一 Bar 执行')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+
+    await waitFor(() => expect(runIntradayFactorBacktest).toHaveBeenCalledWith({
+      factor: 'custom_opening_ten_minute_direction_rule',
+      start: '2026-07-01',
+      end: '2026-07-28',
+      cost_bps: '5',
+      minimum_body_return_bps: '10',
+      directions: ['BULLISH', 'BEARISH', 'IGNORE'],
+      combination: 'ANY',
+      exit_rule: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP',
+      exit_minimum_body_return_bps: '5',
+    }))
   })
 })

@@ -217,9 +217,20 @@ function isRequest(value: unknown): value is IntradayFactorBacktestRequest {
     || !value.directions.every(isDirection)
     || value.directions.every((direction) => direction === 'IGNORE')) return false
   if (value.combination !== 'ALL' && value.combination !== 'ANY') return false
-  return value.factor !== 'opening_three_ten_minute_bullish'
+  const exitRule = value.exit_rule ?? 'NEXT_SESSION_OPEN'
+  if (exitRule !== 'NEXT_SESSION_OPEN'
+    && exitRule !== 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP') {
+    return false
+  }
+  if (exitRule === 'NEXT_SESSION_OPEN') {
+    if (value.exit_minimum_body_return_bps !== undefined
+      && value.exit_minimum_body_return_bps !== '0') return false
+  } else if (!isBoundedDecimalString(value.exit_minimum_body_return_bps, 1000)) {
+    return false
+  }
+  return (value.factor !== 'opening_three_ten_minute_bullish'
     || (value.combination === 'ALL'
-      && value.directions.every((direction) => direction === 'BULLISH'))
+      && value.directions.every((direction) => direction === 'BULLISH')))
 }
 
 function isFactorDefinition(value: unknown): value is LocalIntradayFactorExperiment['factor_definition'] {
@@ -283,6 +294,12 @@ function isDirection(value: unknown): boolean {
 
 function isDecimalString(value: unknown): value is string {
   return typeof value === 'string' && /^\d+(\.\d+)?$/.test(value)
+}
+
+function isBoundedDecimalString(value: unknown, maximum: number): value is string {
+  return isDecimalString(value)
+    && Number.isFinite(Number(value))
+    && Number(value) <= maximum
 }
 
 function isSignedDecimalString(value: unknown): value is string {

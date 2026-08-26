@@ -1491,3 +1491,28 @@ result had -12.4906% observed excess, -11.8338% median, a
 are descriptive resampling diagnostics on reused history, not a calibrated
 p-value or an unseen confirmation. They cannot retune the factor or threshold,
 mutate state, authorize PAPER/LIVE, or transmit an external order.
+
+## ADR-096 — Intraday strategies may use one bounded causal T+1 exit factor
+
+Status: accepted, 2026-08-27.
+
+Treating factors only as entry conditions leaves strategy construction
+incomplete, but accepting arbitrary sell expressions would reopen the same code,
+future-field and timing risks already closed on the entry side. QTrade therefore
+adds one typed alternative to the unchanged next-session-open baseline: all
+three T+1 ten-minute bodies from 09:30 through 10:00 must be bearish by more than
+a bounded 0-1000 bps threshold. The condition is known only at the 10:00 close;
+when true, execution uses the open of the following 10:05-labelled source Bar.
+When false, the time exit uses the open of the final 15:00-labelled Bar, whose
+interval begins at 14:55. Both paths are T+1 and prohibit same-Bar execution.
+
+The benchmark applies the identical per-symbol exit rule, the API binds the
+threshold and trigger/time-exit counts, and browser-local experiments preserve
+the exit identity. Entry-factor effectiveness and correlation deliberately keep
+their standardized next-session-open forward label, so a sell-policy profit is
+not mistaken for stronger entry-factor evidence. The first viewed 20-session,
+75-stock run at 5 bps triggered 28 of 192 entries, returned +1.3245% with
++4.9200% excess and -11.3789% maximum drawdown, but its stitched walk-forward
+return was -10.0783% and the overall research gate failed. It remains reused
+current-universe QFQ evidence, `NOT_ELIGIBLE`, with no state mutation, PAPER/LIVE
+authority or external order transmission.

@@ -88,6 +88,42 @@ describe('local intraday factor experiments', () => {
     })).toEqual([])
   })
 
+  it('round-trips the bounded bearish exit and rejects unsafe exit identity', () => {
+    const exitResult = {
+      ...result,
+      preview_hash: 'b'.repeat(64),
+      parameters: {
+        ...result.parameters,
+        exit_rule: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP' as const,
+        exit_minimum_body_return_bps: '5',
+      },
+    }
+    const saved = saveLocalIntradayFactorExperiment('三连阴退出', exitResult)
+    expect(loadLocalIntradayFactorExperiments(dataset)[0].parameters).toEqual(
+      exitResult.parameters,
+    )
+
+    window.localStorage.setItem(
+      'qtrade.local-intraday-factor-experiments.v1',
+      JSON.stringify([
+        {
+          ...saved,
+          preview_hash: 'c'.repeat(64),
+          parameters: {
+            ...saved.parameters,
+            exit_minimum_body_return_bps: '1001',
+          },
+        },
+        {
+          ...saved,
+          preview_hash: 'd'.repeat(64),
+          parameters: { ...saved.parameters, exit_rule: 'EVAL' },
+        },
+      ]),
+    )
+    expect(loadLocalIntradayFactorExperiments(dataset)).toEqual([])
+  })
+
   it('ignores corrupted or safety-relaxed local records', () => {
     const valid = saveLocalIntradayFactorExperiment('有效规则', result)
     window.localStorage.setItem(

@@ -26,9 +26,9 @@ Last updated: 2026-08-27
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 449 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 453 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 62 frontend Vitest
+  (macOS, 2026-08-27); 64 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 429.75 KB with no large-chunk warning.
@@ -258,10 +258,24 @@ Last updated: 2026-08-27
   or `ANY` under one bounded nonnegative body threshold. The default three-
   bullish preset cannot be redefined, and custom requests cannot submit code,
   arbitrary features or alternate timestamps. Every custom result remains
-  causal (10:00 decision, 10:05 next-Bar entry, T+1 09:35 exit), ephemeral,
+  causal (10:00 decision, 10:05 next-Bar entry, default T+1 09:35 exit), ephemeral,
   current-universe/QFQ non-PIT and `NOT_ELIGIBLE`; it reuses all existing
   effectiveness, correlation, robustness and promotion gates without mutating
   strategy or PAPER state.
+- Bounded intraday exit-factor construction: the same strategy form can instead
+  require three completed bearish ten-minute bodies on T+1. The exit condition
+  is not known until the next session's 10:00 close, so a trigger executes only
+  at the open of the 10:05-labelled source Bar. A non-trigger exits at the open
+  of the final 15:00-labelled Bar, whose interval starts at 14:55; neither path
+  uses a same-Bar close. The threshold is bounded to 0-1000 bps, a threshold on
+  the default next-open exit is rejected rather than ignored, and the benchmark
+  uses the same per-symbol exit rule. Browser-local records retain the exit
+  identity while entry-factor correlation remains standardized to T+1 open.
+  On the already viewed 2026-07-28 through 2026-08-24 window, the 5 bps exit
+  condition triggered 28 of 192 entries and 164 used the time exit. The full
+  window returned +1.3245% with +4.9200% excess, but maximum drawdown was
+  -11.3789%, stitched walk-forward return was -10.0783%, and the research gate
+  still failed. This is a retrospective diagnostic, not evidence for PAPER.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,

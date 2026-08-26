@@ -7,6 +7,7 @@ import pytest
 from qtrade.data import Bar
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.research.intraday_factor import (
+    IntradayExitSpec,
     OpeningTripleBullishSpec,
     _holm_adjusted_p_values,
     _newey_west_mean_statistics,
@@ -189,6 +190,121 @@ def test_three_ten_minute_bullish_signal_executes_next_bar_and_exits_t_plus_one(
     }
     assert result.external_order_transmission is False
     assert result.state_mutation is False
+
+
+def test_three_ten_minute_bearish_exit_is_causal_and_has_a_time_stop() -> None:
+    days = tuple(date(2026, 8, 3) + timedelta(days=index) for index in range(6))
+    symbols = tuple(f"6002{index:02d}" for index in range(5))
+    records = _bars(
+        days=days,
+        symbols=symbols,
+        signal_symbols={symbols[0], symbols[1]},
+    )
+    bearish_exit_symbol = symbols[0]
+    bearish_exit_day = days[1]
+    bearish: list[Bar] = []
+    for bar in records:
+        bar_time = bar.timestamp.timetz().replace(tzinfo=None)
+        if (
+            bar.symbol == bearish_exit_symbol
+            and bar.trading_day == bearish_exit_day
+            and bar_time in {time(9, 40), time(9, 50), time(10, 0)}
+        ):
+            pair_open_index = {time(9, 40): 0, time(9, 50): 2, time(10, 0): 4}[
+                bar_time
+            ]
+            pair_open = next(
+                candidate.open
+                for candidate in records
+                if candidate.symbol == bearish_exit_symbol
+                and candidate.trading_day == bearish_exit_day
+                and candidate.timestamp.timetz().replace(tzinfo=None)
+                == SINA_FIVE_MINUTE_SESSION_TIMES[pair_open_index]
+            )
+            close = pair_open * Decimal("0.999")
+            bearish.append(replace(bar, close=close, low=min(bar.low, close)))
+        else:
+            bearish.append(bar)
+
+    result = run_opening_triple_bullish_research(
+        bearish,
+        sectors={
+            symbol: (f"S{index}", f"板块{index}")
+            for index, symbol in enumerate(symbols)
+        },
+        start=days[0],
+        end=days[-2],
+        exit_spec=IntradayExitSpec(
+            rule=(
+                "NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_"
+                "ELSE_14_55_TIME_STOP"
+            ),
+            minimum_body_return_bps=Decimal("5"),
+        ),
+        quantiles=5,
+    )
+
+    triggered = next(
+        item
+        for item in result.observations
+        if item.trading_day == days[0] and item.symbol == bearish_exit_symbol
+    )
+    timed_out = next(
+        item
+        for item in result.observations
+        if item.trading_day == days[0] and item.symbol == symbols[1]
+    )
+    assert triggered.signal is True
+    assert triggered.exit_condition_triggered is True
+    assert triggered.exit_condition_score > Decimal("0.00099")
+    assert triggered.exit_at.date() == bearish_exit_day
+    assert triggered.exit_at.timetz().replace(tzinfo=None) == time(10, 5)
+    assert timed_out.signal is True
+    assert timed_out.exit_condition_triggered is False
+    assert timed_out.exit_at.date() == bearish_exit_day
+    assert timed_out.exit_at.timetz().replace(tzinfo=None) == time(15, 0)
+    assert triggered.exit_at > datetime.combine(
+        bearish_exit_day,
+        time(10, 0),
+        CHINA,
+    )
+    assert result.causal_contract == {
+        "factor_known_at": "THIRD_TEN_MINUTE_BAR_CLOSE_10_00",
+        "entry_at": "NEXT_SOURCE_FIVE_MINUTE_BAR_OPEN_10_05",
+        "exit_condition_known_at": (
+            "NEXT_SESSION_THIRD_TEN_MINUTE_BAR_CLOSE_10_00_T_PLUS_ONE"
+        ),
+        "conditional_exit_at": (
+            "NEXT_SOURCE_FIVE_MINUTE_BAR_OPEN_10_05_T_PLUS_ONE"
+        ),
+        "fallback_exit_at": (
+            "FINAL_SOURCE_FIVE_MINUTE_BAR_OPEN_14_55_T_PLUS_ONE"
+        ),
+        "source_bar_timestamp_convention": "BAR_END_TIME",
+        "entry_bar_label": "10_05",
+        "entry_interval_start": "10_00",
+        "conditional_exit_bar_label": "NEXT_SESSION_10_05",
+        "conditional_exit_interval_start": "NEXT_SESSION_10_00",
+        "fallback_exit_bar_label": "NEXT_SESSION_15_00",
+        "fallback_exit_interval_start": "NEXT_SESSION_14_55",
+        "same_bar_execution": False,
+        "t_plus_one_compliant": True,
+    }
+
+
+def test_intraday_exit_spec_rejects_unsafe_or_ignored_parameters() -> None:
+    with pytest.raises(ValueError, match="unsupported intraday exit rule"):
+        IntradayExitSpec(rule="EVAL")
+    with pytest.raises(ValueError, match="finite and between 0 and 1000"):
+        IntradayExitSpec(
+            rule=(
+                "NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_"
+                "ELSE_14_55_TIME_STOP"
+            ),
+            minimum_body_return_bps=Decimal("1001"),
+        )
+    with pytest.raises(ValueError, match="must be zero for NEXT_SESSION_OPEN"):
+        IntradayExitSpec(minimum_body_return_bps=Decimal("1"))
 
 
 def test_bounded_opening_direction_rule_uses_only_completed_ten_minute_bars() -> None:

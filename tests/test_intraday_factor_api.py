@@ -236,6 +236,82 @@ def test_intraday_factor_backtest_accepts_a_bounded_custom_direction_rule() -> N
     assert payload["external_order_transmission"] is False
 
 
+def test_intraday_factor_backtest_accepts_a_causal_bearish_exit_rule() -> None:
+    exit_rule = (
+        "NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP"
+    )
+    response = _client().post(
+        "/intraday-factor-backtest",
+        json={
+            "factor": "opening_three_ten_minute_bullish",
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+            "cost_bps": 5,
+            "exit_rule": exit_rule,
+            "exit_minimum_body_return_bps": 5,
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["source_bar_count"] == 21 * 75 * 48
+    assert payload["parameters"]["exit_rule"] == exit_rule
+    assert payload["parameters"]["exit_minimum_body_return_bps"] == "5"
+    strategy = payload["strategy"]
+    assert strategy["exit_rule"] == exit_rule
+    assert strategy["exit_condition"] == (
+        "bearish_10m_0930_0940 AND bearish_10m_0940_0950 "
+        "AND bearish_10m_0950_1000"
+    )
+    assert strategy["exit_condition_known_at"] == (
+        "NEXT_SESSION_10_00_BAR_CLOSE_T_PLUS_ONE"
+    )
+    assert strategy["conditional_exit_price_source"] == (
+        "OPEN_OF_NEXT_SESSION_BAR_LABELLED_10_05_INTERVAL_START_10_00"
+    )
+    assert strategy["fallback_exit_price_source"] == (
+        "OPEN_OF_NEXT_SESSION_BAR_LABELLED_15_00_INTERVAL_START_14_55"
+    )
+    assert strategy["conditional_exit_count"] + strategy[
+        "fallback_time_stop_count"
+    ] == payload["event_summary"]["signal_count"]
+    assert payload["causal_contract"]["same_bar_execution"] is False
+    assert payload["causal_contract"]["t_plus_one_compliant"] is True
+    assert payload["promotion"] == "NOT_ELIGIBLE"
+    assert payload["paper_readiness"] == "NOT_ELIGIBLE"
+    assert payload["live_readiness"] == (
+        "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION"
+    )
+    assert payload["state_mutation"] is False
+    assert payload["external_order_transmission"] is False
+
+
+def test_intraday_factor_backtest_rejects_invalid_exit_contracts() -> None:
+    client = _client()
+    ignored_threshold = client.post(
+        "/intraday-factor-backtest",
+        json={
+            "factor": "opening_three_ten_minute_bullish",
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+            "exit_minimum_body_return_bps": 1,
+        },
+    )
+    assert ignored_threshold.status_code == 422
+    assert "must be zero for NEXT_SESSION_OPEN" in ignored_threshold.text
+
+    unknown_rule = client.post(
+        "/intraday-factor-backtest",
+        json={
+            "factor": "opening_three_ten_minute_bullish",
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+            "exit_rule": "EVAL",
+        },
+    )
+    assert unknown_rule.status_code == 422
+
+
 def test_intraday_factor_backtest_rejects_empty_or_mutated_rule_contracts() -> None:
     client = _client()
     empty = client.post(

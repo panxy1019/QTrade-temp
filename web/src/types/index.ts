@@ -511,9 +511,12 @@ export interface IntradayFactorBacktestRequest {
   minimum_body_return_bps: string
   directions: [IntradayOpeningDirection, IntradayOpeningDirection, IntradayOpeningDirection]
   combination: 'ALL' | 'ANY'
+  exit_rule?: IntradayExitRule
+  exit_minimum_body_return_bps?: string
 }
 
 export type IntradayOpeningDirection = 'BULLISH' | 'BEARISH' | 'IGNORE'
+export type IntradayExitRule = 'NEXT_SESSION_OPEN' | 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP'
 
 export interface IntradayFactorCorrelationRule {
   directions: [IntradayOpeningDirection, IntradayOpeningDirection, IntradayOpeningDirection]
@@ -758,7 +761,14 @@ export interface IntradayFactorBacktest {
     entry_rule: string
     exit_rule: string
     entry_price_source: string
-    exit_price_source: string
+    exit_price_source?: string
+    exit_condition?: string
+    exit_minimum_body_return_bps?: string
+    exit_condition_known_at?: string
+    conditional_exit_price_source?: string
+    fallback_exit_price_source?: string
+    conditional_exit_count?: number
+    fallback_time_stop_count?: number
     position_rule: string
     benchmark_rule: string
     single_side_cost_bps: string
@@ -789,12 +799,19 @@ export interface IntradayFactorBacktest {
   causal_contract: {
     factor_known_at: string
     entry_at: string
-    exit_at: string
+    exit_at?: string
+    exit_condition_known_at?: string
+    conditional_exit_at?: string
+    fallback_exit_at?: string
     source_bar_timestamp_convention: 'BAR_END_TIME'
     entry_bar_label: '10_05'
     entry_interval_start: '10_00'
-    exit_bar_label: 'NEXT_SESSION_09_35'
-    exit_interval_start: 'NEXT_SESSION_09_30'
+    exit_bar_label?: 'NEXT_SESSION_09_35'
+    exit_interval_start?: 'NEXT_SESSION_09_30'
+    conditional_exit_bar_label?: 'NEXT_SESSION_10_05'
+    conditional_exit_interval_start?: 'NEXT_SESSION_10_00'
+    fallback_exit_bar_label?: 'NEXT_SESSION_15_00'
+    fallback_exit_interval_start?: 'NEXT_SESSION_14_55'
     same_bar_execution: false
     t_plus_one_compliant: true
   }
