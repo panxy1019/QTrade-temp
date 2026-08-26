@@ -507,6 +507,15 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       ),
     },
     {
+      title: '策略身份',
+      render: (_: unknown, row: LocalIntradayFactorExperiment) => row.strategy_identity
+        ? <Space orientation="vertical" size={0}>
+            <Typography.Text code>{row.strategy_identity.strategy_id}</Typography.Text>
+            <Typography.Text type="secondary">规格 {row.strategy_identity.spec_hash.slice(0, 12)}… · 未注册</Typography.Text>
+          </Space>
+        : <Tag>旧记录未保存</Tag>,
+    },
+    {
       title: '退出',
       render: (_: unknown, row: LocalIntradayFactorExperiment) => (
         row.parameters.exit_rule === 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP'
@@ -1282,7 +1291,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             />
             <Typography.Text type="secondary">相关性响应哈希 {correlationResult.preview_hash}；数据 checksum {correlationResult.dataset_checksum}；无状态写入、无外部订单。</Typography.Text>
           </>}
-          <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，保留规则、结果哈希、常用绩效、Rank IC、最大相关性、Newey-West 与滚动样本外摘要；载入后必须重新运行。表中统计都来自已经查看的同一历史响应，不是正式实验、独立样本外证据或 PAPER 晋级输入，也不会同步到其他设备。</Typography.Text>
+          <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，保留规则、结果哈希、只读策略 ID/规格哈希、常用绩效、Rank IC、最大相关性、Newey-West 与滚动样本外摘要；载入后必须重新运行。策略身份仍是 AD_HOC_UNREGISTERED；表中统计都来自已经查看的同一历史响应，不是正式实验、独立样本外证据或 PAPER 晋级输入，也不会同步到其他设备。</Typography.Text>
         </Space>
       </Card>
     </Space>

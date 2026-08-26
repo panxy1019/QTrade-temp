@@ -63,6 +63,12 @@ IC, maximum absolute correlation, stitched out-of-sample return/excess,
 Newey-West t and 95% interval. Those values are copied from the exact saved
 checksum/result-hash summary; display does not create a new calculation,
 independent observation, experiment record or promotion decision.
+New intraday-factor rows also keep the exact read-only strategy ID and behavior
+specification hash that bind entry factor, exit rule, sizing, benchmark, cost and
+T+1 execution. The client rejects a hash/ID mismatch or any relaxed registration,
+PAPER, promotion, state or order flag; old rows display no identity rather than
+receiving a synthetic one. All retained identities remain
+`AD_HOC_UNREGISTERED` and cannot create a StrategyVersion.
 Each adjustable result now includes an equal-weight Buy-and-Hold run from the
 same causal simulator. It selects symbols visible at the first decision close,
 executes at the next open and shares the strategy's window, initial cash,

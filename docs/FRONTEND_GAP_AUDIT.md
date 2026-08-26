@@ -139,6 +139,7 @@ GitHub/Vercel 公开节点。判定标准不是“路由存在”，而是页面
 | FE-123 | 回测实验室 / 本地绑定参数复载 | 绑定记录保存了模板身份，但点击“载入参数”会无条件清空模板；若反向直接复用历史规格哈希，又会误导为原 13 字段规格已完整恢复 | DONE | 绑定行复载保存的 template_id 和精确回测参数，同时清空旧结果/草案/绑定，把规格表重置为新的数据集默认草案并将实验 ID 留空；历史 spec/binding 哈希只作身份提示，明确原 experiment/commit/split/seed 未保存且必须重新填写并生成新草案哈希。普通行继续无模板，本地模板与参数不兼容时只载入参数、不恢复模板；不写不可变实验/注册表、不启动 PAPER/LIVE 或订单 |
 | FE-124 | 回测实验室 / 本地对比可携带审计 | 多轮参数与指标只存在 localStorage，当前页面虽可 A/B 对比，但刷新同一设备之外无法留档核对；逐条导出单次结果又丢失对比集合和本地绑定分类 | DONE | 一次导出当前 checksum 数据集下全部有效记录的确定性 JSON，保留 provider/version/checksum/PIT、参数、常用指标、preview hash 与可选 template/spec/binding 身份；无记录时按钮禁用，不写 export 时间戳，未变化状态重复序列化相同。仅作只读携带与核对，不提供导入、自动同步、服务端写入、不可变实验、注册、晋级、PAPER/LIVE 或订单权限 |
 | FE-125 | 策略研究 / 本地因子全维 A/B | 本地因子摘要已经保存年化、超额、Rank IC、最大相关性、滚动样本外超额和 Newey-West 区间，但表格只显示总收益、Sharpe、回撤、样本外收益与 t 值，无法在一行完成有效性/相关性/稳健性/策略绩效对比 | DONE | 每行新增年化收益、主动超额、Rank IC、最大绝对相关、样本外超额和 NW 95% 区间，并保留累计收益、Sharpe、最大回撤、样本外收益、NW t 与硬门；全部直接读取 checksum/result hash 绑定摘要，不重算、不补值、不当成独立证据或 PAPER/LIVE 晋级输入 |
+| FE-126 | 策略研究 / 因子到策略本地血缘 | 单次因子响应已有绑定开仓、平仓、仓位、基准、成本和 T+1 的只读 strategy_id/spec_hash，但保存本地对比时丢弃，复载后无法证明某行对应哪一套策略行为 | DONE | 新记录保存 `AD_HOC_READ_ONLY_STRATEGY_IDENTITY` 的 ID/行为规格哈希，校验 ID 必须来自哈希前缀且 immutable/unregistered/PAPER/promotion/state/order 安全字段全部严格；旧 schema-v1 行归一为缺失身份，放宽或错配记录拒绝。页面显式“未注册”，不创建 StrategyVersion、注册、晋级、PAPER/LIVE 或订单权限 |
 
 ## 外部阻塞，不能伪造为已完成
 

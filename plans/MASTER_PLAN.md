@@ -286,6 +286,12 @@ absolute correlation, stitched out-of-sample return/excess, Newey-West t and
 strategy-PnL comparison on one row without deriving any missing value or
 reclassifying the already viewed response as independent evidence.
 
+New notebook rows also preserve the exact read-only strategy ID and behavior
+specification hash produced by the factor-plus-exit preview. The client verifies
+the hash-derived ID and all immutable/unregistered/no-authority fields before
+writing; legacy rows explicitly lack identity. This closes factor-to-strategy
+replay lineage without inserting a StrategyVersion or changing registry state.
+
 The effectiveness gate now clusters event returns by trading session before
 claiming significance. It computes each signal day's triggered-minus-universe
 mean and applies an automatic-bandwidth Newey-West mean standard error,

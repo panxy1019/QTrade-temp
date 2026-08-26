@@ -273,13 +273,19 @@ research previews and cannot create a PAPER candidate or external order.
 
 Each completed intraday-factor preview can be saved into a browser-local
 comparison notebook. A bounded record keeps the exact dataset version/checksum,
-result hash, typed rule parameters, signal counts, standard metrics, stitched
+result hash, typed rule parameters, read-only strategy ID/spec hash, signal counts, standard metrics, stitched
 walk-forward return and both gate outcomes. Records with invalid structure,
 another dataset identity or relaxed safety flags are ignored; duplicate result
 hashes replace the older label and at most 30 summaries are retained. Loading a
 record only repopulates the form and clears the old result, so the user must run
 the current verified dataset again. The notebook is not server-synchronized,
 does not create a registered experiment and cannot feed PAPER or LIVE.
+
+New records retain `AD_HOC_READ_ONLY_STRATEGY_IDENTITY` only when the strategy ID
+matches the SHA-256 prefix and every unregistered/no-authority flag remains
+strict. Older schema-v1 browser rows load with an explicit missing identity
+rather than inventing one. The table label stays `AD_HOC_UNREGISTERED`; preserving
+the factor-to-entry/exit behavior hash is lineage for replay, not registration.
 
 That notebook now exposes the complete saved comparison surface rather than only
 headline PnL: cumulative and annualized return, active excess, Sharpe, maximum

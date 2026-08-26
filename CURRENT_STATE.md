@@ -409,6 +409,12 @@ Last updated: 2026-08-27
   summary and are not recomputed into new evidence. Reproduce the focused page
   contract with `cd web && npm test -- --run src/pages/DataPages.test.tsx -t
   "runs the full intraday factor gate"`.
+- Intraday factor-to-strategy lineage: new local summaries retain the response's
+  `AD_HOC_READ_ONLY_STRATEGY_IDENTITY`, strategy ID and behavior-spec SHA-256 only
+  when the ID/hash relationship and every unregistered/no-authority flag pass.
+  Legacy rows normalize to an explicit missing identity; unsafe or PAPER-relaxed
+  identities are rejected before write. The table keeps the status visibly
+  `AD_HOC_UNREGISTERED`, so replay identity does not become registration.
 - Session-clustered factor significance: effectiveness testing now forms one
   conditional-excess observation per signal-bearing trading day before applying
   an automatically banded Newey-West mean standard error, t-statistic and 95%

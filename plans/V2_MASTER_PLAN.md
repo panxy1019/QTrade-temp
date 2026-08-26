@@ -163,6 +163,10 @@ npm --prefix web run build
   maximum absolute correlation, stitched OOS return/excess, Newey-West t and
   its 95% interval. Use only saved checksum/result-bound values and create no
   new evidence, promotion or runtime authority.
+- [x] Preserve the response's read-only strategy ID and behavior-spec SHA-256 in
+  new local factor rows, validate their hash relationship and every
+  unregistered/no-authority flag, normalize legacy rows to missing identity and
+  keep all saved identities visibly `AD_HOC_UNREGISTERED`.
 - [x] Cluster intraday event effectiveness by signal-bearing trading day and add
   automatic-bandwidth Newey-West standard error, t-statistic, 95% interval and
   minimum-session/significance hard gates across API, UI and signed evidence.

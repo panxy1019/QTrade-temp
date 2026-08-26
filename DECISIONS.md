@@ -2130,3 +2130,24 @@ This is a diagnostic comparison of already viewed history. Wider visibility does
 not provide a new independent sample, immutable experiment, factor-selection
 permission, registry admission, promotion, PAPER/LIVE authority, state mutation
 or external order transmission.
+
+## ADR-123 — Local factor rows preserve read-only strategy identity
+
+Status: accepted, 2026-08-27.
+
+The factor response bound entry factor, exit rule, sizing, benchmark, cost and
+T+1 timing into a read-only strategy ID and specification hash. Saving the
+response locally discarded that identity, so a retained factor row could not be
+traced to the exact combined strategy behavior it represented.
+
+New rows retain the `AD_HOC_READ_ONLY_STRATEGY_IDENTITY` object. Before writing,
+the client requires a 64-character SHA-256, the exact hash-derived
+`adhoc-intraday-*` ID, the declared scope excluding observed exit counts, an
+unregistered status, immutability within the response, and false PAPER,
+promotion, state-mutation and external-order flags. Legacy schema-v1 rows without
+the field normalize to an explicit null identity; mismatched or relaxed
+identities fail closed.
+
+The preserved identity is replay lineage only. It does not supply the remaining
+StrategySpec fields, create a StrategyVersion, register or promote a strategy,
+start PAPER/LIVE, mutate state or transmit an external order.

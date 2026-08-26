@@ -9,6 +9,19 @@ const MAX_EXPERIMENTS = 30
 
 type Dataset = NonNullable<FiveMinuteResearchReport['minute_dataset']>
 
+export interface LocalIntradayStrategyIdentity {
+  classification: 'AD_HOC_READ_ONLY_STRATEGY_IDENTITY'
+  strategy_id: string
+  spec_hash: string
+  spec_hash_scope: 'strategy_without_observed_exit_counts'
+  registration_status: 'AD_HOC_UNREGISTERED'
+  immutable_within_response: true
+  paper_eligible: false
+  promotion_authority: false
+  state_mutation: false
+  external_order_transmission: false
+}
+
 export interface LocalIntradayFactorExperiment {
   schema_version: 1
   name: string
@@ -25,6 +38,7 @@ export interface LocalIntradayFactorExperiment {
     name: string
     expression: string
   }
+  strategy_identity: LocalIntradayStrategyIdentity | null
   observation_count: number
   signal_count: number
   clustered_signal_session_count: number
@@ -66,6 +80,7 @@ export function saveLocalIntradayFactorExperiment(
   if (!normalizedName || normalizedName.length > 80) {
     throw new Error('实验名称需要 1-80 个字符')
   }
+  const strategyIdentity = copyStrategyIdentity(result.strategy_identity)
   const record: LocalIntradayFactorExperiment = {
     schema_version: 1,
     name: normalizedName,
@@ -85,6 +100,7 @@ export function saveLocalIntradayFactorExperiment(
       name: result.factor_definition.name,
       expression: result.factor_definition.expression,
     },
+    strategy_identity: strategyIdentity,
     observation_count: result.event_summary.observation_count,
     signal_count: result.event_summary.signal_count,
     clustered_signal_session_count: (
@@ -141,10 +157,22 @@ function readAll(): LocalIntradayFactorExperiment[] {
     if (!raw) return []
     const parsed: unknown = JSON.parse(raw)
     if (!Array.isArray(parsed)) return []
-    return parsed.filter(isExperiment).slice(0, MAX_EXPERIMENTS)
+    return parsed
+      .map(parseExperiment)
+      .filter((record): record is LocalIntradayFactorExperiment => record !== null)
+      .slice(0, MAX_EXPERIMENTS)
   } catch {
     return []
   }
+}
+
+function parseExperiment(value: unknown): LocalIntradayFactorExperiment | null {
+  if (!isObject(value)) return null
+  const normalized = {
+    ...value,
+    strategy_identity: value.strategy_identity === undefined ? null : value.strategy_identity,
+  }
+  return isExperiment(normalized) ? normalized : null
 }
 
 function writeAll(records: LocalIntradayFactorExperiment[]): void {
@@ -169,6 +197,7 @@ function isExperiment(value: unknown): value is LocalIntradayFactorExperiment {
     && isRequest(value.parameters)
     && isFactorDefinition(value.factor_definition)
     && matchesFactorDefinition(value.parameters, value.factor_definition)
+    && (value.strategy_identity === null || isStrategyIdentity(value.strategy_identity))
     && isPositiveInteger(value.observation_count)
     && isNonNegativeInteger(value.signal_count)
     && isNonNegativeInteger(value.clustered_signal_session_count)
@@ -176,6 +205,26 @@ function isExperiment(value: unknown): value is LocalIntradayFactorExperiment {
     && typeof value.research_gate_passed === 'boolean'
     && typeof value.robustness_gate_passed === 'boolean'
     && value.promotion === 'NOT_ELIGIBLE'
+    && value.state_mutation === false
+    && value.external_order_transmission === false
+}
+
+function copyStrategyIdentity(value: unknown): LocalIntradayStrategyIdentity {
+  if (!isStrategyIdentity(value)) {
+    throw new Error('因子结果不完整或安全边界不匹配，未保存')
+  }
+  return { ...value }
+}
+
+function isStrategyIdentity(value: unknown): value is LocalIntradayStrategyIdentity {
+  if (!isObject(value) || !isHexHash(value.spec_hash)) return false
+  return value.classification === 'AD_HOC_READ_ONLY_STRATEGY_IDENTITY'
+    && value.strategy_id === `adhoc-intraday-${value.spec_hash.slice(0, 16)}`
+    && value.spec_hash_scope === 'strategy_without_observed_exit_counts'
+    && value.registration_status === 'AD_HOC_UNREGISTERED'
+    && value.immutable_within_response === true
+    && value.paper_eligible === false
+    && value.promotion_authority === false
     && value.state_mutation === false
     && value.external_order_transmission === false
 }

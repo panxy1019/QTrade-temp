@@ -19,6 +19,18 @@ const result = {
     name: '自定义开盘十分钟方向规则',
     expression: 'bullish_10m_0930_0940 AND bearish_10m_0940_0950',
   },
+  strategy_identity: {
+    classification: 'AD_HOC_READ_ONLY_STRATEGY_IDENTITY',
+    strategy_id: `adhoc-intraday-${'b'.repeat(16)}`,
+    spec_hash: 'b'.repeat(64),
+    spec_hash_scope: 'strategy_without_observed_exit_counts',
+    registration_status: 'AD_HOC_UNREGISTERED',
+    immutable_within_response: true,
+    paper_eligible: false,
+    promotion_authority: false,
+    state_mutation: false,
+    external_order_transmission: false,
+  },
   parameters: {
     factor: 'custom_opening_ten_minute_direction_rule',
     start: '2026-07-28',
@@ -80,6 +92,7 @@ describe('local intraday factor experiments', () => {
           confidence_interval_95_lower: '-0.000396',
           confidence_interval_95_upper: '-0.000004',
         }),
+        strategy_identity: result.strategy_identity,
       }),
     ])
     expect(loadLocalIntradayFactorExperiments({
@@ -142,6 +155,29 @@ describe('local intraday factor experiments', () => {
       ]),
     )
 
+    expect(loadLocalIntradayFactorExperiments(dataset)).toEqual([])
+  })
+
+  it('normalizes legacy records without strategy identity and rejects a relaxed identity', () => {
+    const saved = saveLocalIntradayFactorExperiment('身份规则', result)
+    const legacy = Object.fromEntries(Object.entries(saved).filter(
+      ([key]) => key !== 'strategy_identity',
+    ))
+    window.localStorage.setItem(
+      'qtrade.local-intraday-factor-experiments.v1',
+      JSON.stringify([legacy]),
+    )
+    expect(loadLocalIntradayFactorExperiments(dataset)[0]).toEqual(
+      expect.objectContaining({ strategy_identity: null }),
+    )
+
+    window.localStorage.clear()
+    expect(() => saveLocalIntradayFactorExperiment('放宽身份', {
+      ...result,
+      strategy_identity: { ...result.strategy_identity, paper_eligible: true },
+    } as unknown as IntradayFactorBacktest)).toThrow(
+      '因子结果不完整或安全边界不匹配，未保存',
+    )
     expect(loadLocalIntradayFactorExperiments(dataset)).toEqual([])
   })
 
