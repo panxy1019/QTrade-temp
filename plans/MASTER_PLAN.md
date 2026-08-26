@@ -65,6 +65,8 @@ missing, extra, reordered or type-drifted fields fail closed as integrity errors
 The shared gate also binds SSE/SZSE timestamps to their declared trading day in
 China market time, preventing a date-label drift from contaminating session
 splits, factors or minute-overlay replay.
+Parquet dataset paths are resolved before I/O and must remain a direct child of
+the configured root, closing traversal, absolute-path and symlink escape paths.
 Sourced normalized corporate-action factors produce point-in-time backward-
 adjusted bars with explicit adjustment lineage. A durable immutable SQLite
 catalog links PASSED data manifests to experiment hashes and is populated by the

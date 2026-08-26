@@ -29,6 +29,20 @@ def manifest() -> DataManifest:
     )
 
 
+def sample_bar() -> Bar:
+    return Bar(
+        "510300",
+        "SSE",
+        datetime(2026, 8, 12, 7, tzinfo=UTC),
+        date(2026, 8, 12),
+        Decimal("10"),
+        Decimal("11"),
+        Decimal("9"),
+        Decimal("10.5"),
+        Decimal("100"),
+    )
+
+
 def test_parquet_store_requires_quality_and_checksum(tmp_path):
     store = ParquetBarStore(tmp_path)
     bar = Bar(
@@ -144,6 +158,25 @@ def test_parquet_store_rejects_resigned_schema_drift(tmp_path, mutation):
 
     with pytest.raises(DatasetIntegrityError, match="schema"):
         store.read(resigned)
+
+
+def test_parquet_store_write_rejects_data_version_path_escape(tmp_path):
+    store = ParquetBarStore(tmp_path / "root")
+    escaped = replace(manifest(), data_version="../escaped-write")
+
+    with pytest.raises(DatasetIntegrityError, match="path"):
+        store.write([sample_bar()], escaped)
+
+    assert not (tmp_path / "escaped-write").exists()
+
+
+def test_parquet_store_read_rejects_data_version_path_escape(tmp_path):
+    passed = ParquetBarStore(tmp_path / "outside").write([sample_bar()], manifest())
+    escaped = replace(passed, data_version="../outside/bars-v1")
+    (tmp_path / "root").mkdir()
+
+    with pytest.raises(DatasetIntegrityError, match="path"):
+        ParquetBarStore(tmp_path / "root").read(escaped)
 
 
 def test_experiment_artifacts_are_hashed_and_immutable(tmp_path):

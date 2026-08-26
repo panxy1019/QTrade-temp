@@ -37,6 +37,12 @@ class ParquetBarStore:
     def __init__(self, root: Path) -> None:
         self._root = root.resolve()
 
+    def _dataset_dir(self, data_version: str) -> Path:
+        dataset_dir = (self._root / data_version).resolve()
+        if dataset_dir.parent != self._root:
+            raise DatasetIntegrityError("dataset path escapes storage root")
+        return dataset_dir
+
     def write(
         self,
         bars: list[Bar],
@@ -48,12 +54,12 @@ class ParquetBarStore:
             raise ValueError("new dataset manifest must begin PENDING")
         if not bars:
             raise ValueError("bars cannot be empty")
+        dataset_dir = self._dataset_dir(manifest.data_version)
         issues = (quality_gate or BarQualityGate()).validate(bars)
         if issues:
             raise DatasetIntegrityError(
                 "dataset failed quality gate: " + ",".join(issue.code for issue in issues)
             )
-        dataset_dir = self._root / manifest.data_version
         dataset_dir.mkdir(parents=True, exist_ok=False)
         target = dataset_dir / "bars.parquet"
         table = pa.table(
@@ -77,7 +83,7 @@ class ParquetBarStore:
     def read(self, manifest: DataManifest, *, symbol: str | None = None) -> list[Bar]:
         if manifest.quality_status is not QualityStatus.PASSED:
             raise DatasetIntegrityError("only PASSED datasets can be queried")
-        target = self._root / manifest.data_version / "bars.parquet"
+        target = self._dataset_dir(manifest.data_version) / "bars.parquet"
         if not target.is_file():
             raise DatasetIntegrityError("dataset file is missing")
         checksum = sha256(target.read_bytes()).hexdigest()

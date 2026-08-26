@@ -969,3 +969,16 @@ The shared quality gate now resolves timezone-aware SSE/SZSE timestamps at
 UTC+08:00 and requires the resulting date to equal `trading_day`. The rule is
 limited to exchanges whose timezone is known; it does not impose China time on
 future markets with a different calendar.
+
+## ADR-065 — Parquet data versions cannot escape the storage root
+
+Status: accepted, 2026-08-26.
+
+`data_version` participates in a filesystem path. Treating it as an unchecked
+path segment allows traversal, an absolute path, nested directories or a symlink
+to select a Parquet file outside the configured store even when later checksum
+or row-lineage validation rejects the content.
+
+Both reads and writes now resolve the candidate directory before any dataset I/O
+and require it to be a direct child of the resolved storage root. Path escape is
+reported as a dataset-integrity error and no outside file is created or read.
