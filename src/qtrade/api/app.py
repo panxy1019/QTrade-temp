@@ -5418,7 +5418,18 @@ def _load_verified_forward_observation_report(
                     or base is None
                     or overlay is None
                     or base_identity is not None
-                    and base != base_identity
+                    and (
+                        base[3] != base_identity[3]
+                        or any(
+                            not isclose(
+                                base[index],
+                                base_identity[index],
+                                rel_tol=1e-12,
+                                abs_tol=1e-15,
+                            )
+                            for index in range(3)
+                        )
+                    )
                     or not isclose(
                         float(str(row.get("excess_return"))),
                         overlay[0] - base[0],

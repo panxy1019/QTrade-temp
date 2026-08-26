@@ -99,9 +99,11 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert development["external_order_transmission"] is False
     forward = client.get(_api("/forward-observation")).json()
     assert forward["policy_id"] == "dev-floor-098-slow12x48-v1"
-    assert forward["future_session_count"] == 0
+    assert forward["future_session_count"] == 1
     assert forward["minimum_complete_future_sessions"] == 20
     assert forward["observation_status"] == "INCOMPLETE"
+    assert [row["passed"] for row in forward["gates"]] == [True] * 5
+    assert forward["all_required_gates_passed"] is False
     assert forward["promotion"] == "NOT_ELIGIBLE"
     assert forward["external_order_transmission"] is False
     coverage = client.get(_api("/forward-source-coverage")).json()

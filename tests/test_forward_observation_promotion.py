@@ -283,3 +283,9 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
     source_reports[0]["target_day"] = "20260901"
     with pytest.raises(ValueError, match="source sessions"):
         validate(compact_day_candidate)
+
+
+def test_forward_promotion_binds_provider_timezone_anchor_identity() -> None:
+    assert _FROZEN_FORWARD_ANCHOR_SHA256 == (
+        "e057f6e638aebcc9cb02b2ffb106913628734f12730e5506620829ab609e6a29"
+    )

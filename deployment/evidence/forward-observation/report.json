@@ -2,7 +2,7 @@
   "schema_version": 1,
   "report_id": "baostock-locked-forward-observation-v1",
   "classification": "LOCKED_FUTURE_COMPLETE_SESSION_OBSERVATION",
-  "generated_at": "2026-08-26T11:32:31.033625+08:00",
+  "generated_at": "2026-08-26T20:22:48.639459+08:00",
   "preregistration_sha256": "79e87853622d0214bcaa39a2ae4c3f1da785ce1ea1fefe7d1c61eb646c7a2100",
   "policy_id": "dev-floor-098-slow12x48-v1",
   "policy_hash": "7119dba09cbebaa44827271491263ce0def069f43ca36211afb3774aa226035a",
@@ -21,16 +21,365 @@
     "session_count": 368,
     "warmup_returns_enter_metrics": false
   },
-  "future_session_count": 0,
-  "accepted_future_session_count": 0,
-  "evaluated_future_session_count": 0,
+  "future_session_count": 1,
+  "accepted_future_session_count": 1,
+  "evaluated_future_session_count": 1,
   "minimum_complete_future_sessions": 20,
-  "future_sessions": [],
+  "future_sessions": [
+    {
+      "target_day": "2026-08-26",
+      "evidence_sha256": "0a13e53b4cc098e54dbb6c20db4af5140a04e573e640f4ac6cb11bb549042d52",
+      "bar_count": 3600,
+      "anchor_exact_match": true
+    }
+  ],
   "observation_status": "INCOMPLETE",
   "all_required_gates_passed": false,
-  "gates": [],
-  "cost_stress": [],
-  "leave_one_sector_out": [],
+  "gates": [
+    {
+      "gate_id": "OVERLAY_DRAWDOWN_NOT_WORSE_AT_5_BPS",
+      "passed": true
+    },
+    {
+      "gate_id": "RETURN_SHORTFALL_WITHIN_50_BPS_AT_5_BPS",
+      "passed": true
+    },
+    {
+      "gate_id": "MEAN_EXPOSURE_AT_LEAST_90_PERCENT",
+      "passed": true
+    },
+    {
+      "gate_id": "MEAN_TURNOVER_PER_SYMBOL_AT_MOST_FIVE",
+      "passed": true
+    },
+    {
+      "gate_id": "LEAVE_ONE_SECTOR_OUT_STABILITY",
+      "passed": true
+    }
+  ],
+  "cost_stress": [
+    {
+      "cost_bps": 0,
+      "base": {
+        "total_return": 0.006338266256863623,
+        "maximum_drawdown": -0.006746075458686329,
+        "realized_minute_volatility": 0.001348281413755645,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.004906515910643838,
+        "maximum_drawdown": -0.006311970634405695,
+        "realized_minute_volatility": 0.0010503075473785855,
+        "point_count": 48
+      },
+      "excess_return": -0.0014317503462197845,
+      "execution": {
+        "symbol_count": 75,
+        "observation_count": 3600,
+        "reduced_exposure_observation_count": 1351,
+        "exposure_sum": 3511.2399999999984,
+        "mean_exposure": 0.975344444444444,
+        "reduced_exposure_ratio": 0.37527777777777777,
+        "turnover": 5.699999999999999,
+        "mean_turnover_per_symbol": 0.07599999999999998,
+        "transaction_cost": 0.0,
+        "mean_transaction_cost_per_symbol": 0.0,
+        "reason_counts": {
+          "MINUTE_TREND_WEAK": 1120,
+          "RECOVERY_COOLDOWN": 239
+        }
+      }
+    },
+    {
+      "cost_bps": 5,
+      "base": {
+        "total_return": 0.006338266256863623,
+        "maximum_drawdown": -0.006746075458686551,
+        "realized_minute_volatility": 0.0013482814137556266,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.00500411035827697,
+        "maximum_drawdown": -0.006293354295687115,
+        "realized_minute_volatility": 0.0010392402581594637,
+        "point_count": 48
+      },
+      "excess_return": -0.001334155898586653,
+      "execution": {
+        "symbol_count": 75,
+        "observation_count": 3600,
+        "reduced_exposure_observation_count": 1351,
+        "exposure_sum": 3511.2399999999984,
+        "mean_exposure": 0.975344444444444,
+        "reduced_exposure_ratio": 0.37527777777777777,
+        "turnover": 5.699999999999999,
+        "mean_turnover_per_symbol": 0.07599999999999998,
+        "transaction_cost": 0.010249753410706204,
+        "mean_transaction_cost_per_symbol": 0.00013666337880941605,
+        "reason_counts": {
+          "MINUTE_TREND_WEAK": 1120,
+          "RECOVERY_COOLDOWN": 239
+        }
+      }
+    }
+  ],
+  "leave_one_sector_out": [
+    {
+      "excluded_sector_code": "801780",
+      "excluded_sector_name": "银行",
+      "base": {
+        "total_return": 0.006434265774676318,
+        "maximum_drawdown": -0.007339252297994259,
+        "realized_minute_volatility": 0.0014441411765028908,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.005046477988435383,
+        "maximum_drawdown": -0.006776889324191959,
+        "realized_minute_volatility": 0.00111411769846737,
+        "point_count": 48
+      },
+      "excess_return": -0.001387787786240935
+    },
+    {
+      "excluded_sector_code": "801790",
+      "excluded_sector_name": "非银金融",
+      "base": {
+        "total_return": 0.005505297095654171,
+        "maximum_drawdown": -0.007149143731595475,
+        "realized_minute_volatility": 0.001381602305617236,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.0040914755611283216,
+        "maximum_drawdown": -0.006589489689271866,
+        "realized_minute_volatility": 0.0010552596808073322,
+        "point_count": 48
+      },
+      "excess_return": -0.0014138215345258498
+    },
+    {
+      "excluded_sector_code": "801120",
+      "excluded_sector_name": "食品饮料",
+      "base": {
+        "total_return": 0.006631486690206412,
+        "maximum_drawdown": -0.007006365369321421,
+        "realized_minute_volatility": 0.0013980543037235536,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.005263871263294195,
+        "maximum_drawdown": -0.006452787192318787,
+        "realized_minute_volatility": 0.0010779530173027011,
+        "point_count": 48
+      },
+      "excess_return": -0.0013676154269122165
+    },
+    {
+      "excluded_sector_code": "801150",
+      "excluded_sector_name": "医药生物",
+      "base": {
+        "total_return": 0.0067653021712337225,
+        "maximum_drawdown": -0.007181048944414958,
+        "realized_minute_volatility": 0.0014180841929516924,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.0054674429399759195,
+        "maximum_drawdown": -0.0066497502980775725,
+        "realized_minute_volatility": 0.0010883234440335749,
+        "point_count": 48
+      },
+      "excess_return": -0.001297859231257803
+    },
+    {
+      "excluded_sector_code": "801080",
+      "excluded_sector_name": "电子",
+      "base": {
+        "total_return": 0.005256426024451422,
+        "maximum_drawdown": -0.006573686676562329,
+        "realized_minute_volatility": 0.0012913772739132755,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.0041738190568962885,
+        "maximum_drawdown": -0.006158852251847424,
+        "realized_minute_volatility": 0.0009854981673283443,
+        "point_count": 48
+      },
+      "excess_return": -0.001082606967555133
+    },
+    {
+      "excluded_sector_code": "801750",
+      "excluded_sector_name": "计算机",
+      "base": {
+        "total_return": 0.0065946062202622,
+        "maximum_drawdown": -0.006614516076700272,
+        "realized_minute_volatility": 0.0013640224577484903,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.005150062197673222,
+        "maximum_drawdown": -0.0061943389886968125,
+        "realized_minute_volatility": 0.0010437141406318697,
+        "point_count": 48
+      },
+      "excess_return": -0.0014445440225889783
+    },
+    {
+      "excluded_sector_code": "801730",
+      "excluded_sector_name": "电力设备",
+      "base": {
+        "total_return": 0.005920134276046207,
+        "maximum_drawdown": -0.006896945851329828,
+        "realized_minute_volatility": 0.001382163355378768,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.0046272133822578,
+        "maximum_drawdown": -0.006527428164055826,
+        "realized_minute_volatility": 0.001044360163268937,
+        "point_count": 48
+      },
+      "excess_return": -0.0012929208937884074
+    },
+    {
+      "excluded_sector_code": "801880",
+      "excluded_sector_name": "汽车",
+      "base": {
+        "total_return": 0.006584561140898559,
+        "maximum_drawdown": -0.006944789000798535,
+        "realized_minute_volatility": 0.001377616242234368,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.005185048587285523,
+        "maximum_drawdown": -0.006401685105954957,
+        "realized_minute_volatility": 0.001054363303621223,
+        "point_count": 48
+      },
+      "excess_return": -0.001399512553613036
+    },
+    {
+      "excluded_sector_code": "801890",
+      "excluded_sector_name": "机械设备",
+      "base": {
+        "total_return": 0.008124928485887972,
+        "maximum_drawdown": -0.006219551764405584,
+        "realized_minute_volatility": 0.0013253243566801393,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.006285690520453802,
+        "maximum_drawdown": -0.005868830292529048,
+        "realized_minute_volatility": 0.0010159535182544279,
+        "point_count": 48
+      },
+      "excess_return": -0.0018392379654341706
+    },
+    {
+      "excluded_sector_code": "801050",
+      "excluded_sector_name": "有色金属",
+      "base": {
+        "total_return": 0.00420332711153093,
+        "maximum_drawdown": -0.006314986695964531,
+        "realized_minute_volatility": 0.0013244312094347274,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.0024780020543333503,
+        "maximum_drawdown": -0.005644726382469156,
+        "realized_minute_volatility": 0.0009476574457963599,
+        "point_count": 48
+      },
+      "excess_return": -0.0017253250571975798
+    },
+    {
+      "excluded_sector_code": "801030",
+      "excluded_sector_name": "基础化工",
+      "base": {
+        "total_return": 0.005000658881042064,
+        "maximum_drawdown": -0.0066886166205927244,
+        "realized_minute_volatility": 0.0013188976724495976,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.0036624897784574006,
+        "maximum_drawdown": -0.006112451532684582,
+        "realized_minute_volatility": 0.000981500368064497,
+        "point_count": 48
+      },
+      "excess_return": -0.0013381691025846632
+    },
+    {
+      "excluded_sector_code": "801160",
+      "excluded_sector_name": "公用事业",
+      "base": {
+        "total_return": 0.006218221674055391,
+        "maximum_drawdown": -0.007244606258559272,
+        "realized_minute_volatility": 0.0014126756470087447,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.004825402280307811,
+        "maximum_drawdown": -0.006694093886954078,
+        "realized_minute_volatility": 0.001086868837953425,
+        "point_count": 48
+      },
+      "excess_return": -0.0013928193937475797
+    },
+    {
+      "excluded_sector_code": "801740",
+      "excluded_sector_name": "国防军工",
+      "base": {
+        "total_return": 0.006375523420962814,
+        "maximum_drawdown": -0.00684188503553429,
+        "realized_minute_volatility": 0.00136221845118424,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.005037278056976291,
+        "maximum_drawdown": -0.006549832328833438,
+        "realized_minute_volatility": 0.0010406703235432042,
+        "point_count": 48
+      },
+      "excess_return": -0.0013382453639865233
+    },
+    {
+      "excluded_sector_code": "801770",
+      "excluded_sector_name": "通信",
+      "base": {
+        "total_return": 0.008487820353559439,
+        "maximum_drawdown": -0.00638344238774835,
+        "realized_minute_volatility": 0.001128506176729102,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.008512314175471936,
+        "maximum_drawdown": -0.00592501321080785,
+        "realized_minute_volatility": 0.0010969508937023879,
+        "point_count": 48
+      },
+      "excess_return": 2.4493821912496827e-05
+    },
+    {
+      "excluded_sector_code": "801760",
+      "excluded_sector_name": "传媒",
+      "base": {
+        "total_return": 0.007166216429088879,
+        "maximum_drawdown": -0.006761387546932784,
+        "realized_minute_volatility": 0.0013958746826986548,
+        "point_count": 48
+      },
+      "overlay": {
+        "total_return": 0.005603213030758392,
+        "maximum_drawdown": -0.0062312165421748444,
+        "realized_minute_volatility": 0.0010617294421346366,
+        "point_count": 48
+      },
+      "excess_return": -0.001563003398330487
+    }
+  ],
   "causal_contract": {
     "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
     "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
@@ -49,5 +398,5 @@
   "realtime_readiness": false,
   "real_data_paper_readiness": false,
   "external_order_transmission": false,
-  "evidence_sha256": "9f8283997546cd36b8e6bbfbe6d08c5599bcec96b702b8f2d51d8b3efe50cdbd"
+  "evidence_sha256": "8cf21835d2cc934203a0fbf43b4c2451f43157ac42726b61da4b5aa14b0e9084"
 }

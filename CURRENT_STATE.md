@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 420 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 422 tests passed, Ruff clean, strict mypy clean across
   97 checked source files on Python 3.12.13
   (macOS, 2026-08-26); 51 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -578,9 +578,14 @@ Last updated: 2026-08-26
   opened and therefore is not fully blind. Collection is fail-closed at 75
   stocks × 48 native 5-minute bars, requires an exact frozen 2026-08-25 QFQ
   anchor match, and rejects partial/zero-placeholder sessions. The public
-  `/forward-observation` verifier currently reports `0/20`, `INCOMPLETE` and
-  `NOT_ELIGIBLE`; no target data has entered metrics and no runtime authority
-  changed. A separate publisher now accepts only a fully verified candidate
+  `/forward-observation` verifier now reports `1/20`, `INCOMPLETE` and
+  `NOT_ELIGIBLE`. The immutable 2026-08-26 session contributes exactly 3,600
+  Bars and 48 synchronized metric points; no runtime authority changed. At 5
+  bps the base returned `0.6338%` and the overlay `0.5004%` (a `-13.34 bp`
+  shortfall), while mean exposure was `97.53%` and mean turnover per symbol was
+  `0.076`. All five current cumulative gate values are true, but the overall
+  gate remains false until 20 complete sessions. A separate publisher now
+  accepts only a fully verified candidate
   that strictly appends complete sessions to the already public sequence. It
   rejects historical rewrites, frozen-lock changes and stale generation times,
   then atomically replaces and re-verifies the deployment report. The public
@@ -598,8 +603,9 @@ Last updated: 2026-08-26
   Before atomic promotion, the publisher now rereads every formal forward-session
   manifest and checksum-bound Parquet, then requires the candidate session list
   and accepted count to match those source identities exactly.
-  The 0/5-bps rows must also share one exact Buy-and-Hold metric identity, so
-  cost comparisons cannot be constructed from drifting baselines.
+  The 0/5-bps rows must also share one Buy-and-Hold metric identity, with only
+  `1e-12` relative / `1e-15` absolute machine-rounding tolerance, so cost
+  comparisons cannot be constructed from materially drifting baselines.
   Each row must preserve the full 11-field execution diagnostic; reduced counts,
   exposure sums, turnover, transaction cost, per-symbol means and reason counts
   are all structurally and arithmetically revalidated. Reduced/reason counts must
@@ -635,8 +641,9 @@ Last updated: 2026-08-26
   minute snapshot, the research page and the data-center inventory expose those
   facts. A UTC-loaded frozen anchor was also replayed against equivalent
   Asia/Shanghai provider Bars to guard the timezone-aware identity contract.
-  The report is explicitly not forward evidence, does not enter `0/20`,
-  and leaves realtime, PAPER, LIVE and external-order authority disabled.
+  The coverage report is explicitly not forward evidence and did not itself
+  create the separately collected formal `1/20` session; it leaves realtime,
+  PAPER, LIVE and external-order authority disabled.
   The public verifier accepts only the exact report schema and rejects generation
   times more than five minutes ahead of its own clock; a recomputed self-hash
   cannot authorize unknown pass-through fields or future-date the observation.

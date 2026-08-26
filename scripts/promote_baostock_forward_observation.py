@@ -29,7 +29,7 @@ from scripts.run_baostock_locked_forward_observation import _load_forward_sessio
 
 _FROZEN_FORWARD_ANCHOR_DAY = "2026-08-25"
 _FROZEN_FORWARD_ANCHOR_SHA256 = (
-    "c5f74be0063c2aa0d518ebd77055909970e5216c6a5a2240ea2188f42b204f52"
+    "e057f6e638aebcc9cb02b2ffb106913628734f12730e5506620829ab609e6a29"
 )
 _FROZEN_FORWARD_PROVIDER_VERSION = "0.9.3"
 _SHANGHAI = ZoneInfo("Asia/Shanghai")

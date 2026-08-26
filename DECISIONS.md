@@ -1281,3 +1281,35 @@ finite and non-negative, sell reservations carry zero cash, identifiers are
 non-empty strings, and lot dates use exact ISO date strings with the existing
 chronology check. Any invalid durable row rejects construction before PAPER or
 SHADOW recovery.
+
+## ADR-086 — Forward cost baselines tolerate machine rounding only
+
+Status: accepted, 2026-08-26.
+
+The frozen forward evaluator runs the 0 and 5 bps paths independently. Their
+Buy-and-Hold return is identical, but normalizing a cost-scaled equity curve can
+produce differences near machine precision in drawdown and realized volatility.
+Byte-level float equality therefore rejected the first otherwise verified
+future session.
+
+The public and promotion verifier now requires identical point counts and uses
+an explicit `1e-12` relative / `1e-15` absolute tolerance for the three baseline
+metrics. This accepts only numerical roundoff; the existing resigned material
+baseline-drift test remains rejected. Collector, evaluator, policy and frozen
+minute-backtest hashes are unchanged.
+
+## ADR-087 — Forward promotion binds the collector's timezone identity
+
+Status: accepted, 2026-08-26.
+
+The frozen 2026-08-25 anchor has one sequence of 3,600 economic Bars, but its
+canonical JSON differs when the same aware timestamps are rendered from stored
+UTC or provider-native Asia/Shanghai objects. The prior promotion constant used
+the UTC representation (`c5f74b...04f52`), while the code-bound collector first
+checks instant-equivalent Bars and then signs the provider representation
+(`e057f6...e6a29`). This made the first genuine source session unpublishable.
+
+Promotion now accepts exactly the collector's Shanghai representation hash and
+the frozen anchor date. The UTC hash remains documented as the equivalent
+storage identity; no hash set or general timezone coercion was introduced. The
+collector, evaluator, policy and minute-backtest freeze remain unchanged.

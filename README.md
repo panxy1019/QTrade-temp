@@ -276,7 +276,10 @@ that target session, so the artifact explicitly does not claim a fully blind
 preregistration. It binds the development report, the 368-session warmup
 dataset, the exact policy, the collector/evaluator/engine hashes and five fixed
 20-session gates. The research page and `/forward-observation` show the verified
-`0/20` starting state.
+`0/20` starting state. The first immutable 75-stock × 48-bar session was later
+collected for 2026-08-26 and independently promoted, so the current verified
+state is `1/20`, `INCOMPLETE` and `NOT_ELIGIBLE`; its five provisional cumulative
+gate values do not become a conclusion before 20 complete sessions.
 
 After 15:10 China time, one complete future session can be collected with:
 

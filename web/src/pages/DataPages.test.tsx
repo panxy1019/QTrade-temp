@@ -300,7 +300,7 @@ const data = {
     promotion: 'NOT_ELIGIBLE', external_order_transmission: false,
   },
   forwardObservation: {
-    classification: 'LOCKED_FORWARD_OBSERVATION_PREREGISTRATION',
+    classification: 'LOCKED_FUTURE_COMPLETE_SESSION_OBSERVATION',
     preregistration_id: 'baostock-locked-forward-observation-v1',
     preregistration_sha256: '9'.repeat(64),
     created_at: '2026-08-26T11:22:38+08:00',
@@ -308,16 +308,16 @@ const data = {
     timing_disclosure: { development_policy_locked_before_first_session_open: true, evaluation_contract_fixed_after_first_session_open: true, target_session_data_fetched_before_this_lock: false, claim_as_blind_preregistration: false },
     policy_id: 'dev-floor-098-slow12x48-v1', policy_hash: '4'.repeat(64),
     parameters: { short_window: '12', long_window: '48' },
-    first_eligible_trading_day: '2026-08-26', future_session_count: 0,
+    first_eligible_trading_day: '2026-08-26', future_session_count: 1,
     minimum_complete_future_sessions: 20, required_symbol_count: 75,
     required_sector_count: 15, required_bars_per_symbol_session: 48,
     observation_status: 'INCOMPLETE', all_required_gates_passed: false,
     gates: [
-      { gate_id: 'OVERLAY_DRAWDOWN_NOT_WORSE_AT_5_BPS', passed: null },
-      { gate_id: 'RETURN_SHORTFALL_WITHIN_50_BPS_AT_5_BPS', passed: null },
-      { gate_id: 'MEAN_EXPOSURE_AT_LEAST_90_PERCENT', passed: null },
-      { gate_id: 'MEAN_TURNOVER_PER_SYMBOL_AT_MOST_FIVE', passed: null },
-      { gate_id: 'LEAVE_ONE_SECTOR_OUT_STABILITY', passed: null },
+      { gate_id: 'OVERLAY_DRAWDOWN_NOT_WORSE_AT_5_BPS', passed: true },
+      { gate_id: 'RETURN_SHORTFALL_WITHIN_50_BPS_AT_5_BPS', passed: true },
+      { gate_id: 'MEAN_EXPOSURE_AT_LEAST_90_PERCENT', passed: true },
+      { gate_id: 'MEAN_TURNOVER_PER_SYMBOL_AT_MOST_FIVE', passed: true },
+      { gate_id: 'LEAVE_ONE_SECTOR_OUT_STABILITY', passed: true },
     ],
     cost_stress: [], leave_one_sector_out: [], promotion: 'NOT_ELIGIBLE',
     promotion_reasons: ['FUTURE_TWENTY_SESSION_OBSERVATION_INCOMPLETE'],
@@ -1102,7 +1102,7 @@ describe('verified robustness evidence', () => {
     cleanup()
     render(<ResearchPage data={data} />)
     fireEvent.click(screen.getByRole('tab', { name: '未来完整日观测' }))
-    expect(screen.getByText(/观测进度：0\/20 个完整交易日/)).toBeInTheDocument()
+    expect(screen.getByText(/观测进度：1\/20 个完整交易日/)).toBeInTheDocument()
     expect(screen.getByText(/BaoStock 来源覆盖：75\/75 可正式采集/)).toBeInTheDocument()
     expect(screen.getByText(/0 只仍未形成完整目标日网格/)).toBeInTheDocument()
     expect(screen.getByText(/来源发布序列：6 个检查点/)).toBeInTheDocument()
@@ -1110,7 +1110,7 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText(/不进入 0\/20/)).toBeInTheDocument()
     expect(screen.getByText('75 只股票均已形成完整来源网格')).toBeInTheDocument()
     expect(screen.getByText(/15 板块、75 股、每股 48 根原生 5 分钟 Bar/)).toBeInTheDocument()
-    expect(screen.getAllByText('等待样本')).toHaveLength(5)
+    expect(screen.getAllByText('通过')).toHaveLength(5)
     expect(screen.getByText(/不宣称完全盲预注册/)).toBeInTheDocument()
     expect(screen.getByText(/不会自动授权 PAPER、LIVE 或外部下单/)).toBeInTheDocument()
   })

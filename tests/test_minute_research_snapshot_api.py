@@ -33,7 +33,8 @@ def test_minute_research_snapshot_reuses_one_verified_long_dataset(
     )
     assert payload["reservedTailDiagnostic"]["test_session_count"] == 8
     assert payload["developmentPolicySearch"]["candidate_count"] == 4
-    assert payload["forwardObservation"]["future_session_count"] == 0
+    assert payload["forwardObservation"]["future_session_count"] == 1
+    assert payload["forwardObservation"]["all_required_gates_passed"] is False
     assert payload["forwardSourceCoverage"]["ready_symbol_count"] == 75
     assert payload["forwardSourceCoverage"]["incomplete_symbol_count"] == 0
     assert payload["forwardSourceCoverage"]["enters_forward_metrics"] is False
