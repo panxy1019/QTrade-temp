@@ -401,6 +401,9 @@ class IntradayFactorDiscoveryResult:
     selected_factor_expression: str
     selected_training_gate_passed: bool
     overfitting_audit: IntradaySelectionBiasAudit
+    locked_test_cost_stress: Mapping[int, IntradayCostStress]
+    locked_test_cost_stress_criteria: Mapping[str, bool]
+    locked_test_cost_stress_passed: bool
     test_observation_count: int
     test_signal_count: int
     test_signal_session_count: int
@@ -1772,6 +1775,41 @@ def discover_opening_direction_rules(
         list(test_days),
         cost_bps=cost_bps,
     )
+    locked_test_cost_stress: dict[int, IntradayCostStress] = {}
+    for fixed_cost_bps in _COST_STRESS_BPS:
+        stress_strategy, stress_benchmark, _ = _evaluate_observations(
+            test_rows,
+            list(test_days),
+            cost_bps=Decimal(fixed_cost_bps),
+        )
+        locked_test_cost_stress[fixed_cost_bps] = IntradayCostStress(
+            cost_bps=fixed_cost_bps,
+            strategy_metrics=stress_strategy,
+            benchmark_metrics=stress_benchmark,
+        )
+    fixed_cost_returns = tuple(
+        locked_test_cost_stress[value].strategy_metrics.total_return
+        for value in _COST_STRESS_BPS
+    )
+    locked_test_cost_stress_criteria = {
+        "zero_cost_locked_test_total_return_positive": (
+            locked_test_cost_stress[0].strategy_metrics.total_return > 0
+        ),
+        "all_fixed_cost_locked_test_total_returns_positive": all(
+            value > 0 for value in fixed_cost_returns
+        ),
+        "twenty_bps_locked_test_excess_return_positive": (
+            locked_test_cost_stress[20].strategy_metrics.excess_return > 0
+        ),
+        "locked_test_total_return_non_increasing_with_cost": all(
+            left >= right
+            for left, right in zip(
+                fixed_cost_returns[:-1],
+                fixed_cost_returns[1:],
+                strict=True,
+            )
+        ),
+    }
     test_criteria = {
         "minimum_250_test_observations": len(test_rows) >= 250,
         "minimum_twenty_test_signals": test_signal_count >= 20,
@@ -1812,6 +1850,11 @@ def discover_opening_direction_rules(
         selected_factor_expression=selected.factor_expression,
         selected_training_gate_passed=selected.training_gate_passed,
         overfitting_audit=overfitting_audit,
+        locked_test_cost_stress=locked_test_cost_stress,
+        locked_test_cost_stress_criteria=locked_test_cost_stress_criteria,
+        locked_test_cost_stress_passed=all(
+            locked_test_cost_stress_criteria.values()
+        ),
         test_observation_count=len(test_rows),
         test_signal_count=test_signal_count,
         test_signal_session_count=test_signal_sessions,

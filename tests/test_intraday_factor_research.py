@@ -410,6 +410,29 @@ def test_bounded_opening_rule_discovery_locks_training_before_disjoint_test() ->
         for split in audit.splits
     )
     assert audit.passed is all(audit.criteria.values())
+    cost_stress = first.locked_test_cost_stress
+    assert set(cost_stress) == {0, 5, 10, 20}
+    assert all(
+        row.cost_bps == cost_bps
+        and row.strategy_metrics.number_of_periods == 20
+        and row.strategy_metrics.number_of_trades == first.test_signal_count
+        for cost_bps, row in cost_stress.items()
+    )
+    fixed_cost_returns = [
+        cost_stress[cost_bps].strategy_metrics.total_return
+        for cost_bps in (0, 5, 10, 20)
+    ]
+    assert all(
+        left >= right
+        for left, right in zip(
+            fixed_cost_returns[:-1],
+            fixed_cost_returns[1:],
+            strict=True,
+        )
+    )
+    assert first.locked_test_cost_stress_passed is all(
+        first.locked_test_cost_stress_criteria.values()
+    )
     assert first.test_observation_count == 20 * len(symbols)
     assert first.selection_uses_test_returns is False
     assert first.promotion == "NOT_ELIGIBLE"

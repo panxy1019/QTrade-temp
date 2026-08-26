@@ -316,6 +316,16 @@ Last updated: 2026-08-27
   the original locked-test blocks and is neither causal forward validation nor
   an independent confirmation; it cannot replace the locked candidate or alter
   `NOT_ELIGIBLE`, PAPER/LIVE, state-mutation or external-order boundaries.
+- The locked discovery winner now receives a fixed 0/5/10/20 bps cost audit on
+  the exact same 326 test signals and 20 chronological test sessions. The rule
+  is never reselected from a cost row. Strategy return was already -4.2527% at
+  zero cost, then -6.1491%, -8.0089% and -11.6212% as cost increased; maximum
+  drawdown worsened from -8.9914% to -13.0167%, and every excess return remained
+  negative. Zero-cost profitability, all-cost profitability and 20 bps positive
+  excess failed; only the expected non-increasing-return integrity check passed.
+  The consolidated discovery gate now requires the chronological lock, CSCV/PBO
+  and fixed-cost audit together and is 0/3. It remains a historical research
+  veto with no candidate reselection, promotion, state or order authority.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,

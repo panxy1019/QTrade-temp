@@ -9013,6 +9013,47 @@ def _intraday_factor_discovery_preview(
             "criteria": dict(result.overfitting_audit.criteria),
             "passed": result.overfitting_audit.passed,
         },
+        "locked_test_cost_stress": {
+            "costs_bps": ["0", "5", "10", "20"],
+            "selected_candidate_id": result.selected_candidate_id,
+            "test_start": result.test_start.isoformat(),
+            "test_end": result.test_end.isoformat(),
+            "signal_count": result.test_signal_count,
+            "candidate_reselected": False,
+            "cost_rows_used_for_selection": False,
+            "rows": {
+                str(cost_bps): {
+                    "strategy_metrics": _performance_metrics_payload(
+                        row.strategy_metrics
+                    ),
+                    "benchmark_metrics": _performance_metrics_payload(
+                        row.benchmark_metrics
+                    ),
+                }
+                for cost_bps, row in result.locked_test_cost_stress.items()
+            },
+            "criteria": dict(result.locked_test_cost_stress_criteria),
+            "passed": result.locked_test_cost_stress_passed,
+        },
+        "discovery_gate": {
+            "criteria": {
+                "chronological_locked_test_passed": result.test_gate_passed,
+                "selection_bias_audit_passed": (
+                    result.overfitting_audit.passed
+                ),
+                "locked_test_cost_stress_passed": (
+                    result.locked_test_cost_stress_passed
+                ),
+            },
+            "passed": all(
+                (
+                    result.test_gate_passed,
+                    result.overfitting_audit.passed,
+                    result.locked_test_cost_stress_passed,
+                )
+            ),
+            "promotion_authority": False,
+        },
         "test_validation": {
             "observation_count": result.test_observation_count,
             "signal_count": result.test_signal_count,

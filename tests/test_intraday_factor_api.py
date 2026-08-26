@@ -404,6 +404,37 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
         == list(range(1, 9))
         for split in audit["splits"]
     )
+    cost_stress = payload["locked_test_cost_stress"]
+    assert cost_stress["costs_bps"] == ["0", "5", "10", "20"]
+    assert cost_stress["selected_candidate_id"] == payload["selected"][
+        "candidate_id"
+    ]
+    assert cost_stress["test_start"] == payload["split"]["test_start"]
+    assert cost_stress["test_end"] == payload["split"]["test_end"]
+    assert cost_stress["signal_count"] == payload["test_validation"][
+        "signal_count"
+    ]
+    assert cost_stress["candidate_reselected"] is False
+    assert cost_stress["cost_rows_used_for_selection"] is False
+    assert set(cost_stress["rows"]) == {"0", "5", "10", "20"}
+    assert all(
+        row["strategy_metrics"]["number_of_periods"] == 20
+        and row["strategy_metrics"]["number_of_trades"]
+        == payload["test_validation"]["signal_count"]
+        for row in cost_stress["rows"].values()
+    )
+    assert cost_stress["passed"] is all(cost_stress["criteria"].values())
+    assert payload["discovery_gate"] == {
+        "criteria": {
+            "chronological_locked_test_passed": payload["test_validation"][
+                "passed"
+            ],
+            "selection_bias_audit_passed": audit["passed"],
+            "locked_test_cost_stress_passed": cost_stress["passed"],
+        },
+        "passed": False,
+        "promotion_authority": False,
+    }
     assert payload["selected"]["candidate_id"] in {
         candidate["candidate_id"] for candidate in payload["candidates"]
     }

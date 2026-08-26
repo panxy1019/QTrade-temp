@@ -209,6 +209,33 @@ const discovery = {
     },
     passed: false,
   },
+  locked_test_cost_stress: {
+    costs_bps: ['0', '5', '10', '20'], selected_candidate_id: 'DIR-XDU-T0000',
+    test_start: '2026-06-25', test_end: '2026-07-14', signal_count: 326,
+    candidate_reselected: false, cost_rows_used_for_selection: false,
+    rows: {
+      '0': { strategy_metrics: { ...discoveryMetrics, total_return: '-0.042527', excess_return: '-0.018473', sharpe: '-3.2561', maximum_drawdown: '-0.089914', transaction_costs: '0' }, benchmark_metrics: discoveryMetrics },
+      '5': { strategy_metrics: discoveryMetrics, benchmark_metrics: discoveryMetrics },
+      '10': { strategy_metrics: { ...discoveryMetrics, total_return: '-0.080089', excess_return: '-0.017749', sharpe: '-6.3364', maximum_drawdown: '-0.108719', transaction_costs: '0.039895' }, benchmark_metrics: discoveryMetrics },
+      '20': { strategy_metrics: { ...discoveryMetrics, total_return: '-0.116212', excess_return: '-0.017052', sharpe: '-9.4260', maximum_drawdown: '-0.130167', transaction_costs: '0.079751' }, benchmark_metrics: discoveryMetrics },
+    },
+    criteria: {
+      zero_cost_locked_test_total_return_positive: false,
+      all_fixed_cost_locked_test_total_returns_positive: false,
+      twenty_bps_locked_test_excess_return_positive: false,
+      locked_test_total_return_non_increasing_with_cost: true,
+    },
+    passed: false,
+  },
+  discovery_gate: {
+    criteria: {
+      chronological_locked_test_passed: false,
+      selection_bias_audit_passed: false,
+      locked_test_cost_stress_passed: false,
+    },
+    passed: false,
+    promotion_authority: false,
+  },
   test_validation: {
     observation_count: 1500, signal_count: 326, signal_session_count: 20,
     mean_session_conditional_excess_return: '-0.00091894', newey_west_lag: 2,
@@ -293,11 +320,14 @@ describe('intraday factor rule correlation', () => {
     }))
     expect(await screen.findByText('训练最优规则未通过互斥测试段')).toBeInTheDocument()
     expect(screen.getByText('CSCV 检出较高选择偏差风险')).toBeInTheDocument()
+    expect(screen.getByText('锁定规则未通过固定成本压力门')).toBeInTheDocument()
+    expect(screen.getByText('完整因子发现研究门未通过')).toBeInTheDocument()
+    expect(screen.getByText('-11.62%')).toBeInTheDocument()
     expect(screen.getByText('41.43%')).toBeInTheDocument()
     expect(screen.getByText('DIR-DDD-T0020 · 24/70')).toBeInTheDocument()
     expect(screen.getAllByText(/DIR-XDU-T0000/).length).toBeGreaterThan(0)
     expect(screen.getByText('-0.09%')).toBeInTheDocument()
-    expect(screen.getByText('-6.15%')).toBeInTheDocument()
+    expect(screen.getAllByText('-6.15%').length).toBeGreaterThan(0)
     expect(screen.getByText(/选择时刻.*早于首个测试信号/)).toBeInTheDocument()
     expect(screen.getByText(/无状态写入、无外部订单/)).toBeInTheDocument()
   })

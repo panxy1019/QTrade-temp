@@ -735,6 +735,26 @@ export interface IntradayFactorDiscovery {
     criteria: Record<string, boolean>
     passed: boolean
   }
+  locked_test_cost_stress: {
+    costs_bps: ['0', '5', '10', '20']
+    selected_candidate_id: string
+    test_start: string
+    test_end: string
+    signal_count: number
+    candidate_reselected: false
+    cost_rows_used_for_selection: false
+    rows: Record<string, {
+      strategy_metrics: IntradayPerformanceMetrics
+      benchmark_metrics: IntradayPerformanceMetrics
+    }>
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
+  discovery_gate: {
+    criteria: Record<string, boolean>
+    passed: boolean
+    promotion_authority: false
+  }
   test_validation: {
     observation_count: number
     signal_count: number

@@ -87,6 +87,13 @@ const gateLabels: Record<string, string> = {
   probability_of_backtest_overfitting_below_0_25: '组合式回测过拟合概率低于 25%',
   selected_oos_positive_excess_ratio_at_least_0_60: '组合样本外正超额比例至少 60%',
   median_selected_oos_excess_return_positive: '组合样本外超额中位数为正',
+  zero_cost_locked_test_total_return_positive: '零成本锁定测试收益为正',
+  all_fixed_cost_locked_test_total_returns_positive: '四档固定成本下锁定测试收益均为正',
+  twenty_bps_locked_test_excess_return_positive: '20 bps 下锁定测试超额收益为正',
+  locked_test_total_return_non_increasing_with_cost: '成本升高时策略收益不反向增加',
+  chronological_locked_test_passed: '时间顺序锁定测试通过',
+  selection_bias_audit_passed: '组合式选择偏差审计通过',
+  locked_test_cost_stress_passed: '锁定测试固定成本压力通过',
 }
 
 export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
@@ -482,6 +489,9 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
         || left.candidate_id.localeCompare(right.candidate_id)
       ))
     : []
+  const discoveryCostRows = discoveryResult
+    ? Object.entries(discoveryResult.locked_test_cost_stress.rows).map(([cost_bps, value]) => ({ cost_bps, ...value }))
+    : []
 
   return <Card title="分钟因子研究工作台" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · 原生 5 分钟</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
@@ -543,6 +553,26 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           ]} />
           <Alert
             showIcon
+            type={discoveryResult.locked_test_cost_stress.passed ? 'success' : 'warning'}
+            title={discoveryResult.locked_test_cost_stress.passed ? '锁定规则通过固定成本压力门' : '锁定规则未通过固定成本压力门'}
+            description={`同一 ${discoveryResult.locked_test_cost_stress.selected_candidate_id}、同一 ${discoveryResult.locked_test_cost_stress.signal_count} 次测试信号、同一互斥测试日只复算 0/5/10/20 bps 成本。成本行不参与候选选择，也不会触发重新选参。`}
+          />
+          <Table rowKey="cost_bps" size="small" pagination={false} dataSource={discoveryCostRows} columns={[
+            { title: '成本', dataIndex: 'cost_bps', render: (value: string) => `${value} bps` },
+            { title: '策略收益', render: (_: unknown, row: typeof discoveryCostRows[number]) => formatPercent(row.strategy_metrics.total_return) },
+            { title: '年化收益', render: (_: unknown, row: typeof discoveryCostRows[number]) => formatPercent(row.strategy_metrics.annualized_return) },
+            { title: 'Sharpe', render: (_: unknown, row: typeof discoveryCostRows[number]) => formatNumber(row.strategy_metrics.sharpe) },
+            { title: '最大回撤', render: (_: unknown, row: typeof discoveryCostRows[number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+            { title: '超额收益', render: (_: unknown, row: typeof discoveryCostRows[number]) => formatPercent(row.strategy_metrics.excess_return) },
+            { title: '策略成本', render: (_: unknown, row: typeof discoveryCostRows[number]) => formatPercent(row.strategy_metrics.transaction_costs) },
+            { title: '基准收益', render: (_: unknown, row: typeof discoveryCostRows[number]) => formatPercent(row.benchmark_metrics.total_return) },
+          ]} />
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.locked_test_cost_stress.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '锁定测试成本门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
+          <Alert
+            showIcon
             type={discoveryResult.overfitting_audit.passed ? 'info' : 'warning'}
             title={discoveryResult.overfitting_audit.passed && !discoveryResult.test_validation.passed
               ? 'CSCV 选择偏差门通过，但时间顺序锁定测试仍失败'
@@ -596,6 +626,16 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             ]}
             scroll={{ x: 980 }}
           />
+          <Alert
+            showIcon
+            type={discoveryResult.discovery_gate.passed ? 'success' : 'error'}
+            title={discoveryResult.discovery_gate.passed ? '完整因子发现研究门通过，但仍需独立前向证据' : '完整因子发现研究门未通过'}
+            description="时间顺序锁定测试、组合式选择偏差和固定成本压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
+          />
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.discovery_gate.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '完整发现门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
           <Typography.Text type="secondary">选择时刻 {formatTimestamp(discoveryResult.split.selection_known_at)}，早于首个测试信号 {formatTimestamp(discoveryResult.split.first_test_signal_known_at)}；测试收益不参与选择。无状态写入、无外部订单。</Typography.Text>
         </Space>
       </Card>}

@@ -356,6 +356,13 @@ only 35/70 selected complement results have positive excess, their median excess
 is -0.1788%, and all three audit gates fail. Because the construction reuses the
 original locked-test blocks and is not chronological, it is a descriptive
 overfitting-risk audit only; the failed original holdout remains authoritative.
+The unique chronological winner is also replayed under the fixed 0/5/10/20 bps
+cost grid without reselection. It loses even with no modeled cost (-4.2527%) and
+falls to -11.6212% at 20 bps; all four excess returns remain negative. The cost
+audit therefore rules out transaction fees as the sole explanation. A combined
+discovery gate now requires the chronological holdout, CSCV/PBO audit and locked
+cost stress simultaneously; the disclosed run passes none of those three and
+cannot create PAPER or state authority.
 
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no

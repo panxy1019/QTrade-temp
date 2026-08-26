@@ -1595,3 +1595,26 @@ viewed block, including the original locked-test segment, and its interleaved
 training sets are not causal forward validations. It cannot change the original
 winner, authorize a second search, mutate state, promote to PAPER/LIVE or send
 an external order.
+
+## ADR-100 — Discovery cost stress never reselects the locked factor
+
+Status: accepted, 2026-08-27.
+
+Testing only the caller's modeled cost leaves two ambiguities: a losing result
+could be blamed entirely on fees, and repeated requests could use a favorable
+cost setting as another hidden selection dimension. After the chronological
+training segment locks one candidate, QTrade therefore keeps that identity,
+its binary signals and its test sessions unchanged while recomputing exactly
+0/5/10/20 bps round-trip cost rows. None of those rows can alter the training
+rank or replace the locked candidate.
+
+For `DIR-XDU-T0000`, the same 326 signals over the same 20 test sessions returned
+-4.2527%, -6.1491%, -8.0089% and -11.6212% as costs rose. Maximum drawdown moved
+from -8.9914% to -13.0167%, while excess returns remained negative at every
+level. The fixed audit requires positive zero-cost total return, positive total
+return at every fixed cost, positive 20 bps excess and mechanically non-
+increasing total return as costs rise. Only the last integrity condition passes.
+The complete discovery research gate is the conjunction of chronological locked
+test, CSCV/PBO selection-bias audit and locked-test cost stress; this run is 0/3.
+Even a future historical pass would remain non-PIT/reused evidence without
+PAPER, LIVE, state-mutation or external-order authority.

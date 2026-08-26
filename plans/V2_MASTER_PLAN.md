@@ -224,6 +224,9 @@ npm --prefix web run build
   contiguous blocks and all 70 combinatorially symmetric train/complement
   splits; reuse the actual gate/t/effect/threshold rank, expose the failed PBO
   audit and prevent it from replacing the chronological locked test.
+- [x] Replay the single locked discovery winner on its unchanged test signals
+  under 0/5/10/20 bps; expose the losing cost curve and require chronological,
+  selection-bias and cost gates together before any research-quality pass.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,
