@@ -527,8 +527,10 @@ Last updated: 2026-08-26
   then atomically replaces and re-verifies the deployment report. The public
   verifier also requires the report's complete warmup identity to equal the
   preregistered data version/checksum/session contract and explicitly rejects
-  Python booleans masquerading as integer session counts; a resigned mismatch
-  falls back to the independently verified `0/20` lock rather than rendering.
+  reports generated at or before the lock plus Python booleans masquerading as
+  integer session counts. A target session cannot postdate the report's China
+  market date or appear before the locked 15:10 same-day collection boundary;
+  a resigned mismatch falls back to the independently verified `0/20` lock.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator

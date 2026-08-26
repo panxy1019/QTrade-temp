@@ -5073,6 +5073,9 @@ def _load_verified_forward_observation_report(
             key: value for key, value in report.items() if key != "evidence_sha256"
         }
         generated_at = datetime.fromisoformat(str(report.get("generated_at")))
+        lock_created_at = datetime.fromisoformat(
+            str(preregistration.get("created_at"))
+        )
         warmup = report.get("warmup_dataset")
         sessions = report.get("future_sessions")
         cost_stress = report.get("cost_stress")
@@ -5092,6 +5095,8 @@ def _load_verified_forward_observation_report(
             or report.get("classification")
             != "LOCKED_FUTURE_COMPLETE_SESSION_OBSERVATION"
             or generated_at.tzinfo is None
+            or lock_created_at.tzinfo is None
+            or generated_at <= lock_created_at
             or report.get("preregistration_sha256")
             != preregistration.get("preregistration_sha256")
             or report.get("policy_id") != preregistration.get("policy_id")
@@ -5133,6 +5138,7 @@ def _load_verified_forward_observation_report(
         ):
             return None
         days: list[str] = []
+        generated_china = generated_at.astimezone(ZoneInfo("Asia/Shanghai"))
         for row in sessions:
             if (
                 not isinstance(row, dict)
@@ -5141,8 +5147,14 @@ def _load_verified_forward_observation_report(
                 or row.get("anchor_exact_match") is not True
             ):
                 return None
-            day = date.fromisoformat(str(row.get("target_day"))).isoformat()
-            if day < str(preregistration.get("first_eligible_trading_day")):
+            target_day = date.fromisoformat(str(row.get("target_day")))
+            day = target_day.isoformat()
+            if (
+                day < str(preregistration.get("first_eligible_trading_day"))
+                or target_day > generated_china.date()
+                or target_day == generated_china.date()
+                and generated_china.time() < datetime_time(15, 10)
+            ):
                 return None
             days.append(day)
         if days != sorted(set(days)):

@@ -78,6 +78,79 @@ def _empty_forward_report(preregistration: dict[str, object]) -> dict[str, objec
     return {**unsigned, "evidence_sha256": _canonical(unsigned)}
 
 
+def _one_session_forward_report(
+    preregistration: dict[str, object], *, target_day: str, generated_at: str
+) -> dict[str, object]:
+    report = _empty_forward_report(preregistration)
+
+    def metrics() -> dict[str, object]:
+        return {
+            "total_return": 0.0,
+            "maximum_drawdown": 0.0,
+            "realized_minute_volatility": 0.0,
+            "point_count": 48,
+        }
+
+    def execution() -> dict[str, object]:
+        return {
+            "symbol_count": 75,
+            "observation_count": 75 * 48,
+            "mean_exposure": 1.0,
+            "turnover": 0.0,
+            "mean_turnover_per_symbol": 0.0,
+        }
+
+    report.update(
+        {
+            "generated_at": generated_at,
+            "future_session_count": 1,
+            "accepted_future_session_count": 1,
+            "evaluated_future_session_count": 1,
+            "future_sessions": [
+                {
+                    "target_day": target_day,
+                    "evidence_sha256": "1" * 64,
+                    "bar_count": 3600,
+                    "anchor_exact_match": True,
+                }
+            ],
+            "cost_stress": [
+                {
+                    "cost_bps": cost,
+                    "base": metrics(),
+                    "overlay": metrics(),
+                    "excess_return": 0.0,
+                    "execution": execution(),
+                }
+                for cost in (0, 5)
+            ],
+            "leave_one_sector_out": [
+                {
+                    "excluded_sector_code": f"{index:02d}",
+                    "excluded_sector_name": f"sector-{index}",
+                    "base": metrics(),
+                    "overlay": metrics(),
+                    "excess_return": 0.0,
+                }
+                for index in range(1, 16)
+            ],
+            "gates": [
+                {"gate_id": gate_id, "passed": True}
+                for gate_id in (
+                    "OVERLAY_DRAWDOWN_NOT_WORSE_AT_5_BPS",
+                    "RETURN_SHORTFALL_WITHIN_50_BPS_AT_5_BPS",
+                    "MEAN_EXPOSURE_AT_LEAST_90_PERCENT",
+                    "MEAN_TURNOVER_PER_SYMBOL_AT_MOST_FIVE",
+                    "LEAVE_ONE_SECTOR_OUT_STABILITY",
+                )
+            ],
+        }
+    )
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    return report
+
+
 def test_forward_observation_endpoint_exposes_verified_lock() -> None:
     path = EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
     payload = _client(path).get("/forward-observation").json()
@@ -182,6 +255,49 @@ def test_forward_observation_endpoint_rejects_boolean_session_counts(
     report["evaluated_future_session_count"] = False
     report.pop("evidence_sha256")
     report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert rejected["future_session_count"] == 0
+
+
+def test_forward_observation_endpoint_rejects_report_predating_lock(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _empty_forward_report(preregistration)
+    report["generated_at"] = "2026-08-26T11:30:00+08:00"
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert rejected["future_session_count"] == 0
+
+
+def test_forward_observation_endpoint_rejects_future_dated_session(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _one_session_forward_report(
+        preregistration,
+        target_day="2026-08-27",
+        generated_at="2026-08-26T16:00:00+08:00",
+    )
     report_path = tmp_path / "report.json"
     report_path.write_text(json.dumps(report), encoding="utf-8")
 

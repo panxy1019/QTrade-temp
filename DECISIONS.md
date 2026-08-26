@@ -644,10 +644,13 @@ A signed forward-observation report is valid only when its warmup data version,
 checksum, session count and warmup-metric exclusion flag exactly equal the
 already verified preregistration. Merely supplying a syntactically valid SHA-256
 is insufficient because it would detach the result from the causal state used
-by the locked policy.
+by the locked policy. Its signed generation time must also strictly follow the
+lock creation time.
 
 All future-session count fields must also be genuine integers rather than
-booleans, despite Python's `bool` subclassing `int`. A mismatch fails the report
-closed and leaves the independently verified preregistration state visible; it
-cannot advance the public count or grant strategy, PAPER, realtime or order
-authority.
+booleans, despite Python's `bool` subclassing `int`. A target session must not
+postdate the report under the China market clock, and a same-day report must be
+generated no earlier than the locked 15:10 collection boundary. A mismatch fails
+the report closed and leaves the independently verified preregistration state
+visible; it cannot advance the public count or grant strategy, PAPER, realtime
+or order authority.
