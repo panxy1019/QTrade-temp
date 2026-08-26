@@ -34,6 +34,8 @@ _INTRADAY_EXIT_RULES = frozenset(
 _COST_STRESS_BPS = (0, 5, 10, 20)
 _ROBUSTNESS_THRESHOLDS_BPS = tuple(Decimal(value) for value in (0, 5, 10, 20))
 _DISCOVERY_THRESHOLDS_BPS = tuple(Decimal(value) for value in (0, 5, 10, 20))
+_DISCOVERY_PLACEBO_REPLICATIONS = 499
+_DISCOVERY_PLACEBO_SEED = 20260827
 _OPENING_TEN_MINUTE_LABELS = (
     "0930_0940",
     "0940_0950",
@@ -410,6 +412,22 @@ class IntradayDiscoveryRegimeStress:
 
 
 @dataclass(frozen=True, slots=True)
+class IntradayDiscoveryPlaceboAudit:
+    method: str
+    replications: int
+    seed: int
+    preserves_daily_signal_counts: bool
+    observed_mean_session_conditional_excess_return: Decimal
+    placebo_mean_session_conditional_excess_return: Decimal
+    placebo_median_session_conditional_excess_return: Decimal
+    placebo_p95_session_conditional_excess_return: Decimal
+    placebo_at_least_observed_count: int
+    empirical_one_sided_p_value: Decimal
+    criteria: Mapping[str, bool]
+    passed: bool
+
+
+@dataclass(frozen=True, slots=True)
 class IntradayFactorDiscoveryResult:
     candidate_count: int
     candidates: tuple[IntradayDiscoveryCandidate, ...]
@@ -442,6 +460,7 @@ class IntradayFactorDiscoveryResult:
     locked_test_regimes: tuple[IntradayDiscoveryRegimeStress, ...]
     locked_test_regime_stress_criteria: Mapping[str, bool]
     locked_test_regime_stress_passed: bool
+    locked_test_placebo_audit: IntradayDiscoveryPlaceboAudit
     test_observation_count: int
     test_signal_count: int
     test_signal_session_count: int
@@ -1650,6 +1669,105 @@ def _pearson(left: list[Decimal], right: list[Decimal]) -> Decimal:
     return Decimal("0") if denominator == 0 else covariance / denominator
 
 
+def _session_preserving_placebo_audit(
+    observations: list[IntradayFactorObservation],
+) -> IntradayDiscoveryPlaceboAudit:
+    by_day: dict[date, list[IntradayFactorObservation]] = defaultdict(list)
+    for observation in observations:
+        by_day[observation.trading_day].append(observation)
+    ordered_sessions = [
+        sorted(rows, key=lambda row: row.symbol)
+        for _, rows in sorted(by_day.items())
+    ]
+    signal_counts = [sum(row.signal for row in rows) for rows in ordered_sessions]
+    preserves_daily_signal_counts = all(
+        0 <= signal_count <= len(rows)
+        for signal_count, rows in zip(
+            signal_counts,
+            ordered_sessions,
+            strict=True,
+        )
+    )
+    observed_sessions = [
+        value for _, value in _session_conditional_excess_returns(observations)
+    ]
+    observed_mean = (
+        Decimal("0")
+        if not observed_sessions
+        else sum(observed_sessions, start=Decimal("0"))
+        / len(observed_sessions)
+    )
+    generator = Random(_DISCOVERY_PLACEBO_SEED)
+    placebo_means: list[Decimal] = []
+    for _ in range(_DISCOVERY_PLACEBO_REPLICATIONS):
+        placebo_sessions: list[Decimal] = []
+        for rows, signal_count in zip(
+            ordered_sessions,
+            signal_counts,
+            strict=True,
+        ):
+            if signal_count == 0:
+                continue
+            indices = list(range(len(rows)))
+            generator.shuffle(indices)
+            selected_returns = [
+                rows[index].gross_forward_return
+                for index in indices[:signal_count]
+            ]
+            universe_returns = [row.gross_forward_return for row in rows]
+            placebo_sessions.append(
+                sum(selected_returns, start=Decimal("0"))
+                / len(selected_returns)
+                - sum(universe_returns, start=Decimal("0"))
+                / len(universe_returns)
+            )
+        placebo_means.append(
+            Decimal("0")
+            if not placebo_sessions
+            else sum(placebo_sessions, start=Decimal("0"))
+            / len(placebo_sessions)
+        )
+    placebo_means.sort()
+    placebo_at_least_observed_count = sum(
+        value >= observed_mean for value in placebo_means
+    )
+    empirical_p_value = Decimal(placebo_at_least_observed_count + 1) / Decimal(
+        _DISCOVERY_PLACEBO_REPLICATIONS + 1
+    )
+    placebo_mean = sum(placebo_means, start=Decimal("0")) / len(placebo_means)
+    placebo_median = _bootstrap_percentile(placebo_means, Decimal("0.50"))
+    placebo_p95 = _bootstrap_percentile(placebo_means, Decimal("0.95"))
+    criteria = {
+        "minimum_ten_locked_test_signal_sessions_for_placebo": (
+            len(observed_sessions) >= 10
+        ),
+        "placebo_preserves_every_session_signal_count": (
+            preserves_daily_signal_counts
+        ),
+        "observed_conditional_excess_positive": observed_mean > 0,
+        "empirical_one_sided_placebo_p_value_at_most_0_05": (
+            empirical_p_value <= Decimal("0.05")
+        ),
+        "observed_conditional_excess_above_placebo_p95": (
+            observed_mean > placebo_p95
+        ),
+    }
+    return IntradayDiscoveryPlaceboAudit(
+        method="SESSION_PRESERVING_CROSS_SECTIONAL_PERMUTATION",
+        replications=_DISCOVERY_PLACEBO_REPLICATIONS,
+        seed=_DISCOVERY_PLACEBO_SEED,
+        preserves_daily_signal_counts=preserves_daily_signal_counts,
+        observed_mean_session_conditional_excess_return=observed_mean,
+        placebo_mean_session_conditional_excess_return=placebo_mean,
+        placebo_median_session_conditional_excess_return=placebo_median,
+        placebo_p95_session_conditional_excess_return=placebo_p95,
+        placebo_at_least_observed_count=placebo_at_least_observed_count,
+        empirical_one_sided_p_value=empirical_p_value,
+        criteria=criteria,
+        passed=all(criteria.values()),
+    )
+
+
 def discover_opening_direction_rules(
     observations: tuple[IntradayFactorObservation, ...],
     *,
@@ -2079,6 +2197,7 @@ def discover_opening_direction_rules(
             for row in locked_test_regimes
         ),
     }
+    locked_test_placebo_audit = _session_preserving_placebo_audit(test_rows)
     test_criteria = {
         "minimum_250_test_observations": len(test_rows) >= 250,
         "minimum_twenty_test_signals": test_signal_count >= 20,
@@ -2153,6 +2272,7 @@ def discover_opening_direction_rules(
         locked_test_regime_stress_passed=all(
             locked_test_regime_stress_criteria.values()
         ),
+        locked_test_placebo_audit=locked_test_placebo_audit,
         test_observation_count=len(test_rows),
         test_signal_count=test_signal_count,
         test_signal_session_count=test_signal_sessions,

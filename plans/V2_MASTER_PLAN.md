@@ -236,6 +236,9 @@ npm --prefix web run build
 - [x] Split the unchanged locked test by the previous session's equal-weight
   T+1-open return sign, prove the label is known at 09:35 before the current
   10:00 signal, expose both losing states and extend the untuned gate to 0/6.
+- [x] Run 499 fixed-seed cross-sectional placebo permutations for the unchanged
+  locked test while preserving every session's signal count; expose the 77.60%
+  one-sided p-value and extend the no-reselection discovery gate to 0/7.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

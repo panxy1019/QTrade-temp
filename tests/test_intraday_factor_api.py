@@ -440,6 +440,9 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
             "locked_test_regime_stress_passed": payload[
                 "locked_test_regime_stress"
             ]["passed"],
+            "locked_test_placebo_audit_passed": payload[
+                "locked_test_placebo_audit"
+            ]["passed"],
         },
         "passed": False,
         "promotion_authority": False,
@@ -509,6 +512,22 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
     ]["signal_count"]
     assert all(row["known_before_signal"] for row in regime_stress["regimes"])
     assert regime_stress["passed"] is all(regime_stress["criteria"].values())
+    placebo = payload["locked_test_placebo_audit"]
+    assert placebo["selected_candidate_id"] == payload["selected"][
+        "candidate_id"
+    ]
+    assert placebo["test_start"] == payload["split"]["test_start"]
+    assert placebo["test_end"] == payload["split"]["test_end"]
+    assert placebo["candidate_reselected"] is False
+    assert placebo["placebo_rows_used_for_selection"] is False
+    assert placebo["method"] == "SESSION_PRESERVING_CROSS_SECTIONAL_PERMUTATION"
+    assert placebo["replications"] == 499
+    assert placebo["seed"] == 20260827
+    assert placebo["preserves_daily_signal_counts"] is True
+    assert Decimal(placebo["empirical_one_sided_p_value"]) == (
+        Decimal(placebo["placebo_at_least_observed_count"] + 1) / 500
+    )
+    assert placebo["passed"] is all(placebo["criteria"].values())
     assert payload["selected"]["candidate_id"] in {
         candidate["candidate_id"] for candidate in payload["candidates"]
     }

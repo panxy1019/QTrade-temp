@@ -9189,6 +9189,44 @@ def _intraday_factor_discovery_preview(
             "criteria": dict(result.locked_test_regime_stress_criteria),
             "passed": result.locked_test_regime_stress_passed,
         },
+        "locked_test_placebo_audit": {
+            "selected_candidate_id": result.selected_candidate_id,
+            "test_start": result.test_start.isoformat(),
+            "test_end": result.test_end.isoformat(),
+            "candidate_reselected": False,
+            "placebo_rows_used_for_selection": False,
+            "method": result.locked_test_placebo_audit.method,
+            "replications": result.locked_test_placebo_audit.replications,
+            "seed": result.locked_test_placebo_audit.seed,
+            "preserves_daily_signal_counts": (
+                result.locked_test_placebo_audit.preserves_daily_signal_counts
+            ),
+            "observed_mean_session_conditional_excess_return": str(
+                result.locked_test_placebo_audit
+                .observed_mean_session_conditional_excess_return
+            ),
+            "placebo_mean_session_conditional_excess_return": str(
+                result.locked_test_placebo_audit
+                .placebo_mean_session_conditional_excess_return
+            ),
+            "placebo_median_session_conditional_excess_return": str(
+                result.locked_test_placebo_audit
+                .placebo_median_session_conditional_excess_return
+            ),
+            "placebo_p95_session_conditional_excess_return": str(
+                result.locked_test_placebo_audit
+                .placebo_p95_session_conditional_excess_return
+            ),
+            "placebo_at_least_observed_count": (
+                result.locked_test_placebo_audit
+                .placebo_at_least_observed_count
+            ),
+            "empirical_one_sided_p_value": str(
+                result.locked_test_placebo_audit.empirical_one_sided_p_value
+            ),
+            "criteria": dict(result.locked_test_placebo_audit.criteria),
+            "passed": result.locked_test_placebo_audit.passed,
+        },
         "discovery_gate": {
             "criteria": {
                 "chronological_locked_test_passed": result.test_gate_passed,
@@ -9207,6 +9245,9 @@ def _intraday_factor_discovery_preview(
                 "locked_test_regime_stress_passed": (
                     result.locked_test_regime_stress_passed
                 ),
+                "locked_test_placebo_audit_passed": (
+                    result.locked_test_placebo_audit.passed
+                ),
             },
             "passed": all(
                 (
@@ -9216,6 +9257,7 @@ def _intraday_factor_discovery_preview(
                     result.locked_test_sector_stress_passed,
                     result.locked_test_symbol_stress_passed,
                     result.locked_test_regime_stress_passed,
+                    result.locked_test_placebo_audit.passed,
                 )
             ),
             "promotion_authority": False,

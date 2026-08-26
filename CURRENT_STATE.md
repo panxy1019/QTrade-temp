@@ -356,6 +356,17 @@ Last updated: 2026-08-27
   strategy return and not every state had positive excess. The state rows cannot
   reselect the candidate. The consolidated discovery gate is now 0/6, still
   `NOT_ELIGIBLE`, stateless and external-order-disabled.
+- Locked-test placebo audit now holds the same selected rule, test window and
+  each session's realized signal count fixed, then uses seed 20260827 for 499
+  cross-sectional permutations that only reassign those signals among the 75
+  same-day stocks. The observed session-clustered conditional excess was
+  -9.1894 bp, versus a +0.2642 bp placebo median and +17.9292 bp placebo 95th
+  percentile; 387/499 permutations were at least as large as observed, giving
+  a +1-corrected one-sided p-value of 77.60%. Coverage and count preservation
+  passed, while positive observed effect, p <= 0.05 and observed-above-P95 all
+  failed. Placebo rows cannot enter training or trigger candidate reselection.
+  The consolidated seven-stage discovery gate is 0/7 and remains viewed-history
+  evidence with no PAPER/LIVE, state-mutation or external-order authority.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,

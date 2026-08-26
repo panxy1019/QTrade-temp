@@ -306,6 +306,25 @@ const discovery = {
     },
     passed: false,
   },
+  locked_test_placebo_audit: {
+    selected_candidate_id: 'DIR-XDU-T0000', test_start: '2026-06-25', test_end: '2026-07-14',
+    candidate_reselected: false, placebo_rows_used_for_selection: false,
+    method: 'SESSION_PRESERVING_CROSS_SECTIONAL_PERMUTATION', replications: 499, seed: 20260827,
+    preserves_daily_signal_counts: true,
+    observed_mean_session_conditional_excess_return: '-0.0009189368',
+    placebo_mean_session_conditional_excess_return: '-0.0000033146',
+    placebo_median_session_conditional_excess_return: '0.0000264164',
+    placebo_p95_session_conditional_excess_return: '0.0017929205',
+    placebo_at_least_observed_count: 387, empirical_one_sided_p_value: '0.776',
+    criteria: {
+      minimum_ten_locked_test_signal_sessions_for_placebo: true,
+      placebo_preserves_every_session_signal_count: true,
+      observed_conditional_excess_positive: false,
+      empirical_one_sided_placebo_p_value_at_most_0_05: false,
+      observed_conditional_excess_above_placebo_p95: false,
+    },
+    passed: false,
+  },
   discovery_gate: {
     criteria: {
       chronological_locked_test_passed: false,
@@ -314,6 +333,7 @@ const discovery = {
       locked_test_sector_stress_passed: false,
       locked_test_symbol_stress_passed: false,
       locked_test_regime_stress_passed: false,
+      locked_test_placebo_audit_passed: false,
     },
     passed: false,
     promotion_authority: false,
@@ -407,6 +427,7 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('锁定规则未通过多行业鲁棒性门')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过逐股票鲁棒性门')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过信号前市场状态压力门')).toBeInTheDocument()
+    expect(screen.getByText('锁定规则未通过会话内置换安慰剂门')).toBeInTheDocument()
     expect(screen.getByText('4/15 · 26.67%')).toBeInTheDocument()
     expect(screen.getByText('0/15 · 0.00%')).toBeInTheDocument()
     expect(screen.getByText('22/75 · 29.33%')).toBeInTheDocument()
@@ -416,6 +437,9 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('8 / 600 / 138')).toBeInTheDocument()
     expect(screen.getByText('-5.45%')).toBeInTheDocument()
     expect(screen.getByText('-11.62%')).toBeInTheDocument()
+    expect(screen.getByText('+0.2642 bp')).toBeInTheDocument()
+    expect(screen.getByText('77.60%')).toBeInTheDocument()
+    expect(screen.getByText('387/499')).toBeInTheDocument()
     expect(screen.getByText('41.43%')).toBeInTheDocument()
     expect(screen.getByText('DIR-DDD-T0020 · 24/70')).toBeInTheDocument()
     expect(screen.getAllByText(/DIR-XDU-T0000/).length).toBeGreaterThan(0)

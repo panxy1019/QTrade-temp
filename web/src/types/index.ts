@@ -828,6 +828,25 @@ export interface IntradayFactorDiscovery {
     criteria: Record<string, boolean>
     passed: boolean
   }
+  locked_test_placebo_audit: {
+    selected_candidate_id: string
+    test_start: string
+    test_end: string
+    candidate_reselected: false
+    placebo_rows_used_for_selection: false
+    method: 'SESSION_PRESERVING_CROSS_SECTIONAL_PERMUTATION'
+    replications: number
+    seed: number
+    preserves_daily_signal_counts: boolean
+    observed_mean_session_conditional_excess_return: string
+    placebo_mean_session_conditional_excess_return: string
+    placebo_median_session_conditional_excess_return: string
+    placebo_p95_session_conditional_excess_return: string
+    placebo_at_least_observed_count: number
+    empirical_one_sided_p_value: string
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   discovery_gate: {
     criteria: Record<string, boolean>
     passed: boolean

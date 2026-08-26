@@ -97,6 +97,7 @@ const gateLabels: Record<string, string> = {
   locked_test_sector_stress_passed: '锁定测试多行业压力通过',
   locked_test_symbol_stress_passed: '锁定测试逐股票压力通过',
   locked_test_regime_stress_passed: '锁定测试信号前市场状态压力通过',
+  locked_test_placebo_audit_passed: '锁定测试会话内置换安慰剂通过',
   every_locked_test_sector_has_signal: '每个测试行业均有信号',
   positive_locked_test_sector_ratio_at_least_0_60: '至少 60% 测试行业收益为正',
   positive_leave_one_sector_out_ratio_at_least_0_80: '至少 80% 整行业剔除收益为正',
@@ -111,6 +112,11 @@ const gateLabels: Record<string, string> = {
   every_previous_session_regime_has_signal: '每类状态均有测试信号',
   all_previous_session_regime_total_returns_positive: '每类状态策略收益均为正',
   all_previous_session_regime_excess_returns_positive: '每类状态策略超额均为正',
+  minimum_ten_locked_test_signal_sessions_for_placebo: '安慰剂检验至少覆盖 10 个锁定测试信号日',
+  placebo_preserves_every_session_signal_count: '每次置换保留每个测试日的信号数',
+  observed_conditional_excess_positive: '实际条件超额为正',
+  empirical_one_sided_placebo_p_value_at_most_0_05: '单侧置换 p 值不高于 0.05',
+  observed_conditional_excess_above_placebo_p95: '实际条件超额高于安慰剂第 95 百分位',
 }
 
 export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
@@ -689,6 +695,24 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           ]} />
           <Alert
             showIcon
+            type={discoveryResult.locked_test_placebo_audit.passed ? 'success' : 'warning'}
+            title={discoveryResult.locked_test_placebo_audit.passed ? '锁定规则通过会话内置换安慰剂门' : '锁定规则未通过会话内置换安慰剂门'}
+            description={`固定 ${discoveryResult.locked_test_placebo_audit.selected_candidate_id}，按每个测试日保留实际信号数，只在当日股票间随机重排信号归属；使用固定种子 ${discoveryResult.locked_test_placebo_audit.seed} 完成 ${discoveryResult.locked_test_placebo_audit.replications} 次置换。安慰剂行不参与候选选择或重选；窗口已经被查看，不是独立确认。`}
+          />
+          <div className="description-grid">
+            <Metric label="实际条件超额" value={formatBasisPoints(discoveryResult.locked_test_placebo_audit.observed_mean_session_conditional_excess_return)} />
+            <Metric label="安慰剂均值" value={formatBasisPoints(discoveryResult.locked_test_placebo_audit.placebo_mean_session_conditional_excess_return)} />
+            <Metric label="安慰剂中位" value={formatBasisPoints(discoveryResult.locked_test_placebo_audit.placebo_median_session_conditional_excess_return)} />
+            <Metric label="安慰剂 P95" value={formatBasisPoints(discoveryResult.locked_test_placebo_audit.placebo_p95_session_conditional_excess_return)} />
+            <Metric label="单侧置换 p 值" value={formatPercent(discoveryResult.locked_test_placebo_audit.empirical_one_sided_p_value)} />
+            <Metric label="不低于实际的置换" value={`${discoveryResult.locked_test_placebo_audit.placebo_at_least_observed_count}/${discoveryResult.locked_test_placebo_audit.replications}`} />
+          </div>
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.locked_test_placebo_audit.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '锁定测试安慰剂门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
+          <Alert
+            showIcon
             type={discoveryResult.overfitting_audit.passed ? 'info' : 'warning'}
             title={discoveryResult.overfitting_audit.passed && !discoveryResult.test_validation.passed
               ? 'CSCV 选择偏差门通过，但时间顺序锁定测试仍失败'
@@ -746,7 +770,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             showIcon
             type={discoveryResult.discovery_gate.passed ? 'success' : 'error'}
             title={discoveryResult.discovery_gate.passed ? '完整因子发现研究门通过，但仍需独立前向证据' : '完整因子发现研究门未通过'}
-            description="时间顺序锁定测试、组合式选择偏差、固定成本压力、多行业压力、逐股票压力和信号前市场状态压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
+            description="时间顺序锁定测试、组合式选择偏差、固定成本压力、多行业压力、逐股票压力、信号前市场状态压力和会话内置换安慰剂必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
           />
           <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.discovery_gate.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
             { title: '完整发现门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
@@ -1088,6 +1112,13 @@ function formatNumber(value: string) {
 function formatPercent(value: string) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? `${(parsed * 100).toFixed(2)}%` : '—'
+}
+
+function formatBasisPoints(value: string) {
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed)) return '—'
+  const basisPoints = parsed * 10_000
+  return `${basisPoints > 0 ? '+' : ''}${basisPoints.toFixed(4)} bp`
 }
 
 function formatTimestamp(value: string) {

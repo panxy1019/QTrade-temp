@@ -512,6 +512,19 @@ def test_bounded_opening_rule_discovery_locks_training_before_disjoint_test() ->
     assert first.locked_test_regime_stress_passed is all(
         first.locked_test_regime_stress_criteria.values()
     )
+    placebo = first.locked_test_placebo_audit
+    assert placebo.method == "SESSION_PRESERVING_CROSS_SECTIONAL_PERMUTATION"
+    assert placebo.replications == 499
+    assert placebo.seed == 20260827
+    assert placebo.preserves_daily_signal_counts is True
+    assert placebo.observed_mean_session_conditional_excess_return == (
+        first.test_mean_session_conditional_excess_return
+    )
+    assert placebo.empirical_one_sided_p_value == (
+        Decimal(placebo.placebo_at_least_observed_count + 1)
+        / (placebo.replications + 1)
+    )
+    assert placebo.passed is all(placebo.criteria.values())
     assert first.test_observation_count == 20 * len(symbols)
     assert first.selection_uses_test_returns is False
     assert first.promotion == "NOT_ELIGIBLE"

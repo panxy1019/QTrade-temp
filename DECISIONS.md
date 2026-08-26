@@ -1689,3 +1689,29 @@ fail. The consolidated historical discovery gate now requires chronological
 lock, CSCV/PBO, cost, sector, stock and causal state stress and is 0/6. It
 remains non-PIT, viewed reused history, `NOT_ELIGIBLE`, stateless and
 external-order-disabled.
+
+## ADR-104 — Locked-test placebo permutations preserve each session's signal count
+
+Status: accepted, 2026-08-27.
+
+A weak locked result may simply identify a random subset of stocks on each test
+day. Comparing it with a global shuffle would be misleading because the opening
+rule produces different signal counts across sessions and market-wide returns
+also differ by day. QTrade therefore keeps the selected candidate, chronological
+test dates and every session's observed signal count fixed. For each of exactly
+499 replications, a deterministic generator with seed 20260827 shuffles only the
+stock identities within that session and computes the same signal-stock minus
+same-day-universe forward return, averaged once per signal-bearing session.
+
+The viewed locked result had -9.1894 bp mean session-conditional excess. The
+placebo distribution had -0.0331 bp mean, +0.2642 bp median and +17.9292 bp 95th
+percentile; 387/499 placebo values were at least as high as observed. The
+predeclared +1-corrected one-sided p-value is therefore 388/500, or 77.60%.
+Passing requires at least ten signal sessions, exact per-session signal-count
+preservation, positive observed excess, p <= 0.05 and observed excess above the
+placebo 95th percentile. Only coverage and count preservation pass. Placebo
+assignments never enter candidate training, ranking or reselection. The audit
+reuses the already viewed locked test and is not independent confirmation. The
+consolidated historical discovery gate now requires chronological lock,
+CSCV/PBO, cost, sector, stock, causal market-state and placebo stages and is
+0/7; no result can authorize PAPER/LIVE, state mutation or external orders.
