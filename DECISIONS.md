@@ -801,3 +801,18 @@ Every source session considered for promotion must carry both that exact anchor
 day and digest in addition to the checksum-verified target Parquet identity. A
 resigned manifest with a fabricated boolean or different anchor cannot advance
 the public count or affect strategy, PAPER, realtime, or order authority.
+
+## ADR-053 — Forward source semantics cannot drift from the lock
+
+Status: accepted, 2026-08-26.
+
+Each source session admitted by the publisher must retain the locked
+preregistration identity and the exact `BaoStock` / native five-minute /
+`adjustflag=2` collection semantics. It must also keep the current-universe QFQ
+limitations explicit: non-PIT, future-adjustment knowledge possible,
+`NOT_ELIGIBLE`, realtime and real-data PAPER not ready, and external order
+transmission disabled.
+
+The top-level candidate's safe interpretation is not enough if a constituent
+source says otherwise. Any resigned source-level semantic drift rejects the
+entire publication before the prior public report can be replaced.

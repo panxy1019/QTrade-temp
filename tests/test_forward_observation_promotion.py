@@ -117,6 +117,17 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
             "anchor_exact_match": True,
             "anchor_day": "2026-08-25",
             "anchor_sha256": _FROZEN_FORWARD_ANCHOR_SHA256,
+            "preregistration_id": "baostock-locked-forward-observation-v1",
+            "preregistration_sha256": "a" * 64,
+            "provider": "BaoStock",
+            "frequency": "5",
+            "adjustflag": "2",
+            "point_in_time": False,
+            "future_adjustment_knowledge_possible": True,
+            "realtime_readiness": False,
+            "real_data_paper_readiness": False,
+            "promotion": "NOT_ELIGIBLE",
+            "external_order_transmission": False,
         }
     ]
 
@@ -128,5 +139,10 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
 
     source_reports[0]["evidence_sha256"] = "1" * 64
     source_reports[0]["anchor_day"] = "2026-08-24"
+    with pytest.raises(ValueError, match="source sessions"):
+        validate_source_sessions(candidate, source_reports)
+
+    source_reports[0]["anchor_day"] = "2026-08-25"
+    source_reports[0]["external_order_transmission"] = True
     with pytest.raises(ValueError, match="source sessions"):
         validate_source_sessions(candidate, source_reports)

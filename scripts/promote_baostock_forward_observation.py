@@ -46,6 +46,19 @@ def validate_source_sessions(
         or any(
             report.get("anchor_day") != _FROZEN_FORWARD_ANCHOR_DAY
             or report.get("anchor_sha256") != _FROZEN_FORWARD_ANCHOR_SHA256
+            or report.get("preregistration_id")
+            != "baostock-locked-forward-observation-v1"
+            or report.get("preregistration_sha256")
+            != candidate.get("preregistration_sha256")
+            or report.get("provider") != "BaoStock"
+            or report.get("frequency") != "5"
+            or report.get("adjustflag") != "2"
+            or report.get("point_in_time") is not False
+            or report.get("future_adjustment_knowledge_possible") is not True
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("external_order_transmission") is not False
             for report in source_reports
         )
     ):
