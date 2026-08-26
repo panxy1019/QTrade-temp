@@ -126,13 +126,24 @@ def _one_session_forward_report(
             ],
             "leave_one_sector_out": [
                 {
-                    "excluded_sector_code": f"{index:02d}",
-                    "excluded_sector_name": f"sector-{index}",
+                    "excluded_sector_code": sector_code,
+                    "excluded_sector_name": sector_name,
                     "base": metrics(),
                     "overlay": metrics(),
                     "excess_return": 0.0,
                 }
-                for index in range(1, 16)
+                for sector_code, sector_name in sorted(
+                    {
+                        (str(row["sector_code"]), str(row["sector_name"]))
+                        for row in json.loads(
+                            (
+                                EVIDENCE_ROOT
+                                / "long-five-minute-market-data"
+                                / "manifest.json"
+                            ).read_text(encoding="utf-8")
+                        )["universe"]["stocks"]
+                    }
+                )
             ],
             "gates": [
                 {"gate_id": gate_id, "passed": True}
@@ -359,3 +370,29 @@ def test_forward_observation_endpoint_accepts_one_complete_session(
     assert accepted["accepted_future_session_count"] == 1
     assert accepted["observation_status"] == "INCOMPLETE"
     assert accepted["promotion"] == "NOT_ELIGIBLE"
+
+
+def test_forward_observation_endpoint_rejects_resigned_sector_identity(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _one_session_forward_report(
+        preregistration,
+        target_day="2026-08-26",
+        generated_at="2026-08-26T16:00:00+08:00",
+    )
+    report["leave_one_sector_out"][0]["excluded_sector_code"] = "000000"
+    report["leave_one_sector_out"][0]["excluded_sector_name"] = "invented"
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert rejected["future_session_count"] == 0

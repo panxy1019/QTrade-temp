@@ -680,3 +680,16 @@ the frozen 75-symbol count.
 This prevents a resigned report from passing the maximum-turnover gate with a
 negative economic quantity. A one-complete-session report remains explicitly
 `INCOMPLETE` and `NOT_ELIGIBLE` even when all provisional gates are true.
+
+## ADR-044 — Forward sector exclusions inherit the frozen universe identity
+
+Status: accepted, 2026-08-26.
+
+The normalized forward lock derives the exact 15 sector code/name pairs from the
+already verified long-history dataset. Once at least one future session is
+evaluated, every leave-one-sector-out row must match that complete identity set;
+unique but invented sector labels are not sufficient.
+
+This binds sector-stability arithmetic to the intended multi-sector universe.
+It does not turn the current-universe/QFQ evidence into PIT data or grant PAPER,
+realtime or external-order authority.

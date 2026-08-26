@@ -5000,6 +5000,15 @@ def _load_verified_forward_preregistration(
             }
         ):
             return None
+        sector_identities = sorted(
+            {
+                (str(row["sector_code"]), str(row["sector_name"]))
+                for row in cast(list[dict[str, object]], dataset["instruments"])
+                if row.get("instrument_type") == "STOCK"
+            }
+        )
+        if len(sector_identities) != 15:
+            return None
         return {
             "classification": "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION",
             "preregistration_id": report["preregistration_id"],
@@ -5010,6 +5019,10 @@ def _load_verified_forward_preregistration(
             "policy_id": policy_id,
             "policy_hash": candidate["policy_hash"],
             "parameters": candidate["policy"],
+            "sectors": [
+                {"sector_code": code, "sector_name": name}
+                for code, name in sector_identities
+            ],
             "warmup_dataset": {
                 "data_version": warmup["data_version"],
                 "checksum": warmup["checksum"],
@@ -5228,7 +5241,7 @@ def _load_verified_forward_observation_report(
                     five_row = cast(dict[str, object], row)
             if seen_costs != [0, 5] or five_row is None:
                 return None
-            seen_sectors: set[str] = set()
+            seen_sectors: dict[str, str] = {}
             stable_sector_count = 0
             for row in sectors:
                 if not isinstance(row, dict):
@@ -5246,8 +5259,13 @@ def _load_verified_forward_observation_report(
                     or not isclose(excess, overlay[0] - base[0])
                 ):
                     return None
-                seen_sectors.add(code)
+                seen_sectors[code] = str(row["excluded_sector_name"])
                 stable_sector_count += excess >= -0.01
+            if [
+                {"sector_code": code, "sector_name": name}
+                for code, name in sorted(seen_sectors.items())
+            ] != preregistration.get("sectors"):
+                return None
             five_base = metric_values(five_row.get("base"))
             five_overlay = metric_values(five_row.get("overlay"))
             five_execution = cast(dict[str, object], five_row["execution"])
