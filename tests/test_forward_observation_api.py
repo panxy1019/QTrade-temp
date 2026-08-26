@@ -135,6 +135,8 @@ def test_forward_observation_endpoint_verifies_empty_evaluator_report(
     assert payload["accepted_future_session_count"] == 0
     assert payload["evaluated_future_session_count"] == 0
     assert payload["observation_status"] == "INCOMPLETE"
+    assert payload["first_eligible_trading_day"] == "2026-08-26"
+    assert payload["created_at"] == preregistration["created_at"]
 
     report["accepted_future_session_count"] = 20
     report["future_session_count"] = 20

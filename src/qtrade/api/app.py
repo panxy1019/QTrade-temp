@@ -489,6 +489,8 @@ def create_app(
             state.forward_observation_report_path,
             preregistration,
         )
+        if report is not None and preregistration is not None:
+            return {**preregistration, **report}
         return report or preregistration or {
             "classification": "NO_VERIFIED_FORWARD_OBSERVATION_LOCK",
             "observation_status": "UNAVAILABLE",
