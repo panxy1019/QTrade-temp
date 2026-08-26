@@ -57,6 +57,12 @@ set, common metric, preview hash and optional template/spec/binding identity;
 no export timestamp is added. This permits portable audit and A/B review without
 turning removable browser state into automatic synchronization, immutable
 experiment evidence, registry admission or PAPER/LIVE authority.
+Separately, the intraday-factor notebook now shows every stored research axis on
+one A/B row: cumulative/annualized return, active excess, Sharpe, drawdown, Rank
+IC, maximum absolute correlation, stitched out-of-sample return/excess,
+Newey-West t and 95% interval. Those values are copied from the exact saved
+checksum/result-hash summary; display does not create a new calculation,
+independent observation, experiment record or promotion decision.
 Each adjustable result now includes an equal-weight Buy-and-Hold run from the
 same causal simulator. It selects symbols visible at the first decision close,
 executes at the next open and shares the strategy's window, initial cash,

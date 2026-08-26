@@ -281,6 +281,13 @@ record only repopulates the form and clears the old result, so the user must run
 the current verified dataset again. The notebook is not server-synchronized,
 does not create a registered experiment and cannot feed PAPER or LIVE.
 
+That notebook now exposes the complete saved comparison surface rather than only
+headline PnL: cumulative and annualized return, active excess, Sharpe, maximum
+drawdown, Rank IC, maximum absolute factor correlation, stitched out-of-sample
+return/excess, Newey-West t and its 95% interval appear on each row. These are the
+original checksum- and preview-hash-bound response values; the table does not
+recompute, backfill or reinterpret them as independent evidence.
+
 Factor effectiveness no longer treats every same-day stock observation as an
 independent significance sample. For each session containing at least one
 signal, the engine first computes the triggered-stock mean forward return minus

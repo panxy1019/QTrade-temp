@@ -2109,3 +2109,24 @@ flags for immutable persistence, registry writes, PAPER/LIVE starts, state
 mutation and external order transmission. There is no import, automatic sync or
 server write, and the file provides no independent leakage review, new unseen
 evidence, promotion or runtime authority.
+
+## ADR-122 — Local factor comparison shows stored research dimensions together
+
+Status: accepted, 2026-08-27.
+
+The intraday-factor local record already retained effectiveness, correlation,
+robustness and strategy metrics, but its table omitted several of them. Comparing
+only total return, Sharpe, drawdown, stitched return and Newey-West t made the
+saved notebook less complete than the factor workflow it was intended to audit.
+
+Each row now displays cumulative and annualized return, active excess, Sharpe,
+maximum drawdown, Rank IC, maximum absolute correlation, stitched out-of-sample
+return and excess, Newey-West t and its 95% interval, together with the existing
+research and robustness gates. The UI reads these fields directly from the
+validated checksum- and preview-hash-bound summary; it performs no recomputation
+or missing-value inference.
+
+This is a diagnostic comparison of already viewed history. Wider visibility does
+not provide a new independent sample, immutable experiment, factor-selection
+permission, registry admission, promotion, PAPER/LIVE authority, state mutation
+or external order transmission.

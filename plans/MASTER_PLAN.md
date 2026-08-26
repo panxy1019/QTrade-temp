@@ -279,6 +279,13 @@ fail closed on malformed or safety-relaxed local data. Parameter reload clears
 the old result and requires a new run; the notebook has no server write,
 StrategyVersion, promotion or cross-device synchronization semantics.
 
+The notebook comparison now renders its complete stored research surface:
+cumulative/annualized return, active excess, Sharpe, drawdown, Rank IC, maximum
+absolute correlation, stitched out-of-sample return/excess, Newey-West t and
+95% interval. This supports factor-effectiveness, redundancy, robustness and
+strategy-PnL comparison on one row without deriving any missing value or
+reclassifying the already viewed response as independent evidence.
+
 The effectiveness gate now clusters event returns by trading session before
 claiming significance. It computes each signal day's triggered-minus-universe
 mean and applies an automatic-bandwidth Newey-West mean standard error,

@@ -402,6 +402,13 @@ Last updated: 2026-08-27
   Invalid, cross-dataset or safety-relaxed records fail closed; loading a record
   only restores form parameters and requires a fresh rerun. These records are
   neither formal experiments nor independent evidence or PAPER inputs.
+- Intraday factor A/B metrics: every local row now displays cumulative and
+  annualized return, active excess, Sharpe, maximum drawdown, Rank IC, maximum
+  absolute correlation, stitched out-of-sample return/excess, Newey-West t and
+  its 95% interval. Values come directly from the saved checksum/result-hash
+  summary and are not recomputed into new evidence. Reproduce the focused page
+  contract with `cd web && npm test -- --run src/pages/DataPages.test.tsx -t
+  "runs the full intraday factor gate"`.
 - Session-clustered factor significance: effectiveness testing now forms one
   conditional-excess observation per signal-bearing trading day before applying
   an automatically banded Newey-West mean standard error, t-statistic and 95%

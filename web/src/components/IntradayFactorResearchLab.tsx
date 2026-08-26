@@ -515,11 +515,17 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       ),
     },
     { title: '信号', render: (_: unknown, row: LocalIntradayFactorExperiment) => `${row.signal_count}/${row.observation_count} · ${row.clustered_signal_session_count} 日` },
-    { title: '收益', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.total_return) },
+    { title: '累计收益', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.total_return) },
+    { title: '年化收益', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.annualized_return) },
+    { title: '主动超额', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.excess_return) },
     { title: 'Sharpe', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatNumber(row.metrics.sharpe) },
     { title: '最大回撤', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.maximum_drawdown) },
+    { title: 'Rank IC', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatNumber(row.metrics.rank_ic) },
+    { title: '最大 |ρ|', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatNumber(row.metrics.maximum_absolute_correlation) },
     { title: '样本外收益', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.stitched_oos_total_return) },
+    { title: '样本外超额', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.stitched_oos_excess_return) },
     { title: 'NW t', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatNumber(row.metrics.newey_west_t_statistic) },
+    { title: 'NW 95% 区间', render: (_: unknown, row: LocalIntradayFactorExperiment) => `${formatPercent(row.metrics.confidence_interval_95_lower)} ～ ${formatPercent(row.metrics.confidence_interval_95_upper)}` },
     {
       title: '硬门',
       render: (_: unknown, row: LocalIntradayFactorExperiment) => (
@@ -1204,7 +1210,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             },
           }}
           pagination={{ pageSize: 5, showSizeChanger: false }}
-          scroll={{ x: 1450 }}
+          scroll={{ x: 2200 }}
           locale={{ emptyText: '运行因子检验后可保存摘要，用于反复调整和横向比较。' }}
         />
         <Space orientation="vertical" style={{ width: '100%', marginTop: 12 }}>
@@ -1276,7 +1282,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             />
             <Typography.Text type="secondary">相关性响应哈希 {correlationResult.preview_hash}；数据 checksum {correlationResult.dataset_checksum}；无状态写入、无外部订单。</Typography.Text>
           </>}
-          <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，只保存规则、结果哈希和摘要；载入后必须重新运行。它不是正式实验、独立样本外证据或 PAPER 晋级输入，也不会同步到其他设备。</Typography.Text>
+          <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，保留规则、结果哈希、常用绩效、Rank IC、最大相关性、Newey-West 与滚动样本外摘要；载入后必须重新运行。表中统计都来自已经查看的同一历史响应，不是正式实验、独立样本外证据或 PAPER 晋级输入，也不会同步到其他设备。</Typography.Text>
         </Space>
       </Card>
     </Space>
