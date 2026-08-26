@@ -1,13 +1,13 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { PlatformSnapshot } from '../types'
-import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, runBacktestPreview } from '../api/client'
+import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview } from '../api/client'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
 vi.mock('../charts/MinuteBacktestChart', () => ({ MinuteBacktestChart: () => <div data-testid="minute-backtest-chart" /> }))
 vi.mock('../charts/ReservedTailChart', () => ({ ReservedTailChart: () => <div data-testid="reserved-tail-chart" /> }))
-vi.mock('../charts/MinuteHistoryChart', () => ({ MinuteHistoryChart: () => <div data-testid="minute-history-chart" /> }))
+vi.mock('../charts/MinuteHistoryChart', () => ({ MinuteHistoryChart: ({ loading = false }: { loading?: boolean }) => <div data-testid="minute-history-chart">{loading ? '正在加载已验证历史分时线…' : null}</div> }))
 vi.mock('../api/client', () => ({
   prometheusMetricsUrl: '/metrics/prometheus',
   loadHistoricalBarSeries: vi.fn(async (symbol: string) => ({
@@ -709,6 +709,8 @@ describe('persistent PAPER account pages', () => {
 describe('verified historical data pages', () => {
   it('shows verified history without claiming realtime readiness', async () => {
     render(<MarketPage data={data} />)
+    expect(screen.getByText('正在加载已验证历史 K 线…')).toBeInTheDocument()
+    expect(screen.queryByText('暂无校验通过的历史 K 线')).not.toBeInTheDocument()
     expect(screen.getByText('已验证：AKShare 1.18.84')).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: /历史日线 · 18960/ })).toBeInTheDocument()
     expect(screen.getByText(/没有 Bid\/Ask、授权实时价格或实盘权限/)).toBeInTheDocument()
@@ -730,6 +732,15 @@ describe('verified historical data pages', () => {
     expect(await screen.findByText(/2\/2 根 1 分钟 Bar/)).toBeInTheDocument()
     expect(screen.getByText(/不是盘中实时跟踪/)).toBeInTheDocument()
     expect(screen.getByTestId('minute-history-chart')).toBeInTheDocument()
+  })
+
+  it('does not present a pending verified minute request as missing evidence', () => {
+    cleanup()
+    vi.mocked(loadMinuteBarSeries).mockReturnValueOnce(new Promise<never>(() => undefined))
+    render(<MarketPage data={data} />)
+    fireEvent.click(screen.getByRole('tab', { name: /历史分时 · 115430/ }))
+    expect(screen.getByText('正在加载已验证历史分时线…')).toBeInTheDocument()
+    expect(screen.queryByText('暂无校验通过的历史分时线')).not.toBeInTheDocument()
   })
 
   it('shows finalized same-day minute observations without claiming realtime', async () => {

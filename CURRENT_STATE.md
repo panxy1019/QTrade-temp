@@ -521,3 +521,8 @@ Last updated: 2026-08-26
   unavailable sections and preserves all realtime/PAPER/order prohibitions.
   Browser GET concurrency is capped at six and covered by a deterministic
   fan-out test so transient cold-start pressure cannot silently return.
+- Historical chart loading semantics: daily, 1-minute, native 5-minute and long
+  5-minute panels now show an explicit verification/loading state while their
+  identity-bound series request is pending. They no longer claim that evidence
+  is missing during a valid second-stage request; actual failure and verified
+  empty responses remain distinct fail-closed states.

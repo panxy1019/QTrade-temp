@@ -583,3 +583,14 @@ Atomic publication changes only crash consistency. The API still independently
 recomputes every evidence and checkpoint hash, and any source regression remains
 recorded as non-monotonic rather than being hidden. No such report can grant
 realtime/PAPER authority, strategy promotion or external order transmission.
+
+## ADR-037 — Verified charts distinguish loading from missing evidence
+
+Status: accepted, 2026-08-26.
+
+Historical chart series are fetched after the platform snapshot establishes the
+expected data version and checksum. Until that second verified request resolves,
+the chart must show an explicit loading state rather than the empty-evidence
+message. A response is rendered only when its symbol, version and checksum match
+the current signed dataset identity; request failure remains a visible error and
+does not fall back to stale, interpolated or synthetic bars.

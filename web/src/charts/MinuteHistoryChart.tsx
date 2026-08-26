@@ -5,7 +5,10 @@ import { formatChinaMinuteTimestamp } from './formatChinaMinuteTimestamp'
 
 const ChartRenderer = lazy(() => import('./ChartRenderer'))
 
-export function MinuteHistoryChart({ series }: { series: MinuteBarSeries | null }) {
+export function MinuteHistoryChart({ series, loading = false }: { series: MinuteBarSeries | null; loading?: boolean }) {
+  if (loading) {
+    return <div role="status" style={{ alignItems: 'center', display: 'flex', height: 430, justifyContent: 'center' }}>正在加载已验证历史分时线…</div>
+  }
   if (!series?.bars.length) {
     return <Empty description="暂无校验通过的历史分时线" style={{ padding: 72 }} />
   }

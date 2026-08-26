@@ -4,7 +4,10 @@ import type { HistoricalBarSeries } from '../types'
 
 const ChartRenderer = lazy(() => import('./ChartRenderer'))
 
-export function MarketHistoryChart({ series }: { series: HistoricalBarSeries | null }) {
+export function MarketHistoryChart({ series, loading = false }: { series: HistoricalBarSeries | null; loading?: boolean }) {
+  if (loading) {
+    return <div role="status" style={{ alignItems: 'center', display: 'flex', height: 430, justifyContent: 'center' }}>正在加载已验证历史 K 线…</div>
+  }
   if (!series?.bars.length) {
     return <Empty description="暂无校验通过的历史 K 线" style={{ padding: 72 }} />
   }
