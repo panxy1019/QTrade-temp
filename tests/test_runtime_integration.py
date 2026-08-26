@@ -1,5 +1,5 @@
 from contextlib import suppress
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from threading import Barrier, BrokenBarrierError, Thread
 
@@ -161,6 +161,94 @@ def test_restart_rejects_boolean_order_quantity(tmp_path):
     first.journal.save_state("runtime", runtime)
 
     with pytest.raises(ValueError, match="order quantity"):
+        build(tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    (
+        ("remaining_quantity", True, "reservation remaining quantity"),
+        ("remaining_cash", "NaN", "reservation remaining cash"),
+    ),
+)
+def test_restart_rejects_malformed_reservation_state(tmp_path, field, value, message):
+    first = build(tmp_path)
+    attest(first)
+    first.runtime.start(actor="operator")
+    submit(first, "malformed-reservation")
+    runtime = first.journal.load_state("runtime")
+    assert runtime is not None
+    reservations = runtime["reservations"]
+    assert isinstance(reservations, list) and isinstance(reservations[0], dict)
+    reservations[0][field] = value
+    first.journal.save_state("runtime", runtime)
+
+    with pytest.raises(ValueError, match=message):
+        build(tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("field", "message"),
+    (
+        ("reservations", "durable reservations"),
+        ("sellability_lots", "durable sellability lots"),
+    ),
+)
+def test_restart_rejects_non_list_runtime_collection(tmp_path, field, message):
+    first = build(tmp_path)
+    attest(first)
+    first.runtime.start(actor="operator")
+    submit(first, "malformed-runtime-collection")
+    runtime = first.journal.load_state("runtime")
+    assert runtime is not None
+    runtime[field] = {}
+    first.journal.save_state("runtime", runtime)
+
+    with pytest.raises(ValueError, match=message):
+        build(tmp_path)
+
+
+def test_restart_rejects_malformed_sellability_lot_quantity(tmp_path):
+    first = build(tmp_path)
+    attest(first)
+    first.runtime.start(actor="operator")
+    request = OrderRequest(
+        "malformed-lot",
+        "strategy",
+        "portfolio",
+        "510300",
+        Side.BUY,
+        Decimal("10"),
+        100,
+        NOW,
+        trading_day=date(2026, 8, 12),
+        sellable_on=date(2026, 8, 13),
+    )
+    order, _ = first.service.submit(
+        request,
+        RiskContext(
+            first.ledger.account,
+            {"510300": Instrument("510300", "SSE", "ETF", 100, Decimal("0.001"))},
+            {"510300": Decimal("10")},
+            NOW,
+            True,
+            True,
+            NOW,
+            sellable_quantities={},
+        ),
+        now=NOW,
+    )
+    first.gateway.fill(
+        order, fill_key="malformed-lot-fill", price=Decimal("10"), quantity=100, now=NOW
+    )
+    runtime = first.journal.load_state("runtime")
+    assert runtime is not None
+    lots = runtime["sellability_lots"]
+    assert isinstance(lots, list) and isinstance(lots[0], dict)
+    lots[0]["quantity"] = True
+    first.journal.save_state("runtime", runtime)
+
+    with pytest.raises(ValueError, match="sellability lot quantity"):
         build(tmp_path)
 
 

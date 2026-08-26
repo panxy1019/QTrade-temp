@@ -58,6 +58,21 @@ def _restored_datetime(value: object, field: str) -> datetime:
     return restored
 
 
+def _restored_date(value: object, field: str) -> date:
+    if not isinstance(value, str):
+        raise ValueError(f"durable {field} is invalid")
+    try:
+        return date.fromisoformat(value)
+    except ValueError as error:
+        raise ValueError(f"durable {field} is invalid") from error
+
+
+def _restored_string(value: object, field: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"durable {field} is invalid")
+    return value
+
+
 @dataclass(slots=True)
 class PaperRuntimeBundle:
     runtime: PlatformRuntime
@@ -318,31 +333,56 @@ def build_paper_runtime(
                     updated_at=updated_at,
                 )
             )
-        raw_reservations = restored_runtime.get("reservations", [])
-        if isinstance(raw_reservations, list):
-            for raw in raw_reservations:
-                if isinstance(raw, dict):
-                    reservations.restore(
-                        Reservation(
-                            str(raw["order_id"]),
-                            str(raw["symbol"]),
-                            Side(str(raw["side"])),
-                            int(raw["remaining_quantity"]),
-                            Decimal(str(raw["remaining_cash"])),
-                        )
-                    )
-        raw_lots = restored_runtime.get("sellability_lots", [])
-        if isinstance(raw_lots, list):
-            for raw in raw_lots:
-                if isinstance(raw, dict):
-                    sellability.restore(
-                        str(raw["symbol"]),
-                        AcquisitionLot(
-                            int(raw["quantity"]),
-                            date.fromisoformat(str(raw["acquired_on"])),
-                            date.fromisoformat(str(raw["sellable_on"])),
-                        ),
-                    )
+        raw_reservations = restored_runtime.get("reservations")
+        if not isinstance(raw_reservations, list):
+            raise ValueError("durable reservations are invalid")
+        for raw in raw_reservations:
+            if not isinstance(raw, dict):
+                raise ValueError("durable reservation is invalid")
+            side_value = raw.get("side")
+            if not isinstance(side_value, str):
+                raise ValueError("durable reservation side is invalid")
+            side = Side(side_value)
+            remaining_cash = _restored_decimal(
+                raw.get("remaining_cash"),
+                "reservation remaining cash",
+                minimum=Decimal("0"),
+            )
+            if side is Side.SELL and remaining_cash != 0:
+                raise ValueError("durable reservation remaining cash is invalid")
+            reservations.restore(
+                Reservation(
+                    _restored_string(raw.get("order_id"), "reservation order ID"),
+                    _restored_string(raw.get("symbol"), "reservation symbol"),
+                    side,
+                    _restored_int(
+                        raw.get("remaining_quantity"),
+                        "reservation remaining quantity",
+                        minimum=1,
+                    ),
+                    remaining_cash,
+                )
+            )
+        raw_lots = restored_runtime.get("sellability_lots")
+        if not isinstance(raw_lots, list):
+            raise ValueError("durable sellability lots are invalid")
+        for raw in raw_lots:
+            if not isinstance(raw, dict):
+                raise ValueError("durable sellability lot is invalid")
+            sellability.restore(
+                _restored_string(raw.get("symbol"), "sellability lot symbol"),
+                AcquisitionLot(
+                    _restored_int(
+                        raw.get("quantity"), "sellability lot quantity", minimum=1
+                    ),
+                    _restored_date(
+                        raw.get("acquired_on"), "sellability acquisition date"
+                    ),
+                    _restored_date(
+                        raw.get("sellable_on"), "sellability available date"
+                    ),
+                ),
+            )
 
     def incident(reason: str) -> None:
         metrics.gateway_connected = False

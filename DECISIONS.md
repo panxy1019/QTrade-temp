@@ -1265,3 +1265,19 @@ and positive, filled quantities are exact non-negative integers bounded by the
 request, and creation/update timestamps are timezone-aware and ordered. Any
 violation rejects runtime construction; valid restored orders remain HALTED and
 subject to the existing uncertain-order reconciliation gate.
+
+## ADR-085 — Durable reservations and sellability lots reject coercion
+
+Status: accepted, 2026-08-26.
+
+Reserved cash/quantity and T+1 acquisition lots constrain the next risk
+decision after restart. Treating a malformed collection as empty could release
+exposure silently, while `int(true)` could fabricate a one-unit reservation or
+sellability lot and a non-finite cash value could poison aggregate risk math.
+
+Both collections and every row are now mandatory. Reservation and lot
+quantities require exact positive non-boolean integers, reservation cash must be
+finite and non-negative, sell reservations carry zero cash, identifiers are
+non-empty strings, and lot dates use exact ISO date strings with the existing
+chronology check. Any invalid durable row rejects construction before PAPER or
+SHADOW recovery.
