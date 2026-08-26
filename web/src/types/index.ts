@@ -777,6 +777,53 @@ export interface PublicMinuteAuditReport {
   external_order_transmission: false
 }
 
+export interface IntradayObservationReport {
+  classification?: string
+  provider?: string
+  bar_interval?: '1m'
+  started_at?: string
+  completed_at?: string
+  session_phase: 'PRE_OPEN' | 'MORNING_SESSION' | 'MIDDAY_BREAK' | 'AFTERNOON_SESSION' | 'POST_CLOSE' | 'UNAVAILABLE'
+  data_version?: string
+  dataset_checksum?: string
+  evidence_sha256?: string
+  symbol_count: number
+  sector_count: number
+  same_day_symbol_count: number
+  synchronized_finalized_timestamp_count: number
+  latest_synchronized_finalized_timestamp: string | null
+  finalization_guard_seconds?: number
+  observations: Array<{
+    symbol: string
+    exchange?: string
+    name: string
+    sector_code: string
+    sector_name: string
+    observed_at: string
+    session_phase: string
+    source_row_count: number
+    latest_observed_timestamp: string
+    latest_finalized_timestamp: string
+    same_day_finalized_bar_count: number
+    forming_or_uncertain_bar_excluded: boolean
+    bars: Array<{
+      symbol: string
+      exchange: string
+      timestamp: string
+      trading_day: string
+      open: string
+      high: string
+      low: string
+      close: string
+      volume: string
+    }>
+  }>
+  realtime_readiness: false
+  real_data_paper_readiness: false
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  external_order_transmission: false
+}
+
 export interface DailyReportAutomationStatus {
   classification: 'TRUSTED_PAPER_EOD_REPORTING'
   readiness: 'CONFIGURED' | 'UNCONFIGURED'
@@ -821,6 +868,7 @@ export interface PlatformSnapshot {
   longFiveMinuteResearch: FiveMinuteResearchReport
   reservedTailDiagnostic: ReservedTailDiagnosticReport
   publicMinuteAudit: PublicMinuteAuditReport
+  intradayObservation: IntradayObservationReport
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]

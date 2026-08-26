@@ -36,6 +36,7 @@ context.reserved_tail_diagnostic_report_path = (
     EVIDENCE_ROOT / "reserved-tail-diagnostic" / "report.json"
 )
 context.public_minute_audit_path = EVIDENCE_ROOT / "public-minute-audit" / "report.json"
+context.intraday_observation_path = EVIDENCE_ROOT / "intraday-observation" / "report.json"
 
 
 class VercelQueryPathApp:

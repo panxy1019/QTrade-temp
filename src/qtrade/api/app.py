@@ -5,7 +5,7 @@ from collections import Counter, defaultdict, deque
 from collections.abc import Awaitable, Callable
 from contextlib import nullcontext
 from dataclasses import asdict, dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from datetime import time as datetime_time
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
@@ -125,6 +125,7 @@ class AppContext:
     reserved_tail_preregistration_path: Path | None = None
     reserved_tail_diagnostic_report_path: Path | None = None
     public_minute_audit_path: Path | None = None
+    intraday_observation_path: Path | None = None
     minute_overlay_reader: Callable[[], dict[str, object]] | None = None
     applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
     sellable_quantity_reader: Callable[[str, date], int] | None = None
@@ -455,6 +456,38 @@ def create_app(
             "promotion": "NOT_EVALUATED",
             "first_round": None,
             "repeat_round": None,
+            "external_order_transmission": False,
+        }
+
+    @app.get("/intraday-observation")
+    def intraday_observation(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        report = _load_verified_intraday_observation(
+            state.intraday_observation_path,
+            dataset,
+        )
+        return report or {
+            "classification": "NO_VERIFIED_INTRADAY_OBSERVATION",
+            "session_phase": "UNAVAILABLE",
+            "symbol_count": 0,
+            "sector_count": 0,
+            "same_day_symbol_count": 0,
+            "synchronized_finalized_timestamp_count": 0,
+            "latest_synchronized_finalized_timestamp": None,
+            "observations": [],
+            "realtime_readiness": False,
+            "real_data_paper_readiness": False,
+            "promotion": "NOT_EVALUATED",
             "external_order_transmission": False,
         }
 
@@ -1076,6 +1109,9 @@ def context_from_runtime(
         ),
         public_minute_audit_path=Path(
             "deployment/evidence/public-minute-audit/report.json"
+        ),
+        intraday_observation_path=Path(
+            "runtime/research/sina-intraday-observation/latest.json"
         ),
         applied_trade_reader=bundle.journal.applied_trade_payloads,
         sellable_quantity_reader=bundle.sellability.sellable_quantity,
@@ -4393,6 +4429,188 @@ def _load_verified_public_minute_audit(
         json.JSONDecodeError,
     ):
         return None
+
+
+def _load_verified_intraday_observation(
+    path: Path | None,
+    dataset: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if path is None or dataset is None or not path.is_file():
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        observations = report.get("observations")
+        started_at = datetime.fromisoformat(str(report.get("started_at")))
+        completed_at = datetime.fromisoformat(str(report.get("completed_at")))
+        guard_seconds = report.get("finalization_guard_seconds")
+        instruments = dataset.get("instruments")
+        if not isinstance(instruments, list):
+            return None
+        expected: list[tuple[str, str, str, str]] = []
+        seen_sectors: set[str] = set()
+        for row in instruments:
+            if not isinstance(row, dict):
+                return None
+            sector_code = str(row.get("sector_code"))
+            if sector_code in seen_sectors:
+                continue
+            seen_sectors.add(sector_code)
+            expected.append(
+                (
+                    str(row.get("symbol")),
+                    str(row.get("name")),
+                    sector_code,
+                    str(row.get("sector_name")),
+                )
+            )
+        if (
+            not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("classification")
+            != "FREE_HISTORICAL_SOURCE_INTRADAY_OBSERVATION_NOT_REALTIME_ELIGIBLE"
+            or report.get("provider")
+            != "Sina CN_MarketDataService.getKLineData"
+            or report.get("bar_interval") != "1m"
+            or started_at.tzinfo is None
+            or completed_at.tzinfo is None
+            or started_at > completed_at
+            or report.get("session_phase")
+            != _intraday_session_phase(completed_at)
+            or report.get("data_version") != dataset["data_version"]
+            or report.get("dataset_checksum") != dataset["checksum"]
+            or report.get("symbol_count") != 15
+            or report.get("sector_count") != 15
+            or not isinstance(guard_seconds, int)
+            or not 0 <= guard_seconds <= 300
+            or not isinstance(observations, list)
+            or len(observations) != len(expected)
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("external_order_transmission") is not False
+        ):
+            return None
+        same_day_count = 0
+        timestamp_sets: list[set[str]] = []
+        allowed_times = set(SINA_COMPLETE_SESSION_TIMES)
+        report_day = completed_at.astimezone(ZoneInfo("Asia/Shanghai")).date()
+        for observation, identity in zip(observations, expected, strict=True):
+            if not isinstance(observation, dict):
+                return None
+            observed_at = datetime.fromisoformat(str(observation.get("observed_at")))
+            latest_observed = datetime.fromisoformat(
+                str(observation.get("latest_observed_timestamp"))
+            )
+            latest_finalized = datetime.fromisoformat(
+                str(observation.get("latest_finalized_timestamp"))
+            )
+            bars = observation.get("bars")
+            observed_identity = (
+                observation.get("symbol"),
+                observation.get("name"),
+                observation.get("sector_code"),
+                observation.get("sector_name"),
+            )
+            if (
+                observed_identity != identity
+                or observed_at.tzinfo is None
+                or not started_at <= observed_at <= completed_at
+                or observation.get("session_phase")
+                != _intraday_session_phase(observed_at)
+                or not isinstance(observation.get("source_row_count"), int)
+                or cast(int, observation["source_row_count"]) <= 0
+                or latest_observed.tzinfo is None
+                or latest_finalized.tzinfo is None
+                or latest_observed < latest_finalized
+                or latest_finalized
+                > observed_at - timedelta(seconds=guard_seconds)
+                or not isinstance(bars, list)
+                or observation.get("same_day_finalized_bar_count") != len(bars)
+                or observation.get("forming_or_uncertain_bar_excluded")
+                is not (latest_observed > latest_finalized)
+            ):
+                return None
+            previous: datetime | None = None
+            observed_timestamps: set[str] = set()
+            for bar in bars:
+                if not isinstance(bar, dict):
+                    return None
+                timestamp = datetime.fromisoformat(str(bar.get("timestamp")))
+                local = timestamp.astimezone(ZoneInfo("Asia/Shanghai"))
+                prices = [
+                    Decimal(str(bar.get(name)))
+                    for name in ("open", "high", "low", "close")
+                ]
+                volume = Decimal(str(bar.get("volume")))
+                if (
+                    timestamp.tzinfo is None
+                    or previous is not None
+                    and timestamp <= previous
+                    or timestamp > observed_at - timedelta(seconds=guard_seconds)
+                    or local.date() != report_day
+                    or local.time() not in allowed_times
+                    or bar.get("symbol") != identity[0]
+                    or bar.get("exchange") not in {"SSE", "SZSE", "BSE"}
+                    or str(bar.get("trading_day")) != report_day.isoformat()
+                    or not all(value.is_finite() and value > 0 for value in prices)
+                    or not volume.is_finite()
+                    or volume < 0
+                    or prices[1] < max(prices[0], prices[3])
+                    or prices[2] > min(prices[0], prices[3])
+                ):
+                    return None
+                previous = timestamp
+                observed_timestamps.add(timestamp.isoformat())
+            if bars:
+                same_day_count += 1
+                if previous != latest_finalized:
+                    return None
+                timestamp_sets.append(observed_timestamps)
+        synchronized = (
+            sorted(set.intersection(*timestamp_sets)) if timestamp_sets else []
+        )
+        if (
+            report.get("same_day_symbol_count") != same_day_count
+            or report.get("synchronized_finalized_timestamp_count")
+            != len(synchronized)
+            or report.get("latest_synchronized_finalized_timestamp")
+            != (synchronized[-1] if synchronized else None)
+        ):
+            return None
+        return {**report, "minute_dataset": dataset}
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _intraday_session_phase(instant: datetime) -> str:
+    local = instant.astimezone(ZoneInfo("Asia/Shanghai")).time()
+    if local < datetime_time(9, 30):
+        return "PRE_OPEN"
+    if local <= datetime_time(11, 30):
+        return "MORNING_SESSION"
+    if local < datetime_time(13, 0):
+        return "MIDDAY_BREAK"
+    if local <= datetime_time(15, 0):
+        return "AFTERNOON_SESSION"
+    return "POST_CLOSE"
 
 
 def _load_backtest_preview_bars(

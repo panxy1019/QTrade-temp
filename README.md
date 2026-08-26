@@ -252,6 +252,23 @@ control/cancel writes returned `503`.
 evidence. It demonstrates public historical-bar access and caching, not an
 authorized realtime feed or a performance SLA.
 
+For a bounded same-day observation, the following probe selects one stock from
+each of the 15 frozen sectors and keeps only bars older than a conservative
+60-second finalization guard:
+
+```bash
+QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true PYTHONPATH=. .venv/bin/python \
+  scripts/probe_sina_intraday_observation.py \
+  --output deployment/evidence/intraday-observation/report.json
+```
+
+`/intraday-observation` and the market-page “当日分钟观测” tab expose the signed
+point-in-time result. A pre-open run correctly contains zero same-day bars. The
+probe is intentionally a free historical-source observation, not a streaming
+subscription: it never sets realtime/PAPER readiness, mutates strategy state or
+sends an external order. The report can be refreshed after the market opens to
+show only finalized same-day bars while preserving that boundary.
+
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and
 `QTRADE_RQDATA_TOKEN` only inside the bridge process, and claims a session only

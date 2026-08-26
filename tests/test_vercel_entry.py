@@ -97,6 +97,21 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert public_audit["public_write_boundary"]["request_count"] == 7
     assert public_audit["public_write_boundary"]["all_blocked"] is True
     assert public_audit["external_order_transmission"] is False
+    intraday = client.get(_api("/intraday-observation")).json()
+    assert intraday["symbol_count"] == 15
+    assert intraday["sector_count"] == 15
+    assert intraday["session_phase"] in {
+        "PRE_OPEN",
+        "MORNING_SESSION",
+        "MIDDAY_BREAK",
+        "AFTERNOON_SESSION",
+        "POST_CLOSE",
+    }
+    assert 0 <= intraday["same_day_symbol_count"] <= 15
+    assert intraday["realtime_readiness"] is False
+    assert intraday["real_data_paper_readiness"] is False
+    assert intraday["promotion"] == "NOT_ELIGIBLE"
+    assert intraday["external_order_transmission"] is False
     five_minute_bars = client.get(_api("/five-minute-bars/601166")).json()
     assert five_minute_bars["observation_type"] == (
         "HISTORICAL_FIVE_MINUTE_BAR_SERIES"
