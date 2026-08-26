@@ -9,6 +9,7 @@ from typing import Any, cast
 import pytest
 
 from scripts.promote_baostock_forward_observation import (
+    _FROZEN_FORWARD_ANCHOR_SHA256,
     _atomic_publish,
     validate_progression,
     validate_source_sessions,
@@ -114,11 +115,18 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
             "evidence_sha256": "1" * 64,
             "bar_count": 3600,
             "anchor_exact_match": True,
+            "anchor_day": "2026-08-25",
+            "anchor_sha256": _FROZEN_FORWARD_ANCHOR_SHA256,
         }
     ]
 
     validate_source_sessions(candidate, source_reports)
 
     source_reports[0]["evidence_sha256"] = "2" * 64
+    with pytest.raises(ValueError, match="source sessions"):
+        validate_source_sessions(candidate, source_reports)
+
+    source_reports[0]["evidence_sha256"] = "1" * 64
+    source_reports[0]["anchor_day"] = "2026-08-24"
     with pytest.raises(ValueError, match="source sessions"):
         validate_source_sessions(candidate, source_reports)

@@ -22,6 +22,11 @@ from scripts.prepare_baostock_forward_preregistration import (
 )
 from scripts.run_baostock_locked_forward_observation import _load_forward_sessions
 
+_FROZEN_FORWARD_ANCHOR_DAY = "2026-08-25"
+_FROZEN_FORWARD_ANCHOR_SHA256 = (
+    "c5f74be0063c2aa0d518ebd77055909970e5216c6a5a2240ea2188f42b204f52"
+)
+
 
 def validate_source_sessions(
     candidate: dict[str, object], source_reports: list[dict[str, object]]
@@ -38,6 +43,11 @@ def validate_source_sessions(
     if (
         candidate.get("accepted_future_session_count") != len(source_reports)
         or candidate.get("future_sessions") != expected
+        or any(
+            report.get("anchor_day") != _FROZEN_FORWARD_ANCHOR_DAY
+            or report.get("anchor_sha256") != _FROZEN_FORWARD_ANCHOR_SHA256
+            for report in source_reports
+        )
     ):
         raise ValueError("candidate does not match verified forward source sessions")
 

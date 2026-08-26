@@ -786,3 +786,18 @@ This closes the local time-of-check/time-of-use gap between verification and
 atomic publication. A swapped or modified candidate fails while the previous
 public report remains byte-for-byte unchanged; post-replacement verification
 continues as an additional invariant rather than the first point of detection.
+
+## ADR-052 — Forward source sessions bind the recomputed frozen anchor
+
+Status: accepted, 2026-08-26.
+
+The publication boundary does not trust an `anchor_exact_match` boolean by
+itself. The frozen 2026-08-25 warmup tail was independently reopened in the
+predeclared 75-symbol order, with exactly 48 native five-minute bars per symbol,
+and produced anchor digest
+`c5f74be0063c2aa0d518ebd77055909970e5216c6a5a2240ea2188f42b204f52`.
+
+Every source session considered for promotion must carry both that exact anchor
+day and digest in addition to the checksum-verified target Parquet identity. A
+resigned manifest with a fabricated boolean or different anchor cannot advance
+the public count or affect strategy, PAPER, realtime, or order authority.
