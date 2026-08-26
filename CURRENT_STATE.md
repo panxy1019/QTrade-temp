@@ -526,3 +526,7 @@ Last updated: 2026-08-26
   identity-bound series request is pending. They no longer claim that evidence
   is missing during a valid second-stage request; actual failure and verified
   empty responses remain distinct fail-closed states.
+- Local backtest comparison refresh: every browser-local experiment save or
+  delete advances a dedicated list revision. Consecutive deletes therefore
+  update the table even when the user-facing status text is unchanged; these
+  summaries remain local-only and never become registered strategy evidence.

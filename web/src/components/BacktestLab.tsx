@@ -34,6 +34,7 @@ export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) 
   const [running, setRunning] = useState(false)
   const [experimentName, setExperimentName] = useState('')
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
+  const [, setExperimentRevision] = useState(0)
   if (!dataset) {
     return <Card title="参数化回测实验室"><Alert showIcon type="warning" title="需要先准备校验通过的历史数据" description="实验室不会使用缓存、示例或合成行情替代真实数据。" /></Card>
   }
@@ -84,6 +85,7 @@ export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) 
     }
     try {
       const saved = saveLocalBacktestExperiment(experimentName, result)
+      setExperimentRevision((value) => value + 1)
       setExperimentName(saved.name)
       setSaveStatus(`已保存“${saved.name}”；相同结果哈希会更新原记录。`)
     } catch (reason) {
@@ -114,6 +116,7 @@ export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) 
   }
   const removeExperiment = (previewHash: string) => {
     deleteLocalBacktestExperiment(previewHash)
+    setExperimentRevision((value) => value + 1)
     setSaveStatus('本地实验记录已删除。')
   }
   const experimentColumns = [

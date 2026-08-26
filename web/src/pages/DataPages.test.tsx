@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import type { PlatformSnapshot } from '../types'
+import type { BacktestPreview, PlatformSnapshot } from '../types'
 import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview } from '../api/client'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
@@ -826,7 +826,8 @@ describe('verified historical data pages', () => {
 
 describe('verified backtest analytics', () => {
   it('runs an adjustable preview without presenting it as promotion evidence', async () => {
-    vi.mocked(runBacktestPreview).mockResolvedValueOnce({
+    window.localStorage.clear()
+    const preview: BacktestPreview = {
       classification: 'AD_HOC_PREVIEW_CURRENT_UNIVERSE_NOT_PIT', promotion: 'NOT_ELIGIBLE',
       promotion_reasons: ['AD_HOC_PARAMETERS_NOT_PREDECLARED'], data_version: 'akshare-bars-v1',
       data_checksum: 'abc',
@@ -842,7 +843,8 @@ describe('verified backtest analytics', () => {
       terminal_positions: [], execution_timing: 'close decision, next open execution',
       external_order_transmission: false,
       preview_hash: 'a'.repeat(64),
-    })
+    }
+    vi.mocked(runBacktestPreview).mockResolvedValueOnce(preview)
     render(<BacktestPage data={data} />)
     fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
     expect(await screen.findByText('已完成 632 个会话、30 个标的 · 动量')).toBeInTheDocument()
@@ -858,6 +860,22 @@ describe('verified backtest analytics', () => {
     expect(screen.getByRole('button', { name: '载入参数' })).toBeInTheDocument()
     expect(screen.getByText(/记录严格绑定当前数据版本与 checksum/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出完整结果/ })).toBeInTheDocument()
+
+    vi.mocked(runBacktestPreview).mockResolvedValueOnce({ ...preview, preview_hash: 'b'.repeat(64) })
+    fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
+    await waitFor(() => expect(runBacktestPreview).toHaveBeenCalledTimes(2))
+    fireEvent.change(screen.getByLabelText('本地实验名称'), { target: { value: '动量方案 B' } })
+    fireEvent.click(screen.getByRole('button', { name: '保存到本地实验' }))
+    expect(screen.getAllByRole('button', { name: '删除' })).toHaveLength(2)
+
+    fireEvent.click(screen.getAllByRole('button', { name: '删除' })[0])
+    fireEvent.click(await screen.findByRole('button', { name: 'OK' }))
+    await waitFor(() => expect(screen.queryByText('动量方案 B')).not.toBeInTheDocument())
+    fireEvent.click(screen.getByRole('button', { name: '删除' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'OK' }))
+    await waitFor(() => expect(screen.queryByText('动量方案 A')).not.toBeInTheDocument())
+    expect(screen.getByText('运行回测后可保存结果，用于反复调参与对比。')).toBeInTheDocument()
+    window.localStorage.clear()
   })
 
   it('shows the verified leader without presenting it as Champion', async () => {

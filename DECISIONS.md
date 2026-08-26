@@ -594,3 +594,13 @@ the chart must show an explicit loading state rather than the empty-evidence
 message. A response is rendered only when its symbol, version and checksum match
 the current signed dataset identity; request failure remains a visible error and
 does not fall back to stale, interpolated or synthetic bars.
+
+## ADR-038 — Local experiment inventory has an explicit revision trigger
+
+Status: accepted, 2026-08-26.
+
+Browser-local backtest summaries are read from storage during render, but list
+refresh must not depend on an unrelated status string changing. Every successful
+save or delete increments a dedicated in-memory revision so repeated identical
+actions still update the comparison table immediately. The revision adds no
+server persistence, formal experiment registration or strategy promotion path.
