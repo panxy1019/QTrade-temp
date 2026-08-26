@@ -966,6 +966,27 @@ export interface IntradayFactorBacktest {
   }
   parameters: IntradayFactorBacktestRequest
   workflow: Array<{ id: string; status: string; detail: string }>
+  sequential_advancement: {
+    classification: 'READ_ONLY_SEQUENTIAL_FACTOR_TO_STRATEGY_ADVANCEMENT'
+    required_research_stages: Array<{
+      stage_id: 'FACTOR_VALIDATION' | 'CORRELATION_VALIDATION' | 'ROBUSTNESS_VALIDATION'
+      passed: boolean
+    }>
+    passed_research_stage_count: number
+    required_research_stage_count: 3
+    all_research_stages_passed: boolean
+    first_blocking_stage: 'FACTOR_VALIDATION' | 'CORRELATION_VALIDATION' | 'ROBUSTNESS_VALIDATION' | 'CAUSAL_BACKTEST' | 'STRATEGY_REGISTRATION'
+    strategy_construction_status: 'DIAGNOSTIC_PREVIEW_ONLY' | 'RESEARCH_ADMITTED_READ_ONLY_PREVIEW'
+    strategy_preview_generated: true
+    causal_backtest_diagnostic_completed: true
+    causal_backtest_passed: boolean
+    strategy_registration_allowed: false
+    historical_result_can_authorize_paper: false
+    viewed_window_reselection_allowed: false
+    next_allowed_action: 'PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE' | 'REGISTER_IMMUTABLE_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW'
+    state_mutation: false
+    external_order_transmission: false
+  }
   paper_admission: {
     classification: 'READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION'
     decision: 'BLOCKED'

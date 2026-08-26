@@ -1833,3 +1833,24 @@ The research page exposes the ID and full hash, and the PAPER registration
 blocker includes both. This creates no `StrategyRegistry` insertion, registered
 version or lifecycle change. The strategy remains `AD_HOC_UNREGISTERED`, PAPER-
 ineligible, read-only, stateless and external-order-disabled.
+
+## ADR-110 — Computed strategy diagnostics do not imply sequential advancement
+
+Status: accepted, 2026-08-27.
+
+Running a strategy backtest is useful even when the underlying factor fails,
+but displaying that computed strategy as `AVAILABLE` confuses an observed
+diagnostic with permission to advance. QTrade therefore evaluates three ordered
+research prerequisites before research-admitting strategy construction: factor
+effectiveness, correlation and rolling robustness.
+
+The response preserves each raw diagnostic outcome while also reporting the
+first blocking stage. The current three-bullish-Bar rule passes correlation but
+fails factor validity and robustness, so it passes `1/3`, first blocks at
+`FACTOR_VALIDATION`, and labels its strategy `DIAGNOSTIC_PREVIEW_ONLY`. Its
+causal backtest is still computed for rejection evidence, not promotion.
+
+No response from this historical non-PIT endpoint can register the strategy or
+authorize PAPER. Reselection on the viewed window is forbidden; the next
+hypothesis must be predeclared before new evidence. The contract is read-only,
+stateless and external-order-disabled.

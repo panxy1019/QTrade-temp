@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-27T04:59:31.199096+08:00",
+  "generated_at": "2026-08-27T05:14:38.564855+08:00",
   "implementation": {
     "factor_module_sha256": "706c2856617bd461888b5611025c5c106d6819ece6b2b1e31aace7588a18a6ec",
-    "api_module_sha256": "366b044dbda18eb627f25e521f741272d59cbc8543366a6a1d350cc3567bf96a"
+    "api_module_sha256": "6b9c036c051944d057053ed9da535f98be9ee4f4078b27bf585aef8b52b8cd73"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -48,7 +48,7 @@
     ],
     "combination": "ALL"
   },
-  "result_preview_hash": "027fa4fdfe576ab5afe9410d1e2f6c165f0a2498d15bbcf642e89bafefac470b",
+  "result_preview_hash": "08d4a6f23e4dc5ec5499b4684cb879f0ec1ad242506af97c144afcfd46e13c79",
   "summary": {
     "observation_count": 9000,
     "signal_count": 1001,
@@ -202,8 +202,8 @@
       },
       {
         "id": "STRATEGY_CONSTRUCTION",
-        "status": "AVAILABLE",
-        "detail": "Entry, exit, sizing, cost and benchmark rules are explicit."
+        "status": "DIAGNOSTIC_ONLY",
+        "detail": "Entry, exit, sizing, cost and benchmark rules are explicit, but strategy construction is not admitted because at least one prerequisite research stage failed."
       },
       {
         "id": "CAUSAL_BACKTEST",
@@ -221,6 +221,37 @@
         "detail": "Separate explicit user authorization is required."
       }
     ],
+    "sequential_advancement": {
+      "classification": "READ_ONLY_SEQUENTIAL_FACTOR_TO_STRATEGY_ADVANCEMENT",
+      "required_research_stages": [
+        {
+          "stage_id": "FACTOR_VALIDATION",
+          "passed": false
+        },
+        {
+          "stage_id": "CORRELATION_VALIDATION",
+          "passed": true
+        },
+        {
+          "stage_id": "ROBUSTNESS_VALIDATION",
+          "passed": false
+        }
+      ],
+      "passed_research_stage_count": 1,
+      "required_research_stage_count": 3,
+      "all_research_stages_passed": false,
+      "first_blocking_stage": "FACTOR_VALIDATION",
+      "strategy_construction_status": "DIAGNOSTIC_PREVIEW_ONLY",
+      "strategy_preview_generated": true,
+      "causal_backtest_diagnostic_completed": true,
+      "causal_backtest_passed": false,
+      "strategy_registration_allowed": false,
+      "historical_result_can_authorize_paper": false,
+      "viewed_window_reselection_allowed": false,
+      "next_allowed_action": "PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE",
+      "state_mutation": false,
+      "external_order_transmission": false
+    },
     "paper_admission": {
       "classification": "READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION",
       "decision": "BLOCKED",
@@ -7499,7 +7530,7 @@
     "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
     "state_mutation": false,
     "external_order_transmission": false,
-    "preview_hash": "027fa4fdfe576ab5afe9410d1e2f6c165f0a2498d15bbcf642e89bafefac470b"
+    "preview_hash": "08d4a6f23e4dc5ec5499b4684cb879f0ec1ad242506af97c144afcfd46e13c79"
   },
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
@@ -7513,5 +7544,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "2b1d333e93d02c300943bf7ac9ddc365eb5a636bb126644008ffb4f4f34d4e6a"
+  "evidence_sha256": "56fb754be152ad8599816549aee339ff68705e90b93adc65d39d8e804da51d21"
 }

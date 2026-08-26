@@ -1308,11 +1308,27 @@ describe('verified robustness evidence', () => {
         { id: 'FACTOR_VALIDATION', status: 'FAILED', detail: 'failed' },
         { id: 'CORRELATION_VALIDATION', status: 'PASSED', detail: 'passed' },
         { id: 'ROBUSTNESS_VALIDATION', status: 'FAILED', detail: 'failed' },
-        { id: 'STRATEGY_CONSTRUCTION', status: 'AVAILABLE', detail: 'built' },
+        { id: 'STRATEGY_CONSTRUCTION', status: 'DIAGNOSTIC_ONLY', detail: 'not admitted' },
         { id: 'CAUSAL_BACKTEST', status: 'FAILED', detail: 'failed' },
         { id: 'PAPER', status: 'NOT_ELIGIBLE', detail: 'blocked' },
         { id: 'LIVE', status: 'DISABLED', detail: 'blocked' },
       ],
+      sequential_advancement: {
+        classification: 'READ_ONLY_SEQUENTIAL_FACTOR_TO_STRATEGY_ADVANCEMENT',
+        required_research_stages: [
+          { stage_id: 'FACTOR_VALIDATION', passed: false },
+          { stage_id: 'CORRELATION_VALIDATION', passed: true },
+          { stage_id: 'ROBUSTNESS_VALIDATION', passed: false },
+        ],
+        passed_research_stage_count: 1, required_research_stage_count: 3,
+        all_research_stages_passed: false, first_blocking_stage: 'FACTOR_VALIDATION',
+        strategy_construction_status: 'DIAGNOSTIC_PREVIEW_ONLY', strategy_preview_generated: true,
+        causal_backtest_diagnostic_completed: true, causal_backtest_passed: false,
+        strategy_registration_allowed: false, historical_result_can_authorize_paper: false,
+        viewed_window_reselection_allowed: false,
+        next_allowed_action: 'PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE',
+        state_mutation: false, external_order_transmission: false,
+      },
       factor_validation: {
         number_of_periods: 20, minimum_instruments: 75, ic: '0.0117', rank_ic: '-0.0030',
         icir: '0.0711', quantile_returns: [], factor_turnover: '0.589',
@@ -1519,6 +1535,10 @@ describe('verified robustness evidence', () => {
     fireEvent.change(screen.getByRole('spinbutton', { name: '每根退出阴线实体下限（bps）' }), { target: { value: '5' } })
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('回测已完成，研究硬门未通过')).toBeInTheDocument()
+    expect(screen.getByText('顺序晋级停在：有效性检验')).toBeInTheDocument()
+    expect(screen.getByText('前置研究门 1/3')).toBeInTheDocument()
+    expect(screen.getByText(/策略构造与因果回测只是诊断预览/)).toBeInTheDocument()
+    expect(screen.getByText(/禁止在已查看窗口重选参数/)).toBeInTheDocument()
     expect(runIntradayFactorBacktest).toHaveBeenCalledWith(expect.objectContaining({
       factor: 'custom_opening_ten_minute_direction_rule', cost_bps: '5', minimum_body_return_bps: '0',
       directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL',

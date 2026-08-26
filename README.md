@@ -304,6 +304,12 @@ cost and T+1 execution fields share one deterministic SHA-256 and derived
 `adhoc-intraday-*` ID. Observed exit-trigger counts are excluded from the spec
 hash. The identity is bound into the PAPER registration blocker but is not a
 registered strategy version and grants no promotion authority. The proposed
+sequential-advancement contract separately prevents that diagnostic artifact
+from looking like workflow approval. Factor effectiveness, correlation and
+rolling robustness must all pass before strategy construction is research-
+admitted. This run passes only one of those three stages and first blocks at
+factor validation; its strategy and causal backtest remain diagnostic previews.
+The viewed window cannot be used for reselection. The proposed
 five-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
 contract requires five bid/ask prices plus sizes normalized to shares, provider
 event/receive clocks and sequence, continuous-auction validity, certified

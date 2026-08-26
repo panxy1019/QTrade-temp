@@ -110,6 +110,33 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
     assert robustness["stitched_strategy_metrics"]["number_of_periods"] == 10
     assert len(robustness["threshold_sensitivity"]) == 4
     assert robustness["criteria"]["causal_selection_known_before_test_signal"] is True
+    advancement = payload["sequential_advancement"]
+    assert advancement["classification"] == (
+        "READ_ONLY_SEQUENTIAL_FACTOR_TO_STRATEGY_ADVANCEMENT"
+    )
+    assert advancement["required_research_stages"] == [
+        {"stage_id": "FACTOR_VALIDATION", "passed": False},
+        {"stage_id": "CORRELATION_VALIDATION", "passed": True},
+        {"stage_id": "ROBUSTNESS_VALIDATION", "passed": False},
+    ]
+    assert advancement["passed_research_stage_count"] == 1
+    assert advancement["required_research_stage_count"] == 3
+    assert advancement["all_research_stages_passed"] is False
+    assert advancement["first_blocking_stage"] == "FACTOR_VALIDATION"
+    assert advancement["strategy_construction_status"] == (
+        "DIAGNOSTIC_PREVIEW_ONLY"
+    )
+    assert advancement["strategy_preview_generated"] is True
+    assert advancement["causal_backtest_diagnostic_completed"] is True
+    assert advancement["causal_backtest_passed"] is False
+    assert advancement["strategy_registration_allowed"] is False
+    assert advancement["historical_result_can_authorize_paper"] is False
+    assert advancement["viewed_window_reselection_allowed"] is False
+    assert advancement["next_allowed_action"] == (
+        "PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE"
+    )
+    assert advancement["state_mutation"] is False
+    assert advancement["external_order_transmission"] is False
     assert payload["strategy"]["entry_rule"] == "NEXT_5M_OPEN_10_05"
     assert payload["strategy"]["exit_rule"] == "NEXT_SESSION_OPEN_T_PLUS_ONE"
     assert payload["strategy"]["entry_factor_id"] == (
@@ -166,6 +193,13 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
         "PAPER",
         "LIVE",
     ]
+    strategy_stage = next(
+        stage
+        for stage in payload["workflow"]
+        if stage["id"] == "STRATEGY_CONSTRUCTION"
+    )
+    assert strategy_stage["status"] == "DIAGNOSTIC_ONLY"
+    assert "not admitted" in strategy_stage["detail"]
     paper_admission = payload["paper_admission"]
     assert paper_admission["classification"] == (
         "READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION"

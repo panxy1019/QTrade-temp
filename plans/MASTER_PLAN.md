@@ -415,6 +415,14 @@ outcomes rather than strategy parameters. The derived `adhoc-intraday-*` ID and
 full SHA-256 are visible and bound into the failed PAPER registration gate, but
 no strategy registry row, version or promotion authority is created.
 
+Sequential advancement is now explicit rather than inferred from a rendered
+step list. Factor effectiveness, correlation and rolling robustness must all
+pass before strategy construction is research-admitted. The current rule passes
+only correlation (`1/3`) and first blocks at factor validation; its strategy
+specification and causal backtest remain diagnostic previews. The response
+forbids reselection on the viewed window and cannot register, authorize PAPER,
+mutate state or send an external order.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

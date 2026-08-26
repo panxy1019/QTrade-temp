@@ -263,6 +263,11 @@ npm --prefix web run build
   trigger counts from the specification hash, display the derived ID and full
   hash, and attach both to the failed registration gate without inserting or
   promoting a strategy.
+- [x] Add a sequential research-advancement contract so a computed strategy or
+  backtest is not mistaken for permission to advance. Require factor validity,
+  correlation and rolling robustness before research-admitting strategy
+  construction; expose the first blocker, label downstream work diagnostic-
+  only, and prohibit viewed-window reselection, registration and PAPER authority.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

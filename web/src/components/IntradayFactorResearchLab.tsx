@@ -875,6 +875,17 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           title={result.research_gate.passed ? '研究硬门通过，但仍不可自动晋级' : '回测已完成，研究硬门未通过'}
           description={`实际触发 ${result.event_summary.signal_count}/${result.event_summary.observation_count} 次；${result.event_summary.positive_sector_count}/${result.event_summary.sector_count} 个行业信号后均值为正。当前结论 ${result.promotion}，PAPER ${result.paper_readiness}，LIVE ${result.live_readiness}。`}
         />
+        <Alert
+          showIcon
+          type={result.sequential_advancement.all_research_stages_passed ? 'info' : 'error'}
+          title={`顺序晋级停在：${workflowLabels[result.sequential_advancement.first_blocking_stage] ?? result.sequential_advancement.first_blocking_stage}`}
+          description="只有因子有效性、相关性和滚动稳健性全部通过，策略构造才获得研究准入。当前策略构造与因果回测只是诊断预览，不是候选策略或晋级证据；禁止在已查看窗口重选参数，下一假设必须先预注册再接触新证据。"
+        />
+        <Space wrap>
+          <Tag color={result.sequential_advancement.all_research_stages_passed ? 'green' : 'red'}>前置研究门 {result.sequential_advancement.passed_research_stage_count}/{result.sequential_advancement.required_research_stage_count}</Tag>
+          <Tag color="default">策略构造 {result.sequential_advancement.strategy_construction_status}</Tag>
+          <Tag color="default">历史结果不能授权 PAPER</Tag>
+        </Space>
         <Steps
           size="small"
           orientation="vertical"

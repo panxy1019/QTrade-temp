@@ -75,7 +75,7 @@ _MIN_INTRADAY_DISCOVERY_SESSIONS = 40
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "027fa4fdfe576ab5afe9410d1e2f6c165f0a2498d15bbcf642e89bafefac470b"
+    "08d4a6f23e4dc5ec5499b4684cb879f0ec1ad242506af97c144afcfd46e13c79"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -9453,6 +9453,61 @@ def _intraday_factor_preview(
         criteria["base_cost_total_return_positive"]
         and criteria["base_cost_excess_return_positive"]
     )
+    required_research_stages: list[dict[str, object]] = [
+        {
+            "stage_id": "FACTOR_VALIDATION",
+            "passed": factor_validation_passed,
+        },
+        {
+            "stage_id": "CORRELATION_VALIDATION",
+            "passed": correlation_passed,
+        },
+        {
+            "stage_id": "ROBUSTNESS_VALIDATION",
+            "passed": robustness_passed,
+        },
+    ]
+    passed_research_stage_count = sum(
+        stage["passed"] is True for stage in required_research_stages
+    )
+    all_research_stages_passed = (
+        passed_research_stage_count == len(required_research_stages)
+    )
+    first_blocking_stage = next(
+        str(stage["stage_id"])
+        for stage in required_research_stages
+        if stage["passed"] is False
+    ) if not all_research_stages_passed else (
+        "CAUSAL_BACKTEST" if not backtest_passed else "STRATEGY_REGISTRATION"
+    )
+    sequential_advancement: dict[str, object] = {
+        "classification": (
+            "READ_ONLY_SEQUENTIAL_FACTOR_TO_STRATEGY_ADVANCEMENT"
+        ),
+        "required_research_stages": required_research_stages,
+        "passed_research_stage_count": passed_research_stage_count,
+        "required_research_stage_count": len(required_research_stages),
+        "all_research_stages_passed": all_research_stages_passed,
+        "first_blocking_stage": first_blocking_stage,
+        "strategy_construction_status": (
+            "RESEARCH_ADMITTED_READ_ONLY_PREVIEW"
+            if all_research_stages_passed
+            else "DIAGNOSTIC_PREVIEW_ONLY"
+        ),
+        "strategy_preview_generated": True,
+        "causal_backtest_diagnostic_completed": True,
+        "causal_backtest_passed": backtest_passed,
+        "strategy_registration_allowed": False,
+        "historical_result_can_authorize_paper": False,
+        "viewed_window_reselection_allowed": False,
+        "next_allowed_action": (
+            "PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE"
+            if not all_research_stages_passed or not backtest_passed
+            else "REGISTER_IMMUTABLE_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW"
+        ),
+        "state_mutation": False,
+        "external_order_transmission": False,
+    }
     paper_admission_gates: list[dict[str, object]] = [
         {
             "gate_id": "verified_historical_dataset_identity_bound",
@@ -9534,8 +9589,20 @@ def _intraday_factor_preview(
         },
         {
             "id": "STRATEGY_CONSTRUCTION",
-            "status": "AVAILABLE",
-            "detail": "Entry, exit, sizing, cost and benchmark rules are explicit.",
+            "status": (
+                "RESEARCH_ADMITTED_PREVIEW"
+                if all_research_stages_passed
+                else "DIAGNOSTIC_ONLY"
+            ),
+            "detail": (
+                "Entry, exit, sizing, cost and benchmark rules are explicit, "
+                "but strategy construction is not admitted because at least "
+                "one prerequisite research stage failed."
+                if not all_research_stages_passed
+                else "All prerequisite research stages passed; the strategy "
+                "remains a read-only preview pending causal backtest and "
+                "immutable registration."
+            ),
         },
         {
             "id": "CAUSAL_BACKTEST",
@@ -9684,6 +9751,7 @@ def _intraday_factor_preview(
         },
         "parameters": parameters,
         "workflow": workflow,
+        "sequential_advancement": sequential_advancement,
         "paper_admission": {
             "classification": "READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION",
             "decision": "BLOCKED",

@@ -934,3 +934,11 @@ Last updated: 2026-08-27
   sample outcomes. This is a reproducible read-only identity, not a registry
   insertion: it remains `AD_HOC_UNREGISTERED`, PAPER-ineligible, stateless and
   external-order-disabled.
+- Sequential factor-to-strategy advancement: the API and Chinese workbench now
+  distinguish a computed diagnostic from permission to advance. Factor
+  effectiveness, correlation and rolling robustness are three ordered research
+  prerequisites. The current three-bullish-Bar result passes only correlation
+  (`1/3`), first blocks at factor validation, and labels strategy construction
+  `DIAGNOSTIC_PREVIEW_ONLY`; the causal backtest remains a completed diagnostic,
+  not promotion evidence. Reselection on the viewed window, registration,
+  PAPER authorization, state mutation and external orders all remain false.
