@@ -4360,6 +4360,29 @@ def _load_verified_public_minute_audit(
                 or values != sorted(values)
             ):
                 return None
+        write_boundary = report.get("public_write_boundary")
+        expected_paths = [
+            "/system/start",
+            "/system/stop",
+            "/system/pause",
+            "/system/resume",
+            "/system/kill",
+            "/system/recover",
+            "/orders/cancel",
+        ]
+        if (
+            not isinstance(write_boundary, dict)
+            or write_boundary.get("request_count") != len(expected_paths)
+            or write_boundary.get("all_blocked") is not True
+            or not isinstance(write_boundary.get("checks"), list)
+            or [row.get("path") for row in write_boundary["checks"]]
+            != expected_paths
+            or not all(
+                row.get("status") == 503 and row.get("blocked") is True
+                for row in write_boundary["checks"]
+            )
+        ):
+            return None
         return {**report, "minute_dataset": dataset}
     except (
         KeyError,

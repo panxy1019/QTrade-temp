@@ -1,4 +1,5 @@
 from scripts.audit_public_minute_bars import (
+    _audit_write_boundary,
     _percentile,
     _select_sector_instruments,
     _signed,
@@ -66,3 +67,31 @@ def test_public_audit_helpers_are_stable() -> None:
     assert _signed({"value": 1})["evidence_sha256"] == (
         "48208f9428d64634bd8e28ff345bf0eab60d53c18fa2fbdb0b9bc1e84df2b5f6"
     )
+
+
+def test_public_audit_requires_every_write_path_to_be_blocked(monkeypatch) -> None:
+    class BlockedResponse:
+        status = 503
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args) -> None:
+            return None
+
+    monkeypatch.setattr(
+        "scripts.audit_public_minute_bars.urllib.request.urlopen",
+        lambda *_args, **_kwargs: BlockedResponse(),
+    )
+    result = _audit_write_boundary("https://example.test/api")
+    assert result["request_count"] == 7
+    assert result["all_blocked"] is True
+    assert {row["path"] for row in result["checks"]} == {
+        "/system/start",
+        "/system/stop",
+        "/system/pause",
+        "/system/resume",
+        "/system/kill",
+        "/system/recover",
+        "/orders/cancel",
+    }

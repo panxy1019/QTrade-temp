@@ -4,6 +4,7 @@ import argparse
 import json
 import statistics
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from collections import Counter
@@ -160,6 +161,56 @@ def _signed(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _audit_write_boundary(api_root: str) -> dict[str, Any]:
+    checks: list[tuple[str, dict[str, str]]] = [
+        (path, {"reason": "public read-only boundary audit"})
+        for path in (
+            "/system/start",
+            "/system/stop",
+            "/system/pause",
+            "/system/resume",
+            "/system/kill",
+            "/system/recover",
+        )
+    ]
+    checks.append(
+        (
+            "/orders/cancel",
+            {
+                "internal_order_id": "audit-missing",
+                "idempotency_key": "public-readonly-audit",
+            },
+        )
+    )
+
+    def probe(item: tuple[str, dict[str, str]]) -> dict[str, Any]:
+        path, payload = item
+        request = urllib.request.Request(
+            api_root + path,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"content-type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=15) as response:  # noqa: S310
+                status = response.status
+        except urllib.error.HTTPError as error:
+            status = error.code
+        return {
+            "path": path,
+            "status": status,
+            "blocked": status in {403, 503},
+        }
+
+    with ThreadPoolExecutor(max_workers=len(checks)) as pool:
+        results = list(pool.map(probe, checks))
+    return {
+        "request_count": len(results),
+        "all_blocked": all(bool(row["blocked"]) for row in results),
+        "checks": results,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Audit public checksum-bound long-history 5-minute bars."
@@ -211,6 +262,7 @@ def main() -> int:
             "sampled_trading_days": list(trading_days),
             "first_round": first,
             "repeat_round": repeated,
+            "public_write_boundary": _audit_write_boundary(api_root),
             "all_valid": bool(first["all_valid"] and repeated["all_valid"]),
             "promotion": "NOT_ELIGIBLE",
             "external_order_transmission": False,

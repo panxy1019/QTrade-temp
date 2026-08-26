@@ -767,6 +767,11 @@ export interface PublicMinuteAuditReport {
   sampled_trading_days?: string[]
   first_round: PublicMinuteAuditRound | null
   repeat_round: PublicMinuteAuditRound | null
+  public_write_boundary?: {
+    request_count: number
+    all_blocked: boolean
+    checks: Array<{ path: string; status: number; blocked: boolean }>
+  }
   all_valid: boolean
   promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
   external_order_transmission: false

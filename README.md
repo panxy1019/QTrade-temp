@@ -243,9 +243,11 @@ PYTHONPATH=. .venv/bin/python scripts/audit_public_minute_bars.py \
   --output deployment/evidence/public-minute-audit/report.json
 ```
 
-The 2026-08-26 audit passed all 90 requests. The forced-cache-miss round had
-`5.301s` median and `6.612s` P95 latency; the repeated CDN-hit round had `0.189s`
-median and `0.260s` P95 latency, with all 45 responses reported as `HIT`.
+The 2026-08-26 audit passed all 90 historical-bar requests. The
+forced-cache-miss round had `4.669s` median and `6.248s` P95 latency; the
+repeated CDN-hit round had `0.179s` median and `0.274s` P95 latency, with all 45
+responses reported as `HIT`. The same run also confirmed that all seven public
+control/cancel writes returned `503`.
 `/public-minute-audit` exposes this point-in-time, checksum-bound availability
 evidence. It demonstrates public historical-bar access and caching, not an
 authorized realtime feed or a performance SLA.

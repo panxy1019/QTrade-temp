@@ -29,6 +29,8 @@ def test_public_minute_audit_endpoint_verifies_live_evidence() -> None:
     assert payload["sector_count"] == 15
     assert payload["first_round"]["vercel_cache_counts"] == {"MISS": 45}
     assert payload["repeat_round"]["vercel_cache_counts"] == {"HIT": 45}
+    assert payload["public_write_boundary"]["request_count"] == 7
+    assert payload["public_write_boundary"]["all_blocked"] is True
 
 
 def test_public_minute_audit_endpoint_rejects_resigned_claim(

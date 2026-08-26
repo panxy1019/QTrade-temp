@@ -94,6 +94,8 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert public_audit["first_round"]["vercel_cache_counts"] == {"MISS": 45}
     assert public_audit["repeat_round"]["request_count"] == 45
     assert public_audit["repeat_round"]["vercel_cache_counts"] == {"HIT": 45}
+    assert public_audit["public_write_boundary"]["request_count"] == 7
+    assert public_audit["public_write_boundary"]["all_blocked"] is True
     assert public_audit["external_order_transmission"] is False
     five_minute_bars = client.get(_api("/five-minute-bars/601166")).json()
     assert five_minute_bars["observation_type"] == (

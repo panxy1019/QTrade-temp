@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "classification": "PUBLIC_READ_ONLY_MINUTE_BAR_AVAILABILITY_AUDIT",
-  "generated_at": "2026-08-26T07:57:24.332189+08:00",
+  "generated_at": "2026-08-26T08:08:01.975550+08:00",
   "base_url": "https://qtrade.erapi0neer.xyz",
-  "cache_key": "663ff53-20260826t0757",
+  "cache_key": "82daaf1-20260826t0807",
   "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
   "dataset_checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
   "sector_count": 15,
@@ -93,10 +93,10 @@
     "request_count": 45,
     "all_valid": true,
     "latency_seconds": {
-      "minimum": 1.839,
-      "median": 5.301,
-      "p95": 6.612,
-      "maximum": 7.473
+      "minimum": 1.676,
+      "median": 4.669,
+      "p95": 6.248,
+      "maximum": 6.417
     },
     "vercel_cache_counts": {
       "MISS": 45
@@ -108,17 +108,58 @@
     "all_valid": true,
     "latency_seconds": {
       "minimum": 0.156,
-      "median": 0.189,
-      "p95": 0.26,
-      "maximum": 0.321
+      "median": 0.179,
+      "p95": 0.274,
+      "maximum": 0.32
     },
     "vercel_cache_counts": {
       "HIT": 45
     },
     "failures": []
   },
+  "public_write_boundary": {
+    "request_count": 7,
+    "all_blocked": true,
+    "checks": [
+      {
+        "path": "/system/start",
+        "status": 503,
+        "blocked": true
+      },
+      {
+        "path": "/system/stop",
+        "status": 503,
+        "blocked": true
+      },
+      {
+        "path": "/system/pause",
+        "status": 503,
+        "blocked": true
+      },
+      {
+        "path": "/system/resume",
+        "status": 503,
+        "blocked": true
+      },
+      {
+        "path": "/system/kill",
+        "status": 503,
+        "blocked": true
+      },
+      {
+        "path": "/system/recover",
+        "status": 503,
+        "blocked": true
+      },
+      {
+        "path": "/orders/cancel",
+        "status": 503,
+        "blocked": true
+      }
+    ]
+  },
   "all_valid": true,
   "promotion": "NOT_ELIGIBLE",
   "external_order_transmission": false,
-  "evidence_sha256": "ed3f688237bf1307fc6e995925e6752352cadb07016cc881c3c047c5797cac19"
+  "evidence_sha256": "63e6c292dac7c16e35e3123be0e20f11a5bade1909c5ab3bd0ff106ae49c8df1"
 }
