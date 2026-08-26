@@ -2192,3 +2192,23 @@ rerun the endpoint, alter the result hash, select a stock or tune a parameter.
 
 The filter adds no evidence, promotion, registry, PAPER/LIVE, state-mutation or
 external-order authority.
+
+## ADR-126 — Individual minute previews compare within one page session
+
+Status: accepted, 2026-08-27.
+
+The individual-stock five-minute page supported repeated runs and complete
+single-result exports, but each successful run replaced the visible result.
+That prevented direct comparison of parameter changes using the common metric
+surface now returned by the API.
+
+The browser now keeps the ten latest distinct preview hashes for the lifetime of
+the open page. Each row identifies the stock, interval, core parameters, cost,
+cumulative and annualized return, Sharpe, drawdown, active excess, information
+ratio, exposure and turnover. Loading a row copies only its request parameters
+back into the form, clears the current result and requires a new API run.
+
+This deliberately uses component memory rather than localStorage or a server
+write. Refreshing clears the comparison; it is not an immutable experiment,
+independent evidence, promotion input, PAPER/LIVE authorization, state mutation
+or external-order capability.

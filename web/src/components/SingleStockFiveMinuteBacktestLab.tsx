@@ -22,7 +22,9 @@ interface FormValues {
 }
 
 export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: VerifiedFiveMinuteDataset | null }) {
+  const [form] = Form.useForm<FormValues>()
   const [result, setResult] = useState<SingleStockFiveMinuteBacktest | null>(null)
+  const [sessionRuns, setSessionRuns] = useState<SingleStockFiveMinuteBacktest[]>([])
   const [error, setError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
   if (!dataset) {
@@ -54,7 +56,12 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
     setRunning(true)
     setError(null)
     try {
-      setResult(await runSingleStockFiveMinuteBacktest(payload))
+      const next = await runSingleStockFiveMinuteBacktest(payload)
+      setResult(next)
+      setSessionRuns((current) => [
+        next,
+        ...current.filter((row) => row.preview_hash !== next.preview_hash),
+      ].slice(0, 10))
     } catch (reason) {
       setResult(null)
       setError(reason instanceof Error ? reason.message : '个股 5 分钟回测失败')
@@ -72,7 +79,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
   return <Card title="个股 5 分钟因果回测" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · {dataset.session_count} 日</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
       <Alert showIcon type="info" title="可任选覆盖个股并反复调参" description="基准是该股买入持有；修正策略只允许在本根 5 分钟 Bar 收盘生成信号，并于下一根 Bar 开盘降低或恢复敞口。单次最多 120 个交易日，所选区间之前的数据只作因果预热。" />
-      <Form<FormValues> name="single-stock-five-minute-backtest" layout="vertical" initialValues={initialValues} onFinish={(values) => { void submit(values) }}>
+      <Form<FormValues> form={form} name="single-stock-five-minute-backtest" layout="vertical" initialValues={initialValues} onFinish={(values) => { void submit(values) }}>
         <div className="backtest-lab-grid">
           <Form.Item name="symbol" label="个股" rules={[{ required: true }]}><Select showSearch optionFilterProp="label" options={stocks.map((row) => ({ value: row.symbol, label: `${row.symbol} ${row.name} · ${row.sector_name}` }))} /></Form.Item>
           <Form.Item name="start" label="开始交易日" rules={[{ required: true }]}><Select showSearch options={tradingDays.map((value) => ({ value, label: value }))} /></Form.Item>
@@ -125,6 +132,37 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
         />
         <JsonExportButton filename={`qtrade-${result.symbol}-five-minute-${result.preview_hash.slice(0, 12)}.json`} value={result} label="导出个股回测" />
       </>}
+      {sessionRuns.length > 0 && <Card type="inner" title={`本次会话个股回测对比（${sessionRuns.length}/10）`}>
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <Typography.Text type="secondary">仅保留当前页面会话最近 10 个不同结果哈希；刷新后清空，不写服务端、不构成正式实验或晋级证据。</Typography.Text>
+          <Table<SingleStockFiveMinuteBacktest>
+            rowKey="preview_hash"
+            size="small"
+            dataSource={sessionRuns}
+            pagination={false}
+            columns={[
+              { title: '个股', render: (_: unknown, row) => `${row.symbol} ${row.instrument.name}` },
+              { title: '区间', render: (_: unknown, row) => `${row.parameters.start} → ${row.parameters.end}` },
+              { title: '短/长窗', render: (_: unknown, row) => `${row.parameters.short_window}/${row.parameters.long_window}` },
+              { title: '成本 bps', render: (_: unknown, row) => row.parameters.cost_bps },
+              { title: '累计收益', render: (_: unknown, row) => formatPercent(row.metrics.overlay.total_return) },
+              { title: '年化收益', render: (_: unknown, row) => formatPercent(row.metrics.overlay.annualized_return) },
+              { title: 'Sharpe', render: (_: unknown, row) => formatNumber(row.metrics.overlay.sharpe) },
+              { title: '最大回撤', render: (_: unknown, row) => formatPercent(row.metrics.overlay.maximum_drawdown) },
+              { title: '主动超额', render: (_: unknown, row) => formatPercent(row.metrics.excess_return) },
+              { title: '信息比率', render: (_: unknown, row) => formatNumber(row.metrics.information_ratio) },
+              { title: '平均敞口', render: (_: unknown, row) => formatPercent(row.execution.mean_exposure) },
+              { title: '换手', render: (_: unknown, row) => formatNumber(row.execution.turnover) },
+              { title: '操作', render: (_: unknown, row) => <Button type="link" size="small" onClick={() => {
+                form.setFieldsValue(row.parameters)
+                setResult(null)
+                setError(null)
+              }}>载入该次参数</Button> },
+            ]}
+            scroll={{ x: 1550 }}
+          />
+        </Space>
+      </Card>}
     </Space>
   </Card>
 }

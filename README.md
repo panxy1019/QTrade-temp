@@ -243,7 +243,11 @@ and annualized return, annualized volatility, zero-rate Sharpe, maximum drawdown
 matched Buy-and-Hold excess return and information ratio. Annualization is fixed
 at 48 native five-minute Bars per session and 252 sessions per year; it is not
 silently inferred by the browser. The page exposes the complete form and JSON
-export. Every result remains current-universe, QFQ/non-PIT,
+export. During one open page session it also retains the latest ten distinct
+result hashes for side-by-side parameter and metric comparison; loading an old
+row only refills the form and requires a fresh run. The comparison is cleared on
+refresh and is neither persisted evidence nor an experiment record. Every result
+remains current-universe, QFQ/non-PIT,
 `NOT_ELIGIBLE`, stateless and unable to transmit an external order.
 
 `POST /intraday-factor-backtest` and the research-page minute factor workbench
