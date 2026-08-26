@@ -464,6 +464,22 @@ export interface ExperimentRunSpecDraftRequest {
   seed: number
 }
 
+export interface ExperimentRunSpecPayload {
+  experiment_id: string
+  strategy_id: string
+  git_commit: string
+  data_version: string
+  universe: string[]
+  factor_set: string[]
+  label: string
+  split: ExperimentRunSplitDraft
+  model: string
+  parameters: Array<[string, string]>
+  cost_model_id: string
+  transaction_cost: string
+  seed: number
+}
+
 export interface ExperimentRunSpecDraft {
   classification: 'READ_ONLY_COMPLETE_EXPERIMENT_RUN_SPEC_DRAFT_NOT_PERSISTED'
   draft_status: 'HASHED_COMPLETE_FIELDS_NOT_IMMUTABLY_STORED'
@@ -471,21 +487,7 @@ export interface ExperimentRunSpecDraft {
   data_checksum: string
   dataset_point_in_time: boolean
   spec_hash: string
-  spec: {
-    experiment_id: string
-    strategy_id: string
-    git_commit: string
-    data_version: string
-    universe: string[]
-    factor_set: string[]
-    label: string
-    split: ExperimentRunSplitDraft
-    model: string
-    parameters: Array<[string, string]>
-    cost_model_id: string
-    transaction_cost: string
-    seed: number
-  }
+  spec: ExperimentRunSpecPayload
   gates: {
     complete_experiment_run_spec_fields: true
     verified_dataset_identity_bound: true
@@ -498,6 +500,33 @@ export interface ExperimentRunSpecDraft {
   historical_test_window_previously_available?: true
   promotion_eligible?: false
   next_action?: 'PERSIST_AND_REVIEW_BEFORE_ACCESSING_NEW_DISJOINT_EVIDENCE'
+  creates_immutable_experiment: false
+  registry_write: false
+  paper_runtime_start: false
+  live_runtime_start: false
+  state_mutation: false
+  external_order_transmission: false
+}
+
+export interface ExperimentRunSpecBacktest {
+  classification: 'READ_ONLY_HASH_BOUND_EXPERIMENT_PREVIEW_NOT_PERSISTED'
+  template_id: CausalPreviewTemplateId
+  data_checksum: string
+  dataset_point_in_time: boolean
+  spec_hash: string
+  preview_hash: string
+  binding_hash: string
+  spec: ExperimentRunSpecPayload
+  result: BacktestPreview
+  gates: {
+    single_request_spec_result_binding: true
+    spec_hash_recomputed_before_run: true
+    verified_dataset_reloaded_before_run: true
+    preview_hash_bound_to_spec_hash: true
+    immutable_artifact_persisted: false
+    independent_leakage_review_passed: false
+    fresh_unseen_test_evidence: false
+  }
   creates_immutable_experiment: false
   registry_write: false
   paper_runtime_start: false

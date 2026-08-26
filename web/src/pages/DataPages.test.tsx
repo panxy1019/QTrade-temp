@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import type { BacktestPreview, IntradayFactorBacktest, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
-import { cancelPaperOrder, controlRuntime, createExperimentRunSpecDraft, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
+import type { BacktestPreview, ExperimentRunSpecBacktest, IntradayFactorBacktest, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
+import { cancelPaperOrder, controlRuntime, createExperimentRunSpecDraft, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runExperimentRunSpecBacktest, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
 import { formatDirectionalDelta } from '../research/intradayDirectional'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
@@ -45,6 +45,7 @@ vi.mock('../api/client', () => ({
   })),
   runBacktestPreview: vi.fn(),
   createExperimentRunSpecDraft: vi.fn(),
+  runExperimentRunSpecBacktest: vi.fn(),
   runIntradayFactorBacktest: vi.fn(),
   runSingleStockFiveMinuteBacktest: vi.fn(),
   controlRuntime: vi.fn(),
@@ -1190,19 +1191,20 @@ describe('verified backtest analytics', () => {
       external_order_transmission: false, preview_hash: 'b'.repeat(64),
     }
     vi.mocked(runBacktestPreview).mockResolvedValueOnce(preview)
+    const spec = {
+      experiment_id: 'rotation-replay-001', strategy_id: 'etf-momentum-rotation-v1',
+      git_commit: '81e357cb069a69d6be4d8ba7a9fb1acdf7167083', data_version: 'akshare-bars-v1',
+      universe: ['510300'], factor_set: ['momentum_20', 'momentum_60', 'momentum_120'],
+      label: 'next_session_portfolio_return',
+      split: { train_start: '2024-01-02', train_end: '2024-12-31', validation_start: '2025-01-01', validation_end: '2025-12-31', test_start: '2026-01-01', test_end: '2026-08-12' },
+      model: 'qtrade.research.multi_asset.MomentumAllocation', parameters: [] as Array<[string, string]>,
+      cost_model_id: 'explicit-rate-plus-slippage-v1', transaction_cost: '0.0015', seed: 7,
+    }
     vi.mocked(createExperimentRunSpecDraft).mockResolvedValueOnce({
       classification: 'READ_ONLY_COMPLETE_EXPERIMENT_RUN_SPEC_DRAFT_NOT_PERSISTED',
       draft_status: 'HASHED_COMPLETE_FIELDS_NOT_IMMUTABLY_STORED',
       template_id: 'etf-momentum-rotation-v1', data_checksum: 'abc', dataset_point_in_time: false,
-      spec_hash: 'c'.repeat(64), spec: {
-        experiment_id: 'rotation-replay-001', strategy_id: 'etf-momentum-rotation-v1',
-        git_commit: '81e357cb069a69d6be4d8ba7a9fb1acdf7167083', data_version: 'akshare-bars-v1',
-        universe: ['510300'], factor_set: ['momentum_20', 'momentum_60', 'momentum_120'],
-        label: 'next_session_portfolio_return',
-        split: { train_start: '2024-01-02', train_end: '2024-12-31', validation_start: '2025-01-01', validation_end: '2025-12-31', test_start: '2026-01-01', test_end: '2026-08-12' },
-        model: 'qtrade.research.multi_asset.MomentumAllocation', parameters: [],
-        cost_model_id: 'explicit-rate-plus-slippage-v1', transaction_cost: '0.0015', seed: 7,
-      },
+      spec_hash: 'c'.repeat(64), spec,
       gates: {
         complete_experiment_run_spec_fields: true, verified_dataset_identity_bound: true,
         implemented_template_bound: true, chronological_non_overlapping_split: true,
@@ -1212,6 +1214,21 @@ describe('verified backtest analytics', () => {
       creates_immutable_experiment: false, registry_write: false, paper_runtime_start: false,
       live_runtime_start: false, state_mutation: false, external_order_transmission: false,
     })
+    const bound: ExperimentRunSpecBacktest = {
+      classification: 'READ_ONLY_HASH_BOUND_EXPERIMENT_PREVIEW_NOT_PERSISTED',
+      template_id: 'etf-momentum-rotation-v1', spec_hash: 'c'.repeat(64),
+      data_checksum: 'abc', dataset_point_in_time: false, spec,
+      preview_hash: 'b'.repeat(64), binding_hash: 'd'.repeat(64), result: preview,
+      gates: {
+        single_request_spec_result_binding: true, spec_hash_recomputed_before_run: true,
+        verified_dataset_reloaded_before_run: true, preview_hash_bound_to_spec_hash: true,
+        immutable_artifact_persisted: false, independent_leakage_review_passed: false,
+        fresh_unseen_test_evidence: false,
+      },
+      creates_immutable_experiment: false, registry_write: false, paper_runtime_start: false,
+      live_runtime_start: false, state_mutation: false, external_order_transmission: false,
+    }
+    vi.mocked(runExperimentRunSpecBacktest).mockResolvedValueOnce(bound)
 
     render(<BacktestPage data={data} />)
 
@@ -1234,6 +1251,17 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/哈希完整但未写入不可变存储/)).toBeInTheDocument()
     expect(screen.getByText(/当前历史测试窗此前可见，不能变成新的未见证据/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出运行规格草案/ })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '按该哈希运行因果回测' }))
+    await waitFor(() => expect(runExperimentRunSpecBacktest).toHaveBeenCalledWith(expect.objectContaining({
+      template_id: 'etf-momentum-rotation-v1', experiment_id: 'rotation-replay-001', seed: 7,
+      backtest: expect.objectContaining({ trend_window: null, volatility_window: null }),
+    })))
+    expect(screen.getByText(/规格→结果绑定 dddddddddddddddd/)).toBeInTheDocument()
+    expect(screen.getByText(/同一请求重新计算规格并运行，但仍未持久化为正式实验/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /导出规格绑定回测/ })).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('实验 ID'), { target: { value: 'rotation-replay-002' } })
+    expect(screen.queryByRole('button', { name: '按该哈希运行因果回测' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/规格→结果绑定 dddddddddddddddd/)).not.toBeInTheDocument()
     window.location.hash = ''
   })
 

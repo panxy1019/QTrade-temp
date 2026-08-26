@@ -288,35 +288,43 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert preview.status_code == 200
     assert preview.json()["promotion"] == "NOT_ELIGIBLE"
     assert preview.json()["external_order_transmission"] is False
-    run_spec_draft = client.post(
-        _api("/experiment-run-spec-draft"),
-        json={
-            "template_id": "etf-momentum-rotation-v1",
-            "experiment_id": "vercel-read-only-draft",
-            "git_commit": "0" * 40,
-            "split": {
-                "train_start": "2022-09-06",
-                "train_end": "2024-12-31",
-                "validation_start": "2025-01-01",
-                "validation_end": "2025-06-30",
-                "test_start": "2025-07-01",
-                "test_end": "2025-12-31",
-            },
-            "backtest": {
-                "start": "2025-07-01",
-                "end": "2025-12-31",
-                "factor": "momentum",
-                "trend_window": None,
-                "volatility_window": None,
-                "target_annual_volatility": None,
-            },
-            "seed": 7,
+    run_spec_payload = {
+        "template_id": "etf-momentum-rotation-v1",
+        "experiment_id": "vercel-read-only-draft",
+        "git_commit": "0" * 40,
+        "split": {
+            "train_start": "2022-09-06",
+            "train_end": "2024-12-31",
+            "validation_start": "2025-01-01",
+            "validation_end": "2025-06-30",
+            "test_start": "2025-07-01",
+            "test_end": "2025-12-31",
         },
+        "backtest": {
+            "start": "2025-07-01",
+            "end": "2025-12-31",
+            "factor": "momentum",
+            "trend_window": None,
+            "volatility_window": None,
+            "target_annual_volatility": None,
+        },
+        "seed": 7,
+    }
+    run_spec_draft = client.post(
+        _api("/experiment-run-spec-draft"), json=run_spec_payload
     )
     assert run_spec_draft.status_code == 200
     assert run_spec_draft.json()["creates_immutable_experiment"] is False
     assert run_spec_draft.json()["gates"]["fresh_unseen_test_evidence"] is False
     assert run_spec_draft.json()["external_order_transmission"] is False
+    bound_run = client.post(
+        _api("/experiment-run-spec-backtest"), json=run_spec_payload
+    )
+    assert bound_run.status_code == 200
+    assert bound_run.json()["spec_hash"] == run_spec_draft.json()["spec_hash"]
+    assert bound_run.json()["gates"]["single_request_spec_result_binding"] is True
+    assert bound_run.json()["creates_immutable_experiment"] is False
+    assert bound_run.json()["external_order_transmission"] is False
     single_stock = client.post(
         _api("/single-stock-five-minute-backtest"),
         json={

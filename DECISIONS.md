@@ -1977,3 +1977,23 @@ review or fresh evidence. The historical test interval is already visible, so
 the draft cannot be relabelled as a new held-out result. It creates no
 experiment or registry row, starts no PAPER/SHADOW/LIVE runtime, mutates no
 state and transmits no order.
+
+## ADR-116 — Draft and preview share one request before receiving a binding hash
+
+Status: accepted, 2026-08-27.
+
+A complete draft hash did not prove that a separately requested preview used the
+same parameters. An operator could edit the form between the two calls and
+export two individually valid artifacts with no verifiable relationship.
+
+The bound-preview endpoint therefore accepts one complete draft request,
+recomputes and validates its `ExperimentRunSpec`, reloads the exact verified
+dataset, runs the causal preview and then hashes the spec hash, preview hash,
+template identity, data version and checksum together. The UI executes only its
+stored draft request and invalidates the draft and binding after any form field
+changes. This is a fail-closed lineage check, not an implicit parameter lock.
+
+The combined response remains stateless. It is not an immutable experiment
+artifact, an independent leakage-review PASS or a new unseen test. It cannot
+create a registry row, start PAPER/SHADOW/LIVE, mutate state or transmit an
+order.

@@ -466,6 +466,13 @@ write. The already visible historical test window is not new held-out evidence,
 and absent independent leakage review the draft cannot create an experiment,
 register a strategy or authorize PAPER/LIVE.
 
+The draft and result are now connected by a single read-only execution request.
+The API recomputes the spec, revalidates the exact dataset, runs the causal
+preview and hashes the spec/result/data/template identities together. Changing
+any browser field invalidates the old draft and binding. This closes an audit
+gap without pretending the stateless binding is immutable persistence, an
+independent leakage review or fresh held-out evidence.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

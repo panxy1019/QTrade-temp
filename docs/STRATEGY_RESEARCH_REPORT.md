@@ -25,6 +25,13 @@ split, parameters, costs and seed, but is not written to immutable storage.
 Its historical test dates have already been visible and there is no independent
 leakage-review PASS, so it is not fresh confirmation evidence and cannot create
 an experiment, register a strategy or authorize PAPER/LIVE.
+The workbench can execute that draft in one read-only request. The server
+recomputes the spec, reopens the checksum-verified data, runs the same causal
+preview and produces a deterministic binding hash over the spec hash, preview
+hash, template and data identity. Editing any form field removes the prior
+browser binding. This supplies reproducible draft-to-result lineage but remains
+stateless and unpersisted; it is neither a registered experiment nor new
+held-out evidence.
 Experiments bind git commit, data version, PIT universe, chronological
 train/validation/test split, model, parameters, cost model and seed to immutable
 hashed artifacts. The runner automatically registers PASSED dataset lineage and

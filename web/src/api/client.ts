@@ -1,4 +1,4 @@
-import type { BacktestPreview, BacktestPreviewRequest, ExperimentRunSpecDraft, ExperimentRunSpecDraftRequest, HistoricalBarSeries, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorCorrelationRequest, IntradayFactorDiscovery, IntradayFactorDiscoveryRequest, MinuteBarSeries, PlatformSnapshot, SingleStockFiveMinuteBacktest, SingleStockFiveMinuteBacktestRequest } from '../types'
+import type { BacktestPreview, BacktestPreviewRequest, ExperimentRunSpecBacktest, ExperimentRunSpecDraft, ExperimentRunSpecDraftRequest, HistoricalBarSeries, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorCorrelationRequest, IntradayFactorDiscovery, IntradayFactorDiscoveryRequest, MinuteBarSeries, PlatformSnapshot, SingleStockFiveMinuteBacktest, SingleStockFiveMinuteBacktestRequest } from '../types'
 
 const API_BASE = import.meta.env.DEV || import.meta.env.MODE === 'vercel' ? '/api' : ''
 const MAX_CONCURRENT_GETS = 6
@@ -143,6 +143,10 @@ export function runBacktestPreview(payload: BacktestPreviewRequest): Promise<Bac
 
 export function createExperimentRunSpecDraft(payload: ExperimentRunSpecDraftRequest): Promise<ExperimentRunSpecDraft> {
   return postJson<ExperimentRunSpecDraft>('/experiment-run-spec-draft', payload)
+}
+
+export function runExperimentRunSpecBacktest(payload: ExperimentRunSpecDraftRequest): Promise<ExperimentRunSpecBacktest> {
+  return postJson<ExperimentRunSpecBacktest>('/experiment-run-spec-backtest', payload)
 }
 
 export function runSingleStockFiveMinuteBacktest(payload: SingleStockFiveMinuteBacktestRequest): Promise<SingleStockFiveMinuteBacktest> {

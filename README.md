@@ -354,6 +354,15 @@ preregistration. Because its historical test dates are already visible, the
 draft is not fresh held-out evidence and cannot register a strategy, start
 PAPER/LIVE, mutate runtime state or transmit an order.
 
+The draft can now be executed through one hash-bound read-only request. The
+server recomputes the spec, reopens the checksum-verified dataset, runs the
+causal preview from the same request and hashes the resulting `spec_hash`,
+`preview_hash`, data version/checksum and template identity together. Any form
+change invalidates the browser's prior draft and binding immediately. This
+proves which reproducible preview belongs to which draft, but it still writes no
+immutable artifact and cannot convert an already viewed window into independent
+confirmation evidence or authorize PAPER/LIVE.
+
 The proposed
 five-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
 contract requires five bid/ask prices plus sizes normalized to shares, provider

@@ -676,6 +676,58 @@ def _experiment_run_spec_draft(
     }
 
 
+def _hash_bound_experiment_preview(
+    payload: ExperimentRunSpecDraftRequest,
+    dataset: dict[str, object],
+    bars: list[Bar],
+) -> dict[str, object]:
+    draft = _experiment_run_spec_draft(payload, dataset)
+    result = run_backtest_preview(
+        bars,
+        data_version=str(dataset["data_version"]),
+        data_checksum=str(dataset["checksum"]),
+        spec=_backtest_preview_spec(payload.backtest),
+    )
+    binding_identity = {
+        "data_checksum": dataset["checksum"],
+        "data_version": dataset["data_version"],
+        "preview_hash": result["preview_hash"],
+        "spec_hash": draft["spec_hash"],
+        "template_id": payload.template_id,
+    }
+    canonical = json.dumps(
+        binding_identity,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return {
+        "classification": "READ_ONLY_HASH_BOUND_EXPERIMENT_PREVIEW_NOT_PERSISTED",
+        "template_id": payload.template_id,
+        "data_checksum": dataset["checksum"],
+        "dataset_point_in_time": draft["dataset_point_in_time"],
+        "spec_hash": draft["spec_hash"],
+        "preview_hash": result["preview_hash"],
+        "binding_hash": sha256(canonical.encode("utf-8")).hexdigest(),
+        "spec": draft["spec"],
+        "result": result,
+        "gates": {
+            "single_request_spec_result_binding": True,
+            "spec_hash_recomputed_before_run": True,
+            "verified_dataset_reloaded_before_run": True,
+            "preview_hash_bound_to_spec_hash": True,
+            "immutable_artifact_persisted": False,
+            "independent_leakage_review_passed": False,
+            "fresh_unseen_test_evidence": False,
+        },
+        "creates_immutable_experiment": False,
+        "registry_write": False,
+        "paper_runtime_start": False,
+        "live_runtime_start": False,
+        "state_mutation": False,
+        "external_order_transmission": False,
+    }
+
+
 def create_app(
     context: AppContext | None = None,
     auth: ApiAuthConfig | None = None,
@@ -1608,6 +1660,34 @@ def create_app(
             )
         try:
             return _experiment_run_spec_draft(payload, dataset)
+        except (ArithmeticError, KeyError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @app.post("/experiment-run-spec-backtest")
+    def experiment_run_spec_backtest(
+        payload: ExperimentRunSpecDraftRequest,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_market_dataset(state.historical_manifest_path)
+        if dataset is None:
+            raise HTTPException(
+                status_code=409,
+                detail="verified historical dataset unavailable",
+            )
+        bars = _load_backtest_preview_bars(
+            state.historical_manifest_path,
+            data_version=str(dataset["data_version"]),
+            expected_checksum=str(dataset["checksum"]),
+            expected_universe=dataset["universe"],
+            expected_bar_count=dataset["bar_count"],
+        )
+        if bars is None:
+            raise HTTPException(
+                status_code=409,
+                detail="historical dataset validation failed",
+            )
+        try:
+            return _hash_bound_experiment_preview(payload, dataset, bars)
         except (ArithmeticError, KeyError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 

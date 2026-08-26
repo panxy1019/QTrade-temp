@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { IntradayFactorBacktestRequest, IntradayFactorCorrelationRequest, IntradayFactorDiscoveryRequest } from '../types'
-import { loadMinuteBarSeries, loadPlatformSnapshot, runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from './client'
+import type { ExperimentRunSpecDraftRequest, IntradayFactorBacktestRequest, IntradayFactorCorrelationRequest, IntradayFactorDiscoveryRequest } from '../types'
+import { loadMinuteBarSeries, loadPlatformSnapshot, runExperimentRunSpecBacktest, runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from './client'
 
 describe('platform snapshot request fan-out', () => {
   afterEach(() => {
@@ -185,6 +185,43 @@ describe('platform snapshot request fan-out', () => {
       external_order_transmission: false,
     })
     expect(fetchMock).toHaveBeenCalledWith('/api/intraday-factor-discovery', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }))
+  })
+
+  it('posts one complete spec request to the hash-bound backtest endpoint', async () => {
+    const payload: ExperimentRunSpecDraftRequest = {
+      template_id: 'etf-momentum-rotation-v1', experiment_id: 'rotation-replay-001',
+      git_commit: 'a'.repeat(40), seed: 7,
+      split: {
+        train_start: '2024-01-02', train_end: '2024-12-31',
+        validation_start: '2025-01-01', validation_end: '2025-12-31',
+        test_start: '2026-01-01', test_end: '2026-08-12',
+      },
+      backtest: {
+        start: '2026-01-01', end: '2026-08-12', factor: 'momentum',
+        horizons: [20, 60, 120], top_k: 3, rebalance_every: 20, reserve: '0.05',
+        trend_window: null, volatility_window: null, target_annual_volatility: null,
+        initial_cash: '1000000', transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
+      },
+    }
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        classification: 'READ_ONLY_HASH_BOUND_EXPERIMENT_PREVIEW_NOT_PERSISTED',
+        state_mutation: false,
+        external_order_transmission: false,
+      }),
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(runExperimentRunSpecBacktest(payload)).resolves.toMatchObject({
+      state_mutation: false,
+      external_order_transmission: false,
+    })
+    expect(fetchMock).toHaveBeenCalledWith('/api/experiment-run-spec-backtest', expect.objectContaining({
       method: 'POST',
       body: JSON.stringify(payload),
     }))

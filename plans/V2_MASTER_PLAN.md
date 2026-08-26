@@ -296,6 +296,11 @@ npm --prefix web run build
   costs and seed. Keep the draft visibly unfrozen and unpersisted; an already
   viewed test window and missing independent leakage review provide no fresh
   evidence or PAPER/LIVE authority.
+- [x] Execute a draft through one read-only, hash-bound request that recomputes
+  the spec, reloads the verified dataset, runs the causal preview and binds the
+  spec hash, preview hash, data identity and template. Invalidate the browser
+  binding on every field change and keep immutable persistence, leakage review,
+  fresh evidence, registry and runtime authority false.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

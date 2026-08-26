@@ -1,6 +1,6 @@
 import { Alert, Button, Card, Form, Input, InputNumber, Popconfirm, Select, Space, Switch, Table, Tag, Typography } from 'antd'
 import { useState } from 'react'
-import { createExperimentRunSpecDraft, runBacktestPreview } from '../api/client'
+import { createExperimentRunSpecDraft, runBacktestPreview, runExperimentRunSpecBacktest } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
 import { JsonExportButton } from './JsonExportButton'
 import {
@@ -9,7 +9,7 @@ import {
   saveLocalBacktestExperiment,
 } from '../research/localBacktestExperiments'
 import type { LocalBacktestExperiment } from '../research/localBacktestExperiments'
-import type { BacktestPreview, BacktestPreviewRequest, CausalPreviewTemplateId, ExperimentRunSpecDraft, ExperimentRunSpecDraftRequest, HistoricalDataset, StrategyTemplate } from '../types'
+import type { BacktestPreview, BacktestPreviewRequest, CausalPreviewTemplateId, ExperimentRunSpecBacktest, ExperimentRunSpecDraft, ExperimentRunSpecDraftRequest, HistoricalDataset, StrategyTemplate } from '../types'
 
 interface BacktestFormValues {
   start: string
@@ -126,8 +126,12 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
   const [, setExperimentRevision] = useState(0)
   const [selectedTemplateId, setSelectedTemplateId] = useState<CausalPreviewTemplateId | null>(initialTemplateId)
   const [draft, setDraft] = useState<ExperimentRunSpecDraft | null>(null)
+  const [draftRequest, setDraftRequest] = useState<ExperimentRunSpecDraftRequest | null>(null)
   const [draftError, setDraftError] = useState<string | null>(null)
   const [drafting, setDrafting] = useState(false)
+  const [boundBacktest, setBoundBacktest] = useState<ExperimentRunSpecBacktest | null>(null)
+  const [bindingError, setBindingError] = useState<string | null>(null)
+  const [binding, setBinding] = useState(false)
   const trendFilterEnabled = Form.useWatch('use_trend_filter', form) ?? initialTemplateId !== 'etf-momentum-rotation-v1'
   const volatilityScalingEnabled = Form.useWatch('use_volatility_scaling', form) ?? initialTemplateId !== 'etf-momentum-rotation-v1'
   if (!dataset) {
@@ -173,6 +177,8 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
     }
     setRunning(true)
     setError(null)
+    setBoundBacktest(null)
+    setBindingError(null)
     try {
       setResult(await runBacktestPreview(payload))
       setSaveStatus(null)
@@ -188,7 +194,10 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
     setResult(null)
     setError(null)
     setDraft(null)
+    setDraftRequest(null)
     setDraftError(null)
+    setBoundBacktest(null)
+    setBindingError(null)
     if (!templateId) return
     form.setFieldsValue(templatePresets[templateId])
     specForm.setFieldValue('experiment_id', `${templateId}-replay-001`)
@@ -227,12 +236,42 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
         seed: values.seed,
       }
       setDraft(await createExperimentRunSpecDraft(request))
+      setDraftRequest(request)
+      setBoundBacktest(null)
+      setBindingError(null)
     } catch (reason) {
       setDraft(null)
+      setDraftRequest(null)
       setDraftError(reason instanceof Error ? reason.message : '运行规格草案生成失败')
     } finally {
       setDrafting(false)
     }
+  }
+  const runBoundBacktest = async () => {
+    if (!draftRequest) {
+      setBindingError('规格或回测参数已变化，请重新生成哈希草案。')
+      return
+    }
+    setBinding(true)
+    setBindingError(null)
+    try {
+      const response = await runExperimentRunSpecBacktest(draftRequest)
+      setBoundBacktest(response)
+      setResult(response.result)
+      setError(null)
+    } catch (reason) {
+      setBoundBacktest(null)
+      setBindingError(reason instanceof Error ? reason.message : '规格绑定回测失败')
+    } finally {
+      setBinding(false)
+    }
+  }
+  const invalidateDraft = () => {
+    setDraft(null)
+    setDraftRequest(null)
+    setDraftError(null)
+    setBoundBacktest(null)
+    setBindingError(null)
   }
   const saveResult = () => {
     if (!result) return
@@ -272,7 +311,10 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
     setError(null)
     setSelectedTemplateId(null)
     setDraft(null)
+    setDraftRequest(null)
     setDraftError(null)
+    setBoundBacktest(null)
+    setBindingError(null)
     setExperimentName(record.name)
     setSaveStatus(`已载入“${record.name}”的参数；请重新运行以验证当前结果。`)
   }
@@ -307,7 +349,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
         <Select<CausalPreviewTemplateId> aria-label="基线策略模板" allowClear placeholder="选择已接入模板" value={selectedTemplateId ?? undefined} onChange={(value) => applyTemplate(value ?? null)} options={supportedTemplates.map((template) => ({ value: template.template_id as CausalPreviewTemplateId, label: template.name }))} style={{ width: 320 }} />
       </Space>
       {selectedTemplate && <Alert showIcon type="info" title={`已载入模板：${selectedTemplate.name}`} description="模板参数只是预填值，不是已冻结规格；修改后必须重新生成规格哈希，且当前历史数据已经可见，不能变成新的独立样本外证据。" />}
-      <Form<BacktestFormValues> form={form} layout="vertical" initialValues={initialValues} onFinish={(values) => { void submit(values) }}>
+      <Form<BacktestFormValues> form={form} layout="vertical" initialValues={initialValues} onValuesChange={invalidateDraft} onFinish={(values) => { void submit(values) }}>
         <div className="backtest-lab-grid">
           <Form.Item name="start" label="开始日期" rules={[{ required: true }]}><Input type="date" /></Form.Item>
           <Form.Item name="end" label="结束日期" rules={[{ required: true }]}><Input type="date" /></Form.Item>
@@ -334,7 +376,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
       <Card type="inner" title="ExperimentRunSpec 哈希草案" extra={<Typography.Text type="secondary">13 字段 · 不落库</Typography.Text>}>
         <Space orientation="vertical" style={{ width: '100%' }}>
           <Alert showIcon type="warning" title="哈希完整不等于已经冻结" description="这里生成完整 13 字段及确定性哈希，并把测试窗载入上方因果回测；不会写入不可变实验存储。必须在接触新的互斥证据前另行持久化，并通过独立泄漏审查。" />
-          <Form<RunSpecFormValues> name="experiment-run-spec-draft" form={specForm} layout="vertical" initialValues={runSpecInitialValues} onFinish={(values) => { void generateDraft(values) }}>
+          <Form<RunSpecFormValues> name="experiment-run-spec-draft" form={specForm} layout="vertical" initialValues={runSpecInitialValues} onValuesChange={invalidateDraft} onFinish={(values) => { void generateDraft(values) }}>
             <div className="backtest-lab-grid">
               <Form.Item name="experiment_id" label="实验 ID" rules={[{ required: true }, { pattern: /^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/, message: '输入 1-80 个安全字符' }]}><Input /></Form.Item>
               <Form.Item name="git_commit" label="源码 Commit" rules={[{ required: true }, { pattern: /^[0-9a-f]{40}$/, message: '需要完整 40 位 Git SHA' }]}><Input /></Form.Item>
@@ -356,6 +398,17 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
               <Tag color="orange">独立泄漏审查 0/1</Tag>
               <Tag color="orange">新未见证据 0/1</Tag>
               <JsonExportButton filename={`qtrade-run-spec-draft-${draft.spec_hash.slice(0, 12)}.json`} value={draft} label="导出运行规格草案" />
+              <Button onClick={() => { void runBoundBacktest() }} loading={binding}>按该哈希运行因果回测</Button>
+            </Space>
+          </>}
+          {bindingError && <Alert showIcon type="error" title="规格绑定回测未完成" description={bindingError} />}
+          {boundBacktest && <>
+            <Alert showIcon type="success" title={`规格→结果绑定 ${boundBacktest.binding_hash.slice(0, 16)}…`} description="同一请求重新计算规格并运行，但仍未持久化为正式实验；绑定哈希不能替代独立泄漏审查或新未见证据。" />
+            <Space wrap>
+              <Tag color="green">单请求绑定 1/1</Tag>
+              <Tag color="orange">不可变存储 0/1</Tag>
+              <Tag color="orange">新未见证据 0/1</Tag>
+              <JsonExportButton filename={`qtrade-bound-backtest-${boundBacktest.binding_hash.slice(0, 12)}.json`} value={boundBacktest} label="导出规格绑定回测" />
             </Space>
           </>}
         </Space>

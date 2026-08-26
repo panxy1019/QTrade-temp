@@ -288,6 +288,43 @@ def test_experiment_run_spec_draft_binds_template_dataset_split_and_parameters(
     assert repeated["spec_hash"] == draft["spec_hash"]
     assert changed["spec_hash"] != draft["spec_hash"]
 
+    bound_response = api.post("/experiment-run-spec-backtest", json=payload)
+    assert bound_response.status_code == 200
+    bound = bound_response.json()
+    assert bound["classification"] == (
+        "READ_ONLY_HASH_BOUND_EXPERIMENT_PREVIEW_NOT_PERSISTED"
+    )
+    assert bound["spec_hash"] == draft["spec_hash"]
+    assert bound["preview_hash"] == bound["result"]["preview_hash"]
+    assert len(bound["binding_hash"]) == 64
+    assert bound["result"]["data_version"] == draft["spec"]["data_version"]
+    assert bound["result"]["data_checksum"] == draft["data_checksum"]
+    assert bound["result"]["parameters"]["factor"] == "momentum"
+    assert bound["result"]["parameters"]["trend_window"] is None
+    assert bound["gates"] == {
+        "single_request_spec_result_binding": True,
+        "spec_hash_recomputed_before_run": True,
+        "verified_dataset_reloaded_before_run": True,
+        "preview_hash_bound_to_spec_hash": True,
+        "immutable_artifact_persisted": False,
+        "independent_leakage_review_passed": False,
+        "fresh_unseen_test_evidence": False,
+    }
+    assert bound["creates_immutable_experiment"] is False
+    assert bound["registry_write"] is False
+    assert bound["paper_runtime_start"] is False
+    assert bound["live_runtime_start"] is False
+    assert bound["state_mutation"] is False
+    assert bound["external_order_transmission"] is False
+    repeated_bound = api.post("/experiment-run-spec-backtest", json=payload).json()
+    changed_bound = api.post(
+        "/experiment-run-spec-backtest", json={**payload, "seed": 8}
+    ).json()
+    assert repeated_bound["binding_hash"] == bound["binding_hash"]
+    assert changed_bound["preview_hash"] == bound["preview_hash"]
+    assert changed_bound["spec_hash"] != bound["spec_hash"]
+    assert changed_bound["binding_hash"] != bound["binding_hash"]
+
     mismatched_window = {
         **payload,
         "backtest": {**backtest, "start": "2026-02-12"},
