@@ -5,8 +5,8 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
-from itertools import product
-from math import erfc, floor, sqrt
+from itertools import combinations, product
+from math import erfc, floor, log, sqrt
 from random import Random
 
 from qtrade.data import Bar, BarQualityGate
@@ -342,6 +342,49 @@ class IntradayDiscoveryCandidate:
 
 
 @dataclass(frozen=True, slots=True)
+class IntradaySelectionBiasBlock:
+    block_id: int
+    start: date
+    end: date
+    session_count: int
+
+
+@dataclass(frozen=True, slots=True)
+class IntradaySelectionBiasSplit:
+    split_id: str
+    training_block_ids: tuple[int, ...]
+    test_block_ids: tuple[int, ...]
+    selected_candidate_id: str
+    training_excess_return: Decimal
+    test_excess_return: Decimal
+    test_average_rank: Decimal
+    test_rank_percentile: Decimal
+    test_rank_logit: Decimal
+    below_median: bool
+
+
+@dataclass(frozen=True, slots=True)
+class IntradaySelectionBiasAudit:
+    method: str
+    block_count: int
+    split_count: int
+    selection_metric: str
+    rank_tie_method: str
+    blocks: tuple[IntradaySelectionBiasBlock, ...]
+    splits: tuple[IntradaySelectionBiasSplit, ...]
+    below_median_split_count: int
+    probability_of_backtest_overfitting: Decimal
+    selected_oos_positive_excess_split_count: int
+    selected_oos_positive_excess_ratio: Decimal
+    median_selected_oos_excess_return: Decimal
+    unique_selected_candidate_count: int
+    most_selected_candidate_id: str
+    most_selected_candidate_count: int
+    criteria: Mapping[str, bool]
+    passed: bool
+
+
+@dataclass(frozen=True, slots=True)
 class IntradayFactorDiscoveryResult:
     candidate_count: int
     candidates: tuple[IntradayDiscoveryCandidate, ...]
@@ -357,6 +400,7 @@ class IntradayFactorDiscoveryResult:
     selected_minimum_body_return_bps: Decimal
     selected_factor_expression: str
     selected_training_gate_passed: bool
+    overfitting_audit: IntradaySelectionBiasAudit
     test_observation_count: int
     test_signal_count: int
     test_signal_session_count: int
@@ -1590,7 +1634,13 @@ def discover_opening_direction_rules(
     training_session_count = len(trading_days) // 2
     training_days = trading_days[:training_session_count]
     test_days = trading_days[training_session_count:]
+    training_day_set = set(training_days)
     candidates: list[IntradayDiscoveryCandidate] = []
+    candidate_daily: dict[str, tuple[IntradayFactorDay, ...]] = {}
+    candidate_selection_daily: dict[
+        str,
+        tuple[tuple[date, int, int, Decimal | None], ...],
+    ] = {}
     direction_code = {"BULLISH": "U", "BEARISH": "D", "IGNORE": "X"}
     for first, second, third in product(
         ("BULLISH", "BEARISH", "IGNORE"),
@@ -1600,17 +1650,26 @@ def discover_opening_direction_rules(
         if directions == ("IGNORE", "IGNORE", "IGNORE"):
             continue
         for threshold_bps in _DISCOVERY_THRESHOLDS_BPS:
+            candidate_id = "DIR-{}{}{}-T{:04d}".format(
+                *(direction_code[value] for value in directions),
+                int(threshold_bps),
+            )
             spec = OpeningTripleBullishSpec(
                 cost_bps=cost_bps,
                 minimum_body_return_bps=threshold_bps,
                 directions=directions,
                 combination="ALL",
             )
-            training_rows = _opening_rule_observations(
+            rule_rows = _opening_rule_observations(
                 observations,
-                trading_days=training_days,
+                trading_days=trading_days,
                 spec=spec,
             )
+            training_rows = [
+                item
+                for item in rule_rows
+                if item.trading_day in training_day_set
+            ]
             (
                 training_signal_count,
                 training_signal_sessions,
@@ -1626,6 +1685,14 @@ def discover_opening_direction_rules(
                 list(training_days),
                 cost_bps=cost_bps,
             )
+            _, _, full_daily = _evaluate_observations(
+                rule_rows,
+                list(trading_days),
+                cost_bps=cost_bps,
+            )
+            conditional_excess_by_day = dict(
+                _session_conditional_excess_returns(rule_rows)
+            )
             criteria = {
                 "minimum_250_training_observations": len(training_rows) >= 250,
                 "minimum_twenty_training_signals": training_signal_count >= 20,
@@ -1639,9 +1706,15 @@ def discover_opening_direction_rules(
                     training_t_statistic > Decimal("1.96")
                 ),
             }
-            candidate_id = "DIR-{}{}{}-T{:04d}".format(
-                *(direction_code[value] for value in directions),
-                int(threshold_bps),
+            candidate_daily[candidate_id] = full_daily
+            candidate_selection_daily[candidate_id] = tuple(
+                (
+                    row.trading_day,
+                    row.eligible_symbol_count,
+                    row.signal_count,
+                    conditional_excess_by_day.get(row.trading_day),
+                )
+                for row in full_daily
             )
             candidates.append(
                 IntradayDiscoveryCandidate(
@@ -1715,6 +1788,12 @@ def discover_opening_direction_rules(
         _EXIT_TIME,
         _CHINA_TIME,
     )
+    overfitting_audit = _combinatorial_selection_bias_audit(
+        tuple(candidates),
+        candidate_daily,
+        candidate_selection_daily,
+        trading_days=trading_days,
+    )
     return IntradayFactorDiscoveryResult(
         candidate_count=len(candidates),
         candidates=tuple(candidates),
@@ -1732,6 +1811,7 @@ def discover_opening_direction_rules(
         ),
         selected_factor_expression=selected.factor_expression,
         selected_training_gate_passed=selected.training_gate_passed,
+        overfitting_audit=overfitting_audit,
         test_observation_count=len(test_rows),
         test_signal_count=test_signal_count,
         test_signal_session_count=test_signal_sessions,
@@ -1750,6 +1830,224 @@ def discover_opening_direction_rules(
         state_mutation=False,
         external_order_transmission=False,
     )
+
+
+def _combinatorial_selection_bias_audit(
+    candidates: tuple[IntradayDiscoveryCandidate, ...],
+    candidate_daily: Mapping[str, tuple[IntradayFactorDay, ...]],
+    candidate_selection_daily: Mapping[
+        str,
+        tuple[tuple[date, int, int, Decimal | None], ...],
+    ],
+    *,
+    trading_days: tuple[date, ...],
+) -> IntradaySelectionBiasAudit:
+    block_count = 8
+    base_size, remainder = divmod(len(trading_days), block_count)
+    blocks: list[tuple[date, ...]] = []
+    offset = 0
+    for block_index in range(block_count):
+        block_size = base_size + (1 if block_index < remainder else 0)
+        blocks.append(trading_days[offset : offset + block_size])
+        offset += block_size
+    block_records = tuple(
+        IntradaySelectionBiasBlock(
+            block_id=index + 1,
+            start=block[0],
+            end=block[-1],
+            session_count=len(block),
+        )
+        for index, block in enumerate(blocks)
+    )
+
+    split_rows: list[IntradaySelectionBiasSplit] = []
+    selected_counts: dict[str, int] = defaultdict(int)
+    block_ids = tuple(range(block_count))
+    for split_index, training_block_indexes in enumerate(
+        combinations(block_ids, block_count // 2),
+        start=1,
+    ):
+        training_block_set = set(training_block_indexes)
+        test_block_indexes = tuple(
+            value for value in block_ids if value not in training_block_set
+        )
+        training_days = frozenset(
+            day
+            for block_index in training_block_indexes
+            for day in blocks[block_index]
+        )
+        test_days = frozenset(
+            day
+            for block_index in test_block_indexes
+            for day in blocks[block_index]
+        )
+        training_ranks = {
+            candidate.candidate_id: _discovery_selection_rank(
+                candidate_selection_daily[candidate.candidate_id],
+                trading_days=training_days,
+                minimum_body_return_bps=(
+                    candidate.minimum_body_return_bps
+                ),
+            )
+            for candidate in candidates
+        }
+        selected = min(
+            candidates,
+            key=lambda candidate: (
+                not training_ranks[candidate.candidate_id][0],
+                -training_ranks[candidate.candidate_id][1],
+                -training_ranks[candidate.candidate_id][2],
+                candidate.minimum_body_return_bps,
+                candidate.candidate_id,
+            ),
+        )
+        training_excess_return = _compounded_excess_return(
+            candidate_daily[selected.candidate_id],
+            trading_days=training_days,
+        )
+        test_scores = {
+            candidate.candidate_id: _compounded_excess_return(
+                candidate_daily[candidate.candidate_id],
+                trading_days=test_days,
+            )
+            for candidate in candidates
+        }
+        test_ranks = {
+            candidate.candidate_id: _discovery_selection_rank(
+                candidate_selection_daily[candidate.candidate_id],
+                trading_days=test_days,
+                minimum_body_return_bps=(
+                    candidate.minimum_body_return_bps
+                ),
+            )
+            for candidate in candidates
+        }
+        selected_test_score = test_scores[selected.candidate_id]
+        selected_test_rank = test_ranks[selected.candidate_id]
+        lower_count = sum(
+            rank < selected_test_rank for rank in test_ranks.values()
+        )
+        equal_count = sum(
+            rank == selected_test_rank for rank in test_ranks.values()
+        )
+        average_rank = Decimal(lower_count) + (
+            Decimal(equal_count) + Decimal("1")
+        ) / Decimal("2")
+        rank_percentile = (
+            average_rank - Decimal("0.5")
+        ) / Decimal(len(candidates))
+        rank_logit = Decimal(
+            str(log(float(rank_percentile / (Decimal("1") - rank_percentile))))
+        )
+        below_median = rank_logit <= 0
+        selected_counts[selected.candidate_id] += 1
+        split_rows.append(
+            IntradaySelectionBiasSplit(
+                split_id=f"CSCV-{split_index:03d}",
+                training_block_ids=tuple(
+                    value + 1 for value in training_block_indexes
+                ),
+                test_block_ids=tuple(
+                    value + 1 for value in test_block_indexes
+                ),
+                selected_candidate_id=selected.candidate_id,
+                training_excess_return=training_excess_return,
+                test_excess_return=selected_test_score,
+                test_average_rank=average_rank,
+                test_rank_percentile=rank_percentile,
+                test_rank_logit=rank_logit,
+                below_median=below_median,
+            )
+        )
+
+    below_median_count = sum(row.below_median for row in split_rows)
+    positive_oos_count = sum(row.test_excess_return > 0 for row in split_rows)
+    ordered_oos = sorted(row.test_excess_return for row in split_rows)
+    middle = len(ordered_oos) // 2
+    median_oos = (ordered_oos[middle - 1] + ordered_oos[middle]) / Decimal("2")
+    most_selected_candidate_id, most_selected_count = min(
+        selected_counts.items(),
+        key=lambda item: (-item[1], item[0]),
+    )
+    split_count = len(split_rows)
+    probability_of_backtest_overfitting = (
+        Decimal(below_median_count) / split_count
+    )
+    selected_oos_positive_excess_ratio = Decimal(positive_oos_count) / split_count
+    criteria = {
+        "probability_of_backtest_overfitting_below_0_25": (
+            probability_of_backtest_overfitting < Decimal("0.25")
+        ),
+        "selected_oos_positive_excess_ratio_at_least_0_60": (
+            selected_oos_positive_excess_ratio >= Decimal("0.60")
+        ),
+        "median_selected_oos_excess_return_positive": median_oos > 0,
+    }
+    return IntradaySelectionBiasAudit(
+        method="COMBINATORIALLY_SYMMETRIC_CROSS_VALIDATION",
+        block_count=block_count,
+        split_count=split_count,
+        selection_metric=(
+            "TRAINING_GATE_THEN_NEWEY_WEST_T_THEN_SESSION_CONDITIONAL_EXCESS"
+        ),
+        rank_tie_method="AVERAGE_RANK",
+        blocks=block_records,
+        splits=tuple(split_rows),
+        below_median_split_count=below_median_count,
+        probability_of_backtest_overfitting=probability_of_backtest_overfitting,
+        selected_oos_positive_excess_split_count=positive_oos_count,
+        selected_oos_positive_excess_ratio=selected_oos_positive_excess_ratio,
+        median_selected_oos_excess_return=median_oos,
+        unique_selected_candidate_count=len(selected_counts),
+        most_selected_candidate_id=most_selected_candidate_id,
+        most_selected_candidate_count=most_selected_count,
+        criteria=criteria,
+        passed=all(criteria.values()),
+    )
+
+
+def _discovery_selection_rank(
+    daily: tuple[tuple[date, int, int, Decimal | None], ...],
+    *,
+    trading_days: frozenset[date],
+    minimum_body_return_bps: Decimal,
+) -> tuple[bool, Decimal, Decimal, Decimal]:
+    selected = [row for row in daily if row[0] in trading_days]
+    observation_count = sum(row[1] for row in selected)
+    signal_count = sum(row[2] for row in selected)
+    session_returns = [
+        value
+        for _, _, _, value in selected
+        if value is not None
+    ]
+    session_mean, _, _, t_statistic, _, _ = _newey_west_mean_statistics(
+        session_returns
+    )
+    passed = all(
+        (
+            observation_count >= 250,
+            signal_count >= 20,
+            len(session_returns) >= 10,
+            session_mean > 0,
+            t_statistic > Decimal("1.96"),
+        )
+    )
+    return passed, t_statistic, session_mean, -minimum_body_return_bps
+
+
+def _compounded_excess_return(
+    daily: tuple[IntradayFactorDay, ...],
+    *,
+    trading_days: frozenset[date],
+) -> Decimal:
+    strategy_equity = Decimal("1")
+    benchmark_equity = Decimal("1")
+    for row in daily:
+        if row.trading_day not in trading_days:
+            continue
+        strategy_equity *= Decimal("1") + row.strategy_return
+        benchmark_equity *= Decimal("1") + row.benchmark_return
+    return strategy_equity - benchmark_equity
 
 
 def _opening_rule_observations(

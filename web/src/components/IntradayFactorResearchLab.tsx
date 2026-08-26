@@ -84,6 +84,9 @@ const gateLabels: Record<string, string> = {
   test_newey_west_t_statistic_above_1_96: '测试段 Newey-West t 大于 1.96',
   test_strategy_total_return_positive: '测试段策略累计收益为正',
   test_strategy_excess_return_positive: '测试段策略超额收益为正',
+  probability_of_backtest_overfitting_below_0_25: '组合式回测过拟合概率低于 25%',
+  selected_oos_positive_excess_ratio_at_least_0_60: '组合样本外正超额比例至少 60%',
+  median_selected_oos_excess_return_positive: '组合样本外超额中位数为正',
 }
 
 export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
@@ -538,6 +541,45 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             { title: '锁定测试门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
             { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
           ]} />
+          <Alert
+            showIcon
+            type={discoveryResult.overfitting_audit.passed ? 'info' : 'warning'}
+            title={discoveryResult.overfitting_audit.passed && !discoveryResult.test_validation.passed
+              ? 'CSCV 选择偏差门通过，但时间顺序锁定测试仍失败'
+              : discoveryResult.overfitting_audit.passed ? 'CSCV 选择偏差门通过' : 'CSCV 检出较高选择偏差风险'}
+            description={`把同一已查看窗口固定切成 ${discoveryResult.overfitting_audit.block_count} 个连续块，遍历 ${discoveryResult.overfitting_audit.split_count} 个四块训练/四块互补测试组合，并沿用“训练硬门 → Newey-West t → 条件超额 → 较低阈值”的原筛选顺序。该诊断会复用原锁定测试段，只量化候选选择偏差，不是新的时间顺序回测、独立确认或晋级依据。`}
+          />
+          <div className="description-grid">
+            <Metric label="回测过拟合概率 PBO" value={formatPercent(discoveryResult.overfitting_audit.probability_of_backtest_overfitting)} />
+            <Metric label="组合样本外正超额" value={`${discoveryResult.overfitting_audit.selected_oos_positive_excess_split_count}/${discoveryResult.overfitting_audit.split_count} · ${formatPercent(discoveryResult.overfitting_audit.selected_oos_positive_excess_ratio)}`} />
+            <Metric label="组合样本外超额中位" value={formatPercent(discoveryResult.overfitting_audit.median_selected_oos_excess_return)} />
+            <Metric label="不同训练赢家" value={`${discoveryResult.overfitting_audit.unique_selected_candidate_count} 个`} />
+            <Metric label="最常被选" value={`${discoveryResult.overfitting_audit.most_selected_candidate_id} · ${discoveryResult.overfitting_audit.most_selected_candidate_count}/${discoveryResult.overfitting_audit.split_count}`} />
+            <Metric label="低于测试中位" value={`${discoveryResult.overfitting_audit.below_median_split_count}/${discoveryResult.overfitting_audit.split_count}`} />
+          </div>
+          <Typography.Text type="secondary">连续块：{discoveryResult.overfitting_audit.blocks.map((block) => `B${block.block_id} ${block.start}–${block.end}（${block.session_count} 日）`).join('；')}</Typography.Text>
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.overfitting_audit.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '组合式选择偏差门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
+          <Table
+            rowKey="split_id"
+            size="small"
+            dataSource={discoveryResult.overfitting_audit.splits}
+            pagination={{ pageSize: 10, showSizeChanger: false }}
+            columns={[
+              { title: '组合', dataIndex: 'split_id' },
+              { title: '训练块', dataIndex: 'training_block_ids', render: (values: number[]) => values.map((value) => `B${value}`).join('/') },
+              { title: '互补测试块', dataIndex: 'test_block_ids', render: (values: number[]) => values.map((value) => `B${value}`).join('/') },
+              { title: '训练赢家', dataIndex: 'selected_candidate_id' },
+              { title: '训练超额', dataIndex: 'training_excess_return', render: (value: string) => formatPercent(value) },
+              { title: '测试超额', dataIndex: 'test_excess_return', render: (value: string) => formatPercent(value) },
+              { title: '测试排名百分位', dataIndex: 'test_rank_percentile', render: (value: string) => formatPercent(value) },
+              { title: '排名 logit', dataIndex: 'test_rank_logit', render: (value: string) => formatNumber(value) },
+              { title: '低于中位', dataIndex: 'below_median', render: (value: boolean) => value ? <Tag color="red">是</Tag> : <Tag color="green">否</Tag> },
+            ]}
+            scroll={{ x: 1100 }}
+          />
           <Table
             rowKey="candidate_id"
             size="small"

@@ -377,6 +377,39 @@ def test_bounded_opening_rule_discovery_locks_training_before_disjoint_test() ->
     assert first.selected_minimum_body_return_bps in {
         Decimal("0"), Decimal("5"), Decimal("10"), Decimal("20")
     }
+    audit = first.overfitting_audit
+    assert audit.method == "COMBINATORIALLY_SYMMETRIC_CROSS_VALIDATION"
+    assert audit.block_count == 8
+    assert audit.split_count == len(audit.splits) == 70
+    assert audit.selection_metric == (
+        "TRAINING_GATE_THEN_NEWEY_WEST_T_THEN_SESSION_CONDITIONAL_EXCESS"
+    )
+    assert audit.rank_tie_method == "AVERAGE_RANK"
+    assert len(audit.blocks) == 8
+    assert sum(block.session_count for block in audit.blocks) == 40
+    assert audit.blocks[0].start == days[0]
+    assert audit.blocks[-1].end == days[-2]
+    assert audit.probability_of_backtest_overfitting == (
+        Decimal(audit.below_median_split_count) / audit.split_count
+    )
+    assert audit.selected_oos_positive_excess_ratio == (
+        Decimal(audit.selected_oos_positive_excess_split_count)
+        / audit.split_count
+    )
+    assert audit.unique_selected_candidate_count == len(
+        {split.selected_candidate_id for split in audit.splits}
+    )
+    assert all(
+        set(split.training_block_ids).isdisjoint(split.test_block_ids)
+        and sorted(split.training_block_ids + split.test_block_ids)
+        == list(range(1, 9))
+        for split in audit.splits
+    )
+    assert all(
+        Decimal("0") < split.test_rank_percentile < Decimal("1")
+        for split in audit.splits
+    )
+    assert audit.passed is all(audit.criteria.values())
     assert first.test_observation_count == 20 * len(symbols)
     assert first.selection_uses_test_returns is False
     assert first.promotion == "NOT_ELIGIBLE"

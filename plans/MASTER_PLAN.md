@@ -347,6 +347,15 @@ that identity on the final 20 sessions. The first real run selected
 test returned -6.1491% total, -1.8107% excess and Newey-West t -0.5462. The
 visible failed result is frozen as viewed reused history; it cannot trigger a
 second search on the test window, state mutation, PAPER or external orders.
+The same fixed candidate family now has an explicit selection-bias audit. Eight
+contiguous five-session blocks produce all 70 symmetric four-block training and
+four-block complement splits. Every split repeats the real gate/t-statistic/
+conditional-excess/lower-threshold selection order and ranks that winner on the
+complement with average tie ranks. The result is unfavorable: PBO is 41.43%,
+only 35/70 selected complement results have positive excess, their median excess
+is -0.1788%, and all three audit gates fail. Because the construction reuses the
+original locked-test blocks and is not chronological, it is a descriptive
+overfitting-risk audit only; the failed original holdout remains authoritative.
 
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no

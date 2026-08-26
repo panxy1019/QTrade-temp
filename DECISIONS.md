@@ -1568,3 +1568,30 @@ This is an honest falsification, not grounds to search the same test segment
 again. Since the current universe is non-PIT and the full history has been
 viewed, the result remains `NOT_ELIGIBLE`, cannot mutate strategy/PAPER state,
 and cannot authorize LIVE or external order transmission.
+
+## ADR-099 — Factor-mining selection bias uses a fixed CSCV audit
+
+Status: accepted, 2026-08-27.
+
+One chronological holdout is necessary but does not show how strongly the
+training winner depends on the particular split. QTrade therefore partitions
+the same fixed 40-session discovery window into eight contiguous five-session
+blocks and evaluates all 70 combinations of four training blocks against their
+four-block complements. Within each combination it repeats the actual discovery
+ordering: training hard-gate status, Newey-West t-statistic, session-clustered
+conditional excess, lower body threshold and finally candidate ID. The selected
+candidate is ranked on its complement with the same quality components; exact
+ties receive an average rank. PBO is the fraction of selected rules whose
+complement-rank logit is non-positive.
+
+The viewed 104-candidate run produced 29 below-median winners out of 70, for PBO
+41.43%. Only 35/70 selected complement returns had positive excess, their median
+excess was -0.1788%, 17 different rules won at least once, and
+`DIR-DDD-T0020` was most frequent at 24/70. The fixed descriptive gates
+require PBO below 25%, positive complement excess in at least 60% of splits and
+a positive median; all three fail. This agrees with, but cannot replace, the
+failed chronological 20-session locked test. CSCV deliberately reuses every
+viewed block, including the original locked-test segment, and its interleaved
+training sets are not causal forward validations. It cannot change the original
+winner, authorize a second search, mutate state, promote to PAPER/LIVE or send
+an external order.

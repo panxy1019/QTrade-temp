@@ -181,6 +181,34 @@ const discovery = {
     training_mean_session_conditional_excess_return: '0.00493055', training_newey_west_t_statistic: '2.189668',
     training_strategy_metrics: discoveryMetrics, selection_rule: 'TRAINING_ONLY',
   },
+  overfitting_audit: {
+    method: 'COMBINATORIALLY_SYMMETRIC_CROSS_VALIDATION', block_count: 8, split_count: 70,
+    selection_metric: 'TRAINING_GATE_THEN_NEWEY_WEST_T_THEN_SESSION_CONDITIONAL_EXCESS',
+    rank_tie_method: 'AVERAGE_RANK', block_partition: 'EIGHT_CONTIGUOUS_BALANCED_BLOCKS_OLDEST_TO_NEWEST',
+    rank_components: ['GATE_PASSED', 'NEWEY_WEST_T_STATISTIC', 'SESSION_CONDITIONAL_EXCESS', 'LOWER_BODY_THRESHOLD'],
+    training_blocks_per_split: 4, test_blocks_per_split: 4, reuses_original_locked_test_blocks: true,
+    candidate_selection_uses_only_each_cscv_training_partition: true, changes_original_locked_candidate: false,
+    independent_confirmation: false, promotion_authority: false,
+    blocks: Array.from({ length: 8 }, (_, index) => ({
+      block_id: index + 1, start: `2026-06-${String(5 + index * 2).padStart(2, '0')}`,
+      end: `2026-06-${String(6 + index * 2).padStart(2, '0')}`, session_count: 5,
+    })),
+    splits: [{
+      split_id: 'CSCV-001', training_block_ids: [1, 2, 3, 4], test_block_ids: [5, 6, 7, 8],
+      selected_candidate_id: 'DIR-DDD-T0020', training_excess_return: '0.08', test_excess_return: '0.03',
+      test_average_rank: '80', test_rank_percentile: '0.7644', test_rank_logit: '1.177', below_median: false,
+    }],
+    below_median_split_count: 29, probability_of_backtest_overfitting: '0.4142857143',
+    selected_oos_positive_excess_split_count: 35, selected_oos_positive_excess_ratio: '0.5',
+    median_selected_oos_excess_return: '-0.0017882467', unique_selected_candidate_count: 17,
+    most_selected_candidate_id: 'DIR-DDD-T0020', most_selected_candidate_count: 24,
+    criteria: {
+      probability_of_backtest_overfitting_below_0_25: false,
+      selected_oos_positive_excess_ratio_at_least_0_60: false,
+      median_selected_oos_excess_return_positive: false,
+    },
+    passed: false,
+  },
   test_validation: {
     observation_count: 1500, signal_count: 326, signal_session_count: 20,
     mean_session_conditional_excess_return: '-0.00091894', newey_west_lag: 2,
@@ -264,6 +292,9 @@ describe('intraday factor rule correlation', () => {
       cost_bps: '5',
     }))
     expect(await screen.findByText('训练最优规则未通过互斥测试段')).toBeInTheDocument()
+    expect(screen.getByText('CSCV 检出较高选择偏差风险')).toBeInTheDocument()
+    expect(screen.getByText('41.43%')).toBeInTheDocument()
+    expect(screen.getByText('DIR-DDD-T0020 · 24/70')).toBeInTheDocument()
     expect(screen.getAllByText(/DIR-XDU-T0000/).length).toBeGreaterThan(0)
     expect(screen.getByText('-0.09%')).toBeInTheDocument()
     expect(screen.getByText('-6.15%')).toBeInTheDocument()

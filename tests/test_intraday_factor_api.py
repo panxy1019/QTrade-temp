@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from hashlib import sha256
 from pathlib import Path
 
@@ -371,6 +372,38 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
     )
     assert payload["split"]["selection_uses_test_returns"] is False
     assert len(payload["candidates"]) == 104
+    audit = payload["overfitting_audit"]
+    assert audit["method"] == "COMBINATORIALLY_SYMMETRIC_CROSS_VALIDATION"
+    assert audit["block_count"] == 8
+    assert audit["split_count"] == len(audit["splits"]) == 70
+    assert audit["selection_metric"] == (
+        "TRAINING_GATE_THEN_NEWEY_WEST_T_THEN_SESSION_CONDITIONAL_EXCESS"
+    )
+    assert audit["rank_components"] == [
+        "GATE_PASSED",
+        "NEWEY_WEST_T_STATISTIC",
+        "SESSION_CONDITIONAL_EXCESS",
+        "LOWER_BODY_THRESHOLD",
+    ]
+    assert audit["rank_tie_method"] == "AVERAGE_RANK"
+    assert len(audit["blocks"]) == 8
+    assert sum(block["session_count"] for block in audit["blocks"]) == 40
+    assert audit["blocks"][0]["start"] == "2026-06-30"
+    assert audit["blocks"][-1]["end"] == "2026-08-24"
+    assert audit["reuses_original_locked_test_blocks"] is True
+    assert audit["candidate_selection_uses_only_each_cscv_training_partition"] is True
+    assert audit["changes_original_locked_candidate"] is False
+    assert audit["independent_confirmation"] is False
+    assert audit["promotion_authority"] is False
+    assert Decimal(audit["probability_of_backtest_overfitting"]) == (
+        Decimal(audit["below_median_split_count"]) / audit["split_count"]
+    )
+    assert all(
+        set(split["training_block_ids"]).isdisjoint(split["test_block_ids"])
+        and sorted(split["training_block_ids"] + split["test_block_ids"])
+        == list(range(1, 9))
+        for split in audit["splits"]
+    )
     assert payload["selected"]["candidate_id"] in {
         candidate["candidate_id"] for candidate in payload["candidates"]
     }

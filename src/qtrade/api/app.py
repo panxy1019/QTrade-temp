@@ -8936,6 +8936,83 @@ def _intraday_factor_discovery_preview(
                 "THEN_LOWER_THRESHOLD_THEN_ID"
             ),
         },
+        "overfitting_audit": {
+            "method": result.overfitting_audit.method,
+            "block_count": result.overfitting_audit.block_count,
+            "split_count": result.overfitting_audit.split_count,
+            "selection_metric": result.overfitting_audit.selection_metric,
+            "rank_tie_method": result.overfitting_audit.rank_tie_method,
+            "rank_components": [
+                "GATE_PASSED",
+                "NEWEY_WEST_T_STATISTIC",
+                "SESSION_CONDITIONAL_EXCESS",
+                "LOWER_BODY_THRESHOLD",
+            ],
+            "block_partition": (
+                "EIGHT_CONTIGUOUS_BALANCED_BLOCKS_OLDEST_TO_NEWEST"
+            ),
+            "training_blocks_per_split": 4,
+            "test_blocks_per_split": 4,
+            "reuses_original_locked_test_blocks": True,
+            "candidate_selection_uses_only_each_cscv_training_partition": True,
+            "changes_original_locked_candidate": False,
+            "independent_confirmation": False,
+            "promotion_authority": False,
+            "blocks": [
+                {
+                    "block_id": block.block_id,
+                    "start": block.start.isoformat(),
+                    "end": block.end.isoformat(),
+                    "session_count": block.session_count,
+                }
+                for block in result.overfitting_audit.blocks
+            ],
+            "splits": [
+                {
+                    "split_id": split.split_id,
+                    "training_block_ids": list(split.training_block_ids),
+                    "test_block_ids": list(split.test_block_ids),
+                    "selected_candidate_id": split.selected_candidate_id,
+                    "training_excess_return": str(
+                        split.training_excess_return
+                    ),
+                    "test_excess_return": str(split.test_excess_return),
+                    "test_average_rank": str(split.test_average_rank),
+                    "test_rank_percentile": str(
+                        split.test_rank_percentile
+                    ),
+                    "test_rank_logit": str(split.test_rank_logit),
+                    "below_median": split.below_median,
+                }
+                for split in result.overfitting_audit.splits
+            ],
+            "below_median_split_count": (
+                result.overfitting_audit.below_median_split_count
+            ),
+            "probability_of_backtest_overfitting": str(
+                result.overfitting_audit.probability_of_backtest_overfitting
+            ),
+            "selected_oos_positive_excess_split_count": (
+                result.overfitting_audit.selected_oos_positive_excess_split_count
+            ),
+            "selected_oos_positive_excess_ratio": str(
+                result.overfitting_audit.selected_oos_positive_excess_ratio
+            ),
+            "median_selected_oos_excess_return": str(
+                result.overfitting_audit.median_selected_oos_excess_return
+            ),
+            "unique_selected_candidate_count": (
+                result.overfitting_audit.unique_selected_candidate_count
+            ),
+            "most_selected_candidate_id": (
+                result.overfitting_audit.most_selected_candidate_id
+            ),
+            "most_selected_candidate_count": (
+                result.overfitting_audit.most_selected_candidate_count
+            ),
+            "criteria": dict(result.overfitting_audit.criteria),
+            "passed": result.overfitting_audit.passed,
+        },
         "test_validation": {
             "observation_count": result.test_observation_count,
             "signal_count": result.test_signal_count,

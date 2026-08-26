@@ -691,6 +691,50 @@ export interface IntradayFactorDiscovery {
     training_strategy_metrics: IntradayPerformanceMetrics
     selection_rule: string
   }
+  overfitting_audit: {
+    method: 'COMBINATORIALLY_SYMMETRIC_CROSS_VALIDATION'
+    block_count: number
+    split_count: number
+    selection_metric: 'TRAINING_GATE_THEN_NEWEY_WEST_T_THEN_SESSION_CONDITIONAL_EXCESS'
+    rank_tie_method: 'AVERAGE_RANK'
+    rank_components: ['GATE_PASSED', 'NEWEY_WEST_T_STATISTIC', 'SESSION_CONDITIONAL_EXCESS', 'LOWER_BODY_THRESHOLD']
+    block_partition: 'EIGHT_CONTIGUOUS_BALANCED_BLOCKS_OLDEST_TO_NEWEST'
+    training_blocks_per_split: number
+    test_blocks_per_split: number
+    reuses_original_locked_test_blocks: true
+    candidate_selection_uses_only_each_cscv_training_partition: true
+    changes_original_locked_candidate: false
+    independent_confirmation: false
+    promotion_authority: false
+    blocks: Array<{
+      block_id: number
+      start: string
+      end: string
+      session_count: number
+    }>
+    splits: Array<{
+      split_id: string
+      training_block_ids: number[]
+      test_block_ids: number[]
+      selected_candidate_id: string
+      training_excess_return: string
+      test_excess_return: string
+      test_average_rank: string
+      test_rank_percentile: string
+      test_rank_logit: string
+      below_median: boolean
+    }>
+    below_median_split_count: number
+    probability_of_backtest_overfitting: string
+    selected_oos_positive_excess_split_count: number
+    selected_oos_positive_excess_ratio: string
+    median_selected_oos_excess_return: string
+    unique_selected_candidate_count: number
+    most_selected_candidate_id: string
+    most_selected_candidate_count: number
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   test_validation: {
     observation_count: number
     signal_count: number

@@ -220,6 +220,10 @@ npm --prefix web run build
   chronological train/test split, lock one training identity before any test
   signal, expose the complete failed test in the Chinese workbench and prohibit
   reusing that viewed test window as an independent confirmation or PAPER gate.
+- [x] Quantify the fixed 104-candidate search's selection bias with eight
+  contiguous blocks and all 70 combinatorially symmetric train/complement
+  splits; reuse the actual gate/t/effect/threshold rank, expose the failed PBO
+  audit and prevent it from replacing the chronological locked test.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

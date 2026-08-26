@@ -302,6 +302,20 @@ Last updated: 2026-08-27
   The test gate therefore fails. This entire window is now viewed reused-history
   evidence, not an independent confirmation or permission to retune it; the API
   and Chinese workbench keep it stateless, `NOT_ELIGIBLE`, with no external order.
+- Discovery selection bias is now measured with one fixed combinatorially
+  symmetric cross-validation audit. The same 40 viewed sessions are divided
+  into eight contiguous five-session blocks; all 70 four-block training/four-
+  block complement combinations reuse the exact training-gate, Newey-West t,
+  conditional-excess, lower-threshold and candidate-ID selection order. Average
+  out-of-sample rank handles tied quality tuples. In the real 104-candidate run,
+  29/70 selected rules ranked below the complement median, so estimated PBO was
+  41.43%; only 35/70 complement results had positive excess and their median
+  excess was -0.1788%. Seventeen different candidates were selected, led by
+  `DIR-DDD-T0020` in 24/70 splits. All three selection-bias gates failed, agreeing
+  with the failed chronological lock. This CSCV diagnostic deliberately reuses
+  the original locked-test blocks and is neither causal forward validation nor
+  an independent confirmation; it cannot replace the locked candidate or alter
+  `NOT_ELIGIBLE`, PAPER/LIVE, state-mutation or external-order boundaries.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,
