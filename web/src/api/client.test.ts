@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { IntradayFactorBacktestRequest } from '../types'
-import { loadMinuteBarSeries, loadPlatformSnapshot, runIntradayFactorBacktest } from './client'
+import type { IntradayFactorBacktestRequest, IntradayFactorCorrelationRequest } from '../types'
+import { loadMinuteBarSeries, loadPlatformSnapshot, runIntradayFactorBacktest, runIntradayFactorCorrelation } from './client'
 
 describe('platform snapshot request fan-out', () => {
   afterEach(() => {
@@ -135,5 +135,30 @@ describe('platform snapshot request fan-out', () => {
     fetchMock.mockResolvedValueOnce({ ok: false, status: 422, json: async () => ({ detail: 'invalid factor scope' }) })
     await expect(runIntradayFactorBacktest(payload)).rejects.toThrow('invalid factor scope')
     expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('posts the selected bounded rules to the stateless correlation endpoint', async () => {
+    const payload: IntradayFactorCorrelationRequest = {
+      start: '2026-07-28',
+      end: '2026-08-24',
+      rules: [
+        { directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL' },
+        { directions: ['BULLISH', 'BEARISH', 'IGNORE'], combination: 'ANY' },
+      ],
+    }
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({ classification: 'AD_HOC_INTRADAY_FACTOR_CORRELATION_CURRENT_NON_PIT' }),
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(runIntradayFactorCorrelation(payload)).resolves.toMatchObject({
+      classification: 'AD_HOC_INTRADAY_FACTOR_CORRELATION_CURRENT_NON_PIT',
+    })
+    expect(fetchMock).toHaveBeenCalledWith('/api/intraday-factor-correlation', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }))
   })
 })

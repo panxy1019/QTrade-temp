@@ -1,6 +1,6 @@
 import { Alert, Button, Card, Form, Input, InputNumber, Popconfirm, Select, Space, Steps, Table, Tabs, Tag, Typography } from 'antd'
 import { useState } from 'react'
-import { runIntradayFactorBacktest } from '../api/client'
+import { runIntradayFactorBacktest, runIntradayFactorCorrelation } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
 import {
   deleteLocalIntradayFactorExperiment,
@@ -8,7 +8,7 @@ import {
   saveLocalIntradayFactorExperiment,
 } from '../research/localIntradayFactorExperiments'
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
-import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
+import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
 type VerifiedFiveMinuteDataset = NonNullable<FiveMinuteResearchReport['minute_dataset']>
@@ -216,6 +216,11 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const [experimentName, setExperimentName] = useState('')
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
   const [, setExperimentRevision] = useState(0)
+  const [selectedExperimentHashes, setSelectedExperimentHashes] = useState<string[]>([])
+  const [correlationResult, setCorrelationResult] = useState<IntradayFactorCorrelation | null>(null)
+  const [correlationLabels, setCorrelationLabels] = useState<Record<string, string>>({})
+  const [correlationRunning, setCorrelationRunning] = useState(false)
+  const [correlationError, setCorrelationError] = useState<string | null>(null)
 
   if (!dataset) {
     return <Card title="分钟因子研究工作台"><Alert showIcon type="warning" title="长历史 5 分钟数据不可用" description="系统不会用合成行情或不完整缓存替代经过 checksum 验证的多股票数据。" /></Card>
@@ -293,13 +298,47 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setSelectedFactor(parameters.factor)
     setResult(null)
     setError(null)
+    setCorrelationResult(null)
+    setCorrelationError(null)
     setExperimentName(record.name)
     setSaveStatus(`已载入“${record.name}”的参数；请重新运行以验证当前结果。`)
   }
   const removeExperiment = (previewHash: string) => {
     deleteLocalIntradayFactorExperiment(previewHash)
+    setSelectedExperimentHashes((values) => values.filter((value) => value !== previewHash))
+    setCorrelationResult(null)
+    setCorrelationError(null)
     setExperimentRevision((value) => value + 1)
     setSaveStatus('本地因子实验记录已删除。')
+  }
+  const runSelectedCorrelation = async () => {
+    const selected = savedExperiments.filter((record) => selectedExperimentHashes.includes(record.preview_hash))
+    if (selected.length < 2 || selected.length > 8) {
+      setCorrelationError('请选择 2 至 8 条本地因子规则。')
+      return
+    }
+    const { start, end } = await form.validateFields(['start', 'end'])
+    setCorrelationRunning(true)
+    setCorrelationError(null)
+    try {
+      const correlation = await runIntradayFactorCorrelation({
+        start,
+        end,
+        rules: selected.map((record) => ({
+          directions: record.parameters.directions,
+          combination: record.parameters.combination,
+        })),
+      })
+      setCorrelationResult(correlation)
+      setCorrelationLabels(Object.fromEntries(
+        selected.map((record, index) => [`R${String(index + 1).padStart(2, '0')}`, record.name]),
+      ))
+    } catch (reason) {
+      setCorrelationResult(null)
+      setCorrelationError(reason instanceof Error ? reason.message : '因子规则相关性检验失败')
+    } finally {
+      setCorrelationRunning(false)
+    }
   }
   const experimentColumns = [
     { title: '名称', dataIndex: 'name' },
@@ -353,11 +392,15 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const robustnessGateRows = result
     ? Object.entries(result.robustness_validation.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))
     : []
+  const correlationMatrixRows = correlationResult
+    ? correlationResult.matrix.map((row) => ({ ...row, label: correlationLabels[row.rule_id] ?? row.rule_id }))
+    : []
+  const redundantPairs = correlationResult?.pairs.filter((pair) => pair.redundant) ?? []
 
   return <Card title="分钟因子研究工作台" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · 原生 5 分钟</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
       <Alert showIcon type="info" title="从因子到模拟盘的完整门控" description="三根 10 分钟阳线在 10:00 才确认，最早取 10:05 标记的下一根 5 分钟 Bar 开盘价（区间起点 10:00）买入，并按 A 股 T+1 取下一交易日 09:35 标记 Bar 的开盘价（区间起点 09:30）退出。当前参数研究是事后非 PIT 检验，永远不会自动进入 PAPER 或 LIVE。" />
-      <Form<FormValues> form={form} name="intraday-factor-research-backtest" layout="vertical" initialValues={initialValues} onFinish={(values) => { void submit(values) }}>
+      <Form<FormValues> form={form} name="intraday-factor-research-backtest" layout="vertical" initialValues={initialValues} onValuesChange={() => { setCorrelationResult(null); setCorrelationError(null) }} onFinish={(values) => { void submit(values) }}>
         <div className="backtest-lab-grid">
           <Form.Item name="factor" label="因子" rules={[{ required: true }]}><Select onChange={setSelectedFactor} options={[
             { value: 'opening_three_ten_minute_bullish', label: '09:30 起三根 10 分钟阳线' },
@@ -509,11 +552,66 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           size="small"
           columns={experimentColumns}
           dataSource={savedExperiments}
+          rowSelection={{
+            selectedRowKeys: selectedExperimentHashes,
+            onChange: (keys) => {
+              setSelectedExperimentHashes(keys.map(String))
+              setCorrelationResult(null)
+              setCorrelationError(null)
+            },
+          }}
           pagination={{ pageSize: 5, showSizeChanger: false }}
           scroll={{ x: 1450 }}
           locale={{ emptyText: '运行因子检验后可保存摘要，用于反复调整和横向比较。' }}
         />
-        <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，只保存规则、结果哈希和摘要；载入后必须重新运行。它不是正式实验、独立样本外证据或 PAPER 晋级输入，也不会同步到其他设备。</Typography.Text>
+        <Space orientation="vertical" style={{ width: '100%', marginTop: 12 }}>
+          <Space wrap>
+            <Button
+              loading={correlationRunning}
+              disabled={selectedExperimentHashes.length < 2 || selectedExperimentHashes.length > 8}
+              onClick={() => { void runSelectedCorrelation() }}
+            >检验选中规则相关性（{selectedExperimentHashes.length}/8）</Button>
+            <Typography.Text type="secondary">按当前表单日期，在同一 75 股窗口重算 2–8 个连续方向分数。</Typography.Text>
+          </Space>
+          {correlationError && <Alert showIcon type="error" title="规则相关性检验未完成" description={correlationError} />}
+          {correlationResult && <>
+            <Alert
+              showIcon
+              type={correlationResult.passed ? 'success' : 'warning'}
+              title={correlationResult.passed ? '选中规则未发现高度相关对' : `发现 ${redundantPairs.length} 对高度相关规则`}
+              description={`${correlationResult.observation_count.toLocaleString('zh-CN')} 个同窗股票日观测；Pearson |ρ| ≥ ${correlationResult.redundancy_threshold} 判为冗余。使用三段十分钟实体收益构造连续方向分数，不使用二元开仓信号、未来字段或策略收益。结果只读，PAPER ${correlationResult.paper_readiness}，LIVE ${correlationResult.live_readiness}。`}
+            />
+            <Table
+              rowKey="rule_id"
+              size="small"
+              pagination={false}
+              dataSource={correlationMatrixRows}
+              columns={[
+                { title: '本地规则', dataIndex: 'label' },
+                ...correlationResult.rules.map((rule) => ({
+                  title: rule.rule_id,
+                  render: (_: unknown, row: IntradayFactorCorrelation['matrix'][number]) => formatNumber(row.correlations[rule.rule_id]),
+                })),
+              ]}
+              scroll={{ x: 720 }}
+            />
+            <Table
+              rowKey={(row) => `${row.left_rule_id}:${row.right_rule_id}`}
+              size="small"
+              pagination={false}
+              dataSource={correlationResult.pairs}
+              columns={[
+                { title: '规则 A', dataIndex: 'left_rule_id', render: (value: string) => `${value} · ${correlationLabels[value] ?? value}` },
+                { title: '规则 B', dataIndex: 'right_rule_id', render: (value: string) => `${value} · ${correlationLabels[value] ?? value}` },
+                { title: 'Pearson ρ', dataIndex: 'correlation', render: (value: string) => formatNumber(value) },
+                { title: '去冗余判定', dataIndex: 'redundant', render: (value: boolean) => value ? <Tag color="red">冗余</Tag> : <Tag color="green">保留</Tag> },
+              ]}
+              scroll={{ x: 760 }}
+            />
+            <Typography.Text type="secondary">相关性响应哈希 {correlationResult.preview_hash}；数据 checksum {correlationResult.dataset_checksum}；无状态写入、无外部订单。</Typography.Text>
+          </>}
+          <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，只保存规则、结果哈希和摘要；载入后必须重新运行。它不是正式实验、独立样本外证据或 PAPER 晋级输入，也不会同步到其他设备。</Typography.Text>
+        </Space>
       </Card>
     </Space>
   </Card>

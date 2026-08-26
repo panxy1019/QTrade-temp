@@ -515,6 +515,70 @@ export interface IntradayFactorBacktestRequest {
 
 export type IntradayOpeningDirection = 'BULLISH' | 'BEARISH' | 'IGNORE'
 
+export interface IntradayFactorCorrelationRule {
+  directions: [IntradayOpeningDirection, IntradayOpeningDirection, IntradayOpeningDirection]
+  combination: 'ALL' | 'ANY'
+}
+
+export interface IntradayFactorCorrelationRequest {
+  start: string
+  end: string
+  rules: IntradayFactorCorrelationRule[]
+}
+
+export interface IntradayFactorCorrelation {
+  classification: 'AD_HOC_INTRADAY_FACTOR_CORRELATION_CURRENT_NON_PIT'
+  parameters: IntradayFactorCorrelationRequest
+  score_contract: {
+    source_interval: 'NATIVE_5M_AGGREGATED_TO_10M'
+    source_timestamp_convention: 'BAR_END_TIME'
+    source_bars: string
+    known_at: '10:00_BAR_CLOSE'
+    score_definition: 'ALL_MIN_OR_ANY_MAX_OF_SIGNED_TEN_MINUTE_BODY_RETURNS'
+    binary_signal_used: false
+    future_features_used: false
+    arbitrary_code_execution: false
+  }
+  rules: Array<IntradayFactorCorrelationRule & {
+    rule_id: string
+    factor_id: string
+    name: string
+    expression: string
+  }>
+  observation_count: number
+  matrix: Array<{
+    rule_id: string
+    correlations: Record<string, string>
+  }>
+  pairs: Array<{
+    left_rule_id: string
+    right_rule_id: string
+    correlation: string
+    redundant: boolean
+  }>
+  redundancy_threshold: string
+  maximum_absolute_correlation: string
+  passed: boolean
+  data_version: string
+  dataset_checksum: string
+  data_interval: '5m'
+  selected_trading_days: string[]
+  exit_completion_day: string
+  source_bar_count: number
+  symbol_count: number
+  sector_count: number
+  point_in_time: false
+  future_adjustment_knowledge_possible: true
+  realtime_readiness: false
+  promotion: 'NOT_ELIGIBLE'
+  promotion_reasons: string[]
+  paper_readiness: 'NOT_ELIGIBLE'
+  live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION'
+  state_mutation: false
+  external_order_transmission: false
+  preview_hash: string
+}
+
 export interface IntradayPerformanceMetrics {
   total_return: string
   annualized_return: string

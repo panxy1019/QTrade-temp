@@ -273,6 +273,27 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     )
     assert intraday_factor.json()["state_mutation"] is False
     assert intraday_factor.json()["external_order_transmission"] is False
+    correlation = client.post(
+        _api("/intraday-factor-correlation"),
+        json={
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+            "rules": [
+                {
+                    "directions": ["BULLISH", "BULLISH", "BULLISH"],
+                    "combination": "ALL",
+                },
+                {
+                    "directions": ["BULLISH", "BEARISH", "IGNORE"],
+                    "combination": "ANY",
+                },
+            ],
+        },
+    )
+    assert correlation.status_code == 200
+    assert correlation.json()["observation_count"] == 1_500
+    assert correlation.json()["state_mutation"] is False
+    assert correlation.json()["external_order_transmission"] is False
 
     blocked = client.post(_api("/system/kill"), json={"reason": "must stay disabled"})
     assert blocked.status_code == 503

@@ -122,6 +122,7 @@ class IntradayFactorObservation:
     entry_price: Decimal
     exit_price: Decimal
     minimum_ten_minute_body_return: Decimal
+    ten_minute_body_returns: tuple[Decimal, Decimal, Decimal]
     directional_rule_score: Decimal
     opening_30m_return: Decimal
     opening_30m_range_position: Decimal
@@ -195,6 +196,24 @@ class IntradayCostStress:
 class IntradayResearchGate:
     passed: bool
     criteria: Mapping[str, bool]
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayRuleCorrelationPair:
+    left_rule_id: str
+    right_rule_id: str
+    correlation: Decimal
+    redundant: bool
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayRuleCorrelationResult:
+    observation_count: int
+    matrix: tuple[tuple[Decimal, ...], ...]
+    pairs: tuple[IntradayRuleCorrelationPair, ...]
+    redundancy_threshold: Decimal
+    maximum_absolute_correlation: Decimal
+    passed: bool
 
 
 @dataclass(frozen=True, slots=True)
@@ -321,9 +340,10 @@ def run_opening_triple_bullish_research(
             day_bars = grouped[(symbol, trading_day)]
             exit_bars = grouped[(symbol, exit_day)]
             first_six = day_bars[:6]
-            ten_minute_returns = tuple(
-                pair[-1].close / pair[0].open - Decimal("1")
-                for pair in (first_six[0:2], first_six[2:4], first_six[4:6])
+            ten_minute_returns = (
+                first_six[1].close / first_six[0].open - Decimal("1"),
+                first_six[3].close / first_six[2].open - Decimal("1"),
+                first_six[5].close / first_six[4].open - Decimal("1"),
             )
             minimum_ten_minute_body_return = min(ten_minute_returns)
             directional_rule_score = selected_spec.directional_score(
@@ -364,6 +384,7 @@ def run_opening_triple_bullish_research(
                     minimum_ten_minute_body_return=(
                         minimum_ten_minute_body_return
                     ),
+                    ten_minute_body_returns=ten_minute_returns,
                     directional_rule_score=directional_rule_score,
                     opening_30m_return=(
                         signal_bar.close / first_six[0].open - Decimal("1")
@@ -1094,3 +1115,66 @@ def _pearson(left: list[Decimal], right: list[Decimal]) -> Decimal:
     )
     denominator = (left_variance * right_variance).sqrt()
     return Decimal("0") if denominator == 0 else covariance / denominator
+
+
+def evaluate_opening_rule_correlations(
+    observations: tuple[IntradayFactorObservation, ...],
+    specs: tuple[OpeningTripleBullishSpec, ...],
+    *,
+    redundancy_threshold: Decimal = Decimal("0.90"),
+) -> IntradayRuleCorrelationResult:
+    if not 2 <= len(specs) <= 8:
+        raise ValueError("factor correlation requires between two and eight rules")
+    if not observations:
+        raise ValueError("factor correlation requires observations")
+    if (
+        not redundancy_threshold.is_finite()
+        or redundancy_threshold <= 0
+        or redundancy_threshold > 1
+    ):
+        raise ValueError("redundancy threshold must be finite and in (0, 1]")
+    score_series = [
+        [
+            spec.directional_score(observation.ten_minute_body_returns)
+            for observation in observations
+        ]
+        for spec in specs
+    ]
+    matrix: list[list[Decimal]] = [
+        [Decimal("0") for _ in specs] for _ in specs
+    ]
+    pairs: list[IntradayRuleCorrelationPair] = []
+    maximum_absolute_correlation = Decimal("0")
+    for left_index, left in enumerate(score_series):
+        for right_index in range(left_index, len(specs)):
+            right = score_series[right_index]
+            correlation = (
+                Decimal("1")
+                if left_index == right_index or left == right
+                else _pearson(left, right)
+            )
+            matrix[left_index][right_index] = correlation
+            matrix[right_index][left_index] = correlation
+            if left_index == right_index:
+                continue
+            absolute_correlation = abs(correlation)
+            maximum_absolute_correlation = max(
+                maximum_absolute_correlation,
+                absolute_correlation,
+            )
+            pairs.append(
+                IntradayRuleCorrelationPair(
+                    left_rule_id=f"R{left_index + 1:02d}",
+                    right_rule_id=f"R{right_index + 1:02d}",
+                    correlation=correlation,
+                    redundant=absolute_correlation >= redundancy_threshold,
+                )
+            )
+    return IntradayRuleCorrelationResult(
+        observation_count=len(observations),
+        matrix=tuple(tuple(row) for row in matrix),
+        pairs=tuple(pairs),
+        redundancy_threshold=redundancy_threshold,
+        maximum_absolute_correlation=maximum_absolute_correlation,
+        passed=not any(pair.redundant for pair in pairs),
+    )

@@ -9,6 +9,7 @@ from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.research.intraday_factor import (
     OpeningTripleBullishSpec,
     _newey_west_mean_statistics,
+    evaluate_opening_rule_correlations,
     run_opening_triple_bullish_research,
 )
 
@@ -189,6 +190,47 @@ def test_bounded_opening_direction_rule_rejects_unsafe_or_empty_definitions() ->
     assert any_rule.directional_score(
         (Decimal("-0.001"), Decimal("-0.002"), Decimal("0"))
     ) == Decimal("0.002")
+
+
+def test_opening_rule_correlations_are_symmetric_and_flag_duplicate_scores() -> None:
+    days = tuple(date(2026, 7, 1) + timedelta(days=index) for index in range(7))
+    symbols = tuple(f"6005{index:02d}" for index in range(10))
+    result = run_opening_triple_bullish_research(
+        _bars(days=days, symbols=symbols, signal_symbols=set(symbols[:4])),
+        sectors={
+            symbol: (f"S{index // 2}", f"板块{index // 2}")
+            for index, symbol in enumerate(symbols)
+        },
+        start=days[0],
+        end=days[-2],
+    )
+    default = OpeningTripleBullishSpec()
+    mixed = OpeningTripleBullishSpec(
+        directions=("BULLISH", "BEARISH", "IGNORE"),
+        combination="ANY",
+    )
+
+    correlations = evaluate_opening_rule_correlations(
+        result.observations,
+        (default, default, mixed),
+    )
+
+    assert correlations.observation_count == 60
+    assert correlations.matrix[0][0] == correlations.matrix[1][1] == 1
+    assert correlations.matrix[0][1] == correlations.matrix[1][0] == 1
+    assert correlations.pairs[0].left_rule_id == "R01"
+    assert correlations.pairs[0].right_rule_id == "R02"
+    assert correlations.pairs[0].redundant is True
+    assert correlations.maximum_absolute_correlation == 1
+    assert correlations.passed is False
+    assert all(
+        correlations.matrix[left][right] == correlations.matrix[right][left]
+        for left in range(3)
+        for right in range(3)
+    )
+
+    with pytest.raises(ValueError, match="between two and eight"):
+        evaluate_opening_rule_correlations(result.observations, (default,))
 
 
 def test_research_reports_factor_effectiveness_correlation_cost_and_sector_stability() -> None:

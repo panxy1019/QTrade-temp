@@ -44,10 +44,12 @@ from qtrade.research import (
     BacktestPreviewSpec,
     IntradayFactorGroup,
     IntradayFactorResearchResult,
+    IntradayRuleCorrelationResult,
     MinuteBacktestResult,
     MinuteCurveMetrics,
     OpeningTripleBullishSpec,
     PerformanceMetrics,
+    evaluate_opening_rule_correlations,
     run_backtest_preview,
     run_minute_overlay_backtest,
     run_opening_triple_bullish_research,
@@ -166,6 +168,41 @@ class IntradayFactorBacktestRequest(BaseModel):
         if not any(direction != "IGNORE" for direction in self.directions):
             raise ValueError(
                 "opening rule requires at least one completed ten-minute bar"
+            )
+        return self
+
+
+class IntradayFactorCorrelationRule(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    directions: tuple[
+        Literal["BULLISH", "BEARISH", "IGNORE"],
+        Literal["BULLISH", "BEARISH", "IGNORE"],
+        Literal["BULLISH", "BEARISH", "IGNORE"],
+    ]
+    combination: Literal["ALL", "ANY"]
+
+    @model_validator(mode="after")
+    def validate_rule_contract(self) -> Self:
+        if not any(direction != "IGNORE" for direction in self.directions):
+            raise ValueError(
+                "opening rule requires at least one completed ten-minute bar"
+            )
+        return self
+
+
+class IntradayFactorCorrelationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    start: date
+    end: date
+    rules: tuple[IntradayFactorCorrelationRule, ...]
+
+    @model_validator(mode="after")
+    def validate_rule_count(self) -> Self:
+        if not 2 <= len(self.rules) <= 8:
+            raise ValueError(
+                "factor correlation requires between two and eight rules"
             )
         return self
 
@@ -1355,20 +1392,15 @@ def create_app(
         except (ArithmeticError, RuntimeError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
-    @app.post("/intraday-factor-backtest")
-    def intraday_factor_backtest(
-        payload: IntradayFactorBacktestRequest,
-        _: str = Depends(_require_role(Role.READ, auth_config)),
-    ) -> dict[str, object]:
-        try:
-            spec = OpeningTripleBullishSpec(
-                cost_bps=payload.cost_bps,
-                minimum_body_return_bps=payload.minimum_body_return_bps,
-                directions=payload.directions,
-                combination=payload.combination,
-            )
-        except ValueError as exc:
-            raise HTTPException(status_code=422, detail=str(exc)) from exc
+    def _load_intraday_factor_source(
+        start: date,
+        end: date,
+    ) -> tuple[
+        dict[str, object],
+        dict[str, tuple[str, str]],
+        list[str],
+        list[Bar],
+    ]:
         dataset = _load_verified_minute_dataset(
             state.long_five_minute_manifest_path,
             expected_classification=(
@@ -1384,8 +1416,8 @@ def create_app(
                 detail="verified long five-minute dataset unavailable",
             )
         trading_days = cast(list[str], dataset["trading_days"])
-        start_text = payload.start.isoformat()
-        end_text = payload.end.isoformat()
+        start_text = start.isoformat()
+        end_text = end.isoformat()
         if start_text not in trading_days or end_text not in trading_days:
             raise HTTPException(
                 status_code=422,
@@ -1446,6 +1478,25 @@ def create_app(
                 status_code=409,
                 detail="verified intraday factor source bars failed validation",
             )
+        return dataset, sectors, required_trading_days, bars
+
+    @app.post("/intraday-factor-backtest")
+    def intraday_factor_backtest(
+        payload: IntradayFactorBacktestRequest,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        try:
+            spec = OpeningTripleBullishSpec(
+                cost_bps=payload.cost_bps,
+                minimum_body_return_bps=payload.minimum_body_return_bps,
+                directions=payload.directions,
+                combination=payload.combination,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        dataset, sectors, required_trading_days, bars = (
+            _load_intraday_factor_source(payload.start, payload.end)
+        )
         try:
             result = run_opening_triple_bullish_research(
                 bars,
@@ -1456,6 +1507,46 @@ def create_app(
             )
             return _intraday_factor_preview(
                 payload=payload,
+                result=result,
+                dataset=dataset,
+                required_trading_days=required_trading_days,
+                source_bar_count=len(bars),
+            )
+        except (ArithmeticError, RuntimeError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @app.post("/intraday-factor-correlation")
+    def intraday_factor_correlation(
+        payload: IntradayFactorCorrelationRequest,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        try:
+            specs = tuple(
+                OpeningTripleBullishSpec(
+                    cost_bps=Decimal("0"),
+                    minimum_body_return_bps=Decimal("0"),
+                    directions=rule.directions,
+                    combination=rule.combination,
+                )
+                for rule in payload.rules
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        dataset, sectors, required_trading_days, bars = (
+            _load_intraday_factor_source(payload.start, payload.end)
+        )
+        try:
+            observations = run_opening_triple_bullish_research(
+                bars,
+                sectors=sectors,
+                start=payload.start,
+                end=payload.end,
+                spec=OpeningTripleBullishSpec(cost_bps=Decimal("0")),
+            ).observations
+            result = evaluate_opening_rule_correlations(observations, specs)
+            return _intraday_factor_correlation_preview(
+                payload=payload,
+                specs=specs,
                 result=result,
                 dataset=dataset,
                 required_trading_days=required_trading_days,
@@ -8436,6 +8527,118 @@ def _intraday_group_payload(group: IntradayFactorGroup) -> dict[str, object]:
         "signal_hit_rate": str(group.signal_hit_rate),
         "strategy_metrics": _performance_metrics_payload(group.strategy_metrics),
         "benchmark_metrics": _performance_metrics_payload(group.benchmark_metrics),
+    }
+
+
+def _intraday_factor_correlation_preview(
+    *,
+    payload: IntradayFactorCorrelationRequest,
+    specs: tuple[OpeningTripleBullishSpec, ...],
+    result: IntradayRuleCorrelationResult,
+    dataset: dict[str, object],
+    required_trading_days: list[str],
+    source_bar_count: int,
+) -> dict[str, object]:
+    rule_ids = tuple(f"R{index:02d}" for index in range(1, len(specs) + 1))
+    rules = [
+        {
+            "rule_id": rule_id,
+            "factor_id": spec.factor_id,
+            "name": spec.factor_name,
+            "expression": spec.factor_expression,
+            "directions": list(spec.directions),
+            "combination": spec.combination,
+        }
+        for rule_id, spec in zip(rule_ids, specs, strict=True)
+    ]
+    unsigned: dict[str, object] = {
+        "classification": (
+            "AD_HOC_INTRADAY_FACTOR_CORRELATION_CURRENT_NON_PIT"
+        ),
+        "parameters": {
+            "start": payload.start.isoformat(),
+            "end": payload.end.isoformat(),
+            "rules": [
+                {
+                    "directions": list(rule.directions),
+                    "combination": rule.combination,
+                }
+                for rule in payload.rules
+            ],
+        },
+        "score_contract": {
+            "source_interval": "NATIVE_5M_AGGREGATED_TO_10M",
+            "source_timestamp_convention": "BAR_END_TIME",
+            "source_bars": "09:35,09:40,09:45,09:50,09:55,10:00",
+            "known_at": "10:00_BAR_CLOSE",
+            "score_definition": (
+                "ALL_MIN_OR_ANY_MAX_OF_SIGNED_TEN_MINUTE_BODY_RETURNS"
+            ),
+            "binary_signal_used": False,
+            "future_features_used": False,
+            "arbitrary_code_execution": False,
+        },
+        "rules": rules,
+        "observation_count": result.observation_count,
+        "matrix": [
+            {
+                "rule_id": rule_id,
+                "correlations": {
+                    column_id: str(value)
+                    for column_id, value in zip(
+                        rule_ids,
+                        row,
+                        strict=True,
+                    )
+                },
+            }
+            for rule_id, row in zip(rule_ids, result.matrix, strict=True)
+        ],
+        "pairs": [
+            {
+                "left_rule_id": pair.left_rule_id,
+                "right_rule_id": pair.right_rule_id,
+                "correlation": str(pair.correlation),
+                "redundant": pair.redundant,
+            }
+            for pair in result.pairs
+        ],
+        "redundancy_threshold": str(result.redundancy_threshold),
+        "maximum_absolute_correlation": str(
+            result.maximum_absolute_correlation
+        ),
+        "passed": result.passed,
+        "data_version": dataset["data_version"],
+        "dataset_checksum": dataset["checksum"],
+        "data_interval": "5m",
+        "selected_trading_days": required_trading_days[:-1],
+        "exit_completion_day": required_trading_days[-1],
+        "source_bar_count": source_bar_count,
+        "symbol_count": dataset["symbol_count"],
+        "sector_count": dataset["sector_count"],
+        "point_in_time": False,
+        "future_adjustment_knowledge_possible": True,
+        "realtime_readiness": False,
+        "promotion": "NOT_ELIGIBLE",
+        "promotion_reasons": [
+            "AD_HOC_CORRELATION_DIAGNOSTIC_ONLY",
+            "CURRENT_CONSTITUENTS_ARE_NOT_POINT_IN_TIME",
+            "NO_AUTHORIZED_FORWARD_REALTIME_OBSERVATION",
+        ],
+        "paper_readiness": "NOT_ELIGIBLE",
+        "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
+        "state_mutation": False,
+        "external_order_transmission": False,
+    }
+    canonical = json.dumps(
+        unsigned,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return {
+        **unsigned,
+        "preview_hash": sha256(canonical.encode("utf-8")).hexdigest(),
     }
 
 
