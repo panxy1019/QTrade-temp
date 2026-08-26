@@ -365,8 +365,12 @@ locked cost stress simultaneously; the disclosed run passed none of those three.
 The same winner now has 15 sector-only and 15 whole-sector-exclusion test rows.
 Only 4/15 sectors were positive, and every exclusion remained negative from
 -7.2180% to -4.7210%, so one bad sector cannot explain the aggregate loss. The
-current discovery gate adds this sector stress and passes 0/4; it cannot create
-PAPER or state authority.
+sector-stage discovery gate adds this sector stress and passes 0/4. The same
+fixed result is also recomputed for all 75 stocks: only 22/75 are positive, the
+median stock return is -1.1644%, and one stock has no signal. The five largest
+absolute stock returns contribute 24.79%, so only the concentration condition
+passes. The consolidated five-stage gate is 0/5 and cannot create PAPER or state
+authority.
 
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no

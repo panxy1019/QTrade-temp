@@ -251,12 +251,35 @@ const discovery = {
     },
     passed: false,
   },
+  locked_test_symbol_stress: {
+    selected_candidate_id: 'DIR-XDU-T0000', test_start: '2026-06-25', test_end: '2026-07-14',
+    candidate_reselected: false, symbol_rows_used_for_selection: false,
+    symbols: Array.from({ length: 75 }, (_, index) => ({
+      symbol: `${index < 30 ? '00' : index < 55 ? '60' : '30'}${String(index + 1).padStart(4, '0')}`,
+      sector_code: `S${String((index % 15) + 1).padStart(2, '0')}`,
+      sector_name: `行业${(index % 15) + 1}`, observation_count: 20,
+      signal_count: index === 74 ? 0 : 2 + (index % 9),
+      strategy_metrics: { ...discoveryMetrics, total_return: index < 22 ? '0.02' : '-0.0116444' },
+      benchmark_metrics: discoveryMetrics,
+    })),
+    positive_symbol_count: 22, positive_symbol_ratio: '0.2933333333',
+    median_symbol_total_return: '-0.0116444', top_five_absolute_return_share: '0.2479332831',
+    top_five_absolute_return_symbols: ['002558', '002353', '002028', '000408', '603993'],
+    criteria: {
+      every_locked_test_symbol_has_signal: false,
+      positive_locked_test_symbol_ratio_at_least_0_60: false,
+      median_locked_test_symbol_total_return_positive: false,
+      top_five_absolute_symbol_return_share_below_0_30: true,
+    },
+    passed: false,
+  },
   discovery_gate: {
     criteria: {
       chronological_locked_test_passed: false,
       selection_bias_audit_passed: false,
       locked_test_cost_stress_passed: false,
       locked_test_sector_stress_passed: false,
+      locked_test_symbol_stress_passed: false,
     },
     passed: false,
     promotion_authority: false,
@@ -348,8 +371,12 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('锁定规则未通过固定成本压力门')).toBeInTheDocument()
     expect(screen.getByText('完整因子发现研究门未通过')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过多行业鲁棒性门')).toBeInTheDocument()
+    expect(screen.getByText('锁定规则未通过逐股票鲁棒性门')).toBeInTheDocument()
     expect(screen.getByText('4/15 · 26.67%')).toBeInTheDocument()
     expect(screen.getByText('0/15 · 0.00%')).toBeInTheDocument()
+    expect(screen.getByText('22/75 · 29.33%')).toBeInTheDocument()
+    expect(screen.getByText('-1.16%')).toBeInTheDocument()
+    expect(screen.getByText('24.79%')).toBeInTheDocument()
     expect(screen.getByText('-11.62%')).toBeInTheDocument()
     expect(screen.getByText('41.43%')).toBeInTheDocument()
     expect(screen.getByText('DIR-DDD-T0020 · 24/70')).toBeInTheDocument()

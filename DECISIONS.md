@@ -1642,3 +1642,25 @@ worst exclusion. Only signal coverage passes. The consolidated historical
 discovery gate now requires chronological lock, CSCV/PBO, cost stress and sector
 stress and is 0/4. It remains non-PIT, reused, `NOT_ELIGIBLE`, stateless and
 external-order-disabled.
+
+## ADR-102 — Stock robustness keeps all locked-test symbols visible
+
+Status: accepted, 2026-08-27.
+
+Sector aggregates and whole-sector exclusions can still hide a rule that works
+for only a minority of stocks, misses some constituents entirely or depends on
+a few extreme names. QTrade therefore replays the exact locked candidate,
+threshold, 5 bps cost, 326 signals and 20 chronological test sessions once per
+stock for all 75 frozen symbols. Per-stock rows cannot change the training rank,
+factor, threshold or stock universe and cannot be filtered back into selection.
+
+Only 22/75 stocks had positive total return, a 29.33% positive ratio, and the
+median stock return was -1.1644%. `600276` had no locked-test signal. The five
+largest absolute stock returns belonged to `002558`, `002353`, `002028`,
+`000408` and `603993` and contributed 24.79% of total absolute per-stock return
+magnitude. The fixed stock gate requires every stock to have a signal, at least
+60% positive stocks, a positive median return and less than 30% top-five
+absolute-return concentration. Only concentration passes. The consolidated
+historical discovery gate now requires chronological lock, CSCV/PBO, cost,
+sector and stock stress and is 0/5. It remains non-PIT, viewed reused history,
+`NOT_ELIGIBLE`, stateless and external-order-disabled.

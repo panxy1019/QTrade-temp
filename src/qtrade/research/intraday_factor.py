@@ -385,6 +385,17 @@ class IntradaySelectionBiasAudit:
 
 
 @dataclass(frozen=True, slots=True)
+class IntradayDiscoverySymbolStress:
+    symbol: str
+    sector_code: str
+    sector_name: str
+    observation_count: int
+    signal_count: int
+    strategy_metrics: PerformanceMetrics
+    benchmark_metrics: PerformanceMetrics
+
+
+@dataclass(frozen=True, slots=True)
 class IntradayFactorDiscoveryResult:
     candidate_count: int
     candidates: tuple[IntradayDiscoveryCandidate, ...]
@@ -408,6 +419,12 @@ class IntradayFactorDiscoveryResult:
     locked_test_sector_exclusions: tuple[IntradayFactorGroup, ...]
     locked_test_sector_stress_criteria: Mapping[str, bool]
     locked_test_sector_stress_passed: bool
+    locked_test_symbols: tuple[IntradayDiscoverySymbolStress, ...]
+    locked_test_positive_symbol_ratio: Decimal
+    locked_test_median_symbol_total_return: Decimal
+    locked_test_top_five_absolute_return_share: Decimal
+    locked_test_symbol_stress_criteria: Mapping[str, bool]
+    locked_test_symbol_stress_passed: bool
     test_observation_count: int
     test_signal_count: int
     test_signal_session_count: int
@@ -1868,6 +1885,80 @@ def discover_opening_direction_rules(
         )
         >= 0,
     }
+    symbol_groups = _group_results(
+        test_rows,
+        list(test_days),
+        cost_bps=cost_bps,
+        key=lambda item: (item.symbol, item.symbol),
+    )
+    symbol_sector_identity: dict[str, tuple[str, str]] = {}
+    for row in test_rows:
+        identity = (row.sector_code, row.sector_name)
+        current = symbol_sector_identity.setdefault(row.symbol, identity)
+        if current != identity:
+            raise RuntimeError("symbol sector identity changed inside locked test")
+    locked_test_symbols = tuple(
+        IntradayDiscoverySymbolStress(
+            symbol=row.group_id,
+            sector_code=symbol_sector_identity[row.group_id][0],
+            sector_name=symbol_sector_identity[row.group_id][1],
+            observation_count=row.observation_count,
+            signal_count=row.signal_count,
+            strategy_metrics=row.strategy_metrics,
+            benchmark_metrics=row.benchmark_metrics,
+        )
+        for row in symbol_groups
+    )
+    positive_symbol_count = sum(
+        row.strategy_metrics.total_return > 0 for row in locked_test_symbols
+    )
+    positive_symbol_ratio = Decimal(positive_symbol_count) / len(
+        locked_test_symbols
+    )
+    ordered_symbol_returns = sorted(
+        row.strategy_metrics.total_return for row in locked_test_symbols
+    )
+    symbol_middle = len(ordered_symbol_returns) // 2
+    median_symbol_total_return = (
+        ordered_symbol_returns[symbol_middle]
+        if len(ordered_symbol_returns) % 2
+        else (
+            ordered_symbol_returns[symbol_middle - 1]
+            + ordered_symbol_returns[symbol_middle]
+        )
+        / Decimal("2")
+    )
+    absolute_symbol_returns = sorted(
+        (
+            abs(row.strategy_metrics.total_return)
+            for row in locked_test_symbols
+        ),
+        reverse=True,
+    )
+    absolute_symbol_return_total = sum(
+        absolute_symbol_returns,
+        start=Decimal("0"),
+    )
+    top_five_absolute_return_share = (
+        Decimal("0")
+        if absolute_symbol_return_total == 0
+        else sum(absolute_symbol_returns[:5], start=Decimal("0"))
+        / absolute_symbol_return_total
+    )
+    locked_test_symbol_stress_criteria = {
+        "every_locked_test_symbol_has_signal": all(
+            row.signal_count > 0 for row in locked_test_symbols
+        ),
+        "positive_locked_test_symbol_ratio_at_least_0_60": (
+            positive_symbol_ratio >= Decimal("0.60")
+        ),
+        "median_locked_test_symbol_total_return_positive": (
+            median_symbol_total_return > 0
+        ),
+        "top_five_absolute_symbol_return_share_below_0_30": (
+            top_five_absolute_return_share < Decimal("0.30")
+        ),
+    }
     test_criteria = {
         "minimum_250_test_observations": len(test_rows) >= 250,
         "minimum_twenty_test_signals": test_signal_count >= 20,
@@ -1922,6 +2013,18 @@ def discover_opening_direction_rules(
         ),
         locked_test_sector_stress_passed=all(
             locked_test_sector_stress_criteria.values()
+        ),
+        locked_test_symbols=locked_test_symbols,
+        locked_test_positive_symbol_ratio=positive_symbol_ratio,
+        locked_test_median_symbol_total_return=median_symbol_total_return,
+        locked_test_top_five_absolute_return_share=(
+            top_five_absolute_return_share
+        ),
+        locked_test_symbol_stress_criteria=(
+            locked_test_symbol_stress_criteria
+        ),
+        locked_test_symbol_stress_passed=all(
+            locked_test_symbol_stress_criteria.values()
         ),
         test_observation_count=len(test_rows),
         test_signal_count=test_signal_count,

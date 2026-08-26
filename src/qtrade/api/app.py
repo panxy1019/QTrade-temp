@@ -9104,6 +9104,54 @@ def _intraday_factor_discovery_preview(
             "criteria": dict(result.locked_test_sector_stress_criteria),
             "passed": result.locked_test_sector_stress_passed,
         },
+        "locked_test_symbol_stress": {
+            "selected_candidate_id": result.selected_candidate_id,
+            "test_start": result.test_start.isoformat(),
+            "test_end": result.test_end.isoformat(),
+            "candidate_reselected": False,
+            "symbol_rows_used_for_selection": False,
+            "symbols": [
+                {
+                    "symbol": row.symbol,
+                    "sector_code": row.sector_code,
+                    "sector_name": row.sector_name,
+                    "observation_count": row.observation_count,
+                    "signal_count": row.signal_count,
+                    "strategy_metrics": _performance_metrics_payload(
+                        row.strategy_metrics
+                    ),
+                    "benchmark_metrics": _performance_metrics_payload(
+                        row.benchmark_metrics
+                    ),
+                }
+                for row in result.locked_test_symbols
+            ],
+            "positive_symbol_count": sum(
+                row.strategy_metrics.total_return > 0
+                for row in result.locked_test_symbols
+            ),
+            "positive_symbol_ratio": str(
+                result.locked_test_positive_symbol_ratio
+            ),
+            "median_symbol_total_return": str(
+                result.locked_test_median_symbol_total_return
+            ),
+            "top_five_absolute_return_share": str(
+                result.locked_test_top_five_absolute_return_share
+            ),
+            "top_five_absolute_return_symbols": [
+                row.symbol
+                for row in sorted(
+                    result.locked_test_symbols,
+                    key=lambda item: (
+                        -abs(item.strategy_metrics.total_return),
+                        item.symbol,
+                    ),
+                )[:5]
+            ],
+            "criteria": dict(result.locked_test_symbol_stress_criteria),
+            "passed": result.locked_test_symbol_stress_passed,
+        },
         "discovery_gate": {
             "criteria": {
                 "chronological_locked_test_passed": result.test_gate_passed,
@@ -9116,6 +9164,9 @@ def _intraday_factor_discovery_preview(
                 "locked_test_sector_stress_passed": (
                     result.locked_test_sector_stress_passed
                 ),
+                "locked_test_symbol_stress_passed": (
+                    result.locked_test_symbol_stress_passed
+                ),
             },
             "passed": all(
                 (
@@ -9123,6 +9174,7 @@ def _intraday_factor_discovery_preview(
                     result.overfitting_audit.passed,
                     result.locked_test_cost_stress_passed,
                     result.locked_test_sector_stress_passed,
+                    result.locked_test_symbol_stress_passed,
                 )
             ),
             "promotion_authority": False,

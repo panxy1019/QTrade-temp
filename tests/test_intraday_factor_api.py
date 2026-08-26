@@ -434,6 +434,9 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
             "locked_test_sector_stress_passed": payload[
                 "locked_test_sector_stress"
             ]["passed"],
+            "locked_test_symbol_stress_passed": payload[
+                "locked_test_symbol_stress"
+            ]["passed"],
         },
         "passed": False,
         "promotion_authority": False,
@@ -459,6 +462,24 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
         payload["test_validation"]["observation_count"]
     )
     assert sector_stress["passed"] is all(sector_stress["criteria"].values())
+    symbol_stress = payload["locked_test_symbol_stress"]
+    assert symbol_stress["selected_candidate_id"] == payload["selected"][
+        "candidate_id"
+    ]
+    assert symbol_stress["test_start"] == payload["split"]["test_start"]
+    assert symbol_stress["test_end"] == payload["split"]["test_end"]
+    assert symbol_stress["candidate_reselected"] is False
+    assert symbol_stress["symbol_rows_used_for_selection"] is False
+    assert len(symbol_stress["symbols"]) == 75
+    assert len({row["symbol"] for row in symbol_stress["symbols"]}) == 75
+    assert sum(row["observation_count"] for row in symbol_stress["symbols"]) == (
+        payload["test_validation"]["observation_count"]
+    )
+    assert sum(row["signal_count"] for row in symbol_stress["symbols"]) == payload[
+        "test_validation"
+    ]["signal_count"]
+    assert len(symbol_stress["top_five_absolute_return_symbols"]) == 5
+    assert symbol_stress["passed"] is all(symbol_stress["criteria"].values())
     assert payload["selected"]["candidate_id"] in {
         candidate["candidate_id"] for candidate in payload["candidates"]
     }

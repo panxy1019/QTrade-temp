@@ -95,10 +95,15 @@ const gateLabels: Record<string, string> = {
   selection_bias_audit_passed: '组合式选择偏差审计通过',
   locked_test_cost_stress_passed: '锁定测试固定成本压力通过',
   locked_test_sector_stress_passed: '锁定测试多行业压力通过',
+  locked_test_symbol_stress_passed: '锁定测试逐股票压力通过',
   every_locked_test_sector_has_signal: '每个测试行业均有信号',
   positive_locked_test_sector_ratio_at_least_0_60: '至少 60% 测试行业收益为正',
   positive_leave_one_sector_out_ratio_at_least_0_80: '至少 80% 整行业剔除收益为正',
   worst_leave_one_sector_out_total_return_non_negative: '最差整行业剔除收益不为负',
+  every_locked_test_symbol_has_signal: '每只测试股票均有信号',
+  positive_locked_test_symbol_ratio_at_least_0_60: '至少 60% 测试股票收益为正',
+  median_locked_test_symbol_total_return_positive: '测试股票收益中位数为正',
+  top_five_absolute_symbol_return_share_below_0_30: '绝对收益贡献前五股占比低于 30%',
 }
 
 export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
@@ -618,6 +623,38 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           ]} />
           <Alert
             showIcon
+            type={discoveryResult.locked_test_symbol_stress.passed ? 'success' : 'warning'}
+            title={discoveryResult.locked_test_symbol_stress.passed ? '锁定规则通过逐股票鲁棒性门' : '锁定规则未通过逐股票鲁棒性门'}
+            description={`固定 ${discoveryResult.locked_test_symbol_stress.selected_candidate_id} 在同一互斥测试段分别复算 ${discoveryResult.locked_test_symbol_stress.symbols.length} 只股票。股票行不参与训练排序，不重选因子或股票。`}
+          />
+          <div className="description-grid">
+            <Metric label="正收益股票" value={`${discoveryResult.locked_test_symbol_stress.positive_symbol_count}/${discoveryResult.locked_test_symbol_stress.symbols.length} · ${formatPercent(discoveryResult.locked_test_symbol_stress.positive_symbol_ratio)}`} />
+            <Metric label="股票收益中位数" value={formatPercent(discoveryResult.locked_test_symbol_stress.median_symbol_total_return)} />
+            <Metric label="绝对收益前五集中度" value={formatPercent(discoveryResult.locked_test_symbol_stress.top_five_absolute_return_share)} />
+            <Metric label="绝对收益前五股票" value={discoveryResult.locked_test_symbol_stress.top_five_absolute_return_symbols.join(' / ')} />
+          </div>
+          <Table
+            rowKey="symbol"
+            size="small"
+            pagination={{ pageSize: 10, showSizeChanger: false }}
+            dataSource={discoveryResult.locked_test_symbol_stress.symbols}
+            columns={[
+              { title: '股票', dataIndex: 'symbol' },
+              { title: '行业', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_symbol_stress']['symbols'][number]) => `${row.sector_code} · ${row.sector_name}` },
+              { title: '信号 / 观测', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_symbol_stress']['symbols'][number]) => `${row.signal_count} / ${row.observation_count}` },
+              { title: '策略收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_symbol_stress']['symbols'][number]) => formatPercent(row.strategy_metrics.total_return) },
+              { title: '超额收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_symbol_stress']['symbols'][number]) => formatPercent(row.strategy_metrics.excess_return) },
+              { title: 'Sharpe', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_symbol_stress']['symbols'][number]) => formatNumber(row.strategy_metrics.sharpe) },
+              { title: '最大回撤', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_symbol_stress']['symbols'][number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+            ]}
+            scroll={{ x: 960 }}
+          />
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.locked_test_symbol_stress.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '锁定测试股票门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
+          <Alert
+            showIcon
             type={discoveryResult.overfitting_audit.passed ? 'info' : 'warning'}
             title={discoveryResult.overfitting_audit.passed && !discoveryResult.test_validation.passed
               ? 'CSCV 选择偏差门通过，但时间顺序锁定测试仍失败'
@@ -675,7 +712,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             showIcon
             type={discoveryResult.discovery_gate.passed ? 'success' : 'error'}
             title={discoveryResult.discovery_gate.passed ? '完整因子发现研究门通过，但仍需独立前向证据' : '完整因子发现研究门未通过'}
-            description="时间顺序锁定测试、组合式选择偏差、固定成本压力和多行业压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
+            description="时间顺序锁定测试、组合式选择偏差、固定成本压力、多行业压力和逐股票压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
           />
           <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.discovery_gate.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
             { title: '完整发现门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },

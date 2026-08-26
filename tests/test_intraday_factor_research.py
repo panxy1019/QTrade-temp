@@ -452,6 +452,47 @@ def test_bounded_opening_rule_discovery_locks_training_before_disjoint_test() ->
     assert first.locked_test_sector_stress_passed is all(
         first.locked_test_sector_stress_criteria.values()
     )
+    assert len(first.locked_test_symbols) == len(symbols)
+    assert [row.symbol for row in first.locked_test_symbols] == sorted(symbols)
+    assert all(
+        row.observation_count == first.test_session_count
+        for row in first.locked_test_symbols
+    )
+    positive_symbol_count = sum(
+        row.strategy_metrics.total_return > 0
+        for row in first.locked_test_symbols
+    )
+    assert first.locked_test_positive_symbol_ratio == (
+        Decimal(positive_symbol_count) / len(first.locked_test_symbols)
+    )
+    ordered_returns = sorted(
+        row.strategy_metrics.total_return for row in first.locked_test_symbols
+    )
+    middle = len(ordered_returns) // 2
+    expected_median = (
+        ordered_returns[middle]
+        if len(ordered_returns) % 2
+        else (ordered_returns[middle - 1] + ordered_returns[middle])
+        / Decimal("2")
+    )
+    assert first.locked_test_median_symbol_total_return == expected_median
+    absolute_returns = sorted(
+        (
+            abs(row.strategy_metrics.total_return)
+            for row in first.locked_test_symbols
+        ),
+        reverse=True,
+    )
+    assert first.locked_test_top_five_absolute_return_share == (
+        sum(absolute_returns[:5], start=Decimal("0"))
+        / sum(absolute_returns, start=Decimal("0"))
+    )
+    assert sum(row.signal_count for row in first.locked_test_symbols) == (
+        first.test_signal_count
+    )
+    assert first.locked_test_symbol_stress_passed is all(
+        first.locked_test_symbol_stress_criteria.values()
+    )
     assert first.test_observation_count == 20 * len(symbols)
     assert first.selection_uses_test_returns is False
     assert first.promotion == "NOT_ELIGIBLE"

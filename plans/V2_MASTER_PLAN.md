@@ -230,6 +230,9 @@ npm --prefix web run build
 - [x] Re-evaluate the locked winner inside all 15 sectors and across all 15
   whole-sector exclusions on the unchanged test window; expose broad failure
   and add sector stress to the consolidated 0/4 discovery gate without tuning.
+- [x] Re-evaluate the same locked winner for all 75 stocks on the unchanged test
+  window; expose signal coverage, positive-stock breadth, median return and
+  top-five absolute-return concentration, and extend the untuned gate to 0/5.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

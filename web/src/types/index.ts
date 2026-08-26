@@ -781,6 +781,29 @@ export interface IntradayFactorDiscovery {
     criteria: Record<string, boolean>
     passed: boolean
   }
+  locked_test_symbol_stress: {
+    selected_candidate_id: string
+    test_start: string
+    test_end: string
+    candidate_reselected: false
+    symbol_rows_used_for_selection: false
+    symbols: Array<{
+      symbol: string
+      sector_code: string
+      sector_name: string
+      observation_count: number
+      signal_count: number
+      strategy_metrics: IntradayPerformanceMetrics
+      benchmark_metrics: IntradayPerformanceMetrics
+    }>
+    positive_symbol_count: number
+    positive_symbol_ratio: string
+    median_symbol_total_return: string
+    top_five_absolute_return_share: string
+    top_five_absolute_return_symbols: string[]
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   discovery_gate: {
     criteria: Record<string, boolean>
     passed: boolean

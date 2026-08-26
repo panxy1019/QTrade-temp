@@ -335,8 +335,17 @@ Last updated: 2026-08-27
   electronics. Signal coverage passed, while the 60% positive-sector ratio,
   80% positive-exclusion ratio and non-negative worst exclusion all failed.
   This rules out one isolated sector as the explanation. The consolidated
-  discovery research gate now requires chronological test, CSCV/PBO, fixed cost
-  and sector stress together and is 0/4, still `NOT_ELIGIBLE` and stateless.
+  sector-stage research gate requires chronological test, CSCV/PBO, fixed cost
+  and sector stress together and was 0/4.
+- Locked-test stock stress now applies that same immutable candidate and test
+  identity to each of the 75 stocks without filtering or reselection. Only
+  22/75 stocks returned a profit (29.33%); the per-stock total-return median was
+  -1.1644%. `600276` had no signal in the locked test, so stock-level signal
+  coverage also failed. The five largest absolute per-stock returns contributed
+  24.79% of total absolute return magnitude, below the fixed 30% concentration
+  ceiling. Three of four stock gates fail. The consolidated discovery gate now
+  requires all five chronological, CSCV/PBO, cost, sector and stock stages and
+  is 0/5, still `NOT_ELIGIBLE`, stateless and external-order-disabled.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,
