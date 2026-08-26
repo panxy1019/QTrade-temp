@@ -50,7 +50,7 @@ def test_intraday_observation_endpoint_rejects_resigned_phase_claim(
 ) -> None:
     source = EVIDENCE_ROOT / "intraday-observation" / "report.json"
     report = json.loads(source.read_text(encoding="utf-8"))
-    report["session_phase"] = "POST_CLOSE"
+    report["session_phase"] = "MORNING_SESSION"
     report.pop("evidence_sha256")
     canonical = json.dumps(
         report,

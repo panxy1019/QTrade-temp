@@ -386,14 +386,16 @@ recomputes the chain, monotonicity and latest-report
 binding before the market page renders the timeline. A source regression remains
 visible instead of being repaired or dropped. The chain is deployment evidence,
 not a realtime subscription, strategy state or PAPER authorization.
-The current eighth checkpoint binds 15/15 detail and 75/75 breadth coverage at
-210 common finalized minutes through 14:30 and is monotonic versus the previous
-180-minute checkpoint. The signed direction timeline starts at checkpoint five;
-checkpoint eight has 54/75 stocks above open, 20/75 rising in the latest minute,
-`+0.9156%` equal-weight session return and `-0.29 bp` equal-weight latest-minute
-return. Versus checkpoint seven, participation fell by three stocks and the
-equal-weight session return fell `0.22 bp`. Its 75-stock request window was
-`2.174s` and remains visible rather than being represented as realtime. All three mutable report
+The current ninth checkpoint binds 15/15 detail and 75/75 breadth coverage at
+the source-defined complete 238-minute session through 15:00 and is monotonic
+versus the previous 210-minute checkpoint. Sina omits 14:58/14:59 and publishes
+the closing auction at 15:00; QTrade does not synthesize the two absent timestamps.
+The signed direction timeline starts at checkpoint five; checkpoint nine has
+55/75 stocks above open, 13/75 rising in the latest minute, `+0.8777%`
+equal-weight session return and `-2.88 bp` equal-weight latest-minute return.
+Versus checkpoint eight, participation rose by one stock and the equal-weight
+session return fell `3.79 bp`. Its 75-stock request window was `2.802s` and
+remains visible rather than being represented as realtime. All three mutable report
 writers publish through a flushed, `fsync`-backed same-directory temporary file
 and atomic replacement, so an
 interrupted refresh cannot expose a half-written JSON document.
