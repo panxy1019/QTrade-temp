@@ -987,6 +987,47 @@ export interface IntradayFactorBacktest {
     state_mutation: false
     external_order_transmission: false
   }
+  next_hypothesis_preregistration: {
+    classification: 'READ_ONLY_NEXT_HYPOTHESIS_PREREGISTRATION_PREFLIGHT'
+    status: 'REQUIRED_NOT_CREATED' | 'NOT_REQUIRED_CURRENT_RESULT_RESEARCH_ADMITTED'
+    current_result_binding: {
+      strategy_id: string
+      strategy_spec_hash: string
+      data_version: string
+      dataset_checksum: string
+      viewed_evidence_period: { start: string; end: string }
+      first_blocking_stage: string
+      next_allowed_action: 'PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE' | 'REGISTER_IMMUTABLE_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW'
+    }
+    current_result_may_seed_motivation: true
+    current_result_may_seed_new_parameters: false
+    required_hypothesis_fields: string[]
+    required_experiment_lock_fields: string[]
+    required_governance_gates: Array<{
+      gate_id: string
+      required: true
+      requirement: string
+    }>
+    evidence_window_contract: {
+      must_be_new_and_disjoint: true
+      current_viewed_period_excluded_from_new_confirmation: true
+      prior_test_period_reuse_for_candidate_selection_allowed: false
+    }
+    strategy_registry_bridge: {
+      preregistration_is_registry_insertion: false
+      registry_write_performed: false
+      earliest_status_after_completed_preregistration_and_leakage_review: 'IDEA'
+      legal_lifecycle: Array<'IDEA' | 'EXPERIMENT' | 'CANDIDATE' | 'VALIDATED' | 'PAPER' | 'SHADOW' | 'APPROVED' | 'CHAMPION'>
+      human_authorization_required_for: Array<'APPROVED' | 'CHAMPION'>
+      current_lifecycle_status: 'NOT_REGISTERED'
+    }
+    preregistration_created: false
+    state_mutation: false
+    registry_write: false
+    paper_runtime_start: false
+    live_runtime_start: false
+    external_order_transmission: false
+  }
   paper_admission: {
     classification: 'READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION'
     decision: 'BLOCKED'

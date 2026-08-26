@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-27T05:22:08.505808+08:00",
+  "generated_at": "2026-08-27T05:32:28.654294+08:00",
   "implementation": {
     "factor_module_sha256": "706c2856617bd461888b5611025c5c106d6819ece6b2b1e31aace7588a18a6ec",
-    "api_module_sha256": "4b9d68e3e0e25ddb67855ebabb070d9ac5426914399aacdb7478a5c006f30010"
+    "api_module_sha256": "625a94b991b6addaf38563acda0631a006cd4029eaf82d23ac3e7b5545b4d440"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -48,7 +48,7 @@
     ],
     "combination": "ALL"
   },
-  "result_preview_hash": "c57b6ca1ce2a9129af6c84f57789bc609f54ed73ca0ab589c96c38756b6249fb",
+  "result_preview_hash": "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a",
   "summary": {
     "observation_count": 9000,
     "signal_count": 1001,
@@ -250,6 +250,121 @@
       "viewed_window_reselection_allowed": false,
       "next_allowed_action": "PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE",
       "state_mutation": false,
+      "external_order_transmission": false
+    },
+    "next_hypothesis_preregistration": {
+      "classification": "READ_ONLY_NEXT_HYPOTHESIS_PREREGISTRATION_PREFLIGHT",
+      "status": "REQUIRED_NOT_CREATED",
+      "current_result_binding": {
+        "strategy_id": "adhoc-intraday-d6b31e9ee2e5b345",
+        "strategy_spec_hash": "d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3",
+        "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
+        "dataset_checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
+        "viewed_evidence_period": {
+          "start": "2026-03-03",
+          "end": "2026-08-24"
+        },
+        "first_blocking_stage": "FACTOR_VALIDATION",
+        "next_allowed_action": "PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE"
+      },
+      "current_result_may_seed_motivation": true,
+      "current_result_may_seed_new_parameters": false,
+      "required_hypothesis_fields": [
+        "hypothesis_id",
+        "motivation",
+        "economic_intuition",
+        "expected_regimes",
+        "expected_failure_modes",
+        "required_data",
+        "evaluation_criteria"
+      ],
+      "required_experiment_lock_fields": [
+        "experiment_id",
+        "strategy_id",
+        "git_commit",
+        "data_version",
+        "universe",
+        "factor_set",
+        "label",
+        "split",
+        "model",
+        "parameters",
+        "cost_model_id",
+        "transaction_cost",
+        "seed"
+      ],
+      "required_governance_gates": [
+        {
+          "gate_id": "new_hypothesis_identity",
+          "required": true,
+          "requirement": "Use a hypothesis_id not evaluated before."
+        },
+        {
+          "gate_id": "new_evidence_period_disjoint_from_viewed_and_prior_test_periods",
+          "required": true,
+          "requirement": "Use a new evidence period disjoint from this viewed window and prior held-out test periods."
+        },
+        {
+          "gate_id": "independent_leakage_review_pass",
+          "required": true,
+          "requirement": "Attach an independent leakage review PASS."
+        },
+        {
+          "gate_id": "fixed_candidate_budget",
+          "required": true,
+          "requirement": "Fix the candidate budget before data access."
+        },
+        {
+          "gate_id": "fixed_robustness_scenarios",
+          "required": true,
+          "requirement": "Fix bounded robustness scenarios before data access."
+        },
+        {
+          "gate_id": "fixed_cost_model",
+          "required": true,
+          "requirement": "Fix the cost model before data access."
+        },
+        {
+          "gate_id": "immutable_spec_and_hash_before_data_access",
+          "required": true,
+          "requirement": "Freeze the experiment specification and hash before new evidence is read."
+        },
+        {
+          "gate_id": "contamination_disclosure",
+          "required": true,
+          "requirement": "Disclose all prior evidence used to motivate the new hypothesis."
+        }
+      ],
+      "evidence_window_contract": {
+        "must_be_new_and_disjoint": true,
+        "current_viewed_period_excluded_from_new_confirmation": true,
+        "prior_test_period_reuse_for_candidate_selection_allowed": false
+      },
+      "strategy_registry_bridge": {
+        "preregistration_is_registry_insertion": false,
+        "registry_write_performed": false,
+        "earliest_status_after_completed_preregistration_and_leakage_review": "IDEA",
+        "legal_lifecycle": [
+          "IDEA",
+          "EXPERIMENT",
+          "CANDIDATE",
+          "VALIDATED",
+          "PAPER",
+          "SHADOW",
+          "APPROVED",
+          "CHAMPION"
+        ],
+        "human_authorization_required_for": [
+          "APPROVED",
+          "CHAMPION"
+        ],
+        "current_lifecycle_status": "NOT_REGISTERED"
+      },
+      "preregistration_created": false,
+      "state_mutation": false,
+      "registry_write": false,
+      "paper_runtime_start": false,
+      "live_runtime_start": false,
       "external_order_transmission": false
     },
     "paper_admission": {
@@ -7530,7 +7645,7 @@
     "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
     "state_mutation": false,
     "external_order_transmission": false,
-    "preview_hash": "c57b6ca1ce2a9129af6c84f57789bc609f54ed73ca0ab589c96c38756b6249fb"
+    "preview_hash": "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a"
   },
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
@@ -7544,5 +7659,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "8038f89aaebc6afb2c4eebfbeaf03a02738d5d8d9e82793d84e78e94d192e912"
+  "evidence_sha256": "0a4eb2cf660e8577c808b60eac3db85a18f2cc78a41a8a40ae236dc2409b8f03"
 }

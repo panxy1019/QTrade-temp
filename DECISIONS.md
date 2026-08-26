@@ -1874,3 +1874,31 @@ No response from this historical non-PIT endpoint can register the strategy or
 authorize PAPER. Reselection on the viewed window is forbidden; the next
 hypothesis must be predeclared before new evidence. The contract is read-only,
 stateless and external-order-disabled.
+
+## ADR-112 — Rejected results expose a preregistration preflight, not a registry write
+
+Status: accepted, 2026-08-27.
+
+Telling a researcher to predeclare a new hypothesis is insufficient when the
+interface does not state what must be frozen or which evidence is already
+contaminated by inspection. Every intraday-factor result therefore includes a
+read-only next-hypothesis preflight bound to its strategy ID and specification
+hash, data version and checksum, viewed date range, first blocking stage and
+computed next action.
+
+The preflight mirrors the seven required `ResearchHypothesis` fields and the
+thirteen immutable `ExperimentRunSpec` fields. It additionally requires a new
+hypothesis identity, a new evidence period disjoint from the viewed and prior
+held-out periods, an independent leakage-review PASS, fixed candidate and
+robustness budgets, a fixed cost model, an immutable specification/hash before
+new data access and disclosure of prior evidence used as motivation. The
+rejected result may explain a new motivation but may not directly choose new
+parameters.
+
+Preregistration is distinct from `StrategyRegistry.register`. This response
+creates neither artifact nor row; a future completed preregistration and review
+may register an immutable specification only as `IDEA`. The legal research and
+operations path remains `IDEA → EXPERIMENT → CANDIDATE → VALIDATED → PAPER →
+SHADOW → APPROVED → CHAMPION`, with explicit human authorization still required
+for `APPROVED` and `CHAMPION`. The preflight cannot start PAPER/LIVE, mutate
+state or transmit an external order.

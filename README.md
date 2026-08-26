@@ -312,7 +312,15 @@ factor validation; its strategy and causal backtest remain diagnostic previews.
 The viewed window cannot be used for reselection. PAPER admission consumes the
 same next-action value, so this rejected run consistently instructs the user to
 predeclare a new hypothesis before new evidence; it no longer suggests strategy
-registration. The proposed
+registration. That instruction now expands into a read-only preregistration
+preflight bound to the rejected strategy ID/hash, dataset checksum, viewed date
+range and first failed stage. It mirrors the required `ResearchHypothesis` and
+`ExperimentRunSpec` fields, requires a new disjoint evidence period, independent
+leakage review, bounded candidate/robustness budgets, a fixed cost model, a
+pre-data immutable specification hash and contamination disclosure. Completing
+that document is not a registry write: only afterward may a separately reviewed
+immutable strategy enter `StrategyRegistry` as `IDEA`, while `APPROVED` and
+`CHAMPION` still require human authorization. The proposed
 five-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
 contract requires five bid/ask prices plus sizes normalized to shares, provider
 event/receive clocks and sequence, continuous-auction validity, certified

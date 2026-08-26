@@ -1329,6 +1329,52 @@ describe('verified robustness evidence', () => {
         next_allowed_action: 'PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE',
         state_mutation: false, external_order_transmission: false,
       },
+      next_hypothesis_preregistration: {
+        classification: 'READ_ONLY_NEXT_HYPOTHESIS_PREREGISTRATION_PREFLIGHT',
+        status: 'REQUIRED_NOT_CREATED',
+        current_result_binding: {
+          strategy_id: `adhoc-intraday-${'e'.repeat(16)}`,
+          strategy_spec_hash: 'e'.repeat(64),
+          data_version: 'baostock-five-minute-long-v1',
+          dataset_checksum: 'long-five-minute-checksum',
+          viewed_evidence_period: { start: '2026-07-28', end: '2026-08-24' },
+          first_blocking_stage: 'FACTOR_VALIDATION',
+          next_allowed_action: 'PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE',
+        },
+        current_result_may_seed_motivation: true,
+        current_result_may_seed_new_parameters: false,
+        required_hypothesis_fields: ['hypothesis_id', 'motivation', 'economic_intuition', 'expected_regimes', 'expected_failure_modes', 'required_data', 'evaluation_criteria'],
+        required_experiment_lock_fields: ['experiment_id', 'strategy_id', 'git_commit', 'data_version', 'universe', 'factor_set', 'label', 'split', 'model', 'parameters', 'cost_model_id', 'transaction_cost', 'seed'],
+        required_governance_gates: [
+          { gate_id: 'new_hypothesis_identity', required: true, requirement: 'new hypothesis ID' },
+          { gate_id: 'new_evidence_period_disjoint_from_viewed_and_prior_test_periods', required: true, requirement: 'new disjoint evidence' },
+          { gate_id: 'independent_leakage_review_pass', required: true, requirement: 'independent leakage review PASS' },
+          { gate_id: 'fixed_candidate_budget', required: true, requirement: 'fixed candidate budget' },
+          { gate_id: 'fixed_robustness_scenarios', required: true, requirement: 'fixed robustness scenarios' },
+          { gate_id: 'fixed_cost_model', required: true, requirement: 'fixed cost model' },
+          { gate_id: 'immutable_spec_and_hash_before_data_access', required: true, requirement: 'immutable spec and hash' },
+          { gate_id: 'contamination_disclosure', required: true, requirement: 'contamination disclosure' },
+        ],
+        evidence_window_contract: {
+          must_be_new_and_disjoint: true,
+          current_viewed_period_excluded_from_new_confirmation: true,
+          prior_test_period_reuse_for_candidate_selection_allowed: false,
+        },
+        strategy_registry_bridge: {
+          preregistration_is_registry_insertion: false,
+          registry_write_performed: false,
+          earliest_status_after_completed_preregistration_and_leakage_review: 'IDEA',
+          legal_lifecycle: ['IDEA', 'EXPERIMENT', 'CANDIDATE', 'VALIDATED', 'PAPER', 'SHADOW', 'APPROVED', 'CHAMPION'],
+          human_authorization_required_for: ['APPROVED', 'CHAMPION'],
+          current_lifecycle_status: 'NOT_REGISTERED',
+        },
+        preregistration_created: false,
+        state_mutation: false,
+        registry_write: false,
+        paper_runtime_start: false,
+        live_runtime_start: false,
+        external_order_transmission: false,
+      },
       factor_validation: {
         number_of_periods: 20, minimum_instruments: 75, ic: '0.0117', rank_ic: '-0.0030',
         icir: '0.0711', quantile_returns: [], factor_turnover: '0.589',
@@ -1550,6 +1596,14 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText('已通过 1/8 项')).toBeInTheDocument()
     expect(screen.getByText(/下一允许动作：在接触新证据前预注册新假设/)).toBeInTheDocument()
     expect(screen.queryByText(/下一允许动作：注册策略/)).not.toBeInTheDocument()
+    expect(screen.getByText('下一假设预注册：尚未创建')).toBeInTheDocument()
+    expect(screen.getByText(/当前失败结果可以解释研究动机，但不能直接用于重选新参数/)).toBeInTheDocument()
+    expect(screen.getByText('ResearchHypothesis 必填字段 7 个')).toBeInTheDocument()
+    expect(screen.getByText('ExperimentRunSpec 冻结字段 13 个')).toBeInTheDocument()
+    expect(screen.getByText('治理门槛 8 项')).toBeInTheDocument()
+    expect(screen.getByText('当前注册表状态 NOT_REGISTERED')).toBeInTheDocument()
+    expect(screen.getByText(/完成预注册与独立泄漏审查后，最早只能注册为 IDEA/)).toBeInTheDocument()
+    expect(screen.getByText(/APPROVED、CHAMPION 仍需人工授权/)).toBeInTheDocument()
     expect(screen.getByText('历史数据身份已验证并绑定')).toBeInTheDocument()
     expect(screen.getByText('不可变策略版本已注册')).toBeInTheDocument()
     expect(screen.getByText('AD_HOC_UNREGISTERED')).toBeInTheDocument()

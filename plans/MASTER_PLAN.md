@@ -429,6 +429,16 @@ points only to predeclaring a new hypothesis before new evidence. The Chinese
 workbench renders the action explicitly and cannot simultaneously suggest
 strategy registration for the rejected run.
 
+The rejected-result action now has a concrete read-only preregistration
+preflight. It binds the failed strategy identity, dataset checksum, viewed
+window and first blocker; mirrors the exact hypothesis and experiment-run
+fields; and requires a new disjoint evidence period, independent leakage
+review, fixed candidate/robustness budgets, fixed costs, an immutable pre-data
+specification and contamination disclosure. This creates neither a
+preregistration artifact nor a registry row. A future reviewed specification
+may enter the registry only at `IDEA`; later PAPER/SHADOW stages retain their
+own evidence gates and `APPROVED`/`CHAMPION` remain human-authorized.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

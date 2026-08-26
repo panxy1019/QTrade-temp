@@ -75,7 +75,7 @@ _MIN_INTRADAY_DISCOVERY_SESSIONS = 40
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "c57b6ca1ce2a9129af6c84f57789bc609f54ed73ca0ab589c96c38756b6249fb"
+    "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -9725,6 +9725,145 @@ def _intraday_factor_preview(
         "state_mutation": False,
         "external_order_transmission": False,
     }
+    next_hypothesis_preregistration: dict[str, object] = {
+        "classification": (
+            "READ_ONLY_NEXT_HYPOTHESIS_PREREGISTRATION_PREFLIGHT"
+        ),
+        "status": (
+            "REQUIRED_NOT_CREATED"
+            if sequential_advancement["next_allowed_action"]
+            == "PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE"
+            else "NOT_REQUIRED_CURRENT_RESULT_RESEARCH_ADMITTED"
+        ),
+        "current_result_binding": {
+            "strategy_id": strategy_identity["strategy_id"],
+            "strategy_spec_hash": strategy_spec_hash,
+            "data_version": dataset["data_version"],
+            "dataset_checksum": dataset["checksum"],
+            "viewed_evidence_period": {
+                "start": parameters["start"],
+                "end": parameters["end"],
+            },
+            "first_blocking_stage": sequential_advancement[
+                "first_blocking_stage"
+            ],
+            "next_allowed_action": sequential_advancement[
+                "next_allowed_action"
+            ],
+        },
+        "current_result_may_seed_motivation": True,
+        "current_result_may_seed_new_parameters": False,
+        "required_hypothesis_fields": [
+            "hypothesis_id",
+            "motivation",
+            "economic_intuition",
+            "expected_regimes",
+            "expected_failure_modes",
+            "required_data",
+            "evaluation_criteria",
+        ],
+        "required_experiment_lock_fields": [
+            "experiment_id",
+            "strategy_id",
+            "git_commit",
+            "data_version",
+            "universe",
+            "factor_set",
+            "label",
+            "split",
+            "model",
+            "parameters",
+            "cost_model_id",
+            "transaction_cost",
+            "seed",
+        ],
+        "required_governance_gates": [
+            {
+                "gate_id": "new_hypothesis_identity",
+                "required": True,
+                "requirement": "Use a hypothesis_id not evaluated before.",
+            },
+            {
+                "gate_id": (
+                    "new_evidence_period_disjoint_from_viewed_and_"
+                    "prior_test_periods"
+                ),
+                "required": True,
+                "requirement": (
+                    "Use a new evidence period disjoint from this viewed "
+                    "window and prior held-out test periods."
+                ),
+            },
+            {
+                "gate_id": "independent_leakage_review_pass",
+                "required": True,
+                "requirement": "Attach an independent leakage review PASS.",
+            },
+            {
+                "gate_id": "fixed_candidate_budget",
+                "required": True,
+                "requirement": "Fix the candidate budget before data access.",
+            },
+            {
+                "gate_id": "fixed_robustness_scenarios",
+                "required": True,
+                "requirement": (
+                    "Fix bounded robustness scenarios before data access."
+                ),
+            },
+            {
+                "gate_id": "fixed_cost_model",
+                "required": True,
+                "requirement": "Fix the cost model before data access.",
+            },
+            {
+                "gate_id": "immutable_spec_and_hash_before_data_access",
+                "required": True,
+                "requirement": (
+                    "Freeze the experiment specification and hash before "
+                    "new evidence is read."
+                ),
+            },
+            {
+                "gate_id": "contamination_disclosure",
+                "required": True,
+                "requirement": (
+                    "Disclose all prior evidence used to motivate the new "
+                    "hypothesis."
+                ),
+            },
+        ],
+        "evidence_window_contract": {
+            "must_be_new_and_disjoint": True,
+            "current_viewed_period_excluded_from_new_confirmation": True,
+            "prior_test_period_reuse_for_candidate_selection_allowed": False,
+        },
+        "strategy_registry_bridge": {
+            "preregistration_is_registry_insertion": False,
+            "registry_write_performed": False,
+            "earliest_status_after_completed_preregistration_and_leakage_review": (
+                "IDEA"
+            ),
+            "legal_lifecycle": [
+                "IDEA",
+                "EXPERIMENT",
+                "CANDIDATE",
+                "VALIDATED",
+                "PAPER",
+                "SHADOW",
+                "APPROVED",
+                "CHAMPION",
+            ],
+            "human_authorization_required_for": ["APPROVED", "CHAMPION"],
+            "current_lifecycle_status": "NOT_REGISTERED",
+        },
+        "preregistration_created": False,
+        "state_mutation": False,
+        "registry_write": False,
+        "paper_runtime_start": False,
+        "live_runtime_start": False,
+        "external_order_transmission": False,
+    }
     paper_admission_gates[3]["evidence"] = (
         "AD_HOC_UNREGISTERED · "
         f"{strategy_identity['strategy_id']} · {strategy_spec_hash}"
@@ -9752,6 +9891,9 @@ def _intraday_factor_preview(
         "parameters": parameters,
         "workflow": workflow,
         "sequential_advancement": sequential_advancement,
+        "next_hypothesis_preregistration": (
+            next_hypothesis_preregistration
+        ),
         "paper_admission": {
             "classification": "READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION",
             "decision": "BLOCKED",

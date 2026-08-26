@@ -126,6 +126,35 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert paper_admission["next_allowed_stage"] == (
         "PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE"
     )
+    preregistration = payload["result"]["next_hypothesis_preregistration"]
+    assert preregistration["status"] == "REQUIRED_NOT_CREATED"
+    assert preregistration["current_result_binding"] == {
+        "strategy_id": strategy_identity["strategy_id"],
+        "strategy_spec_hash": strategy_identity["spec_hash"],
+        "data_version": payload["result"]["data_version"],
+        "dataset_checksum": payload["result"]["dataset_checksum"],
+        "viewed_evidence_period": {
+            "start": payload["result"]["parameters"]["start"],
+            "end": payload["result"]["parameters"]["end"],
+        },
+        "first_blocking_stage": advancement["first_blocking_stage"],
+        "next_allowed_action": advancement["next_allowed_action"],
+    }
+    assert preregistration["current_result_may_seed_new_parameters"] is False
+    assert preregistration["evidence_window_contract"][
+        "must_be_new_and_disjoint"
+    ] is True
+    assert preregistration["strategy_registry_bridge"][
+        "current_lifecycle_status"
+    ] == "NOT_REGISTERED"
+    assert preregistration["strategy_registry_bridge"][
+        "earliest_status_after_completed_preregistration_and_leakage_review"
+    ] == "IDEA"
+    assert preregistration["preregistration_created"] is False
+    assert preregistration["registry_write"] is False
+    assert preregistration["paper_runtime_start"] is False
+    assert preregistration["live_runtime_start"] is False
+    assert preregistration["external_order_transmission"] is False
     registration_gate = next(
         gate
         for gate in paper_admission["required_gates"]
@@ -149,7 +178,7 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert l2_readiness["derived_from_ohlcv"] is False
     assert l2_readiness["external_order_transmission"] is False
     assert payload["result_preview_hash"] == (
-        "c57b6ca1ce2a9129af6c84f57789bc609f54ed73ca0ab589c96c38756b6249fb"
+        "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a"
     )
     assert payload["promotion"] == "NOT_ELIGIBLE"
     assert payload["paper_readiness"] == "NOT_ELIGIBLE"
@@ -197,7 +226,7 @@ def test_resigned_changed_result_cannot_replace_fixed_long_window_evidence(
     payload = _client(changed_path).get("/intraday-factor-robustness").json()
 
     assert changed_result_hash != (
-        "c57b6ca1ce2a9129af6c84f57789bc609f54ed73ca0ab589c96c38756b6249fb"
+        "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a"
     )
     assert payload["report_id"] is None
     assert payload["promotion"] == "NOT_EVALUATED"

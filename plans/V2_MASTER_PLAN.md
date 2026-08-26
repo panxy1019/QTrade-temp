@@ -272,6 +272,12 @@ npm --prefix web run build
   action. Rejected research now consistently requires a new predeclared
   hypothesis before new evidence and cannot simultaneously recommend strategy
   registration; render the action in Chinese while retaining the reason code.
+- [x] Expand that rejected-result action into a read-only preregistration
+  preflight bound to the strategy hash, dataset checksum, viewed period and
+  first blocker. Mirror the research-hypothesis and experiment-run schemas,
+  require disjoint evidence/leakage/budget/cost/spec/contamination locks, and
+  show that a completed review may enter `StrategyRegistry` only at `IDEA`
+  without performing a registry, PAPER, LIVE, state or order write.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

@@ -174,6 +174,96 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
     assert identity["promotion_authority"] is False
     assert identity["state_mutation"] is False
     assert identity["external_order_transmission"] is False
+    preregistration = payload["next_hypothesis_preregistration"]
+    assert preregistration["classification"] == (
+        "READ_ONLY_NEXT_HYPOTHESIS_PREREGISTRATION_PREFLIGHT"
+    )
+    assert preregistration["status"] == "REQUIRED_NOT_CREATED"
+    assert preregistration["current_result_binding"] == {
+        "strategy_id": identity["strategy_id"],
+        "strategy_spec_hash": identity["spec_hash"],
+        "data_version": payload["data_version"],
+        "dataset_checksum": payload["dataset_checksum"],
+        "viewed_evidence_period": {
+            "start": payload["parameters"]["start"],
+            "end": payload["parameters"]["end"],
+        },
+        "first_blocking_stage": advancement["first_blocking_stage"],
+        "next_allowed_action": advancement["next_allowed_action"],
+    }
+    assert preregistration["current_result_may_seed_motivation"] is True
+    assert preregistration["current_result_may_seed_new_parameters"] is False
+    assert preregistration["required_hypothesis_fields"] == [
+        "hypothesis_id",
+        "motivation",
+        "economic_intuition",
+        "expected_regimes",
+        "expected_failure_modes",
+        "required_data",
+        "evaluation_criteria",
+    ]
+    assert preregistration["required_experiment_lock_fields"] == [
+        "experiment_id",
+        "strategy_id",
+        "git_commit",
+        "data_version",
+        "universe",
+        "factor_set",
+        "label",
+        "split",
+        "model",
+        "parameters",
+        "cost_model_id",
+        "transaction_cost",
+        "seed",
+    ]
+    assert [
+        gate["gate_id"]
+        for gate in preregistration["required_governance_gates"]
+    ] == [
+        "new_hypothesis_identity",
+        "new_evidence_period_disjoint_from_viewed_and_prior_test_periods",
+        "independent_leakage_review_pass",
+        "fixed_candidate_budget",
+        "fixed_robustness_scenarios",
+        "fixed_cost_model",
+        "immutable_spec_and_hash_before_data_access",
+        "contamination_disclosure",
+    ]
+    assert all(
+        gate["required"] is True
+        for gate in preregistration["required_governance_gates"]
+    )
+    assert preregistration["evidence_window_contract"] == {
+        "must_be_new_and_disjoint": True,
+        "current_viewed_period_excluded_from_new_confirmation": True,
+        "prior_test_period_reuse_for_candidate_selection_allowed": False,
+    }
+    assert preregistration["strategy_registry_bridge"] == {
+        "preregistration_is_registry_insertion": False,
+        "registry_write_performed": False,
+        "earliest_status_after_completed_preregistration_and_leakage_review": (
+            "IDEA"
+        ),
+        "legal_lifecycle": [
+            "IDEA",
+            "EXPERIMENT",
+            "CANDIDATE",
+            "VALIDATED",
+            "PAPER",
+            "SHADOW",
+            "APPROVED",
+            "CHAMPION",
+        ],
+        "human_authorization_required_for": ["APPROVED", "CHAMPION"],
+        "current_lifecycle_status": "NOT_REGISTERED",
+    }
+    assert preregistration["preregistration_created"] is False
+    assert preregistration["state_mutation"] is False
+    assert preregistration["registry_write"] is False
+    assert preregistration["paper_runtime_start"] is False
+    assert preregistration["live_runtime_start"] is False
+    assert preregistration["external_order_transmission"] is False
     assert "exit_factor_validation" not in payload
     assert "exit_factor_effectiveness_passed" not in payload["research_gate"][
         "criteria"

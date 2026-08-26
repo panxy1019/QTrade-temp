@@ -60,6 +60,17 @@ const advancementActionLabels: Record<string, string> = {
   REGISTER_IMMUTABLE_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW: '注册不可变策略后再进入授权前向 SHADOW',
 }
 
+const preregistrationGateLabels: Record<string, string> = {
+  new_hypothesis_identity: '使用全新且未评估的假设 ID',
+  new_evidence_period_disjoint_from_viewed_and_prior_test_periods: '新证据窗口与已查看窗口及历史测试窗口互斥',
+  independent_leakage_review_pass: '独立数据泄漏审查通过',
+  fixed_candidate_budget: '接触新数据前冻结候选预算',
+  fixed_robustness_scenarios: '接触新数据前冻结有界稳健性情景',
+  fixed_cost_model: '接触新数据前冻结成本模型',
+  immutable_spec_and_hash_before_data_access: '接触新数据前冻结实验规格与哈希',
+  contamination_disclosure: '披露用于构造新假设的既有证据',
+}
+
 const gateLabels: Record<string, string> = {
   minimum_observation_count: '至少 250 个观测',
   minimum_signal_count: '至少 20 次信号',
@@ -891,6 +902,40 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           <Tag color="default">策略构造 {result.sequential_advancement.strategy_construction_status}</Tag>
           <Tag color="default">历史结果不能授权 PAPER</Tag>
         </Space>
+        <Card type="inner" title={`下一假设预注册：${result.next_hypothesis_preregistration.status === 'REQUIRED_NOT_CREATED' ? '尚未创建' : '当前结果无需创建'}`}>
+          <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+            <Alert
+              showIcon
+              type="warning"
+              title="只读预检，不会写入研究或策略注册表"
+              description="当前失败结果可以解释研究动机，但不能直接用于重选新参数；新假设必须先冻结，再接触与当前窗口互斥的新证据。"
+            />
+            <Space wrap>
+              <Tag>ResearchHypothesis 必填字段 {result.next_hypothesis_preregistration.required_hypothesis_fields.length} 个</Tag>
+              <Tag>ExperimentRunSpec 冻结字段 {result.next_hypothesis_preregistration.required_experiment_lock_fields.length} 个</Tag>
+              <Tag>治理门槛 {result.next_hypothesis_preregistration.required_governance_gates.length} 项</Tag>
+              <Tag color="default">当前注册表状态 {result.next_hypothesis_preregistration.strategy_registry_bridge.current_lifecycle_status}</Tag>
+            </Space>
+            <Typography.Text type="secondary">
+              完成预注册与独立泄漏审查后，最早只能注册为 IDEA；随后依次经过 EXPERIMENT、CANDIDATE、VALIDATED、PAPER、SHADOW，APPROVED、CHAMPION 仍需人工授权。
+            </Typography.Text>
+            <Typography.Text type="secondary">
+              当前绑定：{result.next_hypothesis_preregistration.current_result_binding.strategy_id} · {result.next_hypothesis_preregistration.current_result_binding.strategy_spec_hash} · {result.next_hypothesis_preregistration.current_result_binding.viewed_evidence_period.start} 至 {result.next_hypothesis_preregistration.current_result_binding.viewed_evidence_period.end}
+            </Typography.Text>
+            <Table
+              rowKey="gate_id"
+              size="small"
+              pagination={false}
+              dataSource={result.next_hypothesis_preregistration.required_governance_gates}
+              columns={[
+                { title: '预注册治理门槛', dataIndex: 'gate_id', render: (value: string) => preregistrationGateLabels[value] ?? value },
+                { title: '要求', dataIndex: 'required', render: (value: boolean) => value ? <Tag color="orange">必须冻结</Tag> : <Tag>可选</Tag> },
+                { title: '契约', dataIndex: 'requirement' },
+              ]}
+              scroll={{ x: 820 }}
+            />
+          </Space>
+        </Card>
         <Steps
           size="small"
           orientation="vertical"

@@ -948,3 +948,15 @@ Last updated: 2026-08-27
   current `1/3` rejected factor that action is
   `PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE`, rendered in Chinese as
   “在接触新证据前预注册新假设”; strategy registration is not offered.
+- Rejected-result preregistration preflight: that next action now opens an
+  exportable read-only checklist bound to the current strategy ID/spec hash,
+  dataset checksum, viewed period and first failed stage. It enumerates the
+  exact seven `ResearchHypothesis` fields and thirteen `ExperimentRunSpec`
+  fields plus eight governance locks: a new hypothesis identity, disjoint new
+  evidence, independent leakage review, fixed candidate and robustness budgets,
+  fixed costs, an immutable pre-data spec/hash and contamination disclosure.
+  The current result may motivate a new question but cannot directly reselect
+  parameters. No preregistration or registry record is created; after a future
+  completed review the earliest registry state is `IDEA`, and human authority
+  remains mandatory for `APPROVED` and `CHAMPION`. PAPER/LIVE starts, state
+  mutation and external orders all remain false.
