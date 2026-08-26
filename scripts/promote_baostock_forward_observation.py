@@ -16,7 +16,10 @@ from qtrade.api.app import (
     _load_verified_minute_dataset,
 )
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
-from scripts.prepare_baostock_forward_preregistration import _load_signed
+from scripts.prepare_baostock_forward_preregistration import (
+    _canonical_sha256,
+    _load_signed,
+)
 from scripts.run_baostock_locked_forward_observation import _load_forward_sessions
 
 
@@ -107,8 +110,28 @@ def _load_verified_report(
     return report
 
 
-def _atomic_publish(candidate_path: Path, destination: Path) -> None:
+def _atomic_publish(
+    candidate_path: Path,
+    destination: Path,
+    *,
+    expected_evidence_sha256: str | None = None,
+) -> None:
     payload = candidate_path.read_bytes()
+    if expected_evidence_sha256 is not None:
+        candidate = json.loads(payload)
+        if not isinstance(candidate, dict):
+            raise ValueError("candidate payload changed after verification")
+        digest = candidate.get("evidence_sha256")
+        unsigned = {
+            key: value
+            for key, value in candidate.items()
+            if key != "evidence_sha256"
+        }
+        if (
+            digest != expected_evidence_sha256
+            or _canonical_sha256(unsigned) != digest
+        ):
+            raise ValueError("candidate payload changed after verification")
     destination.parent.mkdir(parents=True, exist_ok=True)
     temporary_path: Path | None = None
     try:
@@ -178,7 +201,11 @@ def main() -> int:
         args.forward_root, preregistration=raw_preregistration
     )
     validate_source_sessions(candidate, source_reports)
-    _atomic_publish(args.candidate, args.destination)
+    _atomic_publish(
+        args.candidate,
+        args.destination,
+        expected_evidence_sha256=str(candidate["evidence_sha256"]),
+    )
     published = _load_verified_report(args.destination, **verification)
     if published.get("evidence_sha256") != candidate.get("evidence_sha256"):
         raise RuntimeError("published report does not match the verified candidate")

@@ -772,3 +772,17 @@ the verifier carries the already frozen digest values rather than reopening
 unavailable paths. Any implementation change requires a new preregistration;
 resigning the old document with replacement digests fails closed and cannot
 grant strategy, PAPER, realtime, or external-order authority.
+
+## ADR-051 — Forward publication revalidates the exact candidate bytes
+
+Status: accepted, 2026-08-26.
+
+The publisher reads the candidate payload once immediately before creating the
+temporary destination file. Its embedded evidence digest must still equal the
+identity returned by full candidate verification, and the digest is recomputed
+over those exact bytes' decoded unsigned document before any replacement.
+
+This closes the local time-of-check/time-of-use gap between verification and
+atomic publication. A swapped or modified candidate fails while the previous
+public report remains byte-for-byte unchanged; post-replacement verification
+continues as an additional invariant rather than the first point of detection.

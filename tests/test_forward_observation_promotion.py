@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from copy import deepcopy
+from hashlib import sha256
 from pathlib import Path
 from typing import Any, cast
 
@@ -74,6 +76,33 @@ def test_atomic_forward_observation_publish_replaces_complete_file(
     _atomic_publish(candidate, destination)
 
     assert destination.read_bytes() == candidate.read_bytes()
+    assert list(tmp_path.glob(".report.json.*.tmp")) == []
+
+
+def test_atomic_forward_observation_publish_rejects_changed_candidate(
+    tmp_path: Path,
+) -> None:
+    destination = tmp_path / "report.json"
+    candidate = tmp_path / "candidate.json"
+    destination.write_bytes(b'{"generation":1}\n')
+    original = {"generation": 2}
+    expected_digest = sha256(
+        json.dumps(original, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    replacement = {"generation": 3}
+    replacement["evidence_sha256"] = sha256(
+        json.dumps(replacement, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    candidate.write_text(json.dumps(replacement), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="changed after verification"):
+        _atomic_publish(
+            candidate,
+            destination,
+            expected_evidence_sha256=expected_digest,
+        )
+
+    assert destination.read_bytes() == b'{"generation":1}\n'
     assert list(tmp_path.glob(".report.json.*.tmp")) == []
 
 
