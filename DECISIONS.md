@@ -899,3 +899,18 @@ After the candidate temporary file has been flushed, the publisher must reopen
 and fully validate every source session immediately before replacement. Any
 failure removes the temporary file and leaves the prior report unchanged; this
 cannot grant strategy, PAPER, realtime or external-order authority.
+
+## ADR-060 — Forward Parquet inherits the frozen 75-stock identity
+
+Status: accepted, 2026-08-26.
+
+A checksum proves that a Parquet file is unchanged after signing, but a resigned
+file with 3,600 bars from 75 substitute symbols could previously satisfy only
+the count and target-day checks. That does not prove the frozen 15-sector sample
+was observed.
+
+The publisher derives the exact 75 symbols from the long-history manifest bound
+by the preregistration. Every source day must provide all 48 native timestamps
+for each symbol, the canonical exchange and China trading-day identity, and pass
+the shared OHLCV quality gate. Substitution or partial coverage fails before
+replacement and cannot affect runtime authority.

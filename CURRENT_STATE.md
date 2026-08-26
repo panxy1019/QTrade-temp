@@ -559,7 +559,10 @@ Last updated: 2026-08-26
   parser-compatible compact spelling carried consistently into the candidate.
   After the candidate temporary file is flushed, every signed source session and
   checksum-bound Parquet is reopened and revalidated immediately before the
-  destination replace; failure leaves the prior public report intact.
+  destination replace; failure leaves the prior public report intact. The source
+  Parquet must also contain the exact 75 symbols from the preregistration-bound
+  long-history manifest, with 48 native timestamps per symbol/day, canonical
+  exchange/day/timezone identities and a clean OHLCV quality gate.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from collections import Counter
 from collections.abc import Callable
 from datetime import date, datetime, time
 from pathlib import Path
@@ -18,6 +19,7 @@ from qtrade.api.app import (
     _load_verified_forward_preregistration,
     _load_verified_minute_dataset,
 )
+from qtrade.data import Bar, BarQualityGate
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
 from scripts.prepare_baostock_forward_preregistration import (
     _canonical_sha256,
@@ -97,11 +99,67 @@ def _valid_source_session_metadata(
     )
 
 
+def _valid_source_bar_grid(
+    source_bars: list[Bar],
+    source_reports: list[dict[str, object]],
+    expected_symbols: tuple[str, ...],
+) -> bool:
+    try:
+        target_days = tuple(
+            date.fromisoformat(str(report.get("target_day")))
+            for report in source_reports
+        )
+    except ValueError:
+        return False
+    if (
+        len(expected_symbols) != 75
+        or len(set(expected_symbols)) != len(expected_symbols)
+        or len(target_days) != len(set(target_days))
+        or BarQualityGate().validate(
+            source_bars,
+            expected_trading_days=set(target_days),
+        )
+    ):
+        return False
+    expected_keys = {
+        (symbol, trading_day)
+        for trading_day in target_days
+        for symbol in expected_symbols
+    }
+    observed_counts = Counter(
+        (bar.symbol, bar.trading_day) for bar in source_bars
+    )
+    expected_times = set(SINA_FIVE_MINUTE_SESSION_TIMES)
+    observed_times: dict[tuple[str, date], set[time]] = {}
+    for bar in source_bars:
+        local = bar.timestamp.astimezone(_SHANGHAI)
+        if (
+            bar.symbol not in expected_symbols
+            or bar.exchange != ("SSE" if bar.symbol.startswith("6") else "SZSE")
+            or local.date() != bar.trading_day
+            or local.time() not in expected_times
+        ):
+            return False
+        observed_times.setdefault((bar.symbol, bar.trading_day), set()).add(
+            local.time()
+        )
+    return (
+        len(source_bars)
+        == len(target_days) * len(expected_symbols) * len(expected_times)
+        and observed_counts
+        == Counter({key: len(expected_times) for key in expected_keys})
+        and observed_times
+        == {key: expected_times for key in expected_keys}
+    )
+
+
 def validate_source_sessions(
     candidate: dict[str, object],
     source_reports: list[dict[str, object]],
     *,
     validation_time: datetime | None = None,
+    source_bars: list[Bar] | None = None,
+    expected_symbols: tuple[str, ...] | None = None,
 ) -> None:
     checked_at = validation_time or datetime.now(_SHANGHAI)
     if checked_at.tzinfo is None:
@@ -128,6 +186,16 @@ def validate_source_sessions(
         )
     ):
         raise ValueError("candidate does not match verified forward source sessions")
+    if (source_bars is not None or expected_symbols is not None) and (
+        source_bars is None
+        or expected_symbols is None
+        or not _valid_source_bar_grid(
+            source_bars,
+            source_reports,
+            expected_symbols,
+        )
+    ):
+        raise ValueError("candidate source bar grid is not the frozen universe")
 
 
 def validate_progression(
@@ -293,17 +361,40 @@ def main() -> int:
     raw_preregistration = _load_signed(
         args.preregistration, "preregistration_sha256"
     )
-    _, source_reports = _load_forward_sessions(
+    raw_dataset = _load_signed(args.dataset_manifest, "evidence_sha256")
+    warmup = raw_preregistration.get("warmup_dataset")
+    eligible_symbols = raw_dataset.get("eligible_symbols")
+    if (
+        not isinstance(warmup, dict)
+        or raw_dataset.get("evidence_sha256") != warmup.get("evidence_sha256")
+        or not isinstance(eligible_symbols, list)
+        or len(eligible_symbols) != 75
+        or not all(isinstance(symbol, str) for symbol in eligible_symbols)
+        or len(set(eligible_symbols)) != len(eligible_symbols)
+    ):
+        raise ValueError("frozen forward symbol universe is invalid")
+    expected_symbols = tuple(eligible_symbols)
+    source_bars, source_reports = _load_forward_sessions(
         args.forward_root, preregistration=raw_preregistration
     )
-    validate_source_sessions(candidate, source_reports)
+    validate_source_sessions(
+        candidate,
+        source_reports,
+        source_bars=source_bars,
+        expected_symbols=expected_symbols,
+    )
 
     def revalidate_sources() -> None:
-        _, current_source_reports = _load_forward_sessions(
+        current_source_bars, current_source_reports = _load_forward_sessions(
             args.forward_root,
             preregistration=raw_preregistration,
         )
-        validate_source_sessions(candidate, current_source_reports)
+        validate_source_sessions(
+            candidate,
+            current_source_reports,
+            source_bars=current_source_bars,
+            expected_symbols=expected_symbols,
+        )
 
     _atomic_publish(
         args.candidate,

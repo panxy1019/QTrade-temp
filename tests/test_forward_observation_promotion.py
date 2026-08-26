@@ -4,13 +4,17 @@ import json
 import os
 import stat
 from copy import deepcopy
-from datetime import datetime
+from datetime import date, datetime
+from decimal import Decimal
 from hashlib import sha256
 from pathlib import Path
 from typing import Any, cast
+from zoneinfo import ZoneInfo
 
 import pytest
 
+from qtrade.data import Bar
+from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
 from scripts.promote_baostock_forward_observation import (
     _FROZEN_FORWARD_ANCHOR_SHA256,
     _atomic_publish,
@@ -35,6 +39,26 @@ def _report(*, count: int, generated_at: str) -> dict[str, object]:
         "policy_hash": "b" * 64,
         "generated_at": generated_at,
     }
+
+
+def _source_bars(symbols: tuple[str, ...]) -> list[Bar]:
+    trading_day = date(2026, 9, 1)
+    timezone = ZoneInfo("Asia/Shanghai")
+    return [
+        Bar(
+            symbol=symbol,
+            exchange="SSE",
+            timestamp=datetime.combine(trading_day, bar_time, timezone),
+            trading_day=trading_day,
+            open=Decimal("10"),
+            high=Decimal("10.2"),
+            low=Decimal("9.9"),
+            close=Decimal("10.1"),
+            volume=Decimal("1000"),
+        )
+        for bar_time in SINA_FIVE_MINUTE_SESSION_TIMES
+        for symbol in symbols
+    ]
 
 
 def test_forward_observation_progression_requires_append_only_sessions() -> None:
@@ -187,6 +211,24 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
         )
 
     validate(candidate)
+
+    frozen_symbols = tuple(f"600{index:03d}" for index in range(75))
+    validate_source_sessions(
+        candidate,
+        source_reports,
+        validation_time=validation_time,
+        source_bars=_source_bars(frozen_symbols),
+        expected_symbols=frozen_symbols,
+    )
+    substitute_symbols = (*frozen_symbols[:-1], "600999")
+    with pytest.raises(ValueError, match="source bar grid"):
+        validate_source_sessions(
+            candidate,
+            source_reports,
+            validation_time=validation_time,
+            source_bars=_source_bars(substitute_symbols),
+            expected_symbols=frozen_symbols,
+        )
 
     source_reports[0]["evidence_sha256"] = "2" * 64
     with pytest.raises(ValueError, match="source sessions"):
