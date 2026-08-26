@@ -914,3 +914,16 @@ by the preregistration. Every source day must provide all 48 native timestamps
 for each symbol, the canonical exchange and China trading-day identity, and pass
 the shared OHLCV quality gate. Substitution or partial coverage fails before
 replacement and cannot affect runtime authority.
+
+## ADR-061 — Parquet rows retain the manifest data version
+
+Status: accepted, 2026-08-26.
+
+A file checksum binds bytes but does not prove that the `data_version` stored in
+each Parquet row equals the manifest used to open it. A modified file can receive
+a new checksum while carrying rows labelled as a different dataset.
+
+`ParquetBarStore` must reject a checksum-valid file when any row omits or changes
+that version before constructing domain Bars. This shared fail-closed lineage
+check applies to research, charts, backtests and forward-session sources; it does
+not change runtime mode or grant external-order authority.

@@ -68,6 +68,8 @@ class ParquetBarStore:
         if checksum != manifest.checksum:
             raise DatasetIntegrityError("dataset checksum mismatch")
         rows = sorted(pq.read_table(target).to_pylist(), key=lambda row: row["timestamp"])
+        if any(row.get("data_version") != manifest.data_version for row in rows):
+            raise DatasetIntegrityError("dataset row data_version mismatch")
         records = [
             Bar(
                 symbol=row["symbol"],

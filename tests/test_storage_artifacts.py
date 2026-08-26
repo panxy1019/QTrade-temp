@@ -1,6 +1,10 @@
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from decimal import Decimal
+from hashlib import sha256
 
+import pyarrow as pa  # type: ignore[import-untyped]
+import pyarrow.parquet as pq  # type: ignore[import-untyped]
 import pytest
 
 from qtrade.data import (
@@ -45,6 +49,38 @@ def test_parquet_store_requires_quality_and_checksum(tmp_path):
     target.write_bytes(target.read_bytes() + b"tampered")
     with pytest.raises(DatasetIntegrityError, match="checksum"):
         store.read(passed)
+
+
+def test_parquet_store_rejects_row_data_version_drift(tmp_path):
+    store = ParquetBarStore(tmp_path)
+    bar = Bar(
+        "510300",
+        "SSE",
+        datetime(2026, 8, 12, 7, tzinfo=UTC),
+        date(2026, 8, 12),
+        Decimal("10"),
+        Decimal("11"),
+        Decimal("9"),
+        Decimal("10.5"),
+        Decimal("100"),
+    )
+    passed = store.write([bar], manifest())
+    target = tmp_path / "bars-v1" / "bars.parquet"
+    table = pq.read_table(target)
+    version_index = table.schema.get_field_index("data_version")
+    pq.write_table(
+        table.set_column(
+            version_index,
+            "data_version",
+            pa.array(["bars-v2"]),
+        ),
+        target,
+        compression="zstd",
+    )
+    resigned = replace(passed, checksum=sha256(target.read_bytes()).hexdigest())
+
+    with pytest.raises(DatasetIntegrityError, match="data_version"):
+        store.read(resigned)
 
 
 def test_experiment_artifacts_are_hashed_and_immutable(tmp_path):
