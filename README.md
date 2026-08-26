@@ -283,7 +283,8 @@ After 15:10 China time, one complete future session can be collected with:
 ```bash
 QTRADE_BAOSTOCK_FREE_DATA_ACK=true PYTHONPATH=. .venv/bin/python \
   scripts/probe_baostock_forward_session.py \
-  --anchor-day 2026-08-25 --target-day 2026-08-26
+  --anchor-day 2026-08-25 --target-day 2026-08-26 \
+  --output-root deployment/evidence/forward-session-data
 ```
 
 The collector requires the exact frozen 75-stock identity, 48 provider-native
@@ -295,13 +296,24 @@ observer is then reproducible with:
 ```bash
 PYTHONPATH=. .venv/bin/python \
   scripts/run_baostock_locked_forward_observation.py \
-  --output runtime/research/baostock-locked-forward-observation-v1/report.json
+  --forward-root deployment/evidence/forward-session-data \
+  --output runtime/research/baostock-locked-forward-observation-v1/report.next.json
+PYTHONPATH=. .venv/bin/python \
+  scripts/promote_baostock_forward_observation.py \
+  --candidate runtime/research/baostock-locked-forward-observation-v1/report.next.json
 ```
 
 All 368 warmup sessions enter strategy state but not future metrics. Only future
 complete sessions are scored at 0/5 bps and under whole-sector exclusions. No
 conclusion is complete before 20 sessions, and even a pass cannot authorize
 PAPER, LIVE or external order transmission.
+
+The candidate is never copied directly over the public baseline. The promotion
+step reruns the same dataset, development-lock, preregistration and report
+validators used by the public API; requires at least one newly appended complete
+session; rejects any rewritten historical session, lock change or non-monotonic
+generation time; then uses an atomic file replacement and verifies the published
+digest again.
 
 For a bounded same-day observation, the following probe selects one stock from
 each of the 15 frozen sectors and keeps only bars older than a conservative

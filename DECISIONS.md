@@ -551,3 +551,20 @@ GETs above a six-request ceiling. This keeps partial-section fault isolation
 without triggering a serverless cold-start burst. POST/control calls are not
 queued by this read limiter and remain protected by their existing local-only
 authentication boundary.
+
+## ADR-035 — Forward evidence advances by verified atomic publication
+
+Status: accepted, 2026-08-26.
+
+The immutable collector and locked evaluator always write new paths and refuse
+overwrites. Their candidate report may replace the public forward-observation
+baseline only through a separate publisher that runs the same long-dataset,
+development-lock, preregistration and semantic report validators as the API.
+
+The accepted complete-session count must strictly increase, the already
+published session list must be an exact prefix, the preregistration and policy
+hashes cannot change, and the signed generation time must advance. Publication
+uses an atomic same-directory replacement and immediately verifies the published
+digest. A failed candidate leaves the previous public evidence unchanged; this
+workflow cannot change strategy parameters, grant realtime/PAPER authority or
+enable LIVE/external orders.

@@ -1,0 +1,168 @@
+"""Atomically publish a strictly advancing verified forward-observation report."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+from datetime import datetime
+from pathlib import Path
+from tempfile import NamedTemporaryFile
+
+from qtrade.api.app import (
+    _load_verified_development_policy_search,
+    _load_verified_forward_observation_report,
+    _load_verified_forward_preregistration,
+    _load_verified_minute_dataset,
+)
+from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
+
+
+def validate_progression(
+    current: dict[str, object], candidate: dict[str, object]
+) -> None:
+    current_count = current.get("accepted_future_session_count")
+    candidate_count = candidate.get("accepted_future_session_count")
+    current_sessions = current.get("future_sessions")
+    candidate_sessions = candidate.get("future_sessions")
+    if (
+        not isinstance(current_count, int)
+        or isinstance(current_count, bool)
+        or not isinstance(candidate_count, int)
+        or isinstance(candidate_count, bool)
+        or not isinstance(current_sessions, list)
+        or not isinstance(candidate_sessions, list)
+    ):
+        raise ValueError("forward observation progression fields are invalid")
+    if candidate_count <= current_count:
+        raise ValueError("candidate must add at least one complete future session")
+    if candidate_sessions[:current_count] != current_sessions:
+        raise ValueError("candidate rewrites an already published future session")
+    if (
+        candidate.get("preregistration_sha256")
+        != current.get("preregistration_sha256")
+        or candidate.get("policy_hash") != current.get("policy_hash")
+    ):
+        raise ValueError("candidate changes the frozen observation identity")
+    current_generated_at = datetime.fromisoformat(str(current.get("generated_at")))
+    candidate_generated_at = datetime.fromisoformat(
+        str(candidate.get("generated_at"))
+    )
+    if (
+        current_generated_at.tzinfo is None
+        or candidate_generated_at.tzinfo is None
+        or candidate_generated_at <= current_generated_at
+    ):
+        raise ValueError("candidate generation time must strictly advance")
+
+
+def _load_verified_report(
+    report_path: Path,
+    *,
+    preregistration_path: Path,
+    dataset_manifest_path: Path,
+    development_report_path: Path,
+) -> dict[str, object]:
+    dataset = _load_verified_minute_dataset(
+        dataset_manifest_path,
+        expected_classification=(
+            "free_historical_qfq_5m_current_non_pit_not_eligible"
+        ),
+        expected_interval="5m",
+        expected_session_count=368,
+        expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+    )
+    development = _load_verified_development_policy_search(
+        development_report_path, dataset
+    )
+    preregistration = _load_verified_forward_preregistration(
+        preregistration_path, dataset, development
+    )
+    report = _load_verified_forward_observation_report(
+        report_path, preregistration
+    )
+    if report is None:
+        raise ValueError(f"forward observation verification failed: {report_path}")
+    return report
+
+
+def _atomic_publish(candidate_path: Path, destination: Path) -> None:
+    payload = candidate_path.read_bytes()
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path: Path | None = None
+    try:
+        with NamedTemporaryFile(
+            mode="wb",
+            dir=destination.parent,
+            prefix=f".{destination.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as handle:
+            temporary_path = Path(handle.name)
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        temporary_path.replace(destination)
+    finally:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--candidate", type=Path, required=True)
+    parser.add_argument(
+        "--destination",
+        type=Path,
+        default=Path("deployment/evidence/forward-observation/report.json"),
+    )
+    parser.add_argument(
+        "--preregistration",
+        type=Path,
+        default=Path("deployment/evidence/forward-observation/preregistration.json"),
+    )
+    parser.add_argument(
+        "--dataset-manifest",
+        type=Path,
+        default=Path("deployment/evidence/long-five-minute-market-data/manifest.json"),
+    )
+    parser.add_argument(
+        "--development-report",
+        type=Path,
+        default=Path("deployment/evidence/development-policy-search/report.json"),
+    )
+    args = parser.parse_args()
+    if not args.destination.is_file():
+        raise FileNotFoundError("published forward observation baseline is missing")
+    if args.candidate.resolve() == args.destination.resolve():
+        raise ValueError("candidate and destination must be different files")
+
+    verification = {
+        "preregistration_path": args.preregistration,
+        "dataset_manifest_path": args.dataset_manifest,
+        "development_report_path": args.development_report,
+    }
+    current = _load_verified_report(args.destination, **verification)
+    candidate = _load_verified_report(args.candidate, **verification)
+    validate_progression(current, candidate)
+    _atomic_publish(args.candidate, args.destination)
+    published = _load_verified_report(args.destination, **verification)
+    if published.get("evidence_sha256") != candidate.get("evidence_sha256"):
+        raise RuntimeError("published report does not match the verified candidate")
+    print(
+        json.dumps(
+            {
+                "status": "PUBLISHED_VERIFIED_FORWARD_OBSERVATION",
+                "accepted_future_session_count": published[
+                    "accepted_future_session_count"
+                ],
+                "evidence_sha256": published["evidence_sha256"],
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

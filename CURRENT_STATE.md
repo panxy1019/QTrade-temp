@@ -503,7 +503,10 @@ Last updated: 2026-08-26
   anchor match, and rejects partial/zero-placeholder sessions. The public
   `/forward-observation` verifier currently reports `0/20`, `INCOMPLETE` and
   `NOT_ELIGIBLE`; no target data has entered metrics and no runtime authority
-  changed.
+  changed. A separate publisher now accepts only a fully verified candidate
+  that strictly appends complete sessions to the already public sequence. It
+  rejects historical rewrites, frozen-lock changes and stale generation times,
+  then atomically replaces and re-verifies the deployment report.
 - Public minute read amplification: `/minute-research-snapshot` now verifies the
   24 MB long-history Parquet once per dashboard refresh and reuses that immutable
   identity across eight report validators. The React loader replaced eight
