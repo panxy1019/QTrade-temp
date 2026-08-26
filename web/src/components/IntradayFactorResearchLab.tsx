@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Form, InputNumber, Select, Space, Steps, Table, Tabs, Tag, Typography } from 'antd'
+import { Alert, Button, Card, Form, Input, InputNumber, Select, Space, Steps, Table, Tabs, Tag, Typography } from 'antd'
 import { useState } from 'react'
 import { runIntradayFactorBacktest } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
@@ -50,11 +50,30 @@ const gateLabels: Record<string, string> = {
 }
 
 export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
+  const [symbolQuery, setSymbolQuery] = useState('')
   const summary = report.summary
   if (!summary || !report.evaluation_contract) {
     return <Card title="120 日固定因子稳健性证据"><Alert showIcon type="warning" title="长期因子报告不可用" description="报告缺失，或其签名、数据身份、源码哈希、固定结果哈希未通过校验。" /></Card>
   }
   const contract = report.evaluation_contract
+  const result = report.result
+  const folds = result?.robustness_validation.folds ?? []
+  const sectors = result?.backtest.sectors ?? []
+  const symbols = (result?.backtest.symbols ?? []).filter((row) => row.group_id.includes(symbolQuery.trim()))
+  const positiveSectors = sectors.filter((row) => Number(row.strategy_metrics.total_return) > 0).length
+  const positiveSymbols = (result?.backtest.symbols ?? []).filter((row) => Number(row.strategy_metrics.total_return) > 0).length
+  const researchGates = result
+    ? Object.entries(result.research_gate.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))
+    : []
+  const robustnessGates = result
+    ? Object.entries(result.robustness_validation.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))
+    : []
+  const curve = result ? {
+    curve: [
+      { session: '起点', equity: '1', drawdown: '0', benchmark_equity: '1', benchmark_drawdown: '0', excess_return: '0' },
+      ...buildChartCurve(result),
+    ],
+  } : null
   return <Card
     title="120 日固定因子稳健性证据"
     extra={<JsonExportButton filename={`qtrade-intraday-factor-long-${report.evidence_sha256?.slice(0, 12) ?? 'unverified'}.json`} value={report} label="导出长期证据" />}
@@ -77,12 +96,91 @@ export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayF
         <Metric label="样本外最大回撤" value={formatPercent(summary.stitched_strategy_metrics.maximum_drawdown)} />
       </div>
       <Typography.Text>逐折训练选择阈值：{summary.selected_thresholds_bps.join(' → ')} bps；固定结果哈希 <Typography.Text code>{report.result_preview_hash}</Typography.Text>。</Typography.Text>
-      <Table rowKey="minimum_body_return_bps" size="small" pagination={false} dataSource={summary.threshold_sensitivity} columns={[
-        { title: '固定阈值 bps', dataIndex: 'minimum_body_return_bps' },
-        { title: '样本外信号', dataIndex: 'signal_count' },
-        { title: '样本外收益', dataIndex: 'total_return', render: (value: string) => formatPercent(value) },
-        { title: '样本外超额', dataIndex: 'excess_return', render: (value: string) => formatPercent(value) },
-      ]} />
+      {result ? <Tabs items={[
+        {
+          key: 'curve',
+          label: '长期收益曲线',
+          children: <Space orientation="vertical" style={{ width: '100%' }}>
+            <EquityChart dark analytics={curve} />
+            <Typography.Text type="secondary">120 日策略、同期等权基准、回撤与超额曲线均来自同一固定结果哈希；不使用盘中未完成 Bar。</Typography.Text>
+          </Space>,
+        },
+        {
+          key: 'folds',
+          label: `滚动测试折 · ${folds.length}`,
+          children: <Table rowKey="fold_id" size="small" pagination={false} dataSource={folds} columns={[
+            { title: '测试折', dataIndex: 'fold_id' },
+            { title: '训练区间', render: (_: unknown, row: typeof folds[number]) => `${row.training_start} → ${row.training_end}` },
+            { title: '测试区间', render: (_: unknown, row: typeof folds[number]) => `${row.test_start} → ${row.test_end}` },
+            { title: '阈值 bps', dataIndex: 'selected_minimum_body_return_bps' },
+            { title: '信号', dataIndex: 'test_signal_count' },
+            { title: '测试收益', render: (_: unknown, row: typeof folds[number]) => formatPercent(row.test_strategy_metrics.total_return) },
+            { title: '测试超额', render: (_: unknown, row: typeof folds[number]) => formatPercent(row.test_strategy_metrics.excess_return) },
+            { title: '最大回撤', render: (_: unknown, row: typeof folds[number]) => formatPercent(row.test_strategy_metrics.maximum_drawdown) },
+            { title: '选择已知时间', dataIndex: 'selection_known_at' },
+          ]} scroll={{ x: 1280 }} />,
+        },
+        {
+          key: 'thresholds',
+          label: '阈值压力',
+          children: <Table rowKey="minimum_body_return_bps" size="small" pagination={false} dataSource={summary.threshold_sensitivity} columns={[
+            { title: '固定阈值 bps', dataIndex: 'minimum_body_return_bps' },
+            { title: '样本外信号', dataIndex: 'signal_count' },
+            { title: '样本外收益', dataIndex: 'total_return', render: (value: string) => formatPercent(value) },
+            { title: '样本外超额', dataIndex: 'excess_return', render: (value: string) => formatPercent(value) },
+          ]} />,
+        },
+        {
+          key: 'sectors',
+          label: `板块拆分 · ${sectors.length}`,
+          children: <Space orientation="vertical" style={{ width: '100%' }}>
+            <Alert showIcon type={positiveSectors >= 9 ? 'success' : 'warning'} title={`正收益板块 ${positiveSectors}/${sectors.length}`} description="板块指标是各板块独立等权回放，不是把弱板块从组合中事后删除后的新策略。" />
+            <Table rowKey="group_id" size="small" pagination={false} dataSource={sectors} columns={[
+              { title: '板块', dataIndex: 'group_name' },
+              { title: '代码', dataIndex: 'group_id' },
+              { title: '观测', dataIndex: 'observation_count' },
+              { title: '信号', dataIndex: 'signal_count' },
+              { title: '信号后均值', dataIndex: 'mean_signal_forward_return', render: (value: string) => formatPercent(value) },
+              { title: '策略收益', render: (_: unknown, row: typeof sectors[number]) => formatPercent(row.strategy_metrics.total_return) },
+              { title: '超额收益', render: (_: unknown, row: typeof sectors[number]) => formatPercent(row.strategy_metrics.excess_return) },
+              { title: 'Sharpe', render: (_: unknown, row: typeof sectors[number]) => formatNumber(row.strategy_metrics.sharpe) },
+              { title: '最大回撤', render: (_: unknown, row: typeof sectors[number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+            ]} scroll={{ x: 1150 }} />
+          </Space>,
+        },
+        {
+          key: 'symbols',
+          label: `个股拆分 · ${result.backtest.symbols.length}`,
+          children: <Space orientation="vertical" style={{ width: '100%' }}>
+            <Alert showIcon type="info" title={`正收益个股 ${positiveSymbols}/${result.backtest.symbols.length}`} description="个股拆分用于发现集中度和迁移失败，不参与当前固定阈值的再次选择。" />
+            <Input.Search aria-label="搜索长期因子个股" allowClear placeholder="搜索六位股票代码" value={symbolQuery} onChange={(event) => setSymbolQuery(event.target.value)} style={{ width: 280 }} />
+            <Table rowKey="group_id" size="small" dataSource={symbols} pagination={{ pageSize: 8, showSizeChanger: false }} columns={[
+              { title: '股票', dataIndex: 'group_id' },
+              { title: '信号', dataIndex: 'signal_count' },
+              { title: '信号后均值', dataIndex: 'mean_signal_forward_return', render: (value: string) => formatPercent(value) },
+              { title: '命中率', dataIndex: 'signal_hit_rate', render: (value: string) => formatPercent(value) },
+              { title: '策略收益', render: (_: unknown, row: typeof symbols[number]) => formatPercent(row.strategy_metrics.total_return) },
+              { title: '超额收益', render: (_: unknown, row: typeof symbols[number]) => formatPercent(row.strategy_metrics.excess_return) },
+              { title: 'Sharpe', render: (_: unknown, row: typeof symbols[number]) => formatNumber(row.strategy_metrics.sharpe) },
+              { title: '最大回撤', render: (_: unknown, row: typeof symbols[number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+            ]} scroll={{ x: 1050 }} />
+          </Space>,
+        },
+        {
+          key: 'gates',
+          label: '研究硬门',
+          children: <Space orientation="vertical" style={{ width: '100%' }}>
+            <Table rowKey="gate_id" size="small" pagination={false} dataSource={researchGates} columns={[
+              { title: '有效性、相关性与回测门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+              { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+            ]} />
+            <Table rowKey="gate_id" size="small" pagination={false} dataSource={robustnessGates} columns={[
+              { title: '滚动稳健性门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+              { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+            ]} />
+          </Space>,
+        },
+      ]} /> : <Alert showIcon type="warning" title="长期明细不可用" description="汇总仍可显示，但完整收益曲线、折级、板块、个股或硬门明细没有通过校验。" />}
       <Typography.Text type="secondary">报告绑定 75 股、15 行业、原生 5 分钟数据 checksum、因子实现源码和完整响应哈希；结论固定为 {report.promotion}，PAPER {report.paper_readiness}，LIVE {report.live_readiness}，外部订单 DISABLED。</Typography.Text>
     </Space>
   </Card>

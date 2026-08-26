@@ -268,6 +268,10 @@ six folds was positive and all fixed thresholds lost money. Public API/UI reads
 fail closed on any identity or result drift. This evidence rejects the current
 hypothesis; it does not justify another search on the viewed window or PAPER
 promotion.
+The research page now also renders the report's complete 120-session equity and
+drawdown curve, six fold identities, 15 sector rows, searchable 75-stock rows,
+threshold stress and both gate matrices. The UI only filters presentation; it
+cannot submit a filtered universe or overwrite the fixed hypothesis.
 
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no

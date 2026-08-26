@@ -289,6 +289,12 @@ excess return. Every fixed threshold also lost money. The read-only
 signed veto, while any digest, source, dataset, fold or fixed-result mismatch
 fails closed. This is reused viewed history, not independent confirmation, and
 it remains `NOT_ELIGIBLE` for PAPER or LIVE.
+The long-window card exposes the same signed result as a 120-session strategy/
+benchmark/equity/drawdown curve, all six fold rows, all 15 independent sector
+breakdowns, a searchable 75-stock table, threshold pressure and both research
+gate matrices. These partitions are diagnostic views of the fixed result; the
+browser cannot remove a weak sector or stock and feed the filtered set back into
+selection.
 
 The public deployment can be audited independently across one stock from every
 sector and three widely separated sessions. The script runs the same 45 requests

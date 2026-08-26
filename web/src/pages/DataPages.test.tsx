@@ -94,6 +94,35 @@ const longIntradayStitchedMetrics = {
   number_of_trades: 506,
 }
 
+const longIntradayFolds = Array.from({ length: 6 }, (_, index) => ({
+  fold_id: `WF-0${index + 1}`,
+  training_start: '2026-03-03', training_end: `2026-${String(5 + index).padStart(2, '0')}-29`,
+  test_start: `2026-${String(6 + index).padStart(2, '0')}-01`, test_end: `2026-${String(6 + index).padStart(2, '0')}-12`,
+  training_session_count: 60 + index * 10, test_session_count: 10,
+  selected_minimum_body_return_bps: index < 2 ? '10' : '5',
+  selection_known_at: `2026-${String(6 + index).padStart(2, '0')}-01T09:35:00+08:00`,
+  training_signal_count: 345 + index * 70, test_signal_count: 74 - index,
+  training_strategy_metrics: longIntradayFullMetrics,
+  test_strategy_metrics: { ...longIntradayStitchedMetrics, total_return: index === 2 ? '0.01' : '-0.05', excess_return: index === 2 ? '0.005' : '-0.02', maximum_drawdown: '-0.08' },
+  test_benchmark_metrics: { ...longIntradayStitchedMetrics, total_return: '-0.03', excess_return: '0' },
+}))
+
+const longIntradaySectorRows = Array.from({ length: 15 }, (_, index) => ({
+  group_id: String(801000 + index), group_name: `板块${index + 1}`,
+  observation_count: 600, signal_count: 60 + index,
+  mean_signal_forward_return: index < 5 ? '0.001' : '-0.001', signal_hit_rate: '0.45',
+  strategy_metrics: { ...longIntradayFullMetrics, total_return: index < 5 ? '0.05' : '-0.04', excess_return: index < 5 ? '0.06' : '-0.02' },
+  benchmark_metrics: { ...longIntradayFullMetrics, total_return: '-0.01', excess_return: '0' },
+}))
+
+const longIntradaySymbolRows = Array.from({ length: 75 }, (_, index) => ({
+  group_id: String(600000 + index), group_name: String(600000 + index),
+  observation_count: 120, signal_count: 10 + index % 8,
+  mean_signal_forward_return: index < 20 ? '0.001' : '-0.001', signal_hit_rate: '0.4',
+  strategy_metrics: { ...longIntradayFullMetrics, total_return: index < 20 ? '0.03' : '-0.03', excess_return: index < 20 ? '0.04' : '-0.01' },
+  benchmark_metrics: { ...longIntradayFullMetrics, total_return: '-0.01', excess_return: '0' },
+}))
+
 const data = {
   system: { mode: 'PAPER', running: true, risk_state: 'NORMAL' },
   health: { healthy: true, runtime_mode: 'PAPER', risk_state: 'NORMAL', gateway_connected: true, reconciliation_status: 'OK' },
@@ -279,7 +308,35 @@ const data = {
       ],
       robustness_passed: false, research_gate_passed: false,
     },
-    result: null,
+    result: {
+      backtest: {
+        curve: [
+          { trading_day: '2026-03-03', signal_count: 3, eligible_symbol_count: 75, strategy_return: '0.01', benchmark_return: '0.005', strategy_equity: '1.01', benchmark_equity: '1.005', excess_equity: '0.005' },
+          { trading_day: '2026-08-24', signal_count: 8, eligible_symbol_count: 75, strategy_return: '-0.02', benchmark_return: '-0.01', strategy_equity: '0.728285', benchmark_equity: '0.787209', excess_equity: '-0.058924' },
+        ],
+        sectors: longIntradaySectorRows, symbols: longIntradaySymbolRows,
+      },
+      robustness_validation: {
+        folds: longIntradayFolds,
+        criteria: {
+          minimum_two_disjoint_test_folds: true, every_test_fold_has_signal: true,
+          causal_selection_known_before_test_signal: true, stitched_oos_total_return_positive: false,
+          stitched_oos_excess_return_positive: false, positive_fold_ratio_at_least_60pct: false,
+          worst_threshold_total_return_non_negative: false,
+        },
+      },
+      research_gate: {
+        criteria: {
+          minimum_observation_count: true, minimum_signal_count: true,
+          positive_mean_signal_return: false, positive_conditional_excess_return: false,
+          positive_rank_ic: false, positive_sector_ratio_at_least_60pct: false,
+          maximum_absolute_factor_correlation_below_0_90: true,
+          base_cost_total_return_positive: false, base_cost_excess_return_positive: false,
+          walk_forward_oos_total_return_positive: false, walk_forward_oos_excess_return_positive: false,
+          walk_forward_positive_fold_ratio_at_least_60pct: false, threshold_sensitivity_majority_positive: false,
+        },
+      },
+    } as unknown as IntradayFactorBacktest,
     promotion: 'NOT_ELIGIBLE',
     promotion_reasons: ['REUSED_HISTORICAL_WINDOW_NOT_INDEPENDENT_CONFIRMATION'],
     paper_readiness: 'NOT_ELIGIBLE', live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION',
@@ -1147,6 +1204,22 @@ describe('verified robustness evidence', () => {
     expect(screen.getByRole('button', { name: /导出长期证据/ })).toBeInTheDocument()
     expect(screen.getByText(/PAPER NOT_ELIGIBLE/)).toBeInTheDocument()
     expect(screen.getByText(/外部订单 DISABLED/)).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: '长期收益曲线' })).toBeInTheDocument()
+    expect(screen.getByTestId('equity-chart')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: '滚动测试折 · 6' }))
+    expect(screen.getByText('WF-01')).toBeInTheDocument()
+    expect(screen.getAllByText('-5.00%').length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole('tab', { name: '板块拆分 · 15' }))
+    expect(screen.getByText('正收益板块 5/15')).toBeInTheDocument()
+    expect(screen.getByText('板块15')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: '个股拆分 · 75' }))
+    expect(screen.getByText('正收益个股 20/75')).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('搜索长期因子个股'), { target: { value: '600074' } })
+    expect(screen.getByText('600074')).toBeInTheDocument()
+    expect(screen.queryByText('600000')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: '研究硬门' }))
+    expect(screen.getByText('Rank IC 为正')).toBeInTheDocument()
+    expect(screen.getByText('最差固定阈值收益不为负')).toBeInTheDocument()
   })
 
   it('runs the full intraday factor gate without promoting a losing rule', async () => {

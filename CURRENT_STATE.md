@@ -247,6 +247,11 @@ Last updated: 2026-08-26
   endpoint, research card and data-center inventory preserve this stronger veto;
   it is viewed reused history, remains `NOT_ELIGIBLE`, and cannot authorize
   PAPER, LIVE, state mutation or external orders.
+  The same card now exposes the signed 120-day strategy/benchmark and drawdown
+  curve, all six fold identities, all 15 sector partitions, a searchable 75-stock
+  breakdown, threshold stress and both hard-gate matrices. These are read-only
+  views of the fixed response hash; filters cannot change the evaluated universe
+  or create a new candidate.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery
