@@ -847,6 +847,27 @@ export interface IntradayFactorDiscovery {
     criteria: Record<string, boolean>
     passed: boolean
   }
+  locked_test_execution_delay_stress: {
+    selected_candidate_id: string
+    test_start: string
+    test_end: string
+    cost_bps: string
+    candidate_reselected: false
+    delay_rows_used_for_selection: false
+    signal_known_at: 'CURRENT_SESSION_10_00'
+    source_bar_timestamp_convention: 'BAR_END_TIME'
+    rows: Array<{
+      delay_bars_after_signal: number
+      entry_source_bar_time: string
+      signal_count: number
+      signal_session_count: number
+      mean_session_conditional_excess_return: string
+      strategy_metrics: IntradayPerformanceMetrics
+      benchmark_metrics: IntradayPerformanceMetrics
+    }>
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   discovery_gate: {
     criteria: Record<string, boolean>
     passed: boolean

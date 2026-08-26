@@ -173,6 +173,11 @@ def test_three_ten_minute_bullish_signal_executes_next_bar_and_exits_t_plus_one(
     first = next(item for item in result.observations if item.signal)
     assert first.signal_at.timetz().replace(tzinfo=None) == time(10, 0)
     assert first.entry_at.timetz().replace(tzinfo=None) == time(10, 5)
+    assert [
+        value.timetz().replace(tzinfo=None)
+        for value in first.entry_delay_ats
+    ] == [time(10, 5), time(10, 10), time(10, 15)]
+    assert first.entry_delay_prices[0] == first.entry_price
     assert first.exit_at.timetz().replace(tzinfo=None) == time(9, 35)
     assert first.exit_at.date() == first.trading_day + timedelta(days=1)
     assert first.entry_price != first.signal_close
@@ -525,6 +530,28 @@ def test_bounded_opening_rule_discovery_locks_training_before_disjoint_test() ->
         / (placebo.replications + 1)
     )
     assert placebo.passed is all(placebo.criteria.values())
+    assert [
+        row.delay_bars_after_signal
+        for row in first.locked_test_execution_delay_rows
+    ] == [1, 2, 3]
+    assert [
+        row.entry_source_bar_time
+        for row in first.locked_test_execution_delay_rows
+    ] == [time(10, 5), time(10, 10), time(10, 15)]
+    assert all(
+        row.signal_count == first.test_signal_count
+        and row.signal_session_count == first.test_signal_session_count
+        for row in first.locked_test_execution_delay_rows
+    )
+    immediate = first.locked_test_execution_delay_rows[0]
+    assert immediate.mean_session_conditional_excess_return == (
+        first.test_mean_session_conditional_excess_return
+    )
+    assert immediate.strategy_metrics == first.test_strategy_metrics
+    assert immediate.benchmark_metrics == first.test_benchmark_metrics
+    assert first.locked_test_execution_delay_stress_passed is all(
+        first.locked_test_execution_delay_stress_criteria.values()
+    )
     assert first.test_observation_count == 20 * len(symbols)
     assert first.selection_uses_test_returns is False
     assert first.promotion == "NOT_ELIGIBLE"

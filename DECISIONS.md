@@ -1715,3 +1715,27 @@ reuses the already viewed locked test and is not independent confirmation. The
 consolidated historical discovery gate now requires chronological lock,
 CSCV/PBO, cost, sector, stock, causal market-state and placebo stages and is
 0/7; no result can authorize PAPER/LIVE, state mutation or external orders.
+
+## ADR-105 — Execution-delay stress moves strategy and benchmark entry together
+
+Status: accepted, 2026-08-27.
+
+A factor known at 10:00 may not reach an executable order at the first causal
+source-Bar open. Reporting only the 10:05-labelled Bar can therefore hide
+sensitivity to data handling, risk checks or queue latency. QTrade now retains
+the original 10:05 open and the next two provider-native opens at 10:10 and
+10:15 in every factor observation. The locked-test stress fixes the selected
+candidate, 326 signal identities, 20 test sessions, exits and requested 5 bps
+cost. For each delay, both selected stocks and the same-day 75-stock benchmark
+use the corresponding entry open, so the comparison does not mix execution
+clocks. Delay rows never enter training, ranking or candidate reselection.
+
+For `DIR-XDU-T0000`, total return at 10:05/10:10/10:15 was respectively
+-6.1491%, -5.0013% and -4.6735%; excess was -1.8107%, -0.9354% and -0.7027%.
+Sharpe remained -4.7951, -3.9658 and -3.7751, with maximum drawdown -9.8972%,
+-8.9241% and -8.0363%. The fixed gate requires all three delay identities,
+unchanged signal/session counts, positive total return at every delay and
+positive excess at every delay. Only identity and coverage pass. The result
+shows that modest delay changes loss magnitude but does not rescue the factor.
+The consolidated historical discovery gate is 0/8 and remains reused-history,
+non-PIT, `NOT_ELIGIBLE`, stateless and external-order-disabled.

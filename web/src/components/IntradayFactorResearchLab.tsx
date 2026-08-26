@@ -98,6 +98,7 @@ const gateLabels: Record<string, string> = {
   locked_test_symbol_stress_passed: '锁定测试逐股票压力通过',
   locked_test_regime_stress_passed: '锁定测试信号前市场状态压力通过',
   locked_test_placebo_audit_passed: '锁定测试会话内置换安慰剂通过',
+  locked_test_execution_delay_stress_passed: '锁定测试执行延迟压力通过',
   every_locked_test_sector_has_signal: '每个测试行业均有信号',
   positive_locked_test_sector_ratio_at_least_0_60: '至少 60% 测试行业收益为正',
   positive_leave_one_sector_out_ratio_at_least_0_80: '至少 80% 整行业剔除收益为正',
@@ -117,6 +118,10 @@ const gateLabels: Record<string, string> = {
   observed_conditional_excess_positive: '实际条件超额为正',
   empirical_one_sided_placebo_p_value_at_most_0_05: '单侧置换 p 值不高于 0.05',
   observed_conditional_excess_above_placebo_p95: '实际条件超额高于安慰剂第 95 百分位',
+  three_predeclared_execution_delays_present: '10:05/10:10/10:15 三档执行时点完整',
+  every_execution_delay_preserves_locked_signal_identity: '每档延迟保持锁定信号身份与数量',
+  all_execution_delay_total_returns_positive: '每档执行延迟的策略收益均为正',
+  all_execution_delay_excess_returns_positive: '每档执行延迟的策略超额均为正',
 }
 
 export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
@@ -713,6 +718,33 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           ]} />
           <Alert
             showIcon
+            type={discoveryResult.locked_test_execution_delay_stress.passed ? 'success' : 'warning'}
+            title={discoveryResult.locked_test_execution_delay_stress.passed ? '锁定规则通过执行延迟压力门' : '锁定规则未通过执行延迟压力门'}
+            description={`信号固定在 10:00 已知，使用 ${discoveryResult.locked_test_execution_delay_stress.cost_bps} bps 成本，分别取 10:05、10:10、10:15 标记的原生 5 分钟 Bar 开盘价。固定 ${discoveryResult.locked_test_execution_delay_stress.selected_candidate_id}、测试日和信号归属，只改变策略与同期全股票基准的入场时点；延迟行不参与选择或重选。`}
+          />
+          <Table
+            rowKey="delay_bars_after_signal"
+            size="small"
+            pagination={false}
+            dataSource={discoveryResult.locked_test_execution_delay_stress.rows}
+            columns={[
+              { title: '信号后延迟', dataIndex: 'delay_bars_after_signal', render: (value: number) => `${value} 根 5 分钟 Bar` },
+              { title: '入场源 Bar', dataIndex: 'entry_source_bar_time' },
+              { title: '信号 / 信号日', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_execution_delay_stress']['rows'][number]) => `${row.signal_count} / ${row.signal_session_count}` },
+              { title: '日聚类条件超额', dataIndex: 'mean_session_conditional_excess_return', render: (value: string) => formatBasisPoints(value) },
+              { title: '策略收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_execution_delay_stress']['rows'][number]) => formatPercent(row.strategy_metrics.total_return) },
+              { title: '超额收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_execution_delay_stress']['rows'][number]) => formatPercent(row.strategy_metrics.excess_return) },
+              { title: 'Sharpe', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_execution_delay_stress']['rows'][number]) => formatNumber(row.strategy_metrics.sharpe) },
+              { title: '最大回撤', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_execution_delay_stress']['rows'][number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+            ]}
+            scroll={{ x: 1080 }}
+          />
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.locked_test_execution_delay_stress.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '锁定测试延迟门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
+          <Alert
+            showIcon
             type={discoveryResult.overfitting_audit.passed ? 'info' : 'warning'}
             title={discoveryResult.overfitting_audit.passed && !discoveryResult.test_validation.passed
               ? 'CSCV 选择偏差门通过，但时间顺序锁定测试仍失败'
@@ -770,7 +802,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             showIcon
             type={discoveryResult.discovery_gate.passed ? 'success' : 'error'}
             title={discoveryResult.discovery_gate.passed ? '完整因子发现研究门通过，但仍需独立前向证据' : '完整因子发现研究门未通过'}
-            description="时间顺序锁定测试、组合式选择偏差、固定成本压力、多行业压力、逐股票压力、信号前市场状态压力和会话内置换安慰剂必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
+            description="时间顺序锁定测试、组合式选择偏差、固定成本压力、多行业压力、逐股票压力、信号前市场状态压力、会话内置换安慰剂和执行延迟压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
           />
           <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.discovery_gate.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
             { title: '完整发现门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },

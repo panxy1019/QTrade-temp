@@ -378,8 +378,12 @@ current 10:00 signal. Returns were -0.7402% after 12 negative prior sessions and
    ownership across that day's 75 stocks 499 times. The observed -9.1894 bp
    conditional excess was below the +0.2642 bp placebo median and +17.9292 bp
    P95; 387/499 permutations were at least as large, so the +1-corrected one-
-   sided p-value was 77.60%. The consolidated seven-stage gate is 0/7 and cannot
-   create PAPER, state or external-order authority.
+   sided p-value was 77.60%. A causal execution-delay stress then preserves all
+   326 locked signals and moves the strategy and benchmark entry together from
+   10:05 to 10:10 and 10:15 at 5 bps. Returns remain negative at -6.1491%,
+   -5.0013% and -4.6735%, with excess -1.8107%, -0.9354% and -0.7027%. The
+   consolidated eight-stage gate is 0/8 and cannot create PAPER, state or
+   external-order authority.
 
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no

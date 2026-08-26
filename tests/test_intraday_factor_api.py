@@ -443,6 +443,9 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
             "locked_test_placebo_audit_passed": payload[
                 "locked_test_placebo_audit"
             ]["passed"],
+            "locked_test_execution_delay_stress_passed": payload[
+                "locked_test_execution_delay_stress"
+            ]["passed"],
         },
         "passed": False,
         "promotion_authority": False,
@@ -528,6 +531,38 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
         Decimal(placebo["placebo_at_least_observed_count"] + 1) / 500
     )
     assert placebo["passed"] is all(placebo["criteria"].values())
+    delay_stress = payload["locked_test_execution_delay_stress"]
+    assert delay_stress["selected_candidate_id"] == payload["selected"][
+        "candidate_id"
+    ]
+    assert delay_stress["test_start"] == payload["split"]["test_start"]
+    assert delay_stress["test_end"] == payload["split"]["test_end"]
+    assert delay_stress["cost_bps"] == "5"
+    assert delay_stress["candidate_reselected"] is False
+    assert delay_stress["delay_rows_used_for_selection"] is False
+    assert [row["delay_bars_after_signal"] for row in delay_stress["rows"]] == [
+        1,
+        2,
+        3,
+    ]
+    assert [row["entry_source_bar_time"] for row in delay_stress["rows"]] == [
+        "10:05",
+        "10:10",
+        "10:15",
+    ]
+    assert all(
+        row["signal_count"] == payload["test_validation"]["signal_count"]
+        and row["signal_session_count"]
+        == payload["test_validation"]["signal_session_count"]
+        for row in delay_stress["rows"]
+    )
+    assert delay_stress["rows"][0]["strategy_metrics"] == payload[
+        "test_validation"
+    ]["strategy_metrics"]
+    assert delay_stress["rows"][0]["benchmark_metrics"] == payload[
+        "test_validation"
+    ]["benchmark_metrics"]
+    assert delay_stress["passed"] is all(delay_stress["criteria"].values())
     assert payload["selected"]["candidate_id"] in {
         candidate["candidate_id"] for candidate in payload["candidates"]
     }

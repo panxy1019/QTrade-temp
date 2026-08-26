@@ -36,6 +36,8 @@ _ROBUSTNESS_THRESHOLDS_BPS = tuple(Decimal(value) for value in (0, 5, 10, 20))
 _DISCOVERY_THRESHOLDS_BPS = tuple(Decimal(value) for value in (0, 5, 10, 20))
 _DISCOVERY_PLACEBO_REPLICATIONS = 499
 _DISCOVERY_PLACEBO_SEED = 20260827
+_DISCOVERY_EXECUTION_DELAY_BARS = (1, 2, 3)
+_DISCOVERY_EXECUTION_DELAY_TIMES = (time(10, 5), time(10, 10), time(10, 15))
 _OPENING_TEN_MINUTE_LABELS = (
     "0930_0940",
     "0940_0950",
@@ -158,9 +160,11 @@ class IntradayFactorObservation:
     signal: bool
     signal_at: datetime
     entry_at: datetime
+    entry_delay_ats: tuple[datetime, datetime, datetime]
     exit_at: datetime
     signal_close: Decimal
     entry_price: Decimal
+    entry_delay_prices: tuple[Decimal, Decimal, Decimal]
     exit_price: Decimal
     exit_condition_score: Decimal
     exit_condition_triggered: bool
@@ -428,6 +432,17 @@ class IntradayDiscoveryPlaceboAudit:
 
 
 @dataclass(frozen=True, slots=True)
+class IntradayDiscoveryExecutionDelayStress:
+    delay_bars_after_signal: int
+    entry_source_bar_time: time
+    signal_count: int
+    signal_session_count: int
+    mean_session_conditional_excess_return: Decimal
+    strategy_metrics: PerformanceMetrics
+    benchmark_metrics: PerformanceMetrics
+
+
+@dataclass(frozen=True, slots=True)
 class IntradayFactorDiscoveryResult:
     candidate_count: int
     candidates: tuple[IntradayDiscoveryCandidate, ...]
@@ -461,6 +476,11 @@ class IntradayFactorDiscoveryResult:
     locked_test_regime_stress_criteria: Mapping[str, bool]
     locked_test_regime_stress_passed: bool
     locked_test_placebo_audit: IntradayDiscoveryPlaceboAudit
+    locked_test_execution_delay_rows: tuple[
+        IntradayDiscoveryExecutionDelayStress, ...
+    ]
+    locked_test_execution_delay_stress_criteria: Mapping[str, bool]
+    locked_test_execution_delay_stress_passed: bool
     test_observation_count: int
     test_signal_count: int
     test_signal_session_count: int
@@ -636,11 +656,19 @@ def run_opening_triple_bullish_research(
             )
             signal = directional_rule_score > threshold
             signal_bar = first_six[-1]
-            entry_bar = day_bars[6]
+            entry_delay_bars = (day_bars[6], day_bars[7], day_bars[8])
+            entry_bar = entry_delay_bars[0]
             if _china_time(signal_bar.timestamp) != _SIGNAL_TIME:
                 raise ValueError("factor signal must be known at the 10:00 close")
             if _china_time(entry_bar.timestamp) != _ENTRY_TIME:
                 raise ValueError("factor entry must use the 10:05 source-bar open")
+            if tuple(
+                _china_time(bar.timestamp) for bar in entry_delay_bars
+            ) != _DISCOVERY_EXECUTION_DELAY_TIMES:
+                raise ValueError(
+                    "factor delay stress must use the 10:05/10:10/10:15 "
+                    "source-bar opens"
+                )
             exit_condition_score = Decimal("0")
             exit_condition_triggered = False
             conditional_exit_price = exit_bars[0].open
@@ -713,9 +741,19 @@ def run_opening_triple_bullish_research(
                     signal=signal,
                     signal_at=signal_bar.timestamp,
                     entry_at=entry_bar.timestamp,
+                    entry_delay_ats=(
+                        entry_delay_bars[0].timestamp,
+                        entry_delay_bars[1].timestamp,
+                        entry_delay_bars[2].timestamp,
+                    ),
                     exit_at=exit_bar.timestamp,
                     signal_close=signal_bar.close,
                     entry_price=entry_bar.open,
+                    entry_delay_prices=(
+                        entry_delay_bars[0].open,
+                        entry_delay_bars[1].open,
+                        entry_delay_bars[2].open,
+                    ),
                     exit_price=exit_bar.open,
                     exit_condition_score=exit_condition_score,
                     exit_condition_triggered=exit_condition_triggered,
@@ -1768,6 +1806,95 @@ def _session_preserving_placebo_audit(
     )
 
 
+def _execution_delay_stress(
+    observations: list[IntradayFactorObservation],
+    trading_days: list[date],
+    *,
+    cost_bps: Decimal,
+) -> tuple[
+    tuple[IntradayDiscoveryExecutionDelayStress, ...],
+    Mapping[str, bool],
+]:
+    rows: list[IntradayDiscoveryExecutionDelayStress] = []
+    expected_signal_count = sum(row.signal for row in observations)
+    expected_signal_session_count = len(
+        {row.trading_day for row in observations if row.signal}
+    )
+    for delay_bars, entry_time in zip(
+        _DISCOVERY_EXECUTION_DELAY_BARS,
+        _DISCOVERY_EXECUTION_DELAY_TIMES,
+        strict=True,
+    ):
+        delay_index = delay_bars - 1
+        delayed_observations = [
+            replace(
+                row,
+                entry_at=row.entry_delay_ats[delay_index],
+                entry_price=row.entry_delay_prices[delay_index],
+                gross_forward_return=(
+                    row.exit_price / row.entry_delay_prices[delay_index]
+                    - Decimal("1")
+                ),
+            )
+            for row in observations
+        ]
+        strategy, benchmark, _ = _evaluate_observations(
+            delayed_observations,
+            trading_days,
+            cost_bps=cost_bps,
+        )
+        session_values = [
+            value
+            for _, value in _session_conditional_excess_returns(
+                delayed_observations
+            )
+        ]
+        mean_session_conditional_excess_return = (
+            Decimal("0")
+            if not session_values
+            else sum(session_values, start=Decimal("0"))
+            / len(session_values)
+        )
+        rows.append(
+            IntradayDiscoveryExecutionDelayStress(
+                delay_bars_after_signal=delay_bars,
+                entry_source_bar_time=entry_time,
+                signal_count=sum(row.signal for row in delayed_observations),
+                signal_session_count=len(
+                    {
+                        row.trading_day
+                        for row in delayed_observations
+                        if row.signal
+                    }
+                ),
+                mean_session_conditional_excess_return=(
+                    mean_session_conditional_excess_return
+                ),
+                strategy_metrics=strategy,
+                benchmark_metrics=benchmark,
+            )
+        )
+    result = tuple(rows)
+    criteria = {
+        "three_predeclared_execution_delays_present": (
+            tuple(row.delay_bars_after_signal for row in result)
+            == _DISCOVERY_EXECUTION_DELAY_BARS
+        ),
+        "every_execution_delay_preserves_locked_signal_identity": all(
+            row.signal_count == expected_signal_count
+            and row.signal_session_count == expected_signal_session_count
+            for row in result
+        ),
+        "all_execution_delay_total_returns_positive": all(
+            row.strategy_metrics.total_return > 0 for row in result
+        ),
+        "all_execution_delay_excess_returns_positive": all(
+            row.strategy_metrics.excess_return > 0 for row in result
+        ),
+    }
+    return result, criteria
+
+
 def discover_opening_direction_rules(
     observations: tuple[IntradayFactorObservation, ...],
     *,
@@ -2198,6 +2325,14 @@ def discover_opening_direction_rules(
         ),
     }
     locked_test_placebo_audit = _session_preserving_placebo_audit(test_rows)
+    (
+        locked_test_execution_delay_rows,
+        locked_test_execution_delay_stress_criteria,
+    ) = _execution_delay_stress(
+        test_rows,
+        list(test_days),
+        cost_bps=cost_bps,
+    )
     test_criteria = {
         "minimum_250_test_observations": len(test_rows) >= 250,
         "minimum_twenty_test_signals": test_signal_count >= 20,
@@ -2273,6 +2408,15 @@ def discover_opening_direction_rules(
             locked_test_regime_stress_criteria.values()
         ),
         locked_test_placebo_audit=locked_test_placebo_audit,
+        locked_test_execution_delay_rows=(
+            locked_test_execution_delay_rows
+        ),
+        locked_test_execution_delay_stress_criteria=(
+            locked_test_execution_delay_stress_criteria
+        ),
+        locked_test_execution_delay_stress_passed=all(
+            locked_test_execution_delay_stress_criteria.values()
+        ),
         test_observation_count=len(test_rows),
         test_signal_count=test_signal_count,
         test_signal_session_count=test_signal_sessions,

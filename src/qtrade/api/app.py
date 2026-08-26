@@ -9227,6 +9227,40 @@ def _intraday_factor_discovery_preview(
             "criteria": dict(result.locked_test_placebo_audit.criteria),
             "passed": result.locked_test_placebo_audit.passed,
         },
+        "locked_test_execution_delay_stress": {
+            "selected_candidate_id": result.selected_candidate_id,
+            "test_start": result.test_start.isoformat(),
+            "test_end": result.test_end.isoformat(),
+            "cost_bps": str(payload.cost_bps),
+            "candidate_reselected": False,
+            "delay_rows_used_for_selection": False,
+            "signal_known_at": "CURRENT_SESSION_10_00",
+            "source_bar_timestamp_convention": "BAR_END_TIME",
+            "rows": [
+                {
+                    "delay_bars_after_signal": row.delay_bars_after_signal,
+                    "entry_source_bar_time": row.entry_source_bar_time.strftime(
+                        "%H:%M"
+                    ),
+                    "signal_count": row.signal_count,
+                    "signal_session_count": row.signal_session_count,
+                    "mean_session_conditional_excess_return": str(
+                        row.mean_session_conditional_excess_return
+                    ),
+                    "strategy_metrics": _performance_metrics_payload(
+                        row.strategy_metrics
+                    ),
+                    "benchmark_metrics": _performance_metrics_payload(
+                        row.benchmark_metrics
+                    ),
+                }
+                for row in result.locked_test_execution_delay_rows
+            ],
+            "criteria": dict(
+                result.locked_test_execution_delay_stress_criteria
+            ),
+            "passed": result.locked_test_execution_delay_stress_passed,
+        },
         "discovery_gate": {
             "criteria": {
                 "chronological_locked_test_passed": result.test_gate_passed,
@@ -9248,6 +9282,9 @@ def _intraday_factor_discovery_preview(
                 "locked_test_placebo_audit_passed": (
                     result.locked_test_placebo_audit.passed
                 ),
+                "locked_test_execution_delay_stress_passed": (
+                    result.locked_test_execution_delay_stress_passed
+                ),
             },
             "passed": all(
                 (
@@ -9258,6 +9295,7 @@ def _intraday_factor_discovery_preview(
                     result.locked_test_symbol_stress_passed,
                     result.locked_test_regime_stress_passed,
                     result.locked_test_placebo_audit.passed,
+                    result.locked_test_execution_delay_stress_passed,
                 )
             ),
             "promotion_authority": False,

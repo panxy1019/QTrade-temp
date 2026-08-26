@@ -367,6 +367,15 @@ Last updated: 2026-08-27
   failed. Placebo rows cannot enter training or trigger candidate reselection.
   The consolidated seven-stage discovery gate is 0/7 and remains viewed-history
   evidence with no PAPER/LIVE, state-mutation or external-order authority.
+- Locked-test execution-delay stress now preserves the same 326 signals, 20
+  sessions, selected rule and 5 bps cost while moving both the strategy and
+  equal-weight benchmark entry from the first causal 10:05 source-Bar open to
+  the predeclared 10:10 and 10:15 opens. Total return improved from -6.1491% to
+  -5.0013% and -4.6735%, but excess remained -1.8107%, -0.9354% and -0.7027%;
+  all three Sharpe ratios and total returns remained negative. Exact delay and
+  signal-identity gates passed, while all-delay positive total and excess gates
+  failed. Delay rows cannot change factor selection. The consolidated historical
+  discovery gate is now 0/8, with no PAPER/LIVE, state or order authority.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,

@@ -325,6 +325,23 @@ const discovery = {
     },
     passed: false,
   },
+  locked_test_execution_delay_stress: {
+    selected_candidate_id: 'DIR-XDU-T0000', test_start: '2026-06-25', test_end: '2026-07-14',
+    cost_bps: '5', candidate_reselected: false, delay_rows_used_for_selection: false,
+    signal_known_at: 'CURRENT_SESSION_10_00', source_bar_timestamp_convention: 'BAR_END_TIME',
+    rows: [
+      { delay_bars_after_signal: 1, entry_source_bar_time: '10:05', signal_count: 326, signal_session_count: 20, mean_session_conditional_excess_return: '-0.0009189368', strategy_metrics: discoveryMetrics, benchmark_metrics: discoveryMetrics },
+      { delay_bars_after_signal: 2, entry_source_bar_time: '10:10', signal_count: 326, signal_session_count: 20, mean_session_conditional_excess_return: '-0.0004561347', strategy_metrics: { ...discoveryMetrics, total_return: '-0.0500131', excess_return: '-0.0093541', sharpe: '-3.9658', maximum_drawdown: '-0.0892412' }, benchmark_metrics: discoveryMetrics },
+      { delay_bars_after_signal: 3, entry_source_bar_time: '10:15', signal_count: 326, signal_session_count: 20, mean_session_conditional_excess_return: '-0.0003367495', strategy_metrics: { ...discoveryMetrics, total_return: '-0.0467354', excess_return: '-0.0070270', sharpe: '-3.7751', maximum_drawdown: '-0.0803629' }, benchmark_metrics: discoveryMetrics },
+    ],
+    criteria: {
+      three_predeclared_execution_delays_present: true,
+      every_execution_delay_preserves_locked_signal_identity: true,
+      all_execution_delay_total_returns_positive: false,
+      all_execution_delay_excess_returns_positive: false,
+    },
+    passed: false,
+  },
   discovery_gate: {
     criteria: {
       chronological_locked_test_passed: false,
@@ -334,6 +351,7 @@ const discovery = {
       locked_test_symbol_stress_passed: false,
       locked_test_regime_stress_passed: false,
       locked_test_placebo_audit_passed: false,
+      locked_test_execution_delay_stress_passed: false,
     },
     passed: false,
     promotion_authority: false,
@@ -428,6 +446,7 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('锁定规则未通过逐股票鲁棒性门')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过信号前市场状态压力门')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过会话内置换安慰剂门')).toBeInTheDocument()
+    expect(screen.getByText('锁定规则未通过执行延迟压力门')).toBeInTheDocument()
     expect(screen.getByText('4/15 · 26.67%')).toBeInTheDocument()
     expect(screen.getByText('0/15 · 0.00%')).toBeInTheDocument()
     expect(screen.getByText('22/75 · 29.33%')).toBeInTheDocument()
@@ -440,6 +459,9 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('+0.2642 bp')).toBeInTheDocument()
     expect(screen.getByText('77.60%')).toBeInTheDocument()
     expect(screen.getByText('387/499')).toBeInTheDocument()
+    expect(screen.getByText('10:15')).toBeInTheDocument()
+    expect(screen.getByText('-4.67%')).toBeInTheDocument()
+    expect(screen.getByText('-0.70%')).toBeInTheDocument()
     expect(screen.getByText('41.43%')).toBeInTheDocument()
     expect(screen.getByText('DIR-DDD-T0020 · 24/70')).toBeInTheDocument()
     expect(screen.getAllByText(/DIR-XDU-T0000/).length).toBeGreaterThan(0)
