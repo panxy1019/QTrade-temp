@@ -1,5 +1,5 @@
 from dataclasses import replace
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from hashlib import sha256
 
@@ -80,6 +80,34 @@ def test_parquet_store_rejects_row_data_version_drift(tmp_path):
     resigned = replace(passed, checksum=sha256(target.read_bytes()).hexdigest())
 
     with pytest.raises(DatasetIntegrityError, match="data_version"):
+        store.read(resigned)
+
+
+def test_parquet_store_rejects_resigned_physical_timestamp_disorder(tmp_path):
+    store = ParquetBarStore(tmp_path)
+    first = Bar(
+        "510300",
+        "SSE",
+        datetime(2026, 8, 12, 7, tzinfo=UTC),
+        date(2026, 8, 12),
+        Decimal("10"),
+        Decimal("11"),
+        Decimal("9"),
+        Decimal("10.5"),
+        Decimal("100"),
+    )
+    second = replace(first, timestamp=first.timestamp + timedelta(minutes=5))
+    passed = store.write([first, second], manifest())
+    target = tmp_path / "bars-v1" / "bars.parquet"
+    table = pq.read_table(target)
+    pq.write_table(
+        table.take(pa.array([1, 0])),
+        target,
+        compression="zstd",
+    )
+    resigned = replace(passed, checksum=sha256(target.read_bytes()).hexdigest())
+
+    with pytest.raises(DatasetIntegrityError, match="quality gate"):
         store.read(resigned)
 
 

@@ -58,6 +58,8 @@ bar adapter, and strict checksum-versioned canonical CSV importer. Temporal and
 jump validation is grouped per instrument and rejects non-finite values.
 Parquet reads reject a checksum-valid file when any row-level `data_version`
 differs from the supplied manifest, preserving dataset lineage after resigning.
+They also rerun the write-time quality gate on physical row order before sorting
+returned Bars, preventing a resigned file from repairing disorder during read.
 Sourced normalized corporate-action factors produce point-in-time backward-
 adjusted bars with explicit adjustment lineage. A durable immutable SQLite
 catalog links PASSED data manifests to experiment hashes and is populated by the

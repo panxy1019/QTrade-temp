@@ -927,3 +927,17 @@ a new checksum while carrying rows labelled as a different dataset.
 that version before constructing domain Bars. This shared fail-closed lineage
 check applies to research, charts, backtests and forward-session sources; it does
 not change runtime mode or grant external-order authority.
+
+## ADR-062 — Parquet physical order is validated before sorting
+
+Status: accepted, 2026-08-26.
+
+Sorting raw rows before validation can silently repair per-instrument timestamp
+disorder in a modified and resigned file. The resulting Bars look canonical even
+though the stored replay sequence is no longer the one that originally passed
+the quality gate.
+
+Reads must construct Bars in physical order and rerun the shared write-time
+quality gate before any presentation sorting. Duplicate/disordered timestamps,
+invalid OHLCV, non-finite values and abnormal jumps therefore fail closed rather
+than entering research, replay or forward evidence.

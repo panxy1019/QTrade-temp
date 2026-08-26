@@ -67,7 +67,7 @@ class ParquetBarStore:
         checksum = sha256(target.read_bytes()).hexdigest()
         if checksum != manifest.checksum:
             raise DatasetIntegrityError("dataset checksum mismatch")
-        rows = sorted(pq.read_table(target).to_pylist(), key=lambda row: row["timestamp"])
+        rows = pq.read_table(target).to_pylist()
         if any(row.get("data_version") != manifest.data_version for row in rows):
             raise DatasetIntegrityError("dataset row data_version mismatch")
         records = [
@@ -88,4 +88,11 @@ class ParquetBarStore:
             )
             for row in rows
         ]
+        issues = BarQualityGate().validate(records)
+        if issues:
+            raise DatasetIntegrityError(
+                "dataset failed quality gate: "
+                + ",".join(issue.code for issue in issues)
+            )
+        records.sort(key=lambda bar: bar.timestamp)
         return records if symbol is None else [bar for bar in records if bar.symbol == symbol]
