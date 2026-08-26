@@ -146,6 +146,24 @@ def test_restart_restores_open_order_and_reservation(tmp_path):
     assert restarted.risk.state.value == "HALTED"
 
 
+def test_restart_rejects_boolean_order_quantity(tmp_path):
+    first = build(tmp_path)
+    attest(first)
+    first.runtime.start(actor="operator")
+    submit(first, "malformed-order")
+    runtime = first.journal.load_state("runtime")
+    assert runtime is not None
+    orders = runtime["orders"]
+    assert isinstance(orders, list) and isinstance(orders[0], dict)
+    request = orders[0]["request"]
+    assert isinstance(request, dict)
+    request["quantity"] = True
+    first.journal.save_state("runtime", runtime)
+
+    with pytest.raises(ValueError, match="order quantity"):
+        build(tmp_path)
+
+
 def test_recovery_refuses_uncertain_fill(tmp_path):
     bundle = build(tmp_path)
     bundle.journal.begin_fill("pending", "order", "hash")

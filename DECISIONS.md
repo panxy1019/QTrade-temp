@@ -1249,3 +1249,19 @@ non-boolean non-negative integer quantities, finite non-negative cash and
 average cost, and finite realized PnL. Any malformed row rejects construction of
 the PAPER/SHADOW bundle. A successfully restored account remains HALTED and still
 requires the existing reconciliation flow before runtime start.
+
+## ADR-084 — Durable orders reject malformed economic fields
+
+Status: accepted, 2026-08-26.
+
+Restored PAPER orders and their requests previously coerced quantities with
+`int()` and silently skipped non-object rows. A boolean could therefore become a
+one-unit order, while a damaged row could disappear from the local OMS view
+before reconciliation.
+
+The durable order collection and every request row are now mandatory objects.
+Request quantities are exact positive non-boolean integers, prices are finite
+and positive, filled quantities are exact non-negative integers bounded by the
+request, and creation/update timestamps are timezone-aware and ordered. Any
+violation rejects runtime construction; valid restored orders remain HALTED and
+subject to the existing uncertain-order reconciliation gate.

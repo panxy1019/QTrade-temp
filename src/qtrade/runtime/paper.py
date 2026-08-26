@@ -43,10 +43,19 @@ def _restored_decimal(value: object, field: str, *, minimum: Decimal | None = No
     return restored
 
 
-def _restored_nonnegative_int(value: object, field: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+def _restored_int(value: object, field: str, *, minimum: int = 0) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
         raise ValueError(f"durable {field} is invalid")
     return value
+
+
+def _restored_datetime(value: object, field: str) -> datetime:
+    if not isinstance(value, str):
+        raise ValueError(f"durable {field} is invalid")
+    restored = datetime.fromisoformat(value)
+    if restored.tzinfo is None:
+        raise ValueError(f"durable {field} is invalid")
+    return restored
 
 
 @dataclass(slots=True)
@@ -217,7 +226,7 @@ def build_paper_runtime(
                 raise ValueError("durable account position is invalid")
             ledger.account.positions[symbol] = Position(
                 symbol=symbol,
-                quantity=_restored_nonnegative_int(
+                quantity=_restored_int(
                     raw.get("quantity"), "position quantity"
                 ),
                 average_cost=_restored_decimal(
@@ -238,52 +247,77 @@ def build_paper_runtime(
 
     restored_runtime = journal.load_state("runtime")
     if restored_runtime is not None:
-        raw_orders = restored_runtime.get("orders", [])
-        if isinstance(raw_orders, list):
-            for raw in raw_orders:
-                if not isinstance(raw, dict):
-                    continue
-                request_data = raw["request"]
-                if not isinstance(request_data, dict):
-                    continue
-                request = OrderRequest(
-                    idempotency_key=str(request_data["idempotency_key"]),
-                    strategy_id=str(request_data["strategy_id"]),
-                    portfolio_id=str(request_data["portfolio_id"]),
-                    symbol=str(request_data["symbol"]),
-                    side=Side(str(request_data["side"])),
-                    price=Decimal(str(request_data["price"])),
-                    quantity=int(request_data["quantity"]),
-                    created_at=datetime.fromisoformat(str(request_data["created_at"])),
-                    trading_day=(
+        raw_orders = restored_runtime.get("orders")
+        if not isinstance(raw_orders, list):
+            raise ValueError("durable orders are invalid")
+        for raw in raw_orders:
+            if not isinstance(raw, dict) or not isinstance(raw.get("request"), dict):
+                raise ValueError("durable order is invalid")
+            request_data = raw["request"]
+            assert isinstance(request_data, dict)
+            price = _restored_decimal(
+                request_data.get("price"), "order price", minimum=Decimal("0")
+            )
+            if price == 0:
+                raise ValueError("durable order price is invalid")
+            quantity = _restored_int(
+                request_data.get("quantity"), "order quantity", minimum=1
+            )
+            request = OrderRequest(
+                idempotency_key=str(request_data["idempotency_key"]),
+                strategy_id=str(request_data["strategy_id"]),
+                portfolio_id=str(request_data["portfolio_id"]),
+                symbol=str(request_data["symbol"]),
+                side=Side(str(request_data["side"])),
+                price=price,
+                quantity=quantity,
+                created_at=_restored_datetime(
+                    request_data.get("created_at"), "order request timestamp"
+                ),
+                trading_day=(
+                    None
+                    if request_data.get("trading_day") is None
+                    else date.fromisoformat(str(request_data["trading_day"]))
+                ),
+                sellable_on=(
+                    None
+                    if request_data.get("sellable_on") is None
+                    else date.fromisoformat(str(request_data["sellable_on"]))
+                ),
+            )
+            filled_quantity = _restored_int(
+                raw.get("filled_quantity"), "filled quantity"
+            )
+            if filled_quantity > quantity:
+                raise ValueError("durable filled quantity is invalid")
+            created_at = _restored_datetime(
+                raw.get("created_at"), "order created timestamp"
+            )
+            updated_at = _restored_datetime(
+                raw.get("updated_at"), "order updated timestamp"
+            )
+            if updated_at < created_at:
+                raise ValueError("durable order timestamp is invalid")
+            oms.restore(
+                Order(
+                    internal_order_id=str(raw["internal_order_id"]),
+                    request=request,
+                    status=OrderStatus(str(raw["status"])),
+                    broker_order_id=(
                         None
-                        if request_data.get("trading_day") is None
-                        else date.fromisoformat(str(request_data["trading_day"]))
+                        if raw["broker_order_id"] is None
+                        else str(raw["broker_order_id"])
                     ),
-                    sellable_on=(
+                    filled_quantity=filled_quantity,
+                    rejection_reason=(
                         None
-                        if request_data.get("sellable_on") is None
-                        else date.fromisoformat(str(request_data["sellable_on"]))
+                        if raw["rejection_reason"] is None
+                        else str(raw["rejection_reason"])
                     ),
+                    created_at=created_at,
+                    updated_at=updated_at,
                 )
-                oms.restore(
-                    Order(
-                        internal_order_id=str(raw["internal_order_id"]),
-                        request=request,
-                        status=OrderStatus(str(raw["status"])),
-                        broker_order_id=(
-                            None if raw["broker_order_id"] is None else str(raw["broker_order_id"])
-                        ),
-                        filled_quantity=int(raw["filled_quantity"]),
-                        rejection_reason=(
-                            None
-                            if raw["rejection_reason"] is None
-                            else str(raw["rejection_reason"])
-                        ),
-                        created_at=datetime.fromisoformat(str(raw["created_at"])),
-                        updated_at=datetime.fromisoformat(str(raw["updated_at"])),
-                    )
-                )
+            )
         raw_reservations = restored_runtime.get("reservations", [])
         if isinstance(raw_reservations, list):
             for raw in raw_reservations:
