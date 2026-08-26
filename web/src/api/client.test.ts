@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { loadMinuteBarSeries, loadPlatformSnapshot } from './client'
+import { loadMinuteBarSeries, loadPlatformSnapshot, runIntradayFactorBacktest } from './client'
 
 describe('platform snapshot request fan-out', () => {
   afterEach(() => {
@@ -113,5 +113,24 @@ describe('platform snapshot request fan-out', () => {
     expect(snapshot.forwardSourceCoverage.classification).toBe('UNAVAILABLE')
     expect(snapshot.availability.failures.forwardSourceCoverage).toBe('聚合快照分区不可用')
     expect(snapshot.availability.failures.longFiveMinuteResearch).toBeUndefined()
+  })
+
+  it('retries only a network failure for the stateless intraday factor request', async () => {
+    const payload = {
+      factor: 'opening_three_ten_minute_bullish' as const,
+      start: '2026-07-28', end: '2026-08-24', cost_bps: '5', minimum_body_return_bps: '0',
+    }
+    const fetchMock = vi.fn()
+      .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      .mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({ preview_hash: 'verified' }) })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(runIntradayFactorBacktest(payload)).resolves.toMatchObject({ preview_hash: 'verified' })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+
+    fetchMock.mockReset()
+    fetchMock.mockResolvedValueOnce({ ok: false, status: 422, json: async () => ({ detail: 'invalid factor scope' }) })
+    await expect(runIntradayFactorBacktest(payload)).rejects.toThrow('invalid factor scope')
+    expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 })

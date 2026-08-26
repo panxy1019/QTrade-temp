@@ -28,10 +28,10 @@ Last updated: 2026-08-26
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 433 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-26); 53 frontend Vitest
+  (macOS, 2026-08-26); 54 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 429.02 KB with no large-chunk warning.
+  minified JavaScript asset at or below 429.12 KB with no large-chunk warning.
   GitHub CI grants only read access to repository contents and pins the official
   Node 24 checkout/setup-python actions to their verified v7 release commits.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -227,7 +227,10 @@ Last updated: 2026-08-26
   and lost 4.0840% after 5 bps per side; Sharpe was -3.3347 and maximum drawdown
   -5.1038%. It failed the research gate and cannot enter PAPER. Five-level
   order-book buying intensity remains `UNCONFIGURED` until an authorized L2
-  source exists; OHLCV is not used to fabricate bid/ask depth.
+  source exists; OHLCV is not used to fabricate bid/ask depth. Because the
+  endpoint is deterministic and side-effect free, its browser client retries
+  one network-level fetch failure; HTTP validation/server responses and every
+  control or trading POST are never retried by this path.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

@@ -144,8 +144,13 @@ export function runSingleStockFiveMinuteBacktest(payload: SingleStockFiveMinuteB
   return postJson<SingleStockFiveMinuteBacktest>('/single-stock-five-minute-backtest', payload)
 }
 
-export function runIntradayFactorBacktest(payload: IntradayFactorBacktestRequest): Promise<IntradayFactorBacktest> {
-  return postJson<IntradayFactorBacktest>('/intraday-factor-backtest', payload)
+export async function runIntradayFactorBacktest(payload: IntradayFactorBacktestRequest): Promise<IntradayFactorBacktest> {
+  try {
+    return await postJson<IntradayFactorBacktest>('/intraday-factor-backtest', payload)
+  } catch (reason) {
+    if (!(reason instanceof TypeError)) throw reason
+    return postJson<IntradayFactorBacktest>('/intraday-factor-backtest', payload)
+  }
 }
 
 export type RuntimeControlAction = 'recover' | 'start' | 'pause' | 'resume' | 'stop' | 'kill'
