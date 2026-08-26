@@ -1156,3 +1156,18 @@ The workflow now grants only `contents: read` and pins the official checkout
 v7.0.1 and setup-python v7.0.0 releases to their full Git commit identities.
 Python 3.11 and 3.13 continue to run Ruff, strict mypy and the complete test
 suite; this CI maintenance does not change any runtime or trading authority.
+
+## ADR-078 — Public cold-start recovery retries once, then returns to cadence
+
+Status: accepted, 2026-08-26.
+
+A newly deployed stateless function can return a partial optional snapshot on
+its first fan-out while dependencies and edge paths warm. Keeping that fallback
+for the full 60-second browser cadence makes a transient failure look persistent;
+unbounded retries would instead amplify load during a real outage.
+
+After the initial public snapshot only, a whole-request failure or any optional
+partition failure schedules one retry five seconds later. A complete snapshot
+does not retry, and cadences of five seconds or less already provide recovery so
+they do not add another timer. Partial data stays visible between attempts and
+the retry does not change any server state or trading authority.

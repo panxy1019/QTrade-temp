@@ -28,10 +28,10 @@ Last updated: 2026-08-26
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 409 tests passed, Ruff clean, strict mypy clean across
   101 checked source/publisher files on Python 3.12.13
-  (macOS, 2026-08-26); 47 frontend Vitest
+  (macOS, 2026-08-26); 49 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 428.12 KB with no large-chunk warning.
+  minified JavaScript asset at or below 428.38 KB with no large-chunk warning.
   GitHub CI grants only read access to repository contents and pins the official
   Node 24 checkout/setup-python actions to their verified v7 release commits.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -51,6 +51,9 @@ Last updated: 2026-08-26
   relevant search/filter/detail/JSON-export paths.
   The monitor retains health/minute status when audit history is unavailable
   and exposes every authorized symbol's causal correction state.
+  On the 60-second public polling cadence, a partial or failed first snapshot
+  receives one bounded retry after five seconds; a complete first snapshot and
+  the local five-second cadence issue no extra retry.
 - Runtime observability: `/metrics/prometheus` exports finite low-cardinality
   counters/gauges in Prometheus 0.0.4 text without strategy heartbeat labels,
   credentials or account identifiers. The monitor now binds the actual

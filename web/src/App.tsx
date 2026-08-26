@@ -80,9 +80,9 @@ function Shell() {
                 <Route path="/research" element={<ResearchPage data={data} />} />
                 <Route path="/experiments" element={<ExperimentPage data={data} />} />
                 <Route path="/backtest" element={<BacktestPage data={data} />} />
-                <Route path="/paper" element={<PaperPage data={data} publicNode={publicNode} onRefresh={refresh} />} />
+                <Route path="/paper" element={<PaperPage data={data} publicNode={publicNode} onRefresh={async () => { await refresh() }} />} />
                 <Route path="/positions" element={<PositionsPage data={data} />} />
-                <Route path="/orders" element={<OrdersPage data={data} publicNode={publicNode} onRefresh={refresh} />} />
+                <Route path="/orders" element={<OrdersPage data={data} publicNode={publicNode} onRefresh={async () => { await refresh() }} />} />
                 <Route path="/risk" element={<RiskPage data={data} />} />
                 <Route path="/data" element={<DataCenterPage data={data} />} />
                 <Route path="/monitor" element={<MonitorPage data={data} />} />
