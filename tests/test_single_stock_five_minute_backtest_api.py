@@ -1,10 +1,17 @@
 import json
+from datetime import date
 from hashlib import sha256
 from pathlib import Path
 
+import pyarrow as pa  # type: ignore[import-untyped]
+import pyarrow.parquet as pq  # type: ignore[import-untyped]
 from fastapi.testclient import TestClient
 
-from qtrade.api.app import bootstrap_context, create_app
+from qtrade.api.app import (
+    _read_verified_market_parquet_content,
+    bootstrap_context,
+    create_app,
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = (
@@ -130,3 +137,36 @@ def test_single_stock_five_minute_backtest_fails_closed_without_data() -> None:
     assert response.json()["detail"] == (
         "verified long five-minute dataset unavailable"
     )
+
+
+def test_market_parquet_reader_rejects_resigned_schema_drift(tmp_path: Path) -> None:
+    row = {
+        "symbol": ["600036"],
+        "exchange": ["SSE"],
+        "timestamp": ["2026-08-25T01:35:00+00:00"],
+        "trading_day": [date(2026, 8, 25)],
+        "open": ["1"],
+        "high": ["1"],
+        "low": ["1"],
+        "close": ["1"],
+        "volume": ["1"],
+        "data_version": ["test-v1"],
+    }
+    target = tmp_path / "bars.parquet"
+    valid = pa.table(row)
+    pq.write_table(valid, target)
+    valid_content = target.read_bytes()
+    assert _read_verified_market_parquet_content(
+        tmp_path / "manifest.json",
+        expected_checksum=sha256(valid_content).hexdigest(),
+        expected_bar_count=1,
+    ) == valid_content
+
+    drifted = valid.append_column("unexpected", pa.array(["resigned-drift"]))
+    pq.write_table(drifted, target)
+    drifted_content = target.read_bytes()
+    assert _read_verified_market_parquet_content(
+        tmp_path / "manifest.json",
+        expected_checksum=sha256(drifted_content).hexdigest(),
+        expected_bar_count=1,
+    ) is None

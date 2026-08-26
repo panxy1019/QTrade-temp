@@ -58,6 +58,20 @@ _MAX_HISTORICAL_SERIES_ROWS = 2000
 _MAX_BACKTEST_PREVIEW_SOURCE_ROWS = 250_000
 _MAX_SINGLE_STOCK_BACKTEST_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
+_MARKET_PARQUET_SCHEMA = pa.schema(
+    [
+        ("symbol", pa.string()),
+        ("exchange", pa.string()),
+        ("timestamp", pa.string()),
+        ("trading_day", pa.date32()),
+        ("open", pa.string()),
+        ("high", pa.string()),
+        ("low", pa.string()),
+        ("close", pa.string()),
+        ("volume", pa.string()),
+        ("data_version", pa.string()),
+    ]
+)
 _GIT_COMMIT_SHA_PATTERN = re.compile(r"[0-9a-f]{40}")
 _GIT_COMMIT_REF_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,254}")
 _DEPLOYMENT_ENVIRONMENT_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}")
@@ -7875,7 +7889,8 @@ def _read_verified_market_parquet_content(
         metadata.row_group(index).total_byte_size for index in range(metadata.num_row_groups)
     )
     if (
-        metadata.num_rows != expected_bar_count
+        not parquet.schema_arrow.equals(_MARKET_PARQUET_SCHEMA, check_metadata=False)
+        or metadata.num_rows != expected_bar_count
         or metadata.num_rows > _MAX_MARKET_PARQUET_ROWS
         or metadata.num_row_groups > _MAX_MARKET_PARQUET_ROW_GROUPS
         or uncompressed_bytes > _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES

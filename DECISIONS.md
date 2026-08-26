@@ -1332,3 +1332,18 @@ next Bar open, and exposure cannot exceed the Buy-and-Hold target. Results bind
 the dataset checksum and policy hash, include deterministic curves and execution
 diagnostics, and are always ad hoc, QFQ/current-universe non-PIT,
 `NOT_ELIGIBLE`, state-mutation false and external-order transmission false.
+
+## ADR-089 — Public market readers bind the exact Arrow schema
+
+Status: accepted, 2026-08-26.
+
+The public API's bounded Parquet helper verified checksum, row count, row-group
+count and uncompressed size, while downstream readers requested the ten columns
+they needed. A locally re-signed file could therefore add or reorder columns, or
+change an ignored field type, without failing at the common open boundary.
+
+The common public helper now requires exact equality with the ten-column Bar
+Arrow schema before any daily, minute, selected-session or individual-stock
+reader receives the file. A regression writes a checksum-matching extra-column
+file and verifies rejection. This does not change the accepted production data,
+the frozen strategy engine or any realtime/PAPER readiness state.

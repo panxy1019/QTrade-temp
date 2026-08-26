@@ -119,7 +119,7 @@ def _write_dataset(tmp_path: Path) -> Path:
                 "symbol": [bar.symbol for bar in records],
                 "exchange": [bar.exchange for bar in records],
                 "timestamp": [bar.timestamp.isoformat() for bar in records],
-                "trading_day": [bar.trading_day.isoformat() for bar in records],
+                "trading_day": [bar.trading_day for bar in records],
                 "open": [str(bar.open) for bar in records],
                 "high": [str(bar.high) for bar in records],
                 "low": [str(bar.low) for bar in records],

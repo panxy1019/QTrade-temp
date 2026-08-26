@@ -406,7 +406,7 @@ def test_latest_historical_bars_are_verified_and_never_labeled_realtime(tmp_path
                 "symbol": ["510300", "510300"],
                 "exchange": ["SSE", "SSE"],
                 "timestamp": ["2026-08-12T03:30:00+12:00", "2026-08-11T08:30:00-08:00"],
-                "trading_day": ["2026-08-11", "2026-08-12"],
+                "trading_day": [date(2026, 8, 11), date(2026, 8, 12)],
                 "open": ["4.0", "4.1"],
                 "high": ["4.2", "4.3"],
                 "low": ["3.9", "4.0"],
