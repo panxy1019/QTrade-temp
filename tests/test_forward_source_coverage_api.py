@@ -103,3 +103,33 @@ def test_forward_source_coverage_rejects_signed_pre_close_diagnostic(
         _load_verified_forward_source_coverage(target, dataset, preregistration)
         is None
     )
+
+
+def test_forward_source_coverage_rejects_signed_unknown_public_field(
+    tmp_path: Path,
+) -> None:
+    report, dataset, preregistration = _inputs()
+    tampered = deepcopy(report)
+    tampered["unexpected_public_field"] = "must-not-pass-through"
+    target = tmp_path / "report.json"
+    _write_signed(target, tampered)
+
+    assert (
+        _load_verified_forward_source_coverage(target, dataset, preregistration)
+        is None
+    )
+
+
+def test_forward_source_coverage_rejects_signed_future_timestamp(
+    tmp_path: Path,
+) -> None:
+    report, dataset, preregistration = _inputs()
+    tampered = deepcopy(report)
+    tampered["generated_at"] = "2099-08-26T18:31:04+08:00"
+    target = tmp_path / "report.json"
+    _write_signed(target, tampered)
+
+    assert (
+        _load_verified_forward_source_coverage(target, dataset, preregistration)
+        is None
+    )

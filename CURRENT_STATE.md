@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 395 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 397 tests passed, Ruff clean, strict mypy clean across
   the 100-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -613,6 +613,9 @@ Last updated: 2026-08-26
   Asia/Shanghai provider Bars to guard the timezone-aware identity contract.
   The report is explicitly not forward evidence, does not enter `0/20`,
   and leaves realtime, PAPER, LIVE and external-order authority disabled.
+  The public verifier accepts only the exact report schema and rejects generation
+  times more than five minutes ahead of its own clock; a recomputed self-hash
+  cannot authorize unknown pass-through fields or future-date the observation.
 - Public minute read amplification: `/minute-research-snapshot` now verifies the
   24 MB long-history Parquet once per dashboard refresh and reuses that immutable
   identity across nine report validators. The React loader replaced nine

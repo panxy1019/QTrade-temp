@@ -1091,3 +1091,17 @@ Bars. The API revalidates the frozen dataset and preregistration identities,
 China-time boundary, per-symbol grid/reason arithmetic and aggregate counts.
 `READY_FOR_FORMAL_COLLECTION` means source availability only: the report always
 stays outside the 0/20 metrics and never grants PAPER, LIVE or order authority.
+
+## ADR-074 — Self-hashed public evidence has an exact semantic envelope
+
+Status: accepted, 2026-08-26.
+
+A SHA-256 field detects accidental drift but is not an authorization signature:
+any modified JSON can be hashed again. Returning an otherwise valid report with
+unknown fields could expose unintended content, while a far-future timestamp
+could make stale evidence appear newer than every legitimate refresh.
+
+The forward-coverage verifier now requires the exact v1 top-level field set and
+rejects generation times more than five minutes ahead of the server clock. These
+checks precede returning the report, so a resigned extension or future-dated
+payload fails closed as unavailable rather than being partially projected.

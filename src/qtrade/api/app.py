@@ -5453,6 +5453,42 @@ def _load_verified_forward_source_coverage(
         report = json.loads(content)
         if not isinstance(report, dict):
             return None
+        expected_report_keys = {
+            "schema_version",
+            "report_id",
+            "generated_at",
+            "classification",
+            "provider",
+            "provider_version",
+            "frequency",
+            "adjustflag",
+            "anchor_day",
+            "target_day",
+            "preregistration_id",
+            "preregistration_sha256",
+            "warmup_data_version",
+            "warmup_checksum",
+            "warmup_evidence_sha256",
+            "required_symbol_count",
+            "required_bars_per_symbol_session",
+            "target_complete_symbol_count",
+            "ready_symbol_count",
+            "incomplete_symbol_count",
+            "incomplete_symbols",
+            "target_incomplete_symbols",
+            "fetch_error_symbols",
+            "coverage",
+            "status",
+            "ready_for_formal_collection",
+            "enters_forward_metrics",
+            "promotion",
+            "realtime_readiness",
+            "real_data_paper_readiness",
+            "external_order_transmission",
+            "evidence_sha256",
+        }
+        if set(report) != expected_report_keys:
+            return None
         digest = report.get("evidence_sha256")
         unsigned = {
             key: value for key, value in report.items() if key != "evidence_sha256"
@@ -5487,6 +5523,8 @@ def _load_verified_forward_source_coverage(
             or report.get("frequency") != "5"
             or report.get("adjustflag") != "2"
             or generated_at.tzinfo is None
+            or generated_at
+            > datetime.now(ZoneInfo("UTC")) + timedelta(minutes=5)
             or target_day <= anchor_day
             or target_day < first_eligible_day
             or not isinstance(warmup, dict)
