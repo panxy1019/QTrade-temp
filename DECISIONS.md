@@ -707,3 +707,15 @@ reports.
 An outer report digest or syntactically valid per-session hash is insufficient.
 A mismatch leaves the previous public report untouched and cannot advance
 strategy, PAPER, realtime or external-order authority.
+
+## ADR-046 — Forward cost rows share one benchmark identity
+
+Status: accepted, 2026-08-26.
+
+The 0-bps and 5-bps forward cost-stress rows must contain the same Buy-and-Hold
+total return, maximum drawdown, realized minute volatility and point count. Cost
+stress changes the overlay's simulated transaction deduction; it cannot redefine
+the common comparator.
+
+A resigned report with internally consistent but different baselines fails
+closed and cannot affect gates, public progress or runtime authority.

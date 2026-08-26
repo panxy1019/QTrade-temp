@@ -5202,6 +5202,7 @@ def _load_verified_forward_observation_report(
                 return None
             seen_costs: list[int] = []
             five_row: dict[str, object] | None = None
+            base_identity: tuple[float, float, float, int] | None = None
             for row in cost_stress:
                 if not isinstance(row, dict):
                     return None
@@ -5220,6 +5221,8 @@ def _load_verified_forward_observation_report(
                     cost not in {0, 5}
                     or base is None
                     or overlay is None
+                    or base_identity is not None
+                    and base != base_identity
                     or not isclose(
                         float(str(row.get("excess_return"))),
                         overlay[0] - base[0],
@@ -5236,6 +5239,7 @@ def _load_verified_forward_observation_report(
                     or not isclose(mean_turnover, turnover / 75)
                 ):
                     return None
+                base_identity = base
                 seen_costs.append(cast(int, cost))
                 if cost == 5:
                     five_row = cast(dict[str, object], row)

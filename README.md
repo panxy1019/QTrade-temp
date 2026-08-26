@@ -325,6 +325,8 @@ collection boundary when the report was generated. Cost-stress execution rows
 must carry finite `[0,1]` exposure and finite non-negative total/per-symbol
 turnover whose arithmetic agrees. Leave-one-sector-out rows must exactly match
 the 15 sector code/name identities derived from the verified frozen dataset.
+Both cost rows must share an identical Buy-and-Hold return/drawdown/volatility/
+point-count baseline.
 
 For a bounded same-day observation, the following probe selects one stock from
 each of the 15 frozen sectors and keeps only bars older than a conservative

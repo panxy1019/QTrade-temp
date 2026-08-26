@@ -542,6 +542,8 @@ Last updated: 2026-08-26
   Before atomic promotion, the publisher now rereads every formal forward-session
   manifest and checksum-bound Parquet, then requires the candidate session list
   and accepted count to match those source identities exactly.
+  The 0/5-bps rows must also share one exact Buy-and-Hold metric identity, so
+  cost comparisons cannot be constructed from drifting baselines.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator
