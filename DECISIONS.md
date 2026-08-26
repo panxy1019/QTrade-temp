@@ -756,3 +756,19 @@ numeric coercion is not evidence validation.
 This closes Python's `False == 0` and `int(48.9) == 48` compatibility paths.
 A resigned report using either ambiguous representation fails closed before it
 can advance public progress, gates, PAPER, realtime, or order authority.
+
+## ADR-050 — The forward lock binds exact implementation digests at runtime
+
+Status: accepted, 2026-08-26.
+
+The public verifier must compare all three implementation digests in the
+forward preregistration to the exact values frozen before the first eligible
+session. Valid key names and SHA-256 syntax alone do not establish code
+identity. The bound files are the provider-session probe, the locked collector
+and evaluator, and the causal minute backtest engine.
+
+Vercel intentionally excludes development scripts from its function bundle, so
+the verifier carries the already frozen digest values rather than reopening
+unavailable paths. Any implementation change requires a new preregistration;
+resigning the old document with replacement digests fails closed and cannot
+grant strategy, PAPER, realtime, or external-order authority.

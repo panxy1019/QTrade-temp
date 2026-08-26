@@ -205,6 +205,23 @@ def test_forward_observation_endpoint_rejects_resigned_weaker_completeness(
     assert rejected["promotion"] == "NOT_EVALUATED"
 
 
+def test_forward_observation_endpoint_rejects_resigned_implementation_hash(
+    tmp_path: Path,
+) -> None:
+    source = EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    report = json.loads(source.read_text(encoding="utf-8"))
+    report["implementation_sha256"]["minute_backtest.py"] = "0" * 64
+    report.pop("preregistration_sha256")
+    report["preregistration_sha256"] = _canonical(report)
+    target = tmp_path / "preregistration.json"
+    target.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(target).get("/forward-observation").json()
+    assert rejected["classification"] == "NO_VERIFIED_FORWARD_OBSERVATION_LOCK"
+    assert rejected["observation_status"] == "UNAVAILABLE"
+    assert rejected["promotion"] == "NOT_EVALUATED"
+
+
 def test_forward_observation_endpoint_verifies_empty_evaluator_report(
     tmp_path: Path,
 ) -> None:

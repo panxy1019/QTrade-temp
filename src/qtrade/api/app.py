@@ -4984,13 +4984,21 @@ def _load_verified_forward_preregistration(
                 "maximum_exposure": 1,
                 "external_order_transmission": False,
             }
-            or set(implementation)
+            or implementation
             != {
-                "probe_baostock_forward_session.py",
-                "run_baostock_locked_forward_observation.py",
-                "minute_backtest.py",
+                "minute_backtest.py": (
+                    "792d300d2df913f9f42576d0d96ebc66"
+                    "c70e042969ea26a4357895c0ec52fa2c"
+                ),
+                "probe_baostock_forward_session.py": (
+                    "d1934024fc23b334dd8c4cda40ca3e55"
+                    "a0e200719d80d60201e3aed42bb357d1"
+                ),
+                "run_baostock_locked_forward_observation.py": (
+                    "0294ac923744c3101b9810142ddfa9efb"
+                    "2e5e3069aa348ae3251b292c49535fa"
+                ),
             }
-            or not all(_is_sha256(value) for value in implementation.values())
             or interpretation
             != {
                 "promotion": "NOT_ELIGIBLE",
