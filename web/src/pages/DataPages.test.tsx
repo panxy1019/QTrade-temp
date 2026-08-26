@@ -624,7 +624,7 @@ describe('verified historical data pages', () => {
     render(<MarketPage data={data} />)
     expect(screen.getByText('已验证：AKShare 1.18.84')).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: /历史日线 · 18960/ })).toBeInTheDocument()
-    expect(screen.getByText(/没有 Bid\/Ask、实时价格、实时延迟或实盘权限/)).toBeInTheDocument()
+    expect(screen.getByText(/没有 Bid\/Ask、授权实时价格或实盘权限/)).toBeInTheDocument()
     expect(screen.getByText('历史数据不等于实时行情')).toBeInTheDocument()
     expect(screen.getByText('510300')).toBeInTheDocument()
     expect(screen.getByText('200,000,000')).toBeInTheDocument()

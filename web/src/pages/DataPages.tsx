@@ -214,12 +214,12 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     { title: '名称', dataIndex: 'name' },
     { title: '板块', dataIndex: 'sector_name' },
     { title: '同日已结束分钟', dataIndex: 'same_day_finalized_bar_count' },
-    { title: '最新已结束 Bar', dataIndex: 'latest_finalized_timestamp' },
+    { title: '最新已结束 Bar', dataIndex: 'latest_finalized_timestamp', render: (value: string) => formatChinaMinuteTimestamp(value) },
   ]
   return <Page title="行情中心" subtitle="校验通过的历史日线、1 分钟与原生 5 分钟分时线">
     <Space orientation="vertical" style={{ width: '100%' }}>
       {waiting}
-      <Alert showIcon type="warning" title="历史数据不等于实时行情" description="日线和分时线均来自 checksum 绑定的历史 Parquet；没有 Bid/Ask、实时价格、实时延迟或实盘权限，不参与 REAL_DATA_PAPER。" />
+      <Alert showIcon type="warning" title="历史数据不等于实时行情" description="历史日线与历史分时来自 checksum 绑定的 Parquet；当日分钟页是签名点时观测。两者都没有 Bid/Ask、授权实时价格或实盘权限，不参与 REAL_DATA_PAPER。" />
       <Input.Search placeholder="搜索代码、名称或板块" value={query} onChange={(event) => setQuery(event.target.value)} allowClear />
       <Card><Tabs activeKey={activeMarketTab} onChange={setActiveMarketTab} items={[
         {
