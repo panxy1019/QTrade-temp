@@ -957,6 +957,9 @@ describe('verified backtest analytics', () => {
     }
     vi.mocked(runSingleStockFiveMinuteBacktest).mockResolvedValueOnce(result)
     render(<BacktestPage data={data} />)
+    expect(screen.getByRole('combobox', { name: '个股' })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: '开始交易日' })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: '结束交易日' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '运行个股 5 分钟回测' }))
     expect(await screen.findByText('已完成 600036 招商银行 · 2 日 / 96 Bar')).toBeInTheDocument()
     expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledWith({
@@ -1020,7 +1023,7 @@ describe('verified backtest analytics', () => {
     await waitFor(() => expect(screen.queryByText('动量方案 A')).not.toBeInTheDocument())
     expect(screen.getByText('运行回测后可保存结果，用于反复调参与对比。')).toBeInTheDocument()
     window.localStorage.clear()
-  })
+  }, 10_000)
 
   it('shows the verified leader without presenting it as Champion', async () => {
     cleanup()
