@@ -496,5 +496,7 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getAllByText('-6.15%').length).toBeGreaterThan(0)
     expect(screen.getByText(/选择时刻.*早于首个测试信号/)).toBeInTheDocument()
     expect(screen.getByText(/无状态写入、无外部订单/)).toBeInTheDocument()
+    fireEvent.change(screen.getByRole('spinbutton', { name: '单边成本（bps）' }), { target: { value: '6' } })
+    expect(screen.queryByText('训练最优规则未通过互斥测试段')).not.toBeInTheDocument()
   })
 })

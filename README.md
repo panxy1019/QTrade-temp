@@ -252,7 +252,9 @@ at 48 native five-minute Bars per session and 252 sessions per year; it is not
 silently inferred by the browser. The page exposes the complete form and JSON
 export. During one open page session it also retains the latest ten distinct
 result hashes for side-by-side parameter and metric comparison; loading an old
-row only refills the form and requires a fresh run. The comparison is cleared on
+row only refills the form and requires a fresh run. Any manual parameter change
+also clears the current result while retaining the session comparison, so an old
+hash cannot remain presented as the output of new inputs. The comparison is cleared on
 refresh and is neither persisted evidence nor an experiment record. Every result
 remains current-universe, QFQ/non-PIT,
 `NOT_ELIGIBLE`, stateless and unable to transmit an external order.
@@ -271,7 +273,9 @@ equal-weight same-horizon benchmark, 0/5/10/20 bps cost stress, daily curves and
 all 15 sector/75 stock breakdowns. The current-result stock tab can filter those
 same-run rows by six-digit code or name and keeps signal count, conditional mean,
 hit rate, strategy return, active excess and drawdown together; filtering never
-reruns the test or selects a new stock/parameter. Its robustness section fixes candidate body
+reruns the test or selects a new stock/parameter. Editing any factor/backtest
+input clears the current result and save action; changing the discovery end date
+or cost also clears its separately bound 104-candidate result. Its robustness section fixes candidate body
 thresholds at `0/5/10/20 bps`, uses the first half as the initial training
 window, selects a threshold from prior sessions only, and evaluates disjoint
 expanding-window test folds. The training day's T+1 exit is known at the test

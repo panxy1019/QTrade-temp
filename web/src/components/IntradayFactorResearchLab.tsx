@@ -586,11 +586,22 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const discoveryCostRows = discoveryResult
     ? Object.entries(discoveryResult.locked_test_cost_stress.rows).map(([cost_bps, value]) => ({ cost_bps, ...value }))
     : []
+  const invalidateChangedParameters = (changedValues: Partial<FormValues>) => {
+    setResult(null)
+    setError(null)
+    setSaveStatus(null)
+    setCorrelationResult(null)
+    setCorrelationError(null)
+    if ('end' in changedValues || 'cost_bps' in changedValues) {
+      setDiscoveryResult(null)
+      setDiscoveryError(null)
+    }
+  }
 
   return <Card title="分钟因子研究工作台" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · 原生 5 分钟</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
       <Alert showIcon type="info" title="从因子到模拟盘的完整门控" description="开仓因子在 10:00 确认，10:05 标记的下一根原生 5 分钟 Bar 开盘买入；平仓可固定为 T+1 09:30 开盘，或在 T+1 10:00 确认三根十分钟阴线后于下一 Bar 开盘退出，未触发则用 15:00 标记 Bar 的开盘价（区间起点 14:55）时间退出。当前事后非 PIT 研究永远不会自动进入 PAPER 或 LIVE。" />
-      <Form<FormValues> form={form} name="intraday-factor-research-backtest" layout="vertical" initialValues={initialValues} onValuesChange={() => { setCorrelationResult(null); setCorrelationError(null) }} onFinish={(values) => { void submit(values) }}>
+      <Form<FormValues> form={form} name="intraday-factor-research-backtest" layout="vertical" initialValues={initialValues} onValuesChange={invalidateChangedParameters} onFinish={(values) => { void submit(values) }}>
         <div className="backtest-lab-grid">
           <Form.Item name="factor" label="因子" rules={[{ required: true }]}><Select onChange={setSelectedFactor} options={[
             { value: 'opening_three_ten_minute_bullish', label: '09:30 起三根 10 分钟阳线' },

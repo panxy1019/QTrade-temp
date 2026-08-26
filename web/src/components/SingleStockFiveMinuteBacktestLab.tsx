@@ -79,7 +79,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
   return <Card title="个股 5 分钟因果回测" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · {dataset.session_count} 日</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
       <Alert showIcon type="info" title="可任选覆盖个股并反复调参" description="基准是该股买入持有；修正策略只允许在本根 5 分钟 Bar 收盘生成信号，并于下一根 Bar 开盘降低或恢复敞口。单次最多 120 个交易日，所选区间之前的数据只作因果预热。" />
-      <Form<FormValues> form={form} name="single-stock-five-minute-backtest" layout="vertical" initialValues={initialValues} onFinish={(values) => { void submit(values) }}>
+      <Form<FormValues> form={form} name="single-stock-five-minute-backtest" layout="vertical" initialValues={initialValues} onValuesChange={() => { setResult(null); setError(null) }} onFinish={(values) => { void submit(values) }}>
         <div className="backtest-lab-grid">
           <Form.Item name="symbol" label="个股" rules={[{ required: true }]}><Select showSearch optionFilterProp="label" options={stocks.map((row) => ({ value: row.symbol, label: `${row.symbol} ${row.name} · ${row.sector_name}` }))} /></Form.Item>
           <Form.Item name="start" label="开始交易日" rules={[{ required: true }]}><Select showSearch options={tradingDays.map((value) => ({ value, label: value }))} /></Form.Item>

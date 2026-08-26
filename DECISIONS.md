@@ -2251,3 +2251,23 @@ The wide desktop layout remains unchanged.
 
 This is presentation-only. It does not modify research evidence, gate results,
 runtime state, PAPER/LIVE admission or external-order capability.
+
+## ADR-129 — Parameter edits invalidate visible ad-hoc results
+
+Status: accepted, 2026-08-27.
+
+The general backtest lab already removed a result when its inputs changed, but
+the individual-stock minute and intraday-factor forms did not. A user could edit
+cost, windows, dates or factor conditions while the prior result hash and metrics
+remained visible, creating an incorrect visual association between new inputs
+and old output.
+
+Both forms now clear their current result and error on every input change while
+preserving explicitly retained comparison rows. The factor workbench also clears
+the prior save status and rule-correlation result. Its 104-candidate discovery is
+independent of most form fields, so it is invalidated only when its actual inputs,
+end date or cost, change.
+
+Clearing is client-side provenance hygiene. A new result appears only after a
+fresh API run; no dataset, research engine, registry, promotion, PAPER/LIVE state
+or external-order permission changes.
