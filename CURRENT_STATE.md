@@ -1004,6 +1004,12 @@ Last updated: 2026-08-27
   writing and normalizes older schema-v1 records to an explicit unbound state.
   Every row remains removable browser state rather than immutable experiment or
   registry evidence and grants no PAPER/LIVE/state/order authority.
+- Browser-local common metrics: the same comparison row now exposes total and
+  annualized return, matched benchmark return, active excess, Sharpe,
+  information ratio and maximum drawdown. Older rows keep unavailable values
+  unavailable. The adjacent warning states that the benchmark still uses the
+  current non-PIT universe with survivorship bias, so A/B visibility is not
+  research admission or promotion evidence.
 - Matched preview benchmark: every adjustable and hash-bound preview now runs
   the implemented equal-weight Buy-and-Hold model through the same causal
   close-decision/next-open engine. Strategy and benchmark share the exact

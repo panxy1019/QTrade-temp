@@ -479,6 +479,12 @@ unbound, old schema-v1 rows load as unbound, and save-time validation rejects
 any result, data or no-authority mismatch. This is removable local state only,
 not an immutable experiment, registry record or runtime admission path.
 
+The local A/B table now carries all common performance fields already present
+in each saved result: total/annualized return, matched benchmark, active excess,
+Sharpe, information ratio and maximum drawdown. It does not backfill missing
+legacy values, and the table-level current-universe/non-PIT survivorship warning
+keeps these metrics diagnostic rather than promotable.
+
 Adjustable previews now include an engine-matched equal-weight Buy-and-Hold
 benchmark. It uses only first-decision-known symbols and the same window,
 capital, reserve, costs, slippage and next-open execution as the strategy. The

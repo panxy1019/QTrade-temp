@@ -337,7 +337,11 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
     },
     { title: '参数', render: (_: unknown, row: LocalBacktestExperiment) => `${factorLabel(row.parameters.factor)} · ${row.parameters.horizons.join('/')} 日 · Top ${row.parameters.top_k} · ${row.parameters.rebalance_every} 日调仓` },
     { title: '累计收益', render: (_: unknown, row: LocalBacktestExperiment) => formatPercent(row.metrics.total_return) },
+    { title: '年化收益', render: (_: unknown, row: LocalBacktestExperiment) => formatPercent(row.metrics.annualized_return) },
+    { title: '匹配基准', render: (_: unknown, row: LocalBacktestExperiment) => formatPercent(row.metrics.benchmark_return) },
+    { title: '主动超额', render: (_: unknown, row: LocalBacktestExperiment) => formatPercent(row.metrics.excess_return) },
     { title: 'Sharpe', render: (_: unknown, row: LocalBacktestExperiment) => formatNumber(row.metrics.sharpe) },
+    { title: '信息比率', render: (_: unknown, row: LocalBacktestExperiment) => formatNumber(row.metrics.information_ratio) },
     { title: '最大回撤', render: (_: unknown, row: LocalBacktestExperiment) => formatPercent(row.metrics.maximum_drawdown) },
     {
       title: '操作',
@@ -454,10 +458,10 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
           columns={experimentColumns}
           dataSource={savedExperiments}
           pagination={{ pageSize: 5, showSizeChanger: false }}
-          scroll={{ x: 980 }}
+          scroll={{ x: 1500 }}
           locale={{ emptyText: '运行回测后可保存结果，用于反复调参与对比。' }}
         />
-        <Typography.Text type="secondary">记录严格绑定当前数据版本与 checksum；绑定草案会额外保存 template/spec/binding 哈希。全部记录都仅在当前浏览器、可删除，不是不可变实验或注册记录，不参与晋级，也不会同步到其他设备。</Typography.Text>
+        <Typography.Text type="secondary">记录严格绑定当前数据版本与 checksum；绑定草案会额外保存 template/spec/binding 哈希。匹配基准同样使用当前非 PIT 标的池，存在幸存者偏差。全部记录都仅在当前浏览器、可删除，不是不可变实验或注册记录，不参与晋级，也不会同步到其他设备。</Typography.Text>
       </Card>
     </Space>
   </Card>

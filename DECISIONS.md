@@ -2040,3 +2040,25 @@ The comparison table is browser-local and removable. Preserving replay lineage
 does not create an immutable experiment, registry record, leakage-review PASS,
 fresh evidence, promotion eligibility, PAPER/LIVE authority, state mutation or
 external order transmission.
+
+## ADR-119 — Local A/B comparison uses the full matched metric surface
+
+Status: accepted, 2026-08-27.
+
+Saved preview records already retained the complete metric dictionary, but the
+browser table displayed only total return, Sharpe and maximum drawdown. That
+made repeated tuning omit annualization and the matched benchmark relationship
+even though the single-run panel exposed them.
+
+Each local row now displays total return, annualized return, matched benchmark
+return, active excess, Sharpe, information ratio and maximum drawdown. Values
+come only from the checksum- and result-hash-bound saved summary; older records
+with missing fields display unavailable values rather than reconstructed or
+invented metrics. The wider table scrolls horizontally instead of hiding a
+metric.
+
+The matched benchmark still uses the current non-PIT universe and retains
+survivorship bias, which is stated beside the table. A complete comparison
+surface improves diagnosis but does not provide independent validation,
+immutable persistence, registry admission, promotion, PAPER/LIVE authority,
+state mutation or external order transmission.

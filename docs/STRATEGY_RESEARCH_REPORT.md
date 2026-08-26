@@ -38,6 +38,12 @@ ordinary immediate preview. The save path verifies the current result and data
 identity plus every no-authority flag before writing; older schema-v1 rows load
 as explicitly unbound. This removable browser state is not immutable storage,
 registration, promotion evidence or PAPER/LIVE authority.
+The browser-local A/B table exposes total and annualized return, matched
+benchmark return, active excess, Sharpe, information ratio and maximum drawdown
+for every saved row. Missing fields from older records stay unavailable. A
+table-adjacent warning preserves the current-universe, non-PIT survivorship
+boundary, so displaying common metrics does not turn repeated tuning into
+independent validation.
 Each adjustable result now includes an equal-weight Buy-and-Hold run from the
 same causal simulator. It selects symbols visible at the first decision close,
 executes at the next open and shares the strategy's window, initial cash,

@@ -311,6 +311,11 @@ npm --prefix web run build
   reject result/data/safety mismatches, and keep legacy rows readable as
   unbound. Treat all rows as removable local summaries rather than immutable
   experiments, registry records or PAPER/LIVE authority.
+- [x] Show total/annualized return, matched benchmark, active excess, Sharpe,
+  information ratio and maximum drawdown together in the browser-local A/B
+  table. Keep missing legacy values unavailable and state the matched
+  benchmark's current-universe, non-PIT survivorship bias beside the table so
+  repeated tuning does not become promotion evidence.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

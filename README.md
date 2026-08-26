@@ -372,6 +372,13 @@ response. Legacy browser records remain readable as unbound previews. These
 records are removable local summaries, not immutable experiments or registry
 entries, and they confer no promotion or runtime authority.
 
+Saved rows now expose the same common comparison surface needed for repeated
+tuning: total and annualized return, matched benchmark return, active excess,
+Sharpe, information ratio and maximum drawdown. Missing metrics in older rows
+render as unavailable rather than being inferred. The table keeps the matched
+benchmark's current-universe, non-PIT survivorship warning adjacent to the
+numbers, so a compact A/B view cannot be mistaken for promotion evidence.
+
 Every adjustable preview now also runs an equal-weight Buy-and-Hold comparison
 through the same causal engine. The benchmark selects only symbols known at the
 first decision close, enters at the next open, and shares the strategy's date

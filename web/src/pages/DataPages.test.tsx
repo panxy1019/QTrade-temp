@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { BacktestPreview, ExperimentRunSpecBacktest, IntradayFactorBacktest, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
 import { cancelPaperOrder, controlRuntime, createExperimentRunSpecDraft, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runExperimentRunSpecBacktest, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
@@ -1263,7 +1263,7 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/同一请求重新计算规格并运行，但仍未持久化为正式实验/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出规格绑定回测/ })).toBeInTheDocument()
     expect(screen.getByText('同窗 Buy-and-Hold')).toBeInTheDocument()
-    expect(screen.getByText('主动超额')).toBeInTheDocument()
+    expect(screen.getAllByText('主动超额').length).toBeGreaterThan(0)
     expect(screen.getByText(/同一窗口、初始资金、现金预留、成本、滑点和下一开盘执行/)).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('本地实验名称'), { target: { value: '绑定动量方案' } })
     fireEvent.click(screen.getByRole('button', { name: '保存到本地实验' }))
@@ -1290,7 +1290,7 @@ describe('verified backtest analytics', () => {
         transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
       },
       session_count: 632, universe_size: 30,
-      metrics: { total_return: '0.03', annualized_return: '0.01', sharpe: '0.4', maximum_drawdown: '-0.09', average_exposure: '0.5', number_of_trades: '42', turnover: '2', transaction_costs: '100' },
+      metrics: { total_return: '0.03', annualized_return: '0.01', sharpe: '0.4', maximum_drawdown: '-0.09', benchmark_return: '0.02', excess_return: '0.01', information_ratio: '0.2', average_exposure: '0.5', number_of_trades: '42', turnover: '2', transaction_costs: '100' },
       benchmark: { strategy_id: 'equal-weight-buy-hold-benchmark-v1', decision_timing: 'first session close, next open execution', first_decision_known_symbols_only: true, current_universe_survivorship_bias: true, reserve: '0.05', transaction_cost_rate: '0.0015', slippage_rate: '0.0005', execution_timing: 'close decision, next open execution', metrics: { total_return: '0.02' } },
       curve: [{ session: '2024-01-02', equity: '1000000', drawdown: '0', benchmark_equity: '1000000', benchmark_drawdown: '0', excess_return: '0' }],
       terminal_positions: [], execution_timing: 'close decision, next open execution',
@@ -1313,6 +1313,20 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText('即时预览')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '载入参数' })).toBeInTheDocument()
     expect(screen.getByText(/记录严格绑定当前数据版本与 checksum/)).toBeInTheDocument()
+    const localComparison = screen.getByText('本地实验对比（1/30）').closest('.ant-card')
+    expect(localComparison).not.toBeNull()
+    const comparison = within(localComparison as HTMLElement)
+    expect(comparison.getAllByText('累计收益').length).toBeGreaterThan(0)
+    expect(comparison.getAllByText('年化收益').length).toBeGreaterThan(0)
+    expect(comparison.getAllByText('Sharpe').length).toBeGreaterThan(0)
+    expect(comparison.getAllByText('最大回撤').length).toBeGreaterThan(0)
+    expect(comparison.getAllByText('匹配基准').length).toBeGreaterThan(0)
+    expect(comparison.getAllByText('主动超额').length).toBeGreaterThan(0)
+    expect(comparison.getAllByText('信息比率').length).toBeGreaterThan(0)
+    expect(comparison.getAllByText('1.00%')).toHaveLength(2)
+    expect(comparison.getByText('2.00%')).toBeInTheDocument()
+    expect(comparison.getByText('0.200')).toBeInTheDocument()
+    expect(comparison.getByText(/匹配基准同样使用当前非 PIT 标的池，存在幸存者偏差/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出完整结果/ })).toBeInTheDocument()
 
     vi.mocked(runBacktestPreview).mockResolvedValueOnce({ ...preview, preview_hash: 'b'.repeat(64) })
