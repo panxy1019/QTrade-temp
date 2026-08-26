@@ -120,6 +120,12 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert advancement["causal_backtest_diagnostic_completed"] is True
     assert advancement["historical_result_can_authorize_paper"] is False
     assert advancement["viewed_window_reselection_allowed"] is False
+    assert paper_admission["next_allowed_stage"] == (
+        advancement["next_allowed_action"]
+    )
+    assert paper_admission["next_allowed_stage"] == (
+        "PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE"
+    )
     registration_gate = next(
         gate
         for gate in paper_admission["required_gates"]
@@ -143,7 +149,7 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert l2_readiness["derived_from_ohlcv"] is False
     assert l2_readiness["external_order_transmission"] is False
     assert payload["result_preview_hash"] == (
-        "08d4a6f23e4dc5ec5499b4684cb879f0ec1ad242506af97c144afcfd46e13c79"
+        "c57b6ca1ce2a9129af6c84f57789bc609f54ed73ca0ab589c96c38756b6249fb"
     )
     assert payload["promotion"] == "NOT_ELIGIBLE"
     assert payload["paper_readiness"] == "NOT_ELIGIBLE"
@@ -191,7 +197,7 @@ def test_resigned_changed_result_cannot_replace_fixed_long_window_evidence(
     payload = _client(changed_path).get("/intraday-factor-robustness").json()
 
     assert changed_result_hash != (
-        "08d4a6f23e4dc5ec5499b4684cb879f0ec1ad242506af97c144afcfd46e13c79"
+        "c57b6ca1ce2a9129af6c84f57789bc609f54ed73ca0ab589c96c38756b6249fb"
     )
     assert payload["report_id"] is None
     assert payload["promotion"] == "NOT_EVALUATED"

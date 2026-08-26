@@ -234,6 +234,12 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
     )
     assert paper_admission["required_gate_count"] == 8
     assert paper_admission["all_required_gates_passed"] is False
+    assert paper_admission["next_allowed_stage"] == (
+        advancement["next_allowed_action"]
+    )
+    assert paper_admission["next_allowed_stage"] == (
+        "PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE"
+    )
     assert paper_admission["automatic_start_allowed"] is False
     assert paper_admission["runtime_mode_change"] is False
     assert paper_admission["state_mutation"] is False

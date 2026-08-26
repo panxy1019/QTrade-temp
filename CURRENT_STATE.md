@@ -942,3 +942,9 @@ Last updated: 2026-08-27
   `DIAGNOSTIC_PREVIEW_ONLY`; the causal backtest remains a completed diagnostic,
   not promotion evidence. Reselection on the viewed window, registration,
   PAPER authorization, state mutation and external orders all remain false.
+- Consistent rejected-research next action: PAPER admission no longer carries a
+  fixed strategy-registration instruction that contradicts sequential
+  advancement. Both contracts now share the same computed action. For the
+  current `1/3` rejected factor that action is
+  `PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE`, rendered in Chinese as
+  “在接触新证据前预注册新假设”; strategy registration is not offered.

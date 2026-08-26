@@ -1465,7 +1465,7 @@ describe('verified robustness evidence', () => {
           { gate_id: 'reconciliation_ready', passed: false, evidence: 'NO_BOUND_PAPER_RUNTIME' },
         ],
         passed_gate_count: 1, required_gate_count: 8, all_required_gates_passed: false,
-        next_allowed_stage: 'REGISTER_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW',
+        next_allowed_stage: 'PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE',
         automatic_start_allowed: false, runtime_mode_change: false,
         state_mutation: false, external_order_transmission: false,
       },
@@ -1548,6 +1548,8 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText(/实际触发 192\/1500 次/)).toBeInTheDocument()
     expect(screen.getByText('PAPER 模拟盘准入：BLOCKED')).toBeInTheDocument()
     expect(screen.getByText('已通过 1/8 项')).toBeInTheDocument()
+    expect(screen.getByText(/下一允许动作：在接触新证据前预注册新假设/)).toBeInTheDocument()
+    expect(screen.queryByText(/下一允许动作：注册策略/)).not.toBeInTheDocument()
     expect(screen.getByText('历史数据身份已验证并绑定')).toBeInTheDocument()
     expect(screen.getByText('不可变策略版本已注册')).toBeInTheDocument()
     expect(screen.getByText('AD_HOC_UNREGISTERED')).toBeInTheDocument()

@@ -75,7 +75,7 @@ _MIN_INTRADAY_DISCOVERY_SESSIONS = 40
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "08d4a6f23e4dc5ec5499b4684cb879f0ec1ad242506af97c144afcfd46e13c79"
+    "c57b6ca1ce2a9129af6c84f57789bc609f54ed73ca0ab589c96c38756b6249fb"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -9759,9 +9759,9 @@ def _intraday_factor_preview(
             "passed_gate_count": paper_admission_passed_gate_count,
             "required_gate_count": len(paper_admission_gates),
             "all_required_gates_passed": False,
-            "next_allowed_stage": (
-                "REGISTER_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW"
-            ),
+            "next_allowed_stage": sequential_advancement[
+                "next_allowed_action"
+            ],
             "automatic_start_allowed": False,
             "runtime_mode_change": False,
             "state_mutation": False,

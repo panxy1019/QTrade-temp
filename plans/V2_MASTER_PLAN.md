@@ -268,6 +268,10 @@ npm --prefix web run build
   correlation and rolling robustness before research-admitting strategy
   construction; expose the first blocker, label downstream work diagnostic-
   only, and prohibit viewed-window reselection, registration and PAPER authority.
+- [x] Make PAPER admission consume the sequential contract's computed next
+  action. Rejected research now consistently requires a new predeclared
+  hypothesis before new evidence and cannot simultaneously recommend strategy
+  registration; render the action in Chinese while retaining the reason code.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

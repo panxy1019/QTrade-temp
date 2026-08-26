@@ -309,7 +309,10 @@ from looking like workflow approval. Factor effectiveness, correlation and
 rolling robustness must all pass before strategy construction is research-
 admitted. This run passes only one of those three stages and first blocks at
 factor validation; its strategy and causal backtest remain diagnostic previews.
-The viewed window cannot be used for reselection. The proposed
+The viewed window cannot be used for reselection. PAPER admission consumes the
+same next-action value, so this rejected run consistently instructs the user to
+predeclare a new hypothesis before new evidence; it no longer suggests strategy
+registration. The proposed
 five-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
 contract requires five bid/ask prices plus sizes normalized to shares, provider
 event/receive clocks and sequence, continuous-auction validity, certified

@@ -1786,6 +1786,26 @@ capacity unavailable and fails that criterion closed. The consolidated viewed-
 history discovery gate becomes 0/9 and remains non-PIT, `NOT_ELIGIBLE`,
 stateless and external-order-disabled.
 
+## ADR-111 — Sequential advancement and PAPER admission share one next action
+
+Status: accepted, 2026-08-27.
+
+The sequential contract correctly rejected the current factor and required a
+new predeclared hypothesis, while PAPER admission still returned a fixed
+“register strategy then forward SHADOW” instruction. Those simultaneous actions
+were contradictory and could encourage registration of failed research.
+
+PAPER admission now consumes the exact next action computed by sequential
+advancement. When any prerequisite research stage or the causal return gate
+fails, both surfaces return
+`PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE`. Only a chain that passes those
+checks may return `REGISTER_IMMUTABLE_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW`.
+The frontend maps the reason code to Chinese without replacing the exported
+machine-readable value.
+
+This is a read-only routing decision. It does not predeclare a hypothesis,
+register a strategy, start SHADOW/PAPER, mutate state or transmit an order.
+
 ## ADR-108 — L2 buying intensity is an untested hypothesis behind a six-gate data contract
 
 Status: accepted, 2026-08-27.

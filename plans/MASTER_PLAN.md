@@ -423,6 +423,12 @@ specification and causal backtest remain diagnostic previews. The response
 forbids reselection on the viewed window and cannot register, authorize PAPER,
 mutate state or send an external order.
 
+PAPER admission consumes that same computed next action rather than returning a
+fixed registration instruction. A failed research/backtest chain therefore
+points only to predeclaring a new hypothesis before new evidence. The Chinese
+workbench renders the action explicitly and cannot simultaneously suggest
+strategy registration for the rejected run.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

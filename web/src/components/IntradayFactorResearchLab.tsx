@@ -55,6 +55,11 @@ const paperAdmissionLabels: Record<string, string> = {
   reconciliation_ready: 'PAPER 对账状态已就绪',
 }
 
+const advancementActionLabels: Record<string, string> = {
+  PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE: '在接触新证据前预注册新假设',
+  REGISTER_IMMUTABLE_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW: '注册不可变策略后再进入授权前向 SHADOW',
+}
+
 const gateLabels: Record<string, string> = {
   minimum_observation_count: '至少 250 个观测',
   minimum_signal_count: '至少 20 次信号',
@@ -901,7 +906,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
               showIcon
               type="error"
               title={`已通过 ${result.paper_admission.passed_gate_count}/${result.paper_admission.required_gate_count} 项`}
-              description={`这是只读准入判定，不会注册策略、启动运行时或发送订单。下一允许阶段：${result.paper_admission.next_allowed_stage}。`}
+              description={`这是只读准入判定，不会注册策略、启动运行时或发送订单。下一允许动作：${advancementActionLabels[result.paper_admission.next_allowed_stage] ?? result.paper_admission.next_allowed_stage}。`}
             />
             <Table
               rowKey="gate_id"

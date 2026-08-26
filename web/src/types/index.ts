@@ -998,7 +998,7 @@ export interface IntradayFactorBacktest {
     passed_gate_count: number
     required_gate_count: number
     all_required_gates_passed: false
-    next_allowed_stage: 'REGISTER_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW'
+    next_allowed_stage: 'PREDECLARE_NEW_HYPOTHESIS_BEFORE_NEW_EVIDENCE' | 'REGISTER_IMMUTABLE_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW'
     automatic_start_allowed: false
     runtime_mode_change: false
     state_mutation: false
