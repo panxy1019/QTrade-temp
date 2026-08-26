@@ -473,6 +473,13 @@ any browser field invalidates the old draft and binding. This closes an audit
 gap without pretending the stateless binding is immutable persistence, an
 independent leakage review or fresh held-out evidence.
 
+Adjustable previews now include an engine-matched equal-weight Buy-and-Hold
+benchmark. It uses only first-decision-known symbols and the same window,
+capital, reserve, costs, slippage and next-open execution as the strategy. The
+API/UI expose aligned benchmark equity/drawdown, benchmark return, cumulative
+excess and information ratio. This completes the common metric surface while
+retaining the explicit current-universe survivorship boundary.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

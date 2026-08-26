@@ -363,6 +363,15 @@ proves which reproducible preview belongs to which draft, but it still writes no
 immutable artifact and cannot convert an already viewed window into independent
 confirmation evidence or authorize PAPER/LIVE.
 
+Every adjustable preview now also runs an equal-weight Buy-and-Hold comparison
+through the same causal engine. The benchmark selects only symbols known at the
+first decision close, enters at the next open, and shares the strategy's date
+window, initial cash, reserve, transaction cost and slippage. The response and
+chart include aligned benchmark equity/drawdown, cumulative excess return,
+benchmark return and information ratio alongside annualized return, Sharpe and
+maximum drawdown. This is a matched current-universe diagnostic; the universe
+is still not PIT and retains survivorship bias.
+
 The proposed
 five-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
 contract requires five bid/ask prices plus sizes normalized to shares, provider

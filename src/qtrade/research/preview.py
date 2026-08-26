@@ -8,8 +8,10 @@ from hashlib import sha256
 
 from qtrade.data import Bar
 from qtrade.research.factors import PriceFactorSpec
+from qtrade.research.metrics import evaluate_returns
 from qtrade.research.multi_asset import (
     DailyMultiAssetBacktester,
+    EqualWeightBuyHold,
     MomentumAllocation,
     RankedFactorAllocation,
 )
@@ -121,25 +123,86 @@ def run_backtest_preview(
             volatility_window=spec.volatility_window,
             target_annual_volatility=spec.target_annual_volatility,
         )
-    result = DailyMultiAssetBacktester(
+    backtester = DailyMultiAssetBacktester(
         initial_cash=spec.initial_cash,
         transaction_cost_rate=spec.transaction_cost_rate,
         slippage_rate=spec.slippage_rate,
-    ).run(selected, model)
+    )
+    result = backtester.run(selected, model)
+    benchmark = backtester.run(
+        selected,
+        EqualWeightBuyHold(tuple(sorted(symbols)), reserve=spec.reserve),
+    )
+    if result.sessions != benchmark.sessions:
+        raise ValueError("preview strategy and benchmark sessions do not align")
+    comparison_metrics = evaluate_returns(
+        list(result.returns),
+        benchmark_returns=list(benchmark.returns),
+        turnover=result.turnover,
+        exposure=result.average_exposure,
+        trade_count=len(result.trades),
+        transaction_costs=result.total_cost / spec.initial_cash,
+    )
     peak = Decimal("0")
+    benchmark_peak = Decimal("0")
     curve: list[dict[str, str]] = []
-    for session, equity in zip(result.sessions, result.equity_curve, strict=True):
+    for session, equity, benchmark_equity in zip(
+        result.sessions,
+        result.equity_curve,
+        benchmark.equity_curve,
+        strict=True,
+    ):
         peak = max(peak, equity)
+        benchmark_peak = max(benchmark_peak, benchmark_equity)
         curve.append(
             {
                 "session": session.isoformat(),
                 "equity": str(equity),
                 "drawdown": str(equity / peak - 1),
+                "benchmark_equity": str(benchmark_equity),
+                "benchmark_drawdown": str(benchmark_equity / benchmark_peak - 1),
+                "excess_return": str(
+                    (equity - benchmark_equity) / spec.initial_cash
+                ),
             }
         )
     metrics = {
         key: str(value)
-        for key, value in asdict(result.metrics).items()
+        for key, value in asdict(comparison_metrics).items()
+        if key
+        in {
+            "annualized_return",
+            "annualized_volatility",
+            "benchmark_return",
+            "calmar",
+            "excess_return",
+            "information_ratio",
+            "maximum_drawdown",
+            "sharpe",
+            "sortino",
+            "total_return",
+            "win_rate",
+        }
+    }
+    metrics.update(
+        {
+            "average_exposure": str(result.average_exposure),
+            "benchmark_return": str(
+                benchmark.equity_curve[-1] / spec.initial_cash - 1
+            ),
+            "excess_return": str(
+                (result.equity_curve[-1] - benchmark.equity_curve[-1])
+                / spec.initial_cash
+            ),
+            "number_of_trades": str(len(result.trades)),
+            "transaction_costs": str(result.total_cost),
+            "total_return": str(result.equity_curve[-1] / spec.initial_cash - 1),
+            "turnover": str(result.turnover),
+        }
+    )
+    benchmark_metrics = {
+        key: str(value)
+        for key, value in asdict(benchmark.metrics).items()
         if key
         in {
             "annualized_return",
@@ -152,12 +215,15 @@ def run_backtest_preview(
             "win_rate",
         }
     }
-    metrics.update(
+    benchmark_metrics.update(
         {
-            "average_exposure": str(result.average_exposure),
-            "number_of_trades": str(len(result.trades)),
-            "transaction_costs": str(result.total_cost),
-            "turnover": str(result.turnover),
+            "average_exposure": str(benchmark.average_exposure),
+            "number_of_trades": str(len(benchmark.trades)),
+            "transaction_costs": str(benchmark.total_cost),
+            "total_return": str(
+                benchmark.equity_curve[-1] / spec.initial_cash - 1
+            ),
+            "turnover": str(benchmark.turnover),
         }
     )
     parameters = {
@@ -191,6 +257,17 @@ def run_backtest_preview(
         "data_version": data_version,
         "data_checksum": data_checksum,
         "parameters": parameters,
+        "benchmark": {
+            "strategy_id": "equal-weight-buy-hold-benchmark-v1",
+            "decision_timing": "first session close, next open execution",
+            "first_decision_known_symbols_only": True,
+            "current_universe_survivorship_bias": True,
+            "reserve": str(spec.reserve),
+            "transaction_cost_rate": str(spec.transaction_cost_rate),
+            "slippage_rate": str(spec.slippage_rate),
+            "execution_timing": "close decision, next open execution",
+            "metrics": benchmark_metrics,
+        },
         "session_count": len(result.sessions),
         "universe_size": len(symbols),
         "metrics": metrics,

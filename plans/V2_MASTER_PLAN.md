@@ -301,6 +301,11 @@ npm --prefix web run build
   spec hash, preview hash, data identity and template. Invalidate the browser
   binding on every field change and keep immutable persistence, leakage review,
   fresh evidence, registry and runtime authority false.
+- [x] Add an equal-weight Buy-and-Hold benchmark to every adjustable preview
+  using first-decision-known symbols and the same window, capital, reserve,
+  costs, slippage and next-open execution. Align both curves and expose
+  benchmark return, excess return and information ratio without treating the
+  current non-PIT universe as survivorship-free evidence.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

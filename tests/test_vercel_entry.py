@@ -288,6 +288,17 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert preview.status_code == 200
     assert preview.json()["promotion"] == "NOT_ELIGIBLE"
     assert preview.json()["external_order_transmission"] is False
+    assert preview.json()["benchmark"]["strategy_id"] == (
+        "equal-weight-buy-hold-benchmark-v1"
+    )
+    assert preview.json()["benchmark"]["first_decision_known_symbols_only"] is True
+    assert "benchmark_return" in preview.json()["metrics"]
+    assert "excess_return" in preview.json()["metrics"]
+    assert "information_ratio" in preview.json()["metrics"]
+    assert all(
+        "benchmark_equity" in point and "excess_return" in point
+        for point in preview.json()["curve"]
+    )
     run_spec_payload = {
         "template_id": "etf-momentum-rotation-v1",
         "experiment_id": "vercel-read-only-draft",

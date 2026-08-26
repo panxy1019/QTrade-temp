@@ -1997,3 +1997,24 @@ The combined response remains stateless. It is not an immutable experiment
 artifact, an independent leakage-review PASS or a new unseen test. It cannot
 create a registry row, start PAPER/SHADOW/LIVE, mutate state or transmit an
 order.
+
+## ADR-117 — Adjustable previews use an engine-matched benchmark
+
+Status: accepted, 2026-08-27.
+
+Reporting a strategy return without a matched benchmark left “excess return”
+undefined. Reusing a benchmark from another experiment could silently mix date
+windows, cash reserve, costs, slippage, symbol availability or execution timing.
+
+Each preview now runs `EqualWeightBuyHold` through the same
+`DailyMultiAssetBacktester`. The comparison uses the same selected history,
+initial cash, reserve, transaction cost, slippage and close-decision/next-open
+timing. The benchmark can allocate only to symbols present in history at its
+first decision close. Strategy and benchmark sessions must match exactly before
+the API emits aligned equity/drawdown curves, benchmark return, cumulative
+excess and information ratio.
+
+Matching the engine does not fix the data universe. The current universe is not
+point-in-time and retains survivorship bias, so these metrics remain diagnostic
+and cannot provide research admission, PAPER/LIVE authority, state mutation or
+external order transmission.

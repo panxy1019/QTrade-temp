@@ -32,6 +32,14 @@ hash, template and data identity. Editing any form field removes the prior
 browser binding. This supplies reproducible draft-to-result lineage but remains
 stateless and unpersisted; it is neither a registered experiment nor new
 held-out evidence.
+Each adjustable result now includes an equal-weight Buy-and-Hold run from the
+same causal simulator. It selects symbols visible at the first decision close,
+executes at the next open and shares the strategy's window, initial cash,
+reserve, transaction cost and slippage. Strategy and benchmark sessions are
+required to align before the API returns benchmark equity/drawdown, benchmark
+return, cumulative excess and information ratio. The comparison is still based
+on the current non-PIT universe and therefore remains a survivorship-biased
+diagnostic rather than promotion evidence.
 Experiments bind git commit, data version, PIT universe, chronological
 train/validation/test split, model, parameters, cost model and seed to immutable
 hashed artifacts. The runner automatically registers PASSED dataset lineage and

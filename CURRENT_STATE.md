@@ -998,3 +998,13 @@ Last updated: 2026-08-27
   spec or backtest field changes. The binding proves replay identity only: it is
   still stateless, unpersisted, independently unreviewed and based on an already
   visible test window, with registry/PAPER/LIVE/state/order writes all false.
+- Matched preview benchmark: every adjustable and hash-bound preview now runs
+  the implemented equal-weight Buy-and-Hold model through the same causal
+  close-decision/next-open engine. Strategy and benchmark share the exact
+  window, initial cash, reserve, transaction cost and slippage; only symbols
+  known at the first decision close can enter the benchmark. The response and
+  chart expose aligned benchmark equity/drawdown, terminal and curve excess,
+  benchmark return and information ratio in addition to annualized return,
+  Sharpe and maximum drawdown. The benchmark still uses the current non-PIT
+  universe and therefore does not remove survivorship bias or create promotion
+  evidence.

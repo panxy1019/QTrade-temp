@@ -1186,7 +1186,9 @@ describe('verified backtest analytics', () => {
         target_annual_volatility: null, initial_cash: '1000000',
         transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
       },
-      session_count: 150, universe_size: 30, metrics: { total_return: '0.01' }, curve: [],
+      session_count: 150, universe_size: 30,
+      metrics: { total_return: '0.01', annualized_return: '0.02', sharpe: '0.3', maximum_drawdown: '-0.04', benchmark_return: '0.03', excess_return: '-0.02', information_ratio: '-0.5' },
+      benchmark: { strategy_id: 'equal-weight-buy-hold-benchmark-v1', decision_timing: 'first session close, next open execution', first_decision_known_symbols_only: true, current_universe_survivorship_bias: true, reserve: '0.05', transaction_cost_rate: '0.0015', slippage_rate: '0.0005', execution_timing: 'close decision, next open execution', metrics: { total_return: '0.03' } }, curve: [],
       terminal_positions: [], execution_timing: 'close decision, next open execution',
       external_order_transmission: false, preview_hash: 'b'.repeat(64),
     }
@@ -1259,6 +1261,9 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/规格→结果绑定 dddddddddddddddd/)).toBeInTheDocument()
     expect(screen.getByText(/同一请求重新计算规格并运行，但仍未持久化为正式实验/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出规格绑定回测/ })).toBeInTheDocument()
+    expect(screen.getByText('同窗 Buy-and-Hold')).toBeInTheDocument()
+    expect(screen.getByText('主动超额')).toBeInTheDocument()
+    expect(screen.getByText(/同一窗口、初始资金、现金预留、成本、滑点和下一开盘执行/)).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('实验 ID'), { target: { value: 'rotation-replay-002' } })
     expect(screen.queryByRole('button', { name: '按该哈希运行因果回测' })).not.toBeInTheDocument()
     expect(screen.queryByText(/规格→结果绑定 dddddddddddddddd/)).not.toBeInTheDocument()
@@ -1279,7 +1284,8 @@ describe('verified backtest analytics', () => {
       },
       session_count: 632, universe_size: 30,
       metrics: { total_return: '0.03', annualized_return: '0.01', sharpe: '0.4', maximum_drawdown: '-0.09', average_exposure: '0.5', number_of_trades: '42', turnover: '2', transaction_costs: '100' },
-      curve: [{ session: '2024-01-02', equity: '1000000', drawdown: '0' }],
+      benchmark: { strategy_id: 'equal-weight-buy-hold-benchmark-v1', decision_timing: 'first session close, next open execution', first_decision_known_symbols_only: true, current_universe_survivorship_bias: true, reserve: '0.05', transaction_cost_rate: '0.0015', slippage_rate: '0.0005', execution_timing: 'close decision, next open execution', metrics: { total_return: '0.02' } },
+      curve: [{ session: '2024-01-02', equity: '1000000', drawdown: '0', benchmark_equity: '1000000', benchmark_drawdown: '0', excess_return: '0' }],
       terminal_positions: [], execution_timing: 'close decision, next open execution',
       external_order_transmission: false,
       preview_hash: 'a'.repeat(64),

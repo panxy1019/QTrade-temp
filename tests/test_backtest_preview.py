@@ -84,6 +84,37 @@ def test_preview_is_deterministic_and_parameter_changes_are_distinct() -> None:
     assert first["data_checksum"] == checksum
     assert int(first["metrics"]["number_of_trades"]) > 0  # type: ignore[index]
     assert len(first["curve"]) == 80  # type: ignore[arg-type]
+    metrics = first["metrics"]
+    assert Decimal(metrics["excess_return"]) == (  # type: ignore[index]
+        Decimal(metrics["total_return"]) - Decimal(metrics["benchmark_return"])
+    )
+    assert "information_ratio" in metrics  # type: ignore[operator]
+    benchmark = first["benchmark"]
+    assert benchmark["strategy_id"] == "equal-weight-buy-hold-benchmark-v1"  # type: ignore[index]
+    assert benchmark["decision_timing"] == (  # type: ignore[index]
+        "first session close, next open execution"
+    )
+    assert benchmark["first_decision_known_symbols_only"] is True  # type: ignore[index]
+    assert benchmark["current_universe_survivorship_bias"] is True  # type: ignore[index]
+    assert benchmark["reserve"] == first["parameters"]["reserve"]  # type: ignore[index]
+    assert benchmark["transaction_cost_rate"] == "0.001"  # type: ignore[index]
+    assert benchmark["slippage_rate"] == "0.0005"  # type: ignore[index]
+    assert benchmark["execution_timing"] == first["execution_timing"]  # type: ignore[index]
+    curve = first["curve"]
+    assert all(  # type: ignore[arg-type]
+        set(point) == {
+            "session",
+            "equity",
+            "drawdown",
+            "benchmark_equity",
+            "benchmark_drawdown",
+            "excess_return",
+        }
+        for point in curve
+    )
+    assert Decimal(curve[-1]["excess_return"]) == Decimal(  # type: ignore[index]
+        metrics["excess_return"]  # type: ignore[index]
+    )
 
 
 def test_preview_supports_only_bounded_factor_families() -> None:

@@ -27,6 +27,7 @@ const result: BacktestPreview = {
   },
   session_count: 400, universe_size: 30,
   metrics: { total_return: '0.1', sharpe: '0.5', maximum_drawdown: '-0.1' },
+  benchmark: { strategy_id: 'equal-weight-buy-hold-benchmark-v1', decision_timing: 'first session close, next open execution', first_decision_known_symbols_only: true, current_universe_survivorship_bias: true, reserve: '0.05', transaction_cost_rate: '0.0015', slippage_rate: '0.0005', execution_timing: 'close decision, next open execution', metrics: { total_return: '0.05' } },
   curve: [], terminal_positions: [], execution_timing: 'close decision, next open execution',
   external_order_transmission: false,
   preview_hash: 'a'.repeat(64),

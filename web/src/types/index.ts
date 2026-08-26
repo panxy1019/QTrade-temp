@@ -431,10 +431,28 @@ export interface BacktestPreview {
   data_version: string
   data_checksum: string
   parameters: BacktestPreviewRequest
+  benchmark: {
+    strategy_id: 'equal-weight-buy-hold-benchmark-v1'
+    decision_timing: 'first session close, next open execution'
+    first_decision_known_symbols_only: true
+    current_universe_survivorship_bias: true
+    reserve: string
+    transaction_cost_rate: string
+    slippage_rate: string
+    execution_timing: 'close decision, next open execution'
+    metrics: Record<string, string>
+  }
   session_count: number
   universe_size: number
   metrics: Record<string, string>
-  curve: Array<{ session: string; equity: string; drawdown: string }>
+  curve: Array<{
+    session: string
+    equity: string
+    drawdown: string
+    benchmark_equity: string
+    benchmark_drawdown: string
+    excess_return: string
+  }>
   terminal_positions: Array<{ symbol: string; quantity: number }>
   execution_timing: 'close decision, next open execution'
   external_order_transmission: false

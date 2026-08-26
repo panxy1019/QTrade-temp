@@ -421,13 +421,16 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
           <Metric label="年化收益" value={formatPercent(result.metrics.annualized_return)} />
           <Metric label="Sharpe" value={formatNumber(result.metrics.sharpe)} />
           <Metric label="最大回撤" value={formatPercent(result.metrics.maximum_drawdown)} />
+          <Metric label="同窗 Buy-and-Hold" value={formatPercent(result.metrics.benchmark_return)} />
+          <Metric label="主动超额" value={formatPercent(result.metrics.excess_return)} />
+          <Metric label="信息比率" value={formatNumber(result.metrics.information_ratio)} />
           <Metric label="平均敞口" value={formatPercent(result.metrics.average_exposure)} />
           <Metric label="模拟成交数" value={result.metrics.number_of_trades ?? '—'} />
           <Metric label="换手" value={formatNumber(result.metrics.turnover)} />
           <Metric label="交易成本" value={formatNumber(result.metrics.transaction_costs)} />
         </div>
         <EquityChart dark analytics={result} />
-        <Typography.Text type="secondary">因果时序：收盘生成目标，下一可用开盘模拟成交。该结果使用当前样本池，存在幸存者偏差，禁止直接作为实盘依据。</Typography.Text>
+        <Typography.Text type="secondary">因果时序：收盘生成目标，下一可用开盘模拟成交。等权 Buy-and-Hold 使用同一窗口、初始资金、现金预留、成本、滑点和下一开盘执行；曲线逐交易日对齐后计算超额。该结果使用当前样本池，存在幸存者偏差，禁止直接作为实盘依据。</Typography.Text>
         <Space wrap>
           <Input aria-label="本地实验名称" placeholder="为本次结果命名" value={experimentName} maxLength={80} onChange={(event) => setExperimentName(event.target.value)} style={{ width: 280 }} />
           <Button onClick={saveResult}>保存到本地实验</Button>
