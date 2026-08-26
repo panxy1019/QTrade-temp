@@ -146,6 +146,9 @@ npm --prefix web run build
   bullish/bearish/ignore predicates, ALL/ANY combination and one body threshold;
   preserve fixed timestamps, reject arbitrary code/features and route every
   result through the existing causal diagnostics and promotion gates.
+- [x] Add a checksum-bound browser-local notebook for intraday factor summaries,
+  comparison, deletion and parameter reload; reject malformed/safety-relaxed
+  records and require a new run after reload without creating formal lineage.
 - [x] Extend the preview to bounded momentum/reversal/low-volatility comparison
   and a checksum-bound browser-local experiment notebook with save, compare,
   parameter reload and delete; keep all records outside formal strategy lineage.

@@ -1,7 +1,13 @@
-import { Alert, Button, Card, Form, Input, InputNumber, Select, Space, Steps, Table, Tabs, Tag, Typography } from 'antd'
+import { Alert, Button, Card, Form, Input, InputNumber, Popconfirm, Select, Space, Steps, Table, Tabs, Tag, Typography } from 'antd'
 import { useState } from 'react'
 import { runIntradayFactorBacktest } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
+import {
+  deleteLocalIntradayFactorExperiment,
+  loadLocalIntradayFactorExperiments,
+  saveLocalIntradayFactorExperiment,
+} from '../research/localIntradayFactorExperiments'
+import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
 import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
@@ -197,14 +203,19 @@ export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayF
 }
 
 export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMinuteDataset | null }) {
+  const [form] = Form.useForm<FormValues>()
   const [result, setResult] = useState<IntradayFactorBacktest | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
   const [selectedFactor, setSelectedFactor] = useState<IntradayFactorBacktestRequest['factor']>('opening_three_ten_minute_bullish')
+  const [experimentName, setExperimentName] = useState('')
+  const [saveStatus, setSaveStatus] = useState<string | null>(null)
+  const [, setExperimentRevision] = useState(0)
 
   if (!dataset) {
     return <Card title="分钟因子研究工作台"><Alert showIcon type="warning" title="长历史 5 分钟数据不可用" description="系统不会用合成行情或不完整缓存替代经过 checksum 验证的多股票数据。" /></Card>
   }
+  const savedExperiments = loadLocalIntradayFactorExperiments(dataset)
 
   const eligibleEndDays = dataset.trading_days.slice(0, -1)
   const defaultEndIndex = eligibleEndDays.length - 1
@@ -237,6 +248,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setError(null)
     try {
       setResult(await runIntradayFactorBacktest(payload))
+      setSaveStatus(null)
     } catch (reason) {
       setResult(null)
       setError(reason instanceof Error ? reason.message : '分钟因子研究失败')
@@ -244,6 +256,79 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       setRunning(false)
     }
   }
+  const saveResult = () => {
+    if (!result) return
+    if (result.data_version !== dataset.data_version
+      || result.dataset_checksum !== dataset.checksum) {
+      setSaveStatus('数据集已变化，请重新运行后再保存。')
+      return
+    }
+    try {
+      const saved = saveLocalIntradayFactorExperiment(experimentName, result)
+      setExperimentRevision((value) => value + 1)
+      setExperimentName(saved.name)
+      setSaveStatus(`已保存“${saved.name}”；相同结果哈希会更新原记录。`)
+    } catch (reason) {
+      setSaveStatus(reason instanceof Error ? reason.message : '本地因子实验保存失败')
+    }
+  }
+  const loadParameters = (record: LocalIntradayFactorExperiment) => {
+    const parameters = record.parameters
+    form.setFieldsValue({
+      factor: parameters.factor,
+      start: parameters.start,
+      end: parameters.end,
+      cost_bps: parameters.cost_bps,
+      minimum_body_return_bps: parameters.minimum_body_return_bps,
+      first_direction: parameters.directions[0],
+      second_direction: parameters.directions[1],
+      third_direction: parameters.directions[2],
+      combination: parameters.combination,
+    })
+    setSelectedFactor(parameters.factor)
+    setResult(null)
+    setError(null)
+    setExperimentName(record.name)
+    setSaveStatus(`已载入“${record.name}”的参数；请重新运行以验证当前结果。`)
+  }
+  const removeExperiment = (previewHash: string) => {
+    deleteLocalIntradayFactorExperiment(previewHash)
+    setExperimentRevision((value) => value + 1)
+    setSaveStatus('本地因子实验记录已删除。')
+  }
+  const experimentColumns = [
+    { title: '名称', dataIndex: 'name' },
+    { title: '保存时间', dataIndex: 'saved_at', render: (value: string) => formatTimestamp(value) },
+    {
+      title: '规则',
+      render: (_: unknown, row: LocalIntradayFactorExperiment) => (
+        `${row.parameters.directions.map(directionLabel).join('/')} · ${row.parameters.combination} · ${row.parameters.minimum_body_return_bps} bps`
+      ),
+    },
+    { title: '信号', render: (_: unknown, row: LocalIntradayFactorExperiment) => `${row.signal_count}/${row.observation_count}` },
+    { title: '收益', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.total_return) },
+    { title: 'Sharpe', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatNumber(row.metrics.sharpe) },
+    { title: '最大回撤', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.maximum_drawdown) },
+    { title: '样本外收益', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.stitched_oos_total_return) },
+    {
+      title: '硬门',
+      render: (_: unknown, row: LocalIntradayFactorExperiment) => (
+        <Space size={4}>
+          <Tag color={row.research_gate_passed ? 'green' : 'red'}>研究{row.research_gate_passed ? '通过' : '失败'}</Tag>
+          <Tag color={row.robustness_gate_passed ? 'green' : 'red'}>稳健性{row.robustness_gate_passed ? '通过' : '失败'}</Tag>
+        </Space>
+      ),
+    },
+    {
+      title: '操作',
+      render: (_: unknown, row: LocalIntradayFactorExperiment) => <Space size={4}>
+        <Button type="link" size="small" onClick={() => loadParameters(row)}>载入因子参数</Button>
+        <Popconfirm title="删除这条本地因子实验？" onConfirm={() => removeExperiment(row.preview_hash)}>
+          <Button type="link" danger size="small">删除</Button>
+        </Popconfirm>
+      </Space>,
+    },
+  ]
   const curve = result ? {
     curve: [
       { session: '起点', equity: '1', drawdown: '0', benchmark_equity: '1', benchmark_drawdown: '0', excess_return: '0' },
@@ -266,7 +351,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   return <Card title="分钟因子研究工作台" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · 原生 5 分钟</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
       <Alert showIcon type="info" title="从因子到模拟盘的完整门控" description="三根 10 分钟阳线在 10:00 才确认，最早取 10:05 标记的下一根 5 分钟 Bar 开盘价（区间起点 10:00）买入，并按 A 股 T+1 取下一交易日 09:35 标记 Bar 的开盘价（区间起点 09:30）退出。当前参数研究是事后非 PIT 检验，永远不会自动进入 PAPER 或 LIVE。" />
-      <Form<FormValues> name="intraday-factor-research-backtest" layout="vertical" initialValues={initialValues} onFinish={(values) => { void submit(values) }}>
+      <Form<FormValues> form={form} name="intraday-factor-research-backtest" layout="vertical" initialValues={initialValues} onFinish={(values) => { void submit(values) }}>
         <div className="backtest-lab-grid">
           <Form.Item name="factor" label="因子" rules={[{ required: true }]}><Select onChange={setSelectedFactor} options={[
             { value: 'opening_three_ten_minute_bullish', label: '09:30 起三根 10 分钟阳线' },
@@ -401,8 +486,25 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           },
         ]} />
         <Alert showIcon type="warning" title={`五档买卖盘强度：${result.l2_factor_readiness.readiness}`} description={`公式 ${result.l2_factor_readiness.formula} 需要 ${result.l2_factor_readiness.required_data}。当前没有获授权的 L2 来源，系统不会从 OHLCV 伪造买一至买五/卖一至卖五。`} />
-        <JsonExportButton filename={`qtrade-intraday-factor-${result.preview_hash.slice(0, 12)}.json`} value={result} label="导出因子研究证据" />
+        <Space wrap>
+          <Input aria-label="本地因子实验名称" placeholder="为本次因子结果命名" value={experimentName} maxLength={80} onChange={(event) => setExperimentName(event.target.value)} style={{ width: 280 }} />
+          <Button onClick={saveResult}>保存到本地因子实验</Button>
+          <JsonExportButton filename={`qtrade-intraday-factor-${result.preview_hash.slice(0, 12)}.json`} value={result} label="导出因子研究证据" />
+        </Space>
       </>}
+      {saveStatus && <Alert showIcon type="info" title={saveStatus} />}
+      <Card type="inner" title={`本地因子实验对比（${savedExperiments.length}/30）`} extra={<Typography.Text type="secondary">仅当前浏览器</Typography.Text>}>
+        <Table<LocalIntradayFactorExperiment>
+          rowKey="preview_hash"
+          size="small"
+          columns={experimentColumns}
+          dataSource={savedExperiments}
+          pagination={{ pageSize: 5, showSizeChanger: false }}
+          scroll={{ x: 1450 }}
+          locale={{ emptyText: '运行因子检验后可保存摘要，用于反复调整和横向比较。' }}
+        />
+        <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，只保存规则、结果哈希和摘要；载入后必须重新运行。它不是正式实验、独立样本外证据或 PAPER 晋级输入，也不会同步到其他设备。</Typography.Text>
+      </Card>
     </Space>
   </Card>
 }
@@ -457,4 +559,15 @@ function formatNumber(value: string) {
 function formatPercent(value: string) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? `${(parsed * 100).toFixed(2)}%` : '—'
+}
+
+function formatTimestamp(value: string) {
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? '—' : parsed.toLocaleString('zh-CN', { hour12: false })
+}
+
+function directionLabel(value: IntradayOpeningDirection) {
+  if (value === 'BULLISH') return '阳'
+  if (value === 'BEARISH') return '阴'
+  return '忽略'
 }

@@ -267,6 +267,13 @@ T+1 exit contract. The immutable three-bullish preset and every custom preview
 flow through the same diagnostics and hard gates; no browser selection can
 register a strategy or grant PAPER/LIVE authority.
 
+The factor workbench also keeps an optional browser-local comparison notebook.
+Its bounded summaries bind the dataset identity and deterministic result hash,
+retain the rule, standard metrics, stitched diagnostic and both hard gates, and
+fail closed on malformed or safety-relaxed local data. Parameter reload clears
+the old result and requires a new run; the notebook has no server write,
+StrategyVersion, promotion or cross-device synchronization semantics.
+
 The factor veto is also persisted as an immutable 120-session report rather than
 left as a one-off API observation. It fixes a 60-session training prefix, six
 disjoint ten-session tests and thresholds `0/5/10/20 bps`, then binds the exact

@@ -271,6 +271,16 @@ immutable preset. Custom runs reuse the same effectiveness, correlation,
 walk-forward, cost, sector, stock and promotion gates; they are stateless
 research previews and cannot create a PAPER candidate or external order.
 
+Each completed intraday-factor preview can be saved into a browser-local
+comparison notebook. A bounded record keeps the exact dataset version/checksum,
+result hash, typed rule parameters, signal counts, standard metrics, stitched
+walk-forward return and both gate outcomes. Records with invalid structure,
+another dataset identity or relaxed safety flags are ignored; duplicate result
+hashes replace the older label and at most 30 summaries are retained. Loading a
+record only repopulates the form and clears the old result, so the user must run
+the current verified dataset again. The notebook is not server-synchronized,
+does not create a registered experiment and cannot feed PAPER or LIVE.
+
 The first disclosed 20-session run from 2026-07-28 through 2026-08-24 produced
 192 signals across 1,500 stock-days. At 5 bps per side it returned `-4.0840%`,
 annualized `-40.8673%`, Sharpe `-3.3347` and maximum drawdown `-5.1038%`.

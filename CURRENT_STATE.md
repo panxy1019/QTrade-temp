@@ -262,6 +262,13 @@ Last updated: 2026-08-27
   current-universe/QFQ non-PIT and `NOT_ELIGIBLE`; it reuses all existing
   effectiveness, correlation, robustness and promotion gates without mutating
   strategy or PAPER state.
+- Intraday factor comparison: successful previews can be retained as at most 30
+  checksum-bound summaries in the current browser. Each summary keeps its typed
+  rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,
+  Rank IC, correlation, stitched walk-forward result and hard-gate outcomes.
+  Invalid, cross-dataset or safety-relaxed records fail closed; loading a record
+  only restores form parameters and requires a fresh rerun. These records are
+  neither formal experiments nor independent evidence or PAPER inputs.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

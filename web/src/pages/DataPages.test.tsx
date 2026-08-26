@@ -1223,6 +1223,7 @@ describe('verified robustness evidence', () => {
   })
 
   it('runs the full intraday factor gate without promoting a losing rule', async () => {
+    window.localStorage.clear()
     const metrics = {
       total_return: '-0.0408', annualized_return: '-0.4087', annualized_volatility: '0.1538',
       sharpe: '-3.3347', sortino: '-4.2', maximum_drawdown: '-0.0510', calmar: '-8.0',
@@ -1243,8 +1244,15 @@ describe('verified robustness evidence', () => {
         expression: 'bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000',
         source_interval: 'NATIVE_5M_AGGREGATED_TO_10M', source_timestamp_convention: 'BAR_END_TIME', source_bars: '09:35,09:40,09:45,09:50,09:55,10:00',
         known_at: '10:00_BAR_CLOSE', minimum_body_return_bps: '0',
+        directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL',
+        allowed_features: ['TEN_MINUTE_BODY_0930_0940', 'TEN_MINUTE_BODY_0940_0950', 'TEN_MINUTE_BODY_0950_1000'],
+        arbitrary_code_execution: false,
       },
-      parameters: { factor: 'opening_three_ten_minute_bullish', start: '2026-07-28', end: '2026-08-24', cost_bps: '5', minimum_body_return_bps: '0' },
+      parameters: {
+        factor: 'custom_opening_ten_minute_direction_rule', start: '2026-07-28', end: '2026-08-24',
+        cost_bps: '5', minimum_body_return_bps: '0',
+        directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL',
+      },
       workflow: [
         { id: 'FACTOR_DEFINITION', status: 'AVAILABLE', detail: 'fixed' },
         { id: 'FACTOR_VALIDATION', status: 'FAILED', detail: 'failed' },
@@ -1373,6 +1381,15 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('tab', { name: '滚动样本外与阈值' }))
     expect(screen.getByText('复用历史样本的因果诊断，不是新的独立证据')).toBeInTheDocument()
     expect(screen.getByText(/固定候选阈值 0\/5\/10\/20 bps/)).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('本地因子实验名称'), { target: { value: '三时段方向方案 A' } })
+    fireEvent.click(screen.getByRole('button', { name: '保存到本地因子实验' }))
+    expect(screen.getByText('已保存“三时段方向方案 A”；相同结果哈希会更新原记录。')).toBeInTheDocument()
+    expect(screen.getByText('本地因子实验对比（1/30）')).toBeInTheDocument()
+    expect(screen.getByText('三时段方向方案 A')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '载入因子参数' }))
+    expect(screen.getByText('已载入“三时段方向方案 A”的参数；请重新运行以验证当前结果。')).toBeInTheDocument()
+    expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: '第一段 09:30–09:40' })).toBeInTheDocument()
   })
 
   it('does not present experiment records as a registered lineage', () => {
