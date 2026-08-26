@@ -290,6 +290,11 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
   }
   const loadParameters = (record: LocalBacktestExperiment) => {
     const parameters = record.parameters
+    const boundTemplateId = record.binding?.template_id ?? null
+    const bindingCompatibilityError = boundTemplateId
+      ? templateCompatibilityError(boundTemplateId, parameters)
+      : null
+    const restoredTemplateId = bindingCompatibilityError ? null : boundTemplateId
     form.setFieldsValue({
       start: parameters.start,
       end: parameters.end,
@@ -307,16 +312,28 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
       transaction_cost_rate: parameters.transaction_cost_rate,
       slippage_rate: parameters.slippage_rate,
     })
+    specForm.setFieldsValue({
+      experiment_id: '',
+      git_commit: gitCommit ?? '',
+      ...splitDefaults(dataset),
+      seed: 7,
+    })
     setResult(null)
     setError(null)
-    setSelectedTemplateId(null)
+    setSelectedTemplateId(restoredTemplateId)
     setDraft(null)
     setDraftRequest(null)
     setDraftError(null)
     setBoundBacktest(null)
     setBindingError(null)
     setExperimentName(record.name)
-    setSaveStatus(`已载入“${record.name}”的参数；请重新运行以验证当前结果。`)
+    if (bindingCompatibilityError) {
+      setSaveStatus(`“${record.name}”的历史模板身份与参数不一致，仅载入参数且未恢复模板；请重新选择模板并生成新草案。`)
+    } else if (record.binding) {
+      setSaveStatus(`已载入“${record.name}”的绑定模板与回测参数；历史规格 ${record.binding.spec_hash.slice(0, 12)}… / 绑定 ${record.binding.binding_hash.slice(0, 12)}… 仅用于识别，原 13 字段规格未恢复，实验 ID 已留空，必须重新填写并生成新草案哈希。`)
+    } else {
+      setSaveStatus(`已载入“${record.name}”的参数；请重新运行以验证当前结果。`)
+    }
   }
   const removeExperiment = (previewHash: string) => {
     deleteLocalBacktestExperiment(previewHash)

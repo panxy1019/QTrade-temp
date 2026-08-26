@@ -485,6 +485,13 @@ Sharpe, information ratio and maximum drawdown. It does not backfill missing
 legacy values, and the table-level current-universe/non-PIT survivorship warning
 keeps these metrics diagnostic rather than promotable.
 
+Reloading a browser-local bound row now preserves its template identity and
+exact backtest parameters, then clears prior result/draft/binding state and
+starts a fresh dataset-bounded run-spec form. The old spec/binding hashes remain
+historical labels only because the local summary did not persist the original
+13 fields. Ordinary rows remain unbound, and incompatible local identity/params
+fail closed rather than selecting a misleading template.
+
 Adjustable previews now include an engine-matched equal-weight Buy-and-Hold
 benchmark. It uses only first-decision-known symbols and the same window,
 capital, reserve, costs, slippage and next-open execution as the strategy. The

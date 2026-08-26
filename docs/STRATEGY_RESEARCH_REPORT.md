@@ -44,6 +44,13 @@ for every saved row. Missing fields from older records stay unavailable. A
 table-adjacent warning preserves the current-universe, non-PIT survivorship
 boundary, so displaying common metrics does not turn repeated tuning into
 independent validation.
+Loading a bound local row restores the saved template identity and exact
+backtest parameters, clears all computed result/draft/binding state, and resets
+the run-spec form for a new dataset-bounded draft. Its old spec and binding
+hashes are displayed only as historical identifiers: the local summary does not
+contain the original experiment ID, source commit, split or seed, so the full
+13-field spec must be rebuilt and rehashed. Ordinary rows stay unbound, and an
+incompatible local template/parameter pair does not restore a template.
 Each adjustable result now includes an equal-weight Buy-and-Hold run from the
 same causal simulator. It selects symbols visible at the first decision close,
 executes at the next open and shares the strategy's window, initial cash,

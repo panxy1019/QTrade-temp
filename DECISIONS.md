@@ -2062,3 +2062,27 @@ survivorship bias, which is stated beside the table. A complete comparison
 surface improves diagnosis but does not provide independent validation,
 immutable persistence, registry admission, promotion, PAPER/LIVE authority,
 state mutation or external order transmission.
+
+## ADR-120 — Reloading a local binding does not restore its full run spec
+
+Status: accepted, 2026-08-27.
+
+A browser-local bound row retained its template, spec and binding identities,
+but the existing load action always cleared the selected template. Restoring the
+old spec hash directly would be worse: the compact row does not contain the
+original experiment ID, commit, chronological split or seed needed to reproduce
+the 13-field `ExperimentRunSpec`.
+
+Loading a compatible bound row now restores only the saved template identity
+and exact backtest parameters. All prior result, draft and binding state is
+cleared, and the run-spec form resets to fresh dataset-bounded defaults with an
+empty experiment ID. The prior spec and binding hashes remain visible in the
+load message as historical identifiers, and the operator must enter a new ID
+and generate a complete draft before another bound run. An ordinary row remains
+unbound; an incompatible local template/parameter pair loads parameters but
+restores no template.
+
+This preserves a useful replay starting point without fabricating missing
+lineage. Reloading creates no immutable experiment or registry record, provides
+no fresh evidence or promotion authority, starts no PAPER/LIVE runtime, mutates
+no state and transmits no external order.

@@ -1273,9 +1273,15 @@ describe('verified backtest analytics', () => {
     fireEvent.change(screen.getByLabelText('实验 ID'), { target: { value: 'rotation-replay-002' } })
     expect(screen.queryByRole('button', { name: '按该哈希运行因果回测' })).not.toBeInTheDocument()
     expect(screen.queryByText(/规格→结果绑定 dddddddddddddddd/)).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '载入参数' }))
+    expect(screen.getByText('已载入模板：ETF 动量轮动')).toBeInTheDocument()
+    expect(screen.getByLabelText('实验 ID')).toHaveValue('')
+    expect(screen.getByText(/历史规格 cccccccccccc… \/ 绑定 dddddddddddd… 仅用于识别/)).toBeInTheDocument()
+    expect(screen.getByText(/原 13 字段规格未恢复，实验 ID 已留空，必须重新填写并生成新草案哈希/)).toBeInTheDocument()
+    expect(screen.queryByText(/规格→结果绑定 dddddddddddddddd/)).not.toBeInTheDocument()
     window.localStorage.clear()
     window.location.hash = ''
-  })
+  }, 10_000)
 
   it('runs an adjustable preview without presenting it as promotion evidence', async () => {
     window.localStorage.clear()
@@ -1328,6 +1334,10 @@ describe('verified backtest analytics', () => {
     expect(comparison.getByText('0.200')).toBeInTheDocument()
     expect(comparison.getByText(/匹配基准同样使用当前非 PIT 标的池，存在幸存者偏差/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出完整结果/ })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '载入参数' }))
+    expect(screen.getByText(/已载入“动量方案 A”的参数；请重新运行以验证当前结果/)).toBeInTheDocument()
+    expect(screen.queryByText(/已载入模板：/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/历史规格/)).not.toBeInTheDocument()
 
     vi.mocked(runBacktestPreview).mockResolvedValueOnce({ ...preview, preview_hash: 'b'.repeat(64) })
     fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
@@ -1345,6 +1355,43 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText('运行回测后可保存结果，用于反复调参与对比。')).toBeInTheDocument()
     window.localStorage.clear()
   }, 10_000)
+
+  it('does not restore a locally edited binding whose template and parameters disagree', () => {
+    window.localStorage.clear()
+    window.location.hash = '#/backtest'
+    window.localStorage.setItem('qtrade.local-backtest-experiments.v1', JSON.stringify([{
+      schema_version: 1,
+      name: '被篡改绑定',
+      saved_at: '2026-08-27T06:00:00+08:00',
+      preview_hash: 'e'.repeat(64),
+      data_version: 'akshare-bars-v1',
+      data_checksum: 'abc',
+      session_count: 100,
+      universe_size: 30,
+      parameters: {
+        start: '2026-01-01', end: '2026-08-12', factor: 'momentum',
+        horizons: [20, 60, 120], top_k: 3, rebalance_every: 20,
+        reserve: '0.05', trend_window: 120, volatility_window: 20,
+        target_annual_volatility: '0.15', initial_cash: '1000000',
+        transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
+      },
+      metrics: { total_return: '0.01' },
+      binding: {
+        classification: 'BROWSER_LOCAL_REPLAY_BINDING_NOT_IMMUTABLE',
+        template_id: 'etf-momentum-rotation-v1',
+        spec_hash: 'f'.repeat(64), binding_hash: 'a'.repeat(64),
+        creates_immutable_experiment: false, registry_write: false,
+        paper_runtime_start: false, live_runtime_start: false,
+      },
+    }]))
+    render(<BacktestPage data={data} />)
+    fireEvent.click(screen.getByRole('button', { name: '载入参数' }))
+    expect(screen.getByText(/“被篡改绑定”的历史模板身份与参数不一致，仅载入参数且未恢复模板/)).toBeInTheDocument()
+    expect(screen.queryByText(/已载入模板：/)).not.toBeInTheDocument()
+    expect(screen.getByLabelText('实验 ID')).toHaveValue('')
+    window.localStorage.clear()
+    window.location.hash = ''
+  })
 
   it('shows the verified leader without presenting it as Champion', async () => {
     cleanup()

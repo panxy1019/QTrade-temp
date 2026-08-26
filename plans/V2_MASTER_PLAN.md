@@ -316,6 +316,11 @@ npm --prefix web run build
   table. Keep missing legacy values unavailable and state the matched
   benchmark's current-universe, non-PIT survivorship bias beside the table so
   repeated tuning does not become promotion evidence.
+- [x] Restore template identity and exact backtest parameters when loading a
+  browser-local bound row, while clearing prior computed state and resetting a
+  fresh run-spec form. Present old spec/binding hashes only as historical
+  identifiers, require a new complete draft hash, keep ordinary rows unbound,
+  and fail closed on incompatible local template/parameter combinations.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

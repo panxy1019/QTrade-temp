@@ -379,6 +379,15 @@ render as unavailable rather than being inferred. The table keeps the matched
 benchmark's current-universe, non-PIT survivorship warning adjacent to the
 numbers, so a compact A/B view cannot be mistaken for promotion evidence.
 
+Loading a saved bound row now restores its code-template identity and exact
+backtest parameters instead of silently degrading it to an unbound preview. It
+clears every prior result/draft/binding and initializes a fresh run-spec form;
+the saved spec and binding hashes are shown only as historical identifiers.
+Because the local summary never stored the original experiment ID, commit,
+split or seed, the UI explicitly requires a newly completed draft and hash.
+Unbound rows remain unbound, and a template/parameter mismatch fails closed by
+loading parameters without restoring the template.
+
 Every adjustable preview now also runs an equal-weight Buy-and-Hold comparison
 through the same causal engine. The benchmark selects only symbols known at the
 first decision close, enters at the next open, and shares the strategy's date

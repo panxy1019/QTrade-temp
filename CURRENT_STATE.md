@@ -1010,6 +1010,12 @@ Last updated: 2026-08-27
   unavailable. The adjacent warning states that the benchmark still uses the
   current non-PIT universe with survivorship bias, so A/B visibility is not
   research admission or promotion evidence.
+- Browser-local replay reload: loading a bound row restores the saved template
+  identity plus exact backtest parameters, clears all prior computed state and
+  resets the run-spec form to a fresh dataset-bounded draft. Historical
+  spec/binding hashes remain visible only as identifiers; the original 13-field
+  spec was never stored and must be rebuilt. Ordinary rows stay unbound, while
+  incompatible local template/parameter combinations do not restore a template.
 - Matched preview benchmark: every adjustable and hash-bound preview now runs
   the implemented equal-weight Buy-and-Hold model through the same causal
   close-decision/next-open engine. Strategy and benchmark share the exact
