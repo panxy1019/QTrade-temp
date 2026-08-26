@@ -732,3 +732,14 @@ The shared minute-execution validator rechecks every bound and arithmetic ratio.
 Removing an inconvenient cost or reduction field and regenerating the outer
 digest fails the report closed. Partial diagnostics cannot influence gates or
 be rendered as verified evidence.
+
+## ADR-048 — Execution counts reject Python booleans
+
+Status: accepted, 2026-08-26.
+
+Reduced-exposure counts and per-reason counts in the shared minute execution
+diagnostic must be genuine integers. Python's `bool` subclassing `int` does not
+make `true` or `false` a valid economic observation count.
+
+This applies to forward and long-history execution evidence. A boolean count
+fails closed before ratios, gates or UI summaries are accepted.

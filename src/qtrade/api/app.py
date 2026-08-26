@@ -4120,12 +4120,14 @@ def _valid_minute_execution_diagnostics(
         symbol_count != expected_symbol_count
         or observation_count != expected_observation_count
         or not isinstance(reduced_count, int)
+        or isinstance(reduced_count, bool)
         or not 0 <= reduced_count <= expected_observation_count
         or not isinstance(reasons, dict)
         or not all(
             isinstance(reason, str)
             and reason
             and isinstance(count, int)
+            and not isinstance(count, bool)
             and 0 <= count <= expected_observation_count
             for reason, count in reasons.items()
         )
