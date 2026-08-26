@@ -75,7 +75,7 @@ def _non_regressing(previous: dict[str, Any], current: dict[str, Any]) -> bool:
 
 
 def _checkpoint_summary(report: dict[str, Any]) -> dict[str, Any]:
-    return {
+    summary = {
         "evidence_sha256": report["evidence_sha256"],
         "completed_at": report["completed_at"],
         "session_phase": report["session_phase"],
@@ -94,15 +94,33 @@ def _checkpoint_summary(report: dict[str, Any]) -> dict[str, Any]:
         ],
         "all_symbols_same_day_coverage": report["all_symbols_same_day_coverage"],
     }
+    if "directional_breadth" in report:
+        summary["directional_breadth"] = report["directional_breadth"]
+    return summary
 
 
 def _load_existing(path: Path) -> dict[str, Any] | None:
     if not path.is_file():
         return None
     report = _load_signed(path, CONTINUITY_CLASSIFICATION)
+    schema_version = report.get("schema_version")
+    directional_first_sequence = report.get("directional_breadth_first_sequence")
+    if schema_version not in {1, 2}:
+        raise ValueError("continuity schema version is invalid")
     checkpoints = report.get("checkpoints")
     if not isinstance(checkpoints, list) or len(checkpoints) > 32:
         raise ValueError("continuity checkpoint inventory is invalid")
+    if (
+        schema_version == 1
+        and directional_first_sequence is not None
+        or schema_version == 2
+        and (
+            not isinstance(directional_first_sequence, int)
+            or isinstance(directional_first_sequence, bool)
+            or not 1 <= directional_first_sequence <= len(checkpoints)
+        )
+    ):
+        raise ValueError("continuity directional sequence is invalid")
     previous_hash: str | None = None
     for index, checkpoint in enumerate(checkpoints, start=1):
         if not isinstance(checkpoint, dict):
@@ -119,6 +137,16 @@ def _load_existing(path: Path) -> dict[str, Any] | None:
             or digest != _canonical_sha256(unsigned)
         ):
             raise ValueError("continuity checkpoint chain is invalid")
+        breadth = checkpoint.get("breadth")
+        has_directional = (
+            isinstance(breadth, dict) and "directional_breadth" in breadth
+        )
+        expected_directional = (
+            isinstance(directional_first_sequence, int)
+            and index >= directional_first_sequence
+        )
+        if has_directional is not expected_directional:
+            raise ValueError("continuity directional chain is invalid")
         previous_hash = str(digest)
     if report.get("checkpoint_count") != len(checkpoints):
         raise ValueError("continuity checkpoint count is invalid")
@@ -191,11 +219,17 @@ def main() -> int:
         "checkpoint_sha256": _canonical_sha256(checkpoint_unsigned),
     }
     checkpoints.append(checkpoint)
+    directional_first_sequence = (
+        existing.get("directional_breadth_first_sequence") if existing else None
+    )
+    if directional_first_sequence is None and "directional_breadth" in breadth_summary:
+        directional_first_sequence = checkpoint["sequence"]
     unsigned: dict[str, Any] = {
-        "schema_version": 1,
+        "schema_version": 2,
         "classification": CONTINUITY_CLASSIFICATION,
         "trading_day": detail_day.isoformat(),
         "checkpoint_count": len(checkpoints),
+        "directional_breadth_first_sequence": directional_first_sequence,
         "all_checkpoints_monotonic": all(
             row["monotonic_vs_previous"] for row in checkpoints
         ),

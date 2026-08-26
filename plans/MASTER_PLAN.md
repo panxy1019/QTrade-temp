@@ -231,7 +231,7 @@ navigation and the explicit no-live boundary remain available during recovery.
 ECharts registers only the line, bar, candlestick and supporting components used
 by the product, while React and zrender are stable cache chunks; both production
 build modes complete without a chunk-size warning and keep the largest minified
-JavaScript asset at 426.86 KB.
+JavaScript asset at 426.90 KB.
 
 The factor-research path now predeclares five causal price factors, keeps every
 forward label inside the discovery period, bounds the active validation grid and
@@ -260,6 +260,9 @@ recomputed directional cross-section from signed first-open, previous-close and
 latest-close fields. Global and 15-sector relative-open/latest-minute counts and
 equal-weight returns are visible on the market page, but remain observation-only:
 they are not candidates, tuning inputs, PAPER state or promotion evidence.
+The bounded continuity chain preserves those direction summaries from an
+explicit first sequence without rewriting older checkpoint hashes, so subsequent
+refreshes can be compared as a signed intraday time series.
 
 The backtest analytics surface now validates the Buy-and-Hold record/result and
 curve artifacts independently from the exploratory leader, requires exact

@@ -5927,8 +5927,12 @@ def _load_verified_intraday_breadth(
         return None
 
 
-def _continuity_summary_from_report(report: dict[str, object]) -> dict[str, object]:
-    return {
+def _continuity_summary_from_report(
+    report: dict[str, object],
+    *,
+    include_directional: bool = True,
+) -> dict[str, object]:
+    summary = {
         key: report[key]
         for key in (
             "evidence_sha256",
@@ -5944,6 +5948,64 @@ def _continuity_summary_from_report(report: dict[str, object]) -> dict[str, obje
             "all_symbols_same_day_coverage",
         )
     }
+    if include_directional and "directional_breadth" in report:
+        summary["directional_breadth"] = report["directional_breadth"]
+    return summary
+
+
+def _valid_directional_breadth_summary(value: object, symbol_count: int) -> bool:
+    if not isinstance(value, dict):
+        return False
+    count_keys = (
+        "eligible_symbol_count",
+        "above_open_count",
+        "unchanged_from_open_count",
+        "below_open_count",
+        "latest_minute_eligible_symbol_count",
+        "latest_minute_up_count",
+        "latest_minute_unchanged_count",
+        "latest_minute_down_count",
+    )
+    if set(value) != {
+        *count_keys,
+        "equal_weight_session_return",
+        "equal_weight_latest_minute_return",
+    }:
+        return False
+    counts = [value.get(key) for key in count_keys]
+    if any(
+        not isinstance(count, int)
+        or isinstance(count, bool)
+        or not 0 <= count <= symbol_count
+        for count in counts
+    ):
+        return False
+    eligible = cast(int, value["eligible_symbol_count"])
+    latest_eligible = cast(int, value["latest_minute_eligible_symbol_count"])
+    if (
+        cast(int, value["above_open_count"])
+        + cast(int, value["unchanged_from_open_count"])
+        + cast(int, value["below_open_count"])
+        != eligible
+        or cast(int, value["latest_minute_up_count"])
+        + cast(int, value["latest_minute_unchanged_count"])
+        + cast(int, value["latest_minute_down_count"])
+        != latest_eligible
+    ):
+        return False
+    for key, expected_count in (
+        ("equal_weight_session_return", eligible),
+        ("equal_weight_latest_minute_return", latest_eligible),
+    ):
+        raw = value.get(key)
+        if expected_count == 0:
+            if raw is not None:
+                return False
+        else:
+            parsed = Decimal(str(raw))
+            if not parsed.is_finite():
+                return False
+    return True
 
 
 def _validate_continuity_summary(
@@ -5967,7 +6029,13 @@ def _validate_continuity_summary(
         "maximum_same_day_latest_age_seconds",
         "all_symbols_same_day_coverage",
     }
-    if set(summary) != expected_keys:
+    directional = summary.get("directional_breadth")
+    if set(summary) not in (expected_keys, expected_keys | {"directional_breadth"}):
+        return None
+    if "directional_breadth" in summary and (
+        symbol_count != 75
+        or not _valid_directional_breadth_summary(directional, symbol_count)
+    ):
         return None
     completed_at = datetime.fromisoformat(str(summary.get("completed_at")))
     latest_raw = summary.get("latest_synchronized_finalized_timestamp")
@@ -6059,10 +6127,14 @@ def _load_verified_intraday_continuity(
         }
         checkpoints = report.get("checkpoints")
         report_day = date.fromisoformat(str(report.get("trading_day")))
+        schema_version = report.get("schema_version")
+        directional_first_sequence = report.get(
+            "directional_breadth_first_sequence"
+        )
         if (
             not _is_sha256(digest)
             or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
-            or report.get("schema_version") != 1
+            or schema_version not in {1, 2}
             or report.get("classification")
             != "SIGNED_INTRADAY_SOURCE_CONTINUITY_NOT_REALTIME_ELIGIBLE"
             or not isinstance(checkpoints, list)
@@ -6072,6 +6144,14 @@ def _load_verified_intraday_continuity(
             or report.get("real_data_paper_readiness") is not False
             or report.get("promotion") != "NOT_ELIGIBLE"
             or report.get("external_order_transmission") is not False
+            or schema_version == 1
+            and directional_first_sequence is not None
+            or schema_version == 2
+            and (
+                not isinstance(directional_first_sequence, int)
+                or isinstance(directional_first_sequence, bool)
+                or not 1 <= directional_first_sequence <= len(checkpoints)
+            )
         ):
             return None
         previous_hash: str | None = None
@@ -6099,6 +6179,14 @@ def _load_verified_intraday_continuity(
                 symbol_count=75,
                 report_day=report_day,
             )
+            breadth_has_directional = (
+                isinstance(breadth_summary, dict)
+                and "directional_breadth" in breadth_summary
+            )
+            expected_directional = (
+                isinstance(directional_first_sequence, int)
+                and index >= directional_first_sequence
+            )
             if (
                 checkpoint.get("sequence") != index
                 or checkpoint.get("trading_day") != report_day.isoformat()
@@ -6112,6 +6200,7 @@ def _load_verified_intraday_continuity(
                     cast(dict[str, object], checkpoint_unsigned)
                 )
                 != checkpoint_digest
+                or breadth_has_directional is not expected_directional
             ):
                 return None
             expected_monotonic = previous_checkpoint is None or (
@@ -6135,7 +6224,10 @@ def _load_verified_intraday_continuity(
             or latest_checkpoint.get("detail")
             != _continuity_summary_from_report(detail)
             or latest_checkpoint.get("breadth")
-            != _continuity_summary_from_report(breadth)
+            != _continuity_summary_from_report(
+                breadth,
+                include_directional=schema_version == 2,
+            )
         ):
             return None
         return cast(dict[str, object], report)

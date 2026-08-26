@@ -423,6 +423,7 @@ const data = {
   intradayContinuity: {
     classification: 'SIGNED_INTRADAY_SOURCE_CONTINUITY_NOT_REALTIME_ELIGIBLE',
     trading_day: '2026-08-26', checkpoint_count: 1,
+    directional_breadth_first_sequence: 1,
     all_checkpoints_monotonic: true, evidence_sha256: '7'.repeat(64),
     checkpoints: [{
       sequence: 1, captured_at: '2026-08-26T01:32:22+00:00', trading_day: '2026-08-26',
@@ -441,6 +442,14 @@ const data = {
         latest_synchronized_finalized_timestamp: '2026-08-26T09:31:00+08:00',
         source_request_window_seconds: 22, maximum_same_day_latest_age_seconds: 82,
         all_symbols_same_day_coverage: true,
+        directional_breadth: {
+          eligible_symbol_count: 75, above_open_count: 45,
+          unchanged_from_open_count: 5, below_open_count: 25,
+          latest_minute_eligible_symbol_count: 75, latest_minute_up_count: 40,
+          latest_minute_unchanged_count: 10, latest_minute_down_count: 25,
+          equal_weight_session_return: '0.0012',
+          equal_weight_latest_minute_return: '0.0003',
+        },
       },
       monotonic_vs_previous: true, previous_checkpoint_sha256: null,
       checkpoint_sha256: '8'.repeat(64),
@@ -772,6 +781,7 @@ describe('verified historical data pages', () => {
     expect(screen.getByText(/不是授权实时行情，不进入 PAPER 或策略状态/)).toBeInTheDocument()
     expect(screen.getByText('盘中连续性 · 1 个签名检查点')).toBeInTheDocument()
     expect(screen.getByText('已验证单调推进')).toBeInTheDocument()
+    expect(screen.getByText(/方向序列自检查点 1 开始签名保留/)).toBeInTheDocument()
     expect(screen.getByText(/时间或共同分钟回退会被保留并标红/)).toBeInTheDocument()
     expect(screen.getByText('全股票宽度观测 · 75/75')).toBeInTheDocument()
     expect(screen.getByText('15 板块 × 每板块 5 只股票')).toBeInTheDocument()

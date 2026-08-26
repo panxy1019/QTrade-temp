@@ -370,15 +370,21 @@ PYTHONPATH=. .venv/bin/python scripts/update_intraday_continuity.py \
 ```
 
 Each checkpoint binds both source-report hashes, completion times, coverage,
-common finalized-minute counts and lag measurements to the prior checkpoint
-hash. `/intraday-continuity` recomputes the chain, monotonicity and latest-report
+common finalized-minute counts and lag measurements to the prior checkpoint.
+Starting at an explicit immutable sequence, it also retains the verified
+relative-open/latest-minute breadth and equal-weight returns. Earlier checkpoint
+hashes are not rewritten during this schema migration. `/intraday-continuity`
+recomputes the chain, monotonicity and latest-report
 binding before the market page renders the timeline. A source regression remains
 visible instead of being repaired or dropped. The chain is deployment evidence,
 not a realtime subscription, strategy state or PAPER authorization.
-The current fourth checkpoint binds 15/15 detail and 75/75 breadth coverage at
-120 common finalized minutes through 11:30 and is monotonic versus the previous
-120-minute checkpoint. All three mutable report writers publish through a flushed,
-`fsync`-backed same-directory temporary file and atomic replacement, so an
+The current fifth checkpoint binds 15/15 detail and 75/75 breadth coverage at
+121 common finalized minutes through 13:01 and is monotonic versus the previous
+120-minute checkpoint. It starts the signed direction timeline at 60/75 stocks
+above open, 27/75 rising in the latest minute, `+1.0847%` equal-weight session
+return and `+0.0018%` equal-weight latest-minute return. All three mutable report
+writers publish through a flushed, `fsync`-backed same-directory temporary file
+and atomic replacement, so an
 interrupted refresh cannot expose a half-written JSON document.
 
 The dashboard reads the long 5-minute research, reserved-tail diagnostic,

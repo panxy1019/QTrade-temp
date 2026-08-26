@@ -904,6 +904,7 @@ export interface IntradayContinuityReport {
   classification?: string
   trading_day: string | null
   checkpoint_count: number
+  directional_breadth_first_sequence?: number | null
   all_checkpoints_monotonic: boolean
   checkpoints: Array<{
     sequence: number
@@ -934,6 +935,7 @@ export interface IntradayContinuityReport {
       source_request_window_seconds: number
       maximum_same_day_latest_age_seconds: number | null
       all_symbols_same_day_coverage: boolean
+      directional_breadth?: IntradayDirectionalBreadth
     }
     monotonic_vs_previous: boolean
     previous_checkpoint_sha256: string | null

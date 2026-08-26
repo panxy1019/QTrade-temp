@@ -619,3 +619,19 @@ These fields describe a bounded point-in-time cross-section from a free
 historical endpoint. They cannot become a factor candidate, influence parameter
 selection, mutate minute-overlay/PAPER state, establish realtime entitlement or
 authorize external order transmission without a separately preregistered study.
+
+## ADR-040 — Directional continuity starts without rewriting history
+
+Status: accepted, 2026-08-26.
+
+Continuity schema v2 names the first checkpoint whose 75-stock breadth summary
+includes relative-open/latest-minute counts and equal-weight returns. Every
+checkpoint at or after that sequence must carry a structurally valid direction
+summary; removing one fails the full chain closed. Checkpoints before the start
+remain byte-for-byte and hash-for-hash unchanged because their overwritten source
+reports cannot be independently reconstructed.
+
+The latest checkpoint must still equal the separately verified current detail
+and breadth reports. This chain supports observable intraday comparison only; it
+does not create a strategy feature, parameter update, PAPER decision, realtime
+entitlement or external order path.

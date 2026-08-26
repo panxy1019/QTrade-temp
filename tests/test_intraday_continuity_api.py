@@ -53,11 +53,13 @@ def test_intraday_continuity_endpoint_verifies_current_checkpoint_chain() -> Non
     assert payload["checkpoint_count"] == len(payload["checkpoints"])
     assert payload["checkpoint_count"] >= 1
     assert payload["all_checkpoints_monotonic"] is True
+    assert payload["directional_breadth_first_sequence"] == 5
     latest = payload["checkpoints"][-1]
     assert latest["detail"]["symbol_count"] == 15
     assert latest["breadth"]["symbol_count"] == 75
     assert latest["detail"]["same_day_symbol_count"] == 15
     assert latest["breadth"]["same_day_symbol_count"] == 75
+    assert latest["breadth"]["directional_breadth"]["eligible_symbol_count"] == 75
     assert payload["realtime_readiness"] is False
     assert payload["real_data_paper_readiness"] is False
     assert payload["promotion"] == "NOT_ELIGIBLE"
@@ -86,6 +88,18 @@ def test_intraday_continuity_rejects_resigned_stale_latest_binding(
     source = EVIDENCE_ROOT / "intraday-continuity" / "report.json"
     report = json.loads(source.read_text(encoding="utf-8"))
     report["checkpoints"][-1]["detail"]["evidence_sha256"] = "0" * 64
+    _resign_checkpoint_and_report(report)
+    target = tmp_path / "report.json"
+    target.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(target).get("/intraday-continuity").json()
+    assert rejected["classification"] == "NO_VERIFIED_INTRADAY_CONTINUITY"
+
+
+def test_intraday_continuity_rejects_resigned_directional_gap(tmp_path: Path) -> None:
+    source = EVIDENCE_ROOT / "intraday-continuity" / "report.json"
+    report = json.loads(source.read_text(encoding="utf-8"))
+    report["checkpoints"][-1]["breadth"].pop("directional_breadth")
     _resign_checkpoint_and_report(report)
     target = tmp_path / "report.json"
     target.write_text(json.dumps(report), encoding="utf-8")

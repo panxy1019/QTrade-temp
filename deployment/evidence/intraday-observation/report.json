@@ -3,19 +3,19 @@
   "classification": "FREE_HISTORICAL_SOURCE_INTRADAY_OBSERVATION_NOT_REALTIME_ELIGIBLE",
   "provider": "Sina CN_MarketDataService.getKLineData",
   "bar_interval": "1m",
-  "started_at": "2026-08-26T04:07:47.101501+00:00",
-  "completed_at": "2026-08-26T04:07:48.158554+00:00",
-  "session_phase": "MIDDAY_BREAK",
+  "started_at": "2026-08-26T05:02:23.405513+00:00",
+  "completed_at": "2026-08-26T05:02:25.907298+00:00",
+  "session_phase": "AFTERNOON_SESSION",
   "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
   "dataset_checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
   "symbol_count": 15,
   "sector_count": 15,
   "same_day_symbol_count": 15,
-  "synchronized_finalized_timestamp_count": 120,
-  "latest_synchronized_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-  "source_request_window_seconds": 1.057,
+  "synchronized_finalized_timestamp_count": 121,
+  "latest_synchronized_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+  "source_request_window_seconds": 2.502,
   "all_symbols_same_day_coverage": true,
-  "maximum_same_day_latest_age_seconds": 2268.158,
+  "maximum_same_day_latest_age_seconds": 85.907,
   "finalization_guard_seconds": 60,
   "observations": [
     {
@@ -23,14 +23,14 @@
       "name": "招商银行",
       "sector_code": "801780",
       "sector_name": "银行",
-      "observed_at": "2026-08-26T04:07:47.439509+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:23.837598+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.44,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 83.838,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "600036",
@@ -1351,6 +1351,17 @@
           "low": "39.650",
           "close": "39.660",
           "volume": "73600"
+        },
+        {
+          "symbol": "600036",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "39.670",
+          "high": "39.670",
+          "low": "39.590",
+          "close": "39.640",
+          "volume": "1078200"
         }
       ]
     },
@@ -1359,14 +1370,14 @@
       "name": "中国平安",
       "sector_code": "801790",
       "sector_name": "非银金融",
-      "observed_at": "2026-08-26T04:07:47.446798+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:23.845699+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.447,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 83.846,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "601318",
@@ -2687,6 +2698,17 @@
           "low": "55.710",
           "close": "55.720",
           "volume": "110200"
+        },
+        {
+          "symbol": "601318",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "55.730",
+          "high": "55.730",
+          "low": "55.630",
+          "close": "55.700",
+          "volume": "917000"
         }
       ]
     },
@@ -2695,14 +2717,14 @@
       "name": "贵州茅台",
       "sector_code": "801120",
       "sector_name": "食品饮料",
-      "observed_at": "2026-08-26T04:07:47.426995+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:23.851537+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.427,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 83.852,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "600519",
@@ -4023,6 +4045,17 @@
           "low": "1303.020",
           "close": "1303.380",
           "volume": "4000"
+        },
+        {
+          "symbol": "600519",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1303.380",
+          "high": "1303.530",
+          "low": "1302.860",
+          "close": "1302.930",
+          "volume": "20200"
         }
       ]
     },
@@ -4031,14 +4064,14 @@
       "name": "药明康德",
       "sector_code": "801150",
       "sector_name": "医药生物",
-      "observed_at": "2026-08-26T04:07:47.492712+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:23.824989+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.493,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 83.825,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "603259",
@@ -5359,6 +5392,17 @@
           "low": "159.050",
           "close": "159.210",
           "volume": "61600"
+        },
+        {
+          "symbol": "603259",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "159.210",
+          "high": "159.460",
+          "low": "158.600",
+          "close": "159.440",
+          "volume": "517900"
         }
       ]
     },
@@ -5367,14 +5411,14 @@
       "name": "寒武纪",
       "sector_code": "801080",
       "sector_name": "电子",
-      "observed_at": "2026-08-26T04:07:47.482663+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:23.861866+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.483,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 83.862,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "688256",
@@ -6695,6 +6739,17 @@
           "low": "1030.650",
           "close": "1032.850",
           "volume": "39866"
+        },
+        {
+          "symbol": "688256",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "1032.000",
+          "high": "1034.990",
+          "low": "1030.000",
+          "close": "1033.710",
+          "volume": "65791"
         }
       ]
     },
@@ -6703,14 +6758,14 @@
       "name": "海康威视",
       "sector_code": "801750",
       "sector_name": "计算机",
-      "observed_at": "2026-08-26T04:07:47.747992+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:24.344299+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.748,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 84.344,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "002415",
@@ -8031,6 +8086,17 @@
           "low": "34.700",
           "close": "34.710",
           "volume": "72700"
+        },
+        {
+          "symbol": "002415",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.720",
+          "high": "34.850",
+          "low": "34.710",
+          "close": "34.770",
+          "volume": "739500"
         }
       ]
     },
@@ -8039,14 +8105,14 @@
       "name": "宁德时代",
       "sector_code": "801730",
       "sector_name": "电力设备",
-      "observed_at": "2026-08-26T04:07:47.762406+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:24.881514+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.762,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 84.882,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "300750",
@@ -9367,6 +9433,17 @@
           "low": "383.050",
           "close": "383.050",
           "volume": "48300"
+        },
+        {
+          "symbol": "300750",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "383.300",
+          "high": "384.030",
+          "low": "382.600",
+          "close": "384.010",
+          "volume": "156800"
         }
       ]
     },
@@ -9375,14 +9452,14 @@
       "name": "比亚迪",
       "sector_code": "801880",
       "sector_name": "汽车",
-      "observed_at": "2026-08-26T04:07:47.737765+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:24.876986+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.738,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 84.877,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "002594",
@@ -10703,6 +10780,17 @@
           "low": "92.330",
           "close": "92.350",
           "volume": "58300"
+        },
+        {
+          "symbol": "002594",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "92.350",
+          "high": "92.350",
+          "low": "92.210",
+          "close": "92.350",
+          "volume": "216600"
         }
       ]
     },
@@ -10711,14 +10799,14 @@
       "name": "三一重工",
       "sector_code": "801890",
       "sector_name": "机械设备",
-      "observed_at": "2026-08-26T04:07:47.755341+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:25.901144+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.755,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 85.901,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "600031",
@@ -12039,6 +12127,17 @@
           "low": "18.880",
           "close": "18.900",
           "volume": "167500"
+        },
+        {
+          "symbol": "600031",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "18.900",
+          "high": "18.920",
+          "low": "18.840",
+          "close": "18.850",
+          "volume": "1029200"
         }
       ]
     },
@@ -12047,14 +12146,14 @@
       "name": "紫金矿业",
       "sector_code": "801050",
       "sector_name": "有色金属",
-      "observed_at": "2026-08-26T04:07:47.769062+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:25.906687+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2267.769,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 85.907,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "601899",
@@ -13375,6 +13474,17 @@
           "low": "34.970",
           "close": "34.980",
           "volume": "386680"
+        },
+        {
+          "symbol": "601899",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.970",
+          "high": "34.990",
+          "low": "34.740",
+          "close": "34.750",
+          "volume": "4013120"
         }
       ]
     },
@@ -13383,14 +13493,14 @@
       "name": "万华化学",
       "sector_code": "801030",
       "sector_name": "基础化工",
-      "observed_at": "2026-08-26T04:07:48.103579+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:24.499127+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2268.104,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 84.499,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "600309",
@@ -14711,6 +14821,17 @@
           "low": "73.870",
           "close": "73.890",
           "volume": "52600"
+        },
+        {
+          "symbol": "600309",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "73.890",
+          "high": "74.090",
+          "low": "73.740",
+          "close": "73.990",
+          "volume": "416900"
         }
       ]
     },
@@ -14719,14 +14840,14 @@
       "name": "长江电力",
       "sector_code": "801160",
       "sector_name": "公用事业",
-      "observed_at": "2026-08-26T04:07:48.114118+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:24.666303+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2268.114,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 84.666,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "600900",
@@ -16047,6 +16168,17 @@
           "low": "28.230",
           "close": "28.230",
           "volume": "90800"
+        },
+        {
+          "symbol": "600900",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "28.230",
+          "high": "28.250",
+          "low": "28.220",
+          "close": "28.230",
+          "volume": "773900"
         }
       ]
     },
@@ -16055,14 +16187,14 @@
       "name": "中国船舶",
       "sector_code": "801740",
       "sector_name": "国防军工",
-      "observed_at": "2026-08-26T04:07:48.135712+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:24.841961+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2268.136,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 84.842,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "600150",
@@ -17383,6 +17515,17 @@
           "low": "34.220",
           "close": "34.230",
           "volume": "149526"
+        },
+        {
+          "symbol": "600150",
+          "exchange": "SSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "34.240",
+          "high": "34.250",
+          "low": "34.140",
+          "close": "34.190",
+          "volume": "1138400"
         }
       ]
     },
@@ -17391,14 +17534,14 @@
       "name": "中际旭创",
       "sector_code": "801770",
       "sector_name": "通信",
-      "observed_at": "2026-08-26T04:07:48.157915+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:25.039885+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2268.158,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 85.04,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "300308",
@@ -18719,6 +18862,17 @@
           "low": "860.620",
           "close": "860.990",
           "volume": "63900"
+        },
+        {
+          "symbol": "300308",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "860.990",
+          "high": "863.500",
+          "low": "860.000",
+          "close": "862.900",
+          "volume": "194266"
         }
       ]
     },
@@ -18727,14 +18881,14 @@
       "name": "世纪华通",
       "sector_code": "801760",
       "sector_name": "传媒",
-      "observed_at": "2026-08-26T04:07:48.121933+00:00",
-      "session_phase": "MIDDAY_BREAK",
+      "observed_at": "2026-08-26T05:02:25.035455+00:00",
+      "session_phase": "AFTERNOON_SESSION",
       "source_row_count": 476,
-      "latest_observed_timestamp": "2026-08-26T11:30:00+08:00",
-      "latest_finalized_timestamp": "2026-08-26T11:30:00+08:00",
-      "same_day_finalized_bar_count": 120,
-      "latest_same_day_finalized_age_seconds": 2268.122,
-      "forming_or_uncertain_bar_excluded": false,
+      "latest_observed_timestamp": "2026-08-26T13:03:00+08:00",
+      "latest_finalized_timestamp": "2026-08-26T13:01:00+08:00",
+      "same_day_finalized_bar_count": 121,
+      "latest_same_day_finalized_age_seconds": 85.035,
+      "forming_or_uncertain_bar_excluded": true,
       "bars": [
         {
           "symbol": "002602",
@@ -20055,6 +20209,17 @@
           "low": "14.030",
           "close": "14.030",
           "volume": "502400"
+        },
+        {
+          "symbol": "002602",
+          "exchange": "SZSE",
+          "timestamp": "2026-08-26T13:01:00+08:00",
+          "trading_day": "2026-08-26",
+          "open": "14.050",
+          "high": "14.050",
+          "low": "14.000",
+          "close": "14.030",
+          "volume": "2283800"
         }
       ]
     }
@@ -20063,5 +20228,5 @@
   "real_data_paper_readiness": false,
   "promotion": "NOT_ELIGIBLE",
   "external_order_transmission": false,
-  "evidence_sha256": "188a4a917db9eec224d5d70075c985da0804b08f1a4069742f285582e68d850d"
+  "evidence_sha256": "68f2b515c6f7cbdcb0788be0b51ea718efa3d0cd4cf7ab1d5206797ace4c8954"
 }

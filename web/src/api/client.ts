@@ -186,6 +186,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
   }
   const continuityFallback: PlatformSnapshot['intradayContinuity'] = {
     classification: 'UNAVAILABLE', trading_day: null, checkpoint_count: 0,
+    directional_breadth_first_sequence: null,
     all_checkpoints_monotonic: false, checkpoints: [], realtime_readiness: false,
     real_data_paper_readiness: false, promotion: 'NOT_EVALUATED',
     external_order_transmission: false,
