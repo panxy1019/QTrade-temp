@@ -155,6 +155,28 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert preregistration["paper_runtime_start"] is False
     assert preregistration["live_runtime_start"] is False
     assert preregistration["external_order_transmission"] is False
+    registration = payload["result"]["strategy_registration_preflight"]
+    assert registration["decision"] == "BLOCKED"
+    assert registration["current_candidate"]["strategy_id"] == (
+        strategy_identity["strategy_id"]
+    )
+    assert registration["current_candidate"]["behavior_spec_hash"] == (
+        strategy_identity["spec_hash"]
+    )
+    assert registration["current_candidate"][
+        "behavior_spec_hash_is_complete_registry_spec_hash"
+    ] is False
+    assert registration["current_field_readiness"]["complete"] is False
+    assert registration["passed_gate_count"] == 2
+    assert registration["required_gate_count"] == 9
+    assert registration["all_required_gates_passed"] is False
+    assert registration["earliest_registry_status"] == "IDEA"
+    assert registration["idea_to_experiment_transition"]["allowed"] is False
+    assert registration["registration_operation_exposed"] is False
+    assert registration["registry_write"] is False
+    assert registration["paper_runtime_start"] is False
+    assert registration["live_runtime_start"] is False
+    assert registration["external_order_transmission"] is False
     registration_gate = next(
         gate
         for gate in paper_admission["required_gates"]
@@ -178,7 +200,7 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert l2_readiness["derived_from_ohlcv"] is False
     assert l2_readiness["external_order_transmission"] is False
     assert payload["result_preview_hash"] == (
-        "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a"
+        "f720e483a74c747a10bc952c58d1933e50b6c9268dd9039ed92bd94c86752a2f"
     )
     assert payload["promotion"] == "NOT_ELIGIBLE"
     assert payload["paper_readiness"] == "NOT_ELIGIBLE"
@@ -226,7 +248,7 @@ def test_resigned_changed_result_cannot_replace_fixed_long_window_evidence(
     payload = _client(changed_path).get("/intraday-factor-robustness").json()
 
     assert changed_result_hash != (
-        "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a"
+        "f720e483a74c747a10bc952c58d1933e50b6c9268dd9039ed92bd94c86752a2f"
     )
     assert payload["report_id"] is None
     assert payload["promotion"] == "NOT_EVALUATED"

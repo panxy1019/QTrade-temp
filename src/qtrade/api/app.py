@@ -75,7 +75,7 @@ _MIN_INTRADAY_DISCOVERY_SESSIONS = 40
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a"
+    "f720e483a74c747a10bc952c58d1933e50b6c9268dd9039ed92bd94c86752a2f"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -9864,6 +9864,133 @@ def _intraday_factor_preview(
         "live_runtime_start": False,
         "external_order_transmission": False,
     }
+    strategy_registration_gates: list[dict[str, object]] = [
+        {
+            "gate_id": "all_ordered_research_stages_passed",
+            "passed": all_research_stages_passed,
+            "evidence": (
+                f"{passed_research_stage_count}/"
+                f"{len(required_research_stages)}"
+            ),
+        },
+        {
+            "gate_id": "causal_backtest_passed",
+            "passed": backtest_passed,
+            "evidence": f"backtest.passed={str(backtest_passed).lower()}",
+        },
+        {
+            "gate_id": "signed_hypothesis_preregistration_attached",
+            "passed": False,
+            "evidence": "NOT_ATTACHED",
+        },
+        {
+            "gate_id": "independent_leakage_review_passed",
+            "passed": False,
+            "evidence": "NOT_ATTACHED",
+        },
+        {
+            "gate_id": "behavior_spec_hash_bound",
+            "passed": True,
+            "evidence": strategy_spec_hash,
+        },
+        {
+            "gate_id": "complete_registry_spec_and_hash_bound",
+            "passed": False,
+            "evidence": "NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING",
+        },
+        {
+            "gate_id": "dataset_identity_bound",
+            "passed": True,
+            "evidence": f"{dataset['data_version']} · {dataset['checksum']}",
+        },
+        {
+            "gate_id": "disjoint_time_split_frozen",
+            "passed": False,
+            "evidence": "NOT_FROZEN",
+        },
+        {
+            "gate_id": "lineage_root_or_parent_binding_declared",
+            "passed": False,
+            "evidence": "NOT_DECLARED",
+        },
+    ]
+    strategy_registration_preflight: dict[str, object] = {
+        "classification": "READ_ONLY_STRATEGY_REGISTRY_ADMISSION_PREFLIGHT",
+        "decision": "BLOCKED",
+        "current_candidate": {
+            "strategy_id": strategy_identity["strategy_id"],
+            "behavior_spec_hash": strategy_spec_hash,
+            "behavior_spec_hash_is_complete_registry_spec_hash": False,
+            "registration_status": "AD_HOC_UNREGISTERED",
+            "registry_spec_hash_status": (
+                "NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING"
+            ),
+        },
+        "required_strategy_spec_fields": [
+            "strategy_id",
+            "name",
+            "family",
+            "version",
+            "parent_strategy_id",
+            "git_commit",
+            "data_version",
+            "universe",
+            "factor_set",
+            "model",
+            "portfolio_rule",
+            "parameters",
+            "split",
+            "created_at",
+            "updated_at",
+        ],
+        "current_field_readiness": {
+            "preview_source_available_fields": [
+                "strategy_id",
+                "data_version",
+                "universe",
+                "factor_set",
+                "portfolio_rule",
+                "parameters",
+            ],
+            "missing_registration_fields": [
+                "name",
+                "family",
+                "version",
+                "parent_strategy_id",
+                "git_commit",
+                "model",
+                "split",
+                "created_at",
+                "updated_at",
+            ],
+            "available_field_count": 6,
+            "required_field_count": 15,
+            "complete": False,
+        },
+        "required_gates": strategy_registration_gates,
+        "passed_gate_count": sum(
+            gate["passed"] is True for gate in strategy_registration_gates
+        ),
+        "required_gate_count": len(strategy_registration_gates),
+        "all_required_gates_passed": False,
+        "earliest_registry_status": "IDEA",
+        "idea_to_experiment_transition": {
+            "from": "IDEA",
+            "to": "EXPERIMENT",
+            "allowed": False,
+            "required_evidence": [
+                "COMPLETED_EXPERIMENT_RUN_SPEC",
+                "QUALITY_PASSED_DATA_MANIFEST",
+                "INDEPENDENT_LEAKAGE_REVIEW_PASS",
+            ],
+        },
+        "registration_operation_exposed": False,
+        "registry_write": False,
+        "state_mutation": False,
+        "paper_runtime_start": False,
+        "live_runtime_start": False,
+        "external_order_transmission": False,
+    }
     paper_admission_gates[3]["evidence"] = (
         "AD_HOC_UNREGISTERED · "
         f"{strategy_identity['strategy_id']} · {strategy_spec_hash}"
@@ -9893,6 +10020,9 @@ def _intraday_factor_preview(
         "sequential_advancement": sequential_advancement,
         "next_hypothesis_preregistration": (
             next_hypothesis_preregistration
+        ),
+        "strategy_registration_preflight": (
+            strategy_registration_preflight
         ),
         "paper_admission": {
             "classification": "READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION",

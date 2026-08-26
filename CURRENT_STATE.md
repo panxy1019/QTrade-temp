@@ -960,3 +960,14 @@ Last updated: 2026-08-27
   completed review the earliest registry state is `IDEA`, and human authority
   remains mandatory for `APPROVED` and `CHAMPION`. PAPER/LIVE starts, state
   mutation and external orders all remain false.
+- Strategy-registry admission preflight: the factor response and research page
+  now distinguish the behavior hash from the full registry `StrategySpec` hash.
+  All fifteen immutable registry fields and nine admission gates are explicit.
+  The rejected three-bullish-Bar result can source six fields from its preview
+  and passes only behavior-hash and dataset-identity binding (`2/9`); ordered
+  research, causal returns, signed preregistration, leakage review, complete
+  registry spec/hash, disjoint split and lineage declaration remain blocked.
+  No registration control exists. `IDEA → EXPERIMENT` remains unavailable until
+  a complete `ExperimentRunSpec`, quality-passed manifest and independent
+  leakage-review PASS are attached; registry/PAPER/LIVE/state/order writes stay
+  false.

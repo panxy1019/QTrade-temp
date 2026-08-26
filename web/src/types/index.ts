@@ -1028,6 +1028,46 @@ export interface IntradayFactorBacktest {
     live_runtime_start: false
     external_order_transmission: false
   }
+  strategy_registration_preflight: {
+    classification: 'READ_ONLY_STRATEGY_REGISTRY_ADMISSION_PREFLIGHT'
+    decision: 'BLOCKED'
+    current_candidate: {
+      strategy_id: string
+      behavior_spec_hash: string
+      behavior_spec_hash_is_complete_registry_spec_hash: false
+      registration_status: 'AD_HOC_UNREGISTERED'
+      registry_spec_hash_status: 'NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING'
+    }
+    required_strategy_spec_fields: string[]
+    current_field_readiness: {
+      preview_source_available_fields: string[]
+      missing_registration_fields: string[]
+      available_field_count: number
+      required_field_count: 15
+      complete: false
+    }
+    required_gates: Array<{
+      gate_id: string
+      passed: boolean
+      evidence: string
+    }>
+    passed_gate_count: number
+    required_gate_count: 9
+    all_required_gates_passed: false
+    earliest_registry_status: 'IDEA'
+    idea_to_experiment_transition: {
+      from: 'IDEA'
+      to: 'EXPERIMENT'
+      allowed: false
+      required_evidence: string[]
+    }
+    registration_operation_exposed: false
+    registry_write: false
+    state_mutation: false
+    paper_runtime_start: false
+    live_runtime_start: false
+    external_order_transmission: false
+  }
   paper_admission: {
     classification: 'READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION'
     decision: 'BLOCKED'

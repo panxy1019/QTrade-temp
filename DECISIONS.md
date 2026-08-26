@@ -1902,3 +1902,28 @@ operations path remains `IDEA → EXPERIMENT → CANDIDATE → VALIDATED → PAP
 SHADOW → APPROVED → CHAMPION`, with explicit human authorization still required
 for `APPROVED` and `CHAMPION`. The preflight cannot start PAPER/LIVE, mutate
 state or transmit an external order.
+
+## ADR-113 — Behavior identity cannot substitute for StrategySpec admission
+
+Status: accepted, 2026-08-27.
+
+The factor preview's deterministic hash identifies entry, exit, execution,
+sizing, benchmark and cost behavior. It intentionally omits registry metadata,
+so treating it as the immutable `StrategySpec` hash would leave name, family,
+version, code commit, model, time split, timestamps and lineage undefined.
+QTrade therefore exposes a separate read-only registration preflight rather
+than allowing the behavior hash to authorize a registry insert.
+
+The preflight lists all fifteen `StrategySpec` fields and nine required gates:
+ordered research stages, causal backtest, signed hypothesis preregistration,
+independent leakage review, behavior-hash binding, complete registry-spec/hash
+binding, dataset identity, a disjoint frozen time split and either an explicit
+root declaration or a valid parent binding. The current rejected rule can
+source six fields from its preview and passes only behavior and dataset identity
+(`2/9`). Its complete registry hash is therefore not computable.
+
+No registration operation is exposed by this historical endpoint. Even after
+a future valid insert creates `IDEA`, transition to `EXPERIMENT` requires a
+complete `ExperimentRunSpec`, a quality-passed data manifest and an independent
+leakage-review PASS. The preflight writes no registry row, starts no PAPER/LIVE
+runtime, mutates no state and transmits no external order.

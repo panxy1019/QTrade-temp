@@ -264,6 +264,94 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
     assert preregistration["paper_runtime_start"] is False
     assert preregistration["live_runtime_start"] is False
     assert preregistration["external_order_transmission"] is False
+    registration = payload["strategy_registration_preflight"]
+    assert registration["classification"] == (
+        "READ_ONLY_STRATEGY_REGISTRY_ADMISSION_PREFLIGHT"
+    )
+    assert registration["decision"] == "BLOCKED"
+    assert registration["current_candidate"] == {
+        "strategy_id": identity["strategy_id"],
+        "behavior_spec_hash": identity["spec_hash"],
+        "behavior_spec_hash_is_complete_registry_spec_hash": False,
+        "registration_status": "AD_HOC_UNREGISTERED",
+        "registry_spec_hash_status": "NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING",
+    }
+    assert registration["required_strategy_spec_fields"] == [
+        "strategy_id",
+        "name",
+        "family",
+        "version",
+        "parent_strategy_id",
+        "git_commit",
+        "data_version",
+        "universe",
+        "factor_set",
+        "model",
+        "portfolio_rule",
+        "parameters",
+        "split",
+        "created_at",
+        "updated_at",
+    ]
+    assert registration["current_field_readiness"] == {
+        "preview_source_available_fields": [
+            "strategy_id",
+            "data_version",
+            "universe",
+            "factor_set",
+            "portfolio_rule",
+            "parameters",
+        ],
+        "missing_registration_fields": [
+            "name",
+            "family",
+            "version",
+            "parent_strategy_id",
+            "git_commit",
+            "model",
+            "split",
+            "created_at",
+            "updated_at",
+        ],
+        "available_field_count": 6,
+        "required_field_count": 15,
+        "complete": False,
+    }
+    registration_gates = {
+        gate["gate_id"]: gate["passed"]
+        for gate in registration["required_gates"]
+    }
+    assert registration_gates == {
+        "all_ordered_research_stages_passed": False,
+        "causal_backtest_passed": False,
+        "signed_hypothesis_preregistration_attached": False,
+        "independent_leakage_review_passed": False,
+        "behavior_spec_hash_bound": True,
+        "complete_registry_spec_and_hash_bound": False,
+        "dataset_identity_bound": True,
+        "disjoint_time_split_frozen": False,
+        "lineage_root_or_parent_binding_declared": False,
+    }
+    assert registration["passed_gate_count"] == 2
+    assert registration["required_gate_count"] == 9
+    assert registration["all_required_gates_passed"] is False
+    assert registration["earliest_registry_status"] == "IDEA"
+    assert registration["idea_to_experiment_transition"] == {
+        "from": "IDEA",
+        "to": "EXPERIMENT",
+        "allowed": False,
+        "required_evidence": [
+            "COMPLETED_EXPERIMENT_RUN_SPEC",
+            "QUALITY_PASSED_DATA_MANIFEST",
+            "INDEPENDENT_LEAKAGE_REVIEW_PASS",
+        ],
+    }
+    assert registration["registration_operation_exposed"] is False
+    assert registration["registry_write"] is False
+    assert registration["state_mutation"] is False
+    assert registration["paper_runtime_start"] is False
+    assert registration["live_runtime_start"] is False
+    assert registration["external_order_transmission"] is False
     assert "exit_factor_validation" not in payload
     assert "exit_factor_effectiveness_passed" not in payload["research_gate"][
         "criteria"

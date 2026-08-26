@@ -439,6 +439,15 @@ preregistration artifact nor a registry row. A future reviewed specification
 may enter the registry only at `IDEA`; later PAPER/SHADOW stages retain their
 own evidence gates and `APPROVED`/`CHAMPION` remain human-authorized.
 
+Registration itself now has a separate read-only admission preflight. It
+enumerates the exact 15-field `StrategySpec`, distinguishes the behavior-only
+rule hash from the still-unavailable complete registry-spec hash, and reports
+nine gates. The current rejected rule sources 6/15 fields and passes 2/9 gates
+(behavior identity and dataset identity only). It cannot create `IDEA`, and the
+first `IDEA → EXPERIMENT` transition remains blocked until the experiment spec,
+quality-passed data manifest and independent leakage review are present. The
+page exposes no registration operation or runtime/state/order mutation path.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

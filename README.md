@@ -320,7 +320,15 @@ leakage review, bounded candidate/robustness budgets, a fixed cost model, a
 pre-data immutable specification hash and contamination disclosure. Completing
 that document is not a registry write: only afterward may a separately reviewed
 immutable strategy enter `StrategyRegistry` as `IDEA`, while `APPROVED` and
-`CHAMPION` still require human authorization. The proposed
+`CHAMPION` still require human authorization. A separate registration preflight
+now proves that the current behavior-only hash is not the complete
+`StrategySpec` hash. It enumerates all 15 registry fields and nine admission
+gates; this rejected run can source only 6/15 fields and passes only the behavior
+hash plus dataset-identity gates (`2/9`). Research, backtest, signed
+preregistration, leakage review, full registry hash, frozen disjoint split and
+lineage declaration remain blocked. No registration operation is exposed, and
+`IDEA → EXPERIMENT` still requires a complete experiment spec, a quality-passed
+manifest and an independent leakage-review PASS. The proposed
 five-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
 contract requires five bid/ask prices plus sizes normalized to shares, provider
 event/receive clocks and sequence, continuous-auction validity, certified

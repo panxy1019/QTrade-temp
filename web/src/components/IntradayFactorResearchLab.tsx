@@ -71,6 +71,18 @@ const preregistrationGateLabels: Record<string, string> = {
   contamination_disclosure: '披露用于构造新假设的既有证据',
 }
 
+const strategyRegistrationGateLabels: Record<string, string> = {
+  all_ordered_research_stages_passed: '有效性、相关性与稳健性顺序门全部通过',
+  causal_backtest_passed: '因果回测收益门通过',
+  signed_hypothesis_preregistration_attached: '已绑定签名假设预注册',
+  independent_leakage_review_passed: '独立数据泄漏审查通过',
+  behavior_spec_hash_bound: '开平仓行为规格哈希已绑定',
+  complete_registry_spec_and_hash_bound: '完整注册规格与哈希已绑定',
+  dataset_identity_bound: '数据版本与 checksum 已绑定',
+  disjoint_time_split_frozen: '互斥训练/验证/测试切分已冻结',
+  lineage_root_or_parent_binding_declared: '根策略或父策略血缘已声明',
+}
+
 const gateLabels: Record<string, string> = {
   minimum_observation_count: '至少 250 个观测',
   minimum_signal_count: '至少 20 次信号',
@@ -931,6 +943,37 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
                 { title: '预注册治理门槛', dataIndex: 'gate_id', render: (value: string) => preregistrationGateLabels[value] ?? value },
                 { title: '要求', dataIndex: 'required', render: (value: boolean) => value ? <Tag color="orange">必须冻结</Tag> : <Tag>可选</Tag> },
                 { title: '契约', dataIndex: 'requirement' },
+              ]}
+              scroll={{ x: 820 }}
+            />
+          </Space>
+        </Card>
+        <Card type="inner" title={`策略注册前审查：${result.strategy_registration_preflight.decision}`}>
+          <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+            <Alert
+              showIcon
+              type="error"
+              title="当前结果不能写入 StrategyRegistry"
+              description="当前行为规格哈希不是完整 StrategySpec 哈希；名称、家族、版本、代码提交、模型、互斥切分、时间戳和血缘声明尚未完整冻结。当前不能写入 IDEA，也不能迁移到 EXPERIMENT。"
+            />
+            <Space wrap>
+              <Tag color="red">注册门 {result.strategy_registration_preflight.passed_gate_count}/{result.strategy_registration_preflight.required_gate_count}</Tag>
+              <Tag>StrategySpec 字段 {result.strategy_registration_preflight.current_field_readiness.available_field_count}/{result.strategy_registration_preflight.current_field_readiness.required_field_count}</Tag>
+              <Tag color="default">最早状态 {result.strategy_registration_preflight.earliest_registry_status}</Tag>
+              <Tag color="default">注册操作未开放</Tag>
+            </Space>
+            <Typography.Text type="secondary">
+              IDEA → EXPERIMENT 仍要求完整 ExperimentRunSpec、质量通过的数据清单和独立泄漏审查；本页不会创建注册表记录。
+            </Typography.Text>
+            <Table
+              rowKey="gate_id"
+              size="small"
+              pagination={false}
+              dataSource={result.strategy_registration_preflight.required_gates}
+              columns={[
+                { title: '策略注册门槛', dataIndex: 'gate_id', render: (value: string) => strategyRegistrationGateLabels[value] ?? value },
+                { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">阻断</Tag> },
+                { title: '证据 / 原因码', dataIndex: 'evidence' },
               ]}
               scroll={{ x: 820 }}
             />

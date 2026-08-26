@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-27T05:32:28.654294+08:00",
+  "generated_at": "2026-08-27T05:42:14.632422+08:00",
   "implementation": {
     "factor_module_sha256": "706c2856617bd461888b5611025c5c106d6819ece6b2b1e31aace7588a18a6ec",
-    "api_module_sha256": "625a94b991b6addaf38563acda0631a006cd4029eaf82d23ac3e7b5545b4d440"
+    "api_module_sha256": "288c075b1664fd55e70a44999e4ad638360b0811f8cabed5c9951b2406a0e00e"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -48,7 +48,7 @@
     ],
     "combination": "ALL"
   },
-  "result_preview_hash": "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a",
+  "result_preview_hash": "f720e483a74c747a10bc952c58d1933e50b6c9268dd9039ed92bd94c86752a2f",
   "summary": {
     "observation_count": 9000,
     "signal_count": 1001,
@@ -363,6 +363,125 @@
       "preregistration_created": false,
       "state_mutation": false,
       "registry_write": false,
+      "paper_runtime_start": false,
+      "live_runtime_start": false,
+      "external_order_transmission": false
+    },
+    "strategy_registration_preflight": {
+      "classification": "READ_ONLY_STRATEGY_REGISTRY_ADMISSION_PREFLIGHT",
+      "decision": "BLOCKED",
+      "current_candidate": {
+        "strategy_id": "adhoc-intraday-d6b31e9ee2e5b345",
+        "behavior_spec_hash": "d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3",
+        "behavior_spec_hash_is_complete_registry_spec_hash": false,
+        "registration_status": "AD_HOC_UNREGISTERED",
+        "registry_spec_hash_status": "NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING"
+      },
+      "required_strategy_spec_fields": [
+        "strategy_id",
+        "name",
+        "family",
+        "version",
+        "parent_strategy_id",
+        "git_commit",
+        "data_version",
+        "universe",
+        "factor_set",
+        "model",
+        "portfolio_rule",
+        "parameters",
+        "split",
+        "created_at",
+        "updated_at"
+      ],
+      "current_field_readiness": {
+        "preview_source_available_fields": [
+          "strategy_id",
+          "data_version",
+          "universe",
+          "factor_set",
+          "portfolio_rule",
+          "parameters"
+        ],
+        "missing_registration_fields": [
+          "name",
+          "family",
+          "version",
+          "parent_strategy_id",
+          "git_commit",
+          "model",
+          "split",
+          "created_at",
+          "updated_at"
+        ],
+        "available_field_count": 6,
+        "required_field_count": 15,
+        "complete": false
+      },
+      "required_gates": [
+        {
+          "gate_id": "all_ordered_research_stages_passed",
+          "passed": false,
+          "evidence": "1/3"
+        },
+        {
+          "gate_id": "causal_backtest_passed",
+          "passed": false,
+          "evidence": "backtest.passed=false"
+        },
+        {
+          "gate_id": "signed_hypothesis_preregistration_attached",
+          "passed": false,
+          "evidence": "NOT_ATTACHED"
+        },
+        {
+          "gate_id": "independent_leakage_review_passed",
+          "passed": false,
+          "evidence": "NOT_ATTACHED"
+        },
+        {
+          "gate_id": "behavior_spec_hash_bound",
+          "passed": true,
+          "evidence": "d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3"
+        },
+        {
+          "gate_id": "complete_registry_spec_and_hash_bound",
+          "passed": false,
+          "evidence": "NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING"
+        },
+        {
+          "gate_id": "dataset_identity_bound",
+          "passed": true,
+          "evidence": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1 · 667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524"
+        },
+        {
+          "gate_id": "disjoint_time_split_frozen",
+          "passed": false,
+          "evidence": "NOT_FROZEN"
+        },
+        {
+          "gate_id": "lineage_root_or_parent_binding_declared",
+          "passed": false,
+          "evidence": "NOT_DECLARED"
+        }
+      ],
+      "passed_gate_count": 2,
+      "required_gate_count": 9,
+      "all_required_gates_passed": false,
+      "earliest_registry_status": "IDEA",
+      "idea_to_experiment_transition": {
+        "from": "IDEA",
+        "to": "EXPERIMENT",
+        "allowed": false,
+        "required_evidence": [
+          "COMPLETED_EXPERIMENT_RUN_SPEC",
+          "QUALITY_PASSED_DATA_MANIFEST",
+          "INDEPENDENT_LEAKAGE_REVIEW_PASS"
+        ]
+      },
+      "registration_operation_exposed": false,
+      "registry_write": false,
+      "state_mutation": false,
       "paper_runtime_start": false,
       "live_runtime_start": false,
       "external_order_transmission": false
@@ -7645,7 +7764,7 @@
     "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
     "state_mutation": false,
     "external_order_transmission": false,
-    "preview_hash": "22230b355164c87200368766f6c22f783e403196a37994efacbfb4684d5c564a"
+    "preview_hash": "f720e483a74c747a10bc952c58d1933e50b6c9268dd9039ed92bd94c86752a2f"
   },
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
@@ -7659,5 +7778,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "0a4eb2cf660e8577c808b60eac3db85a18f2cc78a41a8a40ae236dc2409b8f03"
+  "evidence_sha256": "bb518a1ca36aa589d495ab99897c8aa4f79ee8180627031c877c23dc8a2d0730"
 }

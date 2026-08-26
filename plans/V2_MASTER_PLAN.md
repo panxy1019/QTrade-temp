@@ -278,6 +278,12 @@ npm --prefix web run build
   require disjoint evidence/leakage/budget/cost/spec/contamination locks, and
   show that a completed review may enter `StrategyRegistry` only at `IDEA`
   without performing a registry, PAPER, LIVE, state or order write.
+- [x] Add a distinct StrategyRegistry admission preflight that enumerates all
+  15 immutable `StrategySpec` fields, separates the behavior hash from the full
+  registry-spec hash and evaluates nine research/identity/split/lineage gates.
+  Keep the rejected factor at 2/9 with no registration operation, and block
+  `IDEA → EXPERIMENT` until the complete run spec, quality-passed manifest and
+  independent leakage review exist.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,
