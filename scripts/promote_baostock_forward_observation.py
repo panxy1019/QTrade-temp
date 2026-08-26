@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from collections.abc import Callable
 from datetime import date, datetime, time
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -202,6 +203,7 @@ def _atomic_publish(
     destination: Path,
     *,
     expected_evidence_sha256: str | None = None,
+    source_revalidator: Callable[[], None] | None = None,
 ) -> None:
     payload = candidate_path.read_bytes()
     if expected_evidence_sha256 is not None:
@@ -233,6 +235,8 @@ def _atomic_publish(
             handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
+        if source_revalidator is not None:
+            source_revalidator()
         temporary_path.replace(destination)
         directory_descriptor = os.open(destination.parent, os.O_RDONLY)
         try:
@@ -293,10 +297,19 @@ def main() -> int:
         args.forward_root, preregistration=raw_preregistration
     )
     validate_source_sessions(candidate, source_reports)
+
+    def revalidate_sources() -> None:
+        _, current_source_reports = _load_forward_sessions(
+            args.forward_root,
+            preregistration=raw_preregistration,
+        )
+        validate_source_sessions(candidate, current_source_reports)
+
     _atomic_publish(
         args.candidate,
         args.destination,
         expected_evidence_sha256=str(candidate["evidence_sha256"]),
+        source_revalidator=revalidate_sources,
     )
     published = _load_verified_report(args.destination, **verification)
     if published.get("evidence_sha256") != candidate.get("evidence_sha256"):

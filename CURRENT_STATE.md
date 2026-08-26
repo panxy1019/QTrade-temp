@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 368 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 369 tests passed, Ruff clean, strict mypy clean across
   the 99-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -557,6 +557,9 @@ Last updated: 2026-08-26
   resigned future timestamp cannot advance and then freeze the append-only chain.
   The raw target-day field must be the collector's canonical `YYYY-MM-DD`, not a
   parser-compatible compact spelling carried consistently into the candidate.
+  After the candidate temporary file is flushed, every signed source session and
+  checksum-bound Parquet is reopened and revalidated immediately before the
+  destination replace; failure leaves the prior public report intact.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator

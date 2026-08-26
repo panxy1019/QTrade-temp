@@ -885,3 +885,17 @@ collector.
 The publisher therefore requires the raw source `target_day` to equal the parsed
 date's canonical ISO representation exactly. A compact or alternative spelling
 fails before replacement and cannot alter public progress or runtime authority.
+
+## ADR-059 — Forward sources are reopened at the replacement boundary
+
+Status: accepted, 2026-08-26.
+
+Validating immutable source sessions only once leaves a local time-of-check to
+time-of-use interval before the public destination is replaced. Source manifests
+or their checksum-bound Parquet could change during that interval even though the
+earlier in-memory reports still match the candidate.
+
+After the candidate temporary file has been flushed, the publisher must reopen
+and fully validate every source session immediately before replacement. Any
+failure removes the temporary file and leaves the prior report unchanged; this
+cannot grant strategy, PAPER, realtime or external-order authority.

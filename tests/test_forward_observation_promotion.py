@@ -120,6 +120,28 @@ def test_atomic_forward_observation_publish_rejects_changed_candidate(
     assert list(tmp_path.glob(".report.json.*.tmp")) == []
 
 
+def test_atomic_forward_observation_publish_rechecks_sources_before_replace(
+    tmp_path: Path,
+) -> None:
+    destination = tmp_path / "report.json"
+    candidate = tmp_path / "candidate.json"
+    destination.write_bytes(b'{"generation":1}\n')
+    candidate.write_bytes(b'{"generation":2}\n')
+
+    def reject_changed_source() -> None:
+        raise ValueError("forward source changed before publication")
+
+    with pytest.raises(ValueError, match="source changed"):
+        _atomic_publish(
+            candidate,
+            destination,
+            source_revalidator=reject_changed_source,
+        )
+
+    assert destination.read_bytes() == b'{"generation":1}\n'
+    assert list(tmp_path.glob(".report.json.*.tmp")) == []
+
+
 def test_forward_observation_source_sessions_must_match_candidate() -> None:
     candidate = _report(count=1, generated_at="2026-09-01T16:00:00+08:00")
     source_reports = [
