@@ -1099,8 +1099,15 @@ export interface IntradayFactorBacktest {
     passed: boolean
   }
   strategy: {
+    entry_factor_id: string
+    entry_condition: string
+    entry_minimum_body_return_bps: string
+    entry_directions: IntradayOpeningDirection[]
+    entry_combination: 'ALL' | 'ANY'
     entry_rule: string
     exit_rule: string
+    exit_condition_type: 'TIME_EXIT' | 'FACTOR_THEN_TIME_STOP'
+    exit_factor_id?: string
     entry_price_source: string
     exit_price_source?: string
     exit_condition?: string
@@ -1114,6 +1121,18 @@ export interface IntradayFactorBacktest {
     benchmark_rule: string
     single_side_cost_bps: string
     t_plus_one_compliant: true
+  }
+  strategy_identity: {
+    classification: 'AD_HOC_READ_ONLY_STRATEGY_IDENTITY'
+    strategy_id: string
+    spec_hash: string
+    spec_hash_scope: 'strategy_without_observed_exit_counts'
+    registration_status: 'AD_HOC_UNREGISTERED'
+    immutable_within_response: true
+    paper_eligible: false
+    promotion_authority: false
+    state_mutation: false
+    external_order_transmission: false
   }
   backtest: {
     strategy_metrics: IntradayPerformanceMetrics

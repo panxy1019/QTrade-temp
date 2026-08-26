@@ -938,6 +938,19 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             key: 'contract',
             label: '因子与时序',
             children: <Space orientation="vertical" style={{ width: '100%' }}>
+              <Alert
+                showIcon
+                type="warning"
+                title="策略规格已冻结为只读预览，但未注册"
+                description="开仓因子、平仓规则、仓位、基准与成本已进入同一哈希；观测到的平仓触发次数不进入规格哈希。该 ID 只标识本次可复算预览，不会写入策略注册表，也没有 PAPER 晋级权限。"
+              />
+              <div className="description-grid">
+                <Metric label="只读策略 ID" value={result.strategy_identity.strategy_id} />
+                <Metric label="注册状态" value={result.strategy_identity.registration_status} />
+                <Metric label="规格绑定" value="策略规格 SHA-256 已绑定" />
+                <Metric label="PAPER 资格" value="无" />
+              </div>
+              <Typography.Text code>{result.strategy_identity.spec_hash}</Typography.Text>
               <Typography.Text code>{result.factor_definition.expression}</Typography.Text>
               <Typography.Text>数据：{result.factor_definition.source_interval}；信号已知：{result.factor_definition.known_at}；入场：{result.strategy.entry_rule}；退出：{result.strategy.exit_rule}。</Typography.Text>
               {result.strategy.conditional_exit_count !== undefined && <Typography.Text>平仓因子触发 {result.strategy.conditional_exit_count} 次；14:55 时间退出 {result.strategy.fallback_time_stop_count} 次。退出条件只统计已开仓信号，并与同期等权基准使用同一逐股票退出规则。</Typography.Text>}

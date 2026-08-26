@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-27T04:48:51.293191+08:00",
+  "generated_at": "2026-08-27T04:59:31.199096+08:00",
   "implementation": {
     "factor_module_sha256": "706c2856617bd461888b5611025c5c106d6819ece6b2b1e31aace7588a18a6ec",
-    "api_module_sha256": "0a4aa75f9c8f71e014adb05ee31144a08a108d2a12e423488d8860212975fe23"
+    "api_module_sha256": "366b044dbda18eb627f25e521f741272d59cbc8543366a6a1d350cc3567bf96a"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -48,7 +48,7 @@
     ],
     "combination": "ALL"
   },
-  "result_preview_hash": "4c061b84688cce1e80cb92b2b1d055a49841cbdb829e19489ba6c320e1926f01",
+  "result_preview_hash": "027fa4fdfe576ab5afe9410d1e2f6c165f0a2498d15bbcf642e89bafefac470b",
   "summary": {
     "observation_count": 9000,
     "signal_count": 1001,
@@ -243,7 +243,7 @@
         {
           "gate_id": "registered_immutable_strategy_version_available",
           "passed": false,
-          "evidence": "AD_HOC_UNREGISTERED"
+          "evidence": "AD_HOC_UNREGISTERED · adhoc-intraday-d6b31e9ee2e5b345 · d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3"
         },
         {
           "gate_id": "unseen_forward_shadow_evidence_attached",
@@ -1631,14 +1631,36 @@
       "passed": false
     },
     "strategy": {
+      "entry_factor_id": "opening-three-ten-minute-bullish-v1",
+      "entry_condition": "bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000",
+      "entry_minimum_body_return_bps": "0",
+      "entry_directions": [
+        "BULLISH",
+        "BULLISH",
+        "BULLISH"
+      ],
+      "entry_combination": "ALL",
       "entry_rule": "NEXT_5M_OPEN_10_05",
       "exit_rule": "NEXT_SESSION_OPEN_T_PLUS_ONE",
+      "exit_condition_type": "TIME_EXIT",
       "entry_price_source": "OPEN_OF_BAR_LABELLED_10_05_INTERVAL_START_10_00",
       "exit_price_source": "OPEN_OF_NEXT_SESSION_BAR_LABELLED_09_35_INTERVAL_START_09_30",
       "position_rule": "EQUAL_WEIGHT_TRIGGERED_STOCKS_ELSE_CASH",
       "benchmark_rule": "EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_HORIZON",
       "single_side_cost_bps": "5",
       "t_plus_one_compliant": true
+    },
+    "strategy_identity": {
+      "classification": "AD_HOC_READ_ONLY_STRATEGY_IDENTITY",
+      "strategy_id": "adhoc-intraday-d6b31e9ee2e5b345",
+      "spec_hash": "d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3",
+      "spec_hash_scope": "strategy_without_observed_exit_counts",
+      "registration_status": "AD_HOC_UNREGISTERED",
+      "immutable_within_response": true,
+      "paper_eligible": false,
+      "promotion_authority": false,
+      "state_mutation": false,
+      "external_order_transmission": false
     },
     "backtest": {
       "strategy_metrics": {
@@ -7477,7 +7499,7 @@
     "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
     "state_mutation": false,
     "external_order_transmission": false,
-    "preview_hash": "4c061b84688cce1e80cb92b2b1d055a49841cbdb829e19489ba6c320e1926f01"
+    "preview_hash": "027fa4fdfe576ab5afe9410d1e2f6c165f0a2498d15bbcf642e89bafefac470b"
   },
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
@@ -7491,5 +7513,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "e9639eb5d8ff746742b4bbf095c9cda6bd0c5dc28252ed289322d2f68544c7eb"
+  "evidence_sha256": "2b1d333e93d02c300943bf7ac9ddc365eb5a636bb126644008ffb4f4f34d4e6a"
 }

@@ -1384,7 +1384,11 @@ describe('verified robustness evidence', () => {
         passed: false,
       },
       strategy: {
+        entry_factor_id: 'custom-opening-ten-minute-direction-v1',
+        entry_condition: 'bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000',
+        entry_minimum_body_return_bps: '0', entry_directions: ['BULLISH', 'BULLISH', 'BULLISH'], entry_combination: 'ALL',
         entry_rule: 'NEXT_5M_OPEN_10_05', exit_rule: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP',
+        exit_condition_type: 'FACTOR_THEN_TIME_STOP', exit_factor_id: 'next-session-three-ten-minute-bearish-v1',
         entry_price_source: 'OPEN_OF_BAR_LABELLED_10_05_INTERVAL_START_10_00',
         exit_condition: 'bearish_10m_0930_0940 AND bearish_10m_0940_0950 AND bearish_10m_0950_1000',
         exit_minimum_body_return_bps: '5', exit_condition_known_at: 'NEXT_SESSION_10_00_BAR_CLOSE_T_PLUS_ONE',
@@ -1394,6 +1398,12 @@ describe('verified robustness evidence', () => {
         position_rule: 'EQUAL_WEIGHT_TRIGGERED_STOCKS_ELSE_CASH',
         benchmark_rule: 'EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_HORIZON',
         single_side_cost_bps: '5', t_plus_one_compliant: true,
+      },
+      strategy_identity: {
+        classification: 'AD_HOC_READ_ONLY_STRATEGY_IDENTITY',
+        strategy_id: `adhoc-intraday-${'e'.repeat(16)}`, spec_hash: 'e'.repeat(64), spec_hash_scope: 'strategy_without_observed_exit_counts',
+        registration_status: 'AD_HOC_UNREGISTERED', immutable_within_response: true,
+        paper_eligible: false, promotion_authority: false, state_mutation: false, external_order_transmission: false,
       },
       backtest: {
         strategy_metrics: metrics, benchmark_metrics: { ...metrics, total_return: '-0.0434', excess_return: '0' },
@@ -1432,7 +1442,7 @@ describe('verified robustness evidence', () => {
           { gate_id: 'verified_historical_dataset_identity_bound', passed: true, evidence: 'baostock-five-minute-long-v1 · long-five-minute-checksum' },
           { gate_id: 'research_gate_passed', passed: false, evidence: 'research_gate.passed=false' },
           { gate_id: 'causal_backtest_passed', passed: false, evidence: 'backtest.passed=false' },
-          { gate_id: 'registered_immutable_strategy_version_available', passed: false, evidence: 'AD_HOC_UNREGISTERED' },
+          { gate_id: 'registered_immutable_strategy_version_available', passed: false, evidence: `AD_HOC_UNREGISTERED · adhoc-intraday-${'e'.repeat(16)} · ${'e'.repeat(64)}` },
           { gate_id: 'unseen_forward_shadow_evidence_attached', passed: false, evidence: 'NO_AUTHORIZED_FORWARD_PAPER_EVIDENCE' },
           { gate_id: 'authorized_realtime_provider_ready', passed: false, evidence: 'NO_AUTHORIZED_REALTIME_PROVIDER' },
           { gate_id: 'fresh_runtime_readiness_attestation_available', passed: false, evidence: 'NO_RUNTIME_ATTESTATION' },
@@ -1521,6 +1531,10 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText('历史数据身份已验证并绑定')).toBeInTheDocument()
     expect(screen.getByText('不可变策略版本已注册')).toBeInTheDocument()
     expect(screen.getByText('AD_HOC_UNREGISTERED')).toBeInTheDocument()
+    expect(screen.getByText('策略规格已冻结为只读预览，但未注册')).toBeInTheDocument()
+    expect(screen.getByText(`adhoc-intraday-${'e'.repeat(16)}`)).toBeInTheDocument()
+    expect(screen.getByText('策略规格 SHA-256 已绑定')).toBeInTheDocument()
+    expect(screen.getByText(/开仓因子、平仓规则、仓位、基准与成本已进入同一哈希/)).toBeInTheDocument()
     expect(screen.getAllByText('聚类信号日')[1].nextSibling).toHaveTextContent('20')
     expect(screen.getAllByText('Newey-West t')[1].nextSibling).toHaveTextContent('-2.000')
     expect(screen.getByText('95% 置信区间').nextSibling).toHaveTextContent('-0.04% ～ -0.00%')

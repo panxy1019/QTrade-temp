@@ -297,8 +297,14 @@ annualized `-40.8673%`, Sharpe `-3.3347` and maximum drawdown `-5.1038%`.
 It exceeded the falling same-horizon benchmark by `0.2544` percentage points,
 but mean signal return, conditional excess, Rank IC, sector breadth and absolute
 return gates failed. The workbench therefore reports the result as a rejected
-ad-hoc hypothesis, never as a strategy eligible for PAPER. The proposed five-
-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
+ad-hoc hypothesis, never as a strategy eligible for PAPER. The factor-to-
+strategy handoff is nevertheless reproducible as a read-only specification:
+entry factor, expression, threshold, exit rule, position sizing, benchmark,
+cost and T+1 execution fields share one deterministic SHA-256 and derived
+`adhoc-intraday-*` ID. Observed exit-trigger counts are excluded from the spec
+hash. The identity is bound into the PAPER registration blocker but is not a
+registered strategy version and grants no promotion authority. The proposed
+five-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
 contract requires five bid/ask prices plus sizes normalized to shares, provider
 event/receive clocks and sequence, continuous-auction validity, certified
 freshness and recorded-replay reconciliation. The proposed `intensity > 1`

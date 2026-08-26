@@ -407,6 +407,14 @@ forward SHADOW evidence, authorized realtime readiness, a fresh runtime
 attestation and reconciliation readiness. The current run is `BLOCKED` at 1/8;
 the dossier has no registration, runtime-control, persistence or order path.
 
+The factor-to-strategy handoff now has a deterministic read-only identity. Its
+canonical specification covers the entry factor and threshold, exit rule,
+causal execution prices, equal-weight sizing, matched benchmark, costs and T+1
+constraint. Observed trigger counts are excluded because they are backtest
+outcomes rather than strategy parameters. The derived `adhoc-intraday-*` ID and
+full SHA-256 are visible and bound into the failed PAPER registration gate, but
+no strategy registry row, version or promotion authority is created.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

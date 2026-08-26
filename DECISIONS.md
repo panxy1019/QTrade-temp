@@ -1813,3 +1813,23 @@ user's untested buy hypothesis, not an effectiveness result; no sell condition
 has been defined and no correlation test, strategy backtest or PAPER admission
 exists. The contract is read-only, derives nothing from OHLCV, mutates no state
 and cannot transmit an external order.
+
+## ADR-109 — Factor backtests derive a stable read-only strategy identity without registration
+
+Status: accepted, 2026-08-27.
+
+Displaying entry, exit and cost fields does not prove which strategy a result
+belongs to. QTrade therefore canonicalizes the entry factor ID, expression,
+directions and threshold; entry rule; exit type and optional exit factor;
+causal prices; equal-weight sizing; matched benchmark; cost; and T+1 constraint.
+The resulting SHA-256 derives the `adhoc-intraday-*` strategy ID.
+
+Observed conditional-exit and fallback-time-stop counts are outcomes, so they
+are excluded from the specification hash. The same strategy can therefore keep
+the same identity across evaluation windows. Tests independently reconstruct
+the declared hash scope and verify the derived identity.
+
+The research page exposes the ID and full hash, and the PAPER registration
+blocker includes both. This creates no `StrategyRegistry` insertion, registered
+version or lifecycle change. The strategy remains `AD_HOC_UNREGISTERED`, PAPER-
+ineligible, read-only, stateless and external-order-disabled.

@@ -925,3 +925,12 @@ Last updated: 2026-08-27
   attestation or PAPER reconciliation binding exists. The decision is therefore
   `BLOCKED`; it cannot register or start a strategy, change runtime mode, mutate
   state or transmit an external order.
+- Intraday strategy construction identity: each factor-backtest response binds
+  the exact entry factor, expression, directions and threshold; exit type and
+  optional exit factor; causal price sources; equal-weight sizing; matched
+  benchmark; costs; and T+1 execution into one deterministic SHA-256. The
+  derived ad-hoc ID and full hash are visible and embedded in the PAPER
+  registration blocker. Observed exit counts are excluded because they are
+  sample outcomes. This is a reproducible read-only identity, not a registry
+  insertion: it remains `AD_HOC_UNREGISTERED`, PAPER-ineligible, stateless and
+  external-order-disabled.

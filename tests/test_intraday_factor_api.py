@@ -19,6 +19,17 @@ def _client() -> TestClient:
     return TestClient(create_app(context))
 
 
+def _canonical_sha256(value: object) -> str:
+    return sha256(
+        json.dumps(
+            value,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+
+
 def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() -> None:
     response = _client().post(
         "/intraday-factor-backtest",
@@ -101,6 +112,41 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
     assert robustness["criteria"]["causal_selection_known_before_test_signal"] is True
     assert payload["strategy"]["entry_rule"] == "NEXT_5M_OPEN_10_05"
     assert payload["strategy"]["exit_rule"] == "NEXT_SESSION_OPEN_T_PLUS_ONE"
+    assert payload["strategy"]["entry_factor_id"] == (
+        "opening-three-ten-minute-bullish-v1"
+    )
+    assert payload["strategy"]["entry_condition"] == (
+        "bullish_10m_0930_0940 AND bullish_10m_0940_0950 "
+        "AND bullish_10m_0950_1000"
+    )
+    assert payload["strategy"]["entry_minimum_body_return_bps"] == "0"
+    assert payload["strategy"]["entry_directions"] == [
+        "BULLISH",
+        "BULLISH",
+        "BULLISH",
+    ]
+    assert payload["strategy"]["entry_combination"] == "ALL"
+    assert payload["strategy"]["exit_condition_type"] == "TIME_EXIT"
+    identity = payload["strategy_identity"]
+    assert identity["classification"] == "AD_HOC_READ_ONLY_STRATEGY_IDENTITY"
+    assert identity["spec_hash_scope"] == (
+        "strategy_without_observed_exit_counts"
+    )
+    strategy_spec = {
+        key: value
+        for key, value in payload["strategy"].items()
+        if key not in {"conditional_exit_count", "fallback_time_stop_count"}
+    }
+    assert identity["spec_hash"] == _canonical_sha256(strategy_spec)
+    assert identity["strategy_id"] == (
+        f"adhoc-intraday-{identity['spec_hash'][:16]}"
+    )
+    assert identity["registration_status"] == "AD_HOC_UNREGISTERED"
+    assert identity["immutable_within_response"] is True
+    assert identity["paper_eligible"] is False
+    assert identity["promotion_authority"] is False
+    assert identity["state_mutation"] is False
+    assert identity["external_order_transmission"] is False
     assert "exit_factor_validation" not in payload
     assert "exit_factor_effectiveness_passed" not in payload["research_gate"][
         "criteria"
@@ -158,6 +204,16 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
     assert paper_admission["runtime_mode_change"] is False
     assert paper_admission["state_mutation"] is False
     assert paper_admission["external_order_transmission"] is False
+    registration_gate = next(
+        gate
+        for gate in paper_admission["required_gates"]
+        if gate["gate_id"]
+        == "registered_immutable_strategy_version_available"
+    )
+    assert registration_gate["evidence"] == (
+        f"AD_HOC_UNREGISTERED · {identity['strategy_id']} · "
+        f"{identity['spec_hash']}"
+    )
     assert payload["l2_factor_readiness"] == {
         "classification": "READ_ONLY_L2_FACTOR_DATA_CONTRACT",
         "factor_id": "order-book-buying-intensity-v1",

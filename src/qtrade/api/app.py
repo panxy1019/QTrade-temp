@@ -75,7 +75,7 @@ _MIN_INTRADAY_DISCOVERY_SESSIONS = 40
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "4c061b84688cce1e80cb92b2b1d055a49841cbdb829e19489ba6c320e1926f01"
+    "027fa4fdfe576ab5afe9410d1e2f6c165f0a2498d15bbcf642e89bafefac470b"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -9563,8 +9563,16 @@ def _intraday_factor_preview(
         "combination": payload.combination,
     }
     strategy: dict[str, object] = {
+        "entry_factor_id": result.factor_id,
+        "entry_condition": result.factor_expression,
+        "entry_minimum_body_return_bps": str(
+            payload.minimum_body_return_bps
+        ),
+        "entry_directions": list(payload.directions),
+        "entry_combination": payload.combination,
         "entry_rule": "NEXT_5M_OPEN_10_05",
         "exit_rule": "NEXT_SESSION_OPEN_T_PLUS_ONE",
+        "exit_condition_type": "TIME_EXIT",
         "entry_price_source": (
             "OPEN_OF_BAR_LABELLED_10_05_INTERVAL_START_10_00"
         ),
@@ -9591,8 +9599,17 @@ def _intraday_factor_preview(
         )
         signal_count = sum(item.signal for item in result.observations)
         strategy = {
+            "entry_factor_id": result.factor_id,
+            "entry_condition": result.factor_expression,
+            "entry_minimum_body_return_bps": str(
+                payload.minimum_body_return_bps
+            ),
+            "entry_directions": list(payload.directions),
+            "entry_combination": payload.combination,
             "entry_rule": "NEXT_5M_OPEN_10_05",
             "exit_rule": payload.exit_rule,
+            "exit_condition_type": "FACTOR_THEN_TIME_STOP",
+            "exit_factor_id": "next-session-three-ten-minute-bearish-v1",
             "exit_condition": (
                 "bearish_10m_0930_0940 AND bearish_10m_0940_0950 "
                 "AND bearish_10m_0950_1000"
@@ -9623,6 +9640,28 @@ def _intraday_factor_preview(
             "single_side_cost_bps": str(payload.cost_bps),
             "t_plus_one_compliant": True,
         }
+    strategy_spec = {
+        key: value
+        for key, value in strategy.items()
+        if key not in {"conditional_exit_count", "fallback_time_stop_count"}
+    }
+    strategy_spec_hash = _canonical_dict_sha256(strategy_spec)
+    strategy_identity: dict[str, object] = {
+        "classification": "AD_HOC_READ_ONLY_STRATEGY_IDENTITY",
+        "strategy_id": f"adhoc-intraday-{strategy_spec_hash[:16]}",
+        "spec_hash": strategy_spec_hash,
+        "spec_hash_scope": "strategy_without_observed_exit_counts",
+        "registration_status": "AD_HOC_UNREGISTERED",
+        "immutable_within_response": True,
+        "paper_eligible": False,
+        "promotion_authority": False,
+        "state_mutation": False,
+        "external_order_transmission": False,
+    }
+    paper_admission_gates[3]["evidence"] = (
+        "AD_HOC_UNREGISTERED · "
+        f"{strategy_identity['strategy_id']} · {strategy_spec_hash}"
+    )
     unsigned: dict[str, object] = {
         "classification": "AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT",
         "factor_definition": {
@@ -9815,6 +9854,7 @@ def _intraday_factor_preview(
             "passed": robustness_passed,
         },
         "strategy": strategy,
+        "strategy_identity": strategy_identity,
         "backtest": {
             "strategy_metrics": _performance_metrics_payload(
                 result.strategy_metrics

@@ -257,6 +257,12 @@ npm --prefix web run build
   validity and six explicit provider/replay gates. Keep the proposed `> 1`
   entry untested, the sell condition undefined and readiness at 0/6 until an
   authorized L2 session exists.
+- [x] Bind every intraday factor preview to a deterministic read-only strategy
+  identity covering the entry factor/expression/direction/threshold, exit rule,
+  causal prices, position sizing, benchmark, costs and T+1. Exclude observed
+  trigger counts from the specification hash, display the derived ID and full
+  hash, and attach both to the failed registration gate without inserting or
+  promoting a strategy.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,
