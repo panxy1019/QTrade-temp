@@ -279,6 +279,24 @@ const data = {
     curve: [{ timestamp: '2026-08-14T09:35:00+08:00', base_equity: 1, candidate_equity: 1, comparator_equity: 1 }],
     external_order_transmission: false,
   },
+  developmentPolicySearch: {
+    classification: 'RETROSPECTIVE_DEVELOPMENT_ONLY_POLICY_SEARCH_NOT_INDEPENDENT',
+    generated_at: '2026-08-26T09:01:25+08:00', candidate_count: 4,
+    development_contract: { session_count: 360, observed_start: '2025-01-02', observed_end: '2026-08-13', processed_bar_count: 1296000, cost_bps: 5 },
+    reserved_tail: { session_count: 8, trading_days: [], entered_strategy_engine: false, entered_candidate_metrics: false },
+    candidates: Array.from({ length: 4 }, (_, index) => ({
+      policy_id: index === 3 ? 'dev-floor-098-slow12x48-v1' : `development-candidate-${index + 1}`,
+      policy_hash: String(index + 1).repeat(64), policy: {},
+      base: { total_return: 0.6210147, maximum_drawdown: -0.1510855 },
+      overlay: { total_return: index === 3 ? 0.5989259 : 0.55, maximum_drawdown: index === 3 ? -0.1241326 : -0.12 },
+      return_delta_vs_base: index === 3 ? -0.0220888 : -0.0710147,
+      drawdown_improvement: index === 3 ? 0.0269529 : 0.0310855,
+      execution: { mean_exposure: index === 3 ? 0.9132435 : 0.9, mean_turnover_per_symbol: index === 3 ? 50.5237 : 70 },
+    })),
+    observed_leader: { policy_id: 'dev-floor-098-slow12x48-v1', selection_timing: 'POST_HOC_DEVELOPMENT_ONLY' },
+    future_observation_lock: { locked_at: '2026-08-26T09:01:25+08:00', policy_id: 'dev-floor-098-slow12x48-v1', first_eligible_trading_day: '2026-08-26', minimum_complete_future_sessions: 20, partial_same_day_observations_enter_metrics: false, parameter_changes_before_completion: false },
+    promotion: 'NOT_ELIGIBLE', external_order_transmission: false,
+  },
   publicMinuteAudit: {
     classification: 'PUBLIC_READ_ONLY_MINUTE_BAR_AVAILABILITY_AUDIT',
     generated_at: '2026-08-26T07:57:24+08:00',
@@ -850,6 +868,17 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText(/Bootstrap 正收益概率 96.90%/)).toBeInTheDocument()
     expect(screen.getByText(/2026 当前成分股向历史回投/)).toBeInTheDocument()
     expect(screen.getByText(/结论固定为 NOT_ELIGIBLE，不能接入 PAPER/)).toBeInTheDocument()
+  })
+
+  it('shows the development-only minute policy lock without claiming a new test', () => {
+    cleanup()
+    render(<ResearchPage data={data} />)
+    fireEvent.click(screen.getByRole('tab', { name: '开发区分钟策略' }))
+    expect(screen.getByText(/1296000 根 5 分钟 Bar/)).toBeInTheDocument()
+    expect(screen.getAllByText(/dev-floor-098-slow12x48-v1/).length).toBeGreaterThan(0)
+    expect(screen.getByText(/此前尾部结果已经可见/)).toBeInTheDocument()
+    expect(screen.getByText(/至少等待 20 个完整未来会话/)).toBeInTheDocument()
+    expect(screen.getByText(/不证明 1 分钟实时就绪/)).toBeInTheDocument()
   })
 })
 
