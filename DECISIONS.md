@@ -568,3 +568,18 @@ uses an atomic same-directory replacement and immediately verifies the published
 digest. A failed candidate leaves the previous public evidence unchanged; this
 workflow cannot change strategy parameters, grant realtime/PAPER authority or
 enable LIVE/external orders.
+
+## ADR-036 — Mutable intraday evidence is published atomically
+
+Status: accepted, 2026-08-26.
+
+The detail, 75-stock breadth and continuity reports are intentionally refreshed
+at the same deployment paths during a trading day. Each writer must serialize to
+a same-directory temporary file, flush and `fsync` the complete payload, and only
+then atomically replace the previous signed JSON. A process interruption before
+replacement therefore leaves the last complete checkpoint readable.
+
+Atomic publication changes only crash consistency. The API still independently
+recomputes every evidence and checkpoint hash, and any source regression remains
+recorded as non-monotonic rather than being hidden. No such report can grant
+realtime/PAPER authority, strategy promotion or external order transmission.

@@ -328,10 +328,10 @@ QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true PYTHONPATH=. .venv/bin/python \
 `/intraday-observation` and the market-page “当日分钟观测” tab expose the signed
 point-in-time result. A pre-open run correctly contained zero same-day bars; the
 09:33:16 China-time refresh then verified two finalized bars (09:31 and 09:32)
-for all 15 sector representatives. The final 09:55:17 refresh verified 24
-cross-symbol common bars through 09:54, with a `1.419s` request window and
-`77.455s` maximum latest-bar age. Provider rows timestamped after the causal
-cutoff were excluded. The
+for all 15 sector representatives. The 12:07:48 midday refresh verified all 120
+morning-session common bars through 11:30, with a `1.057s` request window. Its
+larger latest-bar age is retained because the market was in the lunch break;
+provider rows timestamped after the causal cutoff were excluded. The
 probe is intentionally a free historical-source observation, not a streaming
 subscription: it never sets realtime/PAPER readiness, mutates strategy state or
 sends an external order. The report can be refreshed after the market opens to
@@ -370,6 +370,11 @@ hash. `/intraday-continuity` recomputes the chain, monotonicity and latest-repor
 binding before the market page renders the timeline. A source regression remains
 visible instead of being repaired or dropped. The chain is deployment evidence,
 not a realtime subscription, strategy state or PAPER authorization.
+The current third checkpoint binds 15/15 detail and 75/75 breadth coverage at
+120 common finalized minutes through 11:30 and is monotonic versus the previous
+63-minute checkpoint. All three mutable report writers publish through a flushed,
+`fsync`-backed same-directory temporary file and atomic replacement, so an
+interrupted refresh cannot expose a half-written JSON document.
 
 The dashboard reads the long 5-minute research, reserved-tail diagnostic,
 development lock, future observer, public audit and both intraday reports through

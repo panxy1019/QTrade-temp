@@ -2,7 +2,7 @@
   "schema_version": 1,
   "classification": "SIGNED_INTRADAY_SOURCE_CONTINUITY_NOT_REALTIME_ELIGIBLE",
   "trading_day": "2026-08-26",
-  "checkpoint_count": 2,
+  "checkpoint_count": 3,
   "all_checkpoints_monotonic": true,
   "checkpoints": [
     {
@@ -72,11 +72,45 @@
       "monotonic_vs_previous": true,
       "previous_checkpoint_sha256": "66367d542e65fd673e22b0414603d463bb4dc072a76ce66087b63f24f4d76595",
       "checkpoint_sha256": "20c93126740be9028338a3b9c5b1365253fc4d53ca1194029cbc755db5c6d04c"
+    },
+    {
+      "sequence": 3,
+      "captured_at": "2026-08-26T04:07:51.544744+00:00",
+      "trading_day": "2026-08-26",
+      "detail": {
+        "evidence_sha256": "188a4a917db9eec224d5d70075c985da0804b08f1a4069742f285582e68d850d",
+        "completed_at": "2026-08-26T04:07:48.158554+00:00",
+        "session_phase": "MIDDAY_BREAK",
+        "symbol_count": 15,
+        "sector_count": 15,
+        "same_day_symbol_count": 15,
+        "synchronized_finalized_timestamp_count": 120,
+        "latest_synchronized_finalized_timestamp": "2026-08-26T11:30:00+08:00",
+        "source_request_window_seconds": 1.057,
+        "maximum_same_day_latest_age_seconds": 2268.158,
+        "all_symbols_same_day_coverage": true
+      },
+      "breadth": {
+        "evidence_sha256": "bde18dc51ad2dfe718a87a99bccc010e1b0d6d528abd56dfa67709f2640dc1f5",
+        "completed_at": "2026-08-26T04:07:51.544744+00:00",
+        "session_phase": "MIDDAY_BREAK",
+        "symbol_count": 75,
+        "sector_count": 15,
+        "same_day_symbol_count": 75,
+        "synchronized_finalized_timestamp_count": 120,
+        "latest_synchronized_finalized_timestamp": "2026-08-26T11:30:00+08:00",
+        "source_request_window_seconds": 3.237,
+        "maximum_same_day_latest_age_seconds": 2271.544,
+        "all_symbols_same_day_coverage": true
+      },
+      "monotonic_vs_previous": true,
+      "previous_checkpoint_sha256": "20c93126740be9028338a3b9c5b1365253fc4d53ca1194029cbc755db5c6d04c",
+      "checkpoint_sha256": "941c34ad272193d2edc3fb3f04324dc370dd5caef842248cfd676ea188f15935"
     }
   ],
   "realtime_readiness": false,
   "real_data_paper_readiness": false,
   "promotion": "NOT_ELIGIBLE",
   "external_order_transmission": false,
-  "evidence_sha256": "32941cdb0b27febcd33e2ec13e58507258295d8e8b587bec995cf7497a934ed3"
+  "evidence_sha256": "c3d076f70d1cf2819a4fac44bf9832ba3e20d404f562753f406892c5394b6ef7"
 }

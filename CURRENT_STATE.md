@@ -130,6 +130,11 @@ Last updated: 2026-08-26
   day, monotonic common-minute arithmetic and exact latest-report identities.
   The market page displays regressions rather than silently correcting them;
   this remains deployment evidence and never enters strategy or PAPER state.
+  The 2026-08-26 midday chain has three checkpoints; its latest detail/breadth
+  pair covers 15/15 and 75/75 stocks with 120 common finalized minutes through
+  11:30 and is monotonic versus the prior 63-minute checkpoint. Mutable intraday
+  reports now use flushed, `fsync`-backed atomic publication, preventing a crash
+  from exposing a partially written signed snapshot.
 - Long native-5-minute falsification: the optional BaoStock 0.9.3 ingest produced
   a signed 1,324,800-bar dataset for the frozen 75-stock/15-sector universe over
   368 common complete sessions. The predeclared expanding study used 120 initial

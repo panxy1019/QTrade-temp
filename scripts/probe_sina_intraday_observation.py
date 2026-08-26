@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 
 from qtrade.data import Bar
 from qtrade.market_data import SinaMinuteHistoryClient
+from scripts.atomic_json import write_json_atomic
 
 SHANGHAI = ZoneInfo("Asia/Shanghai")
 
@@ -218,11 +219,7 @@ def main() -> int:
         "external_order_transmission": False,
     }
     report = {**unsigned, "evidence_sha256": _canonical_sha256(unsigned)}
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    write_json_atomic(args.output, report)
     print(
         json.dumps(
             {
