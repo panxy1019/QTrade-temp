@@ -279,6 +279,20 @@ const data = {
     curve: [{ timestamp: '2026-08-14T09:35:00+08:00', base_equity: 1, candidate_equity: 1, comparator_equity: 1 }],
     external_order_transmission: false,
   },
+  publicMinuteAudit: {
+    classification: 'PUBLIC_READ_ONLY_MINUTE_BAR_AVAILABILITY_AUDIT',
+    generated_at: '2026-08-26T07:57:24+08:00',
+    base_url: 'https://qtrade.erapi0neer.xyz',
+    data_version: 'baostock-five-minute-long-v1',
+    dataset_checksum: 'long-five-minute-checksum',
+    sector_count: 15,
+    sampled_trading_days: ['2025-01-02', '2025-11-10', '2026-08-25'],
+    first_round: { request_count: 45, all_valid: true, latency_seconds: { minimum: 1.839, median: 5.301, p95: 6.612, maximum: 7.473 }, vercel_cache_counts: { MISS: 45 }, failures: [] },
+    repeat_round: { request_count: 45, all_valid: true, latency_seconds: { minimum: 0.156, median: 0.189, p95: 0.260, maximum: 0.321 }, vercel_cache_counts: { HIT: 45 }, failures: [] },
+    all_valid: true,
+    promotion: 'NOT_ELIGIBLE',
+    external_order_transmission: false,
+  },
   reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
   reporting: {
     classification: 'TRUSTED_PAPER_EOD_REPORTING', readiness: 'CONFIGURED', automatic: true,
@@ -632,6 +646,10 @@ describe('verified historical data pages', () => {
     expect(screen.getByText('paper-20260812')).toBeInTheDocument()
     expect(screen.getByText('SHA-256 已验证')).toBeInTheDocument()
     expect(screen.getByText('PAPER 日终自动报告：GENERATED')).toBeInTheDocument()
+    expect(screen.getByText('公网分时可用性审计：90 次请求全部通过')).toBeInTheDocument()
+    expect(screen.getByText(/强制未缓存中位 5.301 秒、P95 6.612 秒/)).toBeInTheDocument()
+    expect(screen.getByText(/CDN 命中中位 0.189 秒、P95 0.260 秒/)).toBeInTheDocument()
+    expect(screen.getByText(/不是实时行情授权/)).toBeInTheDocument()
     expect(screen.queryByText(/网页调用方不能提供这些身份/)).not.toBeInTheDocument()
   })
 })

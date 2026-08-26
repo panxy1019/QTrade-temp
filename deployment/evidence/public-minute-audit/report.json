@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "classification": "PUBLIC_READ_ONLY_MINUTE_BAR_AVAILABILITY_AUDIT",
+  "generated_at": "2026-08-26T07:57:24.332189+08:00",
+  "base_url": "https://qtrade.erapi0neer.xyz",
+  "cache_key": "663ff53-20260826t0757",
+  "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
+  "dataset_checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
+  "sector_count": 15,
+  "instruments": [
+    {
+      "symbol": "600036",
+      "sector_code": "801780",
+      "sector_name": "银行"
+    },
+    {
+      "symbol": "601318",
+      "sector_code": "801790",
+      "sector_name": "非银金融"
+    },
+    {
+      "symbol": "600519",
+      "sector_code": "801120",
+      "sector_name": "食品饮料"
+    },
+    {
+      "symbol": "603259",
+      "sector_code": "801150",
+      "sector_name": "医药生物"
+    },
+    {
+      "symbol": "688256",
+      "sector_code": "801080",
+      "sector_name": "电子"
+    },
+    {
+      "symbol": "002415",
+      "sector_code": "801750",
+      "sector_name": "计算机"
+    },
+    {
+      "symbol": "300750",
+      "sector_code": "801730",
+      "sector_name": "电力设备"
+    },
+    {
+      "symbol": "002594",
+      "sector_code": "801880",
+      "sector_name": "汽车"
+    },
+    {
+      "symbol": "600031",
+      "sector_code": "801890",
+      "sector_name": "机械设备"
+    },
+    {
+      "symbol": "601899",
+      "sector_code": "801050",
+      "sector_name": "有色金属"
+    },
+    {
+      "symbol": "600309",
+      "sector_code": "801030",
+      "sector_name": "基础化工"
+    },
+    {
+      "symbol": "600900",
+      "sector_code": "801160",
+      "sector_name": "公用事业"
+    },
+    {
+      "symbol": "600150",
+      "sector_code": "801740",
+      "sector_name": "国防军工"
+    },
+    {
+      "symbol": "300308",
+      "sector_code": "801770",
+      "sector_name": "通信"
+    },
+    {
+      "symbol": "002602",
+      "sector_code": "801760",
+      "sector_name": "传媒"
+    }
+  ],
+  "sampled_trading_days": [
+    "2025-01-02",
+    "2025-11-10",
+    "2026-08-25"
+  ],
+  "first_round": {
+    "request_count": 45,
+    "all_valid": true,
+    "latency_seconds": {
+      "minimum": 1.839,
+      "median": 5.301,
+      "p95": 6.612,
+      "maximum": 7.473
+    },
+    "vercel_cache_counts": {
+      "MISS": 45
+    },
+    "failures": []
+  },
+  "repeat_round": {
+    "request_count": 45,
+    "all_valid": true,
+    "latency_seconds": {
+      "minimum": 0.156,
+      "median": 0.189,
+      "p95": 0.26,
+      "maximum": 0.321
+    },
+    "vercel_cache_counts": {
+      "HIT": 45
+    },
+    "failures": []
+  },
+  "all_valid": true,
+  "promotion": "NOT_ELIGIBLE",
+  "external_order_transmission": false,
+  "evidence_sha256": "ed3f688237bf1307fc6e995925e6752352cadb07016cc881c3c047c5797cac19"
+}

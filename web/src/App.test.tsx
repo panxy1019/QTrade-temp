@@ -21,7 +21,7 @@ describe('QTrade web shell', () => {
     expect(screen.queryByText('实盘交易')).not.toBeInTheDocument()
     await waitFor(() => expect(screen.getByText('PAPER 现金')).toBeInTheDocument())
     expect(screen.getByText(/不是当前 PAPER 权益/)).toBeInTheDocument()
-    expect(screen.getByText('19 个数据分区异常')).toBeInTheDocument()
+    expect(screen.getByText('20 个数据分区异常')).toBeInTheDocument()
     expect(screen.getByText(/已保留其余成功分区/)).toBeInTheDocument()
   })
 

@@ -232,6 +232,24 @@ verifies the preregistration, dataset, prior report, curve and artifact hashes
 before returning the evidence. None of these endpoints authorizes realtime data,
 PAPER, strategy promotion or external orders.
 
+The public deployment can be audited independently across one stock from every
+sector and three widely separated sessions. The script runs the same 45 requests
+twice, verifies the dataset checksum, 48 unique bars, trading day, observation
+type and China-market `09:35`–`15:00` clock, then signs the result:
+
+```bash
+PYTHONPATH=. .venv/bin/python scripts/audit_public_minute_bars.py \
+  --cache-key <unique-audit-id> \
+  --output deployment/evidence/public-minute-audit/report.json
+```
+
+The 2026-08-26 audit passed all 90 requests. The forced-cache-miss round had
+`5.301s` median and `6.612s` P95 latency; the repeated CDN-hit round had `0.189s`
+median and `0.260s` P95 latency, with all 45 responses reported as `HIT`.
+`/public-minute-audit` exposes this point-in-time, checksum-bound availability
+evidence. It demonstrates public historical-bar access and caching, not an
+authorized realtime feed or a performance SLA.
+
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and
 `QTRADE_RQDATA_TOKEN` only inside the bridge process, and claims a session only

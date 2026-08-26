@@ -744,6 +744,34 @@ export interface ReservedTailCostStressRow {
   comparator_execution: MinuteExecutionDiagnostics
 }
 
+export interface PublicMinuteAuditRound {
+  request_count: number
+  all_valid: boolean
+  latency_seconds: {
+    minimum: number
+    median: number
+    p95: number
+    maximum: number
+  }
+  vercel_cache_counts: Record<string, number>
+  failures: unknown[]
+}
+
+export interface PublicMinuteAuditReport {
+  classification?: string
+  generated_at?: string
+  base_url?: string
+  data_version?: string
+  dataset_checksum?: string
+  sector_count?: number
+  sampled_trading_days?: string[]
+  first_round: PublicMinuteAuditRound | null
+  repeat_round: PublicMinuteAuditRound | null
+  all_valid: boolean
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  external_order_transmission: false
+}
+
 export interface DailyReportAutomationStatus {
   classification: 'TRUSTED_PAPER_EOD_REPORTING'
   readiness: 'CONFIGURED' | 'UNCONFIGURED'
@@ -787,6 +815,7 @@ export interface PlatformSnapshot {
   fiveMinuteResearch: FiveMinuteResearchReport
   longFiveMinuteResearch: FiveMinuteResearchReport
   reservedTailDiagnostic: ReservedTailDiagnosticReport
+  publicMinuteAudit: PublicMinuteAuditReport
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]

@@ -124,6 +124,7 @@ class AppContext:
     long_five_minute_research_report_path: Path | None = None
     reserved_tail_preregistration_path: Path | None = None
     reserved_tail_diagnostic_report_path: Path | None = None
+    public_minute_audit_path: Path | None = None
     minute_overlay_reader: Callable[[], dict[str, object]] | None = None
     applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
     sellable_quantity_reader: Callable[[str, date], int] | None = None
@@ -428,6 +429,32 @@ def create_app(
             "daily": [],
             "leave_one_sector_out": [],
             "curve": [],
+            "external_order_transmission": False,
+        }
+
+    @app.get("/public-minute-audit")
+    def public_minute_audit(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        report = _load_verified_public_minute_audit(
+            state.public_minute_audit_path,
+            dataset,
+        )
+        return report or {
+            "classification": "NO_VERIFIED_PUBLIC_MINUTE_AUDIT",
+            "all_valid": False,
+            "promotion": "NOT_EVALUATED",
+            "first_round": None,
+            "repeat_round": None,
             "external_order_transmission": False,
         }
 
@@ -1046,6 +1073,9 @@ def context_from_runtime(
         reserved_tail_diagnostic_report_path=Path(
             "runtime/research/baostock-reserved-tail-high-exposure-v1/"
             "report.json"
+        ),
+        public_minute_audit_path=Path(
+            "deployment/evidence/public-minute-audit/report.json"
         ),
         applied_trade_reader=bundle.journal.applied_trade_payloads,
         sellable_quantity_reader=bundle.sellability.sellable_quantity,
@@ -4244,6 +4274,102 @@ def _canonical_dict_sha256(value: dict[str, object]) -> str:
         default=str,
     )
     return sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _load_verified_public_minute_audit(
+    path: Path | None,
+    dataset: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if path is None or dataset is None or not path.is_file():
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        instruments = report.get("instruments")
+        sampled_days = report.get("sampled_trading_days")
+        dataset_days = cast(list[str], dataset["trading_days"])
+        expected_days = [
+            dataset_days[0],
+            dataset_days[len(dataset_days) // 2],
+            dataset_days[-1],
+        ]
+        eligible_symbols = set(cast(list[str], dataset["eligible_symbols"]))
+        generated_at = datetime.fromisoformat(str(report.get("generated_at")))
+        if (
+            not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("classification")
+            != "PUBLIC_READ_ONLY_MINUTE_BAR_AVAILABILITY_AUDIT"
+            or report.get("base_url") != "https://qtrade.erapi0neer.xyz"
+            or report.get("data_version") != dataset["data_version"]
+            or report.get("dataset_checksum") != dataset["checksum"]
+            or report.get("sector_count") != dataset["sector_count"]
+            or not isinstance(instruments, list)
+            or len(instruments) != dataset["sector_count"]
+            or not all(isinstance(row, dict) for row in instruments)
+            or len({str(row.get("symbol")) for row in instruments})
+            != len(instruments)
+            or len({str(row.get("sector_code")) for row in instruments})
+            != len(instruments)
+            or not all(
+                str(row.get("symbol")) in eligible_symbols for row in instruments
+            )
+            or sampled_days != expected_days
+            or generated_at.tzinfo is None
+            or report.get("all_valid") is not True
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("external_order_transmission") is not False
+        ):
+            return None
+        for key, expected_cache in (
+            ("first_round", {"MISS": 45}),
+            ("repeat_round", {"HIT": 45}),
+        ):
+            round_result = report.get(key)
+            if (
+                not isinstance(round_result, dict)
+                or round_result.get("request_count") != 45
+                or round_result.get("all_valid") is not True
+                or round_result.get("failures") != []
+                or round_result.get("vercel_cache_counts") != expected_cache
+            ):
+                return None
+            latency = round_result.get("latency_seconds")
+            if not isinstance(latency, dict) or set(latency) != {
+                "minimum",
+                "median",
+                "p95",
+                "maximum",
+            }:
+                return None
+            values = [
+                float(str(latency[name]))
+                for name in ("minimum", "median", "p95", "maximum")
+            ]
+            if (
+                not all(isfinite(value) and value >= 0 for value in values)
+                or values != sorted(values)
+            ):
+                return None
+        return {**report, "minute_dataset": dataset}
+    except (
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
 
 
 def _load_backtest_preview_bars(
