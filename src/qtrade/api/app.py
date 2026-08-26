@@ -9261,6 +9261,55 @@ def _intraday_factor_discovery_preview(
             ),
             "passed": result.locked_test_execution_delay_stress_passed,
         },
+        "locked_test_liquidity_capacity_stress": {
+            "selected_candidate_id": result.selected_candidate_id,
+            "test_start": result.test_start.isoformat(),
+            "test_end": result.test_end.isoformat(),
+            "candidate_reselected": False,
+            "capacity_rows_used_for_selection": False,
+            "volume_source_bar_time": "10:00",
+            "volume_source_interval": "09:55-10:00",
+            "volume_source_bar_completed_before_entry": True,
+            "volume_unit": "SHARES",
+            "order_lot_size_shares": 100,
+            "source_amount_available": False,
+            "qfq_price_volume_used_as_actual_notional": False,
+            "rmb_notional_capacity_status": (
+                "UNAVAILABLE_QFQ_OHLCV_WITHOUT_PROVIDER_AMOUNT"
+            ),
+            "rows": [
+                {
+                    "participation_rate": str(row.participation_rate),
+                    "signal_count": row.signal_count,
+                    "signal_session_count": row.signal_session_count,
+                    "minimum_round_lot_share_capacity": (
+                        row.minimum_round_lot_share_capacity
+                    ),
+                    "lower_median_round_lot_share_capacity": (
+                        row.lower_median_round_lot_share_capacity
+                    ),
+                    "maximum_round_lot_share_capacity": (
+                        row.maximum_round_lot_share_capacity
+                    ),
+                    "zero_capacity_signal_count": (
+                        row.zero_capacity_signal_count
+                    ),
+                    "one_lot_eligible_signal_count": (
+                        row.one_lot_eligible_signal_count
+                    ),
+                    "one_lot_eligible_signal_ratio": str(
+                        row.one_lot_eligible_signal_ratio
+                    ),
+                }
+                for row in result.locked_test_liquidity_capacity_rows
+            ],
+            "criteria": dict(
+                result.locked_test_liquidity_capacity_stress_criteria
+            ),
+            "passed": (
+                result.locked_test_liquidity_capacity_stress_passed
+            ),
+        },
         "discovery_gate": {
             "criteria": {
                 "chronological_locked_test_passed": result.test_gate_passed,
@@ -9285,6 +9334,9 @@ def _intraday_factor_discovery_preview(
                 "locked_test_execution_delay_stress_passed": (
                     result.locked_test_execution_delay_stress_passed
                 ),
+                "locked_test_liquidity_capacity_stress_passed": (
+                    result.locked_test_liquidity_capacity_stress_passed
+                ),
             },
             "passed": all(
                 (
@@ -9296,6 +9348,7 @@ def _intraday_factor_discovery_preview(
                     result.locked_test_regime_stress_passed,
                     result.locked_test_placebo_audit.passed,
                     result.locked_test_execution_delay_stress_passed,
+                    result.locked_test_liquidity_capacity_stress_passed,
                 )
             ),
             "promotion_authority": False,

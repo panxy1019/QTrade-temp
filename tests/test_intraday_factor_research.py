@@ -178,6 +178,7 @@ def test_three_ten_minute_bullish_signal_executes_next_bar_and_exits_t_plus_one(
         for value in first.entry_delay_ats
     ] == [time(10, 5), time(10, 10), time(10, 15)]
     assert first.entry_delay_prices[0] == first.entry_price
+    assert first.signal_bar_volume == Decimal("1047")
     assert first.exit_at.timetz().replace(tzinfo=None) == time(9, 35)
     assert first.exit_at.date() == first.trading_day + timedelta(days=1)
     assert first.entry_price != first.signal_close
@@ -551,6 +552,30 @@ def test_bounded_opening_rule_discovery_locks_training_before_disjoint_test() ->
     assert immediate.benchmark_metrics == first.test_benchmark_metrics
     assert first.locked_test_execution_delay_stress_passed is all(
         first.locked_test_execution_delay_stress_criteria.values()
+    )
+    liquidity_rows = first.locked_test_liquidity_capacity_rows
+    assert [row.participation_rate for row in liquidity_rows] == [
+        Decimal("0.01"),
+        Decimal("0.05"),
+        Decimal("0.10"),
+    ]
+    assert all(
+        row.signal_count == first.test_signal_count
+        and row.signal_session_count == first.test_signal_session_count
+        for row in liquidity_rows
+    )
+    assert [row.minimum_round_lot_share_capacity for row in liquidity_rows] == [
+        0,
+        0,
+        100,
+    ]
+    assert liquidity_rows[0].zero_capacity_signal_count == first.test_signal_count
+    assert liquidity_rows[2].one_lot_eligible_signal_count == first.test_signal_count
+    assert first.locked_test_liquidity_capacity_stress_criteria[
+        "exact_provider_rmb_amount_available"
+    ] is False
+    assert first.locked_test_liquidity_capacity_stress_passed is all(
+        first.locked_test_liquidity_capacity_stress_criteria.values()
     )
     assert first.test_observation_count == 20 * len(symbols)
     assert first.selection_uses_test_returns is False

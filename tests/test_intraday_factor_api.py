@@ -484,6 +484,9 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
             "locked_test_execution_delay_stress_passed": payload[
                 "locked_test_execution_delay_stress"
             ]["passed"],
+            "locked_test_liquidity_capacity_stress_passed": payload[
+                "locked_test_liquidity_capacity_stress"
+            ]["passed"],
         },
         "passed": False,
         "promotion_authority": False,
@@ -601,6 +604,40 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
         "test_validation"
     ]["benchmark_metrics"]
     assert delay_stress["passed"] is all(delay_stress["criteria"].values())
+    liquidity_stress = payload["locked_test_liquidity_capacity_stress"]
+    assert liquidity_stress["selected_candidate_id"] == payload["selected"][
+        "candidate_id"
+    ]
+    assert liquidity_stress["test_start"] == payload["split"]["test_start"]
+    assert liquidity_stress["test_end"] == payload["split"]["test_end"]
+    assert liquidity_stress["candidate_reselected"] is False
+    assert liquidity_stress["capacity_rows_used_for_selection"] is False
+    assert liquidity_stress["volume_source_bar_time"] == "10:00"
+    assert liquidity_stress["volume_source_interval"] == "09:55-10:00"
+    assert liquidity_stress["volume_unit"] == "SHARES"
+    assert liquidity_stress["order_lot_size_shares"] == 100
+    assert liquidity_stress["source_amount_available"] is False
+    assert liquidity_stress["qfq_price_volume_used_as_actual_notional"] is False
+    assert liquidity_stress["rmb_notional_capacity_status"] == (
+        "UNAVAILABLE_QFQ_OHLCV_WITHOUT_PROVIDER_AMOUNT"
+    )
+    assert [row["participation_rate"] for row in liquidity_stress["rows"]] == [
+        "0.01",
+        "0.05",
+        "0.10",
+    ]
+    assert all(
+        row["signal_count"] == payload["test_validation"]["signal_count"]
+        and row["signal_session_count"]
+        == payload["test_validation"]["signal_session_count"]
+        for row in liquidity_stress["rows"]
+    )
+    assert liquidity_stress["criteria"][
+        "exact_provider_rmb_amount_available"
+    ] is False
+    assert liquidity_stress["passed"] is all(
+        liquidity_stress["criteria"].values()
+    )
     assert payload["selected"]["candidate_id"] in {
         candidate["candidate_id"] for candidate in payload["candidates"]
     }

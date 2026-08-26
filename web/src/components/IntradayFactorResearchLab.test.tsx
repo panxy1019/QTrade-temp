@@ -342,6 +342,28 @@ const discovery = {
     },
     passed: false,
   },
+  locked_test_liquidity_capacity_stress: {
+    selected_candidate_id: 'DIR-XDU-T0000', test_start: '2026-06-25', test_end: '2026-07-14',
+    candidate_reselected: false, capacity_rows_used_for_selection: false,
+    volume_source_bar_time: '10:00', volume_source_interval: '09:55-10:00',
+    volume_source_bar_completed_before_entry: true, volume_unit: 'SHARES',
+    order_lot_size_shares: 100, source_amount_available: false,
+    qfq_price_volume_used_as_actual_notional: false,
+    rmb_notional_capacity_status: 'UNAVAILABLE_QFQ_OHLCV_WITHOUT_PROVIDER_AMOUNT',
+    rows: [
+      { participation_rate: '0.01', signal_count: 326, signal_session_count: 20, minimum_round_lot_share_capacity: 100, lower_median_round_lot_share_capacity: 3200, maximum_round_lot_share_capacity: 25800, zero_capacity_signal_count: 0, one_lot_eligible_signal_count: 326, one_lot_eligible_signal_ratio: '1' },
+      { participation_rate: '0.05', signal_count: 326, signal_session_count: 20, minimum_round_lot_share_capacity: 500, lower_median_round_lot_share_capacity: 16400, maximum_round_lot_share_capacity: 129400, zero_capacity_signal_count: 0, one_lot_eligible_signal_count: 326, one_lot_eligible_signal_ratio: '1' },
+      { participation_rate: '0.10', signal_count: 326, signal_session_count: 20, minimum_round_lot_share_capacity: 1100, lower_median_round_lot_share_capacity: 32900, maximum_round_lot_share_capacity: 258900, zero_capacity_signal_count: 0, one_lot_eligible_signal_count: 326, one_lot_eligible_signal_ratio: '1' },
+    ],
+    criteria: {
+      three_predeclared_participation_rates_present: true,
+      all_capacity_uses_completed_signal_bar_volume: true,
+      every_participation_row_preserves_locked_signal_identity: true,
+      every_locked_signal_supports_one_round_lot_at_1pct: true,
+      exact_provider_rmb_amount_available: false,
+    },
+    passed: false,
+  },
   discovery_gate: {
     criteria: {
       chronological_locked_test_passed: false,
@@ -352,6 +374,7 @@ const discovery = {
       locked_test_regime_stress_passed: false,
       locked_test_placebo_audit_passed: false,
       locked_test_execution_delay_stress_passed: false,
+      locked_test_liquidity_capacity_stress_passed: false,
     },
     passed: false,
     promotion_authority: false,
@@ -447,6 +470,10 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('锁定规则未通过信号前市场状态压力门')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过会话内置换安慰剂门')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过执行延迟压力门')).toBeInTheDocument()
+    expect(screen.getByText('锁定规则股数容量可复算，但人民币容量不可用')).toBeInTheDocument()
+    expect(screen.getByText('人民币容量不可用')).toBeInTheDocument()
+    expect(screen.getByText('09:55-10:00')).toBeInTheDocument()
+    expect(screen.getByText('3,200 股')).toBeInTheDocument()
     expect(screen.getByText('4/15 · 26.67%')).toBeInTheDocument()
     expect(screen.getByText('0/15 · 0.00%')).toBeInTheDocument()
     expect(screen.getByText('22/75 · 29.33%')).toBeInTheDocument()

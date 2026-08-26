@@ -38,6 +38,12 @@ _DISCOVERY_PLACEBO_REPLICATIONS = 499
 _DISCOVERY_PLACEBO_SEED = 20260827
 _DISCOVERY_EXECUTION_DELAY_BARS = (1, 2, 3)
 _DISCOVERY_EXECUTION_DELAY_TIMES = (time(10, 5), time(10, 10), time(10, 15))
+_DISCOVERY_LIQUIDITY_PARTICIPATION_RATES = (
+    Decimal("0.01"),
+    Decimal("0.05"),
+    Decimal("0.10"),
+)
+_A_SHARE_ORDER_LOT_SIZE = 100
 _OPENING_TEN_MINUTE_LABELS = (
     "0930_0940",
     "0940_0950",
@@ -163,6 +169,7 @@ class IntradayFactorObservation:
     entry_delay_ats: tuple[datetime, datetime, datetime]
     exit_at: datetime
     signal_close: Decimal
+    signal_bar_volume: Decimal
     entry_price: Decimal
     entry_delay_prices: tuple[Decimal, Decimal, Decimal]
     exit_price: Decimal
@@ -443,6 +450,19 @@ class IntradayDiscoveryExecutionDelayStress:
 
 
 @dataclass(frozen=True, slots=True)
+class IntradayDiscoveryLiquidityCapacity:
+    participation_rate: Decimal
+    signal_count: int
+    signal_session_count: int
+    minimum_round_lot_share_capacity: int
+    lower_median_round_lot_share_capacity: int
+    maximum_round_lot_share_capacity: int
+    zero_capacity_signal_count: int
+    one_lot_eligible_signal_count: int
+    one_lot_eligible_signal_ratio: Decimal
+
+
+@dataclass(frozen=True, slots=True)
 class IntradayFactorDiscoveryResult:
     candidate_count: int
     candidates: tuple[IntradayDiscoveryCandidate, ...]
@@ -481,6 +501,11 @@ class IntradayFactorDiscoveryResult:
     ]
     locked_test_execution_delay_stress_criteria: Mapping[str, bool]
     locked_test_execution_delay_stress_passed: bool
+    locked_test_liquidity_capacity_rows: tuple[
+        IntradayDiscoveryLiquidityCapacity, ...
+    ]
+    locked_test_liquidity_capacity_stress_criteria: Mapping[str, bool]
+    locked_test_liquidity_capacity_stress_passed: bool
     test_observation_count: int
     test_signal_count: int
     test_signal_session_count: int
@@ -748,6 +773,7 @@ def run_opening_triple_bullish_research(
                     ),
                     exit_at=exit_bar.timestamp,
                     signal_close=signal_bar.close,
+                    signal_bar_volume=signal_bar.volume,
                     entry_price=entry_bar.open,
                     entry_delay_prices=(
                         entry_delay_bars[0].open,
@@ -1895,6 +1921,84 @@ def _execution_delay_stress(
     return result, criteria
 
 
+def _liquidity_capacity_stress(
+    observations: list[IntradayFactorObservation],
+) -> tuple[
+    tuple[IntradayDiscoveryLiquidityCapacity, ...],
+    Mapping[str, bool],
+]:
+    signal_rows = [row for row in observations if row.signal]
+    signal_count = len(signal_rows)
+    signal_session_count = len({row.trading_day for row in signal_rows})
+    rows: list[IntradayDiscoveryLiquidityCapacity] = []
+    for participation_rate in _DISCOVERY_LIQUIDITY_PARTICIPATION_RATES:
+        capacities = sorted(
+            floor(row.signal_bar_volume * participation_rate)
+            // _A_SHARE_ORDER_LOT_SIZE
+            * _A_SHARE_ORDER_LOT_SIZE
+            for row in signal_rows
+        )
+        one_lot_eligible_signal_count = sum(
+            capacity >= _A_SHARE_ORDER_LOT_SIZE for capacity in capacities
+        )
+        rows.append(
+            IntradayDiscoveryLiquidityCapacity(
+                participation_rate=participation_rate,
+                signal_count=signal_count,
+                signal_session_count=signal_session_count,
+                minimum_round_lot_share_capacity=(
+                    capacities[0] if capacities else 0
+                ),
+                lower_median_round_lot_share_capacity=(
+                    capacities[(len(capacities) - 1) // 2]
+                    if capacities
+                    else 0
+                ),
+                maximum_round_lot_share_capacity=(
+                    capacities[-1] if capacities else 0
+                ),
+                zero_capacity_signal_count=sum(
+                    capacity == 0 for capacity in capacities
+                ),
+                one_lot_eligible_signal_count=(
+                    one_lot_eligible_signal_count
+                ),
+                one_lot_eligible_signal_ratio=(
+                    Decimal("0")
+                    if signal_count == 0
+                    else Decimal(one_lot_eligible_signal_count)
+                    / signal_count
+                ),
+            )
+        )
+    result = tuple(rows)
+    criteria = {
+        "three_predeclared_participation_rates_present": (
+            tuple(row.participation_rate for row in result)
+            == _DISCOVERY_LIQUIDITY_PARTICIPATION_RATES
+        ),
+        "all_capacity_uses_completed_signal_bar_volume": all(
+            row.signal_at < row.entry_at
+            and _china_time(row.signal_at) == _SIGNAL_TIME
+            and row.signal_bar_volume.is_finite()
+            and row.signal_bar_volume >= 0
+            for row in signal_rows
+        ),
+        "every_participation_row_preserves_locked_signal_identity": all(
+            row.signal_count == signal_count
+            and row.signal_session_count == signal_session_count
+            for row in result
+        ),
+        "every_locked_signal_supports_one_round_lot_at_1pct": (
+            bool(result)
+            and result[0].zero_capacity_signal_count == 0
+            and result[0].one_lot_eligible_signal_count == signal_count
+        ),
+        "exact_provider_rmb_amount_available": False,
+    }
+    return result, criteria
+
+
 def discover_opening_direction_rules(
     observations: tuple[IntradayFactorObservation, ...],
     *,
@@ -2333,6 +2437,10 @@ def discover_opening_direction_rules(
         list(test_days),
         cost_bps=cost_bps,
     )
+    (
+        locked_test_liquidity_capacity_rows,
+        locked_test_liquidity_capacity_stress_criteria,
+    ) = _liquidity_capacity_stress(test_rows)
     test_criteria = {
         "minimum_250_test_observations": len(test_rows) >= 250,
         "minimum_twenty_test_signals": test_signal_count >= 20,
@@ -2416,6 +2524,15 @@ def discover_opening_direction_rules(
         ),
         locked_test_execution_delay_stress_passed=all(
             locked_test_execution_delay_stress_criteria.values()
+        ),
+        locked_test_liquidity_capacity_rows=(
+            locked_test_liquidity_capacity_rows
+        ),
+        locked_test_liquidity_capacity_stress_criteria=(
+            locked_test_liquidity_capacity_stress_criteria
+        ),
+        locked_test_liquidity_capacity_stress_passed=all(
+            locked_test_liquidity_capacity_stress_criteria.values()
         ),
         test_observation_count=len(test_rows),
         test_signal_count=test_signal_count,

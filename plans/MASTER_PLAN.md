@@ -385,6 +385,16 @@ current 10:00 signal. Returns were -0.7402% after 12 negative prior sessions and
    consolidated eight-stage gate is 0/8 and cannot create PAPER, state or
    external-order authority.
 
+The locked winner now also has a causal share-capacity diagnostic. It uses only
+the completed 09:55-10:00 signal-Bar volume, whose BaoStock minute unit is
+shares, and applies fixed 1%/5%/10% participation rates before rounding down to
+100-share lots. At 1%, all 326 locked signals support at least one lot, with
+400/13,300/241,700-share minimum/lower-median/maximum capacity. The frozen
+dataset contains QFQ OHLCV but no provider-native amount, so adjusted
+price-times-volume is not reported as actual RMB capacity. That unavailable
+currency-capacity condition fails the new stage closed; rows cannot affect
+selection, and the consolidated no-reselection discovery gate is 0/9.
+
 The intraday factor workbench now turns the PAPER handoff into an explicit
 eight-gate read-only admission dossier. It binds the historical dataset identity,
 research and causal-backtest outcomes, immutable strategy registration, unseen

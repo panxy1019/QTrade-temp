@@ -868,6 +868,34 @@ export interface IntradayFactorDiscovery {
     criteria: Record<string, boolean>
     passed: boolean
   }
+  locked_test_liquidity_capacity_stress: {
+    selected_candidate_id: string
+    test_start: string
+    test_end: string
+    candidate_reselected: false
+    capacity_rows_used_for_selection: false
+    volume_source_bar_time: '10:00'
+    volume_source_interval: '09:55-10:00'
+    volume_source_bar_completed_before_entry: true
+    volume_unit: 'SHARES'
+    order_lot_size_shares: 100
+    source_amount_available: false
+    qfq_price_volume_used_as_actual_notional: false
+    rmb_notional_capacity_status: 'UNAVAILABLE_QFQ_OHLCV_WITHOUT_PROVIDER_AMOUNT'
+    rows: Array<{
+      participation_rate: string
+      signal_count: number
+      signal_session_count: number
+      minimum_round_lot_share_capacity: number
+      lower_median_round_lot_share_capacity: number
+      maximum_round_lot_share_capacity: number
+      zero_capacity_signal_count: number
+      one_lot_eligible_signal_count: number
+      one_lot_eligible_signal_ratio: string
+    }>
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   discovery_gate: {
     criteria: Record<string, boolean>
     passed: boolean

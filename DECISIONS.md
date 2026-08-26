@@ -1760,3 +1760,28 @@ those fixed unavailable gates remain false. The dossier is part of the existing
 read-only preview; it cannot register a strategy, initiate PAPER, change runtime
 mode, persist state or transmit an external order. LIVE remains separately
 disabled and requires explicit user authorization.
+
+## ADR-107 — Capacity uses the completed signal Bar and refuses synthetic RMB amount
+
+Status: accepted, 2026-08-27.
+
+A profitable factor can still be untradeable when the intended order consumes
+too much minute liquidity. Using the 10:05 entry Bar's realized volume would be
+future leakage because the factor is known at 10:00. QTrade therefore keeps the
+selected `DIR-XDU-T0000`, its 326 locked signals and 20 test sessions unchanged,
+and uses only the completed 09:55-10:00 Bar volume already known at signal time.
+BaoStock's minute-data contract defines `volume` as interval transaction
+quantity in shares. Capacity is predeclared at 1%, 5% and 10% participation and
+rounded down to the 100-share A-share order lot. No capacity row enters training,
+ranking, filtering or reselection.
+
+At 1% participation, the minimum, lower median and maximum capacity are 400,
+13,300 and 241,700 shares; all 326 signals support at least one lot. The 5% row
+is 2,000/66,700/1,208,900 shares and the 10% row is
+4,000/133,500/2,417,900 shares. These are share-capacity diagnostics only. The
+frozen source contains QFQ OHLCV and no provider-native `amount`; multiplying
+adjusted price by volume would not reconstruct actual traded RMB amount. QTrade
+therefore returns `UNAVAILABLE_QFQ_OHLCV_WITHOUT_PROVIDER_AMOUNT`, labels RMB
+capacity unavailable and fails that criterion closed. The consolidated viewed-
+history discovery gate becomes 0/9 and remains non-PIT, `NOT_ELIGIBLE`,
+stateless and external-order-disabled.

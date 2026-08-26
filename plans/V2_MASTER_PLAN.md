@@ -242,6 +242,11 @@ npm --prefix web run build
 - [x] Hold the locked signal identity fixed and stress causal execution at the
   10:05/10:10/10:15 source-Bar opens under one 5 bps cost; expose three negative
   returns and extend the no-reselection discovery gate to 0/8.
+- [x] Estimate causal share capacity for the unchanged locked signals from only
+  the completed 09:55-10:00 BaoStock volume at fixed 1%/5%/10% participation,
+  rounded down to 100-share lots; expose full coverage at 1% but fail closed on
+  actual RMB capacity because the QFQ OHLCV source lacks provider amount, and
+  extend the no-reselection discovery gate to 0/9.
 - [x] Expose a structured eight-gate PAPER admission dossier for each intraday
   factor run, separating failed research/backtest evidence from registration,
   unseen-forward, realtime, runtime-attestation and reconciliation blockers;

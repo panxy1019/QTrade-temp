@@ -110,6 +110,7 @@ const gateLabels: Record<string, string> = {
   locked_test_regime_stress_passed: '锁定测试信号前市场状态压力通过',
   locked_test_placebo_audit_passed: '锁定测试会话内置换安慰剂通过',
   locked_test_execution_delay_stress_passed: '锁定测试执行延迟压力通过',
+  locked_test_liquidity_capacity_stress_passed: '锁定测试流动性/容量压力通过',
   every_locked_test_sector_has_signal: '每个测试行业均有信号',
   positive_locked_test_sector_ratio_at_least_0_60: '至少 60% 测试行业收益为正',
   positive_leave_one_sector_out_ratio_at_least_0_80: '至少 80% 整行业剔除收益为正',
@@ -128,6 +129,11 @@ const gateLabels: Record<string, string> = {
   placebo_preserves_every_session_signal_count: '每次置换保留每个测试日的信号数',
   observed_conditional_excess_positive: '实际条件超额为正',
   empirical_one_sided_placebo_p_value_at_most_0_05: '单侧置换 p 值不高于 0.05',
+  three_predeclared_participation_rates_present: '固定 1% / 5% / 10% 三档参与率齐全',
+  all_capacity_uses_completed_signal_bar_volume: '容量只使用入场前已完成的信号 Bar 成交量',
+  every_participation_row_preserves_locked_signal_identity: '每档容量均保留锁定测试信号身份',
+  every_locked_signal_supports_one_round_lot_at_1pct: '每个锁定信号在 1% 参与率下至少支持一手',
+  exact_provider_rmb_amount_available: '供应商原始人民币成交额可用',
   observed_conditional_excess_above_placebo_p95: '实际条件超额高于安慰剂第 95 百分位',
   three_predeclared_execution_delays_present: '10:05/10:10/10:15 三档执行时点完整',
   every_execution_delay_preserves_locked_signal_identity: '每档延迟保持锁定信号身份与数量',
@@ -756,6 +762,39 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           ]} />
           <Alert
             showIcon
+            type={discoveryResult.locked_test_liquidity_capacity_stress.passed ? 'success' : 'warning'}
+            title={discoveryResult.locked_test_liquidity_capacity_stress.passed ? '锁定规则通过流动性/容量压力门' : '锁定规则股数容量可复算，但人民币容量不可用'}
+            description={`固定 ${discoveryResult.locked_test_liquidity_capacity_stress.selected_candidate_id}、测试日和信号归属，只使用入场前已完成的 ${discoveryResult.locked_test_liquidity_capacity_stress.volume_source_interval} 源 Bar 成交量。BaoStock 分钟 volume 单位为股，三档参与率容量均按 ${discoveryResult.locked_test_liquidity_capacity_stress.order_lot_size_shares} 股整手向下取整；冻结数据缺少供应商原始成交额且价格为前复权，不使用价格×成交量冒充实际人民币容量。容量行不参与选择或重选。`}
+          />
+          <div className="description-grid">
+            <Metric label="成交量源区间" value={discoveryResult.locked_test_liquidity_capacity_stress.volume_source_interval} />
+            <Metric label="1% 最小容量" value={`${Number(discoveryResult.locked_test_liquidity_capacity_stress.rows[0].minimum_round_lot_share_capacity).toLocaleString('zh-CN')} 股`} />
+            <Metric label="1% 下中位容量" value={`${Number(discoveryResult.locked_test_liquidity_capacity_stress.rows[0].lower_median_round_lot_share_capacity).toLocaleString('zh-CN')} 股 · 1%`} />
+            <Metric label="1% 一手覆盖" value={`${discoveryResult.locked_test_liquidity_capacity_stress.rows[0].one_lot_eligible_signal_count}/${discoveryResult.locked_test_liquidity_capacity_stress.rows[0].signal_count} · ${formatPercent(discoveryResult.locked_test_liquidity_capacity_stress.rows[0].one_lot_eligible_signal_ratio)}`} />
+            <Metric label="人民币容量" value="人民币容量不可用" />
+          </div>
+          <Table
+            rowKey="participation_rate"
+            size="small"
+            pagination={false}
+            dataSource={discoveryResult.locked_test_liquidity_capacity_stress.rows}
+            columns={[
+              { title: '固定参与率', dataIndex: 'participation_rate', render: (value: string) => formatPercent(value) },
+              { title: '信号 / 信号日', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_liquidity_capacity_stress']['rows'][number]) => `${row.signal_count} / ${row.signal_session_count}` },
+              { title: '最小容量', dataIndex: 'minimum_round_lot_share_capacity', render: (value: number) => `${Number(value).toLocaleString('zh-CN')} 股` },
+              { title: '下中位容量', dataIndex: 'lower_median_round_lot_share_capacity', render: (value: number) => `${Number(value).toLocaleString('zh-CN')} 股` },
+              { title: '最大容量', dataIndex: 'maximum_round_lot_share_capacity', render: (value: number) => `${Number(value).toLocaleString('zh-CN')} 股` },
+              { title: '零容量信号', dataIndex: 'zero_capacity_signal_count' },
+              { title: '至少一手覆盖', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_liquidity_capacity_stress']['rows'][number]) => `${row.one_lot_eligible_signal_count}/${row.signal_count} · ${formatPercent(row.one_lot_eligible_signal_ratio)}` },
+            ]}
+            scroll={{ x: 1000 }}
+          />
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.locked_test_liquidity_capacity_stress.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '锁定测试容量门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
+          <Alert
+            showIcon
             type={discoveryResult.overfitting_audit.passed ? 'info' : 'warning'}
             title={discoveryResult.overfitting_audit.passed && !discoveryResult.test_validation.passed
               ? 'CSCV 选择偏差门通过，但时间顺序锁定测试仍失败'
@@ -813,7 +852,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             showIcon
             type={discoveryResult.discovery_gate.passed ? 'success' : 'error'}
             title={discoveryResult.discovery_gate.passed ? '完整因子发现研究门通过，但仍需独立前向证据' : '完整因子发现研究门未通过'}
-            description="时间顺序锁定测试、组合式选择偏差、固定成本压力、多行业压力、逐股票压力、信号前市场状态压力、会话内置换安慰剂和执行延迟压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
+            description="时间顺序锁定测试、组合式选择偏差、固定成本压力、多行业压力、逐股票压力、信号前市场状态压力、会话内置换安慰剂、执行延迟压力和流动性/容量压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
           />
           <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.discovery_gate.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
             { title: '完整发现门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },

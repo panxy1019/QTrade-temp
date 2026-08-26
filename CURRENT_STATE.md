@@ -376,6 +376,18 @@ Last updated: 2026-08-27
   signal-identity gates passed, while all-delay positive total and excess gates
   failed. Delay rows cannot change factor selection. The consolidated historical
   discovery gate is now 0/8, with no PAPER/LIVE, state or order authority.
+- Locked-test share-liquidity/capacity stress now holds the same candidate,
+  326 signal identities and 20 test sessions fixed while reading only the
+  completed 09:55-10:00 source Bar volume known at the 10:00 signal. BaoStock's
+  minute contract defines volume in shares, so fixed 1%/5%/10% participation
+  rates are rounded down to 100-share A-share lots without using any future
+  entry-Bar volume. At 1%, the minimum/lower-median/maximum capacities are
+  400/13,300/241,700 shares and all 326 signals support at least one lot. The
+  frozen QFQ OHLCV dataset has no provider-native amount field, so the system
+  refuses to present adjusted price times volume as actual RMB capacity and the
+  capacity stage fails closed. Capacity rows cannot reselect the rule or enter
+  training. The consolidated historical discovery gate is 0/9 and retains no
+  PAPER/LIVE, state-mutation or external-order authority.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,
