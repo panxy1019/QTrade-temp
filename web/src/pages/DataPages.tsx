@@ -1,7 +1,7 @@
 ﻿import { Alert, Button, Card, Empty, Input, Popconfirm, Select, Space, Table, Tabs, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useRef, useState } from 'react'
-import type { HistoricalBarSeries, MinuteBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
+import type { HistoricalBarSeries, IntradayDirectionalBreadth, MinuteBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
 import { StatusTag } from '../components/StatusTag'
 import { BacktestLab } from '../components/BacktestLab'
 import { EquityChart } from '../charts/EquityChart'
@@ -14,6 +14,7 @@ import { loadFiveMinuteBarSeries, loadHistoricalBarSeries, loadLongFiveMinuteBar
 import { cancelPaperOrder, controlRuntime, prometheusMetricsUrl } from '../api/client'
 import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
+import { formatBasisPoints, formatDirectionalDelta } from '../research/intradayDirectional'
 
 const waiting = <Alert showIcon type="info" title="等待实时数据授权" description="适配器与回放链路已准备；当前未配置任何供应商令牌或真实连接。" />
 const minuteReasonLabels: Record<string, string> = {
@@ -49,6 +50,14 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const directionalBreadth = breadth?.directional_breadth
   const continuity = data?.intradayContinuity
   const latestContinuity = continuity?.checkpoints.at(-1)
+  const previousDirectionalBySequence = new Map<number, IntradayDirectionalBreadth>()
+  let previousDirectional: IntradayDirectionalBreadth | undefined
+  for (const checkpoint of continuity?.checkpoints ?? []) {
+    const currentDirectional = checkpoint.breadth.directional_breadth
+    if (!currentDirectional) continue
+    if (previousDirectional) previousDirectionalBySequence.set(checkpoint.sequence, previousDirectional)
+    previousDirectional = currentDirectional
+  }
   const [activeMarketTab, setActiveMarketTab] = useState('daily')
   const [query, setQuery] = useState('')
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
@@ -269,6 +278,7 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     { title: '75 股票共同分钟', render: (_: unknown, row: NonNullable<typeof latestContinuity>) => `${row.breadth.synchronized_finalized_timestamp_count} · ${row.breadth.latest_synchronized_finalized_timestamp ? formatChinaMinuteTimestamp(row.breadth.latest_synchronized_finalized_timestamp) : '尚无'}` },
     { title: '相对开盘', render: (_: unknown, row: NonNullable<typeof latestContinuity>) => row.breadth.directional_breadth ? `${row.breadth.directional_breadth.above_open_count}/${row.breadth.directional_breadth.eligible_symbol_count} · ${formatPercent(row.breadth.directional_breadth.equal_weight_session_return ?? undefined)}` : '未记录' },
     { title: '最新分钟', render: (_: unknown, row: NonNullable<typeof latestContinuity>) => row.breadth.directional_breadth ? `${row.breadth.directional_breadth.latest_minute_up_count}/${row.breadth.directional_breadth.latest_minute_eligible_symbol_count} · ${formatBasisPoints(row.breadth.directional_breadth.equal_weight_latest_minute_return ?? undefined)}` : '未记录' },
+    { title: '相对上一方向点', render: (_: unknown, row: NonNullable<typeof latestContinuity>) => formatDirectionalDelta(row.breadth.directional_breadth, previousDirectionalBySequence.get(row.sequence)) },
     { title: '相对前次', dataIndex: 'monotonic_vs_previous', render: (value: boolean) => <Tag color={value ? 'green' : 'red'}>{value ? '单调推进' : '检测到回退'}</Tag> },
   ]
   return <Page title="行情中心" subtitle="校验通过的历史日线、1 分钟与原生 5 分钟分时线">
@@ -1021,13 +1031,6 @@ function renderSignedReturn(value: string | null) {
   const parsed = Number(value)
   if (!Number.isFinite(parsed)) return '—'
   return <Tag color={parsed > 0 ? 'red' : parsed < 0 ? 'green' : 'default'}>{formatPercent(value)}</Tag>
-}
-
-function formatBasisPoints(value?: string) {
-  const parsed = Number(value)
-  if (!Number.isFinite(parsed)) return '—'
-  const basisPoints = parsed * 10_000
-  return `${basisPoints > 0 ? '+' : ''}${basisPoints.toFixed(2)} bp`
 }
 
 function renderSignedBasisPoints(value: string | null) {

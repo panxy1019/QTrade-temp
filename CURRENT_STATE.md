@@ -28,7 +28,7 @@ Last updated: 2026-08-26
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 354 tests passed, Ruff clean, strict mypy clean across
   the 97-package source baseline plus the breadth and continuity scripts on Python 3.12.13
-  (macOS, 2026-08-26); 46 frontend Vitest
+  (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 426.90 KB with no large-chunk warning.
@@ -143,7 +143,9 @@ Last updated: 2026-08-26
   intraday reports now use flushed, `fsync`-backed atomic publication, preventing
   a crash from exposing a partially written signed snapshot. Latest-minute
   returns render in signed basis points so small causal moves are not rounded to
-  a misleading `0.00%`.
+  a misleading `0.00%`. Each direction checkpoint also displays its change in
+  above-open participation and equal-weight session basis points versus the prior
+  direction-bearing checkpoint; this remains observation-only.
 - Long native-5-minute falsification: the optional BaoStock 0.9.3 ingest produced
   a signed 1,324,800-bar dataset for the frozen 75-stock/15-sector universe over
   368 common complete sessions. The predeclared expanding study used 120 initial

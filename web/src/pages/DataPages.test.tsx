@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { describe, expect, it, vi } from 'vitest'
 import type { BacktestPreview, PlatformSnapshot } from '../types'
 import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview } from '../api/client'
+import { formatDirectionalDelta } from '../research/intradayDirectional'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
@@ -735,6 +736,15 @@ describe('persistent PAPER account pages', () => {
 })
 
 describe('verified historical data pages', () => {
+  it('formats directional checkpoint changes without hiding their sign', () => {
+    const previous = data.intradayContinuity.checkpoints[0].breadth.directional_breadth
+    expect(previous).toBeDefined()
+    if (!previous) throw new Error('directional fixture is missing')
+    const current = { ...previous, above_open_count: 42, equal_weight_session_return: '0.000001' }
+    expect(formatDirectionalDelta(current, previous)).toBe('-3 股 · -11.99 bp')
+    expect(formatDirectionalDelta(previous)).toBe('首次记录')
+  })
+
   it('shows verified history without claiming realtime readiness', async () => {
     render(<MarketPage data={data} />)
     expect(screen.getByText('正在加载已验证历史 K 线…')).toBeInTheDocument()

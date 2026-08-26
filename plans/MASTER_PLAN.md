@@ -265,6 +265,8 @@ explicit first sequence without rewriting older checkpoint hashes, so subsequent
 refreshes can be compared as a signed intraday time series.
 Latest-minute values use signed basis points in the browser to preserve the
 direction of sub-basis-percent moves that two-decimal percentages would hide.
+The continuity table derives a signed participation/return delta from adjacent
+direction-bearing checkpoints without adding a strategy or persistence path.
 
 The backtest analytics surface now validates the Buy-and-Hold record/result and
 curve artifacts independently from the exploratory leader, requires exact
