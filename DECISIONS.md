@@ -1234,3 +1234,18 @@ integers. Pending decision/signal timestamps and the last finalized bar require
 timezone-aware values with decision time no earlier than its signal bar, and an
 inflight order identity must remain a non-empty string. Invalid recovery state
 fails before the runner can consume another Tick.
+
+## ADR-083 — Durable PAPER accounts restore exact finite economics
+
+Status: accepted, 2026-08-26.
+
+The SQLite account snapshot is an economic source of truth after process
+restart. Silently skipping malformed positions or accepting `NaN` cash and a
+boolean position quantity could produce a coherent-looking but false local
+account before reconciliation.
+
+Recovery now requires a positions mapping with named object rows, exact
+non-boolean non-negative integer quantities, finite non-negative cash and
+average cost, and finite realized PnL. Any malformed row rejects construction of
+the PAPER/SHADOW bundle. A successfully restored account remains HALTED and still
+requires the existing reconciliation flow before runtime start.

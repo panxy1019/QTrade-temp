@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 412 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 414 tests passed, Ruff clean, strict mypy clean across
   97 checked source files on Python 3.12.13
   (macOS, 2026-08-26); 51 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -128,6 +128,9 @@ Last updated: 2026-08-26
   PAPER/SHADOW state is restored. The later-Tick execution checkpoint applies
   the same exact-type boundary to pending quantities and ingest ordinals, and
   requires timezone-aware causal signal/decision timestamps before recovery.
+  Durable account recovery also rejects non-finite cash/PnL, boolean quantities
+  and malformed position rows; valid recovery remains HALTED until explicit
+  reconciliation.
 - Intraday breadth evidence: a separate signed Sina point-in-time probe covers
   all 75 frozen stocks across 15 sectors with five stocks per sector. It records
   each stock's finalized same-day timestamp set, request timing, latest-bar age,

@@ -33,6 +33,22 @@ from qtrade.service import TradingService
 _CHINA_ZONE = ZoneInfo("Asia/Shanghai")
 
 
+def _restored_decimal(value: object, field: str, *, minimum: Decimal | None = None) -> Decimal:
+    try:
+        restored = Decimal(str(value))
+    except (ArithmeticError, ValueError) as error:
+        raise ValueError(f"durable {field} is invalid") from error
+    if not restored.is_finite() or minimum is not None and restored < minimum:
+        raise ValueError(f"durable {field} is invalid")
+    return restored
+
+
+def _restored_nonnegative_int(value: object, field: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(f"durable {field} is invalid")
+    return value
+
+
 @dataclass(slots=True)
 class PaperRuntimeBundle:
     runtime: PlatformRuntime
@@ -190,17 +206,29 @@ def build_paper_runtime(
 
     restored = journal.load_state("account")
     if restored is not None:
-        ledger.account.cash = Decimal(str(restored["cash"]))
-        raw_positions = restored.get("positions", {})
-        if isinstance(raw_positions, dict):
-            for symbol, raw in raw_positions.items():
-                if isinstance(raw, dict):
-                    ledger.account.positions[str(symbol)] = Position(
-                        symbol=str(symbol),
-                        quantity=int(raw["quantity"]),
-                        average_cost=Decimal(str(raw["average_cost"])),
-                        realized_pnl=Decimal(str(raw["realized_pnl"])),
-                    )
+        ledger.account.cash = _restored_decimal(
+            restored.get("cash"), "account cash", minimum=Decimal("0")
+        )
+        raw_positions = restored.get("positions")
+        if not isinstance(raw_positions, dict):
+            raise ValueError("durable account positions are invalid")
+        for symbol, raw in raw_positions.items():
+            if not isinstance(symbol, str) or not symbol or not isinstance(raw, dict):
+                raise ValueError("durable account position is invalid")
+            ledger.account.positions[symbol] = Position(
+                symbol=symbol,
+                quantity=_restored_nonnegative_int(
+                    raw.get("quantity"), "position quantity"
+                ),
+                average_cost=_restored_decimal(
+                    raw.get("average_cost"),
+                    "position average cost",
+                    minimum=Decimal("0"),
+                ),
+                realized_pnl=_restored_decimal(
+                    raw.get("realized_pnl"), "position realized PnL"
+                ),
+            )
         risk.set_state(
             KillState.HALTED,
             actor="restart-recovery",

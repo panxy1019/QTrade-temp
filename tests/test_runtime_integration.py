@@ -101,6 +101,33 @@ def test_restart_restores_account_and_stays_halted_for_reconciliation(tmp_path):
         restarted.runtime.start(actor="operator")
 
 
+@pytest.mark.parametrize(
+    ("account", "message"),
+    (
+        (
+            {
+                "cash": "100000",
+                "positions": {
+                    "510300": {
+                        "quantity": True,
+                        "average_cost": "10",
+                        "realized_pnl": "0",
+                    }
+                },
+            },
+            "position quantity",
+        ),
+        ({"cash": "NaN", "positions": {}}, "account cash"),
+    ),
+)
+def test_restart_rejects_malformed_account_state(tmp_path, account, message):
+    first = build(tmp_path)
+    first.journal.save_state("account", account)
+
+    with pytest.raises(ValueError, match=message):
+        build(tmp_path)
+
+
 def test_restart_restores_open_order_and_reservation(tmp_path):
     first = build(tmp_path)
     attest(first)
