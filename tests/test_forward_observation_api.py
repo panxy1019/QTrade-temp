@@ -147,3 +147,46 @@ def test_forward_observation_endpoint_verifies_empty_evaluator_report(
         "/forward-observation"
     ).json()
     assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+
+
+def test_forward_observation_endpoint_rejects_resigned_wrong_warmup_checksum(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _empty_forward_report(preregistration)
+    report["warmup_dataset"]["checksum"] = "0" * 64
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert rejected["future_session_count"] == 0
+
+
+def test_forward_observation_endpoint_rejects_boolean_session_counts(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _empty_forward_report(preregistration)
+    report["accepted_future_session_count"] = False
+    report["evaluated_future_session_count"] = False
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert rejected["future_session_count"] == 0

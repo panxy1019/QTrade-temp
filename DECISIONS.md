@@ -635,3 +635,19 @@ The latest checkpoint must still equal the separately verified current detail
 and breadth reports. This chain supports observable intraday comparison only; it
 does not create a strategy feature, parameter update, PAPER decision, realtime
 entitlement or external order path.
+
+## ADR-041 — Forward reports inherit the exact preregistered warmup identity
+
+Status: accepted, 2026-08-26.
+
+A signed forward-observation report is valid only when its warmup data version,
+checksum, session count and warmup-metric exclusion flag exactly equal the
+already verified preregistration. Merely supplying a syntactically valid SHA-256
+is insufficient because it would detach the result from the causal state used
+by the locked policy.
+
+All future-session count fields must also be genuine integers rather than
+booleans, despite Python's `bool` subclassing `int`. A mismatch fails the report
+closed and leaves the independently verified preregistration state visible; it
+cannot advance the public count or grant strategy, PAPER, realtime or order
+authority.

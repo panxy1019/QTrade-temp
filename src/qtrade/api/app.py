@@ -5010,6 +5010,12 @@ def _load_verified_forward_preregistration(
             "policy_id": policy_id,
             "policy_hash": candidate["policy_hash"],
             "parameters": candidate["policy"],
+            "warmup_dataset": {
+                "data_version": warmup["data_version"],
+                "checksum": warmup["checksum"],
+                "session_count": warmup["session_count"],
+                "warmup_returns_enter_metrics": False,
+            },
             "first_eligible_trading_day": collection["first_eligible_trading_day"],
             "future_session_count": 0,
             "minimum_complete_future_sessions": collection[
@@ -5075,6 +5081,7 @@ def _load_verified_forward_observation_report(
         causal = report.get("causal_contract")
         accepted = report.get("accepted_future_session_count")
         evaluated = report.get("evaluated_future_session_count")
+        future_count = report.get("future_session_count")
         minimum = preregistration.get("minimum_complete_future_sessions")
         if (
             not _is_sha256(digest)
@@ -5091,16 +5098,16 @@ def _load_verified_forward_observation_report(
             or report.get("policy_hash") != preregistration.get("policy_hash")
             or report.get("policy") != preregistration.get("parameters")
             or not isinstance(warmup, dict)
-            or warmup.get("data_version")
-            != "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1"
-            or not _is_sha256(warmup.get("checksum"))
-            or warmup.get("session_count") != 368
-            or warmup.get("warmup_returns_enter_metrics") is not False
+            or warmup != preregistration.get("warmup_dataset")
             or not isinstance(accepted, int)
+            or isinstance(accepted, bool)
             or accepted < 0
             or not isinstance(evaluated, int)
+            or isinstance(evaluated, bool)
             or evaluated != min(accepted, 20)
-            or report.get("future_session_count") != accepted
+            or not isinstance(future_count, int)
+            or isinstance(future_count, bool)
+            or future_count != accepted
             or minimum != 20
             or report.get("minimum_complete_future_sessions") != minimum
             or not isinstance(sessions, list)

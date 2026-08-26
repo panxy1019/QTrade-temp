@@ -524,7 +524,11 @@ Last updated: 2026-08-26
   changed. A separate publisher now accepts only a fully verified candidate
   that strictly appends complete sessions to the already public sequence. It
   rejects historical rewrites, frozen-lock changes and stale generation times,
-  then atomically replaces and re-verifies the deployment report.
+  then atomically replaces and re-verifies the deployment report. The public
+  verifier also requires the report's complete warmup identity to equal the
+  preregistered data version/checksum/session contract and explicitly rejects
+  Python booleans masquerading as integer session counts; a resigned mismatch
+  falls back to the independently verified `0/20` lock rather than rendering.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator

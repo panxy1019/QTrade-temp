@@ -313,7 +313,10 @@ step reruns the same dataset, development-lock, preregistration and report
 validators used by the public API; requires at least one newly appended complete
 session; rejects any rewritten historical session, lock change or non-monotonic
 generation time; then uses an atomic file replacement and verifies the published
-digest again.
+digest again. The validator requires the report's warmup data version, checksum,
+session count and metric-exclusion flag to equal the preregistered identity, and
+rejects booleans in every integer session-count field even though Python normally
+treats them as integers.
 
 For a bounded same-day observation, the following probe selects one stock from
 each of the 15 frozen sectors and keeps only bars older than a conservative
