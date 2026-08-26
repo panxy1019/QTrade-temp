@@ -131,6 +131,16 @@ def test_daily_target_is_causal_immutable_and_restartable() -> None:
     )
 
 
+def test_daily_target_restore_rejects_boolean_quantity() -> None:
+    store = MemoryStateStore()
+    book = CausalDailyTargetBook(state_store=store)
+    book.publish(published_target(known_at=datetime(2026, 8, 11, 7, tzinfo=UTC)))
+    store.values["minute_overlay:daily_targets:v1"]["targets"][0]["quantity"] = True  # type: ignore[index]
+
+    with pytest.raises(ValueError, match="row is malformed"):
+        CausalDailyTargetBook(state_store=store)
+
+
 def test_minute_overlay_warms_up_only_reduces_and_holds_recovery_cooldown() -> None:
     book = CausalDailyTargetBook()
     book.publish(published_target(known_at=datetime(2026, 8, 11, 7, tzinfo=UTC)))
@@ -192,6 +202,35 @@ def test_drawdown_kills_target_and_overlay_state_survives_restart() -> None:
     with pytest.raises(ValueError, match="strictly chronological"):
         restored.on_bar(bar(33, "9.4"), 0)
     assert restored.on_bar(bar(34, "9.5"), 0) == 0
+
+
+def test_minute_overlay_restore_rejects_string_ready_state() -> None:
+    store = MemoryStateStore()
+    targets = CausalDailyTargetBook(state_store=store)
+    targets.publish(published_target(known_at=datetime(2026, 8, 11, 7, tzinfo=UTC)))
+    strategy = MinuteRiskOverlayStrategy(
+        symbol="510300",
+        lot_size=100,
+        overlay_id="malformed-overlay-v1",
+        targets=targets,
+        policy=policy(),
+        state_store=store,
+    )
+    strategy.on_bar(bar(30, "10"), 0)
+    state_key = next(key for key in store.values if key.startswith("minute_overlay:strategy:"))
+    snapshot = store.values[state_key]["snapshot"]
+    assert isinstance(snapshot, dict)
+    snapshot["ready"] = "false"
+
+    with pytest.raises(ValueError, match="snapshot"):
+        MinuteRiskOverlayStrategy(
+            symbol="510300",
+            lot_size=100,
+            overlay_id="malformed-overlay-v1",
+            targets=targets,
+            policy=policy(),
+            state_store=store,
+        )
 
 
 def test_minute_overlay_monitor_requires_provider_and_all_symbols_ready() -> None:

@@ -1204,3 +1204,18 @@ selects the existing fail-closed placeholder and records a stable partition
 failure; healthy siblings remain visible. The same failure map drives the one
 bounded initial retry. No missing evidence is promoted and no server mutation or
 trading authority is introduced.
+
+## ADR-081 — Minute runtime checkpoints reject lossy JSON coercion
+
+Status: accepted, 2026-08-26.
+
+Python converts JSON `true` to integer `1` and any non-empty string to boolean
+`True`. Applying those conversions before domain validation could therefore
+restore a damaged daily target quantity or minute readiness flag as a different,
+apparently valid PAPER/SHADOW state.
+
+Daily-target quantities, overlay cooldown counters, snapshot quantities and the
+snapshot readiness flag now require their exact JSON primitive types before
+object construction. Existing range and reduction-only validation then runs on
+the uncoerced values. Malformed checkpoints fail during restart; they cannot
+silently modify a target or authorize any execution path.

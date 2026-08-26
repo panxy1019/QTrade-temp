@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 409 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 411 tests passed, Ruff clean, strict mypy clean across
   97 checked source files on Python 3.12.13
   (macOS, 2026-08-26); 51 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -122,6 +122,10 @@ Last updated: 2026-08-26
   the fixed no-external-order boundary. With no authorized RQData/XtData client,
   it reports `UNCONFIGURED`, `NOT_ELIGIBLE` and zero ready symbols rather than
   treating historical AKShare data as a live feed.
+  Restart recovery now rejects lossy JSON type coercion in durable daily-target
+  and minute-overlay checkpoints: booleans cannot become quantities and strings
+  cannot become readiness flags. A malformed checkpoint fails closed before any
+  PAPER/SHADOW state is restored.
 - Intraday breadth evidence: a separate signed Sina point-in-time probe covers
   all 75 frozen stocks across 15 sectors with five stocks per sector. It records
   each stock's finalized same-day timestamp set, request timing, latest-bar age,

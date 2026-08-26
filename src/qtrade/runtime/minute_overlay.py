@@ -104,12 +104,18 @@ class CausalDailyTargetBook:
         if value.get("schema_version") != 1 or not isinstance(raw_targets, list):
             raise ValueError("daily target checkpoint is malformed")
         for raw in raw_targets:
-            if not isinstance(raw, dict):
+            if (
+                not isinstance(raw, dict)
+                or isinstance(raw.get("quantity"), bool)
+                or not isinstance(raw.get("quantity"), int)
+            ):
                 raise ValueError("daily target checkpoint row is malformed")
+            quantity = raw["quantity"]
+            assert isinstance(quantity, int)
             target = DailyTarget(
                 symbol=str(raw["symbol"]),
                 trading_day=date.fromisoformat(str(raw["trading_day"])),
-                quantity=int(raw["quantity"]),
+                quantity=quantity,
                 strategy_version=str(raw["strategy_version"]),
                 strategy_spec_hash=str(raw["strategy_spec_hash"]),
                 known_at=datetime.fromisoformat(str(raw["known_at"])),
@@ -419,34 +425,52 @@ class MinuteRiskOverlayStrategy:
         raw_peak = value.get("session_peak")
         self._session_peak = None if raw_peak is None else Decimal(str(raw_peak))
         self._multiplier = Decimal(str(value["multiplier"]))
-        self._cooldown_remaining = int(str(value["cooldown_remaining"]))
+        raw_cooldown = value["cooldown_remaining"]
+        if (
+            isinstance(raw_cooldown, bool)
+            or not isinstance(raw_cooldown, int)
+            or raw_cooldown < 0
+        ):
+            raise ValueError("minute overlay checkpoint cooldown is malformed")
+        self._cooldown_remaining = raw_cooldown
         raw_snapshot = value.get("snapshot")
         if isinstance(raw_snapshot, dict):
             volatility = raw_snapshot.get("minute_volatility")
             strategy_version = raw_snapshot.get("strategy_version")
             reasons = raw_snapshot.get("reasons")
-            if not isinstance(reasons, list):
-                raise ValueError("minute overlay checkpoint reasons are malformed")
+            ready = raw_snapshot.get("ready")
+            base_quantity = raw_snapshot.get("base_target_quantity")
+            corrected_quantity = raw_snapshot.get("corrected_target_quantity")
+            snapshot_cooldown = raw_snapshot.get("cooldown_bars_remaining")
+            if (
+                type(ready) is not bool
+                or any(
+                    isinstance(item, bool) or not isinstance(item, int)
+                    for item in (base_quantity, corrected_quantity, snapshot_cooldown)
+                )
+                or not isinstance(reasons, list)
+            ):
+                raise ValueError("minute overlay checkpoint snapshot is malformed")
+            assert isinstance(ready, bool)
+            assert isinstance(base_quantity, int)
+            assert isinstance(corrected_quantity, int)
+            assert isinstance(snapshot_cooldown, int)
             self._snapshot = MinuteOverlaySnapshot(
                 symbol=str(raw_snapshot["symbol"]),
-                ready=bool(raw_snapshot["ready"]),
+                ready=ready,
                 trading_day=date.fromisoformat(str(raw_snapshot["trading_day"])),
                 last_bar_timestamp=datetime.fromisoformat(
                     str(raw_snapshot["last_bar_timestamp"])
                 ),
-                base_target_quantity=int(raw_snapshot["base_target_quantity"]),
-                corrected_target_quantity=int(
-                    raw_snapshot["corrected_target_quantity"]
-                ),
+                base_target_quantity=base_quantity,
+                corrected_target_quantity=corrected_quantity,
                 multiplier=Decimal(str(raw_snapshot["multiplier"])),
                 reasons=tuple(str(item) for item in reasons),
                 minute_volatility=(
                     None if volatility is None else Decimal(str(volatility))
                 ),
                 intraday_drawdown=Decimal(str(raw_snapshot["intraday_drawdown"])),
-                cooldown_bars_remaining=int(
-                    raw_snapshot["cooldown_bars_remaining"]
-                ),
+                cooldown_bars_remaining=snapshot_cooldown,
                 strategy_version=(
                     None if strategy_version is None else str(strategy_version)
                 ),
