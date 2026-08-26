@@ -33,7 +33,10 @@ _SHANGHAI = ZoneInfo("Asia/Shanghai")
 
 
 def _valid_source_session_metadata(
-    report: dict[str, object], candidate: dict[str, object]
+    report: dict[str, object],
+    candidate: dict[str, object],
+    *,
+    validation_time: datetime,
 ) -> bool:
     manifest = report.get("manifest")
     provider_version = report.get("provider_version")
@@ -65,6 +68,7 @@ def _valid_source_session_metadata(
             or collected_china.time() >= time(15, 10)
         )
         and ingestion_time <= collected_at <= candidate_generated_at
+        and candidate_generated_at <= validation_time
         and manifest.get("data_version")
         == f"baostock-forward-{target_day.isoformat()}-qfq-v1"
         and manifest.get("source")
@@ -92,8 +96,14 @@ def _valid_source_session_metadata(
 
 
 def validate_source_sessions(
-    candidate: dict[str, object], source_reports: list[dict[str, object]]
+    candidate: dict[str, object],
+    source_reports: list[dict[str, object]],
+    *,
+    validation_time: datetime | None = None,
 ) -> None:
+    checked_at = validation_time or datetime.now(_SHANGHAI)
+    if checked_at.tzinfo is None:
+        raise ValueError("forward source validation time must be timezone-aware")
     expected = [
         {
             "target_day": report.get("target_day"),
@@ -107,7 +117,11 @@ def validate_source_sessions(
         candidate.get("accepted_future_session_count") != len(source_reports)
         or candidate.get("future_sessions") != expected
         or not all(
-            _valid_source_session_metadata(report, candidate)
+            _valid_source_session_metadata(
+                report,
+                candidate,
+                validation_time=checked_at,
+            )
             for report in source_reports
         )
     ):

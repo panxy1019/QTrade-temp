@@ -4,6 +4,7 @@ import json
 import os
 import stat
 from copy import deepcopy
+from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
 from typing import Any, cast
@@ -154,36 +155,44 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
             "external_order_transmission": False,
         }
     ]
+    validation_time = datetime.fromisoformat("2026-09-01T17:00:00+08:00")
 
-    validate_source_sessions(candidate, source_reports)
+    def validate(candidate_value: dict[str, object]) -> None:
+        validate_source_sessions(
+            candidate_value,
+            source_reports,
+            validation_time=validation_time,
+        )
+
+    validate(candidate)
 
     source_reports[0]["evidence_sha256"] = "2" * 64
     with pytest.raises(ValueError, match="source sessions"):
-        validate_source_sessions(candidate, source_reports)
+        validate(candidate)
 
     source_reports[0]["evidence_sha256"] = "1" * 64
     source_reports[0]["anchor_day"] = "2026-08-24"
     with pytest.raises(ValueError, match="source sessions"):
-        validate_source_sessions(candidate, source_reports)
+        validate(candidate)
 
     source_reports[0]["anchor_day"] = "2026-08-25"
     source_reports[0]["external_order_transmission"] = True
     with pytest.raises(ValueError, match="source sessions"):
-        validate_source_sessions(candidate, source_reports)
+        validate(candidate)
 
     source_reports[0]["external_order_transmission"] = False
     cast(dict[str, object], source_reports[0]["manifest"])[
         "data_version"
     ] = "baostock-forward-wrong-day-qfq-v1"
     with pytest.raises(ValueError, match="source sessions"):
-        validate_source_sessions(candidate, source_reports)
+        validate(candidate)
 
     cast(dict[str, object], source_reports[0]["manifest"])[
         "data_version"
     ] = "baostock-forward-2026-09-01-qfq-v1"
     source_reports[0]["collected_at"] = "2026-09-01T15:09:59+08:00"
     with pytest.raises(ValueError, match="source sessions"):
-        validate_source_sessions(candidate, source_reports)
+        validate(candidate)
 
     source_reports[0]["collected_at"] = "2026-09-01T16:00:00+08:00"
     source_reports[0]["provider_version"] = "0.9.4"
@@ -191,4 +200,13 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
         "source"
     ] = "BaoStock 0.9.4 native 5-minute; adjustflag=2"
     with pytest.raises(ValueError, match="source sessions"):
-        validate_source_sessions(candidate, source_reports)
+        validate(candidate)
+
+    source_reports[0]["provider_version"] = "0.9.3"
+    cast(dict[str, object], source_reports[0]["manifest"])[
+        "source"
+    ] = "BaoStock 0.9.3 native 5-minute; adjustflag=2"
+    future_candidate = deepcopy(candidate)
+    future_candidate["generated_at"] = "2027-09-01T16:00:00+08:00"
+    with pytest.raises(ValueError, match="source sessions"):
+        validate(future_candidate)

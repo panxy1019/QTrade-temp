@@ -858,3 +858,17 @@ The publisher must therefore `fsync` the destination parent after the replace.
 Tests require file synchronization to precede directory synchronization. This
 durability step does not relax candidate verification, overwrite a failed
 publication, or grant strategy, PAPER, realtime or external-order authority.
+
+## ADR-057 — Forward publication rejects future candidate timestamps
+
+Status: accepted, 2026-08-26.
+
+Ordering ingestion, collection and candidate generation is insufficient when a
+resigned candidate can place the entire sequence in the future. Publishing such
+a report would make later legitimate candidates fail the strict generation-time
+progression rule.
+
+The publisher therefore compares candidate generation with its timezone-aware
+validation instant and requires `ingestion <= collection <= candidate <= check`.
+A future-dated candidate fails before replacement and cannot advance public
+progress or affect strategy, PAPER, realtime or external-order authority.

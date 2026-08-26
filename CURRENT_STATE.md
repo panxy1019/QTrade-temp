@@ -552,7 +552,9 @@ Last updated: 2026-08-26
   than trusting a source string that could be rewritten together with its
   self-reported version. Atomic promotion now synchronizes the destination
   directory after replacement, closing the durability gap between a flushed
-  temporary file and a persisted directory entry.
+  temporary file and a persisted directory entry. Candidate generation must
+  also be no later than the publisher's timezone-aware validation time, so a
+  resigned future timestamp cannot advance and then freeze the append-only chain.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator
