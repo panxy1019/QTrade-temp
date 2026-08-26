@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import stat
 from copy import deepcopy
 from hashlib import sha256
 from pathlib import Path
@@ -67,16 +69,26 @@ def test_forward_observation_progression_keeps_lock_and_time_monotonic() -> None
 
 
 def test_atomic_forward_observation_publish_replaces_complete_file(
-    tmp_path: Path,
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     destination = tmp_path / "report.json"
     candidate = tmp_path / "candidate.json"
     destination.write_bytes(b'{"generation":1}\n')
     candidate.write_bytes(b'{"generation":2}\n')
+    synced_types: list[str] = []
+    real_fsync = os.fsync
+
+    def track_fsync(file_descriptor: int) -> None:
+        mode = os.fstat(file_descriptor).st_mode
+        synced_types.append("directory" if stat.S_ISDIR(mode) else "file")
+        real_fsync(file_descriptor)
+
+    monkeypatch.setattr(os, "fsync", track_fsync)
 
     _atomic_publish(candidate, destination)
 
     assert destination.read_bytes() == candidate.read_bytes()
+    assert synced_types == ["file", "directory"]
     assert list(tmp_path.glob(".report.json.*.tmp")) == []
 
 

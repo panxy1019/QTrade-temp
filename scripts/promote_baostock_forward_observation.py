@@ -219,6 +219,11 @@ def _atomic_publish(
             handle.flush()
             os.fsync(handle.fileno())
         temporary_path.replace(destination)
+        directory_descriptor = os.open(destination.parent, os.O_RDONLY)
+        try:
+            os.fsync(directory_descriptor)
+        finally:
+            os.close(directory_descriptor)
     finally:
         if temporary_path is not None:
             temporary_path.unlink(missing_ok=True)

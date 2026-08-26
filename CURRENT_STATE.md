@@ -550,7 +550,9 @@ Last updated: 2026-08-26
   be genuine integers; Python booleans are explicitly rejected. Formal source
   sessions also bind the exact frozen BaoStock `0.9.3` provider version rather
   than trusting a source string that could be rewritten together with its
-  self-reported version.
+  self-reported version. Atomic promotion now synchronizes the destination
+  directory after replacement, closing the durability gap between a flushed
+  temporary file and a persisted directory entry.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator

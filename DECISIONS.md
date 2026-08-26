@@ -845,3 +845,16 @@ Every constituent source report must therefore retain the exact provider
 version as well as the matching native five-minute `adjustflag=2` source string.
 A version drift fails before atomic replacement and cannot change public
 progress, strategy/PAPER authority, realtime readiness or external-order state.
+
+## ADR-056 — Forward atomic publication synchronizes the parent directory
+
+Status: accepted, 2026-08-26.
+
+Flushing the same-directory temporary report before atomic replacement prevents
+readers from seeing a partially written candidate, but it does not by itself
+confirm persistence of the replacement directory entry across a sudden crash.
+The publisher must therefore `fsync` the destination parent after the replace.
+
+Tests require file synchronization to precede directory synchronization. This
+durability step does not relax candidate verification, overwrite a failed
+publication, or grant strategy, PAPER, realtime or external-order authority.
