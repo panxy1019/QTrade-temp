@@ -57,6 +57,7 @@ from qtrade.research import (
     discover_opening_direction_rules,
     evaluate_opening_rule_correlations,
     evaluate_opening_rule_effectiveness,
+    evaluate_returns,
     experiment_run_spec_hash,
     paired_stationary_bootstrap_excess_returns,
     run_backtest_preview,
@@ -8794,6 +8795,55 @@ def _minute_execution_payload(raw: dict[str, object]) -> dict[str, object]:
     return result
 
 
+def _single_stock_five_minute_performance(
+    result: MinuteBacktestResult,
+    selected_days: set[date],
+) -> tuple[PerformanceMetrics, PerformanceMetrics]:
+    indexes = [
+        index
+        for index, trading_day in enumerate(result.trading_days)
+        if trading_day in selected_days
+    ]
+    if not indexes:
+        raise ValueError("single-stock performance selection cannot be empty")
+    if any(
+        right != left + 1
+        for left, right in zip(indexes, indexes[1:], strict=False)
+    ):
+        raise ValueError("single-stock performance days must be contiguous")
+    first = indexes[0]
+    previous_base = 1.0 if first == 0 else result.base_equity[first - 1]
+    previous_overlay = 1.0 if first == 0 else result.overlay_equity[first - 1]
+    base_returns: list[Decimal] = []
+    overlay_returns: list[Decimal] = []
+    for index in indexes:
+        current_base = result.base_equity[index]
+        current_overlay = result.overlay_equity[index]
+        base_returns.append(Decimal(str(current_base / previous_base - 1)))
+        overlay_returns.append(Decimal(str(current_overlay / previous_overlay - 1)))
+        previous_base = current_base
+        previous_overlay = current_overlay
+    periods_per_year = len(SINA_FIVE_MINUTE_SESSION_TIMES) * 252
+    return (
+        evaluate_returns(base_returns, periods_per_year=periods_per_year),
+        evaluate_returns(
+            overlay_returns,
+            benchmark_returns=base_returns,
+            periods_per_year=periods_per_year,
+        ),
+    )
+
+
+def _single_stock_common_metric_payload(
+    metrics: PerformanceMetrics,
+) -> dict[str, str]:
+    return {
+        "annualized_return": str(metrics.annualized_return),
+        "annualized_volatility": str(metrics.annualized_volatility),
+        "sharpe": str(metrics.sharpe),
+    }
+
+
 def _single_stock_five_minute_curve(
     result: MinuteBacktestResult,
     selected_days: set[date],
@@ -8846,6 +8896,10 @@ def _single_stock_five_minute_preview(
     instrument: dict[str, object],
 ) -> dict[str, object]:
     metrics = result.metrics(days=selected_days)
+    base_performance, overlay_performance = _single_stock_five_minute_performance(
+        result,
+        selected_days,
+    )
     policy_payload = {key: str(value) for key, value in asdict(policy).items()}
     parameters: dict[str, object] = {
         "symbol": payload.symbol,
@@ -8912,11 +8966,25 @@ def _single_stock_five_minute_preview(
         "policy": policy_payload,
         "cost_bps": _finite_float_text(result.cost_bps),
         "metrics": {
-            "base": _minute_curve_metrics_payload(metrics["base"]),
-            "overlay": _minute_curve_metrics_payload(metrics["overlay"]),
+            "base": {
+                **_minute_curve_metrics_payload(metrics["base"]),
+                **_single_stock_common_metric_payload(base_performance),
+            },
+            "overlay": {
+                **_minute_curve_metrics_payload(metrics["overlay"]),
+                **_single_stock_common_metric_payload(overlay_performance),
+            },
             "excess_return": _finite_float_text(
                 metrics["overlay"].total_return - metrics["base"].total_return
             ),
+            "information_ratio": str(overlay_performance.information_ratio),
+            "annualization": {
+                "observation_interval": "5m",
+                "bars_per_session": len(SINA_FIVE_MINUTE_SESSION_TIMES),
+                "sessions_per_year": 252,
+                "periods_per_year": len(SINA_FIVE_MINUTE_SESSION_TIMES) * 252,
+                "risk_free_rate": "0",
+            },
         },
         "execution": _minute_execution_payload(
             result.execution_metrics(days=selected_days)

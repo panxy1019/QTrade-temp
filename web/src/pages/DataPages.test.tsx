@@ -1127,7 +1127,10 @@ describe('verified backtest analytics', () => {
       turnover: '1.5', mean_turnover_per_symbol: '1.5', transaction_cost: '0.00075',
       mean_transaction_cost_per_symbol: '0.00075', reason_counts: { MINUTE_TREND_WEAK: 12 },
     }
-    const metric = { total_return: '0.01', maximum_drawdown: '-0.02', realized_minute_volatility: '0.001', point_count: 96 }
+    const metric = {
+      total_return: '0.01', annualized_return: '0.30', annualized_volatility: '0.14', sharpe: '2.100',
+      maximum_drawdown: '-0.02', realized_minute_volatility: '0.001', point_count: 96,
+    }
     const result: SingleStockFiveMinuteBacktest = {
       classification: 'AD_HOC_SINGLE_STOCK_FIVE_MINUTE_BACKTEST_CURRENT_NON_PIT',
       promotion: 'NOT_ELIGIBLE', promotion_reasons: ['AD_HOC_PARAMETERS_NOT_PREREGISTERED'],
@@ -1145,7 +1148,12 @@ describe('verified backtest analytics', () => {
       },
       policy_id: 'adhoc-single-stock-five-minute-v1', policy_hash: 'b'.repeat(64),
       policy: {}, cost_bps: '5',
-      metrics: { base: metric, overlay: { ...metric, total_return: '0.008' }, excess_return: '-0.002' },
+      metrics: {
+        base: metric,
+        overlay: { ...metric, total_return: '0.008', annualized_return: '0.25', annualized_volatility: '0.12', sharpe: '1.234' },
+        excess_return: '-0.002', information_ratio: '-0.456',
+        annualization: { observation_interval: '5m', bars_per_session: 48, sessions_per_year: 252, periods_per_year: 12096, risk_free_rate: '0' },
+      },
       execution, daily: [],
       curve: [{ session: '2025-01-02T09:35:00+08:00', equity: '1.008', drawdown: '-0.001', benchmark_equity: '1.01', benchmark_drawdown: '-0.002', excess_return: '-0.002' }],
       causal_contract: {
@@ -1170,6 +1178,15 @@ describe('verified backtest analytics', () => {
       maximum_minute_volatility: '0.02', maximum_intraday_drawdown: '0.04',
       reduction_multiplier: '0.98', cooldown_bars: 6,
     })
+    expect(screen.getByText('修正后年化收益')).toBeInTheDocument()
+    expect(screen.getByText('25.00%')).toBeInTheDocument()
+    expect(screen.getByText('修正后年化波动')).toBeInTheDocument()
+    expect(screen.getByText('12.00%')).toBeInTheDocument()
+    expect(screen.getByText('修正后 Sharpe')).toBeInTheDocument()
+    expect(screen.getByText('1.234')).toBeInTheDocument()
+    expect(screen.getAllByText('信息比率').length).toBeGreaterThan(0)
+    expect(screen.getByText('-0.456')).toBeInTheDocument()
+    expect(screen.getByText(/按每年 252 个交易日、每日 48 根 5 分钟 Bar 年化/)).toBeInTheDocument()
     expect(screen.getByText(/实线为分钟修正策略，虚线为该个股 Buy-and-Hold/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出个股回测/ })).toBeInTheDocument()
   })

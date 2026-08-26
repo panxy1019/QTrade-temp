@@ -1,11 +1,14 @@
 import json
 from datetime import date
 from hashlib import sha256
+from math import sqrt
 from pathlib import Path
+from statistics import mean, pstdev
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
 from fastapi.testclient import TestClient
+from pytest import approx
 
 from qtrade.api.app import (
     _read_verified_market_parquet_content,
@@ -59,6 +62,61 @@ def test_single_stock_five_minute_backtest_is_causal_and_read_only() -> None:
     assert payload["warmup_bar_count"] == 17_520
     assert payload["metrics"]["base"]["point_count"] == 144
     assert payload["metrics"]["overlay"]["point_count"] == 144
+    assert payload["metrics"]["annualization"] == {
+        "observation_interval": "5m",
+        "bars_per_session": 48,
+        "sessions_per_year": 252,
+        "periods_per_year": 12_096,
+        "risk_free_rate": "0",
+    }
+    base_returns: list[float] = []
+    overlay_returns: list[float] = []
+    previous_base = 1.0
+    previous_overlay = 1.0
+    for point in payload["curve"]:
+        current_base = float(point["benchmark_equity"])
+        current_overlay = float(point["equity"])
+        base_returns.append(current_base / previous_base - 1)
+        overlay_returns.append(current_overlay / previous_overlay - 1)
+        previous_base = current_base
+        previous_overlay = current_overlay
+    expected_overlay_annualized = (
+        (1 + float(payload["metrics"]["overlay"]["total_return"]))
+        ** (252 / payload["selected_session_count"])
+        - 1
+    )
+    expected_overlay_volatility = pstdev(overlay_returns) * sqrt(12_096)
+    expected_overlay_sharpe = (
+        mean(overlay_returns) * 12_096 / expected_overlay_volatility
+        if expected_overlay_volatility
+        else 0
+    )
+    active_returns = [
+        overlay - base
+        for overlay, base in zip(overlay_returns, base_returns, strict=True)
+    ]
+    expected_tracking_error = pstdev(active_returns) * sqrt(12_096)
+    expected_information_ratio = (
+        mean(active_returns) * 12_096 / expected_tracking_error
+        if expected_tracking_error
+        else 0
+    )
+    assert float(payload["metrics"]["overlay"]["annualized_return"]) == approx(
+        expected_overlay_annualized,
+        rel=1e-10,
+    )
+    assert float(payload["metrics"]["overlay"]["annualized_volatility"]) == approx(
+        expected_overlay_volatility,
+        rel=1e-10,
+    )
+    assert float(payload["metrics"]["overlay"]["sharpe"]) == approx(
+        expected_overlay_sharpe,
+        rel=1e-10,
+    )
+    assert float(payload["metrics"]["information_ratio"]) == approx(
+        expected_information_ratio,
+        rel=1e-10,
+    )
     assert payload["execution"]["observation_count"] == 144
     assert len(payload["daily"]) == 3
     assert len(payload["curve"]) == 144

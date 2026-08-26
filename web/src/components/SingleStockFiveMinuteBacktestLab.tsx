@@ -95,6 +95,11 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
           <Metric label="买入持有收益" value={formatPercent(result.metrics.base.total_return)} />
           <Metric label="分钟修正收益" value={formatPercent(result.metrics.overlay.total_return)} />
           <Metric label="相对基准" value={formatPercent(result.metrics.excess_return)} />
+          <Metric label="买入持有年化收益" value={formatPercent(result.metrics.base.annualized_return)} />
+          <Metric label="修正后年化收益" value={formatPercent(result.metrics.overlay.annualized_return)} />
+          <Metric label="修正后年化波动" value={formatPercent(result.metrics.overlay.annualized_volatility)} />
+          <Metric label="修正后 Sharpe" value={formatNumber(result.metrics.overlay.sharpe)} />
+          <Metric label="信息比率" value={formatNumber(result.metrics.information_ratio)} />
           <Metric label="修正后最大回撤" value={formatPercent(result.metrics.overlay.maximum_drawdown)} />
           <Metric label="平均敞口" value={formatPercent(result.execution.mean_exposure)} />
           <Metric label="减仓 Bar 比例" value={formatPercent(result.execution.reduced_exposure_ratio)} />
@@ -103,7 +108,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
           <Metric label="策略哈希" value={`${result.policy_hash.slice(0, 12)}…`} />
         </div>
         <EquityChart dark analytics={result} />
-        <Typography.Text type="secondary">曲线：实线为分钟修正策略，虚线为该个股 Buy-and-Hold；{reasons || '本区间没有风险触发'}。前复权价格可能包含未来复权知识，当前成分股样本非 PIT，本结果不可直接晋级 PAPER/LIVE。</Typography.Text>
+        <Typography.Text type="secondary">曲线：实线为分钟修正策略，虚线为该个股 Buy-and-Hold；按每年 {result.metrics.annualization.sessions_per_year} 个交易日、每日 {result.metrics.annualization.bars_per_session} 根 5 分钟 Bar 年化，Sharpe 使用零无风险利率；{reasons || '本区间没有风险触发'}。前复权价格可能包含未来复权知识，当前成分股样本非 PIT，本结果不可直接晋级 PAPER/LIVE。</Typography.Text>
         <Table<SingleStockFiveMinuteBacktest['daily'][number]>
           rowKey="trading_day"
           size="small"

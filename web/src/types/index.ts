@@ -574,6 +574,12 @@ export interface SingleStockFiveMinuteMetric {
   point_count: number
 }
 
+export interface SingleStockFiveMinutePerformanceMetric extends SingleStockFiveMinuteMetric {
+  annualized_return: string
+  annualized_volatility: string
+  sharpe: string
+}
+
 export interface SingleStockFiveMinuteExecution {
   symbol_count: number
   observation_count: number
@@ -613,9 +619,17 @@ export interface SingleStockFiveMinuteBacktest {
   policy: Record<string, string>
   cost_bps: string
   metrics: {
-    base: SingleStockFiveMinuteMetric
-    overlay: SingleStockFiveMinuteMetric
+    base: SingleStockFiveMinutePerformanceMetric
+    overlay: SingleStockFiveMinutePerformanceMetric
     excess_return: string
+    information_ratio: string
+    annualization: {
+      observation_interval: '5m'
+      bars_per_session: 48
+      sessions_per_year: 252
+      periods_per_year: 12096
+      risk_free_rate: '0'
+    }
   }
   execution: SingleStockFiveMinuteExecution
   daily: Array<{

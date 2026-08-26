@@ -140,6 +140,7 @@ GitHub/Vercel 公开节点。判定标准不是“路由存在”，而是页面
 | FE-124 | 回测实验室 / 本地对比可携带审计 | 多轮参数与指标只存在 localStorage，当前页面虽可 A/B 对比，但刷新同一设备之外无法留档核对；逐条导出单次结果又丢失对比集合和本地绑定分类 | DONE | 一次导出当前 checksum 数据集下全部有效记录的确定性 JSON，保留 provider/version/checksum/PIT、参数、常用指标、preview hash 与可选 template/spec/binding 身份；无记录时按钮禁用，不写 export 时间戳，未变化状态重复序列化相同。仅作只读携带与核对，不提供导入、自动同步、服务端写入、不可变实验、注册、晋级、PAPER/LIVE 或订单权限 |
 | FE-125 | 策略研究 / 本地因子全维 A/B | 本地因子摘要已经保存年化、超额、Rank IC、最大相关性、滚动样本外超额和 Newey-West 区间，但表格只显示总收益、Sharpe、回撤、样本外收益与 t 值，无法在一行完成有效性/相关性/稳健性/策略绩效对比 | DONE | 每行新增年化收益、主动超额、Rank IC、最大绝对相关、样本外超额和 NW 95% 区间，并保留累计收益、Sharpe、最大回撤、样本外收益、NW t 与硬门；全部直接读取 checksum/result hash 绑定摘要，不重算、不补值、不当成独立证据或 PAPER/LIVE 晋级输入 |
 | FE-126 | 策略研究 / 因子到策略本地血缘 | 单次因子响应已有绑定开仓、平仓、仓位、基准、成本和 T+1 的只读 strategy_id/spec_hash，但保存本地对比时丢弃，复载后无法证明某行对应哪一套策略行为 | DONE | 新记录保存 `AD_HOC_READ_ONLY_STRATEGY_IDENTITY` 的 ID/行为规格哈希，校验 ID 必须来自哈希前缀且 immutable/unregistered/PAPER/promotion/state/order 安全字段全部严格；旧 schema-v1 行归一为缺失身份，放宽或错配记录拒绝。页面显式“未注册”，不创建 StrategyVersion、注册、晋级、PAPER/LIVE 或订单权限 |
+| FE-127 | 回测分析 / 个股分钟常用绩效 | 个股 5 分钟回测只能比较累计收益、最大回撤、敞口、换手和成本，缺少用户要求的年化收益、年化波动、Sharpe 与基准风险调整超额，无法用统一常用指标判断一次调参结果 | DONE | API 响应层从同一条所选因果净值曲线逐点计算，固定每年 252 个交易日、每日 48 根原生 5 分钟 Bar、零无风险利率，返回基准/修正策略年化收益、年化波动、Sharpe 及相对同窗 Buy-and-Hold 的信息比率；页面展示口径并随完整 JSON 导出。核心分钟回测器、预注册采集/评估、非 PIT/NOT_ELIGIBLE、无状态和不下单边界均未改变 |
 
 ## 外部阻塞，不能伪造为已完成
 

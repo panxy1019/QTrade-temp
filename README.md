@@ -238,8 +238,12 @@ verified stock, two to 120 consecutive listed trading sessions, bounded cost and
 bounded reduction-only overlay parameters. All earlier sessions through the
 selected start are replayed only as causal warmup; selected metrics, next-Bar
 equity curves, execution diagnostics and daily rows are returned with a
-deterministic result hash. The Chinese backtest page exposes the complete form
-and JSON export. Every result remains current-universe, QFQ/non-PIT,
+deterministic result hash. The response and Chinese page also expose cumulative
+and annualized return, annualized volatility, zero-rate Sharpe, maximum drawdown,
+matched Buy-and-Hold excess return and information ratio. Annualization is fixed
+at 48 native five-minute Bars per session and 252 sessions per year; it is not
+silently inferred by the browser. The page exposes the complete form and JSON
+export. Every result remains current-universe, QFQ/non-PIT,
 `NOT_ELIGIBLE`, stateless and unable to transmit an external order.
 
 `POST /intraday-factor-backtest` and the research-page minute factor workbench

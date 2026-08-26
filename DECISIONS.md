@@ -2151,3 +2151,26 @@ identities fail closed.
 The preserved identity is replay lineage only. It does not supply the remaining
 StrategySpec fields, create a StrategyVersion, register or promote a strategy,
 start PAPER/LIVE, mutate state or transmit an external order.
+
+## ADR-124 — Individual minute preview reports common performance metrics
+
+Status: accepted, 2026-08-27.
+
+The individual-stock five-minute preview returned cumulative return, drawdown,
+minute volatility, exposure, turnover and cost, but omitted annualized return,
+annualized volatility, Sharpe and a risk-adjusted comparison with its matched
+Buy-and-Hold curve. That made repeated parameter previews use a narrower metric
+surface than the rest of the backtest workflow.
+
+The API response layer now derives aligned five-minute returns from the same
+selected causal equity curves and passes them through the shared research metric
+calculator. Annualization is explicit and fixed at 48 native Bars per session,
+252 sessions per year and a zero risk-free rate. Base and overlay results expose
+annualized return, volatility and Sharpe; the overlay also exposes information
+ratio against the aligned base returns. The browser displays the values and the
+annualization convention, and the existing full-result export retains them.
+
+This change does not alter the minute overlay engine, its signal timing or any
+preregistered collector/evaluator. The preview remains ad hoc, current-universe,
+QFQ/non-PIT, `NOT_ELIGIBLE`, stateless and unable to start PAPER/LIVE or transmit
+an external order.
