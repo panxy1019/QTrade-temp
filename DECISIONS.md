@@ -743,3 +743,16 @@ make `true` or `false` a valid economic observation count.
 
 This applies to forward and long-history execution evidence. A boolean count
 fails closed before ratios, gates or UI summaries are accepted.
+
+## ADR-049 — Forward cost and metric counters use exact integer identities
+
+Status: accepted, 2026-08-26.
+
+Forward cost-stress identities must use genuine non-boolean integer cost levels
+in the predeclared order `0, 5`. Metric point counts must likewise be genuine
+non-boolean integers and exactly equal the evaluated-session window; lossy
+numeric coercion is not evidence validation.
+
+This closes Python's `False == 0` and `int(48.9) == 48` compatibility paths.
+A resigned report using either ambiguous representation fails closed before it
+can advance public progress, gates, PAPER, realtime, or order authority.

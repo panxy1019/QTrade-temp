@@ -5180,11 +5180,14 @@ def _load_verified_forward_observation_report(
         def metric_values(value: object) -> tuple[float, float, float, int] | None:
             if not isinstance(value, dict):
                 return None
+            point_count = value.get("point_count")
+            if not isinstance(point_count, int) or isinstance(point_count, bool):
+                return None
             values = (
                 float(str(value.get("total_return"))),
                 float(str(value.get("maximum_drawdown"))),
                 float(str(value.get("realized_minute_volatility"))),
-                int(value.get("point_count", 0)),
+                point_count,
             )
             if (
                 not all(isfinite(item) for item in values[:3])
@@ -5225,7 +5228,9 @@ def _load_verified_forward_observation_report(
                     str(execution.get("mean_turnover_per_symbol"))
                 )
                 if (
-                    cost not in {0, 5}
+                    not isinstance(cost, int)
+                    or isinstance(cost, bool)
+                    or cost not in {0, 5}
                     or base is None
                     or overlay is None
                     or base_identity is not None
@@ -5247,7 +5252,7 @@ def _load_verified_forward_observation_report(
                 ):
                     return None
                 base_identity = base
-                seen_costs.append(cast(int, cost))
+                seen_costs.append(cost)
                 if cost == 5:
                     five_row = cast(dict[str, object], row)
             if seen_costs != [0, 5] or five_row is None:

@@ -480,3 +480,29 @@ def test_forward_observation_endpoint_rejects_boolean_execution_count(
     ).json()
     assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
     assert rejected["future_session_count"] == 0
+
+
+def test_forward_observation_endpoint_rejects_ambiguous_metric_identity(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _one_session_forward_report(
+        preregistration,
+        target_day="2026-08-26",
+        generated_at="2026-08-26T16:00:00+08:00",
+    )
+    report["cost_stress"][0]["cost_bps"] = False
+    report["cost_stress"][1]["base"]["point_count"] = 48.9
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert rejected["future_session_count"] == 0
