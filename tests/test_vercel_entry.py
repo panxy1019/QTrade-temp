@@ -87,6 +87,13 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert len(reserved_tail["daily"]) == 8
     assert len(reserved_tail["curve"]) == 384
     assert reserved_tail["external_order_transmission"] is False
+    development = client.get(_api("/development-policy-search")).json()
+    assert development["candidate_count"] == 4
+    assert development["observed_leader"]["policy_id"] == (
+        "dev-floor-098-slow12x48-v1"
+    )
+    assert development["promotion"] == "NOT_ELIGIBLE"
+    assert development["external_order_transmission"] is False
     public_audit = client.get(_api("/public-minute-audit")).json()
     assert public_audit["all_valid"] is True
     assert public_audit["sector_count"] == 15

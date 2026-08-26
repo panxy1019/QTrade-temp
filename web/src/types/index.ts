@@ -829,6 +829,52 @@ export interface IntradayObservationReport {
   external_order_transmission: false
 }
 
+export interface DevelopmentPolicySearchReport {
+  classification?: string
+  generated_at?: string
+  candidate_count: number
+  development_contract?: {
+    session_count: number
+    observed_start: string
+    observed_end: string
+    processed_bar_count: number
+    cost_bps: number
+  }
+  reserved_tail?: {
+    session_count: number
+    trading_days: string[]
+    entered_strategy_engine: false
+    entered_candidate_metrics: false
+  }
+  candidates: Array<{
+    policy_id: string
+    policy_hash: string
+    policy: Record<string, string>
+    base: Record<string, number>
+    overlay: Record<string, number>
+    return_delta_vs_base: number
+    drawdown_improvement: number
+    execution: {
+      mean_exposure: number
+      mean_turnover_per_symbol: number
+    }
+  }>
+  observed_leader?: {
+    policy_id: string
+    selection_timing: 'POST_HOC_DEVELOPMENT_ONLY'
+  }
+  future_observation_lock?: {
+    locked_at: string
+    policy_id: string
+    first_eligible_trading_day: string
+    minimum_complete_future_sessions: number
+    partial_same_day_observations_enter_metrics: false
+    parameter_changes_before_completion: false
+  }
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  external_order_transmission: false
+}
+
 export interface DailyReportAutomationStatus {
   classification: 'TRUSTED_PAPER_EOD_REPORTING'
   readiness: 'CONFIGURED' | 'UNCONFIGURED'
@@ -872,6 +918,7 @@ export interface PlatformSnapshot {
   fiveMinuteResearch: FiveMinuteResearchReport
   longFiveMinuteResearch: FiveMinuteResearchReport
   reservedTailDiagnostic: ReservedTailDiagnosticReport
+  developmentPolicySearch?: DevelopmentPolicySearchReport
   publicMinuteAudit: PublicMinuteAuditReport
   intradayObservation: IntradayObservationReport
   backtestAnalytics: BacktestAnalytics

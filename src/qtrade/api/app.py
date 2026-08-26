@@ -122,6 +122,7 @@ class AppContext:
     five_minute_research_report_path: Path | None = None
     long_five_minute_manifest_path: Path | None = None
     long_five_minute_research_report_path: Path | None = None
+    development_policy_search_path: Path | None = None
     reserved_tail_preregistration_path: Path | None = None
     reserved_tail_diagnostic_report_path: Path | None = None
     public_minute_audit_path: Path | None = None
@@ -430,6 +431,31 @@ def create_app(
             "daily": [],
             "leave_one_sector_out": [],
             "curve": [],
+            "external_order_transmission": False,
+        }
+
+    @app.get("/development-policy-search")
+    def development_policy_search(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        report = _load_verified_development_policy_search(
+            state.development_policy_search_path,
+            dataset,
+        )
+        return report or {
+            "classification": "NO_VERIFIED_DEVELOPMENT_POLICY_SEARCH",
+            "candidate_count": 0,
+            "candidates": [],
+            "promotion": "NOT_EVALUATED",
             "external_order_transmission": False,
         }
 
@@ -1098,6 +1124,9 @@ def context_from_runtime(
         long_five_minute_research_report_path=Path(
             "runtime/research/baostock-five-minute-long-walk-forward-v1/"
             "report.json"
+        ),
+        development_policy_search_path=Path(
+            "runtime/research/baostock-development-policy-search-v1/report.json"
         ),
         reserved_tail_preregistration_path=Path(
             "docs/preregistrations/"
@@ -4417,6 +4446,246 @@ def _load_verified_public_minute_audit(
                 row.get("status") == 503 and row.get("blocked") is True
                 for row in write_boundary["checks"]
             )
+        ):
+            return None
+        return {**report, "minute_dataset": dataset}
+    except (
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _load_verified_development_policy_search(
+    path: Path | None,
+    dataset: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if path is None or dataset is None or not path.is_file():
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        generated_at = datetime.fromisoformat(str(report.get("generated_at")))
+        trading_days = dataset.get("trading_days")
+        candidates = report.get("candidates")
+        expected_policies = {
+            "dev-floor-095-slow6x24-v1": {
+                "short_window": "6",
+                "long_window": "24",
+                "volatility_window": "12",
+                "maximum_minute_volatility": "0.012",
+                "maximum_intraday_drawdown": "0.035",
+                "reduction_multiplier": "0.95",
+                "cooldown_bars": "6",
+            },
+            "dev-floor-098-slow6x24-v1": {
+                "short_window": "6",
+                "long_window": "24",
+                "volatility_window": "12",
+                "maximum_minute_volatility": "0.012",
+                "maximum_intraday_drawdown": "0.035",
+                "reduction_multiplier": "0.98",
+                "cooldown_bars": "6",
+            },
+            "dev-floor-095-slow12x48-v1": {
+                "short_window": "12",
+                "long_window": "48",
+                "volatility_window": "24",
+                "maximum_minute_volatility": "0.02",
+                "maximum_intraday_drawdown": "0.04",
+                "reduction_multiplier": "0.95",
+                "cooldown_bars": "6",
+            },
+            "dev-floor-098-slow12x48-v1": {
+                "short_window": "12",
+                "long_window": "48",
+                "volatility_window": "24",
+                "maximum_minute_volatility": "0.02",
+                "maximum_intraday_drawdown": "0.04",
+                "reduction_multiplier": "0.98",
+                "cooldown_bars": "6",
+            },
+        }
+        dataset_claim = report.get("dataset")
+        development = report.get("development_contract")
+        reserved_tail = report.get("reserved_tail")
+        contamination = report.get("contamination_disclosure")
+        leader = report.get("observed_leader")
+        future_lock = report.get("future_observation_lock")
+        causal = report.get("causal_contract")
+        if (
+            not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("report_id")
+            != "baostock-retrospective-development-policy-search-v1"
+            or report.get("classification")
+            != "RETROSPECTIVE_DEVELOPMENT_ONLY_POLICY_SEARCH_NOT_INDEPENDENT"
+            or generated_at.tzinfo is None
+            or generated_at.astimezone(ZoneInfo("Asia/Shanghai")).date().isoformat()
+            != "2026-08-26"
+            or generated_at.astimezone(ZoneInfo("Asia/Shanghai")).time()
+            >= datetime_time(9, 30)
+            or not isinstance(trading_days, list)
+            or len(trading_days) != 368
+            or not isinstance(dataset_claim, dict)
+            or dataset_claim.get("data_version") != dataset.get("data_version")
+            or dataset_claim.get("checksum") != dataset.get("checksum")
+            or dataset_claim.get("evidence_sha256")
+            != dataset.get("evidence_sha256")
+            or dataset_claim.get("bar_interval") != "5m"
+            or dataset_claim.get("symbol_count") != 75
+            or dataset_claim.get("sector_count") != 15
+            or dataset_claim.get("point_in_time") is not False
+            or dataset_claim.get("future_adjustment_knowledge_possible") is not True
+            or not isinstance(development, dict)
+            or development.get("session_count") != 360
+            or development.get("observed_start") != trading_days[0]
+            or development.get("observed_end") != trading_days[359]
+            or development.get("processed_bar_count") != 75 * 360 * 48
+            or development.get("cost_bps") != 5
+            or not isinstance(reserved_tail, dict)
+            or reserved_tail.get("session_count") != 8
+            or reserved_tail.get("trading_days") != trading_days[360:]
+            or reserved_tail.get("entered_strategy_engine") is not False
+            or reserved_tail.get("entered_candidate_metrics") is not False
+            or contamination
+            != {
+                "prior_reserved_tail_evidence_available_before_candidate_design": True,
+                "candidate_search_is_not_blind": True,
+                "observed_leader_selection_is_post_hoc": True,
+            }
+            or report.get("candidate_count") != 4
+            or not isinstance(candidates, list)
+            or len(candidates) != 4
+            or not isinstance(leader, dict)
+            or not isinstance(future_lock, dict)
+            or not isinstance(causal, dict)
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("external_order_transmission") is not False
+        ):
+            return None
+        eligible: list[tuple[float, float, float, str]] = []
+        base_identity: tuple[float, float, float, int] | None = None
+        for row, (policy_id, policy) in zip(
+            candidates, expected_policies.items(), strict=True
+        ):
+            if not isinstance(row, dict):
+                return None
+            base = row.get("base")
+            overlay = row.get("overlay")
+            execution = row.get("execution")
+            policy_hash = sha256(
+                json.dumps(
+                    {"policy_id": policy_id, "policy": policy},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode()
+            ).hexdigest()
+            if (
+                row.get("policy_id") != policy_id
+                or row.get("policy") != policy
+                or row.get("policy_hash") != policy_hash
+                or not isinstance(base, dict)
+                or not isinstance(overlay, dict)
+                or not isinstance(execution, dict)
+            ):
+                return None
+            base_values = (
+                float(str(base.get("total_return"))),
+                float(str(base.get("maximum_drawdown"))),
+                float(str(base.get("realized_minute_volatility"))),
+                int(base.get("point_count", 0)),
+            )
+            overlay_values = (
+                float(str(overlay.get("total_return"))),
+                float(str(overlay.get("maximum_drawdown"))),
+                float(str(overlay.get("realized_minute_volatility"))),
+                int(overlay.get("point_count", 0)),
+            )
+            return_delta = float(str(row.get("return_delta_vs_base")))
+            drawdown_improvement = float(str(row.get("drawdown_improvement")))
+            exposure = float(str(execution.get("mean_exposure")))
+            turnover = float(str(execution.get("turnover")))
+            turnover_per_symbol = float(
+                str(execution.get("mean_turnover_per_symbol"))
+            )
+            observation_count = int(execution.get("observation_count", 0))
+            if (
+                not all(
+                    isfinite(value)
+                    for value in (*base_values[:3], *overlay_values[:3])
+                )
+                or base_values[3] != 360 * 48
+                or overlay_values[3] != 360 * 48
+                or base_identity is not None
+                and base_values != base_identity
+                or not isclose(return_delta, overlay_values[0] - base_values[0])
+                or not isclose(
+                    drawdown_improvement,
+                    abs(base_values[1]) - abs(overlay_values[1]),
+                )
+                or execution.get("symbol_count") != 75
+                or observation_count != 75 * 360 * 48
+                or not isfinite(exposure)
+                or not 0 <= exposure <= 1
+                or not isfinite(turnover)
+                or turnover < 0
+                or not isclose(turnover_per_symbol, turnover / 75)
+            ):
+                return None
+            base_identity = base_values
+            if (
+                drawdown_improvement >= 0.02
+                and exposure >= 0.90
+                and turnover_per_symbol <= 100
+            ):
+                eligible.append(
+                    (-return_delta, -drawdown_improvement, turnover_per_symbol, policy_id)
+                )
+        if not eligible:
+            return None
+        observed_leader = min(eligible)[3]
+        if (
+            leader.get("policy_id") != observed_leader
+            or leader.get("selection_timing") != "POST_HOC_DEVELOPMENT_ONLY"
+            or leader.get("objective")
+            != "maximum return delta versus base after constraints"
+            or leader.get("constraints")
+            != {
+                "minimum_drawdown_improvement": 0.02,
+                "minimum_mean_exposure": 0.9,
+                "maximum_mean_turnover_per_symbol": 100,
+            }
+            or future_lock.get("locked_at") != report.get("generated_at")
+            or future_lock.get("policy_id") != observed_leader
+            or future_lock.get("first_eligible_trading_day") != "2026-08-26"
+            or future_lock.get("minimum_complete_future_sessions") != 20
+            or future_lock.get("partial_same_day_observations_enter_metrics")
+            is not False
+            or future_lock.get("parameter_changes_before_completion") is not False
+            or causal
+            != {
+                "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
+                "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+                "same_bar_signal_execution": False,
+                "reduction_only": True,
+                "maximum_exposure": 1,
+            }
         ):
             return None
         return {**report, "minute_dataset": dataset}
