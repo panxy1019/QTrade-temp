@@ -1101,10 +1101,11 @@ any modified JSON can be hashed again. Returning an otherwise valid report with
 unknown fields could expose unintended content, while a far-future timestamp
 could make stale evidence appear newer than every legitimate refresh.
 
-The forward-coverage verifier now requires the exact v1 top-level field set and
-rejects generation times more than five minutes ahead of the server clock. These
-checks precede returning the report, so a resigned extension or future-dated
-payload fails closed as unavailable rather than being partially projected.
+The forward-coverage and formal forward-observation verifiers now require their
+exact v1 top-level field sets and reject generation times more than five minutes
+ahead of the server clock. These checks precede returning either report, so a
+resigned extension or future-dated payload fails closed as unavailable (or to
+the independently verified preregistration) rather than being partially exposed.
 
 ## ADR-075 — Mutable JSON snapshots synchronize their directory entry
 

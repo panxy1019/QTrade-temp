@@ -5181,6 +5181,36 @@ def _load_verified_forward_observation_report(
         report = json.loads(content)
         if not isinstance(report, dict):
             return None
+        expected_report_keys = {
+            "schema_version",
+            "report_id",
+            "classification",
+            "generated_at",
+            "preregistration_sha256",
+            "policy_id",
+            "policy_hash",
+            "policy",
+            "warmup_dataset",
+            "future_session_count",
+            "accepted_future_session_count",
+            "evaluated_future_session_count",
+            "minimum_complete_future_sessions",
+            "future_sessions",
+            "observation_status",
+            "all_required_gates_passed",
+            "gates",
+            "cost_stress",
+            "leave_one_sector_out",
+            "causal_contract",
+            "promotion",
+            "promotion_reasons",
+            "realtime_readiness",
+            "real_data_paper_readiness",
+            "external_order_transmission",
+            "evidence_sha256",
+        }
+        if set(report) != expected_report_keys:
+            return None
         digest = report.get("evidence_sha256")
         unsigned = {
             key: value for key, value in report.items() if key != "evidence_sha256"
@@ -5210,6 +5240,8 @@ def _load_verified_forward_observation_report(
             or generated_at.tzinfo is None
             or lock_created_at.tzinfo is None
             or generated_at <= lock_created_at
+            or generated_at
+            > datetime.now(ZoneInfo("UTC")) + timedelta(minutes=5)
             or report.get("preregistration_sha256")
             != preregistration.get("preregistration_sha256")
             or report.get("policy_id") != preregistration.get("policy_id")

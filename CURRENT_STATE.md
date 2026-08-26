@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 398 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 400 tests passed, Ruff clean, strict mypy clean across
   the 100-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -603,6 +603,10 @@ Last updated: 2026-08-26
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator
   rejects the entire target day.
+  The formal report endpoint also requires its exact top-level schema and rejects
+  generation times more than five minutes ahead of the server clock. A resigned
+  extension or future-dated zero-session report falls back to the separately
+  verified preregistration and cannot alter the public `0/20` state.
 - Forward source coverage: an independent, signed BaoStock diagnostic checked
   the full 75-stock locked universe after 15:10 China time without saving fetched
   Bars. At `2026-08-26T18:31:04+08:00`, 47 symbols had an exact frozen anchor and

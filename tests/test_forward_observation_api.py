@@ -320,6 +320,48 @@ def test_forward_observation_endpoint_rejects_report_predating_lock(
     assert rejected["future_session_count"] == 0
 
 
+def test_forward_observation_endpoint_rejects_resigned_unknown_public_field(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _empty_forward_report(preregistration)
+    report["unexpected_public_field"] = "must-not-pass-through"
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert "unexpected_public_field" not in rejected
+
+
+def test_forward_observation_endpoint_rejects_resigned_future_report_time(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _empty_forward_report(preregistration)
+    report["generated_at"] = "2099-08-26T18:31:04+08:00"
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert rejected["future_session_count"] == 0
+
+
 def test_forward_observation_endpoint_rejects_future_dated_session(
     tmp_path: Path,
 ) -> None:
