@@ -1049,6 +1049,49 @@ export interface ForwardObservationReport {
   external_order_transmission: false
 }
 
+export interface ForwardSourceCoverageReport {
+  classification?: string
+  report_id?: string
+  generated_at?: string
+  provider?: string
+  provider_version?: string
+  anchor_day?: string
+  target_day?: string
+  preregistration_id?: string
+  preregistration_sha256?: string
+  warmup_data_version?: string
+  warmup_checksum?: string
+  warmup_evidence_sha256?: string
+  required_symbol_count: number
+  required_bars_per_symbol_session: number
+  target_complete_symbol_count: number
+  ready_symbol_count: number
+  incomplete_symbol_count: number
+  incomplete_symbols: string[]
+  target_incomplete_symbols: string[]
+  fetch_error_symbols: string[]
+  coverage: Array<{
+    symbol: string
+    fetch_status: 'OK' | 'ERROR'
+    frozen_anchor_bar_count: number
+    anchor_bar_count: number
+    target_bar_count: number
+    frozen_anchor_grid_complete: boolean
+    anchor_grid_complete: boolean
+    target_grid_complete: boolean
+    anchor_exact_match: boolean
+    ready: boolean
+    reasons: string[]
+  }>
+  status: 'READY_FOR_FORMAL_COLLECTION' | 'SOURCE_INCOMPLETE' | 'UNAVAILABLE'
+  ready_for_formal_collection: boolean
+  enters_forward_metrics: false
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  realtime_readiness: false
+  real_data_paper_readiness: false
+  external_order_transmission: false
+}
+
 export interface DailyReportAutomationStatus {
   classification: 'TRUSTED_PAPER_EOD_REPORTING'
   readiness: 'CONFIGURED' | 'UNCONFIGURED'
@@ -1095,6 +1138,7 @@ export interface PlatformSnapshot {
   reservedTailDiagnostic: ReservedTailDiagnosticReport
   developmentPolicySearch?: DevelopmentPolicySearchReport
   forwardObservation: ForwardObservationReport
+  forwardSourceCoverage: ForwardSourceCoverageReport
   publicMinuteAudit: PublicMinuteAuditReport
   intradayObservation: IntradayObservationReport
   intradayBreadth: IntradayBreadthObservationReport

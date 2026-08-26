@@ -26,12 +26,12 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 389 tests passed, Ruff clean, strict mypy clean across
-  the 99-file source baseline plus the breadth and continuity scripts on Python 3.12.13
+- Acceptance evidence: 395 tests passed, Ruff clean, strict mypy clean across
+  the 100-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 426.92 KB with no large-chunk warning.
+  minified JavaScript asset at or below 427.73 KB with no large-chunk warning.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
 - Frontend completeness audit: `docs/FRONTEND_GAP_AUDIT.md` tracks every
@@ -603,9 +603,17 @@ Last updated: 2026-08-26
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator
   rejects the entire target day.
+- Forward source coverage: an independent, signed BaoStock diagnostic checked
+  the full 75-stock locked universe after 15:10 China time without saving fetched
+  Bars. At `2026-08-26T18:14:10+08:00`, 41 symbols had an exact frozen anchor and
+  a complete 48-point target grid; 34 still lacked the target grid and none had
+  a fetch error or anchor revision. `/forward-source-coverage`, the bundled
+  minute snapshot, the research page and the data-center inventory expose those
+  facts. The report is explicitly not forward evidence, does not enter `0/20`,
+  and leaves realtime, PAPER, LIVE and external-order authority disabled.
 - Public minute read amplification: `/minute-research-snapshot` now verifies the
   24 MB long-history Parquet once per dashboard refresh and reuses that immutable
-  identity across eight report validators. The React loader replaced eight
+  identity across nine report validators. The React loader replaced nine
   parallel heavy requests with this single bundle while retaining standalone
   endpoints and per-section fail-closed fallbacks. A test instruments the Parquet
   verifier and requires exactly one open; the bundle currently has zero

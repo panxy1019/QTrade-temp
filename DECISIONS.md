@@ -1075,3 +1075,19 @@ ref and target-environment variables, validates their formats, and never returns
 arbitrary environment content. The frontend displays the shortened SHA while
 the API retains all 40 characters for exact comparison; absent or malformed
 metadata is `UNAVAILABLE` and conveys no runtime or trading authority.
+
+## ADR-073 — Source coverage is diagnostic, not forward evidence
+
+Status: accepted, 2026-08-26.
+
+A formal forward count of zero cannot distinguish a delayed provider publication
+from an anchor revision or a collection failure. Repeatedly fetching and storing
+partial sessions would also let operational probing contaminate the locked
+evaluation dataset.
+
+The BaoStock coverage probe therefore reads all 75 locked symbols only after the
+China-market close and publishes a signed summary without persisting fetched
+Bars. The API revalidates the frozen dataset and preregistration identities,
+China-time boundary, per-symbol grid/reason arithmetic and aggregate counts.
+`READY_FOR_FORMAL_COLLECTION` means source availability only: the report always
+stays outside the 0/20 metrics and never grants PAPER, LIVE or order authority.

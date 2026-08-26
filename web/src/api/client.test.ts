@@ -36,6 +36,6 @@ describe('platform snapshot request fan-out', () => {
     expect(paths).not.toContain('/api/long-five-minute-research')
     expect(paths).not.toContain('/api/intraday-breadth-observation')
     expect(new Set(cacheModes)).toEqual(new Set(['no-store']))
-    expect(Object.keys(snapshot.availability.failures)).toHaveLength(26)
+    expect(Object.keys(snapshot.availability.failures)).toHaveLength(27)
   })
 })

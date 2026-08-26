@@ -38,6 +38,9 @@ context.forward_observation_preregistration_path = (
 context.forward_observation_report_path = (
     EVIDENCE_ROOT / "forward-observation" / "report.json"
 )
+context.forward_source_coverage_path = (
+    EVIDENCE_ROOT / "forward-source-coverage" / "report.json"
+)
 context.reserved_tail_preregistration_path = (
     EVIDENCE_ROOT / "reserved-tail-diagnostic" / "preregistration.json"
 )

@@ -76,6 +76,7 @@ interface MinuteResearchSnapshot {
   reservedTailDiagnostic: PlatformSnapshot['reservedTailDiagnostic'] | null
   developmentPolicySearch: NonNullable<PlatformSnapshot['developmentPolicySearch']> | null
   forwardObservation: PlatformSnapshot['forwardObservation'] | null
+  forwardSourceCoverage: PlatformSnapshot['forwardSourceCoverage'] | null
   publicMinuteAudit: PlatformSnapshot['publicMinuteAudit'] | null
   intradayObservation: PlatformSnapshot['intradayObservation'] | null
   intradayBreadth: PlatformSnapshot['intradayBreadth'] | null
@@ -155,6 +156,16 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     promotion: 'NOT_EVALUATED', realtime_readiness: false,
     real_data_paper_readiness: false, external_order_transmission: false,
   }
+  const forwardSourceCoverageFallback: PlatformSnapshot['forwardSourceCoverage'] = {
+    classification: 'UNAVAILABLE', status: 'UNAVAILABLE',
+    required_symbol_count: 75, required_bars_per_symbol_session: 48,
+    target_complete_symbol_count: 0, ready_symbol_count: 0,
+    incomplete_symbol_count: 75, incomplete_symbols: [],
+    target_incomplete_symbols: [], fetch_error_symbols: [], coverage: [],
+    ready_for_formal_collection: false, enters_forward_metrics: false,
+    promotion: 'NOT_EVALUATED', realtime_readiness: false,
+    real_data_paper_readiness: false, external_order_transmission: false,
+  }
   const publicAuditFallback: PlatformSnapshot['publicMinuteAudit'] = {
     classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', first_round: null,
     repeat_round: null, all_valid: false, external_order_transmission: false,
@@ -200,6 +211,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     classification: 'UNAVAILABLE', data_version: null, dataset_checksum: null,
     longFiveMinuteResearch: null, reservedTailDiagnostic: null,
     developmentPolicySearch: null, forwardObservation: null,
+    forwardSourceCoverage: null,
     publicMinuteAudit: null, intradayObservation: null, intradayBreadth: null,
     intradayContinuity: null, unavailable_sections: [], realtime_readiness: false,
     real_data_paper_readiness: false, external_order_transmission: false,
@@ -261,11 +273,12 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
   const reservedTailDiagnostic = { value: minuteEvidence.value.reservedTailDiagnostic ?? reservedTailFallback, error: bundledError }
   const developmentPolicySearch = { value: minuteEvidence.value.developmentPolicySearch ?? developmentFallback, error: bundledError }
   const forwardObservation = { value: minuteEvidence.value.forwardObservation ?? forwardFallback, error: bundledError }
+  const forwardSourceCoverage = { value: minuteEvidence.value.forwardSourceCoverage ?? forwardSourceCoverageFallback, error: bundledError }
   const publicMinuteAudit = { value: minuteEvidence.value.publicMinuteAudit ?? publicAuditFallback, error: bundledError }
   const intradayObservation = { value: minuteEvidence.value.intradayObservation ?? intradayFallback, error: bundledError }
   const intradayBreadth = { value: minuteEvidence.value.intradayBreadth ?? breadthFallback, error: bundledError }
   const intradayContinuity = { value: minuteEvidence.value.intradayContinuity ?? continuityFallback, error: bundledError }
-  const sections = { deployment, metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, longFiveMinuteResearch, reservedTailDiagnostic, developmentPolicySearch, forwardObservation, publicMinuteAudit, intradayObservation, intradayBreadth, intradayContinuity, backtestAnalytics, market, historicalBars, audit }
+  const sections = { deployment, metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, longFiveMinuteResearch, reservedTailDiagnostic, developmentPolicySearch, forwardObservation, forwardSourceCoverage, publicMinuteAudit, intradayObservation, intradayBreadth, intradayContinuity, backtestAnalytics, market, historicalBars, audit }
   const failures = Object.fromEntries(Object.entries(sections).flatMap(([name, result]) => result.error ? [[name, result.error]] : []))
   return {
     system, health, deployment: deployment.value, ...paper,
@@ -279,6 +292,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     reservedTailDiagnostic: reservedTailDiagnostic.value,
     developmentPolicySearch: developmentPolicySearch.value,
     forwardObservation: forwardObservation.value,
+    forwardSourceCoverage: forwardSourceCoverage.value,
     publicMinuteAudit: publicMinuteAudit.value,
     intradayObservation: intradayObservation.value,
     intradayBreadth: intradayBreadth.value,

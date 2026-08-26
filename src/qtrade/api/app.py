@@ -130,6 +130,7 @@ class AppContext:
     development_policy_search_path: Path | None = None
     forward_observation_preregistration_path: Path | None = None
     forward_observation_report_path: Path | None = None
+    forward_source_coverage_path: Path | None = None
     reserved_tail_preregistration_path: Path | None = None
     reserved_tail_diagnostic_report_path: Path | None = None
     public_minute_audit_path: Path | None = None
@@ -538,6 +539,53 @@ def create_app(
             "gates": [],
             "cost_stress": [],
             "leave_one_sector_out": [],
+            "promotion": "NOT_EVALUATED",
+            "realtime_readiness": False,
+            "real_data_paper_readiness": False,
+            "external_order_transmission": False,
+        }
+
+    @app.get("/forward-source-coverage")
+    def forward_source_coverage(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        development = _load_verified_development_policy_search(
+            state.development_policy_search_path,
+            dataset,
+        )
+        preregistration = _load_verified_forward_preregistration(
+            state.forward_observation_preregistration_path,
+            dataset,
+            development,
+        )
+        report = _load_verified_forward_source_coverage(
+            state.forward_source_coverage_path,
+            dataset,
+            preregistration,
+        )
+        return report or {
+            "classification": "NO_VERIFIED_FORWARD_SOURCE_COVERAGE",
+            "status": "UNAVAILABLE",
+            "required_symbol_count": 75,
+            "required_bars_per_symbol_session": 48,
+            "target_complete_symbol_count": 0,
+            "ready_symbol_count": 0,
+            "incomplete_symbol_count": 75,
+            "incomplete_symbols": [],
+            "target_incomplete_symbols": [],
+            "fetch_error_symbols": [],
+            "coverage": [],
+            "ready_for_formal_collection": False,
+            "enters_forward_metrics": False,
             "promotion": "NOT_EVALUATED",
             "realtime_readiness": False,
             "real_data_paper_readiness": False,
@@ -1297,6 +1345,9 @@ def context_from_runtime(
         ),
         forward_observation_report_path=Path(
             "runtime/research/baostock-locked-forward-observation-v1/report.json"
+        ),
+        forward_source_coverage_path=Path(
+            "runtime/research/baostock-forward-source-coverage-v1/report.json"
         ),
         reserved_tail_preregistration_path=Path(
             "docs/preregistrations/"
@@ -5383,6 +5434,216 @@ def _load_verified_forward_observation_report(
         return None
 
 
+def _load_verified_forward_source_coverage(
+    path: Path | None,
+    dataset: dict[str, object] | None,
+    preregistration: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if (
+        path is None
+        or dataset is None
+        or preregistration is None
+        or not path.is_file()
+    ):
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        generated_at = datetime.fromisoformat(str(report.get("generated_at")))
+        anchor_day = date.fromisoformat(str(report.get("anchor_day")))
+        target_day = date.fromisoformat(str(report.get("target_day")))
+        first_eligible_day = date.fromisoformat(
+            str(preregistration.get("first_eligible_trading_day"))
+        )
+        warmup = preregistration.get("warmup_dataset")
+        symbols = dataset.get("eligible_symbols")
+        trading_days = dataset.get("trading_days")
+        warmup_last_day = (
+            trading_days[-1]
+            if isinstance(trading_days, list) and trading_days
+            else warmup.get("last_trading_day")
+            if isinstance(warmup, dict)
+            else None
+        )
+        coverage = report.get("coverage")
+        if (
+            not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("report_id")
+            != "baostock-forward-source-coverage-diagnostic-v1"
+            or report.get("classification")
+            != "SOURCE_COVERAGE_DIAGNOSTIC_NOT_FORWARD_EVIDENCE"
+            or report.get("provider") != "BaoStock"
+            or report.get("provider_version") != "0.9.3"
+            or report.get("frequency") != "5"
+            or report.get("adjustflag") != "2"
+            or generated_at.tzinfo is None
+            or target_day <= anchor_day
+            or target_day < first_eligible_day
+            or not isinstance(warmup, dict)
+            or anchor_day.isoformat() != warmup_last_day
+            or report.get("preregistration_id")
+            != preregistration.get("preregistration_id")
+            or report.get("preregistration_sha256")
+            != preregistration.get("preregistration_sha256")
+            or report.get("warmup_data_version") != dataset.get("data_version")
+            or report.get("warmup_checksum") != dataset.get("checksum")
+            or report.get("warmup_evidence_sha256")
+            != dataset.get("evidence_sha256")
+            or report.get("warmup_data_version") != warmup.get("data_version")
+            or report.get("warmup_checksum") != warmup.get("checksum")
+            or not isinstance(symbols, list)
+            or len(symbols) != 75
+            or len(set(symbols)) != 75
+            or not isinstance(coverage, list)
+            or len(coverage) != 75
+            or report.get("required_symbol_count") != 75
+            or report.get("required_bars_per_symbol_session") != 48
+        ):
+            return None
+        generated_china = generated_at.astimezone(ZoneInfo("Asia/Shanghai"))
+        if generated_china.date() < target_day or (
+            generated_china.date() == target_day
+            and generated_china.time() < datetime_time(15, 10)
+        ):
+            return None
+
+        expected_row_keys = {
+            "symbol",
+            "fetch_status",
+            "frozen_anchor_bar_count",
+            "anchor_bar_count",
+            "target_bar_count",
+            "frozen_anchor_grid_complete",
+            "anchor_grid_complete",
+            "target_grid_complete",
+            "anchor_exact_match",
+            "ready",
+            "reasons",
+        }
+        ready_symbols: list[str] = []
+        incomplete_symbols: list[str] = []
+        target_complete_symbols: list[str] = []
+        target_incomplete_symbols: list[str] = []
+        fetch_error_symbols: list[str] = []
+        for expected_symbol, value in zip(symbols, coverage, strict=True):
+            if not isinstance(expected_symbol, str) or not isinstance(value, dict):
+                return None
+            counts = (
+                value.get("frozen_anchor_bar_count"),
+                value.get("anchor_bar_count"),
+                value.get("target_bar_count"),
+            )
+            flags = (
+                value.get("frozen_anchor_grid_complete"),
+                value.get("anchor_grid_complete"),
+                value.get("target_grid_complete"),
+                value.get("anchor_exact_match"),
+                value.get("ready"),
+            )
+            reasons = value.get("reasons")
+            fetch_status = value.get("fetch_status")
+            if (
+                set(value) != expected_row_keys
+                or value.get("symbol") != expected_symbol
+                or fetch_status not in {"OK", "ERROR"}
+                or any(
+                    not isinstance(count, int)
+                    or isinstance(count, bool)
+                    or count < 0
+                    or count > 5000
+                    for count in counts
+                )
+                or any(not isinstance(flag, bool) for flag in flags)
+                or not isinstance(reasons, list)
+                or any(not isinstance(reason, str) for reason in reasons)
+                or (
+                    value.get("frozen_anchor_grid_complete") is True
+                    and value.get("frozen_anchor_bar_count") != 48
+                )
+                or (
+                    value.get("anchor_grid_complete") is True
+                    and value.get("anchor_bar_count") != 48
+                )
+                or (
+                    value.get("target_grid_complete") is True
+                    and value.get("target_bar_count") != 48
+                )
+                or (
+                    value.get("anchor_exact_match") is True
+                    and not (
+                        value.get("frozen_anchor_grid_complete") is True
+                        and value.get("anchor_grid_complete") is True
+                    )
+                )
+            ):
+                return None
+            expected_reasons: list[str] = []
+            if fetch_status == "ERROR":
+                expected_reasons.append("FETCH_FAILED")
+                fetch_error_symbols.append(expected_symbol)
+            if value["frozen_anchor_grid_complete"] is False:
+                expected_reasons.append("FROZEN_ANCHOR_INCOMPLETE")
+            if value["anchor_grid_complete"] is False:
+                expected_reasons.append("FETCHED_ANCHOR_INCOMPLETE")
+            if value["target_grid_complete"] is False:
+                expected_reasons.append("TARGET_SESSION_INCOMPLETE")
+                target_incomplete_symbols.append(expected_symbol)
+            else:
+                target_complete_symbols.append(expected_symbol)
+            if (
+                value["frozen_anchor_grid_complete"] is True
+                and value["anchor_grid_complete"] is True
+                and value["anchor_exact_match"] is False
+            ):
+                expected_reasons.append("ANCHOR_REVISION")
+            expected_ready = not expected_reasons
+            if reasons != expected_reasons or value.get("ready") is not expected_ready:
+                return None
+            (ready_symbols if expected_ready else incomplete_symbols).append(
+                expected_symbol
+            )
+
+        ready = len(ready_symbols) == 75
+        if (
+            report.get("target_complete_symbol_count")
+            != len(target_complete_symbols)
+            or report.get("ready_symbol_count") != len(ready_symbols)
+            or report.get("incomplete_symbol_count") != len(incomplete_symbols)
+            or report.get("incomplete_symbols") != incomplete_symbols
+            or report.get("target_incomplete_symbols") != target_incomplete_symbols
+            or report.get("fetch_error_symbols") != sorted(fetch_error_symbols)
+            or report.get("status")
+            != ("READY_FOR_FORMAL_COLLECTION" if ready else "SOURCE_INCOMPLETE")
+            or report.get("ready_for_formal_collection") is not ready
+            or report.get("enters_forward_metrics") is not False
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("external_order_transmission") is not False
+        ):
+            return None
+        return cast(dict[str, object], report)
+    except (
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
 def _load_verified_minute_research_snapshot(
     state: AppContext,
 ) -> dict[str, object]:
@@ -5434,6 +5695,11 @@ def _load_verified_minute_research_snapshot(
         if preregistration is not None and forward_report is not None
         else forward_report or preregistration
     )
+    forward_source_coverage = _load_verified_forward_source_coverage(
+        state.forward_source_coverage_path,
+        dataset,
+        preregistration,
+    )
     public_audit = _load_verified_public_minute_audit(
         state.public_minute_audit_path,
         dataset,
@@ -5456,6 +5722,7 @@ def _load_verified_minute_research_snapshot(
         "reservedTailDiagnostic": reserved_tail,
         "developmentPolicySearch": development,
         "forwardObservation": forward,
+        "forwardSourceCoverage": forward_source_coverage,
         "publicMinuteAudit": public_audit,
         "intradayObservation": detail,
         "intradayBreadth": breadth,
