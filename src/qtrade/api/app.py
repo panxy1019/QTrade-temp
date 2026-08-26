@@ -131,6 +131,7 @@ class AppContext:
     forward_observation_preregistration_path: Path | None = None
     forward_observation_report_path: Path | None = None
     forward_source_coverage_path: Path | None = None
+    forward_source_coverage_history_path: Path | None = None
     reserved_tail_preregistration_path: Path | None = None
     reserved_tail_diagnostic_report_path: Path | None = None
     public_minute_audit_path: Path | None = None
@@ -585,6 +586,49 @@ def create_app(
             "fetch_error_symbols": [],
             "coverage": [],
             "ready_for_formal_collection": False,
+            "enters_forward_metrics": False,
+            "promotion": "NOT_EVALUATED",
+            "realtime_readiness": False,
+            "real_data_paper_readiness": False,
+            "external_order_transmission": False,
+        }
+
+    @app.get("/forward-source-coverage-history")
+    def forward_source_coverage_history(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        development = _load_verified_development_policy_search(
+            state.development_policy_search_path,
+            dataset,
+        )
+        preregistration = _load_verified_forward_preregistration(
+            state.forward_observation_preregistration_path,
+            dataset,
+            development,
+        )
+        coverage = _load_verified_forward_source_coverage(
+            state.forward_source_coverage_path,
+            dataset,
+            preregistration,
+        )
+        report = _load_verified_forward_source_coverage_history(
+            state.forward_source_coverage_history_path,
+            coverage,
+        )
+        return report or {
+            "classification": "NO_VERIFIED_FORWARD_SOURCE_COVERAGE_HISTORY",
+            "checkpoint_count": 0,
+            "all_checkpoints_monotonic": False,
+            "checkpoints": [],
             "enters_forward_metrics": False,
             "promotion": "NOT_EVALUATED",
             "realtime_readiness": False,
@@ -1348,6 +1392,9 @@ def context_from_runtime(
         ),
         forward_source_coverage_path=Path(
             "runtime/research/baostock-forward-source-coverage-v1/report.json"
+        ),
+        forward_source_coverage_history_path=Path(
+            "runtime/research/baostock-forward-source-coverage-v1/history.json"
         ),
         reserved_tail_preregistration_path=Path(
             "docs/preregistrations/"
@@ -5714,6 +5761,190 @@ def _load_verified_forward_source_coverage(
         return None
 
 
+def _load_verified_forward_source_coverage_history(
+    path: Path | None,
+    coverage: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if path is None or coverage is None or not path.is_file():
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        expected_report_keys = {
+            "schema_version",
+            "report_id",
+            "classification",
+            "source_identity",
+            "checkpoint_count",
+            "all_checkpoints_monotonic",
+            "checkpoints",
+            "enters_forward_metrics",
+            "promotion",
+            "realtime_readiness",
+            "real_data_paper_readiness",
+            "external_order_transmission",
+            "evidence_sha256",
+        }
+        if not isinstance(report, dict) or set(report) != expected_report_keys:
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        identity = report.get("source_identity")
+        checkpoints = report.get("checkpoints")
+        checkpoint_count = report.get("checkpoint_count")
+        expected_identity = {
+            "provider": coverage.get("provider"),
+            "provider_version": coverage.get("provider_version"),
+            "frequency": coverage.get("frequency"),
+            "adjustflag": coverage.get("adjustflag"),
+            "anchor_day": coverage.get("anchor_day"),
+            "target_day": coverage.get("target_day"),
+            "preregistration_id": coverage.get("preregistration_id"),
+            "preregistration_sha256": coverage.get("preregistration_sha256"),
+            "warmup_data_version": coverage.get("warmup_data_version"),
+            "warmup_checksum": coverage.get("warmup_checksum"),
+            "warmup_evidence_sha256": coverage.get("warmup_evidence_sha256"),
+            "required_symbol_count": coverage.get("required_symbol_count"),
+            "required_bars_per_symbol_session": coverage.get(
+                "required_bars_per_symbol_session"
+            ),
+        }
+        if (
+            not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("report_id")
+            != "baostock-forward-source-coverage-history-v1"
+            or report.get("classification")
+            != "SIGNED_SOURCE_COVERAGE_HISTORY_NOT_FORWARD_EVIDENCE"
+            or identity != expected_identity
+            or not isinstance(checkpoint_count, int)
+            or isinstance(checkpoint_count, bool)
+            or not isinstance(checkpoints, list)
+            or not 1 <= checkpoint_count == len(checkpoints) <= 64
+            or report.get("enters_forward_metrics") is not False
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("external_order_transmission") is not False
+        ):
+            return None
+        expected_checkpoint_keys = {
+            "sequence",
+            "generated_at",
+            "report_evidence_sha256",
+            "ready_symbol_count",
+            "target_complete_symbol_count",
+            "incomplete_symbol_count",
+            "fetch_error_symbol_count",
+            "status",
+            "ready_symbol_count_delta",
+            "monotonic_vs_previous",
+            "previous_checkpoint_sha256",
+            "checkpoint_sha256",
+        }
+        previous_hash: str | None = None
+        previous_time: datetime | None = None
+        previous_ready: int | None = None
+        previous_target: int | None = None
+        previous_incomplete: int | None = None
+        all_monotonic = True
+        for sequence, value in enumerate(checkpoints, start=1):
+            if not isinstance(value, dict) or set(value) != expected_checkpoint_keys:
+                return None
+            generated_at = datetime.fromisoformat(str(value.get("generated_at")))
+            ready = value.get("ready_symbol_count")
+            target_complete = value.get("target_complete_symbol_count")
+            incomplete = value.get("incomplete_symbol_count")
+            fetch_errors = value.get("fetch_error_symbol_count")
+            delta = value.get("ready_symbol_count_delta")
+            checkpoint_digest = value.get("checkpoint_sha256")
+            checkpoint_unsigned = {
+                key: item
+                for key, item in value.items()
+                if key != "checkpoint_sha256"
+            }
+            if (
+                generated_at.tzinfo is None
+                or generated_at
+                > datetime.now(ZoneInfo("UTC")) + timedelta(minutes=5)
+                or previous_time is not None
+                and generated_at <= previous_time
+                or value.get("sequence") != sequence
+                or value.get("previous_checkpoint_sha256") != previous_hash
+                or not _is_sha256(checkpoint_digest)
+                or _canonical_dict_sha256(
+                    cast(dict[str, object], checkpoint_unsigned)
+                )
+                != checkpoint_digest
+                or not _is_sha256(value.get("report_evidence_sha256"))
+                or any(
+                    not isinstance(count, int)
+                    or isinstance(count, bool)
+                    or not 0 <= count <= 75
+                    for count in (ready, target_complete, incomplete, fetch_errors)
+                )
+                or cast(int, ready) > cast(int, target_complete)
+                or cast(int, ready) + cast(int, incomplete) != 75
+                or value.get("status")
+                != (
+                    "READY_FOR_FORMAL_COLLECTION"
+                    if ready == 75
+                    else "SOURCE_INCOMPLETE"
+                )
+                or sequence == 1
+                and delta is not None
+                or sequence > 1
+                and (
+                    not isinstance(delta, int)
+                    or isinstance(delta, bool)
+                    or delta != cast(int, ready) - cast(int, previous_ready)
+                )
+            ):
+                return None
+            monotonic = previous_ready is None or (
+                cast(int, ready) >= previous_ready
+                and cast(int, target_complete) >= cast(int, previous_target)
+                and cast(int, incomplete) <= cast(int, previous_incomplete)
+            )
+            if value.get("monotonic_vs_previous") is not monotonic:
+                return None
+            all_monotonic = all_monotonic and monotonic
+            previous_hash = str(checkpoint_digest)
+            previous_time = generated_at
+            previous_ready = cast(int, ready)
+            previous_target = cast(int, target_complete)
+            previous_incomplete = cast(int, incomplete)
+        latest = cast(dict[str, object], checkpoints[-1])
+        if (
+            report.get("all_checkpoints_monotonic") is not all_monotonic
+            or latest.get("generated_at") != coverage.get("generated_at")
+            or latest.get("report_evidence_sha256")
+            != coverage.get("evidence_sha256")
+            or latest.get("ready_symbol_count") != coverage.get("ready_symbol_count")
+            or latest.get("target_complete_symbol_count")
+            != coverage.get("target_complete_symbol_count")
+            or latest.get("incomplete_symbol_count")
+            != coverage.get("incomplete_symbol_count")
+            or latest.get("status") != coverage.get("status")
+        ):
+            return None
+        return cast(dict[str, object], report)
+    except (
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
 def _load_verified_minute_research_snapshot(
     state: AppContext,
 ) -> dict[str, object]:
@@ -5770,6 +6001,10 @@ def _load_verified_minute_research_snapshot(
         dataset,
         preregistration,
     )
+    forward_source_coverage_history = _load_verified_forward_source_coverage_history(
+        state.forward_source_coverage_history_path,
+        forward_source_coverage,
+    )
     public_audit = _load_verified_public_minute_audit(
         state.public_minute_audit_path,
         dataset,
@@ -5793,6 +6028,7 @@ def _load_verified_minute_research_snapshot(
         "developmentPolicySearch": development,
         "forwardObservation": forward,
         "forwardSourceCoverage": forward_source_coverage,
+        "forwardSourceCoverageHistory": forward_source_coverage_history,
         "publicMinuteAudit": public_audit,
         "intradayObservation": detail,
         "intradayBreadth": breadth,

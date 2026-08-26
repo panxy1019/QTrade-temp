@@ -173,6 +173,9 @@ npm --prefix web run build
 - [x] Chain multiple same-day detail/breadth checkpoints, verify monotonic source
   progression and the latest evidence identities, and show the bounded timeline
   without dropping or repairing a detected regression.
+- [x] Preserve each signed 75-stock forward-source coverage diagnostic in a
+  previous-hash chain, verify its exact provider/lock identity and expose the
+  `41 → 47 → 52` progression without treating it as formal `0/20` evidence.
 - [x] Pre-register the locked development overlay's future complete-session
   collection and evaluation contract, bind it to collector/evaluator/engine
   hashes, require 75×48 bars plus an exact frozen-anchor match, and publish the

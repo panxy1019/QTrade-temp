@@ -5,11 +5,15 @@ from pathlib import Path
 from qtrade.api.app import (
     _canonical_dict_sha256,
     _load_verified_forward_source_coverage,
+    _load_verified_forward_source_coverage_history,
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 REPORT_PATH = (
     PROJECT_ROOT / "deployment/evidence/forward-source-coverage/report.json"
+)
+HISTORY_PATH = (
+    PROJECT_ROOT / "deployment/evidence/forward-source-coverage/history.json"
 )
 
 
@@ -50,10 +54,38 @@ def test_forward_source_coverage_accepts_packaged_diagnostic() -> None:
     )
 
     assert verified == report
-    assert verified["ready_symbol_count"] == 47
-    assert verified["incomplete_symbol_count"] == 28
+    assert verified["ready_symbol_count"] == 52
+    assert verified["incomplete_symbol_count"] == 23
     assert verified["enters_forward_metrics"] is False
     assert verified["external_order_transmission"] is False
+
+
+def test_forward_source_coverage_accepts_packaged_history() -> None:
+    coverage, _, _ = _inputs()
+
+    verified = _load_verified_forward_source_coverage_history(
+        HISTORY_PATH,
+        coverage,
+    )
+
+    assert verified is not None
+    assert verified["checkpoint_count"] == 3
+    assert verified["all_checkpoints_monotonic"] is True
+    assert verified["checkpoints"][-1]["ready_symbol_count"] == 52
+    assert verified["checkpoints"][-1]["ready_symbol_count_delta"] == 5
+    assert verified["enters_forward_metrics"] is False
+
+
+def test_forward_source_coverage_rejects_resigned_history_chain_tamper(
+    tmp_path: Path,
+) -> None:
+    coverage, _, _ = _inputs()
+    history = json.loads(HISTORY_PATH.read_text(encoding="utf-8"))
+    history["checkpoints"][1]["ready_symbol_count"] = 74
+    target = tmp_path / "history.json"
+    _write_signed(target, history)
+
+    assert _load_verified_forward_source_coverage_history(target, coverage) is None
 
 
 def test_forward_source_coverage_rejects_signed_inconsistent_arithmetic(

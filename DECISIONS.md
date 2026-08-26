@@ -1119,3 +1119,20 @@ The shared JSON publisher now fsyncs the completed temporary file, performs the
 same-directory replace, then fsyncs the parent directory before returning. The
 coverage, intraday detail, 75-stock breadth and continuity publishers inherit
 this durability order without changing their evidence or trading authority.
+
+## ADR-076 — Source coverage releases form a bounded evidence chain
+
+Status: accepted, 2026-08-26.
+
+A latest-only coverage report answers which symbols are currently available but
+erases whether provider completeness improved or regressed across repeated
+post-close probes. Treating the snapshots as formal sessions would instead
+contaminate the locked 0/20 evaluation with diagnostics that persist no Bars.
+
+Each independently signed coverage report is now summarized into a second
+signed, previous-hash-bound chain of at most 64 checkpoints. The public verifier
+recomputes every checkpoint hash, provider/preregistration identity, timestamp,
+count arithmetic, delta and monotonic flag, and requires the final checkpoint to
+match the current coverage report exactly. The chain is displayed as source
+publication history only; it cannot increment formal forward metrics or grant
+realtime, PAPER, LIVE or external-order authority.

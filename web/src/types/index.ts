@@ -1092,6 +1092,33 @@ export interface ForwardSourceCoverageReport {
   external_order_transmission: false
 }
 
+export interface ForwardSourceCoverageHistoryReport {
+  classification: string
+  report_id?: string
+  checkpoint_count: number
+  all_checkpoints_monotonic: boolean
+  checkpoints: Array<{
+    sequence: number
+    generated_at: string
+    report_evidence_sha256: string
+    ready_symbol_count: number
+    target_complete_symbol_count: number
+    incomplete_symbol_count: number
+    fetch_error_symbol_count: number
+    status: 'READY_FOR_FORMAL_COLLECTION' | 'SOURCE_INCOMPLETE'
+    ready_symbol_count_delta: number | null
+    monotonic_vs_previous: boolean
+    previous_checkpoint_sha256: string | null
+    checkpoint_sha256: string
+  }>
+  evidence_sha256?: string
+  enters_forward_metrics: false
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  realtime_readiness: false
+  real_data_paper_readiness: false
+  external_order_transmission: false
+}
+
 export interface DailyReportAutomationStatus {
   classification: 'TRUSTED_PAPER_EOD_REPORTING'
   readiness: 'CONFIGURED' | 'UNCONFIGURED'
@@ -1139,6 +1166,7 @@ export interface PlatformSnapshot {
   developmentPolicySearch?: DevelopmentPolicySearchReport
   forwardObservation: ForwardObservationReport
   forwardSourceCoverage: ForwardSourceCoverageReport
+  forwardSourceCoverageHistory: ForwardSourceCoverageHistoryReport
   publicMinuteAudit: PublicMinuteAuditReport
   intradayObservation: IntradayObservationReport
   intradayBreadth: IntradayBreadthObservationReport

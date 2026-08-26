@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "report_id": "baostock-forward-source-coverage-diagnostic-v1",
-  "generated_at": "2026-08-26T18:31:04.697212+08:00",
+  "generated_at": "2026-08-26T18:47:04.612341+08:00",
   "classification": "SOURCE_COVERAGE_DIAGNOSTIC_NOT_FORWARD_EVIDENCE",
   "provider": "BaoStock",
   "provider_version": "0.9.3",
@@ -16,24 +16,19 @@
   "warmup_evidence_sha256": "531f8077caf6849d25ecca960d613c113c3dab25ee630b45e72cbce1252429bb",
   "required_symbol_count": 75,
   "required_bars_per_symbol_session": 48,
-  "target_complete_symbol_count": 47,
-  "ready_symbol_count": 47,
-  "incomplete_symbol_count": 28,
+  "target_complete_symbol_count": 52,
+  "ready_symbol_count": 52,
+  "incomplete_symbol_count": 23,
   "incomplete_symbols": [
-    "300059",
     "000858",
     "000568",
     "300760",
     "002422",
-    "002371",
-    "002475",
     "002415",
     "002230",
     "000938",
     "300750",
-    "300274",
     "002594",
-    "300124",
     "000988",
     "002353",
     "000408",
@@ -50,20 +45,15 @@
     "300251"
   ],
   "target_incomplete_symbols": [
-    "300059",
     "000858",
     "000568",
     "300760",
     "002422",
-    "002371",
-    "002475",
     "002415",
     "002230",
     "000938",
     "300750",
-    "300274",
     "002594",
-    "300124",
     "000988",
     "002353",
     "000408",
@@ -177,15 +167,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "601211",
@@ -369,30 +357,26 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "002475",
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "688012",
@@ -511,15 +495,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "600089",
@@ -645,15 +627,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "000988",
@@ -1120,5 +1100,5 @@
   "realtime_readiness": false,
   "real_data_paper_readiness": false,
   "external_order_transmission": false,
-  "evidence_sha256": "8ecbd9e3575f4aeb57ee5c8fe21c78e4f59f3e6dbac4d058895358140f7fc764"
+  "evidence_sha256": "c0fc84e6bf2a25b19435fe4dd8b7b53de7ec3e8c288377216e68a189996b34b3"
 }

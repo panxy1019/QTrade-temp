@@ -26,12 +26,12 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 400 tests passed, Ruff clean, strict mypy clean across
-  the 100-file source baseline plus the breadth and continuity scripts on Python 3.12.13
+- Acceptance evidence: 405 tests passed, Ruff clean, strict mypy clean across
+  101 checked source/publisher files on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 427.73 KB with no large-chunk warning.
+  minified JavaScript asset at or below 428.12 KB with no large-chunk warning.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
   accounting path is integration tested without a real-provider credential.
 - Frontend completeness audit: `docs/FRONTEND_GAP_AUDIT.md` tracks every
@@ -609,8 +609,8 @@ Last updated: 2026-08-26
   verified preregistration and cannot alter the public `0/20` state.
 - Forward source coverage: an independent, signed BaoStock diagnostic checked
   the full 75-stock locked universe after 15:10 China time without saving fetched
-  Bars. At `2026-08-26T18:31:04+08:00`, 47 symbols had an exact frozen anchor and
-  a complete 48-point target grid; 28 still lacked the target grid and none had
+  Bars. At `2026-08-26T18:47:04+08:00`, 52 symbols had an exact frozen anchor and
+  a complete 48-point target grid; 23 still lacked the target grid and none had
   a fetch error or anchor revision. `/forward-source-coverage`, the bundled
   minute snapshot, the research page and the data-center inventory expose those
   facts. A UTC-loaded frozen anchor was also replayed against equivalent
@@ -620,6 +620,11 @@ Last updated: 2026-08-26
   The public verifier accepts only the exact report schema and rejects generation
   times more than five minutes ahead of its own clock; a recomputed self-hash
   cannot authorize unknown pass-through fields or future-date the observation.
+  A separately signed, previous-hash-bound source-coverage history retains the
+  three independently published diagnostics at `41 → 47 → 52 READY`, verifies
+  every checkpoint and reports whether any coverage regression occurred. The
+  API, bundled snapshot, research page and data center expose the bounded chain;
+  it remains source diagnostics only and never becomes formal forward evidence.
   All mutable JSON evidence publishers now synchronize the replacement directory
   after the completed file is flushed and atomically renamed, so a successful
   coverage, detail, breadth or continuity write includes the directory entry's
