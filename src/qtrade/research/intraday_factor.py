@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 
@@ -21,6 +21,7 @@ _SIGNAL_TIME = time(10, 0)
 _ENTRY_TIME = time(10, 5)
 _EXIT_TIME = time(9, 35)
 _COST_STRESS_BPS = (0, 5, 10, 20)
+_ROBUSTNESS_THRESHOLDS_BPS = tuple(Decimal(value) for value in (0, 5, 10, 20))
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,6 +63,7 @@ class IntradayFactorObservation:
     signal_close: Decimal
     entry_price: Decimal
     exit_price: Decimal
+    minimum_ten_minute_body_return: Decimal
     opening_30m_return: Decimal
     opening_30m_range_position: Decimal
     gross_forward_return: Decimal
@@ -130,6 +132,48 @@ class IntradayResearchGate:
 
 
 @dataclass(frozen=True, slots=True)
+class IntradayThresholdScore:
+    minimum_body_return_bps: Decimal
+    signal_count: int
+    signal_rate: Decimal
+    strategy_metrics: PerformanceMetrics
+    benchmark_metrics: PerformanceMetrics
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayWalkForwardFold:
+    fold_id: str
+    training_start: date
+    training_end: date
+    test_start: date
+    test_end: date
+    training_session_count: int
+    test_session_count: int
+    selected_minimum_body_return_bps: Decimal
+    selection_known_at: datetime
+    training_signal_count: int
+    test_signal_count: int
+    training_strategy_metrics: PerformanceMetrics
+    test_strategy_metrics: PerformanceMetrics
+    test_benchmark_metrics: PerformanceMetrics
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayRobustnessValidation:
+    classification: str
+    candidate_thresholds_bps: tuple[Decimal, ...]
+    initial_training_session_count: int
+    folds: tuple[IntradayWalkForwardFold, ...]
+    stitched_test_session_count: int
+    stitched_strategy_metrics: PerformanceMetrics
+    stitched_benchmark_metrics: PerformanceMetrics
+    stitched_daily: tuple[IntradayFactorDay, ...]
+    threshold_sensitivity: tuple[IntradayThresholdScore, ...]
+    passed: bool
+    criteria: Mapping[str, bool]
+
+
+@dataclass(frozen=True, slots=True)
 class IntradayFactorResearchResult:
     factor_id: str
     start: date
@@ -147,6 +191,7 @@ class IntradayFactorResearchResult:
     daily: tuple[IntradayFactorDay, ...]
     sectors: tuple[IntradayFactorGroup, ...]
     symbols: tuple[IntradayFactorGroup, ...]
+    robustness_validation: IntradayRobustnessValidation
     research_gate: IntradayResearchGate
     causal_contract: Mapping[str, object]
     promotion: str
@@ -210,7 +255,8 @@ def run_opening_triple_bullish_research(
                 pair[-1].close / pair[0].open - Decimal("1")
                 for pair in (first_six[0:2], first_six[2:4], first_six[4:6])
             )
-            signal = all(value > threshold for value in ten_minute_returns)
+            minimum_ten_minute_body_return = min(ten_minute_returns)
+            signal = minimum_ten_minute_body_return > threshold
             signal_bar = first_six[-1]
             entry_bar = day_bars[6]
             exit_bar = exit_bars[0]
@@ -242,6 +288,9 @@ def run_opening_triple_bullish_research(
                     signal_close=signal_bar.close,
                     entry_price=entry_bar.open,
                     exit_price=exit_bar.open,
+                    minimum_ten_minute_body_return=(
+                        minimum_ten_minute_body_return
+                    ),
                     opening_30m_return=(
                         signal_bar.close / first_six[0].open - Decimal("1")
                     ),
@@ -309,6 +358,11 @@ def run_opening_triple_bullish_research(
         key=lambda item: (item.symbol, item.symbol),
     )
     event_summary = _event_summary(observations, sector_groups)
+    robustness = _run_robustness_validation(
+        observations,
+        selected_days,
+        cost_bps=selected_spec.cost_bps,
+    )
     criteria = {
         "minimum_observation_count": event_summary.observation_count >= 250,
         "minimum_signal_count": event_summary.signal_count >= 20,
@@ -330,6 +384,18 @@ def run_opening_triple_bullish_research(
         "base_cost_excess_return_positive": (
             base_evaluation[0].excess_return > 0
         ),
+        "walk_forward_oos_total_return_positive": (
+            robustness.stitched_strategy_metrics.total_return > 0
+        ),
+        "walk_forward_oos_excess_return_positive": (
+            robustness.stitched_strategy_metrics.excess_return > 0
+        ),
+        "walk_forward_positive_fold_ratio_at_least_60pct": robustness.criteria[
+            "positive_fold_ratio_at_least_60pct"
+        ],
+        "threshold_sensitivity_majority_positive": robustness.criteria[
+            "threshold_sensitivity_majority_positive"
+        ],
     }
     return IntradayFactorResearchResult(
         factor_id=selected_spec.factor_id,
@@ -348,6 +414,7 @@ def run_opening_triple_bullish_research(
         daily=base_evaluation[2],
         sectors=sector_groups,
         symbols=symbol_groups,
+        robustness_validation=robustness,
         research_gate=IntradayResearchGate(
             passed=all(criteria.values()),
             criteria=criteria,
@@ -377,6 +444,192 @@ def run_opening_triple_bullish_research(
         state_mutation=False,
         external_order_transmission=False,
     )
+
+
+def _run_robustness_validation(
+    observations: list[IntradayFactorObservation],
+    trading_days: list[date],
+    *,
+    cost_bps: Decimal,
+) -> IntradayRobustnessValidation:
+    if len(trading_days) < 4:
+        raise ValueError("factor robustness requires at least four sessions")
+    initial_training_session_count = len(trading_days) // 2
+    remaining_session_count = len(trading_days) - initial_training_session_count
+    fold_count = min(6, max(1, remaining_session_count // 5))
+    base_fold_size, larger_fold_count = divmod(remaining_session_count, fold_count)
+    test_fold_sizes = [
+        base_fold_size + int(index < larger_fold_count)
+        for index in range(fold_count)
+    ]
+
+    folds: list[IntradayWalkForwardFold] = []
+    stitched_observations: list[IntradayFactorObservation] = []
+    stitched_days: list[date] = []
+    test_offset = initial_training_session_count
+    for fold_index, test_fold_size in enumerate(test_fold_sizes, start=1):
+        training_days = trading_days[:test_offset]
+        test_days = trading_days[test_offset : test_offset + test_fold_size]
+        training_scores = [
+            _threshold_score(
+                observations,
+                training_days,
+                threshold_bps=threshold_bps,
+                cost_bps=cost_bps,
+            )
+            for threshold_bps in _ROBUSTNESS_THRESHOLDS_BPS
+        ]
+        selected = max(
+            training_scores,
+            key=lambda item: (
+                item.strategy_metrics.total_return,
+                item.strategy_metrics.excess_return,
+                -item.minimum_body_return_bps,
+            ),
+        )
+        test_rows = _threshold_observations(
+            observations,
+            test_days,
+            threshold_bps=selected.minimum_body_return_bps,
+        )
+        test_strategy, test_benchmark, _ = _evaluate_observations(
+            test_rows,
+            test_days,
+            cost_bps=cost_bps,
+        )
+        folds.append(
+            IntradayWalkForwardFold(
+                fold_id=f"WF-{fold_index:02d}",
+                training_start=training_days[0],
+                training_end=training_days[-1],
+                test_start=test_days[0],
+                test_end=test_days[-1],
+                training_session_count=len(training_days),
+                test_session_count=len(test_days),
+                selected_minimum_body_return_bps=(
+                    selected.minimum_body_return_bps
+                ),
+                selection_known_at=datetime.combine(
+                    test_days[0],
+                    _EXIT_TIME,
+                    _CHINA_TIME,
+                ),
+                training_signal_count=selected.signal_count,
+                test_signal_count=sum(item.signal for item in test_rows),
+                training_strategy_metrics=selected.strategy_metrics,
+                test_strategy_metrics=test_strategy,
+                test_benchmark_metrics=test_benchmark,
+            )
+        )
+        stitched_observations.extend(test_rows)
+        stitched_days.extend(test_days)
+        test_offset += test_fold_size
+
+    stitched_strategy, stitched_benchmark, stitched_daily = _evaluate_observations(
+        stitched_observations,
+        stitched_days,
+        cost_bps=cost_bps,
+    )
+    threshold_sensitivity = tuple(
+        _threshold_score(
+            observations,
+            stitched_days,
+            threshold_bps=threshold_bps,
+            cost_bps=cost_bps,
+        )
+        for threshold_bps in _ROBUSTNESS_THRESHOLDS_BPS
+    )
+    positive_fold_count = sum(
+        fold.test_strategy_metrics.total_return > 0 for fold in folds
+    )
+    positive_threshold_count = sum(
+        score.strategy_metrics.total_return > 0
+        for score in threshold_sensitivity
+    )
+    criteria = {
+        "minimum_two_disjoint_test_folds": len(folds) >= 2,
+        "every_test_fold_has_signal": all(
+            fold.test_signal_count > 0 for fold in folds
+        ),
+        "causal_selection_known_before_test_signal": all(
+            fold.selection_known_at
+            < datetime.combine(fold.test_start, _SIGNAL_TIME, _CHINA_TIME)
+            for fold in folds
+        ),
+        "stitched_oos_total_return_positive": stitched_strategy.total_return > 0,
+        "stitched_oos_excess_return_positive": stitched_strategy.excess_return > 0,
+        "positive_fold_ratio_at_least_60pct": (
+            positive_fold_count * 5 >= len(folds) * 3
+        ),
+        "threshold_sensitivity_majority_positive": (
+            positive_threshold_count * 2 >= len(threshold_sensitivity)
+        ),
+        "worst_threshold_total_return_non_negative": min(
+            score.strategy_metrics.total_return
+            for score in threshold_sensitivity
+        )
+        >= 0,
+    }
+    return IntradayRobustnessValidation(
+        classification=(
+            "REUSED_CHRONOLOGICAL_WALK_FORWARD_DIAGNOSTIC_NOT_INDEPENDENT"
+        ),
+        candidate_thresholds_bps=_ROBUSTNESS_THRESHOLDS_BPS,
+        initial_training_session_count=initial_training_session_count,
+        folds=tuple(folds),
+        stitched_test_session_count=len(stitched_days),
+        stitched_strategy_metrics=stitched_strategy,
+        stitched_benchmark_metrics=stitched_benchmark,
+        stitched_daily=stitched_daily,
+        threshold_sensitivity=threshold_sensitivity,
+        passed=all(criteria.values()),
+        criteria=criteria,
+    )
+
+
+def _threshold_score(
+    observations: list[IntradayFactorObservation],
+    trading_days: list[date],
+    *,
+    threshold_bps: Decimal,
+    cost_bps: Decimal,
+) -> IntradayThresholdScore:
+    rows = _threshold_observations(
+        observations,
+        trading_days,
+        threshold_bps=threshold_bps,
+    )
+    strategy, benchmark, _ = _evaluate_observations(
+        rows,
+        trading_days,
+        cost_bps=cost_bps,
+    )
+    signal_count = sum(item.signal for item in rows)
+    return IntradayThresholdScore(
+        minimum_body_return_bps=threshold_bps,
+        signal_count=signal_count,
+        signal_rate=Decimal(signal_count) / len(rows),
+        strategy_metrics=strategy,
+        benchmark_metrics=benchmark,
+    )
+
+
+def _threshold_observations(
+    observations: list[IntradayFactorObservation],
+    trading_days: list[date],
+    *,
+    threshold_bps: Decimal,
+) -> list[IntradayFactorObservation]:
+    selected_days = set(trading_days)
+    threshold = threshold_bps / Decimal("10000")
+    return [
+        replace(
+            item,
+            signal=item.minimum_ten_minute_body_return > threshold,
+        )
+        for item in observations
+        if item.trading_day in selected_days
+    ]
 
 
 def _validate_source_grid(

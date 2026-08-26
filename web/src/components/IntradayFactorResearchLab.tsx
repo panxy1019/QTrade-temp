@@ -19,6 +19,7 @@ const workflowLabels: Record<string, string> = {
   FACTOR_DEFINITION: '因子定义',
   FACTOR_VALIDATION: '有效性检验',
   CORRELATION_VALIDATION: '相关性检验',
+  ROBUSTNESS_VALIDATION: '滚动稳健性检验',
   STRATEGY_CONSTRUCTION: '策略构造',
   CAUSAL_BACKTEST: '因果回测',
   PAPER: '模拟盘',
@@ -35,6 +36,17 @@ const gateLabels: Record<string, string> = {
   maximum_absolute_factor_correlation_below_0_90: '相关性绝对值低于 0.90',
   base_cost_total_return_positive: '基础成本下总收益为正',
   base_cost_excess_return_positive: '基础成本下超额收益为正',
+  walk_forward_oos_total_return_positive: '滚动样本外总收益为正',
+  walk_forward_oos_excess_return_positive: '滚动样本外超额收益为正',
+  walk_forward_positive_fold_ratio_at_least_60pct: '至少 60% 测试折收益为正',
+  threshold_sensitivity_majority_positive: '多数固定阈值收益为正',
+  minimum_two_disjoint_test_folds: '至少两个不重叠测试折',
+  every_test_fold_has_signal: '每个测试折均有信号',
+  causal_selection_known_before_test_signal: '阈值选择先于测试信号',
+  stitched_oos_total_return_positive: '拼接样本外总收益为正',
+  stitched_oos_excess_return_positive: '拼接样本外超额收益为正',
+  positive_fold_ratio_at_least_60pct: '至少 60% 测试折为正',
+  worst_threshold_total_return_non_negative: '最差固定阈值收益不为负',
 }
 
 export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMinuteDataset | null }) {
@@ -87,6 +99,9 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const correlationRows = result
     ? Object.entries(result.correlation_validation.correlations).map(([factor, correlation]) => ({ factor, correlation }))
     : []
+  const robustnessGateRows = result
+    ? Object.entries(result.robustness_validation.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))
+    : []
 
   return <Card title="分钟因子研究工作台" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · 原生 5 分钟</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
@@ -129,6 +144,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           <Metric label="ICIR" value={formatNumber(result.factor_validation.icir)} />
           <Metric label="信号率" value={formatPercent(result.event_summary.signal_rate)} />
           <Metric label="条件超额" value={formatPercent(result.event_summary.conditional_excess_return)} />
+          <Metric label="滚动样本外收益" value={formatPercent(result.robustness_validation.stitched_strategy_metrics.total_return)} />
+          <Metric label="滚动样本外超额" value={formatPercent(result.robustness_validation.stitched_strategy_metrics.excess_return)} />
         </div>
         <EquityChart dark analytics={curve} />
         <Tabs items={[
@@ -153,6 +170,40 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
                 { title: '相关开盘特征', dataIndex: 'factor' },
                 { title: 'Pearson 相关系数', dataIndex: 'correlation', render: (value: string) => formatNumber(value) },
                 { title: '绝对值门槛', render: () => `< ${result.correlation_validation.maximum_absolute_correlation}` },
+              ]} />
+            </Space>,
+          },
+          {
+            key: 'robustness',
+            label: '滚动样本外与阈值',
+            children: <Space orientation="vertical" style={{ width: '100%' }}>
+              <Alert
+                showIcon
+                type="warning"
+                title="复用历史样本的因果诊断，不是新的独立证据"
+                description={`固定候选阈值 ${result.robustness_validation.candidate_thresholds_bps.join('/')} bps；首段 ${result.robustness_validation.initial_training_session_count} 日训练，其后 ${result.robustness_validation.folds.length} 个测试折互不重叠。每折只用此前训练日选阈值，测试收益不参与当折选择。`}
+              />
+              <Table rowKey="fold_id" size="small" pagination={false} dataSource={result.robustness_validation.folds} columns={[
+                { title: '测试折', dataIndex: 'fold_id' },
+                { title: '训练区间', render: (_: unknown, row: IntradayFactorBacktest['robustness_validation']['folds'][number]) => `${row.training_start} → ${row.training_end}` },
+                { title: '测试区间', render: (_: unknown, row: IntradayFactorBacktest['robustness_validation']['folds'][number]) => `${row.test_start} → ${row.test_end}` },
+                { title: '所选阈值 bps', dataIndex: 'selected_minimum_body_return_bps' },
+                { title: '测试信号', dataIndex: 'test_signal_count' },
+                { title: '测试收益', render: (_: unknown, row: IntradayFactorBacktest['robustness_validation']['folds'][number]) => formatPercent(row.test_strategy_metrics.total_return) },
+                { title: '测试超额', render: (_: unknown, row: IntradayFactorBacktest['robustness_validation']['folds'][number]) => formatPercent(row.test_strategy_metrics.excess_return) },
+                { title: '最大回撤', render: (_: unknown, row: IntradayFactorBacktest['robustness_validation']['folds'][number]) => formatPercent(row.test_strategy_metrics.maximum_drawdown) },
+              ]} scroll={{ x: 1050 }} />
+              <Table rowKey="minimum_body_return_bps" size="small" pagination={false} dataSource={result.robustness_validation.threshold_sensitivity} columns={[
+                { title: '固定阈值 bps', dataIndex: 'minimum_body_return_bps' },
+                { title: '样本外信号', dataIndex: 'signal_count' },
+                { title: '信号率', dataIndex: 'signal_rate', render: (value: string) => formatPercent(value) },
+                { title: '样本外收益', render: (_: unknown, row: IntradayFactorBacktest['robustness_validation']['threshold_sensitivity'][number]) => formatPercent(row.strategy_metrics.total_return) },
+                { title: '样本外超额', render: (_: unknown, row: IntradayFactorBacktest['robustness_validation']['threshold_sensitivity'][number]) => formatPercent(row.strategy_metrics.excess_return) },
+                { title: 'Sharpe', render: (_: unknown, row: IntradayFactorBacktest['robustness_validation']['threshold_sensitivity'][number]) => formatNumber(row.strategy_metrics.sharpe) },
+              ]} />
+              <Table rowKey="gate_id" size="small" pagination={false} dataSource={robustnessGateRows} columns={[
+                { title: '稳健性门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+                { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
               ]} />
             </Space>,
           },

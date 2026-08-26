@@ -51,6 +51,23 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
         "opening_30m_return",
         "opening_30m_range_position",
     }
+    robustness = payload["robustness_validation"]
+    assert robustness["classification"] == (
+        "REUSED_CHRONOLOGICAL_WALK_FORWARD_DIAGNOSTIC_NOT_INDEPENDENT"
+    )
+    assert robustness["candidate_thresholds_bps"] == ["0", "5", "10", "20"]
+    assert robustness["initial_training_session_count"] == 10
+    assert robustness["stitched_test_session_count"] == 10
+    assert len(robustness["folds"]) == 2
+    assert [fold["test_session_count"] for fold in robustness["folds"]] == [5, 5]
+    assert all(
+        fold["training_end"] < fold["test_start"]
+        and fold["selection_known_at"].endswith("09:35:00+08:00")
+        for fold in robustness["folds"]
+    )
+    assert robustness["stitched_strategy_metrics"]["number_of_periods"] == 10
+    assert len(robustness["threshold_sensitivity"]) == 4
+    assert robustness["criteria"]["causal_selection_known_before_test_signal"] is True
     assert payload["strategy"]["entry_rule"] == "NEXT_5M_OPEN_10_05"
     assert payload["strategy"]["exit_rule"] == "NEXT_SESSION_OPEN_T_PLUS_ONE"
     assert payload["backtest"]["strategy_metrics"]["number_of_periods"] == 20
@@ -62,6 +79,7 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
         "FACTOR_DEFINITION",
         "FACTOR_VALIDATION",
         "CORRELATION_VALIDATION",
+        "ROBUSTNESS_VALIDATION",
         "STRATEGY_CONSTRUCTION",
         "CAUSAL_BACKTEST",
         "PAPER",

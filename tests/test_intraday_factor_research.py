@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 
@@ -141,6 +142,21 @@ def test_research_reports_factor_effectiveness_correlation_cost_and_sector_stabi
     assert len(result.daily) == 6
     assert len(result.sectors) == 5
     assert len(result.symbols) == 10
+    assert result.robustness_validation.candidate_thresholds_bps == (
+        Decimal("0"),
+        Decimal("5"),
+        Decimal("10"),
+        Decimal("20"),
+    )
+    assert result.robustness_validation.initial_training_session_count == 3
+    assert result.robustness_validation.stitched_test_session_count == 3
+    assert len(result.robustness_validation.folds) == 1
+    fold = result.robustness_validation.folds[0]
+    assert fold.training_end < fold.test_start
+    assert fold.selection_known_at.timetz().replace(tzinfo=None) == time(9, 35)
+    assert result.robustness_validation.criteria[
+        "causal_selection_known_before_test_signal"
+    ] is True
     assert result.research_gate.criteria["minimum_signal_count"] is True
     assert result.promotion == "NOT_ELIGIBLE"
     assert "CURRENT_UNIVERSE_NON_PIT" in result.promotion_reasons
@@ -168,3 +184,53 @@ def test_intraday_factor_rejects_missing_grid_or_last_day_without_exit() -> None
             start=days[0],
             end=days[-2],
         )
+
+
+def test_first_walk_forward_selection_does_not_read_its_test_returns() -> None:
+    days = tuple(date(2026, 7, 1) + timedelta(days=index) for index in range(21))
+    symbols = tuple(f"6003{index:02d}" for index in range(5))
+    sectors = {
+        symbol: (f"S{index}", f"板块{index}")
+        for index, symbol in enumerate(symbols)
+    }
+    records = _bars(
+        days=days,
+        symbols=symbols,
+        signal_symbols={symbols[0], symbols[1]},
+    )
+    original = run_opening_triple_bullish_research(
+        records,
+        sectors=sectors,
+        start=days[0],
+        end=days[-2],
+        quantiles=5,
+    )
+    first_fold = original.robustness_validation.folds[0]
+    changed_exit_day = first_fold.test_start + timedelta(days=1)
+    perturbed = [
+        replace(
+            bar,
+            open=bar.open * Decimal("1.1"),
+            high=max(bar.high, bar.open * Decimal("1.1")),
+        )
+        if bar.trading_day == changed_exit_day
+        and bar.timestamp.timetz().replace(tzinfo=None) == time(9, 35)
+        else bar
+        for bar in records
+    ]
+    rerun = run_opening_triple_bullish_research(
+        perturbed,
+        sectors=sectors,
+        start=days[0],
+        end=days[-2],
+        quantiles=5,
+    )
+    rerun_first_fold = rerun.robustness_validation.folds[0]
+
+    assert rerun_first_fold.selected_minimum_body_return_bps == (
+        first_fold.selected_minimum_body_return_bps
+    )
+    assert rerun_first_fold.training_strategy_metrics == (
+        first_fold.training_strategy_metrics
+    )
+    assert rerun_first_fold.test_strategy_metrics != first_fold.test_strategy_metrics

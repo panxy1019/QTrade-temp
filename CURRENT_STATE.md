@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 433 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 434 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
   (macOS, 2026-08-26); 54 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -230,7 +230,13 @@ Last updated: 2026-08-26
   source exists; OHLCV is not used to fabricate bid/ask depth. Because the
   endpoint is deterministic and side-effect free, its browser client retries
   one network-level fetch failure; HTTP validation/server responses and every
-  control or trading POST are never retried by this path.
+  control or trading POST are never retried by this path. A fixed
+  `0/5/10/20 bps` expanding-window diagnostic now selects a threshold on prior
+  sessions only and stitches disjoint test folds. Both 5-day test folds selected
+  5 bps and lost 2.5834% / 2.1394%; the stitched ten-session return was -4.6675%
+  with -5.2240% maximum drawdown. All four fixed-threshold test returns were
+  negative (-4.4507% to -5.7885%). This reused-history diagnostic therefore
+  fails its robustness gate and is not represented as independent evidence.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

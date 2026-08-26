@@ -8138,6 +8138,7 @@ def _intraday_factor_preview(
     correlation_passed = criteria[
         "maximum_absolute_factor_correlation_below_0_90"
     ]
+    robustness_passed = result.robustness_validation.passed
     backtest_passed = (
         criteria["base_cost_total_return_positive"]
         and criteria["base_cost_excess_return_positive"]
@@ -8159,6 +8160,14 @@ def _intraday_factor_preview(
             "id": "CORRELATION_VALIDATION",
             "status": "PASSED" if correlation_passed else "FAILED",
             "detail": "Redundancy checks against related opening features completed.",
+        },
+        {
+            "id": "ROBUSTNESS_VALIDATION",
+            "status": "PASSED" if robustness_passed else "FAILED",
+            "detail": (
+                "Expanding-window threshold selection and disjoint test folds "
+                "completed without using future test returns."
+            ),
         },
         {
             "id": "STRATEGY_CONSTRUCTION",
@@ -8232,6 +8241,83 @@ def _intraday_factor_preview(
             },
             "maximum_absolute_correlation": "0.90",
             "passed": correlation_passed,
+        },
+        "robustness_validation": {
+            "classification": result.robustness_validation.classification,
+            "candidate_thresholds_bps": [
+                str(value)
+                for value in result.robustness_validation.candidate_thresholds_bps
+            ],
+            "initial_training_session_count": (
+                result.robustness_validation.initial_training_session_count
+            ),
+            "stitched_test_session_count": (
+                result.robustness_validation.stitched_test_session_count
+            ),
+            "folds": [
+                {
+                    "fold_id": fold.fold_id,
+                    "training_start": fold.training_start.isoformat(),
+                    "training_end": fold.training_end.isoformat(),
+                    "test_start": fold.test_start.isoformat(),
+                    "test_end": fold.test_end.isoformat(),
+                    "training_session_count": fold.training_session_count,
+                    "test_session_count": fold.test_session_count,
+                    "selected_minimum_body_return_bps": str(
+                        fold.selected_minimum_body_return_bps
+                    ),
+                    "selection_known_at": fold.selection_known_at.isoformat(),
+                    "training_signal_count": fold.training_signal_count,
+                    "test_signal_count": fold.test_signal_count,
+                    "training_strategy_metrics": _performance_metrics_payload(
+                        fold.training_strategy_metrics
+                    ),
+                    "test_strategy_metrics": _performance_metrics_payload(
+                        fold.test_strategy_metrics
+                    ),
+                    "test_benchmark_metrics": _performance_metrics_payload(
+                        fold.test_benchmark_metrics
+                    ),
+                }
+                for fold in result.robustness_validation.folds
+            ],
+            "stitched_strategy_metrics": _performance_metrics_payload(
+                result.robustness_validation.stitched_strategy_metrics
+            ),
+            "stitched_benchmark_metrics": _performance_metrics_payload(
+                result.robustness_validation.stitched_benchmark_metrics
+            ),
+            "stitched_curve": [
+                {
+                    "trading_day": item.trading_day.isoformat(),
+                    "signal_count": item.signal_count,
+                    "eligible_symbol_count": item.eligible_symbol_count,
+                    "strategy_return": str(item.strategy_return),
+                    "benchmark_return": str(item.benchmark_return),
+                    "strategy_equity": str(item.strategy_equity),
+                    "benchmark_equity": str(item.benchmark_equity),
+                    "excess_equity": str(item.excess_equity),
+                }
+                for item in result.robustness_validation.stitched_daily
+            ],
+            "threshold_sensitivity": [
+                {
+                    "minimum_body_return_bps": str(
+                        score.minimum_body_return_bps
+                    ),
+                    "signal_count": score.signal_count,
+                    "signal_rate": str(score.signal_rate),
+                    "strategy_metrics": _performance_metrics_payload(
+                        score.strategy_metrics
+                    ),
+                    "benchmark_metrics": _performance_metrics_payload(
+                        score.benchmark_metrics
+                    ),
+                }
+                for score in result.robustness_validation.threshold_sensitivity
+            ],
+            "criteria": dict(result.robustness_validation.criteria),
+            "passed": robustness_passed,
         },
         "strategy": {
             "entry_rule": "NEXT_5M_OPEN_10_05",

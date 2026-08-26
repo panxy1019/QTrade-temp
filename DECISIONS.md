@@ -1371,3 +1371,25 @@ point-in-time evidence, so even a passing retrospective run remains
 `NOT_ELIGIBLE` until a separately authorized and locked forward PAPER stage.
 Five-level order-book buying intensity cannot be computed without an authorized
 L2 bid/ask feed and must remain `UNCONFIGURED`; OHLCV substitution is prohibited.
+
+## ADR-091 — Intraday threshold tuning uses expanding disjoint test folds
+
+Status: accepted, 2026-08-26.
+
+Repeatedly choosing the body threshold on the same displayed 20-session result
+would convert ordinary overfitting into a favorable-looking backtest. The
+diagnostic therefore fixes the candidate set at `0/5/10/20 bps`, reserves the
+second half for disjoint five-session test folds, and selects each fold's
+threshold using only the expanding training prefix. The final training signal's
+T+1 exit is known at the test day's 09:35 open, before the 10:00 factor signal;
+the test fold's returns do not enter its own selection. A regression perturbs
+future test prices and proves that the first selected threshold and its training
+metrics do not change.
+
+The stitched out-of-sample curve, fold metrics and all four fixed-threshold
+sensitivity rows are returned and hashed with the rest of the response. The
+2026-07-28 through 2026-08-24 diagnostic selected 5 bps in both folds and lost
+4.6675% when stitched; every fixed threshold was negative. The source is still
+current-universe QFQ history viewed after the hypothesis existed, so the result
+is classified as reused-history diagnostic evidence, remains `NOT_ELIGIBLE`,
+and cannot authorize PAPER, LIVE, state mutation or external orders.

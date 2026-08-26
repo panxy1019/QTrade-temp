@@ -1116,6 +1116,7 @@ describe('verified robustness evidence', () => {
         { id: 'FACTOR_DEFINITION', status: 'AVAILABLE', detail: 'fixed' },
         { id: 'FACTOR_VALIDATION', status: 'FAILED', detail: 'failed' },
         { id: 'CORRELATION_VALIDATION', status: 'PASSED', detail: 'passed' },
+        { id: 'ROBUSTNESS_VALIDATION', status: 'FAILED', detail: 'failed' },
         { id: 'STRATEGY_CONSTRUCTION', status: 'AVAILABLE', detail: 'built' },
         { id: 'CAUSAL_BACKTEST', status: 'FAILED', detail: 'failed' },
         { id: 'PAPER', status: 'NOT_ELIGIBLE', detail: 'blocked' },
@@ -1135,6 +1136,37 @@ describe('verified robustness evidence', () => {
       correlation_validation: {
         correlations: { opening_30m_return: '0.4668', opening_30m_range_position: '0.4712' },
         maximum_absolute_correlation: '0.90', passed: true,
+      },
+      robustness_validation: {
+        classification: 'REUSED_CHRONOLOGICAL_WALK_FORWARD_DIAGNOSTIC_NOT_INDEPENDENT',
+        candidate_thresholds_bps: ['0', '5', '10', '20'],
+        initial_training_session_count: 10,
+        stitched_test_session_count: 10,
+        folds: [{
+          fold_id: 'WF-01', training_start: '2026-07-28', training_end: '2026-08-10',
+          test_start: '2026-08-11', test_end: '2026-08-17', training_session_count: 10,
+          test_session_count: 5, selected_minimum_body_return_bps: '5',
+          selection_known_at: '2026-08-11T09:35:00+08:00', training_signal_count: 96,
+          test_signal_count: 44, training_strategy_metrics: metrics,
+          test_strategy_metrics: metrics, test_benchmark_metrics: metrics,
+        }],
+        stitched_strategy_metrics: metrics,
+        stitched_benchmark_metrics: metrics,
+        stitched_curve: [],
+        threshold_sensitivity: [{
+          minimum_body_return_bps: '0', signal_count: 90, signal_rate: '0.12',
+          strategy_metrics: metrics, benchmark_metrics: metrics,
+        }],
+        criteria: {
+          minimum_two_disjoint_test_folds: false, every_test_fold_has_signal: true,
+          causal_selection_known_before_test_signal: true,
+          stitched_oos_total_return_positive: false,
+          stitched_oos_excess_return_positive: true,
+          positive_fold_ratio_at_least_60pct: false,
+          threshold_sensitivity_majority_positive: false,
+          worst_threshold_total_return_non_negative: false,
+        },
+        passed: false,
       },
       strategy: {
         entry_rule: 'NEXT_5M_OPEN_10_05', exit_rule: 'NEXT_SESSION_OPEN_T_PLUS_ONE',
@@ -1158,6 +1190,10 @@ describe('verified robustness evidence', () => {
           positive_rank_ic: false, positive_sector_ratio_at_least_60pct: false,
           maximum_absolute_factor_correlation_below_0_90: true,
           base_cost_total_return_positive: false, base_cost_excess_return_positive: true,
+          walk_forward_oos_total_return_positive: false,
+          walk_forward_oos_excess_return_positive: true,
+          walk_forward_positive_fold_ratio_at_least_60pct: false,
+          threshold_sensitivity_majority_positive: false,
         },
       },
       causal_contract: {
@@ -1193,6 +1229,9 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText(/五档买卖盘强度：UNCONFIGURED/)).toBeInTheDocument()
     expect(screen.getByText(/不会从 OHLCV 伪造买一至买五/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出因子研究证据/ })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: '滚动样本外与阈值' }))
+    expect(screen.getByText('复用历史样本的因果诊断，不是新的独立证据')).toBeInTheDocument()
+    expect(screen.getByText(/固定候选阈值 0\/5\/10\/20 bps/)).toBeInTheDocument()
   })
 
   it('does not present experiment records as a registered lineage', () => {

@@ -253,7 +253,12 @@ the A-share T+1 exit is the open of the next session's Bar labelled `09:35`
 (interval start `09:30`). The response includes IC/Rank IC/ICIR, related-feature
 correlations, conditional event returns, standard performance metrics, an
 equal-weight same-horizon benchmark, 0/5/10/20 bps cost stress, daily curves and
-all 15 sector/75 stock breakdowns.
+all 15 sector/75 stock breakdowns. Its robustness section fixes candidate body
+thresholds at `0/5/10/20 bps`, uses the first half as the initial training
+window, selects a threshold from prior sessions only, and evaluates disjoint
+expanding-window test folds. The training day's T+1 exit is known at the test
+day's `09:35` open before that day's `10:00` signal; test returns never enter the
+same fold's selection.
 
 The first disclosed 20-session run from 2026-07-28 through 2026-08-24 produced
 192 signals across 1,500 stock-days. At 5 bps per side it returned `-4.0840%`,
@@ -263,7 +268,12 @@ but mean signal return, conditional excess, Rank IC, sector breadth and absolute
 return gates failed. The workbench therefore reports the result as a rejected
 ad-hoc hypothesis, never as a strategy eligible for PAPER. The proposed five-
 level order-book buying-intensity factor remains `UNCONFIGURED`: authorized L2
-bid/ask sizes are required and are never synthesized from OHLCV.
+bid/ask sizes are required and are never synthesized from OHLCV. The added
+rolling diagnostic also rejected the rule: both five-session folds selected a
+5 bps body threshold and returned `-2.5834%` and `-2.1394%`; their stitched return
+was `-4.6675%`, and every fixed threshold returned between `-4.4507%` and
+`-5.7885%`. Because these dates were already available, this is labelled reused
+historical evidence rather than a blind confirmation.
 
 The public deployment can be audited independently across one stock from every
 sector and three widely separated sessions. The script runs the same 45 requests

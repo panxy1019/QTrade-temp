@@ -250,10 +250,14 @@ five-minute Bar intervals, checked cross-sectionally across 75 stocks and 15
 sectors, compared with related opening features, converted into an explicit
 next-Bar/T+1 equal-weight strategy, and replayed against a same-horizon benchmark
 under four cost levels. Its first 20-session result is negative and remains a
-rejected, current-universe/QFQ non-PIT hypothesis. Future tuning must use bounded
-development windows and a separately locked forward evaluation; the viewed
-window cannot be relabelled as blind confirmation. Order-book buying intensity
-is only a data contract until an authorized five-level L2 source is selected.
+rejected, current-universe/QFQ non-PIT hypothesis. A fixed four-threshold
+expanding-window diagnostic now selects only from earlier sessions and evaluates
+two disjoint five-session folds; both folds and all four fixed thresholds are
+negative. It is explicitly reused-history robustness evidence, not an
+independent confirmation. Future tuning must use bounded development windows and
+a separately locked forward evaluation; the viewed window cannot be relabelled
+as blind confirmation. Order-book buying intensity is only a data contract until
+an authorized five-level L2 source is selected.
 
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no

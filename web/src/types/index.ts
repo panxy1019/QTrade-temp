@@ -583,6 +583,49 @@ export interface IntradayFactorBacktest {
     maximum_absolute_correlation: string
     passed: boolean
   }
+  robustness_validation: {
+    classification: 'REUSED_CHRONOLOGICAL_WALK_FORWARD_DIAGNOSTIC_NOT_INDEPENDENT'
+    candidate_thresholds_bps: string[]
+    initial_training_session_count: number
+    stitched_test_session_count: number
+    folds: Array<{
+      fold_id: string
+      training_start: string
+      training_end: string
+      test_start: string
+      test_end: string
+      training_session_count: number
+      test_session_count: number
+      selected_minimum_body_return_bps: string
+      selection_known_at: string
+      training_signal_count: number
+      test_signal_count: number
+      training_strategy_metrics: IntradayPerformanceMetrics
+      test_strategy_metrics: IntradayPerformanceMetrics
+      test_benchmark_metrics: IntradayPerformanceMetrics
+    }>
+    stitched_strategy_metrics: IntradayPerformanceMetrics
+    stitched_benchmark_metrics: IntradayPerformanceMetrics
+    stitched_curve: Array<{
+      trading_day: string
+      signal_count: number
+      eligible_symbol_count: number
+      strategy_return: string
+      benchmark_return: string
+      strategy_equity: string
+      benchmark_equity: string
+      excess_equity: string
+    }>
+    threshold_sensitivity: Array<{
+      minimum_body_return_bps: string
+      signal_count: number
+      signal_rate: string
+      strategy_metrics: IntradayPerformanceMetrics
+      benchmark_metrics: IntradayPerformanceMetrics
+    }>
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   strategy: {
     entry_rule: string
     exit_rule: string
