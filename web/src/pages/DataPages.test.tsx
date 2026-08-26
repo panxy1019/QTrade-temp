@@ -167,6 +167,61 @@ const data = {
     data_version: 'akshare-bars-v1', git_commit: '3bdd29f', evidence_status: 'VERIFIED_NOT_ELIGIBLE',
     lineage_status: 'NOT_REGISTERED',
   }],
+  strategyTemplates: {
+    classification: 'READ_ONLY_IMPLEMENTED_BASELINE_STRATEGY_CATALOG',
+    template_count: 5,
+    active_template_count: 4,
+    benchmark_template_count: 1,
+    templates: [
+      {
+        template_id: 'equal-weight-buy-hold-benchmark-v1', name: '等权买入并持有', role: 'BENCHMARK_ONLY',
+        family: 'BUY_AND_HOLD_BENCHMARK', implementation_ref: 'qtrade.research.multi_asset.EqualWeightBuyHold',
+        description: '首个交易日等权建仓，之后保持仓位，作为主动策略比较基准。', data_interval: '1d', universe_scope: '多标的',
+        entry_rule: '首个可交易会话按等权目标在下一会话开盘执行。', exit_rule: '基准期内不主动退出。',
+        parameter_defaults: { reserve: '0' }, required_inputs: ['日线开收盘', '标的列表'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['只作为基准，不是主动选股或择时策略。'],
+      },
+      {
+        template_id: 'moving-average-trend-v1', name: '移动平均趋势', role: 'ACTIVE_BASELINE',
+        family: 'SINGLE_ASSET_TREND', implementation_ref: 'qtrade.strategies.baselines.MovingAverageTrendStrategy',
+        description: '价格位于移动平均线上方时持仓，跌破时清仓。', data_interval: '1d', universe_scope: '单标的',
+        entry_rule: '收盘价大于等于窗口均线时目标持仓。', exit_rule: '收盘价低于窗口均线时目标仓位归零。',
+        parameter_defaults: { window: '20', quantity: '100' }, required_inputs: ['日线收盘价'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['震荡市可能频繁换手。'],
+      },
+      {
+        template_id: 'etf-momentum-rotation-v1', name: 'ETF 动量轮动', role: 'ACTIVE_BASELINE',
+        family: 'ETF_MOMENTUM_ROTATION', implementation_ref: 'qtrade.research.multi_asset.MomentumAllocation',
+        description: '按多周期动量排序并定期持有排名靠前的 ETF。', data_interval: '1d', universe_scope: '多 ETF',
+        entry_rule: '只选择正动量且排名前 K 的 ETF。', exit_rule: '再平衡时跌出前 K 或动量非正则退出。',
+        parameter_defaults: { horizons: '20,60,120', top_k: '3', rebalance_every: '20', reserve: '0.05' }, required_inputs: ['日线收盘价', 'ETF 标的池'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['当前免费数据股票池不是 PIT。'],
+      },
+      {
+        template_id: 'etf-momentum-trend-volatility-v1', name: 'ETF 动量 + 趋势波动率约束', role: 'ACTIVE_BASELINE',
+        family: 'ETF_MOMENTUM_TREND_VOLATILITY', implementation_ref: 'qtrade.research.multi_asset.MomentumAllocation',
+        description: '在动量轮动上增加趋势过滤与目标年化波动率缩放。', data_interval: '1d', universe_scope: '多 ETF',
+        entry_rule: '正动量、排名前 K 且价格不低于趋势均线时持有。', exit_rule: '再平衡时任一资格条件失效则退出。',
+        parameter_defaults: { horizons: '20,60,120', top_k: '3', rebalance_every: '20', reserve: '0.05', trend_window: '120', volatility_window: '20', target_annual_volatility: '0.15' }, required_inputs: ['日线收盘价', 'ETF 标的池'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['目标波动率只降低暴露，不使用杠杆。'],
+      },
+      {
+        template_id: 'cross-sectional-factor-ranking-v1', name: '横截面因子排序', role: 'ACTIVE_BASELINE',
+        family: 'CROSS_SECTIONAL_FACTOR_RANKING', implementation_ref: 'qtrade.research.multi_asset.RankedFactorAllocation',
+        description: '对预声明价格因子做横截面百分位排序并组合选股。', data_interval: '1d', universe_scope: '多股票或 ETF',
+        entry_rule: '按加权因子得分选择排名前 K 的标的。', exit_rule: '再平衡时跌出前 K 或趋势资格失效则退出。',
+        parameter_defaults: { factors: 'momentum_20', top_k: '3', rebalance_every: '20', reserve: '0.05' }, required_inputs: ['质量通过的日线', '冻结标的池', '预注册因子定义'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['因子与参数必须在测试窗口之前冻结。'],
+      },
+    ],
+    selection_creates_experiment: false,
+    selection_registers_strategy: false,
+    paper_runtime_start: false,
+    live_runtime_start: false,
+    arbitrary_code_execution: false,
+    external_order_transmission: false,
+    next_step: 'FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST',
+  },
   experiments: {
     classification: 'exploratory_noncommercial_current_universe_not_pit',
     data_version: 'akshare-bars-v1', git_commit: '3bdd29f', promotion: 'NOT_ELIGIBLE',
@@ -1771,6 +1826,15 @@ describe('verified robustness evidence', () => {
 })
 
 describe('verified experiment candidates', () => {
+  it('starts from implemented baseline templates without pretending they are validated strategies', () => {
+    render(<StrategyPage data={data} />)
+    expect(screen.getByText('已实现基线策略模板 · 5')).toBeInTheDocument()
+    expect(screen.getByText('ETF 动量轮动')).toBeInTheDocument()
+    expect(screen.getByText('4 个主动模板 + 1 个比较基准')).toBeInTheDocument()
+    expect(screen.getByText(/选择模板不会创建实验、注册策略或启动模拟盘/)).toBeInTheDocument()
+    expect(screen.getByText(/下一步：冻结 ExperimentRunSpec 后运行因果回测/)).toBeInTheDocument()
+  })
+
   it('labels full-chain records as ineligible candidates rather than registered strategies', () => {
     render(<StrategyPage data={data} />)
     expect(screen.getByText('实验候选，不是已注册或已批准策略')).toBeInTheDocument()

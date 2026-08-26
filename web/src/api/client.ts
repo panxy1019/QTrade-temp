@@ -291,7 +291,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     intradayContinuity: null, unavailable_sections: [], realtime_readiness: false,
     real_data_paper_readiness: false, external_order_transmission: false,
   }
-  const [deployment, metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, minuteEvidence, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
+  const [deployment, metrics, reports, reporting, strategies, strategyTemplates, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, minuteEvidence, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
     getOptional<PlatformSnapshot['deployment']>('/deployment', deploymentFallback),
     getOptional<PlatformSnapshot['metrics']>('/metrics', {}),
     getOptional<PlatformSnapshot['reports']>('/reports', []),
@@ -304,6 +304,12 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
       external_order_transmission: false,
     }),
     getOptional<PlatformSnapshot['strategies']>('/strategies', []),
+    getOptional<PlatformSnapshot['strategyTemplates']>('/strategy-templates', {
+      classification: 'UNAVAILABLE', template_count: 0, active_template_count: 0, benchmark_template_count: 0,
+      templates: [], selection_creates_experiment: false, selection_registers_strategy: false,
+      paper_runtime_start: false, live_runtime_start: false, arbitrary_code_execution: false,
+      external_order_transmission: false, next_step: 'FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST',
+    }),
     getOptional<PlatformSnapshot['experiments']>('/experiments', {
       classification: 'UNAVAILABLE', promotion: 'NOT_EVALUATED', promotion_reasons: ['REQUEST_FAILED'], experiments: [],
     }),
@@ -356,11 +362,12 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
   const intradayObservation = getBundledSection('intradayObservation', minuteEvidence.value.intradayObservation, intradayFallback, bundledError, bundledUnavailable)
   const intradayBreadth = getBundledSection('intradayBreadth', minuteEvidence.value.intradayBreadth, breadthFallback, bundledError, bundledUnavailable)
   const intradayContinuity = getBundledSection('intradayContinuity', minuteEvidence.value.intradayContinuity, continuityFallback, bundledError, bundledUnavailable)
-  const sections = { deployment, metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, longFiveMinuteResearch, intradayFactorRobustness, reservedTailDiagnostic, developmentPolicySearch, forwardObservation, forwardSourceCoverage, forwardSourceCoverageHistory, publicMinuteAudit, intradayObservation, intradayBreadth, intradayContinuity, backtestAnalytics, market, historicalBars, audit }
+  const sections = { deployment, metrics, reports, reporting, strategies, strategyTemplates, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, longFiveMinuteResearch, intradayFactorRobustness, reservedTailDiagnostic, developmentPolicySearch, forwardObservation, forwardSourceCoverage, forwardSourceCoverageHistory, publicMinuteAudit, intradayObservation, intradayBreadth, intradayContinuity, backtestAnalytics, market, historicalBars, audit }
   const failures = Object.fromEntries(Object.entries(sections).flatMap(([name, result]) => result.error ? [[name, result.error]] : []))
   return {
     system, health, deployment: deployment.value, ...paper,
     metrics: metrics.value, reports: reports.value, reporting: reporting.value, strategies: strategies.value,
+    strategyTemplates: strategyTemplates.value,
     experiments: experiments.value, walkForward: walkForward.value, robustness: robustness.value,
     factorSearch: factorSearch.value, robustFactorSearch: robustFactorSearch.value,
     stockSectorTransfer: stockSectorTransfer.value, minuteOverlay: minuteOverlay.value,

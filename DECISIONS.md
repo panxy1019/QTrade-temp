@@ -1927,3 +1927,28 @@ a future valid insert creates `IDEA`, transition to `EXPERIMENT` requires a
 complete `ExperimentRunSpec`, a quality-passed data manifest and an independent
 leakage-review PASS. The preflight writes no registry row, starts no PAPER/LIVE
 runtime, mutates no state and transmits no external order.
+
+## ADR-114 — Implemented strategy baselines are a catalog, not admission authority
+
+Status: accepted, 2026-08-27.
+
+The repository already contained five baseline strategy structures, but the
+strategy center exposed only experiment rows selected from existing evidence.
+That made the intended “start from a known strategy, freeze it, then backtest”
+workflow invisible and encouraged treating a past candidate as the only entry
+point.
+
+QTrade now publishes a deterministic read-only catalog for equal-weight
+buy-and-hold, moving-average trend, ETF momentum rotation, ETF momentum with
+trend/volatility constraints, and cross-sectional factor ranking. The catalog
+uses the actual implementation references and states data interval, universe
+scope, entry and exit rules, unfrozen defaults, required inputs and limitations.
+Equal-weight buy-and-hold is explicitly comparison-only; the other four are
+active research baselines. “Implemented” does not mean profitable, mature or
+production-validated.
+
+Reading a catalog row performs no selection or write. It cannot create an
+experiment, register a strategy, execute arbitrary code, start PAPER/SHADOW or
+LIVE, mutate runtime state or transmit an order. The earliest next step is to
+freeze a complete `ExperimentRunSpec` before causal backtesting; all later
+research and authorization gates remain unchanged.

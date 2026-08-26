@@ -328,7 +328,21 @@ hash plus dataset-identity gates (`2/9`). Research, backtest, signed
 preregistration, leakage review, full registry hash, frozen disjoint split and
 lineage declaration remain blocked. No registration operation is exposed, and
 `IDEA → EXPERIMENT` still requires a complete experiment spec, a quality-passed
-manifest and an independent leakage-review PASS. The proposed
+manifest and an independent leakage-review PASS.
+
+For researchers who want to begin with existing strategy structures, the
+strategy center now loads a deterministic, read-only catalog of the five
+implemented baselines: an equal-weight buy-and-hold benchmark, single-asset
+moving-average trend, ETF momentum rotation, ETF momentum with trend/volatility
+constraints, and cross-sectional factor ranking. Each row exposes the actual
+implementation reference, data interval, universe scope, entry/exit rules,
+unfrozen defaults, required inputs and known limitations. Four entries are
+active research baselines and one is comparison-only. The catalog does not
+claim profitability, create an experiment, register a strategy, execute
+arbitrary code or start PAPER/LIVE; the next legal action is still to freeze an
+`ExperimentRunSpec` before a causal backtest.
+
+The proposed
 five-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
 contract requires five bid/ask prices plus sizes normalized to shares, provider
 event/receive clocks and sequence, continuous-auction validity, certified

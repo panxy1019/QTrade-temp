@@ -10,6 +10,11 @@ state exists.
 Implemented baseline signal/target primitives are buy-and-hold, moving-average trend, ETF momentum
 rotation, ETF trend plus volatility/risk scaling, and cross-sectional factor
 ranking. These are not yet licensed-data-validated production strategies.
+The read-only `/strategy-templates` catalog maps those five structures to their
+actual implementation references, data scope, entry/exit rules, unfrozen
+defaults, required inputs and limitations. Four are active research baselines;
+equal-weight buy-and-hold is comparison-only. Catalog visibility creates no
+experiment or registry record and does not authorize PAPER, SHADOW or LIVE.
 Experiments bind git commit, data version, PIT universe, chronological
 train/validation/test split, model, parameters, cost model and seed to immutable
 hashed artifacts. The runner automatically registers PASSED dataset lineage and

@@ -353,6 +353,132 @@ def _deployment_provenance() -> dict[str, object]:
     }
 
 
+def _strategy_template_catalog() -> dict[str, object]:
+    validation = "IMPLEMENTED_NOT_PRODUCTION_VALIDATED"
+    templates = [
+        {
+            "template_id": "equal-weight-buy-hold-benchmark-v1",
+            "name": "等权买入并持有",
+            "role": "BENCHMARK_ONLY",
+            "family": "BUY_AND_HOLD_BENCHMARK",
+            "implementation_ref": "qtrade.research.multi_asset.EqualWeightBuyHold",
+            "description": "首个交易日等权建仓，之后保持仓位，用作主动策略比较基准。",
+            "data_interval": "1d",
+            "universe_scope": "多标的",
+            "entry_rule": "首个可交易会话按等权目标计算，下一会话开盘执行。",
+            "exit_rule": "基准期内不主动退出。",
+            "parameter_defaults": {"reserve": "0"},
+            "required_inputs": ["质量通过的日线开收盘", "冻结标的池"],
+            "validation_status": validation,
+            "known_limitations": ["只作为比较基准，不是主动选股或择时策略。"],
+        },
+        {
+            "template_id": "moving-average-trend-v1",
+            "name": "移动平均趋势",
+            "role": "ACTIVE_BASELINE",
+            "family": "SINGLE_ASSET_TREND",
+            "implementation_ref": (
+                "qtrade.strategies.baselines.MovingAverageTrendStrategy"
+            ),
+            "description": "价格位于移动平均线上方时持仓，跌破时清仓。",
+            "data_interval": "1d",
+            "universe_scope": "单标的",
+            "entry_rule": "收盘价大于等于窗口均线时生成目标持仓。",
+            "exit_rule": "收盘价低于窗口均线时生成零仓位目标。",
+            "parameter_defaults": {"window": "20", "quantity": "100"},
+            "required_inputs": ["质量通过的单标的日线"],
+            "validation_status": validation,
+            "known_limitations": ["震荡市可能频繁换手；参数必须在测试前冻结。"],
+        },
+        {
+            "template_id": "etf-momentum-rotation-v1",
+            "name": "ETF 动量轮动",
+            "role": "ACTIVE_BASELINE",
+            "family": "ETF_MOMENTUM_ROTATION",
+            "implementation_ref": "qtrade.research.multi_asset.MomentumAllocation",
+            "description": "按多周期动量排序并定期持有排名靠前的 ETF。",
+            "data_interval": "1d",
+            "universe_scope": "多 ETF",
+            "entry_rule": "再平衡日选择正动量且排名前 K 的 ETF。",
+            "exit_rule": "再平衡时跌出前 K 或动量非正则退出。",
+            "parameter_defaults": {
+                "horizons": "20,60,120",
+                "top_k": "3",
+                "rebalance_every": "20",
+                "reserve": "0.05",
+            },
+            "required_inputs": ["质量通过的日线", "冻结 ETF 标的池"],
+            "validation_status": validation,
+            "known_limitations": ["目录默认值不是已冻结实验参数。"],
+        },
+        {
+            "template_id": "etf-momentum-trend-volatility-v1",
+            "name": "ETF 动量 + 趋势波动率约束",
+            "role": "ACTIVE_BASELINE",
+            "family": "ETF_MOMENTUM_TREND_VOLATILITY",
+            "implementation_ref": "qtrade.research.multi_asset.MomentumAllocation",
+            "description": "在动量轮动上增加趋势过滤与目标年化波动率缩放。",
+            "data_interval": "1d",
+            "universe_scope": "多 ETF",
+            "entry_rule": "正动量、排名前 K 且价格不低于趋势均线时持有。",
+            "exit_rule": "再平衡时任一资格条件失效则退出。",
+            "parameter_defaults": {
+                "horizons": "20,60,120",
+                "top_k": "3",
+                "rebalance_every": "20",
+                "reserve": "0.05",
+                "trend_window": "120",
+                "volatility_window": "20",
+                "target_annual_volatility": "0.15",
+            },
+            "required_inputs": ["质量通过的日线", "冻结 ETF 标的池"],
+            "validation_status": validation,
+            "known_limitations": ["波动率缩放只降低暴露，不使用杠杆。"],
+        },
+        {
+            "template_id": "cross-sectional-factor-ranking-v1",
+            "name": "横截面因子排序",
+            "role": "ACTIVE_BASELINE",
+            "family": "CROSS_SECTIONAL_FACTOR_RANKING",
+            "implementation_ref": (
+                "qtrade.research.multi_asset.RankedFactorAllocation"
+            ),
+            "description": "对预声明价格因子做横截面百分位排序并组合选股。",
+            "data_interval": "1d",
+            "universe_scope": "多股票或 ETF",
+            "entry_rule": "按加权因子得分选择排名前 K 的标的。",
+            "exit_rule": "再平衡时跌出前 K 或趋势资格失效则退出。",
+            "parameter_defaults": {
+                "factors": "momentum_20",
+                "top_k": "3",
+                "rebalance_every": "20",
+                "reserve": "0.05",
+            },
+            "required_inputs": [
+                "质量通过的日线",
+                "冻结标的池",
+                "预注册因子定义",
+            ],
+            "validation_status": validation,
+            "known_limitations": ["因子与参数必须在测试窗口之前冻结。"],
+        },
+    ]
+    return {
+        "classification": "READ_ONLY_IMPLEMENTED_BASELINE_STRATEGY_CATALOG",
+        "template_count": len(templates),
+        "active_template_count": 4,
+        "benchmark_template_count": 1,
+        "templates": templates,
+        "selection_creates_experiment": False,
+        "selection_registers_strategy": False,
+        "paper_runtime_start": False,
+        "live_runtime_start": False,
+        "arbitrary_code_execution": False,
+        "external_order_transmission": False,
+        "next_step": "FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST",
+    }
+
+
 def create_app(
     context: AppContext | None = None,
     auth: ApiAuthConfig | None = None,
@@ -1162,6 +1288,12 @@ def create_app(
         if catalog is None or not isinstance(catalog["strategies"], list):
             return []
         return catalog["strategies"]
+
+    @app.get("/strategy-templates")
+    def strategy_templates(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        return _strategy_template_catalog()
 
     @app.get("/experiments")
     def experiments(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:

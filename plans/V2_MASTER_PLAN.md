@@ -284,6 +284,11 @@ npm --prefix web run build
   Keep the rejected factor at 2/9 with no registration operation, and block
   `IDEA → EXPERIMENT` until the complete run spec, quality-passed manifest and
   independent leakage review exist.
+- [x] Expose a deterministic read-only catalog for all five implemented baseline
+  strategy structures. Distinguish the buy-and-hold benchmark from four active
+  research baselines, show implementation/input/entry/exit/default/limitation
+  fields, and require a frozen `ExperimentRunSpec` before causal backtesting;
+  do not create experiments, registry rows or PAPER/LIVE authority.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

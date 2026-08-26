@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-27T05:42:14.632422+08:00",
+  "generated_at": "2026-08-27T05:54:29.226440+08:00",
   "implementation": {
     "factor_module_sha256": "706c2856617bd461888b5611025c5c106d6819ece6b2b1e31aace7588a18a6ec",
-    "api_module_sha256": "288c075b1664fd55e70a44999e4ad638360b0811f8cabed5c9951b2406a0e00e"
+    "api_module_sha256": "b5d8ff88838e64db186418335286da7ccfe9ad4cd252ee212a60595eb727950b"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -7778,5 +7778,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "bb518a1ca36aa589d495ab99897c8aa4f79ee8180627031c877c23dc8a2d0730"
+  "evidence_sha256": "be16b57757b58e3464bc11f62ebfbb570fc242a2be5fd30515c988b9754b009d"
 }

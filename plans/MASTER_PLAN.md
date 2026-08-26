@@ -448,6 +448,15 @@ first `IDEA → EXPERIMENT` transition remains blocked until the experiment spec
 quality-passed data manifest and independent leakage review are present. The
 page exposes no registration operation or runtime/state/order mutation path.
 
+The strategy center also exposes a read-only catalog of all five implemented
+baseline structures so the workflow can start from known code rather than from
+an already-selected experiment row. It labels equal-weight buy-and-hold as a
+comparison-only benchmark and the other four as active research baselines;
+actual implementation references, entry/exit rules, required inputs, defaults
+and limitations are visible. Catalog selection creates nothing: an immutable
+`ExperimentRunSpec`, causal backtest and evidence gates are still required
+before any separately authorized PAPER/SHADOW step.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

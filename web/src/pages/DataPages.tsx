@@ -1,7 +1,7 @@
 ﻿import { Alert, Button, Card, Empty, Input, Popconfirm, Select, Space, Table, Tabs, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useRef, useState } from 'react'
-import type { HistoricalBarSeries, IntradayDirectionalBreadth, MinuteBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
+import type { HistoricalBarSeries, IntradayDirectionalBreadth, MinuteBarSeries, OrderRow, PlatformSnapshot, PositionRow, StrategyTemplate } from '../types'
 import { StatusTag } from '../components/StatusTag'
 import { BacktestLab } from '../components/BacktestLab'
 import { IntradayFactorLongWindowEvidence, IntradayFactorResearchLab } from '../components/IntradayFactorResearchLab'
@@ -374,7 +374,37 @@ export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
     { title: 'Sharpe', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.sharpe ?? '—' },
     { title: '最大回撤', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.maximum_drawdown ?? '—' },
   ]
-  return <Page title="策略中心" subtitle="不可变记录与结果验证过的实验候选"><Alert showIcon type="warning" title="实验候选，不是已注册或已批准策略" description="每行均通过 comparison、record、result 与 artifact 哈希校验；spec_hash 仅校验格式，当前产物未携带足够字段供 API 独立复算。当前样本池非 PIT，状态 NOT_ELIGIBLE、角色 NONE，也没有已注册谱系，不是 Champion 或运行中 PAPER 策略。" /><Space wrap><Input.Search aria-label="搜索策略候选" placeholder="搜索名称、Family 或 ID" allowClear value={query} onChange={(event) => setQuery(event.target.value)} style={{ width: 320 }} /><Select aria-label="筛选策略场景" allowClear placeholder="全部场景" value={scenario} onChange={setScenario} options={scenarios} style={{ width: 180 }} /><JsonExportButton filename="qtrade-strategy-candidates.json" value={rows} /></Space><Table rowKey="strategy_id" columns={columns} dataSource={rows} pagination={{ pageSize: 8, showSizeChanger: false }} scroll={{ x: 1100 }} expandable={{ expandedRowRender: (row) => <Descriptions values={[["策略 ID", row.strategy_id], ["数据版本", row.data_version], ["Git Commit", row.git_commit], ["Record 哈希", row.version], ["场景类型", row.scenario_type], ["谱系状态", row.lineage_status]]} /> }} locale={{ emptyText: '暂无 record/result/artifact 验证通过的实验候选' }} /></Page>
+  const templateCatalog = data?.strategyTemplates
+  const templateColumns: ColumnsType<StrategyTemplate> = [
+    {
+      title: '模板',
+      dataIndex: 'name',
+      render: (value: string, row) => <Space orientation="vertical" size={0}><Typography.Text strong>{value}</Typography.Text><Typography.Text type="secondary">{row.description}</Typography.Text></Space>,
+    },
+    { title: '角色', dataIndex: 'role', render: (value: StrategyTemplate['role']) => <Tag color={value === 'BENCHMARK_ONLY' ? 'default' : 'blue'}>{value === 'BENCHMARK_ONLY' ? '比较基准' : '主动基线'}</Tag> },
+    { title: '范围', render: (_, row) => `${row.universe_scope} · ${row.data_interval}` },
+    { title: '开仓条件', dataIndex: 'entry_rule' },
+    { title: '平仓条件', dataIndex: 'exit_rule' },
+    { title: '验证状态', render: () => <Tag color="orange">已实现·未生产验证</Tag> },
+  ]
+  return <Page title="策略中心" subtitle="从已实现基线模板到不可变实验候选">
+    <Space orientation="vertical" style={{ width: '100%' }} size="large">
+      <Card title={`已实现基线策略模板 · ${templateCatalog?.template_count ?? 0}`}>
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <Alert showIcon type="info" title={`${templateCatalog?.active_template_count ?? 0} 个主动模板 + ${templateCatalog?.benchmark_template_count ?? 0} 个比较基准`} description="这些是代码中已有的策略结构，不代表成熟盈利或生产验证。选择模板不会创建实验、注册策略或启动模拟盘；没有任意代码执行入口。" />
+          <Typography.Text strong>下一步：冻结 ExperimentRunSpec 后运行因果回测；通过有效性、相关性、稳健性和成本检验后，才可单独申请 PAPER/SHADOW。</Typography.Text>
+          <Table rowKey="template_id" columns={templateColumns} dataSource={templateCatalog?.templates ?? []} pagination={false} scroll={{ x: 1300 }} expandable={{ expandedRowRender: (row) => <Descriptions values={[["实现", row.implementation_ref], ["默认参数（未冻结）", Object.entries(row.parameter_defaults).map(([key, value]) => `${key}=${value}`).join('，')], ["所需输入", row.required_inputs.join('，')], ["已知限制", row.known_limitations.join('；')]]} /> }} locale={{ emptyText: '基线模板目录暂不可用' }} />
+        </Space>
+      </Card>
+      <Card title="已验证实验候选">
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <Alert showIcon type="warning" title="实验候选，不是已注册或已批准策略" description="每行均通过 comparison、record、result 与 artifact 哈希校验；spec_hash 仅校验格式，当前产物未携带足够字段供 API 独立复算。当前样本池非 PIT，状态 NOT_ELIGIBLE、角色 NONE，也没有已注册谱系，不是 Champion 或运行中 PAPER 策略。" />
+          <Space wrap><Input.Search aria-label="搜索策略候选" placeholder="搜索名称、Family 或 ID" allowClear value={query} onChange={(event) => setQuery(event.target.value)} style={{ width: 320 }} /><Select aria-label="筛选策略场景" allowClear placeholder="全部场景" value={scenario} onChange={setScenario} options={scenarios} style={{ width: 180 }} /><JsonExportButton filename="qtrade-strategy-candidates.json" value={rows} /></Space>
+          <Table rowKey="strategy_id" columns={columns} dataSource={rows} pagination={{ pageSize: 8, showSizeChanger: false }} scroll={{ x: 1100 }} expandable={{ expandedRowRender: (row) => <Descriptions values={[["策略 ID", row.strategy_id], ["数据版本", row.data_version], ["Git Commit", row.git_commit], ["Record 哈希", row.version], ["场景类型", row.scenario_type], ["谱系状态", row.lineage_status]]} /> }} locale={{ emptyText: '暂无 record/result/artifact 验证通过的实验候选' }} />
+        </Space>
+      </Card>
+    </Space>
+  </Page>
 }
 
 export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {

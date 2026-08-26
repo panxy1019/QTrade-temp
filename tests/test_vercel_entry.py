@@ -9,6 +9,45 @@ def _api(path: str) -> str:
     return f"/api?route={quote(path, safe='')}"
 
 
+def test_strategy_template_catalog_exposes_only_implemented_read_only_baselines() -> None:
+    client = TestClient(app)
+
+    response = client.get(_api("/strategy-templates"))
+
+    assert response.status_code == 200
+    catalog = response.json()
+    assert catalog["classification"] == "READ_ONLY_IMPLEMENTED_BASELINE_STRATEGY_CATALOG"
+    assert catalog["template_count"] == 5
+    assert catalog["active_template_count"] == 4
+    assert catalog["benchmark_template_count"] == 1
+    assert [template["template_id"] for template in catalog["templates"]] == [
+        "equal-weight-buy-hold-benchmark-v1",
+        "moving-average-trend-v1",
+        "etf-momentum-rotation-v1",
+        "etf-momentum-trend-volatility-v1",
+        "cross-sectional-factor-ranking-v1",
+    ]
+    assert [template["implementation_ref"] for template in catalog["templates"]] == [
+        "qtrade.research.multi_asset.EqualWeightBuyHold",
+        "qtrade.strategies.baselines.MovingAverageTrendStrategy",
+        "qtrade.research.multi_asset.MomentumAllocation",
+        "qtrade.research.multi_asset.MomentumAllocation",
+        "qtrade.research.multi_asset.RankedFactorAllocation",
+    ]
+    assert catalog["templates"][0]["role"] == "BENCHMARK_ONLY"
+    assert all(
+        template["validation_status"] == "IMPLEMENTED_NOT_PRODUCTION_VALIDATED"
+        for template in catalog["templates"]
+    )
+    assert catalog["selection_creates_experiment"] is False
+    assert catalog["selection_registers_strategy"] is False
+    assert catalog["paper_runtime_start"] is False
+    assert catalog["live_runtime_start"] is False
+    assert catalog["arbitrary_code_execution"] is False
+    assert catalog["external_order_transmission"] is False
+    assert catalog["next_step"] == "FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST"
+
+
 def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     client = TestClient(app)
 

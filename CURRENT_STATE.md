@@ -26,12 +26,12 @@ Last updated: 2026-08-27
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 456 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 457 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 66 frontend Vitest
+  (macOS, 2026-08-27); 67 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 429.92 KB with no large-chunk warning.
+  minified JavaScript asset at or below 430.34 KB with no large-chunk warning.
   GitHub CI grants only read access to repository contents and pins the official
   Node 24 checkout/setup-python actions to their verified v7 release commits.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -971,3 +971,12 @@ Last updated: 2026-08-27
   a complete `ExperimentRunSpec`, quality-passed manifest and independent
   leakage-review PASS are attached; registry/PAPER/LIVE/state/order writes stay
   false.
+- Implemented baseline strategy catalog: `/strategy-templates` and the strategy
+  center now expose five deterministic code-backed starting points rather than
+  only the eleven already-run experiment candidates. The catalog distinguishes
+  four active research baselines from the equal-weight buy-and-hold comparison,
+  and shows implementation references, input requirements, entry/exit rules,
+  unfrozen defaults and limitations. It is read-only and explicitly performs
+  no experiment creation, registry write, arbitrary code execution, PAPER/LIVE
+  start, state mutation or external order transmission. The next action remains
+  freezing an immutable `ExperimentRunSpec` before causal backtesting.

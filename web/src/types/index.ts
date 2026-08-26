@@ -113,6 +113,38 @@ export interface ResearchStrategyRow {
   lineage_status: string
 }
 
+export interface StrategyTemplate {
+  template_id: string
+  name: string
+  role: 'BENCHMARK_ONLY' | 'ACTIVE_BASELINE'
+  family: string
+  implementation_ref: string
+  description: string
+  data_interval: string
+  universe_scope: string
+  entry_rule: string
+  exit_rule: string
+  parameter_defaults: Record<string, string>
+  required_inputs: string[]
+  validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED'
+  known_limitations: string[]
+}
+
+export interface StrategyTemplateCatalog {
+  classification: 'READ_ONLY_IMPLEMENTED_BASELINE_STRATEGY_CATALOG' | 'UNAVAILABLE'
+  template_count: number
+  active_template_count: number
+  benchmark_template_count: number
+  templates: StrategyTemplate[]
+  selection_creates_experiment: false
+  selection_registers_strategy: false
+  paper_runtime_start: false
+  live_runtime_start: false
+  arbitrary_code_execution: false
+  external_order_transmission: false
+  next_step: 'FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST'
+}
+
 export interface ResearchExperiment {
   experiment_id: string
   spec_hash: string
@@ -2167,6 +2199,7 @@ export interface PlatformSnapshot {
   reports: DailyReportSummary[]
   reporting: DailyReportAutomationStatus
   strategies: ResearchStrategyRow[]
+  strategyTemplates: StrategyTemplateCatalog
   experiments: ResearchReport
   walkForward: WalkForwardReport
   robustness: RobustnessReport
