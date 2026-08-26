@@ -113,6 +113,9 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
         {
             "target_day": "2026-09-01",
             "evidence_sha256": "1" * 64,
+            "schema_version": 1,
+            "report_id": "baostock-complete-forward-session-v1",
+            "collected_at": "2026-09-01T16:00:00+08:00",
             "bar_count": 3600,
             "anchor_exact_match": True,
             "anchor_day": "2026-08-25",
@@ -120,8 +123,17 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
             "preregistration_id": "baostock-locked-forward-observation-v1",
             "preregistration_sha256": "a" * 64,
             "provider": "BaoStock",
+            "provider_version": "0.9.3",
             "frequency": "5",
             "adjustflag": "2",
+            "manifest": {
+                "data_version": "baostock-forward-2026-09-01-qfq-v1",
+                "source": "BaoStock 0.9.3 native 5-minute; adjustflag=2",
+                "schema_version": "qtrade.bar.v1",
+                "ingestion_time": "2026-09-01T07:59:00+00:00",
+                "checksum": "b" * 64,
+                "quality_status": "PASSED",
+            },
             "point_in_time": False,
             "future_adjustment_knowledge_possible": True,
             "realtime_readiness": False,
@@ -144,5 +156,19 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
 
     source_reports[0]["anchor_day"] = "2026-08-25"
     source_reports[0]["external_order_transmission"] = True
+    with pytest.raises(ValueError, match="source sessions"):
+        validate_source_sessions(candidate, source_reports)
+
+    source_reports[0]["external_order_transmission"] = False
+    cast(dict[str, object], source_reports[0]["manifest"])[
+        "data_version"
+    ] = "baostock-forward-wrong-day-qfq-v1"
+    with pytest.raises(ValueError, match="source sessions"):
+        validate_source_sessions(candidate, source_reports)
+
+    cast(dict[str, object], source_reports[0]["manifest"])[
+        "data_version"
+    ] = "baostock-forward-2026-09-01-qfq-v1"
+    source_reports[0]["collected_at"] = "2026-09-01T15:09:59+08:00"
     with pytest.raises(ValueError, match="source sessions"):
         validate_source_sessions(candidate, source_reports)

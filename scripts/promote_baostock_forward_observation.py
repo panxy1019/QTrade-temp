@@ -5,11 +5,13 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from datetime import datetime
+from datetime import date, datetime, time
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from zoneinfo import ZoneInfo
 
 from qtrade.api.app import (
+    _is_sha256,
     _load_verified_development_policy_search,
     _load_verified_forward_observation_report,
     _load_verified_forward_preregistration,
@@ -26,6 +28,65 @@ _FROZEN_FORWARD_ANCHOR_DAY = "2026-08-25"
 _FROZEN_FORWARD_ANCHOR_SHA256 = (
     "c5f74be0063c2aa0d518ebd77055909970e5216c6a5a2240ea2188f42b204f52"
 )
+_SHANGHAI = ZoneInfo("Asia/Shanghai")
+
+
+def _valid_source_session_metadata(
+    report: dict[str, object], candidate: dict[str, object]
+) -> bool:
+    manifest = report.get("manifest")
+    provider_version = report.get("provider_version")
+    if not isinstance(manifest, dict) or not isinstance(provider_version, str):
+        return False
+    try:
+        target_day = date.fromisoformat(str(report.get("target_day")))
+        collected_at = datetime.fromisoformat(str(report.get("collected_at")))
+        ingestion_time = datetime.fromisoformat(str(manifest.get("ingestion_time")))
+        candidate_generated_at = datetime.fromisoformat(
+            str(candidate.get("generated_at"))
+        )
+    except ValueError:
+        return False
+    if (
+        collected_at.tzinfo is None
+        or ingestion_time.tzinfo is None
+        or candidate_generated_at.tzinfo is None
+    ):
+        return False
+    collected_china = collected_at.astimezone(_SHANGHAI)
+    return (
+        report.get("schema_version") == 1
+        and report.get("report_id") == "baostock-complete-forward-session-v1"
+        and target_day > date.fromisoformat(_FROZEN_FORWARD_ANCHOR_DAY)
+        and collected_china.date() >= target_day
+        and (
+            collected_china.date() != target_day
+            or collected_china.time() >= time(15, 10)
+        )
+        and ingestion_time <= collected_at <= candidate_generated_at
+        and manifest.get("data_version")
+        == f"baostock-forward-{target_day.isoformat()}-qfq-v1"
+        and manifest.get("source")
+        == f"BaoStock {provider_version} native 5-minute; adjustflag=2"
+        and manifest.get("schema_version") == "qtrade.bar.v1"
+        and _is_sha256(manifest.get("checksum"))
+        and manifest.get("quality_status") == "PASSED"
+        and report.get("anchor_day") == _FROZEN_FORWARD_ANCHOR_DAY
+        and report.get("anchor_sha256") == _FROZEN_FORWARD_ANCHOR_SHA256
+        and report.get("preregistration_id")
+        == "baostock-locked-forward-observation-v1"
+        and report.get("preregistration_sha256")
+        == candidate.get("preregistration_sha256")
+        and report.get("provider") == "BaoStock"
+        and report.get("frequency") == "5"
+        and report.get("adjustflag") == "2"
+        and report.get("point_in_time") is False
+        and report.get("future_adjustment_knowledge_possible") is True
+        and report.get("realtime_readiness") is False
+        and report.get("real_data_paper_readiness") is False
+        and report.get("promotion") == "NOT_ELIGIBLE"
+        and report.get("external_order_transmission") is False
+    )
 
 
 def validate_source_sessions(
@@ -43,22 +104,8 @@ def validate_source_sessions(
     if (
         candidate.get("accepted_future_session_count") != len(source_reports)
         or candidate.get("future_sessions") != expected
-        or any(
-            report.get("anchor_day") != _FROZEN_FORWARD_ANCHOR_DAY
-            or report.get("anchor_sha256") != _FROZEN_FORWARD_ANCHOR_SHA256
-            or report.get("preregistration_id")
-            != "baostock-locked-forward-observation-v1"
-            or report.get("preregistration_sha256")
-            != candidate.get("preregistration_sha256")
-            or report.get("provider") != "BaoStock"
-            or report.get("frequency") != "5"
-            or report.get("adjustflag") != "2"
-            or report.get("point_in_time") is not False
-            or report.get("future_adjustment_knowledge_possible") is not True
-            or report.get("realtime_readiness") is not False
-            or report.get("real_data_paper_readiness") is not False
-            or report.get("promotion") != "NOT_ELIGIBLE"
-            or report.get("external_order_transmission") is not False
+        or not all(
+            _valid_source_session_metadata(report, candidate)
             for report in source_reports
         )
     ):

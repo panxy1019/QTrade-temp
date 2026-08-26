@@ -816,3 +816,18 @@ transmission disabled.
 The top-level candidate's safe interpretation is not enough if a constituent
 source says otherwise. Any resigned source-level semantic drift rejects the
 entire publication before the prior public report can be replaced.
+
+## ADR-054 — Forward session versions and collection times are exact
+
+Status: accepted, 2026-08-26.
+
+For each source session, the manifest data version must be exactly
+`baostock-forward-<target-day>-qfq-v1`, with the matching BaoStock versioned
+source string, canonical bar schema, `PASSED` quality status and a SHA-256
+Parquet checksum. A plausible but differently dated label is not equivalent.
+
+All timestamps must be timezone-aware and ordered as manifest ingestion no
+later than collection, and collection no later than candidate generation. A
+same-day collection is valid only from 15:10 Asia/Shanghai onward. This binds
+the source artifact to the predeclared completed-session window before any
+public replacement or runtime interpretation occurs.
