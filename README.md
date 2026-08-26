@@ -363,6 +363,15 @@ proves which reproducible preview belongs to which draft, but it still writes no
 immutable artifact and cannot convert an already viewed window into independent
 confirmation evidence or authorize PAPER/LIVE.
 
+The browser-local comparison table now preserves that lineage when a bound
+preview is saved: template ID, spec hash and binding hash remain visible beside
+the metrics, while an ordinary adjustable run is labelled as an immediate
+preview. Save-time validation fails closed if the current result hash, dataset
+version/checksum, read-only gates or no-order flags do not match the bound
+response. Legacy browser records remain readable as unbound previews. These
+records are removable local summaries, not immutable experiments or registry
+entries, and they confer no promotion or runtime authority.
+
 Every adjustable preview now also runs an equal-weight Buy-and-Hold comparison
 through the same causal engine. The benchmark selects only symbols known at the
 first decision close, enters at the next open, and shares the strategy's date

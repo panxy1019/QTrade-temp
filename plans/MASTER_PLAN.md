@@ -473,6 +473,12 @@ any browser field invalidates the old draft and binding. This closes an audit
 gap without pretending the stateless binding is immutable persistence, an
 independent leakage review or fresh held-out evidence.
 
+Bound results can now be retained in the browser-local comparison table without
+losing their template/spec/binding identity. Ordinary previews remain visibly
+unbound, old schema-v1 rows load as unbound, and save-time validation rejects
+any result, data or no-authority mismatch. This is removable local state only,
+not an immutable experiment, registry record or runtime admission path.
+
 Adjustable previews now include an engine-matched equal-weight Buy-and-Hold
 benchmark. It uses only first-decision-known symbols and the same window,
 capital, reserve, costs, slippage and next-open execution as the strategy. The

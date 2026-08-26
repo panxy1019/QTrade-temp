@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { BacktestPreview, HistoricalDataset } from '../types'
+import type { BacktestPreview, ExperimentRunSpecBacktest, HistoricalDataset } from '../types'
 import {
   deleteLocalBacktestExperiment,
   loadLocalBacktestExperiments,
@@ -33,12 +33,97 @@ const result: BacktestPreview = {
   preview_hash: 'a'.repeat(64),
 }
 
+const boundResult: ExperimentRunSpecBacktest = {
+  classification: 'READ_ONLY_HASH_BOUND_EXPERIMENT_PREVIEW_NOT_PERSISTED',
+  template_id: 'etf-momentum-rotation-v1',
+  data_checksum: dataset.checksum,
+  dataset_point_in_time: false,
+  spec_hash: 'b'.repeat(64),
+  preview_hash: result.preview_hash,
+  binding_hash: 'c'.repeat(64),
+  spec: {
+    experiment_id: 'rotation-replay-001',
+    strategy_id: 'etf-momentum-rotation-v1',
+    git_commit: 'd'.repeat(40),
+    data_version: dataset.data_version,
+    universe: ['510300'],
+    factor_set: ['momentum_20', 'momentum_60', 'momentum_120'],
+    label: 'next_session_portfolio_return',
+    split: {
+      train_start: '2024-01-02', train_end: '2024-12-31',
+      validation_start: '2025-01-01', validation_end: '2025-12-31',
+      test_start: '2026-01-01', test_end: '2026-08-12',
+    },
+    model: 'qtrade.research.multi_asset.MomentumAllocation',
+    parameters: [], cost_model_id: 'explicit-rate-plus-slippage-v1',
+    transaction_cost: '0.0015', seed: 7,
+  },
+  result,
+  gates: {
+    single_request_spec_result_binding: true,
+    spec_hash_recomputed_before_run: true,
+    verified_dataset_reloaded_before_run: true,
+    preview_hash_bound_to_spec_hash: true,
+    immutable_artifact_persisted: false,
+    independent_leakage_review_passed: false,
+    fresh_unseen_test_evidence: false,
+  },
+  creates_immutable_experiment: false,
+  registry_write: false,
+  paper_runtime_start: false,
+  live_runtime_start: false,
+  state_mutation: false,
+  external_order_transmission: false,
+}
+
 beforeEach(() => {
   window.localStorage.clear()
   vi.useRealTimers()
 })
 
 describe('local backtest experiments', () => {
+  it('labels an ordinary preview as browser-local without a run-spec binding', () => {
+    const saved = saveLocalBacktestExperiment('即时方案', result)
+    expect(saved.binding).toBeNull()
+    expect(loadLocalBacktestExperiments(dataset)[0].binding).toBeNull()
+  })
+
+  it('preserves the exact template, spec, and binding identity for a bound preview', () => {
+    const saved = saveLocalBacktestExperiment('绑定方案', result, boundResult)
+    expect(saved.binding).toEqual({
+      classification: 'BROWSER_LOCAL_REPLAY_BINDING_NOT_IMMUTABLE',
+      template_id: 'etf-momentum-rotation-v1',
+      spec_hash: 'b'.repeat(64),
+      binding_hash: 'c'.repeat(64),
+      creates_immutable_experiment: false,
+      registry_write: false,
+      paper_runtime_start: false,
+      live_runtime_start: false,
+    })
+    expect(loadLocalBacktestExperiments(dataset)[0].binding).toEqual(saved.binding)
+  })
+
+  it.each([
+    ['结果哈希', { preview_hash: 'e'.repeat(64) }],
+    ['数据 checksum', { data_checksum: 'another-checksum' }],
+  ])('rejects a mismatched bound preview by %s without writing local data', (_label, override) => {
+    expect(() => saveLocalBacktestExperiment('错配方案', result, {
+      ...boundResult,
+      ...override,
+    })).toThrow('规格绑定与当前回测结果不一致，未保存')
+    expect(loadLocalBacktestExperiments(dataset)).toEqual([])
+  })
+
+  it('loads legacy schema-v1 records without binding metadata as ordinary previews', () => {
+    const legacy = Object.fromEntries(Object.entries(
+      saveLocalBacktestExperiment('旧方案', result),
+    ).filter(([key]) => key !== 'binding'))
+    window.localStorage.setItem('qtrade.local-backtest-experiments.v1', JSON.stringify([legacy]))
+    expect(loadLocalBacktestExperiments(dataset)[0]).toEqual(expect.objectContaining({
+      name: '旧方案', binding: null,
+    }))
+  })
+
   it('binds records to the exact dataset identity and replaces duplicate results', () => {
     saveLocalBacktestExperiment('方案 A', result)
     saveLocalBacktestExperiment('方案 A 改名', result)

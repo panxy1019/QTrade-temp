@@ -280,7 +280,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
       return
     }
     try {
-      const saved = saveLocalBacktestExperiment(experimentName, result)
+      const saved = saveLocalBacktestExperiment(experimentName, result, boundBacktest)
       setExperimentRevision((value) => value + 1)
       setExperimentName(saved.name)
       setSaveStatus(`已保存“${saved.name}”；相同结果哈希会更新原记录。`)
@@ -326,6 +326,15 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
   const experimentColumns = [
     { title: '名称', dataIndex: 'name' },
     { title: '保存时间', dataIndex: 'saved_at', render: (value: string) => formatTimestamp(value) },
+    {
+      title: '规格身份',
+      render: (_: unknown, row: LocalBacktestExperiment) => row.binding
+        ? <Space orientation="vertical" size={0}>
+            <Tag color="green">绑定草案</Tag>
+            <Typography.Text type="secondary">规格 {row.binding.spec_hash.slice(0, 12)}… · 绑定 {row.binding.binding_hash.slice(0, 12)}…</Typography.Text>
+          </Space>
+        : <Tag>即时预览</Tag>,
+    },
     { title: '参数', render: (_: unknown, row: LocalBacktestExperiment) => `${factorLabel(row.parameters.factor)} · ${row.parameters.horizons.join('/')} 日 · Top ${row.parameters.top_k} · ${row.parameters.rebalance_every} 日调仓` },
     { title: '累计收益', render: (_: unknown, row: LocalBacktestExperiment) => formatPercent(row.metrics.total_return) },
     { title: 'Sharpe', render: (_: unknown, row: LocalBacktestExperiment) => formatNumber(row.metrics.sharpe) },
@@ -448,7 +457,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
           scroll={{ x: 980 }}
           locale={{ emptyText: '运行回测后可保存结果，用于反复调参与对比。' }}
         />
-        <Typography.Text type="secondary">记录严格绑定当前数据版本与 checksum；这里只保存参数和摘要，不保存为正式实验、不参与晋级，也不会同步到其他设备。</Typography.Text>
+        <Typography.Text type="secondary">记录严格绑定当前数据版本与 checksum；绑定草案会额外保存 template/spec/binding 哈希。全部记录都仅在当前浏览器、可删除，不是不可变实验或注册记录，不参与晋级，也不会同步到其他设备。</Typography.Text>
       </Card>
     </Space>
   </Card>

@@ -2018,3 +2018,25 @@ Matching the engine does not fix the data universe. The current universe is not
 point-in-time and retains survivorship bias, so these metrics remain diagnostic
 and cannot provide research admission, PAPER/LIVE authority, state mutation or
 external order transmission.
+
+## ADR-118 — Browser-local comparison preserves binding identity without claiming persistence
+
+Status: accepted, 2026-08-27.
+
+The bound-preview response exposed template, spec and binding hashes, but the
+existing local comparison record discarded them. A saved row could therefore
+not distinguish a hash-bound replay from an ordinary adjustable preview.
+
+Bound saves now retain those three identifiers under an explicit
+`BROWSER_LOCAL_REPLAY_BINDING_NOT_IMMUTABLE` classification. Before writing,
+the client requires the bound response and current result to share their result
+hash, data version/checksum and template strategy identity; all binding gates
+must hold and immutable-write, registry, runtime, state-mutation and external-
+order flags must remain false. A mismatch fails closed without changing local
+storage. Ordinary previews store an explicit null binding, and legacy schema-v1
+records lacking the field normalize to that same state.
+
+The comparison table is browser-local and removable. Preserving replay lineage
+does not create an immutable experiment, registry record, leakage-review PASS,
+fresh evidence, promotion eligibility, PAPER/LIVE authority, state mutation or
+external order transmission.

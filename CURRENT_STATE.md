@@ -998,6 +998,12 @@ Last updated: 2026-08-27
   spec or backtest field changes. The binding proves replay identity only: it is
   still stateless, unpersisted, independently unreviewed and based on an already
   visible test window, with registry/PAPER/LIVE/state/order writes all false.
+- Browser-local bound comparison: saving a hash-bound preview now retains its
+  template ID, spec hash and binding hash, while ordinary runs are labelled as
+  immediate previews. The client rejects result/data/safety mismatches before
+  writing and normalizes older schema-v1 records to an explicit unbound state.
+  Every row remains removable browser state rather than immutable experiment or
+  registry evidence and grants no PAPER/LIVE/state/order authority.
 - Matched preview benchmark: every adjustable and hash-bound preview now runs
   the implemented equal-weight Buy-and-Hold model through the same causal
   close-decision/next-open engine. Strategy and benchmark share the exact

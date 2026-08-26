@@ -1175,6 +1175,7 @@ describe('verified backtest analytics', () => {
   })
 
   it('loads a code-backed template and hashes a complete run-spec draft without persisting it', async () => {
+    window.localStorage.clear()
     window.location.hash = '#/backtest?template=etf-momentum-rotation-v1'
     const preview: BacktestPreview = {
       classification: 'AD_HOC_PREVIEW_CURRENT_UNIVERSE_NOT_PIT', promotion: 'NOT_ELIGIBLE',
@@ -1264,9 +1265,15 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText('同窗 Buy-and-Hold')).toBeInTheDocument()
     expect(screen.getByText('主动超额')).toBeInTheDocument()
     expect(screen.getByText(/同一窗口、初始资金、现金预留、成本、滑点和下一开盘执行/)).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('本地实验名称'), { target: { value: '绑定动量方案' } })
+    fireEvent.click(screen.getByRole('button', { name: '保存到本地实验' }))
+    expect(screen.getByText(/已保存“绑定动量方案”/)).toBeInTheDocument()
+    expect(screen.getByText('绑定草案')).toBeInTheDocument()
+    expect(screen.getByText(/规格 cccccccccccc… · 绑定 dddddddddddd…/)).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('实验 ID'), { target: { value: 'rotation-replay-002' } })
     expect(screen.queryByRole('button', { name: '按该哈希运行因果回测' })).not.toBeInTheDocument()
     expect(screen.queryByText(/规格→结果绑定 dddddddddddddddd/)).not.toBeInTheDocument()
+    window.localStorage.clear()
     window.location.hash = ''
   })
 
@@ -1303,6 +1310,7 @@ describe('verified backtest analytics', () => {
     fireEvent.click(screen.getByRole('button', { name: '保存到本地实验' }))
     expect(screen.getByText(/已保存“动量方案 A”/)).toBeInTheDocument()
     expect(screen.getAllByText('动量方案 A').length).toBeGreaterThan(0)
+    expect(screen.getByText('即时预览')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '载入参数' })).toBeInTheDocument()
     expect(screen.getByText(/记录严格绑定当前数据版本与 checksum/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出完整结果/ })).toBeInTheDocument()

@@ -306,6 +306,11 @@ npm --prefix web run build
   costs, slippage and next-open execution. Align both curves and expose
   benchmark return, excess return and information ratio without treating the
   current non-PIT universe as survivorship-free evidence.
+- [x] Preserve template/spec/binding identity when a bound preview is saved to
+  the browser-local comparison table, label ordinary previews separately,
+  reject result/data/safety mismatches, and keep legacy rows readable as
+  unbound. Treat all rows as removable local summaries rather than immutable
+  experiments, registry records or PAPER/LIVE authority.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,
