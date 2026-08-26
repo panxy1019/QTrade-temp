@@ -512,6 +512,10 @@ Last updated: 2026-08-26
   that strictly appends complete sessions to the already public sequence. It
   rejects historical rewrites, frozen-lock changes and stale generation times,
   then atomically replaces and re-verifies the deployment report.
+  A composed regression also feeds one all-zero BaoStock suspension placeholder
+  into an otherwise complete 48-bar target grid: the provider parser omits it
+  without filling, leaving 47 bars, and the locked complete-session validator
+  rejects the entire target day.
 - Public minute read amplification: `/minute-research-snapshot` now verifies the
   24 MB long-history Parquet once per dashboard refresh and reuses that immutable
   identity across eight report validators. The React loader replaced eight
