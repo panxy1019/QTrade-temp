@@ -13,6 +13,9 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     client = TestClient(app)
 
     assert client.get(_api("/health")).status_code == 200
+    deployment = client.get(_api("/deployment")).json()
+    assert deployment["classification"] == "PUBLIC_BUILD_PROVENANCE"
+    assert deployment["external_order_transmission"] is False
     market = client.get(_api("/market"))
     assert market.status_code == 200
     assert market.json()["historical"]["bar_count"] == 28_770

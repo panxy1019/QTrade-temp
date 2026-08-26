@@ -90,6 +90,7 @@ GitHub/Vercel 公开节点。判定标准不是“路由存在”，而是页面
 | FE-74 | 数据中心 / 共享存储 | Arrow 类型正确但字段为 null 或时间/数值字符串不可解析时，读取器泄漏 Python/Decimal 底层异常 | DONE | Bar 构造阶段统一包装 nullable 和非法 timestamp/date/decimal 内容为 `DatasetIntegrityError`，再交给语义质量门槛 |
 | FE-75 | 数据中心 / 共享存储 | Parquet 写入失败时先创建的正式版本目录会成为可见半成品，并阻塞同版本安全重试 | DONE | 先在同一存储根的临时目录完成 Parquet 与 checksum，再原子重命名发布；失败自动清理，已发布版本仍不可覆盖 |
 | FE-76 | 数据中心 / 共享存储 | 原子重命名只保证读取可见性，未同步文件和目录时断电后仍可能丢失刚发布的数据集 | DONE | 返回 PASSED manifest 前依次 fsync Parquet、暂存目录和发布后的存储根；同步失败不报告成功 |
+| FE-77 | 系统监控 / 发布验收 | Vercel 显示 Production 成功且自定义域可访问时，页面仍无法证明实际运行的 Git commit | DONE | 新增只读 `/deployment` 白名单元数据；校验完整 SHA/ref/环境，监控页显示短 SHA，缺失或非法身份保持 UNAVAILABLE，绝不暴露 token |
 
 ## 外部阻塞，不能伪造为已完成
 

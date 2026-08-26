@@ -15,6 +15,16 @@ export interface HealthStatus {
   reconciliation_status: string
 }
 
+export interface DeploymentProvenance {
+  classification: 'PUBLIC_BUILD_PROVENANCE'
+  provider: 'VERCEL' | 'LOCAL'
+  status: 'AVAILABLE' | 'UNAVAILABLE'
+  target_environment: string | null
+  git_commit_sha: string | null
+  git_commit_ref: string | null
+  external_order_transmission: false
+}
+
 export interface OrderRow {
   internal_order_id: string
   broker_order_id: string | null
@@ -1061,6 +1071,7 @@ export interface DailyReportAutomationStatus {
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
+  deployment: DeploymentProvenance
   account: { cash: string; equity: null; valuation_status: 'MARKET_PRICE_UNAVAILABLE' }
   pnl: { realized: string }
   positions: PositionRow[]

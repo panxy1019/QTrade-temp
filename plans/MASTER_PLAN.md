@@ -80,6 +80,9 @@ directory before atomically publishing the immutable data-version directory;
 failed encodes leave no visible partial dataset and the same version can retry.
 The staged file and directory plus the final storage-root entry are fsynced in
 publication order before the writer returns a PASSED manifest.
+Public deployment review reads a format-validated full Git SHA, ref and target
+environment from Vercel's documented system variables through a bounded
+read-only endpoint; malformed or missing identity is reported as unavailable.
 Sourced normalized corporate-action factors produce point-in-time backward-
 adjusted bars with explicit adjustment lineage. A durable immutable SQLite
 catalog links PASSED data manifests to experiment hashes and is populated by the

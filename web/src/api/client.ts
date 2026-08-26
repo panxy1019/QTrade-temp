@@ -191,6 +191,11 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     real_data_paper_readiness: false, promotion: 'NOT_EVALUATED',
     external_order_transmission: false,
   }
+  const deploymentFallback: PlatformSnapshot['deployment'] = {
+    classification: 'PUBLIC_BUILD_PROVENANCE', provider: 'LOCAL', status: 'UNAVAILABLE',
+    target_environment: null, git_commit_sha: null, git_commit_ref: null,
+    external_order_transmission: false,
+  }
   const minuteSnapshotFallback: MinuteResearchSnapshot = {
     classification: 'UNAVAILABLE', data_version: null, dataset_checksum: null,
     longFiveMinuteResearch: null, reservedTailDiagnostic: null,
@@ -199,7 +204,8 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     intradayContinuity: null, unavailable_sections: [], realtime_readiness: false,
     real_data_paper_readiness: false, external_order_transmission: false,
   }
-  const [metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, minuteEvidence, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
+  const [deployment, metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, minuteEvidence, backtestAnalytics, market, historicalBars, audit] = await Promise.all([
+    getOptional<PlatformSnapshot['deployment']>('/deployment', deploymentFallback),
     getOptional<PlatformSnapshot['metrics']>('/metrics', {}),
     getOptional<PlatformSnapshot['reports']>('/reports', []),
     getOptional<PlatformSnapshot['reporting']>('/reporting-status', {
@@ -259,10 +265,10 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
   const intradayObservation = { value: minuteEvidence.value.intradayObservation ?? intradayFallback, error: bundledError }
   const intradayBreadth = { value: minuteEvidence.value.intradayBreadth ?? breadthFallback, error: bundledError }
   const intradayContinuity = { value: minuteEvidence.value.intradayContinuity ?? continuityFallback, error: bundledError }
-  const sections = { metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, longFiveMinuteResearch, reservedTailDiagnostic, developmentPolicySearch, forwardObservation, publicMinuteAudit, intradayObservation, intradayBreadth, intradayContinuity, backtestAnalytics, market, historicalBars, audit }
+  const sections = { deployment, metrics, reports, reporting, strategies, experiments, walkForward, robustness, factorSearch, robustFactorSearch, stockSectorTransfer, minuteOverlay, minuteResearch, fiveMinuteResearch, longFiveMinuteResearch, reservedTailDiagnostic, developmentPolicySearch, forwardObservation, publicMinuteAudit, intradayObservation, intradayBreadth, intradayContinuity, backtestAnalytics, market, historicalBars, audit }
   const failures = Object.fromEntries(Object.entries(sections).flatMap(([name, result]) => result.error ? [[name, result.error]] : []))
   return {
-    system, health, ...paper,
+    system, health, deployment: deployment.value, ...paper,
     metrics: metrics.value, reports: reports.value, reporting: reporting.value, strategies: strategies.value,
     experiments: experiments.value, walkForward: walkForward.value, robustness: robustness.value,
     factorSearch: factorSearch.value, robustFactorSearch: robustFactorSearch.value,

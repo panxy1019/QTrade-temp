@@ -850,6 +850,10 @@ export function MonitorPage({ data }: { data: PlatformSnapshot | null }) {
           <Descriptions
             values={[
               ["Service Health", data?.health.healthy ? "HEALTHY" : "DEGRADED"],
+              ["Deployment", data?.deployment.status ?? "UNAVAILABLE"],
+              ["Git Commit", data?.deployment.git_commit_sha?.slice(0, 12) ?? "—"],
+              ["Git Branch", data?.deployment.git_commit_ref ?? "—"],
+              ["Vercel Environment", data?.deployment.target_environment ?? "—"],
               ["Event Queue", String(data?.metrics.event_queue_depth ?? 0)],
               ["Market Data Lag", String(data?.metrics.market_data_lag_seconds ?? "—")],
               ["Order Rate", String(data?.metrics.orders_per_minute ?? 0)],

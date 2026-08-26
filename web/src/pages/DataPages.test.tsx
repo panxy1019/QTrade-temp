@@ -79,6 +79,7 @@ const foldExecutionFixture = {
 const data = {
   system: { mode: 'PAPER', running: true, risk_state: 'NORMAL' },
   health: { healthy: true, runtime_mode: 'PAPER', risk_state: 'NORMAL', gateway_connected: true, reconciliation_status: 'OK' },
+  deployment: { classification: 'PUBLIC_BUILD_PROVENANCE', provider: 'VERCEL', status: 'AVAILABLE', target_environment: 'production', git_commit_sha: '81e357cb069a69d6be4d8ba7a9fb1acdf7167083', git_commit_ref: 'main', external_order_transmission: false },
   account: { cash: '98999', equity: null, valuation_status: 'MARKET_PRICE_UNAVAILABLE' },
   pnl: { realized: '0' },
   positions: [{ symbol: '510300', quantity: 100, sellable_quantity: 0, as_of_date: '2026-08-12', average_cost: '10.01', realized_pnl: '0', cost_basis_value: '1001', market_price: null, market_value: null, unrealized_pnl: null, valuation_status: 'MARKET_PRICE_UNAVAILABLE' }],
@@ -629,6 +630,8 @@ describe('durable monitoring', () => {
     expect(screen.getByText('禁止')).toBeInTheDocument()
     expect(screen.getByText('1.25')).toBeInTheDocument()
     expect(screen.getByText('3')).toBeInTheDocument()
+    expect(screen.getByText('81e357cb069a')).toBeInTheDocument()
+    expect(screen.getByText('production')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Prometheus 指标' })).toHaveAttribute('href', '/metrics/prometheus')
     expect(screen.getByRole('button', { name: /导出当前审计视图/ })).toBeInTheDocument()
   })

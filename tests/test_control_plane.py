@@ -68,6 +68,41 @@ def test_dashboard_and_health_make_shadow_mode_explicit():
     assert response.json()["runtime_mode"] == "SHADOW"
 
 
+def test_deployment_provenance_exposes_only_allowlisted_vercel_identity(monkeypatch):
+    monkeypatch.setenv("VERCEL", "1")
+    monkeypatch.setenv("VERCEL_TARGET_ENV", "production")
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_SHA", "a" * 40)
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_REF", "main")
+    monkeypatch.setenv("VERCEL_OIDC_TOKEN", "must-never-be-public")
+
+    payload = client().get("/deployment").json()
+
+    assert payload == {
+        "classification": "PUBLIC_BUILD_PROVENANCE",
+        "provider": "VERCEL",
+        "status": "AVAILABLE",
+        "target_environment": "production",
+        "git_commit_sha": "a" * 40,
+        "git_commit_ref": "main",
+        "external_order_transmission": False,
+    }
+    assert "must-never-be-public" not in json.dumps(payload)
+
+
+def test_deployment_provenance_rejects_invalid_commit_identity(monkeypatch):
+    monkeypatch.setenv("VERCEL", "1")
+    monkeypatch.setenv("VERCEL_TARGET_ENV", "production")
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_SHA", "not-a-git-sha")
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_REF", "main\nsecret")
+
+    payload = client().get("/deployment").json()
+
+    assert payload["status"] == "UNAVAILABLE"
+    assert payload["git_commit_sha"] is None
+    assert payload["git_commit_ref"] is None
+    assert payload["external_order_transmission"] is False
+
+
 def test_prometheus_metrics_export_is_numeric_bounded_and_read_only():
     api = client()
     response = api.get("/metrics/prometheus")

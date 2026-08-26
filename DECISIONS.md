@@ -1061,3 +1061,17 @@ After checksumming, the writer fsyncs the staged Parquet file and its directory,
 renames the completed directory, and fsyncs the storage root. A synchronization
 failure prevents a PASSED manifest from being returned; no runtime or promotion
 authority is inferred from filesystem publication alone.
+
+## ADR-072 — Public deployments expose a bounded build identity
+
+Status: accepted, 2026-08-26.
+
+A successful provider status and a reachable custom domain do not prove which
+Git commit currently serves that domain. Without a runtime build identity, a
+public review can accidentally validate an older production alias.
+
+The read-only `/deployment` endpoint reads only Vercel's documented commit SHA,
+ref and target-environment variables, validates their formats, and never returns
+arbitrary environment content. The frontend displays the shortened SHA while
+the API retains all 40 characters for exact comparison; absent or malformed
+metadata is `UNAVAILABLE` and conveys no runtime or trading authority.

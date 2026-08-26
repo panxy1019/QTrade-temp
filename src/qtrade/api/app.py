@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import re
 from collections import Counter, defaultdict, deque
 from collections.abc import Awaitable, Callable
 from contextlib import nullcontext
@@ -48,6 +50,9 @@ _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
 _MAX_HISTORICAL_SERIES_ROWS = 2000
 _MAX_BACKTEST_PREVIEW_SOURCE_ROWS = 250_000
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
+_GIT_COMMIT_SHA_PATTERN = re.compile(r"[0-9a-f]{40}")
+_GIT_COMMIT_REF_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,254}")
+_DEPLOYMENT_ENVIRONMENT_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}")
 
 
 class Role(StrEnum):
@@ -174,6 +179,36 @@ def _require_role(required: Role, auth: ApiAuthConfig) -> Callable[[str | None],
     return dependency
 
 
+def _deployment_provenance() -> dict[str, object]:
+    raw_sha = os.getenv("VERCEL_GIT_COMMIT_SHA")
+    raw_ref = os.getenv("VERCEL_GIT_COMMIT_REF")
+    raw_environment = os.getenv("VERCEL_TARGET_ENV") or os.getenv("VERCEL_ENV")
+    git_commit_sha = (
+        raw_sha if raw_sha is not None and _GIT_COMMIT_SHA_PATTERN.fullmatch(raw_sha) else None
+    )
+    git_commit_ref = (
+        raw_ref if raw_ref is not None and _GIT_COMMIT_REF_PATTERN.fullmatch(raw_ref) else None
+    )
+    target_environment = (
+        raw_environment
+        if raw_environment is not None
+        and _DEPLOYMENT_ENVIRONMENT_PATTERN.fullmatch(raw_environment)
+        else None
+    )
+    provider = "VERCEL" if os.getenv("VERCEL") == "1" else "LOCAL"
+    return {
+        "classification": "PUBLIC_BUILD_PROVENANCE",
+        "provider": provider,
+        "status": "AVAILABLE"
+        if provider == "VERCEL" and git_commit_sha is not None
+        else "UNAVAILABLE",
+        "target_environment": target_environment,
+        "git_commit_sha": git_commit_sha,
+        "git_commit_ref": git_commit_ref,
+        "external_order_transmission": False,
+    }
+
+
 def create_app(
     context: AppContext | None = None,
     auth: ApiAuthConfig | None = None,
@@ -204,6 +239,10 @@ def create_app(
     @app.get("/health")
     def health(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, Any]:
         return asdict(state.runtime.health())
+
+    @app.get("/deployment")
+    def deployment(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, object]:
+        return _deployment_provenance()
 
     @app.get("/system")
     def system(_: str = Depends(_require_role(Role.READ, auth_config))) -> dict[str, Any]:
