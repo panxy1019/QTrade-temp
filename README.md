@@ -36,6 +36,11 @@ npm --prefix web run build
 The local dashboard is then available at `http://127.0.0.1:8000`. It boots
 fail-closed (gateway disconnected and reconciliation unknown); the page is an
 operational status surface, not authorization for external order transmission.
+Its overview presents the workflow as ordered gates: verified data and factor
+definition, factor effectiveness/correlation/robustness, strategy construction,
+causal backtest, PAPER/SHADOW, then separately authorized LIVE. Diagnostic pages
+remain navigable after a failure, but the overview keeps every downstream stage
+blocked and never treats visibility as promotion.
 
 Control endpoints are disabled unless `QTRADE_CONTROL_TOKEN` is supplied in the
 process environment. Send it as `Authorization: Bearer <token>`. Read endpoints

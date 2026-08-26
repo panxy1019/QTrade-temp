@@ -2212,3 +2212,24 @@ This deliberately uses component memory rather than localStorage or a server
 write. Refreshing clears the comparison; it is not an immutable experiment,
 independent evidence, promotion input, PAPER/LIVE authorization, state mutation
 or external-order capability.
+
+## ADR-127 — Overview exposes the ordered quantitative promotion gates
+
+Status: accepted, 2026-08-27.
+
+The dashboard provided separate pages for research, strategies, experiments,
+backtests and PAPER operations, but its overview did not express their required
+ordering. A user could navigate to a downstream diagnostic after a failed factor
+test and mistake page availability for promotion eligibility.
+
+The overview now renders the explicit sequence from verified data and factor
+definition through effectiveness/correlation/robustness, strategy construction,
+causal backtest and PAPER/SHADOW to separately authorized LIVE. Each linked stage
+uses current verified snapshot facts: the signed minute dataset completes only
+the data stage, while the existing three-bullish-bars report stops at factor
+validation with `NOT_ELIGIBLE`. Templates and historical backtests are labelled
+diagnostic, and the public PAPER stage is read-only.
+
+The sequence is a read-only navigation and explanation surface. It does not
+change API admission, create a strategy or experiment, promote a result, start a
+runtime, enable LIVE, mutate state or transmit an external order.
