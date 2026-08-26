@@ -111,10 +111,10 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
         />
         <Steps
           size="small"
-          responsive
+          orientation="vertical"
           items={result.workflow.map((stage) => ({
-            title: workflowLabels[stage.id] ?? stage.id,
-            content: stage.status,
+            title: `${workflowLabels[stage.id] ?? stage.id} · ${stage.status}`,
+            content: stage.detail,
             status: stage.status === 'FAILED' ? 'error' : ['PASSED', 'AVAILABLE', 'COMPLETED'].includes(stage.status) ? 'finish' : 'wait',
           }))}
         />
