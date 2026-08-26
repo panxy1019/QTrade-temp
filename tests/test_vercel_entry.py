@@ -119,6 +119,16 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert intraday["real_data_paper_readiness"] is False
     assert intraday["promotion"] == "NOT_ELIGIBLE"
     assert intraday["external_order_transmission"] is False
+    breadth = client.get(_api("/intraday-breadth-observation")).json()
+    assert breadth["symbol_count"] == 75
+    assert breadth["sector_count"] == 15
+    assert breadth["symbols_per_sector"] == 5
+    assert len(breadth["observations"]) == 75
+    assert len(breadth["sector_summaries"]) == 15
+    assert breadth["realtime_readiness"] is False
+    assert breadth["real_data_paper_readiness"] is False
+    assert breadth["promotion"] == "NOT_ELIGIBLE"
+    assert breadth["external_order_transmission"] is False
     five_minute_bars = client.get(_api("/five-minute-bars/601166")).json()
     assert five_minute_bars["observation_type"] == (
         "HISTORICAL_FIVE_MINUTE_BAR_SERIES"

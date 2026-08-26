@@ -223,7 +223,27 @@ def main() -> int:
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                key: report[key]
+                for key in (
+                    "completed_at",
+                    "session_phase",
+                    "symbol_count",
+                    "sector_count",
+                    "same_day_symbol_count",
+                    "synchronized_finalized_timestamp_count",
+                    "latest_synchronized_finalized_timestamp",
+                    "source_request_window_seconds",
+                    "maximum_same_day_latest_age_seconds",
+                    "evidence_sha256",
+                )
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
     return 0
 
 

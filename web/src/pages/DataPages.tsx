@@ -37,6 +37,7 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const fiveMinuteDataset = data?.fiveMinuteResearch?.minute_dataset
   const longFiveMinuteDataset = data?.longFiveMinuteResearch?.minute_dataset
   const intraday = data?.intradayObservation
+  const breadth = data?.intradayBreadth
   const [activeMarketTab, setActiveMarketTab] = useState('daily')
   const [query, setQuery] = useState('')
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
@@ -69,6 +70,7 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const activeLongFiveMinuteSymbol = selectedLongFiveMinuteSymbol ?? longFiveMinuteDataset?.eligible_symbols[0] ?? null
   const activeLongFiveMinuteDay = selectedLongFiveMinuteDay ?? longFiveMinuteDataset?.trading_days.at(-1) ?? null
   const intradayObservations = (intraday?.observations ?? []).filter((row) => `${row.symbol} ${row.name} ${row.sector_name}`.includes(query.trim()))
+  const breadthObservations = (breadth?.observations ?? []).filter((row) => `${row.symbol} ${row.name} ${row.sector_name}`.includes(query.trim()))
   const activeIntradaySymbol = selectedIntradaySymbol ?? intraday?.observations[0]?.symbol ?? null
   const activeIntradayObservation = intraday?.observations.find((row) => row.symbol === activeIntradaySymbol) ?? null
   const displayedIntradaySeries: MinuteBarSeries | null = activeIntradayObservation?.bars.length ? {
@@ -216,6 +218,14 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
     { title: '同日已结束分钟', dataIndex: 'same_day_finalized_bar_count' },
     { title: '最新已结束 Bar', dataIndex: 'latest_finalized_timestamp', render: (value: string) => formatChinaMinuteTimestamp(value) },
   ]
+  const breadthColumns = [
+    { title: '代码', dataIndex: 'symbol', fixed: 'left' as const },
+    { title: '名称', dataIndex: 'name' },
+    { title: '板块', dataIndex: 'sector_name' },
+    { title: '同日已结束分钟', dataIndex: 'same_day_finalized_bar_count' },
+    { title: '最新同日 Bar', dataIndex: 'latest_same_day_finalized_timestamp', render: (value: string | null) => value ? formatChinaMinuteTimestamp(value) : '尚无' },
+    { title: '最新 Bar 年龄（秒）', dataIndex: 'latest_same_day_finalized_age_seconds', render: (value: number | null) => value ?? '—' },
+  ]
   return <Page title="行情中心" subtitle="校验通过的历史日线、1 分钟与原生 5 分钟分时线">
     <Space orientation="vertical" style={{ width: '100%' }}>
       {waiting}
@@ -234,7 +244,13 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
         {
           key: 'intraday-observation', label: `当日分钟观测 · ${intraday?.same_day_symbol_count ?? 0}/${intraday?.symbol_count ?? 0}`,
           children: <Space orientation="vertical" style={{ width: '100%' }}>
-            <Alert showIcon type="warning" title={`免费历史源当日观测：${intraday?.session_phase ?? 'UNAVAILABLE'}`} description={`完成时间 ${intraday?.completed_at ? formatChinaMinuteTimestamp(intraday.completed_at) : '—'}（中国市场时钟）；${intraday?.same_day_symbol_count ?? 0}/${intraday?.symbol_count ?? 0} 个行业代表股出现同日已结束分钟 Bar，共同时间点 ${intraday?.synchronized_finalized_timestamp_count ?? 0} 个，最新 ${intraday?.latest_synchronized_finalized_timestamp ? formatChinaMinuteTimestamp(intraday.latest_synchronized_finalized_timestamp) : '尚无'}。15 标的请求窗口 ${intraday?.source_request_window_seconds ?? '—'} 秒，最新同日 Bar 最大年龄 ${intraday?.maximum_same_day_latest_age_seconds ?? '尚无'} 秒；额外等待 ${intraday?.finalization_guard_seconds ?? 0} 秒后才纳入。这不是授权实时行情，不进入 PAPER 或策略状态。`} />
+            <Alert showIcon type="warning" title={`免费历史源当日观测：${intraday?.session_phase ?? 'UNAVAILABLE'}`} description={`完成时间 ${intraday?.completed_at ? formatChinaMinuteTimestamp(intraday.completed_at) : '—'}（中国市场时钟）；${intraday?.same_day_symbol_count ?? 0}/${intraday?.symbol_count ?? 0} 个行业代表股出现同日已结束分钟 Bar，共同时间点 ${intraday?.synchronized_finalized_timestamp_count ?? 0} 个，最新 ${intraday?.latest_synchronized_finalized_timestamp ? formatChinaMinuteTimestamp(intraday.latest_synchronized_finalized_timestamp) : '尚无'}。代表股请求窗口 ${intraday?.source_request_window_seconds ?? '—'} 秒，最新同日 Bar 最大年龄 ${intraday?.maximum_same_day_latest_age_seconds ?? '尚无'} 秒；额外等待 ${intraday?.finalization_guard_seconds ?? 0} 秒后才纳入。这不是授权实时行情，不进入 PAPER 或策略状态。`} />
+            <Card title={`全股票宽度观测 · ${breadth?.same_day_symbol_count ?? 0}/${breadth?.symbol_count ?? 0}`}>
+              <Space orientation="vertical" style={{ width: '100%' }}>
+                <Alert showIcon type={breadth?.all_symbols_same_day_coverage ? 'success' : 'warning'} title={`${breadth?.sector_count ?? 0} 板块 × 每板块 ${breadth?.symbols_per_sector ?? 0} 只股票`} description={`全股票完成时间 ${breadth?.completed_at ? formatChinaMinuteTimestamp(breadth.completed_at) : '—'}；跨股票共同已结束分钟 ${breadth?.synchronized_finalized_timestamp_count ?? 0} 个，最新 ${breadth?.latest_synchronized_finalized_timestamp ? formatChinaMinuteTimestamp(breadth.latest_synchronized_finalized_timestamp) : '尚无'}。75 股票请求窗口 ${breadth?.source_request_window_seconds ?? '—'} 秒，最大最新 Bar 年龄 ${breadth?.maximum_same_day_latest_age_seconds ?? '尚无'} 秒。后端从签名的逐股票时间集合重新计算共同覆盖；该宽度审计不进入策略或 PAPER。`} />
+                <Table rowKey="symbol" size="small" columns={breadthColumns} dataSource={breadthObservations} pagination={{ pageSize: 15, showSizeChanger: false }} scroll={{ x: 920 }} locale={{ emptyText: <Empty description="暂无校验通过的全股票分钟宽度观测" /> }} />
+              </Space>
+            </Card>
             <Card title={`${activeIntradaySymbol ?? '—'} 当日已结束 1 分钟观测`}><MinuteHistoryChart series={displayedIntradaySeries} /><Typography.Text type="secondary">{displayedIntradaySeries?.bars.length ? `${displayedIntradaySeries.bars.length} 根同日已结束 Bar；观测签名 ${intraday?.evidence_sha256 ?? '—'}。` : '当前阶段尚无同日已结束分钟 Bar。'} 免费历史接口只作点时观测，不宣称流式、低延迟或实时授权。</Typography.Text></Card>
             <Table rowKey="symbol" size="small" columns={intradayColumns} dataSource={intradayObservations} pagination={{ pageSize: 15, showSizeChanger: false }} scroll={{ x: 900 }} onRow={(row) => ({ onClick: () => setSelectedIntradaySymbol(row.symbol), style: { cursor: 'pointer' } })} rowClassName={(row) => row.symbol === activeIntradaySymbol ? 'selected-market-row' : ''} locale={{ emptyText: <Empty description="暂无校验通过的当日分钟观测" /> }} />
           </Space>,
@@ -715,7 +731,8 @@ export function DataCenterPage({ data }: { data: PlatformSnapshot | null }) {
     { id: 'reserved-tail-diagnostic', name: '尾部 8 日预注册一次性诊断', status: data?.reservedTailDiagnostic?.five_bps ? 'VERIFIED' : 'UNAVAILABLE', count: data?.reservedTailDiagnostic?.gates.length ?? 0, identity: data?.reservedTailDiagnostic?.promotion ?? '—' },
     { id: 'development-policy-search', name: '360 日开发区分钟策略搜索', status: data?.developmentPolicySearch?.candidate_count === 4 ? 'VERIFIED' : 'UNAVAILABLE', count: data?.developmentPolicySearch?.candidate_count ?? 0, identity: `${data?.developmentPolicySearch?.observed_leader?.policy_id ?? '—'} · ${data?.developmentPolicySearch?.promotion ?? '—'}` },
     { id: 'public-minute-audit', name: '公网长历史分时可用性审计', status: publicAudit?.all_valid ? 'VERIFIED' : 'UNAVAILABLE', count: (publicAudit?.first_round?.request_count ?? 0) + (publicAudit?.repeat_round?.request_count ?? 0), identity: publicAudit?.dataset_checksum ?? '—' },
-    { id: 'intraday-observation', name: '15 行业当日分钟点时观测', status: data?.intradayObservation?.classification?.startsWith('FREE_HISTORICAL_SOURCE_') ? 'VERIFIED' : 'UNAVAILABLE', count: data?.intradayObservation?.same_day_symbol_count ?? 0, identity: `${data?.intradayObservation?.session_phase ?? 'UNAVAILABLE'} · ${data?.intradayObservation?.evidence_sha256 ?? '—'}` },
+    { id: 'intraday-observation', name: '15 行业代表股当日分钟点时观测', status: data?.intradayObservation?.classification?.startsWith('FREE_HISTORICAL_SOURCE_') ? 'VERIFIED' : 'UNAVAILABLE', count: data?.intradayObservation?.same_day_symbol_count ?? 0, identity: `${data?.intradayObservation?.session_phase ?? 'UNAVAILABLE'} · ${data?.intradayObservation?.evidence_sha256 ?? '—'}` },
+    { id: 'intraday-breadth', name: '75 股票全板块当日分钟宽度', status: data?.intradayBreadth?.classification?.startsWith('FREE_HISTORICAL_SOURCE_') ? 'VERIFIED' : 'UNAVAILABLE', count: data?.intradayBreadth?.same_day_symbol_count ?? 0, identity: `${data?.intradayBreadth?.session_phase ?? 'UNAVAILABLE'} · ${data?.intradayBreadth?.evidence_sha256 ?? '—'}` },
     { id: 'experiments', name: '基线实验与 artifacts', status: data?.experiments.experiments.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.experiments.experiments.length ?? 0, identity: data?.experiments.data_version ?? '—' },
     { id: 'walk-forward', name: '滚动样本外', status: data?.walkForward.result.folds.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.walkForward.result.folds.length ?? 0, identity: data?.walkForward.data_version ?? '—' },
     { id: 'robustness', name: '拒绝后稳健性', status: data?.robustness.result.scenario_metrics.length ? 'VERIFIED' : 'UNAVAILABLE', count: data?.robustness.result.scenario_metrics.length ?? 0, identity: data?.robustness.promotion ?? '—' },

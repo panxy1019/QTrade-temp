@@ -12,7 +12,8 @@ project-specific DNS name; the root A record and wildcard CNAME remain unchanged
 - `deployment/evidence/` contains the checksum-bound subset displayed online:
   the 30-ETF daily dataset, 11 baseline experiment records and artifacts,
   three-fold walk-forward report, 14-scenario robustness report, bounded factor
-  search, repeated factor robustness and 75-stock sector-transfer evidence.
+  search, repeated factor robustness, 75-stock sector-transfer evidence and
+  signed 15-representative plus 75-stock intraday source observations.
 - `web` uses `/api` only for the `vercel` Vite build mode.
 - Vercel rewrites `/api/:path*` to the single Python function while preserving
   the inner FastAPI path through a bounded query-path adapter.

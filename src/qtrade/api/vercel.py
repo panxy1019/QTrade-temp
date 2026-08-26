@@ -40,6 +40,7 @@ context.reserved_tail_diagnostic_report_path = (
 )
 context.public_minute_audit_path = EVIDENCE_ROOT / "public-minute-audit" / "report.json"
 context.intraday_observation_path = EVIDENCE_ROOT / "intraday-observation" / "report.json"
+context.intraday_breadth_path = EVIDENCE_ROOT / "intraday-breadth" / "report.json"
 
 
 class VercelQueryPathApp:

@@ -829,6 +829,57 @@ export interface IntradayObservationReport {
   external_order_transmission: false
 }
 
+export interface IntradayBreadthObservationReport {
+  classification?: string
+  coverage_scope?: 'ALL_FROZEN_STOCKS_15_SECTORS_X5' | 'UNAVAILABLE'
+  provider?: string
+  bar_interval?: '1m'
+  started_at?: string
+  completed_at?: string
+  session_phase: IntradayObservationReport['session_phase']
+  data_version?: string
+  dataset_checksum?: string
+  evidence_sha256?: string
+  symbol_count: number
+  sector_count: number
+  symbols_per_sector: number
+  same_day_symbol_count: number
+  synchronized_finalized_timestamp_count: number
+  latest_synchronized_finalized_timestamp: string | null
+  source_request_window_seconds?: number
+  all_symbols_same_day_coverage?: boolean
+  maximum_same_day_latest_age_seconds?: number | null
+  finalization_guard_seconds?: number
+  observations: Array<{
+    symbol: string
+    name: string
+    sector_code: string
+    sector_name: string
+    observed_at: string
+    session_phase: string
+    source_row_count: number
+    latest_observed_timestamp: string
+    latest_finalized_timestamp: string | null
+    same_day_finalized_bar_count: number
+    latest_same_day_finalized_timestamp: string | null
+    latest_same_day_finalized_age_seconds: number | null
+    forming_or_uncertain_bar_excluded: boolean
+  }>
+  sector_summaries: Array<{
+    sector_code: string
+    sector_name: string
+    symbol_count: number
+    same_day_symbol_count: number
+    synchronized_finalized_timestamp_count: number
+    latest_synchronized_finalized_timestamp: string | null
+    maximum_same_day_latest_age_seconds: number | null
+  }>
+  realtime_readiness: false
+  real_data_paper_readiness: false
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  external_order_transmission: false
+}
+
 export interface DevelopmentPolicySearchReport {
   classification?: string
   generated_at?: string
@@ -921,6 +972,7 @@ export interface PlatformSnapshot {
   developmentPolicySearch?: DevelopmentPolicySearchReport
   publicMinuteAudit: PublicMinuteAuditReport
   intradayObservation: IntradayObservationReport
+  intradayBreadth: IntradayBreadthObservationReport
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]

@@ -294,6 +294,23 @@ show only finalized same-day bars while preserving that boundary. Its signed
 evidence also records the 15-symbol request window and the maximum age of each
 symbol's latest same-day finalized bar so source delay stays visible.
 
+A separate breadth probe checks all five frozen stocks in each of the 15 sectors
+without duplicating their full OHLCV payload in the dashboard snapshot:
+
+```bash
+QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true PYTHONPATH=. .venv/bin/python \
+  scripts/probe_sina_intraday_breadth.py \
+  --output deployment/evidence/intraday-breadth/report.json
+```
+
+The signed artifact retains every stock's finalized same-day timestamp set. The
+API independently recomputes the 75-stock intersection, per-sector intersections,
+latest-bar ages and request window, then omits the raw timestamp sets from its
+response. The market page shows the resulting 15×5 coverage table beside the 15
+representative-stock charts. This is source-breadth and lag evidence only; it
+does not create realtime entitlement, strategy input, PAPER readiness or order
+authority.
+
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and
 `QTRADE_RQDATA_TOKEN` only inside the bridge process, and claims a session only

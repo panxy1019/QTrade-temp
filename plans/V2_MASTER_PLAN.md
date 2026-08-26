@@ -166,6 +166,10 @@ npm --prefix web run build
   correction, recovery cooldown, multi-symbol recorded tick routing and a
   fail-closed Chinese readiness monitor. Keep it `UNCONFIGURED` until an
   authorized realtime RQData/XtData bridge is supplied.
+- [x] Add a signed same-day breadth probe for all 75 frozen stocks across the 15
+  sectors, independently verify cross-stock/per-sector finalized-minute coverage
+  in the API, and expose a bounded Chinese table without treating it as realtime
+  or PAPER input.
 - [ ] Record and replay the first complete authorized multi-stock minute session,
   then compare replay targets, orders and fills byte-for-byte with the forward
   SHADOW/PAPER trace.

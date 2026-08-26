@@ -127,6 +127,7 @@ class AppContext:
     reserved_tail_diagnostic_report_path: Path | None = None
     public_minute_audit_path: Path | None = None
     intraday_observation_path: Path | None = None
+    intraday_breadth_path: Path | None = None
     minute_overlay_reader: Callable[[], dict[str, object]] | None = None
     applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
     sellable_quantity_reader: Callable[[str, date], int] | None = None
@@ -511,6 +512,41 @@ def create_app(
             "synchronized_finalized_timestamp_count": 0,
             "latest_synchronized_finalized_timestamp": None,
             "observations": [],
+            "realtime_readiness": False,
+            "real_data_paper_readiness": False,
+            "promotion": "NOT_EVALUATED",
+            "external_order_transmission": False,
+        }
+
+    @app.get("/intraday-breadth-observation")
+    def intraday_breadth_observation(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        report = _load_verified_intraday_breadth(
+            state.intraday_breadth_path,
+            dataset,
+        )
+        return report or {
+            "classification": "NO_VERIFIED_INTRADAY_BREADTH_OBSERVATION",
+            "coverage_scope": "UNAVAILABLE",
+            "session_phase": "UNAVAILABLE",
+            "symbol_count": 0,
+            "sector_count": 0,
+            "symbols_per_sector": 0,
+            "same_day_symbol_count": 0,
+            "synchronized_finalized_timestamp_count": 0,
+            "latest_synchronized_finalized_timestamp": None,
+            "observations": [],
+            "sector_summaries": [],
             "realtime_readiness": False,
             "real_data_paper_readiness": False,
             "promotion": "NOT_EVALUATED",
@@ -1141,6 +1177,9 @@ def context_from_runtime(
         ),
         intraday_observation_path=Path(
             "runtime/research/sina-intraday-observation/latest.json"
+        ),
+        intraday_breadth_path=Path(
+            "runtime/research/sina-intraday-breadth/latest.json"
         ),
         applied_trade_reader=bundle.journal.applied_trade_payloads,
         sellable_quantity_reader=bundle.sellability.sellable_quantity,
@@ -4890,6 +4929,266 @@ def _load_verified_intraday_observation(
         ):
             return None
         return {**report, "minute_dataset": dataset}
+    except (
+        InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _load_verified_intraday_breadth(
+    path: Path | None,
+    dataset: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if path is None or dataset is None or not path.is_file():
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        observations = report.get("observations")
+        sector_summaries = report.get("sector_summaries")
+        started_at = datetime.fromisoformat(str(report.get("started_at")))
+        completed_at = datetime.fromisoformat(str(report.get("completed_at")))
+        guard_seconds = report.get("finalization_guard_seconds")
+        instruments = dataset.get("instruments")
+        if not isinstance(instruments, list):
+            return None
+        expected: list[tuple[str, str, str, str]] = []
+        for row in instruments:
+            if not isinstance(row, dict):
+                return None
+            expected.append(
+                (
+                    str(row.get("symbol")),
+                    str(row.get("name")),
+                    str(row.get("sector_code")),
+                    str(row.get("sector_name")),
+                )
+            )
+        expected_sector_counts = Counter(identity[2] for identity in expected)
+        if (
+            len(expected) != 75
+            or len({identity[0] for identity in expected}) != 75
+            or len(expected_sector_counts) != 15
+            or set(expected_sector_counts.values()) != {5}
+            or not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("classification")
+            != "FREE_HISTORICAL_SOURCE_INTRADAY_BREADTH_NOT_REALTIME_ELIGIBLE"
+            or report.get("coverage_scope")
+            != "ALL_FROZEN_STOCKS_15_SECTORS_X5"
+            or report.get("provider")
+            != "Sina CN_MarketDataService.getKLineData"
+            or report.get("bar_interval") != "1m"
+            or started_at.tzinfo is None
+            or completed_at.tzinfo is None
+            or started_at > completed_at
+            or report.get("session_phase")
+            != _intraday_session_phase(completed_at)
+            or report.get("data_version") != dataset["data_version"]
+            or report.get("dataset_checksum") != dataset["checksum"]
+            or report.get("symbol_count") != len(expected)
+            or report.get("sector_count") != len(expected_sector_counts)
+            or report.get("symbols_per_sector") != 5
+            or not isinstance(guard_seconds, int)
+            or not 0 <= guard_seconds <= 300
+            or not isinstance(observations, list)
+            or len(observations) != len(expected)
+            or not isinstance(sector_summaries, list)
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("external_order_transmission") is not False
+        ):
+            return None
+        report_day = completed_at.astimezone(ZoneInfo("Asia/Shanghai")).date()
+        allowed_times = set(SINA_COMPLETE_SESSION_TIMES)
+        same_day_count = 0
+        same_day_ages: list[float] = []
+        timestamp_sets: list[set[str]] = []
+        sector_rows: dict[str, list[tuple[set[str], float | None]]] = defaultdict(list)
+        sanitized_observations: list[dict[str, object]] = []
+        for observation, identity in zip(observations, expected, strict=True):
+            if not isinstance(observation, dict):
+                return None
+            observed_at = datetime.fromisoformat(str(observation.get("observed_at")))
+            latest_observed = datetime.fromisoformat(
+                str(observation.get("latest_observed_timestamp"))
+            )
+            latest_finalized_raw = observation.get("latest_finalized_timestamp")
+            latest_finalized = (
+                None
+                if latest_finalized_raw is None
+                else datetime.fromisoformat(str(latest_finalized_raw))
+            )
+            latest_same_day_raw = observation.get(
+                "latest_same_day_finalized_timestamp"
+            )
+            latest_same_day = (
+                None
+                if latest_same_day_raw is None
+                else datetime.fromisoformat(str(latest_same_day_raw))
+            )
+            timestamp_values = observation.get("same_day_finalized_timestamps")
+            latest_same_day_age = observation.get(
+                "latest_same_day_finalized_age_seconds"
+            )
+            observed_identity = (
+                observation.get("symbol"),
+                observation.get("name"),
+                observation.get("sector_code"),
+                observation.get("sector_name"),
+            )
+            if (
+                observed_identity != identity
+                or observed_at.tzinfo is None
+                or not started_at <= observed_at <= completed_at
+                or observation.get("session_phase")
+                != _intraday_session_phase(observed_at)
+                or not isinstance(observation.get("source_row_count"), int)
+                or not 0 < cast(int, observation["source_row_count"]) <= 476
+                or latest_observed.tzinfo is None
+                or latest_finalized is not None
+                and (
+                    latest_finalized.tzinfo is None
+                    or latest_observed < latest_finalized
+                    or latest_finalized
+                    > observed_at - timedelta(seconds=guard_seconds)
+                )
+                or not isinstance(timestamp_values, list)
+                or len(timestamp_values) > len(SINA_COMPLETE_SESSION_TIMES)
+                or observation.get("same_day_finalized_bar_count")
+                != len(timestamp_values)
+                or observation.get("forming_or_uncertain_bar_excluded")
+                is not (
+                    latest_finalized is None or latest_observed > latest_finalized
+                )
+            ):
+                return None
+            previous: datetime | None = None
+            observed_timestamps: set[str] = set()
+            for value in timestamp_values:
+                timestamp = datetime.fromisoformat(str(value))
+                local = timestamp.astimezone(ZoneInfo("Asia/Shanghai"))
+                if (
+                    timestamp.tzinfo is None
+                    or previous is not None
+                    and timestamp <= previous
+                    or timestamp > observed_at - timedelta(seconds=guard_seconds)
+                    or local.date() != report_day
+                    or local.time() not in allowed_times
+                ):
+                    return None
+                previous = timestamp
+                observed_timestamps.add(timestamp.isoformat())
+            if len(observed_timestamps) != len(timestamp_values):
+                return None
+            if timestamp_values:
+                assert previous is not None
+                if (
+                    latest_finalized != previous
+                    or latest_same_day != previous
+                    or not isinstance(latest_same_day_age, (int, float))
+                    or isinstance(latest_same_day_age, bool)
+                    or not isfinite(float(latest_same_day_age))
+                ):
+                    return None
+                expected_age = round((observed_at - previous).total_seconds(), 3)
+                if not isclose(
+                    float(latest_same_day_age), expected_age, abs_tol=0.001
+                ):
+                    return None
+                age = float(latest_same_day_age)
+                same_day_count += 1
+                same_day_ages.append(age)
+            else:
+                if latest_same_day is not None or latest_same_day_age is not None:
+                    return None
+                age = None
+            timestamp_sets.append(observed_timestamps)
+            sector_rows[identity[2]].append((observed_timestamps, age))
+            sanitized_observations.append(
+                {
+                    key: value
+                    for key, value in observation.items()
+                    if key != "same_day_finalized_timestamps"
+                }
+            )
+        synchronized = sorted(set.intersection(*timestamp_sets)) if timestamp_sets else []
+        expected_sector_summaries: list[dict[str, object]] = []
+        sector_identity = {
+            identity[2]: identity[3] for identity in expected
+        }
+        for sector_code in dict.fromkeys(identity[2] for identity in expected):
+            rows = sector_rows[sector_code]
+            sector_timestamps = [row[0] for row in rows]
+            sector_synchronized = (
+                sorted(set.intersection(*sector_timestamps))
+                if sector_timestamps
+                else []
+            )
+            ages = [row[1] for row in rows if row[1] is not None]
+            expected_sector_summaries.append(
+                {
+                    "sector_code": sector_code,
+                    "sector_name": sector_identity[sector_code],
+                    "symbol_count": len(rows),
+                    "same_day_symbol_count": sum(bool(row[0]) for row in rows),
+                    "synchronized_finalized_timestamp_count": len(
+                        sector_synchronized
+                    ),
+                    "latest_synchronized_finalized_timestamp": (
+                        sector_synchronized[-1] if sector_synchronized else None
+                    ),
+                    "maximum_same_day_latest_age_seconds": (
+                        max(ages) if ages else None
+                    ),
+                }
+            )
+        request_window_seconds = report.get("source_request_window_seconds")
+        expected_request_window = round(
+            (completed_at - started_at).total_seconds(), 3
+        )
+        if (
+            report.get("same_day_symbol_count") != same_day_count
+            or report.get("all_symbols_same_day_coverage")
+            is not (same_day_count == len(expected))
+            or not isinstance(request_window_seconds, (int, float))
+            or isinstance(request_window_seconds, bool)
+            or not isfinite(float(request_window_seconds))
+            or not isclose(
+                float(request_window_seconds),
+                expected_request_window,
+                abs_tol=0.001,
+            )
+            or report.get("maximum_same_day_latest_age_seconds")
+            != (max(same_day_ages) if same_day_ages else None)
+            or report.get("synchronized_finalized_timestamp_count")
+            != len(synchronized)
+            or report.get("latest_synchronized_finalized_timestamp")
+            != (synchronized[-1] if synchronized else None)
+            or sector_summaries != expected_sector_summaries
+        ):
+            return None
+        return {
+            **report,
+            "observations": sanitized_observations,
+            "minute_dataset": dataset,
+        }
     except (
         InvalidOperation,
         KeyError,

@@ -342,6 +342,40 @@ const data = {
     realtime_readiness: false, real_data_paper_readiness: false,
     promotion: 'NOT_ELIGIBLE', external_order_transmission: false,
   },
+  intradayBreadth: {
+    classification: 'FREE_HISTORICAL_SOURCE_INTRADAY_BREADTH_NOT_REALTIME_ELIGIBLE',
+    coverage_scope: 'ALL_FROZEN_STOCKS_15_SECTORS_X5',
+    provider: 'Sina CN_MarketDataService.getKLineData', bar_interval: '1m',
+    started_at: '2026-08-26T01:32:00+00:00', completed_at: '2026-08-26T01:32:22+00:00',
+    session_phase: 'MORNING_SESSION', data_version: 'baostock-five-minute-long-v1',
+    dataset_checksum: 'long-five-minute-checksum', evidence_sha256: '6'.repeat(64),
+    symbol_count: 75, sector_count: 15, symbols_per_sector: 5,
+    same_day_symbol_count: 75, synchronized_finalized_timestamp_count: 1,
+    latest_synchronized_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+    source_request_window_seconds: 22, all_symbols_same_day_coverage: true,
+    maximum_same_day_latest_age_seconds: 82, finalization_guard_seconds: 60,
+    observations: Array.from({ length: 75 }, (_, index) => ({
+      symbol: String(600100 + index), name: `股票${index + 1}`,
+      sector_code: String(801000 + Math.floor(index / 5)),
+      sector_name: `行业${Math.floor(index / 5) + 1}`,
+      observed_at: '2026-08-26T01:32:22+00:00', session_phase: 'MORNING_SESSION',
+      source_row_count: 476, latest_observed_timestamp: '2026-08-26T09:32:00+08:00',
+      latest_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+      same_day_finalized_bar_count: 1,
+      latest_same_day_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+      latest_same_day_finalized_age_seconds: 82,
+      forming_or_uncertain_bar_excluded: true,
+    })),
+    sector_summaries: Array.from({ length: 15 }, (_, index) => ({
+      sector_code: String(801000 + index), sector_name: `行业${index + 1}`,
+      symbol_count: 5, same_day_symbol_count: 5,
+      synchronized_finalized_timestamp_count: 1,
+      latest_synchronized_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+      maximum_same_day_latest_age_seconds: 82,
+    })),
+    realtime_readiness: false, real_data_paper_readiness: false,
+    promotion: 'NOT_ELIGIBLE', external_order_transmission: false,
+  },
   reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
   reporting: {
     classification: 'TRUSTED_PAPER_EOD_REPORTING', readiness: 'CONFIGURED', automatic: true,
@@ -653,6 +687,10 @@ describe('verified historical data pages', () => {
     expect(screen.getByText(/共同时间点 1 个/)).toBeInTheDocument()
     expect(screen.getByText(/额外等待 60 秒后才纳入/)).toBeInTheDocument()
     expect(screen.getByText(/不是授权实时行情，不进入 PAPER 或策略状态/)).toBeInTheDocument()
+    expect(screen.getByText('全股票宽度观测 · 75/75')).toBeInTheDocument()
+    expect(screen.getByText('15 板块 × 每板块 5 只股票')).toBeInTheDocument()
+    expect(screen.getByText(/跨股票共同已结束分钟 1 个/)).toBeInTheDocument()
+    expect(screen.getByText(/后端从签名的逐股票时间集合重新计算共同覆盖/)).toBeInTheDocument()
     expect(screen.getByText(/1 根同日已结束 Bar/)).toBeInTheDocument()
     expect(screen.getByTestId('minute-history-chart')).toBeInTheDocument()
   })
@@ -712,7 +750,8 @@ describe('verified historical data pages', () => {
     expect(screen.getByText(/CDN 命中中位 0.179 秒、P95 0.274 秒/)).toBeInTheDocument()
     expect(screen.getByText(/公网写操作 7\/7 已阻断/)).toBeInTheDocument()
     expect(screen.getByText(/不是实时行情授权/)).toBeInTheDocument()
-    expect(screen.getByText('15 行业当日分钟点时观测')).toBeInTheDocument()
+    expect(screen.getByText('15 行业代表股当日分钟点时观测')).toBeInTheDocument()
+    expect(screen.getByText('75 股票全板块当日分钟宽度')).toBeInTheDocument()
     expect(screen.queryByText(/网页调用方不能提供这些身份/)).not.toBeInTheDocument()
   })
 })

@@ -466,3 +466,22 @@ hidden by the favorable five-day 1-minute relative result or tuned on the four
 already viewed test windows. Because interval transfer failed, the strategy
 remains `NOT_ELIGIBLE`; authorized realtime 1-minute data and new forward
 PAPER/SHADOW sessions are still required before any later promotion review.
+
+## ADR-031 — Intraday breadth is a signed summary, not a second realtime feed
+
+Status: accepted, 2026-08-26.
+
+The point-in-time intraday source audit may cover all five frozen stocks in each
+of the 15 sectors, but it must not multiply the public dashboard payload by
+embedding full-session OHLCV for all 75 stocks. The breadth artifact instead
+retains each stock's finalized same-day timestamp set, source request window and
+latest-bar age. The API binds the exact frozen 15×5 identities, recomputes the
+cross-stock and per-sector intersections, and removes raw timestamp sets from the
+response after verification. Detailed charts remain a separate 15-representative
+artifact.
+
+A successful 75-stock fetch demonstrates only public historical-source breadth
+at that signed instant. Unequal latest timestamps and source latency remain
+visible, partial coverage fails the all-stock claim, and the result cannot set
+realtime entitlement, mutate strategy/PAPER state, promote a candidate or enable
+external order transmission.
