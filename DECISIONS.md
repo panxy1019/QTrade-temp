@@ -995,3 +995,16 @@ used for checksum, schema and quality failures.
 File-read and Arrow-decode failures are now wrapped as `DatasetIntegrityError`
 while retaining the original exception as the cause for local diagnostics. No
 malformed payload reaches row conversion or the backtest engine.
+
+## ADR-067 — Parquet datasets remain non-empty after read-time verification
+
+Status: accepted, 2026-08-26.
+
+The writer rejects an empty Bar list, but a valid ten-column Parquet file can be
+rewritten to zero rows and resigned. Duplicate, lineage and quality checks are
+vacuously satisfied on that payload, allowing consumers to confuse absence of
+data with a successful query.
+
+Reads now reject zero rows after checksum and schema verification but before row
+lineage or quality validation. Symbol filtering may still legitimately return no
+matches from a non-empty verified dataset.

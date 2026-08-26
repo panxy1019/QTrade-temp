@@ -69,6 +69,8 @@ Parquet dataset paths are resolved before I/O and must remain a direct child of
 the configured root, closing traversal, absolute-path and symlink escape paths.
 Checksum-valid payloads that still fail filesystem reads or Arrow decoding are
 reported through the same dataset-integrity boundary used by every consumer.
+Schema-valid zero-row payloads are also rejected, keeping the write-time non-empty
+invariant intact after a file is modified and resigned.
 Sourced normalized corporate-action factors produce point-in-time backward-
 adjusted bars with explicit adjustment lineage. A durable immutable SQLite
 catalog links PASSED data manifests to experiment hashes and is populated by the

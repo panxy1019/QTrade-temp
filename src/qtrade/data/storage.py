@@ -99,6 +99,8 @@ class ParquetBarStore:
         if not table.schema.equals(_BAR_PARQUET_SCHEMA, check_metadata=False):
             raise DatasetIntegrityError("dataset schema mismatch")
         rows = table.to_pylist()
+        if not rows:
+            raise DatasetIntegrityError("dataset is empty")
         if any(row.get("data_version") != manifest.data_version for row in rows):
             raise DatasetIntegrityError("dataset row data_version mismatch")
         records = [

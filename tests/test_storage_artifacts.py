@@ -193,6 +193,17 @@ def test_parquet_store_rejects_checksum_valid_invalid_parquet(tmp_path):
         ParquetBarStore(tmp_path).read(passed)
 
 
+def test_parquet_store_rejects_resigned_empty_dataset(tmp_path):
+    store = ParquetBarStore(tmp_path)
+    passed = store.write([sample_bar()], manifest())
+    target = tmp_path / "bars-v1" / "bars.parquet"
+    pq.write_table(pq.read_table(target).slice(0, 0), target, compression="zstd")
+    resigned = replace(passed, checksum=sha256(target.read_bytes()).hexdigest())
+
+    with pytest.raises(DatasetIntegrityError, match="empty"):
+        store.read(resigned)
+
+
 def test_experiment_artifacts_are_hashed_and_immutable(tmp_path):
     record = ExperimentRecord(
         experiment_id="exp-1",
