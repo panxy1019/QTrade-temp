@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 386 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 387 tests passed, Ruff clean, strict mypy clean across
   the 99-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -424,7 +424,9 @@ Last updated: 2026-08-26
   `DatasetIntegrityError` before the semantic quality gate.
 - Atomic dataset publication: Parquet bytes and checksum are completed in a
   same-filesystem staging directory before the immutable data-version directory
-  appears; failed writes clean their staging state and allow a safe retry.
+  appears; failed writes clean their staging state and allow a safe retry. The
+  file, staging directory and published storage-root entry are fsynced in order
+  before a PASSED manifest is returned.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
   fill markers across restart and durable audit events; backtests require a
   PASSED data manifest and record `data_version`; 54 tests pass.

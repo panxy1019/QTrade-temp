@@ -78,6 +78,8 @@ content are normalized to the dataset-integrity boundary before semantic checks.
 Parquet writes complete and checksum their payload in a same-filesystem staging
 directory before atomically publishing the immutable data-version directory;
 failed encodes leave no visible partial dataset and the same version can retry.
+The staged file and directory plus the final storage-root entry are fsynced in
+publication order before the writer returns a PASSED manifest.
 Sourced normalized corporate-action factors produce point-in-time backward-
 adjusted bars with explicit adjustment lineage. A durable immutable SQLite
 catalog links PASSED data manifests to experiment hashes and is populated by the

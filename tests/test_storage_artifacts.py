@@ -1,3 +1,5 @@
+import os
+import stat
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
@@ -93,6 +95,22 @@ def test_parquet_store_cleans_failed_write_and_allows_retry(tmp_path, monkeypatc
         store.write([sample_bar()], manifest())
 
     assert target.read_bytes() == persisted
+
+
+def test_parquet_store_syncs_file_and_directories_before_return(tmp_path, monkeypatch):
+    synced_types: list[str] = []
+    real_fsync = os.fsync
+
+    def track_fsync(file_descriptor: int) -> None:
+        mode = os.fstat(file_descriptor).st_mode
+        synced_types.append("directory" if stat.S_ISDIR(mode) else "file")
+        real_fsync(file_descriptor)
+
+    monkeypatch.setattr(os, "fsync", track_fsync)
+
+    ParquetBarStore(tmp_path).write([sample_bar()], manifest())
+
+    assert synced_types == ["file", "directory", "directory"]
 
 
 def test_parquet_store_rejects_row_data_version_drift(tmp_path):

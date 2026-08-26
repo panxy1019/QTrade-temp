@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
@@ -32,6 +33,14 @@ _BAR_PARQUET_SCHEMA = pa.schema(
         ("data_version", pa.string()),
     ]
 )
+
+
+def _fsync_directory(path: Path) -> None:
+    descriptor = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
 
 
 class ParquetBarStore:
@@ -84,7 +93,11 @@ class ParquetBarStore:
             )
             pq.write_table(table, target, compression="zstd")
             checksum = sha256(target.read_bytes()).hexdigest()
+            with target.open("rb") as handle:
+                os.fsync(handle.fileno())
+            _fsync_directory(Path(staging))
             Path(staging).rename(dataset_dir)
+            _fsync_directory(self._root)
         return replace(manifest, checksum=checksum, quality_status=QualityStatus.PASSED)
 
     def read(self, manifest: DataManifest, *, symbol: str | None = None) -> list[Bar]:

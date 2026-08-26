@@ -1047,3 +1047,17 @@ Writes now build the Parquet file and compute its checksum inside a temporary
 directory under the same storage root, then rename that completed directory to
 the final version path. Failures remove staging state, while an already published
 version remains immutable and cannot be overwritten.
+
+## ADR-071 — Atomic Parquet publication is synchronized before success
+
+Status: accepted, 2026-08-26.
+
+An atomic directory rename prevents readers from seeing a partial payload, but
+does not by itself request that file bytes and directory entries survive a host
+crash. Returning a PASSED manifest before those writes are synchronized can
+therefore overstate the durability of a newly collected minute dataset.
+
+After checksumming, the writer fsyncs the staged Parquet file and its directory,
+renames the completed directory, and fsyncs the storage root. A synchronization
+failure prevents a PASSED manifest from being returned; no runtime or promotion
+authority is inferred from filesystem publication alone.
