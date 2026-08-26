@@ -2,6 +2,7 @@ import type { BacktestPreview, BacktestPreviewRequest, HistoricalBarSeries, Minu
 
 const API_BASE = import.meta.env.DEV || import.meta.env.MODE === 'vercel' ? '/api' : ''
 const MAX_CONCURRENT_GETS = 6
+const GET_TIMEOUT_MS = 30_000
 let activeGets = 0
 const getWaiters: Array<() => void> = []
 
@@ -28,11 +29,17 @@ function releaseGetSlot(): void {
 
 async function getJson<T>(path: string): Promise<T> {
   await acquireGetSlot()
+  const controller = new AbortController()
+  const timeoutId = globalThis.setTimeout(() => controller.abort(), GET_TIMEOUT_MS)
   try {
-    const response = await fetch(`${API_BASE}${path}`, { cache: 'no-store' })
+    const response = await fetch(`${API_BASE}${path}`, { cache: 'no-store', signal: controller.signal })
     if (!response.ok) throw new Error(`请求失败：${response.status}`)
-    return response.json() as Promise<T>
+    return await response.json() as T
+  } catch (reason) {
+    if (controller.signal.aborted) throw new Error('请求超时：30 秒')
+    throw reason
   } finally {
+    globalThis.clearTimeout(timeoutId)
     releaseGetSlot()
   }
 }

@@ -27,11 +27,11 @@ Last updated: 2026-08-26
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 409 tests passed, Ruff clean, strict mypy clean across
-  101 checked source/publisher files on Python 3.12.13
-  (macOS, 2026-08-26); 49 frontend Vitest
+  97 checked source files on Python 3.12.13
+  (macOS, 2026-08-26); 50 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 428.38 KB with no large-chunk warning.
+  minified JavaScript asset at or below 428.57 KB with no large-chunk warning.
   GitHub CI grants only read access to repository contents and pins the official
   Node 24 checkout/setup-python actions to their verified v7 release commits.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -647,6 +647,9 @@ Last updated: 2026-08-26
   fan-out test so transient cold-start pressure cannot silently return. Every
   GET also requests `cache: no-store`; a production refresh therefore cannot
   keep rendering an older signed intraday checkpoint from the browser cache.
+  Each GET is also aborted after 30 seconds and releases its concurrency slot;
+  a stalled network request therefore cannot strand the snapshot or queued
+  chart reads indefinitely.
 - Historical chart loading semantics: daily, 1-minute, native 5-minute and long
   5-minute panels now show an explicit verification/loading state while their
   identity-bound series request is pending. They no longer claim that evidence

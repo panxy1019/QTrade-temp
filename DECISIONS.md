@@ -1171,3 +1171,19 @@ partition failure schedules one retry five seconds later. A complete snapshot
 does not retry, and cadences of five seconds or less already provide recovery so
 they do not add another timer. Partial data stays visible between attempts and
 the retry does not change any server state or trading authority.
+
+## ADR-079 — Browser GET slots have a bounded lifetime
+
+Status: accepted, 2026-08-26.
+
+The browser limits public GET fan-out to six concurrent requests, but a network
+path that neither resolves nor rejects can retain a slot forever. Enough stalled
+requests would block the complete snapshot, its recovery retry and every queued
+chart request even though the backend might already be healthy.
+
+Every read-only GET now carries an AbortController deadline of 30 seconds. The
+deadline covers both the response and JSON body, reports a stable Chinese timeout
+error, and always clears its timer and releases the concurrency slot. A fake-time
+test stalls all six active requests, queues a seventh and proves that timeout
+failure cannot strand the queue. This is client-side availability control only;
+it sends no mutation and changes no trading authority.

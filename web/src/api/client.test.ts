@@ -1,8 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { loadPlatformSnapshot } from './client'
+import { loadMinuteBarSeries, loadPlatformSnapshot } from './client'
 
 describe('platform snapshot request fan-out', () => {
-  afterEach(() => vi.unstubAllGlobals())
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+  })
 
   it('limits concurrent GETs and uses the minute evidence bundle', async () => {
     let active = 0
@@ -37,5 +40,44 @@ describe('platform snapshot request fan-out', () => {
     expect(paths).not.toContain('/api/intraday-breadth-observation')
     expect(new Set(cacheModes)).toEqual(new Set(['no-store']))
     expect(Object.keys(snapshot.availability.failures)).toHaveLength(28)
+  })
+
+  it('times out stalled GETs and releases the queued request', async () => {
+    vi.useFakeTimers()
+    let active = 0
+    let maximumActive = 0
+    let requestCount = 0
+    vi.stubGlobal('fetch', vi.fn((_: RequestInfo | URL, init?: RequestInit) => {
+      requestCount += 1
+      active += 1
+      maximumActive = Math.max(maximumActive, active)
+      if (requestCount === 7) {
+        active -= 1
+        return Promise.resolve({ ok: true, status: 200, json: async () => ({ symbol: '000007.SZ', bars: [] }) })
+      }
+      return new Promise((_, reject) => {
+        init?.signal?.addEventListener('abort', () => {
+          active -= 1
+          reject(new DOMException('Aborted', 'AbortError'))
+        }, { once: true })
+      })
+    }))
+
+    const requests = Array.from({ length: 7 }, (_, index) => (
+      loadMinuteBarSeries(`00000${index + 1}.SZ`).then(
+        (value) => ({ status: 'fulfilled' as const, value }),
+        (reason: Error) => ({ status: 'rejected' as const, reason }),
+      )
+    ))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(requestCount).toBe(6)
+
+    await vi.advanceTimersByTimeAsync(30_000)
+    const results = await Promise.all(requests)
+
+    expect(maximumActive).toBe(6)
+    expect(requestCount).toBe(7)
+    expect(results.slice(0, 6).every((result) => result.status === 'rejected' && result.reason.message === '请求超时：30 秒')).toBe(true)
+    expect(results[6]).toMatchObject({ status: 'fulfilled' })
   })
 })
