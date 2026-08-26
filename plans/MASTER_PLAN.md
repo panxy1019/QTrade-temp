@@ -338,6 +338,16 @@ once per session and evaluated with Newey-West uncertainty. Although the viewed
 the 95% interval crossed zero. The sell factor therefore fails independently of
 the full-window strategy result.
 
+Bounded factor discovery now makes the search/test boundary explicit. Exactly
+104 predeclared opening rules are formed from 26 non-empty three-slot direction
+tuples and thresholds 0/5/10/20 bps. A 40-session run scans only its first 20
+sessions, locks one identity before the first test signal, and evaluates only
+that identity on the final 20 sessions. The first real run selected
+`IGNORE/BEARISH/BULLISH` at 0 bps after a positive training gate, but the locked
+test returned -6.1491% total, -1.8107% excess and Newey-West t -0.5462. The
+visible failed result is frozen as viewed reused history; it cannot trigger a
+second search on the test window, state mutation, PAPER or external orders.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

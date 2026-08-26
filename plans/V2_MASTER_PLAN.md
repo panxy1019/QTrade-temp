@@ -216,6 +216,10 @@ npm --prefix web run build
 - [x] Collapse eight public long-minute evidence reads into one verified bundle
   that opens the 24 MB Parquet once, while retaining standalone endpoints,
   independent report validation and typed fail-closed frontend sections.
+- [x] Add a fixed 104-candidate opening-factor discovery contract with a 20/20
+  chronological train/test split, lock one training identity before any test
+  signal, expose the complete failed test in the Chinese workbench and prohibit
+  reusing that viewed test window as an independent confirmation or PAPER gate.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

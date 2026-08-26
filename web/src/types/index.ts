@@ -518,6 +518,12 @@ export interface IntradayFactorBacktestRequest {
 export type IntradayOpeningDirection = 'BULLISH' | 'BEARISH' | 'IGNORE'
 export type IntradayExitRule = 'NEXT_SESSION_OPEN' | 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP'
 
+export interface IntradayFactorDiscoveryRequest {
+  start: string
+  end: string
+  cost_bps: string
+}
+
 export interface IntradayFactorCorrelationRule {
   directions: [IntradayOpeningDirection, IntradayOpeningDirection, IntradayOpeningDirection]
   combination: 'ALL' | 'ANY'
@@ -629,6 +635,96 @@ export interface IntradayPerformanceMetrics {
   exposure: string
   number_of_trades: number
   transaction_costs: string
+}
+
+export interface IntradayFactorDiscovery {
+  classification: 'BOUNDED_INTRADAY_FACTOR_DISCOVERY_REUSED_HISTORY_NOT_INDEPENDENT'
+  parameters: IntradayFactorDiscoveryRequest
+  candidate_contract: {
+    direction_values: IntradayOpeningDirection[]
+    active_slot_requirement: 'AT_LEAST_ONE'
+    combination: 'ALL'
+    thresholds_bps: string[]
+    candidate_count: number
+    arbitrary_code_execution: false
+    future_features_used: false
+  }
+  split: {
+    training_start: string
+    training_end: string
+    training_session_count: number
+    test_start: string
+    test_end: string
+    test_session_count: number
+    selection_known_at: string
+    first_test_signal_known_at: string
+    selection_uses_test_returns: false
+    chronological_disjoint: true
+  }
+  candidates: Array<{
+    candidate_id: string
+    directions: [IntradayOpeningDirection, IntradayOpeningDirection, IntradayOpeningDirection]
+    combination: 'ALL'
+    minimum_body_return_bps: string
+    factor_expression: string
+    training_observation_count: number
+    training_signal_count: number
+    training_signal_session_count: number
+    training_mean_session_conditional_excess_return: string
+    training_newey_west_t_statistic: string
+    training_strategy_metrics: IntradayPerformanceMetrics
+    training_benchmark_metrics: IntradayPerformanceMetrics
+    training_gate_criteria: Record<string, boolean>
+    training_gate_passed: boolean
+  }>
+  selected: {
+    candidate_id: string
+    directions: [IntradayOpeningDirection, IntradayOpeningDirection, IntradayOpeningDirection]
+    combination: 'ALL'
+    minimum_body_return_bps: string
+    factor_expression: string
+    training_gate_passed: boolean
+    training_signal_count: number
+    training_signal_session_count: number
+    training_mean_session_conditional_excess_return: string
+    training_newey_west_t_statistic: string
+    training_strategy_metrics: IntradayPerformanceMetrics
+    selection_rule: string
+  }
+  test_validation: {
+    observation_count: number
+    signal_count: number
+    signal_session_count: number
+    mean_session_conditional_excess_return: string
+    newey_west_lag: number
+    newey_west_standard_error: string
+    newey_west_t_statistic: string
+    confidence_interval_95_lower: string
+    confidence_interval_95_upper: string
+    strategy_metrics: IntradayPerformanceMetrics
+    benchmark_metrics: IntradayPerformanceMetrics
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
+  data_version: string
+  dataset_checksum: string
+  data_interval: '5m'
+  selected_trading_days: string[]
+  exit_completion_day: string
+  source_bar_count: number
+  symbol_count: number
+  sector_count: number
+  point_in_time: false
+  future_adjustment_knowledge_possible: true
+  realtime_readiness: false
+  independent_confirmation: false
+  promotion: 'NOT_ELIGIBLE'
+  promotion_reasons: string[]
+  paper_readiness: 'NOT_ELIGIBLE'
+  live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION'
+  state_mutation: false
+  external_order_transmission: false
+  preview_hash: string
 }
 
 export interface IntradayFactorGroup {

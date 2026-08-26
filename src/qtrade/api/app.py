@@ -43,6 +43,7 @@ from qtrade.oms import OrderManager
 from qtrade.research import (
     BacktestPreviewSpec,
     IntradayExitSpec,
+    IntradayFactorDiscoveryResult,
     IntradayFactorGroup,
     IntradayFactorResearchResult,
     IntradayRuleCorrelationResult,
@@ -51,6 +52,7 @@ from qtrade.research import (
     MinuteCurveMetrics,
     OpeningTripleBullishSpec,
     PerformanceMetrics,
+    discover_opening_direction_rules,
     evaluate_opening_rule_correlations,
     evaluate_opening_rule_effectiveness,
     paired_stationary_bootstrap_excess_returns,
@@ -69,6 +71,7 @@ _MAX_HISTORICAL_SERIES_ROWS = 2000
 _MAX_BACKTEST_PREVIEW_SOURCE_ROWS = 250_000
 _MAX_SINGLE_STOCK_BACKTEST_SESSIONS = 120
 _MIN_INTRADAY_FACTOR_SESSIONS = 20
+_MIN_INTRADAY_DISCOVERY_SESSIONS = 40
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
@@ -179,6 +182,14 @@ class IntradayFactorBacktestRequest(BaseModel):
                 "opening rule requires at least one completed ten-minute bar"
             )
         return self
+
+
+class IntradayFactorDiscoveryRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    start: date
+    end: date
+    cost_bps: Decimal = Decimal("5")
 
 
 class IntradayFactorCorrelationRule(BaseModel):
@@ -1528,6 +1539,51 @@ def create_app(
                 dataset=dataset,
                 required_trading_days=required_trading_days,
                 source_bar_count=len(bars),
+            )
+        except (ArithmeticError, RuntimeError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @app.post("/intraday-factor-discovery")
+    def intraday_factor_discovery(
+        payload: IntradayFactorDiscoveryRequest,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset, sectors, required_trading_days, bars = (
+            _load_intraday_factor_source(payload.start, payload.end)
+        )
+        selected_trading_days = required_trading_days[:-1]
+        if len(selected_trading_days) < _MIN_INTRADAY_DISCOVERY_SESSIONS:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "intraday factor discovery requires at least "
+                    f"{_MIN_INTRADAY_DISCOVERY_SESSIONS} sessions"
+                ),
+            )
+        try:
+            observations = run_opening_triple_bullish_research(
+                bars,
+                sectors=sectors,
+                start=payload.start,
+                end=payload.end,
+                spec=OpeningTripleBullishSpec(cost_bps=payload.cost_bps),
+            ).observations
+            result = discover_opening_direction_rules(
+                observations,
+                trading_days=tuple(
+                    date.fromisoformat(value)
+                    for value in selected_trading_days
+                ),
+                cost_bps=payload.cost_bps,
+            )
+            return _intraday_factor_discovery_preview(
+                payload=payload,
+                result=result,
+                dataset=dataset,
+                required_trading_days=required_trading_days,
+                source_bar_count=len(bars),
+                symbol_count=len(sectors),
+                sector_count=len(set(sectors.values())),
             )
         except (ArithmeticError, RuntimeError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -8753,6 +8809,186 @@ def _intraday_factor_correlation_preview(
         "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
         "state_mutation": False,
         "external_order_transmission": False,
+    }
+    canonical = json.dumps(
+        unsigned,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return {
+        **unsigned,
+        "preview_hash": sha256(canonical.encode("utf-8")).hexdigest(),
+    }
+
+
+def _intraday_factor_discovery_preview(
+    *,
+    payload: IntradayFactorDiscoveryRequest,
+    result: IntradayFactorDiscoveryResult,
+    dataset: dict[str, object],
+    required_trading_days: list[str],
+    source_bar_count: int,
+    symbol_count: int,
+    sector_count: int,
+) -> dict[str, object]:
+    selected = next(
+        candidate
+        for candidate in result.candidates
+        if candidate.candidate_id == result.selected_candidate_id
+    )
+    first_test_signal_known_at = datetime.combine(
+        result.test_start,
+        datetime_time(10, 0),
+        ZoneInfo("Asia/Shanghai"),
+    )
+    unsigned: dict[str, object] = {
+        "classification": (
+            "BOUNDED_INTRADAY_FACTOR_DISCOVERY_REUSED_HISTORY_NOT_INDEPENDENT"
+        ),
+        "parameters": {
+            "start": payload.start.isoformat(),
+            "end": payload.end.isoformat(),
+            "cost_bps": str(payload.cost_bps),
+        },
+        "candidate_contract": {
+            "direction_values": ["BULLISH", "BEARISH", "IGNORE"],
+            "active_slot_requirement": "AT_LEAST_ONE",
+            "combination": "ALL",
+            "thresholds_bps": ["0", "5", "10", "20"],
+            "candidate_count": result.candidate_count,
+            "arbitrary_code_execution": False,
+            "future_features_used": False,
+        },
+        "split": {
+            "training_start": result.training_start.isoformat(),
+            "training_end": result.training_end.isoformat(),
+            "training_session_count": result.training_session_count,
+            "test_start": result.test_start.isoformat(),
+            "test_end": result.test_end.isoformat(),
+            "test_session_count": result.test_session_count,
+            "selection_known_at": result.selection_known_at.isoformat(),
+            "first_test_signal_known_at": (
+                first_test_signal_known_at.isoformat()
+            ),
+            "selection_uses_test_returns": result.selection_uses_test_returns,
+            "chronological_disjoint": result.training_end < result.test_start,
+        },
+        "candidates": [
+            {
+                "candidate_id": candidate.candidate_id,
+                "directions": list(candidate.directions),
+                "combination": candidate.combination,
+                "minimum_body_return_bps": str(
+                    candidate.minimum_body_return_bps
+                ),
+                "factor_expression": candidate.factor_expression,
+                "training_observation_count": (
+                    candidate.training_observation_count
+                ),
+                "training_signal_count": candidate.training_signal_count,
+                "training_signal_session_count": (
+                    candidate.training_signal_session_count
+                ),
+                "training_mean_session_conditional_excess_return": str(
+                    candidate.training_mean_session_conditional_excess_return
+                ),
+                "training_newey_west_t_statistic": str(
+                    candidate.training_newey_west_t_statistic
+                ),
+                "training_strategy_metrics": _performance_metrics_payload(
+                    candidate.training_strategy_metrics
+                ),
+                "training_benchmark_metrics": _performance_metrics_payload(
+                    candidate.training_benchmark_metrics
+                ),
+                "training_gate_criteria": dict(
+                    candidate.training_gate_criteria
+                ),
+                "training_gate_passed": candidate.training_gate_passed,
+            }
+            for candidate in result.candidates
+        ],
+        "selected": {
+            "candidate_id": result.selected_candidate_id,
+            "directions": list(result.selected_directions),
+            "combination": "ALL",
+            "minimum_body_return_bps": str(
+                result.selected_minimum_body_return_bps
+            ),
+            "factor_expression": result.selected_factor_expression,
+            "training_gate_passed": result.selected_training_gate_passed,
+            "training_signal_count": selected.training_signal_count,
+            "training_signal_session_count": (
+                selected.training_signal_session_count
+            ),
+            "training_mean_session_conditional_excess_return": str(
+                selected.training_mean_session_conditional_excess_return
+            ),
+            "training_newey_west_t_statistic": str(
+                selected.training_newey_west_t_statistic
+            ),
+            "training_strategy_metrics": _performance_metrics_payload(
+                selected.training_strategy_metrics
+            ),
+            "selection_rule": (
+                "TRAINING_GATE_THEN_NEWEY_WEST_T_THEN_EFFECT_"
+                "THEN_LOWER_THRESHOLD_THEN_ID"
+            ),
+        },
+        "test_validation": {
+            "observation_count": result.test_observation_count,
+            "signal_count": result.test_signal_count,
+            "signal_session_count": result.test_signal_session_count,
+            "mean_session_conditional_excess_return": str(
+                result.test_mean_session_conditional_excess_return
+            ),
+            "newey_west_lag": result.test_newey_west_lag,
+            "newey_west_standard_error": str(
+                result.test_newey_west_standard_error
+            ),
+            "newey_west_t_statistic": str(
+                result.test_newey_west_t_statistic
+            ),
+            "confidence_interval_95_lower": str(
+                result.test_confidence_interval_95_lower
+            ),
+            "confidence_interval_95_upper": str(
+                result.test_confidence_interval_95_upper
+            ),
+            "strategy_metrics": _performance_metrics_payload(
+                result.test_strategy_metrics
+            ),
+            "benchmark_metrics": _performance_metrics_payload(
+                result.test_benchmark_metrics
+            ),
+            "criteria": dict(result.test_gate_criteria),
+            "passed": result.test_gate_passed,
+        },
+        "data_version": dataset["data_version"],
+        "dataset_checksum": dataset["checksum"],
+        "data_interval": "5m",
+        "selected_trading_days": required_trading_days[:-1],
+        "exit_completion_day": required_trading_days[-1],
+        "source_bar_count": source_bar_count,
+        "symbol_count": symbol_count,
+        "sector_count": sector_count,
+        "point_in_time": False,
+        "future_adjustment_knowledge_possible": True,
+        "realtime_readiness": False,
+        "independent_confirmation": False,
+        "promotion": result.promotion,
+        "promotion_reasons": [
+            "CURRENT_UNIVERSE_NON_PIT",
+            "QFQ_MAY_CONTAIN_FUTURE_ADJUSTMENT_KNOWLEDGE",
+            "DISCOVERY_AND_TEST_WINDOW_ALREADY_VIEWED",
+            "NO_AUTHORIZED_FORWARD_PAPER_EVIDENCE",
+            "NO_AUTHORIZED_REALTIME_OR_L2_PROVIDER",
+        ],
+        "paper_readiness": "NOT_ELIGIBLE",
+        "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
+        "state_mutation": result.state_mutation,
+        "external_order_transmission": result.external_order_transmission,
     }
     canonical = json.dumps(
         unsigned,

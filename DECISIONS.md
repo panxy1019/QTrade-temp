@@ -1542,3 +1542,29 @@ research gate therefore fail. Entry-factor validity remains standardized to its
 T+1-open forward label so sell-policy outcomes cannot inflate entry evidence.
 The result is reused-history, non-PIT and `NOT_ELIGIBLE`, with no PAPER/LIVE,
 state-mutation or external-order authority.
+
+## ADR-098 — Bounded factor discovery locks one rule before a disjoint test
+
+Status: accepted, 2026-08-27.
+
+Allowing repeated edits after seeing one test period would turn that period into
+training data and overstate robustness. QTrade therefore fixes the opening-rule
+search space before evaluation: all 26 non-empty tuples of `BULLISH`, `BEARISH`
+and `IGNORE` across the three completed ten-minute slots, `ALL` combination
+only, crossed with thresholds 0/5/10/20 bps, for exactly 104 candidates. A
+request must contain 40–120 complete sessions. Its first half is the only search
+and ranking segment; the second half evaluates only the locked winner. Ranking
+uses training-gate status, Newey-West t, conditional excess, lower threshold and
+candidate ID in that order. The selection is complete at the first test day's
+09:35 standardized exit, before the first possible 10:00 test signal.
+
+The first viewed 40-session run selected `DIR-XDU-T0000`, the 0 bps
+`IGNORE/BEARISH/BULLISH` rule. Training had 348 signals over 20 sessions,
++0.4931% session-clustered conditional excess and t 2.1897. The mutually
+exclusive test had 326 signals over 20 sessions, -0.0919% conditional excess,
+t -0.5462, -6.1491% total return, -1.8107% excess and -9.8972% maximum
+drawdown. Effect, significance, total-return and excess-return gates failed.
+This is an honest falsification, not grounds to search the same test segment
+again. Since the current universe is non-PIT and the full history has been
+viewed, the result remains `NOT_ELIGIBLE`, cannot mutate strategy/PAPER state,
+and cannot authorize LIVE or external order transmission.

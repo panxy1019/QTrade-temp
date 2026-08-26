@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { IntradayFactorBacktestRequest, IntradayFactorCorrelationRequest } from '../types'
-import { loadMinuteBarSeries, loadPlatformSnapshot, runIntradayFactorBacktest, runIntradayFactorCorrelation } from './client'
+import type { IntradayFactorBacktestRequest, IntradayFactorCorrelationRequest, IntradayFactorDiscoveryRequest } from '../types'
+import { loadMinuteBarSeries, loadPlatformSnapshot, runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from './client'
 
 describe('platform snapshot request fan-out', () => {
   afterEach(() => {
@@ -157,6 +157,33 @@ describe('platform snapshot request fan-out', () => {
       classification: 'AD_HOC_INTRADAY_FACTOR_CORRELATION_CURRENT_NON_PIT',
     })
     expect(fetchMock).toHaveBeenCalledWith('/api/intraday-factor-correlation', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }))
+  })
+
+  it('posts the fixed intraday discovery window without mutation authority', async () => {
+    const payload: IntradayFactorDiscoveryRequest = {
+      start: '2026-06-30',
+      end: '2026-08-24',
+      cost_bps: '5',
+    }
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        classification: 'BOUNDED_INTRADAY_FACTOR_DISCOVERY_REUSED_HISTORY_NOT_INDEPENDENT',
+        state_mutation: false,
+        external_order_transmission: false,
+      }),
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(runIntradayFactorDiscovery(payload)).resolves.toMatchObject({
+      state_mutation: false,
+      external_order_transmission: false,
+    })
+    expect(fetchMock).toHaveBeenCalledWith('/api/intraday-factor-discovery', expect.objectContaining({
       method: 'POST',
       body: JSON.stringify(payload),
     }))

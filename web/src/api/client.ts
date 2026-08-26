@@ -1,4 +1,4 @@
-import type { BacktestPreview, BacktestPreviewRequest, HistoricalBarSeries, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorCorrelationRequest, MinuteBarSeries, PlatformSnapshot, SingleStockFiveMinuteBacktest, SingleStockFiveMinuteBacktestRequest } from '../types'
+import type { BacktestPreview, BacktestPreviewRequest, HistoricalBarSeries, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorCorrelationRequest, IntradayFactorDiscovery, IntradayFactorDiscoveryRequest, MinuteBarSeries, PlatformSnapshot, SingleStockFiveMinuteBacktest, SingleStockFiveMinuteBacktestRequest } from '../types'
 
 const API_BASE = import.meta.env.DEV || import.meta.env.MODE === 'vercel' ? '/api' : ''
 const MAX_CONCURRENT_GETS = 6
@@ -160,6 +160,15 @@ export async function runIntradayFactorCorrelation(payload: IntradayFactorCorrel
   } catch (reason) {
     if (!(reason instanceof TypeError)) throw reason
     return postJson<IntradayFactorCorrelation>('/intraday-factor-correlation', payload)
+  }
+}
+
+export async function runIntradayFactorDiscovery(payload: IntradayFactorDiscoveryRequest): Promise<IntradayFactorDiscovery> {
+  try {
+    return await postJson<IntradayFactorDiscovery>('/intraday-factor-discovery', payload)
+  } catch (reason) {
+    if (!(reason instanceof TypeError)) throw reason
+    return postJson<IntradayFactorDiscovery>('/intraday-factor-discovery', payload)
   }
 }
 

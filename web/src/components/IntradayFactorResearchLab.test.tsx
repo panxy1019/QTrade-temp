@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { runIntradayFactorBacktest, runIntradayFactorCorrelation } from '../api/client'
+import { runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from '../api/client'
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
-import type { FiveMinuteResearchReport, IntradayFactorCorrelation } from '../types'
+import type { FiveMinuteResearchReport, IntradayFactorCorrelation, IntradayFactorDiscovery } from '../types'
 import { IntradayFactorResearchLab } from './IntradayFactorResearchLab'
 
 const experiments = [
@@ -73,6 +73,7 @@ const experiments = [
 vi.mock('../api/client', () => ({
   runIntradayFactorBacktest: vi.fn(),
   runIntradayFactorCorrelation: vi.fn(),
+  runIntradayFactorDiscovery: vi.fn(),
 }))
 
 vi.mock('../research/localIntradayFactorExperiments', () => ({
@@ -90,6 +91,15 @@ const dataset = {
   symbol_count: 75,
   sector_count: 15,
   trading_days: tradingDays,
+} as NonNullable<FiveMinuteResearchReport['minute_dataset']>
+
+const discoveryTradingDays = Array.from({ length: 45 }, (_, index) => {
+  const day = new Date(Date.UTC(2026, 5, 1 + index))
+  return day.toISOString().slice(0, 10)
+})
+const discoveryDataset = {
+  ...dataset,
+  trading_days: discoveryTradingDays,
 } as NonNullable<FiveMinuteResearchReport['minute_dataset']>
 
 const correlation = {
@@ -136,6 +146,53 @@ const correlation = {
   live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION',
   preview_hash: 'c'.repeat(64),
 } as unknown as IntradayFactorCorrelation
+
+const discoveryMetrics = {
+  total_return: '-0.061491', annualized_return: '-0.54', sharpe: '-4.7951', maximum_drawdown: '-0.098972',
+  excess_return: '-0.018107', information_ratio: '-1.5', number_of_periods: 20, turnover: '0.3',
+  profit_loss_ratio: '0.8', exposure: '0.2', number_of_trades: 326, transaction_costs: '0.001',
+}
+const discovery = {
+  classification: 'BOUNDED_INTRADAY_FACTOR_DISCOVERY_REUSED_HISTORY_NOT_INDEPENDENT',
+  parameters: { start: '2026-06-05', end: '2026-07-14', cost_bps: '5' },
+  candidate_contract: {
+    direction_values: ['BULLISH', 'BEARISH', 'IGNORE'], active_slot_requirement: 'AT_LEAST_ONE',
+    combination: 'ALL', thresholds_bps: ['0', '5', '10', '20'], candidate_count: 104,
+    arbitrary_code_execution: false, future_features_used: false,
+  },
+  split: {
+    training_start: '2026-06-05', training_end: '2026-06-24', training_session_count: 20,
+    test_start: '2026-06-25', test_end: '2026-07-14', test_session_count: 20,
+    selection_known_at: '2026-06-25T09:35:00+08:00', first_test_signal_known_at: '2026-06-25T10:00:00+08:00',
+    selection_uses_test_returns: false, chronological_disjoint: true,
+  },
+  candidates: [{
+    candidate_id: 'DIR-XDU-T0000', directions: ['IGNORE', 'BEARISH', 'BULLISH'], combination: 'ALL',
+    minimum_body_return_bps: '0', factor_expression: 'bearish_10m_0940_0950 AND bullish_10m_0950_1000',
+    training_observation_count: 1500, training_signal_count: 348, training_signal_session_count: 20,
+    training_mean_session_conditional_excess_return: '0.00493055', training_newey_west_t_statistic: '2.189668',
+    training_strategy_metrics: { ...discoveryMetrics, total_return: '0.059943', excess_return: '0.096344' },
+    training_benchmark_metrics: discoveryMetrics, training_gate_criteria: {}, training_gate_passed: true,
+  }],
+  selected: {
+    candidate_id: 'DIR-XDU-T0000', directions: ['IGNORE', 'BEARISH', 'BULLISH'], combination: 'ALL',
+    minimum_body_return_bps: '0', factor_expression: 'bearish_10m_0940_0950 AND bullish_10m_0950_1000',
+    training_gate_passed: true, training_signal_count: 348, training_signal_session_count: 20,
+    training_mean_session_conditional_excess_return: '0.00493055', training_newey_west_t_statistic: '2.189668',
+    training_strategy_metrics: discoveryMetrics, selection_rule: 'TRAINING_ONLY',
+  },
+  test_validation: {
+    observation_count: 1500, signal_count: 326, signal_session_count: 20,
+    mean_session_conditional_excess_return: '-0.00091894', newey_west_lag: 2,
+    newey_west_standard_error: '0.001682', newey_west_t_statistic: '-0.546233',
+    confidence_interval_95_lower: '-0.00421628', confidence_interval_95_upper: '0.0023784',
+    strategy_metrics: discoveryMetrics, benchmark_metrics: discoveryMetrics,
+    criteria: { positive_test_session_conditional_excess: false, test_strategy_total_return_positive: false },
+    passed: false,
+  },
+  promotion: 'NOT_ELIGIBLE', state_mutation: false, external_order_transmission: false,
+  preview_hash: 'd'.repeat(64),
+} as unknown as IntradayFactorDiscovery
 
 describe('intraday factor rule correlation', () => {
   beforeEach(() => {
@@ -193,5 +250,24 @@ describe('intraday factor rule correlation', () => {
       exit_rule: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP',
       exit_minimum_body_return_bps: '5',
     }))
+  })
+
+  it('locks one training rule before the disjoint discovery test window', async () => {
+    vi.mocked(runIntradayFactorDiscovery).mockResolvedValueOnce(discovery)
+    render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '挖掘最近 40 日的 104 个有界因子' }))
+
+    await waitFor(() => expect(runIntradayFactorDiscovery).toHaveBeenCalledWith({
+      start: '2026-06-05',
+      end: '2026-07-14',
+      cost_bps: '5',
+    }))
+    expect(await screen.findByText('训练最优规则未通过互斥测试段')).toBeInTheDocument()
+    expect(screen.getAllByText(/DIR-XDU-T0000/).length).toBeGreaterThan(0)
+    expect(screen.getByText('-0.09%')).toBeInTheDocument()
+    expect(screen.getByText('-6.15%')).toBeInTheDocument()
+    expect(screen.getByText(/选择时刻.*早于首个测试信号/)).toBeInTheDocument()
+    expect(screen.getByText(/无状态写入、无外部订单/)).toBeInTheDocument()
   })
 })

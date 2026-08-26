@@ -12,6 +12,7 @@ from qtrade.research.intraday_factor import (
     _holm_adjusted_p_values,
     _newey_west_mean_statistics,
     _temporal_stability_validation,
+    discover_opening_direction_rules,
     evaluate_opening_rule_correlations,
     evaluate_opening_rule_effectiveness,
     paired_stationary_bootstrap_excess_returns,
@@ -325,6 +326,62 @@ def test_intraday_exit_spec_rejects_unsafe_or_ignored_parameters() -> None:
         )
     with pytest.raises(ValueError, match="must be zero for NEXT_SESSION_OPEN"):
         IntradayExitSpec(minimum_body_return_bps=Decimal("1"))
+
+
+def test_bounded_opening_rule_discovery_locks_training_before_disjoint_test() -> None:
+    days = tuple(date(2026, 6, 1) + timedelta(days=index) for index in range(41))
+    symbols = tuple(f"6003{index:02d}" for index in range(5))
+    research = run_opening_triple_bullish_research(
+        _bars(
+            days=days,
+            symbols=symbols,
+            signal_symbols={symbols[0], symbols[1]},
+        ),
+        sectors={
+            symbol: (f"S{index}", f"板块{index}")
+            for index, symbol in enumerate(symbols)
+        },
+        start=days[0],
+        end=days[-2],
+        spec=OpeningTripleBullishSpec(cost_bps=Decimal("5")),
+        quantiles=5,
+    )
+
+    first = discover_opening_direction_rules(
+        research.observations,
+        trading_days=days[:-1],
+        cost_bps=Decimal("5"),
+    )
+    second = discover_opening_direction_rules(
+        research.observations,
+        trading_days=days[:-1],
+        cost_bps=Decimal("5"),
+    )
+
+    assert first == second
+    assert first.candidate_count == len(first.candidates) == 104
+    assert first.training_session_count == first.test_session_count == 20
+    assert first.training_end < first.test_start
+    assert first.selection_known_at.date() == first.test_start
+    assert first.selection_known_at.time() == time(9, 35)
+    assert first.selection_known_at < datetime.combine(
+        first.test_start,
+        time(10, 0),
+        CHINA,
+    )
+    assert first.selected_candidate_id in {
+        candidate.candidate_id for candidate in first.candidates
+    }
+    assert len(first.selected_directions) == 3
+    assert any(direction != "IGNORE" for direction in first.selected_directions)
+    assert first.selected_minimum_body_return_bps in {
+        Decimal("0"), Decimal("5"), Decimal("10"), Decimal("20")
+    }
+    assert first.test_observation_count == 20 * len(symbols)
+    assert first.selection_uses_test_returns is False
+    assert first.promotion == "NOT_ELIGIBLE"
+    assert first.state_mutation is False
+    assert first.external_order_transmission is False
 
 
 def test_bounded_opening_direction_rule_uses_only_completed_ten_minute_bars() -> None:

@@ -338,6 +338,77 @@ def test_intraday_factor_backtest_rejects_invalid_exit_contracts() -> None:
     assert unknown_rule.status_code == 422
 
 
+def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> None:
+    response = _client().post(
+        "/intraday-factor-discovery",
+        json={
+            "start": "2026-06-30",
+            "end": "2026-08-24",
+            "cost_bps": 5,
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["classification"] == (
+        "BOUNDED_INTRADAY_FACTOR_DISCOVERY_REUSED_HISTORY_NOT_INDEPENDENT"
+    )
+    assert payload["candidate_contract"] == {
+        "direction_values": ["BULLISH", "BEARISH", "IGNORE"],
+        "active_slot_requirement": "AT_LEAST_ONE",
+        "combination": "ALL",
+        "thresholds_bps": ["0", "5", "10", "20"],
+        "candidate_count": 104,
+        "arbitrary_code_execution": False,
+        "future_features_used": False,
+    }
+    assert payload["split"]["training_session_count"] == 20
+    assert payload["split"]["test_session_count"] == 20
+    assert payload["split"]["training_end"] < payload["split"]["test_start"]
+    assert payload["split"]["selection_known_at"].endswith("09:35:00+08:00")
+    assert payload["split"]["first_test_signal_known_at"].endswith(
+        "10:00:00+08:00"
+    )
+    assert payload["split"]["selection_uses_test_returns"] is False
+    assert len(payload["candidates"]) == 104
+    assert payload["selected"]["candidate_id"] in {
+        candidate["candidate_id"] for candidate in payload["candidates"]
+    }
+    assert payload["selected"]["directions"] != ["IGNORE"] * 3
+    assert payload["test_validation"]["observation_count"] == 20 * 75
+    assert payload["source_bar_count"] == 41 * 75 * 48
+    assert payload["symbol_count"] == 75
+    assert payload["sector_count"] == 15
+    assert payload["promotion"] == "NOT_ELIGIBLE"
+    assert payload["paper_readiness"] == "NOT_ELIGIBLE"
+    assert payload["live_readiness"] == (
+        "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION"
+    )
+    assert payload["state_mutation"] is False
+    assert payload["external_order_transmission"] is False
+    preview_hash = payload.pop("preview_hash")
+    canonical = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    assert preview_hash == sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def test_intraday_factor_discovery_requires_forty_sessions() -> None:
+    response = _client().post(
+        "/intraday-factor-discovery",
+        json={
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+        },
+    )
+
+    assert response.status_code == 422
+    assert "at least 40 sessions" in response.text
+
+
 def test_intraday_factor_backtest_rejects_empty_or_mutated_rule_contracts() -> None:
     client = _client()
     empty = client.post(

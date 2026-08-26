@@ -5,6 +5,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
+from itertools import product
 from math import erfc, floor, sqrt
 from random import Random
 
@@ -32,6 +33,7 @@ _INTRADAY_EXIT_RULES = frozenset(
 )
 _COST_STRESS_BPS = (0, 5, 10, 20)
 _ROBUSTNESS_THRESHOLDS_BPS = tuple(Decimal(value) for value in (0, 5, 10, 20))
+_DISCOVERY_THRESHOLDS_BPS = tuple(Decimal(value) for value in (0, 5, 10, 20))
 _OPENING_TEN_MINUTE_LABELS = (
     "0930_0940",
     "0940_0950",
@@ -319,6 +321,59 @@ class IntradayRuleEffectiveness:
     holm_adjusted_p_value: Decimal
     criteria: Mapping[str, bool]
     passed: bool
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayDiscoveryCandidate:
+    candidate_id: str
+    directions: tuple[str, str, str]
+    combination: str
+    minimum_body_return_bps: Decimal
+    factor_expression: str
+    training_observation_count: int
+    training_signal_count: int
+    training_signal_session_count: int
+    training_mean_session_conditional_excess_return: Decimal
+    training_newey_west_t_statistic: Decimal
+    training_strategy_metrics: PerformanceMetrics
+    training_benchmark_metrics: PerformanceMetrics
+    training_gate_criteria: Mapping[str, bool]
+    training_gate_passed: bool
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayFactorDiscoveryResult:
+    candidate_count: int
+    candidates: tuple[IntradayDiscoveryCandidate, ...]
+    training_start: date
+    training_end: date
+    training_session_count: int
+    test_start: date
+    test_end: date
+    test_session_count: int
+    selection_known_at: datetime
+    selected_candidate_id: str
+    selected_directions: tuple[str, str, str]
+    selected_minimum_body_return_bps: Decimal
+    selected_factor_expression: str
+    selected_training_gate_passed: bool
+    test_observation_count: int
+    test_signal_count: int
+    test_signal_session_count: int
+    test_mean_session_conditional_excess_return: Decimal
+    test_newey_west_lag: int
+    test_newey_west_standard_error: Decimal
+    test_newey_west_t_statistic: Decimal
+    test_confidence_interval_95_lower: Decimal
+    test_confidence_interval_95_upper: Decimal
+    test_strategy_metrics: PerformanceMetrics
+    test_benchmark_metrics: PerformanceMetrics
+    test_gate_criteria: Mapping[str, bool]
+    test_gate_passed: bool
+    selection_uses_test_returns: bool
+    promotion: str
+    state_mutation: bool
+    external_order_transmission: bool
 
 
 @dataclass(frozen=True, slots=True)
@@ -1508,6 +1563,243 @@ def _pearson(left: list[Decimal], right: list[Decimal]) -> Decimal:
     )
     denominator = (left_variance * right_variance).sqrt()
     return Decimal("0") if denominator == 0 else covariance / denominator
+
+
+def discover_opening_direction_rules(
+    observations: tuple[IntradayFactorObservation, ...],
+    *,
+    trading_days: tuple[date, ...],
+    cost_bps: Decimal,
+) -> IntradayFactorDiscoveryResult:
+    if len(trading_days) < 40:
+        raise ValueError("intraday factor discovery requires at least 40 sessions")
+    if len(trading_days) > 120:
+        raise ValueError("intraday factor discovery is limited to 120 sessions")
+    if trading_days != tuple(sorted(set(trading_days))):
+        raise ValueError("intraday factor discovery sessions must be unique and ordered")
+    if not observations:
+        raise ValueError("intraday factor discovery requires observations")
+    if {item.trading_day for item in observations} != set(trading_days):
+        raise ValueError("intraday factor discovery observations must match sessions")
+    if (
+        not cost_bps.is_finite()
+        or not Decimal("0") <= cost_bps <= Decimal("100")
+    ):
+        raise ValueError("cost_bps must be finite and between 0 and 100")
+
+    training_session_count = len(trading_days) // 2
+    training_days = trading_days[:training_session_count]
+    test_days = trading_days[training_session_count:]
+    candidates: list[IntradayDiscoveryCandidate] = []
+    direction_code = {"BULLISH": "U", "BEARISH": "D", "IGNORE": "X"}
+    for first, second, third in product(
+        ("BULLISH", "BEARISH", "IGNORE"),
+        repeat=3,
+    ):
+        directions = (first, second, third)
+        if directions == ("IGNORE", "IGNORE", "IGNORE"):
+            continue
+        for threshold_bps in _DISCOVERY_THRESHOLDS_BPS:
+            spec = OpeningTripleBullishSpec(
+                cost_bps=cost_bps,
+                minimum_body_return_bps=threshold_bps,
+                directions=directions,
+                combination="ALL",
+            )
+            training_rows = _opening_rule_observations(
+                observations,
+                trading_days=training_days,
+                spec=spec,
+            )
+            (
+                training_signal_count,
+                training_signal_sessions,
+                training_session_mean,
+                _,
+                _,
+                training_t_statistic,
+                _,
+                _,
+            ) = _opening_rule_session_statistics(training_rows)
+            training_strategy, training_benchmark, _ = _evaluate_observations(
+                training_rows,
+                list(training_days),
+                cost_bps=cost_bps,
+            )
+            criteria = {
+                "minimum_250_training_observations": len(training_rows) >= 250,
+                "minimum_twenty_training_signals": training_signal_count >= 20,
+                "minimum_ten_training_signal_sessions": (
+                    training_signal_sessions >= 10
+                ),
+                "positive_training_session_conditional_excess": (
+                    training_session_mean > 0
+                ),
+                "training_newey_west_t_statistic_above_1_96": (
+                    training_t_statistic > Decimal("1.96")
+                ),
+            }
+            candidate_id = "DIR-{}{}{}-T{:04d}".format(
+                *(direction_code[value] for value in directions),
+                int(threshold_bps),
+            )
+            candidates.append(
+                IntradayDiscoveryCandidate(
+                    candidate_id=candidate_id,
+                    directions=directions,
+                    combination="ALL",
+                    minimum_body_return_bps=threshold_bps,
+                    factor_expression=spec.factor_expression,
+                    training_observation_count=len(training_rows),
+                    training_signal_count=training_signal_count,
+                    training_signal_session_count=training_signal_sessions,
+                    training_mean_session_conditional_excess_return=(
+                        training_session_mean
+                    ),
+                    training_newey_west_t_statistic=training_t_statistic,
+                    training_strategy_metrics=training_strategy,
+                    training_benchmark_metrics=training_benchmark,
+                    training_gate_criteria=criteria,
+                    training_gate_passed=all(criteria.values()),
+                )
+            )
+    selected = min(
+        candidates,
+        key=lambda item: (
+            not item.training_gate_passed,
+            -item.training_newey_west_t_statistic,
+            -item.training_mean_session_conditional_excess_return,
+            item.minimum_body_return_bps,
+            item.candidate_id,
+        ),
+    )
+    selected_spec = OpeningTripleBullishSpec(
+        cost_bps=cost_bps,
+        minimum_body_return_bps=selected.minimum_body_return_bps,
+        directions=selected.directions,
+        combination="ALL",
+    )
+    test_rows = _opening_rule_observations(
+        observations,
+        trading_days=test_days,
+        spec=selected_spec,
+    )
+    (
+        test_signal_count,
+        test_signal_sessions,
+        test_session_mean,
+        test_newey_west_lag,
+        test_newey_west_standard_error,
+        test_newey_west_t_statistic,
+        test_confidence_lower,
+        test_confidence_upper,
+    ) = _opening_rule_session_statistics(test_rows)
+    test_strategy, test_benchmark, _ = _evaluate_observations(
+        test_rows,
+        list(test_days),
+        cost_bps=cost_bps,
+    )
+    test_criteria = {
+        "minimum_250_test_observations": len(test_rows) >= 250,
+        "minimum_twenty_test_signals": test_signal_count >= 20,
+        "minimum_ten_test_signal_sessions": test_signal_sessions >= 10,
+        "positive_test_session_conditional_excess": test_session_mean > 0,
+        "test_newey_west_t_statistic_above_1_96": (
+            test_newey_west_t_statistic > Decimal("1.96")
+        ),
+        "test_strategy_total_return_positive": test_strategy.total_return > 0,
+        "test_strategy_excess_return_positive": test_strategy.excess_return > 0,
+    }
+    selection_known_at = datetime.combine(
+        test_days[0],
+        _EXIT_TIME,
+        _CHINA_TIME,
+    )
+    return IntradayFactorDiscoveryResult(
+        candidate_count=len(candidates),
+        candidates=tuple(candidates),
+        training_start=training_days[0],
+        training_end=training_days[-1],
+        training_session_count=len(training_days),
+        test_start=test_days[0],
+        test_end=test_days[-1],
+        test_session_count=len(test_days),
+        selection_known_at=selection_known_at,
+        selected_candidate_id=selected.candidate_id,
+        selected_directions=selected.directions,
+        selected_minimum_body_return_bps=(
+            selected.minimum_body_return_bps
+        ),
+        selected_factor_expression=selected.factor_expression,
+        selected_training_gate_passed=selected.training_gate_passed,
+        test_observation_count=len(test_rows),
+        test_signal_count=test_signal_count,
+        test_signal_session_count=test_signal_sessions,
+        test_mean_session_conditional_excess_return=test_session_mean,
+        test_newey_west_lag=test_newey_west_lag,
+        test_newey_west_standard_error=test_newey_west_standard_error,
+        test_newey_west_t_statistic=test_newey_west_t_statistic,
+        test_confidence_interval_95_lower=test_confidence_lower,
+        test_confidence_interval_95_upper=test_confidence_upper,
+        test_strategy_metrics=test_strategy,
+        test_benchmark_metrics=test_benchmark,
+        test_gate_criteria=test_criteria,
+        test_gate_passed=all(test_criteria.values()),
+        selection_uses_test_returns=False,
+        promotion="NOT_ELIGIBLE",
+        state_mutation=False,
+        external_order_transmission=False,
+    )
+
+
+def _opening_rule_observations(
+    observations: tuple[IntradayFactorObservation, ...],
+    *,
+    trading_days: tuple[date, ...],
+    spec: OpeningTripleBullishSpec,
+) -> list[IntradayFactorObservation]:
+    selected_days = set(trading_days)
+    threshold = spec.minimum_body_return_bps / Decimal("10000")
+    output: list[IntradayFactorObservation] = []
+    for observation in observations:
+        if observation.trading_day not in selected_days:
+            continue
+        score = spec.directional_score(observation.ten_minute_body_returns)
+        output.append(
+            replace(
+                observation,
+                signal=score > threshold,
+                directional_rule_score=score,
+            )
+        )
+    return output
+
+
+def _opening_rule_session_statistics(
+    observations: list[IntradayFactorObservation],
+) -> tuple[int, int, Decimal, int, Decimal, Decimal, Decimal, Decimal]:
+    signal_count = sum(item.signal for item in observations)
+    session_returns = [
+        value for _, value in _session_conditional_excess_returns(observations)
+    ]
+    (
+        mean_value,
+        lag,
+        standard_error,
+        t_statistic,
+        confidence_lower,
+        confidence_upper,
+    ) = _newey_west_mean_statistics(session_returns)
+    return (
+        signal_count,
+        len(session_returns),
+        mean_value,
+        lag,
+        standard_error,
+        t_statistic,
+        confidence_lower,
+        confidence_upper,
+    )
 
 
 def evaluate_opening_rule_correlations(

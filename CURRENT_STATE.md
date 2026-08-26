@@ -26,12 +26,12 @@ Last updated: 2026-08-27
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 453 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 456 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 64 frontend Vitest
+  (macOS, 2026-08-27); 66 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 429.75 KB with no large-chunk warning.
+  minified JavaScript asset at or below 429.92 KB with no large-chunk warning.
   GitHub CI grants only read access to repository contents and pins the official
   Node 24 checkout/setup-python actions to their verified v7 release commits.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -287,6 +287,21 @@ Last updated: 2026-08-27
   `t > 1.96` gate failed; `exit_factor_effectiveness_passed=false` is therefore
   part of the strategy research hard gate. This counterfactual diagnostic does
   not change the standardized T+1-open label used to validate entry factors.
+- Bounded intraday factor discovery now enumerates one fixed library of 104
+  opening rules: the 26 non-empty `BULLISH`/`BEARISH`/`IGNORE` three-slot
+  direction tuples, `ALL` combination only, crossed with 0/5/10/20 bps body
+  thresholds. A 40-session request uses only the first 20 sessions to rank and
+  lock one rule, then evaluates only that locked identity on the last 20
+  chronological, mutually exclusive sessions. Selection is known at the first
+  test day's 09:35 exit completion, before its first possible 10:00 signal.
+  On the viewed 2026-06-30 through 2026-08-24 window, training selected
+  `DIR-XDU-T0000` (`IGNORE/BEARISH/BULLISH`, 0 bps) with 348 signals, +0.4931%
+  session-clustered conditional excess and Newey-West t 2.1897. The locked test
+  produced 326 signals but -0.0919% conditional excess, t -0.5462, -6.1491%
+  total return, -1.8107% excess, -9.8972% maximum drawdown and Sharpe -4.7951.
+  The test gate therefore fails. This entire window is now viewed reused-history
+  evidence, not an independent confirmation or permission to retune it; the API
+  and Chinese workbench keep it stateless, `NOT_ELIGIBLE`, with no external order.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,

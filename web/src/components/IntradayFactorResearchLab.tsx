@@ -1,6 +1,6 @@
 import { Alert, Button, Card, Form, Input, InputNumber, Popconfirm, Select, Space, Steps, Table, Tabs, Tag, Typography } from 'antd'
 import { useState } from 'react'
-import { runIntradayFactorBacktest, runIntradayFactorCorrelation } from '../api/client'
+import { runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
 import {
   deleteLocalIntradayFactorExperiment,
@@ -8,7 +8,7 @@ import {
   saveLocalIntradayFactorExperiment,
 } from '../research/localIntradayFactorExperiments'
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
-import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
+import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorDiscovery, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
 type VerifiedFiveMinuteDataset = NonNullable<FiveMinuteResearchReport['minute_dataset']>
@@ -77,6 +77,13 @@ const gateLabels: Record<string, string> = {
   stitched_oos_excess_return_positive: '拼接样本外超额收益为正',
   positive_fold_ratio_at_least_60pct: '至少 60% 测试折为正',
   worst_threshold_total_return_non_negative: '最差固定阈值收益不为负',
+  minimum_250_test_observations: '测试段至少 250 个观测',
+  minimum_twenty_test_signals: '测试段至少 20 次信号',
+  minimum_ten_test_signal_sessions: '测试段至少 10 个信号日',
+  positive_test_session_conditional_excess: '测试段日聚类条件超额为正',
+  test_newey_west_t_statistic_above_1_96: '测试段 Newey-West t 大于 1.96',
+  test_strategy_total_return_positive: '测试段策略累计收益为正',
+  test_strategy_excess_return_positive: '测试段策略超额收益为正',
 }
 
 export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
@@ -244,6 +251,9 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const [correlationLabels, setCorrelationLabels] = useState<Record<string, string>>({})
   const [correlationRunning, setCorrelationRunning] = useState(false)
   const [correlationError, setCorrelationError] = useState<string | null>(null)
+  const [discoveryResult, setDiscoveryResult] = useState<IntradayFactorDiscovery | null>(null)
+  const [discoveryRunning, setDiscoveryRunning] = useState(false)
+  const [discoveryError, setDiscoveryError] = useState<string | null>(null)
 
   if (!dataset) {
     return <Card title="分钟因子研究工作台"><Alert showIcon type="warning" title="长历史 5 分钟数据不可用" description="系统不会用合成行情或不完整缓存替代经过 checksum 验证的多股票数据。" /></Card>
@@ -375,6 +385,29 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       setCorrelationRunning(false)
     }
   }
+  const runDiscovery = async () => {
+    const values = await form.validateFields(['end', 'cost_bps'])
+    const endIndex = eligibleEndDays.indexOf(values.end)
+    if (endIndex < 39) {
+      setDiscoveryResult(null)
+      setDiscoveryError('所选结束日前不足 40 个完整交易日，无法建立互斥训练/测试段。')
+      return
+    }
+    setDiscoveryRunning(true)
+    setDiscoveryError(null)
+    try {
+      setDiscoveryResult(await runIntradayFactorDiscovery({
+        start: eligibleEndDays[endIndex - 39],
+        end: values.end,
+        cost_bps: String(values.cost_bps),
+      }))
+    } catch (reason) {
+      setDiscoveryResult(null)
+      setDiscoveryError(reason instanceof Error ? reason.message : '分钟因子挖掘失败')
+    } finally {
+      setDiscoveryRunning(false)
+    }
+  }
   const experimentColumns = [
     { title: '名称', dataIndex: 'name' },
     { title: '保存时间', dataIndex: 'saved_at', render: (value: string) => formatTimestamp(value) },
@@ -439,6 +472,13 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     ? correlationResult.matrix.map((row) => ({ ...row, label: correlationLabels[row.rule_id] ?? row.rule_id }))
     : []
   const redundantPairs = correlationResult?.pairs.filter((pair) => pair.redundant) ?? []
+  const discoveryCandidates = discoveryResult
+    ? [...discoveryResult.candidates].sort((left, right) => (
+        Number(right.training_gate_passed) - Number(left.training_gate_passed)
+        || Number(right.training_newey_west_t_statistic) - Number(left.training_newey_west_t_statistic)
+        || left.candidate_id.localeCompare(right.candidate_id)
+      ))
+    : []
 
   return <Card title="分钟因子研究工作台" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · 原生 5 分钟</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
@@ -465,10 +505,58 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             <Form.Item name="combination" label="条件组合" rules={[{ required: true }]}><Select options={[{ value: 'ALL', label: '全部满足（AND）' }, { value: 'ANY', label: '任一满足（OR）' }]} /></Form.Item>
           </>}
         </div>
-        <Button type="primary" htmlType="submit" loading={running}>运行 75 股因子检验与回测</Button>
+        <Space wrap>
+          <Button type="primary" htmlType="submit" loading={running}>运行 75 股因子检验与回测</Button>
+          <Button loading={discoveryRunning} onClick={() => { void runDiscovery() }}>挖掘最近 40 日的 104 个有界因子</Button>
+        </Space>
       </Form>
       {selectedFactor === 'custom_opening_ten_minute_direction_rule' && <Alert showIcon type="warning" title="受限规则，不执行任意表达式" description="只允许三段已结束十分钟 K 线的看涨、看跌或忽略条件，以及 AND/OR 组合；10:00 收盘后才知道信号，10:05 下一根原生 5 分钟 Bar 开盘执行。禁止 eval、未来字段、同 Bar 成交和自动 PAPER 晋级。" />}
       {selectedExitRule === 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP' && <Alert showIcon type="warning" title="平仓因子严格遵守 T+1 与下一 Bar 执行" description="T+1 09:30–10:00 三根十分钟阴线全部超过阈值后，条件到 10:00 收盘才完整；成交取 10:05 标记 Bar 的开盘价。未触发时取 15:00 标记 Bar 的开盘价，即 14:55 区间起点，不使用同 Bar 收盘价。" />}
+      {discoveryError && <Alert showIcon type="error" title="分钟因子挖掘未完成" description={discoveryError} />}
+      {discoveryResult && <Card type="inner" title="104 个有界分钟因子 · 训练锁定后单次测试" extra={<JsonExportButton filename={`qtrade-intraday-discovery-${discoveryResult.preview_hash.slice(0, 12)}.json`} value={discoveryResult} label="导出挖掘证据" />}>
+        <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+          <Alert
+            showIcon
+            type={discoveryResult.test_validation.passed ? 'success' : 'warning'}
+            title={discoveryResult.test_validation.passed ? '锁定规则测试门通过，但仍不可自动晋级' : '训练最优规则未通过互斥测试段'}
+            description={`${discoveryResult.split.training_start} 至 ${discoveryResult.split.training_end} 只用于扫描 104 个固定候选；${discoveryResult.split.test_start} 至 ${discoveryResult.split.test_end} 只评估训练锁定的唯一规则。窗口已经被查看，结论固定为 ${discoveryResult.promotion}，不是新盲测。`}
+          />
+          <Typography.Text code>{discoveryResult.selected.factor_expression}</Typography.Text>
+          <div className="description-grid">
+            <Metric label="锁定候选" value={discoveryResult.selected.candidate_id} />
+            <Metric label="训练 NW t" value={formatNumber(discoveryResult.selected.training_newey_west_t_statistic)} />
+            <Metric label="训练条件超额" value={formatPercent(discoveryResult.selected.training_mean_session_conditional_excess_return)} />
+            <Metric label="测试信号" value={`${discoveryResult.test_validation.signal_count}/${discoveryResult.test_validation.observation_count}`} />
+            <Metric label="测试 NW t" value={formatNumber(discoveryResult.test_validation.newey_west_t_statistic)} />
+            <Metric label="测试条件超额" value={formatPercent(discoveryResult.test_validation.mean_session_conditional_excess_return)} />
+            <Metric label="测试累计收益" value={formatPercent(discoveryResult.test_validation.strategy_metrics.total_return)} />
+            <Metric label="测试超额收益" value={formatPercent(discoveryResult.test_validation.strategy_metrics.excess_return)} />
+            <Metric label="测试最大回撤" value={formatPercent(discoveryResult.test_validation.strategy_metrics.maximum_drawdown)} />
+            <Metric label="测试 Sharpe" value={formatNumber(discoveryResult.test_validation.strategy_metrics.sharpe)} />
+          </div>
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.test_validation.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '锁定测试门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
+          <Table
+            rowKey="candidate_id"
+            size="small"
+            dataSource={discoveryCandidates}
+            pagination={{ pageSize: 10, showSizeChanger: false }}
+            columns={[
+              { title: '候选', dataIndex: 'candidate_id', render: (value: string) => value === discoveryResult.selected.candidate_id ? <Tag color="blue">{value} · 锁定</Tag> : value },
+              { title: '三段方向', dataIndex: 'directions', render: (values: IntradayOpeningDirection[]) => values.map(directionLabel).join('/') },
+              { title: '阈值 bps', dataIndex: 'minimum_body_return_bps' },
+              { title: '训练信号 / 日', render: (_: unknown, row: IntradayFactorDiscovery['candidates'][number]) => `${row.training_signal_count} / ${row.training_signal_session_count}` },
+              { title: '训练条件超额', dataIndex: 'training_mean_session_conditional_excess_return', render: (value: string) => formatPercent(value) },
+              { title: '训练 NW t', dataIndex: 'training_newey_west_t_statistic', render: (value: string) => formatNumber(value) },
+              { title: '训练门', dataIndex: 'training_gate_passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">失败</Tag> },
+            ]}
+            scroll={{ x: 980 }}
+          />
+          <Typography.Text type="secondary">选择时刻 {formatTimestamp(discoveryResult.split.selection_known_at)}，早于首个测试信号 {formatTimestamp(discoveryResult.split.first_test_signal_known_at)}；测试收益不参与选择。无状态写入、无外部订单。</Typography.Text>
+        </Space>
+      </Card>}
       {error && <Alert showIcon type="error" title="因子研究未完成" description={error} />}
       {result && <>
         <Alert
