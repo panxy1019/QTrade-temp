@@ -1,4 +1,4 @@
-import type { BacktestPreview, BacktestPreviewRequest, HistoricalBarSeries, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorCorrelationRequest, IntradayFactorDiscovery, IntradayFactorDiscoveryRequest, MinuteBarSeries, PlatformSnapshot, SingleStockFiveMinuteBacktest, SingleStockFiveMinuteBacktestRequest } from '../types'
+import type { BacktestPreview, BacktestPreviewRequest, ExperimentRunSpecDraft, ExperimentRunSpecDraftRequest, HistoricalBarSeries, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorCorrelationRequest, IntradayFactorDiscovery, IntradayFactorDiscoveryRequest, MinuteBarSeries, PlatformSnapshot, SingleStockFiveMinuteBacktest, SingleStockFiveMinuteBacktestRequest } from '../types'
 
 const API_BASE = import.meta.env.DEV || import.meta.env.MODE === 'vercel' ? '/api' : ''
 const MAX_CONCURRENT_GETS = 6
@@ -139,6 +139,10 @@ export function loadLongFiveMinuteBarSeries(symbol: string, tradingDay: string):
 
 export function runBacktestPreview(payload: BacktestPreviewRequest): Promise<BacktestPreview> {
   return postJson<BacktestPreview>('/backtest-preview', payload)
+}
+
+export function createExperimentRunSpecDraft(payload: ExperimentRunSpecDraftRequest): Promise<ExperimentRunSpecDraft> {
+  return postJson<ExperimentRunSpecDraft>('/experiment-run-spec-draft', payload)
 }
 
 export function runSingleStockFiveMinuteBacktest(payload: SingleStockFiveMinuteBacktestRequest): Promise<SingleStockFiveMinuteBacktest> {
@@ -305,7 +309,7 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     }),
     getOptional<PlatformSnapshot['strategies']>('/strategies', []),
     getOptional<PlatformSnapshot['strategyTemplates']>('/strategy-templates', {
-      classification: 'UNAVAILABLE', template_count: 0, active_template_count: 0, benchmark_template_count: 0,
+      classification: 'UNAVAILABLE', template_count: 0, active_template_count: 0, benchmark_template_count: 0, causal_preview_template_count: 0,
       templates: [], selection_creates_experiment: false, selection_registers_strategy: false,
       paper_runtime_start: false, live_runtime_start: false, arbitrary_code_execution: false,
       external_order_transmission: false, next_step: 'FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST',

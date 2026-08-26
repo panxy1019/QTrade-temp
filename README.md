@@ -342,6 +342,18 @@ claim profitability, create an experiment, register a strategy, execute
 arbitrary code or start PAPER/LIVE; the next legal action is still to freeze an
 `ExperimentRunSpec` before a causal backtest.
 
+Three catalog entries now connect directly to the bounded causal backtest lab:
+ETF momentum rotation, ETF momentum with trend/volatility controls, and
+cross-sectional reversal or low-volatility ranking. Loading a template only
+prefills the matching implemented parameters; it never freezes them. The lab can
+construct and export all 13 `ExperimentRunSpec` fields, binding the exact
+dataset version/checksum, point-in-time universe, implementation reference,
+chronological train/validation/test split, costs and seed to a deterministic
+hash. This is deliberately a stateless draft rather than an immutable
+preregistration. Because its historical test dates are already visible, the
+draft is not fresh held-out evidence and cannot register a strategy, start
+PAPER/LIVE, mutate runtime state or transmit an order.
+
 The proposed
 five-level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
 contract requires five bid/ask prices plus sizes normalized to shares, provider

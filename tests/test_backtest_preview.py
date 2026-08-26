@@ -192,3 +192,116 @@ def test_preview_endpoint_uses_only_verified_bounded_history(tmp_path) -> None:
 
     (tmp_path / "bars.parquet").write_bytes(b"tampered")
     assert api.post("/backtest-preview", json=payload).status_code == 409
+
+
+def test_experiment_run_spec_draft_binds_template_dataset_split_and_parameters(
+    tmp_path,
+) -> None:
+    manifest = _write_dataset(tmp_path)
+    context = bootstrap_context()
+    context.historical_manifest_path = manifest
+    api = TestClient(create_app(context, ApiAuthConfig()))
+    backtest = {
+        "start": "2026-02-11",
+        "end": "2026-03-21",
+        "factor": "momentum",
+        "horizons": [2, 3],
+        "top_k": 1,
+        "rebalance_every": 5,
+        "reserve": "0.05",
+        "trend_window": None,
+        "volatility_window": None,
+        "target_annual_volatility": None,
+        "initial_cash": "1000000",
+        "transaction_cost_rate": "0.001",
+        "slippage_rate": "0.0005",
+    }
+    payload = {
+        "template_id": "etf-momentum-rotation-v1",
+        "experiment_id": "etf-momentum-rotation-replay-001",
+        "git_commit": "a" * 40,
+        "split": {
+            "train_start": "2026-01-01",
+            "train_end": "2026-01-20",
+            "validation_start": "2026-01-21",
+            "validation_end": "2026-02-10",
+            "test_start": "2026-02-11",
+            "test_end": "2026-03-21",
+        },
+        "backtest": backtest,
+        "seed": 7,
+    }
+
+    response = api.post("/experiment-run-spec-draft", json=payload)
+
+    assert response.status_code == 200
+    draft = response.json()
+    assert draft["classification"] == (
+        "READ_ONLY_COMPLETE_EXPERIMENT_RUN_SPEC_DRAFT_NOT_PERSISTED"
+    )
+    assert draft["draft_status"] == "HASHED_COMPLETE_FIELDS_NOT_IMMUTABLY_STORED"
+    assert len(draft["spec_hash"]) == 64
+    assert set(draft["spec"]) == {
+        "experiment_id",
+        "strategy_id",
+        "git_commit",
+        "data_version",
+        "universe",
+        "factor_set",
+        "label",
+        "split",
+        "model",
+        "parameters",
+        "cost_model_id",
+        "transaction_cost",
+        "seed",
+    }
+    assert draft["spec"]["strategy_id"] == "etf-momentum-rotation-v1"
+    assert draft["spec"]["model"] == (
+        "qtrade.research.multi_asset.MomentumAllocation"
+    )
+    assert draft["spec"]["universe"] == ["510300", "510500"]
+    assert draft["spec"]["factor_set"] == ["momentum_2", "momentum_3"]
+    assert draft["data_checksum"] == json.loads(manifest.read_text())["manifest"][
+        "checksum"
+    ]
+    assert draft["gates"] == {
+        "complete_experiment_run_spec_fields": True,
+        "verified_dataset_identity_bound": True,
+        "implemented_template_bound": True,
+        "chronological_non_overlapping_split": True,
+        "immutable_artifact_persisted": False,
+        "independent_leakage_review_passed": False,
+        "fresh_unseen_test_evidence": False,
+    }
+    assert draft["creates_immutable_experiment"] is False
+    assert draft["registry_write"] is False
+    assert draft["paper_runtime_start"] is False
+    assert draft["live_runtime_start"] is False
+    assert draft["state_mutation"] is False
+    assert draft["external_order_transmission"] is False
+
+    repeated = api.post("/experiment-run-spec-draft", json=payload).json()
+    changed = api.post(
+        "/experiment-run-spec-draft", json={**payload, "seed": 8}
+    ).json()
+    assert repeated["spec_hash"] == draft["spec_hash"]
+    assert changed["spec_hash"] != draft["spec_hash"]
+
+    mismatched_window = {
+        **payload,
+        "backtest": {**backtest, "start": "2026-02-12"},
+    }
+    assert api.post(
+        "/experiment-run-spec-draft", json=mismatched_window
+    ).status_code == 422
+    filtered_rotation = {
+        **payload,
+        "backtest": {
+            **backtest,
+            "trend_window": 3,
+        },
+    }
+    assert api.post(
+        "/experiment-run-spec-draft", json=filtered_rotation
+    ).status_code == 422

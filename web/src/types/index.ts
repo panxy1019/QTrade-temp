@@ -128,6 +128,8 @@ export interface StrategyTemplate {
   required_inputs: string[]
   validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED'
   known_limitations: string[]
+  causal_preview_supported: boolean
+  causal_preview_blocker: string | null
 }
 
 export interface StrategyTemplateCatalog {
@@ -135,6 +137,7 @@ export interface StrategyTemplateCatalog {
   template_count: number
   active_template_count: number
   benchmark_template_count: number
+  causal_preview_template_count: number
   templates: StrategyTemplate[]
   selection_creates_experiment: false
   selection_registers_strategy: false
@@ -436,6 +439,71 @@ export interface BacktestPreview {
   execution_timing: 'close decision, next open execution'
   external_order_transmission: false
   preview_hash: string
+}
+
+export type CausalPreviewTemplateId =
+  | 'etf-momentum-rotation-v1'
+  | 'etf-momentum-trend-volatility-v1'
+  | 'cross-sectional-factor-ranking-v1'
+
+export interface ExperimentRunSplitDraft {
+  train_start: string
+  train_end: string
+  validation_start: string
+  validation_end: string
+  test_start: string
+  test_end: string
+}
+
+export interface ExperimentRunSpecDraftRequest {
+  template_id: CausalPreviewTemplateId
+  experiment_id: string
+  git_commit: string
+  split: ExperimentRunSplitDraft
+  backtest: BacktestPreviewRequest
+  seed: number
+}
+
+export interface ExperimentRunSpecDraft {
+  classification: 'READ_ONLY_COMPLETE_EXPERIMENT_RUN_SPEC_DRAFT_NOT_PERSISTED'
+  draft_status: 'HASHED_COMPLETE_FIELDS_NOT_IMMUTABLY_STORED'
+  template_id: CausalPreviewTemplateId
+  data_checksum: string
+  dataset_point_in_time: boolean
+  spec_hash: string
+  spec: {
+    experiment_id: string
+    strategy_id: string
+    git_commit: string
+    data_version: string
+    universe: string[]
+    factor_set: string[]
+    label: string
+    split: ExperimentRunSplitDraft
+    model: string
+    parameters: Array<[string, string]>
+    cost_model_id: string
+    transaction_cost: string
+    seed: number
+  }
+  gates: {
+    complete_experiment_run_spec_fields: true
+    verified_dataset_identity_bound: true
+    implemented_template_bound: true
+    chronological_non_overlapping_split: true
+    immutable_artifact_persisted: false
+    independent_leakage_review_passed: false
+    fresh_unseen_test_evidence: false
+  }
+  historical_test_window_previously_available?: true
+  promotion_eligible?: false
+  next_action?: 'PERSIST_AND_REVIEW_BEFORE_ACCESSING_NEW_DISJOINT_EVIDENCE'
+  creates_immutable_experiment: false
+  registry_write: false
+  paper_runtime_start: false
+  live_runtime_start: false
+  state_mutation: false
+  external_order_transmission: false
 }
 
 export interface SingleStockFiveMinuteBacktestRequest {

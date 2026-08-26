@@ -73,6 +73,16 @@ class ExperimentRunResult:
     completed_at: datetime
 
 
+def experiment_run_spec_hash(spec: ExperimentRunSpec) -> str:
+    canonical = json.dumps(
+        asdict(spec),
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    )
+    return sha256(canonical.encode("utf-8")).hexdigest()
+
+
 class ExperimentEvaluator(Protocol):
     def __call__(self, spec: ExperimentRunSpec) -> ExperimentOutput: ...
 
@@ -123,7 +133,7 @@ class ExperimentRunner:
             artifacts=tuple(f"{name}:{digest}" for name, digest in artifact_manifest),
         )
         artifact_path, record_hash = self._store.save(record)
-        spec_hash = self._hash(spec)
+        spec_hash = experiment_run_spec_hash(spec)
         result_hash = self._hash(
             {
                 "artifact_manifest": artifact_manifest,

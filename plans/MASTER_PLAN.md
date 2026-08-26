@@ -457,6 +457,15 @@ and limitations are visible. Catalog selection creates nothing: an immutable
 `ExperimentRunSpec`, causal backtest and evidence gates are still required
 before any separately authorized PAPER/SHADOW step.
 
+The strategy center now carries three behavior-compatible catalog entries into
+the bounded causal backtest lab. Template parameters remain visibly unfrozen;
+the lab can export a complete 13-field `ExperimentRunSpec` draft and
+deterministic hash bound to the verified dataset, PIT universe, implementation,
+chronological split, costs and seed. It intentionally performs no immutable
+write. The already visible historical test window is not new held-out evidence,
+and absent independent leakage review the draft cannot create an experiment,
+register a strategy or authorize PAPER/LIVE.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

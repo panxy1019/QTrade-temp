@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { BacktestPreview, IntradayFactorBacktest, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
-import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
+import { cancelPaperOrder, controlRuntime, createExperimentRunSpecDraft, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
 import { formatDirectionalDelta } from '../research/intradayDirectional'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
@@ -44,6 +44,7 @@ vi.mock('../api/client', () => ({
     ],
   })),
   runBacktestPreview: vi.fn(),
+  createExperimentRunSpecDraft: vi.fn(),
   runIntradayFactorBacktest: vi.fn(),
   runSingleStockFiveMinuteBacktest: vi.fn(),
   controlRuntime: vi.fn(),
@@ -172,6 +173,7 @@ const data = {
     template_count: 5,
     active_template_count: 4,
     benchmark_template_count: 1,
+    causal_preview_template_count: 3,
     templates: [
       {
         template_id: 'equal-weight-buy-hold-benchmark-v1', name: '等权买入并持有', role: 'BENCHMARK_ONLY',
@@ -179,7 +181,7 @@ const data = {
         description: '首个交易日等权建仓，之后保持仓位，作为主动策略比较基准。', data_interval: '1d', universe_scope: '多标的',
         entry_rule: '首个可交易会话按等权目标在下一会话开盘执行。', exit_rule: '基准期内不主动退出。',
         parameter_defaults: { reserve: '0' }, required_inputs: ['日线开收盘', '标的列表'],
-        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['只作为基准，不是主动选股或择时策略。'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['只作为基准，不是主动选股或择时策略。'], causal_preview_supported: false, causal_preview_blocker: 'COMPARISON_ONLY_NO_ACTIVE_TEMPLATE_PREVIEW',
       },
       {
         template_id: 'moving-average-trend-v1', name: '移动平均趋势', role: 'ACTIVE_BASELINE',
@@ -187,7 +189,7 @@ const data = {
         description: '价格位于移动平均线上方时持仓，跌破时清仓。', data_interval: '1d', universe_scope: '单标的',
         entry_rule: '收盘价大于等于窗口均线时目标持仓。', exit_rule: '收盘价低于窗口均线时目标仓位归零。',
         parameter_defaults: { window: '20', quantity: '100' }, required_inputs: ['日线收盘价'],
-        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['震荡市可能频繁换手。'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['震荡市可能频繁换手。'], causal_preview_supported: false, causal_preview_blocker: 'SINGLE_ASSET_DAILY_SELECTOR_NOT_CONNECTED',
       },
       {
         template_id: 'etf-momentum-rotation-v1', name: 'ETF 动量轮动', role: 'ACTIVE_BASELINE',
@@ -195,7 +197,7 @@ const data = {
         description: '按多周期动量排序并定期持有排名靠前的 ETF。', data_interval: '1d', universe_scope: '多 ETF',
         entry_rule: '只选择正动量且排名前 K 的 ETF。', exit_rule: '再平衡时跌出前 K 或动量非正则退出。',
         parameter_defaults: { horizons: '20,60,120', top_k: '3', rebalance_every: '20', reserve: '0.05' }, required_inputs: ['日线收盘价', 'ETF 标的池'],
-        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['当前免费数据股票池不是 PIT。'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['当前免费数据股票池不是 PIT。'], causal_preview_supported: true, causal_preview_blocker: null,
       },
       {
         template_id: 'etf-momentum-trend-volatility-v1', name: 'ETF 动量 + 趋势波动率约束', role: 'ACTIVE_BASELINE',
@@ -203,7 +205,7 @@ const data = {
         description: '在动量轮动上增加趋势过滤与目标年化波动率缩放。', data_interval: '1d', universe_scope: '多 ETF',
         entry_rule: '正动量、排名前 K 且价格不低于趋势均线时持有。', exit_rule: '再平衡时任一资格条件失效则退出。',
         parameter_defaults: { horizons: '20,60,120', top_k: '3', rebalance_every: '20', reserve: '0.05', trend_window: '120', volatility_window: '20', target_annual_volatility: '0.15' }, required_inputs: ['日线收盘价', 'ETF 标的池'],
-        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['目标波动率只降低暴露，不使用杠杆。'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['目标波动率只降低暴露，不使用杠杆。'], causal_preview_supported: true, causal_preview_blocker: null,
       },
       {
         template_id: 'cross-sectional-factor-ranking-v1', name: '横截面因子排序', role: 'ACTIVE_BASELINE',
@@ -211,7 +213,7 @@ const data = {
         description: '对预声明价格因子做横截面百分位排序并组合选股。', data_interval: '1d', universe_scope: '多股票或 ETF',
         entry_rule: '按加权因子得分选择排名前 K 的标的。', exit_rule: '再平衡时跌出前 K 或趋势资格失效则退出。',
         parameter_defaults: { factors: 'momentum_20', top_k: '3', rebalance_every: '20', reserve: '0.05' }, required_inputs: ['质量通过的日线', '冻结标的池', '预注册因子定义'],
-        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['因子与参数必须在测试窗口之前冻结。'],
+        validation_status: 'IMPLEMENTED_NOT_PRODUCTION_VALIDATED', known_limitations: ['因子与参数必须在测试窗口之前冻结。'], causal_preview_supported: true, causal_preview_blocker: null,
       },
     ],
     selection_creates_experiment: false,
@@ -1171,6 +1173,70 @@ describe('verified backtest analytics', () => {
     expect(screen.getByRole('button', { name: /导出个股回测/ })).toBeInTheDocument()
   })
 
+  it('loads a code-backed template and hashes a complete run-spec draft without persisting it', async () => {
+    window.location.hash = '#/backtest?template=etf-momentum-rotation-v1'
+    const preview: BacktestPreview = {
+      classification: 'AD_HOC_PREVIEW_CURRENT_UNIVERSE_NOT_PIT', promotion: 'NOT_ELIGIBLE',
+      promotion_reasons: ['AD_HOC_PARAMETERS_NOT_PREDECLARED'], data_version: 'akshare-bars-v1',
+      data_checksum: 'abc',
+      parameters: {
+        start: '2026-01-01', end: '2026-08-12', factor: 'momentum', horizons: [20, 60, 120], top_k: 3,
+        rebalance_every: 20, reserve: '0.05', trend_window: null, volatility_window: null,
+        target_annual_volatility: null, initial_cash: '1000000',
+        transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
+      },
+      session_count: 150, universe_size: 30, metrics: { total_return: '0.01' }, curve: [],
+      terminal_positions: [], execution_timing: 'close decision, next open execution',
+      external_order_transmission: false, preview_hash: 'b'.repeat(64),
+    }
+    vi.mocked(runBacktestPreview).mockResolvedValueOnce(preview)
+    vi.mocked(createExperimentRunSpecDraft).mockResolvedValueOnce({
+      classification: 'READ_ONLY_COMPLETE_EXPERIMENT_RUN_SPEC_DRAFT_NOT_PERSISTED',
+      draft_status: 'HASHED_COMPLETE_FIELDS_NOT_IMMUTABLY_STORED',
+      template_id: 'etf-momentum-rotation-v1', data_checksum: 'abc', dataset_point_in_time: false,
+      spec_hash: 'c'.repeat(64), spec: {
+        experiment_id: 'rotation-replay-001', strategy_id: 'etf-momentum-rotation-v1',
+        git_commit: '81e357cb069a69d6be4d8ba7a9fb1acdf7167083', data_version: 'akshare-bars-v1',
+        universe: ['510300'], factor_set: ['momentum_20', 'momentum_60', 'momentum_120'],
+        label: 'next_session_portfolio_return',
+        split: { train_start: '2024-01-02', train_end: '2024-12-31', validation_start: '2025-01-01', validation_end: '2025-12-31', test_start: '2026-01-01', test_end: '2026-08-12' },
+        model: 'qtrade.research.multi_asset.MomentumAllocation', parameters: [],
+        cost_model_id: 'explicit-rate-plus-slippage-v1', transaction_cost: '0.0015', seed: 7,
+      },
+      gates: {
+        complete_experiment_run_spec_fields: true, verified_dataset_identity_bound: true,
+        implemented_template_bound: true, chronological_non_overlapping_split: true,
+        immutable_artifact_persisted: false, independent_leakage_review_passed: false,
+        fresh_unseen_test_evidence: false,
+      },
+      creates_immutable_experiment: false, registry_write: false, paper_runtime_start: false,
+      live_runtime_start: false, state_mutation: false, external_order_transmission: false,
+    })
+
+    render(<BacktestPage data={data} />)
+
+    expect(screen.getByText('已载入模板：ETF 动量轮动')).toBeInTheDocument()
+    expect(screen.getByText(/模板参数只是预填值，不是已冻结规格/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
+    await waitFor(() => expect(runBacktestPreview).toHaveBeenCalledWith(expect.objectContaining({
+      factor: 'momentum', trend_window: null, volatility_window: null,
+      target_annual_volatility: null,
+    })))
+
+    fireEvent.change(screen.getByLabelText('实验 ID'), { target: { value: 'rotation-replay-001' } })
+    fireEvent.click(screen.getByRole('button', { name: '生成哈希化运行规格草案' }))
+
+    await waitFor(() => expect(createExperimentRunSpecDraft).toHaveBeenCalledWith(expect.objectContaining({
+      template_id: 'etf-momentum-rotation-v1', experiment_id: 'rotation-replay-001', seed: 7,
+      backtest: expect.objectContaining({ trend_window: null, volatility_window: null }),
+    })))
+    expect(screen.getByText(/规格哈希 cccccccccccccccc/)).toBeInTheDocument()
+    expect(screen.getByText(/哈希完整但未写入不可变存储/)).toBeInTheDocument()
+    expect(screen.getByText(/当前历史测试窗此前可见，不能变成新的未见证据/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /导出运行规格草案/ })).toBeInTheDocument()
+    window.location.hash = ''
+  })
+
   it('runs an adjustable preview without presenting it as promotion evidence', async () => {
     window.localStorage.clear()
     const preview: BacktestPreview = {
@@ -1833,6 +1899,9 @@ describe('verified experiment candidates', () => {
     expect(screen.getByText('4 个主动模板 + 1 个比较基准')).toBeInTheDocument()
     expect(screen.getByText(/选择模板不会创建实验、注册策略或启动模拟盘/)).toBeInTheDocument()
     expect(screen.getByText(/下一步：冻结 ExperimentRunSpec 后运行因果回测/)).toBeInTheDocument()
+    fireEvent.click(screen.getAllByRole('button', { name: '载入因果回测' })[0])
+    expect(window.location.hash).toBe('#/backtest?template=etf-momentum-rotation-v1')
+    window.location.hash = ''
   })
 
   it('labels full-chain records as ineligible candidates rather than registered strategies', () => {

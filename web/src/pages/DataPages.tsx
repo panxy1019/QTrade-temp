@@ -1,7 +1,7 @@
 ﻿import { Alert, Button, Card, Empty, Input, Popconfirm, Select, Space, Table, Tabs, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useRef, useState } from 'react'
-import type { HistoricalBarSeries, IntradayDirectionalBreadth, MinuteBarSeries, OrderRow, PlatformSnapshot, PositionRow, StrategyTemplate } from '../types'
+import type { CausalPreviewTemplateId, HistoricalBarSeries, IntradayDirectionalBreadth, MinuteBarSeries, OrderRow, PlatformSnapshot, PositionRow, StrategyTemplate } from '../types'
 import { StatusTag } from '../components/StatusTag'
 import { BacktestLab } from '../components/BacktestLab'
 import { IntradayFactorLongWindowEvidence, IntradayFactorResearchLab } from '../components/IntradayFactorResearchLab'
@@ -386,6 +386,12 @@ export function StrategyPage({ data }: { data: PlatformSnapshot | null }) {
     { title: '开仓条件', dataIndex: 'entry_rule' },
     { title: '平仓条件', dataIndex: 'exit_rule' },
     { title: '验证状态', render: () => <Tag color="orange">已实现·未生产验证</Tag> },
+    {
+      title: '因果回测',
+      render: (_, row) => row.causal_preview_supported
+        ? <Button size="small" onClick={() => { window.location.hash = `#/backtest?template=${encodeURIComponent(row.template_id)}` }}>载入因果回测</Button>
+        : <Tag>尚未接入该实验室</Tag>,
+    },
   ]
   return <Page title="策略中心" subtitle="从已实现基线模板到不可变实验候选">
     <Space orientation="vertical" style={{ width: '100%' }} size="large">
@@ -548,6 +554,10 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
     .join('；')
   const leader = analytics?.leader
   const benchmark = analytics?.benchmark
+  const requestedTemplate = new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('template')
+  const initialTemplateId = data?.strategyTemplates.templates.some((template) => (
+    template.causal_preview_supported && template.template_id === requestedTemplate
+  )) ? requestedTemplate as CausalPreviewTemplateId : null
   const walkForward = data?.walkForward
   const aggregate = walkForward?.result.aggregate_metrics
   const folds = walkForward?.result.folds ?? []
@@ -573,7 +583,7 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const monthlyColumns = [{ title: '月份', dataIndex: 'month' }, { title: '月收益', dataIndex: 'return', render: (value: string) => formatPercent(value) }]
   return <Page title="回测分析" subtitle="资金曲线、回撤、敞口、换手与成本">
     <SingleStockFiveMinuteBacktestLab key={longFiveMinuteResearch?.minute_dataset ? `single-stock:${longFiveMinuteResearch.minute_dataset.data_version}:${longFiveMinuteResearch.minute_dataset.checksum}` : 'no-five-minute-dataset'} dataset={longFiveMinuteResearch?.minute_dataset ?? null} />
-    <BacktestLab key={data?.market.historical ? `${data.market.historical.data_version}:${data.market.historical.checksum}` : 'no-dataset'} dataset={data?.market.historical ?? null} />
+    <BacktestLab key={data?.market.historical ? `${data.market.historical.data_version}:${data.market.historical.checksum}:${initialTemplateId ?? 'no-template'}` : 'no-dataset'} dataset={data?.market.historical ?? null} templates={data?.strategyTemplates.templates ?? []} initialTemplateId={initialTemplateId} gitCommit={data?.deployment.git_commit_sha ?? null} />
     <Alert showIcon type="warning" title={`分钟修正锁定测试：${minuteResearch?.promotion ?? '未评估'}`} description={minuteSelected ? `${minuteSelected.policy_id} 在后两日、${minuteSelected.cost_bps} bps 下：基准 ${formatPercent(String(minuteSelected.test_base.total_return))}，分钟修正 ${formatPercent(String(minuteSelected.test_overlay.total_return))}，相对改善 ${formatPercent(String(minuteSelected.test_excess_return))}；两者绝对收益均为负。` : '暂无签名与 artifact 哈希均验证通过的分钟回测。'} />
     <Card title="分钟级因果修正：前 3 日选择、后 2 日锁定验证" extra={<JsonExportButton filename="qtrade-minute-overlay-evidence.json" value={minuteResearch ?? {}} />}>
       <MinuteBacktestChart report={minuteResearch ?? null} />

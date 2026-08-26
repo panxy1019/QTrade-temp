@@ -289,6 +289,13 @@ npm --prefix web run build
   research baselines, show implementation/input/entry/exit/default/limitation
   fields, and require a frozen `ExperimentRunSpec` before causal backtesting;
   do not create experiments, registry rows or PAPER/LIVE authority.
+- [x] Connect the three behavior-compatible templates to the bounded causal
+  backtest lab, preserve explicit null risk filters for pure momentum, and
+  export a deterministic complete 13-field `ExperimentRunSpec` draft bound to
+  the verified dataset, PIT universe, implementation, chronological split,
+  costs and seed. Keep the draft visibly unfrozen and unpersisted; an already
+  viewed test window and missing independent leakage review provide no fresh
+  evidence or PAPER/LIVE authority.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

@@ -26,12 +26,12 @@ Last updated: 2026-08-27
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 457 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 67 frontend Vitest
+  (macOS, 2026-08-27); 68 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 430.34 KB with no large-chunk warning.
+  minified JavaScript asset at or below 430.44 KB with no large-chunk warning.
   GitHub CI grants only read access to repository contents and pins the official
   Node 24 checkout/setup-python actions to their verified v7 release commits.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -980,3 +980,13 @@ Last updated: 2026-08-27
   no experiment creation, registry write, arbitrary code execution, PAPER/LIVE
   start, state mutation or external order transmission. The next action remains
   freezing an immutable `ExperimentRunSpec` before causal backtesting.
+- Template-to-run-spec workbench: three templates whose behavior is faithfully
+  supported by the existing causal multi-asset preview can now be loaded from
+  the strategy center. The backtest lab exposes trend/volatility switches so
+  pure momentum has explicit null filters, then builds a deterministic 13-field
+  `ExperimentRunSpec` draft bound to the verified dataset identity, PIT
+  universe, code implementation, chronological split, parameters, costs and
+  seed. The exported hash-complete draft is not immutably persisted, has no
+  independent leakage-review PASS and uses an already visible historical test
+  window, so all three evidence gates remain false. It creates no experiment or
+  registry row and cannot start PAPER/LIVE, mutate state or send orders.

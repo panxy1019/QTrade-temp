@@ -1,6 +1,6 @@
-import { Alert, Button, Card, Form, Input, InputNumber, Popconfirm, Select, Space, Table, Typography } from 'antd'
+import { Alert, Button, Card, Form, Input, InputNumber, Popconfirm, Select, Space, Switch, Table, Tag, Typography } from 'antd'
 import { useState } from 'react'
-import { runBacktestPreview } from '../api/client'
+import { createExperimentRunSpecDraft, runBacktestPreview } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
 import { JsonExportButton } from './JsonExportButton'
 import {
@@ -9,7 +9,7 @@ import {
   saveLocalBacktestExperiment,
 } from '../research/localBacktestExperiments'
 import type { LocalBacktestExperiment } from '../research/localBacktestExperiments'
-import type { BacktestPreview, BacktestPreviewRequest, HistoricalDataset } from '../types'
+import type { BacktestPreview, BacktestPreviewRequest, CausalPreviewTemplateId, ExperimentRunSpecDraft, ExperimentRunSpecDraftRequest, HistoricalDataset, StrategyTemplate } from '../types'
 
 interface BacktestFormValues {
   start: string
@@ -22,19 +22,114 @@ interface BacktestFormValues {
   trend_window: number
   volatility_window: number
   target_annual_volatility: string | number
+  use_trend_filter: boolean
+  use_volatility_scaling: boolean
   initial_cash: string | number
   transaction_cost_rate: string | number
   slippage_rate: string | number
 }
 
-export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) {
+interface RunSpecFormValues {
+  experiment_id: string
+  git_commit: string
+  train_start: string
+  train_end: string
+  validation_start: string
+  validation_end: string
+  test_start: string
+  test_end: string
+  seed: number
+}
+
+interface BacktestLabProps {
+  dataset: HistoricalDataset | null
+  templates: StrategyTemplate[]
+  initialTemplateId: CausalPreviewTemplateId | null
+  gitCommit: string | null
+}
+
+const templatePresets: Record<CausalPreviewTemplateId, Partial<BacktestFormValues>> = {
+  'etf-momentum-rotation-v1': {
+    factor: 'momentum', horizons: '20,60,120', top_k: 3, rebalance_every: 20,
+    reserve: '0.05', use_trend_filter: false, use_volatility_scaling: false,
+  },
+  'etf-momentum-trend-volatility-v1': {
+    factor: 'momentum', horizons: '20,60,120', top_k: 3, rebalance_every: 20,
+    reserve: '0.05', trend_window: 120, volatility_window: 20,
+    target_annual_volatility: '0.15', use_trend_filter: true, use_volatility_scaling: true,
+  },
+  'cross-sectional-factor-ranking-v1': {
+    factor: 'reversal', horizons: '20', top_k: 3, rebalance_every: 20,
+    reserve: '0.05', trend_window: 120, volatility_window: 20,
+    target_annual_volatility: '0.15', use_trend_filter: true, use_volatility_scaling: true,
+  },
+}
+
+function toBacktestRequest(values: BacktestFormValues): BacktestPreviewRequest {
+  return {
+    start: values.start,
+    end: values.end,
+    factor: values.factor,
+    horizons: values.horizons.split(',').map((value) => Number(value.trim())),
+    top_k: values.top_k,
+    rebalance_every: values.rebalance_every,
+    reserve: String(values.reserve),
+    trend_window: values.use_trend_filter ? values.trend_window : null,
+    volatility_window: values.use_volatility_scaling ? values.volatility_window : null,
+    target_annual_volatility: values.use_volatility_scaling ? String(values.target_annual_volatility) : null,
+    initial_cash: String(values.initial_cash),
+    transaction_cost_rate: String(values.transaction_cost_rate),
+    slippage_rate: String(values.slippage_rate),
+  }
+}
+
+function splitDefaults(dataset: HistoricalDataset): Omit<RunSpecFormValues, 'experiment_id' | 'git_commit' | 'seed'> {
+  const start = Date.parse(`${dataset.observed_start.slice(0, 10)}T00:00:00Z`)
+  const end = Date.parse(`${dataset.observed_end.slice(0, 10)}T00:00:00Z`)
+  const day = 86_400_000
+  const span = Math.max(5, Math.floor((end - start) / day))
+  const trainEnd = start + Math.floor(span * 0.6) * day
+  const validationStart = trainEnd + day
+  const validationEnd = start + Math.floor(span * 0.8) * day
+  const testStart = validationEnd + day
+  const iso = (value: number) => new Date(value).toISOString().slice(0, 10)
+  return {
+    train_start: iso(start), train_end: iso(trainEnd),
+    validation_start: iso(validationStart), validation_end: iso(validationEnd),
+    test_start: iso(testStart), test_end: iso(end),
+  }
+}
+
+function templateCompatibilityError(templateId: CausalPreviewTemplateId, request: BacktestPreviewRequest): string | null {
+  if (templateId === 'etf-momentum-rotation-v1' && (
+    request.factor !== 'momentum' || request.trend_window !== null
+    || request.volatility_window !== null || request.target_annual_volatility !== null
+  )) return 'ETF 动量轮动模板必须使用动量因子，且关闭趋势与波动率过滤。'
+  if (templateId === 'etf-momentum-trend-volatility-v1' && (
+    request.factor !== 'momentum' || request.trend_window === null
+    || request.volatility_window === null || request.target_annual_volatility === null
+  )) return 'ETF 动量 + 趋势波动率模板必须使用动量因子并启用两项过滤。'
+  if (templateId === 'cross-sectional-factor-ranking-v1' && request.factor === 'momentum') {
+    return '当前横截面预览请选择反转或低波动；动量值会进入另一套轮动实现。'
+  }
+  return null
+}
+
+export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }: BacktestLabProps) {
   const [form] = Form.useForm<BacktestFormValues>()
+  const [specForm] = Form.useForm<RunSpecFormValues>()
   const [result, setResult] = useState<BacktestPreview | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
   const [experimentName, setExperimentName] = useState('')
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
   const [, setExperimentRevision] = useState(0)
+  const [selectedTemplateId, setSelectedTemplateId] = useState<CausalPreviewTemplateId | null>(initialTemplateId)
+  const [draft, setDraft] = useState<ExperimentRunSpecDraft | null>(null)
+  const [draftError, setDraftError] = useState<string | null>(null)
+  const [drafting, setDrafting] = useState(false)
+  const trendFilterEnabled = Form.useWatch('use_trend_filter', form) ?? initialTemplateId !== 'etf-momentum-rotation-v1'
+  const volatilityScalingEnabled = Form.useWatch('use_volatility_scaling', form) ?? initialTemplateId !== 'etf-momentum-rotation-v1'
   if (!dataset) {
     return <Card title="参数化回测实验室"><Alert showIcon type="warning" title="需要先准备校验通过的历史数据" description="实验室不会使用缓存、示例或合成行情替代真实数据。" /></Card>
   }
@@ -51,19 +146,30 @@ export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) 
     trend_window: 120,
     volatility_window: 20,
     target_annual_volatility: '0.15',
+    use_trend_filter: true,
+    use_volatility_scaling: true,
     initial_cash: '1000000',
     transaction_cost_rate: '0.0015',
     slippage_rate: '0.0005',
+    ...(initialTemplateId ? templatePresets[initialTemplateId] : {}),
+  }
+  const selectedTemplate = templates.find((template) => template.template_id === selectedTemplateId)
+  const supportedTemplates = templates.filter((template) => template.causal_preview_supported)
+  const runSpecInitialValues: RunSpecFormValues = {
+    experiment_id: selectedTemplateId ? `${selectedTemplateId}-replay-001` : '',
+    git_commit: gitCommit ?? '',
+    ...splitDefaults(dataset),
+    seed: 7,
   }
   const submit = async (values: BacktestFormValues) => {
-    const payload: BacktestPreviewRequest = {
-      ...values,
-      horizons: values.horizons.split(',').map((value) => Number(value.trim())),
-      reserve: String(values.reserve),
-      target_annual_volatility: String(values.target_annual_volatility),
-      initial_cash: String(values.initial_cash),
-      transaction_cost_rate: String(values.transaction_cost_rate),
-      slippage_rate: String(values.slippage_rate),
+    const payload = toBacktestRequest(values)
+    if (selectedTemplateId) {
+      const compatibilityError = templateCompatibilityError(selectedTemplateId, payload)
+      if (compatibilityError) {
+        setResult(null)
+        setError(compatibilityError)
+        return
+      }
     }
     setRunning(true)
     setError(null)
@@ -75,6 +181,57 @@ export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) 
       setError(reason instanceof Error ? reason.message : '即时回测失败')
     } finally {
       setRunning(false)
+    }
+  }
+  const applyTemplate = (templateId: CausalPreviewTemplateId | null) => {
+    setSelectedTemplateId(templateId)
+    setResult(null)
+    setError(null)
+    setDraft(null)
+    setDraftError(null)
+    if (!templateId) return
+    form.setFieldsValue(templatePresets[templateId])
+    specForm.setFieldValue('experiment_id', `${templateId}-replay-001`)
+  }
+  const generateDraft = async (values: RunSpecFormValues) => {
+    if (!selectedTemplateId) {
+      setDraft(null)
+      setDraftError('请先选择一个已接入因果实验室的代码模板。')
+      return
+    }
+    setDrafting(true)
+    setDraftError(null)
+    try {
+      const backtestValues = await form.validateFields()
+      const backtest = toBacktestRequest({
+        ...backtestValues,
+        start: values.test_start,
+        end: values.test_end,
+      })
+      const compatibilityError = templateCompatibilityError(selectedTemplateId, backtest)
+      if (compatibilityError) throw new Error(compatibilityError)
+      form.setFieldsValue({ start: values.test_start, end: values.test_end })
+      const request: ExperimentRunSpecDraftRequest = {
+        template_id: selectedTemplateId,
+        experiment_id: values.experiment_id,
+        git_commit: values.git_commit,
+        split: {
+          train_start: values.train_start,
+          train_end: values.train_end,
+          validation_start: values.validation_start,
+          validation_end: values.validation_end,
+          test_start: values.test_start,
+          test_end: values.test_end,
+        },
+        backtest,
+        seed: values.seed,
+      }
+      setDraft(await createExperimentRunSpecDraft(request))
+    } catch (reason) {
+      setDraft(null)
+      setDraftError(reason instanceof Error ? reason.message : '运行规格草案生成失败')
+    } finally {
+      setDrafting(false)
     }
   }
   const saveResult = () => {
@@ -105,12 +262,17 @@ export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) 
       trend_window: parameters.trend_window ?? 120,
       volatility_window: parameters.volatility_window ?? 20,
       target_annual_volatility: parameters.target_annual_volatility ?? '0.15',
+      use_trend_filter: parameters.trend_window !== null,
+      use_volatility_scaling: parameters.volatility_window !== null,
       initial_cash: parameters.initial_cash,
       transaction_cost_rate: parameters.transaction_cost_rate,
       slippage_rate: parameters.slippage_rate,
     })
     setResult(null)
     setError(null)
+    setSelectedTemplateId(null)
+    setDraft(null)
+    setDraftError(null)
     setExperimentName(record.name)
     setSaveStatus(`已载入“${record.name}”的参数；请重新运行以验证当前结果。`)
   }
@@ -140,6 +302,11 @@ export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) 
   return <Card title="参数化回测实验室" extra={<Typography.Text type="secondary">数据版本 {dataset.data_version}</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
       <Alert showIcon type="warning" title="即时预览，不是策略晋级证据" description="参数可随时调整；每次都从 checksum 校验通过的非 PIT 历史数据重新计算，不保存为正式实验，不覆盖既有策略，也不影响 PAPER 运行时。" />
+      <Space wrap>
+        <Typography.Text>代码基线模板</Typography.Text>
+        <Select<CausalPreviewTemplateId> aria-label="基线策略模板" allowClear placeholder="选择已接入模板" value={selectedTemplateId ?? undefined} onChange={(value) => applyTemplate(value ?? null)} options={supportedTemplates.map((template) => ({ value: template.template_id as CausalPreviewTemplateId, label: template.name }))} style={{ width: 320 }} />
+      </Space>
+      {selectedTemplate && <Alert showIcon type="info" title={`已载入模板：${selectedTemplate.name}`} description="模板参数只是预填值，不是已冻结规格；修改后必须重新生成规格哈希，且当前历史数据已经可见，不能变成新的独立样本外证据。" />}
       <Form<BacktestFormValues> form={form} layout="vertical" initialValues={initialValues} onFinish={(values) => { void submit(values) }}>
         <div className="backtest-lab-grid">
           <Form.Item name="start" label="开始日期" rules={[{ required: true }]}><Input type="date" /></Form.Item>
@@ -153,15 +320,46 @@ export function BacktestLab({ dataset }: { dataset: HistoricalDataset | null }) 
           <Form.Item name="top_k" label="持仓数量 Top K" rules={[{ required: true }]}><InputNumber min={1} max={10} precision={0} /></Form.Item>
           <Form.Item name="rebalance_every" label="调仓间隔（日）" rules={[{ required: true }]}><InputNumber min={1} max={120} precision={0} /></Form.Item>
           <Form.Item name="reserve" label="现金预留比例" rules={[{ required: true }]}><InputNumber min={0} max={0.5} step={0.01} stringMode /></Form.Item>
-          <Form.Item name="trend_window" label="趋势过滤窗口" rules={[{ required: true }]}><InputNumber min={2} max={252} precision={0} /></Form.Item>
-          <Form.Item name="volatility_window" label="波动率窗口" rules={[{ required: true }]}><InputNumber min={2} max={252} precision={0} /></Form.Item>
-          <Form.Item name="target_annual_volatility" label="目标年化波动率" rules={[{ required: true }]}><InputNumber min={0.01} max={1} step={0.01} stringMode /></Form.Item>
+          <Form.Item name="use_trend_filter" label="启用趋势过滤" valuePropName="checked"><Switch /></Form.Item>
+          <Form.Item name="trend_window" label="趋势过滤窗口" rules={[{ required: trendFilterEnabled }]}><InputNumber disabled={!trendFilterEnabled} min={2} max={252} precision={0} /></Form.Item>
+          <Form.Item name="use_volatility_scaling" label="启用波动率缩放" valuePropName="checked"><Switch /></Form.Item>
+          <Form.Item name="volatility_window" label="波动率窗口" rules={[{ required: volatilityScalingEnabled }]}><InputNumber disabled={!volatilityScalingEnabled} min={2} max={252} precision={0} /></Form.Item>
+          <Form.Item name="target_annual_volatility" label="目标年化波动率" rules={[{ required: volatilityScalingEnabled }]}><InputNumber disabled={!volatilityScalingEnabled} min={0.01} max={1} step={0.01} stringMode /></Form.Item>
           <Form.Item name="initial_cash" label="初始资金" rules={[{ required: true }]}><InputNumber min={10000} max={100000000} step={10000} stringMode /></Form.Item>
           <Form.Item name="transaction_cost_rate" label="单边交易费率" rules={[{ required: true }]}><InputNumber min={0} max={0.05} step={0.0001} stringMode /></Form.Item>
           <Form.Item name="slippage_rate" label="滑点率" rules={[{ required: true }]}><InputNumber min={0} max={0.05} step={0.0001} stringMode /></Form.Item>
         </div>
         <Button type="primary" htmlType="submit" loading={running}>运行即时回测</Button>
       </Form>
+      <Card type="inner" title="ExperimentRunSpec 哈希草案" extra={<Typography.Text type="secondary">13 字段 · 不落库</Typography.Text>}>
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <Alert showIcon type="warning" title="哈希完整不等于已经冻结" description="这里生成完整 13 字段及确定性哈希，并把测试窗载入上方因果回测；不会写入不可变实验存储。必须在接触新的互斥证据前另行持久化，并通过独立泄漏审查。" />
+          <Form<RunSpecFormValues> name="experiment-run-spec-draft" form={specForm} layout="vertical" initialValues={runSpecInitialValues} onFinish={(values) => { void generateDraft(values) }}>
+            <div className="backtest-lab-grid">
+              <Form.Item name="experiment_id" label="实验 ID" rules={[{ required: true }, { pattern: /^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/, message: '输入 1-80 个安全字符' }]}><Input /></Form.Item>
+              <Form.Item name="git_commit" label="源码 Commit" rules={[{ required: true }, { pattern: /^[0-9a-f]{40}$/, message: '需要完整 40 位 Git SHA' }]}><Input /></Form.Item>
+              <Form.Item name="train_start" label="训练开始" rules={[{ required: true }]}><Input type="date" /></Form.Item>
+              <Form.Item name="train_end" label="训练结束" rules={[{ required: true }]}><Input type="date" /></Form.Item>
+              <Form.Item name="validation_start" label="验证开始" rules={[{ required: true }]}><Input type="date" /></Form.Item>
+              <Form.Item name="validation_end" label="验证结束" rules={[{ required: true }]}><Input type="date" /></Form.Item>
+              <Form.Item name="test_start" label="测试开始" rules={[{ required: true }]}><Input type="date" /></Form.Item>
+              <Form.Item name="test_end" label="测试结束" rules={[{ required: true }]}><Input type="date" /></Form.Item>
+              <Form.Item name="seed" label="随机种子" rules={[{ required: true }]}><InputNumber min={0} max={2147483647} precision={0} /></Form.Item>
+            </div>
+            <Button htmlType="submit" loading={drafting}>生成哈希化运行规格草案</Button>
+          </Form>
+          {draftError && <Alert showIcon type="error" title="规格草案未生成" description={draftError} />}
+          {draft && <>
+            <Alert showIcon type="success" title={`规格哈希 ${draft.spec_hash.slice(0, 16)}…`} description="哈希完整但未写入不可变存储；当前历史测试窗此前可见，不能变成新的未见证据。" />
+            <Space wrap>
+              <Tag color="orange">不可变存储 0/1</Tag>
+              <Tag color="orange">独立泄漏审查 0/1</Tag>
+              <Tag color="orange">新未见证据 0/1</Tag>
+              <JsonExportButton filename={`qtrade-run-spec-draft-${draft.spec_hash.slice(0, 12)}.json`} value={draft} label="导出运行规格草案" />
+            </Space>
+          </>}
+        </Space>
+      </Card>
       {error && <Alert showIcon type="error" title="即时回测未完成" description={error} />}
       {result && <>
         <Alert showIcon type="success" title={`已完成 ${result.session_count} 个会话、${result.universe_size} 个标的 · ${factorLabel(result.parameters.factor)}`} description={`结果哈希 ${result.preview_hash.slice(0, 16)}…；结论固定为 ${result.promotion}。`} />

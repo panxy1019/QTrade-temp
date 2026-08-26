@@ -87,6 +87,7 @@ from qtrade.research.runner import (
     ExperimentRunner,
     ExperimentRunResult,
     ExperimentRunSpec,
+    experiment_run_spec_hash,
 )
 from qtrade.research.walk_forward import (
     WalkForwardConfig,
@@ -182,6 +183,7 @@ __all__ = [
     "ExperimentRunner",
     "ExperimentRunResult",
     "ExperimentRunSpec",
+    "experiment_run_spec_hash",
     "build_walk_forward_splits",
     "skipped_momentum",
 ]

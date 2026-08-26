@@ -1952,3 +1952,28 @@ experiment, register a strategy, execute arbitrary code, start PAPER/SHADOW or
 LIVE, mutate runtime state or transmit an order. The earliest next step is to
 freeze a complete `ExperimentRunSpec` before causal backtesting; all later
 research and authorization gates remain unchanged.
+
+## ADR-115 — A hash-complete run-spec draft is not an immutable experiment
+
+Status: accepted, 2026-08-27.
+
+The template catalog made implemented starting points visible, but selection
+could not carry an implementation-consistent configuration into the bounded
+causal backtest lab. Researchers also had no single pre-run artifact containing
+the complete experiment identity, data identity, time split, parameters, costs
+and seed.
+
+Only the three templates whose behavior the existing multi-asset preview can
+faithfully reproduce are connected: ETF momentum rotation, ETF momentum with
+trend/volatility controls, and cross-sectional reversal or low-volatility
+ranking. Pure momentum disables risk filters explicitly rather than retaining
+hidden defaults. The backend rejects template/parameter mismatches, split/test
+window mismatches and dates outside the verified dataset, then constructs the
+existing 13-field `ExperimentRunSpec` and its canonical deterministic hash.
+
+This endpoint remains stateless. A complete field set and stable hash prove
+reproducible identity, not immutable preregistration, independent leakage
+review or fresh evidence. The historical test interval is already visible, so
+the draft cannot be relabelled as a new held-out result. It creates no
+experiment or registry row, starts no PAPER/SHADOW/LIVE runtime, mutates no
+state and transmits no order.

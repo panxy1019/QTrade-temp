@@ -42,6 +42,7 @@ from qtrade.monitoring import MetricsRegistry, render_prometheus_metrics
 from qtrade.oms import OrderManager
 from qtrade.research import (
     BacktestPreviewSpec,
+    ExperimentRunSpec,
     IntradayExitSpec,
     IntradayFactorDiscoveryResult,
     IntradayFactorGroup,
@@ -52,9 +53,11 @@ from qtrade.research import (
     MinuteCurveMetrics,
     OpeningTripleBullishSpec,
     PerformanceMetrics,
+    TimeSplit,
     discover_opening_direction_rules,
     evaluate_opening_rule_correlations,
     evaluate_opening_rule_effectiveness,
+    experiment_run_spec_hash,
     paired_stationary_bootstrap_excess_returns,
     run_backtest_preview,
     run_minute_overlay_backtest,
@@ -94,6 +97,7 @@ _MARKET_PARQUET_SCHEMA = pa.schema(
 _GIT_COMMIT_SHA_PATTERN = re.compile(r"[0-9a-f]{40}")
 _GIT_COMMIT_REF_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,254}")
 _DEPLOYMENT_ENVIRONMENT_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}")
+_EXPERIMENT_ID_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}")
 
 
 class Role(StrEnum):
@@ -127,6 +131,42 @@ class BacktestPreviewRequest(BaseModel):
     initial_cash: Decimal = Decimal("1000000")
     transaction_cost_rate: Decimal = Decimal("0.0015")
     slippage_rate: Decimal = Decimal("0.0005")
+
+
+class ExperimentRunSplitDraft(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    train_start: date
+    train_end: date
+    validation_start: date
+    validation_end: date
+    test_start: date
+    test_end: date
+
+
+class ExperimentRunSpecDraftRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    template_id: Literal[
+        "etf-momentum-rotation-v1",
+        "etf-momentum-trend-volatility-v1",
+        "cross-sectional-factor-ranking-v1",
+    ]
+    experiment_id: str
+    git_commit: str
+    split: ExperimentRunSplitDraft
+    backtest: BacktestPreviewRequest
+    seed: StrictInt = 7
+
+    @model_validator(mode="after")
+    def validate_draft_identity(self) -> Self:
+        if _EXPERIMENT_ID_PATTERN.fullmatch(self.experiment_id) is None:
+            raise ValueError("experiment id must be 1-80 safe characters")
+        if _GIT_COMMIT_SHA_PATTERN.fullmatch(self.git_commit) is None:
+            raise ValueError("experiment git commit must be a full SHA-1")
+        if not 0 <= self.seed <= 2_147_483_647:
+            raise ValueError("experiment seed must be in [0, 2147483647]")
+        return self
 
 
 class SingleStockFiveMinuteBacktestRequest(BaseModel):
@@ -371,6 +411,8 @@ def _strategy_template_catalog() -> dict[str, object]:
             "required_inputs": ["质量通过的日线开收盘", "冻结标的池"],
             "validation_status": validation,
             "known_limitations": ["只作为比较基准，不是主动选股或择时策略。"],
+            "causal_preview_supported": False,
+            "causal_preview_blocker": "COMPARISON_ONLY_NO_ACTIVE_TEMPLATE_PREVIEW",
         },
         {
             "template_id": "moving-average-trend-v1",
@@ -389,6 +431,8 @@ def _strategy_template_catalog() -> dict[str, object]:
             "required_inputs": ["质量通过的单标的日线"],
             "validation_status": validation,
             "known_limitations": ["震荡市可能频繁换手；参数必须在测试前冻结。"],
+            "causal_preview_supported": False,
+            "causal_preview_blocker": "SINGLE_ASSET_DAILY_SELECTOR_NOT_CONNECTED",
         },
         {
             "template_id": "etf-momentum-rotation-v1",
@@ -410,6 +454,8 @@ def _strategy_template_catalog() -> dict[str, object]:
             "required_inputs": ["质量通过的日线", "冻结 ETF 标的池"],
             "validation_status": validation,
             "known_limitations": ["目录默认值不是已冻结实验参数。"],
+            "causal_preview_supported": True,
+            "causal_preview_blocker": None,
         },
         {
             "template_id": "etf-momentum-trend-volatility-v1",
@@ -434,6 +480,8 @@ def _strategy_template_catalog() -> dict[str, object]:
             "required_inputs": ["质量通过的日线", "冻结 ETF 标的池"],
             "validation_status": validation,
             "known_limitations": ["波动率缩放只降低暴露，不使用杠杆。"],
+            "causal_preview_supported": True,
+            "causal_preview_blocker": None,
         },
         {
             "template_id": "cross-sectional-factor-ranking-v1",
@@ -461,6 +509,8 @@ def _strategy_template_catalog() -> dict[str, object]:
             ],
             "validation_status": validation,
             "known_limitations": ["因子与参数必须在测试窗口之前冻结。"],
+            "causal_preview_supported": True,
+            "causal_preview_blocker": None,
         },
     ]
     return {
@@ -468,6 +518,7 @@ def _strategy_template_catalog() -> dict[str, object]:
         "template_count": len(templates),
         "active_template_count": 4,
         "benchmark_template_count": 1,
+        "causal_preview_template_count": 3,
         "templates": templates,
         "selection_creates_experiment": False,
         "selection_registers_strategy": False,
@@ -476,6 +527,152 @@ def _strategy_template_catalog() -> dict[str, object]:
         "arbitrary_code_execution": False,
         "external_order_transmission": False,
         "next_step": "FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST",
+    }
+
+
+def _backtest_preview_spec(payload: BacktestPreviewRequest) -> BacktestPreviewSpec:
+    return BacktestPreviewSpec(
+        start=payload.start,
+        end=payload.end,
+        factor=payload.factor,
+        horizons=payload.horizons,
+        top_k=payload.top_k,
+        rebalance_every=payload.rebalance_every,
+        reserve=payload.reserve,
+        trend_window=payload.trend_window,
+        volatility_window=payload.volatility_window,
+        target_annual_volatility=payload.target_annual_volatility,
+        initial_cash=payload.initial_cash,
+        transaction_cost_rate=payload.transaction_cost_rate,
+        slippage_rate=payload.slippage_rate,
+    )
+
+
+def _experiment_run_spec_draft(
+    payload: ExperimentRunSpecDraftRequest,
+    dataset: dict[str, object],
+) -> dict[str, object]:
+    preview_spec = _backtest_preview_spec(payload.backtest)
+    split = TimeSplit(
+        payload.split.train_start,
+        payload.split.train_end,
+        payload.split.validation_start,
+        payload.split.validation_end,
+        payload.split.test_start,
+        payload.split.test_end,
+    )
+    if preview_spec.start != split.test_start or preview_spec.end != split.test_end:
+        raise ValueError("backtest window must exactly match the declared test split")
+    observed_start = date.fromisoformat(str(dataset["observed_start"])[:10])
+    observed_end = date.fromisoformat(str(dataset["observed_end"])[:10])
+    if split.train_start < observed_start or split.test_end > observed_end:
+        raise ValueError("experiment split exceeds the verified dataset range")
+
+    if payload.template_id == "etf-momentum-rotation-v1":
+        if preview_spec.factor != "momentum" or any(
+            value is not None
+            for value in (
+                preview_spec.trend_window,
+                preview_spec.volatility_window,
+                preview_spec.target_annual_volatility,
+            )
+        ):
+            raise ValueError(
+                "momentum rotation template requires momentum without trend/volatility filters"
+            )
+    elif payload.template_id == "etf-momentum-trend-volatility-v1":
+        if preview_spec.factor != "momentum" or any(
+            value is None
+            for value in (
+                preview_spec.trend_window,
+                preview_spec.volatility_window,
+                preview_spec.target_annual_volatility,
+            )
+        ):
+            raise ValueError(
+                "trend/volatility template requires momentum and both risk filters"
+            )
+    elif preview_spec.factor not in {"reversal", "low_volatility"}:
+        raise ValueError(
+            "cross-sectional preview requires reversal or low-volatility ranking"
+        )
+
+    templates = cast(list[dict[str, object]], _strategy_template_catalog()["templates"])
+    template = next(
+        item for item in templates if item["template_id"] == payload.template_id
+    )
+    universe_payload = cast(dict[str, object], dataset["universe"])
+    universe = tuple(cast(list[str], universe_payload["symbols"]))
+    parameters = (
+        ("factor", preview_spec.factor),
+        ("horizons", ",".join(str(value) for value in preview_spec.horizons)),
+        ("top_k", str(preview_spec.top_k)),
+        ("rebalance_every", str(preview_spec.rebalance_every)),
+        ("reserve", str(preview_spec.reserve)),
+        ("trend_window", str(preview_spec.trend_window)),
+        ("volatility_window", str(preview_spec.volatility_window)),
+        (
+            "target_annual_volatility",
+            str(preview_spec.target_annual_volatility),
+        ),
+        ("initial_cash", str(preview_spec.initial_cash)),
+        ("slippage_rate", str(preview_spec.slippage_rate)),
+    )
+    spec = ExperimentRunSpec(
+        experiment_id=payload.experiment_id,
+        strategy_id=payload.template_id,
+        git_commit=payload.git_commit,
+        data_version=str(dataset["data_version"]),
+        universe=universe,
+        factor_set=tuple(
+            f"{preview_spec.factor}_{horizon}" for horizon in preview_spec.horizons
+        ),
+        label="next_session_portfolio_return",
+        split=split,
+        model=str(template["implementation_ref"]),
+        parameters=parameters,
+        cost_model_id="explicit-rate-plus-slippage-v1",
+        transaction_cost=preview_spec.transaction_cost_rate,
+        seed=payload.seed,
+    )
+    spec_payload = json.loads(
+        json.dumps(
+            asdict(spec),
+            sort_keys=True,
+            separators=(",", ":"),
+            default=str,
+        )
+    )
+    return {
+        "classification": (
+            "READ_ONLY_COMPLETE_EXPERIMENT_RUN_SPEC_DRAFT_NOT_PERSISTED"
+        ),
+        "draft_status": "HASHED_COMPLETE_FIELDS_NOT_IMMUTABLY_STORED",
+        "template_id": payload.template_id,
+        "data_checksum": dataset["checksum"],
+        "dataset_point_in_time": universe_payload["point_in_time"],
+        "spec_hash": experiment_run_spec_hash(spec),
+        "spec": spec_payload,
+        "gates": {
+            "complete_experiment_run_spec_fields": True,
+            "verified_dataset_identity_bound": True,
+            "implemented_template_bound": True,
+            "chronological_non_overlapping_split": True,
+            "immutable_artifact_persisted": False,
+            "independent_leakage_review_passed": False,
+            "fresh_unseen_test_evidence": False,
+        },
+        "historical_test_window_previously_available": True,
+        "promotion_eligible": False,
+        "next_action": (
+            "PERSIST_AND_REVIEW_BEFORE_ACCESSING_NEW_DISJOINT_EVIDENCE"
+        ),
+        "creates_immutable_experiment": False,
+        "registry_write": False,
+        "paper_runtime_start": False,
+        "live_runtime_start": False,
+        "state_mutation": False,
+        "external_order_transmission": False,
     }
 
 
@@ -1398,6 +1595,22 @@ def create_app(
             "curve": [],
         }
 
+    @app.post("/experiment-run-spec-draft")
+    def experiment_run_spec_draft(
+        payload: ExperimentRunSpecDraftRequest,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_market_dataset(state.historical_manifest_path)
+        if dataset is None:
+            raise HTTPException(
+                status_code=409,
+                detail="verified historical dataset unavailable",
+            )
+        try:
+            return _experiment_run_spec_draft(payload, dataset)
+        except (ArithmeticError, KeyError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
     @app.post("/backtest-preview")
     def backtest_preview(
         payload: BacktestPreviewRequest,
@@ -1416,21 +1629,7 @@ def create_app(
         if bars is None:
             raise HTTPException(status_code=409, detail="historical dataset validation failed")
         try:
-            spec = BacktestPreviewSpec(
-                start=payload.start,
-                end=payload.end,
-                factor=payload.factor,
-                horizons=payload.horizons,
-                top_k=payload.top_k,
-                rebalance_every=payload.rebalance_every,
-                reserve=payload.reserve,
-                trend_window=payload.trend_window,
-                volatility_window=payload.volatility_window,
-                target_annual_volatility=payload.target_annual_volatility,
-                initial_cash=payload.initial_cash,
-                transaction_cost_rate=payload.transaction_cost_rate,
-                slippage_rate=payload.slippage_rate,
-            )
+            spec = _backtest_preview_spec(payload)
             return run_backtest_preview(
                 bars,
                 data_version=str(dataset["data_version"]),

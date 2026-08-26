@@ -20,6 +20,7 @@ def test_strategy_template_catalog_exposes_only_implemented_read_only_baselines(
     assert catalog["template_count"] == 5
     assert catalog["active_template_count"] == 4
     assert catalog["benchmark_template_count"] == 1
+    assert catalog["causal_preview_template_count"] == 3
     assert [template["template_id"] for template in catalog["templates"]] == [
         "equal-weight-buy-hold-benchmark-v1",
         "moving-average-trend-v1",
@@ -35,6 +36,15 @@ def test_strategy_template_catalog_exposes_only_implemented_read_only_baselines(
         "qtrade.research.multi_asset.RankedFactorAllocation",
     ]
     assert catalog["templates"][0]["role"] == "BENCHMARK_ONLY"
+    assert [
+        template["template_id"]
+        for template in catalog["templates"]
+        if template["causal_preview_supported"]
+    ] == [
+        "etf-momentum-rotation-v1",
+        "etf-momentum-trend-volatility-v1",
+        "cross-sectional-factor-ranking-v1",
+    ]
     assert all(
         template["validation_status"] == "IMPLEMENTED_NOT_PRODUCTION_VALIDATED"
         for template in catalog["templates"]
@@ -278,6 +288,35 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert preview.status_code == 200
     assert preview.json()["promotion"] == "NOT_ELIGIBLE"
     assert preview.json()["external_order_transmission"] is False
+    run_spec_draft = client.post(
+        _api("/experiment-run-spec-draft"),
+        json={
+            "template_id": "etf-momentum-rotation-v1",
+            "experiment_id": "vercel-read-only-draft",
+            "git_commit": "0" * 40,
+            "split": {
+                "train_start": "2022-09-06",
+                "train_end": "2024-12-31",
+                "validation_start": "2025-01-01",
+                "validation_end": "2025-06-30",
+                "test_start": "2025-07-01",
+                "test_end": "2025-12-31",
+            },
+            "backtest": {
+                "start": "2025-07-01",
+                "end": "2025-12-31",
+                "factor": "momentum",
+                "trend_window": None,
+                "volatility_window": None,
+                "target_annual_volatility": None,
+            },
+            "seed": 7,
+        },
+    )
+    assert run_spec_draft.status_code == 200
+    assert run_spec_draft.json()["creates_immutable_experiment"] is False
+    assert run_spec_draft.json()["gates"]["fresh_unseen_test_evidence"] is False
+    assert run_spec_draft.json()["external_order_transmission"] is False
     single_stock = client.post(
         _api("/single-stock-five-minute-backtest"),
         json={

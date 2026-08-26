@@ -15,6 +15,16 @@ actual implementation references, data scope, entry/exit rules, unfrozen
 defaults, required inputs and limitations. Four are active research baselines;
 equal-weight buy-and-hold is comparison-only. Catalog visibility creates no
 experiment or registry record and does not authorize PAPER, SHADOW or LIVE.
+ETF momentum rotation, its trend/volatility-constrained variant, and
+cross-sectional reversal/low-volatility ranking now load into the existing
+bounded causal multi-asset preview. The workbench keeps template defaults
+visibly unfrozen, models disabled risk filters as null, and can export all 13
+`ExperimentRunSpec` fields plus a deterministic hash. The draft binds the
+verified data version/checksum, PIT universe, implementation, chronological
+split, parameters, costs and seed, but is not written to immutable storage.
+Its historical test dates have already been visible and there is no independent
+leakage-review PASS, so it is not fresh confirmation evidence and cannot create
+an experiment, register a strategy or authorize PAPER/LIVE.
 Experiments bind git commit, data version, PIT universe, chronological
 train/validation/test split, model, parameters, cost model and seed to immutable
 hashed artifacts. The runner automatically registers PASSED dataset lineage and
