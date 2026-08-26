@@ -941,3 +941,17 @@ Reads must construct Bars in physical order and rerun the shared write-time
 quality gate before any presentation sorting. Duplicate/disordered timestamps,
 invalid OHLCV, non-finite values and abnormal jumps therefore fail closed rather
 than entering research, replay or forward evidence.
+
+## ADR-063 — Parquet reads enforce the exact Arrow schema
+
+Status: accepted, 2026-08-26.
+
+A checksum proves file identity, not compatibility with the canonical Bar
+contract. A modified and resigned Parquet file could previously omit a required
+column, add an untracked field or change a field type; callers then received a
+low-level conversion exception or silently ignored the drift.
+
+Reads compare the complete ordered ten-column Arrow schema before converting any
+row. Missing, extra, reordered and type-drifted columns now fail uniformly as a
+dataset-integrity error, so every chart, research job and replay sees the same
+versioned storage contract.

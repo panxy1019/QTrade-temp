@@ -111,6 +111,41 @@ def test_parquet_store_rejects_resigned_physical_timestamp_disorder(tmp_path):
         store.read(resigned)
 
 
+@pytest.mark.parametrize("mutation", ["missing", "extra", "reordered", "type"])
+def test_parquet_store_rejects_resigned_schema_drift(tmp_path, mutation):
+    store = ParquetBarStore(tmp_path)
+    bar = Bar(
+        "510300",
+        "SSE",
+        datetime(2026, 8, 12, 7, tzinfo=UTC),
+        date(2026, 8, 12),
+        Decimal("10"),
+        Decimal("11"),
+        Decimal("9"),
+        Decimal("10.5"),
+        Decimal("100"),
+    )
+    passed = store.write([bar], manifest())
+    target = tmp_path / "bars-v1" / "bars.parquet"
+    table = pq.read_table(target)
+    if mutation == "missing":
+        table = table.drop(["close"])
+    elif mutation == "extra":
+        table = table.append_column("unexpected", pa.array(["value"]))
+    elif mutation == "reordered":
+        table = table.select(
+            ["exchange", "symbol", *table.column_names[2:]],
+        )
+    else:
+        timestamp_index = table.schema.get_field_index("timestamp")
+        table = table.set_column(timestamp_index, "timestamp", pa.array([1]))
+    pq.write_table(table, target, compression="zstd")
+    resigned = replace(passed, checksum=sha256(target.read_bytes()).hexdigest())
+
+    with pytest.raises(DatasetIntegrityError, match="schema"):
+        store.read(resigned)
+
+
 def test_experiment_artifacts_are_hashed_and_immutable(tmp_path):
     record = ExperimentRecord(
         experiment_id="exp-1",

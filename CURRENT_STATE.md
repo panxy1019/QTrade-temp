@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 371 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 375 tests passed, Ruff clean, strict mypy clean across
   the 99-file source baseline plus the breadth and continuity scripts on Python 3.12.13
   (macOS, 2026-08-26); 47 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -400,7 +400,9 @@ Last updated: 2026-08-26
   1,662,920 rows carry their exact manifest version. Reads preserve physical row
   order through the shared quality gate before returning sorted Bars, so a
   resigned file cannot hide per-instrument disorder or malformed OHLCV by relying
-  on reader-side sorting.
+  on reader-side sorting. The exact ten-column Arrow schema is checked before
+  row conversion, so missing, extra, reordered or type-drifted columns fail with
+  a uniform dataset-integrity error.
 - Operational persistence: SQLite WAL/FULL journal records PENDING/APPLIED/FAILED
   fill markers across restart and durable audit events; backtests require a
   PASSED data manifest and record `data_version`; 54 tests pass.

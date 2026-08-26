@@ -17,6 +17,22 @@ class DatasetIntegrityError(ValueError):
     pass
 
 
+_BAR_PARQUET_SCHEMA = pa.schema(
+    [
+        ("symbol", pa.string()),
+        ("exchange", pa.string()),
+        ("timestamp", pa.string()),
+        ("trading_day", pa.date32()),
+        ("open", pa.string()),
+        ("high", pa.string()),
+        ("low", pa.string()),
+        ("close", pa.string()),
+        ("volume", pa.string()),
+        ("data_version", pa.string()),
+    ]
+)
+
+
 class ParquetBarStore:
     def __init__(self, root: Path) -> None:
         self._root = root.resolve()
@@ -67,7 +83,10 @@ class ParquetBarStore:
         checksum = sha256(target.read_bytes()).hexdigest()
         if checksum != manifest.checksum:
             raise DatasetIntegrityError("dataset checksum mismatch")
-        rows = pq.read_table(target).to_pylist()
+        table = pq.read_table(target)
+        if not table.schema.equals(_BAR_PARQUET_SCHEMA, check_metadata=False):
+            raise DatasetIntegrityError("dataset schema mismatch")
+        rows = table.to_pylist()
         if any(row.get("data_version") != manifest.data_version for row in rows):
             raise DatasetIntegrityError("dataset row data_version mismatch")
         records = [

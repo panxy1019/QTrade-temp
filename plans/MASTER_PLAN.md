@@ -60,6 +60,8 @@ Parquet reads reject a checksum-valid file when any row-level `data_version`
 differs from the supplied manifest, preserving dataset lineage after resigning.
 They also rerun the write-time quality gate on physical row order before sorting
 returned Bars, preventing a resigned file from repairing disorder during read.
+The exact Arrow column contract is validated before row conversion, so renamed,
+missing, extra, reordered or type-drifted fields fail closed as integrity errors.
 Sourced normalized corporate-action factors produce point-in-time backward-
 adjusted bars with explicit adjustment lineage. A durable immutable SQLite
 catalog links PASSED data manifests to experiment hashes and is populated by the
