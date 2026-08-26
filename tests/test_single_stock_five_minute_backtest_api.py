@@ -170,3 +170,34 @@ def test_market_parquet_reader_rejects_resigned_schema_drift(tmp_path: Path) -> 
         expected_checksum=sha256(drifted_content).hexdigest(),
         expected_bar_count=1,
     ) is None
+
+
+def test_every_verified_stock_can_run_the_same_causal_preview() -> None:
+    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    symbols = manifest["eligible_symbols"]
+    stocks = manifest["universe"]["stocks"]
+    client = _client()
+    preview_hashes: set[str] = set()
+
+    for symbol in symbols:
+        response = client.post(
+            "/single-stock-five-minute-backtest",
+            json={
+                "symbol": symbol,
+                "start": "2025-01-02",
+                "end": "2025-01-03",
+            },
+        )
+        assert response.status_code == 200, symbol
+        payload = response.json()
+        assert payload["symbol"] == symbol
+        assert payload["selected_session_count"] == 2
+        assert payload["selected_bar_count"] == 96
+        assert len(payload["curve"]) == 96
+        assert payload["state_mutation"] is False
+        assert payload["external_order_transmission"] is False
+        preview_hashes.add(payload["preview_hash"])
+
+    assert len(symbols) == 75
+    assert len({row["sector_code"] for row in stocks}) == 15
+    assert len(preview_hashes) == 75
