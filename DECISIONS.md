@@ -1219,3 +1219,18 @@ snapshot readiness flag now require their exact JSON primitive types before
 object construction. Existing range and reduction-only validation then runs on
 the uncoerced values. Malformed checkpoints fail during restart; they cannot
 silently modify a target or authorize any execution path.
+
+## ADR-082 — Realtime PAPER pending targets restore without coercion
+
+Status: accepted, 2026-08-26.
+
+The causal realtime runner persists a finalized-bar target until a strictly
+later recorded Tick can execute it. Coercing that durable quantity with `int()`
+would turn JSON `true` into target quantity one; accepting booleans as ingest
+ordinals would similarly weaken replay ordering after restart.
+
+Pending quantities and ingest ordinals now require non-boolean, non-negative
+integers. Pending decision/signal timestamps and the last finalized bar require
+timezone-aware values with decision time no earlier than its signal bar, and an
+inflight order identity must remain a non-empty string. Invalid recovery state
+fails before the runner can consume another Tick.

@@ -267,18 +267,47 @@ class RealDataPaperRunner:
         if value.get("schema_version") != 1 or value.get("identity") != identity:
             raise ValueError("realtime PAPER checkpoint identity mismatch")
         pending = value.get("pending")
-        if isinstance(pending, dict):
+        if pending is not None:
+            if not isinstance(pending, dict):
+                raise ValueError("realtime PAPER checkpoint target is invalid")
+            quantity = pending.get("quantity")
+            raw_decided_at = pending.get("decided_at")
+            raw_signal_at = pending.get("signal_bar_timestamp")
+            if (
+                isinstance(quantity, bool)
+                or not isinstance(quantity, int)
+                or quantity < 0
+                or not isinstance(raw_decided_at, str)
+                or not isinstance(raw_signal_at, str)
+            ):
+                raise ValueError("realtime PAPER checkpoint target is invalid")
+            decided_at = datetime.fromisoformat(raw_decided_at)
+            signal_at = datetime.fromisoformat(raw_signal_at)
+            if (
+                decided_at.tzinfo is None
+                or signal_at.tzinfo is None
+                or decided_at < signal_at
+            ):
+                raise ValueError("realtime PAPER checkpoint target is invalid")
             self._pending = PendingTarget(
-                int(pending["quantity"]),
-                datetime.fromisoformat(str(pending["decided_at"])),
-                datetime.fromisoformat(str(pending["signal_bar_timestamp"])),
+                quantity,
+                decided_at,
+                signal_at,
             )
         inflight = value.get("inflight_order_id")
-        self._inflight_order_id = None if inflight is None else str(inflight)
+        if inflight is not None and (not isinstance(inflight, str) or not inflight):
+            raise ValueError("realtime PAPER checkpoint inflight order is invalid")
+        self._inflight_order_id = inflight
         last_bar = value.get("last_bar")
-        self._last_bar = None if last_bar is None else datetime.fromisoformat(str(last_bar))
+        if last_bar is not None and not isinstance(last_bar, str):
+            raise ValueError("realtime PAPER checkpoint last bar is invalid")
+        self._last_bar = None if last_bar is None else datetime.fromisoformat(last_bar)
+        if self._last_bar is not None and self._last_bar.tzinfo is None:
+            raise ValueError("realtime PAPER checkpoint last bar is invalid")
         ordinal = value.get("last_tick_ordinal")
-        if ordinal is not None and not isinstance(ordinal, int):
+        if ordinal is not None and (
+            isinstance(ordinal, bool) or not isinstance(ordinal, int) or ordinal < 0
+        ):
             raise ValueError("realtime PAPER checkpoint ordinal is invalid")
         self._last_tick_ordinal = ordinal
 

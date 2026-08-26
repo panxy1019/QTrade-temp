@@ -262,6 +262,52 @@ def test_realtime_checkpoint_failure_cannot_skip_incident_latch(tmp_path, monkey
     assert bundle.metrics.reconciliation_status == "FAILED"
 
 
+def test_realtime_checkpoint_rejects_boolean_pending_quantity(tmp_path):
+    day = date(2026, 8, 12)
+    decided_at = datetime(2026, 8, 12, 1, 31, tzinfo=UTC)
+    bundle = build_paper_runtime(
+        mode=RuntimeMode.PAPER,
+        opening_cash=Decimal("100000"),
+        limits=RiskLimits(Decimal("50000"), 10000, Decimal("100000")),
+        fees=FeeSchedule("test", Decimal("0"), Decimal("0")),
+        journal_path=tmp_path / "malformed-checkpoint.db",
+    )
+    runner = RealDataPaperRunner(
+        bundle=bundle,
+        instrument=Instrument("510300", "SSE", "ETF", 100, Decimal("0.001")),
+        trading_rule=TradingRule(
+            "etf", "SSE", "ETF", day, None, 100, 100, Decimal("0.001"),
+            Decimal("0.1"), 0, "fixture://rule", "1"
+        ),
+        calendar=TradingCalendar(
+            (TradingDayStatus("SSE", day, TradingStatus.OPEN, day, "fixture"),)
+        ),
+        strategy=Target100(),
+        strategy_id="target100",
+        portfolio_id="paper",
+        **runner_identity(decided_at),
+    )
+    checkpoint_key = runner._checkpoint_key  # type: ignore[attr-defined]
+    bundle.journal.save_state(
+        checkpoint_key,
+        {
+            "schema_version": 1,
+            "identity": runner._identity(),  # type: ignore[attr-defined]
+            "pending": {
+                "quantity": True,
+                "decided_at": decided_at.isoformat(),
+                "signal_bar_timestamp": (decided_at - timedelta(minutes=1)).isoformat(),
+            },
+            "inflight_order_id": None,
+            "last_bar": (decided_at - timedelta(minutes=1)).isoformat(),
+            "last_tick_ordinal": None,
+        },
+    )
+
+    with pytest.raises(ValueError, match="checkpoint target"):
+        runner._restore_checkpoint(runner._identity())  # type: ignore[attr-defined]
+
+
 def test_market_data_readiness_is_required_and_revocable(tmp_path):
     day = date(2026, 8, 12)
     decided_at = datetime(2026, 8, 12, 1, 31, tzinfo=UTC)
