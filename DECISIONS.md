@@ -693,3 +693,17 @@ unique but invented sector labels are not sufficient.
 This binds sector-stability arithmetic to the intended multi-sector universe.
 It does not turn the current-universe/QFQ evidence into PIT data or grant PAPER,
 realtime or external-order authority.
+
+## ADR-045 — Forward promotion reopens the immutable source sessions
+
+Status: accepted, 2026-08-26.
+
+Before replacing the public forward-observation report, the publisher must load
+every formal forward-session manifest and its checksum-bound Parquet from the
+configured source root. The candidate accepted count and ordered target-day,
+evidence-hash, 3,600-Bar and exact-anchor fields must equal those verified source
+reports.
+
+An outer report digest or syntactically valid per-session hash is insufficient.
+A mismatch leaves the previous public report untouched and cannot advance
+strategy, PAPER, realtime or external-order authority.

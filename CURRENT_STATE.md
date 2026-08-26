@@ -539,6 +539,9 @@ Last updated: 2026-08-26
   negative value cannot satisfy the predeclared maximum-turnover gate. The 15
   leave-one-sector-out rows must also match the exact sector code/name identities
   extracted from the verified frozen long-history universe.
+  Before atomic promotion, the publisher now rereads every formal forward-session
+  manifest and checksum-bound Parquet, then requires the candidate session list
+  and accepted count to match those source identities exactly.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator

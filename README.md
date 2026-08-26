@@ -313,7 +313,10 @@ step reruns the same dataset, development-lock, preregistration and report
 validators used by the public API; requires at least one newly appended complete
 session; rejects any rewritten historical session, lock change or non-monotonic
 generation time; then uses an atomic file replacement and verifies the published
-digest again. The validator requires the report's warmup data version, checksum,
+digest again. It also rereads `deployment/evidence/forward-session-data`, verifies
+each signed manifest and checksum-bound Parquet, and requires the candidate's
+count/date/hash/3,600-Bar/anchor list to match those source sessions exactly. The
+validator requires the report's warmup data version, checksum,
 session count and metric-exclusion flag to equal the preregistered identity, and
 requires its generation time to follow the lock. It rejects booleans in every
 integer session-count field even though Python normally treats them as integers,

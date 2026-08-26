@@ -16,6 +16,27 @@ from qtrade.api.app import (
     _load_verified_minute_dataset,
 )
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
+from scripts.prepare_baostock_forward_preregistration import _load_signed
+from scripts.run_baostock_locked_forward_observation import _load_forward_sessions
+
+
+def validate_source_sessions(
+    candidate: dict[str, object], source_reports: list[dict[str, object]]
+) -> None:
+    expected = [
+        {
+            "target_day": report.get("target_day"),
+            "evidence_sha256": report.get("evidence_sha256"),
+            "bar_count": report.get("bar_count"),
+            "anchor_exact_match": report.get("anchor_exact_match"),
+        }
+        for report in source_reports
+    ]
+    if (
+        candidate.get("accepted_future_session_count") != len(source_reports)
+        or candidate.get("future_sessions") != expected
+    ):
+        raise ValueError("candidate does not match verified forward source sessions")
 
 
 def validate_progression(
@@ -131,6 +152,11 @@ def main() -> int:
         type=Path,
         default=Path("deployment/evidence/development-policy-search/report.json"),
     )
+    parser.add_argument(
+        "--forward-root",
+        type=Path,
+        default=Path("deployment/evidence/forward-session-data"),
+    )
     args = parser.parse_args()
     if not args.destination.is_file():
         raise FileNotFoundError("published forward observation baseline is missing")
@@ -145,6 +171,13 @@ def main() -> int:
     current = _load_verified_report(args.destination, **verification)
     candidate = _load_verified_report(args.candidate, **verification)
     validate_progression(current, candidate)
+    raw_preregistration = _load_signed(
+        args.preregistration, "preregistration_sha256"
+    )
+    _, source_reports = _load_forward_sessions(
+        args.forward_root, preregistration=raw_preregistration
+    )
+    validate_source_sessions(candidate, source_reports)
     _atomic_publish(args.candidate, args.destination)
     published = _load_verified_report(args.destination, **verification)
     if published.get("evidence_sha256") != candidate.get("evidence_sha256"):

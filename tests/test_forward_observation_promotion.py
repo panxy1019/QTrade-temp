@@ -9,6 +9,7 @@ import pytest
 from scripts.promote_baostock_forward_observation import (
     _atomic_publish,
     validate_progression,
+    validate_source_sessions,
 )
 
 
@@ -19,6 +20,8 @@ def _report(*, count: int, generated_at: str) -> dict[str, object]:
             {
                 "target_day": f"2026-09-{day:02d}",
                 "evidence_sha256": str(day) * 64,
+                "bar_count": 3600,
+                "anchor_exact_match": True,
             }
             for day in range(1, count + 1)
         ],
@@ -72,3 +75,21 @@ def test_atomic_forward_observation_publish_replaces_complete_file(
 
     assert destination.read_bytes() == candidate.read_bytes()
     assert list(tmp_path.glob(".report.json.*.tmp")) == []
+
+
+def test_forward_observation_source_sessions_must_match_candidate() -> None:
+    candidate = _report(count=1, generated_at="2026-09-01T16:00:00+08:00")
+    source_reports = [
+        {
+            "target_day": "2026-09-01",
+            "evidence_sha256": "1" * 64,
+            "bar_count": 3600,
+            "anchor_exact_match": True,
+        }
+    ]
+
+    validate_source_sessions(candidate, source_reports)
+
+    source_reports[0]["evidence_sha256"] = "2" * 64
+    with pytest.raises(ValueError, match="source sessions"):
+        validate_source_sessions(candidate, source_reports)
