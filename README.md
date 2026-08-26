@@ -388,6 +388,14 @@ split or seed, the UI explicitly requires a newly completed draft and hash.
 Unbound rows remain unbound, and a template/parameter mismatch fails closed by
 loading parameters without restoring the template.
 
+The complete browser-local comparison can also be exported as one deterministic
+JSON document. It binds the provider/version/data checksum and PIT flag to the
+ordered saved rows, including parameters, common metrics, preview hashes and any
+template/spec/binding identities. The document deliberately has no generated-at
+field, so unchanged browser state produces unchanged JSON. It is a portable
+read-only checkpoint, not automatic device synchronization, immutable experiment
+storage, registry evidence or PAPER/LIVE authority.
+
 Every adjustable preview now also runs an equal-weight Buy-and-Hold comparison
 through the same causal engine. The benchmark selects only symbols known at the
 first decision close, enters at the next open, and shares the strategy's date

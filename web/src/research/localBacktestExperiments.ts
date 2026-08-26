@@ -34,6 +34,26 @@ export interface LocalBacktestExperiment {
   binding: LocalBacktestBinding | null
 }
 
+export interface LocalBacktestComparisonExport {
+  schema_version: 1
+  classification: 'BROWSER_LOCAL_BACKTEST_COMPARISON_EXPORT_NOT_IMMUTABLE'
+  data_identity: {
+    provider: string
+    provider_version: string
+    data_version: string
+    data_checksum: string
+    point_in_time: boolean
+  }
+  record_count: number
+  records: LocalBacktestExperiment[]
+  creates_immutable_experiment: false
+  registry_write: false
+  paper_runtime_start: false
+  live_runtime_start: false
+  state_mutation: false
+  external_order_transmission: false
+}
+
 export function loadLocalBacktestExperiments(
   dataset: HistoricalDataset,
 ): LocalBacktestExperiment[] {
@@ -41,6 +61,31 @@ export function loadLocalBacktestExperiments(
     record.data_version === dataset.data_version
     && record.data_checksum === dataset.checksum
   ))
+}
+
+export function buildLocalBacktestComparisonExport(
+  dataset: HistoricalDataset,
+): LocalBacktestComparisonExport {
+  const records = loadLocalBacktestExperiments(dataset)
+  return {
+    schema_version: 1,
+    classification: 'BROWSER_LOCAL_BACKTEST_COMPARISON_EXPORT_NOT_IMMUTABLE',
+    data_identity: {
+      provider: dataset.provider,
+      provider_version: dataset.provider_version,
+      data_version: dataset.data_version,
+      data_checksum: dataset.checksum,
+      point_in_time: dataset.universe.point_in_time,
+    },
+    record_count: records.length,
+    records,
+    creates_immutable_experiment: false,
+    registry_write: false,
+    paper_runtime_start: false,
+    live_runtime_start: false,
+    state_mutation: false,
+    external_order_transmission: false,
+  }
 }
 
 export function saveLocalBacktestExperiment(

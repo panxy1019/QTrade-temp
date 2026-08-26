@@ -2086,3 +2086,26 @@ This preserves a useful replay starting point without fabricating missing
 lineage. Reloading creates no immutable experiment or registry record, provides
 no fresh evidence or promotion authority, starts no PAPER/LIVE runtime, mutates
 no state and transmits no external order.
+
+## ADR-121 — Local comparisons export deterministically without becoming evidence
+
+Status: accepted, 2026-08-27.
+
+Browser-local A/B rows contained the parameters, common metrics and replay
+identities needed for repeated tuning, but the table could not be carried out of
+one localStorage instance as a complete set. Exporting only the currently visible
+single result would omit the comparison context and any saved binding identity.
+
+The table now builds one schema-versioned JSON value bound to the current
+provider, provider version, data version, checksum and PIT flag. It includes the
+ordered valid rows with their parameters, metrics, preview hashes and optional
+template/spec/binding identities. The export omits a generation timestamp, so
+the same browser state serializes to the same JSON. No-record state disables the
+download rather than emitting an empty artifact that might be mistaken for
+completed research.
+
+The export is a removable, portable read-only checkpoint. It has explicit false
+flags for immutable persistence, registry writes, PAPER/LIVE starts, state
+mutation and external order transmission. There is no import, automatic sync or
+server write, and the file provides no independent leakage review, new unseen
+evidence, promotion or runtime authority.

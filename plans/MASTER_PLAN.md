@@ -492,6 +492,13 @@ historical labels only because the local summary did not persist the original
 13 fields. Ordinary rows remain unbound, and incompatible local identity/params
 fail closed rather than selecting a misleading template.
 
+The local A/B table now exports one deterministic, dataset-bound JSON checkpoint
+containing every saved parameter set, common metric, preview hash and optional
+template/spec/binding identity. There is no export timestamp, server write or
+import path: unchanged state serializes identically, while the artifact remains
+portable read-only browser evidence rather than synchronization, registration,
+promotion or PAPER/LIVE authority.
+
 Adjustable previews now include an engine-matched equal-weight Buy-and-Hold
 benchmark. It uses only first-decision-known symbols and the same window,
 capital, reserve, costs, slippage and next-open execution as the strategy. The

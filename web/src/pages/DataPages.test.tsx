@@ -1305,6 +1305,7 @@ describe('verified backtest analytics', () => {
     }
     vi.mocked(runBacktestPreview).mockResolvedValueOnce(preview)
     render(<BacktestPage data={data} />)
+    expect(screen.getByRole('button', { name: /导出本地对比/ })).toBeDisabled()
     fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
     expect(await screen.findByText('已完成 632 个会话、30 个标的 · 动量')).toBeInTheDocument()
     expect(screen.getByText(/即时预览，不是策略晋级证据/)).toBeInTheDocument()
@@ -1318,7 +1319,9 @@ describe('verified backtest analytics', () => {
     expect(screen.getAllByText('动量方案 A').length).toBeGreaterThan(0)
     expect(screen.getByText('即时预览')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '载入参数' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /导出本地对比/ })).toBeEnabled()
     expect(screen.getByText(/记录严格绑定当前数据版本与 checksum/)).toBeInTheDocument()
+    expect(screen.getByText(/可导出确定性只读 JSON 留档或跨设备核对，但不会自动同步/)).toBeInTheDocument()
     const localComparison = screen.getByText('本地实验对比（1/30）').closest('.ant-card')
     expect(localComparison).not.toBeNull()
     const comparison = within(localComparison as HTMLElement)
@@ -1353,6 +1356,7 @@ describe('verified backtest analytics', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'OK' }))
     await waitFor(() => expect(screen.queryByText('动量方案 A')).not.toBeInTheDocument())
     expect(screen.getByText('运行回测后可保存结果，用于反复调参与对比。')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /导出本地对比/ })).toBeDisabled()
     window.localStorage.clear()
   }, 10_000)
 

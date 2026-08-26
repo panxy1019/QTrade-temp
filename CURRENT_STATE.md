@@ -1016,6 +1016,16 @@ Last updated: 2026-08-27
   spec/binding hashes remain visible only as identifiers; the original 13-field
   spec was never stored and must be rebuilt. Ordinary rows stay unbound, while
   incompatible local template/parameter combinations do not restore a template.
+- Browser-local comparison export: the complete current-dataset table can be
+  downloaded as deterministic JSON with provider/version/checksum/PIT identity,
+  parameters, common metrics, preview hashes and optional template/spec/binding
+  identities. Empty tables disable the action and unchanged state produces the
+  same serialized value because no export timestamp is introduced. This is a
+  portable read-only checkpoint, not synchronization, immutable persistence,
+  registry evidence or runtime authority. Reproduce the focused contract with
+  `cd web && npm test -- --run src/research/localBacktestExperiments.test.ts
+  src/pages/DataPages.test.tsx -t "deterministic portable comparison|runs an
+  adjustable preview"`.
 - Matched preview benchmark: every adjustable and hash-bound preview now runs
   the implemented equal-weight Buy-and-Hold model through the same causal
   close-decision/next-open engine. Strategy and benchmark share the exact

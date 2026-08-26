@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { BacktestPreview, ExperimentRunSpecBacktest, HistoricalDataset } from '../types'
 import {
+  buildLocalBacktestComparisonExport,
   deleteLocalBacktestExperiment,
   loadLocalBacktestExperiments,
   saveLocalBacktestExperiment,
@@ -164,5 +165,48 @@ describe('local backtest experiments', () => {
     expect(records).toHaveLength(30)
     expect(records[0].name).toBe('方案 31')
     expect(records.at(-1)?.name).toBe('方案 2')
+  })
+
+  it('builds a deterministic portable comparison without granting runtime authority', () => {
+    const ordinaryResult = { ...result, preview_hash: 'e'.repeat(64) }
+    saveLocalBacktestExperiment('即时方案', ordinaryResult)
+    saveLocalBacktestExperiment('绑定方案', result, boundResult)
+
+    const first = buildLocalBacktestComparisonExport(dataset)
+    const second = buildLocalBacktestComparisonExport(dataset)
+
+    expect(JSON.stringify(first)).toBe(JSON.stringify(second))
+    expect(first).toEqual(expect.objectContaining({
+      schema_version: 1,
+      classification: 'BROWSER_LOCAL_BACKTEST_COMPARISON_EXPORT_NOT_IMMUTABLE',
+      data_identity: {
+        provider: 'AKShare',
+        provider_version: '1.18.84',
+        data_version: 'bars-v1',
+        data_checksum: 'dataset-checksum-v1',
+        point_in_time: false,
+      },
+      record_count: 2,
+      creates_immutable_experiment: false,
+      registry_write: false,
+      paper_runtime_start: false,
+      live_runtime_start: false,
+      state_mutation: false,
+      external_order_transmission: false,
+    }))
+    expect(first.records[0]).toEqual(expect.objectContaining({
+      preview_hash: result.preview_hash,
+      parameters: result.parameters,
+      metrics: result.metrics,
+      binding: expect.objectContaining({
+        template_id: 'etf-momentum-rotation-v1',
+        spec_hash: 'b'.repeat(64),
+        binding_hash: 'c'.repeat(64),
+      }),
+    }))
+    expect(first.records[1]).toEqual(expect.objectContaining({
+      preview_hash: ordinaryResult.preview_hash,
+      binding: null,
+    }))
   })
 })

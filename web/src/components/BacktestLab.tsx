@@ -4,6 +4,7 @@ import { createExperimentRunSpecDraft, runBacktestPreview, runExperimentRunSpecB
 import { EquityChart } from '../charts/EquityChart'
 import { JsonExportButton } from './JsonExportButton'
 import {
+  buildLocalBacktestComparisonExport,
   deleteLocalBacktestExperiment,
   loadLocalBacktestExperiments,
   saveLocalBacktestExperiment,
@@ -138,6 +139,9 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
     return <Card title="参数化回测实验室"><Alert showIcon type="warning" title="需要先准备校验通过的历史数据" description="实验室不会使用缓存、示例或合成行情替代真实数据。" /></Card>
   }
   const savedExperiments = loadLocalBacktestExperiments(dataset)
+  const comparisonExport = savedExperiments.length > 0
+    ? buildLocalBacktestComparisonExport(dataset)
+    : null
 
   const initialValues: BacktestFormValues = {
     start: dataset.observed_start.slice(0, 10),
@@ -468,7 +472,10 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
         </Space>
       </>}
       {saveStatus && <Alert showIcon type="info" title={saveStatus} />}
-      <Card type="inner" title={`本地实验对比（${savedExperiments.length}/30）`} extra={<Typography.Text type="secondary">仅当前浏览器</Typography.Text>}>
+      <Card type="inner" title={`本地实验对比（${savedExperiments.length}/30）`} extra={<Space wrap>
+        <Typography.Text type="secondary">仅当前浏览器</Typography.Text>
+        <JsonExportButton filename={`qtrade-local-backtest-comparison-${dataset.checksum.slice(0, 12)}.json`} value={comparisonExport} label="导出本地对比" />
+      </Space>}>
         <Table<LocalBacktestExperiment>
           rowKey="preview_hash"
           size="small"
@@ -478,7 +485,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
           scroll={{ x: 1500 }}
           locale={{ emptyText: '运行回测后可保存结果，用于反复调参与对比。' }}
         />
-        <Typography.Text type="secondary">记录严格绑定当前数据版本与 checksum；绑定草案会额外保存 template/spec/binding 哈希。匹配基准同样使用当前非 PIT 标的池，存在幸存者偏差。全部记录都仅在当前浏览器、可删除，不是不可变实验或注册记录，不参与晋级，也不会同步到其他设备。</Typography.Text>
+        <Typography.Text type="secondary">记录严格绑定当前数据版本与 checksum；绑定草案会额外保存 template/spec/binding 哈希。匹配基准同样使用当前非 PIT 标的池，存在幸存者偏差。全部记录都仅在当前浏览器、可删除；可导出确定性只读 JSON 留档或跨设备核对，但不会自动同步，不是不可变实验或注册记录，也不参与晋级。</Typography.Text>
       </Card>
     </Space>
   </Card>

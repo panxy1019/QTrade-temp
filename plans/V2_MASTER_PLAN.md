@@ -321,6 +321,11 @@ npm --prefix web run build
   fresh run-spec form. Present old spec/binding hashes only as historical
   identifiers, require a new complete draft hash, keep ordinary rows unbound,
   and fail closed on incompatible local template/parameter combinations.
+- [x] Export the complete browser-local A/B table as deterministic JSON bound to
+  provider/version/checksum/PIT identity, preserving parameters, common metrics,
+  preview hashes and optional template/spec/binding identity. Keep the empty
+  action disabled and state explicitly that this is portable read-only data,
+  not automatic synchronization, immutable evidence or runtime admission.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

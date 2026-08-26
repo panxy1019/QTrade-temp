@@ -51,6 +51,12 @@ hashes are displayed only as historical identifiers: the local summary does not
 contain the original experiment ID, source commit, split or seed, so the full
 13-field spec must be rebuilt and rehashed. Ordinary rows stay unbound, and an
 incompatible local template/parameter pair does not restore a template.
+The whole local comparison is now exportable as one deterministic JSON
+checkpoint. Provider/version/checksum/PIT identity sits beside every parameter
+set, common metric, preview hash and optional template/spec/binding identity;
+no export timestamp is added. This permits portable audit and A/B review without
+turning removable browser state into automatic synchronization, immutable
+experiment evidence, registry admission or PAPER/LIVE authority.
 Each adjustable result now includes an equal-weight Buy-and-Hold run from the
 same causal simulator. It selects symbols visible at the first decision close,
 executes at the next open and shares the strategy's window, initial cash,
