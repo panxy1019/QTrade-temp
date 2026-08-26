@@ -335,8 +335,8 @@ const data = {
     warmup_data_version: 'baostock-five-minute-long-v1',
     warmup_checksum: '8'.repeat(64), warmup_evidence_sha256: '7'.repeat(64),
     required_symbol_count: 75, required_bars_per_symbol_session: 48,
-    target_complete_symbol_count: 41, ready_symbol_count: 41,
-    incomplete_symbol_count: 34,
+    target_complete_symbol_count: 47, ready_symbol_count: 47,
+    incomplete_symbol_count: 28,
     incomplete_symbols: ['300059'], target_incomplete_symbols: ['300059'],
     fetch_error_symbols: [],
     coverage: [
@@ -891,7 +891,7 @@ describe('verified historical data pages', () => {
     expect(screen.getByText('15 行业代表股当日分钟点时观测')).toBeInTheDocument()
     expect(screen.getByText('75 股票全板块当日分钟宽度')).toBeInTheDocument()
     expect(screen.getByText('75 股票 BaoStock 前向来源覆盖')).toBeInTheDocument()
-    expect(screen.getByText(/41\/75 READY · SOURCE_INCOMPLETE/)).toBeInTheDocument()
+    expect(screen.getByText(/47\/75 READY · SOURCE_INCOMPLETE/)).toBeInTheDocument()
     expect(screen.getByText('当日分钟多检查点连续性')).toBeInTheDocument()
     expect(screen.queryByText(/网页调用方不能提供这些身份/)).not.toBeInTheDocument()
   })
@@ -1084,8 +1084,8 @@ describe('verified robustness evidence', () => {
     render(<ResearchPage data={data} />)
     fireEvent.click(screen.getByRole('tab', { name: '未来完整日观测' }))
     expect(screen.getByText(/观测进度：0\/20 个完整交易日/)).toBeInTheDocument()
-    expect(screen.getByText(/BaoStock 来源覆盖：41\/75 可正式采集/)).toBeInTheDocument()
-    expect(screen.getByText(/34 只仍未形成完整目标日网格/)).toBeInTheDocument()
+    expect(screen.getByText(/BaoStock 来源覆盖：47\/75 可正式采集/)).toBeInTheDocument()
+    expect(screen.getByText(/28 只仍未形成完整目标日网格/)).toBeInTheDocument()
     expect(screen.getByText(/不进入 0\/20/)).toBeInTheDocument()
     expect(screen.getByText('300059')).toBeInTheDocument()
     expect(screen.getByText(/15 板块、75 股、每股 48 根原生 5 分钟 Bar/)).toBeInTheDocument()

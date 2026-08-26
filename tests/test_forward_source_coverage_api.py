@@ -50,8 +50,8 @@ def test_forward_source_coverage_accepts_packaged_diagnostic() -> None:
     )
 
     assert verified == report
-    assert verified["ready_symbol_count"] == 41
-    assert verified["incomplete_symbol_count"] == 34
+    assert verified["ready_symbol_count"] == 47
+    assert verified["incomplete_symbol_count"] == 28
     assert verified["enters_forward_metrics"] is False
     assert verified["external_order_transmission"] is False
 

@@ -605,11 +605,13 @@ Last updated: 2026-08-26
   rejects the entire target day.
 - Forward source coverage: an independent, signed BaoStock diagnostic checked
   the full 75-stock locked universe after 15:10 China time without saving fetched
-  Bars. At `2026-08-26T18:14:10+08:00`, 41 symbols had an exact frozen anchor and
-  a complete 48-point target grid; 34 still lacked the target grid and none had
+  Bars. At `2026-08-26T18:31:04+08:00`, 47 symbols had an exact frozen anchor and
+  a complete 48-point target grid; 28 still lacked the target grid and none had
   a fetch error or anchor revision. `/forward-source-coverage`, the bundled
   minute snapshot, the research page and the data-center inventory expose those
-  facts. The report is explicitly not forward evidence, does not enter `0/20`,
+  facts. A UTC-loaded frozen anchor was also replayed against equivalent
+  Asia/Shanghai provider Bars to guard the timezone-aware identity contract.
+  The report is explicitly not forward evidence, does not enter `0/20`,
   and leaves realtime, PAPER, LIVE and external-order authority disabled.
 - Public minute read amplification: `/minute-research-snapshot` now verifies the
   24 MB long-history Parquet once per dashboard refresh and reuses that immutable

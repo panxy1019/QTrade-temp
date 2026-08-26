@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "report_id": "baostock-forward-source-coverage-diagnostic-v1",
-  "generated_at": "2026-08-26T18:14:10.954642+08:00",
+  "generated_at": "2026-08-26T18:31:04.697212+08:00",
   "classification": "SOURCE_COVERAGE_DIAGNOSTIC_NOT_FORWARD_EVIDENCE",
   "provider": "BaoStock",
   "provider_version": "0.9.3",
@@ -16,32 +16,26 @@
   "warmup_evidence_sha256": "531f8077caf6849d25ecca960d613c113c3dab25ee630b45e72cbce1252429bb",
   "required_symbol_count": 75,
   "required_bars_per_symbol_session": 48,
-  "target_complete_symbol_count": 41,
-  "ready_symbol_count": 41,
-  "incomplete_symbol_count": 34,
+  "target_complete_symbol_count": 47,
+  "ready_symbol_count": 47,
+  "incomplete_symbol_count": 28,
   "incomplete_symbols": [
     "300059",
     "000858",
     "000568",
     "300760",
-    "688271",
     "002422",
     "002371",
     "002475",
-    "688041",
     "002415",
     "002230",
     "000938",
-    "000977",
     "300750",
     "300274",
-    "002028",
     "002594",
-    "000338",
     "300124",
     "000988",
     "002353",
-    "000792",
     "000408",
     "002625",
     "002179",
@@ -60,24 +54,18 @@
     "000858",
     "000568",
     "300760",
-    "688271",
     "002422",
     "002371",
     "002475",
-    "688041",
     "002415",
     "002230",
     "000938",
-    "000977",
     "300750",
     "300274",
-    "002028",
     "002594",
-    "000338",
     "300124",
     "000988",
     "002353",
-    "000792",
     "000408",
     "002625",
     "002179",
@@ -340,15 +328,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "002422",
@@ -426,15 +412,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "002415",
@@ -499,15 +483,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "300750",
@@ -570,15 +552,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "002594",
@@ -600,15 +580,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "600660",
@@ -803,15 +781,13 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "000408",
@@ -1144,5 +1120,5 @@
   "realtime_readiness": false,
   "real_data_paper_readiness": false,
   "external_order_transmission": false,
-  "evidence_sha256": "9405bea256c4f99846d83595beb20b86067457d14c52f43fc8bdead216696492"
+  "evidence_sha256": "8ecbd9e3575f4aeb57ee5c8fe21c78e4f59f3e6dbac4d058895358140f7fc764"
 }

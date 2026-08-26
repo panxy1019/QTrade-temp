@@ -256,7 +256,7 @@ evidence remain explicit external blockers rather than UI placeholders.
 The forward-data surface now separates provider availability from formal
 evaluation. A signed, no-Bar-persistence BaoStock diagnostic checks all 75 locked
 stocks after close and exposes exact anchor/target completeness through the API,
-research page and data-center inventory. Its 41/75 ready snapshot remains outside
+research page and data-center inventory. Its 47/75 ready snapshot remains outside
 the 0/20 metric and cannot authorize PAPER, LIVE or external orders.
 
 The shell now also isolates page render failures inside the content region, so

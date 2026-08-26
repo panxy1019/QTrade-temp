@@ -1,6 +1,7 @@
 import copy
 import json
-from datetime import date, datetime
+from dataclasses import replace
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from hashlib import sha256
 from pathlib import Path
@@ -108,7 +109,11 @@ def test_forward_session_requires_complete_grid_and_exact_anchor() -> None:
     symbols = ("600036", "000858")
     anchor_day = date(2026, 8, 25)
     target_day = date(2026, 8, 26)
-    frozen = [bar for symbol in symbols for bar in _session(symbol, anchor_day)]
+    frozen = [
+        replace(bar, timestamp=bar.timestamp.astimezone(UTC))
+        for symbol in symbols
+        for bar in _session(symbol, anchor_day)
+    ]
     fetched = {
         symbol: (*_session(symbol, anchor_day), *_session(symbol, target_day))
         for symbol in symbols

@@ -108,9 +108,9 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert coverage["classification"] == (
         "SOURCE_COVERAGE_DIAGNOSTIC_NOT_FORWARD_EVIDENCE"
     )
-    assert coverage["target_complete_symbol_count"] == 41
-    assert coverage["ready_symbol_count"] == 41
-    assert coverage["incomplete_symbol_count"] == 34
+    assert coverage["target_complete_symbol_count"] == 47
+    assert coverage["ready_symbol_count"] == 47
+    assert coverage["incomplete_symbol_count"] == 28
     assert coverage["ready_for_formal_collection"] is False
     assert coverage["enters_forward_metrics"] is False
     assert coverage["external_order_transmission"] is False
