@@ -9152,6 +9152,43 @@ def _intraday_factor_discovery_preview(
             "criteria": dict(result.locked_test_symbol_stress_criteria),
             "passed": result.locked_test_symbol_stress_passed,
         },
+        "locked_test_regime_stress": {
+            "selected_candidate_id": result.selected_candidate_id,
+            "test_start": result.test_start.isoformat(),
+            "test_end": result.test_end.isoformat(),
+            "candidate_reselected": False,
+            "regime_rows_used_for_selection": False,
+            "regime_definition": (
+                "PREVIOUS_SESSION_EQUAL_WEIGHT_UNIVERSE_GROSS_RETURN_SIGN"
+            ),
+            "regime_result_known_at": "CURRENT_SESSION_09_35",
+            "current_signal_known_at": "CURRENT_SESSION_10_00",
+            "regimes": [
+                {
+                    "regime_id": row.regime_id,
+                    "regime_name": row.regime_name,
+                    "session_count": row.session_count,
+                    "observation_count": row.observation_count,
+                    "signal_count": row.signal_count,
+                    "previous_session_mean_universe_return_minimum": str(
+                        row.previous_session_mean_universe_return_minimum
+                    ),
+                    "previous_session_mean_universe_return_maximum": str(
+                        row.previous_session_mean_universe_return_maximum
+                    ),
+                    "known_before_signal": row.known_before_signal,
+                    "strategy_metrics": _performance_metrics_payload(
+                        row.strategy_metrics
+                    ),
+                    "benchmark_metrics": _performance_metrics_payload(
+                        row.benchmark_metrics
+                    ),
+                }
+                for row in result.locked_test_regimes
+            ],
+            "criteria": dict(result.locked_test_regime_stress_criteria),
+            "passed": result.locked_test_regime_stress_passed,
+        },
         "discovery_gate": {
             "criteria": {
                 "chronological_locked_test_passed": result.test_gate_passed,
@@ -9167,6 +9204,9 @@ def _intraday_factor_discovery_preview(
                 "locked_test_symbol_stress_passed": (
                     result.locked_test_symbol_stress_passed
                 ),
+                "locked_test_regime_stress_passed": (
+                    result.locked_test_regime_stress_passed
+                ),
             },
             "passed": all(
                 (
@@ -9175,6 +9215,7 @@ def _intraday_factor_discovery_preview(
                     result.locked_test_cost_stress_passed,
                     result.locked_test_sector_stress_passed,
                     result.locked_test_symbol_stress_passed,
+                    result.locked_test_regime_stress_passed,
                 )
             ),
             "promotion_authority": False,

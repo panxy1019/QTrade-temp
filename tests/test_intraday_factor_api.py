@@ -437,6 +437,9 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
             "locked_test_symbol_stress_passed": payload[
                 "locked_test_symbol_stress"
             ]["passed"],
+            "locked_test_regime_stress_passed": payload[
+                "locked_test_regime_stress"
+            ]["passed"],
         },
         "passed": False,
         "promotion_authority": False,
@@ -480,6 +483,32 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
     ]["signal_count"]
     assert len(symbol_stress["top_five_absolute_return_symbols"]) == 5
     assert symbol_stress["passed"] is all(symbol_stress["criteria"].values())
+    regime_stress = payload["locked_test_regime_stress"]
+    assert regime_stress["selected_candidate_id"] == payload["selected"][
+        "candidate_id"
+    ]
+    assert regime_stress["test_start"] == payload["split"]["test_start"]
+    assert regime_stress["test_end"] == payload["split"]["test_end"]
+    assert regime_stress["candidate_reselected"] is False
+    assert regime_stress["regime_rows_used_for_selection"] is False
+    assert regime_stress["regime_definition"] == (
+        "PREVIOUS_SESSION_EQUAL_WEIGHT_UNIVERSE_GROSS_RETURN_SIGN"
+    )
+    assert regime_stress["regime_result_known_at"] == "CURRENT_SESSION_09_35"
+    assert regime_stress["current_signal_known_at"] == "CURRENT_SESSION_10_00"
+    assert {row["regime_id"] for row in regime_stress["regimes"]} == {
+        "PREVIOUS_SESSION_NEGATIVE",
+        "PREVIOUS_SESSION_NON_NEGATIVE",
+    }
+    assert sum(row["session_count"] for row in regime_stress["regimes"]) == 20
+    assert sum(
+        row["observation_count"] for row in regime_stress["regimes"]
+    ) == payload["test_validation"]["observation_count"]
+    assert sum(row["signal_count"] for row in regime_stress["regimes"]) == payload[
+        "test_validation"
+    ]["signal_count"]
+    assert all(row["known_before_signal"] for row in regime_stress["regimes"])
+    assert regime_stress["passed"] is all(regime_stress["criteria"].values())
     assert payload["selected"]["candidate_id"] in {
         candidate["candidate_id"] for candidate in payload["candidates"]
     }

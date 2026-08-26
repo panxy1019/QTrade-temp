@@ -233,6 +233,9 @@ npm --prefix web run build
 - [x] Re-evaluate the same locked winner for all 75 stocks on the unchanged test
   window; expose signal coverage, positive-stock breadth, median return and
   top-five absolute-return concentration, and extend the untuned gate to 0/5.
+- [x] Split the unchanged locked test by the previous session's equal-weight
+  T+1-open return sign, prove the label is known at 09:35 before the current
+  10:00 signal, expose both losing states and extend the untuned gate to 0/6.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

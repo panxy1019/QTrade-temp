@@ -493,11 +493,42 @@ def test_bounded_opening_rule_discovery_locks_training_before_disjoint_test() ->
     assert first.locked_test_symbol_stress_passed is all(
         first.locked_test_symbol_stress_criteria.values()
     )
+    assert {
+        row.regime_id for row in first.locked_test_regimes
+    } <= {"PREVIOUS_SESSION_NON_NEGATIVE", "PREVIOUS_SESSION_NEGATIVE"}
+    assert sum(row.session_count for row in first.locked_test_regimes) == (
+        first.test_session_count
+    )
+    assert sum(row.observation_count for row in first.locked_test_regimes) == (
+        first.test_observation_count
+    )
+    assert sum(row.signal_count for row in first.locked_test_regimes) == (
+        first.test_signal_count
+    )
+    assert all(row.known_before_signal for row in first.locked_test_regimes)
+    assert first.locked_test_regime_stress_criteria[
+        "both_previous_session_direction_regimes_present"
+    ] is False
+    assert first.locked_test_regime_stress_passed is all(
+        first.locked_test_regime_stress_criteria.values()
+    )
     assert first.test_observation_count == 20 * len(symbols)
     assert first.selection_uses_test_returns is False
     assert first.promotion == "NOT_ELIGIBLE"
     assert first.state_mutation is False
     assert first.external_order_transmission is False
+    with pytest.raises(
+        RuntimeError,
+        match="previous-session regime must be known before current signal",
+    ):
+        discover_opening_direction_rules(
+            tuple(
+                replace(row, exit_at=row.exit_at + timedelta(hours=1))
+                for row in research.observations
+            ),
+            trading_days=days[:-1],
+            cost_bps=Decimal("5"),
+        )
 
 
 def test_bounded_opening_direction_rule_uses_only_completed_ten_minute_bars() -> None:

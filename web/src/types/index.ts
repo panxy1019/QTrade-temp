@@ -804,6 +804,30 @@ export interface IntradayFactorDiscovery {
     criteria: Record<string, boolean>
     passed: boolean
   }
+  locked_test_regime_stress: {
+    selected_candidate_id: string
+    test_start: string
+    test_end: string
+    candidate_reselected: false
+    regime_rows_used_for_selection: false
+    regime_definition: 'PREVIOUS_SESSION_EQUAL_WEIGHT_UNIVERSE_GROSS_RETURN_SIGN'
+    regime_result_known_at: 'CURRENT_SESSION_09_35'
+    current_signal_known_at: 'CURRENT_SESSION_10_00'
+    regimes: Array<{
+      regime_id: 'PREVIOUS_SESSION_NEGATIVE' | 'PREVIOUS_SESSION_NON_NEGATIVE'
+      regime_name: string
+      session_count: number
+      observation_count: number
+      signal_count: number
+      previous_session_mean_universe_return_minimum: string
+      previous_session_mean_universe_return_maximum: string
+      known_before_signal: boolean
+      strategy_metrics: IntradayPerformanceMetrics
+      benchmark_metrics: IntradayPerformanceMetrics
+    }>
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   discovery_gate: {
     criteria: Record<string, boolean>
     passed: boolean

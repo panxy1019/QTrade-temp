@@ -273,6 +273,39 @@ const discovery = {
     },
     passed: false,
   },
+  locked_test_regime_stress: {
+    selected_candidate_id: 'DIR-XDU-T0000', test_start: '2026-06-25', test_end: '2026-07-14',
+    candidate_reselected: false, regime_rows_used_for_selection: false,
+    regime_definition: 'PREVIOUS_SESSION_EQUAL_WEIGHT_UNIVERSE_GROSS_RETURN_SIGN',
+    regime_result_known_at: 'CURRENT_SESSION_09_35', current_signal_known_at: 'CURRENT_SESSION_10_00',
+    regimes: [
+      {
+        regime_id: 'PREVIOUS_SESSION_NEGATIVE', regime_name: '上一交易日等权收益为负',
+        session_count: 12, observation_count: 900, signal_count: 188,
+        previous_session_mean_universe_return_minimum: '-0.010247', previous_session_mean_universe_return_maximum: '-0.0000107',
+        known_before_signal: true,
+        strategy_metrics: { ...discoveryMetrics, total_return: '-0.007402', excess_return: '0.014887', sharpe: '-0.8998', maximum_drawdown: '-0.042835' },
+        benchmark_metrics: discoveryMetrics,
+      },
+      {
+        regime_id: 'PREVIOUS_SESSION_NON_NEGATIVE', regime_name: '上一交易日等权收益非负',
+        session_count: 8, observation_count: 600, signal_count: 138,
+        previous_session_mean_universe_return_minimum: '0.0002869', previous_session_mean_universe_return_maximum: '0.012327',
+        known_before_signal: true,
+        strategy_metrics: { ...discoveryMetrics, total_return: '-0.054493', excess_return: '-0.032917', sharpe: '-11.5724', maximum_drawdown: '-0.059405' },
+        benchmark_metrics: discoveryMetrics,
+      },
+    ],
+    criteria: {
+      both_previous_session_direction_regimes_present: true,
+      minimum_five_sessions_per_previous_session_regime: true,
+      every_previous_session_regime_known_before_signal: true,
+      every_previous_session_regime_has_signal: true,
+      all_previous_session_regime_total_returns_positive: false,
+      all_previous_session_regime_excess_returns_positive: false,
+    },
+    passed: false,
+  },
   discovery_gate: {
     criteria: {
       chronological_locked_test_passed: false,
@@ -280,6 +313,7 @@ const discovery = {
       locked_test_cost_stress_passed: false,
       locked_test_sector_stress_passed: false,
       locked_test_symbol_stress_passed: false,
+      locked_test_regime_stress_passed: false,
     },
     passed: false,
     promotion_authority: false,
@@ -372,11 +406,15 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('完整因子发现研究门未通过')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过多行业鲁棒性门')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过逐股票鲁棒性门')).toBeInTheDocument()
+    expect(screen.getByText('锁定规则未通过信号前市场状态压力门')).toBeInTheDocument()
     expect(screen.getByText('4/15 · 26.67%')).toBeInTheDocument()
     expect(screen.getByText('0/15 · 0.00%')).toBeInTheDocument()
     expect(screen.getByText('22/75 · 29.33%')).toBeInTheDocument()
     expect(screen.getByText('-1.16%')).toBeInTheDocument()
     expect(screen.getByText('24.79%')).toBeInTheDocument()
+    expect(screen.getByText('12 / 900 / 188')).toBeInTheDocument()
+    expect(screen.getByText('8 / 600 / 138')).toBeInTheDocument()
+    expect(screen.getByText('-5.45%')).toBeInTheDocument()
     expect(screen.getByText('-11.62%')).toBeInTheDocument()
     expect(screen.getByText('41.43%')).toBeInTheDocument()
     expect(screen.getByText('DIR-DDD-T0020 · 24/70')).toBeInTheDocument()

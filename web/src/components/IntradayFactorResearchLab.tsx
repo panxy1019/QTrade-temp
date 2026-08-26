@@ -96,6 +96,7 @@ const gateLabels: Record<string, string> = {
   locked_test_cost_stress_passed: '锁定测试固定成本压力通过',
   locked_test_sector_stress_passed: '锁定测试多行业压力通过',
   locked_test_symbol_stress_passed: '锁定测试逐股票压力通过',
+  locked_test_regime_stress_passed: '锁定测试信号前市场状态压力通过',
   every_locked_test_sector_has_signal: '每个测试行业均有信号',
   positive_locked_test_sector_ratio_at_least_0_60: '至少 60% 测试行业收益为正',
   positive_leave_one_sector_out_ratio_at_least_0_80: '至少 80% 整行业剔除收益为正',
@@ -104,6 +105,12 @@ const gateLabels: Record<string, string> = {
   positive_locked_test_symbol_ratio_at_least_0_60: '至少 60% 测试股票收益为正',
   median_locked_test_symbol_total_return_positive: '测试股票收益中位数为正',
   top_five_absolute_symbol_return_share_below_0_30: '绝对收益贡献前五股占比低于 30%',
+  both_previous_session_direction_regimes_present: '上一交易日涨跌两类状态均出现',
+  minimum_five_sessions_per_previous_session_regime: '每类上一交易日状态至少五个测试日',
+  every_previous_session_regime_known_before_signal: '每个状态均在当前信号前确定',
+  every_previous_session_regime_has_signal: '每类状态均有测试信号',
+  all_previous_session_regime_total_returns_positive: '每类状态策略收益均为正',
+  all_previous_session_regime_excess_returns_positive: '每类状态策略超额均为正',
 }
 
 export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
@@ -655,6 +662,33 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           ]} />
           <Alert
             showIcon
+            type={discoveryResult.locked_test_regime_stress.passed ? 'success' : 'warning'}
+            title={discoveryResult.locked_test_regime_stress.passed ? '锁定规则通过信号前市场状态压力门' : '锁定规则未通过信号前市场状态压力门'}
+            description={`每个测试日按上一交易日 75 股等权 T+1 开盘收益的正负分组；结果在当前日 09:35 已知，早于 10:00 因子信号。固定 ${discoveryResult.locked_test_regime_stress.selected_candidate_id}，状态行不参与训练选择或重选。`}
+          />
+          <Table
+            rowKey="regime_id"
+            size="small"
+            pagination={false}
+            dataSource={discoveryResult.locked_test_regime_stress.regimes}
+            columns={[
+              { title: '信号前市场状态', dataIndex: 'regime_name' },
+              { title: '测试日 / 观测 / 信号', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_regime_stress']['regimes'][number]) => `${row.session_count} / ${row.observation_count} / ${row.signal_count}` },
+              { title: '上一日等权收益区间', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_regime_stress']['regimes'][number]) => `${formatPercent(row.previous_session_mean_universe_return_minimum)} 至 ${formatPercent(row.previous_session_mean_universe_return_maximum)}` },
+              { title: '策略收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_regime_stress']['regimes'][number]) => formatPercent(row.strategy_metrics.total_return) },
+              { title: '超额收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_regime_stress']['regimes'][number]) => formatPercent(row.strategy_metrics.excess_return) },
+              { title: 'Sharpe', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_regime_stress']['regimes'][number]) => formatNumber(row.strategy_metrics.sharpe) },
+              { title: '最大回撤', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_regime_stress']['regimes'][number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+              { title: '信号前已知', dataIndex: 'known_before_signal', render: (value: boolean) => value ? <Tag color="green">是</Tag> : <Tag color="red">否</Tag> },
+            ]}
+            scroll={{ x: 1120 }}
+          />
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.locked_test_regime_stress.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '锁定测试状态门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
+          <Alert
+            showIcon
             type={discoveryResult.overfitting_audit.passed ? 'info' : 'warning'}
             title={discoveryResult.overfitting_audit.passed && !discoveryResult.test_validation.passed
               ? 'CSCV 选择偏差门通过，但时间顺序锁定测试仍失败'
@@ -712,7 +746,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             showIcon
             type={discoveryResult.discovery_gate.passed ? 'success' : 'error'}
             title={discoveryResult.discovery_gate.passed ? '完整因子发现研究门通过，但仍需独立前向证据' : '完整因子发现研究门未通过'}
-            description="时间顺序锁定测试、组合式选择偏差、固定成本压力、多行业压力和逐股票压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
+            description="时间顺序锁定测试、组合式选择偏差、固定成本压力、多行业压力、逐股票压力和信号前市场状态压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
           />
           <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.discovery_gate.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
             { title: '完整发现门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },

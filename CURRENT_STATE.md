@@ -345,7 +345,17 @@ Last updated: 2026-08-27
   24.79% of total absolute return magnitude, below the fixed 30% concentration
   ceiling. Three of four stock gates fail. The consolidated discovery gate now
   requires all five chronological, CSCV/PBO, cost, sector and stock stages and
-  is 0/5, still `NOT_ELIGIBLE`, stateless and external-order-disabled.
+  was 0/5.
+- Locked-test market-state stress now classifies each test day only by the sign
+  of the previous session's 75-stock equal-weight T+1-open return. That return is
+  complete at the current day 09:35 open, before the current factor can be known
+  at 10:00. The 12 days following a negative prior session returned -0.7402%
+  with +1.4887% excess; the eight days following a non-negative prior session
+  returned -5.4493% with -3.2917% excess. Both states had at least five days and
+  signals, and every label was causally known, but neither state had positive
+  strategy return and not every state had positive excess. The state rows cannot
+  reselect the candidate. The consolidated discovery gate is now 0/6, still
+  `NOT_ELIGIBLE`, stateless and external-order-disabled.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,

@@ -1664,3 +1664,28 @@ absolute-return concentration. Only concentration passes. The consolidated
 historical discovery gate now requires chronological lock, CSCV/PBO, cost,
 sector and stock stress and is 0/5. It remains non-PIT, viewed reused history,
 `NOT_ELIGIBLE`, stateless and external-order-disabled.
+
+## ADR-103 — Market-state stress uses only a previous-session label
+
+Status: accepted, 2026-08-27.
+
+Grouping a test by its own realized return would use future information and
+could make an untradeable retrospective explanation look causal. QTrade instead
+labels each locked-test day from the sign of the previous session's 75-stock
+equal-weight gross return measured from 10:05 entry to the next trading day's
+09:35 open. The label is therefore complete at 09:35 on the current day, before
+the current opening factor is known at 10:00. The first test label may use the
+last training session's already completed return. State rows never enter the
+candidate rank and cannot replace the locked candidate, threshold or universe.
+
+The 20-day locked test contained both predefined states: 12 days followed a
+negative prior session and carried 188 signals; eight followed a non-negative
+prior session and carried 138. The first state returned -0.7402% with +1.4887%
+excess, while the second returned -5.4493% with -3.2917% excess. The fixed state
+gate requires both states, at least five sessions each, signal coverage, causal
+label timing, positive strategy return in both and positive excess in both. The
+first four integrity/coverage conditions pass and both performance conditions
+fail. The consolidated historical discovery gate now requires chronological
+lock, CSCV/PBO, cost, sector, stock and causal state stress and is 0/6. It
+remains non-PIT, viewed reused history, `NOT_ELIGIBLE`, stateless and
+external-order-disabled.

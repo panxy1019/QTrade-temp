@@ -369,8 +369,12 @@ sector-stage discovery gate adds this sector stress and passes 0/4. The same
 fixed result is also recomputed for all 75 stocks: only 22/75 are positive, the
 median stock return is -1.1644%, and one stock has no signal. The five largest
 absolute stock returns contribute 24.79%, so only the concentration condition
-passes. The consolidated five-stage gate is 0/5 and cannot create PAPER or state
-authority.
+passes. The five-stage gate is 0/5. A final locked-test state split uses only the
+previous session's equal-weight T+1-open return sign, known by 09:35 before the
+current 10:00 signal. Returns were -0.7402% after 12 negative prior sessions and
+-5.4493% after eight non-negative prior sessions; both state returns were
+negative and only the first had positive excess. The consolidated six-stage
+gate is 0/6 and cannot create PAPER or state authority.
 
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no

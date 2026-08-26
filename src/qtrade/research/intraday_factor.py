@@ -396,6 +396,20 @@ class IntradayDiscoverySymbolStress:
 
 
 @dataclass(frozen=True, slots=True)
+class IntradayDiscoveryRegimeStress:
+    regime_id: str
+    regime_name: str
+    session_count: int
+    observation_count: int
+    signal_count: int
+    previous_session_mean_universe_return_minimum: Decimal
+    previous_session_mean_universe_return_maximum: Decimal
+    known_before_signal: bool
+    strategy_metrics: PerformanceMetrics
+    benchmark_metrics: PerformanceMetrics
+
+
+@dataclass(frozen=True, slots=True)
 class IntradayFactorDiscoveryResult:
     candidate_count: int
     candidates: tuple[IntradayDiscoveryCandidate, ...]
@@ -425,6 +439,9 @@ class IntradayFactorDiscoveryResult:
     locked_test_top_five_absolute_return_share: Decimal
     locked_test_symbol_stress_criteria: Mapping[str, bool]
     locked_test_symbol_stress_passed: bool
+    locked_test_regimes: tuple[IntradayDiscoveryRegimeStress, ...]
+    locked_test_regime_stress_criteria: Mapping[str, bool]
+    locked_test_regime_stress_passed: bool
     test_observation_count: int
     test_signal_count: int
     test_signal_session_count: int
@@ -1959,6 +1976,109 @@ def discover_opening_direction_rules(
             top_five_absolute_return_share < Decimal("0.30")
         ),
     }
+    selected_history_rows = _opening_rule_observations(
+        observations,
+        trading_days=trading_days,
+        spec=selected_spec,
+    )
+    selected_rows_by_day: dict[date, list[IntradayFactorObservation]] = (
+        defaultdict(list)
+    )
+    for row in selected_history_rows:
+        selected_rows_by_day[row.trading_day].append(row)
+    regime_days: dict[str, list[date]] = defaultdict(list)
+    regime_previous_returns: dict[str, list[Decimal]] = defaultdict(list)
+    known_before_signal_by_regime: dict[str, list[bool]] = defaultdict(list)
+    for current_index in range(training_session_count, len(trading_days)):
+        current_day = trading_days[current_index]
+        previous_day = trading_days[current_index - 1]
+        previous_rows = selected_rows_by_day[previous_day]
+        current_rows = selected_rows_by_day[current_day]
+        previous_session_mean = sum(
+            (row.gross_forward_return for row in previous_rows),
+            start=Decimal("0"),
+        ) / len(previous_rows)
+        previous_result_known_at = max(row.exit_at for row in previous_rows)
+        current_signal_known_at = min(row.signal_at for row in current_rows)
+        known_before_signal = previous_result_known_at < current_signal_known_at
+        if not known_before_signal:
+            raise RuntimeError(
+                "previous-session regime must be known before current signal"
+            )
+        regime_id = (
+            "PREVIOUS_SESSION_NON_NEGATIVE"
+            if previous_session_mean >= 0
+            else "PREVIOUS_SESSION_NEGATIVE"
+        )
+        regime_days[regime_id].append(current_day)
+        regime_previous_returns[regime_id].append(previous_session_mean)
+        known_before_signal_by_regime[regime_id].append(known_before_signal)
+    regime_names = {
+        "PREVIOUS_SESSION_NEGATIVE": "上一交易日等权收益为负",
+        "PREVIOUS_SESSION_NON_NEGATIVE": "上一交易日等权收益非负",
+    }
+    locked_test_regimes_list: list[IntradayDiscoveryRegimeStress] = []
+    for regime_id, selected_regime_days in sorted(regime_days.items()):
+        selected_regime_day_set = set(selected_regime_days)
+        rows = [
+            row
+            for row in test_rows
+            if row.trading_day in selected_regime_day_set
+        ]
+        strategy, benchmark, _ = _evaluate_observations(
+            rows,
+            selected_regime_days,
+            cost_bps=cost_bps,
+        )
+        previous_returns = regime_previous_returns[regime_id]
+        locked_test_regimes_list.append(
+            IntradayDiscoveryRegimeStress(
+                regime_id=regime_id,
+                regime_name=regime_names[regime_id],
+                session_count=len(selected_regime_days),
+                observation_count=len(rows),
+                signal_count=sum(row.signal for row in rows),
+                previous_session_mean_universe_return_minimum=min(
+                    previous_returns
+                ),
+                previous_session_mean_universe_return_maximum=max(
+                    previous_returns
+                ),
+                known_before_signal=all(
+                    known_before_signal_by_regime[regime_id]
+                ),
+                strategy_metrics=strategy,
+                benchmark_metrics=benchmark,
+            )
+        )
+    locked_test_regimes = tuple(locked_test_regimes_list)
+    expected_regime_ids = {
+        "PREVIOUS_SESSION_NEGATIVE",
+        "PREVIOUS_SESSION_NON_NEGATIVE",
+    }
+    locked_test_regime_stress_criteria = {
+        "both_previous_session_direction_regimes_present": (
+            {row.regime_id for row in locked_test_regimes}
+            == expected_regime_ids
+        ),
+        "minimum_five_sessions_per_previous_session_regime": all(
+            row.session_count >= 5 for row in locked_test_regimes
+        ),
+        "every_previous_session_regime_known_before_signal": all(
+            row.known_before_signal for row in locked_test_regimes
+        ),
+        "every_previous_session_regime_has_signal": all(
+            row.signal_count > 0 for row in locked_test_regimes
+        ),
+        "all_previous_session_regime_total_returns_positive": all(
+            row.strategy_metrics.total_return > 0
+            for row in locked_test_regimes
+        ),
+        "all_previous_session_regime_excess_returns_positive": all(
+            row.strategy_metrics.excess_return > 0
+            for row in locked_test_regimes
+        ),
+    }
     test_criteria = {
         "minimum_250_test_observations": len(test_rows) >= 250,
         "minimum_twenty_test_signals": test_signal_count >= 20,
@@ -2025,6 +2145,13 @@ def discover_opening_direction_rules(
         ),
         locked_test_symbol_stress_passed=all(
             locked_test_symbol_stress_criteria.values()
+        ),
+        locked_test_regimes=locked_test_regimes,
+        locked_test_regime_stress_criteria=(
+            locked_test_regime_stress_criteria
+        ),
+        locked_test_regime_stress_passed=all(
+            locked_test_regime_stress_criteria.values()
         ),
         test_observation_count=len(test_rows),
         test_signal_count=test_signal_count,
