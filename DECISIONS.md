@@ -1034,3 +1034,16 @@ conversion exceptions to a chart, API handler or backtest.
 Bar construction now wraps nullable, missing and malformed row content in
 `DatasetIntegrityError` while retaining its original cause. Values that decode
 successfully still pass through the independent semantic quality gate.
+
+## ADR-070 — Parquet datasets publish only after a complete staged write
+
+Status: accepted, 2026-08-26.
+
+Creating the immutable data-version directory before `write_table` succeeds
+leaves a visible but incomplete dataset after an I/O or encoder failure. The
+empty directory also prevents a corrected retry with the same version identity.
+
+Writes now build the Parquet file and compute its checksum inside a temporary
+directory under the same storage root, then rename that completed directory to
+the final version path. Failures remove staging state, while an already published
+version remains immutable and cannot be overwritten.

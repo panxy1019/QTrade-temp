@@ -75,6 +75,9 @@ The shared Bar gate rejects blank or whitespace-padded identities and requires
 canonical six-digit symbols for SSE/SZSE before instrument grouping begins.
 Schema-correct rows with null or syntactically invalid timestamp/date/decimal
 content are normalized to the dataset-integrity boundary before semantic checks.
+Parquet writes complete and checksum their payload in a same-filesystem staging
+directory before atomically publishing the immutable data-version directory;
+failed encodes leave no visible partial dataset and the same version can retry.
 Sourced normalized corporate-action factors produce point-in-time backward-
 adjusted bars with explicit adjustment lineage. A durable immutable SQLite
 catalog links PASSED data manifests to experiment hashes and is populated by the

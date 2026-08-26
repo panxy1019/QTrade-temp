@@ -65,6 +65,36 @@ def test_parquet_store_requires_quality_and_checksum(tmp_path):
         store.read(passed)
 
 
+def test_parquet_store_cleans_failed_write_and_allows_retry(tmp_path, monkeypatch):
+    store = ParquetBarStore(tmp_path)
+    original_write_table = pq.write_table
+    write_attempts = 0
+
+    def fail_once(*args, **kwargs):
+        nonlocal write_attempts
+        write_attempts += 1
+        if write_attempts == 1:
+            raise OSError("simulated parquet write failure")
+        return original_write_table(*args, **kwargs)
+
+    monkeypatch.setattr(pq, "write_table", fail_once)
+
+    with pytest.raises(OSError, match="simulated parquet write failure"):
+        store.write([sample_bar()], manifest())
+
+    assert list(tmp_path.iterdir()) == []
+    passed = store.write([sample_bar()], manifest())
+    assert store.read(passed) == [sample_bar()]
+    assert [path.name for path in tmp_path.iterdir()] == ["bars-v1"]
+    target = tmp_path / "bars-v1" / "bars.parquet"
+    persisted = target.read_bytes()
+
+    with pytest.raises(FileExistsError):
+        store.write([sample_bar()], manifest())
+
+    assert target.read_bytes() == persisted
+
+
 def test_parquet_store_rejects_row_data_version_drift(tmp_path):
     store = ParquetBarStore(tmp_path)
     bar = Bar(

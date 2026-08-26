@@ -5,6 +5,7 @@ from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from hashlib import sha256
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
@@ -60,24 +61,30 @@ class ParquetBarStore:
             raise DatasetIntegrityError(
                 "dataset failed quality gate: " + ",".join(issue.code for issue in issues)
             )
-        dataset_dir.mkdir(parents=True, exist_ok=False)
-        target = dataset_dir / "bars.parquet"
-        table = pa.table(
-            {
-                "symbol": [bar.symbol for bar in bars],
-                "exchange": [bar.exchange for bar in bars],
-                "timestamp": [bar.timestamp.astimezone(UTC).isoformat() for bar in bars],
-                "trading_day": [bar.trading_day for bar in bars],
-                "open": [str(bar.open) for bar in bars],
-                "high": [str(bar.high) for bar in bars],
-                "low": [str(bar.low) for bar in bars],
-                "close": [str(bar.close) for bar in bars],
-                "volume": [str(bar.volume) for bar in bars],
-                "data_version": [manifest.data_version] * len(bars),
-            }
-        )
-        pq.write_table(table, target, compression="zstd")
-        checksum = sha256(target.read_bytes()).hexdigest()
+        self._root.mkdir(parents=True, exist_ok=True)
+        if dataset_dir.exists():
+            raise FileExistsError(dataset_dir)
+        with TemporaryDirectory(prefix=".qtrade-write-", dir=self._root) as staging:
+            target = Path(staging) / "bars.parquet"
+            table = pa.table(
+                {
+                    "symbol": [bar.symbol for bar in bars],
+                    "exchange": [bar.exchange for bar in bars],
+                    "timestamp": [
+                        bar.timestamp.astimezone(UTC).isoformat() for bar in bars
+                    ],
+                    "trading_day": [bar.trading_day for bar in bars],
+                    "open": [str(bar.open) for bar in bars],
+                    "high": [str(bar.high) for bar in bars],
+                    "low": [str(bar.low) for bar in bars],
+                    "close": [str(bar.close) for bar in bars],
+                    "volume": [str(bar.volume) for bar in bars],
+                    "data_version": [manifest.data_version] * len(bars),
+                }
+            )
+            pq.write_table(table, target, compression="zstd")
+            checksum = sha256(target.read_bytes()).hexdigest()
+            Path(staging).rename(dataset_dir)
         return replace(manifest, checksum=checksum, quality_status=QualityStatus.PASSED)
 
     def read(self, manifest: DataManifest, *, symbol: str | None = None) -> list[Bar]:
