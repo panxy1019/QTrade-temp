@@ -58,8 +58,8 @@ def test_forward_source_coverage_accepts_packaged_diagnostic() -> None:
     )
 
     assert verified == report
-    assert verified["ready_symbol_count"] == 74
-    assert verified["incomplete_symbol_count"] == 1
+    assert verified["ready_symbol_count"] == 75
+    assert verified["incomplete_symbol_count"] == 0
     assert verified["enters_forward_metrics"] is False
     assert verified["external_order_transmission"] is False
 
@@ -76,10 +76,10 @@ def test_forward_source_coverage_accepts_packaged_history() -> None:
     )
 
     assert verified is not None
-    assert verified["checkpoint_count"] == 5
+    assert verified["checkpoint_count"] == 6
     assert verified["all_checkpoints_monotonic"] is True
-    assert verified["checkpoints"][-1]["ready_symbol_count"] == 74
-    assert verified["checkpoints"][-1]["ready_symbol_count_delta"] == 5
+    assert verified["checkpoints"][-1]["ready_symbol_count"] == 75
+    assert verified["checkpoints"][-1]["ready_symbol_count_delta"] == 1
     assert verified["enters_forward_metrics"] is False
 
 
@@ -203,10 +203,10 @@ def test_forward_source_coverage_rejects_signed_inconsistent_symbol_reason(
     report, dataset, preregistration = _inputs()
     tampered = deepcopy(report)
     coverage = tampered["coverage"]
-    assert isinstance(coverage, list)
-    row = next(value for value in coverage if value.get("ready") is False)
+    assert isinstance(coverage, list) and isinstance(coverage[0], dict)
+    row = coverage[0]
     assert isinstance(row, dict)
-    row["reasons"] = []
+    row["reasons"] = ["TARGET_SESSION_INCOMPLETE"]
     target = tmp_path / "report.json"
     _write_signed(target, tampered)
 

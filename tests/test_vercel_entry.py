@@ -108,17 +108,17 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert coverage["classification"] == (
         "SOURCE_COVERAGE_DIAGNOSTIC_NOT_FORWARD_EVIDENCE"
     )
-    assert coverage["target_complete_symbol_count"] == 74
-    assert coverage["ready_symbol_count"] == 74
-    assert coverage["incomplete_symbol_count"] == 1
-    assert coverage["ready_for_formal_collection"] is False
+    assert coverage["target_complete_symbol_count"] == 75
+    assert coverage["ready_symbol_count"] == 75
+    assert coverage["incomplete_symbol_count"] == 0
+    assert coverage["ready_for_formal_collection"] is True
     assert coverage["enters_forward_metrics"] is False
     assert coverage["external_order_transmission"] is False
     coverage_history = client.get(_api("/forward-source-coverage-history")).json()
-    assert coverage_history["checkpoint_count"] == 5
+    assert coverage_history["checkpoint_count"] == 6
     assert coverage_history["all_checkpoints_monotonic"] is True
-    assert coverage_history["checkpoints"][-1]["ready_symbol_count"] == 74
-    assert coverage_history["checkpoints"][-1]["ready_symbol_count_delta"] == 5
+    assert coverage_history["checkpoints"][-1]["ready_symbol_count"] == 75
+    assert coverage_history["checkpoints"][-1]["ready_symbol_count_delta"] == 1
     assert coverage_history["enters_forward_metrics"] is False
     assert coverage_history["external_order_transmission"] is False
     public_audit = client.get(_api("/public-minute-audit")).json()
