@@ -267,7 +267,9 @@ point-in-time result. A pre-open run correctly contains zero same-day bars. The
 probe is intentionally a free historical-source observation, not a streaming
 subscription: it never sets realtime/PAPER readiness, mutates strategy state or
 sends an external order. The report can be refreshed after the market opens to
-show only finalized same-day bars while preserving that boundary.
+show only finalized same-day bars while preserving that boundary. Its signed
+evidence also records the 15-symbol request window and the maximum age of each
+symbol's latest same-day finalized bar so source delay stays visible.
 
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and

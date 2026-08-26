@@ -792,6 +792,9 @@ export interface IntradayObservationReport {
   same_day_symbol_count: number
   synchronized_finalized_timestamp_count: number
   latest_synchronized_finalized_timestamp: string | null
+  source_request_window_seconds?: number
+  all_symbols_same_day_coverage?: boolean
+  maximum_same_day_latest_age_seconds?: number | null
   finalization_guard_seconds?: number
   observations: Array<{
     symbol: string
@@ -805,6 +808,7 @@ export interface IntradayObservationReport {
     latest_observed_timestamp: string
     latest_finalized_timestamp: string
     same_day_finalized_bar_count: number
+    latest_same_day_finalized_age_seconds: number | null
     forming_or_uncertain_bar_excluded: boolean
     bars: Array<{
       symbol: string

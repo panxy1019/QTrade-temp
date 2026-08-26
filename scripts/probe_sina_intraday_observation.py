@@ -141,6 +141,7 @@ def main() -> int:
         same_day = tuple(bar for bar in finalized if bar.trading_day == today)
         latest_observed = bars[-1]
         latest_finalized = finalized[-1] if finalized else None
+        latest_same_day = same_day[-1] if same_day else None
         return {
             **instrument,
             "observed_at": observed_at.isoformat(),
@@ -153,6 +154,11 @@ def main() -> int:
                 else None
             ),
             "same_day_finalized_bar_count": len(same_day),
+            "latest_same_day_finalized_age_seconds": (
+                round((observed_at - latest_same_day.timestamp).total_seconds(), 3)
+                if latest_same_day is not None
+                else None
+            ),
             "forming_or_uncertain_bar_excluded": (
                 latest_finalized is None
                 or latest_observed.timestamp > latest_finalized.timestamp
@@ -169,8 +175,13 @@ def main() -> int:
         if row["bars"]
     ]
     synchronized = sorted(set.intersection(*timestamp_sets)) if timestamp_sets else []
+    same_day_ages = [
+        float(row["latest_same_day_finalized_age_seconds"])
+        for row in observations
+        if row["latest_same_day_finalized_age_seconds"] is not None
+    ]
     unsigned: dict[str, Any] = {
-        "schema_version": 1,
+        "schema_version": 2,
         "classification": (
             "FREE_HISTORICAL_SOURCE_INTRADAY_OBSERVATION_NOT_REALTIME_ELIGIBLE"
         ),
@@ -189,6 +200,15 @@ def main() -> int:
         "synchronized_finalized_timestamp_count": len(synchronized),
         "latest_synchronized_finalized_timestamp": (
             synchronized[-1] if synchronized else None
+        ),
+        "source_request_window_seconds": round(
+            (completed_at - started_at).total_seconds(), 3
+        ),
+        "all_symbols_same_day_coverage": all(
+            row["same_day_finalized_bar_count"] > 0 for row in observations
+        ),
+        "maximum_same_day_latest_age_seconds": (
+            max(same_day_ages) if same_day_ages else None
         ),
         "finalization_guard_seconds": args.finalization_guard_seconds,
         "observations": observations,

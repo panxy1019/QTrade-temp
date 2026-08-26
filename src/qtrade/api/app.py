@@ -4475,7 +4475,7 @@ def _load_verified_intraday_observation(
         if (
             not _is_sha256(digest)
             or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
-            or report.get("schema_version") != 1
+            or report.get("schema_version") != 2
             or report.get("classification")
             != "FREE_HISTORICAL_SOURCE_INTRADAY_OBSERVATION_NOT_REALTIME_ELIGIBLE"
             or report.get("provider")
@@ -4501,6 +4501,7 @@ def _load_verified_intraday_observation(
         ):
             return None
         same_day_count = 0
+        same_day_ages: list[float] = []
         timestamp_sets: list[set[str]] = []
         allowed_times = set(SINA_COMPLETE_SESSION_TIMES)
         report_day = completed_at.astimezone(ZoneInfo("Asia/Shanghai")).date()
@@ -4515,6 +4516,9 @@ def _load_verified_intraday_observation(
                 str(observation.get("latest_finalized_timestamp"))
             )
             bars = observation.get("bars")
+            latest_same_day_age = observation.get(
+                "latest_same_day_finalized_age_seconds"
+            )
             observed_identity = (
                 observation.get("symbol"),
                 observation.get("name"),
@@ -4575,12 +4579,41 @@ def _load_verified_intraday_observation(
                 same_day_count += 1
                 if previous != latest_finalized:
                     return None
+                expected_age = round((observed_at - latest_finalized).total_seconds(), 3)
+                if (
+                    not isinstance(latest_same_day_age, (int, float))
+                    or isinstance(latest_same_day_age, bool)
+                    or not isfinite(float(latest_same_day_age))
+                    or not isclose(
+                        float(latest_same_day_age), expected_age, abs_tol=0.001
+                    )
+                ):
+                    return None
+                same_day_ages.append(float(latest_same_day_age))
                 timestamp_sets.append(observed_timestamps)
+            elif latest_same_day_age is not None:
+                return None
         synchronized = (
             sorted(set.intersection(*timestamp_sets)) if timestamp_sets else []
         )
+        request_window_seconds = report.get("source_request_window_seconds")
+        expected_request_window = round(
+            (completed_at - started_at).total_seconds(), 3
+        )
         if (
             report.get("same_day_symbol_count") != same_day_count
+            or report.get("all_symbols_same_day_coverage")
+            is not (same_day_count == len(expected))
+            or not isinstance(request_window_seconds, (int, float))
+            or isinstance(request_window_seconds, bool)
+            or not isfinite(float(request_window_seconds))
+            or not isclose(
+                float(request_window_seconds),
+                expected_request_window,
+                abs_tol=0.001,
+            )
+            or report.get("maximum_same_day_latest_age_seconds")
+            != (max(same_day_ages) if same_day_ages else None)
             or report.get("synchronized_finalized_timestamp_count")
             != len(synchronized)
             or report.get("latest_synchronized_finalized_timestamp")
