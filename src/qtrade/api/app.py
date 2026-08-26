@@ -42,10 +42,15 @@ from qtrade.monitoring import MetricsRegistry, render_prometheus_metrics
 from qtrade.oms import OrderManager
 from qtrade.research import (
     BacktestPreviewSpec,
+    IntradayFactorGroup,
+    IntradayFactorResearchResult,
     MinuteBacktestResult,
     MinuteCurveMetrics,
+    OpeningTripleBullishSpec,
+    PerformanceMetrics,
     run_backtest_preview,
     run_minute_overlay_backtest,
+    run_opening_triple_bullish_research,
 )
 from qtrade.risk import RiskEngine, RiskLimits
 from qtrade.runtime import MinuteOverlayPolicy
@@ -57,6 +62,8 @@ _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
 _MAX_HISTORICAL_SERIES_ROWS = 2000
 _MAX_BACKTEST_PREVIEW_SOURCE_ROWS = 250_000
 _MAX_SINGLE_STOCK_BACKTEST_SESSIONS = 120
+_MIN_INTRADAY_FACTOR_SESSIONS = 20
+_MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -124,6 +131,18 @@ class SingleStockFiveMinuteBacktestRequest(BaseModel):
     maximum_intraday_drawdown: Decimal = Decimal("0.04")
     reduction_multiplier: Decimal = Decimal("0.98")
     cooldown_bars: StrictInt = 6
+
+
+class IntradayFactorBacktestRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    factor: Literal["opening_three_ten_minute_bullish"] = (
+        "opening_three_ten_minute_bullish"
+    )
+    start: date
+    end: date
+    cost_bps: Decimal = Decimal("5")
+    minimum_body_return_bps: Decimal = Decimal("0")
 
 
 @dataclass(frozen=True, slots=True)
@@ -1274,6 +1293,113 @@ def create_app(
                 available_trading_days=trading_days,
                 verified_universe_symbol_count=len(eligible_symbols),
                 instrument=instrument,
+            )
+        except (ArithmeticError, RuntimeError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @app.post("/intraday-factor-backtest")
+    def intraday_factor_backtest(
+        payload: IntradayFactorBacktestRequest,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        try:
+            spec = OpeningTripleBullishSpec(
+                cost_bps=payload.cost_bps,
+                minimum_body_return_bps=payload.minimum_body_return_bps,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        if dataset is None:
+            raise HTTPException(
+                status_code=409,
+                detail="verified long five-minute dataset unavailable",
+            )
+        trading_days = cast(list[str], dataset["trading_days"])
+        start_text = payload.start.isoformat()
+        end_text = payload.end.isoformat()
+        if start_text not in trading_days or end_text not in trading_days:
+            raise HTTPException(
+                status_code=422,
+                detail="factor boundaries must be verified trading sessions",
+            )
+        start_index = trading_days.index(start_text)
+        end_index = trading_days.index(end_text)
+        if start_index > end_index:
+            raise HTTPException(
+                status_code=422,
+                detail="factor research start cannot follow end",
+            )
+        if end_index + 1 >= len(trading_days):
+            raise HTTPException(
+                status_code=422,
+                detail="factor research requires a next verified trading session",
+            )
+        selected_session_count = end_index - start_index + 1
+        if selected_session_count < _MIN_INTRADAY_FACTOR_SESSIONS:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "intraday factor research requires at least "
+                    f"{_MIN_INTRADAY_FACTOR_SESSIONS} sessions"
+                ),
+            )
+        if selected_session_count > _MAX_INTRADAY_FACTOR_SESSIONS:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "intraday factor research is limited to "
+                    f"{_MAX_INTRADAY_FACTOR_SESSIONS} sessions"
+                ),
+            )
+        instruments = cast(list[dict[str, object]], dataset["instruments"])
+        stock_instruments = [
+            item for item in instruments if item.get("instrument_type") == "STOCK"
+        ]
+        sectors = {
+            cast(str, item["symbol"]): (
+                cast(str, item["sector_code"]),
+                cast(str, item["sector_name"]),
+            )
+            for item in stock_instruments
+        }
+        required_trading_days = trading_days[start_index : end_index + 2]
+        bars = _load_intraday_factor_bars(
+            state.long_five_minute_manifest_path,
+            trading_days=required_trading_days,
+            symbols=sorted(sectors),
+            data_version=str(dataset["data_version"]),
+            expected_checksum=str(dataset["checksum"]),
+            expected_bar_count=cast(int, dataset["bar_count"]),
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        if bars is None:
+            raise HTTPException(
+                status_code=409,
+                detail="verified intraday factor source bars failed validation",
+            )
+        try:
+            result = run_opening_triple_bullish_research(
+                bars,
+                sectors=sectors,
+                start=payload.start,
+                end=payload.end,
+                spec=spec,
+            )
+            return _intraday_factor_preview(
+                payload=payload,
+                result=result,
+                dataset=dataset,
+                required_trading_days=required_trading_days,
+                source_bar_count=len(bars),
             )
         except (ArithmeticError, RuntimeError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -7859,6 +7985,336 @@ def _single_stock_five_minute_preview(
         "real_data_paper_readiness": False,
         "state_mutation": False,
         "external_order_transmission": False,
+    }
+    canonical = json.dumps(
+        unsigned,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return {
+        **unsigned,
+        "preview_hash": sha256(canonical.encode("utf-8")).hexdigest(),
+    }
+
+
+def _load_intraday_factor_bars(
+    manifest_path: Path | None,
+    *,
+    trading_days: list[str],
+    symbols: list[str],
+    data_version: str,
+    expected_checksum: str,
+    expected_bar_count: int,
+    expected_times: tuple[datetime_time, ...],
+) -> list[Bar] | None:
+    if (
+        manifest_path is None
+        or not trading_days
+        or not symbols
+        or trading_days != sorted(trading_days)
+        or symbols != sorted(symbols)
+        or len(set(trading_days)) != len(trading_days)
+        or len(set(symbols)) != len(symbols)
+    ):
+        return None
+    try:
+        content = _read_verified_market_parquet_content(
+            manifest_path,
+            expected_checksum=expected_checksum,
+            expected_bar_count=expected_bar_count,
+        )
+        if content is None:
+            return None
+        columns = [
+            "symbol",
+            "exchange",
+            "timestamp",
+            "trading_day",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "data_version",
+        ]
+        first_day = date.fromisoformat(trading_days[0])
+        last_day = date.fromisoformat(trading_days[-1])
+        table = pq.read_table(
+            pa.BufferReader(content),
+            columns=columns,
+            filters=[
+                ("trading_day", ">=", first_day),
+                ("trading_day", "<=", last_day),
+            ],
+        )
+        expected_rows = len(trading_days) * len(symbols) * len(expected_times)
+        if table.num_rows != expected_rows:
+            return None
+        allowed = set(symbols)
+        allowed_days = set(trading_days)
+        bars: list[Bar] = []
+        observed_times: defaultdict[
+            tuple[str, str], list[datetime_time]
+        ] = defaultdict(list)
+        for raw in table.to_pylist():
+            validated = _validated_historical_bar(raw, data_version, allowed)
+            if validated is None:
+                return None
+            candidate, instant = validated
+            symbol = candidate["symbol"]
+            trading_day = candidate["trading_day"]
+            if trading_day not in allowed_days:
+                return None
+            observed_times[(symbol, trading_day)].append(
+                instant.astimezone(ZoneInfo("Asia/Shanghai")).time()
+            )
+            bars.append(
+                Bar(
+                    symbol=symbol,
+                    exchange=candidate["exchange"],
+                    timestamp=instant,
+                    trading_day=date.fromisoformat(trading_day),
+                    open=Decimal(candidate["open"]),
+                    high=Decimal(candidate["high"]),
+                    low=Decimal(candidate["low"]),
+                    close=Decimal(candidate["close"]),
+                    volume=Decimal(candidate["volume"]),
+                )
+            )
+        expected_keys = {
+            (symbol, trading_day)
+            for symbol in symbols
+            for trading_day in trading_days
+        }
+        if set(observed_times) != expected_keys or any(
+            tuple(observed_times[key]) != expected_times for key in expected_keys
+        ):
+            return None
+        bars.sort(key=lambda item: (item.symbol, item.trading_day, item.timestamp))
+        return bars
+    except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
+        return None
+
+
+def _performance_metrics_payload(metrics: PerformanceMetrics) -> dict[str, object]:
+    return {
+        key: value if isinstance(value, int) else str(value)
+        for key, value in asdict(metrics).items()
+    }
+
+
+def _intraday_group_payload(group: IntradayFactorGroup) -> dict[str, object]:
+    return {
+        "group_id": group.group_id,
+        "group_name": group.group_name,
+        "observation_count": group.observation_count,
+        "signal_count": group.signal_count,
+        "mean_signal_forward_return": str(group.mean_signal_forward_return),
+        "signal_hit_rate": str(group.signal_hit_rate),
+        "strategy_metrics": _performance_metrics_payload(group.strategy_metrics),
+        "benchmark_metrics": _performance_metrics_payload(group.benchmark_metrics),
+    }
+
+
+def _intraday_factor_preview(
+    *,
+    payload: IntradayFactorBacktestRequest,
+    result: IntradayFactorResearchResult,
+    dataset: dict[str, object],
+    required_trading_days: list[str],
+    source_bar_count: int,
+) -> dict[str, object]:
+    criteria = dict(result.research_gate.criteria)
+    validation_keys = (
+        "minimum_observation_count",
+        "minimum_signal_count",
+        "positive_mean_signal_return",
+        "positive_conditional_excess_return",
+        "positive_rank_ic",
+        "positive_sector_ratio_at_least_60pct",
+    )
+    factor_validation_passed = all(criteria[key] for key in validation_keys)
+    correlation_passed = criteria[
+        "maximum_absolute_factor_correlation_below_0_90"
+    ]
+    backtest_passed = (
+        criteria["base_cost_total_return_positive"]
+        and criteria["base_cost_excess_return_positive"]
+    )
+    factor_metrics = result.factor_metrics
+    event = result.event_summary
+    workflow = [
+        {
+            "id": "FACTOR_DEFINITION",
+            "status": "AVAILABLE",
+            "detail": "Exact expression and data contract are fixed for this run.",
+        },
+        {
+            "id": "FACTOR_VALIDATION",
+            "status": "PASSED" if factor_validation_passed else "FAILED",
+            "detail": "Cross-sectional IC and conditional event tests completed.",
+        },
+        {
+            "id": "CORRELATION_VALIDATION",
+            "status": "PASSED" if correlation_passed else "FAILED",
+            "detail": "Redundancy checks against related opening features completed.",
+        },
+        {
+            "id": "STRATEGY_CONSTRUCTION",
+            "status": "AVAILABLE",
+            "detail": "Entry, exit, sizing, cost and benchmark rules are explicit.",
+        },
+        {
+            "id": "CAUSAL_BACKTEST",
+            "status": "PASSED" if backtest_passed else "FAILED",
+            "detail": "75-stock and 15-sector causal replay completed.",
+        },
+        {
+            "id": "PAPER",
+            "status": "NOT_ELIGIBLE",
+            "detail": "No authorized forward realtime observation is attached.",
+        },
+        {
+            "id": "LIVE",
+            "status": "DISABLED",
+            "detail": "Separate explicit user authorization is required.",
+        },
+    ]
+    unsigned: dict[str, object] = {
+        "classification": "AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT",
+        "factor_definition": {
+            "factor_id": result.factor_id,
+            "name": "09:30 起三根十分钟阳线",
+            "expression": (
+                "bullish_10m_0930_0940 AND bullish_10m_0940_0950 "
+                "AND bullish_10m_0950_1000"
+            ),
+            "source_interval": "NATIVE_5M_AGGREGATED_TO_10M",
+            "source_timestamp_convention": "BAR_END_TIME",
+            "source_bars": "09:35,09:40,09:45,09:50,09:55,10:00",
+            "known_at": "10:00_BAR_CLOSE",
+            "minimum_body_return_bps": str(payload.minimum_body_return_bps),
+        },
+        "parameters": {
+            "factor": payload.factor,
+            "start": payload.start.isoformat(),
+            "end": payload.end.isoformat(),
+            "cost_bps": str(payload.cost_bps),
+            "minimum_body_return_bps": str(payload.minimum_body_return_bps),
+        },
+        "workflow": workflow,
+        "factor_validation": {
+            "number_of_periods": factor_metrics.number_of_periods,
+            "minimum_instruments": factor_metrics.minimum_instruments,
+            "ic": str(factor_metrics.ic),
+            "rank_ic": str(factor_metrics.rank_ic),
+            "icir": str(factor_metrics.icir),
+            "quantile_returns": [str(value) for value in factor_metrics.quantile_returns],
+            "factor_turnover": str(factor_metrics.factor_turnover),
+            "long_short_spread": str(factor_metrics.long_short_spread),
+            "passed": factor_validation_passed,
+        },
+        "event_summary": {
+            "observation_count": event.observation_count,
+            "signal_count": event.signal_count,
+            "signal_rate": str(event.signal_rate),
+            "mean_signal_forward_return": str(event.mean_signal_forward_return),
+            "mean_universe_forward_return": str(event.mean_universe_forward_return),
+            "conditional_excess_return": str(event.conditional_excess_return),
+            "signal_hit_rate": str(event.signal_hit_rate),
+            "positive_sector_count": event.positive_sector_count,
+            "sector_count": event.sector_count,
+        },
+        "correlation_validation": {
+            "correlations": {
+                key: str(value) for key, value in result.correlations.items()
+            },
+            "maximum_absolute_correlation": "0.90",
+            "passed": correlation_passed,
+        },
+        "strategy": {
+            "entry_rule": "NEXT_5M_OPEN_10_05",
+            "exit_rule": "NEXT_SESSION_OPEN_T_PLUS_ONE",
+            "entry_price_source": (
+                "OPEN_OF_BAR_LABELLED_10_05_INTERVAL_START_10_00"
+            ),
+            "exit_price_source": (
+                "OPEN_OF_NEXT_SESSION_BAR_LABELLED_09_35_INTERVAL_START_09_30"
+            ),
+            "position_rule": "EQUAL_WEIGHT_TRIGGERED_STOCKS_ELSE_CASH",
+            "benchmark_rule": "EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_HORIZON",
+            "single_side_cost_bps": str(payload.cost_bps),
+            "t_plus_one_compliant": True,
+        },
+        "backtest": {
+            "strategy_metrics": _performance_metrics_payload(
+                result.strategy_metrics
+            ),
+            "benchmark_metrics": _performance_metrics_payload(
+                result.benchmark_metrics
+            ),
+            "cost_stress": {
+                str(cost): {
+                    "strategy_metrics": _performance_metrics_payload(
+                        stress.strategy_metrics
+                    ),
+                    "benchmark_metrics": _performance_metrics_payload(
+                        stress.benchmark_metrics
+                    ),
+                }
+                for cost, stress in result.cost_stress.items()
+            },
+            "curve": [
+                {
+                    "trading_day": item.trading_day.isoformat(),
+                    "signal_count": item.signal_count,
+                    "eligible_symbol_count": item.eligible_symbol_count,
+                    "strategy_return": str(item.strategy_return),
+                    "benchmark_return": str(item.benchmark_return),
+                    "strategy_equity": str(item.strategy_equity),
+                    "benchmark_equity": str(item.benchmark_equity),
+                    "excess_equity": str(item.excess_equity),
+                }
+                for item in result.daily
+            ],
+            "sectors": [_intraday_group_payload(item) for item in result.sectors],
+            "symbols": [_intraday_group_payload(item) for item in result.symbols],
+            "passed": backtest_passed,
+        },
+        "research_gate": {
+            "passed": result.research_gate.passed,
+            "criteria": criteria,
+        },
+        "causal_contract": dict(result.causal_contract),
+        "l2_factor_readiness": {
+            "factor_id": "order-book-buying-intensity-v1",
+            "formula": (
+                "(bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5)"
+            ),
+            "required_data": "AUTHORIZED_L2_FIVE_LEVEL_ORDER_BOOK",
+            "readiness": "UNCONFIGURED",
+            "reason": "NO_AUTHORIZED_L2_PROVIDER",
+            "derived_from_ohlcv": False,
+        },
+        "data_version": dataset["data_version"],
+        "dataset_checksum": dataset["checksum"],
+        "data_interval": "5m",
+        "selected_trading_days": required_trading_days[:-1],
+        "exit_completion_day": required_trading_days[-1],
+        "selected_session_count": result.selected_session_count,
+        "source_bar_count": source_bar_count,
+        "symbol_count": result.symbol_count,
+        "sector_count": result.sector_count,
+        "point_in_time": False,
+        "future_adjustment_knowledge_possible": True,
+        "realtime_readiness": False,
+        "promotion": result.promotion,
+        "promotion_reasons": list(result.promotion_reasons),
+        "paper_readiness": "NOT_ELIGIBLE",
+        "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
+        "state_mutation": result.state_mutation,
+        "external_order_transmission": result.external_order_transmission,
     }
     canonical = json.dumps(
         unsigned,

@@ -232,6 +232,25 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert single_stock.json()["promotion"] == "NOT_ELIGIBLE"
     assert single_stock.json()["state_mutation"] is False
     assert single_stock.json()["external_order_transmission"] is False
+    intraday_factor = client.post(
+        _api("/intraday-factor-backtest"),
+        json={
+            "factor": "opening_three_ten_minute_bullish",
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+            "cost_bps": 5,
+        },
+    )
+    assert intraday_factor.status_code == 200
+    assert intraday_factor.json()["event_summary"]["signal_count"] == 192
+    assert intraday_factor.json()["research_gate"]["passed"] is False
+    assert intraday_factor.json()["promotion"] == "NOT_ELIGIBLE"
+    assert intraday_factor.json()["paper_readiness"] == "NOT_ELIGIBLE"
+    assert intraday_factor.json()["live_readiness"] == (
+        "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION"
+    )
+    assert intraday_factor.json()["state_mutation"] is False
+    assert intraday_factor.json()["external_order_transmission"] is False
 
     blocked = client.post(_api("/system/kill"), json={"reason": "must stay disabled"})
     assert blocked.status_code == 503

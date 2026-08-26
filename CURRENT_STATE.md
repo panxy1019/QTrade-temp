@@ -26,12 +26,12 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 422 tests passed, Ruff clean, strict mypy clean across
-  97 checked source files on Python 3.12.13
-  (macOS, 2026-08-26); 51 frontend Vitest
+- Acceptance evidence: 433 tests passed, Ruff clean, strict mypy clean across
+  98 checked source files on Python 3.12.13
+  (macOS, 2026-08-26); 53 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 428.88 KB with no large-chunk warning.
+  minified JavaScript asset at or below 429.02 KB with no large-chunk warning.
   GitHub CI grants only read access to repository contents and pins the official
   Node 24 checkout/setup-python actions to their verified v7 release commits.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -216,6 +216,18 @@ Last updated: 2026-08-26
   diagnostics. The backtest page exposes the complete selector and JSON export;
   QFQ/non-PIT, ad-hoc, `NOT_ELIGIBLE`, stateless and external-order-disabled
   boundaries are part of the response and UI.
+- Intraday factor workflow: `POST /intraday-factor-backtest` and the research
+  page now connect factor definition, effectiveness and related-feature
+  correlation checks, strategy timing, causal replay, cost stress and explicit
+  PAPER/LIVE gates. The opening three-ten-minute-bullish rule runs on 75 stocks
+  across 15 sectors using exact 48-Bar native grids. It is known at the 10:00
+  close, uses the next Bar's open (Bar label 10:05, interval start 10:00), and
+  exits T+1 at the first Bar's open (label 09:35, interval start 09:30). The
+  disclosed 2026-07-28 through 2026-08-24 baseline triggered 192/1,500 stock-days
+  and lost 4.0840% after 5 bps per side; Sharpe was -3.3347 and maximum drawdown
+  -5.1038%. It failed the research gate and cannot enter PAPER. Five-level
+  order-book buying intensity remains `UNCONFIGURED` until an authorized L2
+  source exists; OHLCV is not used to fabricate bid/ask depth.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

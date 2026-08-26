@@ -1347,3 +1347,27 @@ Arrow schema before any daily, minute, selected-session or individual-stock
 reader receives the file. A regression writes a checksum-matching extra-column
 file and verifies rejection. This does not change the accepted production data,
 the frozen strategy engine or any realtime/PAPER readiness state.
+
+## ADR-090 — Intraday factor research uses next-Bar/T+1 pricing and cannot self-promote
+
+Status: accepted, 2026-08-26.
+
+The opening three-ten-minute-bullish hypothesis is evaluated on the signed
+75-stock BaoStock dataset rather than on a synthetic example or a single stock.
+The first six native five-minute Bars form three non-overlapping ten-minute
+intervals. The signal is unavailable until the Bar labelled `10:00` closes, so
+its entry uses the open of the next source Bar labelled `10:05`; because source
+timestamps label interval ends, that price belongs to the interval starting at
+`10:00`. A-share sellability is respected by exiting at the next trading
+session's first Bar open, labelled `09:35` and starting at `09:30`. Signal-Bar
+close execution and same-day exit are forbidden.
+
+Each ad-hoc request must use 20-120 consecutive verified sessions plus a complete
+next session, the exact 48-Bar grid, all 75 stock identities and all 15 frozen
+sector identities. The result reports factor, event, correlation, performance,
+cost, sector and stock evidence with a deterministic hash, but it never mutates
+state or transmits an order. Viewed current-universe QFQ history is not blind or
+point-in-time evidence, so even a passing retrospective run remains
+`NOT_ELIGIBLE` until a separately authorized and locked forward PAPER stage.
+Five-level order-book buying intensity cannot be computed without an authorized
+L2 bid/ask feed and must remain `UNCONFIGURED`; OHLCV substitution is prohibited.

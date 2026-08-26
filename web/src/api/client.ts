@@ -1,4 +1,4 @@
-import type { BacktestPreview, BacktestPreviewRequest, HistoricalBarSeries, MinuteBarSeries, PlatformSnapshot, SingleStockFiveMinuteBacktest, SingleStockFiveMinuteBacktestRequest } from '../types'
+import type { BacktestPreview, BacktestPreviewRequest, HistoricalBarSeries, IntradayFactorBacktest, IntradayFactorBacktestRequest, MinuteBarSeries, PlatformSnapshot, SingleStockFiveMinuteBacktest, SingleStockFiveMinuteBacktestRequest } from '../types'
 
 const API_BASE = import.meta.env.DEV || import.meta.env.MODE === 'vercel' ? '/api' : ''
 const MAX_CONCURRENT_GETS = 6
@@ -142,6 +142,10 @@ export function runBacktestPreview(payload: BacktestPreviewRequest): Promise<Bac
 
 export function runSingleStockFiveMinuteBacktest(payload: SingleStockFiveMinuteBacktestRequest): Promise<SingleStockFiveMinuteBacktest> {
   return postJson<SingleStockFiveMinuteBacktest>('/single-stock-five-minute-backtest', payload)
+}
+
+export function runIntradayFactorBacktest(payload: IntradayFactorBacktestRequest): Promise<IntradayFactorBacktest> {
+  return postJson<IntradayFactorBacktest>('/intraday-factor-backtest', payload)
 }
 
 export type RuntimeControlAction = 'recover' | 'start' | 'pause' | 'resume' | 'stop' | 'kill'

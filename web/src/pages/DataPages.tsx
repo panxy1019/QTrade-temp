@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { HistoricalBarSeries, IntradayDirectionalBreadth, MinuteBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
 import { StatusTag } from '../components/StatusTag'
 import { BacktestLab } from '../components/BacktestLab'
+import { IntradayFactorResearchLab } from '../components/IntradayFactorResearchLab'
 import { SingleStockFiveMinuteBacktestLab } from '../components/SingleStockFiveMinuteBacktestLab'
 import { EquityChart } from '../charts/EquityChart'
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
@@ -387,6 +388,7 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const forwardObservation = data?.forwardObservation
   const forwardSourceCoverage = data?.forwardSourceCoverage
   const forwardSourceCoverageHistory = data?.forwardSourceCoverageHistory
+  const longFiveMinuteDataset = data?.longFiveMinuteResearch?.minute_dataset ?? null
   const forwardSourceIncompleteRows = forwardSourceCoverage?.coverage.filter((row) => !row.ready) ?? []
   const forwardSourceCoverageCheckpoints = forwardSourceCoverageHistory?.checkpoints ?? []
   const forwardGateRows = forwardObservation?.gates.length
@@ -422,6 +424,7 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const sectorRows = stockTransfer?.sector_only ?? []
   const leaveOneRows = stockTransfer?.leave_one_sector_out ?? []
   return <Page title="策略研究" subtitle="实验候选、独立样本外证据与晋级边界">
+    <IntradayFactorResearchLab key={longFiveMinuteDataset ? `intraday-factor:${longFiveMinuteDataset.data_version}:${longFiveMinuteDataset.checksum}` : 'no-intraday-factor-dataset'} dataset={longFiveMinuteDataset} />
     <Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} />
     <JsonExportButton filename="qtrade-verified-research-evidence.json" value={{ factorSearch, robustFactorSearch, stockTransfer, developmentSearch, forwardObservation, forwardSourceCoverage, forwardSourceCoverageHistory, walkForward, robustness }} label="导出全部研究证据" />
     <Card><Tabs items={[

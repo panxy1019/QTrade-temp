@@ -503,6 +503,159 @@ export interface SingleStockFiveMinuteBacktest {
   preview_hash: string
 }
 
+export interface IntradayFactorBacktestRequest {
+  factor: 'opening_three_ten_minute_bullish'
+  start: string
+  end: string
+  cost_bps: string
+  minimum_body_return_bps: string
+}
+
+export interface IntradayPerformanceMetrics {
+  total_return: string
+  annualized_return: string
+  annualized_volatility: string
+  sharpe: string
+  sortino: string
+  maximum_drawdown: string
+  calmar: string
+  win_rate: string
+  benchmark_return: string
+  excess_return: string
+  information_ratio: string
+  number_of_periods: number
+  turnover: string
+  profit_loss_ratio: string
+  exposure: string
+  number_of_trades: number
+  transaction_costs: string
+}
+
+export interface IntradayFactorGroup {
+  group_id: string
+  group_name: string
+  observation_count: number
+  signal_count: number
+  mean_signal_forward_return: string
+  signal_hit_rate: string
+  strategy_metrics: IntradayPerformanceMetrics
+  benchmark_metrics: IntradayPerformanceMetrics
+}
+
+export interface IntradayFactorBacktest {
+  classification: 'AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT'
+  factor_definition: {
+    factor_id: string
+    name: string
+    expression: string
+    source_interval: string
+    source_timestamp_convention: 'BAR_END_TIME'
+    source_bars: string
+    known_at: string
+    minimum_body_return_bps: string
+  }
+  parameters: IntradayFactorBacktestRequest
+  workflow: Array<{ id: string; status: string; detail: string }>
+  factor_validation: {
+    number_of_periods: number
+    minimum_instruments: number
+    ic: string
+    rank_ic: string
+    icir: string
+    quantile_returns: string[]
+    factor_turnover: string
+    long_short_spread: string
+    passed: boolean
+  }
+  event_summary: {
+    observation_count: number
+    signal_count: number
+    signal_rate: string
+    mean_signal_forward_return: string
+    mean_universe_forward_return: string
+    conditional_excess_return: string
+    signal_hit_rate: string
+    positive_sector_count: number
+    sector_count: number
+  }
+  correlation_validation: {
+    correlations: Record<string, string>
+    maximum_absolute_correlation: string
+    passed: boolean
+  }
+  strategy: {
+    entry_rule: string
+    exit_rule: string
+    entry_price_source: string
+    exit_price_source: string
+    position_rule: string
+    benchmark_rule: string
+    single_side_cost_bps: string
+    t_plus_one_compliant: true
+  }
+  backtest: {
+    strategy_metrics: IntradayPerformanceMetrics
+    benchmark_metrics: IntradayPerformanceMetrics
+    cost_stress: Record<string, {
+      strategy_metrics: IntradayPerformanceMetrics
+      benchmark_metrics: IntradayPerformanceMetrics
+    }>
+    curve: Array<{
+      trading_day: string
+      signal_count: number
+      eligible_symbol_count: number
+      strategy_return: string
+      benchmark_return: string
+      strategy_equity: string
+      benchmark_equity: string
+      excess_equity: string
+    }>
+    sectors: IntradayFactorGroup[]
+    symbols: IntradayFactorGroup[]
+    passed: boolean
+  }
+  research_gate: { passed: boolean; criteria: Record<string, boolean> }
+  causal_contract: {
+    factor_known_at: string
+    entry_at: string
+    exit_at: string
+    source_bar_timestamp_convention: 'BAR_END_TIME'
+    entry_bar_label: '10_05'
+    entry_interval_start: '10_00'
+    exit_bar_label: 'NEXT_SESSION_09_35'
+    exit_interval_start: 'NEXT_SESSION_09_30'
+    same_bar_execution: false
+    t_plus_one_compliant: true
+  }
+  l2_factor_readiness: {
+    factor_id: string
+    formula: string
+    required_data: string
+    readiness: 'UNCONFIGURED'
+    reason: string
+    derived_from_ohlcv: false
+  }
+  data_version: string
+  dataset_checksum: string
+  data_interval: '5m'
+  selected_trading_days: string[]
+  exit_completion_day: string
+  selected_session_count: number
+  source_bar_count: number
+  symbol_count: number
+  sector_count: number
+  point_in_time: false
+  future_adjustment_knowledge_possible: true
+  realtime_readiness: false
+  promotion: 'NOT_ELIGIBLE'
+  promotion_reasons: string[]
+  paper_readiness: 'NOT_ELIGIBLE'
+  live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION'
+  state_mutation: false
+  external_order_transmission: false
+  preview_hash: string
+}
+
 export interface HistoricalDataset {
   provider: string
   provider_version: string

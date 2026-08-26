@@ -244,6 +244,17 @@ explicit historical manifest path, so newly ingested versions can be evaluated
 without editing source. This usability path does not weaken immutable experiment,
 held-out or PAPER readiness gates.
 
+The intraday research surface now has one concrete end-to-end factor workflow.
+The opening three-ten-minute-bullish hypothesis is defined against native
+five-minute Bar intervals, checked cross-sectionally across 75 stocks and 15
+sectors, compared with related opening features, converted into an explicit
+next-Bar/T+1 equal-weight strategy, and replayed against a same-horizon benchmark
+under four cost levels. Its first 20-session result is negative and remains a
+rejected, current-universe/QFQ non-PIT hypothesis. Future tuning must use bounded
+development windows and a separately locked forward evaluation; the viewed
+window cannot be relabelled as blind confirmation. Order-book buying intensity
+is only a data contract until an authorized five-level L2 source is selected.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol
@@ -268,7 +279,7 @@ navigation and the explicit no-live boundary remain available during recovery.
 ECharts registers only the line, bar, candlestick and supporting components used
 by the product, while React and zrender are stable cache chunks; both production
 build modes complete without a chunk-size warning and keep the largest minified
-JavaScript asset at 426.92 KB.
+JavaScript asset at 429.02 KB.
 
 The factor-research path now predeclares five causal price factors, keeps every
 forward label inside the discovery period, bounds the active validation grid and

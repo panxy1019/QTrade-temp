@@ -242,6 +242,29 @@ deterministic result hash. The Chinese backtest page exposes the complete form
 and JSON export. Every result remains current-universe, QFQ/non-PIT,
 `NOT_ELIGIBLE`, stateless and unable to transmit an external order.
 
+`POST /intraday-factor-backtest` and the research-page minute factor workbench
+implement the explicit factor-to-strategy path for the opening three-ten-minute-
+bullish rule. Each request rereads the checksum- and schema-verified 75-stock,
+15-sector native five-minute dataset, pairs the first six provider Bars into the
+09:30-09:40, 09:40-09:50 and 09:50-10:00 intervals, and knows the factor only at
+the third interval close. BaoStock timestamps label interval ends: the entry
+price is the open of the next Bar labelled `10:05` (interval start `10:00`), and
+the A-share T+1 exit is the open of the next session's Bar labelled `09:35`
+(interval start `09:30`). The response includes IC/Rank IC/ICIR, related-feature
+correlations, conditional event returns, standard performance metrics, an
+equal-weight same-horizon benchmark, 0/5/10/20 bps cost stress, daily curves and
+all 15 sector/75 stock breakdowns.
+
+The first disclosed 20-session run from 2026-07-28 through 2026-08-24 produced
+192 signals across 1,500 stock-days. At 5 bps per side it returned `-4.0840%`,
+annualized `-40.8673%`, Sharpe `-3.3347` and maximum drawdown `-5.1038%`.
+It exceeded the falling same-horizon benchmark by `0.2544` percentage points,
+but mean signal return, conditional excess, Rank IC, sector breadth and absolute
+return gates failed. The workbench therefore reports the result as a rejected
+ad-hoc hypothesis, never as a strategy eligible for PAPER. The proposed five-
+level order-book buying-intensity factor remains `UNCONFIGURED`: authorized L2
+bid/ask sizes are required and are never synthesized from OHLCV.
+
 The public deployment can be audited independently across one stock from every
 sector and three widely separated sessions. The script runs the same 45 requests
 twice, verifies the dataset checksum, 48 unique bars, trading day, observation

@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import type { BacktestPreview, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
-import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runSingleStockFiveMinuteBacktest } from '../api/client'
+import type { BacktestPreview, IntradayFactorBacktest, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
+import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
 import { formatDirectionalDelta } from '../research/intradayDirectional'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
@@ -44,6 +44,7 @@ vi.mock('../api/client', () => ({
     ],
   })),
   runBacktestPreview: vi.fn(),
+  runIntradayFactorBacktest: vi.fn(),
   runSingleStockFiveMinuteBacktest: vi.fn(),
   controlRuntime: vi.fn(),
   cancelPaperOrder: vi.fn(),
@@ -1088,6 +1089,112 @@ describe('verified backtest analytics', () => {
 })
 
 describe('verified robustness evidence', () => {
+  it('runs the full intraday factor gate without promoting a losing rule', async () => {
+    const metrics = {
+      total_return: '-0.0408', annualized_return: '-0.4087', annualized_volatility: '0.1538',
+      sharpe: '-3.3347', sortino: '-4.2', maximum_drawdown: '-0.0510', calmar: '-8.0',
+      win_rate: '0.45', benchmark_return: '-0.0434', excess_return: '0.0025',
+      information_ratio: '0.292', number_of_periods: 20, turnover: '40',
+      profit_loss_ratio: '1.145', exposure: '1', number_of_trades: 192,
+      transaction_costs: '0.0199',
+    }
+    const group = {
+      group_id: '801780', group_name: '银行', observation_count: 100, signal_count: 10,
+      mean_signal_forward_return: '0.001', signal_hit_rate: '0.6',
+      strategy_metrics: metrics, benchmark_metrics: { ...metrics, excess_return: '0' },
+    }
+    const result = {
+      classification: 'AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT',
+      factor_definition: {
+        factor_id: 'opening-three-ten-minute-bullish-v1', name: '09:30 起三根十分钟阳线',
+        expression: 'bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000',
+        source_interval: 'NATIVE_5M_AGGREGATED_TO_10M', source_timestamp_convention: 'BAR_END_TIME', source_bars: '09:35,09:40,09:45,09:50,09:55,10:00',
+        known_at: '10:00_BAR_CLOSE', minimum_body_return_bps: '0',
+      },
+      parameters: { factor: 'opening_three_ten_minute_bullish', start: '2026-07-28', end: '2026-08-24', cost_bps: '5', minimum_body_return_bps: '0' },
+      workflow: [
+        { id: 'FACTOR_DEFINITION', status: 'AVAILABLE', detail: 'fixed' },
+        { id: 'FACTOR_VALIDATION', status: 'FAILED', detail: 'failed' },
+        { id: 'CORRELATION_VALIDATION', status: 'PASSED', detail: 'passed' },
+        { id: 'STRATEGY_CONSTRUCTION', status: 'AVAILABLE', detail: 'built' },
+        { id: 'CAUSAL_BACKTEST', status: 'FAILED', detail: 'failed' },
+        { id: 'PAPER', status: 'NOT_ELIGIBLE', detail: 'blocked' },
+        { id: 'LIVE', status: 'DISABLED', detail: 'blocked' },
+      ],
+      factor_validation: {
+        number_of_periods: 20, minimum_instruments: 75, ic: '0.0117', rank_ic: '-0.0030',
+        icir: '0.0711', quantile_returns: [], factor_turnover: '0.589',
+        long_short_spread: '0.001', passed: false,
+      },
+      event_summary: {
+        observation_count: 1500, signal_count: 192, signal_rate: '0.128',
+        mean_signal_forward_return: '-0.0013', mean_universe_forward_return: '-0.0012',
+        conditional_excess_return: '-0.0001', signal_hit_rate: '0.4167',
+        positive_sector_count: 8, sector_count: 15,
+      },
+      correlation_validation: {
+        correlations: { opening_30m_return: '0.4668', opening_30m_range_position: '0.4712' },
+        maximum_absolute_correlation: '0.90', passed: true,
+      },
+      strategy: {
+        entry_rule: 'NEXT_5M_OPEN_10_05', exit_rule: 'NEXT_SESSION_OPEN_T_PLUS_ONE',
+        entry_price_source: 'OPEN_OF_BAR_LABELLED_10_05_INTERVAL_START_10_00',
+        exit_price_source: 'OPEN_OF_NEXT_SESSION_BAR_LABELLED_09_35_INTERVAL_START_09_30',
+        position_rule: 'EQUAL_WEIGHT_TRIGGERED_STOCKS_ELSE_CASH',
+        benchmark_rule: 'EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_HORIZON',
+        single_side_cost_bps: '5', t_plus_one_compliant: true,
+      },
+      backtest: {
+        strategy_metrics: metrics, benchmark_metrics: { ...metrics, total_return: '-0.0434', excess_return: '0' },
+        cost_stress: { '5': { strategy_metrics: metrics, benchmark_metrics: metrics } },
+        curve: [{ trading_day: '2026-07-28', signal_count: 10, eligible_symbol_count: 75, strategy_return: '-0.01', benchmark_return: '-0.011', strategy_equity: '0.99', benchmark_equity: '0.989', excess_equity: '0.001' }],
+        sectors: [group], symbols: [{ ...group, group_id: '600036', group_name: '600036' }], passed: false,
+      },
+      research_gate: {
+        passed: false,
+        criteria: {
+          minimum_observation_count: true, minimum_signal_count: true,
+          positive_mean_signal_return: false, positive_conditional_excess_return: false,
+          positive_rank_ic: false, positive_sector_ratio_at_least_60pct: false,
+          maximum_absolute_factor_correlation_below_0_90: true,
+          base_cost_total_return_positive: false, base_cost_excess_return_positive: true,
+        },
+      },
+      causal_contract: {
+        factor_known_at: 'THIRD_TEN_MINUTE_BAR_CLOSE_10_00', entry_at: 'NEXT_SOURCE_FIVE_MINUTE_BAR_OPEN_10_05',
+        exit_at: 'NEXT_TRADING_SESSION_FIRST_FIVE_MINUTE_BAR_OPEN_T_PLUS_ONE', same_bar_execution: false,
+        source_bar_timestamp_convention: 'BAR_END_TIME', entry_bar_label: '10_05', entry_interval_start: '10_00',
+        exit_bar_label: 'NEXT_SESSION_09_35', exit_interval_start: 'NEXT_SESSION_09_30',
+        t_plus_one_compliant: true,
+      },
+      l2_factor_readiness: {
+        factor_id: 'order-book-buying-intensity-v1',
+        formula: '(bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5)',
+        required_data: 'AUTHORIZED_L2_FIVE_LEVEL_ORDER_BOOK', readiness: 'UNCONFIGURED',
+        reason: 'NO_AUTHORIZED_L2_PROVIDER', derived_from_ohlcv: false,
+      },
+      data_version: 'baostock-five-minute-long-v1', dataset_checksum: 'long-five-minute-checksum',
+      data_interval: '5m', selected_trading_days: ['2026-07-28'], exit_completion_day: '2026-07-29',
+      selected_session_count: 20, source_bar_count: 75600, symbol_count: 75, sector_count: 15,
+      point_in_time: false, future_adjustment_knowledge_possible: true, realtime_readiness: false,
+      promotion: 'NOT_ELIGIBLE', promotion_reasons: ['CURRENT_UNIVERSE_NON_PIT'],
+      paper_readiness: 'NOT_ELIGIBLE', live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION',
+      state_mutation: false, external_order_transmission: false, preview_hash: 'd'.repeat(64),
+    } as unknown as IntradayFactorBacktest
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce(result)
+    render(<ResearchPage data={data} />)
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+    expect(await screen.findByText('回测已完成，研究硬门未通过')).toBeInTheDocument()
+    expect(runIntradayFactorBacktest).toHaveBeenCalledWith(expect.objectContaining({
+      factor: 'opening_three_ten_minute_bullish', cost_bps: '5', minimum_body_return_bps: '0',
+    }))
+    expect(screen.getByText(/实际触发 192\/1500 次/)).toBeInTheDocument()
+    expect(screen.getByText('累计收益').nextSibling).toHaveTextContent('-4.08%')
+    expect(screen.getByText(/五档买卖盘强度：UNCONFIGURED/)).toBeInTheDocument()
+    expect(screen.getByText(/不会从 OHLCV 伪造买一至买五/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /导出因子研究证据/ })).toBeInTheDocument()
+  })
+
   it('does not present experiment records as a registered lineage', () => {
     render(<ResearchPage data={data} />)
     expect(screen.getByRole('tab', { name: '实验候选' })).toBeInTheDocument()
