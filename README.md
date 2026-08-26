@@ -281,7 +281,11 @@ QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true PYTHONPATH=. .venv/bin/python \
 ```
 
 `/intraday-observation` and the market-page “当日分钟观测” tab expose the signed
-point-in-time result. A pre-open run correctly contains zero same-day bars. The
+point-in-time result. A pre-open run correctly contained zero same-day bars; the
+09:33:16 China-time refresh then verified two finalized bars (09:31 and 09:32)
+for all 15 sector representatives, with a `0.741s` request window and `76.875s`
+maximum latest-bar age. Provider rows timestamped after the causal cutoff were
+excluded. The
 probe is intentionally a free historical-source observation, not a streaming
 subscription: it never sets realtime/PAPER readiness, mutates strategy state or
 sends an external order. The report can be refreshed after the market opens to
