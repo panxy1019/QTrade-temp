@@ -61,7 +61,7 @@ const experiments = [
       start: '2026-07-01',
       end: '2026-07-28',
       cost_bps: '5',
-      minimum_body_return_bps: '0',
+      minimum_body_return_bps: '10',
       directions: ['BULLISH', 'BEARISH', 'IGNORE'],
       combination: 'ANY',
     },
@@ -98,12 +98,28 @@ const correlation = {
     rules: experiments.map((record) => ({
       directions: record.parameters.directions,
       combination: record.parameters.combination,
+      minimum_body_return_bps: record.parameters.minimum_body_return_bps,
     })),
   },
   rules: [
-    { rule_id: 'R01', factor_id: 'a', name: 'A', expression: 'a', directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL' },
-    { rule_id: 'R02', factor_id: 'b', name: 'B', expression: 'b', directions: ['BULLISH', 'BEARISH', 'IGNORE'], combination: 'ANY' },
+    { rule_id: 'R01', factor_id: 'a', name: 'A', expression: 'a', directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL', minimum_body_return_bps: '0' },
+    { rule_id: 'R02', factor_id: 'b', name: 'B', expression: 'b', directions: ['BULLISH', 'BEARISH', 'IGNORE'], combination: 'ANY', minimum_body_return_bps: '10' },
   ],
+  multiple_testing_contract: {
+    method: 'HOLM_BONFERRONI',
+    family_size: 2,
+    alpha: '0.05',
+    raw_p_value: 'TWO_SIDED_ASYMPTOTIC_NORMAL_FROM_NEWEY_WEST_T',
+    effect_direction: 'POSITIVE_SESSION_CONDITIONAL_EXCESS',
+    minimum_clustered_signal_sessions: 10,
+    minimum_signal_count: 20,
+    minimum_t_statistic: '1.96',
+  },
+  effectiveness: [
+    { rule_id: 'R01', minimum_body_return_bps: '0', observation_count: 1500, signal_count: 100, clustered_signal_session_count: 20, mean_session_conditional_excess_return: '0.001', newey_west_lag: 2, newey_west_standard_error: '0.0004', newey_west_t_statistic: '2.5', confidence_interval_95_lower: '0.0002', confidence_interval_95_upper: '0.0018', raw_p_value: '0.012', holm_adjusted_p_value: '0.024', criteria: {}, passed: true },
+    { rule_id: 'R02', minimum_body_return_bps: '10', observation_count: 1500, signal_count: 40, clustered_signal_session_count: 15, mean_session_conditional_excess_return: '-0.0002', newey_west_lag: 2, newey_west_standard_error: '0.0004', newey_west_t_statistic: '-0.5', confidence_interval_95_lower: '-0.001', confidence_interval_95_upper: '0.0006', raw_p_value: '0.617', holm_adjusted_p_value: '0.617', criteria: {}, passed: false },
+  ],
+  effective_rule_count: 1,
   observation_count: 1500,
   matrix: [
     { rule_id: 'R01', correlations: { R01: '1', R02: '0.95' } },
@@ -128,25 +144,28 @@ describe('intraday factor rule correlation', () => {
     vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce(correlation)
     render(<IntradayFactorResearchLab dataset={dataset} />)
 
-    const button = screen.getByRole('button', { name: '检验选中规则相关性（0/8）' })
+    const button = screen.getByRole('button', { name: '检验选中规则有效性与相关性（0/8）' })
     expect(button).toBeDisabled()
     const checkboxes = screen.getAllByRole('checkbox')
     fireEvent.click(checkboxes[1])
     fireEvent.click(checkboxes[2])
-    fireEvent.click(screen.getByRole('button', { name: '检验选中规则相关性（2/8）' }))
+    fireEvent.click(screen.getByRole('button', { name: '检验选中规则有效性与相关性（2/8）' }))
 
     await waitFor(() => expect(runIntradayFactorCorrelation).toHaveBeenCalledWith({
       start: '2026-07-02',
       end: '2026-07-21',
       rules: [
-        { directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL' },
-        { directions: ['BULLISH', 'BEARISH', 'IGNORE'], combination: 'ANY' },
+        { directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL', minimum_body_return_bps: '0' },
+        { directions: ['BULLISH', 'BEARISH', 'IGNORE'], combination: 'ANY', minimum_body_return_bps: '10' },
       ],
     }))
-    expect(await screen.findByText('发现 1 对高度相关规则')).toBeInTheDocument()
+    expect(await screen.findByText('1/2 条规则通过同窗有效性硬门')).toBeInTheDocument()
+    expect(screen.getAllByText('Holm p').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('未通过').length).toBeGreaterThan(0)
+    expect(screen.getByText('发现 1 对高度相关规则')).toBeInTheDocument()
     expect(screen.getByText(/1,500 个同窗股票日观测/)).toBeInTheDocument()
-    expect(screen.getByText('R01 · 三连阳 A')).toBeInTheDocument()
-    expect(screen.getByText('R02 · 混合方向 B')).toBeInTheDocument()
+    expect(screen.getAllByText('R01 · 三连阳 A').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('R02 · 混合方向 B').length).toBeGreaterThan(0)
     expect(screen.getByText('冗余')).toBeInTheDocument()
     expect(screen.getByText(/无状态写入、无外部订单/)).toBeInTheDocument()
   })

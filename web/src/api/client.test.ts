@@ -142,8 +142,8 @@ describe('platform snapshot request fan-out', () => {
       start: '2026-07-28',
       end: '2026-08-24',
       rules: [
-        { directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL' },
-        { directions: ['BULLISH', 'BEARISH', 'IGNORE'], combination: 'ANY' },
+        { directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL', minimum_body_return_bps: '0' },
+        { directions: ['BULLISH', 'BEARISH', 'IGNORE'], combination: 'ANY', minimum_body_return_bps: '10' },
       ],
     }
     const fetchMock = vi.fn().mockResolvedValueOnce({

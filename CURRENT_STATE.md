@@ -26,12 +26,12 @@ Last updated: 2026-08-27
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 446 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 447 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
   (macOS, 2026-08-27); 62 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 429.12 KB with no large-chunk warning.
+  minified JavaScript asset at or below 429.75 KB with no large-chunk warning.
   GitHub CI grants only read access to repository contents and pins the official
   Node 24 checkout/setup-python actions to their verified v7 release commits.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->
@@ -287,6 +287,17 @@ Last updated: 2026-08-27
   signed 120-session result also had only 2/4 positive blocks, with a worst block
   mean of -0.3125% and maximum contribution share 36.88%. Concentration passed,
   but sign stability failed, strengthening the existing `NOT_ELIGIBLE` veto.
+- Multi-rule false-positive control: the 2–8 rule same-window diagnostic now
+  replays each saved body's threshold rather than silently evaluating every
+  candidate at zero. It clusters conditional excess by session, computes a
+  two-sided asymptotic p-value from the Newey-West t-statistic, and applies
+  Holm-Bonferroni across the complete submitted family. A rule needs at least
+  250 stock-day observations, 20 signals, ten signal sessions, positive excess,
+  `t > 1.96` and adjusted `p <= 0.05`; correlation de-duplication remains a
+  separate continuous-score gate. In the disclosed 20-session, 75-stock check,
+  none of three example rules passed (all adjusted p-values were 1), while a
+  duplicate pair had correlation 1. The endpoint and UI remain retrospective,
+  stateless, `NOT_ELIGIBLE` and external-order-disabled.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

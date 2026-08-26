@@ -518,6 +518,7 @@ export type IntradayOpeningDirection = 'BULLISH' | 'BEARISH' | 'IGNORE'
 export interface IntradayFactorCorrelationRule {
   directions: [IntradayOpeningDirection, IntradayOpeningDirection, IntradayOpeningDirection]
   combination: 'ALL' | 'ANY'
+  minimum_body_return_bps: string
 }
 
 export interface IntradayFactorCorrelationRequest {
@@ -545,6 +546,34 @@ export interface IntradayFactorCorrelation {
     name: string
     expression: string
   }>
+  multiple_testing_contract: {
+    method: 'HOLM_BONFERRONI'
+    family_size: number
+    alpha: string
+    raw_p_value: 'TWO_SIDED_ASYMPTOTIC_NORMAL_FROM_NEWEY_WEST_T'
+    effect_direction: 'POSITIVE_SESSION_CONDITIONAL_EXCESS'
+    minimum_clustered_signal_sessions: number
+    minimum_signal_count: number
+    minimum_t_statistic: string
+  }
+  effectiveness: Array<{
+    rule_id: string
+    minimum_body_return_bps: string
+    observation_count: number
+    signal_count: number
+    clustered_signal_session_count: number
+    mean_session_conditional_excess_return: string
+    newey_west_lag: number
+    newey_west_standard_error: string
+    newey_west_t_statistic: string
+    confidence_interval_95_lower: string
+    confidence_interval_95_upper: string
+    raw_p_value: string
+    holm_adjusted_p_value: string
+    criteria: Record<string, boolean>
+    passed: boolean
+  }>
+  effective_rule_count: number
   observation_count: number
   matrix: Array<{
     rule_id: string

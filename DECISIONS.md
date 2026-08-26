@@ -1444,3 +1444,27 @@ worst block was -0.3125% and its largest absolute contribution share was 36.88%;
 concentration passed but sign stability failed. This is a retrospective veto,
 not a new blind test or parameter search, and cannot authorize PAPER, LIVE,
 state mutation or external order transmission.
+
+## ADR-094 — Multi-rule effectiveness controls the submitted hypothesis family
+
+Status: accepted, 2026-08-27.
+
+Selecting several browser-local factor rules and reading each unadjusted
+significance result would make false positives more likely as the number of
+attempts grows. It would also be misleading to correlate a saved rule while
+silently discarding the body threshold that defined its binary entry signal.
+Every 2–8 rule comparison therefore reruns one identical 75-stock date window,
+uses each rule's saved threshold for effectiveness, forms one conditional-excess
+observation per signal-bearing session, and derives a two-sided asymptotic
+normal p-value from its Newey-West t-statistic. Holm-Bonferroni adjustment is
+then applied to the entire submitted family at alpha 0.05.
+
+A rule passes only with at least 250 stock-day observations, 20 signals, ten
+clustered signal sessions, positive mean conditional excess, Newey-West
+`t > 1.96`, and Holm-adjusted `p <= 0.05`. Continuous directional scores remain
+threshold-independent for the separate Pearson redundancy gate, where
+`|rho| >= 0.90` rejects a pair. Neither diagnostic can change a rule, threshold,
+strategy, dataset or PAPER state. The disclosed three-rule 20-session run had
+zero effectiveness passes, all adjusted p-values equal to one, and a duplicate
+pair at correlation one; it remains retrospective current-universe QFQ evidence,
+`NOT_ELIGIBLE`, with LIVE and external order transmission disabled.

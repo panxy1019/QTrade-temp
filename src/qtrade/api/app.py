@@ -45,11 +45,13 @@ from qtrade.research import (
     IntradayFactorGroup,
     IntradayFactorResearchResult,
     IntradayRuleCorrelationResult,
+    IntradayRuleEffectiveness,
     MinuteBacktestResult,
     MinuteCurveMetrics,
     OpeningTripleBullishSpec,
     PerformanceMetrics,
     evaluate_opening_rule_correlations,
+    evaluate_opening_rule_effectiveness,
     run_backtest_preview,
     run_minute_overlay_backtest,
     run_opening_triple_bullish_research,
@@ -181,6 +183,7 @@ class IntradayFactorCorrelationRule(BaseModel):
         Literal["BULLISH", "BEARISH", "IGNORE"],
     ]
     combination: Literal["ALL", "ANY"]
+    minimum_body_return_bps: Decimal = Decimal("0")
 
     @model_validator(mode="after")
     def validate_rule_contract(self) -> Self:
@@ -1524,7 +1527,7 @@ def create_app(
             specs = tuple(
                 OpeningTripleBullishSpec(
                     cost_bps=Decimal("0"),
-                    minimum_body_return_bps=Decimal("0"),
+                    minimum_body_return_bps=rule.minimum_body_return_bps,
                     directions=rule.directions,
                     combination=rule.combination,
                 )
@@ -1544,10 +1547,15 @@ def create_app(
                 spec=OpeningTripleBullishSpec(cost_bps=Decimal("0")),
             ).observations
             result = evaluate_opening_rule_correlations(observations, specs)
+            effectiveness = evaluate_opening_rule_effectiveness(
+                observations,
+                specs,
+            )
             return _intraday_factor_correlation_preview(
                 payload=payload,
                 specs=specs,
                 result=result,
+                effectiveness=effectiveness,
                 dataset=dataset,
                 required_trading_days=required_trading_days,
                 source_bar_count=len(bars),
@@ -8535,6 +8543,7 @@ def _intraday_factor_correlation_preview(
     payload: IntradayFactorCorrelationRequest,
     specs: tuple[OpeningTripleBullishSpec, ...],
     result: IntradayRuleCorrelationResult,
+    effectiveness: tuple[IntradayRuleEffectiveness, ...],
     dataset: dict[str, object],
     required_trading_days: list[str],
     source_bar_count: int,
@@ -8548,6 +8557,7 @@ def _intraday_factor_correlation_preview(
             "expression": spec.factor_expression,
             "directions": list(spec.directions),
             "combination": spec.combination,
+            "minimum_body_return_bps": str(spec.minimum_body_return_bps),
         }
         for rule_id, spec in zip(rule_ids, specs, strict=True)
     ]
@@ -8562,6 +8572,9 @@ def _intraday_factor_correlation_preview(
                 {
                     "directions": list(rule.directions),
                     "combination": rule.combination,
+                    "minimum_body_return_bps": str(
+                        rule.minimum_body_return_bps
+                    ),
                 }
                 for rule in payload.rules
             ],
@@ -8579,6 +8592,53 @@ def _intraday_factor_correlation_preview(
             "arbitrary_code_execution": False,
         },
         "rules": rules,
+        "multiple_testing_contract": {
+            "method": "HOLM_BONFERRONI",
+            "family_size": len(effectiveness),
+            "alpha": "0.05",
+            "raw_p_value": (
+                "TWO_SIDED_ASYMPTOTIC_NORMAL_FROM_NEWEY_WEST_T"
+            ),
+            "effect_direction": "POSITIVE_SESSION_CONDITIONAL_EXCESS",
+            "minimum_clustered_signal_sessions": 10,
+            "minimum_signal_count": 20,
+            "minimum_t_statistic": "1.96",
+        },
+        "effectiveness": [
+            {
+                "rule_id": row.rule_id,
+                "minimum_body_return_bps": str(
+                    row.minimum_body_return_bps
+                ),
+                "observation_count": row.observation_count,
+                "signal_count": row.signal_count,
+                "clustered_signal_session_count": (
+                    row.clustered_signal_session_count
+                ),
+                "mean_session_conditional_excess_return": str(
+                    row.mean_session_conditional_excess_return
+                ),
+                "newey_west_lag": row.newey_west_lag,
+                "newey_west_standard_error": str(
+                    row.newey_west_standard_error
+                ),
+                "newey_west_t_statistic": str(
+                    row.newey_west_t_statistic
+                ),
+                "confidence_interval_95_lower": str(
+                    row.confidence_interval_95_lower
+                ),
+                "confidence_interval_95_upper": str(
+                    row.confidence_interval_95_upper
+                ),
+                "raw_p_value": str(row.raw_p_value),
+                "holm_adjusted_p_value": str(row.holm_adjusted_p_value),
+                "criteria": dict(row.criteria),
+                "passed": row.passed,
+            }
+            for row in effectiveness
+        ],
+        "effective_rule_count": sum(row.passed for row in effectiveness),
         "observation_count": result.observation_count,
         "matrix": [
             {

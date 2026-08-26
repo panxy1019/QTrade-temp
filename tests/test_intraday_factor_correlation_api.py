@@ -34,6 +34,7 @@ def test_intraday_factor_correlation_exposes_a_read_only_redundancy_matrix() -> 
                 {
                     "directions": ["BULLISH", "BEARISH", "IGNORE"],
                     "combination": "ANY",
+                    "minimum_body_return_bps": 10,
                 },
             ],
         },
@@ -58,6 +59,33 @@ def test_intraday_factor_correlation_exposes_a_read_only_redundancy_matrix() -> 
     assert payload["redundancy_threshold"] == "0.90"
     assert payload["maximum_absolute_correlation"] == "1"
     assert payload["passed"] is False
+    assert payload["rules"][2]["minimum_body_return_bps"] == "10"
+    assert payload["multiple_testing_contract"] == {
+        "method": "HOLM_BONFERRONI",
+        "family_size": 3,
+        "alpha": "0.05",
+        "raw_p_value": "TWO_SIDED_ASYMPTOTIC_NORMAL_FROM_NEWEY_WEST_T",
+        "effect_direction": "POSITIVE_SESSION_CONDITIONAL_EXCESS",
+        "minimum_clustered_signal_sessions": 10,
+        "minimum_signal_count": 20,
+        "minimum_t_statistic": "1.96",
+    }
+    assert [row["rule_id"] for row in payload["effectiveness"]] == [
+        "R01",
+        "R02",
+        "R03",
+    ]
+    assert payload["effectiveness"][0]["raw_p_value"] == (
+        payload["effectiveness"][1]["raw_p_value"]
+    )
+    assert all(
+        0
+        <= float(row["raw_p_value"])
+        <= float(row["holm_adjusted_p_value"])
+        <= 1
+        for row in payload["effectiveness"]
+    )
+    assert all(row["passed"] is False for row in payload["effectiveness"])
     assert payload["promotion"] == "NOT_ELIGIBLE"
     assert payload["state_mutation"] is False
     assert payload["external_order_transmission"] is False
@@ -118,3 +146,24 @@ def test_intraday_factor_correlation_rejects_unbounded_or_empty_rules() -> None:
     )
     assert too_many.status_code == 422
     assert "between two and eight" in too_many.text
+
+    invalid_threshold = client.post(
+        "/intraday-factor-correlation",
+        json={
+            "start": "2026-07-28",
+            "end": "2026-08-24",
+            "rules": [
+                {
+                    "directions": ["BULLISH", "BULLISH", "BULLISH"],
+                    "combination": "ALL",
+                    "minimum_body_return_bps": 1001,
+                },
+                {
+                    "directions": ["BULLISH", "BEARISH", "IGNORE"],
+                    "combination": "ANY",
+                },
+            ],
+        },
+    )
+    assert invalid_threshold.status_code == 422
+    assert "minimum_body_return_bps" in invalid_threshold.text

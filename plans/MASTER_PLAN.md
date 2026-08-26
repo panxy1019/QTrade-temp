@@ -286,7 +286,14 @@ Rule de-duplication and time stability are now explicit gates rather than
 informal chart review. The browser can select two to eight checksum-bound local
 opening rules and rerun their continuous directional scores on one identical
 75-stock window; the read-only API returns a symmetric Pearson matrix and marks
-`|rho| >= 0.90` pairs as redundant. Separately, every factor run is divided into
+`|rho| >= 0.90` pairs as redundant. The same request also evaluates each rule at
+its saved body threshold, derives a two-sided p-value from the session-clustered
+Newey-West t-statistic and applies Holm-Bonferroni to the full submitted family.
+Observation, signal, signal-session, positive-effect, t-statistic and adjusted-p
+gates must all pass; inspecting more rules therefore cannot turn unadjusted
+chance findings into an effectiveness pass. The disclosed 20-session diagnostic
+had zero passing rules out of three and all adjusted p-values equal to one.
+Separately, every factor run is divided into
 four fixed contiguous date blocks. The stability gate requires signals in every
 block, at least three positive session-clustered conditional-excess block means,
 and no single block above 60% of total absolute block contribution. Neither
@@ -332,7 +339,7 @@ navigation and the explicit no-live boundary remain available during recovery.
 ECharts registers only the line, bar, candlestick and supporting components used
 by the product, while React and zrender are stable cache chunks; both production
 build modes complete without a chunk-size warning and keep the largest minified
-JavaScript asset at 429.02 KB.
+JavaScript asset at 429.75 KB.
 
 The factor-research path now predeclares five causal price factors, keeps every
 forward label inside the discovery period, bounds the active validation grid and

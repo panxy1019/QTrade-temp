@@ -8,9 +8,11 @@ from qtrade.data import Bar
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.research.intraday_factor import (
     OpeningTripleBullishSpec,
+    _holm_adjusted_p_values,
     _newey_west_mean_statistics,
     _temporal_stability_validation,
     evaluate_opening_rule_correlations,
+    evaluate_opening_rule_effectiveness,
     run_opening_triple_bullish_research,
 )
 
@@ -33,6 +35,12 @@ def test_newey_west_significance_fails_closed_for_empty_or_zero_variance() -> No
     assert lag > 0
     assert standard_error == 0
     assert t_statistic == 0
+
+
+def test_holm_adjustment_is_monotonic_in_sorted_hypothesis_order() -> None:
+    assert _holm_adjusted_p_values(
+        [Decimal("0.01"), Decimal("0.04"), Decimal("0.03")]
+    ) == [Decimal("0.03"), Decimal("0.06"), Decimal("0.06")]
 
 
 def _bars(
@@ -210,6 +218,9 @@ def test_opening_rule_correlations_are_symmetric_and_flag_duplicate_scores() -> 
         directions=("BULLISH", "BEARISH", "IGNORE"),
         combination="ANY",
     )
+    thresholded = OpeningTripleBullishSpec(
+        minimum_body_return_bps=Decimal("30")
+    )
 
     correlations = evaluate_opening_rule_correlations(
         result.observations,
@@ -232,6 +243,33 @@ def test_opening_rule_correlations_are_symmetric_and_flag_duplicate_scores() -> 
 
     with pytest.raises(ValueError, match="between two and eight"):
         evaluate_opening_rule_correlations(result.observations, (default,))
+
+    effectiveness = evaluate_opening_rule_effectiveness(
+        result.observations,
+        (default, default, thresholded, mixed),
+    )
+    assert [row.rule_id for row in effectiveness] == [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+    ]
+    assert effectiveness[0].signal_count == effectiveness[1].signal_count
+    assert effectiveness[0].raw_p_value == effectiveness[1].raw_p_value
+    assert effectiveness[0].holm_adjusted_p_value == (
+        effectiveness[1].holm_adjusted_p_value
+    )
+    assert effectiveness[2].minimum_body_return_bps == Decimal("30")
+    assert effectiveness[2].signal_count < effectiveness[0].signal_count
+    assert all(
+        Decimal("0") <= row.raw_p_value <= row.holm_adjusted_p_value <= 1
+        for row in effectiveness
+    )
+    assert all(row.observation_count == 60 for row in effectiveness)
+    assert all(row.passed is False for row in effectiveness)
+
+    with pytest.raises(ValueError, match="between two and eight"):
+        evaluate_opening_rule_effectiveness(result.observations, (default,))
 
 
 def test_temporal_stability_uses_four_contiguous_blocks_and_flags_concentration() -> None:

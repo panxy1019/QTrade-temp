@@ -339,6 +339,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
         rules: selected.map((record) => ({
           directions: record.parameters.directions,
           combination: record.parameters.combination,
+          minimum_body_return_bps: record.parameters.minimum_body_return_bps,
         })),
       })
       setCorrelationResult(correlation)
@@ -589,11 +590,34 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
               loading={correlationRunning}
               disabled={selectedExperimentHashes.length < 2 || selectedExperimentHashes.length > 8}
               onClick={() => { void runSelectedCorrelation() }}
-            >检验选中规则相关性（{selectedExperimentHashes.length}/8）</Button>
-            <Typography.Text type="secondary">按当前表单日期，在同一 75 股窗口重算 2–8 个连续方向分数。</Typography.Text>
+            >检验选中规则有效性与相关性（{selectedExperimentHashes.length}/8）</Button>
+            <Typography.Text type="secondary">按当前表单日期，在同一 75 股窗口重算 2–8 条规则各自阈值下的信号有效性与连续方向分数。</Typography.Text>
           </Space>
           {correlationError && <Alert showIcon type="error" title="规则相关性检验未完成" description={correlationError} />}
           {correlationResult && <>
+            <Alert
+              showIcon
+              type={correlationResult.effective_rule_count === correlationResult.multiple_testing_contract.family_size ? 'success' : 'warning'}
+              title={`${correlationResult.effective_rule_count}/${correlationResult.multiple_testing_contract.family_size} 条规则通过同窗有效性硬门`}
+              description={`每条规则使用保存时的实体阈值；先按交易日聚类条件超额计算 Newey-West t 与双侧原始 p，再对本次 ${correlationResult.multiple_testing_contract.family_size} 条规则做 Holm-Bonferroni 校正。要求至少 250 个观测、${correlationResult.multiple_testing_contract.minimum_signal_count} 次信号、${correlationResult.multiple_testing_contract.minimum_clustered_signal_sessions} 个信号交易日、正向条件超额、t > ${correlationResult.multiple_testing_contract.minimum_t_statistic} 且校正 p ≤ ${correlationResult.multiple_testing_contract.alpha}。`}
+            />
+            <Table
+              rowKey="rule_id"
+              size="small"
+              pagination={false}
+              dataSource={correlationResult.effectiveness}
+              columns={[
+                { title: '本地规则', dataIndex: 'rule_id', render: (value: string) => `${value} · ${correlationLabels[value] ?? value}` },
+                { title: '阈值 bps', dataIndex: 'minimum_body_return_bps' },
+                { title: '信号 / 交易日', render: (_: unknown, row: IntradayFactorCorrelation['effectiveness'][number]) => `${row.signal_count} / ${row.clustered_signal_session_count}` },
+                { title: '日聚类条件超额', dataIndex: 'mean_session_conditional_excess_return', render: (value: string) => formatPercent(value) },
+                { title: 'NW t', dataIndex: 'newey_west_t_statistic', render: (value: string) => formatNumber(value) },
+                { title: '原始 p', dataIndex: 'raw_p_value', render: (value: string) => formatNumber(value) },
+                { title: 'Holm p', dataIndex: 'holm_adjusted_p_value', render: (value: string) => formatNumber(value) },
+                { title: '有效性', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+              ]}
+              scroll={{ x: 1120 }}
+            />
             <Alert
               showIcon
               type={correlationResult.passed ? 'success' : 'warning'}

@@ -156,6 +156,10 @@ npm --prefix web run build
   session-clustered conditional excess by block, and gate on positive-block ratio
   plus single-period contribution concentration without allowing block outcomes
   to retune the rule or threshold.
+- [x] Re-evaluate each selected local rule at its saved body threshold on one
+  identical 75-stock window, compute two-sided Newey-West p-values and apply
+  Holm-Bonferroni across the 2–8 rule family before displaying an effectiveness
+  pass; keep continuous-score correlation as an independent de-duplication gate.
 - [x] Extend the preview to bounded momentum/reversal/low-volatility comparison
   and a checksum-bound browser-local experiment notebook with save, compare,
   parameter reload and delete; keep all records outside formal strategy lineage.

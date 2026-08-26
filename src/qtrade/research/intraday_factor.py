@@ -5,7 +5,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
-from math import floor
+from math import erfc, floor, sqrt
 
 from qtrade.data import Bar, BarQualityGate
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
@@ -240,6 +240,25 @@ class IntradayRuleCorrelationResult:
     pairs: tuple[IntradayRuleCorrelationPair, ...]
     redundancy_threshold: Decimal
     maximum_absolute_correlation: Decimal
+    passed: bool
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayRuleEffectiveness:
+    rule_id: str
+    minimum_body_return_bps: Decimal
+    observation_count: int
+    signal_count: int
+    clustered_signal_session_count: int
+    mean_session_conditional_excess_return: Decimal
+    newey_west_lag: int
+    newey_west_standard_error: Decimal
+    newey_west_t_statistic: Decimal
+    confidence_interval_95_lower: Decimal
+    confidence_interval_95_upper: Decimal
+    raw_p_value: Decimal
+    holm_adjusted_p_value: Decimal
+    criteria: Mapping[str, bool]
     passed: bool
 
 
@@ -1310,3 +1329,145 @@ def evaluate_opening_rule_correlations(
         maximum_absolute_correlation=maximum_absolute_correlation,
         passed=not any(pair.redundant for pair in pairs),
     )
+
+
+def evaluate_opening_rule_effectiveness(
+    observations: tuple[IntradayFactorObservation, ...],
+    specs: tuple[OpeningTripleBullishSpec, ...],
+    *,
+    family_alpha: Decimal = Decimal("0.05"),
+) -> tuple[IntradayRuleEffectiveness, ...]:
+    if not 2 <= len(specs) <= 8:
+        raise ValueError("factor effectiveness requires between two and eight rules")
+    if not observations:
+        raise ValueError("factor effectiveness requires observations")
+    if (
+        not family_alpha.is_finite()
+        or family_alpha <= 0
+        or family_alpha >= 1
+    ):
+        raise ValueError("factor effectiveness alpha must be finite and in (0, 1)")
+    statistics: list[
+        tuple[
+            int,
+            int,
+            Decimal,
+            int,
+            Decimal,
+            Decimal,
+            Decimal,
+            Decimal,
+            Decimal,
+        ]
+    ] = []
+    raw_p_values: list[Decimal] = []
+    for spec in specs:
+        threshold = spec.minimum_body_return_bps / Decimal("10000")
+        rule_observations = [
+            replace(
+                observation,
+                signal=(score := spec.directional_score(
+                    observation.ten_minute_body_returns
+                ))
+                > threshold,
+                directional_rule_score=score,
+            )
+            for observation in observations
+        ]
+        session_returns = [
+            value
+            for _, value in _session_conditional_excess_returns(
+                rule_observations
+            )
+        ]
+        (
+            mean_value,
+            lag,
+            standard_error,
+            t_statistic,
+            confidence_lower,
+            confidence_upper,
+        ) = _newey_west_mean_statistics(session_returns)
+        raw_p_value = Decimal(
+            str(erfc(abs(float(t_statistic)) / sqrt(2)))
+        )
+        statistics.append(
+            (
+                sum(observation.signal for observation in rule_observations),
+                len(session_returns),
+                mean_value,
+                lag,
+                standard_error,
+                t_statistic,
+                confidence_lower,
+                confidence_upper,
+                raw_p_value,
+            )
+        )
+        raw_p_values.append(raw_p_value)
+    adjusted_p_values = _holm_adjusted_p_values(raw_p_values)
+    output: list[IntradayRuleEffectiveness] = []
+    for index, (spec, statistic, adjusted_p_value) in enumerate(
+        zip(specs, statistics, adjusted_p_values, strict=True),
+        start=1,
+    ):
+        (
+            signal_count,
+            signal_session_count,
+            mean_value,
+            lag,
+            standard_error,
+            t_statistic,
+            confidence_lower,
+            confidence_upper,
+            raw_p_value,
+        ) = statistic
+        criteria = {
+            "minimum_observation_count": len(observations) >= 250,
+            "minimum_signal_count": signal_count >= 20,
+            "minimum_ten_clustered_signal_sessions": signal_session_count >= 10,
+            "positive_session_conditional_excess": mean_value > 0,
+            "newey_west_t_statistic_above_1_96": (
+                t_statistic > Decimal("1.96")
+            ),
+            "holm_adjusted_p_value_at_most_0_05": (
+                adjusted_p_value <= family_alpha
+            ),
+        }
+        output.append(
+            IntradayRuleEffectiveness(
+                rule_id=f"R{index:02d}",
+                minimum_body_return_bps=spec.minimum_body_return_bps,
+                observation_count=len(observations),
+                signal_count=signal_count,
+                clustered_signal_session_count=signal_session_count,
+                mean_session_conditional_excess_return=mean_value,
+                newey_west_lag=lag,
+                newey_west_standard_error=standard_error,
+                newey_west_t_statistic=t_statistic,
+                confidence_interval_95_lower=confidence_lower,
+                confidence_interval_95_upper=confidence_upper,
+                raw_p_value=raw_p_value,
+                holm_adjusted_p_value=adjusted_p_value,
+                criteria=criteria,
+                passed=all(criteria.values()),
+            )
+        )
+    return tuple(output)
+
+
+def _holm_adjusted_p_values(values: list[Decimal]) -> list[Decimal]:
+    if not values:
+        raise ValueError("Holm adjustment requires p-values")
+    if any(not value.is_finite() or not 0 <= value <= 1 for value in values):
+        raise ValueError("Holm adjustment requires finite p-values in [0, 1]")
+    adjusted = [Decimal("0") for _ in values]
+    running_maximum = Decimal("0")
+    for rank, index in enumerate(sorted(range(len(values)), key=values.__getitem__)):
+        candidate = min(
+            Decimal("1"),
+            values[index] * Decimal(len(values) - rank),
+        )
+        running_maximum = max(running_maximum, candidate)
+        adjusted[index] = running_maximum
+    return adjusted
