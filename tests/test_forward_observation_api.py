@@ -95,9 +95,15 @@ def _one_session_forward_report(
         return {
             "symbol_count": 75,
             "observation_count": 75 * 48,
+            "reduced_exposure_observation_count": 0,
+            "exposure_sum": 75 * 48,
             "mean_exposure": 1.0,
+            "reduced_exposure_ratio": 0.0,
             "turnover": 0.0,
             "mean_turnover_per_symbol": 0.0,
+            "transaction_cost": 0.0,
+            "mean_transaction_cost_per_symbol": 0.0,
+            "reason_counts": {},
         }
 
     report.update(
@@ -412,6 +418,31 @@ def test_forward_observation_endpoint_rejects_cost_base_drift(
     )
     report["cost_stress"][0]["base"]["total_return"] = 0.1
     report["cost_stress"][0]["overlay"]["total_return"] = 0.1
+    report.pop("evidence_sha256")
+    report["evidence_sha256"] = _canonical(report)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    rejected = _client(preregistration_path, report_path).get(
+        "/forward-observation"
+    ).json()
+    assert rejected["classification"] == "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION"
+    assert rejected["future_session_count"] == 0
+
+
+def test_forward_observation_endpoint_rejects_incomplete_execution_diagnostics(
+    tmp_path: Path,
+) -> None:
+    preregistration_path = (
+        EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+    )
+    preregistration = json.loads(preregistration_path.read_text(encoding="utf-8"))
+    report = _one_session_forward_report(
+        preregistration,
+        target_day="2026-08-26",
+        generated_at="2026-08-26T16:00:00+08:00",
+    )
+    report["cost_stress"][1]["execution"].pop("transaction_cost")
     report.pop("evidence_sha256")
     report["evidence_sha256"] = _canonical(report)
     report_path = tmp_path / "report.json"

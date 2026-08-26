@@ -544,6 +544,9 @@ Last updated: 2026-08-26
   and accepted count to match those source identities exactly.
   The 0/5-bps rows must also share one exact Buy-and-Hold metric identity, so
   cost comparisons cannot be constructed from drifting baselines.
+  Each row must preserve the full 11-field execution diagnostic; reduced counts,
+  exposure sums, turnover, transaction cost, per-symbol means and reason counts
+  are all structurally and arithmetically revalidated.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator

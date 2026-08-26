@@ -719,3 +719,16 @@ the common comparator.
 
 A resigned report with internally consistent but different baselines fails
 closed and cannot affect gates, public progress or runtime authority.
+
+## ADR-047 — Forward execution diagnostics are all-or-nothing
+
+Status: accepted, 2026-08-26.
+
+Each forward cost row must carry the complete execution diagnostic contract:
+symbol/observation/reduced counts, exposure sum and mean, reduced ratio, turnover
+and per-symbol mean, transaction cost and per-symbol mean, and reason counts.
+The shared minute-execution validator rechecks every bound and arithmetic ratio.
+
+Removing an inconvenient cost or reduction field and regenerating the outer
+digest fails the report closed. Partial diagnostics cannot influence gates or
+be rendered as verified evidence.

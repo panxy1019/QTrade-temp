@@ -5210,8 +5210,13 @@ def _load_verified_forward_observation_report(
                 base = metric_values(row.get("base"))
                 overlay = metric_values(row.get("overlay"))
                 execution = row.get("execution")
-                if not isinstance(execution, dict):
+                if not _valid_minute_execution_diagnostics(
+                    execution,
+                    expected_symbol_count=75,
+                    expected_observation_count=75 * expected_points,
+                ):
                     return None
+                assert isinstance(execution, dict)
                 mean_exposure = float(str(execution.get("mean_exposure")))
                 turnover = float(str(execution.get("turnover")))
                 mean_turnover = float(
