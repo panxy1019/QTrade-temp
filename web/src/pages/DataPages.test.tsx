@@ -1300,6 +1300,8 @@ describe('verified robustness evidence', () => {
         factor: 'custom_opening_ten_minute_direction_rule', start: '2026-07-28', end: '2026-08-24',
         cost_bps: '5', minimum_body_return_bps: '0',
         directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL',
+        exit_rule: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP',
+        exit_minimum_body_return_bps: '5',
       },
       workflow: [
         { id: 'FACTOR_DEFINITION', status: 'AVAILABLE', detail: 'fixed' },
@@ -1326,6 +1328,24 @@ describe('verified robustness evidence', () => {
         newey_west_lag: 2, newey_west_standard_error: '0.0001',
         newey_west_t_statistic: '-2.0', confidence_interval_95_lower: '-0.000396',
         confidence_interval_95_upper: '-0.000004',
+      },
+      exit_factor_validation: {
+        classification: 'TRIGGERED_EXIT_TIMING_ADVANTAGE_DIAGNOSTIC',
+        advantage_definition: 'CONDITIONAL_EXIT_OPEN_DIVIDED_BY_TIME_STOP_OPEN_MINUS_ONE',
+        entry_signal_count: 192, trigger_count: 28, trigger_rate: '0.1458333333',
+        clustered_trigger_session_count: 10,
+        mean_triggered_timing_advantage: '0.0019661',
+        mean_session_triggered_timing_advantage: '0.0048978', trigger_hit_rate: '0.642857',
+        newey_west_lag: 2, newey_west_standard_error: '0.0026726',
+        newey_west_t_statistic: '1.83262', confidence_interval_95_lower: '-0.0003404',
+        confidence_interval_95_upper: '0.0101361',
+        criteria: {
+          minimum_twenty_exit_triggers: true,
+          minimum_ten_clustered_exit_trigger_sessions: true,
+          positive_mean_session_exit_timing_advantage: true,
+          exit_timing_newey_west_t_statistic_above_1_96: false,
+        },
+        passed: false,
       },
       stability_validation: intradayStabilityFixture,
       correlation_validation: {
@@ -1364,9 +1384,13 @@ describe('verified robustness evidence', () => {
         passed: false,
       },
       strategy: {
-        entry_rule: 'NEXT_5M_OPEN_10_05', exit_rule: 'NEXT_SESSION_OPEN_T_PLUS_ONE',
+        entry_rule: 'NEXT_5M_OPEN_10_05', exit_rule: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP',
         entry_price_source: 'OPEN_OF_BAR_LABELLED_10_05_INTERVAL_START_10_00',
-        exit_price_source: 'OPEN_OF_NEXT_SESSION_BAR_LABELLED_09_35_INTERVAL_START_09_30',
+        exit_condition: 'bearish_10m_0930_0940 AND bearish_10m_0940_0950 AND bearish_10m_0950_1000',
+        exit_minimum_body_return_bps: '5', exit_condition_known_at: 'NEXT_SESSION_10_00_BAR_CLOSE_T_PLUS_ONE',
+        conditional_exit_price_source: 'OPEN_OF_NEXT_SESSION_BAR_LABELLED_10_05_INTERVAL_START_10_00',
+        fallback_exit_price_source: 'OPEN_OF_NEXT_SESSION_BAR_LABELLED_15_00_INTERVAL_START_14_55',
+        conditional_exit_count: 28, fallback_time_stop_count: 164,
         position_rule: 'EQUAL_WEIGHT_TRIGGERED_STOCKS_ELSE_CASH',
         benchmark_rule: 'EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_HORIZON',
         single_side_cost_bps: '5', t_plus_one_compliant: true,
@@ -1389,13 +1413,17 @@ describe('verified robustness evidence', () => {
           walk_forward_oos_excess_return_positive: true,
           walk_forward_positive_fold_ratio_at_least_60pct: false,
           threshold_sensitivity_majority_positive: false,
+          exit_factor_effectiveness_passed: false,
         },
       },
       causal_contract: {
         factor_known_at: 'THIRD_TEN_MINUTE_BAR_CLOSE_10_00', entry_at: 'NEXT_SOURCE_FIVE_MINUTE_BAR_OPEN_10_05',
-        exit_at: 'NEXT_TRADING_SESSION_FIRST_FIVE_MINUTE_BAR_OPEN_T_PLUS_ONE', same_bar_execution: false,
+        exit_condition_known_at: 'NEXT_SESSION_THIRD_TEN_MINUTE_BAR_CLOSE_10_00_T_PLUS_ONE',
+        conditional_exit_at: 'NEXT_SOURCE_FIVE_MINUTE_BAR_OPEN_10_05_T_PLUS_ONE',
+        fallback_exit_at: 'FINAL_SOURCE_FIVE_MINUTE_BAR_OPEN_14_55_T_PLUS_ONE', same_bar_execution: false,
         source_bar_timestamp_convention: 'BAR_END_TIME', entry_bar_label: '10_05', entry_interval_start: '10_00',
-        exit_bar_label: 'NEXT_SESSION_09_35', exit_interval_start: 'NEXT_SESSION_09_30',
+        conditional_exit_bar_label: 'NEXT_SESSION_10_05', conditional_exit_interval_start: 'NEXT_SESSION_10_00',
+        fallback_exit_bar_label: 'NEXT_SESSION_15_00', fallback_exit_interval_start: 'NEXT_SESSION_14_55',
         t_plus_one_compliant: true,
       },
       l2_factor_readiness: {
@@ -1421,17 +1449,25 @@ describe('verified robustness evidence', () => {
     expect(screen.getByRole('combobox', { name: '第三段 09:50–10:00' })).toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: '条件组合' })).toBeInTheDocument()
     expect(screen.getByText('受限规则，不执行任意表达式')).toBeInTheDocument()
+    fireEvent.mouseDown(screen.getByRole('combobox', { name: '平仓规则' }))
+    fireEvent.click(await screen.findByText('T+1 三根 10 分钟阴线退出，否则 14:55 时间退出'))
+    fireEvent.change(screen.getByRole('spinbutton', { name: '每根退出阴线实体下限（bps）' }), { target: { value: '5' } })
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('回测已完成，研究硬门未通过')).toBeInTheDocument()
     expect(runIntradayFactorBacktest).toHaveBeenCalledWith(expect.objectContaining({
       factor: 'custom_opening_ten_minute_direction_rule', cost_bps: '5', minimum_body_return_bps: '0',
       directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL',
+      exit_rule: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP',
+      exit_minimum_body_return_bps: '5',
     }))
     expect(screen.getByText(/实际触发 192\/1500 次/)).toBeInTheDocument()
     expect(screen.getAllByText('聚类信号日')[1].nextSibling).toHaveTextContent('20')
     expect(screen.getAllByText('Newey-West t')[1].nextSibling).toHaveTextContent('-2.000')
     expect(screen.getByText('95% 置信区间').nextSibling).toHaveTextContent('-0.04% ～ -0.00%')
     expect(screen.getByText('累计收益').nextSibling).toHaveTextContent('-4.08%')
+    fireEvent.click(screen.getByRole('tab', { name: '有效性与相关性' }))
+    expect(screen.getByText('平仓因子有效性门未通过')).toBeInTheDocument()
+    expect(screen.getByText(/触发 28 次、覆盖 10 个交易日/)).toBeInTheDocument()
     expect(screen.getByText(/五档买卖盘强度：UNCONFIGURED/)).toBeInTheDocument()
     expect(screen.getByText(/不会从 OHLCV 伪造买一至买五/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出因子研究证据/ })).toBeInTheDocument()

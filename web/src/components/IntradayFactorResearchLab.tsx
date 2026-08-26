@@ -65,6 +65,11 @@ const gateLabels: Record<string, string> = {
   walk_forward_oos_excess_return_positive: '滚动样本外超额收益为正',
   walk_forward_positive_fold_ratio_at_least_60pct: '至少 60% 测试折收益为正',
   threshold_sensitivity_majority_positive: '多数固定阈值收益为正',
+  exit_factor_effectiveness_passed: '平仓因子有效性通过',
+  minimum_twenty_exit_triggers: '至少 20 次平仓因子触发',
+  minimum_ten_clustered_exit_trigger_sessions: '至少 10 个聚类平仓触发日',
+  positive_mean_session_exit_timing_advantage: '平仓触发的日聚类卖出价优势为正',
+  exit_timing_newey_west_t_statistic_above_1_96: '平仓卖出价优势 Newey-West t 大于 1.96',
   minimum_two_disjoint_test_folds: '至少两个不重叠测试折',
   every_test_fold_has_signal: '每个测试折均有信号',
   causal_selection_known_before_test_signal: '阈值选择先于测试信号',
@@ -500,6 +505,12 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           <Metric label="最差时间块超额" value={formatPercent(result.stability_validation.worst_block_mean_conditional_excess_return)} />
           <Metric label="滚动样本外收益" value={formatPercent(result.robustness_validation.stitched_strategy_metrics.total_return)} />
           <Metric label="滚动样本外超额" value={formatPercent(result.robustness_validation.stitched_strategy_metrics.excess_return)} />
+          {result.exit_factor_validation && <>
+            <Metric label="平仓因子触发" value={`${result.exit_factor_validation.trigger_count}/${result.exit_factor_validation.entry_signal_count}`} />
+            <Metric label="平仓触发率" value={formatPercent(result.exit_factor_validation.trigger_rate)} />
+            <Metric label="平仓卖出价优势" value={formatPercent(result.exit_factor_validation.mean_session_triggered_timing_advantage)} />
+            <Metric label="平仓优势 NW t" value={formatNumber(result.exit_factor_validation.newey_west_t_statistic)} />
+          </>}
         </div>
         <EquityChart dark analytics={curve} />
         <Tabs items={[
@@ -526,6 +537,18 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
                 { title: 'Pearson 相关系数', dataIndex: 'correlation', render: (value: string) => formatNumber(value) },
                 { title: '绝对值门槛', render: () => `< ${result.correlation_validation.maximum_absolute_correlation}` },
               ]} />
+              {result.exit_factor_validation && <>
+                <Alert
+                  showIcon
+                  type={result.exit_factor_validation.passed ? 'success' : 'warning'}
+                  title={result.exit_factor_validation.passed ? '平仓因子有效性门通过' : '平仓因子有效性门未通过'}
+                  description={`只在实际开仓且三连阴触发的股票上，比较 10:05 条件退出价与 14:55 时间退出价；触发 ${result.exit_factor_validation.trigger_count} 次、覆盖 ${result.exit_factor_validation.clustered_trigger_session_count} 个交易日，日聚类卖出价优势 ${formatPercent(result.exit_factor_validation.mean_session_triggered_timing_advantage)}，Newey-West t ${formatNumber(result.exit_factor_validation.newey_west_t_statistic)}，95% 区间 ${formatPercent(result.exit_factor_validation.confidence_interval_95_lower)} ～ ${formatPercent(result.exit_factor_validation.confidence_interval_95_upper)}。这是同一路径反事实诊断，不是独立盲测。`}
+                />
+                <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(result.exit_factor_validation.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+                  { title: '平仓因子门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+                  { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+                ]} />
+              </>}
             </Space>,
           },
           {

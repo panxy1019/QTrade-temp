@@ -160,6 +160,9 @@ class IntradayFactorObservation:
     exit_price: Decimal
     exit_condition_score: Decimal
     exit_condition_triggered: bool
+    conditional_exit_price: Decimal
+    fallback_exit_price: Decimal
+    exit_timing_advantage: Decimal
     minimum_ten_minute_body_return: Decimal
     ten_minute_body_returns: tuple[Decimal, Decimal, Decimal]
     directional_rule_score: Decimal
@@ -198,6 +201,25 @@ class IntradayEventSummary:
     newey_west_t_statistic: Decimal
     confidence_interval_95_lower: Decimal
     confidence_interval_95_upper: Decimal
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayExitFactorValidation:
+    classification: str
+    entry_signal_count: int
+    trigger_count: int
+    trigger_rate: Decimal
+    clustered_trigger_session_count: int
+    mean_triggered_timing_advantage: Decimal
+    mean_session_triggered_timing_advantage: Decimal
+    trigger_hit_rate: Decimal
+    newey_west_lag: int
+    newey_west_standard_error: Decimal
+    newey_west_t_statistic: Decimal
+    confidence_interval_95_lower: Decimal
+    confidence_interval_95_upper: Decimal
+    criteria: Mapping[str, bool]
+    passed: bool
 
 
 @dataclass(frozen=True, slots=True)
@@ -370,6 +392,7 @@ class IntradayFactorResearchResult:
     observations: tuple[IntradayFactorObservation, ...]
     factor_metrics: IntradayFactorMetrics
     event_summary: IntradayEventSummary
+    exit_factor_validation: IntradayExitFactorValidation | None
     stability_validation: IntradayFactorStability
     correlations: Mapping[str, Decimal]
     strategy_metrics: PerformanceMetrics
@@ -461,6 +484,9 @@ def run_opening_triple_bullish_research(
                 raise ValueError("factor entry must use the 10:05 source-bar open")
             exit_condition_score = Decimal("0")
             exit_condition_triggered = False
+            conditional_exit_price = exit_bars[0].open
+            fallback_exit_price = exit_bars[0].open
+            exit_timing_advantage = Decimal("0")
             if selected_exit_spec.rule == _NEXT_SESSION_OPEN_EXIT:
                 exit_bar = exit_bars[0]
                 if _china_time(exit_bar.timestamp) != _EXIT_TIME:
@@ -487,10 +513,18 @@ def run_opening_triple_bullish_research(
                         "factor exit condition must be known at the next-session "
                         "10:00 close"
                     )
+                conditional_exit_bar = exit_bars[6]
+                fallback_exit_bar = exit_bars[-1]
+                conditional_exit_price = conditional_exit_bar.open
+                fallback_exit_price = fallback_exit_bar.open
+                exit_timing_advantage = (
+                    conditional_exit_price / fallback_exit_price
+                    - Decimal("1")
+                )
                 exit_bar = (
-                    exit_bars[6]
+                    conditional_exit_bar
                     if exit_condition_triggered
-                    else exit_bars[-1]
+                    else fallback_exit_bar
                 )
                 expected_exit_time = (
                     _ENTRY_TIME
@@ -526,6 +560,9 @@ def run_opening_triple_bullish_research(
                     exit_price=exit_bar.open,
                     exit_condition_score=exit_condition_score,
                     exit_condition_triggered=exit_condition_triggered,
+                    conditional_exit_price=conditional_exit_price,
+                    fallback_exit_price=fallback_exit_price,
+                    exit_timing_advantage=exit_timing_advantage,
                     minimum_ten_minute_body_return=(
                         minimum_ten_minute_body_return
                     ),
@@ -598,6 +635,11 @@ def run_opening_triple_bullish_research(
         key=lambda item: (item.symbol, item.symbol),
     )
     event_summary = _event_summary(observations, sector_groups)
+    exit_factor_validation = (
+        None
+        if selected_exit_spec.rule == _NEXT_SESSION_OPEN_EXIT
+        else _exit_factor_validation(observations)
+    )
     stability = _temporal_stability_validation(observations, selected_days)
     robustness = _run_robustness_validation(
         observations,
@@ -645,6 +687,10 @@ def run_opening_triple_bullish_research(
             "threshold_sensitivity_majority_positive"
         ],
     }
+    if exit_factor_validation is not None:
+        criteria["exit_factor_effectiveness_passed"] = (
+            exit_factor_validation.passed
+        )
     causal_contract: Mapping[str, object]
     if selected_exit_spec.rule == _NEXT_SESSION_OPEN_EXIT:
         causal_contract = {
@@ -698,6 +744,7 @@ def run_opening_triple_bullish_research(
         observations=tuple(observations),
         factor_metrics=factor_metrics,
         event_summary=event_summary,
+        exit_factor_validation=exit_factor_validation,
         stability_validation=stability,
         correlations=correlations,
         strategy_metrics=base_evaluation[0],
@@ -1207,6 +1254,77 @@ def _event_summary(
         newey_west_t_statistic=newey_west_t_statistic,
         confidence_interval_95_lower=confidence_lower,
         confidence_interval_95_upper=confidence_upper,
+    )
+
+
+def _exit_factor_validation(
+    observations: list[IntradayFactorObservation],
+) -> IntradayExitFactorValidation:
+    entries = [item for item in observations if item.signal]
+    triggers = [item for item in entries if item.exit_condition_triggered]
+    by_day: dict[date, list[Decimal]] = defaultdict(list)
+    for item in triggers:
+        exit_day = item.exit_at.astimezone(_CHINA_TIME).date()
+        by_day[exit_day].append(item.exit_timing_advantage)
+    session_advantages = [
+        sum(by_day[trading_day], start=Decimal("0"))
+        / len(by_day[trading_day])
+        for trading_day in sorted(by_day)
+    ]
+    (
+        session_mean,
+        newey_west_lag,
+        newey_west_standard_error,
+        newey_west_t_statistic,
+        confidence_lower,
+        confidence_upper,
+    ) = _newey_west_mean_statistics(session_advantages)
+    raw_mean = (
+        Decimal("0")
+        if not triggers
+        else sum(
+            (item.exit_timing_advantage for item in triggers),
+            start=Decimal("0"),
+        )
+        / len(triggers)
+    )
+    criteria = {
+        "minimum_twenty_exit_triggers": len(triggers) >= 20,
+        "minimum_ten_clustered_exit_trigger_sessions": (
+            len(session_advantages) >= 10
+        ),
+        "positive_mean_session_exit_timing_advantage": session_mean > 0,
+        "exit_timing_newey_west_t_statistic_above_1_96": (
+            newey_west_t_statistic > Decimal("1.96")
+        ),
+    }
+    return IntradayExitFactorValidation(
+        classification="TRIGGERED_EXIT_TIMING_ADVANTAGE_DIAGNOSTIC",
+        entry_signal_count=len(entries),
+        trigger_count=len(triggers),
+        trigger_rate=(
+            Decimal("0")
+            if not entries
+            else Decimal(len(triggers)) / len(entries)
+        ),
+        clustered_trigger_session_count=len(session_advantages),
+        mean_triggered_timing_advantage=raw_mean,
+        mean_session_triggered_timing_advantage=session_mean,
+        trigger_hit_rate=(
+            Decimal("0")
+            if not triggers
+            else Decimal(
+                sum(item.exit_timing_advantage > 0 for item in triggers)
+            )
+            / len(triggers)
+        ),
+        newey_west_lag=newey_west_lag,
+        newey_west_standard_error=newey_west_standard_error,
+        newey_west_t_statistic=newey_west_t_statistic,
+        confidence_interval_95_lower=confidence_lower,
+        confidence_interval_95_upper=confidence_upper,
+        criteria=criteria,
+        passed=all(criteria.values()),
     )
 
 

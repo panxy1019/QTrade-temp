@@ -276,6 +276,17 @@ Last updated: 2026-08-27
   window returned +1.3245% with +4.9200% excess, but maximum drawdown was
   -11.3789%, stitched walk-forward return was -10.0783%, and the research gate
   still failed. This is a retrospective diagnostic, not evidence for PAPER.
+- Exit-factor effectiveness is evaluated separately from total strategy profit.
+  For each actual entry where the T+1 bearish condition triggers, the engine
+  compares the 10:05-labelled conditional exit open with the counterfactual
+  15:00-labelled time-exit open, forms one mean timing advantage per trigger
+  session and applies Newey-West uncertainty. The 5 bps viewed-window rule had
+  28 triggers across 10 sessions: raw mean advantage +0.1966%, session mean
+  +0.4898%, 64.29% positive, Newey-West t 1.8326 and a 95% interval from
+  -0.0340% to +1.0136%. Trigger count, session count and sign passed, but the
+  `t > 1.96` gate failed; `exit_factor_effectiveness_passed=false` is therefore
+  part of the strategy research hard gate. This counterfactual diagnostic does
+  not change the standardized T+1-open label used to validate entry factors.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,

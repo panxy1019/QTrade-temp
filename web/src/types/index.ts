@@ -689,6 +689,24 @@ export interface IntradayFactorBacktest {
     confidence_interval_95_lower: string
     confidence_interval_95_upper: string
   }
+  exit_factor_validation?: {
+    classification: 'TRIGGERED_EXIT_TIMING_ADVANTAGE_DIAGNOSTIC'
+    advantage_definition: 'CONDITIONAL_EXIT_OPEN_DIVIDED_BY_TIME_STOP_OPEN_MINUS_ONE'
+    entry_signal_count: number
+    trigger_count: number
+    trigger_rate: string
+    clustered_trigger_session_count: number
+    mean_triggered_timing_advantage: string
+    mean_session_triggered_timing_advantage: string
+    trigger_hit_rate: string
+    newey_west_lag: number
+    newey_west_standard_error: string
+    newey_west_t_statistic: string
+    confidence_interval_95_lower: string
+    confidence_interval_95_upper: string
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   stability_validation: {
     classification: 'CONTIGUOUS_SESSION_BLOCK_FACTOR_STABILITY_DIAGNOSTIC'
     blocks: Array<{

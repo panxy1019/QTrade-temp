@@ -17,6 +17,7 @@ from qtrade.research.governance import (
 from qtrade.research.intraday_factor import (
     IntradayCostStress,
     IntradayEventSummary,
+    IntradayExitFactorValidation,
     IntradayExitSpec,
     IntradayFactorDay,
     IntradayFactorGroup,
@@ -105,6 +106,7 @@ __all__ = [
     "IntradayCostStress",
     "IntradayEventSummary",
     "IntradayExitSpec",
+    "IntradayExitFactorValidation",
     "IntradayFactorDay",
     "IntradayFactorGroup",
     "IntradayFactorMetrics",

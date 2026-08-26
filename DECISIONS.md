@@ -1516,3 +1516,29 @@ not mistaken for stronger entry-factor evidence. The first viewed 20-session,
 return was -10.0783% and the overall research gate failed. It remains reused
 current-universe QFQ evidence, `NOT_ELIGIBLE`, with no state mutation, PAPER/LIVE
 authority or external order transmission.
+
+## ADR-097 — Exit factors require counterfactual timing-advantage evidence
+
+Status: accepted, 2026-08-27.
+
+A strategy can profit in one viewed window even when its conditional sell rule
+adds no value. QTrade therefore does not treat total return, excess return or a
+trigger count as proof that the T+1 bearish factor is effective. For each actual
+entry where the factor triggers, it retains both causally available historical
+sell prices: the open of the 10:05-labelled conditional-exit Bar and the open of
+the 15:00-labelled time-exit Bar. Timing advantage is defined as conditional
+exit price divided by time-exit price minus one; positive values mean selling
+early preserved more proceeds. This is a sell-versus-sell comparison, so the
+round-trip entry cost and common sell cost do not alter the contrast.
+
+Same-session stocks are not independent. Triggered advantages are first averaged
+by entry cohort/session, then evaluated with the existing automatically banded
+Newey-West mean statistic. Passing requires at least 20 triggers, ten clustered
+trigger sessions, positive clustered mean and `t > 1.96`. The first 5 bps run
+had 28 triggers over ten sessions, +0.4898% clustered mean advantage, 64.29% raw
+hit rate, t 1.8326 and a [-0.0340%, +1.0136%] 95% interval. Sign and coverage
+passed, but statistical uncertainty did not; the exit factor and overall
+research gate therefore fail. Entry-factor validity remains standardized to its
+T+1-open forward label so sell-policy outcomes cannot inflate entry evidence.
+The result is reused-history, non-PIT and `NOT_ELIGIBLE`, with no PAPER/LIVE,
+state-mutation or external-order authority.

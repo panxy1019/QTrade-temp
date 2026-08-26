@@ -100,6 +100,10 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
     assert robustness["criteria"]["causal_selection_known_before_test_signal"] is True
     assert payload["strategy"]["entry_rule"] == "NEXT_5M_OPEN_10_05"
     assert payload["strategy"]["exit_rule"] == "NEXT_SESSION_OPEN_T_PLUS_ONE"
+    assert "exit_factor_validation" not in payload
+    assert "exit_factor_effectiveness_passed" not in payload["research_gate"][
+        "criteria"
+    ]
     assert payload["backtest"]["strategy_metrics"]["number_of_periods"] == 20
     assert set(payload["backtest"]["cost_stress"]) == {"0", "5", "10", "20"}
     assert len(payload["backtest"]["curve"]) == 20
@@ -275,6 +279,28 @@ def test_intraday_factor_backtest_accepts_a_causal_bearish_exit_rule() -> None:
     assert strategy["conditional_exit_count"] + strategy[
         "fallback_time_stop_count"
     ] == payload["event_summary"]["signal_count"]
+    exit_validation = payload["exit_factor_validation"]
+    assert exit_validation["classification"] == (
+        "TRIGGERED_EXIT_TIMING_ADVANTAGE_DIAGNOSTIC"
+    )
+    assert exit_validation["entry_signal_count"] == payload["event_summary"][
+        "signal_count"
+    ]
+    assert exit_validation["trigger_count"] == strategy[
+        "conditional_exit_count"
+    ] == 28
+    assert exit_validation["clustered_trigger_session_count"] > 0
+    assert exit_validation["advantage_definition"] == (
+        "CONDITIONAL_EXIT_OPEN_DIVIDED_BY_TIME_STOP_OPEN_MINUS_ONE"
+    )
+    assert exit_validation["criteria"]["minimum_twenty_exit_triggers"] is True
+    assert exit_validation["criteria"][
+        "minimum_ten_clustered_exit_trigger_sessions"
+    ] is (exit_validation["clustered_trigger_session_count"] >= 10)
+    assert exit_validation["passed"] is False
+    assert payload["research_gate"]["criteria"][
+        "exit_factor_effectiveness_passed"
+    ] is False
     assert payload["causal_contract"]["same_bar_execution"] is False
     assert payload["causal_contract"]["t_plus_one_compliant"] is True
     assert payload["promotion"] == "NOT_ELIGIBLE"

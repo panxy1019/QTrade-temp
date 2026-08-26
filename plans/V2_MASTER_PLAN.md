@@ -151,6 +151,10 @@ npm --prefix web run build
   at the final 15:00-labelled Bar open (14:55 interval start). Bound its threshold,
   use the same per-symbol rule for the benchmark, persist its browser-local
   identity and keep every result stateless and `NOT_ELIGIBLE`.
+- [x] Validate the exit factor independently of total strategy PnL by comparing
+  each triggered 10:05 exit open with its 14:55 time-exit counterfactual, cluster
+  timing advantage by session and gate on trigger count, session count, positive
+  mean and Newey-West significance before any research pass is possible.
 - [x] Add a checksum-bound browser-local notebook for intraday factor summaries,
   comparison, deletion and parameter reload; reject malformed/safety-relaxed
   records and require a new run after reload without creating formal lineage.

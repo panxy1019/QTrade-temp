@@ -257,6 +257,11 @@ def test_three_ten_minute_bearish_exit_is_causal_and_has_a_time_stop() -> None:
     assert triggered.signal is True
     assert triggered.exit_condition_triggered is True
     assert triggered.exit_condition_score > Decimal("0.00099")
+    assert triggered.conditional_exit_price == triggered.exit_price
+    assert triggered.exit_timing_advantage == (
+        triggered.conditional_exit_price / triggered.fallback_exit_price
+        - Decimal("1")
+    )
     assert triggered.exit_at.date() == bearish_exit_day
     assert triggered.exit_at.timetz().replace(tzinfo=None) == time(10, 5)
     assert timed_out.signal is True
@@ -290,6 +295,21 @@ def test_three_ten_minute_bearish_exit_is_causal_and_has_a_time_stop() -> None:
         "same_bar_execution": False,
         "t_plus_one_compliant": True,
     }
+    validation = result.exit_factor_validation
+    assert validation is not None
+    assert validation.entry_signal_count > validation.trigger_count == 1
+    assert validation.clustered_trigger_session_count == 1
+    assert validation.mean_triggered_timing_advantage == (
+        triggered.exit_timing_advantage
+    )
+    assert validation.criteria["minimum_twenty_exit_triggers"] is False
+    assert validation.criteria[
+        "minimum_ten_clustered_exit_trigger_sessions"
+    ] is False
+    assert validation.passed is False
+    assert result.research_gate.criteria[
+        "exit_factor_effectiveness_passed"
+    ] is False
 
 
 def test_intraday_exit_spec_rejects_unsafe_or_ignored_parameters() -> None:

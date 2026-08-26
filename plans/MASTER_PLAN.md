@@ -331,6 +331,12 @@ at 14:55. The same rule is applied per symbol to the benchmark, and the response
 hash binds trigger/time-exit counts. In the viewed 20-session window the 5 bps
 variant returned +1.3245% full-window but -10.0783% in stitched walk-forward
 tests, so the research gate remains failed and no PAPER authority is created.
+The sell factor also has its own effectiveness gate: triggered 10:05 proceeds
+are compared with the same position's 14:55 time-exit counterfactual, aggregated
+once per session and evaluated with Newey-West uncertainty. Although the viewed
+20-session rule's clustered advantage averaged +0.4898%, t was only 1.8326 and
+the 95% interval crossed zero. The sell factor therefore fails independently of
+the full-window strategy result.
 
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no

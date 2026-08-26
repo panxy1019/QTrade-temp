@@ -8775,7 +8775,7 @@ def _intraday_factor_preview(
     source_bar_count: int,
 ) -> dict[str, object]:
     criteria = dict(result.research_gate.criteria)
-    validation_keys = (
+    validation_keys: tuple[str, ...] = (
         "minimum_observation_count",
         "minimum_signal_count",
         "positive_mean_signal_return",
@@ -8786,6 +8786,11 @@ def _intraday_factor_preview(
         "positive_rank_ic",
         "positive_sector_ratio_at_least_60pct",
     )
+    if result.exit_factor_validation is not None:
+        validation_keys = (
+            *validation_keys,
+            "exit_factor_effectiveness_passed",
+        )
     factor_validation_passed = all(criteria[key] for key in validation_keys)
     correlation_passed = criteria[
         "maximum_absolute_factor_correlation_below_0_90"
@@ -8809,6 +8814,9 @@ def _intraday_factor_preview(
             "detail": (
                 "Cross-sectional IC, session-clustered Newey-West and four "
                 "contiguous-block stability tests completed."
+                if result.exit_factor_validation is None
+                else "Entry-factor tests and triggered-exit timing-advantage "
+                "Newey-West tests completed."
             ),
         },
         {
@@ -9161,6 +9169,42 @@ def _intraday_factor_preview(
         "state_mutation": result.state_mutation,
         "external_order_transmission": result.external_order_transmission,
     }
+    if result.exit_factor_validation is not None:
+        exit_validation = result.exit_factor_validation
+        unsigned["exit_factor_validation"] = {
+            "classification": exit_validation.classification,
+            "advantage_definition": (
+                "CONDITIONAL_EXIT_OPEN_DIVIDED_BY_TIME_STOP_OPEN_MINUS_ONE"
+            ),
+            "entry_signal_count": exit_validation.entry_signal_count,
+            "trigger_count": exit_validation.trigger_count,
+            "trigger_rate": str(exit_validation.trigger_rate),
+            "clustered_trigger_session_count": (
+                exit_validation.clustered_trigger_session_count
+            ),
+            "mean_triggered_timing_advantage": str(
+                exit_validation.mean_triggered_timing_advantage
+            ),
+            "mean_session_triggered_timing_advantage": str(
+                exit_validation.mean_session_triggered_timing_advantage
+            ),
+            "trigger_hit_rate": str(exit_validation.trigger_hit_rate),
+            "newey_west_lag": exit_validation.newey_west_lag,
+            "newey_west_standard_error": str(
+                exit_validation.newey_west_standard_error
+            ),
+            "newey_west_t_statistic": str(
+                exit_validation.newey_west_t_statistic
+            ),
+            "confidence_interval_95_lower": str(
+                exit_validation.confidence_interval_95_lower
+            ),
+            "confidence_interval_95_upper": str(
+                exit_validation.confidence_interval_95_upper
+            ),
+            "criteria": dict(exit_validation.criteria),
+            "passed": exit_validation.passed,
+        }
     canonical = json.dumps(
         unsigned,
         ensure_ascii=False,
