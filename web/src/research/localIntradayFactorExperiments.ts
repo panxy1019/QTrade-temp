@@ -27,6 +27,7 @@ export interface LocalIntradayFactorExperiment {
   }
   observation_count: number
   signal_count: number
+  clustered_signal_session_count: number
   metrics: {
     total_return: string
     annualized_return: string
@@ -37,6 +38,9 @@ export interface LocalIntradayFactorExperiment {
     maximum_absolute_correlation: string
     stitched_oos_total_return: string
     stitched_oos_excess_return: string
+    newey_west_t_statistic: string
+    confidence_interval_95_lower: string
+    confidence_interval_95_upper: string
   }
   research_gate_passed: boolean
   robustness_gate_passed: boolean
@@ -83,6 +87,9 @@ export function saveLocalIntradayFactorExperiment(
     },
     observation_count: result.event_summary.observation_count,
     signal_count: result.event_summary.signal_count,
+    clustered_signal_session_count: (
+      result.event_summary.clustered_signal_session_count
+    ),
     metrics: {
       total_return: result.backtest.strategy_metrics.total_return,
       annualized_return: result.backtest.strategy_metrics.annualized_return,
@@ -98,6 +105,13 @@ export function saveLocalIntradayFactorExperiment(
       ),
       stitched_oos_excess_return: (
         result.robustness_validation.stitched_strategy_metrics.excess_return
+      ),
+      newey_west_t_statistic: result.event_summary.newey_west_t_statistic,
+      confidence_interval_95_lower: (
+        result.event_summary.confidence_interval_95_lower
+      ),
+      confidence_interval_95_upper: (
+        result.event_summary.confidence_interval_95_upper
       ),
     },
     research_gate_passed: result.research_gate.passed,
@@ -157,6 +171,7 @@ function isExperiment(value: unknown): value is LocalIntradayFactorExperiment {
     && matchesFactorDefinition(value.parameters, value.factor_definition)
     && isPositiveInteger(value.observation_count)
     && isNonNegativeInteger(value.signal_count)
+    && isNonNegativeInteger(value.clustered_signal_session_count)
     && isMetrics(value.metrics)
     && typeof value.research_gate_passed === 'boolean'
     && typeof value.robustness_gate_passed === 'boolean'
@@ -226,6 +241,9 @@ function isMetrics(value: unknown): value is LocalIntradayFactorExperiment['metr
     value.maximum_absolute_correlation,
     value.stitched_oos_total_return,
     value.stitched_oos_excess_return,
+    value.newey_west_t_statistic,
+    value.confidence_interval_95_lower,
+    value.confidence_interval_95_upper,
   ].every(isSignedDecimalString)
 }
 

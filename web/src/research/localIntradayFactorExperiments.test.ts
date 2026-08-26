@@ -30,7 +30,13 @@ const result = {
   },
   factor_validation: { rank_ic: '-0.003' },
   correlation_validation: { maximum_absolute_correlation: '0.4712' },
-  event_summary: { observation_count: 1500, signal_count: 192 },
+  event_summary: {
+    observation_count: 1500, signal_count: 192,
+    clustered_signal_session_count: 20,
+    newey_west_t_statistic: '-2.0',
+    confidence_interval_95_lower: '-0.000396',
+    confidence_interval_95_upper: '-0.000004',
+  },
   robustness_validation: {
     stitched_strategy_metrics: { total_return: '-0.0467', excess_return: '-0.001' },
     passed: false,
@@ -69,6 +75,11 @@ describe('local intraday factor experiments', () => {
         preview_hash: result.preview_hash,
         research_gate_passed: false,
         robustness_gate_passed: false,
+        metrics: expect.objectContaining({
+          newey_west_t_statistic: '-2.0',
+          confidence_interval_95_lower: '-0.000396',
+          confidence_interval_95_upper: '-0.000004',
+        }),
       }),
     ])
     expect(loadLocalIntradayFactorExperiments({

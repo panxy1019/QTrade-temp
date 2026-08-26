@@ -274,6 +274,14 @@ fail closed on malformed or safety-relaxed local data. Parameter reload clears
 the old result and requires a new run; the notebook has no server write,
 StrategyVersion, promotion or cross-device synchronization semantics.
 
+The effectiveness gate now clusters event returns by trading session before
+claiming significance. It computes each signal day's triggered-minus-universe
+mean and applies an automatic-bandwidth Newey-West mean standard error,
+t-statistic and 95% interval. At least ten signal sessions and `t > 1.96` are
+mandatory. The fixed 120-day result has t = -0.4800 and an interval spanning
+zero, adding another explicit veto rather than counting 9,000 stock-days as
+independent evidence.
+
 The factor veto is also persisted as an immutable 120-session report rather than
 left as a one-off API observation. It fixes a 60-session training prefix, six
 disjoint ten-session tests and thresholds `0/5/10/20 bps`, then binds the exact

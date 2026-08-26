@@ -309,6 +309,12 @@ const data = {
       robustness_passed: false, research_gate_passed: false,
     },
     result: {
+      event_summary: {
+        clustered_signal_session_count: 120,
+        newey_west_t_statistic: '-0.4800296',
+        confidence_interval_95_lower: '-0.0029159',
+        confidence_interval_95_upper: '0.0017686',
+      },
       backtest: {
         curve: [
           { trading_day: '2026-03-03', signal_count: 3, eligible_symbol_count: 75, strategy_return: '0.01', benchmark_return: '0.005', strategy_equity: '1.01', benchmark_equity: '1.005', excess_equity: '0.005' },
@@ -329,6 +335,8 @@ const data = {
         criteria: {
           minimum_observation_count: true, minimum_signal_count: true,
           positive_mean_signal_return: false, positive_conditional_excess_return: false,
+          minimum_ten_clustered_signal_sessions: true,
+          newey_west_t_statistic_above_1_96: false,
           positive_rank_ic: false, positive_sector_ratio_at_least_60pct: false,
           maximum_absolute_factor_correlation_below_0_90: true,
           base_cost_total_return_positive: false, base_cost_excess_return_positive: false,
@@ -1199,6 +1207,9 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText('120 日固定因子稳健性证据')).toBeInTheDocument()
     expect(screen.getByText('长期复核未通过：1/6 个测试折为正')).toBeInTheDocument()
     expect(screen.getByText('全窗口收益').nextSibling).toHaveTextContent('-27.17%')
+    expect(screen.getAllByText('聚类信号日')[0].nextSibling).toHaveTextContent('120')
+    expect(screen.getAllByText('Newey-West t')[0].nextSibling).toHaveTextContent('-0.480')
+    expect(screen.getByText('聚类超额 95% 区间').nextSibling).toHaveTextContent('-0.29% ～ 0.18%')
     expect(screen.getAllByText('样本外收益')[0].nextSibling).toHaveTextContent('-28.31%')
     expect(screen.getByText(/10 → 10 → 5 → 5 → 5 → 5 bps/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出长期证据/ })).toBeInTheDocument()
@@ -1273,6 +1284,11 @@ describe('verified robustness evidence', () => {
         mean_signal_forward_return: '-0.0013', mean_universe_forward_return: '-0.0012',
         conditional_excess_return: '-0.0001', signal_hit_rate: '0.4167',
         positive_sector_count: 8, sector_count: 15,
+        clustered_signal_session_count: 20,
+        mean_session_conditional_excess_return: '-0.0002',
+        newey_west_lag: 2, newey_west_standard_error: '0.0001',
+        newey_west_t_statistic: '-2.0', confidence_interval_95_lower: '-0.000396',
+        confidence_interval_95_upper: '-0.000004',
       },
       correlation_validation: {
         correlations: { opening_30m_return: '0.4668', opening_30m_range_position: '0.4712' },
@@ -1374,6 +1390,9 @@ describe('verified robustness evidence', () => {
       directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL',
     }))
     expect(screen.getByText(/实际触发 192\/1500 次/)).toBeInTheDocument()
+    expect(screen.getAllByText('聚类信号日')[1].nextSibling).toHaveTextContent('20')
+    expect(screen.getAllByText('Newey-West t')[1].nextSibling).toHaveTextContent('-2.000')
+    expect(screen.getByText('95% 置信区间').nextSibling).toHaveTextContent('-0.04% ～ -0.00%')
     expect(screen.getByText('累计收益').nextSibling).toHaveTextContent('-4.08%')
     expect(screen.getByText(/五档买卖盘强度：UNCONFIGURED/)).toBeInTheDocument()
     expect(screen.getByText(/不会从 OHLCV 伪造买一至买五/)).toBeInTheDocument()

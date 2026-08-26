@@ -585,6 +585,13 @@ export interface IntradayFactorBacktest {
     signal_hit_rate: string
     positive_sector_count: number
     sector_count: number
+    clustered_signal_session_count: number
+    mean_session_conditional_excess_return: string
+    newey_west_lag: number
+    newey_west_standard_error: string
+    newey_west_t_statistic: string
+    confidence_interval_95_lower: string
+    confidence_interval_95_upper: string
   }
   correlation_validation: {
     correlations: Record<string, string>

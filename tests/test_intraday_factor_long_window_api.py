@@ -64,7 +64,7 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert float(payload["summary"]["stitched_strategy_metrics"]["total_return"]) < 0
     assert len(payload["summary"]["threshold_sensitivity"]) == 4
     assert payload["result_preview_hash"] == (
-        "a4ee8f9fb7e0a7f20e638021ffc3c4bc10ab1c2bd25196ffed094d364c4694d3"
+        "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d"
     )
     assert payload["promotion"] == "NOT_ELIGIBLE"
     assert payload["paper_readiness"] == "NOT_ELIGIBLE"
@@ -112,7 +112,7 @@ def test_resigned_changed_result_cannot_replace_fixed_long_window_evidence(
     payload = _client(changed_path).get("/intraday-factor-robustness").json()
 
     assert changed_result_hash != (
-        "a4ee8f9fb7e0a7f20e638021ffc3c4bc10ab1c2bd25196ffed094d364c4694d3"
+        "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d"
     )
     assert payload["report_id"] is None
     assert payload["promotion"] == "NOT_EVALUATED"

@@ -5,6 +5,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
+from math import floor
 
 from qtrade.data import Bar, BarQualityGate
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
@@ -150,6 +151,13 @@ class IntradayEventSummary:
     signal_hit_rate: Decimal
     positive_sector_count: int
     sector_count: int
+    clustered_signal_session_count: int
+    mean_session_conditional_excess_return: Decimal
+    newey_west_lag: int
+    newey_west_standard_error: Decimal
+    newey_west_t_statistic: Decimal
+    confidence_interval_95_lower: Decimal
+    confidence_interval_95_upper: Decimal
 
 
 @dataclass(frozen=True, slots=True)
@@ -437,6 +445,12 @@ def run_opening_triple_bullish_research(
         ),
         "positive_conditional_excess_return": (
             event_summary.conditional_excess_return > 0
+        ),
+        "minimum_ten_clustered_signal_sessions": (
+            event_summary.clustered_signal_session_count >= 10
+        ),
+        "newey_west_t_statistic_above_1_96": (
+            event_summary.newey_west_t_statistic > Decimal("1.96")
         ),
         "positive_rank_ic": factor_metrics.rank_ic > 0,
         "positive_sector_ratio_at_least_60pct": (
@@ -964,6 +978,29 @@ def _event_summary(
         else sum(signals, start=Decimal("0")) / len(signals)
     )
     mean_universe = sum(universe, start=Decimal("0")) / len(universe)
+    by_day: dict[date, list[IntradayFactorObservation]] = defaultdict(list)
+    for observation in observations:
+        by_day[observation.trading_day].append(observation)
+    session_excess_returns: list[Decimal] = []
+    for rows in (by_day[trading_day] for trading_day in sorted(by_day)):
+        session_signals = [
+            item.gross_forward_return for item in rows if item.signal
+        ]
+        if not session_signals:
+            continue
+        session_universe = [item.gross_forward_return for item in rows]
+        session_excess_returns.append(
+            sum(session_signals, start=Decimal("0")) / len(session_signals)
+            - sum(session_universe, start=Decimal("0")) / len(session_universe)
+        )
+    (
+        session_excess_mean,
+        newey_west_lag,
+        newey_west_standard_error,
+        newey_west_t_statistic,
+        confidence_lower,
+        confidence_upper,
+    ) = _newey_west_mean_statistics(session_excess_returns)
     return IntradayEventSummary(
         observation_count=len(observations),
         signal_count=len(signals),
@@ -980,6 +1017,60 @@ def _event_summary(
             item.mean_signal_forward_return > 0 for item in sectors
         ),
         sector_count=len(sectors),
+        clustered_signal_session_count=len(session_excess_returns),
+        mean_session_conditional_excess_return=session_excess_mean,
+        newey_west_lag=newey_west_lag,
+        newey_west_standard_error=newey_west_standard_error,
+        newey_west_t_statistic=newey_west_t_statistic,
+        confidence_interval_95_lower=confidence_lower,
+        confidence_interval_95_upper=confidence_upper,
+    )
+
+
+def _newey_west_mean_statistics(
+    values: list[Decimal],
+) -> tuple[Decimal, int, Decimal, Decimal, Decimal, Decimal]:
+    if not values:
+        zero = Decimal("0")
+        return zero, 0, zero, zero, zero, zero
+    count = len(values)
+    decimal_count = Decimal(count)
+    mean_value = sum(values, start=Decimal("0")) / decimal_count
+    if count < 2:
+        zero = Decimal("0")
+        return mean_value, 0, zero, zero, mean_value, mean_value
+    lag = min(
+        count - 1,
+        floor(4 * (count / 100) ** (2 / 9)),
+    )
+    deviations = [value - mean_value for value in values]
+    long_run_variance = (
+        sum((value * value for value in deviations), start=Decimal("0"))
+        / decimal_count
+    )
+    for offset in range(1, lag + 1):
+        covariance = sum(
+            (
+                deviations[index] * deviations[index - offset]
+                for index in range(offset, count)
+            ),
+            start=Decimal("0"),
+        ) / decimal_count
+        weight = Decimal(lag + 1 - offset) / Decimal(lag + 1)
+        long_run_variance += Decimal("2") * weight * covariance
+    variance_of_mean = max(Decimal("0"), long_run_variance) / decimal_count
+    standard_error = variance_of_mean.sqrt()
+    t_statistic = (
+        Decimal("0") if standard_error == 0 else mean_value / standard_error
+    )
+    margin = Decimal("1.96") * standard_error
+    return (
+        mean_value,
+        lag,
+        standard_error,
+        t_statistic,
+        mean_value - margin,
+        mean_value + margin,
     )
 
 

@@ -281,6 +281,16 @@ record only repopulates the form and clears the old result, so the user must run
 the current verified dataset again. The notebook is not server-synchronized,
 does not create a registered experiment and cannot feed PAPER or LIVE.
 
+Factor effectiveness no longer treats every same-day stock observation as an
+independent significance sample. For each session containing at least one
+signal, the engine first computes the triggered-stock mean forward return minus
+that session's full-universe mean. It then reports the daily-series mean, an
+automatically banded Newey-West standard error and t-statistic, and a normal 95%
+interval. The research gate additionally requires at least ten clustered signal
+sessions and `t > 1.96`; insufficient or zero-variance samples return a
+conservative zero statistic. This remains a retrospective effectiveness
+diagnostic and cannot bypass the forward PAPER gate.
+
 The first disclosed 20-session run from 2026-07-28 through 2026-08-24 produced
 192 signals across 1,500 stock-days. At 5 bps per side it returned `-4.0840%`,
 annualized `-40.8673%`, Sharpe `-3.3347` and maximum drawdown `-5.1038%`.
@@ -316,6 +326,10 @@ breakdowns, a searchable 75-stock table, threshold pressure and both research
 gate matrices. These partitions are diagnostic views of the fixed result; the
 browser cannot remove a weak sector or stock and feed the filtered set back into
 selection.
+All 120 sessions contained at least one signal, but their session-clustered
+conditional excess averaged `-0.0574%`; the Newey-West t-statistic was `-0.4800`
+and its 95% interval was `[-0.2916%, 0.1769%]`. Thus the enlarged cross-section
+does not manufacture statistical significance.
 
 The public deployment can be audited independently across one stock from every
 sector and three widely separated sessions. The script runs the same 45 requests

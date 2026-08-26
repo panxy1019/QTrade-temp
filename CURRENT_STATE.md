@@ -269,6 +269,14 @@ Last updated: 2026-08-27
   Invalid, cross-dataset or safety-relaxed records fail closed; loading a record
   only restores form parameters and requires a fresh rerun. These records are
   neither formal experiments nor independent evidence or PAPER inputs.
+- Session-clustered factor significance: effectiveness testing now forms one
+  conditional-excess observation per signal-bearing trading day before applying
+  an automatically banded Newey-West mean standard error, t-statistic and 95%
+  interval. The hard gate requires at least ten such sessions and `t > 1.96`, so
+  75 correlated stocks on one day cannot inflate the independent sample count.
+  In the fixed 120-day report all 120 sessions had signals, but clustered excess
+  averaged -0.0574%, Newey-West t was -0.4800 and the interval was
+  [-0.2916%, 0.1769%]; the hypothesis remains `NOT_ELIGIBLE`.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

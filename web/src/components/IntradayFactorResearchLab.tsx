@@ -47,6 +47,8 @@ const gateLabels: Record<string, string> = {
   minimum_signal_count: '至少 20 次信号',
   positive_mean_signal_return: '信号后平均收益为正',
   positive_conditional_excess_return: '条件超额收益为正',
+  minimum_ten_clustered_signal_sessions: '至少 10 个聚类信号交易日',
+  newey_west_t_statistic_above_1_96: 'Newey-West t 大于 1.96',
   positive_rank_ic: 'Rank IC 为正',
   positive_sector_ratio_at_least_60pct: '至少 60% 行业为正',
   maximum_absolute_factor_correlation_below_0_90: '相关性绝对值低于 0.90',
@@ -107,6 +109,9 @@ export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayF
         <Metric label="全窗口收益" value={formatPercent(summary.full_window_strategy_metrics.total_return)} />
         <Metric label="全窗口超额" value={formatPercent(summary.full_window_strategy_metrics.excess_return)} />
         <Metric label="Rank IC" value={formatNumber(summary.rank_ic)} />
+        {result && <Metric label="聚类信号日" value={String(result.event_summary.clustered_signal_session_count)} />}
+        {result && <Metric label="Newey-West t" value={formatNumber(result.event_summary.newey_west_t_statistic)} />}
+        {result && <Metric label="聚类超额 95% 区间" value={`${formatPercent(result.event_summary.confidence_interval_95_lower)} ～ ${formatPercent(result.event_summary.confidence_interval_95_upper)}`} />}
         <Metric label="样本外收益" value={formatPercent(summary.stitched_strategy_metrics.total_return)} />
         <Metric label="样本外超额" value={formatPercent(summary.stitched_strategy_metrics.excess_return)} />
         <Metric label="样本外最大回撤" value={formatPercent(summary.stitched_strategy_metrics.maximum_drawdown)} />
@@ -305,11 +310,12 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
         `${row.parameters.directions.map(directionLabel).join('/')} · ${row.parameters.combination} · ${row.parameters.minimum_body_return_bps} bps`
       ),
     },
-    { title: '信号', render: (_: unknown, row: LocalIntradayFactorExperiment) => `${row.signal_count}/${row.observation_count}` },
+    { title: '信号', render: (_: unknown, row: LocalIntradayFactorExperiment) => `${row.signal_count}/${row.observation_count} · ${row.clustered_signal_session_count} 日` },
     { title: '收益', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.total_return) },
     { title: 'Sharpe', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatNumber(row.metrics.sharpe) },
     { title: '最大回撤', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.maximum_drawdown) },
     { title: '样本外收益', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatPercent(row.metrics.stitched_oos_total_return) },
+    { title: 'NW t', render: (_: unknown, row: LocalIntradayFactorExperiment) => formatNumber(row.metrics.newey_west_t_statistic) },
     {
       title: '硬门',
       render: (_: unknown, row: LocalIntradayFactorExperiment) => (
@@ -399,6 +405,10 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           <Metric label="ICIR" value={formatNumber(result.factor_validation.icir)} />
           <Metric label="信号率" value={formatPercent(result.event_summary.signal_rate)} />
           <Metric label="条件超额" value={formatPercent(result.event_summary.conditional_excess_return)} />
+          <Metric label="聚类信号日" value={String(result.event_summary.clustered_signal_session_count)} />
+          <Metric label="日聚类超额均值" value={formatPercent(result.event_summary.mean_session_conditional_excess_return)} />
+          <Metric label="Newey-West t" value={formatNumber(result.event_summary.newey_west_t_statistic)} />
+          <Metric label="95% 置信区间" value={`${formatPercent(result.event_summary.confidence_interval_95_lower)} ～ ${formatPercent(result.event_summary.confidence_interval_95_upper)}`} />
           <Metric label="滚动样本外收益" value={formatPercent(result.robustness_validation.stitched_strategy_metrics.total_return)} />
           <Metric label="滚动样本外超额" value={formatPercent(result.robustness_validation.stitched_strategy_metrics.excess_return)} />
         </div>

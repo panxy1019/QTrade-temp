@@ -66,7 +66,7 @@ _MIN_INTRADAY_FACTOR_SESSIONS = 20
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "a4ee8f9fb7e0a7f20e638021ffc3c4bc10ab1c2bd25196ffed094d364c4694d3"
+    "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -8453,6 +8453,8 @@ def _intraday_factor_preview(
         "minimum_signal_count",
         "positive_mean_signal_return",
         "positive_conditional_excess_return",
+        "minimum_ten_clustered_signal_sessions",
+        "newey_west_t_statistic_above_1_96",
         "positive_rank_ic",
         "positive_sector_ratio_at_least_60pct",
     )
@@ -8476,7 +8478,10 @@ def _intraday_factor_preview(
         {
             "id": "FACTOR_VALIDATION",
             "status": "PASSED" if factor_validation_passed else "FAILED",
-            "detail": "Cross-sectional IC and conditional event tests completed.",
+            "detail": (
+                "Cross-sectional IC plus session-clustered Newey-West "
+                "conditional event tests completed."
+            ),
         },
         {
             "id": "CORRELATION_VALIDATION",
@@ -8563,6 +8568,21 @@ def _intraday_factor_preview(
             "signal_hit_rate": str(event.signal_hit_rate),
             "positive_sector_count": event.positive_sector_count,
             "sector_count": event.sector_count,
+            "clustered_signal_session_count": (
+                event.clustered_signal_session_count
+            ),
+            "mean_session_conditional_excess_return": str(
+                event.mean_session_conditional_excess_return
+            ),
+            "newey_west_lag": event.newey_west_lag,
+            "newey_west_standard_error": str(event.newey_west_standard_error),
+            "newey_west_t_statistic": str(event.newey_west_t_statistic),
+            "confidence_interval_95_lower": str(
+                event.confidence_interval_95_lower
+            ),
+            "confidence_interval_95_upper": str(
+                event.confidence_interval_95_upper
+            ),
         },
         "correlation_validation": {
             "correlations": {

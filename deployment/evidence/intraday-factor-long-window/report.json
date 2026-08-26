@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-27T00:21:39.806257+08:00",
+  "generated_at": "2026-08-27T00:44:56.093140+08:00",
   "implementation": {
-    "factor_module_sha256": "ada3203e364ed8ed0169eef8cd39caca6c099e07c78ad3200f66a917323209e9",
-    "api_module_sha256": "55f2b23d960a722efc1386198dd5c5035cc1453f3103f354dad7ece2ab23254b"
+    "factor_module_sha256": "800529a131f325c1d4ba67e3101aa83545e3550fbd4c75effc420f3c7a428beb",
+    "api_module_sha256": "ccbb8e1581d061e1b49eae943d0cd3742ec4ba4418da8f59206f1c5ea6486353"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -48,7 +48,7 @@
     ],
     "combination": "ALL"
   },
-  "result_preview_hash": "a4ee8f9fb7e0a7f20e638021ffc3c4bc10ab1c2bd25196ffed094d364c4694d3",
+  "result_preview_hash": "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d",
   "summary": {
     "observation_count": 9000,
     "signal_count": 1001,
@@ -176,7 +176,7 @@
       {
         "id": "FACTOR_VALIDATION",
         "status": "FAILED",
-        "detail": "Cross-sectional IC and conditional event tests completed."
+        "detail": "Cross-sectional IC plus session-clustered Newey-West conditional event tests completed."
       },
       {
         "id": "CORRELATION_VALIDATION",
@@ -232,7 +232,14 @@
       "conditional_excess_return": "-0.001700196608895330553529310786",
       "signal_hit_rate": "0.4325674325674325674325674326",
       "positive_sector_count": 5,
-      "sector_count": 15
+      "sector_count": 15,
+      "clustered_signal_session_count": 120,
+      "mean_session_conditional_excess_return": "-0.000573651685968281914853943968",
+      "newey_west_lag": 4,
+      "newey_west_standard_error": "0.001195034006140327145577372690",
+      "newey_west_t_statistic": "-0.4800295916440395692521105231",
+      "confidence_interval_95_lower": "-0.002915918338003323120185594440",
+      "confidence_interval_95_upper": "0.001768614966066759290477706504"
     },
     "correlation_validation": {
       "correlations": {
@@ -7066,6 +7073,8 @@
         "minimum_signal_count": true,
         "positive_mean_signal_return": false,
         "positive_conditional_excess_return": false,
+        "minimum_ten_clustered_signal_sessions": true,
+        "newey_west_t_statistic_above_1_96": false,
         "positive_rank_ic": false,
         "positive_sector_ratio_at_least_60pct": false,
         "maximum_absolute_factor_correlation_below_0_90": true,
@@ -7242,7 +7251,7 @@
     "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
     "state_mutation": false,
     "external_order_transmission": false,
-    "preview_hash": "a4ee8f9fb7e0a7f20e638021ffc3c4bc10ab1c2bd25196ffed094d364c4694d3"
+    "preview_hash": "ff8d84932781568022f67189cf7b54ba54d686e59e978e9e84e0e3a0bcd5d65d"
   },
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
@@ -7256,5 +7265,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "09da6fbc14f876a238049bc919ee58206d0206a40e5712ee4222008aa32afb30"
+  "evidence_sha256": "b2e0bd0c85c05a43326a234ff8ffbafbf26d2894543ede1d5c9d285905364d9f"
 }

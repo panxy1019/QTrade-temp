@@ -8,10 +8,29 @@ from qtrade.data import Bar
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.research.intraday_factor import (
     OpeningTripleBullishSpec,
+    _newey_west_mean_statistics,
     run_opening_triple_bullish_research,
 )
 
 CHINA = timezone(timedelta(hours=8))
+
+
+def test_newey_west_significance_fails_closed_for_empty_or_zero_variance() -> None:
+    assert _newey_west_mean_statistics([]) == (
+        Decimal("0"),
+        0,
+        Decimal("0"),
+        Decimal("0"),
+        Decimal("0"),
+        Decimal("0"),
+    )
+    mean_value, lag, standard_error, t_statistic, lower, upper = (
+        _newey_west_mean_statistics([Decimal("0.01")] * 10)
+    )
+    assert mean_value == lower == upper == Decimal("0.01")
+    assert lag > 0
+    assert standard_error == 0
+    assert t_statistic == 0
 
 
 def _bars(
@@ -195,6 +214,15 @@ def test_research_reports_factor_effectiveness_correlation_cost_and_sector_stabi
     assert result.event_summary.signal_count == 24
     assert result.event_summary.observation_count == 60
     assert result.event_summary.signal_rate == Decimal("0.4")
+    assert result.event_summary.clustered_signal_session_count == 6
+    assert 0 <= result.event_summary.newey_west_lag < 6
+    assert result.event_summary.newey_west_standard_error.is_finite()
+    assert result.event_summary.newey_west_t_statistic.is_finite()
+    assert (
+        result.event_summary.confidence_interval_95_lower
+        <= result.event_summary.mean_session_conditional_excess_return
+        <= result.event_summary.confidence_interval_95_upper
+    )
     assert set(result.correlations) == {
         "opening_30m_return",
         "opening_30m_range_position",
@@ -223,6 +251,8 @@ def test_research_reports_factor_effectiveness_correlation_cost_and_sector_stabi
         "causal_selection_known_before_test_signal"
     ] is True
     assert result.research_gate.criteria["minimum_signal_count"] is True
+    assert "minimum_ten_clustered_signal_sessions" in result.research_gate.criteria
+    assert "newey_west_t_statistic_above_1_96" in result.research_gate.criteria
     assert result.promotion == "NOT_ELIGIBLE"
     assert "CURRENT_UNIVERSE_NON_PIT" in result.promotion_reasons
 

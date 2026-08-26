@@ -47,6 +47,18 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
     assert payload["factor_validation"]["minimum_instruments"] == 75
     assert payload["event_summary"]["observation_count"] == 20 * 75
     assert payload["event_summary"]["signal_count"] > 0
+    assert 0 < payload["event_summary"]["clustered_signal_session_count"] <= 20
+    assert payload["event_summary"]["newey_west_lag"] >= 0
+    assert float(payload["event_summary"]["newey_west_standard_error"]) >= 0
+    assert float(payload["event_summary"]["confidence_interval_95_lower"]) <= float(
+        payload["event_summary"]["mean_session_conditional_excess_return"]
+    ) <= float(payload["event_summary"]["confidence_interval_95_upper"])
+    assert "minimum_ten_clustered_signal_sessions" in payload["research_gate"][
+        "criteria"
+    ]
+    assert "newey_west_t_statistic_above_1_96" in payload["research_gate"][
+        "criteria"
+    ]
     assert set(payload["correlation_validation"]["correlations"]) == {
         "opening_30m_return",
         "opening_30m_range_position",

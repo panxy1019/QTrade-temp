@@ -149,6 +149,9 @@ npm --prefix web run build
 - [x] Add a checksum-bound browser-local notebook for intraday factor summaries,
   comparison, deletion and parameter reload; reject malformed/safety-relaxed
   records and require a new run after reload without creating formal lineage.
+- [x] Cluster intraday event effectiveness by signal-bearing trading day and add
+  automatic-bandwidth Newey-West standard error, t-statistic, 95% interval and
+  minimum-session/significance hard gates across API, UI and signed evidence.
 - [x] Extend the preview to bounded momentum/reversal/low-volatility comparison
   and a checksum-bound browser-local experiment notebook with save, compare,
   parameter reload and delete; keep all records outside formal strategy lineage.
