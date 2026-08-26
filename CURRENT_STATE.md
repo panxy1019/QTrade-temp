@@ -123,11 +123,11 @@ Last updated: 2026-08-26
   first open, previous close and latest close. `/intraday-breadth-observation`
   recomputes the 75-stock/per-sector intersections and exact relative-open,
   latest-minute and equal-weight direction summaries before returning a bounded
-  result to the Chinese market page. The 14:01 China-time refresh retained 75/75
-  stock coverage and 180 common minutes through 14:00: 57 stocks were above
-  their first open, 31 rose in the latest finalized minute, and equal-weight
-  returns were `+0.9177%` session-to-date and `+0.03 bp` latest-minute. Its
-  75-stock request window widened to `23.044s`, which remains visible as source
+  result to the Chinese market page. The 14:31 China-time refresh retained 75/75
+  stock coverage and 210 common minutes through 14:30: 54 stocks were above
+  their first open, 20 rose in the latest finalized minute, and equal-weight
+  returns were `+0.9156%` session-to-date and `-0.29 bp` latest-minute. Its
+  75-stock request window was `2.174s`, which remains visible as source
   lag evidence. These
   observational fields remain outside strategy/PAPER state and cannot set
   realtime readiness or transmit an external order.
@@ -137,9 +137,9 @@ Last updated: 2026-08-26
   day, monotonic common-minute arithmetic and exact latest-report identities.
   The market page displays regressions rather than silently correcting them;
   this remains deployment evidence and never enters strategy or PAPER state.
-  The 2026-08-26 chain has seven checkpoints; its latest detail/breadth pair
-  covers 15/15 and 75/75 stocks with 180 common finalized minutes through 14:00
-  and is monotonic versus the prior 150-minute checkpoint. Schema v2 preserves
+  The 2026-08-26 chain has eight checkpoints; its latest detail/breadth pair
+  covers 15/15 and 75/75 stocks with 210 common finalized minutes through 14:30
+  and is monotonic versus the prior 180-minute checkpoint. Schema v2 preserves
   all four prior checkpoint hashes and starts a direction-breadth timeline at
   checkpoint five; missing direction after that boundary fails closed. Mutable
   intraday reports now use flushed, `fsync`-backed atomic publication, preventing

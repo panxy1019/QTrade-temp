@@ -383,14 +383,14 @@ recomputes the chain, monotonicity and latest-report
 binding before the market page renders the timeline. A source regression remains
 visible instead of being repaired or dropped. The chain is deployment evidence,
 not a realtime subscription, strategy state or PAPER authorization.
-The current seventh checkpoint binds 15/15 detail and 75/75 breadth coverage at
-180 common finalized minutes through 14:00 and is monotonic versus the previous
-150-minute checkpoint. The signed direction timeline starts at checkpoint five;
-checkpoint seven has 57/75 stocks above open, 31/75 rising in the latest minute,
-`+0.9177%` equal-weight session return and `+0.03 bp` equal-weight latest-minute
-return. Versus checkpoint six, participation was unchanged and the equal-weight
-session return fell `4.71 bp`. Its 75-stock request window widened to `23.044s`
-and remains visible rather than being represented as realtime. All three mutable report
+The current eighth checkpoint binds 15/15 detail and 75/75 breadth coverage at
+210 common finalized minutes through 14:30 and is monotonic versus the previous
+180-minute checkpoint. The signed direction timeline starts at checkpoint five;
+checkpoint eight has 54/75 stocks above open, 20/75 rising in the latest minute,
+`+0.9156%` equal-weight session return and `-0.29 bp` equal-weight latest-minute
+return. Versus checkpoint seven, participation fell by three stocks and the
+equal-weight session return fell `0.22 bp`. Its 75-stock request window was
+`2.174s` and remains visible rather than being represented as realtime. All three mutable report
 writers publish through a flushed, `fsync`-backed same-directory temporary file
 and atomic replacement, so an
 interrupted refresh cannot expose a half-written JSON document.
