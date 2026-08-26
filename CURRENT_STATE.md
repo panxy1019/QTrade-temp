@@ -123,10 +123,10 @@ Last updated: 2026-08-26
   first open, previous close and latest close. `/intraday-breadth-observation`
   recomputes the 75-stock/per-sector intersections and exact relative-open,
   latest-minute and equal-weight direction summaries before returning a bounded
-  result to the Chinese market page. The 13:02 China-time refresh retained 75/75
-  stock coverage and 121 common minutes through 13:01: 60 stocks were above
-  their first open, 27 rose in the latest finalized minute, and equal-weight
-  returns were `+1.0847%` session-to-date and `+0.0018%` latest-minute. These
+  result to the Chinese market page. The 13:31 China-time refresh retained 75/75
+  stock coverage and 150 common minutes through 13:30: 57 stocks were above
+  their first open, 29 rose in the latest finalized minute, and equal-weight
+  returns were `+0.9648%` session-to-date and `-0.74 bp` latest-minute. These
   observational fields remain outside strategy/PAPER state and cannot set
   realtime readiness or transmit an external order.
 - Intraday continuity: each deployed checkpoint can bind the current 15-stock
@@ -135,9 +135,9 @@ Last updated: 2026-08-26
   day, monotonic common-minute arithmetic and exact latest-report identities.
   The market page displays regressions rather than silently correcting them;
   this remains deployment evidence and never enters strategy or PAPER state.
-  The 2026-08-26 chain has five checkpoints; its latest detail/breadth pair
-  covers 15/15 and 75/75 stocks with 121 common finalized minutes through 13:01
-  and is monotonic versus the prior 120-minute checkpoint. Schema v2 preserves
+  The 2026-08-26 chain has six checkpoints; its latest detail/breadth pair
+  covers 15/15 and 75/75 stocks with 150 common finalized minutes through 13:30
+  and is monotonic versus the prior 121-minute checkpoint. Schema v2 preserves
   all four prior checkpoint hashes and starts a direction-breadth timeline at
   checkpoint five; missing direction after that boundary fails closed. Mutable
   intraday reports now use flushed, `fsync`-backed atomic publication, preventing

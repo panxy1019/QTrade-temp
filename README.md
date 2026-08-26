@@ -378,11 +378,13 @@ recomputes the chain, monotonicity and latest-report
 binding before the market page renders the timeline. A source regression remains
 visible instead of being repaired or dropped. The chain is deployment evidence,
 not a realtime subscription, strategy state or PAPER authorization.
-The current fifth checkpoint binds 15/15 detail and 75/75 breadth coverage at
-121 common finalized minutes through 13:01 and is monotonic versus the previous
-120-minute checkpoint. It starts the signed direction timeline at 60/75 stocks
-above open, 27/75 rising in the latest minute, `+1.0847%` equal-weight session
-return and `+0.0018%` equal-weight latest-minute return. All three mutable report
+The current sixth checkpoint binds 15/15 detail and 75/75 breadth coverage at
+150 common finalized minutes through 13:30 and is monotonic versus the previous
+121-minute checkpoint. The signed direction timeline starts at checkpoint five;
+checkpoint six has 57/75 stocks above open, 29/75 rising in the latest minute,
+`+0.9648%` equal-weight session return and `-0.74 bp` equal-weight latest-minute
+return. Versus checkpoint five, above-open participation fell by three stocks and
+the equal-weight session return fell `11.99 bp`. All three mutable report
 writers publish through a flushed, `fsync`-backed same-directory temporary file
 and atomic replacement, so an
 interrupted refresh cannot expose a half-written JSON document.

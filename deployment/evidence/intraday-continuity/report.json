@@ -2,7 +2,7 @@
   "schema_version": 2,
   "classification": "SIGNED_INTRADAY_SOURCE_CONTINUITY_NOT_REALTIME_ELIGIBLE",
   "trading_day": "2026-08-26",
-  "checkpoint_count": 5,
+  "checkpoint_count": 6,
   "directional_breadth_first_sequence": 5,
   "all_checkpoints_monotonic": true,
   "checkpoints": [
@@ -187,11 +187,57 @@
       "monotonic_vs_previous": true,
       "previous_checkpoint_sha256": "cc4934d8dcc579da8540f9c4cb6b7dc3efddecfce9fc14ea0cd79d3be5d825f2",
       "checkpoint_sha256": "86d780ed5ff7e832e6bec7fbebfe07fa8bf15e7f5f759c7b917f75cc9148908e"
+    },
+    {
+      "sequence": 6,
+      "captured_at": "2026-08-26T05:31:30.752696+00:00",
+      "trading_day": "2026-08-26",
+      "detail": {
+        "evidence_sha256": "462d4aaa44526791f29c17e6ac148b24f5023b942e0ff207f21980df91d4b80b",
+        "completed_at": "2026-08-26T05:31:29.815083+00:00",
+        "session_phase": "AFTERNOON_SESSION",
+        "symbol_count": 15,
+        "sector_count": 15,
+        "same_day_symbol_count": 15,
+        "synchronized_finalized_timestamp_count": 150,
+        "latest_synchronized_finalized_timestamp": "2026-08-26T13:30:00+08:00",
+        "source_request_window_seconds": 1.068,
+        "maximum_same_day_latest_age_seconds": 89.814,
+        "all_symbols_same_day_coverage": true
+      },
+      "breadth": {
+        "evidence_sha256": "599d37de0681be7d7b84bc826a5a5f66bb159d6e55d5615ab3e0bd8ba696c187",
+        "completed_at": "2026-08-26T05:31:30.752696+00:00",
+        "session_phase": "AFTERNOON_SESSION",
+        "symbol_count": 75,
+        "sector_count": 15,
+        "same_day_symbol_count": 75,
+        "synchronized_finalized_timestamp_count": 150,
+        "latest_synchronized_finalized_timestamp": "2026-08-26T13:30:00+08:00",
+        "source_request_window_seconds": 2.004,
+        "maximum_same_day_latest_age_seconds": 90.752,
+        "all_symbols_same_day_coverage": true,
+        "directional_breadth": {
+          "eligible_symbol_count": 75,
+          "above_open_count": 57,
+          "unchanged_from_open_count": 2,
+          "below_open_count": 16,
+          "latest_minute_eligible_symbol_count": 75,
+          "latest_minute_up_count": 29,
+          "latest_minute_unchanged_count": 17,
+          "latest_minute_down_count": 29,
+          "equal_weight_session_return": "0.009647920750776922365122820771",
+          "equal_weight_latest_minute_return": "-0.00007375673825930416890210939467"
+        }
+      },
+      "monotonic_vs_previous": true,
+      "previous_checkpoint_sha256": "86d780ed5ff7e832e6bec7fbebfe07fa8bf15e7f5f759c7b917f75cc9148908e",
+      "checkpoint_sha256": "c6edd88623e3d6aaad87c2ad71035b40e2f6de858590dd40e3f8973b701cdf29"
     }
   ],
   "realtime_readiness": false,
   "real_data_paper_readiness": false,
   "promotion": "NOT_ELIGIBLE",
   "external_order_transmission": false,
-  "evidence_sha256": "73b24b28316e1cd8473497438f429acc754ff05f16046e02003df891d82bf435"
+  "evidence_sha256": "d9e61146eba17a4a03221087e67955c139a898f6f67cdb7ea906d67a114ffdd2"
 }
