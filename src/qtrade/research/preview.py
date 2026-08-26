@@ -200,6 +200,7 @@ def run_backtest_preview(
             for symbol, quantity in result.terminal_positions
         ],
         "execution_timing": "close decision, next open execution",
+        "external_order_transmission": False,
     }
     canonical = json.dumps(response, sort_keys=True, separators=(",", ":"))
     response["preview_hash"] = sha256(canonical.encode()).hexdigest()

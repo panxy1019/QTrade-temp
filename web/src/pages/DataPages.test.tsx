@@ -715,6 +715,7 @@ describe('verified backtest analytics', () => {
       metrics: { total_return: '0.03', annualized_return: '0.01', sharpe: '0.4', maximum_drawdown: '-0.09', average_exposure: '0.5', number_of_trades: '42', turnover: '2', transaction_costs: '100' },
       curve: [{ session: '2024-01-02', equity: '1000000', drawdown: '0' }],
       terminal_positions: [], execution_timing: 'close decision, next open execution',
+      external_order_transmission: false,
       preview_hash: 'a'.repeat(64),
     })
     render(<BacktestPage data={data} />)

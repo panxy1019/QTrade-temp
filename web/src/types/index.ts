@@ -392,6 +392,7 @@ export interface BacktestPreview {
   curve: Array<{ session: string; equity: string; drawdown: string }>
   terminal_positions: Array<{ symbol: string; quantity: number }>
   execution_timing: 'close decision, next open execution'
+  external_order_transmission: false
   preview_hash: string
 }
 

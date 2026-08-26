@@ -28,6 +28,7 @@ const result: BacktestPreview = {
   session_count: 400, universe_size: 30,
   metrics: { total_return: '0.1', sharpe: '0.5', maximum_drawdown: '-0.1' },
   curve: [], terminal_positions: [], execution_timing: 'close decision, next open execution',
+  external_order_transmission: false,
   preview_hash: 'a'.repeat(64),
 }
 

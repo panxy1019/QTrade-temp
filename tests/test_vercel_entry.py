@@ -161,6 +161,7 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     )
     assert preview.status_code == 200
     assert preview.json()["promotion"] == "NOT_ELIGIBLE"
+    assert preview.json()["external_order_transmission"] is False
 
     blocked = client.post(_api("/system/kill"), json={"reason": "must stay disabled"})
     assert blocked.status_code == 503

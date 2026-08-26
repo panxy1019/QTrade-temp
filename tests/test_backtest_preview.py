@@ -80,6 +80,7 @@ def test_preview_is_deterministic_and_parameter_changes_are_distinct() -> None:
     assert first["preview_hash"] != changed["preview_hash"]
     assert first["classification"] == "AD_HOC_PREVIEW_CURRENT_UNIVERSE_NOT_PIT"
     assert first["promotion"] == "NOT_ELIGIBLE"
+    assert first["external_order_transmission"] is False
     assert first["data_checksum"] == checksum
     assert int(first["metrics"]["number_of_trades"]) > 0  # type: ignore[index]
     assert len(first["curve"]) == 80  # type: ignore[arg-type]
