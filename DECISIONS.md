@@ -1021,3 +1021,16 @@ adapter or a resigned Parquet file.
 The shared gate requires non-empty, whitespace-clean symbol and exchange values.
 For SSE and SZSE it additionally requires an exact six-digit symbol; other future
 venues remain free to define their own format instead of inheriting this rule.
+
+## ADR-069 — Parquet row decoding has one integrity error contract
+
+Status: accepted, 2026-08-26.
+
+Arrow field types do not guarantee non-null values or syntactically valid ISO
+timestamps, dates and decimal strings. A modified and resigned payload could
+therefore pass checksum and schema validation before exposing Python or Decimal
+conversion exceptions to a chart, API handler or backtest.
+
+Bar construction now wraps nullable, missing and malformed row content in
+`DatasetIntegrityError` while retaining its original cause. Values that decode
+successfully still pass through the independent semantic quality gate.

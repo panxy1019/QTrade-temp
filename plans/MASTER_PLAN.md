@@ -73,6 +73,8 @@ Schema-valid zero-row payloads are also rejected, keeping the write-time non-emp
 invariant intact after a file is modified and resigned.
 The shared Bar gate rejects blank or whitespace-padded identities and requires
 canonical six-digit symbols for SSE/SZSE before instrument grouping begins.
+Schema-correct rows with null or syntactically invalid timestamp/date/decimal
+content are normalized to the dataset-integrity boundary before semantic checks.
 Sourced normalized corporate-action factors produce point-in-time backward-
 adjusted bars with explicit adjustment lineage. A durable immutable SQLite
 catalog links PASSED data manifests to experiment hashes and is populated by the

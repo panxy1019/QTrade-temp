@@ -204,6 +204,34 @@ def test_parquet_store_rejects_resigned_empty_dataset(tmp_path):
         store.read(resigned)
 
 
+@pytest.mark.parametrize(
+    ("column", "values"),
+    [
+        ("close", pa.array([None], type=pa.string())),
+        ("timestamp", pa.array(["not-a-time"])),
+    ],
+)
+def test_parquet_store_normalizes_resigned_row_decode_failures(
+    tmp_path,
+    column,
+    values,
+):
+    store = ParquetBarStore(tmp_path)
+    passed = store.write([sample_bar()], manifest())
+    target = tmp_path / "bars-v1" / "bars.parquet"
+    table = pq.read_table(target)
+    column_index = table.schema.get_field_index(column)
+    pq.write_table(
+        table.set_column(column_index, column, values),
+        target,
+        compression="zstd",
+    )
+    resigned = replace(passed, checksum=sha256(target.read_bytes()).hexdigest())
+
+    with pytest.raises(DatasetIntegrityError, match="row decoding"):
+        store.read(resigned)
+
+
 def test_experiment_artifacts_are_hashed_and_immutable(tmp_path):
     record = ExperimentRecord(
         experiment_id="exp-1",

@@ -87,6 +87,7 @@ GitHub/Vercel 公开节点。判定标准不是“路由存在”，而是页面
 | FE-71 | 数据中心 / 共享存储 | checksum 与 manifest 相符但载荷并非合法 Parquet 时，读取器向 API/回测泄漏 Arrow/OS 底层异常 | DONE | 文件读取和 Arrow 解码失败统一归一为 `DatasetIntegrityError`；损坏数据不会以实现相关异常穿透共享边界 |
 | FE-72 | 数据中心 / 共享存储 | 重新签名的十列空 Parquet 会通过读取并返回空列表，与写入端禁止空集的约束不一致 | DONE | schema 与 checksum 通过后仍显式要求至少一行；空数据统一失败关闭，不再被图表或回测当成成功结果 |
 | FE-73 | 数据中心 / 共享质量门槛 | 空白标的/交易所或非六位沪深代码可进入分组、因子和回放，重新签名后共享读取器也会接受 | DONE | 所有 Bar 身份要求非空且无首尾空格；SSE/SZSE 额外要求六位数字代码，12 份业务数据的 105 个唯一标的全部通过 |
+| FE-74 | 数据中心 / 共享存储 | Arrow 类型正确但字段为 null 或时间/数值字符串不可解析时，读取器泄漏 Python/Decimal 底层异常 | DONE | Bar 构造阶段统一包装 nullable 和非法 timestamp/date/decimal 内容为 `DatasetIntegrityError`，再交给语义质量门槛 |
 
 ## 外部阻塞，不能伪造为已完成
 

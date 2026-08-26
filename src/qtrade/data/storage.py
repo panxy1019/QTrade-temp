@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from datetime import UTC, date, datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from hashlib import sha256
 from pathlib import Path
 
@@ -103,24 +103,27 @@ class ParquetBarStore:
             raise DatasetIntegrityError("dataset is empty")
         if any(row.get("data_version") != manifest.data_version for row in rows):
             raise DatasetIntegrityError("dataset row data_version mismatch")
-        records = [
-            Bar(
-                symbol=row["symbol"],
-                exchange=row["exchange"],
-                timestamp=datetime.fromisoformat(row["timestamp"]),
-                trading_day=(
-                    row["trading_day"]
-                    if isinstance(row["trading_day"], date)
-                    else date.fromisoformat(row["trading_day"])
-                ),
-                open=Decimal(row["open"]),
-                high=Decimal(row["high"]),
-                low=Decimal(row["low"]),
-                close=Decimal(row["close"]),
-                volume=Decimal(row["volume"]),
-            )
-            for row in rows
-        ]
+        try:
+            records = [
+                Bar(
+                    symbol=row["symbol"],
+                    exchange=row["exchange"],
+                    timestamp=datetime.fromisoformat(row["timestamp"]),
+                    trading_day=(
+                        row["trading_day"]
+                        if isinstance(row["trading_day"], date)
+                        else date.fromisoformat(row["trading_day"])
+                    ),
+                    open=Decimal(row["open"]),
+                    high=Decimal(row["high"]),
+                    low=Decimal(row["low"]),
+                    close=Decimal(row["close"]),
+                    volume=Decimal(row["volume"]),
+                )
+                for row in rows
+            ]
+        except (InvalidOperation, KeyError, TypeError, ValueError) as error:
+            raise DatasetIntegrityError("dataset row decoding failed") from error
         issues = BarQualityGate().validate(records)
         if issues:
             raise DatasetIntegrityError(
