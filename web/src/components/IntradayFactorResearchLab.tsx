@@ -122,8 +122,11 @@ export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayF
         <Metric label="样本外收益" value={formatPercent(summary.stitched_strategy_metrics.total_return)} />
         <Metric label="样本外超额" value={formatPercent(summary.stitched_strategy_metrics.excess_return)} />
         <Metric label="样本外最大回撤" value={formatPercent(summary.stitched_strategy_metrics.maximum_drawdown)} />
+        <Metric label="Bootstrap 超额中位" value={formatPercent(summary.stitched_excess_bootstrap.median_excess_total_return)} />
+        <Metric label="Bootstrap 超额 90% 区间" value={`${formatPercent(summary.stitched_excess_bootstrap.p05_excess_total_return)} ～ ${formatPercent(summary.stitched_excess_bootstrap.p95_excess_total_return)}`} />
+        <Metric label="Bootstrap 超额为正概率" value={formatPercent(summary.stitched_excess_bootstrap.probability_positive_excess)} />
       </div>
-      <Typography.Text>逐折训练选择阈值：{summary.selected_thresholds_bps.join(' → ')} bps；固定结果哈希 <Typography.Text code>{report.result_preview_hash}</Typography.Text>。</Typography.Text>
+      <Typography.Text>逐折训练选择阈值：{summary.selected_thresholds_bps.join(' → ')} bps；固定结果哈希 <Typography.Text code>{report.result_preview_hash}</Typography.Text>。样本外超额区间使用 60 个测试日、策略与基准共用重采样路径的 1,000 次配对 stationary bootstrap（期望块长 10 日）；这是复用历史诊断，不是新的盲测。</Typography.Text>
       {result ? <Tabs items={[
         {
           key: 'curve',

@@ -160,6 +160,10 @@ npm --prefix web run build
   identical 75-stock window, compute two-sided Newey-West p-values and apply
   Holm-Bonferroni across the 2–8 rule family before displaying an effectiveness
   pass; keep continuous-score correlation as an independent de-duplication gate.
+- [x] Add a fixed paired stationary bootstrap over the 60 stitched out-of-sample
+  strategy/benchmark days in the signed 120-session factor report; independently
+  recompute the 1,000-path excess distribution in the API and expose its median,
+  5%/95% interval and positive-excess probability without treating it as blind.
 - [x] Extend the preview to bounded momentum/reversal/low-volatility comparison
   and a checksum-bound browser-local experiment notebook with save, compare,
   parameter reload and delete; keep all records outside formal strategy lineage.

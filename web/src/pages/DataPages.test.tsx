@@ -322,6 +322,13 @@ const data = {
       full_window_strategy_metrics: longIntradayFullMetrics,
       fold_count: 6, positive_fold_count: 1, selected_thresholds_bps: ['10', '10', '5', '5', '5', '5'],
       stitched_strategy_metrics: longIntradayStitchedMetrics,
+      stitched_excess_bootstrap: {
+        method: 'PAIRED_STATIONARY_BOOTSTRAP', observation_count: 60,
+        replications: 1000, expected_block_length: 10, seed: 20260827,
+        observed_excess_total_return: '-0.1249055',
+        p05_excess_total_return: '-0.2391069', median_excess_total_return: '-0.1183382',
+        p95_excess_total_return: '0.0042813', probability_positive_excess: '0.057',
+      },
       threshold_sensitivity: [
         { minimum_body_return_bps: '0', signal_count: 527, total_return: '-0.298072', excess_return: '-0.1401' },
         { minimum_body_return_bps: '5', signal_count: 506, total_return: '-0.271319', excess_return: '-0.1132' },
@@ -1234,6 +1241,9 @@ describe('verified robustness evidence', () => {
     expect(screen.getAllByText('Newey-West t')[0].nextSibling).toHaveTextContent('-0.480')
     expect(screen.getByText('聚类超额 95% 区间').nextSibling).toHaveTextContent('-0.29% ～ 0.18%')
     expect(screen.getAllByText('样本外收益')[0].nextSibling).toHaveTextContent('-28.31%')
+    expect(screen.getByText('Bootstrap 超额中位').nextSibling).toHaveTextContent('-11.83%')
+    expect(screen.getByText('Bootstrap 超额 90% 区间').nextSibling).toHaveTextContent('-23.91% ～ 0.43%')
+    expect(screen.getByText('Bootstrap 超额为正概率').nextSibling).toHaveTextContent('5.70%')
     expect(screen.getByText(/10 → 10 → 5 → 5 → 5 → 5 bps/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出长期证据/ })).toBeInTheDocument()
     expect(screen.getByText(/PAPER NOT_ELIGIBLE/)).toBeInTheDocument()

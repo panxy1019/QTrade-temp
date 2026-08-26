@@ -1468,3 +1468,26 @@ strategy, dataset or PAPER state. The disclosed three-rule 20-session run had
 zero effectiveness passes, all adjusted p-values equal to one, and a duplicate
 pair at correlation one; it remains retrospective current-universe QFQ evidence,
 `NOT_ELIGIBLE`, with LIVE and external order transmission disabled.
+
+## ADR-095 — Long-window excess uncertainty uses paired stationary resampling
+
+Status: accepted, 2026-08-27.
+
+The fixed long-window report disclosed one stitched out-of-sample excess-return
+point estimate, but its 60 daily strategy and benchmark observations are paired
+and serially dependent. Independently resampling the two legs would destroy the
+same-day market relationship, while an ordinary iid bootstrap would ignore
+short runs in market conditions. The report therefore uses exactly 1,000 paired
+stationary-bootstrap paths, expected block length ten and seed 20260827. Each
+path applies one shared index sequence to strategy and benchmark, compounds both
+legs, and records their total-return difference.
+
+The signed summary reports the observed difference, 5th, median and 95th
+percentiles, and the fraction of paths with positive excess. The API does not
+trust those fields: it verifies the 60 test-day identities and independently
+recomputes the entire distribution from the result's daily returns. The fixed
+result had -12.4906% observed excess, -11.8338% median, a
+[-23.9107%, +0.4281%] 5th/95th percentile range and 5.7% positive paths. These
+are descriptive resampling diagnostics on reused history, not a calibrated
+p-value or an unseen confirmation. They cannot retune the factor or threshold,
+mutate state, authorize PAPER/LIVE, or transmit an external order.

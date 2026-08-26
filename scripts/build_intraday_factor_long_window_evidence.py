@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import asdict
 from datetime import datetime
 from hashlib import sha256
 from importlib import import_module
@@ -20,6 +21,7 @@ from qtrade.api.app import (
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.research import (
     OpeningTripleBullishSpec,
+    paired_stationary_bootstrap_excess_returns,
     run_opening_triple_bullish_research,
 )
 from scripts.atomic_json import write_json_immutable
@@ -128,6 +130,10 @@ def build_report(
         dict[str, object], preview["robustness_validation"]
     )
     robustness = result.robustness_validation
+    stitched_excess_bootstrap = paired_stationary_bootstrap_excess_returns(
+        tuple(row.strategy_return for row in robustness.stitched_daily),
+        tuple(row.benchmark_return for row in robustness.stitched_daily),
+    )
     summary: dict[str, object] = {
         "observation_count": result.event_summary.observation_count,
         "signal_count": result.event_summary.signal_count,
@@ -145,6 +151,10 @@ def build_report(
         "stitched_strategy_metrics": preview_robustness[
             "stitched_strategy_metrics"
         ],
+        "stitched_excess_bootstrap": {
+            key: value if isinstance(value, (int, str)) else str(value)
+            for key, value in asdict(stitched_excess_bootstrap).items()
+        },
         "threshold_sensitivity": [
             {
                 "minimum_body_return_bps": str(score.minimum_body_return_bps),

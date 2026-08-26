@@ -310,6 +310,14 @@ six folds was positive and all fixed thresholds lost money. Public API/UI reads
 fail closed on any identity or result drift. This evidence rejects the current
 hypothesis; it does not justify another search on the viewed window or PAPER
 promotion.
+Its 60 stitched test days now also enter one fixed paired stationary bootstrap:
+1,000 paths, expected ten-day blocks and a fixed seed, with strategy and
+benchmark sharing every sampled index. The median excess was -11.8338%, the
+5th/95th percentile range was [-23.9107%, +0.4281%], and only 5.7% of paths
+were positive. The API independently reconstructs that distribution from the
+signed daily curve, so plausible-looking replacement values cannot survive a
+re-sign. This interval describes resampling sensitivity on already viewed data;
+it is not a new hypothesis test or forward observation.
 The research page now also renders the report's complete 120-session equity and
 drawdown curve, six fold identities, 15 sector rows, searchable 75-stock rows,
 threshold stress and both gate matrices. The UI only filters presentation; it

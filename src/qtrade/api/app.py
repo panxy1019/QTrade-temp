@@ -52,6 +52,7 @@ from qtrade.research import (
     PerformanceMetrics,
     evaluate_opening_rule_correlations,
     evaluate_opening_rule_effectiveness,
+    paired_stationary_bootstrap_excess_returns,
     run_backtest_preview,
     run_minute_overlay_backtest,
     run_opening_triple_bullish_research,
@@ -5172,8 +5173,51 @@ def _load_verified_intraday_factor_robustness(
         factor_validation = cast(dict[str, object], factor_validation)
         folds = robustness.get("folds")
         sensitivity = robustness.get("threshold_sensitivity")
-        if not isinstance(folds, list) or not isinstance(sensitivity, list):
+        stitched_curve = robustness.get("stitched_curve")
+        bootstrap_claim = summary.get("stitched_excess_bootstrap")
+        if (
+            not isinstance(folds, list)
+            or not isinstance(sensitivity, list)
+            or not isinstance(stitched_curve, list)
+            or not isinstance(bootstrap_claim, dict)
+            or len(stitched_curve) != 60
+            or not all(isinstance(row, dict) for row in stitched_curve)
+        ):
             return None
+        stitched_strategy_returns = tuple(
+            Decimal(str(row.get("strategy_return"))) for row in stitched_curve
+        )
+        stitched_benchmark_returns = tuple(
+            Decimal(str(row.get("benchmark_return"))) for row in stitched_curve
+        )
+        recomputed_bootstrap = paired_stationary_bootstrap_excess_returns(
+            stitched_strategy_returns,
+            stitched_benchmark_returns,
+        )
+        expected_bootstrap = {
+            "method": recomputed_bootstrap.method,
+            "observation_count": recomputed_bootstrap.observation_count,
+            "replications": recomputed_bootstrap.replications,
+            "expected_block_length": (
+                recomputed_bootstrap.expected_block_length
+            ),
+            "seed": recomputed_bootstrap.seed,
+            "observed_excess_total_return": str(
+                recomputed_bootstrap.observed_excess_total_return
+            ),
+            "p05_excess_total_return": str(
+                recomputed_bootstrap.p05_excess_total_return
+            ),
+            "median_excess_total_return": str(
+                recomputed_bootstrap.median_excess_total_return
+            ),
+            "p95_excess_total_return": str(
+                recomputed_bootstrap.p95_excess_total_return
+            ),
+            "probability_positive_excess": str(
+                recomputed_bootstrap.probability_positive_excess
+            ),
+        }
         expected_training_counts = [60, 70, 80, 90, 100, 110]
         fold_identities_valid = len(folds) == 6
         selected_thresholds: list[str] = []
@@ -5265,6 +5309,8 @@ def _load_verified_intraday_factor_robustness(
             or robustness.get("candidate_thresholds_bps") != ["0", "5", "10", "20"]
             or robustness.get("initial_training_session_count") != 60
             or robustness.get("stitched_test_session_count") != 60
+            or [row.get("trading_day") for row in stitched_curve]
+            != selected_days[60:]
             or robustness.get("passed") is not False
             or not fold_identities_valid
             or [row.get("minimum_body_return_bps") for row in sensitivity]
@@ -5279,6 +5325,11 @@ def _load_verified_intraday_factor_robustness(
             or summary.get("selected_thresholds_bps") != selected_thresholds
             or summary.get("stitched_strategy_metrics")
             != robustness.get("stitched_strategy_metrics")
+            or bootstrap_claim != expected_bootstrap
+            or expected_bootstrap["observed_excess_total_return"]
+            != cast(dict[str, object], robustness.get("stitched_strategy_metrics"))[
+                "excess_return"
+            ]
             or summary.get("threshold_sensitivity") != threshold_rows
             or summary.get("robustness_passed") is not False
             or summary.get("research_gate_passed") is not False

@@ -23,6 +23,7 @@ from qtrade.research.intraday_factor import (
     IntradayFactorObservation,
     IntradayFactorResearchResult,
     IntradayFactorStability,
+    IntradayPairedBootstrapSummary,
     IntradayResearchGate,
     IntradayRobustnessValidation,
     IntradayRuleCorrelationPair,
@@ -34,6 +35,7 @@ from qtrade.research.intraday_factor import (
     OpeningTripleBullishSpec,
     evaluate_opening_rule_correlations,
     evaluate_opening_rule_effectiveness,
+    paired_stationary_bootstrap_excess_returns,
     run_opening_triple_bullish_research,
 )
 from qtrade.research.metrics import (
@@ -107,6 +109,7 @@ __all__ = [
     "IntradayFactorObservation",
     "IntradayFactorResearchResult",
     "IntradayFactorStability",
+    "IntradayPairedBootstrapSummary",
     "IntradayResearchGate",
     "IntradayRobustnessValidation",
     "IntradayRuleCorrelationPair",
@@ -118,6 +121,7 @@ __all__ = [
     "OpeningTripleBullishSpec",
     "evaluate_opening_rule_correlations",
     "evaluate_opening_rule_effectiveness",
+    "paired_stationary_bootstrap_excess_returns",
     "PriceFactorSpec",
     "PerformanceMetrics",
     "DailyMultiAssetBacktester",

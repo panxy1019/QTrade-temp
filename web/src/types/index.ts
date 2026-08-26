@@ -866,6 +866,18 @@ export interface IntradayFactorLongWindowReport {
     positive_fold_count: number
     selected_thresholds_bps: string[]
     stitched_strategy_metrics: IntradayPerformanceMetrics
+    stitched_excess_bootstrap: {
+      method: 'PAIRED_STATIONARY_BOOTSTRAP'
+      observation_count: 60
+      replications: 1000
+      expected_block_length: 10
+      seed: 20260827
+      observed_excess_total_return: string
+      p05_excess_total_return: string
+      median_excess_total_return: string
+      p95_excess_total_return: string
+      probability_positive_excess: string
+    }
     threshold_sensitivity: Array<{
       minimum_body_return_bps: string
       signal_count: number

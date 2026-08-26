@@ -6,6 +6,7 @@ from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 from math import erfc, floor, sqrt
+from random import Random
 
 from qtrade.data import Bar, BarQualityGate
 from qtrade.market_data import SINA_FIVE_MINUTE_SESSION_TIMES
@@ -260,6 +261,20 @@ class IntradayRuleEffectiveness:
     holm_adjusted_p_value: Decimal
     criteria: Mapping[str, bool]
     passed: bool
+
+
+@dataclass(frozen=True, slots=True)
+class IntradayPairedBootstrapSummary:
+    method: str
+    observation_count: int
+    replications: int
+    expected_block_length: int
+    seed: int
+    observed_excess_total_return: Decimal
+    p05_excess_total_return: Decimal
+    median_excess_total_return: Decimal
+    p95_excess_total_return: Decimal
+    probability_positive_excess: Decimal
 
 
 @dataclass(frozen=True, slots=True)
@@ -1471,3 +1486,84 @@ def _holm_adjusted_p_values(values: list[Decimal]) -> list[Decimal]:
         running_maximum = max(running_maximum, candidate)
         adjusted[index] = running_maximum
     return adjusted
+
+
+def paired_stationary_bootstrap_excess_returns(
+    strategy_returns: tuple[Decimal, ...],
+    benchmark_returns: tuple[Decimal, ...],
+    *,
+    replications: int = 1000,
+    expected_block_length: int = 10,
+    seed: int = 20260827,
+) -> IntradayPairedBootstrapSummary:
+    if len(strategy_returns) != len(benchmark_returns):
+        raise ValueError("paired bootstrap requires equal-length return series")
+    if len(strategy_returns) < 20:
+        raise ValueError("paired bootstrap requires at least 20 observations")
+    if replications < 100:
+        raise ValueError("paired bootstrap replications must be at least 100")
+    if not 2 <= expected_block_length <= len(strategy_returns):
+        raise ValueError(
+            "paired bootstrap expected block length must be within the sample"
+        )
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise ValueError("paired bootstrap seed must be an integer")
+    if any(
+        not value.is_finite() or value <= Decimal("-1")
+        for value in (*strategy_returns, *benchmark_returns)
+    ):
+        raise ValueError(
+            "paired bootstrap returns must be finite and greater than -1"
+        )
+
+    observed_excess = _compound_returns(strategy_returns) - _compound_returns(
+        benchmark_returns
+    )
+    generator = Random(seed)
+    restart_probability = 1 / expected_block_length
+    samples: list[Decimal] = []
+    for _ in range(replications):
+        index = generator.randrange(len(strategy_returns))
+        strategy_wealth = Decimal("1")
+        benchmark_wealth = Decimal("1")
+        for _ in strategy_returns:
+            strategy_wealth *= Decimal("1") + strategy_returns[index]
+            benchmark_wealth *= Decimal("1") + benchmark_returns[index]
+            if generator.random() < restart_probability:
+                index = generator.randrange(len(strategy_returns))
+            else:
+                index = (index + 1) % len(strategy_returns)
+        samples.append(strategy_wealth - benchmark_wealth)
+    samples.sort()
+    return IntradayPairedBootstrapSummary(
+        method="PAIRED_STATIONARY_BOOTSTRAP",
+        observation_count=len(strategy_returns),
+        replications=replications,
+        expected_block_length=expected_block_length,
+        seed=seed,
+        observed_excess_total_return=observed_excess,
+        p05_excess_total_return=_bootstrap_percentile(samples, Decimal("0.05")),
+        median_excess_total_return=_bootstrap_percentile(
+            samples,
+            Decimal("0.5"),
+        ),
+        p95_excess_total_return=_bootstrap_percentile(samples, Decimal("0.95")),
+        probability_positive_excess=(
+            Decimal(sum(value > 0 for value in samples)) / replications
+        ),
+    )
+
+
+def _compound_returns(values: tuple[Decimal, ...]) -> Decimal:
+    wealth = Decimal("1")
+    for value in values:
+        wealth *= Decimal("1") + value
+    return wealth - Decimal("1")
+
+
+def _bootstrap_percentile(values: list[Decimal], quantile: Decimal) -> Decimal:
+    position = Decimal(len(values) - 1) * quantile
+    lower = int(position)
+    upper = min(lower + 1, len(values) - 1)
+    fraction = position - lower
+    return values[lower] + (values[upper] - values[lower]) * fraction

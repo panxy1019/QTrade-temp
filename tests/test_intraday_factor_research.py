@@ -13,6 +13,7 @@ from qtrade.research.intraday_factor import (
     _temporal_stability_validation,
     evaluate_opening_rule_correlations,
     evaluate_opening_rule_effectiveness,
+    paired_stationary_bootstrap_excess_returns,
     run_opening_triple_bullish_research,
 )
 
@@ -41,6 +42,60 @@ def test_holm_adjustment_is_monotonic_in_sorted_hypothesis_order() -> None:
     assert _holm_adjusted_p_values(
         [Decimal("0.01"), Decimal("0.04"), Decimal("0.03")]
     ) == [Decimal("0.03"), Decimal("0.06"), Decimal("0.06")]
+
+
+def test_paired_stationary_bootstrap_preserves_pairing_and_is_deterministic() -> None:
+    strategy = tuple(
+        Decimal("0.01") if index % 4 else Decimal("-0.006")
+        for index in range(60)
+    )
+    benchmark = tuple(
+        Decimal("0.004") if index % 5 else Decimal("-0.003")
+        for index in range(60)
+    )
+    first = paired_stationary_bootstrap_excess_returns(
+        strategy,
+        benchmark,
+        replications=200,
+        expected_block_length=5,
+        seed=20260827,
+    )
+    second = paired_stationary_bootstrap_excess_returns(
+        strategy,
+        benchmark,
+        replications=200,
+        expected_block_length=5,
+        seed=20260827,
+    )
+
+    assert first == second
+    assert first.observation_count == 60
+    assert first.observed_excess_total_return == (
+        _compound_for_test(strategy) - _compound_for_test(benchmark)
+    )
+    assert (
+        first.p05_excess_total_return
+        <= first.median_excess_total_return
+        <= first.p95_excess_total_return
+    )
+    assert Decimal("0") <= first.probability_positive_excess <= Decimal("1")
+    with pytest.raises(ValueError, match="equal-length"):
+        paired_stationary_bootstrap_excess_returns(
+            strategy,
+            benchmark[:-1],
+        )
+    with pytest.raises(ValueError, match="at least 20"):
+        paired_stationary_bootstrap_excess_returns(
+            strategy[:10],
+            benchmark[:10],
+        )
+
+
+def _compound_for_test(values: tuple[Decimal, ...]) -> Decimal:
+    wealth = Decimal("1")
+    for value in values:
+        wealth *= Decimal("1") + value
+    return wealth - Decimal("1")
 
 
 def _bars(

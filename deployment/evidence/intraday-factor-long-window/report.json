@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-27T01:30:40.425186+08:00",
+  "generated_at": "2026-08-27T01:39:31.201525+08:00",
   "implementation": {
-    "factor_module_sha256": "2f074e3ee1645660adb9f10954c2430b2d2783fc9ad2f736854fe0d43910973b",
-    "api_module_sha256": "c6a34675b53af989db5623c67cbb294a43882ac4c978aea40529eeff3e637abb"
+    "factor_module_sha256": "699f2b2fdbb17496fc806191a5fbeebd87aad6a41ab43bb65e0791d370b63239",
+    "api_module_sha256": "6658cfef11fa493ff98f99d80d4fecac3cebd2c8aa88cdffa6986bc059e6adfd"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -100,6 +100,18 @@
       "exposure": "0.9666666666666666666666666667",
       "number_of_trades": 478,
       "transaction_costs": "0.05771924162574094516454390398"
+    },
+    "stitched_excess_bootstrap": {
+      "method": "PAIRED_STATIONARY_BOOTSTRAP",
+      "observation_count": 60,
+      "replications": 1000,
+      "expected_block_length": 10,
+      "seed": 20260827,
+      "observed_excess_total_return": "-0.1249055370003824106851625041",
+      "p05_excess_total_return": "-0.2391069694091322716846290948",
+      "median_excess_total_return": "-0.1183382284266824731232615692",
+      "p95_excess_total_return": "0.004281316097073203484013364930",
+      "probability_positive_excess": "0.057"
     },
     "threshold_sensitivity": [
       {
@@ -7323,5 +7335,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "fa03a818ac3e9bd05d033e20804786561a94c24d3bfc933e95e67b7b9567f4c2"
+  "evidence_sha256": "b8fc362f472515c63a6ba9a9051def85bfad2e34d341f156f0551cf68d5cea4d"
 }

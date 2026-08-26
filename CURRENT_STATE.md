@@ -26,7 +26,7 @@ Last updated: 2026-08-27
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 447 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 449 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
   (macOS, 2026-08-27); 62 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -298,6 +298,16 @@ Last updated: 2026-08-27
   none of three example rules passed (all adjusted p-values were 1), while a
   duplicate pair had correlation 1. The endpoint and UI remain retrospective,
   stateless, `NOT_ELIGIBLE` and external-order-disabled.
+- Paired out-of-sample uncertainty: the immutable 120-session report now
+  resamples the 60 stitched test days with 1,000 paired stationary-bootstrap
+  paths, expected block length ten and a fixed seed. Strategy and benchmark use
+  the same sampled indices, preserving their daily pairing and short-range
+  dependence. The observed excess was -12.4906%; the bootstrap median was
+  -11.8338%, its 5th/95th percentiles were [-23.9107%, +0.4281%], and only 5.7%
+  of paths had positive excess. The API recomputes the complete summary from the
+  signed daily curve, so a changed and re-signed bootstrap claim fails closed.
+  This is another reused-history diagnostic, not a p-value, new blind sample or
+  authority for PAPER/LIVE.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery
