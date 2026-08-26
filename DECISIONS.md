@@ -1313,3 +1313,22 @@ Promotion now accepts exactly the collector's Shanghai representation hash and
 the frozen anchor date. The UTC hash remains documented as the equivalent
 storage identity; no hash set or general timezone coercion was introduced. The
 collector, evaluator, policy and minute-backtest freeze remain unchanged.
+
+## ADR-088 — Individual-stock minute previews are bounded and side-effect free
+
+Status: accepted, 2026-08-26.
+
+The signed 75-stock BaoStock dataset could be inspected one session at a time and
+used by frozen portfolio studies, but the public control plane had no way to
+recompute a selected stock and interval. Reusing the daily cross-sectional
+preview would have hidden the different 5-minute timing and reduction-only
+contract.
+
+The dedicated preview accepts only a stock and trading days present in the
+verified long-history manifest, limits the scored interval to 2-120 sessions,
+and bounds every cost and overlay parameter. Prior sessions are replayed only to
+warm causal state; signals observed at Bar close can change exposure only at the
+next Bar open, and exposure cannot exceed the Buy-and-Hold target. Results bind
+the dataset checksum and policy hash, include deterministic curves and execution
+diagnostics, and are always ad hoc, QFQ/current-universe non-PIT,
+`NOT_ELIGIBLE`, state-mutation false and external-order transmission false.

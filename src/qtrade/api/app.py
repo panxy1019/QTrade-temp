@@ -26,7 +26,7 @@ import pyarrow.parquet as pq  # type: ignore[import-untyped]
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, StrictInt
 
 from qtrade.accounting import Ledger
 from qtrade.audit import AuditEvent, AuditLog
@@ -40,8 +40,15 @@ from qtrade.market_data import (
 )
 from qtrade.monitoring import MetricsRegistry, render_prometheus_metrics
 from qtrade.oms import OrderManager
-from qtrade.research import BacktestPreviewSpec, run_backtest_preview
+from qtrade.research import (
+    BacktestPreviewSpec,
+    MinuteBacktestResult,
+    MinuteCurveMetrics,
+    run_backtest_preview,
+    run_minute_overlay_backtest,
+)
 from qtrade.risk import RiskEngine, RiskLimits
+from qtrade.runtime import MinuteOverlayPolicy
 
 _MAX_MARKET_PARQUET_BYTES = 64 * 1024 * 1024
 _MAX_MARKET_PARQUET_ROWS = 2_000_000
@@ -49,6 +56,7 @@ _MAX_MARKET_PARQUET_ROW_GROUPS = 1024
 _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
 _MAX_HISTORICAL_SERIES_ROWS = 2000
 _MAX_BACKTEST_PREVIEW_SOURCE_ROWS = 250_000
+_MAX_SINGLE_STOCK_BACKTEST_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _GIT_COMMIT_SHA_PATTERN = re.compile(r"[0-9a-f]{40}")
 _GIT_COMMIT_REF_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,254}")
@@ -86,6 +94,22 @@ class BacktestPreviewRequest(BaseModel):
     initial_cash: Decimal = Decimal("1000000")
     transaction_cost_rate: Decimal = Decimal("0.0015")
     slippage_rate: Decimal = Decimal("0.0005")
+
+
+class SingleStockFiveMinuteBacktestRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    symbol: str
+    start: date
+    end: date
+    cost_bps: Decimal = Decimal("5")
+    short_window: StrictInt = 12
+    long_window: StrictInt = 48
+    volatility_window: StrictInt = 24
+    maximum_minute_volatility: Decimal = Decimal("0.02")
+    maximum_intraday_drawdown: Decimal = Decimal("0.04")
+    reduction_multiplier: Decimal = Decimal("0.98")
+    cooldown_bars: StrictInt = 6
 
 
 @dataclass(frozen=True, slots=True)
@@ -1133,6 +1157,111 @@ def create_app(
                 spec=spec,
             )
         except (ArithmeticError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @app.post("/single-stock-five-minute-backtest")
+    def single_stock_five_minute_backtest(
+        payload: SingleStockFiveMinuteBacktestRequest,
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        try:
+            policy = _single_stock_five_minute_policy(payload)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        if dataset is None:
+            raise HTTPException(
+                status_code=409,
+                detail="verified long five-minute dataset unavailable",
+            )
+        trading_days = cast(list[str], dataset["trading_days"])
+        eligible_symbols = cast(list[str], dataset["eligible_symbols"])
+        instruments = cast(list[dict[str, object]], dataset["instruments"])
+        instrument = next(
+            (
+                row
+                for row in instruments
+                if row.get("symbol") == payload.symbol
+                and row.get("instrument_type") == "STOCK"
+            ),
+            None,
+        )
+        if payload.symbol not in eligible_symbols or instrument is None:
+            raise HTTPException(
+                status_code=422,
+                detail="symbol is outside the verified 75-stock universe",
+            )
+        start_text = payload.start.isoformat()
+        end_text = payload.end.isoformat()
+        if start_text not in trading_days or end_text not in trading_days:
+            raise HTTPException(
+                status_code=422,
+                detail="backtest boundaries must be verified trading days",
+            )
+        start_index = trading_days.index(start_text)
+        end_index = trading_days.index(end_text)
+        selected_session_count = end_index - start_index + 1
+        if selected_session_count < 2:
+            raise HTTPException(
+                status_code=422,
+                detail="single-stock backtest requires at least two sessions",
+            )
+        if selected_session_count > _MAX_SINGLE_STOCK_BACKTEST_SESSIONS:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "single-stock backtest is limited to "
+                    f"{_MAX_SINGLE_STOCK_BACKTEST_SESSIONS} sessions"
+                ),
+            )
+        bars = _load_single_stock_five_minute_backtest_bars(
+            state.long_five_minute_manifest_path,
+            symbol=payload.symbol,
+            through_day=payload.end,
+            data_version=str(dataset["data_version"]),
+            expected_checksum=str(dataset["checksum"]),
+            expected_bar_count=cast(int, dataset["bar_count"]),
+            expected_trading_days=trading_days,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        if bars is None:
+            raise HTTPException(
+                status_code=409,
+                detail="verified single-stock five-minute bars failed validation",
+            )
+        selected_days = {
+            date.fromisoformat(value)
+            for value in trading_days[start_index : end_index + 1]
+        }
+        try:
+            result = run_minute_overlay_backtest(
+                bars,
+                policy_id="adhoc-single-stock-five-minute-v1",
+                policy=policy,
+                cost_bps=float(payload.cost_bps),
+            )
+            return _single_stock_five_minute_preview(
+                payload=payload,
+                policy=policy,
+                result=result,
+                selected_days=selected_days,
+                selected_trading_days=trading_days[start_index : end_index + 1],
+                warmup_session_count=start_index,
+                data_version=str(dataset["data_version"]),
+                dataset_checksum=str(dataset["checksum"]),
+                available_trading_days=trading_days,
+                verified_universe_symbol_count=len(eligible_symbols),
+                instrument=instrument,
+            )
+        except (ArithmeticError, RuntimeError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     @app.get("/portfolio")
@@ -7419,12 +7548,322 @@ def _load_minute_bar_day_series(
         return None
 
 
-def _open_verified_market_parquet(
+def _single_stock_five_minute_policy(
+    payload: SingleStockFiveMinuteBacktestRequest,
+) -> MinuteOverlayPolicy:
+    if not re.fullmatch(r"[0-9]{6}", payload.symbol):
+        raise ValueError("single-stock symbol must contain exactly six digits")
+    if payload.start >= payload.end:
+        raise ValueError("single-stock backtest start must precede end")
+    decimal_values = (
+        payload.cost_bps,
+        payload.maximum_minute_volatility,
+        payload.maximum_intraday_drawdown,
+        payload.reduction_multiplier,
+    )
+    if any(not value.is_finite() for value in decimal_values):
+        raise ValueError("single-stock backtest numeric parameters must be finite")
+    if not Decimal("0") <= payload.cost_bps <= Decimal("100"):
+        raise ValueError("single-stock backtest cost must be in [0, 100] bps")
+    if not 2 <= payload.short_window <= 96:
+        raise ValueError("single-stock short window must be in [2, 96]")
+    if not 3 <= payload.long_window <= 240:
+        raise ValueError("single-stock long window must be in [3, 240]")
+    if not 2 <= payload.volatility_window <= 240:
+        raise ValueError("single-stock volatility window must be in [2, 240]")
+    if payload.maximum_minute_volatility > Decimal("1"):
+        raise ValueError("single-stock maximum minute volatility cannot exceed one")
+    if payload.cooldown_bars > 240:
+        raise ValueError("single-stock cooldown cannot exceed 240 bars")
+    return MinuteOverlayPolicy(
+        short_window=payload.short_window,
+        long_window=payload.long_window,
+        volatility_window=payload.volatility_window,
+        maximum_minute_volatility=payload.maximum_minute_volatility,
+        maximum_intraday_drawdown=payload.maximum_intraday_drawdown,
+        reduction_multiplier=payload.reduction_multiplier,
+        cooldown_bars=payload.cooldown_bars,
+    )
+
+
+def _load_single_stock_five_minute_backtest_bars(
+    manifest_path: Path | None,
+    *,
+    symbol: str,
+    through_day: date,
+    data_version: str,
+    expected_checksum: str,
+    expected_bar_count: int,
+    expected_trading_days: list[str],
+    expected_times: tuple[datetime_time, ...],
+) -> list[Bar] | None:
+    through_text = through_day.isoformat()
+    if manifest_path is None or through_text not in expected_trading_days:
+        return None
+    try:
+        content = _read_verified_market_parquet_content(
+            manifest_path,
+            expected_checksum=expected_checksum,
+            expected_bar_count=expected_bar_count,
+        )
+        if content is None:
+            return None
+        columns = [
+            "symbol",
+            "exchange",
+            "timestamp",
+            "trading_day",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "data_version",
+        ]
+        table = pq.read_table(
+            pa.BufferReader(content),
+            columns=columns,
+            filters=[("symbol", "=", symbol), ("trading_day", "<=", through_day)],
+        )
+        expected_days = expected_trading_days[
+            : expected_trading_days.index(through_text) + 1
+        ]
+        if table.num_rows != len(expected_days) * len(expected_times):
+            return None
+        allowed = {symbol}
+        bars: list[Bar] = []
+        observed_times: defaultdict[str, list[datetime_time]] = defaultdict(list)
+        previous: datetime | None = None
+        for raw in table.to_pylist():
+            validated = _validated_historical_bar(raw, data_version, allowed)
+            if validated is None:
+                return None
+            candidate, instant = validated
+            trading_day = candidate["trading_day"]
+            local = instant.astimezone(ZoneInfo("Asia/Shanghai"))
+            if (
+                candidate["symbol"] != symbol
+                or trading_day not in expected_days
+                or previous is not None
+                and instant <= previous
+            ):
+                return None
+            previous = instant
+            observed_times[trading_day].append(local.time())
+            bars.append(
+                Bar(
+                    symbol=symbol,
+                    exchange=candidate["exchange"],
+                    timestamp=instant,
+                    trading_day=date.fromisoformat(trading_day),
+                    open=Decimal(candidate["open"]),
+                    high=Decimal(candidate["high"]),
+                    low=Decimal(candidate["low"]),
+                    close=Decimal(candidate["close"]),
+                    volume=Decimal(candidate["volume"]),
+                )
+            )
+        if list(observed_times) != expected_days or any(
+            tuple(observed_times[trading_day]) != expected_times
+            for trading_day in expected_days
+        ):
+            return None
+        return bars
+    except (OSError, ValueError, TypeError, InvalidOperation, pa.ArrowException):
+        return None
+
+
+def _finite_float_text(value: float) -> str:
+    if not isfinite(value):
+        raise ValueError("single-stock backtest produced a non-finite metric")
+    return "0" if value == 0 else format(value, ".17g")
+
+
+def _minute_curve_metrics_payload(
+    metrics: MinuteCurveMetrics,
+) -> dict[str, object]:
+    return {
+        "total_return": _finite_float_text(metrics.total_return),
+        "maximum_drawdown": _finite_float_text(metrics.maximum_drawdown),
+        "realized_minute_volatility": _finite_float_text(
+            metrics.realized_minute_volatility
+        ),
+        "point_count": metrics.point_count,
+    }
+
+
+def _minute_execution_payload(raw: dict[str, object]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in raw.items():
+        if isinstance(value, float):
+            result[key] = _finite_float_text(value)
+        else:
+            result[key] = value
+    return result
+
+
+def _single_stock_five_minute_curve(
+    result: MinuteBacktestResult,
+    selected_days: set[date],
+) -> list[dict[str, str]]:
+    indexes = [
+        index
+        for index, trading_day in enumerate(result.trading_days)
+        if trading_day in selected_days
+    ]
+    if not indexes:
+        raise ValueError("single-stock curve selection cannot be empty")
+    first = indexes[0]
+    base_denominator = 1.0 if first == 0 else result.base_equity[first - 1]
+    overlay_denominator = 1.0 if first == 0 else result.overlay_equity[first - 1]
+    base_peak = 1.0
+    overlay_peak = 1.0
+    curve: list[dict[str, str]] = []
+    for index in indexes:
+        base = result.base_equity[index] / base_denominator
+        overlay = result.overlay_equity[index] / overlay_denominator
+        base_peak = max(base_peak, base)
+        overlay_peak = max(overlay_peak, overlay)
+        curve.append(
+            {
+                "session": result.timestamps[index]
+                .astimezone(ZoneInfo("Asia/Shanghai"))
+                .isoformat(),
+                "equity": _finite_float_text(overlay),
+                "drawdown": _finite_float_text(overlay / overlay_peak - 1),
+                "benchmark_equity": _finite_float_text(base),
+                "benchmark_drawdown": _finite_float_text(base / base_peak - 1),
+                "excess_return": _finite_float_text(overlay - base),
+            }
+        )
+    return curve
+
+
+def _single_stock_five_minute_preview(
+    *,
+    payload: SingleStockFiveMinuteBacktestRequest,
+    policy: MinuteOverlayPolicy,
+    result: MinuteBacktestResult,
+    selected_days: set[date],
+    selected_trading_days: list[str],
+    warmup_session_count: int,
+    data_version: str,
+    dataset_checksum: str,
+    available_trading_days: list[str],
+    verified_universe_symbol_count: int,
+    instrument: dict[str, object],
+) -> dict[str, object]:
+    metrics = result.metrics(days=selected_days)
+    policy_payload = {key: str(value) for key, value in asdict(policy).items()}
+    parameters: dict[str, object] = {
+        "symbol": payload.symbol,
+        "start": payload.start.isoformat(),
+        "end": payload.end.isoformat(),
+        "cost_bps": str(payload.cost_bps),
+        **{
+            key: int(value) if key.endswith("window") or key == "cooldown_bars" else value
+            for key, value in policy_payload.items()
+        },
+    }
+    daily = []
+    for trading_day_text in selected_trading_days:
+        trading_day = date.fromisoformat(trading_day_text)
+        day_metrics = result.metrics(days={trading_day})
+        daily.append(
+            {
+                "trading_day": trading_day_text,
+                "base": _minute_curve_metrics_payload(day_metrics["base"]),
+                "overlay": _minute_curve_metrics_payload(day_metrics["overlay"]),
+                "excess_return": _finite_float_text(
+                    day_metrics["overlay"].total_return
+                    - day_metrics["base"].total_return
+                ),
+                "execution": _minute_execution_payload(
+                    result.execution_metrics(days={trading_day})
+                ),
+            }
+        )
+    unsigned: dict[str, object] = {
+        "classification": "AD_HOC_SINGLE_STOCK_FIVE_MINUTE_BACKTEST_CURRENT_NON_PIT",
+        "promotion": "NOT_ELIGIBLE",
+        "promotion_reasons": [
+            "AD_HOC_PARAMETERS_NOT_PREREGISTERED",
+            "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+            "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+            "SINGLE_STOCK_RESULT_DOES_NOT_PROVE_CROSS_SECTIONAL_ROBUSTNESS",
+            "FREE_HISTORICAL_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
+        ],
+        "symbol": payload.symbol,
+        "instrument": {
+            "name": instrument["name"],
+            "sector_code": instrument["sector_code"],
+            "sector_name": instrument["sector_name"],
+        },
+        "data_version": data_version,
+        "dataset_checksum": dataset_checksum,
+        "data_interval": "5m",
+        "verified_universe_symbol_count": verified_universe_symbol_count,
+        "available_session_count": len(available_trading_days),
+        "available_start": available_trading_days[0],
+        "available_end": available_trading_days[-1],
+        "maximum_selectable_session_count": _MAX_SINGLE_STOCK_BACKTEST_SESSIONS,
+        "selected_trading_days": selected_trading_days,
+        "selected_session_count": len(selected_trading_days),
+        "selected_bar_count": len(selected_trading_days)
+        * len(SINA_FIVE_MINUTE_SESSION_TIMES),
+        "warmup_session_count": warmup_session_count,
+        "warmup_bar_count": warmup_session_count
+        * len(SINA_FIVE_MINUTE_SESSION_TIMES),
+        "parameters": parameters,
+        "policy_id": result.policy_id,
+        "policy_hash": result.policy_hash,
+        "policy": policy_payload,
+        "cost_bps": _finite_float_text(result.cost_bps),
+        "metrics": {
+            "base": _minute_curve_metrics_payload(metrics["base"]),
+            "overlay": _minute_curve_metrics_payload(metrics["overlay"]),
+            "excess_return": _finite_float_text(
+                metrics["overlay"].total_return - metrics["base"].total_return
+            ),
+        },
+        "execution": _minute_execution_payload(
+            result.execution_metrics(days=selected_days)
+        ),
+        "daily": daily,
+        "curve": _single_stock_five_minute_curve(result, selected_days),
+        "causal_contract": {
+            "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
+            "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+            "same_bar_signal_execution": False,
+            "reduction_only": True,
+            "maximum_exposure": _finite_float_text(result.maximum_exposure),
+            "prior_history_used_only_as_causal_warmup": True,
+        },
+        "point_in_time": False,
+        "future_adjustment_knowledge_possible": True,
+        "realtime_readiness": False,
+        "real_data_paper_readiness": False,
+        "state_mutation": False,
+        "external_order_transmission": False,
+    }
+    canonical = json.dumps(
+        unsigned,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return {
+        **unsigned,
+        "preview_hash": sha256(canonical.encode("utf-8")).hexdigest(),
+    }
+
+
+def _read_verified_market_parquet_content(
     manifest_path: Path,
     *,
     expected_checksum: str,
     expected_bar_count: int,
-) -> pq.ParquetFile | None:
+) -> bytes | None:
     content = _read_bounded_file(
         manifest_path.parent / "bars.parquet", _MAX_MARKET_PARQUET_BYTES
     )
@@ -7442,7 +7881,21 @@ def _open_verified_market_parquet(
         or uncompressed_bytes > _MAX_MARKET_PARQUET_UNCOMPRESSED_BYTES
     ):
         return None
-    return parquet
+    return content
+
+
+def _open_verified_market_parquet(
+    manifest_path: Path,
+    *,
+    expected_checksum: str,
+    expected_bar_count: int,
+) -> pq.ParquetFile | None:
+    content = _read_verified_market_parquet_content(
+        manifest_path,
+        expected_checksum=expected_checksum,
+        expected_bar_count=expected_bar_count,
+    )
+    return None if content is None else pq.ParquetFile(pa.BufferReader(content))
 
 
 def _validated_historical_bar(

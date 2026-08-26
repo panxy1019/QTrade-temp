@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { HistoricalBarSeries, IntradayDirectionalBreadth, MinuteBarSeries, OrderRow, PlatformSnapshot, PositionRow } from '../types'
 import { StatusTag } from '../components/StatusTag'
 import { BacktestLab } from '../components/BacktestLab'
+import { SingleStockFiveMinuteBacktestLab } from '../components/SingleStockFiveMinuteBacktestLab'
 import { EquityChart } from '../charts/EquityChart'
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
 import { MinuteHistoryChart } from '../charts/MinuteHistoryChart'
@@ -536,6 +537,7 @@ export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const positionColumns = [{ title: '证券', dataIndex: 'symbol' }, { title: '期末数量', dataIndex: 'quantity' }]
   const monthlyColumns = [{ title: '月份', dataIndex: 'month' }, { title: '月收益', dataIndex: 'return', render: (value: string) => formatPercent(value) }]
   return <Page title="回测分析" subtitle="资金曲线、回撤、敞口、换手与成本">
+    <SingleStockFiveMinuteBacktestLab key={longFiveMinuteResearch?.minute_dataset ? `single-stock:${longFiveMinuteResearch.minute_dataset.data_version}:${longFiveMinuteResearch.minute_dataset.checksum}` : 'no-five-minute-dataset'} dataset={longFiveMinuteResearch?.minute_dataset ?? null} />
     <BacktestLab key={data?.market.historical ? `${data.market.historical.data_version}:${data.market.historical.checksum}` : 'no-dataset'} dataset={data?.market.historical ?? null} />
     <Alert showIcon type="warning" title={`分钟修正锁定测试：${minuteResearch?.promotion ?? '未评估'}`} description={minuteSelected ? `${minuteSelected.policy_id} 在后两日、${minuteSelected.cost_bps} bps 下：基准 ${formatPercent(String(minuteSelected.test_base.total_return))}，分钟修正 ${formatPercent(String(minuteSelected.test_overlay.total_return))}，相对改善 ${formatPercent(String(minuteSelected.test_excess_return))}；两者绝对收益均为负。` : '暂无签名与 artifact 哈希均验证通过的分钟回测。'} />
     <Card title="分钟级因果修正：前 3 日选择、后 2 日锁定验证" extra={<JsonExportButton filename="qtrade-minute-overlay-evidence.json" value={minuteResearch ?? {}} />}>

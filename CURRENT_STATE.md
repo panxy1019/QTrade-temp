@@ -208,6 +208,14 @@ Last updated: 2026-08-26
   are bounded. Results include a deterministic hash, curve, drawdown, metrics and
   positions, remain ephemeral, and are always labelled current-universe/non-PIT,
   ad hoc and `NOT_ELIGIBLE`; they cannot mutate registered strategy or PAPER state.
+- Individual-stock minute preview: `POST /single-stock-five-minute-backtest`
+  accepts any stock in the signed 75-stock BaoStock universe, a verified range of
+  two to 120 sessions and bounded 5-minute reduction-only parameters. It replays
+  all prior available Bars only as causal warmup, scores the selected interval,
+  and returns deterministic base/overlay curves, drawdown, execution and daily
+  diagnostics. The backtest page exposes the complete selector and JSON export;
+  QFQ/non-PIT, ad-hoc, `NOT_ELIGIBLE`, stateless and external-order-disabled
+  boundaries are part of the response and UI.
 - Bounded price-factor search: medium-horizon momentum with an optional recent-
   month skip, short reversal and low-volatility scores now use deterministic
   cross-sectional percentile ranks. Discovery labels stay inside the discovery

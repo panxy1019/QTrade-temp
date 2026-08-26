@@ -232,6 +232,16 @@ verifies the preregistration, dataset, prior report, curve and artifact hashes
 before returning the evidence. None of these endpoints authorizes realtime data,
 PAPER, strategy promotion or external orders.
 
+`POST /single-stock-five-minute-backtest` provides a separate ad-hoc individual
+stock preview over the same signed 75-stock dataset. The request must select one
+verified stock, two to 120 consecutive listed trading sessions, bounded cost and
+bounded reduction-only overlay parameters. All earlier sessions through the
+selected start are replayed only as causal warmup; selected metrics, next-Bar
+equity curves, execution diagnostics and daily rows are returned with a
+deterministic result hash. The Chinese backtest page exposes the complete form
+and JSON export. Every result remains current-universe, QFQ/non-PIT,
+`NOT_ELIGIBLE`, stateless and unable to transmit an external order.
+
 The public deployment can be audited independently across one stock from every
 sector and three widely separated sessions. The script runs the same 45 requests
 twice, verifies the dataset checksum, 48 unique bars, trading day, observation
@@ -482,6 +492,12 @@ current browser, where records remain bound to the exact data version, checksum
 and result hash; this local notebook is not server persistence. Every preview is
 explicitly non-PIT, ad hoc and `NOT_ELIGIBLE`; it is not promotion evidence or
 investment advice.
+
+The same page also exposes the 75-stock native 5-minute preview. Select a stock,
+verified trading-day range and minute overlay parameters, then compare the
+reduction-only curve with that stock's Buy-and-Hold baseline. A request is
+limited to 120 selected sessions and uses prior history only for causal state
+warmup; no result is written to the PAPER runtime.
 
 ## Bounded factor search
 

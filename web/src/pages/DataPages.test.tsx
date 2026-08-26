@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import type { BacktestPreview, PlatformSnapshot } from '../types'
-import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview } from '../api/client'
+import type { BacktestPreview, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
+import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runSingleStockFiveMinuteBacktest } from '../api/client'
 import { formatDirectionalDelta } from '../research/intradayDirectional'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
@@ -44,6 +44,7 @@ vi.mock('../api/client', () => ({
     ],
   })),
   runBacktestPreview: vi.fn(),
+  runSingleStockFiveMinuteBacktest: vi.fn(),
   controlRuntime: vi.fn(),
   cancelPaperOrder: vi.fn(),
 }))
@@ -917,6 +918,57 @@ describe('verified historical data pages', () => {
 })
 
 describe('verified backtest analytics', () => {
+  it('runs a selectable stock five-minute backtest against the verified long dataset', async () => {
+    const execution = {
+      symbol_count: 1, observation_count: 96, reduced_exposure_observation_count: 48,
+      exposure_sum: '72', mean_exposure: '0.75', reduced_exposure_ratio: '0.5',
+      turnover: '1.5', mean_turnover_per_symbol: '1.5', transaction_cost: '0.00075',
+      mean_transaction_cost_per_symbol: '0.00075', reason_counts: { MINUTE_TREND_WEAK: 12 },
+    }
+    const metric = { total_return: '0.01', maximum_drawdown: '-0.02', realized_minute_volatility: '0.001', point_count: 96 }
+    const result: SingleStockFiveMinuteBacktest = {
+      classification: 'AD_HOC_SINGLE_STOCK_FIVE_MINUTE_BACKTEST_CURRENT_NON_PIT',
+      promotion: 'NOT_ELIGIBLE', promotion_reasons: ['AD_HOC_PARAMETERS_NOT_PREREGISTERED'],
+      symbol: '600036', instrument: { name: '招商银行', sector_code: '801780', sector_name: '银行' },
+      data_version: 'baostock-five-minute-long-v1', dataset_checksum: 'long-five-minute-checksum', data_interval: '5m',
+      verified_universe_symbol_count: 75, available_session_count: 368,
+      available_start: '2025-01-02', available_end: '2026-08-25', maximum_selectable_session_count: 120,
+      selected_trading_days: ['2025-01-02', '2026-08-25'], selected_session_count: 2,
+      selected_bar_count: 96, warmup_session_count: 0, warmup_bar_count: 0,
+      parameters: {
+        symbol: '600036', start: '2025-01-02', end: '2026-08-25', cost_bps: '5',
+        short_window: 12, long_window: 48, volatility_window: 24,
+        maximum_minute_volatility: '0.02', maximum_intraday_drawdown: '0.04',
+        reduction_multiplier: '0.98', cooldown_bars: 6,
+      },
+      policy_id: 'adhoc-single-stock-five-minute-v1', policy_hash: 'b'.repeat(64),
+      policy: {}, cost_bps: '5',
+      metrics: { base: metric, overlay: { ...metric, total_return: '0.008' }, excess_return: '-0.002' },
+      execution, daily: [],
+      curve: [{ session: '2025-01-02T09:35:00+08:00', equity: '1.008', drawdown: '-0.001', benchmark_equity: '1.01', benchmark_drawdown: '-0.002', excess_return: '-0.002' }],
+      causal_contract: {
+        signal_observed_at: 'FIVE_MINUTE_BAR_CLOSE_T', exposure_change_at: 'NEXT_FIVE_MINUTE_BAR_OPEN',
+        same_bar_signal_execution: false, reduction_only: true, maximum_exposure: '1',
+        prior_history_used_only_as_causal_warmup: true,
+      },
+      point_in_time: false, future_adjustment_knowledge_possible: true,
+      realtime_readiness: false, real_data_paper_readiness: false,
+      state_mutation: false, external_order_transmission: false, preview_hash: 'c'.repeat(64),
+    }
+    vi.mocked(runSingleStockFiveMinuteBacktest).mockResolvedValueOnce(result)
+    render(<BacktestPage data={data} />)
+    fireEvent.click(screen.getByRole('button', { name: '运行个股 5 分钟回测' }))
+    expect(await screen.findByText('已完成 600036 招商银行 · 2 日 / 96 Bar')).toBeInTheDocument()
+    expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledWith({
+      symbol: '600036', start: '2025-01-02', end: '2026-08-25', cost_bps: '5',
+      short_window: 12, long_window: 48, volatility_window: 24,
+      maximum_minute_volatility: '0.02', maximum_intraday_drawdown: '0.04',
+      reduction_multiplier: '0.98', cooldown_bars: 6,
+    })
+    expect(screen.getByText(/实线为分钟修正策略，虚线为该个股 Buy-and-Hold/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /导出个股回测/ })).toBeInTheDocument()
+  })
+
   it('runs an adjustable preview without presenting it as promotion evidence', async () => {
     window.localStorage.clear()
     const preview: BacktestPreview = {

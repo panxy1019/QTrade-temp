@@ -217,6 +217,21 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert preview.status_code == 200
     assert preview.json()["promotion"] == "NOT_ELIGIBLE"
     assert preview.json()["external_order_transmission"] is False
+    single_stock = client.post(
+        _api("/single-stock-five-minute-backtest"),
+        json={
+            "symbol": "600036",
+            "start": "2026-08-21",
+            "end": "2026-08-25",
+        },
+    )
+    assert single_stock.status_code == 200
+    assert single_stock.json()["verified_universe_symbol_count"] == 75
+    assert single_stock.json()["selected_session_count"] == 3
+    assert single_stock.json()["selected_bar_count"] == 144
+    assert single_stock.json()["promotion"] == "NOT_ELIGIBLE"
+    assert single_stock.json()["state_mutation"] is False
+    assert single_stock.json()["external_order_transmission"] is False
 
     blocked = client.post(_api("/system/kill"), json={"reason": "must stay disabled"})
     assert blocked.status_code == 503

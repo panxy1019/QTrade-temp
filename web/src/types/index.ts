@@ -406,6 +406,103 @@ export interface BacktestPreview {
   preview_hash: string
 }
 
+export interface SingleStockFiveMinuteBacktestRequest {
+  symbol: string
+  start: string
+  end: string
+  cost_bps: string
+  short_window: number
+  long_window: number
+  volatility_window: number
+  maximum_minute_volatility: string
+  maximum_intraday_drawdown: string
+  reduction_multiplier: string
+  cooldown_bars: number
+}
+
+export interface SingleStockFiveMinuteMetric {
+  total_return: string
+  maximum_drawdown: string
+  realized_minute_volatility: string
+  point_count: number
+}
+
+export interface SingleStockFiveMinuteExecution {
+  symbol_count: number
+  observation_count: number
+  reduced_exposure_observation_count: number
+  exposure_sum: string
+  mean_exposure: string
+  reduced_exposure_ratio: string
+  turnover: string
+  mean_turnover_per_symbol: string
+  transaction_cost: string
+  mean_transaction_cost_per_symbol: string
+  reason_counts: Record<string, number>
+}
+
+export interface SingleStockFiveMinuteBacktest {
+  classification: 'AD_HOC_SINGLE_STOCK_FIVE_MINUTE_BACKTEST_CURRENT_NON_PIT'
+  promotion: 'NOT_ELIGIBLE'
+  promotion_reasons: string[]
+  symbol: string
+  instrument: { name: string; sector_code: string; sector_name: string }
+  data_version: string
+  dataset_checksum: string
+  data_interval: '5m'
+  verified_universe_symbol_count: number
+  available_session_count: number
+  available_start: string
+  available_end: string
+  maximum_selectable_session_count: number
+  selected_trading_days: string[]
+  selected_session_count: number
+  selected_bar_count: number
+  warmup_session_count: number
+  warmup_bar_count: number
+  parameters: SingleStockFiveMinuteBacktestRequest
+  policy_id: string
+  policy_hash: string
+  policy: Record<string, string>
+  cost_bps: string
+  metrics: {
+    base: SingleStockFiveMinuteMetric
+    overlay: SingleStockFiveMinuteMetric
+    excess_return: string
+  }
+  execution: SingleStockFiveMinuteExecution
+  daily: Array<{
+    trading_day: string
+    base: SingleStockFiveMinuteMetric
+    overlay: SingleStockFiveMinuteMetric
+    excess_return: string
+    execution: SingleStockFiveMinuteExecution
+  }>
+  curve: Array<{
+    session: string
+    equity: string
+    drawdown: string
+    benchmark_equity: string
+    benchmark_drawdown: string
+    excess_return: string
+  }>
+  causal_contract: {
+    signal_observed_at: 'FIVE_MINUTE_BAR_CLOSE_T'
+    exposure_change_at: 'NEXT_FIVE_MINUTE_BAR_OPEN'
+    same_bar_signal_execution: false
+    reduction_only: true
+    maximum_exposure: string
+    prior_history_used_only_as_causal_warmup: true
+  }
+  point_in_time: false
+  future_adjustment_knowledge_possible: true
+  realtime_readiness: false
+  real_data_paper_readiness: false
+  state_mutation: false
+  external_order_transmission: false
+  preview_hash: string
+}
+
 export interface HistoricalDataset {
   provider: string
   provider_version: string
