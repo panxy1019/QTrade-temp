@@ -511,3 +511,5 @@ Last updated: 2026-08-26
   endpoints and per-section fail-closed fallbacks. A test instruments the Parquet
   verifier and requires exactly one open; the bundle currently has zero
   unavailable sections and preserves all realtime/PAPER/order prohibitions.
+  Browser GET concurrency is capped at six and covered by a deterministic
+  fan-out test so transient cold-start pressure cannot silently return.

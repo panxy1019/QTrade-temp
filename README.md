@@ -367,6 +367,10 @@ identity to all eight independent report validators. Standalone endpoints remain
 available for inspection. A missing or invalid report stays `null` in the bundle
 and cannot be replaced by an unverified value; the aggregation changes read
 amplification only, not evidence rules or runtime authority.
+The browser also caps concurrent GETs at six, preventing a fresh serverless
+deployment from cold-starting every remaining partition at once. A request-pool
+test fixes that upper bound and confirms that the retired heavy endpoints are no
+longer part of the dashboard fan-out.
 
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and

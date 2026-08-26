@@ -20,6 +20,8 @@ project-specific DNS name; the root A record and wildcard CNAME remain unchanged
 - `/api/minute-research-snapshot` shares one checksum-verified long-minute
   dataset identity across eight read-only report validators, avoiding eight
   separate 24 MB Parquet opens during each dashboard refresh.
+- The web client permits at most six concurrent GETs, retaining partition-level
+  fallbacks without a burst of serverless cold starts.
 - Vercel rewrites `/api/:path*` to the single Python function while preserving
   the inner FastAPI path through a bounded query-path adapter.
 - Anonymous successful GET responses use a 15-second browser cache and a

@@ -545,3 +545,9 @@ fail-closed defaults if the whole bundle request fails. Tests instrument the
 Parquet boundary and require one open for all eight sections. This is a read-path
 optimization only; it does not cache mutable runtime state, authorize realtime
 data, change strategy status or expose a write/order route.
+
+The browser may have many independent lightweight sections, but it must queue
+GETs above a six-request ceiling. This keeps partial-section fault isolation
+without triggering a serverless cold-start burst. POST/control calls are not
+queued by this read limiter and remain protected by their existing local-only
+authentication boundary.

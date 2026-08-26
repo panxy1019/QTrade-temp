@@ -1,13 +1,40 @@
 import type { BacktestPreview, BacktestPreviewRequest, HistoricalBarSeries, MinuteBarSeries, PlatformSnapshot } from '../types'
 
 const API_BASE = import.meta.env.DEV || import.meta.env.MODE === 'vercel' ? '/api' : ''
+const MAX_CONCURRENT_GETS = 6
+let activeGets = 0
+const getWaiters: Array<() => void> = []
 
 export const prometheusMetricsUrl = `${API_BASE}/metrics/prometheus`
 
+async function acquireGetSlot(): Promise<void> {
+  if (activeGets < MAX_CONCURRENT_GETS) {
+    activeGets += 1
+    return
+  }
+  await new Promise<void>((resolve) => {
+    getWaiters.push(() => {
+      activeGets += 1
+      resolve()
+    })
+  })
+}
+
+function releaseGetSlot(): void {
+  activeGets -= 1
+  const next = getWaiters.shift()
+  if (next) next()
+}
+
 async function getJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`)
-  if (!response.ok) throw new Error(`请求失败：${response.status}`)
-  return response.json() as Promise<T>
+  await acquireGetSlot()
+  try {
+    const response = await fetch(`${API_BASE}${path}`)
+    if (!response.ok) throw new Error(`请求失败：${response.status}`)
+    return response.json() as Promise<T>
+  } finally {
+    releaseGetSlot()
+  }
 }
 
 async function postJson<T>(path: string, payload: object): Promise<T> {
