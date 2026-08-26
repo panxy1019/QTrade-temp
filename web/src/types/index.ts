@@ -880,6 +880,52 @@ export interface IntradayBreadthObservationReport {
   external_order_transmission: false
 }
 
+export interface IntradayContinuityReport {
+  classification?: string
+  trading_day: string | null
+  checkpoint_count: number
+  all_checkpoints_monotonic: boolean
+  checkpoints: Array<{
+    sequence: number
+    captured_at: string
+    trading_day: string
+    detail: {
+      evidence_sha256: string
+      completed_at: string
+      session_phase: string
+      symbol_count: number
+      sector_count: number
+      same_day_symbol_count: number
+      synchronized_finalized_timestamp_count: number
+      latest_synchronized_finalized_timestamp: string | null
+      source_request_window_seconds: number
+      maximum_same_day_latest_age_seconds: number | null
+      all_symbols_same_day_coverage: boolean
+    }
+    breadth: {
+      evidence_sha256: string
+      completed_at: string
+      session_phase: string
+      symbol_count: number
+      sector_count: number
+      same_day_symbol_count: number
+      synchronized_finalized_timestamp_count: number
+      latest_synchronized_finalized_timestamp: string | null
+      source_request_window_seconds: number
+      maximum_same_day_latest_age_seconds: number | null
+      all_symbols_same_day_coverage: boolean
+    }
+    monotonic_vs_previous: boolean
+    previous_checkpoint_sha256: string | null
+    checkpoint_sha256: string
+  }>
+  evidence_sha256?: string
+  realtime_readiness: false
+  real_data_paper_readiness: false
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  external_order_transmission: false
+}
+
 export interface DevelopmentPolicySearchReport {
   classification?: string
   generated_at?: string
@@ -973,6 +1019,7 @@ export interface PlatformSnapshot {
   publicMinuteAudit: PublicMinuteAuditReport
   intradayObservation: IntradayObservationReport
   intradayBreadth: IntradayBreadthObservationReport
+  intradayContinuity: IntradayContinuityReport
   backtestAnalytics: BacktestAnalytics
   market: MarketStatus
   historicalBars: HistoricalBarRow[]

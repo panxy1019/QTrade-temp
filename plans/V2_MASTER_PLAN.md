@@ -170,6 +170,9 @@ npm --prefix web run build
   sectors, independently verify cross-stock/per-sector finalized-minute coverage
   in the API, and expose a bounded Chinese table without treating it as realtime
   or PAPER input.
+- [x] Chain multiple same-day detail/breadth checkpoints, verify monotonic source
+  progression and the latest evidence identities, and show the bounded timeline
+  without dropping or repairing a detected regression.
 - [ ] Record and replay the first complete authorized multi-stock minute session,
   then compare replay targets, orders and fills byte-for-byte with the forward
   SHADOW/PAPER trace.

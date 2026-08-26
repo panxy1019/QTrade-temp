@@ -128,6 +128,7 @@ class AppContext:
     public_minute_audit_path: Path | None = None
     intraday_observation_path: Path | None = None
     intraday_breadth_path: Path | None = None
+    intraday_continuity_path: Path | None = None
     minute_overlay_reader: Callable[[], dict[str, object]] | None = None
     applied_trade_reader: Callable[[], tuple[dict[str, object], ...]] | None = None
     sellable_quantity_reader: Callable[[str, date], int] | None = None
@@ -547,6 +548,44 @@ def create_app(
             "latest_synchronized_finalized_timestamp": None,
             "observations": [],
             "sector_summaries": [],
+            "realtime_readiness": False,
+            "real_data_paper_readiness": False,
+            "promotion": "NOT_EVALUATED",
+            "external_order_transmission": False,
+        }
+
+    @app.get("/intraday-continuity")
+    def intraday_continuity(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        detail = _load_verified_intraday_observation(
+            state.intraday_observation_path,
+            dataset,
+        )
+        breadth = _load_verified_intraday_breadth(
+            state.intraday_breadth_path,
+            dataset,
+        )
+        report = _load_verified_intraday_continuity(
+            state.intraday_continuity_path,
+            detail,
+            breadth,
+        )
+        return report or {
+            "classification": "NO_VERIFIED_INTRADAY_CONTINUITY",
+            "trading_day": None,
+            "checkpoint_count": 0,
+            "all_checkpoints_monotonic": False,
+            "checkpoints": [],
             "realtime_readiness": False,
             "real_data_paper_readiness": False,
             "promotion": "NOT_EVALUATED",
@@ -1180,6 +1219,9 @@ def context_from_runtime(
         ),
         intraday_breadth_path=Path(
             "runtime/research/sina-intraday-breadth/latest.json"
+        ),
+        intraday_continuity_path=Path(
+            "runtime/research/sina-intraday-continuity/latest.json"
         ),
         applied_trade_reader=bundle.journal.applied_trade_payloads,
         sellable_quantity_reader=bundle.sellability.sellable_quantity,
@@ -5191,6 +5233,229 @@ def _load_verified_intraday_breadth(
         }
     except (
         InvalidOperation,
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _continuity_summary_from_report(report: dict[str, object]) -> dict[str, object]:
+    return {
+        key: report[key]
+        for key in (
+            "evidence_sha256",
+            "completed_at",
+            "session_phase",
+            "symbol_count",
+            "sector_count",
+            "same_day_symbol_count",
+            "synchronized_finalized_timestamp_count",
+            "latest_synchronized_finalized_timestamp",
+            "source_request_window_seconds",
+            "maximum_same_day_latest_age_seconds",
+            "all_symbols_same_day_coverage",
+        )
+    }
+
+
+def _validate_continuity_summary(
+    summary: object,
+    *,
+    symbol_count: int,
+    report_day: date,
+) -> datetime | None:
+    if not isinstance(summary, dict):
+        return None
+    expected_keys = {
+        "evidence_sha256",
+        "completed_at",
+        "session_phase",
+        "symbol_count",
+        "sector_count",
+        "same_day_symbol_count",
+        "synchronized_finalized_timestamp_count",
+        "latest_synchronized_finalized_timestamp",
+        "source_request_window_seconds",
+        "maximum_same_day_latest_age_seconds",
+        "all_symbols_same_day_coverage",
+    }
+    if set(summary) != expected_keys:
+        return None
+    completed_at = datetime.fromisoformat(str(summary.get("completed_at")))
+    latest_raw = summary.get("latest_synchronized_finalized_timestamp")
+    latest = None if latest_raw is None else datetime.fromisoformat(str(latest_raw))
+    same_day_count = summary.get("same_day_symbol_count")
+    synchronized_count = summary.get("synchronized_finalized_timestamp_count")
+    request_window = summary.get("source_request_window_seconds")
+    maximum_age = summary.get("maximum_same_day_latest_age_seconds")
+    if (
+        not _is_sha256(summary.get("evidence_sha256"))
+        or completed_at.tzinfo is None
+        or completed_at.astimezone(ZoneInfo("Asia/Shanghai")).date() != report_day
+        or summary.get("session_phase") != _intraday_session_phase(completed_at)
+        or summary.get("symbol_count") != symbol_count
+        or summary.get("sector_count") != 15
+        or not isinstance(same_day_count, int)
+        or isinstance(same_day_count, bool)
+        or not 0 <= same_day_count <= symbol_count
+        or not isinstance(synchronized_count, int)
+        or isinstance(synchronized_count, bool)
+        or not 0 <= synchronized_count <= len(SINA_COMPLETE_SESSION_TIMES)
+        or summary.get("all_symbols_same_day_coverage")
+        is not (same_day_count == symbol_count)
+        or not isinstance(request_window, (int, float))
+        or isinstance(request_window, bool)
+        or not isfinite(float(request_window))
+        or not 0 <= float(request_window) <= 300
+        or maximum_age is not None
+        and (
+            not isinstance(maximum_age, (int, float))
+            or isinstance(maximum_age, bool)
+            or not isfinite(float(maximum_age))
+            or float(maximum_age) < 0
+        )
+        or synchronized_count == 0
+        and latest is not None
+        or synchronized_count > 0
+        and (
+            latest is None
+            or latest.tzinfo is None
+            or latest.astimezone(ZoneInfo("Asia/Shanghai")).date() != report_day
+            or latest > completed_at
+        )
+    ):
+        return None
+    return completed_at
+
+
+def _continuity_non_regressing(
+    previous: dict[str, object],
+    current: dict[str, object],
+) -> bool:
+    if cast(int, current["same_day_symbol_count"]) < cast(
+        int, previous["same_day_symbol_count"]
+    ):
+        return False
+    if cast(int, current["synchronized_finalized_timestamp_count"]) < cast(
+        int, previous["synchronized_finalized_timestamp_count"]
+    ):
+        return False
+    previous_latest = previous["latest_synchronized_finalized_timestamp"]
+    current_latest = current["latest_synchronized_finalized_timestamp"]
+    if previous_latest is None:
+        return True
+    if current_latest is None:
+        return False
+    return datetime.fromisoformat(str(current_latest)) >= datetime.fromisoformat(
+        str(previous_latest)
+    )
+
+
+def _load_verified_intraday_continuity(
+    path: Path | None,
+    detail: dict[str, object] | None,
+    breadth: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if path is None or detail is None or breadth is None or not path.is_file():
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        checkpoints = report.get("checkpoints")
+        report_day = date.fromisoformat(str(report.get("trading_day")))
+        if (
+            not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("classification")
+            != "SIGNED_INTRADAY_SOURCE_CONTINUITY_NOT_REALTIME_ELIGIBLE"
+            or not isinstance(checkpoints, list)
+            or not 1 <= len(checkpoints) <= 32
+            or report.get("checkpoint_count") != len(checkpoints)
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("external_order_transmission") is not False
+        ):
+            return None
+        previous_hash: str | None = None
+        previous_checkpoint: dict[str, object] | None = None
+        monotonic_values: list[bool] = []
+        for index, checkpoint in enumerate(checkpoints, start=1):
+            if not isinstance(checkpoint, dict):
+                return None
+            checkpoint_digest = checkpoint.get("checkpoint_sha256")
+            checkpoint_unsigned = {
+                key: value
+                for key, value in checkpoint.items()
+                if key != "checkpoint_sha256"
+            }
+            captured_at = datetime.fromisoformat(str(checkpoint.get("captured_at")))
+            detail_summary = checkpoint.get("detail")
+            breadth_summary = checkpoint.get("breadth")
+            detail_completed = _validate_continuity_summary(
+                detail_summary,
+                symbol_count=15,
+                report_day=report_day,
+            )
+            breadth_completed = _validate_continuity_summary(
+                breadth_summary,
+                symbol_count=75,
+                report_day=report_day,
+            )
+            if (
+                checkpoint.get("sequence") != index
+                or checkpoint.get("trading_day") != report_day.isoformat()
+                or captured_at.tzinfo is None
+                or detail_completed is None
+                or breadth_completed is None
+                or captured_at != max(detail_completed, breadth_completed)
+                or checkpoint.get("previous_checkpoint_sha256") != previous_hash
+                or not _is_sha256(checkpoint_digest)
+                or _canonical_dict_sha256(
+                    cast(dict[str, object], checkpoint_unsigned)
+                )
+                != checkpoint_digest
+            ):
+                return None
+            expected_monotonic = previous_checkpoint is None or (
+                _continuity_non_regressing(
+                    cast(dict[str, object], previous_checkpoint["detail"]),
+                    cast(dict[str, object], detail_summary),
+                )
+                and _continuity_non_regressing(
+                    cast(dict[str, object], previous_checkpoint["breadth"]),
+                    cast(dict[str, object], breadth_summary),
+                )
+            )
+            if checkpoint.get("monotonic_vs_previous") is not expected_monotonic:
+                return None
+            monotonic_values.append(expected_monotonic)
+            previous_hash = str(checkpoint_digest)
+            previous_checkpoint = cast(dict[str, object], checkpoint)
+        latest_checkpoint = cast(dict[str, object], checkpoints[-1])
+        if (
+            report.get("all_checkpoints_monotonic") is not all(monotonic_values)
+            or latest_checkpoint.get("detail")
+            != _continuity_summary_from_report(detail)
+            or latest_checkpoint.get("breadth")
+            != _continuity_summary_from_report(breadth)
+        ):
+            return None
+        return cast(dict[str, object], report)
+    except (
         KeyError,
         OSError,
         TypeError,

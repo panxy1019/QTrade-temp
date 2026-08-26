@@ -485,3 +485,20 @@ at that signed instant. Unequal latest timestamps and source latency remain
 visible, partial coverage fails the all-stock claim, and the result cannot set
 realtime entitlement, mutate strategy/PAPER state, promote a candidate or enable
 external order transmission.
+
+## ADR-032 — Intraday source continuity is an explicit bounded hash chain
+
+Status: accepted, 2026-08-26.
+
+The public deployment may retain up to 32 same-day checkpoints that each bind
+one verified 15-representative detail report and one verified 75-stock breadth
+report. A checkpoint records only their identities and independently validated
+coverage, common-minute, request-window and lag summaries. It includes the prior
+checkpoint hash, while the outer report binds the ordered chain.
+
+The API recomputes checkpoint digests, sequence, China trading day, monotonicity
+and the exact binding between the final checkpoint and the currently deployed
+source reports. If common-minute counts or latest timestamps regress, that
+checkpoint remains present with a failed monotonic flag; it is not rewritten or
+dropped. This detects deployment/source continuity only and creates no realtime
+entitlement, strategy input, PAPER readiness, promotion evidence or order path.

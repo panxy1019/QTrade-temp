@@ -26,7 +26,7 @@ Last updated: 2026-08-26
   Anonymous successful GET responses are cached at the Vercel edge for 60
   seconds and the production dashboard polls once per minute. Authorized/cookie
   requests, POSTs and error responses remain uncached.
-- Acceptance evidence: 336 tests passed, Ruff clean, strict mypy clean across
+- Acceptance evidence: 339 tests passed, Ruff clean, strict mypy clean across
   the 97-package source baseline plus the breadth probe on Python 3.12.13
   (macOS, 2026-08-26); 43 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
@@ -124,6 +124,12 @@ Last updated: 2026-08-26
   intersections before returning a bounded summary to the Chinese market page.
   The full-stock probe remains historical-source availability evidence only and
   cannot set realtime/PAPER readiness or transmit an external order.
+- Intraday continuity: each deployed checkpoint can bind the current 15-stock
+  detail report and 75-stock breadth report into a bounded previous-hash chain.
+  `/intraday-continuity` verifies every checkpoint digest, sequence, China trading
+  day, monotonic common-minute arithmetic and exact latest-report identities.
+  The market page displays regressions rather than silently correcting them;
+  this remains deployment evidence and never enters strategy or PAPER state.
 - Long native-5-minute falsification: the optional BaoStock 0.9.3 ingest produced
   a signed 1,324,800-bar dataset for the frozen 75-stock/15-sector universe over
   368 common complete sessions. The predeclared expanding study used 120 initial

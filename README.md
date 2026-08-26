@@ -311,6 +311,21 @@ representative-stock charts. This is source-breadth and lag evidence only; it
 does not create realtime entitlement, strategy input, PAPER readiness or order
 authority.
 
+Multiple detail/breadth refreshes can be chained into a bounded continuity
+artifact:
+
+```bash
+PYTHONPATH=. .venv/bin/python scripts/update_intraday_continuity.py \
+  --output deployment/evidence/intraday-continuity/report.json
+```
+
+Each checkpoint binds both source-report hashes, completion times, coverage,
+common finalized-minute counts and lag measurements to the prior checkpoint
+hash. `/intraday-continuity` recomputes the chain, monotonicity and latest-report
+binding before the market page renders the timeline. A source regression remains
+visible instead of being repaired or dropped. The chain is deployment evidence,
+not a realtime subscription, strategy state or PAPER authorization.
+
 The optional native RQData bridge is implemented with pinned `rqdatac 3.6.3`.
 It imports the SDK lazily, reads `QTRADE_RQDATA_USERNAME` and
 `QTRADE_RQDATA_TOKEN` only inside the bridge process, and claims a session only

@@ -376,6 +376,34 @@ const data = {
     realtime_readiness: false, real_data_paper_readiness: false,
     promotion: 'NOT_ELIGIBLE', external_order_transmission: false,
   },
+  intradayContinuity: {
+    classification: 'SIGNED_INTRADAY_SOURCE_CONTINUITY_NOT_REALTIME_ELIGIBLE',
+    trading_day: '2026-08-26', checkpoint_count: 1,
+    all_checkpoints_monotonic: true, evidence_sha256: '7'.repeat(64),
+    checkpoints: [{
+      sequence: 1, captured_at: '2026-08-26T01:32:22+00:00', trading_day: '2026-08-26',
+      detail: {
+        evidence_sha256: '5'.repeat(64), completed_at: '2026-08-26T01:32:02+00:00',
+        session_phase: 'MORNING_SESSION', symbol_count: 15, sector_count: 15,
+        same_day_symbol_count: 15, synchronized_finalized_timestamp_count: 1,
+        latest_synchronized_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+        source_request_window_seconds: 2, maximum_same_day_latest_age_seconds: 62,
+        all_symbols_same_day_coverage: true,
+      },
+      breadth: {
+        evidence_sha256: '6'.repeat(64), completed_at: '2026-08-26T01:32:22+00:00',
+        session_phase: 'MORNING_SESSION', symbol_count: 75, sector_count: 15,
+        same_day_symbol_count: 75, synchronized_finalized_timestamp_count: 1,
+        latest_synchronized_finalized_timestamp: '2026-08-26T09:31:00+08:00',
+        source_request_window_seconds: 22, maximum_same_day_latest_age_seconds: 82,
+        all_symbols_same_day_coverage: true,
+      },
+      monotonic_vs_previous: true, previous_checkpoint_sha256: null,
+      checkpoint_sha256: '8'.repeat(64),
+    }],
+    realtime_readiness: false, real_data_paper_readiness: false,
+    promotion: 'NOT_ELIGIBLE', external_order_transmission: false,
+  },
   reports: [{ report_id: 'paper-20260812', trading_day: '2026-08-12', generated_at: '2026-08-12T16:00:00+08:00', data_version: 'ticks-v1', strategy_versions: ['trend@1.0.0'], sha256: 'a'.repeat(64) }],
   reporting: {
     classification: 'TRUSTED_PAPER_EOD_REPORTING', readiness: 'CONFIGURED', automatic: true,
@@ -687,6 +715,9 @@ describe('verified historical data pages', () => {
     expect(screen.getByText(/共同时间点 1 个/)).toBeInTheDocument()
     expect(screen.getByText(/额外等待 60 秒后才纳入/)).toBeInTheDocument()
     expect(screen.getByText(/不是授权实时行情，不进入 PAPER 或策略状态/)).toBeInTheDocument()
+    expect(screen.getByText('盘中连续性 · 1 个签名检查点')).toBeInTheDocument()
+    expect(screen.getByText('已验证单调推进')).toBeInTheDocument()
+    expect(screen.getByText(/时间或共同分钟回退会被保留并标红/)).toBeInTheDocument()
     expect(screen.getByText('全股票宽度观测 · 75/75')).toBeInTheDocument()
     expect(screen.getByText('15 板块 × 每板块 5 只股票')).toBeInTheDocument()
     expect(screen.getByText(/跨股票共同已结束分钟 1 个/)).toBeInTheDocument()
@@ -752,6 +783,7 @@ describe('verified historical data pages', () => {
     expect(screen.getByText(/不是实时行情授权/)).toBeInTheDocument()
     expect(screen.getByText('15 行业代表股当日分钟点时观测')).toBeInTheDocument()
     expect(screen.getByText('75 股票全板块当日分钟宽度')).toBeInTheDocument()
+    expect(screen.getByText('当日分钟多检查点连续性')).toBeInTheDocument()
     expect(screen.queryByText(/网页调用方不能提供这些身份/)).not.toBeInTheDocument()
   })
 })

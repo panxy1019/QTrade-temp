@@ -129,6 +129,15 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     assert breadth["real_data_paper_readiness"] is False
     assert breadth["promotion"] == "NOT_ELIGIBLE"
     assert breadth["external_order_transmission"] is False
+    continuity = client.get(_api("/intraday-continuity")).json()
+    assert continuity["checkpoint_count"] >= 1
+    assert continuity["all_checkpoints_monotonic"] is True
+    assert continuity["checkpoints"][-1]["detail"]["symbol_count"] == 15
+    assert continuity["checkpoints"][-1]["breadth"]["symbol_count"] == 75
+    assert continuity["realtime_readiness"] is False
+    assert continuity["real_data_paper_readiness"] is False
+    assert continuity["promotion"] == "NOT_ELIGIBLE"
+    assert continuity["external_order_transmission"] is False
     five_minute_bars = client.get(_api("/five-minute-bars/601166")).json()
     assert five_minute_bars["observation_type"] == (
         "HISTORICAL_FIVE_MINUTE_BAR_SERIES"
