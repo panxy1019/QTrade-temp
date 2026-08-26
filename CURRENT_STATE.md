@@ -543,7 +543,9 @@ Last updated: 2026-08-26
   verifier and requires exactly one open; the bundle currently has zero
   unavailable sections and preserves all realtime/PAPER/order prohibitions.
   Browser GET concurrency is capped at six and covered by a deterministic
-  fan-out test so transient cold-start pressure cannot silently return.
+  fan-out test so transient cold-start pressure cannot silently return. Every
+  GET also requests `cache: no-store`; a production refresh therefore cannot
+  keep rendering an older signed intraday checkpoint from the browser cache.
 - Historical chart loading semantics: daily, 1-minute, native 5-minute and long
   5-minute panels now show an explicit verification/loading state while their
   identity-bound series request is pending. They no longer claim that evidence

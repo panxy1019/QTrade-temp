@@ -8,9 +8,11 @@ describe('platform snapshot request fan-out', () => {
     let active = 0
     let maximumActive = 0
     const paths: string[] = []
-    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+    const cacheModes: Array<RequestCache | undefined> = []
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const path = String(input)
       paths.push(path)
+      cacheModes.push(init?.cache)
       active += 1
       maximumActive = Math.max(maximumActive, active)
       await new Promise((resolve) => window.setTimeout(resolve, 5))
@@ -33,6 +35,7 @@ describe('platform snapshot request fan-out', () => {
     expect(paths).toContain('/api/minute-research-snapshot')
     expect(paths).not.toContain('/api/long-five-minute-research')
     expect(paths).not.toContain('/api/intraday-breadth-observation')
+    expect(new Set(cacheModes)).toEqual(new Set(['no-store']))
     expect(Object.keys(snapshot.availability.failures)).toHaveLength(25)
   })
 })

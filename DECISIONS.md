@@ -654,3 +654,16 @@ generated no earlier than the locked 15:10 collection boundary. A mismatch fails
 the report closed and leaves the independently verified preregistration state
 visible; it cannot advance the public count or grant strategy, PAPER, realtime
 or order authority.
+
+## ADR-042 — Public research refreshes bypass the browser HTTP cache
+
+Status: accepted, 2026-08-26.
+
+Every read-only API GET issued by the web client uses the Fetch `no-store` cache
+mode. Signed evidence identities remain the server's source of truth; a manual or
+periodic refresh must not preserve a previously cached snapshot after a verified
+deployment advances its intraday or forward chain.
+
+This changes only freshness of read requests. The six-request concurrency cap,
+optional-section fault isolation, public mutation failures and all no-realtime,
+no-PAPER and no-external-order boundaries remain unchanged.

@@ -29,7 +29,7 @@ function releaseGetSlot(): void {
 async function getJson<T>(path: string): Promise<T> {
   await acquireGetSlot()
   try {
-    const response = await fetch(`${API_BASE}${path}`)
+    const response = await fetch(`${API_BASE}${path}`, { cache: 'no-store' })
     if (!response.ok) throw new Error(`请求失败：${response.status}`)
     return response.json() as Promise<T>
   } finally {

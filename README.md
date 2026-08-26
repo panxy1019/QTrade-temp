@@ -401,6 +401,8 @@ one `/minute-research-snapshot` request. The server opens and SHA-256 verifies t
 24 MB / 1,324,800-row long-history Parquet once, then passes the same verified
 identity to all eight independent report validators. Standalone endpoints remain
 available for inspection. A missing or invalid report stays `null` in the bundle
+and every browser GET uses `cache: no-store`, so a refresh cannot reuse an older
+signed checkpoint after a deployment.
 and cannot be replaced by an unverified value; the aggregation changes read
 amplification only, not evidence rules or runtime authority.
 The browser also caps concurrent GETs at six, preventing a fresh serverless
