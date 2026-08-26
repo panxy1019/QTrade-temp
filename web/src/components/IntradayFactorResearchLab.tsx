@@ -44,6 +44,17 @@ const workflowLabels: Record<string, string> = {
   LIVE: '实盘',
 }
 
+const paperAdmissionLabels: Record<string, string> = {
+  verified_historical_dataset_identity_bound: '历史数据身份已验证并绑定',
+  research_gate_passed: '因子研究硬门通过',
+  causal_backtest_passed: '因果回测收益门通过',
+  registered_immutable_strategy_version_available: '不可变策略版本已注册',
+  unseen_forward_shadow_evidence_attached: '已附真正未见前向 SHADOW 证据',
+  authorized_realtime_provider_ready: '授权实时行情供应商已就绪',
+  fresh_runtime_readiness_attestation_available: '新鲜运行时就绪证明可用',
+  reconciliation_ready: 'PAPER 对账状态已就绪',
+}
+
 const gateLabels: Record<string, string> = {
   minimum_observation_count: '至少 250 个观测',
   minimum_signal_count: '至少 20 次信号',
@@ -828,6 +839,28 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             status: stage.status === 'FAILED' ? 'error' : ['PASSED', 'AVAILABLE', 'COMPLETED'].includes(stage.status) ? 'finish' : 'wait',
           }))}
         />
+        <Card type="inner" title={`PAPER 模拟盘准入：${result.paper_admission.decision}`}>
+          <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+            <Alert
+              showIcon
+              type="error"
+              title={`已通过 ${result.paper_admission.passed_gate_count}/${result.paper_admission.required_gate_count} 项`}
+              description={`这是只读准入判定，不会注册策略、启动运行时或发送订单。下一允许阶段：${result.paper_admission.next_allowed_stage}。`}
+            />
+            <Table
+              rowKey="gate_id"
+              size="small"
+              pagination={false}
+              dataSource={result.paper_admission.required_gates}
+              columns={[
+                { title: 'PAPER 准入门槛', dataIndex: 'gate_id', render: (value: string) => paperAdmissionLabels[value] ?? value },
+                { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">阻断</Tag> },
+                { title: '证据 / 原因码', dataIndex: 'evidence' },
+              ]}
+              scroll={{ x: 820 }}
+            />
+          </Space>
+        </Card>
         <div className="description-grid">
           <Metric label="累计收益" value={formatPercent(result.backtest.strategy_metrics.total_return)} />
           <Metric label="年化收益" value={formatPercent(result.backtest.strategy_metrics.annualized_return)} />

@@ -75,7 +75,7 @@ _MIN_INTRADAY_DISCOVERY_SESSIONS = 40
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3"
+    "56edc245d8e99c5dea8b0318a1803cd85d6174bc88aff7a391acadabf478e95b"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -9400,6 +9400,53 @@ def _intraday_factor_preview(
         criteria["base_cost_total_return_positive"]
         and criteria["base_cost_excess_return_positive"]
     )
+    paper_admission_gates: list[dict[str, object]] = [
+        {
+            "gate_id": "verified_historical_dataset_identity_bound",
+            "passed": True,
+            "evidence": f"{dataset['data_version']} · {dataset['checksum']}",
+        },
+        {
+            "gate_id": "research_gate_passed",
+            "passed": result.research_gate.passed,
+            "evidence": (
+                f"research_gate.passed={str(result.research_gate.passed).lower()}"
+            ),
+        },
+        {
+            "gate_id": "causal_backtest_passed",
+            "passed": backtest_passed,
+            "evidence": f"backtest.passed={str(backtest_passed).lower()}",
+        },
+        {
+            "gate_id": "registered_immutable_strategy_version_available",
+            "passed": False,
+            "evidence": "AD_HOC_UNREGISTERED",
+        },
+        {
+            "gate_id": "unseen_forward_shadow_evidence_attached",
+            "passed": False,
+            "evidence": "NO_AUTHORIZED_FORWARD_PAPER_EVIDENCE",
+        },
+        {
+            "gate_id": "authorized_realtime_provider_ready",
+            "passed": False,
+            "evidence": "NO_AUTHORIZED_REALTIME_PROVIDER",
+        },
+        {
+            "gate_id": "fresh_runtime_readiness_attestation_available",
+            "passed": False,
+            "evidence": "NO_RUNTIME_ATTESTATION",
+        },
+        {
+            "gate_id": "reconciliation_ready",
+            "passed": False,
+            "evidence": "NO_BOUND_PAPER_RUNTIME",
+        },
+    ]
+    paper_admission_passed_gate_count = sum(
+        gate["passed"] is True for gate in paper_admission_gates
+    )
     factor_metrics = result.factor_metrics
     event = result.event_summary
     workflow = [
@@ -9545,6 +9592,21 @@ def _intraday_factor_preview(
         },
         "parameters": parameters,
         "workflow": workflow,
+        "paper_admission": {
+            "classification": "READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION",
+            "decision": "BLOCKED",
+            "required_gates": paper_admission_gates,
+            "passed_gate_count": paper_admission_passed_gate_count,
+            "required_gate_count": len(paper_admission_gates),
+            "all_required_gates_passed": False,
+            "next_allowed_stage": (
+                "REGISTER_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW"
+            ),
+            "automatic_start_allowed": False,
+            "runtime_mode_change": False,
+            "state_mutation": False,
+            "external_order_transmission": False,
+        },
         "factor_validation": {
             "number_of_periods": factor_metrics.number_of_periods,
             "minimum_instruments": factor_metrics.minimum_instruments,

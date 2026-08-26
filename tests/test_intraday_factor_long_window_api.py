@@ -85,8 +85,17 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert float(stability["worst_block_mean_conditional_excess_return"]) < 0
     assert float(stability["maximum_absolute_block_contribution_share"]) < 0.60
     assert stability["criteria"]["positive_block_ratio_at_least_75pct"] is False
+    paper_admission = payload["result"]["paper_admission"]
+    assert paper_admission["decision"] == "BLOCKED"
+    assert paper_admission["passed_gate_count"] == 1
+    assert paper_admission["required_gate_count"] == 8
+    assert paper_admission["all_required_gates_passed"] is False
+    assert paper_admission["automatic_start_allowed"] is False
+    assert paper_admission["runtime_mode_change"] is False
+    assert paper_admission["state_mutation"] is False
+    assert paper_admission["external_order_transmission"] is False
     assert payload["result_preview_hash"] == (
-        "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3"
+        "56edc245d8e99c5dea8b0318a1803cd85d6174bc88aff7a391acadabf478e95b"
     )
     assert payload["promotion"] == "NOT_ELIGIBLE"
     assert payload["paper_readiness"] == "NOT_ELIGIBLE"
@@ -134,7 +143,7 @@ def test_resigned_changed_result_cannot_replace_fixed_long_window_evidence(
     payload = _client(changed_path).get("/intraday-factor-robustness").json()
 
     assert changed_result_hash != (
-        "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3"
+        "56edc245d8e99c5dea8b0318a1803cd85d6174bc88aff7a391acadabf478e95b"
     )
     assert payload["report_id"] is None
     assert payload["promotion"] == "NOT_EVALUATED"

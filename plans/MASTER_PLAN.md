@@ -385,6 +385,13 @@ current 10:00 signal. Returns were -0.7402% after 12 negative prior sessions and
    consolidated eight-stage gate is 0/8 and cannot create PAPER, state or
    external-order authority.
 
+The intraday factor workbench now turns the PAPER handoff into an explicit
+eight-gate read-only admission dossier. It binds the historical dataset identity,
+research and causal-backtest outcomes, immutable strategy registration, unseen
+forward SHADOW evidence, authorized realtime readiness, a fresh runtime
+attestation and reconciliation readiness. The current run is `BLOCKED` at 1/8;
+the dossier has no registration, runtime-control, persistence or order path.
+
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no
 longer erase the full snapshot; all research inventories and minute-symbol

@@ -242,6 +242,10 @@ npm --prefix web run build
 - [x] Hold the locked signal identity fixed and stress causal execution at the
   10:05/10:10/10:15 source-Bar opens under one 5 bps cost; expose three negative
   returns and extend the no-reselection discovery gate to 0/8.
+- [x] Expose a structured eight-gate PAPER admission dossier for each intraday
+  factor run, separating failed research/backtest evidence from registration,
+  unseen-forward, realtime, runtime-attestation and reconciliation blockers;
+  keep the current 1/8 decision read-only and `BLOCKED`.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

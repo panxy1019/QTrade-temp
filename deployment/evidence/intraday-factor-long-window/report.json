@@ -2,10 +2,10 @@
   "schema_version": 1,
   "report_id": "opening-triple-bullish-long-window-robustness-v1",
   "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
-  "generated_at": "2026-08-27T03:42:06.379743+08:00",
+  "generated_at": "2026-08-27T04:24:27.791270+08:00",
   "implementation": {
     "factor_module_sha256": "74296a42229fa128a1f219840a8759a61ec3d0cab1032da987d863dec7e34194",
-    "api_module_sha256": "473a568a0fb332cd0f2cb5eb99369b1fdaa8476d2d2fb867169be6b44d4129ae"
+    "api_module_sha256": "788d12c41f2da7ae9e36d4c71f4ce1fc380a5b9e0993cc534269199de1388544"
   },
   "dataset": {
     "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
@@ -48,7 +48,7 @@
     ],
     "combination": "ALL"
   },
-  "result_preview_hash": "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3",
+  "result_preview_hash": "56edc245d8e99c5dea8b0318a1803cd85d6174bc88aff7a391acadabf478e95b",
   "summary": {
     "observation_count": 9000,
     "signal_count": 1001,
@@ -221,6 +221,60 @@
         "detail": "Separate explicit user authorization is required."
       }
     ],
+    "paper_admission": {
+      "classification": "READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION",
+      "decision": "BLOCKED",
+      "required_gates": [
+        {
+          "gate_id": "verified_historical_dataset_identity_bound",
+          "passed": true,
+          "evidence": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1 · 667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524"
+        },
+        {
+          "gate_id": "research_gate_passed",
+          "passed": false,
+          "evidence": "research_gate.passed=false"
+        },
+        {
+          "gate_id": "causal_backtest_passed",
+          "passed": false,
+          "evidence": "backtest.passed=false"
+        },
+        {
+          "gate_id": "registered_immutable_strategy_version_available",
+          "passed": false,
+          "evidence": "AD_HOC_UNREGISTERED"
+        },
+        {
+          "gate_id": "unseen_forward_shadow_evidence_attached",
+          "passed": false,
+          "evidence": "NO_AUTHORIZED_FORWARD_PAPER_EVIDENCE"
+        },
+        {
+          "gate_id": "authorized_realtime_provider_ready",
+          "passed": false,
+          "evidence": "NO_AUTHORIZED_REALTIME_PROVIDER"
+        },
+        {
+          "gate_id": "fresh_runtime_readiness_attestation_available",
+          "passed": false,
+          "evidence": "NO_RUNTIME_ATTESTATION"
+        },
+        {
+          "gate_id": "reconciliation_ready",
+          "passed": false,
+          "evidence": "NO_BOUND_PAPER_RUNTIME"
+        }
+      ],
+      "passed_gate_count": 1,
+      "required_gate_count": 8,
+      "all_required_gates_passed": false,
+      "next_allowed_stage": "REGISTER_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW",
+      "automatic_start_allowed": false,
+      "runtime_mode_change": false,
+      "state_mutation": false,
+      "external_order_transmission": false
+    },
     "factor_validation": {
       "number_of_periods": 120,
       "minimum_instruments": 75,
@@ -7321,7 +7375,7 @@
     "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
     "state_mutation": false,
     "external_order_transmission": false,
-    "preview_hash": "6a21e8fc169b50c9bfb52254b45b4dccf658b38d5b875f3be51b2b5bd5f042a3"
+    "preview_hash": "56edc245d8e99c5dea8b0318a1803cd85d6174bc88aff7a391acadabf478e95b"
   },
   "promotion": "NOT_ELIGIBLE",
   "promotion_reasons": [
@@ -7335,5 +7389,5 @@
   "live_readiness": "DISABLED_REQUIRES_SEPARATE_AUTHORIZATION",
   "state_mutation": false,
   "external_order_transmission": false,
-  "evidence_sha256": "11bfe703e51a6b11fb804fc604fb04cfcf30d72070df5ca7ad6330c2898480a3"
+  "evidence_sha256": "9f5631ed748903c4b5758963b6670ecaa807bbf448ceda28e12fc6f373623a62"
 }

@@ -1739,3 +1739,24 @@ positive excess at every delay. Only identity and coverage pass. The result
 shows that modest delay changes loss magnitude but does not rescue the factor.
 The consolidated historical discovery gate is 0/8 and remains reused-history,
 non-PIT, `NOT_ELIGIBLE`, stateless and external-order-disabled.
+
+## ADR-106 — Intraday PAPER admission is an eight-gate read-only dossier
+
+Status: accepted, 2026-08-27.
+
+A generic PAPER `NOT_ELIGIBLE` label does not show whether a run failed research,
+failed economic backtesting or simply lacks operational authority. Every
+intraday-factor preview therefore reports eight separately evidenced gates:
+verified historical identity, research quality, causal total/excess return,
+immutable strategy registration, genuinely unseen forward SHADOW evidence,
+authorized realtime-provider readiness, a fresh runtime attestation and
+reconciliation readiness. Historical identity alone cannot substitute for any
+later gate.
+
+The current three-ten-minute-bullish preview passes 1/8: the dataset identity is
+checksum-bound, while research and causal-return gates fail and all five
+operational/lineage gates are unavailable. Admission is always `BLOCKED` while
+those fixed unavailable gates remain false. The dossier is part of the existing
+read-only preview; it cannot register a strategy, initiate PAPER, change runtime
+mode, persist state or transmit an external order. LIVE remains separately
+disabled and requires explicit user authorization.

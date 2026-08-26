@@ -938,6 +938,23 @@ export interface IntradayFactorBacktest {
   }
   parameters: IntradayFactorBacktestRequest
   workflow: Array<{ id: string; status: string; detail: string }>
+  paper_admission: {
+    classification: 'READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION'
+    decision: 'BLOCKED'
+    required_gates: Array<{
+      gate_id: string
+      passed: boolean
+      evidence: string
+    }>
+    passed_gate_count: number
+    required_gate_count: number
+    all_required_gates_passed: false
+    next_allowed_stage: 'REGISTER_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW'
+    automatic_start_allowed: false
+    runtime_mode_change: false
+    state_mutation: false
+    external_order_transmission: false
+  }
   factor_validation: {
     number_of_periods: number
     minimum_instruments: number

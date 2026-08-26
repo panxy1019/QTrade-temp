@@ -120,6 +120,44 @@ def test_intraday_factor_backtest_exposes_complete_read_only_research_chain() ->
         "PAPER",
         "LIVE",
     ]
+    paper_admission = payload["paper_admission"]
+    assert paper_admission["classification"] == (
+        "READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION"
+    )
+    assert paper_admission["decision"] == "BLOCKED"
+    assert [gate["gate_id"] for gate in paper_admission["required_gates"]] == [
+        "verified_historical_dataset_identity_bound",
+        "research_gate_passed",
+        "causal_backtest_passed",
+        "registered_immutable_strategy_version_available",
+        "unseen_forward_shadow_evidence_attached",
+        "authorized_realtime_provider_ready",
+        "fresh_runtime_readiness_attestation_available",
+        "reconciliation_ready",
+    ]
+    admission_gates = {
+        gate["gate_id"]: gate["passed"]
+        for gate in paper_admission["required_gates"]
+    }
+    assert admission_gates == {
+        "verified_historical_dataset_identity_bound": True,
+        "research_gate_passed": payload["research_gate"]["passed"],
+        "causal_backtest_passed": payload["backtest"]["passed"],
+        "registered_immutable_strategy_version_available": False,
+        "unseen_forward_shadow_evidence_attached": False,
+        "authorized_realtime_provider_ready": False,
+        "fresh_runtime_readiness_attestation_available": False,
+        "reconciliation_ready": False,
+    }
+    assert paper_admission["passed_gate_count"] == sum(
+        admission_gates.values()
+    )
+    assert paper_admission["required_gate_count"] == 8
+    assert paper_admission["all_required_gates_passed"] is False
+    assert paper_admission["automatic_start_allowed"] is False
+    assert paper_admission["runtime_mode_change"] is False
+    assert paper_admission["state_mutation"] is False
+    assert paper_admission["external_order_transmission"] is False
     assert payload["l2_factor_readiness"] == {
         "factor_id": "order-book-buying-intensity-v1",
         "formula": "(bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5)",

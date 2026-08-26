@@ -1426,6 +1426,23 @@ describe('verified robustness evidence', () => {
         fallback_exit_bar_label: 'NEXT_SESSION_15_00', fallback_exit_interval_start: 'NEXT_SESSION_14_55',
         t_plus_one_compliant: true,
       },
+      paper_admission: {
+        classification: 'READ_ONLY_INTRADAY_FACTOR_PAPER_ADMISSION', decision: 'BLOCKED',
+        required_gates: [
+          { gate_id: 'verified_historical_dataset_identity_bound', passed: true, evidence: 'baostock-five-minute-long-v1 · long-five-minute-checksum' },
+          { gate_id: 'research_gate_passed', passed: false, evidence: 'research_gate.passed=false' },
+          { gate_id: 'causal_backtest_passed', passed: false, evidence: 'backtest.passed=false' },
+          { gate_id: 'registered_immutable_strategy_version_available', passed: false, evidence: 'AD_HOC_UNREGISTERED' },
+          { gate_id: 'unseen_forward_shadow_evidence_attached', passed: false, evidence: 'NO_AUTHORIZED_FORWARD_PAPER_EVIDENCE' },
+          { gate_id: 'authorized_realtime_provider_ready', passed: false, evidence: 'NO_AUTHORIZED_REALTIME_PROVIDER' },
+          { gate_id: 'fresh_runtime_readiness_attestation_available', passed: false, evidence: 'NO_RUNTIME_ATTESTATION' },
+          { gate_id: 'reconciliation_ready', passed: false, evidence: 'NO_BOUND_PAPER_RUNTIME' },
+        ],
+        passed_gate_count: 1, required_gate_count: 8, all_required_gates_passed: false,
+        next_allowed_stage: 'REGISTER_STRATEGY_THEN_AUTHORIZED_FORWARD_SHADOW',
+        automatic_start_allowed: false, runtime_mode_change: false,
+        state_mutation: false, external_order_transmission: false,
+      },
       l2_factor_readiness: {
         factor_id: 'order-book-buying-intensity-v1',
         formula: '(bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5)',
@@ -1461,6 +1478,11 @@ describe('verified robustness evidence', () => {
       exit_minimum_body_return_bps: '5',
     }))
     expect(screen.getByText(/实际触发 192\/1500 次/)).toBeInTheDocument()
+    expect(screen.getByText('PAPER 模拟盘准入：BLOCKED')).toBeInTheDocument()
+    expect(screen.getByText('已通过 1/8 项')).toBeInTheDocument()
+    expect(screen.getByText('历史数据身份已验证并绑定')).toBeInTheDocument()
+    expect(screen.getByText('不可变策略版本已注册')).toBeInTheDocument()
+    expect(screen.getByText('AD_HOC_UNREGISTERED')).toBeInTheDocument()
     expect(screen.getAllByText('聚类信号日')[1].nextSibling).toHaveTextContent('20')
     expect(screen.getAllByText('Newey-West t')[1].nextSibling).toHaveTextContent('-2.000')
     expect(screen.getByText('95% 置信区间').nextSibling).toHaveTextContent('-0.04% ～ -0.00%')

@@ -897,3 +897,12 @@ Last updated: 2026-08-27
   delete advances a dedicated list revision. Consecutive deletes therefore
   update the table even when the user-facing status text is unchanged; these
   summaries remain local-only and never become registered strategy evidence.
+- Intraday-factor PAPER admission: the factor-backtest response and Chinese
+  research page now expose one structured, exportable eight-gate dossier instead
+  of only a `NOT_ELIGIBLE` label. The current three-ten-minute-bullish run passes
+  only the checksum-bound historical-data identity gate (`1/8`): its research
+  gate and causal return gate fail, the candidate is ad hoc/unregistered, and no
+  unseen forward SHADOW evidence, authorized realtime provider, fresh runtime
+  attestation or PAPER reconciliation binding exists. The decision is therefore
+  `BLOCKED`; it cannot register or start a strategy, change runtime mode, mutate
+  state or transmit an external order.
