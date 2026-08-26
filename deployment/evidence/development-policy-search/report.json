@@ -1,0 +1,268 @@
+{
+  "schema_version": 1,
+  "report_id": "baostock-retrospective-development-policy-search-v1",
+  "classification": "RETROSPECTIVE_DEVELOPMENT_ONLY_POLICY_SEARCH_NOT_INDEPENDENT",
+  "generated_at": "2026-08-26T09:01:25.014550+08:00",
+  "dataset": {
+    "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
+    "checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
+    "evidence_sha256": "531f8077caf6849d25ecca960d613c113c3dab25ee630b45e72cbce1252429bb",
+    "bar_interval": "5m",
+    "symbol_count": 75,
+    "sector_count": 15,
+    "point_in_time": false,
+    "future_adjustment_knowledge_possible": true
+  },
+  "development_contract": {
+    "session_count": 360,
+    "observed_start": "2025-01-02",
+    "observed_end": "2026-08-13",
+    "processed_bar_count": 1296000,
+    "cost_bps": 5
+  },
+  "reserved_tail": {
+    "session_count": 8,
+    "trading_days": [
+      "2026-08-14",
+      "2026-08-17",
+      "2026-08-18",
+      "2026-08-19",
+      "2026-08-20",
+      "2026-08-21",
+      "2026-08-24",
+      "2026-08-25"
+    ],
+    "entered_strategy_engine": false,
+    "entered_candidate_metrics": false
+  },
+  "contamination_disclosure": {
+    "prior_reserved_tail_evidence_available_before_candidate_design": true,
+    "candidate_search_is_not_blind": true,
+    "observed_leader_selection_is_post_hoc": true
+  },
+  "candidate_count": 4,
+  "candidates": [
+    {
+      "policy_id": "dev-floor-095-slow6x24-v1",
+      "policy_hash": "f131ff1b3e238c3544c467f2fb579fe3e44407e0708960fa5a9ea9d50823b015",
+      "policy": {
+        "short_window": "6",
+        "long_window": "24",
+        "volatility_window": "12",
+        "maximum_minute_volatility": "0.012",
+        "maximum_intraday_drawdown": "0.035",
+        "reduction_multiplier": "0.95",
+        "cooldown_bars": "6"
+      },
+      "base": {
+        "total_return": 0.6210146995749448,
+        "maximum_drawdown": -0.15108553085614007,
+        "realized_minute_volatility": 0.002019323463847489,
+        "point_count": 17280
+      },
+      "overlay": {
+        "total_return": 0.5394154774279447,
+        "maximum_drawdown": -0.12131615875731694,
+        "realized_minute_volatility": 0.0014697664720480575,
+        "point_count": 17280
+      },
+      "return_delta_vs_base": -0.0815992221470001,
+      "drawdown_improvement": 0.029769372098823133,
+      "execution": {
+        "symbol_count": 75,
+        "observation_count": 1296000,
+        "reduced_exposure_observation_count": 881522,
+        "exposure_sum": 1150508.5500000003,
+        "mean_exposure": 0.8877380787037039,
+        "reduced_exposure_ratio": 0.6801867283950618,
+        "turnover": 7120.250000000003,
+        "mean_turnover_per_symbol": 94.93666666666671,
+        "transaction_cost": 6.09224598833776,
+        "mean_transaction_cost_per_symbol": 0.08122994651117013,
+        "reason_counts": {
+          "INSUFFICIENT_MINUTE_HISTORY": 1725,
+          "INTRADAY_DRAWDOWN_LIMIT": 41341,
+          "MINUTE_TREND_WEAK": 685973,
+          "MINUTE_VOLATILITY_LIMIT": 16550,
+          "RECOVERY_COOLDOWN": 180062
+        }
+      }
+    },
+    {
+      "policy_id": "dev-floor-098-slow6x24-v1",
+      "policy_hash": "745601d72f8df13fbe90c8f7948aa647378e5b10774c64cdfef86d9cfa473a5f",
+      "policy": {
+        "short_window": "6",
+        "long_window": "24",
+        "volatility_window": "12",
+        "maximum_minute_volatility": "0.012",
+        "maximum_intraday_drawdown": "0.035",
+        "reduction_multiplier": "0.98",
+        "cooldown_bars": "6"
+      },
+      "base": {
+        "total_return": 0.6210146995749448,
+        "maximum_drawdown": -0.15108553085614007,
+        "realized_minute_volatility": 0.002019323463847489,
+        "point_count": 17280
+      },
+      "overlay": {
+        "total_return": 0.5652174204434988,
+        "maximum_drawdown": -0.12334351632423746,
+        "realized_minute_volatility": 0.0015021836506995347,
+        "point_count": 17280
+      },
+      "return_delta_vs_base": -0.055797279131446054,
+      "drawdown_improvement": 0.027742014531902615,
+      "execution": {
+        "symbol_count": 75,
+        "observation_count": 1296000,
+        "reduced_exposure_observation_count": 881522,
+        "exposure_sum": 1173751.6199999994,
+        "mean_exposure": 0.9056725462962958,
+        "reduced_exposure_ratio": 0.6801867283950618,
+        "turnover": 5757.499999999998,
+        "mean_turnover_per_symbol": 76.76666666666664,
+        "transaction_cost": 5.327061946650077,
+        "mean_transaction_cost_per_symbol": 0.07102749262200103,
+        "reason_counts": {
+          "INSUFFICIENT_MINUTE_HISTORY": 1725,
+          "INTRADAY_DRAWDOWN_LIMIT": 41341,
+          "MINUTE_TREND_WEAK": 685973,
+          "MINUTE_VOLATILITY_LIMIT": 16550,
+          "RECOVERY_COOLDOWN": 180062
+        }
+      }
+    },
+    {
+      "policy_id": "dev-floor-095-slow12x48-v1",
+      "policy_hash": "df0f9662b476941b6dc02e5a91158b60b837c45c90a2fdae96280bc9e63229b5",
+      "policy": {
+        "short_window": "12",
+        "long_window": "48",
+        "volatility_window": "24",
+        "maximum_minute_volatility": "0.02",
+        "maximum_intraday_drawdown": "0.04",
+        "reduction_multiplier": "0.95",
+        "cooldown_bars": "6"
+      },
+      "base": {
+        "total_return": 0.6210146995749448,
+        "maximum_drawdown": -0.15108553085614007,
+        "realized_minute_volatility": 0.002019323463847489,
+        "point_count": 17280
+      },
+      "overlay": {
+        "total_return": 0.5831001422813911,
+        "maximum_drawdown": -0.1217294438092551,
+        "realized_minute_volatility": 0.0015107790468634338,
+        "point_count": 17280
+      },
+      "return_delta_vs_base": -0.03791455729355375,
+      "drawdown_improvement": 0.02935608704688497,
+      "execution": {
+        "symbol_count": 75,
+        "observation_count": 1296000,
+        "reduced_exposure_observation_count": 777143,
+        "exposure_sum": 1163215.4000000001,
+        "mean_exposure": 0.8975427469135804,
+        "reduced_exposure_ratio": 0.5996473765432099,
+        "turnover": 4562.200000000002,
+        "mean_turnover_per_symbol": 60.82933333333335,
+        "transaction_cost": 4.194401610339845,
+        "mean_transaction_cost_per_symbol": 0.05592535480453127,
+        "reason_counts": {
+          "INSUFFICIENT_MINUTE_HISTORY": 3525,
+          "INTRADAY_DRAWDOWN_LIMIT": 27271,
+          "MINUTE_TREND_WEAK": 675285,
+          "MINUTE_VOLATILITY_LIMIT": 2412,
+          "RECOVERY_COOLDOWN": 93979
+        }
+      }
+    },
+    {
+      "policy_id": "dev-floor-098-slow12x48-v1",
+      "policy_hash": "7119dba09cbebaa44827271491263ce0def069f43ca36211afb3774aa226035a",
+      "policy": {
+        "short_window": "12",
+        "long_window": "48",
+        "volatility_window": "24",
+        "maximum_minute_volatility": "0.02",
+        "maximum_intraday_drawdown": "0.04",
+        "reduction_multiplier": "0.98",
+        "cooldown_bars": "6"
+      },
+      "base": {
+        "total_return": 0.6210146995749448,
+        "maximum_drawdown": -0.15108553085614007,
+        "realized_minute_volatility": 0.002019323463847489,
+        "point_count": 17280
+      },
+      "overlay": {
+        "total_return": 0.598925926440993,
+        "maximum_drawdown": -0.12413263596004342,
+        "realized_minute_volatility": 0.001538326552562219,
+        "point_count": 17280
+      },
+      "return_delta_vs_base": -0.022088773133951856,
+      "drawdown_improvement": 0.026952894896096646,
+      "execution": {
+        "symbol_count": 75,
+        "observation_count": 1296000,
+        "reduced_exposure_observation_count": 777143,
+        "exposure_sum": 1183563.5599999994,
+        "mean_exposure": 0.9132434876543205,
+        "reduced_exposure_ratio": 0.5996473765432099,
+        "turnover": 3789.279999999998,
+        "mean_turnover_per_symbol": 50.523733333333304,
+        "transaction_cost": 3.7452833236845606,
+        "mean_transaction_cost_per_symbol": 0.04993711098246081,
+        "reason_counts": {
+          "INSUFFICIENT_MINUTE_HISTORY": 3525,
+          "INTRADAY_DRAWDOWN_LIMIT": 27271,
+          "MINUTE_TREND_WEAK": 675285,
+          "MINUTE_VOLATILITY_LIMIT": 2412,
+          "RECOVERY_COOLDOWN": 93979
+        }
+      }
+    }
+  ],
+  "observed_leader": {
+    "policy_id": "dev-floor-098-slow12x48-v1",
+    "selection_timing": "POST_HOC_DEVELOPMENT_ONLY",
+    "constraints": {
+      "minimum_drawdown_improvement": 0.02,
+      "minimum_mean_exposure": 0.9,
+      "maximum_mean_turnover_per_symbol": 100
+    },
+    "objective": "maximum return delta versus base after constraints"
+  },
+  "future_observation_lock": {
+    "locked_at": "2026-08-26T09:01:25.014550+08:00",
+    "policy_id": "dev-floor-098-slow12x48-v1",
+    "first_eligible_trading_day": "2026-08-26",
+    "minimum_complete_future_sessions": 20,
+    "partial_same_day_observations_enter_metrics": false,
+    "parameter_changes_before_completion": false
+  },
+  "causal_contract": {
+    "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
+    "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+    "same_bar_signal_execution": false,
+    "reduction_only": true,
+    "maximum_exposure": 1
+  },
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "promotion": "NOT_ELIGIBLE",
+  "promotion_reasons": [
+    "RETROSPECTIVE_POST_HOC_DEVELOPMENT_SEARCH",
+    "PRIOR_RESERVED_TAIL_EVIDENCE_ALREADY_VISIBLE",
+    "FUTURE_TWENTY_SESSION_OBSERVATION_INCOMPLETE",
+    "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+    "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+    "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE"
+  ],
+  "external_order_transmission": false,
+  "evidence_sha256": "8c5118f2105b33270ab6f0e452d7450b351c34a276d621f3728fe1bb827ebd5d"
+}

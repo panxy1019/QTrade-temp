@@ -252,6 +252,24 @@ control/cancel writes returned `503`.
 evidence. It demonstrates public historical-bar access and caching, not an
 authorized realtime feed or a performance SLA.
 
+The retrospective development-only policy search is reproducible with:
+
+```bash
+PYTHONPATH=. .venv/bin/python \
+  scripts/run_baostock_development_policy_search.py \
+  --output deployment/evidence/development-policy-search/report.json
+```
+
+It evaluates four fixed high-exposure, slower 5-minute reduction overlays on
+the first 360 sessions only; the final eight sessions do not enter the strategy
+engine or candidate metrics. The observed development leader retains `91.32%`
+mean exposure and reduces mean turnover to `50.52` per symbol, but still trails
+the base return by `2.21` percentage points. Prior reserved-tail evidence was
+already visible before this post-hoc search, so the signed report remains
+`NOT_ELIGIBLE`. It locks that candidate before the 2026-08-26 open for a future
+minimum of 20 complete sessions; partial same-day observations never enter its
+metrics.
+
 For a bounded same-day observation, the following probe selects one stock from
 each of the 15 frozen sectors and keeps only bars older than a conservative
 60-second finalization guard:
