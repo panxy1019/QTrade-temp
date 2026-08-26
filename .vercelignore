@@ -1,0 +1,13 @@
+.git/
+.venv/
+.vercel/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+/build/
+/runtime/
+web/node_modules/
+**/__pycache__/
+*.py[cod]
+.env
+.env.local
