@@ -210,3 +210,12 @@ def test_forward_observation_source_sessions_must_match_candidate() -> None:
     future_candidate["generated_at"] = "2027-09-01T16:00:00+08:00"
     with pytest.raises(ValueError, match="source sessions"):
         validate(future_candidate)
+
+    compact_day_candidate = deepcopy(candidate)
+    compact_sessions = cast(
+        list[dict[str, object]], compact_day_candidate["future_sessions"]
+    )
+    compact_sessions[0]["target_day"] = "20260901"
+    source_reports[0]["target_day"] = "20260901"
+    with pytest.raises(ValueError, match="source sessions"):
+        validate(compact_day_candidate)

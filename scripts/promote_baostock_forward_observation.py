@@ -61,6 +61,7 @@ def _valid_source_session_metadata(
     return (
         report.get("schema_version") == 1
         and report.get("report_id") == "baostock-complete-forward-session-v1"
+        and report.get("target_day") == target_day.isoformat()
         and target_day > date.fromisoformat(_FROZEN_FORWARD_ANCHOR_DAY)
         and collected_china.date() >= target_day
         and (

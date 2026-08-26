@@ -872,3 +872,16 @@ The publisher therefore compares candidate generation with its timezone-aware
 validation instant and requires `ingestion <= collection <= candidate <= check`.
 A future-dated candidate fails before replacement and cannot advance public
 progress or affect strategy, PAPER, realtime or external-order authority.
+
+## ADR-058 — Forward target days use one canonical spelling
+
+Status: accepted, 2026-08-26.
+
+Python accepts compact ISO dates such as `20260901`, but the frozen collector
+emits `YYYY-MM-DD`. Allowing a source report and candidate to drift together to a
+parser-compatible spelling would admit a resigned identity not produced by that
+collector.
+
+The publisher therefore requires the raw source `target_day` to equal the parsed
+date's canonical ISO representation exactly. A compact or alternative spelling
+fails before replacement and cannot alter public progress or runtime authority.

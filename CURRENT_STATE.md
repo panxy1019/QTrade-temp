@@ -555,6 +555,8 @@ Last updated: 2026-08-26
   temporary file and a persisted directory entry. Candidate generation must
   also be no later than the publisher's timezone-aware validation time, so a
   resigned future timestamp cannot advance and then freeze the append-only chain.
+  The raw target-day field must be the collector's canonical `YYYY-MM-DD`, not a
+  parser-compatible compact spelling carried consistently into the candidate.
   A composed regression also feeds one all-zero BaoStock suspension placeholder
   into an otherwise complete 48-bar target grid: the provider parser omits it
   without filling, leaving 47 bars, and the locked complete-session validator
