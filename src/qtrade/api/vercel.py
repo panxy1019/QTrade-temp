@@ -32,6 +32,12 @@ context.long_five_minute_research_report_path = (
 context.development_policy_search_path = (
     EVIDENCE_ROOT / "development-policy-search" / "report.json"
 )
+context.forward_observation_preregistration_path = (
+    EVIDENCE_ROOT / "forward-observation" / "preregistration.json"
+)
+context.forward_observation_report_path = (
+    EVIDENCE_ROOT / "forward-observation" / "report.json"
+)
 context.reserved_tail_preregistration_path = (
     EVIDENCE_ROOT / "reserved-tail-diagnostic" / "preregistration.json"
 )

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "report_id": "baostock-locked-forward-observation-v1",
+  "classification": "LOCKED_FUTURE_COMPLETE_SESSION_OBSERVATION",
+  "generated_at": "2026-08-26T11:32:31.033625+08:00",
+  "preregistration_sha256": "79e87853622d0214bcaa39a2ae4c3f1da785ce1ea1fefe7d1c61eb646c7a2100",
+  "policy_id": "dev-floor-098-slow12x48-v1",
+  "policy_hash": "7119dba09cbebaa44827271491263ce0def069f43ca36211afb3774aa226035a",
+  "policy": {
+    "short_window": "12",
+    "long_window": "48",
+    "volatility_window": "24",
+    "maximum_minute_volatility": "0.02",
+    "maximum_intraday_drawdown": "0.04",
+    "reduction_multiplier": "0.98",
+    "cooldown_bars": "6"
+  },
+  "warmup_dataset": {
+    "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
+    "checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
+    "session_count": 368,
+    "warmup_returns_enter_metrics": false
+  },
+  "future_session_count": 0,
+  "accepted_future_session_count": 0,
+  "evaluated_future_session_count": 0,
+  "minimum_complete_future_sessions": 20,
+  "future_sessions": [],
+  "observation_status": "INCOMPLETE",
+  "all_required_gates_passed": false,
+  "gates": [],
+  "cost_stress": [],
+  "leave_one_sector_out": [],
+  "causal_contract": {
+    "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
+    "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+    "same_bar_signal_execution": false,
+    "reduction_only": true,
+    "maximum_exposure": 1,
+    "external_order_transmission": false
+  },
+  "promotion": "NOT_ELIGIBLE",
+  "promotion_reasons": [
+    "FUTURE_TWENTY_SESSION_OBSERVATION_INCOMPLETE",
+    "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+    "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+    "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE"
+  ],
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "evidence_sha256": "9f8283997546cd36b8e6bbfbe6d08c5599bcec96b702b8f2d51d8b3efe50cdbd"
+}

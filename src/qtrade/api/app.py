@@ -123,6 +123,8 @@ class AppContext:
     long_five_minute_manifest_path: Path | None = None
     long_five_minute_research_report_path: Path | None = None
     development_policy_search_path: Path | None = None
+    forward_observation_preregistration_path: Path | None = None
+    forward_observation_report_path: Path | None = None
     reserved_tail_preregistration_path: Path | None = None
     reserved_tail_diagnostic_report_path: Path | None = None
     public_minute_audit_path: Path | None = None
@@ -458,6 +460,46 @@ def create_app(
             "candidate_count": 0,
             "candidates": [],
             "promotion": "NOT_EVALUATED",
+            "external_order_transmission": False,
+        }
+
+    @app.get("/forward-observation")
+    def forward_observation(
+        _: str = Depends(_require_role(Role.READ, auth_config)),
+    ) -> dict[str, object]:
+        dataset = _load_verified_minute_dataset(
+            state.long_five_minute_manifest_path,
+            expected_classification=(
+                "free_historical_qfq_5m_current_non_pit_not_eligible"
+            ),
+            expected_interval="5m",
+            expected_session_count=368,
+            expected_times=SINA_FIVE_MINUTE_SESSION_TIMES,
+        )
+        development = _load_verified_development_policy_search(
+            state.development_policy_search_path,
+            dataset,
+        )
+        preregistration = _load_verified_forward_preregistration(
+            state.forward_observation_preregistration_path,
+            dataset,
+            development,
+        )
+        report = _load_verified_forward_observation_report(
+            state.forward_observation_report_path,
+            preregistration,
+        )
+        return report or preregistration or {
+            "classification": "NO_VERIFIED_FORWARD_OBSERVATION_LOCK",
+            "observation_status": "UNAVAILABLE",
+            "future_session_count": 0,
+            "minimum_complete_future_sessions": 20,
+            "gates": [],
+            "cost_stress": [],
+            "leave_one_sector_out": [],
+            "promotion": "NOT_EVALUATED",
+            "realtime_readiness": False,
+            "real_data_paper_readiness": False,
             "external_order_transmission": False,
         }
 
@@ -1202,6 +1244,12 @@ def context_from_runtime(
         ),
         development_policy_search_path=Path(
             "runtime/research/baostock-development-policy-search-v1/report.json"
+        ),
+        forward_observation_preregistration_path=Path(
+            "docs/preregistrations/baostock-locked-forward-observation-v1.json"
+        ),
+        forward_observation_report_path=Path(
+            "runtime/research/baostock-locked-forward-observation-v1/report.json"
         ),
         reserved_tail_preregistration_path=Path(
             "docs/preregistrations/"
@@ -4770,6 +4818,443 @@ def _load_verified_development_policy_search(
         ):
             return None
         return {**report, "minute_dataset": dataset}
+    except (
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _load_verified_forward_preregistration(
+    path: Path | None,
+    dataset: dict[str, object] | None,
+    development: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if (
+        path is None
+        or dataset is None
+        or development is None
+        or not path.is_file()
+    ):
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("preregistration_sha256")
+        unsigned = {
+            key: value
+            for key, value in report.items()
+            if key != "preregistration_sha256"
+        }
+        created_at = datetime.fromisoformat(str(report.get("created_at")))
+        development_evidence = report.get("development_evidence")
+        warmup = report.get("warmup_dataset")
+        collection = report.get("collection_lock")
+        evaluation = report.get("evaluation_lock")
+        timing = report.get("timing_disclosure")
+        causal = report.get("causal_contract")
+        implementation = report.get("implementation_sha256")
+        interpretation = report.get("interpretation_lock")
+        future_lock = development.get("future_observation_lock")
+        candidates = development.get("candidates")
+        if (
+            not isinstance(future_lock, dict)
+            or not isinstance(candidates, list)
+            or not isinstance(development_evidence, dict)
+            or not isinstance(warmup, dict)
+            or not isinstance(collection, dict)
+            or not isinstance(evaluation, dict)
+            or not isinstance(timing, dict)
+            or not isinstance(causal, dict)
+            or not isinstance(implementation, dict)
+            or not isinstance(interpretation, dict)
+        ):
+            return None
+        policy_id = "dev-floor-098-slow12x48-v1"
+        candidate = next(
+            (
+                row
+                for row in candidates
+                if isinstance(row, dict) and row.get("policy_id") == policy_id
+            ),
+            None,
+        )
+        required_gate_ids = [
+            "OVERLAY_DRAWDOWN_NOT_WORSE_AT_5_BPS",
+            "RETURN_SHORTFALL_WITHIN_50_BPS_AT_5_BPS",
+            "MEAN_EXPOSURE_AT_LEAST_90_PERCENT",
+            "MEAN_TURNOVER_PER_SYMBOL_AT_MOST_FIVE",
+            "LEAVE_ONE_SECTOR_OUT_STABILITY",
+        ]
+        required_gates = evaluation.get("required_gates_after_twenty_sessions")
+        if (
+            not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("preregistration_id")
+            != "baostock-locked-forward-observation-v1"
+            or report.get("status")
+            != "LOCKED_AFTER_FIRST_SESSION_OPEN_BEFORE_TARGET_SESSION_FETCH"
+            or created_at.tzinfo is None
+            or created_at
+            <= datetime.fromisoformat(str(development.get("generated_at")))
+            or timing
+            != {
+                "development_policy_locked_before_first_session_open": True,
+                "evaluation_contract_fixed_after_first_session_open": True,
+                "target_session_data_fetched_before_this_lock": False,
+                "claim_as_blind_preregistration": False,
+            }
+            or not isinstance(candidate, dict)
+            or development_evidence
+            != {
+                "report_id": development.get("report_id"),
+                "evidence_sha256": development.get("evidence_sha256"),
+                "locked_at": future_lock.get("locked_at"),
+                "policy_id": candidate.get("policy_id"),
+                "policy_hash": candidate.get("policy_hash"),
+                "parameters": candidate.get("policy"),
+            }
+            or warmup.get("data_version") != dataset.get("data_version")
+            or warmup.get("checksum") != dataset.get("checksum")
+            or warmup.get("evidence_sha256") != dataset.get("evidence_sha256")
+            or warmup.get("session_count") != 368
+            or warmup.get("symbol_count") != 75
+            or warmup.get("sector_count") != 15
+            or warmup.get("bar_interval") != "5m"
+            or warmup.get("last_trading_day") != "2026-08-25"
+            or warmup.get("point_in_time") is not False
+            or warmup.get("future_adjustment_knowledge_possible") is not True
+            or collection
+            != {
+                "first_eligible_trading_day": "2026-08-26",
+                "minimum_complete_future_sessions": 20,
+                "provider": "BaoStock",
+                "provider_frequency": "5",
+                "adjustflag": "2",
+                "required_symbol_count": 75,
+                "required_sector_count": 15,
+                "required_bars_per_symbol_session": 48,
+                "required_total_bars_per_session": 3600,
+                "earliest_collection_time_china": "15:10:00",
+                "partial_sessions_enter_dataset": False,
+                "suspended_or_zero_placeholder_sessions_enter_dataset": False,
+                "first_successful_complete_snapshot_is_immutable": True,
+                "anchor_day_must_exactly_match_frozen_warmup_dataset": True,
+                "anchor_revision_action": "REJECT_TARGET_SESSION",
+            }
+            or evaluation.get("metric_sessions") != "future complete sessions only"
+            or evaluation.get("warmup_sessions_enter_metrics") is not False
+            or evaluation.get("cost_bps") != [0, 5]
+            or evaluation.get("parameter_selection_after_future_read") is not False
+            or evaluation.get("parameter_changes_before_twenty_sessions") is not False
+            or evaluation.get("conclusion_before_minimum_sessions") != "INCOMPLETE"
+            or evaluation.get("pass_does_not_authorize_paper_or_live") is not True
+            or evaluation.get("failure_must_be_retained") is not True
+            or not isinstance(required_gates, list)
+            or [
+                row.get("gate_id") if isinstance(row, dict) else None
+                for row in required_gates
+            ]
+            != required_gate_ids
+            or causal
+            != {
+                "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
+                "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+                "same_bar_signal_execution": False,
+                "reduction_only": True,
+                "maximum_exposure": 1,
+                "external_order_transmission": False,
+            }
+            or set(implementation)
+            != {
+                "probe_baostock_forward_session.py",
+                "run_baostock_locked_forward_observation.py",
+                "minute_backtest.py",
+            }
+            or not all(_is_sha256(value) for value in implementation.values())
+            or interpretation
+            != {
+                "promotion": "NOT_ELIGIBLE",
+                "realtime_readiness": False,
+                "real_data_paper_readiness": False,
+                "current_non_point_in_time_universe": True,
+                "qfq_may_use_future_adjustment_knowledge": True,
+                "no_paper_or_shadow_session_evidence": True,
+            }
+        ):
+            return None
+        return {
+            "classification": "LOCKED_FORWARD_OBSERVATION_PREREGISTRATION",
+            "preregistration_id": report["preregistration_id"],
+            "preregistration_sha256": digest,
+            "created_at": report["created_at"],
+            "status": report["status"],
+            "timing_disclosure": timing,
+            "policy_id": policy_id,
+            "policy_hash": candidate["policy_hash"],
+            "parameters": candidate["policy"],
+            "first_eligible_trading_day": collection["first_eligible_trading_day"],
+            "future_session_count": 0,
+            "minimum_complete_future_sessions": collection[
+                "minimum_complete_future_sessions"
+            ],
+            "required_symbol_count": collection["required_symbol_count"],
+            "required_sector_count": collection["required_sector_count"],
+            "required_bars_per_symbol_session": collection[
+                "required_bars_per_symbol_session"
+            ],
+            "observation_status": "INCOMPLETE",
+            "all_required_gates_passed": False,
+            "gates": [
+                {"gate_id": gate_id, "passed": None} for gate_id in required_gate_ids
+            ],
+            "cost_stress": [],
+            "leave_one_sector_out": [],
+            "promotion": "NOT_ELIGIBLE",
+            "promotion_reasons": [
+                "FUTURE_TWENTY_SESSION_OBSERVATION_INCOMPLETE",
+                "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+                "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+                "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
+            ],
+            "realtime_readiness": False,
+            "real_data_paper_readiness": False,
+            "external_order_transmission": False,
+        }
+    except (
+        KeyError,
+        OSError,
+        TypeError,
+        UnicodeDecodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+
+def _load_verified_forward_observation_report(
+    path: Path | None,
+    preregistration: dict[str, object] | None,
+) -> dict[str, object] | None:
+    if path is None or preregistration is None or not path.is_file():
+        return None
+    try:
+        content = _read_bounded_file(path, _MAX_MINUTE_EVIDENCE_JSON_BYTES)
+        if content is None:
+            return None
+        report = json.loads(content)
+        if not isinstance(report, dict):
+            return None
+        digest = report.get("evidence_sha256")
+        unsigned = {
+            key: value for key, value in report.items() if key != "evidence_sha256"
+        }
+        generated_at = datetime.fromisoformat(str(report.get("generated_at")))
+        warmup = report.get("warmup_dataset")
+        sessions = report.get("future_sessions")
+        cost_stress = report.get("cost_stress")
+        sectors = report.get("leave_one_sector_out")
+        gates = report.get("gates")
+        causal = report.get("causal_contract")
+        accepted = report.get("accepted_future_session_count")
+        evaluated = report.get("evaluated_future_session_count")
+        minimum = preregistration.get("minimum_complete_future_sessions")
+        if (
+            not _is_sha256(digest)
+            or _canonical_dict_sha256(cast(dict[str, object], unsigned)) != digest
+            or report.get("schema_version") != 1
+            or report.get("report_id")
+            != "baostock-locked-forward-observation-v1"
+            or report.get("classification")
+            != "LOCKED_FUTURE_COMPLETE_SESSION_OBSERVATION"
+            or generated_at.tzinfo is None
+            or report.get("preregistration_sha256")
+            != preregistration.get("preregistration_sha256")
+            or report.get("policy_id") != preregistration.get("policy_id")
+            or report.get("policy_hash") != preregistration.get("policy_hash")
+            or report.get("policy") != preregistration.get("parameters")
+            or not isinstance(warmup, dict)
+            or warmup.get("data_version")
+            != "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1"
+            or not _is_sha256(warmup.get("checksum"))
+            or warmup.get("session_count") != 368
+            or warmup.get("warmup_returns_enter_metrics") is not False
+            or not isinstance(accepted, int)
+            or accepted < 0
+            or not isinstance(evaluated, int)
+            or evaluated != min(accepted, 20)
+            or report.get("future_session_count") != accepted
+            or minimum != 20
+            or report.get("minimum_complete_future_sessions") != minimum
+            or not isinstance(sessions, list)
+            or len(sessions) != accepted
+            or not isinstance(cost_stress, list)
+            or not isinstance(sectors, list)
+            or not isinstance(gates, list)
+            or report.get("observation_status")
+            != ("COMPLETE" if accepted >= 20 else "INCOMPLETE")
+            or report.get("realtime_readiness") is not False
+            or report.get("real_data_paper_readiness") is not False
+            or report.get("promotion") != "NOT_ELIGIBLE"
+            or report.get("external_order_transmission") is not False
+            or causal
+            != {
+                "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
+                "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+                "same_bar_signal_execution": False,
+                "reduction_only": True,
+                "maximum_exposure": 1,
+                "external_order_transmission": False,
+            }
+        ):
+            return None
+        days: list[str] = []
+        for row in sessions:
+            if (
+                not isinstance(row, dict)
+                or not _is_sha256(row.get("evidence_sha256"))
+                or row.get("bar_count") != 3600
+                or row.get("anchor_exact_match") is not True
+            ):
+                return None
+            day = date.fromisoformat(str(row.get("target_day"))).isoformat()
+            if day < str(preregistration.get("first_eligible_trading_day")):
+                return None
+            days.append(day)
+        if days != sorted(set(days)):
+            return None
+
+        expected_points = evaluated * 48
+
+        def metric_values(value: object) -> tuple[float, float, float, int] | None:
+            if not isinstance(value, dict):
+                return None
+            values = (
+                float(str(value.get("total_return"))),
+                float(str(value.get("maximum_drawdown"))),
+                float(str(value.get("realized_minute_volatility"))),
+                int(value.get("point_count", 0)),
+            )
+            if (
+                not all(isfinite(item) for item in values[:3])
+                or values[1] > 0
+                or values[2] < 0
+                or values[3] != expected_points
+            ):
+                return None
+            return values
+
+        if evaluated == 0:
+            if cost_stress or sectors or gates:
+                return None
+            gate_values: dict[str, bool] = {}
+        else:
+            if len(cost_stress) != 2 or len(sectors) != 15 or len(gates) != 5:
+                return None
+            seen_costs: list[int] = []
+            five_row: dict[str, object] | None = None
+            for row in cost_stress:
+                if not isinstance(row, dict):
+                    return None
+                cost = row.get("cost_bps")
+                base = metric_values(row.get("base"))
+                overlay = metric_values(row.get("overlay"))
+                execution = row.get("execution")
+                if (
+                    cost not in {0, 5}
+                    or base is None
+                    or overlay is None
+                    or not isinstance(execution, dict)
+                    or not isclose(
+                        float(str(row.get("excess_return"))),
+                        overlay[0] - base[0],
+                    )
+                    or execution.get("symbol_count") != 75
+                    or execution.get("observation_count") != 75 * expected_points
+                    or not 0 <= float(str(execution.get("mean_exposure"))) <= 1
+                    or not isclose(
+                        float(str(execution.get("mean_turnover_per_symbol"))),
+                        float(str(execution.get("turnover"))) / 75,
+                    )
+                ):
+                    return None
+                seen_costs.append(cast(int, cost))
+                if cost == 5:
+                    five_row = cast(dict[str, object], row)
+            if seen_costs != [0, 5] or five_row is None:
+                return None
+            seen_sectors: set[str] = set()
+            stable_sector_count = 0
+            for row in sectors:
+                if not isinstance(row, dict):
+                    return None
+                code = str(row.get("excluded_sector_code"))
+                base = metric_values(row.get("base"))
+                overlay = metric_values(row.get("overlay"))
+                excess = float(str(row.get("excess_return")))
+                if (
+                    not code.isdigit()
+                    or code in seen_sectors
+                    or not str(row.get("excluded_sector_name"))
+                    or base is None
+                    or overlay is None
+                    or not isclose(excess, overlay[0] - base[0])
+                ):
+                    return None
+                seen_sectors.add(code)
+                stable_sector_count += excess >= -0.01
+            five_base = metric_values(five_row.get("base"))
+            five_overlay = metric_values(five_row.get("overlay"))
+            five_execution = cast(dict[str, object], five_row["execution"])
+            assert five_base is not None and five_overlay is not None
+            gate_values = {
+                "OVERLAY_DRAWDOWN_NOT_WORSE_AT_5_BPS": (
+                    five_overlay[1] >= five_base[1]
+                ),
+                "RETURN_SHORTFALL_WITHIN_50_BPS_AT_5_BPS": (
+                    five_overlay[0] - five_base[0] >= -0.005
+                ),
+                "MEAN_EXPOSURE_AT_LEAST_90_PERCENT": (
+                    float(str(five_execution.get("mean_exposure"))) >= 0.90
+                ),
+                "MEAN_TURNOVER_PER_SYMBOL_AT_MOST_FIVE": (
+                    float(str(five_execution.get("mean_turnover_per_symbol"))) <= 5
+                ),
+                "LEAVE_ONE_SECTOR_OUT_STABILITY": stable_sector_count >= 12,
+            }
+            if gates != [
+                {"gate_id": gate_id, "passed": passed}
+                for gate_id, passed in gate_values.items()
+            ]:
+                return None
+        complete = accepted >= 20
+        all_passed = complete and bool(gate_values) and all(gate_values.values())
+        expected_reasons = [
+            *([] if complete else ["FUTURE_TWENTY_SESSION_OBSERVATION_INCOMPLETE"]),
+            *(
+                ["PREDECLARED_FORWARD_GATES_FAILED"]
+                if complete and not all_passed
+                else []
+            ),
+            "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
+            "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+            "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE",
+        ]
+        if (
+            report.get("all_required_gates_passed") is not all_passed
+            or report.get("promotion_reasons") != expected_reasons
+        ):
+            return None
+        return cast(dict[str, object], report)
     except (
         KeyError,
         OSError,

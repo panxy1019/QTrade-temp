@@ -30,6 +30,13 @@ const reservedTailGateLabels: Record<string, string> = {
   POSITIVE_AT_ZERO_AND_FIVE_BPS: '0/5 bps 均为正收益',
   LEAVE_ONE_SECTOR_OUT_MAJORITY: '15 个整行业剔除中至少胜 12 个',
 }
+const forwardObservationGateLabels: Record<string, string> = {
+  OVERLAY_DRAWDOWN_NOT_WORSE_AT_5_BPS: '5 bps 回撤不劣于基准',
+  RETURN_SHORTFALL_WITHIN_50_BPS_AT_5_BPS: '5 bps 收益落后不超过 50 bps',
+  MEAN_EXPOSURE_AT_LEAST_90_PERCENT: '平均敞口至少 90%',
+  MEAN_TURNOVER_PER_SYMBOL_AT_MOST_FIVE: '前 20 日每标的累计换手不超过 5',
+  LEAVE_ONE_SECTOR_OUT_STABILITY: '15 个整行业剔除中至少 12 个稳定',
+}
 
 export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   const historical = data?.market?.historical
@@ -335,6 +342,10 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const robustFactorSearch = data?.robustFactorSearch
   const stockTransfer = data?.stockSectorTransfer
   const developmentSearch = data?.developmentPolicySearch
+  const forwardObservation = data?.forwardObservation
+  const forwardGateRows = forwardObservation?.gates.length
+    ? forwardObservation.gates
+    : Object.keys(forwardObservationGateLabels).map((gate_id) => ({ gate_id, passed: null }))
   const aggregate = walkForward?.result.aggregate_metrics
   const factorMetrics = factorSearch?.test.selected_metrics
   const benchmarkMetrics = factorSearch?.test.buy_hold_metrics
@@ -366,7 +377,7 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const leaveOneRows = stockTransfer?.leave_one_sector_out ?? []
   return <Page title="策略研究" subtitle="实验候选、独立样本外证据与晋级边界">
     <Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} />
-    <JsonExportButton filename="qtrade-verified-research-evidence.json" value={{ factorSearch, robustFactorSearch, stockTransfer, developmentSearch, walkForward, robustness }} label="导出全部研究证据" />
+    <JsonExportButton filename="qtrade-verified-research-evidence.json" value={{ factorSearch, robustFactorSearch, stockTransfer, developmentSearch, forwardObservation, walkForward, robustness }} label="导出全部研究证据" />
     <Card><Tabs items={[
       { key: 'registry', label: '实验候选', children: <Space orientation="vertical"><Typography.Text>record/result/artifact 验证通过：{report?.experiments.length ?? 0} 个不可变实验记录。</Typography.Text><Typography.Text type="secondary">spec_hash 未独立复算；这些记录尚未注册为 StrategyVersion，也不存在可展示的 Champion、Challenger 或演化血缘。</Typography.Text></Space> },
       { key: 'factor-search', label: '因子搜索', children: <Space orientation="vertical" style={{ width: '100%' }}><Typography.Text>发现期通过：{factorSearch?.factor_selection?.passing_factor_ids.join('、') || '无'}；验证候选：{factorSearch?.validation.candidate_count ?? 0} 个。</Typography.Text><Typography.Text>验证胜者：{factorSearch?.validation.selected_candidate_id ?? '—'}；确认段收益 {formatPercent(String(factorMetrics?.total_return ?? '0'))}，Sharpe {String(factorMetrics?.sharpe ?? '—')}，最大回撤 {formatPercent(String(factorMetrics?.maximum_drawdown ?? '0'))}。</Typography.Text><Typography.Text>同期 Buy-and-Hold：{formatPercent(String(benchmarkMetrics?.total_return ?? '0'))}；主动超额：{formatPercent(factorSearch?.test.terminal_excess_return ?? '0')}。</Typography.Text><Table rowKey="factor_id" size="small" pagination={false} dataSource={factorDiagnostics} columns={[{ title: '因子', dataIndex: 'factor_id' }, { title: '周期', dataIndex: 'periods' }, { title: '最少标的', dataIndex: 'instruments_minimum' }, { title: 'IC', render: (_: unknown, row: typeof factorDiagnostics[number]) => formatNumber(String(row.metrics.ic ?? '')) }, { title: 'Rank IC', render: (_: unknown, row: typeof factorDiagnostics[number]) => formatNumber(String(row.metrics.rank_ic ?? '')) }, { title: 'ICIR', render: (_: unknown, row: typeof factorDiagnostics[number]) => formatNumber(String(row.metrics.icir ?? '')) }, { title: '多空收益差', render: (_: unknown, row: typeof factorDiagnostics[number]) => formatPercent(String(row.metrics.long_short_spread ?? '')) }]} scroll={{ x: 900 }} locale={{ emptyText: '暂无已验证因子诊断' }} /><Table rowKey="candidate_id" size="small" dataSource={validationRows} pagination={{ pageSize: 8, showSizeChanger: false }} columns={[{ title: '验证候选', dataIndex: 'candidate_id' }, { title: '验证 Sharpe', dataIndex: 'sharpe', render: (value: string) => formatNumber(value) }, { title: '是否选中', render: (_: unknown, row: typeof validationRows[number]) => row.candidate_id === factorSearch?.validation.selected_candidate_id ? <Tag color="blue">LOCKED</Tag> : '—' }]} /><Typography.Text type="secondary">因子 Rank IC 仅用于发现期筛选；参数只按验证期选择。确认期曾被项目历史实验查看，不是全新盲测，结果固定为 {factorSearch?.promotion ?? '未评估'}，不能接入 PAPER。</Typography.Text></Space> },
@@ -394,6 +405,12 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
         <Typography.Text>观测领先者：{developmentSearch?.observed_leader?.policy_id ?? '—'}；在 {developmentSearch?.future_observation_lock?.locked_at ? formatChinaMinuteTimestamp(developmentSearch.future_observation_lock.locked_at) : '—'}（中国市场时钟）锁定，至少等待 {developmentSearch?.future_observation_lock?.minimum_complete_future_sessions ?? 0} 个完整未来会话。当天未完成分钟不进入指标，锁定期间不改参数。</Typography.Text>
         <Table rowKey="policy_id" size="small" pagination={false} dataSource={developmentSearch?.candidates ?? []} columns={[{ title: '候选', dataIndex: 'policy_id' }, { title: '策略收益', render: (_: unknown, row: NonNullable<typeof developmentSearch>['candidates'][number]) => formatPercent(String(row.overlay.total_return)) }, { title: '对基准差', dataIndex: 'return_delta_vs_base', render: (value: number) => formatPercent(String(value)) }, { title: '回撤改善', dataIndex: 'drawdown_improvement', render: (value: number) => formatPercent(String(value)) }, { title: '平均敞口', render: (_: unknown, row: NonNullable<typeof developmentSearch>['candidates'][number]) => formatPercent(String(row.execution.mean_exposure)) }, { title: '每标的换手', render: (_: unknown, row: NonNullable<typeof developmentSearch>['candidates'][number]) => formatNumber(String(row.execution.mean_turnover_per_symbol)) }, { title: '状态', render: (_: unknown, row: NonNullable<typeof developmentSearch>['candidates'][number]) => row.policy_id === developmentSearch?.observed_leader?.policy_id ? <Tag color="blue">FUTURE LOCK</Tag> : '开发候选' }]} scroll={{ x: 1050 }} />
         <Typography.Text type="secondary">信号在 5 分钟 Bar 收盘观察、下一 Bar 开盘生效；只允许保持或降低日级目标，不发送外部订单，也不证明 1 分钟实时就绪。</Typography.Text>
+      </Space> },
+      { key: 'forward-observation', label: '未来完整日观测', children: <Space orientation="vertical" style={{ width: '100%' }}>
+        <Alert showIcon type="info" title={`观测进度：${forwardObservation?.future_session_count ?? 0}/${forwardObservation?.minimum_complete_future_sessions ?? 20} 个完整交易日`} description={`当前状态 ${forwardObservation?.observation_status ?? 'UNAVAILABLE'}；只接受 ${forwardObservation?.required_sector_count ?? 15} 板块、${forwardObservation?.required_symbol_count ?? 75} 股、每股 ${forwardObservation?.required_bars_per_symbol_session ?? 48} 根原生 5 分钟 Bar 的收盘后完整会话。半日、停牌零值占位或锚点修订均拒绝。`} />
+        <Typography.Text>锁定策略：{forwardObservation?.policy_id ?? '—'}；最早合格日 {forwardObservation?.first_eligible_trading_day ?? '—'}；预注册时间 {forwardObservation?.created_at ? formatChinaMinuteTimestamp(forwardObservation.created_at) : '—'}。</Typography.Text>
+        <Table rowKey="gate_id" size="small" pagination={false} dataSource={forwardGateRows} columns={[{ title: '20 日后硬门', dataIndex: 'gate_id', render: (value: string) => forwardObservationGateLabels[value] ?? value }, { title: '状态', dataIndex: 'passed', render: (value: boolean | null) => value === null ? <Tag>等待样本</Tag> : value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> }]} />
+        <Typography.Text type="secondary">开发策略在开盘前已经锁定；具体评估合同在首日开盘后、目标会话抓取前固定，因此不宣称完全盲预注册。暖启动的 368 日收益不进入未来指标；即使 20 日硬门全部通过，也不会自动授权 PAPER、LIVE 或外部下单。</Typography.Text>
       </Space> },
       { key: 'walk-forward', label: '滚动样本外', children: <Space orientation="vertical"><Typography.Text>独立测试折数：{walkForward?.result.folds.length ?? 0}；正收益折比例：{walkForward?.result.fold_pass_ratio ?? '—'}</Typography.Text><Typography.Text>聚合 Sharpe：{String(aggregate?.sharpe ?? '—')}；聚合收益：{String(aggregate?.total_return ?? '—')}</Typography.Text><Typography.Text type="secondary">仅验证期选择候选；完整折区间互不重叠。结论：{walkForward?.promotion ?? '未评估'}。</Typography.Text></Space> },
       { key: 'robustness', label: '稳健性诊断', children: <Space orientation="vertical"><Typography.Text>场景数：{robustness?.result.scenario_metrics.length ?? 0}；最差 Sharpe：{robustness?.result.worst_sharpe ?? '—'}</Typography.Text><Typography.Text>离散度：{robustness?.result.dispersion ?? '—'}；存在负 Sharpe 场景：{robustness?.result.any_negative_sharpe ? '是' : '否'}</Typography.Text><Typography.Text type="secondary">这是复用样本的拒绝后诊断，不是新的独立测试证据。结论：{robustness?.promotion ?? '未评估'}。</Typography.Text></Space> },

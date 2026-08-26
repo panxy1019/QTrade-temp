@@ -270,6 +270,39 @@ already visible before this post-hoc search, so the signed report remains
 minimum of 20 complete sessions; partial same-day observations never enter its
 metrics.
 
+That lock now has a code-bound forward-observation preregistration. It was
+created after the first eligible session opened but before this project fetched
+that target session, so the artifact explicitly does not claim a fully blind
+preregistration. It binds the development report, the 368-session warmup
+dataset, the exact policy, the collector/evaluator/engine hashes and five fixed
+20-session gates. The research page and `/forward-observation` show the verified
+`0/20` starting state.
+
+After 15:10 China time, one complete future session can be collected with:
+
+```bash
+QTRADE_BAOSTOCK_FREE_DATA_ACK=true PYTHONPATH=. .venv/bin/python \
+  scripts/probe_baostock_forward_session.py \
+  --anchor-day 2026-08-25 --target-day 2026-08-26
+```
+
+The collector requires the exact frozen 75-stock identity, 48 provider-native
+5-minute bars per stock and a byte-equivalent anchor-day OHLCV grid. A partial
+session, suspended zero placeholder, missing symbol or QFQ anchor revision
+rejects the entire target day. Accepted snapshots are immutable. The locked
+observer is then reproducible with:
+
+```bash
+PYTHONPATH=. .venv/bin/python \
+  scripts/run_baostock_locked_forward_observation.py \
+  --output runtime/research/baostock-locked-forward-observation-v1/report.json
+```
+
+All 368 warmup sessions enter strategy state but not future metrics. Only future
+complete sessions are scored at 0/5 bps and under whole-sector exclusions. No
+conclusion is complete before 20 sessions, and even a pass cannot authorize
+PAPER, LIVE or external order transmission.
+
 For a bounded same-day observation, the following probe selects one stock from
 each of the 15 frozen sectors and keeps only bars older than a conservative
 60-second finalization guard:

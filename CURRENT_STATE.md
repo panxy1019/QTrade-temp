@@ -494,3 +494,13 @@ Last updated: 2026-08-26
   backtest page displays the failed folds and cross-scale veto. `NOT_ELIGIBLE`,
   no PAPER/SHADOW authority and `external_order_transmission=false` remain
   mandatory.
+- Locked future-session observation: the development leader
+  `dev-floor-098-slow12x48-v1` now has a signed, code-bound preregistration. It
+  fixes a 20-complete-session evaluation before the first target-session fetch,
+  while disclosing that the detailed contract was written after that session
+  opened and therefore is not fully blind. Collection is fail-closed at 75
+  stocks × 48 native 5-minute bars, requires an exact frozen 2026-08-25 QFQ
+  anchor match, and rejects partial/zero-placeholder sessions. The public
+  `/forward-observation` verifier currently reports `0/20`, `INCOMPLETE` and
+  `NOT_ELIGIBLE`; no target data has entered metrics and no runtime authority
+  changed.

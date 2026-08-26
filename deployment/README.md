@@ -14,7 +14,8 @@ project-specific DNS name; the root A record and wildcard CNAME remain unchanged
   three-fold walk-forward report, 14-scenario robustness report, bounded factor
   search, repeated factor robustness, 75-stock sector-transfer evidence and
   signed 15-representative plus 75-stock intraday source observations with a
-  bounded multi-checkpoint continuity chain.
+  bounded multi-checkpoint continuity chain, plus the code-bound locked future
+  complete-session observation preregistration.
 - `web` uses `/api` only for the `vercel` Vite build mode.
 - Vercel rewrites `/api/:path*` to the single Python function while preserving
   the inner FastAPI path through a bounded query-path adapter.

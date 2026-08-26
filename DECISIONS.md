@@ -502,3 +502,27 @@ source reports. If common-minute counts or latest timestamps regress, that
 checkpoint remains present with a failed monotonic flag; it is not rewritten or
 dropped. This detects deployment/source continuity only and creates no realtime
 entitlement, strategy input, PAPER readiness, promotion evidence or order path.
+
+## ADR-033 — Future-session evaluation is immutable and complete-day only
+
+Status: accepted, 2026-08-26.
+
+The retrospective development leader may be observed on future BaoStock data
+only under a signed contract that binds the policy, 368-session warmup dataset,
+collector, evaluator and causal engine. The policy itself was locked before the
+first eligible open. Because the detailed evaluation contract was fixed after
+that open, the evidence must disclose this timing and cannot be called a fully
+blind preregistration.
+
+Each future observation is an immutable provider-native 5-minute snapshot with
+exactly 75 frozen stocks and 48 bars per stock. The latest frozen warmup day is
+re-fetched in the same QFQ request and must match every OHLCV field exactly; a
+revision, suspension placeholder, missing bar or partial day rejects the target
+session. Warmup sessions advance state but never enter future metrics.
+
+The first 20 complete future sessions are evaluated at the predeclared 0/5 bps
+costs, exposure/turnover limits and whole-sector exclusions without parameter
+changes. Before 20 sessions the only valid conclusion is `INCOMPLETE`. A later
+pass remains research-only because the current universe is non-PIT, QFQ can
+contain future adjustment knowledge, and no authorized PAPER/SHADOW trace has
+been recorded. It cannot enable LIVE or external order transmission.

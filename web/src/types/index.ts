@@ -972,6 +972,51 @@ export interface DevelopmentPolicySearchReport {
   external_order_transmission: false
 }
 
+export interface ForwardObservationReport {
+  classification?: string
+  preregistration_id?: string
+  preregistration_sha256?: string
+  created_at?: string
+  status?: string
+  timing_disclosure?: {
+    development_policy_locked_before_first_session_open: true
+    evaluation_contract_fixed_after_first_session_open: true
+    target_session_data_fetched_before_this_lock: false
+    claim_as_blind_preregistration: false
+  }
+  policy_id?: string
+  policy_hash?: string
+  parameters?: Record<string, string>
+  first_eligible_trading_day?: string
+  future_session_count: number
+  minimum_complete_future_sessions: number
+  required_symbol_count?: number
+  required_sector_count?: number
+  required_bars_per_symbol_session?: number
+  observation_status: 'INCOMPLETE' | 'COMPLETE' | 'UNAVAILABLE'
+  all_required_gates_passed?: boolean
+  gates: Array<{ gate_id: string; passed: boolean | null }>
+  cost_stress: Array<{
+    cost_bps: number
+    base: MinuteCurveMetrics
+    overlay: MinuteCurveMetrics
+    excess_return: number
+    execution: MinuteExecutionDiagnostics
+  }>
+  leave_one_sector_out: Array<{
+    excluded_sector_code: string
+    excluded_sector_name: string
+    base: MinuteCurveMetrics
+    overlay: MinuteCurveMetrics
+    excess_return: number
+  }>
+  promotion: 'NOT_ELIGIBLE' | 'NOT_EVALUATED'
+  promotion_reasons?: string[]
+  realtime_readiness: false
+  real_data_paper_readiness: false
+  external_order_transmission: false
+}
+
 export interface DailyReportAutomationStatus {
   classification: 'TRUSTED_PAPER_EOD_REPORTING'
   readiness: 'CONFIGURED' | 'UNCONFIGURED'
@@ -1016,6 +1061,7 @@ export interface PlatformSnapshot {
   longFiveMinuteResearch: FiveMinuteResearchReport
   reservedTailDiagnostic: ReservedTailDiagnosticReport
   developmentPolicySearch?: DevelopmentPolicySearchReport
+  forwardObservation: ForwardObservationReport
   publicMinuteAudit: PublicMinuteAuditReport
   intradayObservation: IntradayObservationReport
   intradayBreadth: IntradayBreadthObservationReport

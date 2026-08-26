@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "preregistration_id": "baostock-locked-forward-observation-v1",
+  "created_at": "2026-08-26T11:30:21.897077+08:00",
+  "status": "LOCKED_AFTER_FIRST_SESSION_OPEN_BEFORE_TARGET_SESSION_FETCH",
+  "timing_disclosure": {
+    "development_policy_locked_before_first_session_open": true,
+    "evaluation_contract_fixed_after_first_session_open": true,
+    "target_session_data_fetched_before_this_lock": false,
+    "claim_as_blind_preregistration": false
+  },
+  "development_evidence": {
+    "report_id": "baostock-retrospective-development-policy-search-v1",
+    "evidence_sha256": "8c5118f2105b33270ab6f0e452d7450b351c34a276d621f3728fe1bb827ebd5d",
+    "locked_at": "2026-08-26T09:01:25.014550+08:00",
+    "policy_id": "dev-floor-098-slow12x48-v1",
+    "policy_hash": "7119dba09cbebaa44827271491263ce0def069f43ca36211afb3774aa226035a",
+    "parameters": {
+      "short_window": "12",
+      "long_window": "48",
+      "volatility_window": "24",
+      "maximum_minute_volatility": "0.02",
+      "maximum_intraday_drawdown": "0.04",
+      "reduction_multiplier": "0.98",
+      "cooldown_bars": "6"
+    }
+  },
+  "warmup_dataset": {
+    "data_version": "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1",
+    "checksum": "667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524",
+    "evidence_sha256": "531f8077caf6849d25ecca960d613c113c3dab25ee630b45e72cbce1252429bb",
+    "session_count": 368,
+    "symbol_count": 75,
+    "sector_count": 15,
+    "bar_interval": "5m",
+    "last_trading_day": "2026-08-25",
+    "point_in_time": false,
+    "future_adjustment_knowledge_possible": true
+  },
+  "collection_lock": {
+    "first_eligible_trading_day": "2026-08-26",
+    "minimum_complete_future_sessions": 20,
+    "provider": "BaoStock",
+    "provider_frequency": "5",
+    "adjustflag": "2",
+    "required_symbol_count": 75,
+    "required_sector_count": 15,
+    "required_bars_per_symbol_session": 48,
+    "required_total_bars_per_session": 3600,
+    "earliest_collection_time_china": "15:10:00",
+    "partial_sessions_enter_dataset": false,
+    "suspended_or_zero_placeholder_sessions_enter_dataset": false,
+    "first_successful_complete_snapshot_is_immutable": true,
+    "anchor_day_must_exactly_match_frozen_warmup_dataset": true,
+    "anchor_revision_action": "REJECT_TARGET_SESSION"
+  },
+  "evaluation_lock": {
+    "metric_sessions": "future complete sessions only",
+    "warmup_sessions_enter_metrics": false,
+    "cost_bps": [
+      0,
+      5
+    ],
+    "parameter_selection_after_future_read": false,
+    "parameter_changes_before_twenty_sessions": false,
+    "required_gates_after_twenty_sessions": [
+      {
+        "gate_id": "OVERLAY_DRAWDOWN_NOT_WORSE_AT_5_BPS",
+        "rule": "overlay maximum drawdown must be greater than or equal to base"
+      },
+      {
+        "gate_id": "RETURN_SHORTFALL_WITHIN_50_BPS_AT_5_BPS",
+        "rule": "overlay total return minus base total return must be at least -0.005"
+      },
+      {
+        "gate_id": "MEAN_EXPOSURE_AT_LEAST_90_PERCENT",
+        "rule": "overlay mean exposure must be at least 0.90"
+      },
+      {
+        "gate_id": "MEAN_TURNOVER_PER_SYMBOL_AT_MOST_FIVE",
+        "rule": "total mean turnover per symbol across the first twenty sessions must be at most 5"
+      },
+      {
+        "gate_id": "LEAVE_ONE_SECTOR_OUT_STABILITY",
+        "rule": "at least 12 of 15 leave-one-sector-out returns must be no worse than base by more than 100 bps"
+      }
+    ],
+    "conclusion_before_minimum_sessions": "INCOMPLETE",
+    "pass_does_not_authorize_paper_or_live": true,
+    "failure_must_be_retained": true
+  },
+  "causal_contract": {
+    "signal_observed_at": "FIVE_MINUTE_BAR_CLOSE_T",
+    "exposure_change_at": "NEXT_FIVE_MINUTE_BAR_OPEN",
+    "same_bar_signal_execution": false,
+    "reduction_only": true,
+    "maximum_exposure": 1,
+    "external_order_transmission": false
+  },
+  "implementation_sha256": {
+    "minute_backtest.py": "792d300d2df913f9f42576d0d96ebc66c70e042969ea26a4357895c0ec52fa2c",
+    "probe_baostock_forward_session.py": "d1934024fc23b334dd8c4cda40ca3e55a0e200719d80d60201e3aed42bb357d1",
+    "run_baostock_locked_forward_observation.py": "0294ac923744c3101b9810142ddfa9efb2e5e3069aa348ae3251b292c49535fa"
+  },
+  "interpretation_lock": {
+    "promotion": "NOT_ELIGIBLE",
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "current_non_point_in_time_universe": true,
+    "qfq_may_use_future_adjustment_knowledge": true,
+    "no_paper_or_shadow_session_evidence": true
+  },
+  "preregistration_sha256": "79e87853622d0214bcaa39a2ae4c3f1da785ce1ea1fefe7d1c61eb646c7a2100"
+}

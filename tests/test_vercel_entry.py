@@ -94,6 +94,13 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     )
     assert development["promotion"] == "NOT_ELIGIBLE"
     assert development["external_order_transmission"] is False
+    forward = client.get(_api("/forward-observation")).json()
+    assert forward["policy_id"] == "dev-floor-098-slow12x48-v1"
+    assert forward["future_session_count"] == 0
+    assert forward["minimum_complete_future_sessions"] == 20
+    assert forward["observation_status"] == "INCOMPLETE"
+    assert forward["promotion"] == "NOT_ELIGIBLE"
+    assert forward["external_order_transmission"] is False
     public_audit = client.get(_api("/public-minute-audit")).json()
     assert public_audit["all_valid"] is True
     assert public_audit["sector_count"] == 15
