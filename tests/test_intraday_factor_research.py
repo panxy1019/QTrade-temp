@@ -433,6 +433,25 @@ def test_bounded_opening_rule_discovery_locks_training_before_disjoint_test() ->
     assert first.locked_test_cost_stress_passed is all(
         first.locked_test_cost_stress_criteria.values()
     )
+    assert len(first.locked_test_sectors) == len(symbols)
+    assert len(first.locked_test_sector_exclusions) == len(symbols)
+    assert {
+        (row.group_id, row.group_name) for row in first.locked_test_sectors
+    } == {
+        (row.group_id, row.group_name)
+        for row in first.locked_test_sector_exclusions
+    }
+    assert all(
+        row.observation_count == first.test_session_count
+        for row in first.locked_test_sectors
+    )
+    assert all(
+        row.observation_count == first.test_session_count * (len(symbols) - 1)
+        for row in first.locked_test_sector_exclusions
+    )
+    assert first.locked_test_sector_stress_passed is all(
+        first.locked_test_sector_stress_criteria.values()
+    )
     assert first.test_observation_count == 20 * len(symbols)
     assert first.selection_uses_test_returns is False
     assert first.promotion == "NOT_ELIGIBLE"

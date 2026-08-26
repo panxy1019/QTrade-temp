@@ -360,9 +360,13 @@ The unique chronological winner is also replayed under the fixed 0/5/10/20 bps
 cost grid without reselection. It loses even with no modeled cost (-4.2527%) and
 falls to -11.6212% at 20 bps; all four excess returns remain negative. The cost
 audit therefore rules out transaction fees as the sole explanation. A combined
-discovery gate now requires the chronological holdout, CSCV/PBO audit and locked
-cost stress simultaneously; the disclosed run passes none of those three and
-cannot create PAPER or state authority.
+cost-stage discovery gate requires the chronological holdout, CSCV/PBO audit and
+locked cost stress simultaneously; the disclosed run passed none of those three.
+The same winner now has 15 sector-only and 15 whole-sector-exclusion test rows.
+Only 4/15 sectors were positive, and every exclusion remained negative from
+-7.2180% to -4.7210%, so one bad sector cannot explain the aggregate loss. The
+current discovery gate adds this sector stress and passes 0/4; it cannot create
+PAPER or state authority.
 
 The twelve-route frontend completeness audit is closed for every capability the
 repository can implement without new authority. Optional evidence failures no

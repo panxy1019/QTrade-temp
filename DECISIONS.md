@@ -1614,7 +1614,31 @@ from -8.9914% to -13.0167%, while excess returns remained negative at every
 level. The fixed audit requires positive zero-cost total return, positive total
 return at every fixed cost, positive 20 bps excess and mechanically non-
 increasing total return as costs rise. Only the last integrity condition passes.
-The complete discovery research gate is the conjunction of chronological locked
-test, CSCV/PBO selection-bias audit and locked-test cost stress; this run is 0/3.
+The cost-stage discovery research gate is the conjunction of chronological
+locked test, CSCV/PBO selection-bias audit and locked-test cost stress; this run
+is 0/3 before the later sector-stress extension.
 Even a future historical pass would remain non-PIT/reused evidence without
 PAPER, LIVE, state-mutation or external-order authority.
+
+## ADR-101 — Sector robustness uses the locked test without stock reselection
+
+Status: accepted, 2026-08-27.
+
+An aggregate 75-stock loss could conceal profitable sector pockets or be driven
+by one unusually weak industry. QTrade therefore holds the discovered candidate,
+threshold, 5 bps cost, 326 signals and 20 chronological test sessions fixed while
+computing two complementary diagnostics: the strategy inside each of the 15
+sectors, and the remaining 70 stocks after excluding each complete sector. No
+sector result may alter the factor, threshold, stock list or training rank.
+
+Only four sector-only returns were positive. Electronics was worst at -16.4469%,
+while machinery was best at +9.0138%. More importantly, all 15 leave-one-sector-
+out portfolios stayed negative: removing power equipment gave the worst
+-7.2180%, and removing electronics gave the least-negative -4.7210%. The locked
+rule therefore fails broadly rather than because of one isolated sector. The
+sector gate requires every sector to contain a signal, at least 60% positive
+sector-only returns, at least 80% positive exclusion returns and a non-negative
+worst exclusion. Only signal coverage passes. The consolidated historical
+discovery gate now requires chronological lock, CSCV/PBO, cost stress and sector
+stress and is 0/4. It remains non-PIT, reused, `NOT_ELIGIBLE`, stateless and
+external-order-disabled.

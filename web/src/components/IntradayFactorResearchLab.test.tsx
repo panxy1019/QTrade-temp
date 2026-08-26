@@ -227,11 +227,36 @@ const discovery = {
     },
     passed: false,
   },
+  locked_test_sector_stress: {
+    selected_candidate_id: 'DIR-XDU-T0000', test_start: '2026-06-25', test_end: '2026-07-14',
+    candidate_reselected: false, sector_rows_used_for_selection: false,
+    sector_only: Array.from({ length: 15 }, (_, index) => ({
+      sector_code: `S${String(index + 1).padStart(2, '0')}`, sector_name: `行业${index + 1}`,
+      observation_count: 100, signal_count: 10 + index, mean_signal_forward_return: '0', signal_hit_rate: '0.5',
+      strategy_metrics: { ...discoveryMetrics, total_return: index < 4 ? '0.02' : '-0.05' },
+      benchmark_metrics: discoveryMetrics,
+    })),
+    leave_one_sector_out: Array.from({ length: 15 }, (_, index) => ({
+      excluded_sector_code: `S${String(index + 1).padStart(2, '0')}`, excluded_sector_name: `行业${index + 1}`,
+      observation_count: 1400, signal_count: 300,
+      strategy_metrics: { ...discoveryMetrics, total_return: '-0.06' }, benchmark_metrics: discoveryMetrics,
+    })),
+    positive_sector_count: 4, positive_sector_ratio: '0.2666666667',
+    positive_exclusion_count: 0, positive_exclusion_ratio: '0',
+    criteria: {
+      every_locked_test_sector_has_signal: true,
+      positive_locked_test_sector_ratio_at_least_0_60: false,
+      positive_leave_one_sector_out_ratio_at_least_0_80: false,
+      worst_leave_one_sector_out_total_return_non_negative: false,
+    },
+    passed: false,
+  },
   discovery_gate: {
     criteria: {
       chronological_locked_test_passed: false,
       selection_bias_audit_passed: false,
       locked_test_cost_stress_passed: false,
+      locked_test_sector_stress_passed: false,
     },
     passed: false,
     promotion_authority: false,
@@ -322,6 +347,9 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('CSCV 检出较高选择偏差风险')).toBeInTheDocument()
     expect(screen.getByText('锁定规则未通过固定成本压力门')).toBeInTheDocument()
     expect(screen.getByText('完整因子发现研究门未通过')).toBeInTheDocument()
+    expect(screen.getByText('锁定规则未通过多行业鲁棒性门')).toBeInTheDocument()
+    expect(screen.getByText('4/15 · 26.67%')).toBeInTheDocument()
+    expect(screen.getByText('0/15 · 0.00%')).toBeInTheDocument()
     expect(screen.getByText('-11.62%')).toBeInTheDocument()
     expect(screen.getByText('41.43%')).toBeInTheDocument()
     expect(screen.getByText('DIR-DDD-T0020 · 24/70')).toBeInTheDocument()

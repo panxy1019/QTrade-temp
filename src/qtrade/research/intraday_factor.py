@@ -404,6 +404,10 @@ class IntradayFactorDiscoveryResult:
     locked_test_cost_stress: Mapping[int, IntradayCostStress]
     locked_test_cost_stress_criteria: Mapping[str, bool]
     locked_test_cost_stress_passed: bool
+    locked_test_sectors: tuple[IntradayFactorGroup, ...]
+    locked_test_sector_exclusions: tuple[IntradayFactorGroup, ...]
+    locked_test_sector_stress_criteria: Mapping[str, bool]
+    locked_test_sector_stress_passed: bool
     test_observation_count: int
     test_signal_count: int
     test_signal_session_count: int
@@ -1810,6 +1814,60 @@ def discover_opening_direction_rules(
             )
         ),
     }
+    locked_test_sectors = _group_results(
+        test_rows,
+        list(test_days),
+        cost_bps=cost_bps,
+        key=lambda item: (item.sector_code, item.sector_name),
+    )
+    sector_identities = tuple(
+        (row.group_id, row.group_name) for row in locked_test_sectors
+    )
+    locked_test_sector_exclusions: list[IntradayFactorGroup] = []
+    for excluded_sector_code, excluded_sector_name in sector_identities:
+        remaining_rows = [
+            row
+            for row in test_rows
+            if row.sector_code != excluded_sector_code
+        ]
+        exclusion = _group_results(
+            remaining_rows,
+            list(test_days),
+            cost_bps=cost_bps,
+            key=lambda _item: (
+                excluded_sector_code,
+                excluded_sector_name,
+            ),
+        )
+        if len(exclusion) != 1:
+            raise RuntimeError("sector exclusion must produce exactly one result")
+        locked_test_sector_exclusions.append(exclusion[0])
+    positive_sector_count = sum(
+        row.strategy_metrics.total_return > 0 for row in locked_test_sectors
+    )
+    positive_exclusion_count = sum(
+        row.strategy_metrics.total_return > 0
+        for row in locked_test_sector_exclusions
+    )
+    locked_test_sector_stress_criteria = {
+        "every_locked_test_sector_has_signal": all(
+            row.signal_count > 0 for row in locked_test_sectors
+        ),
+        "positive_locked_test_sector_ratio_at_least_0_60": (
+            Decimal(positive_sector_count) / len(locked_test_sectors)
+            >= Decimal("0.60")
+        ),
+        "positive_leave_one_sector_out_ratio_at_least_0_80": (
+            Decimal(positive_exclusion_count)
+            / len(locked_test_sector_exclusions)
+            >= Decimal("0.80")
+        ),
+        "worst_leave_one_sector_out_total_return_non_negative": min(
+            row.strategy_metrics.total_return
+            for row in locked_test_sector_exclusions
+        )
+        >= 0,
+    }
     test_criteria = {
         "minimum_250_test_observations": len(test_rows) >= 250,
         "minimum_twenty_test_signals": test_signal_count >= 20,
@@ -1854,6 +1912,16 @@ def discover_opening_direction_rules(
         locked_test_cost_stress_criteria=locked_test_cost_stress_criteria,
         locked_test_cost_stress_passed=all(
             locked_test_cost_stress_criteria.values()
+        ),
+        locked_test_sectors=locked_test_sectors,
+        locked_test_sector_exclusions=tuple(
+            locked_test_sector_exclusions
+        ),
+        locked_test_sector_stress_criteria=(
+            locked_test_sector_stress_criteria
+        ),
+        locked_test_sector_stress_passed=all(
+            locked_test_sector_stress_criteria.values()
         ),
         test_observation_count=len(test_rows),
         test_signal_count=test_signal_count,

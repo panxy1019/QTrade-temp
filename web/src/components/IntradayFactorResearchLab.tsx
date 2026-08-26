@@ -94,6 +94,11 @@ const gateLabels: Record<string, string> = {
   chronological_locked_test_passed: '时间顺序锁定测试通过',
   selection_bias_audit_passed: '组合式选择偏差审计通过',
   locked_test_cost_stress_passed: '锁定测试固定成本压力通过',
+  locked_test_sector_stress_passed: '锁定测试多行业压力通过',
+  every_locked_test_sector_has_signal: '每个测试行业均有信号',
+  positive_locked_test_sector_ratio_at_least_0_60: '至少 60% 测试行业收益为正',
+  positive_leave_one_sector_out_ratio_at_least_0_80: '至少 80% 整行业剔除收益为正',
+  worst_leave_one_sector_out_total_return_non_negative: '最差整行业剔除收益不为负',
 }
 
 export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayFactorLongWindowReport }) {
@@ -573,6 +578,46 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           ]} />
           <Alert
             showIcon
+            type={discoveryResult.locked_test_sector_stress.passed ? 'success' : 'warning'}
+            title={discoveryResult.locked_test_sector_stress.passed ? '锁定规则通过多行业鲁棒性门' : '锁定规则未通过多行业鲁棒性门'}
+            description={`固定 ${discoveryResult.locked_test_sector_stress.selected_candidate_id} 在同一互斥测试段分别复算 15 个行业内结果和 15 次整行业剔除。行业行不参与训练排序，也不会重选因子或股票。`}
+          />
+          <div className="description-grid">
+            <Metric label="正收益行业" value={`${discoveryResult.locked_test_sector_stress.positive_sector_count}/${discoveryResult.locked_test_sector_stress.sector_only.length} · ${formatPercent(discoveryResult.locked_test_sector_stress.positive_sector_ratio)}`} />
+            <Metric label="正收益整行业剔除" value={`${discoveryResult.locked_test_sector_stress.positive_exclusion_count}/${discoveryResult.locked_test_sector_stress.leave_one_sector_out.length} · ${formatPercent(discoveryResult.locked_test_sector_stress.positive_exclusion_ratio)}`} />
+          </div>
+          <Tabs items={[
+            {
+              key: 'locked-sector-only',
+              label: '15 个行业内测试',
+              children: <Table rowKey="sector_code" size="small" pagination={{ pageSize: 8, showSizeChanger: false }} dataSource={discoveryResult.locked_test_sector_stress.sector_only} columns={[
+                { title: '行业', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['sector_only'][number]) => `${row.sector_code} · ${row.sector_name}` },
+                { title: '信号 / 观测', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['sector_only'][number]) => `${row.signal_count} / ${row.observation_count}` },
+                { title: '策略收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['sector_only'][number]) => formatPercent(row.strategy_metrics.total_return) },
+                { title: '超额收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['sector_only'][number]) => formatPercent(row.strategy_metrics.excess_return) },
+                { title: 'Sharpe', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['sector_only'][number]) => formatNumber(row.strategy_metrics.sharpe) },
+                { title: '最大回撤', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['sector_only'][number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+              ]} />,
+            },
+            {
+              key: 'locked-sector-exclusion',
+              label: '15 次整行业剔除',
+              children: <Table rowKey="excluded_sector_code" size="small" pagination={{ pageSize: 8, showSizeChanger: false }} dataSource={discoveryResult.locked_test_sector_stress.leave_one_sector_out} columns={[
+                { title: '剔除行业', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['leave_one_sector_out'][number]) => `${row.excluded_sector_code} · ${row.excluded_sector_name}` },
+                { title: '剩余信号 / 观测', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['leave_one_sector_out'][number]) => `${row.signal_count} / ${row.observation_count}` },
+                { title: '策略收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['leave_one_sector_out'][number]) => formatPercent(row.strategy_metrics.total_return) },
+                { title: '超额收益', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['leave_one_sector_out'][number]) => formatPercent(row.strategy_metrics.excess_return) },
+                { title: 'Sharpe', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['leave_one_sector_out'][number]) => formatNumber(row.strategy_metrics.sharpe) },
+                { title: '最大回撤', render: (_: unknown, row: IntradayFactorDiscovery['locked_test_sector_stress']['leave_one_sector_out'][number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+              ]} />,
+            },
+          ]} />
+          <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.locked_test_sector_stress.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
+            { title: '锁定测试行业门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+          ]} />
+          <Alert
+            showIcon
             type={discoveryResult.overfitting_audit.passed ? 'info' : 'warning'}
             title={discoveryResult.overfitting_audit.passed && !discoveryResult.test_validation.passed
               ? 'CSCV 选择偏差门通过，但时间顺序锁定测试仍失败'
@@ -630,7 +675,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             showIcon
             type={discoveryResult.discovery_gate.passed ? 'success' : 'error'}
             title={discoveryResult.discovery_gate.passed ? '完整因子发现研究门通过，但仍需独立前向证据' : '完整因子发现研究门未通过'}
-            description="时间顺序锁定测试、组合式选择偏差和固定成本压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
+            description="时间顺序锁定测试、组合式选择偏差、固定成本压力和多行业压力必须同时通过。当前门只评价历史研究质量，即使通过也没有 PAPER/LIVE 或外部订单授权。"
           />
           <Table rowKey="gate_id" size="small" pagination={false} dataSource={Object.entries(discoveryResult.discovery_gate.criteria).map(([gate_id, passed]) => ({ gate_id, passed }))} columns={[
             { title: '完整发现门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },

@@ -323,9 +323,20 @@ Last updated: 2026-08-27
   drawdown worsened from -8.9914% to -13.0167%, and every excess return remained
   negative. Zero-cost profitability, all-cost profitability and 20 bps positive
   excess failed; only the expected non-increasing-return integrity check passed.
-  The consolidated discovery gate now requires the chronological lock, CSCV/PBO
-  and fixed-cost audit together and is 0/3. It remains a historical research
+  The cost-stage discovery gate requires the chronological lock, CSCV/PBO and
+  fixed-cost audit together and was 0/3. It remains a historical research
   veto with no candidate reselection, promotion, state or order authority.
+- Locked-test sector stress now holds the same candidate, threshold, 5 bps cost,
+  326 signals and 20 test sessions across 15 sector-only evaluations and 15
+  whole-sector exclusions. Every sector had a signal, but only 4/15 sector-only
+  returns were positive. Electronics was worst at -16.4469%; machinery was best
+  at +9.0138%. All 15 leave-one-sector-out portfolios remained negative: the
+  range was -7.2180% after excluding power equipment to -4.7210% after excluding
+  electronics. Signal coverage passed, while the 60% positive-sector ratio,
+  80% positive-exclusion ratio and non-negative worst exclusion all failed.
+  This rules out one isolated sector as the explanation. The consolidated
+  discovery research gate now requires chronological test, CSCV/PBO, fixed cost
+  and sector stress together and is 0/4, still `NOT_ELIGIBLE` and stateless.
 - Intraday factor comparison: successful previews can be retained as at most 30
   checksum-bound summaries in the current browser. Each summary keeps its typed
   rule, result hash, signal/observation counts, return, Sharpe, drawdown, excess,

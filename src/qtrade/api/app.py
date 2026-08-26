@@ -9035,6 +9035,75 @@ def _intraday_factor_discovery_preview(
             "criteria": dict(result.locked_test_cost_stress_criteria),
             "passed": result.locked_test_cost_stress_passed,
         },
+        "locked_test_sector_stress": {
+            "selected_candidate_id": result.selected_candidate_id,
+            "test_start": result.test_start.isoformat(),
+            "test_end": result.test_end.isoformat(),
+            "candidate_reselected": False,
+            "sector_rows_used_for_selection": False,
+            "sector_only": [
+                {
+                    "sector_code": row.group_id,
+                    "sector_name": row.group_name,
+                    "observation_count": row.observation_count,
+                    "signal_count": row.signal_count,
+                    "mean_signal_forward_return": str(
+                        row.mean_signal_forward_return
+                    ),
+                    "signal_hit_rate": str(row.signal_hit_rate),
+                    "strategy_metrics": _performance_metrics_payload(
+                        row.strategy_metrics
+                    ),
+                    "benchmark_metrics": _performance_metrics_payload(
+                        row.benchmark_metrics
+                    ),
+                }
+                for row in result.locked_test_sectors
+            ],
+            "leave_one_sector_out": [
+                {
+                    "excluded_sector_code": row.group_id,
+                    "excluded_sector_name": row.group_name,
+                    "observation_count": row.observation_count,
+                    "signal_count": row.signal_count,
+                    "strategy_metrics": _performance_metrics_payload(
+                        row.strategy_metrics
+                    ),
+                    "benchmark_metrics": _performance_metrics_payload(
+                        row.benchmark_metrics
+                    ),
+                }
+                for row in result.locked_test_sector_exclusions
+            ],
+            "positive_sector_count": sum(
+                row.strategy_metrics.total_return > 0
+                for row in result.locked_test_sectors
+            ),
+            "positive_sector_ratio": str(
+                Decimal(
+                    sum(
+                        row.strategy_metrics.total_return > 0
+                        for row in result.locked_test_sectors
+                    )
+                )
+                / len(result.locked_test_sectors)
+            ),
+            "positive_exclusion_count": sum(
+                row.strategy_metrics.total_return > 0
+                for row in result.locked_test_sector_exclusions
+            ),
+            "positive_exclusion_ratio": str(
+                Decimal(
+                    sum(
+                        row.strategy_metrics.total_return > 0
+                        for row in result.locked_test_sector_exclusions
+                    )
+                )
+                / len(result.locked_test_sector_exclusions)
+            ),
+            "criteria": dict(result.locked_test_sector_stress_criteria),
+            "passed": result.locked_test_sector_stress_passed,
+        },
         "discovery_gate": {
             "criteria": {
                 "chronological_locked_test_passed": result.test_gate_passed,
@@ -9044,12 +9113,16 @@ def _intraday_factor_discovery_preview(
                 "locked_test_cost_stress_passed": (
                     result.locked_test_cost_stress_passed
                 ),
+                "locked_test_sector_stress_passed": (
+                    result.locked_test_sector_stress_passed
+                ),
             },
             "passed": all(
                 (
                     result.test_gate_passed,
                     result.overfitting_audit.passed,
                     result.locked_test_cost_stress_passed,
+                    result.locked_test_sector_stress_passed,
                 )
             ),
             "promotion_authority": False,

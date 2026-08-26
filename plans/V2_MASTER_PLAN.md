@@ -227,6 +227,9 @@ npm --prefix web run build
 - [x] Replay the single locked discovery winner on its unchanged test signals
   under 0/5/10/20 bps; expose the losing cost curve and require chronological,
   selection-bias and cost gates together before any research-quality pass.
+- [x] Re-evaluate the locked winner inside all 15 sectors and across all 15
+  whole-sector exclusions on the unchanged test window; expose broad failure
+  and add sector stress to the consolidated 0/4 discovery gate without tuning.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

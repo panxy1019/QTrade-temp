@@ -431,10 +431,34 @@ def test_intraday_factor_discovery_locks_one_of_104_candidates_before_test() -> 
             ],
             "selection_bias_audit_passed": audit["passed"],
             "locked_test_cost_stress_passed": cost_stress["passed"],
+            "locked_test_sector_stress_passed": payload[
+                "locked_test_sector_stress"
+            ]["passed"],
         },
         "passed": False,
         "promotion_authority": False,
     }
+    sector_stress = payload["locked_test_sector_stress"]
+    assert sector_stress["selected_candidate_id"] == payload["selected"][
+        "candidate_id"
+    ]
+    assert sector_stress["test_start"] == payload["split"]["test_start"]
+    assert sector_stress["test_end"] == payload["split"]["test_end"]
+    assert sector_stress["candidate_reselected"] is False
+    assert sector_stress["sector_rows_used_for_selection"] is False
+    assert len(sector_stress["sector_only"]) == 15
+    assert len(sector_stress["leave_one_sector_out"]) == 15
+    assert {
+        (row["sector_code"], row["sector_name"])
+        for row in sector_stress["sector_only"]
+    } == {
+        (row["excluded_sector_code"], row["excluded_sector_name"])
+        for row in sector_stress["leave_one_sector_out"]
+    }
+    assert sum(row["observation_count"] for row in sector_stress["sector_only"]) == (
+        payload["test_validation"]["observation_count"]
+    )
+    assert sector_stress["passed"] is all(sector_stress["criteria"].values())
     assert payload["selected"]["candidate_id"] in {
         candidate["candidate_id"] for candidate in payload["candidates"]
     }

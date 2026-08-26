@@ -750,6 +750,37 @@ export interface IntradayFactorDiscovery {
     criteria: Record<string, boolean>
     passed: boolean
   }
+  locked_test_sector_stress: {
+    selected_candidate_id: string
+    test_start: string
+    test_end: string
+    candidate_reselected: false
+    sector_rows_used_for_selection: false
+    sector_only: Array<{
+      sector_code: string
+      sector_name: string
+      observation_count: number
+      signal_count: number
+      mean_signal_forward_return: string
+      signal_hit_rate: string
+      strategy_metrics: IntradayPerformanceMetrics
+      benchmark_metrics: IntradayPerformanceMetrics
+    }>
+    leave_one_sector_out: Array<{
+      excluded_sector_code: string
+      excluded_sector_name: string
+      observation_count: number
+      signal_count: number
+      strategy_metrics: IntradayPerformanceMetrics
+      benchmark_metrics: IntradayPerformanceMetrics
+    }>
+    positive_sector_count: number
+    positive_sector_ratio: string
+    positive_exclusion_count: number
+    positive_exclusion_ratio: string
+    criteria: Record<string, boolean>
+    passed: boolean
+  }
   discovery_gate: {
     criteria: Record<string, boolean>
     passed: boolean
