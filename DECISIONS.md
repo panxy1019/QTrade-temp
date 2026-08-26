@@ -1785,3 +1785,31 @@ therefore returns `UNAVAILABLE_QFQ_OHLCV_WITHOUT_PROVIDER_AMOUNT`, labels RMB
 capacity unavailable and fails that criterion closed. The consolidated viewed-
 history discovery gate becomes 0/9 and remains non-PIT, `NOT_ELIGIBLE`,
 stateless and external-order-disabled.
+
+## ADR-108 — L2 buying intensity is an untested hypothesis behind a six-gate data contract
+
+Status: accepted, 2026-08-27.
+
+The expression `(bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5)` is not
+a valid factor observation until the underlying order book has an authorized,
+causally timestamped and replayable identity. QTrade therefore defines exactly
+five bid prices/sizes and five ask prices/sizes, normalized to shares only after
+the provider's native quantity unit is certified. Every observation also needs
+symbol, exchange, provider event time, local receive time and monotonic sequence,
+and is restricted to continuous auction trading.
+
+Missing, non-finite or negative values, a non-monotonic or crossed book, a stale
+or future snapshot and zero total ask size reject the observation; zero ask size
+does not produce infinity. A finalized-minute correction may use only a same-
+symbol, same-provider snapshot already received before its decision. The actual
+freshness threshold must be certified against the selected provider rather than
+invented before integration.
+
+Readiness requires six independent gates: authorized L2 provider, certified
+five-level schema, quantity-unit normalization, event clock plus sequence,
+certified freshness, and recorded-session replay reconciliation. All are false
+today, so readiness is 0/6 and `UNCONFIGURED`. `buying_intensity > 1` remains the
+user's untested buy hypothesis, not an effectiveness result; no sell condition
+has been defined and no correlation test, strategy backtest or PAPER admission
+exists. The contract is read-only, derives nothing from OHLCV, mutates no state
+and cannot transmit an external order.

@@ -1157,12 +1157,57 @@ export interface IntradayFactorBacktest {
     t_plus_one_compliant: true
   }
   l2_factor_readiness: {
+    classification: 'READ_ONLY_L2_FACTOR_DATA_CONTRACT'
     factor_id: string
     formula: string
+    buying_hypothesis: {
+      condition: 'buying_intensity > 1'
+      interpretation: 'BUY_SIDE_QUANTITY_EXCEEDS_SELL_SIDE_QUANTITY'
+      validation_status: 'UNTESTED_NO_AUTHORIZED_L2_DATA'
+    }
+    sell_condition_status: 'NOT_DEFINED_REQUIRES_SEPARATE_RESEARCH'
     required_data: string
+    normalized_input_contract: {
+      level_count: 5
+      bid_price_fields: string[]
+      bid_size_fields: string[]
+      ask_price_fields: string[]
+      ask_size_fields: string[]
+      size_unit: 'SHARES'
+      required_identity_fields: string[]
+      allowed_session: 'CONTINUOUS_AUCTION'
+    }
+    invalid_snapshot_policy: {
+      missing_or_non_finite_value: 'REJECT'
+      negative_size: 'REJECT'
+      zero_total_ask_size: 'REJECT_FACTOR_UNDEFINED'
+      non_monotonic_or_crossed_book: 'REJECT'
+      stale_snapshot: 'REJECT'
+      future_snapshot: 'REJECT'
+    }
+    causal_contract: {
+      decision_clock: 'FINALIZED_MINUTE_CORRECTION'
+      snapshot_must_be_known_before_decision: true
+      same_symbol_snapshot: true
+      same_provider_snapshot: true
+      future_book_used: false
+      freshness_limit: 'REQUIRES_PROVIDER_CERTIFICATION'
+    }
+    required_gates: Array<{
+      gate_id: string
+      passed: boolean
+      reason: string
+    }>
+    passed_gate_count: number
+    required_gate_count: number
     readiness: 'UNCONFIGURED'
     reason: string
+    factor_effectiveness_tested: false
+    correlation_tested: false
+    strategy_backtested: false
     derived_from_ohlcv: false
+    state_mutation: false
+    external_order_transmission: false
   }
   data_version: string
   dataset_checksum: string

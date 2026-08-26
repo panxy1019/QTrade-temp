@@ -298,8 +298,12 @@ It exceeded the falling same-horizon benchmark by `0.2544` percentage points,
 but mean signal return, conditional excess, Rank IC, sector breadth and absolute
 return gates failed. The workbench therefore reports the result as a rejected
 ad-hoc hypothesis, never as a strategy eligible for PAPER. The proposed five-
-level order-book buying-intensity factor remains `UNCONFIGURED`: authorized L2
-bid/ask sizes are required and are never synthesized from OHLCV. The added
+level order-book buying-intensity factor remains `UNCONFIGURED`: its read-only
+contract requires five bid/ask prices plus sizes normalized to shares, provider
+event/receive clocks and sequence, continuous-auction validity, certified
+freshness and recorded-replay reconciliation. The proposed `intensity > 1`
+entry is explicitly untested, its exit is not yet defined, and authorized L2
+depth is never synthesized from OHLCV. The added
 rolling diagnostic also rejected the rule: both five-session folds selected a
 5 bps body threshold and returned `-2.5834%` and `-2.1394%`; their stitched return
 was `-4.6675%`, and every fixed threshold returned between `-4.4507%` and

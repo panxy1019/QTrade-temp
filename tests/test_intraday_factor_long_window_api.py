@@ -94,8 +94,22 @@ def test_long_window_intraday_factor_report_is_verified_and_read_only() -> None:
     assert paper_admission["runtime_mode_change"] is False
     assert paper_admission["state_mutation"] is False
     assert paper_admission["external_order_transmission"] is False
+    l2_readiness = payload["result"]["l2_factor_readiness"]
+    assert l2_readiness["classification"] == (
+        "READ_ONLY_L2_FACTOR_DATA_CONTRACT"
+    )
+    assert l2_readiness["passed_gate_count"] == 0
+    assert l2_readiness["required_gate_count"] == 6
+    assert l2_readiness["buying_hypothesis"]["validation_status"] == (
+        "UNTESTED_NO_AUTHORIZED_L2_DATA"
+    )
+    assert l2_readiness["sell_condition_status"] == (
+        "NOT_DEFINED_REQUIRES_SEPARATE_RESEARCH"
+    )
+    assert l2_readiness["derived_from_ohlcv"] is False
+    assert l2_readiness["external_order_transmission"] is False
     assert payload["result_preview_hash"] == (
-        "56edc245d8e99c5dea8b0318a1803cd85d6174bc88aff7a391acadabf478e95b"
+        "4c061b84688cce1e80cb92b2b1d055a49841cbdb829e19489ba6c320e1926f01"
     )
     assert payload["promotion"] == "NOT_ELIGIBLE"
     assert payload["paper_readiness"] == "NOT_ELIGIBLE"
@@ -143,7 +157,7 @@ def test_resigned_changed_result_cannot_replace_fixed_long_window_evidence(
     payload = _client(changed_path).get("/intraday-factor-robustness").json()
 
     assert changed_result_hash != (
-        "56edc245d8e99c5dea8b0318a1803cd85d6174bc88aff7a391acadabf478e95b"
+        "4c061b84688cce1e80cb92b2b1d055a49841cbdb829e19489ba6c320e1926f01"
     )
     assert payload["report_id"] is None
     assert payload["promotion"] == "NOT_EVALUATED"

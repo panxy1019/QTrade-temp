@@ -134,6 +134,12 @@ const gateLabels: Record<string, string> = {
   every_participation_row_preserves_locked_signal_identity: '每档容量均保留锁定测试信号身份',
   every_locked_signal_supports_one_round_lot_at_1pct: '每个锁定信号在 1% 参与率下至少支持一手',
   exact_provider_rmb_amount_available: '供应商原始人民币成交额可用',
+  authorized_l2_provider_selected: '获授权 L2 供应商已选择',
+  five_level_schema_certified: '五档价格与委托量字段已认证',
+  size_unit_normalized_to_shares: '委托量单位已认证并归一为股',
+  event_time_and_sequence_available: '交易所事件时间与序号可用',
+  freshness_threshold_certified: '供应商新鲜度阈值已认证',
+  recorded_replay_reconciliation_passed: 'L2 录制与回放对账已通过',
   observed_conditional_excess_above_placebo_p95: '实际条件超额高于安慰剂第 95 百分位',
   three_predeclared_execution_delays_present: '10:05/10:10/10:15 三档执行时点完整',
   every_execution_delay_preserves_locked_signal_identity: '每档延迟保持锁定信号身份与数量',
@@ -1027,7 +1033,38 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             children: <GroupTable rows={result.backtest.symbols} nameLabel="证券" />,
           },
         ]} />
-        <Alert showIcon type="warning" title={`五档买卖盘强度：${result.l2_factor_readiness.readiness}`} description={`公式 ${result.l2_factor_readiness.formula} 需要 ${result.l2_factor_readiness.required_data}。当前没有获授权的 L2 来源，系统不会从 OHLCV 伪造买一至买五/卖一至卖五。`} />
+        <Alert
+          showIcon
+          type="warning"
+          title={`五档买卖盘强度：${result.l2_factor_readiness.readiness} · ${result.l2_factor_readiness.passed_gate_count}/${result.l2_factor_readiness.required_gate_count}`}
+          description={`公式 ${result.l2_factor_readiness.formula} 是待验证的买入假设，不是已经有效的策略。它需要 ${result.l2_factor_readiness.required_data}；当前没有获授权的 L2 来源，系统不会从 OHLCV 伪造买一至买五/卖一至卖五，也不会自动补出卖出条件。`}
+        />
+        <div className="description-grid">
+          <Metric label="买入条件" value="买入假设 > 1 · 未检验" />
+          <Metric label="平仓条件" value="卖出条件未定义" />
+          <Metric label="深度模式" value="规范深度字段 20 个" />
+          <Metric label="委托量单位" value="股（供应商单位待认证）" />
+          <Metric label="修正时钟" value="封闭分钟后决定" />
+          <Metric label="无效分母" value="零卖方总量：因子无定义" />
+        </div>
+        <Alert
+          showIcon
+          type="info"
+          title={`L2 数据门 ${result.l2_factor_readiness.passed_gate_count}/${result.l2_factor_readiness.required_gate_count}`}
+          description="必须先完成供应商授权、五档字段与单位认证、事件时钟/序号、新鲜度和录制回放对账，才允许采集因子样本。当前不会计算因子、运行相关性/有效性检验、回测策略或进入 PAPER。"
+        />
+        <Table
+          rowKey="gate_id"
+          size="small"
+          pagination={false}
+          dataSource={result.l2_factor_readiness.required_gates}
+          columns={[
+            { title: 'L2 数据门槛', dataIndex: 'gate_id', render: (value: string) => gateLabels[value] ?? value },
+            { title: '结果', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+            { title: '原因码', dataIndex: 'reason' },
+          ]}
+          scroll={{ x: 760 }}
+        />
         <Space wrap>
           <Input aria-label="本地因子实验名称" placeholder="为本次因子结果命名" value={experimentName} maxLength={80} onChange={(event) => setExperimentName(event.target.value)} style={{ width: 280 }} />
           <Button onClick={saveResult}>保存到本地因子实验</Button>

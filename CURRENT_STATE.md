@@ -226,8 +226,15 @@ Last updated: 2026-08-27
   disclosed 2026-07-28 through 2026-08-24 baseline triggered 192/1,500 stock-days
   and lost 4.0840% after 5 bps per side; Sharpe was -3.3347 and maximum drawdown
   -5.1038%. It failed the research gate and cannot enter PAPER. Five-level
-  order-book buying intensity remains `UNCONFIGURED` until an authorized L2
-  source exists; OHLCV is not used to fabricate bid/ask depth. Because the
+  order-book buying intensity remains `UNCONFIGURED` behind a structured 0/6
+  data-readiness contract. It requires all five bid/ask prices and sizes,
+  provider event/receive clocks plus sequence, provider-unit normalization to
+  shares, continuous-auction validity, a certified freshness limit and recorded
+  replay reconciliation. Missing/non-finite/negative depth, crossed/non-monotonic
+  books, stale/future snapshots and a zero total ask size all reject the factor.
+  `intensity > 1` is displayed only as an untested buy hypothesis; the sell
+  condition is not defined and no effectiveness, correlation or backtest claim
+  is made. OHLCV is not used to fabricate bid/ask depth. Because the
   endpoint is deterministic and side-effect free, its browser client retries
   one network-level fetch failure; HTTP validation/server responses and every
   control or trading POST are never retried by this path. A fixed

@@ -256,8 +256,13 @@ two disjoint five-session folds; both folds and all four fixed thresholds are
 negative. It is explicitly reused-history robustness evidence, not an
 independent confirmation. Future tuning must use bounded development windows and
 a separately locked forward evaluation; the viewed window cannot be relabelled
-as blind confirmation. Order-book buying intensity is only a data contract until
-an authorized five-level L2 source is selected.
+as blind confirmation. Order-book buying intensity is now an explicit fail-closed
+data contract rather than a one-line placeholder. It fixes 20 normalized depth
+fields, share units, event/receive clocks and sequence, continuous-auction book
+validity, provider-certified freshness and recorded replay reconciliation. All
+six provider gates are currently false. The proposed `intensity > 1` entry is
+untested and has no sell rule; no effectiveness, correlation, strategy backtest
+or PAPER claim exists until an authorized five-level L2 source is selected.
 
 Factor construction now includes one deliberately bounded extension of that
 workflow: the three fixed completed intervals accept bullish, bearish or ignored

@@ -251,6 +251,12 @@ npm --prefix web run build
   factor run, separating failed research/backtest evidence from registration,
   unseen-forward, realtime, runtime-attestation and reconciliation blockers;
   keep the current 1/8 decision read-only and `BLOCKED`.
+- [x] Replace the L2 buying-intensity placeholder with a structured five-level
+  data contract: exact price/size fields, share-unit certification, provider
+  event/receive clocks and sequence, causal minute timing, fail-closed book
+  validity and six explicit provider/replay gates. Keep the proposed `> 1`
+  entry untested, the sell condition undefined and readiness at 0/6 until an
+  authorized L2 session exists.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

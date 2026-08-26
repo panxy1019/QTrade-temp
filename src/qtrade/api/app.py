@@ -75,7 +75,7 @@ _MIN_INTRADAY_DISCOVERY_SESSIONS = 40
 _MAX_INTRADAY_FACTOR_SESSIONS = 120
 _MAX_MINUTE_EVIDENCE_JSON_BYTES = 2 * 1024 * 1024
 _INTRADAY_FACTOR_LONG_WINDOW_PREVIEW_SHA256 = (
-    "56edc245d8e99c5dea8b0318a1803cd85d6174bc88aff7a391acadabf478e95b"
+    "4c061b84688cce1e80cb92b2b1d055a49841cbdb829e19489ba6c320e1926f01"
 )
 _MARKET_PARQUET_SCHEMA = pa.schema(
     [
@@ -9855,16 +9855,7 @@ def _intraday_factor_preview(
             "criteria": criteria,
         },
         "causal_contract": dict(result.causal_contract),
-        "l2_factor_readiness": {
-            "factor_id": "order-book-buying-intensity-v1",
-            "formula": (
-                "(bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5)"
-            ),
-            "required_data": "AUTHORIZED_L2_FIVE_LEVEL_ORDER_BOOK",
-            "readiness": "UNCONFIGURED",
-            "reason": "NO_AUTHORIZED_L2_PROVIDER",
-            "derived_from_ohlcv": False,
-        },
+        "l2_factor_readiness": _l2_factor_readiness_payload(),
         "data_version": dataset["data_version"],
         "dataset_checksum": dataset["checksum"],
         "data_interval": "5m",
@@ -9929,6 +9920,110 @@ def _intraday_factor_preview(
     return {
         **unsigned,
         "preview_hash": sha256(canonical.encode("utf-8")).hexdigest(),
+    }
+
+
+def _l2_factor_readiness_payload() -> dict[str, object]:
+    required_gates: list[dict[str, object]] = [
+        {
+            "gate_id": "authorized_l2_provider_selected",
+            "passed": False,
+            "reason": "NO_AUTHORIZED_L2_PROVIDER",
+        },
+        {
+            "gate_id": "five_level_schema_certified",
+            "passed": False,
+            "reason": "PROVIDER_SCHEMA_NOT_CERTIFIED",
+        },
+        {
+            "gate_id": "size_unit_normalized_to_shares",
+            "passed": False,
+            "reason": "PROVIDER_SIZE_UNIT_NOT_CERTIFIED",
+        },
+        {
+            "gate_id": "event_time_and_sequence_available",
+            "passed": False,
+            "reason": "PROVIDER_CLOCK_NOT_CERTIFIED",
+        },
+        {
+            "gate_id": "freshness_threshold_certified",
+            "passed": False,
+            "reason": "PROVIDER_FRESHNESS_NOT_CERTIFIED",
+        },
+        {
+            "gate_id": "recorded_replay_reconciliation_passed",
+            "passed": False,
+            "reason": "NO_AUTHORIZED_RECORDED_L2_SESSION",
+        },
+    ]
+    return {
+        "classification": "READ_ONLY_L2_FACTOR_DATA_CONTRACT",
+        "factor_id": "order-book-buying-intensity-v1",
+        "formula": (
+            "(bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5)"
+        ),
+        "buying_hypothesis": {
+            "condition": "buying_intensity > 1",
+            "interpretation": (
+                "BUY_SIDE_QUANTITY_EXCEEDS_SELL_SIDE_QUANTITY"
+            ),
+            "validation_status": "UNTESTED_NO_AUTHORIZED_L2_DATA",
+        },
+        "sell_condition_status": "NOT_DEFINED_REQUIRES_SEPARATE_RESEARCH",
+        "required_data": "AUTHORIZED_L2_FIVE_LEVEL_ORDER_BOOK",
+        "normalized_input_contract": {
+            "level_count": 5,
+            "bid_price_fields": [
+                f"bid_price_{level}" for level in range(1, 6)
+            ],
+            "bid_size_fields": [
+                f"bid_size_{level}" for level in range(1, 6)
+            ],
+            "ask_price_fields": [
+                f"ask_price_{level}" for level in range(1, 6)
+            ],
+            "ask_size_fields": [
+                f"ask_size_{level}" for level in range(1, 6)
+            ],
+            "size_unit": "SHARES",
+            "required_identity_fields": [
+                "symbol",
+                "exchange",
+                "provider_event_at",
+                "received_at",
+                "sequence",
+            ],
+            "allowed_session": "CONTINUOUS_AUCTION",
+        },
+        "invalid_snapshot_policy": {
+            "missing_or_non_finite_value": "REJECT",
+            "negative_size": "REJECT",
+            "zero_total_ask_size": "REJECT_FACTOR_UNDEFINED",
+            "non_monotonic_or_crossed_book": "REJECT",
+            "stale_snapshot": "REJECT",
+            "future_snapshot": "REJECT",
+        },
+        "causal_contract": {
+            "decision_clock": "FINALIZED_MINUTE_CORRECTION",
+            "snapshot_must_be_known_before_decision": True,
+            "same_symbol_snapshot": True,
+            "same_provider_snapshot": True,
+            "future_book_used": False,
+            "freshness_limit": "REQUIRES_PROVIDER_CERTIFICATION",
+        },
+        "required_gates": required_gates,
+        "passed_gate_count": sum(
+            gate["passed"] is True for gate in required_gates
+        ),
+        "required_gate_count": len(required_gates),
+        "readiness": "UNCONFIGURED",
+        "reason": "NO_AUTHORIZED_L2_PROVIDER",
+        "factor_effectiveness_tested": False,
+        "correlation_tested": False,
+        "strategy_backtested": False,
+        "derived_from_ohlcv": False,
+        "state_mutation": False,
+        "external_order_transmission": False,
     }
 
 
