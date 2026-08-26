@@ -327,7 +327,7 @@ const data = {
   forwardSourceCoverage: {
     classification: 'SOURCE_COVERAGE_DIAGNOSTIC_NOT_FORWARD_EVIDENCE',
     report_id: 'baostock-forward-source-coverage-diagnostic-v1',
-    generated_at: '2026-08-26T19:20:50+08:00',
+    generated_at: '2026-08-26T19:46:16+08:00',
     provider: 'BaoStock', provider_version: '0.9.3',
     anchor_day: '2026-08-25', target_day: '2026-08-26',
     preregistration_id: 'baostock-locked-forward-observation-v1',
@@ -335,14 +335,14 @@ const data = {
     warmup_data_version: 'baostock-five-minute-long-v1',
     warmup_checksum: '8'.repeat(64), warmup_evidence_sha256: '7'.repeat(64),
     required_symbol_count: 75, required_bars_per_symbol_session: 48,
-    target_complete_symbol_count: 69, ready_symbol_count: 69,
-    incomplete_symbol_count: 6,
-    incomplete_symbols: ['300750', '300308', '300502', '300394', '300418', '300251'],
-    target_incomplete_symbols: ['300750', '300308', '300502', '300394', '300418', '300251'],
+    target_complete_symbol_count: 74, ready_symbol_count: 74,
+    incomplete_symbol_count: 1,
+    incomplete_symbols: ['300750'],
+    target_incomplete_symbols: ['300750'],
     fetch_error_symbols: [],
     coverage: [
       { symbol: '600036', fetch_status: 'OK', frozen_anchor_bar_count: 48, anchor_bar_count: 48, target_bar_count: 48, frozen_anchor_grid_complete: true, anchor_grid_complete: true, target_grid_complete: true, anchor_exact_match: true, ready: true, reasons: [] },
-      ...['300750', '300308', '300502', '300394', '300418', '300251'].map((symbol) => ({ symbol, fetch_status: 'OK' as const, frozen_anchor_bar_count: 48, anchor_bar_count: 48, target_bar_count: 0, frozen_anchor_grid_complete: true, anchor_grid_complete: true, target_grid_complete: false, anchor_exact_match: true, ready: false, reasons: ['TARGET_SESSION_INCOMPLETE'] })),
+      { symbol: '300750', fetch_status: 'OK', frozen_anchor_bar_count: 48, anchor_bar_count: 48, target_bar_count: 0, frozen_anchor_grid_complete: true, anchor_grid_complete: true, target_grid_complete: false, anchor_exact_match: true, ready: false, reasons: ['TARGET_SESSION_INCOMPLETE'] },
     ],
     status: 'SOURCE_INCOMPLETE', ready_for_formal_collection: false,
     enters_forward_metrics: false, promotion: 'NOT_ELIGIBLE',
@@ -352,12 +352,13 @@ const data = {
   forwardSourceCoverageHistory: {
     classification: 'SIGNED_SOURCE_COVERAGE_HISTORY_NOT_FORWARD_EVIDENCE',
     report_id: 'baostock-forward-source-coverage-history-v1',
-    checkpoint_count: 4, all_checkpoints_monotonic: true,
+    checkpoint_count: 5, all_checkpoints_monotonic: true,
     checkpoints: [
       { sequence: 1, generated_at: '2026-08-26T18:14:10+08:00', report_evidence_sha256: '1'.repeat(64), ready_symbol_count: 41, target_complete_symbol_count: 41, incomplete_symbol_count: 34, fetch_error_symbol_count: 0, status: 'SOURCE_INCOMPLETE', ready_symbol_count_delta: null, monotonic_vs_previous: true, previous_checkpoint_sha256: null, checkpoint_sha256: 'a'.repeat(64) },
       { sequence: 2, generated_at: '2026-08-26T18:31:17+08:00', report_evidence_sha256: '2'.repeat(64), ready_symbol_count: 47, target_complete_symbol_count: 47, incomplete_symbol_count: 28, fetch_error_symbol_count: 0, status: 'SOURCE_INCOMPLETE', ready_symbol_count_delta: 6, monotonic_vs_previous: true, previous_checkpoint_sha256: 'a'.repeat(64), checkpoint_sha256: 'b'.repeat(64) },
       { sequence: 3, generated_at: '2026-08-26T18:47:04+08:00', report_evidence_sha256: '3'.repeat(64), ready_symbol_count: 52, target_complete_symbol_count: 52, incomplete_symbol_count: 23, fetch_error_symbol_count: 0, status: 'SOURCE_INCOMPLETE', ready_symbol_count_delta: 5, monotonic_vs_previous: true, previous_checkpoint_sha256: 'b'.repeat(64), checkpoint_sha256: 'c'.repeat(64) },
       { sequence: 4, generated_at: '2026-08-26T19:20:50+08:00', report_evidence_sha256: '4'.repeat(64), ready_symbol_count: 69, target_complete_symbol_count: 69, incomplete_symbol_count: 6, fetch_error_symbol_count: 0, status: 'SOURCE_INCOMPLETE', ready_symbol_count_delta: 17, monotonic_vs_previous: true, previous_checkpoint_sha256: 'c'.repeat(64), checkpoint_sha256: 'd'.repeat(64) },
+      { sequence: 5, generated_at: '2026-08-26T19:46:16+08:00', report_evidence_sha256: '5'.repeat(64), ready_symbol_count: 74, target_complete_symbol_count: 74, incomplete_symbol_count: 1, fetch_error_symbol_count: 0, status: 'SOURCE_INCOMPLETE', ready_symbol_count_delta: 5, monotonic_vs_previous: true, previous_checkpoint_sha256: 'd'.repeat(64), checkpoint_sha256: 'f'.repeat(64) },
     ],
     evidence_sha256: 'e'.repeat(64), enters_forward_metrics: false,
     promotion: 'NOT_ELIGIBLE', realtime_readiness: false,
@@ -906,9 +907,9 @@ describe('verified historical data pages', () => {
     expect(screen.getByText('15 行业代表股当日分钟点时观测')).toBeInTheDocument()
     expect(screen.getByText('75 股票全板块当日分钟宽度')).toBeInTheDocument()
     expect(screen.getByText('75 股票 BaoStock 前向来源覆盖')).toBeInTheDocument()
-    expect(screen.getByText(/69\/75 READY · SOURCE_INCOMPLETE/)).toBeInTheDocument()
+    expect(screen.getByText(/74\/75 READY · SOURCE_INCOMPLETE/)).toBeInTheDocument()
     expect(screen.getByText('BaoStock 来源覆盖发布序列')).toBeInTheDocument()
-    expect(screen.getByText(/MONOTONIC · 41 → 47 → 52 → 69 READY/)).toBeInTheDocument()
+    expect(screen.getByText(/MONOTONIC · 41 → 47 → 52 → 69 → 74 READY/)).toBeInTheDocument()
     expect(screen.getByText('当日分钟多检查点连续性')).toBeInTheDocument()
     expect(screen.queryByText(/网页调用方不能提供这些身份/)).not.toBeInTheDocument()
   })
@@ -1101,13 +1102,12 @@ describe('verified robustness evidence', () => {
     render(<ResearchPage data={data} />)
     fireEvent.click(screen.getByRole('tab', { name: '未来完整日观测' }))
     expect(screen.getByText(/观测进度：0\/20 个完整交易日/)).toBeInTheDocument()
-    expect(screen.getByText(/BaoStock 来源覆盖：69\/75 可正式采集/)).toBeInTheDocument()
-    expect(screen.getByText(/6 只仍未形成完整目标日网格/)).toBeInTheDocument()
-    expect(screen.getByText(/来源发布序列：4 个检查点/)).toBeInTheDocument()
-    expect(screen.getByText(/41 → 47 → 52 → 69 READY/)).toBeInTheDocument()
+    expect(screen.getByText(/BaoStock 来源覆盖：74\/75 可正式采集/)).toBeInTheDocument()
+    expect(screen.getByText(/1 只仍未形成完整目标日网格/)).toBeInTheDocument()
+    expect(screen.getByText(/来源发布序列：5 个检查点/)).toBeInTheDocument()
+    expect(screen.getByText(/41 → 47 → 52 → 69 → 74 READY/)).toBeInTheDocument()
     expect(screen.getByText(/不进入 0\/20/)).toBeInTheDocument()
     expect(screen.getByText('300750')).toBeInTheDocument()
-    expect(screen.getByText('300251')).toBeInTheDocument()
     expect(screen.getByText(/15 板块、75 股、每股 48 根原生 5 分钟 Bar/)).toBeInTheDocument()
     expect(screen.getAllByText('等待样本')).toHaveLength(5)
     expect(screen.getByText(/不宣称完全盲预注册/)).toBeInTheDocument()

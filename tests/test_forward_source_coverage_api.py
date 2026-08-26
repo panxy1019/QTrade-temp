@@ -58,8 +58,8 @@ def test_forward_source_coverage_accepts_packaged_diagnostic() -> None:
     )
 
     assert verified == report
-    assert verified["ready_symbol_count"] == 69
-    assert verified["incomplete_symbol_count"] == 6
+    assert verified["ready_symbol_count"] == 74
+    assert verified["incomplete_symbol_count"] == 1
     assert verified["enters_forward_metrics"] is False
     assert verified["external_order_transmission"] is False
 
@@ -76,10 +76,10 @@ def test_forward_source_coverage_accepts_packaged_history() -> None:
     )
 
     assert verified is not None
-    assert verified["checkpoint_count"] == 4
+    assert verified["checkpoint_count"] == 5
     assert verified["all_checkpoints_monotonic"] is True
-    assert verified["checkpoints"][-1]["ready_symbol_count"] == 69
-    assert verified["checkpoints"][-1]["ready_symbol_count_delta"] == 17
+    assert verified["checkpoints"][-1]["ready_symbol_count"] == 74
+    assert verified["checkpoints"][-1]["ready_symbol_count_delta"] == 5
     assert verified["enters_forward_metrics"] is False
 
 

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "report_id": "baostock-forward-source-coverage-diagnostic-v1",
-  "generated_at": "2026-08-26T19:20:50.230290+08:00",
+  "generated_at": "2026-08-26T19:46:16.055971+08:00",
   "classification": "SOURCE_COVERAGE_DIAGNOSTIC_NOT_FORWARD_EVIDENCE",
   "provider": "BaoStock",
   "provider_version": "0.9.3",
@@ -16,24 +16,14 @@
   "warmup_evidence_sha256": "531f8077caf6849d25ecca960d613c113c3dab25ee630b45e72cbce1252429bb",
   "required_symbol_count": 75,
   "required_bars_per_symbol_session": 48,
-  "target_complete_symbol_count": 69,
-  "ready_symbol_count": 69,
-  "incomplete_symbol_count": 6,
+  "target_complete_symbol_count": 74,
+  "ready_symbol_count": 74,
+  "incomplete_symbol_count": 1,
   "incomplete_symbols": [
-    "300750",
-    "300308",
-    "300502",
-    "300394",
-    "300418",
-    "300251"
+    "300750"
   ],
   "target_incomplete_symbols": [
-    "300750",
-    "300308",
-    "300502",
-    "300394",
-    "300418",
-    "300251"
+    "300750"
   ],
   "fetch_error_symbols": [],
   "coverage": [
@@ -889,45 +879,39 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "300502",
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "300394",
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "000063",
@@ -999,30 +983,26 @@
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     },
     {
       "symbol": "300251",
       "fetch_status": "OK",
       "frozen_anchor_bar_count": 48,
       "anchor_bar_count": 48,
-      "target_bar_count": 0,
+      "target_bar_count": 48,
       "frozen_anchor_grid_complete": true,
       "anchor_grid_complete": true,
-      "target_grid_complete": false,
+      "target_grid_complete": true,
       "anchor_exact_match": true,
-      "ready": false,
-      "reasons": [
-        "TARGET_SESSION_INCOMPLETE"
-      ]
+      "ready": true,
+      "reasons": []
     }
   ],
   "status": "SOURCE_INCOMPLETE",
@@ -1032,5 +1012,5 @@
   "realtime_readiness": false,
   "real_data_paper_readiness": false,
   "external_order_transmission": false,
-  "evidence_sha256": "fcee32d64438a333b851f066afb77289947eef8db313ddd3f045f1a357fb190f"
+  "evidence_sha256": "7e9f7a4a166643619a17693ff5e059401477849af9692eeed0c4e84423ee67dc"
 }
