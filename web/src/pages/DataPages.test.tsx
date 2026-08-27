@@ -2027,6 +2027,17 @@ describe('verified robustness evidence', () => {
     clearResponseError()
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
       ...result,
+      causal_contract: {
+        ...result.causal_contract,
+        entry_at: 'SAME_BAR_OPEN',
+      },
+    } as unknown as IntradayFactorBacktest)
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+    expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    clearResponseError()
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
+      ...result,
       sequential_advancement: {
         ...result.sequential_advancement,
         passed_research_stage_count: 2,

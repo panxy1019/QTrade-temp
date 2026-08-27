@@ -2936,3 +2936,27 @@ counts, hash scope, digest or authority fields reject the complete response.
 This is independent response verification, not a signature or registry write.
 It does not change the backtest engine, create a strategy version, advance a
 research gate, authorize PAPER/LIVE, mutate runtime state or transmit an order.
+
+## ADR-161 — Intraday backtest clocks are exact branch-derived contracts
+
+Status: accepted, 2026-08-27.
+
+Two causal booleans cannot prove when a factor became knowable or which later
+provider Bar supplied an execution price. A response could preserve
+`same_bar_execution=false` and `t_plus_one_compliant=true` while moving entry to
+the signal Bar, shifting the interval label, or mixing the fixed-open and
+conditional-exit branches.
+
+The browser now derives the complete causal clock from the normalized exit rule.
+Both branches require the third ten-minute Bar to close at 10:00 before entry at
+the next provider five-minute open identified by label 10:05 and interval start
+10:00. The fixed branch requires the T+1 first-Bar open identified by label 09:35
+and interval start 09:30. The conditional branch requires its third T+1
+ten-minute Bar to close at 10:00, execution at the next 10:05-labelled Bar, and
+fallback at the 15:00-labelled Bar whose interval starts at 14:55. Exact recursive
+matching rejects branch mixing, changed clocks or labels, and missing or extra
+fields before metrics render.
+
+This verifies response timing only. It does not recalculate returns, alter the
+backtest engine, register or advance a strategy, authorize PAPER/LIVE, mutate
+runtime state or transmit an external order.

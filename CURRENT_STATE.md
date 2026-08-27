@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 129 frontend Vitest
+  (macOS, 2026-08-27); 138 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -1075,6 +1075,13 @@ Last updated: 2026-08-27
   sample outcomes. This is a reproducible read-only identity, not a registry
   insertion: it remains `AD_HOC_UNREGISTERED`, PAPER-ineligible, stateless and
   external-order-disabled.
+- Intraday causal-clock admission: the browser no longer treats only
+  `same_bar_execution=false` and `t_plus_one_compliant=true` as proof of timing.
+  It reconstructs the exact 10:00-known/10:05-next-Bar entry clock and either
+  the T+1 09:30 first-open exit or the T+1 10:00-known/10:05 conditional exit
+  with a 14:55 interval-start fallback. Branch mixing, drifted timestamps or Bar
+  labels, and missing or extra fields reject the complete response before any
+  metric renders. This adds no engine, PAPER/LIVE, state or order authority.
 - Sequential factor-to-strategy advancement: the API and Chinese workbench now
   distinguish a computed diagnostic from permission to advance. Factor
   effectiveness, correlation and rolling robustness are three ordered research
