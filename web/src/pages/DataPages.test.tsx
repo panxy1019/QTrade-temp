@@ -1560,18 +1560,52 @@ describe('verified robustness evidence', () => {
       },
     }
     window.localStorage.clear()
+    const selectedTradingDays = intradayData.longFiveMinuteResearch.minute_dataset!.trading_days.slice(0, 20)
+    const strategyReturns = [
+      -0.051,
+      0.9592 / (0.949 * 1.001 ** 8) - 1,
+      ...Array.from({ length: 8 }, () => 0.001),
+      ...Array.from({ length: 10 }, () => 0),
+    ]
+    const benchmarkReturns = [
+      -0.051,
+      0.9567 / (0.949 * 1.0005 ** 8) - 1,
+      ...Array.from({ length: 8 }, () => 0.0005),
+      ...Array.from({ length: 10 }, () => 0),
+    ]
+    let strategyEquity = 1
+    let benchmarkEquity = 1
+    const curve = selectedTradingDays.map((tradingDay, index) => {
+      strategyEquity *= 1 + strategyReturns[index]
+      benchmarkEquity *= 1 + benchmarkReturns[index]
+      return {
+        trading_day: tradingDay,
+        signal_count: index < 12 ? 10 : 9,
+        eligible_symbol_count: 75,
+        strategy_return: String(strategyReturns[index]),
+        benchmark_return: String(benchmarkReturns[index]),
+        strategy_equity: String(strategyEquity),
+        benchmark_equity: String(benchmarkEquity),
+        excess_equity: String(strategyEquity - benchmarkEquity),
+      }
+    })
     const metrics = {
       total_return: '-0.0408', annualized_return: '-0.4087', annualized_volatility: '0.1538',
       sharpe: '-3.3347', sortino: '-4.2', maximum_drawdown: '-0.0510', calmar: '-8.0',
-      win_rate: '0.45', benchmark_return: '-0.0434', excess_return: '0.0025',
+      win_rate: '0.45', benchmark_return: '-0.0433', excess_return: '0.0025',
       information_ratio: '0.292', number_of_periods: 20, turnover: '40',
       profit_loss_ratio: '1.145', exposure: '1', number_of_trades: 192,
       transaction_costs: '0.0199',
     }
+    const benchmarkMetrics = {
+      ...metrics,
+      total_return: '-0.0433', benchmark_return: '-0.0433', excess_return: '0',
+      number_of_trades: 1500,
+    }
     const group = {
       group_id: '801780', group_name: '银行', observation_count: 100, signal_count: 10,
       mean_signal_forward_return: '0.001', signal_hit_rate: '0.6',
-      strategy_metrics: metrics, benchmark_metrics: { ...metrics, excess_return: '0' },
+      strategy_metrics: metrics, benchmark_metrics: benchmarkMetrics,
     }
     const strategySpecHash = 'ae3e57ed25bd3fe909cdf1e46e360c3e0da53ac9f52f32d4eeb104cbd06d2d8c'
     const strategyId = `adhoc-intraday-${strategySpecHash.slice(0, 16)}`
@@ -1794,9 +1828,9 @@ describe('verified robustness evidence', () => {
         paper_eligible: false, promotion_authority: false, state_mutation: false, external_order_transmission: false,
       },
       backtest: {
-        strategy_metrics: metrics, benchmark_metrics: { ...metrics, total_return: '-0.0434', excess_return: '0' },
-        cost_stress: { '5': { strategy_metrics: metrics, benchmark_metrics: metrics } },
-        curve: [{ trading_day: '2026-07-28', signal_count: 10, eligible_symbol_count: 75, strategy_return: '-0.01', benchmark_return: '-0.011', strategy_equity: '0.99', benchmark_equity: '0.989', excess_equity: '0.001' }],
+        strategy_metrics: metrics, benchmark_metrics: benchmarkMetrics,
+        cost_stress: { '5': { strategy_metrics: metrics, benchmark_metrics: benchmarkMetrics } },
+        curve,
         sectors: [group], symbols: [
           { ...group, group_id: '600036', group_name: '600036' },
           { ...group, group_id: '000001', group_name: '000001' },
@@ -1889,7 +1923,7 @@ describe('verified robustness evidence', () => {
         state_mutation: false, external_order_transmission: false,
       },
       data_version: 'baostock-five-minute-long-v1', dataset_checksum: 'long-five-minute-checksum',
-      data_interval: '5m', selected_trading_days: ['2026-07-28'], exit_completion_day: '2026-07-29',
+      data_interval: '5m', selected_trading_days: selectedTradingDays, exit_completion_day: '2026-08-25',
       selected_session_count: 20, source_bar_count: 75600, symbol_count: 75, sector_count: 15,
       point_in_time: false, future_adjustment_knowledge_possible: true, realtime_readiness: false,
       promotion: 'NOT_ELIGIBLE', promotion_reasons: ['CURRENT_UNIVERSE_NON_PIT'],

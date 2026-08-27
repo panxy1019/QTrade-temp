@@ -18,6 +18,7 @@ import type { LocalIntradayFactorExperiment } from '../research/localIntradayFac
 import { buildIntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import type { IntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import { matchesIntradayCausalContract } from '../research/causalBacktestContract'
+import { matchesIntradayBacktestPerformance } from '../research/intradayBacktestPerformance'
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
 import { matchesNextHypothesisPreregistration } from '../research/nextHypothesisPreregistration'
 import { matchesBlockedPaperAdmission } from '../research/paperAdmission'
@@ -1786,6 +1787,7 @@ async function matchesBacktestResponse(
       && response.strategy.t_plus_one_compliant === true
       && exitValidationMatches
       && matchesIntradayCausalContract(response.causal_contract, request)
+      && matchesIntradayBacktestPerformance(response, request, dataset)
       && strategyIdentityMatches
       && matchesResearchWorkflow(response.workflow, {
         factorValidationPassed: response.factor_validation.passed,
