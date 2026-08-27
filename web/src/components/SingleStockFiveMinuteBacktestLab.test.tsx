@@ -6,6 +6,11 @@ import { SingleStockFiveMinuteBacktestLab } from './SingleStockFiveMinuteBacktes
 
 vi.mock('../api/client', () => ({ runSingleStockFiveMinuteBacktest: vi.fn() }))
 vi.mock('../charts/EquityChart', () => ({ EquityChart: () => <div data-testid="equity-chart" /> }))
+vi.mock('./JsonExportButton', () => ({
+  JsonExportButton: ({ value, label = '导出 JSON' }: { value: unknown; label?: string }) => (
+    <button data-export={JSON.stringify(value)}>{label}</button>
+  ),
+}))
 
 type Dataset = NonNullable<FiveMinuteResearchReport['minute_dataset']>
 
@@ -110,6 +115,17 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(within(screen.getByTestId('sector-batch-summary')).getByText('指标有效代表股')).toBeInTheDocument()
     expect(within(screen.getByTestId('sector-batch-summary')).getAllByText('2/2')).toHaveLength(3)
     expect(within(screen.getByTestId('sector-batch-summary')).getByText(/只按 2 个成功代表股/)).toBeInTheDocument()
+    const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
+    expect(exported.classification).toBe('BROWSER_SESSION_ONLY_CROSS_SECTOR_SAME_PARAMETER_DIAGNOSTIC')
+    expect(exported.dataset_identity).toEqual({ data_version: dataset.data_version, checksum: dataset.checksum })
+    expect(exported.status).toEqual({ requested: 3, completed: 2, failed: 1, identity_rejected: 0 })
+    expect(exported.requests.map((request: SingleStockFiveMinuteBacktestRequest) => request.symbol)).toEqual(['600003', '600001', '600004'])
+    expect(exported.results).toHaveLength(2)
+    expect(exported.summary).toMatchObject({ valid_metric_count: 2, positive_return_count: 2, positive_excess_count: 2 })
+    expect(exported.creates_immutable_evidence).toBe(false)
+    expect(exported.promotion).toBe('NOT_ELIGIBLE')
+    expect(exported.state_mutation).toBe(false)
+    expect(exported.external_order_transmission).toBe(false)
     await waitFor(() => expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledTimes(3))
   })
 
@@ -141,6 +157,23 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(await screen.findByText('同参批量部分完成：0/3 个板块')).toBeInTheDocument()
     expect(screen.queryByTestId('sector-batch-summary')).not.toBeInTheDocument()
     expect(screen.queryByText(/0\/0/)).not.toBeInTheDocument()
+    expect(screen.getByText('本次会话个股回测对比（0/15，覆盖 0 个板块）')).toBeInTheDocument()
+    const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
+    expect(exported.status).toEqual({ requested: 3, completed: 0, failed: 3, identity_rejected: 0 })
+    expect(exported.requests).toHaveLength(3)
+    expect(exported.results).toEqual([])
+    expect(exported.summary).toEqual({
+      valid_metric_count: 0,
+      positive_return_count: 0,
+      positive_excess_count: 0,
+      median_total_return: null,
+      worst_return: null,
+      deepest_drawdown: null,
+    })
+    expect(exported.creates_immutable_evidence).toBe(false)
+    expect(exported.promotion).toBe('NOT_ELIGIBLE')
+    expect(exported.state_mutation).toBe(false)
+    expect(exported.external_order_transmission).toBe(false)
     await waitFor(() => expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledTimes(3))
   })
 

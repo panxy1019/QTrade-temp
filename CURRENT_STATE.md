@@ -228,7 +228,9 @@ Last updated: 2026-08-27
   drawdown stocks, while failed requests remain outside every denominator. It does
   not admit a response until stock/sector, complete request parameters, signed
   dataset identity and all no-realtime/no-mutation/no-order flags match; identity
-  drift is counted and omitted. It does not tune per stock or prove sector/full-universe robustness;
+  drift is counted and omitted. Its batch export retains the full expected request
+  roster, status counts, successful results, finite-metric summary and explicit
+  browser-only/no-evidence safety boundary. It does not tune per stock or prove sector/full-universe robustness;
   QFQ/non-PIT, ad-hoc, `NOT_ELIGIBLE`, stateless and external-order-disabled
   boundaries are part of the response and UI.
 - Intraday factor workflow: `POST /intraday-factor-backtest` and the research

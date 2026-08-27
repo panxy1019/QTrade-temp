@@ -261,6 +261,12 @@ signed sector identity, every normalized parameter, the long-history dataset
 version/checksum and the fixed no-realtime/no-state/no-order contract. A mismatch
 is counted separately and excluded from the session and summary, so a stale or
 drifted response cannot support the same-parameter label.
+The active batch export now retains the complete expected request set and
+representative roster alongside success, failure and identity-rejection counts,
+the admitted results and the same finite-metric summary. The envelope explicitly
+states browser-session-only persistence, no immutable evidence/registry write,
+`NOT_ELIGIBLE` and no state/order capability; ordinary manual session exports
+remain simple result arrays.
 
 The historical research surface now also includes a bounded interactive preview.
 It accepts adjustable momentum/reversal/low-volatility, risk and cost parameters,

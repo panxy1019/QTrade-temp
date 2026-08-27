@@ -25,6 +25,8 @@ interface SectorBatchStatus {
   completed: number
   failed: number
   identityRejected: number
+  representatives: Array<{ symbol: string; name: string; sector_code: string; sector_name: string }>
+  requests: SingleStockFiveMinuteBacktestRequest[]
   requested: number
 }
 
@@ -140,12 +142,19 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
     setBatchStatus(null)
     setResult(null)
     setError(null)
+    const requests = sectorRepresentatives.map((representative) => toRequest(values, representative.symbol))
+    const representatives = sectorRepresentatives.map((representative) => ({
+      symbol: representative.symbol,
+      name: representative.name,
+      sector_code: representative.sector_code ?? '',
+      sector_name: representative.sector_name ?? '',
+    }))
     const completed: SingleStockFiveMinuteBacktest[] = []
     let failed = 0
     let identityRejected = 0
     for (const [index, representative] of sectorRepresentatives.entries()) {
       try {
-        const request = toRequest(values, representative.symbol)
+        const request = requests[index]
         const next = await runSingleStockFiveMinuteBacktest(request)
         if (isBoundBatchResponse(next, request, representative, dataset)) {
           completed.push(next)
@@ -159,7 +168,14 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       setBatchProgress(index + 1)
     }
     setSessionRuns(completed.slice(0, 15))
-    setBatchStatus({ completed: completed.length, failed, identityRejected, requested: sectorRepresentatives.length })
+    setBatchStatus({
+      completed: completed.length,
+      failed,
+      identityRejected,
+      representatives,
+      requests,
+      requested: sectorRepresentatives.length,
+    })
     setBatchRunning(false)
   }
   const reasons = result
@@ -185,6 +201,49 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       : (sortedBatchReturns[sortedBatchReturns.length / 2 - 1].totalReturn + sortedBatchReturns[sortedBatchReturns.length / 2].totalReturn) / 2
   const batchWorstReturn = sortedBatchReturns[0] ?? null
   const batchDeepestDrawdown = [...batchMetricRows].sort((left, right) => left.maximumDrawdown - right.maximumDrawdown)[0] ?? null
+  const batchDiagnosticExport = batchStatus ? {
+    classification: 'BROWSER_SESSION_ONLY_CROSS_SECTOR_SAME_PARAMETER_DIAGNOSTIC',
+    dataset_identity: { data_version: dataset.data_version, checksum: dataset.checksum },
+    representative_selection: {
+      method: 'SORT_SECTOR_CODE_THEN_SYMBOL_FIRST_PER_SECTOR',
+      instruments: batchStatus.representatives,
+    },
+    status: {
+      requested: batchStatus.requested,
+      completed: batchStatus.completed,
+      failed: batchStatus.failed,
+      identity_rejected: batchStatus.identityRejected,
+    },
+    requests: batchStatus.requests,
+    results: sessionRuns,
+    summary: {
+      valid_metric_count: batchMetricRows.length,
+      positive_return_count: batchMetricRows.filter((row) => row.totalReturn > 0).length,
+      positive_excess_count: batchMetricRows.filter((row) => row.excessReturn > 0).length,
+      median_total_return: batchMedianReturn,
+      worst_return: batchWorstReturn ? {
+        symbol: batchWorstReturn.row.symbol,
+        sector_code: batchWorstReturn.row.instrument.sector_code,
+        total_return: batchWorstReturn.totalReturn,
+      } : null,
+      deepest_drawdown: batchDeepestDrawdown ? {
+        symbol: batchDeepestDrawdown.row.symbol,
+        sector_code: batchDeepestDrawdown.row.instrument.sector_code,
+        maximum_drawdown: batchDeepestDrawdown.maximumDrawdown,
+      } : null,
+    },
+    persistence: 'NONE_REFRESH_CLEARS',
+    creates_immutable_evidence: false,
+    registry_write: false,
+    promotion: 'NOT_ELIGIBLE',
+    state_mutation: false,
+    external_order_transmission: false,
+    limitations: [
+      'ONE_DETERMINISTIC_REPRESENTATIVE_PER_SECTOR_NOT_FULL_UNIVERSE',
+      'AD_HOC_VIEWED_HISTORY_NOT_INDEPENDENT_SAMPLE_OUT_EVIDENCE',
+      'BROWSER_SESSION_DIAGNOSTIC_NOT_PAPER_OR_LIVE_ADMISSION',
+    ],
+  } : null
 
   return <Card title="个股 5 分钟因果回测" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · {dataset.session_count} 日</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
@@ -290,7 +349,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
         />
         <JsonExportButton filename={`qtrade-${result.symbol}-five-minute-${result.preview_hash.slice(0, 12)}.json`} value={result} label="导出个股回测" />
       </>}
-      {sessionRuns.length > 0 && <Card type="inner" title={`本次会话个股回测对比（${sessionRuns.length}/15，覆盖 ${sessionSectorCount} 个板块）`} extra={<JsonExportButton filename="qtrade-single-stock-five-minute-session-comparison.json" value={sessionRuns} label="导出本次会话对比" size="small" />}>
+      {(sessionRuns.length > 0 || batchDiagnosticExport) && <Card type="inner" title={`本次会话个股回测对比（${sessionRuns.length}/15，覆盖 ${sessionSectorCount} 个板块）`} extra={<JsonExportButton filename={batchDiagnosticExport ? 'qtrade-cross-sector-five-minute-session-diagnostic.json' : 'qtrade-single-stock-five-minute-session-comparison.json'} value={batchDiagnosticExport ?? sessionRuns} label="导出本次会话对比" size="small" />}>
         <Space orientation="vertical" style={{ width: '100%' }}>
           <Typography.Text type="secondary">仅保留当前页面会话最近 15 个不同结果哈希，便于各选一股覆盖签名数据的 15 个板块；覆盖数只是当前会话去重统计。刷新后清空，不写服务端、不构成正式实验或晋级证据。</Typography.Text>
           <Table<SingleStockFiveMinuteBacktest>

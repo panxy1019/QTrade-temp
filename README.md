@@ -277,7 +277,13 @@ the browser also requires its stock/sector identity, complete normalized request
 parameters, signed data version/checksum, fixed `NOT_ELIGIBLE` classification and
 all realtime/PAPER/state/order safety flags to match the batch contract. A drifted
 response is counted as identity-rejected and omitted rather than mixed into the
-same-parameter claim. The comparison is cleared on
+same-parameter claim. While that batch identity remains active, the session export
+is an explicit browser-only diagnostic envelope rather than a bare success array:
+it preserves the signed dataset identity, deterministic representative roster,
+every expected normalized request, completed/failed/identity-rejected counts,
+successful results, finite-metric summary and worst tail. It explicitly carries
+no-persistence, no-registry, `NOT_ELIGIBLE`, no-state and no-order boundaries.
+The comparison is cleared on
 refresh and is neither persisted evidence nor an experiment record. Every result
 remains current-universe, QFQ/non-PIT,
 `NOT_ELIGIBLE`, stateless and unable to transmit an external order.

@@ -2434,3 +2434,23 @@ This duplicates only the minimum client-side binding needed to make the visible
 same-parameter claim honest. The signed API remains authoritative; the check does
 not create a second engine, repair a response, retry it, persist evidence, register
 or promote a strategy, change PAPER/LIVE state or add order capability.
+
+## ADR-138 — Batch exports retain the attempted denominator without becoming evidence
+
+Status: accepted, 2026-08-27.
+
+A success-only result array cannot reconstruct which sector representatives were
+attempted, whether each request used the same normalized parameters, or how many
+requests failed or were rejected by identity checks. That makes an exported batch
+less auditable than the page that produced it.
+
+While batch status is active, the comparison export is therefore a bounded
+browser-session diagnostic envelope. It carries the signed dataset identity, the
+deterministic selection method and representative roster, every expected request,
+all status counts, admitted results and the finite-metric cross-sectional summary.
+Worst return and deepest drawdown identities remain explicit.
+
+The envelope declares that refresh clears it, it creates no immutable evidence or
+registry write, promotion is `NOT_ELIGIBLE`, and state mutation/external orders are
+false. It is not uploaded or persisted and cannot be used as an experiment,
+statistical robustness gate, PAPER/LIVE admission or order authorization.
