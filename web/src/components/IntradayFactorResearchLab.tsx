@@ -23,6 +23,7 @@ import { matchesBlockedPaperAdmission } from '../research/paperAdmission'
 import { matchesResearchWorkflow } from '../research/researchWorkflow'
 import { matchesSequentialAdvancement } from '../research/sequentialAdvancement'
 import { matchesBlockedStrategyRegistrationPreflight } from '../research/strategyRegistrationPreflight'
+import { matchesIntradayFactorDefinition, matchesIntradayStrategyIdentity } from '../research/strategyIdentity'
 import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorDiscovery, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
@@ -427,7 +428,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setError(null)
     try {
       const next = await runIntradayFactorBacktest(payload)
-      if (!matchesBacktestResponse(next, payload, dataset)) {
+      if (!await matchesBacktestResponse(next, payload, dataset)) {
         throw new Error('策略回测响应身份或安全边界与请求不一致，结果已拒绝')
       }
       setResult(next)
@@ -1730,11 +1731,11 @@ function Metric({ label, value }: { label: string; value: string }) {
   return <div><span>{label}</span><strong>{value}</strong></div>
 }
 
-function matchesBacktestResponse(
+async function matchesBacktestResponse(
   response: IntradayFactorBacktest | null,
   request: IntradayFactorBacktestRequest,
   dataset: VerifiedFiveMinuteDataset,
-): response is IntradayFactorBacktest {
+): Promise<boolean> {
   if (!response) return false
   try {
     const identity = response.strategy_identity
@@ -1749,6 +1750,22 @@ function matchesBacktestResponse(
     const expectedStrategyExitRule = expectedExitRule === 'NEXT_SESSION_OPEN'
       ? 'NEXT_SESSION_OPEN_T_PLUS_ONE'
       : expectedExitRule
+    const exitValidationMatches = expectedExitRule === 'NEXT_SESSION_OPEN'
+      ? response.exit_factor_validation === undefined
+      : response.exit_factor_validation !== undefined
+        && response.exit_factor_validation.entry_signal_count === response.event_summary.signal_count
+        && response.exit_factor_validation.trigger_count <= response.event_summary.signal_count
+    const strategyIdentityMatches = await matchesIntradayStrategyIdentity(
+      response.strategy,
+      identity,
+      request,
+      {
+        signalCount: response.event_summary.signal_count,
+        ...(response.exit_factor_validation
+          ? { exitTriggerCount: response.exit_factor_validation.trigger_count }
+          : {}),
+      },
+    )
     return response.classification === 'AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT'
       && sameBacktestRequest(response.parameters, request)
       && response.data_version === dataset.data_version
@@ -1756,10 +1773,7 @@ function matchesBacktestResponse(
       && response.data_interval === '5m'
       && response.symbol_count === dataset.symbol_count
       && response.sector_count === dataset.sector_count
-      && response.factor_definition.minimum_body_return_bps === request.minimum_body_return_bps
-      && response.factor_definition.combination === request.combination
-      && sameDirections(response.factor_definition.directions, request.directions)
-      && response.factor_definition.arbitrary_code_execution === false
+      && matchesIntradayFactorDefinition(response.factor_definition, request)
       && response.strategy.entry_minimum_body_return_bps === request.minimum_body_return_bps
       && response.strategy.entry_combination === request.combination
       && sameDirections(response.strategy.entry_directions, request.directions)
@@ -1769,17 +1783,10 @@ function matchesBacktestResponse(
         || response.strategy.exit_minimum_body_return_bps === expectedExitThreshold)
       && response.strategy.single_side_cost_bps === request.cost_bps
       && response.strategy.t_plus_one_compliant === true
+      && exitValidationMatches
       && response.causal_contract.same_bar_execution === false
       && response.causal_contract.t_plus_one_compliant === true
-      && /^[a-f0-9]{64}$/.test(identity.spec_hash)
-      && identity.strategy_id === `adhoc-intraday-${identity.spec_hash.slice(0, 16)}`
-      && identity.classification === 'AD_HOC_READ_ONLY_STRATEGY_IDENTITY'
-      && identity.registration_status === 'AD_HOC_UNREGISTERED'
-      && identity.immutable_within_response === true
-      && identity.paper_eligible === false
-      && identity.promotion_authority === false
-      && identity.state_mutation === false
-      && identity.external_order_transmission === false
+      && strategyIdentityMatches
       && matchesResearchWorkflow(response.workflow, {
         factorValidationPassed: response.factor_validation.passed,
         correlationValidationPassed: response.correlation_validation.passed,

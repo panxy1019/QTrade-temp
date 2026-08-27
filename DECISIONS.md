@@ -2912,3 +2912,27 @@ context.
 
 This check changes no research conclusion and adds no workflow transition,
 registry operation, PAPER/LIVE runtime, state mutation or external order path.
+
+## ADR-160 — Strategy behavior identity is reconstructed and rehashed in the browser
+
+Status: accepted, 2026-08-27.
+
+A hash-shaped server field and an ID derived from its prefix do not establish
+that the displayed strategy matches either the submitted request or the stated
+hash scope. Strategy behavior and a matching invented digest could previously
+drift together while downstream read-only admission records remained internally
+consistent with those invented values.
+
+The browser now reconstructs the exact entry factor, conditional or time exit,
+causal price sources, position rule, benchmark, cost and T+1 behavior from the
+normalized request. It binds observed conditional-exit and fallback counts to
+the response while excluding only those two outcome counts from the immutable
+behavior specification. The specification is serialized with the same recursive
+key ordering and compact JSON semantics as the service, hashed with Web Crypto
+SHA-256, and compared with the exact scope, digest, derived ID and read-only
+identity object. Extra, missing or drifted behavior, factor metadata, outcome
+counts, hash scope, digest or authority fields reject the complete response.
+
+This is independent response verification, not a signature or registry write.
+It does not change the backtest engine, create a strategy version, advance a
+research gate, authorize PAPER/LIVE, mutate runtime state or transmit an order.

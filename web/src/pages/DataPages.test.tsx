@@ -1573,6 +1573,8 @@ describe('verified robustness evidence', () => {
       mean_signal_forward_return: '0.001', signal_hit_rate: '0.6',
       strategy_metrics: metrics, benchmark_metrics: { ...metrics, excess_return: '0' },
     }
+    const strategySpecHash = 'ae3e57ed25bd3fe909cdf1e46e360c3e0da53ac9f52f32d4eeb104cbd06d2d8c'
+    const strategyId = `adhoc-intraday-${strategySpecHash.slice(0, 16)}`
     const result = {
       classification: 'AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT',
       factor_definition: {
@@ -1621,8 +1623,8 @@ describe('verified robustness evidence', () => {
         classification: 'READ_ONLY_NEXT_HYPOTHESIS_PREREGISTRATION_PREFLIGHT',
         status: 'REQUIRED_NOT_CREATED',
         current_result_binding: {
-          strategy_id: `adhoc-intraday-${'e'.repeat(16)}`,
-          strategy_spec_hash: 'e'.repeat(64),
+          strategy_id: strategyId,
+          strategy_spec_hash: strategySpecHash,
           data_version: 'baostock-five-minute-long-v1',
           dataset_checksum: 'long-five-minute-checksum',
           viewed_evidence_period: { start: '2026-07-28', end: '2026-08-24' },
@@ -1667,8 +1669,8 @@ describe('verified robustness evidence', () => {
         classification: 'READ_ONLY_STRATEGY_REGISTRY_ADMISSION_PREFLIGHT',
         decision: 'BLOCKED',
         current_candidate: {
-          strategy_id: `adhoc-intraday-${'e'.repeat(16)}`,
-          behavior_spec_hash: 'e'.repeat(64),
+          strategy_id: strategyId,
+          behavior_spec_hash: strategySpecHash,
           behavior_spec_hash_is_complete_registry_spec_hash: false,
           registration_status: 'AD_HOC_UNREGISTERED',
           registry_spec_hash_status: 'NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING',
@@ -1684,7 +1686,7 @@ describe('verified robustness evidence', () => {
           { gate_id: 'causal_backtest_passed', passed: false, evidence: 'backtest.passed=false' },
           { gate_id: 'signed_hypothesis_preregistration_attached', passed: false, evidence: 'NOT_ATTACHED' },
           { gate_id: 'independent_leakage_review_passed', passed: false, evidence: 'NOT_ATTACHED' },
-          { gate_id: 'behavior_spec_hash_bound', passed: true, evidence: 'e'.repeat(64) },
+          { gate_id: 'behavior_spec_hash_bound', passed: true, evidence: strategySpecHash },
           { gate_id: 'complete_registry_spec_and_hash_bound', passed: false, evidence: 'NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING' },
           { gate_id: 'dataset_identity_bound', passed: true, evidence: 'baostock-five-minute-long-v1 · long-five-minute-checksum' },
           { gate_id: 'disjoint_time_split_frozen', passed: false, evidence: 'NOT_FROZEN' },
@@ -1770,7 +1772,7 @@ describe('verified robustness evidence', () => {
         passed: false,
       },
       strategy: {
-        entry_factor_id: 'custom-opening-ten-minute-direction-v1',
+        entry_factor_id: 'opening-three-ten-minute-bullish-v1',
         entry_condition: 'bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000',
         entry_minimum_body_return_bps: '0', entry_directions: ['BULLISH', 'BULLISH', 'BULLISH'], entry_combination: 'ALL',
         entry_rule: 'NEXT_5M_OPEN_10_05', exit_rule: 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP',
@@ -1782,12 +1784,12 @@ describe('verified robustness evidence', () => {
         fallback_exit_price_source: 'OPEN_OF_NEXT_SESSION_BAR_LABELLED_15_00_INTERVAL_START_14_55',
         conditional_exit_count: 28, fallback_time_stop_count: 164,
         position_rule: 'EQUAL_WEIGHT_TRIGGERED_STOCKS_ELSE_CASH',
-        benchmark_rule: 'EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_HORIZON',
+        benchmark_rule: 'EQUAL_WEIGHT_ALL_ELIGIBLE_STOCKS_SAME_PER_SYMBOL_EXIT_RULE',
         single_side_cost_bps: '5', t_plus_one_compliant: true,
       },
       strategy_identity: {
         classification: 'AD_HOC_READ_ONLY_STRATEGY_IDENTITY',
-        strategy_id: `adhoc-intraday-${'e'.repeat(16)}`, spec_hash: 'e'.repeat(64), spec_hash_scope: 'strategy_without_observed_exit_counts',
+        strategy_id: strategyId, spec_hash: strategySpecHash, spec_hash_scope: 'strategy_without_observed_exit_counts',
         registration_status: 'AD_HOC_UNREGISTERED', immutable_within_response: true,
         paper_eligible: false, promotion_authority: false, state_mutation: false, external_order_transmission: false,
       },
@@ -1831,7 +1833,7 @@ describe('verified robustness evidence', () => {
           { gate_id: 'verified_historical_dataset_identity_bound', passed: true, evidence: 'baostock-five-minute-long-v1 · long-five-minute-checksum' },
           { gate_id: 'research_gate_passed', passed: false, evidence: 'research_gate.passed=false' },
           { gate_id: 'causal_backtest_passed', passed: false, evidence: 'backtest.passed=false' },
-          { gate_id: 'registered_immutable_strategy_version_available', passed: false, evidence: `AD_HOC_UNREGISTERED · adhoc-intraday-${'e'.repeat(16)} · ${'e'.repeat(64)}` },
+          { gate_id: 'registered_immutable_strategy_version_available', passed: false, evidence: `AD_HOC_UNREGISTERED · ${strategyId} · ${strategySpecHash}` },
           { gate_id: 'unseen_forward_shadow_evidence_attached', passed: false, evidence: 'NO_AUTHORIZED_FORWARD_PAPER_EVIDENCE' },
           { gate_id: 'authorized_realtime_provider_ready', passed: false, evidence: 'NO_AUTHORIZED_REALTIME_PROVIDER' },
           { gate_id: 'fresh_runtime_readiness_attestation_available', passed: false, evidence: 'NO_RUNTIME_ATTESTATION' },
@@ -1945,7 +1947,7 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText('不可变策略版本已注册')).toBeInTheDocument()
     expect(screen.getByText('AD_HOC_UNREGISTERED')).toBeInTheDocument()
     expect(screen.getByText('策略规格已冻结为只读预览，但未注册')).toBeInTheDocument()
-    expect(screen.getByText(`adhoc-intraday-${'e'.repeat(16)}`)).toBeInTheDocument()
+    expect(screen.getByText(strategyId)).toBeInTheDocument()
     expect(screen.getByText('策略规格 SHA-256 已绑定')).toBeInTheDocument()
     expect(screen.getByText(/开仓因子、平仓规则、仓位、基准与成本已进入同一哈希/)).toBeInTheDocument()
     expect(screen.getAllByText('聚类信号日')[1].nextSibling).toHaveTextContent('20')
@@ -1991,8 +1993,8 @@ describe('verified robustness evidence', () => {
     expect(factorComparison.getAllByText('样本外超额').length).toBeGreaterThan(0)
     expect(factorComparison.getAllByText('NW 95% 区间').length).toBeGreaterThan(0)
     expect(factorComparison.getAllByText('策略身份').length).toBeGreaterThan(0)
-    expect(factorComparison.getAllByText(`adhoc-intraday-${'e'.repeat(16)}`).length).toBeGreaterThan(0)
-    expect(factorComparison.getAllByText(`规格 ${'e'.repeat(12)}… · 未注册`).length).toBeGreaterThan(0)
+    expect(factorComparison.getAllByText(strategyId).length).toBeGreaterThan(0)
+    expect(factorComparison.getAllByText(`规格 ${strategySpecHash.slice(0, 12)}… · 未注册`).length).toBeGreaterThan(0)
     expect(factorComparison.getAllByText('-40.87%').length).toBeGreaterThan(0)
     expect(factorComparison.getAllByText('0.25%').length).toBeGreaterThan(0)
     expect(factorComparison.getAllByText('-0.003').length).toBeGreaterThan(0)
@@ -2016,6 +2018,13 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    const clearResponseError = () => {
+      const threshold = screen.getByRole('spinbutton', { name: '每根 10 分钟实体下限（bps）' })
+      fireEvent.change(threshold, { target: { value: '1' } })
+      fireEvent.change(threshold, { target: { value: '0' } })
+      expect(screen.queryByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).not.toBeInTheDocument()
+    }
+    clearResponseError()
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
       ...result,
       sequential_advancement: {
@@ -2026,6 +2035,7 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    clearResponseError()
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
       ...result,
       next_hypothesis_preregistration: {
@@ -2036,6 +2046,7 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    clearResponseError()
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
       ...result,
       l2_factor_readiness: {
@@ -2047,6 +2058,7 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    clearResponseError()
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
       ...result,
       paper_admission: {
@@ -2057,6 +2069,7 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    clearResponseError()
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
       ...result,
       strategy_registration_preflight: {
@@ -2067,7 +2080,7 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
-  }, 15_000)
+  }, 20_000)
 
   it('does not present experiment records as a registered lineage', () => {
     render(<ResearchPage data={data} />)
