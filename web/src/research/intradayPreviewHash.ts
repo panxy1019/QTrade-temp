@@ -1,8 +1,11 @@
-import type { IntradayFactorBacktest } from '../types'
 import { canonicalJson, sha256Hex } from './strategyIdentity'
 
-export async function matchesIntradayPreviewHash(
-  response: IntradayFactorBacktest,
+interface PreviewHashedResponse {
+  preview_hash: string
+}
+
+export async function matchesResponsePreviewHash(
+  response: PreviewHashedResponse,
 ): Promise<boolean> {
   if (!/^[a-f0-9]{64}$/.test(response.preview_hash)) return false
   const unsigned = { ...response } as Record<string, unknown>
@@ -10,3 +13,5 @@ export async function matchesIntradayPreviewHash(
   const digest = await sha256Hex(canonicalJson(unsigned))
   return digest !== null && digest === response.preview_hash
 }
+
+export const matchesIntradayPreviewHash = matchesResponsePreviewHash

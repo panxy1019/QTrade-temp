@@ -22,7 +22,8 @@ import { matchesIntradayCausalContract } from '../research/causalBacktestContrac
 import { matchesIntradayBacktestPerformance } from '../research/intradayBacktestPerformance'
 import { matchesIntradayFactorValidation } from '../research/intradayFactorValidation'
 import { matchesIntradayEventSummary } from '../research/intradayEventSummary'
-import { matchesIntradayPreviewHash } from '../research/intradayPreviewHash'
+import { matchesIntradayDiscoveryResponse } from '../research/intradayDiscoveryResponse'
+import { matchesIntradayPreviewHash, matchesResponsePreviewHash } from '../research/intradayPreviewHash'
 import { matchesIntradayRobustness } from '../research/intradayRobustness'
 import { matchesIntradayStability } from '../research/intradayStability'
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
@@ -533,7 +534,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
         })),
       }
       const correlation = await runIntradayFactorCorrelation(request)
-      if (!matchesCorrelationResponse(correlation, request, dataset)) {
+      if (!await matchesCorrelationResponse(correlation, request, dataset)) {
         throw new Error('相关性响应身份或安全边界与请求不一致，结果已拒绝')
       }
       setCorrelationResult(correlation)
@@ -652,11 +653,16 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setDiscoveryError(null)
     setDiscoveryHandoffStatus(null)
     try {
-      setDiscoveryResult(await runIntradayFactorDiscovery({
+      const request = {
         start: eligibleEndDays[endIndex - 39],
         end: values.end,
         cost_bps: String(values.cost_bps),
-      }))
+      }
+      const discovery = await runIntradayFactorDiscovery(request)
+      if (!await matchesIntradayDiscoveryResponse(discovery, request, dataset)) {
+        throw new Error('因子挖掘响应身份或安全边界与请求不一致，结果已拒绝')
+      }
+      setDiscoveryResult(discovery)
     } catch (reason) {
       setDiscoveryResult(null)
       setDiscoveryError(reason instanceof Error ? reason.message : '分钟因子挖掘失败')
@@ -1894,11 +1900,11 @@ function sameDirections(
     && left.every((direction, index) => direction === right[index])
 }
 
-function matchesCorrelationResponse(
+async function matchesCorrelationResponse(
   response: IntradayFactorCorrelation,
   request: IntradayFactorCorrelation['parameters'],
   dataset: VerifiedFiveMinuteDataset,
-): boolean {
+): Promise<boolean> {
   try {
     const ruleIds = request.rules.map((_, index) => `R${String(index + 1).padStart(2, '0')}`)
     const startIndex = dataset.trading_days.indexOf(request.start)
@@ -1978,7 +1984,7 @@ function matchesCorrelationResponse(
       && pairValidation.matches
       && approximatelyEqual(response.maximum_absolute_correlation, pairValidation.maximumAbsoluteCorrelation)
       && response.passed === !pairValidation.hasRedundantPair
-      && /^[a-f0-9]{64}$/.test(response.preview_hash)
+      && await matchesResponsePreviewHash(response)
       && response.point_in_time === false
       && response.future_adjustment_knowledge_possible === true
       && response.realtime_readiness === false

@@ -4,6 +4,7 @@ import { runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFac
 import { saveLocalIntradayFactorCandidate } from '../research/localIntradayFactorCandidates'
 import type { LocalIntradayFactorCandidate } from '../research/localIntradayFactorCandidates'
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
+import { canonicalJson, sha256Hex } from '../research/strategyIdentity'
 import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorCorrelation, IntradayFactorDiscovery } from '../types'
 import { IntradayFactorResearchLab } from './IntradayFactorResearchLab'
 
@@ -115,6 +116,14 @@ vi.mock('../research/localIntradayFactorCandidates', () => ({
   saveLocalIntradayFactorCandidate: vi.fn(),
   deleteLocalIntradayFactorCandidate: vi.fn(),
 }))
+
+async function withPreviewHash<T extends { preview_hash: string }>(value: T): Promise<T> {
+  const unsigned = structuredClone(value) as Record<string, unknown>
+  delete unsigned.preview_hash
+  const previewHash = await sha256Hex(canonicalJson(unsigned))
+  if (previewHash === null) throw new Error('Web Crypto SHA-256 unavailable')
+  return { ...value, preview_hash: previewHash }
+}
 
 const tradingDays = Array.from({ length: 22 }, (_, index) => (
   `2026-07-${String(index + 1).padStart(2, '0')}`
@@ -260,6 +269,57 @@ const discoveryMetrics = {
   excess_return: '-0.018107', information_ratio: '-1.5', number_of_periods: 20, turnover: '0.3',
   profit_loss_ratio: '0.8', exposure: '0.2', number_of_trades: 326, transaction_costs: '0.001',
 }
+const discoveryCandidate = {
+  candidate_id: 'DIR-XDU-T0000', directions: ['IGNORE', 'BEARISH', 'BULLISH'], combination: 'ALL',
+  minimum_body_return_bps: '0', factor_expression: 'bearish_10m_0940_0950 AND bullish_10m_0950_1000',
+  training_observation_count: 1500, training_signal_count: 348, training_signal_session_count: 20,
+  training_mean_session_conditional_excess_return: '0.00493055', training_newey_west_t_statistic: '2.189668',
+  training_strategy_metrics: { ...discoveryMetrics, total_return: '0.059943', excess_return: '0.096344' },
+  training_benchmark_metrics: discoveryMetrics,
+  training_gate_criteria: {
+    minimum_250_training_observations: true,
+    minimum_twenty_training_signals: true,
+    minimum_ten_training_signal_sessions: true,
+    positive_training_session_conditional_excess: true,
+    training_newey_west_t_statistic_above_1_96: true,
+  },
+  training_gate_passed: true,
+}
+const discoveryDirections = ['BULLISH', 'BEARISH', 'IGNORE'] as const
+const discoveryDirectionCodes = { BULLISH: 'U', BEARISH: 'D', IGNORE: 'X' } as const
+const discoveryOpeningLabels = ['0930_0940', '0940_0950', '0950_1000'] as const
+const discoveryThresholds = ['0', '5', '10', '20'] as const
+const discoveryCandidates = discoveryDirections.flatMap((first) => (
+  discoveryDirections.flatMap((second) => (
+    discoveryDirections.flatMap((third) => {
+      const directions = [first, second, third] as const
+      if (directions.every((direction) => direction === 'IGNORE')) return []
+      return discoveryThresholds.map((threshold) => {
+        const candidateId = `DIR-${directions.map((direction) => discoveryDirectionCodes[direction]).join('')}-T${threshold.padStart(4, '0')}`
+        if (candidateId === discoveryCandidate.candidate_id) return discoveryCandidate
+        return {
+          ...discoveryCandidate,
+          candidate_id: candidateId,
+          directions,
+          minimum_body_return_bps: threshold,
+          factor_expression: directions.flatMap((direction, index) => (
+            direction === 'IGNORE' ? [] : [`${direction.toLowerCase()}_10m_${discoveryOpeningLabels[index]}`]
+          )).join(' AND '),
+          training_mean_session_conditional_excess_return: '-0.001',
+          training_newey_west_t_statistic: '1',
+          training_gate_criteria: {
+            minimum_250_training_observations: true,
+            minimum_twenty_training_signals: true,
+            minimum_ten_training_signal_sessions: true,
+            positive_training_session_conditional_excess: false,
+            training_newey_west_t_statistic_above_1_96: false,
+          },
+          training_gate_passed: false,
+        }
+      })
+    })
+  ))
+))
 const discovery = {
   classification: 'BOUNDED_INTRADAY_FACTOR_DISCOVERY_REUSED_HISTORY_NOT_INDEPENDENT',
   parameters: { start: '2026-06-05', end: '2026-07-14', cost_bps: '5' },
@@ -274,20 +334,14 @@ const discovery = {
     selection_known_at: '2026-06-25T09:35:00+08:00', first_test_signal_known_at: '2026-06-25T10:00:00+08:00',
     selection_uses_test_returns: false, chronological_disjoint: true,
   },
-  candidates: [{
-    candidate_id: 'DIR-XDU-T0000', directions: ['IGNORE', 'BEARISH', 'BULLISH'], combination: 'ALL',
-    minimum_body_return_bps: '0', factor_expression: 'bearish_10m_0940_0950 AND bullish_10m_0950_1000',
-    training_observation_count: 1500, training_signal_count: 348, training_signal_session_count: 20,
-    training_mean_session_conditional_excess_return: '0.00493055', training_newey_west_t_statistic: '2.189668',
-    training_strategy_metrics: { ...discoveryMetrics, total_return: '0.059943', excess_return: '0.096344' },
-    training_benchmark_metrics: discoveryMetrics, training_gate_criteria: {}, training_gate_passed: true,
-  }],
+  candidates: discoveryCandidates,
   selected: {
     candidate_id: 'DIR-XDU-T0000', directions: ['IGNORE', 'BEARISH', 'BULLISH'], combination: 'ALL',
     minimum_body_return_bps: '0', factor_expression: 'bearish_10m_0940_0950 AND bullish_10m_0950_1000',
     training_gate_passed: true, training_signal_count: 348, training_signal_session_count: 20,
     training_mean_session_conditional_excess_return: '0.00493055', training_newey_west_t_statistic: '2.189668',
-    training_strategy_metrics: discoveryMetrics, selection_rule: 'TRAINING_ONLY',
+    training_strategy_metrics: discoveryCandidate.training_strategy_metrics,
+    selection_rule: 'TRAINING_GATE_THEN_NEWEY_WEST_T_THEN_EFFECT_THEN_LOWER_THRESHOLD_THEN_ID',
   },
   overfitting_audit: {
     method: 'COMBINATORIALLY_SYMMETRIC_CROSS_VALIDATION', block_count: 8, split_count: 70,
@@ -496,7 +550,15 @@ const discovery = {
     criteria: { positive_test_session_conditional_excess: false, test_strategy_total_return_positive: false },
     passed: false,
   },
-  promotion: 'NOT_ELIGIBLE', state_mutation: false, external_order_transmission: false,
+  data_version: 'baostock-five-minute-long-v1', dataset_checksum: 'long-five-minute-checksum',
+  data_interval: '5m', selected_trading_days: discoveryTradingDays.slice(4, 44),
+  exit_completion_day: discoveryTradingDays[44], source_bar_count: 147_600,
+  symbol_count: 75, sector_count: 15, point_in_time: false,
+  future_adjustment_knowledge_possible: true, realtime_readiness: false,
+  independent_confirmation: false, promotion: 'NOT_ELIGIBLE',
+  promotion_reasons: ['DISCOVERY_AND_TEST_WINDOW_ALREADY_VIEWED'],
+  paper_readiness: 'NOT_ELIGIBLE', live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION',
+  state_mutation: false, external_order_transmission: false,
   preview_hash: 'd'.repeat(64),
 } as unknown as IntradayFactorDiscovery
 
@@ -506,7 +568,7 @@ describe('intraday factor rule correlation', () => {
   })
 
   it('reruns two selected local rules on one bounded window and shows redundancy', async () => {
-    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce(correlation)
+    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce(await withPreviewHash(correlation))
     render(<IntradayFactorResearchLab dataset={dataset} />)
 
     expect(screen.getByText('当前开平仓条件草案（未运行）')).toBeInTheDocument()
@@ -570,7 +632,7 @@ describe('intraday factor rule correlation', () => {
   })
 
   it('hands an effective non-redundant entry factor to strategy construction without running it', async () => {
-    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce(admittedCorrelation)
+    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce(await withPreviewHash(admittedCorrelation))
     render(<IntradayFactorResearchLab dataset={dataset} />)
 
     expect(screen.queryByRole('button', { name: '载入“混合方向 B”进入策略构造' })).not.toBeInTheDocument()
@@ -593,10 +655,10 @@ describe('intraday factor rule correlation', () => {
   })
 
   it('fails closed when the factor-correlation response drifts from the requested dataset', async () => {
-    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce({
+    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce(await withPreviewHash({
       ...admittedCorrelation,
       dataset_checksum: 'drifted-checksum',
-    })
+    }))
     render(<IntradayFactorResearchLab dataset={dataset} />)
 
     const checkboxes = screen.getAllByRole('checkbox')
@@ -712,7 +774,7 @@ describe('intraday factor rule correlation', () => {
   })
 
   it('locks one training rule before the disjoint discovery test window', async () => {
-    vi.mocked(runIntradayFactorDiscovery).mockResolvedValueOnce(discovery)
+    vi.mocked(runIntradayFactorDiscovery).mockResolvedValueOnce(await withPreviewHash(discovery))
     render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
 
     expect(screen.queryByRole('button', { name: '载入训练锁定开仓因子' })).not.toBeInTheDocument()
@@ -764,5 +826,34 @@ describe('intraday factor rule correlation', () => {
     expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
     fireEvent.change(screen.getByRole('spinbutton', { name: '单边成本（bps）' }), { target: { value: '6' } })
     expect(screen.queryByText('训练最优规则未通过互斥测试段')).not.toBeInTheDocument()
+  })
+
+  it('fails closed when a signed discovery response drifts from the requested dataset', async () => {
+    vi.mocked(runIntradayFactorDiscovery).mockResolvedValueOnce(await withPreviewHash({
+      ...discovery,
+      dataset_checksum: 'drifted-checksum',
+    } as unknown as IntradayFactorDiscovery))
+    render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '挖掘最近 40 日的 104 个有界因子' }))
+
+    expect(await screen.findByText('因子挖掘响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '载入训练锁定开仓因子' })).not.toBeInTheDocument()
+    expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
+  })
+
+  it('fails closed when a signed discovery response substitutes a candidate identity', async () => {
+    vi.mocked(runIntradayFactorDiscovery).mockResolvedValueOnce(await withPreviewHash({
+      ...discovery,
+      candidates: discovery.candidates.map((candidate, index) => (
+        index === 1 ? { ...candidate, candidate_id: 'DIR-SUBSTITUTED-T0000' } : candidate
+      )),
+    } as unknown as IntradayFactorDiscovery))
+    render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '挖掘最近 40 日的 104 个有界因子' }))
+
+    expect(await screen.findByText('因子挖掘响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '载入训练锁定开仓因子' })).not.toBeInTheDocument()
   })
 })
