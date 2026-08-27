@@ -342,6 +342,15 @@ expanding-window test folds. The training day's T+1 exit is known at the test
 day's `09:35` open before that day's `10:00` signal; test returns never enter the
 same fold's selection.
 
+Once discovery returns, “载入训练锁定开仓因子” copies only the selected training
+candidate's three directions, fixed `ALL` combination and body threshold into
+the custom entry-factor form. Current dates, cost and exit rule are intentionally
+left untouched; any prior strategy/correlation response is cleared and no API
+run starts. The page keeps the discovery evidence visible and warns that its
+test window is already viewed, so the operator must separately choose/review an
+exit and run a diagnostic or genuinely new preregistered window. The handoff
+copies no test conclusion and creates no experiment, registry or runtime state.
+
 The research page begins with one evidence-derived, read-only factor catalog.
 It combines only definitions actually present in the signed daily-factor search
 and intraday long-window report, then displays each factor's selection/entry/

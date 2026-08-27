@@ -2640,3 +2640,24 @@ rendered; parameter or selected-rule changes invalidate the old result.
 The browser does not wrap, rehash, recalculate or persist the response. Export
 cannot select a winner, create an immutable experiment or registry record,
 promote a strategy, start PAPER/LIVE, mutate state or transmit an order.
+
+## ADR-148 — Discovery hands off an entry factor, not a tested strategy
+
+Status: accepted, 2026-08-27.
+
+The bounded discovery response identifies one training-locked opening rule, but
+the editable strategy form previously required manual transcription. Copying the
+whole discovery request or its test metrics would be worse: dates, cost, exit
+behavior and already viewed test conclusions are not part of the selected entry
+factor and must not silently become a strategy identity.
+
+The handoff therefore copies exactly the selected three directions, fixed `ALL`
+combination and body threshold into the custom opening-factor fields. It leaves
+the current date window, cost and exit rule untouched, clears stale strategy and
+multi-rule correlation responses, and performs no API request. The discovery
+card remains visible and labels the transfer as diagnostic; an exit condition,
+manual review and a new explicit run are still required.
+
+This operation copies no test conclusion and does not create or select another
+candidate, persist an experiment, write FactorRegistry/StrategyRegistry, promote
+a strategy, start PAPER/LIVE, mutate state or transmit an order.

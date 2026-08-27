@@ -350,6 +350,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const [discoveryResult, setDiscoveryResult] = useState<IntradayFactorDiscovery | null>(null)
   const [discoveryRunning, setDiscoveryRunning] = useState(false)
   const [discoveryError, setDiscoveryError] = useState<string | null>(null)
+  const [discoveryHandoffStatus, setDiscoveryHandoffStatus] = useState<string | null>(null)
 
   if (!dataset) {
     return <Card title="分钟因子研究工作台"><Alert showIcon type="warning" title="长历史 5 分钟数据不可用" description="系统不会用合成行情或不完整缓存替代经过 checksum 验证的多股票数据。" /></Card>
@@ -494,6 +495,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     }
     setDiscoveryRunning(true)
     setDiscoveryError(null)
+    setDiscoveryHandoffStatus(null)
     try {
       setDiscoveryResult(await runIntradayFactorDiscovery({
         start: eligibleEndDays[endIndex - 39],
@@ -506,6 +508,25 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     } finally {
       setDiscoveryRunning(false)
     }
+  }
+  const loadSelectedDiscoveryEntryFactor = () => {
+    if (!discoveryResult) return
+    const selected = discoveryResult.selected
+    form.setFieldsValue({
+      factor: 'custom_opening_ten_minute_direction_rule',
+      minimum_body_return_bps: selected.minimum_body_return_bps,
+      first_direction: selected.directions[0],
+      second_direction: selected.directions[1],
+      third_direction: selected.directions[2],
+      combination: selected.combination,
+    })
+    setSelectedFactor('custom_opening_ten_minute_direction_rule')
+    setResult(null)
+    setError(null)
+    setSaveStatus(null)
+    setCorrelationResult(null)
+    setCorrelationError(null)
+    setDiscoveryHandoffStatus(`已载入 ${selected.candidate_id} 的训练锁定开仓因子`)
   }
   const experimentColumns = [
     { title: '名称', dataIndex: 'name' },
@@ -617,6 +638,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setSaveStatus(null)
     setCorrelationResult(null)
     setCorrelationError(null)
+    setDiscoveryHandoffStatus(null)
     if ('end' in changedValues || 'cost_bps' in changedValues) {
       setDiscoveryResult(null)
       setDiscoveryError(null)
@@ -673,6 +695,16 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             description={`${discoveryResult.split.training_start} 至 ${discoveryResult.split.training_end} 只用于扫描 104 个固定候选；${discoveryResult.split.test_start} 至 ${discoveryResult.split.test_end} 只评估训练锁定的唯一规则。窗口已经被查看，结论固定为 ${discoveryResult.promotion}，不是新盲测。`}
           />
           <Typography.Text code>{discoveryResult.selected.factor_expression}</Typography.Text>
+          <Space wrap>
+            <Button onClick={loadSelectedDiscoveryEntryFactor}>载入训练锁定开仓因子</Button>
+            <Typography.Text type="secondary">仅复制训练阶段已经锁定的开仓表达式，不复制测试结论，也不会自动回测或晋级。</Typography.Text>
+          </Space>
+          {discoveryHandoffStatus && <Alert
+            showIcon
+            type="info"
+            title={discoveryHandoffStatus}
+            description="只回填开仓方向、ALL 组合和实体阈值；日期、成本与平仓条件保持不变，必须人工核对后重新运行。当前测试窗口已经查看，复现结果仍不是新的独立证据。"
+          />}
           <div className="description-grid">
             <Metric label="锁定候选" value={discoveryResult.selected.candidate_id} />
             <Metric label="训练 NW t" value={formatNumber(discoveryResult.selected.training_newey_west_t_statistic)} />

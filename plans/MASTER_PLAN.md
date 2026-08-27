@@ -444,6 +444,12 @@ that identity on the final 20 sessions. The first real run selected
 test returned -6.1491% total, -1.8107% excess and Newey-West t -0.5462. The
 visible failed result is frozen as viewed reused history; it cannot trigger a
 second search on the test window, state mutation, PAPER or external orders.
+The workbench can now hand the training-locked entry factor into the strategy
+form without transcription: only the three directions, fixed `ALL` combination
+and body threshold are copied. Dates, cost and exit rule remain untouched, old
+strategy/correlation results are cleared and no backtest starts. The already
+viewed test conclusion is not copied; exit design, manual review and a new run
+remain explicit separate steps with no registry or runtime authority.
 The same fixed candidate family now has an explicit selection-bias audit. Eight
 contiguous five-session blocks produce all 70 symmetric four-block training and
 four-block complement splits. Every split repeats the real gate/t-statistic/

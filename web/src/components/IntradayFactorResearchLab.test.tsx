@@ -467,6 +467,7 @@ describe('intraday factor rule correlation', () => {
     vi.mocked(runIntradayFactorDiscovery).mockResolvedValueOnce(discovery)
     render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
 
+    expect(screen.queryByRole('button', { name: '载入训练锁定开仓因子' })).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '挖掘最近 40 日的 104 个有界因子' }))
 
     await waitFor(() => expect(runIntradayFactorDiscovery).toHaveBeenCalledWith({
@@ -509,6 +510,10 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getAllByText('-6.15%').length).toBeGreaterThan(0)
     expect(screen.getByText(/选择时刻.*早于首个测试信号/)).toBeInTheDocument()
     expect(screen.getByText(/无状态写入、无外部订单/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '载入训练锁定开仓因子' }))
+    expect(await screen.findByText('body_return_0940_0950 <= -0 bps AND body_return_0950_1000 >= 0 bps')).toBeInTheDocument()
+    expect(screen.getByText(/只回填开仓方向、ALL 组合和实体阈值；日期、成本与平仓条件保持不变/)).toBeInTheDocument()
+    expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
     fireEvent.change(screen.getByRole('spinbutton', { name: '单边成本（bps）' }), { target: { value: '6' } })
     expect(screen.queryByText('训练最优规则未通过互斥测试段')).not.toBeInTheDocument()
   })

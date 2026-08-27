@@ -349,6 +349,14 @@ Last updated: 2026-08-27
   The test gate therefore fails. This entire window is now viewed reused-history
   evidence, not an independent confirmation or permission to retune it; the API
   and Chinese workbench keep it stateless, `NOT_ELIGIBLE`, with no external order.
+- Discovery-to-strategy handoff now copies only the training-locked entry-factor
+  identity into the editable strategy form: its three directions, fixed `ALL`
+  combination and body threshold. It deliberately preserves the operator's
+  current dates, cost and exit rule, clears any old strategy/correlation result,
+  and does not call a backtest. The page states that the test window is already
+  viewed and that exit construction, review and a fresh manual run remain
+  separate. This handoff copies no test conclusion and grants no persistence,
+  registration, promotion, PAPER/LIVE, state or order authority.
 - Discovery selection bias is now measured with one fixed combinatorially
   symmetric cross-validation audit. The same 40 viewed sessions are divided
   into eight contiguous five-session blocks; all 70 four-block training/four-
