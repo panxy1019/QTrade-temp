@@ -598,6 +598,14 @@ first `IDEA → EXPERIMENT` transition remains blocked until the experiment spec
 quality-passed data manifest and independent leakage review are present. The
 page exposes no registration operation or runtime/state/order mutation path.
 
+That preflight is now an exact dynamic browser transport contract. The client
+derives research-stage and causal-backtest gate values from the returned factor,
+correlation, robustness and backtest facts, then requires the ordered 15-field
+inventory, 6/15 readiness split, nine gate/evidence rows, passed-count arithmetic
+and fixed `IDEA → EXPERIMENT` evidence. Count, gate, field or authority drift
+rejects the whole response before metrics render; no registry or runtime write is
+added.
+
 The strategy center also exposes a read-only catalog of all five implemented
 baseline structures so the workflow can start from known code rather than from
 an already-selected experiment row. It labels equal-weight buy-and-hold as a

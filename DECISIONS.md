@@ -2826,3 +2826,26 @@ This is a response-admission boundary, not a promotion evaluator. It neither
 changes the server's research result nor creates registration, unseen-forward,
 realtime, attestation or reconciliation evidence. PAPER remains blocked and LIVE
 and external order transmission remain disabled.
+
+## ADR-156 — Strategy registration preflight is an exact dynamic contract
+
+Status: accepted, 2026-08-27.
+
+Checking only that registration is `BLOCKED`, the ad-hoc strategy identity
+matches and write flags are false does not validate a registry preflight. A
+payload could forge `8/9`, duplicate a passing gate, claim all fifteen fields are
+available or permit `IDEA → EXPERIMENT` while retaining those shallow fields.
+The surrounding backtest would then render an unreviewed registry boundary.
+
+The browser now derives ordered-research and causal-backtest gate values from
+the response's factor, correlation, robustness and backtest facts. It requires
+the exact 15-field `StrategySpec` inventory, six available and nine missing
+fields, all nine gate IDs and evidence strings, `2 + all_research + backtest`
+passed-count arithmetic, the fixed three-item transition evidence and every
+registration/runtime/state/order prohibition. Recursive exact matching rejects
+missing, duplicate and extra fields as well as evidence or authority drift.
+
+This remains transport admission for an ad-hoc historical preview. It does not
+compute a complete registry specification, attach preregistration or leakage
+review, freeze a disjoint split, declare lineage, insert an `IDEA`, start PAPER
+or LIVE, mutate runtime state or transmit an external order.

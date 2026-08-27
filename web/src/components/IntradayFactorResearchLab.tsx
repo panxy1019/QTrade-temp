@@ -19,6 +19,7 @@ import { buildIntradayFactorStrategyLineage } from '../research/intradayFactorSt
 import type { IntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
 import { matchesBlockedPaperAdmission } from '../research/paperAdmission'
+import { matchesBlockedStrategyRegistrationPreflight } from '../research/strategyRegistrationPreflight'
 import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorDiscovery, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
@@ -1800,15 +1801,16 @@ function matchesBacktestResponse(
       && preregistration.live_runtime_start === false
       && preregistration.state_mutation === false
       && preregistration.external_order_transmission === false
-      && registration.decision === 'BLOCKED'
-      && registration.current_candidate.strategy_id === identity.strategy_id
-      && registration.current_candidate.behavior_spec_hash === identity.spec_hash
-      && registration.registration_operation_exposed === false
-      && registration.registry_write === false
-      && registration.paper_runtime_start === false
-      && registration.live_runtime_start === false
-      && registration.state_mutation === false
-      && registration.external_order_transmission === false
+      && matchesBlockedStrategyRegistrationPreflight(registration, {
+        dataVersion: dataset.data_version,
+        datasetChecksum: dataset.checksum,
+        strategyId: identity.strategy_id,
+        strategySpecHash: identity.spec_hash,
+        factorValidationPassed: response.factor_validation.passed,
+        correlationValidationPassed: response.correlation_validation.passed,
+        robustnessValidationPassed: response.robustness_validation.passed,
+        backtestPassed: response.backtest.passed,
+      })
       && matchesBlockedPaperAdmission(paperAdmission, {
         dataVersion: dataset.data_version,
         datasetChecksum: dataset.checksum,

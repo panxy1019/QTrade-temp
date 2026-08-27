@@ -523,7 +523,11 @@ hash plus dataset-identity gates (`2/9`). Research, backtest, signed
 preregistration, leakage review, full registry hash, frozen disjoint split and
 lineage declaration remain blocked. No registration operation is exposed, and
 `IDEA → EXPERIMENT` still requires a complete experiment spec, a quality-passed
-manifest and an independent leakage-review PASS.
+manifest and an independent leakage-review PASS. The browser now admits that
+preflight only when the ordered 15-field inventory, 6/15 readiness split, nine
+gate identities/evidence, research/backtest-derived pass count and fixed
+transition evidence match exactly. A forged count, duplicate gate, field-list
+drift or exposed registration authority rejects the complete backtest response.
 
 For researchers who want to begin with existing strategy structures, the
 strategy center now loads a deterministic, read-only catalog of the five

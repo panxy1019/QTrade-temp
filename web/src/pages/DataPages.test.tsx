@@ -1681,7 +1681,7 @@ describe('verified robustness evidence', () => {
         },
         required_gates: [
           { gate_id: 'all_ordered_research_stages_passed', passed: false, evidence: '1/3' },
-          { gate_id: 'causal_backtest_passed', passed: false, evidence: 'false' },
+          { gate_id: 'causal_backtest_passed', passed: false, evidence: 'backtest.passed=false' },
           { gate_id: 'signed_hypothesis_preregistration_attached', passed: false, evidence: 'NOT_ATTACHED' },
           { gate_id: 'independent_leakage_review_passed', passed: false, evidence: 'NOT_ATTACHED' },
           { gate_id: 'behavior_spec_hash_bound', passed: true, evidence: 'e'.repeat(64) },
@@ -2023,6 +2023,16 @@ describe('verified robustness evidence', () => {
       paper_admission: {
         ...result.paper_admission,
         passed_gate_count: 7,
+      },
+    } as unknown as IntradayFactorBacktest)
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+    expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
+      ...result,
+      strategy_registration_preflight: {
+        ...result.strategy_registration_preflight,
+        passed_gate_count: 8,
       },
     } as unknown as IntradayFactorBacktest)
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))

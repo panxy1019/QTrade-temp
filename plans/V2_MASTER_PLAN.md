@@ -326,6 +326,10 @@ npm --prefix web run build
   Keep the rejected factor at 2/9 with no registration operation, and block
   `IDEA → EXPERIMENT` until the complete run spec, quality-passed manifest and
   independent leakage review exist.
+- [x] Validate that registry preflight as an exact dynamic browser contract:
+  bind the ordered 15-field/6-available inventory, nine gates and evidence to
+  factor/correlation/robustness/backtest facts, verify count arithmetic and the
+  fixed IDEA transition, and reject field/gate/count/authority drift wholesale.
 - [x] Expose a deterministic read-only catalog for all five implemented baseline
   strategy structures. Distinguish the buy-and-hold benchmark from four active
   research baselines, show implementation/input/entry/exit/default/limitation

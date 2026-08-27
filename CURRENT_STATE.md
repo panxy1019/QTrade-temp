@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 113 frontend Vitest
+  (macOS, 2026-08-27); 117 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -1112,6 +1112,13 @@ Last updated: 2026-08-27
   a complete `ExperimentRunSpec`, quality-passed manifest and independent
   leakage-review PASS are attached; registry/PAPER/LIVE/state/order writes stay
   false.
+- Strategy-registry browser boundary: the 15-field inventory, exact 6/15
+  readiness partition, ordered nine gates and evidence, dynamic research and
+  backtest pass arithmetic, fixed `IDEA → EXPERIMENT` evidence and all no-write
+  fields must now match before any strategy result renders. A forged `8/9`,
+  duplicated gate, readiness drift, transition permission or extra authority
+  rejects the entire response. The check creates no registry record or runtime
+  permission.
 - Implemented baseline strategy catalog: `/strategy-templates` and the strategy
   center now expose five deterministic code-backed starting points rather than
   only the eleven already-run experiment candidates. The catalog distinguishes
