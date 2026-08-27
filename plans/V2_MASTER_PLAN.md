@@ -340,6 +340,10 @@ npm --prefix web run build
   construction status, causal-backtest branch and next action from validated
   stage facts; reject missing/reordered/extra fields, forged arithmetic or any
   registration/state/order authority before rendering the strategy result.
+- [x] Validate the visible eight-stage workflow as an exact derived contract:
+  bind ordered status/detail rows to factor, correlation, robustness, optional
+  exit-factor validation and causal-backtest facts; admit strategy construction
+  only after all research prerequisites and keep PAPER/LIVE fixed closed.
 - [x] Expose a deterministic read-only catalog for all five implemented baseline
   strategy structures. Distinguish the buy-and-hold benchmark from four active
   research baselines, show implementation/input/entry/exit/default/limitation

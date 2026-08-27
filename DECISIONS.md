@@ -2891,3 +2891,24 @@ state and any preregistration/registry/runtime/state/order authority.
 This remains read-only response admission. It creates neither a hypothesis nor
 an experiment or registry row, does not authorize PAPER/LIVE, does not mutate
 state and cannot transmit an external order.
+
+## ADR-159 — The visible research workflow is an exact derived contract
+
+Status: accepted, 2026-08-27.
+
+Finding only a `PAPER=NOT_ELIGIBLE` row and a `LIVE=DISABLED` row does not
+validate the workflow shown above them. A payload could mark factor validation
+as passed, reorder prerequisites or claim research-admitted strategy
+construction while retaining those two final blockers.
+
+The browser now reconstructs the exact eight ordered stages from independently
+validated factor, correlation, robustness and causal-backtest booleans. The
+factor-validation explanation also depends on whether triggered conditional-
+exit timing was evaluated, and strategy construction is research-admitted only
+when all three prerequisites pass. Every reviewed detail string and the fixed
+PAPER/LIVE blockers must match. Recursive exact matching rejects missing,
+reordered, duplicate and extra stages, forged status, text drift and non-boolean
+context.
+
+This check changes no research conclusion and adds no workflow transition,
+registry operation, PAPER/LIVE runtime, state mutation or external order path.

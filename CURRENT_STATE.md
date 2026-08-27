@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 125 frontend Vitest
+  (macOS, 2026-08-27); 129 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -1089,6 +1089,11 @@ Last updated: 2026-08-27
   validation facts. Missing, reordered or extra fields, forged counts, an
   inconsistent blocker or any registration/state/order authority reject the
   complete result before metrics render. This adds no advancement operation.
+- Research-workflow browser boundary: all eight ordered stages and their exact
+  explanation text are now derived from factor/correlation/robustness/backtest
+  facts and whether a conditional exit factor was evaluated. Forged PASS,
+  reordered/duplicate/extra stages, admitted construction despite a failed
+  prerequisite, or weakened PAPER/LIVE explanations reject the whole result.
 - Consistent rejected-research next action: PAPER admission no longer carries a
   fixed strategy-registration instruction that contradicts sequential
   advancement. Both contracts now share the same computed action. For the

@@ -539,6 +539,13 @@ blocker, diagnostic/admitted status, backtest branch and next action from the
 validated stage booleans. Reordered stages, inconsistent arithmetic or blocker,
 extra fields and any registration/state/order authority reject the whole result;
 the check itself exposes no advancement or execution operation.
+The displayed eight-stage workflow is also reconstructed exactly from the same
+validated factor, correlation, robustness and causal-backtest facts. Its factor
+detail switches only when a conditional exit factor was actually evaluated;
+strategy construction becomes a research-admitted preview only after all three
+research stages pass. Stage order, status or explanation drift—including a
+forged PASS—rejects the complete result while PAPER stays ineligible and LIVE
+stays disabled.
 
 For researchers who want to begin with existing strategy structures, the
 strategy center now loads a deterministic, read-only catalog of the five

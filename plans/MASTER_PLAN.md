@@ -620,6 +620,13 @@ with the response's validation booleans. Missing, reordered or extra fields,
 forged arithmetic and authority drift reject the complete strategy response;
 this adds no advancement, registry, runtime or order write.
 
+The visible eight-stage research workflow is now an exact derived transport
+contract too. Factor, correlation, robustness and causal-backtest statuses,
+conditional-exit validation detail, strategy-construction admission and the
+fixed PAPER/LIVE blockers must appear in the exact order with reviewed text.
+Forged PASS, reordered/duplicate/extra stages or explanation drift rejects the
+complete response without creating an advancement or execution path.
+
 The strategy center also exposes a read-only catalog of all five implemented
 baseline structures so the workflow can start from known code rather than from
 an already-selected experiment row. It labels equal-weight buy-and-hold as a

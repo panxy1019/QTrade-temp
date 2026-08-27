@@ -20,6 +20,7 @@ import type { IntradayFactorStrategyLineage } from '../research/intradayFactorSt
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
 import { matchesNextHypothesisPreregistration } from '../research/nextHypothesisPreregistration'
 import { matchesBlockedPaperAdmission } from '../research/paperAdmission'
+import { matchesResearchWorkflow } from '../research/researchWorkflow'
 import { matchesSequentialAdvancement } from '../research/sequentialAdvancement'
 import { matchesBlockedStrategyRegistrationPreflight } from '../research/strategyRegistrationPreflight'
 import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorDiscovery, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
@@ -1748,11 +1749,6 @@ function matchesBacktestResponse(
     const expectedStrategyExitRule = expectedExitRule === 'NEXT_SESSION_OPEN'
       ? 'NEXT_SESSION_OPEN_T_PLUS_ONE'
       : expectedExitRule
-    const workflowBlocksExecution = response.workflow.some((stage) => (
-      stage.id === 'PAPER' && stage.status === 'NOT_ELIGIBLE'
-    )) && response.workflow.some((stage) => (
-      stage.id === 'LIVE' && stage.status === 'DISABLED'
-    ))
     return response.classification === 'AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT'
       && sameBacktestRequest(response.parameters, request)
       && response.data_version === dataset.data_version
@@ -1784,6 +1780,13 @@ function matchesBacktestResponse(
       && identity.promotion_authority === false
       && identity.state_mutation === false
       && identity.external_order_transmission === false
+      && matchesResearchWorkflow(response.workflow, {
+        factorValidationPassed: response.factor_validation.passed,
+        correlationValidationPassed: response.correlation_validation.passed,
+        robustnessValidationPassed: response.robustness_validation.passed,
+        backtestPassed: response.backtest.passed,
+        hasExitFactorValidation: response.exit_factor_validation !== undefined,
+      })
       && matchesSequentialAdvancement(advancement, {
         factorValidationPassed: response.factor_validation.passed,
         correlationValidationPassed: response.correlation_validation.passed,
@@ -1819,7 +1822,6 @@ function matchesBacktestResponse(
         strategySpecHash: identity.spec_hash,
         nextAllowedStage: advancement.next_allowed_action,
       })
-      && workflowBlocksExecution
       && matchesUnavailableL2FactorReadiness(l2Readiness)
       && /^[a-f0-9]{64}$/.test(response.preview_hash)
       && response.point_in_time === false

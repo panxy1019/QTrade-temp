@@ -1592,14 +1592,14 @@ describe('verified robustness evidence', () => {
         exit_minimum_body_return_bps: '5',
       },
       workflow: [
-        { id: 'FACTOR_DEFINITION', status: 'AVAILABLE', detail: 'fixed' },
-        { id: 'FACTOR_VALIDATION', status: 'FAILED', detail: 'failed' },
-        { id: 'CORRELATION_VALIDATION', status: 'PASSED', detail: 'passed' },
-        { id: 'ROBUSTNESS_VALIDATION', status: 'FAILED', detail: 'failed' },
-        { id: 'STRATEGY_CONSTRUCTION', status: 'DIAGNOSTIC_ONLY', detail: 'not admitted' },
-        { id: 'CAUSAL_BACKTEST', status: 'FAILED', detail: 'failed' },
-        { id: 'PAPER', status: 'NOT_ELIGIBLE', detail: 'blocked' },
-        { id: 'LIVE', status: 'DISABLED', detail: 'blocked' },
+        { id: 'FACTOR_DEFINITION', status: 'AVAILABLE', detail: 'Exact expression and data contract are fixed for this run.' },
+        { id: 'FACTOR_VALIDATION', status: 'FAILED', detail: 'Entry-factor tests and triggered-exit timing-advantage Newey-West tests completed.' },
+        { id: 'CORRELATION_VALIDATION', status: 'PASSED', detail: 'Redundancy checks against related opening features completed.' },
+        { id: 'ROBUSTNESS_VALIDATION', status: 'FAILED', detail: 'Expanding-window threshold selection and disjoint test folds completed without using future test returns.' },
+        { id: 'STRATEGY_CONSTRUCTION', status: 'DIAGNOSTIC_ONLY', detail: 'Entry, exit, sizing, cost and benchmark rules are explicit, but strategy construction is not admitted because at least one prerequisite research stage failed.' },
+        { id: 'CAUSAL_BACKTEST', status: 'FAILED', detail: '75-stock and 15-sector causal replay completed.' },
+        { id: 'PAPER', status: 'NOT_ELIGIBLE', detail: 'No authorized forward realtime observation is attached.' },
+        { id: 'LIVE', status: 'DISABLED', detail: 'Separate explicit user authorization is required.' },
       ],
       sequential_advancement: {
         classification: 'READ_ONLY_SEQUENTIAL_FACTOR_TO_STRATEGY_ADVANCEMENT',
@@ -2007,6 +2007,15 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText('已载入“三时段方向方案 A”的参数；请重新运行以验证当前结果。')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: '第一段 09:30–09:40' })).toBeInTheDocument()
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
+      ...result,
+      workflow: result.workflow.map((stage) => stage.id === 'FACTOR_VALIDATION'
+        ? { ...stage, status: 'PASSED' }
+        : stage),
+    } as unknown as IntradayFactorBacktest)
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+    expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
       ...result,
       sequential_advancement: {
