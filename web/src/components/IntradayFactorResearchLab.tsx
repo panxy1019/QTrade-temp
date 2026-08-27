@@ -228,7 +228,7 @@ export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayF
   const curve = result ? {
     curve: [
       { session: '起点', equity: '1', drawdown: '0', benchmark_equity: '1', benchmark_drawdown: '0', excess_return: '0' },
-      ...buildChartCurve(result),
+      ...buildChartCurve(result.backtest.curve),
     ],
   } : null
   return <Card
@@ -763,7 +763,13 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const curve = result ? {
     curve: [
       { session: '起点', equity: '1', drawdown: '0', benchmark_equity: '1', benchmark_drawdown: '0', excess_return: '0' },
-      ...buildChartCurve(result),
+      ...buildChartCurve(result.backtest.curve),
+    ],
+  } : null
+  const robustnessCurve = result ? {
+    curve: [
+      { session: '样本外起点', equity: '1', drawdown: '0', benchmark_equity: '1', benchmark_drawdown: '0', excess_return: '0' },
+      ...buildChartCurve(result.robustness_validation.stitched_curve),
     ],
   } : null
   const stressRows = result
@@ -1395,6 +1401,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
                 title="复用历史样本的因果诊断，不是新的独立证据"
                 description={`固定候选阈值 ${result.robustness_validation.candidate_thresholds_bps.join('/')} bps；首段 ${result.robustness_validation.initial_training_session_count} 日训练，其后 ${result.robustness_validation.folds.length} 个测试折互不重叠。每折只用此前训练日选阈值，测试收益不参与当折选择。`}
               />
+              <Typography.Title level={5}>滚动样本外净值曲线</Typography.Title>
+              <EquityChart dark analytics={robustnessCurve} />
               <Table rowKey="fold_id" size="small" pagination={false} dataSource={result.robustness_validation.folds} columns={[
                 { title: '测试折', dataIndex: 'fold_id' },
                 { title: '训练区间', render: (_: unknown, row: IntradayFactorBacktest['robustness_validation']['folds'][number]) => `${row.training_start} → ${row.training_end}` },
@@ -1433,6 +1441,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
               { title: '年化收益', render: (_: unknown, row: typeof stressRows[number]) => formatPercent(row.strategy_metrics.annualized_return) },
               { title: 'Sharpe', render: (_: unknown, row: typeof stressRows[number]) => formatNumber(row.strategy_metrics.sharpe) },
               { title: '最大回撤', render: (_: unknown, row: typeof stressRows[number]) => formatPercent(row.strategy_metrics.maximum_drawdown) },
+              { title: '交易成本', render: (_: unknown, row: typeof stressRows[number]) => formatNumber(row.strategy_metrics.transaction_costs) },
               { title: '超额收益', render: (_: unknown, row: typeof stressRows[number]) => formatPercent(row.strategy_metrics.excess_return) },
             ]} />,
           },
@@ -1717,10 +1726,10 @@ function GroupTable({ rows, nameLabel, searchLabel, summaryLabel }: {
   </Space>
 }
 
-function buildChartCurve(result: IntradayFactorBacktest) {
+function buildChartCurve(points: IntradayFactorBacktest['backtest']['curve']) {
   let strategyPeak = 1
   let benchmarkPeak = 1
-  return result.backtest.curve.map((point) => {
+  return points.map((point) => {
     const strategy = Number(point.strategy_equity)
     const benchmark = Number(point.benchmark_equity)
     strategyPeak = Math.max(strategyPeak, strategy)
