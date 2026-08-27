@@ -1797,6 +1797,122 @@ describe('verified robustness evidence', () => {
     const nonSignalMean = (
       universeMean * 1500 - totalGroupMean * 192
     ) / (1500 - 192)
+    const stitchedCurve = curve.slice(10).map((point) => ({
+      ...point,
+      strategy_equity: '1',
+      benchmark_equity: '1',
+      excess_equity: '0',
+    }))
+    const stitchedReturns = stitchedCurve.map(() => 0)
+    const stitchedSignals = stitchedCurve.map((point) => point.signal_count)
+    const stitchedSignalCount = stitchedSignals.reduce((total, value) => total + value, 0)
+    const stitchedGrossReturns = stitchedReturns.map(removeCost)
+    const stitchedStrategyMetrics = performanceMetrics(
+      stitchedReturns,
+      stitchedReturns,
+      20,
+      1,
+      stitchedSignalCount,
+      transactionCosts(stitchedGrossReturns, stitchedReturns),
+    )
+    const stitchedBenchmarkMetrics = performanceMetrics(
+      stitchedReturns,
+      stitchedReturns,
+      20,
+      1,
+      750,
+      transactionCosts(stitchedGrossReturns, stitchedReturns),
+    )
+    const robustnessFolds = [0, 1].map((foldIndex) => {
+      const offset = foldIndex * 5
+      const foldSignals = stitchedSignals.slice(offset, offset + 5)
+      const foldSignalCount = foldSignals.reduce((total, value) => total + value, 0)
+      const foldReturns = stitchedReturns.slice(offset, offset + 5)
+      const foldGrossReturns = foldReturns.map(removeCost)
+      const trainingCount = 10 + offset
+      return {
+        fold_id: `WF-${String(foldIndex + 1).padStart(2, '0')}`,
+        training_start: selectedTradingDays[0],
+        training_end: selectedTradingDays[trainingCount - 1],
+        test_start: selectedTradingDays[10 + offset],
+        test_end: selectedTradingDays[14 + offset],
+        training_session_count: trainingCount,
+        test_session_count: 5,
+        selected_minimum_body_return_bps: '5',
+        selection_known_at: `${selectedTradingDays[10 + offset]}T09:35:00+08:00`,
+        training_signal_count: foldIndex === 0 ? 96 : 144,
+        test_signal_count: foldSignalCount,
+        training_strategy_metrics: performanceMetrics(
+          Array.from({ length: trainingCount }, () => 0),
+          Array.from({ length: trainingCount }, () => 0),
+          trainingCount * 2,
+          1,
+          foldIndex === 0 ? 96 : 144,
+          0,
+        ),
+        test_strategy_metrics: performanceMetrics(
+          foldReturns,
+          foldReturns,
+          10,
+          1,
+          foldSignalCount,
+          transactionCosts(foldGrossReturns, foldReturns),
+        ),
+        test_benchmark_metrics: performanceMetrics(
+          foldReturns,
+          foldReturns,
+          10,
+          1,
+          375,
+          transactionCosts(foldGrossReturns, foldReturns),
+        ),
+      }
+    })
+    const thresholdSensitivity = [
+      { threshold: '0', signalCount: 100, loss: -0.001 },
+      { threshold: '5', signalCount: 92, loss: -0.002 },
+      { threshold: '10', signalCount: 80, loss: -0.003 },
+      { threshold: '20', signalCount: 60, loss: -0.004 },
+    ].map(({ threshold, signalCount, loss }) => {
+      const returns = [loss, ...Array.from({ length: 9 }, () => 0)]
+      const grossReturns = returns.map(removeCost)
+      return {
+        minimum_body_return_bps: threshold,
+        signal_count: signalCount,
+        signal_rate: String(signalCount / 750),
+        strategy_metrics: performanceMetrics(
+          returns,
+          stitchedReturns,
+          20,
+          1,
+          signalCount,
+          transactionCosts(grossReturns, returns),
+        ),
+        benchmark_metrics: structuredClone(stitchedBenchmarkMetrics),
+      }
+    })
+    const robustnessValidation: IntradayFactorBacktest['robustness_validation'] = {
+      classification: 'REUSED_CHRONOLOGICAL_WALK_FORWARD_DIAGNOSTIC_NOT_INDEPENDENT',
+      candidate_thresholds_bps: ['0', '5', '10', '20'],
+      initial_training_session_count: 10,
+      stitched_test_session_count: 10,
+      folds: robustnessFolds,
+      stitched_strategy_metrics: stitchedStrategyMetrics,
+      stitched_benchmark_metrics: stitchedBenchmarkMetrics,
+      stitched_curve: stitchedCurve,
+      threshold_sensitivity: thresholdSensitivity,
+      criteria: {
+        minimum_two_disjoint_test_folds: true,
+        every_test_fold_has_signal: true,
+        causal_selection_known_before_test_signal: true,
+        stitched_oos_total_return_positive: false,
+        stitched_oos_excess_return_positive: false,
+        positive_fold_ratio_at_least_60pct: false,
+        threshold_sensitivity_majority_positive: false,
+        worst_threshold_total_return_non_negative: false,
+      },
+      passed: false,
+    }
     const strategySpecHash = 'ae3e57ed25bd3fe909cdf1e46e360c3e0da53ac9f52f32d4eeb104cbd06d2d8c'
     const strategyId = `adhoc-intraday-${strategySpecHash.slice(0, 16)}`
     const result = {
@@ -1966,37 +2082,7 @@ describe('verified robustness evidence', () => {
         correlations: { opening_30m_return: '0.4668', opening_30m_range_position: '0.4712' },
         maximum_absolute_correlation: '0.90', passed: true,
       },
-      robustness_validation: {
-        classification: 'REUSED_CHRONOLOGICAL_WALK_FORWARD_DIAGNOSTIC_NOT_INDEPENDENT',
-        candidate_thresholds_bps: ['0', '5', '10', '20'],
-        initial_training_session_count: 10,
-        stitched_test_session_count: 10,
-        folds: [{
-          fold_id: 'WF-01', training_start: '2026-07-28', training_end: '2026-08-10',
-          test_start: '2026-08-11', test_end: '2026-08-17', training_session_count: 10,
-          test_session_count: 5, selected_minimum_body_return_bps: '5',
-          selection_known_at: '2026-08-11T09:35:00+08:00', training_signal_count: 96,
-          test_signal_count: 44, training_strategy_metrics: metrics,
-          test_strategy_metrics: metrics, test_benchmark_metrics: metrics,
-        }],
-        stitched_strategy_metrics: metrics,
-        stitched_benchmark_metrics: metrics,
-        stitched_curve: [],
-        threshold_sensitivity: [{
-          minimum_body_return_bps: '0', signal_count: 90, signal_rate: '0.12',
-          strategy_metrics: metrics, benchmark_metrics: metrics,
-        }],
-        criteria: {
-          minimum_two_disjoint_test_folds: false, every_test_fold_has_signal: true,
-          causal_selection_known_before_test_signal: true,
-          stitched_oos_total_return_positive: false,
-          stitched_oos_excess_return_positive: true,
-          positive_fold_ratio_at_least_60pct: false,
-          threshold_sensitivity_majority_positive: false,
-          worst_threshold_total_return_non_negative: false,
-        },
-        passed: false,
-      },
+      robustness_validation: robustnessValidation,
       strategy: {
         entry_factor_id: 'opening-three-ten-minute-bullish-v1',
         entry_condition: 'bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000',
@@ -2037,7 +2123,7 @@ describe('verified robustness evidence', () => {
           maximum_absolute_factor_correlation_below_0_90: true,
           base_cost_total_return_positive: false, base_cost_excess_return_positive: true,
           walk_forward_oos_total_return_positive: false,
-          walk_forward_oos_excess_return_positive: true,
+          walk_forward_oos_excess_return_positive: false,
           walk_forward_positive_fold_ratio_at_least_60pct: false,
           threshold_sensitivity_majority_positive: false,
           exit_factor_effectiveness_passed: false,

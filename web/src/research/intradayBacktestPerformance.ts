@@ -396,6 +396,27 @@ interface CoreMetricExpectation {
   transactionCosts: number
 }
 
+export function matchesIntradayMetricsFromReturns(
+  metrics: IntradayPerformanceMetrics,
+  returns: readonly number[],
+  benchmarkReturns: readonly number[],
+  turnover: number,
+  exposure: number,
+  trades: number,
+  transactionCosts: number,
+): boolean {
+  return returns.length > 0
+    && returns.length === benchmarkReturns.length
+    && matchesCoreMetrics(metrics, calculateMetricExpectation(
+      returns,
+      benchmarkReturns,
+      turnover,
+      exposure,
+      trades,
+      transactionCosts,
+    ))
+}
+
 function matchesCoreMetrics(
   metrics: IntradayPerformanceMetrics,
   expected: CoreMetricExpectation,

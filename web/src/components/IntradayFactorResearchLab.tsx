@@ -21,6 +21,7 @@ import type { IntradayFactorStrategyLineage } from '../research/intradayFactorSt
 import { matchesIntradayCausalContract } from '../research/causalBacktestContract'
 import { matchesIntradayBacktestPerformance } from '../research/intradayBacktestPerformance'
 import { matchesIntradayFactorValidation } from '../research/intradayFactorValidation'
+import { matchesIntradayRobustness } from '../research/intradayRobustness'
 import { matchesIntradayStability } from '../research/intradayStability'
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
 import { matchesNextHypothesisPreregistration } from '../research/nextHypothesisPreregistration'
@@ -1795,6 +1796,7 @@ async function matchesBacktestResponse(
       && matchesIntradayFactorValidation(response)
       && matchesIntradayStability(response)
       && matchesIntradayExitFactorValidation(response)
+      && matchesIntradayRobustness(response)
       && matchesIntradayResearchGate(response)
       && strategyIdentityMatches
       && matchesResearchWorkflow(response.workflow, {
