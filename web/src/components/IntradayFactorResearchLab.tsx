@@ -2,6 +2,7 @@ import { Alert, Button, Card, Form, Input, InputNumber, Popconfirm, Select, Spac
 import { useState } from 'react'
 import { runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
+import { matchesIntradayExitFactorValidation } from '../research/exitFactorValidation'
 import {
   deleteLocalIntradayFactorCandidate,
   loadLocalIntradayFactorCandidates,
@@ -1793,6 +1794,7 @@ async function matchesBacktestResponse(
       && matchesIntradayBacktestPerformance(response, request, dataset)
       && matchesIntradayFactorValidation(response)
       && matchesIntradayStability(response)
+      && matchesIntradayExitFactorValidation(response)
       && matchesIntradayResearchGate(response)
       && strategyIdentityMatches
       && matchesResearchWorkflow(response.workflow, {

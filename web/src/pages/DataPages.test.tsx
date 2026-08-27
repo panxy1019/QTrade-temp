@@ -1945,13 +1945,14 @@ describe('verified robustness evidence', () => {
       exit_factor_validation: {
         classification: 'TRIGGERED_EXIT_TIMING_ADVANTAGE_DIAGNOSTIC',
         advantage_definition: 'CONDITIONAL_EXIT_OPEN_DIVIDED_BY_TIME_STOP_OPEN_MINUS_ONE',
-        entry_signal_count: 192, trigger_count: 28, trigger_rate: '0.1458333333',
+        entry_signal_count: 192, trigger_count: 28, trigger_rate: String(28 / 192),
         clustered_trigger_session_count: 10,
         mean_triggered_timing_advantage: '0.0019661',
-        mean_session_triggered_timing_advantage: '0.0048978', trigger_hit_rate: '0.642857',
+        mean_session_triggered_timing_advantage: '0.0048978', trigger_hit_rate: String(18 / 28),
         newey_west_lag: 2, newey_west_standard_error: '0.0026726',
-        newey_west_t_statistic: '1.83262', confidence_interval_95_lower: '-0.0003404',
-        confidence_interval_95_upper: '0.0101361',
+        newey_west_t_statistic: String(0.0048978 / 0.0026726),
+        confidence_interval_95_lower: String(0.0048978 - 1.96 * 0.0026726),
+        confidence_interval_95_upper: String(0.0048978 + 1.96 * 0.0026726),
         criteria: {
           minimum_twenty_exit_triggers: true,
           minimum_ten_clustered_exit_trigger_sessions: true,
