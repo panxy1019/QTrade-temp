@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 85 frontend Vitest
+  (macOS, 2026-08-27); 90 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -225,9 +225,11 @@ Last updated: 2026-08-27
   sequentially; the two-stock setting covers 30 stocks in the signed 15-sector
   universe, while partial
   failures stay absent and the actual successful coverage plus combined JSON
-  export remain explicit. The batch now summarizes finite successful rows with
-  positive return/excess coverage, median return and identified worst return/deepest
-  drawdown stocks, while failed requests remain outside every denominator. It does
+  export remain explicit. The batch now summarizes successful rows whose six
+  common metrics are all finite, with positive return/excess coverage; median
+  cumulative/annualized return, Sharpe, maximum drawdown, active excess and
+  information ratio; and identified worst return/deepest drawdown stocks. Failed
+  requests remain outside every denominator. It does
   not admit a response until stock/sector, complete request parameters, signed
   dataset identity and all no-realtime/no-mutation/no-order flags match; identity
   drift is counted and omitted. Its batch export retains the full expected request

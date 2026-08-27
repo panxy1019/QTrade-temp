@@ -49,6 +49,13 @@ interface SectorBatchAttempt {
   preview_hash: string | null
 }
 
+function median(values: number[]) {
+  if (values.length === 0) return null
+  const sorted = [...values].sort((left, right) => left - right)
+  const middle = Math.floor(sorted.length / 2)
+  return sorted.length % 2 === 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2
+}
+
 function toRequest(values: FormValues, symbol = values.symbol): SingleStockFiveMinuteBacktestRequest {
   return {
     ...values,
@@ -239,11 +246,12 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       && Number.isFinite(row.maximumDrawdown))
     : []
   const sortedBatchReturns = [...batchMetricRows].sort((left, right) => left.totalReturn - right.totalReturn)
-  const batchMedianReturn = sortedBatchReturns.length === 0
-    ? null
-    : sortedBatchReturns.length % 2 === 1
-      ? sortedBatchReturns[Math.floor(sortedBatchReturns.length / 2)].totalReturn
-      : (sortedBatchReturns[sortedBatchReturns.length / 2 - 1].totalReturn + sortedBatchReturns[sortedBatchReturns.length / 2].totalReturn) / 2
+  const batchMedianReturn = median(batchMetricRows.map((row) => row.totalReturn))
+  const batchMedianAnnualizedReturn = median(batchMetricRows.map((row) => row.annualizedReturn))
+  const batchMedianSharpe = median(batchMetricRows.map((row) => row.sharpe))
+  const batchMedianMaximumDrawdown = median(batchMetricRows.map((row) => row.maximumDrawdown))
+  const batchMedianExcessReturn = median(batchMetricRows.map((row) => row.excessReturn))
+  const batchMedianInformationRatio = median(batchMetricRows.map((row) => row.informationRatio))
   const batchWorstReturn = sortedBatchReturns[0] ?? null
   const batchDeepestDrawdown = [...batchMetricRows].sort((left, right) => left.maximumDrawdown - right.maximumDrawdown)[0] ?? null
   const requestedBySector = new Map<string, number>()
@@ -275,12 +283,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       absolute_return_spread: Math.abs(left.totalReturn - right.totalReturn),
     }]
   })
-  const sortedPairSpreads = withinSectorPairs.map((pair) => pair.absolute_return_spread).sort((left, right) => left - right)
-  const medianPairSpread = sortedPairSpreads.length === 0
-    ? null
-    : sortedPairSpreads.length % 2 === 1
-      ? sortedPairSpreads[Math.floor(sortedPairSpreads.length / 2)]
-      : (sortedPairSpreads[sortedPairSpreads.length / 2 - 1] + sortedPairSpreads[sortedPairSpreads.length / 2]) / 2
+  const medianPairSpread = median(withinSectorPairs.map((pair) => pair.absolute_return_spread))
   const worstPairSpread = [...withinSectorPairs].sort((left, right) => right.absolute_return_spread - left.absolute_return_spread)[0] ?? null
   const returnDirectionAgreementCount = withinSectorPairs.filter((pair) => pair.return_direction_agreement).length
   const excessDirectionAgreementCount = withinSectorPairs.filter((pair) => pair.excess_direction_agreement).length
@@ -322,6 +325,11 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       positive_return_count: batchMetricRows.filter((row) => row.totalReturn > 0).length,
       positive_excess_count: batchMetricRows.filter((row) => row.excessReturn > 0).length,
       median_total_return: batchMedianReturn,
+      median_annualized_return: batchMedianAnnualizedReturn,
+      median_sharpe: batchMedianSharpe,
+      median_maximum_drawdown: batchMedianMaximumDrawdown,
+      median_excess_return: batchMedianExcessReturn,
+      median_information_ratio: batchMedianInformationRatio,
       worst_return: batchWorstReturn ? {
         symbol: batchWorstReturn.row.symbol,
         sector_code: batchWorstReturn.row.instrument.sector_code,
@@ -430,6 +438,11 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
             <Metric label="正收益代表股" value={`${batchMetricRows.filter((row) => row.totalReturn > 0).length}/${batchMetricRows.length}`} />
             <Metric label="正超额代表股" value={`${batchMetricRows.filter((row) => row.excessReturn > 0).length}/${batchMetricRows.length}`} />
             <Metric label="收益中位数" value={batchMedianReturn === null ? '—' : formatPercent(String(batchMedianReturn))} />
+            <Metric label="年化收益中位数" value={batchMedianAnnualizedReturn === null ? '—' : formatPercent(String(batchMedianAnnualizedReturn))} />
+            <Metric label="Sharpe 中位数" value={batchMedianSharpe === null ? '—' : formatNumber(String(batchMedianSharpe))} />
+            <Metric label="最大回撤中位数" value={batchMedianMaximumDrawdown === null ? '—' : formatPercent(String(batchMedianMaximumDrawdown))} />
+            <Metric label="主动超额中位数" value={batchMedianExcessReturn === null ? '—' : formatPercent(String(batchMedianExcessReturn))} />
+            <Metric label="信息比率中位数" value={batchMedianInformationRatio === null ? '—' : formatNumber(String(batchMedianInformationRatio))} />
             <Metric label="最差收益" value={batchWorstReturn ? `${batchWorstReturn.row.symbol} · ${formatPercent(String(batchWorstReturn.totalReturn))}` : '—'} />
             <Metric label="最深回撤" value={batchDeepestDrawdown ? `${batchDeepestDrawdown.row.symbol} · ${formatPercent(String(batchDeepestDrawdown.maximumDrawdown))}` : '—'} />
           </div>

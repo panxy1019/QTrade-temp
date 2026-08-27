@@ -2555,3 +2555,23 @@ visible in the ordinary successful-session table.
 These are response-bound diagnostics, not recalculated curves or a new research
 gate. They do not create persistence, registry or promotion evidence, change
 PAPER/LIVE state or permit external-order transmission.
+
+## ADR-144 — Cross-sector medians share one complete common-metric denominator
+
+Status: accepted, 2026-08-27.
+
+A cross-sector batch that reports only median cumulative return still requires
+the operator to inspect every row to understand typical annualized performance,
+risk-adjusted return, drawdown and active performance. Mixing separate valid-row
+sets per metric would make those headline values incomparable.
+
+The batch summary therefore computes median cumulative return, annualized return,
+Sharpe, maximum drawdown, active excess return and information ratio from the same
+admitted rows for which all six values are finite. Exact values are retained in
+the existing browser-session export. A missing or non-finite value excludes that
+row from every median without imputation; failed and identity-rejected requests
+remain outside the denominator as before.
+
+These descriptive medians add no request, parameter choice or statistical gate.
+They are not independent sample-out evidence and cannot create persistence,
+registry or promotion state, start PAPER/LIVE or transmit an external order.

@@ -256,9 +256,10 @@ deterministic stocks per sector. On the signed universe this requests 30 stocks,
 keeps up to 30 accepted results with pagination after 15 rows, and reports stock
 completion separately from successful sector coverage. The export freezes the
 requested per-sector count; changing it invalidates the prior batch identity.
-Its browser-only cross-sectional summary uses only successful responses with
-finite return, excess and drawdown metrics. It exposes positive counts, median
-return and the worst return/drawdown identities so favourable rows cannot hide
+Its browser-only cross-sectional summary uses only successful responses with all
+six common metrics finite. It exposes positive counts, median cumulative and
+annualized return, Sharpe, maximum drawdown, active excess and information ratio,
+plus the worst return/drawdown identities so favourable rows cannot hide
 the visible tail. Missing requests remain excluded and visible, and the summary
 is neither a statistical gate nor an independent sample-out claim.
 When two representatives were requested, a second diagnostic groups only

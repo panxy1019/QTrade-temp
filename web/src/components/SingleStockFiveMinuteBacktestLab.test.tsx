@@ -84,9 +84,9 @@ describe('single-stock cross-sector batch diagnostic', () => {
 
   it('runs one deterministic representative per sector with identical parameters', async () => {
     vi.mocked(runSingleStockFiveMinuteBacktest)
-      .mockResolvedValueOnce(resultFor(requestFor('600003'), { totalReturn: '0.03', excessReturn: '0.01', maximumDrawdown: '-0.04' }))
-      .mockResolvedValueOnce(resultFor(requestFor('600001'), { totalReturn: '-0.01', excessReturn: '-0.02', maximumDrawdown: '-0.08' }))
-      .mockResolvedValueOnce(resultFor(requestFor('600004'), { totalReturn: '0.02', excessReturn: '0.005', maximumDrawdown: '-0.03' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600003'), { totalReturn: '0.03', annualizedReturn: '0.30', sharpe: '1.5', excessReturn: '0.01', informationRatio: '0.4', maximumDrawdown: '-0.04' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600001'), { totalReturn: '-0.01', annualizedReturn: '-0.10', sharpe: '-0.5', excessReturn: '-0.02', informationRatio: '-0.3', maximumDrawdown: '-0.08' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600004'), { totalReturn: '0.02', annualizedReturn: '0.20', sharpe: '0.8', excessReturn: '0.005', informationRatio: '0.1', maximumDrawdown: '-0.03' }))
     render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
 
     fireEvent.click(screen.getByRole('button', { name: '运行 3 股 / 3 板块同参诊断' }))
@@ -104,8 +104,28 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(within(summary).getByText('同参批量横截面摘要（仅成功代表股）')).toBeInTheDocument()
     expect(within(summary).getAllByText('2/3')).toHaveLength(2)
     expect(within(summary).getByText('2.00%')).toBeInTheDocument()
+    expect(within(summary).getByText('年化收益中位数')).toBeInTheDocument()
+    expect(within(summary).getByText('20.00%')).toBeInTheDocument()
+    expect(within(summary).getByText('Sharpe 中位数')).toBeInTheDocument()
+    expect(within(summary).getByText('0.800')).toBeInTheDocument()
+    expect(within(summary).getByText('最大回撤中位数')).toBeInTheDocument()
+    expect(within(summary).getByText('-4.00%')).toBeInTheDocument()
+    expect(within(summary).getByText('主动超额中位数')).toBeInTheDocument()
+    expect(within(summary).getByText('0.50%')).toBeInTheDocument()
+    expect(within(summary).getByText('信息比率中位数')).toBeInTheDocument()
+    expect(within(summary).getByText('0.100')).toBeInTheDocument()
     expect(within(summary).getByText('600001 · -1.00%')).toBeInTheDocument()
     expect(within(summary).getByText('600001 · -8.00%')).toBeInTheDocument()
+
+    const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
+    expect(exported.summary).toMatchObject({
+      median_total_return: 0.02,
+      median_annualized_return: 0.2,
+      median_sharpe: 0.8,
+      median_maximum_drawdown: -0.04,
+      median_excess_return: 0.005,
+      median_information_ratio: 0.1,
+    })
   })
 
   it('bounds the signed 15-sector universe at 15 or 30 deterministic stock requests', () => {
@@ -352,6 +372,11 @@ describe('single-stock cross-sector batch diagnostic', () => {
       positive_return_count: 0,
       positive_excess_count: 0,
       median_total_return: null,
+      median_annualized_return: null,
+      median_sharpe: null,
+      median_maximum_drawdown: null,
+      median_excess_return: null,
+      median_information_ratio: null,
       worst_return: null,
       deepest_drawdown: null,
       within_sector_consistency: null,

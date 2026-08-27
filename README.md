@@ -272,7 +272,9 @@ successful rows only, and the complete session comparison can be exported as one
 JSON document. The batch does not tune per stock and is not evidence for every
 stock in a sector. For the successful batch rows, a compact cross-sectional
 summary reports finite-metric coverage, positive strategy and excess counts,
-median return, the worst-return stock and the deepest-drawdown stock. Failed
+the median cumulative/annualized return, Sharpe, maximum drawdown, active excess
+and information ratio, plus the worst-return stock and the deepest-drawdown
+stock. Failed
 requests never enter those denominators. This is a browser-session fragility
 diagnostic over at most two representatives per sector, not a full 75-stock
 statistical robustness gate or independent sample-out result. The two-stock
