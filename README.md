@@ -283,6 +283,10 @@ it preserves the signed dataset identity, deterministic representative roster,
 every expected normalized request, completed/failed/identity-rejected counts,
 successful results, finite-metric summary and worst tail. It explicitly carries
 no-persistence, no-registry, `NOT_ELIGIBLE`, no-state and no-order boundaries.
+The page and export also retain one ordered attempt row per representative with
+only `COMPLETED`, `REQUEST_FAILED` or `IDENTITY_REJECTED`; a completed row binds
+its accepted result hash, while failed/rejected rows expose neither exception text
+nor a rejected response payload and never enter the metric denominator.
 The comparison is cleared on
 refresh and is neither persisted evidence nor an experiment record. Every result
 remains current-universe, QFQ/non-PIT,

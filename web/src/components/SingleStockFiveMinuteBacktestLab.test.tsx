@@ -92,6 +92,7 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(new Set(payloads.map((payload) => JSON.stringify(payload))).size).toBe(1)
     expect(screen.getByText('本次会话个股回测对比（3/15，覆盖 3 个板块）')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出本次会话对比/ })).toBeInTheDocument()
+    expect(within(screen.getByTestId('sector-batch-attempts')).getAllByText('已接纳')).toHaveLength(3)
     const summary = screen.getByTestId('sector-batch-summary')
     expect(within(summary).getByText('同参批量横截面摘要（仅成功代表股）')).toBeInTheDocument()
     expect(within(summary).getAllByText('2/3')).toHaveLength(2)
@@ -115,11 +116,19 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(within(screen.getByTestId('sector-batch-summary')).getByText('指标有效代表股')).toBeInTheDocument()
     expect(within(screen.getByTestId('sector-batch-summary')).getAllByText('2/2')).toHaveLength(3)
     expect(within(screen.getByTestId('sector-batch-summary')).getByText(/只按 2 个成功代表股/)).toBeInTheDocument()
+    const attempts = screen.getByTestId('sector-batch-attempts')
+    expect(within(attempts).getByText('600001 乙一')).toBeInTheDocument()
+    expect(within(attempts).getByText('请求失败')).toBeInTheDocument()
     const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
     expect(exported.classification).toBe('BROWSER_SESSION_ONLY_CROSS_SECTOR_SAME_PARAMETER_DIAGNOSTIC')
     expect(exported.dataset_identity).toEqual({ data_version: dataset.data_version, checksum: dataset.checksum })
     expect(exported.status).toEqual({ requested: 3, completed: 2, failed: 1, identity_rejected: 0 })
     expect(exported.requests.map((request: SingleStockFiveMinuteBacktestRequest) => request.symbol)).toEqual(['600003', '600001', '600004'])
+    expect(exported.attempts.map(({ symbol, outcome, preview_hash }: { symbol: string; outcome: string; preview_hash: string | null }) => ({ symbol, outcome, preview_hash }))).toEqual([
+      { symbol: '600003', outcome: 'COMPLETED', preview_hash: resultFor(requestFor('600003')).preview_hash },
+      { symbol: '600001', outcome: 'REQUEST_FAILED', preview_hash: null },
+      { symbol: '600004', outcome: 'COMPLETED', preview_hash: resultFor(requestFor('600004')).preview_hash },
+    ])
     expect(exported.results).toHaveLength(2)
     expect(exported.summary).toMatchObject({ valid_metric_count: 2, positive_return_count: 2, positive_excess_count: 2 })
     expect(exported.creates_immutable_evidence).toBe(false)
@@ -158,9 +167,13 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(screen.queryByTestId('sector-batch-summary')).not.toBeInTheDocument()
     expect(screen.queryByText(/0\/0/)).not.toBeInTheDocument()
     expect(screen.getByText('本次会话个股回测对比（0/15，覆盖 0 个板块）')).toBeInTheDocument()
+    expect(within(screen.getByTestId('sector-batch-attempts')).getAllByText('请求失败')).toHaveLength(3)
     const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
     expect(exported.status).toEqual({ requested: 3, completed: 0, failed: 3, identity_rejected: 0 })
     expect(exported.requests).toHaveLength(3)
+    expect(exported.attempts.map(({ outcome }: { outcome: string }) => outcome)).toEqual([
+      'REQUEST_FAILED', 'REQUEST_FAILED', 'REQUEST_FAILED',
+    ])
     expect(exported.results).toEqual([])
     expect(exported.summary).toEqual({
       valid_metric_count: 0,
@@ -195,8 +208,19 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(await screen.findByText('同参批量部分完成：1/3 个板块')).toBeInTheDocument()
     expect(screen.getByText(/2 个响应身份或安全边界不匹配/)).toBeInTheDocument()
     expect(screen.getByText('本次会话个股回测对比（1/15，覆盖 1 个板块）')).toBeInTheDocument()
-    expect(screen.queryByText('乙一')).not.toBeInTheDocument()
-    expect(screen.queryByText('丙一')).not.toBeInTheDocument()
+    const comparison = screen.getByTestId('single-stock-session-comparison')
+    expect(within(comparison).queryByText(/600001/)).not.toBeInTheDocument()
+    expect(within(comparison).queryByText(/600004/)).not.toBeInTheDocument()
+    const attempts = screen.getByTestId('sector-batch-attempts')
+    expect(within(attempts).getByText('600001 乙一')).toBeInTheDocument()
+    expect(within(attempts).getByText('600004 丙一')).toBeInTheDocument()
+    expect(within(attempts).getAllByText('身份拒绝')).toHaveLength(2)
+    const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
+    expect(exported.attempts.map(({ symbol, outcome }: { symbol: string; outcome: string }) => ({ symbol, outcome }))).toEqual([
+      { symbol: '600003', outcome: 'COMPLETED' },
+      { symbol: '600001', outcome: 'IDENTITY_REJECTED' },
+      { symbol: '600004', outcome: 'IDENTITY_REJECTED' },
+    ])
     await waitFor(() => expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledTimes(3))
   })
 })

@@ -22,12 +22,25 @@ interface FormValues {
 }
 
 interface SectorBatchStatus {
+  attempts: SectorBatchAttempt[]
   completed: number
   failed: number
   identityRejected: number
   representatives: Array<{ symbol: string; name: string; sector_code: string; sector_name: string }>
   requests: SingleStockFiveMinuteBacktestRequest[]
   requested: number
+}
+
+type SectorBatchOutcome = 'COMPLETED' | 'REQUEST_FAILED' | 'IDENTITY_REJECTED'
+
+interface SectorBatchAttempt {
+  symbol: string
+  name: string
+  sector_code: string
+  sector_name: string
+  request: SingleStockFiveMinuteBacktestRequest
+  outcome: SectorBatchOutcome
+  preview_hash: string | null
 }
 
 function toRequest(values: FormValues, symbol = values.symbol): SingleStockFiveMinuteBacktestRequest {
@@ -150,25 +163,37 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       sector_name: representative.sector_name ?? '',
     }))
     const completed: SingleStockFiveMinuteBacktest[] = []
+    const attempts: SectorBatchAttempt[] = []
     let failed = 0
     let identityRejected = 0
     for (const [index, representative] of sectorRepresentatives.entries()) {
+      const request = requests[index]
+      const attemptIdentity = {
+        symbol: representative.symbol,
+        name: representative.name,
+        sector_code: representative.sector_code ?? '',
+        sector_name: representative.sector_name ?? '',
+        request,
+      }
       try {
-        const request = requests[index]
         const next = await runSingleStockFiveMinuteBacktest(request)
         if (isBoundBatchResponse(next, request, representative, dataset)) {
           completed.push(next)
+          attempts.push({ ...attemptIdentity, outcome: 'COMPLETED', preview_hash: next.preview_hash })
         } else {
           failed += 1
           identityRejected += 1
+          attempts.push({ ...attemptIdentity, outcome: 'IDENTITY_REJECTED', preview_hash: null })
         }
       } catch {
         failed += 1
+        attempts.push({ ...attemptIdentity, outcome: 'REQUEST_FAILED', preview_hash: null })
       }
       setBatchProgress(index + 1)
     }
     setSessionRuns(completed.slice(0, 15))
     setBatchStatus({
+      attempts,
       completed: completed.length,
       failed,
       identityRejected,
@@ -215,6 +240,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       identity_rejected: batchStatus.identityRejected,
     },
     requests: batchStatus.requests,
+    attempts: batchStatus.attempts,
     results: sessionRuns,
     summary: {
       valid_metric_count: batchMetricRows.length,
@@ -299,6 +325,24 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
             ? `${batchStatus.failed} 个板块未进入结果，其中 ${batchStatus.identityRejected} 个响应身份或安全边界不匹配；拒绝结果未补造，当前覆盖只能按通过绑定的成功行计数。`
             : `${batchStatus.failed} 个板块请求失败，失败结果未补造；当前覆盖必须按成功行计数，不能声称完成全板块检验。`}
       />}
+      {batchStatus && <Card data-testid="sector-batch-attempts" type="inner" title={`同参批量逐股台账（${batchStatus.attempts.length}/${batchStatus.requested}）`}>
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <Table<SectorBatchAttempt>
+            rowKey="symbol"
+            size="small"
+            dataSource={batchStatus.attempts}
+            pagination={false}
+            columns={[
+              { title: '代表股', render: (_: unknown, row) => `${row.symbol} ${row.name}` },
+              { title: '板块', render: (_: unknown, row) => `${row.sector_code} ${row.sector_name}` },
+              { title: '结果状态', render: (_: unknown, row) => formatBatchOutcome(row.outcome) },
+              { title: '结果哈希', render: (_: unknown, row) => row.preview_hash ? <Typography.Text code>{row.preview_hash.slice(0, 12)}…</Typography.Text> : '—' },
+            ]}
+            scroll={{ x: 720 }}
+          />
+          <Typography.Text type="secondary">台账逐股保留本次请求顺序和稳定结果分类；请求失败不导出底层异常文本，身份拒绝不保留未接纳响应，二者都不会补造结果或进入指标分母。</Typography.Text>
+        </Space>
+      </Card>}
       {batchStatus && batchStatus.completed > 0 && <Card data-testid="sector-batch-summary" type="inner" title="同参批量横截面摘要（仅成功代表股）">
         <Space orientation="vertical" style={{ width: '100%' }}>
           <div className="description-grid">
@@ -349,7 +393,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
         />
         <JsonExportButton filename={`qtrade-${result.symbol}-five-minute-${result.preview_hash.slice(0, 12)}.json`} value={result} label="导出个股回测" />
       </>}
-      {(sessionRuns.length > 0 || batchDiagnosticExport) && <Card type="inner" title={`本次会话个股回测对比（${sessionRuns.length}/15，覆盖 ${sessionSectorCount} 个板块）`} extra={<JsonExportButton filename={batchDiagnosticExport ? 'qtrade-cross-sector-five-minute-session-diagnostic.json' : 'qtrade-single-stock-five-minute-session-comparison.json'} value={batchDiagnosticExport ?? sessionRuns} label="导出本次会话对比" size="small" />}>
+      {(sessionRuns.length > 0 || batchDiagnosticExport) && <Card data-testid="single-stock-session-comparison" type="inner" title={`本次会话个股回测对比（${sessionRuns.length}/15，覆盖 ${sessionSectorCount} 个板块）`} extra={<JsonExportButton filename={batchDiagnosticExport ? 'qtrade-cross-sector-five-minute-session-diagnostic.json' : 'qtrade-single-stock-five-minute-session-comparison.json'} value={batchDiagnosticExport ?? sessionRuns} label="导出本次会话对比" size="small" />}>
         <Space orientation="vertical" style={{ width: '100%' }}>
           <Typography.Text type="secondary">仅保留当前页面会话最近 15 个不同结果哈希，便于各选一股覆盖签名数据的 15 个板块；覆盖数只是当前会话去重统计。刷新后清空，不写服务端、不构成正式实验或晋级证据。</Typography.Text>
           <Table<SingleStockFiveMinuteBacktest>
@@ -413,4 +457,10 @@ function formatDraftNumber(value: string | number) {
 function formatDraftPercent(value: string | number) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? `${(parsed * 100).toFixed(2)}%` : '—'
+}
+
+function formatBatchOutcome(outcome: SectorBatchOutcome) {
+  if (outcome === 'COMPLETED') return '已接纳'
+  if (outcome === 'IDENTITY_REJECTED') return '身份拒绝'
+  return '请求失败'
 }

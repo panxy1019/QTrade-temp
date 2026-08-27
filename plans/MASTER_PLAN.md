@@ -267,6 +267,11 @@ the admitted results and the same finite-metric summary. The envelope explicitly
 states browser-session-only persistence, no immutable evidence/registry write,
 `NOT_ELIGIBLE` and no state/order capability; ordinary manual session exports
 remain simple result arrays.
+An ordered per-representative ledger now makes the denominator auditable without
+retaining unsafe payloads: each frozen request is labelled `COMPLETED`,
+`REQUEST_FAILED` or `IDENTITY_REJECTED`, and only completed rows carry an admitted
+preview hash. Network exception text and rejected responses are discarded; the
+ledger remains browser-session-only and cannot trigger retries or promotion.
 
 The historical research surface now also includes a bounded interactive preview.
 It accepts adjustable momentum/reversal/low-volatility, risk and cost parameters,

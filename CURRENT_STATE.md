@@ -230,7 +230,10 @@ Last updated: 2026-08-27
   dataset identity and all no-realtime/no-mutation/no-order flags match; identity
   drift is counted and omitted. Its batch export retains the full expected request
   roster, status counts, successful results, finite-metric summary and explicit
-  browser-only/no-evidence safety boundary. It does not tune per stock or prove sector/full-universe robustness;
+  browser-only/no-evidence safety boundary. A per-representative attempt ledger
+  additionally binds each request to `COMPLETED`, `REQUEST_FAILED` or
+  `IDENTITY_REJECTED`; only admitted rows retain result hashes, while rejected or
+  failed rows retain no response/error payload. It does not tune per stock or prove sector/full-universe robustness;
   QFQ/non-PIT, ad-hoc, `NOT_ELIGIBLE`, stateless and external-order-disabled
   boundaries are part of the response and UI.
 - Intraday factor workflow: `POST /intraday-factor-backtest` and the research

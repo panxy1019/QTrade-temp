@@ -2454,3 +2454,21 @@ The envelope declares that refresh clears it, it creates no immutable evidence o
 registry write, promotion is `NOT_ELIGIBLE`, and state mutation/external orders are
 false. It is not uploaded or persisted and cannot be used as an experiment,
 statistical robustness gate, PAPER/LIVE admission or order authorization.
+
+## ADR-139 — Batch attempt ledgers retain stable outcomes, not rejected payloads
+
+Status: accepted, 2026-08-27.
+
+Aggregate failure counts preserve the denominator size but cannot identify which
+representative request failed or distinguish transport failure from an otherwise
+successful response that violated the frozen identity/safety contract.
+
+Each cross-sector batch therefore retains an ordered browser-session attempt row
+for every frozen request. The only outcomes are `COMPLETED`, `REQUEST_FAILED` and
+`IDENTITY_REJECTED`. A completed row binds the admitted preview hash. Request
+failures discard exception text; identity failures discard the rejected response;
+both keep a null preview hash and remain outside results and metric denominators.
+
+The ledger is shown and exported only with the active browser batch. It does not
+retry, repair, persist or promote anything, does not create evidence or registry
+state, and cannot start PAPER/LIVE or transmit an order.
