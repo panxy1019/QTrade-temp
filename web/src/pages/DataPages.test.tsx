@@ -1908,6 +1908,8 @@ describe('verified robustness evidence', () => {
     fireEvent.change(screen.getByRole('spinbutton', { name: '每根退出阴线实体下限（bps）' }), { target: { value: '5' } })
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('策略回测响应身份已绑定')).toBeInTheDocument()
+    expect(screen.getByText('本次回测没有因子检验手工交接血缘')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /导出因子到策略血缘/ })).not.toBeInTheDocument()
     expect(await screen.findByText('回测已完成，研究硬门未通过')).toBeInTheDocument()
     expect(screen.getByText('顺序晋级停在：有效性检验')).toBeInTheDocument()
     expect(screen.getByText('前置研究门 1/3')).toBeInTheDocument()

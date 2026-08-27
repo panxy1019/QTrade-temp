@@ -383,6 +383,18 @@ curves render; a valid result displays “策略回测响应身份已绑定”. 
 returned preview identity only and does not recalculate it, register a strategy,
 promote it or start PAPER/LIVE.
 
+When that accepted preview follows the identity-bound manual factor handoff in
+the same browser session, the page also builds one deterministic read-only
+lineage export. It binds the local candidate key/name/expression, `Rxx` rule,
+effective/non-redundant decision, Holm-adjusted evidence and correlation result
+hash to the exact later strategy request, preview hash and read-only behavior
+hash. Any form, candidate selection or evidence change clears the binding. The
+package explicitly says that the exit rule and strategy returns were not
+validated by the factor-correlation diagnostic and that the shared viewed window
+is not independent evidence. Direct backtests remain valid diagnostics but show
+that no joint handoff lineage exists; neither path writes a registry, starts
+PAPER/LIVE, mutates state or sends an order.
+
 The research page begins with one evidence-derived, read-only factor catalog.
 It combines only definitions actually present in the signed daily-factor search
 and intraday long-window report, then displays each factor's selection/entry/

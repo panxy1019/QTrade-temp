@@ -249,6 +249,11 @@ npm --prefix web run build
   the exact normalized request, data version/checksum and 75-stock/15-sector
   scope, entry/exit and next-bar/T+1 behavior, read-only strategy identity,
   preregistration/registration/PAPER blockers and every no-state/no-order flag.
+- [x] Bind a verified manual factor handoff to the exact subsequent strategy
+  preview in one deterministic browser-session export: retain candidate,
+  effective/non-redundant correlation and Holm identities plus the strategy
+  request/result/behavior hashes; clear it on drift and state explicitly that
+  exit behavior, strategy returns and same-window independence are not proven.
 - [x] Quantify the fixed 104-candidate search's selection bias with eight
   contiguous blocks and all 70 combinatorially symmetric train/complement
   splits; reuse the actual gate/t/effect/threshold rank, expose the failed PBO

@@ -15,6 +15,8 @@ import {
   saveLocalIntradayFactorExperiment,
 } from '../research/localIntradayFactorExperiments'
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
+import { buildIntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
+import type { IntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorDiscovery, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
@@ -32,6 +34,12 @@ interface FormValues {
   combination: 'ALL' | 'ANY'
   exit_rule: IntradayExitRule
   exit_minimum_body_return_bps: string | number
+}
+
+interface CorrelationHandoff {
+  candidate: LocalIntradayFactorCandidate
+  ruleId: string
+  correlation: IntradayFactorCorrelation
 }
 
 const directionOptions = [
@@ -355,6 +363,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const [correlationResult, setCorrelationResult] = useState<IntradayFactorCorrelation | null>(null)
   const [correlationLabels, setCorrelationLabels] = useState<Record<string, string>>({})
   const [correlationBindings, setCorrelationBindings] = useState<Record<string, LocalIntradayFactorCandidate>>({})
+  const [correlationHandoff, setCorrelationHandoff] = useState<CorrelationHandoff | null>(null)
+  const [strategyLineage, setStrategyLineage] = useState<IntradayFactorStrategyLineage | null>(null)
   const [correlationHandoffStatus, setCorrelationHandoffStatus] = useState<string | null>(null)
   const [correlationRunning, setCorrelationRunning] = useState(false)
   const [correlationError, setCorrelationError] = useState<string | null>(null)
@@ -415,9 +425,20 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
         throw new Error('策略回测响应身份或安全边界与请求不一致，结果已拒绝')
       }
       setResult(next)
+      setStrategyLineage(correlationHandoff
+        ? buildIntradayFactorStrategyLineage({
+            dataset,
+            candidate: correlationHandoff.candidate,
+            ruleId: correlationHandoff.ruleId,
+            correlation: correlationHandoff.correlation,
+            request: payload,
+            backtest: next,
+          })
+        : null)
       setSaveStatus(null)
     } catch (reason) {
       setResult(null)
+      setStrategyLineage(null)
       setError(reason instanceof Error ? reason.message : '分钟因子研究失败')
     } finally {
       setRunning(false)
@@ -461,6 +482,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setCorrelationResult(null)
     setCorrelationError(null)
     setCorrelationBindings({})
+    setCorrelationHandoff(null)
+    setStrategyLineage(null)
     setCorrelationHandoffStatus(null)
     setFactorCandidateStatus(null)
     setExperimentName(record.name)
@@ -480,6 +503,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     const { start, end } = await form.validateFields(['start', 'end'])
     setCorrelationRunning(true)
     setCorrelationError(null)
+    setCorrelationHandoff(null)
+    setStrategyLineage(null)
     setCorrelationHandoffStatus(null)
     try {
       const request = {
@@ -506,6 +531,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       setCorrelationResult(null)
       setCorrelationLabels({})
       setCorrelationBindings({})
+      setCorrelationHandoff(null)
+      setStrategyLineage(null)
       setCorrelationError(reason instanceof Error ? reason.message : '因子规则相关性检验失败')
     } finally {
       setCorrelationRunning(false)
@@ -530,6 +557,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       setCorrelationResult(null)
       setCorrelationError(null)
       setCorrelationBindings({})
+      setCorrelationHandoff(null)
+      setStrategyLineage(null)
       setCorrelationHandoffStatus(null)
     } catch (reason) {
       setFactorCandidateStatus(reason instanceof Error ? reason.message : '开仓因子候选保存失败')
@@ -553,6 +582,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setCorrelationResult(null)
     setCorrelationError(null)
     setCorrelationBindings({})
+    setCorrelationHandoff(null)
+    setStrategyLineage(null)
     setCorrelationHandoffStatus(null)
   }
   const removeFactorCandidate = (draftKey: string) => {
@@ -562,6 +593,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setCorrelationResult(null)
     setCorrelationError(null)
     setCorrelationBindings({})
+    setCorrelationHandoff(null)
+    setStrategyLineage(null)
     setCorrelationHandoffStatus(null)
     setFactorCandidateStatus('本地开仓因子候选已删除。')
   }
@@ -587,6 +620,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setSaveStatus(null)
     setDiscoveryHandoffStatus(null)
     setFactorCandidateStatus(null)
+    setCorrelationHandoff({ candidate, ruleId, correlation: correlationResult })
+    setStrategyLineage(null)
     setCorrelationHandoffStatus(`已载入“${candidate.name}”进入策略构造`)
   }
   const runDiscovery = async () => {
@@ -631,6 +666,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setCorrelationResult(null)
     setCorrelationError(null)
     setCorrelationBindings({})
+    setCorrelationHandoff(null)
+    setStrategyLineage(null)
     setCorrelationHandoffStatus(null)
     setFactorCandidateStatus(null)
     setDiscoveryHandoffStatus(`已载入 ${selected.candidate_id} 的训练锁定开仓因子`)
@@ -762,6 +799,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setCorrelationResult(null)
     setCorrelationError(null)
     setCorrelationBindings({})
+    setCorrelationHandoff(null)
+    setStrategyLineage(null)
     setCorrelationHandoffStatus(null)
     setFactorCandidateStatus(null)
     setDiscoveryHandoffStatus(null)
@@ -1120,6 +1159,25 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           title="策略回测响应身份已绑定"
           description={`已逐项核对当前请求、${result.data_version}、数据 checksum、开平仓行为规格、策略只读身份与 PAPER/LIVE 安全边界；结果哈希 ${result.preview_hash.slice(0, 16)}…。`}
         />
+        {strategyLineage ? <Alert
+          showIcon
+          type="info"
+          title="因子检验 → 策略回测血缘已绑定"
+          description={<Space orientation="vertical" size={4}>
+            <Typography.Text>{strategyLineage.factor_evidence.rule_id} · {strategyLineage.factor_evidence.candidate_name} · 相关性证据 {strategyLineage.factor_evidence.correlation_preview_hash.slice(0, 12)}… → 策略结果 {strategyLineage.strategy_preview.preview_hash.slice(0, 12)}…</Typography.Text>
+            <Typography.Text type="secondary">只证明本次回测的开仓条件来自同窗已通过有效性且非冗余的手工交接；平仓规则和策略收益没有被相关性检验验证，同一历史窗口不是独立证据。</Typography.Text>
+            <JsonExportButton
+              filename={`qtrade-factor-strategy-lineage-${strategyLineage.strategy_preview.preview_hash.slice(0, 12)}.json`}
+              value={strategyLineage}
+              label="导出因子到策略血缘"
+            />
+          </Space>}
+        /> : <Alert
+          showIcon
+          type="warning"
+          title="本次回测没有因子检验手工交接血缘"
+          description="结果本身已通过请求与安全边界校验，但不是从当前会话中已绑定、有效且非冗余的因子手工交接生成；因此不会导出因子到策略的联合身份包。"
+        />}
         <Alert
           showIcon
           type={result.research_gate.passed ? 'success' : 'warning'}
@@ -1437,6 +1495,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
               setCorrelationResult(null)
               setCorrelationError(null)
               setCorrelationBindings({})
+              setCorrelationHandoff(null)
+              setStrategyLineage(null)
               setCorrelationHandoffStatus(null)
             },
           }}

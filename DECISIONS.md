@@ -2726,3 +2726,28 @@ error before result rendering. A valid response displays its binding explicitly.
 This is a client boundary check, not a second backtest or cryptographic
 recalculation. It creates no experiment or registry record, does not promote or
 start PAPER/LIVE, and cannot mutate state or transmit an order.
+
+## ADR-152 — A manual factor handoff retains one bounded strategy lineage package
+
+Status: accepted, 2026-08-27.
+
+The effectiveness/correlation response and strategy backtest could each be
+exported, but a manual handoff did not leave one portable identity proving which
+effective, non-redundant factor seeded a particular strategy preview. Simply
+placing both JSON objects beside each other would also risk implying that the
+factor diagnostic validated the later exit rule or strategy profitability.
+
+After an identity-bound manual handoff, the browser therefore retains the exact
+local candidate, `Rxx` identity, passing Holm-adjusted effectiveness row,
+non-redundant decision, correlation hash and same-window data identity. Only a
+subsequent FE-154-admitted response with the unchanged opening rule and window
+can produce the deterministic joint export; it additionally binds the complete
+strategy request, result hash and read-only behavior hash. Any form, selected
+candidate or evidence change clears the handoff and package. A direct backtest
+remains a valid diagnostic but is visibly unbound to a preceding factor screen.
+
+The package explicitly records that the exit rule and strategy returns were not
+validated by factor correlation and that reuse of one viewed historical window
+is not independent evidence. It is browser-session state, not immutable
+persistence, FactorRegistry/StrategyRegistry evidence, promotion authority,
+PAPER/LIVE admission, state mutation or external-order capability.

@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 93 frontend Vitest
+  (macOS, 2026-08-27); 102 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -382,6 +382,16 @@ Last updated: 2026-08-27
   no-state/no-order flag. Missing or drifted fields produce one rejection and no
   result; accepted output displays its verified binding. This client gate does
   not recompute evidence or add registry, promotion or runtime authority.
+- An accepted strategy preview can now retain the preceding manual factor
+  handoff as one deterministic browser-session lineage package. It binds the
+  candidate identity, effective/non-redundant `Rxx` row, Holm/correlation result
+  hash and exact same-window data identity to the later strategy request,
+  preview hash and read-only behavior hash. Parameter, candidate or evidence
+  changes clear the package; direct backtests visibly have no joint lineage.
+  The export states that factor correlation does not validate the added exit
+  rule or strategy returns and that the viewed window is not independent
+  evidence. It is not immutable persistence and has no registry, promotion,
+  PAPER/LIVE, state-mutation or order authority.
 - Discovery selection bias is now measured with one fixed combinatorially
   symmetric cross-validation audit. The same 40 viewed sessions are divided
   into eight contiguous five-session blocks; all 70 four-block training/four-

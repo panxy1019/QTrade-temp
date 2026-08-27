@@ -471,6 +471,13 @@ entry/exit and next-bar/T+1 behavior, read-only strategy hash, preregistration
 lineage, blocked registry/PAPER workflow and all state/order prohibitions.
 Malformed or drifted responses are rejected wholesale; an accepted preview is
 still historical diagnosis with no registration, promotion or runtime power.
+If that preview immediately follows the verified manual factor handoff, the
+browser now exports one deterministic lineage package binding the exact
+candidate, effective/non-redundant correlation row and correlation hash to the
+strategy request, result hash and read-only behavior hash. Parameter or evidence
+drift clears the package. It explicitly excludes exit-rule and strategy-return
+validation from the earlier factor test and labels the same viewed window as
+non-independent; no immutable, registry, promotion or runtime authority follows.
 The same fixed candidate family now has an explicit selection-bias audit. Eight
 contiguous five-session blocks produce all 70 symmetric four-block training and
 four-block complement splits. Every split repeats the real gate/t-statistic/

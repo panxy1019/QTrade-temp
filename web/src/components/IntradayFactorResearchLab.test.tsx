@@ -539,6 +539,11 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText(/只复制已绑定的开仓因子；日期、成本和平仓条件保持不变/)).toBeInTheDocument()
     expect(screen.getByText('T+1_OPEN_09_30')).toBeInTheDocument()
     expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
+
+    fireEvent.change(screen.getByRole('spinbutton', { name: '每根 10 分钟实体下限（bps）' }), {
+      target: { value: '11' },
+    })
+    expect(screen.queryByText(/只复制已绑定的开仓因子；日期、成本和平仓条件保持不变/)).not.toBeInTheDocument()
   })
 
   it('fails closed when the factor-correlation response drifts from the requested dataset', async () => {
