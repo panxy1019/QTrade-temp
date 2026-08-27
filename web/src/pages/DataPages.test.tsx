@@ -1793,6 +1793,10 @@ describe('verified robustness evidence', () => {
       (total, row) => total + Number(row.mean_signal_forward_return) * row.signal_count,
       0,
     ) / 192
+    const universeMean = -0.0012
+    const nonSignalMean = (
+      universeMean * 1500 - totalGroupMean * 192
+    ) / (1500 - 192)
     const strategySpecHash = 'ae3e57ed25bd3fe909cdf1e46e360c3e0da53ac9f52f32d4eeb104cbd06d2d8c'
     const strategyId = `adhoc-intraday-${strategySpecHash.slice(0, 16)}`
     const result = {
@@ -1923,13 +1927,14 @@ describe('verified robustness evidence', () => {
       },
       factor_validation: {
         number_of_periods: 20, minimum_instruments: 75, ic: '0.0117', rank_ic: '-0.0030',
-        icir: '0.0711', quantile_returns: [], factor_turnover: '0.589',
-        long_short_spread: '0.001', passed: false,
+        icir: '0.0711', quantile_returns: [String(nonSignalMean), String(totalGroupMean)],
+        factor_turnover: '0.589', long_short_spread: String(totalGroupMean - nonSignalMean),
+        passed: false,
       },
       event_summary: {
         observation_count: 1500, signal_count: 192, signal_rate: '0.128',
-        mean_signal_forward_return: String(totalGroupMean), mean_universe_forward_return: '-0.0012',
-        conditional_excess_return: '-0.0001', signal_hit_rate: String(totalGroupHitCount / 192),
+        mean_signal_forward_return: String(totalGroupMean), mean_universe_forward_return: String(universeMean),
+        conditional_excess_return: String(totalGroupMean - universeMean), signal_hit_rate: String(totalGroupHitCount / 192),
         positive_sector_count: 8, sector_count: 15,
         clustered_signal_session_count: 20,
         mean_session_conditional_excess_return: '-0.0002',
