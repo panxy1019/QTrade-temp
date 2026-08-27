@@ -425,6 +425,7 @@ const data = {
           positive_mean_signal_return: false, positive_conditional_excess_return: false,
           minimum_ten_clustered_signal_sessions: true,
           newey_west_t_statistic_above_1_96: false,
+          temporal_stability_passed: false,
           positive_rank_ic: false, positive_sector_ratio_at_least_60pct: false,
           maximum_absolute_factor_correlation_below_0_90: true,
           base_cost_total_return_positive: false, base_cost_excess_return_positive: false,
@@ -1994,6 +1995,9 @@ describe('verified robustness evidence', () => {
         criteria: {
           minimum_observation_count: true, minimum_signal_count: true,
           positive_mean_signal_return: false, positive_conditional_excess_return: false,
+          minimum_ten_clustered_signal_sessions: true,
+          newey_west_t_statistic_above_1_96: false,
+          temporal_stability_passed: false,
           positive_rank_ic: false, positive_sector_ratio_at_least_60pct: false,
           maximum_absolute_factor_correlation_below_0_90: true,
           base_cost_total_return_positive: false, base_cost_excess_return_positive: true,

@@ -22,6 +22,7 @@ import { matchesIntradayBacktestPerformance } from '../research/intradayBacktest
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
 import { matchesNextHypothesisPreregistration } from '../research/nextHypothesisPreregistration'
 import { matchesBlockedPaperAdmission } from '../research/paperAdmission'
+import { matchesIntradayResearchGate } from '../research/researchGate'
 import { matchesResearchWorkflow } from '../research/researchWorkflow'
 import { matchesSequentialAdvancement } from '../research/sequentialAdvancement'
 import { matchesBlockedStrategyRegistrationPreflight } from '../research/strategyRegistrationPreflight'
@@ -1788,6 +1789,7 @@ async function matchesBacktestResponse(
       && exitValidationMatches
       && matchesIntradayCausalContract(response.causal_contract, request)
       && matchesIntradayBacktestPerformance(response, request, dataset)
+      && matchesIntradayResearchGate(response)
       && strategyIdentityMatches
       && matchesResearchWorkflow(response.workflow, {
         factorValidationPassed: response.factor_validation.passed,
