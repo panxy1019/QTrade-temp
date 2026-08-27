@@ -2534,3 +2534,24 @@ The table is limited by the two-per-sector, fifteen-sector batch contract. It is
 browser-session diagnostic visibility only and cannot tune a parameter, create
 evidence or registry state, promote a strategy, start PAPER/LIVE or transmit an
 external order.
+
+## ADR-143 — A comparable stock pair requires the complete common metric surface
+
+Status: accepted, 2026-08-27.
+
+Total return and active excess alone are insufficient for the requested strategy
+comparison. Two stocks can have similar terminal returns while carrying materially
+different annualized performance, risk-adjusted return or drawdown. Admitting a
+pair whose missing Sharpe or information ratio is rendered as unavailable would
+also make its denominator broader than the visible evidence.
+
+Each admitted batch row is therefore parsed for cumulative return, annualized
+return, Sharpe, maximum drawdown, active excess return and information ratio. A
+within-sector pair exists only when every metric is finite for both stocks. The
+pair object and detail table retain both values for every metric; a non-finite
+value excludes the whole pair without imputation, while the stock response remains
+visible in the ordinary successful-session table.
+
+These are response-bound diagnostics, not recalculated curves or a new research
+gate. They do not create persistence, registry or promotion evidence, change
+PAPER/LIVE state or permit external-order transmission.

@@ -34,7 +34,14 @@ const dataset = {
 
 function resultFor(
   payload: SingleStockFiveMinuteBacktestRequest,
-  metrics: { totalReturn?: string; excessReturn?: string; maximumDrawdown?: string } = {},
+  metrics: {
+    totalReturn?: string
+    annualizedReturn?: string
+    sharpe?: string
+    excessReturn?: string
+    informationRatio?: string
+    maximumDrawdown?: string
+  } = {},
 ): SingleStockFiveMinuteBacktest {
   const instrument = dataset.instruments.find((row) => row.symbol === payload.symbol)
   if (!instrument?.sector_code || !instrument.sector_name) throw new Error('missing fixture instrument')
@@ -49,10 +56,10 @@ function resultFor(
     parameters: payload,
     metrics: {
       overlay: {
-        total_return: metrics.totalReturn ?? '0.01', annualized_return: '0.10', sharpe: '1.0',
+        total_return: metrics.totalReturn ?? '0.01', annualized_return: metrics.annualizedReturn ?? '0.10', sharpe: metrics.sharpe ?? '1.0',
         maximum_drawdown: metrics.maximumDrawdown ?? '-0.02',
       },
-      excess_return: metrics.excessReturn ?? '0.001', information_ratio: '0.2',
+      excess_return: metrics.excessReturn ?? '0.001', information_ratio: metrics.informationRatio ?? '0.2',
     },
     execution: { mean_exposure: '0.90', turnover: '1.5' },
     realtime_readiness: false,
@@ -156,8 +163,8 @@ describe('single-stock cross-sector batch diagnostic', () => {
   it('measures within-sector agreement only from a complete finite two-stock pair', async () => {
     vi.mocked(runSingleStockFiveMinuteBacktest)
       .mockResolvedValueOnce(resultFor(requestFor('600003'), { totalReturn: '0.05', excessReturn: '0.02' }))
-      .mockResolvedValueOnce(resultFor(requestFor('600001'), { totalReturn: '0.02', excessReturn: '0.01' }))
-      .mockResolvedValueOnce(resultFor(requestFor('600002'), { totalReturn: '-0.01', excessReturn: '0.005' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600001'), { totalReturn: '0.02', annualizedReturn: '0.12', sharpe: '1.1', excessReturn: '0.01', informationRatio: '0.4', maximumDrawdown: '-0.03' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600002'), { totalReturn: '-0.01', annualizedReturn: '-0.08', sharpe: '-0.5', excessReturn: '0.005', informationRatio: '0.1', maximumDrawdown: '-0.06' }))
       .mockResolvedValueOnce(resultFor(requestFor('600004'), { totalReturn: '0.03', excessReturn: '0.01' }))
     render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
 
@@ -177,7 +184,11 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(within(details).getByText('801020 乙板块')).toBeInTheDocument()
     expect(within(details).getByText('600001 / 600002')).toBeInTheDocument()
     expect(within(details).getByText('2.00% / -1.00%')).toBeInTheDocument()
+    expect(within(details).getByText('12.00% / -8.00%')).toBeInTheDocument()
+    expect(within(details).getByText('1.100 / -0.500')).toBeInTheDocument()
+    expect(within(details).getByText('-3.00% / -6.00%')).toBeInTheDocument()
     expect(within(details).getByText('1.00% / 0.50%')).toBeInTheDocument()
+    expect(within(details).getByText('0.400 / 0.100')).toBeInTheDocument()
     expect(within(details).getByText('收益不一致 · 超额一致')).toBeInTheDocument()
     expect(within(details).getByText('3.00%')).toBeInTheDocument()
     const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
@@ -198,11 +209,38 @@ describe('single-stock cross-sector batch diagnostic', () => {
         sector_name: '乙板块',
         symbols: ['600001', '600002'],
         total_returns: [0.02, -0.01],
+        annualized_returns: [0.12, -0.08],
+        sharpes: [1.1, -0.5],
+        maximum_drawdowns: [-0.03, -0.06],
         excess_returns: [0.01, 0.005],
+        information_ratios: [0.4, 0.1],
         return_direction_agreement: false,
         excess_direction_agreement: true,
         absolute_return_spread: 0.03,
       }],
+    })
+  })
+
+  it('excludes a two-stock sector when one common risk metric is non-finite', async () => {
+    vi.mocked(runSingleStockFiveMinuteBacktest)
+      .mockResolvedValueOnce(resultFor(requestFor('600003')))
+      .mockResolvedValueOnce(resultFor(requestFor('600001')))
+      .mockResolvedValueOnce(resultFor(requestFor('600002'), { sharpe: 'NaN' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600004')))
+    render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '每板块 2 股' }))
+    fireEvent.click(screen.getByRole('button', { name: '运行 4 股 / 3 板块同参诊断' }))
+
+    expect(await screen.findByText('同参批量完成：4/4 只代表股，覆盖 3/3 个板块')).toBeInTheDocument()
+    const consistency = screen.getByTestId('sector-pair-consistency')
+    expect(within(consistency).getByText('0/1')).toBeInTheDocument()
+    expect(screen.queryByTestId('sector-pair-details')).not.toBeInTheDocument()
+    const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
+    expect(exported.summary.within_sector_consistency).toMatchObject({
+      requested_pair_sector_count: 1,
+      complete_pair_sector_count: 0,
+      pairs: [],
     })
   })
 

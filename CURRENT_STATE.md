@@ -240,8 +240,10 @@ Last updated: 2026-08-27
   summary admits only complete finite pairs and reports pair coverage,
   return/excess direction agreement, median absolute return spread and the worst
   divergence; a sector-sorted detail table exposes both stocks, both returns and
-  excess returns, both direction decisions and the spread from those same
-  exported pair objects. Incomplete or rejected partners are never imputed. It
+  excess returns, annualized returns, Sharpes, maximum drawdowns, information
+  ratios, both direction decisions and the spread from those same exported pair
+  objects. Any non-finite common metric excludes the whole pair; incomplete or
+  rejected partners are never imputed. It
   does not tune per stock or prove sector/full-universe robustness;
   QFQ/non-PIT, ad-hoc, `NOT_ELIGIBLE`, stateless and external-order-disabled
   boundaries are part of the response and UI.

@@ -284,8 +284,11 @@ rejected or non-finite partners are excluded without imputation. Pair details ar
 preserved in the browser-session export and remain diagnostic rather than a
 formal robustness or promotion gate. Every complete pair is also visible in a
 bounded sector-sorted table with both stock codes, both strategy/excess returns,
-the two sign-agreement decisions and absolute return spread. The table reads the
-same admitted pair objects as the export and never renders an incomplete pair.
+both annualized returns, Sharpes, maximum drawdowns and information ratios, the
+two sign-agreement decisions and absolute return spread. A pair requires every
+one of these common metrics to be finite for both stocks. The table reads the
+same admitted pair objects as the export and never renders or imputes an
+incomplete/non-finite pair.
 Before any response enters the session,
 the browser also requires its stock/sector identity, complete normalized request
 parameters, signed data version/checksum, fixed `NOT_ELIGIBLE` classification and

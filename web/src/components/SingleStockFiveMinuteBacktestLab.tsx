@@ -226,9 +226,17 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
     ? sessionRuns.map((row) => ({
       row,
       totalReturn: Number(row.metrics.overlay.total_return),
+      annualizedReturn: Number(row.metrics.overlay.annualized_return),
+      sharpe: Number(row.metrics.overlay.sharpe),
       excessReturn: Number(row.metrics.excess_return),
+      informationRatio: Number(row.metrics.information_ratio),
       maximumDrawdown: Number(row.metrics.overlay.maximum_drawdown),
-    })).filter((row) => Number.isFinite(row.totalReturn) && Number.isFinite(row.excessReturn) && Number.isFinite(row.maximumDrawdown))
+    })).filter((row) => Number.isFinite(row.totalReturn)
+      && Number.isFinite(row.annualizedReturn)
+      && Number.isFinite(row.sharpe)
+      && Number.isFinite(row.excessReturn)
+      && Number.isFinite(row.informationRatio)
+      && Number.isFinite(row.maximumDrawdown))
     : []
   const sortedBatchReturns = [...batchMetricRows].sort((left, right) => left.totalReturn - right.totalReturn)
   const batchMedianReturn = sortedBatchReturns.length === 0
@@ -257,7 +265,11 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       sector_name: left.row.instrument.sector_name,
       symbols: [left.row.symbol, right.row.symbol],
       total_returns: [left.totalReturn, right.totalReturn],
+      annualized_returns: [left.annualizedReturn, right.annualizedReturn],
+      sharpes: [left.sharpe, right.sharpe],
+      maximum_drawdowns: [left.maximumDrawdown, right.maximumDrawdown],
       excess_returns: [left.excessReturn, right.excessReturn],
+      information_ratios: [left.informationRatio, right.informationRatio],
       return_direction_agreement: Math.sign(left.totalReturn) === Math.sign(right.totalReturn),
       excess_direction_agreement: Math.sign(left.excessReturn) === Math.sign(right.excessReturn),
       absolute_return_spread: Math.abs(left.totalReturn - right.totalReturn),
@@ -447,11 +459,15 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
               { title: '板块', render: (_: unknown, row) => `${row.sector_code} ${row.sector_name}` },
               { title: '股票对', render: (_: unknown, row) => row.symbols.join(' / ') },
               { title: '分钟修正收益', render: (_: unknown, row) => row.total_returns.map((value) => formatPercent(String(value))).join(' / ') },
+              { title: '年化收益', render: (_: unknown, row) => row.annualized_returns.map((value) => formatPercent(String(value))).join(' / ') },
+              { title: 'Sharpe', render: (_: unknown, row) => row.sharpes.map((value) => formatNumber(String(value))).join(' / ') },
+              { title: '最大回撤', render: (_: unknown, row) => row.maximum_drawdowns.map((value) => formatPercent(String(value))).join(' / ') },
               { title: '主动超额', render: (_: unknown, row) => row.excess_returns.map((value) => formatPercent(String(value))).join(' / ') },
+              { title: '信息比率', render: (_: unknown, row) => row.information_ratios.map((value) => formatNumber(String(value))).join(' / ') },
               { title: '方向', render: (_: unknown, row) => `收益${row.return_direction_agreement ? '一致' : '不一致'} · 超额${row.excess_direction_agreement ? '一致' : '不一致'}` },
               { title: '绝对收益差', render: (_: unknown, row) => formatPercent(String(row.absolute_return_spread)) },
             ]}
-            scroll={{ x: 1080 }}
+            scroll={{ x: 1680 }}
           />
           <Typography.Text type="secondary">明细与本次会话导出的 pairs 使用同一份已接纳数据，按板块代码稳定排序；表格不会显示或补造不完整双股板块，也不会据此自动调参或晋级。</Typography.Text>
         </Space>

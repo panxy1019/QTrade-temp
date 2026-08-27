@@ -269,8 +269,11 @@ rejected or non-finite partner excludes the whole sector pair without imputation
 the result remains a browser-session fragility view rather than promotion evidence.
 Every complete pair is now rendered in a bounded sector-sorted detail table using
 the exact objects exported in the session envelope. The table exposes both stock
-codes, both strategy/excess returns, both sign decisions and absolute spread; it
-does not rerun, recompute or display an incomplete pair.
+codes, both cumulative/annualized returns, Sharpes, maximum drawdowns, active
+excess returns, information ratios, both sign decisions and absolute spread. All
+six common metrics must be finite for both stocks; otherwise the whole pair stays
+outside the denominator and table without imputation. The UI does not rerun or
+recompute the admitted responses.
 Each batch response is now bound before admission to the requested symbol and
 signed sector identity, every normalized parameter, the long-history dataset
 version/checksum and the fixed no-realtime/no-state/no-order contract. A mismatch
