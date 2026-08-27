@@ -2619,3 +2619,24 @@ The artifact is explicitly not an experiment or decision. It cannot be imported
 or automatically synchronized, ranks no winner, writes neither FactorRegistry
 nor StrategyRegistry, and provides no promotion, PAPER/LIVE, state-mutation or
 external-order authority.
+
+## ADR-147 — Export the multi-rule response without creating a second result
+
+Status: accepted, 2026-08-27.
+
+The browser displays the complete 2–8 rule effectiveness and correlation result,
+but local factor summaries do not contain the submitted-family Holm adjustment,
+continuous-score matrix or redundant-pair set. Reconstructing those fields from
+screenshots or individual records would lose the exact response identity and
+could silently change the statistical family.
+
+After a successful request, the page therefore downloads the exact server JSON
+under a filename derived from its `preview_hash`. It preserves each saved
+threshold, session-clustered effectiveness row, Newey-West statistic, raw and
+Holm-adjusted p-value, Pearson matrix, redundant pairs, data version/checksum,
+PIT limitation and no-authority fields. Before a result exists the action is not
+rendered; parameter or selected-rule changes invalidate the old result.
+
+The browser does not wrap, rehash, recalculate or persist the response. Export
+cannot select a winner, create an immutable experiment or registry record,
+promote a strategy, start PAPER/LIVE, mutate state or transmit an order.

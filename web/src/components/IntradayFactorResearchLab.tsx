@@ -1344,7 +1344,14 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
               ]}
               scroll={{ x: 760 }}
             />
-            <Typography.Text type="secondary">相关性响应哈希 {correlationResult.preview_hash}；数据 checksum {correlationResult.dataset_checksum}；无状态写入、无外部订单。</Typography.Text>
+            <Space wrap>
+              <JsonExportButton
+                filename={`qtrade-intraday-factor-correlation-${correlationResult.preview_hash.slice(0, 12)}.json`}
+                value={correlationResult}
+                label="导出有效性与相关性证据"
+              />
+              <Typography.Text type="secondary">相关性响应哈希 {correlationResult.preview_hash}；数据 checksum {correlationResult.dataset_checksum}。导出保留服务端原始有效性、多重检验、相关矩阵和冗余判定；不写本地实验或注册表，无状态写入、无外部订单。</Typography.Text>
+            </Space>
           </>}
           <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，保留规则、结果哈希、只读策略 ID/规格哈希、常用绩效、Rank IC、最大相关性、Newey-West 与滚动样本外摘要；载入后必须重新运行。可导出确定性只读 JSON 留档或跨设备核对，但不支持导入、自动同步或自动选优。策略身份仍是 AD_HOC_UNREGISTERED；表中统计都来自已经查看的同一历史响应，不是不可变实验、FactorRegistry/StrategyRegistry 写入、独立样本外证据或 PAPER/LIVE 晋级输入。</Typography.Text>
         </Space>

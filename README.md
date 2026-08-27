@@ -398,6 +398,15 @@ This is portable review data only: there is no import, automatic synchronization
 or winner selection, immutable experiment or registry write, promotion,
 PAPER/LIVE transition, state mutation or external order transmission.
 
+The selected 2–8 rule same-window check also exposes its complete server result
+as a `preview_hash`-named JSON download after success. It retains per-rule saved
+thresholds, session-clustered effectiveness, Newey-West statistics, raw and
+Holm-adjusted p-values, the continuous-score Pearson matrix, redundant pairs,
+dataset/PIT identity and every read-only safety flag. No export appears before a
+result exists; form or selection changes invalidate the old result. The file is
+not recalculated browser evidence, persistence, automatic selection, registry or
+PAPER/LIVE authority.
+
 Factor effectiveness no longer treats every same-day stock observation as an
 independent significance sample. For each session containing at least one
 signal, the engine first computes the triggered-stock mean forward return minus

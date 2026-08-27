@@ -410,6 +410,7 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('KNOWN_AT_10_00_CLOSE → NEXT_5M_OPEN_10_05')).toBeInTheDocument()
     expect(screen.getByText('T+1_OPEN_09_30')).toBeInTheDocument()
     expect(screen.getByText(/不是服务端规范、规格哈希、有效性结论或晋级证据/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /导出有效性与相关性证据/ })).not.toBeInTheDocument()
     const button = screen.getByRole('button', { name: '检验选中规则有效性与相关性（0/8）' })
     expect(button).toBeDisabled()
     const checkboxes = screen.getAllByRole('checkbox')
@@ -433,6 +434,7 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getAllByText('R01 · 三连阳 A').length).toBeGreaterThan(0)
     expect(screen.getAllByText('R02 · 混合方向 B').length).toBeGreaterThan(0)
     expect(screen.getByText('冗余')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /导出有效性与相关性证据/ })).toBeEnabled()
     expect(screen.getByText(/无状态写入、无外部订单/)).toBeInTheDocument()
   })
 

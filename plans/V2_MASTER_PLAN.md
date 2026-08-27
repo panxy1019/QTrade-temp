@@ -178,6 +178,10 @@ npm --prefix web run build
   identical 75-stock window, compute two-sided Newey-West p-values and apply
   Holm-Bonferroni across the 2–8 rule family before displaying an effectiveness
   pass; keep continuous-score correlation as an independent de-duplication gate.
+- [x] Export the exact hash-bound multi-rule response after a successful run,
+  retaining thresholds, clustered effectiveness, Newey-West/raw/Holm p-values,
+  Pearson matrix, redundant pairs, data/PIT identity and no-authority fields;
+  hide it before a result and never persist, rank, register or admit runtime.
 - [x] Add a fixed paired stationary bootstrap over the 60 stitched out-of-sample
   strategy/benchmark days in the signed 120-session factor report; independently
   recompute the 1,000-path excess distribution in the API and expose its median,

@@ -492,6 +492,15 @@ Last updated: 2026-08-27
   none of three example rules passed (all adjusted p-values were 1), while a
   duplicate pair had correlation 1. The endpoint and UI remain retrospective,
   stateless, `NOT_ELIGIBLE` and external-order-disabled.
+- Multi-rule evidence export: after the same-window request succeeds, the page
+  can download the exact server response under its `preview_hash`. The JSON
+  preserves saved thresholds, session-clustered effectiveness, Newey-West and
+  raw/Holm p-values, the continuous-score Pearson matrix, redundant pairs,
+  dataset identity, PIT limitation and all no-authority fields. No action is
+  shown before a result exists, and changing parameters or selection clears the
+  old result. Export neither recalculates nor persists evidence, chooses a
+  winner, writes an experiment/registry, starts PAPER/LIVE, mutates state or
+  transmits orders.
 - Paired out-of-sample uncertainty: the immutable 120-session report now
   resamples the 60 stitched test days with 1,000 paired stationary-bootstrap
   paths, expected block length ten and a fixed seed. Strategy and benchmark use

@@ -384,6 +384,12 @@ Observation, signal, signal-session, positive-effect, t-statistic and adjusted-p
 gates must all pass; inspecting more rules therefore cannot turn unadjusted
 chance findings into an effectiveness pass. The disclosed 20-session diagnostic
 had zero passing rules out of three and all adjusted p-values equal to one.
+Once a same-window request succeeds, its exact `preview_hash`-bound response can
+be exported with rule thresholds, clustered effectiveness, Newey-West and
+raw/Holm p-values, Pearson matrix, redundant pairs, dataset/PIT identity and
+every safety flag. The action is absent before a result exists and stale results
+are cleared on parameter or selection changes. Export adds no recalculation,
+persistence, winner selection, experiment/registry write or runtime authority.
 Separately, every factor run is divided into
 four fixed contiguous date blocks. The stability gate requires signals in every
 block, at least three positive session-clustered conditional-excess block means,
