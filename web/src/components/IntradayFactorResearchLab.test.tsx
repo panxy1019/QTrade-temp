@@ -320,6 +320,43 @@ const discoveryCandidates = discoveryDirections.flatMap((first) => (
     })
   ))
 ))
+const discoverySelectedDays = discoveryTradingDays.slice(4, 44)
+const discoveryBlockIds = Array.from({ length: 8 }, (_, index) => index + 1)
+function numberCombinations(values: readonly number[], size: number): number[][] {
+  const result: number[][] = []
+  function visit(start: number, selected: number[]): void {
+    if (selected.length === size) {
+      result.push(selected)
+      return
+    }
+    for (let index = start; index <= values.length - (size - selected.length); index += 1) {
+      visit(index + 1, [...selected, values[index]])
+    }
+  }
+  visit(0, [])
+  return result
+}
+const discoveryAlternativeWinnerIds = discoveryCandidates
+  .map((candidate) => candidate.candidate_id)
+  .filter((candidateId) => candidateId !== 'DIR-DDD-T0020')
+  .slice(0, 16)
+const discoveryCscvSplits = numberCombinations(discoveryBlockIds, 4).map((trainingBlocks, index) => {
+  const belowMedian = index < 29
+  return {
+    split_id: `CSCV-${String(index + 1).padStart(3, '0')}`,
+    training_block_ids: trainingBlocks,
+    test_block_ids: discoveryBlockIds.filter((blockId) => !trainingBlocks.includes(blockId)),
+    selected_candidate_id: index < 24
+      ? 'DIR-DDD-T0020'
+      : discoveryAlternativeWinnerIds[(index - 24) % discoveryAlternativeWinnerIds.length],
+    training_excess_return: '0.08',
+    test_excess_return: index < 35 ? '-0.004' : '0.0004235066',
+    test_average_rank: belowMedian ? '26.5' : '78.5',
+    test_rank_percentile: belowMedian ? '0.25' : '0.75',
+    test_rank_logit: belowMedian ? '-1.0986122886681098' : '1.0986122886681098',
+    below_median: belowMedian,
+  }
+})
 const discovery = {
   classification: 'BOUNDED_INTRADAY_FACTOR_DISCOVERY_REUSED_HISTORY_NOT_INDEPENDENT',
   parameters: { start: '2026-06-05', end: '2026-07-14', cost_bps: '5' },
@@ -351,15 +388,13 @@ const discovery = {
     training_blocks_per_split: 4, test_blocks_per_split: 4, reuses_original_locked_test_blocks: true,
     candidate_selection_uses_only_each_cscv_training_partition: true, changes_original_locked_candidate: false,
     independent_confirmation: false, promotion_authority: false,
-    blocks: Array.from({ length: 8 }, (_, index) => ({
-      block_id: index + 1, start: `2026-06-${String(5 + index * 2).padStart(2, '0')}`,
-      end: `2026-06-${String(6 + index * 2).padStart(2, '0')}`, session_count: 5,
+    blocks: discoveryBlockIds.map((blockId, index) => ({
+      block_id: blockId,
+      start: discoverySelectedDays[index * 5],
+      end: discoverySelectedDays[index * 5 + 4],
+      session_count: 5,
     })),
-    splits: [{
-      split_id: 'CSCV-001', training_block_ids: [1, 2, 3, 4], test_block_ids: [5, 6, 7, 8],
-      selected_candidate_id: 'DIR-DDD-T0020', training_excess_return: '0.08', test_excess_return: '0.03',
-      test_average_rank: '80', test_rank_percentile: '0.7644', test_rank_logit: '1.177', below_median: false,
-    }],
+    splits: discoveryCscvSplits,
     below_median_split_count: 29, probability_of_backtest_overfitting: '0.4142857143',
     selected_oos_positive_excess_split_count: 35, selected_oos_positive_excess_ratio: '0.5',
     median_selected_oos_excess_return: '-0.0017882467', unique_selected_candidate_count: 17,
@@ -848,6 +883,22 @@ describe('intraday factor rule correlation', () => {
       candidates: discovery.candidates.map((candidate, index) => (
         index === 1 ? { ...candidate, candidate_id: 'DIR-SUBSTITUTED-T0000' } : candidate
       )),
+    } as unknown as IntradayFactorDiscovery))
+    render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '挖掘最近 40 日的 104 个有界因子' }))
+
+    expect(await screen.findByText('因子挖掘响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '载入训练锁定开仓因子' })).not.toBeInTheDocument()
+  })
+
+  it('fails closed when a signed discovery response misstates its CSCV aggregate', async () => {
+    vi.mocked(runIntradayFactorDiscovery).mockResolvedValueOnce(await withPreviewHash({
+      ...discovery,
+      overfitting_audit: {
+        ...discovery.overfitting_audit,
+        below_median_split_count: 28,
+      },
     } as unknown as IntradayFactorDiscovery))
     render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
 
