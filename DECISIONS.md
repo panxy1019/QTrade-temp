@@ -2802,3 +2802,27 @@ recorded replay require a reviewed type and validator update together. The
 current implementation does not fetch or synthesize L2, calculate an intensity,
 test a factor, define an exit, start PAPER/LIVE, mutate state or transmit an
 external order.
+
+## ADR-155 — PAPER admission is a dynamic exact transport contract
+
+Status: accepted, 2026-08-27.
+
+An eight-row PAPER dossier is not trustworthy merely because its array length is
+eight and several obvious runtime gates are false. A response could report a
+forged passed count, repeat a false gate to hide the research or backtest gate,
+or detach its evidence from the dataset and ad-hoc strategy while retaining the
+top-level `BLOCKED` decision. Rendering the surrounding backtest would make that
+drift look like a reviewed promotion boundary.
+
+The browser now derives the expected dossier from the verified data version and
+checksum, actual research and causal-backtest results, read-only strategy ID and
+spec hash, and sequential next action. It requires the exact ordered eight gates
+and evidence strings, `1 + research + backtest` passed-count arithmetic, a fixed
+required count of eight, and every automatic-start/runtime-mode/state/order flag
+to remain false. Recursive exact matching rejects missing and extra fields as
+well as duplicate gates, count or evidence drift before any metric renders.
+
+This is a response-admission boundary, not a promotion evaluator. It neither
+changes the server's research result nor creates registration, unseen-forward,
+realtime, attestation or reconciliation evidence. PAPER remains blocked and LIVE
+and external order transmission remain disabled.

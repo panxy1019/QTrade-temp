@@ -2018,6 +2018,16 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
+      ...result,
+      paper_admission: {
+        ...result.paper_admission,
+        passed_gate_count: 7,
+      },
+    } as unknown as IntradayFactorBacktest)
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+    expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
   }, 10_000)
 
   it('does not present experiment records as a registered lineage', () => {

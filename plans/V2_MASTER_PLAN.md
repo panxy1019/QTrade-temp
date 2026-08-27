@@ -285,6 +285,10 @@ npm --prefix web run build
   factor run, separating failed research/backtest evidence from registration,
   unseen-forward, realtime, runtime-attestation and reconciliation blockers;
   keep the current 1/8 decision read-only and `BLOCKED`.
+- [x] Fail closed before rendering that PAPER dossier unless the ordered eight
+  gates, dataset/strategy evidence, research/backtest values, count arithmetic,
+  sequential next action and all no-authority fields match exactly; reject
+  duplicate/missing gates, forged counts, evidence drift and extra fields.
 - [x] Replace the L2 buying-intensity placeholder with a structured five-level
   data contract: exact price/size fields, share-unit certification, provider
   event/receive clocks and sequence, causal minute timing, fail-closed book

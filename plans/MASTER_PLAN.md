@@ -549,6 +549,14 @@ forward SHADOW evidence, authorized realtime readiness, a fresh runtime
 attestation and reconciliation readiness. The current run is `BLOCKED` at 1/8;
 the dossier has no registration, runtime-control, persistence or order path.
 
+The browser now validates that dossier as an exact dynamic transport contract
+before rendering any strategy result. It requires the ordered eight gates,
+dataset and ad-hoc strategy evidence, research/backtest-derived booleans, exact
+passed/required counts, the sequential next action and all no-authority fields.
+A forged `7/8`, duplicate/missing gate, evidence drift or extra field rejects the
+entire response. The validator neither reruns research nor grants PAPER/runtime
+authority.
+
 The factor-to-strategy handoff now has a deterministic read-only identity. Its
 canonical specification covers the entry factor and threshold, exit rule,
 causal execution prices, equal-weight sizing, matched benchmark, costs and T+1

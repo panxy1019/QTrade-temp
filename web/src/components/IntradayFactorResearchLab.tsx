@@ -18,6 +18,7 @@ import type { LocalIntradayFactorExperiment } from '../research/localIntradayFac
 import { buildIntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import type { IntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
+import { matchesBlockedPaperAdmission } from '../research/paperAdmission'
 import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorDiscovery, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
@@ -1808,26 +1809,15 @@ function matchesBacktestResponse(
       && registration.live_runtime_start === false
       && registration.state_mutation === false
       && registration.external_order_transmission === false
-      && paperAdmission.decision === 'BLOCKED'
-      && paperAdmission.all_required_gates_passed === false
-      && paperAdmission.automatic_start_allowed === false
-      && paperAdmission.runtime_mode_change === false
-      && paperAdmission.state_mutation === false
-      && paperAdmission.external_order_transmission === false
-      && paperAdmission.next_allowed_stage === advancement.next_allowed_action
-      && paperAdmission.required_gates.length === 8
-      && paperAdmission.required_gates.some((gate) => (
-        gate.gate_id === 'verified_historical_dataset_identity_bound' && gate.passed
-      ))
-      && [
-        'registered_immutable_strategy_version_available',
-        'unseen_forward_shadow_evidence_attached',
-        'authorized_realtime_provider_ready',
-        'fresh_runtime_readiness_attestation_available',
-        'reconciliation_ready',
-      ].every((gateId) => paperAdmission.required_gates.some((gate) => (
-        gate.gate_id === gateId && !gate.passed
-      )))
+      && matchesBlockedPaperAdmission(paperAdmission, {
+        dataVersion: dataset.data_version,
+        datasetChecksum: dataset.checksum,
+        researchGatePassed: response.research_gate.passed,
+        backtestPassed: response.backtest.passed,
+        strategyId: identity.strategy_id,
+        strategySpecHash: identity.spec_hash,
+        nextAllowedStage: advancement.next_allowed_action,
+      })
       && workflowBlocksExecution
       && matchesUnavailableL2FactorReadiness(l2Readiness)
       && /^[a-f0-9]{64}$/.test(response.preview_hash)

@@ -502,7 +502,12 @@ factor validation; its strategy and causal backtest remain diagnostic previews.
 The viewed window cannot be used for reselection. PAPER admission consumes the
 same next-action value, so this rejected run consistently instructs the user to
 predeclare a new hypothesis before new evidence; it no longer suggests strategy
-registration. That instruction now expands into a read-only preregistration
+registration. Before the dossier renders, the browser now requires the exact
+ordered eight-gate family, dataset/strategy-bound evidence strings, dynamic
+research/backtest gate values and count arithmetic. A duplicated or missing
+gate, forged `passed_gate_count`, evidence drift or extra authority field rejects
+the complete response instead of displaying a misleading PAPER boundary. That
+instruction now expands into a read-only preregistration
 preflight bound to the rejected strategy ID/hash, dataset checksum, viewed date
 range and first failed stage. It mirrors the required `ResearchHypothesis` and
 `ExperimentRunSpec` fields, requires a new disjoint evidence period, independent

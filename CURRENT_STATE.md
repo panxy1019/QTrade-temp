@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 109 frontend Vitest
+  (macOS, 2026-08-27); 113 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -1059,6 +1059,13 @@ Last updated: 2026-08-27
   attestation or PAPER reconciliation binding exists. The decision is therefore
   `BLOCKED`; it cannot register or start a strategy, change runtime mode, mutate
   state or transmit an external order.
+- PAPER-admission browser boundary: that eight-gate dossier is now admitted only
+  when its classification, ordered gate IDs, dataset/strategy-bound evidence,
+  research/backtest booleans, `1 + research + backtest` passed-count arithmetic,
+  required count, shared next action and every no-authority field match exactly.
+  Duplicated/missing gates, a forged count, drifted evidence or an extra field
+  reject the full strategy response before metrics render. This is read-only
+  transport validation and does not create PAPER eligibility or runtime power.
 - Intraday strategy construction identity: each factor-backtest response binds
   the exact entry factor, expression, directions and threshold; exit type and
   optional exit factor; causal price sources; equal-weight sizing; matched
