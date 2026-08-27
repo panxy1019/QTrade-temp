@@ -61,7 +61,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       setSessionRuns((current) => [
         next,
         ...current.filter((row) => row.preview_hash !== next.preview_hash),
-      ].slice(0, 10))
+      ].slice(0, 15))
     } catch (reason) {
       setResult(null)
       setError(reason instanceof Error ? reason.message : '个股 5 分钟回测失败')
@@ -75,6 +75,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       .map(([reason, count]) => `${reason} ${count}`)
       .join('；')
     : ''
+  const sessionSectorCount = new Set(sessionRuns.map((row) => row.instrument.sector_code)).size
 
   return <Card title="个股 5 分钟因果回测" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · {dataset.session_count} 日</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
@@ -153,9 +154,9 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
         />
         <JsonExportButton filename={`qtrade-${result.symbol}-five-minute-${result.preview_hash.slice(0, 12)}.json`} value={result} label="导出个股回测" />
       </>}
-      {sessionRuns.length > 0 && <Card type="inner" title={`本次会话个股回测对比（${sessionRuns.length}/10）`}>
+      {sessionRuns.length > 0 && <Card type="inner" title={`本次会话个股回测对比（${sessionRuns.length}/15，覆盖 ${sessionSectorCount} 个板块）`}>
         <Space orientation="vertical" style={{ width: '100%' }}>
-          <Typography.Text type="secondary">仅保留当前页面会话最近 10 个不同结果哈希；刷新后清空，不写服务端、不构成正式实验或晋级证据。</Typography.Text>
+          <Typography.Text type="secondary">仅保留当前页面会话最近 15 个不同结果哈希，便于各选一股覆盖签名数据的 15 个板块；覆盖数只是当前会话去重统计。刷新后清空，不写服务端、不构成正式实验或晋级证据。</Typography.Text>
           <Table<SingleStockFiveMinuteBacktest>
             rowKey="preview_hash"
             size="small"
@@ -163,6 +164,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
             pagination={false}
             columns={[
               { title: '个股', render: (_: unknown, row) => `${row.symbol} ${row.instrument.name}` },
+              { title: '板块', render: (_: unknown, row) => row.instrument.sector_name },
               { title: '结果哈希', render: (_: unknown, row) => <Typography.Text code>{row.preview_hash.slice(0, 12)}…</Typography.Text> },
               { title: '区间', render: (_: unknown, row) => `${row.parameters.start} → ${row.parameters.end}` },
               { title: '短/长窗', render: (_: unknown, row) => `${row.parameters.short_window}/${row.parameters.long_window}` },
@@ -184,7 +186,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
                 <JsonExportButton filename={`qtrade-${row.symbol}-five-minute-${row.preview_hash.slice(0, 12)}.json`} value={row} label="导出该次" size="small" type="link" />
               </Space> },
             ]}
-            scroll={{ x: 1720 }}
+            scroll={{ x: 1820 }}
           />
         </Space>
       </Card>}

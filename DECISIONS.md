@@ -2202,9 +2202,9 @@ single-result exports, but each successful run replaced the visible result.
 That prevented direct comparison of parameter changes using the common metric
 surface now returned by the API.
 
-The browser now keeps the ten latest distinct preview hashes for the lifetime of
+The browser now keeps the fifteen latest distinct preview hashes for the lifetime of
 the open page. Each row identifies the stock, interval, core parameters, cost,
-cumulative and annualized return, Sharpe, drawdown, active excess, information
+sector, cumulative and annualized return, Sharpe, drawdown, active excess, information
 ratio, exposure and turnover. Loading a row copies only its request parameters
 back into the form, clears the current result and requires a new API run.
 
@@ -2330,3 +2330,21 @@ The draft is browser-derived and explicitly non-canonical. It does not define a
 stock-selection factor, create server strategy identity, prove performance,
 register or promote a policy, start PAPER/LIVE, mutate state or transmit an
 external order.
+
+## ADR-133 — Session comparison can represent one stock from every signed sector
+
+Status: accepted, 2026-08-27.
+
+The verified minute universe spans fifteen sectors, while the individual-stock
+session comparison retained only ten runs and omitted sector identity. Even an
+intentional one-stock-per-sector diagnostic therefore could not be reviewed in
+one page session.
+
+The comparison now retains fifteen distinct result hashes, displays the dataset-
+bound sector name on every row and reports the count of distinct sector codes in
+the current session. It still evicts older results deterministically and remains
+small enough for direct visual comparison.
+
+Sector coverage is descriptive only. The browser does not automatically select
+or run stocks, prove cross-sectional robustness, persist evidence, promote a
+strategy, start PAPER/LIVE, mutate state or transmit an external order.
