@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 121 frontend Vitest
+  (macOS, 2026-08-27); 125 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -1107,6 +1107,12 @@ Last updated: 2026-08-27
   completed review the earliest registry state is `IDEA`, and human authority
   remains mandatory for `APPROVED` and `CHAMPION`. PAPER/LIVE starts, state
   mutation and external orders all remain false.
+- Preregistration browser boundary: the client now requires the exact binding,
+  status derived from the sequential next action, ordered 7 hypothesis fields,
+  13 experiment locks, eight governance gates and requirement text, disjoint
+  evidence-window policy, legal lifecycle and human-authorization list. Missing,
+  reordered or extra fields, evidence reuse, premature lifecycle state or any
+  preregistration/registry/runtime/order write rejects the complete result.
 - Strategy-registry admission preflight: the factor response and research page
   now distinguish the behavior hash from the full registry `StrategySpec` hash.
   All fifteen immutable registry fields and nine admission gates are explicit.

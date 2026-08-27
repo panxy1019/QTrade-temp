@@ -2870,3 +2870,24 @@ whole backtest response before its metrics render.
 This is transport admission only. It does not advance a stage, register a
 strategy, reuse the viewed window, authorize PAPER/LIVE, mutate state or
 transmit an external order.
+
+## ADR-158 — Next-hypothesis preregistration is an exact transport contract
+
+Status: accepted, 2026-08-27.
+
+Binding only the strategy, dataset, viewed dates and final no-write flags does
+not validate the preregistration checklist. A payload could omit a governance
+gate, weaken its requirement, permit reuse of an already viewed test window or
+claim an `IDEA` lifecycle state while leaving those shallow bindings intact.
+
+The browser now derives the preregistration status from sequential advancement
+and requires the exact current-result binding, ordered seven hypothesis fields,
+thirteen experiment locks, eight governance gates and requirement strings,
+disjoint evidence-window policy, eight-state legal lifecycle and mandatory
+human authorization for `APPROVED` and `CHAMPION`. Recursive exact matching
+rejects missing, reordered and extra fields, evidence reuse, premature lifecycle
+state and any preregistration/registry/runtime/state/order authority.
+
+This remains read-only response admission. It creates neither a hypothesis nor
+an experiment or registry row, does not authorize PAPER/LIVE, does not mutate
+state and cannot transmit an external order.

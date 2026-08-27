@@ -18,6 +18,7 @@ import type { LocalIntradayFactorExperiment } from '../research/localIntradayFac
 import { buildIntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import type { IntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
+import { matchesNextHypothesisPreregistration } from '../research/nextHypothesisPreregistration'
 import { matchesBlockedPaperAdmission } from '../research/paperAdmission'
 import { matchesSequentialAdvancement } from '../research/sequentialAdvancement'
 import { matchesBlockedStrategyRegistrationPreflight } from '../research/strategyRegistrationPreflight'
@@ -1789,20 +1790,16 @@ function matchesBacktestResponse(
         robustnessValidationPassed: response.robustness_validation.passed,
         backtestPassed: response.backtest.passed,
       })
-      && preregistration.current_result_binding.strategy_id === identity.strategy_id
-      && preregistration.current_result_binding.strategy_spec_hash === identity.spec_hash
-      && preregistration.current_result_binding.data_version === dataset.data_version
-      && preregistration.current_result_binding.dataset_checksum === dataset.checksum
-      && preregistration.current_result_binding.viewed_evidence_period.start === request.start
-      && preregistration.current_result_binding.viewed_evidence_period.end === request.end
-      && preregistration.current_result_binding.first_blocking_stage === advancement.first_blocking_stage
-      && preregistration.current_result_binding.next_allowed_action === advancement.next_allowed_action
-      && preregistration.preregistration_created === false
-      && preregistration.registry_write === false
-      && preregistration.paper_runtime_start === false
-      && preregistration.live_runtime_start === false
-      && preregistration.state_mutation === false
-      && preregistration.external_order_transmission === false
+      && matchesNextHypothesisPreregistration(preregistration, {
+        strategyId: identity.strategy_id,
+        strategySpecHash: identity.spec_hash,
+        dataVersion: dataset.data_version,
+        datasetChecksum: dataset.checksum,
+        viewedStart: request.start,
+        viewedEnd: request.end,
+        firstBlockingStage: advancement.first_blocking_stage,
+        nextAllowedAction: advancement.next_allowed_action,
+      })
       && matchesBlockedStrategyRegistrationPreflight(registration, {
         dataVersion: dataset.data_version,
         datasetChecksum: dataset.checksum,

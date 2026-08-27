@@ -589,6 +589,13 @@ preregistration artifact nor a registry row. A future reviewed specification
 may enter the registry only at `IDEA`; later PAPER/SHADOW stages retain their
 own evidence gates and `APPROVED`/`CHAMPION` remain human-authorized.
 
+That preregistration preflight is now an exact browser transport contract. The
+client binds its status to the sequential next action and requires the ordered
+7 hypothesis fields, 13 experiment locks, eight governance gates and exact
+requirements, disjoint-window policy, legal lifecycle and human-authorization
+list. Missing, reordered or extra fields, evidence reuse, premature lifecycle
+state or any registry/runtime/order authority rejects the complete response.
+
 Registration itself now has a separate read-only admission preflight. It
 enumerates the exact 15-field `StrategySpec`, distinguishes the behavior-only
 rule hash from the still-unavailable complete registry-spec hash, and reports

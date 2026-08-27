@@ -515,7 +515,12 @@ leakage review, bounded candidate/robustness budgets, a fixed cost model, a
 pre-data immutable specification hash and contamination disclosure. Completing
 that document is not a registry write: only afterward may a separately reviewed
 immutable strategy enter `StrategyRegistry` as `IDEA`, while `APPROVED` and
-`CHAMPION` still require human authorization. A separate registration preflight
+`CHAMPION` still require human authorization. The browser now admits that
+preflight only when its binding and sequentially derived status, ordered 7
+hypothesis fields, 13 experiment locks, eight governance requirements,
+disjoint-window policy, lifecycle and human-authorization list match exactly.
+Evidence reuse, field/gate drift or any write authority rejects the full result.
+A separate registration preflight
 now proves that the current behavior-only hash is not the complete
 `StrategySpec` hash. It enumerates all 15 registry fields and nine admission
 gates; this rejected run can source only 6/15 fields and passes only the behavior

@@ -1634,14 +1634,14 @@ describe('verified robustness evidence', () => {
         required_hypothesis_fields: ['hypothesis_id', 'motivation', 'economic_intuition', 'expected_regimes', 'expected_failure_modes', 'required_data', 'evaluation_criteria'],
         required_experiment_lock_fields: ['experiment_id', 'strategy_id', 'git_commit', 'data_version', 'universe', 'factor_set', 'label', 'split', 'model', 'parameters', 'cost_model_id', 'transaction_cost', 'seed'],
         required_governance_gates: [
-          { gate_id: 'new_hypothesis_identity', required: true, requirement: 'new hypothesis ID' },
-          { gate_id: 'new_evidence_period_disjoint_from_viewed_and_prior_test_periods', required: true, requirement: 'new disjoint evidence' },
-          { gate_id: 'independent_leakage_review_pass', required: true, requirement: 'independent leakage review PASS' },
-          { gate_id: 'fixed_candidate_budget', required: true, requirement: 'fixed candidate budget' },
-          { gate_id: 'fixed_robustness_scenarios', required: true, requirement: 'fixed robustness scenarios' },
-          { gate_id: 'fixed_cost_model', required: true, requirement: 'fixed cost model' },
-          { gate_id: 'immutable_spec_and_hash_before_data_access', required: true, requirement: 'immutable spec and hash' },
-          { gate_id: 'contamination_disclosure', required: true, requirement: 'contamination disclosure' },
+          { gate_id: 'new_hypothesis_identity', required: true, requirement: 'Use a hypothesis_id not evaluated before.' },
+          { gate_id: 'new_evidence_period_disjoint_from_viewed_and_prior_test_periods', required: true, requirement: 'Use a new evidence period disjoint from this viewed window and prior held-out test periods.' },
+          { gate_id: 'independent_leakage_review_pass', required: true, requirement: 'Attach an independent leakage review PASS.' },
+          { gate_id: 'fixed_candidate_budget', required: true, requirement: 'Fix the candidate budget before data access.' },
+          { gate_id: 'fixed_robustness_scenarios', required: true, requirement: 'Fix bounded robustness scenarios before data access.' },
+          { gate_id: 'fixed_cost_model', required: true, requirement: 'Fix the cost model before data access.' },
+          { gate_id: 'immutable_spec_and_hash_before_data_access', required: true, requirement: 'Freeze the experiment specification and hash before new evidence is read.' },
+          { gate_id: 'contamination_disclosure', required: true, requirement: 'Disclose all prior evidence used to motivate the new hypothesis.' },
         ],
         evidence_window_contract: {
           must_be_new_and_disjoint: true,
@@ -2019,6 +2019,16 @@ describe('verified robustness evidence', () => {
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
       ...result,
+      next_hypothesis_preregistration: {
+        ...result.next_hypothesis_preregistration,
+        required_governance_gates: result.next_hypothesis_preregistration.required_governance_gates.slice(0, 7),
+      },
+    } as unknown as IntradayFactorBacktest)
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+    expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
+      ...result,
       l2_factor_readiness: {
         ...result.l2_factor_readiness,
         required_gates: result.l2_factor_readiness.required_gates.slice(0, 5),
@@ -2048,7 +2058,7 @@ describe('verified robustness evidence', () => {
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
     expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
-  }, 10_000)
+  }, 15_000)
 
   it('does not present experiment records as a registered lineage', () => {
     render(<ResearchPage data={data} />)

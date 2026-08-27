@@ -320,6 +320,11 @@ npm --prefix web run build
   require disjoint evidence/leakage/budget/cost/spec/contamination locks, and
   show that a completed review may enter `StrategyRegistry` only at `IDEA`
   without performing a registry, PAPER, LIVE, state or order write.
+- [x] Validate the next-hypothesis preregistration as an exact browser contract:
+  bind status and current-result identity to sequential advancement, require the
+  ordered 7 hypothesis fields, 13 experiment locks, eight governance gates,
+  disjoint-window policy, lifecycle and human-authorization list, and reject
+  field/gate/evidence/lifecycle/write-authority drift wholesale.
 - [x] Add a distinct StrategyRegistry admission preflight that enumerates all
   15 immutable `StrategySpec` fields, separates the behavior hash from the full
   registry-spec hash and evaluates nine research/identity/split/lineage gates.
