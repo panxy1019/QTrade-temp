@@ -220,8 +220,10 @@ Last updated: 2026-08-27
   all prior available Bars only as causal warmup, scores the selected interval,
   and returns deterministic base/overlay curves, drawdown, execution and daily
   diagnostics. The backtest page exposes the complete selector and JSON export.
-  A bounded session-only batch deterministically chooses one signed stock per
-  sector and runs the same validated dates, costs and policy sequentially; partial
+  A bounded session-only batch can deterministically choose one or two signed
+  stocks per sector and runs the same validated dates, costs and policy
+  sequentially; the two-stock setting covers 30 stocks in the signed 15-sector
+  universe, while partial
   failures stay absent and the actual successful coverage plus combined JSON
   export remain explicit. The batch now summarizes finite successful rows with
   positive return/excess coverage, median return and identified worst return/deepest
@@ -233,7 +235,9 @@ Last updated: 2026-08-27
   browser-only/no-evidence safety boundary. A per-representative attempt ledger
   additionally binds each request to `COMPLETED`, `REQUEST_FAILED` or
   `IDENTITY_REJECTED`; only admitted rows retain result hashes, while rejected or
-  failed rows retain no response/error payload. It does not tune per stock or prove sector/full-universe robustness;
+  failed rows retain no response/error payload. Requested/completed stock and
+  sector counts remain separate. It does not tune per stock or prove
+  sector/full-universe robustness;
   QFQ/non-PIT, ad-hoc, `NOT_ELIGIBLE`, stateless and external-order-disabled
   boundaries are part of the response and UI.
 - Intraday factor workflow: `POST /intraday-factor-backtest` and the research

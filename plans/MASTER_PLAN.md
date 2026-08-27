@@ -251,6 +251,11 @@ enter the browser-session table; partial failures remain visible and cannot be
 called complete coverage. A combined JSON export supports review, while the
 batch performs no per-stock tuning, persistence, promotion, PAPER/LIVE state or
 order operation and is not a substitute for the existing 75-stock formal report.
+The operator can now explicitly raise the bounded selection from one to two
+deterministic stocks per sector. On the signed universe this requests 30 stocks,
+keeps up to 30 accepted results with pagination after 15 rows, and reports stock
+completion separately from successful sector coverage. The export freezes the
+requested per-sector count; changing it invalidates the prior batch identity.
 Its browser-only cross-sectional summary uses only successful responses with
 finite return, excess and drawdown metrics. It exposes positive counts, median
 return and the worst return/drawdown identities so favourable rows cannot hide

@@ -262,8 +262,11 @@ also clears the current result while retaining the session comparison, so an old
 hash cannot remain presented as the output of new inputs. Each retained row shows
 its stock sector and short result hash and can export the complete original response even after
 the main result has been cleared. A bounded batch action can deterministically
-choose the lowest-code stock in each signed sector and run the existing stateless
-endpoint sequentially with one shared date/cost/policy form snapshot. Partial
+choose the first one or two stocks by sector code and symbol in each signed sector
+and run the existing stateless endpoint sequentially with one shared
+date/cost/policy form snapshot. The two-stock setting covers 30 stocks across the
+signed 15-sector universe, with stock-request and successful-sector counts shown
+separately. Partial
 failures remain missing instead of being synthesized, the visible coverage uses
 successful rows only, and the complete session comparison can be exported as one
 JSON document. The batch does not tune per stock and is not evidence for every
@@ -271,8 +274,8 @@ stock in a sector. For the successful batch rows, a compact cross-sectional
 summary reports finite-metric coverage, positive strategy and excess counts,
 median return, the worst-return stock and the deepest-drawdown stock. Failed
 requests never enter those denominators. This is a browser-session fragility
-diagnostic over one representative per sector, not a statistical robustness
-gate or independent sample-out result. Before any response enters the session,
+diagnostic over at most two representatives per sector, not a full 75-stock
+statistical robustness gate or independent sample-out result. Before any response enters the session,
 the browser also requires its stock/sector identity, complete normalized request
 parameters, signed data version/checksum, fixed `NOT_ELIGIBLE` classification and
 all realtime/PAPER/state/order safety flags to match the batch contract. A drifted
@@ -287,6 +290,7 @@ The page and export also retain one ordered attempt row per representative with
 only `COMPLETED`, `REQUEST_FAILED` or `IDENTITY_REJECTED`; a completed row binds
 its accepted result hash, while failed/rejected rows expose neither exception text
 nor a rejected response payload and never enter the metric denominator.
+Up to 30 accepted hashes remain in the session table, paginated after 15 rows.
 The comparison is cleared on
 refresh and is neither persisted evidence nor an experiment record. Every result
 remains current-universe, QFQ/non-PIT,

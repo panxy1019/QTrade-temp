@@ -82,15 +82,15 @@ describe('single-stock cross-sector batch diagnostic', () => {
       .mockResolvedValueOnce(resultFor(requestFor('600004'), { totalReturn: '0.02', excessReturn: '0.005', maximumDrawdown: '-0.03' }))
     render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
 
-    fireEvent.click(screen.getByRole('button', { name: '运行 3 板块同参诊断' }))
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 股 / 3 板块同参诊断' }))
 
-    expect(await screen.findByText('同参批量完成：3/3 个板块')).toBeInTheDocument()
+    expect(await screen.findByText('同参批量完成：3/3 只代表股，覆盖 3/3 个板块')).toBeInTheDocument()
     expect(vi.mocked(runSingleStockFiveMinuteBacktest).mock.calls.map(([payload]) => payload.symbol)).toEqual([
       '600003', '600001', '600004',
     ])
     const payloads = vi.mocked(runSingleStockFiveMinuteBacktest).mock.calls.map(([payload]) => ({ ...payload, symbol: 'SAME' }))
     expect(new Set(payloads.map((payload) => JSON.stringify(payload))).size).toBe(1)
-    expect(screen.getByText('本次会话个股回测对比（3/15，覆盖 3 个板块）')).toBeInTheDocument()
+    expect(screen.getByText('本次会话个股回测对比（3/30，覆盖 3 个板块）')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出本次会话对比/ })).toBeInTheDocument()
     expect(within(screen.getByTestId('sector-batch-attempts')).getAllByText('已接纳')).toHaveLength(3)
     const summary = screen.getByTestId('sector-batch-summary')
@@ -101,6 +101,58 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(within(summary).getByText('600001 · -8.00%')).toBeInTheDocument()
   })
 
+  it('bounds the signed 15-sector universe at 15 or 30 deterministic stock requests', () => {
+    const instruments = Array.from({ length: 15 }, (_, sectorIndex) => (
+      Array.from({ length: 5 }, (_, stockIndex) => ({
+        symbol: String(600000 + sectorIndex * 5 + stockIndex),
+        instrument_type: 'STOCK' as const,
+        name: `股票${sectorIndex + 1}-${stockIndex + 1}`,
+        sector_code: String(801000 + sectorIndex),
+        sector_name: `板块${sectorIndex + 1}`,
+      }))
+    )).flat()
+    const broadDataset = {
+      ...dataset,
+      bar_count: 75 * 2 * 48,
+      symbol_count: 75,
+      stock_count: 75,
+      sector_count: 15,
+      eligible_symbols: instruments.map((row) => row.symbol),
+      instruments,
+    } satisfies Dataset
+    render(<SingleStockFiveMinuteBacktestLab dataset={broadDataset} />)
+
+    expect(screen.getByRole('button', { name: '运行 15 股 / 15 板块同参诊断' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '每板块 2 股' }))
+    expect(screen.getByRole('button', { name: '运行 30 股 / 15 板块同参诊断' })).toBeInTheDocument()
+  })
+
+  it('can run two deterministic representatives per sector without changing shared parameters', async () => {
+    vi.mocked(runSingleStockFiveMinuteBacktest)
+      .mockResolvedValueOnce(resultFor(requestFor('600003')))
+      .mockResolvedValueOnce(resultFor(requestFor('600001')))
+      .mockResolvedValueOnce(resultFor(requestFor('600002')))
+      .mockResolvedValueOnce(resultFor(requestFor('600004')))
+    render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '每板块 2 股' }))
+    fireEvent.click(screen.getByRole('button', { name: '运行 4 股 / 3 板块同参诊断' }))
+
+    expect(await screen.findByText('同参批量完成：4/4 只代表股，覆盖 3/3 个板块')).toBeInTheDocument()
+    expect(vi.mocked(runSingleStockFiveMinuteBacktest).mock.calls.map(([payload]) => payload.symbol)).toEqual([
+      '600003', '600001', '600002', '600004',
+    ])
+    const payloads = vi.mocked(runSingleStockFiveMinuteBacktest).mock.calls.map(([payload]) => ({ ...payload, symbol: 'SAME' }))
+    expect(new Set(payloads.map((payload) => JSON.stringify(payload))).size).toBe(1)
+    const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
+    expect(exported.representative_selection.requested_per_sector).toBe(2)
+    expect(exported.status).toMatchObject({ requested: 4, completed: 4, requested_sectors: 3, completed_sectors: 3 })
+    expect(exported.attempts.map(({ symbol }: { symbol: string }) => symbol)).toEqual(['600003', '600001', '600002', '600004'])
+    fireEvent.click(screen.getByRole('button', { name: '每板块 1 股' }))
+    expect(screen.queryByTestId('sector-batch-attempts')).not.toBeInTheDocument()
+    expect(screen.queryByText('同参批量完成：4/4 只代表股，覆盖 3/3 个板块')).not.toBeInTheDocument()
+  })
+
   it('reports partial coverage when one sector request fails', async () => {
     vi.mocked(runSingleStockFiveMinuteBacktest)
       .mockResolvedValueOnce(resultFor(requestFor('600003')))
@@ -108,11 +160,11 @@ describe('single-stock cross-sector batch diagnostic', () => {
       .mockResolvedValueOnce(resultFor(requestFor('600004')))
     render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
 
-    fireEvent.click(screen.getByRole('button', { name: '运行 3 板块同参诊断' }))
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 股 / 3 板块同参诊断' }))
 
-    expect(await screen.findByText('同参批量部分完成：2/3 个板块')).toBeInTheDocument()
-    expect(screen.getByText(/1 个板块请求失败，失败结果未补造/)).toBeInTheDocument()
-    expect(screen.getByText('本次会话个股回测对比（2/15，覆盖 2 个板块）')).toBeInTheDocument()
+    expect(await screen.findByText('同参批量部分完成：2/3 只代表股，覆盖 2/3 个板块')).toBeInTheDocument()
+    expect(screen.getByText(/1 只代表股请求失败，失败结果未补造/)).toBeInTheDocument()
+    expect(screen.getByText('本次会话个股回测对比（2/30，覆盖 2 个板块）')).toBeInTheDocument()
     expect(within(screen.getByTestId('sector-batch-summary')).getByText('指标有效代表股')).toBeInTheDocument()
     expect(within(screen.getByTestId('sector-batch-summary')).getAllByText('2/2')).toHaveLength(3)
     expect(within(screen.getByTestId('sector-batch-summary')).getByText(/只按 2 个成功代表股/)).toBeInTheDocument()
@@ -122,7 +174,7 @@ describe('single-stock cross-sector batch diagnostic', () => {
     const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
     expect(exported.classification).toBe('BROWSER_SESSION_ONLY_CROSS_SECTOR_SAME_PARAMETER_DIAGNOSTIC')
     expect(exported.dataset_identity).toEqual({ data_version: dataset.data_version, checksum: dataset.checksum })
-    expect(exported.status).toEqual({ requested: 3, completed: 2, failed: 1, identity_rejected: 0 })
+    expect(exported.status).toEqual({ requested: 3, completed: 2, failed: 1, identity_rejected: 0, requested_sectors: 3, completed_sectors: 2 })
     expect(exported.requests.map((request: SingleStockFiveMinuteBacktestRequest) => request.symbol)).toEqual(['600003', '600001', '600004'])
     expect(exported.attempts.map(({ symbol, outcome, preview_hash }: { symbol: string; outcome: string; preview_hash: string | null }) => ({ symbol, outcome, preview_hash }))).toEqual([
       { symbol: '600003', outcome: 'COMPLETED', preview_hash: resultFor(requestFor('600003')).preview_hash },
@@ -145,9 +197,9 @@ describe('single-stock cross-sector batch diagnostic', () => {
       .mockRejectedValueOnce(new Error('provider timeout'))
     render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
 
-    fireEvent.click(screen.getByRole('button', { name: '运行 3 板块同参诊断' }))
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 股 / 3 板块同参诊断' }))
 
-    expect(await screen.findByText('同参批量部分完成：2/3 个板块')).toBeInTheDocument()
+    expect(await screen.findByText('同参批量部分完成：2/3 只代表股，覆盖 2/3 个板块')).toBeInTheDocument()
     const summary = screen.getByTestId('sector-batch-summary')
     expect(within(summary).getByText('1/2')).toBeInTheDocument()
     expect(within(summary).getAllByText('1/1')).toHaveLength(2)
@@ -161,15 +213,15 @@ describe('single-stock cross-sector batch diagnostic', () => {
       .mockRejectedValueOnce(new Error('provider timeout'))
     render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
 
-    fireEvent.click(screen.getByRole('button', { name: '运行 3 板块同参诊断' }))
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 股 / 3 板块同参诊断' }))
 
-    expect(await screen.findByText('同参批量部分完成：0/3 个板块')).toBeInTheDocument()
+    expect(await screen.findByText('同参批量部分完成：0/3 只代表股，覆盖 0/3 个板块')).toBeInTheDocument()
     expect(screen.queryByTestId('sector-batch-summary')).not.toBeInTheDocument()
     expect(screen.queryByText(/0\/0/)).not.toBeInTheDocument()
-    expect(screen.getByText('本次会话个股回测对比（0/15，覆盖 0 个板块）')).toBeInTheDocument()
+    expect(screen.getByText('本次会话个股回测对比（0/30，覆盖 0 个板块）')).toBeInTheDocument()
     expect(within(screen.getByTestId('sector-batch-attempts')).getAllByText('请求失败')).toHaveLength(3)
     const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
-    expect(exported.status).toEqual({ requested: 3, completed: 0, failed: 3, identity_rejected: 0 })
+    expect(exported.status).toEqual({ requested: 3, completed: 0, failed: 3, identity_rejected: 0, requested_sectors: 3, completed_sectors: 0 })
     expect(exported.requests).toHaveLength(3)
     expect(exported.attempts.map(({ outcome }: { outcome: string }) => outcome)).toEqual([
       'REQUEST_FAILED', 'REQUEST_FAILED', 'REQUEST_FAILED',
@@ -203,11 +255,11 @@ describe('single-stock cross-sector batch diagnostic', () => {
       .mockResolvedValueOnce(unsafe)
     render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
 
-    fireEvent.click(screen.getByRole('button', { name: '运行 3 板块同参诊断' }))
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 股 / 3 板块同参诊断' }))
 
-    expect(await screen.findByText('同参批量部分完成：1/3 个板块')).toBeInTheDocument()
+    expect(await screen.findByText('同参批量部分完成：1/3 只代表股，覆盖 1/3 个板块')).toBeInTheDocument()
     expect(screen.getByText(/2 个响应身份或安全边界不匹配/)).toBeInTheDocument()
-    expect(screen.getByText('本次会话个股回测对比（1/15，覆盖 1 个板块）')).toBeInTheDocument()
+    expect(screen.getByText('本次会话个股回测对比（1/30，覆盖 1 个板块）')).toBeInTheDocument()
     const comparison = screen.getByTestId('single-stock-session-comparison')
     expect(within(comparison).queryByText(/600001/)).not.toBeInTheDocument()
     expect(within(comparison).queryByText(/600004/)).not.toBeInTheDocument()

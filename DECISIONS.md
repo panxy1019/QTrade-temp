@@ -2472,3 +2472,22 @@ both keep a null preview hash and remain outside results and metric denominators
 The ledger is shown and exported only with the active browser batch. It does not
 retry, repair, persist or promote anything, does not create evidence or registry
 state, and cannot start PAPER/LIVE or transmit an order.
+
+## ADR-140 — Bounded within-sector diagnostics stop at two full responses per sector
+
+Status: accepted, 2026-08-27.
+
+One representative per sector can reveal cross-sector fragility but cannot show
+whether the next deterministic stock in the same sector immediately contradicts
+the result. Conversely, fetching and retaining all 75 full curve responses in one
+browser action would create unnecessary public-function and client-memory load.
+
+The browser therefore offers an explicit one- or two-stock-per-sector choice. It
+sorts by sector code then symbol and takes the first N without per-stock tuning.
+For the signed 15-sector universe, two means exactly 30 sequential requests. The
+batch freezes N, expands the session cap to 30, paginates after 15 rows, and keeps
+requested/completed stock counts separate from requested/completed sector counts.
+
+This is a bounded within-sector fragility diagnostic, not full-universe evidence.
+It does not replace the signed 75-stock report, retry failures, persist an
+experiment, promote a strategy, start PAPER/LIVE or transmit an order.

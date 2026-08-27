@@ -24,14 +24,20 @@ interface FormValues {
 interface SectorBatchStatus {
   attempts: SectorBatchAttempt[]
   completed: number
+  completedSectors: number
   failed: number
   identityRejected: number
   representatives: Array<{ symbol: string; name: string; sector_code: string; sector_name: string }>
+  representativesPerSector: BatchRepresentativesPerSector
   requests: SingleStockFiveMinuteBacktestRequest[]
   requested: number
+  requestedSectors: number
 }
 
 type SectorBatchOutcome = 'COMPLETED' | 'REQUEST_FAILED' | 'IDENTITY_REJECTED'
+type BatchRepresentativesPerSector = 1 | 2
+
+const SESSION_RUN_LIMIT = 30
 
 interface SectorBatchAttempt {
   symbol: string
@@ -96,20 +102,23 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
   const [batchRunning, setBatchRunning] = useState(false)
   const [batchProgress, setBatchProgress] = useState(0)
   const [batchStatus, setBatchStatus] = useState<SectorBatchStatus | null>(null)
+  const [batchRepresentativesPerSector, setBatchRepresentativesPerSector] = useState<BatchRepresentativesPerSector>(1)
   if (!dataset) {
     return <Card title="个股 5 分钟因果回测"><Alert showIcon type="warning" title="长历史 5 分钟数据不可用" description="系统不会用模拟行情替代真实且校验通过的数据。" /></Card>
   }
   const stocks = dataset.instruments.filter((row) => row.instrument_type === 'STOCK')
-  const representativesBySector = new Map<string, typeof stocks[number]>()
-  for (const stock of [...stocks].sort((left, right) => {
+  const sectorSelectionCounts = new Map<string, number>()
+  const sectorBatchInstruments = [...stocks].sort((left, right) => {
     const sectorOrder = (left.sector_code ?? '').localeCompare(right.sector_code ?? '')
     return sectorOrder || left.symbol.localeCompare(right.symbol)
-  })) {
-    if (stock.sector_code && !representativesBySector.has(stock.sector_code)) {
-      representativesBySector.set(stock.sector_code, stock)
-    }
-  }
-  const sectorRepresentatives = [...representativesBySector.values()]
+  }).filter((stock) => {
+    if (!stock.sector_code) return false
+    const selected = sectorSelectionCounts.get(stock.sector_code) ?? 0
+    if (selected >= batchRepresentativesPerSector) return false
+    sectorSelectionCounts.set(stock.sector_code, selected + 1)
+    return true
+  })
+  const requestedSectorCount = new Set(sectorBatchInstruments.map((row) => row.sector_code)).size
   const tradingDays = dataset.trading_days
   const initialValues: FormValues = {
     symbol: stocks[0]?.symbol ?? dataset.eligible_symbols[0],
@@ -135,7 +144,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       setSessionRuns((current) => [
         next,
         ...current.filter((row) => row.preview_hash !== next.preview_hash),
-      ].slice(0, 15))
+      ].slice(0, SESSION_RUN_LIMIT))
     } catch (reason) {
       setResult(null)
       setError(reason instanceof Error ? reason.message : '个股 5 分钟回测失败')
@@ -155,8 +164,8 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
     setBatchStatus(null)
     setResult(null)
     setError(null)
-    const requests = sectorRepresentatives.map((representative) => toRequest(values, representative.symbol))
-    const representatives = sectorRepresentatives.map((representative) => ({
+    const requests = sectorBatchInstruments.map((representative) => toRequest(values, representative.symbol))
+    const representatives = sectorBatchInstruments.map((representative) => ({
       symbol: representative.symbol,
       name: representative.name,
       sector_code: representative.sector_code ?? '',
@@ -166,7 +175,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
     const attempts: SectorBatchAttempt[] = []
     let failed = 0
     let identityRejected = 0
-    for (const [index, representative] of sectorRepresentatives.entries()) {
+    for (const [index, representative] of sectorBatchInstruments.entries()) {
       const request = requests[index]
       const attemptIdentity = {
         symbol: representative.symbol,
@@ -191,15 +200,18 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       }
       setBatchProgress(index + 1)
     }
-    setSessionRuns(completed.slice(0, 15))
+    setSessionRuns(completed.slice(0, SESSION_RUN_LIMIT))
     setBatchStatus({
       attempts,
       completed: completed.length,
+      completedSectors: new Set(completed.map((row) => row.instrument.sector_code)).size,
       failed,
       identityRejected,
       representatives,
+      representativesPerSector: batchRepresentativesPerSector,
       requests,
-      requested: sectorRepresentatives.length,
+      requested: sectorBatchInstruments.length,
+      requestedSectors: requestedSectorCount,
     })
     setBatchRunning(false)
   }
@@ -230,7 +242,8 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
     classification: 'BROWSER_SESSION_ONLY_CROSS_SECTOR_SAME_PARAMETER_DIAGNOSTIC',
     dataset_identity: { data_version: dataset.data_version, checksum: dataset.checksum },
     representative_selection: {
-      method: 'SORT_SECTOR_CODE_THEN_SYMBOL_FIRST_PER_SECTOR',
+      method: 'SORT_SECTOR_CODE_THEN_SYMBOL_FIRST_N_PER_SECTOR',
+      requested_per_sector: batchStatus.representativesPerSector,
       instruments: batchStatus.representatives,
     },
     status: {
@@ -238,6 +251,8 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       completed: batchStatus.completed,
       failed: batchStatus.failed,
       identity_rejected: batchStatus.identityRejected,
+      requested_sectors: batchStatus.requestedSectors,
+      completed_sectors: batchStatus.completedSectors,
     },
     requests: batchStatus.requests,
     attempts: batchStatus.attempts,
@@ -265,7 +280,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
     state_mutation: false,
     external_order_transmission: false,
     limitations: [
-      'ONE_DETERMINISTIC_REPRESENTATIVE_PER_SECTOR_NOT_FULL_UNIVERSE',
+      'UP_TO_TWO_DETERMINISTIC_REPRESENTATIVES_PER_SECTOR_NOT_FULL_UNIVERSE',
       'AD_HOC_VIEWED_HISTORY_NOT_INDEPENDENT_SAMPLE_OUT_EVIDENCE',
       'BROWSER_SESSION_DIAGNOSTIC_NOT_PAPER_OR_LIVE_ADMISSION',
     ],
@@ -311,19 +326,23 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
         </Form.Item>
         <Space wrap>
           <Button type="primary" htmlType="submit" loading={running} disabled={batchRunning}>运行个股 5 分钟回测</Button>
-          <Button onClick={() => { void runSectorBatch() }} loading={batchRunning} disabled={running || sectorRepresentatives.length === 0}>运行 {sectorRepresentatives.length} 板块同参诊断</Button>
+          <Button aria-pressed={batchRepresentativesPerSector === 1} type={batchRepresentativesPerSector === 1 ? 'primary' : 'default'} disabled={running || batchRunning} onClick={() => { setBatchRepresentativesPerSector(1); setBatchStatus(null); setBatchProgress(0) }}>每板块 1 股</Button>
+          <Button aria-pressed={batchRepresentativesPerSector === 2} type={batchRepresentativesPerSector === 2 ? 'primary' : 'default'} disabled={running || batchRunning} onClick={() => { setBatchRepresentativesPerSector(2); setBatchStatus(null); setBatchProgress(0) }}>每板块 2 股</Button>
+          <Button onClick={() => { void runSectorBatch() }} loading={batchRunning} disabled={running || sectorBatchInstruments.length === 0}>运行 {sectorBatchInstruments.length} 股 / {requestedSectorCount} 板块同参诊断</Button>
         </Space>
       </Form>
-      {batchRunning && <Typography.Text type="secondary">同参批量进度：{batchProgress}/{sectorRepresentatives.length}；请求按确定性代表股顺序逐一执行。</Typography.Text>}
+      {batchRunning && <Typography.Text type="secondary">同参批量进度：{batchProgress}/{sectorBatchInstruments.length} 只股票；请求按板块代码、股票代码的确定性顺序逐一执行。</Typography.Text>}
       {batchStatus && <Alert
         showIcon
         type={batchStatus.failed === 0 ? 'success' : 'warning'}
-        title={batchStatus.failed === 0 ? `同参批量完成：${batchStatus.completed}/${batchStatus.requested} 个板块` : `同参批量部分完成：${batchStatus.completed}/${batchStatus.requested} 个板块`}
+        title={batchStatus.failed === 0
+          ? `同参批量完成：${batchStatus.completed}/${batchStatus.requested} 只代表股，覆盖 ${batchStatus.completedSectors}/${batchStatus.requestedSectors} 个板块`
+          : `同参批量部分完成：${batchStatus.completed}/${batchStatus.requested} 只代表股，覆盖 ${batchStatus.completedSectors}/${batchStatus.requestedSectors} 个板块`}
         description={batchStatus.failed === 0
-          ? '每个板块按板块代码、股票代码确定性选一股，日期、成本与分钟修正参数完全一致；结果只进入当前浏览器会话对比，不等于全板块或全股票稳健性证据。'
+          ? `每个板块按板块代码、股票代码确定性选择最多 ${batchStatus.representativesPerSector} 股，日期、成本与分钟修正参数完全一致；结果只进入当前浏览器会话对比，不等于全股票稳健性证据。`
           : batchStatus.identityRejected > 0
-            ? `${batchStatus.failed} 个板块未进入结果，其中 ${batchStatus.identityRejected} 个响应身份或安全边界不匹配；拒绝结果未补造，当前覆盖只能按通过绑定的成功行计数。`
-            : `${batchStatus.failed} 个板块请求失败，失败结果未补造；当前覆盖必须按成功行计数，不能声称完成全板块检验。`}
+            ? `${batchStatus.failed} 只代表股未进入结果，其中 ${batchStatus.identityRejected} 个响应身份或安全边界不匹配；拒绝结果未补造，股票与板块覆盖只能按通过绑定的成功行计数。`
+            : `${batchStatus.failed} 只代表股请求失败，失败结果未补造；股票与板块覆盖必须按成功行计数。`}
       />}
       {batchStatus && <Card data-testid="sector-batch-attempts" type="inner" title={`同参批量逐股台账（${batchStatus.attempts.length}/${batchStatus.requested}）`}>
         <Space orientation="vertical" style={{ width: '100%' }}>
@@ -393,14 +412,14 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
         />
         <JsonExportButton filename={`qtrade-${result.symbol}-five-minute-${result.preview_hash.slice(0, 12)}.json`} value={result} label="导出个股回测" />
       </>}
-      {(sessionRuns.length > 0 || batchDiagnosticExport) && <Card data-testid="single-stock-session-comparison" type="inner" title={`本次会话个股回测对比（${sessionRuns.length}/15，覆盖 ${sessionSectorCount} 个板块）`} extra={<JsonExportButton filename={batchDiagnosticExport ? 'qtrade-cross-sector-five-minute-session-diagnostic.json' : 'qtrade-single-stock-five-minute-session-comparison.json'} value={batchDiagnosticExport ?? sessionRuns} label="导出本次会话对比" size="small" />}>
+      {(sessionRuns.length > 0 || batchDiagnosticExport) && <Card data-testid="single-stock-session-comparison" type="inner" title={`本次会话个股回测对比（${sessionRuns.length}/${SESSION_RUN_LIMIT}，覆盖 ${sessionSectorCount} 个板块）`} extra={<JsonExportButton filename={batchDiagnosticExport ? 'qtrade-cross-sector-five-minute-session-diagnostic.json' : 'qtrade-single-stock-five-minute-session-comparison.json'} value={batchDiagnosticExport ?? sessionRuns} label="导出本次会话对比" size="small" />}>
         <Space orientation="vertical" style={{ width: '100%' }}>
-          <Typography.Text type="secondary">仅保留当前页面会话最近 15 个不同结果哈希，便于各选一股覆盖签名数据的 15 个板块；覆盖数只是当前会话去重统计。刷新后清空，不写服务端、不构成正式实验或晋级证据。</Typography.Text>
+          <Typography.Text type="secondary">仅保留当前页面会话最近 {SESSION_RUN_LIMIT} 个不同结果哈希，可按每板块一股或两股检查同参表现；覆盖数只是当前会话去重统计。刷新后清空，不写服务端、不构成正式实验或晋级证据。</Typography.Text>
           <Table<SingleStockFiveMinuteBacktest>
             rowKey="preview_hash"
             size="small"
             dataSource={sessionRuns}
-            pagination={false}
+            pagination={sessionRuns.length > 15 ? { pageSize: 15, showSizeChanger: false } : false}
             columns={[
               { title: '个股', render: (_: unknown, row) => `${row.symbol} ${row.instrument.name}` },
               { title: '板块', render: (_: unknown, row) => row.instrument.sector_name },

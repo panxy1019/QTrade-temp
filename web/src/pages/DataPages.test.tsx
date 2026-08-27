@@ -1194,8 +1194,8 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText(/按每年 252 个交易日、每日 48 根 5 分钟 Bar 年化/)).toBeInTheDocument()
     expect(screen.getByText(/实线为分钟修正策略，虚线为该个股 Buy-and-Hold/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出个股回测/ })).toBeInTheDocument()
-    expect(screen.getByText('本次会话个股回测对比（1/15，覆盖 1 个板块）')).toBeInTheDocument()
-    const minuteComparison = screen.getByText('本次会话个股回测对比（1/15，覆盖 1 个板块）').closest('.ant-card')
+    expect(screen.getByText('本次会话个股回测对比（1/30，覆盖 1 个板块）')).toBeInTheDocument()
+    const minuteComparison = screen.getByText('本次会话个股回测对比（1/30，覆盖 1 个板块）').closest('.ant-card')
     expect(minuteComparison).not.toBeNull()
     const minuteComparisonTable = within(minuteComparison as HTMLElement)
     expect(minuteComparisonTable.getAllByText('年化收益').length).toBeGreaterThan(0)
@@ -1208,10 +1208,10 @@ describe('verified backtest analytics', () => {
     fireEvent.change(within(individualBacktestCard as HTMLElement).getByRole('spinbutton', { name: '单边成本（bps）' }), { target: { value: '6' } })
     expect(screen.getByText('CLOCK: KNOWN_AT_5M_CLOSE_T → APPLY_NEXT_5M_OPEN; WARMUP ≥ 48 Bars; COST 6 bps / exposure change')).toBeInTheDocument()
     expect(screen.queryByText('已完成 600036 招商银行 · 2 日 / 96 Bar')).not.toBeInTheDocument()
-    expect(screen.getByText('本次会话个股回测对比（1/15，覆盖 1 个板块）')).toBeInTheDocument()
+    expect(screen.getByText('本次会话个股回测对比（1/30，覆盖 1 个板块）')).toBeInTheDocument()
     fireEvent.click(minuteComparisonTable.getByRole('button', { name: '载入该次参数' }))
     expect(screen.queryByText('已完成 600036 招商银行 · 2 日 / 96 Bar')).not.toBeInTheDocument()
-    expect(screen.getByText('本次会话个股回测对比（1/15，覆盖 1 个板块）')).toBeInTheDocument()
+    expect(screen.getByText('本次会话个股回测对比（1/30，覆盖 1 个板块）')).toBeInTheDocument()
   })
 
   it('loads a code-backed template and hashes a complete run-spec draft without persisting it', async () => {
