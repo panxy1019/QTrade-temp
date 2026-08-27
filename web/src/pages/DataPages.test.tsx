@@ -1561,15 +1561,17 @@ describe('verified robustness evidence', () => {
     }
     window.localStorage.clear()
     const selectedTradingDays = intradayData.longFiveMinuteResearch.minute_dataset!.trading_days.slice(0, 20)
+    const strategyFinalEquity = 0.5913 ** (20 / 252)
+    const benchmarkFinalEquity = strategyFinalEquity - 0.0025
     const strategyReturns = [
       -0.051,
-      0.9592 / (0.949 * 1.001 ** 8) - 1,
+      strategyFinalEquity / (0.949 * 1.001 ** 8) - 1,
       ...Array.from({ length: 8 }, () => 0.001),
       ...Array.from({ length: 10 }, () => 0),
     ]
     const benchmarkReturns = [
       -0.051,
-      0.9567 / (0.949 * 1.0005 ** 8) - 1,
+      benchmarkFinalEquity / (0.949 * 1.0005 ** 8) - 1,
       ...Array.from({ length: 8 }, () => 0.0005),
       ...Array.from({ length: 10 }, () => 0),
     ]
@@ -1589,17 +1591,40 @@ describe('verified robustness evidence', () => {
         excess_equity: String(strategyEquity - benchmarkEquity),
       }
     })
+    const average = (values: number[]) => values.reduce((total, value) => total + value, 0) / values.length
+    const populationStandardDeviation = (values: number[]) => {
+      const mean = average(values)
+      return Math.sqrt(average(values.map((value) => (value - mean) ** 2)))
+    }
+    const riskMetrics = (returns: number[], benchmarks: number[], finalEquity: number) => {
+      const annualizedReturn = finalEquity ** (252 / returns.length) - 1
+      const annualizedVolatility = populationStandardDeviation(returns) * Math.sqrt(252)
+      const annualizedAverageReturn = average(returns) * 252
+      const downsideDeviation = Math.sqrt(average(returns.map((value) => Math.min(0, value) ** 2))) * Math.sqrt(252)
+      const activeReturns = returns.map((value, index) => value - benchmarks[index])
+      const trackingError = populationStandardDeviation(activeReturns) * Math.sqrt(252)
+      return {
+        annualized_return: String(annualizedReturn),
+        annualized_volatility: String(annualizedVolatility),
+        sharpe: String(annualizedVolatility === 0 ? 0 : annualizedAverageReturn / annualizedVolatility),
+        sortino: String(downsideDeviation === 0 ? 0 : annualizedAverageReturn / downsideDeviation),
+        calmar: String(annualizedReturn / 0.051),
+        information_ratio: String(trackingError === 0 ? 0 : average(activeReturns) * 252 / trackingError),
+      }
+    }
     const metrics = {
-      total_return: '-0.0408', annualized_return: '-0.4087', annualized_volatility: '0.1538',
-      sharpe: '-3.3347', sortino: '-4.2', maximum_drawdown: '-0.0510', calmar: '-8.0',
-      win_rate: '0.45', benchmark_return: '-0.0433', excess_return: '0.0025',
-      information_ratio: '0.292', number_of_periods: 20, turnover: '40',
+      ...riskMetrics(strategyReturns, benchmarkReturns, strategyEquity),
+      total_return: String(strategyEquity - 1), maximum_drawdown: '-0.051',
+      win_rate: '0.45', benchmark_return: String(benchmarkEquity - 1),
+      excess_return: String(strategyEquity - benchmarkEquity),
+      number_of_periods: 20, turnover: '40',
       profit_loss_ratio: '1.145', exposure: '1', number_of_trades: 192,
       transaction_costs: '0.0199',
     }
     const benchmarkMetrics = {
       ...metrics,
-      total_return: '-0.0433', benchmark_return: '-0.0433', excess_return: '0',
+      ...riskMetrics(benchmarkReturns, benchmarkReturns, benchmarkEquity),
+      total_return: String(benchmarkEquity - 1), benchmark_return: String(benchmarkEquity - 1), excess_return: '0',
       number_of_trades: 1500,
     }
     const group = {

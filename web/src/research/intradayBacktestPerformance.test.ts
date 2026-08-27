@@ -22,17 +22,20 @@ const dataset = {
 } as NonNullable<FiveMinuteResearchReport['minute_dataset']>
 
 const strategyMetrics = {
-  total_return: '0.0395', annualized_return: '1', annualized_volatility: '0.1',
-  sharpe: '1', sortino: '1', maximum_drawdown: '-0.05', calmar: '1', win_rate: '0.5',
-  benchmark_return: '0.0098', excess_return: '0.0297', information_ratio: '1',
+  total_return: '0.0395', annualized_return: '130.79113618644902', annualized_volatility: '1.1446355672079438',
+  sharpe: '4.866637448089611840466200867', sortino: '9.925238541758241668642152972',
+  maximum_drawdown: '-0.05', calmar: '2615.8227237289804', win_rate: '0.5',
+  benchmark_return: '0.0098', excess_return: '0.0297', information_ratio: '5.720494246595854461766838963',
   number_of_periods: 2, turnover: '4', profit_loss_ratio: '1', exposure: '1',
   number_of_trades: 3, transaction_costs: '0.001',
 }
 
 const benchmarkMetrics = {
   ...strategyMetrics,
-  total_return: '0.0098', maximum_drawdown: '-0.02', win_rate: '0.5',
-  benchmark_return: '0.0098', excess_return: '0', number_of_trades: 4,
+  total_return: '0.0098', annualized_return: '2.4170879842503443', annualized_volatility: '0.4001023921426248',
+  sharpe: '3.277732393464633605411150166', sortino: '5.841567144657273488834262994',
+  maximum_drawdown: '-0.02', calmar: '120.854399212517215', win_rate: '0.5',
+  benchmark_return: '0.0098', excess_return: '0', information_ratio: '0', number_of_trades: 4,
 }
 
 const response = {
@@ -92,6 +95,25 @@ describe('intraday backtest performance response', () => {
       expect(matchesIntradayBacktestPerformance({
         ...response,
         backtest: { ...response.backtest, strategy_metrics },
+      }, request, dataset)).toBe(false)
+    }
+  })
+
+  it('rejects forged annualization and risk ratios', () => {
+    for (const field of [
+      'annualized_return',
+      'annualized_volatility',
+      'sharpe',
+      'sortino',
+      'calmar',
+      'information_ratio',
+    ] as const) {
+      expect(matchesIntradayBacktestPerformance({
+        ...response,
+        backtest: {
+          ...response.backtest,
+          strategy_metrics: { ...response.backtest.strategy_metrics, [field]: '999' },
+        },
       }, request, dataset)).toBe(false)
     }
   })

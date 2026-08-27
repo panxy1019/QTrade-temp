@@ -8,6 +8,7 @@ import type {
 type VerifiedFiveMinuteDataset = NonNullable<FiveMinuteResearchReport['minute_dataset']>
 
 const METRIC_TOLERANCE = 1e-9
+const TRADING_PERIODS_PER_YEAR = 252
 
 export function matchesIntradayBacktestPerformance(
   response: IntradayFactorBacktest,
@@ -42,6 +43,8 @@ export function matchesIntradayBacktestPerformance(
   let benchmarkWins = 0
   let activeDays = 0
   let signalCount = 0
+  const strategyReturns: number[] = []
+  const benchmarkReturns: number[] = []
 
   for (const [index, point] of response.backtest.curve.entries()) {
     const strategyReturn = finiteNumber(point.strategy_return)
@@ -76,11 +79,26 @@ export function matchesIntradayBacktestPerformance(
     benchmarkWins += Number(benchmarkReturn > 0)
     activeDays += Number(point.signal_count > 0)
     signalCount += point.signal_count
+    strategyReturns.push(strategyReturn)
+    benchmarkReturns.push(benchmarkReturn)
   }
 
   if (signalCount !== response.event_summary.signal_count) return false
 
+  const strategyRiskMetrics = calculateRiskMetrics(
+    strategyReturns,
+    benchmarkReturns,
+    strategyEquity,
+    strategyMaximumDrawdown,
+  )
+  const benchmarkRiskMetrics = calculateRiskMetrics(
+    benchmarkReturns,
+    benchmarkReturns,
+    benchmarkEquity,
+    benchmarkMaximumDrawdown,
+  )
   return matchesCoreMetrics(response.backtest.strategy_metrics, {
+    ...strategyRiskMetrics,
     totalReturn: strategyEquity - 1,
     benchmarkReturn: benchmarkEquity - 1,
     excessReturn: strategyEquity - benchmarkEquity,
@@ -91,6 +109,7 @@ export function matchesIntradayBacktestPerformance(
     exposure: activeDays / selectedDays.length,
     trades: signalCount,
   }) && matchesCoreMetrics(response.backtest.benchmark_metrics, {
+    ...benchmarkRiskMetrics,
     totalReturn: benchmarkEquity - 1,
     benchmarkReturn: benchmarkEquity - 1,
     excessReturn: 0,
@@ -113,6 +132,12 @@ interface CoreMetricExpectation {
   turnover: number
   exposure: number
   trades: number
+  annualizedReturn: number
+  annualizedVolatility: number
+  sharpe: number
+  sortino: number
+  calmar: number
+  informationRatio: number
 }
 
 function matchesCoreMetrics(
@@ -162,14 +187,54 @@ function matchesCoreMetrics(
     && Number.isInteger(metrics.number_of_periods)
     && Number.isInteger(metrics.number_of_trades)
     && approximatelyEqual(totalReturn, expected.totalReturn)
+    && approximatelyEqual(annualizedReturn, expected.annualizedReturn)
+    && approximatelyEqual(annualizedVolatility, expected.annualizedVolatility)
+    && approximatelyEqual(sharpe, expected.sharpe)
+    && approximatelyEqual(sortino, expected.sortino)
     && approximatelyEqual(benchmarkReturn, expected.benchmarkReturn)
     && approximatelyEqual(excessReturn, expected.excessReturn)
     && approximatelyEqual(maximumDrawdown, expected.maximumDrawdown)
+    && approximatelyEqual(calmar, expected.calmar)
     && approximatelyEqual(winRate, expected.winRate)
+    && approximatelyEqual(informationRatio, expected.informationRatio)
     && metrics.number_of_periods === expected.periods
     && approximatelyEqual(turnover, expected.turnover)
     && approximatelyEqual(exposure, expected.exposure)
     && metrics.number_of_trades === expected.trades
+}
+
+function calculateRiskMetrics(
+  returns: readonly number[],
+  benchmarkReturns: readonly number[],
+  finalEquity: number,
+  maximumDrawdown: number,
+): Pick<CoreMetricExpectation,
+  'annualizedReturn' | 'annualizedVolatility' | 'sharpe' | 'sortino' | 'calmar' | 'informationRatio'> {
+  const annualizedReturn = finalEquity ** (TRADING_PERIODS_PER_YEAR / returns.length) - 1
+  const annualizedVolatility = populationStandardDeviation(returns)
+    * Math.sqrt(TRADING_PERIODS_PER_YEAR)
+  const annualizedAverageReturn = average(returns) * TRADING_PERIODS_PER_YEAR
+  const sharpe = annualizedVolatility === 0 ? 0 : annualizedAverageReturn / annualizedVolatility
+  const downsideDeviation = Math.sqrt(average(returns.map((value) => Math.min(0, value) ** 2)))
+    * Math.sqrt(TRADING_PERIODS_PER_YEAR)
+  const sortino = downsideDeviation === 0 ? 0 : annualizedAverageReturn / downsideDeviation
+  const calmar = maximumDrawdown === 0 ? 0 : annualizedReturn / Math.abs(maximumDrawdown)
+  const activeReturns = returns.map((value, index) => value - benchmarkReturns[index])
+  const trackingError = populationStandardDeviation(activeReturns)
+    * Math.sqrt(TRADING_PERIODS_PER_YEAR)
+  const informationRatio = trackingError === 0
+    ? 0
+    : average(activeReturns) * TRADING_PERIODS_PER_YEAR / trackingError
+  return { annualizedReturn, annualizedVolatility, sharpe, sortino, calmar, informationRatio }
+}
+
+function average(values: readonly number[]): number {
+  return values.reduce((total, value) => total + value, 0) / values.length
+}
+
+function populationStandardDeviation(values: readonly number[]): number {
+  const mean = average(values)
+  return Math.sqrt(average(values.map((value) => (value - mean) ** 2)))
 }
 
 function finiteNumber(value: string): number | null {
