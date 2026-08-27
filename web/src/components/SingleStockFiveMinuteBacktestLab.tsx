@@ -142,6 +142,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
             pagination={false}
             columns={[
               { title: '个股', render: (_: unknown, row) => `${row.symbol} ${row.instrument.name}` },
+              { title: '结果哈希', render: (_: unknown, row) => <Typography.Text code>{row.preview_hash.slice(0, 12)}…</Typography.Text> },
               { title: '区间', render: (_: unknown, row) => `${row.parameters.start} → ${row.parameters.end}` },
               { title: '短/长窗', render: (_: unknown, row) => `${row.parameters.short_window}/${row.parameters.long_window}` },
               { title: '成本 bps', render: (_: unknown, row) => row.parameters.cost_bps },
@@ -153,13 +154,16 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
               { title: '信息比率', render: (_: unknown, row) => formatNumber(row.metrics.information_ratio) },
               { title: '平均敞口', render: (_: unknown, row) => formatPercent(row.execution.mean_exposure) },
               { title: '换手', render: (_: unknown, row) => formatNumber(row.execution.turnover) },
-              { title: '操作', render: (_: unknown, row) => <Button type="link" size="small" onClick={() => {
-                form.setFieldsValue(row.parameters)
-                setResult(null)
-                setError(null)
-              }}>载入该次参数</Button> },
+              { title: '操作', render: (_: unknown, row) => <Space size={4}>
+                <Button type="link" size="small" onClick={() => {
+                  form.setFieldsValue(row.parameters)
+                  setResult(null)
+                  setError(null)
+                }}>载入该次参数</Button>
+                <JsonExportButton filename={`qtrade-${row.symbol}-five-minute-${row.preview_hash.slice(0, 12)}.json`} value={row} label="导出该次" size="small" type="link" />
+              </Space> },
             ]}
-            scroll={{ x: 1550 }}
+            scroll={{ x: 1720 }}
           />
         </Space>
       </Card>}

@@ -1195,6 +1195,8 @@ describe('verified backtest analytics', () => {
     const minuteComparisonTable = within(minuteComparison as HTMLElement)
     expect(minuteComparisonTable.getAllByText('年化收益').length).toBeGreaterThan(0)
     expect(minuteComparisonTable.getAllByText('信息比率').length).toBeGreaterThan(0)
+    expect(minuteComparisonTable.getByText(`${'c'.repeat(12)}…`)).toBeInTheDocument()
+    expect(minuteComparisonTable.getByRole('button', { name: /导出该次/ })).toBeInTheDocument()
     const individualBacktestCard = screen.getByText('个股 5 分钟因果回测').closest('.ant-card')
     expect(individualBacktestCard).not.toBeNull()
     fireEvent.change(within(individualBacktestCard as HTMLElement).getByRole('spinbutton', { name: '单边成本（bps）' }), { target: { value: '6' } })

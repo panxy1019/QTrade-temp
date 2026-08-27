@@ -2291,3 +2291,21 @@ The draft is deliberately not called canonical. It is not a server-validated
 StrategySpec, hash, experiment, effectiveness result or admission record. Only a
 fresh backend run supplies authoritative identity and evidence; the draft cannot
 change promotion, PAPER/LIVE or external-order authority.
+
+## ADR-131 — Session comparison rows retain visible result lineage and export
+
+Status: accepted, 2026-08-27.
+
+The individual minute comparison deduplicated rows by the backend preview hash,
+but did not display that identity. Once a form edit correctly cleared the main
+result, the retained full response also had no export action, so a prior tuning
+run could no longer be recovered from the UI.
+
+Each comparison row now displays a short preview-hash prefix and can export its
+complete original JSON response. The shared JSON button accepts optional visual
+size and type properties so the action fits in a table without changing its
+serialization or download behavior elsewhere.
+
+The browser does not recompute the hash, upload the export, persist the session
+or create an experiment. The row remains an ephemeral diagnostic and supplies no
+registry, promotion, PAPER/LIVE, state-mutation or external-order authority.
