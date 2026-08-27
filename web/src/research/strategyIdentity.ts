@@ -46,7 +46,7 @@ export async function matchesIntradayStrategyIdentity(
   const strategySpec = expectedStrategySpec(request)
   const expectedStrategy = expectedStrategyWithObservedCounts(strategySpec, request, observed)
   if (!strategySpec || !expectedStrategy || !sameValue(strategy, expectedStrategy)) return false
-  const specHash = await sha256(canonicalJson(strategySpec))
+  const specHash = await sha256Hex(canonicalJson(strategySpec))
   if (!specHash) return false
   return sameValue(identity, {
     classification: 'AD_HOC_READ_ONLY_STRATEGY_IDENTITY',
@@ -154,7 +154,7 @@ function sameValue(left: unknown, right: unknown): boolean {
     && leftKeys.every((key) => sameValue(left[key], right[key]))
 }
 
-function canonicalJson(value: unknown): string {
+export function canonicalJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`
   if (isRecord(value)) {
     return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(',')}}`
@@ -166,7 +166,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
 }
 
-async function sha256(value: string): Promise<string | null> {
+export async function sha256Hex(value: string): Promise<string | null> {
   if (!globalThis.crypto?.subtle) return null
   const digest = await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('')

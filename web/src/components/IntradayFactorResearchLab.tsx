@@ -22,6 +22,7 @@ import { matchesIntradayCausalContract } from '../research/causalBacktestContrac
 import { matchesIntradayBacktestPerformance } from '../research/intradayBacktestPerformance'
 import { matchesIntradayFactorValidation } from '../research/intradayFactorValidation'
 import { matchesIntradayEventSummary } from '../research/intradayEventSummary'
+import { matchesIntradayPreviewHash } from '../research/intradayPreviewHash'
 import { matchesIntradayRobustness } from '../research/intradayRobustness'
 import { matchesIntradayStability } from '../research/intradayStability'
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
@@ -1763,17 +1764,20 @@ async function matchesBacktestResponse(
       : response.exit_factor_validation !== undefined
         && response.exit_factor_validation.entry_signal_count === response.event_summary.signal_count
         && response.exit_factor_validation.trigger_count <= response.event_summary.signal_count
-    const strategyIdentityMatches = await matchesIntradayStrategyIdentity(
-      response.strategy,
-      identity,
-      request,
-      {
-        signalCount: response.event_summary.signal_count,
-        ...(response.exit_factor_validation
-          ? { exitTriggerCount: response.exit_factor_validation.trigger_count }
-          : {}),
-      },
-    )
+    const [strategyIdentityMatches, previewHashMatches] = await Promise.all([
+      matchesIntradayStrategyIdentity(
+        response.strategy,
+        identity,
+        request,
+        {
+          signalCount: response.event_summary.signal_count,
+          ...(response.exit_factor_validation
+            ? { exitTriggerCount: response.exit_factor_validation.trigger_count }
+            : {}),
+        },
+      ),
+      matchesIntradayPreviewHash(response),
+    ])
     return response.classification === 'AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT'
       && sameBacktestRequest(response.parameters, request)
       && response.data_version === dataset.data_version
@@ -1801,6 +1805,7 @@ async function matchesBacktestResponse(
       && matchesIntradayRobustness(response)
       && matchesIntradayResearchGate(response)
       && strategyIdentityMatches
+      && previewHashMatches
       && matchesResearchWorkflow(response.workflow, {
         factorValidationPassed: response.factor_validation.passed,
         correlationValidationPassed: response.correlation_validation.passed,
@@ -1844,7 +1849,6 @@ async function matchesBacktestResponse(
         nextAllowedStage: advancement.next_allowed_action,
       })
       && matchesUnavailableL2FactorReadiness(l2Readiness)
-      && /^[a-f0-9]{64}$/.test(response.preview_hash)
       && response.point_in_time === false
       && response.future_adjustment_knowledge_possible === true
       && response.realtime_readiness === false

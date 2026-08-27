@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { BacktestPreview, ExperimentRunSpecBacktest, IntradayFactorBacktest, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
 import { cancelPaperOrder, controlRuntime, createExperimentRunSpecDraft, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runExperimentRunSpecBacktest, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
 import { formatDirectionalDelta } from '../research/intradayDirectional'
+import { canonicalJson, sha256Hex } from '../research/strategyIdentity'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
@@ -2208,6 +2209,11 @@ describe('verified robustness evidence', () => {
       paper_readiness: 'NOT_ELIGIBLE', live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION',
       state_mutation: false, external_order_transmission: false, preview_hash: 'd'.repeat(64),
     } as unknown as IntradayFactorBacktest
+    const unsignedResult = { ...result } as Record<string, unknown>
+    delete unsignedResult.preview_hash
+    const resultPreviewHash = await sha256Hex(canonicalJson(unsignedResult))
+    if (resultPreviewHash === null) throw new Error('Web Crypto SHA-256 unavailable')
+    result.preview_hash = resultPreviewHash
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce(result)
     render(<ResearchPage data={intradayData} />)
     fireEvent.mouseDown(screen.getByRole('combobox', { name: '因子' }))
