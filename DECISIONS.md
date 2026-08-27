@@ -2370,3 +2370,25 @@ The catalog is a browser evidence index with deterministic JSON export. It is
 not `FactorRegistry`, does not persist or execute definitions, and cannot create
 a strategy/experiment, alter promotion or PAPER/LIVE state, mutate the runtime
 or transmit an external order.
+
+## ADR-135 — Cross-sector individual diagnostics freeze one shared form snapshot
+
+Status: accepted, 2026-08-27.
+
+The individual-stock lab could retain one result from every signed sector, but
+the operator still had to choose and run each stock manually. That made it easy
+to change a parameter between sectors or stop after favourable rows, while the
+session coverage count alone could not distinguish a failed request from a
+completed sector diagnostic.
+
+The new batch action sorts the signed stock inventory by sector code and symbol,
+selects the first stock from each sector, validates the form once and reuses that
+exact date/cost/policy snapshot for every request. Calls are sequential to keep
+the public stateless service load bounded. Successful responses replace the
+session comparison; failures are counted and omitted without retry, fabrication
+or a full-coverage claim. The complete session array is exportable.
+
+This is a convenience diagnostic over the existing single-stock endpoint, not a
+new engine or statistical robustness test. It does not select parameters per
+stock, represent every stock in a sector, persist evidence, register/promote a
+strategy, start PAPER/LIVE, mutate runtime state or transmit an external order.

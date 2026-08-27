@@ -243,6 +243,15 @@ closed and are not executable. This avoids changing the evidence-bound backend
 module and deliberately creates no FactorRegistry, strategy, experiment,
 promotion, PAPER/LIVE state or order capability.
 
+The individual-stock minute lab now closes the manual cross-sector execution
+gap without adding a second backtest engine. It deterministically selects one
+signed stock per sector, freezes one validated form snapshot and calls the
+existing stateless single-stock endpoint sequentially. Only successful responses
+enter the browser-session table; partial failures remain visible and cannot be
+called complete coverage. A combined JSON export supports review, while the
+batch performs no per-stock tuning, persistence, promotion, PAPER/LIVE state or
+order operation and is not a substitute for the existing 75-stock formal report.
+
 The historical research surface now also includes a bounded interactive preview.
 It accepts adjustable momentum/reversal/low-volatility, risk and cost parameters,
 rereads the selected signed Parquet dataset, returns a deterministic result hash

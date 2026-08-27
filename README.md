@@ -261,7 +261,13 @@ row only refills the form and requires a fresh run. Any manual parameter change
 also clears the current result while retaining the session comparison, so an old
 hash cannot remain presented as the output of new inputs. Each retained row shows
 its stock sector and short result hash and can export the complete original response even after
-the main result has been cleared. The comparison is cleared on
+the main result has been cleared. A bounded batch action can deterministically
+choose the lowest-code stock in each signed sector and run the existing stateless
+endpoint sequentially with one shared date/cost/policy form snapshot. Partial
+failures remain missing instead of being synthesized, the visible coverage uses
+successful rows only, and the complete session comparison can be exported as one
+JSON document. The batch does not tune per stock and is not evidence for every
+stock in a sector. The comparison is cleared on
 refresh and is neither persisted evidence nor an experiment record. Every result
 remains current-universe, QFQ/non-PIT,
 `NOT_ELIGIBLE`, stateless and unable to transmit an external order.
