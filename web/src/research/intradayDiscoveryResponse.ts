@@ -1,4 +1,5 @@
 import type { IntradayFactorDiscovery, IntradayFactorDiscoveryRequest, IntradayOpeningDirection } from '../types'
+import { matchesIntradayDiscoveryLockedStress } from './intradayDiscoveryLockedStress'
 import { matchesIntradayDiscoveryOverfitting } from './intradayDiscoveryOverfitting'
 import { matchesResponsePreviewHash } from './intradayPreviewHash'
 import { canonicalJson } from './strategyIdentity'
@@ -124,6 +125,7 @@ async function matchesIntradayDiscoveryResponseUnchecked(
       selectedDays,
       candidateIds,
     )
+    && matchesIntradayDiscoveryLockedStress(response)
     && response.data_version === dataset.data_version
     && response.dataset_checksum === dataset.checksum
     && response.data_interval === '5m'

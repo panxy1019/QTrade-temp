@@ -265,9 +265,11 @@ const admittedCorrelation = {
 } as IntradayFactorCorrelation
 
 const discoveryMetrics = {
-  total_return: '-0.061491', annualized_return: '-0.54', sharpe: '-4.7951', maximum_drawdown: '-0.098972',
-  excess_return: '-0.018107', information_ratio: '-1.5', number_of_periods: 20, turnover: '0.3',
-  profit_loss_ratio: '0.8', exposure: '0.2', number_of_trades: 326, transaction_costs: '0.001',
+  total_return: '-0.061491', annualized_return: '-0.54', annualized_volatility: '0.12',
+  sharpe: '-4.7951', sortino: '-5.2', maximum_drawdown: '-0.098972', calmar: '-5.455',
+  win_rate: '0.4', benchmark_return: '-0.044', excess_return: '-0.018107', information_ratio: '-1.5',
+  number_of_periods: 20, turnover: '0.3', profit_loss_ratio: '0.8', exposure: '0.2',
+  number_of_trades: 326, transaction_costs: '0.001',
 }
 const discoveryCandidate = {
   candidate_id: 'DIR-XDU-T0000', directions: ['IGNORE', 'BEARISH', 'BULLISH'], combination: 'ALL',
@@ -429,13 +431,14 @@ const discovery = {
     candidate_reselected: false, sector_rows_used_for_selection: false,
     sector_only: Array.from({ length: 15 }, (_, index) => ({
       sector_code: `S${String(index + 1).padStart(2, '0')}`, sector_name: `行业${index + 1}`,
-      observation_count: 100, signal_count: 10 + index, mean_signal_forward_return: '0', signal_hit_rate: '0.5',
+      observation_count: 100, signal_count: index === 14 ? 18 : 22,
+      mean_signal_forward_return: '0', signal_hit_rate: '0.5',
       strategy_metrics: { ...discoveryMetrics, total_return: index < 4 ? '0.02' : '-0.05' },
       benchmark_metrics: discoveryMetrics,
     })),
     leave_one_sector_out: Array.from({ length: 15 }, (_, index) => ({
       excluded_sector_code: `S${String(index + 1).padStart(2, '0')}`, excluded_sector_name: `行业${index + 1}`,
-      observation_count: 1400, signal_count: 300,
+      observation_count: 1400, signal_count: index === 14 ? 308 : 304,
       strategy_metrics: { ...discoveryMetrics, total_return: '-0.06' }, benchmark_metrics: discoveryMetrics,
     })),
     positive_sector_count: 4, positive_sector_ratio: '0.2666666667',
@@ -455,13 +458,16 @@ const discovery = {
       symbol: `${index < 30 ? '00' : index < 55 ? '60' : '30'}${String(index + 1).padStart(4, '0')}`,
       sector_code: `S${String((index % 15) + 1).padStart(2, '0')}`,
       sector_name: `行业${(index % 15) + 1}`, observation_count: 20,
-      signal_count: index === 74 ? 0 : 2 + (index % 9),
-      strategy_metrics: { ...discoveryMetrics, total_return: index < 22 ? '0.02' : '-0.0116444' },
+      signal_count: index === 74 ? 0 : index < 30 ? 5 : 4,
+      strategy_metrics: {
+        ...discoveryMetrics,
+        total_return: index < 5 ? '0.06310879872037346' : index < 22 ? '0.02' : '-0.0116444',
+      },
       benchmark_metrics: discoveryMetrics,
     })),
     positive_symbol_count: 22, positive_symbol_ratio: '0.2933333333',
     median_symbol_total_return: '-0.0116444', top_five_absolute_return_share: '0.2479332831',
-    top_five_absolute_return_symbols: ['002558', '002353', '002028', '000408', '603993'],
+    top_five_absolute_return_symbols: ['000001', '000002', '000003', '000004', '000005'],
     criteria: {
       every_locked_test_symbol_has_signal: false,
       positive_locked_test_symbol_ratio_at_least_0_60: false,
@@ -898,6 +904,22 @@ describe('intraday factor rule correlation', () => {
       overfitting_audit: {
         ...discovery.overfitting_audit,
         below_median_split_count: 28,
+      },
+    } as unknown as IntradayFactorDiscovery))
+    render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '挖掘最近 40 日的 104 个有界因子' }))
+
+    expect(await screen.findByText('因子挖掘响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '载入训练锁定开仓因子' })).not.toBeInTheDocument()
+  })
+
+  it('fails closed when a signed discovery response misstates its cross-sector breadth', async () => {
+    vi.mocked(runIntradayFactorDiscovery).mockResolvedValueOnce(await withPreviewHash({
+      ...discovery,
+      locked_test_sector_stress: {
+        ...discovery.locked_test_sector_stress,
+        positive_sector_count: 5,
       },
     } as unknown as IntradayFactorDiscovery))
     render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
