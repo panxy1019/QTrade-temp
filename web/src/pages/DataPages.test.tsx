@@ -1605,6 +1605,35 @@ describe('verified robustness evidence', () => {
         excess_equity: String(strategyEquity - benchmarkEquity),
       }
     })
+    const currentBlockMeans = [0.0001, 0.0001, -0.0005, -0.0005]
+    const currentIntradayStability: IntradayFactorBacktest['stability_validation'] = {
+      classification: 'CONTIGUOUS_SESSION_BLOCK_FACTOR_STABILITY_DIAGNOSTIC',
+      blocks: Array.from({ length: 4 }, (_, index) => {
+        const blockCurve = curve.slice(index * 5, index * 5 + 5)
+        return {
+          block_id: `TS-${String(index + 1).padStart(2, '0')}`,
+          start: selectedTradingDays[index * 5],
+          end: selectedTradingDays[index * 5 + 4],
+          session_count: 5,
+          observation_count: 375,
+          signal_count: blockCurve.reduce((total, point) => total + point.signal_count, 0),
+          signal_session_count: 5,
+          mean_session_conditional_excess_return: String(currentBlockMeans[index]),
+        }
+      }),
+      block_count: 4,
+      positive_block_count: 2,
+      worst_block_mean_conditional_excess_return: '-0.0005',
+      maximum_absolute_block_contribution_share: String(5 / 12),
+      contribution_share_threshold: '0.60',
+      criteria: {
+        minimum_four_contiguous_blocks: true,
+        every_block_has_signal_session: true,
+        positive_block_ratio_at_least_75pct: false,
+        maximum_absolute_block_contribution_share_below_0_60: true,
+      },
+      passed: false,
+    }
     const average = (values: number[]) => values.reduce((total, value) => total + value, 0) / values.length
     const populationStandardDeviation = (values: number[]) => {
       const mean = average(values)
@@ -1926,7 +1955,7 @@ describe('verified robustness evidence', () => {
         },
         passed: false,
       },
-      stability_validation: intradayStabilityFixture,
+      stability_validation: currentIntradayStability,
       correlation_validation: {
         correlations: { opening_30m_return: '0.4668', opening_30m_range_position: '0.4712' },
         maximum_absolute_correlation: '0.90', passed: true,
