@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from '../api/client'
+import { saveLocalIntradayFactorCandidate } from '../research/localIntradayFactorCandidates'
+import type { LocalIntradayFactorCandidate } from '../research/localIntradayFactorCandidates'
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
 import type { FiveMinuteResearchReport, IntradayFactorCorrelation, IntradayFactorDiscovery } from '../types'
 import { IntradayFactorResearchLab } from './IntradayFactorResearchLab'
@@ -70,6 +72,28 @@ const experiments = [
   },
 ] as unknown as LocalIntradayFactorExperiment[]
 
+const factorCandidates = experiments.map((record, index) => ({
+  schema_version: 1,
+  classification: 'BROWSER_LOCAL_ENTRY_FACTOR_DRAFT_NOT_EVIDENCE',
+  draft_key: `draft-${index + 1}`,
+  name: record.name,
+  saved_at: record.saved_at,
+  data_version: record.data_version,
+  dataset_checksum: record.dataset_checksum,
+  directions: record.parameters.directions,
+  combination: record.parameters.combination,
+  minimum_body_return_bps: record.parameters.minimum_body_return_bps,
+  expression: record.factor_definition.expression,
+  validation_status: 'NOT_RUN',
+  strategy_constructed: false,
+  strategy_backtest_run: false,
+  factor_registry_write: false,
+  strategy_registry_write: false,
+  promotion: 'NOT_ELIGIBLE',
+  state_mutation: false,
+  external_order_transmission: false,
+})) as LocalIntradayFactorCandidate[]
+
 vi.mock('../api/client', () => ({
   runIntradayFactorBacktest: vi.fn(),
   runIntradayFactorCorrelation: vi.fn(),
@@ -84,6 +108,12 @@ vi.mock('../research/localIntradayFactorExperiments', () => ({
   loadLocalIntradayFactorExperiments: vi.fn(() => experiments),
   saveLocalIntradayFactorExperiment: vi.fn(),
   deleteLocalIntradayFactorExperiment: vi.fn(),
+}))
+
+vi.mock('../research/localIntradayFactorCandidates', () => ({
+  loadLocalIntradayFactorCandidates: vi.fn(() => factorCandidates),
+  saveLocalIntradayFactorCandidate: vi.fn(),
+  deleteLocalIntradayFactorCandidate: vi.fn(),
 }))
 
 const tradingDays = Array.from({ length: 22 }, (_, index) => (
@@ -410,6 +440,8 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('KNOWN_AT_10_00_CLOSE → NEXT_5M_OPEN_10_05')).toBeInTheDocument()
     expect(screen.getByText('T+1_OPEN_09_30')).toBeInTheDocument()
     expect(screen.getByText(/不是服务端规范、规格哈希、有效性结论或晋级证据/)).toBeInTheDocument()
+    expect(screen.getByText('本地开仓因子候选（2/30）')).toBeInTheDocument()
+    expect(screen.getByText(/不包含平仓条件、策略指标或回测结论/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /导出有效性与相关性证据/ })).not.toBeInTheDocument()
     const button = screen.getByRole('button', { name: '检验选中规则有效性与相关性（0/8）' })
     expect(button).toBeDisabled()
@@ -417,6 +449,8 @@ describe('intraday factor rule correlation', () => {
     fireEvent.click(checkboxes[1])
     fireEvent.click(checkboxes[2])
     fireEvent.click(screen.getByRole('button', { name: '检验选中规则有效性与相关性（2/8）' }))
+
+    expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
 
     await waitFor(() => expect(runIntradayFactorCorrelation).toHaveBeenCalledWith({
       start: '2026-07-02',
@@ -436,6 +470,29 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText('冗余')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出有效性与相关性证据/ })).toBeEnabled()
     expect(screen.getByText(/无状态写入、无外部订单/)).toBeInTheDocument()
+  })
+
+  it('saves the current entry factor before any strategy backtest', async () => {
+    vi.mocked(saveLocalIntradayFactorCandidate).mockReturnValueOnce(factorCandidates[0])
+    render(<IntradayFactorResearchLab dataset={dataset} />)
+
+    fireEvent.change(screen.getByRole('textbox', { name: '开仓因子候选名称' }), {
+      target: { value: '三连阳开仓草案' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: '保存当前开仓因子候选（不回测）' }))
+
+    await waitFor(() => expect(saveLocalIntradayFactorCandidate).toHaveBeenCalledWith(
+      '三连阳开仓草案',
+      dataset,
+      {
+        directions: ['BULLISH', 'BULLISH', 'BULLISH'],
+        combination: 'ALL',
+        minimum_body_return_bps: '0',
+      },
+    ))
+    expect(screen.getByText(/尚未运行有效性、相关性或策略回测/)).toBeInTheDocument()
+    expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
+    expect(runIntradayFactorCorrelation).not.toHaveBeenCalled()
   })
 
   it('loads and submits the bounded bearish exit identity', async () => {

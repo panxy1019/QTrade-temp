@@ -357,6 +357,15 @@ Last updated: 2026-08-27
   viewed and that exit construction, review and a fresh manual run remain
   separate. This handoff copies no test conclusion and grants no persistence,
   registration, promotion, PAPER/LIVE, state or order authority.
+- Entry-factor candidates no longer depend on a completed strategy backtest.
+  The browser can keep up to 30 dataset-bound drafts containing only the three
+  opening directions, `ALL`/`ANY` combination and body threshold, then select
+  2–8 drafts for the existing server-side effectiveness, Holm-Bonferroni and
+  correlation diagnostic. Drafts are `NOT_RUN`, exclude dates, cost, exit rules,
+  strategy metrics and conclusions, and remain separate from the local strategy
+  experiment table. Saving/loading/deleting a draft is browser-local and grants
+  no FactorRegistry/StrategyRegistry, promotion, PAPER/LIVE, state or order
+  authority.
 - Discovery selection bias is now measured with one fixed combinatorially
   symmetric cross-validation audit. The same 40 viewed sessions are divided
   into eight contiguous five-session blocks; all 70 four-block training/four-

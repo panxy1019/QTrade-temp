@@ -2661,3 +2661,24 @@ manual review and a new explicit run are still required.
 This operation copies no test conclusion and does not create or select another
 candidate, persist an experiment, write FactorRegistry/StrategyRegistry, promote
 a strategy, start PAPER/LIVE, mutate state or transmit an order.
+
+## ADR-149 — Opening-factor drafts precede strategy construction
+
+Status: accepted, 2026-08-27.
+
+The multi-rule effectiveness/correlation diagnostic previously selected rules
+from locally saved full strategy backtests. That made exit choice and causal
+backtest an accidental prerequisite for factor screening, reversing the intended
+research order and mixing a pure opening-factor identity with strategy fields.
+
+The browser now stores a separate, dataset-bound opening-factor draft containing
+only three directions, `ALL`/`ANY` and a normalized body threshold. Exact rule
+duplicates replace their earlier draft and the library is bounded at 30. Two to
+eight selected drafts feed the existing server diagnostic; dates come from the
+current analysis window, while exit, cost and all strategy metrics are absent.
+Completed strategy results remain in their own local comparison table.
+
+Every draft is explicitly `NOT_RUN` and not evidence. Local save/load/delete
+does not call the API; the diagnostic remains stateless and read-only. Neither
+path writes FactorRegistry/StrategyRegistry, promotes a rule, starts PAPER/LIVE,
+mutates runtime state or transmits an order.

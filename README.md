@@ -351,6 +351,17 @@ test window is already viewed, so the operator must separately choose/review an
 exit and run a diagnostic or genuinely new preregistered window. The handoff
 copies no test conclusion and creates no experiment, registry or runtime state.
 
+The workbench also separates entry-factor drafts from tested strategies. “保存
+当前开仓因子候选（不回测）” stores only the bounded three-window directions,
+`ALL`/`ANY` combination and body threshold in the current browser. Two to eight
+such drafts can be checked on one 75-stock window for clustered effectiveness,
+Holm-Bonferroni adjusted significance and continuous-score correlation before
+an exit rule or strategy result exists. These dataset-bound drafts are always
+`NOT_RUN`: they contain no dates, cost, exit, strategy metrics or backtest
+conclusion and cannot write either registry, promote, start PAPER/LIVE or send
+an order. Completed entry/exit backtests remain in a separate local strategy
+experiment table.
+
 The research page begins with one evidence-derived, read-only factor catalog.
 It combines only definitions actually present in the signed daily-factor search
 and intraday long-window report, then displays each factor's selection/entry/

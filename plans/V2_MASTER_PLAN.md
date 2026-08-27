@@ -237,6 +237,10 @@ npm --prefix web run build
   strategy form—three directions, `ALL` and threshold—while preserving dates,
   cost and exit rule, clearing stale strategy/correlation output and requiring a
   separate manual run without copying test conclusions or runtime authority.
+- [x] Decouple opening-factor drafts from completed strategy backtests: keep a
+  dataset-bound browser library of up to 30 direction/combination/threshold
+  candidates, run 2–8 through effectiveness/Holm/correlation before exit design,
+  and keep every draft `NOT_RUN` with no registry, promotion or runtime power.
 - [x] Quantify the fixed 104-candidate search's selection bias with eight
   contiguous blocks and all 70 combinatorially symmetric train/complement
   splits; reuse the actual gate/t/effect/threshold rank, expose the failed PBO

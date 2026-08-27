@@ -3,6 +3,12 @@ import { useState } from 'react'
 import { runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
 import {
+  deleteLocalIntradayFactorCandidate,
+  loadLocalIntradayFactorCandidates,
+  saveLocalIntradayFactorCandidate,
+} from '../research/localIntradayFactorCandidates'
+import type { LocalIntradayFactorCandidate } from '../research/localIntradayFactorCandidates'
+import {
   buildLocalIntradayFactorComparisonExport,
   deleteLocalIntradayFactorExperiment,
   loadLocalIntradayFactorExperiments,
@@ -342,7 +348,10 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const [experimentName, setExperimentName] = useState('')
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
   const [, setExperimentRevision] = useState(0)
-  const [selectedExperimentHashes, setSelectedExperimentHashes] = useState<string[]>([])
+  const [factorCandidateName, setFactorCandidateName] = useState('')
+  const [factorCandidateStatus, setFactorCandidateStatus] = useState<string | null>(null)
+  const [, setFactorCandidateRevision] = useState(0)
+  const [selectedFactorCandidateKeys, setSelectedFactorCandidateKeys] = useState<string[]>([])
   const [correlationResult, setCorrelationResult] = useState<IntradayFactorCorrelation | null>(null)
   const [correlationLabels, setCorrelationLabels] = useState<Record<string, string>>({})
   const [correlationRunning, setCorrelationRunning] = useState(false)
@@ -356,6 +365,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     return <Card title="分钟因子研究工作台"><Alert showIcon type="warning" title="长历史 5 分钟数据不可用" description="系统不会用合成行情或不完整缓存替代经过 checksum 验证的多股票数据。" /></Card>
   }
   const savedExperiments = loadLocalIntradayFactorExperiments(dataset)
+  const factorCandidates = loadLocalIntradayFactorCandidates(dataset)
   const factorComparisonExport = savedExperiments.length > 0
     ? buildLocalIntradayFactorComparisonExport(dataset)
     : null
@@ -444,21 +454,19 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setError(null)
     setCorrelationResult(null)
     setCorrelationError(null)
+    setFactorCandidateStatus(null)
     setExperimentName(record.name)
     setSaveStatus(`已载入“${record.name}”的参数；请重新运行以验证当前结果。`)
   }
   const removeExperiment = (previewHash: string) => {
     deleteLocalIntradayFactorExperiment(previewHash)
-    setSelectedExperimentHashes((values) => values.filter((value) => value !== previewHash))
-    setCorrelationResult(null)
-    setCorrelationError(null)
     setExperimentRevision((value) => value + 1)
     setSaveStatus('本地因子实验记录已删除。')
   }
   const runSelectedCorrelation = async () => {
-    const selected = savedExperiments.filter((record) => selectedExperimentHashes.includes(record.preview_hash))
+    const selected = factorCandidates.filter((candidate) => selectedFactorCandidateKeys.includes(candidate.draft_key))
     if (selected.length < 2 || selected.length > 8) {
-      setCorrelationError('请选择 2 至 8 条本地因子规则。')
+      setCorrelationError('请选择 2 至 8 条本地开仓因子候选。')
       return
     }
     const { start, end } = await form.validateFields(['start', 'end'])
@@ -468,15 +476,15 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       const correlation = await runIntradayFactorCorrelation({
         start,
         end,
-        rules: selected.map((record) => ({
-          directions: record.parameters.directions,
-          combination: record.parameters.combination,
-          minimum_body_return_bps: record.parameters.minimum_body_return_bps,
+        rules: selected.map((candidate) => ({
+          directions: candidate.directions,
+          combination: candidate.combination,
+          minimum_body_return_bps: candidate.minimum_body_return_bps,
         })),
       })
       setCorrelationResult(correlation)
       setCorrelationLabels(Object.fromEntries(
-        selected.map((record, index) => [`R${String(index + 1).padStart(2, '0')}`, record.name]),
+        selected.map((candidate, index) => [`R${String(index + 1).padStart(2, '0')}`, candidate.name]),
       ))
     } catch (reason) {
       setCorrelationResult(null)
@@ -484,6 +492,54 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     } finally {
       setCorrelationRunning(false)
     }
+  }
+  const saveCurrentFactorCandidate = async () => {
+    try {
+      await form.validateFields([
+        'minimum_body_return_bps',
+        ...(selectedFactor === 'custom_opening_ten_minute_direction_rule'
+          ? ['first_direction', 'second_direction', 'third_direction', 'combination'] as const
+          : []),
+      ])
+      const candidate = saveLocalIntradayFactorCandidate(factorCandidateName, dataset, {
+        directions: [draftDirections[0], draftDirections[1], draftDirections[2]],
+        combination: draftCombination,
+        minimum_body_return_bps: draftThresholdBps,
+      })
+      setFactorCandidateName(candidate.name)
+      setFactorCandidateStatus(`已保存“${candidate.name}”的开仓因子草案；尚未运行有效性、相关性或策略回测。`)
+      setFactorCandidateRevision((value) => value + 1)
+      setCorrelationResult(null)
+      setCorrelationError(null)
+    } catch (reason) {
+      setFactorCandidateStatus(reason instanceof Error ? reason.message : '开仓因子候选保存失败')
+    }
+  }
+  const loadFactorCandidate = (candidate: LocalIntradayFactorCandidate) => {
+    form.setFieldsValue({
+      factor: 'custom_opening_ten_minute_direction_rule',
+      minimum_body_return_bps: candidate.minimum_body_return_bps,
+      first_direction: candidate.directions[0],
+      second_direction: candidate.directions[1],
+      third_direction: candidate.directions[2],
+      combination: candidate.combination,
+    })
+    setSelectedFactor('custom_opening_ten_minute_direction_rule')
+    setFactorCandidateName(candidate.name)
+    setFactorCandidateStatus(`已载入“${candidate.name}”的开仓因子草案；日期、成本和平仓条件保持不变。`)
+    setResult(null)
+    setError(null)
+    setSaveStatus(null)
+    setCorrelationResult(null)
+    setCorrelationError(null)
+  }
+  const removeFactorCandidate = (draftKey: string) => {
+    deleteLocalIntradayFactorCandidate(draftKey)
+    setSelectedFactorCandidateKeys((values) => values.filter((value) => value !== draftKey))
+    setFactorCandidateRevision((value) => value + 1)
+    setCorrelationResult(null)
+    setCorrelationError(null)
+    setFactorCandidateStatus('本地开仓因子候选已删除。')
   }
   const runDiscovery = async () => {
     const values = await form.validateFields(['end', 'cost_bps'])
@@ -526,6 +582,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setSaveStatus(null)
     setCorrelationResult(null)
     setCorrelationError(null)
+    setFactorCandidateStatus(null)
     setDiscoveryHandoffStatus(`已载入 ${selected.candidate_id} 的训练锁定开仓因子`)
   }
   const experimentColumns = [
@@ -585,6 +642,21 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       </Space>,
     },
   ]
+  const factorCandidateColumns = [
+    { title: '候选名称', dataIndex: 'name' },
+    { title: '保存时间', dataIndex: 'saved_at', render: (value: string) => formatTimestamp(value) },
+    { title: '开仓表达式', dataIndex: 'expression' },
+    { title: '检验状态', render: () => <Tag>未检验草案</Tag> },
+    {
+      title: '操作',
+      render: (_: unknown, candidate: LocalIntradayFactorCandidate) => <Space size={4}>
+        <Button type="link" size="small" onClick={() => loadFactorCandidate(candidate)}>载入开仓因子</Button>
+        <Popconfirm title="删除这个本地开仓因子候选？" onConfirm={() => removeFactorCandidate(candidate.draft_key)}>
+          <Button type="link" danger size="small">删除候选</Button>
+        </Popconfirm>
+      </Space>,
+    },
+  ]
   const curve = result ? {
     curve: [
       { session: '起点', equity: '1', drawdown: '0', benchmark_equity: '1', benchmark_drawdown: '0', excess_return: '0' },
@@ -638,6 +710,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setSaveStatus(null)
     setCorrelationResult(null)
     setCorrelationError(null)
+    setFactorCandidateStatus(null)
     setDiscoveryHandoffStatus(null)
     if ('end' in changedValues || 'cost_bps' in changedValues) {
       setDiscoveryResult(null)
@@ -1282,41 +1355,42 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       {saveStatus && <Alert showIcon type="info" title={saveStatus} />}
       <Card
         type="inner"
-        title={`本地因子实验对比（${savedExperiments.length}/30）`}
-        extra={<Space wrap>
-          <Typography.Text type="secondary">仅当前浏览器</Typography.Text>
-          <JsonExportButton
-            filename={`qtrade-local-intraday-factor-comparison-${dataset.checksum.slice(0, 12)}.json`}
-            value={factorComparisonExport}
-            label="导出因子对比"
-          />
-        </Space>}
+        title={`本地开仓因子候选（${factorCandidates.length}/30）`}
+        extra={<Typography.Text type="secondary">仅当前浏览器 · 草案不是证据</Typography.Text>}
       >
-        <Table<LocalIntradayFactorExperiment>
-          rowKey="preview_hash"
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <Space wrap>
+            <Input aria-label="开仓因子候选名称" placeholder="为当前开仓表达式命名" value={factorCandidateName} maxLength={80} onChange={(event) => setFactorCandidateName(event.target.value)} style={{ width: 280 }} />
+            <Button onClick={() => { void saveCurrentFactorCandidate() }}>保存当前开仓因子候选（不回测）</Button>
+          </Space>
+          <Typography.Text type="secondary">候选只保存三段方向、ALL/ANY 和实体阈值，不包含平仓条件、策略指标或回测结论；保存不会调用服务端，也不会生成有效性、注册或晋级证据。</Typography.Text>
+          {factorCandidateStatus && <Alert showIcon type="info" title={factorCandidateStatus} />}
+        </Space>
+        <Table<LocalIntradayFactorCandidate>
+          rowKey="draft_key"
           size="small"
-          columns={experimentColumns}
-          dataSource={savedExperiments}
+          columns={factorCandidateColumns}
+          dataSource={factorCandidates}
           rowSelection={{
-            selectedRowKeys: selectedExperimentHashes,
+            selectedRowKeys: selectedFactorCandidateKeys,
             onChange: (keys) => {
-              setSelectedExperimentHashes(keys.map(String))
+              setSelectedFactorCandidateKeys(keys.map(String))
               setCorrelationResult(null)
               setCorrelationError(null)
             },
           }}
-          pagination={{ pageSize: 5, showSizeChanger: false }}
-          scroll={{ x: 2200 }}
-          locale={{ emptyText: '运行因子检验后可保存摘要，用于反复调整和横向比较。' }}
+          pagination={{ pageSize: 8, showSizeChanger: false }}
+          scroll={{ x: 1100 }}
+          locale={{ emptyText: '先保存至少两个开仓因子草案，再做有效性、多重检验与相关性检验；不必先运行策略回测。' }}
         />
         <Space orientation="vertical" style={{ width: '100%', marginTop: 12 }}>
           <Space wrap>
             <Button
               loading={correlationRunning}
-              disabled={selectedExperimentHashes.length < 2 || selectedExperimentHashes.length > 8}
+              disabled={selectedFactorCandidateKeys.length < 2 || selectedFactorCandidateKeys.length > 8}
               onClick={() => { void runSelectedCorrelation() }}
-            >检验选中规则有效性与相关性（{selectedExperimentHashes.length}/8）</Button>
-            <Typography.Text type="secondary">按当前表单日期，在同一 75 股窗口重算 2–8 条开仓规则各自阈值下的信号有效性与连续方向分数；相关性标签固定使用 T+1 开盘收益，不混入平仓策略收益。</Typography.Text>
+            >检验选中规则有效性与相关性（{selectedFactorCandidateKeys.length}/8）</Button>
+            <Typography.Text type="secondary">按当前表单日期，在同一 75 股窗口检验 2–8 条纯开仓因子候选；有效性标签固定为 T+1 开盘收益，相关性使用连续方向分数，不读取平仓条件或策略收益。</Typography.Text>
           </Space>
           {correlationError && <Alert showIcon type="error" title="规则相关性检验未完成" description={correlationError} />}
           {correlationResult && <>
@@ -1385,8 +1459,31 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
               <Typography.Text type="secondary">相关性响应哈希 {correlationResult.preview_hash}；数据 checksum {correlationResult.dataset_checksum}。导出保留服务端原始有效性、多重检验、相关矩阵和冗余判定；不写本地实验或注册表，无状态写入、无外部订单。</Typography.Text>
             </Space>
           </>}
-          <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，保留规则、结果哈希、只读策略 ID/规格哈希、常用绩效、Rank IC、最大相关性、Newey-West 与滚动样本外摘要；载入后必须重新运行。可导出确定性只读 JSON 留档或跨设备核对，但不支持导入、自动同步或自动选优。策略身份仍是 AD_HOC_UNREGISTERED；表中统计都来自已经查看的同一历史响应，不是不可变实验、FactorRegistry/StrategyRegistry 写入、独立样本外证据或 PAPER/LIVE 晋级输入。</Typography.Text>
+          <Typography.Text type="secondary">草案绑定当前数据版本与 checksum，但只有服务端检验响应才包含有效性、Holm 校正和相关矩阵；草案本身始终是 NOT_RUN。响应仍是已查看历史的只读诊断，不写 FactorRegistry/StrategyRegistry，不构造平仓策略，不产生 PAPER/LIVE 或订单权限。</Typography.Text>
         </Space>
+      </Card>
+      <Card
+        type="inner"
+        title={`本地因子实验对比（${savedExperiments.length}/30）`}
+        extra={<Space wrap>
+          <Typography.Text type="secondary">仅当前浏览器</Typography.Text>
+          <JsonExportButton
+            filename={`qtrade-local-intraday-factor-comparison-${dataset.checksum.slice(0, 12)}.json`}
+            value={factorComparisonExport}
+            label="导出因子对比"
+          />
+        </Space>}
+      >
+        <Table<LocalIntradayFactorExperiment>
+          rowKey="preview_hash"
+          size="small"
+          columns={experimentColumns}
+          dataSource={savedExperiments}
+          pagination={{ pageSize: 5, showSizeChanger: false }}
+          scroll={{ x: 2200 }}
+          locale={{ emptyText: '完成策略构造和因果回测后可保存结果摘要，用于反复调整和横向比较。' }}
+        />
+        <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，保留规则、结果哈希、只读策略 ID/规格哈希、常用绩效、Rank IC、最大相关性、Newey-West 与滚动样本外摘要；载入后必须重新运行。可导出确定性只读 JSON 留档或跨设备核对，但不支持导入、自动同步或自动选优。策略身份仍是 AD_HOC_UNREGISTERED；表中统计都来自已经查看的同一历史响应，不是不可变实验、FactorRegistry/StrategyRegistry 写入、独立样本外证据或 PAPER/LIVE 晋级输入。</Typography.Text>
       </Card>
     </Space>
   </Card>

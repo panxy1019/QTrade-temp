@@ -450,6 +450,14 @@ and body threshold are copied. Dates, cost and exit rule remain untouched, old
 strategy/correlation results are cleared and no backtest starts. The already
 viewed test conclusion is not copied; exit design, manual review and a new run
 remain explicit separate steps with no registry or runtime authority.
+The same workbench now keeps entry-factor candidates ahead of strategy
+construction. A dataset-bound browser library stores at most 30 bounded opening
+rules without dates, cost, exit behavior, metrics or conclusions. Operators may
+select 2–8 drafts for the existing 75-stock clustered effectiveness, Holm and
+continuous-score correlation diagnostic before choosing an exit or running a
+strategy. Drafts remain `NOT_RUN`; completed entry/exit backtests stay in a
+separate strategy experiment table and neither browser collection has registry
+or runtime authority.
 The same fixed candidate family now has an explicit selection-bias audit. Eight
 contiguous five-session blocks produce all 70 symmetric four-block training and
 four-block complement splits. Every split repeats the real gate/t-statistic/
