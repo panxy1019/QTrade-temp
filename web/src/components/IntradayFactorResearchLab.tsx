@@ -1877,54 +1877,232 @@ function matchesCorrelationResponse(
   request: IntradayFactorCorrelation['parameters'],
   dataset: VerifiedFiveMinuteDataset,
 ): boolean {
-  const ruleIds = request.rules.map((_, index) => `R${String(index + 1).padStart(2, '0')}`)
-  const ruleIdSet = new Set(ruleIds)
-  const parametersMatch = response.parameters.start === request.start
-    && response.parameters.end === request.end
-    && sameCorrelationRules(response.parameters.rules, request.rules)
-  const rulesMatch = response.rules.length === request.rules.length
-    && response.rules.every((rule, index) => (
-      rule.rule_id === ruleIds[index]
-      && sameCorrelationRule(rule, request.rules[index])
-    ))
-  const effectivenessMatches = response.effectiveness.length === ruleIds.length
-    && response.effectiveness.every((row, index) => row.rule_id === ruleIds[index])
-  const matrixMatches = response.matrix.length === ruleIds.length
-    && response.matrix.every((row, index) => (
-      row.rule_id === ruleIds[index]
-      && ruleIds.every((ruleId) => typeof row.correlations[ruleId] === 'string')
-    ))
-  const expectedPairKeys = new Set(ruleIds.flatMap((leftRuleId, index) => (
-    ruleIds.slice(index + 1).map((rightRuleId) => `${leftRuleId}:${rightRuleId}`)
-  )))
-  const actualPairKeys = new Set(response.pairs.map((pair) => (
-    [pair.left_rule_id, pair.right_rule_id].sort().join(':')
-  )))
-  const pairsMatch = response.pairs.length === expectedPairKeys.size
-    && actualPairKeys.size === expectedPairKeys.size
-    && [...expectedPairKeys].every((pairKey) => actualPairKeys.has(pairKey))
-    && response.pairs.every((pair) => (
-      pair.left_rule_id !== pair.right_rule_id
-      && ruleIdSet.has(pair.left_rule_id)
-      && ruleIdSet.has(pair.right_rule_id)
-    ))
-  return response.classification === 'AD_HOC_INTRADAY_FACTOR_CORRELATION_CURRENT_NON_PIT'
-    && response.data_version === dataset.data_version
-    && response.dataset_checksum === dataset.checksum
-    && parametersMatch
-    && rulesMatch
-    && effectivenessMatches
-    && matrixMatches
-    && pairsMatch
-    && /^[a-f0-9]{64}$/.test(response.preview_hash)
-    && response.point_in_time === false
-    && response.future_adjustment_knowledge_possible === true
-    && response.realtime_readiness === false
-    && response.promotion === 'NOT_ELIGIBLE'
-    && response.paper_readiness === 'NOT_ELIGIBLE'
-    && response.live_readiness === 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION'
-    && response.state_mutation === false
-    && response.external_order_transmission === false
+  try {
+    const ruleIds = request.rules.map((_, index) => `R${String(index + 1).padStart(2, '0')}`)
+    const startIndex = dataset.trading_days.indexOf(request.start)
+    const endIndex = dataset.trading_days.indexOf(request.end)
+    if (startIndex < 0 || endIndex < startIndex || endIndex + 1 >= dataset.trading_days.length) return false
+    const selectedTradingDays = dataset.trading_days.slice(startIndex, endIndex + 1)
+    const exitCompletionDay = dataset.trading_days[endIndex + 1]
+    const expectedObservationCount = selectedTradingDays.length * dataset.symbol_count
+    const expectedSourceBarCount = (selectedTradingDays.length + 1)
+      * dataset.symbol_count
+      * dataset.session_bar_count_per_symbol
+    const parametersMatch = response.parameters.start === request.start
+      && response.parameters.end === request.end
+      && sameCorrelationRules(response.parameters.rules, request.rules)
+    const scoreContractMatches = response.score_contract.source_interval === 'NATIVE_5M_AGGREGATED_TO_10M'
+      && response.score_contract.source_timestamp_convention === 'BAR_END_TIME'
+      && response.score_contract.source_bars === '09:35,09:40,09:45,09:50,09:55,10:00'
+      && response.score_contract.known_at === '10:00_BAR_CLOSE'
+      && response.score_contract.score_definition === 'ALL_MIN_OR_ANY_MAX_OF_SIGNED_TEN_MINUTE_BODY_RETURNS'
+      && response.score_contract.binary_signal_used === false
+      && response.score_contract.future_features_used === false
+      && response.score_contract.arbitrary_code_execution === false
+    const rulesMatch = response.rules.length === request.rules.length
+      && response.rules.every((rule, index) => (
+        rule.rule_id === ruleIds[index]
+        && typeof rule.factor_id === 'string'
+        && rule.factor_id.length > 0
+        && typeof rule.name === 'string'
+        && rule.name.length > 0
+        && typeof rule.expression === 'string'
+        && rule.expression.length > 0
+        && sameCorrelationRule(rule, request.rules[index])
+      ))
+    const testingContract = response.multiple_testing_contract
+    const testingContractMatches = testingContract.method === 'HOLM_BONFERRONI'
+      && testingContract.family_size === ruleIds.length
+      && testingContract.alpha === '0.05'
+      && testingContract.raw_p_value === 'TWO_SIDED_ASYMPTOTIC_NORMAL_FROM_NEWEY_WEST_T'
+      && testingContract.effect_direction === 'POSITIVE_SESSION_CONDITIONAL_EXCESS'
+      && testingContract.minimum_clustered_signal_sessions === 10
+      && testingContract.minimum_signal_count === 20
+      && testingContract.minimum_t_statistic === '1.96'
+    const effectivenessMatches = response.effectiveness.length === ruleIds.length
+      && response.effectiveness.every((row, index) => matchesEffectivenessRow(
+        row,
+        ruleIds[index],
+        request.rules[index],
+        expectedObservationCount,
+        selectedTradingDays.length,
+      ))
+      && matchesHolmAdjustedPValues(response.effectiveness)
+      && response.effective_rule_count === response.effectiveness.filter((row) => row.passed).length
+    const matrixMatches = matchesCorrelationMatrix(response.matrix, ruleIds)
+    const redundancyThreshold = finiteDecimal(response.redundancy_threshold)
+    const pairValidation = redundancyThreshold !== null
+      && redundancyThreshold > 0
+      && redundancyThreshold <= 1
+      ? validateCorrelationPairs(response, ruleIds, redundancyThreshold)
+      : null
+    return response.classification === 'AD_HOC_INTRADAY_FACTOR_CORRELATION_CURRENT_NON_PIT'
+      && response.data_version === dataset.data_version
+      && response.dataset_checksum === dataset.checksum
+      && response.data_interval === '5m'
+      && response.symbol_count === dataset.symbol_count
+      && response.sector_count === dataset.sector_count
+      && response.observation_count === expectedObservationCount
+      && response.source_bar_count === expectedSourceBarCount
+      && sameStrings(response.selected_trading_days, selectedTradingDays)
+      && response.exit_completion_day === exitCompletionDay
+      && parametersMatch
+      && scoreContractMatches
+      && rulesMatch
+      && testingContractMatches
+      && effectivenessMatches
+      && matrixMatches
+      && pairValidation !== null
+      && pairValidation.matches
+      && approximatelyEqual(response.maximum_absolute_correlation, pairValidation.maximumAbsoluteCorrelation)
+      && response.passed === !pairValidation.hasRedundantPair
+      && /^[a-f0-9]{64}$/.test(response.preview_hash)
+      && response.point_in_time === false
+      && response.future_adjustment_knowledge_possible === true
+      && response.realtime_readiness === false
+      && response.promotion === 'NOT_ELIGIBLE'
+      && response.paper_readiness === 'NOT_ELIGIBLE'
+      && response.live_readiness === 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION'
+      && response.state_mutation === false
+      && response.external_order_transmission === false
+  } catch {
+    return false
+  }
+}
+
+const effectivenessCriteriaKeys = [
+  'minimum_observation_count',
+  'minimum_signal_count',
+  'minimum_ten_clustered_signal_sessions',
+  'positive_session_conditional_excess',
+  'newey_west_t_statistic_above_1_96',
+  'holm_adjusted_p_value_at_most_0_05',
+] as const
+
+function matchesEffectivenessRow(
+  row: IntradayFactorCorrelation['effectiveness'][number],
+  ruleId: string,
+  rule: IntradayFactorCorrelation['parameters']['rules'][number] | undefined,
+  observationCount: number,
+  selectedSessionCount: number,
+): boolean {
+  if (!rule || row.rule_id !== ruleId || row.minimum_body_return_bps !== rule.minimum_body_return_bps) return false
+  const mean = finiteDecimal(row.mean_session_conditional_excess_return)
+  const standardError = finiteDecimal(row.newey_west_standard_error)
+  const tStatistic = finiteDecimal(row.newey_west_t_statistic)
+  const confidenceLower = finiteDecimal(row.confidence_interval_95_lower)
+  const confidenceUpper = finiteDecimal(row.confidence_interval_95_upper)
+  const rawPValue = finiteDecimal(row.raw_p_value)
+  const adjustedPValue = finiteDecimal(row.holm_adjusted_p_value)
+  if (mean === null || standardError === null || standardError < 0 || tStatistic === null
+    || confidenceLower === null || confidenceUpper === null || confidenceLower > confidenceUpper
+    || rawPValue === null || adjustedPValue === null || rawPValue < 0 || adjustedPValue < rawPValue
+    || adjustedPValue > 1) return false
+  if (row.observation_count !== observationCount
+    || !boundedInteger(row.signal_count, 0, observationCount)
+    || !boundedInteger(row.clustered_signal_session_count, 0, selectedSessionCount)
+    || !boundedInteger(row.newey_west_lag, 0, selectedSessionCount - 1)) return false
+  const expectedCriteria: Record<(typeof effectivenessCriteriaKeys)[number], boolean> = {
+    minimum_observation_count: observationCount >= 250,
+    minimum_signal_count: row.signal_count >= 20,
+    minimum_ten_clustered_signal_sessions: row.clustered_signal_session_count >= 10,
+    positive_session_conditional_excess: mean > 0,
+    newey_west_t_statistic_above_1_96: tStatistic > 1.96,
+    holm_adjusted_p_value_at_most_0_05: adjustedPValue <= 0.05,
+  }
+  return sameStringSet(Object.keys(row.criteria), effectivenessCriteriaKeys)
+    && effectivenessCriteriaKeys.every((key) => row.criteria[key] === expectedCriteria[key])
+    && row.passed === effectivenessCriteriaKeys.every((key) => expectedCriteria[key])
+}
+
+function matchesCorrelationMatrix(
+  matrix: IntradayFactorCorrelation['matrix'],
+  ruleIds: string[],
+): boolean {
+  if (matrix.length !== ruleIds.length) return false
+  for (const [rowIndex, row] of matrix.entries()) {
+    if (row.rule_id !== ruleIds[rowIndex] || !sameStringSet(Object.keys(row.correlations), ruleIds)) return false
+    for (const [columnIndex, ruleId] of ruleIds.entries()) {
+      const value = finiteDecimal(row.correlations[ruleId])
+      const symmetric = finiteDecimal(matrix[columnIndex]?.correlations[row.rule_id])
+      if (value === null || symmetric === null || value < -1 || value > 1 || Math.abs(value - symmetric) > 1e-12) return false
+      if (rowIndex === columnIndex && Math.abs(value - 1) > 1e-12) return false
+    }
+  }
+  return true
+}
+
+function matchesHolmAdjustedPValues(effectiveness: IntradayFactorCorrelation['effectiveness']): boolean {
+  const ranked = effectiveness.map((row, index) => ({
+    index,
+    raw: finiteDecimal(row.raw_p_value),
+  }))
+  if (ranked.some((item) => item.raw === null)) return false
+  ranked.sort((left, right) => (left.raw as number) - (right.raw as number) || left.index - right.index)
+  const expected = Array<number>(effectiveness.length)
+  let runningMaximum = 0
+  for (const [rank, item] of ranked.entries()) {
+    runningMaximum = Math.max(
+      runningMaximum,
+      Math.min(1, (item.raw as number) * (effectiveness.length - rank)),
+    )
+    expected[item.index] = runningMaximum
+  }
+  return effectiveness.every((row, index) => approximatelyEqual(row.holm_adjusted_p_value, expected[index]))
+}
+
+function validateCorrelationPairs(
+  response: IntradayFactorCorrelation,
+  ruleIds: string[],
+  redundancyThreshold: number,
+): { matches: boolean; maximumAbsoluteCorrelation: number; hasRedundantPair: boolean } {
+  const expectedPairs = ruleIds.flatMap((leftRuleId, index) => (
+    ruleIds.slice(index + 1).map((rightRuleId) => ({ leftRuleId, rightRuleId }))
+  ))
+  if (response.pairs.length !== expectedPairs.length) {
+    return { matches: false, maximumAbsoluteCorrelation: 0, hasRedundantPair: false }
+  }
+  let maximumAbsoluteCorrelation = 0
+  let hasRedundantPair = false
+  for (const [index, expected] of expectedPairs.entries()) {
+    const pair = response.pairs[index]
+    const correlation = finiteDecimal(pair.correlation)
+    const matrixCorrelation = finiteDecimal(
+      response.matrix[ruleIds.indexOf(expected.leftRuleId)]?.correlations[expected.rightRuleId],
+    )
+    if (pair.left_rule_id !== expected.leftRuleId || pair.right_rule_id !== expected.rightRuleId
+      || correlation === null || matrixCorrelation === null || correlation < -1 || correlation > 1
+      || Math.abs(correlation - matrixCorrelation) > 1e-12
+      || pair.redundant !== (Math.abs(correlation) >= redundancyThreshold)) {
+      return { matches: false, maximumAbsoluteCorrelation: 0, hasRedundantPair: false }
+    }
+    maximumAbsoluteCorrelation = Math.max(maximumAbsoluteCorrelation, Math.abs(correlation))
+    hasRedundantPair ||= pair.redundant
+  }
+  return { matches: true, maximumAbsoluteCorrelation, hasRedundantPair }
+}
+
+function finiteDecimal(value: unknown): number | null {
+  if (typeof value !== 'string' || value.trim() === '') return null
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+function approximatelyEqual(value: unknown, expected: number): boolean {
+  const parsed = finiteDecimal(value)
+  return parsed !== null && Math.abs(parsed - expected) <= 1e-12
+}
+
+function boundedInteger(value: unknown, minimum: number, maximum: number): boolean {
+  return typeof value === 'number' && Number.isInteger(value) && value >= minimum && value <= maximum
+}
+
+function sameStrings(left: string[], right: string[]): boolean {
+  return left.length === right.length && left.every((value, index) => value === right[index])
+}
+
+function sameStringSet(left: readonly string[], right: readonly string[]): boolean {
+  return left.length === right.length && left.every((value) => right.includes(value))
 }
 
 function sameCorrelationRules(

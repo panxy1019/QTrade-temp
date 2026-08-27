@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 102 frontend Vitest
+  (macOS, 2026-08-27); 105 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -374,6 +374,16 @@ Last updated: 2026-08-27
   ineffective, redundant or unbound rules do not. The handoff copies only the
   opening directions, combination and threshold, preserving dates, cost and
   exit rule, and never runs a backtest or grants registry/runtime authority.
+- Factor-correlation admission now also validates the complete statistical and
+  data-scope semantics behind those identities. The selected day sequence, next
+  exit-completion session, source Bar and stock-day counts must match the signed
+  75-stock/15-sector native-5-minute dataset. Effectiveness counts, fixed gate
+  criteria and the submitted-family Holm adjustment are recomputed; the Pearson
+  matrix must be finite, bounded, symmetric and unit-diagonal, while pair values,
+  redundancy flags, maximum absolute correlation and the overall decision must
+  agree arithmetically. A one-stock scope, asymmetric matrix or false Holm value
+  is rejected before any strategy-construction action appears. Reproduce with
+  `cd web && npm test -- --run src/components/IntradayFactorResearchLab.test.tsx`.
 - A strategy backtest response is now fail-closed before any metric, curve or
   PAPER-admission card can render. The browser binds the exact normalized
   request, BaoStock version/checksum and 75-stock/15-sector identity, entry and

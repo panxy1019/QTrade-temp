@@ -124,6 +124,7 @@ const dataset = {
   checksum: 'long-five-minute-checksum',
   symbol_count: 75,
   sector_count: 15,
+  session_bar_count_per_symbol: 48,
   trading_days: tradingDays,
 } as NonNullable<FiveMinuteResearchReport['minute_dataset']>
 
@@ -147,6 +148,16 @@ const correlation = {
       minimum_body_return_bps: record.parameters.minimum_body_return_bps,
     })),
   },
+  score_contract: {
+    source_interval: 'NATIVE_5M_AGGREGATED_TO_10M',
+    source_timestamp_convention: 'BAR_END_TIME',
+    source_bars: '09:35,09:40,09:45,09:50,09:55,10:00',
+    known_at: '10:00_BAR_CLOSE',
+    score_definition: 'ALL_MIN_OR_ANY_MAX_OF_SIGNED_TEN_MINUTE_BODY_RETURNS',
+    binary_signal_used: false,
+    future_features_used: false,
+    arbitrary_code_execution: false,
+  },
   rules: [
     { rule_id: 'R01', factor_id: 'a', name: 'A', expression: 'a', directions: ['BULLISH', 'BULLISH', 'BULLISH'], combination: 'ALL', minimum_body_return_bps: '0' },
     { rule_id: 'R02', factor_id: 'b', name: 'B', expression: 'b', directions: ['BULLISH', 'BEARISH', 'IGNORE'], combination: 'ANY', minimum_body_return_bps: '10' },
@@ -162,8 +173,36 @@ const correlation = {
     minimum_t_statistic: '1.96',
   },
   effectiveness: [
-    { rule_id: 'R01', minimum_body_return_bps: '0', observation_count: 1500, signal_count: 100, clustered_signal_session_count: 20, mean_session_conditional_excess_return: '0.001', newey_west_lag: 2, newey_west_standard_error: '0.0004', newey_west_t_statistic: '2.5', confidence_interval_95_lower: '0.0002', confidence_interval_95_upper: '0.0018', raw_p_value: '0.012', holm_adjusted_p_value: '0.024', criteria: {}, passed: true },
-    { rule_id: 'R02', minimum_body_return_bps: '10', observation_count: 1500, signal_count: 40, clustered_signal_session_count: 15, mean_session_conditional_excess_return: '-0.0002', newey_west_lag: 2, newey_west_standard_error: '0.0004', newey_west_t_statistic: '-0.5', confidence_interval_95_lower: '-0.001', confidence_interval_95_upper: '0.0006', raw_p_value: '0.617', holm_adjusted_p_value: '0.617', criteria: {}, passed: false },
+    {
+      rule_id: 'R01', minimum_body_return_bps: '0', observation_count: 1500, signal_count: 100,
+      clustered_signal_session_count: 20, mean_session_conditional_excess_return: '0.001', newey_west_lag: 2,
+      newey_west_standard_error: '0.0004', newey_west_t_statistic: '2.5', confidence_interval_95_lower: '0.0002',
+      confidence_interval_95_upper: '0.0018', raw_p_value: '0.012', holm_adjusted_p_value: '0.024',
+      criteria: {
+        minimum_observation_count: true,
+        minimum_signal_count: true,
+        minimum_ten_clustered_signal_sessions: true,
+        positive_session_conditional_excess: true,
+        newey_west_t_statistic_above_1_96: true,
+        holm_adjusted_p_value_at_most_0_05: true,
+      },
+      passed: true,
+    },
+    {
+      rule_id: 'R02', minimum_body_return_bps: '10', observation_count: 1500, signal_count: 40,
+      clustered_signal_session_count: 15, mean_session_conditional_excess_return: '-0.0002', newey_west_lag: 2,
+      newey_west_standard_error: '0.0004', newey_west_t_statistic: '-0.5', confidence_interval_95_lower: '-0.001',
+      confidence_interval_95_upper: '0.0006', raw_p_value: '0.617', holm_adjusted_p_value: '0.617',
+      criteria: {
+        minimum_observation_count: true,
+        minimum_signal_count: true,
+        minimum_ten_clustered_signal_sessions: true,
+        positive_session_conditional_excess: false,
+        newey_west_t_statistic_above_1_96: false,
+        holm_adjusted_p_value_at_most_0_05: false,
+      },
+      passed: false,
+    },
   ],
   effective_rule_count: 1,
   observation_count: 1500,
@@ -177,6 +216,12 @@ const correlation = {
   passed: false,
   data_version: 'baostock-five-minute-long-v1',
   dataset_checksum: 'long-five-minute-checksum',
+  data_interval: '5m',
+  selected_trading_days: tradingDays.slice(1, 21),
+  exit_completion_day: tradingDays[21],
+  source_bar_count: 75_600,
+  symbol_count: 75,
+  sector_count: 15,
   promotion: 'NOT_ELIGIBLE',
   paper_readiness: 'NOT_ELIGIBLE',
   live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION',
@@ -196,6 +241,7 @@ const admittedCorrelation = {
     newey_west_t_statistic: '2.5',
     raw_p_value: '0.012',
     holm_adjusted_p_value: '0.024',
+    criteria: Object.fromEntries(Object.keys(row.criteria).map((key) => [key, true])),
     passed: true,
   })),
   effective_rule_count: 2,
@@ -561,6 +607,60 @@ describe('intraday factor rule correlation', () => {
     expect(await screen.findByText('相关性响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /进入策略构造/ })).not.toBeInTheDocument()
     expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
+  })
+
+  it('fails closed when the factor-correlation response drifts from the requested 75-stock scope', async () => {
+    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce({
+      ...admittedCorrelation,
+      symbol_count: 1,
+      observation_count: 20,
+    })
+    render(<IntradayFactorResearchLab dataset={dataset} />)
+
+    const checkboxes = screen.getAllByRole('checkbox')
+    fireEvent.click(checkboxes[1])
+    fireEvent.click(checkboxes[2])
+    fireEvent.click(screen.getByRole('button', { name: '检验选中规则有效性与相关性（2/8）' }))
+
+    expect(await screen.findByText('相关性响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /进入策略构造/ })).not.toBeInTheDocument()
+  })
+
+  it('fails closed when the factor-correlation matrix is asymmetric', async () => {
+    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce({
+      ...admittedCorrelation,
+      matrix: [
+        { rule_id: 'R01', correlations: { R01: '1', R02: '0.50' } },
+        { rule_id: 'R02', correlations: { R01: '0.40', R02: '1' } },
+      ],
+    })
+    render(<IntradayFactorResearchLab dataset={dataset} />)
+
+    const checkboxes = screen.getAllByRole('checkbox')
+    fireEvent.click(checkboxes[1])
+    fireEvent.click(checkboxes[2])
+    fireEvent.click(screen.getByRole('button', { name: '检验选中规则有效性与相关性（2/8）' }))
+
+    expect(await screen.findByText('相关性响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /进入策略构造/ })).not.toBeInTheDocument()
+  })
+
+  it('fails closed when the reported Holm adjustment does not match the submitted family', async () => {
+    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce({
+      ...admittedCorrelation,
+      effectiveness: admittedCorrelation.effectiveness.map((row, index) => (
+        index === 0 ? { ...row, holm_adjusted_p_value: row.raw_p_value } : row
+      )),
+    })
+    render(<IntradayFactorResearchLab dataset={dataset} />)
+
+    const checkboxes = screen.getAllByRole('checkbox')
+    fireEvent.click(checkboxes[1])
+    fireEvent.click(checkboxes[2])
+    fireEvent.click(screen.getByRole('button', { name: '检验选中规则有效性与相关性（2/8）' }))
+
+    expect(await screen.findByText('相关性响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /进入策略构造/ })).not.toBeInTheDocument()
   })
 
   it('fails closed before displaying a strategy backtest with drifted data identity', async () => {

@@ -465,6 +465,15 @@ Only an effective rule absent from every redundant pair exposes a manual handoff
 It copies the opening rule alone while preserving date, cost and exit fields;
 drifted, ineffective, redundant or unbound rules cannot seed the form, and no
 handoff runs a backtest or gains registry/runtime authority.
+The correlation boundary now also derives its admissible scope and arithmetic
+from the verified dataset and submitted family. Exact trading days plus the next
+exit session determine 75-stock observation and native-5-minute source-Bar
+counts. Fixed effectiveness criteria and the Holm adjustment are checked from
+the returned statistics; correlation cells must be finite, bounded, symmetric
+and unit-diagonal, and every pair/threshold/maximum/overall result must agree.
+Any drift rejects the response before strategy construction. The focused
+reproduction is `cd web && npm test -- --run
+src/components/IntradayFactorResearchLab.test.tsx`.
 The resulting strategy preview must pass a second browser boundary before any
 metric renders. It binds the exact request, dataset version/checksum and scope,
 entry/exit and next-bar/T+1 behavior, read-only strategy hash, preregistration

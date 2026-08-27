@@ -2751,3 +2751,28 @@ validated by factor correlation and that reuse of one viewed historical window
 is not independent evidence. It is browser-session state, not immutable
 persistence, FactorRegistry/StrategyRegistry evidence, promotion authority,
 PAPER/LIVE admission, state mutation or external-order capability.
+
+## ADR-153 — Correlation admission validates scope and arithmetic, not typed shape
+
+Status: accepted, 2026-08-27.
+
+Matching a data checksum, ordered rule IDs and a complete pair-key set does not
+prove that a factor-correlation response describes the requested experiment. A
+response can retain those identifiers while shrinking the stock universe,
+changing the trading-day grid, reporting a non-Holm p-value adjustment or using
+an asymmetric matrix whose pair summary hides the conflicting cell.
+
+Before exposing a factor-to-strategy handoff, the browser now derives the exact
+selected sessions and next exit-completion session from the verified dataset.
+Those identities determine the required 75-stock observation count and native
+5-minute source-Bar count. It checks the causal score contract, fixed
+effectiveness gates and submitted-family Holm-Bonferroni adjustment. It also
+requires a finite correlation matrix in `[-1, 1]`, exact rule keys, symmetry and
+unit diagonal, then derives every pair's redundancy flag, maximum absolute
+correlation and overall result from the returned matrix and fixed threshold.
+
+This is an independent client admission boundary over an already computed
+read-only response; it does not rerun factor returns or replace the signed server
+preview hash. Rejection creates no fallback result. Acceptance still creates no
+immutable evidence, registry or promotion state, PAPER/LIVE transition, runtime
+mutation or external-order capability.

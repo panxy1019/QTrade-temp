@@ -373,6 +373,17 @@ response is rejected, while ineffective, redundant and unbound rules expose no
 handoff action. This is still viewed-history diagnosis, not automatic selection,
 registration, PAPER/LIVE admission or order authority.
 
+That admission now verifies the response semantics rather than trusting those
+top-level identities alone. The selected trading-day sequence, required next
+session for T+1 exits, native 5-minute Bar count, 75-stock/15-sector scope and
+stock-day observation count must all agree with the verified dataset. Each
+effectiveness row must reproduce the fixed Newey-West/Holm thresholds and the
+Holm adjustment for the submitted family. The Pearson matrix must be finite,
+bounded, symmetric and unit-diagonal; every pair must equal the corresponding
+matrix cell and derive its redundancy flag, maximum absolute correlation and
+overall result from the fixed threshold. A scope, p-value or matrix arithmetic
+drift rejects the whole response before a factor handoff is shown.
+
 The subsequent strategy backtest is also admitted to the page only after a
 fail-closed identity check. The response must reproduce the normalized request,
 BaoStock data version/checksum, 5-minute 75-stock/15-sector scope, opening and
