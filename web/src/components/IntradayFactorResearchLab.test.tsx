@@ -175,11 +175,39 @@ const correlation = {
   redundancy_threshold: '0.90',
   maximum_absolute_correlation: '0.95',
   passed: false,
+  data_version: 'baostock-five-minute-long-v1',
   dataset_checksum: 'long-five-minute-checksum',
+  promotion: 'NOT_ELIGIBLE',
   paper_readiness: 'NOT_ELIGIBLE',
   live_readiness: 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION',
+  point_in_time: false,
+  future_adjustment_knowledge_possible: true,
+  realtime_readiness: false,
+  state_mutation: false,
+  external_order_transmission: false,
   preview_hash: 'c'.repeat(64),
 } as unknown as IntradayFactorCorrelation
+
+const admittedCorrelation = {
+  ...correlation,
+  effectiveness: correlation.effectiveness.map((row) => ({
+    ...row,
+    mean_session_conditional_excess_return: '0.001',
+    newey_west_t_statistic: '2.5',
+    raw_p_value: '0.012',
+    holm_adjusted_p_value: '0.024',
+    passed: true,
+  })),
+  effective_rule_count: 2,
+  matrix: [
+    { rule_id: 'R01', correlations: { R01: '1', R02: '0.50' } },
+    { rule_id: 'R02', correlations: { R01: '0.50', R02: '1' } },
+  ],
+  pairs: [{ left_rule_id: 'R01', right_rule_id: 'R02', correlation: '0.50', redundant: false }],
+  maximum_absolute_correlation: '0.50',
+  passed: true,
+  preview_hash: 'e'.repeat(64),
+} as IntradayFactorCorrelation
 
 const discoveryMetrics = {
   total_return: '-0.061491', annualized_return: '-0.54', sharpe: '-4.7951', maximum_drawdown: '-0.098972',
@@ -493,6 +521,41 @@ describe('intraday factor rule correlation', () => {
     expect(screen.getByText(/尚未运行有效性、相关性或策略回测/)).toBeInTheDocument()
     expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
     expect(runIntradayFactorCorrelation).not.toHaveBeenCalled()
+  })
+
+  it('hands an effective non-redundant entry factor to strategy construction without running it', async () => {
+    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce(admittedCorrelation)
+    render(<IntradayFactorResearchLab dataset={dataset} />)
+
+    expect(screen.queryByRole('button', { name: '载入“混合方向 B”进入策略构造' })).not.toBeInTheDocument()
+    const checkboxes = screen.getAllByRole('checkbox')
+    fireEvent.click(checkboxes[1])
+    fireEvent.click(checkboxes[2])
+    fireEvent.click(screen.getByRole('button', { name: '检验选中规则有效性与相关性（2/8）' }))
+
+    const handoff = await screen.findByRole('button', { name: '载入“混合方向 B”进入策略构造' })
+    fireEvent.click(handoff)
+    expect(await screen.findByText('body_return_0930_0940 >= 10 bps OR body_return_0940_0950 <= -10 bps')).toBeInTheDocument()
+    expect(screen.getByText(/只复制已绑定的开仓因子；日期、成本和平仓条件保持不变/)).toBeInTheDocument()
+    expect(screen.getByText('T+1_OPEN_09_30')).toBeInTheDocument()
+    expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
+  })
+
+  it('fails closed when the factor-correlation response drifts from the requested dataset', async () => {
+    vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce({
+      ...admittedCorrelation,
+      dataset_checksum: 'drifted-checksum',
+    })
+    render(<IntradayFactorResearchLab dataset={dataset} />)
+
+    const checkboxes = screen.getAllByRole('checkbox')
+    fireEvent.click(checkboxes[1])
+    fireEvent.click(checkboxes[2])
+    fireEvent.click(screen.getByRole('button', { name: '检验选中规则有效性与相关性（2/8）' }))
+
+    expect(await screen.findByText('相关性响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /进入策略构造/ })).not.toBeInTheDocument()
+    expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
   })
 
   it('loads and submits the bounded bearish exit identity', async () => {

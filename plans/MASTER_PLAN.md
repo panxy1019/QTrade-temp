@@ -458,6 +458,13 @@ continuous-score correlation diagnostic before choosing an exit or running a
 strategy. Drafts remain `NOT_RUN`; completed entry/exit backtests stay in a
 separate strategy experiment table and neither browser collection has registry
 or runtime authority.
+The factor-to-strategy handoff is identity-bound and fail-closed. A correlation
+response must match the requested data identity, window, ordered rule family,
+rule/effectiveness/matrix IDs, complete pair set, response hash and safety flags.
+Only an effective rule absent from every redundant pair exposes a manual handoff.
+It copies the opening rule alone while preserving date, cost and exit fields;
+drifted, ineffective, redundant or unbound rules cannot seed the form, and no
+handoff runs a backtest or gains registry/runtime authority.
 The same fixed candidate family now has an explicit selection-bias audit. Eight
 contiguous five-session blocks produce all 70 symmetric four-block training and
 four-block complement splits. Every split repeats the real gate/t-statistic/

@@ -354,6 +354,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const [selectedFactorCandidateKeys, setSelectedFactorCandidateKeys] = useState<string[]>([])
   const [correlationResult, setCorrelationResult] = useState<IntradayFactorCorrelation | null>(null)
   const [correlationLabels, setCorrelationLabels] = useState<Record<string, string>>({})
+  const [correlationBindings, setCorrelationBindings] = useState<Record<string, LocalIntradayFactorCandidate>>({})
+  const [correlationHandoffStatus, setCorrelationHandoffStatus] = useState<string | null>(null)
   const [correlationRunning, setCorrelationRunning] = useState(false)
   const [correlationError, setCorrelationError] = useState<string | null>(null)
   const [discoveryResult, setDiscoveryResult] = useState<IntradayFactorDiscovery | null>(null)
@@ -454,6 +456,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setError(null)
     setCorrelationResult(null)
     setCorrelationError(null)
+    setCorrelationBindings({})
+    setCorrelationHandoffStatus(null)
     setFactorCandidateStatus(null)
     setExperimentName(record.name)
     setSaveStatus(`已载入“${record.name}”的参数；请重新运行以验证当前结果。`)
@@ -472,8 +476,9 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     const { start, end } = await form.validateFields(['start', 'end'])
     setCorrelationRunning(true)
     setCorrelationError(null)
+    setCorrelationHandoffStatus(null)
     try {
-      const correlation = await runIntradayFactorCorrelation({
+      const request = {
         start,
         end,
         rules: selected.map((candidate) => ({
@@ -481,13 +486,22 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           combination: candidate.combination,
           minimum_body_return_bps: candidate.minimum_body_return_bps,
         })),
-      })
+      }
+      const correlation = await runIntradayFactorCorrelation(request)
+      if (!matchesCorrelationResponse(correlation, request, dataset)) {
+        throw new Error('相关性响应身份或安全边界与请求不一致，结果已拒绝')
+      }
       setCorrelationResult(correlation)
       setCorrelationLabels(Object.fromEntries(
         selected.map((candidate, index) => [`R${String(index + 1).padStart(2, '0')}`, candidate.name]),
       ))
+      setCorrelationBindings(Object.fromEntries(
+        correlation.rules.map((rule, index) => [rule.rule_id, selected[index]]),
+      ))
     } catch (reason) {
       setCorrelationResult(null)
+      setCorrelationLabels({})
+      setCorrelationBindings({})
       setCorrelationError(reason instanceof Error ? reason.message : '因子规则相关性检验失败')
     } finally {
       setCorrelationRunning(false)
@@ -511,6 +525,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       setFactorCandidateRevision((value) => value + 1)
       setCorrelationResult(null)
       setCorrelationError(null)
+      setCorrelationBindings({})
+      setCorrelationHandoffStatus(null)
     } catch (reason) {
       setFactorCandidateStatus(reason instanceof Error ? reason.message : '开仓因子候选保存失败')
     }
@@ -532,6 +548,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setSaveStatus(null)
     setCorrelationResult(null)
     setCorrelationError(null)
+    setCorrelationBindings({})
+    setCorrelationHandoffStatus(null)
   }
   const removeFactorCandidate = (draftKey: string) => {
     deleteLocalIntradayFactorCandidate(draftKey)
@@ -539,7 +557,33 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setFactorCandidateRevision((value) => value + 1)
     setCorrelationResult(null)
     setCorrelationError(null)
+    setCorrelationBindings({})
+    setCorrelationHandoffStatus(null)
     setFactorCandidateStatus('本地开仓因子候选已删除。')
+  }
+  const loadValidatedFactorIntoStrategy = (ruleId: string) => {
+    if (!correlationResult) return
+    const candidate = correlationBindings[ruleId]
+    const effectiveness = correlationResult.effectiveness.find((row) => row.rule_id === ruleId)
+    const isRedundant = correlationResult.pairs.some((pair) => (
+      pair.redundant && (pair.left_rule_id === ruleId || pair.right_rule_id === ruleId)
+    ))
+    if (!candidate || !effectiveness?.passed || isRedundant) return
+    form.setFieldsValue({
+      factor: 'custom_opening_ten_minute_direction_rule',
+      minimum_body_return_bps: candidate.minimum_body_return_bps,
+      first_direction: candidate.directions[0],
+      second_direction: candidate.directions[1],
+      third_direction: candidate.directions[2],
+      combination: candidate.combination,
+    })
+    setSelectedFactor('custom_opening_ten_minute_direction_rule')
+    setResult(null)
+    setError(null)
+    setSaveStatus(null)
+    setDiscoveryHandoffStatus(null)
+    setFactorCandidateStatus(null)
+    setCorrelationHandoffStatus(`已载入“${candidate.name}”进入策略构造`)
   }
   const runDiscovery = async () => {
     const values = await form.validateFields(['end', 'cost_bps'])
@@ -582,6 +626,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setSaveStatus(null)
     setCorrelationResult(null)
     setCorrelationError(null)
+    setCorrelationBindings({})
+    setCorrelationHandoffStatus(null)
     setFactorCandidateStatus(null)
     setDiscoveryHandoffStatus(`已载入 ${selected.candidate_id} 的训练锁定开仓因子`)
   }
@@ -679,6 +725,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     ? correlationResult.matrix.map((row) => ({ ...row, label: correlationLabels[row.rule_id] ?? row.rule_id }))
     : []
   const redundantPairs = correlationResult?.pairs.filter((pair) => pair.redundant) ?? []
+  const redundantRuleIds = new Set(redundantPairs.flatMap((pair) => [pair.left_rule_id, pair.right_rule_id]))
   const discoveryCandidates = discoveryResult
     ? [...discoveryResult.candidates].sort((left, right) => (
         Number(right.training_gate_passed) - Number(left.training_gate_passed)
@@ -710,6 +757,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setSaveStatus(null)
     setCorrelationResult(null)
     setCorrelationError(null)
+    setCorrelationBindings({})
+    setCorrelationHandoffStatus(null)
     setFactorCandidateStatus(null)
     setDiscoveryHandoffStatus(null)
     if ('end' in changedValues || 'cost_bps' in changedValues) {
@@ -1377,6 +1426,8 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
               setSelectedFactorCandidateKeys(keys.map(String))
               setCorrelationResult(null)
               setCorrelationError(null)
+              setCorrelationBindings({})
+              setCorrelationHandoffStatus(null)
             },
           }}
           pagination={{ pageSize: 8, showSizeChanger: false }}
@@ -1414,9 +1465,25 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
                 { title: '原始 p', dataIndex: 'raw_p_value', render: (value: string) => formatNumber(value) },
                 { title: 'Holm p', dataIndex: 'holm_adjusted_p_value', render: (value: string) => formatNumber(value) },
                 { title: '有效性', dataIndex: 'passed', render: (value: boolean) => value ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag> },
+                {
+                  title: '进入策略构造',
+                  render: (_: unknown, row: IntradayFactorCorrelation['effectiveness'][number]) => {
+                    const candidate = correlationBindings[row.rule_id]
+                    if (!row.passed) return <Tag>有效性未通过</Tag>
+                    if (redundantRuleIds.has(row.rule_id)) return <Tag color="red">相关性冗余</Tag>
+                    if (!candidate) return <Tag color="red">身份未绑定</Tag>
+                    return <Button size="small" onClick={() => loadValidatedFactorIntoStrategy(row.rule_id)}>载入“{candidate.name}”进入策略构造</Button>
+                  },
+                },
               ]}
-              scroll={{ x: 1120 }}
+              scroll={{ x: 1340 }}
             />
+            {correlationHandoffStatus && <Alert
+              showIcon
+              type="info"
+              title={correlationHandoffStatus}
+              description="只复制已绑定的开仓因子；日期、成本和平仓条件保持不变。不会自动运行策略回测、写入注册表或晋级 PAPER/LIVE；当前检验窗口已被查看，后续同窗回测仍只是诊断。"
+            />}
             <Alert
               showIcon
               type={correlationResult.passed ? 'success' : 'warning'}
@@ -1585,6 +1652,79 @@ function buildChartCurve(result: IntradayFactorBacktest) {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return <div><span>{label}</span><strong>{value}</strong></div>
+}
+
+function matchesCorrelationResponse(
+  response: IntradayFactorCorrelation,
+  request: IntradayFactorCorrelation['parameters'],
+  dataset: VerifiedFiveMinuteDataset,
+): boolean {
+  const ruleIds = request.rules.map((_, index) => `R${String(index + 1).padStart(2, '0')}`)
+  const ruleIdSet = new Set(ruleIds)
+  const parametersMatch = response.parameters.start === request.start
+    && response.parameters.end === request.end
+    && sameCorrelationRules(response.parameters.rules, request.rules)
+  const rulesMatch = response.rules.length === request.rules.length
+    && response.rules.every((rule, index) => (
+      rule.rule_id === ruleIds[index]
+      && sameCorrelationRule(rule, request.rules[index])
+    ))
+  const effectivenessMatches = response.effectiveness.length === ruleIds.length
+    && response.effectiveness.every((row, index) => row.rule_id === ruleIds[index])
+  const matrixMatches = response.matrix.length === ruleIds.length
+    && response.matrix.every((row, index) => (
+      row.rule_id === ruleIds[index]
+      && ruleIds.every((ruleId) => typeof row.correlations[ruleId] === 'string')
+    ))
+  const expectedPairKeys = new Set(ruleIds.flatMap((leftRuleId, index) => (
+    ruleIds.slice(index + 1).map((rightRuleId) => `${leftRuleId}:${rightRuleId}`)
+  )))
+  const actualPairKeys = new Set(response.pairs.map((pair) => (
+    [pair.left_rule_id, pair.right_rule_id].sort().join(':')
+  )))
+  const pairsMatch = response.pairs.length === expectedPairKeys.size
+    && actualPairKeys.size === expectedPairKeys.size
+    && [...expectedPairKeys].every((pairKey) => actualPairKeys.has(pairKey))
+    && response.pairs.every((pair) => (
+      pair.left_rule_id !== pair.right_rule_id
+      && ruleIdSet.has(pair.left_rule_id)
+      && ruleIdSet.has(pair.right_rule_id)
+    ))
+  return response.classification === 'AD_HOC_INTRADAY_FACTOR_CORRELATION_CURRENT_NON_PIT'
+    && response.data_version === dataset.data_version
+    && response.dataset_checksum === dataset.checksum
+    && parametersMatch
+    && rulesMatch
+    && effectivenessMatches
+    && matrixMatches
+    && pairsMatch
+    && /^[a-f0-9]{64}$/.test(response.preview_hash)
+    && response.point_in_time === false
+    && response.future_adjustment_knowledge_possible === true
+    && response.realtime_readiness === false
+    && response.promotion === 'NOT_ELIGIBLE'
+    && response.paper_readiness === 'NOT_ELIGIBLE'
+    && response.live_readiness === 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION'
+    && response.state_mutation === false
+    && response.external_order_transmission === false
+}
+
+function sameCorrelationRules(
+  left: IntradayFactorCorrelation['parameters']['rules'],
+  right: IntradayFactorCorrelation['parameters']['rules'],
+): boolean {
+  return left.length === right.length
+    && left.every((rule, index) => sameCorrelationRule(rule, right[index]))
+}
+
+function sameCorrelationRule(
+  left: IntradayFactorCorrelation['parameters']['rules'][number],
+  right: IntradayFactorCorrelation['parameters']['rules'][number] | undefined,
+): boolean {
+  return right !== undefined
+    && left.combination === right.combination
+    && left.minimum_body_return_bps === right.minimum_body_return_bps
+    && left.directions.every((direction, index) => direction === right.directions[index])
 }
 
 function buildDraftEntryExpression(

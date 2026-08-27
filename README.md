@@ -362,6 +362,17 @@ conclusion and cannot write either registry, promote, start PAPER/LIVE or send
 an order. Completed entry/exit backtests remain in a separate local strategy
 experiment table.
 
+Before a checked factor can enter strategy construction, the browser verifies
+that the correlation response exactly binds the current data version/checksum,
+date window, ordered rules, rule/effectiveness/matrix IDs, complete pair family,
+response hash and fail-closed safety fields. An effective factor is eligible for
+a manual handoff only when it belongs to no redundant pair in that response.
+“进入策略构造” copies only the bound opening directions, combination and body
+threshold; dates, cost and exit stay untouched, and no backtest starts. A drifted
+response is rejected, while ineffective, redundant and unbound rules expose no
+handoff action. This is still viewed-history diagnosis, not automatic selection,
+registration, PAPER/LIVE admission or order authority.
+
 The research page begins with one evidence-derived, read-only factor catalog.
 It combines only definitions actually present in the signed daily-factor search
 and intraday long-window report, then displays each factor's selection/entry/

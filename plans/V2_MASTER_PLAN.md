@@ -241,6 +241,10 @@ npm --prefix web run build
   dataset-bound browser library of up to 30 direction/combination/threshold
   candidates, run 2–8 through effectiveness/Holm/correlation before exit design,
   and keep every draft `NOT_RUN` with no registry, promotion or runtime power.
+- [x] Fail closed on factor-correlation response identity/safety drift and expose
+  a manual strategy-construction handoff only for effective, locally bound rules
+  absent from every redundant pair; copy only the opening rule and preserve the
+  date, cost and exit fields without running or promoting a strategy.
 - [x] Quantify the fixed 104-candidate search's selection bias with eight
   contiguous blocks and all 70 combinatorially symmetric train/complement
   splits; reuse the actual gate/t/effect/threshold rank, expose the failed PBO

@@ -2682,3 +2682,26 @@ Every draft is explicitly `NOT_RUN` and not evidence. Local save/load/delete
 does not call the API; the diagnostic remains stateless and read-only. Neither
 path writes FactorRegistry/StrategyRegistry, promotes a rule, starts PAPER/LIVE,
 mutates runtime state or transmits an order.
+
+## ADR-150 — A tested opening factor needs an identity-bound manual handoff
+
+Status: accepted, 2026-08-27.
+
+A displayed effectiveness/correlation row is insufficient to seed a strategy:
+the response could belong to another data version, window or ordered candidate
+family, and a statistically effective rule can still be redundant with another
+selected factor. Copying by visible label would break the evidence lineage.
+
+Before rendering any strategy-construction action, the browser therefore checks
+the exact data version/checksum, requested dates and ordered rules, deterministic
+rule/effectiveness/matrix IDs, complete correlation pair set, response hash and
+all read-only safety fields. It retains a browser-memory binding from each
+verified `Rxx` identity to the exact selected local draft. Any mismatch rejects
+the whole response.
+
+An action appears only for a rule whose effectiveness gate passed and whose ID
+is absent from every redundant pair. All eligible rules remain visible, so the
+UI does not choose a winner. A click copies only directions, combination and
+threshold into the custom opening form; date, cost and exit remain unchanged and
+the response stays visible. It performs no backtest, registry write, promotion,
+PAPER/LIVE start, state mutation or order transmission.

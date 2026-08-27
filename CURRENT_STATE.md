@@ -366,6 +366,14 @@ Last updated: 2026-08-27
   experiment table. Saving/loading/deleting a draft is browser-local and grants
   no FactorRegistry/StrategyRegistry, promotion, PAPER/LIVE, state or order
   authority.
+- A factor-correlation response is now fail-closed before it can seed strategy
+  construction. The browser requires exact data version/checksum, requested
+  window and ordered rules, deterministic rule/effectiveness/matrix identities,
+  a complete pair set, response hash and all read-only safety fields. Each
+  effective rule that participates in no redundant pair gets a manual handoff;
+  ineffective, redundant or unbound rules do not. The handoff copies only the
+  opening directions, combination and threshold, preserving dates, cost and
+  exit rule, and never runs a backtest or grants registry/runtime authority.
 - Discovery selection bias is now measured with one fixed combinatorially
   symmetric cross-validation audit. The same 40 viewed sessions are divided
   into eight contiguous five-session blocks; all 70 four-block training/four-
