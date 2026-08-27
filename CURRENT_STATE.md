@@ -374,6 +374,14 @@ Last updated: 2026-08-27
   ineffective, redundant or unbound rules do not. The handoff copies only the
   opening directions, combination and threshold, preserving dates, cost and
   exit rule, and never runs a backtest or grants registry/runtime authority.
+- A strategy backtest response is now fail-closed before any metric, curve or
+  PAPER-admission card can render. The browser binds the exact normalized
+  request, BaoStock version/checksum and 75-stock/15-sector identity, entry and
+  exit behavior, next-bar/T+1 causal contract, read-only strategy ID/spec hash,
+  preregistration and registration blockers, PAPER/LIVE workflow and every
+  no-state/no-order flag. Missing or drifted fields produce one rejection and no
+  result; accepted output displays its verified binding. This client gate does
+  not recompute evidence or add registry, promotion or runtime authority.
 - Discovery selection bias is now measured with one fixed combinatorially
   symmetric cross-validation audit. The same 40 viewed sessions are divided
   into eight contiguous five-session blocks; all 70 four-block training/four-

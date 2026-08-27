@@ -373,6 +373,16 @@ response is rejected, while ineffective, redundant and unbound rules expose no
 handoff action. This is still viewed-history diagnosis, not automatic selection,
 registration, PAPER/LIVE admission or order authority.
 
+The subsequent strategy backtest is also admitted to the page only after a
+fail-closed identity check. The response must reproduce the normalized request,
+BaoStock data version/checksum, 5-minute 75-stock/15-sector scope, opening and
+exit behavior, next-bar/T+1 contract, read-only strategy ID/spec hash,
+preregistration binding, blocked registration/PAPER workflow and all disabled
+state/order fields. Any missing or drifted value is rejected before metrics or
+curves render; a valid result displays “策略回测响应身份已绑定”. This verifies the
+returned preview identity only and does not recalculate it, register a strategy,
+promote it or start PAPER/LIVE.
+
 The research page begins with one evidence-derived, read-only factor catalog.
 It combines only definitions actually present in the signed daily-factor search
 and intraday long-window report, then displays each factor's selection/entry/

@@ -4,7 +4,7 @@ import { runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFac
 import { saveLocalIntradayFactorCandidate } from '../research/localIntradayFactorCandidates'
 import type { LocalIntradayFactorCandidate } from '../research/localIntradayFactorCandidates'
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
-import type { FiveMinuteResearchReport, IntradayFactorCorrelation, IntradayFactorDiscovery } from '../types'
+import type { FiveMinuteResearchReport, IntradayFactorBacktest, IntradayFactorCorrelation, IntradayFactorDiscovery } from '../types'
 import { IntradayFactorResearchLab } from './IntradayFactorResearchLab'
 
 const experiments = [
@@ -556,6 +556,29 @@ describe('intraday factor rule correlation', () => {
     expect(await screen.findByText('相关性响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /进入策略构造/ })).not.toBeInTheDocument()
     expect(runIntradayFactorBacktest).not.toHaveBeenCalled()
+  })
+
+  it('fails closed before displaying a strategy backtest with drifted data identity', async () => {
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
+      classification: 'AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT',
+      parameters: {
+        factor: 'opening_three_ten_minute_bullish',
+        start: '2026-07-02',
+        end: '2026-07-21',
+        cost_bps: '5',
+        minimum_body_return_bps: '0',
+        directions: ['BULLISH', 'BULLISH', 'BULLISH'],
+        combination: 'ALL',
+      },
+      data_version: dataset.data_version,
+      dataset_checksum: 'drifted-checksum',
+    } as unknown as IntradayFactorBacktest)
+    render(<IntradayFactorResearchLab dataset={dataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+
+    expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByText(/回测已完成/)).not.toBeInTheDocument()
   })
 
   it('loads and submits the bounded bearish exit identity', async () => {

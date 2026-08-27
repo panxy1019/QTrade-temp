@@ -1543,6 +1543,22 @@ describe('verified robustness evidence', () => {
   })
 
   it('runs the full intraday factor gate without promoting a losing rule', async () => {
+    const intradayData: PlatformSnapshot = {
+      ...data,
+      longFiveMinuteResearch: {
+        ...data.longFiveMinuteResearch,
+        minute_dataset: {
+          ...data.longFiveMinuteResearch.minute_dataset!,
+          trading_days: [
+            '2026-07-28', '2026-07-29', '2026-07-30', '2026-07-31',
+            '2026-08-03', '2026-08-04', '2026-08-05', '2026-08-06', '2026-08-07',
+            '2026-08-10', '2026-08-11', '2026-08-12', '2026-08-13', '2026-08-14',
+            '2026-08-17', '2026-08-18', '2026-08-19', '2026-08-20', '2026-08-21',
+            '2026-08-24', '2026-08-25',
+          ],
+        },
+      },
+    }
     window.localStorage.clear()
     const metrics = {
       total_return: '-0.0408', annualized_return: '-0.4087', annualized_volatility: '0.1538',
@@ -1879,7 +1895,7 @@ describe('verified robustness evidence', () => {
       state_mutation: false, external_order_transmission: false, preview_hash: 'd'.repeat(64),
     } as unknown as IntradayFactorBacktest
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce(result)
-    render(<ResearchPage data={data} />)
+    render(<ResearchPage data={intradayData} />)
     fireEvent.mouseDown(screen.getByRole('combobox', { name: '因子' }))
     fireEvent.click(await screen.findByText('自定义开盘十分钟方向规则'))
     expect(screen.getByRole('combobox', { name: '第一段 09:30–09:40' })).toBeInTheDocument()
@@ -1891,6 +1907,7 @@ describe('verified robustness evidence', () => {
     fireEvent.click(await screen.findByText('T+1 三根 10 分钟阴线退出，否则 14:55 时间退出'))
     fireEvent.change(screen.getByRole('spinbutton', { name: '每根退出阴线实体下限（bps）' }), { target: { value: '5' } })
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+    expect(await screen.findByText('策略回测响应身份已绑定')).toBeInTheDocument()
     expect(await screen.findByText('回测已完成，研究硬门未通过')).toBeInTheDocument()
     expect(screen.getByText('顺序晋级停在：有效性检验')).toBeInTheDocument()
     expect(screen.getByText('前置研究门 1/3')).toBeInTheDocument()

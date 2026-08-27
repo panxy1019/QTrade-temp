@@ -2705,3 +2705,24 @@ UI does not choose a winner. A click copies only directions, combination and
 threshold into the custom opening form; date, cost and exit remain unchanged and
 the response stays visible. It performs no backtest, registry write, promotion,
 PAPER/LIVE start, state mutation or order transmission.
+
+## ADR-151 — Reject a strategy response before rendering unbound metrics
+
+Status: accepted, 2026-08-27.
+
+The factor workbench previously trusted a typed strategy-backtest response for
+immediate display and performed only a subset of identity checks when the user
+later saved a local summary. A response from another request or data checksum,
+or one with relaxed PAPER safety fields, could therefore contaminate the visible
+metrics and curves before persistence rejected it.
+
+The browser now admits a response only when it reproduces the normalized request
+and verified dataset scope; binds the opening and exit behavior, next-bar and
+T+1 execution, strategy ID/spec hash and preregistration identity; and retains
+blocked registration, PAPER/LIVE, state and order fields throughout the nested
+workflow. Missing nested fields and any mismatch fail closed to one canonical
+error before result rendering. A valid response displays its binding explicitly.
+
+This is a client boundary check, not a second backtest or cryptographic
+recalculation. It creates no experiment or registry record, does not promote or
+start PAPER/LIVE, and cannot mutate state or transmit an order.

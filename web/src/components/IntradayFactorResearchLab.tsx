@@ -410,7 +410,11 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     setRunning(true)
     setError(null)
     try {
-      setResult(await runIntradayFactorBacktest(payload))
+      const next = await runIntradayFactorBacktest(payload)
+      if (!matchesBacktestResponse(next, payload, dataset)) {
+        throw new Error('策略回测响应身份或安全边界与请求不一致，结果已拒绝')
+      }
+      setResult(next)
       setSaveStatus(null)
     } catch (reason) {
       setResult(null)
@@ -1112,6 +1116,12 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
       {result && <>
         <Alert
           showIcon
+          type="success"
+          title="策略回测响应身份已绑定"
+          description={`已逐项核对当前请求、${result.data_version}、数据 checksum、开平仓行为规格、策略只读身份与 PAPER/LIVE 安全边界；结果哈希 ${result.preview_hash.slice(0, 16)}…。`}
+        />
+        <Alert
+          showIcon
           type={result.research_gate.passed ? 'success' : 'warning'}
           title={result.research_gate.passed ? '研究硬门通过，但仍不可自动晋级' : '回测已完成，研究硬门未通过'}
           description={`实际触发 ${result.event_summary.signal_count}/${result.event_summary.observation_count} 次；${result.event_summary.positive_sector_count}/${result.event_summary.sector_count} 个行业信号后均值为正。当前结论 ${result.promotion}，PAPER ${result.paper_readiness}，LIVE ${result.live_readiness}。`}
@@ -1654,6 +1664,154 @@ function Metric({ label, value }: { label: string; value: string }) {
   return <div><span>{label}</span><strong>{value}</strong></div>
 }
 
+function matchesBacktestResponse(
+  response: IntradayFactorBacktest | null,
+  request: IntradayFactorBacktestRequest,
+  dataset: VerifiedFiveMinuteDataset,
+): response is IntradayFactorBacktest {
+  if (!response) return false
+  try {
+    const identity = response.strategy_identity
+    const advancement = response.sequential_advancement
+    const preregistration = response.next_hypothesis_preregistration
+    const registration = response.strategy_registration_preflight
+    const paperAdmission = response.paper_admission
+    const l2Readiness = response.l2_factor_readiness
+    const expectedExitRule = request.exit_rule
+      ?? 'NEXT_SESSION_OPEN'
+    const expectedExitThreshold = request.exit_minimum_body_return_bps ?? '0'
+    const expectedStrategyExitRule = expectedExitRule === 'NEXT_SESSION_OPEN'
+      ? 'NEXT_SESSION_OPEN_T_PLUS_ONE'
+      : expectedExitRule
+    const workflowBlocksExecution = response.workflow.some((stage) => (
+      stage.id === 'PAPER' && stage.status === 'NOT_ELIGIBLE'
+    )) && response.workflow.some((stage) => (
+      stage.id === 'LIVE' && stage.status === 'DISABLED'
+    ))
+    return response.classification === 'AD_HOC_INTRADAY_FACTOR_RESEARCH_CURRENT_NON_PIT'
+      && sameBacktestRequest(response.parameters, request)
+      && response.data_version === dataset.data_version
+      && response.dataset_checksum === dataset.checksum
+      && response.data_interval === '5m'
+      && response.symbol_count === dataset.symbol_count
+      && response.sector_count === dataset.sector_count
+      && response.factor_definition.minimum_body_return_bps === request.minimum_body_return_bps
+      && response.factor_definition.combination === request.combination
+      && sameDirections(response.factor_definition.directions, request.directions)
+      && response.factor_definition.arbitrary_code_execution === false
+      && response.strategy.entry_minimum_body_return_bps === request.minimum_body_return_bps
+      && response.strategy.entry_combination === request.combination
+      && sameDirections(response.strategy.entry_directions, request.directions)
+      && response.strategy.entry_rule === 'NEXT_5M_OPEN_10_05'
+      && response.strategy.exit_rule === expectedStrategyExitRule
+      && (expectedExitRule === 'NEXT_SESSION_OPEN'
+        || response.strategy.exit_minimum_body_return_bps === expectedExitThreshold)
+      && response.strategy.single_side_cost_bps === request.cost_bps
+      && response.strategy.t_plus_one_compliant === true
+      && response.causal_contract.same_bar_execution === false
+      && response.causal_contract.t_plus_one_compliant === true
+      && /^[a-f0-9]{64}$/.test(identity.spec_hash)
+      && identity.strategy_id === `adhoc-intraday-${identity.spec_hash.slice(0, 16)}`
+      && identity.classification === 'AD_HOC_READ_ONLY_STRATEGY_IDENTITY'
+      && identity.registration_status === 'AD_HOC_UNREGISTERED'
+      && identity.immutable_within_response === true
+      && identity.paper_eligible === false
+      && identity.promotion_authority === false
+      && identity.state_mutation === false
+      && identity.external_order_transmission === false
+      && advancement.strategy_registration_allowed === false
+      && advancement.historical_result_can_authorize_paper === false
+      && advancement.viewed_window_reselection_allowed === false
+      && advancement.state_mutation === false
+      && advancement.external_order_transmission === false
+      && preregistration.current_result_binding.strategy_id === identity.strategy_id
+      && preregistration.current_result_binding.strategy_spec_hash === identity.spec_hash
+      && preregistration.current_result_binding.data_version === dataset.data_version
+      && preregistration.current_result_binding.dataset_checksum === dataset.checksum
+      && preregistration.current_result_binding.viewed_evidence_period.start === request.start
+      && preregistration.current_result_binding.viewed_evidence_period.end === request.end
+      && preregistration.current_result_binding.first_blocking_stage === advancement.first_blocking_stage
+      && preregistration.current_result_binding.next_allowed_action === advancement.next_allowed_action
+      && preregistration.preregistration_created === false
+      && preregistration.registry_write === false
+      && preregistration.paper_runtime_start === false
+      && preregistration.live_runtime_start === false
+      && preregistration.state_mutation === false
+      && preregistration.external_order_transmission === false
+      && registration.decision === 'BLOCKED'
+      && registration.current_candidate.strategy_id === identity.strategy_id
+      && registration.current_candidate.behavior_spec_hash === identity.spec_hash
+      && registration.registration_operation_exposed === false
+      && registration.registry_write === false
+      && registration.paper_runtime_start === false
+      && registration.live_runtime_start === false
+      && registration.state_mutation === false
+      && registration.external_order_transmission === false
+      && paperAdmission.decision === 'BLOCKED'
+      && paperAdmission.all_required_gates_passed === false
+      && paperAdmission.automatic_start_allowed === false
+      && paperAdmission.runtime_mode_change === false
+      && paperAdmission.state_mutation === false
+      && paperAdmission.external_order_transmission === false
+      && paperAdmission.next_allowed_stage === advancement.next_allowed_action
+      && paperAdmission.required_gates.length === 8
+      && paperAdmission.required_gates.some((gate) => (
+        gate.gate_id === 'verified_historical_dataset_identity_bound' && gate.passed
+      ))
+      && [
+        'registered_immutable_strategy_version_available',
+        'unseen_forward_shadow_evidence_attached',
+        'authorized_realtime_provider_ready',
+        'fresh_runtime_readiness_attestation_available',
+        'reconciliation_ready',
+      ].every((gateId) => paperAdmission.required_gates.some((gate) => (
+        gate.gate_id === gateId && !gate.passed
+      )))
+      && workflowBlocksExecution
+      && l2Readiness.readiness === 'UNCONFIGURED'
+      && l2Readiness.factor_effectiveness_tested === false
+      && l2Readiness.correlation_tested === false
+      && l2Readiness.strategy_backtested === false
+      && l2Readiness.derived_from_ohlcv === false
+      && l2Readiness.state_mutation === false
+      && l2Readiness.external_order_transmission === false
+      && /^[a-f0-9]{64}$/.test(response.preview_hash)
+      && response.point_in_time === false
+      && response.future_adjustment_knowledge_possible === true
+      && response.realtime_readiness === false
+      && response.promotion === 'NOT_ELIGIBLE'
+      && response.paper_readiness === 'NOT_ELIGIBLE'
+      && response.live_readiness === 'DISABLED_REQUIRES_SEPARATE_AUTHORIZATION'
+      && response.state_mutation === false
+      && response.external_order_transmission === false
+  } catch {
+    return false
+  }
+}
+
+function sameBacktestRequest(
+  left: IntradayFactorBacktestRequest,
+  right: IntradayFactorBacktestRequest,
+): boolean {
+  return left.factor === right.factor
+    && left.start === right.start
+    && left.end === right.end
+    && left.cost_bps === right.cost_bps
+    && left.minimum_body_return_bps === right.minimum_body_return_bps
+    && left.combination === right.combination
+    && sameDirections(left.directions, right.directions)
+    && (left.exit_rule ?? 'NEXT_SESSION_OPEN') === (right.exit_rule ?? 'NEXT_SESSION_OPEN')
+    && (left.exit_minimum_body_return_bps ?? '0') === (right.exit_minimum_body_return_bps ?? '0')
+}
+
+function sameDirections(
+  left: readonly IntradayOpeningDirection[],
+  right: readonly IntradayOpeningDirection[],
+): boolean {
+  return left.length === right.length
+    && left.every((direction, index) => direction === right[index])
+}
+
 function matchesCorrelationResponse(
   response: IntradayFactorCorrelation,
   request: IntradayFactorCorrelation['parameters'],
@@ -1724,7 +1882,7 @@ function sameCorrelationRule(
   return right !== undefined
     && left.combination === right.combination
     && left.minimum_body_return_bps === right.minimum_body_return_bps
-    && left.directions.every((direction, index) => direction === right.directions[index])
+    && sameDirections(left.directions, right.directions)
 }
 
 function buildDraftEntryExpression(

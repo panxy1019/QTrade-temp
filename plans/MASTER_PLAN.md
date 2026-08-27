@@ -465,6 +465,12 @@ Only an effective rule absent from every redundant pair exposes a manual handoff
 It copies the opening rule alone while preserving date, cost and exit fields;
 drifted, ineffective, redundant or unbound rules cannot seed the form, and no
 handoff runs a backtest or gains registry/runtime authority.
+The resulting strategy preview must pass a second browser boundary before any
+metric renders. It binds the exact request, dataset version/checksum and scope,
+entry/exit and next-bar/T+1 behavior, read-only strategy hash, preregistration
+lineage, blocked registry/PAPER workflow and all state/order prohibitions.
+Malformed or drifted responses are rejected wholesale; an accepted preview is
+still historical diagnosis with no registration, promotion or runtime power.
 The same fixed candidate family now has an explicit selection-bias audit. Eight
 contiguous five-session blocks produce all 70 symmetric four-block training and
 four-block complement splits. Every split repeats the real gate/t-statistic/
