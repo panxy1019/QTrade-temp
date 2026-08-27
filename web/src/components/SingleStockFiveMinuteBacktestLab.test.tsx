@@ -153,6 +153,79 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(screen.queryByText('同参批量完成：4/4 只代表股，覆盖 3/3 个板块')).not.toBeInTheDocument()
   })
 
+  it('measures within-sector agreement only from a complete finite two-stock pair', async () => {
+    vi.mocked(runSingleStockFiveMinuteBacktest)
+      .mockResolvedValueOnce(resultFor(requestFor('600003'), { totalReturn: '0.05', excessReturn: '0.02' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600001'), { totalReturn: '0.02', excessReturn: '0.01' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600002'), { totalReturn: '-0.01', excessReturn: '0.005' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600004'), { totalReturn: '0.03', excessReturn: '0.01' }))
+    render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '每板块 2 股' }))
+    fireEvent.click(screen.getByRole('button', { name: '运行 4 股 / 3 板块同参诊断' }))
+
+    expect(await screen.findByText('同参批量完成：4/4 只代表股，覆盖 3/3 个板块')).toBeInTheDocument()
+    const consistency = screen.getByTestId('sector-pair-consistency')
+    expect(within(consistency).getByText('完整双股板块')).toBeInTheDocument()
+    expect(within(consistency).getByText('1/1')).toBeInTheDocument()
+    expect(within(consistency).getByText('0.00%')).toBeInTheDocument()
+    expect(within(consistency).getByText('100.00%')).toBeInTheDocument()
+    expect(within(consistency).getAllByText('3.00%')).toHaveLength(2)
+    expect(within(consistency).getByText(/只含同时接纳两只且关键指标有限的板块/)).toBeInTheDocument()
+    const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
+    expect(exported.summary.within_sector_consistency).toEqual({
+      requested_pair_sector_count: 1,
+      complete_pair_sector_count: 1,
+      return_direction_agreement_count: 0,
+      excess_direction_agreement_count: 1,
+      median_absolute_return_spread: 0.03,
+      worst_absolute_return_spread: {
+        sector_code: '801020',
+        sector_name: '乙板块',
+        symbols: ['600001', '600002'],
+        absolute_return_spread: 0.03,
+      },
+      pairs: [{
+        sector_code: '801020',
+        sector_name: '乙板块',
+        symbols: ['600001', '600002'],
+        total_returns: [0.02, -0.01],
+        excess_returns: [0.01, 0.005],
+        return_direction_agreement: false,
+        excess_direction_agreement: true,
+        absolute_return_spread: 0.03,
+      }],
+    })
+  })
+
+  it('excludes an incomplete two-stock sector from the within-sector denominator', async () => {
+    vi.mocked(runSingleStockFiveMinuteBacktest)
+      .mockResolvedValueOnce(resultFor(requestFor('600003')))
+      .mockResolvedValueOnce(resultFor(requestFor('600001')))
+      .mockRejectedValueOnce(new Error('provider timeout'))
+      .mockResolvedValueOnce(resultFor(requestFor('600004')))
+    render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '每板块 2 股' }))
+    fireEvent.click(screen.getByRole('button', { name: '运行 4 股 / 3 板块同参诊断' }))
+
+    expect(await screen.findByText('同参批量部分完成：3/4 只代表股，覆盖 3/3 个板块')).toBeInTheDocument()
+    const consistency = screen.getByTestId('sector-pair-consistency')
+    expect(within(consistency).getByText('0/1')).toBeInTheDocument()
+    expect(within(consistency).getAllByText('—')).toHaveLength(4)
+    expect(within(consistency).getByText(/单股板块、请求失败、身份拒绝或非有限指标均不补值/)).toBeInTheDocument()
+    const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
+    expect(exported.summary.within_sector_consistency).toMatchObject({
+      requested_pair_sector_count: 1,
+      complete_pair_sector_count: 0,
+      return_direction_agreement_count: 0,
+      excess_direction_agreement_count: 0,
+      median_absolute_return_spread: null,
+      worst_absolute_return_spread: null,
+      pairs: [],
+    })
+  })
+
   it('reports partial coverage when one sector request fails', async () => {
     vi.mocked(runSingleStockFiveMinuteBacktest)
       .mockResolvedValueOnce(resultFor(requestFor('600003')))
@@ -234,6 +307,7 @@ describe('single-stock cross-sector batch diagnostic', () => {
       median_total_return: null,
       worst_return: null,
       deepest_drawdown: null,
+      within_sector_consistency: null,
     })
     expect(exported.creates_immutable_evidence).toBe(false)
     expect(exported.promotion).toBe('NOT_ELIGIBLE')

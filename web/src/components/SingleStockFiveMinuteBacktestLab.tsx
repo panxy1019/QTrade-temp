@@ -238,6 +238,54 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       : (sortedBatchReturns[sortedBatchReturns.length / 2 - 1].totalReturn + sortedBatchReturns[sortedBatchReturns.length / 2].totalReturn) / 2
   const batchWorstReturn = sortedBatchReturns[0] ?? null
   const batchDeepestDrawdown = [...batchMetricRows].sort((left, right) => left.maximumDrawdown - right.maximumDrawdown)[0] ?? null
+  const requestedBySector = new Map<string, number>()
+  for (const representative of batchStatus?.representatives ?? []) {
+    requestedBySector.set(representative.sector_code, (requestedBySector.get(representative.sector_code) ?? 0) + 1)
+  }
+  const requestedPairSectors = [...requestedBySector.entries()]
+    .filter(([, count]) => count === 2)
+    .map(([sectorCode]) => sectorCode)
+    .sort()
+  const withinSectorPairs = requestedPairSectors.flatMap((sectorCode) => {
+    const pair = batchMetricRows
+      .filter(({ row }) => row.instrument.sector_code === sectorCode)
+      .sort((left, right) => left.row.symbol.localeCompare(right.row.symbol))
+    if (pair.length !== 2) return []
+    const [left, right] = pair
+    return [{
+      sector_code: sectorCode,
+      sector_name: left.row.instrument.sector_name,
+      symbols: [left.row.symbol, right.row.symbol],
+      total_returns: [left.totalReturn, right.totalReturn],
+      excess_returns: [left.excessReturn, right.excessReturn],
+      return_direction_agreement: Math.sign(left.totalReturn) === Math.sign(right.totalReturn),
+      excess_direction_agreement: Math.sign(left.excessReturn) === Math.sign(right.excessReturn),
+      absolute_return_spread: Math.abs(left.totalReturn - right.totalReturn),
+    }]
+  })
+  const sortedPairSpreads = withinSectorPairs.map((pair) => pair.absolute_return_spread).sort((left, right) => left - right)
+  const medianPairSpread = sortedPairSpreads.length === 0
+    ? null
+    : sortedPairSpreads.length % 2 === 1
+      ? sortedPairSpreads[Math.floor(sortedPairSpreads.length / 2)]
+      : (sortedPairSpreads[sortedPairSpreads.length / 2 - 1] + sortedPairSpreads[sortedPairSpreads.length / 2]) / 2
+  const worstPairSpread = [...withinSectorPairs].sort((left, right) => right.absolute_return_spread - left.absolute_return_spread)[0] ?? null
+  const returnDirectionAgreementCount = withinSectorPairs.filter((pair) => pair.return_direction_agreement).length
+  const excessDirectionAgreementCount = withinSectorPairs.filter((pair) => pair.excess_direction_agreement).length
+  const withinSectorConsistency = batchStatus?.representativesPerSector === 2 ? {
+    requested_pair_sector_count: requestedPairSectors.length,
+    complete_pair_sector_count: withinSectorPairs.length,
+    return_direction_agreement_count: returnDirectionAgreementCount,
+    excess_direction_agreement_count: excessDirectionAgreementCount,
+    median_absolute_return_spread: medianPairSpread,
+    worst_absolute_return_spread: worstPairSpread ? {
+      sector_code: worstPairSpread.sector_code,
+      sector_name: worstPairSpread.sector_name,
+      symbols: worstPairSpread.symbols,
+      absolute_return_spread: worstPairSpread.absolute_return_spread,
+    } : null,
+    pairs: withinSectorPairs,
+  } : null
   const batchDiagnosticExport = batchStatus ? {
     classification: 'BROWSER_SESSION_ONLY_CROSS_SECTOR_SAME_PARAMETER_DIAGNOSTIC',
     dataset_identity: { data_version: dataset.data_version, checksum: dataset.checksum },
@@ -272,6 +320,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
         sector_code: batchDeepestDrawdown.row.instrument.sector_code,
         maximum_drawdown: batchDeepestDrawdown.maximumDrawdown,
       } : null,
+      within_sector_consistency: withinSectorConsistency,
     },
     persistence: 'NONE_REFRESH_CLEARS',
     creates_immutable_evidence: false,
@@ -373,6 +422,18 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
             <Metric label="最深回撤" value={batchDeepestDrawdown ? `${batchDeepestDrawdown.row.symbol} · ${formatPercent(String(batchDeepestDrawdown.maximumDrawdown))}` : '—'} />
           </div>
           <Typography.Text type="secondary">摘要只按 {batchStatus.completed} 个成功代表股计算；失败请求和同板块其余股票均未进入分母。它用于识别同一参数的横截面脆弱性，不是统计稳健性门槛、独立样本外证据、策略注册或 PAPER/LIVE 晋级结论。</Typography.Text>
+        </Space>
+      </Card>}
+      {withinSectorConsistency && <Card data-testid="sector-pair-consistency" type="inner" title="同参批量板块内双股一致性（仅完整双股板块）">
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <div className="description-grid">
+            <Metric label="完整双股板块" value={`${withinSectorConsistency.complete_pair_sector_count}/${withinSectorConsistency.requested_pair_sector_count}`} />
+            <Metric label="收益方向一致率" value={withinSectorPairs.length === 0 ? '—' : formatPercent(String(returnDirectionAgreementCount / withinSectorPairs.length))} />
+            <Metric label="超额方向一致率" value={withinSectorPairs.length === 0 ? '—' : formatPercent(String(excessDirectionAgreementCount / withinSectorPairs.length))} />
+            <Metric label="板块内收益差中位数" value={medianPairSpread === null ? '—' : formatPercent(String(medianPairSpread))} />
+            <Metric label="最大板块内收益差" value={worstPairSpread ? formatPercent(String(worstPairSpread.absolute_return_spread)) : '—'} />
+          </div>
+          <Typography.Text type="secondary">分母只含同时接纳两只且关键指标有限的板块；单股板块、请求失败、身份拒绝或非有限指标均不补值。方向按收益符号严格比较，0 单独成类。{worstPairSpread ? ` 最大分歧来自 ${worstPairSpread.sector_code} ${worstPairSpread.sector_name}（${worstPairSpread.symbols.join(' / ')}）。` : ''}这只是板块内脆弱性诊断，不是正式稳健性门、独立样本外证据或 PAPER/LIVE 晋级结论。</Typography.Text>
         </Space>
       </Card>}
       {error && <Alert showIcon type="error" title="个股回测未完成" description={error} />}

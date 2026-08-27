@@ -261,6 +261,12 @@ finite return, excess and drawdown metrics. It exposes positive counts, median
 return and the worst return/drawdown identities so favourable rows cannot hide
 the visible tail. Missing requests remain excluded and visible, and the summary
 is neither a statistical gate nor an independent sample-out claim.
+When two representatives were requested, a second diagnostic groups only
+complete, finite, identity-admitted pairs. It exposes the number of comparable
+sectors, return/excess sign agreement, median absolute return spread and the
+worst-divergence sector, while exporting the exact paired values. A missing,
+rejected or non-finite partner excludes the whole sector pair without imputation;
+the result remains a browser-session fragility view rather than promotion evidence.
 Each batch response is now bound before admission to the requested symbol and
 signed sector identity, every normalized parameter, the long-history dataset
 version/checksum and the fixed no-realtime/no-state/no-order contract. A mismatch

@@ -275,7 +275,14 @@ summary reports finite-metric coverage, positive strategy and excess counts,
 median return, the worst-return stock and the deepest-drawdown stock. Failed
 requests never enter those denominators. This is a browser-session fragility
 diagnostic over at most two representatives per sector, not a full 75-stock
-statistical robustness gate or independent sample-out result. Before any response enters the session,
+statistical robustness gate or independent sample-out result. The two-stock
+mode additionally forms a within-sector pair only when both
+requested responses pass identity binding and all key metrics are finite. It
+reports complete-pair coverage, return/excess sign agreement, median absolute
+return spread and the worst-divergence sector; single-stock sectors and missing,
+rejected or non-finite partners are excluded without imputation. Pair details are
+preserved in the browser-session export and remain diagnostic rather than a
+formal robustness or promotion gate. Before any response enters the session,
 the browser also requires its stock/sector identity, complete normalized request
 parameters, signed data version/checksum, fixed `NOT_ELIGIBLE` classification and
 all realtime/PAPER/state/order safety flags to match the batch contract. A drifted

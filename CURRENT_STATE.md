@@ -236,8 +236,11 @@ Last updated: 2026-08-27
   additionally binds each request to `COMPLETED`, `REQUEST_FAILED` or
   `IDENTITY_REJECTED`; only admitted rows retain result hashes, while rejected or
   failed rows retain no response/error payload. Requested/completed stock and
-  sector counts remain separate. It does not tune per stock or prove
-  sector/full-universe robustness;
+  sector counts remain separate. In two-stock mode, a separate within-sector
+  summary admits only complete finite pairs and reports pair coverage,
+  return/excess direction agreement, median absolute return spread and the worst
+  divergence; incomplete or rejected partners are never imputed. It does not
+  tune per stock or prove sector/full-universe robustness;
   QFQ/non-PIT, ad-hoc, `NOT_ELIGIBLE`, stateless and external-order-disabled
   boundaries are part of the response and UI.
 - Intraday factor workflow: `POST /intraday-factor-backtest` and the research

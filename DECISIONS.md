@@ -2491,3 +2491,25 @@ requested/completed stock counts separate from requested/completed sector counts
 This is a bounded within-sector fragility diagnostic, not full-universe evidence.
 It does not replace the signed 75-stock report, retry failures, persist an
 experiment, promote a strategy, start PAPER/LIVE or transmit an order.
+
+## ADR-141 — Within-sector agreement requires two complete finite admitted responses
+
+Status: accepted, 2026-08-27.
+
+Running two deterministic stocks per sector makes within-sector disagreement
+observable, but stock-level rows alone do not define a valid paired denominator.
+Counting a sector after only one successful response would hide the missing
+partner and overstate the evidence available for an agreement claim.
+
+A sector enters the pair summary only when exactly two representatives were
+requested, both responses passed the frozen identity and safety contract, and
+both retained rows have finite return, excess return and drawdown metrics. The
+browser then reports return-sign and excess-sign agreement, absolute return
+spread, its median across complete pairs and the worst-divergence sector. Zero is
+its own sign. Missing requests, identity rejections and non-finite metrics exclude
+the entire pair without zero filling or copying another value.
+
+The browser-session export retains every admitted pair and the requested versus
+complete pair-sector counts. This is a bounded fragility diagnostic, not a
+statistical robustness threshold, new sample-out evidence, registry record,
+promotion decision, PAPER/LIVE state transition or external-order capability.
