@@ -289,7 +289,11 @@ nonnegative body threshold applies to every active slot. This is a typed rule
 contract rather than an arbitrary expression evaluator: requests cannot select
 other fields, execute code, change the three time windows or move the decision,
 entry and T+1 exit timestamps. The original three-bullish factor remains an
-immutable preset. Custom runs reuse the same effectiveness, correlation,
+immutable preset. Before running, the page renders the current entry predicates
+in body-return/bps notation, the `10:00 → 10:05` causal clock and the complete
+T+1 exit branch. This is a readable form draft only; it has no server identity or
+evidentiary meaning until the API validates and hashes a run. Custom runs reuse
+the same effectiveness, correlation,
 walk-forward, cost, sector, stock and promotion gates; they are stateless
 research previews and cannot create a PAPER candidate or external order.
 

@@ -327,6 +327,12 @@ export function IntradayFactorLongWindowEvidence({ report }: { report: IntradayF
 
 export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMinuteDataset | null }) {
   const [form] = Form.useForm<FormValues>()
+  const watchedMinimumBodyReturnBps = Form.useWatch('minimum_body_return_bps', form)
+  const watchedFirstDirection = Form.useWatch('first_direction', form)
+  const watchedSecondDirection = Form.useWatch('second_direction', form)
+  const watchedThirdDirection = Form.useWatch('third_direction', form)
+  const watchedCombination = Form.useWatch('combination', form)
+  const watchedExitMinimumBodyReturnBps = Form.useWatch('exit_minimum_body_return_bps', form)
   const [result, setResult] = useState<IntradayFactorBacktest | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
@@ -586,6 +592,21 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
   const discoveryCostRows = discoveryResult
     ? Object.entries(discoveryResult.locked_test_cost_stress.rows).map(([cost_bps, value]) => ({ cost_bps, ...value }))
     : []
+  const draftThresholdBps = String(watchedMinimumBodyReturnBps ?? initialValues.minimum_body_return_bps)
+  const draftDirections: IntradayOpeningDirection[] = selectedFactor === 'opening_three_ten_minute_bullish'
+    ? ['BULLISH', 'BULLISH', 'BULLISH']
+    : [
+        watchedFirstDirection ?? initialValues.first_direction,
+        watchedSecondDirection ?? initialValues.second_direction,
+        watchedThirdDirection ?? initialValues.third_direction,
+      ]
+  const draftCombination = selectedFactor === 'opening_three_ten_minute_bullish'
+    ? 'ALL'
+    : watchedCombination ?? initialValues.combination
+  const draftEntryExpression = buildDraftEntryExpression(draftDirections, draftCombination, draftThresholdBps)
+  const draftExitExpression = selectedExitRule === 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP'
+    ? `IF T+1 (${buildDraftEntryExpression(['BEARISH', 'BEARISH', 'BEARISH'], 'ALL', String(watchedExitMinimumBodyReturnBps ?? initialValues.exit_minimum_body_return_bps))}) THEN NEXT_5M_OPEN_10_05 ELSE TIME_STOP_OPEN_14_55`
+    : 'T+1_OPEN_09_30'
   const invalidateChangedParameters = (changedValues: Partial<FormValues>) => {
     setResult(null)
     setError(null)
@@ -628,6 +649,14 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
           <Button loading={discoveryRunning} onClick={() => { void runDiscovery() }}>挖掘最近 40 日的 104 个有界因子</Button>
         </Space>
       </Form>
+      <Card size="small" title="当前开平仓条件草案（未运行）">
+        <Space orientation="vertical" size={6} style={{ width: '100%' }}>
+          <Typography.Text>开仓因子：<Typography.Text code>{draftEntryExpression}</Typography.Text></Typography.Text>
+          <Typography.Text>开仓时点：<Typography.Text code>KNOWN_AT_10_00_CLOSE → NEXT_5M_OPEN_10_05</Typography.Text></Typography.Text>
+          <Typography.Text>平仓条件：<Typography.Text code>{draftExitExpression}</Typography.Text></Typography.Text>
+          <Typography.Text type="secondary">这是当前表单的可读草案，不是服务端规范、规格哈希、有效性结论或晋级证据；参数变化会清除旧结果，只有重新运行才能生成绑定结果。</Typography.Text>
+        </Space>
+      </Card>
       {selectedFactor === 'custom_opening_ten_minute_direction_rule' && <Alert showIcon type="warning" title="受限规则，不执行任意表达式" description="只允许三段已结束十分钟 K 线的看涨、看跌或忽略条件，以及 AND/OR 组合；10:00 收盘后才知道信号，10:05 下一根原生 5 分钟 Bar 开盘执行。禁止 eval、未来字段、同 Bar 成交和自动 PAPER 晋级。" />}
       {selectedExitRule === 'NEXT_SESSION_THREE_TEN_MINUTE_BEARISH_ELSE_14_55_TIME_STOP' && <Alert showIcon type="warning" title="平仓因子严格遵守 T+1 与下一 Bar 执行" description="T+1 09:30–10:00 三根十分钟阴线全部超过阈值后，条件到 10:00 收盘才完整；成交取 10:05 标记 Bar 的开盘价。未触发时取 15:00 标记 Bar 的开盘价，即 14:55 区间起点，不使用同 Bar 收盘价。" />}
       {discoveryError && <Alert showIcon type="error" title="分钟因子挖掘未完成" description={discoveryError} />}
@@ -1405,6 +1434,21 @@ function buildChartCurve(result: IntradayFactorBacktest) {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return <div><span>{label}</span><strong>{value}</strong></div>
+}
+
+function buildDraftEntryExpression(
+  directions: IntradayOpeningDirection[],
+  combination: 'ALL' | 'ANY',
+  thresholdBps: string,
+) {
+  const intervals = ['0930_0940', '0940_0950', '0950_1000']
+  const predicates = directions.flatMap((direction, index) => {
+    if (direction === 'IGNORE') return []
+    const comparison = direction === 'BULLISH' ? '>=' : '<='
+    const threshold = direction === 'BULLISH' ? thresholdBps : `-${thresholdBps}`
+    return [`body_return_${intervals[index]} ${comparison} ${threshold} bps`]
+  })
+  return predicates.join(combination === 'ALL' ? ' AND ' : ' OR ')
 }
 
 function formatNumber(value: string) {

@@ -2271,3 +2271,23 @@ end date or cost, change.
 Clearing is client-side provenance hygiene. A new result appears only after a
 fresh API run; no dataset, research engine, registry, promotion, PAPER/LIVE state
 or external-order permission changes.
+
+## ADR-130 — Factor forms expose a readable pre-run entry and exit draft
+
+Status: accepted, 2026-08-27.
+
+The bounded factor builder separated interval directions, combination, body
+threshold and exit behavior across several controls. Although safe to submit, it
+was difficult to review the combined mathematical and temporal rule before a
+run.
+
+The workbench now derives a readable draft from the live form. It emits one
+body-return predicate per active ten-minute interval, joins them with the chosen
+AND/OR operator, shows the factor-known and next-Bar entry clock, and displays
+the full T+1 exit branch including its threshold and fallback time stop. Ignored
+intervals are omitted rather than represented as a false predicate.
+
+The draft is deliberately not called canonical. It is not a server-validated
+StrategySpec, hash, experiment, effectiveness result or admission record. Only a
+fresh backend run supplies authoritative identity and evidence; the draft cannot
+change promotion, PAPER/LIVE or external-order authority.

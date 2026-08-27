@@ -401,6 +401,11 @@ describe('intraday factor rule correlation', () => {
     vi.mocked(runIntradayFactorCorrelation).mockResolvedValueOnce(correlation)
     render(<IntradayFactorResearchLab dataset={dataset} />)
 
+    expect(screen.getByText('当前开平仓条件草案（未运行）')).toBeInTheDocument()
+    expect(screen.getByText('body_return_0930_0940 >= 0 bps AND body_return_0940_0950 >= 0 bps AND body_return_0950_1000 >= 0 bps')).toBeInTheDocument()
+    expect(screen.getByText('KNOWN_AT_10_00_CLOSE → NEXT_5M_OPEN_10_05')).toBeInTheDocument()
+    expect(screen.getByText('T+1_OPEN_09_30')).toBeInTheDocument()
+    expect(screen.getByText(/不是服务端规范、规格哈希、有效性结论或晋级证据/)).toBeInTheDocument()
     const button = screen.getByRole('button', { name: '检验选中规则有效性与相关性（0/8）' })
     expect(button).toBeDisabled()
     const checkboxes = screen.getAllByRole('checkbox')
@@ -435,6 +440,8 @@ describe('intraday factor rule correlation', () => {
 
     fireEvent.click(screen.getAllByRole('button', { name: '载入因子参数' })[1])
     expect(screen.getByText('平仓因子严格遵守 T+1 与下一 Bar 执行')).toBeInTheDocument()
+    expect(await screen.findByText('body_return_0930_0940 >= 10 bps OR body_return_0940_0950 <= -10 bps')).toBeInTheDocument()
+    expect(await screen.findByText('IF T+1 (body_return_0930_0940 <= -5 bps AND body_return_0940_0950 <= -5 bps AND body_return_0950_1000 <= -5 bps) THEN NEXT_5M_OPEN_10_05 ELSE TIME_STOP_OPEN_14_55')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
 
     await waitFor(() => expect(runIntradayFactorBacktest).toHaveBeenCalledWith({
