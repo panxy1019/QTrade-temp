@@ -2,6 +2,7 @@ import type {
   FiveMinuteResearchReport,
   IntradayFactorBacktest,
   IntradayFactorBacktestRequest,
+  IntradayFactorGroup,
   IntradayPerformanceMetrics,
 } from '../types'
 
@@ -142,7 +143,238 @@ export function matchesIntradayBacktestPerformance(
     strategyActive,
     signalCount,
     expectedObservationCount,
-  )
+  ) && matchesGroupBreakdown(response, dataset, selectedDays.length)
+}
+
+interface ParsedGroup {
+  id: string
+  observationCount: number
+  signalCount: number
+  meanSignalForwardReturn: number
+  signalHitRate: number
+}
+
+function matchesGroupBreakdown(
+  response: IntradayFactorBacktest,
+  dataset: VerifiedFiveMinuteDataset,
+  sessionCount: number,
+): boolean {
+  if (!Array.isArray(response.backtest.sectors) || !Array.isArray(response.backtest.symbols)) return false
+
+  const symbols = [...dataset.eligible_symbols].sort()
+  if (symbols.length !== dataset.symbol_count || new Set(symbols).size !== symbols.length) return false
+  if (!Array.isArray(dataset.instruments) || dataset.instruments.length !== symbols.length) return false
+
+  const instruments = new Map<string, VerifiedFiveMinuteDataset['instruments'][number]>()
+  for (const instrument of dataset.instruments) {
+    if (instruments.has(instrument.symbol)) return false
+    instruments.set(instrument.symbol, instrument)
+  }
+
+  const sectorMembers = new Map<string, { name: string; symbols: string[] }>()
+  for (const symbol of symbols) {
+    const instrument = instruments.get(symbol)
+    if (!instrument || instrument.instrument_type !== 'STOCK'
+      || instrument.sector_code === null || instrument.sector_name === null) return false
+    const sector = sectorMembers.get(instrument.sector_code)
+    if (sector && sector.name !== instrument.sector_name) return false
+    if (sector) sector.symbols.push(symbol)
+    else sectorMembers.set(instrument.sector_code, { name: instrument.sector_name, symbols: [symbol] })
+  }
+  const sectors = [...sectorMembers.entries()].sort(([leftId, left], [rightId, right]) => (
+    leftId.localeCompare(rightId) || left.name.localeCompare(right.name)
+  ))
+  if (sectors.length !== dataset.sector_count
+    || new Set(sectors.map(([, sector]) => sector.name)).size !== sectors.length
+    || response.backtest.symbols.length !== symbols.length
+    || response.backtest.sectors.length !== sectors.length) return false
+
+  const parsedSymbols: ParsedGroup[] = []
+  for (const [index, symbol] of symbols.entries()) {
+    const parsed = parseGroup(
+      response.backtest.symbols[index],
+      symbol,
+      symbol,
+      sessionCount,
+      sessionCount,
+    )
+    if (!parsed) return false
+    parsedSymbols.push(parsed)
+  }
+
+  const parsedSectors: ParsedGroup[] = []
+  for (const [index, [sectorId, sector]] of sectors.entries()) {
+    const parsed = parseGroup(
+      response.backtest.sectors[index],
+      sectorId,
+      sector.name,
+      sessionCount * sector.symbols.length,
+      sessionCount,
+    )
+    if (!parsed) return false
+    const members = parsedSymbols.filter((row) => sector.symbols.includes(row.id))
+    const aggregate = aggregateGroups(members)
+    if (members.length !== sector.symbols.length
+      || parsed.signalCount !== aggregate.signalCount
+      || !approximatelyEqual(parsed.meanSignalForwardReturn, aggregate.meanSignalForwardReturn)
+      || !approximatelyEqual(parsed.signalHitRate, aggregate.signalHitRate)) return false
+    parsedSectors.push(parsed)
+  }
+
+  const symbolAggregate = aggregateGroups(parsedSymbols)
+  const sectorAggregate = aggregateGroups(parsedSectors)
+  const eventSignalRate = finiteNumber(response.event_summary.signal_rate)
+  const eventMean = finiteNumber(response.event_summary.mean_signal_forward_return)
+  const eventHitRate = finiteNumber(response.event_summary.signal_hit_rate)
+  const expectedSignalRate = symbolAggregate.observationCount === 0
+    ? 0
+    : symbolAggregate.signalCount / symbolAggregate.observationCount
+  return eventSignalRate !== null
+    && eventMean !== null
+    && eventHitRate !== null
+    && response.event_summary.observation_count === symbolAggregate.observationCount
+    && response.event_summary.signal_count === symbolAggregate.signalCount
+    && response.event_summary.sector_count === parsedSectors.length
+    && response.event_summary.positive_sector_count
+      === parsedSectors.filter((row) => row.meanSignalForwardReturn > 0).length
+    && sameAggregate(symbolAggregate, sectorAggregate)
+    && approximatelyEqual(eventSignalRate, expectedSignalRate)
+    && approximatelyEqual(eventMean, symbolAggregate.meanSignalForwardReturn)
+    && approximatelyEqual(eventHitRate, symbolAggregate.signalHitRate)
+}
+
+function parseGroup(
+  group: IntradayFactorGroup | undefined,
+  expectedId: string,
+  expectedName: string,
+  expectedObservationCount: number,
+  sessionCount: number,
+): ParsedGroup | null {
+  if (!group || group.group_id !== expectedId || group.group_name !== expectedName
+    || !Number.isInteger(group.observation_count)
+    || group.observation_count !== expectedObservationCount
+    || !Number.isInteger(group.signal_count)
+    || group.signal_count < 0
+    || group.signal_count > group.observation_count) return null
+
+  const meanSignalForwardReturn = finiteNumber(group.mean_signal_forward_return)
+  const signalHitRate = finiteNumber(group.signal_hit_rate)
+  if (meanSignalForwardReturn === null || signalHitRate === null
+    || signalHitRate < 0 || signalHitRate > 1
+    || (group.signal_count === 0
+      && (!approximatelyEqual(meanSignalForwardReturn, 0) || !approximatelyEqual(signalHitRate, 0)))
+    || !approximatelyEqual(signalHitRate * group.signal_count, Math.round(signalHitRate * group.signal_count))
+    || !matchesGroupMetrics(group.strategy_metrics, sessionCount, group.signal_count, false)
+    || !matchesGroupMetrics(group.benchmark_metrics, sessionCount, group.observation_count, true)) return null
+
+  const strategyBenchmarkReturn = finiteNumber(group.strategy_metrics.benchmark_return)
+  const benchmarkTotalReturn = finiteNumber(group.benchmark_metrics.total_return)
+  if (strategyBenchmarkReturn === null || benchmarkTotalReturn === null
+    || !approximatelyEqual(strategyBenchmarkReturn, benchmarkTotalReturn)) return null
+  return {
+    id: group.group_id,
+    observationCount: group.observation_count,
+    signalCount: group.signal_count,
+    meanSignalForwardReturn,
+    signalHitRate,
+  }
+}
+
+function matchesGroupMetrics(
+  metrics: IntradayPerformanceMetrics | null | undefined,
+  sessionCount: number,
+  expectedTrades: number,
+  benchmark: boolean,
+): boolean {
+  if (!metrics) return false
+  const values = {
+    totalReturn: finiteNumber(metrics.total_return),
+    annualizedReturn: finiteNumber(metrics.annualized_return),
+    annualizedVolatility: finiteNumber(metrics.annualized_volatility),
+    sharpe: finiteNumber(metrics.sharpe),
+    sortino: finiteNumber(metrics.sortino),
+    maximumDrawdown: finiteNumber(metrics.maximum_drawdown),
+    calmar: finiteNumber(metrics.calmar),
+    winRate: finiteNumber(metrics.win_rate),
+    benchmarkReturn: finiteNumber(metrics.benchmark_return),
+    excessReturn: finiteNumber(metrics.excess_return),
+    informationRatio: finiteNumber(metrics.information_ratio),
+    turnover: finiteNumber(metrics.turnover),
+    profitLossRatio: finiteNumber(metrics.profit_loss_ratio),
+    exposure: finiteNumber(metrics.exposure),
+    transactionCosts: finiteNumber(metrics.transaction_costs),
+  }
+  if (Object.values(values).some((value) => value === null)) return false
+  const value = values as Record<keyof typeof values, number>
+  const expectedAnnualizedReturn = (1 + value.totalReturn) ** (TRADING_PERIODS_PER_YEAR / sessionCount) - 1
+  const expectedCalmar = value.maximumDrawdown === 0
+    ? 0
+    : value.annualizedReturn / Math.abs(value.maximumDrawdown)
+  if (value.totalReturn <= -1
+    || value.benchmarkReturn <= -1
+    || value.annualizedVolatility < 0
+    || value.maximumDrawdown < -1
+    || value.maximumDrawdown > 0
+    || value.winRate < 0 || value.winRate > 1
+    || value.turnover < 0 || value.turnover > sessionCount * 2
+    || value.profitLossRatio < 0
+    || value.exposure < 0 || value.exposure > 1
+    || value.transactionCosts < 0
+    || metrics.number_of_periods !== sessionCount
+    || metrics.number_of_trades !== expectedTrades
+    || !approximatelyEqual(value.annualizedReturn, expectedAnnualizedReturn)
+    || !approximatelyEqual(value.calmar, expectedCalmar)
+    || !approximatelyEqual(value.excessReturn, value.totalReturn - value.benchmarkReturn)) return false
+
+  if (benchmark) {
+    return approximatelyEqual(value.totalReturn, value.benchmarkReturn)
+      && approximatelyEqual(value.excessReturn, 0)
+      && approximatelyEqual(value.informationRatio, 0)
+      && approximatelyEqual(value.turnover, sessionCount * 2)
+      && approximatelyEqual(value.exposure, 1)
+  }
+  if (!approximatelyEqual(value.turnover, value.exposure * sessionCount * 2)) return false
+  return expectedTrades !== 0 || [
+    value.totalReturn,
+    value.annualizedReturn,
+    value.annualizedVolatility,
+    value.sharpe,
+    value.sortino,
+    value.maximumDrawdown,
+    value.calmar,
+    value.winRate,
+    value.turnover,
+    value.profitLossRatio,
+    value.exposure,
+    value.transactionCosts,
+  ].every((metric) => approximatelyEqual(metric, 0))
+}
+
+function aggregateGroups(groups: readonly ParsedGroup[]) {
+  const observationCount = groups.reduce((total, row) => total + row.observationCount, 0)
+  const signalCount = groups.reduce((total, row) => total + row.signalCount, 0)
+  return {
+    observationCount,
+    signalCount,
+    meanSignalForwardReturn: signalCount === 0 ? 0 : groups.reduce(
+      (total, row) => total + row.meanSignalForwardReturn * row.signalCount,
+      0,
+    ) / signalCount,
+    signalHitRate: signalCount === 0 ? 0 : groups.reduce(
+      (total, row) => total + row.signalHitRate * row.signalCount,
+      0,
+    ) / signalCount,
+  }
+}
+
+function sameAggregate(
+  left: ReturnType<typeof aggregateGroups>,
+  right: ReturnType<typeof aggregateGroups>,
+): boolean {
+  return left.observationCount === right.observationCount
+    && left.signalCount === right.signalCount
+    && approximatelyEqual(left.meanSignalForwardReturn, right.meanSignalForwardReturn)
+    && approximatelyEqual(left.signalHitRate, right.signalHitRate)
 }
 
 interface CoreMetricExpectation {

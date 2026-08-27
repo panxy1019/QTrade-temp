@@ -1543,6 +1543,17 @@ describe('verified robustness evidence', () => {
   })
 
   it('runs the full intraday factor gate without promoting a losing rule', async () => {
+    const intradaySymbols = [
+      '000001',
+      ...Array.from({ length: 74 }, (_, index) => String(600001 + index)),
+    ]
+    const intradayInstruments = intradaySymbols.map((symbol, index) => ({
+      symbol,
+      instrument_type: 'STOCK' as const,
+      name: `测试股票${index + 1}`,
+      sector_code: String(801001 + Math.floor(index / 5)),
+      sector_name: `板块${Math.floor(index / 5) + 1}`,
+    }))
     const intradayData: PlatformSnapshot = {
       ...data,
       longFiveMinuteResearch: {
@@ -1556,6 +1567,8 @@ describe('verified robustness evidence', () => {
             '2026-08-17', '2026-08-18', '2026-08-19', '2026-08-20', '2026-08-21',
             '2026-08-24', '2026-08-25',
           ],
+          eligible_symbols: intradaySymbols,
+          instruments: intradayInstruments,
         },
       },
     }
@@ -1683,11 +1696,73 @@ describe('verified robustness evidence', () => {
         ),
       }]
     }))
-    const group = {
-      group_id: '801780', group_name: '银行', observation_count: 100, signal_count: 10,
-      mean_signal_forward_return: '0.001', signal_hit_rate: '0.6',
-      strategy_metrics: metrics, benchmark_metrics: benchmarkMetrics,
+    const positiveGroupMean = 0.001
+    const negativeGroupMean = (-0.0013 * 192 - positiveGroupMean * 120) / 72
+    const makeGroupMetrics = (signalCount: number, observationCount: number, positive: boolean) => {
+      const activeDays = Math.min(signalCount, selectedTradingDays.length)
+      const returns = selectedTradingDays.map((_, index) => (
+        index < activeDays ? (positive ? 0.001 : -0.001) : 0
+      ))
+      const grossReturns = returns.map(removeCost)
+      return {
+        strategy_metrics: performanceMetrics(
+          returns,
+          benchmarkReturns,
+          activeDays * 2,
+          activeDays / selectedTradingDays.length,
+          signalCount,
+          transactionCosts(grossReturns, returns),
+        ),
+        benchmark_metrics: performanceMetrics(
+          benchmarkReturns,
+          benchmarkReturns,
+          selectedTradingDays.length * 2,
+          1,
+          observationCount,
+          transactionCosts(grossBenchmarkReturns, benchmarkReturns),
+        ),
+      }
     }
+    const symbolGroups = intradayInstruments.map((instrument, index) => {
+      const signalCount = index < 42 ? 3 : 2
+      const hitCount = index < 70 ? 1 : 2
+      const positive = Math.floor(index / 5) < 8
+      return {
+        group_id: instrument.symbol,
+        group_name: instrument.symbol,
+        observation_count: selectedTradingDays.length,
+        signal_count: signalCount,
+        mean_signal_forward_return: String(positive ? positiveGroupMean : negativeGroupMean),
+        signal_hit_rate: String(hitCount / signalCount),
+        ...makeGroupMetrics(signalCount, selectedTradingDays.length, positive),
+      }
+    })
+    const sectorGroups = Array.from({ length: 15 }, (_, sectorIndex) => {
+      const members = symbolGroups.slice(sectorIndex * 5, sectorIndex * 5 + 5)
+      const signalCount = members.reduce((total, row) => total + row.signal_count, 0)
+      const hitCount = members.reduce(
+        (total, row) => total + Number(row.signal_hit_rate) * row.signal_count,
+        0,
+      )
+      const positive = sectorIndex < 8
+      return {
+        group_id: String(801001 + sectorIndex),
+        group_name: `板块${sectorIndex + 1}`,
+        observation_count: selectedTradingDays.length * members.length,
+        signal_count: signalCount,
+        mean_signal_forward_return: String(positive ? positiveGroupMean : negativeGroupMean),
+        signal_hit_rate: String(hitCount / signalCount),
+        ...makeGroupMetrics(signalCount, selectedTradingDays.length * members.length, positive),
+      }
+    })
+    const totalGroupHitCount = symbolGroups.reduce(
+      (total, row) => total + Number(row.signal_hit_rate) * row.signal_count,
+      0,
+    )
+    const totalGroupMean = symbolGroups.reduce(
+      (total, row) => total + Number(row.mean_signal_forward_return) * row.signal_count,
+      0,
+    ) / 192
     const strategySpecHash = 'ae3e57ed25bd3fe909cdf1e46e360c3e0da53ac9f52f32d4eeb104cbd06d2d8c'
     const strategyId = `adhoc-intraday-${strategySpecHash.slice(0, 16)}`
     const result = {
@@ -1823,8 +1898,8 @@ describe('verified robustness evidence', () => {
       },
       event_summary: {
         observation_count: 1500, signal_count: 192, signal_rate: '0.128',
-        mean_signal_forward_return: '-0.0013', mean_universe_forward_return: '-0.0012',
-        conditional_excess_return: '-0.0001', signal_hit_rate: '0.4167',
+        mean_signal_forward_return: String(totalGroupMean), mean_universe_forward_return: '-0.0012',
+        conditional_excess_return: '-0.0001', signal_hit_rate: String(totalGroupHitCount / 192),
         positive_sector_count: 8, sector_count: 15,
         clustered_signal_session_count: 20,
         mean_session_conditional_excess_return: '-0.0002',
@@ -1912,10 +1987,7 @@ describe('verified robustness evidence', () => {
         strategy_metrics: metrics, benchmark_metrics: benchmarkMetrics,
         cost_stress: costStress,
         curve,
-        sectors: [group], symbols: [
-          { ...group, group_id: '600036', group_name: '600036' },
-          { ...group, group_id: '000001', group_name: '000001' },
-        ], passed: false,
+        sectors: sectorGroups, symbols: symbolGroups, passed: false,
       },
       research_gate: {
         passed: false,
@@ -2088,9 +2160,9 @@ describe('verified robustness evidence', () => {
     expect(screen.getAllByText('连续时间块 2/4 正向').length).toBeGreaterThan(0)
     expect(screen.getAllByText('单块绝对贡献占比低于 60%').length).toBeGreaterThan(0)
     fireEvent.click(screen.getByRole('tab', { name: '75 个股' }))
-    expect(screen.getByText('当前结果个股 2/2')).toBeInTheDocument()
+    expect(screen.getByText('当前结果个股 75/75')).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('搜索本次因子个股'), { target: { value: '000001' } })
-    expect(screen.getByText('当前结果个股 1/2')).toBeInTheDocument()
+    expect(screen.getByText('当前结果个股 1/75')).toBeInTheDocument()
     expect(screen.getByText('000001')).toBeInTheDocument()
     expect(screen.queryByText('600036')).not.toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('本地因子实验名称'), { target: { value: '三时段方向方案 A' } })
