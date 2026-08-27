@@ -239,8 +239,10 @@ Last updated: 2026-08-27
   sector counts remain separate. In two-stock mode, a separate within-sector
   summary admits only complete finite pairs and reports pair coverage,
   return/excess direction agreement, median absolute return spread and the worst
-  divergence; incomplete or rejected partners are never imputed. It does not
-  tune per stock or prove sector/full-universe robustness;
+  divergence; a sector-sorted detail table exposes both stocks, both returns and
+  excess returns, both direction decisions and the spread from those same
+  exported pair objects. Incomplete or rejected partners are never imputed. It
+  does not tune per stock or prove sector/full-universe robustness;
   QFQ/non-PIT, ad-hoc, `NOT_ELIGIBLE`, stateless and external-order-disabled
   boundaries are part of the response and UI.
 - Intraday factor workflow: `POST /intraday-factor-backtest` and the research

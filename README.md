@@ -282,7 +282,11 @@ reports complete-pair coverage, return/excess sign agreement, median absolute
 return spread and the worst-divergence sector; single-stock sectors and missing,
 rejected or non-finite partners are excluded without imputation. Pair details are
 preserved in the browser-session export and remain diagnostic rather than a
-formal robustness or promotion gate. Before any response enters the session,
+formal robustness or promotion gate. Every complete pair is also visible in a
+bounded sector-sorted table with both stock codes, both strategy/excess returns,
+the two sign-agreement decisions and absolute return spread. The table reads the
+same admitted pair objects as the export and never renders an incomplete pair.
+Before any response enters the session,
 the browser also requires its stock/sector identity, complete normalized request
 parameters, signed data version/checksum, fixed `NOT_ELIGIBLE` classification and
 all realtime/PAPER/state/order safety flags to match the batch contract. A drifted

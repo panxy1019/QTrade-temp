@@ -436,6 +436,26 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
           <Typography.Text type="secondary">分母只含同时接纳两只且关键指标有限的板块；单股板块、请求失败、身份拒绝或非有限指标均不补值。方向按收益符号严格比较，0 单独成类。{worstPairSpread ? ` 最大分歧来自 ${worstPairSpread.sector_code} ${worstPairSpread.sector_name}（${worstPairSpread.symbols.join(' / ')}）。` : ''}这只是板块内脆弱性诊断，不是正式稳健性门、独立样本外证据或 PAPER/LIVE 晋级结论。</Typography.Text>
         </Space>
       </Card>}
+      {withinSectorPairs.length > 0 && <Card data-testid="sector-pair-details" type="inner" title={`完整双股板块明细（${withinSectorPairs.length}）`}>
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <Table<(typeof withinSectorPairs)[number]>
+            rowKey="sector_code"
+            size="small"
+            dataSource={withinSectorPairs}
+            pagination={false}
+            columns={[
+              { title: '板块', render: (_: unknown, row) => `${row.sector_code} ${row.sector_name}` },
+              { title: '股票对', render: (_: unknown, row) => row.symbols.join(' / ') },
+              { title: '分钟修正收益', render: (_: unknown, row) => row.total_returns.map((value) => formatPercent(String(value))).join(' / ') },
+              { title: '主动超额', render: (_: unknown, row) => row.excess_returns.map((value) => formatPercent(String(value))).join(' / ') },
+              { title: '方向', render: (_: unknown, row) => `收益${row.return_direction_agreement ? '一致' : '不一致'} · 超额${row.excess_direction_agreement ? '一致' : '不一致'}` },
+              { title: '绝对收益差', render: (_: unknown, row) => formatPercent(String(row.absolute_return_spread)) },
+            ]}
+            scroll={{ x: 1080 }}
+          />
+          <Typography.Text type="secondary">明细与本次会话导出的 pairs 使用同一份已接纳数据，按板块代码稳定排序；表格不会显示或补造不完整双股板块，也不会据此自动调参或晋级。</Typography.Text>
+        </Space>
+      </Card>}
       {error && <Alert showIcon type="error" title="个股回测未完成" description={error} />}
       {result && <>
         <Alert showIcon type="success" title={`已完成 ${result.symbol} ${result.instrument.name} · ${result.selected_session_count} 日 / ${result.selected_bar_count} Bar`} description={`使用 ${result.warmup_session_count} 日因果预热；结果哈希 ${result.preview_hash.slice(0, 16)}…；固定结论 ${result.promotion}。`} />

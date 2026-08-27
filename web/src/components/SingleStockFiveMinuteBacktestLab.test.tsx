@@ -172,6 +172,14 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(within(consistency).getByText('100.00%')).toBeInTheDocument()
     expect(within(consistency).getAllByText('3.00%')).toHaveLength(2)
     expect(within(consistency).getByText(/只含同时接纳两只且关键指标有限的板块/)).toBeInTheDocument()
+    const details = screen.getByTestId('sector-pair-details')
+    expect(within(details).getByText('完整双股板块明细（1）')).toBeInTheDocument()
+    expect(within(details).getByText('801020 乙板块')).toBeInTheDocument()
+    expect(within(details).getByText('600001 / 600002')).toBeInTheDocument()
+    expect(within(details).getByText('2.00% / -1.00%')).toBeInTheDocument()
+    expect(within(details).getByText('1.00% / 0.50%')).toBeInTheDocument()
+    expect(within(details).getByText('收益不一致 · 超额一致')).toBeInTheDocument()
+    expect(within(details).getByText('3.00%')).toBeInTheDocument()
     const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
     expect(exported.summary.within_sector_consistency).toEqual({
       requested_pair_sector_count: 1,
@@ -214,6 +222,7 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(within(consistency).getByText('0/1')).toBeInTheDocument()
     expect(within(consistency).getAllByText('—')).toHaveLength(4)
     expect(within(consistency).getByText(/单股板块、请求失败、身份拒绝或非有限指标均不补值/)).toBeInTheDocument()
+    expect(screen.queryByTestId('sector-pair-details')).not.toBeInTheDocument()
     const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')
     expect(exported.summary.within_sector_consistency).toMatchObject({
       requested_pair_sector_count: 1,

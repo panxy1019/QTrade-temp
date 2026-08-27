@@ -267,6 +267,10 @@ sectors, return/excess sign agreement, median absolute return spread and the
 worst-divergence sector, while exporting the exact paired values. A missing,
 rejected or non-finite partner excludes the whole sector pair without imputation;
 the result remains a browser-session fragility view rather than promotion evidence.
+Every complete pair is now rendered in a bounded sector-sorted detail table using
+the exact objects exported in the session envelope. The table exposes both stock
+codes, both strategy/excess returns, both sign decisions and absolute spread; it
+does not rerun, recompute or display an incomplete pair.
 Each batch response is now bound before admission to the requested symbol and
 signed sector identity, every normalized parameter, the long-history dataset
 version/checksum and the fixed no-realtime/no-state/no-order contract. A mismatch

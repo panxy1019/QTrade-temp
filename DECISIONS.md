@@ -2513,3 +2513,24 @@ The browser-session export retains every admitted pair and the requested versus
 complete pair-sector counts. This is a bounded fragility diagnostic, not a
 statistical robustness threshold, new sample-out evidence, registry record,
 promotion decision, PAPER/LIVE state transition or external-order capability.
+
+## ADR-142 — Complete within-sector pairs are inspectable without export-only evidence
+
+Status: accepted, 2026-08-27.
+
+An aggregate consistency rate and worst-divergence label are not enough to audit
+all complete sectors. Keeping the remaining pair values only in a JSON download
+forces an operator to leave the page before checking whether the summary matches
+the admitted stock-level outcomes.
+
+The page therefore renders one bounded row for every already admitted complete
+pair, sorted by sector code. Each row shows the sector, both stock codes, both
+overlay returns, both active excess returns, return/excess sign agreement and the
+absolute return spread. It reads the same `pairs` objects used by the session
+export; it does not issue another request, derive a second denominator or render
+an incomplete pair.
+
+The table is limited by the two-per-sector, fifteen-sector batch contract. It is
+browser-session diagnostic visibility only and cannot tune a parameter, create
+evidence or registry state, promote a strategy, start PAPER/LIVE or transmit an
+external order.
