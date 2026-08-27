@@ -24,6 +24,7 @@ interface FormValues {
 interface SectorBatchStatus {
   completed: number
   failed: number
+  identityRejected: number
   requested: number
 }
 
@@ -36,6 +37,39 @@ function toRequest(values: FormValues, symbol = values.symbol): SingleStockFiveM
     maximum_intraday_drawdown: String(values.maximum_intraday_drawdown),
     reduction_multiplier: String(values.reduction_multiplier),
   }
+}
+
+function isBoundBatchResponse(
+  response: SingleStockFiveMinuteBacktest | null | undefined,
+  request: SingleStockFiveMinuteBacktestRequest,
+  instrument: VerifiedFiveMinuteDataset['instruments'][number],
+  dataset: VerifiedFiveMinuteDataset,
+) {
+  if (!response) return false
+  const parameters = response.parameters
+  return response.classification === 'AD_HOC_SINGLE_STOCK_FIVE_MINUTE_BACKTEST_CURRENT_NON_PIT'
+    && response.promotion === 'NOT_ELIGIBLE'
+    && response.symbol === request.symbol
+    && response.instrument?.name === instrument.name
+    && response.instrument?.sector_code === instrument.sector_code
+    && response.instrument?.sector_name === instrument.sector_name
+    && response.data_version === dataset.data_version
+    && response.dataset_checksum === dataset.checksum
+    && parameters?.symbol === request.symbol
+    && parameters?.start === request.start
+    && parameters?.end === request.end
+    && parameters?.cost_bps === request.cost_bps
+    && parameters?.short_window === request.short_window
+    && parameters?.long_window === request.long_window
+    && parameters?.volatility_window === request.volatility_window
+    && parameters?.maximum_minute_volatility === request.maximum_minute_volatility
+    && parameters?.maximum_intraday_drawdown === request.maximum_intraday_drawdown
+    && parameters?.reduction_multiplier === request.reduction_multiplier
+    && parameters?.cooldown_bars === request.cooldown_bars
+    && response.realtime_readiness === false
+    && response.real_data_paper_readiness === false
+    && response.state_mutation === false
+    && response.external_order_transmission === false
 }
 
 export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: VerifiedFiveMinuteDataset | null }) {
@@ -108,16 +142,24 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
     setError(null)
     const completed: SingleStockFiveMinuteBacktest[] = []
     let failed = 0
+    let identityRejected = 0
     for (const [index, representative] of sectorRepresentatives.entries()) {
       try {
-        completed.push(await runSingleStockFiveMinuteBacktest(toRequest(values, representative.symbol)))
+        const request = toRequest(values, representative.symbol)
+        const next = await runSingleStockFiveMinuteBacktest(request)
+        if (isBoundBatchResponse(next, request, representative, dataset)) {
+          completed.push(next)
+        } else {
+          failed += 1
+          identityRejected += 1
+        }
       } catch {
         failed += 1
       }
       setBatchProgress(index + 1)
     }
     setSessionRuns(completed.slice(0, 15))
-    setBatchStatus({ completed: completed.length, failed, requested: sectorRepresentatives.length })
+    setBatchStatus({ completed: completed.length, failed, identityRejected, requested: sectorRepresentatives.length })
     setBatchRunning(false)
   }
   const reasons = result
@@ -194,7 +236,9 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
         title={batchStatus.failed === 0 ? `同参批量完成：${batchStatus.completed}/${batchStatus.requested} 个板块` : `同参批量部分完成：${batchStatus.completed}/${batchStatus.requested} 个板块`}
         description={batchStatus.failed === 0
           ? '每个板块按板块代码、股票代码确定性选一股，日期、成本与分钟修正参数完全一致；结果只进入当前浏览器会话对比，不等于全板块或全股票稳健性证据。'
-          : `${batchStatus.failed} 个板块请求失败，失败结果未补造；当前覆盖必须按成功行计数，不能声称完成全板块检验。`}
+          : batchStatus.identityRejected > 0
+            ? `${batchStatus.failed} 个板块未进入结果，其中 ${batchStatus.identityRejected} 个响应身份或安全边界不匹配；拒绝结果未补造，当前覆盖只能按通过绑定的成功行计数。`
+            : `${batchStatus.failed} 个板块请求失败，失败结果未补造；当前覆盖必须按成功行计数，不能声称完成全板块检验。`}
       />}
       {batchStatus && batchStatus.completed > 0 && <Card data-testid="sector-batch-summary" type="inner" title="同参批量横截面摘要（仅成功代表股）">
         <Space orientation="vertical" style={{ width: '100%' }}>

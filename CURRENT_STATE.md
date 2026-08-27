@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 84 frontend Vitest
+  (macOS, 2026-08-27); 85 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -226,7 +226,9 @@ Last updated: 2026-08-27
   export remain explicit. The batch now summarizes finite successful rows with
   positive return/excess coverage, median return and identified worst return/deepest
   drawdown stocks, while failed requests remain outside every denominator. It does
-  not tune per stock or prove sector/full-universe robustness;
+  not admit a response until stock/sector, complete request parameters, signed
+  dataset identity and all no-realtime/no-mutation/no-order flags match; identity
+  drift is counted and omitted. It does not tune per stock or prove sector/full-universe robustness;
   QFQ/non-PIT, ad-hoc, `NOT_ELIGIBLE`, stateless and external-order-disabled
   boundaries are part of the response and UI.
 - Intraday factor workflow: `POST /intraday-factor-backtest` and the research

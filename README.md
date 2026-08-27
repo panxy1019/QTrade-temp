@@ -272,7 +272,12 @@ summary reports finite-metric coverage, positive strategy and excess counts,
 median return, the worst-return stock and the deepest-drawdown stock. Failed
 requests never enter those denominators. This is a browser-session fragility
 diagnostic over one representative per sector, not a statistical robustness
-gate or independent sample-out result. The comparison is cleared on
+gate or independent sample-out result. Before any response enters the session,
+the browser also requires its stock/sector identity, complete normalized request
+parameters, signed data version/checksum, fixed `NOT_ELIGIBLE` classification and
+all realtime/PAPER/state/order safety flags to match the batch contract. A drifted
+response is counted as identity-rejected and omitted rather than mixed into the
+same-parameter claim. The comparison is cleared on
 refresh and is neither persisted evidence nor an experiment record. Every result
 remains current-universe, QFQ/non-PIT,
 `NOT_ELIGIBLE`, stateless and unable to transmit an external order.

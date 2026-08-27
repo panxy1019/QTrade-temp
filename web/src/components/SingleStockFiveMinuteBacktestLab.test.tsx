@@ -34,8 +34,12 @@ function resultFor(
   const instrument = dataset.instruments.find((row) => row.symbol === payload.symbol)
   if (!instrument?.sector_code || !instrument.sector_name) throw new Error('missing fixture instrument')
   return {
+    classification: 'AD_HOC_SINGLE_STOCK_FIVE_MINUTE_BACKTEST_CURRENT_NON_PIT',
+    promotion: 'NOT_ELIGIBLE',
     symbol: payload.symbol,
     instrument: { name: instrument.name, sector_code: instrument.sector_code, sector_name: instrument.sector_name },
+    data_version: dataset.data_version,
+    dataset_checksum: dataset.checksum,
     preview_hash: payload.symbol.repeat(11).slice(0, 64),
     parameters: payload,
     metrics: {
@@ -46,6 +50,10 @@ function resultFor(
       excess_return: metrics.excessReturn ?? '0.001', information_ratio: '0.2',
     },
     execution: { mean_exposure: '0.90', turnover: '1.5' },
+    realtime_readiness: false,
+    real_data_paper_readiness: false,
+    state_mutation: false,
+    external_order_transmission: false,
   } as unknown as SingleStockFiveMinuteBacktest
 }
 
@@ -133,6 +141,29 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(await screen.findByText('同参批量部分完成：0/3 个板块')).toBeInTheDocument()
     expect(screen.queryByTestId('sector-batch-summary')).not.toBeInTheDocument()
     expect(screen.queryByText(/0\/0/)).not.toBeInTheDocument()
+    await waitFor(() => expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledTimes(3))
+  })
+
+  it('rejects responses whose parameters or safety identity drift from the batch request', async () => {
+    const parameterDrift = resultFor(requestFor('600001'))
+    parameterDrift.parameters = { ...parameterDrift.parameters, cost_bps: '10' }
+    const unsafe = {
+      ...resultFor(requestFor('600004')),
+      external_order_transmission: true,
+    } as unknown as SingleStockFiveMinuteBacktest
+    vi.mocked(runSingleStockFiveMinuteBacktest)
+      .mockResolvedValueOnce(resultFor(requestFor('600003')))
+      .mockResolvedValueOnce(parameterDrift)
+      .mockResolvedValueOnce(unsafe)
+    render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 板块同参诊断' }))
+
+    expect(await screen.findByText('同参批量部分完成：1/3 个板块')).toBeInTheDocument()
+    expect(screen.getByText(/2 个响应身份或安全边界不匹配/)).toBeInTheDocument()
+    expect(screen.getByText('本次会话个股回测对比（1/15，覆盖 1 个板块）')).toBeInTheDocument()
+    expect(screen.queryByText('乙一')).not.toBeInTheDocument()
+    expect(screen.queryByText('丙一')).not.toBeInTheDocument()
     await waitFor(() => expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledTimes(3))
   })
 })

@@ -256,6 +256,11 @@ finite return, excess and drawdown metrics. It exposes positive counts, median
 return and the worst return/drawdown identities so favourable rows cannot hide
 the visible tail. Missing requests remain excluded and visible, and the summary
 is neither a statistical gate nor an independent sample-out claim.
+Each batch response is now bound before admission to the requested symbol and
+signed sector identity, every normalized parameter, the long-history dataset
+version/checksum and the fixed no-realtime/no-state/no-order contract. A mismatch
+is counted separately and excluded from the session and summary, so a stale or
+drifted response cannot support the same-parameter label.
 
 The historical research surface now also includes a bounded interactive preview.
 It accepts adjustable momentum/reversal/low-volatility, risk and cost parameters,

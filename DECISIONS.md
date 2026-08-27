@@ -2413,3 +2413,24 @@ The calculation covers one deterministic representative per sector in one curren
 browser session. It is a fragility diagnostic, not a registered robustness gate,
 independent sample-out evidence, per-stock tuning result, experiment, promotion,
 PAPER/LIVE state change or external-order capability.
+
+## ADR-137 — Same-parameter batch claims require response identity binding
+
+Status: accepted, 2026-08-27.
+
+Freezing one form snapshot controls requests but does not by itself prove that
+every received result belongs to that snapshot. Accepting a stale response with
+another symbol, parameter set, dataset identity or loosened safety flag would
+corrupt the session comparison and its cross-sectional denominator.
+
+Before admission, the browser now compares the result with the exact normalized
+request, the deterministic representative's stock/sector identity, and the signed
+long-history data version/checksum. Classification and promotion must remain the
+ad-hoc `NOT_ELIGIBLE` contract, while realtime readiness, real-data PAPER readiness,
+state mutation and external-order transmission must all remain false. A mismatch
+is counted as an identity rejection and is not retained or summarized.
+
+This duplicates only the minimum client-side binding needed to make the visible
+same-parameter claim honest. The signed API remains authoritative; the check does
+not create a second engine, repair a response, retry it, persist evidence, register
+or promote a strategy, change PAPER/LIVE state or add order capability.
