@@ -330,6 +330,11 @@ npm --prefix web run build
   bind the ordered 15-field/6-available inventory, nine gates and evidence to
   factor/correlation/robustness/backtest facts, verify count arithmetic and the
   fixed IDEA transition, and reject field/gate/count/authority drift wholesale.
+- [x] Validate sequential advancement as an exact derived browser contract:
+  rebuild the ordered three research stages, pass count, first blocker,
+  construction status, causal-backtest branch and next action from validated
+  stage facts; reject missing/reordered/extra fields, forged arithmetic or any
+  registration/state/order authority before rendering the strategy result.
 - [x] Expose a deterministic read-only catalog for all five implemented baseline
   strategy structures. Distinguish the buy-and-hold benchmark from four active
   research baselines, show implementation/input/entry/exit/default/limitation

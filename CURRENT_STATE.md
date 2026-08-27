@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 117 frontend Vitest
+  (macOS, 2026-08-27); 121 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -1083,6 +1083,12 @@ Last updated: 2026-08-27
   `DIAGNOSTIC_PREVIEW_ONLY`; the causal backtest remains a completed diagnostic,
   not promotion evidence. Reselection on the viewed window, registration,
   PAPER authorization, state mutation and external orders all remain false.
+- Sequential-advancement browser boundary: the client now derives the exact
+  ordered three-stage vector, pass count, first blocker, construction status,
+  causal-backtest branch and next legal action from the separately returned
+  validation facts. Missing, reordered or extra fields, forged counts, an
+  inconsistent blocker or any registration/state/order authority reject the
+  complete result before metrics render. This adds no advancement operation.
 - Consistent rejected-research next action: PAPER admission no longer carries a
   fixed strategy-registration instruction that contradicts sequential
   advancement. Both contracts now share the same computed action. For the

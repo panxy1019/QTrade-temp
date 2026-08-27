@@ -528,6 +528,12 @@ preflight only when the ordered 15-field inventory, 6/15 readiness split, nine
 gate identities/evidence, research/backtest-derived pass count and fixed
 transition evidence match exactly. A forged count, duplicate gate, field-list
 drift or exposed registration authority rejects the complete backtest response.
+The earlier sequential-advancement envelope is now equally strict: the browser
+reconstructs the ordered factor/correlation/robustness rows, count, earliest
+blocker, diagnostic/admitted status, backtest branch and next action from the
+validated stage booleans. Reordered stages, inconsistent arithmetic or blocker,
+extra fields and any registration/state/order authority reject the whole result;
+the check itself exposes no advancement or execution operation.
 
 For researchers who want to begin with existing strategy structures, the
 strategy center now loads a deterministic, read-only catalog of the five

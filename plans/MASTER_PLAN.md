@@ -606,6 +606,13 @@ and fixed `IDEA → EXPERIMENT` evidence. Count, gate, field or authority drift
 rejects the whole response before metrics render; no registry or runtime write is
 added.
 
+The browser also validates the sequential-advancement envelope as an exact
+derived contract. The three ordered research stages, their count, earliest
+blocker, construction status, causal-backtest branch and next action must agree
+with the response's validation booleans. Missing, reordered or extra fields,
+forged arithmetic and authority drift reject the complete strategy response;
+this adds no advancement, registry, runtime or order write.
+
 The strategy center also exposes a read-only catalog of all five implemented
 baseline structures so the workflow can start from known code rather than from
 an already-selected experiment row. It labels equal-weight buy-and-hold as a

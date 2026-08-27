@@ -2009,6 +2009,16 @@ describe('verified robustness evidence', () => {
     expect(screen.getByRole('combobox', { name: '第一段 09:30–09:40' })).toBeInTheDocument()
     vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
       ...result,
+      sequential_advancement: {
+        ...result.sequential_advancement,
+        passed_research_stage_count: 2,
+      },
+    } as unknown as IntradayFactorBacktest)
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+    expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
+      ...result,
       l2_factor_readiness: {
         ...result.l2_factor_readiness,
         required_gates: result.l2_factor_readiness.required_gates.slice(0, 5),

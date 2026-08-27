@@ -19,6 +19,7 @@ import { buildIntradayFactorStrategyLineage } from '../research/intradayFactorSt
 import type { IntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
 import { matchesBlockedPaperAdmission } from '../research/paperAdmission'
+import { matchesSequentialAdvancement } from '../research/sequentialAdvancement'
 import { matchesBlockedStrategyRegistrationPreflight } from '../research/strategyRegistrationPreflight'
 import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorDiscovery, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
@@ -1782,11 +1783,12 @@ function matchesBacktestResponse(
       && identity.promotion_authority === false
       && identity.state_mutation === false
       && identity.external_order_transmission === false
-      && advancement.strategy_registration_allowed === false
-      && advancement.historical_result_can_authorize_paper === false
-      && advancement.viewed_window_reselection_allowed === false
-      && advancement.state_mutation === false
-      && advancement.external_order_transmission === false
+      && matchesSequentialAdvancement(advancement, {
+        factorValidationPassed: response.factor_validation.passed,
+        correlationValidationPassed: response.correlation_validation.passed,
+        robustnessValidationPassed: response.robustness_validation.passed,
+        backtestPassed: response.backtest.passed,
+      })
       && preregistration.current_result_binding.strategy_id === identity.strategy_id
       && preregistration.current_result_binding.strategy_spec_hash === identity.spec_hash
       && preregistration.current_result_binding.data_version === dataset.data_version

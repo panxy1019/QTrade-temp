@@ -2849,3 +2849,24 @@ This remains transport admission for an ad-hoc historical preview. It does not
 compute a complete registry specification, attach preregistration or leakage
 review, freeze a disjoint split, declare lineage, insert an `IDEA`, start PAPER
 or LIVE, mutate runtime state or transmit an external order.
+
+## ADR-157 — Sequential advancement is an exact derived contract
+
+Status: accepted, 2026-08-27.
+
+Checking only the final no-registration, no-state and no-order flags does not
+validate the research sequence that users rely on. A payload could forge a pass
+count, reorder the three prerequisites, skip the earliest failed stage or offer
+the registry action while preserving those shallow prohibitions.
+
+The browser now reconstructs the exact ordered factor-validity, correlation and
+rolling-robustness rows from their separately validated booleans. It derives the
+pass count, all-passed state, earliest blocker, diagnostic/admitted construction
+status, causal-backtest branch and next action, then recursively compares the
+complete object. Missing, reordered or extra fields, non-boolean drift,
+inconsistent arithmetic and any registration/state/order authority reject the
+whole backtest response before its metrics render.
+
+This is transport admission only. It does not advance a stage, register a
+strategy, reuse the viewed window, authorize PAPER/LIVE, mutate state or
+transmit an external order.
