@@ -77,6 +77,10 @@ vi.mock('../api/client', () => ({
 }))
 
 vi.mock('../research/localIntradayFactorExperiments', () => ({
+  buildLocalIntradayFactorComparisonExport: vi.fn(() => ({
+    classification: 'BROWSER_LOCAL_INTRADAY_FACTOR_COMPARISON_EXPORT_NOT_IMMUTABLE',
+    records: experiments,
+  })),
   loadLocalIntradayFactorExperiments: vi.fn(() => experiments),
   saveLocalIntradayFactorExperiment: vi.fn(),
   deleteLocalIntradayFactorExperiment: vi.fn(),

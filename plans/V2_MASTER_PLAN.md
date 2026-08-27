@@ -335,6 +335,11 @@ npm --prefix web run build
   preview hashes and optional template/spec/binding identity. Keep the empty
   action disabled and state explicitly that this is portable read-only data,
   not automatic synchronization, immutable evidence or runtime admission.
+- [x] Export the complete browser-local factor notebook as deterministic JSON
+  bound to provider/version, checksum, evidence/PIT identity, typed rules,
+  definitions, metrics, hashes and read-only strategy identities. Keep empty
+  state disabled and import, synchronization, winner selection, registry,
+  promotion and runtime authority unavailable.
 - [ ] Accumulate the first 20 immutable post-lock complete BaoStock sessions and
   retain the predeclared result without post-read parameter changes.
 - [ ] Record and replay the first complete authorized multi-stock minute session,

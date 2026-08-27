@@ -390,6 +390,14 @@ return/excess, Newey-West t and its 95% interval appear on each row. These are t
 original checksum- and preview-hash-bound response values; the table does not
 recompute, backfill or reinterpret them as independent evidence.
 
+The full current-dataset notebook can be downloaded as deterministic JSON with
+provider/version, checksum, evidence/PIT identity, typed entry/exit rules,
+factor definitions, metrics, result hashes and read-only strategy identities.
+No export timestamp is introduced, and an empty notebook disables the action.
+This is portable review data only: there is no import, automatic synchronization
+or winner selection, immutable experiment or registry write, promotion,
+PAPER/LIVE transition, state mutation or external order transmission.
+
 Factor effectiveness no longer treats every same-day stock observation as an
 independent significance sample. For each session containing at least one
 signal, the engine first computes the triggered-stock mean forward return minus

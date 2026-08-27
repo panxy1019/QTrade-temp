@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 92 frontend Vitest
+  (macOS, 2026-08-27); 93 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -455,6 +455,14 @@ Last updated: 2026-08-27
   Legacy rows normalize to an explicit missing identity; unsafe or PAPER-relaxed
   identities are rejected before write. The table keeps the status visibly
   `AD_HOC_UNREGISTERED`, so replay identity does not become registration.
+- Intraday factor comparison export: the current dataset's complete valid local
+  notebook can be downloaded as deterministic JSON with provider/version,
+  checksum, evidence/PIT identity, rules, entry/exit parameters, definitions,
+  common metrics, result hashes and read-only strategy identities. Empty state
+  disables export; no timestamp is added. The file supports portable review
+  only: import, synchronization, winner selection, immutable experiment and
+  FactorRegistry/StrategyRegistry writes remain false, as do promotion,
+  PAPER/LIVE, state mutation and external orders.
 - Session-clustered factor significance: effectiveness testing now forms one
   conditional-excess observation per signal-bearing trading day before applying
   an automatically banded Newey-West mean standard error, t-statistic and 95%

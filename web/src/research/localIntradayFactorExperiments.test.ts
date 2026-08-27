@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { FiveMinuteResearchReport, IntradayFactorBacktest } from '../types'
 import {
+  buildLocalIntradayFactorComparisonExport,
   deleteLocalIntradayFactorExperiment,
   loadLocalIntradayFactorExperiments,
   saveLocalIntradayFactorExperiment,
@@ -9,8 +10,20 @@ import {
 type Dataset = NonNullable<FiveMinuteResearchReport['minute_dataset']>
 
 const dataset = {
+  provider: 'BaoStock',
+  provider_version: '0.9.3',
   data_version: 'baostock-five-minute-long-v1',
   checksum: 'long-five-minute-checksum',
+  evidence_sha256: 'f'.repeat(64),
+  bar_interval: '5m',
+  bar_count: 1_324_800,
+  symbol_count: 75,
+  etf_count: 0,
+  stock_count: 75,
+  sector_count: 15,
+  session_count: 368,
+  point_in_time: false,
+  future_adjustment_knowledge_possible: true,
 } as Dataset
 
 const result = {
@@ -229,5 +242,69 @@ describe('local intraday factor experiments', () => {
     expect(records).toHaveLength(30)
     expect(records[0].name).toBe('规则 31')
     expect(records.at(-1)?.name).toBe('规则 2')
+  })
+
+  it('builds a deterministic portable factor comparison without selecting a winner', () => {
+    const second = {
+      ...result,
+      preview_hash: 'c'.repeat(64),
+      parameters: {
+        ...result.parameters,
+        combination: 'ANY' as const,
+      },
+      factor_definition: {
+        ...result.factor_definition,
+        expression: 'bullish_10m_0930_0940 OR bearish_10m_0940_0950',
+      },
+    }
+    saveLocalIntradayFactorExperiment('规则 A', result)
+    saveLocalIntradayFactorExperiment('规则 B', second)
+
+    const first = buildLocalIntradayFactorComparisonExport(dataset)
+    const repeated = buildLocalIntradayFactorComparisonExport(dataset)
+
+    expect(JSON.stringify(first)).toBe(JSON.stringify(repeated))
+    expect(first).toEqual(expect.objectContaining({
+      schema_version: 1,
+      classification: 'BROWSER_LOCAL_INTRADAY_FACTOR_COMPARISON_EXPORT_NOT_IMMUTABLE',
+      data_identity: {
+        provider: 'BaoStock',
+        provider_version: '0.9.3',
+        data_version: 'baostock-five-minute-long-v1',
+        data_checksum: 'long-five-minute-checksum',
+        evidence_sha256: 'f'.repeat(64),
+        bar_interval: '5m',
+        bar_count: 1_324_800,
+        symbol_count: 75,
+        etf_count: 0,
+        stock_count: 75,
+        sector_count: 15,
+        session_count: 368,
+        point_in_time: false,
+        future_adjustment_knowledge_possible: true,
+      },
+      record_count: 2,
+      automatic_winner_selection: false,
+      import_supported: false,
+      automatic_synchronization: false,
+      creates_immutable_experiment: false,
+      factor_registry_write: false,
+      strategy_registry_write: false,
+      promotion: 'NOT_ELIGIBLE',
+      paper_runtime_start: false,
+      live_runtime_start: false,
+      state_mutation: false,
+      external_order_transmission: false,
+    }))
+    expect(first.records.map((record) => record.name)).toEqual(['规则 B', '规则 A'])
+    expect(first.records[0]).toEqual(expect.objectContaining({
+      parameters: second.parameters,
+      factor_definition: second.factor_definition,
+      strategy_identity: result.strategy_identity,
+    }))
+    expect(buildLocalIntradayFactorComparisonExport({
+      ...dataset,
+      checksum: 'different-checksum',
+    }).record_count).toBe(0)
   })
 })

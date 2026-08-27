@@ -2597,3 +2597,25 @@ The table does not rank, highlight or select a winner. It is refresh-cleared
 browser state without full duplicate curves, import or server synchronization.
 It cannot become an immutable experiment, independent sample-out evidence,
 registry or promotion state, PAPER/LIVE transition or external-order capability.
+
+## ADR-146 — Local factor comparisons export identities, not decisions
+
+Status: accepted, 2026-08-27.
+
+The factor notebook already preserves the complete rule, effectiveness,
+correlation, robustness and strategy-performance surface, but browser-local
+storage alone makes cross-device review depend on manual transcription. Exporting
+individual backtest responses also loses the comparison set and its common data
+identity.
+
+The page therefore exports every valid record bound to the current data version
+and checksum in one deterministic JSON value. It includes provider/version,
+evidence and PIT identity, full entry/exit parameters, factor definition, common
+metrics, result hash and read-only strategy identity. Empty state disables the
+action, and no export timestamp is added, so unchanged state serializes
+identically.
+
+The artifact is explicitly not an experiment or decision. It cannot be imported
+or automatically synchronized, ranks no winner, writes neither FactorRegistry
+nor StrategyRegistry, and provides no promotion, PAPER/LIVE, state-mutation or
+external-order authority.

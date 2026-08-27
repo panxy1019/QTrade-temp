@@ -1978,6 +1978,8 @@ describe('verified robustness evidence', () => {
     expect(factorComparison.getAllByText('0.25%').length).toBeGreaterThan(0)
     expect(factorComparison.getAllByText('-0.003').length).toBeGreaterThan(0)
     expect(factorComparison.getAllByText('0.900').length).toBeGreaterThan(0)
+    expect(factorComparison.getByRole('button', { name: /导出因子对比/ })).toBeEnabled()
+    expect(factorComparison.getByText(/可导出确定性只读 JSON 留档或跨设备核对/)).toBeInTheDocument()
     expect(factorComparison.getByText(/策略身份仍是 AD_HOC_UNREGISTERED/)).toBeInTheDocument()
     fireEvent.change(screen.getByRole('spinbutton', { name: '每根 10 分钟实体下限（bps）' }), { target: { value: '1' } })
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()

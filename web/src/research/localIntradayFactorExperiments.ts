@@ -63,6 +63,40 @@ export interface LocalIntradayFactorExperiment {
   external_order_transmission: false
 }
 
+export interface LocalIntradayFactorComparisonExport {
+  schema_version: 1
+  classification: 'BROWSER_LOCAL_INTRADAY_FACTOR_COMPARISON_EXPORT_NOT_IMMUTABLE'
+  data_identity: {
+    provider: string
+    provider_version: string | null
+    data_version: string
+    data_checksum: string
+    evidence_sha256: string
+    bar_interval: '1m' | '5m'
+    bar_count: number
+    symbol_count: number
+    etf_count: number
+    stock_count: number
+    sector_count: number
+    session_count: number
+    point_in_time: false
+    future_adjustment_knowledge_possible: boolean
+  }
+  record_count: number
+  records: LocalIntradayFactorExperiment[]
+  automatic_winner_selection: false
+  import_supported: false
+  automatic_synchronization: false
+  creates_immutable_experiment: false
+  factor_registry_write: false
+  strategy_registry_write: false
+  promotion: 'NOT_ELIGIBLE'
+  paper_runtime_start: false
+  live_runtime_start: false
+  state_mutation: false
+  external_order_transmission: false
+}
+
 export function loadLocalIntradayFactorExperiments(
   dataset: Pick<Dataset, 'data_version' | 'checksum'>,
 ): LocalIntradayFactorExperiment[] {
@@ -70,6 +104,47 @@ export function loadLocalIntradayFactorExperiments(
     record.data_version === dataset.data_version
     && record.dataset_checksum === dataset.checksum
   ))
+}
+
+export function buildLocalIntradayFactorComparisonExport(
+  dataset: Dataset,
+): LocalIntradayFactorComparisonExport {
+  const records = loadLocalIntradayFactorExperiments(dataset)
+  return {
+    schema_version: 1,
+    classification: 'BROWSER_LOCAL_INTRADAY_FACTOR_COMPARISON_EXPORT_NOT_IMMUTABLE',
+    data_identity: {
+      provider: dataset.provider,
+      provider_version: dataset.provider_version ?? null,
+      data_version: dataset.data_version,
+      data_checksum: dataset.checksum,
+      evidence_sha256: dataset.evidence_sha256,
+      bar_interval: dataset.bar_interval,
+      bar_count: dataset.bar_count,
+      symbol_count: dataset.symbol_count,
+      etf_count: dataset.etf_count,
+      stock_count: dataset.stock_count,
+      sector_count: dataset.sector_count,
+      session_count: dataset.session_count,
+      point_in_time: dataset.point_in_time,
+      future_adjustment_knowledge_possible: (
+        dataset.future_adjustment_knowledge_possible ?? false
+      ),
+    },
+    record_count: records.length,
+    records,
+    automatic_winner_selection: false,
+    import_supported: false,
+    automatic_synchronization: false,
+    creates_immutable_experiment: false,
+    factor_registry_write: false,
+    strategy_registry_write: false,
+    promotion: 'NOT_ELIGIBLE',
+    paper_runtime_start: false,
+    live_runtime_start: false,
+    state_mutation: false,
+    external_order_transmission: false,
+  }
 }
 
 export function saveLocalIntradayFactorExperiment(

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from '../api/client'
 import { EquityChart } from '../charts/EquityChart'
 import {
+  buildLocalIntradayFactorComparisonExport,
   deleteLocalIntradayFactorExperiment,
   loadLocalIntradayFactorExperiments,
   saveLocalIntradayFactorExperiment,
@@ -354,6 +355,9 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
     return <Card title="分钟因子研究工作台"><Alert showIcon type="warning" title="长历史 5 分钟数据不可用" description="系统不会用合成行情或不完整缓存替代经过 checksum 验证的多股票数据。" /></Card>
   }
   const savedExperiments = loadLocalIntradayFactorExperiments(dataset)
+  const factorComparisonExport = savedExperiments.length > 0
+    ? buildLocalIntradayFactorComparisonExport(dataset)
+    : null
 
   const eligibleEndDays = dataset.trading_days.slice(0, -1)
   const defaultEndIndex = eligibleEndDays.length - 1
@@ -1244,7 +1248,18 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
         </Space>
       </>}
       {saveStatus && <Alert showIcon type="info" title={saveStatus} />}
-      <Card type="inner" title={`本地因子实验对比（${savedExperiments.length}/30）`} extra={<Typography.Text type="secondary">仅当前浏览器</Typography.Text>}>
+      <Card
+        type="inner"
+        title={`本地因子实验对比（${savedExperiments.length}/30）`}
+        extra={<Space wrap>
+          <Typography.Text type="secondary">仅当前浏览器</Typography.Text>
+          <JsonExportButton
+            filename={`qtrade-local-intraday-factor-comparison-${dataset.checksum.slice(0, 12)}.json`}
+            value={factorComparisonExport}
+            label="导出因子对比"
+          />
+        </Space>}
+      >
         <Table<LocalIntradayFactorExperiment>
           rowKey="preview_hash"
           size="small"
@@ -1331,7 +1346,7 @@ export function IntradayFactorResearchLab({ dataset }: { dataset: VerifiedFiveMi
             />
             <Typography.Text type="secondary">相关性响应哈希 {correlationResult.preview_hash}；数据 checksum {correlationResult.dataset_checksum}；无状态写入、无外部订单。</Typography.Text>
           </>}
-          <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，保留规则、结果哈希、只读策略 ID/规格哈希、常用绩效、Rank IC、最大相关性、Newey-West 与滚动样本外摘要；载入后必须重新运行。策略身份仍是 AD_HOC_UNREGISTERED；表中统计都来自已经查看的同一历史响应，不是正式实验、独立样本外证据或 PAPER 晋级输入，也不会同步到其他设备。</Typography.Text>
+          <Typography.Text type="secondary">记录绑定当前数据版本与 checksum，保留规则、结果哈希、只读策略 ID/规格哈希、常用绩效、Rank IC、最大相关性、Newey-West 与滚动样本外摘要；载入后必须重新运行。可导出确定性只读 JSON 留档或跨设备核对，但不支持导入、自动同步或自动选优。策略身份仍是 AD_HOC_UNREGISTERED；表中统计都来自已经查看的同一历史响应，不是不可变实验、FactorRegistry/StrategyRegistry 写入、独立样本外证据或 PAPER/LIVE 晋级输入。</Typography.Text>
         </Space>
       </Card>
     </Space>

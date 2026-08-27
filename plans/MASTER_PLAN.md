@@ -351,6 +351,14 @@ absolute correlation, stitched out-of-sample return/excess, Newey-West t and
 strategy-PnL comparison on one row without deriving any missing value or
 reclassifying the already viewed response as independent evidence.
 
+The complete current-dataset notebook can also be exported as deterministic
+JSON. It preserves provider/version, checksum, evidence/PIT identity, typed
+entry/exit rules, factor definitions, metrics, result hashes and read-only
+strategy identities. Empty state disables export and unchanged state produces
+the same serialization. The portable file cannot be imported or synchronized,
+does not choose a winner, and creates no immutable experiment, registry,
+promotion, PAPER/LIVE, state or order authority.
+
 New notebook rows also preserve the exact read-only strategy ID and behavior
 specification hash produced by the factor-plus-exit preview. The client verifies
 the hash-derived ID and all immutable/unregistered/no-authority fields before
