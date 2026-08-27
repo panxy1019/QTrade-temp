@@ -487,16 +487,16 @@ const discovery = {
         session_count: 12, observation_count: 900, signal_count: 188,
         previous_session_mean_universe_return_minimum: '-0.010247', previous_session_mean_universe_return_maximum: '-0.0000107',
         known_before_signal: true,
-        strategy_metrics: { ...discoveryMetrics, total_return: '-0.007402', excess_return: '0.014887', sharpe: '-0.8998', maximum_drawdown: '-0.042835' },
-        benchmark_metrics: discoveryMetrics,
+        strategy_metrics: { ...discoveryMetrics, number_of_periods: 12, total_return: '-0.007402', excess_return: '0.014887', sharpe: '-0.8998', maximum_drawdown: '-0.042835' },
+        benchmark_metrics: { ...discoveryMetrics, number_of_periods: 12 },
       },
       {
         regime_id: 'PREVIOUS_SESSION_NON_NEGATIVE', regime_name: '上一交易日等权收益非负',
         session_count: 8, observation_count: 600, signal_count: 138,
         previous_session_mean_universe_return_minimum: '0.0002869', previous_session_mean_universe_return_maximum: '0.012327',
         known_before_signal: true,
-        strategy_metrics: { ...discoveryMetrics, total_return: '-0.054493', excess_return: '-0.032917', sharpe: '-11.5724', maximum_drawdown: '-0.059405' },
-        benchmark_metrics: discoveryMetrics,
+        strategy_metrics: { ...discoveryMetrics, number_of_periods: 8, total_return: '-0.054493', excess_return: '-0.032917', sharpe: '-11.5724', maximum_drawdown: '-0.059405' },
+        benchmark_metrics: { ...discoveryMetrics, number_of_periods: 8 },
       },
     ],
     criteria: {
@@ -584,11 +584,19 @@ const discovery = {
   },
   test_validation: {
     observation_count: 1500, signal_count: 326, signal_session_count: 20,
-    mean_session_conditional_excess_return: '-0.00091894', newey_west_lag: 2,
+    mean_session_conditional_excess_return: '-0.0009189368', newey_west_lag: 2,
     newey_west_standard_error: '0.001682', newey_west_t_statistic: '-0.546233',
     confidence_interval_95_lower: '-0.00421628', confidence_interval_95_upper: '0.0023784',
     strategy_metrics: discoveryMetrics, benchmark_metrics: discoveryMetrics,
-    criteria: { positive_test_session_conditional_excess: false, test_strategy_total_return_positive: false },
+    criteria: {
+      minimum_250_test_observations: true,
+      minimum_twenty_test_signals: true,
+      minimum_ten_test_signal_sessions: true,
+      positive_test_session_conditional_excess: false,
+      test_newey_west_t_statistic_above_1_96: false,
+      test_strategy_total_return_positive: false,
+      test_strategy_excess_return_positive: false,
+    },
     passed: false,
   },
   data_version: 'baostock-five-minute-long-v1', dataset_checksum: 'long-five-minute-checksum',
@@ -920,6 +928,22 @@ describe('intraday factor rule correlation', () => {
       locked_test_sector_stress: {
         ...discovery.locked_test_sector_stress,
         positive_sector_count: 5,
+      },
+    } as unknown as IntradayFactorDiscovery))
+    render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '挖掘最近 40 日的 104 个有界因子' }))
+
+    expect(await screen.findByText('因子挖掘响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '载入训练锁定开仓因子' })).not.toBeInTheDocument()
+  })
+
+  it('fails closed when a signed discovery response misstates its placebo probability', async () => {
+    vi.mocked(runIntradayFactorDiscovery).mockResolvedValueOnce(await withPreviewHash({
+      ...discovery,
+      locked_test_placebo_audit: {
+        ...discovery.locked_test_placebo_audit,
+        placebo_at_least_observed_count: 386,
       },
     } as unknown as IntradayFactorDiscovery))
     render(<IntradayFactorResearchLab dataset={discoveryDataset} />)
