@@ -289,6 +289,16 @@ expanding-window test folds. The training day's T+1 exit is known at the test
 day's `09:35` open before that day's `10:00` signal; test returns never enter the
 same fold's selection.
 
+The research page begins with one evidence-derived, read-only factor catalog.
+It combines only definitions actually present in the signed daily-factor search
+and intraday long-window report, then displays each factor's selection/entry/
+exit/L2-hypothesis role, exact formula, required data, causal known/execution
+clock, validation status and evidence binding. Optional exit and L2 rows are not
+invented when their signed contracts are absent, and an unknown daily formula is
+marked non-executable. This is an exportable evidence index, not a writable
+`FactorRegistry`; it cannot create a strategy or experiment, authorize PAPER or
+LIVE, mutate state or transmit an order.
+
 The workbench also exposes a bounded opening-direction rule builder over those
 same three completed intervals. Each slot can be `BULLISH`, `BEARISH` or
 `IGNORE`, the non-ignored predicates can be joined with `ALL` or `ANY`, and one

@@ -234,6 +234,15 @@ market-data, research-governance, report and Chinese-web foundations are tracked
 in `plans/V2_MASTER_PLAN.md`; their maturity limits are recorded in
 `docs/READINESS_REPORT_V2.md`. Further real-market integration is externally gated:
 
+The research entry point now has a single evidence-derived factor catalog before
+the detailed workbench. It reads only the already signed daily factor-search and
+intraday long-window responses, presenting exact formulas, roles, data contracts,
+causal clocks, validation status and evidence identity. Optional exit and L2
+definitions appear only when those signed contracts exist; unknown formulas fail
+closed and are not executable. This avoids changing the evidence-bound backend
+module and deliberately creates no FactorRegistry, strategy, experiment,
+promotion, PAPER/LIVE state or order capability.
+
 The historical research surface now also includes a bounded interactive preview.
 It accepts adjustable momentum/reversal/low-volatility, risk and cost parameters,
 rereads the selected signed Parquet dataset, returns a deterministic result hash

@@ -2348,3 +2348,25 @@ small enough for direct visual comparison.
 Sector coverage is descriptive only. The browser does not automatically select
 or run stocks, prove cross-sectional robustness, persist evidence, promote a
 strategy, start PAPER/LIVE, mutate state or transmit an external order.
+
+## ADR-134 — Factor catalog is derived from signed evidence, not a new registry
+
+Status: accepted, 2026-08-27.
+
+Factor definitions existed across the daily factor-search response, the
+intraday long-window report and its optional exit/L2 contracts. Adding a new
+backend catalog endpoint would change the API module whose source digest is
+bound into the signed long-window evidence, invalidating that evidence for a
+presentation-only improvement.
+
+The research page therefore derives a read-only catalog from those existing
+responses. Daily rows are the union of diagnosed and passing signed factor IDs
+with explicitly registered formulas; the opening factor may use the recognized
+signed report identity as a fail-closed fallback. Exit and L2 rows appear only
+when the report actually contains those contracts. Unknown daily definitions
+remain visibly non-executable instead of accepting arbitrary expressions.
+
+The catalog is a browser evidence index with deterministic JSON export. It is
+not `FactorRegistry`, does not persist or execute definitions, and cannot create
+a strategy/experiment, alter promotion or PAPER/LIVE state, mutate the runtime
+or transmit an external order.

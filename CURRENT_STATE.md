@@ -13,6 +13,12 @@ Last updated: 2026-08-27
 - Current phase: QTrade v0.2 strategy research and real-market PAPER platform.
 - Current milestone: V2-M7 AKShare real-market research/PAPER bootstrap,
   adjustable historical backtest preview and bounded factor search.
+- Factor evidence navigation: the research page now derives one read-only catalog
+  from the signed daily factor search and intraday long-window report. It exposes
+  exact formulas, selection/entry/exit/L2-hypothesis roles, required data,
+  causal clocks, validation state and evidence binding without changing the
+  signed backend module. Missing optional L2 or exit contracts are not invented;
+  the catalog is not a registry, strategy, experiment or PAPER/LIVE authority.
 - Deployment surface: a Vercel-compatible, stateless read-only application now
   serves the Chinese React dashboard with a same-origin `/api` FastAPI function.
   The packaged evidence subset retains its report and Parquet checksums. Control
@@ -28,10 +34,10 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 69 frontend Vitest
+  (macOS, 2026-08-27); 80 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
-  minified JavaScript asset at or below 430.51 KB with no large-chunk warning.
+  minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
   GitHub CI grants only read access to repository contents and pins the official
   Node 24 checkout/setup-python actions to their verified v7 release commits.
   The causal finalized-bar -> later tick -> Risk -> OMS -> PaperGateway ->

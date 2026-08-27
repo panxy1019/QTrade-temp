@@ -1502,6 +1502,10 @@ describe('verified backtest analytics', () => {
 describe('verified robustness evidence', () => {
   it('shows the signed 120-day intraday factor veto without claiming promotion', () => {
     render(<ResearchPage data={data} />)
+    expect(screen.getByText('因子定义与数据契约目录 · 4')).toBeInTheDocument()
+    expect(screen.getByText('只读证据索引，不是 FactorRegistry')).toBeInTheDocument()
+    expect(screen.getByText('momentum-252-skip-20')).toBeInTheDocument()
+    expect(screen.getByText('opening-three-ten-minute-bullish-v1')).toBeInTheDocument()
     expect(screen.getByText('120 日固定因子稳健性证据')).toBeInTheDocument()
     expect(screen.getByText('长期复核未通过：1/6 个测试折为正')).toBeInTheDocument()
     expect(screen.getByText('全窗口收益').nextSibling).toHaveTextContent('-27.17%')

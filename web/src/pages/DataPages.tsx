@@ -16,6 +16,7 @@ import { loadFiveMinuteBarSeries, loadHistoricalBarSeries, loadLongFiveMinuteBar
 import { cancelPaperOrder, controlRuntime, prometheusMetricsUrl } from '../api/client'
 import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
+import { FactorEvidenceCatalog } from '../components/FactorEvidenceCatalog'
 import { formatBasisPoints, formatDirectionalDelta } from '../research/intradayDirectional'
 
 const waiting = <Alert showIcon type="info" title="等待实时数据授权" description="适配器与回放链路已准备；当前未配置任何供应商令牌或真实连接。" />
@@ -461,6 +462,7 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const sectorRows = stockTransfer?.sector_only ?? []
   const leaveOneRows = stockTransfer?.leave_one_sector_out ?? []
   return <Page title="策略研究" subtitle="实验候选、独立样本外证据与晋级边界">
+    <FactorEvidenceCatalog factorSearch={factorSearch} intradayReport={intradayFactorRobustness} />
     {intradayFactorRobustness && <IntradayFactorLongWindowEvidence report={intradayFactorRobustness} />}
     <IntradayFactorResearchLab key={longFiveMinuteDataset ? `intraday-factor:${longFiveMinuteDataset.data_version}:${longFiveMinuteDataset.checksum}` : 'no-intraday-factor-dataset'} dataset={longFiveMinuteDataset} />
     <Alert showIcon type="warning" title={`晋级结论：${report?.promotion ?? '未评估'}`} description={(report?.promotion_reasons ?? ['缺少可验证研究产物']).join(' / ')} />
