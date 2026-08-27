@@ -602,6 +602,13 @@ event/receive clocks and sequence, continuous-auction validity, certified
 freshness and recorded-replay reconciliation. The proposed `intensity > 1`
 entry is explicitly untested, its exit is not yet defined, and authorized L2
 depth is never synthesized from OHLCV. The added
+browser admission now independently requires the exact 20-field schema, five
+identity fields, rejection policy, causal clock and ordered six-gate 0/6
+contract before rendering any strategy response. A missing level, duplicate or
+unknown field, forged gate/count, future-book permission or OHLCV substitution
+rejects the complete response instead of degrading to a partial L2 card. This
+does not make L2 configured; an authorized provider and recorded replay remain
+external requirements. The added
 rolling diagnostic also rejected the rule: both five-session folds selected a
 5 bps body threshold and returned `-2.5834%` and `-2.1394%`; their stitched return
 was `-4.6675%`, and every fixed threshold returned between `-4.4507%` and

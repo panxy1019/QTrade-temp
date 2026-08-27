@@ -17,6 +17,7 @@ import {
 import type { LocalIntradayFactorExperiment } from '../research/localIntradayFactorExperiments'
 import { buildIntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
 import type { IntradayFactorStrategyLineage } from '../research/intradayFactorStrategyLineage'
+import { matchesUnavailableL2FactorReadiness } from '../research/l2FactorReadiness'
 import type { FiveMinuteResearchReport, IntradayExitRule, IntradayFactorBacktest, IntradayFactorBacktestRequest, IntradayFactorCorrelation, IntradayFactorDiscovery, IntradayFactorLongWindowReport, IntradayOpeningDirection } from '../types'
 import { JsonExportButton } from './JsonExportButton'
 
@@ -1828,13 +1829,7 @@ function matchesBacktestResponse(
         gate.gate_id === gateId && !gate.passed
       )))
       && workflowBlocksExecution
-      && l2Readiness.readiness === 'UNCONFIGURED'
-      && l2Readiness.factor_effectiveness_tested === false
-      && l2Readiness.correlation_tested === false
-      && l2Readiness.strategy_backtested === false
-      && l2Readiness.derived_from_ohlcv === false
-      && l2Readiness.state_mutation === false
-      && l2Readiness.external_order_transmission === false
+      && matchesUnavailableL2FactorReadiness(l2Readiness)
       && /^[a-f0-9]{64}$/.test(response.preview_hash)
       && response.point_in_time === false
       && response.future_adjustment_knowledge_possible === true

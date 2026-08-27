@@ -2007,6 +2007,17 @@ describe('verified robustness evidence', () => {
     expect(screen.getByText('已载入“三时段方向方案 A”的参数；请重新运行以验证当前结果。')).toBeInTheDocument()
     expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: '第一段 09:30–09:40' })).toBeInTheDocument()
+    vi.mocked(runIntradayFactorBacktest).mockResolvedValueOnce({
+      ...result,
+      l2_factor_readiness: {
+        ...result.l2_factor_readiness,
+        required_gates: result.l2_factor_readiness.required_gates.slice(0, 5),
+        required_gate_count: 5,
+      },
+    } as unknown as IntradayFactorBacktest)
+    fireEvent.click(screen.getByRole('button', { name: '运行 75 股因子检验与回测' }))
+    expect(await screen.findByText('策略回测响应身份或安全边界与请求不一致，结果已拒绝')).toBeInTheDocument()
+    expect(screen.queryByText('回测已完成，研究硬门未通过')).not.toBeInTheDocument()
   }, 10_000)
 
   it('does not present experiment records as a registered lineage', () => {

@@ -2776,3 +2776,29 @@ read-only response; it does not rerun factor returns or replace the signed serve
 preview hash. Rejection creates no fallback result. Acceptance still creates no
 immutable evidence, registry or promotion state, PAPER/LIVE transition, runtime
 mutation or external-order capability.
+
+## ADR-154 — Unavailable L2 readiness is an exact transport contract
+
+Status: accepted, 2026-08-27.
+
+The six-gate L2 boundary is safety-relevant even while every gate is false. A
+typed browser response can still drift at runtime: it may omit one depth level,
+drop the event sequence, remove a rejection rule or report a shorter gate family
+while retaining the top-level `UNCONFIGURED` and no-order flags. Rendering that
+payload would make an incomplete contract look equivalent to the reviewed one.
+
+The browser therefore admits the current unavailable L2 payload only when it
+exactly matches the reviewed formula and untested hypothesis, twenty ordered
+five-level price/size fields, five identity fields, share units, continuous-
+auction scope, all invalid-book rejection policies and the finalized-minute
+causal clock. The six ordered gate identities and reasons must all remain false,
+and their reported counts must equal the actual gate family. Missing and extra
+fields both reject the complete strategy response; so do future-book permission
+or any claim that OHLCV supplied depth.
+
+This intentionally fails closed when a future provider integration changes the
+contract: provider authorization, schema/unit/clock/freshness certification and
+recorded replay require a reviewed type and validator update together. The
+current implementation does not fetch or synthesize L2, calculate an intensity,
+test a factor, define an exit, start PAPER/LIVE, mutate state or transmit an
+external order.

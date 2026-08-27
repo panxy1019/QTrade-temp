@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 105 frontend Vitest
+  (macOS, 2026-08-27); 109 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -275,6 +275,17 @@ Last updated: 2026-08-27
   `intensity > 1` is displayed only as an untested buy hypothesis; the sell
   condition is not defined and no effectiveness, correlation or backtest claim
   is made. OHLCV is not used to fabricate bid/ask depth. Because the
+  browser previously admitted this nested contract from its TypeScript shape,
+  a drifted response could retain `UNCONFIGURED` while dropping a fifth-level
+  field or gate. Strategy-response admission now independently matches the exact
+  formula, 20 ordered depth fields, identity fields, invalid-book policy, causal
+  clock, six unique false gates and 0/6 arithmetic. Missing/extra fields, a
+  forged count, future-book access or OHLCV substitution reject the complete
+  response before metrics render. This is still `UNCONFIGURED`; it adds no L2
+  provider, factor observation, test result, PAPER readiness or order authority.
+  Reproduce with `cd web && npm test -- --run
+  src/research/l2FactorReadiness.test.ts src/pages/DataPages.test.tsx -t
+  "unavailable L2|runs the full intraday factor gate"`. Because the
   endpoint is deterministic and side-effect free, its browser client retries
   one network-level fetch failure; HTTP validation/server responses and every
   control or trading POST are never retried by this path. A fixed

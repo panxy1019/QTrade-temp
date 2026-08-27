@@ -328,6 +328,13 @@ validity, provider-certified freshness and recorded replay reconciliation. All
 six provider gates are currently false. The proposed `intensity > 1` entry is
 untested and has no sell rule; no effectiveness, correlation, strategy backtest
 or PAPER claim exists until an authorized five-level L2 source is selected.
+The browser now treats every field of that unavailable contract as an admission
+boundary rather than relying on static TypeScript types. Exact field families,
+identity, rejection and causal policies, ordered gate identities/reasons and
+0/6 arithmetic must match. Missing or extra schema, a forged gate/count,
+future-book access or OHLCV substitution rejects the complete strategy response.
+This is strict transport validation only; L2 remains unconfigured until provider
+authorization, schema/unit/clock/freshness certification and recorded replay.
 
 Factor construction now includes one deliberately bounded extension of that
 workflow: the three fixed completed intervals accept bullish, bearish or ignored

@@ -291,6 +291,10 @@ npm --prefix web run build
   validity and six explicit provider/replay gates. Keep the proposed `> 1`
   entry untested, the sell condition undefined and readiness at 0/6 until an
   authorized L2 session exists.
+- [x] Fail closed on semantic drift inside that unavailable L2 contract before
+  a strategy response renders: require the exact 20 depth fields, five identity
+  fields, invalid-book and causal policies, ordered six-gate reasons and 0/6
+  arithmetic; reject missing/extra fields, future-book or OHLCV substitution.
 - [x] Bind every intraday factor preview to a deterministic read-only strategy
   identity covering the entry factor/expression/direction/threshold, exit rule,
   causal prices, position sizing, benchmark, costs and T+1. Exclude observed
