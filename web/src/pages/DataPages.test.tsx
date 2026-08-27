@@ -1596,7 +1596,30 @@ describe('verified robustness evidence', () => {
       const mean = average(values)
       return Math.sqrt(average(values.map((value) => (value - mean) ** 2)))
     }
-    const riskMetrics = (returns: number[], benchmarks: number[], finalEquity: number) => {
+    const baseCostBps = 5
+    const removeCost = (value: number) => (1 + value) / (1 - baseCostBps / 10_000) ** 2 - 1
+    const applyCost = (value: number, costBps: number) => (1 + value) * (1 - costBps / 10_000) ** 2 - 1
+    const transactionCosts = (gross: number[], net: number[]) => (
+      gross.reduce((total, value, index) => total + value - net[index], 0)
+    )
+    const performanceMetrics = (
+      returns: number[],
+      benchmarks: number[],
+      turnover: number,
+      exposure: number,
+      trades: number,
+      costs: number,
+    ) => {
+      let finalEquity = 1
+      let finalBenchmarkEquity = 1
+      let peak = 1
+      let maximumDrawdown = 0
+      for (const [index, value] of returns.entries()) {
+        finalEquity *= 1 + value
+        finalBenchmarkEquity *= 1 + benchmarks[index]
+        peak = Math.max(peak, finalEquity)
+        maximumDrawdown = Math.min(maximumDrawdown, finalEquity / peak - 1)
+      }
       const annualizedReturn = finalEquity ** (252 / returns.length) - 1
       const annualizedVolatility = populationStandardDeviation(returns) * Math.sqrt(252)
       const annualizedAverageReturn = average(returns) * 252
@@ -1604,29 +1627,62 @@ describe('verified robustness evidence', () => {
       const activeReturns = returns.map((value, index) => value - benchmarks[index])
       const trackingError = populationStandardDeviation(activeReturns) * Math.sqrt(252)
       return {
+        total_return: String(finalEquity - 1),
         annualized_return: String(annualizedReturn),
         annualized_volatility: String(annualizedVolatility),
         sharpe: String(annualizedVolatility === 0 ? 0 : annualizedAverageReturn / annualizedVolatility),
         sortino: String(downsideDeviation === 0 ? 0 : annualizedAverageReturn / downsideDeviation),
-        calmar: String(annualizedReturn / 0.051),
+        maximum_drawdown: String(maximumDrawdown),
+        calmar: String(maximumDrawdown === 0 ? 0 : annualizedReturn / Math.abs(maximumDrawdown)),
+        win_rate: String(returns.filter((value) => value > 0).length / returns.length),
+        benchmark_return: String(finalBenchmarkEquity - 1),
+        excess_return: String(finalEquity - finalBenchmarkEquity),
         information_ratio: String(trackingError === 0 ? 0 : average(activeReturns) * 252 / trackingError),
+        number_of_periods: returns.length, turnover: String(turnover),
+        profit_loss_ratio: '1.145', exposure: String(exposure), number_of_trades: trades,
+        transaction_costs: String(costs),
       }
     }
-    const metrics = {
-      ...riskMetrics(strategyReturns, benchmarkReturns, strategyEquity),
-      total_return: String(strategyEquity - 1), maximum_drawdown: '-0.051',
-      win_rate: '0.45', benchmark_return: String(benchmarkEquity - 1),
-      excess_return: String(strategyEquity - benchmarkEquity),
-      number_of_periods: 20, turnover: '40',
-      profit_loss_ratio: '1.145', exposure: '1', number_of_trades: 192,
-      transaction_costs: '0.0199',
-    }
-    const benchmarkMetrics = {
-      ...metrics,
-      ...riskMetrics(benchmarkReturns, benchmarkReturns, benchmarkEquity),
-      total_return: String(benchmarkEquity - 1), benchmark_return: String(benchmarkEquity - 1), excess_return: '0',
-      number_of_trades: 1500,
-    }
+    const grossStrategyReturns = strategyReturns.map(removeCost)
+    const grossBenchmarkReturns = benchmarkReturns.map(removeCost)
+    const metrics = performanceMetrics(
+      strategyReturns,
+      benchmarkReturns,
+      40,
+      1,
+      192,
+      transactionCosts(grossStrategyReturns, strategyReturns),
+    )
+    const benchmarkMetrics = performanceMetrics(
+      benchmarkReturns,
+      benchmarkReturns,
+      40,
+      1,
+      1500,
+      transactionCosts(grossBenchmarkReturns, benchmarkReturns),
+    )
+    const costStress = Object.fromEntries([0, 5, 10, 20].map((costBps) => {
+      const stressedStrategy = grossStrategyReturns.map((value) => applyCost(value, costBps))
+      const stressedBenchmark = grossBenchmarkReturns.map((value) => applyCost(value, costBps))
+      return [String(costBps), {
+        strategy_metrics: performanceMetrics(
+          stressedStrategy,
+          stressedBenchmark,
+          40,
+          1,
+          192,
+          transactionCosts(grossStrategyReturns, stressedStrategy),
+        ),
+        benchmark_metrics: performanceMetrics(
+          stressedBenchmark,
+          stressedBenchmark,
+          40,
+          1,
+          1500,
+          transactionCosts(grossBenchmarkReturns, stressedBenchmark),
+        ),
+      }]
+    }))
     const group = {
       group_id: '801780', group_name: '银行', observation_count: 100, signal_count: 10,
       mean_signal_forward_return: '0.001', signal_hit_rate: '0.6',
@@ -1854,7 +1910,7 @@ describe('verified robustness evidence', () => {
       },
       backtest: {
         strategy_metrics: metrics, benchmark_metrics: benchmarkMetrics,
-        cost_stress: { '5': { strategy_metrics: metrics, benchmark_metrics: benchmarkMetrics } },
+        cost_stress: costStress,
         curve,
         sectors: [group], symbols: [
           { ...group, group_id: '600036', group_name: '600036' },

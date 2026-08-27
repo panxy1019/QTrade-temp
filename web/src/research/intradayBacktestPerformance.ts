@@ -9,6 +9,7 @@ type VerifiedFiveMinuteDataset = NonNullable<FiveMinuteResearchReport['minute_da
 
 const METRIC_TOLERANCE = 1e-9
 const TRADING_PERIODS_PER_YEAR = 252
+const COST_STRESS_BPS = [0, 5, 10, 20] as const
 
 export function matchesIntradayBacktestPerformance(
   response: IntradayFactorBacktest,
@@ -25,8 +26,12 @@ export function matchesIntradayBacktestPerformance(
   const expectedSourceBarCount = (selectedDays.length + 1)
     * dataset.symbol_count
     * dataset.session_bar_count_per_symbol
+  const baseCostBps = finiteNumber(request.cost_bps)
 
-  if (!sameStrings(response.selected_trading_days, selectedDays)
+  if (baseCostBps === null
+    || baseCostBps < 0
+    || baseCostBps > 100
+    || !sameStrings(response.selected_trading_days, selectedDays)
     || response.exit_completion_day !== expectedExitCompletionDay
     || response.selected_session_count !== selectedDays.length
     || response.source_bar_count !== expectedSourceBarCount
@@ -45,6 +50,7 @@ export function matchesIntradayBacktestPerformance(
   let signalCount = 0
   const strategyReturns: number[] = []
   const benchmarkReturns: number[] = []
+  const strategyActive: boolean[] = []
 
   for (const [index, point] of response.backtest.curve.entries()) {
     const strategyReturn = finiteNumber(point.strategy_return)
@@ -61,6 +67,7 @@ export function matchesIntradayBacktestPerformance(
       || benchmarkReturn === null
       || strategyReturn <= -1
       || benchmarkReturn <= -1
+      || (point.signal_count === 0 && !approximatelyEqual(strategyReturn, 0))
       || reportedStrategyEquity === null
       || reportedBenchmarkEquity === null
       || reportedExcessEquity === null) return false
@@ -81,10 +88,17 @@ export function matchesIntradayBacktestPerformance(
     signalCount += point.signal_count
     strategyReturns.push(strategyReturn)
     benchmarkReturns.push(benchmarkReturn)
+    strategyActive.push(point.signal_count > 0)
   }
 
   if (signalCount !== response.event_summary.signal_count) return false
 
+  const grossStrategyReturns = strategyReturns.map((value, index) => (
+    strategyActive[index] ? removeRoundTripCost(value, baseCostBps) : 0
+  ))
+  const grossBenchmarkReturns = benchmarkReturns.map((value) => removeRoundTripCost(value, baseCostBps))
+  const strategyTransactionCosts = totalTransactionCosts(grossStrategyReturns, strategyReturns)
+  const benchmarkTransactionCosts = totalTransactionCosts(grossBenchmarkReturns, benchmarkReturns)
   const strategyRiskMetrics = calculateRiskMetrics(
     strategyReturns,
     benchmarkReturns,
@@ -108,6 +122,7 @@ export function matchesIntradayBacktestPerformance(
     turnover: activeDays * 2,
     exposure: activeDays / selectedDays.length,
     trades: signalCount,
+    transactionCosts: strategyTransactionCosts,
   }) && matchesCoreMetrics(response.backtest.benchmark_metrics, {
     ...benchmarkRiskMetrics,
     totalReturn: benchmarkEquity - 1,
@@ -119,7 +134,15 @@ export function matchesIntradayBacktestPerformance(
     turnover: selectedDays.length * 2,
     exposure: 1,
     trades: expectedObservationCount,
-  })
+    transactionCosts: benchmarkTransactionCosts,
+  }) && matchesCostStress(
+    response.backtest.cost_stress,
+    grossStrategyReturns,
+    grossBenchmarkReturns,
+    strategyActive,
+    signalCount,
+    expectedObservationCount,
+  )
 }
 
 interface CoreMetricExpectation {
@@ -138,6 +161,7 @@ interface CoreMetricExpectation {
   sortino: number
   calmar: number
   informationRatio: number
+  transactionCosts: number
 }
 
 function matchesCoreMetrics(
@@ -201,6 +225,100 @@ function matchesCoreMetrics(
     && approximatelyEqual(turnover, expected.turnover)
     && approximatelyEqual(exposure, expected.exposure)
     && metrics.number_of_trades === expected.trades
+    && approximatelyEqual(transactionCosts, expected.transactionCosts)
+}
+
+function matchesCostStress(
+  costStress: IntradayFactorBacktest['backtest']['cost_stress'],
+  grossStrategyReturns: readonly number[],
+  grossBenchmarkReturns: readonly number[],
+  strategyActive: readonly boolean[],
+  signalCount: number,
+  observationCount: number,
+): boolean {
+  if (!costStress || typeof costStress !== 'object' || Array.isArray(costStress)) return false
+  const keys = Object.keys(costStress).sort((left, right) => Number(left) - Number(right))
+  if (!sameStrings(keys, COST_STRESS_BPS.map(String))) return false
+
+  const activeDays = strategyActive.filter(Boolean).length
+  return COST_STRESS_BPS.every((costBps) => {
+    const strategyReturns = grossStrategyReturns.map((value, index) => (
+      strategyActive[index] ? applyRoundTripCost(value, costBps) : 0
+    ))
+    const benchmarkReturns = grossBenchmarkReturns.map((value) => applyRoundTripCost(value, costBps))
+    const strategyMetrics = calculateMetricExpectation(
+      strategyReturns,
+      benchmarkReturns,
+      activeDays * 2,
+      activeDays / strategyReturns.length,
+      signalCount,
+      totalTransactionCosts(grossStrategyReturns, strategyReturns),
+    )
+    const benchmarkMetrics = calculateMetricExpectation(
+      benchmarkReturns,
+      benchmarkReturns,
+      benchmarkReturns.length * 2,
+      1,
+      observationCount,
+      totalTransactionCosts(grossBenchmarkReturns, benchmarkReturns),
+    )
+    const row = costStress[String(costBps)]
+    return row !== undefined
+      && matchesCoreMetrics(row.strategy_metrics, strategyMetrics)
+      && matchesCoreMetrics(row.benchmark_metrics, benchmarkMetrics)
+  })
+}
+
+function calculateMetricExpectation(
+  returns: readonly number[],
+  benchmarkReturns: readonly number[],
+  turnover: number,
+  exposure: number,
+  trades: number,
+  transactionCosts: number,
+): CoreMetricExpectation {
+  let equity = 1
+  let benchmarkEquity = 1
+  let peak = 1
+  let maximumDrawdown = 0
+  let wins = 0
+  for (const [index, value] of returns.entries()) {
+    equity *= 1 + value
+    benchmarkEquity *= 1 + benchmarkReturns[index]
+    peak = Math.max(peak, equity)
+    maximumDrawdown = Math.min(maximumDrawdown, equity / peak - 1)
+    wins += Number(value > 0)
+  }
+  return {
+    ...calculateRiskMetrics(returns, benchmarkReturns, equity, maximumDrawdown),
+    totalReturn: equity - 1,
+    benchmarkReturn: benchmarkEquity - 1,
+    excessReturn: equity - benchmarkEquity,
+    maximumDrawdown,
+    winRate: wins / returns.length,
+    periods: returns.length,
+    turnover,
+    exposure,
+    trades,
+    transactionCosts,
+  }
+}
+
+function removeRoundTripCost(netReturn: number, costBps: number): number {
+  const retainedPerSide = 1 - costBps / 10_000
+  return (1 + netReturn) / retainedPerSide ** 2 - 1
+}
+
+function applyRoundTripCost(grossReturn: number, costBps: number): number {
+  const retainedPerSide = 1 - costBps / 10_000
+  return (1 + grossReturn) * retainedPerSide ** 2 - 1
+}
+
+function totalTransactionCosts(
+  grossReturns: readonly number[],
+  netReturns: readonly number[],
+): number {
+  return grossReturns.reduce((total, value, index) => total + value - netReturns[index], 0)
 }
 
 function calculateRiskMetrics(
