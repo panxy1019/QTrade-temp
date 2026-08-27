@@ -250,7 +250,12 @@ and annualized return, annualized volatility, zero-rate Sharpe, maximum drawdown
 matched Buy-and-Hold excess return and information ratio. Annualization is fixed
 at 48 native five-minute Bars per session and 252 sessions per year; it is not
 silently inferred by the browser. The page exposes the complete form and JSON
-export. During one open page session it also retains the latest ten distinct
+export. Before a run, the form expands its current parameters into a readable
+reduction-only policy draft: the constant full-exposure base target, trend and
+volatility reductions, drawdown exit, cooldown recovery, required warmup,
+next-Bar execution and cost. This browser draft is neither a stock-selection
+entry signal nor a server-validated strategy/evidence identity. During one open
+page session it also retains the latest ten distinct
 result hashes for side-by-side parameter and metric comparison; loading an old
 row only refills the form and requires a fresh run. Any manual parameter change
 also clears the current result while retaining the session comparison, so an old

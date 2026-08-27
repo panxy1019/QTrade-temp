@@ -2309,3 +2309,24 @@ serialization or download behavior elsewhere.
 The browser does not recompute the hash, upload the export, persist the session
 or create an experiment. The row remains an ephemeral diagnostic and supplies no
 registry, promotion, PAPER/LIVE, state-mutation or external-order authority.
+
+## ADR-132 — Individual-stock minute parameters expose a pre-run policy draft
+
+Status: accepted, 2026-08-27.
+
+The individual-stock minute form exposed every bounded overlay parameter, but a
+user still had to infer how the short and long averages, volatility threshold,
+drawdown threshold and cooldown combine into actual exposure changes. That made
+the reduction-only risk overlay easy to mistake for an independent stock-entry
+strategy.
+
+The form now derives a readable draft from its live values. It shows the constant
+full-exposure base target, trend and volatility reductions, drawdown-to-zero
+condition, safe-Bar recovery, required history, next-five-minute-open execution
+and per-exposure-change cost. Changes update the draft while continuing to clear
+any old result.
+
+The draft is browser-derived and explicitly non-canonical. It does not define a
+stock-selection factor, create server strategy identity, prove performance,
+register or promote a policy, start PAPER/LIVE, mutate state or transmit an
+external order.

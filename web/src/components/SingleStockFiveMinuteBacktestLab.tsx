@@ -93,6 +93,27 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
           <Form.Item name="reduction_multiplier" label="触发后敞口倍数" rules={[{ required: true }]}><InputNumber min={0} max={0.999} step={0.01} stringMode /></Form.Item>
           <Form.Item name="cooldown_bars" label="恢复冷却（Bar）" rules={[{ required: true }]}><InputNumber min={0} max={240} precision={0} /></Form.Item>
         </div>
+        <Form.Item noStyle shouldUpdate>
+          {({ getFieldsValue }) => {
+            const values = { ...initialValues, ...getFieldsValue(true) } as FormValues
+            const requiredHistory = Math.max(values.long_window, values.volatility_window + 1)
+            return <Alert
+              style={{ marginBottom: 16 }}
+              showIcon
+              type="info"
+              title="当前分钟修正规则草案（未运行）"
+              description={<Space orientation="vertical" size={2}>
+                <Typography.Text code>{`BASE_TARGET: ${values.symbol} constant 100% exposure / Buy-and-Hold benchmark`}</Typography.Text>
+                <Typography.Text code>{`TREND: SMA_CLOSE_${values.short_window} < SMA_CLOSE_${values.long_window} → EXPOSURE ≤ ${formatDraftNumber(values.reduction_multiplier)}`}</Typography.Text>
+                <Typography.Text code>{`VOL: STDEV(RET_CLOSE, ${values.volatility_window}) ≥ ${formatDraftPercent(values.maximum_minute_volatility)} → EXPOSURE ≤ ${formatDraftNumber(values.reduction_multiplier)}`}</Typography.Text>
+                <Typography.Text code>{`DRAWDOWN: CLOSE / SESSION_PEAK - 1 ≤ -${formatDraftPercent(values.maximum_intraday_drawdown)} → EXPOSURE = 0`}</Typography.Text>
+                <Typography.Text code>{`RECOVERY: ${values.cooldown_bars} completed safe Bars, then still safe → EXPOSURE = 1`}</Typography.Text>
+                <Typography.Text code>{`CLOCK: KNOWN_AT_5M_CLOSE_T → APPLY_NEXT_5M_OPEN; WARMUP ≥ ${requiredHistory} Bars; COST ${values.cost_bps} bps / exposure change`}</Typography.Text>
+                <Typography.Text type="secondary">这是从当前表单推导的只读修正草案：基础目标固定为该股满敞口，分钟层只能减仓、清仓或恢复，不能加到 100% 以上；它不是独立选股/买入因子，也不是服务端策略规范、回测证据、注册或 PAPER/LIVE 准入。</Typography.Text>
+              </Space>}
+            />
+          }}
+        </Form.Item>
         <Button type="primary" htmlType="submit" loading={running}>运行个股 5 分钟回测</Button>
       </Form>
       {error && <Alert showIcon type="error" title="个股回测未完成" description={error} />}
@@ -181,6 +202,16 @@ function formatNumber(value: string) {
 }
 
 function formatPercent(value: string) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? `${(parsed * 100).toFixed(2)}%` : '—'
+}
+
+function formatDraftNumber(value: string | number) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? String(parsed) : '—'
+}
+
+function formatDraftPercent(value: string | number) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? `${(parsed * 100).toFixed(2)}%` : '—'
 }
