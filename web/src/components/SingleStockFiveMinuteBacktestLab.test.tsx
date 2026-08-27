@@ -128,6 +128,87 @@ describe('single-stock cross-sector batch diagnostic', () => {
     })
   })
 
+  it('retains bounded batch summaries across parameter changes without auto-selecting a winner', async () => {
+    const atCost = (symbol: string, cost_bps: string) => ({ ...requestFor(symbol), cost_bps })
+    vi.mocked(runSingleStockFiveMinuteBacktest)
+      .mockResolvedValueOnce(resultFor(atCost('600003', '5'), { totalReturn: '0.01', annualizedReturn: '0.10', sharpe: '0.5', excessReturn: '0.002', informationRatio: '0.1', maximumDrawdown: '-0.05' }))
+      .mockResolvedValueOnce(resultFor(atCost('600001', '5'), { totalReturn: '-0.01', annualizedReturn: '-0.10', sharpe: '-0.5', excessReturn: '-0.002', informationRatio: '-0.1', maximumDrawdown: '-0.08' }))
+      .mockResolvedValueOnce(resultFor(atCost('600004', '5'), { totalReturn: '0.02', annualizedReturn: '0.20', sharpe: '0.8', excessReturn: '0.004', informationRatio: '0.2', maximumDrawdown: '-0.03' }))
+      .mockResolvedValueOnce(resultFor(atCost('600003', '10'), { totalReturn: '0.03', annualizedReturn: '0.30', sharpe: '1.0', excessReturn: '0.006', informationRatio: '0.3', maximumDrawdown: '-0.04' }))
+      .mockResolvedValueOnce(resultFor(atCost('600001', '10'), { totalReturn: '0.01', annualizedReturn: '0.10', sharpe: '0.4', excessReturn: '0.002', informationRatio: '0.1', maximumDrawdown: '-0.06' }))
+      .mockResolvedValueOnce(resultFor(atCost('600004', '10'), { totalReturn: '0.02', annualizedReturn: '0.20', sharpe: '0.7', excessReturn: '0.004', informationRatio: '0.2', maximumDrawdown: '-0.02' }))
+    render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 股 / 3 板块同参诊断' }))
+    expect(await screen.findByText('同参批量完成：3/3 只代表股，覆盖 3/3 个板块')).toBeInTheDocument()
+
+    fireEvent.change(screen.getByRole('spinbutton', { name: '单边成本（bps）' }), { target: { value: '10' } })
+    expect(screen.queryByText('同参批量完成：3/3 只代表股，覆盖 3/3 个板块')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 股 / 3 板块同参诊断' }))
+    await waitFor(() => expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledTimes(6))
+
+    const history = screen.getByTestId('sector-batch-history')
+    expect(within(history).getByText('同参批量历史对比（2/5）')).toBeInTheDocument()
+    expect(within(history).getByText('批次 1')).toBeInTheDocument()
+    expect(within(history).getByText('批次 2')).toBeInTheDocument()
+    expect(within(history).getByText('5 bps')).toBeInTheDocument()
+    expect(within(history).getByText('10 bps')).toBeInTheDocument()
+    expect(within(history).getByText(/仅供人工比较，不会自动排序或选择赢家/)).toBeInTheDocument()
+    const exported = JSON.parse(within(history).getByRole('button', { name: '导出批次历史' }).dataset.export ?? '')
+    expect(exported.classification).toBe('BROWSER_SESSION_ONLY_CROSS_SECTOR_BATCH_COMPARISON')
+    expect(exported.runs).toHaveLength(2)
+    expect(exported.runs[0]).toMatchObject({
+      sequence: 2,
+      parameters: { cost_bps: '10' },
+      status: { requested: 3, completed: 3, failed: 0 },
+      summary: { valid_metric_count: 3, median_total_return: 0.02, median_sharpe: 0.7 },
+    })
+    expect(exported.runs[1]).toMatchObject({
+      sequence: 1,
+      parameters: { cost_bps: '5' },
+      summary: { valid_metric_count: 3, median_total_return: 0.01, median_sharpe: 0.5 },
+    })
+    expect(exported.automatic_winner_selection).toBe(false)
+    expect(exported.promotion).toBe('NOT_ELIGIBLE')
+    expect(exported.state_mutation).toBe(false)
+    expect(exported.external_order_transmission).toBe(false)
+
+    fireEvent.click(within(history).getByRole('button', { name: '载入批次 1 参数' }))
+    expect(screen.getByRole('spinbutton', { name: '单边成本（bps）' })).toHaveValue('5')
+    expect(screen.queryByTestId('sector-batch-summary')).not.toBeInTheDocument()
+    expect(screen.getByTestId('sector-batch-history')).toBeInTheDocument()
+  })
+
+  it('evicts the oldest batch summary after the five-run session limit', async () => {
+    const oneStockDataset = {
+      ...dataset,
+      bar_count: 2 * 48,
+      symbol_count: 1,
+      stock_count: 1,
+      sector_count: 1,
+      eligible_symbols: ['600003'],
+      instruments: [dataset.instruments.find((row) => row.symbol === '600003')!],
+    } satisfies Dataset
+    for (let cost = 1; cost <= 6; cost += 1) {
+      vi.mocked(runSingleStockFiveMinuteBacktest).mockResolvedValueOnce(resultFor({ ...requestFor('600003'), cost_bps: String(cost) }))
+    }
+    render(<SingleStockFiveMinuteBacktestLab dataset={oneStockDataset} />)
+
+    const costInput = screen.getByRole('spinbutton', { name: '单边成本（bps）' })
+    for (let sequence = 1; sequence <= 6; sequence += 1) {
+      fireEvent.change(costInput, { target: { value: String(sequence) } })
+      fireEvent.click(screen.getByRole('button', { name: '运行 1 股 / 1 板块同参诊断' }))
+      await waitFor(() => expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledTimes(sequence))
+    }
+
+    const history = await screen.findByTestId('sector-batch-history')
+    expect(within(history).getByText('同参批量历史对比（5/5）')).toBeInTheDocument()
+    const exported = JSON.parse(within(history).getByRole('button', { name: '导出批次历史' }).dataset.export ?? '')
+    expect(exported.runs.map(({ sequence }: { sequence: number }) => sequence)).toEqual([6, 5, 4, 3, 2])
+    expect(exported.runs.map(({ parameters }: { parameters: { cost_bps: string } }) => parameters.cost_bps)).toEqual(['6', '5', '4', '3', '2'])
+    expect(within(history).queryByText('批次 1')).not.toBeInTheDocument()
+  })
+
   it('bounds the signed 15-sector universe at 15 or 30 deterministic stock requests', () => {
     const instruments = Array.from({ length: 15 }, (_, sectorIndex) => (
       Array.from({ length: 5 }, (_, stockIndex) => ({
@@ -357,7 +438,7 @@ describe('single-stock cross-sector batch diagnostic', () => {
 
     expect(await screen.findByText('同参批量部分完成：0/3 只代表股，覆盖 0/3 个板块')).toBeInTheDocument()
     expect(screen.queryByTestId('sector-batch-summary')).not.toBeInTheDocument()
-    expect(screen.queryByText(/0\/0/)).not.toBeInTheDocument()
+    expect(within(screen.getByTestId('sector-batch-history')).getByText('0/0')).toBeInTheDocument()
     expect(screen.getByText('本次会话个股回测对比（0/30，覆盖 0 个板块）')).toBeInTheDocument()
     expect(within(screen.getByTestId('sector-batch-attempts')).getAllByText('请求失败')).toHaveLength(3)
     const exported = JSON.parse(screen.getByRole('button', { name: '导出本次会话对比' }).dataset.export ?? '')

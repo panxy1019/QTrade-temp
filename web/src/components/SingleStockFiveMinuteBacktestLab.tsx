@@ -36,8 +36,10 @@ interface SectorBatchStatus {
 
 type SectorBatchOutcome = 'COMPLETED' | 'REQUEST_FAILED' | 'IDENTITY_REJECTED'
 type BatchRepresentativesPerSector = 1 | 2
+type BatchSharedParameters = Omit<SingleStockFiveMinuteBacktestRequest, 'symbol'>
 
 const SESSION_RUN_LIMIT = 30
+const BATCH_HISTORY_LIMIT = 5
 
 interface SectorBatchAttempt {
   symbol: string
@@ -49,6 +51,45 @@ interface SectorBatchAttempt {
   preview_hash: string | null
 }
 
+interface BatchMetricRow {
+  row: SingleStockFiveMinuteBacktest
+  totalReturn: number
+  annualizedReturn: number
+  sharpe: number
+  excessReturn: number
+  informationRatio: number
+  maximumDrawdown: number
+}
+
+interface BatchMetricSummary {
+  valid_metric_count: number
+  positive_return_count: number
+  positive_excess_count: number
+  median_total_return: number | null
+  median_annualized_return: number | null
+  median_sharpe: number | null
+  median_maximum_drawdown: number | null
+  median_excess_return: number | null
+  median_information_ratio: number | null
+}
+
+interface SectorBatchHistoryEntry {
+  sequence: number
+  dataset_identity: { data_version: string; checksum: string }
+  representatives_per_sector: BatchRepresentativesPerSector
+  parameters: BatchSharedParameters
+  status: {
+    requested: number
+    completed: number
+    failed: number
+    identity_rejected: number
+    requested_sectors: number
+    completed_sectors: number
+  }
+  accepted_preview_hashes: string[]
+  summary: BatchMetricSummary
+}
+
 function median(values: number[]) {
   if (values.length === 0) return null
   const sorted = [...values].sort((left, right) => left - right)
@@ -56,14 +97,53 @@ function median(values: number[]) {
   return sorted.length % 2 === 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2
 }
 
-function toRequest(values: FormValues, symbol = values.symbol): SingleStockFiveMinuteBacktestRequest {
+function toBatchSharedParameters(values: FormValues): BatchSharedParameters {
   return {
-    ...values,
-    symbol,
+    start: values.start,
+    end: values.end,
     cost_bps: String(values.cost_bps),
+    short_window: values.short_window,
+    long_window: values.long_window,
+    volatility_window: values.volatility_window,
     maximum_minute_volatility: String(values.maximum_minute_volatility),
     maximum_intraday_drawdown: String(values.maximum_intraday_drawdown),
     reduction_multiplier: String(values.reduction_multiplier),
+    cooldown_bars: values.cooldown_bars,
+  }
+}
+
+function toRequest(values: FormValues, symbol = values.symbol): SingleStockFiveMinuteBacktestRequest {
+  return { symbol, ...toBatchSharedParameters(values) }
+}
+
+function toBatchMetricRows(rows: SingleStockFiveMinuteBacktest[]): BatchMetricRow[] {
+  return rows.map((row) => ({
+    row,
+    totalReturn: Number(row.metrics.overlay.total_return),
+    annualizedReturn: Number(row.metrics.overlay.annualized_return),
+    sharpe: Number(row.metrics.overlay.sharpe),
+    excessReturn: Number(row.metrics.excess_return),
+    informationRatio: Number(row.metrics.information_ratio),
+    maximumDrawdown: Number(row.metrics.overlay.maximum_drawdown),
+  })).filter((row) => Number.isFinite(row.totalReturn)
+    && Number.isFinite(row.annualizedReturn)
+    && Number.isFinite(row.sharpe)
+    && Number.isFinite(row.excessReturn)
+    && Number.isFinite(row.informationRatio)
+    && Number.isFinite(row.maximumDrawdown))
+}
+
+function summarizeBatchMetrics(rows: BatchMetricRow[]): BatchMetricSummary {
+  return {
+    valid_metric_count: rows.length,
+    positive_return_count: rows.filter((row) => row.totalReturn > 0).length,
+    positive_excess_count: rows.filter((row) => row.excessReturn > 0).length,
+    median_total_return: median(rows.map((row) => row.totalReturn)),
+    median_annualized_return: median(rows.map((row) => row.annualizedReturn)),
+    median_sharpe: median(rows.map((row) => row.sharpe)),
+    median_maximum_drawdown: median(rows.map((row) => row.maximumDrawdown)),
+    median_excess_return: median(rows.map((row) => row.excessReturn)),
+    median_information_ratio: median(rows.map((row) => row.informationRatio)),
   }
 }
 
@@ -110,6 +190,7 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
   const [batchProgress, setBatchProgress] = useState(0)
   const [batchStatus, setBatchStatus] = useState<SectorBatchStatus | null>(null)
   const [batchRepresentativesPerSector, setBatchRepresentativesPerSector] = useState<BatchRepresentativesPerSector>(1)
+  const [batchHistory, setBatchHistory] = useState<SectorBatchHistoryEntry[]>([])
   if (!dataset) {
     return <Card title="个股 5 分钟因果回测"><Alert showIcon type="warning" title="长历史 5 分钟数据不可用" description="系统不会用模拟行情替代真实且校验通过的数据。" /></Card>
   }
@@ -220,6 +301,27 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       requested: sectorBatchInstruments.length,
       requestedSectors: requestedSectorCount,
     })
+    const summary = summarizeBatchMetrics(toBatchMetricRows(completed))
+    setBatchHistory((current) => {
+      const compatible = current.filter((entry) => entry.dataset_identity.data_version === dataset.data_version
+        && entry.dataset_identity.checksum === dataset.checksum)
+      return [{
+        sequence: (compatible[0]?.sequence ?? 0) + 1,
+        dataset_identity: { data_version: dataset.data_version, checksum: dataset.checksum },
+        representatives_per_sector: batchRepresentativesPerSector,
+        parameters: toBatchSharedParameters(values),
+        status: {
+          requested: sectorBatchInstruments.length,
+          completed: completed.length,
+          failed,
+          identity_rejected: identityRejected,
+          requested_sectors: requestedSectorCount,
+          completed_sectors: new Set(completed.map((row) => row.instrument.sector_code)).size,
+        },
+        accepted_preview_hashes: completed.map((row) => row.preview_hash),
+        summary,
+      }, ...compatible].slice(0, BATCH_HISTORY_LIMIT)
+    })
     setBatchRunning(false)
   }
   const reasons = result
@@ -229,29 +331,15 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       .join('；')
     : ''
   const sessionSectorCount = new Set(sessionRuns.map((row) => row.instrument.sector_code)).size
-  const batchMetricRows = batchStatus
-    ? sessionRuns.map((row) => ({
-      row,
-      totalReturn: Number(row.metrics.overlay.total_return),
-      annualizedReturn: Number(row.metrics.overlay.annualized_return),
-      sharpe: Number(row.metrics.overlay.sharpe),
-      excessReturn: Number(row.metrics.excess_return),
-      informationRatio: Number(row.metrics.information_ratio),
-      maximumDrawdown: Number(row.metrics.overlay.maximum_drawdown),
-    })).filter((row) => Number.isFinite(row.totalReturn)
-      && Number.isFinite(row.annualizedReturn)
-      && Number.isFinite(row.sharpe)
-      && Number.isFinite(row.excessReturn)
-      && Number.isFinite(row.informationRatio)
-      && Number.isFinite(row.maximumDrawdown))
-    : []
+  const batchMetricRows = batchStatus ? toBatchMetricRows(sessionRuns) : []
+  const batchMetricSummary = summarizeBatchMetrics(batchMetricRows)
   const sortedBatchReturns = [...batchMetricRows].sort((left, right) => left.totalReturn - right.totalReturn)
-  const batchMedianReturn = median(batchMetricRows.map((row) => row.totalReturn))
-  const batchMedianAnnualizedReturn = median(batchMetricRows.map((row) => row.annualizedReturn))
-  const batchMedianSharpe = median(batchMetricRows.map((row) => row.sharpe))
-  const batchMedianMaximumDrawdown = median(batchMetricRows.map((row) => row.maximumDrawdown))
-  const batchMedianExcessReturn = median(batchMetricRows.map((row) => row.excessReturn))
-  const batchMedianInformationRatio = median(batchMetricRows.map((row) => row.informationRatio))
+  const batchMedianReturn = batchMetricSummary.median_total_return
+  const batchMedianAnnualizedReturn = batchMetricSummary.median_annualized_return
+  const batchMedianSharpe = batchMetricSummary.median_sharpe
+  const batchMedianMaximumDrawdown = batchMetricSummary.median_maximum_drawdown
+  const batchMedianExcessReturn = batchMetricSummary.median_excess_return
+  const batchMedianInformationRatio = batchMetricSummary.median_information_ratio
   const batchWorstReturn = sortedBatchReturns[0] ?? null
   const batchDeepestDrawdown = [...batchMetricRows].sort((left, right) => left.maximumDrawdown - right.maximumDrawdown)[0] ?? null
   const requestedBySector = new Map<string, number>()
@@ -321,9 +409,9 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
     attempts: batchStatus.attempts,
     results: sessionRuns,
     summary: {
-      valid_metric_count: batchMetricRows.length,
-      positive_return_count: batchMetricRows.filter((row) => row.totalReturn > 0).length,
-      positive_excess_count: batchMetricRows.filter((row) => row.excessReturn > 0).length,
+      valid_metric_count: batchMetricSummary.valid_metric_count,
+      positive_return_count: batchMetricSummary.positive_return_count,
+      positive_excess_count: batchMetricSummary.positive_excess_count,
       median_total_return: batchMedianReturn,
       median_annualized_return: batchMedianAnnualizedReturn,
       median_sharpe: batchMedianSharpe,
@@ -354,6 +442,33 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       'BROWSER_SESSION_DIAGNOSTIC_NOT_PAPER_OR_LIVE_ADMISSION',
     ],
   } : null
+  const currentBatchHistory = batchHistory.filter((entry) => entry.dataset_identity.data_version === dataset.data_version
+    && entry.dataset_identity.checksum === dataset.checksum)
+  const batchHistoryExport = {
+    classification: 'BROWSER_SESSION_ONLY_CROSS_SECTOR_BATCH_COMPARISON',
+    dataset_identity: { data_version: dataset.data_version, checksum: dataset.checksum },
+    limit: BATCH_HISTORY_LIMIT,
+    ordering: 'NEWEST_SEQUENCE_FIRST',
+    runs: currentBatchHistory,
+    persistence: 'NONE_REFRESH_CLEARS',
+    automatic_winner_selection: false,
+    creates_immutable_evidence: false,
+    registry_write: false,
+    promotion: 'NOT_ELIGIBLE',
+    state_mutation: false,
+    external_order_transmission: false,
+  }
+  const loadBatchHistoryParameters = (entry: SectorBatchHistoryEntry) => {
+    form.setFieldsValue({
+      symbol: form.getFieldValue('symbol') ?? initialValues.symbol,
+      ...entry.parameters,
+    })
+    setBatchRepresentativesPerSector(entry.representatives_per_sector)
+    setResult(null)
+    setError(null)
+    setBatchStatus(null)
+    setBatchProgress(0)
+  }
 
   return <Card title="个股 5 分钟因果回测" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · {dataset.session_count} 日</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
@@ -483,6 +598,42 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
             scroll={{ x: 1680 }}
           />
           <Typography.Text type="secondary">明细与本次会话导出的 pairs 使用同一份已接纳数据，按板块代码稳定排序；表格不会显示或补造不完整双股板块，也不会据此自动调参或晋级。</Typography.Text>
+        </Space>
+      </Card>}
+      {currentBatchHistory.length > 0 && <Card
+        data-testid="sector-batch-history"
+        type="inner"
+        title={`同参批量历史对比（${currentBatchHistory.length}/${BATCH_HISTORY_LIMIT}）`}
+        extra={<JsonExportButton filename="qtrade-cross-sector-batch-comparison.json" value={batchHistoryExport} label="导出批次历史" size="small" />}
+      >
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <Table<SectorBatchHistoryEntry>
+            rowKey="sequence"
+            size="small"
+            dataSource={currentBatchHistory}
+            pagination={false}
+            columns={[
+              { title: '批次', render: (_: unknown, row) => `批次 ${row.sequence}` },
+              { title: '代表股', render: (_: unknown, row) => `${row.representatives_per_sector} 股/板块` },
+              { title: '区间', render: (_: unknown, row) => `${row.parameters.start} → ${row.parameters.end}` },
+              { title: '成本', render: (_: unknown, row) => `${row.parameters.cost_bps} bps` },
+              { title: '趋势窗', render: (_: unknown, row) => `${row.parameters.short_window}/${row.parameters.long_window}` },
+              { title: '风险参数', render: (_: unknown, row) => `波动 ${row.parameters.volatility_window}/${row.parameters.maximum_minute_volatility} · 回撤 ${row.parameters.maximum_intraday_drawdown} · 倍数 ${row.parameters.reduction_multiplier} · 冷却 ${row.parameters.cooldown_bars}` },
+              { title: '完成股票/板块', render: (_: unknown, row) => `${row.status.completed}/${row.status.requested} · ${row.status.completed_sectors}/${row.status.requested_sectors}` },
+              { title: '失败/身份拒绝', render: (_: unknown, row) => `${row.status.failed}/${row.status.identity_rejected}` },
+              { title: '有效指标', render: (_: unknown, row) => `${row.summary.valid_metric_count}/${row.status.completed}` },
+              { title: '累计收益中位', render: (_: unknown, row) => row.summary.median_total_return === null ? '—' : formatPercent(String(row.summary.median_total_return)) },
+              { title: '年化收益中位', render: (_: unknown, row) => row.summary.median_annualized_return === null ? '—' : formatPercent(String(row.summary.median_annualized_return)) },
+              { title: 'Sharpe 中位', render: (_: unknown, row) => row.summary.median_sharpe === null ? '—' : formatNumber(String(row.summary.median_sharpe)) },
+              { title: '回撤中位', render: (_: unknown, row) => row.summary.median_maximum_drawdown === null ? '—' : formatPercent(String(row.summary.median_maximum_drawdown)) },
+              { title: '超额中位', render: (_: unknown, row) => row.summary.median_excess_return === null ? '—' : formatPercent(String(row.summary.median_excess_return)) },
+              { title: '信息比率中位', render: (_: unknown, row) => row.summary.median_information_ratio === null ? '—' : formatNumber(String(row.summary.median_information_ratio)) },
+              { title: '已接纳身份', render: (_: unknown, row) => `${row.accepted_preview_hashes.length} 个结果哈希` },
+              { title: '操作', render: (_: unknown, row) => <Button size="small" onClick={() => loadBatchHistoryParameters(row)}>载入批次 {row.sequence} 参数</Button> },
+            ]}
+            scroll={{ x: 2280 }}
+          />
+          <Typography.Text type="secondary">仅保留当前页面最近 {BATCH_HISTORY_LIMIT} 个批次的参数、真实覆盖/失败分母、统一有限指标摘要和已接纳结果哈希；不保留重复完整曲线。仅供人工比较，不会自动排序或选择赢家；载入只回填表单，必须重新运行。刷新即清空，不是不可变实验、样本外证据、注册、晋级或 PAPER/LIVE 权限。</Typography.Text>
         </Space>
       </Card>}
       {error && <Alert showIcon type="error" title="个股回测未完成" description={error} />}

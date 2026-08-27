@@ -277,7 +277,14 @@ and information ratio, plus the worst-return stock and the deepest-drawdown
 stock. Failed
 requests never enter those denominators. This is a browser-session fragility
 diagnostic over at most two representatives per sector, not a full 75-stock
-statistical robustness gate or independent sample-out result. The two-stock
+statistical robustness gate or independent sample-out result. The batch workflow
+also retains the latest five batch summaries in the current page,
+including exact shared parameters, real stock/sector coverage and failures, all
+six common-metric medians and every admitted preview hash. Operators may export
+the comparison or load an older parameter set for a required fresh run. The
+sixth run evicts the oldest; refresh clears the history, and the browser never
+auto-ranks or selects a winner. This is not server persistence, an immutable
+experiment, sample-out evidence or promotion authority. The two-stock
 mode additionally forms a within-sector pair only when both
 requested responses pass identity binding and all key metrics are finite. It
 reports complete-pair coverage, return/excess sign agreement, median absolute

@@ -2575,3 +2575,25 @@ remain outside the denominator as before.
 These descriptive medians add no request, parameter choice or statistical gate.
 They are not independent sample-out evidence and cannot create persistence,
 registry or promotion state, start PAPER/LIVE or transmit an external order.
+
+## ADR-145 — Repeated cross-sector tuning keeps bounded summaries, not winners
+
+Status: accepted, 2026-08-27.
+
+Replacing the previous cross-sector batch on every run prevents an operator from
+checking whether a manual parameter change improved one headline while degrading
+coverage, failure counts or another common metric. Retaining every full response,
+however, would duplicate up to 30 curves per run and encourage unbounded browser
+memory use.
+
+The page therefore retains the newest five compact batch entries. Each binds its
+dataset identity, one/two-stock selection mode, complete shared parameters,
+stock/sector request and completion denominators, failure and identity-rejection
+counts, the shared complete finite-metric summary and all admitted preview hashes.
+The sixth entry evicts the oldest. Export preserves this order and identity; loading
+an entry only refills the form and still requires a fresh server-validated run.
+
+The table does not rank, highlight or select a winner. It is refresh-cleared
+browser state without full duplicate curves, import or server synchronization.
+It cannot become an immutable experiment, independent sample-out evidence,
+registry or promotion state, PAPER/LIVE transition or external-order capability.

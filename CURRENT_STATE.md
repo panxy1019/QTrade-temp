@@ -34,7 +34,7 @@ Last updated: 2026-08-27
   requests, POSTs and error responses remain uncached.
 - Acceptance evidence: 458 tests passed, Ruff clean, strict mypy clean across
   98 checked source files on Python 3.12.13
-  (macOS, 2026-08-27); 90 frontend Vitest
+  (macOS, 2026-08-27); 92 frontend Vitest
   tests, ESLint and both production builds pass. Route-level lazy loading plus
   modular ECharts registration and stable React/zrender chunks keep every
   minified JavaScript asset at or below 430.53 KB with no large-chunk warning.
@@ -230,6 +230,13 @@ Last updated: 2026-08-27
   cumulative/annualized return, Sharpe, maximum drawdown, active excess and
   information ratio; and identified worst return/deepest drawdown stocks. Failed
   requests remain outside every denominator. It does
+  retain the latest five cross-sector batch summaries in the current page so
+  repeated manual parameter changes can be compared without losing the prior
+  parameter set, actual coverage/failure denominator, six common-metric medians
+  or admitted preview hashes. The comparison can be exported, and loading an old
+  row only refills the form for a required fresh run. The sixth batch evicts the
+  oldest; refresh clears all rows, and there is no automatic winner selection.
+  It does
   not admit a response until stock/sector, complete request parameters, signed
   dataset identity and all no-realtime/no-mutation/no-order flags match; identity
   drift is counted and omitted. Its batch export retains the full expected request

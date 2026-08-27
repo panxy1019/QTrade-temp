@@ -262,6 +262,13 @@ annualized return, Sharpe, maximum drawdown, active excess and information ratio
 plus the worst return/drawdown identities so favourable rows cannot hide
 the visible tail. Missing requests remain excluded and visible, and the summary
 is neither a statistical gate nor an independent sample-out claim.
+The browser now also retains the latest five batch summaries so repeated manual
+parameter changes can be compared against their exact shared parameters, real
+stock/sector success and failure denominators, unified six-metric medians and
+admitted preview hashes. Loading an older batch only refills the form and requires
+a fresh run; the sixth batch evicts the oldest. The bounded comparison is
+exportable but refresh-cleared, never auto-ranks or selects a winner, and creates
+no server record, experiment, promotion or PAPER/LIVE authority.
 When two representatives were requested, a second diagnostic groups only
 complete, finite, identity-admitted pairs. It exposes the number of comparable
 sectors, return/excess sign agreement, median absolute return spread and the
