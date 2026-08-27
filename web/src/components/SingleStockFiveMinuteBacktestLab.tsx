@@ -127,6 +127,22 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
       .join('；')
     : ''
   const sessionSectorCount = new Set(sessionRuns.map((row) => row.instrument.sector_code)).size
+  const batchMetricRows = batchStatus
+    ? sessionRuns.map((row) => ({
+      row,
+      totalReturn: Number(row.metrics.overlay.total_return),
+      excessReturn: Number(row.metrics.excess_return),
+      maximumDrawdown: Number(row.metrics.overlay.maximum_drawdown),
+    })).filter((row) => Number.isFinite(row.totalReturn) && Number.isFinite(row.excessReturn) && Number.isFinite(row.maximumDrawdown))
+    : []
+  const sortedBatchReturns = [...batchMetricRows].sort((left, right) => left.totalReturn - right.totalReturn)
+  const batchMedianReturn = sortedBatchReturns.length === 0
+    ? null
+    : sortedBatchReturns.length % 2 === 1
+      ? sortedBatchReturns[Math.floor(sortedBatchReturns.length / 2)].totalReturn
+      : (sortedBatchReturns[sortedBatchReturns.length / 2 - 1].totalReturn + sortedBatchReturns[sortedBatchReturns.length / 2].totalReturn) / 2
+  const batchWorstReturn = sortedBatchReturns[0] ?? null
+  const batchDeepestDrawdown = [...batchMetricRows].sort((left, right) => left.maximumDrawdown - right.maximumDrawdown)[0] ?? null
 
   return <Card title="个股 5 分钟因果回测" extra={<Typography.Text type="secondary">{dataset.symbol_count} 股 · {dataset.sector_count} 板块 · {dataset.session_count} 日</Typography.Text>}>
     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
@@ -180,6 +196,19 @@ export function SingleStockFiveMinuteBacktestLab({ dataset }: { dataset: Verifie
           ? '每个板块按板块代码、股票代码确定性选一股，日期、成本与分钟修正参数完全一致；结果只进入当前浏览器会话对比，不等于全板块或全股票稳健性证据。'
           : `${batchStatus.failed} 个板块请求失败，失败结果未补造；当前覆盖必须按成功行计数，不能声称完成全板块检验。`}
       />}
+      {batchStatus && batchStatus.completed > 0 && <Card data-testid="sector-batch-summary" type="inner" title="同参批量横截面摘要（仅成功代表股）">
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          <div className="description-grid">
+            <Metric label="指标有效代表股" value={`${batchMetricRows.length}/${batchStatus.completed}`} />
+            <Metric label="正收益代表股" value={`${batchMetricRows.filter((row) => row.totalReturn > 0).length}/${batchMetricRows.length}`} />
+            <Metric label="正超额代表股" value={`${batchMetricRows.filter((row) => row.excessReturn > 0).length}/${batchMetricRows.length}`} />
+            <Metric label="收益中位数" value={batchMedianReturn === null ? '—' : formatPercent(String(batchMedianReturn))} />
+            <Metric label="最差收益" value={batchWorstReturn ? `${batchWorstReturn.row.symbol} · ${formatPercent(String(batchWorstReturn.totalReturn))}` : '—'} />
+            <Metric label="最深回撤" value={batchDeepestDrawdown ? `${batchDeepestDrawdown.row.symbol} · ${formatPercent(String(batchDeepestDrawdown.maximumDrawdown))}` : '—'} />
+          </div>
+          <Typography.Text type="secondary">摘要只按 {batchStatus.completed} 个成功代表股计算；失败请求和同板块其余股票均未进入分母。它用于识别同一参数的横截面脆弱性，不是统计稳健性门槛、独立样本外证据、策略注册或 PAPER/LIVE 晋级结论。</Typography.Text>
+        </Space>
+      </Card>}
       {error && <Alert showIcon type="error" title="个股回测未完成" description={error} />}
       {result && <>
         <Alert showIcon type="success" title={`已完成 ${result.symbol} ${result.instrument.name} · ${result.selected_session_count} 日 / ${result.selected_bar_count} Bar`} description={`使用 ${result.warmup_session_count} 日因果预热；结果哈希 ${result.preview_hash.slice(0, 16)}…；固定结论 ${result.promotion}。`} />

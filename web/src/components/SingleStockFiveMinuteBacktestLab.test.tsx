@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { runSingleStockFiveMinuteBacktest } from '../api/client'
 import type { FiveMinuteResearchReport, SingleStockFiveMinuteBacktest, SingleStockFiveMinuteBacktestRequest } from '../types'
@@ -27,7 +27,10 @@ const dataset = {
   realtime_readiness: false, real_data_paper_readiness: false, external_order_transmission: false,
 } satisfies Dataset
 
-function resultFor(payload: SingleStockFiveMinuteBacktestRequest): SingleStockFiveMinuteBacktest {
+function resultFor(
+  payload: SingleStockFiveMinuteBacktestRequest,
+  metrics: { totalReturn?: string; excessReturn?: string; maximumDrawdown?: string } = {},
+): SingleStockFiveMinuteBacktest {
   const instrument = dataset.instruments.find((row) => row.symbol === payload.symbol)
   if (!instrument?.sector_code || !instrument.sector_name) throw new Error('missing fixture instrument')
   return {
@@ -36,8 +39,11 @@ function resultFor(payload: SingleStockFiveMinuteBacktestRequest): SingleStockFi
     preview_hash: payload.symbol.repeat(11).slice(0, 64),
     parameters: payload,
     metrics: {
-      overlay: { total_return: '0.01', annualized_return: '0.10', sharpe: '1.0', maximum_drawdown: '-0.02' },
-      excess_return: '0.001', information_ratio: '0.2',
+      overlay: {
+        total_return: metrics.totalReturn ?? '0.01', annualized_return: '0.10', sharpe: '1.0',
+        maximum_drawdown: metrics.maximumDrawdown ?? '-0.02',
+      },
+      excess_return: metrics.excessReturn ?? '0.001', information_ratio: '0.2',
     },
     execution: { mean_exposure: '0.90', turnover: '1.5' },
   } as unknown as SingleStockFiveMinuteBacktest
@@ -58,9 +64,9 @@ describe('single-stock cross-sector batch diagnostic', () => {
 
   it('runs one deterministic representative per sector with identical parameters', async () => {
     vi.mocked(runSingleStockFiveMinuteBacktest)
-      .mockResolvedValueOnce(resultFor(requestFor('600003')))
-      .mockResolvedValueOnce(resultFor(requestFor('600001')))
-      .mockResolvedValueOnce(resultFor(requestFor('600004')))
+      .mockResolvedValueOnce(resultFor(requestFor('600003'), { totalReturn: '0.03', excessReturn: '0.01', maximumDrawdown: '-0.04' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600001'), { totalReturn: '-0.01', excessReturn: '-0.02', maximumDrawdown: '-0.08' }))
+      .mockResolvedValueOnce(resultFor(requestFor('600004'), { totalReturn: '0.02', excessReturn: '0.005', maximumDrawdown: '-0.03' }))
     render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
 
     fireEvent.click(screen.getByRole('button', { name: '运行 3 板块同参诊断' }))
@@ -73,6 +79,12 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(new Set(payloads.map((payload) => JSON.stringify(payload))).size).toBe(1)
     expect(screen.getByText('本次会话个股回测对比（3/15，覆盖 3 个板块）')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出本次会话对比/ })).toBeInTheDocument()
+    const summary = screen.getByTestId('sector-batch-summary')
+    expect(within(summary).getByText('同参批量横截面摘要（仅成功代表股）')).toBeInTheDocument()
+    expect(within(summary).getAllByText('2/3')).toHaveLength(2)
+    expect(within(summary).getByText('2.00%')).toBeInTheDocument()
+    expect(within(summary).getByText('600001 · -1.00%')).toBeInTheDocument()
+    expect(within(summary).getByText('600001 · -8.00%')).toBeInTheDocument()
   })
 
   it('reports partial coverage when one sector request fails', async () => {
@@ -87,6 +99,40 @@ describe('single-stock cross-sector batch diagnostic', () => {
     expect(await screen.findByText('同参批量部分完成：2/3 个板块')).toBeInTheDocument()
     expect(screen.getByText(/1 个板块请求失败，失败结果未补造/)).toBeInTheDocument()
     expect(screen.getByText('本次会话个股回测对比（2/15，覆盖 2 个板块）')).toBeInTheDocument()
+    expect(within(screen.getByTestId('sector-batch-summary')).getByText('指标有效代表股')).toBeInTheDocument()
+    expect(within(screen.getByTestId('sector-batch-summary')).getAllByText('2/2')).toHaveLength(3)
+    expect(within(screen.getByTestId('sector-batch-summary')).getByText(/只按 2 个成功代表股/)).toBeInTheDocument()
+    await waitFor(() => expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledTimes(3))
+  })
+
+  it('excludes a successful response with non-finite metrics from the summary denominator', async () => {
+    vi.mocked(runSingleStockFiveMinuteBacktest)
+      .mockResolvedValueOnce(resultFor(requestFor('600003')))
+      .mockResolvedValueOnce(resultFor(requestFor('600001'), { totalReturn: 'NaN' }))
+      .mockRejectedValueOnce(new Error('provider timeout'))
+    render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 板块同参诊断' }))
+
+    expect(await screen.findByText('同参批量部分完成：2/3 个板块')).toBeInTheDocument()
+    const summary = screen.getByTestId('sector-batch-summary')
+    expect(within(summary).getByText('1/2')).toBeInTheDocument()
+    expect(within(summary).getAllByText('1/1')).toHaveLength(2)
+    expect(within(summary).getByText(/失败请求和同板块其余股票均未进入分母/)).toBeInTheDocument()
+  })
+
+  it('does not create an aggregate summary when every representative request fails', async () => {
+    vi.mocked(runSingleStockFiveMinuteBacktest)
+      .mockRejectedValueOnce(new Error('provider timeout'))
+      .mockRejectedValueOnce(new Error('provider timeout'))
+      .mockRejectedValueOnce(new Error('provider timeout'))
+    render(<SingleStockFiveMinuteBacktestLab dataset={dataset} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '运行 3 板块同参诊断' }))
+
+    expect(await screen.findByText('同参批量部分完成：0/3 个板块')).toBeInTheDocument()
+    expect(screen.queryByTestId('sector-batch-summary')).not.toBeInTheDocument()
+    expect(screen.queryByText(/0\/0/)).not.toBeInTheDocument()
     await waitFor(() => expect(runSingleStockFiveMinuteBacktest).toHaveBeenCalledTimes(3))
   })
 })

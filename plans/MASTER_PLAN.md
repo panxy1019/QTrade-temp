@@ -251,6 +251,11 @@ enter the browser-session table; partial failures remain visible and cannot be
 called complete coverage. A combined JSON export supports review, while the
 batch performs no per-stock tuning, persistence, promotion, PAPER/LIVE state or
 order operation and is not a substitute for the existing 75-stock formal report.
+Its browser-only cross-sectional summary uses only successful responses with
+finite return, excess and drawdown metrics. It exposes positive counts, median
+return and the worst return/drawdown identities so favourable rows cannot hide
+the visible tail. Missing requests remain excluded and visible, and the summary
+is neither a statistical gate nor an independent sample-out claim.
 
 The historical research surface now also includes a bounded interactive preview.
 It accepts adjustable momentum/reversal/low-volatility, risk and cost parameters,

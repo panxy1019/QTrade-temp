@@ -2392,3 +2392,24 @@ This is a convenience diagnostic over the existing single-stock endpoint, not a
 new engine or statistical robustness test. It does not select parameters per
 stock, represent every stock in a sector, persist evidence, register/promote a
 strategy, start PAPER/LIVE, mutate runtime state or transmit an external order.
+
+## ADR-136 — Batch cross-section summaries preserve the successful-response denominator
+
+Status: accepted, 2026-08-27.
+
+The deterministic sector batch exposed every successful result, but an operator
+still had to scan the table to find how many representative stocks were positive
+and which one carried the worst return or drawdown. A favourable row could receive
+attention while a failed request or weak tail remained easy to overlook.
+
+The browser now derives one bounded summary from the batch's successful responses.
+A row enters the calculation only when overlay return, excess return and maximum
+drawdown are finite. The UI reports the valid metric count against successful
+responses, positive return and excess counts, the median overlay return, the
+worst-return identity and the deepest-drawdown identity. Failed requests are not
+assigned zero, copied values or a place in the denominator.
+
+The calculation covers one deterministic representative per sector in one current
+browser session. It is a fragility diagnostic, not a registered robustness gate,
+independent sample-out evidence, per-stock tuning result, experiment, promotion,
+PAPER/LIVE state change or external-order capability.

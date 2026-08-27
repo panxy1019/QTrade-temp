@@ -267,7 +267,12 @@ endpoint sequentially with one shared date/cost/policy form snapshot. Partial
 failures remain missing instead of being synthesized, the visible coverage uses
 successful rows only, and the complete session comparison can be exported as one
 JSON document. The batch does not tune per stock and is not evidence for every
-stock in a sector. The comparison is cleared on
+stock in a sector. For the successful batch rows, a compact cross-sectional
+summary reports finite-metric coverage, positive strategy and excess counts,
+median return, the worst-return stock and the deepest-drawdown stock. Failed
+requests never enter those denominators. This is a browser-session fragility
+diagnostic over one representative per sector, not a statistical robustness
+gate or independent sample-out result. The comparison is cleared on
 refresh and is neither persisted evidence nor an experiment record. Every result
 remains current-universe, QFQ/non-PIT,
 `NOT_ELIGIBLE`, stateless and unable to transmit an external order.
