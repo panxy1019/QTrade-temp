@@ -2,6 +2,17 @@
 
 Last updated: 2026-10-25
 
+- Qlib daily baseline computed: isolated Python3.11/Qlib0.9.7 environment;
+  990/1000 stocks and 2,157,805 daily bars reconciled with recovered Sina amount
+  and effective-date HFQ multipliers. Ten stocks with unexplained raw-date drift
+  are excluded. Fixed Alpha158/LightGBM historical test spans 2024-01-02 through
+  2026-10-23 (678 portfolio sessions). IC 0.02341, RankIC 0.04941, net total return
+  111.29%, maximum drawdown -33.50%; current-universe bias prevents promotion.
+  Linux full suite 516 passed, followed by 24 focused checks; frontend full suite
+  195 passed, followed by four Qlib panel checks. See `docs/QLIB_BASELINE.md`.
+  Public production acceptance is being completed. Historical ST/exact limits,
+  suspension reasons and PIT memberships remain explicitly unverified.
+
 - Current-data synchronization: default market/backtest workspaces now use the
   verified `/current/*` channel. EOD inputs cover 2026-10-23; intraday charts
   follow the observer. Immutable reports remain dated archives. Daily expansion

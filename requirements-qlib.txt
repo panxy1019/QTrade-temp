@@ -1,0 +1,9 @@
+# Isolated cluster research environment; do not add these to Vercel dependencies.
+pyqlib==0.9.7
+numpy==1.26.4
+pandas==2.2.3
+lightgbm==4.6.0
+scikit-learn==1.6.1
+mlflow==2.22.2
+# MLflow 2.22 requires Arrow <20. This is a separate environment, not the API runtime.
+pyarrow==19.0.1

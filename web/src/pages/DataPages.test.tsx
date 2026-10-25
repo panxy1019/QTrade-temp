@@ -8,6 +8,7 @@ import { HistoricalBacktestPage as BacktestPage, DataCenterPage, ExperimentPage,
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
 vi.mock('../components/PublicResearchObservations', () => ({ PublicResearchObservations: () => null }))
+vi.mock('../components/QlibBaseline', () => ({ QlibBaseline: () => null }))
 vi.mock('../charts/MinuteBacktestChart', () => ({ MinuteBacktestChart: () => <div data-testid="minute-backtest-chart" /> }))
 vi.mock('../charts/ReservedTailChart', () => ({ ReservedTailChart: () => <div data-testid="reserved-tail-chart" /> }))
 vi.mock('../charts/MinuteHistoryChart', () => ({ MinuteHistoryChart: ({ loading = false }: { loading?: boolean }) => <div data-testid="minute-history-chart">{loading ? '正在加载已验证历史分时线…' : null}</div> }))

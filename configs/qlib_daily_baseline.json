@@ -1,0 +1,49 @@
+{
+  "schema_version": "qtrade.qlib-baseline-config.v1",
+  "name": "alpha158-lightgbm-daily-v1",
+  "seed": 20261025,
+  "segments": {
+    "train": ["2017-04-05", "2021-12-28"],
+    "valid": ["2022-01-04", "2023-12-26"],
+    "test": ["2024-01-02", "2026-10-23"]
+  },
+  "label": "Ref($open,-2)/Ref($open,-1)-1",
+  "model": {
+    "class": "LGBModel",
+    "module_path": "qlib.contrib.model.gbdt",
+    "kwargs": {
+      "loss": "mse", "learning_rate": 0.05, "num_leaves": 31,
+      "max_depth": 6, "min_data_in_leaf": 100,
+      "colsample_bytree": 0.8, "subsample": 0.8, "subsample_freq": 1,
+      "lambda_l1": 0.0, "lambda_l2": 1.0,
+      "num_threads": 6, "seed": 20261025,
+      "feature_fraction_seed": 20261025, "bagging_seed": 20261025,
+      "deterministic": true, "force_col_wise": true, "verbosity": -1
+    }
+  },
+  "fit": {"num_boost_round": 300, "early_stopping_rounds": 30, "verbose_eval": 50},
+  "portfolio": {
+    "topk": 50, "n_drop": 5, "hold_thresh": 2,
+    "risk_degree": 0.95, "only_tradable": false,
+    "forbid_all_trade_at_limit": false
+  },
+  "exchange": {
+    "freq": "day", "deal_price": "open", "trade_unit": 100,
+    "limit_threshold": ["$buy_block", "$sell_block"],
+    "volume_threshold": ["cum", "$capacity"],
+    "open_cost": 0.0008, "close_cost": 0.0013, "min_cost": 5,
+    "impact_cost": 0.0
+  },
+  "cost_description": "Buy 8bp / sell 13bp includes 3bp commission + 5bp slippage proxy, sell adds 5bp stamp duty; minimum CNY5. Research assumptions, not a broker quote. No separate nonlinear impact model.",
+  "account": 10000000,
+  "benchmark": "SH000300",
+  "limitations": [
+    "Current liquidity universe selected after the historical test; survivorship and screening bias",
+    "Post hoc historical out-of-sample evaluation, not preregistered or forward unseen evidence",
+    "Historical ST and exact daily limits unverified: conservative directional 4.5% adjusted-open gap blocks",
+    "STAR buys excluded because the baseline uses 100-share lots",
+    "Missing daily quotes are non-tradable, not a certified suspension-reason table",
+    "Vendor effective-date HFQ factors not independently reconciled to corporate actions",
+    "Daily open-price fills and previous-session 1% volume cap are approximations, not auction replay"
+  ]
+}

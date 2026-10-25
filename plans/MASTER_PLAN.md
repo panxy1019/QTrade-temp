@@ -22,6 +22,17 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
+### Qlib daily research migration, 2026-10-25
+
+- [x] Record source/reuse audit and fixed research contract.
+- [x] Implement amount/HFQ/VWAP adaptation with existing-bar reconciliation.
+- [x] Implement fixed Alpha158/LightGBM run and complete artifact archive.
+- [x] Implement independent read-only result API and web panel.
+- [x] Complete cluster data audit, model fit and out-of-sample backtest.
+- [ ] Verify persisted artifacts, production publication and UI acceptance.
+
+Reproduction and limits: `docs/QLIB_BASELINE.md`.
+
 ### Current-data synchronization and capacity, 2026-10-25
 
 - [x] Trace August-only charts/backtests to bundled immutable inputs.

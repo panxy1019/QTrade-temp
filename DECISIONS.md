@@ -1,5 +1,29 @@
 # Architecture decisions
 
+## ADR-165 — Qlib is the isolated daily research engine
+
+Status: accepted, 2026-10-25, at the user's request.
+
+Reuse QTrade's checksummed raw stock history, data gates, provenance, archives
+and public observation transport. Source/reuse audit is in `docs/QLIB_BASELINE.md`.
+Use Qlib Alpha158, LGBModel, DatasetH, Recorder and built-in backtest components;
+vn.py execution components are outside this research migration. Isolate Python
+and dependencies from collectors and the public Vercel runtime.
+
+Recover amount and effective-date HFQ factors from saved public-source responses,
+reconcile existing OHLCV, normalize prices and inverse-adjust volumes. Reject
+unexplained source drift; do not fill suspension bars or fabricate VWAP. Current
+universe bias and unverified historical corporate-action/ST/limit/halt data stay
+visible. Conservative execution proxies are documented, not called certified rules.
+
+Fix time segments, seed, costs and model parameters before examining the test
+result. Persist the actual source revision, environment, model, signals, portfolio
+reports and every input/artifact checksum before publishing COMPLETE. Historical
+test results remain post hoc non-PIT diagnostics. Publish a bounded result through
+the existing data-only channel; show publication age separately from result dates.
+No public research write endpoint, automatic promotion or trading path is added.
+LIVE_TRADING_ENABLED remains false.
+
 ## ADR-001 — Bootstrap with a framework-independent safety kernel
 
 Status: accepted, 2026-08-12.
