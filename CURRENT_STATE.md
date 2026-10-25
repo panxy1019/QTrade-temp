@@ -2,6 +2,13 @@
 
 Last updated: 2026-10-25
 
+- Qlib migration in progress: isolated Python3.11 research environment, signed
+  OHLCV reconciliation with recovered Sina amount/effective-date HFQ factors,
+  fixed Alpha158/LightGBM config and read-only web publication implemented.
+  Data preparation and first cluster baseline are being verified; no completed
+  result is claimed yet. See `docs/QLIB_BASELINE.md`. Historical ST/exact limits,
+  suspension reasons and PIT memberships remain explicitly unverified.
+
 - Current-data synchronization: default market/backtest workspaces now use the
   verified `/current/*` channel. EOD inputs cover 2026-10-23; intraday charts
   follow the observer. Immutable reports remain dated archives. Daily expansion

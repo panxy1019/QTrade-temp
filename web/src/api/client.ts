@@ -8,6 +8,10 @@ const getWaiters: Array<() => void> = []
 
 export const prometheusMetricsUrl = `${API_BASE}/metrics/prometheus`
 
+export function loadQlibBaseline() {
+  return getJson<import('../types').QlibBaselinePublication>('/qlib/baseline')
+}
+
 export function loadPublicResearchObservations() {
   return getJson<import('../types').PublicResearchObservation>('/observations/latest')
 }

@@ -2333,6 +2333,41 @@ export interface DailyReportAutomationStatus {
   external_order_transmission: false
 }
 
+export interface QlibBaselinePublication {
+  schema_version: 'qtrade.qlib-baseline.v1'
+  state: string
+  published_at: string
+  publication_status: 'CURRENT' | 'STALE'
+  result_data_status: 'CURRENT_THROUGH_COMPLETE_DAY' | 'HISTORICAL' | 'NOT_AVAILABLE'
+  expected_complete_day: string
+  external_order_transmission: false
+  live_trading_enabled: false
+  progress: { completed: number | null; failed: number | null; target: number | null; updated_at: string | null }
+  artifact_manifest_sha256: string | null
+  run: null | {
+    run_id: string
+    model: string
+    completed_at: string
+    source_revision: string
+    data_end: string
+    data_rows: number
+    symbols: number
+    requested_symbols: number
+    feature_count: number
+    persisted: true
+    segments: Record<'train' | 'valid' | 'test', [string, string]>
+    split_rows: Record<string, number>
+    metrics: Record<string, number | null>
+    signal_evaluation: { start: string; end: string; days: number; label: string }
+    portfolio_evaluation: { start: string; end: string; days: number; benchmark: string }
+    curve: Array<{ date: string; equity: number; benchmark_equity: number; drawdown: number; turnover: number; cost: number }>
+    cost_assumptions: { open_cost: number; close_cost: number; min_cost: number }
+    selection_bias: string
+    limitations: string[]
+    evidence_sha256: string
+  }
+}
+
 export interface PublicResearchObservation {
   schema_version: 'qtrade.public-observations.v1'
   published_at: string

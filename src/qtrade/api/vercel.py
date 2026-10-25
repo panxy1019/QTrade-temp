@@ -6,6 +6,7 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from qtrade.api.app import ApiAuthConfig, bootstrap_context, create_app
 from qtrade.api.current_datasets import router as current_dataset_router
 from qtrade.api.public_observations import router as observation_router
+from qtrade.api.qlib_baseline import router as qlib_router
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_ROOT = PROJECT_ROOT / "deployment" / "evidence"
@@ -91,6 +92,7 @@ class VercelQueryPathApp:
                 "/persisted-experiments",
             }
             and not route.startswith("/current/")
+            and not route.startswith("/qlib/")
         )
 
         async def send_with_cache(message: Message) -> None:
@@ -121,4 +123,5 @@ class VercelQueryPathApp:
 inner_app = create_app(context, auth=ApiAuthConfig())
 inner_app.include_router(observation_router)
 inner_app.include_router(current_dataset_router)
+inner_app.include_router(qlib_router)
 app = VercelQueryPathApp(inner_app)

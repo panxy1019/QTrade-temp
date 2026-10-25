@@ -99,6 +99,13 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         raise ValueError("PUBLICATION_DESTINATION_MISMATCH")
     snapshot = build_snapshot(root, experiment_root)
     current_files: list[str] = []
+    from qtrade.research.qlib_publication import build_publication
+
+    qlib = build_publication(
+        root.parent, json.loads((REPO / "configs/observer_calendar_2026.json").read_text())
+    )
+    write_json_atomic(publication / "qlib.json", qlib)
+    current_files.append("qlib.json")
     current_root = root.parent / "current-data" / "public"
     if (current_root / "current.json").is_file():
         from hashlib import sha256

@@ -5,6 +5,7 @@ import { CurrentDataProvider, CurrentDataStatus, CurrentWorkspace } from './Curr
 
 vi.mock('../api/client', () => ({ loadCurrentDatasets: vi.fn(), loadCurrentSeries: vi.fn() }))
 vi.mock('./PublicResearchObservations', () => ({ PublicResearchObservations: () => null }))
+vi.mock('./QlibBaseline', () => ({ QlibBaseline: () => null }))
 vi.mock('./BacktestLab', () => ({ BacktestLab: () => null }))
 vi.mock('../charts/MarketHistoryChart', () => ({ MarketHistoryChart: ({ series }: { series: { data_version: string } | null }) => <div>{series?.data_version ?? '没有图表数据'}</div> }))
 const load = vi.mocked(loadCurrentDatasets)
