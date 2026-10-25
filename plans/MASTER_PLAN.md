@@ -798,3 +798,13 @@ observations and frozen current universes are not PIT or execution readiness;
 calendar renewal is required before 2027; process supervision cannot keep a
 rented cluster container powered on; external alerts and off-host backups remain
 unconfigured. Accepted old research evidence remains unchanged.
+
+## 2026-10-25 — Public observation channel and persisted research
+
+- [x] Audit existing data, factors, templates, browser previews and experiment storage.
+- [x] Implement bounded publication and request-time freshness validation.
+- [x] Implement immutable formal-run archives and local-catalog recovery.
+- [ ] Verify Linux persistence, idempotency, corruption rejection and recovery.
+- [ ] Run three fixed continuation diagnostics and archive 11 legacy experiments.
+- [ ] Deploy and verify browser -> API -> publication -> cluster data.
+- [ ] Deliver Chinese data/factor/strategy inventory and operating instructions.

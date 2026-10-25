@@ -2979,3 +2979,30 @@ Do not modify accepted historical experiments, count backfill as forward
 PAPER evidence, or change live/external-order authority. A public Vercel project
 cannot directly reach the private SSH address; web publication is a separate
 read-only integration with explicit destination and network configuration.
+
+## ADR-163 — Public research publication is a bounded data-only channel
+
+Status: accepted, 2026-10-25.
+
+Use a dedicated public observation repository for small JSON snapshots, with a
+write deploy key scoped only to that repository. The generated private key stays
+on the cluster with restricted permissions. Vercel fetches one fixed HTTPS
+destination without credentials; it never executes code from the data repository.
+Bulk Parquet, full experiment artifacts and active catalogs remain on the cluster.
+This small-volume bootstrap can later move to object storage without moving
+research computation into Vercel. GitHub/CDN availability and delay are explicit
+transport limits, not realtime authority.
+
+Snapshots bind source reports and latest bars. Request-time checks re-evaluate
+market clocks, calendar coverage, worker state at publication and a 20-minute
+publication expiry. Monitoring responses are never edge-cached. Missing, invalid
+or stale observations never silently replace accepted backtest evidence.
+
+Formal research runs reuse ExperimentRunner, SQLiteMetadataCatalog and canonical
+backtest artifacts. A full run specification, dataset manifest, result and file
+checksums are persisted before publication. Active SQLite is container-local;
+verified immutable backups and artifacts reside on persistent storage. Legacy
+archives preserve their original identities without claiming missing run specs
+were independently reconstructed. Historical continuation runs remain post hoc,
+non-PIT and promotion-ineligible. There is no anonymous experiment write API,
+automatic strategy promotion, PAPER start or external order transmission.

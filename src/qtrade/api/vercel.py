@@ -4,6 +4,7 @@ from urllib.parse import parse_qs
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from qtrade.api.app import ApiAuthConfig, bootstrap_context, create_app
+from qtrade.api.public_observations import router as observation_router
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_ROOT = PROJECT_ROOT / "deployment" / "evidence"
@@ -84,6 +85,10 @@ class VercelQueryPathApp:
             scope.get("method") == "GET"
             and b"authorization" not in request_headers
             and b"cookie" not in request_headers
+            and route not in {
+                "/observations/latest", "/data-freshness", "/observations/health",
+                "/persisted-experiments",
+            }
         )
 
         async def send_with_cache(message: Message) -> None:
@@ -111,4 +116,6 @@ class VercelQueryPathApp:
         await self.inner(routed_scope, receive, send_with_cache)
 
 
-app = VercelQueryPathApp(create_app(context, auth=ApiAuthConfig()))
+inner_app = create_app(context, auth=ApiAuthConfig())
+inner_app.include_router(observation_router)
+app = VercelQueryPathApp(inner_app)

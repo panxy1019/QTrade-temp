@@ -8,6 +8,10 @@ const getWaiters: Array<() => void> = []
 
 export const prometheusMetricsUrl = `${API_BASE}/metrics/prometheus`
 
+export function loadPublicResearchObservations() {
+  return getJson<import('../types').PublicResearchObservation>('/observations/latest')
+}
+
 async function acquireGetSlot(): Promise<void> {
   if (activeGets < MAX_CONCURRENT_GETS) {
     activeGets += 1

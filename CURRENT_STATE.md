@@ -2,6 +2,13 @@
 
 Last updated: 2026-10-25
 
+- In progress: publish bounded public research observation JSON through the
+  dedicated `panxy1019/QTrade-observations` repository. Vercel will re-evaluate
+  source freshness and publication age on each request, without public write
+  access. Archive the 11 verified legacy experiments and run three complete,
+  immutable continuation diagnostics with local SQLite lineage and NFS archives.
+  Deployment and end-to-end acceptance are pending.
+
 - Continuous research observation restored (2026-10-25): a dedicated cluster
   process reuses the existing AKShare/Sina readers, Bar quality gate, Parquet
   storage and atomic JSON publication. The first collection contains 1,170 new

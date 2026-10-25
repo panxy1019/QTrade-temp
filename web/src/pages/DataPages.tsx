@@ -17,6 +17,7 @@ import { cancelPaperOrder, controlRuntime, prometheusMetricsUrl } from '../api/c
 import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
 import { FactorEvidenceCatalog } from '../components/FactorEvidenceCatalog'
+import { PublicResearchObservations } from '../components/PublicResearchObservations'
 import { formatBasisPoints, formatDirectionalDelta } from '../research/intradayDirectional'
 
 const waiting = <Alert showIcon type="info" title="等待实时数据授权" description="适配器与回放链路已准备；当前未配置任何供应商令牌或真实连接。" />
@@ -286,8 +287,9 @@ export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
   ]
   return <Page title="行情中心" subtitle="校验通过的历史日线、1 分钟与原生 5 分钟分时线">
     <Space orientation="vertical" style={{ width: '100%' }}>
+      <PublicResearchObservations />
       {waiting}
-      <Alert showIcon type="warning" title="历史数据不等于实时行情" description="历史日线与历史分时来自 checksum 绑定的 Parquet；当日分钟页是签名点时观测。两者都没有 Bid/Ask、授权实时价格或实盘权限，不参与 REAL_DATA_PAPER。" />
+      <Alert showIcon type="warning" title="冻结历史研究数据（不随观测快照更新）" description="历史日线与历史分时来自 checksum 绑定的 Parquet；当日分钟页是签名点时观测。两者都没有 Bid/Ask、授权实时价格或实盘权限，不参与 REAL_DATA_PAPER。" />
       <Input.Search placeholder="搜索代码、名称或板块" value={query} onChange={(event) => setQuery(event.target.value)} allowClear />
       <Card><Tabs activeKey={activeMarketTab} onChange={setActiveMarketTab} items={[
         {
@@ -535,7 +537,7 @@ export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
     { title: 'Sharpe', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.sharpe ?? '—' },
     { title: '最大回撤', render: (_: unknown, row: { metrics: Record<string, string> }) => row.metrics.maximum_drawdown ?? '—' },
   ]
-  return <Page title="实验中心" subtitle="真实 AKShare 历史数据上的可复现实验"><Alert showIcon type="warning" title={data?.experiments.classification ?? '尚无验证产物'} description={`数据版本：${data?.experiments.data_version ?? '—'}；每行已验证 record/result/artifact 哈希，但当前结论仍为 ${data?.experiments.promotion ?? '未评估'}。`} /><Space wrap><Input.Search aria-label="搜索实验" placeholder="搜索实验 ID 或模型" allowClear value={query} onChange={(event) => setQuery(event.target.value)} style={{ width: 320 }} /><Select aria-label="筛选实验类型" allowClear placeholder="全部类型" value={scenario} onChange={setScenario} options={scenarios} style={{ width: 180 }} /><JsonExportButton filename="qtrade-experiments.json" value={rows} /></Space><Table rowKey="experiment_id" columns={columns} dataSource={rows} pagination={{ pageSize: 8, showSizeChanger: false }} scroll={{ x: 1400 }} expandable={{ expandedRowRender: (row) => <Descriptions values={[["Spec Hash", row.spec_hash], ["Result Hash", row.result_hash], ["Record Hash", row.record_hash ?? '—'], ["数据版本", row.data_version ?? data?.experiments.data_version ?? '—'], ["Git Commit", row.git_commit ?? data?.experiments.git_commit ?? '—'], ["交易成本", row.transaction_cost ?? '—'], ["参数", Object.entries(row.parameters ?? {}).map(([key, value]) => `${key}=${value}`).join('，') || '基准']]} /> }} locale={{ emptyText: '尚未运行验证实验' }} /></Page>
+  return <Page title="实验中心" subtitle="真实 AKShare 历史数据上的可复现实验"><PublicResearchObservations mode="experiments" /><Alert showIcon type="warning" title={data?.experiments.classification ?? '尚无验证产物'} description={`数据版本：${data?.experiments.data_version ?? '—'}；每行已验证 record/result/artifact 哈希，但当前结论仍为 ${data?.experiments.promotion ?? '未评估'}。`} /><Space wrap><Input.Search aria-label="搜索实验" placeholder="搜索实验 ID 或模型" allowClear value={query} onChange={(event) => setQuery(event.target.value)} style={{ width: 320 }} /><Select aria-label="筛选实验类型" allowClear placeholder="全部类型" value={scenario} onChange={setScenario} options={scenarios} style={{ width: 180 }} /><JsonExportButton filename="qtrade-experiments.json" value={rows} /></Space><Table rowKey="experiment_id" columns={columns} dataSource={rows} pagination={{ pageSize: 8, showSizeChanger: false }} scroll={{ x: 1400 }} expandable={{ expandedRowRender: (row) => <Descriptions values={[["Spec Hash", row.spec_hash], ["Result Hash", row.result_hash], ["Record Hash", row.record_hash ?? '—'], ["数据版本", row.data_version ?? data?.experiments.data_version ?? '—'], ["Git Commit", row.git_commit ?? data?.experiments.git_commit ?? '—'], ["交易成本", row.transaction_cost ?? '—'], ["参数", Object.entries(row.parameters ?? {}).map(([key, value]) => `${key}=${value}`).join('，') || '基准']]} /> }} locale={{ emptyText: '尚未运行验证实验' }} /></Page>
 }
 
 export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
@@ -906,6 +908,7 @@ export function MonitorPage({ data }: { data: PlatformSnapshot | null }) {
   const minuteRows = minute?.symbols ?? [];
   return (
     <Page title="系统监控" subtitle="服务健康、延迟、队列与持久化">
+      <PublicResearchObservations mode="monitor" />
       <Space orientation="vertical" style={{ width: "100%" }}>
         <Card extra={<Button href={prometheusMetricsUrl} target="_blank" rel="noreferrer">Prometheus 指标</Button>}>
           <Descriptions
