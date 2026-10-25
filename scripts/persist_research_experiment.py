@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 import sqlite3
+import subprocess
 from dataclasses import asdict
 from datetime import UTC, date, datetime
 from decimal import Decimal
@@ -43,6 +44,18 @@ from scripts.run_akshare_etf_experiments import _manifest, _metrics
 from scripts.run_data_observer import read_report
 
 REPO = Path(__file__).resolve().parents[1]
+
+
+def verify_source_revision(expected: str) -> None:
+    marker = REPO / "SOURCE_REVISION"
+    if marker.exists():
+        actual = marker.read_text().strip()
+    else:
+        actual = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+        if subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO, text=True).strip():
+            raise ValueError("FORMAL_RUN_REQUIRES_CLEAN_SOURCE")
+    if actual != expected:
+        raise ValueError("RUNNING_SOURCE_COMMIT_MISMATCH")
 
 
 def canonical(value: Any) -> bytes:
@@ -398,6 +411,7 @@ def main() -> None:
             register_archive(archive.parent, args.catalog)
         print("CATALOG_REBUILT_FROM_VERIFIED_ARCHIVES")
     else:
+        verify_source_revision(args.git_commit)
         result = persist_experiment(
             json.loads(args.request.read_text(encoding="utf-8")),
             args.manifest,

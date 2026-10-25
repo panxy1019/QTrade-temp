@@ -12,9 +12,18 @@ from scripts.persist_research_experiment import (
     persist_experiment,
     register_archive,
     verify_archive,
+    verify_source_revision,
 )
 
 pytestmark = pytest.mark.skipif(os.name == "nt", reason="durable publishers require Linux fsync")
+
+
+def test_archive_source_marker_rejects_an_invented_code_commit(tmp_path, monkeypatch):
+    monkeypatch.setattr("scripts.persist_research_experiment.REPO", tmp_path)
+    (tmp_path / "SOURCE_REVISION").write_text("a" * 40)
+    verify_source_revision("a" * 40)
+    with pytest.raises(ValueError, match="SOURCE_COMMIT_MISMATCH"):
+        verify_source_revision("b" * 40)
 
 
 def test_existing_experiments_are_archived_without_fabricating_legacy_specs(tmp_path):

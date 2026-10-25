@@ -83,6 +83,7 @@ $PY -m scripts.persist_research_experiment run \
 
 `--git-commit` 必须是实际运行的完整代码 SHA，不能随意填写。Git checkout 可用
 `git rev-parse HEAD` 核对；归档部署用经过校验的发布记录及 `SOURCE_REVISION` 核对。
+命令会拒绝与实际 Git HEAD/归档发布标记不一致的代码 SHA；Git checkout 还必须保持干净。
 当前命令支持三个已有网页因果模板的日线请求结构；不是通用任意 Python 实验执行器，
 也不会自动把浏览器中的日内预览转换成正式日线实验。
 
