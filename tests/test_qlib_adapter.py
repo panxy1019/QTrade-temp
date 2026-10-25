@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import pytest
 
-from qtrade.research.qlib_adapter import normalize_daily, verify_reused_bars
+from qtrade.research.qlib_adapter import causal_capacity, normalize_daily, verify_reused_bars
 
 
 def bar(day, price=10, volume=1000):
@@ -77,3 +77,13 @@ def test_fixed_splits_purge_future_label_overlap_and_keep_trading_off():
     assert config["segments"]["valid"][1] < "2023-12-29" < config["segments"]["test"][0]
     assert config["portfolio"]["hold_thresh"] >= 1
     assert config["exchange"]["deal_price"] == "open"
+
+
+def test_capacity_is_causal_zero_on_resume_and_uses_current_share_units():
+    rows = [
+        {"date": "2020-01-02", "raw_volume": 1000, "factor": 0.1},
+        {"date": "2020-01-03", "raw_volume": 999999999, "factor": 0.2},
+        {"date": "2020-01-07", "raw_volume": 2000, "factor": 0.2},
+    ]
+    result = causal_capacity(rows, ["2020-01-02", "2020-01-03", "2020-01-06", "2020-01-07"])
+    assert result == {"2020-01-02": 0, "2020-01-03": 50, "2020-01-07": 0}

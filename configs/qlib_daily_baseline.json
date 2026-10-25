@@ -30,7 +30,7 @@
   "exchange": {
     "freq": "day", "deal_price": "open", "trade_unit": 100,
     "limit_threshold": ["$buy_block", "$sell_block"],
-    "volume_threshold": ["cum", "0.01*Ref($volume,1)*Ref($factor,1)/$factor"],
+    "volume_threshold": ["cum", "$capacity"],
     "open_cost": 0.0008, "close_cost": 0.0013, "min_cost": 5,
     "impact_cost": 0.0
   },

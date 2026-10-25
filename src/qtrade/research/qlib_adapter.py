@@ -97,3 +97,22 @@ def verify_reused_bars(source: list[dict[str, Any]], existing: list[dict[str, An
         if Decimal(str(row["volume"])) != Decimal(str(observed["volume"])):
             raise ValueError("REUSED_VOLUME_CHANGED")
     return len(existing)
+
+
+def causal_capacity(rows: list[dict[str, Any]], calendar: list[str]) -> dict[str, float]:
+    """One percent of previous *exchange session* raw volume in today's units.
+
+    A first quote or a resumed quote without previous-session volume gets zero
+    capacity. This deliberately does not fill volume across a suspension.
+    """
+    previous_day = dict(zip(calendar[1:], calendar[:-1], strict=True))
+    lookup = {row["date"]: row for row in rows}
+    result = {}
+    for row in rows:
+        previous = lookup.get(previous_day.get(row["date"]))
+        result[row["date"]] = (
+            float(positive(previous["raw_volume"]) * Decimal("0.01") / positive(row["factor"]))
+            if previous
+            else 0.0
+        )
+    return result

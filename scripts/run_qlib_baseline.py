@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
+from qtrade.research.qlib_adapter import causal_capacity
 from scripts.atomic_json import write_json_atomic
 
 REPO = Path(__file__).resolve().parents[1]
@@ -56,6 +57,8 @@ def make_provider(dataset_root: Path, target: Path) -> dict[str, Any]:
         "amount",
         "buy_block",
         "sell_block",
+        "capacity",
+        "change",
     ]
 
     def dump(code: str, frame: Any, fields: list[str]) -> None:
@@ -75,6 +78,9 @@ def make_provider(dataset_root: Path, target: Path) -> dict[str, Any]:
         frame = pd.read_parquet(folder / "daily.parquet").set_index("date")
         if not set(frame.index) <= set(dates):
             raise ValueError("STOCK_DAY_OUTSIDE_BENCHMARK_CALENDAR")
+        capacity = causal_capacity(frame.reset_index().to_dict("records"), dates)
+        frame["capacity"] = pd.Series(capacity)
+        frame["change"] = frame["close"] / frame["close"].shift(1) - 1
         code = ("SH" if row["symbol"].startswith("6") else "SZ") + row["symbol"]
         dump(code, frame, field_names)
     index_frame = pd.DataFrame(raw_index)
