@@ -806,11 +806,13 @@ unconfigured. Accepted old research evidence remains unchanged.
 - [x] Implement immutable formal-run archives and local-catalog recovery.
 - [x] Verify Linux persistence, idempotency, corruption rejection and recovery.
 - [x] Run three fixed continuation diagnostics and archive 11 legacy experiments.
-- [x] Deploy and verify browser -> API -> publication -> cluster data in preview.
+- [x] Deploy and verify browser -> API -> publication -> cluster data.
 - [x] Deliver Chinese data/factor/strategy inventory and operating instructions.
 
-Acceptance: all 489 Linux Python tests (including 54 focused tests), 42 relevant frontend tests, whole-repository
+Acceptance: all 490 Linux Python tests (including 55 focused tests), 42 relevant frontend tests, whole-repository
 Ruff, 100-source-file mypy, script mypy, ESLint and the Vercel production build
 pass. The preview browser displays both streams FRESH and the public snapshot
-contains 14 persisted experiments. Production is released through the reviewed
-main-branch merge; signed historical evidence remains unchanged.
+contains 14 persisted experiments. Production merge `97e2b21` serves the new
+read-only health endpoint with HTTP 200 and both streams FRESH. Both cluster
+programs run from verified release `300497a`; their targeted restart retains
+state. Signed historical evidence remains unchanged.

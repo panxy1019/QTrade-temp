@@ -7,9 +7,10 @@ Last updated: 2026-10-25
   source freshness and publication age on each request, without public write
   access. Eleven verified legacy experiments and three complete immutable
   continuation diagnostics are persisted, with local SQLite lineage and NFS
-  archives. Both supervised processes are running. Preview browser acceptance
-  confirms FRESH coverage for 30 ETFs and 75 stocks; production release follows
-  the reviewed main-branch merge. Read `docs/DATA_FACTOR_STRATEGY_STATUS.md` and
+  archives. Both supervised processes are running. Production acceptance at
+  `q-trade-temp.vercel.app` confirms HTTP 200 and FRESH coverage for 30 ETFs and
+  75 stocks after the reviewed main-branch merge `97e2b21`. All 490 Linux Python
+  tests and 42 relevant frontend tests pass. Read `docs/DATA_FACTOR_STRATEGY_STATUS.md` and
   `docs/RESEARCH_WORKFLOW.md` for the Chinese inventory and operating procedure.
 
 - Continuous research observation restored (2026-10-25): a dedicated cluster

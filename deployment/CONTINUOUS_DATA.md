@@ -70,6 +70,13 @@ restarts this worker after process failure; it cannot guarantee that a rented
 container itself will remain powered on or be recreated automatically. Keep the
 program template on persistent storage for container-reset recovery.
 
+The inspected container's Supervisor compatibility layer can apply `reread` or
+`update` while its Python client raises `ValueError: not enough values to unpack`.
+Do not infer success from that error or restart every program. Inspect the
+specific process status; after a targeted restart verify its `/proc/PID/cwd`,
+data versions and health endpoint against the intended release. This deployment
+verified both running programs against source `300497a` after targeted restarts.
+
 The HTTP service binds only `127.0.0.1:8010`:
 
 ```bash
