@@ -4,7 +4,7 @@ import type { BacktestPreview, ExperimentRunSpecBacktest, IntradayFactorBacktest
 import { cancelPaperOrder, controlRuntime, createExperimentRunSpecDraft, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runExperimentRunSpecBacktest, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
 import { formatDirectionalDelta } from '../research/intradayDirectional'
 import { canonicalJson, sha256Hex } from '../research/strategyIdentity'
-import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
+import { HistoricalBacktestPage as BacktestPage, DataCenterPage, ExperimentPage, HistoricalMarketPage as MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
 vi.mock('../components/PublicResearchObservations', () => ({ PublicResearchObservations: () => null }))

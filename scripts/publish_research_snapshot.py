@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import signal
 import subprocess
 from datetime import UTC, datetime
@@ -97,6 +98,30 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
     if remote != "ssh://git@ssh.github.com:443/panxy1019/QTrade-observations.git":
         raise ValueError("PUBLICATION_DESTINATION_MISMATCH")
     snapshot = build_snapshot(root, experiment_root)
+    current_files: list[str] = []
+    current_root = root.parent / "current-data" / "public"
+    if (current_root / "current.json").is_file():
+        from hashlib import sha256
+
+        from qtrade.api.current_datasets import validate_catalog
+
+        current = json.loads((current_root / "current.json").read_text())
+        validate_catalog(json.loads(json.dumps(current)))
+        for kind in ("daily", "minute"):
+            relative = "datasets/" + current[kind]["checksum"] + ".parquet"
+            content = (current_root / relative).read_bytes()
+            if (
+                len(content) > 20_000_000
+                or sha256(content).hexdigest() != current[kind]["checksum"]
+            ):
+                raise ValueError("CURRENT_PUBLICATION_PARQUET_MISMATCH")
+            target = publication / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if not target.exists():
+                shutil.copyfile(current_root / relative, target)
+            current_files.append(relative)
+        write_json_atomic(publication / "current.json", current)
+        current_files.append("current.json")
     write_json_atomic(publication / "latest.json", snapshot)
     (publication / "README.md").write_text(
         "# QTrade public research observations\n\n"
@@ -107,7 +132,7 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         "No credentials, accounts, order state or arbitrary executable code are published.\n"
     )
     commands = [
-        ["add", "--", "latest.json", "README.md"],
+        ["add", "--", "latest.json", "README.md", *current_files],
         ["commit", "-m", "Publish research observation " + snapshot["published_at"]],
         ["push", "origin", "HEAD:refs/heads/main"],
     ]

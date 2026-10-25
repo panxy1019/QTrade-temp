@@ -10,6 +10,7 @@ import { usePlatformSnapshot } from './hooks/usePlatformSnapshot'
 import { StatusTag } from './components/StatusTag'
 import { PageErrorBoundary } from './components/PageErrorBoundary'
 import { isPublicResearchNode } from './runtime/environment'
+import { CurrentDataProvider, CurrentDataStatus } from './components/CurrentWorkspace'
 import './styles.css'
 
 const OverviewPage = lazy(() => import('./pages/OverviewPage').then((module) => ({ default: module.OverviewPage })))
@@ -71,6 +72,7 @@ function Shell() {
           <Space><span>深色模式</span><Switch checked={dark} onChange={setDark} /></Space>
         </Layout.Header>
         <Layout.Content className="content">
+          <CurrentDataStatus archive={!['/market', '/backtest'].includes(location.pathname)} />
           <PageErrorBoundary key={location.pathname}>
             <Suspense fallback={<Typography.Text type="secondary">页面加载中…</Typography.Text>}>
               <Routes>
@@ -96,4 +98,4 @@ function Shell() {
   </ConfigProvider>
 }
 
-export default function App() { return <HashRouter><Shell /></HashRouter> }
+export default function App() { return <CurrentDataProvider><HashRouter><Shell /></HashRouter></CurrentDataProvider> }

@@ -8894,6 +8894,7 @@ def _single_stock_five_minute_preview(
     available_trading_days: list[str],
     verified_universe_symbol_count: int,
     instrument: dict[str, object],
+    adjustment_warning: str = "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
 ) -> dict[str, object]:
     metrics = result.metrics(days=selected_days)
     base_performance, overlay_performance = _single_stock_five_minute_performance(
@@ -8935,7 +8936,7 @@ def _single_stock_five_minute_preview(
         "promotion_reasons": [
             "AD_HOC_PARAMETERS_NOT_PREREGISTERED",
             "CURRENT_NON_POINT_IN_TIME_UNIVERSE",
-            "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
+            adjustment_warning,
             "SINGLE_STOCK_RESULT_DOES_NOT_PROVE_CROSS_SECTIONAL_ROBUSTNESS",
             "FREE_HISTORICAL_SOURCE_NOT_AUTHORIZED_REALTIME_FEED",
         ],

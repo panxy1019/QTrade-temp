@@ -48,10 +48,10 @@ async function getJson<T>(path: string): Promise<T> {
   }
 }
 
-async function postJson<T>(path: string, payload: object): Promise<T> {
+async function postJson<T>(path: string, payload: object, currentVersion?: string): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...(currentVersion ? { 'X-QTrade-Data-Version': currentVersion } : {}) },
     body: JSON.stringify(payload),
   })
   if (!response.ok) {
@@ -141,21 +141,25 @@ export function loadLongFiveMinuteBarSeries(symbol: string, tradingDay: string):
   return getJson<MinuteBarSeries>(`/long-five-minute-bars/${encodeURIComponent(symbol)}?trading_day=${encodeURIComponent(tradingDay)}`)
 }
 
-export function runBacktestPreview(payload: BacktestPreviewRequest): Promise<BacktestPreview> {
-  return postJson<BacktestPreview>('/backtest-preview', payload)
+export function runBacktestPreview(payload: BacktestPreviewRequest, currentVersion?: string): Promise<BacktestPreview> {
+  return postJson<BacktestPreview>(`${currentVersion ? '/current' : ''}/backtest-preview`, payload, currentVersion)
 }
 
-export function createExperimentRunSpecDraft(payload: ExperimentRunSpecDraftRequest): Promise<ExperimentRunSpecDraft> {
-  return postJson<ExperimentRunSpecDraft>('/experiment-run-spec-draft', payload)
+export function createExperimentRunSpecDraft(payload: ExperimentRunSpecDraftRequest, currentVersion?: string): Promise<ExperimentRunSpecDraft> {
+  return postJson<ExperimentRunSpecDraft>(`${currentVersion ? '/current' : ''}/experiment-run-spec-draft`, payload, currentVersion)
 }
 
-export function runExperimentRunSpecBacktest(payload: ExperimentRunSpecDraftRequest): Promise<ExperimentRunSpecBacktest> {
-  return postJson<ExperimentRunSpecBacktest>('/experiment-run-spec-backtest', payload)
+export function runExperimentRunSpecBacktest(payload: ExperimentRunSpecDraftRequest, currentVersion?: string): Promise<ExperimentRunSpecBacktest> {
+  return postJson<ExperimentRunSpecBacktest>(`${currentVersion ? '/current' : ''}/experiment-run-spec-backtest`, payload, currentVersion)
 }
 
-export function runSingleStockFiveMinuteBacktest(payload: SingleStockFiveMinuteBacktestRequest): Promise<SingleStockFiveMinuteBacktest> {
-  return postJson<SingleStockFiveMinuteBacktest>('/single-stock-five-minute-backtest', payload)
+export function runSingleStockFiveMinuteBacktest(payload: SingleStockFiveMinuteBacktestRequest, currentVersion?: string): Promise<SingleStockFiveMinuteBacktest> {
+  return postJson<SingleStockFiveMinuteBacktest>(`${currentVersion ? '/current' : ''}/single-stock-five-minute-backtest`, payload, currentVersion)
 }
+
+export const loadCurrentDatasets = () => getJson<import('../types').CurrentDatasets>('/current/datasets')
+export const loadCurrentSeries = (kind: 'daily' | 'minute', symbol: string, version: string, day?: string) =>
+  getJson<HistoricalBarSeries | MinuteBarSeries>(`/current/bars/${kind}/${encodeURIComponent(symbol)}?version=${encodeURIComponent(version)}${day ? `&trading_day=${encodeURIComponent(day)}` : ''}`)
 
 export async function runIntradayFactorBacktest(payload: IntradayFactorBacktestRequest): Promise<IntradayFactorBacktest> {
   try {

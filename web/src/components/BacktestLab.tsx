@@ -43,6 +43,7 @@ interface RunSpecFormValues {
 }
 
 interface BacktestLabProps {
+  currentVersion?: string
   dataset: HistoricalDataset | null
   templates: StrategyTemplate[]
   initialTemplateId: CausalPreviewTemplateId | null
@@ -116,7 +117,7 @@ function templateCompatibilityError(templateId: CausalPreviewTemplateId, request
   return null
 }
 
-export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }: BacktestLabProps) {
+export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit, currentVersion }: BacktestLabProps) {
   const [form] = Form.useForm<BacktestFormValues>()
   const [specForm] = Form.useForm<RunSpecFormValues>()
   const [result, setResult] = useState<BacktestPreview | null>(null)
@@ -184,7 +185,9 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
     setBoundBacktest(null)
     setBindingError(null)
     try {
-      setResult(await runBacktestPreview(payload))
+      const response = await runBacktestPreview(payload, currentVersion)
+      if (response.data_version !== dataset.data_version || response.data_checksum !== dataset.checksum) throw new Error('数据版本已变化，请刷新后重试。')
+      setResult(response)
       setSaveStatus(null)
     } catch (reason) {
       setResult(null)
@@ -239,7 +242,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
         backtest,
         seed: values.seed,
       }
-      setDraft(await createExperimentRunSpecDraft(request))
+      setDraft(await createExperimentRunSpecDraft(request, currentVersion))
       setDraftRequest(request)
       setBoundBacktest(null)
       setBindingError(null)
@@ -259,7 +262,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit }
     setBinding(true)
     setBindingError(null)
     try {
-      const response = await runExperimentRunSpecBacktest(draftRequest)
+      const response = await runExperimentRunSpecBacktest(draftRequest, currentVersion)
       setBoundBacktest(response)
       setResult(response.result)
       setError(null)

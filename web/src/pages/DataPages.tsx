@@ -18,6 +18,7 @@ import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
 import { FactorEvidenceCatalog } from '../components/FactorEvidenceCatalog'
 import { PublicResearchObservations } from '../components/PublicResearchObservations'
+import { CurrentWorkspace } from '../components/CurrentWorkspace'
 import { formatBasisPoints, formatDirectionalDelta } from '../research/intradayDirectional'
 
 const waiting = <Alert showIcon type="info" title="等待实时数据授权" description="适配器与回放链路已准备；当前未配置任何供应商令牌或真实连接。" />
@@ -45,6 +46,13 @@ const forwardObservationGateLabels: Record<string, string> = {
 type SeriesLoadError = { key: string; message: string }
 
 export function MarketPage({ data }: { data: PlatformSnapshot | null }) {
+  return <Page title="行情中心" subtitle="当前数据与历史证据"><Tabs defaultActiveKey="current" items={[
+    { key: 'current', label: '当前行情', children: <CurrentWorkspace mode="market" platform={data} /> },
+    { key: 'archive', label: '历史档案（原始日期）', children: <><Alert showIcon type="warning" title="以下为冻结历史档案，不代表当前行情" /><HistoricalMarketPage data={data} /></> },
+  ]} /></Page>
+}
+
+export function HistoricalMarketPage({ data }: { data: PlatformSnapshot | null }) {
   const historical = data?.market?.historical
   const minuteDataset = data?.minuteResearch.minute_dataset
   const fiveMinuteDataset = data?.fiveMinuteResearch?.minute_dataset
@@ -541,6 +549,13 @@ export function ExperimentPage({ data }: { data: PlatformSnapshot | null }) {
 }
 
 export function BacktestPage({ data }: { data: PlatformSnapshot | null }) {
+  return <Page title="回测分析" subtitle="使用当前数据重新计算"><Tabs defaultActiveKey="current" items={[
+    { key: 'current', label: '当前数据回测', children: <CurrentWorkspace mode="backtest" platform={data} /> },
+    { key: 'archive', label: '历史实验与旧版回测', children: <><Alert showIcon type="warning" title="历史实验结果保留原始数据区间；不会随行情自动改写" /><HistoricalBacktestPage data={data} /></> },
+  ]} /></Page>
+}
+
+export function HistoricalBacktestPage({ data }: { data: PlatformSnapshot | null }) {
   const analytics = data?.backtestAnalytics
   const minuteResearch = data?.minuteResearch
   const minuteSelected = minuteResearch?.selected

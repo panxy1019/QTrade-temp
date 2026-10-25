@@ -4,6 +4,7 @@ from urllib.parse import parse_qs
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from qtrade.api.app import ApiAuthConfig, bootstrap_context, create_app
+from qtrade.api.current_datasets import router as current_dataset_router
 from qtrade.api.public_observations import router as observation_router
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -89,6 +90,7 @@ class VercelQueryPathApp:
                 "/observations/latest", "/data-freshness", "/observations/health",
                 "/persisted-experiments",
             }
+            and not route.startswith("/current/")
         )
 
         async def send_with_cache(message: Message) -> None:
@@ -118,4 +120,5 @@ class VercelQueryPathApp:
 
 inner_app = create_app(context, auth=ApiAuthConfig())
 inner_app.include_router(observation_router)
+inner_app.include_router(current_dataset_router)
 app = VercelQueryPathApp(inner_app)
