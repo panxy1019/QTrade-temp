@@ -1612,6 +1612,7 @@ export interface CurrentDatasets {
   published_at: string
   daily: CurrentDataset
   minute: CurrentDataset
+  intraday?: CurrentDataset
   expansion: { daily: { state: string; completed: number; selected?: number; candidate_count?: number }; minute: { state: string; completed?: number }; free_gib: number } | null
 }
 

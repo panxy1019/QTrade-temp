@@ -17,7 +17,7 @@ from fastapi import APIRouter, Header, HTTPException, Response
 
 from qtrade.data import Bar, BarQualityGate
 from qtrade.data.storage import _BAR_PARQUET_SCHEMA
-from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, freshness, signed
 
 ROOT = "https://raw.githubusercontent.com/panxy1019/QTrade-observations/main/"
 router = APIRouter(prefix="/current")
@@ -46,7 +46,10 @@ def validate_catalog(value: dict[str, Any]) -> dict[str, Any]:
     if published.tzinfo is None or published > now:
         raise ValueError("INVALID_CURRENT_PUBLICATION_CLOCK")
     expected = Calendar(value["calendar"]).expected(now, "daily").date()
-    for kind, maximum in (("daily", 100), ("minute", 400)):
+    kinds = [("daily", 100), ("minute", 400)]
+    if "intraday" in value:
+        kinds.append(("intraday", 400))
+    for kind, maximum in kinds:
         row = value[kind]
         symbols = row["universe"]["symbols"]
         if (
@@ -71,6 +74,15 @@ def validate_catalog(value: dict[str, Any]) -> dict[str, Any]:
             and (now - published).total_seconds() <= 1200
             else "STALE"
         )
+        if kind == "intraday":
+            state = freshness(
+                row["observation_report"],
+                Calendar(value["calendar"]).expected(now, "minute"),
+                now,
+                "minute",
+            )
+            if state["status"] != "FRESH" or not value.get("observer_healthy"):
+                row["freshness"] = "STALE"
     return {**value, "checked_at": now.isoformat(), "read_only": True}
 
 
@@ -153,15 +165,17 @@ def bar_series(
     trading_day: date | None = None,
     version: str | None = None,
 ) -> dict[str, Any]:
-    if kind not in {"daily", "minute"}:
+    if kind not in {"daily", "minute", "intraday"}:
         raise HTTPException(404, "unknown interval")
-    row = catalog()[kind]
+    row = catalog().get(kind)
+    if row is None:
+        raise HTTPException(503, "current interval unavailable")
     if symbol not in row["universe"]["symbols"] or (version and row["data_version"] != version):
         raise HTTPException(409, "symbol or dataset version changed")
     try:
         source = bars(row, symbol)
         selected = trading_day or max(b.trading_day for b in source)
-        if kind == "minute":
+        if kind != "daily":
             source = [b for b in source if b.trading_day == selected]
         records = [
             {

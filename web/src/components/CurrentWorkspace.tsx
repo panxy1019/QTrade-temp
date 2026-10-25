@@ -23,6 +23,7 @@ export function CurrentDataProvider({ children }: { children: ReactNode }) {
       inFlight = true
       try {
         const value = await loadCurrentDatasets()
+        if (!value.daily?.data_version || !value.minute?.data_version) throw new Error('当前数据目录格式无效')
         if (active) { setData(value); setError(null) }
       } catch (reason) {
         if (active) { setData(null); setError(reason instanceof Error ? reason.message : '当前数据不可用') }
@@ -38,7 +39,7 @@ export function CurrentDataProvider({ children }: { children: ReactNode }) {
 export function CurrentDataStatus({ archive = false }: { archive?: boolean }) {
   const { data, error } = useContext(CurrentContext)
   if (!data) return <Alert showIcon type={error ? 'error' : 'info'} title={error ? `当前数据通道不可用：${error}` : '正在核对当前数据版本…'} description="当前工作区不会用 8 月档案替代缺失的新数据。" />
-  const fresh = data.daily.freshness === 'FRESH' && data.minute.freshness === 'FRESH'
+  const fresh = data.daily.freshness === 'FRESH' && data.minute.freshness === 'FRESH' && (!data.intraday || data.intraday.freshness === 'FRESH')
   return <Alert showIcon type={fresh ? 'success' : 'warning'} title={`当前数据：日线 ${data.daily.minimum_latest_day} · 五分钟 ${data.minute.minimum_latest_day} · ${fresh ? '符合交易日历' : '数据滞后'}`} description={`最近应有完整交易日 ${data.daily.expected_complete_day}；网页每 60 秒核对版本。行情、参数化回测共用校验后的输入；日终历史与盘中观测分别显示。${archive ? '本页固定实验/报告属于历史档案，结论日期保留原样；最新行情和重算入口在行情中心、回测分析。' : ''}`} />
 }
 
@@ -50,21 +51,21 @@ export function CurrentWorkspace({ mode, platform }: { mode: 'market' | 'backtes
     {mode === 'market' && <PublicResearchObservations />}
     <Typography.Text type="secondary">当前网页研究范围：{data.daily.universe.symbols.length} ETF 日线 / {data.minute.universe.symbols.length} 股票五分钟。扩容全量历史保存在集群，网页覆盖与集群库存分别列示。</Typography.Text>
     {data.expansion && <Alert type="info" showIcon title={`集群扩容：日频已校验 ${data.expansion.daily.completed} / ${data.expansion.daily.candidate_count ?? '—'} 候选，已选 ${data.expansion.daily.selected ?? '待排名'} / 1000；分钟 ${data.expansion.minute.completed ?? 0} / 400`} description={`日频状态 ${data.expansion.daily.state}；分钟状态 ${data.expansion.minute.state}；持久盘余量 ${data.expansion.free_gib} GiB。完整十年历史仅对上市时间足够的股票成立。`} />}
-    {mode === 'market' ? <CurrentCharts key={identity} daily={data.daily} minute={data.minute} /> : <>
+    {mode === 'market' ? <CurrentCharts key={identity} daily={data.daily} minute={data.minute} intraday={data.intraday} /> : <>
       <BacktestLab key={data.daily.checksum} dataset={data.daily} currentVersion={data.daily.data_version} templates={platform?.strategyTemplates.templates ?? []} initialTemplateId={null} gitCommit={platform?.deployment.git_commit_sha ?? null} />
       <CurrentMinuteLab key={data.minute.checksum} dataset={data.minute} />
     </>}
   </Space>
 }
 
-function CurrentCharts({ daily, minute }: { daily: CurrentDataset; minute: CurrentDataset }) {
-  const [kind, setKind] = useState<'daily' | 'minute'>('daily')
-  const [symbols, setSymbols] = useState({ daily: daily.universe.symbols[0], minute: minute.universe.symbols[0] })
+function CurrentCharts({ daily, minute, intraday }: { daily: CurrentDataset; minute: CurrentDataset; intraday?: CurrentDataset }) {
+  const [kind, setKind] = useState<'daily' | 'minute' | 'intraday'>('daily')
+  const [symbols, setSymbols] = useState({ daily: daily.universe.symbols[0], minute: minute.universe.symbols[0], intraday: minute.universe.symbols[0] })
   const [day, setDay] = useState(minute.trading_days.at(-1)!)
   const [series, setSeries] = useState<HistoricalBarSeries | MinuteBarSeries | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const dataset = kind === 'daily' ? daily : minute
+  const dataset = kind === 'daily' ? daily : kind === 'intraday' ? intraday! : minute
   const symbol = symbols[kind]
   useEffect(() => {
     let active = true
@@ -77,12 +78,12 @@ function CurrentCharts({ daily, minute }: { daily: CurrentDataset; minute: Curre
   }, [kind, symbol, day, dataset.data_version, dataset.checksum])
   const change = () => { setLoading(true); setSeries(null); setError(null) }
   return <Card title={`当前${kind === 'daily' ? '日线' : '五分钟'}图表 · 截至 ${dataset.minimum_latest_day}`}>
-    <Tabs activeKey={kind} onChange={(key) => { change(); setKind(key as 'daily' | 'minute') }} items={[{ key: 'daily', label: '当前日线' }, { key: 'minute', label: '当前五分钟' }]} />
+    <Tabs activeKey={kind} onChange={(key) => { change(); setKind(key as 'daily' | 'minute' | 'intraday') }} items={[{ key: 'daily', label: '当前日线' }, { key: 'minute', label: '已完成交易日五分钟' }, ...(intraday ? [{ key: 'intraday', label: '盘中五分钟观测（15 分钟采集）' }] : [])]} />
     <Space wrap><Select aria-label="当前行情证券" showSearch optionFilterProp="label" value={symbol} style={{ width: 250 }} onChange={(value) => { change(); setSymbols({ ...symbols, [kind]: value }) }} options={dataset.instruments.map((r) => ({ value: r.symbol, label: `${r.symbol} ${r.name}` }))} />
       {kind === 'minute' && <Select aria-label="当前五分钟交易日" value={day} style={{ width: 160 }} onChange={(value) => { change(); setDay(value) }} options={[...minute.trading_days].reverse().map((value) => ({ value, label: value }))} />}</Space>
-    <Typography.Paragraph type="secondary">{dataset.observed_start.slice(0, 10)} 至 {dataset.observed_end.slice(0, 10)} · {dataset.bar_count.toLocaleString()} 根 · {dataset.data_version}</Typography.Paragraph>
+    <Typography.Paragraph type="secondary">{dataset.observed_start.slice(0, 10)} 至 {dataset.observed_end.slice(0, 10)} · {dataset.bar_count.toLocaleString()} 根 · {dataset.data_version}；最新源时钟 {dataset.observed_end}</Typography.Paragraph>
     {error && <Alert type="error" showIcon title={error} />}
-    {kind === 'daily' ? <MarketHistoryChart loading={loading} series={series as HistoricalBarSeries | null} /> : <MinuteHistoryChart loading={loading} series={series as MinuteBarSeries | null} />}
+    {kind === 'daily' ? <MarketHistoryChart loading={loading || series?.data_version !== dataset.data_version} series={series?.data_version === dataset.data_version ? series as HistoricalBarSeries : null} /> : <MinuteHistoryChart loading={loading || (!error && series?.data_version !== dataset.data_version)} series={series?.data_version === dataset.data_version ? series as MinuteBarSeries : null} />}
   </Card>
 }
 

@@ -158,7 +158,7 @@ export function runSingleStockFiveMinuteBacktest(payload: SingleStockFiveMinuteB
 }
 
 export const loadCurrentDatasets = () => getJson<import('../types').CurrentDatasets>('/current/datasets')
-export const loadCurrentSeries = (kind: 'daily' | 'minute', symbol: string, version: string, day?: string) =>
+export const loadCurrentSeries = (kind: 'daily' | 'minute' | 'intraday', symbol: string, version: string, day?: string) =>
   getJson<HistoricalBarSeries | MinuteBarSeries>(`/current/bars/${kind}/${encodeURIComponent(symbol)}?version=${encodeURIComponent(version)}${day ? `&trading_day=${encodeURIComponent(day)}` : ''}`)
 
 export async function runIntradayFactorBacktest(payload: IntradayFactorBacktestRequest): Promise<IntradayFactorBacktest> {

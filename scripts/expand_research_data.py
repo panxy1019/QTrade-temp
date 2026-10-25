@@ -228,56 +228,110 @@ def run(root: Path, end: date) -> None:
         save()
         return
 
-    from qtrade.market_data.baostock_five_minute import fetch_baostock_five_minute_history
-
     login = bs.login()
     if login.error_code != "0":
         raise RuntimeError("BAOSTOCK_LOGIN_FAILED")
-    minute_rows = []
+    minute_rows, minute_failures = [], []
     try:
-        for row in selected[:400]:
+        for row in selected:
+            if len(minute_rows) >= 400:
+                break
             reserve_space(root)
-            version = f"baostock-qfq-5m-{row['symbol']}-20231024-{end:%Y%m%d}"
-            checkpoint = root / "minute" / row["symbol"] / (str(end) + ".json")
-            if checkpoint.exists():
-                minute_rows.append(json.loads(checkpoint.read_text()))
-                continue
-            bars = list(
-                fetch_baostock_five_minute_history(
-                    bs,
-                    symbol=row["symbol"],
-                    start_date="2023-10-24",
-                    end_date=str(end),
-                    adjustflag="2",
+            try:
+                value = ingest_minute(root, row, end)
+                minute_rows.append(value)
+            except Exception as error:
+                minute_failures.append(
+                    {
+                        "symbol": row["symbol"],
+                        "error": type(error).__name__ + ":" + str(error)[:100],
+                    }
                 )
-            )
-            manifest = ParquetBarStore(root / "bars").write(
-                bars,
-                DataManifest(
-                    version,
-                    "BaoStock qfq 5m full-window rebuild; future adjustment knowledge possible",
-                    "qtrade.bar.v1",
-                    datetime.now(UTC),
-                    "pending",
-                    QualityStatus.PENDING,
-                ),
-            )
-            value = {
-                "symbol": row["symbol"],
-                "bar_count": len(bars),
-                "manifest": {"data_version": version, "checksum": manifest.checksum},
+                write_json_atomic(root / "minute-failures.json", {"failures": minute_failures})
+            state["minute"] = {
+                "state": "RUNNING",
+                "completed": len(minute_rows),
+                "failed": len(minute_failures),
             }
-            write_json_atomic(checkpoint, value)
-            minute_rows.append(value)
-            state["minute"] = {"state": "RUNNING", "completed": len(minute_rows)}
             save()
     finally:
         bs.logout()
     state["minute"] = {
         "state": "COMPLETE" if len(minute_rows) == 400 else "PARTIAL",
         "completed": len(minute_rows),
+        "bar_count": sum(r["bar_count"] for r in minute_rows),
+        "bytes": sum(r["manifest"].get("bytes", 0) for r in minute_rows),
     }
     save()
+
+
+def ingest_minute(root: Path, row: dict[str, Any], end: date) -> dict[str, Any]:
+    import baostock as bs
+
+    from qtrade.market_data.baostock_five_minute import fetch_baostock_five_minute_history
+
+    version = f"baostock-qfq-5m-{row['symbol']}-20231024-{end:%Y%m%d}"
+    checkpoint = root / "minute" / row["symbol"] / (str(end) + ".json")
+    if checkpoint.exists():
+        value = json.loads(checkpoint.read_text())
+        from hashlib import sha256
+
+        target = root / "bars" / value["manifest"]["data_version"] / "bars.parquet"
+        if sha256(target.read_bytes()).hexdigest() != value["manifest"]["checksum"]:
+            raise ValueError("MINUTE_CHECKPOINT_CHECKSUM_MISMATCH")
+        return value
+    bars = list(
+        fetch_baostock_five_minute_history(
+            bs,
+            symbol=row["symbol"],
+            start_date="2023-10-24",
+            end_date=str(end),
+            adjustflag="2",
+        )
+    )
+    from collections import Counter
+
+    from qtrade.market_data.sina_minute import SINA_FIVE_MINUTE_SESSION_TIMES
+
+    counts = Counter(b.trading_day for b in bars)
+    if (
+        not bars
+        or len(counts) < 650
+        or max(counts) != end
+        or min(counts) > date(2023, 11, 1)
+        or any(n != 48 for n in counts.values())
+        or any(
+            b.timestamp.astimezone(SHANGHAI).time() not in SINA_FIVE_MINUTE_SESSION_TIMES
+            for b in bars
+        )
+    ):
+        raise ValueError("THREE_YEAR_MINUTE_COVERAGE_OR_SESSION_GRID_FAILED")
+    manifest = ParquetBarStore(root / "bars").write(
+        bars,
+        DataManifest(
+            version,
+            "BaoStock qfq 5m full-window rebuild; future adjustment knowledge possible",
+            "qtrade.bar.v1",
+            datetime.now(UTC),
+            "pending",
+            QualityStatus.PENDING,
+        ),
+    )
+    value = {
+        "symbol": row["symbol"],
+        "bar_count": len(bars),
+        "session_count": len(counts),
+        "observed_start": str(min(counts)),
+        "observed_end": str(max(counts)),
+        "missing_sessions_policy": "No synthetic fill; suspension dates remain absent",
+        "manifest": {
+            "data_version": version,
+            "checksum": manifest.checksum,
+            "bytes": (root / "bars" / version / "bars.parquet").stat().st_size,
+        },
+    }
+    write_json_atomic(checkpoint, value)
+    return value
 
 
 def main() -> None:

@@ -107,6 +107,33 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
 
         current = json.loads((current_root / "current.json").read_text())
         validate_catalog(json.loads(json.dumps(current)))
+        report = snapshot["datasets"]["minute"]["report"]
+        manifest = report["manifest"]
+        source = root / "data/minute" / manifest["data_version"] / "bars.parquet"
+        import pyarrow.parquet as pq
+
+        clocks = pq.read_table(source, columns=["trading_day", "timestamp"]).to_pylist()
+        latest = {s: v[:10] for s, v in report["latest_by_symbol"].items()}
+        current["intraday"] = {
+            **current["minute"],
+            "data_version": manifest["data_version"],
+            "checksum": manifest["checksum"],
+            "bar_count": report["bar_count"],
+            "latest_by_symbol": latest,
+            "minimum_latest_day": min(latest.values()),
+            "observed_start": min(b["timestamp"] for b in clocks),
+            "observed_end": max(b["timestamp"] for b in clocks),
+            "trading_days": sorted({str(b["trading_day"]) for b in clocks}),
+            "observation_report": report,
+        }
+        current["observer_healthy"] = validate_snapshot(snapshot)["healthy"]
+        relative = "datasets/" + manifest["checksum"] + ".parquet"
+        if sha256(source.read_bytes()).hexdigest() != manifest["checksum"]:
+            raise ValueError("INTRADAY_PUBLICATION_CHECKSUM_MISMATCH")
+        (publication / "datasets").mkdir(parents=True, exist_ok=True)
+        if not (publication / relative).exists():
+            shutil.copyfile(source, publication / relative)
+        current_files.append(relative)
         for kind in ("daily", "minute"):
             relative = "datasets/" + current[kind]["checksum"] + ".parquet"
             content = (current_root / relative).read_bytes()
@@ -120,6 +147,7 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
             if not target.exists():
                 shutil.copyfile(current_root / relative, target)
             current_files.append(relative)
+        current = signed({k: v for k, v in current.items() if k != "evidence_sha256"})
         write_json_atomic(publication / "current.json", current)
         current_files.append("current.json")
     write_json_atomic(publication / "latest.json", snapshot)
@@ -127,7 +155,7 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         "# QTrade public research observations\n\n"
         "Read-only latest market observations and persisted experiment summaries.\n"
         "Public-source historical data, non-PIT, not trading or promotion authority.\n"
-        "Bulk Parquet and complete experiment artifacts stay on the research cluster.\n"
+        "Bounded current-chart Parquet is public; full research archives stay on the cluster.\n"
         "Published every five minutes; consumers must check source clocks and publication age.\n"
         "No credentials, accounts, order state or arbitrary executable code are published.\n"
     )

@@ -185,7 +185,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit, 
     setBoundBacktest(null)
     setBindingError(null)
     try {
-      const response = await runBacktestPreview(payload, currentVersion)
+      const response = await (currentVersion ? runBacktestPreview(payload, currentVersion) : runBacktestPreview(payload))
       if (response.data_version !== dataset.data_version || response.data_checksum !== dataset.checksum) throw new Error('数据版本已变化，请刷新后重试。')
       setResult(response)
       setSaveStatus(null)
@@ -242,7 +242,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit, 
         backtest,
         seed: values.seed,
       }
-      setDraft(await createExperimentRunSpecDraft(request, currentVersion))
+      setDraft(await (currentVersion ? createExperimentRunSpecDraft(request, currentVersion) : createExperimentRunSpecDraft(request)))
       setDraftRequest(request)
       setBoundBacktest(null)
       setBindingError(null)
@@ -262,7 +262,7 @@ export function BacktestLab({ dataset, templates, initialTemplateId, gitCommit, 
     setBinding(true)
     setBindingError(null)
     try {
-      const response = await runExperimentRunSpecBacktest(draftRequest, currentVersion)
+      const response = await (currentVersion ? runExperimentRunSpecBacktest(draftRequest, currentVersion) : runExperimentRunSpecBacktest(draftRequest))
       setBoundBacktest(response)
       setResult(response.result)
       setError(null)
