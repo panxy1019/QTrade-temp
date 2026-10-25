@@ -267,7 +267,7 @@ def run(root: Path, end: date) -> None:
         except Exception as error:
             return None, type(error).__name__
 
-    with ThreadPoolExecutor(max_workers=3) as pool:
+    with ThreadPoolExecutor(max_workers=1) as pool:
         for offset in range(0, len(selected), 24):
             if len(minute_rows) >= 400:
                 break
@@ -334,7 +334,17 @@ def ingest_minute(root: Path, row: dict[str, Any], end: date) -> dict[str, Any]:
             for b in bars
         )
     ):
-        raise ValueError("THREE_YEAR_MINUTE_COVERAGE_OR_SESSION_GRID_FAILED")
+        raise ValueError(
+            "THREE_YEAR_MINUTE_COVERAGE_OR_SESSION_GRID_FAILED: "
+            + str(
+                {
+                    "sessions": len(counts),
+                    "start": str(min(counts)) if counts else None,
+                    "end": str(max(counts)) if counts else None,
+                    "partial_sessions": sum(n != 48 for n in counts.values()),
+                }
+            )
+        )
     manifest = ParquetBarStore(root / "bars").write(
         bars,
         DataManifest(

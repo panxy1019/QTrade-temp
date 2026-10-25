@@ -48,13 +48,13 @@ export function CurrentWorkspace({ mode, platform }: { mode: 'market' | 'backtes
   if (!data) return <Alert type={error ? 'error' : 'info'} showIcon title={error ?? '正在加载当前研究数据…'} />
   const identity = `${data.daily.checksum}:${data.minute.checksum}`
   return <Space orientation="vertical" style={{ width: '100%' }}>
-    {mode === 'market' && <PublicResearchObservations />}
     <Typography.Text type="secondary">当前网页研究范围：{data.daily.universe.symbols.length} ETF 日线 / {data.minute.universe.symbols.length} 股票五分钟。扩容全量历史保存在集群，网页覆盖与集群库存分别列示。</Typography.Text>
     {data.expansion && <Alert type="info" showIcon title={`集群扩容：日频已校验 ${data.expansion.daily.completed} / ${data.expansion.daily.candidate_count ?? '—'} 候选，已选 ${data.expansion.daily.selected ?? '待排名'} / 1000；分钟 ${data.expansion.minute.completed ?? 0} / 400`} description={`日频状态 ${data.expansion.daily.state}；分钟状态 ${data.expansion.minute.state}；持久盘余量 ${data.expansion.free_gib} GiB。完整十年历史仅对上市时间足够的股票成立。`} />}
     {mode === 'market' ? <CurrentCharts key={identity} daily={data.daily} minute={data.minute} intraday={data.intraday} /> : <>
       <BacktestLab key={data.daily.checksum} dataset={data.daily} currentVersion={data.daily.data_version} templates={platform?.strategyTemplates.templates ?? []} initialTemplateId={null} gitCommit={platform?.deployment.git_commit_sha ?? null} />
       <CurrentMinuteLab key={data.minute.checksum} dataset={data.minute} />
     </>}
+    {mode === 'market' && <PublicResearchObservations />}
   </Space>
 }
 

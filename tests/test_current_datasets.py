@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import json
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
@@ -18,6 +19,20 @@ from qtrade.data.storage import _BAR_PARQUET_SCHEMA
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.market_data.sina_minute import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
+
+
+def test_mutable_pointer_refreshes_upstream_cache_but_parquet_is_immutable(monkeypatch):
+    requested = []
+
+    def open_request(request, timeout):
+        requested.append(request.full_url)
+        return io.BytesIO(b"{}")
+
+    monkeypatch.setattr(current, "urlopen", open_request)
+    assert current.download("current.json", 100) == b"{}"
+    assert requested[-1].startswith(current.ROOT + "current.json?v=")
+    current.download("datasets/" + "a" * 64 + ".parquet", 100)
+    assert requested[-1] == current.ROOT + "datasets/" + "a" * 64 + ".parquet"
 
 
 @pytest.fixture

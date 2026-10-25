@@ -106,7 +106,8 @@ def validate_snapshot(document: dict[str, Any], *, now: datetime | None = None) 
 
 def fetch_snapshot() -> dict[str, Any]:
     # The destination is fixed in reviewed source, never supplied by a caller.
-    request = Request(SNAPSHOT_URL, headers={"User-Agent": "QTrade-ReadOnly/1"})
+    bucket = int(datetime.now(UTC).timestamp()) // 60
+    request = Request(SNAPSHOT_URL + f"?v={bucket}", headers={"User-Agent": "QTrade-ReadOnly/1"})
     with urlopen(request, timeout=8) as response:
         raw = response.read(MAX_BYTES + 1)
     if len(raw) > MAX_BYTES:

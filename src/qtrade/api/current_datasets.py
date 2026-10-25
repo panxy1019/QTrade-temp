@@ -24,8 +24,10 @@ router = APIRouter(prefix="/current")
 
 
 def download(name: str, limit: int) -> bytes:
+    # Mutable pointers need a fresh CDN key; immutable Parquet remains cacheable.
+    suffix = f"?v={int(datetime.now(UTC).timestamp()) // 60}" if name.endswith(".json") else ""
     with urlopen(
-        Request(ROOT + name, headers={"User-Agent": "QTrade-Research/1"}), timeout=8
+        Request(ROOT + name + suffix, headers={"User-Agent": "QTrade-Research/1"}), timeout=8
     ) as handle:
         value = bytes(handle.read(limit + 1))
     if len(value) > limit:
