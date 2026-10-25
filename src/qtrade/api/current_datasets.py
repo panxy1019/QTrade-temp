@@ -291,7 +291,7 @@ def minute_preview(
             policy=policy,
             cost_bps=float(payload.cost_bps),
         )
-        return _single_stock_five_minute_preview(
+        preview = _single_stock_five_minute_preview(
             payload=payload,
             policy=policy,
             result=result,
@@ -303,7 +303,23 @@ def minute_preview(
             available_trading_days=days,
             verified_universe_symbol_count=len(row["universe"]["symbols"]),
             instrument=next(b for b in row["instruments"] if b["symbol"] == payload.symbol),
-            adjustment_warning="SOURCE_NATIVE_ADJUSTMENT_NOT_CERTIFIED",
         )
+        # This freshly computed preview uses a different source from the archived
+        # qfq helper. Bind the correct warning into its own result hash, while
+        # leaving the byte-pinned archival API module untouched.
+        reasons = preview["promotion_reasons"]
+        if not isinstance(reasons, list):
+            raise ValueError("INVALID_PREVIEW_WARNINGS")
+        preview["promotion_reasons"] = [
+            "SOURCE_NATIVE_ADJUSTMENT_NOT_CERTIFIED"
+            if reason == "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE"
+            else reason
+            for reason in reasons
+        ]
+        unsigned = {k: v for k, v in preview.items() if k != "preview_hash"}
+        preview["preview_hash"] = sha256(
+            json.dumps(unsigned, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        return preview
     except (ArithmeticError, ValueError, KeyError) as error:
         raise HTTPException(422, str(error)) from error
