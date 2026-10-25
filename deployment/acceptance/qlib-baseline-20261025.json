@@ -1,4 +1,5 @@
-a43169a5f0",
+{
+  "run_id": "alpha158-lightgbm-daily-v1-beb391a43169a5f0",
   "source_revision": "207a6b7a4eb324956139a98529110f166039095f",
   "result_sha256": "15c500187e7cd43242bc318621cab70fb6871f256381969f0baefde8969b94a3",
   "artifact_manifest_sha256": "10a5924284ba73bb9171cb34439b6b9bfaf5887815bf4371ae30d9f090f82ee4",
@@ -47,4 +48,5 @@ a43169a5f0",
   },
   "independent_metric_recalculation": true,
   "publication_valid": true,
-  "live_trading_enable
+  "live_trading_enabled": false
+}
