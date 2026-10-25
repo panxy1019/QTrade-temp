@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Descriptions, Space, Statistic, Table, Tag, Typography } from 'antd'
+import { Alert, Button, Card, Descriptions, Space, Statistic, Table, Tag, Typography, theme } from 'antd'
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { loadQlibBaseline } from '../api/client'
 import type { QlibBaselinePublication } from '../types'
@@ -14,6 +14,7 @@ const number = (value: number | null | undefined, percent = false) => value == n
   ? '—' : percent ? `${(value * 100).toFixed(2)}%` : value.toFixed(4)
 
 export function QlibBaseline() {
+  const { token } = theme.useToken()
   const [data, setData] = useState<QlibBaselinePublication | null>(null)
   const [error, setError] = useState<string | null>(null)
   const active = useRef(true)
@@ -67,10 +68,14 @@ export function QlibBaseline() {
           <Statistic title="日均双边换手" value={number(run.metrics.mean_daily_turnover, true)} />
         </Space>
         <Suspense fallback={<div style={{ height: 360 }}>正在加载净值曲线</div>}><ChartRenderer style={{ height: 360 }} option={{
-          animation: false, tooltip: { trigger: 'axis' }, legend: { data: ['成本后净值', '沪深300', '回撤'] },
+          animation: false, textStyle: { color: token.colorText }, tooltip: { trigger: 'axis' },
+          legend: { data: ['成本后净值', '沪深300', '回撤'], textStyle: { color: token.colorText } },
           grid: { left: 64, right: 64, bottom: 50 },
-          xAxis: { type: 'category', data: run.curve.map((point) => point.date) },
-          yAxis: [{ type: 'value', scale: true }, { type: 'value', max: 0, axisLabel: { formatter: (value: number) => `${(value * 100).toFixed(0)}%` } }],
+          xAxis: { type: 'category', data: run.curve.map((point) => point.date), axisLabel: { color: token.colorTextSecondary } },
+          yAxis: [
+            { type: 'value', scale: true, axisLabel: { color: token.colorTextSecondary }, splitLine: { lineStyle: { color: token.colorSplit } } },
+            { type: 'value', max: 0, axisLabel: { color: token.colorTextSecondary, formatter: (value: number) => `${(value * 100).toFixed(0)}%` }, splitLine: { show: false } },
+          ],
           series: [
             { name: '成本后净值', type: 'line', showSymbol: false, data: run.curve.map((point) => point.equity) },
             { name: '沪深300', type: 'line', showSymbol: false, data: run.curve.map((point) => point.benchmark_equity) },
