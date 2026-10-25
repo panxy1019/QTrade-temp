@@ -160,56 +160,78 @@ def run(root: Path, end: date) -> None:
         write_json_atomic(root / "progress.json", state)
 
     save()
-    candidate_file = root / ("candidates-" + str(end) + ".json")
-    if not candidate_file.exists():
-        write_json_atomic(candidate_file, {"rows": liquid_candidates()})
-    candidates = json.loads(candidate_file.read_text())["rows"]
-    state["daily"]["candidate_count"] = len(candidates)
-    accepted, failures = [], []
-    # AKShare's underlying requests have no timeout parameter. The supervisor's
-    # outer subprocess timeout bounds a pass; completed symbol checkpoints survive.
-    socket.setdefaulttimeout(25)
-    with ThreadPoolExecutor(max_workers=3) as pool:
-        futures = {pool.submit(ingest_daily, root, row, end): row for row in candidates}
-        for future in as_completed(futures):
-            try:
-                accepted.append(future.result())
-            except Exception as error:
-                failures.append(
-                    {
-                        "symbol": futures[future]["symbol"],
-                        "error": type(error).__name__ + ":" + str(error)[:100],
-                    }
-                )
-            state["daily"].update(completed=len(accepted), failed=len(failures))
-            save()
-    selected = sorted(accepted, key=lambda row: (-Decimal(row["median_amount_20"]), row["symbol"]))[
-        :1000
-    ]
-    write_json_atomic(
-        root / "universe.json",
-        signed(
-            {
-                **AUTHORITY,
-                "known_at": datetime.now(UTC).isoformat(),
-                "selection": (
-                    "latest-turnover top-1760 pre-screen, exclude ST, >=1200 sessions, "
-                    "rank 20-session median CNY amount"
-                ),
-                "point_in_time": False,
-                "stocks": selected,
-            }
-        ),
+    cached_path = root / "universe.json"
+    cached = json.loads(cached_path.read_text()) if cached_path.exists() else None
+    if cached is not None:
+        unsigned = {k: v for k, v in cached.items() if k != "evidence_sha256"}
+        if signed(unsigned)["evidence_sha256"] != cached.get("evidence_sha256"):
+            raise ValueError("DAILY_UNIVERSE_CHECKSUM_MISMATCH")
+    reuse = (
+        cached is not None
+        and len(cached.get("stocks", [])) == 1000
+        and all(r["observed_end"] == str(end) for r in cached["stocks"])
     )
-    state["daily"].update(
-        state="COMPLETE" if len(selected) == 1000 else "PARTIAL",
-        selected=len(selected),
-        selected_bars=sum(row["bar_count"] for row in selected),
-        selected_bytes=sum(row["manifest"]["bytes"] for row in selected),
-    )
-    write_json_atomic(root / "failures.json", {"failures": failures})
-    save()
-    # One official service connection per pass, never one timeout per stock.
+    if reuse:
+        selected = cached["stocks"]
+        state["daily"] = {
+            "state": "COMPLETE",
+            "completed": len(selected),
+            "selected": len(selected),
+            "selected_bars": sum(r["bar_count"] for r in selected),
+            "selected_bytes": sum(r["manifest"]["bytes"] for r in selected),
+            "selection_reused_for_same_complete_day": True,
+        }
+        save()
+    else:
+        candidate_file = root / ("candidates-" + str(end) + ".json")
+        if not candidate_file.exists():
+            write_json_atomic(candidate_file, {"rows": liquid_candidates()})
+        candidates = json.loads(candidate_file.read_text())["rows"]
+        state["daily"]["candidate_count"] = len(candidates)
+        accepted, failures = [], []
+        # AKShare's underlying requests have no timeout parameter. The supervisor's
+        # outer subprocess timeout bounds a pass; completed symbol checkpoints survive.
+        socket.setdefaulttimeout(25)
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            futures = {pool.submit(ingest_daily, root, row, end): row for row in candidates}
+            for future in as_completed(futures):
+                try:
+                    accepted.append(future.result())
+                except Exception as error:
+                    failures.append(
+                        {
+                            "symbol": futures[future]["symbol"],
+                            "error": type(error).__name__ + ":" + str(error)[:100],
+                        }
+                    )
+                state["daily"].update(completed=len(accepted), failed=len(failures))
+                save()
+        selected = sorted(
+            accepted, key=lambda row: (-Decimal(row["median_amount_20"]), row["symbol"])
+        )[:1000]
+        write_json_atomic(
+            root / "universe.json",
+            signed(
+                {
+                    **AUTHORITY,
+                    "known_at": datetime.now(UTC).isoformat(),
+                    "selection": (
+                        "latest-turnover top-1760 pre-screen, exclude ST, >=1200 sessions, "
+                        "rank 20-session median CNY amount"
+                    ),
+                    "point_in_time": False,
+                    "stocks": selected,
+                }
+            ),
+        )
+        state["daily"].update(
+            state="COMPLETE" if len(selected) == 1000 else "PARTIAL",
+            selected=len(selected),
+            selected_bars=sum(row["bar_count"] for row in selected),
+            selected_bytes=sum(row["manifest"]["bytes"] for row in selected),
+        )
+        write_json_atomic(root / "failures.json", {"failures": failures})
+        save()
     minute_rows, minute_failures = [], []
 
     # BaoStock owns a process-global socket; use isolated bounded subprocesses,
