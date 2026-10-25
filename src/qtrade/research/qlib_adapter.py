@@ -125,7 +125,7 @@ def calendar_boundary_tail(last_observed: str, document: dict[str, Any]) -> list
 
     calendar = Calendar(document)
     day = date.fromisoformat(last_observed)
-    result = []
+    result: list[str] = []
     while len(result) < 3:
         day += timedelta(days=1)
         if calendar.is_open(day):

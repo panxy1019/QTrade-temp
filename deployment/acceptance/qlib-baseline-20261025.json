@@ -1,0 +1,50 @@
+a43169a5f0",
+  "source_revision": "207a6b7a4eb324956139a98529110f166039095f",
+  "result_sha256": "15c500187e7cd43242bc318621cab70fb6871f256381969f0baefde8969b94a3",
+  "artifact_manifest_sha256": "10a5924284ba73bb9171cb34439b6b9bfaf5887815bf4371ae30d9f090f82ee4",
+  "artifacts": 11905,
+  "archive_bytes": 129854054,
+  "rows": 2157805,
+  "symbols": 990,
+  "metrics": {
+    "ic": 0.02341357867173008,
+    "rank_ic": 0.049405012048798685,
+    "icir": 0.15982215838844993,
+    "rank_icir": 0.3053799421214159,
+    "total_return_net": 1.1128963401443048,
+    "annual_return_net": 0.3205388603014696,
+    "sharpe_net": 1.2116550445954386,
+    "max_drawdown": -0.33501600039694257,
+    "mean_daily_turnover": 0.17371365258193583,
+    "benchmark_return": 0.19650306312424815,
+    "annualized_volatility": 0.25684776627924855
+  },
+  "segments": {
+    "train": [
+      "2017-04-05",
+      "2021-12-28"
+    ],
+    "valid": [
+      "2022-01-04",
+      "2023-12-26"
+    ],
+    "test": [
+      "2024-01-02",
+      "2026-10-23"
+    ]
+  },
+  "signal_evaluation": {
+    "start": "2024-01-02",
+    "end": "2026-10-21",
+    "days": 676,
+    "label": "Ref($open,-2)/Ref($open,-1)-1"
+  },
+  "portfolio_evaluation": {
+    "start": "2024-01-02",
+    "end": "2026-10-23",
+    "days": 678,
+    "benchmark": "SH000300"
+  },
+  "independent_metric_recalculation": true,
+  "publication_valid": true,
+  "live_trading_enable
