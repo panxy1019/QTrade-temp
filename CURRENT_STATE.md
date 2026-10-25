@@ -9,6 +9,12 @@ Last updated: 2026-10-25
   three-year five-minute job is resumable and still in progress; consult its
   actual progress rather than the configured target. See
   `docs/CURRENT_DATA_AND_CAPACITY.md` for reproduction and limitations.
+  Production browser and API acceptance confirm both newly computed curves end
+  on 2026-10-23. Linux full-suite 495 and frontend 192 tests passed; follow-up
+  cache fixes passed 18 focused backend tests. Mutable JSON pointers use a
+  minute-scoped CDN key; anonymous BaoStock minute sessions run serially after
+  observed cross-session login/logout failures. All three supervised services
+  are running; the long-minute target remains an explicit incomplete batch.
 
 - Implemented: publish bounded public research observation JSON through the
   dedicated `panxy1019/QTrade-observations` repository. Vercel will re-evaluate

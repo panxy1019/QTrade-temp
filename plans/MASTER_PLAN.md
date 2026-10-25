@@ -30,7 +30,7 @@ Audit date: 2026-08-12.
 - [x] Measure capacity and select 1000 liquid daily stocks with 5–10 years.
 - [x] Implement bounded resumable three-year minute ingestion and maintenance.
 - [ ] Complete and audit all 400 long-minute stocks; live progress stays explicit.
-- [ ] Production browser acceptance and final integration record.
+- [x] Production browser acceptance and final integration record.
 
 Reproduction and limits: `docs/CURRENT_DATA_AND_CAPACITY.md`.
 

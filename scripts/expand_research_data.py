@@ -159,7 +159,6 @@ def run(root: Path, end: date) -> None:
         state["free_gib"] = round(shutil.disk_usage(root).free / 1024**3, 2)
         write_json_atomic(root / "progress.json", state)
 
-    save()
     cached_path = root / "universe.json"
     cached = json.loads(cached_path.read_text()) if cached_path.exists() else None
     if cached is not None:
@@ -183,6 +182,7 @@ def run(root: Path, end: date) -> None:
         }
         save()
     else:
+        save()
         candidate_file = root / ("candidates-" + str(end) + ".json")
         if not candidate_file.exists():
             write_json_atomic(candidate_file, {"rows": liquid_candidates()})
