@@ -8,6 +8,16 @@ versioned data, research, event-driven backtesting, portfolio construction,
 risk/OMS/accounting, recovery, monitoring, and a control plane. Real-money
 trading is not enabled.
 
+## 当前部署与研究操作
+
+- 网站：<https://q-trade-temp.vercel.app/>；行情与监控页读取集群只读观测快照。
+- [数据、因子、策略与实验盘点](docs/DATA_FACTOR_STRATEGY_STATUS.md)
+- [新增因子、正式实验持久化与发布操作](docs/RESEARCH_WORKFLOW.md)
+- [持续采集和部署说明](deployment/CONTINUOUS_DATA.md)
+
+代码由 `main` 推送触发 Vercel 构建；新数据和实验摘要通过独立快照通道刷新。
+集群研究程序不会因仓库中新增一个文件而自动运行。
+
 ## Safety invariant
 
 `LIVE_TRADING_ENABLED` is false by default and cannot be enabled by the current

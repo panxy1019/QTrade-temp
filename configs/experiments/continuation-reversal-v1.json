@@ -1,0 +1,30 @@
+{
+  "template_id": "cross-sectional-factor-ranking-v1",
+  "experiment_id": "etf30-continuation-reversal-20261023-v1",
+  "split": {
+    "train_start": "2022-09-06",
+    "train_end": "2024-12-31",
+    "validation_start": "2025-01-01",
+    "validation_end": "2025-12-31",
+    "test_start": "2026-08-24",
+    "test_end": "2026-10-23"
+  },
+  "backtest": {
+    "start": "2026-08-24",
+    "end": "2026-10-23",
+    "factor": "reversal",
+    "horizons": [
+      5
+    ],
+    "top_k": 3,
+    "rebalance_every": 20,
+    "reserve": "0.05",
+    "trend_window": null,
+    "volatility_window": null,
+    "target_annual_volatility": null,
+    "initial_cash": "1000000",
+    "transaction_cost_rate": "0.0015",
+    "slippage_rate": "0.0005"
+  },
+  "seed": 7
+}

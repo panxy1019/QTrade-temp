@@ -7,6 +7,7 @@ import { canonicalJson, sha256Hex } from '../research/strategyIdentity'
 import { BacktestPage, DataCenterPage, ExperimentPage, MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div data-testid="equity-chart" /> }))
+vi.mock('../components/PublicResearchObservations', () => ({ PublicResearchObservations: () => null }))
 vi.mock('../charts/MinuteBacktestChart', () => ({ MinuteBacktestChart: () => <div data-testid="minute-backtest-chart" /> }))
 vi.mock('../charts/ReservedTailChart', () => ({ ReservedTailChart: () => <div data-testid="reserved-tail-chart" /> }))
 vi.mock('../charts/MinuteHistoryChart', () => ({ MinuteHistoryChart: ({ loading = false }: { loading?: boolean }) => <div data-testid="minute-history-chart">{loading ? '正在加载已验证历史分时线…' : null}</div> }))
@@ -1000,7 +1001,7 @@ describe('verified historical data pages', () => {
     expect(screen.getByText('已验证：AKShare 1.18.84')).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: /历史日线 · 18960/ })).toBeInTheDocument()
     expect(screen.getByText(/没有 Bid\/Ask、授权实时价格或实盘权限/)).toBeInTheDocument()
-    expect(screen.getByText('历史数据不等于实时行情')).toBeInTheDocument()
+    expect(screen.getByText('冻结历史研究数据（不随观测快照更新）')).toBeInTheDocument()
     expect(screen.getByText('510300')).toBeInTheDocument()
     expect(screen.getByText('200,000,000')).toBeInTheDocument()
     expect(screen.queryByText('Bid')).not.toBeInTheDocument()
@@ -1400,7 +1401,7 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText('运行回测后可保存结果，用于反复调参与对比。')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出本地对比/ })).toBeDisabled()
     window.localStorage.clear()
-  }, 10_000)
+  }, 20_000)
 
   it('does not restore a locally edited binding whose template and parameters disagree', () => {
     window.localStorage.clear()

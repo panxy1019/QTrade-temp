@@ -1,0 +1,11 @@
+{
+  "valid_from": "2026-08-01",
+  "valid_through": "2026-12-31",
+  "timezone": "Asia/Shanghai",
+  "sources": [
+    "https://www.sse.com.cn/disclosure/announcement/general/c/c_20260915_10832273.shtml",
+    "https://www.szse.cn/disclosure/notice/general/t20251222_618087.html"
+  ],
+  "weekday_closures": ["2026-09-25", "2026-10-01", "2026-10-02", "2026-10-05", "2026-10-06", "2026-10-07"],
+  "limitation": "Bounded SSE/SZSE calendar; no assumptions outside its horizon or about emergency closures."
+}

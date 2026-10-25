@@ -2314,6 +2314,53 @@ export interface DailyReportAutomationStatus {
   external_order_transmission: false
 }
 
+export interface PublicResearchObservation {
+  schema_version: 'qtrade.public-observations.v1'
+  published_at: string
+  checked_at: string
+  healthy: boolean
+  publication_status: 'CURRENT' | 'STALE'
+  publication_age_seconds: number
+  maximum_publication_age_seconds: number
+  worker_alive_at_publication: boolean
+  read_only: true
+  external_order_transmission: false
+  streams: Record<'daily' | 'minute', {
+    status: string
+    observed_symbols: number
+    required_symbols: number
+    latest_minimum: string
+    expected_through: string
+    collected_at: string
+    data_version: string
+    bar_count: number
+  }>
+  datasets: Record<'daily' | 'minute', {
+    latest_bars: Array<{
+      symbol: string
+      exchange: string
+      timestamp: string
+      close: string
+      volume: string
+    }>
+  }>
+  experiments: Array<{
+    experiment_id: string
+    persistence_kind: 'FORMAL_IMMUTABLE_RUN' | 'VERIFIED_LEGACY_ARCHIVE'
+    model: string
+    persisted: true
+    spec_hash: string
+    result_hash: string
+    data_version: string
+    git_commit: string
+    universe_size: number
+    split: { test_start: string; test_end: string }
+    metrics: Record<string, string>
+    benchmark_metrics?: Record<string, string>
+    promotion: 'NOT_ELIGIBLE'
+  }>
+}
+
 export interface PlatformSnapshot {
   system: SystemStatus
   health: HealthStatus
