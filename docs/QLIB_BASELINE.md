@@ -24,6 +24,17 @@
 该股票池在测试末期筛选，结果有明显的幸存者/筛选偏差，且历史交易状态未全部
 认证；这些数字是迁移基线诊断，不是无偏收益预测、前瞻验证或交易许可。
 
+生产验收：`https://q-trade-temp.vercel.app/#/research` 和 `#/backtest` 展示独立Qlib面板；
+`/api/qlib/baseline` 返回200、COMPLETE，结果/产物哈希与集群一致。
+原有观测通道healthy=true，采集、维护和发布服务均运行。验收记录为
+`deployment/acceptance/qlib-production-20261025.json`。
+Linux全量516项通过，后续新增日历边界的24项相关检查通过；前端全量196项通过；
+Ruff、mypy和Vercel构建通过。原有889KB入口分块告警也存在于迁移前构建，本次未改动分包。
+
+该容器Supervisor的配置重读RPC返回值与Python客户端不兼容；当前使用显式启动器
+将原发布进程exec到已核验的新源码目录，PID受原Supervisor管理。磁盘上的Supervisor
+配置也已指向新目录，重启后可直接使用；未重载整个守护进程或其他用户服务。
+
 这是对现有研究平台的增量迁移：采集、质量核对、归档和网页继续复用 QTrade，
 特征、训练、信号与组合回测使用 Qlib。没有交易网关或订单权限。
 

@@ -1,0 +1,12 @@
+{
+  "url": "https://q-trade-temp.vercel.app/api/qlib/baseline",
+  "http_status": 200,
+  "state": "COMPLETE",
+  "run_id": "alpha158-lightgbm-daily-v1-beb391a43169a5f0",
+  "result_hash": "15c500187e7cd43242bc318621cab70fb6871f256381969f0baefde8969b94a3",
+  "result_data_status": "CURRENT_THROUGH_COMPLETE_DAY",
+  "publication_status": "CURRENT",
+  "deployment_commit": "7ad188fa4b9c4dc378a3378ef2430e0f2b636758",
+  "existing_observation_healthy": true,
+  "external_order_transmission": false
+}

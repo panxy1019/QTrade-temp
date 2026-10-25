@@ -9,8 +9,10 @@ Last updated: 2026-10-25
   2026-10-23 (678 portfolio sessions). IC 0.02341, RankIC 0.04941, net total return
   111.29%, maximum drawdown -33.50%; current-universe bias prevents promotion.
   Linux full suite 516 passed, followed by 24 focused checks; frontend full suite
-  195 passed, followed by four Qlib panel checks. See `docs/QLIB_BASELINE.md`.
-  Public production acceptance is being completed. Historical ST/exact limits,
+  196 passed. See `docs/QLIB_BASELINE.md`.
+  Production API and browser acceptance confirm COMPLETE, current-through-2026-10-23,
+  matching result/artifact hashes and the actual metrics; the original observation
+  channel remains healthy. Historical ST/exact limits,
   suspension reasons and PIT memberships remain explicitly unverified.
 
 - Current-data synchronization: default market/backtest workspaces now use the
