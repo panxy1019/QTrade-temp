@@ -3006,3 +3006,23 @@ archives preserve their original identities without claiming missing run specs
 were independently reconstructed. Historical continuation runs remain post hoc,
 non-PIT and promotion-ineligible. There is no anonymous experiment write API,
 automatic strategy promotion, PAPER start or external order transmission.
+
+
+## ADR-164 — Current research inputs are versioned independently of frozen evidence
+
+Status: accepted, 2026-10-25.
+
+Reuse the existing Sina/BaoStock readers, Bar quality gates, Parquet schema and
+causal backtest/spec helpers. No gateway or new trading path is needed; vn.py
+execution components do not address the stale dataset/publication gap. Current
+charts and parameterized previews use a fixed read-only content-hash channel,
+with request version binding, bounded downloads and publication expiry. Dated
+experiments and reports retain their original evidence and are shown as archives.
+Intraday observations and complete-session EOD backtests have separate clocks.
+
+Expansion uses a current liquidity screen (explicit non-PIT bias), per-symbol
+checkpoints on persistent storage, isolated bounded vendor processes and a 100 GiB
+free-space reserve. A configured target is never a completed coverage claim.
+Full research history stays on the cluster; only bounded web inputs enter the
+public data repository. BaoStock qfq history is rebuilt consistently, never
+spliced with uncertified Sina adjustment semantics. LIVE remains disabled.

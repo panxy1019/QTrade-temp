@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-25
 
+- Current-data synchronization: default market/backtest workspaces now use the
+  verified `/current/*` channel. EOD inputs cover 2026-10-23; intraday charts
+  follow the observer. Immutable reports remain dated archives. Daily expansion
+  selected 1000 liquid stocks, 2,180,786 bars (53,994,292 bytes). The 400-stock
+  three-year five-minute job is resumable and still in progress; consult its
+  actual progress rather than the configured target. See
+  `docs/CURRENT_DATA_AND_CAPACITY.md` for reproduction and limitations.
+
 - Implemented: publish bounded public research observation JSON through the
   dedicated `panxy1019/QTrade-observations` repository. Vercel will re-evaluate
   source freshness and publication age on each request, without public write

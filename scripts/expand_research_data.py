@@ -210,52 +210,59 @@ def run(root: Path, end: date) -> None:
     write_json_atomic(root / "failures.json", {"failures": failures})
     save()
     # One official service connection per pass, never one timeout per stock.
-    import baostock as bs
-    from baostock.common.contants import BAOSTOCK_SERVER_IP, BAOSTOCK_SERVER_PORT
-
-    try:
-        with socket.create_connection((BAOSTOCK_SERVER_IP, BAOSTOCK_SERVER_PORT), timeout=12):
-            pass
-    except OSError:
-        state["minute"] = {
-            "state": "BLOCKED_SOURCE_UNREACHABLE",
-            "completed": 0,
-            "reason": (
-                "BaoStock official TCP service unavailable; recent Sina 5m is separate, "
-                "not spliced into historical qfq"
-            ),
-        }
-        save()
-        return
-
-    login = bs.login()
-    if login.error_code != "0":
-        raise RuntimeError("BAOSTOCK_LOGIN_FAILED")
     minute_rows, minute_failures = [], []
-    try:
-        for row in selected:
+
+    # BaoStock owns a process-global socket; use isolated bounded subprocesses,
+    # never concurrent threads sharing a vendor session. Checkpoints survive timeout.
+    def fetch_minute(row: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
+        import subprocess
+        import sys
+
+        try:
+            reserve_space(root)
+            log_path = root / "minute-logs" / (row["symbol"] + ".log")
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            with log_path.open("a") as log:
+                subprocess.run(
+                    [
+                        sys.executable,
+                        "-m",
+                        "scripts.expand_research_data",
+                        "--root",
+                        str(root),
+                        "--end",
+                        str(end),
+                        "--minute-symbol",
+                        row["symbol"],
+                    ],
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                    timeout=120,
+                    check=True,
+                )
+            value = json.loads((root / "minute" / row["symbol"] / (str(end) + ".json")).read_text())
+            return value, None
+        except Exception as error:
+            return None, type(error).__name__
+
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        for offset in range(0, len(selected), 24):
             if len(minute_rows) >= 400:
                 break
-            reserve_space(root)
-            try:
-                value = ingest_minute(root, row, end)
-                minute_rows.append(value)
-            except Exception as error:
-                minute_failures.append(
-                    {
-                        "symbol": row["symbol"],
-                        "error": type(error).__name__ + ":" + str(error)[:100],
-                    }
-                )
+            group = selected[offset : offset + 24]
+            for row, (value, error) in zip(group, pool.map(fetch_minute, group), strict=True):
+                if value is not None and len(minute_rows) < 400:
+                    minute_rows.append(value)
+                elif error:
+                    minute_failures.append({"symbol": row["symbol"], "error": error})
+                state["minute"] = {
+                    "state": "RUNNING",
+                    "completed": len(minute_rows),
+                    "failed": len(minute_failures),
+                }
                 write_json_atomic(root / "minute-failures.json", {"failures": minute_failures})
-            state["minute"] = {
-                "state": "RUNNING",
-                "completed": len(minute_rows),
-                "failed": len(minute_failures),
-            }
-            save()
-    finally:
-        bs.logout()
+                save()
+    write_json_atomic(root / "minute-universe.json", signed({**AUTHORITY, "stocks": minute_rows}))
     state["minute"] = {
         "state": "COMPLETE" if len(minute_rows) == 400 else "PARTIAL",
         "completed": len(minute_rows),
@@ -338,10 +345,23 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--end", type=date.fromisoformat, required=True)
+    parser.add_argument("--minute-symbol")
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("live trading must remain disabled")
-    run(args.root, args.end)
+    if args.minute_symbol:
+        import baostock as bs
+
+        socket.setdefaulttimeout(20)
+        login = bs.login()
+        if login.error_code != "0":
+            raise RuntimeError("BAOSTOCK_LOGIN_FAILED")
+        try:
+            ingest_minute(args.root, {"symbol": args.minute_symbol}, args.end)
+        finally:
+            bs.logout()
+    else:
+        run(args.root, args.end)
 
 
 if __name__ == "__main__":
