@@ -1597,6 +1597,25 @@ export interface HistoricalDataset {
   universe: { point_in_time: boolean; symbols: string[] }
 }
 
+export interface CurrentDataset extends HistoricalDataset {
+  minimum_latest_day: string
+  expected_complete_day: string
+  freshness: 'FRESH' | 'STALE'
+  trading_days: string[]
+  instruments: Array<{ symbol: string; name: string; sector_code?: string; sector_name?: string }>
+  interval: '1d' | '5m'
+  adjustment: string
+}
+
+export interface CurrentDatasets {
+  checked_at: string
+  published_at: string
+  daily: CurrentDataset
+  minute: CurrentDataset
+  intraday?: CurrentDataset
+  expansion: { daily: { state: string; completed: number; selected?: number; candidate_count?: number }; minute: { state: string; completed?: number }; free_gib: number } | null
+}
+
 export interface MarketStatus {
   provider_connected: boolean
   execution_gateway_connected: boolean
