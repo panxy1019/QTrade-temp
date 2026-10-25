@@ -3,7 +3,12 @@ from decimal import Decimal
 
 import pytest
 
-from qtrade.research.qlib_adapter import causal_capacity, normalize_daily, verify_reused_bars
+from qtrade.research.qlib_adapter import (
+    calendar_boundary_tail,
+    causal_capacity,
+    normalize_daily,
+    verify_reused_bars,
+)
 
 
 def bar(day, price=10, volume=1000):
@@ -87,3 +92,17 @@ def test_capacity_is_causal_zero_on_resume_and_uses_current_share_units():
     ]
     result = causal_capacity(rows, ["2020-01-02", "2020-01-03", "2020-01-06", "2020-01-07"])
     assert result == {"2020-01-02": 0, "2020-01-03": 50, "2020-01-07": 0}
+
+
+def test_calendar_boundary_tail_uses_verified_exchange_sessions_not_fake_bars():
+    import json
+    from pathlib import Path
+
+    calendar = json.loads(Path("configs/observer_calendar_2026.json").read_text())
+    assert calendar_boundary_tail("2026-10-23", calendar) == [
+        "2026-10-26",
+        "2026-10-27",
+        "2026-10-28",
+    ]
+    with pytest.raises(ValueError, match="OUTSIDE_VERIFIED_HORIZON"):
+        calendar_boundary_tail("2026-12-31", calendar)

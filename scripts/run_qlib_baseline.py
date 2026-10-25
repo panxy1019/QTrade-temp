@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
-from qtrade.research.qlib_adapter import causal_capacity
+from qtrade.research.qlib_adapter import calendar_boundary_tail, causal_capacity
 from scripts.atomic_json import write_json_atomic
 
 REPO = Path(__file__).resolve().parents[1]
@@ -42,9 +42,16 @@ def make_provider(dataset_root: Path, target: Path) -> dict[str, Any]:
     dates = [str(r["date"])[:10] for r in raw_index]
     if dates != sorted(set(dates)):
         raise ValueError("INVALID_BENCHMARK_CALENDAR")
+    # Qlib needs the next exchange boundary to close its final backtest step.
+    # Append calendar-only sessions, leaving every price/volume field NaN there.
+    tail = calendar_boundary_tail(
+        dates[-1], json.loads((REPO / "configs/observer_calendar_2026.json").read_text())
+    )
+    dates += tail
     (target / "calendars").mkdir(parents=True, exist_ok=True)
     (target / "instruments").mkdir(exist_ok=True)
     (target / "calendars/day.txt").write_text("\n".join(dates) + "\n")
+    (target / "calendars/day_future.txt").write_text("\n".join(dates) + "\n")
     instruments = []
     field_names = [
         "open",

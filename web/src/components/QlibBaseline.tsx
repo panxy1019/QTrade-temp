@@ -59,10 +59,10 @@ export function QlibBaseline() {
           { key: 'constraints', label: '成交约束', children: '缺失行情不成交；保守4.5%方向性开盘跳空限制；前一交易日成交量的1%容量上限' },
         ]} />
         <Space wrap size="large">
-          <Statistic title="IC" value={number(run.metrics.ic)} />
-          <Statistic title="RankIC" value={number(run.metrics.rank_ic)} />
+          <Statistic title="IC" value={run.metrics.ic ?? '—'} formatter={() => number(run.metrics.ic)} />
+          <Statistic title="RankIC" value={run.metrics.rank_ic ?? '—'} formatter={() => number(run.metrics.rank_ic)} />
           <Statistic title="成本后累计收益" value={number(run.metrics.total_return_net, true)} />
-          <Statistic title="成本后 Sharpe" value={number(run.metrics.sharpe_net)} />
+          <Statistic title="成本后 Sharpe" value={run.metrics.sharpe_net ?? '—'} formatter={() => number(run.metrics.sharpe_net)} />
           <Statistic title="最大回撤" value={number(run.metrics.max_drawdown, true)} />
           <Statistic title="日均双边换手" value={number(run.metrics.mean_daily_turnover, true)} />
         </Space>

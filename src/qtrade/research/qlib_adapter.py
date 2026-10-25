@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from bisect import bisect_right
+from datetime import date, timedelta
 from decimal import Decimal
 from typing import Any
 
@@ -115,4 +116,18 @@ def causal_capacity(rows: list[dict[str, Any]], calendar: list[str]) -> dict[str
             if previous
             else 0.0
         )
+    return result
+
+
+def calendar_boundary_tail(last_observed: str, document: dict[str, Any]) -> list[str]:
+    """Known exchange-session boundaries for Qlib; these are not observed bars."""
+    from qtrade.monitoring.data_freshness import Calendar
+
+    calendar = Calendar(document)
+    day = date.fromisoformat(last_observed)
+    result = []
+    while len(result) < 3:
+        day += timedelta(days=1)
+        if calendar.is_open(day):
+            result.append(str(day))
     return result
