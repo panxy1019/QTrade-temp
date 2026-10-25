@@ -70,6 +70,9 @@ def build_snapshot(root: Path, experiment_root: Path) -> dict[str, Any]:
 
         verify_archive(path.parent)
         experiments.append(json.loads(path.read_text()))
+    experiments.sort(
+        key=lambda row: (row["persistence_kind"] != "FORMAL_IMMUTABLE_RUN", row["experiment_id"])
+    )
     snapshot = signed(
         {
             **AUTHORITY,

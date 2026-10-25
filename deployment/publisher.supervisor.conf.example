@@ -1,0 +1,17 @@
+[program:qtrade-research-publisher]
+; Replace /PERSIST/qtrade and SOURCE_COMMIT with inspected deployment paths.
+directory=/PERSIST/qtrade/releases/SOURCE_COMMIT
+command=/PERSIST/qtrade/venv/bin/python -m scripts.publish_research_snapshot --root /PERSIST/qtrade/runtime --experiment-root /PERSIST/qtrade/research/experiments --publication /PERSIST/qtrade/publication
+environment=LIVE_TRADING_ENABLED="false",PYTHONUNBUFFERED="1"
+autostart=true
+autorestart=true
+startsecs=10
+startretries=3
+stopsignal=TERM
+stopwaitsecs=110
+stopasgroup=true
+killasgroup=true
+redirect_stderr=true
+stdout_logfile=/PERSIST/qtrade/publication.log
+stdout_logfile_maxbytes=5MB
+stdout_logfile_backups=3

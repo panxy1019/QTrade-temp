@@ -2,12 +2,15 @@
 
 Last updated: 2026-10-25
 
-- In progress: publish bounded public research observation JSON through the
+- Implemented: publish bounded public research observation JSON through the
   dedicated `panxy1019/QTrade-observations` repository. Vercel will re-evaluate
   source freshness and publication age on each request, without public write
-  access. Archive the 11 verified legacy experiments and run three complete,
-  immutable continuation diagnostics with local SQLite lineage and NFS archives.
-  Deployment and end-to-end acceptance are pending.
+  access. Eleven verified legacy experiments and three complete immutable
+  continuation diagnostics are persisted, with local SQLite lineage and NFS
+  archives. Both supervised processes are running. Preview browser acceptance
+  confirms FRESH coverage for 30 ETFs and 75 stocks; production release follows
+  the reviewed main-branch merge. Read `docs/DATA_FACTOR_STRATEGY_STATUS.md` and
+  `docs/RESEARCH_WORKFLOW.md` for the Chinese inventory and operating procedure.
 
 - Continuous research observation restored (2026-10-25): a dedicated cluster
   process reuses the existing AKShare/Sina readers, Bar quality gate, Parquet
@@ -21,8 +24,8 @@ Last updated: 2026-10-25
 - Deployment ownership: a new Vercel project in the user's `richman3` team is
   connected to `panxy1019/QTrade-temp` and serves
   `https://q-trade-temp.vercel.app`. The original domain was not changed.
-  The new website still reads the existing bundled evidence; private-cluster
-  observations require a separately configured read-only publication path.
+  The bundled historical evidence remains frozen, while the new observation
+  panel reads the cluster publication channel and recomputes source freshness.
 - Goal: evolve the v0.1 stable PAPER/SHADOW core into a real-market-data strategy
   research/evolution platform with a professional Chinese web application and
   isolated read-only broker architecture. Real-money trading remains disabled.

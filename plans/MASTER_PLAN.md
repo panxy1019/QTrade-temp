@@ -791,7 +791,7 @@ intentional human gate and were not used.
   partial coverage, checksums and failure-state retention with focused tests.
 - [x] Fetch 30-ETF daily and 75-stock five-minute data through 2026-10-23.
 - [x] Create the user's Git-connected Vercel project and verify its production API.
-- [ ] Connect private-cluster observations to the public site's read-only data path.
+- [x] Connect private-cluster observations to the public site's read-only data path.
 
 Reproduce: see deployment/CONTINUOUS_DATA.md. Known limitations: public-source
 observations and frozen current universes are not PIT or execution readiness;
@@ -804,7 +804,13 @@ unconfigured. Accepted old research evidence remains unchanged.
 - [x] Audit existing data, factors, templates, browser previews and experiment storage.
 - [x] Implement bounded publication and request-time freshness validation.
 - [x] Implement immutable formal-run archives and local-catalog recovery.
-- [ ] Verify Linux persistence, idempotency, corruption rejection and recovery.
-- [ ] Run three fixed continuation diagnostics and archive 11 legacy experiments.
-- [ ] Deploy and verify browser -> API -> publication -> cluster data.
-- [ ] Deliver Chinese data/factor/strategy inventory and operating instructions.
+- [x] Verify Linux persistence, idempotency, corruption rejection and recovery.
+- [x] Run three fixed continuation diagnostics and archive 11 legacy experiments.
+- [x] Deploy and verify browser -> API -> publication -> cluster data in preview.
+- [x] Deliver Chinese data/factor/strategy inventory and operating instructions.
+
+Acceptance: all 489 Linux Python tests (including 54 focused tests), 42 relevant frontend tests, whole-repository
+Ruff, 100-source-file mypy, script mypy, ESLint and the Vercel production build
+pass. The preview browser displays both streams FRESH and the public snapshot
+contains 14 persisted experiments. Production is released through the reviewed
+main-branch merge; signed historical evidence remains unchanged.

@@ -103,6 +103,16 @@ a realtime dashboard. Connecting the website requires an explicitly configured
 read-only publication path (for example, approved object storage or a reviewed
 HTTPS observation API). No SSH password belongs in Vercel or GitHub settings.
 
+The subsequent read-only channel is implemented by
+`scripts/publish_research_snapshot.py` and `qtrade.api.public_observations`.
+It publishes bounded JSON every five minutes to the dedicated
+`panxy1019/QTrade-observations` repository with a repository-scoped deploy key;
+Vercel reads a fixed public HTTPS URL without credentials. Use
+`publisher.supervisor.conf.example` for the independent supervised publisher.
+The original evidence remains frozen. See `docs/RESEARCH_WORKFLOW.md` for
+publication, formal experiment persistence and catalog recovery, and
+`docs/DATA_FACTOR_STRATEGY_STATUS.md` for the data/factor/strategy inventory.
+
 ## Acceptance record, 2026-10-25
 
 - Source: `panxy1019/QTrade-temp` commit

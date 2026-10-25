@@ -128,9 +128,39 @@
       "periods": 15
     }
   ],
-  "factor-search": {},
-  "factor-robustness": {},
-  "stock-sector-transfer": {},
+  "factor-search": {
+    "classification": "bounded_factor_search_current_universe_non_pit",
+    "promotion": "NOT_ELIGIBLE",
+    "promotion_reasons": [
+      "CURRENT_UNIVERSE_SURVIVORSHIP_BIAS",
+      "CONFIRMATORY_PERIOD_PREVIOUSLY_VIEWED_BY_PROJECT",
+      "SHORT_SINGLE_PROVIDER_HISTORY",
+      "NO_PAPER_OR_SHADOW_SESSIONS"
+    ]
+  },
+  "factor-robustness": {
+    "classification": "post_selection_robust_factor_search_current_universe_non_pit",
+    "promotion": "NOT_ELIGIBLE",
+    "promotion_reasons": [
+      "POST_SELECTION_REUSE_NOT_NEW_HELD_OUT_EVIDENCE",
+      "CURRENT_UNIVERSE_SURVIVORSHIP_BIAS",
+      "CONFIRMATORY_PERIOD_PREVIOUSLY_VIEWED_BY_PROJECT",
+      "SHORT_SINGLE_PROVIDER_HISTORY",
+      "NO_PAPER_OR_SHADOW_SESSIONS"
+    ]
+  },
+  "stock-sector-transfer": {
+    "classification": "locked_etf_factor_stock_sector_transfer_non_pit",
+    "promotion": "NOT_ELIGIBLE",
+    "promotion_reasons": [
+      "CURRENT_2026_CONSTITUENTS_PROJECTED_BACKWARD",
+      "HFQ_SERIES_NOT_POINT_IN_TIME",
+      "SINGLE_PUBLIC_DATA_SOURCE",
+      "NO_LIMIT_UP_DOWN_EXECUTION_MODEL",
+      "LAST_CLOSE_VALUATION_ALLOWED_FOR_UP_TO_40_MISSING_SESSIONS",
+      "NO_PAPER_OR_SHADOW_SESSIONS"
+    ]
+  },
   "intraday-factor-long-window": {
     "classification": "SIGNED_REUSED_LONG_WINDOW_INTRADAY_FACTOR_DIAGNOSTIC",
     "promotion": "NOT_ELIGIBLE",
@@ -174,5 +204,299 @@
       "QFQ_MAY_USE_FUTURE_ADJUSTMENT_KNOWLEDGE",
       "NO_PAPER_OR_SHADOW_SESSION_EVIDENCE"
     ]
+  },
+  "continuous_observations": {
+    "published_at": "2026-10-25T09:03:49.246597+00:00",
+    "daily": 1170,
+    "minute": 7200,
+    "latest_market_timestamp": "2026-10-23T15:00:00+08:00"
+  },
+  "persisted_experiments": [
+    {
+      "experiment_id": "akshare-etf30-buy-hold-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "7eae9ac1580762b56feb6e507fd8c3ca406b5fb1c33124d125db1340aa66a491",
+      "result_hash": "1f1ab664245a28afcc83107bd09c33aea386cbe5431449d595ee01bff4f71932",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "-0.04918669340175008",
+        "annualized_volatility": "0.19775519306149886",
+        "calmar": "-0.3280184195561091690805517898",
+        "maximum_drawdown": "-0.1499510102765325146949391912",
+        "sharpe": "-0.1559302645909348964007187287",
+        "sortino": "-0.2124513613052448359593872499",
+        "test_exposure": "0.9597055669978069742084730714",
+        "test_transaction_cost": "0",
+        "test_turnover": "0",
+        "total_return": "-0.0289932928548257728682058273"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-60-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "0095d0981a0da1c4d9e5fa907df4aa8dea93b314c0d964b40de82700323f61fe",
+      "result_hash": "fbbf726c9903ee72999210fa1189b61c7a1b2768b2d93b6900f9ac910fe8044c",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "-0.31230218119844155",
+        "annualized_volatility": "0.33380285769419693",
+        "calmar": "-0.9642830291655095848228732685",
+        "maximum_drawdown": "-0.3238698304881584603924939037",
+        "sharpe": "-0.9530770361000138099053814875",
+        "sortino": "-1.244274149506380626344338647",
+        "test_exposure": "0.9502852504271978876495266456",
+        "test_transaction_cost": "0.01107514845",
+        "test_turnover": "7.3834323",
+        "total_return": "-0.1961988423350820152138561252"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-multi-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "dcbca21d5b2fd1b77540a7324612356b82f31bc7e6e256c23e0e61fcd24ae79b",
+      "result_hash": "d13cc0f6faa858ead9ca9a8b96d62af73bbbdef482f568279ad2c85c2593b4b8",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "-0.23488163687153596",
+        "annualized_volatility": "0.3270944372931016",
+        "calmar": "-0.8454084712424039433406476472",
+        "maximum_drawdown": "-0.2778321306934105181602599587",
+        "sharpe": "-0.6538352394973745614846281236",
+        "sortino": "-0.8726212405976809990957543390",
+        "test_exposure": "0.9505665201640272792477318612",
+        "test_transaction_cost": "0.01269377085",
+        "test_turnover": "8.4625139",
+        "total_return": "-0.1445886045910804179629416911"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-trend-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "d84b5d7dacd7ca9f50fee6d581211c1e3a03dcd574bc70734463230cb58fcb46",
+      "result_hash": "7d38270d994f01fb25337f9af91a453588308b11bb82ae08d17ec5cca4241fb4",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "-0.23479241661364625",
+        "annualized_volatility": "0.3270680730367041",
+        "calmar": "-0.8452366853713766023481348516",
+        "maximum_drawdown": "-0.2777830407473193477603578486",
+        "sharpe": "-0.6535584644792547047657170359",
+        "sortino": "-0.8722658057082775899413661836",
+        "test_exposure": "0.9505256425554014316035516483",
+        "test_transaction_cost": "0.01262466465",
+        "test_turnover": "8.4164431",
+        "total_return": "-0.1445304189097432378027811283"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-vol-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "4a146cf72c707cc0b46fd981105b2e98948a4dba7f422ada66807e517c99fbc4",
+      "result_hash": "e06a1779b2e2d43486313647523e5314815f29f1b90b9ef3641dff0eb1551b6f",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "0.011032177758744766",
+        "annualized_volatility": "0.14734949093029323",
+        "calmar": "0.1158670518517957157215067909",
+        "maximum_drawdown": "-0.0952141060157110447176564919",
+        "sharpe": "0.1481292160707791939025164939",
+        "sortino": "0.2117749054061484222890428702",
+        "test_exposure": "0.4818989224723726687725992818",
+        "test_transaction_cost": "0.00710731425",
+        "test_turnover": "4.7382095",
+        "total_return": "0.006420722554291628152413786"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-vol-cost-high-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "cdde2bbe13cca85f8804cc40b8826edafbfe93d3c7b6e8ac6c99983ed6faa548",
+      "result_hash": "8e6ed21e5c3a31b07f983ce9bc91f766f06085bda47755ae1267755dc3309696",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "0.0000944150899950813",
+        "annualized_volatility": "0.14760489620709025",
+        "calmar": "0.0009707884456158495304461881770",
+        "maximum_drawdown": "-0.0972560916041663244689142389",
+        "sharpe": "0.07443163678294947432305902390",
+        "sortino": "0.1062880265387746517562868831",
+        "test_exposure": "0.4822625466443129754960449776",
+        "test_transaction_cost": "0.0138826677",
+        "test_turnover": "4.6275559",
+        "total_return": "0.000055074385888093074854420"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-vol-cost-low-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "d238f65ece822935dd463d692f533b59b197f01acafd961d76d610d3ee7b6bd4",
+      "result_hash": "5c5e45a325f650a020223a8ed76e55be94c04dfea7bff3e99a28ffcd97d025d2",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "0.016531253555411407",
+        "annualized_volatility": "0.14726883005264207",
+        "calmar": "0.1754793104635892082717273764",
+        "maximum_drawdown": "-0.0942062828474672650611644171",
+        "sharpe": "0.1849658597248862998691057345",
+        "sortino": "0.2645385965773331370564559230",
+        "test_exposure": "0.4817110884830418801897154068",
+        "test_transaction_cost": "0.003594722625",
+        "test_turnover": "4.7929635",
+        "total_return": "0.009610276546435514599473651"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-vol-fast-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "d7607258c7fce8a953739ab4fd9b27a01a0cefb31648866ad72ec4d0e085a48c",
+      "result_hash": "7650ed7087b79f2eb320388cd3081a7e56eda5a1840afef639f02c050c2f786a",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "-0.05544095191551002",
+        "annualized_volatility": "0.14288832664456882",
+        "calmar": "-0.5879423058699298513423569340",
+        "maximum_drawdown": "-0.0942965855016651768109195044",
+        "sharpe": "-0.3276109394802772993512867376",
+        "sortino": "-0.4475561184099069224681194685",
+        "test_exposure": "0.4669977264058172188619757668",
+        "test_transaction_cost": "0.01280044350",
+        "test_turnover": "8.5336290",
+        "total_return": "-0.0327242150587841835122956963"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-vol-high-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "4cbbe34c6ac2aec2ab6ae51516df62983d97c90b3d6aa92738908b8cca8e85cb",
+      "result_hash": "9bd8d05af325b6dfab96022fa5fa193e343067d3ee4657825e4faa844ce455c4",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "0.013437783684249194",
+        "annualized_volatility": "0.19563860001523034",
+        "calmar": "0.1082987389073996967019854950",
+        "maximum_drawdown": "-0.1240807032456684906920276794",
+        "sharpe": "0.1660427922795065790648355681",
+        "sortino": "0.2374862799124961961389947005",
+        "test_exposure": "0.6320902084561634288360110918",
+        "test_transaction_cost": "0.00956587545",
+        "test_turnover": "6.3772503",
+        "total_return": "0.007816900521357476006612353"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-vol-low-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "50c664a0e715b645eeff3ff0c2eb27f01bba212d08bf3d269ec9b2e3e6852d5a",
+      "result_hash": "ad036bcfe412b62f3c7e9078070466030db2edfbb74c6bfa7231a5838329d582",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "0.011080354197032127",
+        "annualized_volatility": "0.09812556449874386",
+        "calmar": "0.1742071772951763849201266197",
+        "maximum_drawdown": "-0.0636044643456772802745198816",
+        "sharpe": "0.1613586893224041947193633195",
+        "sortino": "0.2308948397845357314972582706",
+        "test_exposure": "0.3218376490496109448984293701",
+        "test_transaction_cost": "0.00466995015",
+        "test_turnover": "3.1133001",
+        "total_return": "0.006448697017671081960715561"
+      }
+    },
+    {
+      "experiment_id": "akshare-etf30-momentum-vol-slow-20260812-v4",
+      "persistence_kind": "VERIFIED_LEGACY_ARCHIVE",
+      "spec_hash": "04b1a5f057270ac8fa9489d69872d98a465f80006d79f64d08ac45b2333056cc",
+      "result_hash": "c081798057ec382983317407b7dc926e86dc727d9490c0e288ef0e843b797272",
+      "data_version": "akshare-etf30-factor-research-20220906-20260821-v1",
+      "git_commit": "840750d854dabea5f600860d7916b1c027c2ca33",
+      "metrics": {
+        "annualized_return": "0.05820764990779215",
+        "annualized_volatility": "0.15572535578385713",
+        "calmar": "0.6397683475465291841507717670",
+        "maximum_drawdown": "-0.0909823846881684215681955944",
+        "sharpe": "0.4412622135451753358535078369",
+        "sortino": "0.6245466557717702953357314809",
+        "test_exposure": "0.4509513473644472063106543299",
+        "test_transaction_cost": "0.00301946175",
+        "test_turnover": "2.0129745",
+        "total_return": "0.033553645446292808016802717"
+      }
+    },
+    {
+      "experiment_id": "etf30-continuation-momentum-20261023-v1",
+      "persistence_kind": "FORMAL_IMMUTABLE_RUN",
+      "spec_hash": "b1b430d1dc2869c5be45b0fa385cbba653205abbe25e87dee0b8ff72f7a70632",
+      "result_hash": "a8f764bd27f8ec85cbd8397f56869c65d29992b29ecdb52aa81688d1e8321df0",
+      "data_version": "etf30-continuation-20261023-078a1ae8b506",
+      "git_commit": "76835caad012ad97ce400d06d72f178a0e5321d7",
+      "metrics": {
+        "annualized_return": "-0.1517947025322416",
+        "annualized_volatility": "0.18143266486356355",
+        "calmar": "-2.209303363011149281920817667",
+        "maximum_drawdown": "-0.0687070436200098998358943759",
+        "sharpe": "-0.8168698401229290276833005795",
+        "sortino": "-1.236058017202012725578044062",
+        "test_exposure": "0.9520005640679511787705862851",
+        "test_transaction_cost": "0.00365999415225",
+        "test_turnover": "2.4399961015",
+        "total_return": "-0.0251570044075847535670886699"
+      }
+    },
+    {
+      "experiment_id": "etf30-continuation-reversal-20261023-v1",
+      "persistence_kind": "FORMAL_IMMUTABLE_RUN",
+      "spec_hash": "e3ebbf07f4b2b2931221499834833a032f6d314ced3bb2afc0a98ef595225ed7",
+      "result_hash": "138e4035b0c0cd94f8e377a2f39d1fd4cfe67c293a808008c17a5245a9db7761",
+      "data_version": "etf30-continuation-20261023-078a1ae8b506",
+      "git_commit": "76835caad012ad97ce400d06d72f178a0e5321d7",
+      "metrics": {
+        "annualized_return": "-0.02381828437444533",
+        "annualized_volatility": "0.17595060170551202",
+        "calmar": "-0.5288920913834389752013995251",
+        "maximum_drawdown": "-0.0450342986073834571541571292",
+        "sharpe": "-0.04931045700896918146064755226",
+        "sortino": "-0.07664783002689015188610342817",
+        "test_exposure": "0.9526434063225716797904490926",
+        "test_transaction_cost": "0.003690382456275",
+        "test_turnover": "2.46025497085",
+        "total_return": "-0.0037238211759138251010257921"
+      }
+    },
+    {
+      "experiment_id": "etf30-continuation-risk-20261023-v1",
+      "persistence_kind": "FORMAL_IMMUTABLE_RUN",
+      "spec_hash": "e4b5a1eb6af5117c18901f56e2ad899919e7c8e035d9102f173d488ee99394cf",
+      "result_hash": "147eeb2ce4d224e9245ba2550b0a1ae04b39d8d625f3a01b1e1025ebcb274c4a",
+      "data_version": "etf30-continuation-20261023-078a1ae8b506",
+      "git_commit": "76835caad012ad97ce400d06d72f178a0e5321d7",
+      "metrics": {
+        "annualized_return": "-0.10200207811011275",
+        "annualized_volatility": "0.10920055954763513",
+        "calmar": "-2.744451919573821887712182966",
+        "maximum_drawdown": "-0.0371666478769838904054398581",
+        "sharpe": "-0.9305677200887152568093796004",
+        "sortino": "-1.394235961692042006999009965",
+        "test_exposure": "0.6074106185531261281020497536",
+        "test_transaction_cost": "0.003358534226400",
+        "test_turnover": "2.23902281760",
+        "total_return": "-0.0165125976881281411663811042"
+      }
+    }
+  ],
+  "unified_daily": {
+    "data_version": "etf30-continuation-20261023-078a1ae8b506",
+    "bars": 29940,
+    "sessions": 998,
+    "symbols": 30
   }
 }

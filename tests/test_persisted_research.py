@@ -8,7 +8,10 @@ import pytest
 from qtrade.data import Bar, DataManifest, ParquetBarStore, QualityStatus
 from qtrade.persistence import SQLiteMetadataCatalog
 from scripts.persist_research_experiment import (
-    archive_legacy, persist_experiment, register_archive, verify_archive,
+    archive_legacy,
+    persist_experiment,
+    register_archive,
+    verify_archive,
 )
 
 pytestmark = pytest.mark.skipif(os.name == "nt", reason="durable publishers require Linux fsync")

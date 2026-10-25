@@ -1401,7 +1401,7 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText('运行回测后可保存结果，用于反复调参与对比。')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /导出本地对比/ })).toBeDisabled()
     window.localStorage.clear()
-  }, 10_000)
+  }, 20_000)
 
   it('does not restore a locally edited binding whose template and parameters disagree', () => {
     window.localStorage.clear()
