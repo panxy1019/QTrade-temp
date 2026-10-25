@@ -1,7 +1,21 @@
 # Current state
 
-Last updated: 2026-08-27
+Last updated: 2026-10-25
 
+- Continuous research observation restored (2026-10-25): a dedicated cluster
+  process reuses the existing AKShare/Sina readers, Bar quality gate, Parquet
+  storage and atomic JSON publication. The first collection contains 1,170 new
+  daily bars for all 30 ETFs and 7,200 native five-minute bars for all 75 stocks,
+  with minimum/maximum latest clocks at 2026-10-23 15:00 China time. The service
+  exposes loopback-only freshness, health and Prometheus endpoints, preserves
+  failed attempts separately, and cannot grant PAPER/LIVE readiness. Its bounded
+  exchange-calendar coverage expires on 2026-12-31. See
+  `deployment/CONTINUOUS_DATA.md` for reproduction and limitations.
+- Deployment ownership: a new Vercel project in the user's `richman3` team is
+  connected to `panxy1019/QTrade-temp` and serves
+  `https://q-trade-temp.vercel.app`. The original domain was not changed.
+  The new website still reads the existing bundled evidence; private-cluster
+  observations require a separately configured read-only publication path.
 - Goal: evolve the v0.1 stable PAPER/SHADOW core into a real-market-data strategy
   research/evolution platform with a professional Chinese web application and
   isolated read-only broker architecture. Real-money trading remains disabled.

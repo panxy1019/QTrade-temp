@@ -1,0 +1,17 @@
+[program:qtrade-data-observer]
+; Replace /PERSIST/qtrade and BASE_COMMIT with the inspected deployment paths.
+directory=/PERSIST/qtrade/releases/BASE_COMMIT
+command=/PERSIST/qtrade/venv/bin/python -m scripts.run_data_observer --root /PERSIST/qtrade/runtime --port 8010
+environment=LIVE_TRADING_ENABLED="false",QTRADE_AKSHARE_NONCOMMERCIAL_ACK="true",PYTHONUNBUFFERED="1"
+autostart=true
+autorestart=true
+startsecs=10
+startretries=3
+stopsignal=TERM
+stopwaitsecs=390
+stopasgroup=true
+killasgroup=true
+redirect_stderr=true
+stdout_logfile=/PERSIST/qtrade/service.log
+stdout_logfile_maxbytes=5MB
+stdout_logfile_backups=3

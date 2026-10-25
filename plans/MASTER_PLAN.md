@@ -781,3 +781,20 @@ run-spec fields are absent from the report.
 Licensed realtime data and a broker/native ABI selection are required for the
 next integration milestone. Credentials and real order transmission remain an
 intentional human gate and were not used.
+
+## 2026-10-25 — Restore continuous research data and freshness monitoring
+
+- [x] Inspect actual container limits, persistent mounts, Python and supervision.
+- [x] Deploy from the user's panxy1019/QTrade-temp source snapshot.
+- [x] Add immutable daily/5m collection and loopback freshness/health/metrics.
+- [x] Verify bounded exchange calendars, old-source success, future timestamps,
+  partial coverage, checksums and failure-state retention with focused tests.
+- [x] Fetch 30-ETF daily and 75-stock five-minute data through 2026-10-23.
+- [x] Create the user's Git-connected Vercel project and verify its production API.
+- [ ] Connect private-cluster observations to the public site's read-only data path.
+
+Reproduce: see deployment/CONTINUOUS_DATA.md. Known limitations: public-source
+observations and frozen current universes are not PIT or execution readiness;
+calendar renewal is required before 2027; process supervision cannot keep a
+rented cluster container powered on; external alerts and off-host backups remain
+unconfigured. Accepted old research evidence remains unchanged.

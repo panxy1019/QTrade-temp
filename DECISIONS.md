@@ -2960,3 +2960,22 @@ fields before metrics render.
 This verifies response timing only. It does not recalculate returns, alter the
 backtest engine, register or advance a strategy, authorize PAPER/LIVE, mutate
 runtime state or transmit an external order.
+
+## ADR-162 — Continuous collection is isolated research observation
+
+Status: accepted, 2026-10-25.
+
+Run one supervised, bounded collector on the inspected cluster. Reuse existing
+public-source adapters and canonical validation rather than adding gateways.
+Publish immutable Parquet plus checksum-bound reports and retain the previous
+success after a failed attempt. Distinguish process heartbeat, collection
+success and exchange-calendar-aware source freshness. Calendar expiry, future
+clocks, incomplete coverage or invalid checksums fail closed.
+
+Use the persistent NFS mount only for research archives and JSON; no SQLite WAL
+operational ledger is deployed there. The worker lock remains container-local,
+so multi-container writers are unsupported. Bind observation HTTP to loopback.
+Do not modify accepted historical experiments, count backfill as forward
+PAPER evidence, or change live/external-order authority. A public Vercel project
+cannot directly reach the private SSH address; web publication is a separate
+read-only integration with explicit destination and network configuration.
