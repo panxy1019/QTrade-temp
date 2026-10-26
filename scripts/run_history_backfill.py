@@ -37,7 +37,7 @@ STREAM_LIMIT = 2_000_000
 
 
 def pit_backoff_reason(base: Path, now: datetime) -> str | None:
-    """Honor the shared public endpoint's PIT deadline, including between child polls."""
+    """Separate vendor-failure backoff from the PIT queue's normal scheduling clock."""
     path = base / "pit-repair/next-pass.json"
     try:
         with path.open("rb") as handle:
@@ -52,13 +52,33 @@ def pit_backoff_reason(base: Path, now: datetime) -> str | None:
         value = json.loads(payload)
         if not isinstance(value, dict):
             raise ValueError("PIT_SCHEDULE_NOT_OBJECT")
-        if "next_attempt_at" not in value:
-            return None
-        deadline = datetime.fromisoformat(value["next_attempt_at"])
-        if deadline.tzinfo is None or now.tzinfo is None:
+        outcome = value.get("outcome")
+        failures = value.get("consecutive_failures", 0)
+        returncode = value.get("returncode")
+        receipt_valid = value.get("receipt_valid")
+        if (outcome not in {"RUNNING", "FAILED", "PARTIAL", "SUCCEEDED"}
+                or type(failures) is not int or failures < 0
+                or "returncode" in value and type(returncode) is not int
+                or "receipt_valid" in value and type(receipt_valid) is not bool):
+            raise ValueError("PIT_SCHEDULE_OUTCOME_UNCLASSIFIABLE")
+        deadline = (datetime.fromisoformat(value["next_attempt_at"])
+                    if "next_attempt_at" in value else None)
+        if now.tzinfo is None or deadline is not None and deadline.tzinfo is None:
             raise ValueError("PIT_SCHEDULE_TIMEZONE_REQUIRED")
-        if now < deadline:
-            return "PIT_SOURCE_BACKOFF_ACTIVE"
+        # RUNNING deliberately has no deadline and carries the prior failure count.
+        # The shared vendor lease prevents an overlapping anonymous session.
+        if outcome == "RUNNING":
+            return None
+        failed = (outcome == "FAILED" or failures > 0 or receipt_valid is False
+                  or returncode is not None and returncode != 0)
+        if failed:
+            if deadline is None:
+                raise ValueError("PIT_FAILURE_DEADLINE_MISSING")
+            return "PIT_SOURCE_BACKOFF_ACTIVE" if now < deadline else None
+        if returncode != 0 or outcome == "PARTIAL" and receipt_valid is not True:
+            raise ValueError("PIT_NORMAL_SCHEDULE_RECEIPT_UNCLASSIFIABLE")
+        # Successful passes wait six hours; valid partial batches can wait for
+        # per-symbol retries. Neither interval is an endpoint-wide source failure.
     except (ValueError, TypeError):
         return "PIT_SOURCE_BACKOFF_INVALID"
     return None

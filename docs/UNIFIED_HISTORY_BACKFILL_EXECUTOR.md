@@ -59,14 +59,17 @@ Sina native、当前日常增量和 Qlib Provider 相互独立。
 9. 默认当前采集标记必须存在、时间不超前且 300 秒内，状态必须为空闲；COLLECTING、FAILED、
    不明、缺失或陈旧标记均阻断历史请求。可重复传 `--priority-state` 加入日预测等优先工作标记。
    这些标记也必须有 `state` 和新鲜 `heartbeat_at`/`updated_at`；主代理统一接入调度。
-   此外无条件尊重 `<base>/pit-repair/next-pass.json` 的 `next_attempt_at`：未来截止阻断请求，
-   文件或字段缺失表示未设，过期允许继续；坏 JSON、非对象、空/无时区/不合法截止等均阻断。
-   请求前、持有 vendor lease 后登录前和运行中都检查，不能借历史队列绕过 PIT 源退避。
+   此外检查 `<base>/pit-repair/next-pass.json` 的真实失败退避：FAILED、非零退出、
+   `receipt_valid=false` 或连续失败计数大于零时，未来 `next_attempt_at` 阻断，过期允许继续。
+   正常 SUCCEEDED（退出零、无失败），以及回执有效、退出零、无失败的 PARTIAL 队列间隔
+   不构成源失败退避；RUNNING 由共享 vendor lease 互斥。标记文件缺失表示未设，
+   存在但 outcome 无法判定、坏 JSON/类型/时钟、失败缺少截止等均阻断。
+   请求前、持有 vendor lease 后登录前和运行中都检查，不改写 PIT 的截止或结果。
 10. 新的大量写入需在 100 GiB reserve 外再有 16 MiB 单次请求余量；不自动删除旧产物。
     请求有行数、字段数、字段长度、流大小及对象大小上限，历史数据不会每日全量复制。
 
-历史自身失败的全局 source 退避由历史队列持久化；PIT 的全局截止为额外强制门禁，
-不会改写或提前其 next-pass 标记。两种截止都已过期后仍需通过当前采集及共享租约检查。
+历史自身失败的全局 source 退避由历史队列持久化；PIT 真正的源失败退避是额外强制门禁，
+不会把正常批次间隔或成功后的六小时调度当作失败。所有请求仍需通过当前采集和共享租约检查。
 共享 vendor lease 仅支持当前单主机部署，不声称跨容器/NFS 分布式互斥。
 
 ## 质量、覆盖与缺口含义
@@ -111,10 +114,10 @@ OHLC、时序/重复、周末、5min 网格与日期、amount/volume 的价格�
 
 ## 复现与集群验收
 
-本地专项 70 项通过、1 项真实 Linux 子进程检查因平台跳过；
-连同计划/探测/存储/当前采集队列及 PIT 队列共 133 项通过、同一项跳过；
+本地专项 88 项通过、1 项真实 Linux 子进程检查因平台跳过；
+连同计划/探测/存储/当前采集队列及 PIT 队列共 151 项通过、同一项跳过；
 四份新脚本的严格 mypy（Linux 目标）与 Ruff 通过。
-Windows 测试仅替换不支持的目录 fsync；Linux 应执行全部 134 项且无跳过。
+Windows 测试仅替换不支持的目录 fsync；Linux 应执行全部 152 项且无跳过。
 真正的 fsync/flock、子进程信号及来源仍需 Linux 验收。
 
 ```sh
@@ -176,8 +179,9 @@ SIGTERM/SIGINT 设置同一个 stop event，当前 pass 会回收 capture 子进
 
 配置样例：`deployment/history-backfill.supervisor.conf.example`，只增加独立 program，
 固定 LIVE=false、单进程和进程组停止。主代理应在 Linux 全回归及配置审阅后统一部署。
-先检查未来 PIT 截止时 `attempted_windows=0`、`priority_reason=PIT_SOURCE_BACKOFF_ACTIVE`；
-不要为了验收清除真实截止。用隔离测试夹具证明到期恢复，再在真实截止过后观察受限来源结果。
+先检查未来 PIT 失败截止时 `attempted_windows=0`、`priority_reason=PIT_SOURCE_BACKOFF_ACTIVE`；
+不要为了验收清除真实截止。用隔离夹具证明失败到期恢复、成功和有效 PARTIAL 的正常间隔
+不阻断历史，再在真实失败截止过后观察受限来源结果。
 验证服务心跳推进、退出状态以及 capture 子进程已经被 wait 回收。生产上线本身仍待主代理确认。
 
 ## 需合入公共状态的摘要

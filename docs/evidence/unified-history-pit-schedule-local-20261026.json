@@ -1,0 +1,24 @@
+{
+  "schema_version": "qtrade.history-pit-schedule-local-checks.v1",
+  "base_revision": "12986bfdf75b6edc05cfdb69c7d83097310da4ba",
+  "platform": "Windows / Python 3.14.6",
+  "focused_history_tests": {"passed": 88, "skipped": 1},
+  "related_regression": {"passed": 151, "failed": 0, "skipped": 1},
+  "linux_related_expected_checks": 152,
+  "mypy": "PASSED_FOUR_HISTORY_SCRIPTS_LINUX_TARGET",
+  "ruff": "PASSED_FOUR_HISTORY_SCRIPTS_AND_TEST",
+  "pit_schedule_policy": {
+    "failed_future_deadline_blocks": true,
+    "invalid_receipt_future_deadline_blocks": true,
+    "nonzero_exit_or_consecutive_failures_future_deadline_blocks": true,
+    "normal_succeeded_interval_allows_history": true,
+    "valid_partial_zero_exit_interval_allows_history": true,
+    "running_uses_shared_vendor_lease": true,
+    "unclassifiable_or_malformed_marker_fails_closed": true,
+    "expired_failure_deadline_allows_resume": true
+  },
+  "actual_source_requests": 0,
+  "pit_marker_modified": false,
+  "cluster_or_service_changes": false,
+  "live_trading_enabled": false
+}

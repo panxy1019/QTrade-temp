@@ -616,10 +616,11 @@ def idle_marker(base, now=NOW):
 
 
 @pytest.mark.parametrize("payload,expected", [
-    (None, None), (b"{}", None), (b'{"outcome":"RUNNING"}', None),
-    (b'{"next_attempt_at":"2026-10-26T14:51:00+00:00"}', "PIT_SOURCE_BACKOFF_ACTIVE"),
-    (b'{"next_attempt_at":"2026-10-26T13:59:59+00:00"}', None),
-    (b'{"next_attempt_at":"2026-10-26T14:00:00+00:00"}', None),
+    (None, None), (b"{}", "PIT_SOURCE_BACKOFF_INVALID"), (b'{"outcome":"RUNNING"}', None),
+    (b'{"outcome":"FAILED","next_attempt_at":"2026-10-26T14:51:00+00:00"}',
+     "PIT_SOURCE_BACKOFF_ACTIVE"),
+    (b'{"outcome":"FAILED","next_attempt_at":"2026-10-26T13:59:59+00:00"}', None),
+    (b'{"outcome":"FAILED","next_attempt_at":"2026-10-26T14:00:00+00:00"}', None),
     (b"bad json", "PIT_SOURCE_BACKOFF_INVALID"),
     (b"[]", "PIT_SOURCE_BACKOFF_INVALID"),
     (b'{"next_attempt_at":null}', "PIT_SOURCE_BACKOFF_INVALID"),
@@ -646,7 +647,8 @@ def test_pit_backoff_pass_makes_zero_requests_and_expiry_allows_resume(
     idle_marker(tmp_path, now)
     marker = tmp_path / "pit-repair/next-pass.json"
     marker.parent.mkdir()
-    marker.write_text(json.dumps({"next_attempt_at": (now + timedelta(hours=1)).isoformat()}))
+    marker.write_text(json.dumps({"outcome": "FAILED", "returncode": 1, "consecutive_failures": 3,
+                                  "next_attempt_at": (now + timedelta(hours=1)).isoformat()}))
     saved = marker.read_bytes()
     download = Mock(side_effect=lambda store, attempt, **kwargs: (raw_for(attempt["scope"]), None))
     root = tmp_path / "history"
@@ -657,11 +659,82 @@ def test_pit_backoff_pass_makes_zero_requests_and_expiry_allows_resume(
     download.assert_not_called()
     assert not list((root / "lake/attempts").glob("*/request.json"))
     assert marker.read_bytes() == saved
-    marker.write_text(json.dumps({"next_attempt_at": (now - timedelta(seconds=1)).isoformat()}))
+    marker.write_text(json.dumps({"outcome": "FAILED", "returncode": 1, "consecutive_failures": 3,
+                                  "next_attempt_at": (now - timedelta(seconds=1)).isoformat()}))
     resumed = runner.run_pass(tmp_path, root, *inputs, revision=REVISION,
                               new_windows=1, retry_windows=0, downloader=download)
     assert resumed["attempted_windows"] == 1 and resumed["qualified_rows"] > 0
     assert download.call_count == 1
+
+
+@pytest.mark.parametrize("outcome", ["SUCCEEDED", "PARTIAL"])
+def test_normal_pit_schedule_future_deadline_allows_history_pass(
+    tmp_path, inputs, monkeypatch, outcome,
+):
+    monkeypatch.setattr(runner, "worker_lease", lambda *args: nullcontext())
+    monkeypatch.setattr(runner.shutil, "disk_usage", lambda _: SimpleNamespace(
+        free=runner.RESERVE + runner.WRITE_HEADROOM))
+    now = datetime.now(UTC)
+    idle_marker(tmp_path, now)
+    marker = tmp_path / "pit-repair/next-pass.json"
+    marker.parent.mkdir()
+    marker.write_text(json.dumps({
+        "mode": "BOUNDED_UNIVERSE_QUEUE_V2", "outcome": outcome, "returncode": 0,
+        "receipt_valid": True, "consecutive_failures": 0,
+        "next_attempt_at": (now + timedelta(hours=6)).isoformat(),
+    }))
+    download = Mock(side_effect=lambda store, attempt, **kwargs: (raw_for(attempt["scope"]), None))
+    result = runner.run_pass(tmp_path, tmp_path / "history", *inputs, revision=REVISION,
+                             new_windows=1, retry_windows=0, downloader=download)
+    assert result["priority_reason"] is None and result["attempted_windows"] == 1
+    assert download.call_count == 1
+
+
+@pytest.mark.parametrize("updates,expected", [
+    ({"outcome": "FAILED"}, "PIT_SOURCE_BACKOFF_ACTIVE"),
+    ({"receipt_valid": False}, "PIT_SOURCE_BACKOFF_ACTIVE"),
+    ({"returncode": 1}, "PIT_SOURCE_BACKOFF_ACTIVE"),
+    ({"consecutive_failures": 1}, "PIT_SOURCE_BACKOFF_ACTIVE"),
+    ({"outcome": "RUNNING", "consecutive_failures": 3}, None),
+    ({"outcome": "SUCCEEDED"}, None),
+    ({"outcome": "UNKNOWN"}, "PIT_SOURCE_BACKOFF_INVALID"),
+    ({"returncode": None}, "PIT_SOURCE_BACKOFF_INVALID"),
+    ({"returncode": True}, "PIT_SOURCE_BACKOFF_INVALID"),
+    ({"receipt_valid": "true"}, "PIT_SOURCE_BACKOFF_INVALID"),
+    ({"consecutive_failures": -1}, "PIT_SOURCE_BACKOFF_INVALID"),
+    ({"next_attempt_at": None}, "PIT_SOURCE_BACKOFF_INVALID"),
+])
+def test_pit_failure_signals_override_normal_scheduler_outcome(tmp_path, updates, expected):
+    idle_marker(tmp_path)
+    marker = tmp_path / "pit-repair/next-pass.json"
+    marker.parent.mkdir()
+    value = {"outcome": "PARTIAL", "returncode": 0, "receipt_valid": True,
+             "consecutive_failures": 0, "next_attempt_at": "2026-10-26T14:51:00+00:00"}
+    marker.write_text(json.dumps({**value, **updates}))
+    assert runner.priority_reason(tmp_path, NOW) == expected
+
+
+@pytest.mark.parametrize("value", [
+    {"next_attempt_at": "2026-10-26T14:51:00+00:00"},
+    {"outcome": "PARTIAL", "returncode": 0, "next_attempt_at": "2026-10-26T14:51:00+00:00"},
+    {"outcome": "FAILED", "returncode": 1},
+])
+def test_unclassifiable_pit_marker_stays_closed(tmp_path, value):
+    marker = tmp_path / "pit-repair/next-pass.json"
+    marker.parent.mkdir()
+    marker.write_text(json.dumps(value))
+    assert runner.pit_backoff_reason(tmp_path, NOW) == "PIT_SOURCE_BACKOFF_INVALID"
+
+
+def test_legacy_success_schedule_is_a_normal_interval_without_receipt_flag(tmp_path):
+    from scripts.run_pit_repair import finish_pass
+
+    marker = tmp_path / "pit-repair/next-pass.json"
+    marker.parent.mkdir()
+    value = finish_pass(990, 0, NOW, 3)
+    assert value["outcome"] == "SUCCEEDED" and "receipt_valid" not in value
+    marker.write_text(json.dumps(value))
+    assert runner.pit_backoff_reason(tmp_path, NOW) is None
 
 
 def test_capture_checks_shared_deadline_after_lease_before_login(tmp_path, inputs, monkeypatch):
