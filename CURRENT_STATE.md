@@ -2,6 +2,18 @@
 
 Last updated: 2026-10-27
 
+- At 02:29 Shanghai, separate ETF SHADOW and publication services run 59dc24c.
+  One actual October 27 target was durably admitted at 02:28:25: SH512010,
+  SH512690 and SH512800, each target weight 0.316666666666. Independent raw replay
+  and the post-write admission receipt verify its pre-open durability. It has
+  no next-session observation, orders, holdings or portfolio return. All 182 Linux
+  integration checks pass without skips. Existing stock worker and 12 forward
+  books remain on their prior processes; LightGBM PAPER still requires human
+  recovery. Evidence: docs/evidence/qlib-etf-shadow-59dc24c.json. ETF API/UI code is
+  prepared; its Vercel release and browser acceptance are still pending. Production
+  Vercel currently verifies PR23/main 3ecba66. Historical ETF same-cohort comparison
+  and actual next-session evidence remain open; STEP2 is not started.
+
 - At 02:08 Shanghai, daily Provider and ETF diagnostic services were upgraded
   independently to 55b5b00. Existing worker/publisher, 12 stock forward books,
   collection/history/PIT and unrelated process PIDs are unchanged. On the real

@@ -24,6 +24,13 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+The separate ETF SHADOW contract/service is deployed at 59dc24c with 182 passing
+Linux checks. A real three-ETF target has raw-replay and pre-open durable-admission
+proof; no later observation or portfolio return is claimed. Stock worker/books
+were not restarted. API/UI publication release is pending. The original ETF
+historical comparison still needs a same-cohort source audit; see
+docs/QLIB_ETF_HISTORY_GAP_AUDIT.md and docs/evidence/qlib-etf-shadow-59dc24c.json.
+
 Daily and ETF scheduling fixes are deployed at 55b5b00 with 110 passing Linux
 checks and real minute-only snapshot acceptance: 1,500 exact-universe daily rows,
 1,497 successful/3 failed. Other process PIDs are unchanged. Evidence is

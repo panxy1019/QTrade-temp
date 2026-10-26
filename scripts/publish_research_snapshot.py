@@ -36,6 +36,18 @@ def online_publication(source: Path) -> dict[str, Any]:
         return unavailable_catalog()
 
 
+def etf_shadow_publication(source: Path) -> dict[str, Any]:
+    from qtrade.research.etf_shadow_publication import validate_etf_shadow_publication
+
+    try:
+        raw = source.read_bytes()
+        if len(raw) > 1_000_000:
+            raise ValueError('ETF_SHADOW_PUBLICATION_TOO_LARGE')
+        return validate_etf_shadow_publication(json.loads(raw))
+    except (OSError, ValueError, KeyError, TypeError):
+        return signed({**AUTHORITY, 'state': 'NO_VERIFIED_ETF_SHADOW_PUBLICATION'})
+
+
 def build_snapshot(root: Path, experiment_root: Path) -> dict[str, Any]:
     with urlopen("http://127.0.0.1:8010/data-freshness", timeout=10) as response:
         observer = json.load(response)
@@ -271,6 +283,9 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         etf = signed({**AUTHORITY, 'state': 'NO_VERIFIED_ETF_DIAGNOSTIC'})
     write_json_atomic(publication/'etf-trend.json', etf, compact=True)
     current_files.append('etf-trend.json')
+    write_json_atomic(publication/'etf-forward.json',
+                      etf_shadow_publication(workflow_root/'etf-forward.json'), compact=True)
+    current_files.append('etf-forward.json')
     (publication / "README.md").write_text(
         "# QTrade public research observations\n\n"
         "Read-only latest market observations and persisted experiment summaries.\n"

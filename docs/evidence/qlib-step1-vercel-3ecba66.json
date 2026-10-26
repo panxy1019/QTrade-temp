@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-26T18:21:00.122075+00:00",
+  "deployment": {
+    "classification": "PUBLIC_BUILD_PROVENANCE",
+    "provider": "VERCEL",
+    "status": "AVAILABLE",
+    "target_environment": "production",
+    "git_commit_sha": "3ecba66dea4b5c61b1c10b7bfcbbaf1d88cfe632",
+    "git_commit_ref": "main",
+    "external_order_transmission": false
+  },
+  "rendered_visual_acceptance": false
+}

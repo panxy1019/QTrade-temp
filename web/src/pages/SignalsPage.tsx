@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Alert, Card, Descriptions, Select, Space, Table, Typography } from 'antd'
 import { workflowGet } from '../research/qlibWorkflow'
 import { EtfTrendPanel } from '../components/EtfTrendPanel'
+import { EtfShadowPanel } from '../components/EtfShadowPanel'
 
 interface Signals {
   publication_available: boolean; current_input: boolean
@@ -33,7 +34,7 @@ export function SignalsPage() {
   const m = data?.manifest
   return <Space orientation="vertical" style={{ width: '100%' }}>
     <Typography.Title level={2}>每日研究信号</Typography.Title>
-    <Alert type="warning" showIcon title="分数和指示权重已分离；尚未形成已执行持仓" description="统一使用连续 21 个交易会话的复权收盘输入。指示权重尚未经过持仓核对、换手及执行约束，不代表委托、成交或 PAPER 准入；前向收益尚未观测。" />
+    <Alert type="warning" showIcon title="信号分数与指示权重分别展示" description="股票信号使用连续 21 个交易会话的复权收盘输入。指示权重不代表委托、成交或 PAPER 准入；已冻结目标及实际观察记录请查看前向研究。ETF 使用下方独立口径。" />
     {error && <Alert type="error" title="信号读取失败" description={error} />}
     {!error && !data && <Typography.Text>正在读取信号…</Typography.Text>}
     {data && !data.publication_available && <Alert type="info" title="尚无通过校验的信号发布" />}
@@ -51,7 +52,7 @@ export function SignalsPage() {
       <Typography.Text type="secondary">{m.limitations.join(' · ')}</Typography.Text></Card>
       <Card title="独立信号与组合输入">
         <Select aria-label="信号家族" value={strategy} style={{ width: 250 }} options={data.families.map(f => ({ value: f.name, label: `${names[f.name] ?? f.name}（${f.score_count}）` }))} onChange={s => { setData(null); setError(null); setStrategy(s); setPage(1) }} />
-        <Typography.Paragraph>排名类信号取前 50 只等权、总指示权重 95%；共同股票池等权使用全部合格股票。不同因子分数量纲不同，不能直接比较绝对大小。当前尚无统一历史策略对照结果。</Typography.Paragraph>
+        <Typography.Paragraph>排名类信号取前 50 只等权、总指示权重 95%；共同股票池等权使用全部合格股票。不同因子分数量纲不同，不能直接比较绝对大小。统一历史策略对照请查看回测分析中的独立对照报告。</Typography.Paragraph>
         <Table rowKey="instrument" dataSource={data.rows} pagination={{ current: page, pageSize: 50, total: data.total, showSizeChanger: false, onChange: p => { setData(null); setError(null); setPage(p) } }} columns={[
           { title: '证券', dataIndex: 'instrument' },
           { title: '信号分数', dataIndex: 'score', render: (v: number) => v.toFixed(6) },
@@ -60,5 +61,6 @@ export function SignalsPage() {
       </Card>
     </>}
     <EtfTrendPanel />
+    <EtfShadowPanel />
   </Space>
 }
