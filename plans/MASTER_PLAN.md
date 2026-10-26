@@ -30,6 +30,13 @@ PIT/source repair continues in parallel. Then immutable data events, frozen
 processor restoration, daily prediction, controlled rolling and forward research.
 Each phase needs code, tests, cluster and production evidence, docs and limits.
 
+Phase C forward-input validation accepted at source 5bb4a93: 779 Linux checks,
+both native models infer 888 supported stocks on the new 2026-10-26 Provider,
+17,814 old references remain stable. Each 15-file result includes 12 bound source
+files. Explicit model approval, automatic event scheduling and public integration
+remain required; candidate validation is not AUTO_PREDICT. See
+docs/QLIB_FORWARD_INFERENCE.md.
+
 Phase C immutable data core accepted: source 2dc5946 passes 757 Linux checks and
 real Qlib reload of the first 2026-10-26 version (982 current / 990 historical,
 eight current gaps, 17,398 verified files). Ready pointer/event commit together;

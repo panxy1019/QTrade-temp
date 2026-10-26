@@ -99,6 +99,7 @@ def test_dataset_materializes_verified_current_partition_without_mutating_origin
     stage = tmp_path/'version-stage'
     value = builder.copy_dataset(base, prepared, stage, request=request)
     assert value['end'] == '2026-10-26' and value['incremental']['current_symbols'] == ['600036']
+    assert value['ancestor_dataset_sha256'] == [dataset['evidence_sha256']]
     assert value['stocks'][0]['rows'] == 3
     assert pq.read_table(stage/'stocks/600036/daily.parquet').to_pylist()[:2] == frozen
     assert pq.read_table(base/'stocks/600036/daily.parquet').to_pylist() == frozen

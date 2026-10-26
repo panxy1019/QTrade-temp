@@ -2,6 +2,35 @@
 
 Last updated: 2026-10-26
 
+- Final forward-input validation accepted: source 5bb4a93 passes all 779 Linux
+  checks and both actual native model runs, each 888 current supported stocks /
+  158 factors and 17,814 stable historical reference rows. Each complete result
+  verifies 15 files including 12 bound source/calendar files. Runner PID 142787
+  finished successfully and is Z; do not restart it. Final proof:
+  docs/evidence/qlib-forward-final-acceptance-20261026.json. Model activation and
+  AUTO_PREDICT remain disabled; input-validation results are not live signals or
+  observed forward returns. Model-control work continues on codex/qlib-online-control
+  (284a2e9: transactional model ledger, 12 focused checks; not deployed yet).
+
+- Latest continuation: codex/qlib-forward-inference source 5bb4a93, PR 17 draft.
+  Its 779 full Linux checks pass. Final independent candidate input validation
+  is live under runner PID 142787 (child 143937 confirmed); inspect
+  forward-validation-v2-acceptance.json/logs before restarting. Initial source
+  76fa292 already passes 773 checks and real inference for both native models:
+  888 qualified supported stocks on 2026-10-26, 17,814 old reference rows stable,
+  Ridge max difference 2.24e-16 and LightGBM zero. Final source adds full immutable
+  code inventory/reuse verification and persistent multi-day dataset ancestry.
+  docs/evidence/qlib-forward-pilot-20261026.json is explicitly preliminary, not
+  final source acceptance. No ACTIVE model or automatic prediction is claimed.
+  Daily preparation now seals 986/987 available inputs; last bounded PID 143270
+  exited (Z), one retry due 13:55:42 UTC, plus three missing raw inputs. Published
+  Qlib version remains its frozen 982/990 scope. PIT source PID 80296 is live,
+  last attempt failed at 12:51 UTC and next global retry is 14:51 UTC; last verified
+  coverage remains 552/990. Do not bypass backoff. PR 16 merged; production
+  /api/deployment verifies aae4cea. Version UI/model lifecycle/automatic scheduling,
+  historical backfill and Phase D/E remain pending. SSH session 80784 and source
+  transfer session 94286 were live at this checkpoint; revalidate handles.
+
 - Phase C first immutable Provider is accepted on source 2dc5946: 757 Linux
   checks pass; real Qlib 0.9.7 reload validates 982 current stocks through
   2026-10-26, 990 historical stocks and eight explicit missing current inputs.

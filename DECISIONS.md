@@ -1,5 +1,23 @@
 # Architecture decisions
 
+## ADR-179 — Forward inference reuses fitted state and proves old-reference stability
+
+Status: candidate input gate accepted on cluster, 2026-10-26, Phase C.
+
+Reuse audited Qlib RMDLoader/IT_LS and the verified local model archive. The new
+data version must descend from frozen training data, be current at generation,
+and have already passed independent Provider reload. Preserve the original
+calculation origin and prohibit fitting. Compare the old 20-session feature and
+score reference after adding the new day; do not loosen accepted tolerances.
+
+Require exact current supported-universe coverage and finite, deterministically
+ranked scores. Bind actual data date, model/data/universe identities, generation
+time and the next verified open. Reject stale data and an already-passed expected
+execution, retain unknown future returns, and never append to old experiment
+predictions. Candidate input validation is separate from human activation and
+automatic prediction scheduling. No vn.py or gateway is needed for model input
+validation; LIVE_TRADING_ENABLED=false.
+
 ## ADR-178 — Immutable Provider admission commits version, head and event together
 
 Status: core accepted on cluster, 2026-10-26, Phase C; automatic/UI integration pending.
