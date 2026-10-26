@@ -21,11 +21,14 @@ Last updated: 2026-10-26
   Neither probe certifies historical availability or participates in Qlib yet.
   See docs/PIT_COLLECTION_QUEUE.md and docs/PIT_OFFICIAL_SOURCE_AUDIT.md.
 
-- Next workflow gap: continuous source updates can change model defaults between
-  two form visits. Backtest can reject unequal sources but has no entry to copy an
-  archived complete configuration/source into a new comparison task. Add explicit
-  archived-config reuse, preserve its frozen identity through polling and report
-  missing/legacy specifications rather than silently substituting current defaults.
+- Archived configuration reuse is in implementation: the read-only template API
+  validates checksum-bound published results, complete source-bound specs and
+  current worker revision. Backtest links to a form that copies exact archived
+  inputs and defaults to the other model. Missing/legacy configurations and version
+  drift reject reuse instead of filling current defaults. Form initialization is
+  keyed by the requested archive/model; polling, retry and late responses cannot
+  replace its source, edits or request identity. Relevant backend checks and all
+  211 frontend tests pass; Linux full-suite and production acceptance are pending.
 
 - Source-bound Qlib execution is deployed and accepted: verified raw status/master
   inputs are frozen into request/run identity and both production-browser tasks.

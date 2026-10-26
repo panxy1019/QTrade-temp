@@ -87,6 +87,52 @@ export interface WorkflowResult {
   evidence_sha256: string
 }
 
+export interface ArchivedResearchTemplate {
+  schema_version: 'qtrade.research-template.v1'
+  base_experiment_id: string
+  base_run_id: string
+  base_result_sha256: string
+  source_revision: string
+  dataset_sha256: string
+  source_snapshot_sha256: string
+  comparison_protocol: string
+  spec: ResearchSpec
+  live_trading_enabled: false
+  external_order_transmission: false
+  point_in_time: false
+  real_data_paper_readiness: false
+  promotion: 'NOT_ELIGIBLE'
+}
+
+export const sourceBoundProtocol = 'ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2'
+
+export function canReuseArchivedResult(result: WorkflowResult): boolean {
+  return result.comparison_protocol === sourceBoundProtocol && !!result.spec &&
+    /^[a-f0-9]{64}$/.test(result.source_snapshot_sha256 ?? '') &&
+    result.spec.source_snapshot_sha256 === result.source_snapshot_sha256
+}
+
+export function comparisonDraft(
+  template: ArchivedResearchTemplate, expectedId: string, target?: 'linear' | 'lightgbm',
+): ResearchSpec {
+  if (template.schema_version !== 'qtrade.research-template.v1' ||
+    template.base_experiment_id !== expectedId || template.live_trading_enabled !== false ||
+    template.external_order_transmission !== false || template.point_in_time !== false ||
+    template.real_data_paper_readiness !== false || template.promotion !== 'NOT_ELIGIBLE' ||
+    template.comparison_protocol !== sourceBoundProtocol || !template.spec ||
+    !/^[a-f0-9]{64}$/.test(template.source_snapshot_sha256) ||
+    template.spec.source_snapshot_sha256 !== template.source_snapshot_sha256 ||
+    !/^[a-f0-9]{64}$/.test(template.base_result_sha256) ||
+    !/^[a-f0-9]{64}$/.test(template.dataset_sha256) ||
+    !/^[a-f0-9]{40}$/.test(template.source_revision) ||
+    !['linear', 'lightgbm'].includes(template.spec.model)) {
+    throw new Error('归档配置或来源身份不完整，不能以当前默认值替代')
+  }
+  const model = target ?? (template.spec.model === 'linear' ? 'lightgbm' : 'linear')
+  return { ...structuredClone(template.spec), model,
+    name: template.spec.name.slice(0, 40) + '-vs-' + model }
+}
+
 export const finalStates = new Set(['COMPLETE', 'FAILED', 'CANCELLED', 'INTERRUPTED', 'REJECTED'])
 export function completedExperiments(rows: WorkflowExperiment[]): WorkflowExperiment[] {
   return rows.filter(row => row.state === 'COMPLETE').sort((a, b) =>
@@ -117,7 +163,7 @@ export function comparisonIssue(left: WorkflowResult, right: WorkflowResult): st
   if (left.dataset_sha256 !== right.dataset_sha256) return '数据版本不同，请先统一输入'
   if (left.source_revision !== right.source_revision) return '代码版本不同，请先统一实现版本'
   if ((left.source_snapshot_sha256 ?? null) !== (right.source_snapshot_sha256 ?? null)) return '历史状态来源快照不同，请先统一来源证据'
-  if (left.comparison_protocol === 'ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2' &&
+  if (left.comparison_protocol === sourceBoundProtocol &&
     !/^[a-f0-9]{64}$/.test(left.source_snapshot_sha256 ?? '')) return '历史状态来源快照身份缺失，不能归因比较'
   const comparable = (spec: ResearchSpec) => {
     const { name, model, ...rest } = spec
@@ -133,7 +179,11 @@ export function comparisonIssue(left: WorkflowResult, right: WorkflowResult): st
 const ROOT = '/api/research'
 export async function workflowGet<T>(path: string): Promise<T> {
   const response = await fetch(ROOT + path, { cache: 'no-store', credentials: 'same-origin' })
-  if (!response.ok) throw new Error('研究接口读取失败：' + response.status)
+  if (!response.ok) {
+    const body = await response.json().catch(() => null) as { detail?: unknown } | null
+    throw new Error(typeof body?.detail === 'string' ? body.detail.slice(0, 300)
+      : '研究接口读取失败：' + response.status)
+  }
   return response.json() as Promise<T>
 }
 

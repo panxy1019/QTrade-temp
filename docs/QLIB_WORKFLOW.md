@@ -37,6 +37,32 @@ RobustZScoreNorm/Fillna。组合为 TopkDropout；Top K、每日淘汰数、最�
 和新协议不同，网页禁止把二者直接解释为模型增量。新实验只有在数据、源码、
 时间、成本、组合、种子和协议一致时才允许模型归因对照。
 
+## 从已归档实验创建模型对照
+
+进入已完成的新来源协议实验，在“固定配置与结果身份”中点击
+“复用配置创建对照”。服务器校验公开结果身份和完整规格后，载入原数据、来源快照、切分、组合、
+成本及种子，默认切换到另一模型并生成新名称。修改其他参数后，不再视为纯模型
+对照。复制本身不创建任务，仍需研究登录后明确提交。
+
+采集持续更新或刷新目录不会替换这份表单的来源、输入、编辑内容或重试请求 ID。
+旧档案缺字段、来源身份冲突或当前执行器版本与原实验不同时，载入会明确失败，
+不能以当前默认值补齐。可选择“新建默认研究”开始另一份明确的新配置。
+如果执行器在配置载入后发生升级，最终对照仍会根据实际结果的源码、行情哈希
+和评价日期阻止错误归因，不会自动运行旧归档中的任意代码。
+
+只读复查入口：`GET /api/research/experiments/<实验ID>/template`。
+复现与验证命令：
+
+```bash
+PYTHONPATH=src python -m pytest tests/test_qlib_archived_template.py tests/test_qlib_workflow.py
+npm --prefix web test -- --maxWorkers=2 src/pages/QlibWorkflowPages.test.tsx src/research/qlibWorkflow.test.ts
+npm --prefix web run lint
+npm --prefix web run build
+```
+
+该入口保持已查看历史的非 PIT 诊断限制，不生成新的独立样本外证据。
+本轮完整检查和生产交互验收尚在进行，不提前声明完成。
+
 ## 通道与时延
 
 浏览器 → 同源 `/api/research` → 私有 Git 队列 → 集群串行执行器 →

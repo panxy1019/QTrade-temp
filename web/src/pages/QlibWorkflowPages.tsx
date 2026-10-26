@@ -4,8 +4,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useResearchWorkflow } from '../components/ResearchWorkflowProvider'
 import { JsonExportButton } from '../components/JsonExportButton'
 import ChartRenderer from '../charts/ChartRenderer'
-import { comparisonIssue, completedExperiments, finalStates, limitationLabels, stageLabels, workflowGet, workflowPost } from '../research/qlibWorkflow'
-import type { ResearchAudit, ResearchSpec, WorkflowExperiment, WorkflowResult } from '../research/qlibWorkflow'
+import { canReuseArchivedResult, comparisonDraft, comparisonIssue, completedExperiments, finalStates, limitationLabels, stageLabels, workflowGet, workflowPost } from '../research/qlibWorkflow'
+import type { ArchivedResearchTemplate, ResearchAudit, ResearchSpec, WorkflowExperiment, WorkflowResult } from '../research/qlibWorkflow'
 
 function Layout({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   const { catalog, error, refresh } = useResearchWorkflow()
@@ -103,26 +103,66 @@ export function QlibResearchPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [requestId, setRequestId] = useState<string | null>(null)
+  const baseId = params.has('from') ? params.get('from')! : null
+  const requestedModel = params.get('model')
+  const configurationKey = JSON.stringify([baseId, requestedModel])
+  const [initialization, setInitialization] = useState<{
+    key: string; spec: ResearchSpec; template?: ArchivedResearchTemplate
+  } | null>(null)
+  const [initializationError, setInitializationError] = useState<{ key: string; message: string } | null>(null)
+  const [reloadVersion, setReloadVersion] = useState(0)
+  const initializedKey = initialization?.key
+  const ready = initializedKey === configurationKey
+  const hasCatalog = catalog !== null
   useEffect(() => {
-    if (!catalog) return
-    const spec = params.get('model') === 'linear' ? catalog.default_linear_spec : catalog.default_spec
-    const { segments, ...rest } = spec
-    form.setFieldsValue({
-      ...rest, train_start: segments.train[0], train_end: segments.train[1],
-      valid_start: segments.valid[0], valid_end: segments.valid[1],
-      test_start: segments.test[0], test_end: segments.test[1],
-    })
-  // Set the initial configuration once per chosen model, not on each polling response.
+    if (!catalog || initializedKey === configurationKey) return
+    let active = true
+    const timer = window.setTimeout(() => {
+      setInitializationError(null); setError(null); setRequestId(null)
+      const initialize = async () => {
+        try {
+          if (requestedModel !== null && requestedModel !== 'linear' && requestedModel !== 'lightgbm') {
+            throw new Error('该预测模型尚未开放，配置未载入')
+          }
+          let template: ArchivedResearchTemplate | undefined
+          let spec: ResearchSpec
+          if (baseId !== null) {
+            if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,120}$/.test(baseId)) throw new Error('归档实验标识无效，配置未载入')
+            template = await workflowGet<ArchivedResearchTemplate>('/experiments/' + encodeURIComponent(baseId) + '/template')
+            spec = comparisonDraft(template, baseId, requestedModel ?? undefined)
+          } else {
+            spec = structuredClone(requestedModel === 'linear' ? catalog.default_linear_spec : catalog.default_spec)
+          }
+          if (!active) return
+          const { segments, ...rest } = spec
+          form.resetFields()
+          form.setFieldsValue({
+            ...rest, train_start: segments.train[0], train_end: segments.train[1],
+            valid_start: segments.valid[0], valid_end: segments.valid[1],
+            test_start: segments.test[0], test_end: segments.test[1],
+          })
+          setInitialization({ key: configurationKey, spec, template })
+        } catch (reason) {
+          if (active) setInitializationError({ key: configurationKey,
+            message: reason instanceof Error ? reason.message : '归档配置载入失败' })
+        }
+      }
+      void initialize()
+    }, 0)
+    return () => { active = false; window.clearTimeout(timer) }
+  // Freeze once per requested configuration; catalog polling must not reset edits or retries.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, params.get('model'), !!catalog])
+  }, [form, baseId, requestedModel, hasCatalog, initializedKey, reloadVersion])
   const submit = async (values: FormSpec) => {
+    if (!ready || !initialization || busy || !session.authenticated || !catalog?.publication_available || catalog.worker_fresh === false) return
     setBusy(true); setError(null)
     const identity = requestId ?? crypto.randomUUID().replaceAll('-', '')
     setRequestId(identity)
     const { train_start, train_end, valid_start, valid_end, test_start, test_end, ...rest } = values
     const spec: ResearchSpec = {
-      ...rest, dataset_id: catalog!.default_spec.dataset_id, features: 'Alpha158',
-      universe_policy: 'supported_a_share',
+      ...initialization.spec, ...rest, dataset_id: initialization.spec.dataset_id,
+      features: initialization.spec.features, universe_policy: initialization.spec.universe_policy,
+      source_snapshot_sha256: initialization.spec.source_snapshot_sha256,
       segments: { train: [train_start, train_end], valid: [valid_start, valid_end], test: [test_start, test_end] },
     }
     try {
@@ -133,16 +173,24 @@ export function QlibResearchPage() {
     } catch (reason) { setError(String(reason)) }
     finally { setBusy(false) }
   }
+  const template = ready ? initialization?.template : undefined
+  const dataset = catalog?.datasets.find(row => row.id === initialization?.spec.dataset_id)
   return <Layout title="策略研究" description="冻结数据、时间切分、模型、组合与成本后，提交集群任务。">
     <Login />
-    {catalog?.datasets[0] && <Card title="研究输入">
-      <Typography.Paragraph>{catalog.datasets[0].id} · {catalog.datasets[0].symbols}股输入库存 · {catalog.datasets[0].rows.toLocaleString()}根日线 · 截至{catalog.datasets[0].end}。训练和排名排除科创板，实际动态资格数量以实验审计为准。</Typography.Paragraph>
-      {catalog.source_snapshot_sha256 && <Typography.Paragraph>历史状态来源快照将在表单初始化时固定；后续回填不会改变这份任务。需要比较模型时，请使用同一来源快照。</Typography.Paragraph>}
-      <Audit audit={catalog.datasets[0].audit} />
+    {baseId !== null && !ready && initializationError?.key !== configurationKey && <Alert type="info" title="正在校验并载入归档配置，提交入口暂不可用" />}
+    {initializationError?.key === configurationKey && <Alert type="error" showIcon title={initializationError.message} description="不会使用当前默认值补齐或替代归档配置。" action={<Space><Button onClick={() => setReloadVersion(v => v + 1)}>重试载入</Button><Button href="#/research">新建默认研究</Button></Space>} />}
+    {template && <Alert type="info" showIcon title="已载入归档实验的固定配置" description={<>
+      <Typography.Paragraph>基于 <Typography.Link href={'#/backtest?experiment=' + encodeURIComponent(template.base_experiment_id)}>{template.spec.name}</Typography.Link>；原数据哈希：{template.dataset_sha256}。</Typography.Paragraph>
+      <Typography.Text>载入时仅调整实验名称和预测模型，数据、来源、时间、组合、成本及种子沿用原配置。修改其他参数后，不再视为纯模型对照；最终结果仍会核对实际数据与执行器代码版本。</Typography.Text>
+    </>} />}
+    {ready && dataset && <Card title="研究输入">
+      <Typography.Paragraph>{dataset.id} · {dataset.symbols}股输入库存 · {dataset.rows.toLocaleString()}根日线 · 截至{dataset.end}。训练和排名排除科创板，实际动态资格数量以实验审计为准。</Typography.Paragraph>
+      {catalog?.source_snapshot_sha256 && <Typography.Paragraph>历史状态来源快照将在表单初始化时固定；后续回填不会改变这份任务。需要比较模型时，请使用同一来源快照。</Typography.Paragraph>}
+      <Audit audit={dataset.audit} />
     </Card>}
     <Card title="Qlib训练与回测配置">
-      {pinnedSource && <Typography.Paragraph copyable>本任务固定来源：{pinnedSource}</Typography.Paragraph>}
-      <Form form={form} layout="vertical" onFinish={values => void submit(values)} onValuesChange={() => { setRequestId(null); setError(null) }}>
+      {ready && pinnedSource && <Typography.Paragraph copyable>本任务固定来源：{pinnedSource}</Typography.Paragraph>}
+      <Form form={form} disabled={!ready || busy} layout="vertical" onFinish={values => void submit(values)} onValuesChange={() => { setRequestId(null); setError(null) }}>
         <Form.Item name="source_snapshot_sha256" hidden><Input /></Form.Item>
         <div className="backtest-lab-grid">
           <Form.Item name="name" label="实验名称" rules={[{ required: true, pattern: /^[A-Za-z0-9][A-Za-z0-9._-]{0,59}$/ }]}><Input /></Form.Item>
@@ -159,7 +207,7 @@ export function QlibResearchPage() {
           <Form.Item name="seed" label="随机种子" rules={[{ required: true }]}><InputNumber min={0} max={2147483647} /></Form.Item>
         </div>
         <Alert type="info" title="固定合同：Alpha158＋训练期拟合归一化，下一交易日开盘，TopkDropout，前日量1%容量；分区边界须隔离未来标签。" description="已有历史已被查看，所有结果保持事后研究诊断。模型超参数采用已声明固定配置，当前表单不进行无界搜索。" />
-        <Button style={{ marginTop: 16 }} type="primary" htmlType="submit" loading={busy} disabled={!session.authenticated || !catalog?.publication_available || catalog.worker_fresh === false}>提交集群研究任务</Button>
+        <Button style={{ marginTop: 16 }} type="primary" htmlType="submit" loading={busy} disabled={!ready || !session.authenticated || !catalog?.publication_available || catalog.worker_fresh === false}>提交集群研究任务</Button>
       </Form>
       {requestId && <Typography.Paragraph copyable>幂等请求ID：{requestId}</Typography.Paragraph>}
       {error && <Alert type="error" showIcon title={error} description="规格未改变时重试沿用同一请求ID，避免重复计算。" />}
@@ -250,7 +298,11 @@ function Result({ result }: { result: WorkflowResult }) {
       <Typography.Paragraph copyable>源码：{result.source_revision}</Typography.Paragraph>
       <Typography.Paragraph>对照协议：{result.comparison_protocol}</Typography.Paragraph>
       <Typography.Paragraph><pre>{JSON.stringify(result.spec ?? { note: '原始固定基线，完整规格在集群归档' }, null, 2)}</pre></Typography.Paragraph>
-      <JsonExportButton filename={result.experiment_id + '-result.json'} value={result} />
+      <Space wrap>
+        <JsonExportButton filename={result.experiment_id + '-result.json'} value={result} />
+        <Button disabled={!canReuseArchivedResult(result)} href={canReuseArchivedResult(result) ? '#/research?from=' + encodeURIComponent(result.experiment_id) : undefined}>复用配置创建对照</Button>
+      </Space>
+      {!canReuseArchivedResult(result) && <Typography.Paragraph type="secondary">此档案缺少当前来源协议的完整配置，不能用默认值补齐；可新建研究任务。</Typography.Paragraph>}
     </Card>
   </Space>
 }
