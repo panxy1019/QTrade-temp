@@ -1,0 +1,98 @@
+{
+  "gate": {
+    "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+    "observed_at": "2026-10-26T18:08:15.156065+00:00",
+    "data_version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+    "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+    "progress_frequencies": [
+      "5min"
+    ],
+    "daily_tasks": 1500,
+    "daily_states": {
+      "SUCCEEDED": 1497,
+      "FAILED": 3
+    },
+    "etf_source_gate": null,
+    "linux_tests": {
+      "tests": 110,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "source_requests_made": 0,
+    "live_trading_enabled": false,
+    "new_provider_claimed": false,
+    "evidence_sha256": "21dc1748ddd505dd07e1070b5e5e0b83ce5292fcaa268870f32fc075fc3d6c1c"
+  },
+  "deployment": {
+    "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+    "completed_at": "2026-10-26T18:08:56.042900+00:00",
+    "services_before": {
+      "code-server": 81,
+      "jupyterlab": 80,
+      "qtrade-data-observer": 4471,
+      "qtrade-etf-diagnostics": 174684,
+      "qtrade-forward-research": 175982,
+      "qtrade-history-backfill": 164340,
+      "qtrade-pit-repair": 153768,
+      "qtrade-qlib-data": 173728,
+      "qtrade-qlib-workflow": 173727,
+      "qtrade-research-maintenance": 119771,
+      "qtrade-research-publication": 173730,
+      "tensorboard": 79
+    },
+    "services_after": {
+      "code-server": 81,
+      "jupyterlab": 80,
+      "qtrade-data-observer": 4471,
+      "qtrade-etf-diagnostics": 179865,
+      "qtrade-forward-research": 175982,
+      "qtrade-history-backfill": 164340,
+      "qtrade-pit-repair": 153768,
+      "qtrade-qlib-data": 179733,
+      "qtrade-qlib-workflow": 173727,
+      "qtrade-research-maintenance": 119771,
+      "qtrade-research-publication": 173730,
+      "tensorboard": 79
+    },
+    "unchanged_other_processes": true,
+    "live_trading_enabled": false,
+    "collection_database": "/root/qtrade-local/unified-data.sqlite"
+  },
+  "daily_cycle": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "required_day": "2026-10-26",
+    "data_version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+    "data_end": "2026-10-26",
+    "provider_published": false,
+    "state": "CURRENT_DAY_ALREADY_READY",
+    "updated_at": "2026-10-26T18:08:31.875243+00:00",
+    "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+    "evidence_sha256": "dfb5a3c4592bc296afe4bf103cfb0df2dfac389bfa55b1eb0076e3cea13b5bda"
+  },
+  "etf_cycle": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "required_day": "2026-10-26",
+    "diagnostic_id": "b3cd61f630c17146a4c2d3b0fa3060a3e1b98ff8faf3735387a3f24b196296d4",
+    "published": true,
+    "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+    "qualified_close_symbols": 30,
+    "required_symbols": 30,
+    "schema_version": "qtrade.etf-trend-service.v1",
+    "state": "ETF_DAILY_DIAGNOSTIC_ALREADY_READY",
+    "heartbeat_at": "2026-10-26T18:08:44.902302+00:00",
+    "evidence_sha256": "dd22fd8b6d6d795ee840a75b9abfe09968b03eb3648441c36b931e8c8ffe6f71"
+  }
+}

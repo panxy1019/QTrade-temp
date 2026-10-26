@@ -2,6 +2,18 @@
 
 Last updated: 2026-10-27
 
+- At 02:08 Shanghai, daily Provider and ETF diagnostic services were upgraded
+  independently to 55b5b00. Existing worker/publisher, 12 stock forward books,
+  collection/history/PIT and unrelated process PIDs are unchanged. On the real
+  minute-only progress snapshot, read-only ledger gates find 1,500 terminal daily
+  tasks (1,497 SUCCEEDED, 3 FAILED) and allow ETF source scheduling. All 110 Linux
+  focused checks pass without skips. Both services recognize October 26 as already
+  ready, without a new Provider or duplicate ETF request. Evidence:
+  docs/evidence/qlib-daily-ledger-55b5b00.json. The actual preclose forward audit
+  remains BLOCKED; human PAPER recovery, real next session and visual acceptance
+  remain pending. Original Phase E ETF allocation/SHADOW contract work continues;
+  the current close diagnostic is not full ETF strategy acceptance. STEP2 not begun.
+
 - Production web checkpoint at 01:39 Shanghai: PR22 merged as a3f9f6f and
   /api/deployment confirms that exact production main revision. All six online
   research routes return available publications. Production forward route is
