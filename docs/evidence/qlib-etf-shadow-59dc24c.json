@@ -1,0 +1,254 @@
+{
+  "source_revision": "59dc24cd853e6e6690dc831de980e92147bf52b2",
+  "checked_at": "2026-10-26T18:29:42.169718+00:00",
+  "deployment": {
+    "source_revision": "59dc24cd853e6e6690dc831de980e92147bf52b2",
+    "completed_at": "2026-10-26T18:28:55.301578+00:00",
+    "linux_tests": {
+      "tests": 182,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "services_before": {
+      "code-server": 81,
+      "jupyterlab": 80,
+      "qtrade-data-observer": 4471,
+      "qtrade-etf-diagnostics": 179865,
+      "qtrade-forward-research": 175982,
+      "qtrade-history-backfill": 164340,
+      "qtrade-pit-repair": 153768,
+      "qtrade-qlib-data": 179733,
+      "qtrade-qlib-workflow": 173727,
+      "qtrade-research-maintenance": 119771,
+      "qtrade-research-publication": 173730,
+      "tensorboard": 79
+    },
+    "services_after": {
+      "code-server": 81,
+      "jupyterlab": 80,
+      "qtrade-data-observer": 4471,
+      "qtrade-etf-diagnostics": 179865,
+      "qtrade-etf-shadow": 181180,
+      "qtrade-forward-research": 175982,
+      "qtrade-history-backfill": 164340,
+      "qtrade-pit-repair": 153768,
+      "qtrade-qlib-data": 179733,
+      "qtrade-qlib-workflow": 173727,
+      "qtrade-research-maintenance": 119771,
+      "qtrade-research-publication": 181181,
+      "tensorboard": 79
+    },
+    "unchanged_stock_forward_and_worker": true,
+    "live_trading_enabled": false
+  },
+  "publication": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.etf-shadow-service.v1",
+    "security_type": "ETF",
+    "mode": "SHADOW",
+    "strategy_id": "etf_positive_trend20_native_close_rotation_v1",
+    "contract_id": "7e5dc8a24e53a36249050fbfc85014e5d7bf309233d5343e8505c1c6f8f80459",
+    "contract": {
+      "schema_version": "qtrade.etf-research-contract.v1",
+      "security_type": "ETF",
+      "frequency": "day",
+      "universe_policy": "CURRENT_OBSERVED_ETF_TARGETS_NOT_HISTORICAL_PIT",
+      "price_basis": "SINA_NATIVE_ADJUSTMENT_UNCERTIFIED",
+      "signal": {
+        "family": "etf_positive_trend20",
+        "lookback_sessions": 20,
+        "formula": "close[t]/close[t-20]-1",
+        "filter": "score>0"
+      },
+      "portfolio": {
+        "method": "TOPK_EQUAL_WEIGHT_POSITIVE",
+        "top_k": 3,
+        "risk_degree": "0.95",
+        "rebalance_sessions": 1,
+        "weight_precision": "0.000000000001"
+      },
+      "execution": {
+        "kind": "SHADOW_NO_EXECUTION",
+        "intended_clock": "NEXT_EXCHANGE_OPEN",
+        "rules_admitted": false,
+        "fee_policy": null,
+        "settlement_policy": null
+      },
+      "evaluation": {
+        "cohort": "ETF_NATIVE_CLOSE_SEPARATE_FROM_STOCK_MODELS",
+        "historical_state": "BLOCKED_PENDING_VERIFIED_SAME_COHORT_HISTORY",
+        "historical_metrics": null
+      }
+    },
+    "source_revision": "59dc24cd853e6e6690dc831de980e92147bf52b2",
+    "generated_at": "2026-10-26T18:28:43.913885+00:00",
+    "heartbeat_at": "2026-10-26T18:28:43.913885+00:00",
+    "state": "RUNNING",
+    "entries": [
+      {
+        "target": {
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "point_in_time": false,
+          "realtime_readiness": false,
+          "real_data_paper_readiness": false,
+          "external_order_transmission": false,
+          "live_trading_enabled": false,
+          "promotion": "NOT_ELIGIBLE",
+          "schema_version": "qtrade.etf-allocation-target.v1",
+          "strategy_id": "etf_positive_trend20_native_close_rotation_v1",
+          "mode": "SHADOW",
+          "state": "FROZEN_RESEARCH_TARGET",
+          "target_id": "463cff4d89878ef3c29c785d97e86835d9c71fc19d77102433b1171a1385d299",
+          "contract": {
+            "schema_version": "qtrade.etf-research-contract.v1",
+            "security_type": "ETF",
+            "frequency": "day",
+            "universe_policy": "CURRENT_OBSERVED_ETF_TARGETS_NOT_HISTORICAL_PIT",
+            "price_basis": "SINA_NATIVE_ADJUSTMENT_UNCERTIFIED",
+            "signal": {
+              "family": "etf_positive_trend20",
+              "lookback_sessions": 20,
+              "formula": "close[t]/close[t-20]-1",
+              "filter": "score>0"
+            },
+            "portfolio": {
+              "method": "TOPK_EQUAL_WEIGHT_POSITIVE",
+              "top_k": 3,
+              "risk_degree": "0.95",
+              "rebalance_sessions": 1,
+              "weight_precision": "0.000000000001"
+            },
+            "execution": {
+              "kind": "SHADOW_NO_EXECUTION",
+              "intended_clock": "NEXT_EXCHANGE_OPEN",
+              "rules_admitted": false,
+              "fee_policy": null,
+              "settlement_policy": null
+            },
+            "evaluation": {
+              "cohort": "ETF_NATIVE_CLOSE_SEPARATE_FROM_STOCK_MODELS",
+              "historical_state": "BLOCKED_PENDING_VERIFIED_SAME_COHORT_HISTORY",
+              "historical_metrics": null
+            }
+          },
+          "bindings": {
+            "contract_id": "7e5dc8a24e53a36249050fbfc85014e5d7bf309233d5343e8505c1c6f8f80459",
+            "diagnostic_id": "b3cd61f630c17146a4c2d3b0fa3060a3e1b98ff8faf3735387a3f24b196296d4",
+            "diagnostic_sha256": "9dee067715e3b4f0d171b4ff30a26f69c3317c496e5d85de16e38e1ab27163de",
+            "receipt_sha256": "0f4bc4676110c3a9ae2f4a1a3c1ebee3165a7d40b5d0f047fab3247cf4507c83",
+            "master_sha256": "aea0fe389a3cb016f020b68fe327e9e9c910e53a90ff61fff2dc81a96adc6fa5",
+            "calendar_sha256": "b31af901ef888cf76f0137a06829e2bf3b9f27c430b85e9af80e48f9a2b1165c",
+            "source_revision": "d83e1ae556205114790945359a9c7eb2a658cd6b",
+            "implementation_revision": "59dc24cd853e6e6690dc831de980e92147bf52b2",
+            "as_of": "2026-10-26",
+            "expected_execution_at": "2026-10-27T09:30:00+08:00",
+            "weights_sha256": "a44e06abe6bbb83a11e6ad9f0e566983d2e476cd8db9ed0cc91e0191b2407dc8"
+          },
+          "weights": [
+            {
+              "instrument": "SH512010",
+              "weight": "0.316666666666"
+            },
+            {
+              "instrument": "SH512690",
+              "weight": "0.316666666666"
+            },
+            {
+              "instrument": "SH512800",
+              "weight": "0.316666666666"
+            }
+          ],
+          "source_observed_at": "2026-10-26T16:48:24.916464+00:00",
+          "qualified_inputs": 30,
+          "excluded_inputs": [],
+          "generated_at": "2026-10-26T18:28:25.348232+00:00",
+          "frozen_at": "2026-10-26T18:28:25.348232+00:00",
+          "execution_admitted": false,
+          "paper_admission": {
+            "state": "BLOCKED",
+            "reasons": [
+              "ETF_LOT_FEE_SETTLEMENT_AND_LIMIT_RULES_NOT_ADMITTED",
+              "DISTRIBUTIONS_AND_SPLITS_NOT_RECONCILED",
+              "CLOSE_ONLY_NOT_FULL_BAR_EXECUTION_INPUT"
+            ]
+          },
+          "orders": [],
+          "fills": [],
+          "holdings": [],
+          "cash": null,
+          "net_asset_value": null,
+          "forward_return": null,
+          "limitations": [
+            "VENDOR_NATIVE_PRICE_NOT_CERTIFIED_UNADJUSTED_OR_ADJUSTED",
+            "DISTRIBUTIONS_AND_SPLITS_NOT_RECONCILED",
+            "CURRENT_POOL_SURVIVORSHIP_BIAS",
+            "CLOSE_ONLY_NOT_AMOUNT_VWAP_OR_EXECUTION_ADMISSION",
+            "NOT_COMPARABLE_TO_ADJUSTED_STOCK_MODEL_OR_HISTORICAL_RETURN_SERIES",
+            "TARGET_WEIGHTS_ARE_NOT_HOLDINGS",
+            "SHADOW_HAS_NO_EXECUTION_OR_PORTFOLIO_RETURN"
+          ],
+          "evidence_sha256": "1da533a5932d1b78f33ac415a5610e067b47370458e8317db238e42ede427e93"
+        },
+        "observation": null
+      }
+    ],
+    "errors": [],
+    "execution_admitted": false,
+    "paper_admission": {
+      "state": "BLOCKED",
+      "reasons": [
+        "ETF_LOT_FEE_SETTLEMENT_AND_LIMIT_RULES_NOT_ADMITTED",
+        "DISTRIBUTIONS_AND_SPLITS_NOT_RECONCILED",
+        "CLOSE_ONLY_NOT_FULL_BAR_EXECUTION_INPUT"
+      ]
+    },
+    "orders": [],
+    "fills": [],
+    "holdings": [],
+    "cash": null,
+    "net_asset_value": null,
+    "forward_return": null,
+    "limitations": [
+      "VENDOR_NATIVE_PRICE_NOT_CERTIFIED_UNADJUSTED_OR_ADJUSTED",
+      "DISTRIBUTIONS_AND_SPLITS_NOT_RECONCILED",
+      "CURRENT_POOL_SURVIVORSHIP_BIAS",
+      "CLOSE_ONLY_NOT_AMOUNT_VWAP_OR_EXECUTION_ADMISSION",
+      "NOT_COMPARABLE_TO_ADJUSTED_STOCK_MODEL_OR_HISTORICAL_RETURN_SERIES",
+      "ETF_LOT_FEE_SETTLEMENT_AND_LIMIT_RULES_NOT_ADMITTED",
+      "CLOSE_ONLY_NOT_FULL_BAR_EXECUTION_INPUT",
+      "FULL_PIT_NOT_CERTIFIED",
+      "HISTORICAL_AVAILABLE_AT_UNKNOWN",
+      "TARGET_WEIGHTS_ARE_NOT_HOLDINGS",
+      "SHADOW_HAS_NO_EXECUTION_OR_PORTFOLIO_RETURN"
+    ],
+    "evidence_sha256": "3ec3a0ee53e8e8ca9dac6037d8f13000b5523a1a36892e393721ec8cf1ec98b8"
+  },
+  "private_target_raw_replay_verified": true,
+  "admission": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.etf-target-admission.v1",
+    "target_id": "463cff4d89878ef3c29c785d97e86835d9c71fc19d77102433b1171a1385d299",
+    "target_sha256": "1da533a5932d1b78f33ac415a5610e067b47370458e8317db238e42ede427e93",
+    "durable_at": "2026-10-26T18:28:25.350851+00:00",
+    "evidence_sha256": "ae4df5271fbae5fd3f68268b696b01c8e6f7d17fad82b93235652feed3f1af94"
+  },
+  "stock_book_count": 12,
+  "stock_recovery_required": 1,
+  "live_trading_enabled": false,
+  "actual_next_session_accepted": false,
+  "browser_verified": false,
+  "evidence_sha256": "f5dd7640d2ab1c027423bfbd8bb8c011816fb521c48e0b6d4386b1473b7c0a94"
+}
