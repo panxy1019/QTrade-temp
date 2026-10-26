@@ -1,0 +1,78 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "observed_at": "2026-10-26T13:33:12.875097+00:00",
+  "deployment": {
+    "classification": "PUBLIC_BUILD_PROVENANCE",
+    "provider": "VERCEL",
+    "status": "AVAILABLE",
+    "target_environment": "production",
+    "git_commit_sha": "28c2b9cd6230ffbeb9df5903c06ae41d511d122a",
+    "git_commit_ref": "main",
+    "external_order_transmission": false
+  },
+  "online_catalog_sha256": "5f4cf8799a975544293a508280e4328b626352a790c3615acbf3f487bc32cd1a",
+  "worker": {
+    "heartbeat_at": "2026-10-26T13:31:45.713670+00:00",
+    "source_revision": "978553a0472521ff9270d59d149cda150a9e5555",
+    "state": "MODEL_CONTROL_READY"
+  },
+  "worker_fresh": true,
+  "data_version": {
+    "version_id": "384ce479913266c3e65798e28a85c22bec3b6d3db90629b2c8928c0c141c83c6",
+    "actual_end": "2026-10-26",
+    "state": "RESEARCH_READY_QUALIFIED_SUBSET",
+    "created_at": "2026-10-26T12:45:48.732538+00:00",
+    "blocked_symbols": [
+      "002827",
+      "600621",
+      "605258",
+      "688018",
+      "688090",
+      "688617",
+      "688690",
+      "688777"
+    ],
+    "historical_pit_certified": false,
+    "external_execution_ready": false,
+    "evidence_sha256": "8d6f381e12775706e851831c21fdb388cdb70c7d79bac7ba43f739682d7577ea",
+    "current_symbols": 982,
+    "historical_symbols": 990,
+    "observation_universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308"
+  },
+  "candidates": [
+    {
+      "model_id": "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707",
+      "name": "Alpha158 + Ridge",
+      "state": "STAGED"
+    },
+    {
+      "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "name": "Alpha158 + LightGBM",
+      "state": "STAGED"
+    }
+  ],
+  "active_model": null,
+  "score_counts": [
+    888,
+    888
+  ],
+  "anonymous_control_http": 401,
+  "frontend_checks": 219,
+  "browser_visual_acceptance": "NOT_VERIFIED_TOOL_TIMEOUT",
+  "authenticated_live_mutation": "NOT_PERFORMED_NO_HUMAN_MODEL_APPROVAL",
+  "auto_predict": {
+    "enabled": false,
+    "state": "EVENT_WORKER_INTEGRATION_PENDING"
+  },
+  "auto_train": {
+    "mode": "OFF",
+    "state": "ROLLING_INTEGRATION_PENDING"
+  },
+  "evidence_sha256": "5f083a7b4b1c2529c7c9ec3f08b28f58d44bc9d908b0203af5cf5c670b6ca773"
+}

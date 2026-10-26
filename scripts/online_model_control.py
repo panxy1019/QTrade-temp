@@ -139,6 +139,18 @@ class OnlineModels:
         state = self.registry.snapshot()
         data = None
         data_error = None
+        schedule: dict[str, Any] = {'state': 'NOT_DEPLOYED', 'fresh': False}
+        try:
+            schedule_root = self.base/'unified-data/qlib-schedule'
+            heartbeat = load_signed(schedule_root/'service-state.json')
+            cycle = load_signed(schedule_root/'cycle.json')
+            stamp = datetime.fromisoformat(heartbeat['heartbeat_at'])
+            schedule = {'state': heartbeat['state'], 'heartbeat_at': heartbeat['heartbeat_at'],
+                'fresh': bool(stamp.tzinfo and 0 <= (now-stamp).total_seconds() <= 720),
+                'last_cycle_state': cycle['state'], 'required_day': cycle['required_day'],
+                'data_end': cycle['data_end'], 'source_revision': heartbeat['source_revision']}
+        except (ValueError, KeyError, TypeError, OSError):
+            pass
         try:
             version = self.data_head(verify=False)
             data = {k: version[k] for k in (
@@ -173,6 +185,7 @@ class OnlineModels:
                 'source_revision': revision,
                 'state': 'MODEL_CONTROL_READY' if worker_state == 'IDLE' else worker_state},
             'data_version': data, 'data_error': data_error, 'active_model': state['active_model'],
+            'data_schedule': schedule,
             'models': models, 'validations': validations,
             'commands': state['commands'], 'events': state['events'],
             'auto_predict': {'enabled': False, 'state': 'EVENT_WORKER_INTEGRATION_PENDING'},

@@ -104,7 +104,8 @@ export interface ArchivedResearchTemplate {
   promotion: 'NOT_ELIGIBLE'
 }
 
-export const sourceBoundProtocol = 'ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2'
+export const sourceBoundProtocol = 'ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V3'
+const sourceBoundProtocols = new Set([sourceBoundProtocol, 'ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2'])
 
 export function canReuseArchivedResult(result: WorkflowResult): boolean {
   return result.comparison_protocol === sourceBoundProtocol && !!result.spec &&
@@ -163,7 +164,7 @@ export function comparisonIssue(left: WorkflowResult, right: WorkflowResult): st
   if (left.dataset_sha256 !== right.dataset_sha256) return '数据版本不同，请先统一输入'
   if (left.source_revision !== right.source_revision) return '代码版本不同，请先统一实现版本'
   if ((left.source_snapshot_sha256 ?? null) !== (right.source_snapshot_sha256 ?? null)) return '历史状态来源快照不同，请先统一来源证据'
-  if (left.comparison_protocol === sourceBoundProtocol &&
+  if (sourceBoundProtocols.has(left.comparison_protocol) &&
     !/^[a-f0-9]{64}$/.test(left.source_snapshot_sha256 ?? '')) return '历史状态来源快照身份缺失，不能归因比较'
   const comparable = (spec: ResearchSpec) => {
     const { name, model, ...rest } = spec

@@ -123,7 +123,7 @@ def archived_template(result: dict[str, Any], worker_revision: str | None) -> di
     ):
         raise ValueError("归档结果身份或权限边界无效，不能复用配置")
     if result.get("comparison_protocol") != (
-        "ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2"
+        "ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V3"
     ) or not isinstance(result.get("spec"), dict):
         raise ValueError("该档案未保存当前协议的完整来源配置，请新建默认研究任务")
     try:
@@ -186,7 +186,7 @@ def build_config(spec: dict[str, Any], baseline: dict[str, Any]) -> dict[str, An
             config["model"]["kwargs"][key] = spec["seed"]
     config["workflow_spec"] = spec
     config["universe_policy"] = "supported_a_share"
-    config["source_constraint_policy"] = "RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V1"
+    config["source_constraint_policy"] = "RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V2"
     config["infer_processors"] = [
         {"class": "ProcessInf"},
         {"class": "RobustZScoreNorm", "kwargs": {

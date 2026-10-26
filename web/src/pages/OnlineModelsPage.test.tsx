@@ -101,3 +101,24 @@ it('ignores older in-flight catalog responses after a newer refresh', async () =
   expect(screen.getByText('模型控制心跳已过期，操作入口关闭')).toBeInTheDocument()
   expect(screen.getByRole('button', { name: '审阅激活' })).toBeDisabled()
 })
+
+it('distinguishes enabled daily inference from having an approved current prediction', async () => {
+  const state = mount()
+  await screen.findByText('982 只当日合格 / 990 只历史保留')
+  const next = { ...catalog(), auto_predict: { enabled: true, state: 'WAITING_FOR_APPROVAL', predictions: [], current_prediction_id: null } }
+  state.update(next)
+  fireEvent.click(screen.getByRole('button', { name: '刷新模型目录' }))
+  await screen.findByText('每日自动预测记录')
+  expect(screen.getByText(/等待人工批准模型。当前没有可使用的研究预测/)).toBeInTheDocument()
+  expect(state.posts).toHaveLength(0)
+})
+
+it('shows a historical data gap even while the version scheduler is alive', async () => {
+  const state = mount()
+  await screen.findByText('982 只当日合格 / 990 只历史保留')
+  const next = { ...catalog(), data_schedule: { state: 'WAITING', fresh: true, last_cycle_state: 'BLOCKED_MISSED_SESSION_REQUIRES_BACKFILL', required_day: '2026-10-26', data_end: '2026-10-22' } }
+  state.update(next)
+  fireEvent.click(screen.getByRole('button', { name: '刷新模型目录' }))
+  await screen.findByText('日版本调度：存在断档，需要补齐后再推进')
+  expect(screen.getByText(/运行中的调度进程不等于当天数据已经验收/)).toBeInTheDocument()
+})

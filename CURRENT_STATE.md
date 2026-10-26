@@ -2,6 +2,26 @@
 
 Last updated: 2026-10-26
 
+- Automatic approved-model prediction implementation now includes durable event
+  claims, nonblocking frozen inference, immutable outputs, restart reconciliation,
+  final data/model/clock gates and public daily history. Local focused checks pass;
+  cluster, real-model isolated acceptance and production deployment are pending.
+  No production ACTIVE. New Provider built successfully: d33a7466, 987/990 current,
+  missing 002827/600621/605258, through 2026-10-26. Candidate proofs still bind the
+  former version and need new validation. See docs/QLIB_AUTOMATIC_PREDICTION.md.
+  Historical backfill and public PIT subagents delivered commits for integration;
+  no new historical coverage or full PIT certification is claimed.
+
+- Production model-control API accepted: PR 18 merged at 28c2b9c, verified by
+  /api/deployment. Actual online catalog has fresh worker 978553a, 982/990,
+  two STAGED candidates and 888 scores each; anonymous action HTTP 401, no
+  ACTIVE and no production activation. Browser automation timed out twice;
+  219 frontend checks pass but visual acceptance is still pending. Evidence:
+  docs/evidence/qlib-model-control-production-20261026.json. Next branch is
+  codex/qlib-auto-predict; continuous data versions and event-driven prediction
+  are not implemented yet. PIT stays in source backoff until 14:51 UTC and the
+  single remaining prepared-input retry is due 13:55 UTC; do not bypass either.
+
 - Online model control runtime 978553a is accepted on the cluster: 819 Linux
   checks and 219 frontend checks pass. Verified native Ridge/LightGBM candidates
   are STAGED (888 new-day scores each), ACTIVE remains empty. Worker PID 147001

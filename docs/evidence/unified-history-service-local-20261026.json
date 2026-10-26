@@ -1,0 +1,31 @@
+{
+  "schema_version": "qtrade.history-service-local-checks.v1",
+  "platform": "Windows / Python 3.14.6",
+  "base_revision": "a1833f76e0ca2413faf88a1b2b6bc764bedc56d1",
+  "focused_history_tests": {"passed": 70, "skipped": 1},
+  "related_regression": {"passed": 133, "failed": 0, "skipped": 1},
+  "skip_reason": "Actual Linux flock/SIGALRM child deadline requires cluster verification",
+  "mypy": "PASSED_FOUR_HISTORY_SCRIPTS_LINUX_TARGET",
+  "ruff": "PASSED_FOUR_HISTORY_SCRIPTS_AND_TEST",
+  "pit_backoff_tests": {
+    "future_deadline_requests": 0,
+    "expired_deadline_resumes": true,
+    "missing_file_or_field_means_unset": true,
+    "malformed_or_naive_deadline_blocks": true,
+    "checked_before_login_and_during_download": true
+  },
+  "service_tests": {
+    "start_to_start_period_seconds": 300,
+    "maximum_pass_seconds": 240,
+    "independent_heartbeat_during_pass": true,
+    "heartbeat_failure_stops_requests": true,
+    "stop_event_propagated_and_child_reaped": true,
+    "group_stop_is_interruption_not_vendor_failure": true,
+    "failed_pass_retains_previous_execution_snapshot": true
+  },
+  "actual_source_requests": 0,
+  "cluster_or_service_changes": false,
+  "historical_pit_certified": false,
+  "ten_year_history_certified": false,
+  "live_trading_enabled": false
+}

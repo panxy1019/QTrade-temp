@@ -30,12 +30,24 @@ PIT/source repair continues in parallel. Then immutable data events, frozen
 processor restoration, daily prediction, controlled rolling and forward research.
 Each phase needs code, tests, cluster and production evidence, docs and limits.
 
+Approved daily prediction ledger/runtime/UI implemented locally; real-model
+isolated acceptance, deployment and continuous data-version coordination remain.
+New 2026-10-26 Provider d33a7466 has 987 current inputs (three gaps); frozen
+candidate validations require refresh. Parallel history/PIT code is delivered
+for integration, not yet accepted as newly collected or certified coverage.
+
 Model control runtime 978553a passes 819 Linux / 219 frontend checks and actual
 archive-backed candidate registration. Two candidates STAGED, no ACTIVE; worker
 and publisher upgraded, consistent ledger backup verified. Production API and
 browser acceptance remain pending (browser-control tool timeout). Automatic
 data/prediction scheduling and rolling training remain separate unfinished gates.
 See docs/QLIB_MODEL_CONTROL.md and its cluster proof.
+
+Production API now accepted at main 28c2b9c (PR 18 merged): fresh new worker,
+982/990 qualified data, two STAGED candidates, anonymous control HTTP 401.
+No production activation performed. Browser visual acceptance remains unverified
+because automation timed out. Next is immutable event-driven daily prediction,
+while continuous version scheduling and historical/PIT repairs remain parallel.
 
 Phase C forward-input validation accepted at source 5bb4a93: 779 Linux checks,
 both native models infer 888 supported stocks on the new 2026-10-26 Provider,
