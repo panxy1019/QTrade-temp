@@ -8,6 +8,7 @@ from qtrade.api.current_datasets import router as current_dataset_router
 from qtrade.api.public_observations import router as observation_router
 from qtrade.api.qlib_baseline import router as qlib_router
 from qtrade.api.research_workflow import router as research_router
+from qtrade.api.unified_data import router as unified_router
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_ROOT = PROJECT_ROOT / "deployment" / "evidence"
@@ -95,6 +96,7 @@ class VercelQueryPathApp:
             and not route.startswith("/current/")
             and not route.startswith("/qlib/")
             and not route.startswith("/research/")
+            and not route.startswith("/unified/")
         )
 
         async def send_with_cache(message: Message) -> None:
@@ -127,4 +129,5 @@ inner_app.include_router(observation_router)
 inner_app.include_router(current_dataset_router)
 inner_app.include_router(qlib_router)
 inner_app.include_router(research_router)
+inner_app.include_router(unified_router)
 app = VercelQueryPathApp(inner_app)

@@ -2464,3 +2464,53 @@ export interface PlatformSnapshot {
     failures: Record<string, string>
   }
 }
+export interface UnifiedFrequency {
+  planned: boolean
+  state: string
+  issues: string[]
+  observed_start: string | null
+  observed_end: string | null
+  bar_count: number | null
+}
+export interface UnifiedSecurity {
+  instrument_id: string
+  name: string
+  symbol: string
+  exchange: string
+  security_type: string
+  status: string
+  listing_date: string | null
+  delisting_date: string | null
+  available_at: null
+  in_target: boolean
+  legacy_sources: string[]
+  issues: string[]
+  source: { source_id: string; sha256: string }[]
+  frequencies: Record<'day' | '5min', UnifiedFrequency>
+}
+export interface UnifiedSummary {
+  schema_version: string
+  built_at: string
+  snapshot_age_seconds: number
+  live_trading_enabled: false
+  master: {
+    master_count: number
+    target_count: number
+    target_actual: number
+    legacy_union_count: number
+    legacy_active_retained: number
+    top_up_count: number
+    target_by_type: Record<string, number>
+    vendor_master_observed_at: string | null
+    universe_version: string
+    frequency_counts: Record<'day' | '5min', Record<string, number>>
+  }
+}
+export interface UnifiedSecurities {
+  universe_version: string
+  catalog_sha256: string
+  built_at: string
+  total: number
+  rows: UnifiedSecurity[]
+  live_trading_enabled: false
+}

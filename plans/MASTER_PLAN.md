@@ -22,6 +22,30 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
+### Unified securities and Qlib Online Serving, 2026-10-26 (active)
+
+Execute the owner-approved Phase A–E in plans/UNIFIED_DATA_ONLINE_PLAN.md.
+Start with source/reuse audit, observed identities and old-minute admission;
+PIT/source repair continues in parallel. Then immutable data events, frozen
+processor restoration, daily prediction, controlled rolling and forward research.
+Each phase needs code, tests, cluster and production evidence, docs and limits.
+
+### Proposed next research capabilities from the 2026-10-26 audit
+
+Planning only; no new runtime implementation is claimed by these items.
+
+- [ ] P0 data: repair cached minute coverage admission; quarantine/rebuild 002384
+      and audit every accepted long-minute input against dates/sessions/grid.
+- [ ] P0 data: continue public master/status/delisted-history reconciliation and
+      connect daily adaptation, validation and versioned Qlib publication.
+- [ ] P0 research: unify factor registration and independent evaluation on the
+      current supported Qlib universe; reuse existing metrics/diagnostic modules.
+- [ ] P1: unified simple-factor/multifactor/Ridge/LightGBM strategy comparisons,
+      rolling and forward validation, cost stress and risk attribution.
+- [ ] P2: bounded LLM factor proposals and timestamped announcement-event pilots.
+
+Evidence and acceptance proposals: docs/PLATFORM_CAPABILITY_AUDIT_20261026.md.
+
 ### Public official delisting/master reconciliation, 2026-10-26
 
 - [x] Record the owner's public-source-only scope and source/reuse audit.
