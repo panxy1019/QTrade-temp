@@ -22,7 +22,7 @@ LIVE_TRADING_ENABLED=false throughout.
 
 ## ADR-179 — Forward inference reuses fitted state and proves old-reference stability
 
-Status: implementation in progress, 2026-10-26, Phase C.
+Status: candidate input gate accepted on cluster, 2026-10-26, Phase C.
 
 Reuse audited Qlib RMDLoader/IT_LS and the verified local model archive. The new
 data version must descend from frozen training data, be current at generation,
