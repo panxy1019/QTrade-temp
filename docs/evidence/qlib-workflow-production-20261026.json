@@ -1,0 +1,67 @@
+{
+  "checked_at": "2026-10-26T02:55:12.267661+00:00",
+  "production": {
+    "classification": "PUBLIC_BUILD_PROVENANCE",
+    "provider": "VERCEL",
+    "status": "AVAILABLE",
+    "target_environment": "production",
+    "git_commit_sha": "6573e3fc4ab993593bcb9480e1a7d2a0dd4294ae",
+    "git_commit_ref": "main",
+    "external_order_transmission": false
+  },
+  "catalog_schema": "qtrade.research-workflow.v1",
+  "worker_fresh": true,
+  "expected_complete_day": "2026-10-23",
+  "frozen_data_current": true,
+  "catalog_cache_control": "no-store",
+  "research_login_configured": false,
+  "anonymous_submission_status": 401,
+  "real_result_comparison_aligned": true,
+  "default_browser_result": "alpha158-linear-6662c251f73982da",
+  "browser_pair_comparison_verified": true,
+  "results": [
+    {
+      "experiment_id": "da2997a86caf4e899d19254de254c222",
+      "run_id": "alpha158-linear-6662c251f73982da",
+      "evidence_sha256": "447d28091c4606d32e2988f96a409015a702d1c20597f03ce28505a49566a3f6",
+      "source_revision": "a0f4f05954706dddd88b7140e29e80c15de7b99d",
+      "metrics": {
+        "ic": 0.019365427557294205,
+        "rank_ic": 0.04697245699452107,
+        "icir": 0.13562694497607072,
+        "rank_icir": 0.3096880734235888,
+        "total_return_net": 0.9142587305656005,
+        "annual_return_net": 0.27295894117160313,
+        "sharpe_net": 1.2623732129253582,
+        "max_drawdown": -0.3234350778532282,
+        "mean_daily_turnover": 0.17561828819481248,
+        "benchmark_return": 0.19650306312424815,
+        "annualized_volatility": 0.2084803072956039
+      }
+    },
+    {
+      "experiment_id": "77e5d2011b80439887691ae98496b06d",
+      "run_id": "alpha158-lightgbm-14b06bdc9ce9fd58",
+      "evidence_sha256": "d1d38dda88d4396b236aa770b43ac8317734bb716a10c2440c152080cb9945fb",
+      "source_revision": "a0f4f05954706dddd88b7140e29e80c15de7b99d",
+      "metrics": {
+        "ic": 0.02425705803026911,
+        "rank_ic": 0.05205254524640808,
+        "icir": 0.164329978273446,
+        "rank_icir": 0.32494389109558336,
+        "total_return_net": 1.2243111939661944,
+        "annual_return_net": 0.346003324904149,
+        "sharpe_net": 1.2478022212728666,
+        "max_drawdown": -0.3332760415766354,
+        "mean_daily_turnover": 0.17498266509388824,
+        "benchmark_return": 0.19650306312424815,
+        "annualized_volatility": 0.26689447851635056
+      }
+    }
+  ],
+  "pending": [
+    "Production research credential setup",
+    "Authenticated production browser submit/cancel acceptance"
+  ],
+  "live_trading_enabled": false
+}

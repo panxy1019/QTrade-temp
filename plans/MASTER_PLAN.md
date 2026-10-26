@@ -30,7 +30,8 @@ Audit date: 2026-08-12.
 - [x] Add causal admission, strict unknown-state checks and versioned source backfill.
 - [x] Validate real cluster executions, source coverage and immutable publications.
 - [ ] Configure Vercel research credentials and accept browser submission end to end.
-- [ ] Complete full Linux checks, production acceptance and reproducible evidence.
+- [x] Complete full Linux checks and public production result-page acceptance.
+- [ ] Complete authenticated production acceptance and final credential evidence.
 
 Execution record: plans/QLIB_WORKFLOW_INTEGRATION.md. The PIT work remains
 uncertified until historical availability and independent master/rule evidence

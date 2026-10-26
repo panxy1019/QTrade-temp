@@ -86,7 +86,7 @@ PYTHONPATH=src python -m scripts.run_qlib_worker --base "$BASE" \
 # 共享匿名数据源会话锁，分批补历史状态；不是历史可得性认证
 PYTHONPATH=src python -m scripts.collect_pit_evidence --base "$BASE" --maximum 20
 
-# 后续来源回填：每六小时扩大20只候选、保留失败重试，单次最多30分钟
+# 后续来源回填：成功后六小时扩大20只；失败保持范围，30分钟起有界退避；每次最多30分钟
 PYTHONPATH=src python -m scripts.run_pit_repair --base "$BASE"
 ```
 
@@ -102,6 +102,10 @@ PYTHONPATH=src python -m scripts.run_pit_repair --base "$BASE"
 首批主表9,022条（来源包括其他证券类型，不能当作当前A股数量），其中来源标记
 1,200条非活跃；这不等于已补齐1,200只退市股价格历史。20只状态试采完成13只、
 31,577行，7只失败，需继续重试、覆盖扩展及独立对账。
+来源主表请求后来失败。`attempt.json`现单独记录最近一次尝试状态，不能用进程
+存活或旧`coverage.json`代替本次成功。复用主表前验证内容哈希；24小时内复用已
+校验快照，较旧快照刷新失败时显式记录降级并保留原`master_observed_at`。
+失败不扩大采集范围，30分钟起退避、最长六小时；超时或停止时回收子进程。
 `known_state` 拒绝未来才可得状态，`historical_blocks` 在状态或精确限制未知时拒绝
 将其认定为已认证可交易。这两个严格检查是后续认证执行适配的入口；当前诊断回测
 继续使用明确标注的近似协议，不能把“采到了状态”解释为“回测已完整采用精确规则”。
@@ -136,3 +140,10 @@ PYTHONPATH=src python -m scripts.run_pit_repair --base "$BASE"
 市场观察、维护、Qlib执行、结果发布和PIT来源修复均已由集群进程管理器监管。
 研究目录独立检查执行器心跳和交易日历：即使任务服务新鲜，冻结数据落后也会单独提示，
 不会把旧实验的截止日改成今天。回测页默认选择最新已完成实验，原基线留作参考。
+
+2026-10-26生产检查：PR #4已合并，部署源码6573e3f。公开目录、会话状态和实验详情
+均返回200，匿名提交返回401；浏览器实际显示最新Ridge及同协议LightGBM对照。
+`configured=false`明确表示生产研究登录尚未开放。私有配置文件位于本机
+`%LOCALAPPDATA%/QTrade/research-private/vercel-production.env`，不得提交Git或发送到聊天。
+在已打开的Vercel表单中保持Secret与Production，导入文件后保存，再重部署并做最终
+登录提交/取消验收。配置只涉及独立研究账户及私有队列，不包含集群SSH或券商凭据。

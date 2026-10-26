@@ -3076,3 +3076,22 @@ invent historical available_at timestamps or certify full PIT. Freeze source
 repair coverage into each new archive; unknown exact trading limits remain
 explicit diagnostic constraints. LIVE_TRADING_ENABLED=false.
 
+## ADR-166 — Source retry status is separate from accepted PIT coverage
+
+Status: accepted, 2026-10-26.
+
+A supervised process being alive does not establish a successful source pass.
+Keep a signed attempt record independently of the last accepted coverage. Reuse
+only checksum-verified master/status evidence, preserve its original observed
+time, and disclose stale-master fallback after a failed refresh. No fallback
+creates historical availability or trading-rule certification. Failed or
+interrupted passes retain their existing scope and retry after bounded backoff;
+successful passes advance the bounded sample after six hours. The parent reaps
+its collector on shutdown or timeout so the shared vendor session is released.
+
+The first production login acceptance also exposed a stale uv.lock: the frozen
+deployment lacked declared queue transport dependencies. Keep declared runtime
+dependencies and the deployment lock aligned, with a regression check. Queue
+failure logs contain the operation and exception class only, never credential
+values, exception messages or tracebacks.
+

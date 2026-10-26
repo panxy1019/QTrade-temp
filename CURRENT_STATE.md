@@ -2,7 +2,18 @@
 
 Last updated: 2026-10-26
 
-- Qlib unified workflow implementation is in cluster integration. Research-only
+- Qlib public workflow pages are deployed to production at main 6573e3f;
+  browser acceptance confirms the newest Ridge result and the actual aligned
+  LightGBM comparison. Production catalog/session/result endpoints return 200,
+  worker and frozen-data clocks are fresh, and anonymous submission returns 401.
+  The user imported Production credentials; actual browser login and submission
+  now succeed. PR #5 (main 2b1e200) fixes a stale frozen dependency lock that
+  initially prevented queue transport imports. The same request identity was
+  retried successfully, and cancellation was submitted for cluster verification.
+  Full production execution/result acceptance is in progress. See production evidence
+  docs/evidence/qlib-workflow-production-20261026.json.
+
+- Qlib unified workflow implementation includes research-only
   cookie authentication, a scoped private Git queue, serial durable worker,
   Ridge/LightGBM allowlisted configurations, unified pages and per-run audits
   have been implemented. The user selected direct authenticated Vercel submission.
@@ -11,11 +22,16 @@ Last updated: 2026-10-26
   891 supported stocks, matching inputs/protocol/source. Frontend 201 tests and
   Linux 544 full-suite checks pass; final navigation/compare checks pass too.
   Worker, publication and bounded six-hour PIT source repair are supervised.
-  Production credentials and final browser submission
-  are still pending. Do not report Vercel submission as live.
+  Authenticated production submission is enabled; final cancellation and result
+  acceptance remain in progress.
   The first source pass captured 9,022 master rows and 13/20 stocks' historical
   status (31,577 rows), with seven failures retained rather than certified.
   Historical-source backfill and causal admission remain non-certified PIT work.
+  The next master refresh failed while old coverage remained visible. Source
+  resilience repair now records attempts separately, reuses verified cached
+  masters without changing their clock, retries failed scopes with backoff and
+  reaps timed-out children. Nine source/scheduler regression checks pass locally;
+  cluster deployment and resumed coverage still require verification.
   See plans/QLIB_WORKFLOW_INTEGRATION.md and docs/QLIB_WORKFLOW.md.
 
 - Website learning guide completed in docs/learning/README.md: 13 Chinese

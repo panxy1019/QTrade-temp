@@ -58,5 +58,28 @@ the integrated form with authentication closed until Production credentials
 are configured. That credential handoff and final public-browser submission
 are still required; do not mark the overall goal complete.
 
+Production checkpoint: PR #4 merged as 6573e3fc4ab993593bcb9480e1a7d2a0dd4294ae.
+Live API and browser confirm two completed aligned runs, newest-run selection,
+actual model comparison, fresh worker/data clocks and anonymous POST rejection.
+The Production/Secret import dialog is prepared without entering credentials.
+User credential setup, redeployment and authenticated UI acceptance remain.
+The temporary cluster transfer key has been revoked; no credential values were
+committed. Final production evidence is staged locally for the remaining handoff.
+
+2026-10-26 follow-up: the user imported all seven Production values. Redeploy
+G8kg8mdRQUPtoPGXZmdyJvz2eJX1 enabled actual browser login. Submission with request
+34dd6dd3094342e1871f0046135f5656 was initially unconfirmed; uv lock --check exposed
+missing Dulwich/Paramiko dependencies. PR #5 repairs the frozen lock and adds
+credential-safe exception-class diagnostics; 26 targeted checks, Ruff, mypy
+and Vercel preview pass. Main 2b1e200 now accepts the same browser request;
+cancellation was submitted and final cluster/result acceptance is in progress.
+Values were saved as Config; sensitive values still need owner-managed Secret
+storage. Do not print or copy their contents.
+
+PIT source recovery: last master refresh failed while old accepted coverage
+remained visible. Add independent attempt evidence, verified cache reuse with
+original clocks, bounded same-scope failure retries and child cleanup. Nine
+source/scheduler tests pass locally; real cluster recovery is not yet certified.
+
 Learning documentation already in the working tree belongs to the previous
 request and must be preserved. Existing fixed experiments remain immutable.
