@@ -59,10 +59,14 @@ Sina native、当前日常增量和 Qlib Provider 相互独立。
 9. 默认当前采集标记必须存在、时间不超前且 300 秒内，状态必须为空闲；COLLECTING、FAILED、
    不明、缺失或陈旧标记均阻断历史请求。可重复传 `--priority-state` 加入日预测等优先工作标记。
    这些标记也必须有 `state` 和新鲜 `heartbeat_at`/`updated_at`；主代理统一接入调度。
+   此外无条件尊重 `<base>/pit-repair/next-pass.json` 的 `next_attempt_at`：未来截止阻断请求，
+   文件或字段缺失表示未设，过期允许继续；坏 JSON、非对象、空/无时区/不合法截止等均阻断。
+   请求前、持有 vendor lease 后登录前和运行中都检查，不能借历史队列绕过 PIT 源退避。
 10. 新的大量写入需在 100 GiB reserve 外再有 16 MiB 单次请求余量；不自动删除旧产物。
     请求有行数、字段数、字段长度、流大小及对象大小上限，历史数据不会每日全量复制。
 
-实际全局 source 退避由此历史队列管理；既有 PIT repair 等服务各自的退避政策仍需尊重。
+历史自身失败的全局 source 退避由历史队列持久化；PIT 的全局截止为额外强制门禁，
+不会改写或提前其 next-pass 标记。两种截止都已过期后仍需通过当前采集及共享租约检查。
 共享 vendor lease 仅支持当前单主机部署，不声称跨容器/NFS 分布式互斥。
 
 ## 质量、覆盖与缺口含义
@@ -102,26 +106,27 @@ OHLC、时序/重复、周末、5min 网格与日期、amount/volume 的价格�
 <root>/lake/objects/<sha>.parquet          内容合格/部分会话分标识的观测
 <root>/progress.json                      完整覆盖与缺口视图
 <base>/unified-data/backfill/execution-latest.json  有界摘要
+<base>/unified-data/backfill/service-state.json     独立历史服务心跳
 ```
 
 ## 复现与集群验收
 
-本地专项 50 项通过、1 项真实 Linux 子进程检查因平台跳过；
-连同计划/探测/存储/当前采集队列共 101 项通过、同一项跳过；
-三份新脚本的严格 mypy（Linux 目标）与 Ruff 通过。
-Windows 测试仅替换不支持的目录 fsync；Linux 应执行全部 102 项且无跳过。
+本地专项 70 项通过、1 项真实 Linux 子进程检查因平台跳过；
+连同计划/探测/存储/当前采集队列及 PIT 队列共 133 项通过、同一项跳过；
+四份新脚本的严格 mypy（Linux 目标）与 Ruff 通过。
+Windows 测试仅替换不支持的目录 fsync；Linux 应执行全部 134 项且无跳过。
 真正的 fsync/flock、子进程信号及来源仍需 Linux 验收。
 
 ```sh
 export PYTHONPATH="$PWD/src" MYPYPATH="$PWD/src" LIVE_TRADING_ENABLED=false
 python -m pytest tests/test_history_backfill.py tests/test_unified_backfill_plan.py \
   tests/test_probe_unified_history.py tests/test_unified_store.py \
-  tests/test_collect_unified_data.py tests/test_unified_queue.py
+  tests/test_collect_unified_data.py tests/test_unified_queue.py tests/test_pit_collection_queue.py
 python -m mypy --explicit-package-bases --platform linux --follow-imports=silent \
   scripts/history_backfill_store.py scripts/history_backfill_queue.py \
-  scripts/run_history_backfill.py
+  scripts/run_history_backfill.py scripts/run_history_backfill_service.py
 python -m ruff check scripts/history_backfill_store.py scripts/history_backfill_queue.py \
-  scripts/run_history_backfill.py tests/test_history_backfill.py
+  scripts/run_history_backfill.py scripts/run_history_backfill_service.py tests/test_history_backfill.py
 ```
 
 由主代理在已检验 release、原持久卷根 B 中初始化；不用 catalog/latest 替换原冻结主表：
@@ -147,6 +152,33 @@ HISTORY_ROOT="$B/unified-data/backfill/execution-v1"
 停止后没有存活 capture 子进程；原始与规范化对象独立重放一致。源实际返回空/失败也应封存，
 不能伪报已获得覆盖。至少再做一次先封存后退出的恢复验收，并记录实际耗时/字节/行数。
 当前模块不更改 Supervisor、集群服务、线上模型、预测任务或网页，主代理负责统一集成部署。
+
+## 独立 Supervisor 调度入口
+
+`scripts.run_history_backfill_service` 每 300 秒开始一个有界 pass，单次最多 240 秒；
+未执行完的窗口仍由已有持久队列恢复，不积攒追赶任务。15 秒一次的独立线程心跳不依赖
+某次来源请求结束；已有 `execution-latest.json` 继续表达最后一轮实际结果，不能用
+Supervisor RUNNING 或新鲜心跳代替成功覆盖。pass 失败时保留上一份 execution 摘要，
+在独立服务状态记录失败类；心跳写入失败会停止来源请求。日志不记录异常消息或凭据。
+
+SIGTERM/SIGINT 设置同一个 stop event，当前 pass 会回收 capture 子进程、保存中断 receipt，
+之后服务心跳更新 STOPPED。进程组停止使 capture 先退出时也记录 INTERRUPTED，
+不会把人工停止伪记为供应商失败并追加全局退避。单独的服务生命周期租约位于
+`<lease-dir>/history-service/history-backfill.lock`；原 writer lease 仍在每个 pass 内使用，
+不会与 one-off CLI 并发写同一历史 root。服务不修改或启动既有日常采集/PIT/预测进程。
+
+```sh
+# 使用前文已经封存的 root，或者首次启动时同时传入原 --plan 与 --master。
+"$B/venv/bin/python" -m scripts.run_history_backfill_service \
+  --base "$B" --root "$HISTORY_ROOT" --source-revision "$REVISION" \
+  --seconds 240 --new-windows 4 --retry-windows 1 --query-seconds 25
+```
+
+配置样例：`deployment/history-backfill.supervisor.conf.example`，只增加独立 program，
+固定 LIVE=false、单进程和进程组停止。主代理应在 Linux 全回归及配置审阅后统一部署。
+先检查未来 PIT 截止时 `attempted_windows=0`、`priority_reason=PIT_SOURCE_BACKOFF_ACTIVE`；
+不要为了验收清除真实截止。用隔离测试夹具证明到期恢复，再在真实截止过后观察受限来源结果。
+验证服务心跳推进、退出状态以及 capture 子进程已经被 wait 回收。生产上线本身仍待主代理确认。
 
 ## 需合入公共状态的摘要
 

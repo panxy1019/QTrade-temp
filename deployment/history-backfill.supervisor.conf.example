@@ -1,0 +1,19 @@
+[program:qtrade-history-backfill]
+; Replace /PERSIST/qtrade and SOURCE_COMMIT with inspected paths/full revision.
+; Use the original frozen plan/master. Do not create a new root to bypass backoff.
+directory=/PERSIST/qtrade/releases/SOURCE_COMMIT
+command=/PERSIST/qtrade/venv/bin/python -m scripts.run_history_backfill_service --base /PERSIST/qtrade --root /PERSIST/qtrade/unified-data/backfill/execution-v1 --plan /PERSIST/qtrade/unified-data/backfill/plans/649872fb2eef3ad84614ab0c11635e56517bdcda13fde7fe76d3a9d63bef3945.json --master /PERSIST/qtrade/unified-data/catalog/versions/aea0fe389a3cb016f020b68fe327e9e9c910e53a90ff61fff2dc81a96adc6fa5.json --source-revision SOURCE_COMMIT --seconds 240 --new-windows 4 --retry-windows 1 --query-seconds 25
+environment=LIVE_TRADING_ENABLED="false",QTRADE_BAOSTOCK_FREE_DATA_ACK="true",PYTHONPATH="/PERSIST/qtrade/releases/SOURCE_COMMIT/src",PYTHONUNBUFFERED="1"
+numprocs=1
+autostart=true
+autorestart=true
+startsecs=10
+startretries=3
+stopsignal=TERM
+stopwaitsecs=90
+stopasgroup=true
+killasgroup=true
+redirect_stderr=true
+stdout_logfile=/PERSIST/qtrade/history-backfill.log
+stdout_logfile_maxbytes=5MB
+stdout_logfile_backups=3

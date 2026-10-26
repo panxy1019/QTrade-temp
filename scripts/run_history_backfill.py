@@ -36,8 +36,38 @@ WRITE_HEADROOM = 16 * 1024**2
 STREAM_LIMIT = 2_000_000
 
 
+def pit_backoff_reason(base: Path, now: datetime) -> str | None:
+    """Honor the shared public endpoint's PIT deadline, including between child polls."""
+    path = base / "pit-repair/next-pass.json"
+    try:
+        with path.open("rb") as handle:
+            payload = handle.read(64_001)
+    except FileNotFoundError:
+        return None
+    except OSError:
+        return "PIT_SOURCE_BACKOFF_INVALID"
+    try:
+        if len(payload) > 64_000:
+            raise ValueError("PIT_SCHEDULE_TOO_LARGE")
+        value = json.loads(payload)
+        if not isinstance(value, dict):
+            raise ValueError("PIT_SCHEDULE_NOT_OBJECT")
+        if "next_attempt_at" not in value:
+            return None
+        deadline = datetime.fromisoformat(value["next_attempt_at"])
+        if deadline.tzinfo is None or now.tzinfo is None:
+            raise ValueError("PIT_SCHEDULE_TIMEZONE_REQUIRED")
+        if now < deadline:
+            return "PIT_SOURCE_BACKOFF_ACTIVE"
+    except (ValueError, TypeError):
+        return "PIT_SOURCE_BACKOFF_INVALID"
+    return None
+
+
 def priority_reason(base: Path, now: datetime, extra_states: tuple[Path, ...] = ()) -> str | None:
     """Missing/stale current collector evidence cannot authorize expensive history work."""
+    if reason := pit_backoff_reason(base, now):
+        return reason
     paths = (base / "unified-data/service-state.json", *extra_states)
     idle = {"WAITING", "IDLE", "SUCCEEDED", "PASS_FINISHED", "COMPLETE", "STOPPED"}
     for path in paths:
@@ -64,7 +94,10 @@ def worker_lease(directory: Path) -> Iterator[TextIO]:
         yield handle
 
 
-def capture_vendor(store: HistoryStore, attempt: dict[str, Any], api: Any) -> None:
+def capture_vendor(
+    store: HistoryStore, attempt: dict[str, Any], api: Any, *,
+    before_login: Callable[[], str | None] | None = None,
+) -> None:
     """Run only in a bounded child. Each decoded row is fsynced before the next read."""
     path = store.path(attempt["attempt_id"], "capture.jsonl")
     total = 0
@@ -85,6 +118,10 @@ def capture_vendor(store: HistoryStore, attempt: dict[str, Any], api: Any) -> No
         queried = False
         try:
             with baostock_session(blocking=False):
+                if before_login is not None and (reason := before_login()):
+                    emit("finished", state="YIELDED_TO_CURRENT_COLLECTION", body_complete=False,
+                         vendor_error_code=None, error=reason)
+                    return
                 if api.login().error_code != "0":
                     emit("finished", state="LOGIN_FAILED", body_complete=False,
                          vendor_error_code=None, error="VENDOR_LOGIN_FAILED")
@@ -178,9 +215,15 @@ def download(
     stop: Event, extra_states: tuple[Path, ...] = (),
     worker_lease_fd: int | None = None,
 ) -> tuple[dict[str, Any], str | None]:
+    if stop.is_set():
+        return read_capture(store, attempt), "INTERRUPTED"
+    if priority_reason(base, datetime.now(UTC), extra_states):
+        return read_capture(store, attempt), "YIELDED_TO_CURRENT_COLLECTION"
     child = subprocess.Popen([
         sys.executable, "-m", "scripts.run_history_backfill", "--capture-root", str(store.root),
         "--capture-attempt", attempt["attempt_id"], "--capture-seconds", str(seconds),
+        "--base", str(base),
+        *[part for path in extra_states for part in ("--priority-state", str(path))],
     ], cwd=REPO, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         pass_fds=() if worker_lease_fd is None else (worker_lease_fd,))
     started = time.monotonic()
@@ -203,6 +246,10 @@ def download(
     finally:
         reap(child)  # A killed child releases its OS vendor lease before return.
     raw = read_capture(store, attempt)
+    # Supervisor may signal the whole process group, so the capture can exit
+    # before the polling body sees stop. Intentional shutdown is not a vendor fault.
+    if state is None and stop.is_set() and not raw["body_complete"]:
+        state = "INTERRUPTED"
     if state is None and child.returncode != 0 and not raw["body_complete"]:
         state = "QUERY_TIMEOUT" if child.returncode == 124 else "SOURCE_QUERY_FAILED"
     if state is None and raw["state"] != "CAPTURED":
@@ -273,6 +320,8 @@ def run_pass(
             if override in {"YIELDED_TO_CURRENT_COLLECTION", "YIELDED_TO_SHARED_VENDOR_SESSION",
                             "STORAGE_RESERVE_PAUSED", "INTERRUPTED"}:
                 state = override
+                if override == "YIELDED_TO_CURRENT_COLLECTION":
+                    reason = priority_reason(base, datetime.now(UTC), extra_states)
                 break
         report = queue.snapshot(now=datetime.now(UTC))
         report = signed({**{k: v for k, v in report.items() if k != "evidence_sha256"},
@@ -326,7 +375,10 @@ def main() -> None:
         signal.signal(signal.SIGALRM, lambda *_: os._exit(124))
         signal.alarm(math.ceil(args.capture_seconds))
         socket.setdefaulttimeout(15)
-        capture_vendor(store, attempt, import_module("baostock"))
+        capture_vendor(store, attempt, import_module("baostock"),
+                       before_login=(lambda: priority_reason(
+                           args.base, datetime.now(UTC), tuple(args.priority_state)))
+                       if args.base else None)
         return
     if not args.base or not args.root or not args.source_revision:
         parser.error("--base, --root and --source-revision required")

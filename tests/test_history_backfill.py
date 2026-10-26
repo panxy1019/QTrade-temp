@@ -19,6 +19,7 @@ from qtrade.monitoring.data_freshness import signed
 from scripts import history_backfill_queue as queue_module
 from scripts import history_backfill_store as store_module
 from scripts import run_history_backfill as runner
+from scripts import run_history_backfill_service as service
 from scripts import unified_store
 from scripts.history_backfill_queue import HistoryQueue
 from scripts.history_backfill_store import HistoryStore, fields, qualify, request_for
@@ -36,7 +37,7 @@ def platform_writers(monkeypatch):
     # Actual Linux directory fsync and flock are cluster acceptance requirements.
     monkeypatch.setattr(unified_store, "_fsync_directory", lambda _: None)
     monkeypatch.setattr(runner, "_fsync_directory", lambda _: None)
-    for module in (queue_module, store_module, runner):
+    for module in (queue_module, store_module, runner, service):
         for name in ("write_json_atomic", "write_json_immutable"):
             original = getattr(module, name, None)
             if original is None:
@@ -389,7 +390,8 @@ def test_timeout_and_priority_preemption_reap_child_and_preserve_capture(
     child.wait.assert_called_once()
     child.reset_mock()
     monkeypatch.setattr(runner.time, "monotonic", lambda: 0)
-    monkeypatch.setattr(runner, "priority_reason", lambda *args: "CURRENT_PRIORITY_WORK_ACTIVE")
+    reasons = iter([None, "CURRENT_PRIORITY_WORK_ACTIVE"])
+    monkeypatch.setattr(runner, "priority_reason", lambda *args: next(reasons))
     _, state = runner.download(store, attempt, base=tmp_path, seconds=25, stop=Event())
     assert state == "YIELDED_TO_CURRENT_COLLECTION"
     child.terminate.assert_called_once()
@@ -605,3 +607,253 @@ def test_child_inherits_writer_lease_and_hard_deadline_releases_it_without_paren
         assert runner.read_capture(store, attempt)["body_complete"] is False
     finally:
         runner.reap(child)
+
+
+def idle_marker(base, now=NOW):
+    path = base / "unified-data/service-state.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"state": "WAITING", "heartbeat_at": now.isoformat()}))
+
+
+@pytest.mark.parametrize("payload,expected", [
+    (None, None), (b"{}", None), (b'{"outcome":"RUNNING"}', None),
+    (b'{"next_attempt_at":"2026-10-26T14:51:00+00:00"}', "PIT_SOURCE_BACKOFF_ACTIVE"),
+    (b'{"next_attempt_at":"2026-10-26T13:59:59+00:00"}', None),
+    (b'{"next_attempt_at":"2026-10-26T14:00:00+00:00"}', None),
+    (b"bad json", "PIT_SOURCE_BACKOFF_INVALID"),
+    (b"[]", "PIT_SOURCE_BACKOFF_INVALID"),
+    (b'{"next_attempt_at":null}', "PIT_SOURCE_BACKOFF_INVALID"),
+    (b'{"next_attempt_at":"2026-10-26T14:51:00"}', "PIT_SOURCE_BACKOFF_INVALID"),
+    (b"a" * 64001, "PIT_SOURCE_BACKOFF_INVALID"),
+], ids=["missing", "unset", "running_unset", "future", "expired", "due", "broken",
+        "array", "null", "naive", "oversize"])
+def test_pit_global_deadline_is_respected_and_corruption_fails_closed(tmp_path, payload, expected):
+    idle_marker(tmp_path)
+    path = tmp_path / "pit-repair/next-pass.json"
+    if payload is not None:
+        path.parent.mkdir()
+        path.write_bytes(payload)
+    assert runner.priority_reason(tmp_path, NOW) == expected
+
+
+def test_pit_backoff_pass_makes_zero_requests_and_expiry_allows_resume(
+    tmp_path, inputs, monkeypatch,
+):
+    monkeypatch.setattr(runner, "worker_lease", lambda *args: nullcontext())
+    monkeypatch.setattr(runner.shutil, "disk_usage", lambda _: SimpleNamespace(
+        free=runner.RESERVE + runner.WRITE_HEADROOM))
+    now = datetime.now(UTC)
+    idle_marker(tmp_path, now)
+    marker = tmp_path / "pit-repair/next-pass.json"
+    marker.parent.mkdir()
+    marker.write_text(json.dumps({"next_attempt_at": (now + timedelta(hours=1)).isoformat()}))
+    saved = marker.read_bytes()
+    download = Mock(side_effect=lambda store, attempt, **kwargs: (raw_for(attempt["scope"]), None))
+    root = tmp_path / "history"
+    result = runner.run_pass(tmp_path, root, *inputs, revision=REVISION,
+                             new_windows=1, retry_windows=0, downloader=download)
+    assert result["priority_reason"] == "PIT_SOURCE_BACKOFF_ACTIVE"
+    assert result["attempted_windows"] == result["stage_counts_this_pass"]["requested"] == 0
+    download.assert_not_called()
+    assert not list((root / "lake/attempts").glob("*/request.json"))
+    assert marker.read_bytes() == saved
+    marker.write_text(json.dumps({"next_attempt_at": (now - timedelta(seconds=1)).isoformat()}))
+    resumed = runner.run_pass(tmp_path, root, *inputs, revision=REVISION,
+                              new_windows=1, retry_windows=0, downloader=download)
+    assert resumed["attempted_windows"] == 1 and resumed["qualified_rows"] > 0
+    assert download.call_count == 1
+
+
+def test_capture_checks_shared_deadline_after_lease_before_login(tmp_path, inputs, monkeypatch):
+    queue, store = setup(tmp_path, inputs)
+    attempt = claim(queue, store)
+    monkeypatch.setattr(runner, "baostock_session", lambda **kwargs: nullcontext())
+    api = Mock()
+    runner.capture_vendor(store, attempt, api, before_login=lambda: "PIT_SOURCE_BACKOFF_ACTIVE")
+    api.login.assert_not_called()
+    assert runner.read_capture(store, attempt)["state"] == "YIELDED_TO_CURRENT_COLLECTION"
+
+
+def test_stopped_download_reaps_active_child_before_return(tmp_path, inputs, monkeypatch):
+    queue, store = setup(tmp_path, inputs)
+    attempt = claim(queue, store)
+    stop = Event()
+    child = Mock(returncode=-15)
+    child.poll.return_value = None
+
+    def spawn(*args, **kwargs):
+        stop.set()
+        return child
+
+    monkeypatch.setattr(runner.subprocess, "Popen", spawn)
+    monkeypatch.setattr(runner, "priority_reason", lambda *args: None)
+    _, state = runner.download(store, attempt, base=tmp_path, seconds=25, stop=stop)
+    assert state == "INTERRUPTED"
+    child.terminate.assert_called_once()
+    child.wait.assert_called_once_with(timeout=3)
+
+
+def test_group_stopped_child_is_interrupted_without_global_source_failure(
+    tmp_path, inputs, monkeypatch,
+):
+    queue, store = setup(tmp_path, inputs)
+    attempt = claim(queue, store)
+    stop = Event()
+    child = Mock(returncode=-15)
+    child.poll.return_value = -15
+
+    def spawn(*args, **kwargs):
+        stop.set()
+        return child
+
+    monkeypatch.setattr(runner.subprocess, "Popen", spawn)
+    monkeypatch.setattr(runner, "priority_reason", lambda *args: None)
+    raw, state = runner.download(store, attempt, base=tmp_path, seconds=25, stop=stop)
+    assert state == "INTERRUPTED"
+    receipt = store.seal(attempt, raw, state=state)
+    queue.finish(store, receipt, now=NOW)
+    assert queue.meta["global_next_attempt_at"] is None
+
+
+def test_service_300_second_cadence_heartbeat_and_clean_stop(tmp_path, inputs, monkeypatch):
+    monkeypatch.setenv("QTRADE_BAOSTOCK_FREE_DATA_ACK", "true")
+    monkeypatch.setenv("LIVE_TRADING_ENABLED", "false")
+    monkeypatch.setattr(service, "worker_lease", lambda *args: nullcontext())
+    stop = Event()
+    real_wait = stop.wait
+    waits = []
+
+    def wait(seconds):
+        waits.append(seconds)
+        stop.set()
+        return real_wait(0)
+
+    monkeypatch.setattr(stop, "wait", wait)
+    monotonic = iter([0, 40])
+    monkeypatch.setattr(service.time, "monotonic", lambda: next(monotonic))
+
+    def one_pass(*args, **kwargs):
+        assert kwargs["stop"] is stop and kwargs["seconds"] == 240
+        during = json.loads((tmp_path / "unified-data/backfill/service-state.json").read_text())
+        assert during["state"] == "RUNNING" and during["live_trading_enabled"] is False
+        return {"state": "YIELDED_TO_CURRENT_COLLECTION", "evidence_sha256": "a" * 64}
+
+    run = Mock(side_effect=one_pass)
+    monkeypatch.setattr(service, "run_pass", run)
+    state = service.serve(tmp_path, tmp_path / "history", *inputs, revision=REVISION, stop=stop)
+    assert run.call_count == 1 and waits == [260]
+    assert state["state"] == "STOPPED" and state["completed_passes"] == 1
+    assert state["last_execution_sha256"] == "a" * 64 and state["next_pass_not_before"] is None
+
+
+def test_service_heartbeat_updates_while_pass_runs_and_shutdown_joins_it(
+    tmp_path, inputs, monkeypatch,
+):
+    monkeypatch.setenv("QTRADE_BAOSTOCK_FREE_DATA_ACK", "true")
+    monkeypatch.setenv("LIVE_TRADING_ENABLED", "false")
+    monkeypatch.setattr(service, "worker_lease", lambda *args: nullcontext())
+    monkeypatch.setattr(service, "HEARTBEAT_SECONDS", 0.01)
+    written = Event()
+    real_write = service.write_json_atomic
+    timestamps = []
+
+    def write(path, value):
+        real_write(path, value)
+        if value["state"] == "RUNNING":
+            timestamps.append(value["heartbeat_at"])
+            if len(timestamps) >= 2:
+                written.set()
+
+    monkeypatch.setattr(service, "write_json_atomic", write)
+    stop = Event()
+
+    def one_pass(*args, **kwargs):
+        assert written.wait(2), "independent heartbeat did not advance during pass"
+        stop.set()
+        return {"state": "STOPPED", "evidence_sha256": "b" * 64}
+
+    monkeypatch.setattr(service, "run_pass", one_pass)
+    result = service.serve(tmp_path, tmp_path / "history", *inputs, revision=REVISION, stop=stop)
+    assert result["state"] == "STOPPED" and len(set(timestamps)) >= 2
+
+
+def test_service_stop_reaps_capture_and_publishes_final_heartbeat_and_execution(
+    tmp_path, inputs, monkeypatch,
+):
+    monkeypatch.setenv("QTRADE_BAOSTOCK_FREE_DATA_ACK", "true")
+    monkeypatch.setenv("LIVE_TRADING_ENABLED", "false")
+    monkeypatch.setattr(service, "worker_lease", lambda *args: nullcontext())
+    monkeypatch.setattr(runner, "worker_lease", lambda *args: nullcontext())
+    monkeypatch.setattr(runner.shutil, "disk_usage", lambda _: SimpleNamespace(
+        free=runner.RESERVE + runner.WRITE_HEADROOM))
+    idle_marker(tmp_path, datetime.now(UTC))
+    stop = Event()
+    child = Mock(returncode=-15)
+    child.poll.return_value = None
+
+    def spawn(*args, **kwargs):
+        stop.set()
+        return child
+
+    monkeypatch.setattr(runner.subprocess, "Popen", spawn)
+    result = service.serve(tmp_path, tmp_path / "history", *inputs, revision=REVISION,
+                           stop=stop, new_windows=1, retry_windows=0)
+    child.terminate.assert_called_once()
+    child.wait.assert_called_once_with(timeout=3)
+    assert result["state"] == "STOPPED" and result["last_pass_state"] == "INTERRUPTED"
+    latest = json.loads((tmp_path / "unified-data/backfill/execution-latest.json").read_text())
+    assert latest["state"] == "INTERRUPTED" and latest["attempted_windows"] == 1
+    assert latest["stage_counts_this_pass"]["requested"] == 0
+
+
+def test_service_heartbeat_failure_stops_work_and_preserves_class_only_failure(
+    tmp_path, inputs, monkeypatch,
+):
+    monkeypatch.setenv("QTRADE_BAOSTOCK_FREE_DATA_ACK", "true")
+    monkeypatch.setenv("LIVE_TRADING_ENABLED", "false")
+    monkeypatch.setattr(service, "worker_lease", lambda *args: nullcontext())
+    monkeypatch.setattr(service, "HEARTBEAT_SECONDS", 0.01)
+    real_write = service.write_json_atomic
+    running_updates = 0
+
+    def write(path, value):
+        nonlocal running_updates
+        if value["state"] == "RUNNING":
+            running_updates += 1
+            if running_updates == 2:
+                raise PermissionError("DO_NOT_LOG_MESSAGE")
+        real_write(path, value)
+
+    monkeypatch.setattr(service, "write_json_atomic", write)
+    stop = Event()
+
+    def one_pass(*args, **kwargs):
+        assert stop.wait(2), "heartbeat failure did not stop the active pass"
+        return {"state": "STOPPED", "evidence_sha256": "b" * 64}
+
+    monkeypatch.setattr(service, "run_pass", one_pass)
+    with pytest.raises(RuntimeError, match="HISTORY_SERVICE_HEARTBEAT_FAILED"):
+        service.serve(tmp_path, tmp_path / "history", *inputs, revision=REVISION, stop=stop)
+    text = (tmp_path / "unified-data/backfill/service-state.json").read_text()
+    assert "DO_NOT_LOG_MESSAGE" not in text
+    state = json.loads(text)
+    assert state["state"] == "FAILED" and state["last_error_class"] == "PermissionError"
+
+
+def test_service_pass_failure_retains_previous_execution_and_waits_full_period(
+    tmp_path, inputs, monkeypatch,
+):
+    monkeypatch.setenv("QTRADE_BAOSTOCK_FREE_DATA_ACK", "true")
+    monkeypatch.setenv("LIVE_TRADING_ENABLED", "false")
+    monkeypatch.setattr(service, "worker_lease", lambda *args: nullcontext())
+    path = tmp_path / "unified-data/backfill/execution-latest.json"
+    path.parent.mkdir(parents=True)
+    previous = b'{"previous":"preserved"}'
+    path.write_bytes(previous)
+    stop = Event()
+    monkeypatch.setattr(service, "run_pass", Mock(side_effect=ValueError("DO_NOT_LOG_MESSAGE")))
+    monkeypatch.setattr(stop, "wait", lambda seconds: stop.set())
+    result = service.serve(tmp_path, tmp_path / "history", *inputs, revision=REVISION, stop=stop)
+    assert result["failed_passes"] == 1 and result["last_error_class"] == "ValueError"
+    assert result["last_pass_state"] == "FAILED" and result["completed_passes"] == 0
+    assert path.read_bytes() == previous
