@@ -281,9 +281,12 @@ class Worker:
         with sqlite3.connect(self.root / "catalog-backup.sqlite.tmp") as backup:
             self.db.backup(backup)
         (self.root / "catalog-backup.sqlite.tmp").replace(self.root / "catalog-backup.sqlite")
-        with sqlite3.connect(self.online.registry.database) as model_source:
-            with sqlite3.connect(self.online.root/'catalog-backup.sqlite.tmp') as backup:
-                model_source.backup(backup)
+        with (
+            contextlib.closing(sqlite3.connect(self.online.registry.database)) as model_source,
+            contextlib.closing(sqlite3.connect(
+                self.online.root/'catalog-backup.sqlite.tmp')) as backup,
+        ):
+            model_source.backup(backup)
         (self.online.root/'catalog-backup.sqlite.tmp').replace(
             self.online.root/'catalog-backup.sqlite')
 
