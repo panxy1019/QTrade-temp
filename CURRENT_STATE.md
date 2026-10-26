@@ -23,6 +23,19 @@ Last updated: 2026-10-26
   8.94e-8, features exact; full-batch scores exact). Add a shared float64 feature
   policy for new restore-enabled candidates and revalidate both models; production
   worker is unchanged. Rejected Ridge attempt and diagnosis remain archived.
+
+- Continuation snapshot at 2026-10-26 11:57 UTC: preparation source 438c628 has
+  394/987 qualified-current partitions prepared, nine network retries waiting.
+  Bounded runner PID 131901 is confirmed live; its state is in the persistent
+  qtrade root's forward-preparation-bounded-state.json. It yields to current
+  ingestion and has a 30-minute budget, after which remaining work needs resume.
+  Source 262abb9's full suite passes, and its sequential float64 Ridge/LightGBM
+  training+restore acceptance runner PID 134245 is confirmed live; inspect
+  float64-model-acceptance.json and float64-{linear,lightgbm}-training.log before
+  any restart. PR 15 remains draft until both runtime contracts are accepted.
+  PIT's last valid coverage is 552/990 / 1,247,523 rows; latest attempt FAILED,
+  next retry 12:50:28 UTC, Supervisor PID 80296 remains live. Preserve coverage
+  and respect vendor backoff. Production main is 66ec3d8 (PR 14 accepted).
   Old worker/model/data identities remain unchanged. docs/QLIB_FITTED_RESTORE.md.
 
 - Phase B current incremental milestone is live at production main 51ec2e1;
