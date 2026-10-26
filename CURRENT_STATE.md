@@ -37,6 +37,8 @@ Last updated: 2026-10-26
   and 30-minute retry guidance as well as raw responses. Background historical
   backfill and automatic Qlib data/prediction are still pending.
   The worker retains its old frozen data/model identity.
+  Final source 5d86ca5 passes all 705 Linux checks; source observations and
+  controlled session receipt acceptance are recorded in docs/evidence/unified-history-*.json.
 
 - First unified-data delivery passes 637 full Linux backend checks and 213
   frontend checks, lint/types/build. Real offline audit rechecks 172 old minute

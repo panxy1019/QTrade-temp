@@ -86,6 +86,9 @@ Linux 全套扩展到 690 项全部通过。新探测工具 `scripts.probe_unifi
 登录失败给出至少 30 分钟的下次尝试时间。完整历史批量执行尚未启用。
 
 该小样本只能证明本次查询结果，不能宣称供应商全部证券没有十年分钟源。
+最终源 5d86ca5 的 705 项 Linux 检查全通过，零失败／跳过；
+[最终检查与受控会话回执](evidence/unified-history-final-acceptance-20261026.json)
+区别于上方真实供应商探测，不能算新增价格数据。
 
 ```sh
 export PYTHONPATH="$PWD/src" LIVE_TRADING_ENABLED=false
