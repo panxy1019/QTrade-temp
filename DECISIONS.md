@@ -1,5 +1,25 @@
 # Architecture decisions
 
+## ADR-177 — Forward daily adaptation preserves the old normalization anchor
+
+Status: implementation in progress, 2026-10-26, Phase C.
+
+Reuse admitted immutable day batches, raw-capture validation, the existing HFQ
+normalizer and the durable bounded attempt queue. Verify the old stock files,
+compare raw OHLCV at the exact frozen endpoint, capture fresh factor bytes, and
+reject any revised historical multiplier or inconsistent old anchor. Append only
+new completed rows with the old anchor and previous adjusted close. Never refit
+the historical price series or invent missing amount, calendars or state.
+
+Keep normalized partitions and factor captures under content identities. Old
+raw files are verified and hard-linked without writes; failed responses remain
+while a later attempt can capture fresh bytes. A separate nonblocking local
+process lease, bounded new/retry budgets and backoff prevent duplicate work and
+prefix starvation. Preparation is not Provider readiness or model activation;
+benchmark/calendar adaptation, complete input validation, atomic version/event
+publication and prediction remain required. No new vn.py/gateway component
+supplies this missing data lineage; LIVE_TRADING_ENABLED=false.
+
 ## ADR-176 — Online candidates require independent fitted-state restoration
 
 Status: implementation in progress, 2026-10-26, Phase C.

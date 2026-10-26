@@ -42,3 +42,24 @@ export PYTHONPATH="$PWD/src" LIVE_TRADING_ENABLED=false
 该门禁仍不证明新数据版本、公司行为口径或实时输入合格。后续必须把新日线版本
 与模型身份绑定，逐日保存不可变信号；不通过当天门禁则阻断新信号。滚动候选、
 人工激活及回滚由 Phase D 另行验收，LIVE_TRADING_ENABLED=false。
+
+## 新日线准备
+
+`scripts.prepare_qlib_incremental` 复用旧冻结日线与统一采集已验收的 day 批次，
+按证券验证旧文件、前一真实数据日的原始 OHLCV 重叠、当天金额和完成状态。
+保存当次 HFQ 原件并校验整个旧历史的因子前缀，固定旧归一化锚点后只追加新行。
+旧行必须逐字段保持一致。该一致性属于同供应商研究兼容性，尚非公司行为独立认证。
+
+分区保存为内容哈希文件；失败原始响应保留，下一次可抓新原件，不覆盖旧分区。
+沿用已验收的逐证券尝试／重试调度，默认每次 25 个新证券、至多 5 个到期重试，
+轮次限 180 秒，两个批次之间可恢复。单独本地进程租约避免重复准备任务。
+
+```sh
+export QTRADE_AKSHARE_NONCOMMERCIAL_ACK=true
+"$B/venv/bin/python" -m scripts.prepare_qlib_incremental --base "$B" \
+  --previous "$B/qlib-data-20261023" --source-revision "$REVISION" \
+  --maximum-symbols 25
+```
+
+输出 `PREPARATION_ONLY_NOT_A_READY_QLIB_VERSION`。这一步不写 ready 指针，
+也不触发旧模型；基准／日历适配、不可变 Provider 构建及原子发布仍须验收。

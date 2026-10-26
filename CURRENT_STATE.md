@@ -11,6 +11,9 @@ Last updated: 2026-10-26
   Restore now preserves the training calculation origin; real rerun is pending.
   Fixed-anchor daily extension also rejects changed adjustment history and raw
   price/volume overlap, with 12 focused checks. New data version publication is pending.
+  A bounded resumable preparer now binds admitted day batches and fresh factor
+  captures, preserving original rows; five integration checks pass. Real small
+  cluster pilot is pending. No ready pointer or automatic prediction is claimed.
   Old worker/model/data identities remain unchanged. docs/QLIB_FITTED_RESTORE.md.
 
 - Phase B current incremental milestone is live at production main 51ec2e1;

@@ -68,7 +68,7 @@ def freeze(
     if processor_hash(dataset) != fitted_hash:
         raise ValueError("PROCESSORS_CHANGED_WHILE_FREEZING")
     for name in BUNDLE_FILES:
-        with (root / name).open('rb') as handle:
+        with (root / name).open('r+b') as handle:
             os.fsync(handle.fileno())
     provider_files = {p.relative_to(provider).as_posix(): checksum(p)
                       for p in sorted(provider.rglob('*')) if p.is_file()}
