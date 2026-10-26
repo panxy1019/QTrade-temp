@@ -13,7 +13,7 @@ no new deployment, actual daily transition or source collection is claimed here.
 | `run_etf_trend.run` | Same bounded Sina daily kline requests and immutable attempt/receipt; an optional source callback adds request-by-request scheduling gates |
 | `UnifiedBatchStore` | Preserve each actual response in a content-addressed raw pack before another query; preserve the final replayable aggregate receipt |
 | `verify_etf_archive` | Reparse the real raw bodies on their original observation clock and compare the exact signed diagnostic before publication |
-| Current collection service/progress | Require a fresh `WAITING` heartbeat and signed `PASS_FINISHED` progress for the required day; current collection takes priority |
+| Current collection service/progress and optional queue ledger | Require a fresh `WAITING` heartbeat and signed `PASS_FINISHED` progress; a bounded read-only ledger proves exact-day terminal daily tasks even when the latest snapshot only contains minute data |
 | Existing daily/version service | Adapt its local Linux lease, bounded alarm and immutable scheduling-intent pattern; no additional research-worker job or data-version ledger writer |
 | vn.py/execution components | No role at this data-only boundary; no portfolio, order, gateway or brokerage access is added |
 
@@ -42,6 +42,7 @@ python -m scripts.run_etf_trend_service \
   --base "$B" \
   --local-root /root/qtrade-local/etf-trend-service \
   --master "$B/unified-data/catalog/latest.json" \
+  --collection-database /root/qtrade-local/unified-data.sqlite \
   --source-revision "$REVIEWED_FULL_RELEASE_SHA" \
   --once
 ```
@@ -59,9 +60,37 @@ Before the first query and every following query, the service checks:
 - its persistent Sina cooldown;
 - a current collector heartbeat no older than 300 seconds, state `WAITING`, and
   `live_trading_enabled=false`;
-- signed collection progress no older than 300 seconds, state `PASS_FINISHED`,
-  and the required complete day;
-- no running current collection task or pending HTTP/transport source retry.
+- signed collection progress no older than 300 seconds, state `PASS_FINISHED`;
+- at least one daily task for the exact required complete day, with every such
+  task terminal (`SUCCEEDED` or `FAILED`); failed collection is not full coverage;
+- no nonterminal current collection task (including `RUNNING`, `QUEUED`,
+  `PLANNED` and `INTERRUPTED`) or pending HTTP/transport source retry in any
+  relevant frequency.
+
+Production should pass the existing collection ledger explicitly with
+`--collection-database /root/qtrade-local/unified-data.sqlite`. It is opened only
+with SQLite `mode=ro`; the ETF service does not initialize a queue, add schemas,
+change rows or claim the collector's writer lease. Each request reads at most
+20,000 tasks bound to the checked `universe_version` in signed current progress,
+for the required completed day and the current Shanghai calendar
+date when different. The latter protects current intraday collection while an
+older completed daily ETF diagnostic is still pending. Source HTTP/transport
+errors are checked across all these frequencies: a future retry remains in
+backoff, and an elapsed retry gives the collector priority until it runs.
+Retired-universe rows cannot supply daily completion or permanent priority blocks.
+Due `FAILED` tasks for other errors also take priority when their completed end
+is missing or earlier than the desired end, matching the collector's actual
+retry claim. A future non-HTTP retry can remain a terminal partial collection;
+the service does not demand all-success market coverage.
+
+The mutable progress snapshot rotates frequencies and may legitimately have
+only `required_through.5min`. With ledger proof, it need not contain a `day`
+entry; the signed freshness/state checks still apply. Without a ledger, the
+snapshot must contain an exact matching `required_through.day` and terminal
+exact-day daily tasks. Missing daily proof returns
+`ETF_SERVICE_WAITING_CURRENT_DAILY_COLLECTION`, consumes no daily source attempt
+and does not raise a missing-key exception. A missing, unreadable, incompatible
+or oversized configured ledger fails closed with an explicit diagnostic state.
 
 A source failure receives a six-hour cooldown immediately after its raw response
 is durable. The next query is blocked. A current collector's due source retry
@@ -122,9 +151,12 @@ MYPYPATH="$PWD/src" python -m mypy --explicit-package-bases \
   scripts/run_etf_trend_service.py scripts/run_etf_trend.py
 ```
 
-The 52 focused offline checks pass locally, including real raw-pack creation,
+The 81 focused offline checks pass locally, including real raw-pack creation,
 normalization and archive replay for two completed exchange days. HTTP responses
-and time are controlled; no real requests are made. On Windows only, fixture
+and time are controlled; no real requests are made. New real-SQLite cases cover
+minute-only snapshots, exact-day task existence, unchanged read-only ledger
+bytes, all-frequency priority/backoff, malformed retry clocks, query bounds,
+per-request preemption and CLI option propagation. On Windows only, fixture
 creation substitutes Linux directory fsync and leases; a real Linux service lease,
 alarm and supervised restart still need deployment acceptance.
 

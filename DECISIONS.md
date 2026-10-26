@@ -3537,3 +3537,25 @@ source snapshots, completed experiments or historical membership. Historical ST,
 delisted prices, corporate actions and exact trading rules remain uncertified.
 LIVE_TRADING_ENABLED=false.
 
+## ADR-171 — Daily preparation binds the collection ledger, not rotating progress
+
+Status: accepted, 2026-10-27.
+
+Collection progress is a fresh operational snapshot of the latest frequency,
+not a complete daily catalog. Reuse the collector's existing SQLite ledger with
+read-only exact universe/session queries and its signed target master. No vn.py
+component supplies this source metadata; no collector writer or gateway is added.
+
+Freeze terminal daily task metadata, then verify immutable source receipts and
+bind qualified batch identities before bounded stock preparation. Resume keeps
+those identities across collector retries. Temporary storage errors retry without
+sealing permanent exclusions; missing daily proof waits before pinning a service
+intent. Selected new/due work precedes completed-checkpoint revalidation, while
+all completed checkpoints remain verified before publication.
+
+ETF collection checks the signed current universe and relevant session dates,
+yielding to pending tasks and claimable retries. Retired universes cannot satisfy
+daily proof or indefinitely block current collection. Failed terminal rows do
+not certify price coverage. Preserve source backoff, disk reserve, data epoch
+checks and human model/PAPER recovery gates. LIVE_TRADING_ENABLED=false.
+

@@ -9,12 +9,14 @@ import os
 import re
 import shutil
 import signal
+import sqlite3
 from collections.abc import Iterator
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from threading import Event
 from typing import Any
 
+from qtrade.market_data.akshare import SHANGHAI
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from qtrade.research.etf_trend import etf_targets, verify_etf_archive
 from qtrade.research.model_registry import checked_document, checked_identity
@@ -29,6 +31,7 @@ HEADROOM = 128*1024**2
 PERIOD_SECONDS = 300
 HARD_DEADLINE_SECONDS = 900
 SOURCE_ERRORS = {'SOURCE_HTTP_ERROR', 'SOURCE_TRANSPORT_ERROR'}
+MAX_COLLECTION_TASKS = 20_000
 
 
 def utc_now() -> datetime:
@@ -55,7 +58,7 @@ def exclusive(path: Path) -> Iterator[None]:
 
 
 def source_gate(base: Path, local_root: Path, calendar: Calendar, day: str,
-                now: datetime) -> str | None:
+                now: datetime, *, collection_database: Path | None = None) -> str | None:
     """Recheck current collection, real source failures and storage before every request."""
     if calendar.expected(now, 'daily').date().isoformat() != day:
         return 'ETF_SERVICE_SESSION_CHANGED'
@@ -78,23 +81,85 @@ def source_gate(base: Path, local_root: Path, calendar: Calendar, day: str,
     clock = datetime.fromisoformat(progress['updated_at'])
     if (clock.tzinfo is None or not 0 <= (now-clock).total_seconds() <= 300
             or progress['state'] != 'PASS_FINISHED'
-            or datetime.fromisoformat(progress['required_through']['day']).date().isoformat()
-            != day or not isinstance(progress['tasks'], list) or len(progress['tasks']) > 12_000):
+            or not isinstance(progress.get('required_through'), dict)
+            or not isinstance(progress['tasks'], list) or len(progress['tasks']) > 12_000):
         return 'ETF_SERVICE_CURRENT_COLLECTION_EVIDENCE_INVALID'
+    try:
+        universe = checked_identity(progress.get('universe_version'))
+    except ValueError:
+        return 'ETF_SERVICE_CURRENT_COLLECTION_UNIVERSE_INVALID'
+    days = sorted({day, now.astimezone(SHANGHAI).date().isoformat()})
+    tasks = []
     for task in progress['tasks']:
-        if task['state'] == 'RUNNING':
+        if (not isinstance(task, dict) or task.get('universe_version') != universe
+                or not isinstance(task.get('trading_day'), str)):
+            return 'ETF_SERVICE_CURRENT_COLLECTION_EVIDENCE_INVALID'
+        if task['trading_day'] in days:
+            tasks.append(task)
+    if collection_database is not None:
+        # The mutable snapshot rotates frequencies. Read exact-day durable tasks
+        # without initializing a queue, creating schema or claiming its writer lease.
+        try:
+            with contextlib.closing(sqlite3.connect(
+                collection_database.resolve().as_uri()+'?mode=ro', uri=True, timeout=2,
+            )) as connection:
+                connection.row_factory = sqlite3.Row
+                marks = ','.join('?' for _ in days)
+                rows = connection.execute(
+                    'SELECT frequency,trading_day,state,last_error,next_attempt_at,'
+                    'desired_end,completed_end FROM collection_tasks '
+                    f'WHERE universe_version=? AND trading_day IN ({marks}) LIMIT ?',
+                    (universe, *days, MAX_COLLECTION_TASKS+1),
+                ).fetchall()
+            if len(rows) > MAX_COLLECTION_TASKS:
+                return 'ETF_SERVICE_COLLECTION_LEDGER_BOUND_EXCEEDED'
+            tasks = [dict(row) for row in rows]
+        except (OSError, sqlite3.Error):
+            return 'ETF_SERVICE_COLLECTION_LEDGER_INVALID'
+    for task in tasks:
+        if not isinstance(task, dict):
+            return 'ETF_SERVICE_CURRENT_COLLECTION_EVIDENCE_INVALID'
+        if task.get('state') not in {'SUCCEEDED', 'FAILED'}:
             return 'ETF_SERVICE_WAITING_CURRENT_COLLECTION'
-        if task['state'] == 'FAILED' and task.get('last_error') in SOURCE_ERRORS:
-            retry = datetime.fromisoformat(task['next_attempt_at'])
+        if task.get('state') == 'FAILED' or task.get('last_error') in SOURCE_ERRORS:
+            try:
+                retry = datetime.fromisoformat(task['next_attempt_at'])
+            except (KeyError, TypeError, ValueError):
+                return 'ETF_SERVICE_CURRENT_SOURCE_BACKOFF_INVALID'
             if retry.tzinfo is None:
                 return 'ETF_SERVICE_CURRENT_SOURCE_BACKOFF_INVALID'
-            return ('ETF_SERVICE_CURRENT_SOURCE_BACKOFF_ACTIVE' if now < retry
-                    else 'ETF_SERVICE_WAITING_CURRENT_SOURCE_RETRY')
+            if task.get('last_error') in SOURCE_ERRORS:
+                return ('ETF_SERVICE_CURRENT_SOURCE_BACKOFF_ACTIVE' if now < retry
+                        else 'ETF_SERVICE_WAITING_CURRENT_SOURCE_RETRY')
+            try:
+                desired = datetime.fromisoformat(task['desired_end'])
+                completed = (datetime.fromisoformat(task['completed_end'])
+                             if task.get('completed_end') is not None else None)
+            except (KeyError, TypeError, ValueError):
+                return 'ETF_SERVICE_CURRENT_COLLECTION_EVIDENCE_INVALID'
+            if desired.tzinfo is None or completed is not None and completed.tzinfo is None:
+                return 'ETF_SERVICE_CURRENT_COLLECTION_EVIDENCE_INVALID'
+            if retry <= now and (completed is None or completed < desired):
+                return 'ETF_SERVICE_WAITING_CURRENT_COLLECTION_RETRY'
+    if collection_database is None:
+        through = progress['required_through'].get('day')
+        if through is None:
+            return 'ETF_SERVICE_WAITING_CURRENT_DAILY_COLLECTION'
+        try:
+            if datetime.fromisoformat(through).date().isoformat() != day:
+                return 'ETF_SERVICE_WAITING_CURRENT_DAILY_COLLECTION'
+        except (TypeError, ValueError):
+            return 'ETF_SERVICE_CURRENT_COLLECTION_EVIDENCE_INVALID'
+    daily = [task for task in tasks
+             if task.get('frequency') == 'day' and task.get('trading_day') == day]
+    if not daily or any(task.get('state') not in {'SUCCEEDED', 'FAILED'} for task in daily):
+        return 'ETF_SERVICE_WAITING_CURRENT_DAILY_COLLECTION'
     return None
 
 
 def cycle(base: Path, local_root: Path, master_path: Path, revision: str, *,
-          now: datetime | None = None, stop: Event | None = None) -> dict[str, Any]:
+          now: datetime | None = None, stop: Event | None = None,
+          collection_database: Path | None = None) -> dict[str, Any]:
     if (os.environ.get('LIVE_TRADING_ENABLED', 'false').lower() != 'false'
             or os.environ.get('QTRADE_AKSHARE_NONCOMMERCIAL_ACK', '').lower() != 'true'):
         raise ValueError('ETF_SERVICE_RESEARCH_CONFIGURATION_REQUIRED')
@@ -159,7 +224,8 @@ def cycle(base: Path, local_root: Path, master_path: Path, revision: str, *,
                 return publish(identity, value)
         if stop.is_set():
             return outcome('STOPPED')
-        if reason := source_gate(base, local_root, calendar, day, now):
+        if reason := source_gate(base, local_root, calendar, day, now,
+                                 collection_database=collection_database):
             return outcome(reason)
         request_path = job/'request.json'
         frozen_master = job/'master.json'
@@ -207,7 +273,8 @@ def cycle(base: Path, local_root: Path, master_path: Path, revision: str, *,
             stamp = utc_now()
             if stop.is_set():
                 raise ValueError('ETF_SERVICE_STOP_REQUESTED')
-            if reason := source_gate(base, local_root, calendar, day, stamp):
+            if reason := source_gate(base, local_root, calendar, day, stamp,
+                                     collection_database=collection_database):
                 raise ValueError(reason)
             if captures >= len(request['symbols']):
                 raise ValueError('ETF_SERVICE_REQUEST_BUDGET_EXCEEDED')
@@ -247,6 +314,7 @@ def main() -> None:
     parser.add_argument('--local-root', type=Path, required=True)
     parser.add_argument('--master', type=Path)
     parser.add_argument('--source-revision', required=True)
+    parser.add_argument('--collection-database', type=Path)
     parser.add_argument('--once', action='store_true')
     args = parser.parse_args()
     if os.name != 'posix':
@@ -260,7 +328,8 @@ def main() -> None:
         while not stop.is_set():
             try:
                 signal.alarm(HARD_DEADLINE_SECONDS)
-                value = cycle(args.base, args.local_root, master, args.source_revision, stop=stop)
+                value = cycle(args.base, args.local_root, master, args.source_revision, stop=stop,
+                              collection_database=args.collection_database)
                 print(json.dumps(value), flush=True)
             except Exception as exc:
                 write_json_atomic(args.local_root/'cycle.json', signed({**AUTHORITY,

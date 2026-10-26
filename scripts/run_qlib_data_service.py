@@ -25,7 +25,7 @@ from qtrade.research.data_versions import file_hash
 from qtrade.research.forward_prediction import next_execution
 from scripts.atomic_json import write_json_atomic, write_json_immutable
 from scripts.build_qlib_daily_version import build
-from scripts.prepare_qlib_incremental import load_signed
+from scripts.prepare_qlib_incremental import daily_tasks, load_signed
 from scripts.prepare_qlib_incremental import run as prepare
 
 REPO = Path(__file__).resolve().parents[1]
@@ -70,8 +70,8 @@ def exclusive(path: Path) -> Iterator[None]:
         yield
 
 
-def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datetime
-          ) -> dict[str, Any]:
+def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datetime,
+          collection_database: Path | None = None) -> dict[str, Any]:
     if re.fullmatch('[a-f0-9]{40}', revision) is None or now.tzinfo is None:
         raise ValueError('DATA_SERVICE_REVISION_AND_CLOCK_REQUIRED')
     root = base/'unified-data/qlib-schedule'
@@ -99,8 +99,22 @@ def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datet
         return outcome('WAITING_FOR_CURRENT_COLLECTION')
     if shutil.disk_usage(base).free < 100*1024**3:
         return outcome('BLOCKED_STORAGE_RESERVE')
+    if collection_database is None:
+        try:
+            progress = load_signed(base/'unified-data/collection-progress.json')
+        except FileNotFoundError:
+            return outcome('WAITING_FOR_CURRENT_DAILY_INPUTS')
+        daily_end = progress.get('required_through', {}).get('day')
+        if daily_end is None or datetime.fromisoformat(daily_end).date().isoformat() != day:
+            return outcome('WAITING_FOR_CURRENT_DAILY_INPUTS')
+    elif current.get('bindings', {}).get('observation_universe_version') is None:
+        return outcome('WAITING_FOR_CURRENT_DAILY_INPUTS')
     job_root = root/'days'/day
     job_file = job_root/'request.json'
+    if (collection_database is not None and not job_file.exists()
+            and daily_tasks(base, load_signed(previous/'dataset.json'), day,
+                current['bindings']['observation_universe_version'], collection_database) is None):
+        return outcome('WAITING_FOR_CURRENT_DAILY_INPUTS')
     request = signed({**AUTHORITY, 'day': day, 'previous': previous.relative_to(base).as_posix(),
                       'previous_version': current['version_id'], 'previous_event_id': epoch,
                       'source_revision': revision})
@@ -119,11 +133,12 @@ def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datet
     # Persist the retry deadline before work; interrupted passes cannot spin.
     write_json_atomic(attempt_file, signed({**AUTHORITY, 'started_at': now.isoformat(),
         'not_before': (now+timedelta(minutes=5)).isoformat(), 'state': 'RUNNING'}))
-    progress = load_signed(base/'unified-data/collection-progress.json')
-    if datetime.fromisoformat(progress['required_through']['day']).date().isoformat() != day:
-        return outcome('WAITING_FOR_CURRENT_DAILY_INPUTS')
     with exclusive(database.parent/'qlib-data-preparation.lock'):
-        prepared = prepare(base, previous, revision=revision, maximum=25)
+        prepared = prepare(base, previous, revision=revision, maximum=25,
+            collection_database=collection_database, day=day,
+            universe_version=current.get('bindings', {}).get('observation_universe_version'))
+    if prepared.get('state') == 'WAITING_FOR_CURRENT_DAILY_INPUTS':
+        return outcome('WAITING_FOR_CURRENT_DAILY_INPUTS')
     detail['preparation'] = {k: prepared[k] for k in (
         'request_sha256', 'prepared_symbols', 'qualified_current_daily_inputs', 'retry_queue')}
     if prepared['retry_queue']['unattempted_symbols'] or not prepared['prepared_symbols']:
@@ -163,6 +178,7 @@ def main() -> None:
     for name in ('base', 'database', 'qlib-python'):
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--source-revision', required=True)
+    parser.add_argument('--collection-database', type=Path)
     parser.add_argument('--once', action='store_true')
     parser.add_argument('--cycle', action='store_true', help=argparse.SUPPRESS)
     args = parser.parse_args()
@@ -175,9 +191,11 @@ def main() -> None:
         signal.signal(signal.SIGALRM, signal.SIG_DFL)
         signal.alarm(900)
         print(json.dumps(cycle(args.base, args.database, args.qlib_python,
-                               args.source_revision, now=datetime.now(UTC))))
+                               args.source_revision, now=datetime.now(UTC),
+                               collection_database=args.collection_database)))
         return
     import fcntl
+
     args.database.parent.mkdir(parents=True, exist_ok=True)
     with (args.database.parent/'qlib-data-service.lock').open('a') as lease:
         fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -189,9 +207,12 @@ def main() -> None:
         while not stop.is_set():
             started = time.monotonic()
             with (root/'service.log').open('ab') as log:
+                collection_args = (['--collection-database', str(args.collection_database)]
+                                   if args.collection_database is not None else [])
                 child = subprocess.Popen([sys.executable, '-m', 'scripts.run_qlib_data_service',
                     '--base', str(args.base), '--database', str(args.database), '--qlib-python',
-                    str(args.qlib_python), '--source-revision', args.source_revision, '--cycle'],
+                    str(args.qlib_python), '--source-revision', args.source_revision, '--cycle',
+                    *collection_args],
                     cwd=REPO, env={**os.environ, 'PYTHONPATH': str(REPO/'src')},
                     stdout=log, stderr=subprocess.STDOUT, start_new_session=True,
                     pass_fds=(lease.fileno(),))
