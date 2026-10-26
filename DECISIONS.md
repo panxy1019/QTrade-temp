@@ -3156,3 +3156,19 @@ async responses. Copying is not submission, a strategy promotion or a claim of
 new unseen evidence. Final comparison still checks actual execution code, data
 and dates if the worker changes after preparation. LIVE_TRADING_ENABLED=false.
 
+## ADR-170 — Official delisting reconciliation is a separate uncertified audit
+
+Status: accepted, 2026-10-26.
+
+The owner has no licensed historical source and authorized continued work on
+verifiable public sources. Reuse captured exchange bytes and the verified vendor
+master offline. No vn.py component supplies this missing historical source lineage;
+reuse the existing content hashes, immutable evidence writer and authority flags.
+Keep each official row, A/B identity uncertainty, duplicate keys and conflicting or
+missing dates. Reported delisting dates cannot supply publication times, last trade
+dates or historical information availability. Exact date agreement is a diagnostic
+result only. Store a separate immutable reconciliation; do not rewrite provider,
+source snapshots, completed experiments or historical membership. Historical ST,
+delisted prices, corporate actions and exact trading rules remain uncertified.
+LIVE_TRADING_ENABLED=false.
+

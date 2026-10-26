@@ -1,0 +1,359 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.archived-config-production-acceptance.v1",
+  "cluster_capture": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.archived-config-acceptance.v1",
+    "checked_at": "2026-10-26T06:37:59.595388+00:00",
+    "web_production_revision": "38a48c8da61801c28c7b066b56e0e334b84b4bcb",
+    "feature_revision": "d4e54006971d80b2222931a1e7089b7a138c9008",
+    "job_id": "a76123ab31f24bf3a347e347e3ba9161",
+    "base_experiment_id": "6f04b986eaeb454c8c61579f1cea266b",
+    "state": "COMPLETE",
+    "completed_at": "2026-10-26T06:36:05.049108+00:00",
+    "run_id": "archived-compare-lightgbm-20261026-1003990bba3effdc",
+    "source_revision": "846a836702e8c8f4c020e90159565fcc869b6fa7",
+    "source_snapshot_sha256": "b39408fa65995fc593e85c43e0b1c6bd6d5ae2443efdbe0f42873c1de6a83687",
+    "dataset_sha256": "a56d093e439345619d2a0419be4e6191886164d8bc849ee05ef25452c26a0759",
+    "catalog_default_source_at_acceptance": "9e92ce70290bb8ee2ec4b0e2d4eda50b70a5f002693cdba3c8d002f0bd8a59a5",
+    "only_spec_differences": [
+      "model",
+      "name"
+    ],
+    "frozen_spec": {
+      "buy_cost_bps": 8,
+      "dataset_id": "daily-liquid-990-20261023",
+      "features": "Alpha158",
+      "hold_thresh": 2,
+      "initial_cash": 10000000,
+      "min_cost": 5,
+      "model": "lightgbm",
+      "n_drop": 5,
+      "name": "archived-compare-lightgbm-20261026",
+      "risk_degree": 0.95,
+      "seed": 20261026,
+      "segments": {
+        "test": [
+          "2024-01-02",
+          "2026-10-23"
+        ],
+        "train": [
+          "2017-04-05",
+          "2021-12-28"
+        ],
+        "valid": [
+          "2022-01-04",
+          "2023-12-26"
+        ]
+      },
+      "sell_cost_bps": 13,
+      "source_snapshot_sha256": "b39408fa65995fc593e85c43e0b1c6bd6d5ae2443efdbe0f42873c1de6a83687",
+      "topk": 50,
+      "universe_policy": "supported_a_share"
+    },
+    "metrics": {
+      "ic": 0.02425705803026911,
+      "rank_ic": 0.05205254524640808,
+      "icir": 0.164329978273446,
+      "rank_icir": 0.32494389109558336,
+      "total_return_net": 1.172260122360656,
+      "annual_return_net": 0.3342089999779245,
+      "sharpe_net": 1.2102822140858491,
+      "max_drawdown": -0.3333414343635831,
+      "mean_daily_turnover": 0.17591530407974898,
+      "benchmark_return": 0.19650306312424815,
+      "annualized_volatility": 0.2681567922918474
+    },
+    "result_evidence_sha256": "9723769431d2df49a4588010bfa097aa2cc9ff026bcb611582ae7ec5ad2ce6fb",
+    "summary_evidence_sha256": "e07e6b0cc919db67511fc543b6b8e4287e9ceeea15223880bfd6ea4a0dc6efee",
+    "archive_files_verified": 11955,
+    "directional_reload_check": {
+      "state": "VERIFIED",
+      "implementation": "qlib.backtest.exchange.Exchange.check_stock_limit",
+      "checks": [
+        {
+          "symbol": "000001",
+          "date": "2016-10-24",
+          "side": "buy",
+          "blocked": true,
+          "reason": "RECONCILED_NON_ST_PROXY_RETAINED"
+        },
+        {
+          "symbol": "000001",
+          "date": "2016-10-24",
+          "side": "sell",
+          "blocked": true,
+          "reason": "RECONCILED_NON_ST_PROXY_RETAINED"
+        },
+        {
+          "symbol": "000001",
+          "date": "2016-10-25",
+          "side": "buy",
+          "blocked": false,
+          "reason": "RECONCILED_NON_ST_PROXY_RETAINED"
+        },
+        {
+          "symbol": "000001",
+          "date": "2016-10-25",
+          "side": "sell",
+          "blocked": false,
+          "reason": "RECONCILED_NON_ST_PROXY_RETAINED"
+        },
+        {
+          "symbol": "000001",
+          "date": "2017-07-11",
+          "side": "buy",
+          "blocked": true,
+          "reason": "RAW_SOURCE_CONFLICT_BLOCK_BOTH"
+        },
+        {
+          "symbol": "000001",
+          "date": "2017-07-11",
+          "side": "sell",
+          "blocked": true,
+          "reason": "RAW_SOURCE_CONFLICT_BLOCK_BOTH"
+        },
+        {
+          "symbol": "000001",
+          "date": "2017-07-12",
+          "side": "buy",
+          "blocked": true,
+          "reason": "RAW_SOURCE_CONFLICT_BLOCK_BOTH"
+        },
+        {
+          "symbol": "000001",
+          "date": "2017-07-12",
+          "side": "sell",
+          "blocked": true,
+          "reason": "RAW_SOURCE_CONFLICT_BLOCK_BOTH"
+        },
+        {
+          "symbol": "000070",
+          "date": "2024-05-14",
+          "side": "buy",
+          "blocked": true,
+          "reason": "RECONCILED_ST_RESEARCH_BUY_EXCLUSION"
+        },
+        {
+          "symbol": "000070",
+          "date": "2024-05-14",
+          "side": "sell",
+          "blocked": true,
+          "reason": "RECONCILED_ST_RESEARCH_BUY_EXCLUSION"
+        },
+        {
+          "symbol": "000070",
+          "date": "2024-05-15",
+          "side": "buy",
+          "blocked": true,
+          "reason": "RECONCILED_ST_RESEARCH_BUY_EXCLUSION"
+        },
+        {
+          "symbol": "000070",
+          "date": "2024-05-15",
+          "side": "sell",
+          "blocked": true,
+          "reason": "RECONCILED_ST_RESEARCH_BUY_EXCLUSION"
+        }
+      ],
+      "historical_pit_certified": false,
+      "evidence_sha256": "efdcbfb6918ce0e0e38f52ef9fd46bad19c5879387b4e52c9391bb419e5879f2"
+    },
+    "original_archive_files_verified": 11955,
+    "previous_experiment_artifact_hashes_preserved": {
+      "workflow/jobs/6f04b986eaeb454c8c61579f1cea266b/output/runs/source-bound-ridge-prod-20261026-a5157438bd6cc6a0/summary.json": "bf9349e57f80aa472a881c091fcc0a1713546f5f6a00bd5acc1e2f9d72fd2215",
+      "workflow/jobs/6f04b986eaeb454c8c61579f1cea266b/output/runs/source-bound-ridge-prod-20261026-a5157438bd6cc6a0/checksums.json": "ec57792ad304033224d59483f7e537cffe2c865d8e10e811d45acfc14dff9db9",
+      "workflow/jobs/4fc474f9f5f94199914b5c8802eb5127/output/runs/source-bound-lightgbm-prod-20261026-fbd3630e653be6a1/summary.json": "4a5a53711daa5523e4c32a94c773ed444b0a91659a400e3765161add4496c4c7",
+      "workflow/jobs/4fc474f9f5f94199914b5c8802eb5127/output/runs/source-bound-lightgbm-prod-20261026-fbd3630e653be6a1/checksums.json": "66a32ee2061c48ff5b77267396dddf30506ffed7b4b009f0b9506c4ca42cad46"
+    },
+    "latest_public_source_coverage": {
+      "observed_at": "2026-10-26T05:51:54.730465+00:00",
+      "status_symbols": 132,
+      "status_rows": 318174,
+      "input_symbols": 990,
+      "evidence_sha256": "ff3469c45596012cc35d0491f31ded47975953e4ced9eb8a77bc876061706862"
+    },
+    "linux_validation": {
+      "source_revision": "d4e54006971d80b2222931a1e7089b7a138c9008",
+      "started_at": "2026-10-26T06:20:31Z",
+      "archive_sha256": "48eba58d738d39fdf78fa2b98e483a1731f312ecb2e3531463fbbb551ac6dd0a",
+      "archive_bytes": 33410651,
+      "files_verified": 607,
+      "returncode": 0,
+      "tests": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "606",
+          "time": "86.793",
+          "timestamp": "2026-10-26T14:24:12.018720+08:00",
+          "hostname": "73ec830048ca"
+        }
+      ],
+      "completed_at": "2026-10-26T06:25:39Z"
+    },
+    "historical_pit_certified": false,
+    "evidence_sha256": "3bed3ab45fbbf580e176e8a1e1073ad938b53fc06ce7c3fe762e13b05be208d5"
+  },
+  "public_api": {
+    "checked_at": "2026-10-26T06:48:06.841905+00:00",
+    "catalog": {
+      "http_status": 200,
+      "published_at": "2026-10-26T06:42:09.145780+00:00",
+      "worker": {
+        "state": "IDLE",
+        "heartbeat_at": "2026-10-26T06:42:09.146077+00:00",
+        "concurrency": 1,
+        "source_revision": "846a836702e8c8f4c020e90159565fcc869b6fa7",
+        "max_job_seconds": 3600
+      },
+      "default_source": "9e92ce70290bb8ee2ec4b0e2d4eda50b70a5f002693cdba3c8d002f0bd8a59a5",
+      "source_catalog_evidence_sha256": "83f1d8d6f26140294e9138436a59ce7988d1ec1e325039c907335a480a29d964",
+      "dynamic_api_fields_excluded_from_source_checksum": [
+        "worker_fresh",
+        "expected_complete_day",
+        "frozen_data_current",
+        "publication_available",
+        "checked_at"
+      ],
+      "new_job": [
+        {
+          "id": "a76123ab31f24bf3a347e347e3ba9161",
+          "state": "COMPLETE"
+        }
+      ]
+    },
+    "result": {
+      "http_status": 200,
+      "experiment_id": "a76123ab31f24bf3a347e347e3ba9161",
+      "state": "COMPLETE",
+      "source_revision": "846a836702e8c8f4c020e90159565fcc869b6fa7",
+      "source_snapshot_sha256": "b39408fa65995fc593e85c43e0b1c6bd6d5ae2443efdbe0f42873c1de6a83687",
+      "dataset_sha256": "a56d093e439345619d2a0419be4e6191886164d8bc849ee05ef25452c26a0759",
+      "evidence_sha256": "9723769431d2df49a4588010bfa097aa2cc9ff026bcb611582ae7ec5ad2ce6fb",
+      "base_experiment_id": null
+    },
+    "template": {
+      "http_status": 200,
+      "experiment_id": null,
+      "state": null,
+      "source_revision": "846a836702e8c8f4c020e90159565fcc869b6fa7",
+      "source_snapshot_sha256": "b39408fa65995fc593e85c43e0b1c6bd6d5ae2443efdbe0f42873c1de6a83687",
+      "dataset_sha256": "a56d093e439345619d2a0419be4e6191886164d8bc849ee05ef25452c26a0759",
+      "evidence_sha256": "47f47e2de1fdd18cbb7965e127ff51676ca2ca06eefbe9465b6451f957786202",
+      "base_experiment_id": "6f04b986eaeb454c8c61579f1cea266b"
+    },
+    "anonymous_submission_http_status": 401,
+    "deployment": {
+      "classification": "PUBLIC_BUILD_PROVENANCE",
+      "provider": "VERCEL",
+      "status": "AVAILABLE",
+      "target_environment": "production",
+      "git_commit_sha": "38a48c8da61801c28c7b066b56e0e334b84b4bcb",
+      "git_commit_ref": "main",
+      "external_order_transmission": false
+    }
+  },
+  "operations": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "checked_at": "2026-10-26T06:48:07.366370+00:00",
+    "services": {
+      "qtrade-data-observer": {
+        "running": true,
+        "pid": 4471,
+        "live_trading_enabled": false
+      },
+      "qtrade-research-maintenance": {
+        "running": true,
+        "pid": 65600,
+        "live_trading_enabled": false
+      },
+      "qtrade-pit-repair": {
+        "running": true,
+        "pid": 80296,
+        "live_trading_enabled": false
+      },
+      "qtrade-qlib-workflow": {
+        "running": true,
+        "pid": 76486,
+        "live_trading_enabled": false
+      },
+      "qtrade-research-publication": {
+        "running": true,
+        "pid": 76665,
+        "live_trading_enabled": false
+      }
+    },
+    "free_bytes": 315374960640,
+    "temporary_transfer_access_present": false,
+    "source_coverage": {
+      "status_symbols": 151,
+      "status_rows": 363896,
+      "observed_at": "2026-10-26T06:30:17.900071+00:00",
+      "evidence_sha256": "20edc8f3ccd523395e9f424762ce6d2f9d513e801fcb7a7f22de1b15a761b7b9"
+    },
+    "current_source_attempt": {
+      "state": "RUNNING",
+      "updated_at": "2026-10-26T06:47:32.560681+00:00",
+      "stage": "STATUS",
+      "symbol": "002266",
+      "evidence_sha256": "da6552503df4e0b25a7b1bfafd4195215f0ef25c98359a4115c0a680f4def33f"
+    },
+    "evidence_sha256": "59ca2ffe6f6b71c5fc5646d570f1b7d9444d82fa6208cd41a5ce6fcca3545477"
+  },
+  "frontend_validation": {
+    "full_suite_tests": 211,
+    "full_suite_files": 36,
+    "focused_tests": 15,
+    "eslint": "PASSED",
+    "typescript_and_vite_build": "PASSED"
+  },
+  "browser_acceptance": {
+    "archive_link_clicked": true,
+    "original_source_copied": true,
+    "other_model_defaulted": true,
+    "edited_name_and_source_preserved_after_catalog_refresh": true,
+    "authenticated_submission_job": "a76123ab31f24bf3a347e347e3ba9161",
+    "experiment_center_complete_seen": true,
+    "result_identity_matches_archive": true,
+    "aligned_ridge_comparison_seen": true,
+    "limits_visible": true,
+    "screenshots": {
+      "qlib-archived-config-form-20261026.png": {
+        "sha256": "fabe8018851f358ac876e4ecc4730c3d8405ff9f3bd3727b7a646fe1792da7f5",
+        "bytes": 230692
+      },
+      "qlib-archived-config-comparison-20261026.png": {
+        "sha256": "3c4014595afdec08e52112902cf70ae3086ae329f7c23dd83eb84ef649233dd2",
+        "bytes": 348505
+      }
+    }
+  },
+  "known_limitations": [
+    "PUBLICATION_CADENCE_PLUS_GITHUB_RAW_CDN_MAX_AGE_300_CAN_DELAY_STATUS",
+    "CATALOG_DYNAMIC_FRESHNESS_FIELDS_ARE_OUTSIDE_UPSTREAM_PUBLICATION_CHECKSUM",
+    "REPEATED_VIEWED_HISTORY_IS_NOT_NEW_UNSEEN_EVIDENCE",
+    "HISTORICAL_PIT_AND_EXACT_RULES_NOT_CERTIFIED"
+  ],
+  "evidence_sha256": "d5a8dfc0f53e19297cbb28a5c09295842af23a6fcf586a14537ca9fc297a32e4"
+}
