@@ -37,6 +37,12 @@ browser acceptance remain pending (browser-control tool timeout). Automatic
 data/prediction scheduling and rolling training remain separate unfinished gates.
 See docs/QLIB_MODEL_CONTROL.md and its cluster proof.
 
+Production API now accepted at main 28c2b9c (PR 18 merged): fresh new worker,
+982/990 qualified data, two STAGED candidates, anonymous control HTTP 401.
+No production activation performed. Browser visual acceptance remains unverified
+because automation timed out. Next is immutable event-driven daily prediction,
+while continuous version scheduling and historical/PIT repairs remain parallel.
+
 Phase C forward-input validation accepted at source 5bb4a93: 779 Linux checks,
 both native models infer 888 supported stocks on the new 2026-10-26 Provider,
 17,814 old references remain stable. Each 15-file result includes 12 bound source

@@ -1,5 +1,31 @@
 # Architecture decisions
 
+## ADR-181 — Daily prediction must bind approved activation and qualified data
+
+Status: design recorded, implementation pending, 2026-10-26, Phase C.
+
+Reuse audited Qlib 0.9.7 RMDLoader and the accepted fitted-state forward inference
+path. PredUpdater's default write updates existing recorder prediction objects;
+our daily archive must preserve prior artifacts. Use a new immutable request/output
+per approved activation and data-ready identity, without copying training or
+prediction algorithms. No vn.py execution component or broker connection is needed.
+
+Bind prediction to the exact APPLIED activation receipt, model bundle, current
+qualified data version, observation universe, code, generation clock and next
+verified exchange-session open. Validation scores produced before approval cannot
+be relabeled as automatic predictions. Recheck model and data heads before sealing;
+superseded work remains audit evidence but cannot become the current signal.
+No ACTIVE means waiting, not failure and never implicit selection of the best model.
+
+Claims and terminal results must be durable and idempotent. Recovery reconciles
+actual immutable output before retrying; incomplete attempts are preserved. Data
+events do not certify PIT or trading readiness. Prioritize daily inference over new
+training; source failures and disk reserve gates block new signals explicitly.
+Scheduled version creation must avoid emitting new events merely because a retry
+timestamp changed. Backfill gaps stay explicit; never synthesize missing sessions.
+AUTO_PREDICT remains disabled until this integration is implemented and verified.
+LIVE_TRADING_ENABLED=false.
+
 ## ADR-180 — Human model control reuses the authenticated queue and atomic ledger
 
 Status: implementation in progress, 2026-10-26, Phase C/D.
