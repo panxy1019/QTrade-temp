@@ -353,6 +353,7 @@ def run(
         "src/qtrade/research/qlib_adapter.py",
         "src/qtrade/research/workflow.py",
         "src/qtrade/research/pit_repair.py",
+        "src/qtrade/research/pit_quality.py",
         "src/qtrade/research/source_constraints.py",
         *(["scripts/qlib_restore_bundle.py", "src/qtrade/research/feature_precision.py",
            "src/qtrade/research/qlib_processors.py"] if restore_proof else []),

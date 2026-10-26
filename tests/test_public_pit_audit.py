@@ -98,6 +98,11 @@ def test_offline_command_pins_actual_corrupt_bytes_and_is_idempotent(tmp_path, m
     write(root / "next-pass.json", values["schedule"])
     monkeypatch.setattr(command, "write_json_immutable", write)
     first = command.run(tmp_path, now=NOW)
+    assert set(first["implementation_sha256"]) == {
+        "scripts/audit_public_pit.py", "src/qtrade/research/public_pit_audit.py",
+        "src/qtrade/research/pit_quality.py",
+    }
+    assert all(len(value) == 64 for value in first["implementation_sha256"].values())
     assert command.run(tmp_path, now=NOW) == first
     assert len(list((root / "audits").glob("*.json"))) == 1
     original = (root / "status/000001.json").read_bytes()

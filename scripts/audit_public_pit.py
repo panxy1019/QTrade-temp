@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
+from qtrade.research.pit_quality import status_quality
 from qtrade.research.public_pit_audit import build_audit
 from qtrade.research.workflow import digest
 from scripts.atomic_json import write_json_immutable
@@ -113,8 +114,17 @@ def run(
         status_errors=errors, attempts=read_attempts(root, dataset, now), schedule=schedule,
         official=official, observed=observed, now=now,
     )
-    result = signed({**{k: v for k, v in result.items() if k != "evidence_sha256"},
-                     "actual_status_file_sha256": byte_hashes})
+    implementations = {
+        "scripts/audit_public_pit.py": Path(__file__),
+        "src/qtrade/research/public_pit_audit.py": Path(build_audit.__code__.co_filename),
+        "src/qtrade/research/pit_quality.py": Path(status_quality.__code__.co_filename),
+    }
+    result = signed({
+        **{k: v for k, v in result.items() if k != "evidence_sha256"},
+        "actual_status_file_sha256": byte_hashes,
+        "implementation_sha256": {name: hashlib.sha256(path.read_bytes()).hexdigest()
+                                  for name, path in implementations.items()},
+    })
     output = root / "audits" / (result["evidence_sha256"] + ".json")
     if not output.exists():
         write_json_immutable(output, result)

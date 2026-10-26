@@ -102,6 +102,9 @@ dataset, attempt ledger and schedule. Optional inputs are the immutable official
 reconciliation and observed-security master. It rechecks signatures/content
 hashes and binds actual status file byte hashes; malformed/missing status inputs
 appear as per-symbol integrity gaps instead of disappearing from the report.
+It also binds the actual byte hashes of the audit command, audit builder and
+content validator. New Qlib runs archive the added validator dependency with
+their other explicit source files.
 It checks content and reports known-date bounds without inferring session
 coverage, suspension from missing bars, or last-trade dates from delisting dates.
 
