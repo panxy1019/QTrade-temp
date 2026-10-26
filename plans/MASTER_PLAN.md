@@ -33,7 +33,7 @@ Audit date: 2026-08-12.
 - [x] Complete full Linux checks and public production result-page acceptance.
 - [x] Complete authenticated production acceptance and final credential evidence.
 - [x] Repair frozen deployment dependencies and PIT source retry/attempt handling.
-- [ ] Owner verification: convert sensitive Vercel Config values to Secret storage.
+- [x] Record the owner's explicit choice to retain Config storage for now.
 
 Execution record: plans/QLIB_WORKFLOW_INTEGRATION.md. The PIT work remains
 uncertified until historical availability and independent master/rule evidence

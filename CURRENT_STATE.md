@@ -3,8 +3,8 @@
 Last updated: 2026-10-26
 
 - Qlib research login and production task workflow are live at main 2b1e200;
-  browser acceptance confirms the newest Ridge result and the actual aligned
-  LightGBM comparison. Production catalog/session/result endpoints return 200,
+  browser acceptance confirms aligned Ridge/LightGBM comparison and the newest
+  production LightGBM result. Catalog/session/result endpoints return 200,
   worker and frozen-data clocks are fresh, and anonymous submission returns 401.
   The user imported Production credentials; actual browser login and submission
   now succeed. PR #5 fixes a stale frozen dependency lock that initially
@@ -12,8 +12,8 @@ Last updated: 2026-10-26
   cluster; job 316ff564 completed in about 3m34s and all 11,911 archive files
   passed verification. Production browser/API acceptance confirms the complete
   result and audit, with anonymous submission still rejected (401). Sensitive
-  Vercel values are currently Config; Secret conversion awaits owner email
-  verification. See production evidence
+  Vercel values remain Config by the user's explicit choice; do not report
+  Secret conversion or block research login on it. See production evidence
   docs/evidence/qlib-workflow-production-20261026.json.
 
 - Qlib unified workflow implementation includes research-only
@@ -40,9 +40,12 @@ Last updated: 2026-10-26
   explicit vendor failures. This is an increase from 13 stocks / 31,577 rows,
   not PIT certification. A follow-up scheduler check ensures PARTIAL source
   evidence with process exit 0 retries the same scope instead of advancing it.
-  Ten source/scheduler regressions pass; deployment of this final state fix is
-  in progress. The user's Secret conversion report has not yet been confirmed:
-  the refreshed Vercel project list still displays Config.
+  Final release 24b6298 is deployed to the supervised PIT process. Forty Linux
+  targeted tests pass after the 556-test full-suite run. Its PARTIAL schedule
+  retains scope 40 and retries at 2026-10-26 12:23 Asia/Shanghai; accepted source
+  hashes and all five service states are saved in
+  docs/evidence/pit-source-recovery-20261026.json. Temporary transfer access is
+  revoked. Full PIT and exact historical rule certification remain ongoing P0.
   See plans/QLIB_WORKFLOW_INTEGRATION.md and docs/QLIB_WORKFLOW.md.
 
 - Website learning guide completed in docs/learning/README.md: 13 Chinese

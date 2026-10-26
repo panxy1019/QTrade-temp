@@ -163,3 +163,9 @@ PYTHONPATH=src python -m scripts.run_pit_repair --base "$BASE"
 变量目前被保存成Config；修改敏感四项PASSWORD_HASH、SESSION_KEY、QUEUE_KEY、
 QUEUE_SECRET为Secret需要所有者完成Vercel邮箱验证。它与研究网页登录是两套
 认证，当前研究工作流已可用。类型转换不要求把密钥发给任何人。
+
+最终选择：用户明确要求暂时保留Config，因此本轮不再等待Secret转换，也不宣称
+转换已完成。登录、任务提交、取消与结果发布均已通过实际生产验收。
+PIT恢复的完整来源证据见[恢复记录](evidence/pit-source-recovery-20261026.json)。
+最终调度补丁已在集群部署：部分完成保持40只范围，下一次重试为北京时间12:23；
+十项来源回归测试和最终40项Linux专项检查通过。临时上传访问已撤销。

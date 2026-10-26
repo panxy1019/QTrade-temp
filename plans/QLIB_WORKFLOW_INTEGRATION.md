@@ -100,5 +100,15 @@ the same scope and back off instead of advancing the sample. Ten focused source
 tests pass. The user reported Secret conversion, but the freshly loaded project
 list still shows Config; it remains unverified rather than marked complete.
 
+Final checkpoint: the user explicitly chose to retain Config for now, so Secret
+conversion is a deferred owner choice, not a production login blocker. Release
+24b6298 passes 40 targeted Linux checks after the prior 556-test full suite.
+The supervised PIT PID/cwd was verified on this release; the old PARTIAL pass
+was preserved and its next schedule corrected to scope 40 at 12:23 Asia/Shanghai.
+All five services are running. Accepted coverage/attempt hashes and schedule are
+recorded in docs/evidence/pit-source-recovery-20261026.json. The temporary upload
+key was revoked. P0 historical PIT availability and exact-rule enforcement remain
+open; do not mark these as certified based on this workflow acceptance.
+
 Learning documentation already in the working tree belongs to the previous
 request and must be preserved. Existing fixed experiments remain immutable.

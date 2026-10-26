@@ -60,7 +60,6 @@
     }
   ],
   "pending": [
-    "Owner verification and Secret storage for sensitive Vercel variables",
     "Continuing uncertified historical PIT and exact-rule source repair"
   ],
   "live_trading_enabled": false,
@@ -114,7 +113,8 @@
       ]
     },
     "production_dependency_repair": "PR #5; frozen uv.lock now includes Dulwich and Paramiko",
-    "secret_storage": "CONFIG_REQUIRES_OWNER_VERIFICATION_TO_CHANGE_TO_SECRET",
+    "secret_storage": "CONFIG_RETAINED_BY_EXPLICIT_OWNER_CHOICE",
     "live_trading_enabled": false
-  }
+  },
+  "pit_recovery_evidence": "pit-source-recovery-20261026.json"
 }
