@@ -6,7 +6,7 @@ import os
 from datetime import UTC, date, datetime
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, HTTPException, Query, Request, Response
 
 from qtrade.api.research_workflow import (
     _body,
@@ -23,6 +23,49 @@ from qtrade.research.workflow_queue import GitQueue, seal
 
 router = APIRouter(prefix='/research/online')
 STATES = {'TRAINED', 'VALIDATING', 'VALIDATED', 'STAGED', 'ACTIVE', 'FAILED', 'RETIRED'}
+
+
+@router.get('/signals')
+def signal_catalog(response: Response, strategy: str | None = None,
+                   offset: int = Query(0, ge=0, le=6000),
+                   limit: int = Query(50, ge=1, le=100)) -> dict[str, Any]:
+    from qtrade.research.signal_publication import validate_signal_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        value = validate_signal_publication(read_public('signals.json', maximum=3_000_000))
+        manifest = value['manifest']
+        online = listing()
+        current = bool(worker_fresh(online) and online['data_version']
+            and manifest['bindings']['data_version_id'] == online['data_version']['version_id']
+            and manifest['bindings']['code_revision'] == online['worker']['source_revision']
+            and manifest['data_end'] == research_clock()
+            and datetime.now(UTC) < datetime.fromisoformat(manifest['expected_execution_at']))
+        families = [{'name': name, 'score_count': len(scores),
+            'allocation_method': value['targets'][name]['allocation_method'],
+            'target_count': len(value['targets'][name]['positions'])}
+            for name, scores in value['signals'].items()]
+        rows = []
+        total = 0
+        if strategy:
+            if strategy not in value['signals']:
+                raise HTTPException(404, 'SIGNAL_FAMILY_UNAVAILABLE')
+            weights = {p['instrument']: p['target_weight']
+                       for p in value['targets'][strategy]['positions']}
+            scores = sorted(value['signals'][strategy],
+                            key=lambda r: (-r['score'], r['instrument']))
+            total = len(scores)
+            rows = [{**r, 'indicative_weight': weights.get(r['instrument'], '0')}
+                    for r in scores[offset:offset+limit]]
+        return {**AUTHORITY, 'publication_available': True, 'current_input': current,
+            'manifest': manifest, 'families': families, 'strategy': strategy,
+            'rows': rows, 'total': total, 'offset': offset, 'limit': limit,
+            'execution_admitted': False, 'forward_return': None}
+    except HTTPException:
+        raise
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False, 'current_input': False,
+                'families': [], 'rows': [], 'execution_admitted': False, 'forward_return': None}
 
 
 def unavailable_catalog() -> dict[str, Any]:

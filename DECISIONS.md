@@ -2,7 +2,8 @@
 
 ## ADR-186 — Signal baselines are separate from execution-admitted portfolios
 
-Status: initial implementation, cluster acceptance pending, 2026-10-26, Phase E.
+Status: five real signal archives accepted; automated publication/UI implementation
+awaiting production acceptance, 2026-10-26, Phase E.
 
 Reuse PriceFactorSpec for momentum/reversal/low-volatility; use a common complete
 21-session close grid and average tied cross-sectional ranks for equal-weight
@@ -18,9 +19,16 @@ returns. Holdings, turnover and execution constraints remain explicit unmet gate
 before PAPER/SHADOW admission. No gateway/vn.py component is needed for this layer.
 LIVE_TRADING_ENABLED=false.
 
+Reuse the single research queue for one signal job per data/code version, after
+prediction priority gates. Bound runtime and retries, verify complete inventory
+and recompute indicative allocation before publishing. The read-only signal page
+rechecks current data, code, worker and execution time; an old artifact stays
+historical. Public target weights are never represented as executed holdings.
+
 ## ADR-185 — Mature rolling windows reuse native generators and trainers
 
-Status: implementation; native cluster acceptance pending, 2026-10-26.
+Status: native cluster training and independent restore accepted; control rollout
+awaiting production acceptance, 2026-10-26.
 
 Reuse Qlib 0.9.7 RollingGen and TrainerR, existing immutable baseline evaluation,
 source constraints and independent fitted-state restoration. Rolling policy has

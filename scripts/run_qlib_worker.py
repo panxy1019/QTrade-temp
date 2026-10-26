@@ -58,7 +58,8 @@ def recover_child(job: Path) -> None:
                 try:
                     args = (proc/'cmdline').read_bytes().split(b'\0')
                     match = (any(m in args for m in (b'scripts.run_qlib_rolling',
-                                b'scripts.run_qlib_candidate_validation')) and b'--output' in args
+                                b'scripts.run_qlib_candidate_validation',
+                                b'scripts.run_qlib_signal_baselines')) and b'--output' in args
                              and args[args.index(b'--output')+1] == str(job/'output').encode())
                     if match:
                         if os.getpgid(int(proc.name)) != int(proc.name):
@@ -75,7 +76,7 @@ def recover_child(job: Path) -> None:
     start = (proc / "stat").read_text().split()[21]
     if start != value["start_ticks"] or not any(module in command for module in (
         b"scripts.run_qlib_baseline", b"scripts.run_qlib_rolling",
-        b'scripts.run_qlib_candidate_validation')) or (
+        b'scripts.run_qlib_candidate_validation', b'scripts.run_qlib_signal_baselines')) or (
         str(job / "output").encode() not in command
     ):
         raise ValueError("UNCERTAIN_CHILD_IDENTITY_REQUIRES_HUMAN_RECONCILIATION")
@@ -291,7 +292,7 @@ class Worker:
             "SELECT id,request,state,updated,result,error FROM jobs ORDER BY rowid DESC LIMIT 100"
         ):
             request = json.loads(raw)
-            if request.get('kind') == 'QLIB_MODEL_VALIDATION':
+            if request.get('kind') in {'QLIB_MODEL_VALIDATION', 'QLIB_SIGNAL_JOB'}:
                 continue  # Listed with candidate controls, not as a portfolio experiment.
             rolling = request.get('kind') == 'QLIB_ROLLING_JOB'
             rows.append({
@@ -320,6 +321,7 @@ class Worker:
         online_value['auto_train'] = self.rolling.publication()
         write_json_atomic(self.public/'online.json', signed({
             k: v for k, v in online_value.items() if k != 'evidence_sha256'}))
+        self.publish_signals()
         # A consistent local-SQLite backup on NFS, never the active database.
         with sqlite3.connect(self.root / "catalog-backup.sqlite.tmp") as backup:
             self.db.backup(backup)
@@ -344,9 +346,20 @@ class Worker:
         job.mkdir(parents=True, exist_ok=True)
         write_json_atomic(job / "request.json", request)
         output = job / "output"
+        signal_job = request.get('kind') == 'QLIB_SIGNAL_JOB'
         rolling = request.get('kind') == 'QLIB_ROLLING_JOB'
         validation = request.get('kind') == 'QLIB_MODEL_VALIDATION'
-        if validation:
+        if signal_job:
+            data = self.online.data_head(verify=False)
+            if (request['data_version_id'] != data['version_id']
+                    or request['source_revision'] != self.revision):
+                self.update(identity, 'REJECTED', error='SIGNAL_CONTEXT_CHANGED')
+                return
+            command = [self.python, '-m', 'scripts.run_qlib_signal_baselines',
+                '--data-version-root', str(self.base/'unified-data/qlib-versions/versions'/
+                                           data['version_id']), '--output', str(output),
+                '--source-revision', self.revision]
+        elif validation:
             from scripts.prepare_qlib_incremental import load_signed
 
             data = self.online.data_head(verify=False)
@@ -404,7 +417,7 @@ class Worker:
                         if not k.startswith("QTRADE_RESEARCH_")},
                      "PYTHONPATH": str(REPO / "src"),
                      "LIVE_TRADING_ENABLED": "false",
-                     "OMP_NUM_THREADS": '2' if rolling or validation else '6'},
+                     "OMP_NUM_THREADS": '2' if rolling or validation or signal_job else '6'},
             )
             cleanup.callback(terminate, child)
             write_json_atomic(job / "child.json", {
@@ -416,7 +429,7 @@ class Worker:
             while child.poll() is None:
                 self.predictor.tick(stop=self.stop)
                 if self.stop or identity in self.cancellations or (
-                    time.monotonic() - started > (900 if validation else 3600)
+                    time.monotonic() - started > (900 if validation or signal_job else 3600)
                 ):
                     terminate(child)
                     state = "CANCELLED" if identity in self.cancellations else "INTERRUPTED"
@@ -434,6 +447,19 @@ class Worker:
                     self.ingest()
         if child.returncode:
             self.update(identity, "FAILED", error="QLIB_RUN_FAILED_SEE_PRIVATE_CLUSTER_LOG")
+            return
+        if signal_job:
+            from qtrade.research.signal_publication import verify_signal_archive
+
+            paths = list(output.glob('*/manifest.json'))
+            if len(paths) != 1:
+                raise ValueError('SIGNAL_ONE_SEALED_ARCHIVE_REQUIRED')
+            manifest = verify_signal_archive(paths[0].parent)['manifest']
+            if (manifest['bindings']['data_version_id'] != request['data_version_id']
+                    or manifest['bindings']['code_revision'] != self.revision):
+                raise ValueError('SIGNAL_COMPLETED_CONTEXT_CHANGED')
+            self.update(identity, 'COMPLETE', result={'signal_family_id':
+                manifest['signal_family_id'], 'data_version_id': request['data_version_id']})
             return
         if validation:
             proof = json.loads((output/'result.json').read_text())
@@ -503,6 +529,7 @@ class Worker:
         self.ingest()
         self.predictor.tick(stop=self.stop)
         self.schedule_candidate_validation()
+        self.schedule_signals()
         self.schedule_rolling()
         row = self.db.execute(
             "SELECT id,request FROM jobs WHERE state='QUEUED' ORDER BY rowid LIMIT 1"
@@ -513,6 +540,48 @@ class Worker:
             except Exception:
                 self.update(row[0], "FAILED", error="WORKER_JOB_VALIDATION_FAILED")
         self.publish('PREDICTING' if self.predictor.child is not None else 'IDLE')
+
+    def schedule_signals(self) -> None:
+        if (self.stop or self.predictor.child is not None
+                or self.predictor.state not in {'COMPLETE', 'WAITING_FOR_APPROVAL'}):
+            return
+        if self.db.execute("SELECT count(*) FROM jobs WHERE state NOT IN "
+            "('COMPLETE','FAILED','CANCELLED','INTERRUPTED','REJECTED')").fetchone()[0]:
+            return
+        from qtrade.monitoring.data_freshness import Calendar
+
+        now = datetime.now(UTC)
+        data = self.online.data_head(verify=False)
+        if data['actual_end'] != Calendar(REPO/'configs/observer_calendar_2026.json').expected(
+                now, 'daily').date().isoformat():
+            return
+        bindings = {'kind': 'QLIB_SIGNAL_JOB', 'data_version_id': data['version_id'],
+                    'source_revision': self.revision}
+        identity = signed(bindings)['evidence_sha256'][:32]
+        with self.db:
+            created = self.db.execute('INSERT OR IGNORE INTO jobs VALUES(?,?,?,?,NULL,NULL)',
+                (identity, json.dumps(signed({**AUTHORITY, **bindings, 'job_id': identity})),
+                 'QUEUED', now.isoformat()))
+            if created.rowcount:
+                self.db.execute('INSERT INTO events VALUES(?,?,?)',
+                                 (identity, now.isoformat(), 'QUEUED'))
+
+    def publish_signals(self) -> None:
+        from qtrade.research.signal_publication import verify_signal_archive
+
+        publication = signed({**AUTHORITY, 'state': 'NO_VERIFIED_SIGNAL_ARCHIVE'})
+        try:
+            for identity, raw, result in self.db.execute(
+                    "SELECT id,request,result FROM jobs WHERE state='COMPLETE' "
+                    "ORDER BY rowid DESC"):
+                if json.loads(raw).get('kind') != 'QLIB_SIGNAL_JOB':
+                    continue
+                family_id = json.loads(result)['signal_family_id']
+                publication = verify_signal_archive(self.root/'jobs'/identity/'output'/family_id)
+                break
+        except (OSError, ValueError, KeyError, TypeError):
+            publication = signed({**AUTHORITY, 'state': 'SIGNAL_ARCHIVE_INVALID'})
+        write_json_atomic(self.public/'signals.json', publication)
 
 
 def main() -> None:

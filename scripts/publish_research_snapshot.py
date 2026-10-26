@@ -227,6 +227,17 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
     online_file = workflow_root/'online.json'
     write_json_atomic(publication/'online.json', online_publication(online_file))
     current_files.append('online.json')
+    try:
+        from qtrade.research.signal_publication import validate_signal_publication
+
+        signal_bytes = (workflow_root/'signals.json').read_bytes()
+        if len(signal_bytes) > 3_000_000:
+            raise ValueError('SIGNAL_PUBLICATION_TOO_LARGE')
+        signals = validate_signal_publication(json.loads(signal_bytes))
+    except (OSError, ValueError, KeyError, TypeError):
+        signals = signed({**AUTHORITY, 'state': 'NO_VERIFIED_SIGNAL_PUBLICATION'})
+    write_json_atomic(publication/'signals.json', signals, compact=True)
+    current_files.append('signals.json')
     (publication / "README.md").write_text(
         "# QTrade public research observations\n\n"
         "Read-only latest market observations and persisted experiment summaries.\n"

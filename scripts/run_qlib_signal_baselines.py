@@ -14,6 +14,7 @@ from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from qtrade.research.data_versions import file_hash, verify_version
 from qtrade.research.forward_prediction import expected_codes, next_execution
 from qtrade.research.signal_baselines import allocation, signal_family
+from qtrade.research.signal_publication import verify_signal_archive
 from scripts.atomic_json import write_json_immutable
 from scripts.build_qlib_daily_version import move_durable, sync_directory
 
@@ -51,13 +52,7 @@ def run(root: Path, output: Path, revision: str) -> dict[str, Any]:
     identity = signed(bindings)['evidence_sha256']
     target = output/identity
     if target.exists():
-        manifest = json.loads((target/'manifest.json').read_text())
-        if signed({k: v for k, v in manifest.items() if k != 'evidence_sha256'}) != manifest:
-            raise ValueError('SIGNAL_ARCHIVE_MANIFEST_CHANGED')
-        for name, digest in manifest['files'].items():
-            if file_hash(target/name) != digest:
-                raise ValueError('SIGNAL_ARCHIVE_CHANGED')
-        return dict(manifest)
+        return dict(verify_signal_archive(target)['manifest'])
     stage = output/(identity+'.'+now.strftime('%Y%m%dT%H%M%S%f')+'.partial')
     stage.mkdir(parents=True, exist_ok=False)
     frame.to_parquet(stage/'close-input.parquet')
@@ -77,7 +72,8 @@ def run(root: Path, output: Path, revision: str) -> dict[str, Any]:
         'generated_at': generated.isoformat(), 'expected_execution_at': execution.isoformat(),
         'state': 'INDICATIVE_RESEARCH_TARGETS_NOT_EXECUTION_ADMITTED'}))
     for name in ('scripts/run_qlib_signal_baselines.py', 'src/qtrade/research/signal_baselines.py',
-                 'src/qtrade/research/factors.py'):
+                 'src/qtrade/research/factors.py',
+                 'src/qtrade/research/signal_publication.py'):
         destination = stage/'source'/name
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes((REPO/name).read_bytes())

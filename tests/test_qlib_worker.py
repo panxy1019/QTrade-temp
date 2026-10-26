@@ -196,3 +196,31 @@ def test_candidate_validation_waits_for_new_data_and_prediction_priority(worker,
     value.schedule_candidate_validation()
     assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
     assert value.rolling.publication()['validation_tasks'][0]['state'] == 'FAILED'
+
+
+def test_signal_jobs_are_data_bound_deduplicated_and_yield_to_prediction(worker, monkeypatch):
+    from datetime import UTC, datetime
+
+    value, _ = worker
+    class Clock(datetime):
+        @classmethod
+        def now(cls, tz=UTC):
+            return datetime(2026, 10, 26, 15, tzinfo=UTC)
+    monkeypatch.setattr(worker_module, 'datetime', Clock)
+    value.predictor.child = object()
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 0
+    value.predictor.child = None
+    value.predictor.state = 'COMPLETE'
+    data = {'version_id': 'd'*64, 'actual_end': '2026-10-23'}
+    monkeypatch.setattr(value.online, 'data_head', lambda **kw: data)
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 0
+    data['actual_end'] = '2026-10-26'
+    value.schedule_signals()
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
+    value.db.execute("UPDATE jobs SET state='FAILED'")
+    value.db.commit()
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
