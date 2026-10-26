@@ -8,9 +8,10 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 
-def write_json_atomic(path: Path, value: object) -> None:
+def write_json_atomic(path: Path, value: object, *, compact: bool = False) -> None:
     payload = (
-        json.dumps(value, ensure_ascii=False, indent=2) + "\n"
+        json.dumps(value, ensure_ascii=False, indent=None if compact else 2,
+                   separators=(",", ":") if compact else None) + "\n"
     ).encode("utf-8")
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path: Path | None = None

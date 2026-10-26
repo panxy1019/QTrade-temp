@@ -54,6 +54,13 @@ class UnifiedCollectionQueue:
                     event_id TEXT PRIMARY KEY, frequency TEXT, batch_id TEXT UNIQUE,
                     payload TEXT, created_at TEXT
                 );
+                CREATE TABLE IF NOT EXISTS excluded_collection_chunks (
+                    batch_id TEXT, symbol TEXT, reason TEXT, observed_at TEXT,
+                    PRIMARY KEY(batch_id,symbol)
+                );
+                CREATE TABLE IF NOT EXISTS collection_metadata (
+                    key TEXT PRIMARY KEY, value TEXT
+                );
                 CREATE INDEX IF NOT EXISTS collection_due ON collection_tasks (
                     universe_version,frequency,trading_day,state,next_attempt_at
                 );
@@ -234,6 +241,38 @@ class UnifiedCollectionQueue:
                 interrupted += 1
         return {"replayed": replayed, "interrupted": interrupted}
 
+    def recheck_daily_amounts(self, store: UnifiedBatchStore, *, now: datetime) -> int:
+        """Retain legacy price-only archives; they cannot satisfy the full daily contract."""
+        with self.connect() as c:
+            if c.execute("SELECT 1 FROM collection_metadata "
+                         "WHERE key='strict_daily_amount_v1'").fetchone():
+                return 0
+            tasks = [dict(r) for r in c.execute(
+                "SELECT * FROM collection_tasks WHERE frequency='day' "
+                "AND last_success_batch IS NOT NULL")]
+        cache = {}
+        repaired = 0
+        for task in tasks:
+            batch_id = task["last_success_batch"]
+            if batch_id not in cache:
+                cache[batch_id] = store.load(batch_id)
+            if not cache[batch_id]["outcomes"][task["symbol"]].get("missing_amount_bars", 0):
+                continue
+            with self.connect() as c:
+                c.execute("INSERT OR IGNORE INTO excluded_collection_chunks VALUES(?,?,?,?)",
+                          (batch_id, task["symbol"], "DAILY_AMOUNT_UNVERIFIED", clock(now)))
+                c.execute("UPDATE collection_tasks SET state='FAILED',completed_end=NULL,"
+                          "last_success_batch=NULL,last_error='DAILY_AMOUNT_UNVERIFIED',"
+                          "next_attempt_at=? WHERE universe_version=? AND frequency='day' "
+                          "AND symbol=? AND trading_day=?",
+                          (clock(now), task["universe_version"], task["symbol"],
+                           task["trading_day"]))
+            repaired += 1
+        with self.connect() as c:
+            c.execute("INSERT INTO collection_metadata VALUES('strict_daily_amount_v1',?)",
+                      (clock(now),))
+        return repaired
+
     def snapshot(self, universe_version: str) -> dict[str, Any]:
         with self.connect() as c:
             tasks = [dict(r) for r in c.execute(
@@ -245,4 +284,16 @@ class UnifiedCollectionQueue:
                 "SELECT batch_id,state,attempted_at,completed_at,manifest_sha256 "
                 "FROM collection_batches ORDER BY attempted_at DESC LIMIT 12")]
             events = c.execute("SELECT COUNT(*) FROM data_ready_events").fetchone()[0]
+            counts = {(r["frequency"], r["symbol"], r["trading_day"]): dict(r)
+                      for r in c.execute(
+                          "SELECT frequency,symbol,SUBSTR(end_time,1,10) trading_day,"
+                          "MIN(start_time) accepted_start,SUM(bar_count) bar_count "
+                          "FROM collection_chunks c WHERE universe_version=? AND NOT EXISTS "
+                          "(SELECT 1 FROM excluded_collection_chunks e WHERE e.batch_id=c.batch_id "
+                          "AND e.symbol=c.symbol) "
+                          "GROUP BY frequency,symbol,SUBSTR(end_time,1,10)", (universe_version,))}
+        for task in tasks:
+            total = counts.get((task["frequency"], task["symbol"], task["trading_day"]), {})
+            task["accepted_bar_count"] = total.get("bar_count", 0)
+            task["accepted_start"] = total.get("accepted_start")
         return {"tasks": tasks, "recent_batches": batches, "data_ready_events": events}

@@ -194,6 +194,9 @@ class UnifiedBatchStore:
                     or row.frequency == "5min"
                     and row.bar.timestamp.time() not in SINA_FIVE_MINUTE_SESSION_TIMES):
                 raise ValueError("BATCH_ROW_SCOPE_OR_COMPLETION_MISMATCH")
+            if row.frequency == "day" and (row.amount is None or row.vwap is None
+                                            or row.source_clock is None):
+                raise ValueError("DAILY_AMOUNT_OR_SOURCE_CLOCK_UNVERIFIED")
         counts = Counter(r.bar.symbol for r in records)
         for symbol, outcome in outcomes.items():
             if (outcome["state"] not in {"SUCCEEDED", "FAILED"}
@@ -235,7 +238,8 @@ class UnifiedBatchStore:
             "stage_counts": {
                 "requested": len(captures),
                 "downloaded": sum(c["status_code"] == 200 and c["body_complete"] for c in captures),
-                "parsed_symbols": sum(bool(o.get("parsed")) for o in outcomes.values()),
+                "parsed_symbols": sum(bool(o.get("decoded")) for o in outcomes.values()),
+                "validated_symbols": sum(bool(o.get("parsed")) for o in outcomes.values()),
                 "admitted_symbols": len(counts), "admitted_rows": len(records),
                 "same_vendor_endpoint_matched": sum(bool(o.get("same_vendor_matched"))
                                                     for o in outcomes.values()),

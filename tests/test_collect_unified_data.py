@@ -60,7 +60,8 @@ def test_daily_fetch_archives_raw_before_parsing_and_attaches_verified_same_vend
     assert len(calls) == 3 and result['raw']['captures'] == 3
     assert result['bar_count'] == 2
     assert result['stage_counts'] == {
-        'requested': 3, 'downloaded': 3, 'parsed_symbols': 2, 'admitted_symbols': 2,
+        'requested': 3, 'downloaded': 3, 'parsed_symbols': 2, 'validated_symbols': 2,
+        'admitted_symbols': 2,
         'admitted_rows': 2, 'same_vendor_endpoint_matched': 2, 'independent_source_reconciled': 0,
     }
     assert all(r['missing_amount_bars'] == 0 for r in result['outcomes'].values())
@@ -82,7 +83,7 @@ def test_malformed_symbol_response_retains_raw_and_does_not_block_other_symbol(s
     assert result['stage_counts']['parsed_symbols'] == 1
 
 
-def test_one_unavailable_quote_keeps_valid_daily_prices_with_explicit_missing_amount(store):
+def test_unavailable_quote_retains_raw_prices_and_retries_without_publishing_fake_amount(store):
     def change(capture):
         if capture['source_id'] == 'sina_quote':
             lines = capture['body'].splitlines()
@@ -90,10 +91,10 @@ def test_one_unavailable_quote_keeps_valid_daily_prices_with_explicit_missing_am
         return capture
     source, _ = fake_source(change)
     result = collect_batch(store, batch(), CALENDAR, source=source)
-    assert result['bar_count'] == 2
+    assert result['bar_count'] == 1
     row = result['outcomes']['000001']
-    assert row['missing_amount_bars'] == 1
-    assert row['warnings'] == ['QUOTE_AMOUNT_UNAVAILABLE']
+    assert row['state'] == 'FAILED' and row['error_code'] == 'QUOTE_AMOUNT_UNAVAILABLE'
+    assert len(store.read_captures(result['raw'])) == 3
     assert result['stage_counts']['same_vendor_endpoint_matched'] == 1
 
 

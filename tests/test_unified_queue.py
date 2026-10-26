@@ -126,3 +126,23 @@ def test_old_dates_remain_archived_but_snapshot_is_bounded_to_current_scope(tmp_
     assert {r['trading_day'] for r in snapshot['tasks']} == {'2026-10-27'}
     assert q.claim(VERSION, 'day', date(2026, 10, 26), now=NOW,
                    code_revision='b' * 40) is not None
+
+
+def test_legacy_price_only_admission_is_retained_but_requeued_once_for_amount(tmp_path):
+    q = UnifiedCollectionQueue(tmp_path / 'queue.sqlite')
+    q.plan(master(1), CALENDAR, NOW)
+    old = claim(q)
+    value = receipt(old)
+    value['outcomes']['600000']['missing_amount_bars'] = 1
+    value = signed({k: v for k, v in value.items() if k != 'evidence_sha256'})
+    q.finish(value, now=NOW)
+    store = Mock()
+    store.load.return_value = value
+    assert q.recheck_daily_amounts(store, now=NOW) == 1
+    assert q.recheck_daily_amounts(store, now=NOW) == 0
+    store.load.assert_called_once_with(old['batch_id'])
+    row = next(r for r in q.snapshot(VERSION)['tasks'] if r['frequency'] == 'day')
+    assert row['state'] == 'FAILED' and row['accepted_bar_count'] == 0
+    assert q.snapshot(VERSION)['data_ready_events'] == 1  # Original evidence remains.
+    retry = claim(q)
+    assert retry['spec']['after_by_symbol']['600000'] is None

@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-26
 
+- Unified incremental collection pilot on release 62f5e94 passes all 672 Linux
+  backend checks. Real first 20 symbol/frequency tasks succeed (490 bars, 22 raw
+  responses). A subsequent bounded 3,000-attempt pass reaches 1,497 daily and
+  1,481 5min targets through 2026-10-26; 11 minute tasks remain unattempted, with
+  failures retained for transport, absent bars and unknown minute gaps. This is
+  current native-source coverage, not repaired old qfq history or PIT evidence.
+  Continuous-mode integration and production status views are being accepted;
+  the formal worker still uses its old frozen Qlib data/model identity.
+
 - Phase B source adapter is implemented on codex/unified-incremental-data with
   12 focused tests, lint and strict typing passing; not yet connected/deployed.
   It keeps missing amount unknown, filters unfinished bars, verifies same-vendor

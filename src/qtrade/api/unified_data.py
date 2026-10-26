@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Query, Response
 
 from qtrade.api.current_datasets import download
 from qtrade.instruments.observed import SCHEMA, instrument_id
-from qtrade.monitoring.data_freshness import AUTHORITY, signed
+from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 
 router = APIRouter(prefix="/unified")
 
@@ -50,7 +50,55 @@ def validate_publication(value: dict[str, Any]) -> dict[str, Any]:
         if dict(Counter(r["frequencies"][freq]["state"] for r in target)) != (
                 master["frequency_counts"][freq]):
             raise ValueError("UNIFIED_FREQUENCY_COUNTS_MISMATCH")
+    if "incremental_counts" in master:
+        for freq in ("day", "5min"):
+            values = [r["incremental"][freq] for r in target]
+            if dict(Counter(r["state"] for r in values)) != master["incremental_counts"][freq]:
+                raise ValueError("UNIFIED_INCREMENTAL_COUNTS_MISMATCH")
+            for row in values:
+                if (row["state"] not in {"PLANNED", "CONTENT_COVERAGE_VERIFIED", "LIMITED_RESEARCH",
+                                         "QUARANTINED", "FAILED_RETAINING_LAST_SUCCESS"}
+                        or row["independent_source_reconciled"] is not False
+                        or row["historical_pit_certified"] is not False
+                        or type(row["bar_count"]) is not int or row["bar_count"] < 0):
+                    raise ValueError("INVALID_UNIFIED_INCREMENTAL_STATE")
+                for key in ("expected_end", "observed_end", "observed_start", "last_success_at"):
+                    if row.get(key) is not None:
+                        at = datetime.fromisoformat(row[key])
+                        if at.tzinfo is None or at > now:
+                            raise ValueError("INVALID_UNIFIED_INCREMENTAL_CLOCK")
+                if row["observed_end"] is not None and (
+                        row["expected_end"] is None or datetime.fromisoformat(
+                            row["observed_end"]) > datetime.fromisoformat(row["expected_end"])):
+                    raise ValueError("UNIFIED_INCREMENTAL_FUTURE_END")
     return value
+
+
+def collection_freshness(value: dict[str, Any], *, now: datetime | None = None) -> dict[str, Any]:
+    now = now or datetime.now(UTC)
+    master = value["master"]
+    if "incremental_counts" not in master:
+        return {}
+    try:
+        calendar = Calendar(master["collection"]["calendar"])
+        ends = {freq: calendar.expected(now, "daily" if freq == "day" else "minute")
+                for freq in ("day", "5min")}
+    except (ValueError, KeyError):
+        return {freq: {"status": "CALENDAR_UNVERIFIED", "ready_symbols": 0,
+                       "required_symbols": master["target_actual"], "expected_end": None}
+                for freq in ("day", "5min")}
+    result = {}
+    age = (now - datetime.fromisoformat(value["built_at"])).total_seconds()
+    fresh_publication = 0 <= age <= 1200
+    for freq, expected in ends.items():
+        ready = sum(r["incremental"][freq]["observed_end"] is not None and
+                    datetime.fromisoformat(r["incremental"][freq]["observed_end"]) >= expected
+                    for r in master["securities"] if r["in_target"])
+        result[freq] = {"status": "STALE_PUBLICATION" if not fresh_publication else
+                        "FRESH" if ready == master["target_actual"] else "PARTIAL",
+                        "ready_symbols": ready, "required_symbols": master["target_actual"],
+                        "expected_end": expected.isoformat()}
+    return result
 
 
 @lru_cache(maxsize=1)
@@ -74,6 +122,7 @@ def summary(response: Response) -> dict[str, Any]:
             "snapshot_age_seconds": (datetime.now(UTC) - datetime.fromisoformat(
                 value["built_at"])).total_seconds(),
             "evidence_sha256": value["evidence_sha256"], "read_only": True,
+            "incremental_freshness": collection_freshness(value),
             "master": {k: v for k, v in value["master"].items() if k != "securities"}}
 
 
@@ -83,13 +132,18 @@ def securities(
     frequency: Literal["day", "5min"] = "day", quality: str = Query("", max_length=50),
     target_only: bool = True, offset: int = Query(0, ge=0, le=10_000),
     limit: int = Query(25, ge=1, le=100),
+    coverage: Literal["historical", "incremental"] = "historical",
 ) -> dict[str, Any]:
     response.headers["Cache-Control"] = "no-store"
     value = catalog()
     needle = query.strip().lower()
+    def state(row: dict[str, Any]) -> str:
+        return str(row["frequencies"][frequency]["state"] if coverage == "historical"
+                   else row.get("incremental", {}).get(frequency, {}).get("state", "NOT_PLANNED"))
+
     rows = [r for r in value["master"]["securities"]
             if (not target_only or r["in_target"])
-            and (not quality or r["frequencies"][frequency]["state"] == quality)
+            and (not quality or state(r) == quality)
             and (not needle or needle in (r["instrument_id"] + r["name"]).lower())]
     return {**AUTHORITY, "universe_version": value["master"]["universe_version"],
             "catalog_sha256": value["evidence_sha256"], "built_at": value["built_at"],

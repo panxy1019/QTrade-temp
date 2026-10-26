@@ -126,10 +126,13 @@ def collect_batch(
     rows: list[IncrementalBar] = []
     outcomes: dict[str, dict[str, Any]] = {}
     for symbol, response in zip(symbols, responses, strict=True):
-        parsed_ok, same_vendor_matched = False, False
+        decoded_ok, parsed_ok, same_vendor_matched = False, False, False
         try:
+            body = require_download(response)
+            json.loads(body)
+            decoded_ok = True
             parsed = completed_klines(
-                require_download(response), symbol=symbol, security_type=kinds[symbol],
+                body, symbol=symbol, security_type=kinds[symbol],
                 frequency=freq, requested_day=day,
                 observed_at=datetime.fromisoformat(response["received_at"]), calendar=calendar,
             )
@@ -152,7 +155,7 @@ def collect_batch(
                     selected = [reconcile_day(selected[0], candidate)]
                     same_vendor_matched = True
                 else:
-                    warnings.append("QUOTE_AMOUNT_UNAVAILABLE")
+                    raise ValueError("QUOTE_AMOUNT_UNAVAILABLE")
             else:
                 expected = {datetime.combine(day, t, SHANGHAI)
                             for t in SINA_FIVE_MINUTE_SESSION_TIMES
@@ -167,10 +170,12 @@ def collect_batch(
                 raise ValueError("STALE_SOURCE_END")
             rows.extend(selected)
             outcomes[symbol] = {"state": "SUCCEEDED", "error_code": None, "warnings": warnings,
-                                "parsed": parsed_ok, "same_vendor_matched": same_vendor_matched}
+                                "decoded": decoded_ok, "parsed": parsed_ok,
+                                "same_vendor_matched": same_vendor_matched}
         except Exception as exc:
             outcomes[symbol] = {"state": "FAILED", "error_code": error_code(exc), "warnings": [],
-                                "parsed": parsed_ok, "same_vendor_matched": False}
+                                "decoded": decoded_ok, "parsed": parsed_ok,
+                                "same_vendor_matched": False}
     completed = max(datetime.fromisoformat(c["received_at"]) for c in captures)
     return store.commit(batch["batch_id"], spec, raw_ref, rows, outcomes, completed_at=completed)
 
@@ -178,7 +183,7 @@ def collect_batch(
 def run_pass(
     base: Path, database: Path, *, code_revision: str, seconds: float = 240,
     maximum_symbols: int = 3000, group_size: int = 25, stop: Event | None = None,
-    source: Source = fetch,
+    source: Source = fetch, publish_progress: Callable[[dict[str, Any]], None] | None = None,
 ) -> dict[str, Any]:
     if re.fullmatch(r"[a-f0-9]{40}", code_revision) is None:
         raise ValueError("COLLECTION_CODE_REVISION_REQUIRED")
@@ -192,6 +197,7 @@ def run_pass(
     store = UnifiedBatchStore(base / "unified-data/lake")
     queue = UnifiedCollectionQueue(database)
     recovery = queue.recover(store, now=datetime.now(UTC))
+    recovery["amount_rechecks"] = queue.recheck_daily_amounts(store, now=datetime.now(UTC))
     ends = queue.plan(master, calendar, datetime.now(UTC))
     started, attempted, batches = time.monotonic(), 0, 0
     state = {**AUTHORITY, "schema_version": "qtrade.unified-collection-progress.v1",
@@ -199,17 +205,24 @@ def run_pass(
              "universe_version": master["universe_version"],
              "code_revision": code_revision, "required_through": ends, "recovery": recovery}
     state["stage_counts"] = {key: 0 for key in (
-        "requested", "downloaded", "parsed_symbols", "admitted_symbols", "admitted_rows",
+        "requested", "downloaded", "parsed_symbols", "validated_symbols",
+        "admitted_symbols", "admitted_rows",
         "same_vendor_endpoint_matched", "independent_source_reconciled",
     )}
+    last_publication = -1000.0
 
     def save() -> None:
+        nonlocal last_publication
         state.update(updated_at=datetime.now(UTC).isoformat(), attempted_symbols=attempted,
                      completed_batches=batches,
                      elapsed_seconds=round(time.monotonic() - started, 3),
                      free_bytes=shutil.disk_usage(base).free,
                      **queue.snapshot(master["universe_version"]))
         write_json_atomic(base / "unified-data/collection-progress.json", signed(state))
+        if publish_progress and (time.monotonic() - last_publication >= 60
+                                 or state.get("state") != "COLLECTING"):
+            publish_progress(state)
+            last_publication = time.monotonic()
 
     while (not stop.is_set() and time.monotonic() - started < seconds
            and attempted < maximum_symbols):
