@@ -1,0 +1,51 @@
+{
+  "deployment": {
+    "classification": "PUBLIC_BUILD_PROVENANCE",
+    "provider": "VERCEL",
+    "status": "AVAILABLE",
+    "target_environment": "production",
+    "git_commit_sha": "a3f9f6fcbee4306e3a82d470ffcd0f5cc325c719",
+    "git_commit_ref": "main",
+    "external_order_transmission": false
+  },
+  "visual_acceptance": false,
+  "next_session_accepted": false,
+  "routes": {
+    "etf-trend": {
+      "publication_available": true,
+      "worker_fresh": null,
+      "current_input": true
+    },
+    "signals": {
+      "publication_available": true,
+      "worker_fresh": null,
+      "current_input": true
+    },
+    "catalog": {
+      "publication_available": true,
+      "worker_fresh": true,
+      "current_input": null
+    },
+    "data-versions": {
+      "publication_available": true,
+      "worker_fresh": true,
+      "current_input": null
+    },
+    "forward-books": {
+      "publication_available": true,
+      "worker_fresh": null,
+      "current_input": null,
+      "book_count": 12,
+      "service_fresh": true,
+      "state": "HUMAN_RECOVERY_REQUIRED",
+      "target_count": 12.0,
+      "recovery_required_count": 1
+    },
+    "strategy-comparison": {
+      "publication_available": true,
+      "worker_fresh": null,
+      "current_input": null
+    }
+  },
+  "observed_at": "2026-10-26T17:39:09.7930769Z"
+}

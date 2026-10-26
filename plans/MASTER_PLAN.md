@@ -24,6 +24,19 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Daily and ETF scheduling fixes are deployed at 55b5b00 with 110 passing Linux
+checks and real minute-only snapshot acceptance: 1,500 exact-universe daily rows,
+1,497 successful/3 failed. Other process PIDs are unchanged. Evidence is
+docs/evidence/qlib-daily-ledger-55b5b00.json. Actual preclose audit correctly blocks
+unfinished-session acceptance. ETF trend allocation/SHADOW integration from the
+original guide remains active work; full ETF Alpha158 modeling is not substituted
+for that requirement. Human recovery, actual next-session and visual gates remain.
+
+PR22/main a3f9f6f is verified on production Vercel. All six online publication
+routes are available, including 12 prospective books / targets and one halted
+model PAPER awaiting human recovery. Visual browser inspection and actual next
+complete-session acceptance remain pending; see production evidence.
+
 Forward e107eb9 freezes 12 actual prospective targets across six strategy/mode
 pairs. Existing LightGBM PAPER awaits explicit human recovery after restart;
 the other five pristine PAPER books initialized successfully. Actual observation

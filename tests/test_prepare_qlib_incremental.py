@@ -139,7 +139,12 @@ def test_failed_preparation_does_not_starve_unattempted_symbols_or_claim_version
 
     monkeypatch.setattr(module, 'prepare_stock', fail)
     monkeypatch.setattr(module.UnifiedBatchStore, 'load', lambda *args: {
-        'spec': {'universe_version': 'b'*64, 'target_end': NOW.isoformat()},
+        'spec': {'universe_version': 'b'*64, 'frequency': 'day',
+                 'target_end': '2026-10-26T15:00:00+08:00',
+                 'symbols': [r['symbol'] for r in stocks]},
+        'completed_at': NOW.isoformat(), 'normalized': {'sha256': 'd'*64},
+        'evidence_sha256': 'e'*64,
+        'outcomes': {r['symbol']: {'state': 'SUCCEEDED', 'missing_amount_bars': 0} for r in stocks},
     })
     first = module.run(tmp_path, previous, revision='c'*40, maximum=1)
     second = module.run(tmp_path, previous, revision='c'*40, maximum=1)
