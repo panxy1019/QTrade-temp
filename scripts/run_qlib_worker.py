@@ -21,6 +21,7 @@ from qtrade.research.workflow import catalog_envelope, data_audit, digest, valid
 from qtrade.research.workflow_queue import GitQueue, unseal
 from scripts.atomic_json import write_json_atomic
 from scripts.online_model_control import OnlineModels
+from scripts.online_prediction_worker import OnlinePredictor
 
 REPO = Path(__file__).resolve().parents[1]
 TERMINAL = {"COMPLETE", "FAILED", "CANCELLED", "INTERRUPTED", "REJECTED"}
@@ -102,6 +103,7 @@ class Worker:
         self._source_identity: str | None = None
         self.online = OnlineModels(base, database.with_name('online-models.sqlite'),
                                    database.with_name('qlib-versions.sqlite'))
+        self.predictor = OnlinePredictor(self.online, python, revision)
 
     def freeze_source(self) -> str:
         root = self.base / "pit-repair"
@@ -274,9 +276,11 @@ class Worker:
                     "source_revision": self.revision, "max_job_seconds": 3600},
         )
         write_json_atomic(self.public / "workflow.json", value)
-        write_json_atomic(self.public/'online.json',
-                          self.online.publication(self.revision, now=datetime.now(UTC),
-                                                  worker_state=state))
+        online_value = self.online.publication(self.revision, now=datetime.now(UTC),
+                                                worker_state=state)
+        online_value['auto_predict'] = self.predictor.publication(now=datetime.now(UTC))
+        write_json_atomic(self.public/'online.json', signed({
+            k: v for k, v in online_value.items() if k != 'evidence_sha256'}))
         # A consistent local-SQLite backup on NFS, never the active database.
         with sqlite3.connect(self.root / "catalog-backup.sqlite.tmp") as backup:
             self.db.backup(backup)
@@ -334,6 +338,7 @@ class Worker:
             started = time.monotonic()
             last_state = "RUNNING"
             while child.poll() is None:
+                self.predictor.tick(stop=self.stop)
                 if self.stop or identity in self.cancellations or (
                     time.monotonic() - started > 3600
                 ):
@@ -361,15 +366,16 @@ class Worker:
 
     def once(self) -> None:
         self.ingest()
+        self.predictor.tick(stop=self.stop)
         row = self.db.execute(
             "SELECT id,request FROM jobs WHERE state='QUEUED' ORDER BY rowid LIMIT 1"
         ).fetchone()
-        if row:
+        if row and self.predictor.child is None:
             try:
                 self.execute(row[0], json.loads(row[1]))
             except Exception:
                 self.update(row[0], "FAILED", error="WORKER_JOB_VALIDATION_FAILED")
-        self.publish()
+        self.publish('PREDICTING' if self.predictor.child is not None else 'IDLE')
 
 
 def main() -> None:
@@ -399,6 +405,8 @@ def main() -> None:
         if args.once:
             break
         time.sleep(15)
+    worker.predictor.tick(stop=True)
+    worker.publish('STOPPED')
 
 
 if __name__ == "__main__":

@@ -2,6 +2,16 @@
 
 Last updated: 2026-10-26
 
+- Automatic approved-model prediction implementation now includes durable event
+  claims, nonblocking frozen inference, immutable outputs, restart reconciliation,
+  final data/model/clock gates and public daily history. Local focused checks pass;
+  cluster, real-model isolated acceptance and production deployment are pending.
+  No production ACTIVE. New Provider built successfully: d33a7466, 987/990 current,
+  missing 002827/600621/605258, through 2026-10-26. Candidate proofs still bind the
+  former version and need new validation. See docs/QLIB_AUTOMATIC_PREDICTION.md.
+  Historical backfill and public PIT subagents delivered commits for integration;
+  no new historical coverage or full PIT certification is claimed.
+
 - Production model-control API accepted: PR 18 merged at 28c2b9c, verified by
   /api/deployment. Actual online catalog has fresh worker 978553a, 982/990,
   two STAGED candidates and 888 scores each; anonymous action HTTP 401, no

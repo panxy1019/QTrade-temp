@@ -100,6 +100,47 @@ def validate_catalog(value: dict[str, Any]) -> dict[str, Any]:
         checked_identity(command['command_sha256'])
         if command['state'] not in {'APPLIED', 'REJECTED'}:
             raise ValueError('ONLINE_COMMAND_STATE_INVALID')
+    prediction = value.get('auto_predict', {})
+    if prediction.get('enabled') is True:
+        if (prediction.get('schema_version') != 'qtrade.auto-prediction.v1'
+                or prediction.get('forward_return_observed') is not False
+                or not isinstance(prediction['predictions'], list)
+                or len(prediction['predictions']) > 50):
+            raise ValueError('ONLINE_PREDICTION_SCHEMA_INVALID')
+        identities = set()
+        current = None
+        for row in prediction['predictions']:
+            bindings = row['bindings']
+            identity = checked_identity(row['prediction_id'])
+            if (identity in identities or identity != signed(bindings)['evidence_sha256']
+                    or row['state'] not in {'QUEUED', 'RUNNING', 'INTERRUPTED', 'FAILED',
+                                            'COMPLETE', 'SUPERSEDED'}):
+                raise ValueError('ONLINE_PREDICTION_IDENTITY_INVALID')
+            identities.add(identity)
+            if row['state'] in {'COMPLETE', 'SUPERSEDED'}:
+                contract = row['contract']
+                checked_document(contract)
+                generated = datetime.fromisoformat(contract['generated_at'])
+                execute = datetime.fromisoformat(contract['expected_execution_at'])
+                if (contract['data_version_id'] != bindings['data_version_id']
+                        or contract['model_bundle_sha256'] != bindings['model_id']
+                        or contract['data_end'] != bindings['data_end']
+                        or contract['forward_return_observed'] is not False
+                        or generated.tzinfo is None or execute.tzinfo is None
+                        or not generated < execute or generated > datetime.fromisoformat(
+                            value['published_at'])
+                        or row['feature_count'] != 158 or not 1 <= row['score_count'] <= 6000):
+                    raise ValueError('ONLINE_PREDICTION_CONTRACT_INVALID')
+            if identity == prediction['current_prediction_id']:
+                current = row
+        if prediction['current_prediction_id'] is not None and (
+                current is None or current['state'] != 'COMPLETE' or data is None
+                or current['bindings']['data_version_id'] != data['version_id']
+                or current['bindings']['model_id'] != value['active_model']
+                or current['bindings']['code_revision'] != value['worker']['source_revision']
+                or datetime.fromisoformat(current['contract']['expected_execution_at']) <= (
+                    datetime.fromisoformat(value['published_at']))):
+            raise ValueError('ONLINE_CURRENT_PREDICTION_INCONSISTENT')
     return value
 
 
@@ -118,8 +159,17 @@ def catalog(response: Response) -> dict[str, Any]:
     response.headers['Cache-Control'] = 'no-store'
     try:
         value = listing()
-        return {**value, 'publication_available': True, 'worker_fresh': worker_fresh(value),
-                'expected_complete_day': research_clock()}
+        fresh = worker_fresh(value)
+        expected_day = research_clock()
+        prediction = value.get('auto_predict', {})
+        current = next((p for p in prediction.get('predictions', [])
+                        if p['prediction_id'] == prediction.get('current_prediction_id')), None)
+        usable = bool(fresh and current and value['data_version']
+                      and value['data_version']['actual_end'] == expected_day
+                      and datetime.fromisoformat(current['contract']['expected_execution_at']) > (
+                          datetime.now(UTC)))
+        return {**value, 'publication_available': True, 'worker_fresh': fresh,
+                'current_prediction_usable': usable, 'expected_complete_day': expected_day}
     except Exception:
         return {**AUTHORITY, 'publication_available': False, 'worker_fresh': False,
                 'models': [], 'validations': [], 'commands': [], 'events': [],

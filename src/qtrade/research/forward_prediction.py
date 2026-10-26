@@ -48,6 +48,13 @@ def verify_validation(root: Path) -> dict[str, Any]:
     return value
 
 
+def next_execution(end: str, calendar: Calendar) -> datetime:
+    day = date.fromisoformat(end) + timedelta(days=1)
+    while not calendar.is_open(day):
+        day += timedelta(days=1)
+    return datetime.combine(day, time(9, 30), SHANGHAI)
+
+
 def inference_contract(model: dict[str, Any], trained_data: dict[str, Any],
                        current_data: dict[str, Any], version: dict[str, Any],
                        calendar: Calendar, *, now: datetime) -> dict[str, Any]:
@@ -63,10 +70,7 @@ def inference_contract(model: dict[str, Any], trained_data: dict[str, Any],
         raise ValueError('FORWARD_TRAINED_DATA_LINEAGE_OR_PRECISION_CHANGED')
     if calendar.expected(now, 'daily').date().isoformat() != end:
         raise ValueError('FORWARD_DATA_NOT_LATEST_COMPLETE_SESSION')
-    day = date.fromisoformat(end) + timedelta(days=1)
-    while not calendar.is_open(day):
-        day += timedelta(days=1)
-    execution = datetime.combine(day, time(9, 30), SHANGHAI)
+    execution = next_execution(end, calendar)
     if execution <= now:
         raise ValueError('FORWARD_EXPECTED_EXECUTION_ALREADY_PASSED')
     return signed({

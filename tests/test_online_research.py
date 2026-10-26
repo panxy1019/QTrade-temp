@@ -168,3 +168,54 @@ def test_valid_optional_publication_preserves_actual_candidate_states(tmp_path):
     source = tmp_path/'online.json'
     source.write_text(json.dumps(value))
     assert online_publication(source) == value
+
+
+def add_prediction(value):
+    now = datetime.now(UTC)
+    value['worker']['source_revision'] = 'c'*40
+    value['active_model'] = 'a'*64
+    value['models'][0]['state'] = 'ACTIVE'
+    bindings = {'model_id': 'a'*64, 'data_version_id': 'd'*64, 'approval_sha256': 'b'*64,
+                'data_event_id': 'e'*64, 'observation_universe_version': 'f'*64,
+                'code_revision': 'c'*40, 'data_end': '2026-10-26'}
+    row = {'prediction_id': signed(bindings)['evidence_sha256'], 'state': 'COMPLETE',
+           'bindings': bindings, 'feature_count': 158, 'score_count': 888,
+           'contract': signed({**AUTHORITY, 'data_version_id': 'd'*64,
+               'model_bundle_sha256': 'a'*64, 'data_end': '2026-10-26',
+               'generated_at': (now-timedelta(minutes=1)).isoformat(),
+               'expected_execution_at': (now+timedelta(hours=1)).isoformat(),
+               'forward_return_observed': False})}
+    value['auto_predict'] = {'schema_version': 'qtrade.auto-prediction.v1', 'enabled': True,
+        'state': 'COMPLETE', 'predictions': [row], 'current_prediction_id': row['prediction_id'],
+        'forward_return_observed': False}
+    return row
+
+
+def test_current_prediction_is_only_usable_with_fresh_matching_context(online):
+    http, _, value, _ = online
+    add_prediction(value)
+    assert http.get('/research/online/catalog').json()['current_prediction_usable'] is True
+    value['worker']['heartbeat_at'] = (datetime.now(UTC)-timedelta(hours=1)).isoformat()
+    result = http.get('/research/online/catalog').json()
+    assert result['publication_available'] is True
+    assert result['current_prediction_usable'] is False
+
+
+@pytest.mark.parametrize('damage', ['identity', 'data', 'model', 'clock', 'returns', 'state'])
+def test_invalid_current_prediction_fails_closed(online, damage):
+    http, _, value, _ = online
+    row = add_prediction(value)
+    if damage == 'identity':
+        row['prediction_id'] = '0'*64
+    elif damage == 'data':
+        row['contract']['data_version_id'] = 'e'*64
+    elif damage == 'model':
+        row['contract']['model_bundle_sha256'] = 'b'*64
+    elif damage == 'clock':
+        row['contract']['expected_execution_at'] = '2026-10-26T12:00:00'
+    elif damage == 'returns':
+        row['contract']['forward_return_observed'] = True
+    else:
+        row['state'] = 'SUPERSEDED'
+    row['contract'] = resign(row['contract'])
+    assert http.get('/research/online/catalog').json()['publication_available'] is False

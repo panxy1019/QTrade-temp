@@ -27,9 +27,16 @@ interface Catalog {
   expected_complete_day: string | null
   data_version: null | { version_id: string; actual_end: string; current_symbols: number; historical_symbols: number; blocked_symbols: string[] }
   commands: Array<{ request_id: string; state: string; operation: string; error_code: string | null; at: string }>
-  auto_predict?: { enabled: boolean; state: string }; auto_train?: { mode: string; state: string }
+  current_prediction_usable?: boolean
+  auto_predict?: { enabled: boolean; state: string; current_prediction_id?: string | null; predictions?: Array<{
+    prediction_id: string; state: string; updated_at: string; error_code: string | null
+    bindings: { model_id: string; data_end: string; data_version_id: string }
+    contract?: { generated_at: string; expected_execution_at: string }; score_count?: number
+    limitations?: string[]
+  }> }; auto_train?: { mode: string; state: string }
 }
 const labels: Record<string, string> = { TRAINED: '训练完成', VALIDATING: '验证中', VALIDATED: '验证通过', STAGED: '待人工批准', ACTIVE: '当前研究模型', FAILED: '失败', RETIRED: '历史模型' }
+const predictionLabels: Record<string, string> = { WAITING_FOR_APPROVAL: '等待人工批准模型', RUNNING: '计算中', QUEUED: '等待计算', COMPLETE: '已封存', SUPERSEDED: '已被后续模型、数据或时效替代', INTERRUPTED: '中断，等待恢复核对', FAILED: '失败', BLOCKED_STALE_DATA: '数据未覆盖最近完整交易日', BLOCKED_INPUT_UNAVAILABLE: '输入不可用', BLOCKED_INPUT_OR_LAUNCH_FAILURE: '输入或启动失败', BLOCKED_STORAGE_RESERVE: '磁盘保留空间不足', EVENT_WORKER_INTEGRATION_PENDING: '调度尚未接入' }
 
 function ModelEvidence({ definition: d }: { definition: Definition }) {
   const metric = (key: string, percent = false) => typeof d.metrics[key] === 'number' && Number.isFinite(d.metrics[key])
@@ -100,6 +107,18 @@ export function OnlineModelsPage() {
       ]} /> : <Typography.Text>尚无可核验的数据版本。</Typography.Text>}
     </Card>
     <Alert type="info" showIcon title={`每日自动预测：${catalog?.auto_predict?.enabled ? '已启用' : '未启用'}；自动重训：${catalog?.auto_train?.mode ?? '未接入'}`} description="当前候选输入验证与生产自动预测分开记录。验证分数未取得真实前向收益；完整历史 PIT、复权与交易规则认证仍有限制。" />
+    {catalog?.auto_predict?.enabled && <Card title="每日自动预测记录">
+      <Typography.Paragraph>{predictionLabels[catalog.auto_predict.state] ?? catalog.auto_predict.state}。{catalog.current_prediction_usable ? '存在身份匹配且尚未过期的研究预测。' : '当前没有可使用的研究预测。'}分数仅用于研究排序，不是交易指令或收益承诺。</Typography.Paragraph>
+      <Table rowKey="prediction_id" dataSource={catalog.auto_predict.predictions ?? []} pagination={{ pageSize: 5 }} scroll={{ x: 1000 }} columns={[
+        { title: '数据截止', render: (_, row) => row.bindings.data_end },
+        { title: '状态', render: (_, row) => predictionLabels[row.state] ?? row.state },
+        { title: '模型身份', render: (_, row) => <Typography.Text copyable={{ text: row.bindings.model_id }}>{row.bindings.model_id.slice(0, 12)}</Typography.Text> },
+        { title: '证券数', dataIndex: 'score_count', render: value => value ?? '尚无结果' },
+        { title: '实际生成', render: (_, row) => row.contract?.generated_at ?? '尚未生成' },
+        { title: '预期研究执行', render: (_, row) => row.contract?.expected_execution_at ?? '尚无结果' },
+        { title: '诊断', dataIndex: 'error_code' },
+      ]} expandable={{ expandedRowRender: row => <Space orientation="vertical"><Typography.Text>预测身份：{row.prediction_id}</Typography.Text><Typography.Text>数据版本：{row.bindings.data_version_id}</Typography.Text>{row.limitations?.map(reason => <Typography.Text key={reason}>• {reason}</Typography.Text>)}</Space> }} />
+    </Card>}
     <Card title="候选与历史模型" extra={<JsonExportButton filename="qtrade-online-models.json" value={catalog} />}>
       <Table<Model> rowKey={row => row.definition.model_id} dataSource={catalog?.models ?? []} pagination={false} scroll={{ x: 1000 }} columns={[
         { title: '模型', render: (_, row) => <Space orientation="vertical"><b>{row.definition.name}</b><Typography.Text copyable={{ text: row.definition.model_id }}>{row.definition.model_id.slice(0, 16)}</Typography.Text></Space> },
