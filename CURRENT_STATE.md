@@ -2,6 +2,17 @@
 
 Last updated: 2026-10-27
 
+- STEP1 integration checkpoint: actual native seven-strategy comparison completed
+  on 601,013 common rows and 678 sessions (2024-01-02 through 2026-10-23).
+  Thirty ETFs have verified 21-session native-close diagnostic inputs through
+  October 26, with adjustment basis explicitly uncertified. Evidence is in
+  docs/evidence/qlib-step1-initial-native-20261027.json. Source d83e1ae passed
+  1,181 Linux checks; this predates the forward service additions. Current local
+  integration passes 248 frontend tests, Vercel build and targeted backend checks
+  (one Windows-only skip). Forward service, durable books, admission serialization,
+  public summaries and pages await Linux/production acceptance. Production still
+  runs a69eb70. No real October 27 transition or forward fills are claimed.
+
 - New owner-requested continuous goal: complete STEP1 C/D/E (unified historical
   comparison, holdings/constraints, PAPER/SHADOW, actual next-session acceptance)
   before STEP2 factor/strategy research. Execution plan is

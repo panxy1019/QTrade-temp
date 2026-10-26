@@ -1,0 +1,224 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "checked_at": "2026-10-26T17:01:33.579044+00:00",
+  "source_revision": "d83e1ae556205114790945359a9c7eb2a658cd6b",
+  "comparison": {
+    "comparison_id": "f6b9e52b1c30c4f46e0733d02bb4e800450a9acbb67a8954d63a2bb857dde943",
+    "bindings": {
+      "protocol": {
+        "segments": {
+          "test": [
+            "2024-01-02",
+            "2026-10-23"
+          ],
+          "train": [
+            "2017-04-05",
+            "2021-12-28"
+          ],
+          "valid": [
+            "2022-01-04",
+            "2023-12-26"
+          ]
+        },
+        "label": "Ref($open,-2)/Ref($open,-1)-1",
+        "portfolio": {
+          "forbid_all_trade_at_limit": false,
+          "hold_thresh": 2,
+          "n_drop": 5,
+          "only_tradable": false,
+          "risk_degree": 0.95,
+          "topk": 50
+        },
+        "exchange": {
+          "close_cost": 0.0013,
+          "deal_price": "open",
+          "freq": "day",
+          "impact_cost": 0.0,
+          "limit_threshold": [
+            "$buy_block",
+            "$sell_block"
+          ],
+          "min_cost": 5,
+          "open_cost": 0.0008,
+          "trade_unit": 100,
+          "volume_threshold": [
+            "cum",
+            "$capacity"
+          ]
+        },
+        "account": 10000000,
+        "benchmark": "SH000300",
+        "universe_policy": "supported_a_share",
+        "source_constraint_policy": "RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V1"
+      },
+      "dataset_sha256": "a56d093e439345619d2a0419be4e6191886164d8bc849ee05ef25452c26a0759",
+      "source_snapshot_sha256": "b39408fa65995fc593e85c43e0b1c6bd6d5ae2443efdbe0f42873c1de6a83687",
+      "training_source_revision": "262abb9ebf853a9ec75c18783bdd4fecb770f4ea",
+      "model_archives": {
+        "ridge": {
+          "run_id": "float64-alpha158-linear-20261026-0ab51f95e3178a27",
+          "manifest_sha256": "ec093d40eb60de64ac2a597f1bf79fa21207d14adf1d183a38651841733540ea"
+        },
+        "lightgbm": {
+          "run_id": "float64-alpha158-lightgbm-20261026-7d31f41cbdf65d62",
+          "manifest_sha256": "058f0f4d51d34b863518f910bc793e08b133a0fa02da4e4feade5a972eeb5c0c"
+        }
+      },
+      "provider_inventory_sha256": "501b0a356415ae019927f45c74a25124576b50898c04a18957e2b47676751c71",
+      "code_revision": "f6c26aa4ba934897fa49fec38d2a433d90adfc98",
+      "comparison_contract": "COMMON_CAUSAL_PANEL_NATIVE_EXCHANGE_V1"
+    },
+    "created_at": "2026-10-26T16:59:38.767192+00:00",
+    "state": "COMPLETE_DIAGNOSTIC",
+    "signal_start": "2024-01-02",
+    "signal_end": "2026-10-23",
+    "common_rows": 601013,
+    "limitations": [
+      "CURRENT_POOL_SURVIVORSHIP_AND_SELECTION_BIAS",
+      "FULL_PIT_NOT_CERTIFIED",
+      "HISTORICAL_AVAILABLE_AT_UNKNOWN",
+      "POST_HOC_OOS_NOT_FORWARD_PERFORMANCE",
+      "DAILY_OPEN_CAPACITY_AND_LIMIT_PROXIES_NOT_AUCTION_REPLAY",
+      "EQUAL_UNIVERSE_IS_ALLOCATION_CONTROL_NOT_IDENTICAL_TOPK_PORTFOLIO",
+      "ETF_PROVIDER_UNAVAILABLE"
+    ]
+  },
+  "metrics": {
+    "momentum20": {
+      "ic": -0.0031706577265113393,
+      "rank_ic": -0.027486572345387948,
+      "total_return_net": 0.023291295905089715,
+      "annual_return_net": 0.008594386205005966,
+      "max_drawdown": -0.4616783473181083,
+      "mean_daily_turnover": 0.16285757512975776,
+      "sharpe_net": 0.21097336417742032,
+      "benchmark_return": 0.19650306312424815
+    },
+    "reversal5": {
+      "ic": -0.0024884719777160096,
+      "rank_ic": 0.017341653015252277,
+      "total_return_net": 0.4699165052237997,
+      "annual_return_net": 0.15393029444644002,
+      "max_drawdown": -0.40228457819633656,
+      "mean_daily_turnover": 0.19846185023016216,
+      "sharpe_net": 0.574140332337187,
+      "benchmark_return": 0.19650306312424815
+    },
+    "lowvol20": {
+      "ic": -0.0006968040406676338,
+      "rank_ic": 0.03479941855628279,
+      "total_return_net": 0.5300781313716609,
+      "annual_return_net": 0.17126351556195085,
+      "max_drawdown": -0.12329834103526671,
+      "mean_daily_turnover": 0.14256340040653018,
+      "sharpe_net": 1.1640911405799013,
+      "benchmark_return": 0.19650306312424815
+    },
+    "multifactor_equal_rank": {
+      "ic": 0.00037573970667859286,
+      "rank_ic": 0.026128657175895145,
+      "total_return_net": 0.6511736669715504,
+      "annual_return_net": 0.20489587934837483,
+      "max_drawdown": -0.1452537724193831,
+      "mean_daily_turnover": 0.19045554278516055,
+      "sharpe_net": 1.2057021080932424,
+      "benchmark_return": 0.19650306312424815
+    },
+    "equal_weight_universe": {
+      "ic": null,
+      "rank_ic": null,
+      "total_return_net": 1.0215887179853587,
+      "annual_return_net": 0.2990334512615911,
+      "max_drawdown": -0.21745292330716048,
+      "mean_daily_turnover": 0.007110588663724221,
+      "sharpe_net": 1.1805647918871904,
+      "benchmark_return": 0.19650306312424815
+    },
+    "ridge": {
+      "ic": 0.018893638159766406,
+      "rank_ic": 0.04674060739002064,
+      "total_return_net": 0.8746894225080639,
+      "annual_return_net": 0.2631146127601953,
+      "max_drawdown": -0.32178221466454526,
+      "mean_daily_turnover": 0.17528075456471004,
+      "sharpe_net": 1.213724167579036,
+      "benchmark_return": 0.19650306312424815
+    },
+    "lightgbm": {
+      "ic": 0.02322926080592241,
+      "rank_ic": 0.05176184059522626,
+      "total_return_net": 1.267130077571688,
+      "annual_return_net": 0.3555763585011724,
+      "max_drawdown": -0.32174781993959256,
+      "mean_daily_turnover": 0.17428933798716967,
+      "sharpe_net": 1.2707659468392516,
+      "benchmark_return": 0.19650306312424815
+    }
+  },
+  "linux_tests": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "1181",
+    "time": "116.431",
+    "timestamp": "2026-10-27T00:47:37.480850+08:00",
+    "hostname": "73ec830048ca"
+  },
+  "etf": {
+    "state": "CLOSE_DIAGNOSTIC_READY",
+    "as_of": "2026-10-26",
+    "qualified_close_symbols": 30,
+    "required_symbols": 30,
+    "sessions": [
+      "2026-09-18",
+      "2026-09-21",
+      "2026-09-22",
+      "2026-09-23",
+      "2026-09-24",
+      "2026-09-28",
+      "2026-09-29",
+      "2026-09-30",
+      "2026-10-08",
+      "2026-10-09",
+      "2026-10-12",
+      "2026-10-13",
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16",
+      "2026-10-19",
+      "2026-10-20",
+      "2026-10-21",
+      "2026-10-22",
+      "2026-10-23",
+      "2026-10-26"
+    ],
+    "bindings": {
+      "master_sha256": "aea0fe389a3cb016f020b68fe327e9e9c910e53a90ff61fff2dc81a96adc6fa5",
+      "as_of": "2026-10-26",
+      "code_revision": "d83e1ae556205114790945359a9c7eb2a658cd6b",
+      "calendar_sha256": "b31af901ef888cf76f0137a06829e2bf3b9f27c430b85e9af80e48f9a2b1165c",
+      "contract": "ETF_CLOSE_DIAGNOSTIC_V1"
+    },
+    "receipt_sha256": "0f4bc4676110c3a9ae2f4a1a3c1ebee3165a7d40b5d0f047fab3247cf4507c83",
+    "execution_admitted": false,
+    "return_adjustment_certified": false,
+    "limitations": [
+      "VENDOR_NATIVE_PRICE_NOT_CERTIFIED_UNADJUSTED_OR_ADJUSTED",
+      "DISTRIBUTIONS_AND_SPLITS_NOT_RECONCILED",
+      "CURRENT_POOL_SURVIVORSHIP_BIAS",
+      "CLOSE_ONLY_NOT_AMOUNT_VWAP_OR_EXECUTION_ADMISSION",
+      "NOT_COMPARABLE_TO_ADJUSTED_STOCK_MODEL_OR_HISTORICAL_RETURN_SERIES"
+    ]
+  },
+  "free_bytes": 301186678784,
+  "production_deployed": false,
+  "real_next_session_verified": false,
+  "evidence_sha256": "5c5ebb0af71e13d19bfb8a70a03860de2e4fe6391f9d9fcc3d8e1d1332f10ac9"
+}

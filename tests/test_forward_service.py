@@ -1,0 +1,517 @@
+import json
+import sqlite3
+from dataclasses import replace
+from datetime import UTC, datetime, timedelta
+from decimal import Decimal
+from types import SimpleNamespace
+
+import pytest
+
+from qtrade.domain import RuntimeMode
+from qtrade.monitoring.data_freshness import AUTHORITY, signed
+from qtrade.research.forward_paper import ForwardPaperBook as RealBook
+from qtrade.research.forward_paper import ForwardTarget, ObservedSecurity, ObservedSession
+from qtrade.research.forward_publication import validate_forward_publication
+from scripts import run_qlib_forward_service as service
+from scripts.qlib_forward_paper_adapter import public_book_summary
+
+
+class Book:
+    recovered = []
+
+    def __init__(self, root, *, strategy_id, mode, **kwargs):
+        root.mkdir(parents=True, exist_ok=True)
+        self.strategy_id, self.mode = strategy_id, mode
+        self.db = sqlite3.connect(root / "forward.sqlite")
+        self.db.executescript(
+            "CREATE TABLE IF NOT EXISTS targets "
+            "(id TEXT PRIMARY KEY,payload TEXT,execution_at TEXT); "
+            "CREATE TABLE IF NOT EXISTS sessions(day TEXT,target_id TEXT,status TEXT)"
+        )
+        self.bundle = SimpleNamespace(
+            runtime=SimpleNamespace(status=SimpleNamespace(running=False)),
+            ledger=SimpleNamespace(account=SimpleNamespace(positions={})),
+        )
+
+    def recover(self, *, actor):
+        self.recovered.append((self.strategy_id, actor))
+        self.bundle.runtime.status.running = True
+
+    def freeze(self, target, *, now):
+        if now >= target.execution_at:
+            raise ValueError("TARGET_TOO_LATE")
+        from dataclasses import asdict
+
+        self.db.execute(
+            "INSERT OR IGNORE INTO targets VALUES(?,?,?)",
+            (
+                target.identity,
+                json.dumps(asdict(target), default=str),
+                target.execution_at.isoformat(),
+            ),
+        )
+        self.db.commit()
+
+    def observe(self, target, session, *, now):
+        self.db.execute(
+            "INSERT INTO sessions VALUES(?,?,'COMPLETE')",
+            (session.trading_day.isoformat(), target.identity),
+        )
+        self.db.commit()
+
+
+@pytest.fixture
+def environment(tmp_path, monkeypatch):
+    def atomic(path, value):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(value))
+
+    def immutable(path, value):
+        if path.exists():
+            raise FileExistsError(path)
+        atomic(path, value)
+
+    monkeypatch.setattr(service, "write_json_atomic", atomic)
+    monkeypatch.setattr(service, "write_json_immutable", immutable)
+    monkeypatch.setattr(service, "ForwardPaperBook", Book)
+    monkeypatch.setattr(service, "current_epoch", lambda *args: "e" * 64)
+    monkeypatch.setattr(service, "validate_forward_publication", lambda value, **kwargs: value)
+    monkeypatch.setattr(service.shutil, "disk_usage", lambda _: SimpleNamespace(free=200 * 1024**3))
+    monkeypatch.setattr(
+        service,
+        "public_book_summary",
+        lambda book, **kwargs: {"strategy_id": book.strategy_id, "mode": book.mode.value},
+    )
+    Book.recovered = []
+
+    def create(**kwargs):
+        for name in ("data", "models"):
+            sqlite3.connect(tmp_path / name).close()
+        return service.ForwardService(
+            tmp_path / "base",
+            tmp_path / "local",
+            tmp_path / "workflow",
+            tmp_path / "models",
+            tmp_path / "data",
+            "a" * 40,
+            **kwargs,
+        )
+
+    return create
+
+
+def target():
+    now = datetime.now(UTC)
+    return ForwardTarget(
+        "momentum20",
+        "b" * 64,
+        "c" * 64,
+        "a" * 40,
+        now - timedelta(seconds=5),
+        now + timedelta(days=1),
+        {"SH600036": Decimal(".5")},
+        ("Research only",),
+    )
+
+
+def link():
+    return {
+        "kind": "signal-family",
+        "artifact_id": "b" * 64,
+        "manifest_sha256": "d" * 64,
+        "strategy_id": "momentum20",
+        "model_id": None,
+        "data_event_id": "e" * 64,
+    }
+
+
+def test_only_explicit_pristine_paper_initializes_never_restart(environment):
+    instance = environment(modes=(RuntimeMode.PAPER,), initialize_paper="owner")
+    instance.register(target(), link(), now=datetime.now(UTC))
+    assert Book.recovered == [("momentum20", "owner")]
+    restored = environment(modes=(RuntimeMode.PAPER,), initialize_paper="owner")
+    assert Book.recovered == [("momentum20", "owner")]
+    assert all(not b.bundle.runtime.status.running for b in restored.books.values())
+    assert restored.cycle(stopped=True)["state"] == "STOPPED"
+
+
+def test_default_shadow_never_recovers_or_initializes_paper(environment):
+    instance = environment()
+    instance.register(target(), link(), now=datetime.now(UTC))
+    assert [b.mode for b in instance.books.values()] == [RuntimeMode.SHADOW]
+    assert not Book.recovered
+
+
+def test_stale_new_inputs_do_not_prevent_processing_existing_frozen_book(environment, monkeypatch):
+    instance = environment()
+    instance.register(target(), link(), now=datetime.now(UTC))
+
+    def failure(now):
+        raise ValueError("FORWARD_SERVICE_CURRENT_INPUTS_STALE")
+
+    monkeypatch.setattr(instance, "current_targets", failure)
+    observed = []
+    monkeypatch.setattr(instance, "observe_book", lambda book, **kwargs: observed.append(book))
+    result = instance.cycle()
+    assert len(observed) == 1
+    assert result["state"] == "DEGRADED"
+    assert result["errors"][0]["code"] == "FORWARD_SERVICE_CURRENT_INPUTS_STALE"
+
+
+def test_storage_reserve_blocks_freeze_and_observe(environment, monkeypatch):
+    instance = environment()
+    monkeypatch.setattr(service.shutil, "disk_usage", lambda _: SimpleNamespace(free=99 * 1024**3))
+    monkeypatch.setattr(instance, "current_targets", lambda _: pytest.fail("storage gate skipped"))
+    result = instance.cycle()
+    assert result["errors"][0]["code"] == "FORWARD_SERVICE_STORAGE_RESERVE"
+
+
+def test_errors_in_one_book_do_not_skip_other_books(environment, monkeypatch):
+    instance = environment(modes=(RuntimeMode.SHADOW, RuntimeMode.PAPER))
+    instance.register(target(), link(), now=datetime.now(UTC))
+    monkeypatch.setattr(instance, "current_targets", lambda _: [])
+    visited = []
+
+    def observe(book, **kwargs):
+        visited.append(book.mode)
+        if book.mode is RuntimeMode.SHADOW:
+            raise ValueError("FORWARD_SERVICE_MISSING_SESSION")
+
+    monkeypatch.setattr(instance, "observe_book", observe)
+    result = instance.cycle()
+    assert len(visited) == 2 and result["state"] == "HUMAN_RECOVERY_REQUIRED"
+    assert result["errors"][0]["code"] == "FORWARD_SERVICE_MISSING_SESSION"
+
+
+def test_epoch_changed_before_freeze_rejects_prospective_admission(environment, monkeypatch):
+    instance = environment()
+    monkeypatch.setattr(service, "current_epoch", lambda *args: "f" * 64)
+    with pytest.raises(ValueError, match="EPOCH_CHANGED"):
+        instance.register(target(), link(), now=datetime.now(UTC))
+    assert instance.books == {}
+
+
+def test_missing_observation_day_does_not_skip_ahead(environment, monkeypatch):
+    instance = environment()
+    item = target()
+    instance.register(item, link(), now=datetime.now(UTC))
+    now = item.execution_at + timedelta(days=2)
+    monkeypatch.setattr(instance.calendar, "expected", lambda *_: now)
+    progress = signed({**AUTHORITY, "required_through": {"day": now.isoformat()}, "tasks": []})
+    service.write_json_atomic(instance.base / "unified-data/collection-progress.json", progress)
+    book = next(iter(instance.books.values()))
+    with pytest.raises(ValueError, match="MARKET_DAY_UNAVAILABLE"):
+        instance.observe_book(book, now=now)
+    assert book.db.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 0
+
+
+def test_live_and_unrequested_paper_initialization_are_rejected(environment, monkeypatch):
+    with pytest.raises(ValueError, match="CONFIGURATION_INVALID"):
+        environment(initialize_paper="owner")
+    monkeypatch.setenv("LIVE_TRADING_ENABLED", "true")
+    with pytest.raises(ValueError, match="CONFIGURATION_INVALID"):
+        environment()
+
+
+def test_atomic_admission_reserves_both_ledgers_without_mutation(environment, monkeypatch):
+    instance = environment()
+    original = Book.freeze
+    checked = []
+
+    def freeze(book, item, *, now):
+        for database in (instance.data_database, instance.model_database):
+            with (
+                sqlite3.connect(database, timeout=0) as competing,
+                pytest.raises(sqlite3.OperationalError, match="locked"),
+            ):
+                competing.execute("BEGIN IMMEDIATE")
+            checked.append(database)
+        original(book, item, now=now)
+
+    monkeypatch.setattr(Book, "freeze", freeze)
+    before = [p.read_bytes() for p in (instance.data_database, instance.model_database)]
+    instance.register(target(), link(), now=datetime.now(UTC))
+    assert len(checked) == 2
+    assert [p.read_bytes() for p in (instance.data_database, instance.model_database)] == before
+
+
+def test_epoch_change_during_freeze_leaves_unadmitted_target(environment, monkeypatch):
+    instance = environment()
+    original = Book.freeze
+    item = target()
+
+    def freeze(book, item, *, now):
+        original(book, item, now=now)
+        monkeypatch.setattr(service, "current_epoch", lambda *args: "f" * 64)
+
+    monkeypatch.setattr(Book, "freeze", freeze)
+    with pytest.raises(ValueError, match="EPOCH_CHANGED"):
+        instance.register(item, link(), now=datetime.now(UTC))
+    identity, book = next(iter(instance.books.items()))
+    assert not (instance.root / identity / "admissions" / (item.identity + ".json")).exists()
+    with pytest.raises(ValueError, match="ADMISSION_RECONCILIATION_REQUIRED"):
+        instance.observe_book(book, now=item.execution_at + timedelta(days=1))
+    monkeypatch.setattr(service, "current_epoch", lambda *args: "e" * 64)
+    with pytest.raises(ValueError, match="ADMISSION_RECONCILIATION_REQUIRED"):
+        instance.register(item, link(), now=datetime.now(UTC))
+
+
+def test_restart_shadow_excludes_persisted_paper(environment):
+    instance = environment(modes=(RuntimeMode.PAPER, RuntimeMode.SHADOW))
+    instance.register(target(), link(), now=datetime.now(UTC))
+    restored = environment()
+    assert [book.mode for book in restored.books.values()] == [RuntimeMode.SHADOW]
+
+
+def test_signed_real_book_and_service_publication_contract(environment, monkeypatch):
+    monkeypatch.setattr(service, "ForwardPaperBook", RealBook)
+    monkeypatch.setattr(service, "public_book_summary", public_book_summary)
+    monkeypatch.setattr(service, "validate_forward_publication", validate_forward_publication)
+    instance = environment(modes=(RuntimeMode.SHADOW, RuntimeMode.PAPER), initialize_paper="owner")
+    item = target()
+    instance.register(item, link(), now=datetime.now(UTC))
+    monkeypatch.setattr(instance, "current_targets", lambda now: [(item, link())])
+    result = instance.cycle()
+    assert result["state"] == "RUNNING" and len(result["books"]) == 2
+    for book in result["books"]:
+        assert book["target_count"] == 1 and book["sessions"] == []
+        assert book["frozen_targets"][0]["weight_count"] == 1
+        assert book["frozen_targets"][0]["weights"][0]["weight"] == "0.5"
+    stopped = instance.cycle(stopped=True)
+    assert validate_forward_publication(stopped)["state"] == "STOPPED"
+    # Synthetic test clocks exercise schema/accounting, never production forward evidence.
+    day = item.execution_at.date()
+    market = ObservedSession(
+        day,
+        day - timedelta(days=1),
+        day + timedelta(days=1),
+        item.execution_at,
+        item.execution_at + timedelta(hours=1),
+        item.execution_at + timedelta(hours=2),
+        "f" * 64,
+        "9" * 64,
+        {
+            "SH600036": ObservedSecurity(
+                "SH600036",
+                "SSE",
+                Decimal("10"),
+                Decimal("11"),
+                1000000,
+                100,
+                Decimal(".01"),
+                None,
+                None,
+                None,
+                None,
+                None,
+                "8" * 64,
+            ),
+        },
+    )
+    for book in instance.books.values():
+        book.observe(item, market, now=market.observed_at)
+    completed = instance.cycle(now=market.observed_at)
+    assert validate_forward_publication(completed, now=market.observed_at)["state"] == "RUNNING"
+    for book in completed["books"]:
+        receipt = book["sessions"][0]
+        assert receipt["blocked_count"] == 1 and receipt["fill_count"] == 0
+        assert (
+            receipt["forward_return"] is None
+            if book["mode"] == "SHADOW"
+            else (Decimal(receipt["forward_return"]) == 0)
+        )
+
+
+def test_collection_database_replays_exact_old_day_and_stays_read_only(environment, tmp_path):
+    database = tmp_path / "collection.sqlite"
+    with sqlite3.connect(database) as connection:
+        connection.execute(
+            "CREATE TABLE collection_tasks "
+            "(symbol TEXT,state TEXT,last_success_batch TEXT,"
+            "frequency TEXT,trading_day TEXT)"
+        )
+        connection.executemany(
+            "INSERT INTO collection_tasks VALUES(?,?,?,?,?)",
+            [
+                ("600036", "SUCCEEDED", "a" * 32, "day", "2026-10-26"),
+                ("600036", "SUCCEEDED", "b" * 32, "day", "2026-10-27"),
+            ],
+        )
+    before = database.read_bytes()
+    instance = environment(collection_database=database)
+    rows = instance.collection_tasks("2026-10-26", ["SH600036"])
+    assert rows == [{"symbol": "600036", "state": "SUCCEEDED", "last_success_batch": "a" * 32}]
+    assert database.read_bytes() == before
+    with (
+        service.readonly(database) as connection,
+        pytest.raises(sqlite3.OperationalError, match="readonly"),
+    ):
+        connection.execute("DELETE FROM collection_tasks")
+
+
+def test_source_discovery_uses_verified_current_epoch_and_actual_archive(environment, monkeypatch):
+    instance = environment()
+    item = target()
+    now = datetime.now(UTC)
+    online = signed(
+        {
+            **AUTHORITY,
+            "worker": {"heartbeat_at": now.isoformat(), "source_revision": "a" * 40},
+            "data_version": {
+                "version_id": item.data_version,
+                "data_event_id": "e" * 64,
+                "actual_end": instance.calendar.expected(now, "daily").date().isoformat(),
+            },
+        }
+    )
+    service.write_json_atomic(instance.base / "workflow/public/online.json", online)
+    with sqlite3.connect(instance.workflow_database) as connection:
+        connection.execute("CREATE TABLE jobs(id TEXT, request TEXT, result TEXT, state TEXT)")
+        connection.execute(
+            "INSERT INTO jobs VALUES(?,?,?,?)",
+            (
+                "a" * 32,
+                json.dumps(
+                    {
+                        "kind": "QLIB_SIGNAL_JOB",
+                        "data_version_id": item.data_version,
+                        "data_event_id": "e" * 64,
+                    }
+                ),
+                json.dumps({"signal_family_id": item.signal_id}),
+                "COMPLETE",
+            ),
+        )
+    archive = instance.base / "workflow/jobs" / ("a" * 32) / "output" / item.signal_id
+    service.write_json_atomic(
+        archive / "manifest.json", signed({**AUTHORITY, "bindings": {"data_event_id": "e" * 64}})
+    )
+    monkeypatch.setattr(service, "active_approval", lambda _: None)
+    verified = []
+
+    def verify(path, **kwargs):
+        verified.append((path, kwargs))
+        return [(item, link())]
+
+    monkeypatch.setattr(service, "signal_targets", verify)
+    values = instance.current_targets(now)
+    assert verified == [(archive, {"data_version": item.data_version, "source_revision": "a" * 40})]
+    assert values[0][1]["data_event_id"] == "e" * 64
+    assert values[0][1]["approval_sha256"] is None
+    online["worker"]["heartbeat_at"] = (now - timedelta(hours=1)).isoformat()
+    service.write_json_atomic(
+        instance.base / "workflow/public/online.json",
+        signed({k: v for k, v in online.items() if k != "evidence_sha256"}),
+    )
+    with pytest.raises(ValueError, match="WORKER_STALE"):
+        instance.current_targets(now)
+
+
+def test_invalid_book_does_not_prevent_other_books_restoring(environment):
+    instance = environment(modes=(RuntimeMode.PAPER, RuntimeMode.SHADOW))
+    instance.register(target(), link(), now=datetime.now(UTC))
+    paper = next(key for key, value in instance.roster.items() if value["mode"] == "PAPER")
+    instance.roster[paper]["strategy_id"] = "tampered"
+    service.write_json_atomic(
+        instance.root / "roster.json", signed({**AUTHORITY, "books": instance.roster})
+    )
+    restored = environment(modes=(RuntimeMode.PAPER, RuntimeMode.SHADOW))
+    assert len(restored.books) == 1
+    assert restored.startup_errors[0]["code"] == "FORWARD_SERVICE_BOOK_RESTORE_FAILED"
+
+
+def test_diagnostics_do_not_persist_exception_messages(environment, monkeypatch):
+    instance = environment()
+
+    def fail(now):
+        raise RuntimeError("credential=never-record-this-secret")
+
+    monkeypatch.setattr(instance, "current_targets", fail)
+    result = instance.cycle()
+    assert result["errors"][0]["code"] == "RuntimeError"
+    assert "never-record-this-secret" not in json.dumps(result)
+    for path in (instance.root / "diagnostics").glob("*.json"):
+        assert "never-record-this-secret" not in path.read_text()
+
+
+def data_ledger(instance, item):
+    with sqlite3.connect(instance.data_database) as c:
+        c.executescript(
+            "CREATE TABLE data_events(sequence INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "event_id TEXT,version_id TEXT,payload TEXT);"
+            "CREATE TABLE data_heads(frequency TEXT,version_id TEXT);"
+            "CREATE TABLE data_versions(version_id TEXT,manifest_sha256 TEXT)"
+        )
+        c.execute(
+            "INSERT INTO data_events(event_id,version_id,payload) VALUES(?,?,?)",
+            (
+                "e" * 64,
+                item.data_version,
+                json.dumps(
+                    signed(
+                        {**AUTHORITY, "kind": "QLIB_DATA_READY", "version_id": item.data_version}
+                    )
+                ),
+            ),
+        )
+        c.execute("INSERT INTO data_heads VALUES(?,?)", ("day", item.data_version))
+        c.execute("INSERT INTO data_versions VALUES(?,?)", (item.data_version, "d" * 64))
+
+
+def test_observation_rejects_any_rollback_after_frozen_epoch(environment):
+    instance, item = environment(), target()
+    data_ledger(instance, item)
+    instance.check_observation_context(item, link())
+    with sqlite3.connect(instance.data_database) as c:
+        c.execute(
+            "INSERT INTO data_events(event_id,version_id,payload) VALUES(?,?,?)",
+            (
+                "f" * 64,
+                item.data_version,
+                json.dumps(
+                    signed(
+                        {**AUTHORITY, "kind": "QLIB_DATA_ROLLBACK", "version_id": item.data_version}
+                    )
+                ),
+            ),
+        )
+    with pytest.raises(ValueError, match="ROLLBACK_REQUIRES_REVIEW"):
+        instance.check_observation_context(item, link())
+
+
+def test_observation_allows_only_verified_descendant_data(environment):
+    instance = environment()
+
+    def version(dataset):
+        # Minimal signed lineage manifests exercise this bounded lineage guard;
+        # full Provider/source verification belongs to immutable data admission.
+        from hashlib import sha256
+
+        raw = json.dumps(dataset).encode()
+        files = {"dataset.json": sha256(raw).hexdigest()}
+        identity = service.content_id(files, {})
+        root = instance.base / "unified-data/qlib-versions/versions" / identity
+        root.mkdir(parents=True)
+        (root / "dataset.json").write_bytes(raw)
+        manifest = signed({**AUTHORITY, "version_id": identity, "files": files, "bindings": {}})
+        service.write_json_atomic(root / "version.json", manifest)
+        return identity, manifest["evidence_sha256"]
+
+    frozen = signed({**AUTHORITY, "end": "2026-10-26"})
+    old_id, _ = version(frozen)
+    item = replace(target(), data_version=old_id)
+    data_ledger(instance, item)
+    descendant = signed(
+        {**AUTHORITY, "end": "2026-10-27", "ancestor_dataset_sha256": [frozen["evidence_sha256"]]}
+    )
+    new_id, manifest_sha = version(descendant)
+    with sqlite3.connect(instance.data_database) as c:
+        c.execute("INSERT INTO data_versions VALUES(?,?)", (new_id, manifest_sha))
+        c.execute("UPDATE data_heads SET version_id=?", (new_id,))
+    instance.check_observation_context(item, link())
+    unrelated_id, manifest_sha = version(signed({**AUTHORITY, "end": "2026-10-28"}))
+    with sqlite3.connect(instance.data_database) as c:
+        c.execute("INSERT INTO data_versions VALUES(?,?)", (unrelated_id, manifest_sha))
+        c.execute("UPDATE data_heads SET version_id=?", (unrelated_id,))
+    with pytest.raises(ValueError, match="DATA_NOT_DESCENDANT"):
+        instance.check_observation_context(item, link())

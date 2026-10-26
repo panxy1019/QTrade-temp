@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Alert, Card, Descriptions, Select, Space, Table, Typography } from 'antd'
 import { workflowGet } from '../research/qlibWorkflow'
+import { EtfTrendPanel } from '../components/EtfTrendPanel'
 
 interface Signals {
   publication_available: boolean; current_input: boolean
@@ -58,5 +59,6 @@ export function SignalsPage() {
         ]} />
       </Card>
     </>}
+    <EtfTrendPanel />
   </Space>
 }

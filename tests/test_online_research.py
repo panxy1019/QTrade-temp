@@ -275,6 +275,38 @@ def test_data_rollback_auth_epoch_and_idempotent_receipt(online, tmp_path):
     assert len(sent) == 1
 
 
+def test_historical_comparison_is_immutable_research_not_current_signal(online, monkeypatch):
+    from test_strategy_comparison import public_result
+
+    http, _, _, _ = online
+    result = public_result()
+    monkeypatch.setattr(api, 'read_public', lambda *args, **kwargs: result)
+    response = http.get('/research/online/strategy-comparison')
+    assert response.headers['cache-control'] == 'no-store'
+    assert response.json()['comparison']['forward_return_observed'] is False
+    result['strategies']['ridge']['metrics']['ic'] = True
+    result = resign(result)
+    assert http.get('/research/online/strategy-comparison').json()['publication_available'] is False
+
+
+@pytest.mark.parametrize('age,fresh', [(0, True), (719, True), (721, False)])
+def test_forward_service_freshness_is_read_time_not_execution_permission(online, monkeypatch,
+                                                                      age, fresh):
+    http, _, _, _ = online
+    stamp = (datetime.now(UTC)-timedelta(seconds=age)).isoformat()
+    value = signed({**AUTHORITY, 'schema_version': 'qtrade.forward-service.v1',
+        'generated_at': stamp, 'heartbeat_at': stamp, 'source_revision': 'c'*40,
+        'state': 'HUMAN_RECOVERY_REQUIRED', 'books': [], 'errors': [],
+        'limitations': ['No production forward acceptance in this test']})
+    monkeypatch.setattr(api, 'read_public', lambda *args, **kwargs: value)
+    result = http.get('/research/online/forward-books').json()
+    assert result['publication_available'] is True and result['service_fresh'] is fresh
+    assert result['publication']['state'] == 'HUMAN_RECOVERY_REQUIRED'
+    value['live_trading_enabled'] = True
+    value = resign(value)
+    assert http.get('/research/online/forward-books').json()['publication_available'] is False
+
+
 @pytest.mark.parametrize('state,fresh', [('PREDICTING', True), ('RUNNING', True),
     ('STOPPED', False), ('QUEUE_UNAVAILABLE', False), ('FAILED', False), ('unknown', False)])
 def test_working_process_is_not_mislabeled_as_expired_heartbeat(online, state, fresh):

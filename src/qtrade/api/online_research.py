@@ -257,6 +257,49 @@ def catalog(response: Response) -> dict[str, Any]:
                 'expected_complete_day': research_clock()}
 
 
+@router.get('/etf-trend')
+def etf_trend(response: Response) -> dict[str, Any]:
+    from qtrade.research.etf_trend import validate_etf_trend_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        result = validate_etf_trend_publication(read_public('etf-trend.json', maximum=300_000))
+        return {**AUTHORITY, 'publication_available': True,
+                'current_input': result['as_of'] == research_clock(), 'diagnostic': result}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False,
+                'current_input': False, 'diagnostic': None}
+
+
+@router.get('/forward-books')
+def forward_books(response: Response) -> dict[str, Any]:
+    from qtrade.research.forward_publication import validate_forward_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        result = validate_forward_publication(read_public('forward.json', maximum=2_000_000))
+        stamp = datetime.fromisoformat(result['heartbeat_at'])
+        fresh = result['state'] != 'STOPPED' and 0 <= (
+            datetime.now(UTC)-stamp).total_seconds() <= 720
+        return {**AUTHORITY, 'publication_available': True,
+                'service_fresh': fresh, 'publication': result}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False,
+                'service_fresh': False, 'publication': None}
+
+
+@router.get('/strategy-comparison')
+def strategy_comparison(response: Response) -> dict[str, Any]:
+    from qtrade.research.strategy_comparison import validate_comparison_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        result = validate_comparison_publication(read_public('comparison.json', maximum=3_000_000))
+        return {**AUTHORITY, 'publication_available': True, 'comparison': result}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False, 'comparison': None}
+
+
 @router.get('/data-versions')
 def data_versions(response: Response) -> dict[str, Any]:
     response.headers['Cache-Control'] = 'no-store'

@@ -48,6 +48,35 @@ def test_worker_deduplicates_and_records_history_and_capacity(worker):
     ).fetchall() == [("QUEUED",), ("COMPUTING_ALPHA158",)]
 
 
+def test_data_rollback_ingress_requires_authenticated_request_envelope(worker, monkeypatch):
+    value, queue = worker
+    calls = []
+    monkeypatch.setattr(value, 'execute_data_rollback', lambda command: calls.append(command))
+    command = {'request_id': 'e'*32, 'version_id': 'a'*64, 'expected_head': 'b'*64,
+               'expected_event_id': 'c'*64, 'actor': 'test-user', 'reason': 'DATA_QUALITY_REVIEW'}
+    payload = {'job_id': command['request_id'], 'kind': 'QLIB_DATA_ROLLBACK',
+               'command': command, 'live_trading_enabled': False}
+    queue.read = lambda: {'requests/'+command['request_id']: payload}
+    value.ingest()
+    assert calls == []
+    envelope = seal(payload, value.secret)
+    queue.read = lambda: {'cancellations/'+command['request_id']: envelope}
+    value.ingest()
+    assert calls == []
+    queue.read = lambda: {'requests/'+command['request_id']: envelope}
+    value.ingest()
+    assert calls == [command]
+
+
+def test_data_rollback_yields_without_mutation_to_running_prediction(worker):
+    value, _ = worker
+    value.predictor.child = object()
+    value.execute_data_rollback({'request_id': 'e'*32, 'version_id': 'a'*64,
+        'expected_head': 'b'*64, 'expected_event_id': 'c'*64,
+        'actor': 'test-user', 'reason': 'DATA_QUALITY_REVIEW'})
+    assert not (value.root/'data-control').exists()
+
+
 def test_worker_restart_never_replays_an_uncertain_running_job(worker):
     value, queue = worker
     identity = "a" * 32

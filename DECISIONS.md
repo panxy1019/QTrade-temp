@@ -39,6 +39,25 @@ returns. Holdings, turnover and execution constraints remain explicit unmet gate
 before PAPER/SHADOW admission. No gateway/vn.py component is needed for this layer.
 LIVE_TRADING_ENABLED=false.
 
+## ADR-171 — Prospective books reserve admission context without owning source ledgers
+
+Status: accepted, 2026-10-27.
+
+Reuse the existing portfolio, risk, OMS, simulation gateway and accounting stack;
+neither vn.py nor Qlib can certify missing market source constraints. SHADOW stores
+observations without portfolio fills or returns. PAPER blocks unknown suspension,
+ST, precise limits, corporate actions and missing prior-session liquidity evidence.
+Current-session total volume cannot determine opening execution capacity.
+
+Archive verification precedes a short data-then-model SQLite reservation, matching
+the control worker lock order. Final epoch checks and immutable target admission
+are serialized under those reservations without source-ledger row mutations or
+ownership claims. Real write time must precede execution. Restarted PAPER remains
+halted until explicit human recovery and successful reconciliation. Initial user
+authorization applies only to pristine research books, not later recovery.
+Public evidence distinguishes historical comparison, diagnostic ETF closes,
+indicative targets and actual prospective observations. Live trading stays off.
+
 Reuse the single research queue for one signal job per data/code version, after
 prediction priority gates. Bound runtime and retries, verify complete inventory
 and recompute indicative allocation before publishing. The read-only signal page

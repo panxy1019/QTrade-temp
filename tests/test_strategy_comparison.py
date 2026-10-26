@@ -116,11 +116,10 @@ def test_bind_rejects_cost_and_provider_drift(tmp_path, monkeypatch):
 
 
 def test_sealed_comparison_rejects_extra_or_tampered_files(tmp_path):
-    result = signed({**AUTHORITY, 'comparison_id': 'a'*64, 'strategies': dict.fromkeys(FAMILIES),
-                     'historical_pit_certified': False})
+    result = public_result()
     (tmp_path/'comparison.json').write_text(json.dumps(result))
     manifest = signed({**AUTHORITY, 'schema_version': 'qtrade.strategy-comparison.v1',
-                       'comparison_id': 'a'*64,
+                       'comparison_id': result['comparison_id'],
                        'files': {'comparison.json': file_hash(tmp_path/'comparison.json')}})
     (tmp_path/'manifest.json').write_text(json.dumps(manifest))
     assert verify_comparison(tmp_path) == result
@@ -132,3 +131,111 @@ def test_sealed_comparison_rejects_extra_or_tampered_files(tmp_path):
     with pytest.raises(ValueError, match='ARTIFACT'):
         verify_comparison(tmp_path)
 
+
+
+def public_result():
+    from pathlib import Path
+
+    from qtrade.research.source_constraints import POLICY
+    from qtrade.research.strategy_comparison import LIMITATIONS, PROTOCOL_KEYS
+    config = json.loads((Path(__file__).resolve().parents[1]/
+                         'configs/qlib_daily_baseline.json').read_text())
+    protocol = {key: config.get(key) for key in PROTOCOL_KEYS}
+    protocol.update({'segments': {'train': ['2020-01-01', '2021-12-31'],
+                                  'valid': ['2022-01-01', '2023-12-31'],
+                                  'test': ['2024-01-02', '2024-01-03']},
+                     'universe_policy': 'supported_a_share', 'source_constraint_policy': POLICY})
+    bindings = {'dataset_sha256': 'a'*64, 'source_snapshot_sha256': 'b'*64,
+                'provider_inventory_sha256': 'c'*64, 'code_revision': 'd'*40,
+                'training_source_revision': 'e'*40, 'protocol': protocol,
+                'comparison_contract': 'COMMON_CAUSAL_PANEL_NATIVE_EXCHANGE_V1',
+                'model_archives': {n: {'run_id': n, 'manifest_sha256': 'f'*64}
+                                   for n in ('ridge', 'lightgbm')}}
+    return signed({**AUTHORITY, 'schema_version': 'qtrade.strategy-comparison-result.v1',
+        'state': 'COMPLETE_DIAGNOSTIC', 'bindings': bindings,
+        'comparison_id': signed(bindings)['evidence_sha256'], 'common_rows': 20,
+        'signal_start': '2024-01-02', 'signal_end': '2024-01-03',
+        'created_at': '2026-10-26T00:00:00+08:00', 'limitations': LIMITATIONS,
+        'unavailable': ['etf_positive_trend20'], 'historical_pit_certified': False,
+        'historical_available_at_known': False, 'forward_return_observed': False,
+        'strategies': {n: {'signal_rows': 20,
+            'allocation': 'EQUAL_WEIGHT_ALL' if n == 'equal_weight_universe'
+                          else 'TOPK_DROPOUT_COMMON_CONFIG',
+            'metrics': dict.fromkeys(('ic', 'rank_ic', 'total_return_net', 'annual_return_net',
+                                     'max_drawdown', 'mean_daily_turnover', 'sharpe_net',
+                                     'benchmark_return')),
+            'curve': [{'date': '2024-01-02', 'equity': 1., 'turnover': 0., 'cost': 0.}]}
+            for n in FAMILIES}})
+
+
+@pytest.mark.parametrize('change', ['hash', 'authority', 'numeric_authority', 'metric',
+                                   'curve', 'family', 'limits'])
+def test_publication_rejects_resigned_invalid_contract(change):
+    from qtrade.research.strategy_comparison import validate_comparison_publication
+    value = public_result()
+    assert validate_comparison_publication(value) == value
+    if change == 'hash':
+        value['comparison_id'] = '0'*64
+    elif change == 'authority':
+        value['live_trading_enabled'] = True
+    elif change == 'numeric_authority':
+        value['live_trading_enabled'] = 0
+    elif change == 'metric':
+        value['strategies']['ridge']['metrics']['ic'] = True
+    elif change == 'curve':
+        value['strategies']['ridge']['curve'].append(value['strategies']['ridge']['curve'][0])
+    elif change == 'family':
+        del value['strategies']['ridge']
+    else:
+        value['limitations'] = []
+    value.pop('evidence_sha256')
+    with pytest.raises(ValueError):
+        validate_comparison_publication(signed(value))
+
+
+@pytest.mark.parametrize('change', ['future', 'empty_portfolio', 'empty_exchange',
+                                   'bool_cost', 'negative_cost', 'bad_limit', 'risk', 'cash',
+                                   'bool_topk', 'too_many_drops', 'nonfinite_cost'])
+def test_public_execution_protocol_fails_closed(change):
+    from qtrade.research.strategy_comparison import validate_comparison_publication
+
+    value = public_result()
+    protocol = value['bindings']['protocol']
+    if change == 'future':
+        value['created_at'] = '2099-01-01T00:00:00+00:00'
+    elif change == 'empty_portfolio':
+        protocol['portfolio'] = {}
+    elif change == 'empty_exchange':
+        protocol['exchange'] = {}
+    elif change == 'bool_cost':
+        protocol['exchange']['min_cost'] = False
+    elif change == 'negative_cost':
+        protocol['exchange']['close_cost'] = -.001
+    elif change == 'bad_limit':
+        protocol['exchange']['limit_threshold'] = .1
+    elif change == 'risk':
+        protocol['portfolio']['risk_degree'] = 1.5
+    elif change == 'bool_topk':
+        protocol['portfolio']['topk'] = True
+    elif change == 'too_many_drops':
+        protocol['portfolio'].update(topk=10, n_drop=20)
+    elif change == 'nonfinite_cost':
+        protocol['exchange']['close_cost'] = float('inf')
+    else:
+        protocol['account'] = '1000000'
+    value['comparison_id'] = signed(value['bindings'])['evidence_sha256']
+    value.pop('evidence_sha256')
+    with pytest.raises(ValueError):
+        validate_comparison_publication(signed(value))
+
+
+def test_publication_size_limit_matches_compact_utf8_transport():
+    from qtrade.research.strategy_comparison import validate_comparison_publication
+
+    value = public_result()
+    value['padding'] = '\u7814' * 500_000
+    value.pop('evidence_sha256')
+    assert validate_comparison_publication(signed(value))['padding'] == value['padding']
+    value['padding'] = 'x' * 3_000_000
+    with pytest.raises(ValueError, match='COMPARISON_PUBLICATION_TOO_LARGE'):
+        validate_comparison_publication(signed(value))

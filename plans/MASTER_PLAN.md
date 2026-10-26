@@ -24,6 +24,12 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Native comparison and ETF diagnostic evidence are captured in
+docs/evidence/qlib-step1-initial-native-20261027.json. New forward service/core/UI
+and data control integration pass local checks; Linux acceptance and deployment
+of this batch remain pending. Daily ETF scheduling is being added separately.
+Actual next-session proof is still required; STEP2 implementation has not begun.
+
 Owner explicitly requests continuous execution and authorizes parallel agents.
 Follow plans/STEP1_STEP2_EXECUTION.md and preserved STEP2_USER_GUIDE.txt.
 Complete all C/D/E gates, including real next-session evidence, before starting

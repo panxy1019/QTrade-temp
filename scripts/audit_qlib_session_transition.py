@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import sqlite3
+from contextlib import closing
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -21,7 +23,7 @@ REPO = Path(__file__).resolve().parents[1]
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('previous-version', 'current-version', 'automatic-completion',
-                 'prediction', 'signals', 'output'):
+                 'prediction', 'signals', 'database', 'output'):
         parser.add_argument('--'+name, type=Path, required=True)
     args = parser.parse_args()
     # No --now override: production evidence uses the actual wall clock.
@@ -32,8 +34,14 @@ def main() -> None:
     if (daily_request['previous_version'] != previous['version_id']
             or daily_request['day'] != current['actual_end']):
         raise ValueError('SESSION_ACCEPTANCE_AUTOMATIC_REQUEST_MISMATCH')
+    prediction = verify_prediction(args.prediction)
+    with closing(sqlite3.connect(args.database.resolve().as_uri()+'?mode=ro', uri=True)) as c:
+        row = c.execute('SELECT payload FROM data_events WHERE event_id=?',
+                        (prediction['bindings']['data_event_id'],)).fetchone()
+    if row is None:
+        raise ValueError('SESSION_ACCEPTANCE_ADMISSION_EVENT_MISSING')
     result = assess_transition(previous, current, completion,
-        verify_prediction(args.prediction), verify_signal_archive(args.signals)['manifest'],
+        prediction, verify_signal_archive(args.signals)['manifest'], json.loads(row[0]),
         Calendar(REPO/'configs/observer_calendar_2026.json'), now=datetime.now(UTC))
     write_json_immutable(args.output, result)
     print(json.dumps(result))

@@ -372,6 +372,8 @@ class Worker:
         write_json_atomic(self.public/'online.json', signed({
             k: v for k, v in online_value.items() if k != 'evidence_sha256'}))
         self.publish_signals()
+        self.publish_comparison()
+        self.publish_etf()
         # A consistent local-SQLite backup on NFS, never the active database.
         with sqlite3.connect(self.root / "catalog-backup.sqlite.tmp") as backup:
             self.db.backup(backup)
@@ -510,7 +512,10 @@ class Worker:
                 raise ValueError('SIGNAL_ONE_SEALED_ARCHIVE_REQUIRED')
             manifest = verify_signal_archive(paths[0].parent)['manifest']
             if (manifest['bindings']['data_version_id'] != request['data_version_id']
-                    or manifest['bindings']['code_revision'] != self.revision):
+                    or manifest['bindings']['code_revision'] != self.revision
+                    or manifest['bindings'].get('data_event_id') != request['data_event_id']
+                    or current_epoch(self.online.data_database, request['data_version_id'])
+                    != request['data_event_id']):
                 raise ValueError('SIGNAL_COMPLETED_CONTEXT_CHANGED')
             self.update(identity, 'COMPLETE', result={'signal_family_id':
                 manifest['signal_family_id'], 'data_version_id': request['data_version_id']})
@@ -622,6 +627,39 @@ class Worker:
             if created.rowcount:
                 self.db.execute('INSERT INTO events VALUES(?,?,?)',
                                  (identity, now.isoformat(), 'QUEUED'))
+
+    def publish_etf(self) -> None:
+        from qtrade.monitoring.data_freshness import Calendar
+        from qtrade.research.etf_trend import verify_etf_archive
+        from qtrade.research.model_registry import checked_identity
+        from scripts.prepare_qlib_incremental import load_signed
+
+        value = signed({**AUTHORITY, 'state': 'NO_VERIFIED_ETF_DIAGNOSTIC'})
+        try:
+            root = self.base/'online-research/etf-trend'
+            identity = checked_identity(load_signed(root/'latest.json')['diagnostic_id'])
+            value = verify_etf_archive(root/identity,
+                                       Calendar(REPO/'configs/observer_calendar_2026.json'))
+        except (OSError, ValueError, KeyError, TypeError):
+            value = signed({**AUTHORITY, 'state': 'NO_VERIFIED_ETF_DIAGNOSTIC'})
+        write_json_atomic(self.public/'etf-trend.json', value)
+
+    def publish_comparison(self) -> None:
+        from qtrade.research.model_registry import checked_identity
+        from qtrade.research.strategy_comparison import verify_comparison
+        from scripts.prepare_qlib_incremental import load_signed
+
+        value = signed({**AUTHORITY, 'state': 'NO_VERIFIED_STRATEGY_COMPARISON'})
+        try:
+            root = self.base/'online-research/strategy-comparisons'
+            pointer = load_signed(root/'latest.json')
+            identity = checked_identity(pointer['comparison_id'])
+            value = verify_comparison(root/identity)
+            if value['comparison_id'] != identity:
+                raise ValueError('COMPARISON_POINTER_IDENTITY_MISMATCH')
+        except (OSError, ValueError, KeyError, TypeError):
+            value = signed({**AUTHORITY, 'state': 'NO_VERIFIED_STRATEGY_COMPARISON'})
+        write_json_atomic(self.public/'comparison.json', value)
 
     def publish_signals(self) -> None:
         from qtrade.research.signal_publication import verify_signal_archive

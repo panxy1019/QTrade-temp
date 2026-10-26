@@ -238,6 +238,39 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         signals = signed({**AUTHORITY, 'state': 'NO_VERIFIED_SIGNAL_PUBLICATION'})
     write_json_atomic(publication/'signals.json', signals, compact=True)
     current_files.append('signals.json')
+    try:
+        from qtrade.research.strategy_comparison import validate_comparison_publication
+
+        raw_comparison = (workflow_root/'comparison.json').read_bytes()
+        if len(raw_comparison) > 3_000_000:
+            raise ValueError('COMPARISON_PUBLICATION_TOO_LARGE')
+        comparison = validate_comparison_publication(json.loads(raw_comparison))
+    except (OSError, ValueError, KeyError, TypeError):
+        comparison = signed({**AUTHORITY, 'state': 'NO_VERIFIED_STRATEGY_COMPARISON'})
+    write_json_atomic(publication/'comparison.json', comparison, compact=True)
+    current_files.append('comparison.json')
+    try:
+        from qtrade.research.forward_publication import validate_forward_publication
+
+        raw_forward = (workflow_root/'forward.json').read_bytes()
+        if len(raw_forward) > 2_000_000:
+            raise ValueError('FORWARD_PUBLICATION_TOO_LARGE')
+        forward = validate_forward_publication(json.loads(raw_forward))
+    except (OSError, ValueError, KeyError, TypeError):
+        forward = signed({**AUTHORITY, 'state': 'NO_VERIFIED_FORWARD_PUBLICATION'})
+    write_json_atomic(publication/'forward.json', forward, compact=True)
+    current_files.append('forward.json')
+    try:
+        from qtrade.research.etf_trend import validate_etf_trend_publication
+
+        raw_etf = (workflow_root/'etf-trend.json').read_bytes()
+        if len(raw_etf) > 300_000:
+            raise ValueError('ETF_PUBLICATION_TOO_LARGE')
+        etf = validate_etf_trend_publication(json.loads(raw_etf))
+    except (OSError, ValueError, KeyError, TypeError):
+        etf = signed({**AUTHORITY, 'state': 'NO_VERIFIED_ETF_DIAGNOSTIC'})
+    write_json_atomic(publication/'etf-trend.json', etf, compact=True)
+    current_files.append('etf-trend.json')
     (publication / "README.md").write_text(
         "# QTrade public research observations\n\n"
         "Read-only latest market observations and persisted experiment summaries.\n"
