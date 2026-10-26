@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-26
 
+- The owner confirms there is no licensed historical source; continue verifiable
+  public-source work. Offline official delisting/master reconciliation is in
+  implementation. It checks preserved SSE/SZSE bytes, retains every row and
+  quarantines identity ambiguity, duplicate keys, missing dates and conflicts.
+  Fifteen focused tests and static checks pass; cluster reconciliation is pending.
+  This separate audit never rewrites the current universe or certifies PIT.
+  See docs/PIT_OFFICIAL_RECONCILIATION.md.
+
 - PIT collection queue repair is deployed: the prior prefix scheduler stalled at
   36/40 after four repeated vendor failures; its last retry recovered to 40 before
   cutover. A dataset-bound, durable per-symbol queue now gives each pass separate

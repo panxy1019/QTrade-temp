@@ -22,6 +22,15 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
+### Public official delisting/master reconciliation, 2026-10-26
+
+- [x] Record the owner's public-source-only scope and source/reuse audit.
+- [x] Preserve raw identity, duplicate/ambiguous rows and date discrepancies.
+- [ ] Run real cluster reconciliation, full backend checks and retain evidence.
+
+Reproduction and limits: docs/PIT_OFFICIAL_RECONCILIATION.md. Current lists cannot
+establish historical availability or repair delisted prices and exact rules.
+
 ### P0 historical status collection queue, 2026-10-26
 
 - [x] Reproduce prefix starvation at 36/40 with four persistent vendor failures.
