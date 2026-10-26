@@ -30,6 +30,12 @@ PIT/source repair continues in parallel. Then immutable data events, frozen
 processor restoration, daily prediction, controlled rolling and forward research.
 Each phase needs code, tests, cluster and production evidence, docs and limits.
 
+Phase C immutable data core accepted: source 2dc5946 passes 757 Linux checks and
+real Qlib reload of the first 2026-10-26 version (982 current / 990 historical,
+eight current gaps, 17,398 verified files). Ready pointer/event commit together;
+repeat admission keeps one event. Public view, scheduled generation and forward
+prediction remain pending. See docs/QLIB_DATA_VERSIONS.md.
+
 Phase C fitted-state gate accepted: source 262abb9 passes 736 Linux checks and
 both Ridge/LightGBM independent restoration; 17,814 rows, 158 factors, unchanged
 fitted processors, max score errors 1.46e-16 / zero. Each 11,965-file archive
