@@ -2,6 +2,16 @@
 
 Last updated: 2026-10-27
 
+- New owner-requested continuous goal: complete STEP1 C/D/E (unified historical
+  comparison, holdings/constraints, PAPER/SHADOW, actual next-session acceptance)
+  before STEP2 factor/strategy research. Execution plan is
+  plans/STEP1_STEP2_EXECUTION.md; original STEP2 input is preserved. Three parallel
+  implementation tasks own comparison, forward paper core, and version control;
+  parent integrates worker/API/UI and production acceptance. Work is local and
+  not yet deployed. Actual 00:35 Shanghai checks show collection WAITING, daily
+  service current through Oct 26, successful publication, free space 280.6 GiB.
+  An actual Oct 27 complete-session transition has not happened yet.
+
 - PR20 merged as main 7c7d98a; cluster research worker/publisher and the single
   alternating history service run audited source a69eb70. All 1,127 Linux checks
   pass without skips; all 227 frontend checks pass. Production APIs verify fresh

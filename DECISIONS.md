@@ -1,5 +1,25 @@
 # Architecture decisions
 
+## ADR-187 — STEP1 completion gates research expansion and rollback epochs bind outputs
+
+Status: implementing locally, 2026-10-27.
+
+The owner explicitly ordered completion of C/D/E and real next-session acceptance
+before STEP2 factor/strategy expansion. Preserve this sequential gate while
+comparison, holdings/constraints and version controls develop in parallel.
+Reuse native Qlib comparison and the existing portfolio/risk/OMS/paper/accounting
+stack; no alternate gateway or live-order path. Unknown execution facts block
+simulated execution rather than receiving permissive defaults.
+
+Version identity alone cannot distinguish an A → B → A rollback. Bind admission
+event epochs to current predictions and signals, recheck the epoch under the
+final data transaction, and check it again before a prepared Provider is published.
+Rollback requires authenticated CAS control and leaves immutable history. A real
+next-session audit verifies archived versions, automatic completion, prediction
+and signal identities, with no clock override in its CLI. That narrow audit never
+certifies publication, browser behavior, PAPER returns or all of STEP1 by itself.
+
+
 ## ADR-186 — Signal baselines are separate from execution-admitted portfolios
 
 Status: five real signal families and scheduled publication accepted on production

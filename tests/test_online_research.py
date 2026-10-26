@@ -242,6 +242,39 @@ def test_current_prediction_is_only_usable_with_fresh_matching_context(online):
     assert result['current_prediction_usable'] is False
 
 
+def test_return_to_same_version_does_not_revive_old_prediction_epoch(online):
+    http, _, value, _ = online
+    add_prediction(value)
+    value['data_version']['data_event_id'] = '9'*64
+    assert http.get('/research/online/catalog').json()['current_prediction_usable'] is False
+
+
+def test_data_rollback_auth_epoch_and_idempotent_receipt(online, tmp_path):
+    from test_data_version_control import setup
+
+    from qtrade.research.data_version_control import apply, read_catalog
+
+    http, password, value, sent = online
+    database, archive, ledger, command, _ = setup(tmp_path)
+    value['data_catalog'] = read_catalog(database, archive)
+    body = {k: v for k, v in command.items() if k != 'actor'}
+    assert http.post('/research/online/data-rollback', json=body).status_code == 401
+    login(http, password)
+    assert http.get('/research/online/data-versions').json()['publication_available']
+    assert http.post('/research/online/data-rollback', json={
+        **body, 'expected_event_id': '0'*64}).status_code == 409
+    assert http.post('/research/online/data-rollback', json={
+        **body, 'actor': 'forged'}).status_code == 422
+    assert http.post('/research/online/data-rollback', json=body).status_code == 202
+    envelope = unseal(sent[0][2], 'x'*40)
+    assert envelope['kind'] == 'QLIB_DATA_ROLLBACK'
+    assert envelope['command']['actor'] == 'research-test'
+    receipt = apply(ledger, envelope['command'], now=datetime.now(UTC))
+    value['data_catalog'] = read_catalog(database, archive)
+    assert http.post('/research/online/data-rollback', json=body).json() == receipt
+    assert len(sent) == 1
+
+
 @pytest.mark.parametrize('state,fresh', [('PREDICTING', True), ('RUNNING', True),
     ('STOPPED', False), ('QUEUE_UNAVAILABLE', False), ('FAILED', False), ('unknown', False)])
 def test_working_process_is_not_mislabeled_as_expired_heartbeat(online, state, fresh):

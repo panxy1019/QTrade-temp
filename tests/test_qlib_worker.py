@@ -201,7 +201,11 @@ def test_candidate_validation_waits_for_new_data_and_prediction_priority(worker,
 def test_signal_jobs_are_data_bound_deduplicated_and_yield_to_prediction(worker, monkeypatch):
     from datetime import UTC, datetime
 
+    from qtrade.research import data_epoch
+
     value, _ = worker
+    epoch = ['e'*64]
+    monkeypatch.setattr(data_epoch, 'current_epoch', lambda *args: epoch[0])
     class Clock(datetime):
         @classmethod
         def now(cls, tz=UTC):
@@ -224,6 +228,9 @@ def test_signal_jobs_are_data_bound_deduplicated_and_yield_to_prediction(worker,
     value.db.commit()
     value.schedule_signals()
     assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
+    epoch[0] = 'f'*64
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 2
 
 
 @pytest.mark.parametrize('kind,module', [('QLIB_SIGNAL_JOB', 'scripts.run_qlib_signal_baselines'),

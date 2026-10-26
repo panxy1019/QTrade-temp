@@ -126,6 +126,9 @@ class DataVersionCatalog:
                     sequence INTEGER PRIMARY KEY AUTOINCREMENT, event_id TEXT UNIQUE,
                     version_id TEXT, kind TEXT, payload TEXT
                 );
+                CREATE TABLE IF NOT EXISTS data_rollback_commands (
+                    request_id TEXT PRIMARY KEY, command TEXT NOT NULL, receipt TEXT NOT NULL
+                );
             ''')
         _claim_single_process_owner(self.database)
 
@@ -201,23 +204,81 @@ class DataVersionCatalog:
                 'SELECT payload FROM data_events ORDER BY sequence')]
 
     def rollback(self, version_id: str, *, expected_head: str, actor: str,
-                 now: datetime) -> None:
+                 now: datetime, request: dict[str, Any] | None = None) -> dict[str, Any]:
         if (not re.fullmatch(r'[A-Za-z0-9._-]{1,60}', actor) or now.tzinfo is None
                 or version_id == expected_head):
             raise ValueError('DATA_ROLLBACK_EXPLICIT_OPERATOR_REQUIRED')
-        value = verify_version(self.root(version_id))
         with self.connect() as c:
+            raw = json.dumps(request, sort_keys=True) if request is not None else None
+            if request is not None:
+                from qtrade.research.data_version_control import command
+                command(request)
+                if (request['version_id'] != version_id or request['expected_head'] != expected_head
+                        or request['actor'] != actor):
+                    raise ValueError('DATA_ROLLBACK_COMMAND_ARGUMENT_MISMATCH')
+                prior = c.execute('SELECT command,receipt FROM data_rollback_commands '
+                                  'WHERE request_id=?', (request['request_id'],)).fetchone()
+                if prior:
+                    if prior['command'] != raw:
+                        raise ValueError('DATA_ROLLBACK_REQUEST_ID_CONFLICT')
+                    return dict(json.loads(prior['receipt']))
+            def reject(code: str) -> dict[str, Any]:
+                if request is None:
+                    raise ValueError(code)
+                receipt = signed({**AUTHORITY, 'state': 'REJECTED',
+                    'request_id': request['request_id'],
+                    'command_sha256': signed(request)['evidence_sha256'],
+                    'version_id': version_id, 'expected_head': expected_head,
+                    'error_code': code, 'at': now.isoformat()})
+                c.execute('INSERT INTO data_rollback_commands VALUES(?,?,?)',
+                          (request['request_id'], raw, json.dumps(receipt, sort_keys=True)))
+                return receipt
+
+            try:
+                value = verify_version(self.root(version_id))
+            except (ValueError, OSError, KeyError, TypeError):
+                if request is None:
+                    raise
+                return reject('DATA_ROLLBACK_TARGET_VERIFICATION_FAILED')
+            if value['version_id'] != version_id:
+                return reject('DATA_VERSION_DIRECTORY_IDENTITY_MISMATCH')
             current = c.execute('SELECT version_id FROM data_heads WHERE frequency=?',
                                 ('day',)).fetchone()
             known = c.execute('SELECT manifest_sha256 FROM data_versions WHERE version_id=?',
                               (version_id,)).fetchone()
+            epoch = c.execute('SELECT event_id,version_id,payload FROM data_events '
+                              'ORDER BY sequence DESC LIMIT 1').fetchone()
+            if request is not None:
+                if (epoch is None or current is None
+                        or epoch['version_id'] != current['version_id']
+                        or epoch['event_id'] != request['expected_event_id']):
+                    return reject('DATA_ROLLBACK_HEAD_EVENT_CHANGED')
+                latest = json.loads(epoch['payload'])
+                if (latest.get('version_id') != current['version_id']
+                        or latest.get('evidence_sha256') != epoch['event_id']
+                        or latest.get('kind') not in {'QLIB_DATA_READY', 'QLIB_DATA_ROLLBACK'}
+                        or any(latest.get(k) != v for k, v in AUTHORITY.items())
+                        or signed({k: v for k, v in latest.items()
+                                   if k != 'evidence_sha256'}) != latest):
+                    return reject('DATA_ROLLBACK_HEAD_EVENT_CHANGED')
             if (current is None or current['version_id'] != expected_head or known is None
                     or known['manifest_sha256'] != value['evidence_sha256']):
-                raise ValueError('DATA_ROLLBACK_HEAD_OR_VERSION_CHANGED')
+                return reject('DATA_ROLLBACK_HEAD_OR_VERSION_CHANGED')
             event = signed({**AUTHORITY, 'kind': 'QLIB_DATA_ROLLBACK', 'version_id': version_id,
                             'previous_head': expected_head, 'actor': actor,
-                            'created_at': now.isoformat()})
+                            'created_at': now.isoformat(),
+                            'request_id': request['request_id'] if request else None,
+                            'reason': request['reason'] if request else 'OPERATOR_ROLLBACK'})
             c.execute('UPDATE data_heads SET version_id=? WHERE frequency=?', (version_id, 'day'))
             c.execute('INSERT INTO data_events(event_id,version_id,kind,payload) VALUES(?,?,?,?)',
                       (event['evidence_sha256'], version_id, 'QLIB_DATA_ROLLBACK',
                        json.dumps(event)))
+            receipt = signed({**AUTHORITY, 'state': 'APPLIED', 'version_id': version_id,
+                'previous_head': expected_head, 'event_id': event['evidence_sha256'],
+                'request_id': request['request_id'] if request else None,
+                'command_sha256': signed(request)['evidence_sha256'] if request else None,
+                'at': now.isoformat(), 'predictions_require_head_event_revalidation': True})
+            if request is not None:
+                c.execute('INSERT INTO data_rollback_commands VALUES(?,?,?)',
+                          (request['request_id'], raw, json.dumps(receipt, sort_keys=True)))
+            return receipt

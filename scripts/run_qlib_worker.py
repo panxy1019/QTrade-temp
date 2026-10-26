@@ -9,8 +9,9 @@ import os
 import signal
 import sqlite3
 import subprocess
+import sys
 import time
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -20,7 +21,7 @@ from qtrade.research.rolling_control import RollingControl
 from qtrade.research.source_constraints import capture_source, constraint_protocol
 from qtrade.research.workflow import catalog_envelope, data_audit, digest, validate_spec
 from qtrade.research.workflow_queue import GitQueue, unseal
-from scripts.atomic_json import write_json_atomic
+from scripts.atomic_json import write_json_atomic, write_json_immutable
 from scripts.online_model_control import OnlineModels
 from scripts.online_prediction_worker import OnlinePredictor
 
@@ -168,6 +169,13 @@ class Worker:
                         raise ValueError('ROLLING_CONTROL_ENVELOPE_INVALID')
                     self.rolling.apply(value['command'], now=datetime.now(UTC))
                     continue
+                if value.get('kind') == 'QLIB_DATA_ROLLBACK':
+                    if (not key.startswith('requests/')
+                            or value.get('live_trading_enabled') is not False
+                            or value['command']['request_id'] != identity):
+                        raise ValueError('DATA_CONTROL_ENVELOPE_INVALID')
+                    self.execute_data_rollback(value['command'])
+                    continue
                 if key.startswith("cancellations/"):
                     if value["kind"] != "CANCEL_RESEARCH_JOB":
                         raise ValueError("INVALID_CANCELLATION")
@@ -201,6 +209,48 @@ class Worker:
             except (ValueError, KeyError, TypeError):
                 # Malformed queue items are not executable. Do not publish their body.
                 continue
+
+    def execute_data_rollback(self, value: dict[str, Any]) -> None:
+        from qtrade.research.data_version_control import command
+        from scripts.prepare_qlib_incremental import load_signed
+
+        value = command(value)
+        if self.stop or self.predictor.child is not None:
+            return
+        folder = self.root/'data-control'/value['request_id']
+        folder.mkdir(parents=True, exist_ok=True)
+        request = folder/'request.json'
+        if request.exists():
+            if json.loads(request.read_bytes()) != value:
+                raise ValueError('DATA_CONTROL_REQUEST_ID_CONFLICT')
+        else:
+            write_json_immutable(request, value)
+        receipt = folder/'receipt.json'
+        if receipt.exists():
+            saved = load_signed(receipt)
+            if (saved['request_id'] != value['request_id']
+                    or saved['command_sha256'] != signed(value)['evidence_sha256']):
+                raise ValueError('DATA_CONTROL_RECEIPT_CONFLICT')
+            return
+        now = datetime.now(UTC)
+        attempt = folder/'attempt.json'
+        if attempt.exists() and datetime.fromisoformat(load_signed(attempt)['not_before']) > now:
+            return
+        write_json_atomic(attempt, signed({**AUTHORITY,
+            'not_before': (now+timedelta(minutes=5)).isoformat()}))
+        # A short-lived sole writer shares the builder lock; parent never claims its DB.
+        with (folder/'runner.log').open('ab') as log:
+            try:
+                subprocess.run([sys.executable, '-m', 'scripts.data_version_control', 'rollback',
+                    '--database', str(self.online.data_database), '--archive-root',
+                    str(self.base/'unified-data/qlib-versions'), '--request', str(request),
+                    '--output', str(receipt)], cwd=REPO, timeout=180, check=False,
+                    stdout=log, stderr=subprocess.STDOUT,
+                    env={**{k: v for k, v in os.environ.items()
+                           if not k.startswith('QTRADE_RESEARCH_')},
+                         'PYTHONPATH': str(REPO/'src'), 'LIVE_TRADING_ENABLED': 'false'})
+            except subprocess.TimeoutExpired:
+                return
 
     def update(
         self, identity: str, state: str, *, result: dict[str, Any] | None = None,
@@ -350,15 +400,19 @@ class Worker:
         rolling = request.get('kind') == 'QLIB_ROLLING_JOB'
         validation = request.get('kind') == 'QLIB_MODEL_VALIDATION'
         if signal_job:
+            from qtrade.research.data_epoch import current_epoch
+
             data = self.online.data_head(verify=False)
             if (request['data_version_id'] != data['version_id']
-                    or request['source_revision'] != self.revision):
+                    or request['source_revision'] != self.revision
+                    or request.get('data_event_id') != current_epoch(
+                        self.online.data_database, data['version_id'])):
                 self.update(identity, 'REJECTED', error='SIGNAL_CONTEXT_CHANGED')
                 return
             command = [self.python, '-m', 'scripts.run_qlib_signal_baselines',
                 '--data-version-root', str(self.base/'unified-data/qlib-versions/versions'/
                                            data['version_id']), '--output', str(output),
-                '--source-revision', self.revision]
+                '--source-revision', self.revision, '--data-event-id', request['data_event_id']]
         elif validation:
             from scripts.prepare_qlib_incremental import load_signed
 
@@ -542,6 +596,8 @@ class Worker:
         self.publish('PREDICTING' if self.predictor.child is not None else 'IDLE')
 
     def schedule_signals(self) -> None:
+        from qtrade.research.data_epoch import current_epoch
+
         if (self.stop or self.predictor.child is not None
                 or self.predictor.state not in {'COMPLETE', 'WAITING_FOR_APPROVAL'}):
             return
@@ -556,6 +612,7 @@ class Worker:
                 now, 'daily').date().isoformat():
             return
         bindings = {'kind': 'QLIB_SIGNAL_JOB', 'data_version_id': data['version_id'],
+                    'data_event_id': current_epoch(self.online.data_database, data['version_id']),
                     'source_revision': self.revision}
         identity = signed(bindings)['evidence_sha256'][:32]
         with self.db:

@@ -22,6 +22,16 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
+### STEP1 completion then STEP2 research core, 2026-10-27 (active)
+
+Owner explicitly requests continuous execution and authorizes parallel agents.
+Follow plans/STEP1_STEP2_EXECUTION.md and preserved STEP2_USER_GUIDE.txt.
+Complete all C/D/E gates, including real next-session evidence, before starting
+Factor Registry/Evaluation/Strategy Registry/Builder and controlled model expansion.
+Current local implementations cover comparison, forward ledger, data controls
+and cross-session lineage audit; none of this new batch is deployed or accepted.
+Unknown historical PIT is a published constraint, not a successful certification.
+
 ### Unified securities and Qlib Online Serving, 2026-10-26 (active)
 
 Execute the owner-approved Phase A–E in plans/UNIFIED_DATA_ONLINE_PLAN.md.
