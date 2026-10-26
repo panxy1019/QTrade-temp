@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from decimal import Decimal
 
@@ -17,7 +18,8 @@ from qtrade.domain import RuntimeMode
 from qtrade.execution import FeeSchedule
 from qtrade.monitoring.data_freshness import signed
 from qtrade.research.data_versions import file_hash
-from qtrade.research.forward_paper import ForwardPaperBook
+from qtrade.research.forward_paper import ForwardPaperBook, ForwardTarget
+from qtrade.research.signal_baselines import allocation
 from scripts.collect_unified_data import collect_batch
 from scripts.qlib_forward_paper_adapter import (
     observed_session,
@@ -164,6 +166,85 @@ def test_signal_archive_current_context_and_provenance(archive):  # noqa: F811
     (archive / "indicative-targets.json").write_text("{}")
     with pytest.raises(ValueError):
         signal_targets(archive, data_version="a" * 64, source_revision="b" * 40)
+
+
+def test_verified_five_family_archive_keeps_sz302132_observation_targets(archive):  # noqa: F811
+    signals = json.loads((archive / "signals.json").read_text())
+    targets = json.loads((archive / "indicative-targets.json").read_text())
+    manifest = json.loads((archive / "manifest.json").read_text())
+    scores = signals["signals"]["momentum20"]
+    scores[-1]["instrument"] = "SZ302132"
+    names = ("momentum20", "reversal5", "lowvol20", "multifactor_equal_rank",
+             "equal_weight_universe")
+    signals["signals"] = {name: scores for name in names}
+    original = targets["targets"]["momentum20"]
+    targets["targets"] = {}
+    for name in names:
+        method = "EQUAL_WEIGHT_ALL" if name == "equal_weight_universe" else "TOPK_EQUAL_WEIGHT"
+        targets["targets"][name] = {
+            **original, "allocation_method": method, "positions": allocation(scores, method=method)
+        }
+    for filename, value in (("signals.json", signals), ("indicative-targets.json", targets)):
+        (archive / filename).write_text(json.dumps(signed(
+            {k: v for k, v in value.items() if k != "evidence_sha256"}
+        )))
+        manifest["files"][filename] = file_hash(archive / filename)
+    manifest.update(signal_count=5, limitations=["Synthetic source shape; execution rules unknown"])
+    (archive / "manifest.json").write_text(json.dumps(signed(
+        {k: v for k, v in manifest.items() if k != "evidence_sha256"}
+    )))
+    verified = signal_targets(archive, data_version="a" * 64, source_revision="b" * 40)
+    assert {target.strategy_id for target, _ in verified} == set(names)
+    assert all("SZ302132" in target.weights for target, _ in verified)
+
+
+def test_sz302132_raw_observation_never_supplies_unproven_lot_rule(store, tmp_path):  # noqa: F811
+    def replace_symbol(capture):
+        capture["body"] = capture["body"].replace(b"sz000001", b"sz302132")
+        return capture
+
+    source, _ = fake_source(replace_symbol)
+    job = batch()
+    job["security_types"] = {"600036": "STOCK", "302132": "STOCK"}
+    job["spec"]["symbols"] = ["600036", "302132"]
+    job["spec"]["after_by_symbol"] = {"600036": None, "302132": None}
+    receipt = collect_batch(store, job, CALENDAR, source=source)
+    market, evidence = observed_session(
+        store.root, [receipt["batch_id"]], day=date(2026, 10, 26),
+        instruments=["SZ302132"], calendar=CALENDAR, now=NOW,
+    )
+    security = market.securities["SZ302132"]
+    assert evidence["observed"] == ["SZ302132"] and evidence["missing"] == []
+    assert security.exchange == "SZSE" and security.lot_size == 0
+    assert security.block_reason() == "UNKNOWN_TRADING_CONSTRAINTS"
+    # Even independently known other flags cannot turn unknown lot=0 into admission.
+    known_except_lot = replace(
+        security, suspended=False, st=False, upper_limit=Decimal("11"),
+        lower_limit=Decimal("9"), corporate_action_clear=True, previous_session_volume=1000000,
+    )
+    assert known_except_lot.block_reason() == "INVALID_MARKET_VALUES"
+    target = ForwardTarget(
+        "momentum20", "a" * 64, "b" * 64, "c" * 40,
+        market.open_at.replace(day=23), market.open_at, {"SZ302132": Decimal(".5")},
+        ("SZ302 execution lot rule remains unproven",),
+    )
+    observations = (
+        (RuntimeMode.SHADOW, market, "UNKNOWN_TRADING_CONSTRAINTS"),
+        (RuntimeMode.PAPER, market, "UNKNOWN_TRADING_CONSTRAINTS"),
+        (RuntimeMode.PAPER, replace(market, securities={"SZ302132": known_except_lot}),
+         "INVALID_MARKET_VALUES"),
+    )
+    for index, (mode, observed, reason) in enumerate(observations):
+        book = ForwardPaperBook(
+            tmp_path / str(index), strategy_id="momentum20", mode=mode,
+            opening_cash=Decimal("10000"), fees=FeeSchedule("fixture", Decimal(0), Decimal(0)),
+        )
+        if mode is RuntimeMode.PAPER:
+            book.recover(actor="synthetic test human")
+        book.freeze(target, now=target.generated_at)
+        result = book.observe(target, observed, now=NOW)
+        assert result["fills"] == [] and result["orders"] == [] and result["holdings"] == {}
+        assert result["blocked"]["SZ302132"] == reason
 
 
 def test_summary_is_bounded_linked_and_does_not_claim_execution(tmp_path):

@@ -31,7 +31,7 @@ from scripts.unified_store import UnifiedBatchStore
 def _symbol(code: str) -> str:
     if re.fullmatch(r"(?:SH|SZ)\d{6}", code) is None:
         raise ValueError("FORWARD_UNSUPPORTED_INSTRUMENT")
-    # ETFs require a separate data/rule adapter; STAR remains observation-only.
+    # ETFs require a separate adapter; STAR and SZ302 remain observation-only.
     if not code.startswith(
         (
             "SH600",
@@ -46,6 +46,7 @@ def _symbol(code: str) -> str:
             "SZ003",
             "SZ300",
             "SZ301",
+            "SZ302",
         )
     ):
         raise ValueError("FORWARD_STOCK_RULE_NOT_ADMITTED")
@@ -305,7 +306,7 @@ def observed_session(
             Decimal(row["open"]),
             Decimal(row["close"]),
             int(volume),
-            0 if code.startswith(("SH688", "SH689")) else 100,
+            0 if code.startswith(("SH688", "SH689", "SZ302")) else 100,
             Decimal("0.01"),
             None,
             None,
