@@ -1,5 +1,30 @@
 # Architecture decisions
 
+## ADR-178 — Immutable Provider admission commits version, head and event together
+
+Status: implemented, cluster acceptance pending, 2026-10-26, Phase C.
+
+Reuse the existing Qlib Provider conversion, causal supported universe, frozen
+source restrictions and SQLite ownership/transaction contract. Qlib supplies
+data loading but not our source quality or durable ready-pointer transaction;
+vn.py does not close this research-data lineage gap. Keep the local SQLite
+ledger separate from persistent-volume immutable Parquet/provider artifacts.
+
+Only completed prepared partitions get current-day fields. Failed inputs remain
+historical and explicitly quarantined; unattempted/in-progress preparation blocks
+admission. Bind full normalized input and provider inventories, old data identity,
+fresh source snapshot, original observation pool and code. An independent Qlib
+reload must prove actual values, missing blocked rows and empty future boundaries.
+Use qualified-subset readiness, never full-universe/PIT/trade certification.
+
+Seal files before publishing a build receipt; atomically commit version, head and
+event after full hash verification. Preserve interrupted initialization attempts;
+replay sealed stages without rewriting them. Sync files/directories and both
+rename parents. Duplicate admission is inert, including after explicit rollback.
+Rollback requires an admitted target, expected head and named operator. Public
+latest.json is derived from the actual database head, not an independent authority.
+No model activation or live gateway is added; LIVE_TRADING_ENABLED=false.
+
 ## ADR-177 — Forward daily adaptation preserves the old normalization anchor
 
 Status: implementation in progress, 2026-10-26, Phase C.

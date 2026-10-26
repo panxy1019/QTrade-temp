@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-26
 
+- Immutable day Provider admission is implemented on codex/qlib-data-versions:
+  shared conversion/universe logic, independent installed-Qlib reload, immutable
+  file inventory and transactional version/head/event. Failed current inputs are
+  quarantined while history remains; pending attempts block publication. Crash
+  recovery preserves incomplete stages and replays sealed receipts. 21 focused
+  new checks pass locally, 43 including related adapter checks; cluster full suite
+  and actual build/reload are next. docs/QLIB_DATA_VERSIONS.md / ADR-178.
+
 - Phase C double-model restoration is now accepted at source 262abb9: all 736
   Linux checks pass; both native Ridge and LightGBM independently restore 17,814
   rows / 158 factors with fitted processors unchanged. Score max differences are

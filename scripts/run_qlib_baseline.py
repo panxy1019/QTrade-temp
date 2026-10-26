@@ -144,6 +144,30 @@ def finite(value: Any) -> float | None:
     return result if math.isfinite(result) else None
 
 
+def make_supported_universe(data_root: Path, provider: Path, dataset: dict[str, Any]) -> list[str]:
+    """Reuse the existing causal supported-stock policy for training and new providers."""
+    import pandas as pd
+
+    from qtrade.research.pit_repair import causal_intervals
+
+    calendar = (provider / 'calendars/day.txt').read_text().splitlines()
+    histories = {
+        row['symbol']: pd.read_parquet(data_root/'stocks'/row['symbol']/'daily.parquet',
+                                        columns=['date', 'amount']).to_dict('records')
+        for row in dataset['stocks']
+    }
+    intervals, audit = causal_intervals(histories, [d for d in calendar if d <= dataset['end']])
+    lines = [f"{('SH' if s.startswith('6') else 'SZ') + s}\t{start}\t{end}"
+             for s, windows in intervals.items() for start, end in windows]
+    (provider/'instruments/workflow_supported.txt').write_text('\n'.join(lines)+'\n')
+    instruments = [('SH' if r['symbol'].startswith('6') else 'SZ')+r['symbol']
+                   for r in dataset['stocks'] if r['symbol'] in intervals]
+    if not instruments:
+        raise ValueError('NO_SUPPORTED_INSTRUMENTS')
+    write_json_atomic(provider.parent/'universe-audit.json', audit)
+    return instruments
+
+
 def verify_constraint_masks(stage: Path, config: dict[str, Any]) -> None:
     """Reload provider masks through Qlib's actual directional limit implementation."""
     import pandas as pd
@@ -271,32 +295,7 @@ def run(
             raise ValueError("FUTURE_LABEL_CROSSES_SEGMENT_BOUNDARY")
     instruments: str | list[str] = "qtrade1000"
     if config.get("universe_policy") == "supported_a_share":
-        from qtrade.research.pit_repair import causal_intervals
-
-        histories = {
-            row["symbol"]: pd.read_parquet(
-                data_root / "stocks" / row["symbol"] / "daily.parquet",
-                columns=["date", "amount"],
-            ).to_dict("records")
-            for row in dataset["stocks"]
-        }
-        actual_calendar = [day for day in calendar if day <= dataset["end"]]
-        intervals, universe_audit = causal_intervals(histories, actual_calendar)
-        lines = [
-            f"{('SH' if symbol.startswith('6') else 'SZ') + symbol}\t{start}\t{end}"
-            for symbol, windows in intervals.items() for start, end in windows
-        ]
-        (stage / "provider/instruments/workflow_supported.txt").write_text(
-            "\n".join(lines) + "\n"
-        )
-        instruments = [
-            ("SH" if row["symbol"].startswith("6") else "SZ") + row["symbol"]
-            for row in dataset["stocks"]
-            if row["symbol"] in intervals
-        ]
-        if not instruments:
-            raise ValueError("NO_SUPPORTED_INSTRUMENTS")
-        write_json_atomic(stage / "universe-audit.json", universe_audit)
+        instruments = make_supported_universe(data_root, stage/'provider', dataset)
     tracking.mkdir(parents=True, exist_ok=True)
     qlib.init(
         provider_uri=str(stage / "provider"),
