@@ -109,6 +109,13 @@ cryptographic operator signature or a historical point-in-time certification.
 
 ## Reproduction
 
+Vercel excludes the cluster `scripts/` directory. Public ETF validation therefore
+loads only data-contract code; atomic writers and raw-capture stores are imported
+only inside cluster operations. The serverless regression starts a fresh Python
+process that rejects every `scripts` import and exercises the actual Vercel ETF
+route against a signed target/observation publication. This deployment boundary
+must be checked independently of a successful local repository import.
+
 Run the focused checks from the repository root. The short Windows temporary
 directory avoids MAX_PATH failures in deeply nested raw-capture fixtures.
 

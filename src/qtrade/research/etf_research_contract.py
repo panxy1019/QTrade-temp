@@ -20,8 +20,6 @@ from qtrade.research.etf_trend import LIMITATIONS, verify_etf_archive
 from qtrade.research.forward_prediction import next_execution
 from qtrade.research.model_registry import checked_document, checked_identity
 from qtrade.research.multi_asset import MomentumAllocation
-from scripts.atomic_json import write_json_immutable
-from scripts.unified_store import UnifiedBatchStore
 
 SCHEMA = "qtrade.etf-research-contract.v1"
 BLOCKERS = [
@@ -29,6 +27,14 @@ BLOCKERS = [
     "DISTRIBUTIONS_AND_SPLITS_NOT_RECONCILED",
     "CLOSE_ONLY_NOT_FULL_BAR_EXECUTION_INPUT",
 ]
+
+
+def write_json_immutable(path: Path, value: dict[str, Any]) -> None:
+    # Serverless publication validation excludes cluster scripts from its bundle.
+    # Only cluster-side writers load the filesystem implementation.
+    from scripts.atomic_json import write_json_immutable as write
+
+    write(path, value)
 
 
 def _same(left: object, right: object) -> bool:
@@ -99,6 +105,8 @@ def _clock(now: datetime | None) -> datetime:
 
 
 def _source(root: Path, calendar: Calendar) -> tuple[dict[str, Any], datetime]:
+    from scripts.unified_store import UnifiedBatchStore
+
     value = verify_etf_archive(root, calendar)
     checked_identity(root.name)
     receipt = json.loads((root/"receipt.json").read_bytes())
