@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-26
 
+- Phase B source adapter is implemented on codex/unified-incremental-data with
+  12 focused tests, lint and strict typing passing; not yet connected/deployed.
+  It keeps missing amount unknown, filters unfinished bars, verifies same-vendor
+  quote/day OHLCV before attaching turnover, and rejects date/identity/unit drift.
+  Current source probes and installed Qlib online module hashes are archived
+  under docs/evidence/*source-audit-20261026.json. Unified incremental persistence,
+  scheduling and downstream data-ready events remain pending. Old interrupted
+  expansion progress is explicitly INTERRUPTED with its original snapshot kept.
+
 - First unified-data delivery passes 637 full Linux backend checks and 213
   frontend checks, lint/types/build. Real offline audit rechecks 172 old minute
   checkpoints: 171 content/coverage pass, 002384 quarantined, original bytes
