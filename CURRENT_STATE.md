@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-27
 
+- Production web checkpoint at 01:39 Shanghai: PR22 merged as a3f9f6f and
+  /api/deployment confirms that exact production main revision. All six online
+  research routes return available publications. Production forward route is
+  fresh, has 12 books / 12 actual frozen targets and exactly one recovery-required
+  LightGBM PAPER book; no recovery request has been authorized or submitted.
+  Evidence: docs/evidence/qlib-step1-vercel-a3f9f6f.json. Browser tooling timed out
+  twice, so rendered visual acceptance is still pending. Next real complete-day
+  transition and later-data candidate validation remain pending. STEP2 not begun.
+
 - STEP1 prospective checkpoint at 01:35 Shanghai: forward runtime e107eb9 now
   holds 12 books (five baseline families plus approved LightGBM, each SHADOW and
   PAPER), each with one actual pre-open frozen target. No observed session or

@@ -24,6 +24,11 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+PR22/main a3f9f6f is verified on production Vercel. All six online publication
+routes are available, including 12 prospective books / targets and one halted
+model PAPER awaiting human recovery. Visual browser inspection and actual next
+complete-session acceptance remain pending; see production evidence.
+
 Forward e107eb9 freezes 12 actual prospective targets across six strategy/mode
 pairs. Existing LightGBM PAPER awaits explicit human recovery after restart;
 the other five pristine PAPER books initialized successfully. Actual observation
