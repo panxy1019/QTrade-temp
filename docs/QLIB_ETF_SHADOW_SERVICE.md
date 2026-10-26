@@ -67,10 +67,15 @@ comparison.
 
 ## Bounds and failures
 
-The service runs every 60 seconds with a 900-second hard process deadline. It
-checks 100 GiB free space plus 16 MiB headroom on both source/public storage and
-local storage before target, intent or observation writes. A small validated
-heartbeat publication is still allowed when this gate blocks archive writes.
+The service runs every 60 seconds with a 900-second hard process deadline. Its
+data-volume gate requires 100 GiB free space plus 16 MiB headroom on the base
+source/public filesystem. Its separate local operational-filesystem gate requires
+1 GiB free headroom for bounded target, intent, observation and receipt metadata;
+this directory does not duplicate the raw source archives. A 32 GiB operational
+overlay with 28 GiB free therefore passes, while the data-volume 100 GiB reserve
+remains mandatory. Either failed gate blocks new target, intent or observation
+writes and reports its own fixed error code. A small validated heartbeat
+publication is still allowed when these gates block archive writes.
 No collector/provider priority or source backoff is changed, because the process
 makes no network/source request.
 

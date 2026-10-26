@@ -44,6 +44,7 @@ REPO = Path(__file__).resolve().parents[1]
 STRATEGY = 'etf_positive_trend20_native_close_rotation_v1'
 RESERVE = 100*1024**3
 HEADROOM = 16*1024**2
+LOCAL_HEADROOM = 1024**3
 PERIOD_SECONDS = 60
 HARD_DEADLINE_SECONDS = 900
 MAX_ARCHIVES = 4096
@@ -302,10 +303,14 @@ def cycle(base: Path, local_root: Path, revision: str, *, now: datetime | None =
     targets = local_root/'targets'
     archives = base/'online-research/etf-trend'
     errors: set[str] = set()
-    writable = all(shutil.disk_usage(path).free >= RESERVE+HEADROOM
-                   for path in (base, local_root)) and not stop.is_set()
-    if not writable and not stop.is_set():
-        errors.add('ETF_SHADOW_STORAGE_RESERVE')
+    data_space = shutil.disk_usage(base).free >= RESERVE+HEADROOM
+    local_space = shutil.disk_usage(local_root).free >= LOCAL_HEADROOM
+    writable = data_space and local_space and not stop.is_set()
+    if not stop.is_set():
+        if not data_space:
+            errors.add('ETF_SHADOW_STORAGE_RESERVE')
+        if not local_space:
+            errors.add('ETF_SHADOW_LOCAL_STORAGE_HEADROOM')
     latest, candidates = discover(archives, errors)
     if latest is not None and writable and not stop.is_set():
         try:

@@ -386,6 +386,35 @@ def test_storage_reserve_and_stop_prevent_new_targets(runtime, monkeypatch):
     assert not list(runtime.local.rglob('intent.json'))
 
 
+def test_separate_data_and_operational_filesystems_allow_small_local_volume(runtime, monkeypatch):
+    runtime.archive()
+
+    def free(path):
+        return SimpleNamespace(free=(280 if path == runtime.base else 28)*1024**3)
+
+    monkeypatch.setattr(service.shutil, 'disk_usage', free)
+    result = runtime.run()
+    assert result['state'] == 'RUNNING' and result['errors'] == []
+    assert len(result['entries']) == 1
+    assert len(list(runtime.local.glob('targets/*/admission.json'))) == 1
+
+
+@pytest.mark.parametrize(('data_free', 'local_free', 'expected'), [
+    (280*1024**3, 512*1024**2, 'ETF_SHADOW_LOCAL_STORAGE_HEADROOM'),
+    (99*1024**3, 28*1024**3, 'ETF_SHADOW_STORAGE_RESERVE'),
+])
+def test_each_filesystem_keeps_its_own_space_gate(
+        runtime, monkeypatch, data_free, local_free, expected):
+    runtime.archive()
+    monkeypatch.setattr(service.shutil, 'disk_usage', lambda path: SimpleNamespace(
+        free=data_free if path == runtime.base else local_free))
+    result = runtime.run()
+    assert result['errors'] == [expected]
+    assert result['entries'] == []
+    assert not list(runtime.local.rglob('intent.json'))
+    assert not list(runtime.local.glob('targets/*/target.json'))
+
+
 def test_stop_replays_existing_evidence_but_never_adds_observation(runtime):
     runtime.archive()
     target = runtime.run()['entries'][0]['target']

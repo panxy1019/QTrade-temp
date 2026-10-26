@@ -28,26 +28,38 @@ export function EtfShadowPanel() {
   const [reply, setReply] = useState<Reply | null>(null)
   const [error, setError] = useState(false)
   const [refresh, setRefresh] = useState(0)
+  const [now, setNow] = useState(Date.now)
   useEffect(() => {
     let active = true
     let inFlight = false
+    let controller: AbortController | null = null
     const load = async () => {
       if (inFlight) return
       inFlight = true
+      const request = new AbortController()
+      controller = request
+      let timeout = 0
       try {
-        const value = await workflowGet<Reply>('/online/etf-forward')
-        if (active) { setReply(value); setError(false) }
+        const deadline = new Promise<never>((_, reject) => {
+          timeout = window.setTimeout(() => { request.abort(); reject(new Error('ETF_REQUEST_TIMEOUT')) }, 15_000)
+        })
+        const value = await Promise.race([workflowGet<Reply>('/online/etf-forward', { signal: request.signal }), deadline])
+        if (active) { setReply(value); setError(false); setNow(Date.now()) }
       } catch { if (active) { setReply(null); setError(true) } }
-      finally { inFlight = false }
+      finally { window.clearTimeout(timeout); inFlight = false }
     }
     void load()
     const timer = window.setInterval(() => void load(), 30_000)
-    return () => { active = false; window.clearInterval(timer) }
+    const clock = window.setInterval(() => setNow(Date.now()), 1000)
+    return () => { active = false; controller?.abort(); window.clearInterval(timer); window.clearInterval(clock) }
   }, [refresh])
   const value = reply?.publication_available && reply.publication?.schema_version === 'qtrade.etf-shadow-service.v1' ? reply.publication : null
   const entries = value?.entries ?? []
   const latest = [...entries].sort((a, b) => b.target.bindings.expected_execution_at.localeCompare(a.target.bindings.expected_execution_at))[0]
   const portfolio = value?.contract.portfolio
+  const heartbeatAge = value ? now - Date.parse(value.heartbeat_at) : Number.NaN
+  const fresh = !!reply?.service_fresh && value?.state !== 'STOPPED' && heartbeatAge >= 0 && heartbeatAge <= 720_000
+  const current = fresh && !!reply?.current_target && entries.some(row => Date.parse(row.target.bindings.expected_execution_at) > now)
   return <Card title="ETF 趋势轮动 · SHADOW" extra={<Button onClick={() => setRefresh(n => n + 1)}>刷新 ETF 目标</Button>}>
     <Space orientation="vertical" style={{ width: '100%' }}>
       <Typography.Paragraph>20 日正趋势筛选后，按合同取排名靠前的 ETF 等权配置。目标在下一交易日开盘前冻结，之后只记录实际取得的收盘行情；目标权重不代表已执行持仓。</Typography.Paragraph>
@@ -57,9 +69,9 @@ export function EtfShadowPanel() {
       {!reply && !error && <Typography.Text>正在读取 ETF 前向记录…</Typography.Text>}
       {reply && !value && <Empty description="尚无通过校验的 ETF SHADOW 发布" />}
       {value && <>
-        <Alert type={reply?.service_fresh ? 'info' : 'warning'} showIcon
-          title={reply?.service_fresh ? `ETF 观察服务：${value.state}` : 'ETF 观察服务已停止或心跳过期；以下为历史记录'}
-          description={`心跳：${value.heartbeat_at}。${reply?.current_target ? '存在符合当前时点的开盘前目标。' : '当前没有可用的开盘前目标；历史冻结记录仍保留。'}`} />
+        <Alert type={fresh ? 'info' : 'warning'} showIcon
+          title={fresh ? `ETF 观察服务：${value.state}` : 'ETF 观察服务已停止或心跳过期；以下为历史记录'}
+          description={`心跳：${value.heartbeat_at}。${current ? '存在符合当前时点的开盘前目标。' : '当前没有可用的开盘前目标；历史冻结记录仍保留。'}`} />
         <Descriptions size="small" column={2} items={[
           { key: 'topk', label: '正趋势最多选取', children: `${portfolio?.top_k} 只 ETF` },
           { key: 'risk', label: '总目标权重上限', children: `${(Number(portfolio?.risk_degree) * 100).toFixed(1)}%` },

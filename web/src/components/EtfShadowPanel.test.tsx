@@ -1,11 +1,12 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { beforeEach, expect, it, vi } from 'vitest'
+import { act, fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { EtfShadowPanel } from './EtfShadowPanel'
 
 const get = vi.hoisted(() => vi.fn())
 vi.mock('../research/qlibWorkflow', () => ({ workflowGet: get }))
 vi.mock('./JsonExportButton', () => ({ JsonExportButton: () => <button>导出 ETF 前向记录</button> }))
-beforeEach(() => get.mockReset())
+beforeEach(() => { get.mockReset() })
+afterEach(() => vi.useRealTimers())
 function publication() {
   return { schema_version: 'qtrade.etf-shadow-service.v1', state: 'RUNNING', heartbeat_at: '2026-10-27T00:00:00Z',
     strategy_id: 'etf_positive_trend20_native_close_rotation_v1', contract_id: 'a'.repeat(64),
@@ -19,7 +20,7 @@ it('shows frozen ETF allocation and pending observation without invented perform
   get.mockResolvedValue({ publication_available: true, service_fresh: true, current_target: true, publication: publication() })
   render(<EtfShadowPanel />)
   await screen.findByText('SH510300')
-  expect(get).toHaveBeenCalledWith('/online/etf-forward')
+  expect(get).toHaveBeenCalledWith('/online/etf-forward', { signal: expect.any(AbortSignal) })
   expect(screen.getByText('95.000%')).toBeInTheDocument()
   expect(screen.getByText('尚未取得完整后续收据')).toBeInTheDocument()
   expect(screen.getByText('SHADOW 不计算组合收益')).toBeInTheDocument()
@@ -50,5 +51,23 @@ it('clears old targets after refresh failure', async () => {
   await screen.findByText('SH510300')
   fireEvent.click(screen.getByRole('button', { name: '刷新 ETF 目标' }))
   await screen.findByText('ETF 前向记录读取失败')
+  expect(screen.queryByText('SH510300')).not.toBeInTheDocument()
+})
+
+it('expires a prospective target locally before the next poll and times out a hung refresh', async () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-10-27T01:29:50Z'))
+  const value = publication()
+  value.heartbeat_at = '2026-10-27T01:29:50Z'
+  get.mockResolvedValueOnce({ publication_available: true, service_fresh: true, current_target: true, publication: value })
+    .mockImplementation(() => new Promise(() => {}))
+  await act(async () => { render(<EtfShadowPanel />) })
+  expect(screen.getByText(/存在符合当前时点的开盘前目标/)).toBeInTheDocument()
+  await act(async () => { await vi.advanceTimersByTimeAsync(11_000) })
+  expect(screen.queryByText(/存在符合当前时点的开盘前目标/)).not.toBeInTheDocument()
+  expect(screen.getByText('SH510300')).toBeInTheDocument()
+  await act(async () => { await vi.advanceTimersByTimeAsync(35_000) })
+  expect(screen.getByText('ETF 前向记录读取失败')).toBeInTheDocument()
+  expect(get.mock.calls[1][1].signal.aborted).toBe(true)
   expect(screen.queryByText('SH510300')).not.toBeInTheDocument()
 })

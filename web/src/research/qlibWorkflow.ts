@@ -178,8 +178,9 @@ export function comparisonIssue(left: WorkflowResult, right: WorkflowResult): st
 }
 
 const ROOT = '/api/research'
-export async function workflowGet<T>(path: string): Promise<T> {
-  const response = await fetch(ROOT + path, { cache: 'no-store', credentials: 'same-origin' })
+export async function workflowGet<T>(path: string, options?: { signal?: AbortSignal }): Promise<T> {
+  const response = await fetch(ROOT + path, { cache: 'no-store', credentials: 'same-origin',
+    ...(options?.signal ? { signal: options.signal } : {}) })
   if (!response.ok) {
     const body = await response.json().catch(() => null) as { detail?: unknown } | null
     throw new Error(typeof body?.detail === 'string' ? body.detail.slice(0, 300)
