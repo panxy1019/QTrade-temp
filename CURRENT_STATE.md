@@ -2,6 +2,26 @@
 
 Last updated: 2026-10-26
 
+- Phase C first immutable Provider is accepted on source 2dc5946: 757 Linux
+  checks pass; real Qlib 0.9.7 reload validates 982 current stocks through
+  2026-10-26, 990 historical stocks and eight explicit missing current inputs.
+  Version 384ce479913266c3e65798e28a85c22bec3b6d3db90629b2c8928c0c141c83c6
+  verifies 17,398 files, empty future boundaries and exactly one atomic ready
+  event after repeated admission. No model activation/automatic prediction yet.
+  docs/evidence/qlib-data-version-acceptance-20261026.json. PR 15 is merged at
+  production main 683414b (verified /api/deployment). Old supervised worker stays
+  pinned; source 76fa292 forward-input validation is running separately on the
+  cluster under PID 140743, state forward-validation-acceptance.json. This process
+  only validates frozen candidates; it does not activate them or claim AUTO_PREDICT.
+
+- Immutable day Provider admission is implemented on codex/qlib-data-versions:
+  shared conversion/universe logic, independent installed-Qlib reload, immutable
+  file inventory and transactional version/head/event. Failed current inputs are
+  quarantined while history remains; pending attempts block publication. Crash
+  recovery preserves incomplete stages and replays sealed receipts. 21 focused
+  new checks pass locally, 43 including related adapter checks; cluster full suite
+  and actual build/reload are next. docs/QLIB_DATA_VERSIONS.md / ADR-178.
+
 - Phase C double-model restoration is now accepted at source 262abb9: all 736
   Linux checks pass; both native Ridge and LightGBM independently restore 17,814
   rows / 158 factors with fitted processors unchanged. Score max differences are
