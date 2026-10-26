@@ -17,6 +17,8 @@
 
 ## 证据入口
 
+- `evidence/qlib-cd-audits-linux-c5c280f.json`：C/D 工具 103 项 Linux 检查通过；D 真实 CLI 检查因候选仍为 TRAINED 而阻断，未激活模型、未重启服务；后续真实版本验证仍待发生。
+
 - `evidence/qlib-c-public-transport-8b924ea.json`：修复系统代理兼容后，实际五个生产 GET 响应及两次当前目录校验成功；仅证明 10 月 26 日当前发布可读，不代表 10 月 27 日跨日链通过，集群直连仍不可用。
 
 - `evidence/qlib-c-delivery-linux-429ee53.json`：C 公网验收工具 54 项 Linux 测试通过；实际直连 Vercel 失败，未生成公网跨日通过报告。系统代理兼容与集群访问路径仍待验证。

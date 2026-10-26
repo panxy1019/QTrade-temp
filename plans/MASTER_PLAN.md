@@ -24,6 +24,11 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+C/D tools c5c280f pass all 103 Linux checks. The actual D pretransition audit is
+BLOCKED because the candidate is still TRAINED, with zero activations. The tool
+release is installed without restarting writers; real later-input validation
+remains pending. Evidence: docs/evidence/qlib-cd-audits-linux-c5c280f.json.
+
 D read-only candidate validation audit is independently reviewed with 25 passing
 local tests and the three reproduced review findings fixed. It checks actual
 archives, later-input validation job/proof registration and unchanged ACTIVE

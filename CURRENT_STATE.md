@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-27
 
+- C/D audit tools at c5c280f are installed as an immutable cluster release;
+  all 103 focused Linux tests pass with zero skips. The real D CLI run against
+  the actual current data head returns BLOCKED / CANDIDATE_NOT_UNACTIVATED_STAGED:
+  candidate 29589b44 remains TRAINED with zero activations. This is expected before
+  the genuine later-session worker validation, not a completed D transition.
+  Evidence: docs/evidence/qlib-cd-audits-linux-c5c280f.json. No running service was
+  restarted and no model, queue, data head or account state was changed.
+
 - D later-input candidate auditor is implemented and independently reviewed.
   Its 25 targeted tests, Ruff and focused mypy pass locally. Review regressions
   cover concurrent ACTIVE-row changes, forged automatic-training attribution,
