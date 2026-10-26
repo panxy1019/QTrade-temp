@@ -1,0 +1,63 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "revision": "76fa29210d1ad1f83a8a6affbe31e4e6c7fc8e79",
+  "linux_tests": 773,
+  "models": [
+    {
+      "validation_id": "20951666412ab2e1c54f36bf6b870ef7620c169cb5d4c873f2bdcfca56f1b68f",
+      "model_run_id": "float64-alpha158-linear-20261026-0ab51f95e3178a27",
+      "state": "FORWARD_INPUT_VALIDATED_NOT_ACTIVATED",
+      "score_count": 888,
+      "feature_count": 158,
+      "historical_reference_rows": 17814,
+      "fitted_processors_unchanged": true,
+      "fit_methods_forbidden": true,
+      "max_reference_score_difference": 2.237793284010081e-16,
+      "model_activated": false,
+      "auto_predict_enabled": false,
+      "evidence_sha256": "fc76249c772e6ec3154be9ba98d809e96ee0656723d81f94ad78b068357e2837",
+      "contract": {
+        "data_version_id": "384ce479913266c3e65798e28a85c22bec3b6d3db90629b2c8928c0c141c83c6",
+        "data_end": "2026-10-26",
+        "model_bundle_sha256": "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707",
+        "generated_at": "2026-10-26T12:52:12.721322+00:00",
+        "expected_execution_at": "2026-10-27T09:30:00+08:00",
+        "forward_return_observed": false
+      },
+      "verified_files": 3
+    },
+    {
+      "validation_id": "038d04d950083d9ee36f85d95d372518869870560074312623560bbfd3dec4ce",
+      "model_run_id": "float64-alpha158-lightgbm-20261026-7d31f41cbdf65d62",
+      "state": "FORWARD_INPUT_VALIDATED_NOT_ACTIVATED",
+      "score_count": 888,
+      "feature_count": 158,
+      "historical_reference_rows": 17814,
+      "fitted_processors_unchanged": true,
+      "fit_methods_forbidden": true,
+      "max_reference_score_difference": 0.0,
+      "model_activated": false,
+      "auto_predict_enabled": false,
+      "evidence_sha256": "5096dc8f60f044a0aab9bea09162bf11640099545cf435d681cad30884f71774",
+      "contract": {
+        "data_version_id": "384ce479913266c3e65798e28a85c22bec3b6d3db90629b2c8928c0c141c83c6",
+        "data_end": "2026-10-26",
+        "model_bundle_sha256": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+        "generated_at": "2026-10-26T12:54:19.841859+00:00",
+        "expected_execution_at": "2026-10-27T09:30:00+08:00",
+        "forward_return_observed": false
+      },
+      "verified_files": 3
+    }
+  ],
+  "stage": "PILOT_BEFORE_COMPLETE_SOURCE_ARCHIVAL",
+  "final_source": "5bb4a93e4293c009118a29b613d1d49c8c8c5c40",
+  "final_acceptance_pending": true,
+  "evidence_sha256": "41d1eefa7e41971b61fd2db4cfd6d04b4a220156a590dcf3602c1acb3ebdb77a"
+}
