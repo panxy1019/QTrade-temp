@@ -384,14 +384,17 @@ def main() -> None:
     if args.minute_symbol:
         import baostock as bs
 
+        from scripts.vendor_session import baostock_session
+
         socket.setdefaulttimeout(20)
-        login = bs.login()
-        if login.error_code != "0":
-            raise RuntimeError("BAOSTOCK_LOGIN_FAILED")
-        try:
-            ingest_minute(args.root, {"symbol": args.minute_symbol}, args.end)
-        finally:
-            bs.logout()
+        with baostock_session():
+            login = bs.login()
+            if login.error_code != "0":
+                raise RuntimeError("BAOSTOCK_LOGIN_FAILED")
+            try:
+                ingest_minute(args.root, {"symbol": args.minute_symbol}, args.end)
+            finally:
+                bs.logout()
     else:
         run(args.root, args.end)
 

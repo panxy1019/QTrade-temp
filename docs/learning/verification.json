@@ -1,0 +1,70 @@
+{
+  "schema_version": "qtrade.learning-docs-verification.v1",
+  "checked_at": "2026-10-25T23:26:32.746451+08:00",
+  "business_source_revision": "381b9e095f3c56f16fc06f8e678c611b08ba66c6",
+  "markdown_documents": 13,
+  "characters": 56351,
+  "cjk_characters": 28032,
+  "local_links_checked": 150,
+  "table_rows_checked": 508,
+  "outer_research_tabs_covered": 10,
+  "screenshots": [
+    {
+      "file": "01-research-qlib-overview.jpg",
+      "width": 954,
+      "height": 870,
+      "bytes": 84826,
+      "sha256": "51fd6e15c4bb62c965a42e2bd5d48deaf50e76c24c675cddd931790890bbbf9d"
+    },
+    {
+      "file": "02-strategy-center.jpg",
+      "width": 954,
+      "height": 2284,
+      "bytes": 221037,
+      "sha256": "a7ccc3c0c3ed22b51d7df5d6402e4fae8b7348909f4c461fc330f54fac240e96"
+    },
+    {
+      "file": "03-research-page-full.jpg",
+      "width": 954,
+      "height": 6527,
+      "bytes": 634964,
+      "sha256": "6c61b9053290d186b441904376692daf22a704a6e27557667934f3e753038bd9"
+    },
+    {
+      "file": "04-intraday-metrics.jpg",
+      "width": 954,
+      "height": 870,
+      "bytes": 40422,
+      "sha256": "e9e6e547dfae4f1480ab18954c7ff15476700516a22c3d042572fd09f34c44b4"
+    },
+    {
+      "file": "05-discovery-contract-rejected.jpg",
+      "width": 954,
+      "height": 870,
+      "bytes": 84600,
+      "sha256": "6331e070a916ff3a58f484e594609e2921d9a062751d896f77ed5231f898c06a"
+    },
+    {
+      "file": "06-factor-search.jpg",
+      "width": 954,
+      "height": 870,
+      "bytes": 69967,
+      "sha256": "2b4b91ee15bb458d8e26d962f44be48815871f2008482cbcdc6a292dfef9b565"
+    },
+    {
+      "file": "07-forward-incomplete.jpg",
+      "width": 954,
+      "height": 870,
+      "bytes": 75119,
+      "sha256": "99e681d4a9b99005bca372601720655d037d6a08213da6b2c8e2d068d0f5442d"
+    }
+  ],
+  "math_and_config_examples": "PASS",
+  "browser_default_intraday_preview": "PASS",
+  "browser_discovery_preview": "REJECTED_BY_FRONTEND_CONTRACT",
+  "template_navigation_end_to_end": "NOT_COMPLETED_BROWSER_TIMEOUT; SOURCE_DIFFERENCE_DOCUMENTED",
+  "runtime_code_changed": false,
+  "full_application_tests_run": false,
+  "errors": [],
+  "status": "PASS"
+}

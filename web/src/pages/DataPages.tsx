@@ -18,7 +18,6 @@ import type { RuntimeControlAction } from '../api/client'
 import { JsonExportButton } from '../components/JsonExportButton'
 import { FactorEvidenceCatalog } from '../components/FactorEvidenceCatalog'
 import { PublicResearchObservations } from '../components/PublicResearchObservations'
-import { QlibBaseline } from '../components/QlibBaseline'
 import { CurrentWorkspace } from '../components/CurrentWorkspace'
 import { formatBasisPoints, formatDirectionalDelta } from '../research/intradayDirectional'
 
@@ -473,7 +472,6 @@ export function ResearchPage({ data }: { data: PlatformSnapshot | null }) {
   const sectorRows = stockTransfer?.sector_only ?? []
   const leaveOneRows = stockTransfer?.leave_one_sector_out ?? []
   return <Page title="策略研究" subtitle="实验候选、独立样本外证据与晋级边界">
-    <QlibBaseline />
     <FactorEvidenceCatalog factorSearch={factorSearch} intradayReport={intradayFactorRobustness} />
     {intradayFactorRobustness && <IntradayFactorLongWindowEvidence report={intradayFactorRobustness} />}
     <IntradayFactorResearchLab key={longFiveMinuteDataset ? `intraday-factor:${longFiveMinuteDataset.data_version}:${longFiveMinuteDataset.checksum}` : 'no-intraday-factor-dataset'} dataset={longFiveMinuteDataset} />

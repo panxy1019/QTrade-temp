@@ -109,7 +109,10 @@ def finite(value: Any) -> float | None:
     return result if math.isfinite(result) else None
 
 
-def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> dict[str, Any]:
+def run(
+    data_root: Path, output: Path, tracking: Path, source_revision: str,
+    *, config_override: dict[str, Any] | None = None, pit_evidence_root: Path | None = None,
+) -> dict[str, Any]:
     import importlib.metadata
     import random
 
@@ -121,7 +124,9 @@ def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> 
     from qlib.utils import init_instance_by_config
     from qlib.workflow import R
 
-    config = json.loads((REPO / "configs/qlib_daily_baseline.json").read_text())
+    config = config_override or json.loads(
+        (REPO / "configs/qlib_daily_baseline.json").read_text()
+    )
     if re.fullmatch(r"[a-f0-9]{40}", source_revision) is None:
         raise ValueError("FULL_SOURCE_REVISION_REQUIRED")
     output.mkdir(parents=True, exist_ok=True)
@@ -142,6 +147,14 @@ def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> 
     attempt = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%f")
     stage = output / "runs" / (run_id + "." + attempt + ".partial")
     stage.mkdir(parents=True, exist_ok=False)
+    pit_coverage = {"state": "NO_REPAIR_COVERAGE_AT_SUBMISSION",
+                    "historical_pit_certified": False}
+    if pit_evidence_root is not None and (pit_evidence_root / "coverage.json").exists():
+        pit_coverage = json.loads((pit_evidence_root / "coverage.json").read_text())
+        if signed({k: v for k, v in pit_coverage.items()
+                   if k != "evidence_sha256"}) != pit_coverage:
+            raise ValueError("PIT_COVERAGE_HASH_MISMATCH")
+    write_json_atomic(stage / "pit-repair-coverage.json", pit_coverage)
 
     def status(state: str) -> None:
         write_json_atomic(
@@ -155,8 +168,46 @@ def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> 
 
     status("BUILDING_PROVIDER")
     dataset = make_provider(data_root, stage / "provider")
-    if dataset["end"] != config["segments"]["test"][1]:
+    if dataset["end"] < config["segments"]["test"][1] or (
+        config_override is None and dataset["end"] != config["segments"]["test"][1]
+    ):
         raise ValueError("FIXED_TEST_END_DOES_NOT_MATCH_DATASET")
+    calendar = (stage / "provider/calendars/day.txt").read_text().splitlines()
+    for left, right in (("train", "valid"), ("valid", "test")):
+        left_days = [day for day in calendar if day <= config["segments"][left][1]]
+        right_days = [day for day in calendar if day >= config["segments"][right][0]]
+        if not left_days or not right_days or (
+            calendar.index(left_days[-1]) + 2 >= calendar.index(right_days[0])
+        ):
+            raise ValueError("FUTURE_LABEL_CROSSES_SEGMENT_BOUNDARY")
+    instruments: str | list[str] = "qtrade1000"
+    if config.get("universe_policy") == "supported_a_share":
+        from qtrade.research.pit_repair import causal_intervals
+
+        histories = {
+            row["symbol"]: pd.read_parquet(
+                data_root / "stocks" / row["symbol"] / "daily.parquet",
+                columns=["date", "amount"],
+            ).to_dict("records")
+            for row in dataset["stocks"]
+        }
+        actual_calendar = [day for day in calendar if day <= dataset["end"]]
+        intervals, universe_audit = causal_intervals(histories, actual_calendar)
+        lines = [
+            f"{('SH' if symbol.startswith('6') else 'SZ') + symbol}\t{start}\t{end}"
+            for symbol, windows in intervals.items() for start, end in windows
+        ]
+        (stage / "provider/instruments/workflow_supported.txt").write_text(
+            "\n".join(lines) + "\n"
+        )
+        instruments = [
+            ("SH" if row["symbol"].startswith("6") else "SZ") + row["symbol"]
+            for row in dataset["stocks"]
+            if row["symbol"] in intervals
+        ]
+        if not instruments:
+            raise ValueError("NO_SUPPORTED_INSTRUMENTS")
+        write_json_atomic(stage / "universe-audit.json", universe_audit)
     tracking.mkdir(parents=True, exist_ok=True)
     qlib.init(
         provider_uri=str(stage / "provider"),
@@ -174,13 +225,15 @@ def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> 
         "class": "Alpha158",
         "module_path": "qlib.contrib.data.handler",
         "kwargs": {
-            "instruments": "qtrade1000",
+            "instruments": "workflow_supported" if config.get(
+                "universe_policy"
+            ) == "supported_a_share" else instruments,
             "start_time": "2016-10-24",
             "end_time": dataset["end"],
             "fit_start_time": config["segments"]["train"][0],
             "fit_end_time": config["segments"]["train"][1],
             "label": [config["label"]],
-            "infer_processors": [{"class": "ProcessInf"}],
+            "infer_processors": config.get("infer_processors", [{"class": "ProcessInf"}]),
             "learn_processors": [
                 {"class": "DropnaLabel"},
                 {"class": "CSRankNorm", "kwargs": {"fields_group": "label"}},
@@ -196,12 +249,16 @@ def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> 
         },
     }
     write_json_atomic(stage / "run-spec.json", {**request, "task": task})
+    if config.get("workflow_spec"):
+        write_json_atomic(stage / "workflow-spec.json", config["workflow_spec"])
     shutil.copyfile(data_root / "dataset.json", stage / "data-manifest.json")
     for relative in (
         "configs/qlib_daily_baseline.json",
         "scripts/run_qlib_baseline.py",
         "scripts/prepare_qlib_data.py",
         "src/qtrade/research/qlib_adapter.py",
+        "src/qtrade/research/workflow.py",
+        "src/qtrade/research/pit_repair.py",
     ):
         target = stage / "source" / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -218,7 +275,7 @@ def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> 
     split_rows = {key: len(data.prepare(key, col_set="label")) for key in config["segments"]}
     del features
     model = init_instance_by_config(config["model"])
-    status("TRAINING_LIGHTGBM")
+    status("TRAINING_MODEL" if config_override else "TRAINING_LIGHTGBM")
     with R.start(experiment_name=config["name"], recorder_name=run_id):
         R.log_params(
             **{
@@ -258,7 +315,7 @@ def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> 
         exchange["volume_threshold"] = tuple(exchange["volume_threshold"])
         report, positions = backtest_daily(
             start_time=config["segments"]["test"][0],
-            end_time=dataset["end"],
+            end_time=config["segments"]["test"][1],
             strategy=strategy,
             account=config["account"],
             benchmark=config["benchmark"],
@@ -333,7 +390,9 @@ def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> 
             "excluded_symbols": dataset["failures"],
             "feature_count": 158,
             "features": feature_names,
-            "model": "Alpha158 + LightGBM",
+            "model": "Alpha158 + " + (
+                "LightGBM" if config["model"]["class"] == "LGBModel" else "Ridge"
+            ),
             "packages": {
                 k: importlib.metadata.version(k)
                 for k in ("pyqlib", "lightgbm", "numpy", "pandas", "mlflow")
@@ -357,6 +416,11 @@ def run(data_root: Path, output: Path, tracking: Path, source_revision: str) -> 
             "cost_assumptions": config["exchange"],
             "cost_description": config["cost_description"],
             "portfolio": config["portfolio"],
+            "workflow_spec": config.get("workflow_spec"),
+            "pit_repair_coverage": pit_coverage,
+            "effective_universe_size": len(instruments) if isinstance(
+                instruments, list
+            ) else dataset["accepted_symbols"],
             "limitations": config["limitations"] + dataset["limitations"],
             "selection_bias": dataset["selection_bias"],
             "mlflow_recorder_id": recorder_id,
@@ -384,11 +448,24 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--tracking", type=Path, required=True)
     parser.add_argument("--source-revision", required=True)
+    parser.add_argument("--workflow-spec", type=Path)
+    parser.add_argument("--pit-evidence-root", type=Path)
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("live trading must remain disabled")
     try:
-        result = run(args.data_root, args.output, args.tracking, args.source_revision)
+        override = None
+        if args.workflow_spec:
+            from qtrade.research.workflow import build_config
+
+            override = build_config(
+                json.loads(args.workflow_spec.read_text()),
+                json.loads((REPO / "configs/qlib_daily_baseline.json").read_text()),
+            )
+        result = run(
+            args.data_root, args.output, args.tracking, args.source_revision,
+            config_override=override, pit_evidence_root=args.pit_evidence_root,
+        )
         print(json.dumps({"run_id": result["run_id"], "metrics": result["metrics"]}), flush=True)
     except Exception:
         write_json_atomic(

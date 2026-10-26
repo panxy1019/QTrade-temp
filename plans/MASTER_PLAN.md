@@ -22,6 +22,36 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
+### Qlib unified research workflow, 2026-10-26
+
+- [x] Record page responsibilities, model/config contract and private-queue design.
+- [x] Implement research authentication, bounded signed tasks and serial worker.
+- [x] Implement unified Qlib strategy/research/experiment/backtest pages and archive.
+- [x] Add causal admission, strict unknown-state checks and versioned source backfill.
+- [x] Validate real cluster executions, source coverage and immutable publications.
+- [ ] Configure Vercel research credentials and accept browser submission end to end.
+- [ ] Complete full Linux checks, production acceptance and reproducible evidence.
+
+Execution record: plans/QLIB_WORKFLOW_INTEGRATION.md. The PIT work remains
+uncertified until historical availability and independent master/rule evidence
+are reconciled. Live trading and external transmission remain disabled.
+
+### Website learning documentation, 2026-10-25
+
+- [x] Inspect strategy center, research components and ten archive tabs.
+- [x] Verify a read-only default intraday preview and record the rejected
+      discovery response without treating it as a successful experiment.
+- [x] Write 13 learning documents with seven screenshots, source references,
+      metric definitions, examples, component index and self-check exercises.
+- [x] Check local references, JPEG evidence and core formulas/configuration;
+      preserve the verification record and file digest manifest.
+
+Entry and reproduction: docs/learning/README.md and
+docs/learning/12-sources-and-verification.md. No runtime/strategy changes,
+formal experiment reruns or subsequent delivery schedule are included.
+Known limits: discovery-contract rejection; current/archive template
+initialization difference with browser end-to-end verification incomplete.
+
 ### Qlib daily research migration, 2026-10-25
 
 - [x] Record source/reuse audit and fixed research contract.

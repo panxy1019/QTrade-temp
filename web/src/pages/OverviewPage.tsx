@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import { EquityChart } from '../charts/EquityChart'
 import { MetricCard } from '../components/MetricCard'
 import { StatusTag } from '../components/StatusTag'
+import { useResearchWorkflow } from '../components/ResearchWorkflowProvider'
 import type { PlatformSnapshot } from '../types'
 
 export function OverviewPage({ data, dark, publicNode }: { data: PlatformSnapshot | null; dark: boolean; publicNode: boolean }) {
   const screens = Grid.useBreakpoint()
+  const { catalog } = useResearchWorkflow()
   const mode = data?.system.mode ?? 'PAPER'
   const risk = data?.system.risk_state ?? 'HALTED'
   const failures = Object.keys(data?.availability?.failures ?? {})
@@ -29,6 +31,14 @@ export function OverviewPage({ data, dark, publicNode }: { data: PlatformSnapsho
         <div><Typography.Title level={2}>总览</Typography.Title><Typography.Text type="secondary">研究、模拟交易与系统安全态势</Typography.Text></div>
         <Space><StatusTag value={mode} prominent /><StatusTag value={risk} prominent /></Space>
       </div>
+      <Card title="Qlib 主研究工作流">
+        <Typography.Paragraph>策略配置 → 登录后提交 → 集群训练/回测 → 不可变实验 → 同协议对照。数据按实验冻结，完成任务不会消除PIT与交易约束缺口。</Typography.Paragraph>
+        <Space wrap>
+          <Link to="/strategies">查看已接入模型</Link><Link to="/research">配置并提交Qlib任务</Link>
+          <Link to="/experiments">查看集群任务与归档</Link><Link to="/backtest">分析Qlib结果</Link>
+        </Space>
+        <Typography.Paragraph type="secondary">{catalog?.datasets[0] ? `${catalog.datasets[0].symbols}股输入库存，截至${catalog.datasets[0].end}；${catalog.experiments.filter(r => r.state === 'COMPLETE').length}份已完成Qlib档案。` : '正在读取Qlib独立目录。'} 以下PAPER账本、分钟因子闸门与历史曲线属于原平台运行时，不代表Qlib任务状态。</Typography.Paragraph>
+      </Card>
       <Alert
         type={data?.health?.healthy ? 'success' : 'warning'}
         showIcon
@@ -55,12 +65,12 @@ export function OverviewPage({ data, dark, publicNode }: { data: PlatformSnapsho
           responsive={false}
           items={[
             {
-              title: <Link to="/research">数据与因子定义</Link>,
+              title: <Link to="/archive">数据与因子定义</Link>,
               status: hasVerifiedMinuteDataset ? 'finish' : 'wait',
               content: hasVerifiedMinuteDataset ? `${verifiedMinuteDataset?.symbol_count ?? 0} 股、${verifiedMinuteDataset?.sector_count ?? 0} 板块的签名 5 分钟历史数据可用于研究。` : '等待校验通过的分钟数据与明确因子表达式。',
             },
             {
-              title: <Link to="/research">有效性、相关性与稳健性</Link>,
+              title: <Link to="/archive">有效性、相关性与稳健性</Link>,
               status: hasFactorValidation ? 'error' : 'wait',
               content: hasFactorValidation ? '三连阳因子已完成检验，但结论为 NOT_ELIGIBLE。' : '尚无完整且校验通过的因子检验结果。',
             },

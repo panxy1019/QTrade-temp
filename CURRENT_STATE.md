@@ -1,6 +1,34 @@
 # Current state
 
-Last updated: 2026-10-25
+Last updated: 2026-10-26
+
+- Qlib unified workflow implementation is in cluster integration. Research-only
+  cookie authentication, a scoped private Git queue, serial durable worker,
+  Ridge/LightGBM allowlisted configurations, unified pages and per-run audits
+  have been implemented. The user selected direct authenticated Vercel submission.
+  Two authenticated local API requests traversed the real private queue and
+  completed immutable cluster archives (11,911 files each): Ridge and LightGBM,
+  891 supported stocks, matching inputs/protocol/source. Frontend 201 tests and
+  Linux 544 full-suite checks pass; final navigation/compare checks pass too.
+  Worker, publication and bounded six-hour PIT source repair are supervised.
+  Production credentials and final browser submission
+  are still pending. Do not report Vercel submission as live.
+  The first source pass captured 9,022 master rows and 13/20 stocks' historical
+  status (31,577 rows), with seven failures retained rather than certified.
+  Historical-source backfill and causal admission remain non-certified PIT work.
+  See plans/QLIB_WORKFLOW_INTEGRATION.md and docs/QLIB_WORKFLOW.md.
+
+- Website learning guide completed in docs/learning/README.md: 13 Chinese
+  Markdown documents, seven real production screenshots, component index,
+  formulas, worked examples and exercises. Strategy center, all ten research
+  archive tabs, and a default read-only intraday preview were inspected.
+  Documentation checks cover local links, image dimensions, table structure,
+  key calculations and baseline configuration; see learning/verification.json.
+  The 104-rule discovery response was rejected by frontend contract checks.
+  Template initialization differs between current and archived workspaces;
+  its browser end-to-end recheck timed out. These limits are documented, with
+  no runtime changes or new formal research runs. Future delivery planning
+  remains with the user after reading.
 
 - Qlib daily baseline computed: isolated Python3.11/Qlib0.9.7 environment;
   990/1000 stocks and 2,157,805 daily bars reconciled with recovered Sina amount

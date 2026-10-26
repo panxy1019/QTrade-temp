@@ -7,6 +7,7 @@ from qtrade.api.app import ApiAuthConfig, bootstrap_context, create_app
 from qtrade.api.current_datasets import router as current_dataset_router
 from qtrade.api.public_observations import router as observation_router
 from qtrade.api.qlib_baseline import router as qlib_router
+from qtrade.api.research_workflow import router as research_router
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_ROOT = PROJECT_ROOT / "deployment" / "evidence"
@@ -93,6 +94,7 @@ class VercelQueryPathApp:
             }
             and not route.startswith("/current/")
             and not route.startswith("/qlib/")
+            and not route.startswith("/research/")
         )
 
         async def send_with_cache(message: Message) -> None:
@@ -124,4 +126,5 @@ inner_app = create_app(context, auth=ApiAuthConfig())
 inner_app.include_router(observation_router)
 inner_app.include_router(current_dataset_router)
 inner_app.include_router(qlib_router)
+inner_app.include_router(research_router)
 app = VercelQueryPathApp(inner_app)
