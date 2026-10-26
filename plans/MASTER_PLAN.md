@@ -35,8 +35,8 @@ certify historical information availability or independently repair the universe
 
 ### Archived Qlib configuration reuse for stable model comparison
 
-- [ ] Open a completed experiment's complete frozen configuration as a new task.
-- [ ] Preserve source, data, time, portfolio, costs and seed across catalog updates.
+- [x] Open a completed experiment's complete frozen configuration as a new task.
+- [x] Preserve source, data, time, portfolio, costs and seed across catalog updates.
 - [ ] Reject missing/legacy configuration reuse and verify production interaction.
 
 Continuous collection changes defaults; comparison must remain reproducible even

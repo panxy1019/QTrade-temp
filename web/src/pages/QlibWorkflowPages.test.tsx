@@ -1,9 +1,11 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { Link, MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ResearchWorkflowProvider } from '../components/ResearchWorkflowProvider'
 import catalog from '../test/fixtures/qlib-workflow.json'
 import { QlibBacktestPage, QlibResearchPage, QlibStrategyPage } from './QlibWorkflowPages'
+import type { ArchivedResearchTemplate, ResearchSpec } from '../research/qlibWorkflow'
+import { sourceBoundProtocol } from '../research/qlibWorkflow'
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div /> }))
 afterEach(() => { vi.unstubAllGlobals(); sessionStorage.clear() })
@@ -60,7 +62,8 @@ describe('Qlib research workflow pages', () => {
     const result = {
       experiment_id: 'source-bound', run_id: 'source-bound-run', state: 'COMPLETE',
       model: 'Alpha158 + Ridge', symbols: 891, feature_count: 158, data_end: '2026-10-23',
-      metrics: {}, curve: [], spec: catalog.default_spec,
+      metrics: {}, curve: [], spec: { ...catalog.default_spec, source_snapshot_sha256: 'a'.repeat(64) },
+      comparison_protocol: sourceBoundProtocol, source_snapshot_sha256: 'a'.repeat(64),
       portfolio_evaluation: { start: '2024-01-02', end: '2026-10-23' },
       signal_evaluation: { start: '2024-01-02', end: '2026-10-21' },
       audit: { ...catalog.datasets[0].audit, source_repair_coverage: {
@@ -81,6 +84,7 @@ describe('Qlib research workflow pages', () => {
     expect(await screen.findByText(/原始行情对账70,000根/)).toBeInTheDocument()
     expect(screen.getByText(/ST禁买是研究政策，精确涨跌停与完整历史PIT仍未认证/)).toBeInTheDocument()
     expect(screen.getByText(/来源快照：aaaa/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '复用配置创建对照' })).toHaveAttribute('href', '#/research?from=source-bound')
   })
   it('shows and submits the pinned source identity alongside model configuration', async () => {
     const source = 'a'.repeat(64)
@@ -91,4 +95,94 @@ describe('Qlib research workflow pages', () => {
     const call = (fetcher.mock.calls as unknown as Array<[string, RequestInit]>).find(([url]) => url.endsWith('/jobs'))!
     expect(JSON.parse(call[1].body as string).spec.source_snapshot_sha256).toBe(source)
   })
+  it('reuses archived inputs despite refreshed defaults and retries with the same request identity', async () => {
+    const archived = archiveTemplate()
+    let refreshed = false, submissions = 0
+    const fetcher = vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input)
+      const body = path.endsWith('/catalog') ? { ...catalog,
+        source_snapshot_sha256: (refreshed ? 'e' : 'f').repeat(64),
+        default_spec: { ...catalog.default_spec, dataset_id: refreshed ? 'changed-default' : catalog.default_spec.dataset_id },
+        ...(refreshed ? { frozen_data_current: false, expected_complete_day: '2026-10-26' } : {}) }
+        : path.endsWith('/session') ? { configured: true, authenticated: true, user: 'research-test' }
+        : path.endsWith('/template') ? archived
+        : ++submissions === 1 ? { detail: '队列临时不可用' } : { state: 'QUEUED' }
+      return { ok: !('detail' in body), status: 'detail' in body ? 503 : 200, json: async () => body }
+    })
+    vi.stubGlobal('fetch', fetcher)
+    renderResearch('/research?from=reference')
+    await screen.findByText('已载入归档实验的固定配置')
+    expect(screen.getByLabelText('实验名称')).toHaveValue('frozen-reference-vs-lightgbm')
+    expect(screen.getByLabelText('目标持仓Top K')).toHaveValue('40')
+    expect(screen.getByLabelText('卖出成本bp')).toHaveValue('15')
+    expect(screen.getByLabelText('随机种子')).toHaveValue('17')
+    expect(screen.getByText('本任务固定来源：' + 'a'.repeat(64))).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('实验名称'), { target: { value: 'chosen-comparison' } })
+    fireEvent.click(screen.getByRole('button', { name: '提交集群研究任务' }))
+    await screen.findByText(/队列临时不可用/)
+    refreshed = true
+    fireEvent.click(screen.getByRole('button', { name: '刷新研究目录' }))
+    await screen.findByText('研究数据尚未覆盖最近完整交易日2026-10-26')
+    expect(screen.getByLabelText('实验名称')).toHaveValue('chosen-comparison')
+    fireEvent.click(screen.getByRole('button', { name: '提交集群研究任务' }))
+    await screen.findByText('已进入任务状态页')
+    const calls = (fetcher.mock.calls as unknown as Array<[string, RequestInit]>).filter(([url]) => url.endsWith('/jobs'))
+    const first = JSON.parse(calls[0][1].body as string), second = JSON.parse(calls[1][1].body as string)
+    expect(second).toEqual(first)
+    expect(second.spec).toEqual({ ...archived.spec, name: 'chosen-comparison', model: 'lightgbm' })
+  })
+  it('keeps submission closed after a legacy template error instead of falling back to defaults', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => ({
+      ok: !String(input).endsWith('/template'), status: String(input).endsWith('/template') ? 422 : 200,
+      json: async () => String(input).endsWith('/catalog') ? catalog
+        : String(input).endsWith('/session') ? { configured: true, authenticated: true }
+        : { detail: '该档案未保存当前协议的完整来源配置，请新建默认研究任务' },
+    })))
+    renderResearch('/research?from=legacy')
+    await screen.findByText('该档案未保存当前协议的完整来源配置，请新建默认研究任务')
+    expect(screen.getByRole('button', { name: '提交集群研究任务' })).toBeDisabled()
+    expect(screen.getByLabelText('实验名称')).not.toHaveValue(catalog.default_spec.name)
+    expect(screen.getByRole('link', { name: '新建默认研究' })).toHaveAttribute('href', '#/research')
+  })
+  it('ignores a late response for a different archived configuration', async () => {
+    let resolveFirst!: (response: unknown) => void
+    const other = archiveTemplate(); other.base_experiment_id = 'other'; other.spec.name = 'other-reference'
+    other.source_snapshot_sha256 = other.spec.source_snapshot_sha256 = 'd'.repeat(64)
+    const fetcher = vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input)
+      if (path.endsWith('/reference/template')) return new Promise(resolve => { resolveFirst = resolve })
+      return { ok: true, json: async () => path.endsWith('/catalog') ? catalog
+        : path.endsWith('/session') ? { configured: true, authenticated: true } : other }
+    })
+    vi.stubGlobal('fetch', fetcher)
+    renderResearch('/research?from=reference', true)
+    await waitFor(() => expect(resolveFirst).toBeDefined())
+    expect(screen.getByRole('button', { name: '提交集群研究任务' })).toBeDisabled()
+    fireEvent.click(screen.getByRole('link', { name: '切换归档' }))
+    await screen.findByText('本任务固定来源：' + 'd'.repeat(64))
+    await act(async () => { resolveFirst({ ok: true, json: async () => archiveTemplate() }) })
+    expect(screen.getByLabelText('实验名称')).toHaveValue('other-reference-vs-lightgbm')
+    expect(screen.getByText('本任务固定来源：' + 'd'.repeat(64))).toBeInTheDocument()
+  })
 })
+
+function archiveTemplate(): ArchivedResearchTemplate {
+  return {
+    schema_version: 'qtrade.research-template.v1', base_experiment_id: 'reference',
+    base_run_id: 'reference-run', base_result_sha256: 'b'.repeat(64), source_revision: 'c'.repeat(40),
+    dataset_sha256: 'd'.repeat(64), source_snapshot_sha256: 'a'.repeat(64),
+    comparison_protocol: sourceBoundProtocol,
+    spec: { ...structuredClone(catalog.default_linear_spec) as ResearchSpec,
+      name: 'frozen-reference', topk: 40, sell_cost_bps: 15, seed: 17, source_snapshot_sha256: 'a'.repeat(64) },
+    live_trading_enabled: false, external_order_transmission: false, point_in_time: false,
+    real_data_paper_readiness: false, promotion: 'NOT_ELIGIBLE',
+  }
+}
+
+function renderResearch(path: string, switchLink = false) {
+  render(<ResearchWorkflowProvider><MemoryRouter initialEntries={[path]}>
+    {switchLink && <Link to="/research?from=other">切换归档</Link>}
+    <Routes><Route path="/research" element={<QlibResearchPage />} />
+      <Route path="/experiments" element={<div>已进入任务状态页</div>} /></Routes>
+  </MemoryRouter></ResearchWorkflowProvider>)
+}

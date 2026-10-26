@@ -19,7 +19,7 @@ from urllib.request import urlopen
 from fastapi import APIRouter, HTTPException, Request, Response
 
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
-from qtrade.research.workflow import SCHEMA, capabilities, digest, validate_spec
+from qtrade.research.workflow import SCHEMA, archived_template, capabilities, digest, validate_spec
 from qtrade.research.workflow_queue import GitQueue, seal
 
 router = APIRouter(prefix="/research")
@@ -226,6 +226,24 @@ def experiment(experiment_id: str, response: Response) -> dict[str, Any]:
         raise HTTPException(404, "未找到已完成实验") from None
     except Exception:
         raise HTTPException(503, "实验发布不可用或校验失败") from None
+
+
+@router.get("/experiments/{experiment_id}/template")
+def template(experiment_id: str, response: Response) -> dict[str, Any]:
+    result = experiment(experiment_id, response)
+    try:
+        listing = read_public("workflow.json")
+        if listing.get("schema_version") != SCHEMA:
+            raise ValueError("CATALOG_SCHEMA_MISMATCH")
+        revision = listing["worker"].get("source_revision")
+    except Exception:
+        raise HTTPException(503, "当前执行器版本不可核验，配置未载入") from None
+    try:
+        return archived_template(result, revision)
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from None
+    except (KeyError, TypeError):
+        raise HTTPException(422, "归档配置不完整，不能用当前默认值补齐") from None
 
 
 @router.post("/jobs", status_code=202)

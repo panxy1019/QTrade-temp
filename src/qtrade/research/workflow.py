@@ -113,6 +113,53 @@ def default_spec(model: str = "lightgbm") -> dict[str, Any]:
     }
 
 
+def archived_template(result: dict[str, Any], worker_revision: str | None) -> dict[str, Any]:
+    """Copy declared inputs only; never fill missing archived fields from current defaults."""
+    if signed({k: v for k, v in result.items() if k != "evidence_sha256"}) != result or (
+        any((result.get(k) is not False) if v is False else result.get(k) != v
+            for k, v in AUTHORITY.items())
+        or result.get("schema_version") != "qtrade.workflow-result.v1"
+        or result.get("engine") != "QLIB" or result.get("state") != "COMPLETE"
+    ):
+        raise ValueError("归档结果身份或权限边界无效，不能复用配置")
+    if result.get("comparison_protocol") != (
+        "ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2"
+    ) or not isinstance(result.get("spec"), dict):
+        raise ValueError("该档案未保存当前协议的完整来源配置，请新建默认研究任务")
+    try:
+        spec = validate_spec(result["spec"])
+    except (ValueError, KeyError, TypeError):
+        raise ValueError("归档规格不符合已开放合同，不能复用配置") from None
+    if any(not isinstance(result.get(k), str) or re.fullmatch(
+        r"[A-Za-z0-9][A-Za-z0-9._-]{0,120}", result[k]
+    ) is None for k in ("experiment_id", "run_id")):
+        raise ValueError("归档实验或运行身份缺失，不能复用配置")
+    source = result.get("source_snapshot_sha256")
+    if not isinstance(source, str) or re.fullmatch(r"[a-f0-9]{64}", source) is None or (
+        spec.get("source_snapshot_sha256") != source
+    ):
+        raise ValueError("归档规格与历史来源身份不一致，不能复用配置")
+    revision = result.get("source_revision")
+    if not isinstance(worker_revision, str) or re.fullmatch(
+        r"[a-f0-9]{40}", worker_revision
+    ) is None:
+        raise ValueError("当前执行器代码版本不可核验，暂不能生成模型对照配置")
+    if not isinstance(revision, str) or re.fullmatch(r"[a-f0-9]{40}", revision) is None or (
+        revision != worker_revision
+    ):
+        raise ValueError("当前执行器代码与原实验不同，请在同一当前版本重新运行两种模型")
+    dataset = result.get("dataset_sha256")
+    if not isinstance(dataset, str) or re.fullmatch(r"[a-f0-9]{64}", dataset) is None:
+        raise ValueError("归档行情身份缺失，不能复用配置")
+    return signed({
+        **AUTHORITY, "schema_version": "qtrade.research-template.v1",
+        "base_experiment_id": result["experiment_id"], "base_run_id": result["run_id"],
+        "base_result_sha256": result["evidence_sha256"], "source_revision": revision,
+        "dataset_sha256": dataset, "source_snapshot_sha256": source,
+        "comparison_protocol": result["comparison_protocol"], "spec": spec,
+    })
+
+
 def build_config(spec: dict[str, Any], baseline: dict[str, Any]) -> dict[str, Any]:
     spec = validate_spec(spec)
     config: dict[str, Any] = json.loads(canonical(baseline))

@@ -3137,3 +3137,22 @@ availability, exact rules, PIT membership or trading admission. Raw source files
 and completed experiments retain their existing identities. No new gateway or
 vn.py execution component is needed. LIVE_TRADING_ENABLED=false.
 
+## ADR-169 — Archived comparison tasks reuse declared inputs without default substitution
+
+Status: accepted, 2026-10-26.
+
+Continuously collected sources change model defaults, so a later form visit must
+be able to reuse an earlier experiment's exact inputs. Add a public read-only
+template derived from a checksum-bound published archive result. Require
+the current allowlisted spec, matching source identity, dataset identity and
+worker revision; incomplete legacy specs and known code drift cannot be repaired
+with current defaults. Reuse the existing research API, signed evidence, form,
+authenticated submission and private queue. No gateway or vn.py runtime is needed.
+
+Default the new draft to the other model and a new name; preserve archived data,
+source, splits, portfolio, costs and seed. Freeze form initialization by the
+requested archive/model, retain retry identity across polling, and ignore stale
+async responses. Copying is not submission, a strategy promotion or a claim of
+new unseen evidence. Final comparison still checks actual execution code, data
+and dates if the worker changes after preparation. LIVE_TRADING_ENABLED=false.
+

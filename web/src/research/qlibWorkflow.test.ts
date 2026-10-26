@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest'
-import { comparisonIssue, completedExperiments } from './qlibWorkflow'
-import type { ResearchSpec, WorkflowExperiment, WorkflowResult } from './qlibWorkflow'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { canReuseArchivedResult, comparisonDraft, comparisonIssue, completedExperiments, sourceBoundProtocol, workflowGet } from './qlibWorkflow'
+import type { ArchivedResearchTemplate, ResearchSpec, WorkflowExperiment, WorkflowResult } from './qlibWorkflow'
+
+afterEach(() => vi.unstubAllGlobals())
 
 const spec: ResearchSpec = {
   name: 'test', dataset_id: 'same-input', model: 'linear', features: 'Alpha158',
@@ -9,6 +11,16 @@ const spec: ResearchSpec = {
   sell_cost_bps: 13, min_cost: 5, initial_cash: 10000000, seed: 1, universe_policy: 'supported_a_share',
 }
 const result = () => ({ spec: structuredClone(spec), dataset_sha256: 'same', source_revision: 'same', comparison_protocol: 'aligned-v1', curve: [{ date: '2024-01-02' }] }) as WorkflowResult
+
+const template = (): ArchivedResearchTemplate => ({
+  schema_version: 'qtrade.research-template.v1', base_experiment_id: 'reference',
+  base_run_id: 'reference-run', base_result_sha256: 'a'.repeat(64),
+  source_revision: 'b'.repeat(40), dataset_sha256: 'c'.repeat(64),
+  source_snapshot_sha256: 'd'.repeat(64), comparison_protocol: sourceBoundProtocol,
+  spec: { ...structuredClone(spec), source_snapshot_sha256: 'd'.repeat(64) },
+  live_trading_enabled: false, external_order_transmission: false, point_in_time: false,
+  real_data_paper_readiness: false, promotion: 'NOT_ELIGIBLE',
+})
 
 describe('controlled Qlib comparisons', () => {
   it('defaults to the newest completed run, ahead of the imported old reference', () => {
@@ -48,5 +60,29 @@ describe('controlled Qlib comparisons', () => {
     expect(comparisonIssue(left, right)).toMatch(/来源快照不同/)
     right.source_snapshot_sha256 = left.source_snapshot_sha256
     expect(comparisonIssue(left, right)).toBeNull()
+  })
+  it('creates a model-only draft without mutating any archived input', () => {
+    const original = template(), before = structuredClone(original)
+    const draft = comparisonDraft(original, 'reference')
+    expect(draft).toEqual({ ...original.spec, name: 'test-vs-lightgbm', model: 'lightgbm' })
+    draft.segments.test[1] = '2025-01-01'
+    expect(original).toEqual(before)
+    const long = template(); long.spec.name = 'a'.repeat(60)
+    expect(comparisonDraft(long, 'reference').name.length).toBeLessThanOrEqual(60)
+  })
+  it('rejects misbound templates and does not offer legacy configuration reuse', () => {
+    expect(() => comparisonDraft(template(), 'another')).toThrow(/身份不完整/)
+    const changed = template(); changed.spec.source_snapshot_sha256 = 'e'.repeat(64)
+    expect(() => comparisonDraft(changed, 'reference')).toThrow(/身份不完整/)
+    const candidate = { ...result(), comparison_protocol: sourceBoundProtocol,
+      source_snapshot_sha256: 'd'.repeat(64), spec: template().spec }
+    expect(canReuseArchivedResult(candidate)).toBe(true)
+    expect(canReuseArchivedResult({ ...candidate, spec: null })).toBe(false)
+    expect(canReuseArchivedResult(result())).toBe(false)
+  })
+  it('preserves the server explanation when an archived template cannot be reused', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 422,
+      json: async () => ({ detail: '当前执行器代码与原实验不同' }) })))
+    await expect(workflowGet('/experiments/reference/template')).rejects.toThrow('当前执行器代码与原实验不同')
   })
 })
