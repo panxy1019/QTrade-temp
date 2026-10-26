@@ -1,0 +1,195 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.pit-recovery-acceptance.v1",
+  "checked_at": "2026-10-26T04:04:12.765042+00:00",
+  "source_revision": "24b6298e89587c03b9d4537af56eb127b4c3c6ec",
+  "full_linux_tests_before_partial_followup": 556,
+  "linux_targeted_tests_final": 40,
+  "historical_pit_certified": false,
+  "accepted_source_evidence": {
+    "coverage.json": {
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "point_in_time": false,
+      "realtime_readiness": false,
+      "real_data_paper_readiness": false,
+      "external_order_transmission": false,
+      "live_trading_enabled": false,
+      "promotion": "NOT_ELIGIBLE",
+      "schema_version": "qtrade.pit-repair.v1",
+      "observed_at": "2026-10-26T03:40:33.718778+00:00",
+      "state": "SOURCE_BACKFILL_REQUIRES_RECONCILIATION",
+      "master_rows": 9022,
+      "master_sha256": "3fe4114d53f195bdcbfc574f7c1b88a6e1cdf8c4e2c8085ec0055061ecdcb564",
+      "master_observed_at": "2026-10-26T02:05:27.695891+00:00",
+      "master_fetch_outcome": "REUSED_VERIFIED_SNAPSHOT",
+      "master_refresh_error": null,
+      "master_inactive_rows": 1200,
+      "master_is_historical_asof_snapshot": false,
+      "status_symbols": 33,
+      "input_symbols": 990,
+      "status_rows": 79299,
+      "source_checksums": {
+        "000001.json": "f6bdabc82b57b9a2efd6259c79cd40ace9de1d3241995989f4a122cbd2cf3953",
+        "000002.json": "7ef77342c4c841925955b52fbc130dae6af82cc887745638e551521f28118450",
+        "000011.json": "3833fd7b4f2192423b23ae16f1b3ea098be9886abd8d940ba6cc24127e033ebe",
+        "000021.json": "b612b6c7e9842604cbb8a11628de8b4afe262baf0253606b5587b22e46b88600",
+        "000032.json": "ddbdba3495c18ae7c82d1372545835f23eade078397418867b33e248681813d3",
+        "000034.json": "ffb06abbf8beb63c1c75aa3ab9e1035b8ccabf2380ef4eb4dc77a4ece85fa877",
+        "000060.json": "8a929f60133fcffa8e2b3cbb379173000f2c84403b49398b1383f1dcfa931baf",
+        "000063.json": "f8fb23d0feaa75d4cfd9c5e279c2df64c6f23464044c898e5d58df4cd6bc76d4",
+        "000070.json": "96a8d3a5b82d441d58897e3cad6b004fba65970dff9883902bda15e312691dad",
+        "000100.json": "826975e2c453bf05938a836a59593fa816c5202cd182807a8414dbc92d8a9d4b",
+        "000157.json": "8d5a7b2cfe8312ad1e931d38fa16d450282dfec68f3ba48affaf1387a2350f18",
+        "000158.json": "0e486eedb239908cfa18d7d206910529247c2b73181a3ac5b5138f0cec0f1d3e",
+        "000166.json": "1298e66cada0b21f02410783930016a0905136ae292e3c17c6ac2322dadfc10e",
+        "000333.json": "9ee2e0268e95f563538e9092902e13e432917d95e2d686c7af4fd2f44b04ac50",
+        "000400.json": "af6ebe14b7581a265fc76284c80a2e1434e07cce47fb9d85d751c61889f974b4",
+        "000408.json": "acc3b104fa6afae4756c034d0ff1a93ae101b6bfed7a6b1f19738569e8d6cd57",
+        "000420.json": "686f156de3c35b13f9033accb30142ee4799407a7c4cf095b382c634e86bcbb2",
+        "000425.json": "5fbada5c738804fe4c9d51580f3ce4747bdea789da93586f56b9b5f64aed2f96",
+        "000426.json": "9575066e5caabbf95468c1a0f16b76bbd49395cc6f8c0cdce6f45841c7258cb1",
+        "000503.json": "4220d712eef025d0a2255985e7f810d08dcec582bc123d601ae6dc725a54d11e",
+        "000506.json": "e72a0eeff26f28748fb0376d86cfac38d5c4e18ac1f0b97534605d663858cf4c",
+        "000519.json": "3be160ee2353e664bb02543067151f148f9ab1d9cff429cec24c1b1f9387ad73",
+        "000523.json": "d6fdbf3cc6c67cc5a4bee5666c70cec8bac89989f6f75e1e814f365cb50890f7",
+        "000538.json": "16e0b62b11ce4fe142f0f7cc1163c466fe33b94cdd4861a8778cbb74adb9e0e6",
+        "000547.json": "dc8a90a74a09778b2738cca6b7eb27051e027531d2cd18326f05e5e8bfcdcd10",
+        "000559.json": "985618d7c630656b4d0d08d5121e0ad531df661a464cfe3f4f1356f4dd4defd5",
+        "000568.json": "4acf873a782032cf259bbfe44a93ea4cb599a95b1bc5ae66c88cf82929439dc9",
+        "000592.json": "db0aad55d29f98d620960f091358bfc19b74474237677e8730508cb6089a7b24",
+        "000596.json": "0726602fccc96ade879919b355bd88cebefad64e20ef055aa0fbc58f8f6dfb6a",
+        "000601.json": "403b088a718efe5bba1be29f712ea9243aff442fbc6446c81894e2d73572eecf",
+        "000603.json": "14ef71357b0303feaff8fafe8e525def8903478b3a16dd48246bf1d228d72a61",
+        "000617.json": "4652f59d83a57446795b6467661deb16a16c214cba66583cee37151236bc3eda",
+        "000620.json": "5e87c6474c36d1acc4ea25a9e8da10fa0adf85d2459589002114b7579e2c200e"
+      },
+      "historical_pit_certified": false,
+      "historical_available_at_known": false,
+      "execution_enforcement": "NOT_USED_DAILY_PROXY_REMAINS",
+      "failures": [
+        {
+          "symbol": "000062",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000066",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000510",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000513",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000582",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000612",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000625",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        }
+      ],
+      "missing": [
+        "INDEPENDENT_MASTER_AND_DELISTED_PRICE_RECONCILIATION",
+        "HISTORICAL_INFORMATION_AVAILABILITY",
+        "OFFICIAL_RAW_PRICE_LIMITS",
+        "AUCTION_REPLAY_AND_CORPORATE_ACTION_LEDGER"
+      ],
+      "evidence_sha256": "13e2f73d246be1211ddb3cb9da0800b38df9369dc22dbb2dc6a556fab8efcb56"
+    },
+    "attempt.json": {
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "point_in_time": false,
+      "realtime_readiness": false,
+      "real_data_paper_readiness": false,
+      "external_order_transmission": false,
+      "live_trading_enabled": false,
+      "promotion": "NOT_ELIGIBLE",
+      "schema_version": "qtrade.pit-source-attempt.v1",
+      "updated_at": "2026-10-26T03:53:01.784935+00:00",
+      "requested_maximum": 40,
+      "state": "PARTIAL",
+      "historical_pit_certified": false,
+      "status_symbols": 33,
+      "status_rows": 79299,
+      "failures": [
+        {
+          "symbol": "000062",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000066",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000510",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000513",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000582",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000612",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        },
+        {
+          "symbol": "000625",
+          "code": "VendorQueryError",
+          "vendor_code": "10002007"
+        }
+      ],
+      "coverage_sha256": "13e2f73d246be1211ddb3cb9da0800b38df9369dc22dbb2dc6a556fab8efcb56",
+      "master_fetch_outcome": "REUSED_VERIFIED_SNAPSHOT",
+      "evidence_sha256": "bcd676fb42379cb47f9977c4b1773d47ffb75dbf4b21e3e431d8464f53572416"
+    },
+    "next-pass.json": {
+      "maximum": 40,
+      "at": "2026-10-26T03:53:02.031811+00:00",
+      "returncode": 0,
+      "outcome": "PARTIAL",
+      "consecutive_failures": 1,
+      "next_attempt_at": "2026-10-26T04:23:02.031811+00:00",
+      "source_attempt_sha256": "bcd676fb42379cb47f9977c4b1773d47ffb75dbf4b21e3e431d8464f53572416",
+      "legacy_partial_corrected_at": "2026-10-26T04:02:44.087635+00:00"
+    }
+  },
+  "services": {
+    "qtrade-data-observer": "qtrade-data-observer             Running   pid 4471, uptime 18:46:11",
+    "qtrade-research-maintenance": "qtrade-research-maintenance      Running   pid 65600, uptime 1:55:21",
+    "qtrade-qlib-workflow": "qtrade-qlib-workflow             Running   pid 68714, uptime 1:29:31",
+    "qtrade-research-publication": "qtrade-research-publication      Running   pid 68779, uptime 1:29:21",
+    "qtrade-pit-repair": "qtrade-pit-repair                Running   pid 73343, uptime 0:01:28"
+  },
+  "evidence_sha256": "393d3542690aabb84930fffd102db30c958c875f70734957ab9ef6887f50897c"
+}

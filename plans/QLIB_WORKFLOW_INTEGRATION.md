@@ -46,7 +46,7 @@ Goal opened 2026-10-26 at the user's request.
 - [x] M3: reorganized pages and submit/status/detail/compare navigation.
 - [ ] P0 parallel: causal universe/state audit, historical source ingestion,
       constraint enforcement and per-run unresolved-coverage disclosures.
-- [ ] M4: targeted/full checks, production deployment and browser acceptance.
+- [x] M4: targeted/full checks, production deployment and browser acceptance.
 
 Evidence: Linux 544 full-suite tests passed on release da2878c; frontend 201
 full-suite tests and nine final workflow/navigation checks passed. A later
@@ -57,6 +57,58 @@ market observer and maintenance services are supervised. Vercel preview shows
 the integrated form with authentication closed until Production credentials
 are configured. That credential handoff and final public-browser submission
 are still required; do not mark the overall goal complete.
+
+Production checkpoint: PR #4 merged as 6573e3fc4ab993593bcb9480e1a7d2a0dd4294ae.
+Live API and browser confirm two completed aligned runs, newest-run selection,
+actual model comparison, fresh worker/data clocks and anonymous POST rejection.
+The Production/Secret import dialog is prepared without entering credentials.
+User credential setup, redeployment and authenticated UI acceptance remain.
+The temporary cluster transfer key has been revoked; no credential values were
+committed. Final production evidence is staged locally for the remaining handoff.
+
+2026-10-26 follow-up: the user imported all seven Production values. Redeploy
+G8kg8mdRQUPtoPGXZmdyJvz2eJX1 enabled actual browser login. Submission with request
+34dd6dd3094342e1871f0046135f5656 was initially unconfirmed; uv lock --check exposed
+missing Dulwich/Paramiko dependencies. PR #5 repairs the frozen lock and adds
+credential-safe exception-class diagnostics; 26 targeted checks, Ruff, mypy
+and Vercel preview pass. Main 2b1e200 now accepts the same browser request;
+cancellation was submitted and final cluster/result acceptance is in progress.
+Values were saved as Config; sensitive values still need owner-managed Secret
+storage. Do not print or copy their contents.
+
+PIT source recovery: last master refresh failed while old accepted coverage
+remained visible. Add independent attempt evidence, verified cache reuse with
+original clocks, bounded same-scope failure retries and child cleanup. Nine
+source/scheduler tests pass locally. Release 6c6092a passes all 556 Linux tests;
+the supervised PIT service runs this release and resumes from the verified
+master without changing its original clock. Final source coverage remains
+pending this bounded pass, and historical certification remains unresolved.
+
+Final production acceptance: login, submission and cancellation were performed
+through the production browser. 34dd6dd3094342e1871f0046135f5656 reached CANCELLED;
+316ff5642f3344d588c8de2646598314 reached COMPLETE in about 3m34s. Its 11,911-file
+archive verifies, and its public detail, metrics and PIT coverage render in the
+actual backtest page. Anonymous submission remains 401. The two browser
+screenshots and final checkpoint are in docs/evidence. Source certification is
+not inferred from this operational acceptance. Secret storage conversion remains
+an owner task because Vercel requests email verification before editing.
+
+The resumed 40-stock source pass finalized 33 stocks / 79,299 rows with seven
+vendor failures (10002007), preserving the master observation time. Follow-up
+state handling distinguishes PARTIAL evidence from a zero process exit: retain
+the same scope and back off instead of advancing the sample. Ten focused source
+tests pass. The user reported Secret conversion, but the freshly loaded project
+list still shows Config; it remains unverified rather than marked complete.
+
+Final checkpoint: the user explicitly chose to retain Config for now, so Secret
+conversion is a deferred owner choice, not a production login blocker. Release
+24b6298 passes 40 targeted Linux checks after the prior 556-test full suite.
+The supervised PIT PID/cwd was verified on this release; the old PARTIAL pass
+was preserved and its next schedule corrected to scope 40 at 12:23 Asia/Shanghai.
+All five services are running. Accepted coverage/attempt hashes and schedule are
+recorded in docs/evidence/pit-source-recovery-20261026.json. The temporary upload
+key was revoked. P0 historical PIT availability and exact-rule enforcement remain
+open; do not mark these as certified based on this workflow acceptance.
 
 Learning documentation already in the working tree belongs to the previous
 request and must be preserved. Existing fixed experiments remain immutable.

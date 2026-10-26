@@ -29,8 +29,11 @@ Audit date: 2026-08-12.
 - [x] Implement unified Qlib strategy/research/experiment/backtest pages and archive.
 - [x] Add causal admission, strict unknown-state checks and versioned source backfill.
 - [x] Validate real cluster executions, source coverage and immutable publications.
-- [ ] Configure Vercel research credentials and accept browser submission end to end.
-- [ ] Complete full Linux checks, production acceptance and reproducible evidence.
+- [x] Configure Vercel research credentials and accept browser submission end to end.
+- [x] Complete full Linux checks and public production result-page acceptance.
+- [x] Complete authenticated production acceptance and final credential evidence.
+- [x] Repair frozen deployment dependencies and PIT source retry/attempt handling.
+- [x] Record the owner's explicit choice to retain Config storage for now.
 
 Execution record: plans/QLIB_WORKFLOW_INTEGRATION.md. The PIT work remains
 uncertified until historical availability and independent master/rule evidence
