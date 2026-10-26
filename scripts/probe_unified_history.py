@@ -110,6 +110,8 @@ def probe(
     try:
         if not raw["body_complete"] or raw["transport_error"]:
             raise ValueError("HISTORY_PROBE_DOWNLOAD_INCOMPLETE")
+        if not raw["rows"]:
+            raise ValueError("HISTORY_PROBE_EMPTY_RESPONSE")
         bars = fetch_baostock_five_minute_history(
             RecordedApi(raw), symbol=symbol, start_date=str(start), end_date=str(end),
             adjustflag="3",
@@ -151,6 +153,53 @@ def probe(
     return sealed
 
 
+def probe_session(api: Any, output: Path, **scope: Any) -> dict[str, Any]:
+    """Keep scheduling/login failures durable too; a yielded lease is no download."""
+    now = scope['now']
+    instrument_id(scope['symbol'], scope['security_type'])
+    if (now.tzinfo is None or not 0 <= (scope['end']-scope['start']).days < 31
+            or scope['end'] >= now.date()
+            or re.fullmatch(r'[a-f0-9]{40}', scope['revision']) is None):
+        raise ValueError('HISTORY_PROBE_BOUND_OR_CLOCK_INVALID')
+    folder = output / 'sessions' / uuid4().hex
+    request = signed({**AUTHORITY, 'symbol': scope['symbol'],
+                      'security_type': scope['security_type'], 'start': str(scope['start']),
+                      'end': str(scope['end']), 'code_revision': scope['revision'],
+                      'started_at': now.isoformat()})
+    write_json_immutable(folder / 'request.json', request)
+    result: dict[str, Any] = {
+        **AUTHORITY, 'schema_version': 'qtrade.history-probe-session.v1',
+        'request_sha256': request['evidence_sha256'], 'state': 'LOGIN_FAILED',
+        'query_attempted': False, 'admitted_bar_count': 0, 'probe_receipt_sha256': None,
+        'error_class': None, 'next_attempt_not_before': None,
+    }
+    from datetime import timedelta
+
+    try:
+        with baostock_session(blocking=False):
+            if api.login().error_code != '0':
+                raise RuntimeError('VENDOR_LOGIN_FAILED')
+            try:
+                result['query_attempted'] = True
+                receipt = probe(api, output, **scope)
+                result.update(state='PROBE_RECORDED',
+                              probe_receipt_sha256=receipt['evidence_sha256'],
+                              probe_state=receipt['state'], attempt_id=receipt['attempt_id'])
+            finally:
+                api.logout()
+    except BlockingIOError:
+        result['state'] = 'YIELDED_TO_SHARED_VENDOR_SESSION'
+    except Exception as error:
+        result['state'] = 'FAILED_AFTER_QUERY' if result['query_attempted'] else 'LOGIN_FAILED'
+        result['error_class'] = type(error).__name__
+    if result['state'] in {'LOGIN_FAILED', 'FAILED_AFTER_QUERY'}:
+        result['next_attempt_not_before'] = (now + timedelta(minutes=30)).isoformat()
+    result['finished_at'] = datetime.now(UTC).isoformat()
+    sealed = signed(result)
+    write_json_immutable(folder / 'receipt.json', sealed)
+    return sealed
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
@@ -169,20 +218,11 @@ def main() -> None:
         raise RuntimeError("PERSISTENT_STORAGE_RESERVE_100_GIB")
     bs = import_module("baostock")
     socket.setdefaulttimeout(15)
-    # Low-priority audits do not wait ahead of the ongoing PIT source worker.
-    try:
-        with baostock_session(blocking=False):
-            if bs.login().error_code != "0":
-                raise RuntimeError("VENDOR_LOGIN_FAILED")
-            try:
-                result = probe(bs, args.output, symbol=args.symbol,
-                               security_type=args.security_type, start=args.start, end=args.end,
-                               now=datetime.now(UTC), revision=args.source_revision)
-            finally:
-                bs.logout()
-    except BlockingIOError:
+    result = probe_session(bs, args.output, symbol=args.symbol, security_type=args.security_type,
+                           start=args.start, end=args.end, now=datetime.now(UTC),
+                           revision=args.source_revision)
+    if result['state'] == 'YIELDED_TO_SHARED_VENDOR_SESSION':
         print("HISTORY_PROBE_YIELDED_TO_SHARED_VENDOR_SESSION")
-        return
     print(json.dumps(result, ensure_ascii=False))
 
 
