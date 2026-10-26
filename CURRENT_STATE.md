@@ -2,6 +2,28 @@
 
 Last updated: 2026-10-27
 
+- ETF historical public integration is verified at 59894ea using the new b284da5
+  simulation with full per-session OHLCV marks. Report and six artifacts pass
+  independent data-only accounting/target validation and actual raw replay on
+  the cluster; the public envelope is 838,897 bytes. The runner suite has 54
+  passing Linux checks and public integration suite 100, zero failures/skips.
+  Only the read-only publisher was restarted (PID 183766); other process PIDs
+  are unchanged. Frontend 257 tests, build/lint and full src mypy pass. Vercel
+  release and rendered visual acceptance remain pending. Evidence:
+  docs/evidence/qlib-etf-history-public-59894ea.json. Original 18d102e archive is
+  retained; simulation metrics are unchanged. STEP1 remains active.
+
+- Actual ETF historical portfolio simulation completed on cluster source 18d102e:
+  30 fixed ETFs, 21 warmup closes and 34 evaluation sessions; positive20 daily
+  Top3 versus daily fixed-pool equal weight. Every cash/holding/fill/fee/slippage/
+  NAV/P&L ledger reconciles, and immutable rerun is identical. All 51 Linux checks
+  pass without skips. Assumed-cost cumulative returns are -15.6273% and -8.0768%;
+  these short retrospective native-price simulations do not certify performance,
+  adjustments, PIT or PAPER admission. Evidence:
+  docs/evidence/qlib-etf-history-comparison-18d102e.json. Public report validation,
+  API and separate historical UI are under integration, not yet deployed. Actual
+  next-session, manual PAPER recovery and visual acceptance remain open.
+
 - ETF history source audit a830d8a is verified on actual immutable captures:
   30 ETFs, 55 common continuous admitted sessions (August 3 to October 26),
   no missing sessions, no amount. Local verified legacy overlap has 450 exact

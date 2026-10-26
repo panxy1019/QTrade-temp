@@ -24,6 +24,24 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+- ETF historical public integration is verified at 59894ea using the new b284da5
+  simulation with full per-session OHLCV marks. Report and six artifacts pass
+  independent data-only accounting/target validation and actual raw replay on
+  the cluster; the public envelope is 838,897 bytes. The runner suite has 54
+  passing Linux checks and public integration suite 100, zero failures/skips.
+  Only the read-only publisher was restarted (PID 183766); other process PIDs
+  are unchanged. Frontend 257 tests, build/lint and full src mypy pass. Vercel
+  release and rendered visual acceptance remain pending. Evidence:
+  docs/evidence/qlib-etf-history-public-59894ea.json. Original 18d102e archive is
+  retained; simulation metrics are unchanged. STEP1 remains active.
+
+The original ETF historical portfolio comparison now has actual cluster evidence
+at 18d102e: two fixed rules, common 30-ETF/55-session input, 34 evaluation sessions,
+complete reconciled accounting and immutable replay. All 51 Linux checks pass.
+Assumptions/limitations remain attached; web delivery is being integrated. See
+docs/evidence/qlib-etf-history-comparison-18d102e.json and
+ docs/QLIB_ETF_HISTORY_COMPARISON.md. This is not actual SHADOW performance.
+
 ETF immutable history audit is implemented at a830d8a with 24 passing Linux tests
 and real raw replay. The fixed 30-ETF cohort has 55 common sessions, no missing
 sessions, and 450 exact legacy/new OHLCV overlap pairs on the local comparison.

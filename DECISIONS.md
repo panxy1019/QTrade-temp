@@ -3585,3 +3585,28 @@ old strategy curves cannot be relabeled as the new contract. Read-time heartbeat
 and source/session checks distinguish current targets from retained history.
 LIVE_TRADING_ENABLED=false; stock PAPER human recovery is unaffected.
 
+## ADR-173 — ETF historical simulation is an independent assumption-based experiment
+
+Status: accepted, 2026-10-27.
+
+The ETF source audit admits a fixed common OHLCV grid, not certified execution.
+Reuse MomentumAllocation and DailyMultiAssetBacktester after the recorded gap
+audit in docs/QLIB_ETF_HISTORY_COMPARISON.md. Compare positive20 daily Top3 with
+daily fixed-pool equal weight under the same warmup, next-open clock, 95% budget,
+lot, fee and slippage assumptions. Pin the complete Decimal context and existing
+12-place allocation precision. Independently reconcile every simulated fill,
+cash balance, holding, cost, P&L, NAV and turnover against the engine journal.
+
+Persist the report and six immutable target/trade/ledger artifacts with source
+and implementation identities. A pure-data bounded publication validator serves
+the separate historical report on the web; it does not claim raw-source replay.
+Cluster execution performs raw replay. Do not import cluster scripts into the
+Vercel validation path. Keep historical simulation distinct from live-observed
+SHADOW records, stock model comparisons, and authenticated research controls.
+
+No fitting split is invented for fixed rules. No legacy history is stitched merely
+because overlapping OHLCV agrees. Assumed lot, fees and fills do not certify ETF
+settlement, liquidity, limits, suspensions or corporate actions; PAPER remains
+blocked and existing SHADOW historical metrics remain null. Short-history and
+non-PIT limitations accompany each report. LIVE_TRADING_ENABLED=false.
+
