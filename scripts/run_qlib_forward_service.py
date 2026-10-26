@@ -118,6 +118,7 @@ class ForwardService:
         self.books: dict[str, ForwardPaperBook] = {}
         self.links: dict[str, dict[str, Any]] = {}
         self.startup_errors: list[dict[str, Any]] = []
+        self.discovery_errors: list[str] = []
         roster = self.root / "roster.json"
         self.roster: dict[str, Any] = load(roster)["books"] if roster.exists() else {}
         if not isinstance(self.roster, dict) or len(self.roster) > 32:
@@ -244,6 +245,7 @@ class ForwardService:
                 raise ValueError("FORWARD_SERVICE_APPROVAL_CHANGED")
 
     def current_targets(self, now: datetime) -> list[tuple[ForwardTarget, dict[str, Any]]]:
+        self.discovery_errors = []
         online = load(self.base / "workflow/public/online.json")
         stamp = datetime.fromisoformat(online["worker"]["heartbeat_at"])
         if stamp.tzinfo is None or not 0 <= (now - stamp).total_seconds() <= 720:
@@ -260,57 +262,67 @@ class ForwardService:
         if re.fullmatch("[a-f0-9]{40}", source) is None:
             raise ValueError("FORWARD_SERVICE_SOURCE_INVALID")
         result = []
-        with contextlib.closing(readonly(self.workflow_database)) as c:
-            rows = c.execute(
-                "SELECT id,request,result FROM jobs WHERE state='COMPLETE' "
-                "ORDER BY rowid DESC LIMIT 100"
-            ).fetchall()
-        for row in rows:
-            request = json.loads(row["request"])
-            if (
-                request.get("kind") != "QLIB_SIGNAL_JOB"
-                or request.get("data_version_id") != version["version_id"]
-                or request.get("data_event_id") != epoch
-            ):
-                continue
-            identity = checked_identity(json.loads(row["result"])["signal_family_id"])
-            if re.fullmatch("[a-f0-9]{32}", row["id"]) is None:
-                raise ValueError("FORWARD_SERVICE_JOB_ID_INVALID")
-            path = self.base / "workflow/jobs" / row["id"] / "output" / identity
-            manifest = load(path / "manifest.json")
-            if manifest["bindings"].get("data_event_id") != epoch:
-                raise ValueError("FORWARD_SERVICE_SIGNAL_EPOCH_CHANGED")
-            result.extend(
-                signal_targets(path, data_version=version["version_id"], source_revision=source)
-            )
-            break
+        try:
+            with contextlib.closing(readonly(self.workflow_database)) as c:
+                rows = c.execute(
+                    "SELECT id,request,result FROM jobs WHERE state='COMPLETE' "
+                    "ORDER BY rowid DESC LIMIT 100"
+                ).fetchall()
+            for row in rows:
+                request = json.loads(row["request"])
+                if (
+                    request.get("kind") != "QLIB_SIGNAL_JOB"
+                    or request.get("data_version_id") != version["version_id"]
+                    or request.get("data_event_id") != epoch
+                ):
+                    continue
+                identity = checked_identity(json.loads(row["result"])["signal_family_id"])
+                if re.fullmatch("[a-f0-9]{32}", row["id"]) is None:
+                    raise ValueError("FORWARD_SERVICE_JOB_ID_INVALID")
+                path = self.base / "workflow/jobs" / row["id"] / "output" / identity
+                manifest = load(path / "manifest.json")
+                if manifest["bindings"].get("data_event_id") != epoch:
+                    raise ValueError("FORWARD_SERVICE_SIGNAL_EPOCH_CHANGED")
+                result.extend(
+                    signal_targets(path, data_version=version["version_id"], source_revision=source)
+                )
+                break
+            if not result:
+                self.discovery_errors.append("FORWARD_SERVICE_SIGNAL_UNAVAILABLE")
+        except Exception:
+            self.discovery_errors.append("FORWARD_SERVICE_SIGNAL_DISCOVERY_FAILED")
         with contextlib.closing(readonly(self.model_database)) as c:
             approval = active_approval(c)
-        prediction = online.get("auto_predict", {}).get("current_prediction_id")
-        if prediction is not None and approval is not None:
-            checked_identity(prediction)
-            path = (
-                self.base
-                / "online-research/control/predictions"
-                / prediction
-                / "output"
-                / prediction
-            )
-            manifest = load(path / "manifest.json")
-            bindings = manifest["bindings"]
-            if (
-                bindings["data_event_id"] != epoch
-                or bindings["approval_sha256"] != approval["evidence_sha256"]
-            ):
-                raise ValueError("FORWARD_SERVICE_PREDICTION_APPROVAL_OR_EPOCH_CHANGED")
-            result.append(
-                prediction_target(
-                    path,
-                    active_model_id=approval["model_id"],
-                    data_version=version["version_id"],
-                    source_revision=source,
+        try:
+            prediction = online.get("auto_predict", {}).get("current_prediction_id")
+            if prediction is not None and approval is not None:
+                checked_identity(prediction)
+                path = (
+                    self.base
+                    / "online-research/control/predictions"
+                    / prediction
+                    / "output"
+                    / prediction
                 )
-            )
+                manifest = load(path / "manifest.json")
+                bindings = manifest["bindings"]
+                if (
+                    bindings["data_event_id"] != epoch
+                    or bindings["approval_sha256"] != approval["evidence_sha256"]
+                ):
+                    raise ValueError("FORWARD_SERVICE_PREDICTION_APPROVAL_OR_EPOCH_CHANGED")
+                result.append(
+                    prediction_target(
+                        path,
+                        active_model_id=approval["model_id"],
+                        data_version=version["version_id"],
+                        source_revision=source,
+                    )
+                )
+            elif approval is not None or prediction is not None:
+                self.discovery_errors.append("FORWARD_SERVICE_PREDICTION_UNAVAILABLE")
+        except Exception:
+            self.discovery_errors.append("FORWARD_SERVICE_PREDICTION_DISCOVERY_FAILED")
         # Recheck after potentially costly byte verification, before prospective admission.
         if current_epoch(self.data_database, version["version_id"]) != epoch:
             raise ValueError("FORWARD_SERVICE_DATA_EPOCH_CHANGED")
@@ -507,6 +519,7 @@ class ForwardService:
                 write_json_immutable(path, detail)
 
         if not stopped:
+            self.discovery_errors = []
             storage_ready = shutil.disk_usage(self.base).free >= 100 * 1024**3
             try:
                 if not storage_ready:
@@ -521,6 +534,8 @@ class ForwardService:
                             error(target.strategy_id, mode.value, exc)
             except Exception as exc:
                 error(None, None, exc)
+            for code in self.discovery_errors:
+                error(None, None, ValueError(code))
             # Previously frozen books do not depend on today's new model/signal being ready.
             if storage_ready:
                 for book in self.books.values():

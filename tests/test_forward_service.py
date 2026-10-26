@@ -407,6 +407,158 @@ def test_source_discovery_uses_verified_current_epoch_and_actual_archive(environ
         instance.current_targets(now)
 
 
+@pytest.fixture
+def discovery_sources(environment, monkeypatch):
+    instance, item, now = environment(), target(), datetime.now(UTC)
+    approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+    model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
+    model_link = {
+        **link(),
+        "kind": "approved-prediction",
+        "strategy_id": model.strategy_id,
+        "artifact_id": model.signal_id,
+        "model_id": approval["model_id"],
+    }
+    online = signed(
+        {
+            **AUTHORITY,
+            "worker": {"heartbeat_at": now.isoformat(), "source_revision": "a" * 40},
+            "data_version": {
+                "version_id": item.data_version,
+                "data_event_id": "e" * 64,
+                "actual_end": instance.calendar.expected(now, "daily").date().isoformat(),
+            },
+            "auto_predict": {"current_prediction_id": model.signal_id},
+        }
+    )
+    service.write_json_atomic(instance.base / "workflow/public/online.json", online)
+    with sqlite3.connect(instance.workflow_database) as connection:
+        connection.execute("CREATE TABLE jobs(id TEXT,request TEXT,result TEXT,state TEXT)")
+        connection.execute(
+            "INSERT INTO jobs VALUES(?,?,?,?)",
+            (
+                "a" * 32,
+                json.dumps(
+                    {
+                        "kind": "QLIB_SIGNAL_JOB",
+                        "data_version_id": item.data_version,
+                        "data_event_id": "e" * 64,
+                    }
+                ),
+                json.dumps({"signal_family_id": item.signal_id}),
+                "COMPLETE",
+            ),
+        )
+    signal_root = instance.base / "workflow/jobs" / ("a" * 32) / "output" / item.signal_id
+    prediction_root = (
+        instance.base / "online-research/control/predictions" / model.signal_id / "output"
+    )
+    prediction_root /= model.signal_id
+    service.write_json_atomic(
+        signal_root / "manifest.json",
+        signed({**AUTHORITY, "bindings": {"data_event_id": "e" * 64}}),
+    )
+    service.write_json_atomic(
+        prediction_root / "manifest.json",
+        signed(
+            {
+                **AUTHORITY,
+                "bindings": {
+                    "data_event_id": "e" * 64,
+                    "approval_sha256": approval["evidence_sha256"],
+                },
+            }
+        ),
+    )
+    monkeypatch.setattr(service, "active_approval", lambda _: approval)
+    monkeypatch.setattr(service, "signal_targets", lambda *args, **kwargs: [(item, link())])
+    monkeypatch.setattr(service, "prediction_target", lambda *args, **kwargs: (model, model_link))
+    return SimpleNamespace(
+        instance=instance,
+        signal=item,
+        model=model,
+        now=now,
+        approval=approval,
+        signal_root=signal_root,
+        prediction_root=prediction_root,
+    )
+
+
+@pytest.mark.parametrize("source", ["signal", "prediction"])
+@pytest.mark.parametrize("failure", ["missing", "corrupt"])
+def test_discovery_isolates_independent_sources_and_publishes_diagnostics(
+    discovery_sources, monkeypatch, source, failure
+):
+    data = discovery_sources
+    if failure == "missing":
+        getattr(data, source + "_root").joinpath("manifest.json").unlink()
+    else:
+
+        def corrupt(*args, **kwargs):
+            raise ValueError("credential=never-expose-discovery-secret")
+
+        monkeypatch.setattr(
+            service, "signal_targets" if source == "signal" else "prediction_target", corrupt
+        )
+    result = data.instance.cycle(now=data.now)
+    expected = data.model if source == "signal" else data.signal
+    assert result["state"] == "DEGRADED"
+    assert [book["strategy_id"] for book in result["books"]] == [expected.strategy_id]
+    assert [error["code"] for error in result["errors"]] == [
+        "FORWARD_SERVICE_" + source.upper() + "_DISCOVERY_FAILED"
+    ]
+    assert (
+        sum(
+            book.db.execute("SELECT COUNT(*) FROM targets").fetchone()[0]
+            for book in data.instance.books.values()
+        )
+        == 1
+    )
+    assert "never-expose-discovery-secret" not in json.dumps(result)
+    diagnostics = list((data.instance.root / "diagnostics").glob("*.json"))
+    assert diagnostics and all(
+        "never-expose-discovery-secret" not in p.read_text() for p in diagnostics
+    )
+
+
+@pytest.mark.parametrize("gate", ["epoch", "approval"])
+def test_discovery_common_final_gate_rejects_all_targets(discovery_sources, monkeypatch, gate):
+    data = discovery_sources
+    verify = service.prediction_target
+
+    def change_context(*args, **kwargs):
+        if gate == "epoch":
+            monkeypatch.setattr(service, "current_epoch", lambda *args: "f" * 64)
+        else:
+            monkeypatch.setattr(service, "active_approval", lambda _: None)
+        return verify(*args, **kwargs)
+
+    monkeypatch.setattr(service, "prediction_target", change_context)
+    result = data.instance.cycle(now=data.now)
+    assert result["books"] == [] and data.instance.books == {}
+    assert [error["code"] for error in result["errors"]] == [
+        "FORWARD_SERVICE_DATA_EPOCH_CHANGED"
+        if gate == "epoch"
+        else "FORWARD_SERVICE_APPROVAL_CHANGED"
+    ]
+
+
+def test_discovery_reports_missing_sources_and_clears_transient_failures(discovery_sources):
+    data = discovery_sources
+    manifest = data.signal_root / "manifest.json"
+    original = manifest.read_bytes()
+    manifest.unlink()
+    assert data.instance.cycle(now=data.now)["state"] == "DEGRADED"
+    manifest.write_bytes(original)
+    recovered = data.instance.cycle(now=data.now)
+    assert recovered["state"] == "RUNNING" and recovered["errors"] == []
+    assert len(recovered["books"]) == 2
+    with sqlite3.connect(data.instance.workflow_database) as connection:
+        connection.execute("DELETE FROM jobs")
+    missing = data.instance.cycle(now=data.now)
+    assert [error["code"] for error in missing["errors"]] == ["FORWARD_SERVICE_SIGNAL_UNAVAILABLE"]
+
+
 def test_invalid_book_does_not_prevent_other_books_restoring(environment):
     instance = environment(modes=(RuntimeMode.PAPER, RuntimeMode.SHADOW))
     instance.register(target(), link(), now=datetime.now(UTC))

@@ -19,6 +19,17 @@ the current approved model prediction and its exact approval epoch. Target
 source revisions remain those of the generating archives; the service separately
 publishes its own implementation revision.
 
+Signal-family discovery and approved-prediction discovery are independent. A
+missing/corrupt archive on one side retains verified targets from the other side
+and publishes DEGRADED with a fixed `FORWARD_SERVICE_SIGNAL_DISCOVERY_FAILED` or
+`FORWARD_SERVICE_PREDICTION_DISCOVERY_FAILED` diagnostic. No matching completed
+signal job is reported as `FORWARD_SERVICE_SIGNAL_UNAVAILABLE`; an active model
+without its current prediction (or a prediction without current approval) reports
+`FORWARD_SERVICE_PREDICTION_UNAVAILABLE`. Arbitrary archive exception messages are
+never published or saved as diagnostics. Final common data-event and approval
+rechecks still reject the entire discovery result if either changes during
+verification. Partial discovery never weakens those gates or uses fallback data.
+
 Archive verification occurs outside the short admission guard. Final data and
 approval checks, durable target freeze and an immutable per-target admission
 receipt run while holding `BEGIN IMMEDIATE` reservations in **data then model**
