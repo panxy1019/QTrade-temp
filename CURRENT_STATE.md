@@ -25,8 +25,11 @@ Last updated: 2026-10-26
   WAITING_FOR_SOURCE_PROBE. This plan executes no downloads. Cluster source
   fc58308 passes all 690 Linux checks and seals 3,000 work scopes. A bounded raw
   BaoStock source probe now reuses the production parser and nonblocking shared
-  lease, with 12 focused checks; real probe acceptance is pending. Background
-  historical backfill and automatic Qlib data/prediction are still pending.
+  lease, with 15 focused checks. Real probes return no rows for three 2016
+  sample windows; three newer windows fail vendor login and establish no source
+  range. Do not infer source-wide unavailability. Persist login/yield receipts
+  and 30-minute retry guidance as well as raw responses. Background historical
+  backfill and automatic Qlib data/prediction are still pending.
   The worker retains its old frozen data/model identity.
 
 - First unified-data delivery passes 637 full Linux backend checks and 213

@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+from contextlib import contextmanager
 from datetime import UTC, date, datetime
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -141,3 +142,34 @@ def test_busy_lease_prevents_low_priority_body_from_running(tmp_path, monkeypatc
     monkeypatch.setattr(vendor_session, 'Path', lambda _: tmp_path)
     with pytest.raises(BlockingIOError), vendor_session.baostock_session(blocking=False):
         pytest.fail('vendor query must not run')
+
+
+@pytest.mark.parametrize('outcome', ['busy', 'login_failed', 'query_success'])
+def test_session_failures_and_yields_have_receipts_without_false_download(
+    tmp_path, monkeypatch, outcome,
+):
+    @contextmanager
+    def lease(**kwargs):
+        assert kwargs == {'blocking': False}
+        if outcome == 'busy':
+            raise BlockingIOError
+        yield
+
+    monkeypatch.setattr(module, 'baostock_session', lease)
+    client = api()
+    client.login.return_value.error_code = '1' if outcome == 'login_failed' else '0'
+    result = module.probe_session(client, tmp_path, symbol='600036', security_type='STOCK',
+                                  start=DAY, end=DAY, now=NOW, revision='a' * 40)
+    if outcome == 'busy':
+        assert result['state'] == 'YIELDED_TO_SHARED_VENDOR_SESSION'
+        client.login.assert_not_called()
+    elif outcome == 'login_failed':
+        assert result['state'] == 'LOGIN_FAILED'
+        assert result['next_attempt_not_before'] > NOW.isoformat()
+        client.query_history_k_data_plus.assert_not_called()
+    else:
+        assert result['state'] == 'PROBE_RECORDED'
+        assert result['probe_state'] == 'SOURCE_WINDOW_OBSERVED_NOT_ADMITTED'
+    assert result['query_attempted'] == (outcome == 'query_success')
+    assert result['admitted_bar_count'] == 0
+    assert len(list((tmp_path/'sessions').glob('*/receipt.json'))) == 1
