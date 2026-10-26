@@ -127,7 +127,7 @@ def session(request: Request, response: Response) -> dict[str, Any]:
         user = None
     return {
         "configured": configured(), "authenticated": user is not None, "user": user,
-        "scope": "RESEARCH_JOBS_ONLY", "external_order_transmission": False,
+        "scope": "RESEARCH_AND_MODEL_CONTROL", "external_order_transmission": False,
     }
 
 

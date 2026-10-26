@@ -46,7 +46,7 @@ function Audit({ audit }: { audit: ResearchAudit }) {
   </Card>
 }
 
-function Login() {
+export function Login() {
   const { session, refresh } = useResearchWorkflow()
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -59,7 +59,7 @@ function Login() {
   }
   return <Card title="研究账户">
     {session.authenticated ? <Space wrap>
-      <Tag color="green">{session.user} 已登录</Tag><Typography.Text>仅可提交和取消研究任务</Typography.Text>
+      <Tag color="green">{session.user} 已登录</Tag><Typography.Text>可提交研究任务及审阅模型控制操作</Typography.Text>
       <Button onClick={() => void workflowPost('/logout', {}).then(refresh)}>退出研究登录</Button>
     </Space> : <>
       {!session.configured && <Alert type="warning" showIcon title="研究登录配置未就绪，提交入口保持关闭" />}

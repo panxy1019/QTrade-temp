@@ -5,6 +5,7 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from qtrade.api.app import ApiAuthConfig, bootstrap_context, create_app
 from qtrade.api.current_datasets import router as current_dataset_router
+from qtrade.api.online_research import router as online_router
 from qtrade.api.public_observations import router as observation_router
 from qtrade.api.qlib_baseline import router as qlib_router
 from qtrade.api.research_workflow import router as research_router
@@ -130,4 +131,5 @@ inner_app.include_router(current_dataset_router)
 inner_app.include_router(qlib_router)
 inner_app.include_router(research_router)
 inner_app.include_router(unified_router)
+inner_app.include_router(online_router)
 app = VercelQueryPathApp(inner_app)

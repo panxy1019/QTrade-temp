@@ -170,6 +170,41 @@ class ModelRegistry:
             c.execute('UPDATE models SET state=? WHERE model_id=?', ('FAILED', model))
             self.event(c, model, 'FAILED', now, {'error_code': error_code})
 
+    def receipt(self, command: dict[str, Any]) -> dict[str, Any] | None:
+        command = control_command(command)
+        with self.connect() as c:
+            row = c.execute('SELECT command,result FROM model_commands WHERE request_id=?',
+                            (command['request_id'],)).fetchone()
+        if row is None:
+            return None
+        if row['command'] != json.dumps(command, sort_keys=True):
+            raise ValueError('IMMUTABLE_MODEL_COMMAND_CONFLICT')
+        result: dict[str, Any] = json.loads(row['result'])
+        return result
+
+    def reject(self, command: dict[str, Any], error: str, *, now: datetime) -> dict[str, Any]:
+        command = control_command(command)
+        if re.fullmatch(r'[A-Z_]{1,100}', error) is None or now.tzinfo is None:
+            raise ValueError('SAFE_MODEL_REJECTION_REQUIRED')
+        previous = self.receipt(command)
+        if previous is not None:
+            return previous
+        with self.connect() as c:
+            row = c.execute('SELECT model_id FROM active_model WHERE singleton=1').fetchone()
+            active = row['model_id'] if row else None
+            result = signed({**AUTHORITY, 'request_id': command['request_id'],
+                'command_sha256': signed(command)['evidence_sha256'],
+                'operation': command['operation'], 'state': 'REJECTED',
+                'model_id': command['model_id'], 'previous_active': active,
+                'active_model': active, 'error_code': error, 'actor': command['actor'],
+                'at': now.isoformat(), 'data_version_id': command['data_version_id'],
+                'validation_id': command['validation_id']})
+            c.execute('INSERT INTO model_commands VALUES(?,?,?)',
+                      (command['request_id'], json.dumps(command, sort_keys=True),
+                       json.dumps(result, sort_keys=True)))
+            self.event(c, command['model_id'], 'CONTROL_REJECTED', now, result)
+            return result
+
     def apply(self, command: dict[str, Any], *, current_data_version: str,
               now: datetime) -> dict[str, Any]:
         command = control_command(command)
@@ -223,6 +258,7 @@ class ModelRegistry:
                 c.execute('INSERT INTO active_model VALUES(1,?) ON CONFLICT(singleton) '
                           'DO UPDATE SET model_id=excluded.model_id', (command['model_id'],))
             result = signed({**AUTHORITY, 'request_id': command['request_id'],
+                'command_sha256': signed(command)['evidence_sha256'],
                 'operation': command['operation'], 'state': 'REJECTED' if error else 'APPLIED',
                 'model_id': command['model_id'], 'previous_active': active,
                 'active_model': active if error else command['model_id'], 'error_code': error,

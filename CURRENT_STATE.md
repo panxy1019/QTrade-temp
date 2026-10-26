@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-26
 
+- Model control integration is implemented locally on codex/qlib-online-control:
+  authenticated same-origin allowlisted API → signed queue → archive revalidation
+  → atomic model ledger; public data/candidate/receipt UI with historical metrics
+  and costs. Stale approvals, data-head races, tampering and duplicate retries
+  are checked; optional broken model publication cannot stop market freshness.
+  Cluster/production acceptance is next. No production model has been activated;
+  AUTO_PREDICT and rolling training remain pending. PR 17 has now merged.
+  Reproduction and boundaries: docs/QLIB_MODEL_CONTROL.md.
+
 - Final forward-input validation accepted: source 5bb4a93 passes all 779 Linux
   checks and both actual native model runs, each 888 current supported stocks /
   158 factors and 17,814 stable historical reference rows. Each complete result

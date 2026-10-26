@@ -166,7 +166,7 @@ def test_cookie_login_is_research_only_and_csrf_is_rejected(client):
     assert "HttpOnly" in response.headers["set-cookie"]
     assert "Secure" in response.headers["set-cookie"]
     assert "SameSite=strict" in response.headers["set-cookie"]
-    assert http.get("/research/session").json()["scope"] == "RESEARCH_JOBS_ONLY"
+    assert http.get("/research/session").json()["scope"] == "RESEARCH_AND_MODEL_CONTROL"
     assert http.post(
         "/research/jobs", json={}, headers={"origin": "https://evil.invalid"}
     ).status_code == 403

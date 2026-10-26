@@ -31,11 +31,13 @@ const QlibResearchPage = lazy(() => import('./pages/QlibWorkflowPages').then(m =
 const QlibExperimentPage = lazy(() => import('./pages/QlibWorkflowPages').then(m => ({ default: m.QlibExperimentPage })))
 const QlibBacktestPage = lazy(() => import('./pages/QlibWorkflowPages').then(m => ({ default: m.QlibBacktestPage })))
 const QlibArchivePage = lazy(() => import('./pages/QlibWorkflowPages').then(m => ({ default: m.QlibArchivePage })))
+const OnlineModelsPage = lazy(() => import('./pages/OnlineModelsPage').then(m => ({ default: m.OnlineModelsPage })))
 
 const menu = [
   ['/', '总览', <AreaChartOutlined />], ['/market', '行情中心', <StockOutlined />],
   ['/strategies', '策略中心', <ThunderboltOutlined />], ['/research', '策略研究', <FundOutlined />],
   ['/experiments', '实验中心', <ExperimentOutlined />], ['/backtest', '回测分析', <LineChartOutlined />],
+  ['/models', '在线模型', <ExperimentOutlined />],
   ['/archive', '历史工作区', <DatabaseOutlined />],
   ['/paper', '模拟交易', <PieChartOutlined />], ['/positions', '持仓', <BarChartOutlined />],
   ['/orders', '委托与成交', <ReconciliationOutlined />], ['/risk', '风控中心', <SafetyCertificateOutlined />],
@@ -49,7 +51,7 @@ function Shell() {
   const publicNode = isPublicResearchNode()
   const runtimeLabel = publicNode ? '公开研究结果 · 登录后提交研究' : '本地安全核心'
   const location = useLocation()
-  const researchRoute = ['/strategies', '/research', '/experiments', '/backtest'].includes(location.pathname)
+  const researchRoute = ['/strategies', '/research', '/experiments', '/backtest', '/models'].includes(location.pathname)
   const navigate = useNavigate()
   const algorithm = dark ? theme.darkAlgorithm : theme.defaultAlgorithm
   const items = useMemo(() => menu.map(([key, label, icon]) => ({ key, label, icon })), [])
@@ -88,6 +90,7 @@ function Shell() {
                 <Route path="/market" element={<MarketPage data={data} />} />
                 <Route path="/strategies" element={<QlibStrategyPage />} />
                 <Route path="/research" element={<QlibResearchPage />} />
+                <Route path="/models" element={<OnlineModelsPage />} />
                 <Route path="/experiments" element={<QlibExperimentPage />} />
                 <Route path="/backtest" element={<QlibBacktestPage />} />
                 <Route path="/archive" element={<QlibArchivePage><Tabs items={[
