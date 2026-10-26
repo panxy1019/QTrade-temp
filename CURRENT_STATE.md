@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-26
 
+- Online model control runtime 978553a is accepted on the cluster: 819 Linux
+  checks and 219 frontend checks pass. Verified native Ridge/LightGBM candidates
+  are STAGED (888 new-day scores each), ACTIVE remains empty. Worker PID 147001
+  and single publisher PID 147080 run the new source; consistent model backup
+  integrity is ok. Public production API/page acceptance is next; browser-control
+  tool timed out twice, so no visual acceptance is claimed. PR 18 is open.
+  Evidence: docs/evidence/qlib-model-control-cluster-20261026.json. No automatic
+  prediction, scheduled daily version or rolling-training completion is claimed.
+
 - Model control integration is implemented locally on codex/qlib-online-control:
   authenticated same-origin allowlisted API → signed queue → archive revalidation
   → atomic model ledger; public data/candidate/receipt UI with historical metrics

@@ -1,6 +1,14 @@
 # Qlib 在线模型控制
 
-状态：实现与本地验证完成，集群及生产网页验收进行中。2026-10-26。
+状态：集群验收通过；生产 API/页面验收进行中。2026-10-26。
+
+运行源 978553a：819 项 Linux 检查、219 项前端检查通过，前端 lint/build、
+src 类型检查及新增控制脚本类型检查通过。两份真实 Ridge/LightGBM 归档已
+完整复验并注册为 STAGED，各有 888 只当日输入分数，无 ACTIVE。
+模型库一致性备份 integrity_check=ok。证据：
+`docs/evidence/qlib-model-control-cluster-20261026.json`。
+扩大至所有旧 scripts 的额外 mypy 检查仍有 66 项既存问题；本次未改写这些
+无关历史脚本，不能声称全仓脚本类型检查通过。
 
 ## 页面与权限
 
@@ -30,6 +38,9 @@ ACTIVE 指针、回执和审计事件在本地 SQLite 同一事务提交。拒�
 本地库 `online-models.sqlite` 位于现有 workflow SQLite 同目录，不能放在
 共享 NFS。不可变模型/验证映射保存于 `online-research/control`。唯一 worker
 持有库；导入候选需在启动 worker 前或停机维护期间进行，不并发抢占所有权。
+worker 将一致性备份保存为 `online-research/control/catalog-backup.sqlite`；
+该副本不是活跃数据库。恢复须停机、核对队列回执和归档后人工执行，不能
+把较早备份中的模型指针静默覆盖当前审批。
 
 ## 复现与维护
 
