@@ -1,11 +1,32 @@
 # 统一证券数据与 Qlib 在线研究：实现及维护
 
-状态：2026-10-26 开始执行，Phase A 和分钟 P0 修复待现场/生产验收。
+状态：2026-10-26，Phase A 与分钟 P0 修复已通过集群及预览验收，生产验收进行中。
 完整目标见 [执行计划](../plans/UNIFIED_DATA_ONLINE_PLAN.md)。后续阶段尚未交付。
+
+## 首次现场结果
+
+| 项目 | 实测结果 |
+|---|---|
+| 主表身份（含非目标及停用） | 5594 |
+| 目标池 | 1500：1470 股票 + 30 ETF |
+| 旧清单去重 / 当前候选补足 | 1037 / 463 |
+| 日线内容验收 | 1000，其余 500 处于计划状态 |
+| 旧长期分钟检查点 | 172：171 内容/覆盖通过，1 隔离 |
+| 分钟目标池分布 | 171 通过、1 隔离、1328 尚未取得合格长历史 |
+| 长历史数据截止 | 2026-10-23；不能标成当天最新 |
+| 历史 PIT 认证 | 0 |
+
+隔离证券为 002384，原文件仍存在，不再能凭正确 checksum 获得覆盖验收。
+新维护和唯一发布服务使用 release 133b034；原 Qlib worker、PIT repair、observer
+保留原代码身份。Linux 全套 637 项、前端 213 项、Ruff、115 文件严格类型检查、
+ESLint 与构建通过。Windows 另行旧 Vercel 证据测试有平台相关失败，Linux
+两版全套均通过；未把该 Windows 检查写成通过。
 
 ## 当前调用关系与复用审计
 
-Supervisor 启动 observer、maintenance、PIT repair、Qlib worker、publisher 五个服务。
+业务角色为 observer、maintenance、PIT repair、Qlib worker、publisher。
+现场实际还发现重复的旧 publisher：两个进程以不同代码写相同 Git 输出；
+按 ADR-172 保留备份后停用重复写入，只保留 workflow-aware publication 服务。
 observer 写 runtime 数据和新鲜度；maintenance 写 expansion 并刷新小范围当前图表；
 PIT repair 用独立持久队列补公共主表/状态；worker 消费 Git + SQLite 任务并冻结实验；
 publisher 发布有界观测到独立只读仓库；Vercel 读取结果，受保护入口写私有任务队列。

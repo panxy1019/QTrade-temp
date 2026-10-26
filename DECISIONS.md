@@ -1,5 +1,20 @@
 # Architecture decisions
 
+## ADR-172 — Retire a verified duplicate publication writer without removing recovery
+
+Status: accepted, 2026-10-26, unified-platform single-writer requirement.
+
+Live /proc and Supervisor audit finds two processes with identical publication
+root, experiment root and output Git repository: qtrade-research-publisher on
+e9459e8 and qtrade-research-publication on da2878c. Configuration directory paths
+also differ from actual executable revisions. Retain private/config backups,
+stop the redundant legacy publisher and disable its autostart/restart; use the
+workflow-aware publication service as the single writer. Upgrade only its source
+and the maintenance source after full tests, preserving worker/source identities,
+vendor repair and observer. Stop maintenance's process group gracefully so an
+old expansion subprocess cannot continue alongside its replacement. Existing
+immutable checkpoints survive; no existing data/experiment/service is deleted.
+
 ## ADR-171 — Unified observed identities precede online research lifecycle
 
 Status: accepted, 2026-10-26, owner-provided development guide.

@@ -2,6 +2,19 @@
 
 Last updated: 2026-10-26
 
+- First unified-data delivery passes 637 full Linux backend checks and 213
+  frontend checks, lint/types/build. Real offline audit rechecks 172 old minute
+  checkpoints: 171 content/coverage pass, 002384 quarantined, original bytes
+  retained. Observed master has 5,594 identities; 1,500 current targets comprise
+  1,470 stocks + 30 ETFs, from 1,037 deduplicated legacy identities + 463 candidate
+  top-ups. All 1,000 legacy daily inputs pass content checks; 500 daily and 1,328
+  long-minute targets remain planned. Coverage is through 2026-10-23, not today;
+  complete historical PIT certification remains zero. Source 133b034 is deployed
+  to maintenance and the workflow-aware publisher. A verified duplicate old
+  publisher was stopped with autostart/restart disabled and backups retained.
+  Other services/old experiment identities stay unchanged. Preview browser reads
+  the real 1,500 target catalog; production acceptance is in progress.
+
 - Active owner-requested goal: unified observed universe (configurable target
   about 1,500), day/5min quality and ingestion, immutable Qlib data versions,
   restored-model daily prediction, controlled rolling and forward research.
