@@ -17,6 +17,9 @@
 
 ## 证据入口
 
+- `evidence/qlib-c-delivery-linux-429ee53.json`：C 公网验收工具 54 项 Linux 测试通过；实际直连 Vercel 失败，未生成公网跨日通过报告。系统代理兼容与集群访问路径仍待验证。
+- `evidence/qlib-etf-transition-preclose-3068e35.json`：ETF 真实跨日审计工具 39 项 Linux 测试通过；真实开盘前执行正确阻断，不能替代完整交易日观察。
+
 - `evidence/qlib-step1-initial-native-20261027.json`：真实原生比较和 ETF 输入。
 - `evidence/qlib-step1-integration-658d3d3.json`：1,299 项 Linux 集成检查及归档指针。
 - `evidence/qlib-step1-forward-freeze-e107eb9.json`：12 本账本及 92 项 Linux 前向检查。

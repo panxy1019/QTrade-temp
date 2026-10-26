@@ -24,6 +24,13 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Source 429ee53 passes the 54 C audit checks on Linux. Real direct public transport
+fails on cluster and local host; fix compatibility with the existing local system
+proxy and separately resolve cluster egress before claiming public-chain success.
+Evidence: docs/evidence/qlib-c-delivery-linux-429ee53.json. Independent D review
+found incomplete ACTIVE-row race coverage and insufficient automatic-training
+attribution proof; both are under repair before release.
+
 C public-delivery audit wiring is implemented and independently reviewed with
 54 passing local tests. Its paired production flags preserve private-only default
 behavior and accept only the exact raw-verified C transition's current public

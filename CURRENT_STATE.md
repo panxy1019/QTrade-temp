@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-27
 
+- Source 429ee53 also passes all 54 focused tests on Linux, but its actual
+  direct HTTPS request to Vercel fails with PUBLIC_DELIVERY_HTTP_FETCH_FAILED
+  (OS error 99). The local direct probe times out; local urllib discovers an
+  existing credential-free system HTTPS proxy that the tool disabled. Proxy
+  compatibility is being corrected; cluster has no configured HTTPS proxy.
+  Evidence: docs/evidence/qlib-c-delivery-linux-429ee53.json. No public transition
+  acceptance was issued and no running service was restarted.
+
 - C-chain production delivery acceptance now has an opt-in, fixed-origin GET
   verifier after private archive/raw transition verification. It binds deployment,
   two current catalogs, version head/epoch, prediction and full signal manifest,
