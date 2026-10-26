@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 from qtrade.api import research_workflow as api
 from qtrade.research.pit_repair import causal_intervals, historical_blocks, known_state
 from qtrade.research.workflow import build_config, default_spec, digest, validate_spec
-from qtrade.research.workflow_queue import seal, unseal
+from qtrade.research.workflow_queue import GitQueue, seal, unseal
 
 
 def test_model_configs_are_allowlisted_and_fixed_exchange_is_preserved():
@@ -60,6 +60,15 @@ def test_queue_seal_detects_spec_or_cancel_tampering():
     envelope["spec"] = {**envelope["spec"], "topk": 99}
     with pytest.raises(ValueError, match="SIGNATURE"):
         unseal(envelope, key)
+
+
+def test_queue_client_binds_the_pinned_vendor_without_system_ssh_fallback(monkeypatch):
+    queue = GitQueue("test-only-key", "ssh-ed25519 test-only-host")
+    vendor = object()
+    monkeypatch.setattr(queue, "_vendor", lambda: vendor)
+    client = queue._client()
+    assert client.ssh_vendor is vendor
+    assert (client.host, client.port, client.username) == ("ssh.github.com", 443, "git")
 
 
 def test_future_liquidity_cannot_rewrite_earlier_admission_and_star_is_excluded():

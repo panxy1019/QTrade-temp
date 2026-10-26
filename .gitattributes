@@ -1,0 +1,6 @@
+# Research archive checksums must survive Windows checkout and Git export.
+* text=auto eol=lf
+*.parquet -text
+*.jpg -text
+*.png -text
+*.zip -text

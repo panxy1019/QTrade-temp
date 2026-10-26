@@ -80,16 +80,23 @@ class GitQueue:
                     raise ValueError("QUEUE_TRANSPORT_UNAVAILABLE")
                 channel = transport.open_session(timeout=8)
                 channel.settimeout(8)
+                if kwargs.get("protocol_version") in (None, 2):
+                    channel.set_environment_variable("GIT_PROTOCOL", "version=2")
                 channel.exec_command(command)
                 return _ParamikoWrapper(client, channel)
 
         return PinnedVendor()
 
+    def _client(self) -> Any:
+        from dulwich.client import SSHGitClient
+        # porcelain.clone silently filters unknown transport kwargs in 0.24.10.
+        # Bind the vendor on the client itself; never fall back to system ssh.
+        return SSHGitClient("ssh.github.com", port=443, username="git", vendor=self._vendor())
+
     def checkout(self, destination: Path) -> Any:
-        from dulwich import porcelain
-        return porcelain.clone(
-            QUEUE_URL, target=str(destination), checkout=True, depth=1,
-            ssh_vendor=self._vendor(), errstream=io.BytesIO(),
+        return self._client().clone(
+            "/panxy1019/QTrade-research-queue.git", str(destination),
+            checkout=True, depth=1, branch="main", progress=lambda _: None,
         )
 
     def append(self, section: str, identity: str, value: dict[str, Any]) -> None:
@@ -111,11 +118,21 @@ class GitQueue:
                     return
                 target.parent.mkdir(exist_ok=True)
                 target.write_bytes(content)
+                parent = repo.head()
                 porcelain.add(repo, paths=[str(target)])
                 porcelain.commit(repo, message=b"Append bounded research task", author=IDENTITY)
-                pushed = porcelain.push(
-                    repo, QUEUE_URL, b"HEAD:refs/heads/main",
-                    ssh_vendor=self._vendor(), errstream=io.BytesIO(),
+
+                def update_refs(refs: dict[bytes, bytes]) -> dict[bytes, bytes]:
+                    if refs.get(b"refs/heads/main") != parent:
+                        raise ValueError("QUEUE_CONCURRENT_UPDATE_RETRY")
+                    return {b"refs/heads/main": repo.head()}
+
+                def pack(have: Any, want: Any, **kwargs: Any) -> Any:
+                    return repo.generate_pack_data(set(have), set(want), **kwargs)
+
+                pushed = self._client().send_pack(
+                    b"/panxy1019/QTrade-research-queue.git", update_refs,
+                    generate_pack_data=pack, progress=lambda _: None,
                 )
                 if any((pushed.ref_status or {}).values()):
                     raise ValueError("QUEUE_PUSH_NOT_ACCEPTED")
