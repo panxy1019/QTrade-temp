@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -90,3 +93,42 @@ def test_publisher_carries_only_valid_bounded_etf_shadow_bytes(channel, tmp_path
     assert etf_shadow_publication(path)['state'] == 'NO_VERIFIED_ETF_SHADOW_PUBLICATION'
     assert etf_shadow_publication(tmp_path/'missing.json')['state'] == (
         'NO_VERIFIED_ETF_SHADOW_PUBLICATION')
+
+
+def test_serverless_route_loads_and_validates_when_cluster_scripts_are_excluded(publication, tmp_path):  # noqa: F811
+    path = tmp_path/'public.json'
+    path.write_text(json.dumps(publication))
+    code = '''
+import importlib.abc, json, sys
+from datetime import datetime
+class ExcludeClusterScripts(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname == 'scripts' or fullname.startswith('scripts.'):
+            raise ModuleNotFoundError('Excluded from Vercel bundle: '+fullname)
+sys.meta_path.insert(0, ExcludeClusterScripts())
+from fastapi.testclient import TestClient
+from qtrade.api.vercel import app
+from qtrade.api import online_research as api
+with open(sys.argv[1]) as stream:
+    publication = json.load(stream)
+class Clock(datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return datetime.fromisoformat(publication['heartbeat_at']).astimezone(tz)
+api.datetime = Clock
+api.read_public = lambda *args, **kwargs: publication
+api.research_clock = lambda: '2026-10-27'
+with TestClient(app) as client:
+    response = client.get('/api?route=/research/online/etf-forward')
+    assert response.status_code == 200, response.text
+    result = response.json()
+    assert result['publication_available'] and result['service_fresh'], result
+    assert result['publication'] == publication
+assert not any(name == 'scripts' or name.startswith('scripts.') for name in sys.modules)
+print('SERVERLESS_ETF_ROUTE_VERIFIED_WITHOUT_CLUSTER_SCRIPTS')
+'''
+    process = subprocess.run([sys.executable, '-c', code, str(path)],
+        env={k: v for k, v in os.environ.items() if not k.startswith('QTRADE_RESEARCH_')},
+        capture_output=True, text=True, timeout=30)
+    assert process.returncode == 0, process.stdout+process.stderr
+    assert 'SERVERLESS_ETF_ROUTE_VERIFIED_WITHOUT_CLUSTER_SCRIPTS' in process.stdout
