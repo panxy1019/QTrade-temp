@@ -9,7 +9,9 @@ Last updated: 2026-10-26
   Two authenticated local API requests traversed the real private queue and
   completed immutable cluster archives (11,911 files each): Ridge and LightGBM,
   891 supported stocks, matching inputs/protocol/source. Frontend 201 tests and
-  the Linux full suite pass. Production credentials and final browser submission
+  Linux 544 full-suite checks pass; final navigation/compare checks pass too.
+  Worker, publication and bounded six-hour PIT source repair are supervised.
+  Production credentials and final browser submission
   are still pending. Do not report Vercel submission as live.
   The first source pass captured 9,022 master rows and 13/20 stocks' historical
   status (31,577 rows), with seven failures retained rather than certified.

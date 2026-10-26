@@ -10,13 +10,14 @@ import os
 import re
 import time
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 from urllib.request import Request as UrlRequest
 from urllib.request import urlopen
 
 from fastapi import APIRouter, HTTPException, Request, Response
 
-from qtrade.monitoring.data_freshness import AUTHORITY, signed
+from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from qtrade.research.workflow import SCHEMA, capabilities, digest, validate_spec
 from qtrade.research.workflow_queue import GitQueue, seal
 
@@ -24,6 +25,15 @@ router = APIRouter(prefix="/research")
 PUBLIC_ROOT = "https://raw.githubusercontent.com/panxy1019/QTrade-observations/main/"
 COOKIE = "qtrade_research_session"
 ORIGIN = "https://q-trade-temp.vercel.app"
+
+
+def research_clock() -> str | None:
+    try:
+        path = Path(__file__).resolve().parents[3] / "configs/observer_calendar_2026.json"
+        calendar = Calendar(path)
+        return calendar.expected(datetime.now(UTC), "daily").date().isoformat()
+    except (ValueError, OSError, KeyError):
+        return None
 
 
 def configured() -> bool:
@@ -163,6 +173,11 @@ def catalog(response: Response) -> dict[str, Any]:
         heartbeat = datetime.fromisoformat(value["worker"]["heartbeat_at"])
         age = (datetime.now(UTC) - heartbeat).total_seconds()
         value["worker_fresh"] = -60 <= age <= 720
+        expected = research_clock()
+        value["expected_complete_day"] = expected
+        value["frozen_data_current"] = (all(
+            r["end"] >= expected for r in value.get("datasets", [])
+        ) if expected and value.get("datasets") else None)
         value["publication_available"] = True
         value["checked_at"] = datetime.now(UTC).isoformat()
         return value

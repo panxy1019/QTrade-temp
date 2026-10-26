@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useResearchWorkflow } from '../components/ResearchWorkflowProvider'
 import { JsonExportButton } from '../components/JsonExportButton'
 import ChartRenderer from '../charts/ChartRenderer'
-import { comparisonIssue, finalStates, limitationLabels, stageLabels, workflowGet, workflowPost } from '../research/qlibWorkflow'
+import { comparisonIssue, completedExperiments, finalStates, limitationLabels, stageLabels, workflowGet, workflowPost } from '../research/qlibWorkflow'
 import type { ResearchAudit, ResearchSpec, WorkflowExperiment, WorkflowResult } from '../research/qlibWorkflow'
 
 function Layout({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
@@ -15,6 +15,8 @@ function Layout({ title, description, children }: { title: string; description: 
     {error && <Alert type="error" showIcon title={error} />}
     {catalog && !catalog.publication_available && <Alert type="warning" showIcon title="集群研究目录尚不可用" description="可以查看已开放配置；执行状态和实验结果不可用时不以旧成功状态代替。" />}
     {catalog?.publication_available && catalog.worker_fresh === false && <Alert type="error" showIcon title="集群任务心跳已过期，提交入口关闭；已归档结果仍可查阅" />}
+    {catalog?.frozen_data_current === false && <Alert type="warning" showIcon title={`研究数据尚未覆盖最近完整交易日${catalog.expected_complete_day}`} description="仍可在已声明的冻结历史上研究；提交任务不会自动补齐新行情或改写旧实验。" />}
+    {catalog?.publication_available && catalog.frozen_data_current === null && <Alert type="warning" showIcon title="研究交易日历不可用，无法判断冻结数据是否覆盖最近完整交易日" />}
     <Typography.Text type="secondary">任务由集群串行执行，状态约每五分钟发布；网页每15秒核对。旧ETF和75股分钟研究已移至历史工作区。</Typography.Text>
     {children}
   </Space>
@@ -248,7 +250,7 @@ export function QlibBacktestPage() {
   const [result, setResult] = useState<WorkflowResult | null>(null)
   const [other, setOther] = useState<WorkflowResult | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const completed = catalog?.experiments.filter(r => r.state === 'COMPLETE') ?? []
+  const completed = completedExperiments(catalog?.experiments ?? [])
   const firstCompleted = completed[0]?.experiment_id
   useEffect(() => {
     let active = true

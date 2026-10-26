@@ -47,6 +47,8 @@ export interface WorkflowCatalog {
   schema_version: 'qtrade.research-workflow.v1'
   publication_available: boolean
   worker_fresh?: boolean
+  expected_complete_day?: string | null
+  frozen_data_current?: boolean | null
   published_at?: string
   live_trading_enabled: false
   external_order_transmission: false
@@ -83,6 +85,10 @@ export interface WorkflowResult {
 }
 
 export const finalStates = new Set(['COMPLETE', 'FAILED', 'CANCELLED', 'INTERRUPTED', 'REJECTED'])
+export function completedExperiments(rows: WorkflowExperiment[]): WorkflowExperiment[] {
+  return rows.filter(row => row.state === 'COMPLETE').sort((a, b) =>
+    Date.parse(b.completed_at ?? '1970-01-01') - Date.parse(a.completed_at ?? '1970-01-01'))
+}
 export const stageLabels: Record<string, string> = {
   AWAITING_PUBLICATION: '提交获确认，等待集群状态发布',
   QUEUED: '等待集群接收', RUNNING: '执行中', BUILDING_PROVIDER: '校验并转换数据',

@@ -227,3 +227,18 @@ def test_result_cannot_be_misbound_to_another_experiment(client, monkeypatch):
     monkeypatch.setattr(api, "read_public", lambda path: listing if path == "workflow.json"
                         else result)
     assert http.get("/research/experiments/requested").status_code == 503
+
+
+def test_market_clock_exposes_frozen_data_lag_without_relabeling_results(client, monkeypatch):
+    http, _ = client
+    monkeypatch.setattr(api, "research_clock", lambda: "2026-10-26")
+    monkeypatch.setattr(api, "read_public", lambda _: {
+        "schema_version": api.SCHEMA, "worker": {"heartbeat_at": datetime.now(UTC).isoformat()},
+        "datasets": [{"end": "2026-10-23"}], "experiments": [{"state": "COMPLETE"}],
+    })
+    value = http.get("/research/catalog").json()
+    assert value["worker_fresh"] is True
+    assert value["frozen_data_current"] is False
+    assert value["expected_complete_day"] == "2026-10-26"
+    assert value["datasets"][0]["end"] == "2026-10-23"
+    assert value["experiments"][0]["state"] == "COMPLETE"

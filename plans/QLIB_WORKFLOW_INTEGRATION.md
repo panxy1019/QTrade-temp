@@ -41,12 +41,22 @@ Goal opened 2026-10-26 at the user's request.
 
 ## Milestones
 
-- [ ] M1: validated configurations, research authentication and private queue.
-- [ ] M2: cluster worker, immutable runs and unified catalog/detail publication.
-- [ ] M3: reorganized pages and real submit/status/detail/compare navigation.
+- [x] M1: validated configurations, research authentication and private queue.
+- [x] M2: cluster worker, immutable runs and unified catalog/detail publication.
+- [x] M3: reorganized pages and submit/status/detail/compare navigation.
 - [ ] P0 parallel: causal universe/state audit, historical source ingestion,
       constraint enforcement and per-run unresolved-coverage disclosures.
 - [ ] M4: targeted/full checks, production deployment and browser acceptance.
+
+Evidence: Linux 544 full-suite tests passed on release da2878c; frontend 201
+full-suite tests and nine final workflow/navigation checks passed. A later
+market-clock regression test also passes. Both real authenticated local API
+requests completed 11,911-file verified archives, with 891 aligned instruments.
+See docs/evidence/qlib-workflow-20261026.json. Qlib, publication, source-repair,
+market observer and maintenance services are supervised. Vercel preview shows
+the integrated form with authentication closed until Production credentials
+are configured. That credential handoff and final public-browser submission
+are still required; do not mark the overall goal complete.
 
 Learning documentation already in the working tree belongs to the previous
 request and must be preserved. Existing fixed experiments remain immutable.

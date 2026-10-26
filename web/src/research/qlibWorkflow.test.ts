@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { comparisonIssue } from './qlibWorkflow'
-import type { ResearchSpec, WorkflowResult } from './qlibWorkflow'
+import { comparisonIssue, completedExperiments } from './qlibWorkflow'
+import type { ResearchSpec, WorkflowExperiment, WorkflowResult } from './qlibWorkflow'
 
 const spec: ResearchSpec = {
   name: 'test', dataset_id: 'same-input', model: 'linear', features: 'Alpha158',
@@ -11,6 +11,15 @@ const spec: ResearchSpec = {
 const result = () => ({ spec: structuredClone(spec), dataset_sha256: 'same', source_revision: 'same', comparison_protocol: 'aligned-v1', curve: [{ date: '2024-01-02' }] }) as WorkflowResult
 
 describe('controlled Qlib comparisons', () => {
+  it('defaults to the newest completed run, ahead of the imported old reference', () => {
+    const rows = [
+      { experiment_id: 'legacy', state: 'COMPLETE', completed_at: '2026-10-25T00:00:00Z' },
+      { experiment_id: 'newest', state: 'COMPLETE', completed_at: '2026-10-26T00:00:00Z' },
+      { experiment_id: 'pending', state: 'QUEUED', completed_at: '2026-10-27T00:00:00Z' },
+    ] as WorkflowExperiment[]
+    expect(completedExperiments(rows).map(row => row.experiment_id)).toEqual(['newest', 'legacy'])
+    expect(rows[0].experiment_id).toBe('legacy')
+  })
   it('accepts model-only changes despite JSON property ordering', () => {
     const left = result(), right = result()
     right.spec = Object.fromEntries(Object.entries(right.spec!).reverse()) as unknown as ResearchSpec
