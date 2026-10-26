@@ -60,8 +60,61 @@
     }
   ],
   "pending": [
-    "Production research credential setup",
-    "Authenticated production browser submit/cancel acceptance"
+    "Owner verification and Secret storage for sensitive Vercel variables",
+    "Continuing uncertified historical PIT and exact-rule source repair"
   ],
-  "live_trading_enabled": false
+  "live_trading_enabled": false,
+  "final_acceptance": {
+    "checked_at": "2026-10-26T03:48:49.556566+00:00",
+    "production": {
+      "classification": "PUBLIC_BUILD_PROVENANCE",
+      "provider": "VERCEL",
+      "status": "AVAILABLE",
+      "target_environment": "production",
+      "git_commit_sha": "2b1e2005702127456f6bad3ac6673a160ac0a47c",
+      "git_commit_ref": "main",
+      "external_order_transmission": false
+    },
+    "session": {
+      "configured": true,
+      "authenticated": false,
+      "user": null,
+      "scope": "RESEARCH_JOBS_ONLY",
+      "external_order_transmission": false
+    },
+    "browser_authenticated_login": true,
+    "browser_submission": true,
+    "browser_cancel_confirmed": true,
+    "cancelled_job_id": "34dd6dd3094342e1871f0046135f5656",
+    "completed_job_id": "316ff5642f3344d588c8de2646598314",
+    "completed_run_id": "production-e2e-lightgbm-20261026-aae5685cc17e0fed",
+    "result_detail_sha256": "9b7bbb02c1db781fae7db7bd3b29d755141626e4f9b069a064765fcec09bc7df",
+    "worker_fresh": true,
+    "frozen_data_current": true,
+    "expected_complete_day": "2026-10-23",
+    "anonymous_submission_status": 401,
+    "full_archive_files_verified": 11911,
+    "linux_full_tests_passed": 556,
+    "browser_result_details_verified": true,
+    "cluster_events": {
+      "cancel": [
+        "QUEUED",
+        "RUNNING",
+        "BUILDING_PROVIDER",
+        "CANCELLED"
+      ],
+      "complete": [
+        "QUEUED",
+        "RUNNING",
+        "BUILDING_PROVIDER",
+        "COMPUTING_ALPHA158",
+        "TRAINING_MODEL",
+        "BACKTESTING",
+        "COMPLETE"
+      ]
+    },
+    "production_dependency_repair": "PR #5; frozen uv.lock now includes Dulwich and Paramiko",
+    "secret_storage": "CONFIG_REQUIRES_OWNER_VERIFICATION_TO_CHANGE_TO_SECRET",
+    "live_trading_enabled": false
+  }
 }

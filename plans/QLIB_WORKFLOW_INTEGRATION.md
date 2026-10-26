@@ -46,7 +46,7 @@ Goal opened 2026-10-26 at the user's request.
 - [x] M3: reorganized pages and submit/status/detail/compare navigation.
 - [ ] P0 parallel: causal universe/state audit, historical source ingestion,
       constraint enforcement and per-run unresolved-coverage disclosures.
-- [ ] M4: targeted/full checks, production deployment and browser acceptance.
+- [x] M4: targeted/full checks, production deployment and browser acceptance.
 
 Evidence: Linux 544 full-suite tests passed on release da2878c; frontend 201
 full-suite tests and nine final workflow/navigation checks passed. A later
@@ -79,7 +79,19 @@ storage. Do not print or copy their contents.
 PIT source recovery: last master refresh failed while old accepted coverage
 remained visible. Add independent attempt evidence, verified cache reuse with
 original clocks, bounded same-scope failure retries and child cleanup. Nine
-source/scheduler tests pass locally; real cluster recovery is not yet certified.
+source/scheduler tests pass locally. Release 6c6092a passes all 556 Linux tests;
+the supervised PIT service runs this release and resumes from the verified
+master without changing its original clock. Final source coverage remains
+pending this bounded pass, and historical certification remains unresolved.
+
+Final production acceptance: login, submission and cancellation were performed
+through the production browser. 34dd6dd3094342e1871f0046135f5656 reached CANCELLED;
+316ff5642f3344d588c8de2646598314 reached COMPLETE in about 3m34s. Its 11,911-file
+archive verifies, and its public detail, metrics and PIT coverage render in the
+actual backtest page. Anonymous submission remains 401. The two browser
+screenshots and final checkpoint are in docs/evidence. Source certification is
+not inferred from this operational acceptance. Secret storage conversion remains
+an owner task because Vercel requests email verification before editing.
 
 Learning documentation already in the working tree belongs to the previous
 request and must be preserved. Existing fixed experiments remain immutable.

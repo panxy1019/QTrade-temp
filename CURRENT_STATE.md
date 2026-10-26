@@ -2,15 +2,18 @@
 
 Last updated: 2026-10-26
 
-- Qlib public workflow pages are deployed to production at main 6573e3f;
+- Qlib research login and production task workflow are live at main 2b1e200;
   browser acceptance confirms the newest Ridge result and the actual aligned
   LightGBM comparison. Production catalog/session/result endpoints return 200,
   worker and frozen-data clocks are fresh, and anonymous submission returns 401.
   The user imported Production credentials; actual browser login and submission
-  now succeed. PR #5 (main 2b1e200) fixes a stale frozen dependency lock that
-  initially prevented queue transport imports. The same request identity was
-  retried successfully, and cancellation was submitted for cluster verification.
-  Full production execution/result acceptance is in progress. See production evidence
+  now succeed. PR #5 fixes a stale frozen dependency lock that initially
+  prevented queue transport imports. Browser job 34dd6dd3 was cancelled by the
+  cluster; job 316ff564 completed in about 3m34s and all 11,911 archive files
+  passed verification. Production browser/API acceptance confirms the complete
+  result and audit, with anonymous submission still rejected (401). Sensitive
+  Vercel values are currently Config; Secret conversion awaits owner email
+  verification. See production evidence
   docs/evidence/qlib-workflow-production-20261026.json.
 
 - Qlib unified workflow implementation includes research-only
@@ -22,8 +25,7 @@ Last updated: 2026-10-26
   891 supported stocks, matching inputs/protocol/source. Frontend 201 tests and
   Linux 544 full-suite checks pass; final navigation/compare checks pass too.
   Worker, publication and bounded six-hour PIT source repair are supervised.
-  Authenticated production submission is enabled; final cancellation and result
-  acceptance remain in progress.
+  Authenticated production submit/cancel/result acceptance is complete.
   The first source pass captured 9,022 master rows and 13/20 stocks' historical
   status (31,577 rows), with seven failures retained rather than certified.
   Historical-source backfill and causal admission remain non-certified PIT work.
@@ -31,7 +33,9 @@ Last updated: 2026-10-26
   resilience repair now records attempts separately, reuses verified cached
   masters without changing their clock, retries failed scopes with backoff and
   reaps timed-out children. Nine source/scheduler regression checks pass locally;
-  cluster deployment and resumed coverage still require verification.
+  Linux full-suite 556 tests pass. The source service now runs release 6c6092a
+  and demonstrably resumes status collection from the verified master. New
+  checkpoints do not replace accepted coverage until the pass is finalized.
   See plans/QLIB_WORKFLOW_INTEGRATION.md and docs/QLIB_WORKFLOW.md.
 
 - Website learning guide completed in docs/learning/README.md: 13 Chinese
