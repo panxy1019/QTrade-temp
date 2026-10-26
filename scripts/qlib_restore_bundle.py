@@ -7,7 +7,7 @@ import json
 import os
 import pickle
 import re
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from hashlib import sha256
 from importlib import import_module
 from importlib.metadata import version
@@ -80,6 +80,7 @@ def freeze(
         "processor_sha256": fitted_hash,
         "reference_start": str(pd.Timestamp(dates[0]).date()),
         "reference_end": str(pd.Timestamp(dates[-1]).date()),
+        "handler_start": str(pd.Timestamp(dataset.handler.start_time).date()),
         "reference_rows": len(reference), "packages": {p: version(p) for p in PACKAGES},
         "files": {name: checksum(root / name) for name in sorted(BUNDLE_FILES)},
         "provider_files": provider_files, "state": "AWAITING_INDEPENDENT_RESTORE",
@@ -101,6 +102,13 @@ def verify_bundle(root: Path, provider: Path) -> dict[str, Any]:
             or len(value["feature_order"]) != 158
             or len(set(value["feature_order"])) != 158):
         raise ValueError("RESTORE_BUNDLE_CONTRACT_INVALID")
+    dates = [str(date.fromisoformat(value[k])) for k in (
+        'handler_start', 'reference_start', 'reference_end',
+    )]
+    if (not dates[0] <= dates[1] < dates[2] <= str(datetime.now(UTC).date())
+            or type(value['reference_rows']) is not int
+            or not 2 <= value['reference_rows'] <= 200_000):
+        raise ValueError('RESTORE_REFERENCE_RANGE_INVALID')
     for base, entries in ((root, value["files"]), (provider, value["provider_files"])):
         for name, digest in entries.items():
             path = base / name
@@ -154,8 +162,13 @@ def restore(root: Path, provider: Path, *, output: Path) -> dict[str, Any]:
 
     DataHandlerLP.fit = forbidden_fit
     DataHandlerLP.fit_process_data = forbidden_fit
-    data = loader.get_dataset(manifest['reference_start'], manifest['reference_end'],
-                              unprepared_dataset=unprepared)
+    # Keep the training calculation origin: Qlib float32 rolling STD/CORR can
+    # change by one ULP with a shorter window despite identical fitted state.
+    data = loader.get_dataset(
+        manifest['handler_start'], manifest['reference_end'],
+        segments={'test': (manifest['reference_start'], manifest['reference_end'])},
+        unprepared_dataset=unprepared,
+    )
     model = loader.get_model()
     features = data.prepare('test', col_set='feature', data_key='infer')
     scores = model.predict(data, segment='test').to_frame('score')
@@ -181,6 +194,7 @@ def restore(root: Path, provider: Path, *, output: Path) -> dict[str, Any]:
         'bundle_sha256': manifest['evidence_sha256'], 'pid': os.getpid(),
         'feature_count': len(features.columns), 'reference_rows': len(scores),
         'reference_start': manifest['reference_start'], 'reference_end': manifest['reference_end'],
+        'handler_start': manifest['handler_start'],
         'max_absolute_score_difference': float(np.abs(scores-reference_scores).to_numpy().max()),
         'fitted_processors_unchanged': before == after,
         'fit_methods_forbidden': True, 'official_loader': 'qlib.workflow.online.update.RMDLoader',

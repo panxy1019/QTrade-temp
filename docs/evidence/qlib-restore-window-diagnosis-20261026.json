@@ -1,0 +1,68 @@
+{
+  "acceptance": {
+    "revision": "d58f38444f7f6c4ab40bd6ab1ed986e7f4cfeb03",
+    "started_at": 1793013489.2665675,
+    "pytest_exit": 0,
+    "training_exit": 1,
+    "finished_at": 1793013871.847584
+  },
+  "diagnosis": {
+    "mismatches": 4,
+    "cells": 2814612,
+    "max_abs": 1.7881393432617188e-07,
+    "per_feature": {
+      "STD20": 1,
+      "CORR10": 1,
+      "CORR20": 1,
+      "CORR30": 1
+    },
+    "examples": [
+      {
+        "index": "(Timestamp('2026-09-18 00:00:00'), 'SZ000858')",
+        "feature": "CORR10",
+        "reference": 0.3692030608654022,
+        "restored": 0.3692029118537903
+      },
+      {
+        "index": "(Timestamp('2026-09-21 00:00:00'), 'SZ300120')",
+        "feature": "CORR20",
+        "reference": 0.8801385164260864,
+        "restored": 0.8801386952400208
+      },
+      {
+        "index": "(Timestamp('2026-10-14 00:00:00'), 'SH600196')",
+        "feature": "CORR30",
+        "reference": 0.5578693747520447,
+        "restored": 0.557869553565979
+      },
+      {
+        "index": "(Timestamp('2026-10-14 00:00:00'), 'SH600588')",
+        "feature": "STD20",
+        "reference": -0.7875682711601257,
+        "restored": -0.787568211555481
+      }
+    ],
+    "processors_match": true,
+    "score_max_abs": 0.0
+  },
+  "bundle_sha256": "8a79917408675d7f47fc65df746a4f019efc0db269bf131e672682809e55950b",
+  "original_handler_calculation_start": "2016-10-24",
+  "restore_calculation_start": "2026-09-18",
+  "reference_end": "2026-10-23",
+  "reference_rows": 17814,
+  "artifact_sizes": {
+    "reference-features.parquet": 12571710,
+    "reference-scores.parquet": 190972,
+    "params.pkl": 193867,
+    "dataset": 13806,
+    "manifest.json": 1286900
+  },
+  "state": "REJECTED_RESTORE_WINDOW_PARITY",
+  "live_trading_enabled": false,
+  "model_activated": false,
+  "tests": {
+    "passed": 713,
+    "failed": 0,
+    "skipped": 0
+  }
+}

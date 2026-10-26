@@ -25,6 +25,8 @@ def bundle(tmp_path):
         'provider_files': {'calendars/day.txt': sha256(
             (provider/'calendars/day.txt').read_bytes()).hexdigest()},
         'feature_order': [f'F{i}' for i in range(158)],
+        'handler_start': '2016-10-24', 'reference_start': '2026-10-19',
+        'reference_end': '2026-10-23', 'reference_rows': 100,
     })
     (root / 'manifest.json').write_text(json.dumps(value))
     return root, provider, value
@@ -75,3 +77,13 @@ def test_recorder_cannot_load_unapproved_paths(bundle):
     root, _, _ = bundle
     with pytest.raises(ValueError, match='ALLOWLISTED'):
         FrozenRecorder(root).load_object('../outside')
+
+
+def test_restore_cannot_shorten_origin_beyond_reference_or_compare_future_data(bundle):
+    root, provider, value = bundle
+    for key, day in (('handler_start', '2026-10-24'), ('reference_end', '2099-01-01')):
+        changed = {k: v for k, v in value.items() if k != 'evidence_sha256'}
+        changed[key] = day
+        (root / 'manifest.json').write_text(json.dumps(signed(changed)))
+        with pytest.raises(ValueError, match='RANGE'):
+            verify_bundle(root, provider)

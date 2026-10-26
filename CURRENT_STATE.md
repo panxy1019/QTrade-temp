@@ -5,7 +5,12 @@ Last updated: 2026-10-26
 - Phase C fitted-state restoration is implemented on codex/qlib-frozen-restore:
   opt-in new run identity, official params.pkl/dataset contract, provider and
   package binding, independent RMDLoader/IT_LS inference with refitting forbidden.
-  Eleven integrity checks pass; actual cluster training/parity is pending.
+  First full Linux suite passes 713 checks and real training completes; a
+  shortened restore window changes four float32 STD/CORR cells (of 2.8 million)
+  while scores match exactly. Strict parity correctly rejects the attempt.
+  Restore now preserves the training calculation origin; real rerun is pending.
+  Fixed-anchor daily extension also rejects changed adjustment history and raw
+  price/volume overlap, with 12 focused checks. New data version publication is pending.
   Old worker/model/data identities remain unchanged. docs/QLIB_FITTED_RESTORE.md.
 
 - Phase B current incremental milestone is live at production main 51ec2e1;
