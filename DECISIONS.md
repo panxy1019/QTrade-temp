@@ -1,5 +1,23 @@
 # Architecture decisions
 
+## ADR-186 — Signal baselines are separate from execution-admitted portfolios
+
+Status: initial implementation, cluster acceptance pending, 2026-10-26, Phase E.
+
+Reuse PriceFactorSpec for momentum/reversal/low-volatility; use a common complete
+21-session close grid and average tied cross-sectional ranks for equal-weight
+multifactor signals. Equal-universe allocation must retain the whole common pool,
+not select arbitrary tied TopK securities. ETF positive trend requires an ETF
+provider; stock inputs cannot stand in for that data acceptance.
+
+Existing construct_targets filters positive scores and needs execution prices and
+lot sizes. It is not compatible with rank-only model scores or unknown next-open
+prices, so retain it and use a separate indicative-weight function. Save input,
+signal and target identities independently; do not invent prices, units, fills or
+returns. Holdings, turnover and execution constraints remain explicit unmet gates
+before PAPER/SHADOW admission. No gateway/vn.py component is needed for this layer.
+LIVE_TRADING_ENABLED=false.
+
 ## ADR-185 — Mature rolling windows reuse native generators and trainers
 
 Status: implementation; native cluster acceptance pending, 2026-10-26.
