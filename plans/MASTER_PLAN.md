@@ -24,6 +24,12 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+PR27 production main 34c5118 is verified with all eight available online routes,
+current catalog validation and independent ETF artifact checks. Evidence:
+docs/evidence/qlib-step1-vercel-34c5118.json. This closes the production deployment
+follow-up only; actual next-session, PAPER human recovery, cluster egress and
+rendered visual acceptance remain open. STEP2 remains gated on full STEP1.
+
 C/D tools c5c280f pass all 103 Linux checks. The actual D pretransition audit is
 BLOCKED because the candidate is still TRAINED, with zero activations. The tool
 release is installed without restarting writers; real later-input validation

@@ -2,6 +2,13 @@
 
 Last updated: 2026-10-27
 
+- PR27 is merged and production now verifies main 34c5118. All eight online
+  research routes return available HTTP 200 responses; the current catalog and
+  full public ETF historical report/artifacts independently validate. Evidence:
+  docs/evidence/qlib-step1-vercel-34c5118.json. Rendered browser acceptance and
+  the real October 27 completed-session transition remain unverified. STEP2 is
+  not started. Cluster audit tools remain c5c280f; no writer restart was needed.
+
 - C/D audit tools at c5c280f are installed as an immutable cluster release;
   all 103 focused Linux tests pass with zero skips. The real D CLI run against
   the actual current data head returns BLOCKED / CANDIDATE_NOT_UNACTIVATED_STAGED:
