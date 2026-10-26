@@ -2,6 +2,17 @@
 
 Last updated: 2026-10-27
 
+- ETF history source audit a830d8a is verified on actual immutable captures:
+  30 ETFs, 55 common continuous admitted sessions (August 3 to October 26),
+  no missing sessions, no amount. Local verified legacy overlap has 450 exact
+  OHLCV pairs and no mismatch; this does not certify source equivalence,
+  adjustments or history stitching. All 24 Linux audit tests pass; cluster raw
+  audit independently replays. No service was restarted. Formal evidence:
+  docs/evidence/qlib-etf-history-audit-a830d8a.json and
+  docs/evidence/qlib-etf-history-linux-a830d8a.json. Full assumption-based
+  historical portfolio comparison remains under development; source audit alone
+  does not complete Phase E or establish next-session performance.
+
 - Production Vercel now verifies main 455f396 (PR25). All seven online research
   publication routes return HTTP 200 and available data. Both stock forward and
   independent ETF SHADOW are fresh; ETF has one current frozen target and no

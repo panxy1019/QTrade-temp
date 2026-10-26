@@ -24,6 +24,12 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+ETF immutable history audit is implemented at a830d8a with 24 passing Linux tests
+and real raw replay. The fixed 30-ETF cohort has 55 common sessions, no missing
+sessions, and 450 exact legacy/new OHLCV overlap pairs on the local comparison.
+Amount and certified execution/corporate-action inputs remain absent. Full
+historical portfolio comparison is the next deliverable; audit is not backtest.
+
 Production API delivery is verified on main 455f396: seven online research routes
 are available, including fresh independent ETF SHADOW and stock forward books.
 The ETF serverless packaging regression is fixed with an isolated route test.
