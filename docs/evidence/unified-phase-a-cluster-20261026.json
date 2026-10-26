@@ -1,0 +1,163 @@
+{
+  "schema_version": "qtrade.unified-phase-a-cluster-acceptance.v1",
+  "release_revision": "133b034907dca73f8ac3440d2181f5ae56426304",
+  "source_base": {
+    "revision": "4a4b6451edcb68f27f986c74a5b263e422e695b9",
+    "archive_sha256": "81e189407af94dc4dc9ede47afafa1fa475c7b999a02fc134c849da062a8fbad",
+    "archive_bytes": 33928286,
+    "files_verified": 631,
+    "started_at": 1793004815.6001847,
+    "pytest_exit": 0,
+    "minute_audit_exit": 0,
+    "catalog_build_exit": 0,
+    "finished_at": 1793005083.9339101
+  },
+  "final_code_checks": {
+    "revision": "133b034907dca73f8ac3440d2181f5ae56426304",
+    "base_archive_sha256": "81e189407af94dc4dc9ede47afafa1fa475c7b999a02fc134c849da062a8fbad",
+    "overlay_git_blobs": {
+      "scripts/build_observed_universe.py": "236dd7134804fe94aa0156b10ac78fd1ac6f4982",
+      "src/qtrade/api/unified_data.py": "56990060c7e8d7d5f9bda8d08cd344d4898dda7a",
+      "src/qtrade/instruments/observed.py": "8ab08bb62c174ca9312180903013e5e2ba3f373f",
+      "tests/test_observed_master.py": "9fa5da64c78b3b7265c8215b7b19b56cc2375e71"
+    },
+    "started_at": 1793004983.7729144,
+    "pytest_exit": 0,
+    "catalog_build_exit": 1,
+    "finished_at": 1793005085.2070034
+  },
+  "catalog_retry": {
+    "revision": "133b034907dca73f8ac3440d2181f5ae56426304",
+    "catalog_build_exit": 0,
+    "legacy_universe_sha256": "0fe5c3a1a73852561b26428e0be4e919568bf652d250ea00ef87aa70537b1019",
+    "finished_at": 1793005192.3296556,
+    "prior_failure": "transfer transcript path copied incorrectly; bytes preserved"
+  },
+  "tests": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "637",
+      "time": "91.155",
+      "timestamp": "2026-10-26T16:56:24.065606+08:00",
+      "hostname": "73ec830048ca"
+    }
+  ],
+  "catalog": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.observed-security-master.v1",
+    "observed_at": "2026-10-26T08:59:06.887581+00:00",
+    "target_count": 1500,
+    "target_actual": 1500,
+    "state": "TARGET_REACHED",
+    "selection_policy": "legacy union then frozen current liquidity candidates; non-PIT",
+    "legacy_union_count": 1037,
+    "legacy_active_retained": 1037,
+    "legacy_unresolved_or_inactive": [],
+    "top_up_count": 463,
+    "source_counts": {
+      "legacy_etf30": 30,
+      "legacy_stock75": 75,
+      "legacy_daily1000": 1000,
+      "frozen_liquidity_candidates": 1745,
+      "legacy_minute_checkpoints": 172
+    },
+    "master_count": 5594,
+    "target_by_type": {
+      "ETF": 30,
+      "STOCK": 1470
+    },
+    "historical_pit_certified_count": 0,
+    "limitations": [
+      "Current selection has survivorship and liquidity selection bias",
+      "Vendor listing/delisting dates are unverified source claims",
+      "Source known_at is not historical row available_at",
+      "Day/5min collection plans do not certify data coverage"
+    ],
+    "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+    "frequency_counts": {
+      "day": {
+        "PLANNED": 500,
+        "CONTENT_COVERAGE_VERIFIED": 1000
+      },
+      "5min": {
+        "PLANNED": 1328,
+        "CONTENT_COVERAGE_VERIFIED": 171,
+        "QUARANTINED": 1
+      }
+    },
+    "vendor_master_observed_at": "2026-10-26T02:05:27.695891+00:00",
+    "evidence_sha256": "aea0fe389a3cb016f020b68fe327e9e9c910e53a90ff61fff2dc81a96adc6fa5"
+  },
+  "minute_audit": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.minute-admission-audit.v1",
+    "rule_version": "qtrade.legacy-minute-admission.v1",
+    "requested_end": "2026-10-23",
+    "started_at": "2026-10-26T08:55:05.872932+00:00",
+    "completed_at": "2026-10-26T08:57:23.809522+00:00",
+    "checkpoint_count": 172,
+    "states": {
+      "CONTENT_COVERAGE_VERIFIED": 171,
+      "QUARANTINED": 1
+    },
+    "evidence_sha256": "809ad3df84e2046e3f6fbceb4dd20e0358223b74c36553b62dfb67121726c45d"
+  },
+  "quarantined_receipts": [
+    {
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "point_in_time": false,
+      "realtime_readiness": false,
+      "real_data_paper_readiness": false,
+      "external_order_transmission": false,
+      "live_trading_enabled": false,
+      "promotion": "NOT_ELIGIBLE",
+      "schema_version": "qtrade.minute-admission.v1",
+      "checkpoint_sha256": "7b1e587305d1730ceff44875c4e4bb7155b019dc0eab564170041813c40a8497",
+      "data_version": "baostock-qfq-5m-002384-20231024-20261023",
+      "data_sha256": "63884e72b1065ff41bc989cb5a83d730f55ce890258a6cc30dbec6b8e7096405",
+      "rule_version": "qtrade.legacy-minute-admission.v1",
+      "symbol": "002384",
+      "requested_start": "2023-10-24",
+      "requested_end": "2026-10-23",
+      "minimum_sessions": 650,
+      "bar_count": 24000,
+      "session_count": 501,
+      "partial_sessions": 2,
+      "observed_start": "2023-10-24",
+      "observed_end": "2025-11-14",
+      "state": "QUARANTINED",
+      "issues": [
+        "INCOMPLETE_SESSION",
+        "INSUFFICIENT_SESSIONS",
+        "STALE_END"
+      ],
+      "historical_calendar_certified": false,
+      "amount_verified": false,
+      "adjustment_pit_certified": false,
+      "missing_sessions_policy": "No synthetic fill; missing reasons remain unknown",
+      "bytes": 403008,
+      "evidence_sha256": "87e62c7ac110ee207e6475d0e10818bd1c64353e8a20c8e4eb761c403467c95d"
+    }
+  ],
+  "accepted_minute_bars": 5960496,
+  "accepted_minute_bytes": 101309367,
+  "free_bytes": 314615791616,
+  "publication_evidence_sha256": "fbfc6b7fd15a99742840d6efd5da0206a0f0a4cc0b49850cf3d2389a24933db0",
+  "publication_bytes": 9599301,
+  "live_trading_enabled": false
+}

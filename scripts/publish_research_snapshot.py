@@ -209,7 +209,7 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         if len(raw_unified) > 12_000_000:
             raise ValueError("UNIFIED_PUBLICATION_TOO_LARGE")
         unified = validate_publication(json.loads(raw_unified))
-        write_json_atomic(publication / "unified.json", unified)
+        write_json_atomic(publication / "unified.json", unified, compact=True)
         current_files.append("unified.json")
     write_json_atomic(publication / "latest.json", snapshot)
     (publication / "README.md").write_text(

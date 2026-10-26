@@ -413,6 +413,7 @@ export function loadUnifiedSummary() {
 }
 export function loadUnifiedSecurities(filters: {
   query: string; frequency: 'day' | '5min'; quality: string; target_only: boolean; offset: number
+  coverage?: 'historical' | 'incremental'
 }) {
   const params = new URLSearchParams(Object.entries(filters).map(([key, value]) => [key, String(value)]))
   return getJson<import('../types').UnifiedSecurities>(`/unified/securities?${params}`)

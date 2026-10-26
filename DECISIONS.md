@@ -1,5 +1,46 @@
 # Architecture decisions
 
+## ADR-174 — Local collection ledger commits only after immutable batch sealing
+
+Status: accepted implementation design, 2026-10-26, Phase B.
+
+Keep the authenticated Git + SQLite research queue unchanged. Collection uses
+the same SQLite WAL/FULL durability and existing single-process ownership helper
+in a separate local-disk ledger, never SQLite WAL on the NFS data volume.
+Per-security day/5min plans retain last success independently from later failures;
+bounded fresh/retry budgets prevent prefix starvation. A sealed immutable batch
+is replayed after interruption; a missing seal stays INTERRUPTED with a retry.
+
+Reuse existing atomic JSON writers, BarQualityGate and directory fsync. Retain
+exact raw bytes in bounded compressed packs before parsing. Normalized chunks
+bind raw hashes, native price basis, amounts/VWAP where known and completion
+clocks. Commit chunks, task outcomes and uniquely keyed data-ready events in one
+SQLite transaction after raw/Parquet/manifest hashes verify. These events mean
+accepted incremental rows, not a complete universe or a ready Qlib provider.
+Rolling-window source requests append only new completed bars; existing legacy
+qfq histories remain a separate source family. No broker or gateway is involved.
+
+## ADR-173 — Incremental collection keeps raw price bases and bounded batches separate
+
+Status: accepted design, 2026-10-26; implementation pending Phase B.
+
+Cluster probes verify bounded Sina day and 5min responses. Day K-lines omit
+amount; the completed-day quote endpoint carries amount and the same OHLCV for
+sampled stock/ETF identities. Retain both raw responses and reconcile exact
+identity/date/OHLCV before attaching cash turnover. A same-vendor endpoint check
+is not independent source/PIT certification. Do not invent missing historical
+amount or infer suspension. Native 5min may expose vendor amount, which remains
+vendor-claimed. Preserve its adjustment uncertainty; never concatenate it with
+legacy BaoStock qfq as if both were one certified raw price series.
+
+Reuse existing calendar/BarQualityGate, append only completed observations, and
+store incremental immutable batches with logical instrument/time indexes. Avoid
+one tiny file per bar per security, daily whole-history downloads or copies of
+all minute history. Today collection and historical backfill have separate durable
+attempt states and budgets. Source clocks, receipt clocks, data cutoffs and Qlib
+cutoffs are separate. Capture raw before parsing so failed observations remain
+auditable. Only explicit verified data-ready events may advance downstream work.
+
 ## ADR-172 — Retire a verified duplicate publication writer without removing recovery
 
 Status: accepted, 2026-10-26, unified-platform single-writer requirement.

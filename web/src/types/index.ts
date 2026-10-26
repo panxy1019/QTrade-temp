@@ -2471,6 +2471,13 @@ export interface UnifiedFrequency {
   observed_start: string | null
   observed_end: string | null
   bar_count: number | null
+  expected_end?: string | null
+  task_state?: string
+  last_success_batch?: string | null
+  last_success_at?: string | null
+  next_attempt_at?: string | null
+  price_basis?: string
+  last_chunk_missing_amount_bars?: number | null
 }
 export interface UnifiedSecurity {
   instrument_id: string
@@ -2487,12 +2494,17 @@ export interface UnifiedSecurity {
   issues: string[]
   source: { source_id: string; sha256: string }[]
   frequencies: Record<'day' | '5min', UnifiedFrequency>
+  incremental?: Record<'day' | '5min', UnifiedFrequency>
 }
 export interface UnifiedSummary {
   schema_version: string
   built_at: string
   snapshot_age_seconds: number
   live_trading_enabled: false
+  evidence_sha256: string
+  incremental_freshness?: Record<'day' | '5min', {
+    status: string; ready_symbols: number; required_symbols: number; expected_end: string | null
+  }>
   master: {
     master_count: number
     target_count: number
@@ -2504,6 +2516,16 @@ export interface UnifiedSummary {
     vendor_master_observed_at: string | null
     universe_version: string
     frequency_counts: Record<'day' | '5min', Record<string, number>>
+    incremental_counts?: Record<'day' | '5min', Record<string, number>>
+    collection?: {
+      state: string
+      updated_at: string
+      attempted_symbols: number
+      data_ready_events: number
+      elapsed_seconds: number
+      stage_counts: Record<string, number>
+      task_counts: Record<string, number>
+    }
   }
 }
 export interface UnifiedSecurities {

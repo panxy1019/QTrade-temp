@@ -2,6 +2,24 @@
 
 Last updated: 2026-10-26
 
+- Unified incremental collection pilot on release 62f5e94 passes all 672 Linux
+  backend checks. Real first 20 symbol/frequency tasks succeed (490 bars, 22 raw
+  responses). A subsequent bounded 3,000-attempt pass reaches 1,497 daily and
+  1,481 5min targets through 2026-10-26; 11 minute tasks remain unattempted, with
+  failures retained for transport, absent bars and unknown minute gaps. This is
+  current native-source coverage, not repaired old qfq history or PIT evidence.
+  Continuous-mode integration and production status views are being accepted;
+  the formal worker still uses its old frozen Qlib data/model identity.
+
+- Phase B source adapter is implemented on codex/unified-incremental-data with
+  12 focused tests, lint and strict typing passing; not yet connected/deployed.
+  It keeps missing amount unknown, filters unfinished bars, verifies same-vendor
+  quote/day OHLCV before attaching turnover, and rejects date/identity/unit drift.
+  Current source probes and installed Qlib online module hashes are archived
+  under docs/evidence/*source-audit-20261026.json. Unified incremental persistence,
+  scheduling and downstream data-ready events remain pending. Old interrupted
+  expansion progress is explicitly INTERRUPTED with its original snapshot kept.
+
 - First unified-data delivery passes 637 full Linux backend checks and 213
   frontend checks, lint/types/build. Real offline audit rechecks 172 old minute
   checkpoints: 171 content/coverage pass, 002384 quarantined, original bytes
@@ -12,13 +30,16 @@ Last updated: 2026-10-26
   complete historical PIT certification remains zero. Source 133b034 is deployed
   to maintenance and the workflow-aware publisher. A verified duplicate old
   publisher was stopped with autostart/restart disabled and backups retained.
-  Other services/old experiment identities stay unchanged. Preview browser reads
-  the real 1,500 target catalog; production acceptance is in progress.
+  Other services/old experiment identities stay unchanged. Production main 055b87f
+  serves both read-only endpoints; browser accepts 1,500 targets, symbol search
+  and 002384's 5min quarantine. Anonymous research submit remains 401 and unified
+  catalog POST is 405. Single publisher resumes SUCCEEDED at 09:07:10 UTC.
+  Evidence: docs/evidence/unified-phase-a-{cluster,production}-20261026.json.
 
 - Active owner-requested goal: unified observed universe (configurable target
   about 1,500), day/5min quality and ingestion, immutable Qlib data versions,
   restored-model daily prediction, controlled rolling and forward research.
-  Phase A is in progress, not accepted. Scope and checks:
+  Phase A is accepted; Phase B incremental collection is in progress. Scope and checks:
   plans/UNIFIED_DATA_ONLINE_GUIDE.md and plans/UNIFIED_DATA_ONLINE_PLAN.md.
   Existing identities and services remain; effective limits are 13 CPU / 60 GiB,
   free persistent space about 293 GiB. LIVE_TRADING_ENABLED=false.

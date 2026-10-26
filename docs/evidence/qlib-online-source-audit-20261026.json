@@ -1,0 +1,108 @@
+{
+  "observed_at": "2026-10-26T09:28:13.424328+00:00",
+  "qlib_version": "0.9.7",
+  "python": "3.11.17",
+  "modules": {
+    "qlib.workflow.online.manager": {
+      "source_sha256": "eef102410434d9d604b99c6e5b11f45d2a4ea78145940174449fab6d64c5c332",
+      "classes": {
+        "OnlineManager": {
+          "__init__": "(self, strategies: Union[qlib.workflow.online.strategy.OnlineStrategy, List[qlib.workflow.online.strategy.OnlineStrategy]], trainer: qlib.model.trainer.Trainer = None, begin_time: Union[str, pandas._libs.tslibs.timestamps.Timestamp] = None, freq='day')",
+          "routine": "(self, cur_time: Union[str, pandas._libs.tslibs.timestamps.Timestamp] = None, task_kwargs: dict = {}, model_kwargs: dict = {}, signal_kwargs: dict = {})",
+          "to_pickle": "(self, path: Union[pathlib.Path, str], **kwargs)"
+        }
+      }
+    },
+    "qlib.workflow.online.strategy": {
+      "source_sha256": "b606149e78d502a7d863bdde1a93e0b78e2f73ff371ec040ecfb0d6973150519",
+      "classes": {
+        "OnlineStrategy": {
+          "__init__": "(self, name_id: str)",
+          "prepare_tasks": "(self, cur_time, **kwargs) -> List[dict]",
+          "prepare_online_models": "(self, trained_models, cur_time=None) -> List[object]"
+        },
+        "RollingStrategy": {
+          "__init__": "(self, name_id: str, task_template: Union[dict, List[dict]], rolling_gen: qlib.workflow.task.gen.RollingGen)",
+          "prepare_tasks": "(self, cur_time) -> List[dict]",
+          "prepare_online_models": "(self, trained_models, cur_time=None) -> List[object]"
+        }
+      }
+    },
+    "qlib.workflow.online.utils": {
+      "source_sha256": "d1234362d14c95021d5ba170d2a86d405b598ea0498c513a005191e3f90ba631",
+      "classes": {
+        "OnlineToolR": {
+          "__init__": "(self, default_exp_name: str = None)",
+          "set_online_tag": "(self, tag, recorder: Union[qlib.workflow.recorder.Recorder, List])"
+        }
+      }
+    },
+    "qlib.workflow.online.update": {
+      "source_sha256": "ba358656d64a7f9b8380af358e2f5a961a23d5606adc35a4a069c2e7f9d6c59a",
+      "classes": {
+        "PredUpdater": {
+          "__init__": "(self, record: qlib.workflow.recorder.Recorder, to_date=None, from_date=None, hist_ref: Optional[int] = None, freq='day', fname='pred.pkl', loader_cls: type = <class 'qlib.workflow.online.update.RMDLoader'>)",
+          "update": "(self, dataset: qlib.data.dataset.DatasetH = None, write: bool = True, ret_new: bool = False) -> Optional[object]"
+        },
+        "RMDLoader": {
+          "__init__": "(self, rec: qlib.workflow.recorder.Recorder)",
+          "get_dataset": "(self, start_time, end_time, segments=None, unprepared_dataset: Optional[qlib.data.dataset.DatasetH] = None) -> qlib.data.dataset.DatasetH",
+          "get_model": "(self) -> qlib.model.base.Model"
+        }
+      }
+    },
+    "qlib.workflow.task.gen": {
+      "source_sha256": "62cc7bea53314f9e876a865e657b206d78782f95a82ce526e9c82ecc1efc2ee2",
+      "classes": {
+        "RollingGen": {
+          "__init__": "(self, step: int = 40, rtype: str = 'expanding', ds_extra_mod_func: Optional[Callable] = <function handler_mod at <process-address>>, test_key='test', train_key='train', trunc_days: int = None, task_copy_func: Callable = <function deepcopy at <process-address>>)",
+          "generate": "(self, task: dict) -> List[dict]"
+        }
+      }
+    },
+    "qlib.model.trainer": {
+      "source_sha256": "b39e610725d4ec52cbfbab62a55163ab6e599f3c9c07167a2ef59677f2a46146",
+      "classes": {
+        "TrainerR": {
+          "__init__": "(self, experiment_name: Optional[str] = None, train_func: Callable = <function task_train at <process-address>>, call_in_subproc: bool = False, default_rec_name: Optional[str] = None)",
+          "train": "(self, tasks: list, train_func: Optional[Callable] = None, experiment_name: Optional[str] = None, **kwargs) -> List[qlib.workflow.recorder.Recorder]"
+        }
+      }
+    },
+    "qlib.data.dataset": {
+      "source_sha256": "f81de9c050e91e4f25ed0fb802273a7ca7dedc104d580ee30ebdd2a733fc68a8",
+      "classes": {
+        "DatasetH": {
+          "__init__": "(self, handler: Union[Dict, qlib.data.dataset.handler.DataHandler], segments: Dict[str, Tuple], fetch_kwargs: Dict = {}, **kwargs)",
+          "to_pickle": "(self, path: Union[pathlib.Path, str], **kwargs)"
+        }
+      }
+    },
+    "qlib.data.dataset.handler": {
+      "source_sha256": "8fc3732631bc5e199f8c925827fb0dc7775cfc4edcf3d16e2ac591ec71a4ae90",
+      "classes": {
+        "DataHandlerLP": {
+          "__init__": "(self, instruments=None, start_time=None, end_time=None, data_loader: Union[dict, str, qlib.data.dataset.loader.DataLoader] = None, infer_processors: List = [], learn_processors: List = [], shared_processors: List = [], process_type='append', drop_raw=False, **kwargs)",
+          "to_pickle": "(self, path: Union[pathlib.Path, str], **kwargs)"
+        }
+      }
+    },
+    "qlib.contrib.model.gbdt": {
+      "source_sha256": "9ed0f79dcf1af5b4f081b1b09676ed3b23b64d353afe1419ea4d708fac8dc4a4",
+      "classes": {
+        "LGBModel": {
+          "__init__": "(self, loss='mse', early_stopping_rounds=50, num_boost_round=1000, **kwargs)",
+          "to_pickle": "(self, path: Union[pathlib.Path, str], **kwargs)"
+        }
+      }
+    },
+    "qlib.contrib.strategy.signal_strategy": {
+      "source_sha256": "b1b4145e94065879768cfc9750c08a7c3af8880d3c338e0de675f5fb6b78d932",
+      "classes": {
+        "TopkDropoutStrategy": {
+          "__init__": "(self, *, topk, n_drop, method_sell='bottom', method_buy='top', hold_thresh=1, only_tradable=False, forbid_all_trade_at_limit=True, **kwargs)"
+        }
+      }
+    }
+  }
+}
