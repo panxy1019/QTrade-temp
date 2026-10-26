@@ -14,6 +14,14 @@ from typing import Any
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from qtrade.research.workflow import digest
 from scripts.atomic_json import write_json_atomic
+from scripts.pit_collection_queue import (
+    begin_attempt,
+    end_attempt,
+    queue_progress,
+    read_attempts,
+    save_attempts,
+    select_batch,
+)
 from scripts.vendor_session import baostock_session
 
 FIELDS = "date,code,open,high,low,close,preclose,volume,amount,tradestatus,isST"
@@ -82,28 +90,42 @@ def verified_status(path: Path) -> dict[str, Any]:
     return value
 
 
-def collect(base: Path, maximum: int) -> dict[str, Any]:
+def collect(base: Path, maximum: int, *, batch_size: int | None = None) -> dict[str, Any]:
     record_attempt(base, maximum, "RUNNING", stage="WAITING_VENDOR_SESSION")
     try:
-        value = collect_pass(base, maximum)
+        value = collect_pass(base, maximum, batch_size=batch_size)
     except Exception as error:
         record_attempt(base, maximum, "FAILED", error_type=type(error).__name__,
                        vendor_code=getattr(error, "vendor_code", None),
                        error_code=str(error) if re.fullmatch(r"[A-Z_]{1,80}", str(error)) else None)
         raise
-    record_attempt(base, maximum, "PARTIAL" if value["failures"] else "COMPLETE",
+    progress = value.get("collection_progress")
+    partial = bool(value["failures"]) or (progress is not None and bool(
+        progress["unresolved_symbols"]
+    ))
+    record_attempt(base, maximum, "PARTIAL" if partial else "COMPLETE",
                    status_symbols=value["status_symbols"], status_rows=value["status_rows"],
                    failures=value["failures"], coverage_sha256=value["evidence_sha256"],
-                   master_fetch_outcome=value["master_fetch_outcome"])
+                   master_fetch_outcome=value["master_fetch_outcome"],
+                   collection_progress=progress)
     return value
 
 
-def collect_pass(base: Path, maximum: int) -> dict[str, Any]:
+def collect_pass(
+    base: Path, maximum: int, *, batch_size: int | None = None,
+) -> dict[str, Any]:
     import baostock as bs
     root = base / "pit-repair"
     root.mkdir(exist_ok=True)
     dataset = json.loads((base / "qlib-data-20261023/dataset.json").read_text())
-    stocks = dataset["stocks"][:maximum]
+    scope = [s["symbol"] for s in dataset["stocks"][:maximum]]
+    entries: dict[str, dict[str, Any]] = {}
+    selected = scope
+    if batch_size is not None:
+        entries = read_attempts(root, dataset, datetime.now(UTC))
+        completed = {p.stem for p in (root / "status").glob("*.json")
+                     if verified_status(p)}
+        selected = select_batch(scope, completed, entries, datetime.now(UTC), batch_size)
     failures = []
     socket.setdefaulttimeout(20)
     observed = datetime.now(UTC).isoformat()
@@ -141,8 +163,7 @@ def collect_pass(base: Path, maximum: int) -> dict[str, Any]:
                     if bs.login().error_code != "0":
                         raise ValueError("VENDOR_RELOGIN_FAILED") from None
             master = payload["rows"]
-            for stock in stocks:
-                symbol = stock["symbol"]
+            for symbol in selected:
                 code = ("sh." if symbol.startswith("6") else "sz.") + symbol
                 checkpoint = root / "status" / (symbol + ".json")
                 if checkpoint.exists():
@@ -150,6 +171,9 @@ def collect_pass(base: Path, maximum: int) -> dict[str, Any]:
                     continue
                 record_attempt(base, maximum, "RUNNING", stage="STATUS", symbol=symbol,
                                master_fetch_outcome=master_outcome)
+                if batch_size is not None:
+                    begin_attempt(entries, symbol, datetime.now(UTC))
+                    save_attempts(root, dataset, entries)
                 try:
                     values = rows(bs.query_history_k_data_plus(
                         code, FIELDS, start_date="2016-10-24", end_date=dataset["end"],
@@ -163,7 +187,13 @@ def collect_pass(base: Path, maximum: int) -> dict[str, Any]:
                         "historical_available_at": None,
                         "certified_at_decision": False, "rows": values,
                     }))
+                    if batch_size is not None:
+                        end_attempt(entries, symbol, None)
+                        save_attempts(root, dataset, entries)
                 except Exception as error:
+                    if batch_size is not None:
+                        end_attempt(entries, symbol, error)
+                        save_attempts(root, dataset, entries)
                     failures.append({"symbol": symbol, "code": type(error).__name__,
                                      "vendor_code": getattr(error, "vendor_code", None)})
                     bs.logout()
@@ -173,6 +203,18 @@ def collect_pass(base: Path, maximum: int) -> dict[str, Any]:
             bs.logout()
     files = sorted((root / "status").glob("*.json"))
     records = [verified_status(p) for p in files]
+    if {p.stem for p in files} - {s["symbol"] for s in dataset["stocks"]}:
+        raise ValueError("STATUS_CHECKPOINT_OUTSIDE_DATASET")
+    progress = queue_progress(scope, {p.stem for p in files}, entries, datetime.now(UTC)) if (
+        batch_size is not None
+    ) else None
+    if batch_size is not None:
+        completed = {p.stem for p in files}
+        # Preserve outstanding failures even when this batch only collected new symbols.
+        failures = [{"symbol": s, "code": e.get("error_type", "CollectorInterrupted"),
+                     "vendor_code": e.get("vendor_code"), "attempts": e["attempts"],
+                     "next_attempt_at": e["next_attempt_at"]}
+                    for s, e in sorted(entries.items()) if s in scope and s not in completed]
     coverage = signed({
         **AUTHORITY, "schema_version": "qtrade.pit-repair.v1", "observed_at": observed,
         "state": "SOURCE_BACKFILL_REQUIRES_RECONCILIATION",
@@ -187,6 +229,7 @@ def collect_pass(base: Path, maximum: int) -> dict[str, Any]:
         "historical_pit_certified": False, "historical_available_at_known": False,
         "execution_enforcement": "NOT_USED_DAILY_PROXY_REMAINS",
         "failures": failures,
+        "collection_progress": progress,
         "missing": ["INDEPENDENT_MASTER_AND_DELISTED_PRICE_RECONCILIATION",
                     "HISTORICAL_INFORMATION_AVAILABILITY", "OFFICIAL_RAW_PRICE_LIMITS",
                     "AUCTION_REPLAY_AND_CORPORATE_ACTION_LEDGER"],
@@ -201,12 +244,14 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base", type=Path, required=True)
     parser.add_argument("--maximum", type=int, default=20)
+    parser.add_argument("--batch-size", type=int, default=None,
+                        help="new symbols per pass, plus at most five due retries")
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("live trading must remain disabled")
     if not 1 <= args.maximum <= 1000:
         raise ValueError("BOUNDED_SOURCE_PASS_REQUIRED")
-    value = collect(args.base, args.maximum)
+    value = collect(args.base, args.maximum, batch_size=args.batch_size)
     print(json.dumps({k: value[k] for k in (
         "state", "master_rows", "status_symbols", "status_rows"
     )}))

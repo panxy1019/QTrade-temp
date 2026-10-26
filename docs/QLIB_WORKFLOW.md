@@ -88,7 +88,7 @@ PYTHONPATH=src python -m scripts.run_qlib_worker --base "$BASE" \
 # 共享匿名数据源会话锁，分批补历史状态；不是历史可得性认证
 PYTHONPATH=src python -m scripts.collect_pit_evidence --base "$BASE" --maximum 20
 
-# 后续来源回填：成功后六小时扩大20只；失败保持范围，30分钟起有界退避；每次最多30分钟
+# 后续来源回填：20股未尝试 + 最多5股到期重试，单股独立退避；每次最多30分钟
 PYTHONPATH=src python -m scripts.run_pit_repair --base "$BASE"
 ```
 
@@ -111,6 +111,9 @@ PYTHONPATH=src python -m scripts.run_pit_repair --base "$BASE"
 恢复后的40只范围完成33只、79,299行，7只返回供应商错误10002007；主表仍保留
 原采集时间。部分来源失败即使子进程退出码为0，也记录PARTIAL并在原范围退避重试，
 全部完成才在六小时后扩大20只。这些覆盖更新不会回写已完成实验的冻结审计。
+该前缀调度后来在 36/40 股处被 4 股持续错误阻塞。后续调度将未尝试扫描和
+到期重试分开，覆盖不足仍保持 PARTIAL，详见
+[历史状态采集队列](PIT_COLLECTION_QUEUE.md)。
 `known_state` 拒绝未来才可得状态，`historical_blocks` 在状态或精确限制未知时拒绝
 将其认定为已认证可交易。这两个严格检查是后续认证执行适配的入口；当前诊断回测
 继续使用明确标注的近似协议，不能把“采到了状态”解释为“回测已完整采用精确规则”。

@@ -2,6 +2,31 @@
 
 Last updated: 2026-10-26
 
+- PIT collection queue repair is deployed: the prior prefix scheduler stalled at
+  36/40 after four repeated vendor failures; its last retry recovered to 40 before
+  cutover. A dataset-bound, durable per-symbol queue now gives each pass separate
+  budgets for 20 unattempted stocks and at most five due retries. Partial coverage
+  stays PARTIAL; interrupted and failed symbols retain bounded retry deadlines.
+  Forty-four local source/queue/constraint tests and all 592 Linux full-suite tests
+  pass with no skips/failures. Supervised release 32519f2 grows accepted coverage
+  from 40 stocks / 96,302 rows to 60 / 144,882 in its first batch. All 40 prior
+  raw file hashes and both completed experiment summaries/manifests are preserved.
+  The Qlib worker verifies and freezes the new source for both model defaults.
+  All five services run with LIVE disabled. Production API publication now binds a
+  verified 77-stock source to both defaults; old results retain their 36-stock source.
+  Further collection reaches 93 stocks / 223,443 rows despite three prior waiting
+  failures (seven waiting failures now retained, 890 still unattempted).
+  Independent SSE/SZSE probes capture 161/211 delisting rows; the first SZSE failure
+  is retained and its corrected-request response is parsed with the existing venv.
+  Neither probe certifies historical availability or participates in Qlib yet.
+  See docs/PIT_COLLECTION_QUEUE.md and docs/PIT_OFFICIAL_SOURCE_AUDIT.md.
+
+- Next workflow gap: continuous source updates can change model defaults between
+  two form visits. Backtest can reject unequal sources but has no entry to copy an
+  archived complete configuration/source into a new comparison task. Add explicit
+  archived-config reuse, preserve its frozen identity through polling and report
+  missing/legacy specifications rather than silently substituting current defaults.
+
 - Source-bound Qlib execution is deployed and accepted: verified raw status/master
   inputs are frozen into request/run identity and both production-browser tasks.
   Ridge 6f04b986 and LightGBM 4fc474f9 completed on release 846a836 with identical

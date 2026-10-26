@@ -218,3 +218,55 @@ def test_worker_cleanup_reaps_its_running_collector():
         scheduler.stop_child(child)
     finally:
         scheduler.stop_child(child)
+
+
+def test_batched_collector_moves_past_a_persistent_vendor_failure(cached_source, monkeypatch):
+    import json
+    import sys
+
+    base, root, cache, _ = cached_source
+    cache()
+    dataset_path = base / "qlib-data-20261023/dataset.json"
+    dataset_path.write_text(json.dumps({
+        "stocks": [{"symbol": f"{i:06d}"} for i in range(1, 4)],
+        "end": "2026-10-23", "accepted_symbols": 3,
+    }))
+    queried = []
+
+    class Result:
+        error_code = "0"
+        fields = ["code", "date", "tradestatus", "isST"]
+
+        def __init__(self, code):
+            self.values = iter([[code, "2020-01-02", "1", "0"]])
+
+        def next(self):
+            self.row = next(self.values, None)
+            return self.row is not None
+
+        def get_row_data(self):
+            return self.row
+
+    def fetch(code, *args, **kwargs):
+        queried.append(code)
+        return SimpleNamespace(error_code="10002007") if code == "sz.000001" else Result(code)
+
+    monkeypatch.setattr(sys.modules["baostock"], "query_history_k_data_plus", fetch)
+    from scripts import pit_collection_queue
+    monkeypatch.setattr(pit_collection_queue, "write_json_atomic", collector.write_json_atomic)
+    first = collector.collect(base, 3, batch_size=1)
+    assert first["status_symbols"] == 0
+    assert first["collection_progress"]["unattempted_symbols"] == 2
+    second = collector.collect(base, 3, batch_size=1)
+    third = collector.collect(base, 3, batch_size=1)
+    assert queried == ["sz.000001", "sz.000002", "sz.000003"]
+    assert second["status_symbols"] == 1 and third["status_symbols"] == 2
+    assert third["collection_progress"]["waiting_retry_symbols"] == 1
+    assert third["collection_progress"]["unattempted_symbols"] == 0
+    assert third["collection_progress"]["unresolved_symbols"] == 1
+    assert [f["symbol"] for f in third["failures"]] == ["000001"]
+    assert third["historical_pit_certified"] is False
+    assert json.loads((root / "attempt.json").read_text())["state"] == "PARTIAL"
+    fourth = collector.collect(base, 3, batch_size=1)
+    assert queried == ["sz.000001", "sz.000002", "sz.000003"]
+    assert fourth["status_symbols"] == 2
