@@ -2,6 +2,18 @@
 
 Last updated: 2026-10-25
 
+- Website learning guide completed in docs/learning/README.md: 13 Chinese
+  Markdown documents, seven real production screenshots, component index,
+  formulas, worked examples and exercises. Strategy center, all ten research
+  archive tabs, and a default read-only intraday preview were inspected.
+  Documentation checks cover local links, image dimensions, table structure,
+  key calculations and baseline configuration; see learning/verification.json.
+  The 104-rule discovery response was rejected by frontend contract checks.
+  Template initialization differs between current and archived workspaces;
+  its browser end-to-end recheck timed out. These limits are documented, with
+  no runtime changes or new formal research runs. Future delivery planning
+  remains with the user after reading.
+
 - Qlib daily baseline computed: isolated Python3.11/Qlib0.9.7 environment;
   990/1000 stocks and 2,157,805 daily bars reconciled with recovered Sina amount
   and effective-date HFQ multipliers. Ten stocks with unexplained raw-date drift

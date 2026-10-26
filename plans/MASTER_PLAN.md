@@ -22,6 +22,22 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
+### Website learning documentation, 2026-10-25
+
+- [x] Inspect strategy center, research components and ten archive tabs.
+- [x] Verify a read-only default intraday preview and record the rejected
+      discovery response without treating it as a successful experiment.
+- [x] Write 13 learning documents with seven screenshots, source references,
+      metric definitions, examples, component index and self-check exercises.
+- [x] Check local references, JPEG evidence and core formulas/configuration;
+      preserve the verification record and file digest manifest.
+
+Entry and reproduction: docs/learning/README.md and
+docs/learning/12-sources-and-verification.md. No runtime/strategy changes,
+formal experiment reruns or subsequent delivery schedule are included.
+Known limits: discovery-contract rejection; current/archive template
+initialization difference with browser end-to-end verification incomplete.
+
 ### Qlib daily research migration, 2026-10-25
 
 - [x] Record source/reuse audit and fixed research contract.

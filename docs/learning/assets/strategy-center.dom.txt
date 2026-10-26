@@ -1,0 +1,298 @@
+- complementary:
+  - generic: Q
+  - generic: QTrade
+  - generic: 量化研究平台
+  - menu:
+    - menuitem "area-chart 总览":
+      - img "area-chart":
+      - generic: 总览
+    - menuitem "stock 行情中心":
+      - img "stock":
+      - generic: 行情中心
+    - menuitem "thunderbolt 策略中心" [active]:
+      - img "thunderbolt":
+      - generic: 策略中心
+    - menuitem "fund 策略研究":
+      - img "fund":
+      - generic: 策略研究
+    - menuitem "experiment 实验中心":
+      - img "experiment":
+      - generic: 实验中心
+    - menuitem "line-chart 回测分析":
+      - img "line-chart":
+      - generic: 回测分析
+    - menuitem "pie-chart 模拟交易":
+      - img "pie-chart":
+      - generic: 模拟交易
+    - menuitem "bar-chart 持仓":
+      - img "bar-chart":
+      - generic: 持仓
+    - menuitem "reconciliation 委托与成交":
+      - img "reconciliation":
+      - generic: 委托与成交
+    - menuitem "safety-certificate 风控中心":
+      - img "safety-certificate":
+      - generic: 风控中心
+    - menuitem "database 数据中心":
+      - img "database":
+      - generic: 数据中心
+    - menuitem "monitor 系统监控":
+      - img "monitor":
+      - generic: 系统监控
+  - text: 实盘模式不可用
+  - text: 仅回测 / 模拟 / 影子
+  - img "left":
+- banner:
+  - generic: 模拟交易
+  - generic: 公开只读研究节点
+  - generic: 更新 22:56:24
+  - button "刷新平台快照":
+    - img "reload":
+    - generic: 刷新
+  - generic: 深色模式
+  - switch [checked]
+- main:
+  - alert:
+    - img "check-circle":
+    - generic: 当前数据：日线 2026-10-23 · 五分钟 2026-10-23 · 符合交易日历
+    - generic: 最近应有完整交易日 2026-10-23；网页每 60 秒核对版本。行情、参数化回测共用校验后的输入；日终历史与盘中观测分别显示。本页固定实验/报告属于历史档案，结论日期保留原样；最新行情和重算入口在行情中心、回测分析。
+  - heading "策略中心" [level=2]
+  - text: 从已实现基线模板到不可变实验候选
+  - generic: 已实现基线策略模板 · 5
+  - alert:
+    - img "info-circle":
+    - generic: 4 个主动模板 + 1 个比较基准
+    - generic: 这些是代码中已有的策略结构，不代表成熟盈利或生产验证。选择模板不会创建实验、注册策略或启动模拟盘；没有任意代码执行入口。
+  - strong: 下一步：冻结 ExperimentRunSpec 后运行因果回测；通过有效性、相关性、稳健性和成本检验后，才可单独申请 PAPER/SHADOW。
+  - table:
+    - rowgroup:
+      - row "模板 角色 范围 开仓条件 平仓条件 验证状态 因果回测":
+        - columnheader
+        - columnheader "模板"
+        - columnheader "角色"
+        - columnheader "范围"
+        - columnheader "开仓条件"
+        - columnheader "平仓条件"
+        - columnheader "验证状态"
+        - columnheader "因果回测"
+    - rowgroup:
+      - row "Expand row 等权买入并持有 首个交易日等权建仓，之后保持仓位，用作主动策略比较基准。 比较基准 多标的 · 1d 首个可交易会话按等权目标计算，下一会话开盘执行。 基准期内不主动退出。 已实现·未生产验证 尚未接入该实验室":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "等权买入并持有 首个交易日等权建仓，之后保持仓位，用作主动策略比较基准。":
+          - strong: 等权买入并持有
+          - generic: 首个交易日等权建仓，之后保持仓位，用作主动策略比较基准。
+        - cell "比较基准":
+          - generic: 比较基准
+        - cell "多标的 · 1d"
+        - cell "首个可交易会话按等权目标计算，下一会话开盘执行。"
+        - cell "基准期内不主动退出。"
+        - cell "已实现·未生产验证":
+          - generic: 已实现·未生产验证
+        - cell "尚未接入该实验室":
+          - generic: 尚未接入该实验室
+      - row "Expand row 移动平均趋势 价格位于移动平均线上方时持仓，跌破时清仓。 主动基线 单标的 · 1d 收盘价大于等于窗口均线时生成目标持仓。 收盘价低于窗口均线时生成零仓位目标。 已实现·未生产验证 尚未接入该实验室":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "移动平均趋势 价格位于移动平均线上方时持仓，跌破时清仓。":
+          - strong: 移动平均趋势
+          - generic: 价格位于移动平均线上方时持仓，跌破时清仓。
+        - cell "主动基线":
+          - generic: 主动基线
+        - cell "单标的 · 1d"
+        - cell "收盘价大于等于窗口均线时生成目标持仓。"
+        - cell "收盘价低于窗口均线时生成零仓位目标。"
+        - cell "已实现·未生产验证":
+          - generic: 已实现·未生产验证
+        - cell "尚未接入该实验室":
+          - generic: 尚未接入该实验室
+      - row "Expand row ETF 动量轮动 按多周期动量排序并定期持有排名靠前的 ETF。 主动基线 多 ETF · 1d 再平衡日选择正动量且排名前 K 的 ETF。 再平衡时跌出前 K 或动量非正则退出。 已实现·未生产验证 载入因果回测":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "ETF 动量轮动 按多周期动量排序并定期持有排名靠前的 ETF。":
+          - strong: ETF 动量轮动
+          - generic: 按多周期动量排序并定期持有排名靠前的 ETF。
+        - cell "主动基线":
+          - generic: 主动基线
+        - cell "多 ETF · 1d"
+        - cell "再平衡日选择正动量且排名前 K 的 ETF。"
+        - cell "再平衡时跌出前 K 或动量非正则退出。"
+        - cell "已实现·未生产验证":
+          - generic: 已实现·未生产验证
+        - cell "载入因果回测":
+          - button "载入因果回测":
+            - generic: 载入因果回测
+      - row "Expand row ETF 动量 + 趋势波动率约束 在动量轮动上增加趋势过滤与目标年化波动率缩放。 主动基线 多 ETF · 1d 正动量、排名前 K 且价格不低于趋势均线时持有。 再平衡时任一资格条件失效则退出。 已实现·未生产验证 载入因果回测":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "ETF 动量 + 趋势波动率约束 在动量轮动上增加趋势过滤与目标年化波动率缩放。":
+          - strong: ETF 动量 + 趋势波动率约束
+          - generic: 在动量轮动上增加趋势过滤与目标年化波动率缩放。
+        - cell "主动基线":
+          - generic: 主动基线
+        - cell "多 ETF · 1d"
+        - cell "正动量、排名前 K 且价格不低于趋势均线时持有。"
+        - cell "再平衡时任一资格条件失效则退出。"
+        - cell "已实现·未生产验证":
+          - generic: 已实现·未生产验证
+        - cell "载入因果回测":
+          - button "载入因果回测":
+            - generic: 载入因果回测
+      - row "Expand row 横截面因子排序 对预声明价格因子做横截面百分位排序并组合选股。 主动基线 多股票或 ETF · 1d 按加权因子得分选择排名前 K 的标的。 再平衡时跌出前 K 或趋势资格失效则退出。 已实现·未生产验证 载入因果回测":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "横截面因子排序 对预声明价格因子做横截面百分位排序并组合选股。":
+          - strong: 横截面因子排序
+          - generic: 对预声明价格因子做横截面百分位排序并组合选股。
+        - cell "主动基线":
+          - generic: 主动基线
+        - cell "多股票或 ETF · 1d"
+        - cell "按加权因子得分选择排名前 K 的标的。"
+        - cell "再平衡时跌出前 K 或趋势资格失效则退出。"
+        - cell "已实现·未生产验证":
+          - generic: 已实现·未生产验证
+        - cell "载入因果回测":
+          - button "载入因果回测":
+            - generic: 载入因果回测
+  - generic: 已验证实验候选
+  - alert:
+    - img "exclamation-circle":
+    - generic: 实验候选，不是已注册或已批准策略
+    - generic: 每行均通过 comparison、record、result 与 artifact 哈希校验；spec_hash 仅校验格式，当前产物未携带足够字段供 API 独立复算。当前样本池非 PIT，状态 NOT_ELIGIBLE、角色 NONE，也没有已注册谱系，不是 Champion 或运行中 PAPER 策略。
+  - searchbox "搜索策略候选"
+  - button "search":
+    - img "search":
+  - generic: 全部场景
+  - combobox "筛选策略场景"
+  - img "down":
+  - button "download 导出 JSON":
+    - img "download":
+    - generic: 导出 JSON
+  - table:
+    - rowgroup:
+      - row "策略名称 Record 哈希 Family 状态 角色 证据 Sharpe 最大回撤":
+        - columnheader
+        - columnheader "策略名称"
+        - columnheader "Record 哈希"
+        - columnheader "Family"
+        - columnheader "状态"
+        - columnheader "角色"
+        - columnheader "证据"
+        - columnheader "Sharpe"
+        - columnheader "最大回撤"
+    - rowgroup:
+      - row "Expand row buy-hold 19fea3be4f1b BUY_AND_HOLD_BENCHMARK NOT_ELIGIBLE NONE 已验证·不可晋级 -0.1559302645909348964007187287 -0.1499510102765325146949391912":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "buy-hold"
+        - cell "19fea3be4f1b"
+        - cell "BUY_AND_HOLD_BENCHMARK"
+        - cell "NOT_ELIGIBLE":
+          - generic: NOT_ELIGIBLE
+        - cell "NONE"
+        - cell "已验证·不可晋级":
+          - generic: 已验证·不可晋级
+        - cell "-0.1559302645909348964007187287"
+        - cell "-0.1499510102765325146949391912"
+      - row "Expand row momentum-60 8f4140f5bba5 ETF_MOMENTUM_ROTATION NOT_ELIGIBLE NONE 已验证·不可晋级 -0.9530770361000138099053814875 -0.3238698304881584603924939037":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "momentum-60"
+        - cell "8f4140f5bba5"
+        - cell "ETF_MOMENTUM_ROTATION"
+        - cell "NOT_ELIGIBLE":
+          - generic: NOT_ELIGIBLE
+        - cell "NONE"
+        - cell "已验证·不可晋级":
+          - generic: 已验证·不可晋级
+        - cell "-0.9530770361000138099053814875"
+        - cell "-0.3238698304881584603924939037"
+      - row "Expand row momentum-multi 580ee6db0f0c ETF_MOMENTUM_ROTATION NOT_ELIGIBLE NONE 已验证·不可晋级 -0.6538352394973745614846281236 -0.2778321306934105181602599587":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "momentum-multi"
+        - cell "580ee6db0f0c"
+        - cell "ETF_MOMENTUM_ROTATION"
+        - cell "NOT_ELIGIBLE":
+          - generic: NOT_ELIGIBLE
+        - cell "NONE"
+        - cell "已验证·不可晋级":
+          - generic: 已验证·不可晋级
+        - cell "-0.6538352394973745614846281236"
+        - cell "-0.2778321306934105181602599587"
+      - row "Expand row momentum-vol 0d7c1f5912ab ETF_MOMENTUM_VOLATILITY NOT_ELIGIBLE NONE 已验证·不可晋级 0.1481292160707791939025164939 -0.0952141060157110447176564919":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "momentum-vol"
+        - cell "0d7c1f5912ab"
+        - cell "ETF_MOMENTUM_VOLATILITY"
+        - cell "NOT_ELIGIBLE":
+          - generic: NOT_ELIGIBLE
+        - cell "NONE"
+        - cell "已验证·不可晋级":
+          - generic: 已验证·不可晋级
+        - cell "0.1481292160707791939025164939"
+        - cell "-0.0952141060157110447176564919"
+      - row "Expand row momentum-trend a48e5a88d977 ETF_MOMENTUM_TREND NOT_ELIGIBLE NONE 已验证·不可晋级 -0.6535584644792547047657170359 -0.2777830407473193477603578486":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "momentum-trend"
+        - cell "a48e5a88d977"
+        - cell "ETF_MOMENTUM_TREND"
+        - cell "NOT_ELIGIBLE":
+          - generic: NOT_ELIGIBLE
+        - cell "NONE"
+        - cell "已验证·不可晋级":
+          - generic: 已验证·不可晋级
+        - cell "-0.6535584644792547047657170359"
+        - cell "-0.2777830407473193477603578486"
+      - row "Expand row momentum-vol-low ea27608f805e ETF_MOMENTUM_VOLATILITY NOT_ELIGIBLE NONE 已验证·不可晋级 0.1613586893224041947193633195 -0.0636044643456772802745198816":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "momentum-vol-low"
+        - cell "ea27608f805e"
+        - cell "ETF_MOMENTUM_VOLATILITY"
+        - cell "NOT_ELIGIBLE":
+          - generic: NOT_ELIGIBLE
+        - cell "NONE"
+        - cell "已验证·不可晋级":
+          - generic: 已验证·不可晋级
+        - cell "0.1613586893224041947193633195"
+        - cell "-0.0636044643456772802745198816"
+      - row "Expand row momentum-vol-high 1c61f06ca233 ETF_MOMENTUM_VOLATILITY NOT_ELIGIBLE NONE 已验证·不可晋级 0.1660427922795065790648355681 -0.1240807032456684906920276794":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "momentum-vol-high"
+        - cell "1c61f06ca233"
+        - cell "ETF_MOMENTUM_VOLATILITY"
+        - cell "NOT_ELIGIBLE":
+          - generic: NOT_ELIGIBLE
+        - cell "NONE"
+        - cell "已验证·不可晋级":
+          - generic: 已验证·不可晋级
+        - cell "0.1660427922795065790648355681"
+        - cell "-0.1240807032456684906920276794"
+      - row "Expand row momentum-vol-fast 3d6cc5ef0354 ETF_MOMENTUM_VOLATILITY NOT_ELIGIBLE NONE 已验证·不可晋级 -0.3276109394802772993512867376 -0.0942965855016651768109195044":
+        - cell "Expand row":
+          - button "Expand row"
+        - cell "momentum-vol-fast"
+        - cell "3d6cc5ef0354"
+        - cell "ETF_MOMENTUM_VOLATILITY"
+        - cell "NOT_ELIGIBLE":
+          - generic: NOT_ELIGIBLE
+        - cell "NONE"
+        - cell "已验证·不可晋级":
+          - generic: 已验证·不可晋级
+        - cell "-0.3276109394802772993512867376"
+        - cell "-0.0942965855016651768109195044"
+  - list:
+    - listitem "Previous Page":
+      - button "left" [disabled]:
+        - img "left":
+    - listitem "1":
+      - generic: "1"
+    - listitem "2":
+      - generic: "2"
+    - listitem "Next Page":
+      - button "right":
+        - img "right":

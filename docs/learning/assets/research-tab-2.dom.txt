@@ -1,0 +1,1013 @@
+- complementary:
+  - generic: Q
+  - generic: QTrade
+  - generic: 量化研究平台
+  - menu:
+    - menuitem "area-chart 总览":
+      - img "area-chart":
+      - generic: 总览
+    - menuitem "stock 行情中心":
+      - img "stock":
+      - generic: 行情中心
+    - menuitem "thunderbolt 策略中心":
+      - img "thunderbolt":
+      - generic: 策略中心
+    - menuitem "fund 策略研究":
+      - img "fund":
+      - generic: 策略研究
+    - menuitem "experiment 实验中心":
+      - img "experiment":
+      - generic: 实验中心
+    - menuitem "line-chart 回测分析":
+      - img "line-chart":
+      - generic: 回测分析
+    - menuitem "pie-chart 模拟交易":
+      - img "pie-chart":
+      - generic: 模拟交易
+    - menuitem "bar-chart 持仓":
+      - img "bar-chart":
+      - generic: 持仓
+    - menuitem "reconciliation 委托与成交":
+      - img "reconciliation":
+      - generic: 委托与成交
+    - menuitem "safety-certificate 风控中心":
+      - img "safety-certificate":
+      - generic: 风控中心
+    - menuitem "database 数据中心":
+      - img "database":
+      - generic: 数据中心
+    - menuitem "monitor 系统监控":
+      - img "monitor":
+      - generic: 系统监控
+  - text: 实盘模式不可用
+  - text: 仅回测 / 模拟 / 影子
+  - img "left":
+- banner:
+  - generic: 模拟交易
+  - generic: 公开只读研究节点
+  - generic: 更新 23:15:24
+  - button "刷新平台快照":
+    - img "reload":
+    - generic: 刷新
+  - generic: 深色模式
+  - switch [checked]
+- main:
+  - alert:
+    - img "check-circle":
+    - generic: 当前数据：日线 2026-10-23 · 五分钟 2026-10-23 · 符合交易日历
+    - generic: 最近应有完整交易日 2026-10-23；网页每 60 秒核对版本。行情、参数化回测共用校验后的输入；日终历史与盘中观测分别显示。本页固定实验/报告属于历史档案，结论日期保留原样；最新行情和重算入口在行情中心、回测分析。
+  - heading "策略研究" [level=2]
+  - text: 实验候选、独立样本外证据与晋级边界
+  - generic: Qlib · Alpha158 + LightGBM 固定基线
+  - button "刷新 Qlib 结果":
+    - generic: 刷新 Qlib 结果
+  - alert:
+    - img "info-circle":
+    - generic: 固定基线已归档
+    - generic: 数据适配 990/1000 股，排除/失败 10 股；发布于 2026-10-25T15:11:47.559497+00:00。
+  - generic: 正式不可变实验
+  - generic: 非 PIT · 存在幸存者偏差
+  - generic: 事后样本外诊断
+  - generic: 数据截至 2026-10-23；最近应有完整交易日 2026-10-23。结果覆盖当前完整交易日；新行情不会改写此实验。
+  - table:
+    - rowgroup:
+      - row "研究数据 990/1000 股 · 2,157,805 根日线 · 158 个特征 训练区间 2017-04-05 至 2021-12-28":
+        - rowheader "研究数据"
+        - cell "990/1000 股 · 2,157,805 根日线 · 158 个特征"
+        - rowheader "训练区间"
+        - cell "2017-04-05 至 2021-12-28"
+      - row "验证区间 2022-01-04 至 2023-12-26 样本外区间 2024-01-02 至 2026-10-23":
+        - rowheader "验证区间"
+        - cell "2022-01-04 至 2023-12-26"
+        - rowheader "样本外区间"
+        - cell "2024-01-02 至 2026-10-23"
+      - row "IC 有效标签区间 2024-01-02 至 2026-10-21；未来标签未成熟的末尾日期不计入 IC 组合与成交 Top50，每日最多替换5只；下一交易日开盘，至少持有2个交易步；100股整手，科创板不买入":
+        - rowheader "IC 有效标签区间"
+        - cell "2024-01-02 至 2026-10-21；未来标签未成熟的末尾日期不计入 IC"
+        - rowheader "组合与成交"
+        - cell "Top50，每日最多替换5只；下一交易日开盘，至少持有2个交易步；100股整手，科创板不买入"
+      - row "成本假设 买入 8.0 bp / 卖出 13.0 bp，最低 5 元；含固定滑点近似 成交约束 缺失行情不成交；保守4.5%方向性开盘跳空限制；前一交易日成交量的1%容量上限":
+        - rowheader "成本假设"
+        - cell "买入 8.0 bp / 卖出 13.0 bp，最低 5 元；含固定滑点近似"
+        - rowheader "成交约束"
+        - cell "缺失行情不成交；保守4.5%方向性开盘跳空限制；前一交易日成交量的1%容量上限"
+  - generic: IC
+  - generic: "0.0234"
+  - generic: RankIC
+  - generic: "0.0494"
+  - generic: 成本后累计收益
+  - generic: 111.29%
+  - generic: 成本后 Sharpe
+  - generic: "1.2117"
+  - generic: 最大回撤
+  - generic: "-33.50%"
+  - generic: 日均双边换手
+  - generic: 17.37%
+  - alert:
+    - img "exclamation-circle":
+    - generic: 当前结论：研究诊断，不可晋级
+    - generic: 当前股票池是在历史测试结束后筛选，存在幸存者和流动性筛选偏差；历史 ST、精确涨跌停和停牌原因尚未完整认证。已建模的保守限制不能替代逐日交易规则与公司行为核验。
+  - table:
+    - rowgroup:
+      - row "审计项 内容":
+        - columnheader "审计项"
+        - columnheader "内容"
+    - rowgroup:
+      - row "实验 ID alpha158-lightgbm-daily-v1-beb391a43169a5f0 Copy":
+        - cell "实验 ID"
+        - cell "alpha158-lightgbm-daily-v1-beb391a43169a5f0 Copy":
+          - text: alpha158-lightgbm-daily-v1-beb391a43169a5f0
+          - button "Copy":
+            - img "copy":
+      - row "代码提交 207a6b7a4eb324956139a98529110f166039095f Copy":
+        - cell "代码提交"
+        - cell "207a6b7a4eb324956139a98529110f166039095f Copy":
+          - text: 207a6b7a4eb324956139a98529110f166039095f
+          - button "Copy":
+            - img "copy":
+      - row "产物清单 SHA256 10a5924284ba73bb9171cb34439b6b9bfaf5887815bf4371ae30d9f090f82ee4 Copy":
+        - cell "产物清单 SHA256"
+        - cell "10a5924284ba73bb9171cb34439b6b9bfaf5887815bf4371ae30d9f090f82ee4 Copy":
+          - text: 10a5924284ba73bb9171cb34439b6b9bfaf5887815bf4371ae30d9f090f82ee4
+          - button "Copy":
+            - img "copy":
+      - row "结果 SHA256 15c500187e7cd43242bc318621cab70fb6871f256381969f0baefde8969b94a3 Copy":
+        - cell "结果 SHA256"
+        - cell "15c500187e7cd43242bc318621cab70fb6871f256381969f0baefde8969b94a3 Copy":
+          - text: 15c500187e7cd43242bc318621cab70fb6871f256381969f0baefde8969b94a3
+          - button "Copy":
+            - img "copy":
+  - button "download 导出 JSON":
+    - img "download":
+    - generic: 导出 JSON
+  - generic: 因子定义与数据契约目录 · 7
+  - button "download 导出因子目录":
+    - img "download":
+    - generic: 导出因子目录
+  - alert:
+    - img "info-circle":
+    - generic: 只读证据索引，不是 FactorRegistry
+    - generic: 目录只聚合当前已签名的日频因子搜索、三连阳长期报告、可选平仓因子与 L2 就绪契约；未知公式失败关闭，不执行任意代码，不保存定义，不创建策略、实验、PAPER/LIVE 或订单权限。
+  - table:
+    - rowgroup:
+      - row "因子 角色 公式 数据与因果时点 数据状态 有效性状态 证据绑定":
+        - columnheader "因子"
+        - columnheader "角色"
+        - columnheader "公式"
+        - columnheader "数据与因果时点"
+        - columnheader "数据状态"
+        - columnheader "有效性状态"
+        - columnheader "证据绑定"
+    - rowgroup:
+      - row "60 日动量 momentum-60 SELECTION close_t / close_(t-60) - 1 1d · 至少 61 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN 历史日线可用；当前标的池非 PIT 发现期未通过或未进入候选 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。 bounded_factor_search_current_un…":
+        - cell "60 日动量 momentum-60":
+          - strong: 60 日动量
+          - code: momentum-60
+        - cell "SELECTION":
+          - generic: SELECTION
+        - cell "close_t / close_(t-60) - 1":
+          - code: close_t / close_(t-60) - 1
+        - cell "1d · 至少 61 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN":
+          - generic: 1d · 至少 61 个已完成日收盘价
+          - generic: DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN
+        - cell "历史日线可用；当前标的池非 PIT"
+        - cell "发现期未通过或未进入候选 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。":
+          - generic: 发现期未通过或未进入候选
+          - generic: 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。
+        - cell "bounded_factor_search_current_un…":
+          - code: bounded_factor_search_current_un…
+      - row "120 日动量（跳过最近 20 日） momentum-120-skip-20 SELECTION close_(t-20) / close_(t-140) - 1 1d · 至少 141 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN 历史日线可用；当前标的池非 PIT 发现期单因子门槛通过；全局 NOT_ELIGIBLE 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。 bounded_factor_search_current_un…":
+        - cell "120 日动量（跳过最近 20 日） momentum-120-skip-20":
+          - strong: 120 日动量（跳过最近 20 日）
+          - code: momentum-120-skip-20
+        - cell "SELECTION":
+          - generic: SELECTION
+        - cell "close_(t-20) / close_(t-140) - 1":
+          - code: close_(t-20) / close_(t-140) - 1
+        - cell "1d · 至少 141 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN":
+          - generic: 1d · 至少 141 个已完成日收盘价
+          - generic: DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN
+        - cell "历史日线可用；当前标的池非 PIT"
+        - cell "发现期单因子门槛通过；全局 NOT_ELIGIBLE 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。":
+          - generic: 发现期单因子门槛通过；全局 NOT_ELIGIBLE
+          - generic: 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。
+        - cell "bounded_factor_search_current_un…":
+          - code: bounded_factor_search_current_un…
+      - row "252 日动量（跳过最近 20 日） momentum-252-skip-20 SELECTION close_(t-20) / close_(t-272) - 1 1d · 至少 273 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN 历史日线可用；当前标的池非 PIT 发现期单因子门槛通过；全局 NOT_ELIGIBLE 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。 bounded_factor_search_current_un…":
+        - cell "252 日动量（跳过最近 20 日） momentum-252-skip-20":
+          - strong: 252 日动量（跳过最近 20 日）
+          - code: momentum-252-skip-20
+        - cell "SELECTION":
+          - generic: SELECTION
+        - cell "close_(t-20) / close_(t-272) - 1":
+          - code: close_(t-20) / close_(t-272) - 1
+        - cell "1d · 至少 273 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN":
+          - generic: 1d · 至少 273 个已完成日收盘价
+          - generic: DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN
+        - cell "历史日线可用；当前标的池非 PIT"
+        - cell "发现期单因子门槛通过；全局 NOT_ELIGIBLE 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。":
+          - generic: 发现期单因子门槛通过；全局 NOT_ELIGIBLE
+          - generic: 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。
+        - cell "bounded_factor_search_current_un…":
+          - code: bounded_factor_search_current_un…
+      - row "5 日反转 reversal-5 SELECTION -(close_t / close_(t-5) - 1) 1d · 至少 6 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN 历史日线可用；当前标的池非 PIT 发现期单因子门槛通过；全局 NOT_ELIGIBLE 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。 bounded_factor_search_current_un…":
+        - cell "5 日反转 reversal-5":
+          - strong: 5 日反转
+          - code: reversal-5
+        - cell "SELECTION":
+          - generic: SELECTION
+        - cell "-(close_t / close_(t-5) - 1)":
+          - code: "-(close_t / close_(t-5) - 1)"
+        - cell "1d · 至少 6 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN":
+          - generic: 1d · 至少 6 个已完成日收盘价
+          - generic: DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN
+        - cell "历史日线可用；当前标的池非 PIT"
+        - cell "发现期单因子门槛通过；全局 NOT_ELIGIBLE 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。":
+          - generic: 发现期单因子门槛通过；全局 NOT_ELIGIBLE
+          - generic: 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。
+        - cell "bounded_factor_search_current_un…":
+          - code: bounded_factor_search_current_un…
+      - row "60 日低波动 low_volatility-60 SELECTION -PSTDEV(close_to_close_return, 60) 1d · 至少 61 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN 历史日线可用；当前标的池非 PIT 发现期单因子门槛通过；全局 NOT_ELIGIBLE 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。 bounded_factor_search_current_un…":
+        - cell "60 日低波动 low_volatility-60":
+          - strong: 60 日低波动
+          - code: low_volatility-60
+        - cell "SELECTION":
+          - generic: SELECTION
+        - cell "-PSTDEV(close_to_close_return, 60)":
+          - code: "-PSTDEV(close_to_close_return, 60)"
+        - cell "1d · 至少 61 个已完成日收盘价 DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN":
+          - generic: 1d · 至少 61 个已完成日收盘价
+          - generic: DAILY_BAR_CLOSE_T → NEXT_SESSION_OPEN
+        - cell "历史日线可用；当前标的池非 PIT"
+        - cell "发现期单因子门槛通过；全局 NOT_ELIGIBLE 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。":
+          - generic: 发现期单因子门槛通过；全局 NOT_ELIGIBLE
+          - generic: 全局结论 NOT_ELIGIBLE；已查看确认窗不能再用于选参。
+        - cell "bounded_factor_search_current_un…":
+          - code: bounded_factor_search_current_un…
+      - row "09:30 起三根十分钟阳线 opening-three-ten-minute-bullish-v1 ENTRY_TIMING bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000 5m → 10m · BaoStock 原生 5 分钟 OHLCV：09:35,09:40,09:45,09:50,09:55,10:00 10:00_BAR_CLOSE → NEXT_5M_OPEN_10:05 签名历史 5 分钟可用；QFQ/非 PIT 长期有效性/稳健性未通过 长期报告 NOT_ELIGIBLE；仅可构造诊断策略。 f720e483a74c747a10bc952c58d1933e…":
+        - cell "09:30 起三根十分钟阳线 opening-three-ten-minute-bullish-v1":
+          - strong: 09:30 起三根十分钟阳线
+          - code: opening-three-ten-minute-bullish-v1
+        - cell "ENTRY_TIMING":
+          - generic: ENTRY_TIMING
+        - cell "bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000":
+          - code: bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000
+        - cell "5m → 10m · BaoStock 原生 5 分钟 OHLCV：09:35,09:40,09:45,09:50,09:55,10:00 10:00_BAR_CLOSE → NEXT_5M_OPEN_10:05":
+          - generic: 5m → 10m · BaoStock 原生 5 分钟 OHLCV：09:35,09:40,09:45,09:50,09:55,10:00
+          - generic: 10:00_BAR_CLOSE → NEXT_5M_OPEN_10:05
+        - cell "签名历史 5 分钟可用；QFQ/非 PIT"
+        - cell "长期有效性/稳健性未通过 长期报告 NOT_ELIGIBLE；仅可构造诊断策略。":
+          - generic: 长期有效性/稳健性未通过
+          - generic: 长期报告 NOT_ELIGIBLE；仅可构造诊断策略。
+        - cell "f720e483a74c747a10bc952c58d1933e…":
+          - code: f720e483a74c747a10bc952c58d1933e…
+      - row "五档盘口买入强度 order-book-buying-intensity-v1 UNTESTED_L2_HYPOTHESIS (bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5); BUY when buying_intensity > 1 L2 snapshot → finalized minute · AUTHORIZED_L2_FIVE_LEVEL_ORDER_BOOK；20 个五档价量字段 + 事件/接收时钟与序号 FINALIZED_MINUTE_CORRECTION → UNAVAILABLE_UNTIL_PROVIDER_AND_FRESHNESS_CERTIFIED UNCONFIGURED · 0/6 数据门 UNTESTED_NO_AUTHORIZED_L2_DATA NOT_DEFINED_REQUIRES_SEPARATE_RESEARCH；不允许从 OHLCV 伪造盘口。 READ_ONLY_L2_FACTOR_DATA_CONTRAC…":
+        - cell "五档盘口买入强度 order-book-buying-intensity-v1":
+          - strong: 五档盘口买入强度
+          - code: order-book-buying-intensity-v1
+        - cell "UNTESTED_L2_HYPOTHESIS":
+          - generic: UNTESTED_L2_HYPOTHESIS
+        - cell "(bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5); BUY when buying_intensity > 1":
+          - code: (bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5); BUY when buying_intensity > 1
+        - cell "L2 snapshot → finalized minute · AUTHORIZED_L2_FIVE_LEVEL_ORDER_BOOK；20 个五档价量字段 + 事件/接收时钟与序号 FINALIZED_MINUTE_CORRECTION → UNAVAILABLE_UNTIL_PROVIDER_AND_FRESHNESS_CERTIFIED":
+          - generic: L2 snapshot → finalized minute · AUTHORIZED_L2_FIVE_LEVEL_ORDER_BOOK；20 个五档价量字段 + 事件/接收时钟与序号
+          - generic: FINALIZED_MINUTE_CORRECTION → UNAVAILABLE_UNTIL_PROVIDER_AND_FRESHNESS_CERTIFIED
+        - cell "UNCONFIGURED · 0/6 数据门"
+        - cell "UNTESTED_NO_AUTHORIZED_L2_DATA NOT_DEFINED_REQUIRES_SEPARATE_RESEARCH；不允许从 OHLCV 伪造盘口。":
+          - generic: UNTESTED_NO_AUTHORIZED_L2_DATA
+          - generic: NOT_DEFINED_REQUIRES_SEPARATE_RESEARCH；不允许从 OHLCV 伪造盘口。
+        - cell "READ_ONLY_L2_FACTOR_DATA_CONTRAC…":
+          - code: READ_ONLY_L2_FACTOR_DATA_CONTRAC…
+  - generic: 120 日固定因子稳健性证据
+  - button "download 导出长期证据":
+    - img "download":
+    - generic: 导出长期证据
+  - alert:
+    - img "close-circle":
+    - generic: 长期复核未通过：1/6 个测试折为正
+    - generic: 2026-03-03 至 2026-08-24 共 120 日；首段 60 日训练，随后 6 折 × 10 日互不重叠测试。该窗口已经被查看，只是固化的复用历史诊断，不是独立确认。
+  - generic: 股票日观测
+  - strong: 9,000
+  - generic: 触发信号
+  - strong: 1,001
+  - generic: 全窗口收益
+  - strong: "-27.17%"
+  - generic: 全窗口超额
+  - strong: "-5.89%"
+  - generic: Rank IC
+  - strong: "-0.012"
+  - generic: 聚类信号日
+  - strong: "120"
+  - generic: Newey-West t
+  - strong: "-0.480"
+  - generic: 聚类超额 95% 区间
+  - strong: "-0.29% ～ 0.18%"
+  - generic: 正向时间块
+  - strong: 2/4
+  - generic: 最差时间块超额
+  - strong: "-0.31%"
+  - generic: 样本外收益
+  - strong: "-28.31%"
+  - generic: 样本外超额
+  - strong: "-12.49%"
+  - generic: 样本外最大回撤
+  - strong: "-28.72%"
+  - generic: Bootstrap 超额中位
+  - strong: "-11.83%"
+  - generic: Bootstrap 超额 90% 区间
+  - strong: "-23.91% ～ 0.43%"
+  - generic: Bootstrap 超额为正概率
+  - strong: 5.70%
+  - text: 逐折训练选择阈值：10 → 10 → 5 → 5 → 5 → 5 bps；固定结果哈希
+  - code: f720e483a74c747a10bc952c58d1933e50b6c9268dd9039ed92bd94c86752a2f
+  - text: 。样本外超额区间使用 60 个测试日、策略与基准共用重采样路径的 1,000 次配对 stationary bootstrap（期望块长 10 日）；这是复用历史诊断，不是新的盲测。
+  - tablist:
+    - tab "长期收益曲线" [selected]
+    - tab "滚动测试折 · 6"
+    - tab "阈值压力"
+    - tab "时间稳定性 · 2/4"
+    - tab "板块拆分 · 15"
+    - tab "个股拆分 · 75"
+    - tab "研究硬门"
+    - button "ellipsis":
+      - img "ellipsis":
+  - tabpanel "长期收益曲线":
+    - generic: 120 日策略、同期等权基准、回撤与超额曲线均来自同一固定结果哈希；不使用盘中未完成 Bar。
+  - generic: 报告绑定 75 股、15 行业、原生 5 分钟数据 checksum、因子实现源码和完整响应哈希；结论固定为 NOT_ELIGIBLE，PAPER NOT_ELIGIBLE，LIVE DISABLED_REQUIRES_SEPARATE_AUTHORIZATION，外部订单 DISABLED。
+  - generic: 分钟因子研究工作台
+  - generic: 75 股 · 15 板块 · 原生 5 分钟
+  - alert:
+    - img "info-circle":
+    - generic: 从因子到模拟盘的完整门控
+    - generic: 开仓因子在 10:00 确认，10:05 标记的下一根原生 5 分钟 Bar 开盘买入；平仓可固定为 T+1 09:30 开盘，或在 T+1 10:00 确认三根十分钟阴线后于下一 Bar 开盘退出，未触发则用 15:00 标记 Bar 的开盘价（区间起点 14:55）时间退出。当前事后非 PIT 研究永远不会自动进入 PAPER 或 LIVE。
+  - generic "因子": "* 因子"
+  - generic "09:30 起三根 10 分钟阳线":
+    - text: 09:30 起三根 10 分钟阳线
+    - combobox "* 因子"
+  - img "down":
+  - generic "开始交易日": "* 开始交易日"
+  - generic "2026-07-28":
+    - text: 2026-07-28
+    - combobox "* 开始交易日"
+  - img "down":
+  - generic "结束交易日": "* 结束交易日"
+  - generic "2026-08-24":
+    - text: 2026-08-24
+    - combobox "* 结束交易日"
+  - img "down":
+  - generic "单边成本（bps）": "* 单边成本（bps）"
+  - spinbutton "* 单边成本（bps）": "5"
+  - button "Increase Value":
+    - img "up":
+  - button "Decrease Value":
+    - img "down":
+  - generic "每根 10 分钟实体下限（bps）": "* 每根 10 分钟实体下限（bps）"
+  - spinbutton "* 每根 10 分钟实体下限（bps）": "0"
+  - button "Increase Value":
+    - img "up":
+  - button "Decrease Value" [disabled]:
+    - img "down":
+  - generic "平仓规则": "* 平仓规则"
+  - generic "T+1 09:30 开盘退出（基准）":
+    - text: T+1 09:30 开盘退出（基准）
+    - combobox "* 平仓规则"
+  - img "down":
+  - button "运行 75 股因子检验与回测":
+    - generic: 运行 75 股因子检验与回测
+  - button "挖掘最近 40 日的 104 个有界因子":
+    - generic: 挖掘最近 40 日的 104 个有界因子
+  - generic: 当前开平仓条件草案（未运行）
+  - text: 开仓因子：
+  - code: body_return_0930_0940 >= 0 bps AND body_return_0940_0950 >= 0 bps AND body_return_0950_1000 >= 0 bps
+  - text: 开仓时点：
+  - code: KNOWN_AT_10_00_CLOSE → NEXT_5M_OPEN_10_05
+  - text: 平仓条件：
+  - code: T+1_OPEN_09_30
+  - generic: 这是当前表单的可读草案，不是服务端规范、规格哈希、有效性结论或晋级证据；参数变化会清除旧结果，只有重新运行才能生成绑定结果。
+  - alert:
+    - img "close-circle":
+    - generic: 分钟因子挖掘未完成
+    - generic: 因子挖掘响应身份或安全边界与请求不一致，结果已拒绝
+  - alert:
+    - img "check-circle":
+    - generic: 策略回测响应身份已绑定
+    - generic: 已逐项核对当前请求、baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1、数据 checksum、开平仓行为规格、策略只读身份与 PAPER/LIVE 安全边界；结果哈希 ebf69b8b25cf4a80…。
+  - alert:
+    - img "exclamation-circle":
+    - generic: 本次回测没有因子检验手工交接血缘
+    - generic: 结果本身已通过请求与安全边界校验，但不是从当前会话中已绑定、有效且非冗余的因子手工交接生成；因此不会导出因子到策略的联合身份包。
+  - alert:
+    - img "exclamation-circle":
+    - generic: 回测已完成，研究硬门未通过
+    - generic: 实际触发 192/1500 次；8/15 个行业信号后均值为正。当前结论 NOT_ELIGIBLE，PAPER NOT_ELIGIBLE，LIVE DISABLED_REQUIRES_SEPARATE_AUTHORIZATION。
+  - alert:
+    - img "close-circle":
+    - generic: 顺序晋级停在：有效性检验
+    - generic: 只有因子有效性、相关性和滚动稳健性全部通过，策略构造才获得研究准入。当前策略构造与因果回测只是诊断预览，不是候选策略或晋级证据；禁止在已查看窗口重选参数，下一假设必须先预注册再接触新证据。
+  - generic: 前置研究门 1/3
+  - generic: 策略构造 DIAGNOSTIC_PREVIEW_ONLY
+  - generic: 历史结果不能授权 PAPER
+  - generic: 下一假设预注册：尚未创建
+  - alert:
+    - img "exclamation-circle":
+    - generic: 只读预检，不会写入研究或策略注册表
+    - generic: 当前失败结果可以解释研究动机，但不能直接用于重选新参数；新假设必须先冻结，再接触与当前窗口互斥的新证据。
+  - generic: ResearchHypothesis 必填字段 7 个
+  - generic: ExperimentRunSpec 冻结字段 13 个
+  - generic: 治理门槛 8 项
+  - generic: 当前注册表状态 NOT_REGISTERED
+  - generic: 完成预注册与独立泄漏审查后，最早只能注册为 IDEA；随后依次经过 EXPERIMENT、CANDIDATE、VALIDATED、PAPER、SHADOW，APPROVED、CHAMPION 仍需人工授权。
+  - generic: 当前绑定：adhoc-intraday-d6b31e9ee2e5b345 · d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3 · 2026-07-28 至 2026-08-24
+  - table:
+    - rowgroup:
+      - row "预注册治理门槛 要求 契约":
+        - columnheader "预注册治理门槛"
+        - columnheader "要求"
+        - columnheader "契约"
+    - rowgroup:
+      - row "使用全新且未评估的假设 ID 必须冻结 Use a hypothesis_id not evaluated before.":
+        - cell "使用全新且未评估的假设 ID"
+        - cell "必须冻结":
+          - generic: 必须冻结
+        - cell "Use a hypothesis_id not evaluated before."
+      - row "新证据窗口与已查看窗口及历史测试窗口互斥 必须冻结 Use a new evidence period disjoint from this viewed window and prior held-out test periods.":
+        - cell "新证据窗口与已查看窗口及历史测试窗口互斥"
+        - cell "必须冻结":
+          - generic: 必须冻结
+        - cell "Use a new evidence period disjoint from this viewed window and prior held-out test periods."
+      - row "独立数据泄漏审查通过 必须冻结 Attach an independent leakage review PASS.":
+        - cell "独立数据泄漏审查通过"
+        - cell "必须冻结":
+          - generic: 必须冻结
+        - cell "Attach an independent leakage review PASS."
+      - row "接触新数据前冻结候选预算 必须冻结 Fix the candidate budget before data access.":
+        - cell "接触新数据前冻结候选预算"
+        - cell "必须冻结":
+          - generic: 必须冻结
+        - cell "Fix the candidate budget before data access."
+      - row "接触新数据前冻结有界稳健性情景 必须冻结 Fix bounded robustness scenarios before data access.":
+        - cell "接触新数据前冻结有界稳健性情景"
+        - cell "必须冻结":
+          - generic: 必须冻结
+        - cell "Fix bounded robustness scenarios before data access."
+      - row "接触新数据前冻结成本模型 必须冻结 Fix the cost model before data access.":
+        - cell "接触新数据前冻结成本模型"
+        - cell "必须冻结":
+          - generic: 必须冻结
+        - cell "Fix the cost model before data access."
+      - row "接触新数据前冻结实验规格与哈希 必须冻结 Freeze the experiment specification and hash before new evidence is read.":
+        - cell "接触新数据前冻结实验规格与哈希"
+        - cell "必须冻结":
+          - generic: 必须冻结
+        - cell "Freeze the experiment specification and hash before new evidence is read."
+      - row "披露用于构造新假设的既有证据 必须冻结 Disclose all prior evidence used to motivate the new hypothesis.":
+        - cell "披露用于构造新假设的既有证据"
+        - cell "必须冻结":
+          - generic: 必须冻结
+        - cell "Disclose all prior evidence used to motivate the new hypothesis."
+  - generic: 策略注册前审查：BLOCKED
+  - alert:
+    - img "close-circle":
+    - generic: 当前结果不能写入 StrategyRegistry
+    - generic: 当前行为规格哈希不是完整 StrategySpec 哈希；名称、家族、版本、代码提交、模型、互斥切分、时间戳和血缘声明尚未完整冻结。当前不能写入 IDEA，也不能迁移到 EXPERIMENT。
+  - generic: 注册门 2/9
+  - generic: StrategySpec 字段 6/15
+  - generic: 最早状态 IDEA
+  - generic: 注册操作未开放
+  - generic: IDEA → EXPERIMENT 仍要求完整 ExperimentRunSpec、质量通过的数据清单和独立泄漏审查；本页不会创建注册表记录。
+  - table:
+    - rowgroup:
+      - row "策略注册门槛 结果 证据 / 原因码":
+        - columnheader "策略注册门槛"
+        - columnheader "结果"
+        - columnheader "证据 / 原因码"
+    - rowgroup:
+      - row "有效性、相关性与稳健性顺序门全部通过 阻断 1/3":
+        - cell "有效性、相关性与稳健性顺序门全部通过"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "1/3"
+      - row "因果回测收益门通过 阻断 backtest.passed=false":
+        - cell "因果回测收益门通过"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "backtest.passed=false"
+      - row "已绑定签名假设预注册 阻断 NOT_ATTACHED":
+        - cell "已绑定签名假设预注册"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "NOT_ATTACHED"
+      - row "独立数据泄漏审查通过 阻断 NOT_ATTACHED":
+        - cell "独立数据泄漏审查通过"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "NOT_ATTACHED"
+      - row "开平仓行为规格哈希已绑定 通过 d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3":
+        - cell "开平仓行为规格哈希已绑定"
+        - cell "通过":
+          - generic: 通过
+        - cell "d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3"
+      - row "完整注册规格与哈希已绑定 阻断 NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING":
+        - cell "完整注册规格与哈希已绑定"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "NOT_COMPUTABLE_REQUIRED_FIELDS_MISSING"
+      - row "数据版本与 checksum 已绑定 通过 baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1 · 667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524":
+        - cell "数据版本与 checksum 已绑定"
+        - cell "通过":
+          - generic: 通过
+        - cell "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1 · 667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524"
+      - row "互斥训练/验证/测试切分已冻结 阻断 NOT_FROZEN":
+        - cell "互斥训练/验证/测试切分已冻结"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "NOT_FROZEN"
+      - row "根策略或父策略血缘已声明 阻断 NOT_DECLARED":
+        - cell "根策略或父策略血缘已声明"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "NOT_DECLARED"
+  - img "check":
+  - generic: 因子定义 · AVAILABLE
+  - generic: Exact expression and data contract are fixed for this run.
+  - img "close":
+  - generic: 有效性检验 · FAILED
+  - generic: Cross-sectional IC, session-clustered Newey-West and four contiguous-block stability tests completed.
+  - img "check":
+  - generic: 相关性检验 · PASSED
+  - generic: Redundancy checks against related opening features completed.
+  - img "close":
+  - generic: 滚动稳健性检验 · FAILED
+  - generic: Expanding-window threshold selection and disjoint test folds completed without using future test returns.
+  - generic: "5"
+  - generic: 策略构造 · DIAGNOSTIC_ONLY
+  - generic: Entry, exit, sizing, cost and benchmark rules are explicit, but strategy construction is not admitted because at least one prerequisite research stage failed.
+  - img "close":
+  - generic: 因果回测 · FAILED
+  - generic: 75-stock and 15-sector causal replay completed.
+  - generic: "7"
+  - generic: 模拟盘 · NOT_ELIGIBLE
+  - generic: No authorized forward realtime observation is attached.
+  - generic: "8"
+  - generic: 实盘 · DISABLED
+  - generic: Separate explicit user authorization is required.
+  - generic: PAPER 模拟盘准入：BLOCKED
+  - alert:
+    - img "close-circle":
+    - generic: 已通过 1/8 项
+    - generic: 这是只读准入判定，不会注册策略、启动运行时或发送订单。下一允许动作：在接触新证据前预注册新假设。
+  - table:
+    - rowgroup:
+      - row "PAPER 准入门槛 结果 证据 / 原因码":
+        - columnheader "PAPER 准入门槛"
+        - columnheader "结果"
+        - columnheader "证据 / 原因码"
+    - rowgroup:
+      - row "历史数据身份已验证并绑定 通过 baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1 · 667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524":
+        - cell "历史数据身份已验证并绑定"
+        - cell "通过":
+          - generic: 通过
+        - cell "baostock-five-minute-stock-sw15x5-qfq-20250102-20260825-v1 · 667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524"
+      - row "因子研究硬门通过 阻断 research_gate.passed=false":
+        - cell "因子研究硬门通过"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "research_gate.passed=false"
+      - row "因果回测收益门通过 阻断 backtest.passed=false":
+        - cell "因果回测收益门通过"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "backtest.passed=false"
+      - row "不可变策略版本已注册 阻断 AD_HOC_UNREGISTERED · adhoc-intraday-d6b31e9ee2e5b345 · d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3":
+        - cell "不可变策略版本已注册"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "AD_HOC_UNREGISTERED · adhoc-intraday-d6b31e9ee2e5b345 · d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3"
+      - row "已附真正未见前向 SHADOW 证据 阻断 NO_AUTHORIZED_FORWARD_PAPER_EVIDENCE":
+        - cell "已附真正未见前向 SHADOW 证据"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "NO_AUTHORIZED_FORWARD_PAPER_EVIDENCE"
+      - row "授权实时行情供应商已就绪 阻断 NO_AUTHORIZED_REALTIME_PROVIDER":
+        - cell "授权实时行情供应商已就绪"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "NO_AUTHORIZED_REALTIME_PROVIDER"
+      - row "新鲜运行时就绪证明可用 阻断 NO_RUNTIME_ATTESTATION":
+        - cell "新鲜运行时就绪证明可用"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "NO_RUNTIME_ATTESTATION"
+      - row "PAPER 对账状态已就绪 阻断 NO_BOUND_PAPER_RUNTIME":
+        - cell "PAPER 对账状态已就绪"
+        - cell "阻断":
+          - generic: 阻断
+        - cell "NO_BOUND_PAPER_RUNTIME"
+  - generic: 累计收益
+  - strong: "-4.08%"
+  - generic: 年化收益
+  - strong: "-40.87%"
+  - generic: Sharpe
+  - strong: "-3.335"
+  - generic: 最大回撤
+  - strong: "-5.10%"
+  - generic: 超额收益
+  - strong: 0.25%
+  - generic: 胜率
+  - strong: 45.00%
+  - generic: Rank IC
+  - strong: "-0.003"
+  - generic: ICIR
+  - strong: "0.071"
+  - generic: 信号率
+  - strong: 12.80%
+  - generic: 条件超额
+  - strong: "-0.01%"
+  - generic: 聚类信号日
+  - strong: "20"
+  - generic: 日聚类超额均值
+  - strong: 0.02%
+  - generic: Newey-West t
+  - strong: "0.099"
+  - generic: 95% 置信区间
+  - strong: "-0.30% ～ 0.34%"
+  - generic: 正向时间块
+  - strong: 2/4
+  - generic: 最差时间块超额
+  - strong: "-0.24%"
+  - generic: 滚动样本外收益
+  - strong: "-4.67%"
+  - generic: 滚动样本外超额
+  - strong: 0.12%
+  - tablist:
+    - tab "因子与时序" [selected]
+    - tab "有效性与相关性"
+    - tab "滚动样本外与阈值"
+    - tab "时间稳定性 · 2/4"
+    - tab "成本压力"
+    - tab "15 行业"
+    - tab "75 个股"
+    - button "ellipsis":
+      - img "ellipsis":
+  - tabpanel "因子与时序":
+    - alert:
+      - img "exclamation-circle":
+      - generic: 策略规格已冻结为只读预览，但未注册
+      - generic: 开仓因子、平仓规则、仓位、基准与成本已进入同一哈希；观测到的平仓触发次数不进入规格哈希。该 ID 只标识本次可复算预览，不会写入策略注册表，也没有 PAPER 晋级权限。
+    - generic: 只读策略 ID
+    - strong: adhoc-intraday-d6b31e9ee2e5b345
+    - generic: 注册状态
+    - strong: AD_HOC_UNREGISTERED
+    - generic: 规格绑定
+    - strong: 策略规格 SHA-256 已绑定
+    - generic: PAPER 资格
+    - strong: 无
+    - code: d6b31e9ee2e5b3459ec4fdd0e431c007d602a7499f539052229408ec12b20be3
+    - code: bullish_10m_0930_0940 AND bullish_10m_0940_0950 AND bullish_10m_0950_1000
+    - generic: 数据：NATIVE_5M_AGGREGATED_TO_10M；信号已知：10:00_BAR_CLOSE；入场：NEXT_5M_OPEN_10_05；退出：NEXT_SESSION_OPEN_T_PLUS_ONE。
+    - generic: 响应哈希 ebf69b8b25cf4a80dd99a73889c22bd519477029c70db2ff004f8a9f6ad6a6e2；数据 checksum 667c494a6cde0e2f5d73500dce17fcfb24619d1e448b13c82115cd4596fa3524；读取 75,600 根已验证 Bar，无状态写入、无外部订单。
+  - alert:
+    - img "exclamation-circle":
+    - generic: 五档买卖盘强度：UNCONFIGURED · 0/6
+    - generic: 公式 (bid_size_1+...+bid_size_5)/(ask_size_1+...+ask_size_5) 是待验证的买入假设，不是已经有效的策略。它需要 AUTHORIZED_L2_FIVE_LEVEL_ORDER_BOOK；当前没有获授权的 L2 来源，系统不会从 OHLCV 伪造买一至买五/卖一至卖五，也不会自动补出卖出条件。
+  - generic: 买入条件
+  - strong: 买入假设 > 1 · 未检验
+  - generic: 平仓条件
+  - strong: 卖出条件未定义
+  - generic: 深度模式
+  - strong: 规范深度字段 20 个
+  - generic: 委托量单位
+  - strong: 股（供应商单位待认证）
+  - generic: 修正时钟
+  - strong: 封闭分钟后决定
+  - generic: 无效分母
+  - strong: 零卖方总量：因子无定义
+  - alert:
+    - img "info-circle":
+    - generic: L2 数据门 0/6
+    - generic: 必须先完成供应商授权、五档字段与单位认证、事件时钟/序号、新鲜度和录制回放对账，才允许采集因子样本。当前不会计算因子、运行相关性/有效性检验、回测策略或进入 PAPER。
+  - table:
+    - rowgroup:
+      - row "L2 数据门槛 结果 原因码":
+        - columnheader "L2 数据门槛"
+        - columnheader "结果"
+        - columnheader "原因码"
+    - rowgroup:
+      - row "获授权 L2 供应商已选择 未通过 NO_AUTHORIZED_L2_PROVIDER":
+        - cell "获授权 L2 供应商已选择"
+        - cell "未通过":
+          - generic: 未通过
+        - cell "NO_AUTHORIZED_L2_PROVIDER"
+      - row "五档价格与委托量字段已认证 未通过 PROVIDER_SCHEMA_NOT_CERTIFIED":
+        - cell "五档价格与委托量字段已认证"
+        - cell "未通过":
+          - generic: 未通过
+        - cell "PROVIDER_SCHEMA_NOT_CERTIFIED"
+      - row "委托量单位已认证并归一为股 未通过 PROVIDER_SIZE_UNIT_NOT_CERTIFIED":
+        - cell "委托量单位已认证并归一为股"
+        - cell "未通过":
+          - generic: 未通过
+        - cell "PROVIDER_SIZE_UNIT_NOT_CERTIFIED"
+      - row "交易所事件时间与序号可用 未通过 PROVIDER_CLOCK_NOT_CERTIFIED":
+        - cell "交易所事件时间与序号可用"
+        - cell "未通过":
+          - generic: 未通过
+        - cell "PROVIDER_CLOCK_NOT_CERTIFIED"
+      - row "供应商新鲜度阈值已认证 未通过 PROVIDER_FRESHNESS_NOT_CERTIFIED":
+        - cell "供应商新鲜度阈值已认证"
+        - cell "未通过":
+          - generic: 未通过
+        - cell "PROVIDER_FRESHNESS_NOT_CERTIFIED"
+      - row "L2 录制与回放对账已通过 未通过 NO_AUTHORIZED_RECORDED_L2_SESSION":
+        - cell "L2 录制与回放对账已通过"
+        - cell "未通过":
+          - generic: 未通过
+        - cell "NO_AUTHORIZED_RECORDED_L2_SESSION"
+  - textbox "本地因子实验名称":
+    - /placeholder: 为本次因子结果命名
+  - button "保存到本地因子实验":
+    - generic: 保存到本地因子实验
+  - button "download 导出因子研究证据":
+    - img "download":
+    - generic: 导出因子研究证据
+  - generic: 本地开仓因子候选（0/30）
+  - generic: 仅当前浏览器 · 草案不是证据
+  - textbox "开仓因子候选名称":
+    - /placeholder: 为当前开仓表达式命名
+  - button "保存当前开仓因子候选（不回测）":
+    - generic: 保存当前开仓因子候选（不回测）
+  - generic: 候选只保存三段方向、ALL/ANY 和实体阈值，不包含平仓条件、策略指标或回测结论；保存不会调用服务端，也不会生成有效性、注册或晋级证据。
+  - table:
+    - rowgroup:
+      - row "Select all 候选名称 保存时间 开仓表达式 检验状态 操作":
+        - columnheader "Select all":
+          - checkbox "Select all" [disabled]
+        - columnheader "候选名称"
+        - columnheader "保存时间"
+        - columnheader "开仓表达式"
+        - columnheader "检验状态"
+        - columnheader "操作"
+    - rowgroup:
+      - checkbox [disabled]
+      - row "先保存至少两个开仓因子草案，再做有效性、多重检验与相关性检验；不必先运行策略回测。":
+        - cell "先保存至少两个开仓因子草案，再做有效性、多重检验与相关性检验；不必先运行策略回测。":
+          - generic: 先保存至少两个开仓因子草案，再做有效性、多重检验与相关性检验；不必先运行策略回测。
+  - button "检验选中规则有效性与相关性（0/8）" [disabled]:
+    - generic: 检验选中规则有效性与相关性（0/8）
+  - generic: 按当前表单日期，在同一 75 股窗口检验 2–8 条纯开仓因子候选；有效性标签固定为 T+1 开盘收益，相关性使用连续方向分数，不读取平仓条件或策略收益。
+  - generic: 草案绑定当前数据版本与 checksum，但只有服务端检验响应才包含有效性、Holm 校正和相关矩阵；草案本身始终是 NOT_RUN。响应仍是已查看历史的只读诊断，不写 FactorRegistry/StrategyRegistry，不构造平仓策略，不产生 PAPER/LIVE 或订单权限。
+  - generic: 本地因子实验对比（0/30）
+  - generic: 仅当前浏览器
+  - button "download 导出因子对比" [disabled]:
+    - img "download":
+    - generic: 导出因子对比
+  - table:
+    - rowgroup:
+      - row "名称 保存时间 规则 策略身份 退出 信号 累计收益 年化收益 主动超额 Sharpe 最大回撤 Rank IC 最大 |ρ| 样本外收益 样本外超额 NW t NW 95% 区间 硬门 操作":
+        - columnheader "名称"
+        - columnheader "保存时间"
+        - columnheader "规则"
+        - columnheader "策略身份"
+        - columnheader "退出"
+        - columnheader "信号"
+        - columnheader "累计收益"
+        - columnheader "年化收益"
+        - columnheader "主动超额"
+        - columnheader "Sharpe"
+        - columnheader "最大回撤"
+        - columnheader "Rank IC"
+        - columnheader "最大 |ρ|"
+        - columnheader "样本外收益"
+        - columnheader "样本外超额"
+        - columnheader "NW t"
+        - columnheader "NW 95% 区间"
+        - columnheader "硬门"
+        - columnheader "操作"
+    - rowgroup:
+      - row "完成策略构造和因果回测后可保存结果摘要，用于反复调整和横向比较。":
+        - cell "完成策略构造和因果回测后可保存结果摘要，用于反复调整和横向比较。":
+          - generic: 完成策略构造和因果回测后可保存结果摘要，用于反复调整和横向比较。
+  - text: 记录绑定当前数据版本与 checksum，保留规则、结果哈希、只读策略 ID/规格哈希、常用绩效、Rank IC、最大相关性、Newey-West 与滚动样本外摘要；载入后必须重新运行。可导出确定性只读 JSON 留档或跨设备核对，但不支持导入、自动同步或自动选优。策略身份仍是 AD_HOC_UNREGISTERED；表中统计都来自已经查看的同一历史响应，不是不可变实验、FactorRegistry/StrategyRegistry 写入、独立样本外证据或 PAPER/LIVE 晋级输入。
+  - alert:
+    - img "exclamation-circle":
+    - generic: 晋级结论：NOT_ELIGIBLE
+    - generic: CURRENT_UNIVERSE_SURVIVORSHIP_BIAS / NO_WALK_FORWARD_ROBUSTNESS_EVIDENCE / NO_PAPER_OR_SHADOW_SESSIONS
+  - button "download 导出全部研究证据":
+    - img "download":
+    - generic: 导出全部研究证据
+  - tablist:
+    - tab "实验候选"
+    - tab "因子搜索"
+    - tab "因子鲁棒性"
+    - tab "多板块个股迁移" [active] [selected]
+    - tab "开发区分钟策略"
+    - tab "未来完整日观测"
+    - tab "滚动样本外"
+    - tab "稳健性诊断"
+    - tab "演化树"
+    - tab "未晋级"
+    - button "ellipsis":
+      - img "ellipsis":
+  - tabpanel "多板块个股迁移":
+    - generic: 数据：15 个板块 × 每板块 5 只，共 75 只股票、149903 根日线；统一 HFQ。
+    - generic: 锁定策略：reversal-10-top3-20；2019–2025 正收益年份 7/7，单板块 15/15，留一板块 15/15。
+    - generic: 全期收益 315.75%，年化 23.53%，Sharpe 0.810，最大回撤 -34.20%；双倍成本收益 256.14%。
+    - generic: 最弱单板块：食品饮料，收益 46.29%；Bootstrap 正收益概率 96.90%，5% 分位 14.75%。
+    - generic: 2026 污染审计：策略 1.90%，等权 -0.95%，超额 2.85%。
+    - table:
+      - rowgroup:
+        - row "年度 收益 Sharpe 最大回撤 交易数":
+          - columnheader "年度"
+          - columnheader "收益"
+          - columnheader "Sharpe"
+          - columnheader "最大回撤"
+          - columnheader "交易数"
+      - rowgroup:
+        - row "2019 19.51% 0.776 -25.38% 67":
+          - cell "2019"
+          - cell "19.51%"
+          - cell "0.776"
+          - cell "-25.38%"
+          - cell "67"
+        - row "2020 19.68% 0.744 -23.27% 70":
+          - cell "2020"
+          - cell "19.68%"
+          - cell "0.744"
+          - cell "-23.27%"
+          - cell "70"
+        - row "2021 7.15% 0.383 -32.75% 64":
+          - cell "2021"
+          - cell "7.15%"
+          - cell "0.383"
+          - cell "-32.75%"
+          - cell "64"
+        - row "2022 16.19% 0.648 -27.14% 66":
+          - cell "2022"
+          - cell "16.19%"
+          - cell "0.648"
+          - cell "-27.14%"
+          - cell "66"
+        - row "2023 9.38% 0.454 -20.53% 66":
+          - cell "2023"
+          - cell "9.38%"
+          - cell "0.454"
+          - cell "-20.53%"
+          - cell "66"
+        - row "2024 30.29% 0.921 -20.46% 70":
+          - cell "2024"
+          - cell "30.29%"
+          - cell "0.921"
+          - cell "-20.46%"
+          - cell "70"
+        - row "2025 63.81% 1.660 -30.95% 74":
+          - cell "2025"
+          - cell "63.81%"
+          - cell "1.660"
+          - cell "-30.95%"
+          - cell "74"
+    - table:
+      - rowgroup:
+        - row "板块 代码 股票数 收益 Sharpe 最大回撤":
+          - columnheader "板块"
+          - columnheader "代码"
+          - columnheader "股票数"
+          - columnheader "收益"
+          - columnheader "Sharpe"
+          - columnheader "最大回撤"
+      - rowgroup:
+        - row "银行 801780 5 49.26% 0.555 -19.09%":
+          - cell "银行"
+          - cell "801780"
+          - cell "5"
+          - cell "49.26%"
+          - cell "0.555"
+          - cell "-19.09%"
+        - row "非银金融 801790 5 84.55% 0.508 -37.50%":
+          - cell "非银金融"
+          - cell "801790"
+          - cell "5"
+          - cell "84.55%"
+          - cell "0.508"
+          - cell "-37.50%"
+        - row "食品饮料 801120 5 46.29% 0.442 -36.04%":
+          - cell "食品饮料"
+          - cell "801120"
+          - cell "5"
+          - cell "46.29%"
+          - cell "0.442"
+          - cell "-36.04%"
+        - row "医药生物 801150 5 100.54% 0.534 -36.62%":
+          - cell "医药生物"
+          - cell "801150"
+          - cell "5"
+          - cell "100.54%"
+          - cell "0.534"
+          - cell "-36.62%"
+        - row "电子 801080 5 1319.78% 1.146 -58.63%":
+          - cell "电子"
+          - cell "801080"
+          - cell "5"
+          - cell "1319.78%"
+          - cell "1.146"
+          - cell "-58.63%"
+        - row "计算机 801750 5 267.77% 0.734 -44.75%":
+          - cell "计算机"
+          - cell "801750"
+          - cell "5"
+          - cell "267.77%"
+          - cell "0.734"
+          - cell "-44.75%"
+        - row "电力设备 801730 5 587.20% 1.115 -45.43%":
+          - cell "电力设备"
+          - cell "801730"
+          - cell "5"
+          - cell "587.20%"
+          - cell "1.115"
+          - cell "-45.43%"
+        - row "汽车 801880 5 58.14% 0.412 -40.64%":
+          - cell "汽车"
+          - cell "801880"
+          - cell "5"
+          - cell "58.14%"
+          - cell "0.412"
+          - cell "-40.64%"
+    - list:
+      - listitem "Previous Page":
+        - button "left" [disabled]:
+          - img "left":
+      - listitem "1":
+        - generic: "1"
+      - listitem "2":
+        - generic: "2"
+      - listitem "Next Page":
+        - button "right":
+          - img "right":
+    - table:
+      - rowgroup:
+        - row "剔除板块 剔除代码 收益 Sharpe 最大回撤":
+          - columnheader "剔除板块"
+          - columnheader "剔除代码"
+          - columnheader "收益"
+          - columnheader "Sharpe"
+          - columnheader "最大回撤"
+      - rowgroup:
+        - row "银行 801780 322.08% 0.817 -34.67%":
+          - cell "银行"
+          - cell "801780"
+          - cell "322.08%"
+          - cell "0.817"
+          - cell "-34.67%"
+        - row "非银金融 801790 332.46% 0.828 -33.14%":
+          - cell "非银金融"
+          - cell "801790"
+          - cell "332.46%"
+          - cell "0.828"
+          - cell "-33.14%"
+        - row "食品饮料 801120 308.19% 0.796 -41.46%":
+          - cell "食品饮料"
+          - cell "801120"
+          - cell "308.19%"
+          - cell "0.796"
+          - cell "-41.46%"
+        - row "医药生物 801150 424.98% 0.909 -32.94%":
+          - cell "医药生物"
+          - cell "801150"
+          - cell "424.98%"
+          - cell "0.909"
+          - cell "-32.94%"
+        - row "电子 801080 584.49% 1.042 -31.74%":
+          - cell "电子"
+          - cell "801080"
+          - cell "584.49%"
+          - cell "1.042"
+          - cell "-31.74%"
+        - row "计算机 801750 227.12% 0.701 -34.54%":
+          - cell "计算机"
+          - cell "801750"
+          - cell "227.12%"
+          - cell "0.701"
+          - cell "-34.54%"
+        - row "电力设备 801730 139.09% 0.564 -34.83%":
+          - cell "电力设备"
+          - cell "801730"
+          - cell "139.09%"
+          - cell "0.564"
+          - cell "-34.83%"
+        - row "汽车 801880 370.69% 0.867 -35.74%":
+          - cell "汽车"
+          - cell "801880"
+          - cell "370.69%"
+          - cell "0.867"
+          - cell "-35.74%"
+    - list:
+      - listitem "Previous Page":
+        - button "left" [disabled]:
+          - img "left":
+      - listitem "1":
+        - generic: "1"
+      - listitem "2":
+        - generic: "2"
+      - listitem "Next Page":
+        - button "right":
+          - img "right":
+    - generic: 研究硬门：通过；但股票池是 2026 当前成分股向历史回投、后复权也不是时点一致数据，且未模拟涨跌停成交，结论固定为 NOT_ELIGIBLE，不能接入 PAPER。
