@@ -1,11 +1,12 @@
 # Phase B：增量采集实施依据
 
-状态：设计、现场探测及有界解析器已完成，正式增量调度尚未实现。下一批按此依据实施，
+状态：设计、探测、解析器和采集/存储/持久队列核心已实现，等待集群及生产验收。
 不把 Phase A 的目录上线认作 1500 证券持续数据已经就绪。
 
 已实现解析器：src/qtrade/market_data/sina_incremental.py；12 项针对性检查通过。
 复现：`PYTHONPATH=src python -m pytest tests/test_sina_incremental.py`。
-原始响应持久化、增量版本发布和正式调度继续实施，尚未部署此适配器。
+批次存储与采集核心见 scripts/unified_store.py、unified_queue.py、collect_unified_data.py。
+新增 35 项针对性检查通过，尚未完成集群真实采集及网页接入验收。
 
 可核验摘要：[有界日线/分钟源](evidence/sina-incremental-source-audit-20261026.json)、
 [盘后快照源](evidence/sina-completed-quote-source-audit-20261026.json)、

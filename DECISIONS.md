@@ -1,5 +1,25 @@
 # Architecture decisions
 
+## ADR-174 — Local collection ledger commits only after immutable batch sealing
+
+Status: accepted implementation design, 2026-10-26, Phase B.
+
+Keep the authenticated Git + SQLite research queue unchanged. Collection uses
+the same SQLite WAL/FULL durability and existing single-process ownership helper
+in a separate local-disk ledger, never SQLite WAL on the NFS data volume.
+Per-security day/5min plans retain last success independently from later failures;
+bounded fresh/retry budgets prevent prefix starvation. A sealed immutable batch
+is replayed after interruption; a missing seal stays INTERRUPTED with a retry.
+
+Reuse existing atomic JSON writers, BarQualityGate and directory fsync. Retain
+exact raw bytes in bounded compressed packs before parsing. Normalized chunks
+bind raw hashes, native price basis, amounts/VWAP where known and completion
+clocks. Commit chunks, task outcomes and uniquely keyed data-ready events in one
+SQLite transaction after raw/Parquet/manifest hashes verify. These events mean
+accepted incremental rows, not a complete universe or a ready Qlib provider.
+Rolling-window source requests append only new completed bars; existing legacy
+qfq histories remain a separate source family. No broker or gateway is involved.
+
 ## ADR-173 — Incremental collection keeps raw price bases and bounded batches separate
 
 Status: accepted design, 2026-10-26; implementation pending Phase B.
