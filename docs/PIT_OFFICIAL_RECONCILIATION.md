@@ -28,7 +28,7 @@
 ```bash
 LIVE_TRADING_ENABLED=false PYTHONPATH=src python -m pytest tests/test_official_master.py
 LIVE_TRADING_ENABLED=false PYTHONPATH=src python -m scripts.reconcile_official_master \
-  --base "$BASE" --receipt "$BASE/pit-independent-sources/verified-probe.json"
+  --base "$BASE" --receipt docs/evidence/official-source-probe-20261026.json
 ```
 
 `--receipt` 应是实际校验通过的 `qtrade.official-source-probe.v1` 记录。
@@ -36,5 +36,33 @@ LIVE_TRADING_ENABLED=false PYTHONPATH=src python -m scripts.reconcile_official_m
 结果位于该目录的 `reconciliation/<evidence_sha256>.json`，以排他方式创建。
 校验和表示内容身份，不是交易所数字签名或历史可得性的认证。
 
-验收应记录实际统计和完整后端结果，不能根据测试中的合成证券推断真实覆盖率。
+## 集群实际验收
+
+版本 `70a32d39dd3fa2ba73677d8109bda0d9cc272ec2` 的 611 个源码文件已与 Git
+逐文件校验；Linux 完整后端 621 项通过，失败、错误、跳过均为 0。对账于北京时间
+2026-10-26 14:33 完成，记录见 [验收证据](evidence/official-master-acceptance-20261026.json)。
+
+| 项目 | 实际结果 |
+| --- | --- |
+| 官方原始行数 | 上交所 161＋深交所 211＝372 行 |
+| 能识别 A 股身份的行 | 342 行，336 个唯一身份 |
+| 日期相同、类型及非活跃标志相符 | 310 行；仍未认证历史可得性 |
+| 待复核 | 32 行 |
+| 非 A 股或身份未确定而隔离 | 30 行 |
+| 退市字段差异 | 28 行 |
+| 上市字段差异 | 8 行 |
+| A/B 共同上市、日期语义待核验 | 6 行 |
+| 重复身份涉及的行 | 12 行 |
+| 官方识别的退市身份与当前 990 股样本重合 | 0 行 |
+
+问题计数会重叠，不能相加当作异常股票数量。例如 `sh.600069` 的官方退市字段是
+2020-08-28，供应商 `outDate` 是 2020-08-27；`sh.600175` 分别是 2020-08-17
+与 2020-08-14。差异可能涉及摘牌日与最后交易日的语义，未核验前不判定哪一方错误，
+也不以统一减一天等方式“修正”。重复身份保留全部原始行，不能静默去重并认证。
+
+完整逐行结果保存在集群
+`pit-independent-sources/reconciliation/b620f4a277d1ddacd7b779cd663ac7901ed38e019d97e2b1e941566202f8fc89.json`。
+上述 336 个身份不等于完整全市场退市名录；与当前研究样本没有重合，也说明仅对
+现有 990 股回填状态无法补上这批退市样本。后续需要独立接入并对账其价格和公司行为。
+
 后续退市股行情、公司行为、历史 ST/停牌和精确交易规则补齐仍需分别验收。

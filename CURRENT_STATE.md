@@ -3,11 +3,16 @@
 Last updated: 2026-10-26
 
 - The owner confirms there is no licensed historical source; continue verifiable
-  public-source work. Offline official delisting/master reconciliation is in
-  implementation. It checks preserved SSE/SZSE bytes, retains every row and
+  public-source work. Offline official delisting/master reconciliation is accepted
+  on release 70a32d3. It checks preserved SSE/SZSE bytes, retains every row and
   quarantines identity ambiguity, duplicate keys, missing dates and conflicts.
-  Fifteen focused tests and static checks pass; cluster reconciliation is pending.
-  This separate audit never rewrites the current universe or certifies PIT.
+  Fifteen focused and all 621 Linux full-suite tests pass, with no failures/skips.
+  Real reconciliation retains 372 rows, 342 A-identity rows / 336 unique identities:
+  310 date-agree-uncertified, 32 review, 30 non-A/unresolved rows quarantined.
+  Twenty-eight outDate and eight ipoDate row differences are retained; six mixed
+  share-class rows and twelve duplicate-identity rows may overlap these counts.
+  The official delisted identities have zero overlap with this 990-stock sample.
+  This separate immutable audit never rewrites the current universe or certifies PIT.
   See docs/PIT_OFFICIAL_RECONCILIATION.md.
 
 - PIT collection queue repair is deployed: the prior prefix scheduler stalled at
@@ -29,14 +34,26 @@ Last updated: 2026-10-26
   Neither probe certifies historical availability or participates in Qlib yet.
   See docs/PIT_COLLECTION_QUEUE.md and docs/PIT_OFFICIAL_SOURCE_AUDIT.md.
 
-- Archived configuration reuse is in implementation: the read-only template API
+- Archived configuration reuse is deployed: the read-only template API
   validates checksum-bound published results, complete source-bound specs and
   current worker revision. Backtest links to a form that copies exact archived
   inputs and defaults to the other model. Missing/legacy configurations and version
   drift reject reuse instead of filling current defaults. Form initialization is
   keyed by the requested archive/model; polling, retry and late responses cannot
   replace its source, edits or request identity. Relevant backend checks and all
-  211 frontend tests pass; Linux full-suite and production acceptance are pending.
+  211 frontend tests and all 606 Linux full-suite tests pass. Production-browser
+  reuse, refresh and authenticated submission produce job a76123ab with exactly
+  the original b39408fa source while catalog defaults have moved to 9e92ce70.
+  The job completes with all 11,955 archive files verified and only name/model
+  changed from the original Ridge. Production experiment center, result and aligned
+  Ridge comparison all pass browser acceptance. Public result/template return 200;
+  anonymous submission remains 401. All five supervised services run with LIVE
+  disabled; temporary transfer access remains revoked. Latest accepted status
+  backfill grows to 151/990 stocks and 363,896 rows while the comparison correctly
+  retains its original 36-stock source. GitHub raw CDN max-age=300 adds publication
+  latency; source and snapshot clocks remain explicit. Full historical PIT/rules
+  and delisted-price reconstruction remain uncertified P0 follow-up work.
+  See docs/evidence/qlib-archived-config-acceptance-20261026.json.
 
 - Source-bound Qlib execution is deployed and accepted: verified raw status/master
   inputs are frozen into request/run identity and both production-browser tasks.

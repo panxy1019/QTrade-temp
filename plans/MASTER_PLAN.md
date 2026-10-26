@@ -26,7 +26,7 @@ Audit date: 2026-08-12.
 
 - [x] Record the owner's public-source-only scope and source/reuse audit.
 - [x] Preserve raw identity, duplicate/ambiguous rows and date discrepancies.
-- [ ] Run real cluster reconciliation, full backend checks and retain evidence.
+- [x] Run real cluster reconciliation, full backend checks and retain evidence.
 
 Reproduction and limits: docs/PIT_OFFICIAL_RECONCILIATION.md. Current lists cannot
 establish historical availability or repair delisted prices and exact rules.
@@ -46,7 +46,7 @@ certify historical information availability or independently repair the universe
 
 - [x] Open a completed experiment's complete frozen configuration as a new task.
 - [x] Preserve source, data, time, portfolio, costs and seed across catalog updates.
-- [ ] Reject missing/legacy configuration reuse and verify production interaction.
+- [x] Reject missing/legacy configuration reuse and verify production interaction.
 
 Continuous collection changes defaults; comparison must remain reproducible even
 when the user starts the second model after another collection batch.

@@ -1,0 +1,178 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.official-master-acceptance.v1",
+  "checked_at": "2026-10-26T06:33:51.264904+00:00",
+  "source_revision": "70a32d39dd3fa2ba73677d8109bda0d9cc272ec2",
+  "owner_scope": "NO_LICENSED_HISTORICAL_SOURCE_CONTINUE_VERIFIABLE_PUBLIC_SOURCES",
+  "linux_validation": {
+    "source_revision": "70a32d39dd3fa2ba73677d8109bda0d9cc272ec2",
+    "started_at": "2026-10-26T06:27:56Z",
+    "archive_sha256": "323f46d9857dbd7c78513b54e6aabc4680b311707b4854a838d00265aec66d56",
+    "archive_bytes": 33418519,
+    "files_verified": 611,
+    "returncode": 0,
+    "tests": [
+      {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "621",
+        "time": "84.810",
+        "timestamp": "2026-10-26T14:31:41.268519+08:00",
+        "hostname": "73ec830048ca"
+      }
+    ],
+    "reconciliation_returncode": 0,
+    "completed_at": "2026-10-26T06:33:07Z"
+  },
+  "full_reconciliation_file": "pit-independent-sources/reconciliation/b620f4a277d1ddacd7b779cd663ac7901ed38e019d97e2b1e941566202f8fc89.json",
+  "full_reconciliation_evidence_sha256": "b620f4a277d1ddacd7b779cd663ac7901ed38e019d97e2b1e941566202f8fc89",
+  "statistics": {
+    "official_rows": 372,
+    "a_identity_rows": 342,
+    "unique_a_identities": 336,
+    "current_sample_symbols": 990,
+    "state_counts": {
+      "DATES_AGREE_UNCERTIFIED": 310,
+      "REQUIRES_REVIEW": 32,
+      "QUARANTINED_IDENTITY": 30
+    },
+    "issue_counts": {
+      "CONFLICT_OUTDATE": 28,
+      "SHARE_CLASS_DATE_SEMANTICS_UNVERIFIED": 6,
+      "DUPLICATE_OFFICIAL_IDENTITY": 12,
+      "CONFLICT_IPODATE": 8,
+      "NON_A_OR_UNRESOLVED_IDENTITY": 30
+    }
+  },
+  "master_sha256": "3fe4114d53f195bdcbfc574f7c1b88a6e1cdf8c4e2c8085ec0055061ecdcb564",
+  "master_observed_at": "2026-10-26T02:05:27.695891+00:00",
+  "probe_evidence_sha256": "66b96fa55b9c3693261f97e00fd2decd4f74167839a7e9adb001211afad983c9",
+  "raw_source_identities": {
+    "SSE": {
+      "raw_sha256": "d5e5dec58882aef4aba8be707087e9c3483ee1be9c2d1fcb6070e1ae9abc8990",
+      "raw_bytes": 173775,
+      "rows": 161,
+      "observed_at": "2026-10-26T05:29:29.020811+00:00",
+      "url": "https://query.sse.com.cn/commonQuery.do"
+    },
+    "SZSE": {
+      "raw_sha256": "e1d09fabf1e4f07d6fbb859631aba6206dac8e576684857b4c8bd92ba7aa164c",
+      "raw_bytes": 10914,
+      "rows": 211,
+      "observed_at": "2026-10-26T05:42:03.573892+00:00",
+      "url": "https://www.szse.cn/api/report/ShowReport"
+    }
+  },
+  "current_sample_delisted_rows": 0,
+  "review_examples": [
+    {
+      "exchange": "SSE",
+      "source_row": 6,
+      "raw_row_sha256": "52069f9b342a678e85eaa374464aaf6cce14e54feaedf5d990c3d1281707e5e7",
+      "source_stock_type": "1",
+      "symbol": "sh.600069",
+      "listing_date": "1997-04-30",
+      "reported_delisting_date": "2020-08-28",
+      "raw_listing_date": "19970430",
+      "raw_delisting_date": "20200828",
+      "in_current_research_sample": false,
+      "issues": [
+        "CONFLICT_OUTDATE"
+      ],
+      "vendor_match_count": 1,
+      "vendor": {
+        "type": "1",
+        "status": "0",
+        "ipoDate": "1997-04-30",
+        "outDate": "2020-08-27"
+      },
+      "state": "REQUIRES_REVIEW"
+    },
+    {
+      "exchange": "SSE",
+      "source_row": 8,
+      "raw_row_sha256": "5215ec0bf3577be34b069678c2b19a210fa2931086164270546dcf6dfc018909",
+      "source_stock_type": "1",
+      "symbol": "sh.600074",
+      "listing_date": "1997-06-23",
+      "reported_delisting_date": "2020-06-03",
+      "raw_listing_date": "19970623",
+      "raw_delisting_date": "20200603",
+      "in_current_research_sample": false,
+      "issues": [
+        "CONFLICT_OUTDATE"
+      ],
+      "vendor_match_count": 1,
+      "vendor": {
+        "type": "1",
+        "status": "0",
+        "ipoDate": "1997-06-23",
+        "outDate": "2020-06-02"
+      },
+      "state": "REQUIRES_REVIEW"
+    },
+    {
+      "exchange": "SSE",
+      "source_row": 11,
+      "raw_row_sha256": "bfe4dad47c934a93494f2c2e93e2381b74f26ea6dcf5324d13f5735d7c5bb6a7",
+      "source_stock_type": "1",
+      "symbol": "sh.600086",
+      "listing_date": "1997-06-06",
+      "reported_delisting_date": "2021-03-18",
+      "raw_listing_date": "19970606",
+      "raw_delisting_date": "20210318",
+      "in_current_research_sample": false,
+      "issues": [
+        "CONFLICT_OUTDATE"
+      ],
+      "vendor_match_count": 1,
+      "vendor": {
+        "type": "1",
+        "status": "0",
+        "ipoDate": "1997-06-06",
+        "outDate": "2021-03-17"
+      },
+      "state": "REQUIRES_REVIEW"
+    },
+    {
+      "exchange": "SSE",
+      "source_row": 23,
+      "raw_row_sha256": "36d1c53e6575085ef3bf377b1cb3b7effc0dc34d2c477c04edc84538dc296ae9",
+      "source_stock_type": "1",
+      "symbol": "sh.600175",
+      "listing_date": "1999-04-08",
+      "reported_delisting_date": "2020-08-17",
+      "raw_listing_date": "19990408",
+      "raw_delisting_date": "20200817",
+      "in_current_research_sample": false,
+      "issues": [
+        "CONFLICT_OUTDATE"
+      ],
+      "vendor_match_count": 1,
+      "vendor": {
+        "type": "1",
+        "status": "0",
+        "ipoDate": "1999-04-08",
+        "outDate": "2020-08-14"
+      },
+      "state": "REQUIRES_REVIEW"
+    }
+  ],
+  "historical_pit_certified": false,
+  "used_in_qlib": false,
+  "source_sample_bias_removed": false,
+  "limitations": [
+    "CURRENT_LIST_NOT_HISTORICAL_ASOF_SNAPSHOT",
+    "REPORTED_DELISTING_DATE_NOT_LAST_TRADE_OR_PUBLICATION_TIME",
+    "PRICE_CORPORATE_ACTION_ST_SUSPENSION_AND_EXACT_RULES_NOT_REPAIRED"
+  ],
+  "evidence_sha256": "eff5109800a7d31de45fc7ca4658da31b00e8df590ea8dd837000899c1b49a3f"
+}

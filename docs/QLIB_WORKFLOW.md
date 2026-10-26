@@ -61,7 +61,23 @@ npm --prefix web run build
 ```
 
 该入口保持已查看历史的非 PIT 诊断限制，不生成新的独立样本外证据。
-本轮完整检查和生产交互验收尚在进行，不提前声明完成。
+2026-10-26 验收：Linux 完整后端 606 项、前端完整 211 项、相关后端 40 项及
+前端专项 15 项通过；Ruff、mypy、ESLint、TypeScript 和生产构建通过。
+真实浏览器从 Ridge `6f04b986eaeb454c8c61579f1cea266b` 载入归档并刷新目录，
+编辑后的名称与原来源 `b39408fa…` 保持不变；登录后提交任务
+`a76123ab31f24bf3a347e347e3ba9161`，集群完成并核验全部 11,955 个归档文件。
+与原 Ridge 的固定规格仅名称与模型不同；实际源码、行情哈希、来源、日期、成本、
+组合及种子相同。当前目录默认来源已变化为 `9e92ce70…`，新任务仍保留原来源。
+LightGBM 成本后累计收益 117.23%、Sharpe 1.2103、最大回撤 -33.33%；重复运行
+同一已查看历史不构成新的未见样本。生产实验中心、回测详情及与原 Ridge 的统一
+对照均验收通过：[完整证据](evidence/qlib-archived-config-acceptance-20261026.json)。
+公开详情与模板 HTTP 200，未登录提交仍为 401；五项服务运行且实盘开关为 false。
+后续官方主表对账的完整后端 621 项也通过，见
+[官方对账说明](PIT_OFFICIAL_RECONCILIATION.md)。
+
+![从归档载入并刷新后保留配置](evidence/qlib-archived-config-form-20261026.png)
+
+![新 LightGBM 与原 Ridge 的生产对照](evidence/qlib-archived-config-comparison-20261026.png)
 
 ## 通道与时延
 
@@ -69,6 +85,12 @@ npm --prefix web run build
 不可变归档 → 现有公开观察发布通道 → 回测网页。
 不开放集群公网端口，不传券商凭据，不连接真实交易网关。
 执行器约15秒轮询，公开发布约5分钟，网页15秒核对公开目录。
+GitHub raw CDN 本次返回 `Cache-Control: max-age=300`，发布后还可能有数分钟
+缓存延迟；网页每15秒读取不等于状态每15秒到达。本次任务北京时间14:36完成，
+随后公开目录才出现 COMPLETE；以实际阶段时间和快照心跳判定新鲜度。
+目录接口在校验来源内容后附加动态新鲜度字段；其 `evidence_sha256` 仍对应上游
+发布内容，独立复核时应将 `worker_fresh/expected_complete_day/frozen_data_current/
+publication_available/checked_at` 与来源校验范围分开。实验详情和模板单独校验。
 提交确认不表示集群已开始执行；界面会单独标出等待发布的本地导航记录。
 同一份规格重试沿用请求 ID；修改规格后使用新的请求 ID。
 

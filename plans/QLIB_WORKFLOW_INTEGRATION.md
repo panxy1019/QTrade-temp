@@ -2,6 +2,14 @@
 
 Goal opened 2026-10-26 at the user's request.
 
+Latest delivery acceptance: authenticated production login, submit/cancel,
+source-bound execution, immutable archives, page responsibilities, comparison and
+archived configuration reuse all pass. The user confirms no licensed historical
+database and authorizes continued verification of public sources. Official
+delisting/master reconciliation is accepted separately; historical PIT, delisted
+prices and exact trading-rule certification remain unresolved and visible.
+This delivery does not certify them or grant promotion/trading authority.
+
 ## Acceptance contract
 
 1. Vercel research login submits a bounded, immutable task; anonymous users
@@ -47,6 +55,18 @@ Goal opened 2026-10-26 at the user's request.
 - [ ] P0 parallel: causal universe/state audit, historical source ingestion,
       constraint enforcement and per-run unresolved-coverage disclosures.
 - [x] M4: targeted/full checks, production deployment and browser acceptance.
+
+2026-10-26 final comparison acceptance: production feature release 38a48c8;
+archive reuse job a76123ab completes on worker 846a836 with exactly the original
+b39408fa source, while catalog defaults have advanced. Only model/name change.
+All 11,955 new archive files verify; actual browser shows aligned Ridge/LightGBM
+results and the per-experiment limitations. Full frontend 211 and Linux backend
+606 pass. Subsequent official-source reconciliation passes all 621 backend tests,
+preserves 372 raw rows / 336 unique A-share identities, and retains every date
+conflict/duplicate. Latest accepted status collection reaches 151 stocks / 363,896
+rows and continues under supervision. No full PIT claim is made. See
+docs/evidence/qlib-archived-config-acceptance-20261026.json and
+docs/evidence/official-master-acceptance-20261026.json.
 
 Evidence: Linux 544 full-suite tests passed on release da2878c; frontend 201
 full-suite tests and nine final workflow/navigation checks passed. A later
