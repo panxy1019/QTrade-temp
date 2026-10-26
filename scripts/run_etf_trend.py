@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import re
+from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -20,7 +21,8 @@ from scripts.unified_store import UnifiedBatchStore
 REPO = Path(__file__).resolve().parents[1]
 
 
-def run(master_path: Path, output: Path, revision: str, *, collect: bool) -> dict[str, Any]:
+def run(master_path: Path, output: Path, revision: str, *, collect: bool,
+        source: Callable[[str, dict[str, str]], dict[str, Any]] | None = None) -> dict[str, Any]:
     if os.environ.get('LIVE_TRADING_ENABLED', 'false').lower() != 'false':
         raise ValueError('LIVE_TRADING_MUST_REMAIN_DISABLED')
     if not re.fullmatch('[a-f0-9]{40}', revision):
@@ -44,7 +46,7 @@ def run(master_path: Path, output: Path, revision: str, *, collect: bool) -> dic
         # A persisted attempt prevents interrupted executions from issuing another burst.
         write_json_immutable(root/'collection-attempt.json', signed({**bindings,
                              'started_at': now.isoformat(), 'maximum_queries': len(symbols)}))
-        captures = [fetch('sina_klines', {
+        captures = [(source or fetch)('sina_klines', {
             'symbol': ('sh' if symbol.startswith('5') else 'sz')+symbol,
             'scale': '240', 'ma': 'no', 'datalen': '63'}) for symbol in symbols]
         raw = store.capture(captures)
