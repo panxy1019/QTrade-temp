@@ -116,7 +116,8 @@ it('distinguishes enabled daily inference from having an approved current predic
 it('shows a historical data gap even while the version scheduler is alive', async () => {
   const state = mount()
   await screen.findByText('982 只当日合格 / 990 只历史保留')
-  state.update({ ...catalog(), data_schedule: { state: 'WAITING', fresh: true, last_cycle_state: 'BLOCKED_MISSED_SESSION_REQUIRES_BACKFILL', required_day: '2026-10-26', data_end: '2026-10-22' } })
+  const next = { ...catalog(), data_schedule: { state: 'WAITING', fresh: true, last_cycle_state: 'BLOCKED_MISSED_SESSION_REQUIRES_BACKFILL', required_day: '2026-10-26', data_end: '2026-10-22' } }
+  state.update(next)
   fireEvent.click(screen.getByRole('button', { name: '刷新模型目录' }))
   await screen.findByText('日版本调度：存在断档，需要补齐后再推进')
   expect(screen.getByText(/运行中的调度进程不等于当天数据已经验收/)).toBeInTheDocument()
