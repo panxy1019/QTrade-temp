@@ -288,6 +288,29 @@ def forward_books(response: Response) -> dict[str, Any]:
                 'service_fresh': False, 'publication': None}
 
 
+@router.get('/etf-forward')
+def etf_forward(response: Response) -> dict[str, Any]:
+    from qtrade.research.etf_shadow_publication import validate_etf_shadow_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        now = datetime.now(UTC)
+        result = validate_etf_shadow_publication(
+            read_public('etf-forward.json', maximum=1_000_000), now=now)
+        stamp = datetime.fromisoformat(result['heartbeat_at'])
+        fresh = result['state'] not in {'STOPPED', 'FAILED'} and 0 <= (
+            now-stamp).total_seconds() <= 720
+        current = fresh and any(
+            row['target']['bindings']['as_of'] == research_clock()
+            and datetime.fromisoformat(row['target']['bindings']['expected_execution_at']) > now
+            for row in result['entries'])
+        return {**AUTHORITY, 'publication_available': True,
+                'service_fresh': fresh, 'current_target': current, 'publication': result}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False,
+                'service_fresh': False, 'current_target': False, 'publication': None}
+
+
 @router.get('/strategy-comparison')
 def strategy_comparison(response: Response) -> dict[str, Any]:
     from qtrade.research.strategy_comparison import validate_comparison_publication

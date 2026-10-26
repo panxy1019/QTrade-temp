@@ -43,7 +43,8 @@ it('shows prospective target timestamps and keeps paper recovery explicit withou
   expect(screen.getByText('PAPER 已停止接收新风险；需要人工对账与显式恢复')).toBeInTheDocument()
   expect(screen.getByText('LIVE_TRADING_ENABLED=false')).toBeInTheDocument()
   expect(screen.queryByRole('button', { name: /恢复|下单/ })).not.toBeInTheDocument()
-  expect(fetcher.mock.calls[0]).toEqual(['/api/research/online/forward-books', { cache: 'no-store', credentials: 'same-origin' }])
+  expect(fetcher).toHaveBeenCalledWith('/api/research/online/forward-books', { cache: 'no-store', credentials: 'same-origin' })
+  expect(fetcher).toHaveBeenCalledWith('/api/research/online/etf-forward', { cache: 'no-store', credentials: 'same-origin' })
 })
 
 it('positions route opens actual holdings rather than target weights', async () => {

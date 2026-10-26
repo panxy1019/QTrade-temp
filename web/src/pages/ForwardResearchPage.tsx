@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Alert, Button, Card, Descriptions, Empty, Select, Space, Table, Tabs, Tag, Typography } from 'antd'
 import { JsonExportButton } from '../components/JsonExportButton'
 import { workflowGet } from '../research/qlibWorkflow'
+import { EtfShadowPanel } from '../components/EtfShadowPanel'
 
 type Focus = 'overview' | 'holdings' | 'fills' | 'risk'
 interface Holding { instrument: string; quantity: number }
@@ -200,5 +201,6 @@ export function ForwardResearchPage({ focus = 'overview' }: { focus?: Focus }) {
       {!!publication.errors.length && <Alert type="warning" title="部分账本未能更新" description={publication.errors.map(row => `${row.strategy_id ?? '服务'} / ${row.mode ?? '观察'}: ${row.code}`).join('；')} />}
       {publication.limitations.map(reason => <Typography.Paragraph key={reason}>{reason}</Typography.Paragraph>)}
     </>}
+    {focus === 'overview' && <EtfShadowPanel />}
   </Space>
 }

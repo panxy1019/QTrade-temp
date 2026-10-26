@@ -17,7 +17,8 @@ describe('daily research signal observations', () => {
     expect(await screen.findByText('SH600001')).toBeInTheDocument()
     expect(screen.getByText('1.900%')).toBeInTheDocument()
     expect(screen.getByText('指示权重（非持仓）')).toBeInTheDocument()
-    expect(screen.getByText(/尚未形成已执行持仓/)).toBeInTheDocument()
+    expect(screen.getByText(/指示权重不代表委托、成交或 PAPER 准入/)).toBeInTheDocument()
+    expect(screen.queryByText(/当前尚无统一历史策略对照结果/)).not.toBeInTheDocument()
     expect(workflowGet).toHaveBeenCalledWith('/online/signals?strategy=momentum20&offset=0&limit=50')
   })
   it('keeps expired archives visible with a clear current-input block', async () => {

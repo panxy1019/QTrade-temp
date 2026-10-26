@@ -3559,3 +3559,29 @@ daily proof or indefinitely block current collection. Failed terminal rows do
 not certify price coverage. Preserve source backoff, disk reserve, data epoch
 checks and human model/PAPER recovery gates. LIVE_TRADING_ENABLED=false.
 
+## ADR-172 — ETF trend targets use a separate non-executing SHADOW channel
+
+Status: accepted, 2026-10-27.
+
+The original Phase E calls for ETF trend rotation, not just close-price scores.
+Reuse MomentumAllocation and the immutable raw-replayed ETF diagnostic to define
+an explicit positive-trend, TopK/equal-weight contract and next-session target.
+Keep ETF source/contract identities separate from adjusted stock model inputs.
+Existing stock forward records require stock accounting and execution fields;
+coercing ETF observations into those records would misstate their authority.
+
+Use a separate bounded, supervised ETF SHADOW service and publication channel.
+It reads existing archives, persists prospective target/admission and subsequent
+source observations, and never constructs stock runtimes, gateways or recovery
+requests. Target durability must be proven before the next open; interrupted or
+late writes cannot become admitted merely because a target file exists. Reuse
+the reviewed source validators, filesystem leases and immutable evidence rather
+than introduce a vn.py gateway, which does not supply the missing ETF rules.
+
+ETF fees, lot sizes, settlement, limits, distributions and adjustments remain
+uncertified. Orders/fills/holdings stay empty; cash/NAV/portfolio returns stay
+null. Historical ETF comparison requires a separate same-cohort source audit;
+old strategy curves cannot be relabeled as the new contract. Read-time heartbeat
+and source/session checks distinguish current targets from retained history.
+LIVE_TRADING_ENABLED=false; stock PAPER human recovery is unaffected.
+
