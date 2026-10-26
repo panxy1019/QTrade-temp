@@ -24,6 +24,12 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+D read-only candidate validation audit is independently reviewed with 25 passing
+local tests and the three reproduced review findings fixed. It checks actual
+archives, later-input validation job/proof registration and unchanged ACTIVE
+approval, without certifying automatic training or current-serving admission.
+Linux reproduction and the actual next-session candidate transition remain open.
+
 The C proxy compatibility fix 8b924ea passes 78 local checks and an actual local
 five-response production observation, with valid stable current catalogs.
 See docs/evidence/qlib-c-public-transport-8b924ea.json. This resolves local network

@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-27
 
+- D later-input candidate auditor is implemented and independently reviewed.
+  Its 25 targeted tests, Ruff and focused mypy pass locally. Review regressions
+  cover concurrent ACTIVE-row changes, forged automatic-training attribution,
+  and future/inverted ACTIVE registration clocks. It reads existing raw archives
+  and short SQLite snapshots only, never schedules or activates a model.
+  Real candidate 29589b44 is still TRAINED with zero activations; approved
+  LightGBM remains ACTIVE. Actual later-session validation is not accepted.
+  See docs/QLIB_CANDIDATE_TRANSITION_AUDIT.md; Linux integration follows.
+
 - C transport compatibility is fixed at 8b924ea: existing credential-free
   system/environment HTTPS proxies are accepted with bounded GET-only requests.
   All 78 focused local checks pass. Five actual production responses were
