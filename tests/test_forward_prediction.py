@@ -30,6 +30,15 @@ def test_fresh_contract_binds_lineage_real_end_and_next_open_without_claiming_re
     assert result['external_order_transmission'] is False
 
 
+def test_old_frozen_model_can_follow_a_verified_chain_of_new_daily_versions(inputs):
+    model, trained, current, data_version, calendar = inputs
+    current['parent_dataset_sha256'] = 'f'*64
+    current['ancestor_dataset_sha256'] = ['f'*64, trained['evidence_sha256']]
+    result = inference_contract(model, trained, current, data_version, calendar,
+                                now=datetime(2026, 10, 26, 12, tzinfo=UTC))
+    assert result['model_bundle_sha256'] == model['evidence_sha256']
+
+
 @pytest.mark.parametrize('change', ['ancestor', 'precision', 'date', 'training_end'])
 def test_wrong_lineage_or_old_precision_cannot_produce_a_forward_contract(inputs, change):
     model, trained, current, data_version, calendar = deepcopy(inputs)

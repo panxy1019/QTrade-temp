@@ -187,6 +187,10 @@ def copy_dataset(
         'requested_symbols': len(stocks), 'accepted_symbols': len(stocks),
         'failures': [], 'parent_failures': base.get('failures', []),
         'parent_dataset_sha256': base['evidence_sha256'],
+        'ancestor_dataset_sha256': list(dict.fromkeys([
+            base['evidence_sha256'], *base.get('ancestor_dataset_sha256', []),
+            *([base['parent_dataset_sha256']] if 'parent_dataset_sha256' in base else []),
+        ])),
         'incremental': {
             'preparation_request_sha256': request['evidence_sha256'], 'current_symbols': current,
             'blocked_symbols': sorted({r['symbol'] for r in stocks}-set(current)),
