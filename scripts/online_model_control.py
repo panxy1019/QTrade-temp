@@ -23,6 +23,7 @@ class OnlineModels:
     def __init__(self, base: Path, database: Path, data_database: Path):
         self.base = base.resolve()
         self.root = self.base/'online-research/control'
+        self.root.mkdir(parents=True, exist_ok=True)
         self.registry = ModelRegistry(database)
         self.data_database = data_database
 
@@ -133,7 +134,8 @@ class OnlineModels:
             return self.registry.apply(command, current_data_version=data['version_id'],
                                        now=final_clock)
 
-    def publication(self, revision: str, *, now: datetime) -> dict[str, Any]:
+    def publication(self, revision: str, *, now: datetime,
+                    worker_state: str = 'IDLE') -> dict[str, Any]:
         state = self.registry.snapshot()
         data = None
         data_error = None
@@ -168,7 +170,8 @@ class OnlineModels:
             )}})
         return signed({**AUTHORITY, 'schema_version': 'qtrade.online-catalog.v1',
             'published_at': now.isoformat(), 'worker': {'heartbeat_at': now.isoformat(),
-                'source_revision': revision, 'state': 'MODEL_CONTROL_READY'},
+                'source_revision': revision,
+                'state': 'MODEL_CONTROL_READY' if worker_state == 'IDLE' else worker_state},
             'data_version': data, 'data_error': data_error, 'active_model': state['active_model'],
             'models': models, 'validations': validations,
             'commands': state['commands'], 'events': state['events'],

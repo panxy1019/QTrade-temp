@@ -275,11 +275,17 @@ class Worker:
         )
         write_json_atomic(self.public / "workflow.json", value)
         write_json_atomic(self.public/'online.json',
-                          self.online.publication(self.revision, now=datetime.now(UTC)))
+                          self.online.publication(self.revision, now=datetime.now(UTC),
+                                                  worker_state=state))
         # A consistent local-SQLite backup on NFS, never the active database.
         with sqlite3.connect(self.root / "catalog-backup.sqlite.tmp") as backup:
             self.db.backup(backup)
         (self.root / "catalog-backup.sqlite.tmp").replace(self.root / "catalog-backup.sqlite")
+        with sqlite3.connect(self.online.registry.database) as model_source:
+            with sqlite3.connect(self.online.root/'catalog-backup.sqlite.tmp') as backup:
+                model_source.backup(backup)
+        (self.online.root/'catalog-backup.sqlite.tmp').replace(
+            self.online.root/'catalog-backup.sqlite')
 
     def execute(self, identity: str, request: dict[str, Any]) -> None:
         if identity in self.cancellations:

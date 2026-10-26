@@ -96,3 +96,12 @@ def test_local_control_index_cannot_escape_base_or_change_immutable_mapping(runt
         (tmp_path/'escape').symlink_to(tmp_path.parent, target_is_directory=True)
         with pytest.raises(ValueError, match='OUTSIDE_LOCAL_ARCHIVE'):
             value.local('escape/file')
+
+
+@pytest.mark.parametrize('state', ['QUEUE_UNAVAILABLE', 'RUNNING'])
+def test_busy_or_disconnected_worker_cannot_advertise_ready_control(runtime, state):
+    value, _, _ = runtime
+    result = value.publication('a'*40, now=NOW, worker_state=state)
+    assert result['worker']['state'] == state
+    assert result['auto_predict']['enabled'] is False
+    assert result['active_model'] is None
