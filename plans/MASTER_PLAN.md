@@ -24,6 +24,11 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+The C proxy compatibility fix 8b924ea passes 78 local checks and an actual local
+five-response production observation, with valid stable current catalogs.
+See docs/evidence/qlib-c-public-transport-8b924ea.json. This resolves local network
+compatibility only; cluster egress and actual next-session acceptance remain open.
+
 Source 429ee53 passes the 54 C audit checks on Linux. Real direct public transport
 fails on cluster and local host; fix compatibility with the existing local system
 proxy and separately resolve cluster egress before claiming public-chain success.

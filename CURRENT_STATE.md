@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-27
 
+- C transport compatibility is fixed at 8b924ea: existing credential-free
+  system/environment HTTPS proxies are accepted with bounded GET-only requests.
+  All 78 focused local checks pass. Five actual production responses were
+  captured on the local host; both current catalogs validate with stable identity
+  and production main 4eade8a, complete day October 26. Evidence:
+  docs/evidence/qlib-c-public-transport-8b924ea.json. This proves current transport,
+  not the October 27 private-to-public transition. Cluster direct egress remains
+  unavailable; global proxy settings and running services were not changed.
+
 - Source 429ee53 also passes all 54 focused tests on Linux, but its actual
   direct HTTPS request to Vercel fails with PUBLIC_DELIVERY_HTTP_FETCH_FAILED
   (OS error 99). The local direct probe times out; local urllib discovers an
