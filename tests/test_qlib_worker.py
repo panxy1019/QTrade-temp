@@ -90,3 +90,26 @@ def test_recovery_does_not_signal_an_unrelated_reused_pid(tmp_path):
         pytest.skip("Linux process identity check")
     with pytest.raises(ValueError, match="UNCERTAIN_CHILD_IDENTITY"):
         worker_module.recover_child(tmp_path)
+
+
+def test_model_control_uses_only_verified_request_channel_and_never_creates_training_job(worker):
+    value, queue = worker
+    calls = []
+    value.online.execute = lambda command, **kw: calls.append(command)
+    identity = 'c'*32
+    payload = {'job_id': identity, 'kind': 'QLIB_MODEL_CONTROL',
+               'live_trading_enabled': False, 'command': {'request_id': identity}}
+    good = seal(payload, value.secret)
+    altered = {**good, 'live_trading_enabled': True}
+    queue.read = lambda: {'requests/'+identity: altered}
+    value.ingest()
+    queue.read = lambda: {'cancellations/'+identity: good}
+    value.ingest()
+    queue.read = lambda: {'requests/'+identity: seal({**payload, 'command': {
+        'request_id': 'd'*32}}, value.secret)}
+    value.ingest()
+    assert calls == []
+    queue.read = lambda: {'requests/'+identity: good}
+    value.ingest()
+    assert calls == [payload['command']]
+    assert value.db.execute('SELECT COUNT(*) FROM jobs').fetchone()[0] == 0

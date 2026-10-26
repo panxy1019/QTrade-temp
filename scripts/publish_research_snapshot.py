@@ -24,6 +24,18 @@ from scripts.run_data_observer import read_report
 REPO = Path(__file__).resolve().parents[1]
 
 
+def online_publication(source: Path) -> dict[str, Any]:
+    from qtrade.api.online_research import unavailable_catalog, validate_catalog
+
+    try:
+        if source.stat().st_size > 3_000_000:
+            raise ValueError('ONLINE_PUBLICATION_TOO_LARGE')
+        return validate_catalog(json.loads(source.read_bytes()))
+    except (ValueError, KeyError, TypeError, OSError, AttributeError):
+        # Optional research state must not stop independent market publication.
+        return unavailable_catalog()
+
+
 def build_snapshot(root: Path, experiment_root: Path) -> dict[str, Any]:
     with urlopen("http://127.0.0.1:8010/data-freshness", timeout=10) as response:
         observer = json.load(response)
@@ -212,6 +224,9 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         write_json_atomic(publication / "unified.json", unified, compact=True)
         current_files.append("unified.json")
     write_json_atomic(publication / "latest.json", snapshot)
+    online_file = workflow_root/'online.json'
+    write_json_atomic(publication/'online.json', online_publication(online_file))
+    current_files.append('online.json')
     (publication / "README.md").write_text(
         "# QTrade public research observations\n\n"
         "Read-only latest market observations and persisted experiment summaries.\n"

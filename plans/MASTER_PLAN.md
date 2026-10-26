@@ -30,6 +30,13 @@ PIT/source repair continues in parallel. Then immutable data events, frozen
 processor restoration, daily prediction, controlled rolling and forward research.
 Each phase needs code, tests, cluster and production evidence, docs and limits.
 
+Model control runtime 978553a passes 819 Linux / 219 frontend checks and actual
+archive-backed candidate registration. Two candidates STAGED, no ACTIVE; worker
+and publisher upgraded, consistent ledger backup verified. Production API and
+browser acceptance remain pending (browser-control tool timeout). Automatic
+data/prediction scheduling and rolling training remain separate unfinished gates.
+See docs/QLIB_MODEL_CONTROL.md and its cluster proof.
+
 Phase C forward-input validation accepted at source 5bb4a93: 779 Linux checks,
 both native models infer 888 supported stocks on the new 2026-10-26 Provider,
 17,814 old references remain stable. Each 15-file result includes 12 bound source

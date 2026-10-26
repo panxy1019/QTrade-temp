@@ -20,6 +20,7 @@ from qtrade.research.source_constraints import PROTOCOL, capture_source
 from qtrade.research.workflow import catalog_envelope, data_audit, digest, validate_spec
 from qtrade.research.workflow_queue import GitQueue, unseal
 from scripts.atomic_json import write_json_atomic
+from scripts.online_model_control import OnlineModels
 
 REPO = Path(__file__).resolve().parents[1]
 TERMINAL = {"COMPLETE", "FAILED", "CANCELLED", "INTERRUPTED", "REJECTED"}
@@ -99,6 +100,8 @@ class Worker:
         self.references: list[dict[str, Any]] | None = None
         self._source_version: str | None = None
         self._source_identity: str | None = None
+        self.online = OnlineModels(base, database.with_name('online-models.sqlite'),
+                                   database.with_name('qlib-versions.sqlite'))
 
     def freeze_source(self) -> str:
         root = self.base / "pit-repair"
@@ -126,6 +129,13 @@ class Worker:
                 value = unseal(envelope, self.secret)
                 if value["job_id"] != identity:
                     raise ValueError("JOB_ID_MISMATCH")
+                if value.get('kind') == 'QLIB_MODEL_CONTROL':
+                    if (not key.startswith('requests/')
+                            or value.get('live_trading_enabled') is not False
+                            or value['command']['request_id'] != identity):
+                        raise ValueError('MODEL_CONTROL_ENVELOPE_INVALID')
+                    self.online.execute(value['command'], now=datetime.now(UTC))
+                    continue
                 if key.startswith("cancellations/"):
                     if value["kind"] != "CANCEL_RESEARCH_JOB":
                         raise ValueError("INVALID_CANCELLATION")
@@ -264,10 +274,21 @@ class Worker:
                     "source_revision": self.revision, "max_job_seconds": 3600},
         )
         write_json_atomic(self.public / "workflow.json", value)
+        write_json_atomic(self.public/'online.json',
+                          self.online.publication(self.revision, now=datetime.now(UTC),
+                                                  worker_state=state))
         # A consistent local-SQLite backup on NFS, never the active database.
         with sqlite3.connect(self.root / "catalog-backup.sqlite.tmp") as backup:
             self.db.backup(backup)
         (self.root / "catalog-backup.sqlite.tmp").replace(self.root / "catalog-backup.sqlite")
+        with (
+            contextlib.closing(sqlite3.connect(self.online.registry.database)) as model_source,
+            contextlib.closing(sqlite3.connect(
+                self.online.root/'catalog-backup.sqlite.tmp')) as backup,
+        ):
+            model_source.backup(backup)
+        (self.online.root/'catalog-backup.sqlite.tmp').replace(
+            self.online.root/'catalog-backup.sqlite')
 
     def execute(self, identity: str, request: dict[str, Any]) -> None:
         if identity in self.cancellations:

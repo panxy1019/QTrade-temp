@@ -1,0 +1,87 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "observed_at": "2026-10-26T13:29:35.081949+00:00",
+  "source_revision": "978553a0472521ff9270d59d149cda150a9e5555",
+  "linux_tests": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "819",
+    "time": "95.493",
+    "timestamp": "2026-10-26T21:27:16.217917+08:00",
+    "hostname": "73ec830048ca"
+  },
+  "worker": {
+    "heartbeat_at": "2026-10-26T13:29:14.568591+00:00",
+    "source_revision": "978553a0472521ff9270d59d149cda150a9e5555",
+    "state": "MODEL_CONTROL_READY"
+  },
+  "data_version": {
+    "version_id": "384ce479913266c3e65798e28a85c22bec3b6d3db90629b2c8928c0c141c83c6",
+    "actual_end": "2026-10-26",
+    "state": "RESEARCH_READY_QUALIFIED_SUBSET",
+    "created_at": "2026-10-26T12:45:48.732538+00:00",
+    "blocked_symbols": [
+      "002827",
+      "600621",
+      "605258",
+      "688018",
+      "688090",
+      "688617",
+      "688690",
+      "688777"
+    ],
+    "historical_pit_certified": false,
+    "external_execution_ready": false,
+    "evidence_sha256": "8d6f381e12775706e851831c21fdb388cdb70c7d79bac7ba43f739682d7577ea",
+    "current_symbols": 982,
+    "historical_symbols": 990,
+    "observation_universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308"
+  },
+  "active_model": null,
+  "models": [
+    {
+      "model_id": "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707",
+      "name": "Alpha158 + Ridge",
+      "state": "STAGED"
+    },
+    {
+      "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "name": "Alpha158 + LightGBM",
+      "state": "STAGED"
+    }
+  ],
+  "validation_counts": [
+    888,
+    888
+  ],
+  "backup": {
+    "integrity": "ok",
+    "states": [
+      [
+        "STAGED",
+        2
+      ]
+    ]
+  },
+  "worker_pid": 147001,
+  "publisher_pid": 147080,
+  "auto_predict": {
+    "enabled": false,
+    "state": "EVENT_WORKER_INTEGRATION_PENDING"
+  },
+  "auto_train": {
+    "mode": "OFF",
+    "state": "ROLLING_INTEGRATION_PENDING"
+  },
+  "production_browser_acceptance": "PENDING",
+  "model_activation_performed": false,
+  "evidence_sha256": "2d976f2ea399828740ff0358bc66d5c935b9f09c160677335ba160f8de33a578"
+}
