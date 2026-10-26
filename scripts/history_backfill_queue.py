@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 from collections import Counter
+from collections.abc import Callable
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -26,6 +27,8 @@ def read_signed(path: Path) -> dict[str, Any]:
 
 class HistoryQueue:
     """All mutation requires the worker's process lease; no SQLite WAL on NFS."""
+
+    source_receipt_committer: Callable[..., None] | None = None
 
     def __init__(self, root: Path, plan: dict[str, Any], master: dict[str, Any]):
         from datetime import date
@@ -203,7 +206,9 @@ class HistoryQueue:
         # The immutable receipt and active claim already exist. Persist vendor-wide
         # backoff before completing the claim; recovery replays this receipt once.
         unseen_source_attempt = self.meta.get("last_source_attempt_id") != attempt["attempt_id"]
-        if unseen_source_attempt and state in {
+        if self.source_receipt_committer is not None:
+            self.source_receipt_committer(receipt, now=now)
+        elif unseen_source_attempt and state in {
                 "LOGIN_FAILED", "SOURCE_QUERY_FAILED", "QUERY_TIMEOUT"}:
             self.meta["global_failures"] += 1
             seconds = min(21600, 1800 * 2 ** min(self.meta["global_failures"] - 1, 4))

@@ -19,6 +19,7 @@ from qtrade.monitoring.data_freshness import signed
 from scripts import audit_history_backfill as audit_module
 from scripts import history_backfill_queue as queue_module
 from scripts import history_backfill_store as store_module
+from scripts import history_source_gate as gate_module
 from scripts import run_history_backfill as runner
 from scripts import run_history_backfill_service as service
 from scripts import unified_store
@@ -39,7 +40,7 @@ def platform_writers(monkeypatch):
     monkeypatch.setattr(unified_store, "_fsync_directory", lambda _: None)
     monkeypatch.setattr(runner, "_fsync_directory", lambda _: None)
     monkeypatch.setattr(audit_module, "worker_lease", lambda *args: nullcontext())
-    for module in (queue_module, store_module, runner, service, audit_module):
+    for module in (queue_module, store_module, gate_module, runner, service, audit_module):
         for name in ("write_json_atomic", "write_json_immutable"):
             original = getattr(module, name, None)
             if original is None:
@@ -588,8 +589,22 @@ def test_child_inherits_writer_lease_and_hard_deadline_releases_it_without_paren
     attempt = claim(queue, store)
     fake = tmp_path / "public_source_fixture"
     fake.mkdir()
+    login_started = fake / "login-started.txt"
+    vendor_lock = tmp_path / "test-vendor-session.lock"
+    # sitecustomize is confined to this child's fixture PYTHONPATH. Exercise real
+    # flock without competing with a production PIT/collector vendor session.
+    (fake / "sitecustomize.py").write_text(
+        "import contextlib\nimport fcntl\nimport scripts.vendor_session\n"
+        "@contextlib.contextmanager\n"
+        "def isolated_session(*, blocking=True):\n"
+        f"    with open({str(vendor_lock)!r}, 'a') as handle:\n"
+        "        fcntl.flock(handle, fcntl.LOCK_EX | (0 if blocking else fcntl.LOCK_NB))\n"
+        "        yield\n"
+        "scripts.vendor_session.baostock_session = isolated_session\n", encoding="utf-8")
     (fake / "baostock.py").write_text(
-        "import time\ndef login():\n    time.sleep(3600)\n", encoding="utf-8")
+        "import time\nfrom pathlib import Path\ndef login():\n"
+        f"    Path({str(login_started)!r}).write_text('started')\n"
+        "    time.sleep(3600)\n", encoding="utf-8")
     env = {**os.environ, "LIVE_TRADING_ENABLED": "false", "QTRADE_BAOSTOCK_FREE_DATA_ACK": "true",
            "PYTHONPATH": os.pathsep.join((str(fake), str(runner.REPO / "src"), str(runner.REPO)))}
     lease_dir = tmp_path / "local-leases"
@@ -604,6 +619,11 @@ def test_child_inherits_writer_lease_and_hard_deadline_releases_it_without_paren
         with pytest.raises(BlockingIOError), runner.worker_lease(lease_dir):
             pass
         assert child.wait(timeout=10) == 124
+        assert login_started.read_text() == "started"
+        import fcntl
+
+        with vendor_lock.open("a") as vendor:
+            fcntl.flock(vendor, fcntl.LOCK_EX | fcntl.LOCK_NB)
         with runner.worker_lease(lease_dir):
             assert Path(lease_dir / "history-backfill.lock").exists()
         assert runner.read_capture(store, attempt)["body_complete"] is False
