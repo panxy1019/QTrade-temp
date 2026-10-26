@@ -73,7 +73,8 @@ docs/evidence/qlib-first-production-prediction-20261026.json。
 实现中：独立政策合同、原生 RollingGen/TrainerR、成熟标签/切分隔离、
 拟合态恢复、已有任务队列中的原子任务声明、登录政策入口与网页审阅。
 运行期默认 OFF；f8ccac3 的 1047 Linux 检查、224 前端检查通过。
-首次实际训练发现 DatasetH handler 恢复参数问题，修复后真实候选正在重验。
+修复 DatasetH handler 恢复参数后真实滚动候选已完成：17,813 行、158 特征
+独立恢复分数差 0、处理器未重拟合。登录政策与后续版本验证队列待生产部署验收。
 候选训练完成只注册 TRAINED，后续新版本输入验证后才可 STAGED，仍不自动激活。
 
 - [ ] 验收后复用 RollingGen/TrainerR，不复制训练算法。
@@ -85,7 +86,8 @@ docs/evidence/qlib-first-production-prediction-20261026.json。
 ## Phase E：因子、策略、PAPER 与网页
 
 初步实现独立信号家族与指示权重；复用 PriceFactorSpec，统一 21 会话输入。
-实际信号封存、统一历史策略对照、持仓/换手/交易约束、PAPER 和页面仍待验收。
+真实数据已封存五组信号，885 只满足共同连续窗口；统一历史策略对照、
+持仓/换手/交易约束、PAPER 和页面仍待验收。
 指示权重不等同于已执行组合，ETF 尚未进入当前股票 Provider。
 
 - [ ] 动量/反转/低波/多因子/等权/ETF 趋势，统一研究合同与变更轴。

@@ -12,6 +12,7 @@ export interface RollingCatalog {
   tasks?: Array<{ job_id: string; state: string; error_code?: string; plan: {
     data_end: string; segments: Record<string, [string, string]>
   } }>
+  validation_tasks?: Array<{ job_id: string; model_id: string; state: string; error_code?: string }>
 }
 const modes = [{ value: 'OFF', label: '关闭自动重训' }, { value: 'DAILY', label: '每 1 个交易会话' }, { value: 'WEEKLY', label: '每 5 个交易会话' }, { value: 'MONTHLY', label: '每 20 个交易会话' }, { value: 'CUSTOM', label: '自定义会话间隔' }]
 
@@ -41,6 +42,10 @@ export function RollingPolicyPanel({ value, authenticated, ready, refresh }: {
       { key: 'model', label: '候选模型', children: value?.policy?.model ?? '未配置' },
       { key: 'day', label: '最近创建任务的数据日', children: value?.last_attempt_day ?? '尚无自动重训尝试' },
     ]} />
+    {!!value?.validation_tasks?.length && <Table rowKey="job_id" dataSource={value.validation_tasks} pagination={{ pageSize: 5 }} columns={[
+      { title: '候选输入验证', dataIndex: 'model_id', render: id => <Typography.Text copyable>{id.slice(0, 16)}</Typography.Text> },
+      { title: '状态', dataIndex: 'state' }, { title: '诊断', dataIndex: 'error_code' },
+    ]} />}
     {notice && <Alert type="info" showIcon title={notice} />}
     <Table rowKey="job_id" dataSource={value?.tasks ?? []} pagination={{ pageSize: 5 }} columns={[
       { title: '任务', dataIndex: 'job_id', render: id => <Typography.Text copyable>{id}</Typography.Text> },

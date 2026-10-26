@@ -49,14 +49,16 @@ def recover_child(job: Path) -> None:
     path = job / "child.json"
     if not path.exists():
         request = job/'request.json'
-        if request.exists() and json.loads(request.read_text()).get('kind') == 'QLIB_ROLLING_JOB':
+        if request.exists() and json.loads(request.read_text()).get('kind') in {
+                'QLIB_ROLLING_JOB', 'QLIB_MODEL_VALIDATION'}:
             # Cover a crash after spawn but before child.json is sealed.
             for proc in Path('/proc').iterdir():
                 if not proc.name.isdigit():
                     continue
                 try:
                     args = (proc/'cmdline').read_bytes().split(b'\0')
-                    match = (b'scripts.run_qlib_rolling' in args and b'--output' in args
+                    match = (any(m in args for m in (b'scripts.run_qlib_rolling',
+                                b'scripts.run_qlib_candidate_validation')) and b'--output' in args
                              and args[args.index(b'--output')+1] == str(job/'output').encode())
                     if match:
                         if os.getpgid(int(proc.name)) != int(proc.name):
@@ -72,7 +74,8 @@ def recover_child(job: Path) -> None:
     command = (proc / "cmdline").read_bytes()
     start = (proc / "stat").read_text().split()[21]
     if start != value["start_ticks"] or not any(module in command for module in (
-        b"scripts.run_qlib_baseline", b"scripts.run_qlib_rolling")) or (
+        b"scripts.run_qlib_baseline", b"scripts.run_qlib_rolling",
+        b'scripts.run_qlib_candidate_validation')) or (
         str(job / "output").encode() not in command
     ):
         raise ValueError("UNCERTAIN_CHILD_IDENTITY_REQUIRES_HUMAN_RECONCILIATION")
@@ -288,6 +291,8 @@ class Worker:
             "SELECT id,request,state,updated,result,error FROM jobs ORDER BY rowid DESC LIMIT 100"
         ):
             request = json.loads(raw)
+            if request.get('kind') == 'QLIB_MODEL_VALIDATION':
+                continue  # Listed with candidate controls, not as a portfolio experiment.
             rolling = request.get('kind') == 'QLIB_ROLLING_JOB'
             rows.append({
                 "experiment_id": identity,
@@ -340,7 +345,23 @@ class Worker:
         write_json_atomic(job / "request.json", request)
         output = job / "output"
         rolling = request.get('kind') == 'QLIB_ROLLING_JOB'
-        if rolling:
+        validation = request.get('kind') == 'QLIB_MODEL_VALIDATION'
+        if validation:
+            from scripts.prepare_qlib_incremental import load_signed
+
+            data = self.online.data_head(verify=False)
+            if (request['data_version_id'] != data['version_id']
+                    or request['source_revision'] != self.revision):
+                self.update(identity, 'REJECTED', error='CANDIDATE_VALIDATION_CONTEXT_CHANGED')
+                return
+            index = load_signed(self.online.root/'models'/(request['model_id']+'.json'))
+            archive = self.online.local(index['archive'])
+            command = [self.python, '-m', 'scripts.run_qlib_candidate_validation',
+                '--archive', str(archive), '--data-root',
+                str(self.base/'unified-data/qlib-versions/versions'/data['version_id']),
+                '--output', str(output), '--model-id', request['model_id'],
+                '--data-version-id', data['version_id']]
+        elif rolling:
             from qtrade.monitoring.data_freshness import Calendar
 
             planned = request['plan']
@@ -382,7 +403,8 @@ class Worker:
                 env={**{k: v for k, v in os.environ.items()
                         if not k.startswith("QTRADE_RESEARCH_")},
                      "PYTHONPATH": str(REPO / "src"),
-                     "LIVE_TRADING_ENABLED": "false", "OMP_NUM_THREADS": '2' if rolling else '6'},
+                     "LIVE_TRADING_ENABLED": "false",
+                     "OMP_NUM_THREADS": '2' if rolling or validation else '6'},
             )
             cleanup.callback(terminate, child)
             write_json_atomic(job / "child.json", {
@@ -394,7 +416,7 @@ class Worker:
             while child.poll() is None:
                 self.predictor.tick(stop=self.stop)
                 if self.stop or identity in self.cancellations or (
-                    time.monotonic() - started > 3600
+                    time.monotonic() - started > (900 if validation else 3600)
                 ):
                     terminate(child)
                     state = "CANCELLED" if identity in self.cancellations else "INTERRUPTED"
@@ -412,6 +434,13 @@ class Worker:
                     self.ingest()
         if child.returncode:
             self.update(identity, "FAILED", error="QLIB_RUN_FAILED_SEE_PRIVATE_CLUSTER_LOG")
+            return
+        if validation:
+            proof = json.loads((output/'result.json').read_text())
+            self.online.import_candidate(archive, output/'validations'/proof['validation_id'],
+                                          now=datetime.now(UTC))
+            self.update(identity, 'COMPLETE', result={'validation_id': proof['validation_id'],
+                        'model_id': request['model_id'], 'data_version_id': data['version_id']})
             return
         status = json.loads((output / "status.json").read_text())
         archive = output / "runs" / status["run_id"]
@@ -440,9 +469,40 @@ class Worker:
         self.rolling.schedule(calendar, data['actual_end'], data['version_id'],
                                self.revision, now=now)
 
+    def schedule_candidate_validation(self) -> None:
+        if (self.stop or self.predictor.child is not None
+                or self.predictor.state not in {'COMPLETE', 'WAITING_FOR_APPROVAL'}):
+            return
+        if self.db.execute("SELECT count(*) FROM jobs WHERE state NOT IN "
+            "('COMPLETE','FAILED','CANCELLED','INTERRUPTED','REJECTED')").fetchone()[0]:
+            return
+        from qtrade.monitoring.data_freshness import Calendar
+
+        now = datetime.now(UTC)
+        data = self.online.data_head(verify=False)
+        if data['actual_end'] != Calendar(REPO/'configs/observer_calendar_2026.json').expected(
+                now, 'daily').date().isoformat():
+            return
+        for model in self.online.registry.snapshot()['models']:
+            definition = model['definition']
+            if model['state'] != 'TRAINED' or data['actual_end'] <= definition['training_data_end']:
+                continue
+            bindings = {'kind': 'QLIB_MODEL_VALIDATION', 'model_id': definition['model_id'],
+                        'data_version_id': data['version_id'], 'source_revision': self.revision}
+            identity = signed(bindings)['evidence_sha256'][:32]
+            request = signed({**AUTHORITY, **bindings, 'job_id': identity})
+            with self.db:
+                created = self.db.execute('INSERT OR IGNORE INTO jobs VALUES(?,?,?,?,NULL,NULL)',
+                    (identity, json.dumps(request), 'QUEUED', now.isoformat()))
+                if created.rowcount:
+                    self.db.execute('INSERT INTO events VALUES(?,?,?)',
+                                     (identity, now.isoformat(), 'QUEUED'))
+                    return
+
     def once(self) -> None:
         self.ingest()
         self.predictor.tick(stop=self.stop)
+        self.schedule_candidate_validation()
         self.schedule_rolling()
         row = self.db.execute(
             "SELECT id,request FROM jobs WHERE state='QUEUED' ORDER BY rowid LIMIT 1"

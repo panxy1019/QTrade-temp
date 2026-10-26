@@ -150,7 +150,9 @@ def validate_catalog(value: dict[str, Any]) -> dict[str, Any]:
         if (training.get('mode') != training['policy']['mode']
                 or training.get('automatic_activation') is not False
                 or not isinstance(training['receipts'], list) or len(training['receipts']) > 50
-                or not isinstance(training['tasks'], list) or len(training['tasks']) > 50):
+                or not isinstance(training['tasks'], list) or len(training['tasks']) > 50
+                or not isinstance(training.get('validation_tasks', []), list)
+                or len(training.get('validation_tasks', [])) > 50):
             raise ValueError('ONLINE_ROLLING_CONTROL_INVALID')
         for receipt in training['receipts']:
             checked_document(receipt)

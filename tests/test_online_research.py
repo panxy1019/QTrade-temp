@@ -99,6 +99,17 @@ def test_training_policy_authenticated_queue_and_stale_policy_rejection(online):
     assert len(sent) == 1
 
 
+@pytest.mark.parametrize('invalid', [None, {}, [{}]*51])
+def test_candidate_validation_publication_is_bounded(online, invalid):
+    from qtrade.research.rolling_policy import default_policy
+
+    http, _, value, _ = online
+    value['auto_train'] = {'mode': 'OFF', 'state': 'CONTROL_READY', 'policy_id': 'b'*64,
+        'policy': default_policy(), 'tasks': [], 'receipts': [], 'automatic_activation': False,
+        'validation_tasks': invalid}
+    assert http.get('/research/online/catalog').json()['publication_available'] is False
+
+
 def test_approval_only_queues_signed_allowlisted_action_and_actor_is_session_bound(online):
     http, password, value, sent = online
     login(http, password)

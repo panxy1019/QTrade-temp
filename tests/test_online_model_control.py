@@ -119,3 +119,38 @@ def test_daily_schedule_does_not_equate_live_process_with_qualified_data(runtime
     schedule = value.publication('a'*40, now=NOW)['data_schedule']
     assert schedule['fresh'] is True
     assert schedule['last_cycle_state'] == 'BLOCKED_MISSED_SESSION_REQUIRES_BACKFILL'
+
+
+@pytest.mark.parametrize('damage', [None, 'fit_methods_forbidden',
+    'fitted_processors_unchanged', 'bundle_sha256'])
+def test_trained_import_requires_restore_proof_and_never_promotes(runtime, monkeypatch, damage):
+    value, _, _ = runtime
+    original = value.registry.snapshot()['models'][0]['definition']
+    summary = {**original, 'run_id': 'new-rolling-run', 'model': 'LightGBM',
+        'data_end': '2026-10-26', 'dataset_sha256': 'd'*64,
+        'source_revision': 'c'*40, 'completed_at': NOW.isoformat(), 'segments': {},
+        'portfolio': {}, 'cost_assumptions': {}, 'metrics': {}, 'limitations': [],
+        'source_snapshot_sha256': 'e'*64}
+    restore = signed({**AUTHORITY, 'bundle_sha256': 'b'*64,
+        'state': 'PARITY_VERIFIED_NOT_ACTIVATED', 'fitted_processors_unchanged': True,
+        'fit_methods_forbidden': True})
+    if damage:
+        restore[damage] = 'c'*64 if damage == 'bundle_sha256' else False
+        restore = signed({k: v for k, v in restore.items() if k != 'evidence_sha256'})
+    monkeypatch.setattr(adapter, 'verify_archive', lambda p: summary)
+    monkeypatch.setattr(adapter, 'verify_bundle', lambda *a: {'evidence_sha256': 'b'*64})
+    load = adapter.load_signed
+    monkeypatch.setattr(adapter, 'load_signed', lambda p: restore if (
+        p.name == 'independent-restore.json') else load(p))
+    archive = value.base/'archives/new'
+    if damage:
+        with pytest.raises(ValueError, match='PROOF_IDENTITY_CHANGED'):
+            value.import_trained(archive, now=NOW)
+        assert len(value.registry.snapshot()['models']) == 1
+    else:
+        assert value.import_trained(archive, now=NOW) == 'b'*64
+        assert value.import_trained(archive, now=NOW) == 'b'*64
+        state = value.registry.snapshot()
+        new = next(m for m in state['models'] if m['definition']['model_id'] == 'b'*64)
+        assert new['state'] == 'TRAINED'
+        assert state['active_model'] is None

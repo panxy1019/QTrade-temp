@@ -117,16 +117,24 @@ class RollingControl:
         current = self.current()
         receipts = [json.loads(row[0]) for row in self.db.execute(
             'SELECT receipt FROM rolling_commands ORDER BY rowid DESC LIMIT 50')]
-        tasks = []
+        tasks: list[dict[str, Any]] = []
+        validations: list[dict[str, Any]] = []
         for identity, raw, state, updated, result, error in self.db.execute(
                 'SELECT id,request,state,updated,result,error FROM jobs ORDER BY rowid DESC'):
             request = json.loads(raw)
+            if request.get('kind') == 'QLIB_MODEL_VALIDATION' and len(validations) < 50:
+                validations.append({'job_id': identity, 'model_id': request['model_id'],
+                    'data_version_id': request['data_version_id'], 'state': state,
+                    'error_code': error, 'updated_at': updated})
             if request.get('kind') != 'QLIB_ROLLING_JOB':
+                continue
+            if len(tasks) >= 50:
                 continue
             tasks.append({'job_id': identity, 'state': state, 'updated_at': updated,
                 'error_code': error, 'plan': request['plan'],
                 'result': json.loads(result) if result else None})
-            if len(tasks) == 50:
+            if len(tasks) == 50 and len(validations) == 50:
                 break
         return {'mode': current['policy']['mode'], 'state': 'CONTROL_READY', **current,
-                'receipts': receipts, 'tasks': tasks, 'automatic_activation': False}
+                'receipts': receipts, 'tasks': tasks, 'validation_tasks': validations,
+                'automatic_activation': False}
