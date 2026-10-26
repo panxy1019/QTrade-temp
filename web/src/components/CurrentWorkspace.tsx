@@ -1,5 +1,5 @@
 import { Alert, Button, Card, Form, InputNumber, Select, Space, Tabs, Typography } from 'antd'
-import { createContext, lazy, Suspense, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { loadCurrentDatasets, loadCurrentSeries, runSingleStockFiveMinuteBacktest } from '../api/client'
 import type { CurrentDataset, CurrentDatasets, HistoricalBarSeries, MinuteBarSeries, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
@@ -9,8 +9,6 @@ import { EquityChart } from '../charts/EquityChart'
 import { BacktestLab } from './BacktestLab'
 import { JsonExportButton } from './JsonExportButton'
 import { PublicResearchObservations } from './PublicResearchObservations'
-
-const QlibBaseline = lazy(() => import('./QlibBaseline').then((module) => ({ default: module.QlibBaseline })))
 
 const CurrentContext = createContext<{ data: CurrentDatasets | null; error: string | null }>({ data: null, error: null })
 
@@ -50,7 +48,6 @@ export function CurrentWorkspace({ mode, platform }: { mode: 'market' | 'backtes
   if (!data) return <Alert type={error ? 'error' : 'info'} showIcon title={error ?? '正在加载当前研究数据…'} />
   const identity = `${data.daily.checksum}:${data.minute.checksum}`
   return <Space orientation="vertical" style={{ width: '100%' }}>
-    {mode === 'backtest' && <Suspense fallback={<Card>正在加载 Qlib 研究基线…</Card>}><QlibBaseline /></Suspense>}
     <Typography.Text type="secondary">当前网页研究范围：{data.daily.universe.symbols.length} ETF 日线 / {data.minute.universe.symbols.length} 股票五分钟。扩容全量历史保存在集群，网页覆盖与集群库存分别列示。</Typography.Text>
     {data.expansion && <Alert type="info" showIcon title={`集群扩容：日频已校验 ${data.expansion.daily.completed} / ${data.expansion.daily.candidate_count ?? '—'} 候选，已选 ${data.expansion.daily.selected ?? '待排名'} / 1000；分钟 ${data.expansion.minute.completed ?? 0} / 400`} description={`日频状态 ${data.expansion.daily.state}；分钟状态 ${data.expansion.minute.state}；持久盘余量 ${data.expansion.free_gib} GiB。完整十年历史仅对上市时间足够的股票成立。`} />}
     {mode === 'market' ? <CurrentCharts key={identity} daily={data.daily} minute={data.minute} intraday={data.intraday} /> : <>

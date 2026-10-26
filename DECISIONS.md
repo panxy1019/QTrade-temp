@@ -3050,3 +3050,29 @@ free-space reserve. A configured target is never a completed coverage claim.
 Full research history stays on the cluster; only bounded web inputs enter the
 public data repository. BaoStock qfq history is rebuilt consistently, never
 spliced with uncertified Sina adjustment semantics. LIVE remains disabled.
+## ADR-165 — Authenticated research submission uses a private outbound queue
+
+Status: accepted, 2026-10-26.
+
+The user selected direct submission after login on the existing Vercel website.
+Use an independent research account and signed HttpOnly/Secure/SameSite cookie;
+never reuse broker, SSH or trading-control credentials. Store only password
+hashes and repository-scoped queue credentials in server-side environment values.
+The new private QTrade-research-queue repository carries bounded signed JSON
+requests and cancellation intents. Pin GitHub's SSH host key; non-force pushes
+provide append conflict detection. The cluster pulls outbound and executes one
+allowlisted model subprocess at a time, with a local SQLite claim catalog, lease,
+timeout, process-identity recovery and explicit interrupted states. Public
+observation publication continues to carry bounded data only. This bootstrap
+has GitHub/CDN availability and roughly five-minute status latency; it is not
+a realtime job service and must eventually be replaced if submission volume grows.
+
+New Ridge/LightGBM experiments share Alpha158 train-fitted preprocessing,
+supported-universe admission, TopkDropout and explicit cost/split contracts.
+The original fixed baseline remains immutable under its different protocol.
+Only equal inputs, source, splits, seed, portfolio and costs may be attributed
+to model differences in the UI. Vendor status backfill is observed now; do not
+invent historical available_at timestamps or certify full PIT. Freeze source
+repair coverage into each new archive; unknown exact trading limits remain
+explicit diagnostic constraints. LIVE_TRADING_ENABLED=false.
+

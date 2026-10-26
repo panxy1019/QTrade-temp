@@ -12,6 +12,8 @@ dependencies = [
   "fastapi>=0.116,<1",
   "pyarrow>=21,<24",
   "uvicorn>=0.35,<1",
+  "dulwich==0.24.10",
+  "paramiko>=3.5,<5",
 ]
 
 [project.optional-dependencies]

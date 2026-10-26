@@ -1,6 +1,15 @@
 # Current state
 
-Last updated: 2026-10-25
+Last updated: 2026-10-26
+
+- Qlib unified workflow implementation is in cluster integration. Research-only
+  cookie authentication, a scoped private Git queue, serial durable worker,
+  Ridge/LightGBM allowlisted configurations, unified pages and per-run audits
+  have been implemented. The user selected direct authenticated Vercel submission.
+  Local focused backend and frontend tests pass; production credentials and
+  end-to-end acceptance are still pending. Do not report the workflow as live.
+  Historical-source backfill and causal admission remain non-certified PIT work.
+  See plans/QLIB_WORKFLOW_INTEGRATION.md and docs/QLIB_WORKFLOW.md.
 
 - Website learning guide completed in docs/learning/README.md: 13 Chinese
   Markdown documents, seven real production screenshots, component index,

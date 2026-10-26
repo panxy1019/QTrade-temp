@@ -99,6 +99,33 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         raise ValueError("PUBLICATION_DESTINATION_MISMATCH")
     snapshot = build_snapshot(root, experiment_root)
     current_files: list[str] = []
+    workflow_root = root.parent / "workflow/public"
+    workflow_catalog = workflow_root / "workflow.json"
+    if workflow_catalog.is_file():
+        workflow = json.loads(workflow_catalog.read_text())
+        if signed({k: v for k, v in workflow.items() if k != "evidence_sha256"}) != workflow:
+            raise ValueError("WORKFLOW_CATALOG_HASH_MISMATCH")
+        for item in workflow["experiments"]:
+            if item.get("state") != "COMPLETE":
+                continue
+            relative = item["detail_file"]
+            import re
+
+            if not re.fullmatch(r"workflow-results/[a-f0-9]{64}\.json", relative):
+                raise ValueError("WORKFLOW_RESULT_PATH_INVALID")
+            value = json.loads((workflow_root / relative).read_text())
+            if (
+                value.get("evidence_sha256") != item["detail_sha256"]
+                or signed({k: v for k, v in value.items() if k != "evidence_sha256"}) != value
+            ):
+                raise ValueError("WORKFLOW_RESULT_HASH_MISMATCH")
+            target = publication / relative
+            target.parent.mkdir(exist_ok=True)
+            if not target.exists():
+                shutil.copyfile(workflow_root / relative, target)
+            current_files.append(relative)
+        write_json_atomic(publication / "workflow.json", workflow)
+        current_files.append("workflow.json")
     from qtrade.research.qlib_publication import build_publication
 
     calendar = json.loads((REPO / "configs/observer_calendar_2026.json").read_text())

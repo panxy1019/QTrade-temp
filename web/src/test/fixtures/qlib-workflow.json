@@ -1,0 +1,142 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.research-workflow.v1",
+  "models": [
+    {
+      "id": "linear",
+      "name": "Ridge 线性模型",
+      "parameters": {
+        "alpha": 1.0
+      }
+    },
+    {
+      "id": "lightgbm",
+      "name": "LightGBM",
+      "parameters": {
+        "learning_rate": 0.05,
+        "num_leaves": 31,
+        "max_depth": 6,
+        "max_rounds": 300,
+        "early_stopping_rounds": 30
+      }
+    }
+  ],
+  "feature_sets": [
+    "Alpha158"
+  ],
+  "portfolio_methods": [
+    "TopkDropout"
+  ],
+  "datasets": [
+    {
+      "id": "daily-liquid-990-20261023",
+      "symbols": 990,
+      "rows": 2157805,
+      "start": "2016-10-24",
+      "end": "2026-10-23",
+      "status": "FROZEN_RESEARCH_DATASET",
+      "audit": {
+        "universe": {
+          "status": "BIASED_CURRENT_SAMPLE",
+          "historical_pit_certified": false,
+          "selection": "2026-10-23 liquidity selection projected into history"
+        },
+        "corporate_actions": {
+          "status": "VENDOR_EFFECTIVE_DATE_NOT_RECONCILED"
+        },
+        "historical_st_and_halts": {
+          "status": "PARTIAL_OR_UNVERIFIED"
+        },
+        "exact_price_limits": {
+          "status": "UNVERIFIED_CONSERVATIVE_PROXY"
+        },
+        "execution": {
+          "status": "DAILY_OPEN_PROXY_WITH_CAUSAL_VOLUME_CAP"
+        },
+        "supported_universe": {
+          "status": "TRAIN_RANK_EXECUTION_ALIGNED_EXCLUDING_STAR"
+        },
+        "limitations": [
+          "CURRENT_LIQUIDITY_UNIVERSE_SURVIVORSHIP_AND_SELECTION_BIAS",
+          "POST_HOC_VIEWED_HISTORY_NOT_UNSEEN_FORWARD_EVIDENCE",
+          "HISTORICAL_ST_AND_EXACT_LIMIT_PRICES_NOT_FULLY_CERTIFIED",
+          "MISSING_QUOTE_NOT_CERTIFIED_SUSPENSION_REASON",
+          "VENDOR_ADJUSTMENTS_NOT_INDEPENDENT_CORPORATE_ACTION_RECONCILIATION",
+          "OPEN_PRICE_AND_PREVIOUS_VOLUME_CAP_NOT_AUCTION_REPLAY"
+        ],
+        "promotion": "NOT_ELIGIBLE"
+      }
+    }
+  ],
+  "default_spec": {
+    "name": "alpha158-lightgbm",
+    "dataset_id": "daily-liquid-990-20261023",
+    "model": "lightgbm",
+    "features": "Alpha158",
+    "segments": {
+      "test": [
+        "2024-01-02",
+        "2026-10-23"
+      ],
+      "train": [
+        "2017-04-05",
+        "2021-12-28"
+      ],
+      "valid": [
+        "2022-01-04",
+        "2023-12-26"
+      ]
+    },
+    "topk": 50,
+    "n_drop": 5,
+    "hold_thresh": 2,
+    "risk_degree": 0.95,
+    "buy_cost_bps": 8,
+    "sell_cost_bps": 13,
+    "min_cost": 5,
+    "initial_cash": 10000000,
+    "seed": 20261026,
+    "universe_policy": "supported_a_share"
+  },
+  "default_linear_spec": {
+    "name": "alpha158-linear",
+    "dataset_id": "daily-liquid-990-20261023",
+    "model": "linear",
+    "features": "Alpha158",
+    "segments": {
+      "test": [
+        "2024-01-02",
+        "2026-10-23"
+      ],
+      "train": [
+        "2017-04-05",
+        "2021-12-28"
+      ],
+      "valid": [
+        "2022-01-04",
+        "2023-12-26"
+      ]
+    },
+    "topk": 50,
+    "n_drop": 5,
+    "hold_thresh": 2,
+    "risk_degree": 0.95,
+    "buy_cost_bps": 8,
+    "sell_cost_bps": 13,
+    "min_cost": 5,
+    "initial_cash": 10000000,
+    "seed": 20261026,
+    "universe_policy": "supported_a_share"
+  },
+  "experiments": [],
+  "worker": {
+    "state": "IDLE"
+  },
+  "publication_available": true
+}
