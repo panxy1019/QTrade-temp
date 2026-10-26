@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-27
 
+- Cluster public GET access is verified through a temporary loopback-only SSH
+  relay using the existing local system proxy. Five actual requests succeed,
+  both current catalogs validate and bind production 34c5118; the forward is
+  closed afterward. No global network settings or services were changed.
+  Evidence: docs/evidence/qlib-cluster-public-tunnel-c5c280f.json; reproduction:
+  docs/QLIB_CLUSTER_PUBLIC_ACCEPTANCE_TRANSPORT.md. This supplies an operator
+  acceptance path, not unattended cluster egress or next-session acceptance.
+
 - PR27 is merged and production now verifies main 34c5118. All eight online
   research routes return available HTTP 200 responses; the current catalog and
   full public ETF historical report/artifacts independently validate. Evidence:

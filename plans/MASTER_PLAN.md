@@ -24,6 +24,13 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+The cluster C public acceptance transport is now verified using a temporary,
+loopback-only SSH relay; five real requests and stable catalog checks pass.
+It closes afterward and requires the local host during acceptance. This resolves
+the operator acceptance route without changing unattended publisher networking.
+See docs/QLIB_CLUSTER_PUBLIC_ACCEPTANCE_TRANSPORT.md. Real next-session, human
+PAPER recovery and rendered visual acceptance remain open.
+
 PR27 production main 34c5118 is verified with all eight available online routes,
 current catalog validation and independent ETF artifact checks. Evidence:
 docs/evidence/qlib-step1-vercel-34c5118.json. This closes the production deployment

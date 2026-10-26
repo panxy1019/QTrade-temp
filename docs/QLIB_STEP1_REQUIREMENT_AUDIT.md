@@ -17,6 +17,8 @@
 
 ## 证据入口
 
+- `evidence/qlib-cluster-public-tunnel-c5c280f.json`：集群通过临时、仅回环的 SSH 通道完成五次公网 GET 与当前目录一致性校验；通道已关闭，仅解决有人值守的验收访问路径，不代表跨日验收通过。
+
 - `evidence/qlib-step1-vercel-34c5118.json`：PR27 实际生产版本、八个可用接口、当前目录与 ETF 公开产物校验；仍未包含渲染视觉和真实下一交易日验收。
 
 - `evidence/qlib-cd-audits-linux-c5c280f.json`：C/D 工具 103 项 Linux 检查通过；D 真实 CLI 检查因候选仍为 TRAINED 而阻断，未激活模型、未重启服务；后续真实版本验证仍待发生。
