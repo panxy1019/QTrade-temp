@@ -24,6 +24,13 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Production API delivery is verified on main 455f396: seven online research routes
+are available, including fresh independent ETF SHADOW and stock forward books.
+The ETF serverless packaging regression is fixed with an isolated route test.
+Evidence: docs/evidence/qlib-step1-vercel-455f396.json. Visual acceptance, original
+ETF historical same-cohort comparison and real next-session acceptance remain
+open; this checkpoint supersedes older API/UI release-pending notes below.
+
 The separate ETF SHADOW contract/service is deployed at 59dc24c with 182 passing
 Linux checks. A real three-ETF target has raw-replay and pre-open durable-admission
 proof; no later observation or portfolio return is claimed. Stock worker/books

@@ -2,6 +2,16 @@
 
 Last updated: 2026-10-27
 
+- Production Vercel now verifies main 455f396 (PR25). All seven online research
+  publication routes return HTTP 200 and available data. Both stock forward and
+  independent ETF SHADOW are fresh; ETF has one current frozen target and no
+  subsequent observation. The serverless import failure is fixed and covered by
+  a fresh-process route test that forbids cluster scripts. This verifies API
+  delivery, not rendered visual acceptance. Evidence:
+  docs/evidence/qlib-step1-vercel-455f396.json. Historical ETF same-cohort source
+  audit continues; actual next-session and human PAPER recovery gates remain.
+  STEP2 has not started; LIVE_TRADING_ENABLED=false.
+
 - At 02:29 Shanghai, separate ETF SHADOW and publication services run 59dc24c.
   One actual October 27 target was durably admitted at 02:28:25: SH512010,
   SH512690 and SH512800, each target weight 0.316666666666. Independent raw replay
