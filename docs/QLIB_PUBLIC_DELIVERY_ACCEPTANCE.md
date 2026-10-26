@@ -28,8 +28,21 @@ reports are preserved, so their recorded check times remain significant.
 The helper makes five fixed-origin GET requests to
 `https://q-trade-temp.vercel.app`: deployment, catalog, data-versions, signals,
 then catalog again. It sends no authentication, cookies or payload, follows no
-redirects, uses no environment proxy credentials, and accepts no origin/path
-override. It has no retries, a 50-second HTTP budget, at most 10 seconds per socket
+redirects, uses no proxy credentials, and accepts no origin/path override.
+It follows urllib's existing system/environment HTTPS proxy discovery, with
+urllib's normal proxy-bypass rules. Only a configured HTTP(S) proxy with a hostname,
+no userinfo, no query/fragment and no path beyond `/` is accepted. Invalid discovery
+or configuration fails before the request; it never silently falls back to direct.
+Other proxy schemes and HTTP/ALL proxy entries are not promoted to the HTTPS route.
+Without an HTTPS proxy, requests use direct connections. TLS verification remains
+the default HTTPS verification, including when using an accepted proxy.
+
+Evidence records only `DIRECT` or `CONFIGURED_CREDENTIAL_FREE_PROXY` configuration
+mode, never the proxy URL, host, port or credentials. This is configuration metadata,
+not proof of the actual socket route: urllib may bypass a configured proxy according
+to existing platform/NO_PROXY settings. The tool does not change those settings.
+
+It has no retries, a 50-second HTTP budget, at most 10 seconds per socket
 operation, and body limits of 16 KB / 3 MB / 1.1 MB / 3 MB respectively. Research
 responses must be HTTP 200 JSON with `Cache-Control: no-store`; the deployment
 endpoint may retain its normal short cache policy.

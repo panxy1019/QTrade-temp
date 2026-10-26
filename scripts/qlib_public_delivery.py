@@ -12,7 +12,8 @@ from http.client import HTTPException
 from pathlib import Path
 from typing import Any
 from urllib.error import URLError
-from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
+from urllib.parse import urlsplit
+from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener, getproxies
 
 from qtrade.api.online_research import validate_catalog
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
@@ -46,6 +47,30 @@ class _NoRedirect(HTTPRedirectHandler):
         return None
 
 
+def _proxy_handler() -> tuple[ProxyHandler, str]:
+    """Follow urllib discovery, but never pass proxy credentials or disclose its URL."""
+    try:
+        configured = getproxies()
+        if 'https' not in configured:
+            return ProxyHandler({}), 'DIRECT'
+        route = configured['https']
+        require(isinstance(route, str) and bool(route) and route == route.strip()
+                and not any(character.isspace() or ord(character) < 32 for character in route),
+                'PROXY_CONFIGURATION_INVALID')
+        parsed = urlsplit(route)
+        require(parsed.scheme.lower() in {'http', 'https'} and bool(parsed.hostname)
+                and parsed.username is None and parsed.password is None
+                and not any(character in parsed.netloc for character in ('@', '%', '\\'))
+                and parsed.path in {'', '/'}
+                and '?' not in route and '#' not in route,
+                'PROXY_CONFIGURATION_INVALID')
+        # Accessing .port also rejects malformed and out-of-range port numbers.
+        require(parsed.port is None or 1 <= parsed.port <= 65535, 'PROXY_CONFIGURATION_INVALID')
+        return ProxyHandler({'https': route}), 'CONFIGURED_CREDENTIAL_FREE_PROXY'
+    except (OSError, ValueError, TypeError, AttributeError):
+        raise ValueError('PUBLIC_DELIVERY_PROXY_CONFIGURATION_INVALID') from None
+
+
 def _get(path: str, deadline: float) -> dict[str, Any]:
     """No credentials, cookies, redirects, arbitrary URLs, retries or write methods."""
     require(path in LIMITS, 'PATH_NOT_ALLOWED')
@@ -56,8 +81,9 @@ def _get(path: str, deadline: float) -> dict[str, Any]:
     request = Request(url, method='GET', headers={
         'Accept': 'application/json', 'Accept-Encoding': 'identity',
         'Cache-Control': 'no-cache', 'User-Agent': 'QTrade-readonly-C-acceptance/1'})
+    proxy, configuration_mode = _proxy_handler()
     try:
-        with build_opener(ProxyHandler({}), _NoRedirect()).open(
+        with build_opener(proxy, _NoRedirect()).open(
                 request, timeout=min(10, remaining)) as response:
             require(response.status == 200 and response.geturl() == url,
                     'HTTP_STATUS_OR_REDIRECT_INVALID')
@@ -88,12 +114,13 @@ def _get(path: str, deadline: float) -> dict[str, Any]:
                     'HTTP_BODY_INCOMPLETE')
             text = raw.decode('utf-8')
             json.dumps(json.loads(text), allow_nan=False)
-    except (OSError, URLError, HTTPException, UnicodeError) as error:
-        raise ValueError('PUBLIC_DELIVERY_HTTP_FETCH_FAILED') from error
+    except (OSError, URLError, HTTPException, UnicodeError):
+        raise ValueError('PUBLIC_DELIVERY_HTTP_FETCH_FAILED') from None
     return {'url': url, 'status_code': 200, 'content_type': content_type,
             'cache_control': cache, 'requested_at': started.isoformat(),
             'received_at': utc_now().isoformat(), 'body_bytes': len(raw),
-            'body_sha256': sha256(raw).hexdigest(), 'body_utf8': text}
+            'body_sha256': sha256(raw).hexdigest(), 'body_utf8': text,
+            'proxy_configuration_mode': configuration_mode}
 
 
 def _authority(value: dict[str, Any]) -> None:

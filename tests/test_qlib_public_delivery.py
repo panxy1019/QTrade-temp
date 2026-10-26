@@ -297,3 +297,72 @@ def test_transport_sends_only_get_without_credentials_and_records_actual_bytes(m
     assert value['body_sha256'] == sha256(b'{ "x": 1 }\n').hexdigest()
     with pytest.raises(ValueError, match='PATH_NOT_ALLOWED'):
         delivery._get('/api/research/online/actions', delivery.time.monotonic()+30)
+
+
+@pytest.mark.parametrize('scheme', ['http', 'https'])
+def test_discovered_credential_free_proxy_is_used_only_for_fixed_https_target(monkeypatch, scheme):
+    route = scheme+'://proxy.invalid:8080/'
+    monkeypatch.setattr(delivery, 'getproxies', lambda: {
+        'https': route, 'http': 'http://ignored.invalid', 'all': 'socks5://ignored.invalid'})
+    calls = []
+    def opener(*handlers):
+        calls.append(handlers)
+        return SimpleNamespace(open=lambda request, **kwargs: Response())
+    monkeypatch.setattr(delivery, 'build_opener', opener)
+    value = delivery._get(delivery.CATALOG, delivery.time.monotonic()+30)
+    proxy, redirect = calls[0]
+    assert proxy.proxies == {'https': route}
+    assert isinstance(redirect, delivery._NoRedirect)
+    assert value['proxy_configuration_mode'] == 'CONFIGURED_CREDENTIAL_FREE_PROXY'
+    assert route not in json.dumps(value) and 'proxy.invalid' not in json.dumps(value)
+    assert redirect.redirect_request(None, None, 302, '', None, 'https://elsewhere.invalid') is None
+
+
+def test_no_discovered_https_proxy_uses_direct_without_promoting_http_or_all(monkeypatch):
+    monkeypatch.setattr(delivery, 'getproxies', lambda: {
+        'http': 'http://ignored.invalid', 'all': 'socks5://ignored.invalid'})
+    proxy, mode = delivery._proxy_handler()
+    assert proxy.proxies == {} and mode == 'DIRECT'
+
+
+@pytest.mark.parametrize('route', [
+    '', None, 'proxy.invalid:8080', 'socks5://proxy.invalid:1080',
+    'http://TEST_ONLY_USER:TEST_ONLY_PASSWORD@proxy.invalid',
+    'http://TEST_ONLY_USER@proxy.invalid', 'http://proxy.invalid?query',
+    'http://proxy.invalid?', 'http://proxy.invalid#fragment', 'http://proxy.invalid#',
+    'http://proxy.invalid/not-root', 'http:///no-host', 'https://',
+    'http://proxy.invalid:99999', 'http://proxy.invalid:bad',
+    ' http://proxy.invalid', 'http://proxy.invalid\n',
+    'http://%75ser%3Apassword%40proxy.invalid', 'http://proxy.invalid\\hidden',
+])
+def test_invalid_proxy_discovery_fails_closed_without_open_or_address_disclosure(
+        monkeypatch, route):
+    monkeypatch.setattr(delivery, 'getproxies', lambda: {'https': route})
+    monkeypatch.setattr(delivery, 'build_opener', lambda *_: pytest.fail('unexpected network'))
+    with pytest.raises(ValueError, match='^PUBLIC_DELIVERY_PROXY_CONFIGURATION_INVALID$') as error:
+        delivery._get(delivery.CATALOG, delivery.time.monotonic()+30)
+    assert error.value.__suppress_context__ is True
+    assert 'proxy.invalid' not in str(error.value) and 'TEST_ONLY' not in str(error.value)
+
+
+def test_proxy_discovery_error_is_sanitized_without_falling_back(monkeypatch):
+    def broken():
+        raise OSError('TEST_ONLY_PRIVATE_PROXY_CONFIGURATION')
+    monkeypatch.setattr(delivery, 'getproxies', broken)
+    with pytest.raises(ValueError, match='^PUBLIC_DELIVERY_PROXY_CONFIGURATION_INVALID$') as error:
+        delivery._proxy_handler()
+    assert error.value.__suppress_context__ is True
+    assert 'TEST_ONLY' not in str(error.value)
+
+
+def test_configured_proxy_keeps_urllib_bypass_semantics(monkeypatch):
+    import urllib.request
+
+    monkeypatch.setattr(delivery, 'getproxies', lambda: {'https': 'http://proxy.invalid:8080'})
+    monkeypatch.setattr(urllib.request, 'proxy_bypass', lambda host: True)
+    proxy, mode = delivery._proxy_handler()
+    request = delivery.Request(delivery.ORIGIN+delivery.CATALOG, method='GET')
+    assert proxy.proxy_open(request, proxy.proxies['https'], 'https') is None
+    assert request.full_url == delivery.ORIGIN+delivery.CATALOG
+    assert not request.has_header('Proxy-authorization')
+    assert mode == 'CONFIGURED_CREDENTIAL_FREE_PROXY'
