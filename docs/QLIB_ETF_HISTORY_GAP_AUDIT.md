@@ -107,6 +107,20 @@ captures = UnifiedBatchStore(archive / 'capture-store').read_captures(receipt['r
 body hashes and source lineage. Preserve each actual request, symbol, received
 clock and body hash. Do not certify rows simply because their JSON is present.
 
+## Actual cluster raw inventory, October 27
+
+A subsequent read-only cluster replay passed `verify_etf_archive` and
+`UnifiedBatchStore.read_captures` for all 30 captures. Every body contains 63
+rows with 63 distinct date strings, from 2026-07-22 through 2026-10-26. All
+bodies expose day/open/high/low/close/volume, without amount. Per-symbol body
+hashes and actual row bounds are preserved in
+`evidence/qlib-etf-raw-inventory-20261027.json`, signed at the actual audit clock.
+This establishes that earlier data exist; it does not yet admit OHLCV values,
+prove the calendar grid or certify legacy overlap. July rows remain outside the
+current verified calendar. The inventory is explicitly `RAW_INVENTORY_ONLY_NOT_OHLCV_ADMISSION`
+and `backtest_ready=false`. The prior local-only conclusions above are preserved
+as provenance; this later evidence resolves only the unknown raw row bounds.
+
 ## Calendar and return-clock limits
 
 The actual checked-in `configs/observer_calendar_2026.json` is valid only from
@@ -227,3 +241,22 @@ print(min(t.column('trading_day').to_pylist()), max(t.column('trading_day').to_p
 ```
 
 No source request, production mutation or new backtest was performed for this audit.
+
+## Read-only history audit command
+
+Run the committed audit tool against an immutable archive and the verified
+calendar. Optional legacy arguments must be supplied together. Redirect stdout
+to a new evidence file outside the source archive; existing evidence must not be
+overwritten. The tool performs no network requests or source writes.
+
+```powershell
+$env:PYTHONPATH='E:/QTrade-git/src;E:/QTrade-git'
+python -m scripts.audit_etf_history --archive <archive-directory> --calendar configs/observer_calendar_2026.json --revision <audit-code-commit> --legacy-manifest <legacy-manifest.json> --legacy-bars <legacy-bars.parquet>
+```
+
+`verify_etf_history_audit` independently recomputes a saved audit against the
+same source paths and calendar. Hash verification alone is insufficient. The
+report fixes the declared cohort, retains per-symbol invalid/missing sessions,
+rejects dates outside the calendar, and exposes the contiguous common grid ending
+at the archive as-of. Legacy overlap is exact OHLCV comparison only; even full
+agreement does not certify adjustments or authorize joining histories.

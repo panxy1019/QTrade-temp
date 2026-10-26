@@ -2,6 +2,49 @@
 
 Last updated: 2026-10-27
 
+- ETF historical public integration is verified at 59894ea using the new b284da5
+  simulation with full per-session OHLCV marks. Report and six artifacts pass
+  independent data-only accounting/target validation and actual raw replay on
+  the cluster; the public envelope is 838,897 bytes. The runner suite has 54
+  passing Linux checks and public integration suite 100, zero failures/skips.
+  Only the read-only publisher was restarted (PID 183766); other process PIDs
+  are unchanged. Frontend 257 tests, build/lint and full src mypy pass. Vercel
+  release and rendered visual acceptance remain pending. Evidence:
+  docs/evidence/qlib-etf-history-public-59894ea.json. Original 18d102e archive is
+  retained; simulation metrics are unchanged. STEP1 remains active.
+
+- Actual ETF historical portfolio simulation completed on cluster source 18d102e:
+  30 fixed ETFs, 21 warmup closes and 34 evaluation sessions; positive20 daily
+  Top3 versus daily fixed-pool equal weight. Every cash/holding/fill/fee/slippage/
+  NAV/P&L ledger reconciles, and immutable rerun is identical. All 51 Linux checks
+  pass without skips. Assumed-cost cumulative returns are -15.6273% and -8.0768%;
+  these short retrospective native-price simulations do not certify performance,
+  adjustments, PIT or PAPER admission. Evidence:
+  docs/evidence/qlib-etf-history-comparison-18d102e.json. Public report validation,
+  API and separate historical UI are under integration, not yet deployed. Actual
+  next-session, manual PAPER recovery and visual acceptance remain open.
+
+- ETF history source audit a830d8a is verified on actual immutable captures:
+  30 ETFs, 55 common continuous admitted sessions (August 3 to October 26),
+  no missing sessions, no amount. Local verified legacy overlap has 450 exact
+  OHLCV pairs and no mismatch; this does not certify source equivalence,
+  adjustments or history stitching. All 24 Linux audit tests pass; cluster raw
+  audit independently replays. No service was restarted. Formal evidence:
+  docs/evidence/qlib-etf-history-audit-a830d8a.json and
+  docs/evidence/qlib-etf-history-linux-a830d8a.json. Full assumption-based
+  historical portfolio comparison remains under development; source audit alone
+  does not complete Phase E or establish next-session performance.
+
+- Production Vercel now verifies main 455f396 (PR25). All seven online research
+  publication routes return HTTP 200 and available data. Both stock forward and
+  independent ETF SHADOW are fresh; ETF has one current frozen target and no
+  subsequent observation. The serverless import failure is fixed and covered by
+  a fresh-process route test that forbids cluster scripts. This verifies API
+  delivery, not rendered visual acceptance. Evidence:
+  docs/evidence/qlib-step1-vercel-455f396.json. Historical ETF same-cohort source
+  audit continues; actual next-session and human PAPER recovery gates remain.
+  STEP2 has not started; LIVE_TRADING_ENABLED=false.
+
 - At 02:29 Shanghai, separate ETF SHADOW and publication services run 59dc24c.
   One actual October 27 target was durably admitted at 02:28:25: SH512010,
   SH512690 and SH512800, each target weight 0.316666666666. Independent raw replay

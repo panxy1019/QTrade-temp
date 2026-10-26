@@ -48,6 +48,17 @@ def etf_shadow_publication(source: Path) -> dict[str, Any]:
         return signed({**AUTHORITY, 'state': 'NO_VERIFIED_ETF_SHADOW_PUBLICATION'})
 
 
+def etf_history_publication(source: Path) -> dict[str, Any]:
+    from qtrade.research.etf_history_publication import validate_etf_history_publication
+
+    try:
+        if source.is_symlink() or source.stat().st_size > 3_000_000:
+            raise ValueError('ETF_HISTORY_PUBLICATION_TOO_LARGE')
+        return validate_etf_history_publication(json.loads(source.read_bytes()))
+    except (OSError, ValueError, KeyError, TypeError):
+        return signed({**AUTHORITY, 'state': 'NO_VERIFIED_ETF_HISTORY_PUBLICATION'})
+
+
 def build_snapshot(root: Path, experiment_root: Path) -> dict[str, Any]:
     with urlopen("http://127.0.0.1:8010/data-freshness", timeout=10) as response:
         observer = json.load(response)
@@ -286,13 +297,17 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
     write_json_atomic(publication/'etf-forward.json',
                       etf_shadow_publication(workflow_root/'etf-forward.json'), compact=True)
     current_files.append('etf-forward.json')
+    write_json_atomic(publication/'etf-history.json',
+                      etf_history_publication(workflow_root/'etf-history.json'), compact=True)
+    current_files.append('etf-history.json')
     (publication / "README.md").write_text(
         "# QTrade public research observations\n\n"
         "Read-only latest market observations and persisted experiment summaries.\n"
         "Public-source historical data, non-PIT, not trading or promotion authority.\n"
         "Bounded current-chart Parquet is public; full research archives stay on the cluster.\n"
         "Published every five minutes; consumers must check source clocks and publication age.\n"
-        "No credentials, accounts, order state or arbitrary executable code are published.\n"
+        "Historical simulation ledgers are explicitly labeled and carry no execution authority.\n"
+        "No credentials, live account state or arbitrary executable code are published.\n"
     )
     commands = [
         ["add", "--", "latest.json", "README.md", *current_files],
