@@ -2,6 +2,20 @@
 
 Last updated: 2026-10-27
 
+- STEP1 runtime checkpoint at 01:23 Shanghai: research worker, publisher, daily
+  version service and new prospective forward service run source 19cbb2a. Approved
+  LightGBM prediction is RUNNING; forward books are not frozen until current
+  prediction/signals become available. Dedicated ETF diagnostics source 1233c2f
+  adopted the actual October 26 archive (30/30) without additional source requests;
+  its supervised service is installed. Existing unrelated process PIDs are preserved.
+  Source 658d3d3 passes 1,299 Linux tests with zero failures/skips; subsequent
+  comparison/discovery fixes pass 55 Linux tests and ETF service passes 52.
+  Full local src typecheck (137 files), frontend lint and 248 frontend tests pass.
+  Archive publication now preserves explicit V1 or V2 historical constraint policy.
+  Evidence: docs/evidence/qlib-step1-integration-658d3d3.json. Vercel release, actual
+  prospective freeze and next-session acceptance remain pending. Older checkpoints
+  below describe earlier states, not the current deployment.
+
 - STEP1 integration checkpoint: actual native seven-strategy comparison completed
   on 601,013 common rows and 678 sessions (2024-01-02 through 2026-10-23).
   Thirty ETFs have verified 21-session native-close diagnostic inputs through

@@ -1,0 +1,47 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "observed_at": "2026-10-26T17:18:34.548659+00:00",
+  "test_revision": "658d3d3c2ce4baa354ef76cdc7681d2cdedf0b38",
+  "linux_suite": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "1299",
+    "time": "124.036",
+    "timestamp": "2026-10-27T01:14:34.403647+08:00",
+    "hostname": "73ec830048ca"
+  },
+  "archive_verifier_revision": "8c048c8b51d39609b6ea618817a869d764c25b4b",
+  "comparison_pointer": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "comparison_id": "f6b9e52b1c30c4f46e0733d02bb4e800450a9acbb67a8954d63a2bb857dde943",
+    "evidence_sha256": "f6280d1df98e14a8faa38f4ab4af3e0337c53f56fd5c2a6ac8d53899351123a0"
+  },
+  "etf_pointer": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "diagnostic_id": "b3cd61f630c17146a4c2d3b0fa3060a3e1b98ff8faf3735387a3f24b196296d4",
+    "evidence_sha256": "cdfc3df392dc9ba472374d7b9cf6a043cd961dc53507b20712105da2dcca1d40"
+  },
+  "production_deployed": false,
+  "next_session_accepted": false,
+  "evidence_sha256": "ddd3897cbc3a41c89af256d1479eabab8f64c429b0029bac4e1d18b2b6244494"
+}

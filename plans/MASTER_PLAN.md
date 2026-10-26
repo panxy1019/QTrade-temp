@@ -24,6 +24,11 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Cluster runtime is now 19cbb2a plus the independent ETF service 1233c2f. Full
+Linux integration (1,299 checks) and focused subsequent fixes pass. Initial
+native archive pointers are verified; prospective targets await current prediction
+and signals. Vercel release and genuine next-session acceptance remain open.
+
 Native comparison and ETF diagnostic evidence are captured in
 docs/evidence/qlib-step1-initial-native-20261027.json. New forward service/core/UI
 and data control integration pass local checks; Linux acceptance and deployment
