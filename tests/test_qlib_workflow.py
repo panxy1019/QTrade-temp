@@ -71,6 +71,19 @@ def test_queue_client_binds_the_pinned_vendor_without_system_ssh_fallback(monkey
     assert (client.host, client.port, client.username) == ("ssh.github.com", 443, "git")
 
 
+def test_malformed_queue_file_does_not_block_other_valid_jobs(monkeypatch):
+    queue = GitQueue("test-only-key", "ssh-ed25519 test-only-host")
+
+    def checkout(path):
+        (path / "requests").mkdir(parents=True)
+        for name, value in (("a", "[]"), ("b", "invalid json"), ("c", '{"valid":true}')):
+            (path / "requests" / (name * 32 + ".json")).write_text(value)
+        return type("Repo", (), {"close": lambda self: None})()
+
+    monkeypatch.setattr(queue, "checkout", checkout)
+    assert queue.read() == {"requests/" + "c" * 32: {"valid": True}}
+
+
 def test_future_liquidity_cannot_rewrite_earlier_admission_and_star_is_excluded():
     calendar = ["2020-01-02", "2020-01-03", "2020-01-06"]
     stocks = {
@@ -189,3 +202,28 @@ def test_unavailable_worker_never_silently_accepts_tasks(client, monkeypatch):
     assert http.post(
         "/research/jobs", json={"request_id": "b" * 32, "spec": default_spec()}
     ).status_code == 503
+
+
+def test_catalog_exposes_stale_worker_without_hiding_immutable_results(client, monkeypatch):
+    http, _ = client
+    monkeypatch.setattr(api, "read_public", lambda *_: {
+        "schema_version": api.SCHEMA, "worker": {"heartbeat_at": "2020-01-01T00:00:00+00:00"},
+        "experiments": [{"experiment_id": "preserved", "state": "COMPLETE"}],
+    })
+    value = http.get("/research/catalog").json()
+    assert value["publication_available"] is True
+    assert value["worker_fresh"] is False
+    assert value["experiments"][0]["experiment_id"] == "preserved"
+
+
+def test_result_cannot_be_misbound_to_another_experiment(client, monkeypatch):
+    http, _ = client
+    listing = {"schema_version": api.SCHEMA, "experiments": [{
+        "experiment_id": "requested", "state": "COMPLETE",
+        "detail_file": "workflow-results/" + "a" * 64 + ".json", "detail_sha256": "a" * 64,
+    }]}
+    result = {"evidence_sha256": "a" * 64, "schema_version": "qtrade.workflow-result.v1",
+              "experiment_id": "another", "engine": "QLIB", "state": "COMPLETE"}
+    monkeypatch.setattr(api, "read_public", lambda path: listing if path == "workflow.json"
+                        else result)
+    assert http.get("/research/experiments/requested").status_code == 503

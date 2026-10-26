@@ -6,8 +6,13 @@ Last updated: 2026-10-26
   cookie authentication, a scoped private Git queue, serial durable worker,
   Ridge/LightGBM allowlisted configurations, unified pages and per-run audits
   have been implemented. The user selected direct authenticated Vercel submission.
-  Local focused backend and frontend tests pass; production credentials and
-  end-to-end acceptance are still pending. Do not report the workflow as live.
+  Two authenticated local API requests traversed the real private queue and
+  completed immutable cluster archives (11,911 files each): Ridge and LightGBM,
+  891 supported stocks, matching inputs/protocol/source. Frontend 201 tests and
+  the Linux full suite pass. Production credentials and final browser submission
+  are still pending. Do not report Vercel submission as live.
+  The first source pass captured 9,022 master rows and 13/20 stocks' historical
+  status (31,577 rows), with seven failures retained rather than certified.
   Historical-source backfill and causal admission remain non-certified PIT work.
   See plans/QLIB_WORKFLOW_INTEGRATION.md and docs/QLIB_WORKFLOW.md.
 

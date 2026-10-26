@@ -14,18 +14,23 @@ function Layout({ title, description, children }: { title: string; description: 
     <Typography.Text type="secondary">{description}</Typography.Text>
     {error && <Alert type="error" showIcon title={error} />}
     {catalog && !catalog.publication_available && <Alert type="warning" showIcon title="集群研究目录尚不可用" description="可以查看已开放配置；执行状态和实验结果不可用时不以旧成功状态代替。" />}
+    {catalog?.publication_available && catalog.worker_fresh === false && <Alert type="error" showIcon title="集群任务心跳已过期，提交入口关闭；已归档结果仍可查阅" />}
     <Typography.Text type="secondary">任务由集群串行执行，状态约每五分钟发布；网页每15秒核对。旧ETF和75股分钟研究已移至历史工作区。</Typography.Text>
     {children}
   </Space>
 }
 
 function Audit({ audit }: { audit: ResearchAudit }) {
+  const coverage = audit.source_repair_coverage as {
+    state?: string; status_symbols?: number; input_symbols?: number; status_rows?: number;
+    master_rows?: number;
+  } | undefined
   return <Card size="small" title="数据与交易约束审计">
     <Space orientation="vertical" style={{ width: '100%' }}>
       <Space wrap><Tag color="orange">非完整历史PIT</Tag><Tag>不可晋级</Tag><Typography.Text>{audit.universe.status}</Typography.Text></Space>
       <Typography.Text>{(audit.supported_universe as { status?: string })?.status === 'TRAIN_RANK_EXECUTION_ALIGNED_EXCLUDING_STAR' ? '新工作流训练/排名/投资范围对齐，使用完成历史做动态资格与流动性选择；样本本身的幸存者偏差尚未消除。' : '原基线存在训练与可投资范围差异；其结果作为独立协议档案保留。'}</Typography.Text>
       {audit.limitations.map(reason => <Typography.Text key={reason}>• {limitationLabels[reason] ?? reason}</Typography.Text>)}
-      {audit.source_repair_coverage != null && <Typography.Paragraph>本实验冻结的PIT修复覆盖：<pre>{JSON.stringify(audit.source_repair_coverage, null, 2)}</pre></Typography.Paragraph>}
+      {coverage && <Typography.Paragraph>本实验冻结的PIT修复覆盖：{coverage.status_symbols != null ? `状态回填${coverage.status_symbols}/${coverage.input_symbols ?? '—'}股、${coverage.status_rows?.toLocaleString() ?? '—'}行；来源主表${coverage.master_rows?.toLocaleString() ?? '—'}条。尚未用于精确规则回测，历史可得性待核验。` : '运行时没有已冻结的修复覆盖证据；不据此推断状态已认证。'} 完整来源摘要随实验JSON导出。</Typography.Paragraph>}
     </Space>
   </Card>
 }
@@ -139,7 +144,7 @@ export function QlibResearchPage() {
           <Form.Item name="seed" label="随机种子" rules={[{ required: true }]}><InputNumber min={0} max={2147483647} /></Form.Item>
         </div>
         <Alert type="info" title="固定合同：Alpha158＋训练期拟合归一化，下一交易日开盘，TopkDropout，前日量1%容量；分区边界须隔离未来标签。" description="已有历史已被查看，所有结果保持事后研究诊断。模型超参数采用已声明固定配置，当前表单不进行无界搜索。" />
-        <Button style={{ marginTop: 16 }} type="primary" htmlType="submit" loading={busy} disabled={!session.authenticated || !catalog?.publication_available}>提交集群研究任务</Button>
+        <Button style={{ marginTop: 16 }} type="primary" htmlType="submit" loading={busy} disabled={!session.authenticated || !catalog?.publication_available || catalog.worker_fresh === false}>提交集群研究任务</Button>
       </Form>
       {requestId && <Typography.Paragraph copyable>幂等请求ID：{requestId}</Typography.Paragraph>}
       {error && <Alert type="error" showIcon title={error} description="规格未改变时重试沿用同一请求ID，避免重复计算。" />}
@@ -203,6 +208,7 @@ function Result({ result }: { result: WorkflowResult }) {
   return <Space orientation="vertical" style={{ width: '100%' }} size="large">
     <Card title={result.model + ' · ' + result.run_id}>
       <Typography.Paragraph>组合评价 {result.portfolio_evaluation.start}—{result.portfolio_evaluation.end}；IC标签 {result.signal_evaluation.start}—{result.signal_evaluation.end}。输入数据截至{result.data_end}。</Typography.Paragraph>
+      <Typography.Paragraph>实际资格区间覆盖{result.symbols}只股票，{result.feature_count}个特征；每日可用股票数随已完成历史和成交额变化。完整资格区间保存在集群实验审计中。</Typography.Paragraph>
       <Space wrap size="large">{[
         ['累计收益', percent(metrics.total_return_net)], ['年化收益', percent(metrics.annual_return_net)],
         ['Sharpe', number(metrics.sharpe_net)], ['最大回撤', percent(metrics.max_drawdown)],

@@ -70,6 +70,10 @@ def known_state(
         raise ValueError("TIMEZONE_REQUIRED")
     if evidence.get("symbol") != symbol or evidence.get("date") != day:
         raise ValueError("STATE_IDENTITY_MISMATCH")
+    if not isinstance(evidence.get("available_at"), str) or not isinstance(
+        evidence.get("observed_at"), str
+    ):
+        raise ValueError("STATE_AVAILABILITY_UNKNOWN")
     available = datetime.fromisoformat(evidence["available_at"])
     observed = datetime.fromisoformat(evidence["observed_at"])
     if available.tzinfo is None or observed.tzinfo is None or available > decision_at:
@@ -84,7 +88,7 @@ def historical_blocks(
     *, raw_open: Decimal, state: dict[str, Any], side: str
 ) -> tuple[bool, str]:
     """Requires independently supplied raw limit prices; unknown is never certified."""
-    if side not in {"BUY", "SELL"} or raw_open <= 0:
+    if side not in {"BUY", "SELL"} or not raw_open.is_finite() or raw_open <= 0:
         raise ValueError("INVALID_TRADE_CHECK")
     if state.get("tradestatus") == "0":
         return True, "SOURCE_REPORTED_SUSPENDED"

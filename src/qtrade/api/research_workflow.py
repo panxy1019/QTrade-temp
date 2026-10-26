@@ -160,6 +160,9 @@ def catalog(response: Response) -> dict[str, Any]:
         value = read_public("workflow.json")
         if value.get("schema_version") != SCHEMA:
             raise ValueError("SCHEMA_MISMATCH")
+        heartbeat = datetime.fromisoformat(value["worker"]["heartbeat_at"])
+        age = (datetime.now(UTC) - heartbeat).total_seconds()
+        value["worker_fresh"] = -60 <= age <= 720
         value["publication_available"] = True
         value["checked_at"] = datetime.now(UTC).isoformat()
         return value
@@ -167,6 +170,7 @@ def catalog(response: Response) -> dict[str, Any]:
         return {
             **AUTHORITY, "schema_version": SCHEMA, **capabilities(),
             "publication_available": False, "experiments": [],
+            "worker_fresh": False,
             "worker": {"state": "UNAVAILABLE"},
         }
 
@@ -178,6 +182,8 @@ def experiment(experiment_id: str, response: Response) -> dict[str, Any]:
         raise HTTPException(422, "实验标识无效")
     try:
         listing = read_public("workflow.json")
+        if listing.get("schema_version") != SCHEMA:
+            raise ValueError("CATALOG_SCHEMA_MISMATCH")
         row = next(
             r for r in listing["experiments"]
             if r["experiment_id"] == experiment_id and r["state"] == "COMPLETE"
@@ -186,7 +192,11 @@ def experiment(experiment_id: str, response: Response) -> dict[str, Any]:
         if not re.fullmatch(r"workflow-results/[a-f0-9]{64}\.json", relative):
             raise ValueError("INVALID_RESULT_PATH")
         result = read_public(relative)
-        if result["evidence_sha256"] != row["detail_sha256"]:
+        if result["evidence_sha256"] != row["detail_sha256"] or (
+            result.get("schema_version") != "qtrade.workflow-result.v1"
+            or result.get("experiment_id") != experiment_id
+            or result.get("engine") != "QLIB" or result.get("state") != "COMPLETE"
+        ):
             raise ValueError("RESULT_IDENTITY_MISMATCH")
         return result
     except StopIteration:
@@ -210,7 +220,7 @@ async def submit(request: Request) -> dict[str, Any]:
     try:
         listing = read_public("workflow.json")
         heartbeat = datetime.fromisoformat(listing["worker"]["heartbeat_at"])
-        if (datetime.now(UTC) - heartbeat).total_seconds() > 720:
+        if not -60 <= (datetime.now(UTC) - heartbeat).total_seconds() <= 720:
             raise ValueError("WORKER_STALE")
         if len([r for r in listing["experiments"] if r["state"] not in {
             "COMPLETE", "FAILED", "CANCELLED", "INTERRUPTED", "REJECTED"

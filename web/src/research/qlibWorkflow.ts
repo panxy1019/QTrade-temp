@@ -46,6 +46,7 @@ export interface WorkflowExperiment {
 export interface WorkflowCatalog {
   schema_version: 'qtrade.research-workflow.v1'
   publication_available: boolean
+  worker_fresh?: boolean
   published_at?: string
   live_trading_enabled: false
   external_order_transmission: false

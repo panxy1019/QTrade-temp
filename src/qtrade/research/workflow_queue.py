@@ -150,7 +150,12 @@ class GitQueue:
                         if re.fullmatch(r"[a-f0-9]{32}\.json", path.name) and (
                             path.stat().st_size <= 16000
                         ):
-                            result[section + "/" + path.stem] = json.loads(path.read_bytes())
+                            try:
+                                value = json.loads(path.read_bytes())
+                            except (ValueError, UnicodeError):
+                                continue
+                            if isinstance(value, dict):
+                                result[section + "/" + path.stem] = value
                 if len(result) > 2000:
                     raise ValueError("QUEUE_RETENTION_LIMIT_REACHED")
                 return result

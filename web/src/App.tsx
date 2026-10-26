@@ -49,6 +49,7 @@ function Shell() {
   const publicNode = isPublicResearchNode()
   const runtimeLabel = publicNode ? '公开研究结果 · 登录后提交研究' : '本地安全核心'
   const location = useLocation()
+  const researchRoute = ['/strategies', '/research', '/experiments', '/backtest'].includes(location.pathname)
   const navigate = useNavigate()
   const algorithm = dark ? theme.darkAlgorithm : theme.defaultAlgorithm
   const items = useMemo(() => menu.map(([key, label, icon]) => ({ key, label, icon })), [])
@@ -70,7 +71,7 @@ function Shell() {
       <Layout>
         <Layout.Header className="topbar">
           <Space wrap>
-            <StatusTag value={data?.system.mode ?? 'PAPER'} prominent />
+            {researchRoute ? <Tag color="blue">Qlib 研究</Tag> : <StatusTag value={data?.system.mode ?? 'PAPER'} prominent />}
             <Typography.Text type={error ? 'danger' : 'secondary'}>{error ?? runtimeLabel}</Typography.Text>
             {failedSections.length > 0 && <Tag color="orange">{failedSections.length} 个数据分区异常</Tag>}
             <Typography.Text type="secondary">{lastUpdated ? `更新 ${lastUpdated.toLocaleTimeString('zh-CN', { hour12: false })}` : loading ? '首次加载中…' : '尚未更新'}</Typography.Text>
@@ -79,7 +80,7 @@ function Shell() {
           <Space><span>深色模式</span><Switch checked={dark} onChange={setDark} /></Space>
         </Layout.Header>
         <Layout.Content className="content">
-          {!['/strategies', '/research', '/experiments', '/backtest'].includes(location.pathname) && <CurrentDataStatus archive={location.pathname !== '/market'} />}
+          {!researchRoute && <CurrentDataStatus archive={location.pathname !== '/market'} />}
           <PageErrorBoundary key={location.pathname}>
             <Suspense fallback={<Typography.Text type="secondary">页面加载中…</Typography.Text>}>
               <Routes>

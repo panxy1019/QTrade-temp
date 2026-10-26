@@ -40,7 +40,7 @@ export function CurrentDataStatus({ archive = false }: { archive?: boolean }) {
   const { data, error } = useContext(CurrentContext)
   if (!data) return <Alert showIcon type={error ? 'error' : 'info'} title={error ? `当前数据通道不可用：${error}` : '正在核对当前数据版本…'} description="当前工作区不会用 8 月档案替代缺失的新数据。" />
   const fresh = data.daily.freshness === 'FRESH' && data.minute.freshness === 'FRESH' && (!data.intraday || data.intraday.freshness === 'FRESH')
-  return <Alert showIcon type={fresh ? 'success' : 'warning'} title={`当前数据：日线 ${data.daily.minimum_latest_day} · 五分钟 ${data.minute.minimum_latest_day} · ${fresh ? '符合交易日历' : '数据滞后'}`} description={`最近应有完整交易日 ${data.daily.expected_complete_day}；网页每 60 秒核对版本。行情、参数化回测共用校验后的输入；日终历史与盘中观测分别显示。${archive ? '本页固定实验/报告属于历史档案，结论日期保留原样；最新行情和重算入口在行情中心、回测分析。' : ''}`} />
+  return <Alert showIcon type={fresh ? 'success' : 'warning'} title={`当前数据：日线 ${data.daily.minimum_latest_day} · 五分钟 ${data.minute.minimum_latest_day} · ${fresh ? '符合交易日历' : '数据滞后'}`} description={`最近应有完整交易日 ${data.daily.expected_complete_day}；网页每 60 秒核对版本。行情与历史工作区的当前数据回测工具共用输入；日终历史与盘中观测分别显示。${archive ? '固定实验保留原日期；Qlib冻结数据和实验状态在策略研究、实验中心分别显示。' : ''}`} />
 }
 
 export function CurrentWorkspace({ mode, platform }: { mode: 'market' | 'backtest'; platform: PlatformSnapshot | null }) {

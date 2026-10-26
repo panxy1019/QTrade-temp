@@ -1,7 +1,8 @@
 # Qlib 统一研究工作流
 
-当前实现进入集群联调阶段，不能仅凭代码合并就视为生产提交已开放。
-最终验收记录见本文末尾及 `plans/QLIB_WORKFLOW_INTEGRATION.md`。
+集群任务提交、两种模型执行、归档与公开结果通道已完成真实联调。
+Vercel 的生产研究登录凭据和浏览器端最终提交验收仍待配置，当前不能说公网提交已开放。
+验收记录见本文末尾及 `plans/QLIB_WORKFLOW_INTEGRATION.md`。
 
 ## 页面职责
 
@@ -66,6 +67,8 @@ Vercel 仅 Production 环境配置这些值；预览部署默认不具备写入�
 私钥仅限专用队列仓库，不使用本地 `gh` 的账户级令牌。
 活跃 SQLite 在容器本地 `/root/qtrade-local`；一致性备份及实验归档在持久盘。
 研究模型子进程不继承研究账户或队列密钥。
+研究账户与队列配置在用户本机的私有目录准备，未进入 Git 或公开观察通道。
+导入生产环境并重部署后，再核对 `/api/research/session` 的 `configured`。
 
 ```bash
 PYTHONPATH=src python -m pytest tests/test_qlib_workflow.py tests/test_qlib_worker.py
@@ -82,6 +85,9 @@ PYTHONPATH=src python -m scripts.run_qlib_worker --base "$BASE" \
 
 # 共享匿名数据源会话锁，分批补历史状态；不是历史可得性认证
 PYTHONPATH=src python -m scripts.collect_pit_evidence --base "$BASE" --maximum 20
+
+# 后续来源回填：每六小时扩大20只候选、保留失败重试，单次最多30分钟
+PYTHONPATH=src python -m scripts.run_pit_repair --base "$BASE"
 ```
 
 新增模型需要在服务器允许列表、配置构造、适配测试、能力目录和复现文档中登记，
@@ -93,6 +99,9 @@ PYTHONPATH=src python -m scripts.collect_pit_evidence --base "$BASE" --maximum 2
 
 `collect_pit_evidence` 保存 BaoStock 股票主表及原始日线 `tradestatus/isST/preclose`
 来源快照、接收时间和校验和。现在接收的回填不会伪造历史 available_at。
+首批主表9,022条（来源包括其他证券类型，不能当作当前A股数量），其中来源标记
+1,200条非活跃；这不等于已补齐1,200只退市股价格历史。20只状态试采完成13只、
+31,577行，7只失败，需继续重试、覆盖扩展及独立对账。
 `known_state` 拒绝未来才可得状态，`historical_blocks` 在状态或精确限制未知时拒绝
 将其认定为已认证可交易。这两个严格检查是后续认证执行适配的入口；当前诊断回测
 继续使用明确标注的近似协议，不能把“采到了状态”解释为“回测已完整采用精确规则”。
@@ -103,8 +112,24 @@ PYTHONPATH=src python -m scripts.collect_pit_evidence --base "$BASE" --maximum 2
 
 ## 验收记录
 
-- 本地：18项配置/认证/因果性测试通过，worker补充测试3通过、1项Linux专用待集群；
-  新前端5项交互/比较测试通过，原前端196项通过，构建和lint通过。
-- Windows完整后端测试触发既有目录fsync/只读文件fsync与封存源校验差异；
-  应在目标Linux运行完整套件，不能将该本地结果记为全绿。
-- 集群真实模型任务、来源回填、Vercel配置和生产端到端验收：待补充。
+- Linux 完整后端套件通过，修正后的SSH传输/worker专项23项通过；后续新增专项随最终发布补记。
+- 前端完整201项通过（限制并行以避免既有重型页面测试的5秒偶发超时），页面职责和
+  新流程专项8项通过；lint、类型检查和Vercel构建通过。预览部署显示真实表单和关闭的登录门。
+- Windows 的完整套件受既有目录/只读文件fsync差异限制；首次打包还发现Git换行转换。
+  已增加`.gitattributes`并用保留Git字节的Linux包复验，未重签旧实验以绕过校验。
+- 两份真实请求经本地研究登录API → 私有队列 → 集群执行器 → 完整不可变归档；
+  每份11,911个文件校验通过。证据：[integration JSON](evidence/qlib-workflow-20261026.json)。
+- 两份均用源码`a0f4f05954706dddd88b7140e29e80c15de7b99d`、相同数据/切分/成本/组合/种子，
+  有效资格区间891股，678个组合评价日；不是990股每天都可交易。
+
+| 模型 | IC | RankIC | 成本后累计收益 | 年化收益 | Sharpe | 最大回撤 | 双边日均换手 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Ridge | 0.01937 | 0.04697 | 91.43% | 27.30% | 1.2624 | -32.34% | 17.56% |
+| LightGBM | 0.02426 | 0.05205 | 122.43% | 34.60% | 1.2478 | -33.33% | 17.50% |
+
+较高累计收益没有同时带来较高Sharpe或较低回撤。这是同一已查看历史上的诊断，
+不能据此宣称模型已被独立确认，更不能晋级模拟盘或实盘。
+原固定基线属于不同协议，不能把上表与其直接作模型增量归因。
+
+待完成：Vercel生产凭据配置、重部署后的实际网页登录提交/取消验收。
+来源修复继续运行，完整历史PIT、历史可得性与精确规则仍未认证。
