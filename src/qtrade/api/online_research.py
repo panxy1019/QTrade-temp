@@ -323,6 +323,19 @@ def strategy_comparison(response: Response) -> dict[str, Any]:
         return {**AUTHORITY, 'publication_available': False, 'comparison': None}
 
 
+@router.get('/etf-history')
+def etf_history(response: Response) -> dict[str, Any]:
+    from qtrade.research.etf_history_publication import validate_etf_history_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        result = validate_etf_history_publication(
+            read_public('etf-history.json', maximum=3_000_000))
+        return {**AUTHORITY, 'publication_available': True, 'comparison': result}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False, 'comparison': None}
+
+
 @router.get('/data-versions')
 def data_versions(response: Response) -> dict[str, Any]:
     response.headers['Cache-Control'] = 'no-store'
