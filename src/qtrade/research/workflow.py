@@ -45,8 +45,13 @@ def validate_spec(value: dict[str, Any]) -> dict[str, Any]:
         "hold_thresh", "risk_degree", "buy_cost_bps", "sell_cost_bps",
         "min_cost", "initial_cash", "seed", "universe_policy",
     }
-    if set(value) != required:
+    if set(value) - {"source_snapshot_sha256"} != required:
         raise ValueError("SPEC_FIELDS_MISMATCH")
+    if "source_snapshot_sha256" in value and (
+        not isinstance(value["source_snapshot_sha256"], str)
+        or re.fullmatch(r"[a-f0-9]{64}", value["source_snapshot_sha256"]) is None
+    ):
+        raise ValueError("INVALID_SOURCE_SNAPSHOT_IDENTITY")
     if not isinstance(value["name"], str) or not re.fullmatch(
         r"[A-Za-z0-9][A-Za-z0-9._-]{0,59}", value["name"]
     ):
@@ -134,6 +139,7 @@ def build_config(spec: dict[str, Any], baseline: dict[str, Any]) -> dict[str, An
             config["model"]["kwargs"][key] = spec["seed"]
     config["workflow_spec"] = spec
     config["universe_policy"] = "supported_a_share"
+    config["source_constraint_policy"] = "RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V1"
     config["infer_processors"] = [
         {"class": "ProcessInf"},
         {"class": "RobustZScoreNorm", "kwargs": {
@@ -196,9 +202,15 @@ def capabilities() -> dict[str, Any]:
 
 
 def catalog_envelope(
-    *, published_at: str, experiments: list[dict[str, Any]], worker: dict[str, Any]
+    *, published_at: str, experiments: list[dict[str, Any]], worker: dict[str, Any],
+    source_snapshot_sha256: str | None = None,
 ) -> dict[str, Any]:
+    available = capabilities()
+    if source_snapshot_sha256 is not None:
+        for key in ("default_spec", "default_linear_spec"):
+            available[key]["source_snapshot_sha256"] = source_snapshot_sha256
     return signed({
         **AUTHORITY, "schema_version": SCHEMA, "published_at": published_at,
-        **capabilities(), "experiments": experiments, "worker": worker,
+        **available, "experiments": experiments, "worker": worker,
+        "source_snapshot_sha256": source_snapshot_sha256,
     })

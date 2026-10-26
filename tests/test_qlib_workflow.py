@@ -25,6 +25,7 @@ def test_model_configs_are_allowlisted_and_fixed_exchange_is_preserved():
     assert tree["exchange"]["volume_threshold"] == ["cum", "$capacity"]
     assert linear["infer_processors"] == tree["infer_processors"]
     assert tree["universe_policy"] == "supported_a_share"
+    assert linear["source_constraint_policy"] == tree["source_constraint_policy"]
     assert baseline["name"] == "alpha158-lightgbm-daily-v1"
 
 
@@ -50,6 +51,16 @@ def test_unknown_fields_and_labels_crossing_split_are_rejected():
     spec["segments"]["train"][1] = "2022-01-03"
     with pytest.raises(ValueError, match="PURGE"):
         validate_spec(spec)
+
+
+def test_source_snapshot_spec_allows_only_a_content_hash():
+    spec = default_spec()
+    spec["source_snapshot_sha256"] = "a" * 64
+    assert validate_spec(spec)["source_snapshot_sha256"] == "a" * 64
+    for value in ("../../status", "main", None, True, "a" * 63):
+        spec["source_snapshot_sha256"] = value
+        with pytest.raises(ValueError, match="SOURCE_SNAPSHOT"):
+            validate_spec(spec)
 
 
 def test_queue_seal_detects_spec_or_cancel_tampering():

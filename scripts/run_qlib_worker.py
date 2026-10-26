@@ -16,6 +16,7 @@ from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from qtrade.research.qlib_publication import verify_archive
+from qtrade.research.source_constraints import PROTOCOL, capture_source
 from qtrade.research.workflow import catalog_envelope, data_audit, digest, validate_spec
 from qtrade.research.workflow_queue import GitQueue, unseal
 from scripts.atomic_json import write_json_atomic
@@ -96,6 +97,26 @@ class Worker:
         self.secret = os.environ["QTRADE_RESEARCH_QUEUE_SECRET"]
         self.cancellations: set[str] = set()
         self.references: list[dict[str, Any]] | None = None
+        self._source_version: str | None = None
+        self._source_identity: str | None = None
+
+    def freeze_source(self) -> str:
+        root = self.base / "pit-repair"
+        path = root / "coverage.json"
+        version = digest(json.loads(path.read_bytes())) if path.exists() else "missing"
+        if version == self._source_version and self._source_identity:
+            return self._source_identity
+        snapshot = capture_source(root)
+        folder = self.root / "source-snapshots" / snapshot.identity
+        if folder.exists():
+            if capture_source(folder).identity != snapshot.identity:
+                raise ValueError("PERSISTED_SOURCE_SNAPSHOT_MISMATCH")
+        else:
+            partial = folder.with_name(folder.name + "." + str(os.getpid()) + ".partial")
+            snapshot.freeze(partial)
+            partial.rename(folder)
+        self._source_identity, self._source_version = snapshot.identity, version
+        return snapshot.identity
 
     def ingest(self) -> None:
         values = self.queue.read()
@@ -156,11 +177,26 @@ class Worker:
         audit["source_repair_coverage"] = summary.get("pit_repair_coverage", {
             "state": "NOT_CAPTURED_IN_ORIGINAL_RUN", "historical_pit_certified": False,
         })
+        constraints = summary.get("execution_constraints")
+        if constraints:
+            # Publish bounded aggregate counts; the full per-symbol ledger stays in the archive.
+            audit["execution_constraints"] = {
+                k: v for k, v in constraints.items() if k != "per_symbol"
+            }
+            audit["historical_st_and_halts"] = {
+                "status": "RECONCILED_BACKFILL_DIAGNOSTIC_ONLY_NOT_PIT",
+            }
+            audit["execution"] = {
+                "status": "DAILY_PROXY_WITH_SOURCE_BOUND_ADDITIONAL_BLOCKS",
+            }
+            audit["limitations"] = [*audit["limitations"],
+                                    "BACKFILLED_STATE_RESTRICTIONS_ARE_POST_HOC_NOT_PIT"]
         detail = signed({
             **AUTHORITY, "schema_version": "qtrade.workflow-result.v1",
             "experiment_id": identity, "run_id": summary["run_id"],
             "source_revision": summary["source_revision"],
             "summary_sha256": summary["evidence_sha256"],
+            "source_snapshot_sha256": summary.get("source_snapshot_sha256"),
             "state": "COMPLETE", "engine": "QLIB", "spec": spec,
             "model": summary["model"], "segments": summary["segments"],
             "data_end": summary["data_end"], "dataset_sha256": summary["dataset_sha256"],
@@ -175,7 +211,7 @@ class Worker:
             "limitations": sorted(set(summary["limitations"])),
             "persisted": True, "completed_at": summary["completed_at"],
             "comparison_protocol": (
-                "ALIGNED_SUPPORTED_UNIVERSE_TRAIN_NORMALIZATION_V1"
+                PROTOCOL if constraints else "ALIGNED_SUPPORTED_UNIVERSE_TRAIN_NORMALIZATION_V1"
                 if spec else "LEGACY_BASELINE_DIFFERENT_PREPROCESSING_AND_UNIVERSE"
             ),
         })
@@ -223,6 +259,7 @@ class Worker:
             })
         value = catalog_envelope(
             published_at=clock(), experiments=rows,
+            source_snapshot_sha256=self.freeze_source(),
             worker={"state": state, "heartbeat_at": clock(), "concurrency": 1,
                     "source_revision": self.revision, "max_job_seconds": 3600},
         )
@@ -243,6 +280,10 @@ class Worker:
         job.mkdir(parents=True, exist_ok=True)
         write_json_atomic(job / "request.json", request)
         write_json_atomic(job / "spec.json", request["spec"])
+        source_id = request["spec"].get("source_snapshot_sha256") or self.freeze_source()
+        source_root = self.root / "source-snapshots" / source_id
+        if capture_source(source_root).identity != source_id:
+            raise ValueError("REQUESTED_SOURCE_SNAPSHOT_UNAVAILABLE")
         output = job / "output"
         self.update(identity, "RUNNING")
         self.publish("RUNNING")
@@ -253,7 +294,7 @@ class Worker:
             "--tracking", "/root/qtrade-local/workflow-mlruns",
             "--source-revision", self.revision,
             "--workflow-spec", str(job / "spec.json"),
-            "--pit-evidence-root", str(self.base / "pit-repair"),
+            "--pit-evidence-root", str(source_root),
         ]
         with (job / "runner.log").open("ab") as log, contextlib.ExitStack() as cleanup:
             child = subprocess.Popen(

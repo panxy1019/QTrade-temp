@@ -14,6 +14,7 @@ export interface ResearchSpec {
   initial_cash: number
   seed: number
   universe_policy: 'supported_a_share'
+  source_snapshot_sha256?: string
 }
 
 export interface ResearchAudit {
@@ -49,6 +50,7 @@ export interface WorkflowCatalog {
   worker_fresh?: boolean
   expected_complete_day?: string | null
   frozen_data_current?: boolean | null
+  source_snapshot_sha256?: string | null
   published_at?: string
   live_trading_enabled: false
   external_order_transmission: false
@@ -71,6 +73,7 @@ export interface WorkflowResult {
   spec: ResearchSpec | null
   source_revision: string
   dataset_sha256: string
+  source_snapshot_sha256?: string | null
   data_end: string
   symbols: number
   feature_count: number
@@ -104,6 +107,7 @@ export const limitationLabels: Record<string, string> = {
   MISSING_QUOTE_NOT_CERTIFIED_SUSPENSION_REASON: '缺行情不等于已认证停牌原因',
   VENDOR_ADJUSTMENTS_NOT_INDEPENDENT_CORPORATE_ACTION_RECONCILIATION: '供应商复权尚未与独立公司行为账本对账',
   OPEN_PRICE_AND_PREVIOUS_VOLUME_CAP_NOT_AUCTION_REPLAY: '开盘价及前日量容量是研究近似，未重放集合竞价',
+  BACKFILLED_STATE_RESTRICTIONS_ARE_POST_HOC_NOT_PIT: '回填状态只增加研究限制，历史可得时间未认证；ST禁买是研究政策',
 }
 
 export function comparisonIssue(left: WorkflowResult, right: WorkflowResult): string | null {
@@ -112,6 +116,9 @@ export function comparisonIssue(left: WorkflowResult, right: WorkflowResult): st
   }
   if (left.dataset_sha256 !== right.dataset_sha256) return '数据版本不同，请先统一输入'
   if (left.source_revision !== right.source_revision) return '代码版本不同，请先统一实现版本'
+  if ((left.source_snapshot_sha256 ?? null) !== (right.source_snapshot_sha256 ?? null)) return '历史状态来源快照不同，请先统一来源证据'
+  if (left.comparison_protocol === 'ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2' &&
+    !/^[a-f0-9]{64}$/.test(left.source_snapshot_sha256 ?? '')) return '历史状态来源快照身份缺失，不能归因比较'
   const comparable = (spec: ResearchSpec) => {
     const { name, model, ...rest } = spec
     void name

@@ -17,6 +17,7 @@ from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from qtrade.research.qlib_adapter import calendar_boundary_tail, causal_capacity
+from qtrade.research.source_constraints import POLICY, SourceSnapshot, capture_source, restrict_rows
 from scripts.atomic_json import write_json_atomic
 
 REPO = Path(__file__).resolve().parents[1]
@@ -26,11 +27,13 @@ def checksum(path: Path) -> str:
     return sha256(path.read_bytes()).hexdigest()
 
 
-def make_provider(dataset_root: Path, target: Path) -> dict[str, Any]:
+def make_provider(
+    dataset_root: Path, target: Path, *, source_snapshot: SourceSnapshot | None = None,
+) -> dict[str, Any]:
     import numpy as np
     import pandas as pd
 
-    document = json.loads((dataset_root / "dataset.json").read_text())
+    document: dict[str, Any] = json.loads((dataset_root / "dataset.json").read_text())
     if signed({k: v for k, v in document.items() if k != "evidence_sha256"}) != document:
         raise ValueError("QLIB_DATASET_SIGNATURE_MISMATCH")
     if document["accepted_symbols"] < 500:
@@ -53,6 +56,8 @@ def make_provider(dataset_root: Path, target: Path) -> dict[str, Any]:
     (target / "calendars/day.txt").write_text("\n".join(dates) + "\n")
     (target / "calendars/day_future.txt").write_text("\n".join(dates) + "\n")
     instruments = []
+    constraint_rows: list[dict[str, Any]] = []
+    constraint_counts: list[dict[str, Any]] = []
     field_names = [
         "open",
         "high",
@@ -85,6 +90,14 @@ def make_provider(dataset_root: Path, target: Path) -> dict[str, Any]:
         frame = pd.read_parquet(folder / "daily.parquet").set_index("date")
         if not set(frame.index) <= set(dates):
             raise ValueError("STOCK_DAY_OUTSIDE_BENCHMARK_CALENDAR")
+        if source_snapshot is not None:
+            restricted, counts, ledger = restrict_rows(
+                frame.reset_index().to_dict("records"), row["symbol"],
+                source_snapshot.statuses.get(row["symbol"]),
+            )
+            frame = pd.DataFrame(restricted).set_index("date")
+            constraint_counts.append(counts)
+            constraint_rows.extend(ledger)
         capacity = causal_capacity(frame.reset_index().to_dict("records"), dates)
         frame["capacity"] = pd.Series(capacity)
         frame["change"] = frame["close"] / frame["close"].shift(1) - 1
@@ -99,6 +112,28 @@ def make_provider(dataset_root: Path, target: Path) -> dict[str, Any]:
     dump("SH000300", index_frame, ["open", "high", "low", "close", "volume", "factor"])
     (target / "instruments/all.txt").write_text("\n".join(instruments) + "\n")
     (target / "instruments/qtrade1000.txt").write_text("\n".join(instruments[:-1]) + "\n")
+    if source_snapshot is not None:
+        keys = [key for key in constraint_counts[0] if key != "symbol"]
+        audit = signed({
+            **AUTHORITY, "schema_version": "qtrade.source-constraints.v1", "policy": POLICY,
+            "source_snapshot_sha256": source_snapshot.identity,
+            "historical_pit_certified": False, "exact_price_limits_certified": False,
+            "state": "APPLIED_DIAGNOSTIC_ADDITIONAL_RESTRICTIONS",
+            "coverage_symbols": len(source_snapshot.statuses),
+            "matched_input_symbols": sum(bool(r["reconciled_bars"]) for r in constraint_counts),
+            "counts": {key: sum(r[key] for r in constraint_counts) for key in keys},
+            "per_symbol": constraint_counts,
+            "missing_state_policy": "BASE_PROXY_RETAINED_NOT_CERTIFIED_TRADABLE",
+            "st_policy": "RESEARCH_BUY_EXCLUSION_NOT_EXCHANGE_PROHIBITION",
+            "raw_price_tolerance_cny": "0.011", "raw_volume_tolerance": "0",
+            "amount_tolerance": "max(CNY1,1ppm)",
+            "historical_available_at": None,
+        })
+        write_json_atomic(target.parent / "execution-constraints.json", audit)
+        pd.DataFrame(constraint_rows, columns=[
+            "symbol", "date", "reason", "base_buy_block", "base_sell_block",
+            "buy_block", "sell_block",
+        ]).to_parquet(target.parent / "constraint-ledger.parquet", index=False)
     return document
 
 
@@ -107,6 +142,40 @@ def finite(value: Any) -> float | None:
 
     result = float(value)
     return result if math.isfinite(result) else None
+
+
+def verify_constraint_masks(stage: Path, config: dict[str, Any]) -> None:
+    """Reload provider masks through Qlib's actual directional limit implementation."""
+    import pandas as pd
+    from qlib.backtest.decision import Order
+    from qlib.backtest.exchange import Exchange
+
+    ledger = pd.read_parquet(stage / "constraint-ledger.parquet")
+    # Cover each reason, including source disagreements, without selecting on returns.
+    sample = ledger.groupby("reason", sort=True).head(2)
+    checked = []
+    if not sample.empty:
+        options = dict(config["exchange"])
+        for key in ("limit_threshold", "volume_threshold"):
+            options[key] = tuple(options[key])
+        codes = {("SH" if s.startswith("6") else "SZ") + s for s in sample["symbol"]}
+        exchange = Exchange(start_time=sample["date"].min(), end_time=sample["date"].max(),
+                            codes=sorted(codes), **options)
+        for row in sample.to_dict("records"):
+            code = ("SH" if row["symbol"].startswith("6") else "SZ") + row["symbol"]
+            day = pd.Timestamp(row["date"])
+            for side, direction in (("buy", Order.BUY), ("sell", Order.SELL)):
+                actual = bool(exchange.check_stock_limit(code, day, day, direction))
+                expected = bool(row[side + "_block"])
+                if actual != expected:
+                    raise ValueError("QLIB_SOURCE_CONSTRAINT_RELOAD_MISMATCH")
+                checked.append({"symbol": row["symbol"], "date": row["date"],
+                                "side": side, "blocked": actual, "reason": row["reason"]})
+    write_json_atomic(stage / "constraint-reload-check.json", signed({
+        "state": "VERIFIED" if checked else "NO_BACKFILLED_ROWS_AVAILABLE",
+        "implementation": "qlib.backtest.exchange.Exchange.check_stock_limit",
+        "checks": checked, "historical_pit_certified": False,
+    }))
 
 
 def run(
@@ -130,11 +199,17 @@ def run(
     if re.fullmatch(r"[a-f0-9]{40}", source_revision) is None:
         raise ValueError("FULL_SOURCE_REVISION_REQUIRED")
     output.mkdir(parents=True, exist_ok=True)
+    source_snapshot = capture_source(pit_evidence_root)
+    if config.get("workflow_spec", {}).get("source_snapshot_sha256") not in (
+        None, source_snapshot.identity,
+    ):
+        raise ValueError("WORKFLOW_SOURCE_SNAPSHOT_MISMATCH")
     request = signed(
         {
             "config": config,
             "source_revision": source_revision,
             "data_manifest_sha256": checksum(data_root / "dataset.json"),
+            "source_snapshot_sha256": source_snapshot.identity,
         }
     )
     run_id = config["name"] + "-" + request["evidence_sha256"][:16]
@@ -143,17 +218,14 @@ def run(
         from qtrade.research.qlib_publication import verify_archive
 
         verify_archive(archive)
-        return json.loads((archive / "summary.json").read_text())
+        archived_summary: dict[str, Any] = json.loads((archive / "summary.json").read_text())
+        return archived_summary
     attempt = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%f")
     stage = output / "runs" / (run_id + "." + attempt + ".partial")
     stage.mkdir(parents=True, exist_ok=False)
-    pit_coverage = {"state": "NO_REPAIR_COVERAGE_AT_SUBMISSION",
-                    "historical_pit_certified": False}
-    if pit_evidence_root is not None and (pit_evidence_root / "coverage.json").exists():
-        pit_coverage = json.loads((pit_evidence_root / "coverage.json").read_text())
-        if signed({k: v for k, v in pit_coverage.items()
-                   if k != "evidence_sha256"}) != pit_coverage:
-            raise ValueError("PIT_COVERAGE_HASH_MISMATCH")
+    pit_coverage = source_snapshot.coverage
+    source_snapshot.freeze(stage / "pit-sources")
+    write_json_atomic(stage / "request.json", request)
     write_json_atomic(stage / "pit-repair-coverage.json", pit_coverage)
 
     def status(state: str) -> None:
@@ -167,7 +239,13 @@ def run(
         )
 
     status("BUILDING_PROVIDER")
-    dataset = make_provider(data_root, stage / "provider")
+    apply_constraints = config.get("source_constraint_policy") == POLICY
+    dataset = make_provider(
+        data_root, stage / "provider",
+        source_snapshot=source_snapshot if apply_constraints else None,
+    )
+    constraints = (json.loads((stage / "execution-constraints.json").read_text())
+                   if apply_constraints else None)
     if dataset["end"] < config["segments"]["test"][1] or (
         config_override is None and dataset["end"] != config["segments"]["test"][1]
     ):
@@ -219,6 +297,8 @@ def run(
             "kwargs": {"uri": tracking.resolve().as_uri(), "default_exp_name": config["name"]},
         },
     )
+    if apply_constraints:
+        verify_constraint_masks(stage, config)
     random.seed(config["seed"])
     np.random.seed(config["seed"])
     handler = {
@@ -248,7 +328,9 @@ def run(
             "kwargs": {"handler": handler, "segments": config["segments"]},
         },
     }
-    write_json_atomic(stage / "run-spec.json", {**request, "task": task})
+    write_json_atomic(stage / "run-spec.json", signed({
+        **{k: v for k, v in request.items() if k != "evidence_sha256"}, "task": task,
+    }))
     if config.get("workflow_spec"):
         write_json_atomic(stage / "workflow-spec.json", config["workflow_spec"])
     shutil.copyfile(data_root / "dataset.json", stage / "data-manifest.json")
@@ -259,6 +341,7 @@ def run(
         "src/qtrade/research/qlib_adapter.py",
         "src/qtrade/research/workflow.py",
         "src/qtrade/research/pit_repair.py",
+        "src/qtrade/research/source_constraints.py",
     ):
         target = stage / "source" / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -418,6 +501,8 @@ def run(
             "portfolio": config["portfolio"],
             "workflow_spec": config.get("workflow_spec"),
             "pit_repair_coverage": pit_coverage,
+            "source_snapshot_sha256": source_snapshot.identity,
+            "execution_constraints": constraints,
             "effective_universe_size": len(instruments) if isinstance(
                 instruments, list
             ) else dataset["accepted_symbols"],

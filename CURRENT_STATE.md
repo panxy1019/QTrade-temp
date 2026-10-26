@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-26
 
+- P0 source-bound execution work is in progress: freeze verified raw status/master
+  inputs, pin browser/worker source identity, bind it into run identity and verify
+  archives against it. New workflow providers add diagnostic ST/suspension/conflict
+  restrictions without relaxing existing proxy masks. New and old protocols stay
+  distinct; webpage model comparison also requires identical source evidence.
+  Focused backend and frontend checks pass; cluster/Qlib execution and production
+  acceptance of this new protocol are pending. See docs/QLIB_SOURCE_CONSTRAINTS.md.
+
 - Qlib research login and production task workflow are live at main 2b1e200;
   browser acceptance confirms aligned Ridge/LightGBM comparison and the newest
   production LightGBM result. Catalog/session/result endpoints return 200,

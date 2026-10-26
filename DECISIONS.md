@@ -3097,3 +3097,23 @@ dependencies and the deployment lock aligned, with a regression check. Queue
 failure logs contain the operation and exception class only, never credential
 values, exception messages or tracebacks.
 
+## ADR-167 — New Qlib runs bind raw source evidence and only add diagnostic blocks
+
+Status: accepted, 2026-10-26.
+
+Coverage counts alone cannot reproduce a run or justify execution-state claims.
+Freeze the exact verified master/status inputs and bind their hash into the
+request/run identity. Publish a pinned source ID with model defaults; preserve
+that ID through browser retry, queueing and execution. Different source versions
+cannot be attributed to model differences. Archive raw sources and request proof.
+
+Reuse Qlib's directional limit fields and Exchange implementation. Apply only
+additional diagnostic restrictions after raw price/volume/amount reconciliation:
+block both directions on contradictory sources; exclude reconciled ST buys as
+an explicit research policy. Never relax prior proxy limits, fill missing state
+as normal trading or claim backfills were historically available. Preserve old
+protocols and archives; new runs use a distinct source-bound comparison protocol.
+Full historical PIT, exact limits, corporate actions, settlement and auctions
+remain separate uncertified P0 work. No gateway or vn.py execution component
+supplies this missing source lineage. LIVE_TRADING_ENABLED=false.
+
