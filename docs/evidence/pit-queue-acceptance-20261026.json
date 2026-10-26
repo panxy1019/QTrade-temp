@@ -1,0 +1,115 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.pit-queue-acceptance.v1",
+  "checked_at": "2026-10-26T05:37:06.020070+00:00",
+  "source_revision": "32519f2dfab5e887c9ec488db088233b13cbe571",
+  "linux_test_marks": {
+    ".": 592,
+    "s": 0,
+    "x": 0,
+    "E": 0,
+    "F": 0
+  },
+  "test_result": {
+    "source_revision": "32519f2dfab5e887c9ec488db088233b13cbe571",
+    "returncode": 0
+  },
+  "before_coverage": {
+    "observed_at": "2026-10-26T05:27:02.770142+00:00",
+    "status_symbols": 40,
+    "status_rows": 96302,
+    "evidence_sha256": "8fd7e91750bd8b9feaf81b0e7b618c27d30f0dde895e24093daca8cfab500b80"
+  },
+  "after_coverage": {
+    "observed_at": "2026-10-26T05:32:26.721239+00:00",
+    "status_symbols": 60,
+    "status_rows": 144882,
+    "evidence_sha256": "abcb27c74fabf92f3b38ab9e20621298fcc7c0178c7b8443475f53d8951d151d",
+    "collection_progress": {
+      "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+      "scope_symbols": 990,
+      "completed_symbols": 60,
+      "unresolved_symbols": 930,
+      "unattempted_symbols": 930,
+      "due_retry_symbols": 0,
+      "waiting_retry_symbols": 0,
+      "next_retry_at": null,
+      "historical_pit_certified": false
+    },
+    "failures": []
+  },
+  "before_status_file_hashes_preserved": 40,
+  "experiment_artifact_hashes_preserved": {
+    "workflow/jobs/6f04b986eaeb454c8c61579f1cea266b/output/runs/source-bound-ridge-prod-20261026-a5157438bd6cc6a0/summary.json": "bf9349e57f80aa472a881c091fcc0a1713546f5f6a00bd5acc1e2f9d72fd2215",
+    "workflow/jobs/6f04b986eaeb454c8c61579f1cea266b/output/runs/source-bound-ridge-prod-20261026-a5157438bd6cc6a0/checksums.json": "ec57792ad304033224d59483f7e537cffe2c865d8e10e811d45acfc14dff9db9",
+    "workflow/jobs/4fc474f9f5f94199914b5c8802eb5127/output/runs/source-bound-lightgbm-prod-20261026-fbd3630e653be6a1/summary.json": "4a5a53711daa5523e4c32a94c773ed444b0a91659a400e3765161add4496c4c7",
+    "workflow/jobs/4fc474f9f5f94199914b5c8802eb5127/output/runs/source-bound-lightgbm-prod-20261026-fbd3630e653be6a1/checksums.json": "66a32ee2061c48ff5b77267396dddf30506ffed7b4b009f0b9506c4ca42cad46"
+  },
+  "frozen_source": {
+    "identity": "253f962ed14f86fa434d2116c84156c580a853404a5b1e83d34fe8dfbfffaa06",
+    "coverage_symbols": 60,
+    "both_model_defaults_bound": true
+  },
+  "legacy_schedule_archives": 1,
+  "services": {
+    "qtrade-data-observer": {
+      "pid": 4471,
+      "source_revision": "300497adc5ecee88d07cfc9d752b0c03f86f06b3",
+      "running": true,
+      "live_trading_enabled": false
+    },
+    "qtrade-research-maintenance": {
+      "pid": 65600,
+      "source_revision": "d9f251c52bc0abc026b81a36421c178248e55a0c",
+      "running": true,
+      "live_trading_enabled": false
+    },
+    "qtrade-pit-repair": {
+      "pid": 80296,
+      "source_revision": "32519f2dfab5e887c9ec488db088233b13cbe571",
+      "running": true,
+      "live_trading_enabled": false
+    },
+    "qtrade-qlib-workflow": {
+      "pid": 76486,
+      "source_revision": "846a836702e8c8f4c020e90159565fcc869b6fa7",
+      "running": true,
+      "live_trading_enabled": false
+    },
+    "qtrade-research-publication": {
+      "pid": 76665,
+      "source_revision": "da2878c4670e2d331aecdcac5d93f5f11c71ed72",
+      "running": true,
+      "live_trading_enabled": false
+    }
+  },
+  "independent_official_source_probes": [
+    {
+      "source": "SSE",
+      "url": "https://query.sse.com.cn/commonQuery.do",
+      "observed_at": "2026-10-26T05:29:29.020811+00:00",
+      "state": "CAPTURED_UNCERTIFIED",
+      "raw_sha256": "d5e5dec58882aef4aba8be707087e9c3483ee1be9c2d1fcb6070e1ae9abc8990",
+      "rows": 161,
+      "min_delist_date": "20010425",
+      "max_delist_date": "20261019",
+      "historical_available_at": null,
+      "used_in_qlib": false
+    },
+    {
+      "source": "SZSE",
+      "url": "https://www.szse.cn/api/report/ShowReport",
+      "observed_at": "2026-10-26T05:29:29.234811+00:00",
+      "state": "FAILED",
+      "error_type": "HTTPError"
+    }
+  ],
+  "historical_pit_certified": false,
+  "evidence_sha256": "6b411ba21b30c055727f3608e9fcb8c598f2174f4d173bde0f894d9726ced067"
+}

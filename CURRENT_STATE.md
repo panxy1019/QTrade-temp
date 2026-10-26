@@ -2,14 +2,20 @@
 
 Last updated: 2026-10-26
 
-- PIT collection starvation repair is in progress: the prior prefix scheduler
-  remains at 36/40 after four persistent vendor failures and cannot attempt later
-  symbols. A dataset-bound, durable per-symbol queue now gives each pass separate
+- PIT collection queue repair is deployed: the prior prefix scheduler stalled at
+  36/40 after four repeated vendor failures; its last retry recovered to 40 before
+  cutover. A dataset-bound, durable per-symbol queue now gives each pass separate
   budgets for 20 unattempted stocks and at most five due retries. Partial coverage
   stays PARTIAL; interrupted and failed symbols retain bounded retry deadlines.
-  Forty-four local source/queue/constraint tests pass. Linux full-suite validation,
-  supervised deployment and actual coverage-growth acceptance are pending.
-  See docs/PIT_COLLECTION_QUEUE.md. Historical PIT certification remains false.
+  Forty-four local source/queue/constraint tests and all 592 Linux full-suite tests
+  pass with no skips/failures. Supervised release 32519f2 grows accepted coverage
+  from 40 stocks / 96,302 rows to 60 / 144,882 in its first batch. All 40 prior
+  raw file hashes and both completed experiment summaries/manifests are preserved.
+  The Qlib worker verifies and freezes the new source for both model defaults.
+  All five services run with LIVE disabled. Public publication acceptance is pending.
+  An independent SSE endpoint probe captures 161 delisting rows; SZSE probe fails.
+  Neither probe certifies historical availability or participates in Qlib yet.
+  See docs/PIT_COLLECTION_QUEUE.md and docs/PIT_OFFICIAL_SOURCE_AUDIT.md.
 
 - Source-bound Qlib execution is deployed and accepted: verified raw status/master
   inputs are frozen into request/run identity and both production-browser tasks.
