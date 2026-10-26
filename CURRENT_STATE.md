@@ -2,6 +2,20 @@
 
 Last updated: 2026-10-27
 
+- STEP1 prospective checkpoint at 01:35 Shanghai: forward runtime e107eb9 now
+  holds 12 books (five baseline families plus approved LightGBM, each SHADOW and
+  PAPER), each with one actual pre-open frozen target. No observed session or
+  fill is claimed. Existing LightGBM PAPER is halted after the controlled restart;
+  explicit owner recovery approval is pending. Other five PAPER books completed
+  pristine initialization. The live-instance-bound one-shot recovery endpoint is
+  local-only and has not been invoked on production. SZ302132 is admitted for
+  observation with lot zero, never unproven execution. All 92 Linux forward
+  checks pass. Actual cluster-backed HTTP routes for catalog, signals, comparison,
+  ETF, forward books and data versions all return available publications; this
+  does not prove Vercel delivery or rendered UI. PR22 preview passed before the
+  last fixes, final preview is pending; browser inspection timed out. Evidence:
+  docs/evidence/qlib-step1-forward-freeze-e107eb9.json.
+
 - STEP1 runtime checkpoint at 01:23 Shanghai: research worker, publisher, daily
   version service and new prospective forward service run source 19cbb2a. Approved
   LightGBM prediction is RUNNING; forward books are not frozen until current

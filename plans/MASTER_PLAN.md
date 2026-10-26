@@ -24,6 +24,12 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Forward e107eb9 freezes 12 actual prospective targets across six strategy/mode
+pairs. Existing LightGBM PAPER awaits explicit human recovery after restart;
+the other five pristine PAPER books initialized successfully. Actual observation
+and next-session acceptance remain open. One-shot recovery and SZ302 conservative
+observation support pass 92 Linux checks. PR22 carries the web integration.
+
 Cluster runtime is now 19cbb2a plus the independent ETF service 1233c2f. Full
 Linux integration (1,299 checks) and focused subsequent fixes pass. Initial
 native archive pointers are verified; prospective targets await current prediction
