@@ -1,0 +1,289 @@
+{
+  "observed_at": "2026-10-26T10:49:47.091349+00:00",
+  "code_revision": "1e73f323d7113442f79eb33977db73328ecd0888",
+  "production_revision": "51ec2e1f742adffc9e66b489a3cceaa8209b117c",
+  "progress": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.unified-collection-progress.v1",
+    "started_at": "2026-10-26T10:48:47.411809+00:00",
+    "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+    "code_revision": "1e73f323d7113442f79eb33977db73328ecd0888",
+    "required_through": {
+      "day": "2026-10-26T07:00:00+00:00",
+      "5min": "2026-10-26T07:00:00+00:00"
+    },
+    "recovery": {
+      "replayed": 0,
+      "interrupted": 0,
+      "amount_rechecks": 0
+    },
+    "stage_counts": {
+      "requested": 0,
+      "downloaded": 0,
+      "parsed_symbols": 0,
+      "validated_symbols": 0,
+      "admitted_symbols": 0,
+      "admitted_rows": 0,
+      "same_vendor_endpoint_matched": 0,
+      "independent_source_reconciled": 0
+    },
+    "state": "PASS_FINISHED",
+    "updated_at": "2026-10-26T10:48:47.415050+00:00",
+    "attempted_symbols": 0,
+    "completed_batches": 0,
+    "elapsed_seconds": 0.003,
+    "free_bytes": 313123667968,
+    "recent_batches": [
+      {
+        "batch_id": "b5d6215cf00842be8ece243409c75f9f",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:46:44+00:00",
+        "completed_at": "2026-10-26T10:46:44+00:00",
+        "manifest_sha256": "11b72fea5ec66424a97d226395add4911c5c6add21096afd3f115c02157b9c76"
+      },
+      {
+        "batch_id": "3251db56f63b4f22ba8aad26f360ca67",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:46:43+00:00",
+        "completed_at": "2026-10-26T10:46:44+00:00",
+        "manifest_sha256": "39cecf972e9abe8be54e967602fbd2f1d2637db030eb8a94bad1efe2f0b55b53"
+      },
+      {
+        "batch_id": "296f0d355f014a1f925b9dd5802ecac4",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:42:37+00:00",
+        "completed_at": "2026-10-26T10:42:37+00:00",
+        "manifest_sha256": "2ad162712848fb281bc8d81312a37f0418e34c4a98736ff8dbb6c5005231b6c7"
+      },
+      {
+        "batch_id": "19292a3fab8a42668c892102dcab5222",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:42:35+00:00",
+        "completed_at": "2026-10-26T10:42:37+00:00",
+        "manifest_sha256": "a5ce2f83ef2450b36768999e7c3720fd610c6ca782e5f6ac500182395c520432"
+      },
+      {
+        "batch_id": "9c1fa9e176ce44578d605c9e3bc6b51f",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:38:29+00:00",
+        "completed_at": "2026-10-26T10:38:30+00:00",
+        "manifest_sha256": "175108b0e9319ed1d12df8ac38be3cdc21362afeff880f0759835702e770a4e1"
+      },
+      {
+        "batch_id": "d7c98da77e3248feb7bcaddcde78b6f1",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:38:27+00:00",
+        "completed_at": "2026-10-26T10:38:29+00:00",
+        "manifest_sha256": "5d58fd7d581dc980f18b698ba56a1ab08810f096147989b76a86cf48d56bb745"
+      },
+      {
+        "batch_id": "89bec0c2d2f64db19effc7605c6b0326",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:34:22+00:00",
+        "completed_at": "2026-10-26T10:34:22+00:00",
+        "manifest_sha256": "2e198043e3b08f29594630fe321a439486ba51e44cb0dd6b1a9fd70fbd92a698"
+      },
+      {
+        "batch_id": "93ce9640aa2848f59418646f190ed7b2",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:34:20+00:00",
+        "completed_at": "2026-10-26T10:34:22+00:00",
+        "manifest_sha256": "ddc610876a99d369f50d1dc39fd38787ae1fe07d21815b9bccebb454ec0a8b58"
+      },
+      {
+        "batch_id": "aa32cdacfd914634a0954cd3b6caa49c",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:29:59+00:00",
+        "completed_at": "2026-10-26T10:29:59+00:00",
+        "manifest_sha256": "a396ce5ec706dbaaf1c6fb66360a4671569cc21b2215d87ad9483ea341720753"
+      },
+      {
+        "batch_id": "1df27d07696c4bf99cd7920e35166bec",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:29:50+00:00",
+        "completed_at": "2026-10-26T10:29:59+00:00",
+        "manifest_sha256": "053bed5731d9a9bbbae9f55ddd98b99c670e3696fd77b835eee6e57db4e6f5c7"
+      },
+      {
+        "batch_id": "bfb16bc293b946ad816e7832de81cf95",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:29:43+00:00",
+        "completed_at": "2026-10-26T10:29:49+00:00",
+        "manifest_sha256": "d3bcbd62dde4883bafed33cf32d6b8e489dc73718321dac5c98f1e72ae1d483f"
+      },
+      {
+        "batch_id": "a2832c36c4444bb8bd67e408542fc23d",
+        "state": "COMPLETE",
+        "attempted_at": "2026-10-26T10:16:12+00:00",
+        "completed_at": "2026-10-26T10:16:23+00:00",
+        "manifest_sha256": "09f24ae5f5723a4adc8da4057f71f2bc77ee04a87224fd312283f206a6254441"
+      }
+    ],
+    "data_ready_events": 127,
+    "original_evidence_sha256": "42ec98f2b433d1183c917288b50260635a5ae4a1c3b2b0ec1cebcf8575bc5cc2",
+    "excerpt_note": "tasks omitted; original hash applies to full progress retained in cluster"
+  },
+  "failures": [
+    {
+      "symbol": "600621",
+      "frequency": "day",
+      "trading_day": "2026-10-26",
+      "state": "FAILED",
+      "attempts": 5,
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "completed_end": null
+    },
+    {
+      "symbol": "605258",
+      "frequency": "day",
+      "trading_day": "2026-10-26",
+      "state": "FAILED",
+      "attempts": 5,
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "completed_end": null
+    },
+    {
+      "symbol": "002827",
+      "frequency": "day",
+      "trading_day": "2026-10-26",
+      "state": "FAILED",
+      "attempts": 6,
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "completed_end": null
+    },
+    {
+      "symbol": "510660",
+      "frequency": "5min",
+      "trading_day": "2026-10-26",
+      "state": "FAILED",
+      "attempts": 5,
+      "last_error": "MINUTE_WINDOW_GAP_REASON_UNKNOWN",
+      "completed_end": null
+    },
+    {
+      "symbol": "512580",
+      "frequency": "5min",
+      "trading_day": "2026-10-26",
+      "state": "FAILED",
+      "attempts": 5,
+      "last_error": "MINUTE_WINDOW_GAP_REASON_UNKNOWN",
+      "completed_end": null
+    },
+    {
+      "symbol": "600621",
+      "frequency": "5min",
+      "trading_day": "2026-10-26",
+      "state": "FAILED",
+      "attempts": 5,
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "completed_end": null
+    },
+    {
+      "symbol": "605258",
+      "frequency": "5min",
+      "trading_day": "2026-10-26",
+      "state": "FAILED",
+      "attempts": 5,
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "completed_end": null
+    },
+    {
+      "symbol": "002811",
+      "frequency": "5min",
+      "trading_day": "2026-10-26",
+      "state": "FAILED",
+      "attempts": 6,
+      "last_error": "MINUTE_WINDOW_GAP_REASON_UNKNOWN",
+      "completed_end": null
+    },
+    {
+      "symbol": "002827",
+      "frequency": "5min",
+      "trading_day": "2026-10-26",
+      "state": "FAILED",
+      "attempts": 6,
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "completed_end": null
+    }
+  ],
+  "storage_bytes": {
+    "unified-data/lake/objects": 8960146,
+    "unified-data/lake/batches": 1489111
+  },
+  "free_bytes": 313119473664,
+  "disk_reserve_bytes": 107374182400,
+  "single_publisher_pid": 119773,
+  "supervisor_implementation": "ochinchina/supervisord v0.6.8",
+  "duplicate_retirement": "unanchored include matched .conf.pre-qlib; moved out, two reloads verified single writer",
+  "live_trading_enabled": false,
+  "unified-continuous-check.json": {
+    "revision": "1e73f323d7113442f79eb33977db73328ecd0888",
+    "started_at": 1793010491.957749,
+    "pytest_exit": 0,
+    "pilot_exit": 0,
+    "staged_publication_exit": 0,
+    "finished_at": 1793010601.9165502
+  },
+  "unified-full-pass-check.json": {
+    "revision": "62f5e9466f7b70d551af377febc1fb5ae5313510",
+    "exit": 0,
+    "started_at": 1793008803.4168851,
+    "finished_at": 1793009783.7822287
+  },
+  "service": {
+    "state": "WAITING",
+    "heartbeat_at": "2026-10-26T10:48:48.307874+00:00",
+    "code_revision": "1e73f323d7113442f79eb33977db73328ecd0888",
+    "live_trading_enabled": false,
+    "last_pass_state": "PASS_FINISHED"
+  },
+  "publication": {
+    "outcome": "SUCCEEDED",
+    "published_at": "2026-10-26T10:47:58.043219+00:00",
+    "evidence_sha256": "3af8fefcac0a2c476b0d2e138e33dcf4dbec22033ce39de454ee807392ebf1b5"
+  },
+  "progress_sha256": "2cf5644f3268d4b37f4e87a7b4b85a103d07cc6a43cd0d233a0b1ebf301fd25b",
+  "frequency_counts": {
+    "day": {
+      "FAILED": 3,
+      "SUCCEEDED": 1497
+    },
+    "5min": {
+      "FAILED": 6,
+      "SUCCEEDED": 1494
+    }
+  },
+  "accepted_bar_count": {
+    "day": 1497,
+    "5min": 71712
+  },
+  "linux_tests": {
+    "tests": 678,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "storage_components": {
+    ".jsonl.gz": {
+      "files": 139,
+      "bytes": 5099243
+    },
+    ".parquet": {
+      "files": 127,
+      "bytes": 3874971
+    }
+  },
+  "parallel_pit_receipt": {
+    "observed_at": "2026-10-26T10:58:42.699444+00:00",
+    "receipt_valid": true,
+    "completed_symbols": 491,
+    "scope_symbols": 990,
+    "historical_pit_certified": false
+  }
+}

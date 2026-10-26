@@ -1,5 +1,30 @@
 # Architecture decisions
 
+## ADR-175 — Historical work plans cannot relabel coverage or bypass source probes
+
+Status: accepted implementation design, 2026-10-26, Phase B.
+
+Reuse the observed master, signed immutable writers and the existing public-source
+adapters; no new vn.py/gateway component supplies missing source coverage. Seal a
+separate plan bound to master, membership and code. Compile newest-first monthly
+windows of at most 31 calendar days, with unknown historical calendars explicit.
+Keep current vendor listing dates as claims, not authoritative historical bounds.
+Retain legacy OHLCV/qfq evidence separately; it cannot grant the new raw+amount
+contract or prove ten-year minute availability. Source probes precede execution;
+the plan's admitted count stays zero. Day/5min plans remain independent.
+
+Use the existing local BaoStock session lease for eventual bounded execution;
+yield to current ingestion, prediction and PIT repair; preserve the 100 GiB disk
+reserve. Planning does not start collection or mutate existing archives.
+
+Runtime correction to ADR-172: actual Go supervisord v0.6.8 include matching is
+unanchored, so qtrade-research-publisher.conf.pre-qlib also loaded the legacy
+program. Merely editing the normal .conf leaves the cached process alive.
+Preserve the backup privately and move it into a non-included subdirectory;
+two targeted native ctl reloads plus /proc verified one writer, without restarting
+the daemon or unrelated user services. Never keep .conf.* backups in this include
+directory. Sources: ochinchina/supervisord v0.6.8 config/config.go and supervisor.go.
+
 ## ADR-174 — Local collection ledger commits only after immutable batch sealing
 
 Status: accepted implementation design, 2026-10-26, Phase B.

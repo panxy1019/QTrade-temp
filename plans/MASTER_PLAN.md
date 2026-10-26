@@ -33,7 +33,13 @@ Each phase needs code, tests, cluster and production evidence, docs and limits.
 Phase A accepted at production main 055b87f: 1,500 observed targets, independent
 frequency states and lineage queries. 172 old-minute inputs rechecked: 171 pass,
 one quarantined. 637 Linux / 213 frontend checks pass. Evidence and reproduction:
-docs/UNIFIED_DATA_ONLINE.md. Phase B continuous incremental ingestion is next.
+docs/UNIFIED_DATA_ONLINE.md. Phase B current incremental milestone is accepted at
+production 51ec2e1 / runtime 1e73f32: 1,497 day and 1,494 5min through 2026-10-26;
+678 Linux / 215 frontend checks pass. Separate old-history/current-source views
+are accepted; remaining gaps stay PARTIAL. Historical source probes and bounded
+backfill execution remain pending; the immutable plan compiler is being accepted.
+Qlib versions, restore parity and Phase C-E remain pending. Evidence and limits:
+docs/UNIFIED_INCREMENTAL_ACCEPTANCE_20261026.md.
 
 ### Proposed next research capabilities from the 2026-10-26 audit
 

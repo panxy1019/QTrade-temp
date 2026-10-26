@@ -2,23 +2,37 @@
 
 Last updated: 2026-10-26
 
-- Unified incremental collection pilot on release 62f5e94 passes all 672 Linux
-  backend checks. Real first 20 symbol/frequency tasks succeed (490 bars, 22 raw
-  responses). A subsequent bounded 3,000-attempt pass reaches 1,497 daily and
-  1,481 5min targets through 2026-10-26; 11 minute tasks remain unattempted, with
-  failures retained for transport, absent bars and unknown minute gaps. This is
-  current native-source coverage, not repaired old qfq history or PIT evidence.
-  Continuous-mode integration and production status views are being accepted;
-  the formal worker still uses its old frozen Qlib data/model identity.
+- Phase B current incremental milestone is live at production main 51ec2e1;
+  maintenance/publication run source 1e73f32. Through 2026-10-26 15:00 Shanghai:
+  day 1,497/1,500 and 5min 1,494/1,500, 73,209 qualified bars. Missing 3 daily /
+  6 minute tasks remain PARTIAL, with explicit errors/backoff and no inferred
+  suspension. Raw packs, Parquet, sealed batches, recovery and data events persist.
+  A strict amount recheck retains/excludes 25 early price-only daily chunks and
+  recovers all 25 with turnover. Full Linux 678 and frontend 215 checks, types,
+  lint/build pass. Production API and browser verify current 002384 5min 48 bars
+  separately from its old quarantined history. Evidence/reproduction:
+  docs/UNIFIED_INCREMENTAL_ACCEPTANCE_20261026.md.
 
-- Phase B source adapter is implemented on codex/unified-incremental-data with
-  12 focused tests, lint and strict typing passing; not yet connected/deployed.
-  It keeps missing amount unknown, filters unfinished bars, verifies same-vendor
-  quote/day OHLCV before attaching turnover, and rejects date/identity/unit drift.
-  Current source probes and installed Qlib online module hashes are archived
-  under docs/evidence/*source-audit-20261026.json. Unified incremental persistence,
-  scheduling and downstream data-ready events remain pending. Old interrupted
-  expansion progress is explicitly INTERRUPTED with its original snapshot kept.
+- Duplicate publisher retirement is now durable across two real reloads: Go
+  supervisord v0.6.8 uses an unanchored include regex and also loaded a legacy
+  .conf.pre-qlib backup. Move that preserved file outside include scope; changing
+  only the active .conf flags did not retire its cached old command. Exactly one
+  publisher PID 119773 remains, publication SUCCEEDED. Other service PIDs unchanged.
+
+- Bounded historical plan compiler is implemented with 12 focused checks. It
+  binds 10-year requested scope to the observed master, uses <=31-day windows,
+  retains old independent price bases and marks every new source range as
+  WAITING_FOR_SOURCE_PROBE. This plan executes no downloads. Cluster source
+  fc58308 passes all 690 Linux checks and seals 3,000 work scopes. A bounded raw
+  BaoStock source probe now reuses the production parser and nonblocking shared
+  lease, with 15 focused checks. Real probes return no rows for three 2016
+  sample windows; three newer windows fail vendor login and establish no source
+  range. Do not infer source-wide unavailability. Persist login/yield receipts
+  and 30-minute retry guidance as well as raw responses. Background historical
+  backfill and automatic Qlib data/prediction are still pending.
+  The worker retains its old frozen data/model identity.
+  Final source 5d86ca5 passes all 705 Linux checks; source observations and
+  controlled session receipt acceptance are recorded in docs/evidence/unified-history-*.json.
 
 - First unified-data delivery passes 637 full Linux backend checks and 213
   frontend checks, lint/types/build. Real offline audit rechecks 172 old minute
@@ -39,7 +53,8 @@ Last updated: 2026-10-26
 - Active owner-requested goal: unified observed universe (configurable target
   about 1,500), day/5min quality and ingestion, immutable Qlib data versions,
   restored-model daily prediction, controlled rolling and forward research.
-  Phase A is accepted; Phase B incremental collection is in progress. Scope and checks:
+  Phase A and Phase B current incremental milestone are accepted; historical
+  source probes/backfill and Phase C-E remain active. Scope and checks:
   plans/UNIFIED_DATA_ONLINE_GUIDE.md and plans/UNIFIED_DATA_ONLINE_PLAN.md.
   Existing identities and services remain; effective limits are 13 CPU / 60 GiB,
   free persistent space about 293 GiB. LIVE_TRADING_ENABLED=false.

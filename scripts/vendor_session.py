@@ -8,12 +8,12 @@ from pathlib import Path
 
 
 @contextlib.contextmanager
-def baostock_session() -> Iterator[None]:
+def baostock_session(*, blocking: bool = True) -> Iterator[None]:
     # The service runs on Linux. Keep the lease outside the NFS archive mount.
     import fcntl
     root = Path("/root/qtrade-local")
     root.mkdir(parents=True, exist_ok=True)
     with (root / "baostock-session.lock").open("a") as lease:
-        fcntl.flock(lease, fcntl.LOCK_EX)
+        fcntl.flock(lease, fcntl.LOCK_EX | (0 if blocking else fcntl.LOCK_NB))
         yield
 

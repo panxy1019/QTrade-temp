@@ -1,0 +1,519 @@
+{
+  "observed_at": "2026-10-26T11:20:19.808960+00:00",
+  "plan_acceptance": {
+    "revision": "fc58308efb818314859465092fa17a2cbac5ecaa",
+    "started_at": 1793012478.866725,
+    "pytest_exit": 0,
+    "plan_exit": 0,
+    "finished_at": 1793012570.7895305
+  },
+  "plan": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.unified-backfill-plan.v1",
+    "observed_at": "2026-10-26T11:02:50.577105+00:00",
+    "master_sha256": "aea0fe389a3cb016f020b68fe327e9e9c910e53a90ff61fff2dc81a96adc6fa5",
+    "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+    "code_revision": "fc58308efb818314859465092fa17a2cbac5ecaa",
+    "requested_start": "2016-10-23",
+    "requested_end": "2026-10-23",
+    "years": 10,
+    "task_identity": "ab7732c9011841ee0e1ddeae2e9cb971d2b8ad5bd4b952fa18a1f102b9428ee8",
+    "target_securities": 1500,
+    "frequency_counts": {
+      "day": 1500,
+      "5min": 1500
+    },
+    "state_counts": {
+      "WAITING_FOR_SOURCE_PROBE": 3000
+    },
+    "admitted_bar_count": 0,
+    "source_probe_complete": false,
+    "execution_policy": {
+      "enabled": false,
+      "maximum_calendar_days_per_query": 31,
+      "maximum_concurrent_baostock_sessions": 1,
+      "session_lease": "/root/qtrade-local/baostock-session.lock",
+      "disk_reserve_bytes": 107374182400,
+      "yield_to": [
+        "CURRENT_INCREMENTAL",
+        "DAILY_PREDICTION",
+        "PIT_REPAIR"
+      ],
+      "raw_capture_before_parse": true,
+      "reuse_requires_content_revalidation": true,
+      "retry_requires_persisted_attempt_and_backoff": true
+    },
+    "limitations": [
+      "A work plan is not a download, admitted coverage or a Qlib version",
+      "Current membership retains survivorship and liquidity selection bias",
+      "Legacy price bases remain independent; no automatic stitching",
+      "Unverified historical calendars, state and corporate actions remain unknown",
+      "A missing month cannot establish suspension, pre-listing or unavailable source range"
+    ],
+    "plan_sha256": "649872fb2eef3ad84614ab0c11635e56517bdcda13fde7fe76d3a9d63bef3945",
+    "plan_file": "649872fb2eef3ad84614ab0c11635e56517bdcda13fde7fe76d3a9d63bef3945.json",
+    "evidence_sha256": "e686d37d486947679a3c8337c0a45ab7ddb02336f580d82bf73a047a9b6ce3dc"
+  },
+  "probe_acceptance": {
+    "revision": "b63b6ee14460cb392ff62351f92bb3bda482f6aa",
+    "started_at": 1793012734.2781577,
+    "attempts": [
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793012825.6670868,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "000001",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793012826.2751899,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "510300",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793012826.8407946,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793012827.433632,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2026-10-19",
+        "end": "2026-10-23",
+        "at": 1793012828.0384037,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "002384",
+        "start": "2026-10-19",
+        "end": "2026-10-23",
+        "at": 1793012828.6289134,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793012849.230272,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "000001",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793012849.8455486,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "510300",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793012850.4478781,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793012851.037569,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2026-10-19",
+        "end": "2026-10-23",
+        "at": 1793012851.632271,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "002384",
+        "start": "2026-10-19",
+        "end": "2026-10-23",
+        "at": 1793012852.2259188,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793012872.83231,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "000001",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793012873.4621406,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "510300",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793012874.036821,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793012874.632632,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2026-10-19",
+        "end": "2026-10-23",
+        "at": 1793012875.233823,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "002384",
+        "start": "2026-10-19",
+        "end": "2026-10-23",
+        "at": 1793012875.8353682,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      }
+    ],
+    "pytest_exit": 0,
+    "finished_at": 1793012896.4300492
+  },
+  "idle_window": {
+    "revision": "b63b6ee14460cb392ff62351f92bb3bda482f6aa",
+    "started_at": 1793013007.206141,
+    "attempts": [
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013007.206165,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013037.9907246,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013068.5450306,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013099.1789603,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013129.748442,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013160.3792746,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013190.9546103,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013221.5746462,
+        "returncode": 0,
+        "outcome": "RETURNED"
+      },
+      {
+        "symbol": "000001",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013240.4324577,
+        "returncode": 0,
+        "outcome": "RETURNED"
+      },
+      {
+        "symbol": "510300",
+        "start": "2016-10-24",
+        "end": "2016-10-31",
+        "at": 1793013254.003171,
+        "returncode": 0,
+        "outcome": "RETURNED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793013271.3819017,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793013301.9511654,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793013332.538733,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793013363.1743512,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793013393.7521458,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793013424.3849952,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793013454.9405723,
+        "returncode": 0,
+        "outcome": "YIELDED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2023-10-24",
+        "end": "2023-10-31",
+        "at": 1793013485.5946667,
+        "returncode": 1,
+        "outcome": "FAILED"
+      },
+      {
+        "symbol": "600036",
+        "start": "2026-10-19",
+        "end": "2026-10-23",
+        "at": 1793013502.245556,
+        "returncode": 1,
+        "outcome": "FAILED"
+      },
+      {
+        "symbol": "002384",
+        "start": "2026-10-19",
+        "end": "2026-10-23",
+        "at": 1793013523.8694546,
+        "returncode": 1,
+        "outcome": "FAILED"
+      }
+    ],
+    "state": "FINISHED_ATTEMPTS",
+    "live_trading_enabled": false,
+    "remaining": 0,
+    "finished_at": 1793013545.5669222
+  },
+  "source_probes": [
+    {
+      "receipt": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.history-source-probe.v1",
+        "instrument_id": "SSE.600036",
+        "code_revision": "b63b6ee14460cb392ff62351f92bb3bda482f6aa",
+        "request": {
+          "code": "sh.600036",
+          "fields": "date,time,code,open,high,low,close,volume,amount,adjustflag",
+          "start_date": "2016-10-24",
+          "end_date": "2016-10-31",
+          "frequency": "5",
+          "adjustflag": "3"
+        },
+        "raw_sha256": "9b0823599a8c4c4ac267a484ce1605a5fb46396f4c04bfabd94d2026a609d050",
+        "attempt_id": "11b8cdd611614100b14580d4082669ac",
+        "received_at": "2026-10-26T11:13:59.300631+00:00",
+        "downloaded_rows": 0,
+        "elapsed_seconds": 1.652627,
+        "admitted_bar_count": 0,
+        "historical_pit_certified": false,
+        "ten_year_history_certified": false,
+        "independent_source_reconciled": false,
+        "price_basis": "BAOSTOCK_RAW_ADJUSTFLAG_3_VENDOR_CLAIM_UNCERTIFIED",
+        "historical_available_at": null,
+        "state": "FAILED",
+        "error_class": "ValueError",
+        "error_code": null,
+        "evidence_sha256": "6e006e1f1c1dc66fbaa830db9ee1befdda57aad710a4c62258b4fd4bb6c04748"
+      },
+      "vendor_error_code": "0",
+      "body_complete": true,
+      "downloaded_rows": 0
+    },
+    {
+      "receipt": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.history-source-probe.v1",
+        "instrument_id": "SZSE.000001",
+        "code_revision": "b63b6ee14460cb392ff62351f92bb3bda482f6aa",
+        "request": {
+          "code": "sz.000001",
+          "fields": "date,time,code,open,high,low,close,volume,amount,adjustflag",
+          "start_date": "2016-10-24",
+          "end_date": "2016-10-31",
+          "frequency": "5",
+          "adjustflag": "3"
+        },
+        "raw_sha256": "a8bfdcc91c05cdd5864dd266291274212c4e4b90146209e920a6987d49d93dbb",
+        "attempt_id": "cc5bed9aefd54ba4a42a215fcfe3dff1",
+        "received_at": "2026-10-26T11:14:12.740332+00:00",
+        "downloaded_rows": 0,
+        "elapsed_seconds": 0.961904,
+        "admitted_bar_count": 0,
+        "historical_pit_certified": false,
+        "ten_year_history_certified": false,
+        "independent_source_reconciled": false,
+        "price_basis": "BAOSTOCK_RAW_ADJUSTFLAG_3_VENDOR_CLAIM_UNCERTIFIED",
+        "historical_available_at": null,
+        "state": "FAILED",
+        "error_class": "ValueError",
+        "error_code": null,
+        "evidence_sha256": "55b78189e50d09defaf9b3e47999bac465998781c68b226e4654fb069872c06c"
+      },
+      "vendor_error_code": "0",
+      "body_complete": true,
+      "downloaded_rows": 0
+    },
+    {
+      "receipt": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.history-source-probe.v1",
+        "instrument_id": "SSE.510300",
+        "code_revision": "b63b6ee14460cb392ff62351f92bb3bda482f6aa",
+        "request": {
+          "code": "sh.510300",
+          "fields": "date,time,code,open,high,low,close,volume,amount,adjustflag",
+          "start_date": "2016-10-24",
+          "end_date": "2016-10-31",
+          "frequency": "5",
+          "adjustflag": "3"
+        },
+        "raw_sha256": "7ddf13f71e30f137405a4fdf6f9be59399d14148f9292c5c187c523a21861b92",
+        "attempt_id": "bfbb2c829f5c4e6ba8c8fdd31096c1e7",
+        "received_at": "2026-10-26T11:14:30.162198+00:00",
+        "downloaded_rows": 0,
+        "elapsed_seconds": 1.554852,
+        "admitted_bar_count": 0,
+        "historical_pit_certified": false,
+        "ten_year_history_certified": false,
+        "independent_source_reconciled": false,
+        "price_basis": "BAOSTOCK_RAW_ADJUSTFLAG_3_VENDOR_CLAIM_UNCERTIFIED",
+        "historical_available_at": null,
+        "state": "FAILED",
+        "error_class": "ValueError",
+        "error_code": null,
+        "evidence_sha256": "514aaeeecdc493f140e8a1ee55b5a5656beb5b17a75b5138bf3e032b75a71166"
+      },
+      "vendor_error_code": "0",
+      "body_complete": true,
+      "downloaded_rows": 0
+    }
+  ],
+  "live_trading_enabled": false,
+  "linux_tests": {
+    "tests": 702,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "limitations": [
+    "Empty 2016 responses in three samples do not certify source-wide range",
+    "Three recent-window login failures provide no price coverage evidence",
+    "Full historical backfill not enabled"
+  ]
+}

@@ -1,0 +1,667 @@
+{
+  "deployment": {
+    "http_status": 200,
+    "body": {
+      "classification": "PUBLIC_BUILD_PROVENANCE",
+      "provider": "VERCEL",
+      "status": "AVAILABLE",
+      "target_environment": "production",
+      "git_commit_sha": "51ec2e1f742adffc9e66b489a3cceaa8209b117c",
+      "git_commit_ref": "main",
+      "external_order_transmission": false
+    }
+  },
+  "summary": {
+    "http_status": 200,
+    "body": {
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "point_in_time": false,
+      "realtime_readiness": false,
+      "real_data_paper_readiness": false,
+      "external_order_transmission": false,
+      "live_trading_enabled": false,
+      "promotion": "NOT_ELIGIBLE",
+      "schema_version": "qtrade.unified-catalog.v1",
+      "built_at": "2026-10-26T10:47:46.628131+00:00",
+      "checked_at": "2026-10-26T10:56:51.464113+00:00",
+      "snapshot_age_seconds": 544.835992,
+      "evidence_sha256": "307586ccd900c8cfb8b3823482abcd947f253952b139b46b22974f77867aedea",
+      "read_only": true,
+      "incremental_freshness": {
+        "day": {
+          "status": "PARTIAL",
+          "ready_symbols": 1497,
+          "required_symbols": 1500,
+          "expected_end": "2026-10-26T15:00:00+08:00"
+        },
+        "5min": {
+          "status": "PARTIAL",
+          "ready_symbols": 1494,
+          "required_symbols": 1500,
+          "expected_end": "2026-10-26T15:00:00+08:00"
+        }
+      },
+      "master": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.observed-security-master.v1",
+        "observed_at": "2026-10-26T08:59:06.887581+00:00",
+        "target_count": 1500,
+        "target_actual": 1500,
+        "state": "TARGET_REACHED",
+        "selection_policy": "legacy union then frozen current liquidity candidates; non-PIT",
+        "legacy_union_count": 1037,
+        "legacy_active_retained": 1037,
+        "legacy_unresolved_or_inactive": [],
+        "top_up_count": 463,
+        "source_counts": {
+          "legacy_etf30": 30,
+          "legacy_stock75": 75,
+          "legacy_daily1000": 1000,
+          "frozen_liquidity_candidates": 1745,
+          "legacy_minute_checkpoints": 172
+        },
+        "master_count": 5594,
+        "target_by_type": {
+          "ETF": 30,
+          "STOCK": 1470
+        },
+        "historical_pit_certified_count": 0,
+        "limitations": [
+          "Current selection has survivorship and liquidity selection bias",
+          "Vendor listing/delisting dates are unverified source claims",
+          "Source known_at is not historical row available_at",
+          "Day/5min collection plans do not certify data coverage"
+        ],
+        "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+        "frequency_counts": {
+          "day": {
+            "PLANNED": 500,
+            "CONTENT_COVERAGE_VERIFIED": 1000
+          },
+          "5min": {
+            "PLANNED": 1328,
+            "CONTENT_COVERAGE_VERIFIED": 171,
+            "QUARANTINED": 1
+          }
+        },
+        "recent_streams": {
+          "daily": {
+            "completed_at": "2026-10-26T08:16:14.930696+00:00",
+            "required_symbol_count": 30,
+            "bar_count": 1170,
+            "latest_by_symbol": {
+              "159915": "2026-10-23T15:00:00+08:00",
+              "510050": "2026-10-23T15:00:00+08:00",
+              "510180": "2026-10-23T15:00:00+08:00",
+              "510210": "2026-10-23T15:00:00+08:00",
+              "510230": "2026-10-23T15:00:00+08:00",
+              "510300": "2026-10-23T15:00:00+08:00",
+              "510330": "2026-10-23T15:00:00+08:00",
+              "510500": "2026-10-23T15:00:00+08:00",
+              "510510": "2026-10-23T15:00:00+08:00",
+              "510660": "2026-10-23T15:00:00+08:00",
+              "510760": "2026-10-23T15:00:00+08:00",
+              "510880": "2026-10-23T15:00:00+08:00",
+              "510900": "2026-10-23T15:00:00+08:00",
+              "512000": "2026-10-23T15:00:00+08:00",
+              "512010": "2026-10-23T15:00:00+08:00",
+              "512070": "2026-10-23T15:00:00+08:00",
+              "512100": "2026-10-23T15:00:00+08:00",
+              "512170": "2026-10-23T15:00:00+08:00",
+              "512290": "2026-10-23T15:00:00+08:00",
+              "512400": "2026-10-23T15:00:00+08:00",
+              "512500": "2026-10-23T15:00:00+08:00",
+              "512580": "2026-10-23T15:00:00+08:00",
+              "512660": "2026-10-23T15:00:00+08:00",
+              "512690": "2026-10-23T15:00:00+08:00",
+              "512710": "2026-10-23T15:00:00+08:00",
+              "512760": "2026-10-23T15:00:00+08:00",
+              "512800": "2026-10-23T15:00:00+08:00",
+              "512880": "2026-10-23T15:00:00+08:00",
+              "512980": "2026-10-23T15:00:00+08:00",
+              "515790": "2026-10-23T15:00:00+08:00"
+            }
+          },
+          "minute": {
+            "completed_at": "2026-10-26T07:02:26.435435+00:00",
+            "required_symbol_count": 75,
+            "bar_count": 7200,
+            "latest_by_symbol": {
+              "000063": "2026-10-26T15:00:00+08:00",
+              "000338": "2026-10-26T15:00:00+08:00",
+              "000408": "2026-10-26T15:00:00+08:00",
+              "000568": "2026-10-26T15:00:00+08:00",
+              "000792": "2026-10-26T15:00:00+08:00",
+              "000858": "2026-10-26T15:00:00+08:00",
+              "000938": "2026-10-26T15:00:00+08:00",
+              "000977": "2026-10-26T15:00:00+08:00",
+              "000988": "2026-10-26T15:00:00+08:00",
+              "002027": "2026-10-26T15:00:00+08:00",
+              "002028": "2026-10-26T15:00:00+08:00",
+              "002179": "2026-10-26T15:00:00+08:00",
+              "002230": "2026-10-26T15:00:00+08:00",
+              "002353": "2026-10-26T15:00:00+08:00",
+              "002371": "2026-10-26T15:00:00+08:00",
+              "002415": "2026-10-26T15:00:00+08:00",
+              "002422": "2026-10-26T15:00:00+08:00",
+              "002475": "2026-10-26T15:00:00+08:00",
+              "002558": "2026-10-26T15:00:00+08:00",
+              "002594": "2026-10-26T15:00:00+08:00",
+              "002602": "2026-10-26T15:00:00+08:00",
+              "002625": "2026-10-26T15:00:00+08:00",
+              "300059": "2026-10-26T15:00:00+08:00",
+              "300124": "2026-10-26T15:00:00+08:00",
+              "300251": "2026-10-26T15:00:00+08:00",
+              "300274": "2026-10-26T15:00:00+08:00",
+              "300308": "2026-10-26T15:00:00+08:00",
+              "300394": "2026-10-26T15:00:00+08:00",
+              "300418": "2026-10-26T15:00:00+08:00",
+              "300502": "2026-10-26T15:00:00+08:00",
+              "300750": "2026-10-26T15:00:00+08:00",
+              "300760": "2026-10-26T15:00:00+08:00",
+              "600030": "2026-10-26T15:00:00+08:00",
+              "600031": "2026-10-26T15:00:00+08:00",
+              "600036": "2026-10-26T15:00:00+08:00",
+              "600089": "2026-10-26T15:00:00+08:00",
+              "600104": "2026-10-26T15:00:00+08:00",
+              "600111": "2026-10-26T15:00:00+08:00",
+              "600150": "2026-10-26T15:00:00+08:00",
+              "600160": "2026-10-26T15:00:00+08:00",
+              "600276": "2026-10-26T15:00:00+08:00",
+              "600309": "2026-10-26T15:00:00+08:00",
+              "600406": "2026-10-26T15:00:00+08:00",
+              "600489": "2026-10-26T15:00:00+08:00",
+              "600519": "2026-10-26T15:00:00+08:00",
+              "600660": "2026-10-26T15:00:00+08:00",
+              "600760": "2026-10-26T15:00:00+08:00",
+              "600795": "2026-10-26T15:00:00+08:00",
+              "600886": "2026-10-26T15:00:00+08:00",
+              "600887": "2026-10-26T15:00:00+08:00",
+              "600893": "2026-10-26T15:00:00+08:00",
+              "600900": "2026-10-26T15:00:00+08:00",
+              "600905": "2026-10-26T15:00:00+08:00",
+              "600989": "2026-10-26T15:00:00+08:00",
+              "601127": "2026-10-26T15:00:00+08:00",
+              "601166": "2026-10-26T15:00:00+08:00",
+              "601211": "2026-10-26T15:00:00+08:00",
+              "601288": "2026-10-26T15:00:00+08:00",
+              "601318": "2026-10-26T15:00:00+08:00",
+              "601328": "2026-10-26T15:00:00+08:00",
+              "601398": "2026-10-26T15:00:00+08:00",
+              "601600": "2026-10-26T15:00:00+08:00",
+              "601688": "2026-10-26T15:00:00+08:00",
+              "601728": "2026-10-26T15:00:00+08:00",
+              "601766": "2026-10-26T15:00:00+08:00",
+              "601899": "2026-10-26T15:00:00+08:00",
+              "601985": "2026-10-26T15:00:00+08:00",
+              "603019": "2026-10-26T15:00:00+08:00",
+              "603259": "2026-10-26T15:00:00+08:00",
+              "603288": "2026-10-26T15:00:00+08:00",
+              "603993": "2026-10-26T15:00:00+08:00",
+              "688012": "2026-10-26T15:00:00+08:00",
+              "688041": "2026-10-26T15:00:00+08:00",
+              "688256": "2026-10-26T15:00:00+08:00",
+              "688271": "2026-10-26T15:00:00+08:00"
+            }
+          }
+        },
+        "vendor_master_observed_at": "2026-10-26T02:05:27.695891+00:00",
+        "incremental_counts": {
+          "day": {
+            "CONTENT_COVERAGE_VERIFIED": 1497,
+            "QUARANTINED": 3
+          },
+          "5min": {
+            "CONTENT_COVERAGE_VERIFIED": 1494,
+            "QUARANTINED": 6
+          }
+        },
+        "collection": {
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "point_in_time": false,
+          "realtime_readiness": false,
+          "real_data_paper_readiness": false,
+          "external_order_transmission": false,
+          "live_trading_enabled": false,
+          "promotion": "NOT_ELIGIBLE",
+          "schema_version": "qtrade.unified-collection-progress.v1",
+          "started_at": "2026-10-26T10:47:46.112910+00:00",
+          "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+          "code_revision": "1e73f323d7113442f79eb33977db73328ecd0888",
+          "required_through": {
+            "day": "2026-10-26T07:00:00+00:00",
+            "5min": "2026-10-26T07:00:00+00:00"
+          },
+          "recovery": {
+            "replayed": 0,
+            "interrupted": 0,
+            "amount_rechecks": 0
+          },
+          "stage_counts": {
+            "requested": 0,
+            "downloaded": 0,
+            "parsed_symbols": 0,
+            "validated_symbols": 0,
+            "admitted_symbols": 0,
+            "admitted_rows": 0,
+            "same_vendor_endpoint_matched": 0,
+            "independent_source_reconciled": 0
+          },
+          "state": "PASS_FINISHED",
+          "updated_at": "2026-10-26T10:47:46.113968+00:00",
+          "attempted_symbols": 0,
+          "completed_batches": 0,
+          "elapsed_seconds": 0.001,
+          "free_bytes": 313129959424,
+          "recent_batches": [
+            {
+              "batch_id": "b5d6215cf00842be8ece243409c75f9f",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:46:44+00:00",
+              "completed_at": "2026-10-26T10:46:44+00:00",
+              "manifest_sha256": "11b72fea5ec66424a97d226395add4911c5c6add21096afd3f115c02157b9c76"
+            },
+            {
+              "batch_id": "3251db56f63b4f22ba8aad26f360ca67",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:46:43+00:00",
+              "completed_at": "2026-10-26T10:46:44+00:00",
+              "manifest_sha256": "39cecf972e9abe8be54e967602fbd2f1d2637db030eb8a94bad1efe2f0b55b53"
+            },
+            {
+              "batch_id": "296f0d355f014a1f925b9dd5802ecac4",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:42:37+00:00",
+              "completed_at": "2026-10-26T10:42:37+00:00",
+              "manifest_sha256": "2ad162712848fb281bc8d81312a37f0418e34c4a98736ff8dbb6c5005231b6c7"
+            },
+            {
+              "batch_id": "19292a3fab8a42668c892102dcab5222",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:42:35+00:00",
+              "completed_at": "2026-10-26T10:42:37+00:00",
+              "manifest_sha256": "a5ce2f83ef2450b36768999e7c3720fd610c6ca782e5f6ac500182395c520432"
+            },
+            {
+              "batch_id": "9c1fa9e176ce44578d605c9e3bc6b51f",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:38:29+00:00",
+              "completed_at": "2026-10-26T10:38:30+00:00",
+              "manifest_sha256": "175108b0e9319ed1d12df8ac38be3cdc21362afeff880f0759835702e770a4e1"
+            },
+            {
+              "batch_id": "d7c98da77e3248feb7bcaddcde78b6f1",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:38:27+00:00",
+              "completed_at": "2026-10-26T10:38:29+00:00",
+              "manifest_sha256": "5d58fd7d581dc980f18b698ba56a1ab08810f096147989b76a86cf48d56bb745"
+            },
+            {
+              "batch_id": "89bec0c2d2f64db19effc7605c6b0326",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:34:22+00:00",
+              "completed_at": "2026-10-26T10:34:22+00:00",
+              "manifest_sha256": "2e198043e3b08f29594630fe321a439486ba51e44cb0dd6b1a9fd70fbd92a698"
+            },
+            {
+              "batch_id": "93ce9640aa2848f59418646f190ed7b2",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:34:20+00:00",
+              "completed_at": "2026-10-26T10:34:22+00:00",
+              "manifest_sha256": "ddc610876a99d369f50d1dc39fd38787ae1fe07d21815b9bccebb454ec0a8b58"
+            },
+            {
+              "batch_id": "aa32cdacfd914634a0954cd3b6caa49c",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:29:59+00:00",
+              "completed_at": "2026-10-26T10:29:59+00:00",
+              "manifest_sha256": "a396ce5ec706dbaaf1c6fb66360a4671569cc21b2215d87ad9483ea341720753"
+            },
+            {
+              "batch_id": "1df27d07696c4bf99cd7920e35166bec",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:29:50+00:00",
+              "completed_at": "2026-10-26T10:29:59+00:00",
+              "manifest_sha256": "053bed5731d9a9bbbae9f55ddd98b99c670e3696fd77b835eee6e57db4e6f5c7"
+            },
+            {
+              "batch_id": "bfb16bc293b946ad816e7832de81cf95",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:29:43+00:00",
+              "completed_at": "2026-10-26T10:29:49+00:00",
+              "manifest_sha256": "d3bcbd62dde4883bafed33cf32d6b8e489dc73718321dac5c98f1e72ae1d483f"
+            },
+            {
+              "batch_id": "a2832c36c4444bb8bd67e408542fc23d",
+              "state": "COMPLETE",
+              "attempted_at": "2026-10-26T10:16:12+00:00",
+              "completed_at": "2026-10-26T10:16:23+00:00",
+              "manifest_sha256": "09f24ae5f5723a4adc8da4057f71f2bc77ee04a87224fd312283f206a6254441"
+            }
+          ],
+          "data_ready_events": 127,
+          "source_progress_sha256": "66cbd9105b30c7b3edf823998c6a5b0000c561c1a554419ea2f1154c0ccb4162",
+          "calendar": {
+            "valid_from": "2026-08-01",
+            "valid_through": "2026-12-31",
+            "timezone": "Asia/Shanghai",
+            "sources": [
+              "https://www.sse.com.cn/disclosure/announcement/general/c/c_20260915_10832273.shtml",
+              "https://www.szse.cn/disclosure/notice/general/t20251222_618087.html"
+            ],
+            "weekday_closures": [
+              "2026-09-25",
+              "2026-10-01",
+              "2026-10-02",
+              "2026-10-05",
+              "2026-10-06",
+              "2026-10-07"
+            ],
+            "limitation": "Bounded SSE/SZSE calendar; no assumptions outside its horizon or about emergency closures."
+          },
+          "task_counts": {
+            "FAILED": 9,
+            "SUCCEEDED": 2991
+          }
+        },
+        "evidence_sha256": "65fccbb9a630eee2e2ad453599af8bd2c041449f78e64124b4c35cfb22fe1470"
+      }
+    }
+  },
+  "incremental_002384": {
+    "http_status": 200,
+    "body": {
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "point_in_time": false,
+      "realtime_readiness": false,
+      "real_data_paper_readiness": false,
+      "external_order_transmission": false,
+      "live_trading_enabled": false,
+      "promotion": "NOT_ELIGIBLE",
+      "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+      "catalog_sha256": "307586ccd900c8cfb8b3823482abcd947f253952b139b46b22974f77867aedea",
+      "built_at": "2026-10-26T10:47:46.628131+00:00",
+      "frequency": "5min",
+      "total": 1,
+      "offset": 0,
+      "limit": 25,
+      "rows": [
+        {
+          "instrument_id": "SZSE.002384",
+          "symbol": "002384",
+          "exchange": "SZSE",
+          "security_type": "STOCK",
+          "name": "涓滃北绮惧瘑",
+          "listing_date": "2010-04-09",
+          "delisting_date": null,
+          "status": "ACTIVE_OBSERVED",
+          "source": [
+            {
+              "source_id": "vendor_master",
+              "sha256": "669a756e4c392d13a1f120638c5564bcc3f08f30be7d07d363a1695171d49aaf",
+              "vendor_code": "sz.002384",
+              "available_at": null
+            },
+            {
+              "source_id": "legacy_daily1000",
+              "sha256": "0fe5c3a1a73852561b26428e0be4e919568bf652d250ea00ef87aa70537b1019",
+              "source_known_at": "2026-10-25T11:21:48.256601+00:00",
+              "available_at": null
+            },
+            {
+              "source_id": "frozen_liquidity_candidates",
+              "sha256": "4d8b103fe11ff69060e38fcff679c157c62d825e98d72b5669d4b14c2bed2412",
+              "source_known_at": null,
+              "available_at": null
+            },
+            {
+              "source_id": "legacy_minute_checkpoints",
+              "sha256": "115d21c0ce8163dc015bad961976a94e1da148560a92f1d97c6007d3e5560dbe",
+              "source_known_at": null,
+              "available_at": null
+            }
+          ],
+          "observed_at": "2026-10-26T08:59:06.887581+00:00",
+          "valid_from": "2010-04-09",
+          "valid_to": null,
+          "available_at": null,
+          "valid_time_basis": "unverified vendor claim; not historical knowledge",
+          "data_quality_status": "LIMITED_RESEARCH",
+          "issues": [],
+          "in_target": true,
+          "legacy_sources": [
+            "legacy_daily1000",
+            "legacy_minute_checkpoints"
+          ],
+          "candidate_rank": 8,
+          "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+          "frequencies": {
+            "day": {
+              "planned": true,
+              "state": "CONTENT_COVERAGE_VERIFIED",
+              "issues": [],
+              "observed_start": "2016-10-24",
+              "observed_end": "2026-10-23",
+              "bar_count": 2359,
+              "data_version": "sina-raw-daily-002384-20161024-20261023",
+              "data_sha256": "d485114d9647660ad8ce5173a4503487797769ef7eca13b3e2111cb8b24bf6e6",
+              "amount_verified": false,
+              "historical_pit_certified": false
+            },
+            "5min": {
+              "planned": true,
+              "state": "QUARANTINED",
+              "issues": [
+                "INCOMPLETE_SESSION",
+                "INSUFFICIENT_SESSIONS",
+                "STALE_END"
+              ],
+              "observed_start": "2023-10-24",
+              "observed_end": "2025-11-14",
+              "bar_count": 24000,
+              "data_version": "baostock-qfq-5m-002384-20231024-20261023",
+              "data_sha256": "63884e72b1065ff41bc989cb5a83d730f55ce890258a6cc30dbec6b8e7096405",
+              "evidence_sha256": "87e62c7ac110ee207e6475d0e10818bd1c64353e8a20c8e4eb761c403467c95d",
+              "requested_end": "2026-10-23"
+            }
+          },
+          "incremental": {
+            "day": {
+              "planned": true,
+              "state": "CONTENT_COVERAGE_VERIFIED",
+              "task_state": "SUCCEEDED",
+              "expected_end": "2026-10-26T07:00:00+00:00",
+              "observed_start": "2026-10-26T07:00:00+00:00",
+              "observed_end": "2026-10-26T07:00:00+00:00",
+              "bar_count": 1,
+              "issues": [],
+              "last_success_batch": "20d9d0741b794a7f8b79f70760571a8d",
+              "last_success_at": "2026-10-26T10:03:34.277851+00:00",
+              "next_attempt_at": "2026-10-26T10:03:34+00:00",
+              "last_chunk_missing_amount_bars": 0,
+              "price_basis": "SINA_NATIVE_ADJUSTMENT_UNCERTIFIED",
+              "independent_source_reconciled": false,
+              "historical_pit_certified": false
+            },
+            "5min": {
+              "planned": true,
+              "state": "CONTENT_COVERAGE_VERIFIED",
+              "task_state": "SUCCEEDED",
+              "expected_end": "2026-10-26T07:00:00+00:00",
+              "observed_start": "2026-10-26T01:35:00+00:00",
+              "observed_end": "2026-10-26T07:00:00+00:00",
+              "bar_count": 48,
+              "issues": [],
+              "last_success_batch": "fc353cbf291143f38404fd5ce28abb92",
+              "last_success_at": "2026-10-26T10:03:40.775054+00:00",
+              "next_attempt_at": "2026-10-26T10:03:40+00:00",
+              "last_chunk_missing_amount_bars": 0,
+              "price_basis": "SINA_NATIVE_ADJUSTMENT_UNCERTIFIED",
+              "independent_source_reconciled": false,
+              "historical_pit_certified": false
+            }
+          }
+        }
+      ],
+      "read_only": true
+    }
+  },
+  "historical_002384": {
+    "http_status": 200,
+    "body": {
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "point_in_time": false,
+      "realtime_readiness": false,
+      "real_data_paper_readiness": false,
+      "external_order_transmission": false,
+      "live_trading_enabled": false,
+      "promotion": "NOT_ELIGIBLE",
+      "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+      "catalog_sha256": "307586ccd900c8cfb8b3823482abcd947f253952b139b46b22974f77867aedea",
+      "built_at": "2026-10-26T10:47:46.628131+00:00",
+      "frequency": "5min",
+      "total": 1,
+      "offset": 0,
+      "limit": 25,
+      "rows": [
+        {
+          "instrument_id": "SZSE.002384",
+          "symbol": "002384",
+          "exchange": "SZSE",
+          "security_type": "STOCK",
+          "name": "涓滃北绮惧瘑",
+          "listing_date": "2010-04-09",
+          "delisting_date": null,
+          "status": "ACTIVE_OBSERVED",
+          "source": [
+            {
+              "source_id": "vendor_master",
+              "sha256": "669a756e4c392d13a1f120638c5564bcc3f08f30be7d07d363a1695171d49aaf",
+              "vendor_code": "sz.002384",
+              "available_at": null
+            },
+            {
+              "source_id": "legacy_daily1000",
+              "sha256": "0fe5c3a1a73852561b26428e0be4e919568bf652d250ea00ef87aa70537b1019",
+              "source_known_at": "2026-10-25T11:21:48.256601+00:00",
+              "available_at": null
+            },
+            {
+              "source_id": "frozen_liquidity_candidates",
+              "sha256": "4d8b103fe11ff69060e38fcff679c157c62d825e98d72b5669d4b14c2bed2412",
+              "source_known_at": null,
+              "available_at": null
+            },
+            {
+              "source_id": "legacy_minute_checkpoints",
+              "sha256": "115d21c0ce8163dc015bad961976a94e1da148560a92f1d97c6007d3e5560dbe",
+              "source_known_at": null,
+              "available_at": null
+            }
+          ],
+          "observed_at": "2026-10-26T08:59:06.887581+00:00",
+          "valid_from": "2010-04-09",
+          "valid_to": null,
+          "available_at": null,
+          "valid_time_basis": "unverified vendor claim; not historical knowledge",
+          "data_quality_status": "LIMITED_RESEARCH",
+          "issues": [],
+          "in_target": true,
+          "legacy_sources": [
+            "legacy_daily1000",
+            "legacy_minute_checkpoints"
+          ],
+          "candidate_rank": 8,
+          "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+          "frequencies": {
+            "day": {
+              "planned": true,
+              "state": "CONTENT_COVERAGE_VERIFIED",
+              "issues": [],
+              "observed_start": "2016-10-24",
+              "observed_end": "2026-10-23",
+              "bar_count": 2359,
+              "data_version": "sina-raw-daily-002384-20161024-20261023",
+              "data_sha256": "d485114d9647660ad8ce5173a4503487797769ef7eca13b3e2111cb8b24bf6e6",
+              "amount_verified": false,
+              "historical_pit_certified": false
+            },
+            "5min": {
+              "planned": true,
+              "state": "QUARANTINED",
+              "issues": [
+                "INCOMPLETE_SESSION",
+                "INSUFFICIENT_SESSIONS",
+                "STALE_END"
+              ],
+              "observed_start": "2023-10-24",
+              "observed_end": "2025-11-14",
+              "bar_count": 24000,
+              "data_version": "baostock-qfq-5m-002384-20231024-20261023",
+              "data_sha256": "63884e72b1065ff41bc989cb5a83d730f55ce890258a6cc30dbec6b8e7096405",
+              "evidence_sha256": "87e62c7ac110ee207e6475d0e10818bd1c64353e8a20c8e4eb761c403467c95d",
+              "requested_end": "2026-10-23"
+            }
+          },
+          "incremental": {
+            "day": {
+              "planned": true,
+              "state": "CONTENT_COVERAGE_VERIFIED",
+              "task_state": "SUCCEEDED",
+              "expected_end": "2026-10-26T07:00:00+00:00",
+              "observed_start": "2026-10-26T07:00:00+00:00",
+              "observed_end": "2026-10-26T07:00:00+00:00",
+              "bar_count": 1,
+              "issues": [],
+              "last_success_batch": "20d9d0741b794a7f8b79f70760571a8d",
+              "last_success_at": "2026-10-26T10:03:34.277851+00:00",
+              "next_attempt_at": "2026-10-26T10:03:34+00:00",
+              "last_chunk_missing_amount_bars": 0,
+              "price_basis": "SINA_NATIVE_ADJUSTMENT_UNCERTIFIED",
+              "independent_source_reconciled": false,
+              "historical_pit_certified": false
+            },
+            "5min": {
+              "planned": true,
+              "state": "CONTENT_COVERAGE_VERIFIED",
+              "task_state": "SUCCEEDED",
+              "expected_end": "2026-10-26T07:00:00+00:00",
+              "observed_start": "2026-10-26T01:35:00+00:00",
+              "observed_end": "2026-10-26T07:00:00+00:00",
+              "bar_count": 48,
+              "issues": [],
+              "last_success_batch": "fc353cbf291143f38404fd5ce28abb92",
+              "last_success_at": "2026-10-26T10:03:40.775054+00:00",
+              "next_attempt_at": "2026-10-26T10:03:40+00:00",
+              "last_chunk_missing_amount_bars": 0,
+              "price_basis": "SINA_NATIVE_ADJUSTMENT_UNCERTIFIED",
+              "independent_source_reconciled": false,
+              "historical_pit_certified": false
+            }
+          }
+        }
+      ],
+      "read_only": true
+    }
+  },
+  "observed_at": "2026-10-26T10:56:51.448478+00:00",
+  "browser": {
+    "url": "https://q-trade-temp.vercel.app/#/data",
+    "current_002384_5min_end": "2026-10-26T15:00:00+08:00",
+    "bars": 48,
+    "screenshot": "E:/QTrade-temp/unified-incremental-production-20261026.png",
+    "historical_ui_check": {
+      "status": "accepted",
+      "symbol": "002384",
+      "end": "2025-11-14",
+      "quality": "QUARANTINED",
+      "old_bars": 24000
+    }
+  }
+}
