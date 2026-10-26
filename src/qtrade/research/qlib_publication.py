@@ -39,6 +39,10 @@ def verify_archive(root: Path) -> dict[str, Any]:
     if summary.get("source_snapshot_sha256") is not None:
         from qtrade.research.source_constraints import capture_source
 
+        if not {"request.json", "pit-sources/coverage.json", "pit-sources/snapshot.json"} <= set(
+            manifest["files"]
+        ):
+            raise ValueError("QLIB_SOURCE_PROOF_FILES_MISSING")
         snapshot = capture_source(root / "pit-sources")
         request = json.loads((root / "request.json").read_bytes())
         verify_signed(request)
@@ -51,6 +55,9 @@ def verify_archive(root: Path) -> dict[str, Any]:
             raise ValueError("QLIB_SOURCE_BOUND_REQUEST_MISMATCH")
         constraints = summary.get("execution_constraints")
         if constraints is not None:
+            if not {"execution-constraints.json", "constraint-ledger.parquet",
+                    "constraint-reload-check.json"} <= set(manifest["files"]):
+                raise ValueError("QLIB_CONSTRAINT_PROOF_FILES_MISSING")
             verify_signed(constraints)
             if constraints != json.loads((root / "execution-constraints.json").read_bytes()) or (
                 constraints.get("source_snapshot_sha256") != snapshot.identity

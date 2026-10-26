@@ -8,10 +8,13 @@ import { QlibBacktestPage, QlibResearchPage, QlibStrategyPage } from './QlibWork
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div /> }))
 afterEach(() => { vi.unstubAllGlobals(); sessionStorage.clear() })
 
-function mount(authenticated: boolean, page: 'research' | 'strategies' = 'research') {
+function mount(authenticated: boolean, page: 'research' | 'strategies' = 'research', source?: string) {
+  const supplied = source ? { ...catalog, source_snapshot_sha256: source,
+    default_spec: { ...catalog.default_spec, source_snapshot_sha256: source },
+    default_linear_spec: { ...catalog.default_linear_spec, source_snapshot_sha256: source } } : catalog
   const fetcher = vi.fn(async (input: RequestInfo | URL) => {
     const path = String(input)
-    const body = path.endsWith('/catalog') ? catalog
+    const body = path.endsWith('/catalog') ? supplied
       : path.endsWith('/session') ? { configured: true, authenticated, user: authenticated ? 'research-test' : null }
       : { job_id: 'test', state: 'QUEUED' }
     return { ok: true, status: path.endsWith('/jobs') ? 202 : 200, json: async () => body }
@@ -78,5 +81,14 @@ describe('Qlib research workflow pages', () => {
     expect(await screen.findByText(/原始行情对账70,000根/)).toBeInTheDocument()
     expect(screen.getByText(/ST禁买是研究政策，精确涨跌停与完整历史PIT仍未认证/)).toBeInTheDocument()
     expect(screen.getByText(/来源快照：aaaa/)).toBeInTheDocument()
+  })
+  it('shows and submits the pinned source identity alongside model configuration', async () => {
+    const source = 'a'.repeat(64)
+    const fetcher = mount(true, 'research', source)
+    await screen.findByText('本任务固定来源：' + source)
+    fireEvent.click(screen.getByRole('button', { name: '提交集群研究任务' }))
+    await screen.findByText('已进入任务状态页')
+    const call = (fetcher.mock.calls as unknown as Array<[string, RequestInit]>).find(([url]) => url.endsWith('/jobs'))!
+    expect(JSON.parse(call[1].body as string).spec.source_snapshot_sha256).toBe(source)
   })
 })

@@ -184,6 +184,13 @@ def test_archive_checks_request_and_raw_source_binding_even_if_file_hashes_are_r
     manifest()
     with pytest.raises(ValueError, match="SOURCE_BOUND_REQUEST"):
         verify_archive(archive)
+    missing = json.loads((archive / "checksums.json").read_bytes())
+    del missing["files"]["pit-sources/snapshot.json"]
+    (archive / "checksums.json").write_bytes(canonical(signed({
+        k: v for k, v in missing.items() if k != "evidence_sha256"
+    })))
+    with pytest.raises(ValueError, match="PROOF_FILES_MISSING"):
+        verify_archive(archive)
 
 
 def test_worker_pins_versioned_source_before_it_can_change(source, tmp_path, monkeypatch):

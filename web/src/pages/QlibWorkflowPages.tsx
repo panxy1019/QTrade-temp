@@ -99,6 +99,7 @@ export function QlibResearchPage() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
   const [form] = Form.useForm<FormSpec>()
+  const pinnedSource = Form.useWatch('source_snapshot_sha256', form) as string | undefined
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [requestId, setRequestId] = useState<string | null>(null)
@@ -140,6 +141,7 @@ export function QlibResearchPage() {
       <Audit audit={catalog.datasets[0].audit} />
     </Card>}
     <Card title="Qlib训练与回测配置">
+      {pinnedSource && <Typography.Paragraph copyable>本任务固定来源：{pinnedSource}</Typography.Paragraph>}
       <Form form={form} layout="vertical" onFinish={values => void submit(values)} onValuesChange={() => { setRequestId(null); setError(null) }}>
         <Form.Item name="source_snapshot_sha256" hidden><Input /></Form.Item>
         <div className="backtest-lab-grid">
