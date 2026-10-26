@@ -2,6 +2,54 @@
 
 Last updated: 2026-10-26
 
+- Phase C double-model restoration is now accepted at source 262abb9: all 736
+  Linux checks pass; both native Ridge and LightGBM independently restore 17,814
+  rows / 158 factors with fitted processors unchanged. Score max differences are
+  1.46e-16 and zero, within the original 1e-10 gate. Each complete archive's 11,965
+  files were verified. Candidates remain NOT_ACTIVATED. Evidence:
+  docs/evidence/qlib-float64-model-acceptance-20261026.json.
+  Daily preparation's resumed bounded process PID 137243 has reached terminal
+  WAITING_FOR_RETRY (confirmed zombie after exit): 968/987 qualified inputs sealed,
+  19 retries and no unattempted symbols; three additional stocks lack qualified
+  day inputs. A new Provider has not yet been published. Earlier snapshots below
+  describe previous attempts, not the current process state.
+
+- Phase C fitted-state restoration is implemented on codex/qlib-frozen-restore:
+  opt-in new run identity, official params.pkl/dataset contract, provider and
+  package binding, independent RMDLoader/IT_LS inference with refitting forbidden.
+  First full Linux suite passes 713 checks and real training completes; a
+  shortened restore window changes four float32 STD/CORR cells (of 2.8 million)
+  while scores match exactly. Strict parity correctly rejects the attempt.
+  Restore now preserves the training calculation origin; source 1bb13a9 passes
+  729 Linux checks and real retraining/independent restoration. 17,814 rows across
+  20 sessions, 158 factors, unchanged processors, maximum score difference zero;
+  11,963 archive files verified. Candidate remains NOT_ACTIVATED.
+  Fixed-anchor daily extension also rejects changed adjustment history and raw
+  price/volume overlap, with 12 focused checks. New data version publication is pending.
+  A bounded resumable preparer now binds admitted day batches and fresh factor
+  captures, preserving original rows; five integration checks pass. Source 438c628
+  passes all 734 Linux checks and prepares three real stocks through 2026-10-26.
+  Current Qlib 990 scope has 987 qualified day inputs; three are blocked. Bounded
+  background preparation continues; no ready pointer or prediction is claimed.
+  Native Ridge float32 inference fails the strict short-batch score gate (max
+  8.94e-8, features exact; full-batch scores exact). Add a shared float64 feature
+  policy for new restore-enabled candidates and revalidate both models; production
+  worker is unchanged. Rejected Ridge attempt and diagnosis remain archived.
+
+- Continuation snapshot at 2026-10-26 11:57 UTC: preparation source 438c628 has
+  394/987 qualified-current partitions prepared, nine network retries waiting.
+  Bounded runner PID 131901 is confirmed live; its state is in the persistent
+  qtrade root's forward-preparation-bounded-state.json. It yields to current
+  ingestion and has a 30-minute budget, after which remaining work needs resume.
+  Source 262abb9's full suite passes, and its sequential float64 Ridge/LightGBM
+  training+restore acceptance runner PID 134245 is confirmed live; inspect
+  float64-model-acceptance.json and float64-{linear,lightgbm}-training.log before
+  any restart. PR 15 remains draft until both runtime contracts are accepted.
+  PIT's last valid coverage is 552/990 / 1,247,523 rows; latest attempt FAILED,
+  next retry 12:50:28 UTC, Supervisor PID 80296 remains live. Preserve coverage
+  and respect vendor backoff. Production main is 66ec3d8 (PR 14 accepted).
+  Old worker/model/data identities remain unchanged. docs/QLIB_FITTED_RESTORE.md.
+
 - Phase B current incremental milestone is live at production main 51ec2e1;
   maintenance/publication run source 1e73f32. Through 2026-10-26 15:00 Shanghai:
   day 1,497/1,500 and 5min 1,494/1,500, 73,209 qualified bars. Missing 3 daily /

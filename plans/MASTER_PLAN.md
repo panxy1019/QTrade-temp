@@ -30,6 +30,13 @@ PIT/source repair continues in parallel. Then immutable data events, frozen
 processor restoration, daily prediction, controlled rolling and forward research.
 Each phase needs code, tests, cluster and production evidence, docs and limits.
 
+Phase C fitted-state gate accepted: source 262abb9 passes 736 Linux checks and
+both Ridge/LightGBM independent restoration; 17,814 rows, 158 factors, unchanged
+fitted processors, max score errors 1.46e-16 / zero. Each 11,965-file archive
+verified. Daily preparation has 968 sealed current partitions, 19 retry inputs
+and three raw-input gaps; immutable Provider publication/daily signals remain
+in progress. See docs/QLIB_FITTED_RESTORE.md and its acceptance evidence.
+
 Phase A accepted at production main 055b87f: 1,500 observed targets, independent
 frequency states and lineage queries. 172 old-minute inputs rechecked: 171 pass,
 one quarantined. 637 Linux / 213 frontend checks pass. Evidence and reproduction:

@@ -1,5 +1,52 @@
 # Architecture decisions
 
+## ADR-177 — Forward daily adaptation preserves the old normalization anchor
+
+Status: implementation in progress, 2026-10-26, Phase C.
+
+Reuse admitted immutable day batches, raw-capture validation, the existing HFQ
+normalizer and the durable bounded attempt queue. Verify the old stock files,
+compare raw OHLCV at the exact frozen endpoint, capture fresh factor bytes, and
+reject any revised historical multiplier or inconsistent old anchor. Append only
+new completed rows with the old anchor and previous adjusted close. Never refit
+the historical price series or invent missing amount, calendars or state.
+
+Keep normalized partitions and factor captures under content identities. Old
+raw files are verified and hard-linked without writes; failed responses remain
+while a later attempt can capture fresh bytes. A separate nonblocking local
+process lease, bounded new/retry budgets and backoff prevent duplicate work and
+prefix starvation. Preparation is not Provider readiness or model activation;
+benchmark/calendar adaptation, complete input validation, atomic version/event
+publication and prediction remain required. No new vn.py/gateway component
+supplies this missing data lineage; LIVE_TRADING_ENABLED=false.
+
+## ADR-176 — Online candidates require independent fitted-state restoration
+
+Status: implementation in progress, 2026-10-26, Phase C.
+
+Reuse the existing training/evaluation runner and official Qlib 0.9.7 RMDLoader.
+An explicit restore contract creates a new request/run identity; old workers and
+archived experiments keep their prior behavior and hashes. Save params.pkl and
+the already-fitted DatasetH with dump_all=False, as official TrainerR does, into
+both Recorder and an immutable local bundle. Freeze feature order, processor
+state, package versions, the full provider file identity and a multi-session
+feature/score reference. No vn.py or gateway component is required.
+
+Before local trusted pickle loading, verify every bound file and exact provider
+inventory. A separate process uses RMDLoader and IT_LS with handler fit methods
+forbidden; require unchanged fitted processors, identical indices/feature order,
+feature equality and prediction parity. Failed restoration leaves an incomplete
+attempt, never a completed or ACTIVE model. Success proves frozen-data restore,
+not next-day data validity, historical PIT, profitability or model activation.
+
+Real probes also expose float32 batch-size differences in native Ridge: features
+and processor state are exact, full-batch predictions match, but a shorter batch
+differs by up to 8.94e-8. Keep the existing 1e-10 score tolerance. New restore-enabled
+candidates for both models use an official-Processor subclass that only promotes
+the computed features to float64; factor values/order, fitting and native model
+algorithms are unchanged. Freeze this shared precision policy in request/source
+identity. Revalidate both models before worker rollout; keep rejected attempts.
+
 ## ADR-175 — Historical work plans cannot relabel coverage or bypass source probes
 
 Status: accepted implementation design, 2026-10-26, Phase B.

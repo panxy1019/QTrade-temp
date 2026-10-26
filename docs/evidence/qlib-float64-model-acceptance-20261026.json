@@ -1,0 +1,84 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "source_revision": "262abb9ebf853a9ec75c18783bdd4fecb770f4ea",
+  "models": {
+    "linear": {
+      "run_id": "float64-alpha158-linear-20261026-0ab51f95e3178a27",
+      "archive_verified_files": 11965,
+      "proof": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.qlib-independent-restore.v1",
+        "state": "PARITY_VERIFIED_NOT_ACTIVATED",
+        "verified_at": "2026-10-26T12:02:51.720603+00:00",
+        "bundle_sha256": "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707",
+        "pid": 135690,
+        "feature_count": 158,
+        "reference_rows": 17814,
+        "reference_start": "2026-09-18",
+        "reference_end": "2026-10-23",
+        "handler_start": "2016-10-24",
+        "max_absolute_score_difference": 1.457167719820518e-16,
+        "fitted_processors_unchanged": true,
+        "fit_methods_forbidden": true,
+        "official_loader": "qlib.workflow.online.update.RMDLoader",
+        "handler_init_type": "DataHandlerLP.IT_LS",
+        "model_activated": false,
+        "limitations": [
+          "FROZEN_DATA_RESTORE_ONLY_NOT_NEW_DAY_PREDICTION",
+          "CURRENT_UNIVERSE_NON_PIT",
+          "MANUAL_ACTIVATION_STILL_REQUIRED"
+        ],
+        "evidence_sha256": "704126c7e6375fc237b55c14988f57a9f2b8a90e2ad4571ced29849c3ede3277"
+      }
+    },
+    "lightgbm": {
+      "run_id": "float64-alpha158-lightgbm-20261026-7d31f41cbdf65d62",
+      "archive_verified_files": 11965,
+      "proof": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.qlib-independent-restore.v1",
+        "state": "PARITY_VERIFIED_NOT_ACTIVATED",
+        "verified_at": "2026-10-26T12:08:31.986134+00:00",
+        "bundle_sha256": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+        "pid": 136521,
+        "feature_count": 158,
+        "reference_rows": 17814,
+        "reference_start": "2026-09-18",
+        "reference_end": "2026-10-23",
+        "handler_start": "2016-10-24",
+        "max_absolute_score_difference": 0.0,
+        "fitted_processors_unchanged": true,
+        "fit_methods_forbidden": true,
+        "official_loader": "qlib.workflow.online.update.RMDLoader",
+        "handler_init_type": "DataHandlerLP.IT_LS",
+        "model_activated": false,
+        "limitations": [
+          "FROZEN_DATA_RESTORE_ONLY_NOT_NEW_DAY_PREDICTION",
+          "CURRENT_UNIVERSE_NON_PIT",
+          "MANUAL_ACTIVATION_STILL_REQUIRED"
+        ],
+        "evidence_sha256": "5f899f5d2ac1583d37519a4a2b57713e20be8e7479c693d45f7a082fce42350f"
+      }
+    }
+  },
+  "model_activated": false,
+  "evidence_sha256": "d2ce7676a6a522ecb7472cdd645204fbc64023a80697c929acb1252446d5b2e4"
+}
