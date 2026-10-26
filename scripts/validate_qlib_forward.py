@@ -13,7 +13,12 @@ from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from qtrade.research.data_versions import file_hash, verify_version
-from qtrade.research.forward_prediction import expected_codes, inference_contract, rank_scores
+from qtrade.research.forward_prediction import (
+    expected_codes,
+    inference_contract,
+    rank_scores,
+    verify_validation,
+)
 from qtrade.research.qlib_publication import verify_archive
 from scripts.atomic_json import write_json_immutable
 from scripts.prepare_qlib_incremental import load_signed
@@ -43,20 +48,32 @@ def validate(archive: Path, data_root: Path, output: Path) -> dict[str, Any]:
     calendar = Calendar(REPO/'configs/observer_calendar_2026.json')
     contract = inference_contract(model, trained_data, current_data, data_version, calendar,
                                   now=datetime.now(UTC))
-    policy_file = REPO/'src/qtrade/research/forward_prediction.py'
-    identity = signed({'model': model['evidence_sha256'], 'data': data_version['version_id'],
-                       'script_sha256': file_hash(Path(__file__)),
-                       'policy_sha256': file_hash(policy_file)})['evidence_sha256']
+    source_names = (
+        'scripts/validate_qlib_forward.py', 'scripts/qlib_restore_bundle.py',
+        'scripts/build_qlib_daily_version.py', 'scripts/prepare_qlib_incremental.py',
+        'scripts/atomic_json.py', 'src/qtrade/research/forward_prediction.py',
+        'src/qtrade/research/data_versions.py', 'src/qtrade/research/qlib_publication.py',
+        'src/qtrade/research/qlib_processors.py', 'src/qtrade/research/feature_precision.py',
+        'src/qtrade/monitoring/data_freshness.py', 'configs/observer_calendar_2026.json',
+    )
+    bindings = {'model': model['evidence_sha256'], 'data': data_version['version_id'],
+                'code': {name: file_hash(REPO/name) for name in source_names}}
+    identity = signed(bindings)['evidence_sha256']
     target = output/identity
     if (target/'manifest.json').exists():
-        result = load_signed(target/'manifest.json')
-        if result['validation_id'] != identity or any(file_hash(target/name) != digest
-                for name, digest in result['files'].items()):
+        result = verify_validation(target)
+        if result['validation_id'] != identity:
             raise ValueError('FORWARD_VALIDATION_ARCHIVE_CHANGED')
         return result
     stage = output/(identity+'.'+datetime.now(UTC).strftime('%Y%m%dT%H%M%S%f')+'.partial')
     stage.mkdir(parents=True, exist_ok=False)
     write_json_immutable(stage/'request.json', contract)
+    for name in source_names:
+        destination = stage/'source'/name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes((REPO/name).read_bytes())
+        if file_hash(destination) != bindings['code'][name]:
+            raise ValueError('FORWARD_CODE_CHANGED_DURING_CAPTURE')
     qlib = import_module('qlib')
     DataHandlerLP = import_module('qlib.data.dataset.handler').DataHandlerLP
     RMDLoader = import_module('qlib.workflow.online.update').RMDLoader
@@ -115,6 +132,7 @@ def validate(archive: Path, data_root: Path, output: Path) -> dict[str, Any]:
     result = signed({
         **AUTHORITY, 'schema_version': 'qtrade.qlib-forward-validation.v1',
         'state': 'FORWARD_INPUT_VALIDATED_NOT_ACTIVATED', 'validation_id': identity,
+        'bindings': bindings,
         'model_run_id': summary['run_id'], 'model_bundle_sha256': model['evidence_sha256'],
         'contract': generated, 'score_count': len(ranked), 'feature_count': 158,
         'historical_reference_rows': len(reference_scores),
@@ -124,13 +142,23 @@ def validate(archive: Path, data_root: Path, output: Path) -> dict[str, Any]:
         'model_activated': False, 'auto_predict_enabled': False,
         'files': {p.relative_to(stage).as_posix(): file_hash(p)
                   for p in stage.rglob('*') if p.is_file()},
-        'limitations': current_data['limitations'] + [
+        'limitations': list(dict.fromkeys(summary['limitations'] + current_data['limitations'])) + [
+            'Current liquidity observation universe has survivorship and selection bias',
             'Candidate validation only; human activation and automatic event worker pending',
             'No observed forward returns; scores are not orders or expected returns',
         ],
     })
     write_json_immutable(stage/'manifest.json', result)
-    from scripts.build_qlib_daily_version import move_durable
+    verify_validation(stage)
+    from scripts.build_qlib_daily_version import move_durable, sync_directory
+
+    for name in result['files']:
+        with (stage/name).open('rb') as handle:
+            os.fsync(handle.fileno())
+    for folder in sorted((p for p in stage.rglob('*') if p.is_dir()),
+                          key=lambda p: len(p.parts), reverse=True):
+        sync_directory(folder)
+    sync_directory(stage)
 
     move_durable(stage, target)
     return result

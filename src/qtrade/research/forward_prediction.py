@@ -2,13 +2,50 @@
 
 from __future__ import annotations
 
+import json
 import math
 import re
 from datetime import date, datetime, time, timedelta
+from pathlib import Path
 from typing import Any
 
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.research.data_versions import file_hash
+
+
+def verify_validation(root: Path) -> dict[str, Any]:
+    value: dict[str, Any] = json.loads((root/'manifest.json').read_bytes())
+    for document in (value, value['contract']):
+        if (signed({k: v for k, v in document.items() if k != 'evidence_sha256'}) != document
+                or any(document.get(k) != v for k, v in AUTHORITY.items())):
+            raise ValueError('FORWARD_VALIDATION_HASH_OR_AUTHORITY_INVALID')
+    bindings = value['bindings']
+    if (value.get('schema_version') != 'qtrade.qlib-forward-validation.v1'
+            or value['state'] != 'FORWARD_INPUT_VALIDATED_NOT_ACTIVATED'
+            or value['model_activated'] is not False or value['auto_predict_enabled'] is not False
+            or value['validation_id'] != signed(bindings)['evidence_sha256']
+            or bindings['model'] != value['contract']['model_bundle_sha256']
+            or bindings['data'] != value['contract']['data_version_id']
+            or value['fitted_processors_unchanged'] is not True
+            or value['fit_methods_forbidden'] is not True
+            or value['contract']['forward_return_observed'] is not False
+            or not 1 <= value['score_count'] <= 6000 or value['feature_count'] != 158):
+        raise ValueError('FORWARD_VALIDATION_BINDING_INVALID')
+    files = value['files']
+    if not {'request.json', 'scores.parquet', 'features.parquet'} <= set(files):
+        raise ValueError('FORWARD_VALIDATION_FILES_MISSING')
+    for name, digest in files.items():
+        path = root/name
+        if (path.is_symlink() or not path.resolve().is_relative_to(root.resolve())
+                or not path.is_file() or file_hash(path) != digest):
+            raise ValueError('FORWARD_VALIDATION_FILE_CHANGED')
+    if ({p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()
+         and p != root/'manifest.json'} != set(files)
+            or any(files.get('source/'+name) != digest
+                   for name, digest in bindings['code'].items())):
+        raise ValueError('FORWARD_VALIDATION_UNBOUND_FILE_OR_CODE')
+    return value
 
 
 def inference_contract(model: dict[str, Any], trained_data: dict[str, Any],
@@ -35,6 +72,7 @@ def inference_contract(model: dict[str, Any], trained_data: dict[str, Any],
     return signed({
         **AUTHORITY, 'data_version_id': version['version_id'], 'data_end': end,
         'model_bundle_sha256': model['evidence_sha256'],
+        'model_reference_end': model['reference_end'],
         'training_data_sha256': model['data_sha256'],
         'observation_universe_version': current_data['incremental']['observation_universe_version'],
         'current_input_symbols': current_data['incremental']['current_symbols'],

@@ -1,10 +1,17 @@
+import json
 from copy import deepcopy
 from datetime import UTC, datetime
 
 import pytest
 
-from qtrade.monitoring.data_freshness import Calendar
-from qtrade.research.forward_prediction import expected_codes, inference_contract, rank_scores
+from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.research.data_versions import file_hash
+from qtrade.research.forward_prediction import (
+    expected_codes,
+    inference_contract,
+    rank_scores,
+    verify_validation,
+)
 
 
 @pytest.fixture
@@ -90,3 +97,54 @@ def test_equal_scores_have_deterministic_code_tiebreak_and_full_coverage():
                           {'instrument': 'SZ000001', 'score': 0.2}], ['SZ000001', 'SH600036'])
     assert [r['instrument'] for r in result] == ['SH600036', 'SZ000001']
     assert [r['rank'] for r in result] == [1, 2]
+
+
+@pytest.fixture
+def snapshot(inputs, tmp_path):
+    root = tmp_path/'validation'
+    root.mkdir()
+    contract = inference_contract(*inputs, now=datetime(2026, 10, 26, 12, tzinfo=UTC))
+    for name in ['request.json', 'scores.parquet', 'features.parquet', 'source/inference.py']:
+        path = root/name
+        path.parent.mkdir(exist_ok=True)
+        path.write_bytes(name.encode())
+    bindings = {'model': contract['model_bundle_sha256'], 'data': contract['data_version_id'],
+                'code': {'inference.py': file_hash(root/'source/inference.py')}}
+    value = signed({**AUTHORITY, 'schema_version': 'qtrade.qlib-forward-validation.v1',
+                    'state': 'FORWARD_INPUT_VALIDATED_NOT_ACTIVATED', 'contract': contract,
+                    'bindings': bindings, 'validation_id': signed(bindings)['evidence_sha256'],
+                    'model_activated': False, 'auto_predict_enabled': False,
+                    'fitted_processors_unchanged': True, 'fit_methods_forbidden': True,
+                    'score_count': 1, 'feature_count': 158,
+                    'files': {p.relative_to(root).as_posix(): file_hash(p)
+                              for p in root.rglob('*') if p.is_file()}})
+    (root/'manifest.json').write_text(json.dumps(value))
+    return root, value
+
+
+def test_prediction_archive_binds_exact_code_and_files(snapshot):
+    root, value = snapshot
+    assert verify_validation(root) == value
+    (root/'scores.parquet').write_bytes(b'changed')
+    with pytest.raises(ValueError, match='FILE_CHANGED'):
+        verify_validation(root)
+
+
+@pytest.mark.parametrize('change', ['source', 'extra', 'activation', 'contract'])
+def test_rehashed_or_unbound_validation_cannot_be_reused(snapshot, change):
+    root, value = snapshot
+    if change == 'source':
+        value['bindings']['code']['inference.py'] = 'f'*64
+        value['validation_id'] = signed(value['bindings'])['evidence_sha256']
+    elif change == 'extra':
+        (root/'extra.json').write_text('not bound')
+    elif change == 'activation':
+        value['model_activated'] = True
+    else:
+        value['contract']['data_version_id'] = 'f'*64
+        value['contract'] = signed({k: v for k, v in value['contract'].items()
+                                     if k != 'evidence_sha256'})
+    (root/'manifest.json').write_text(json.dumps(signed({k: v for k, v in value.items()
+                                                      if k != 'evidence_sha256'})))
+    with pytest.raises(ValueError):
+        verify_validation(root)
