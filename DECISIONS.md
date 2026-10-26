@@ -3117,3 +3117,23 @@ Full historical PIT, exact limits, corporate actions, settlement and auctions
 remain separate uncertified P0 work. No gateway or vn.py execution component
 supplies this missing source lineage. LIVE_TRADING_ENABLED=false.
 
+## ADR-168 — Single-symbol failures cannot block the remaining source universe
+
+Status: accepted, 2026-10-26.
+
+The previous all-or-nothing prefix retry stalls at 36/40 despite hundreds of
+unattempted stocks. For the supervised collector, replace prefix advancement in
+ADR-166 with two independent bounded queues over the frozen dataset: 20 new symbols
+and at most five due retries per pass. Persist dataset-bound, signed per-symbol
+attempts before querying; a killed attempt remains unresolved and waits for its
+retry deadline. Failed symbols retain 30-minute to six-hour exponential backoff.
+Preserve the old scheduler record immutably during migration.
+
+New-symbol progress may continue while coverage remains PARTIAL. Only verified
+checkpoints establish collected coverage; only a checksum-verified current receipt
+and complete scope can establish successful collection. A collector-wide failure
+retains global backoff. Completing source collection never certifies historical
+availability, exact rules, PIT membership or trading admission. Raw source files
+and completed experiments retain their existing identities. No new gateway or
+vn.py execution component is needed. LIVE_TRADING_ENABLED=false.
+

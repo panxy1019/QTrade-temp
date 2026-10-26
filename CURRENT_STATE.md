@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-26
 
+- PIT collection starvation repair is in progress: the prior prefix scheduler
+  remains at 36/40 after four persistent vendor failures and cannot attempt later
+  symbols. A dataset-bound, durable per-symbol queue now gives each pass separate
+  budgets for 20 unattempted stocks and at most five due retries. Partial coverage
+  stays PARTIAL; interrupted and failed symbols retain bounded retry deadlines.
+  Forty-four local source/queue/constraint tests pass. Linux full-suite validation,
+  supervised deployment and actual coverage-growth acceptance are pending.
+  See docs/PIT_COLLECTION_QUEUE.md. Historical PIT certification remains false.
+
 - Source-bound Qlib execution is deployed and accepted: verified raw status/master
   inputs are frozen into request/run identity and both production-browser tasks.
   Ridge 6f04b986 and LightGBM 4fc474f9 completed on release 846a836 with identical

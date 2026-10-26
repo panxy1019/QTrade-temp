@@ -22,6 +22,17 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
+### P0 historical status collection queue, 2026-10-26
+
+- [x] Reproduce prefix starvation at 36/40 with four persistent vendor failures.
+- [x] Separate bounded unattempted scanning from durable per-symbol retries.
+- [x] Reject stale receipts, false completion, corrupted ledgers and data changes.
+- [ ] Complete Linux full-suite and supervised cluster deployment.
+- [ ] Accept real coverage growth, publication and preserved old experiment hashes.
+
+Reproduction and limits: docs/PIT_COLLECTION_QUEUE.md. Broader coverage does not
+certify historical information availability or independently repair the universe.
+
 ### P0 source-bound Qlib execution, 2026-10-26
 
 - [x] Audit actual source/constraint gaps and record the diagnostic policy.
