@@ -77,6 +77,7 @@ def freeze(
         "created_at": datetime.now(UTC).isoformat(), "code_revision": source_revision,
         "data_sha256": data_sha256, "source_snapshot_sha256": source_snapshot_sha256,
         "feature_order": [str(c) for c in features.columns],
+        "feature_dtypes": [str(dtype) for dtype in features.dtypes],
         "processor_sha256": fitted_hash,
         "reference_start": str(pd.Timestamp(dates[0]).date()),
         "reference_end": str(pd.Timestamp(dates[-1]).date()),

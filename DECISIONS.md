@@ -39,6 +39,14 @@ feature equality and prediction parity. Failed restoration leaves an incomplete
 attempt, never a completed or ACTIVE model. Success proves frozen-data restore,
 not next-day data validity, historical PIT, profitability or model activation.
 
+Real probes also expose float32 batch-size differences in native Ridge: features
+and processor state are exact, full-batch predictions match, but a shorter batch
+differs by up to 8.94e-8. Keep the existing 1e-10 score tolerance. New restore-enabled
+candidates for both models use an official-Processor subclass that only promotes
+the computed features to float64; factor values/order, fitting and native model
+algorithms are unchanged. Freeze this shared precision policy in request/source
+identity. Revalidate both models before worker rollout; keep rejected attempts.
+
 ## ADR-175 — Historical work plans cannot relabel coverage or bypass source probes
 
 Status: accepted implementation design, 2026-10-26, Phase B.

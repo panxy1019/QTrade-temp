@@ -19,6 +19,10 @@ Last updated: 2026-10-26
   passes all 734 Linux checks and prepares three real stocks through 2026-10-26.
   Current Qlib 990 scope has 987 qualified day inputs; three are blocked. Bounded
   background preparation continues; no ready pointer or prediction is claimed.
+  Native Ridge float32 inference fails the strict short-batch score gate (max
+  8.94e-8, features exact; full-batch scores exact). Add a shared float64 feature
+  policy for new restore-enabled candidates and revalidate both models; production
+  worker is unchanged. Rejected Ridge attempt and diagnosis remain archived.
   Old worker/model/data identities remain unchanged. docs/QLIB_FITTED_RESTORE.md.
 
 - Phase B current incremental milestone is live at production main 51ec2e1;

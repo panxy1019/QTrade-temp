@@ -1,0 +1,29 @@
+{
+  "acceptance": {
+    "revision": "438c6282478da655dd937f74792e1fcf1f97dbcf",
+    "started_at": 1793014980.8884525,
+    "training_exit": 1,
+    "finished_at": 1793015292.3600461
+  },
+  "diagnosis": {
+    "coef_dtype": "float32",
+    "feature_dtype": "float32",
+    "full_shape": [
+      603412,
+      158
+    ],
+    "short_shape": [
+      17814,
+      158
+    ],
+    "full_max_abs": 0.0,
+    "short_max_abs": 8.940696716308594e-08,
+    "score_nonfinite": 0,
+    "feature_max_abs": 0.0,
+    "processor_hash_unchanged": true
+  },
+  "state": "REJECTED_FLOAT32_SHORT_BATCH_SCORE_PARITY",
+  "model_activated": false,
+  "live_trading_enabled": false,
+  "remediation": "Float64 feature contract for both new online candidates; tolerance unchanged"
+}

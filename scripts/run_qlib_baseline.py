@@ -197,6 +197,14 @@ def run(
     config = config_override or json.loads(
         (REPO / "configs/qlib_daily_baseline.json").read_text()
     )
+    if restore_proof:
+        # Keep both models on the same numeric feature contract. Native Ridge
+        # float32 matrix products can change by one ULP with prediction batch size.
+        config = json.loads(json.dumps(config))
+        processors = config.setdefault("infer_processors", [{"class": "ProcessInf"}])
+        processors.append({"class": "Float64Features",
+                           "module_path": "qtrade.research.qlib_processors"})
+        config["online_feature_precision"] = "FLOAT64_AFTER_FROZEN_NORMALIZATION_V1"
     if re.fullmatch(r"[a-f0-9]{40}", source_revision) is None:
         raise ValueError("FULL_SOURCE_REVISION_REQUIRED")
     output.mkdir(parents=True, exist_ok=True)
@@ -345,7 +353,8 @@ def run(
         "src/qtrade/research/workflow.py",
         "src/qtrade/research/pit_repair.py",
         "src/qtrade/research/source_constraints.py",
-        *(["scripts/qlib_restore_bundle.py"] if restore_proof else []),
+        *(["scripts/qlib_restore_bundle.py", "src/qtrade/research/feature_precision.py",
+           "src/qtrade/research/qlib_processors.py"] if restore_proof else []),
     ):
         target = stage / "source" / relative
         target.parent.mkdir(parents=True, exist_ok=True)
