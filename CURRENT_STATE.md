@@ -1,6 +1,24 @@
 # Current state
 
-Last updated: 2026-10-26
+Last updated: 2026-10-27
+
+- PR20 merged as main 7c7d98a; cluster research worker/publisher and the single
+  alternating history service run audited source a69eb70. All 1,127 Linux checks
+  pass without skips; all 227 frontend checks pass. Production APIs verify fresh
+  worker, usable approved LightGBM prediction e6bbb1af (888 scores), OFF training
+  policy with CONTROL_READY, and five current signal families with 885 stocks.
+  A real native rolling candidate 29589b44 is TRAINED, not activated; independent
+  fitted restore matches 17,813 rows / 158 features exactly. Current ACTIVE remains
+  user-approved 2d78cc4c. Signal weights are indicative, never holdings or fills.
+  Raw/Parquet receipt audits verify 48 day rows / four symbols, 576 five-minute
+  rows / one symbol, plus three separate delisted day rows / one symbol. These
+  are first bounded backfill windows, not long-history completion. PIT content
+  coverage is 817/990, 1,861,256 rows; full PIT/available_at remain uncertified.
+  Free space is 283.3 GiB with a 100 GiB reserve. Cross-session data generation,
+  candidate validation on later data, browser visual acceptance, ETF Provider,
+  unified historical strategy comparisons and PAPER/SHADOW remain open. See
+  docs/QLIB_CDE_ACCEPTANCE_20261027.md and serving cluster/production evidence.
+  Earlier checkpoints below are historical and do not override this entry.
 
 - PR 19 merged at main 344a6bf; source 5d4e7bf passes 977 Linux checks and
   221 frontend checks. Daily version and history services are supervised; the

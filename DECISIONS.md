@@ -2,8 +2,8 @@
 
 ## ADR-186 — Signal baselines are separate from execution-admitted portfolios
 
-Status: five real signal archives accepted; automated publication/UI implementation
-awaiting production acceptance, 2026-10-26, Phase E.
+Status: five real signal families and scheduled publication accepted on production
+API; browser visual acceptance pending, 2026-10-27, Phase E.
 
 Reuse PriceFactorSpec for momentum/reversal/low-volatility; use a common complete
 21-session close grid and average tied cross-sectional ranks for equal-weight
@@ -27,8 +27,8 @@ historical. Public target weights are never represented as executed holdings.
 
 ## ADR-185 — Mature rolling windows reuse native generators and trainers
 
-Status: native cluster training and independent restore accepted; control rollout
-awaiting production acceptance, 2026-10-26.
+Status: native cluster training and independent restore accepted; control deployed
+with OFF policy, later-version validation pending, 2026-10-27.
 
 Reuse Qlib 0.9.7 RollingGen and TrainerR, existing immutable baseline evaluation,
 source constraints and independent fitted-state restoration. Rolling policy has
@@ -43,8 +43,8 @@ is copied. Fit normalizers on the training split, reload with IT_LS and forbid
 refitting during reload. Freeze a separate latest-20-session inference reference;
 immature labels are excluded from evaluation even though current features exist.
 Reference scores are not forward results. Candidates never replace ACTIVE without
-human approval. OFF remains the production policy until control/scheduling gates
-are integrated. vn.py has no role in this model-training boundary.
+human approval. OFF remains the production policy until the user saves another
+policy through the protected control. vn.py has no role in this model-training boundary.
 
 LightGBM model 2d78cc4c was explicitly approved in chat on 2026-10-26; activation
 421b9273 applied through the signed queue at 14:52:26 UTC. This authorizes that

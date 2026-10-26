@@ -1,0 +1,241 @@
+{
+  "observed_at": "2026-10-26T15:59:45.955882+00:00",
+  "deployment": {
+    "classification": "PUBLIC_BUILD_PROVENANCE",
+    "provider": "VERCEL",
+    "status": "AVAILABLE",
+    "target_environment": "production",
+    "git_commit_sha": "7c7d98a2d37620d7001f949a2e033fb703cc82ce",
+    "git_commit_ref": "main",
+    "external_order_transmission": false
+  },
+  "worker": {
+    "heartbeat_at": "2026-10-26T15:57:08.826091+00:00",
+    "source_revision": "a69eb701e00516461e0f487dc25a2088c1e0dab3",
+    "state": "MODEL_CONTROL_READY"
+  },
+  "active_model": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+  "model_states": [
+    {
+      "id": "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707",
+      "state": "STAGED"
+    },
+    {
+      "id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+      "state": "TRAINED"
+    }
+  ],
+  "training_mode": "OFF",
+  "training_control_state": "CONTROL_READY",
+  "current_prediction_usable": true,
+  "current_prediction_id": "e6bbb1af52d2b333044acafa7fe6c2db5cca3b94c22eb0bbdea75eb0184cd91a",
+  "signals": {
+    "momentum20": {
+      "family_id": "6ba7a557b02d748dcb6e11916acde0310655b4cdea19db19443f6e8718bfe962",
+      "data_end": "2026-10-26",
+      "current_input": true,
+      "total": 885,
+      "page_size_observed": 3,
+      "families": [
+        {
+          "name": "momentum20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "reversal5",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "lowvol20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "multifactor_equal_rank",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "equal_weight_universe",
+          "score_count": 885,
+          "allocation_method": "EQUAL_WEIGHT_ALL",
+          "target_count": 885
+        }
+      ],
+      "execution_admitted": false
+    },
+    "reversal5": {
+      "family_id": "6ba7a557b02d748dcb6e11916acde0310655b4cdea19db19443f6e8718bfe962",
+      "data_end": "2026-10-26",
+      "current_input": true,
+      "total": 885,
+      "page_size_observed": 3,
+      "families": [
+        {
+          "name": "momentum20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "reversal5",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "lowvol20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "multifactor_equal_rank",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "equal_weight_universe",
+          "score_count": 885,
+          "allocation_method": "EQUAL_WEIGHT_ALL",
+          "target_count": 885
+        }
+      ],
+      "execution_admitted": false
+    },
+    "lowvol20": {
+      "family_id": "6ba7a557b02d748dcb6e11916acde0310655b4cdea19db19443f6e8718bfe962",
+      "data_end": "2026-10-26",
+      "current_input": true,
+      "total": 885,
+      "page_size_observed": 3,
+      "families": [
+        {
+          "name": "momentum20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "reversal5",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "lowvol20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "multifactor_equal_rank",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "equal_weight_universe",
+          "score_count": 885,
+          "allocation_method": "EQUAL_WEIGHT_ALL",
+          "target_count": 885
+        }
+      ],
+      "execution_admitted": false
+    },
+    "multifactor_equal_rank": {
+      "family_id": "6ba7a557b02d748dcb6e11916acde0310655b4cdea19db19443f6e8718bfe962",
+      "data_end": "2026-10-26",
+      "current_input": true,
+      "total": 885,
+      "page_size_observed": 3,
+      "families": [
+        {
+          "name": "momentum20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "reversal5",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "lowvol20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "multifactor_equal_rank",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "equal_weight_universe",
+          "score_count": 885,
+          "allocation_method": "EQUAL_WEIGHT_ALL",
+          "target_count": 885
+        }
+      ],
+      "execution_admitted": false
+    },
+    "equal_weight_universe": {
+      "family_id": "6ba7a557b02d748dcb6e11916acde0310655b4cdea19db19443f6e8718bfe962",
+      "data_end": "2026-10-26",
+      "current_input": true,
+      "total": 885,
+      "page_size_observed": 3,
+      "families": [
+        {
+          "name": "momentum20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "reversal5",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "lowvol20",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "multifactor_equal_rank",
+          "score_count": 885,
+          "allocation_method": "TOPK_EQUAL_WEIGHT",
+          "target_count": 50
+        },
+        {
+          "name": "equal_weight_universe",
+          "score_count": 885,
+          "allocation_method": "EQUAL_WEIGHT_ALL",
+          "target_count": 885
+        }
+      ],
+      "execution_admitted": false
+    }
+  },
+  "anonymous_policy_write_http_status": 401,
+  "browser_visual_verified": false,
+  "live_trading_enabled": false
+}
