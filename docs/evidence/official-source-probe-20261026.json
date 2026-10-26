@@ -1,0 +1,93 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.official-source-probe.v1",
+  "checked_at": "2026-10-26T05:44:53.389701+00:00",
+  "sdk_version": "1.18.84",
+  "historical_pit_certified": false,
+  "used_in_qlib": false,
+  "SSE": {
+    "url": "https://query.sse.com.cn/commonQuery.do",
+    "params": {
+      "sqlId": "COMMON_SSE_CP_GPJCTPZ_GPLB_GP_L",
+      "isPagination": "true",
+      "STOCK_CODE": "",
+      "CSRC_CODE": "",
+      "REG_PROVINCE": "",
+      "STOCK_TYPE": "1,2,8",
+      "COMPANY_STATUS": "3",
+      "type": "inParams",
+      "pageHelp.cacheSize": "1",
+      "pageHelp.beginPage": "1",
+      "pageHelp.pageSize": "500",
+      "pageHelp.pageNo": "1",
+      "pageHelp.endPage": "1"
+    },
+    "observed_at": "2026-10-26T05:29:29.020811+00:00",
+    "rows": 161,
+    "pagination_total": 161,
+    "raw_sha256": "d5e5dec58882aef4aba8be707087e9c3483ee1be9c2d1fcb6070e1ae9abc8990",
+    "raw_bytes": 173775,
+    "historical_available_at": null,
+    "sample_601198": {
+      "COMPANY_CODE": "601198",
+      "A_STOCK_CODE": "601198",
+      "LIST_DATE": "20150226",
+      "DELIST_DATE": "20261019"
+    },
+    "state": "CAPTURED_UNCERTIFIED"
+  },
+  "SZSE": {
+    "source": "SZSE",
+    "observed_at": "2026-10-26T05:42:03.573892+00:00",
+    "historical_available_at": null,
+    "historical_pit_certified": false,
+    "used_in_qlib": false,
+    "request_change": "USE_SZSE_REFERER_AND_SDK_QUERY_PARAMS",
+    "http_status": 200,
+    "state": "CAPTURED_UNCERTIFIED",
+    "parsed_at": "2026-10-26T05:43:11.073974+00:00",
+    "raw_sha256": "e1d09fabf1e4f07d6fbb859631aba6206dac8e576684857b4c8bd92ba7aa164c",
+    "raw_bytes": 10914,
+    "rows": 211,
+    "fields": [
+      "证券代码",
+      "证券简称",
+      "上市日期",
+      "终止上市日期"
+    ],
+    "url": "https://www.szse.cn/api/report/ShowReport",
+    "params": {
+      "SHOWTYPE": "xlsx",
+      "CATALOGID": "1793_ssgs",
+      "TABKEY": "tab2",
+      "random": "0.6935816432433362"
+    }
+  },
+  "szse_duplicate_codes": 0,
+  "szse_noncanonical_codes": 0,
+  "szse_delist_date_range": [
+    "1999-07-12",
+    "2026-10-23"
+  ],
+  "initial_szse_failure": {
+    "source": "SZSE",
+    "url": "https://www.szse.cn/api/report/ShowReport",
+    "params": {
+      "SHOWTYPE": "xlsx",
+      "CATALOGID": "1793_ssgs",
+      "TABKEY": "tab2"
+    },
+    "observed_at": "2026-10-26T05:29:29.234811+00:00",
+    "historical_pit_certified": false,
+    "historical_available_at": null,
+    "state": "FAILED",
+    "error_type": "HTTPError"
+  },
+  "evidence_sha256": "66b96fa55b9c3693261f97e00fd2decd4f74167839a7e9adb001211afad983c9"
+}

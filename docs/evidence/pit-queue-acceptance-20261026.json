@@ -7,7 +7,7 @@
   "live_trading_enabled": false,
   "promotion": "NOT_ELIGIBLE",
   "schema_version": "qtrade.pit-queue-acceptance.v1",
-  "checked_at": "2026-10-26T05:37:06.020070+00:00",
+  "checked_at": "2026-10-26T05:46:59.214605+00:00",
   "source_revision": "32519f2dfab5e887c9ec488db088233b13cbe571",
   "linux_test_marks": {
     ".": 592,
@@ -111,5 +111,97 @@
     }
   ],
   "historical_pit_certified": false,
-  "evidence_sha256": "6b411ba21b30c055727f3608e9fcb8c598f2174f4d173bde0f894d9726ced067"
+  "initial_cluster_capture_evidence_sha256": "6b411ba21b30c055727f3608e9fcb8c598f2174f4d173bde0f894d9726ced067",
+  "publication_acceptance": {
+    "api": {
+      "checked_at": "2026-10-26T05:46:02.187754+00:00",
+      "published_at": "2026-10-26T05:44:29.600553+00:00",
+      "source_snapshot_sha256": "93f8bfafbce56c47925ea866c9db697577ce88de3bc1f88bb6febcef794b4a7a",
+      "worker_fresh": true,
+      "both_model_defaults_bound": true,
+      "old_experiment_api_checks": [
+        {
+          "experiment_id": "6f04b986eaeb454c8c61579f1cea266b",
+          "evidence_sha256": "99075d95589cd1bf7140f09e445a6853d75c011353d761599efd884cca913bfc",
+          "frozen_status_symbols": 36,
+          "metrics_preserved": true
+        },
+        {
+          "experiment_id": "4fc474f9f5f94199914b5c8802eb5127",
+          "evidence_sha256": "882d9e206a3dbe5ca2045d2daa9f827360389a61ae431a001154ce3314822031",
+          "frozen_status_symbols": 36,
+          "metrics_preserved": true
+        }
+      ]
+    },
+    "frozen_source_proof": {
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "point_in_time": false,
+      "realtime_readiness": false,
+      "real_data_paper_readiness": false,
+      "external_order_transmission": false,
+      "live_trading_enabled": false,
+      "promotion": "NOT_ELIGIBLE",
+      "checked_at": "2026-10-26T05:46:47.284097+00:00",
+      "source_snapshot_sha256": "93f8bfafbce56c47925ea866c9db697577ce88de3bc1f88bb6febcef794b4a7a",
+      "frozen_status_symbols": 77,
+      "frozen_status_rows": 186175,
+      "collection_progress": {
+        "completed_symbols": 77,
+        "due_retry_symbols": 0,
+        "historical_pit_certified": false,
+        "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+        "next_retry_at": "2026-10-26T06:07:13.115393+00:00",
+        "scope_symbols": 990,
+        "unattempted_symbols": 910,
+        "unresolved_symbols": 913,
+        "waiting_retry_symbols": 3
+      },
+      "coverage_sha256": "1ddacbefbd4eca70d458e74253795b127e595c45eabaa22b319cad1f6ec603f1",
+      "historical_pit_certified": false,
+      "evidence_sha256": "9f7ec22967d8e1d8193a90301b1b22315d63424abe348eadc756f6f1275edf7d"
+    }
+  },
+  "progress_after_waiting_failures": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "checked_at": "2026-10-26T05:49:42.841191+00:00",
+    "source_snapshot_sha256": "9e932457bcf2cfe8284447b2d86a0fa5b9dd026b0ea7afd3cc519bed659631f1",
+    "status_symbols": 93,
+    "status_rows": 223443,
+    "collection_progress": {
+      "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+      "scope_symbols": 990,
+      "completed_symbols": 93,
+      "unresolved_symbols": 897,
+      "unattempted_symbols": 890,
+      "due_retry_symbols": 0,
+      "waiting_retry_symbols": 7,
+      "next_retry_at": "2026-10-26T06:07:13.115393+00:00",
+      "historical_pit_certified": false
+    },
+    "previous_waiting_failures_preserved": [
+      "000858",
+      "000880",
+      "000893"
+    ],
+    "current_waiting_failures": [
+      "000858",
+      "000880",
+      "000893",
+      "000973",
+      "000988",
+      "001203",
+      "001216"
+    ],
+    "new_stocks_collected_despite_old_failures": 16,
+    "historical_pit_certified": false,
+    "evidence_sha256": "fab435650af4f6d6baaaf636c208537ebb3d57009ec47a8e8400dbd30b310683"
+  },
+  "evidence_sha256": "2e561910b54adb16bd403dc251e02aafdef257bb8abfb444e36fb154d2d07536"
 }

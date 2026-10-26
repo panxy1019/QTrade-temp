@@ -12,7 +12,7 @@
 | 来源 | 本次结果 | 限制 |
 | --- | --- | --- |
 | [上交所终止上市列表](https://www.sse.com.cn/assortment/stock/list/delisting/)的 `query.sse.com.cn/commonQuery.do` | 保存 161 行；返回分页总数也是 161，日期字段范围为 2001-04-25 至 2026-10-19 | 请求 STOCK_TYPE 为 1,2,8；161 行不能直接称为 161 只 A 股或全市场历史股票池 |
-| [深交所暂停/终止上市列表](https://www.szse.cn/market/stock/suspend/index.html)的 `api/report/ShowReport` | HTTPError，没有取得可验证表格 | 不将失败解释为零条记录，也不以其他网站列表替代认证 |
+| [深交所暂停/终止上市列表](https://www.szse.cn/market/stock/suspend/index.html)的 `api/report/ShowReport` | 首次 HTTPError；修正 Referer 和 SDK 参数后 HTTP 200，读取保留的工作簿得到 211 行 | 未把第一次失败解释为零条记录；211 行也不是全市场历史股票池 |
 
 上交所原文 SHA256：
 `d5e5dec58882aef4aba8be707087e9c3483ee1be9c2d1fcb6070e1ae9abc8990`。
@@ -20,7 +20,13 @@
 [上交所终止上市公告](https://www.sse.com.cn/disclosure/announcement/listing/stock/c/c_20261012_10834560.shtml)
 所列 2026-10-19 对应；这只是一个交叉核对点，不证明所有记录都正确。
 完整探测身份及失败状态见
-[采集队列验收记录](evidence/pit-queue-acceptance-20261026.json)。
+[官方来源探测记录](evidence/official-source-probe-20261026.json)。
+
+深交所响应接收于北京时间 13:42，随后使用已有 venv 的 pandas/openpyxl 解析，
+没有为解析重新请求或改写原文。工作簿为 10,914 字节，SHA256 为
+`e1d09fabf1e4f07d6fbb859631aba6206dac8e576684857b4c8bd92ba7aa164c`。
+证券代码列没有重复或不符合六位数字的记录；退市日期范围为 1999-07-12 至
+2026-10-23。这些格式检查没有替代证券类型和历史日期语义核验。
 
 AKShare 本地函数将上交所的 `DELIST_DATE` 显示为“暂停上市日期”，本轮保留
 原始字段，不直接信任展示名称。公告发布日期、退市整理期开始日、最后交易日和
@@ -34,7 +40,7 @@ AKShare 本地函数将上交所的 `DELIST_DATE` 显示为“暂停上市日期
 
 下一步需要核对证券身份及重复记录、A/B 股与板块类型、原始日期语义、历史
 公告版本和可得时间，再与供应商主表及退市前行情逐项对账。
-深交所来源失败也尚未解决，不能宣称全沪深股票池已独立覆盖。
+两份列表还没有与主表及逐股票历史行情完成对账，不能宣称全沪深股票池已独立覆盖。
 完整历史来源的接入条件仍需确认；当前扩容不会消除原 2026 年流动性样本的偏差。
 
 ## 复查入口
