@@ -229,6 +229,24 @@ def test_public_execution_protocol_fails_closed(change):
         validate_comparison_publication(signed(value))
 
 
+@pytest.mark.parametrize('policy', ['RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V1',
+                                  'RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V2', 'UNKNOWN'])
+def test_archived_constraint_policy_is_preserved_not_upgraded(policy):
+    from qtrade.research.strategy_comparison import validate_comparison_publication
+
+    value = public_result()
+    value['bindings']['protocol']['source_constraint_policy'] = policy
+    value['comparison_id'] = signed(value['bindings'])['evidence_sha256']
+    value.pop('evidence_sha256')
+    value = signed(value)
+    if policy == 'UNKNOWN':
+        with pytest.raises(ValueError, match='EXECUTION_POLICY'):
+            validate_comparison_publication(value)
+    else:
+        assert validate_comparison_publication(value)['bindings']['protocol'][
+            'source_constraint_policy'] == policy
+
+
 def test_publication_size_limit_matches_compact_utf8_transport():
     from qtrade.research.strategy_comparison import validate_comparison_publication
 

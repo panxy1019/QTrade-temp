@@ -7,7 +7,7 @@ import { JsonExportButton } from './JsonExportButton'
 const names: Record<string, string> = { momentum20: '20日动量', reversal5: '5日反转', lowvol20: '20日低波动', multifactor_equal_rank: '多因子等秩', ridge: 'Alpha158 + Ridge', lightgbm: 'Alpha158 + LightGBM', equal_weight_universe: '全池等权（配置对照）' }
 export interface StrategyComparison {
   comparison_id: string; created_at: string; signal_start: string; signal_end: string; common_rows: number
-  bindings: { dataset_sha256: string; code_revision: string; source_snapshot_sha256: string; protocol: { segments: Record<string, string[]>; label: string; portfolio: Record<string, unknown>; exchange: Record<string, unknown>; account: number; benchmark: string } }
+  bindings: { dataset_sha256: string; code_revision: string; source_snapshot_sha256: string; protocol: { segments: Record<string, string[]>; label: string; portfolio: Record<string, unknown>; exchange: Record<string, unknown>; account: number; benchmark: string; source_constraint_policy: string } }
   limitations: string[]
   strategies: Record<string, { allocation: string; metrics: Record<string, number | null>; curve: { date: string; equity: number; turnover: number; cost: number }[] }>
 }
@@ -55,6 +55,7 @@ export function StrategyComparisonPanel() {
           { key: 'clock', label: '成交时点', children: '前一交易日信号驱动下一开盘；首日可能为空仓' },
           { key: 'split', label: '时间切分', children: JSON.stringify(value.bindings.protocol.segments) },
           { key: 'label', label: 'IC标签', children: value.bindings.protocol.label },
+          { key: 'policy', label: '归档交易约束版本', children: value.bindings.protocol.source_constraint_policy },
           { key: 'cash', label: '初始资金／基准', children: `${value.bindings.protocol.account.toLocaleString()}／${value.bindings.protocol.benchmark}` },
         ]} />
         <Table rowKey="id" pagination={false} scroll={{ x: 1050 }} dataSource={rows} columns={[

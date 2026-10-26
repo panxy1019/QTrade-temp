@@ -39,7 +39,7 @@ returns. Holdings, turnover and execution constraints remain explicit unmet gate
 before PAPER/SHADOW admission. No gateway/vn.py component is needed for this layer.
 LIVE_TRADING_ENABLED=false.
 
-## ADR-171 — Prospective books reserve admission context without owning source ledgers
+## ADR-188 — Prospective books reserve admission context without owning source ledgers
 
 Status: accepted, 2026-10-27.
 

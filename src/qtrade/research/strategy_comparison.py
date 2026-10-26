@@ -90,7 +90,7 @@ def validate_comparison_publication(value: dict[str, Any]) -> dict[str, Any]:
     import re
     from datetime import UTC, date, datetime
 
-    from qtrade.research.source_constraints import POLICY
+    from qtrade.research.source_constraints import LEGACY_POLICY, POLICY
 
     try:
         if len(json.dumps(value, allow_nan=False, ensure_ascii=False,
@@ -144,7 +144,7 @@ def validate_comparison_publication(value: dict[str, Any]) -> dict[str, Any]:
                 or exchange['volume_threshold'] != ['cum', '$capacity']
                 or protocol['benchmark'] != 'SH000300'
                 or protocol['universe_policy'] != 'supported_a_share'
-                or protocol['source_constraint_policy'] != POLICY
+                or protocol['source_constraint_policy'] not in (LEGACY_POLICY, POLICY)
                 or protocol['label'] != 'Ref($open,-2)/Ref($open,-1)-1'):
             raise ValueError('COMPARISON_PUBLIC_EXECUTION_POLICY_INVALID')
         for number, lower_float, upper_float in (
