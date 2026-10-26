@@ -1,0 +1,35 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.c-delivery-integration-evidence.v1",
+  "checked_at": "2026-10-26T19:25:37.345037+00:00",
+  "source_revision": "429ee53f503d059ba9bdf8f1caf12c863c44ff14",
+  "linux_tests": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "54",
+    "time": "1.497",
+    "timestamp": "2026-10-27T03:23:29.414247+08:00",
+    "hostname": "73ec830048ca"
+  },
+  "public_transport_state": "FAILED",
+  "public_transport_error": "PUBLIC_DELIVERY_HTTP_FETCH_FAILED",
+  "underlying_error": "OSERROR_99_CANNOT_ASSIGN_REQUESTED_ADDRESS",
+  "public_transport_mode": "DIRECT_NO_PROXY",
+  "production_session_transition_verified": false,
+  "whole_step1_accepted": false,
+  "browser_verified": false,
+  "service_restarted": false,
+  "limitations": [
+    "LINUX_TESTS_PASS_BUT_ACTUAL_DIRECT_HTTPS_TRANSPORT_FAILED",
+    "NEXT_SESSION_PRIVATE_RAW_CHAIN_NOT_YET_AVAILABLE"
+  ],
+  "evidence_sha256": "15826ed225650034ee18a92cba7e2f078f2317ce6b265da70134161fa7b1a7dd"
+}

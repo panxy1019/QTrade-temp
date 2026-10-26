@@ -2,6 +2,66 @@
 
 Last updated: 2026-10-27
 
+- C/D audit tools at c5c280f are installed as an immutable cluster release;
+  all 103 focused Linux tests pass with zero skips. The real D CLI run against
+  the actual current data head returns BLOCKED / CANDIDATE_NOT_UNACTIVATED_STAGED:
+  candidate 29589b44 remains TRAINED with zero activations. This is expected before
+  the genuine later-session worker validation, not a completed D transition.
+  Evidence: docs/evidence/qlib-cd-audits-linux-c5c280f.json. No running service was
+  restarted and no model, queue, data head or account state was changed.
+
+- D later-input candidate auditor is implemented and independently reviewed.
+  Its 25 targeted tests, Ruff and focused mypy pass locally. Review regressions
+  cover concurrent ACTIVE-row changes, forged automatic-training attribution,
+  and future/inverted ACTIVE registration clocks. It reads existing raw archives
+  and short SQLite snapshots only, never schedules or activates a model.
+  Real candidate 29589b44 is still TRAINED with zero activations; approved
+  LightGBM remains ACTIVE. Actual later-session validation is not accepted.
+  See docs/QLIB_CANDIDATE_TRANSITION_AUDIT.md; Linux integration follows.
+
+- C transport compatibility is fixed at 8b924ea: existing credential-free
+  system/environment HTTPS proxies are accepted with bounded GET-only requests.
+  All 78 focused local checks pass. Five actual production responses were
+  captured on the local host; both current catalogs validate with stable identity
+  and production main 4eade8a, complete day October 26. Evidence:
+  docs/evidence/qlib-c-public-transport-8b924ea.json. This proves current transport,
+  not the October 27 private-to-public transition. Cluster direct egress remains
+  unavailable; global proxy settings and running services were not changed.
+
+- Source 429ee53 also passes all 54 focused tests on Linux, but its actual
+  direct HTTPS request to Vercel fails with PUBLIC_DELIVERY_HTTP_FETCH_FAILED
+  (OS error 99). The local direct probe times out; local urllib discovers an
+  existing credential-free system HTTPS proxy that the tool disabled. Proxy
+  compatibility is being corrected; cluster has no configured HTTPS proxy.
+  Evidence: docs/evidence/qlib-c-delivery-linux-429ee53.json. No public transition
+  acceptance was issued and no running service was restarted.
+
+- C-chain production delivery acceptance now has an opt-in, fixed-origin GET
+  verifier after private archive/raw transition verification. It binds deployment,
+  two current catalogs, version head/epoch, prediction and full signal manifest,
+  preserving actual HTTP bytes. Independent parent review and 54 focused tests,
+  Ruff and focused mypy pass locally. Real October 27 transition acceptance is
+  still pending; these tests do not certify production delivery for that session.
+  See docs/QLIB_PUBLIC_DELIVERY_ACCEPTANCE.md. No service or account was changed.
+
+- ETF actual-session acceptance tooling is added at 3068e35. Independent read-only
+  checks bind target/admission, exact local receipts, both raw archives and the
+  supplied public entry; no clock override or service writer is exposed by CLI.
+  All 39 Linux tests pass without skips. At real 03:17 Shanghai the production
+  preclose audit correctly returns BLOCKED / REAL_SESSION_NOT_COMPLETE, with
+  null returns and whole_step1_accepted=false. No service was restarted. Evidence:
+  docs/evidence/qlib-etf-transition-preclose-3068e35.json. Candidate later-version
+  and C-chain production-delivery acceptance tools are being completed in parallel.
+
+- PR26 is merged and production Vercel verifies main 4eade8a. All eight online
+  publication routes return available HTTP 200 results. The ETF historical
+  response carries simulation 6cdc93fa7243a1e70e780953feb160583c9fade3b390df3c6aef58ede51ac3bd;
+  independent validation of the actual public report and six artifacts passes.
+  Evidence: docs/evidence/qlib-step1-vercel-4eade8a.json. This closes production
+  API delivery for the separate historical ETF simulation, not rendered visual
+  acceptance. Real next-session, later-data candidate validation and explicit
+  LightGBM PAPER recovery remain open. STEP2 has not started.
+
 - ETF historical public integration is verified at 59894ea using the new b284da5
   simulation with full per-session OHLCV marks. Report and six artifacts pass
   independent data-only accounting/target validation and actual raw replay on

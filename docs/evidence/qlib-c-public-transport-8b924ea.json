@@ -1,0 +1,89 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.c-public-transport-integration.v1",
+  "checked_at": "2026-10-26T19:28:21.055691+00:00",
+  "auditor_revision": "8b924ea52ab8bf47f8108e16a8db321ff27f6351",
+  "transport_archive": "E:\\QTrade-temp\\c-public-transport-8b924ea.json",
+  "transport_evidence_sha256": "6f196d6b99f4be667a3b5db65fe2eb6f9268def0b8aa74ebad5e1ed9460e22ff",
+  "responses": [
+    {
+      "url": "https://q-trade-temp.vercel.app/api/deployment",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "public, max-age=15",
+      "requested_at": "2026-10-26T19:28:18.020359+00:00",
+      "received_at": "2026-10-26T19:28:18.495033+00:00",
+      "body_bytes": 239,
+      "body_sha256": "97bea99e42b16630ba02945b14666378a10d99462cdf875aa66368df04790959",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/research/online/catalog",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-26T19:28:18.495056+00:00",
+      "received_at": "2026-10-26T19:28:19.182421+00:00",
+      "body_bytes": 63190,
+      "body_sha256": "8e082db7a12a78f11faec88671583168b9d80a9ba7dd55ea2192eb428e659925",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/research/online/data-versions",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-26T19:28:19.182461+00:00",
+      "received_at": "2026-10-26T19:28:19.757367+00:00",
+      "body_bytes": 3270,
+      "body_sha256": "a27aab574676eeef9239d526a0414705ea096de4d4f67b6199c7506cd0294292",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/research/online/signals",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-26T19:28:19.757382+00:00",
+      "received_at": "2026-10-26T19:28:20.464122+00:00",
+      "body_bytes": 3290,
+      "body_sha256": "f9cd8c8dc6ebc68ae0df4552d2cc77ebf3fbadc19e3382f48968f47995796a81",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/research/online/catalog",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-26T19:28:20.464137+00:00",
+      "received_at": "2026-10-26T19:28:21.055651+00:00",
+      "body_bytes": 63190,
+      "body_sha256": "8e082db7a12a78f11faec88671583168b9d80a9ba7dd55ea2192eb428e659925",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    }
+  ],
+  "stable_catalog_identity": [
+    "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+    "75c3aed2eed7a2c6af34025536575404d2e4d9cff9ad864f5c9d4185bda0475c",
+    "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+    "924b3c35fa4163a01f76c0d95defa8ea7dd426bb241ce841fcc579a06a157af6",
+    "19cbb2a1faa2f537ddb670dcbbf89d760e27acb7"
+  ],
+  "production_revision": "4eade8af1336412abd5e479a61088f60d8d1c288",
+  "complete_day": "2026-10-26",
+  "production_session_transition_verified": false,
+  "whole_step1_accepted": false,
+  "browser_verified": false,
+  "limitations": [
+    "CURRENT_PUBLIC_TRANSPORT_AND_CATALOG_OBSERVATION_ONLY",
+    "NO_NEXT_SESSION_PRIVATE_RAW_TRANSITION_ACCEPTANCE",
+    "LOCAL_SYSTEM_PROXY_USED_CLUSTER_DIRECT_ACCESS_STILL_UNAVAILABLE"
+  ],
+  "evidence_sha256": "5a7f877ac79c37883c6fab280fa80cb9373cdde07484b7e3e903431855107cbe"
+}

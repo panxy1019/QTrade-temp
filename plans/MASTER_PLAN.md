@@ -24,6 +24,47 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+C/D tools c5c280f pass all 103 Linux checks. The actual D pretransition audit is
+BLOCKED because the candidate is still TRAINED, with zero activations. The tool
+release is installed without restarting writers; real later-input validation
+remains pending. Evidence: docs/evidence/qlib-cd-audits-linux-c5c280f.json.
+
+D read-only candidate validation audit is independently reviewed with 25 passing
+local tests and the three reproduced review findings fixed. It checks actual
+archives, later-input validation job/proof registration and unchanged ACTIVE
+approval, without certifying automatic training or current-serving admission.
+Linux reproduction and the actual next-session candidate transition remain open.
+
+The C proxy compatibility fix 8b924ea passes 78 local checks and an actual local
+five-response production observation, with valid stable current catalogs.
+See docs/evidence/qlib-c-public-transport-8b924ea.json. This resolves local network
+compatibility only; cluster egress and actual next-session acceptance remain open.
+
+Source 429ee53 passes the 54 C audit checks on Linux. Real direct public transport
+fails on cluster and local host; fix compatibility with the existing local system
+proxy and separately resolve cluster egress before claiming public-chain success.
+Evidence: docs/evidence/qlib-c-delivery-linux-429ee53.json. Independent D review
+found incomplete ACTIVE-row race coverage and insufficient automatic-training
+attribution proof; both are under repair before release.
+
+C public-delivery audit wiring is implemented and independently reviewed with
+54 passing local tests. Its paired production flags preserve private-only default
+behavior and accept only the exact raw-verified C transition's current public
+identities. Actual next-session execution and cluster integration remain pending;
+see docs/QLIB_PUBLIC_DELIVERY_ACCEPTANCE.md. D later-version audit is under review.
+
+ETF next-session independent acceptance is implemented at 3068e35 with 39 passing
+Linux checks. Actual wall-clock execution before October 27 close remains BLOCKED;
+see docs/evidence/qlib-etf-transition-preclose-3068e35.json. This closes the audit
+wiring gap, not actual-session acceptance. Candidate later-version and C public
+identity delivery audit wiring remain in progress; no production writer restarted.
+
+PR26 production main 4eade8a is verified with eight available online routes.
+Actual ETF historical API bytes pass independent report/artifact validation;
+see docs/evidence/qlib-step1-vercel-4eade8a.json. Production API delivery is
+complete for this comparison. Rendered visual and actual next-session gates
+remain open; STEP2 is not started.
+
 - ETF historical public integration is verified at 59894ea using the new b284da5
   simulation with full per-session OHLCV marks. Report and six artifacts pass
   independent data-only accounting/target validation and actual raw replay on

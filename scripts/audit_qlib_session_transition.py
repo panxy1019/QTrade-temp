@@ -15,6 +15,7 @@ from qtrade.research.session_acceptance import assess_transition
 from qtrade.research.signal_publication import verify_signal_archive
 from scripts.atomic_json import write_json_immutable
 from scripts.prepare_qlib_incremental import load_signed
+from scripts.qlib_public_delivery import verify_public_delivery
 from scripts.run_qlib_prediction import verify_prediction
 
 REPO = Path(__file__).resolve().parents[1]
@@ -25,7 +26,11 @@ def main() -> None:
     for name in ('previous-version', 'current-version', 'automatic-completion',
                  'prediction', 'signals', 'database', 'output'):
         parser.add_argument('--'+name, type=Path, required=True)
+    parser.add_argument('--verify-production', action='store_true')
+    parser.add_argument('--expected-production-revision')
     args = parser.parse_args()
+    if args.verify_production != (args.expected_production_revision is not None):
+        parser.error('--verify-production and --expected-production-revision are required together')
     # No --now override: production evidence uses the actual wall clock.
     previous = verify_version(args.previous_version)
     current = verify_version(args.current_version)
@@ -40,9 +45,18 @@ def main() -> None:
                         (prediction['bindings']['data_event_id'],)).fetchone()
     if row is None:
         raise ValueError('SESSION_ACCEPTANCE_ADMISSION_EVENT_MISSING')
+    signals = verify_signal_archive(args.signals)['manifest']
     result = assess_transition(previous, current, completion,
-        prediction, verify_signal_archive(args.signals)['manifest'], json.loads(row[0]),
+        prediction, signals, json.loads(row[0]),
         Calendar(REPO/'configs/observer_calendar_2026.json'), now=datetime.now(UTC))
+    if args.verify_production:
+        delivery = verify_public_delivery(result, current, prediction, signals,
+                                           args.expected_production_revision)
+        from qtrade.monitoring.data_freshness import signed
+
+        result = signed({**{key: value for key, value in result.items()
+                            if key != 'evidence_sha256'},
+                         'production_publication_verified': True, 'public_delivery': delivery})
     write_json_immutable(args.output, result)
     print(json.dumps(result))
 
