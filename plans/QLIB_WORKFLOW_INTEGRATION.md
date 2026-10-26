@@ -52,8 +52,10 @@ This delivery does not certify them or grant promotion/trading authority.
 - [x] M1: validated configurations, research authentication and private queue.
 - [x] M2: cluster worker, immutable runs and unified catalog/detail publication.
 - [x] M3: reorganized pages and submit/status/detail/compare navigation.
-- [ ] P0 parallel: causal universe/state audit, historical source ingestion,
-      constraint enforcement and per-run unresolved-coverage disclosures.
+- [x] P0 parallel engineering: causal admission/state audit, versioned partial
+      public-source ingestion, additive diagnostic blocks and per-run unknowns.
+- [ ] Separate scientific qualification: independent historical PIT membership,
+      delisted-price/corporate-action history and exact trading-rule certification.
 - [x] M4: targeted/full checks, production deployment and browser acceptance.
 
 2026-10-26 final comparison acceptance: production feature release 38a48c8;
