@@ -241,3 +241,22 @@ print(min(t.column('trading_day').to_pylist()), max(t.column('trading_day').to_p
 ```
 
 No source request, production mutation or new backtest was performed for this audit.
+
+## Read-only history audit command
+
+Run the committed audit tool against an immutable archive and the verified
+calendar. Optional legacy arguments must be supplied together. Redirect stdout
+to a new evidence file outside the source archive; existing evidence must not be
+overwritten. The tool performs no network requests or source writes.
+
+```powershell
+$env:PYTHONPATH='E:/QTrade-git/src;E:/QTrade-git'
+python -m scripts.audit_etf_history --archive <archive-directory> --calendar configs/observer_calendar_2026.json --revision <audit-code-commit> --legacy-manifest <legacy-manifest.json> --legacy-bars <legacy-bars.parquet>
+```
+
+`verify_etf_history_audit` independently recomputes a saved audit against the
+same source paths and calendar. Hash verification alone is insufficient. The
+report fixes the declared cohort, retains per-symbol invalid/missing sessions,
+rejects dates outside the calendar, and exposes the contiguous common grid ending
+at the archive as-of. Legacy overlap is exact OHLCV comparison only; even full
+agreement does not certify adjustments or authorize joining histories.
