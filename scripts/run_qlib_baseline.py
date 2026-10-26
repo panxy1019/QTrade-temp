@@ -115,7 +115,7 @@ def make_provider(
     if source_snapshot is not None:
         keys = [key for key in constraint_counts[0] if key != "symbol"]
         audit = signed({
-            **AUTHORITY, "schema_version": "qtrade.source-constraints.v1", "policy": POLICY,
+            **AUTHORITY, "schema_version": "qtrade.source-constraints.v2", "policy": POLICY,
             "source_snapshot_sha256": source_snapshot.identity,
             "historical_pit_certified": False, "exact_price_limits_certified": False,
             "state": "APPLIED_DIAGNOSTIC_ADDITIONAL_RESTRICTIONS",
@@ -125,6 +125,8 @@ def make_provider(
             "per_symbol": constraint_counts,
             "missing_state_policy": "BASE_PROXY_RETAINED_NOT_CERTIFIED_TRADABLE",
             "st_policy": "RESEARCH_BUY_EXCLUSION_NOT_EXCHANGE_PROHIBITION",
+            "unknown_trade_state_policy": "ADDITIONAL_BLOCK_BOTH",
+            "unknown_st_state_policy": "RESEARCH_BUY_EXCLUSION_NOT_CERTIFIED_NON_ST",
             "raw_price_tolerance_cny": "0.011", "raw_volume_tolerance": "0",
             "amount_tolerance": "max(CNY1,1ppm)",
             "historical_available_at": None,

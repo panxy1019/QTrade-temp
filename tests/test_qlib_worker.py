@@ -84,6 +84,36 @@ def test_worker_rejects_tampered_requests_and_honors_queued_cancel(worker):
     assert value.db.execute("SELECT state FROM jobs").fetchone()[0] == "CANCELLED"
 
 
+@pytest.mark.parametrize("policy,protocol", [
+    ("RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V1",
+     "ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2"),
+    ("RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V2",
+     "ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V3"),
+])
+def test_archive_publication_keeps_the_original_constraint_protocol(worker, monkeypatch,
+                                                                  policy, protocol):
+    from copy import deepcopy
+
+    from qtrade.monitoring.data_freshness import signed
+
+    value, _ = worker
+    monkeypatch.setattr(worker_module, "write_json_atomic", lambda path, detail: None)
+    summary = signed({
+        "workflow_spec": default_spec(), "run_id": "old-frozen-reference",
+        "source_revision": "b" * 40, "source_snapshot_sha256": "a" * 64,
+        "execution_constraints": {"policy": policy}, "model": "LinearModel",
+        "segments": {}, "data_end": "2026-10-23", "dataset_sha256": "c" * 64,
+        "symbols": 990, "data_rows": 1000, "feature_count": 158, "metrics": {},
+        "curve": [], "signal_evaluation": {}, "portfolio_evaluation": {},
+        "cost_assumptions": {}, "portfolio": {}, "limitations": [],
+        "completed_at": "2026-10-26T00:00:00+00:00",
+    })
+    before = deepcopy(summary)
+    result = value.archive_detail(summary, "reference")
+    assert result["comparison_protocol"] == protocol
+    assert summary == before
+
+
 def test_recovery_does_not_signal_an_unrelated_reused_pid(tmp_path):
     (tmp_path / "child.json").write_text(json.dumps({"pid": 1, "start_ticks": "impossible"}))
     if not Path("/proc/1").exists():

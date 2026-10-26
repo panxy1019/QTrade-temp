@@ -126,7 +126,8 @@ def migrate_schedule(base: Path, previous: dict[str, Any], now: datetime) -> dic
         raise ValueError("SOURCE_QUEUE_UNIVERSE_BOUND_INVALID")
     return {
         "mode": QUEUE_MODE, "maximum": maximum, "outcome": "MIGRATED",
-        "consecutive_failures": 0, "next_attempt_at": now.isoformat(),
+        "consecutive_failures": previous.get("consecutive_failures", 0),
+        "next_attempt_at": (now + timedelta(seconds=plan_pass(previous, now)[0])).isoformat(),
         "legacy_schedule_identity": digest(previous),
     }
 

@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from qtrade.api import research_workflow as api
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
-from qtrade.research.source_constraints import PROTOCOL
+from qtrade.research.source_constraints import LEGACY_PROTOCOL, PROTOCOL
 from qtrade.research.workflow import archived_template, default_spec
 
 
@@ -34,6 +34,16 @@ def test_template_preserves_complete_archived_inputs_and_cannot_mutate_the_refer
     assert result["live_trading_enabled"] is False
     assert result["promotion"] == "NOT_ELIGIBLE"
     result["spec"]["segments"]["test"][1] = "2025-01-01"
+    assert reference == before
+
+
+def test_legacy_v2_template_cannot_be_relabelled_for_the_new_policy():
+    reference = archived_result()
+    reference["comparison_protocol"] = LEGACY_PROTOCOL
+    reference = signed({k: v for k, v in reference.items() if k != "evidence_sha256"})
+    before = deepcopy(reference)
+    with pytest.raises(ValueError, match="当前协议"):
+        archived_template(reference, "b" * 40)
     assert reference == before
 
 

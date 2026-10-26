@@ -60,6 +60,9 @@ describe('controlled Qlib comparisons', () => {
     expect(comparisonIssue(left, right)).toMatch(/来源快照不同/)
     right.source_snapshot_sha256 = left.source_snapshot_sha256
     expect(comparisonIssue(left, right)).toBeNull()
+    expect(canReuseArchivedResult(left)).toBe(false)
+    const newPolicy = { ...right, comparison_protocol: sourceBoundProtocol }
+    expect(comparisonIssue(left, newPolicy)).toMatch(/协议不同/)
   })
   it('creates a model-only draft without mutating any archived input', () => {
     const original = template(), before = structuredClone(original)

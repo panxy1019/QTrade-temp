@@ -38,9 +38,14 @@ def test_backfilled_vendor_state_never_invents_historical_availability(tmp_path,
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(value))
 
+    master_returned = []
+    def fetch_master():
+        master_returned.append(datetime.now(UTC))
+        return Result([{"code": "sz.000001", "status": "0"}])
+
     fake = SimpleNamespace(
         login=lambda: SimpleNamespace(error_code="0"), logout=lambda: None,
-        query_stock_basic=lambda: Result([{"code": "sz.000001", "status": "0"}]),
+        query_stock_basic=fetch_master,
         query_history_k_data_plus=lambda *a, **kw: Result([{
             "code": "sz.000001", "date": "2020-01-02", "tradestatus": "0", "isST": "1",
         }]),
@@ -54,6 +59,10 @@ def test_backfilled_vendor_state_never_invents_historical_availability(tmp_path,
     assert result["execution_enforcement"] == "NOT_USED_DAILY_PROXY_REMAINS"
     assert result["status_rows"] == 1
     assert result["master_inactive_rows"] == 1
+    assert datetime.fromisoformat(result["master_observed_at"]) >= master_returned[0]
+    assert datetime.fromisoformat(result["observed_at"]) >= datetime.fromisoformat(
+        result["master_observed_at"]
+    )
     status = json.loads((base / "pit-repair/status/000001.json").read_text())
     assert status["historical_available_at"] is None
     assert status["certified_at_decision"] is False
@@ -157,7 +166,7 @@ def test_first_master_failure_writes_attempt_without_inventing_coverage(cached_s
     assert attempt["historical_pit_certified"] is False
 
 
-@pytest.mark.parametrize("tamper", ["coverage", "master", "status"])
+@pytest.mark.parametrize("tamper", ["coverage", "master"])
 def test_corrupt_cached_evidence_cannot_replace_accepted_coverage(cached_source, tamper):
     import json
 
@@ -170,13 +179,6 @@ def test_corrupt_cached_evidence_cannot_replace_accepted_coverage(cached_source,
     elif tamper == "master":
         path = root / "master" / (identity + ".json")
         path.write_text("{}")
-    else:
-        path = root / "status/000001.json"
-        path.parent.mkdir()
-        path.write_text(json.dumps(signed({
-            "symbol": "000002", "certified_at_decision": False,
-            "historical_available_at": None, "rows": [],
-        })))
     accepted = (root / "coverage.json").read_bytes()
     with pytest.raises(ValueError, match="CACHED_"):
         collector.collect(base, 1)
@@ -270,3 +272,105 @@ def test_batched_collector_moves_past_a_persistent_vendor_failure(cached_source,
     fourth = collector.collect(base, 3, batch_size=1)
     assert queried == ["sz.000001", "sz.000002", "sz.000003"]
     assert fourth["status_symbols"] == 2
+
+
+def test_invalid_success_checkpoint_waits_for_retry_while_new_symbols_continue(
+    cached_source, monkeypatch,
+):
+    import base64
+    import json
+    import sys
+
+    from scripts import pit_collection_queue as queue
+
+    base, root, cache, _ = cached_source
+    cache()
+    dataset_path = base / "qlib-data-20261023/dataset.json"
+    dataset_path.write_text(json.dumps({"stocks": [{"symbol": "000001"}, {"symbol": "000002"}],
+                                        "end": "2026-10-23", "accepted_symbols": 2}))
+    dataset = json.loads(dataset_path.read_bytes())
+    checkpoint = root / "status/000001.json"
+    checkpoint.parent.mkdir()
+    original = b'{"invalid-original":true}\n'
+    checkpoint.write_bytes(original)
+    monkeypatch.setattr(collector, "write_json_immutable", collector.write_json_atomic)
+    monkeypatch.setattr(queue, "write_json_atomic", collector.write_json_atomic)
+    attempts = {}
+    queue.begin_attempt(attempts, "000001", datetime.now(UTC))
+    queue.end_attempt(attempts, "000001", None)
+    queue.save_attempts(root, dataset, attempts)
+    queried = []
+
+    class Result:
+        fields = ["date", "code", "tradestatus", "isST"]
+        error_code = "0"
+
+        def __init__(self, code):
+            self.values = iter([["2020-01-02", code, "1", "0"]])
+
+        def next(self):
+            self.row = next(self.values, None)
+            return self.row is not None
+
+        def get_row_data(self):
+            return self.row
+
+    def fetch(code, *args, **kwargs):
+        queried.append(code)
+        return Result(code)
+    monkeypatch.setattr(sys.modules["baostock"], "query_history_k_data_plus", fetch)
+    first = collector.collect(base, 2, batch_size=1)
+    assert queried == ["sz.000002"]
+    assert first["status_symbols"] == 1
+    assert first["collection_progress"]["waiting_retry_symbols"] == 1
+    assert first["quarantined_checkpoints"][0]["symbol"] == "000001"
+    assert checkpoint.read_bytes() == original
+    archived = json.loads(next((root / "quarantine/000001").glob("*.json")).read_bytes())
+    assert base64.b64decode(archived["raw_bytes_base64"]) == original
+    attempts = queue.read_attempts(root, dataset, datetime.now(UTC))
+    attempts["000001"]["attempted_at"] = (datetime.now(UTC) - timedelta(hours=1)).isoformat()
+    attempts["000001"]["next_attempt_at"] = (datetime.now(UTC) - timedelta(minutes=30)).isoformat()
+    queue.save_attempts(root, dataset, attempts)
+    second = collector.collect(base, 2, batch_size=1)
+    assert queried == ["sz.000002", "sz.000001"]
+    assert second["status_symbols"] == 2
+    assert second["quarantined_checkpoints"] == []
+    assert json.loads(checkpoint.read_bytes())["symbol"] == "000001"
+    assert base64.b64decode(archived["raw_bytes_base64"]) == original
+
+
+def test_rejected_source_content_is_preserved_and_does_not_become_a_successful_checkpoint(
+    cached_source, monkeypatch,
+):
+    import json
+    import sys
+
+    from scripts import pit_collection_queue as queue
+
+    base, root, cache, _ = cached_source
+    cache()
+    monkeypatch.setattr(collector, "write_json_immutable", collector.write_json_atomic)
+    monkeypatch.setattr(queue, "write_json_atomic", collector.write_json_atomic)
+
+    class Result:
+        fields = ["date", "code", "tradestatus", "isST", "amount"]
+        error_code = "0"
+
+        def __init__(self):
+            self.values = iter([["2020-01-02", "sz.000001", "1", "0", "NaN"]])
+
+        def next(self):
+            self.row = next(self.values, None)
+            return self.row is not None
+
+        def get_row_data(self):
+            return self.row
+    monkeypatch.setattr(sys.modules["baostock"], "query_history_k_data_plus",
+                        lambda *a, **kw: Result())
+    result = collector.collect(base, 1, batch_size=1)
+    assert result["status_symbols"] == 0
+    assert result["collection_progress"]["waiting_retry_symbols"] == 1
+    assert not (root / "status/000001.json").exists()
+    rejected = json.loads(next((root / "rejected-responses/000001").glob("*.json")).read_bytes())
+    assert rejected["rows"][0]["amount"] == "NaN"
+    assert result["historical_pit_certified"] is False

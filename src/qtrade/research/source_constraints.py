@@ -11,10 +11,22 @@ from pathlib import Path
 from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
+from qtrade.research.pit_quality import SHANGHAI
 from qtrade.research.workflow import canonical, digest
 
-POLICY = "RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V1"
-PROTOCOL = "ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2"
+LEGACY_POLICY = "RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V1"
+LEGACY_PROTOCOL = "ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2"
+POLICY = "RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V2"
+PROTOCOL = "ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V3"
+
+
+def constraint_protocol(constraints: dict[str, Any]) -> str:
+    """Use the archived policy, so publishing old evidence cannot relabel it."""
+    protocols = {LEGACY_POLICY: LEGACY_PROTOCOL, POLICY: PROTOCOL}
+    policy = constraints.get("policy")
+    if policy not in protocols:
+        raise ValueError("SOURCE_CONSTRAINT_POLICY_UNKNOWN")
+    return protocols[policy]
 
 
 def _signed(value: dict[str, Any]) -> None:
@@ -118,13 +130,16 @@ def capture_source(root: Path | None, *, now: datetime | None = None) -> SourceS
         code = ("sh." if symbol.startswith("6") else "sz.") + symbol
         if not isinstance(record.get("rows"), list) or not record["rows"]:
             raise ValueError("SOURCE_STATUS_ROWS_INVALID")
+        observed_day = datetime.fromisoformat(record["observed_at"]).astimezone(
+            SHANGHAI
+        ).date().isoformat()
         for row in record["rows"]:
             day = row["date"]
             if date.fromisoformat(day).isoformat() != day or day <= previous or (
-                day > datetime.fromisoformat(record["observed_at"]).date().isoformat()
+                day > observed_day
                 or row.get("code") != code
-                or row.get("tradestatus") not in {"0", "1"}
-                or row.get("isST") not in {"0", "1"}
+                or row.get("tradestatus") not in {"0", "1", "", None}
+                or row.get("isST") not in {"0", "1", "", None}
             ):
                 raise ValueError("SOURCE_STATUS_ROW_IDENTITY_OR_STATE_INVALID")
             previous = day
@@ -166,7 +181,7 @@ def restrict_rows(
     counts = {key: 0 for key in (
         "bars", "missing_state_bars", "reconciled_bars", "conflict_bars",
         "source_suspended_bars", "st_buy_exclusions", "additional_buy_blocks",
-        "additional_sell_blocks",
+        "additional_sell_blocks", "unknown_trade_state_bars", "unknown_st_state_bars",
     )}
     result, ledger = [], []
     for original in rows:
@@ -177,10 +192,16 @@ def restrict_rows(
             raise ValueError("BINARY_BASE_CONSTRAINT_REQUIRED")
         before = [int(value) for value in base]
         source = status.get(row["date"])
+        if source is not None:
+            counts["unknown_trade_state_bars"] += source.get("tradestatus") not in {"0", "1"}
+            counts["unknown_st_state_bars"] += source.get("isST") not in {"0", "1"}
         reason = "SOURCE_STATE_MISSING_PROXY_RETAINED"
         if source is None:
             counts["missing_state_bars"] += 1
-        elif source["tradestatus"] == "0":
+        elif source.get("tradestatus") not in {"0", "1"}:
+            row["buy_block"] = row["sell_block"] = 1.0
+            reason = "UNKNOWN_SOURCE_TRADE_STATE_BLOCK_BOTH"
+        elif source.get("tradestatus") == "0":
             row["buy_block"] = row["sell_block"] = 1.0
             counts["source_suspended_bars"] += 1
             counts["conflict_bars"] += 1  # Existing normalized row has nonzero volume.
@@ -203,7 +224,10 @@ def restrict_rows(
             else:
                 counts["reconciled_bars"] += 1
                 reason = "RECONCILED_NON_ST_PROXY_RETAINED"
-                if source["isST"] == "1":
+                if source.get("isST") not in {"0", "1"}:
+                    row["buy_block"] = 1.0
+                    reason = "RECONCILED_UNKNOWN_ST_RESEARCH_BUY_EXCLUSION"
+                elif source.get("isST") == "1":
                     row["buy_block"] = 1.0
                     counts["st_buy_exclusions"] += 1
                     reason = "RECONCILED_ST_RESEARCH_BUY_EXCLUSION"
@@ -212,8 +236,7 @@ def restrict_rows(
         counts["additional_buy_blocks"] += after[0] - before[0]
         counts["additional_sell_blocks"] += after[1] - before[1]
         result.append(row)
-        if source is not None:
-            ledger.append({"symbol": symbol, "date": row["date"], "reason": reason,
-                           "base_buy_block": before[0], "base_sell_block": before[1],
-                           "buy_block": after[0], "sell_block": after[1]})
+        ledger.append({"symbol": symbol, "date": row["date"], "reason": reason,
+                       "base_buy_block": before[0], "base_sell_block": before[1],
+                       "buy_block": after[0], "sell_block": after[1]})
     return result, {"symbol": symbol, **counts}, ledger

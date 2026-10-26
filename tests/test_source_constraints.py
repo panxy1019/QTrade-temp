@@ -152,6 +152,32 @@ def test_fractional_or_unknown_base_masks_cannot_be_treated_as_binary():
         restrict_rows([bar(buy_block=0.5)], "000001", None)
 
 
+@pytest.mark.parametrize("field", ["tradestatus", "isST"])
+@pytest.mark.parametrize("unknown", [None, ""])
+def test_unknown_source_state_is_never_labelled_normal_or_used_to_relax_masks(
+    source, field, unknown,
+):
+    root, status, _, save = source
+    status["rows"][0][field] = unknown
+    status.update(signed({k: v for k, v in status.items() if k != "evidence_sha256"}))
+    save()
+    frozen = capture_source(root)
+    assert frozen.statuses["000001"]["rows"][0][field] is unknown
+    result, counts, ledger = restrict_rows([bar(sell_block=1)], "000001", status)
+    assert result[0]["buy_block"] == result[0]["sell_block"] == 1
+    counter = "unknown_trade_state_bars" if field == "tradestatus" else "unknown_st_state_bars"
+    assert counts[counter] == 1
+    assert "UNKNOWN" in ledger[0]["reason"] and "NON_ST" not in ledger[0]["reason"]
+
+
+def test_missing_source_is_present_in_the_diagnostic_ledger_with_original_proxy():
+    original = bar(buy_block=1)
+    rows, counts, ledger = restrict_rows([original], "000001", None)
+    assert rows == [original]
+    assert counts["missing_state_bars"] == 1
+    assert ledger[0]["reason"] == "SOURCE_STATE_MISSING_PROXY_RETAINED"
+
+
 def test_archive_checks_request_and_raw_source_binding_even_if_file_hashes_are_resigned(
     source, tmp_path,
 ):
@@ -191,6 +217,37 @@ def test_archive_checks_request_and_raw_source_binding_even_if_file_hashes_are_r
     })))
     with pytest.raises(ValueError, match="PROOF_FILES_MISSING"):
         verify_archive(archive)
+
+
+def test_old_v2_constraint_archive_still_verifies_without_rewriting_its_policy(source, tmp_path):
+    from hashlib import sha256
+
+    from qtrade.research.qlib_publication import verify_archive
+    from qtrade.research.source_constraints import LEGACY_POLICY
+
+    root, _, _, _ = source
+    snapshot = capture_source(root)
+    archive = tmp_path / "old-v2-archive"
+    snapshot.freeze(archive / "pit-sources")
+    request = signed({"config": {"name": "old-v2"}, "source_snapshot_sha256": snapshot.identity})
+    run_id = "old-v2-" + request["evidence_sha256"][:16]
+    constraints = signed({"schema_version": "qtrade.source-constraints.v1",
+                          "policy": LEGACY_POLICY, "source_snapshot_sha256": snapshot.identity,
+                          "historical_pit_certified": False, "exact_price_limits_certified": False})
+    summary = signed({"run_id": run_id, "source_snapshot_sha256": snapshot.identity,
+                      "execution_constraints": constraints})
+    for name, value in {"request.json": request, "summary.json": summary,
+                        "execution-constraints.json": constraints}.items():
+        (archive / name).write_bytes(canonical(value))
+    for name in ("constraint-ledger.parquet", "constraint-reload-check.json"):
+        (archive / name).write_bytes(b"frozen-old-artifact")
+    files = {p.relative_to(archive).as_posix(): sha256(p.read_bytes()).hexdigest()
+             for p in archive.rglob("*") if p.is_file()}
+    (archive / "checksums.json").write_bytes(canonical(signed({"run_id": run_id, "files": files})))
+    before = {p.name: p.read_bytes() for p in archive.rglob("*") if p.is_file()}
+    accepted = verify_archive(archive)
+    assert accepted["execution_constraints"]["policy"] == LEGACY_POLICY
+    assert {p.name: p.read_bytes() for p in archive.rglob("*") if p.is_file()} == before
 
 
 def test_worker_pins_versioned_source_before_it_can_change(source, tmp_path, monkeypatch):

@@ -16,7 +16,7 @@ from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from qtrade.research.qlib_publication import verify_archive
-from qtrade.research.source_constraints import PROTOCOL, capture_source
+from qtrade.research.source_constraints import capture_source, constraint_protocol
 from qtrade.research.workflow import catalog_envelope, data_audit, digest, validate_spec
 from qtrade.research.workflow_queue import GitQueue, unseal
 from scripts.atomic_json import write_json_atomic
@@ -223,7 +223,8 @@ class Worker:
             "limitations": sorted(set(summary["limitations"])),
             "persisted": True, "completed_at": summary["completed_at"],
             "comparison_protocol": (
-                PROTOCOL if constraints else "ALIGNED_SUPPORTED_UNIVERSE_TRAIN_NORMALIZATION_V1"
+                constraint_protocol(constraints) if constraints
+                else "ALIGNED_SUPPORTED_UNIVERSE_TRAIN_NORMALIZATION_V1"
                 if spec else "LEGACY_BASELINE_DIFFERENT_PREPROCESSING_AND_UNIVERSE"
             ),
         })
