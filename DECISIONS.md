@@ -1,5 +1,38 @@
 # Architecture decisions
 
+## ADR-184 — Daily versions use bounded, idempotent coordination
+
+Status: implemented, cluster acceptance pending, 2026-10-26.
+
+Reuse the accepted preparation/build/reload and DataVersionCatalog path. A separate
+supervised bounded coordinator freezes each day's parent and code, waits for current
+collection, respects existing preparation/build leases and preserves 100 GiB reserve.
+Only ready partition bytes define progress; retry timestamps cannot authorize duplicate
+versions. Never bridge missing sessions. A first published qualified subset ends that
+day's automatic cycle; subsequent same-day repair is explicit. Process health, verified
+data end and prediction readiness remain separate. No vn.py gateway is required.
+
+## ADR-183 — Public PIT repair verifies content but preserves unknown historical availability
+
+Status: implemented; offline cluster audit accepted, 2026-10-26.
+
+Use strict status content validation, immutable rejected bytes, original backoff and
+per-symbol retries. Unknown state is not normal trading. New constraint policy V2
+maps to comparison protocol V3, while old archived V1 remains protocol V2. Source
+backfills do not establish historical available_at, full PIT or delisted price coverage.
+The offline gap dossier binds actual source and implementation hashes and creates no
+download authorization. Full PIT certification remains zero.
+
+## ADR-182 — Historical execution keeps source basis separate from legacy research
+
+Status: implemented; cluster execution acceptance pending, 2026-10-26.
+
+Adapt frozen 3000 scopes to bounded BaoStock raw day/5min requests, explicitly recording
+the original candidate source and execution source. Reuse parser, quality, immutable
+store and shared vendor lease; maintain independent durable cursors/backoff, current
+collection priority and child deadlines. Preserve legacy qfq and quarantined raw files.
+Only actual verified observations count as coverage, never planned or empty windows.
+
 ## ADR-181 — Daily prediction must bind approved activation and qualified data
 
 Status: design recorded, implementation pending, 2026-10-26, Phase C.

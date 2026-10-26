@@ -105,3 +105,17 @@ def test_busy_or_disconnected_worker_cannot_advertise_ready_control(runtime, sta
     assert result['worker']['state'] == state
     assert result['auto_predict']['enabled'] is False
     assert result['active_model'] is None
+
+
+def test_daily_schedule_does_not_equate_live_process_with_qualified_data(runtime):
+    value, _, _ = runtime
+    folder = value.base/'unified-data/qlib-schedule'
+    folder.mkdir(parents=True)
+    (folder/'service-state.json').write_text(json.dumps(signed({**AUTHORITY,
+        'state': 'WAITING', 'heartbeat_at': NOW.isoformat(), 'source_revision': 'a'*40})))
+    (folder/'cycle.json').write_text(json.dumps(signed({**AUTHORITY,
+        'state': 'BLOCKED_MISSED_SESSION_REQUIRES_BACKFILL',
+        'required_day': '2026-10-26', 'data_end': '2026-10-22'})))
+    schedule = value.publication('a'*40, now=NOW)['data_schedule']
+    assert schedule['fresh'] is True
+    assert schedule['last_cycle_state'] == 'BLOCKED_MISSED_SESSION_REQUIRES_BACKFILL'

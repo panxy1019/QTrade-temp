@@ -28,6 +28,7 @@ interface Catalog {
   data_version: null | { version_id: string; actual_end: string; current_symbols: number; historical_symbols: number; blocked_symbols: string[] }
   commands: Array<{ request_id: string; state: string; operation: string; error_code: string | null; at: string }>
   current_prediction_usable?: boolean
+  data_schedule?: { state: string; fresh: boolean; heartbeat_at?: string; last_cycle_state?: string; required_day?: string; data_end?: string }
   auto_predict?: { enabled: boolean; state: string; current_prediction_id?: string | null; predictions?: Array<{
     prediction_id: string; state: string; updated_at: string; error_code: string | null
     bindings: { model_id: string; data_end: string; data_version_id: string }
@@ -37,6 +38,7 @@ interface Catalog {
 }
 const labels: Record<string, string> = { TRAINED: '训练完成', VALIDATING: '验证中', VALIDATED: '验证通过', STAGED: '待人工批准', ACTIVE: '当前研究模型', FAILED: '失败', RETIRED: '历史模型' }
 const predictionLabels: Record<string, string> = { WAITING_FOR_APPROVAL: '等待人工批准模型', RUNNING: '计算中', QUEUED: '等待计算', COMPLETE: '已封存', SUPERSEDED: '已被后续模型、数据或时效替代', INTERRUPTED: '中断，等待恢复核对', FAILED: '失败', BLOCKED_STALE_DATA: '数据未覆盖最近完整交易日', BLOCKED_INPUT_UNAVAILABLE: '输入不可用', BLOCKED_INPUT_OR_LAUNCH_FAILURE: '输入或启动失败', BLOCKED_STORAGE_RESERVE: '磁盘保留空间不足', EVENT_WORKER_INTEGRATION_PENDING: '调度尚未接入' }
+const dataLabels: Record<string, string> = { CURRENT_DAY_ALREADY_READY: '当日版本已就绪', DAILY_VERSION_PUBLISHED: '新日版本已发布', PREPARING_DAILY_INPUTS: '正在准备当日输入', WAITING_FOR_CURRENT_COLLECTION: '等待日常采集空闲', WAITING_FOR_CURRENT_DAILY_INPUTS: '等待最新日线', WAITING_FOR_RETRY: '等待重试', WAITING_FOR_BUILD_RETRY: '等待构建重试', BLOCKED_MISSED_SESSION_REQUIRES_BACKFILL: '存在断档，需要补齐后再推进', BLOCKED_EXECUTION_WINDOW_PASSED: '已错过本次研究执行时点', BLOCKED_STORAGE_RESERVE: '磁盘保留空间不足', BLOCKED_DAILY_INPUT_CHANGED_REVIEW_REQUIRED: '当日输入或代码变化，需要核对', NOT_DEPLOYED: '尚未部署' }
 
 function ModelEvidence({ definition: d }: { definition: Definition }) {
   const metric = (key: string, percent = false) => typeof d.metrics[key] === 'number' && Number.isFinite(d.metrics[key])
@@ -106,6 +108,7 @@ export function OnlineModelsPage() {
         { key: 'version', label: '不可变版本', children: <Typography.Text copyable>{data.version_id}</Typography.Text> },
       ]} /> : <Typography.Text>尚无可核验的数据版本。</Typography.Text>}
     </Card>
+    {catalog?.data_schedule && <Alert type={catalog.data_schedule.fresh ? 'info' : 'warning'} showIcon title={`日版本调度：${dataLabels[catalog.data_schedule.last_cycle_state ?? catalog.data_schedule.state] ?? catalog.data_schedule.state}`} description={`调度心跳${catalog.data_schedule.fresh ? '有效' : '不可用或过期'}；要求截止日 ${catalog.data_schedule.required_day ?? '未知'}。运行中的调度进程不等于当天数据已经验收；以最近合格版本及其缺口为准。`} />}
     <Alert type="info" showIcon title={`每日自动预测：${catalog?.auto_predict?.enabled ? '已启用' : '未启用'}；自动重训：${catalog?.auto_train?.mode ?? '未接入'}`} description="当前候选输入验证与生产自动预测分开记录。验证分数未取得真实前向收益；完整历史 PIT、复权与交易规则认证仍有限制。" />
     {catalog?.auto_predict?.enabled && <Card title="每日自动预测记录">
       <Typography.Paragraph>{predictionLabels[catalog.auto_predict.state] ?? catalog.auto_predict.state}。{catalog.current_prediction_usable ? '存在身份匹配且尚未过期的研究预测。' : '当前没有可使用的研究预测。'}分数仅用于研究排序，不是交易指令或收益承诺。</Typography.Paragraph>
