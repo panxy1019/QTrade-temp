@@ -214,6 +214,10 @@ def reconcile(result: MultiAssetBacktestResult, bars: list[Bar], assumptions: As
         peak = max(peak, nav)
         ledger.append({'session': str(session),
             'phase': 'WARMUP' if index < WARMUP else 'EVALUATION',
+            'source_bars': [{'symbol': symbol,
+                **{field: str(getattr(bar, field))
+                   for field in ('open', 'high', 'low', 'close', 'volume')}}
+                for symbol, bar in sorted(market.items())],
             'executed_signal_as_of': str(result.sessions[index-1]) if index >= WARMUP else None,
             'opening_cash': str(opening_cash), 'opening_positions': opening_positions,
             'equity_at_open': str(opening_nav), 'cash': str(cash), 'holdings': holdings,

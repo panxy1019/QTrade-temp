@@ -4,7 +4,7 @@ import json
 import os
 from dataclasses import replace
 from datetime import UTC, date, datetime
-from decimal import ROUND_UP, Decimal, Inexact, localcontext
+from decimal import ROUND_DOWN, ROUND_UP, Decimal, Inexact, localcontext
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -175,6 +175,65 @@ def test_cash_holdings_fees_slippage_nav_turnover_and_drawdown_reconcile(inputs)
         assert Decimal(summary['terminal_net_asset_value']) == previous
         assert Decimal(summary['total_return']) == pytest.approx(
             previous/Decimal('1000000')-1, abs=Decimal('1e-24'))
+
+
+def test_public_source_bars_match_full_audited_grid_for_both_strategies(inputs):
+    root, _, _ = inputs
+    _, _, audit, report = execute(inputs)
+    expected = {(row['date'], capture['symbol']): row
+                for capture in audit['captures'] for row in capture['normalized']}
+    ledgers = [artifacts(root, report, strategy)['ledger'] for strategy in runner.STRATEGIES]
+    for left, right in zip(*ledgers, strict=True):
+        assert left['source_bars'] == right['source_bars']
+        assert [bar['symbol'] for bar in left['source_bars']] == audit['cohort']
+        assert len(left['source_bars']) <= 50
+        for bar in left['source_bars']:
+            original = expected[(left['session'], bar['symbol'])]
+            assert set(bar) == {'symbol', 'open', 'high', 'low', 'close', 'volume'}
+            assert all(bar[field] == original[field]
+                       for field in ('open', 'high', 'low', 'close', 'volume'))
+
+
+def test_public_marks_reconstruct_opening_nav_and_separate_price_pnl_components(inputs):
+    root, _, _ = inputs
+    _, _, _, report = execute(inputs)
+    for strategy in runner.STRATEGIES:
+        value = artifacts(root, report, strategy)
+        previous = {}
+        for row in value['ledger']:
+            market = {bar['symbol']: bar for bar in row['source_bars']}
+            opening = Decimal(row['opening_cash'])+sum((quantity*Decimal(market[symbol]['open'])
+                for symbol, quantity in row['opening_positions'].items()), start=Decimal(0))
+            price_pnl = sum((quantity*(Decimal(market[symbol]['close'])-previous[symbol])
+                for symbol, quantity in row['opening_positions'].items()), start=Decimal(0))
+            trade_pnl = sum(((1 if trade['side'] == 'BUY' else -1)*trade['quantity']*(
+                Decimal(market[trade['symbol']]['close'])-Decimal(market[trade['symbol']]['open']))
+                for trade in value['trades'] if trade['session'] == row['session']),
+                start=Decimal(0))
+            assert abs(opening-Decimal(row['equity_at_open'])) < Decimal('1e-18')
+            assert abs(price_pnl-Decimal(row['prior_holdings_price_pnl'])) < Decimal('1e-18')
+            assert abs(trade_pnl-Decimal(row['trade_open_to_close_pnl'])) < Decimal('1e-18')
+            previous = {symbol: Decimal(bar['close']) for symbol, bar in market.items()}
+
+
+def test_positive20_targets_are_reproducible_from_only_public_full_pool_close_marks(inputs):
+    root, _, _ = inputs
+    _, _, audit, report = execute(inputs)
+    value = artifacts(root, report, runner.STRATEGIES[0])
+    history = {symbol: [] for symbol in audit['cohort']}
+    decisions = {row['session_index']: row for row in value['targets']}
+    for index, row in enumerate(value['ledger']):
+        for bar in row['source_bars']:
+            history[bar['symbol']].append(Decimal(bar['close']))
+        if index < 20:
+            continue
+        scores = {symbol: closes[-1]/closes[-21]-1 for symbol, closes in history.items()}
+        selected = sorted((symbol for symbol, score in scores.items() if score > 0),
+                           key=lambda symbol: (-scores[symbol], symbol))[:3]
+        weight = str((Decimal('.95')/len(selected)).quantize(
+            Decimal('0.000000000001'), rounding=ROUND_DOWN)) if selected else None
+        assert decisions[index]['weights'] == [
+            {'symbol': symbol, 'weight': weight} for symbol in sorted(selected)]
 
 
 def test_source_replay_and_identical_output_are_immutable(inputs):
