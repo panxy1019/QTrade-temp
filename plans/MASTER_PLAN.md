@@ -24,6 +24,12 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+ETF next-session independent acceptance is implemented at 3068e35 with 39 passing
+Linux checks. Actual wall-clock execution before October 27 close remains BLOCKED;
+see docs/evidence/qlib-etf-transition-preclose-3068e35.json. This closes the audit
+wiring gap, not actual-session acceptance. Candidate later-version and C public
+identity delivery audit wiring remain in progress; no production writer restarted.
+
 PR26 production main 4eade8a is verified with eight available online routes.
 Actual ETF historical API bytes pass independent report/artifact validation;
 see docs/evidence/qlib-step1-vercel-4eade8a.json. Production API delivery is

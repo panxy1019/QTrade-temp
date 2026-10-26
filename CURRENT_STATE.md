@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-27
 
+- ETF actual-session acceptance tooling is added at 3068e35. Independent read-only
+  checks bind target/admission, exact local receipts, both raw archives and the
+  supplied public entry; no clock override or service writer is exposed by CLI.
+  All 39 Linux tests pass without skips. At real 03:17 Shanghai the production
+  preclose audit correctly returns BLOCKED / REAL_SESSION_NOT_COMPLETE, with
+  null returns and whole_step1_accepted=false. No service was restarted. Evidence:
+  docs/evidence/qlib-etf-transition-preclose-3068e35.json. Candidate later-version
+  and C-chain production-delivery acceptance tools are being completed in parallel.
+
 - PR26 is merged and production Vercel verifies main 4eade8a. All eight online
   publication routes return available HTTP 200 results. The ETF historical
   response carries simulation 6cdc93fa7243a1e70e780953feb160583c9fade3b390df3c6aef58ede51ac3bd;
