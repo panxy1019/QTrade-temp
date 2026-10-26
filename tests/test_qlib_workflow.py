@@ -242,3 +242,31 @@ def test_market_clock_exposes_frozen_data_lag_without_relabeling_results(client,
     assert value["expected_complete_day"] == "2026-10-26"
     assert value["datasets"][0]["end"] == "2026-10-23"
     assert value["experiments"][0]["state"] == "COMPLETE"
+
+
+def test_vercel_rewrite_keeps_research_login_separate_from_control_authority(client, monkeypatch):
+    from urllib.parse import quote
+
+    from qtrade.api.vercel import app
+
+    _, password = client
+    monkeypatch.setattr(api, "read_public", lambda _: {
+        "worker": {"heartbeat_at": datetime.now(UTC).isoformat()}, "experiments": [],
+    })
+    captured = []
+    queue = type("Queue", (), {"append": lambda self, *args: captured.append(args)})()
+    monkeypatch.setattr(api.GitQueue, "from_environment", lambda: queue)
+    with TestClient(app, base_url=api.ORIGIN) as http:
+        http.headers["origin"] = api.ORIGIN
+        path = "/api?route=" + quote("/research/login", safe="")
+        response = http.post(path, json={"user": "research-test", "password": password})
+        assert response.status_code == 200
+        assert "public" not in response.headers.get("cache-control", "")
+        response = http.post("/api?route=" + quote("/research/jobs", safe=""), json={
+            "spec": default_spec(), "request_id": "c" * 32,
+        })
+        assert response.status_code == 202
+        assert len(captured) == 1
+        assert http.post("/api?route=" + quote("/control/start", safe=""), json={}).status_code in {
+            401, 403, 404, 503,
+        }
