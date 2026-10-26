@@ -6,6 +6,7 @@ import base64
 import hashlib
 import hmac
 import json
+import logging
 import os
 import re
 import time
@@ -25,6 +26,13 @@ router = APIRouter(prefix="/research")
 PUBLIC_ROOT = "https://raw.githubusercontent.com/panxy1019/QTrade-observations/main/"
 COOKIE = "qtrade_research_session"
 ORIGIN = "https://q-trade-temp.vercel.app"
+logger = logging.getLogger(__name__)
+
+
+def _queue_failure(operation: str, error: Exception) -> None:
+    # Exception messages/tracebacks can contain keys or transport credentials.
+    logger.warning("research_queue_failure operation=%s error_type=%s",
+                   operation, type(error).__name__)
 
 
 def research_clock() -> str | None:
@@ -259,8 +267,10 @@ async def submit(request: Request) -> dict[str, Any]:
     except ValueError as error:
         if str(error) == "IMMUTABLE_JOB_ID_CONFLICT":
             raise HTTPException(409, "请求标识已绑定另一份规格") from None
+        _queue_failure("submit", error)
         raise HTTPException(503, "研究队列配置无效，未确认提交") from None
-    except Exception:
+    except Exception as error:
+        _queue_failure("submit", error)
         raise HTTPException(503, "任务提交未获确认；请使用同一请求标识重试") from None
     return {**AUTHORITY, "job_id": identity, "state": "QUEUED", "spec_sha256": digest(spec)}
 
@@ -276,6 +286,7 @@ async def cancel(job_id: str, request: Request) -> dict[str, Any]:
             {"job_id": job_id, "actor": user, "kind": "CANCEL_RESEARCH_JOB"},
             os.environ["QTRADE_RESEARCH_QUEUE_SECRET"],
         ))
-    except Exception:
+    except Exception as error:
+        _queue_failure("cancel", error)
         raise HTTPException(503, "取消请求未获确认") from None
     return {"job_id": job_id, "state": "CANCEL_REQUESTED"}

@@ -195,6 +195,27 @@ def test_authenticated_submission_binds_exact_spec_and_safe_id(client, monkeypat
     ).status_code == 422
 
 
+def test_queue_failure_logs_type_without_credentials_or_traceback(client, monkeypatch, caplog):
+    http, password = client
+    http.post("/research/login", json={"user": "research-test", "password": password})
+    monkeypatch.setattr(api, "read_public", lambda *_: {
+        "worker": {"heartbeat_at": datetime.now(UTC).isoformat()}, "experiments": [],
+    })
+
+    def fail():
+        raise ModuleNotFoundError("test-only-credential-never-log")
+
+    monkeypatch.setattr(api.GitQueue, "from_environment", fail)
+    response = http.post(
+        "/research/jobs", json={"request_id": "d" * 32, "spec": default_spec()}
+    )
+    assert response.status_code == 503
+    assert "error_type=ModuleNotFoundError" in caplog.text
+    assert "test-only-credential-never-log" not in caplog.text
+    assert all(record.exc_info is None for record in caplog.records)
+    assert "test-only-credential-never-log" not in response.text
+
+
 def test_unavailable_worker_never_silently_accepts_tasks(client, monkeypatch):
     http, password = client
     http.post("/research/login", json={"user": "research-test", "password": password})
