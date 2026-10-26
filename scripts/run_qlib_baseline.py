@@ -181,6 +181,7 @@ def verify_constraint_masks(stage: Path, config: dict[str, Any]) -> None:
 def run(
     data_root: Path, output: Path, tracking: Path, source_revision: str,
     *, config_override: dict[str, Any] | None = None, pit_evidence_root: Path | None = None,
+    restore_proof: bool = False,
 ) -> dict[str, Any]:
     import importlib.metadata
     import random
@@ -204,12 +205,14 @@ def run(
         None, source_snapshot.identity,
     ):
         raise ValueError("WORKFLOW_SOURCE_SNAPSHOT_MISMATCH")
+    restore_request = {"restore_contract": "FITTED_DATASETH_RMDLOADER_V1"} if restore_proof else {}
     request = signed(
         {
             "config": config,
             "source_revision": source_revision,
             "data_manifest_sha256": checksum(data_root / "dataset.json"),
             "source_snapshot_sha256": source_snapshot.identity,
+            **restore_request,
         }
     )
     run_id = config["name"] + "-" + request["evidence_sha256"][:16]
@@ -342,6 +345,7 @@ def run(
         "src/qtrade/research/workflow.py",
         "src/qtrade/research/pit_repair.py",
         "src/qtrade/research/source_constraints.py",
+        *(["scripts/qlib_restore_bundle.py"] if restore_proof else []),
     ):
         target = stage / "source" / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -446,7 +450,24 @@ def run(
         sample.to_parquet(stage / "provider-reload-check.parquet")
         R.log_metrics(**{k: v for k, v in metrics.items() if v is not None})
         R.save_objects(**{"task": task, "prediction": prediction, "portfolio_report": report})
+        if restore_proof:
+            from scripts.qlib_restore_bundle import freeze
+
+            freeze(stage / "online-restore", dataset=data, model=model, prediction=prediction,
+                   provider=stage / "provider", data_sha256=request["data_manifest_sha256"],
+                   source_revision=source_revision, source_snapshot_sha256=source_snapshot.identity)
+            R.save_objects(**{"params.pkl": model, "dataset": data})
         recorder_id = R.get_recorder().id
+    if restore_proof:
+        with (stage / "independent-restore.log").open("w") as log:
+            subprocess.run([
+                sys.executable, "-m", "scripts.qlib_restore_bundle", "--bundle",
+                str(stage / "online-restore"), "--provider", str(stage / "provider"),
+                "--output", str(stage / "independent-restore.json"),
+            ], cwd=REPO, env=os.environ, stdout=log, stderr=subprocess.STDOUT,
+                timeout=900, check=True)
+    restore_result = json.loads((stage / "independent-restore.json").read_text()) if (
+        restore_proof) else None
     curve = [
         {
             "date": str(day.date()),
@@ -509,6 +530,7 @@ def run(
             "limitations": config["limitations"] + dataset["limitations"],
             "selection_bias": dataset["selection_bias"],
             "mlflow_recorder_id": recorder_id,
+            **({"independent_restore": restore_result} if restore_proof else {}),
             "persisted": True,
             "persistence_kind": "FORMAL_IMMUTABLE_QLIB_RUN",
             "conclusion": "DIAGNOSTIC_NON_PIT_NOT_ELIGIBLE",
@@ -535,6 +557,7 @@ if __name__ == "__main__":
     parser.add_argument("--source-revision", required=True)
     parser.add_argument("--workflow-spec", type=Path)
     parser.add_argument("--pit-evidence-root", type=Path)
+    parser.add_argument("--restore-proof", action="store_true")
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("live trading must remain disabled")
@@ -550,6 +573,7 @@ if __name__ == "__main__":
         result = run(
             args.data_root, args.output, args.tracking, args.source_revision,
             config_override=override, pit_evidence_root=args.pit_evidence_root,
+            restore_proof=args.restore_proof,
         )
         print(json.dumps({"run_id": result["run_id"], "metrics": result["metrics"]}), flush=True)
     except Exception:

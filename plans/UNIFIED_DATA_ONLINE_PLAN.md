@@ -44,6 +44,8 @@ docs/evidence/unified-phase-a-production-20261026.json。完整 Online Serving �
 
 ## Phase C：版本与每日预测
 
+- [x] 新实验可选训练态冻结和独立 RMDLoader 恢复实现；11 项完整性检查。
+- [ ] 集群新训练／恢复特征及分数一致性真实验收。
 - [ ] 不可变分区、原子就绪指针、幂等事件、恢复和回退。
 - [ ] 新日线进入独立 Qlib 版本，真实数据日与边界占位日分开。
 - [ ] 保存模型及训练拟合 DatasetH/处理器；跨进程预测一致。

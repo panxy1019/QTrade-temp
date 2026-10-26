@@ -1,5 +1,24 @@
 # Architecture decisions
 
+## ADR-176 — Online candidates require independent fitted-state restoration
+
+Status: implementation in progress, 2026-10-26, Phase C.
+
+Reuse the existing training/evaluation runner and official Qlib 0.9.7 RMDLoader.
+An explicit restore contract creates a new request/run identity; old workers and
+archived experiments keep their prior behavior and hashes. Save params.pkl and
+the already-fitted DatasetH with dump_all=False, as official TrainerR does, into
+both Recorder and an immutable local bundle. Freeze feature order, processor
+state, package versions, the full provider file identity and a multi-session
+feature/score reference. No vn.py or gateway component is required.
+
+Before local trusted pickle loading, verify every bound file and exact provider
+inventory. A separate process uses RMDLoader and IT_LS with handler fit methods
+forbidden; require unchanged fitted processors, identical indices/feature order,
+feature equality and prediction parity. Failed restoration leaves an incomplete
+attempt, never a completed or ACTIVE model. Success proves frozen-data restore,
+not next-day data validity, historical PIT, profitability or model activation.
+
 ## ADR-175 — Historical work plans cannot relabel coverage or bypass source probes
 
 Status: accepted implementation design, 2026-10-26, Phase B.
