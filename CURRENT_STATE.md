@@ -2,6 +2,39 @@
 
 Last updated: 2026-10-26
 
+- First unified-data delivery passes 637 full Linux backend checks and 213
+  frontend checks, lint/types/build. Real offline audit rechecks 172 old minute
+  checkpoints: 171 content/coverage pass, 002384 quarantined, original bytes
+  retained. Observed master has 5,594 identities; 1,500 current targets comprise
+  1,470 stocks + 30 ETFs, from 1,037 deduplicated legacy identities + 463 candidate
+  top-ups. All 1,000 legacy daily inputs pass content checks; 500 daily and 1,328
+  long-minute targets remain planned. Coverage is through 2026-10-23, not today;
+  complete historical PIT certification remains zero. Source 133b034 is deployed
+  to maintenance and the workflow-aware publisher. A verified duplicate old
+  publisher was stopped with autostart/restart disabled and backups retained.
+  Other services/old experiment identities stay unchanged. Preview browser reads
+  the real 1,500 target catalog; production acceptance is in progress.
+
+- Active owner-requested goal: unified observed universe (configurable target
+  about 1,500), day/5min quality and ingestion, immutable Qlib data versions,
+  restored-model daily prediction, controlled rolling and forward research.
+  Phase A is in progress, not accepted. Scope and checks:
+  plans/UNIFIED_DATA_ONLINE_GUIDE.md and plans/UNIFIED_DATA_ONLINE_PLAN.md.
+  Existing identities and services remain; effective limits are 13 CPU / 60 GiB,
+  free persistent space about 293 GiB. LIVE_TRADING_ENABLED=false.
+
+- Read-only capability audit at 15:18 Asia/Shanghai: all five services run with
+  LIVE disabled. Accepted historical status coverage is 180/990 stocks / 431,408
+  rows; minute expansion progress reports 149/400 with 46 failures. An actual
+  legacy checkpoint check exposes 002384 ending 2025-11-14 (501 sessions, two
+  partial sessions), despite a correct byte checksum and a 2026-10-23 filename.
+  Cached minute reuse currently checks bytes without rerunning coverage rules.
+  Treat completion counters as provisional; coverage admission repair is next P0.
+  Two other legacy checks pass the sampled date/session rules. The observer's
+  75-stock five-minute stream reaches 2026-10-26 15:00; Qlib remains a frozen
+  2026-10-23 version. No runtime change was made by this audit. Proposed roadmap
+  and evidence: docs/PLATFORM_CAPABILITY_AUDIT_20261026.md.
+
 - The owner confirms there is no licensed historical source; continue verifiable
   public-source work. Offline official delisting/master reconciliation is accepted
   on release 70a32d3. It checks preserved SSE/SZSE bytes, retains every row and

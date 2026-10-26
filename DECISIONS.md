@@ -1,5 +1,45 @@
 # Architecture decisions
 
+## ADR-172 — Retire a verified duplicate publication writer without removing recovery
+
+Status: accepted, 2026-10-26, unified-platform single-writer requirement.
+
+Live /proc and Supervisor audit finds two processes with identical publication
+root, experiment root and output Git repository: qtrade-research-publisher on
+e9459e8 and qtrade-research-publication on da2878c. Configuration directory paths
+also differ from actual executable revisions. Retain private/config backups,
+stop the redundant legacy publisher and disable its autostart/restart; use the
+workflow-aware publication service as the single writer. Upgrade only its source
+and the maintenance source after full tests, preserving worker/source identities,
+vendor repair and observer. Stop maintenance's process group gracefully so an
+old expansion subprocess cannot continue alongside its replacement. Existing
+immutable checkpoints survive; no existing data/experiment/service is deleted.
+
+## ADR-171 — Unified observed identities precede online research lifecycle
+
+Status: accepted, 2026-10-26, owner-provided development guide.
+
+Reuse InstrumentMaster's SSE/SZSE identity convention, ParquetBarStore,
+BarQualityGate, immutable writers, collection services and private queue. A
+separate observed master retains vendor claims, capture clocks and unknown
+available_at; it never inserts current vendor claims into strict historical
+InstrumentMaster resolution. Target size is configurable, actual union counts
+and top-up provenance are explicit. Day and 5min admission are independent.
+
+Source/gap audit: existing vn.py adapters cover gateway/event execution, not
+public vendor history identity/PIT or Qlib fitted processors. No gateway is
+needed for this data/research milestone. Reuse Qlib 0.9.7 DatasetH/DataHandlerLP,
+RollingGen/TrainerR and the audited online interfaces after restore tests;
+RMDLoader requires params.pkl and dataset, absent in legacy archives. Original
+models remain legacy until proven restored. Native online tags/prediction
+updates do not supply immutable publication or activation transactions.
+
+Re-run minute content/coverage rules on every cached file, preserving old bytes;
+hash correctness alone grants no coverage admission. New audit receipts bind
+rules, requested interval, checkpoint and data hashes. No certification of
+historical membership, suspension reasons, adjustment availability or execution
+rules follows from observed master or complete minute grids. LIVE stays false.
+
 ## ADR-165 — Qlib is the isolated daily research engine
 
 Status: accepted, 2026-10-25, at the user's request.

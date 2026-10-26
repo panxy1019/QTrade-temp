@@ -201,6 +201,16 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         current = signed({k: v for k, v in current.items() if k != "evidence_sha256"})
         write_json_atomic(publication / "current.json", current)
         current_files.append("current.json")
+    unified_file = root.parent / "unified-data/public/unified.json"
+    if unified_file.is_file():
+        from qtrade.api.unified_data import validate_publication
+
+        raw_unified = unified_file.read_bytes()
+        if len(raw_unified) > 12_000_000:
+            raise ValueError("UNIFIED_PUBLICATION_TOO_LARGE")
+        unified = validate_publication(json.loads(raw_unified))
+        write_json_atomic(publication / "unified.json", unified)
+        current_files.append("unified.json")
     write_json_atomic(publication / "latest.json", snapshot)
     (publication / "README.md").write_text(
         "# QTrade public research observations\n\n"

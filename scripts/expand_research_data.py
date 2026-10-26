@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from qtrade.data import Bar, DataManifest, ParquetBarStore, QualityStatus
+from qtrade.data.minute_admission import admitted_checkpoint, validate_minute_window
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from scripts.atomic_json import write_json_atomic
@@ -262,7 +263,10 @@ def run(root: Path, end: date) -> None:
                     timeout=120,
                     check=True,
                 )
-            value = json.loads((root / "minute" / row["symbol"] / (str(end) + ".json")).read_text())
+            value = admitted_checkpoint(
+                root, root / "minute" / row["symbol"] / (str(end) + ".json"),
+                symbol=row["symbol"], end=end,
+            )
             return value, None
         except Exception as error:
             return None, type(error).__name__
@@ -295,20 +299,14 @@ def run(root: Path, end: date) -> None:
 
 
 def ingest_minute(root: Path, row: dict[str, Any], end: date) -> dict[str, Any]:
-    import baostock as bs
-
-    from qtrade.market_data.baostock_five_minute import fetch_baostock_five_minute_history
-
     version = f"baostock-qfq-5m-{row['symbol']}-20231024-{end:%Y%m%d}"
     checkpoint = root / "minute" / row["symbol"] / (str(end) + ".json")
     if checkpoint.exists():
-        value = json.loads(checkpoint.read_text())
-        from hashlib import sha256
+        return admitted_checkpoint(root, checkpoint, symbol=row["symbol"], end=end)
 
-        target = root / "bars" / value["manifest"]["data_version"] / "bars.parquet"
-        if sha256(target.read_bytes()).hexdigest() != value["manifest"]["checksum"]:
-            raise ValueError("MINUTE_CHECKPOINT_CHECKSUM_MISMATCH")
-        return value
+    import baostock as bs
+
+    from qtrade.market_data.baostock_five_minute import fetch_baostock_five_minute_history
     bars = list(
         fetch_baostock_five_minute_history(
             bs,
@@ -318,33 +316,9 @@ def ingest_minute(root: Path, row: dict[str, Any], end: date) -> dict[str, Any]:
             adjustflag="2",
         )
     )
-    from collections import Counter
-
-    from qtrade.market_data.sina_minute import SINA_FIVE_MINUTE_SESSION_TIMES
-
-    counts = Counter(b.trading_day for b in bars)
-    if (
-        not bars
-        or len(counts) < 650
-        or max(counts) != end
-        or min(counts) > date(2023, 11, 1)
-        or any(n != 48 for n in counts.values())
-        or any(
-            b.timestamp.astimezone(SHANGHAI).time() not in SINA_FIVE_MINUTE_SESSION_TIMES
-            for b in bars
-        )
-    ):
-        raise ValueError(
-            "THREE_YEAR_MINUTE_COVERAGE_OR_SESSION_GRID_FAILED: "
-            + str(
-                {
-                    "sessions": len(counts),
-                    "start": str(min(counts)) if counts else None,
-                    "end": str(max(counts)) if counts else None,
-                    "partial_sessions": sum(n != 48 for n in counts.values()),
-                }
-            )
-        )
+    coverage = validate_minute_window(bars, symbol=row["symbol"], requested_end=end)
+    if coverage["state"] != "CONTENT_COVERAGE_VERIFIED":
+        raise ValueError("THREE_YEAR_MINUTE_COVERAGE_FAILED:" + ",".join(coverage["issues"]))
     manifest = ParquetBarStore(root / "bars").write(
         bars,
         DataManifest(
@@ -359,10 +333,10 @@ def ingest_minute(root: Path, row: dict[str, Any], end: date) -> dict[str, Any]:
     value = {
         "symbol": row["symbol"],
         "bar_count": len(bars),
-        "session_count": len(counts),
-        "observed_start": str(min(counts)),
-        "observed_end": str(max(counts)),
-        "missing_sessions_policy": "No synthetic fill; suspension dates remain absent",
+        "session_count": coverage["session_count"],
+        "observed_start": coverage["observed_start"],
+        "observed_end": coverage["observed_end"],
+        "missing_sessions_policy": coverage["missing_sessions_policy"],
         "manifest": {
             "data_version": version,
             "checksum": manifest.checksum,

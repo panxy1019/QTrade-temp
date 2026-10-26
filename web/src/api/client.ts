@@ -408,3 +408,12 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     historicalBars: historicalBars.value, audit: audit.value, availability: { failures },
   }
 }
+export function loadUnifiedSummary() {
+  return getJson<import('../types').UnifiedSummary>('/unified/summary')
+}
+export function loadUnifiedSecurities(filters: {
+  query: string; frequency: 'day' | '5min'; quality: string; target_only: boolean; offset: number
+}) {
+  const params = new URLSearchParams(Object.entries(filters).map(([key, value]) => [key, String(value)]))
+  return getJson<import('../types').UnifiedSecurities>(`/unified/securities?${params}`)
+}
