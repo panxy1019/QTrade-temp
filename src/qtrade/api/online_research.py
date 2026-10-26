@@ -150,8 +150,20 @@ def listing() -> dict[str, Any]:
 
 def worker_fresh(value: dict[str, Any]) -> bool:
     clock = datetime.fromisoformat(value['worker']['heartbeat_at'])
-    return (clock.tzinfo is not None and value['worker']['state'] == 'MODEL_CONTROL_READY'
+    return (clock.tzinfo is not None and value['worker']['state'] in {
+                'MODEL_CONTROL_READY', 'PREDICTING', 'RUNNING'}
             and 0 <= (datetime.now(UTC)-clock).total_seconds() <= 720)
+
+
+def data_schedule_fresh(value: dict[str, Any]) -> bool:
+    """Recheck at read time; a cached publication cannot renew a process heartbeat."""
+    schedule = value.get('data_schedule', {})
+    try:
+        clock = datetime.fromisoformat(schedule['heartbeat_at'])
+        return bool(schedule.get('fresh') is True and clock.tzinfo is not None
+                    and 0 <= (datetime.now(UTC)-clock).total_seconds() <= 720)
+    except (KeyError, TypeError, ValueError):
+        return False
 
 
 @router.get('/catalog')
@@ -169,6 +181,7 @@ def catalog(response: Response) -> dict[str, Any]:
                       and datetime.fromisoformat(current['contract']['expected_execution_at']) > (
                           datetime.now(UTC)))
         return {**value, 'publication_available': True, 'worker_fresh': fresh,
+                'data_schedule_fresh': data_schedule_fresh(value),
                 'current_prediction_usable': usable, 'expected_complete_day': expected_day}
     except Exception:
         return {**AUTHORITY, 'publication_available': False, 'worker_fresh': False,

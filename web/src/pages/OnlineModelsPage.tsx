@@ -22,7 +22,7 @@ interface Command {
   expected_active: string | null; data_version_id: string; validation_id: string
 }
 interface Catalog {
-  publication_available: boolean; worker_fresh: boolean; published_at?: string
+  publication_available: boolean; worker_fresh: boolean; published_at?: string; data_schedule_fresh?: boolean
   active_model: string | null; models: Model[]; validations: Validation[]
   expected_complete_day: string | null
   data_version: null | { version_id: string; actual_end: string; current_symbols: number; historical_symbols: number; blocked_symbols: string[] }
@@ -108,7 +108,7 @@ export function OnlineModelsPage() {
         { key: 'version', label: '不可变版本', children: <Typography.Text copyable>{data.version_id}</Typography.Text> },
       ]} /> : <Typography.Text>尚无可核验的数据版本。</Typography.Text>}
     </Card>
-    {catalog?.data_schedule && <Alert type={catalog.data_schedule.fresh ? 'info' : 'warning'} showIcon title={`日版本调度：${dataLabels[catalog.data_schedule.last_cycle_state ?? catalog.data_schedule.state] ?? catalog.data_schedule.state}`} description={`调度心跳${catalog.data_schedule.fresh ? '有效' : '不可用或过期'}；要求截止日 ${catalog.data_schedule.required_day ?? '未知'}。运行中的调度进程不等于当天数据已经验收；以最近合格版本及其缺口为准。`} />}
+    {catalog?.data_schedule && <Alert type={catalog.data_schedule_fresh ? 'info' : 'warning'} showIcon title={`日版本调度：${dataLabels[catalog.data_schedule.last_cycle_state ?? catalog.data_schedule.state] ?? catalog.data_schedule.state}`} description={`调度心跳${catalog.data_schedule_fresh ? '有效' : '不可用或过期'}；要求截止日 ${catalog.data_schedule.required_day ?? '未知'}。运行中的调度进程不等于当天数据已经验收；以最近合格版本及其缺口为准。`} />}
     <Alert type="info" showIcon title={`每日自动预测：${catalog?.auto_predict?.enabled ? '已启用' : '未启用'}；自动重训：${catalog?.auto_train?.mode ?? '未接入'}`} description="当前候选输入验证与生产自动预测分开记录。验证分数未取得真实前向收益；完整历史 PIT、复权与交易规则认证仍有限制。" />
     {catalog?.auto_predict?.enabled && <Card title="每日自动预测记录">
       <Typography.Paragraph>{predictionLabels[catalog.auto_predict.state] ?? catalog.auto_predict.state}。{catalog.current_prediction_usable ? '存在身份匹配且尚未过期的研究预测。' : '当前没有可使用的研究预测。'}分数仅用于研究排序，不是交易指令或收益承诺。</Typography.Paragraph>

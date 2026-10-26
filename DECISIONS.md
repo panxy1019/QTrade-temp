@@ -1,5 +1,30 @@
 # Architecture decisions
 
+## ADR-185 — Mature rolling windows reuse native generators and trainers
+
+Status: implementation; native cluster acceptance pending, 2026-10-26.
+
+Reuse Qlib 0.9.7 RollingGen and TrainerR, existing immutable baseline evaluation,
+source constraints and independent fitted-state restoration. Rolling policy has
+its own allowlisted contract; the fixed historical workflow contract is unchanged.
+Count verified sessions only, remove future calendar placeholders, mature the
+two-session open label and purge two feature dates between each split. Cadence is
+independent of test-window length. One admitted event creates one mature window.
+
+Native TrainerR does not forward the baseline fit kwargs. A narrow LGBModel
+subclass fixes the reviewed 300-round/30-early-stop budget; no training algorithm
+is copied. Fit normalizers on the training split, reload with IT_LS and forbid
+refitting during reload. Freeze a separate latest-20-session inference reference;
+immature labels are excluded from evaluation even though current features exist.
+Reference scores are not forward results. Candidates never replace ACTIVE without
+human approval. OFF remains the production policy until control/scheduling gates
+are integrated. vn.py has no role in this model-training boundary.
+
+LightGBM model 2d78cc4c was explicitly approved in chat on 2026-10-26; activation
+421b9273 applied through the signed queue at 14:52:26 UTC. This authorizes that
+research model only, not future candidates, automatic training or live trading.
+LIVE_TRADING_ENABLED=false.
+
 ## ADR-184 — Daily versions use bounded, idempotent coordination
 
 Status: implemented, cluster acceptance pending, 2026-10-26.

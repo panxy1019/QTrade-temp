@@ -201,6 +201,24 @@ def test_current_prediction_is_only_usable_with_fresh_matching_context(online):
     assert result['current_prediction_usable'] is False
 
 
+@pytest.mark.parametrize('state,fresh', [('PREDICTING', True), ('RUNNING', True),
+    ('STOPPED', False), ('QUEUE_UNAVAILABLE', False), ('FAILED', False), ('unknown', False)])
+def test_working_process_is_not_mislabeled_as_expired_heartbeat(online, state, fresh):
+    http, _, value, _ = online
+    value['worker']['state'] = state
+    assert http.get('/research/online/catalog').json()['worker_fresh'] is fresh
+
+
+@pytest.mark.parametrize('age,fresh', [(0, True), (719, True), (721, False), (-60, False)])
+def test_schedule_freshness_expires_at_read_time(online, age, fresh):
+    http, _, value, _ = online
+    value['data_schedule'] = {'fresh': True, 'heartbeat_at': (
+        datetime.now(UTC)-timedelta(seconds=age)).isoformat()}
+    result = http.get('/research/online/catalog').json()
+    assert result['data_schedule_fresh'] is fresh
+    assert result['data_schedule'] == value['data_schedule']  # Keep signed source unchanged.
+
+
 @pytest.mark.parametrize('damage', ['identity', 'data', 'model', 'clock', 'returns', 'state'])
 def test_invalid_current_prediction_fails_closed(online, damage):
     http, _, value, _ = online

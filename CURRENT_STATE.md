@@ -2,6 +2,20 @@
 
 Last updated: 2026-10-26
 
+- PR 19 merged at main 344a6bf; source 5d4e7bf passes 977 Linux checks and
+  221 frontend checks. Daily version and history services are supervised; the
+  current-day version cycle is idempotent. Provider d33a7466 has 987/990 current
+  inputs and both candidates were revalidated. User explicitly approved LightGBM:
+  signed queue request de31d803 applied at 14:52:26 UTC; first production prediction
+  fa86dd6a completed at 14:54:54 UTC, 888 scores/158 features, expected research
+  execution 2026-10-27 09:30 Shanghai. Public API delivery is still being checked
+  because upstream publication/CDN lags. No observed forward returns.
+  History has zero newly qualified rows and yields to current collection; PIT
+  resumed source work after backoff. Full PIT remains uncertified. Source audits
+  continue in two authorized subagents. Branch codex/qlib-rolling-control adds
+  native RollingGen/TrainerR acceptance; scheduling/UI and Phase E remain pending.
+  Earlier checkpoint entries below are historical, not current runtime claims.
+
 - Automatic approved-model prediction implementation now includes durable event
   claims, nonblocking frozen inference, immutable outputs, restart reconciliation,
   final data/model/clock gates and public daily history. Local focused checks pass;

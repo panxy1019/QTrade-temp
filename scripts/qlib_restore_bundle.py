@@ -36,6 +36,7 @@ def processor_hash(dataset: Any) -> str:
 def freeze(
     root: Path, *, dataset: Any, model: Any, prediction: Any, provider: Path,
     data_sha256: str, source_revision: str, source_snapshot_sha256: str,
+    reference_segment: Any = 'test',
 ) -> dict[str, Any]:
     pd = import_module("pandas")
 
@@ -50,7 +51,8 @@ def freeze(
         raise ValueError("RESTORE_REFERENCE_REQUIRES_MULTIPLE_SESSIONS")
     reference = prediction[prediction.index.get_level_values("datetime").isin(dates)].to_frame(
         "score")
-    features = dataset.prepare("test", col_set="feature", data_key="infer").loc[reference.index]
+    features = dataset.prepare(reference_segment, col_set="feature", data_key="infer").loc[
+        reference.index]
     if len(features.columns) != 158 or features.empty or not features.index.is_unique:
         raise ValueError("RESTORE_FEATURE_REFERENCE_INVALID")
     root.mkdir(parents=True, exist_ok=False)
