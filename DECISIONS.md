@@ -2,7 +2,7 @@
 
 ## ADR-178 — Immutable Provider admission commits version, head and event together
 
-Status: implemented, cluster acceptance pending, 2026-10-26, Phase C.
+Status: core accepted on cluster, 2026-10-26, Phase C; automatic/UI integration pending.
 
 Reuse the existing Qlib Provider conversion, causal supported universe, frozen
 source restrictions and SQLite ownership/transaction contract. Qlib supplies
