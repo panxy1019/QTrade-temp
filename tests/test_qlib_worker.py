@@ -224,3 +224,26 @@ def test_signal_jobs_are_data_bound_deduplicated_and_yield_to_prediction(worker,
     value.db.commit()
     value.schedule_signals()
     assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
+
+
+@pytest.mark.parametrize('kind,module', [('QLIB_SIGNAL_JOB', 'scripts.run_qlib_signal_baselines'),
+    ('QLIB_MODEL_VALIDATION', 'scripts.run_qlib_candidate_validation'),
+    ('QLIB_ROLLING_JOB', 'scripts.run_qlib_rolling')])
+def test_recovery_finds_owned_child_before_pid_marker_is_sealed(
+    tmp_path, monkeypatch, kind, module,
+):
+    job = tmp_path/'job'
+    job.mkdir()
+    (job/'request.json').write_text(json.dumps({'kind': kind}))
+    proc = tmp_path/'proc'/'321'
+    proc.mkdir(parents=True)
+    (proc/'cmdline').write_bytes(b'python\0-m\0'+module.encode()+b'\0--output\0'+
+                                 str(job/'output').encode()+b'\0')
+    monkeypatch.setattr(worker_module, 'Path',
+                        lambda p: tmp_path/'proc' if p == '/proc' else Path(p))
+    monkeypatch.setattr(worker_module.os, 'getpgid', lambda pid: pid, raising=False)
+    calls = []
+    monkeypatch.setattr(worker_module.os, 'killpg', lambda *args: calls.append(args), raising=False)
+    monkeypatch.setattr(worker_module.signal, 'SIGKILL', 9, raising=False)
+    worker_module.recover_child(job)
+    assert calls == [(321, 9)]

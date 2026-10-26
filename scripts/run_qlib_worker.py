@@ -50,7 +50,7 @@ def recover_child(job: Path) -> None:
     if not path.exists():
         request = job/'request.json'
         if request.exists() and json.loads(request.read_text()).get('kind') in {
-                'QLIB_ROLLING_JOB', 'QLIB_MODEL_VALIDATION'}:
+                'QLIB_ROLLING_JOB', 'QLIB_MODEL_VALIDATION', 'QLIB_SIGNAL_JOB'}:
             # Cover a crash after spawn but before child.json is sealed.
             for proc in Path('/proc').iterdir():
                 if not proc.name.isdigit():
