@@ -112,3 +112,19 @@ open; do not mark these as certified based on this workflow acceptance.
 
 Learning documentation already in the working tree belongs to the previous
 request and must be preserved. Existing fixed experiments remain immutable.
+
+Source-bound execution acceptance: PR #7 merged as 82c3295; cluster worker release
+846a836 freezes verified raw sources and binds their identity to browser requests,
+runs and model comparisons. Production-browser Ridge job 6f04b986 and LightGBM job
+4fc474f9 completed from the same b39408fa source. Both 11,955-file archives verify,
+and both actual Qlib directional reload proofs pass 12 checks. Production backtest
+shows aligned 89.00%/117.23% results and explicitly rejects cross-protocol model
+attribution. Only 36/990 stocks have state backfill in these frozen runs; counts
+describe the entire input provider, not actual orders. Full Linux 579 tests, final
+focused 72, full frontend 204 and final focused nine pass. The wording follow-up
+passes five page tests, lint/types/build. Five supervised services remain running
+with LIVE disabled and temporary transfer access revoked. Evidence and reproduction
+are in docs/QLIB_SOURCE_CONSTRAINTS.md and
+docs/evidence/qlib-source-constraints-20261026.json. Independent historical universe,
+availability and exact-rule certification remain open; do not mark the overall
+goal complete based solely on this operational milestone.
