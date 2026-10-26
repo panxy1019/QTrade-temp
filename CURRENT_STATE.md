@@ -2,6 +2,16 @@
 
 Last updated: 2026-10-26
 
+- Final forward-input validation accepted: source 5bb4a93 passes all 779 Linux
+  checks and both actual native model runs, each 888 current supported stocks /
+  158 factors and 17,814 stable historical reference rows. Each complete result
+  verifies 15 files including 12 bound source/calendar files. Runner PID 142787
+  finished successfully and is Z; do not restart it. Final proof:
+  docs/evidence/qlib-forward-final-acceptance-20261026.json. Model activation and
+  AUTO_PREDICT remain disabled; input-validation results are not live signals or
+  observed forward returns. Model-control work continues on codex/qlib-online-control
+  (284a2e9: transactional model ledger, 12 focused checks; not deployed yet).
+
 - Latest continuation: codex/qlib-forward-inference source 5bb4a93, PR 17 draft.
   Its 779 full Linux checks pass. Final independent candidate input validation
   is live under runner PID 142787 (child 143937 confirmed); inspect
