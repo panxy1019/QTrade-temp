@@ -2,6 +2,18 @@
 
 Last updated: 2026-10-26
 
+- Phase C double-model restoration is now accepted at source 262abb9: all 736
+  Linux checks pass; both native Ridge and LightGBM independently restore 17,814
+  rows / 158 factors with fitted processors unchanged. Score max differences are
+  1.46e-16 and zero, within the original 1e-10 gate. Each complete archive's 11,965
+  files were verified. Candidates remain NOT_ACTIVATED. Evidence:
+  docs/evidence/qlib-float64-model-acceptance-20261026.json.
+  Daily preparation's resumed bounded process PID 137243 has reached terminal
+  WAITING_FOR_RETRY (confirmed zombie after exit): 968/987 qualified inputs sealed,
+  19 retries and no unattempted symbols; three additional stocks lack qualified
+  day inputs. A new Provider has not yet been published. Earlier snapshots below
+  describe previous attempts, not the current process state.
+
 - Phase C fitted-state restoration is implemented on codex/qlib-frozen-restore:
   opt-in new run identity, official params.pkl/dataset contract, provider and
   package binding, independent RMDLoader/IT_LS inference with refitting forbidden.
