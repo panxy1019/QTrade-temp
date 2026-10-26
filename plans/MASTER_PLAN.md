@@ -22,6 +22,17 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
+### P0 source-bound Qlib execution, 2026-10-26
+
+- [x] Audit actual source/constraint gaps and record the diagnostic policy.
+- [x] Freeze raw source evidence and bind request/run/comparison identities.
+- [x] Apply reconciled additional restrictions and expose coverage/limits in UI.
+- [ ] Verify actual Qlib directional masks, both models and immutable archives.
+- [ ] Deploy and accept source-bound results in production; publish evidence.
+- [ ] Independent full-market historical PIT and exact rule certification (ongoing).
+
+Reproduction and limits: docs/QLIB_SOURCE_CONSTRAINTS.md.
+
 ### Qlib unified research workflow, 2026-10-26
 
 - [x] Record page responsibilities, model/config contract and private-queue design.

@@ -40,4 +40,13 @@ describe('controlled Qlib comparisons', () => {
     const dates = result(); dates.curve[0].date = '2024-01-03'
     expect(comparisonIssue(left, dates)).toMatch(/日期/)
   })
+  it('binds model comparisons to identical historical source evidence', () => {
+    const left = result(), right = result()
+    left.comparison_protocol = right.comparison_protocol = 'ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2'
+    expect(comparisonIssue(left, right)).toMatch(/身份缺失/)
+    left.source_snapshot_sha256 = 'a'.repeat(64); right.source_snapshot_sha256 = 'b'.repeat(64)
+    expect(comparisonIssue(left, right)).toMatch(/来源快照不同/)
+    right.source_snapshot_sha256 = left.source_snapshot_sha256
+    expect(comparisonIssue(left, right)).toBeNull()
+  })
 })

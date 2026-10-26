@@ -27,12 +27,21 @@ function Audit({ audit }: { audit: ResearchAudit }) {
     state?: string; status_symbols?: number; input_symbols?: number; status_rows?: number;
     master_rows?: number;
   } | undefined
+  const constraints = audit.execution_constraints as {
+    source_snapshot_sha256?: string; matched_input_symbols?: number;
+    counts?: { reconciled_bars?: number; missing_state_bars?: number; conflict_bars?: number;
+      additional_buy_blocks?: number; additional_sell_blocks?: number }
+  } | undefined
   return <Card size="small" title="数据与交易约束审计">
     <Space orientation="vertical" style={{ width: '100%' }}>
       <Space wrap><Tag color="orange">非完整历史PIT</Tag><Tag>不可晋级</Tag><Typography.Text>{audit.universe.status}</Typography.Text></Space>
       <Typography.Text>{(audit.supported_universe as { status?: string })?.status === 'TRAIN_RANK_EXECUTION_ALIGNED_EXCLUDING_STAR' ? '新工作流训练/排名/投资范围对齐，使用完成历史做动态资格与流动性选择；样本本身的幸存者偏差尚未消除。' : '原基线存在训练与可投资范围差异；其结果作为独立协议档案保留。'}</Typography.Text>
       {audit.limitations.map(reason => <Typography.Text key={reason}>• {limitationLabels[reason] ?? reason}</Typography.Text>)}
       {coverage && <Typography.Paragraph>本实验冻结的PIT修复覆盖：{coverage.status_symbols != null ? `状态回填${coverage.status_symbols}/${coverage.input_symbols ?? '—'}股、${coverage.status_rows?.toLocaleString() ?? '—'}行；来源主表${coverage.master_rows?.toLocaleString() ?? '—'}条。尚未用于精确规则回测，历史可得性待核验。` : '运行时没有已冻结的修复覆盖证据；不据此推断状态已认证。'} 完整来源摘要随实验JSON导出。</Typography.Paragraph>}
+      {constraints && <>
+        <Typography.Paragraph>已参与本次回测的附加状态限制：原始行情对账{constraints.counts?.reconciled_bars?.toLocaleString() ?? '—'}根，覆盖{constraints.matched_input_symbols ?? '—'}股；来源冲突{constraints.counts?.conflict_bars?.toLocaleString() ?? '—'}根双向限制。新增禁买{constraints.counts?.additional_buy_blocks?.toLocaleString() ?? '—'}根、禁卖{constraints.counts?.additional_sell_blocks?.toLocaleString() ?? '—'}根。缺状态{constraints.counts?.missing_state_bars?.toLocaleString() ?? '—'}根继续保留原近似限制，不能认定为已认证可交易。</Typography.Paragraph>
+        <Typography.Text>来源快照：{constraints.source_snapshot_sha256}。回填为事后诊断；ST禁买是研究政策，精确涨跌停与完整历史PIT仍未认证。逐股票逐日账本保存在集群归档中。</Typography.Text>
+      </>}
     </Space>
   </Card>
 }
@@ -127,10 +136,12 @@ export function QlibResearchPage() {
     <Login />
     {catalog?.datasets[0] && <Card title="研究输入">
       <Typography.Paragraph>{catalog.datasets[0].id} · {catalog.datasets[0].symbols}股输入库存 · {catalog.datasets[0].rows.toLocaleString()}根日线 · 截至{catalog.datasets[0].end}。训练和排名排除科创板，实际动态资格数量以实验审计为准。</Typography.Paragraph>
+      {catalog.source_snapshot_sha256 && <Typography.Paragraph>历史状态来源快照将在表单初始化时固定；后续回填不会改变这份任务。需要比较模型时，请使用同一来源快照。</Typography.Paragraph>}
       <Audit audit={catalog.datasets[0].audit} />
     </Card>}
     <Card title="Qlib训练与回测配置">
       <Form form={form} layout="vertical" onFinish={values => void submit(values)} onValuesChange={() => { setRequestId(null); setError(null) }}>
+        <Form.Item name="source_snapshot_sha256" hidden><Input /></Form.Item>
         <div className="backtest-lab-grid">
           <Form.Item name="name" label="实验名称" rules={[{ required: true, pattern: /^[A-Za-z0-9][A-Za-z0-9._-]{0,59}$/ }]}><Input /></Form.Item>
           <Form.Item name="model" label="预测模型" rules={[{ required: true }]}><Select options={catalog?.models.map(r => ({ value: r.id, label: r.name }))} /></Form.Item>

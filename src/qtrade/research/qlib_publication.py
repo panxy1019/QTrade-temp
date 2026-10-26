@@ -36,6 +36,28 @@ def verify_archive(root: Path) -> dict[str, Any]:
     verify_signed(summary)
     if summary["run_id"] != manifest["run_id"] or "summary.json" not in manifest["files"]:
         raise ValueError("QLIB_ARCHIVE_IDENTITY_MISMATCH")
+    if summary.get("source_snapshot_sha256") is not None:
+        from qtrade.research.source_constraints import capture_source
+
+        snapshot = capture_source(root / "pit-sources")
+        request = json.loads((root / "request.json").read_bytes())
+        verify_signed(request)
+        if snapshot.identity != summary["source_snapshot_sha256"] or (
+            snapshot.identity != request.get("source_snapshot_sha256")
+            or summary["run_id"] != request["config"]["name"] + "-" + request[
+                "evidence_sha256"
+            ][:16]
+        ):
+            raise ValueError("QLIB_SOURCE_BOUND_REQUEST_MISMATCH")
+        constraints = summary.get("execution_constraints")
+        if constraints is not None:
+            verify_signed(constraints)
+            if constraints != json.loads((root / "execution-constraints.json").read_bytes()) or (
+                constraints.get("source_snapshot_sha256") != snapshot.identity
+                or constraints.get("historical_pit_certified") is not False
+                or constraints.get("exact_price_limits_certified") is not False
+            ):
+                raise ValueError("QLIB_CONSTRAINT_EVIDENCE_MISMATCH")
     return summary
 
 
