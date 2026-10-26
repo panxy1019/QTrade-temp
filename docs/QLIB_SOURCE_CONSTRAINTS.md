@@ -87,4 +87,62 @@ PYTHONPATH=src "$QLIB_PYTHON" -m scripts.run_qlib_baseline \
 涨跌停和特殊上市期规则、公司行为与交收约束、集合竞价和停牌恢复。完成研究任务
 不会自动获得 PAPER 或 LIVE 权限，`LIVE_TRADING_ENABLED=false`。
 
-集群真实运行、归档和生产网页验收记录待本轮执行后补充，不提前宣称完成。
+## 2026-10-26 集群实跑与归档
+
+两份任务均由生产网页登录提交，执行源码为
+`846a836702e8c8f4c020e90159565fcc869b6fa7`，行情清单哈希为
+`a56d093e439345619d2a0419be4e6191886164d8bc849ee05ef25452c26a0759`，
+固定来源快照为
+`b39408fa65995fc593e85c43e0b1c6bd6d5ae2443efdbe0f42873c1de6a83687`。
+任务配置仅名称、模型不同。每份归档的 11,955 个文件逐一校验通过，
+每份 `constraint-reload-check.json` 的 12 次实际 Qlib 方向检查通过。
+
+| 项目 | Ridge | LightGBM |
+| --- | --- | --- |
+| 任务 ID | `6f04b986eaeb454c8c61579f1cea266b` | `4fc474f9f5f94199914b5c8802eb5127` |
+| 实验 ID | `source-bound-ridge-prod-20261026-a5157438bd6cc6a0` | `source-bound-lightgbm-prod-20261026-fbd3630e653be6a1` |
+| IC | 0.01937 | 0.02426 |
+| RankIC | 0.04697 | 0.05205 |
+| 成本后区间收益 | 89.00% | 117.23% |
+| 成本后年化收益 | 26.69% | 33.42% |
+| 成本后 Sharpe | 1.238 | 1.210 |
+| 最大回撤 | −32.35% | −33.33% |
+| 平均日换手 | 17.57% | 17.59% |
+
+测试区间为 2024-01-02 至 2026-10-23，共 678 个组合交易日；
+训练 2017-04-05 至 2021-12-28，验证 2022-01-04 至 2023-12-26。
+两者均使用 Alpha158、TopkDropout（50/5、最少持有 2 日）、95% 风险仓位、
+初始资金 1,000 万元、买入 8bps、卖出 13bps、最低费用 5 元及同一种子。
+同区间基准收益为 19.65%。990 股为行情库存，训练、排名和交易支持范围
+为 891 股；这不是每日恒定的可投资数量。99 股科创板仍排除在支持范围之外。
+
+36 股状态来源共 86,586 行，只有与现有行情日期匹配的行参与以下对账。
+全输入库共 2,157,805 根日线，其中对账一致 84,302 根、冲突 549 根、
+缺状态 2,072,954 根；新增禁买掩码 1,817 根、禁卖 539 根。
+这些数字覆盖输入库全历史，不是测试期委托或实际成交次数。
+来源中的额外日期也不会被补造成价格行。旧实验的来源和收益不会被改写。
+
+这些结果仍是已查看历史上的非 PIT 诊断，不是新的未见样本外证据。
+Ridge 旧协议的 91.43% 与本次 89.00% 不能作为模型差异归因；新旧执行协议
+不同，网页拒绝直接对照。两份新任务可以按相同协议进行模型对照，
+但收益较高不等于风险更小，更不代表获得 PAPER/LIVE 准入。
+
+机器证据见 [来源约束验收记录](evidence/qlib-source-constraints-20261026.json)。
+生产浏览器已验证
+[同来源模型对照](evidence/qlib-source-bound-comparison-20261026.png)和
+[跨协议归因保护](evidence/qlib-source-bound-cross-protocol-20261026.png)。
+生产结果地址：
+[Ridge](https://q-trade-temp.vercel.app/#/backtest?experiment=6f04b986eaeb454c8c61579f1cea266b)、
+[LightGBM](https://q-trade-temp.vercel.app/#/backtest?experiment=4fc474f9f5f94199914b5c8802eb5127)。
+
+完整归档保留在集群的 `workflow/jobs/<任务ID>/output/runs/<实验ID>/`。
+在对应源码版本运行以下命令可重新校验归档（只读，不重训）：
+
+```bash
+ARCHIVE="$ARCHIVE" PYTHONPATH=src python -c \
+  'import os; from pathlib import Path; from qtrade.research.qlib_publication import verify_archive; print(verify_archive(Path(os.environ["ARCHIVE"]))["run_id"])'
+```
+
+后端完整 Linux 检查 579 项通过，最终协议相关检查 72 项通过；前端完整
+204 项通过，最终来源固定相关检查 9 项通过。验收说明的文字补充另经页面
+5 项测试、ESLint、TypeScript 和生产构建检查通过。

@@ -2,13 +2,21 @@
 
 Last updated: 2026-10-26
 
-- P0 source-bound execution work is in progress: freeze verified raw status/master
-  inputs, pin browser/worker source identity, bind it into run identity and verify
-  archives against it. New workflow providers add diagnostic ST/suspension/conflict
-  restrictions without relaxing existing proxy masks. New and old protocols stay
-  distinct; webpage model comparison also requires identical source evidence.
-  Focused backend and frontend checks pass; cluster/Qlib execution and production
-  acceptance of this new protocol are pending. See docs/QLIB_SOURCE_CONSTRAINTS.md.
+- Source-bound Qlib execution is deployed and accepted: verified raw status/master
+  inputs are frozen into request/run identity and both production-browser tasks.
+  Ridge 6f04b986 and LightGBM 4fc474f9 completed on release 846a836 with identical
+  data, source b39408fa, splits, costs and portfolio settings. Each 11,955-file
+  archive verifies; each actual Qlib directional reload check passes 12 calls.
+  Production UI shows their aligned 89.00%/117.23% net returns and rejects direct
+  attribution against the old protocol. Backend full Linux 579 tests and final
+  focused 72 pass; frontend full 204 and final focused 9 pass. The wording follow-up
+  passes five page tests, lint/types/build. State evidence covers only 36/990 stocks:
+  84,302 reconciled bars, 549 conflicts, 2,072,954 missing state bars across the full
+  provider history. These are mask counts, not orders. Both results retain explicit
+  non-PIT, exact-rule-unverified and NOT_ELIGIBLE status. All five cluster services
+  run with LIVE_TRADING_ENABLED=false; temporary upload access is revoked. Full
+  independent historical PIT/rule certification remains open P0.
+  See docs/QLIB_SOURCE_CONSTRAINTS.md and its production evidence/screenshots.
 
 - Qlib research login and production task workflow are live at main 2b1e200;
   browser acceptance confirms aligned Ridge/LightGBM comparison and the newest

@@ -40,7 +40,7 @@ function Audit({ audit }: { audit: ResearchAudit }) {
       {coverage && <Typography.Paragraph>本实验冻结的PIT修复覆盖：{coverage.status_symbols != null ? `状态回填${coverage.status_symbols}/${coverage.input_symbols ?? '—'}股、${coverage.status_rows?.toLocaleString() ?? '—'}行；来源主表${coverage.master_rows?.toLocaleString() ?? '—'}条。尚未用于精确规则回测，历史可得性待核验。` : '运行时没有已冻结的修复覆盖证据；不据此推断状态已认证。'} 完整来源摘要随实验JSON导出。</Typography.Paragraph>}
       {constraints && <>
         <Typography.Paragraph>已参与本次回测的附加状态限制：原始行情对账{constraints.counts?.reconciled_bars?.toLocaleString() ?? '—'}根，覆盖{constraints.matched_input_symbols ?? '—'}股；来源冲突{constraints.counts?.conflict_bars?.toLocaleString() ?? '—'}根双向限制。新增禁买{constraints.counts?.additional_buy_blocks?.toLocaleString() ?? '—'}根、禁卖{constraints.counts?.additional_sell_blocks?.toLocaleString() ?? '—'}根。缺状态{constraints.counts?.missing_state_bars?.toLocaleString() ?? '—'}根继续保留原近似限制，不能认定为已认证可交易。</Typography.Paragraph>
-        <Typography.Text>来源快照：{constraints.source_snapshot_sha256}。回填为事后诊断；ST禁买是研究政策，精确涨跌停与完整历史PIT仍未认证。逐股票逐日账本保存在集群归档中。</Typography.Text>
+        <Typography.Text>以上为输入库全历史的掩码计数，不是测试期委托或实际成交次数。来源快照：{constraints.source_snapshot_sha256}。回填为事后诊断；ST禁买是研究政策，精确涨跌停与完整历史PIT仍未认证。逐股票逐日账本保存在集群归档中。</Typography.Text>
       </>}
     </Space>
   </Card>
