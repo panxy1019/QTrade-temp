@@ -1,6 +1,6 @@
 # 统一证券数据与 Qlib 在线研究：实现及维护
 
-状态：2026-10-26，Phase A 与分钟 P0 修复已通过集群及预览验收，生产验收进行中。
+状态：2026-10-26，Phase A 与分钟 P0 修复已通过集群、预览及生产验收。
 完整目标见 [执行计划](../plans/UNIFIED_DATA_ONLINE_PLAN.md)。后续阶段尚未交付。
 
 ## 首次现场结果
@@ -17,6 +17,10 @@
 | 历史 PIT 认证 | 0 |
 
 隔离证券为 002384，原文件仍存在，不再能凭正确 checksum 获得覆盖验收。
+生产 [数据中心](https://q-trade-temp.vercel.app/#/data) 已验收 1500 目标、
+002384 查询和 5min 隔离；API 总量/历史身份查询及只读边界检查通过。
+证据：[集群](evidence/unified-phase-a-cluster-20261026.json)、
+[生产](evidence/unified-phase-a-production-20261026.json)。
 新维护和唯一发布服务使用 release 133b034；原 Qlib worker、PIT repair、observer
 保留原代码身份。Linux 全套 637 项、前端 213 项、Ruff、115 文件严格类型检查、
 ESLint 与构建通过。Windows 另行旧 Vercel 证据测试有平台相关失败，Linux

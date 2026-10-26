@@ -12,13 +12,16 @@ Last updated: 2026-10-26
   complete historical PIT certification remains zero. Source 133b034 is deployed
   to maintenance and the workflow-aware publisher. A verified duplicate old
   publisher was stopped with autostart/restart disabled and backups retained.
-  Other services/old experiment identities stay unchanged. Preview browser reads
-  the real 1,500 target catalog; production acceptance is in progress.
+  Other services/old experiment identities stay unchanged. Production main 055b87f
+  serves both read-only endpoints; browser accepts 1,500 targets, symbol search
+  and 002384's 5min quarantine. Anonymous research submit remains 401 and unified
+  catalog POST is 405. Single publisher resumes SUCCEEDED at 09:07:10 UTC.
+  Evidence: docs/evidence/unified-phase-a-{cluster,production}-20261026.json.
 
 - Active owner-requested goal: unified observed universe (configurable target
   about 1,500), day/5min quality and ingestion, immutable Qlib data versions,
   restored-model daily prediction, controlled rolling and forward research.
-  Phase A is in progress, not accepted. Scope and checks:
+  Phase A is accepted; Phase B incremental collection is in progress. Scope and checks:
   plans/UNIFIED_DATA_ONLINE_GUIDE.md and plans/UNIFIED_DATA_ONLINE_PLAN.md.
   Existing identities and services remain; effective limits are 13 CPU / 60 GiB,
   free persistent space about 293 GiB. LIVE_TRADING_ENABLED=false.

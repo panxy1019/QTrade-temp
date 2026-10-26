@@ -1,0 +1,409 @@
+{
+  "schema_version": "qtrade.unified-phase-a-production.v1",
+  "checked_at": "2026-10-26T09:17:33.412483+00:00",
+  "results": {
+    "/api/deployment": {
+      "status": 200,
+      "seconds": 0.608,
+      "body": {
+        "classification": "PUBLIC_BUILD_PROVENANCE",
+        "provider": "VERCEL",
+        "status": "AVAILABLE",
+        "target_environment": "production",
+        "git_commit_sha": "055b87fd2d841daff9f92daa9fed7e269f46f232",
+        "git_commit_ref": "main",
+        "external_order_transmission": false
+      }
+    },
+    "/api/unified/summary": {
+      "status": 200,
+      "seconds": 1.541,
+      "body": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.unified-catalog.v1",
+        "built_at": "2026-10-26T08:59:06.887581+00:00",
+        "checked_at": "2026-10-26T09:17:30.388080+00:00",
+        "snapshot_age_seconds": 1103.500527,
+        "evidence_sha256": "fbfc6b7fd15a99742840d6efd5da0206a0f0a4cc0b49850cf3d2389a24933db0",
+        "read_only": true,
+        "master": {
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "point_in_time": false,
+          "realtime_readiness": false,
+          "real_data_paper_readiness": false,
+          "external_order_transmission": false,
+          "live_trading_enabled": false,
+          "promotion": "NOT_ELIGIBLE",
+          "schema_version": "qtrade.observed-security-master.v1",
+          "observed_at": "2026-10-26T08:59:06.887581+00:00",
+          "target_count": 1500,
+          "target_actual": 1500,
+          "state": "TARGET_REACHED",
+          "selection_policy": "legacy union then frozen current liquidity candidates; non-PIT",
+          "legacy_union_count": 1037,
+          "legacy_active_retained": 1037,
+          "legacy_unresolved_or_inactive": [],
+          "top_up_count": 463,
+          "source_counts": {
+            "legacy_etf30": 30,
+            "legacy_stock75": 75,
+            "legacy_daily1000": 1000,
+            "frozen_liquidity_candidates": 1745,
+            "legacy_minute_checkpoints": 172
+          },
+          "master_count": 5594,
+          "target_by_type": {
+            "ETF": 30,
+            "STOCK": 1470
+          },
+          "historical_pit_certified_count": 0,
+          "limitations": [
+            "Current selection has survivorship and liquidity selection bias",
+            "Vendor listing/delisting dates are unverified source claims",
+            "Source known_at is not historical row available_at",
+            "Day/5min collection plans do not certify data coverage"
+          ],
+          "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+          "frequency_counts": {
+            "day": {
+              "PLANNED": 500,
+              "CONTENT_COVERAGE_VERIFIED": 1000
+            },
+            "5min": {
+              "PLANNED": 1328,
+              "CONTENT_COVERAGE_VERIFIED": 171,
+              "QUARANTINED": 1
+            }
+          },
+          "recent_streams": {
+            "daily": {
+              "completed_at": "2026-10-26T08:16:14.930696+00:00",
+              "required_symbol_count": 30,
+              "bar_count": 1170,
+              "latest_by_symbol": {
+                "159915": "2026-10-23T15:00:00+08:00",
+                "510050": "2026-10-23T15:00:00+08:00",
+                "510180": "2026-10-23T15:00:00+08:00",
+                "510210": "2026-10-23T15:00:00+08:00",
+                "510230": "2026-10-23T15:00:00+08:00",
+                "510300": "2026-10-23T15:00:00+08:00",
+                "510330": "2026-10-23T15:00:00+08:00",
+                "510500": "2026-10-23T15:00:00+08:00",
+                "510510": "2026-10-23T15:00:00+08:00",
+                "510660": "2026-10-23T15:00:00+08:00",
+                "510760": "2026-10-23T15:00:00+08:00",
+                "510880": "2026-10-23T15:00:00+08:00",
+                "510900": "2026-10-23T15:00:00+08:00",
+                "512000": "2026-10-23T15:00:00+08:00",
+                "512010": "2026-10-23T15:00:00+08:00",
+                "512070": "2026-10-23T15:00:00+08:00",
+                "512100": "2026-10-23T15:00:00+08:00",
+                "512170": "2026-10-23T15:00:00+08:00",
+                "512290": "2026-10-23T15:00:00+08:00",
+                "512400": "2026-10-23T15:00:00+08:00",
+                "512500": "2026-10-23T15:00:00+08:00",
+                "512580": "2026-10-23T15:00:00+08:00",
+                "512660": "2026-10-23T15:00:00+08:00",
+                "512690": "2026-10-23T15:00:00+08:00",
+                "512710": "2026-10-23T15:00:00+08:00",
+                "512760": "2026-10-23T15:00:00+08:00",
+                "512800": "2026-10-23T15:00:00+08:00",
+                "512880": "2026-10-23T15:00:00+08:00",
+                "512980": "2026-10-23T15:00:00+08:00",
+                "515790": "2026-10-23T15:00:00+08:00"
+              }
+            },
+            "minute": {
+              "completed_at": "2026-10-26T07:02:26.435435+00:00",
+              "required_symbol_count": 75,
+              "bar_count": 7200,
+              "latest_by_symbol": {
+                "000063": "2026-10-26T15:00:00+08:00",
+                "000338": "2026-10-26T15:00:00+08:00",
+                "000408": "2026-10-26T15:00:00+08:00",
+                "000568": "2026-10-26T15:00:00+08:00",
+                "000792": "2026-10-26T15:00:00+08:00",
+                "000858": "2026-10-26T15:00:00+08:00",
+                "000938": "2026-10-26T15:00:00+08:00",
+                "000977": "2026-10-26T15:00:00+08:00",
+                "000988": "2026-10-26T15:00:00+08:00",
+                "002027": "2026-10-26T15:00:00+08:00",
+                "002028": "2026-10-26T15:00:00+08:00",
+                "002179": "2026-10-26T15:00:00+08:00",
+                "002230": "2026-10-26T15:00:00+08:00",
+                "002353": "2026-10-26T15:00:00+08:00",
+                "002371": "2026-10-26T15:00:00+08:00",
+                "002415": "2026-10-26T15:00:00+08:00",
+                "002422": "2026-10-26T15:00:00+08:00",
+                "002475": "2026-10-26T15:00:00+08:00",
+                "002558": "2026-10-26T15:00:00+08:00",
+                "002594": "2026-10-26T15:00:00+08:00",
+                "002602": "2026-10-26T15:00:00+08:00",
+                "002625": "2026-10-26T15:00:00+08:00",
+                "300059": "2026-10-26T15:00:00+08:00",
+                "300124": "2026-10-26T15:00:00+08:00",
+                "300251": "2026-10-26T15:00:00+08:00",
+                "300274": "2026-10-26T15:00:00+08:00",
+                "300308": "2026-10-26T15:00:00+08:00",
+                "300394": "2026-10-26T15:00:00+08:00",
+                "300418": "2026-10-26T15:00:00+08:00",
+                "300502": "2026-10-26T15:00:00+08:00",
+                "300750": "2026-10-26T15:00:00+08:00",
+                "300760": "2026-10-26T15:00:00+08:00",
+                "600030": "2026-10-26T15:00:00+08:00",
+                "600031": "2026-10-26T15:00:00+08:00",
+                "600036": "2026-10-26T15:00:00+08:00",
+                "600089": "2026-10-26T15:00:00+08:00",
+                "600104": "2026-10-26T15:00:00+08:00",
+                "600111": "2026-10-26T15:00:00+08:00",
+                "600150": "2026-10-26T15:00:00+08:00",
+                "600160": "2026-10-26T15:00:00+08:00",
+                "600276": "2026-10-26T15:00:00+08:00",
+                "600309": "2026-10-26T15:00:00+08:00",
+                "600406": "2026-10-26T15:00:00+08:00",
+                "600489": "2026-10-26T15:00:00+08:00",
+                "600519": "2026-10-26T15:00:00+08:00",
+                "600660": "2026-10-26T15:00:00+08:00",
+                "600760": "2026-10-26T15:00:00+08:00",
+                "600795": "2026-10-26T15:00:00+08:00",
+                "600886": "2026-10-26T15:00:00+08:00",
+                "600887": "2026-10-26T15:00:00+08:00",
+                "600893": "2026-10-26T15:00:00+08:00",
+                "600900": "2026-10-26T15:00:00+08:00",
+                "600905": "2026-10-26T15:00:00+08:00",
+                "600989": "2026-10-26T15:00:00+08:00",
+                "601127": "2026-10-26T15:00:00+08:00",
+                "601166": "2026-10-26T15:00:00+08:00",
+                "601211": "2026-10-26T15:00:00+08:00",
+                "601288": "2026-10-26T15:00:00+08:00",
+                "601318": "2026-10-26T15:00:00+08:00",
+                "601328": "2026-10-26T15:00:00+08:00",
+                "601398": "2026-10-26T15:00:00+08:00",
+                "601600": "2026-10-26T15:00:00+08:00",
+                "601688": "2026-10-26T15:00:00+08:00",
+                "601728": "2026-10-26T15:00:00+08:00",
+                "601766": "2026-10-26T15:00:00+08:00",
+                "601899": "2026-10-26T15:00:00+08:00",
+                "601985": "2026-10-26T15:00:00+08:00",
+                "603019": "2026-10-26T15:00:00+08:00",
+                "603259": "2026-10-26T15:00:00+08:00",
+                "603288": "2026-10-26T15:00:00+08:00",
+                "603993": "2026-10-26T15:00:00+08:00",
+                "688012": "2026-10-26T15:00:00+08:00",
+                "688041": "2026-10-26T15:00:00+08:00",
+                "688256": "2026-10-26T15:00:00+08:00",
+                "688271": "2026-10-26T15:00:00+08:00"
+              }
+            }
+          },
+          "vendor_master_observed_at": "2026-10-26T02:05:27.695891+00:00",
+          "evidence_sha256": "aea0fe389a3cb016f020b68fe327e9e9c910e53a90ff61fff2dc81a96adc6fa5"
+        }
+      }
+    },
+    "/api/unified/securities?query=002384&frequency=5min": {
+      "status": 200,
+      "seconds": 1.111,
+      "body": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+        "catalog_sha256": "fbfc6b7fd15a99742840d6efd5da0206a0f0a4cc0b49850cf3d2389a24933db0",
+        "built_at": "2026-10-26T08:59:06.887581+00:00",
+        "frequency": "5min",
+        "total": 1,
+        "offset": 0,
+        "limit": 25,
+        "rows": [
+          {
+            "instrument_id": "SZSE.002384",
+            "symbol": "002384",
+            "exchange": "SZSE",
+            "security_type": "STOCK",
+            "name": "东山精密",
+            "listing_date": "2010-04-09",
+            "delisting_date": null,
+            "status": "ACTIVE_OBSERVED",
+            "source": [
+              {
+                "source_id": "vendor_master",
+                "sha256": "669a756e4c392d13a1f120638c5564bcc3f08f30be7d07d363a1695171d49aaf",
+                "vendor_code": "sz.002384",
+                "available_at": null
+              },
+              {
+                "source_id": "legacy_daily1000",
+                "sha256": "0fe5c3a1a73852561b26428e0be4e919568bf652d250ea00ef87aa70537b1019",
+                "source_known_at": "2026-10-25T11:21:48.256601+00:00",
+                "available_at": null
+              },
+              {
+                "source_id": "frozen_liquidity_candidates",
+                "sha256": "4d8b103fe11ff69060e38fcff679c157c62d825e98d72b5669d4b14c2bed2412",
+                "source_known_at": null,
+                "available_at": null
+              },
+              {
+                "source_id": "legacy_minute_checkpoints",
+                "sha256": "115d21c0ce8163dc015bad961976a94e1da148560a92f1d97c6007d3e5560dbe",
+                "source_known_at": null,
+                "available_at": null
+              }
+            ],
+            "observed_at": "2026-10-26T08:59:06.887581+00:00",
+            "valid_from": "2010-04-09",
+            "valid_to": null,
+            "available_at": null,
+            "valid_time_basis": "unverified vendor claim; not historical knowledge",
+            "data_quality_status": "LIMITED_RESEARCH",
+            "issues": [],
+            "in_target": true,
+            "legacy_sources": [
+              "legacy_daily1000",
+              "legacy_minute_checkpoints"
+            ],
+            "candidate_rank": 8,
+            "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+            "frequencies": {
+              "day": {
+                "planned": true,
+                "state": "CONTENT_COVERAGE_VERIFIED",
+                "issues": [],
+                "observed_start": "2016-10-24",
+                "observed_end": "2026-10-23",
+                "bar_count": 2359,
+                "data_version": "sina-raw-daily-002384-20161024-20261023",
+                "data_sha256": "d485114d9647660ad8ce5173a4503487797769ef7eca13b3e2111cb8b24bf6e6",
+                "amount_verified": false,
+                "historical_pit_certified": false
+              },
+              "5min": {
+                "planned": true,
+                "state": "QUARANTINED",
+                "issues": [
+                  "INCOMPLETE_SESSION",
+                  "INSUFFICIENT_SESSIONS",
+                  "STALE_END"
+                ],
+                "observed_start": "2023-10-24",
+                "observed_end": "2025-11-14",
+                "bar_count": 24000,
+                "data_version": "baostock-qfq-5m-002384-20231024-20261023",
+                "data_sha256": "63884e72b1065ff41bc989cb5a83d730f55ce890258a6cc30dbec6b8e7096405",
+                "evidence_sha256": "87e62c7ac110ee207e6475d0e10818bd1c64353e8a20c8e4eb761c403467c95d",
+                "requested_end": "2026-10-23"
+              }
+            }
+          }
+        ],
+        "read_only": true
+      }
+    },
+    "/api/unified/securities?target_only=false&limit=1": {
+      "status": 200,
+      "seconds": 0.613,
+      "body": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+        "catalog_sha256": "fbfc6b7fd15a99742840d6efd5da0206a0f0a4cc0b49850cf3d2389a24933db0",
+        "built_at": "2026-10-26T08:59:06.887581+00:00",
+        "frequency": "day",
+        "total": 5594,
+        "offset": 0,
+        "limit": 1,
+        "rows": [
+          {
+            "instrument_id": "SSE.510050",
+            "symbol": "510050",
+            "exchange": "SSE",
+            "security_type": "ETF",
+            "name": "华夏上证50ETF",
+            "listing_date": "2005-02-23",
+            "delisting_date": null,
+            "status": "ACTIVE_OBSERVED",
+            "source": [
+              {
+                "source_id": "vendor_master",
+                "sha256": "669a756e4c392d13a1f120638c5564bcc3f08f30be7d07d363a1695171d49aaf",
+                "vendor_code": "sh.510050",
+                "available_at": null
+              },
+              {
+                "source_id": "legacy_etf30",
+                "sha256": "3b5fdb02eec6b4da1f3f14cd35f80b8e74eb0b99cb0f8b13abfb68fdc242da6f",
+                "source_known_at": "2026-08-12T14:55:00Z",
+                "available_at": null
+              }
+            ],
+            "observed_at": "2026-10-26T08:59:06.887581+00:00",
+            "valid_from": "2005-02-23",
+            "valid_to": null,
+            "available_at": null,
+            "valid_time_basis": "unverified vendor claim; not historical knowledge",
+            "data_quality_status": "LIMITED_RESEARCH",
+            "issues": [],
+            "in_target": true,
+            "legacy_sources": [
+              "legacy_etf30"
+            ],
+            "candidate_rank": null,
+            "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+            "frequencies": {
+              "day": {
+                "planned": true,
+                "state": "PLANNED",
+                "issues": [],
+                "observed_start": null,
+                "observed_end": null,
+                "bar_count": 0
+              },
+              "5min": {
+                "planned": true,
+                "state": "PLANNED",
+                "issues": [],
+                "observed_start": null,
+                "observed_end": null,
+                "bar_count": 0
+              }
+            }
+          }
+        ],
+        "read_only": true
+      }
+    },
+    "POST /api/unified/securities": {
+      "status": 405
+    },
+    "POST /api/research/jobs": {
+      "status": 401
+    }
+  },
+  "browser": {
+    "url": "https://q-trade-temp.vercel.app/#/data",
+    "checks": [
+      "real target1500 rendered",
+      "002384 search",
+      "5min quarantine rendered"
+    ],
+    "screenshot": "E:/QTrade-temp/unified-data-production-20261026.png"
+  },
+  "cluster_evidence_sha256": "bb204ba3799de6e189846a9567f12d0601683558b5ec1e80f27a88d3752e9ce7",
+  "live_trading_enabled": false
+}

@@ -30,6 +30,11 @@ PIT/source repair continues in parallel. Then immutable data events, frozen
 processor restoration, daily prediction, controlled rolling and forward research.
 Each phase needs code, tests, cluster and production evidence, docs and limits.
 
+Phase A accepted at production main 055b87f: 1,500 observed targets, independent
+frequency states and lineage queries. 172 old-minute inputs rechecked: 171 pass,
+one quarantined. 637 Linux / 213 frontend checks pass. Evidence and reproduction:
+docs/UNIFIED_DATA_ONLINE.md. Phase B continuous incremental ingestion is next.
+
 ### Proposed next research capabilities from the 2026-10-26 audit
 
 Planning only; no new runtime implementation is claimed by these items.
