@@ -208,6 +208,7 @@ def run(
     data_root: Path, output: Path, tracking: Path, source_revision: str,
     *, config_override: dict[str, Any] | None = None, pit_evidence_root: Path | None = None,
     restore_proof: bool = False,
+    rolling_plan: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     import importlib.metadata
     import random
@@ -223,6 +224,19 @@ def run(
     config = config_override or json.loads(
         (REPO / "configs/qlib_daily_baseline.json").read_text()
     )
+    if rolling_plan is not None:
+        from qtrade.research.data_versions import verify_version
+        from qtrade.research.rolling_policy import verify_plan
+
+        admitted = verify_version(data_root)
+        verify_plan(rolling_plan, (data_root/'provider/calendars/day.txt').read_text().splitlines())
+        if (not restore_proof or config_override is None
+                or rolling_plan['data_version_id'] != admitted['version_id']
+                or rolling_plan['source_revision'] != source_revision
+                or config['segments'] != rolling_plan['segments']):
+            raise ValueError('ROLLING_TRAINING_INPUT_BINDING_INVALID')
+        config = json.loads(json.dumps(config))
+        config['rolling_plan'] = rolling_plan
     if restore_proof:
         # Keep both models on the same numeric feature contract. Native Ridge
         # float32 matrix products can change by one ULP with prediction batch size.
@@ -235,6 +249,9 @@ def run(
         raise ValueError("FULL_SOURCE_REVISION_REQUIRED")
     output.mkdir(parents=True, exist_ok=True)
     source_snapshot = capture_source(pit_evidence_root)
+    if rolling_plan is not None and source_snapshot.identity != admitted['bindings'][
+            'source_snapshot_sha256']:
+        raise ValueError('ROLLING_SOURCE_MUST_MATCH_ADMITTED_PROVIDER')
     if config.get("workflow_spec", {}).get("source_snapshot_sha256") not in (
         None, source_snapshot.identity,
     ):
@@ -340,6 +357,11 @@ def run(
             "kwargs": {"handler": handler, "segments": config["segments"]},
         },
     }
+    if rolling_plan is not None:
+        from scripts.qlib_rolling_adapter import generate
+
+        task = generate(task, rolling_plan, calendar)
+        write_json_atomic(stage/'rolling-plan.json', rolling_plan)
     write_json_atomic(stage / "run-spec.json", signed({
         **{k: v for k, v in request.items() if k != "evidence_sha256"}, "task": task,
     }))
@@ -357,6 +379,9 @@ def run(
         "src/qtrade/research/source_constraints.py",
         *(["scripts/qlib_restore_bundle.py", "src/qtrade/research/feature_precision.py",
            "src/qtrade/research/qlib_processors.py"] if restore_proof else []),
+        *(['scripts/qlib_rolling_adapter.py', 'scripts/run_qlib_rolling.py',
+           'src/qtrade/research/rolling_policy.py', 'src/qtrade/research/qlib_training.py',
+           'src/qtrade/research/data_versions.py'] if rolling_plan is not None else []),
     ):
         target = stage / "source" / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -365,16 +390,24 @@ def run(
         subprocess.check_output([sys.executable, "-m", "pip", "freeze"], text=True)
     )
     status("COMPUTING_ALPHA158")
-    data = init_instance_by_config(task["dataset"])
+    native_recorder = None
+    if rolling_plan is not None:
+        from scripts.qlib_rolling_adapter import train
+
+        status('TRAINING_MODEL')
+        model, data, native_recorder = train(task, experiment=config['name'], name=run_id)
+    else:
+        data = init_instance_by_config(task["dataset"])
+        model = init_instance_by_config(config["model"])
     features = data.prepare("train", col_set="feature")
     feature_names = list(features.columns)
     if len(feature_names) != 158 or not np.isfinite(features.to_numpy()).any():
         raise ValueError("ALPHA158_FEATURE_CONTRACT_FAILED")
     split_rows = {key: len(data.prepare(key, col_set="label")) for key in config["segments"]}
     del features
-    model = init_instance_by_config(config["model"])
     status("TRAINING_MODEL" if config_override else "TRAINING_LIGHTGBM")
-    with R.start(experiment_name=config["name"], recorder_name=run_id):
+    with R.start(experiment_name=config["name"], recorder_name=run_id,
+                 **({'recorder_id': native_recorder, 'resume': True} if native_recorder else {})):
         R.log_params(
             **{
                 "run_id": run_id,
@@ -383,7 +416,8 @@ def run(
                 "data_manifest_sha256": request["data_manifest_sha256"],
             }
         )
-        model.fit(data, **config["fit"])
+        if native_recorder is None:
+            model.fit(data, **config["fit"])
         prediction = model.predict(data, segment="test").rename("score")
         labels = data.prepare("test", col_set="label", data_key="raw").iloc[:, 0].rename("label")
         paired = pd.concat([prediction, labels], axis=1).replace([np.inf, -np.inf], np.nan).dropna()
@@ -464,7 +498,15 @@ def run(
         if restore_proof:
             from scripts.qlib_restore_bundle import freeze
 
-            freeze(stage / "online-restore", dataset=data, model=model, prediction=prediction,
+            reference_segment: Any = 'test'
+            reference_prediction = prediction
+            if rolling_plan is not None:
+                real_days = [d for d in calendar if d <= dataset['end']]
+                reference_segment = (real_days[-20], dataset['end'])
+                reference_prediction = model.predict(data, segment=reference_segment).rename(
+                    'score')
+            freeze(stage / "online-restore", dataset=data, model=model,
+                   prediction=reference_prediction, reference_segment=reference_segment,
                    provider=stage / "provider", data_sha256=request["data_manifest_sha256"],
                    source_revision=source_revision, source_snapshot_sha256=source_snapshot.identity)
             R.save_objects(**{"params.pkl": model, "dataset": data})
@@ -532,6 +574,8 @@ def run(
             "cost_description": config["cost_description"],
             "portfolio": config["portfolio"],
             "workflow_spec": config.get("workflow_spec"),
+            **({'rolling_plan': rolling_plan, 'trainer': 'qlib.model.trainer.TrainerR',
+                'model_activation': 'NOT_ACTIVATED'} if rolling_plan is not None else {}),
             "pit_repair_coverage": pit_coverage,
             "source_snapshot_sha256": source_snapshot.identity,
             "execution_constraints": constraints,

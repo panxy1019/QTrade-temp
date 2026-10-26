@@ -16,6 +16,7 @@ from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from qtrade.research.qlib_publication import verify_archive
+from qtrade.research.rolling_control import RollingControl
 from qtrade.research.source_constraints import capture_source, constraint_protocol
 from qtrade.research.workflow import catalog_envelope, data_audit, digest, validate_spec
 from qtrade.research.workflow_queue import GitQueue, unseal
@@ -47,6 +48,25 @@ def terminate(child: subprocess.Popen[Any]) -> None:
 def recover_child(job: Path) -> None:
     path = job / "child.json"
     if not path.exists():
+        request = job/'request.json'
+        if request.exists() and json.loads(request.read_text()).get('kind') in {
+                'QLIB_ROLLING_JOB', 'QLIB_MODEL_VALIDATION', 'QLIB_SIGNAL_JOB'}:
+            # Cover a crash after spawn but before child.json is sealed.
+            for proc in Path('/proc').iterdir():
+                if not proc.name.isdigit():
+                    continue
+                try:
+                    args = (proc/'cmdline').read_bytes().split(b'\0')
+                    match = (any(m in args for m in (b'scripts.run_qlib_rolling',
+                                b'scripts.run_qlib_candidate_validation',
+                                b'scripts.run_qlib_signal_baselines')) and b'--output' in args
+                             and args[args.index(b'--output')+1] == str(job/'output').encode())
+                    if match:
+                        if os.getpgid(int(proc.name)) != int(proc.name):
+                            raise ValueError('ROLLING_ORPHAN_PROCESS_GROUP_UNCERTAIN')
+                        os.killpg(int(proc.name), signal.SIGKILL)
+                except (FileNotFoundError, ProcessLookupError):
+                    continue
         return
     value = json.loads(path.read_text())
     proc = Path("/proc") / str(int(value["pid"]))
@@ -54,7 +74,9 @@ def recover_child(job: Path) -> None:
         return
     command = (proc / "cmdline").read_bytes()
     start = (proc / "stat").read_text().split()[21]
-    if start != value["start_ticks"] or b"scripts.run_qlib_baseline" not in command or (
+    if start != value["start_ticks"] or not any(module in command for module in (
+        b"scripts.run_qlib_baseline", b"scripts.run_qlib_rolling",
+        b'scripts.run_qlib_candidate_validation', b'scripts.run_qlib_signal_baselines')) or (
         str(job / "output").encode() not in command
     ):
         raise ValueError("UNCERTAIN_CHILD_IDENTITY_REQUIRES_HUMAN_RECONCILIATION")
@@ -104,6 +126,7 @@ class Worker:
         self.online = OnlineModels(base, database.with_name('online-models.sqlite'),
                                    database.with_name('qlib-versions.sqlite'))
         self.predictor = OnlinePredictor(self.online, python, revision)
+        self.rolling = RollingControl(self.db)
 
     def freeze_source(self) -> str:
         root = self.base / "pit-repair"
@@ -137,6 +160,13 @@ class Worker:
                             or value['command']['request_id'] != identity):
                         raise ValueError('MODEL_CONTROL_ENVELOPE_INVALID')
                     self.online.execute(value['command'], now=datetime.now(UTC))
+                    continue
+                if value.get('kind') == 'QLIB_ROLLING_POLICY':
+                    if (not key.startswith('requests/')
+                            or value.get('live_trading_enabled') is not False
+                            or value['command']['request_id'] != identity):
+                        raise ValueError('ROLLING_CONTROL_ENVELOPE_INVALID')
+                    self.rolling.apply(value['command'], now=datetime.now(UTC))
                     continue
                 if key.startswith("cancellations/"):
                     if value["kind"] != "CANCEL_RESEARCH_JOB":
@@ -185,7 +215,8 @@ class Worker:
 
     def archive_detail(self, summary: dict[str, Any], identity: str) -> dict[str, Any]:
         spec = summary.get("workflow_spec")
-        audit = data_audit(aligned=bool(spec))
+        rolling = summary.get('rolling_plan')
+        audit = data_audit(aligned=bool(spec or rolling))
         audit["source_repair_coverage"] = summary.get("pit_repair_coverage", {
             "state": "NOT_CAPTURED_IN_ORIGINAL_RUN", "historical_pit_certified": False,
         })
@@ -210,6 +241,7 @@ class Worker:
             "summary_sha256": summary["evidence_sha256"],
             "source_snapshot_sha256": summary.get("source_snapshot_sha256"),
             "state": "COMPLETE", "engine": "QLIB", "spec": spec,
+            **({'rolling_plan': rolling} if rolling else {}),
             "model": summary["model"], "segments": summary["segments"],
             "data_end": summary["data_end"], "dataset_sha256": summary["dataset_sha256"],
             "symbols": summary.get("effective_universe_size", summary["symbols"]),
@@ -223,6 +255,7 @@ class Worker:
             "limitations": sorted(set(summary["limitations"])),
             "persisted": True, "completed_at": summary["completed_at"],
             "comparison_protocol": (
+                'MATURE_ROLLING_SOURCE_BOUND_V1' if rolling else
                 constraint_protocol(constraints) if constraints
                 else "ALIGNED_SUPPORTED_UNIVERSE_TRAIN_NORMALIZATION_V1"
                 if spec else "LEGACY_BASELINE_DIFFERENT_PREPROCESSING_AND_UNIVERSE"
@@ -259,11 +292,16 @@ class Worker:
             "SELECT id,request,state,updated,result,error FROM jobs ORDER BY rowid DESC LIMIT 100"
         ):
             request = json.loads(raw)
+            if request.get('kind') in {'QLIB_MODEL_VALIDATION', 'QLIB_SIGNAL_JOB'}:
+                continue  # Listed with candidate controls, not as a portfolio experiment.
+            rolling = request.get('kind') == 'QLIB_ROLLING_JOB'
             rows.append({
-                "experiment_id": identity, "name": request["spec"]["name"],
-                "model": request["spec"]["model"], "engine": "QLIB",
+                "experiment_id": identity,
+                "name": request['name'] if rolling else request["spec"]["name"],
+                "model": request['model'] if rolling else request["spec"]["model"],
+                "engine": "QLIB",
                 "state": job_state, "stage": job_state, "updated_at": updated,
-                "spec": request["spec"], "spec_sha256": request["spec_sha256"],
+                "spec": request.get("spec"), "spec_sha256": request.get("spec_sha256"),
                 "audit": data_audit(), "error_code": error,
                 "events": [{"at": at, "state": phase} for at, phase in self.db.execute(
                     "SELECT at,state FROM events WHERE id=? ORDER BY rowid", (identity,)
@@ -280,8 +318,10 @@ class Worker:
         online_value = self.online.publication(self.revision, now=datetime.now(UTC),
                                                 worker_state=state)
         online_value['auto_predict'] = self.predictor.publication(now=datetime.now(UTC))
+        online_value['auto_train'] = self.rolling.publication()
         write_json_atomic(self.public/'online.json', signed({
             k: v for k, v in online_value.items() if k != 'evidence_sha256'}))
+        self.publish_signals()
         # A consistent local-SQLite backup on NFS, never the active database.
         with sqlite3.connect(self.root / "catalog-backup.sqlite.tmp") as backup:
             self.db.backup(backup)
@@ -305,23 +345,70 @@ class Worker:
         job = self.root / "jobs" / identity
         job.mkdir(parents=True, exist_ok=True)
         write_json_atomic(job / "request.json", request)
-        write_json_atomic(job / "spec.json", request["spec"])
-        source_id = request["spec"].get("source_snapshot_sha256") or self.freeze_source()
-        source_root = self.root / "source-snapshots" / source_id
-        if capture_source(source_root).identity != source_id:
-            raise ValueError("REQUESTED_SOURCE_SNAPSHOT_UNAVAILABLE")
         output = job / "output"
+        signal_job = request.get('kind') == 'QLIB_SIGNAL_JOB'
+        rolling = request.get('kind') == 'QLIB_ROLLING_JOB'
+        validation = request.get('kind') == 'QLIB_MODEL_VALIDATION'
+        if signal_job:
+            data = self.online.data_head(verify=False)
+            if (request['data_version_id'] != data['version_id']
+                    or request['source_revision'] != self.revision):
+                self.update(identity, 'REJECTED', error='SIGNAL_CONTEXT_CHANGED')
+                return
+            command = [self.python, '-m', 'scripts.run_qlib_signal_baselines',
+                '--data-version-root', str(self.base/'unified-data/qlib-versions/versions'/
+                                           data['version_id']), '--output', str(output),
+                '--source-revision', self.revision]
+        elif validation:
+            from scripts.prepare_qlib_incremental import load_signed
+
+            data = self.online.data_head(verify=False)
+            if (request['data_version_id'] != data['version_id']
+                    or request['source_revision'] != self.revision):
+                self.update(identity, 'REJECTED', error='CANDIDATE_VALIDATION_CONTEXT_CHANGED')
+                return
+            index = load_signed(self.online.root/'models'/(request['model_id']+'.json'))
+            archive = self.online.local(index['archive'])
+            command = [self.python, '-m', 'scripts.run_qlib_candidate_validation',
+                '--archive', str(archive), '--data-root',
+                str(self.base/'unified-data/qlib-versions/versions'/data['version_id']),
+                '--output', str(output), '--model-id', request['model_id'],
+                '--data-version-id', data['version_id']]
+        elif rolling:
+            from qtrade.monitoring.data_freshness import Calendar
+
+            planned = request['plan']
+            data = self.online.data_head(verify=False)
+            if (request['policy_id'] != self.rolling.current()['policy_id']
+                    or planned['source_revision'] != self.revision
+                    or planned['data_version_id'] != data['version_id']
+                    or data['actual_end'] != Calendar(REPO/'configs/observer_calendar_2026.json'
+                        ).expected(datetime.now(UTC), 'daily').date().isoformat()):
+                self.update(identity, 'REJECTED', error='ROLLING_CONTEXT_CHANGED')
+                return
+            write_json_atomic(job/'policy.json', planned['policy'])
+            command = [self.python, '-m', 'scripts.run_qlib_rolling',
+                '--data-version-root', str(self.base/'unified-data/qlib-versions/versions'/
+                                            data['version_id']), '--output', str(output),
+                '--tracking', '/root/qtrade-local/workflow-mlruns',
+                '--source-revision', self.revision, '--policy', str(job/'policy.json')]
+        else:
+            write_json_atomic(job / "spec.json", request["spec"])
+            source_id = request["spec"].get("source_snapshot_sha256") or self.freeze_source()
+            source_root = self.root / "source-snapshots" / source_id
+            if capture_source(source_root).identity != source_id:
+                raise ValueError("REQUESTED_SOURCE_SNAPSHOT_UNAVAILABLE")
+            command = [
+                self.python, "-m", "scripts.run_qlib_baseline",
+                "--data-root", str(self.base / "qlib-data-20261023"),
+                "--output", str(output),
+                "--tracking", "/root/qtrade-local/workflow-mlruns",
+                "--source-revision", self.revision,
+                "--workflow-spec", str(job / "spec.json"),
+                "--pit-evidence-root", str(source_root),
+            ]
         self.update(identity, "RUNNING")
         self.publish("RUNNING")
-        command = [
-            self.python, "-m", "scripts.run_qlib_baseline",
-            "--data-root", str(self.base / "qlib-data-20261023"),
-            "--output", str(output),
-            "--tracking", "/root/qtrade-local/workflow-mlruns",
-            "--source-revision", self.revision,
-            "--workflow-spec", str(job / "spec.json"),
-            "--pit-evidence-root", str(source_root),
-        ]
         with (job / "runner.log").open("ab") as log, contextlib.ExitStack() as cleanup:
             child = subprocess.Popen(
                 command, cwd=REPO, stdout=log, stderr=subprocess.STDOUT,
@@ -329,7 +416,8 @@ class Worker:
                 env={**{k: v for k, v in os.environ.items()
                         if not k.startswith("QTRADE_RESEARCH_")},
                      "PYTHONPATH": str(REPO / "src"),
-                     "LIVE_TRADING_ENABLED": "false", "OMP_NUM_THREADS": "6"},
+                     "LIVE_TRADING_ENABLED": "false",
+                     "OMP_NUM_THREADS": '2' if rolling or validation or signal_job else '6'},
             )
             cleanup.callback(terminate, child)
             write_json_atomic(job / "child.json", {
@@ -341,7 +429,7 @@ class Worker:
             while child.poll() is None:
                 self.predictor.tick(stop=self.stop)
                 if self.stop or identity in self.cancellations or (
-                    time.monotonic() - started > 3600
+                    time.monotonic() - started > (900 if validation or signal_job else 3600)
                 ):
                     terminate(child)
                     state = "CANCELLED" if identity in self.cancellations else "INTERRUPTED"
@@ -360,14 +448,89 @@ class Worker:
         if child.returncode:
             self.update(identity, "FAILED", error="QLIB_RUN_FAILED_SEE_PRIVATE_CLUSTER_LOG")
             return
+        if signal_job:
+            from qtrade.research.signal_publication import verify_signal_archive
+
+            paths = list(output.glob('*/manifest.json'))
+            if len(paths) != 1:
+                raise ValueError('SIGNAL_ONE_SEALED_ARCHIVE_REQUIRED')
+            manifest = verify_signal_archive(paths[0].parent)['manifest']
+            if (manifest['bindings']['data_version_id'] != request['data_version_id']
+                    or manifest['bindings']['code_revision'] != self.revision):
+                raise ValueError('SIGNAL_COMPLETED_CONTEXT_CHANGED')
+            self.update(identity, 'COMPLETE', result={'signal_family_id':
+                manifest['signal_family_id'], 'data_version_id': request['data_version_id']})
+            return
+        if validation:
+            proof = json.loads((output/'result.json').read_text())
+            self.online.import_candidate(archive, output/'validations'/proof['validation_id'],
+                                          now=datetime.now(UTC))
+            self.update(identity, 'COMPLETE', result={'validation_id': proof['validation_id'],
+                        'model_id': request['model_id'], 'data_version_id': data['version_id']})
+            return
         status = json.loads((output / "status.json").read_text())
         archive = output / "runs" / status["run_id"]
         summary = verify_archive(archive)
+        if rolling and summary.get('rolling_plan') != request['plan']:
+            raise ValueError('ROLLING_COMPLETED_PLAN_CHANGED')
+        if rolling:
+            self.online.import_trained(archive, now=datetime.now(UTC))
         self.update(identity, "COMPLETE", result=self.archive_detail(summary, identity))
+
+    def schedule_rolling(self) -> None:
+        if (self.stop or self.predictor.child is not None
+                or self.predictor.state not in {'COMPLETE', 'WAITING_FOR_APPROVAL'}
+                or self.rolling.current()['policy']['mode'] == 'OFF'):
+            return
+        from qtrade.monitoring.data_freshness import Calendar
+
+        now = datetime.now(UTC)
+        data = self.online.data_head(verify=False)
+        if (data['actual_end'] != Calendar(REPO/'configs/observer_calendar_2026.json').expected(
+                now, 'daily').date().isoformat()
+                or __import__('shutil').disk_usage(self.base).free < 100*1024**3):
+            return
+        root = self.base/'unified-data/qlib-versions/versions'/data['version_id']
+        calendar = (root/'provider/calendars/day.txt').read_text().splitlines()
+        self.rolling.schedule(calendar, data['actual_end'], data['version_id'],
+                               self.revision, now=now)
+
+    def schedule_candidate_validation(self) -> None:
+        if (self.stop or self.predictor.child is not None
+                or self.predictor.state not in {'COMPLETE', 'WAITING_FOR_APPROVAL'}):
+            return
+        if self.db.execute("SELECT count(*) FROM jobs WHERE state NOT IN "
+            "('COMPLETE','FAILED','CANCELLED','INTERRUPTED','REJECTED')").fetchone()[0]:
+            return
+        from qtrade.monitoring.data_freshness import Calendar
+
+        now = datetime.now(UTC)
+        data = self.online.data_head(verify=False)
+        if data['actual_end'] != Calendar(REPO/'configs/observer_calendar_2026.json').expected(
+                now, 'daily').date().isoformat():
+            return
+        for model in self.online.registry.snapshot()['models']:
+            definition = model['definition']
+            if model['state'] != 'TRAINED' or data['actual_end'] <= definition['training_data_end']:
+                continue
+            bindings = {'kind': 'QLIB_MODEL_VALIDATION', 'model_id': definition['model_id'],
+                        'data_version_id': data['version_id'], 'source_revision': self.revision}
+            identity = signed(bindings)['evidence_sha256'][:32]
+            request = signed({**AUTHORITY, **bindings, 'job_id': identity})
+            with self.db:
+                created = self.db.execute('INSERT OR IGNORE INTO jobs VALUES(?,?,?,?,NULL,NULL)',
+                    (identity, json.dumps(request), 'QUEUED', now.isoformat()))
+                if created.rowcount:
+                    self.db.execute('INSERT INTO events VALUES(?,?,?)',
+                                     (identity, now.isoformat(), 'QUEUED'))
+                    return
 
     def once(self) -> None:
         self.ingest()
         self.predictor.tick(stop=self.stop)
+        self.schedule_candidate_validation()
+        self.schedule_signals()
+        self.schedule_rolling()
         row = self.db.execute(
             "SELECT id,request FROM jobs WHERE state='QUEUED' ORDER BY rowid LIMIT 1"
         ).fetchone()
@@ -377,6 +540,48 @@ class Worker:
             except Exception:
                 self.update(row[0], "FAILED", error="WORKER_JOB_VALIDATION_FAILED")
         self.publish('PREDICTING' if self.predictor.child is not None else 'IDLE')
+
+    def schedule_signals(self) -> None:
+        if (self.stop or self.predictor.child is not None
+                or self.predictor.state not in {'COMPLETE', 'WAITING_FOR_APPROVAL'}):
+            return
+        if self.db.execute("SELECT count(*) FROM jobs WHERE state NOT IN "
+            "('COMPLETE','FAILED','CANCELLED','INTERRUPTED','REJECTED')").fetchone()[0]:
+            return
+        from qtrade.monitoring.data_freshness import Calendar
+
+        now = datetime.now(UTC)
+        data = self.online.data_head(verify=False)
+        if data['actual_end'] != Calendar(REPO/'configs/observer_calendar_2026.json').expected(
+                now, 'daily').date().isoformat():
+            return
+        bindings = {'kind': 'QLIB_SIGNAL_JOB', 'data_version_id': data['version_id'],
+                    'source_revision': self.revision}
+        identity = signed(bindings)['evidence_sha256'][:32]
+        with self.db:
+            created = self.db.execute('INSERT OR IGNORE INTO jobs VALUES(?,?,?,?,NULL,NULL)',
+                (identity, json.dumps(signed({**AUTHORITY, **bindings, 'job_id': identity})),
+                 'QUEUED', now.isoformat()))
+            if created.rowcount:
+                self.db.execute('INSERT INTO events VALUES(?,?,?)',
+                                 (identity, now.isoformat(), 'QUEUED'))
+
+    def publish_signals(self) -> None:
+        from qtrade.research.signal_publication import verify_signal_archive
+
+        publication = signed({**AUTHORITY, 'state': 'NO_VERIFIED_SIGNAL_ARCHIVE'})
+        try:
+            for identity, raw, result in self.db.execute(
+                    "SELECT id,request,result FROM jobs WHERE state='COMPLETE' "
+                    "ORDER BY rowid DESC"):
+                if json.loads(raw).get('kind') != 'QLIB_SIGNAL_JOB':
+                    continue
+                family_id = json.loads(result)['signal_family_id']
+                publication = verify_signal_archive(self.root/'jobs'/identity/'output'/family_id)
+                break
+        except (OSError, ValueError, KeyError, TypeError):
+            publication = signed({**AUTHORITY, 'state': 'SIGNAL_ARCHIVE_INVALID'})
+        write_json_atomic(self.public/'signals.json', publication)
 
 
 def main() -> None:

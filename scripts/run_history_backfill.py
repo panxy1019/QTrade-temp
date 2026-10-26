@@ -28,6 +28,7 @@ from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from scripts.atomic_json import write_json_atomic
 from scripts.history_backfill_queue import HistoryQueue, read_signed
 from scripts.history_backfill_store import HistoryStore, request_for
+from scripts.history_source_gate import HistorySourceGate, history_backoff_reason
 from scripts.vendor_session import baostock_session
 
 REPO = Path(__file__).resolve().parents[1]
@@ -84,9 +85,12 @@ def pit_backoff_reason(base: Path, now: datetime) -> str | None:
     return None
 
 
-def priority_reason(base: Path, now: datetime, extra_states: tuple[Path, ...] = ()) -> str | None:
+def priority_reason(base: Path, now: datetime, extra_states: tuple[Path, ...] = (),
+                    history_gate_required: bool = False) -> str | None:
     """Missing/stale current collector evidence cannot authorize expensive history work."""
     if reason := pit_backoff_reason(base, now):
+        return reason
+    if reason := history_backoff_reason(base, now, history_gate_required):
         return reason
     paths = (base / "unified-data/service-state.json", *extra_states)
     idle = {"WAITING", "IDLE", "SUCCEEDED", "PASS_FINISHED", "COMPLETE", "STOPPED"}
@@ -237,12 +241,13 @@ def download(
 ) -> tuple[dict[str, Any], str | None]:
     if stop.is_set():
         return read_capture(store, attempt), "INTERRUPTED"
-    if priority_reason(base, datetime.now(UTC), extra_states):
+    if priority_reason(base, datetime.now(UTC), extra_states, True):
         return read_capture(store, attempt), "YIELDED_TO_CURRENT_COLLECTION"
     child = subprocess.Popen([
         sys.executable, "-m", "scripts.run_history_backfill", "--capture-root", str(store.root),
         "--capture-attempt", attempt["attempt_id"], "--capture-seconds", str(seconds),
         "--base", str(base),
+        "--history-gate-required",
         *[part for path in extra_states for part in ("--priority-state", str(path))],
     ], cwd=REPO, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         pass_fds=() if worker_lease_fd is None else (worker_lease_fd,))
@@ -253,7 +258,7 @@ def download(
             if stop.is_set():
                 state = "INTERRUPTED"
                 break
-            if priority_reason(base, datetime.now(UTC), extra_states):
+            if priority_reason(base, datetime.now(UTC), extra_states, True):
                 state = "YIELDED_TO_CURRENT_COLLECTION"
                 break
             if shutil.disk_usage(base).free < RESERVE:
@@ -278,11 +283,13 @@ def download(
 
 
 def run_pass(
-    base: Path, root: Path, plan: dict[str, Any], master: dict[str, Any], *, revision: str,
+    base: Path, root: Path, plan: dict[str, Any] | None, master: dict[str, Any] | None,
+    *, revision: str,
     seconds: float = 240, new_windows: int = 4, retry_windows: int = 1,
     query_seconds: float = 25, stop: Event | None = None,
     lease_dir: Path = Path("/root/qtrade-local"), extra_states: tuple[Path, ...] = (),
     downloader: Callable[..., tuple[dict[str, Any], str | None]] = download,
+    probe_bundle: Path | None = None, observed_root: Path | None = None,
 ) -> dict[str, Any]:
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("LIVE_TRADING_MUST_REMAIN_DISABLED")
@@ -293,8 +300,32 @@ def run_pass(
     stop = stop or Event()
     started = time.monotonic()
     with worker_lease(lease_dir) as lease:
-        queue = HistoryQueue(root, plan, master)
+        if probe_bundle is not None:
+            from scripts.delisted_history_queue import DelistedHistoryQueue
+
+            if plan is not None or master is not None or observed_root is None:
+                raise ValueError("DELISTED_EXECUTION_REQUIRES_OBSERVED_ROOT_AND_SEPARATE_BUNDLE")
+            validate_cohort_roots(observed_root, root)
+            observed = HistoryQueue(observed_root, read_signed(observed_root / "plan.json"),
+                                    read_signed(observed_root / "master.json"))
+            queue: HistoryQueue = DelistedHistoryQueue(root, probe_bundle, now=datetime.now(UTC))
+        else:
+            if plan is None or master is None or observed_root is not None:
+                raise ValueError("OBSERVED_EXECUTION_REQUIRES_FROZEN_PLAN_AND_MASTER")
+            queue = observed = HistoryQueue(root, plan, master)
+        source_gate = HistorySourceGate(base, observed, now=datetime.now(UTC))
+        source_recovery = source_gate.recover_pending(now=datetime.now(UTC))
+        source_gate.bind(observed, HistoryStore(observed.root / "lake"), now=datetime.now(UTC))
+        source_gate.prepare_queue_recovery(observed, HistoryStore(observed.root / "lake"),
+                                           now=datetime.now(UTC))
+        if queue is not observed:
+            # A pre-upgrade active receipt can contain a source failure absent from
+            # its old scheduler. Replay it before granting a second cohort access.
+            observed.recover(HistoryStore(observed.root / "lake"), now=datetime.now(UTC))
+            source_gate.bind(queue, HistoryStore(root / "lake"), now=datetime.now(UTC))
         store = HistoryStore(root / "lake")
+        if queue is not observed:
+            source_gate.prepare_queue_recovery(queue, store, now=datetime.now(UTC))
         recovery = queue.recover(store, now=datetime.now(UTC))
         attempted, state, reason = 0, "PASS_FINISHED", None
         pass_counts = {key: 0 for key in ("requested", "downloaded", "downloaded_rows",
@@ -307,9 +338,10 @@ def run_pass(
             if stop.is_set() or remaining < 1:
                 state = "STOPPED" if stop.is_set() else "PASS_BUDGET_REACHED"
                 break
-            reason = priority_reason(base, datetime.now(UTC), extra_states)
+            reason = priority_reason(base, datetime.now(UTC), extra_states, True)
             if reason:
-                state = "YIELDED_TO_CURRENT_COLLECTION"
+                state = ("WAITING_FOR_GLOBAL_SOURCE_BACKOFF" if reason.startswith(
+                    "HISTORY_SOURCE_BACKOFF") else "YIELDED_TO_CURRENT_COLLECTION")
                 break
             if shutil.disk_usage(base).free < RESERVE + WRITE_HEADROOM:
                 state = "STORAGE_RESERVE_PAUSED"
@@ -320,6 +352,7 @@ def run_pass(
                     state = "WAITING_FOR_GLOBAL_SOURCE_BACKOFF"
                 continue
             store.begin(attempt)
+            source_gate.begin(root, attempt, now=datetime.now(UTC))
             raw, override = downloader(store, attempt, base=base,
                                        seconds=min(query_seconds, remaining), stop=stop,
                                        extra_states=extra_states,
@@ -341,22 +374,36 @@ def run_pass(
                             "STORAGE_RESERVE_PAUSED", "INTERRUPTED"}:
                 state = override
                 if override == "YIELDED_TO_CURRENT_COLLECTION":
-                    reason = priority_reason(base, datetime.now(UTC), extra_states)
+                    reason = priority_reason(base, datetime.now(UTC), extra_states, True)
+                break
+            if receipt["quality"]["state"] in {
+                    "LOGIN_FAILED", "SOURCE_QUERY_FAILED", "QUERY_TIMEOUT"}:
+                state, reason = "WAITING_FOR_GLOBAL_SOURCE_BACKOFF", "HISTORY_SOURCE_BACKOFF_ACTIVE"
                 break
         report = queue.snapshot(now=datetime.now(UTC))
         report = signed({**{k: v for k, v in report.items() if k != "evidence_sha256"},
                          "state": state, "priority_reason": reason, "attempted_windows": attempted,
                          "stage_counts_this_pass": pass_counts,
                          "recovery": recovery, "code_revision": revision,
+                         "shared_source_recovery": source_recovery,
+                         "shared_source_backoff_sha256": source_gate.value["evidence_sha256"],
+                         "global_next_attempt_at": source_gate.value["next_attempt_at"],
                          "free_bytes": shutil.disk_usage(base).free,
                          "elapsed_seconds": round(time.monotonic() - started, 3)})
         write_json_atomic(root / "progress.json", report)
         # The small pointer is safe for a publisher; full gaps remain in progress.json.
-        write_json_atomic(base / "unified-data/backfill/execution-latest.json", signed({
+        summary = "delisted-execution-latest.json" if probe_bundle else "execution-latest.json"
+        write_json_atomic(base / "unified-data/backfill" / summary, signed({
             **{k: v for k, v in report.items() if k not in {"tasks", "evidence_sha256"}},
             "progress_sha256": report["evidence_sha256"],
         }))
         return report
+
+
+def validate_cohort_roots(observed: Path, probe: Path) -> None:
+    if (observed.resolve().is_relative_to(probe.resolve())
+            or probe.resolve().is_relative_to(observed.resolve())):
+        raise ValueError("HISTORY_COHORT_ROOTS_MUST_BE_SEPARATE")
 
 
 def main() -> None:
@@ -365,6 +412,8 @@ def main() -> None:
     parser.add_argument("--root", type=Path)
     parser.add_argument("--plan", type=Path)
     parser.add_argument("--master", type=Path)
+    parser.add_argument("--delisted-probe-bundle", type=Path)
+    parser.add_argument("--observed-root", type=Path)
     parser.add_argument("--source-revision")
     parser.add_argument("--seconds", type=float, default=240)
     parser.add_argument("--new-windows", type=int, default=4)
@@ -375,6 +424,7 @@ def main() -> None:
     parser.add_argument("--capture-root", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--capture-attempt", help=argparse.SUPPRESS)
     parser.add_argument("--capture-seconds", type=float, default=25, help=argparse.SUPPRESS)
+    parser.add_argument("--history-gate-required", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("LIVE_TRADING_MUST_REMAIN_DISABLED")
@@ -397,21 +447,26 @@ def main() -> None:
         socket.setdefaulttimeout(15)
         capture_vendor(store, attempt, import_module("baostock"),
                        before_login=(lambda: priority_reason(
-                           args.base, datetime.now(UTC), tuple(args.priority_state)))
+                           args.base, datetime.now(UTC), tuple(args.priority_state),
+                           args.history_gate_required))
                        if args.base else None)
         return
     if not args.base or not args.root or not args.source_revision:
         parser.error("--base, --root and --source-revision required")
+    if args.delisted_probe_bundle and (args.plan or args.master):
+        parser.error("delisted bundle requires its own source inputs; omit --plan and --master")
     plan_path = args.plan or args.root / "plan.json"
     master_path = args.master or args.root / "master.json"
     stop = Event()
     for sig in (signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, lambda *_: stop.set())
     result = run_pass(
-        args.base, args.root, read_signed(plan_path), read_signed(master_path),
+        args.base, args.root, None if args.delisted_probe_bundle else read_signed(plan_path),
+        None if args.delisted_probe_bundle else read_signed(master_path),
         revision=args.source_revision, seconds=args.seconds, new_windows=args.new_windows,
         retry_windows=args.retry_windows, query_seconds=args.query_seconds, stop=stop,
         extra_states=tuple(args.priority_state), lease_dir=args.lease_dir,
+        probe_bundle=args.delisted_probe_bundle, observed_root=args.observed_root,
     )
     print(json.dumps({k: v for k, v in result.items() if k != "tasks"}, ensure_ascii=False))
 

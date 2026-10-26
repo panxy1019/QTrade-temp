@@ -16,7 +16,7 @@ from typing import Any
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from scripts.atomic_json import write_json_atomic
 from scripts.history_backfill_queue import read_signed
-from scripts.run_history_backfill import run_pass, worker_lease
+from scripts.run_history_backfill import run_pass, validate_cohort_roots, worker_lease
 
 PERIOD_SECONDS = 300
 HEARTBEAT_SECONDS = 15
@@ -27,6 +27,7 @@ def serve(
     stop: Event, seconds: float = 240, new_windows: int = 4, retry_windows: int = 1,
     query_seconds: float = 25, lease_dir: Path = Path("/root/qtrade-local"),
     extra_states: tuple[Path, ...] = (),
+    probe_bundle: Path | None = None, probe_root: Path | None = None,
 ) -> dict[str, Any]:
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("LIVE_TRADING_MUST_REMAIN_DISABLED")
@@ -36,6 +37,14 @@ def serve(
             or not 0 <= new_windows <= 100 or not 0 <= retry_windows <= 20
             or new_windows + retry_windows < 1 or not 1 <= query_seconds <= 120):
         raise ValueError("HISTORY_SERVICE_RESOURCE_BUDGET_INVALID")
+    probe_identity = None
+    if (probe_bundle is None) != (probe_root is None):
+        raise ValueError("DELISTED_SERVICE_REQUIRES_BUNDLE_AND_SEPARATE_ROOT")
+    if probe_bundle is not None and probe_root is not None:
+        from scripts.delisted_history_queue import DelistedHistoryQueue
+
+        validate_cohort_roots(root, probe_root)
+        probe_identity = DelistedHistoryQueue(probe_root, probe_bundle, read_only=True).identity
     status: dict[str, Any] = {
         **AUTHORITY, "schema_version": "qtrade.history-service.v1", "state": "STARTING",
         "started_at": datetime.now(UTC).isoformat(), "code_revision": revision,
@@ -43,6 +52,10 @@ def serve(
         "pass_budget_seconds": seconds, "completed_passes": 0, "failed_passes": 0,
         "last_pass_state": None, "last_error_class": None, "next_pass_not_before": None,
         "last_execution_sha256": None,
+        "delisted_probe_plan_sha256": probe_identity, "running_cohort": None,
+        "scheduling_policy": "ALTERNATE_OBSERVED_DELISTED" if probe_identity else "OBSERVED_ONLY",
+        "last_observed_execution_sha256": None, "last_delisted_execution_sha256": None,
+        "last_pass_cohort": None,
     }
     mutex = Lock()
     heartbeat_error: list[str] = []
@@ -70,30 +83,42 @@ def serve(
         publish()
         heartbeat = Thread(target=heartbeats, name="history-heartbeat", daemon=True)
         heartbeat.start()
+        cycle = 0
         try:
             while not stop.is_set():
+                is_probe = probe_bundle is not None and cycle % 2 == 1
+                cohort = "DELISTED_PROBE" if is_probe else "OBSERVED"
                 started = time.monotonic()
                 due = datetime.now(UTC) + timedelta(seconds=PERIOD_SECONDS)
                 publish(state="RUNNING", next_pass_not_before=due.isoformat(),
-                        last_error_class=None)
+                        last_error_class=None, running_cohort=cohort)
                 try:
                     result = run_pass(
-                        base, root, plan, master, revision=revision, seconds=seconds,
+                        base, probe_root if is_probe and probe_root is not None else root,
+                        None if is_probe else plan, None if is_probe else master,
+                        revision=revision, seconds=seconds,
                         new_windows=new_windows, retry_windows=retry_windows,
                         query_seconds=query_seconds, stop=stop, lease_dir=lease_dir,
                         extra_states=extra_states,
+                        probe_bundle=probe_bundle if is_probe else None,
+                        observed_root=root if is_probe else None,
                     )
                 except BlockingIOError:
-                    publish(state="WAITING", last_pass_state="EXISTING_HISTORY_WRITER_ACTIVE")
+                    publish(state="WAITING", last_pass_state="EXISTING_HISTORY_WRITER_ACTIVE",
+                            last_pass_cohort=cohort)
                 except Exception as error:
                     publish(state="FAILED", last_pass_state="FAILED",
                             failed_passes=status["failed_passes"] + 1,
-                            last_error_class=type(error).__name__)
+                            last_error_class=type(error).__name__, last_pass_cohort=cohort)
                 else:
                     publish(state="STOPPING" if stop.is_set() else "WAITING",
                             completed_passes=status["completed_passes"] + 1,
                             last_pass_state=result["state"],
-                            last_execution_sha256=result["evidence_sha256"])
+                            last_pass_cohort=cohort,
+                            last_execution_sha256=result["evidence_sha256"],
+                            **{"last_delisted_execution_sha256" if is_probe else
+                               "last_observed_execution_sha256": result["evidence_sha256"]})
+                cycle += 1
                 # Start-to-start cadence; long passes never build a catch-up queue.
                 remaining = PERIOD_SECONDS - (time.monotonic() - started)
                 if remaining > 0:
@@ -104,7 +129,7 @@ def serve(
             heartbeat.join(timeout=HEARTBEAT_SECONDS + 1)
             publish(state="FAILED" if heartbeat_error else "STOPPED",
                     last_error_class=heartbeat_error[0] if heartbeat_error
-                    else status["last_error_class"], next_pass_not_before=None)
+                    else status["last_error_class"], next_pass_not_before=None, running_cohort=None)
         if heartbeat_error:
             raise RuntimeError("HISTORY_SERVICE_HEARTBEAT_FAILED")
     return signed(status)
@@ -116,6 +141,8 @@ def main() -> None:
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--plan", type=Path)
     parser.add_argument("--master", type=Path)
+    parser.add_argument("--delisted-probe-bundle", type=Path)
+    parser.add_argument("--delisted-probe-root", type=Path)
     parser.add_argument("--source-revision", required=True)
     parser.add_argument("--seconds", type=float, default=240)
     parser.add_argument("--new-windows", type=int, default=4)
@@ -133,6 +160,7 @@ def main() -> None:
         stop=stop, seconds=args.seconds, new_windows=args.new_windows,
         retry_windows=args.retry_windows, query_seconds=args.query_seconds,
         lease_dir=args.lease_dir, extra_states=tuple(args.priority_state),
+        probe_bundle=args.delisted_probe_bundle, probe_root=args.delisted_probe_root,
     )
     print(json.dumps(result, ensure_ascii=False))
 

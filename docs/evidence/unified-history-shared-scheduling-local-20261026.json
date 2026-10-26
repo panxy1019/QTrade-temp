@@ -1,0 +1,59 @@
+{
+  "schema_version": "qtrade.history-shared-scheduling-local-validation.v1",
+  "observed_at": "2026-10-26T15:47:21.515297+00:00",
+  "parent_revision": "d1fd71c7398a192dc1123c9d03c79c514bd99989",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.14.6",
+  "validation": {
+    "related_suite": {
+      "passed": 231,
+      "skipped": 2
+    },
+    "four_history_groups": {
+      "passed": 168,
+      "skipped": 2
+    },
+    "new_shared_tests": {
+      "passed": 29,
+      "skipped": 1
+    },
+    "ruff": "PASSED",
+    "linux_target_mypy_four_scripts": "PASSED",
+    "git_diff_check": "PASSED"
+  },
+  "skips": [
+    "Linux inherited writer lease/vendor flock/SIGALRM hard deadline",
+    "Linux different-cohort writer lease exclusion"
+  ],
+  "windows_substitutions": "Directory fsync and process flock in synthetic tests only; real Linux verification belongs to parent",
+  "implementation_sha256": {
+    "scripts/history_source_gate.py": "973b5c7671daf1375dbd6a7d79ec4afb6af1bfb63b03060b0eeffd1483889170",
+    "scripts/history_backfill_queue.py": "872dc3b9af7d43aedd78e8cd66b36313d9db8f416e6ba808d1a984ee96fb932c",
+    "scripts/run_history_backfill.py": "bab9910995984b7f2c2393aa4d0633cd37d798f983704e35a2c01cfa6ef2bbc8",
+    "scripts/run_history_backfill_service.py": "b7870228f9a8ed98820b4b67e733a74be68dd7127cf2e92dd089e20af9a2999c",
+    "tests/test_history_shared_execution.py": "40925e794a2baf5b7ce2b2c2afce4b424bad0bf053a0f4532ae423cb4e9e8f50",
+    "tests/test_history_backfill.py": "e11c91325fa635a96c9026e3543c91e44610293e81c68d47ca5a870e48a807f8"
+  },
+  "scope": [
+    "Single bounded observed/delisted runner",
+    "One shared durable failure clock and in-flight intent",
+    "PIT failure/current collection/disk priority retained",
+    "Independent receipt-audited cohort coverage",
+    "Supervisor alternates one 240s pass each 300s cycle",
+    "Test-only isolated real vendor flock; production lock fixed"
+  ],
+  "real_vendor_requests": 0,
+  "ssh_connections": 0,
+  "deployment_performed": false,
+  "live_trading_enabled": false,
+  "new_real_history_rows": 0,
+  "current_universe_coverage_delta": 0,
+  "historical_pit_certified": false,
+  "cluster_acceptance_pending": [
+    "Run related and complete pytest under actual directory fsync/flock",
+    "Validate unique bundle manifest and original execution-v1 frozen identity",
+    "Upgrade only existing qtrade-history-backfill program",
+    "Check actual backoff/current-collection yields, bounded query receipts and stop/restart recovery",
+    "Run separate observed/delisted read-only receipt audits; do not aggregate into current1500"
+  ]
+}

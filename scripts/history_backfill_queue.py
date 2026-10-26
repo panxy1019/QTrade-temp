@@ -5,7 +5,8 @@ from __future__ import annotations
 import json
 import re
 from collections import Counter
-from datetime import datetime, timedelta
+from collections.abc import Callable
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -26,6 +27,8 @@ def read_signed(path: Path) -> dict[str, Any]:
 
 class HistoryQueue:
     """All mutation requires the worker's process lease; no SQLite WAL on NFS."""
+
+    source_receipt_committer: Callable[..., None] | None = None
 
     def __init__(self, root: Path, plan: dict[str, Any], master: dict[str, Any]):
         from datetime import date
@@ -78,6 +81,15 @@ class HistoryQueue:
     def save_meta(self) -> None:
         self.meta = signed({k: v for k, v in self.meta.items() if k != "evidence_sha256"})
         write_json_atomic(self.root / "scheduler.json", self.meta)
+
+    def frontier(self, task: dict[str, Any]) -> tuple[str, str] | None:
+        definition = self.definitions[task["task_id"]]
+        window = month_window(
+            date.fromisoformat(definition["requested_start"]),
+            date.fromisoformat(definition["requested_end"]),
+            before=date.fromisoformat(task["before"]) if task["before"] else None,
+        )
+        return (str(window[0]), str(window[1])) if window else None
 
     def claim(self, *, now: datetime, revision: str, retry: bool = False) -> dict[str, Any] | None:
         from datetime import date
@@ -174,9 +186,11 @@ class HistoryQueue:
             "partial_sessions") and conflict is None
         delay = (60 if yielded else min(21600, 1800 * 2 ** min(failures - 1, 4)))
         next_at = None if complete else (now + timedelta(seconds=delay)).isoformat()
-        # A cooperative yield did not examine this window and must not advance its cursor.
-        if not yielded and not attempt["retry"]:
+        # A retry can be the first actual examination after a cooperative yield.
+        # Advance only the current frontier, never rewind for an older due retry.
+        if not yielded and self.frontier(task) == (start, attempt["scope"]["end"]):
             task["before"] = start
+            task["new_windows_exhausted"] = self.frontier(task) is None
         task["windows"][start] = {
             "start": start, "end": attempt["scope"]["end"], "state": state,
             "attempts": attempt["attempt_number"], "failures": 0 if complete else failures,
@@ -192,7 +206,9 @@ class HistoryQueue:
         # The immutable receipt and active claim already exist. Persist vendor-wide
         # backoff before completing the claim; recovery replays this receipt once.
         unseen_source_attempt = self.meta.get("last_source_attempt_id") != attempt["attempt_id"]
-        if unseen_source_attempt and state in {
+        if self.source_receipt_committer is not None:
+            self.source_receipt_committer(receipt, now=now)
+        elif unseen_source_attempt and state in {
                 "LOGIN_FAILED", "SOURCE_QUERY_FAILED", "QUERY_TIMEOUT"}:
             self.meta["global_failures"] += 1
             seconds = min(21600, 1800 * 2 ** min(self.meta["global_failures"] - 1, 4))
@@ -210,22 +226,55 @@ class HistoryQueue:
     def recover(self, store: HistoryStore, *, now: datetime) -> dict[str, int]:
         from scripts.run_history_backfill import read_capture
 
-        replayed = interrupted = 0
-        for task in self.tasks.values():
+        replayed = interrupted = repaired = 0
+        for task_id in self.tasks:
+            task = self.tasks[task_id]
             attempt = task["active"]
-            if attempt is None:
-                continue
-            if store.path(attempt["attempt_id"], "receipt.json").exists():
-                receipt = store.load(attempt["attempt_id"])
-                replayed += 1
-            else:
-                if not store.path(attempt["attempt_id"], "request.json").exists():
-                    store.begin(attempt)
-                receipt = store.seal(attempt, read_capture(store, attempt), state="INTERRUPTED",
-                                     error="PREVIOUS_PROCESS_INTERRUPTED")
-                interrupted += 1
-            self.finish(store, receipt, now=now)
-        return {"replayed_sealed_receipts": replayed, "interrupted_attempts": interrupted}
+            if attempt is not None:
+                if store.path(attempt["attempt_id"], "receipt.json").exists():
+                    receipt = store.load(attempt["attempt_id"])
+                    replayed += 1
+                else:
+                    if not store.path(attempt["attempt_id"], "request.json").exists():
+                        store.begin(attempt)
+                    receipt = store.seal(attempt, read_capture(store, attempt), state="INTERRUPTED",
+                                         error="PREVIOUS_PROCESS_INTERRUPTED")
+                    interrupted += 1
+                self.finish(store, receipt, now=now)
+            task = self.tasks[task_id]
+            # Compatibility with earlier writers: a yielded frontier completed by
+            # retry was recorded but its before cursor remained behind. Reuse only
+            # a fully replayed, correctly bound receipt; do not query it again.
+            changed = False
+            while (frontier := self.frontier(task)) is not None:
+                window = task["windows"].get(frontier[0])
+                if window is None or window["state"] in {
+                        "YIELDED_TO_SHARED_VENDOR_SESSION", "YIELDED_TO_CURRENT_COLLECTION"}:
+                    break
+                checked = store.load(window["latest_attempt_id"])
+                scope = checked["attempt"]["scope"]
+                definition = self.definitions[task_id]
+                security = self.securities[definition["instrument_id"]]
+                binding = {"plan_sha256": self.identity, "task_id": task_id,
+                           "master_sha256": self.plan["master_sha256"],
+                           "universe_version": self.plan["universe_version"],
+                           "instrument_id": definition["instrument_id"],
+                           "frequency": definition["frequency"], "symbol": security["symbol"],
+                           "security_type": security["security_type"]}
+                if (checked["evidence_sha256"] != window["receipt_sha256"]
+                        or any(scope.get(k) != v for k, v in binding.items())
+                        or (scope["start"], scope["end"]) != frontier
+                        or checked["quality"]["state"] != window["state"]):
+                    raise ValueError("HISTORY_FRONTIER_RECEIPT_MISMATCH")
+                task["before"] = frontier[0]
+                changed = True
+            exhausted = self.frontier(task) is None
+            if changed or task["new_windows_exhausted"] != exhausted:
+                task["new_windows_exhausted"] = exhausted
+                self.save_task(task)
+                repaired += 1
+        return {"replayed_sealed_receipts": replayed, "interrupted_attempts": interrupted,
+                "repaired_frontiers": repaired}
 
     def snapshot(self, *, now: datetime) -> dict[str, Any]:
         from datetime import date

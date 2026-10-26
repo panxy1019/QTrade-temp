@@ -143,3 +143,107 @@ def test_model_control_uses_only_verified_request_channel_and_never_creates_trai
     value.ingest()
     assert calls == [payload['command']]
     assert value.db.execute('SELECT COUNT(*) FROM jobs').fetchone()[0] == 0
+
+
+def test_rolling_policy_ingestion_is_authenticated_channel_bound_and_replay_safe(worker):
+    from qtrade.research.rolling_policy import default_policy
+
+    value, queue = worker
+    identity = 'e'*32
+    command = {'request_id': identity, 'expected_policy_id': value.rolling.current()['policy_id'],
+        'policy': {**default_policy(), 'mode': 'MONTHLY'}, 'actor': 'test-user'}
+    envelope = seal({'job_id': identity, 'kind': 'QLIB_ROLLING_POLICY',
+                     'command': command, 'live_trading_enabled': False}, value.secret)
+    queue.read = lambda: {'cancellations/'+identity: envelope}
+    value.ingest()
+    assert value.rolling.current()['policy']['mode'] == 'OFF'
+    queue.read = lambda: {'requests/'+identity: envelope}
+    value.ingest()
+    value.ingest()
+    assert value.rolling.current()['policy']['mode'] == 'MONTHLY'
+    assert len(value.rolling.publication()['receipts']) == 1
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 0
+
+
+def test_candidate_validation_waits_for_new_data_and_prediction_priority(worker, monkeypatch):
+    from datetime import UTC, datetime
+
+    value, _ = worker
+    class Clock(datetime):
+        @classmethod
+        def now(cls, tz=UTC):
+            return datetime(2026, 10, 26, 15, tzinfo=UTC)
+    monkeypatch.setattr(worker_module, 'datetime', Clock)
+    value.predictor.child = object()
+    value.predictor.state = 'RUNNING'
+    value.schedule_candidate_validation()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 0
+    value.predictor.child = None
+    value.predictor.state = 'COMPLETE'
+    data = {'version_id': 'd'*64, 'actual_end': '2026-10-26'}
+    monkeypatch.setattr(value.online, 'data_head', lambda **kw: data)
+    model = {'state': 'TRAINED', 'definition': {'model_id': 'b'*64,
+                                              'training_data_end': '2026-10-26'}}
+    monkeypatch.setattr(value.online.registry, 'snapshot', lambda: {'models': [model]})
+    value.schedule_candidate_validation()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 0
+    model['definition']['training_data_end'] = '2026-10-23'
+    value.schedule_candidate_validation()
+    value.schedule_candidate_validation()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
+    value.db.execute("UPDATE jobs SET state='FAILED'")
+    value.db.commit()
+    value.schedule_candidate_validation()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
+    assert value.rolling.publication()['validation_tasks'][0]['state'] == 'FAILED'
+
+
+def test_signal_jobs_are_data_bound_deduplicated_and_yield_to_prediction(worker, monkeypatch):
+    from datetime import UTC, datetime
+
+    value, _ = worker
+    class Clock(datetime):
+        @classmethod
+        def now(cls, tz=UTC):
+            return datetime(2026, 10, 26, 15, tzinfo=UTC)
+    monkeypatch.setattr(worker_module, 'datetime', Clock)
+    value.predictor.child = object()
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 0
+    value.predictor.child = None
+    value.predictor.state = 'COMPLETE'
+    data = {'version_id': 'd'*64, 'actual_end': '2026-10-23'}
+    monkeypatch.setattr(value.online, 'data_head', lambda **kw: data)
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 0
+    data['actual_end'] = '2026-10-26'
+    value.schedule_signals()
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
+    value.db.execute("UPDATE jobs SET state='FAILED'")
+    value.db.commit()
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
+
+
+@pytest.mark.parametrize('kind,module', [('QLIB_SIGNAL_JOB', 'scripts.run_qlib_signal_baselines'),
+    ('QLIB_MODEL_VALIDATION', 'scripts.run_qlib_candidate_validation'),
+    ('QLIB_ROLLING_JOB', 'scripts.run_qlib_rolling')])
+def test_recovery_finds_owned_child_before_pid_marker_is_sealed(
+    tmp_path, monkeypatch, kind, module,
+):
+    job = tmp_path/'job'
+    job.mkdir()
+    (job/'request.json').write_text(json.dumps({'kind': kind}))
+    proc = tmp_path/'proc'/'321'
+    proc.mkdir(parents=True)
+    (proc/'cmdline').write_bytes(b'python\0-m\0'+module.encode()+b'\0--output\0'+
+                                 str(job/'output').encode()+b'\0')
+    monkeypatch.setattr(worker_module, 'Path',
+                        lambda p: tmp_path/'proc' if p == '/proc' else Path(p))
+    monkeypatch.setattr(worker_module.os, 'getpgid', lambda pid: pid, raising=False)
+    calls = []
+    monkeypatch.setattr(worker_module.os, 'killpg', lambda *args: calls.append(args), raising=False)
+    monkeypatch.setattr(worker_module.signal, 'SIGKILL', 9, raising=False)
+    worker_module.recover_child(job)
+    assert calls == [(321, 9)]

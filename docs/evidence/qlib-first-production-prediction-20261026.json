@@ -1,0 +1,86 @@
+{
+  "checked_at": "2026-10-26T15:01:43.827232+00:00",
+  "production_main": "344a6bf04c2881682707966921d2c22e93866054",
+  "runtime_revision": "5d4e7bfb36d23cc70f600ca8f63cf183075e5177",
+  "production_api": "https://q-trade-temp.vercel.app/api/research/online/catalog",
+  "worker": {
+    "heartbeat_at": "2026-10-26T14:56:31.693185+00:00",
+    "source_revision": "5d4e7bfb36d23cc70f600ca8f63cf183075e5177",
+    "state": "MODEL_CONTROL_READY"
+  },
+  "worker_fresh": true,
+  "data_version": {
+    "version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+    "actual_end": "2026-10-26",
+    "state": "RESEARCH_READY_QUALIFIED_SUBSET",
+    "created_at": "2026-10-26T14:02:47.605534+00:00",
+    "blocked_symbols": [
+      "002827",
+      "600621",
+      "605258"
+    ],
+    "historical_pit_certified": false,
+    "external_execution_ready": false,
+    "evidence_sha256": "b313fba558f36f487c2180f05fdcaefc1e2fa6ff47efaa0a4b3608c1c9c25438",
+    "current_symbols": 987,
+    "historical_symbols": 990,
+    "observation_universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308"
+  },
+  "active_model": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+  "activation": {
+    "active_model": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+    "actor": "panxy1019-explicit-chat-approval",
+    "at": "2026-10-26T14:52:26.286301+00:00",
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "command_sha256": "0e40ffdb6d8ea7248992a6557f99bde02b275abe4280c0d96b20dbc0d2150db9",
+    "data_version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+    "error_code": null,
+    "evidence_sha256": "421b9273fcad8d5122350dff38e76ee563c6a82f6d9a461d0c0e1f8426c812bb",
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+    "operation": "ACTIVATE",
+    "point_in_time": false,
+    "previous_active": null,
+    "promotion": "NOT_ELIGIBLE",
+    "real_data_paper_readiness": false,
+    "realtime_readiness": false,
+    "request_id": "de31d80373b844d8ae5db601bcf2ded5",
+    "state": "APPLIED",
+    "validation_id": "a538d56f3186872fa2d6f09d586b3e078ddab78e6ef59430763727246a1d8fa1"
+  },
+  "prediction": {
+    "prediction_id": "fa86dd6a5e54a882897c7a0842dcfd5f2e288b612e3b948a6411659728957f40",
+    "state": "COMPLETE",
+    "bindings": {
+      "approval_sha256": "421b9273fcad8d5122350dff38e76ee563c6a82f6d9a461d0c0e1f8426c812bb",
+      "code_revision": "5d4e7bfb36d23cc70f600ca8f63cf183075e5177",
+      "data_end": "2026-10-26",
+      "data_event_id": "75c3aed2eed7a2c6af34025536575404d2e4d9cff9ad864f5c9d4185bda0475c",
+      "data_version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+      "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "observation_universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308"
+    },
+    "score_count": 888,
+    "feature_count": 158,
+    "updated_at": "2026-10-26T14:54:54.295263+00:00"
+  },
+  "prediction_clock": {
+    "data_end": "2026-10-26",
+    "generated_at": "2026-10-26T14:54:31.749812+00:00",
+    "expected_execution_at": "2026-10-27T09:30:00+08:00",
+    "forward_return_observed": false
+  },
+  "current_prediction_usable": true,
+  "publication_sha256": "35c97acbc4b6a08f55c9d04b603c2afb8e88fafd5e48b77ce44bb76d4401f06f",
+  "linux_tests": {
+    "passed": 977,
+    "source_revision": "5d4e7bfb36d23cc70f600ca8f63cf183075e5177",
+    "cluster_report": "rolling predecessor auto-predict-tests-5d4e7bf.xml"
+  },
+  "frontend_tests": 221,
+  "browser_visual_verified": false,
+  "next_session_automatic_version_verified": false,
+  "live_trading_enabled": false,
+  "external_order_transmission": false
+}

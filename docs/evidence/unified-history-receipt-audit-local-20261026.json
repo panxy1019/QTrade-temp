@@ -1,0 +1,29 @@
+{
+  "schema_version": "qtrade.history-receipt-audit-local-checks.v1",
+  "platform": "Windows / Python 3.14.6",
+  "synced_origin_main": "344a6bf04c2881682707966921d2c22e93866054",
+  "sync_merge_commit": "78009f6",
+  "focused_history_tests": {"passed": 106, "skipped": 1},
+  "related_regression": {"passed": 169, "failed": 0, "skipped": 1},
+  "linux_related_expected_checks": 170,
+  "ruff": "PASSED_FIVE_HISTORY_SCRIPTS_AND_TEST",
+  "mypy": "PASSED_FIVE_HISTORY_SCRIPTS_LINUX_TARGET",
+  "regressions": {
+    "yielded_frontier_retry_advances_without_duplicate_download": true,
+    "legacy_cursor_repair_requires_replayed_receipt": true,
+    "older_retry_cannot_rewind_frontier": true,
+    "all_26_one_year_windows_attempted_once": true,
+    "empty_window_coverage_rows": 0,
+    "uncommitted_receipts_excluded_from_accepted_coverage": true,
+    "superseded_receipts_do_not_double_count": true,
+    "damaged_or_inflated_coverage_rejected": true,
+    "offline_summary_keeps_source_and_checkpoints_unchanged": true,
+    "bounded_receipt_subset_disclosed": true
+  },
+  "actual_source_requests": 0,
+  "cluster_or_service_changes": false,
+  "main_worktree_modified": false,
+  "live_trading_enabled": false,
+  "historical_pit_certified": false,
+  "ten_year_history_certified": false
+}

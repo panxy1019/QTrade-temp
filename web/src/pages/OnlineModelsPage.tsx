@@ -4,6 +4,7 @@ import { useResearchWorkflow } from '../components/ResearchWorkflowProvider'
 import { JsonExportButton } from '../components/JsonExportButton'
 import { workflowGet, workflowPost } from '../research/qlibWorkflow'
 import { Login } from './QlibWorkflowPages'
+import { RollingPolicyPanel, type RollingCatalog } from '../components/RollingPolicyPanel'
 
 interface Definition {
   model_id: string; model_run_id: string; name: string; training_data_end: string
@@ -22,7 +23,7 @@ interface Command {
   expected_active: string | null; data_version_id: string; validation_id: string
 }
 interface Catalog {
-  publication_available: boolean; worker_fresh: boolean; published_at?: string
+  publication_available: boolean; worker_fresh: boolean; published_at?: string; data_schedule_fresh?: boolean
   active_model: string | null; models: Model[]; validations: Validation[]
   expected_complete_day: string | null
   data_version: null | { version_id: string; actual_end: string; current_symbols: number; historical_symbols: number; blocked_symbols: string[] }
@@ -34,7 +35,7 @@ interface Catalog {
     bindings: { model_id: string; data_end: string; data_version_id: string }
     contract?: { generated_at: string; expected_execution_at: string }; score_count?: number
     limitations?: string[]
-  }> }; auto_train?: { mode: string; state: string }
+  }> }; auto_train?: RollingCatalog
 }
 const labels: Record<string, string> = { TRAINED: '训练完成', VALIDATING: '验证中', VALIDATED: '验证通过', STAGED: '待人工批准', ACTIVE: '当前研究模型', FAILED: '失败', RETIRED: '历史模型' }
 const predictionLabels: Record<string, string> = { WAITING_FOR_APPROVAL: '等待人工批准模型', RUNNING: '计算中', QUEUED: '等待计算', COMPLETE: '已封存', SUPERSEDED: '已被后续模型、数据或时效替代', INTERRUPTED: '中断，等待恢复核对', FAILED: '失败', BLOCKED_STALE_DATA: '数据未覆盖最近完整交易日', BLOCKED_INPUT_UNAVAILABLE: '输入不可用', BLOCKED_INPUT_OR_LAUNCH_FAILURE: '输入或启动失败', BLOCKED_STORAGE_RESERVE: '磁盘保留空间不足', EVENT_WORKER_INTEGRATION_PENDING: '调度尚未接入' }
@@ -108,8 +109,9 @@ export function OnlineModelsPage() {
         { key: 'version', label: '不可变版本', children: <Typography.Text copyable>{data.version_id}</Typography.Text> },
       ]} /> : <Typography.Text>尚无可核验的数据版本。</Typography.Text>}
     </Card>
-    {catalog?.data_schedule && <Alert type={catalog.data_schedule.fresh ? 'info' : 'warning'} showIcon title={`日版本调度：${dataLabels[catalog.data_schedule.last_cycle_state ?? catalog.data_schedule.state] ?? catalog.data_schedule.state}`} description={`调度心跳${catalog.data_schedule.fresh ? '有效' : '不可用或过期'}；要求截止日 ${catalog.data_schedule.required_day ?? '未知'}。运行中的调度进程不等于当天数据已经验收；以最近合格版本及其缺口为准。`} />}
+    {catalog?.data_schedule && <Alert type={catalog.data_schedule_fresh ? 'info' : 'warning'} showIcon title={`日版本调度：${dataLabels[catalog.data_schedule.last_cycle_state ?? catalog.data_schedule.state] ?? catalog.data_schedule.state}`} description={`调度心跳${catalog.data_schedule_fresh ? '有效' : '不可用或过期'}；要求截止日 ${catalog.data_schedule.required_day ?? '未知'}。运行中的调度进程不等于当天数据已经验收；以最近合格版本及其缺口为准。`} />}
     <Alert type="info" showIcon title={`每日自动预测：${catalog?.auto_predict?.enabled ? '已启用' : '未启用'}；自动重训：${catalog?.auto_train?.mode ?? '未接入'}`} description="当前候选输入验证与生产自动预测分开记录。验证分数未取得真实前向收益；完整历史 PIT、复权与交易规则认证仍有限制。" />
+    <RollingPolicyPanel value={catalog?.auto_train} authenticated={session.authenticated} ready={!!catalog?.worker_fresh} refresh={refresh} />
     {catalog?.auto_predict?.enabled && <Card title="每日自动预测记录">
       <Typography.Paragraph>{predictionLabels[catalog.auto_predict.state] ?? catalog.auto_predict.state}。{catalog.current_prediction_usable ? '存在身份匹配且尚未过期的研究预测。' : '当前没有可使用的研究预测。'}分数仅用于研究排序，不是交易指令或收益承诺。</Typography.Paragraph>
       <Table rowKey="prediction_id" dataSource={catalog.auto_predict.predictions ?? []} pagination={{ pageSize: 5 }} scroll={{ x: 1000 }} columns={[

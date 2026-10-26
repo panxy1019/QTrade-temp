@@ -30,6 +30,13 @@ PIT/source repair continues in parallel. Then immutable data events, frozen
 processor restoration, daily prediction, controlled rolling and forward research.
 Each phase needs code, tests, cluster and production evidence, docs and limits.
 
+Current checkpoint: PR19 merged/main344a6bf, runtime5d4e7bf, 977 Linux and221
+frontend checks pass. Daily version/history services are supervised. Approved
+LightGBM first production prediction completed (888 scores, 2026-10-26 data,
+expected research execution2026-10-27 09:30 Shanghai). Public delivery acceptance
+is being rechecked. Native mature RollingGen/TrainerR candidate implementation
+is underway; automatic training staysOFF. PhaseD/E are not accepted complete.
+
 Approved daily prediction ledger/runtime/UI implemented locally; real-model
 isolated acceptance, deployment and continuous data-version coordination remain.
 New 2026-10-26 Provider d33a7466 has 987 current inputs (three gaps); frozen

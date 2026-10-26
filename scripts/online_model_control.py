@@ -41,19 +41,16 @@ class OnlineModels:
         else:
             write_json_immutable(path, value)
 
-    def import_candidate(self, archive: Path, validation: Path, *, now: datetime) -> str:
+    def import_trained(self, archive: Path, *, now: datetime) -> str:
         archive = self.local(archive.resolve().relative_to(self.base).as_posix())
-        validation = self.local(validation.resolve().relative_to(self.base).as_posix())
         summary = verify_archive(archive)
         bundle = verify_bundle(archive/'online-restore', archive/'provider')
         restore = load_signed(archive/'independent-restore.json')
-        proof = verify_validation(validation)
         identity = checked_identity(bundle['evidence_sha256'])
         if (restore['bundle_sha256'] != identity
                 or restore['state'] != 'PARITY_VERIFIED_NOT_ACTIVATED'
                 or restore['fitted_processors_unchanged'] is not True
-                or proof['model_bundle_sha256'] != identity
-                or proof['model_run_id'] != summary['run_id']):
+                or restore['fit_methods_forbidden'] is not True):
             raise ValueError('MODEL_CANDIDATE_PROOF_IDENTITY_CHANGED')
         definition = signed({
             **AUTHORITY, 'schema_version': 'qtrade.online-model.v1', 'model_id': identity,
@@ -72,12 +69,24 @@ class OnlineModels:
             **AUTHORITY, 'model_id': identity, 'archive': archive.relative_to(self.base).as_posix(),
             'definition': definition,
         }))
+        self.registry.register(definition, now=now)
+        return identity
+
+    def import_candidate(self, archive: Path, validation: Path, *, now: datetime) -> str:
+        archive = self.local(archive.resolve().relative_to(self.base).as_posix())
+        validation = self.local(validation.resolve().relative_to(self.base).as_posix())
+        proof = verify_validation(validation)
+        summary = verify_archive(archive)
+        bundle = verify_bundle(archive/'online-restore', archive/'provider')
+        if (proof['model_bundle_sha256'] != bundle['evidence_sha256']
+                or proof['model_run_id'] != summary['run_id']):
+            raise ValueError('MODEL_CANDIDATE_PROOF_IDENTITY_CHANGED')
+        identity = self.import_trained(archive, now=now)
         self.remember(self.root/'validations'/(proof['validation_id']+'.json'), signed({
             **AUTHORITY, 'validation_id': proof['validation_id'], 'model_id': identity,
             'archive': validation.relative_to(self.base).as_posix(),
             'manifest_sha256': proof['evidence_sha256'],
         }))
-        self.registry.register(definition, now=now)
         self.registry.record_validation(proof, now=now)
         return identity
 

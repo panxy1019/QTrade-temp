@@ -239,6 +239,19 @@ class HistoryStore:
                 or value["normalized"] is None and (value["quality"]["qualified_rows"] != 0
                                                       or value["quality"]["observed_rows"] != 0)):
             raise ValueError("HISTORY_RAW_SCOPE_OR_RECEIPT_COUNTS_INVALID")
+        stages = {"requested": int(raw.get("query_attempted", False)),
+                  "downloaded": int(raw["body_complete"]),
+                  "parsed_rows": value["quality"]["observed_rows"],
+                  "qualified_rows": value["quality"]["qualified_rows"],
+                  "independent_source_reconciled": 0, "published_qlib_versions": 0}
+        if (value["stage_counts"] != stages or value["price_basis"] != PRICE_BASIS
+                or value["historical_available_at"] is not None
+                or any(value[k] is not False for k in (
+                    "historical_pit_certified", "independent_source_reconciled",
+                    "ten_year_history_certified"))
+                or value["normalized"] is None and value["normalized_rows_sha256"] != sha256(
+                    canonical([])).hexdigest()):
+            raise ValueError("HISTORY_RECEIPT_STAGE_OR_AUTHORITY_MISMATCH")
         if raw["body_complete"] and value["quality"]["state"] in {
                 "CONTENT_QUALIFIED_WITH_UNRESOLVED_GAPS", "PARTIAL_SESSIONS_QUARANTINED",
                 "VENDOR_NONTRADING_OBSERVATIONS_UNCERTIFIED", "EMPTY_WINDOW_UNEXPLAINED"}:

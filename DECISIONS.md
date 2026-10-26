@@ -1,5 +1,56 @@
 # Architecture decisions
 
+## ADR-186 — Signal baselines are separate from execution-admitted portfolios
+
+Status: five real signal archives accepted; automated publication/UI implementation
+awaiting production acceptance, 2026-10-26, Phase E.
+
+Reuse PriceFactorSpec for momentum/reversal/low-volatility; use a common complete
+21-session close grid and average tied cross-sectional ranks for equal-weight
+multifactor signals. Equal-universe allocation must retain the whole common pool,
+not select arbitrary tied TopK securities. ETF positive trend requires an ETF
+provider; stock inputs cannot stand in for that data acceptance.
+
+Existing construct_targets filters positive scores and needs execution prices and
+lot sizes. It is not compatible with rank-only model scores or unknown next-open
+prices, so retain it and use a separate indicative-weight function. Save input,
+signal and target identities independently; do not invent prices, units, fills or
+returns. Holdings, turnover and execution constraints remain explicit unmet gates
+before PAPER/SHADOW admission. No gateway/vn.py component is needed for this layer.
+LIVE_TRADING_ENABLED=false.
+
+Reuse the single research queue for one signal job per data/code version, after
+prediction priority gates. Bound runtime and retries, verify complete inventory
+and recompute indicative allocation before publishing. The read-only signal page
+rechecks current data, code, worker and execution time; an old artifact stays
+historical. Public target weights are never represented as executed holdings.
+
+## ADR-185 — Mature rolling windows reuse native generators and trainers
+
+Status: native cluster training and independent restore accepted; control rollout
+awaiting production acceptance, 2026-10-26.
+
+Reuse Qlib 0.9.7 RollingGen and TrainerR, existing immutable baseline evaluation,
+source constraints and independent fitted-state restoration. Rolling policy has
+its own allowlisted contract; the fixed historical workflow contract is unchanged.
+Count verified sessions only, remove future calendar placeholders, mature the
+two-session open label and purge two feature dates between each split. Cadence is
+independent of test-window length. One admitted event creates one mature window.
+
+Native TrainerR does not forward the baseline fit kwargs. A narrow LGBModel
+subclass fixes the reviewed 300-round/30-early-stop budget; no training algorithm
+is copied. Fit normalizers on the training split, reload with IT_LS and forbid
+refitting during reload. Freeze a separate latest-20-session inference reference;
+immature labels are excluded from evaluation even though current features exist.
+Reference scores are not forward results. Candidates never replace ACTIVE without
+human approval. OFF remains the production policy until control/scheduling gates
+are integrated. vn.py has no role in this model-training boundary.
+
+LightGBM model 2d78cc4c was explicitly approved in chat on 2026-10-26; activation
+421b9273 applied through the signed queue at 14:52:26 UTC. This authorizes that
+research model only, not future candidates, automatic training or live trading.
+LIVE_TRADING_ENABLED=false.
+
 ## ADR-184 — Daily versions use bounded, idempotent coordination
 
 Status: implemented, cluster acceptance pending, 2026-10-26.

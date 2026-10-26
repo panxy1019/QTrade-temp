@@ -9,7 +9,7 @@ afterEach(() => vi.unstubAllGlobals())
 
 function catalog() {
   return {
-    publication_available: true, worker_fresh: true, active_model: null,
+    publication_available: true, worker_fresh: true, data_schedule_fresh: false, active_model: null,
     expected_complete_day: '2026-10-26',
     data_version: { version_id: 'd'.repeat(64), actual_end: '2026-10-26', current_symbols: 982, historical_symbols: 990, blocked_symbols: ['002827'] },
     models: [{ state: 'STAGED', definition: { model_id: 'a'.repeat(64), model_run_id: 'frozen-ridge', name: 'Alpha158 + Ridge',
@@ -116,9 +116,13 @@ it('distinguishes enabled daily inference from having an approved current predic
 it('shows a historical data gap even while the version scheduler is alive', async () => {
   const state = mount()
   await screen.findByText('982 只当日合格 / 990 只历史保留')
-  const next = { ...catalog(), data_schedule: { state: 'WAITING', fresh: true, last_cycle_state: 'BLOCKED_MISSED_SESSION_REQUIRES_BACKFILL', required_day: '2026-10-26', data_end: '2026-10-22' } }
+  const next = { ...catalog(), data_schedule_fresh: true, data_schedule: { state: 'WAITING', fresh: true, last_cycle_state: 'BLOCKED_MISSED_SESSION_REQUIRES_BACKFILL', required_day: '2026-10-26', data_end: '2026-10-22' } }
   state.update(next)
   fireEvent.click(screen.getByRole('button', { name: '刷新模型目录' }))
   await screen.findByText('日版本调度：存在断档，需要补齐后再推进')
   expect(screen.getByText(/运行中的调度进程不等于当天数据已经验收/)).toBeInTheDocument()
+  expect(screen.getByText(/调度心跳有效/)).toBeInTheDocument()
+  state.update({ ...next, data_schedule_fresh: false })
+  fireEvent.click(screen.getByRole('button', { name: '刷新模型目录' }))
+  await screen.findByText(/调度心跳不可用或过期/)
 })

@@ -6,7 +6,7 @@ import os
 from datetime import UTC, date, datetime
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, HTTPException, Query, Request, Response
 
 from qtrade.api.research_workflow import (
     _body,
@@ -17,10 +17,55 @@ from qtrade.api.research_workflow import (
 )
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from qtrade.research.model_registry import checked_document, checked_identity, control_command
+from qtrade.research.rolling_control import command as rolling_command
+from qtrade.research.rolling_policy import validate_policy
 from qtrade.research.workflow_queue import GitQueue, seal
 
 router = APIRouter(prefix='/research/online')
 STATES = {'TRAINED', 'VALIDATING', 'VALIDATED', 'STAGED', 'ACTIVE', 'FAILED', 'RETIRED'}
+
+
+@router.get('/signals')
+def signal_catalog(response: Response, strategy: str | None = None,
+                   offset: int = Query(0, ge=0, le=6000),
+                   limit: int = Query(50, ge=1, le=100)) -> dict[str, Any]:
+    from qtrade.research.signal_publication import validate_signal_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        value = validate_signal_publication(read_public('signals.json', maximum=3_000_000))
+        manifest = value['manifest']
+        online = listing()
+        current = bool(worker_fresh(online) and online['data_version']
+            and manifest['bindings']['data_version_id'] == online['data_version']['version_id']
+            and manifest['bindings']['code_revision'] == online['worker']['source_revision']
+            and manifest['data_end'] == research_clock()
+            and datetime.now(UTC) < datetime.fromisoformat(manifest['expected_execution_at']))
+        families = [{'name': name, 'score_count': len(scores),
+            'allocation_method': value['targets'][name]['allocation_method'],
+            'target_count': len(value['targets'][name]['positions'])}
+            for name, scores in value['signals'].items()]
+        rows = []
+        total = 0
+        if strategy:
+            if strategy not in value['signals']:
+                raise HTTPException(404, 'SIGNAL_FAMILY_UNAVAILABLE')
+            weights = {p['instrument']: p['target_weight']
+                       for p in value['targets'][strategy]['positions']}
+            scores = sorted(value['signals'][strategy],
+                            key=lambda r: (-r['score'], r['instrument']))
+            total = len(scores)
+            rows = [{**r, 'indicative_weight': weights.get(r['instrument'], '0')}
+                    for r in scores[offset:offset+limit]]
+        return {**AUTHORITY, 'publication_available': True, 'current_input': current,
+            'manifest': manifest, 'families': families, 'strategy': strategy,
+            'rows': rows, 'total': total, 'offset': offset, 'limit': limit,
+            'execution_admitted': False, 'forward_return': None}
+    except HTTPException:
+        raise
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False, 'current_input': False,
+                'families': [], 'rows': [], 'execution_admitted': False, 'forward_return': None}
 
 
 def unavailable_catalog() -> dict[str, Any]:
@@ -141,6 +186,19 @@ def validate_catalog(value: dict[str, Any]) -> dict[str, Any]:
                 or datetime.fromisoformat(current['contract']['expected_execution_at']) <= (
                     datetime.fromisoformat(value['published_at']))):
             raise ValueError('ONLINE_CURRENT_PREDICTION_INCONSISTENT')
+    training = value.get('auto_train', {})
+    if training.get('state') == 'CONTROL_READY':
+        validate_policy(training['policy'])
+        checked_identity(training['policy_id'])
+        if (training.get('mode') != training['policy']['mode']
+                or training.get('automatic_activation') is not False
+                or not isinstance(training['receipts'], list) or len(training['receipts']) > 50
+                or not isinstance(training['tasks'], list) or len(training['tasks']) > 50
+                or not isinstance(training.get('validation_tasks', []), list)
+                or len(training.get('validation_tasks', [])) > 50):
+            raise ValueError('ONLINE_ROLLING_CONTROL_INVALID')
+        for receipt in training['receipts']:
+            checked_document(receipt)
     return value
 
 
@@ -150,8 +208,20 @@ def listing() -> dict[str, Any]:
 
 def worker_fresh(value: dict[str, Any]) -> bool:
     clock = datetime.fromisoformat(value['worker']['heartbeat_at'])
-    return (clock.tzinfo is not None and value['worker']['state'] == 'MODEL_CONTROL_READY'
+    return (clock.tzinfo is not None and value['worker']['state'] in {
+                'MODEL_CONTROL_READY', 'PREDICTING', 'RUNNING'}
             and 0 <= (datetime.now(UTC)-clock).total_seconds() <= 720)
+
+
+def data_schedule_fresh(value: dict[str, Any]) -> bool:
+    """Recheck at read time; a cached publication cannot renew a process heartbeat."""
+    schedule = value.get('data_schedule', {})
+    try:
+        clock = datetime.fromisoformat(schedule['heartbeat_at'])
+        return bool(schedule.get('fresh') is True and clock.tzinfo is not None
+                    and 0 <= (datetime.now(UTC)-clock).total_seconds() <= 720)
+    except (KeyError, TypeError, ValueError):
+        return False
 
 
 @router.get('/catalog')
@@ -169,12 +239,51 @@ def catalog(response: Response) -> dict[str, Any]:
                       and datetime.fromisoformat(current['contract']['expected_execution_at']) > (
                           datetime.now(UTC)))
         return {**value, 'publication_available': True, 'worker_fresh': fresh,
+                'data_schedule_fresh': data_schedule_fresh(value),
                 'current_prediction_usable': usable, 'expected_complete_day': expected_day}
     except Exception:
         return {**AUTHORITY, 'publication_available': False, 'worker_fresh': False,
                 'models': [], 'validations': [], 'commands': [], 'events': [],
                 'active_model': None, 'data_version': None,
                 'expected_complete_day': research_clock()}
+
+
+@router.post('/training-policy', status_code=202)
+async def training_policy(request: Request) -> dict[str, Any]:
+    user = actor(request)
+    body = await _body(request)
+    try:
+        if 'actor' in body:
+            raise ValueError('CALLER_CANNOT_SET_ACTOR')
+        command = rolling_command({**body, 'actor': user})
+    except (ValueError, KeyError, TypeError):
+        raise HTTPException(422, '训练政策只接受受控模型、会话间隔和窗口') from None
+    try:
+        value = listing()
+        training = value['auto_train']
+        if not worker_fresh(value) or training['state'] != 'CONTROL_READY':
+            raise ValueError('ROLLING_CONTROL_UNAVAILABLE')
+        validate_policy(training['policy'])
+        checked_identity(training['policy_id'])
+    except (ValueError, KeyError, TypeError):
+        raise HTTPException(503, '滚动训练控制未就绪') from None
+    prior = next((r for r in training['receipts']
+                  if r['request_id'] == command['request_id']), None)
+    if prior is not None:
+        if prior['command_sha256'] != signed(command)['evidence_sha256']:
+            raise HTTPException(409, '请求标识已绑定另一项训练政策')
+        return dict(prior)
+    if training['policy_id'] != command['expected_policy_id']:
+        raise HTTPException(409, '训练政策已变化，请重新审阅')
+    try:
+        GitQueue.from_environment().append('requests', command['request_id'], seal({
+            'job_id': command['request_id'], 'kind': 'QLIB_ROLLING_POLICY',
+            'command': command, 'live_trading_enabled': False,
+        }, os.environ['QTRADE_RESEARCH_QUEUE_SECRET']))
+    except Exception as error:
+        _queue_failure('rolling-policy', error)
+        raise HTTPException(503, '政策未获提交确认，请用原请求标识重试') from None
+    return {**AUTHORITY, 'request_id': command['request_id'], 'state': 'QUEUED'}
 
 
 @router.post('/actions', status_code=202)

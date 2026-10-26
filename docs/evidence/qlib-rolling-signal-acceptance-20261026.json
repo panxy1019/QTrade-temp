@@ -1,0 +1,199 @@
+{
+  "rolling": {
+    "run_id": "rolling-alpha158-lightgbm-51aa317a71d1180c",
+    "source_revision": "f8ccac31b91b42383ca24840234a26f3987ad03d",
+    "data_end": "2026-10-26",
+    "symbols": 990,
+    "segments": {
+      "test": [
+        "2026-07-23",
+        "2026-10-22"
+      ],
+      "valid": [
+        "2026-01-09",
+        "2026-07-20"
+      ],
+      "train": [
+        "2020-10-29",
+        "2026-01-06"
+      ]
+    },
+    "metrics": {
+      "ic": 0.05001861689161101,
+      "rank_ic": 0.07102421684652514,
+      "icir": 0.40293574086702316,
+      "rank_icir": 0.45784907869992747,
+      "total_return_net": 0.23883949839814966,
+      "annual_return_net": 1.4584602089536025,
+      "sharpe_net": 3.02767080213306,
+      "max_drawdown": -0.07628080317572516,
+      "mean_daily_turnover": 0.16319795679848637,
+      "benchmark_return": -0.14435266808570724,
+      "annualized_volatility": 0.31356590957113895
+    },
+    "trainer": "qlib.model.trainer.TrainerR",
+    "independent_restore": {
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "point_in_time": false,
+      "realtime_readiness": false,
+      "real_data_paper_readiness": false,
+      "external_order_transmission": false,
+      "live_trading_enabled": false,
+      "promotion": "NOT_ELIGIBLE",
+      "schema_version": "qtrade.qlib-independent-restore.v1",
+      "state": "PARITY_VERIFIED_NOT_ACTIVATED",
+      "verified_at": "2026-10-26T15:22:51.789215+00:00",
+      "bundle_sha256": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+      "pid": 159661,
+      "feature_count": 158,
+      "reference_rows": 17813,
+      "reference_start": "2026-09-21",
+      "reference_end": "2026-10-26",
+      "handler_start": "2016-10-24",
+      "max_absolute_score_difference": 0.0,
+      "fitted_processors_unchanged": true,
+      "fit_methods_forbidden": true,
+      "official_loader": "qlib.workflow.online.update.RMDLoader",
+      "handler_init_type": "DataHandlerLP.IT_LS",
+      "model_activated": false,
+      "limitations": [
+        "FROZEN_DATA_RESTORE_ONLY_NOT_NEW_DAY_PREDICTION",
+        "CURRENT_UNIVERSE_NON_PIT",
+        "MANUAL_ACTIVATION_STILL_REQUIRED"
+      ],
+      "evidence_sha256": "40e13fa452ac3bfb3b076fed1f7ffc5883db23724d98ad53514867aef6524ee4"
+    },
+    "cost_assumptions": {
+      "close_cost": 0.0013,
+      "deal_price": "open",
+      "freq": "day",
+      "impact_cost": 0.0,
+      "limit_threshold": [
+        "$buy_block",
+        "$sell_block"
+      ],
+      "min_cost": 5,
+      "open_cost": 0.0008,
+      "trade_unit": 100,
+      "volume_threshold": [
+        "cum",
+        "$capacity"
+      ]
+    },
+    "limitations": [
+      "Current liquidity universe selected after the historical test; survivorship and screening bias",
+      "Post hoc historical out-of-sample evaluation, not preregistered or forward unseen evidence",
+      "Historical ST and exact daily limits unverified: conservative directional 4.5% adjusted-open gap blocks",
+      "STAR buys excluded because the baseline uses 100-share lots",
+      "Missing daily quotes are non-tradable, not a certified suspension-reason table",
+      "Vendor effective-date HFQ factors not independently reconciled to corporate actions",
+      "Daily open-price fills and previous-session 1% volume cap are approximations, not auction replay",
+      "COMMON_TRAIN_FITTED_FEATURE_NORMALIZATION_AND_FILLNA",
+      "STAR_EXCLUDED_FROM_TRAINING_RANKING_AND_EXECUTION",
+      "ROLLING_HISTORICAL_TEST_NOT_UNSEEN_FORWARD_EVIDENCE",
+      "MATURE_LABELS_ONLY_TWO_SESSIONS_PURGED",
+      "Historical ST/limit-price and halt reason not independently certified",
+      "Historical vendor revisions not point-in-time snapshots",
+      "Vendor HFQ multipliers not independently reconciled to corporate-action ledger",
+      "Current unknown daily inputs retain history but have no current price or signal",
+      "New same-vendor overlap/HFQ check is not independent corporate-action certification",
+      "New benchmark turnover unavailable; price-index volume only, not stock liquidity"
+    ],
+    "evidence_sha256": "dc89f2c2a0930498ca17555ae4a570d022c37df20100baf2a9839189765855cf"
+  },
+  "model_id": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+  "restore": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.qlib-independent-restore.v1",
+    "state": "PARITY_VERIFIED_NOT_ACTIVATED",
+    "verified_at": "2026-10-26T15:22:51.789215+00:00",
+    "bundle_sha256": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+    "pid": 159661,
+    "feature_count": 158,
+    "reference_rows": 17813,
+    "reference_start": "2026-09-21",
+    "reference_end": "2026-10-26",
+    "handler_start": "2016-10-24",
+    "max_absolute_score_difference": 0.0,
+    "fitted_processors_unchanged": true,
+    "fit_methods_forbidden": true,
+    "official_loader": "qlib.workflow.online.update.RMDLoader",
+    "handler_init_type": "DataHandlerLP.IT_LS",
+    "model_activated": false,
+    "limitations": [
+      "FROZEN_DATA_RESTORE_ONLY_NOT_NEW_DAY_PREDICTION",
+      "CURRENT_UNIVERSE_NON_PIT",
+      "MANUAL_ACTIVATION_STILL_REQUIRED"
+    ],
+    "evidence_sha256": "40e13fa452ac3bfb3b076fed1f7ffc5883db23724d98ad53514867aef6524ee4"
+  },
+  "signal": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.signal-baselines.v1",
+    "signal_family_id": "dc12aa78e62ce1364462b095e5be2db148ce52953f9855ec5c6bf0e55399228f",
+    "bindings": {
+      "data_version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+      "code_revision": "d33527f9eb0c2c22746443618f2aa3cfaae17f31",
+      "observation_universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+      "signal_contract": "COMMON_21_SESSION_GRID_V1",
+      "risk_degree": "0.95",
+      "topk": 50
+    },
+    "data_end": "2026-10-26",
+    "generated_at": "2026-10-26T15:22:24.807769+00:00",
+    "expected_execution_at": "2026-10-27T09:30:00+08:00",
+    "signal_count": 5,
+    "qualified_instruments": 885,
+    "excluded_instruments": [
+      {
+        "instrument": "SH600301",
+        "reason": "INVALID_CLOSE"
+      },
+      {
+        "instrument": "SH601995",
+        "reason": "INVALID_CLOSE"
+      },
+      {
+        "instrument": "SZ000582",
+        "reason": "INVALID_CLOSE"
+      }
+    ],
+    "unavailable": [
+      "etf_positive_trend20"
+    ],
+    "forward_return_observed": false,
+    "portfolio_state_reconciled": false,
+    "state": "SIGNALS_AND_INDICATIVE_TARGETS_SEALED",
+    "limitations": [
+      "CURRENT_POOL_SURVIVORSHIP_BIAS",
+      "FULL_PIT_NOT_CERTIFIED",
+      "VENDOR_ADJUSTMENTS_NOT_INDEPENDENTLY_RECONCILED",
+      "TARGETS_AWAIT_HOLDINGS_TURNOVER_AND_EXECUTION_CONSTRAINTS",
+      "NO_ETF_PROVIDER_ADMISSION",
+      "NO_HISTORICAL_STRATEGY_COMPARISON_IN_THIS_ARTIFACT"
+    ],
+    "files": {
+      "close-input.parquet": "317d4ddc7a71c6647be4e1b3dd653466c214bb123765656c317dd128da1933d2",
+      "signals.json": "5157dc5864cb0e4b49680d89a8c559028a26f1aec2fe7062c8a6d5b40a625897",
+      "indicative-targets.json": "deb0572206c0ddab5c6c85e1fc364c740433ae9637207a3c838bbc8b6704dfbc",
+      "source/scripts/run_qlib_signal_baselines.py": "4113aac5a796f865ad8efe7ff1431d2bff85c3857900e06edaf6f417963de54f",
+      "source/src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+      "source/src/qtrade/research/factors.py": "9082aaa603729651199ec3b5c37a7acf93f9931bf32dd348da4eeb9ccd6cb39d"
+    },
+    "evidence_sha256": "510bba385ee2cc72ebe08ddf26aca0b25fa3a1e77052b8171459022478b4fefa"
+  },
+  "production_training_enabled": false,
+  "candidate_activated": false
+}
