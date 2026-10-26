@@ -3086,7 +3086,9 @@ only checksum-verified master/status evidence, preserve its original observed
 time, and disclose stale-master fallback after a failed refresh. No fallback
 creates historical availability or trading-rule certification. Failed or
 interrupted passes retain their existing scope and retry after bounded backoff;
-successful passes advance the bounded sample after six hours. The parent reaps
+only fully complete source passes advance the bounded sample after six hours.
+A zero process exit with PARTIAL source evidence retries the same scope with
+backoff and is never recorded as a successful coverage pass. The parent reaps
 its collector on shutdown or timeout so the shared vendor session is released.
 
 The first production login acceptance also exposed a stale uv.lock: the frozen

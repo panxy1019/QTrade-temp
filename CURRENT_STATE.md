@@ -36,6 +36,13 @@ Last updated: 2026-10-26
   Linux full-suite 556 tests pass. The source service now runs release 6c6092a
   and demonstrably resumes status collection from the verified master. New
   checkpoints do not replace accepted coverage until the pass is finalized.
+  The resumed 40-stock source pass finalized 33 stocks / 79,299 rows with seven
+  explicit vendor failures. This is an increase from 13 stocks / 31,577 rows,
+  not PIT certification. A follow-up scheduler check ensures PARTIAL source
+  evidence with process exit 0 retries the same scope instead of advancing it.
+  Ten source/scheduler regressions pass; deployment of this final state fix is
+  in progress. The user's Secret conversion report has not yet been confirmed:
+  the refreshed Vercel project list still displays Config.
   See plans/QLIB_WORKFLOW_INTEGRATION.md and docs/QLIB_WORKFLOW.md.
 
 - Website learning guide completed in docs/learning/README.md: 13 Chinese

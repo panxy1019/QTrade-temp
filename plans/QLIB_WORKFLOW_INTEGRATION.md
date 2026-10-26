@@ -93,5 +93,12 @@ screenshots and final checkpoint are in docs/evidence. Source certification is
 not inferred from this operational acceptance. Secret storage conversion remains
 an owner task because Vercel requests email verification before editing.
 
+The resumed 40-stock source pass finalized 33 stocks / 79,299 rows with seven
+vendor failures (10002007), preserving the master observation time. Follow-up
+state handling distinguishes PARTIAL evidence from a zero process exit: retain
+the same scope and back off instead of advancing the sample. Ten focused source
+tests pass. The user reported Secret conversion, but the freshly loaded project
+list still shows Config; it remains unverified rather than marked complete.
+
 Learning documentation already in the working tree belongs to the previous
 request and must be preserved. Existing fixed experiments remain immutable.

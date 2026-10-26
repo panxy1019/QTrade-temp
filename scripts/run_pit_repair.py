@@ -39,12 +39,15 @@ def plan_pass(previous: dict[str, Any], now: datetime) -> tuple[float, int]:
     return max(0, (deadline - now).total_seconds()), maximum
 
 
-def finish_pass(maximum: int, returncode: int, now: datetime, failures: int) -> dict[str, Any]:
-    failures = 0 if returncode == 0 else min(5, failures + 1)
-    delay = 21600 if returncode == 0 else min(21600, 1800 * 2 ** (failures - 1))
+def finish_pass(
+    maximum: int, returncode: int, now: datetime, failures: int, *, partial: bool = False,
+) -> dict[str, Any]:
+    complete = returncode == 0 and not partial
+    failures = 0 if complete else min(5, failures + 1)
+    delay = 21600 if complete else min(21600, 1800 * 2 ** (failures - 1))
     return {
         "maximum": maximum, "at": now.isoformat(), "returncode": returncode,
-        "outcome": "SUCCEEDED" if returncode == 0 else "FAILED",
+        "outcome": "SUCCEEDED" if complete else "PARTIAL" if returncode == 0 else "FAILED",
         "consecutive_failures": failures,
         "next_attempt_at": (now + timedelta(seconds=delay)).isoformat(),
     }
@@ -107,13 +110,13 @@ def main() -> None:
                         stop.wait(1)
                 finally:
                     stop_child(child)
-            write_json_atomic(marker, finish_pass(
-                maximum, child.returncode, datetime.now(UTC), prior.get("consecutive_failures", 0)
-            ))
             attempt_path = args.base / "pit-repair/attempt.json"
-            if child.returncode and attempt_path.exists() and json.loads(
-                attempt_path.read_text()
-            ).get("state") == "RUNNING":
+            attempt = json.loads(attempt_path.read_text()) if attempt_path.exists() else {}
+            write_json_atomic(marker, finish_pass(
+                maximum, child.returncode, datetime.now(UTC), prior.get("consecutive_failures", 0),
+                partial=attempt.get("state") != "COMPLETE",
+            ))
+            if child.returncode and attempt.get("state") == "RUNNING":
                 record_attempt(args.base, maximum, "FAILED", stage="PROCESS_EXIT",
                                returncode=child.returncode)
             print("PIT_SOURCE_PASS_EXIT=" + str(child.returncode), flush=True)

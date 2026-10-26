@@ -198,6 +198,15 @@ def test_failed_pass_retries_same_scope_after_backoff_and_success_advances():
     assert scheduler.plan_pass(scheduler.finish_pass(40, 1, now, 10), now) == (21600, 40)
 
 
+def test_partial_source_pass_retries_same_scope_despite_zero_process_exit():
+    now = datetime.now(UTC)
+    partial = scheduler.finish_pass(40, 0, now, 0, partial=True)
+    assert partial["outcome"] == "PARTIAL"
+    assert partial["returncode"] == 0
+    assert scheduler.plan_pass(partial, now) == (1800, 40)
+    assert scheduler.plan_pass(partial, now + timedelta(minutes=31)) == (0, 40)
+
+
 def test_worker_cleanup_reaps_its_running_collector():
     import subprocess
     import sys
