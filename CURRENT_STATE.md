@@ -2,6 +2,15 @@
 
 Last updated: 2026-10-27
 
+- PR26 is merged and production Vercel verifies main 4eade8a. All eight online
+  publication routes return available HTTP 200 results. The ETF historical
+  response carries simulation 6cdc93fa7243a1e70e780953feb160583c9fade3b390df3c6aef58ede51ac3bd;
+  independent validation of the actual public report and six artifacts passes.
+  Evidence: docs/evidence/qlib-step1-vercel-4eade8a.json. This closes production
+  API delivery for the separate historical ETF simulation, not rendered visual
+  acceptance. Real next-session, later-data candidate validation and explicit
+  LightGBM PAPER recovery remain open. STEP2 has not started.
+
 - ETF historical public integration is verified at 59894ea using the new b284da5
   simulation with full per-session OHLCV marks. Report and six artifacts pass
   independent data-only accounting/target validation and actual raw replay on

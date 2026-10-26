@@ -1,0 +1,177 @@
+{
+  "checked_at": "2026-10-26T19:08:35.219071+00:00",
+  "base_url": "https://q-trade-temp.vercel.app",
+  "responses": {
+    "/api/deployment": {
+      "status": 200,
+      "body_sha256": "97bea99e42b16630ba02945b14666378a10d99462cdf875aa66368df04790959",
+      "cache_control": "public, max-age=15",
+      "bytes": 239,
+      "deployment": {
+        "classification": "PUBLIC_BUILD_PROVENANCE",
+        "provider": "VERCEL",
+        "status": "AVAILABLE",
+        "target_environment": "production",
+        "git_commit_sha": "4eade8af1336412abd5e479a61088f60d8d1c288",
+        "git_commit_ref": "main",
+        "external_order_transmission": false
+      }
+    },
+    "/api/research/online/catalog": {
+      "status": 200,
+      "body_sha256": "c14a0dc21e1dd521707ad1620e0317cc798b02e6c4ad79c309a9bfaf40bdcdf5",
+      "cache_control": "no-store",
+      "bytes": 63190,
+      "summary": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.online-catalog.v1",
+        "published_at": "2026-10-26T19:03:22.077655+00:00",
+        "data_error": null,
+        "active_model": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+        "evidence_sha256": "2ca3cc1bffddbe6c54879bbf9d0da7b82198fe4ce4e052cdc432e79f395ae37b",
+        "publication_available": true,
+        "worker_fresh": true,
+        "data_schedule_fresh": true,
+        "current_prediction_usable": true,
+        "expected_complete_day": "2026-10-26"
+      }
+    },
+    "/api/research/online/signals": {
+      "status": 200,
+      "body_sha256": "f9cd8c8dc6ebc68ae0df4552d2cc77ebf3fbadc19e3382f48968f47995796a81",
+      "cache_control": "no-store",
+      "bytes": 3290,
+      "summary": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "publication_available": true,
+        "current_input": true,
+        "strategy": null,
+        "total": 0,
+        "offset": 0,
+        "limit": 50,
+        "execution_admitted": false,
+        "forward_return": null
+      }
+    },
+    "/api/research/online/strategy-comparison": {
+      "status": 200,
+      "body_sha256": "b5ad3b23d3cd3a833a4f47dcdb38f2ef6e1d9677029655ed6380c1b30770962f",
+      "cache_control": "no-store",
+      "bytes": 529349,
+      "summary": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "publication_available": true
+      }
+    },
+    "/api/research/online/etf-trend": {
+      "status": 200,
+      "body_sha256": "66d2dc88f70197c3fff2edb4b1b2cce0d7becc2f8902f58c5b7d4a37f3673d9e",
+      "cache_control": "no-store",
+      "bytes": 26528,
+      "summary": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "publication_available": true,
+        "current_input": true
+      }
+    },
+    "/api/research/online/forward-books": {
+      "status": 200,
+      "body_sha256": "54f44e3592ee264677ded2d8eaf06d2d5e26d16ebd11cafb1faa48bc70a234f4",
+      "cache_control": "no-store",
+      "bytes": 48753,
+      "summary": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "publication_available": true,
+        "service_fresh": true
+      }
+    },
+    "/api/research/online/data-versions": {
+      "status": 200,
+      "body_sha256": "a27aab574676eeef9239d526a0414705ea096de4d4f67b6199c7506cd0294292",
+      "cache_control": "no-store",
+      "bytes": 3270,
+      "summary": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "publication_available": true,
+        "worker_fresh": true
+      }
+    },
+    "/api/research/online/etf-forward": {
+      "status": 200,
+      "body_sha256": "31fec0fc7158c55efd5948d21ee447ecb1f368276c6d98d6d24962c90f88efa0",
+      "cache_control": "no-store",
+      "bytes": 5896,
+      "summary": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "publication_available": true,
+        "service_fresh": true,
+        "current_target": true
+      }
+    },
+    "/api/research/online/etf-history": {
+      "status": 200,
+      "body_sha256": "ffd2bbd9c4365836f1e472f485a286df90559763270379f3a71f05479950deb4",
+      "cache_control": "no-store",
+      "bytes": 839174,
+      "summary": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "publication_available": true
+      },
+      "independent_public_validation_passed": true,
+      "simulation_id": "6cdc93fa7243a1e70e780953feb160583c9fade3b390df3c6aef58ede51ac3bd",
+      "publication_evidence_sha256": "2393f79b8eec53b5fc6a13754203ffa229f7c72020a0d05b2f944fce019919c6",
+      "report_evidence_sha256": "a569bd8c9e641cf142b6f76181e99ca09dc33b0a8ef49d44d981dfcd40ad1d89",
+      "report_implementation_revision": "b284da5ba8e1ab1edbc7b45b07b9001d67acf66c",
+      "artifacts_count": 6
+    }
+  },
+  "rendered_visual_acceptance": false
+}

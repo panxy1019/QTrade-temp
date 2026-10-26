@@ -24,6 +24,12 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+PR26 production main 4eade8a is verified with eight available online routes.
+Actual ETF historical API bytes pass independent report/artifact validation;
+see docs/evidence/qlib-step1-vercel-4eade8a.json. Production API delivery is
+complete for this comparison. Rendered visual and actual next-session gates
+remain open; STEP2 is not started.
+
 - ETF historical public integration is verified at 59894ea using the new b284da5
   simulation with full per-session OHLCV marks. Report and six artifacts pass
   independent data-only accounting/target validation and actual raw replay on
