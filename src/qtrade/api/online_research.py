@@ -17,6 +17,8 @@ from qtrade.api.research_workflow import (
 )
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from qtrade.research.model_registry import checked_document, checked_identity, control_command
+from qtrade.research.rolling_control import command as rolling_command
+from qtrade.research.rolling_policy import validate_policy
 from qtrade.research.workflow_queue import GitQueue, seal
 
 router = APIRouter(prefix='/research/online')
@@ -141,6 +143,17 @@ def validate_catalog(value: dict[str, Any]) -> dict[str, Any]:
                 or datetime.fromisoformat(current['contract']['expected_execution_at']) <= (
                     datetime.fromisoformat(value['published_at']))):
             raise ValueError('ONLINE_CURRENT_PREDICTION_INCONSISTENT')
+    training = value.get('auto_train', {})
+    if training.get('state') == 'CONTROL_READY':
+        validate_policy(training['policy'])
+        checked_identity(training['policy_id'])
+        if (training.get('mode') != training['policy']['mode']
+                or training.get('automatic_activation') is not False
+                or not isinstance(training['receipts'], list) or len(training['receipts']) > 50
+                or not isinstance(training['tasks'], list) or len(training['tasks']) > 50):
+            raise ValueError('ONLINE_ROLLING_CONTROL_INVALID')
+        for receipt in training['receipts']:
+            checked_document(receipt)
     return value
 
 
@@ -188,6 +201,44 @@ def catalog(response: Response) -> dict[str, Any]:
                 'models': [], 'validations': [], 'commands': [], 'events': [],
                 'active_model': None, 'data_version': None,
                 'expected_complete_day': research_clock()}
+
+
+@router.post('/training-policy', status_code=202)
+async def training_policy(request: Request) -> dict[str, Any]:
+    user = actor(request)
+    body = await _body(request)
+    try:
+        if 'actor' in body:
+            raise ValueError('CALLER_CANNOT_SET_ACTOR')
+        command = rolling_command({**body, 'actor': user})
+    except (ValueError, KeyError, TypeError):
+        raise HTTPException(422, '训练政策只接受受控模型、会话间隔和窗口') from None
+    try:
+        value = listing()
+        training = value['auto_train']
+        if not worker_fresh(value) or training['state'] != 'CONTROL_READY':
+            raise ValueError('ROLLING_CONTROL_UNAVAILABLE')
+        validate_policy(training['policy'])
+        checked_identity(training['policy_id'])
+    except (ValueError, KeyError, TypeError):
+        raise HTTPException(503, '滚动训练控制未就绪') from None
+    prior = next((r for r in training['receipts']
+                  if r['request_id'] == command['request_id']), None)
+    if prior is not None:
+        if prior['command_sha256'] != signed(command)['evidence_sha256']:
+            raise HTTPException(409, '请求标识已绑定另一项训练政策')
+        return dict(prior)
+    if training['policy_id'] != command['expected_policy_id']:
+        raise HTTPException(409, '训练政策已变化，请重新审阅')
+    try:
+        GitQueue.from_environment().append('requests', command['request_id'], seal({
+            'job_id': command['request_id'], 'kind': 'QLIB_ROLLING_POLICY',
+            'command': command, 'live_trading_enabled': False,
+        }, os.environ['QTRADE_RESEARCH_QUEUE_SECRET']))
+    except Exception as error:
+        _queue_failure('rolling-policy', error)
+        raise HTTPException(503, '政策未获提交确认，请用原请求标识重试') from None
+    return {**AUTHORITY, 'request_id': command['request_id'], 'state': 'QUEUED'}
 
 
 @router.post('/actions', status_code=202)

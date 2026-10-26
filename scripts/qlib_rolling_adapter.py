@@ -56,7 +56,7 @@ def train(task: dict[str, Any], *, experiment: str, name: str) -> tuple[Any, Any
     with (patch.object(Handler, 'fit', side_effect=RuntimeError('ROLLING_RELOAD_REFIT_FORBIDDEN')),
           patch.object(Handler, 'fit_process_data', side_effect=RuntimeError(
               'ROLLING_RELOAD_REFIT_FORBIDDEN'))):
-        data.setup_data(init_type=Handler.IT_LS)
+        data.setup_data(handler_kwargs={'init_type': Handler.IT_LS})
     if processor_hash(data) != before:
         raise ValueError('ROLLING_TRAINERR_RELOAD_CHANGED_FITTED_STATE')
     return model, data, str(recorder.id)

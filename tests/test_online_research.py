@@ -69,6 +69,36 @@ def test_public_read_and_authentication_same_origin_write_boundary(online):
     assert sent == []
 
 
+def test_training_policy_authenticated_queue_and_stale_policy_rejection(online):
+    from qtrade.research.rolling_policy import default_policy
+
+    http, password, value, sent = online
+    policy = default_policy()
+    value['auto_train'] = {'mode': 'OFF', 'state': 'CONTROL_READY', 'policy_id': 'b'*64,
+        'policy': policy, 'tasks': [], 'receipts': [], 'automatic_activation': False}
+    body = {'request_id': 'f'*32, 'expected_policy_id': 'b'*64,
+            'policy': {**policy, 'mode': 'WEEKLY'}}
+    assert http.post('/research/online/training-policy', json=body).status_code == 401
+    login(http, password)
+    assert http.post('/research/online/training-policy', json=body,
+        headers={'origin': 'https://attacker.invalid'}).status_code == 403
+    response = http.post('/research/online/training-policy', json=body)
+    assert response.status_code == 202
+    payload = unseal(sent[0][2], 'x'*40)
+    assert payload['kind'] == 'QLIB_ROLLING_POLICY'
+    assert payload['command'] == {**body, 'actor': 'research-test'}
+    assert payload['live_trading_enabled'] is False
+    receipt = signed({**AUTHORITY, 'request_id': body['request_id'], 'state': 'APPLIED',
+        'command_sha256': signed(payload['command'])['evidence_sha256']})
+    value['auto_train'].update(policy_id='c'*64, receipts=[receipt])
+    assert http.post('/research/online/training-policy', json=body).json() == receipt
+    assert http.post('/research/online/training-policy', json={
+        **body, 'request_id': 'e'*32}).status_code == 409
+    assert http.post('/research/online/training-policy', json={
+        **body, 'actor': 'root'}).status_code == 422
+    assert len(sent) == 1
+
+
 def test_approval_only_queues_signed_allowlisted_action_and_actor_is_session_bound(online):
     http, password, value, sent = online
     login(http, password)

@@ -48,8 +48,19 @@ def main() -> None:
     parser.add_argument('--policy', required=True, type=Path)
     parser.add_argument('--source-revision', required=True)
     args = parser.parse_args()
-    result = run_candidate(args.data_version_root, args.output, args.tracking,
-                           json.loads(args.policy.read_text()), args.source_revision)
+    try:
+        result = run_candidate(args.data_version_root, args.output, args.tracking,
+                               json.loads(args.policy.read_text()), args.source_revision)
+    except Exception:
+        from datetime import UTC, datetime
+
+        from scripts.atomic_json import write_json_atomic
+
+        path = args.output/'status.json'
+        previous = json.loads(path.read_text()) if path.exists() else {}
+        write_json_atomic(path, {**previous, 'state': 'FAILED',
+            'updated_at': datetime.now(UTC).isoformat()})
+        raise
     print(json.dumps({'run_id': result['run_id'], 'metrics': result['metrics'],
                       'model_activated': False}))
 

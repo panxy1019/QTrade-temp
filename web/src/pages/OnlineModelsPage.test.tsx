@@ -9,7 +9,7 @@ afterEach(() => vi.unstubAllGlobals())
 
 function catalog() {
   return {
-    publication_available: true, worker_fresh: true, active_model: null,
+    publication_available: true, worker_fresh: true, data_schedule_fresh: false, active_model: null,
     expected_complete_day: '2026-10-26',
     data_version: { version_id: 'd'.repeat(64), actual_end: '2026-10-26', current_symbols: 982, historical_symbols: 990, blocked_symbols: ['002827'] },
     models: [{ state: 'STAGED', definition: { model_id: 'a'.repeat(64), model_run_id: 'frozen-ridge', name: 'Alpha158 + Ridge',
