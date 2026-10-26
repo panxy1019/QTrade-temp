@@ -31,6 +31,7 @@ class Book:
         self.bundle = SimpleNamespace(
             runtime=SimpleNamespace(status=SimpleNamespace(running=False)),
             ledger=SimpleNamespace(account=SimpleNamespace(positions={})),
+            report_incident=lambda _: setattr(self.bundle.runtime.status, "running", False),
         )
 
     def recover(self, *, actor):
@@ -667,3 +668,254 @@ def test_observation_allows_only_verified_descendant_data(environment):
         c.execute("UPDATE data_heads SET version_id=?", (unrelated_id,))
     with pytest.raises(ValueError, match="DATA_NOT_DESCENDANT"):
         instance.check_observation_context(item, link())
+
+
+@pytest.fixture
+def recovery_service(environment, monkeypatch):
+    instance = environment(modes=(RuntimeMode.PAPER, RuntimeMode.SHADOW))
+    instance.register(target(), link(), now=datetime.now(UTC))
+    monkeypatch.setattr(instance, "current_targets", lambda _: [])
+    monkeypatch.setattr(instance, "observe_book", lambda *args, **kwargs: None)
+    instance.cycle()
+    identities = {book.mode: identity for identity, book in instance.books.items()}
+    return SimpleNamespace(
+        instance=instance,
+        paper=identities[RuntimeMode.PAPER],
+        shadow=identities[RuntimeMode.SHADOW],
+    )
+
+
+def test_explicit_recovery_prepare_does_not_open_or_recover_book_then_live_consumes_once(
+    recovery_service,
+):
+    data = recovery_service
+    request = service.prepare_recovery_request(
+        data.instance.root, book_id=data.paper, actor="owner"
+    )
+    assert Book.recovered == []
+    identity = request["request_id"]
+    assert request["instance_id"] == data.instance.instance_id
+    assert data.instance.recover_requested_books() == []
+    assert Book.recovered == [("momentum20", "owner")]
+    assert not data.instance.books[data.shadow].bundle.runtime.status.running
+    consumed = service.load(data.instance.root / "recovery/consumed" / (identity + ".json"))
+    receipt = service.load(data.instance.root / "recovery/receipts" / (identity + ".json"))
+    assert consumed["state"] == "CONSUMED"
+    assert consumed["request_sha256"] == request["evidence_sha256"]
+    assert receipt["state"] == "SUCCEEDED"
+    data.instance.books[data.paper].bundle.runtime.status.running = False
+    assert data.instance.recover_requested_books() == []
+    assert Book.recovered == [("momentum20", "owner")]
+    with pytest.raises(ValueError, match="REQUEST_ID_REUSED"):
+        service.prepare_recovery_request(
+            data.instance.root, book_id=data.paper, actor="owner", request_id=identity
+        )
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "expired",
+        "future",
+        "wrong_book",
+        "shadow",
+        "old_instance",
+        "extra",
+        "long_ttl",
+        "actor",
+    ],
+)
+def test_invalid_recovery_request_is_rejected_and_never_replayed(recovery_service, defect):
+    data = recovery_service
+    request = service.prepare_recovery_request(
+        data.instance.root, book_id=data.paper, actor="owner"
+    )
+    now = datetime.now(UTC)
+    updates = {
+        "expired": {
+            "issued_at": (now - timedelta(minutes=10)).isoformat(),
+            "expires_at": (now - timedelta(minutes=5)).isoformat(),
+        },
+        "future": {
+            "issued_at": (now + timedelta(minutes=1)).isoformat(),
+            "expires_at": (now + timedelta(minutes=6)).isoformat(),
+        },
+        "wrong_book": {"book_id": "1" * 64},
+        "shadow": {"book_id": data.shadow},
+        "old_instance": {"instance_id": "1" * 32},
+        "extra": {"auto_recover": True},
+        "long_ttl": {"expires_at": (now + timedelta(hours=1)).isoformat()},
+        "actor": {"actor": "not a valid actor"},
+    }
+    altered = signed(
+        {**{k: v for k, v in request.items() if k != "evidence_sha256"}, **updates[defect]}
+    )
+    service.write_json_atomic(
+        data.instance.root / "recovery/requests" / (request["request_id"] + ".json"), altered
+    )
+    assert data.instance.recover_requested_books() == ["FORWARD_SERVICE_RECOVERY_REQUEST_REJECTED"]
+    assert Book.recovered == []
+    assert data.instance.recover_requested_books() == []
+    receipt = service.load(
+        data.instance.root / "recovery/receipts" / (request["request_id"] + ".json")
+    )
+    assert receipt["state"] == "REJECTED"
+
+
+def test_prepare_rejects_nonpaper_and_stale_service_without_writing_request(recovery_service):
+    data = recovery_service
+    with pytest.raises(ValueError, match="BOOK_OR_INSTANCE_INVALID"):
+        service.prepare_recovery_request(data.instance.root, book_id=data.shadow, actor="owner")
+    instance_file = data.instance.root / "service-instance.json"
+    instance = service.load(instance_file)
+    service.write_json_atomic(
+        instance_file,
+        signed(
+            {
+                **{k: v for k, v in instance.items() if k != "evidence_sha256"},
+                "heartbeat_at": (datetime.now(UTC) - timedelta(minutes=5)).isoformat(),
+            }
+        ),
+    )
+    with pytest.raises(ValueError, match="BOOK_OR_INSTANCE_INVALID"):
+        service.prepare_recovery_request(data.instance.root, book_id=data.paper, actor="owner")
+    assert not list((data.instance.root / "recovery/requests").glob("*.json"))
+    assert Book.recovered == []
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("live_trading_enabled", 0),
+        ("external_order_transmission", 0.0),
+        ("point_in_time", 0),
+        ("real_data_paper_readiness", True),
+        ("classification", "TRADE_READY"),
+    ],
+)
+def test_recovery_requires_exact_authority_values_and_types(recovery_service, field, value):
+    data = recovery_service
+    request = service.prepare_recovery_request(
+        data.instance.root, book_id=data.paper, actor="owner"
+    )
+    changed = signed({**{k: v for k, v in request.items() if k != "evidence_sha256"}, field: value})
+    service.write_json_atomic(
+        data.instance.root / "recovery/requests" / (request["request_id"] + ".json"), changed
+    )
+    assert data.instance.recover_requested_books() == ["FORWARD_SERVICE_RECOVERY_REQUEST_REJECTED"]
+    assert Book.recovered == []
+
+
+def test_recovery_failure_is_durable_halted_and_not_retried(recovery_service, monkeypatch):
+    data = recovery_service
+    request = service.prepare_recovery_request(
+        data.instance.root, book_id=data.paper, actor="owner"
+    )
+    attempted = []
+
+    def failure(*, actor):
+        attempted.append(actor)
+        raise ValueError("credential=never-record-recovery-secret")
+
+    monkeypatch.setattr(data.instance.books[data.paper], "recover", failure)
+    assert data.instance.recover_requested_books() == [
+        "FORWARD_SERVICE_RECOVERY_RECONCILIATION_FAILED"
+    ]
+    assert data.instance.recover_requested_books() == []
+    assert attempted == ["owner"]
+    assert not data.instance.books[data.paper].bundle.runtime.status.running
+    receipt = service.load(
+        data.instance.root / "recovery/receipts" / (request["request_id"] + ".json")
+    )
+    assert receipt["state"] == "FAILED" and "never-record-recovery-secret" not in json.dumps(
+        receipt
+    )
+
+
+def test_crash_after_consume_never_retries_in_live_or_restarted_service(
+    recovery_service, environment, monkeypatch
+):
+    data = recovery_service
+    request = service.prepare_recovery_request(
+        data.instance.root, book_id=data.paper, actor="owner"
+    )
+    consumed = data.instance.root / "recovery/consumed" / (request["request_id"] + ".json")
+    attempted = []
+
+    def crash(*, actor):
+        assert consumed.exists()
+        attempted.append(actor)
+        raise SystemExit("synthetic process crash")
+
+    monkeypatch.setattr(data.instance.books[data.paper], "recover", crash)
+    with pytest.raises(SystemExit, match="synthetic process crash"):
+        data.instance.recover_requested_books()
+    expected = ["FORWARD_SERVICE_RECOVERY_CONSUMED_REQUIRES_REVIEW"]
+    assert data.instance.recover_requested_books() == expected
+    restored = environment(modes=(RuntimeMode.PAPER, RuntimeMode.SHADOW))
+    assert restored.recover_requested_books() == expected
+    assert not restored.books[data.paper].bundle.runtime.status.running
+    assert attempted == ["owner"] and Book.recovered == []
+
+
+def test_unconsumed_request_cannot_recover_a_restarted_service(recovery_service, environment):
+    data = recovery_service
+    service.prepare_recovery_request(data.instance.root, book_id=data.paper, actor="owner")
+    restored = environment(modes=(RuntimeMode.PAPER, RuntimeMode.SHADOW))
+    assert restored.instance_id != data.instance.instance_id
+    assert restored.recover_requested_books() == ["FORWARD_SERVICE_RECOVERY_REQUEST_REJECTED"]
+    assert not restored.books[data.paper].bundle.runtime.status.running
+    assert Book.recovered == []
+
+
+def test_recovery_prepare_cli_only_writes_request(recovery_service, monkeypatch, capsys):
+    data = recovery_service
+    monkeypatch.setattr(
+        service.sys,
+        "argv",
+        [
+            "forward-service",
+            "--local-root",
+            str(data.instance.root),
+            "--prepare-recovery-book",
+            data.paper,
+            "--recovery-actor",
+            "owner",
+            "--recovery-request-id",
+            "2" * 32,
+        ],
+    )
+    monkeypatch.setattr(
+        service, "ForwardService", lambda *args, **kwargs: pytest.fail("opened book")
+    )
+    service.main()
+    request = json.loads(capsys.readouterr().out)
+    assert request["request_id"] == "2" * 32
+    assert request["book_id"] == data.paper and Book.recovered == []
+
+
+def test_live_explicit_recovery_runs_real_reconciliation_and_preserves_pending_gate(
+    environment, monkeypatch
+):
+    monkeypatch.setattr(service, "ForwardPaperBook", RealBook)
+    instance = environment(modes=(RuntimeMode.PAPER,))
+    item = target()
+    instance.register(item, link(), now=datetime.now(UTC))
+    monkeypatch.setattr(instance, "current_targets", lambda _: [])
+    monkeypatch.setattr(instance, "observe_book", lambda *args, **kwargs: None)
+    assert instance.cycle()["state"] == "HUMAN_RECOVERY_REQUIRED"
+    identity, book = next(iter(instance.books.items()))
+    service.prepare_recovery_request(instance.root, book_id=identity, actor="test-human")
+    assert instance.recover_requested_books() == []
+    assert book.bundle.runtime.status.running and book.bundle.risk.state.value == "NORMAL"
+    book.bundle.runtime.kill(actor="test-human", reason="synthetic uncertain receipt")
+    book.db.execute(
+        "INSERT INTO sessions VALUES (?,?,?,'PENDING',NULL,?)",
+        ("2026-10-27", item.identity, "fixture", "{}"),
+    )
+    service.prepare_recovery_request(instance.root, book_id=identity, actor="test-human")
+    assert instance.recover_requested_books() == ["FORWARD_SERVICE_RECOVERY_RECONCILIATION_FAILED"]
+    assert not book.bundle.runtime.status.running and book.bundle.risk.state.value == "HALTED"
+    assert (
+        book.db.execute("SELECT COUNT(*) FROM sessions WHERE status='PENDING'").fetchone()[0] == 1
+    )

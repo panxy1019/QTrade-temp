@@ -17,6 +17,7 @@ from decimal import Decimal
 from pathlib import Path
 from threading import Event
 from typing import Any
+from uuid import uuid4
 
 from qtrade.domain import RuntimeMode
 from qtrade.execution import FeeSchedule
@@ -44,6 +45,7 @@ LIMITATIONS = [
     "PAPER restarts require explicit human reconciliation; SHADOW has no fills or returns.",
     "Current universe has survivor bias; historical PIT and available_at remain uncertified.",
 ]
+RECOVERY_SCHEMA = "qtrade.forward-recovery-request.v1"
 
 
 def load(path: Path, maximum: int = 16 * 1024 * 1024) -> dict[str, Any]:
@@ -58,6 +60,98 @@ def readonly(path: Path) -> sqlite3.Connection:
     connection = sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True)
     connection.row_factory = sqlite3.Row
     return connection
+
+
+def validate_recovery_request(
+    value: dict[str, Any], *, identity: str, instance_id: str, now: datetime
+) -> None:
+    checked_document(value)
+    if (
+        any(
+            type(value.get(key)) is not type(expected) or value[key] != expected
+            for key, expected in AUTHORITY.items()
+        )
+        or set(value)
+        != set(AUTHORITY)
+        | {
+            "schema_version",
+            "evidence_sha256",
+            "request_id",
+            "book_id",
+            "actor",
+            "instance_id",
+            "issued_at",
+            "expires_at",
+        }
+        or value["schema_version"] != RECOVERY_SCHEMA
+        or re.fullmatch("[a-f0-9]{32}", identity) is None
+        or value["request_id"] != identity
+        or value["instance_id"] != instance_id
+        or re.fullmatch("[a-f0-9]{32}", instance_id) is None
+        or re.fullmatch("[A-Za-z0-9._-]{1,60}", value["actor"]) is None
+    ):
+        raise ValueError("FORWARD_SERVICE_RECOVERY_REQUEST_INVALID")
+    checked_identity(value["book_id"])
+    issued, expires = (datetime.fromisoformat(value[k]) for k in ("issued_at", "expires_at"))
+    if (
+        issued.tzinfo is None
+        or expires.tzinfo is None
+        or not issued <= now < expires
+        or not 30 <= (expires - issued).total_seconds() <= 600
+    ):
+        raise ValueError("FORWARD_SERVICE_RECOVERY_REQUEST_EXPIRED_OR_CLOCK_INVALID")
+
+
+def prepare_recovery_request(
+    root: Path, *, book_id: str, actor: str, request_id: str | None = None, ttl_seconds: int = 300
+) -> dict[str, Any]:
+    """Explicit operator invocation only; never opens a book or recovers a runtime."""
+    if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
+        raise ValueError("FORWARD_SERVICE_CONFIGURATION_INVALID")
+    checked_identity(book_id)
+    config = load(root / "roster.json")["books"].get(book_id)
+    instance = load(root / "service-instance.json")
+    now = datetime.now(UTC)
+    heartbeat = datetime.fromisoformat(instance["heartbeat_at"])
+    if (
+        config is None
+        or signed(config)["evidence_sha256"] != book_id
+        or config["mode"] != "PAPER"
+        or not (root / book_id / "forward.sqlite").is_file()
+        or instance.get("schema_version") != "qtrade.forward-service-instance.v1"
+        or instance.get("state") != "RUNNING"
+        or any(
+            type(instance.get(key)) is not type(expected) or instance[key] != expected
+            for key, expected in AUTHORITY.items()
+        )
+        or book_id not in instance.get("paper_books", [])
+        or heartbeat.tzinfo is None
+        or not 0 <= (now - heartbeat).total_seconds() <= 90
+        or type(ttl_seconds) is not int
+        or not 30 <= ttl_seconds <= 600
+    ):
+        raise ValueError("FORWARD_SERVICE_RECOVERY_BOOK_OR_INSTANCE_INVALID")
+    identity = request_id if request_id is not None else uuid4().hex
+    value = signed(
+        {
+            **AUTHORITY,
+            "schema_version": RECOVERY_SCHEMA,
+            "request_id": identity,
+            "book_id": book_id,
+            "actor": actor,
+            "instance_id": instance["instance_id"],
+            "issued_at": now.isoformat(),
+            "expires_at": (now + timedelta(seconds=ttl_seconds)).isoformat(),
+        }
+    )
+    validate_recovery_request(
+        value, identity=identity, instance_id=instance["instance_id"], now=now
+    )
+    for directory in ("consumed", "receipts", "requests"):
+        if (root / "recovery" / directory / (identity + ".json")).exists():
+            raise ValueError("FORWARD_SERVICE_RECOVERY_REQUEST_ID_REUSED")
+    write_json_immutable(root / "recovery/requests" / (identity + ".json"), value)
+    return value
 
 
 @contextlib.contextmanager
@@ -112,6 +206,7 @@ class ForwardService:
         self.workflow_database, self.model_database = workflow_database, model_database
         self.data_database, self.revision = data_database, revision
         self.collection_database = collection_database
+        self.instance_id = uuid4().hex
         self.modes, self.initialize_paper = modes, initialize_paper
         self.calendar = Calendar(REPO / "configs/observer_calendar_2026.json")
         self.root.mkdir(parents=True, exist_ok=True)
@@ -491,6 +586,99 @@ class ForwardService:
         else:
             book.observe(target, session, now=now)
 
+    def recover_requested_books(self) -> list[str]:
+        """Consume explicit current-instance requests once, before human reconciliation."""
+        errors = []
+        for index, path in enumerate((self.root / "recovery/requests").glob("*.json")):
+            if index >= 1024:
+                errors.append("FORWARD_SERVICE_RECOVERY_REQUEST_BOUND")
+                break
+            identity = path.stem
+            if re.fullmatch("[a-f0-9]{32}", identity) is None:
+                errors.append("FORWARD_SERVICE_RECOVERY_REQUEST_INVALID")
+                continue
+            consumed = self.root / "recovery/consumed" / (identity + ".json")
+            receipt = self.root / "recovery/receipts" / (identity + ".json")
+            if receipt.exists():
+                continue
+            if consumed.exists():
+                errors.append("FORWARD_SERVICE_RECOVERY_CONSUMED_REQUIRES_REVIEW")
+                continue
+            now = datetime.now(UTC)
+            try:
+                request = load(path, 16 * 1024)
+                validate_recovery_request(
+                    request, identity=identity, instance_id=self.instance_id, now=now
+                )
+                book = self.books.get(request["book_id"])
+                if (
+                    book is None
+                    or book.mode is not RuntimeMode.PAPER
+                    or signed(self.roster[request["book_id"]])["evidence_sha256"]
+                    != request["book_id"]
+                    or book.bundle.runtime.status.running
+                ):
+                    raise ValueError("FORWARD_SERVICE_RECOVERY_BOOK_NOT_HALTED_PAPER")
+            except Exception:
+                code = "FORWARD_SERVICE_RECOVERY_REQUEST_REJECTED"
+                write_json_immutable(
+                    receipt,
+                    signed(
+                        {
+                            **AUTHORITY,
+                            "request_id": identity,
+                            "state": "REJECTED",
+                            "at": now.isoformat(),
+                            "code": code,
+                        }
+                    ),
+                )
+                errors.append(code)
+                continue
+            # This durable intent is irreversible even if reconciliation crashes or fails.
+            write_json_immutable(
+                consumed,
+                signed(
+                    {
+                        **AUTHORITY,
+                        "request_id": identity,
+                        "request_sha256": request["evidence_sha256"],
+                        "book_id": request["book_id"],
+                        "actor": request["actor"],
+                        "instance_id": self.instance_id,
+                        "state": "CONSUMED",
+                        "at": now.isoformat(),
+                    }
+                ),
+            )
+            state = "SUCCEEDED"
+            outcome_code: str | None = None
+            try:
+                validate_recovery_request(
+                    request, identity=identity, instance_id=self.instance_id, now=datetime.now(UTC)
+                )
+                book.recover(actor=request["actor"])
+            except Exception:
+                book.bundle.report_incident("explicit forward recovery failed")
+                state = "FAILED"
+                outcome_code = "FORWARD_SERVICE_RECOVERY_RECONCILIATION_FAILED"
+                errors.append(outcome_code)
+            write_json_immutable(
+                receipt,
+                signed(
+                    {
+                        **AUTHORITY,
+                        "request_id": identity,
+                        "request_sha256": request["evidence_sha256"],
+                        "book_id": request["book_id"],
+                        "state": state,
+                        "at": datetime.now(UTC).isoformat(),
+                        "code": outcome_code,
+                    }
+                ),
+            )
+        return errors
+
     def cycle(self, *, now: datetime | None = None, stopped: bool = False) -> dict[str, Any]:
         now = now or datetime.now(UTC)
         errors: list[dict[str, Any]] = list(self.startup_errors)
@@ -521,6 +709,9 @@ class ForwardService:
         if not stopped:
             self.discovery_errors = []
             storage_ready = shutil.disk_usage(self.base).free >= 100 * 1024**3
+            if storage_ready:
+                for code in self.recover_requested_books():
+                    error(None, RuntimeMode.PAPER.value, ValueError(code))
             try:
                 if not storage_ready:
                     raise ValueError("FORWARD_SERVICE_STORAGE_RESERVE")
@@ -583,6 +774,23 @@ class ForwardService:
         )
         value = validate_forward_publication(publication(summaries, state), now=now)
         write_json_atomic(self.base / "workflow/public/forward.json", value)
+        write_json_atomic(
+            self.root / "service-instance.json",
+            signed(
+                {
+                    **AUTHORITY,
+                    "schema_version": "qtrade.forward-service-instance.v1",
+                    "instance_id": self.instance_id,
+                    "state": "STOPPED" if stopped else "RUNNING",
+                    "paper_books": [
+                        identity
+                        for identity, book in self.books.items()
+                        if book.mode is RuntimeMode.PAPER
+                    ],
+                    "heartbeat_at": datetime.now(UTC).isoformat(),
+                }
+            ),
+        )
         return value
 
     def close(self) -> None:
@@ -597,14 +805,46 @@ class ForwardService:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ("base", "local-root", "workflow-database", "model-database", "data-database"):
-        parser.add_argument("--" + name, type=Path, required=True)
-    parser.add_argument("--source-revision", required=True)
+    parser.add_argument("--local-root", type=Path, required=True)
+    for name in ("base", "workflow-database", "model-database", "data-database"):
+        parser.add_argument("--" + name, type=Path)
+    parser.add_argument("--source-revision")
+    parser.add_argument("--prepare-recovery-book")
+    parser.add_argument("--recovery-actor")
+    parser.add_argument("--recovery-request-id")
+    parser.add_argument("--recovery-ttl-seconds", type=int, default=300)
     parser.add_argument("--modes", default="SHADOW")
     parser.add_argument("--initialize-paper")
     parser.add_argument("--collection-database", type=Path)
     parser.add_argument("--once", action="store_true")
     args = parser.parse_args()
+    if args.prepare_recovery_book:
+        if not args.recovery_actor:
+            parser.error("--recovery-actor is required for explicit request preparation")
+        value = prepare_recovery_request(
+            args.local_root,
+            book_id=args.prepare_recovery_book,
+            actor=args.recovery_actor,
+            request_id=args.recovery_request_id,
+            ttl_seconds=args.recovery_ttl_seconds,
+        )
+        print(json.dumps(value, sort_keys=True))
+        return
+    if args.recovery_actor or args.recovery_request_id or args.recovery_ttl_seconds != 300:
+        parser.error("Recovery options require --prepare-recovery-book")
+    if any(
+        getattr(args, name) is None
+        for name in (
+            "base",
+            "workflow_database",
+            "model_database",
+            "data_database",
+            "source_revision",
+        )
+    ):
+        parser.error(
+            "Service mode requires base, workflow/model/data databases and source revision"
+        )
     if sys.platform == "win32":
         parser.error("The supervised service requires Linux local filesystem leases")
     import fcntl
