@@ -8,12 +8,17 @@ Last updated: 2026-10-26
   First full Linux suite passes 713 checks and real training completes; a
   shortened restore window changes four float32 STD/CORR cells (of 2.8 million)
   while scores match exactly. Strict parity correctly rejects the attempt.
-  Restore now preserves the training calculation origin; real rerun is pending.
+  Restore now preserves the training calculation origin; source 1bb13a9 passes
+  729 Linux checks and real retraining/independent restoration. 17,814 rows across
+  20 sessions, 158 factors, unchanged processors, maximum score difference zero;
+  11,963 archive files verified. Candidate remains NOT_ACTIVATED.
   Fixed-anchor daily extension also rejects changed adjustment history and raw
   price/volume overlap, with 12 focused checks. New data version publication is pending.
   A bounded resumable preparer now binds admitted day batches and fresh factor
-  captures, preserving original rows; five integration checks pass. Real small
-  cluster pilot is pending. No ready pointer or automatic prediction is claimed.
+  captures, preserving original rows; five integration checks pass. Source 438c628
+  passes all 734 Linux checks and prepares three real stocks through 2026-10-26.
+  Current Qlib 990 scope has 987 qualified day inputs; three are blocked. Bounded
+  background preparation continues; no ready pointer or prediction is claimed.
   Old worker/model/data identities remain unchanged. docs/QLIB_FITTED_RESTORE.md.
 
 - Phase B current incremental milestone is live at production main 51ec2e1;

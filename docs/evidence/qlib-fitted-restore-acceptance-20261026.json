@@ -1,0 +1,107 @@
+{
+  "acceptance": {
+    "revision": "1bb13a935addbf4d79b87416c967570459ed0fe6",
+    "started_at": 1793014234.7333446,
+    "pytest_exit": 0,
+    "training_exit": 0,
+    "finished_at": 1793014666.545753
+  },
+  "archive_verified_files": 11963,
+  "checksums_sha256": "688cf14ae5bd6b01ebfce60fbdc3e76e9491c74865ca28957530c8765173b2b4",
+  "summary": {
+    "run_id": "restore-alpha158-lightgbm-20261026-43e499352a151677",
+    "completed_at": "2026-10-26T11:37:41.692348+00:00",
+    "source_revision": "1bb13a935addbf4d79b87416c967570459ed0fe6",
+    "data_end": "2026-10-23",
+    "dataset_sha256": "a56d093e439345619d2a0419be4e6191886164d8bc849ee05ef25452c26a0759",
+    "symbols": 990,
+    "feature_count": 158,
+    "packages": {
+      "pyqlib": "0.9.7",
+      "lightgbm": "4.6.0",
+      "numpy": "1.26.4",
+      "pandas": "2.2.3",
+      "mlflow": "2.22.2"
+    },
+    "segments": {
+      "test": [
+        "2024-01-02",
+        "2026-10-23"
+      ],
+      "train": [
+        "2017-04-05",
+        "2021-12-28"
+      ],
+      "valid": [
+        "2022-01-04",
+        "2023-12-26"
+      ]
+    },
+    "metrics": {
+      "ic": 0.02425705803026911,
+      "rank_ic": 0.05205254524640808,
+      "icir": 0.164329978273446,
+      "rank_icir": 0.32494389109558336,
+      "total_return_net": 1.172260122360648,
+      "annual_return_net": 0.33420899997792275,
+      "sharpe_net": 1.2102822140858476,
+      "max_drawdown": -0.33334143436358366,
+      "mean_daily_turnover": 0.17591530407974906,
+      "benchmark_return": 0.19650306312424815,
+      "annualized_volatility": 0.26815679229184775
+    },
+    "source_snapshot_sha256": "b39408fa65995fc593e85c43e0b1c6bd6d5ae2443efdbe0f42873c1de6a83687",
+    "selection_bias": "current liquidity universe; survivorship and pre-screen bias; non-PIT",
+    "mlflow_recorder_id": "9e59d7ec652441d9b1eccab885aff0c1"
+  },
+  "restore": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.qlib-independent-restore.v1",
+    "state": "PARITY_VERIFIED_NOT_ACTIVATED",
+    "verified_at": "2026-10-26T11:37:40.967606+00:00",
+    "bundle_sha256": "62c25a557bd2666f60e3744db4ed54f08d304dc5a984be4a803a5b426e62251a",
+    "pid": 130633,
+    "feature_count": 158,
+    "reference_rows": 17814,
+    "reference_start": "2026-09-18",
+    "reference_end": "2026-10-23",
+    "handler_start": "2016-10-24",
+    "max_absolute_score_difference": 0.0,
+    "fitted_processors_unchanged": true,
+    "fit_methods_forbidden": true,
+    "official_loader": "qlib.workflow.online.update.RMDLoader",
+    "handler_init_type": "DataHandlerLP.IT_LS",
+    "model_activated": false,
+    "limitations": [
+      "FROZEN_DATA_RESTORE_ONLY_NOT_NEW_DAY_PREDICTION",
+      "CURRENT_UNIVERSE_NON_PIT",
+      "MANUAL_ACTIVATION_STILL_REQUIRED"
+    ],
+    "evidence_sha256": "38f885c363457e787fcc3bb88fff598f4458dfbd82a34705c785cab01171c5b0"
+  },
+  "artifact_sizes": {
+    "reference-features.parquet": 12571710,
+    "reference-scores.parquet": 190972,
+    "params.pkl": 193867,
+    "dataset": 13806,
+    "manifest.json": 1286933
+  },
+  "live_trading_enabled": false,
+  "model_activated": false,
+  "tests": {
+    "passed": 729,
+    "failed": 0,
+    "skipped": 0
+  },
+  "limitations": [
+    "FROZEN_20261023_DATA_NOT_NEW_DAY_PREDICTION",
+    "FULL_HISTORICAL_PIT_UNCERTIFIED",
+    "MANUAL_ACTIVATION_NOT_PERFORMED"
+  ]
+}

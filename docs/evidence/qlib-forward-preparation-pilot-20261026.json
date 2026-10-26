@@ -1,0 +1,198 @@
+{
+  "observed_at": "2026-10-26T11:41:54.299131+00:00",
+  "acceptance": {
+    "revision": "438c6282478da655dd937f74792e1fcf1f97dbcf",
+    "started_at": 1793014659.6742718,
+    "pytest_exit": 0,
+    "pilot_exit": 0,
+    "finished_at": 1793014753.8685553
+  },
+  "tests": {
+    "passed": 734,
+    "failed": 0,
+    "skipped": 0
+  },
+  "progress": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.forward-qlib-preparation.v1",
+    "request_sha256": "1b63d659e52fe9bccd9d9dd127c01f933d384f81bf5974a1ab0bef406cd1ab64",
+    "day": "2026-10-26",
+    "updated_at": "2026-10-26T11:41:30.464316+00:00",
+    "requested_symbols": 990,
+    "qualified_current_daily_inputs": 987,
+    "prepared_symbols": 28,
+    "attempted_new_symbols": 25,
+    "failures": [
+      {
+        "symbol": "002827",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "600621",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "605258",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      }
+    ],
+    "pending_symbols": 959,
+    "retry_queue": {
+      "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+      "scope_symbols": 987,
+      "completed_symbols": 28,
+      "unresolved_symbols": 959,
+      "unattempted_symbols": 959,
+      "due_retry_symbols": 0,
+      "waiting_retry_symbols": 0,
+      "next_retry_at": null,
+      "historical_pit_certified": false
+    },
+    "state": "PREPARATION_ONLY_NOT_A_READY_QLIB_VERSION",
+    "provider_published": false,
+    "model_activated": false,
+    "historical_pit_certified": false,
+    "next_gates": [
+      "COMPLETE_BOUND_SOURCE_ADAPTATION",
+      "BENCHMARK_AND_CALENDAR_ADAPTATION",
+      "IMMUTABLE_PROVIDER_BUILD_AND_ATOMIC_READY_PUBLICATION"
+    ],
+    "evidence_sha256": "2026aea404ec3241d8441e2c3f2e51891ca8d2eacc8a0c8d4794fb9276197cdf"
+  },
+  "pilot_stock_receipts": [
+    {
+      "symbol": "000001",
+      "name": "平安银行",
+      "rows": 2430,
+      "start": "2016-10-24",
+      "end": "2026-10-26",
+      "base_stock_sha256": "cc4d4520d6935104e4710a29964f00a9235fc6dbe7a9a70b802bc604636901dc",
+      "batch_sha256": "73dae3167bb0cfb44789ff3ff80fe2c421e9d1944dea7a6027d718c5c7ecece1",
+      "daily_file": "daily-2f7dac443697348d2941a40f76f0ed4fb025bfb1489359999cf820bf2bed2799.parquet",
+      "factor_capture_file": "factors-ce1986d73c408e5c127e41d65f8199ba27287857bcb2034406eb02836153eb15.json",
+      "observed_at": "2026-10-26T11:39:12.991171+00:00",
+      "normalization": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.forward-daily-normalization.v1",
+        "symbol": "000001",
+        "frozen_rows": 2429,
+        "frozen_end": "2026-10-23",
+        "appended_rows": 1,
+        "new_end": "2026-10-26",
+        "anchor_scale": "1050.376926584960436",
+        "frozen_prefix_unchanged": true,
+        "same_vendor_overlap_checked": true,
+        "historical_pit_certified": false,
+        "independent_price_basis_certified": false,
+        "corporate_actions_certified": false,
+        "historical_available_at": null,
+        "evidence_sha256": "73b56b883a510a34896828cdb1390b6913fc05970f750358385411b4ed79b718"
+      },
+      "files": {
+        "factors-ce1986d73c408e5c127e41d65f8199ba27287857bcb2034406eb02836153eb15.json": "6280fd4d2c941327d50c1b6401aaee2fbf80bf3c20ee94d7af420821a5eb3850",
+        "daily-2f7dac443697348d2941a40f76f0ed4fb025bfb1489359999cf820bf2bed2799.parquet": "2f7dac443697348d2941a40f76f0ed4fb025bfb1489359999cf820bf2bed2799",
+        "sz000001-hfq.js": "60aa3b71bd6e860cb2a85a6ec36453344ae7c339f33f3c61dd340e8abc3c4378",
+        "sz000001-raw.js": "eb226369a04fda7b33067487ef27d9daa2da1c7b5f527a2c7b15b1f5cb6c7b23"
+      },
+      "evidence_sha256": "083f5d5130eaa3d68e46f110f8ac557b310262199d1075eb236abea342ad4dc2"
+    },
+    {
+      "symbol": "000002",
+      "name": "万 科Ａ",
+      "rows": 2425,
+      "start": "2016-10-24",
+      "end": "2026-10-26",
+      "base_stock_sha256": "edade557a1b148cd27a7ebde286a7a72346fcd1eebb73df32bba99e19cf23622",
+      "batch_sha256": "73dae3167bb0cfb44789ff3ff80fe2c421e9d1944dea7a6027d718c5c7ecece1",
+      "daily_file": "daily-adfaa0697f6789591118fbc2d012231911e200cd18a9a116c11f6dc37ce7eeb6.parquet",
+      "factor_capture_file": "factors-cb0394d078529736142798080a98715d1a214bad4a0c0eadb72c57fb1c95d7ab.json",
+      "observed_at": "2026-10-26T11:39:13.299184+00:00",
+      "normalization": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.forward-daily-normalization.v1",
+        "symbol": "000002",
+        "frozen_rows": 2424,
+        "frozen_end": "2026-10-23",
+        "appended_rows": 1,
+        "new_end": "2026-10-26",
+        "anchor_scale": "3119.831059858288980",
+        "frozen_prefix_unchanged": true,
+        "same_vendor_overlap_checked": true,
+        "historical_pit_certified": false,
+        "independent_price_basis_certified": false,
+        "corporate_actions_certified": false,
+        "historical_available_at": null,
+        "evidence_sha256": "30a1736c173624d975a242b0f4be1e6661587d917cf475a3c4ce3da4c1c8775e"
+      },
+      "files": {
+        "factors-cb0394d078529736142798080a98715d1a214bad4a0c0eadb72c57fb1c95d7ab.json": "056f48c029191fa00afc2ab4c245b0a81cde6b81d6ded48b45320dd4aef8c361",
+        "daily-adfaa0697f6789591118fbc2d012231911e200cd18a9a116c11f6dc37ce7eeb6.parquet": "adfaa0697f6789591118fbc2d012231911e200cd18a9a116c11f6dc37ce7eeb6",
+        "sz000002-hfq.js": "0ef6c976cbec609dea2ab65420e513dfa025a3c995c20c85e008660db6e92786",
+        "sz000002-raw.js": "9b15d04996a4a2cfdb12bc31592154e75fe6be12bd88ca75854e5c814ba13074"
+      },
+      "evidence_sha256": "cbd1ef2fdb24f556c3b683e319502e197ecf2a2c650d2a1a189da4d5b938653e"
+    },
+    {
+      "symbol": "000011",
+      "name": "深物业A",
+      "rows": 2430,
+      "start": "2016-10-24",
+      "end": "2026-10-26",
+      "base_stock_sha256": "bdd4638c9ef7c2f9014abe5a55302e5ae59f53ac067d13a8a0f2ffc758721819",
+      "batch_sha256": "73dae3167bb0cfb44789ff3ff80fe2c421e9d1944dea7a6027d718c5c7ecece1",
+      "daily_file": "daily-2d04dee6997fa36a5fb52a100c368d7fdfa3f3070afc1af6086758b8aa9ebae8.parquet",
+      "factor_capture_file": "factors-4b9ddbe7d585ceeea6b804078e59bd5b04a85ab4a12a08f29edbccff3b4f631b.json",
+      "observed_at": "2026-10-26T11:39:13.704861+00:00",
+      "normalization": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.forward-daily-normalization.v1",
+        "symbol": "000011",
+        "frozen_rows": 2429,
+        "frozen_end": "2026-10-23",
+        "appended_rows": 1,
+        "new_end": "2026-10-26",
+        "anchor_scale": "64.772251460883096",
+        "frozen_prefix_unchanged": true,
+        "same_vendor_overlap_checked": true,
+        "historical_pit_certified": false,
+        "independent_price_basis_certified": false,
+        "corporate_actions_certified": false,
+        "historical_available_at": null,
+        "evidence_sha256": "a89ce96737f79b741876f71b68b3b9142c31d5cbbd7753f03a08b6a1ec7645e3"
+      },
+      "files": {
+        "factors-4b9ddbe7d585ceeea6b804078e59bd5b04a85ab4a12a08f29edbccff3b4f631b.json": "2643c1da4110842af4a18b0665654695e389456e9188d282517b31d50c1d3cbf",
+        "daily-2d04dee6997fa36a5fb52a100c368d7fdfa3f3070afc1af6086758b8aa9ebae8.parquet": "2d04dee6997fa36a5fb52a100c368d7fdfa3f3070afc1af6086758b8aa9ebae8",
+        "sz000011-hfq.js": "781f31bdfaa88e64587a59756100d8add08bad8c587405895748a833a48ac913",
+        "sz000011-raw.js": "6453c0724b042df2c1f53ea953b9befb01ffe5a4f15634abd12764d77d34f242"
+      },
+      "evidence_sha256": "0dbde90163c8332cd8c62c690a2cd6e4a7125c724578d5dc62a1c57129747933"
+    }
+  ],
+  "provider_published": false,
+  "live_trading_enabled": false
+}
