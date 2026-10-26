@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.research.data_epoch import current_epoch
+from qtrade.research.data_version_control import read_catalog
 from qtrade.research.data_versions import verify_version
 from qtrade.research.forward_prediction import verify_validation
 from qtrade.research.model_registry import ModelRegistry, checked_identity, control_command
@@ -170,8 +172,21 @@ class OnlineModels:
             data['historical_symbols'] = len(version['historical_symbols'])
             data['observation_universe_version'] = version['bindings'][
                 'observation_universe_version']
+            data['data_event_id'] = current_epoch(self.data_database, version['version_id'])
         except (ValueError, KeyError, TypeError, OSError, sqlite3.Error):
             data_error = 'QUALIFIED_DATA_HEAD_UNAVAILABLE'
+            data = None
+        data_catalog = None
+        try:
+            data_catalog = read_catalog(self.data_database,
+                                        self.base/'unified-data/qlib-versions', limit=100)
+            if data is not None and (
+                    data_catalog['head_version_id'] != data['version_id']
+                    or data_catalog['head_event_id'] != data['data_event_id']):
+                data = None
+                data_error = 'QUALIFIED_DATA_HEAD_CHANGED_DURING_PUBLICATION'
+        except (ValueError, KeyError, TypeError, OSError, sqlite3.Error):
+            pass
         validations = []
         models = state['models'][-199:]
         if state['active_model'] and not any(r['definition']['model_id'] == state['active_model']
@@ -194,7 +209,7 @@ class OnlineModels:
                 'source_revision': revision,
                 'state': 'MODEL_CONTROL_READY' if worker_state == 'IDLE' else worker_state},
             'data_version': data, 'data_error': data_error, 'active_model': state['active_model'],
-            'data_schedule': schedule,
+            'data_schedule': schedule, 'data_catalog': data_catalog,
             'models': models, 'validations': validations,
             'commands': state['commands'], 'events': state['events'],
             'auto_predict': {'enabled': False, 'state': 'EVENT_WORKER_INTEGRATION_PENDING'},

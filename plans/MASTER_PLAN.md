@@ -22,6 +22,33 @@ Audit date: 2026-08-12.
 
 ## Milestones
 
+### STEP1 completion then STEP2 research core, 2026-10-27 (active)
+
+Forward e107eb9 freezes 12 actual prospective targets across six strategy/mode
+pairs. Existing LightGBM PAPER awaits explicit human recovery after restart;
+the other five pristine PAPER books initialized successfully. Actual observation
+and next-session acceptance remain open. One-shot recovery and SZ302 conservative
+observation support pass 92 Linux checks. PR22 carries the web integration.
+
+Cluster runtime is now 19cbb2a plus the independent ETF service 1233c2f. Full
+Linux integration (1,299 checks) and focused subsequent fixes pass. Initial
+native archive pointers are verified; prospective targets await current prediction
+and signals. Vercel release and genuine next-session acceptance remain open.
+
+Native comparison and ETF diagnostic evidence are captured in
+docs/evidence/qlib-step1-initial-native-20261027.json. New forward service/core/UI
+and data control integration pass local checks; Linux acceptance and deployment
+of this batch remain pending. Daily ETF scheduling is being added separately.
+Actual next-session proof is still required; STEP2 implementation has not begun.
+
+Owner explicitly requests continuous execution and authorizes parallel agents.
+Follow plans/STEP1_STEP2_EXECUTION.md and preserved STEP2_USER_GUIDE.txt.
+Complete all C/D/E gates, including real next-session evidence, before starting
+Factor Registry/Evaluation/Strategy Registry/Builder and controlled model expansion.
+Current local implementations cover comparison, forward ledger, data controls
+and cross-session lineage audit; none of this new batch is deployed or accepted.
+Unknown historical PIT is a published constraint, not a successful certification.
+
 ### Unified securities and Qlib Online Serving, 2026-10-26 (active)
 
 Execute the owner-approved Phase A–E in plans/UNIFIED_DATA_ONLINE_PLAN.md.

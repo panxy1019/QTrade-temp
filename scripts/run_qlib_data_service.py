@@ -20,6 +20,7 @@ from threading import Event
 from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.research.data_epoch import current_epoch
 from qtrade.research.data_versions import file_hash
 from qtrade.research.forward_prediction import next_execution
 from scripts.atomic_json import write_json_atomic, write_json_immutable
@@ -78,6 +79,7 @@ def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datet
     calendar = Calendar(REPO/'configs/observer_calendar_2026.json')
     day = calendar.expected(now, 'daily').date().isoformat()
     previous, current = head(base, database)
+    epoch = current_epoch(database, current['version_id'])
     detail: dict[str, Any] = {'required_day': day, 'data_version_id': current['version_id'],
                               'data_end': current['actual_end'], 'provider_published': False}
 
@@ -100,7 +102,8 @@ def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datet
     job_root = root/'days'/day
     job_file = job_root/'request.json'
     request = signed({**AUTHORITY, 'day': day, 'previous': previous.relative_to(base).as_posix(),
-                      'previous_version': current['version_id'], 'source_revision': revision})
+                      'previous_version': current['version_id'], 'previous_event_id': epoch,
+                      'source_revision': revision})
     if job_file.exists():
         saved = load_signed(job_file)
         if saved != request:
@@ -140,6 +143,10 @@ def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datet
         return outcome('WAITING_FOR_CURRENT_COLLECTION')
     # Exclude manual builders while the automatic one publishes the same ledger.
     with exclusive(database.parent/'qlib-provider-build.lock'):
+        _, final_head = head(base, database)
+        if (final_head['version_id'] != current['version_id']
+                or current_epoch(database, final_head['version_id']) != epoch):
+            return outcome('BLOCKED_DAILY_HEAD_CHANGED_REVIEW_REQUIRED')
         value = build(base, previous, folder, database, revision=revision, qlib_python=python)
     if value['state'] != 'RESEARCH_READY_QUALIFIED_SUBSET':
         return outcome('BLOCKED_PROVIDER_VALIDATION')

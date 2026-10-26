@@ -2,6 +2,55 @@
 
 Last updated: 2026-10-27
 
+- STEP1 prospective checkpoint at 01:35 Shanghai: forward runtime e107eb9 now
+  holds 12 books (five baseline families plus approved LightGBM, each SHADOW and
+  PAPER), each with one actual pre-open frozen target. No observed session or
+  fill is claimed. Existing LightGBM PAPER is halted after the controlled restart;
+  explicit owner recovery approval is pending. Other five PAPER books completed
+  pristine initialization. The live-instance-bound one-shot recovery endpoint is
+  local-only and has not been invoked on production. SZ302132 is admitted for
+  observation with lot zero, never unproven execution. All 92 Linux forward
+  checks pass. Actual cluster-backed HTTP routes for catalog, signals, comparison,
+  ETF, forward books and data versions all return available publications; this
+  does not prove Vercel delivery or rendered UI. PR22 preview passed before the
+  last fixes, final preview is pending; browser inspection timed out. Evidence:
+  docs/evidence/qlib-step1-forward-freeze-e107eb9.json.
+
+- STEP1 runtime checkpoint at 01:23 Shanghai: research worker, publisher, daily
+  version service and new prospective forward service run source 19cbb2a. Approved
+  LightGBM prediction is RUNNING; forward books are not frozen until current
+  prediction/signals become available. Dedicated ETF diagnostics source 1233c2f
+  adopted the actual October 26 archive (30/30) without additional source requests;
+  its supervised service is installed. Existing unrelated process PIDs are preserved.
+  Source 658d3d3 passes 1,299 Linux tests with zero failures/skips; subsequent
+  comparison/discovery fixes pass 55 Linux tests and ETF service passes 52.
+  Full local src typecheck (137 files), frontend lint and 248 frontend tests pass.
+  Archive publication now preserves explicit V1 or V2 historical constraint policy.
+  Evidence: docs/evidence/qlib-step1-integration-658d3d3.json. Vercel release, actual
+  prospective freeze and next-session acceptance remain pending. Older checkpoints
+  below describe earlier states, not the current deployment.
+
+- STEP1 integration checkpoint: actual native seven-strategy comparison completed
+  on 601,013 common rows and 678 sessions (2024-01-02 through 2026-10-23).
+  Thirty ETFs have verified 21-session native-close diagnostic inputs through
+  October 26, with adjustment basis explicitly uncertified. Evidence is in
+  docs/evidence/qlib-step1-initial-native-20261027.json. Source d83e1ae passed
+  1,181 Linux checks; this predates the forward service additions. Current local
+  integration passes 248 frontend tests, Vercel build and targeted backend checks
+  (one Windows-only skip). Forward service, durable books, admission serialization,
+  public summaries and pages await Linux/production acceptance. Production still
+  runs a69eb70. No real October 27 transition or forward fills are claimed.
+
+- New owner-requested continuous goal: complete STEP1 C/D/E (unified historical
+  comparison, holdings/constraints, PAPER/SHADOW, actual next-session acceptance)
+  before STEP2 factor/strategy research. Execution plan is
+  plans/STEP1_STEP2_EXECUTION.md; original STEP2 input is preserved. Three parallel
+  implementation tasks own comparison, forward paper core, and version control;
+  parent integrates worker/API/UI and production acceptance. Work is local and
+  not yet deployed. Actual 00:35 Shanghai checks show collection WAITING, daily
+  service current through Oct 26, successful publication, free space 280.6 GiB.
+  An actual Oct 27 complete-session transition has not happened yet.
+
 - PR20 merged as main 7c7d98a; cluster research worker/publisher and the single
   alternating history service run audited source a69eb70. All 1,127 Linux checks
   pass without skips; all 227 frontend checks pass. Production APIs verify fresh

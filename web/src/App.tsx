@@ -33,6 +33,7 @@ const QlibBacktestPage = lazy(() => import('./pages/QlibWorkflowPages').then(m =
 const QlibArchivePage = lazy(() => import('./pages/QlibWorkflowPages').then(m => ({ default: m.QlibArchivePage })))
 const OnlineModelsPage = lazy(() => import('./pages/OnlineModelsPage').then(m => ({ default: m.OnlineModelsPage })))
 const SignalsPage = lazy(() => import('./pages/SignalsPage').then(m => ({ default: m.SignalsPage })))
+const ForwardResearchPage = lazy(() => import('./pages/ForwardResearchPage').then(m => ({ default: m.ForwardResearchPage })))
 
 const menu = [
   ['/', '总览', <AreaChartOutlined />], ['/market', '行情中心', <StockOutlined />],
@@ -102,10 +103,10 @@ function Shell() {
                   { key: 'experiments', label: '原实验档案', children: <ExperimentPage data={data} /> },
                   { key: 'backtest', label: 'ETF/分钟回测工具', children: <BacktestPage data={data} /> },
                 ]} /></QlibArchivePage>} />
-                <Route path="/paper" element={<PaperPage data={data} publicNode={publicNode} onRefresh={async () => { await refresh() }} />} />
-                <Route path="/positions" element={<PositionsPage data={data} />} />
-                <Route path="/orders" element={<OrdersPage data={data} publicNode={publicNode} onRefresh={async () => { await refresh() }} />} />
-                <Route path="/risk" element={<RiskPage data={data} />} />
+                <Route path="/paper" element={publicNode ? <ForwardResearchPage /> : <PaperPage data={data} publicNode={publicNode} onRefresh={async () => { await refresh() }} />} />
+                <Route path="/positions" element={publicNode ? <ForwardResearchPage focus="holdings" /> : <PositionsPage data={data} />} />
+                <Route path="/orders" element={publicNode ? <ForwardResearchPage focus="fills" /> : <OrdersPage data={data} publicNode={publicNode} onRefresh={async () => { await refresh() }} />} />
+                <Route path="/risk" element={publicNode ? <ForwardResearchPage focus="risk" /> : <RiskPage data={data} />} />
                 <Route path="/data" element={<DataCenterPage data={data} />} />
                 <Route path="/monitor" element={<MonitorPage data={data} />} />
                 <Route path="*" element={<Navigate to="/" replace />} />

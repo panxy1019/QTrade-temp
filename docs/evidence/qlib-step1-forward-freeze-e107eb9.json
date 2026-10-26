@@ -1,0 +1,120 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "observed_at": "2026-10-26T17:34:54.850242+00:00",
+  "forward_revision": "e107eb9c74001822dda220b1e6ca96a55ee00ef6",
+  "worker": {
+    "heartbeat_at": "2026-10-26T17:34:45.492957+00:00",
+    "source_revision": "19cbb2a1faa2f537ddb670dcbbf89d760e27acb7",
+    "state": "MODEL_CONTROL_READY"
+  },
+  "prediction_state": "COMPLETE",
+  "forward_state": "HUMAN_RECOVERY_REQUIRED",
+  "forward_evidence_sha256": "428cb0bc364f7b5237f3d04c96220f96c52f699f53d78d2f42d89b6901ec0922",
+  "books": [
+    {
+      "strategy_id": "approved_model_2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "mode": "SHADOW",
+      "target_count": 1,
+      "running": false,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "approved_model_2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "mode": "PAPER",
+      "target_count": 1,
+      "running": false,
+      "recovery_required": true
+    },
+    {
+      "strategy_id": "equal_weight_universe",
+      "mode": "SHADOW",
+      "target_count": 1,
+      "running": false,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "equal_weight_universe",
+      "mode": "PAPER",
+      "target_count": 1,
+      "running": true,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "lowvol20",
+      "mode": "SHADOW",
+      "target_count": 1,
+      "running": false,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "lowvol20",
+      "mode": "PAPER",
+      "target_count": 1,
+      "running": true,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "momentum20",
+      "mode": "SHADOW",
+      "target_count": 1,
+      "running": false,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "momentum20",
+      "mode": "PAPER",
+      "target_count": 1,
+      "running": true,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "multifactor_equal_rank",
+      "mode": "SHADOW",
+      "target_count": 1,
+      "running": false,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "multifactor_equal_rank",
+      "mode": "PAPER",
+      "target_count": 1,
+      "running": true,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "reversal5",
+      "mode": "SHADOW",
+      "target_count": 1,
+      "running": false,
+      "recovery_required": false
+    },
+    {
+      "strategy_id": "reversal5",
+      "mode": "PAPER",
+      "target_count": 1,
+      "running": true,
+      "recovery_required": false
+    }
+  ],
+  "linux_forward_tests": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "92",
+    "time": "10.123",
+    "timestamp": "2026-10-27T01:33:33.512593+08:00",
+    "hostname": "73ec830048ca"
+  },
+  "errors": [],
+  "next_session_accepted": false,
+  "production_web_accepted": false,
+  "model_paper_recovery_authorized": false,
+  "evidence_sha256": "ef1f4da0c6b7cf3d5e97d475e43f719151e28f11b044e72c334ec709ec75cb36"
+}

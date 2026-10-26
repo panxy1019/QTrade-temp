@@ -48,6 +48,35 @@ def test_worker_deduplicates_and_records_history_and_capacity(worker):
     ).fetchall() == [("QUEUED",), ("COMPUTING_ALPHA158",)]
 
 
+def test_data_rollback_ingress_requires_authenticated_request_envelope(worker, monkeypatch):
+    value, queue = worker
+    calls = []
+    monkeypatch.setattr(value, 'execute_data_rollback', lambda command: calls.append(command))
+    command = {'request_id': 'e'*32, 'version_id': 'a'*64, 'expected_head': 'b'*64,
+               'expected_event_id': 'c'*64, 'actor': 'test-user', 'reason': 'DATA_QUALITY_REVIEW'}
+    payload = {'job_id': command['request_id'], 'kind': 'QLIB_DATA_ROLLBACK',
+               'command': command, 'live_trading_enabled': False}
+    queue.read = lambda: {'requests/'+command['request_id']: payload}
+    value.ingest()
+    assert calls == []
+    envelope = seal(payload, value.secret)
+    queue.read = lambda: {'cancellations/'+command['request_id']: envelope}
+    value.ingest()
+    assert calls == []
+    queue.read = lambda: {'requests/'+command['request_id']: envelope}
+    value.ingest()
+    assert calls == [command]
+
+
+def test_data_rollback_yields_without_mutation_to_running_prediction(worker):
+    value, _ = worker
+    value.predictor.child = object()
+    value.execute_data_rollback({'request_id': 'e'*32, 'version_id': 'a'*64,
+        'expected_head': 'b'*64, 'expected_event_id': 'c'*64,
+        'actor': 'test-user', 'reason': 'DATA_QUALITY_REVIEW'})
+    assert not (value.root/'data-control').exists()
+
+
 def test_worker_restart_never_replays_an_uncertain_running_job(worker):
     value, queue = worker
     identity = "a" * 32
@@ -201,7 +230,11 @@ def test_candidate_validation_waits_for_new_data_and_prediction_priority(worker,
 def test_signal_jobs_are_data_bound_deduplicated_and_yield_to_prediction(worker, monkeypatch):
     from datetime import UTC, datetime
 
+    from qtrade.research import data_epoch
+
     value, _ = worker
+    epoch = ['e'*64]
+    monkeypatch.setattr(data_epoch, 'current_epoch', lambda *args: epoch[0])
     class Clock(datetime):
         @classmethod
         def now(cls, tz=UTC):
@@ -224,6 +257,9 @@ def test_signal_jobs_are_data_bound_deduplicated_and_yield_to_prediction(worker,
     value.db.commit()
     value.schedule_signals()
     assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 1
+    epoch[0] = 'f'*64
+    value.schedule_signals()
+    assert value.db.execute('SELECT count(*) FROM jobs').fetchone()[0] == 2
 
 
 @pytest.mark.parametrize('kind,module', [('QLIB_SIGNAL_JOB', 'scripts.run_qlib_signal_baselines'),

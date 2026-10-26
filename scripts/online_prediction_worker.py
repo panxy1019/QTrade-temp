@@ -138,6 +138,10 @@ class OnlinePredictor:
                     raise ValueError('PREDICTION_DATA_HEAD_MISSING')
                 if head[0] != version['version_id']:
                     raise ValueError('PREDICTION_DATA_HEAD_CHANGED_DURING_VERIFICATION')
+                epoch = c.execute('SELECT event_id FROM data_events WHERE version_id=? '
+                                  'ORDER BY sequence DESC LIMIT 1', (head[0],)).fetchone()
+                if epoch is None or epoch[0] != proof['bindings']['data_event_id']:
+                    raise ValueError('PREDICTION_DATA_EVENT_CHANGED_DURING_COMPUTE')
                 self.state = self.ledger.finish(proof, current_data_version=head[0],
                                                 now=datetime.now(UTC))
         except (ValueError, KeyError, TypeError, OSError, sqlite3.Error):

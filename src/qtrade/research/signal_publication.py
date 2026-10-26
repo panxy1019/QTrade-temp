@@ -59,6 +59,8 @@ def validate_signal_publication(value: dict[str, Any]) -> dict[str, Any]:
             or m['schema_version'] != 'qtrade.signal-baselines.v1'):
         raise ValueError('SIGNAL_MANIFEST_IDENTITY_INVALID')
     checked_identity(m['bindings']['data_version_id'])
+    if 'data_event_id' in m['bindings']:
+        checked_identity(m['bindings']['data_event_id'])
     generated = datetime.fromisoformat(m['generated_at'])
     execute = datetime.fromisoformat(m['expected_execution_at'])
     if (generated.tzinfo is None or execute.tzinfo is None or generated >= execute

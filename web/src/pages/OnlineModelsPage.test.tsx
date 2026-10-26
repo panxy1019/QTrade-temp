@@ -25,11 +25,20 @@ function catalog() {
   }
 }
 
-function mount(authenticated = true) {
+function mount(authenticated = true, dataVersions = false) {
   let value = catalog(), failed = false
   const posts: Record<string, unknown>[] = []
   const fetcher = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const path = String(input)
+    if (dataVersions && path.endsWith('/online/data-versions')) return { ok: true, status: 200, json: async () => ({
+      publication_available: true, worker_fresh: true, catalog: { head_version_id: value.data_version.version_id,
+        head_event_id: 'e'.repeat(64), total_versions: 2, versions_truncated: false, receipts: [], versions: [
+          { version_id: value.data_version.version_id, actual_end: value.data_version.actual_end,
+            is_head: true, current_symbols: 982, historical_symbols: 990, blocked_symbols: 8 },
+          { version_id: 'f'.repeat(64), actual_end: '2026-10-26', is_head: false,
+            current_symbols: 987, historical_symbols: 990, blocked_symbols: 3 },
+        ] },
+    }) }
     if (path.endsWith('/actions')) {
       posts.push(JSON.parse(String(init?.body)))
       return { ok: !failed, status: failed ? 503 : 202, json: async () => failed ? { detail: '队列暂不可用，保留原请求重试' } : { state: 'QUEUED' } }
@@ -125,4 +134,20 @@ it('shows a historical data gap even while the version scheduler is alive', asyn
   state.update({ ...next, data_schedule_fresh: false })
   fireEvent.click(screen.getByRole('button', { name: '刷新模型目录' }))
   await screen.findByText(/调度心跳不可用或过期/)
+})
+
+it('allows recovery to an admitted version when current data is stale but control is fresh', async () => {
+  const state = mount(true, true)
+  await screen.findByText('982 只当日合格 / 990 只历史保留')
+  const stale = catalog()
+  stale.data_version.actual_end = '2026-10-23'
+  state.update(stale)
+  fireEvent.click(screen.getByRole('button', { name: '刷新模型目录' }))
+  await screen.findByText('2026-10-23（最近完整交易日：2026-10-26）')
+  expect(screen.getByRole('button', { name: '审阅激活' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: '审阅数据回退' })).toBeEnabled()
+  fireEvent.click(screen.getByRole('button', { name: '审阅数据回退' }))
+  expect(await screen.findByRole('button', { name: '批准数据回退' })).toBeEnabled()
+  expect(screen.getByText('旧数据不会恢复为最新可用预测')).toBeInTheDocument()
+  expect(state.posts).toHaveLength(0)
 })

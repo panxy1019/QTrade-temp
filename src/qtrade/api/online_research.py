@@ -16,6 +16,8 @@ from qtrade.api.research_workflow import (
     research_clock,
 )
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
+from qtrade.research.data_version_control import command as data_command
+from qtrade.research.data_version_control import validate_public_catalog
 from qtrade.research.model_registry import checked_document, checked_identity, control_command
 from qtrade.research.rolling_control import command as rolling_command
 from qtrade.research.rolling_policy import validate_policy
@@ -38,6 +40,8 @@ def signal_catalog(response: Response, strategy: str | None = None,
         online = listing()
         current = bool(worker_fresh(online) and online['data_version']
             and manifest['bindings']['data_version_id'] == online['data_version']['version_id']
+            and (not online['data_version'].get('data_event_id') or manifest['bindings'].get(
+                'data_event_id') == online['data_version']['data_event_id'])
             and manifest['bindings']['code_revision'] == online['worker']['source_revision']
             and manifest['data_end'] == research_clock()
             and datetime.now(UTC) < datetime.fromisoformat(manifest['expected_execution_at']))
@@ -114,6 +118,8 @@ def validate_catalog(value: dict[str, Any]) -> dict[str, Any]:
     data = value['data_version']
     if data is not None:
         checked_identity(data['version_id'])
+        if 'data_event_id' in data:
+            checked_identity(data['data_event_id'])
         date.fromisoformat(data['actual_end'])
         if (data['historical_pit_certified'] is not False
                 or data['external_execution_ready'] is not False
@@ -236,6 +242,9 @@ def catalog(response: Response) -> dict[str, Any]:
                         if p['prediction_id'] == prediction.get('current_prediction_id')), None)
         usable = bool(fresh and current and value['data_version']
                       and value['data_version']['actual_end'] == expected_day
+                      and (not value['data_version'].get('data_event_id') or
+                           current['bindings']['data_event_id'] ==
+                           value['data_version']['data_event_id'])
                       and datetime.fromisoformat(current['contract']['expected_execution_at']) > (
                           datetime.now(UTC)))
         return {**value, 'publication_available': True, 'worker_fresh': fresh,
@@ -246,6 +255,100 @@ def catalog(response: Response) -> dict[str, Any]:
                 'models': [], 'validations': [], 'commands': [], 'events': [],
                 'active_model': None, 'data_version': None,
                 'expected_complete_day': research_clock()}
+
+
+@router.get('/etf-trend')
+def etf_trend(response: Response) -> dict[str, Any]:
+    from qtrade.research.etf_trend import validate_etf_trend_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        result = validate_etf_trend_publication(read_public('etf-trend.json', maximum=300_000))
+        return {**AUTHORITY, 'publication_available': True,
+                'current_input': result['as_of'] == research_clock(), 'diagnostic': result}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False,
+                'current_input': False, 'diagnostic': None}
+
+
+@router.get('/forward-books')
+def forward_books(response: Response) -> dict[str, Any]:
+    from qtrade.research.forward_publication import validate_forward_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        result = validate_forward_publication(read_public('forward.json', maximum=2_000_000))
+        stamp = datetime.fromisoformat(result['heartbeat_at'])
+        fresh = result['state'] != 'STOPPED' and 0 <= (
+            datetime.now(UTC)-stamp).total_seconds() <= 720
+        return {**AUTHORITY, 'publication_available': True,
+                'service_fresh': fresh, 'publication': result}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False,
+                'service_fresh': False, 'publication': None}
+
+
+@router.get('/strategy-comparison')
+def strategy_comparison(response: Response) -> dict[str, Any]:
+    from qtrade.research.strategy_comparison import validate_comparison_publication
+
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        result = validate_comparison_publication(read_public('comparison.json', maximum=3_000_000))
+        return {**AUTHORITY, 'publication_available': True, 'comparison': result}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {**AUTHORITY, 'publication_available': False, 'comparison': None}
+
+
+@router.get('/data-versions')
+def data_versions(response: Response) -> dict[str, Any]:
+    response.headers['Cache-Control'] = 'no-store'
+    try:
+        value = listing()
+        data = validate_public_catalog(value['data_catalog'])
+        return {**AUTHORITY, 'publication_available': True,
+                'worker_fresh': worker_fresh(value), 'catalog': data}
+    except (ValueError, KeyError, TypeError, OSError):
+        return {**AUTHORITY, 'publication_available': False,
+                'worker_fresh': False, 'catalog': None}
+
+
+@router.post('/data-rollback', status_code=202)
+async def data_rollback(request: Request) -> dict[str, Any]:
+    user = actor(request)
+    body = await _body(request, 4096)
+    try:
+        if 'actor' in body:
+            raise ValueError('CALLER_CANNOT_SET_ACTOR')
+        command = data_command({**body, 'actor': user})
+    except (ValueError, KeyError, TypeError):
+        raise HTTPException(422, '数据回退需要明确版本、当前版本事件及允许的原因') from None
+    try:
+        value = listing()
+        versions = validate_public_catalog(value['data_catalog'])
+        if not worker_fresh(value):
+            raise ValueError('DATA_CONTROL_WORKER_STALE')
+    except (ValueError, KeyError, TypeError, OSError):
+        raise HTTPException(503, '数据版本控制未就绪，请等待最新发布') from None
+    prior = next((r for r in versions['receipts']
+                  if r['request_id'] == command['request_id']), None)
+    if prior is not None:
+        if prior['command_sha256'] != signed(command)['evidence_sha256']:
+            raise HTTPException(409, '请求标识已绑定另一项数据操作')
+        return dict(prior)
+    if (versions['head_version_id'] != command['expected_head']
+            or versions['head_event_id'] != command['expected_event_id']
+            or not any(v['version_id'] == command['version_id'] for v in versions['versions'])):
+        raise HTTPException(409, '版本或事件已变化，请刷新后重新审阅')
+    try:
+        GitQueue.from_environment().append('requests', command['request_id'], seal({
+            'job_id': command['request_id'], 'kind': 'QLIB_DATA_ROLLBACK',
+            'command': command, 'live_trading_enabled': False,
+        }, os.environ['QTRADE_RESEARCH_QUEUE_SECRET']))
+    except Exception as error:
+        _queue_failure('data-rollback', error)
+        raise HTTPException(503, '回退未获提交确认；请使用原请求标识重试') from None
+    return {**AUTHORITY, 'request_id': command['request_id'], 'state': 'QUEUED'}
 
 
 @router.post('/training-policy', status_code=202)

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Alert, Button, Card, Descriptions, Empty, Form, Input, InputNumber, Select, Space, Statistic, Table, Tag, Timeline, Typography, theme } from 'antd'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useResearchWorkflow } from '../components/ResearchWorkflowProvider'
+import { StrategyComparisonPanel } from '../components/StrategyComparisonPanel'
 import { JsonExportButton } from '../components/JsonExportButton'
 import ChartRenderer from '../charts/ChartRenderer'
 import { canReuseArchivedResult, comparisonDraft, comparisonIssue, completedExperiments, finalStates, limitationLabels, stageLabels, workflowGet, workflowPost } from '../research/qlibWorkflow'
@@ -339,6 +340,7 @@ export function QlibBacktestPage() {
   }, [compareId])
   const issue = result && other ? comparisonIssue(result, other) : null
   return <Layout title="回测分析" description="选择已完成Qlib实验，查看固定结果；统一协议后进行模型对照。">
+    <StrategyComparisonPanel />
     <Space wrap>
       <Select aria-label="选择Qlib实验" placeholder="选择已完成实验" style={{ minWidth: 330 }} value={selected ?? completed[0]?.experiment_id} options={completed.map(row => ({ value: row.experiment_id, label: row.name + ' · ' + row.model }))} onChange={value => { setSelected(value); setParams({ experiment: value }) }} />
       <Select aria-label="选择对照实验" allowClear placeholder="选择另一实验进行对照" style={{ minWidth: 330 }} value={compareId} options={completed.filter(row => row.experiment_id !== (selected ?? completed[0]?.experiment_id)).map(row => ({ value: row.experiment_id, label: row.name }))} onChange={setCompareId} />
@@ -369,4 +371,3 @@ export function QlibArchivePage({ children }: { children: React.ReactNode }) {
     {children}
   </Layout>
 }
-

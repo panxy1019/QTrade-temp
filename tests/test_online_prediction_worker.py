@@ -102,6 +102,24 @@ def test_failed_subprocess_preserves_old_model_and_never_invents_prediction(pred
     assert len(launches) == 1
 
 
+def test_same_version_return_after_rollback_rejects_inflight_old_epoch(predictor, monkeypatch):
+    value, _, _ = predictor
+    value.online.registry.apply(command(), current_data_version=DATA, now=NOW)
+    value.tick()
+    request = value.ledger.tasks()[0]['request']
+    monkeypatch.setattr(worker, 'verify_prediction', lambda p: result(request))
+    event = signed({**AUTHORITY, 'kind': 'QLIB_DATA_ROLLBACK', 'version_id': DATA,
+                    'created_at': NOW.isoformat()})
+    with sqlite3.connect(value.online.data_database) as c:
+        c.execute('INSERT INTO data_events VALUES(2,?,?,?)',
+                  (DATA, event['evidence_sha256'], json.dumps(event)))
+    value.child.returncode = 0
+    value.tick()
+    assert value.state == 'FAILED'
+    assert value.publication(now=NOW)['current_prediction_id'] is None
+    assert value.online.registry.snapshot()['active_model'] == 'a'*64
+
+
 def test_launch_error_is_durable_instead_of_leaving_a_running_claim(predictor, monkeypatch):
     value, _, _ = predictor
     value.online.registry.apply(command(), current_data_version=DATA, now=NOW)

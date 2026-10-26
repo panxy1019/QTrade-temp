@@ -1,0 +1,25 @@
+step2大体安排和开发重点，只有全面完成STEP1之后才考虑进入STEP2
+1. P0-1
+   Factor Registry
+   现有 Alpha158 与基础因子有 ID、公式、版本、时点及依赖
+   P0-2
+   Factor Evaluation
+   能批量评价基础因子，输出独立报告与相关性
+   P0-3
+   统一历史策略基线
+   动量、反转、低波、多因子、Ridge、LightGBM 可同协议比较
+   P0-4
+   Strategy Registry
+   每套策略拥有信号来源、组合规则、执行规则与版本
+   P1-1
+   Strategy Builder
+   网站通过允许列表配置因子、模型、Top-K、权重与成本
+   P1-2
+   PAPER/SHADOW
+   策略能够形成连续模拟持仓、成交与前向收益
+   P1-3
+   模型和特征集扩展
+   XGBoost、Alpha360 等进行受控对照复用 Qlib 0.9.7 的表达式引擎、DataHandler 和已有 QTrade 因子函数，建立统一 Factor Registry。 将现有五组信号追溯到明确的因子版本，并补齐一组基本价量因子，不重复构建底层计算引擎。
+2. 接入 Qlib 原生信号评价与回测分析能力，建立独立因子评价任务。 每个任务固定数据、标签、时间、股票池、因子身份；结果归档并展示 IC、分组、稳定性和相关性。
+3. 建立统一 Strategy Registry 和策略对照工作流。 直接使用 Qlib 的 TopkDropout、WeightStrategyBase 和现有 Exchange，把单因子、多因子、Ridge、LightGBM 放在相同规则下比较。
+4. 连接已有每日信号与 PAPER 模拟账户。 分开保存预测分数、目标权重、模拟实际成交、实际持仓及前向收益，沿用现有模型审批和不可变归档原则。基础因子库、独立因子评价中心、统一策略研发与对照中心。 这三项一旦建成，再接入更多 Qlib 模型、WorldQuant 公式化因子和 RD-Agent，就能够在现有 QTrade 平台上持续产生可检验、可比较的研究结果，而不只是不断增加新的回测曲线。

@@ -15,6 +15,7 @@ NOW = datetime(2026, 10, 26, 12, tzinfo=UTC)
 def runtime(tmp_path, monkeypatch):
     current = {'version_id': 'a'*64, 'actual_end': '2026-10-23'}
     monkeypatch.setattr(service, 'head', lambda *a: (tmp_path/'old', current))
+    monkeypatch.setattr(service, 'current_epoch', lambda *a: 'e'*64)
     monkeypatch.setattr(service, 'collection_idle', lambda *a: True)
     monkeypatch.setattr(service.shutil, 'disk_usage', lambda p: type('Disk', (), {
         'free': 200*1024**3}))
@@ -87,6 +88,14 @@ def test_crash_deadline_and_code_identity_prevent_uncontrolled_retries(runtime, 
     assert run()['state'] == 'WAITING_FOR_RETRY'
     assert calls == ['prepare']
     assert run(revision='e'*40)['state'] == 'BLOCKED_DAILY_INPUT_CHANGED_REVIEW_REQUIRED'
+
+
+def test_rollback_during_preparation_cannot_be_undone_by_stale_builder(runtime, monkeypatch):
+    run, _, _, calls, _ = runtime
+    epochs = iter(['e'*64, 'f'*64])
+    monkeypatch.setattr(service, 'current_epoch', lambda *a: next(epochs))
+    assert run()['state'] == 'BLOCKED_DAILY_HEAD_CHANGED_REVIEW_REQUIRED'
+    assert calls == ['prepare']
 
 
 def test_build_failure_backoff_ignores_retry_metadata_changes(runtime, monkeypatch):

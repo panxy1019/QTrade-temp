@@ -21,7 +21,8 @@ from scripts.build_qlib_daily_version import move_durable, sync_directory
 REPO = Path(__file__).resolve().parents[1]
 
 
-def run(root: Path, output: Path, revision: str) -> dict[str, Any]:
+def run(root: Path, output: Path, revision: str, *,
+        data_event_id: str | None = None) -> dict[str, Any]:
     if os.environ.get('LIVE_TRADING_ENABLED', 'false').lower() != 'false':
         raise ValueError('LIVE_TRADING_MUST_REMAIN_DISABLED')
     import re
@@ -49,6 +50,10 @@ def run(root: Path, output: Path, revision: str) -> dict[str, Any]:
     bindings = {'data_version_id': version['version_id'], 'code_revision': revision,
         'observation_universe_version': version['bindings']['observation_universe_version'],
         'signal_contract': 'COMMON_21_SESSION_GRID_V1', 'risk_degree': '0.95', 'topk': 50}
+    if data_event_id is not None:
+        from qtrade.research.model_registry import checked_identity
+
+        bindings['data_event_id'] = checked_identity(data_event_id)
     identity = signed(bindings)['evidence_sha256']
     target = output/identity
     if target.exists():
@@ -108,7 +113,9 @@ if __name__ == '__main__':
     parser.add_argument('--data-version-root', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--source-revision', required=True)
+    parser.add_argument('--data-event-id')
     args = parser.parse_args()
-    result = run(args.data_version_root, args.output, args.source_revision)
+    result = run(args.data_version_root, args.output, args.source_revision,
+                 data_event_id=args.data_event_id)
     print(json.dumps({k: result[k] for k in ('signal_family_id', 'state', 'signal_count',
                                            'qualified_instruments', 'unavailable')}))

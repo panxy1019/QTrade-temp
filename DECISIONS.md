@@ -1,5 +1,25 @@
 # Architecture decisions
 
+## ADR-187 — STEP1 completion gates research expansion and rollback epochs bind outputs
+
+Status: implementing locally, 2026-10-27.
+
+The owner explicitly ordered completion of C/D/E and real next-session acceptance
+before STEP2 factor/strategy expansion. Preserve this sequential gate while
+comparison, holdings/constraints and version controls develop in parallel.
+Reuse native Qlib comparison and the existing portfolio/risk/OMS/paper/accounting
+stack; no alternate gateway or live-order path. Unknown execution facts block
+simulated execution rather than receiving permissive defaults.
+
+Version identity alone cannot distinguish an A → B → A rollback. Bind admission
+event epochs to current predictions and signals, recheck the epoch under the
+final data transaction, and check it again before a prepared Provider is published.
+Rollback requires authenticated CAS control and leaves immutable history. A real
+next-session audit verifies archived versions, automatic completion, prediction
+and signal identities, with no clock override in its CLI. That narrow audit never
+certifies publication, browser behavior, PAPER returns or all of STEP1 by itself.
+
+
 ## ADR-186 — Signal baselines are separate from execution-admitted portfolios
 
 Status: five real signal families and scheduled publication accepted on production
@@ -18,6 +38,25 @@ signal and target identities independently; do not invent prices, units, fills o
 returns. Holdings, turnover and execution constraints remain explicit unmet gates
 before PAPER/SHADOW admission. No gateway/vn.py component is needed for this layer.
 LIVE_TRADING_ENABLED=false.
+
+## ADR-188 — Prospective books reserve admission context without owning source ledgers
+
+Status: accepted, 2026-10-27.
+
+Reuse the existing portfolio, risk, OMS, simulation gateway and accounting stack;
+neither vn.py nor Qlib can certify missing market source constraints. SHADOW stores
+observations without portfolio fills or returns. PAPER blocks unknown suspension,
+ST, precise limits, corporate actions and missing prior-session liquidity evidence.
+Current-session total volume cannot determine opening execution capacity.
+
+Archive verification precedes a short data-then-model SQLite reservation, matching
+the control worker lock order. Final epoch checks and immutable target admission
+are serialized under those reservations without source-ledger row mutations or
+ownership claims. Real write time must precede execution. Restarted PAPER remains
+halted until explicit human recovery and successful reconciliation. Initial user
+authorization applies only to pristine research books, not later recovery.
+Public evidence distinguishes historical comparison, diagnostic ETF closes,
+indicative targets and actual prospective observations. Live trading stays off.
 
 Reuse the single research queue for one signal job per data/code version, after
 prediction priority gates. Bound runtime and retries, verify complete inventory
