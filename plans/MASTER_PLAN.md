@@ -24,6 +24,12 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+C public-delivery audit wiring is implemented and independently reviewed with
+54 passing local tests. Its paired production flags preserve private-only default
+behavior and accept only the exact raw-verified C transition's current public
+identities. Actual next-session execution and cluster integration remain pending;
+see docs/QLIB_PUBLIC_DELIVERY_ACCEPTANCE.md. D later-version audit is under review.
+
 ETF next-session independent acceptance is implemented at 3068e35 with 39 passing
 Linux checks. Actual wall-clock execution before October 27 close remains BLOCKED;
 see docs/evidence/qlib-etf-transition-preclose-3068e35.json. This closes the audit

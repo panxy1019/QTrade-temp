@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-27
 
+- C-chain production delivery acceptance now has an opt-in, fixed-origin GET
+  verifier after private archive/raw transition verification. It binds deployment,
+  two current catalogs, version head/epoch, prediction and full signal manifest,
+  preserving actual HTTP bytes. Independent parent review and 54 focused tests,
+  Ruff and focused mypy pass locally. Real October 27 transition acceptance is
+  still pending; these tests do not certify production delivery for that session.
+  See docs/QLIB_PUBLIC_DELIVERY_ACCEPTANCE.md. No service or account was changed.
+
 - ETF actual-session acceptance tooling is added at 3068e35. Independent read-only
   checks bind target/admission, exact local receipts, both raw archives and the
   supplied public entry; no clock override or service writer is exposed by CLI.

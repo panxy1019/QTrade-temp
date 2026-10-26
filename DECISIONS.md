@@ -3610,3 +3610,20 @@ settlement, liquidity, limits, suspensions or corporate actions; PAPER remains
 blocked and existing SHADOW historical metrics remain null. Short-history and
 non-PIT limitations accompany each report. LIVE_TRADING_ENABLED=false.
 
+## ADR-174 — C production delivery is a scoped read-only acceptance step
+
+Status: accepted, 2026-10-27.
+
+Reuse the private session-transition verifier and existing public catalog,
+version and signed-manifest validators. A vn.py execution component cannot
+establish HTTP publication identity and is not introduced for this audit.
+Optional paired CLI flags add five bounded fixed-origin GET observations after
+private raw verification. Bind reviewed production revision, two fresh catalogs,
+head/event, approved model, prediction proof and complete signal manifest;
+preserve response bytes and local capture times in an immutable receipt.
+
+No credentials, arbitrary origins, redirects or clock override are accepted.
+Failure creates no passed report. The receipt certifies C public projection only,
+not browser rendering, candidate validation, PAPER/ETF ledgers or whole STEP1.
+Actual completed-session and pre-execution time gates remain mandatory.
+
