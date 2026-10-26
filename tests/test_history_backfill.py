@@ -16,6 +16,7 @@ from qtrade.instruments.observed import build_observed_master
 from qtrade.market_data.backfill_plan import build_backfill_plan
 from qtrade.market_data.sina_minute import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.monitoring.data_freshness import signed
+from scripts import audit_history_backfill as audit_module
 from scripts import history_backfill_queue as queue_module
 from scripts import history_backfill_store as store_module
 from scripts import run_history_backfill as runner
@@ -37,7 +38,8 @@ def platform_writers(monkeypatch):
     # Actual Linux directory fsync and flock are cluster acceptance requirements.
     monkeypatch.setattr(unified_store, "_fsync_directory", lambda _: None)
     monkeypatch.setattr(runner, "_fsync_directory", lambda _: None)
-    for module in (queue_module, store_module, runner, service):
+    monkeypatch.setattr(audit_module, "worker_lease", lambda *args: nullcontext())
+    for module in (queue_module, store_module, runner, service, audit_module):
         for name in ("write_json_atomic", "write_json_immutable"):
             original = getattr(module, name, None)
             if original is None:
@@ -276,7 +278,7 @@ def test_crash_before_receipt_and_after_seal_recover_without_skipping_or_double_
     count = after.snapshot(now=NOW)["qualified_rows"]
     assert count > 0
     assert after.recover(store, now=NOW) == {
-        "replayed_sealed_receipts": 0, "interrupted_attempts": 0}
+        "replayed_sealed_receipts": 0, "interrupted_attempts": 0, "repaired_frontiers": 0}
     assert after.snapshot(now=NOW)["qualified_rows"] == count
 
 
@@ -930,3 +932,243 @@ def test_service_pass_failure_retains_previous_execution_and_waits_full_period(
     assert result["failed_passes"] == 1 and result["last_error_class"] == "ValueError"
     assert result["last_pass_state"] == "FAILED" and result["completed_passes"] == 0
     assert path.read_bytes() == previous
+
+
+def yield_window(queue, store, attempt):
+    receipt = store.seal(attempt, raw_for(attempt["scope"], [], query_attempted=False,
+                                         body_complete=False, vendor_error_code=None),
+                         state="YIELDED_TO_SHARED_VENDOR_SESSION")
+    queue.finish(store, receipt, now=NOW)
+
+
+def audit(queue, *, receipts=10000, details=50):
+    return audit_module.audit_history(
+        queue.root, revision=REVISION, now=datetime.now(UTC),
+        maximum_receipts=receipts, maximum_details=details,
+        lease_dir=queue.root.parent / "audit-leases",
+    )
+
+
+def test_yielded_frontier_completed_by_retry_advances_without_a_duplicate_query(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    first = claim(queue, store)
+    yield_window(queue, store, first)
+    retry = claim(queue, store, now=NOW + timedelta(seconds=60), retry=True)
+    assert retry["scope"]["task_id"] == first["scope"]["task_id"]
+    seal(queue, store, retry, now=NOW + timedelta(seconds=60))
+    assert queue.tasks[first["scope"]["task_id"]]["before"] == first["scope"]["start"]
+    other = claim(queue, store, now=NOW + timedelta(seconds=61))
+    seal(queue, store, other, now=NOW + timedelta(seconds=61))
+    next_new = claim(queue, store, now=NOW + timedelta(seconds=62))
+    assert next_new["scope"]["task_id"] == first["scope"]["task_id"]
+    assert next_new["scope"]["end"] == "2026-09-30"
+
+
+def test_recovery_repairs_old_retry_cursor_from_receipt_without_new_objects(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    first = claim(queue, store)
+    yield_window(queue, store, first)
+    retry = claim(queue, store, now=NOW + timedelta(seconds=60), retry=True)
+    seal(queue, store, retry, now=NOW + timedelta(seconds=60))
+    task = queue.tasks[first["scope"]["task_id"]]
+    task["before"] = None  # Exact legacy state left by retry completion before this repair.
+    queue.save_task(task)
+    before = {p: p.read_bytes() for p in store.root.rglob("*") if p.is_file()}
+    report = audit(queue)
+    assert report["state"] == "VERIFIED_WITH_PENDING_RECOVERY"
+    assert report["checkpoint_counts"]["cursor_repairs_needed"] == 1
+    resumed = HistoryQueue(queue.root, *inputs)
+    recovery = resumed.recover(store, now=NOW + timedelta(minutes=2))
+    assert recovery["repaired_frontiers"] == 1
+    assert resumed.tasks[task["task_id"]]["before"] == first["scope"]["start"]
+    assert {p: p.read_bytes() for p in store.root.rglob("*") if p.is_file()} == before
+    after = audit(resumed)
+    assert after["state"] == "VERIFIED"
+    assert after["frequency_coverage"] == report["frequency_coverage"]
+
+
+def test_due_old_retry_cannot_rewind_new_window_frontier(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    first = claim(queue, store)
+    seal(queue, store, first, values=[])
+    second = claim(queue, store)
+    seal(queue, store, second, values=[])
+    third = claim(queue, store, now=NOW + timedelta(seconds=1))
+    assert third["scope"]["task_id"] == first["scope"]["task_id"]
+    seal(queue, store, third, values=[])
+    task_id = first["scope"]["task_id"]
+    prior = queue.tasks[task_id]["before"]
+    retry = claim(queue, store, now=NOW + timedelta(minutes=31), retry=True)
+    assert retry["scope"]["start"] > prior
+    seal(queue, store, retry, values=[], now=NOW + timedelta(minutes=31))
+    assert queue.tasks[task_id]["before"] == prior
+
+
+def test_all_months_are_attempted_once_and_empty_windows_never_become_coverage(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    observed = []
+    for offset in range(40):
+        attempt = queue.claim(now=NOW + timedelta(seconds=offset), revision=REVISION)
+        if attempt is None:
+            break
+        store.begin(attempt)
+        key = (attempt["scope"]["task_id"], attempt["scope"]["start"], attempt["scope"]["end"])
+        assert key not in observed
+        observed.append(key)
+        seal(queue, store, attempt, values=[])
+    assert len(observed) == 26  # 13 bounded windows per scope, including both endpoint fragments.
+    assert all(t["new_windows_exhausted"] for t in queue.tasks.values())
+    assert all(w["next_attempt_at"] is not None for t in queue.tasks.values()
+               for w in t["windows"].values())
+    report = audit(queue)
+    assert report["state"] == "VERIFIED" and report["verified_query_attempts"] == 26
+    assert report["latest_window_states"] == {"EMPTY_WINDOW_UNEXPLAINED": 26}
+    assert all(f["verified_accepted_rows"] == 0 for f in report["frequency_coverage"].values())
+    assert report["ten_year_history_certified"] is False
+
+
+def test_receipt_audit_is_read_only_and_uses_observations_instead_of_plan_counts(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    planned = audit(queue)
+    assert planned["planned_scope_count_metadata_only"] == 2
+    assert planned["verified_receipt_attempts"] == 0
+    assert all(f["qualified_instrument_count"] == 0 for f in planned["frequency_coverage"].values())
+    for _ in range(2):
+        seal(queue, store, claim(queue, store))
+    before = {p: p.read_bytes() for p in queue.root.rglob("*") if p.is_file()}
+    report = audit(queue)
+    assert report["state"] == "VERIFIED" and report["verified_receipt_attempts"] == 2
+    assert report["frequency_coverage"]["day"]["verified_accepted_rows"] == 1
+    assert report["frequency_coverage"]["5min"]["verified_accepted_rows"] == 48
+    assert {p: p.read_bytes() for p in queue.root.rglob("*") if p.is_file()} == before
+
+
+@pytest.mark.parametrize("corrupt", ["checkpoint_count", "normalized", "receipt_stage"])
+@pytest.mark.parametrize("details", [0, 50])
+def test_audit_rejects_invented_coverage_and_corrupt_or_mismatched_artifacts(
+    tmp_path, inputs, corrupt, details,
+):
+    queue, store = setup(tmp_path, inputs)
+    attempt = claim(queue, store)
+    result = seal(queue, store, attempt)
+    if corrupt == "checkpoint_count":
+        task = queue.tasks[attempt["scope"]["task_id"]]
+        task["windows"][attempt["scope"]["start"]]["qualified_rows"] += 100
+        queue.save_task(task)
+    elif corrupt == "normalized":
+        store.blobs._blob_path(result["normalized"]["sha256"], ".parquet").write_bytes(b"damaged")
+    else:
+        value = dict(result)
+        value.pop("evidence_sha256")
+        value["stage_counts"]["requested"] = 999
+        store.path(attempt["attempt_id"], "receipt.json").write_text(json.dumps(signed(value)))
+    report = audit(queue, details=details)
+    assert report["state"] == "INVALID_EVIDENCE"
+    assert report["checkpoint_counts"]["integrity_errors"] > 0
+    assert all(f["verified_accepted_rows"] == 0 for f in report["frequency_coverage"].values())
+
+
+def test_uncommitted_sealed_receipt_is_reported_but_not_accepted_until_recovery(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    attempt = claim(queue, store)
+    store.seal(attempt, raw_for(attempt["scope"]))
+    report = audit(queue)
+    assert report["state"] == "VERIFIED_WITH_PENDING_RECOVERY"
+    assert report["pending_sealed_claims"] == 1
+    assert report["verified_receipt_attempts"] == 1
+    assert all(f["verified_accepted_rows"] == 0 for f in report["frequency_coverage"].values())
+    queue.recover(store, now=NOW)
+    accepted = audit(queue)
+    assert accepted["state"] == "VERIFIED"
+    assert sum(f["verified_accepted_rows"] for f in accepted["frequency_coverage"].values()) > 0
+
+
+def test_superseded_retries_are_audited_without_double_counting_or_false_pending(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    attempt = claim(queue, store)
+    if attempt["scope"]["frequency"] == "day":
+        seal(queue, store, attempt)
+        attempt = claim(queue, store)
+    first = seal(queue, store, attempt, values=rows(day=date(2026, 10, 22)) + rows()[:3])
+    retry = claim(queue, store, retry=True, now=NOW + timedelta(minutes=30))
+    seal(queue, store, retry, values=rows(day=date(2026, 10, 22)) + rows(),
+         now=NOW + timedelta(minutes=30))
+    report = audit(queue)
+    assert report["state"] == "VERIFIED"
+    assert report["frequency_coverage"]["5min"]["verified_accepted_rows"] == 96
+    assert sum(report["superseded_archived_receipt_states"].values()) == 1
+    assert report["downloaded_rows_including_reobservations"] >= 147
+    assert store.load(attempt["attempt_id"]) == first
+
+
+def test_receipt_limit_reports_a_verified_subset_without_claiming_full_audit(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    for _ in range(2):
+        seal(queue, store, claim(queue, store))
+    report = audit(queue, receipts=1)
+    assert report["state"] == "PARTIAL_AUDIT_LIMIT" and report["limit_reached"] is True
+    assert report["verified_receipt_attempts"] == 1
+    assert sum(f["verified_accepted_rows"] for f in report["frequency_coverage"].values()) < 49
+
+
+def test_audit_cli_yields_to_writer_without_printing_fabricated_zero_coverage(
+    tmp_path, monkeypatch, capsys,
+):
+    @contextmanager
+    def busy(*args):
+        raise BlockingIOError
+        yield
+
+    monkeypatch.setattr(audit_module, "worker_lease", busy)
+    monkeypatch.setattr(sys, "argv", ["audit", "--root", str(tmp_path / "missing"),
+                                     "--source-revision", REVISION])
+    with pytest.raises(SystemExit) as exit_info:
+        audit_module.main()
+    assert exit_info.value.code == 2
+    assert capsys.readouterr().out.strip() == "HISTORY_AUDIT_YIELDED_TO_ACTIVE_WRITER"
+    assert not (tmp_path / "missing").exists()
+
+
+def test_audit_cli_output_is_immutable(tmp_path, inputs, monkeypatch, capsys):
+    queue, _ = setup(tmp_path, inputs)
+    output = tmp_path / "receipt-audit.json"
+    monkeypatch.setattr(sys, "argv", [
+        "audit", "--root", str(queue.root), "--source-revision", REVISION,
+        "--lease-dir", str(tmp_path / "audit-leases"), "--output", str(output),
+    ])
+    with pytest.raises(SystemExit) as exit_info:
+        audit_module.main()
+    assert exit_info.value.code == 0
+    saved = output.read_bytes()
+    assert json.loads(capsys.readouterr().out)["verified_receipt_attempts"] == 0
+    with pytest.raises(FileExistsError):
+        audit_module.main()
+    assert output.read_bytes() == saved
+
+
+def test_audit_detects_a_cursor_that_skipped_unexamined_months(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    first = claim(queue, store)
+    seal(queue, store, first)
+    task = queue.tasks[first["scope"]["task_id"]]
+    task["before"] = "2026-08-01"
+    queue.save_task(task)
+    report = audit(queue)
+    assert report["state"] == "INVALID_EVIDENCE"
+    assert any(e["error_code"] == "HISTORY_AUDIT_CURSOR_SKIPS_UNEXAMINED_WINDOW"
+               for e in report["error_examples"])
+
+
+def test_legacy_frontier_repair_requires_actual_receipt_replay(tmp_path, inputs):
+    queue, store = setup(tmp_path, inputs)
+    first = claim(queue, store)
+    seal(queue, store, first)
+    task = queue.tasks[first["scope"]["task_id"]]
+    task["before"] = None
+    queue.save_task(task)
+    checkpoint = queue.task_path(task["task_id"]).read_bytes()
+    store.path(first["attempt_id"], "receipt.json").unlink()
+    resumed = HistoryQueue(queue.root, *inputs)
+    with pytest.raises(FileNotFoundError):
+        resumed.recover(store, now=NOW)
+    assert queue.task_path(task["task_id"]).read_bytes() == checkpoint
