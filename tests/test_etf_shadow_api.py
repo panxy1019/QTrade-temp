@@ -95,7 +95,7 @@ def test_publisher_carries_only_valid_bounded_etf_shadow_bytes(channel, tmp_path
         'NO_VERIFIED_ETF_SHADOW_PUBLICATION')
 
 
-def test_serverless_route_loads_and_validates_when_cluster_scripts_are_excluded(publication, tmp_path):  # noqa: F811
+def test_serverless_route_without_cluster_scripts(publication, tmp_path):  # noqa: F811
     path = tmp_path/'public.json'
     path.write_text(json.dumps(publication))
     code = '''
