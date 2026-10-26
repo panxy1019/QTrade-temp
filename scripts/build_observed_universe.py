@@ -28,7 +28,7 @@ def checked_json(path: Path) -> dict[str, Any]:
 
 def build(
     base: Path, *, vendor_master: Path, candidate_file: Path, target_count: int,
-    observed_at: datetime, verify_daily: bool = True,
+    observed_at: datetime, verify_daily: bool = True, legacy_universe: Path | None = None,
 ) -> dict[str, Any]:
     groups = []
     captured: dict[Path, bytes] = {}
@@ -51,7 +51,7 @@ def build(
     group(minute_file, "legacy_stock75", "legacy", [
         {"symbol": s, "security_type": "STOCK"} for s in minute_manifest["eligible_symbols"]
     ])
-    daily_path = base / "expansion/universe.json"
+    daily_path = legacy_universe or base / "expansion/universe.json"
     daily = capture(daily_path)
     if signed({k: v for k, v in daily.items() if k != "evidence_sha256"}) != daily:
         raise ValueError("DAILY_UNIVERSE_HASH_MISMATCH")
@@ -63,6 +63,16 @@ def build(
     group(candidate_file, "frozen_liquidity_candidates", "candidate", [
         {**row, "security_type": "STOCK"} for row in candidate_doc["rows"]
     ])
+    audit_path = base / "unified-data/minute-admission/latest.json"
+    minute_audit = checked_json(audit_path) if audit_path.exists() else None
+    if minute_audit is not None:
+        captured[audit_path] = audit_path.read_bytes()
+        if json.loads(captured[audit_path]) != minute_audit:
+            raise ValueError("MINUTE_AUDIT_CHANGED_DURING_CAPTURE")
+        group(audit_path, "legacy_minute_checkpoints", "legacy", [
+            {"symbol": s, "security_type": "STOCK"}
+            for s in sorted({r["symbol"] for r in minute_audit["receipts"]})
+        ])
     vendor = capture(vendor_master)
     master = build_observed_master(
         vendor_rows=vendor["rows"] if isinstance(vendor, dict) else vendor,
@@ -96,9 +106,7 @@ def build(
             "data_sha256": stock["manifest"]["checksum"],
             "amount_verified": False, "historical_pit_certified": False,
         }}
-    audit_path = base / "unified-data/minute-admission/latest.json"
-    if audit_path.exists():
-        minute_audit = checked_json(audit_path)
+    if minute_audit is not None:
         for receipt in minute_audit["receipts"]:
             coverage.setdefault(receipt["symbol"], {})["5min"] = {
                 key: receipt.get(key) for key in (
@@ -151,9 +159,11 @@ def main() -> None:
     parser.add_argument("--vendor-master", type=Path, required=True)
     parser.add_argument("--candidates", type=Path, required=True)
     parser.add_argument("--target", type=int, default=1500)
+    parser.add_argument("--legacy-universe", type=Path)
     args = parser.parse_args()
     result = build(args.base, vendor_master=args.vendor_master, candidate_file=args.candidates,
-                   target_count=args.target, observed_at=datetime.now(UTC))
+                   target_count=args.target, observed_at=datetime.now(UTC),
+                   legacy_universe=args.legacy_universe)
     print(json.dumps({k: result["master"][k] for k in (
         "master_count", "target_actual", "legacy_union_count", "top_up_count", "frequency_counts",
     )}))

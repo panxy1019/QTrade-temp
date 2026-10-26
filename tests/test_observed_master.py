@@ -44,6 +44,7 @@ def test_observed_master_deduplicates_lineage_tops_up_and_never_certifies_pit() 
     assert rows["SZSE.000002"]["delisting_date"] == "2020-01-01"
     assert "SSE.512000" not in rows  # vendor fund class alone cannot assert ETF
     assert all(r["available_at"] is None for r in rows.values())
+    assert all(r["universe_version"] == result["universe_version"] for r in rows.values())
     assert result["point_in_time"] is False and result["historical_pit_certified_count"] == 0
     assert result == build()
 

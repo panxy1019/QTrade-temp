@@ -85,6 +85,8 @@ def build_observed_master(
             row["issues"].append("VENDOR_SECURITY_TYPE_CONFLICT")
         if row["status"] == "ACTIVE_OBSERVED" and row["delisting_date"]:
             row["issues"].append("ACTIVE_WITH_DELISTING_CLAIM")
+        if row["listing_date"] and row["listing_date"] > str(observed_at.date()):
+            row["issues"].append("LISTING_AFTER_OBSERVATION")
         row["source"].append({"source_id": "vendor_master", "sha256": vendor_sha256,
                               "vendor_code": code, "available_at": None})
 
@@ -149,7 +151,13 @@ def build_observed_master(
                          "Day/5min collection plans do not certify data coverage"],
         "securities": rows,
     })
-    # The content identity includes the ordered source claims and observation clock.
-    version = result["evidence_sha256"]
+    # Membership identity is independent of later coverage audits and refresh clocks.
+    version = signed({
+        "schema_version": "qtrade.observed-universe.v1", "target_count": target_count,
+        "selected": sorted(selected), "vendor_sha256": vendor_sha256,
+        "sources": [{"source_id": g["source_id"], "sha256": g["sha256"]} for g in source_groups],
+    })["evidence_sha256"]
+    for row in rows:
+        row["universe_version"] = version
     return signed({**{k: v for k, v in result.items() if k != "evidence_sha256"},
                    "universe_version": version})

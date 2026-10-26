@@ -41,6 +41,7 @@ def validate_publication(value: dict[str, Any]) -> dict[str, Any]:
     for row in rows:
         if (row["instrument_id"] != instrument_id(row["symbol"], row["security_type"])
                 or row["exchange"] != row["instrument_id"].split(".")[0]
+                or row["universe_version"] != master["universe_version"]
                 or row["available_at"] is not None
                 or set(row["frequencies"]) != {"day", "5min"}
                 or row["in_target"] and (row["status"] != "ACTIVE_OBSERVED" or row["issues"])):
