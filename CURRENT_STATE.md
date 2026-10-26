@@ -22,9 +22,12 @@ Last updated: 2026-10-26
 - Bounded historical plan compiler is implemented with 12 focused checks. It
   binds 10-year requested scope to the observed master, uses <=31-day windows,
   retains old independent price bases and marks every new source range as
-  WAITING_FOR_SOURCE_PROBE. This plan executes no downloads. Cluster acceptance
-  is pending; background historical backfill and automatic Qlib data/prediction
-  are still pending. The worker retains its old frozen data/model identity.
+  WAITING_FOR_SOURCE_PROBE. This plan executes no downloads. Cluster source
+  fc58308 passes all 690 Linux checks and seals 3,000 work scopes. A bounded raw
+  BaoStock source probe now reuses the production parser and nonblocking shared
+  lease, with 12 focused checks; real probe acceptance is pending. Background
+  historical backfill and automatic Qlib data/prediction are still pending.
+  The worker retains its old frozen data/model identity.
 
 - First unified-data delivery passes 637 full Linux backend checks and 213
   frontend checks, lint/types/build. Real offline audit rechecks 172 old minute

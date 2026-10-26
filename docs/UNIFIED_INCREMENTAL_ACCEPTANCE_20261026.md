@@ -70,11 +70,25 @@ include 正则会匹配 `.conf.pre-qlib` 备份；仅修改 `.conf` 的自动启
 状态为 WAITING_FOR_SOURCE_PROBE，新增接纳 Bar 为零。新上市公司仍进入观察池；
 其真实有效历史待核验，不要求拥有十年数据。旧 qfq 不会自动拼接到原生新源。
 
+集群计划已在源 fc58308 生成，3,000 项证券／频率工作范围，计划文件约 3.34 MB，
+任务身份 `ab7732c9011841ee0e1ddeae2e9cb971d2b8ad5bd4b952fa18a1f102b9428ee8`。
+Linux 全套扩展到 690 项全部通过。新探测工具 `scripts.probe_unified_history`
+复用已存在的 BaoStock 五分钟解析器，以 adjustflag=3 查询一个月内的独立原始口径；
+保存未经改写的 BaoStock API 解码行，明确它不等于 TCP 原始报文。
+下载失败、网格不完整、金额／单位问题都保留证据，不授予目录覆盖资格。
+低优先级探测使用共享租约的非阻塞模式，忙时直接让出；旧调用默认阻塞行为保持。
+
 ```sh
 export PYTHONPATH="$PWD/src" LIVE_TRADING_ENABLED=false
 "$B/venv/bin/python" -m scripts.plan_unified_backfill --base "$B" \
   --end 2026-10-23 --years 10 --source-revision "$REVISION"
 "$B/venv/bin/python" -m pytest tests/test_unified_backfill_plan.py
+# 单个有界源探测；忙时输出 YIELDED，不能记为下载成功。
+export QTRADE_BAOSTOCK_FREE_DATA_ACK=true
+"$B/venv/bin/python" -m scripts.probe_unified_history \
+  --output "$B/unified-data/backfill/source-probes" --symbol 600036 \
+  --security-type STOCK --start 2016-10-24 --end 2016-10-31 \
+  --source-revision "$REVISION"
 ```
 
 下一步是实际源范围／价格基础探测、共享 BaoStock 租约下的低优先级分段执行，
