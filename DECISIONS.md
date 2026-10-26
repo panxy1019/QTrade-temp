@@ -1,5 +1,25 @@
 # Architecture decisions
 
+## ADR-180 — Human model control reuses the authenticated queue and atomic ledger
+
+Status: implementation in progress, 2026-10-26, Phase C/D.
+
+Reuse the existing research login, same-origin checks, signed private Git queue,
+supervised worker, immutable archives and local SQLite. Qlib Recorder online tags
+do not provide durable compare-and-swap approval, audit/replay or publication.
+Add only a model-control ledger and allowlisted commands, not arbitrary model
+paths, uploaded pickles or executable configurations. No vn.py gateway is needed.
+
+Training artifacts and input validations keep separate immutable identities.
+Import verified candidates as STAGED; activation remains an explicit human action.
+Bind activation/rollback to expected active model, expected data version and a
+verified forward-input proof. Commit active/retired states, command result and
+audit event together. Replay the same command without undoing later decisions;
+failed validation or a stale comparison cannot replace the active model. A model
+rollback can target only a previously active model and must pass the same current
+input gate. Expose histories and limitations through bounded public summaries.
+LIVE_TRADING_ENABLED=false throughout.
+
 ## ADR-179 — Forward inference reuses fitted state and proves old-reference stability
 
 Status: implementation in progress, 2026-10-26, Phase C.
