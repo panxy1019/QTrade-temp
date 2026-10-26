@@ -1,7 +1,8 @@
 # 统一证券数据与 Qlib 在线研究：实现及维护
 
-状态：2026-10-26，Phase A 与分钟 P0 修复已通过集群、预览及生产验收。
-完整目标见 [执行计划](../plans/UNIFIED_DATA_ONLINE_PLAN.md)。后续阶段尚未交付。
+状态：2026-10-26，Phase A、分钟 P0 修复及 Phase B 当前增量里程碑已验收。
+本页保留 Phase A 首次结果；当前采集见 [增量验收](UNIFIED_INCREMENTAL_ACCEPTANCE_20261026.md)。
+完整目标见 [执行计划](../plans/UNIFIED_DATA_ONLINE_PLAN.md)。完整 Online Serving 尚未完成。
 
 ## 首次现场结果
 
@@ -96,7 +97,7 @@ export PYTHONPATH="$PWD/src" LIVE_TRADING_ENABLED=false
 
 审计不访问供应商，不争抢 BaoStock 会话；运行前确认 CPU/I/O 预算。
 catalog/versions 与 minute-admission/receipts 保留不可变内容，latest 指针原子替换。
-当前不是全平台连续更新任务：统一增量采集和自动重建目录仍属 Phase B。
+统一增量采集和自动目录已经接通，日常覆盖与本节旧历史口径独立。
 
 ## 网页与只读发布
 
@@ -104,5 +105,5 @@ catalog/versions 与 minute-admission/receipts 保留不可变内容，latest �
 API `/unified/summary` 不带全证券明细，`/unified/securities` 每页上限 100。
 整份发布输入有大小上限，验证外层和主表哈希、权限、身份及计数后才响应；
 公开 API 无写入口。查询失败清除正常状态，目录身份变化要求刷新。
-旧证据、研究页面和模型策略不被替代。尚未声称具备每日在线预测、滚动重训、
-模型激活、1500 证券连续合格行情或十年五分钟历史。
+旧证据、研究页面和模型策略不被替代。当前增量不足 1500 全部合格，缺口如实展示；
+每日在线预测、滚动重训、模型激活和十年五分钟历史尚未交付。
