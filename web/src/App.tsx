@@ -100,7 +100,7 @@ function Shell() {
                 <Route path="/experiments" element={<QlibExperimentPage />} />
                 <Route path="/backtest" element={<QlibBacktestPage />} />
                 <Route path="/archive" element={<CurrentDataProvider><QlibArchivePage><Tabs items={[
-                  { key: 'strategies', label: '原策略目录', children: <StrategyPage data={data} /> },
+                  { key: 'strategies', label: '历史实验候选', children: <StrategyPage data={data} /> },
                   { key: 'research', label: '因子与分钟研究', children: <ResearchPage data={data} /> },
                   { key: 'experiments', label: '原实验档案', children: <ExperimentPage data={data} /> },
                   { key: 'backtest', label: 'ETF/分钟回测工具', children: <BacktestPage data={data} /> },

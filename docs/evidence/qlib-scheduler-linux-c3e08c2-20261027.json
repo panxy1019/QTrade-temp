@@ -1,0 +1,55 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.qlib-scheduler-linux-isolated.v1",
+  "state": "PASSED",
+  "source_revision": "c3e08c205c032c85aae6682449106898e67fae5e",
+  "base_revision": "0a545a8a6741c9e210d3077c877d8912170fc9e9",
+  "source_file_count": 250,
+  "overlay_files": [
+    "scripts/run_qlib_data_service.py",
+    "tests/test_prepare_qlib_incremental.py",
+    "tests/test_qlib_data_service.py"
+  ],
+  "overlay_archive_sha256": "0eca8200c37faa4751ca4df5ecafa463133ac994c93827d2f1d69f4494d39a59",
+  "started_at": "2026-10-27T10:44:14.884894+00:00",
+  "checked_at": "2026-10-27T10:44:18.158529+00:00",
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jun 18 2026, 21:28:09) [GCC 14.3.0]",
+  "command": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_qlib_data_service.py",
+    "tests/test_daily_collection_binding.py",
+    "tests/test_prepare_qlib_incremental.py",
+    "tests/test_pit_collection_queue.py",
+    "-q",
+    "-o",
+    "addopts=",
+    "--junitxml=/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/online-research/unified-qlib-scheduler-linux-c3e08c2-20261027.xml"
+  ],
+  "returncode": 0,
+  "counts": {
+    "tests": 56,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "stdout": "........................................................                 [100%]\n56 passed in 2.64s\n",
+  "stderr": "",
+  "xml_sha256": "2a93fd4f34c7f31ab12f32a3cc8e1bb0394a4b4d9818635a61ab58d451d9ea76",
+  "production_deployed": false,
+  "service_restarted": false,
+  "frozen_request_changed": false,
+  "known_limits": [
+    "ISOLATED_TEST_NOT_CURRENT_DAY_ACCEPTANCE",
+    "PENDING_FROZEN_REQUEST_SOURCE_REVISION_MUST_REMAIN_UNCHANGED",
+    "NO_HISTORICAL_PIT_OR_PRICE_ADJUSTMENT_CERTIFICATION"
+  ],
+  "evidence_sha256": "912507a85a9c5e454c8847e627b87afc5ec182141bc563daab4c4a5bb1f423a3"
+}

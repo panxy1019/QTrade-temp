@@ -1,0 +1,15 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "day": "2026-10-27",
+  "previous": "unified-data/qlib-versions/versions/d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+  "previous_version": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+  "previous_event_id": "75c3aed2eed7a2c6af34025536575404d2e4d9cff9ad864f5c9d4185bda0475c",
+  "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+  "evidence_sha256": "40d36f920c1f3c19f9269015271c7cb6eddce122ab765d20f21b563c384647c0"
+}

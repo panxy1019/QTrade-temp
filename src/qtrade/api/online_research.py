@@ -425,6 +425,56 @@ async def training_policy(request: Request) -> dict[str, Any]:
     return {**AUTHORITY, 'request_id': command['request_id'], 'state': 'QUEUED'}
 
 
+@router.post('/model-promotion-policy', status_code=202)
+async def model_promotion_policy(request: Request) -> dict[str, Any]:
+    """Change a standing research authorization through the same signed queue."""
+    import re
+
+    from qtrade.research.model_promotion_policy import (
+        AUTHORIZATION_SOURCE,
+        SCOPES,
+    )
+    from qtrade.research.model_promotion_policy import (
+        validate_policy as validate_promotion_policy,
+    )
+    user = actor(request)
+    body = await _body(request, 16000)
+    try:
+        if (set(body) != {'request_id', 'expected_policy_id', 'policy',
+                          'explicit_human_authorization'}
+                or re.fullmatch('[a-f0-9]{32}', body['request_id']) is None
+                or body['explicit_human_authorization'] is not True):
+            raise ValueError('EXPLICIT_STANDING_RESEARCH_AUTHORIZATION_REQUIRED')
+        checked_identity(body['expected_policy_id'])
+        validate_promotion_policy(body['policy'])
+    except (ValueError, TypeError, KeyError):
+        raise HTTPException(422, '自动批准需要明确研究范围、政策版本和有效请求标识') from None
+    command = {**body, 'actor': user, 'authorization': {
+        'source': AUTHORIZATION_SOURCE, 'quote': '都允许批准', 'scopes': SCOPES}}
+    try:
+        current = listing()
+        policy = current['model_promotion']
+        if not worker_fresh(current):
+            raise ValueError('WORKER_STALE')
+        if policy.get('command_sha256') == signed(command)['evidence_sha256']:
+            return {**AUTHORITY, 'request_id': command['request_id'], 'state': 'APPLIED'}
+        if policy['policy_id'] != body['expected_policy_id']:
+            raise HTTPException(409, '自动批准政策已经变化，请刷新后重试')
+    except HTTPException:
+        raise
+    except (ValueError, TypeError, KeyError, OSError):
+        raise HTTPException(503, '自动批准政策尚不可核验，未提交') from None
+    try:
+        GitQueue.from_environment().append('requests', command['request_id'], seal({
+            'job_id': command['request_id'], 'kind': 'QLIB_MODEL_PROMOTION_POLICY',
+            'command': command, 'live_trading_enabled': False,
+        }, os.environ['QTRADE_RESEARCH_QUEUE_SECRET']))
+    except Exception as error:
+        _queue_failure('model-promotion-policy', error)
+        raise HTTPException(503, '政策提交未获确认，请使用同一请求标识重试') from None
+    return {**AUTHORITY, 'request_id': command['request_id'], 'state': 'QUEUED'}
+
+
 @router.post('/actions', status_code=202)
 async def action(request: Request) -> dict[str, Any]:
     user = actor(request)

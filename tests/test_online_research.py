@@ -57,6 +57,32 @@ def login(http, password):
         'user': 'research-test', 'password': password}).status_code == 200
 
 
+def test_standing_model_policy_requires_auth_scope_cas_and_seals_human_actor(online):
+    http, password, value, sent = online
+    value['model_promotion'] = {'policy_id': 'b'*64, 'policy': {
+        'mode': 'OFF', 'allowed_model_ids': [], 'allowed_models': []}}
+    body = {'request_id': 'e'*32, 'expected_policy_id': 'b'*64,
+        'policy': {'mode': 'ENABLED', 'allowed_model_ids': [], 'allowed_models': ['lightgbm']},
+        'explicit_human_authorization': True}
+    route = '/research/online/model-promotion-policy'
+    assert http.post(route, json=body).status_code == 401
+    login(http, password)
+    assert http.post(route, json=body, headers={'origin': 'https://invalid.example'}
+                     ).status_code == 403
+    assert http.post(route, json={**body, 'actor': 'spoof'}).status_code == 422
+    assert http.post(route, json={**body, 'explicit_human_authorization': False}
+                     ).status_code == 422
+    assert http.post(route, json=body).status_code == 202
+    payload = unseal(sent[0][2], 'x'*40)
+    assert payload['kind'] == 'QLIB_MODEL_PROMOTION_POLICY'
+    assert payload['command']['actor'] == 'research-test'
+    assert payload['command']['authorization']['quote'] == '都允许批准'
+    assert payload['live_trading_enabled'] is False
+    value['model_promotion']['policy_id'] = 'c'*64
+    assert http.post(route, json=body).status_code == 409
+    assert len(sent) == 1
+
+
 def test_public_read_and_authentication_same_origin_write_boundary(online):
     http, password, _, sent = online
     view = http.get('/research/online/catalog')

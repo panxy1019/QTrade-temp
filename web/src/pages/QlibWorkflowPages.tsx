@@ -6,8 +6,8 @@ import { StrategyComparisonPanel } from '../components/StrategyComparisonPanel'
 import { EtfHistoryPanel } from '../components/EtfHistoryPanel'
 import { JsonExportButton } from '../components/JsonExportButton'
 import ChartRenderer from '../charts/ChartRenderer'
-import { canReuseArchivedResult, comparisonDraft, comparisonIssue, completedExperiments, finalStates, limitationLabels, stageLabels, workflowGet, workflowPost } from '../research/qlibWorkflow'
-import type { ArchivedResearchTemplate, ResearchAudit, ResearchSpec, WorkflowExperiment, WorkflowResult } from '../research/qlibWorkflow'
+import { alpha158FeatureVersion, bindResearchData, canReuseArchivedResult, checkedSpecification, comparisonDraft, comparisonIssue, completedExperiments, finalStates, limitationLabels, stageLabels, strategyDraft, workflowGet, workflowPost } from '../research/qlibWorkflow'
+import type { ArchivedResearchTemplate, ResearchAudit, ResearchSpec, ResearchSpecification, WorkflowExperiment, WorkflowResult } from '../research/qlibWorkflow'
 
 function Layout({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   const { catalog, error, refresh } = useResearchWorkflow()
@@ -88,6 +88,37 @@ export function QlibStrategyPage() {
         { title: '操作', render: (_, row) => <Button type="primary" href={'#/research?model=' + row.id}>配置并运行</Button> },
       ]} />
     </Card>
+    <Card title="已发布的策略版本">
+      <Typography.Paragraph>选择完整研究合同作为起点；编辑参数后会冻结新的版本。158 列是模型特征，不代表 158 个独立有效 Alpha。</Typography.Paragraph>
+      <Table rowKey="strategy_version" dataSource={catalog?.strategy_versions ?? []} pagination={{ pageSize: 5 }} scroll={{ x: 1100 }} columns={[
+        { title: '策略版本', dataIndex: 'strategy_version', render: value => <Typography.Text copyable>{value}</Typography.Text> },
+        { title: '模型 / 特征', render: (_, row) => `${row.spec.model} · ${row.feature_set.version}` },
+        { title: '组合', render: (_, row) => `${row.portfolio.method} · Top${row.portfolio.topk} / 淘汰${row.portfolio.n_drop}` },
+        { title: '成本', render: (_, row) => `买 ${row.execution.buy_cost_bps} bp / 卖 ${row.execution.sell_cost_bps} bp / 最低 ${row.execution.min_cost} 元` },
+        { title: '数据截止', render: (_, row) => row.spec.data_binding?.actual_end ?? '未绑定' },
+        { title: '操作', render: (_, row) => <Button href={'#/research?strategy_version=' + row.strategy_version}>以此版本创建研究</Button> },
+      ]} expandable={{ expandedRowRender: row => <pre>{JSON.stringify(row, null, 2)}</pre> }} locale={{ emptyText: '尚无已发布的版本合同' }} />
+    </Card>
+    <Card title="策略注册与生命周期">
+      <Alert type="info" showIcon title="研究登记不授予模拟执行或实盘权限" description="状态、关联任务和已有谱系来自策略注册器；模型工件在训练完成前仍为空，不把模型名称当作已训练模型版本。" />
+      <Table rowKey="strategy_id" dataSource={catalog?.strategies ?? []} pagination={{ pageSize: 5 }} scroll={{ x: 1100 }} columns={[
+        { title: '名称 / 家族', render: (_, row) => `${row.name ?? row.strategy_id} · ${row.family ?? 'QLIB'}` },
+        { title: '状态', dataIndex: 'state', render: value => <Tag>{value}</Tag> },
+        { title: '策略版本', dataIndex: 'version', render: value => <Typography.Text copyable>{value}</Typography.Text> },
+        { title: '信号 / 模型', render: (_, row) => `${row.contract.signal.kind} · ${row.contract.signal.model} · ${row.model_artifacts?.map(item => item.model_id).join('、') || row.contract.signal.model_artifact_id || '训练工件尚未生成'}` },
+        { title: '关联任务', render: (_, row) => (row.job_ids ?? []).join('、') || '暂无任务' },
+      ]} expandable={{ expandedRowRender: row => <>
+        <Descriptions column={1} items={[
+          { key: 'data', label: '数据版本', children: row.contract.spec.data_binding?.data_version_id ?? '未绑定' },
+          { key: 'feature', label: '特征版本', children: row.contract.feature_set.version },
+          { key: 'code', label: '代码版本', children: row.contract.source_revision },
+          { key: 'models', label: '已训练模型工件', children: row.model_artifacts?.map(item => `${item.model_id}（任务 ${item.job_id}）`).join('；') || '尚无已完成训练工件' },
+          { key: 'portfolio', label: '组合与执行成本', children: `${row.contract.portfolio.method} · Top${row.contract.portfolio.topk} · ${row.contract.execution.timing} · 买${row.contract.execution.buy_cost_bps}bp/卖${row.contract.execution.sell_cost_bps}bp/最低${row.contract.execution.min_cost}元` },
+        ]} />
+        <Typography.Text>已有谱系：{row.lineage ? JSON.stringify(row.lineage) : '未登记父版本'}</Typography.Text>
+        <JsonExportButton filename={`qtrade-strategy-${row.version}.json`} value={row} label="导出注册合同" />
+      </> }} locale={{ emptyText: '尚无已注册的 Qlib 研究策略' }} />
+    </Card>
     {catalog?.datasets[0] && <Audit audit={catalog.datasets[0].audit} />}
     <Alert type="info" showIcon title="模型与组合分别配置" description="当前开放Ridge线性模型与LightGBM，使用相同特征预处理和持仓协议对照。其他Qlib模型尚未接通，不显示为可运行选项。" />
     <Button href="#/archive">查看旧ETF和分钟研究档案</Button>
@@ -105,11 +136,13 @@ export function QlibResearchPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [requestId, setRequestId] = useState<string | null>(null)
+  const [preview, setPreview] = useState<ResearchSpecification | null>(null)
   const baseId = params.has('from') ? params.get('from')! : null
   const requestedModel = params.get('model')
-  const configurationKey = JSON.stringify([baseId, requestedModel])
+  const requestedStrategyVersion = params.get('strategy_version')
+  const configurationKey = JSON.stringify([baseId, requestedModel, requestedStrategyVersion])
   const [initialization, setInitialization] = useState<{
-    key: string; spec: ResearchSpec; template?: ArchivedResearchTemplate
+    key: string; spec: ResearchSpec; template?: ArchivedResearchTemplate; startingVersion?: string
   } | null>(null)
   const [initializationError, setInitializationError] = useState<{ key: string; message: string } | null>(null)
   const [reloadVersion, setReloadVersion] = useState(0)
@@ -120,7 +153,7 @@ export function QlibResearchPage() {
     if (!catalog || initializedKey === configurationKey) return
     let active = true
     const timer = window.setTimeout(() => {
-      setInitializationError(null); setError(null); setRequestId(null)
+      setInitializationError(null); setError(null); setRequestId(null); setPreview(null)
       const initialize = async () => {
         try {
           if (requestedModel !== null && requestedModel !== 'linear' && requestedModel !== 'lightgbm') {
@@ -128,7 +161,12 @@ export function QlibResearchPage() {
           }
           let template: ArchivedResearchTemplate | undefined
           let spec: ResearchSpec
-          if (baseId !== null) {
+          if (requestedStrategyVersion !== null) {
+            if (baseId !== null || !/^[a-f0-9]{64}$/.test(requestedStrategyVersion)) throw new Error('策略起点参数不明确，配置未载入')
+            const definition = catalog.strategy_versions?.find(row => row.strategy_version === requestedStrategyVersion)
+            if (!definition) throw new Error('所选策略版本未发布，配置未载入')
+            spec = strategyDraft(definition)
+          } else if (baseId !== null) {
             if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,120}$/.test(baseId)) throw new Error('归档实验标识无效，配置未载入')
             template = await workflowGet<ArchivedResearchTemplate>('/experiments/' + encodeURIComponent(baseId) + '/template')
             spec = comparisonDraft(template, baseId, requestedModel ?? undefined)
@@ -143,7 +181,7 @@ export function QlibResearchPage() {
             valid_start: segments.valid[0], valid_end: segments.valid[1],
             test_start: segments.test[0], test_end: segments.test[1],
           })
-          setInitialization({ key: configurationKey, spec, template })
+          setInitialization({ key: configurationKey, spec, template, startingVersion: requestedStrategyVersion ?? undefined })
         } catch (reason) {
           if (active) setInitializationError({ key: configurationKey,
             message: reason instanceof Error ? reason.message : '归档配置载入失败' })
@@ -154,22 +192,64 @@ export function QlibResearchPage() {
     return () => { active = false; window.clearTimeout(timer) }
   // Freeze once per requested configuration; catalog polling must not reset edits or retries.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, baseId, requestedModel, hasCatalog, initializedKey, reloadVersion])
-  const submit = async (values: FormSpec) => {
-    if (!ready || !initialization || busy || !session.authenticated || !catalog?.publication_available || catalog.worker_fresh === false) return
-    setBusy(true); setError(null)
-    const identity = requestId ?? crypto.randomUUID().replaceAll('-', '')
-    setRequestId(identity)
+  }, [form, baseId, requestedModel, requestedStrategyVersion, hasCatalog, initializedKey, reloadVersion])
+  const invalidate = () => { setRequestId(null); setError(null); setPreview(null) }
+  const editedSpec = (values: FormSpec): ResearchSpec => {
+    if (!initialization) throw new Error('研究配置未就绪')
     const { train_start, train_end, valid_start, valid_end, test_start, test_end, ...rest } = values
-    const spec: ResearchSpec = {
+    return {
       ...initialization.spec, ...rest, dataset_id: initialization.spec.dataset_id,
       features: initialization.spec.features, universe_policy: initialization.spec.universe_policy,
       source_snapshot_sha256: initialization.spec.source_snapshot_sha256,
       segments: { train: [train_start, train_end], valid: [valid_start, valid_end], test: [test_start, test_end] },
     }
+  }
+  const selectSpec = (spec: ResearchSpec, startingVersion?: string) => {
+    const { segments, ...rest } = structuredClone(spec)
+    form.resetFields()
+    form.setFieldsValue({ ...rest, train_start: segments.train[0], train_end: segments.train[1],
+      valid_start: segments.valid[0], valid_end: segments.valid[1], test_start: segments.test[0], test_end: segments.test[1] })
+    setInitialization({ key: configurationKey, spec: structuredClone(spec), startingVersion })
+    invalidate()
+  }
+  const selectData = (id: string) => {
+    const selected = catalog?.datasets.find(row => row.id === id)
+    if (!ready || !selected || !initialization) return
     try {
-      await workflowPost('/jobs', { request_id: identity, spec })
-      sessionStorage.setItem('qtrade.pending-research-job', JSON.stringify({ id: identity, spec }))
+      if (!selected.data_binding) throw new Error('所选数据没有 READY 版本描述，未载入')
+      const spec = bindResearchData(editedSpec(form.getFieldsValue(true)), selected.data_binding)
+      spec.segments.test[1] = selected.data_binding.actual_end
+      selectSpec(spec)
+    } catch (reason) { setError(String(reason)) }
+  }
+  const selectStrategy = (version: string) => {
+    const selected = catalog?.strategy_versions?.find(row => row.strategy_version === version)
+    if (!selected) return
+    try { selectSpec(strategyDraft(selected), version) }
+    catch (reason) { setError(String(reason)) }
+  }
+  const freeze = async (spec: ResearchSpec) => checkedSpecification(
+    await workflowPost<ResearchSpecification>('/specification', { spec }), spec)
+  const showPreview = async () => {
+    if (!ready || busy || !session.authenticated || !initialization?.spec.data_binding) return
+    setBusy(true); setError(null)
+    try { setPreview(await freeze(editedSpec(await form.validateFields()))) }
+    catch (reason) { setPreview(null); setError(String(reason)) }
+    finally { setBusy(false) }
+  }
+  const submit = async (values: FormSpec) => {
+    if (!ready || !initialization || busy || !session.authenticated || !catalog?.publication_available || catalog.worker_fresh === false) return
+    setBusy(true); setError(null)
+    const identity = requestId ?? crypto.randomUUID().replaceAll('-', '')
+    setRequestId(identity)
+    const spec = editedSpec(values)
+    try {
+      const frozen = spec.data_binding ? (preview ? checkedSpecification(preview, spec) : await freeze(spec)) : null
+      if (frozen) setPreview(frozen)
+      await workflowPost('/jobs', { request_id: identity, spec,
+        ...(frozen ? { expected_strategy_version: frozen.expected_strategy_version } : {}) })
+      sessionStorage.setItem('qtrade.pending-research-job', JSON.stringify({ id: identity, spec,
+        ...(frozen ? { strategy_version: frozen.expected_strategy_version, strategy_definition: frozen.strategy_definition } : {}) }))
       await refresh()
       navigate('/experiments?job=' + identity)
     } catch (reason) { setError(String(reason)) }
@@ -191,8 +271,22 @@ export function QlibResearchPage() {
       <Audit audit={dataset.audit} />
     </Card>}
     <Card title="Qlib训练与回测配置">
+      <Space orientation="vertical" style={{ width: '100%', marginBottom: 16 }}>
+        <label>不可变研究数据版本 <Select aria-label="不可变研究数据版本" disabled={!ready || busy} value={ready ? initialization?.spec.dataset_id : undefined} style={{ width: 'min(100%, 650px)' }}
+          onChange={selectData} options={(catalog?.datasets ?? []).filter(row => row.data_binding || row.id === initialization?.spec.dataset_id).map(row => ({ value: row.id, label: `${row.end} · ${row.data_binding ? 'READY' : '历史固定合同'} · ${row.id}`, disabled: !row.data_binding }))} /></label>
+        <label>特征集版本 <Select aria-label="特征集版本" disabled value={initialization?.spec.feature_set_version ?? 'historical-alpha158'} style={{ width: 340 }} options={[
+          { value: alpha158FeatureVersion, label: alpha158FeatureVersion }, { value: 'historical-alpha158', label: 'Alpha158 · 原历史合同' },
+        ]} /></label>
+        <label>已发布策略版本起点 <Select aria-label="已发布策略版本起点" disabled={!ready || busy} value={initialization?.startingVersion} placeholder="从已发布完整合同载入" style={{ width: 'min(100%, 650px)' }} onChange={selectStrategy}
+          options={(catalog?.strategy_versions ?? []).map(row => ({ value: row.strategy_version, label: `${row.spec.name} · ${row.spec.model} · ${row.strategy_version}` }))} /></label>
+      </Space>
       {ready && pinnedSource && <Typography.Paragraph copyable>本任务固定来源：{pinnedSource}</Typography.Paragraph>}
-      <Form form={form} disabled={!ready || busy} layout="vertical" onFinish={values => void submit(values)} onValuesChange={() => { setRequestId(null); setError(null) }}>
+      {ready && initialization?.spec.data_binding && <Descriptions column={1} items={[
+        { key: 'version', label: '固定数据版本', children: initialization.spec.data_binding.data_version_id },
+        { key: 'event', label: 'READY 事件', children: initialization.spec.data_binding.ready_event_id },
+        { key: 'scope', label: '支持证券', children: initialization.spec.data_binding.supported_symbols },
+      ]} />}
+      <Form form={form} disabled={!ready || busy} layout="vertical" onFinish={values => void submit(values)} onValuesChange={invalidate}>
         <Form.Item name="source_snapshot_sha256" hidden><Input /></Form.Item>
         <div className="backtest-lab-grid">
           <Form.Item name="name" label="实验名称" rules={[{ required: true, pattern: /^[A-Za-z0-9][A-Za-z0-9._-]{0,59}$/ }]}><Input /></Form.Item>
@@ -210,7 +304,14 @@ export function QlibResearchPage() {
         </div>
         <Alert type="info" title="固定合同：Alpha158＋训练期拟合归一化，下一交易日开盘，TopkDropout，前日量1%容量；分区边界须隔离未来标签。" description="已有历史已被查看，所有结果保持事后研究诊断。模型超参数采用已声明固定配置，当前表单不进行无界搜索。" />
         <Button style={{ marginTop: 16 }} type="primary" htmlType="submit" loading={busy} disabled={!ready || !session.authenticated || !catalog?.publication_available || catalog.worker_fresh === false}>提交集群研究任务</Button>
+        {initialization?.spec.data_binding && <Button style={{ marginLeft: 12 }} disabled={!ready || busy || !session.authenticated || !catalog?.publication_available || catalog.worker_fresh === false} onClick={() => void showPreview()}>预览冻结策略规格</Button>}
       </Form>
+      {preview && <Card type="inner" title="本次冻结研究规格">
+        <Typography.Paragraph copyable>策略版本：{preview.expected_strategy_version}</Typography.Paragraph>
+        <Typography.Paragraph>编辑参数会清除此预览并生成新版本；目录刷新保持当前选择。入队后以集群独立校验及回执为准，不激活模型或授予交易权限。</Typography.Paragraph>
+        <JsonExportButton filename={`qtrade-specification-${preview.expected_strategy_version}.json`} value={preview} label="导出冻结规格" />
+        <pre>{JSON.stringify(preview.spec, null, 2)}</pre>
+      </Card>}
       {requestId && <Typography.Paragraph copyable>幂等请求ID：{requestId}</Typography.Paragraph>}
       {error && <Alert type="error" showIcon title={error} description="规格未改变时重试沿用同一请求ID，避免重复计算。" />}
     </Card>

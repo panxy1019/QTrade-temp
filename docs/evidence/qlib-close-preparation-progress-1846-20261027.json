@@ -1,0 +1,214 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.qlib-close-preparation-live.v2",
+  "started_at": "2026-10-27T10:46:32.223364+00:00",
+  "state": "PREPARATION_ONLY",
+  "whole_step1_accepted": false,
+  "free_gib": 275.486328125,
+  "qlib-versions": [
+    {
+      "frequency": "day",
+      "version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+      "actual_end": "2026-10-26",
+      "admitted_at": "2026-10-26T14:02:55.608696+00:00"
+    }
+  ],
+  "online-models": [
+    {
+      "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "state": "ACTIVE",
+      "registered_at": "2026-10-26T13:22:46.923586+00:00",
+      "activated_at": "2026-10-26T14:52:26.286301+00:00",
+      "activation_count": 1
+    }
+  ],
+  "progress": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.forward-qlib-preparation.v1",
+    "request_sha256": "b0f90249f515ff6cc0e8a04d7c4218e7a55824fe95c2af4ee172ae608e7c53ab",
+    "day": "2026-10-27",
+    "updated_at": "2026-10-27T10:44:04.792383+00:00",
+    "requested_symbols": 990,
+    "qualified_current_daily_inputs": 987,
+    "prepared_symbols": 600,
+    "attempted_new_symbols": 25,
+    "failures": [
+      {
+        "symbol": "002827",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "600621",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "605258",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      }
+    ],
+    "pending_symbols": 387,
+    "retry_queue": {
+      "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+      "scope_symbols": 987,
+      "completed_symbols": 600,
+      "unresolved_symbols": 387,
+      "unattempted_symbols": 387,
+      "due_retry_symbols": 0,
+      "waiting_retry_symbols": 0,
+      "next_retry_at": null,
+      "historical_pit_certified": false
+    },
+    "state": "PREPARATION_ONLY_NOT_A_READY_QLIB_VERSION",
+    "provider_published": false,
+    "model_activated": false,
+    "historical_pit_certified": false,
+    "next_gates": [
+      "COMPLETE_BOUND_SOURCE_ADAPTATION",
+      "BENCHMARK_AND_CALENDAR_ADAPTATION",
+      "IMMUTABLE_PROVIDER_BUILD_AND_ATOMIC_READY_PUBLICATION"
+    ],
+    "evidence_sha256": "09f194d64331fd2ec570b464ace04cff5d79d5e40cdbb2da473f91fcfa42cccc"
+  },
+  "cycle": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "required_day": "2026-10-27",
+    "data_version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+    "data_end": "2026-10-26",
+    "provider_published": false,
+    "preparation": {
+      "request_sha256": "b0f90249f515ff6cc0e8a04d7c4218e7a55824fe95c2af4ee172ae608e7c53ab",
+      "prepared_symbols": 600,
+      "qualified_current_daily_inputs": 987,
+      "retry_queue": {
+        "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+        "scope_symbols": 987,
+        "completed_symbols": 600,
+        "unresolved_symbols": 387,
+        "unattempted_symbols": 387,
+        "due_retry_symbols": 0,
+        "waiting_retry_symbols": 0,
+        "next_retry_at": null,
+        "historical_pit_certified": false
+      }
+    },
+    "state": "PREPARING_DAILY_INPUTS",
+    "updated_at": "2026-10-27T10:43:46.017092+00:00",
+    "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+    "evidence_sha256": "4b8e559600ec8c2dffd402b9e466de8ff7774363e5a91b7da6f62e324c9e682e"
+  },
+  "service": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "state": "WAITING",
+    "heartbeat_at": "2026-10-27T10:46:25.625834+00:00",
+    "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+    "last_returncode": 0,
+    "evidence_sha256": "691d7dec1bc11d4857d5ed4084cb9329c48fdd9791b530cac92f28fbdcd50d06"
+  },
+  "attempt": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "started_at": "2026-10-27T10:43:46.017092+00:00",
+    "not_before": "2026-10-27T10:48:46.017092+00:00",
+    "state": "RUNNING",
+    "evidence_sha256": "0c7a03da7678c5c3a75535c532c488298736d7339e12ec88151982fbe0be7be7"
+  },
+  "automatic_completion_exists": false,
+  "supervised_processes": [
+    {
+      "name": "code-server",
+      "pid": 81,
+      "state": "Running"
+    },
+    {
+      "name": "jupyterlab",
+      "pid": 80,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-data-observer",
+      "pid": 4471,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-etf-diagnostics",
+      "pid": 179865,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-etf-shadow",
+      "pid": 299932,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-forward-research",
+      "pid": 175982,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-history-backfill",
+      "pid": 164340,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-pit-repair",
+      "pid": 153768,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-qlib-data",
+      "pid": 179733,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-qlib-workflow",
+      "pid": 173727,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-research-maintenance",
+      "pid": 213587,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-research-publication",
+      "pid": 294214,
+      "state": "Running"
+    },
+    {
+      "name": "tensorboard",
+      "pid": 79,
+      "state": "Running"
+    }
+  ],
+  "checked_at": "2026-10-27T10:46:32.229375+00:00",
+  "evidence_sha256": "fd62597a925041ed90a2d85689ee67eac641ff087660488b5bacf8b3df0f6347"
+}

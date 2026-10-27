@@ -6,7 +6,7 @@ import type { CurrentDataset, CurrentDatasets, HistoricalBarSeries, MinuteBarSer
 import { MarketHistoryChart } from '../charts/MarketHistoryChart'
 import { MinuteHistoryChart } from '../charts/MinuteHistoryChart'
 import { EquityChart } from '../charts/EquityChart'
-import { BacktestLab } from './BacktestLab'
+import { LegacyBacktestArchive } from './LegacyBacktestArchive'
 import { JsonExportButton } from './JsonExportButton'
 import { PublicResearchObservations } from './PublicResearchObservations'
 
@@ -43,7 +43,7 @@ export function CurrentDataStatus({ archive = false }: { archive?: boolean }) {
   return <Alert showIcon type={fresh ? 'success' : 'warning'} title={`当前数据：日线 ${data.daily.minimum_latest_day} · 五分钟 ${data.minute.minimum_latest_day} · ${fresh ? '符合交易日历' : '数据滞后'}`} description={`最近应有完整交易日 ${data.daily.expected_complete_day}；网页每 60 秒核对版本。行情与历史工作区的当前数据回测工具共用输入；日终历史与盘中观测分别显示。${archive ? '固定实验保留原日期；Qlib冻结数据和实验状态在策略研究、实验中心分别显示。' : ''}`} />
 }
 
-export function CurrentWorkspace({ mode, platform }: { mode: 'market' | 'backtest'; platform: PlatformSnapshot | null }) {
+export function CurrentWorkspace({ mode }: { mode: 'market' | 'backtest'; platform: PlatformSnapshot | null }) {
   const { data, error } = useContext(CurrentContext)
   if (!data) return <Alert type={error ? 'error' : 'info'} showIcon title={error ?? '正在加载当前研究数据…'} />
   const identity = `${data.daily.checksum}:${data.minute.checksum}`
@@ -51,7 +51,7 @@ export function CurrentWorkspace({ mode, platform }: { mode: 'market' | 'backtes
     <Typography.Text type="secondary">旧范围参考：{data.daily.universe.symbols.length} ETF 日线 / {data.minute.universe.symbols.length} 股票五分钟，保留此范围自身的数据截止与版本。当前统一目标池行情请返回“统一池当前行情”；扩容库存与此旧网页范围分别列示。</Typography.Text>
     {data.expansion && <Alert type="info" showIcon title={`集群扩容：日频已校验 ${data.expansion.daily.completed} / ${data.expansion.daily.candidate_count ?? '—'} 候选，已选 ${data.expansion.daily.selected ?? '待排名'} / 1000；分钟 ${data.expansion.minute.completed ?? 0} / 400`} description={`日频状态 ${data.expansion.daily.state}；分钟状态 ${data.expansion.minute.state}；持久盘余量 ${data.expansion.free_gib} GiB。完整十年历史仅对上市时间足够的股票成立。`} />}
     {mode === 'market' ? <CurrentCharts key={identity} daily={data.daily} minute={data.minute} intraday={data.intraday} /> : <>
-      <BacktestLab key={data.daily.checksum} dataset={data.daily} currentVersion={data.daily.data_version} templates={platform?.strategyTemplates.templates ?? []} initialTemplateId={null} gitCommit={platform?.deployment.git_commit_sha ?? null} />
+      <LegacyBacktestArchive dataset={data.daily} />
       <CurrentMinuteLab key={data.minute.checksum} dataset={data.minute} />
     </>}
     {mode === 'market' && <PublicResearchObservations />}

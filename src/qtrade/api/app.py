@@ -17,7 +17,7 @@ from math import isclose, isfinite
 from pathlib import Path
 from secrets import compare_digest
 from statistics import median
-from typing import Any, Literal, Self, cast
+from typing import Any, Literal, NoReturn, Self, cast
 from zoneinfo import ZoneInfo
 
 import pyarrow as pa  # type: ignore[import-untyped]
@@ -395,140 +395,34 @@ def _deployment_provenance() -> dict[str, object]:
 
 
 def _strategy_template_catalog() -> dict[str, object]:
-    validation = "IMPLEMENTED_NOT_PRODUCTION_VALIDATED"
-    templates = [
-        {
-            "template_id": "equal-weight-buy-hold-benchmark-v1",
-            "name": "等权买入并持有",
-            "role": "BENCHMARK_ONLY",
-            "family": "BUY_AND_HOLD_BENCHMARK",
-            "implementation_ref": "qtrade.research.multi_asset.EqualWeightBuyHold",
-            "description": "首个交易日等权建仓，之后保持仓位，用作主动策略比较基准。",
-            "data_interval": "1d",
-            "universe_scope": "多标的",
-            "entry_rule": "首个可交易会话按等权目标计算，下一会话开盘执行。",
-            "exit_rule": "基准期内不主动退出。",
-            "parameter_defaults": {"reserve": "0"},
-            "required_inputs": ["质量通过的日线开收盘", "冻结标的池"],
-            "validation_status": validation,
-            "known_limitations": ["只作为比较基准，不是主动选股或择时策略。"],
-            "causal_preview_supported": False,
-            "causal_preview_blocker": "COMPARISON_ONLY_NO_ACTIVE_TEMPLATE_PREVIEW",
-        },
-        {
-            "template_id": "moving-average-trend-v1",
-            "name": "移动平均趋势",
-            "role": "ACTIVE_BASELINE",
-            "family": "SINGLE_ASSET_TREND",
-            "implementation_ref": (
-                "qtrade.strategies.baselines.MovingAverageTrendStrategy"
-            ),
-            "description": "价格位于移动平均线上方时持仓，跌破时清仓。",
-            "data_interval": "1d",
-            "universe_scope": "单标的",
-            "entry_rule": "收盘价大于等于窗口均线时生成目标持仓。",
-            "exit_rule": "收盘价低于窗口均线时生成零仓位目标。",
-            "parameter_defaults": {"window": "20", "quantity": "100"},
-            "required_inputs": ["质量通过的单标的日线"],
-            "validation_status": validation,
-            "known_limitations": ["震荡市可能频繁换手；参数必须在测试前冻结。"],
-            "causal_preview_supported": False,
-            "causal_preview_blocker": "SINGLE_ASSET_DAILY_SELECTOR_NOT_CONNECTED",
-        },
-        {
-            "template_id": "etf-momentum-rotation-v1",
-            "name": "ETF 动量轮动",
-            "role": "ACTIVE_BASELINE",
-            "family": "ETF_MOMENTUM_ROTATION",
-            "implementation_ref": "qtrade.research.multi_asset.MomentumAllocation",
-            "description": "按多周期动量排序并定期持有排名靠前的 ETF。",
-            "data_interval": "1d",
-            "universe_scope": "多 ETF",
-            "entry_rule": "再平衡日选择正动量且排名前 K 的 ETF。",
-            "exit_rule": "再平衡时跌出前 K 或动量非正则退出。",
-            "parameter_defaults": {
-                "horizons": "20,60,120",
-                "top_k": "3",
-                "rebalance_every": "20",
-                "reserve": "0.05",
-            },
-            "required_inputs": ["质量通过的日线", "冻结 ETF 标的池"],
-            "validation_status": validation,
-            "known_limitations": ["目录默认值不是已冻结实验参数。"],
-            "causal_preview_supported": True,
-            "causal_preview_blocker": None,
-        },
-        {
-            "template_id": "etf-momentum-trend-volatility-v1",
-            "name": "ETF 动量 + 趋势波动率约束",
-            "role": "ACTIVE_BASELINE",
-            "family": "ETF_MOMENTUM_TREND_VOLATILITY",
-            "implementation_ref": "qtrade.research.multi_asset.MomentumAllocation",
-            "description": "在动量轮动上增加趋势过滤与目标年化波动率缩放。",
-            "data_interval": "1d",
-            "universe_scope": "多 ETF",
-            "entry_rule": "正动量、排名前 K 且价格不低于趋势均线时持有。",
-            "exit_rule": "再平衡时任一资格条件失效则退出。",
-            "parameter_defaults": {
-                "horizons": "20,60,120",
-                "top_k": "3",
-                "rebalance_every": "20",
-                "reserve": "0.05",
-                "trend_window": "120",
-                "volatility_window": "20",
-                "target_annual_volatility": "0.15",
-            },
-            "required_inputs": ["质量通过的日线", "冻结 ETF 标的池"],
-            "validation_status": validation,
-            "known_limitations": ["波动率缩放只降低暴露，不使用杠杆。"],
-            "causal_preview_supported": True,
-            "causal_preview_blocker": None,
-        },
-        {
-            "template_id": "cross-sectional-factor-ranking-v1",
-            "name": "横截面因子排序",
-            "role": "ACTIVE_BASELINE",
-            "family": "CROSS_SECTIONAL_FACTOR_RANKING",
-            "implementation_ref": (
-                "qtrade.research.multi_asset.RankedFactorAllocation"
-            ),
-            "description": "对预声明价格因子做横截面百分位排序并组合选股。",
-            "data_interval": "1d",
-            "universe_scope": "多股票或 ETF",
-            "entry_rule": "按加权因子得分选择排名前 K 的标的。",
-            "exit_rule": "再平衡时跌出前 K 或趋势资格失效则退出。",
-            "parameter_defaults": {
-                "factors": "momentum_20",
-                "top_k": "3",
-                "rebalance_every": "20",
-                "reserve": "0.05",
-            },
-            "required_inputs": [
-                "质量通过的日线",
-                "冻结标的池",
-                "预注册因子定义",
-            ],
-            "validation_status": validation,
-            "known_limitations": ["因子与参数必须在测试窗口之前冻结。"],
-            "causal_preview_supported": True,
-            "causal_preview_blocker": None,
-        },
-    ]
+    """Compatibility tombstone; frozen historical artifacts remain readable."""
     return {
-        "classification": "READ_ONLY_IMPLEMENTED_BASELINE_STRATEGY_CATALOG",
-        "template_count": len(templates),
-        "active_template_count": 4,
-        "benchmark_template_count": 1,
-        "causal_preview_template_count": 3,
-        "templates": templates,
+        "classification": "RETIRED_LEGACY_TEMPLATES",
+        "template_count": 0,
+        "active_template_count": 0,
+        "benchmark_template_count": 0,
+        "causal_preview_template_count": 0,
+        "templates": [],
         "selection_creates_experiment": False,
         "selection_registers_strategy": False,
         "paper_runtime_start": False,
         "live_runtime_start": False,
         "arbitrary_code_execution": False,
         "external_order_transmission": False,
-        "next_step": "FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST",
+        "historical_artifacts_available": True,
+        "next_step": "USE_VERSION_BOUND_QLIB_RESEARCH",
     }
+
+
+def retired_legacy_daily_research() -> NoReturn:
+    """Retire before parsing old specs, resolving datasets or invoking engines."""
+    raise HTTPException(status_code=410, detail={
+        "code": "LEGACY_DAILY_RESEARCH_RETIRED",
+        "replacement": "/api/research/specification",
+        "historical_artifacts_available": True,
+        "state_mutation": False,
+        "external_order_transmission": False,
+    })
 
 
 def _backtest_preview_spec(payload: BacktestPreviewRequest) -> BacktestPreviewSpec:
@@ -1650,75 +1544,21 @@ def create_app(
 
     @app.post("/experiment-run-spec-draft")
     def experiment_run_spec_draft(
-        payload: ExperimentRunSpecDraftRequest,
         _: str = Depends(_require_role(Role.READ, auth_config)),
     ) -> dict[str, object]:
-        dataset = _load_verified_market_dataset(state.historical_manifest_path)
-        if dataset is None:
-            raise HTTPException(
-                status_code=409,
-                detail="verified historical dataset unavailable",
-            )
-        try:
-            return _experiment_run_spec_draft(payload, dataset)
-        except (ArithmeticError, KeyError, ValueError) as exc:
-            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        retired_legacy_daily_research()
 
     @app.post("/experiment-run-spec-backtest")
     def experiment_run_spec_backtest(
-        payload: ExperimentRunSpecDraftRequest,
         _: str = Depends(_require_role(Role.READ, auth_config)),
     ) -> dict[str, object]:
-        dataset = _load_verified_market_dataset(state.historical_manifest_path)
-        if dataset is None:
-            raise HTTPException(
-                status_code=409,
-                detail="verified historical dataset unavailable",
-            )
-        bars = _load_backtest_preview_bars(
-            state.historical_manifest_path,
-            data_version=str(dataset["data_version"]),
-            expected_checksum=str(dataset["checksum"]),
-            expected_universe=dataset["universe"],
-            expected_bar_count=dataset["bar_count"],
-        )
-        if bars is None:
-            raise HTTPException(
-                status_code=409,
-                detail="historical dataset validation failed",
-            )
-        try:
-            return _hash_bound_experiment_preview(payload, dataset, bars)
-        except (ArithmeticError, KeyError, ValueError) as exc:
-            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        retired_legacy_daily_research()
 
     @app.post("/backtest-preview")
     def backtest_preview(
-        payload: BacktestPreviewRequest,
         _: str = Depends(_require_role(Role.READ, auth_config)),
     ) -> dict[str, object]:
-        dataset = _load_verified_market_dataset(state.historical_manifest_path)
-        if dataset is None:
-            raise HTTPException(status_code=409, detail="verified historical dataset unavailable")
-        bars = _load_backtest_preview_bars(
-            state.historical_manifest_path,
-            data_version=str(dataset["data_version"]),
-            expected_checksum=str(dataset["checksum"]),
-            expected_universe=dataset["universe"],
-            expected_bar_count=dataset["bar_count"],
-        )
-        if bars is None:
-            raise HTTPException(status_code=409, detail="historical dataset validation failed")
-        try:
-            spec = _backtest_preview_spec(payload)
-            return run_backtest_preview(
-                bars,
-                data_version=str(dataset["data_version"]),
-                data_checksum=str(dataset["checksum"]),
-                spec=spec,
-            )
-        except (ArithmeticError, ValueError) as exc:
-            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        retired_legacy_daily_research()
 
     @app.post("/single-stock-five-minute-backtest")
     def single_stock_five_minute_backtest(
@@ -5622,15 +5462,23 @@ def _load_verified_intraday_factor_robustness(
             "test_returns_enter_same_fold_selection": False,
             "reused_history_not_independent_confirmation": True,
         }
-        factor_source = (
-            Path(__file__).resolve().parents[1]
-            / "research"
-            / "intraday_factor.py"
-        )
+        # This is an immutable historical diagnostic. Its implementation must
+        # remain the recorded source, not today's unrelated API/UI edits.
+        archived_source = (Path(__file__).resolve().parents[3]
+            / 'deployment/evidence/intraday-factor-long-window/implementation-v1')
         expected_implementation = {
-            "factor_module_sha256": sha256(factor_source.read_bytes()).hexdigest(),
-            "api_module_sha256": sha256(Path(__file__).read_bytes()).hexdigest(),
+            'factor_module_sha256': sha256(
+                (archived_source/'intraday_factor.source').read_bytes()).hexdigest(),
+            'api_module_sha256': sha256(
+                (archived_source/'api_app.source').read_bytes()).hexdigest(),
         }
+        if expected_implementation != {
+            'factor_module_sha256':
+                '706c2856617bd461888b5611025c5c106d6819ece6b2b1e31aace7588a18a6ec',
+            'api_module_sha256':
+                '192940cc70fad85efd388944fc60463f50af96c475531343caec461214a4f87e',
+        }:
+            return None
         backtest = result.get("backtest")
         robustness = result.get("robustness_validation")
         research_gate = result.get("research_gate")

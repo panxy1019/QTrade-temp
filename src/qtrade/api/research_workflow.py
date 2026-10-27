@@ -19,6 +19,7 @@ from urllib.request import urlopen
 from fastapi import APIRouter, HTTPException, Request, Response
 
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.research.strategy_contract import freeze_strategy, validate_strategy
 from qtrade.research.workflow import SCHEMA, archived_template, capabilities, digest, validate_spec
 from qtrade.research.workflow_queue import GitQueue, seal
 
@@ -183,8 +184,10 @@ def catalog(response: Response) -> dict[str, Any]:
         value["worker_fresh"] = -60 <= age <= 720
         expected = research_clock()
         value["expected_complete_day"] = expected
-        value["frozen_data_current"] = (all(
-            r["end"] >= expected for r in value.get("datasets", [])
+        value["frozen_data_current"] = (any(
+            r["end"] >= expected
+            and r['id'] == value.get('default_spec', {}).get('dataset_id', r['id'])
+            for r in value.get("datasets", [])
         ) if expected and value.get("datasets") else None)
         value["publication_available"] = True
         value["checked_at"] = datetime.now(UTC).isoformat()
@@ -246,11 +249,66 @@ def template(experiment_id: str, response: Response) -> dict[str, Any]:
         raise HTTPException(422, "归档配置不完整，不能用当前默认值补齐") from None
 
 
+def bound_definition(spec: dict[str, Any], listing: dict[str, Any]) -> dict[str, Any]:
+    """Freeze only published immutable inputs; the cluster independently verifies bytes."""
+    try:
+        if listing.get("schema_version") != SCHEMA:
+            raise ValueError("CATALOG_SCHEMA_MISMATCH")
+        heartbeat = datetime.fromisoformat(listing["worker"]["heartbeat_at"])
+        age = (datetime.now(UTC)-heartbeat).total_seconds() if heartbeat.tzinfo else None
+        if age is None or not -60 <= age <= 720:
+            raise ValueError("WORKER_STALE")
+        binding = spec["data_binding"]
+        matches = [row for row in listing["datasets"]
+                   if row.get("data_binding") == binding and row["id"] == spec["dataset_id"]]
+        if len(matches) != 1:
+            raise HTTPException(422, "所选 READY 数据版本未在当前研究目录发布")
+        revision = listing["worker"]["source_revision"]
+        # A config-code mismatch between Vercel and the worker must close this
+        # entrance; custom parameters may derive a new contract from this base.
+        bases = [row for row in listing.get("strategy_versions", [])
+                 if row.get("spec", {}).get("data_binding") == binding
+                 and row.get('source_revision') == revision]
+        if not bases or any(validate_strategy(row) != row or row["source_revision"] != revision
+                            for row in bases):
+            raise ValueError("PUBLISHED_STRATEGY_BUILDER_MISMATCH")
+        return freeze_strategy(spec, revision)
+    except HTTPException:
+        raise
+    except (ValueError, KeyError, TypeError):
+        raise HTTPException(503, "集群版本规格不可核验，未生成冻结策略") from None
+
+
+@router.post("/specification")
+async def specification(request: Request, response: Response) -> dict[str, Any]:
+    actor(request)
+    response.headers["Cache-Control"] = "no-store"
+    body = await _body(request)
+    try:
+        if set(body) != {"spec"}:
+            raise ValueError("SPEC_FIELDS_MISMATCH")
+        spec = validate_spec(body["spec"])
+        if "data_binding" not in spec:
+            raise ValueError("READY_DATA_BINDING_REQUIRED")
+    except (ValueError, TypeError, KeyError):
+        raise HTTPException(422, "请先选择不可变 READY 数据与已支持的特征版本") from None
+    try:
+        listing = read_public("workflow.json")
+    except Exception:
+        raise HTTPException(503, "研究目录不可用，未生成冻结策略") from None
+    definition = bound_definition(spec, listing)
+    return signed({**AUTHORITY, "schema_version": "qtrade.qlib-specification-preview.v1",
+        "spec": spec, "source_revision": definition["source_revision"],
+        "strategy_definition": definition,
+        "expected_strategy_version": definition["strategy_version"]})
+
+
 @router.post("/jobs", status_code=202)
 async def submit(request: Request) -> dict[str, Any]:
     user = actor(request)
     body = await _body(request)
-    if set(body) != {"spec", "request_id"} or not re.fullmatch(
+    if set(body) not in ({"spec", "request_id"},
+                         {"spec", "request_id", "expected_strategy_version"}) or not re.fullmatch(
         r"[a-f0-9]{32}", str(body.get("request_id", ""))
     ):
         raise HTTPException(422, "需要有效的规格与幂等请求标识")
@@ -271,12 +329,21 @@ async def submit(request: Request) -> dict[str, Any]:
         raise
     except Exception:
         raise HTTPException(503, "集群执行器未就绪，未提交任务") from None
+    frozen = None
+    if "data_binding" in spec:
+        frozen = bound_definition(spec, listing)
+        if body.get("expected_strategy_version") != frozen["strategy_version"]:
+            raise HTTPException(409, "冻结策略版本已变化，请重新预览后提交")
+    elif "expected_strategy_version" in body:
+        raise HTTPException(422, "策略版本需要绑定不可变 READY 数据")
     identity = body["request_id"]
     # Deterministic envelope supports safe browser retry after a lost response.
     value = {
         "job_id": identity, "actor": user, "spec": spec, "spec_sha256": digest(spec),
         "kind": "QLIB_RESEARCH_JOB", "live_trading_enabled": False,
     }
+    if frozen is not None:
+        value["expected_strategy_version"] = frozen["strategy_version"]
     try:
         queue = GitQueue.from_environment()
         queue.append("requests", identity, seal(
@@ -290,7 +357,8 @@ async def submit(request: Request) -> dict[str, Any]:
     except Exception as error:
         _queue_failure("submit", error)
         raise HTTPException(503, "任务提交未获确认；请使用同一请求标识重试") from None
-    return {**AUTHORITY, "job_id": identity, "state": "QUEUED", "spec_sha256": digest(spec)}
+    return {**AUTHORITY, "job_id": identity, "state": "QUEUED", "spec_sha256": digest(spec),
+            **({"strategy_version": frozen["strategy_version"]} if frozen else {})}
 
 
 @router.post("/jobs/{job_id}/cancel", status_code=202)

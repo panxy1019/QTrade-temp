@@ -1,0 +1,33 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.operator-cli-failure-observation.v1",
+  "recorded_at": "2026-10-27T10:48:21.122691+00:00",
+  "state": "FAILED_NO_ACCEPTANCE_REPORT",
+  "whole_step1_accepted": false,
+  "expected_production_revision": "b64b5f9e9a77a59a140d366fc1cf9a0186a90cfa",
+  "command": [
+    "python",
+    "-m",
+    "scripts.probe_unified_publication",
+    "--expected-production-revision",
+    "b64b5f9e9a77a59a140d366fc1cf9a0186a90cfa",
+    "--report",
+    "E:/QTrade-temp/cluster-evidence/qlib-publication-probe-b64b5f9-20261027-1847.json"
+  ],
+  "observed_returncode": 1,
+  "observed_tool_wall_seconds": 7.8850372,
+  "observed_output": "UNIFIED_PROBE_HTTP_FETCH_FAILED",
+  "acceptance_report_exists": false,
+  "limitations": [
+    "RECORDED_AFTER_ACTUAL_CLI_ATTEMPT",
+    "NO_PER_REQUEST_CAPTURE_OR_FAILURE_STAGE_AVAILABLE",
+    "NO_FRESHNESS_OR_BACKEND_FAILURE_INFERENCE_FROM_THIS_TRANSPORT_ERROR"
+  ],
+  "evidence_sha256": "55cc14bcc13b7e3a198503c5db0945077ef47eb8603019c2b7cf0b11d7dec313"
+}

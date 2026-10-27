@@ -45,7 +45,7 @@ def validate_spec(value: dict[str, Any]) -> dict[str, Any]:
         "hold_thresh", "risk_degree", "buy_cost_bps", "sell_cost_bps",
         "min_cost", "initial_cash", "seed", "universe_policy",
     }
-    if set(value) - {"source_snapshot_sha256"} != required:
+    if set(value) - {"source_snapshot_sha256", "data_binding", "feature_set_version"} != required:
         raise ValueError("SPEC_FIELDS_MISMATCH")
     if "source_snapshot_sha256" in value and (
         not isinstance(value["source_snapshot_sha256"], str)
@@ -56,7 +56,19 @@ def validate_spec(value: dict[str, Any]) -> dict[str, Any]:
         r"[A-Za-z0-9][A-Za-z0-9._-]{0,59}", value["name"]
     ):
         raise ValueError("SAFE_EXPERIMENT_NAME_REQUIRED")
-    if value["dataset_id"] != DATASET_ID or value["features"] != "Alpha158":
+    earliest, latest = "2017-04-05", "2026-10-23"
+    if "data_binding" in value or "feature_set_version" in value:
+        from qtrade.research.strategy_contract import FEATURE_SET_VERSION, validate_data_binding
+
+        binding = validate_data_binding(value.get("data_binding"))
+        if (value.get("feature_set_version") != FEATURE_SET_VERSION
+                or value["dataset_id"] != binding["dataset_id"]
+                or value.get("source_snapshot_sha256") != binding["source_snapshot_sha256"]):
+            raise ValueError("IMMUTABLE_RESEARCH_BINDING_MISMATCH")
+        earliest, latest = binding["start"], binding["actual_end"]
+    elif value["dataset_id"] != DATASET_ID:
+        raise ValueError("UNSUPPORTED_DATASET_OR_FEATURES")
+    if value["features"] != "Alpha158":
         raise ValueError("UNSUPPORTED_DATASET_OR_FEATURES")
     if value["model"] not in MODELS or value["universe_policy"] != "supported_a_share":
         raise ValueError("UNSUPPORTED_MODEL_OR_UNIVERSE_POLICY")
@@ -88,9 +100,9 @@ def validate_spec(value: dict[str, Any]) -> dict[str, Any]:
         if pair[0] > pair[1]:
             raise ValueError("REVERSED_SEGMENT")
     if not (
-        "2017-04-05" <= segments["train"][0] < segments["train"][1]
+        earliest <= segments["train"][0] < segments["train"][1]
         < segments["valid"][0] < segments["valid"][1]
-        < segments["test"][0] < segments["test"][1] <= "2026-10-23"
+        < segments["test"][0] < segments["test"][1] <= latest
     ):
         raise ValueError("OVERLAPPING_OR_OUT_OF_DATA_SEGMENTS")
     # At least seven calendar days for the two-future-session label. The runner
@@ -185,6 +197,9 @@ def build_config(spec: dict[str, Any], baseline: dict[str, Any]) -> dict[str, An
         for key in ("seed", "feature_fraction_seed", "bagging_seed"):
             config["model"]["kwargs"][key] = spec["seed"]
     config["workflow_spec"] = spec
+    if "data_binding" in spec:
+        config["data_binding"] = spec["data_binding"]
+        config["feature_set_version"] = spec["feature_set_version"]
     config["universe_policy"] = "supported_a_share"
     config["source_constraint_policy"] = "RECONCILED_BACKFILL_ADDITIONAL_BLOCKS_V2"
     config["infer_processors"] = [

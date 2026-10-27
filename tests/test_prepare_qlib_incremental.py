@@ -146,8 +146,8 @@ def test_failed_preparation_does_not_starve_unattempted_symbols_or_claim_version
         'evidence_sha256': 'e'*64,
         'outcomes': {r['symbol']: {'state': 'SUCCEEDED', 'missing_amount_bars': 0} for r in stocks},
     })
-    first = module.run(tmp_path, previous, revision='c'*40, maximum=1)
-    second = module.run(tmp_path, previous, revision='c'*40, maximum=1)
+    first = module.run(tmp_path, previous, revision='c'*40, maximum=1, day=NOW.date().isoformat())
+    second = module.run(tmp_path, previous, revision='c'*40, maximum=1, day=NOW.date().isoformat())
     assert seen == ['600000', '600001']
     assert first['attempted_new_symbols'] == second['attempted_new_symbols'] == 1
     assert second['provider_published'] is False and second['model_activated'] is False

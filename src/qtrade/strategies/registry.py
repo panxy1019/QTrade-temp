@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import re
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -9,6 +11,7 @@ from datetime import UTC, date, datetime
 from enum import StrEnum
 from hashlib import sha256
 from pathlib import Path
+from typing import Any
 
 from qtrade.research import TimeSplit
 from qtrade.strategies.promotion import (
@@ -207,6 +210,17 @@ class StrategyRegistry:
                     actor TEXT NOT NULL,
                     occurred_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS strategy_research_contracts (
+                    strategy_id TEXT PRIMARY KEY REFERENCES strategies(strategy_id),
+                    contract_sha256 TEXT NOT NULL UNIQUE,
+                    contract_json TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS strategy_research_jobs (
+                    job_id TEXT PRIMARY KEY,
+                    strategy_id TEXT NOT NULL REFERENCES strategies(strategy_id),
+                    actor TEXT NOT NULL,
+                    registered_at TEXT NOT NULL
+                );
                 """
             )
 
@@ -319,6 +333,91 @@ class StrategyRegistry:
                 (strategy_id, before.value, target.value, actor, reason, timestamp.isoformat()),
             )
         return StrategyRecord(spec, target, StrategyRole(row[2]))
+
+    def register_research_experiment(
+        self, spec: StrategySpec, *, contract: dict[str, Any], job_id: str, actor: str
+    ) -> StrategyRecord:
+        """Atomically bind a Qlib contract/job at EXPERIMENT, without promotion.
+
+        Repeated jobs preserve the original registration clocks and lifecycle;
+        a distinct job can reference the same immutable strategy version.
+        """
+        from qtrade.research.strategy_contract import strategy_spec, validate_strategy
+
+        if (os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false"
+                or re.fullmatch("[a-f0-9]{32}", job_id) is None
+                or re.fullmatch(r"[A-Za-z0-9._@-]{1,80}", actor) is None):
+            raise ValueError("RESEARCH_REGISTRATION_AUTHORITY_OR_JOB_INVALID")
+        contract = validate_strategy(contract)
+        expected = strategy_spec(contract, universe=spec.universe, now=spec.created_at)
+        if spec != expected:
+            raise ValueError("RESEARCH_STRATEGY_SPEC_CONTRACT_MISMATCH")
+        raw = json.dumps(contract, sort_keys=True, separators=(",", ":"), allow_nan=False)
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            job = connection.execute("SELECT strategy_id,actor FROM strategy_research_jobs "
+                                     "WHERE job_id=?", (job_id,)).fetchone()
+            if job is not None and job != (spec.strategy_id, actor):
+                raise ValueError("IMMUTABLE_RESEARCH_JOB_STRATEGY_CONFLICT")
+            existing = connection.execute(
+                "SELECT spec_json,status,role FROM strategies WHERE strategy_id=?",
+                (spec.strategy_id,),
+            ).fetchone()
+            if existing is None:
+                connection.execute("INSERT INTO strategies VALUES(?,?,?,?,?,?)", (
+                    spec.strategy_id, spec.family, spec.version, self._encode_spec(spec),
+                    StrategyStatus.EXPERIMENT.value, StrategyRole.NONE.value,
+                ))
+                connection.execute("INSERT INTO strategy_research_contracts VALUES(?,?,?)", (
+                    spec.strategy_id, contract["evidence_sha256"], raw,
+                ))
+                connection.execute(
+                    "INSERT INTO strategy_transitions(strategy_id,before_status,after_status,"
+                    "actor,reason,occurred_at) VALUES(?,?,?,?,?,?)", (
+                        spec.strategy_id, StrategyStatus.IDEA.value,
+                        StrategyStatus.EXPERIMENT.value,
+                        actor, "Accepted immutable Qlib research job " + job_id,
+                        spec.created_at.isoformat(),
+                    ),
+                )
+                status, role = StrategyStatus.EXPERIMENT, StrategyRole.NONE
+            else:
+                stored = self._decode_spec(existing[0])
+                # Lifecycle transitions may update updated_at; no identity field may change.
+                expected_spec = replace(spec, created_at=stored.created_at,
+                                        updated_at=stored.updated_at)
+                frozen = connection.execute(
+                    "SELECT contract_sha256,contract_json FROM strategy_research_contracts "
+                    "WHERE strategy_id=?", (spec.strategy_id,),
+                ).fetchone()
+                if stored != expected_spec or frozen != (contract["evidence_sha256"], raw):
+                    raise ValueError("IMMUTABLE_RESEARCH_STRATEGY_CONFLICT")
+                spec = stored
+                status, role = StrategyStatus(existing[1]), StrategyRole(existing[2])
+                if job is None and status in {StrategyStatus.REJECTED, StrategyStatus.RETIRED}:
+                    raise ValueError("RESEARCH_STRATEGY_LIFECYCLE_CLOSED")
+            if job is None:
+                connection.execute("INSERT INTO strategy_research_jobs VALUES(?,?,?,?)", (
+                    job_id, spec.strategy_id, actor, expected.created_at.isoformat(),
+                ))
+        return StrategyRecord(spec, status, role)
+
+    def research_contract(self, strategy_id: str) -> dict[str, Any] | None:
+        with self._connect() as connection:
+            row = connection.execute("SELECT contract_json FROM strategy_research_contracts "
+                                     "WHERE strategy_id=?", (strategy_id,)).fetchone()
+        return None if row is None else dict(json.loads(row[0]))
+
+    def research_jobs(self, strategy_id: str, *, limit: int = 100) -> tuple[dict[str, str], ...]:
+        if type(limit) is not int or not 1 <= limit <= 200:
+            raise ValueError("BOUNDED_RESEARCH_JOB_QUERY_REQUIRED")
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT job_id,actor,registered_at FROM strategy_research_jobs "
+                "WHERE strategy_id=? ORDER BY registered_at DESC,job_id LIMIT ?",
+                (strategy_id, limit)).fetchall()
+        return tuple(dict(zip(("job_id", "actor", "registered_at"), row, strict=True))
+                     for row in rows)
 
     def assign_research_role(
         self,

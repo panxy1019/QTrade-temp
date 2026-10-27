@@ -30,13 +30,13 @@ export function RollingPolicyPanel({ value, authenticated, ready, refresh }: {
     setBusy(true)
     try {
       const result = await workflowPost<{ state: string }>('/online/training-policy', draft)
-      setNotice(`训练政策${result.state === 'QUEUED' ? '已排队，等待集群回执' : result.state}。新候选仍需人工批准。`)
+      setNotice(`训练政策${result.state === 'QUEUED' ? '已排队，等待集群回执' : result.state}。候选激活按独立批准政策执行。`)
       setDraft(null); await refresh()
     } catch (error) { setNotice(String(error)) }
     finally { setBusy(false) }
   }
   return <Card title="受控滚动训练" extra={<Button disabled={!available || !authenticated} onClick={() => value?.policy && value.policy_id && setDraft({ request_id: crypto.randomUUID().replaceAll('-', ''), expected_policy_id: value.policy_id, policy: structuredClone(value.policy) })}>配置训练政策</Button>}>
-    <Typography.Paragraph>按真实交易会话安排新候选；数据就绪、标签成熟和资源门禁通过后才执行。预测优先，失败保留当前模型，候选不会自动激活。</Typography.Paragraph>
+    <Typography.Paragraph>按真实交易会话安排新候选；数据就绪、标签成熟和资源门禁通过后才执行。预测优先，失败保留当前模型；候选激活由独立的人工或自动批准政策控制。</Typography.Paragraph>
     <Descriptions column={1} items={[
       { key: 'mode', label: '生效政策', children: modes.find(m => m.value === value?.mode)?.label ?? '尚未接入' },
       { key: 'model', label: '候选模型', children: value?.policy?.model ?? '未配置' },
@@ -60,7 +60,7 @@ export function RollingPolicyPanel({ value, authenticated, ready, refresh }: {
         <label>候选模型 <Select aria-label="候选模型" value={draft.policy.model} options={[{ value: 'linear', label: 'Ridge' }, { value: 'lightgbm', label: 'LightGBM' }]} onChange={model => change({ model })} /></label>
         {(['train_sessions', 'valid_sessions', 'test_sessions'] as const).map((key, i) => <label key={key}>{['训练会话数', '验证会话数', '测试会话数'][i]} <Select aria-label={['训练会话数', '验证会话数', '测试会话数'][i]} value={draft.policy[key]} options={[[252, 504, 756, 1260], [60, 126, 252], [20, 60, 126]][i].map(value => ({ value, label: value }))} onChange={value => change({ [key]: value })} /></label>)}
         <Typography.Text>固定随机种子 {draft.policy.seed}；两会话标签成熟与切分隔离。当前数据池仍存在幸存者偏差及 PIT、复权、交易约束限制。</Typography.Text>
-        <Alert type="warning" showIcon title="仅创建研究候选，人工激活保持独立" description="关闭或更改政策将取消旧政策下尚未执行的滚动任务；已经运行的任务可完成归档。不会更换当前模型或开启实盘。" />
+        <Alert type="warning" showIcon title="仅创建研究候选，批准政策保持独立" description="关闭或更改训练政策将取消旧政策下尚未执行的滚动任务；已经运行的任务可完成归档。此配置本身不会更换当前模型或开启实盘。" />
         {changed && <Alert type="error" title="政策已变化，请关闭后重新审阅" />}
       </Space>}
     </Modal>

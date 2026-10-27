@@ -64,4 +64,15 @@ describe('QTrade web shell', () => {
     expect(await screen.findByText('旧范围参考：仅 30 ETF 日线 / 75 股分钟，不代表统一目标池')).toBeInTheDocument()
     await waitFor(() => expect(vi.mocked(fetch).mock.calls.some(([path]) => String(path).includes('/current/datasets'))).toBe(true))
   })
+
+  it('opens historical candidates without requesting or displaying retired strategy templates', async () => {
+    vi.mocked(fetch).mockClear()
+    window.location.hash = '#/archive'
+    render(<App />)
+    expect(await screen.findByRole('tab', { name: '历史实验候选' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.queryByRole('tab', { name: '原策略目录' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/已实现基线策略模板/)).not.toBeInTheDocument()
+    await waitFor(() => expect(vi.mocked(fetch).mock.calls.some(([path]) => String(path).endsWith('/strategies'))).toBe(true))
+    expect(vi.mocked(fetch).mock.calls.some(([path]) => String(path).endsWith('/strategy-templates'))).toBe(false)
+  })
 })

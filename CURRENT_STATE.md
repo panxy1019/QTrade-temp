@@ -1,6 +1,101 @@
 # Current state
 
-Last updated: 2026-10-27 18:04 Shanghai, actual post-close checkpoint.
+Last updated: 2026-10-27 21:40 Shanghai, close-chain acceptance and source integration.
+
+- October 27 automatic completion is real at 20:23:26, version 09a67b13,
+  987 current / 990 historical; original ACTIVE prediction completes at 20:26,
+  candidate later-version validation at 20:30, then signals. C private replay
+  and actual public delivery pass separately (public at 21:08 on main b64b5f9).
+  D's corrected auditor passes the real replay at 21:11; original VALIDATING
+  false rejection is retained. Actual-public stock E passes all twelve books.
+  These pinned checks do not claim whole STEP1, rendering or future-session P&L.
+
+- User explicitly authorizes both automatic daily prediction and validated
+  research candidate activation. New standing policy is implemented with signed
+  scope, durable attempts, final ACTIVE/data-epoch CAS and new-PAPER initialization
+  isolation. Original PAPER 175982 is not restarted or recovered; rolling OFF
+  and LIVE false remain. Policy is not yet deployed/enabled. Immutable version/
+  feature/strategy form and Registry/job/model links are implemented; old five
+  templates and daily execution endpoints are retired in source. Linux/new-job/
+  production acceptance remains to run. See docs/QLIB_UNIFIED_RESEARCH_CLOSEOUT_20261027.md.
+
+- The old finite eight-run close heartbeat is deleted as obsolete after the
+  actual C/D/stock E observations and changed user authorization. Continue the
+  current human-requested work; do not replay its old pending-state instructions.
+
+- Overall implementation/effect/next-plan report is now in
+  docs/QTRADE_OVERALL_PROGRESS_REPORT_20261027.md. Actual 19:26 full public
+  market probe passes on production main b64b5f9, public commit 6361e0b5, with
+  index/catalog ages 149.27/145.10s. Eight fixed public API captures succeed;
+  coverage remains daily 1,497 and minute 1,496 out of 1,500. This is bounded
+  public delivery evidence, not browser rendering or full STEP1 acceptance.
+
+- Actual 19:38 preparation is 847/987, with 137 unattempted and three waiting
+  retries (140 unresolved); formal head remains October 26, automatic completion
+  absent. All QTrade supervised PIDs remain Running and unchanged, including
+  PAPER 175982. ACTIVE activation count stays one; candidate TRAINED/unactivated,
+  rolling OFF. Free space is 275.39 GiB. At 19:27 history queue has 57,888 qualified
+  rows (day 1,440 / minute 56,448), independent delisted probe 67; these are sealed
+  queue counts, not total lake or full historical certification. Dataset signed
+  metadata has 990 retained stock partitions / 2,158,792 rows ending October 26;
+  no new full Parquet scan was performed for this report.
+
+- Actual public stock forward remains DEGRADED/FORWARD_SERVICE_DATA_STALE,
+  although all 12 books have October 27 observations. Six PAPER books are NORMAL,
+  running, no recovery required, zero fills/holdings and cash/NAV 1m each; the
+  1,135 blocked items are not execution/alpha evidence. ETF SHADOW remains Running
+  with current 30/30 close inputs and the previously accepted pinned observation;
+  tomorrow's target is prospective. PR32 remains Draft and the cadence repair is
+  not deployed into today's source-55b5b004 frozen request. C/D/stock E and STEP2
+  remain gated. Report clarifies existing factor/evaluation/StrategyRegistry cores
+  versus missing unified factor research and builder workflows.
+
+- A second actual full production probe at 18:49 confirms main b64b5f9 and a
+  different public commit, 2dffe7dd. It is FRESH_TRANSPORT in 17.56s, with
+  index/catalog ages 118.62/106.92s; all identity/index/five-series checks pass.
+  An intervening HTTP_FETCH_FAILED attempt produced no acceptance report; its
+  explicit post-attempt failure observation is retained. These point checks
+  do not establish continuous availability or full-pool data completeness.
+
+- At actual 18:46 Qlib preparation reaches 600/987, with 387 unattempted and no
+  retry backlog; automatic completion is still absent and formal head ends
+  October 26. All supervised PIDs including PAPER 175982 remain unchanged;
+  ACTIVE activation count is one. Free disk is 275.49 GiB. Sixteen more useful
+  25-symbol slots are required, roughly 80 minutes of scheduled opportunities;
+  further jitter/source failures may extend this. First-pass planning estimate
+  is now 20:10-20:30, then provider/prediction/signals/validation and actual audits.
+
+- Cadence fix c3e08c2 independently reviewed, Ruff/mypy clean. All four related
+  suites pass on Windows (56) and in actual Linux isolation (56), zero skips;
+  these are the same cases on two platforms, not 112 unique tests. The first
+  Windows path failures and a fixed-date fixture failure remain documented;
+  only the fixture's two calls are bound explicitly to its synthetic date.
+  Linux verifies 250 source/test/config files against the committed Git blobs.
+  This is test acceptance only: the frozen source-55b5b004 data service was not
+  switched or restarted. Deploy the repair after that request resolves, using
+  its actual new revision. The remaining C/D/stock-forward checklist includes
+  exact RO lookups, failed-claim handling and public wrapper extraction.
+
+- PR31 is merged as b64b5f9. The actual default production endpoint now reports
+  that exact main revision. A new complete public probe at 18:24 passes in
+  18.48s: all 1,500 identities/3,000 entries, pinned catalog/index Git bytes and
+  five sampled API series agree with publication be60c348. Index/catalog ages
+  are 83.54/68.31s, FRESH_TRANSPORT; daily/minute coverage remains PARTIAL at
+  1,497/1,496 out of 1,500. This is a production delivery checkpoint, not UI
+  rendering acceptance, all-series byte replay or the entire C/D/E milestone.
+
+- The actual 18:27 read-only checkpoint is Qlib preparation 524/987: 462 inputs
+  unattempted and one waiting retry, 463 unresolved. No automatic completion
+  exists; the formal daily head still ends October 26 and ACTIVE activation
+  count stays one. All supervised services run; PAPER 175982 is unchanged.
+  An 18:18 child started 16ms before its persisted retry deadline and lost one
+  five-minute parent slot. A narrow cadence repair is under review. Do not
+  deploy it into this pending request: the request freezes revision 55b5b004,
+  so changing that revision blocks equality and disguising new code as the old
+  revision would invalidate provenance. Keep the current owner running. At the
+  existing cadence the remaining first pass is around 20:00, with network,
+  retries and subsequent provider/prediction/validation time still separate.
+  Actual receipts and the later deployment restriction are in the close runbook.
 
 - Public market delivery has recovered: the one-time nonforce catch-up succeeds
   in 225.07s, then the original publisher resumes as PID 294214 with its ordinary

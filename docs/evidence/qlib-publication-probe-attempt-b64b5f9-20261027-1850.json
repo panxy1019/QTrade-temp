@@ -1,0 +1,27 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.operator-cli-attempt.v1",
+  "started_at": "2026-10-27T10:48:46.469449+00:00",
+  "checked_at": "2026-10-27T10:49:04.749091+00:00",
+  "command": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "scripts.probe_unified_publication",
+    "--expected-production-revision",
+    "b64b5f9e9a77a59a140d366fc1cf9a0186a90cfa",
+    "--report",
+    "E:\\QTrade-temp\\cluster-evidence\\qlib-publication-probe-b64b5f9-20261027-1850.json"
+  ],
+  "returncode": 0,
+  "stdout": "{\"state\": \"FRESH_TRANSPORT\", \"production_revision\": \"b64b5f9e9a77a59a140d366fc1cf9a0186a90cfa\", \"index_id\": \"ac571af68d3092ed8669fa88462545646d4755c530eb596e98262934afedb1e9\", \"catalog_id\": \"a3f886f9ac7b0e236f72c304087e8983b148e842f7cf399589c2402b6a0a8294\", \"fresh_publication\": true, \"transport_mode\": \"ACTUAL_HTTP_GET\", \"incremental_freshness\": {\"day\": {\"status\": \"PARTIAL\", \"ready_symbols\": 1497, \"required_symbols\": 1500, \"expected_end\": \"2026-10-27T15:00:00+08:00\"}, \"5min\": {\"status\": \"PARTIAL\", \"ready_symbols\": 1496, \"required_symbols\": 1500, \"expected_end\": \"2026-10-27T15:00:00+08:00\"}}}\n",
+  "stderr": "",
+  "acceptance_report_exists": true,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "aedd62392a136eb2a012bbe66afe1210582b087a719c10fbc2998ae330ab4d0e"
+}

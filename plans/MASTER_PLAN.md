@@ -24,6 +24,62 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+21:40 checkpoint: real October 27 version/prediction/later candidate validation/
+signals exist. Private C plus real production C delivery, corrected D replay and
+actual-public twelve-book stock E pass for their pinned inputs. Preserve all
+prior failure evidence. User now authorizes automatic candidate research approval
+as well as ACTIVE daily inference: implement signed standing policy with epoch
+CAS and no new PAPER initialization/recovery authority. Version-bound research
+contracts, registry/job/model linking and webpage selection are implemented;
+old five templates and daily tool endpoints are retired. Windows integration,
+build/lint and focused webpage checks pass; actual Linux, live new workflow,
+production and visual verification still need completing. Original PAPER PID and
+rolling OFF/LIVE false remain unchanged. Full PIT/history certification and all
+STEP1 acceptance are not inferred from these individual successes.
+
+19:38 report checkpoint: overall implementation/effect/roadmap documented in
+docs/QTRADE_OVERALL_PROGRESS_REPORT_20261027.md, backed by actual private state,
+eight fixed API captures and another full public probe (production b64b5f9,
+index/catalog 149.27/145.10s). Prep is 847/987, 137 unattempted and three waiting
+retries; formal head remains October 26 and automatic completion absent. All
+PIDs/ACTIVE/OFF remain unchanged, free 275.39 GiB. History queue reached 57,888
+qualified rows and separate delisted 67 at 19:27; no full-history certification.
+Public stock forward is still DEGRADED for stale formal data: six PAPER books
+hold cash with zero fills, not validated strategy returns. Pinned ETF SHADOW
+observation retains its independent pass. Keep PR32 Draft until the frozen
+source-bound daily request resolves, then roll out the already tested cadence
+repair. Complete real C/D/stock E and separately scoped production/visual checks
+before STEP2. Reuse existing factor metrics and StrategyRegistry core when
+building Factor Registry, independent evaluation, unified strategy registration
+and a version-bound builder; do not duplicate those foundations.
+
+18:49 checkpoint: another full actual production frame passes on main b64b5f9,
+public commit 2dffe7dd, index/catalog ages 118.62/106.92s in 17.56s. Preserve the
+intervening HTTP fetch failure (no acceptance report); no continuous SLA claim.
+Real 18:46 prep is 600/987, 387 unattempted, no retries; formal head remains
+October 26 and automatic completion is absent. Sixteen useful slots remain;
+first-pass estimate is 20:10-20:30 with downstream work separate. All PIDs,
+ACTIVE and rolling OFF unchanged. Reviewed c3e08c2 cadence repair passes the
+same 56 cases on Windows and real Linux without skips, plus Ruff/mypy; the
+250-file isolated Git-blob verification is test evidence, not service rollout.
+Keep the current source-bound owner running and defer deployment until its
+frozen request resolves. Preserve failure receipts and the explicit fixture
+date correction. Remaining-gate runbook documents exact C/D/stock artifact and
+public-input requirements; neither STEP1 completion nor STEP2 is accepted.
+
+18:27 checkpoint: PR31 is merged as b64b5f9, and the default production API
+independently reports that exact main revision. Actual 18:24 full public probe
+is FRESH_TRANSPORT in 18.48s with index/catalog ages 83.54/68.31s. All 1,500
+identities/3,000 entries and five fixed API series agree with public be60c348;
+coverage is still PARTIAL. The real Qlib queue is 524/987, 462 unattempted plus
+one waiting retry, with no READY October 27 provider or completion marker.
+All service PIDs including PAPER 175982 remain unchanged. One 16ms early child
+launch caused a lost five-minute slot; review a bounded cadence repair without
+changing source budgets. Deploy only after the active frozen-source request is
+resolved, never relabel runtime code or weaken source equality to patch in place.
+First-pass preparation is now around 20:00, plus independent downstream work;
+C/D/stock E, full STEP1 and STEP2 remain gated. See the close recovery runbook.
+
 18:04 actual acceptance checkpoint: ordinary market publication is restored after
 one separately bounded, nonforce operator catch-up (225.07s). Publisher 294214
 keeps the ordinary 90s cap. Two distinct actual public frames pass all identity,

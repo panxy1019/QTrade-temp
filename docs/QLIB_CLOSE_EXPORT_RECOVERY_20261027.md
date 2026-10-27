@@ -74,6 +74,38 @@ ETF 的[唯一续补计划](evidence/qlib-etf-continuation-plan-0a545a8-20261027
 
 [18:00 Qlib 只读检查](evidence/qlib-close-preparation-progress-1801-20261027.json)为 425/987 已准备，562 未尝试，无待重试；正式日版本仍止于 10 月 26 日，ACTIVE 激活次数仍为 1。首轮准备估计 19:50—20:00，之后还需真实 provider/预测/signals/候选验证和 C/D/股票前向验收，不是整个链路 ETA。[后台回补/PIT 快照](evidence/qlib-close-history-pit-services-1753-20261027.json)记录历史队列 49,032 合格行（日线 1,224、五分钟 47,808）、独立退市队列 47 行，低优先级任务仍按政策让位。PIT 当前 990 范围刷新不等于历史 PIT，以上队列数也不等于整个数据湖。空闲 275.56 GiB，保留 100 GiB 下限。
 
+## 18:27 主分支正式交付与剩余队列
+
+PR31 已合并为 `b64b5f9e9a77a59a140d366fc1cf9a0186a90cfa`。不能仅凭 Vercel 构建成功判定正式别名已切换：合并后的首次 API 检查仍返回旧 `f3c55cb`，18:24 的实际默认生产端点才确认新 `main`。随后[完整实际公网核验](evidence/qlib-publication-probe-b64b5f9-20261027-1825.json)在 18:24:46 完成，耗时 18.48 秒，公开提交固定为 `be60c348bd317c7a52924d7033b6ba148826a845`，索引/目录年龄 83.54/68.31 秒，`FRESH_TRANSPORT`。
+
+这次再次核验 1,500 个身份、3,000 个条目、目录/索引 Git blob 与原始字节哈希、五组 API 与引用分片的逐行一致。日线 1,497/1,500、五分钟 1,496/1,500 仍为 `PARTIAL`；不能据此接受所有证券原始来源、整个交易日 SLA、网页渲染或 C/D/E。
+
+[18:27:31 的只读准备快照](evidence/qlib-close-preparation-progress-1828-20261027.json)为 524/987，尚有 462 只未尝试和 1 只等待重试。自动完成文件不存在，正式日版本仍止于 10 月 26 日；ACTIVE 激活次数为 1。受监管服务全部运行，原 PAPER `175982` 和其它 PID 不变。
+
+实际调度日志还记录一个边界缺陷：上一子周期开始于 UTC `10:13:45.739667`，写入冷却时间 `10:18:45.739667`；下次子进程在 `10:18:45.723310` 开始，提前约 16 毫秒，返回 `WAITING_FOR_RETRY`，父进程再等待一整轮五分钟。`10:23:45.723720` 才继续到 524。这是少一次准备轮次，不是采集器停止，也不能通过改时钟或增大每轮 25 个新证券额度掩盖。
+
+窄范围调度修复正在测试。当前 `request.json` 明确冻结 `55b5b0044649a28fd84c77364ca9908df0cee7a4`：直接换新 `--source-revision` 会触发 `BLOCKED_DAILY_INPUT_CHANGED_REVIEW_REQUIRED`，用新代码谎报旧 revision 也会破坏证据。因此当前自动 owner 保持运行，修复只在冻结请求完成或另行审查解决后部署，不修改既有请求。剩余首轮按原节奏估计约 20:00，重试、源失败、后续 provider 构建、预测、signals、候选验证和独立 C/D/股票前向验收仍会增加时间。
+
+[剩余 C/D/股票前向清单](QLIB_CLOSE_REMAINING_GATES_20261027.md)补充精确只读查询、归档定位、真实公开响应提取和失败状态处理。滚动 OFF 不阻止独立候选后续版本验证；但精确 prediction binding 的终态失败不会自动重排。股票 API 外层包装需要与其内层签名 publication 分别保存，不能把 ETF CLI 接受包装对象的行为套用到股票审计器。
+
+## 18:49 持续交付与调度修复验证
+
+新一轮[实际完整公网检查](evidence/qlib-publication-probe-b64b5f9-20261027-1850.json)在 18:49:04 完成，仍为正式 `main b64b5f9`，但公开提交已前进到 `2dffe7dd1e460695d0d421839f2f5db458281428`。耗时 17.56 秒，索引/目录年龄 118.62/106.92 秒，全部目录和五组引用抽查通过 `FRESH_TRANSPORT`。这与 18:24 是不同实际交付帧，覆盖仍为 PARTIAL。
+
+中间一次完整探针返回 `UNIFIED_PROBE_HTTP_FETCH_FAILED`，没有验收报告。保留[失败后的操作员观察](evidence/qlib-publication-probe-failure-b64b5f9-20261027-1847.json)：它记录实际 CLI 返回码和工具耗时，未捕获具体 HTTP 失败阶段，也没有声称源已过期或后台停机。后一次检查的[独立调用凭证](evidence/qlib-publication-probe-attempt-b64b5f9-20261027-1850.json)保留真正开始/结束时钟与 CLI 输出。后续成功不删除失败，更不构成连续可用性 SLA。
+
+[18:46:32 只读检查](evidence/qlib-close-preparation-progress-1846-20261027.json)为 600/987，387 未尝试，没有待重试。自动完成标记仍不存在，正式 provider 截至 10 月 26 日；全部受监管 PID 未变，原 PAPER `175982`、ACTIVE 激活次数 1 保持。磁盘空闲 275.49 GiB。剩余首遍至少还需 16 个有效批次，按五分钟节奏约 80 分钟；已有边界空转、后续网络失败仍可能延长，当前规划估计 20:10—20:30，再加 provider、预测、signals、候选验证与独立验收，不能当作全部 STEP1 的 ETA。
+
+调度修复 `c3e08c205c032c85aae6682449106898e67fae5e` 只在子进程首次获得合法签名 `WAITING_FOR_RETRY` 时，按真实 aware deadline 至多等待一次、最多 300 秒，然后用新的实际 UTC 重走所有 cycle 门禁。第二次仍 WAITING 就返回，不循环，不提前覆盖 attempt，不重复准备。原单个 900 秒 alarm 覆盖两次检查和等待，源/锁/25+5/采集优先级/存储/head/epoch 检查不变，另经独立源码复核。
+
+Windows [56 项最终测试](evidence/qlib-scheduler-windows-short-20261027.xml)、实际 Linux [56 项隔离测试](evidence/qlib-scheduler-linux-c3e08c2-20261027.xml)均无失败、错误或跳过，另有 Ruff/mypy；这是相同测试跨平台通过，不能相加为 112 个不同用例。[Linux 凭证](evidence/qlib-scheduler-linux-c3e08c2-20261027.json)绑定 c3e08c2 和 250 个源码/测试/配置文件，逐项核对 Git blob、SHA256、大小，在独立目录验证，没有切换任何生产进程。
+
+[Windows 报告](evidence/qlib-scheduler-windows-report-20261027.json)如实保留最初三个 FileNotFoundError 的工具观察、原 HEAD 复现及短临时路径全部通过的结果；路径长度是证据支持的推断，不冒充保存了初次原始日志。扩大测试还发现固定 10 月 26 日 fixture 使用真实当前日默认值，[55 通过/1 失败原始 XML](evidence/qlib-scheduler-windows-before-fixture-fix-20261027.xml)保留；只给该测试的两次调用补上 fixture 日期，生产默认时钟和准备逻辑未改。
+
+原始 XML 与 JSON 都通过 Git `-text` 属性保留字节。失败 XML 的原始断言空白和 Windows 换行也是凭证内容，不能为了通用空白检查而重排；归档后再次比较 Git blob 与捕获 SHA256，防止换行归一化破坏报告引用。
+
+**修复没有部署到当前 data owner。** 今日冻结请求必须继续用 `55b5b004`；等其完成或有另行审查的解决后，才使用新真实 revision 部署。当前 Linux 目录只是隔离测试产物，不能当作新服务来源或今天 C/D/E 已通过。
+
 ## 复现与验收界限
 
 相关测试：
@@ -90,6 +122,15 @@ python -m pytest tests/test_unified_market.py tests/test_unified_source.py tests
 
 ```powershell
 python -m scripts.probe_unified_publication --expected-production-revision REVIEWED_MAIN_40_HEX --report NEW_REPORT.json
+```
+
+调度修复的四组针对性回归如下。Windows 使用经过确认的短临时目录，避免路径长度问题；目录必须全新，执行前确认其位于预期临时根下。普通 Linux 不需要该变通。
+
+```bash
+PYTHONPATH="$PWD/src:$PWD" LIVE_TRADING_ENABLED=false python -m pytest \
+  tests/test_qlib_data_service.py tests/test_daily_collection_binding.py \
+  tests/test_prepare_qlib_incremental.py tests/test_pit_collection_queue.py \
+  -q -o addopts=''
 ```
 
 ETF 独立审计使用新捕获的真实公开响应，输出必须与来源、local root 和捕获目录分离。保留真实时钟，旧捕获过期时应如实拒绝，不修改日期；已成功的续补不得再次 apply。

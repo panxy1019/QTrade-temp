@@ -325,6 +325,101 @@ def test_actual_sqlite_and_raw_parquet_replay_verify_candidate_without_activatio
     assert runtime.run() == value
 
 
+def test_runner_validating_progress_is_accepted_without_mutating_any_ledger(runtime):
+    with closing(sqlite3.connect(runtime.workflow)) as connection, connection:
+        job_id = connection.execute('SELECT id FROM jobs').fetchone()[0]
+        connection.execute('DELETE FROM events')
+        connection.executemany('INSERT INTO events VALUES(?,?,?)', [
+            (job_id, '2026-10-26T09:10:00+00:00', 'QUEUED'),
+            (job_id, '2026-10-26T09:11:00+00:00', 'RUNNING'),
+            (job_id, '2026-10-26T09:12:00+00:00', 'VALIDATING'),
+            (job_id, '2026-10-26T09:14:00+00:00', 'COMPLETE'),
+        ])
+    before = {path: path.read_bytes() for path in (runtime.models, runtime.workflow, runtime.data)}
+    value = runtime.run()
+    assert value['errors'] == [], value['errors']
+    assert value['state'] == 'VERIFIED_LATER_INPUT_CANDIDATE_NOT_ACTIVATED'
+    assert value['evidence']['validation_job_id'] == job_id
+    assert value['evidence']['validation_queued_at'] == '2026-10-26T09:10:00+00:00'
+    assert value['evidence']['validation_completed_at'] == '2026-10-26T09:14:00+00:00'
+    assert value['model_activated_by_auditor'] is False
+    assert value['automatic_training_accepted'] is False
+    assert value['whole_step1_accepted'] is False
+    assert before == {path: path.read_bytes() for path in before}
+
+
+@pytest.mark.parametrize('states', [
+    ['RUNNING', 'VALIDATING', 'COMPLETE'],
+    ['QUEUED', 'VALIDATING', 'COMPLETE'],
+    ['QUEUED', 'VALIDATING', 'RUNNING', 'COMPLETE'],
+    ['QUEUED', 'RUNNING', 'VALIDATING'],
+    ['QUEUED', 'RUNNING', 'VALIDATING', 'VALIDATING', 'COMPLETE'],
+    ['QUEUED', 'RUNNING', 'VALIDATING', 'RUNNING', 'COMPLETE'],
+    ['QUEUED', 'RUNNING', 'TRAINING', 'COMPLETE'],
+    ['QUEUED', 'RUNNING', 'VALIDATED', 'COMPLETE'],
+    ['QUEUED', 'RUNNING', 'FAILED', 'COMPLETE'],
+    ['QUEUED', 'RUNNING', 'INTERRUPTED', 'COMPLETE'],
+    ['QUEUED', 'RUNNING', 'CANCELLED', 'COMPLETE'],
+    ['QUEUED', 'RUNNING', 'COMPLETE', 'VALIDATING'],
+])
+def test_validation_job_rejects_missing_reordered_repeated_or_unproven_phases(states):
+    identity = 'a'*32
+    events = [{'state': state, 'at': (NOW-timedelta(minutes=10-index)).isoformat()}
+              for index, state in enumerate(states)]
+    job = {'id': identity, 'state': 'COMPLETE', 'error': None, 'updated': NOW.isoformat()}
+    with pytest.raises(ValueError, match='CANDIDATE_AUDIT_JOB_EVENT_CHAIN_INVALID'):
+        module.job_chain(job, {'job_events': {identity: events}}, NOW)
+
+
+@pytest.mark.parametrize(('validating_at', 'updated', 'code'), [
+    ('2026-10-26T09:10:30+00:00', '2026-10-26T09:14:00+00:00', 'JOB_EVENT_CLOCK_INVALID'),
+    ('2026-10-26T09:15:00+00:00', '2026-10-26T09:14:00+00:00', 'JOB_EVENT_CLOCK_INVALID'),
+    ('2026-10-28T09:12:00+00:00', '2026-10-26T09:14:00+00:00', 'FUTURE_OR_NAIVE_CLOCK'),
+    ('2026-10-26T09:12:00', '2026-10-26T09:14:00+00:00', 'FUTURE_OR_NAIVE_CLOCK'),
+    ('2026-10-26T09:12:00+00:00', '2026-10-26T09:13:00+00:00', 'JOB_EVENT_CLOCK_INVALID'),
+])
+def test_validating_progress_cannot_bypass_event_clock_validation(validating_at, updated, code):
+    identity = 'a'*32
+    events = [
+        {'state': 'QUEUED', 'at': '2026-10-26T09:10:00+00:00'},
+        {'state': 'RUNNING', 'at': '2026-10-26T09:11:00+00:00'},
+        {'state': 'VALIDATING', 'at': validating_at},
+        {'state': 'COMPLETE', 'at': '2026-10-26T09:14:00+00:00'},
+    ]
+    job = {'id': identity, 'state': 'COMPLETE', 'error': None, 'updated': updated}
+    with pytest.raises(ValueError, match='CANDIDATE_AUDIT_'+code):
+        module.job_chain(job, {'job_events': {identity: events}}, NOW)
+
+
+@pytest.mark.parametrize(('state', 'error'), [
+    ('FAILED', None), ('INTERRUPTED', None), ('COMPLETE', 'VALIDATION_FAILED')])
+def test_complete_looking_progress_cannot_override_failed_job_result(state, error):
+    identity = 'a'*32
+    events = [{'state': value, 'at': (NOW-timedelta(minutes=10-index)).isoformat()}
+              for index, value in enumerate(['QUEUED', 'RUNNING', 'VALIDATING', 'COMPLETE'])]
+    job = {'id': identity, 'state': state, 'error': error, 'updated': NOW.isoformat()}
+    with pytest.raises(ValueError, match='CANDIDATE_AUDIT_JOB_NOT_COMPLETE'):
+        module.job_chain(job, {'job_events': {identity: events}}, NOW)
+
+
+def test_validating_job_progress_cannot_authorize_a_changed_request_identity(runtime):
+    with closing(sqlite3.connect(runtime.workflow)) as connection, connection:
+        row = connection.execute('SELECT id,request FROM jobs').fetchone()
+        connection.execute('DELETE FROM events')
+        connection.executemany('INSERT INTO events VALUES(?,?,?)', [
+            (row[0], at, state) for state, at in (
+                ('QUEUED', '2026-10-26T09:10:00+00:00'),
+                ('RUNNING', '2026-10-26T09:11:00+00:00'),
+                ('VALIDATING', '2026-10-26T09:12:00+00:00'),
+                ('COMPLETE', '2026-10-26T09:14:00+00:00'))])
+        request = json.loads(row[1])
+        request['source_revision'] = 'e'*40
+        connection.execute('UPDATE jobs SET request=?', (json.dumps(resign(request)),))
+    value = runtime.run()
+    assert value['state'] == 'BLOCKED'
+    assert value['errors'] == ['CANDIDATE_AUDIT_VALIDATION_JOB_IDENTITY_INVALID']
+
+
 @pytest.mark.parametrize(('table', 'sql', 'parameters', 'code'), [
     ('models', "UPDATE models SET state='ACTIVE' WHERE model_id=?", 'model', 'UNACTIVATED_STAGED'),
     ('models', 'DELETE FROM model_validations', None, 'UNIQUE_LATER_VALIDATION'),

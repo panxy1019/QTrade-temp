@@ -133,7 +133,7 @@ export interface StrategyTemplate {
 }
 
 export interface StrategyTemplateCatalog {
-  classification: 'READ_ONLY_IMPLEMENTED_BASELINE_STRATEGY_CATALOG' | 'UNAVAILABLE'
+  classification: 'READ_ONLY_IMPLEMENTED_BASELINE_STRATEGY_CATALOG' | 'UNAVAILABLE' | 'RETIRED_LEGACY_TEMPLATES'
   template_count: number
   active_template_count: number
   benchmark_template_count: number
@@ -145,7 +145,7 @@ export interface StrategyTemplateCatalog {
   live_runtime_start: false
   arbitrary_code_execution: false
   external_order_transmission: false
-  next_step: 'FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST'
+  next_step: 'FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST' | 'USE_QLIB_RESEARCH_WORKFLOW'
 }
 
 export interface ResearchExperiment {

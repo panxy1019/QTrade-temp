@@ -27,6 +27,26 @@ def checksum(path: Path) -> str:
     return sha256(path.read_bytes()).hexdigest()
 
 
+def bound_training_definition(data_root: Path, config: dict[str, Any], revision: str,
+    database: Path | None, expected: str | None, *, restore_proof: bool,
+    pit_evidence_root: Path | None) -> dict[str, Any] | None:
+    """Independent runner gate; no Qlib import or training before this check."""
+    spec = config.get('workflow_spec', {})
+    if 'data_binding' not in spec:
+        if database is not None or expected is not None:
+            raise ValueError('BOUND_RESEARCH_INPUT_REQUIRED')
+        return None
+    from qtrade.research.strategy_contract import freeze_strategy, verify_bound_spec
+
+    if database is None or not restore_proof or pit_evidence_root != data_root/'pit-sources':
+        raise ValueError('BOUND_RESEARCH_RESTORE_AND_SOURCE_REQUIRED')
+    spec = verify_bound_spec(spec, data_root, database)
+    definition = freeze_strategy(spec, revision)
+    if expected != definition['strategy_version']:
+        raise ValueError('BOUND_RESEARCH_EXPECTED_STRATEGY_CHANGED')
+    return definition
+
+
 def make_provider(
     dataset_root: Path, target: Path, *, source_snapshot: SourceSnapshot | None = None,
 ) -> dict[str, Any]:
@@ -209,7 +229,13 @@ def run(
     *, config_override: dict[str, Any] | None = None, pit_evidence_root: Path | None = None,
     restore_proof: bool = False,
     rolling_plan: dict[str, Any] | None = None,
+    data_database: Path | None = None, expected_strategy_version: str | None = None,
 ) -> dict[str, Any]:
+    config = config_override or json.loads(
+        (REPO / "configs/qlib_daily_baseline.json").read_text()
+    )
+    strategy = bound_training_definition(data_root, config, source_revision, data_database,
+        expected_strategy_version, restore_proof=restore_proof, pit_evidence_root=pit_evidence_root)
     import importlib.metadata
     import random
 
@@ -221,9 +247,6 @@ def run(
     from qlib.utils import init_instance_by_config
     from qlib.workflow import R
 
-    config = config_override or json.loads(
-        (REPO / "configs/qlib_daily_baseline.json").read_text()
-    )
     if rolling_plan is not None:
         from qtrade.research.data_versions import verify_version
         from qtrade.research.rolling_policy import verify_plan
@@ -245,6 +268,8 @@ def run(
         processors.append({"class": "Float64Features",
                            "module_path": "qtrade.research.qlib_processors"})
         config["online_feature_precision"] = "FLOAT64_AFTER_FROZEN_NORMALIZATION_V1"
+    if strategy is not None and config != strategy['training_config']:
+        raise ValueError('BOUND_RESEARCH_TRAINING_CONFIG_CHANGED')
     if re.fullmatch(r"[a-f0-9]{40}", source_revision) is None:
         raise ValueError("FULL_SOURCE_REVISION_REQUIRED")
     output.mkdir(parents=True, exist_ok=True)
@@ -264,6 +289,7 @@ def run(
             "data_manifest_sha256": checksum(data_root / "dataset.json"),
             "source_snapshot_sha256": source_snapshot.identity,
             **restore_request,
+            **({'strategy_definition': strategy} if strategy is not None else {}),
         }
     )
     run_id = config["name"] + "-" + request["evidence_sha256"][:16]
@@ -281,6 +307,8 @@ def run(
     source_snapshot.freeze(stage / "pit-sources")
     write_json_atomic(stage / "request.json", request)
     write_json_atomic(stage / "pit-repair-coverage.json", pit_coverage)
+    if strategy is not None:
+        write_json_atomic(stage/'strategy-definition.json', strategy)
 
     def status(state: str) -> None:
         write_json_atomic(
@@ -315,6 +343,14 @@ def run(
     instruments: str | list[str] = "qtrade1000"
     if config.get("universe_policy") == "supported_a_share":
         instruments = make_supported_universe(data_root, stage/'provider', dataset)
+    if strategy is not None:
+        admitted_files = json.loads((data_root/'version.json').read_bytes())['files']
+        expected_provider = {name: value for name, value in admitted_files.items()
+                             if name.startswith('provider/')}
+        actual_provider = {p.relative_to(stage).as_posix(): checksum(p)
+                           for p in (stage/'provider').rglob('*') if p.is_file()}
+        if actual_provider != expected_provider:
+            raise ValueError('BOUND_RESEARCH_REGENERATED_PROVIDER_CHANGED')
     tracking.mkdir(parents=True, exist_ok=True)
     qlib.init(
         provider_uri=str(stage / "provider"),
@@ -382,6 +418,8 @@ def run(
         *(['scripts/qlib_rolling_adapter.py', 'scripts/run_qlib_rolling.py',
            'src/qtrade/research/rolling_policy.py', 'src/qtrade/research/qlib_training.py',
            'src/qtrade/research/data_versions.py'] if rolling_plan is not None else []),
+        *(['src/qtrade/research/strategy_contract.py', 'src/qtrade/research/data_versions.py',
+           'src/qtrade/strategies/registry.py'] if strategy is not None else []),
     ):
         target = stage / "source" / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -574,6 +612,10 @@ def run(
             "cost_description": config["cost_description"],
             "portfolio": config["portfolio"],
             "workflow_spec": config.get("workflow_spec"),
+            **({'strategy_definition': strategy,
+                'strategy_version': strategy['strategy_version'],
+                'data_binding': config['workflow_spec']['data_binding']}
+               if strategy is not None else {}),
             **({'rolling_plan': rolling_plan, 'trainer': 'qlib.model.trainer.TrainerR',
                 'model_activation': 'NOT_ACTIVATED'} if rolling_plan is not None else {}),
             "pit_repair_coverage": pit_coverage,
@@ -613,6 +655,8 @@ if __name__ == "__main__":
     parser.add_argument("--workflow-spec", type=Path)
     parser.add_argument("--pit-evidence-root", type=Path)
     parser.add_argument("--restore-proof", action="store_true")
+    parser.add_argument('--data-database', type=Path)
+    parser.add_argument('--expected-strategy-version')
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("live trading must remain disabled")
@@ -629,6 +673,8 @@ if __name__ == "__main__":
             args.data_root, args.output, args.tracking, args.source_revision,
             config_override=override, pit_evidence_root=args.pit_evidence_root,
             restore_proof=args.restore_proof,
+            data_database=args.data_database,
+            expected_strategy_version=args.expected_strategy_version,
         )
         print(json.dumps({"run_id": result["run_id"], "metrics": result["metrics"]}), flush=True)
     except Exception:

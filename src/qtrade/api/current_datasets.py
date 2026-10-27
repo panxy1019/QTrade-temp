@@ -211,56 +211,29 @@ def bar_series(
         raise HTTPException(503, "current chart data integrity check failed") from error
 
 
-# Reuse the audited causal preview/spec pipeline, without changing archival routes.
+# Keep the independent minute simulator; legacy daily execution is retired.
 from qtrade.api.app import (  # noqa: E402
-    BacktestPreviewRequest,
-    ExperimentRunSpecDraftRequest,
     SingleStockFiveMinuteBacktestRequest,
-    _backtest_preview_spec,
-    _experiment_run_spec_draft,
-    _hash_bound_experiment_preview,
     _single_stock_five_minute_policy,
     _single_stock_five_minute_preview,
+    retired_legacy_daily_research,
 )
-from qtrade.research import run_backtest_preview, run_minute_overlay_backtest  # noqa: E402
+from qtrade.research import run_minute_overlay_backtest  # noqa: E402
 
 
 @router.post("/backtest-preview")
-def preview(
-    payload: BacktestPreviewRequest, x_qtrade_data_version: str = Header()
-) -> dict[str, Any]:
-    row, source = resolve("daily", x_qtrade_data_version)
-    try:
-        return run_backtest_preview(
-            source,
-            data_version=row["data_version"],
-            data_checksum=row["checksum"],
-            spec=_backtest_preview_spec(payload),
-        )
-    except (ArithmeticError, ValueError) as error:
-        raise HTTPException(422, str(error)) from error
+def preview() -> dict[str, Any]:
+    retired_legacy_daily_research()
 
 
 @router.post("/experiment-run-spec-draft")
-def draft(
-    payload: ExperimentRunSpecDraftRequest, x_qtrade_data_version: str = Header()
-) -> dict[str, Any]:
-    row, _ = resolve("daily", x_qtrade_data_version)
-    try:
-        return _experiment_run_spec_draft(payload, row)
-    except (ArithmeticError, ValueError, KeyError) as error:
-        raise HTTPException(422, str(error)) from error
+def draft() -> dict[str, Any]:
+    retired_legacy_daily_research()
 
 
 @router.post("/experiment-run-spec-backtest")
-def bound_preview(
-    payload: ExperimentRunSpecDraftRequest, x_qtrade_data_version: str = Header()
-) -> dict[str, Any]:
-    row, source = resolve("daily", x_qtrade_data_version)
-    try:
-        return _hash_bound_experiment_preview(payload, row, source)
-    except (ArithmeticError, ValueError, KeyError) as error:
-        raise HTTPException(422, str(error)) from error
+def bound_preview() -> dict[str, Any]:
+    retired_legacy_daily_research()
 
 
 @router.post("/single-stock-five-minute-backtest")
