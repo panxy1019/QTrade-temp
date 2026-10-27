@@ -1,0 +1,66 @@
+{
+  "state": "AUTHENTICATED_PREVIEW_SUBMIT_REPLAY_ACCEPTED",
+  "job_id": "79b67daa7abe4d62a1d65e0c68c18dbf",
+  "strategy_version": "6f7165448a7af225d102ed92362d1feb73daf0c1258e3dfefa21c21372cbe174",
+  "source_revision": "c382453b5eba6c6441646ab70c76131f486cb509",
+  "credential_saved": false,
+  "session_token_saved": false,
+  "browser_rendered_verified": false,
+  "at": "2026-10-27T14:11:38.376427+00:00",
+  "observations": [
+    {
+      "name": "login",
+      "endpoint": "/api/research/login",
+      "status": 200,
+      "at": "2026-10-27T14:11:31.572100+00:00",
+      "sha256": "7e00aab790fdc87f6038bf11191912d0f0b7ce3d47a82906c1f7f7d9e6bcf8d6",
+      "bytes": 70,
+      "response_headers_saved": false
+    },
+    {
+      "name": "session",
+      "endpoint": "/api/research/session",
+      "status": 200,
+      "at": "2026-10-27T14:11:32.178137+00:00",
+      "sha256": "e4a46a73512f150f1f6ecc18a94c6018d82612a63449d8435b17b9238470510f",
+      "bytes": 132,
+      "response_headers_saved": false
+    },
+    {
+      "name": "catalog",
+      "endpoint": "/api/research/catalog",
+      "status": 200,
+      "at": "2026-10-27T14:11:33.445419+00:00",
+      "sha256": "4ac3efd653d58c694044ee6f43d436d9a5daa841fddea0989a18da4e0533ca6a",
+      "bytes": 127759,
+      "response_headers_saved": false
+    },
+    {
+      "name": "specification",
+      "endpoint": "/api/research/specification",
+      "status": 200,
+      "at": "2026-10-27T14:11:34.100126+00:00",
+      "sha256": "07b6b911238043dc92a5eb30638dfcc3e2a1205eb89ddef0c134d18ace902b0f",
+      "bytes": 10387,
+      "response_headers_saved": false
+    },
+    {
+      "name": "submit",
+      "endpoint": "/api/research/jobs",
+      "status": 202,
+      "at": "2026-10-27T14:11:36.946553+00:00",
+      "sha256": "59f9ab20d531a03b4d75c4496e9e80967986e89ea475450d5ae22b8aa2cd2ffe",
+      "bytes": 463,
+      "response_headers_saved": false
+    },
+    {
+      "name": "idempotent-replay",
+      "endpoint": "/api/research/jobs",
+      "status": 202,
+      "at": "2026-10-27T14:11:38.375417+00:00",
+      "sha256": "59f9ab20d531a03b4d75c4496e9e80967986e89ea475450d5ae22b8aa2cd2ffe",
+      "bytes": 463,
+      "response_headers_saved": false
+    }
+  ]
+}

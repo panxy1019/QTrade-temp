@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-27T14:07:20.756733+00:00",
+  "services": [
+    {
+      "pid": 334528,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/c382453b5eba6c6441646ab70c76131f486cb509",
+      "argv": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python -m scripts.run_qlib_worker --base /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade --database /root/qtrade-local/workflow.sqlite --python /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/bin/python --source-revision c382453b5eba6c6441646ab70c76131f486cb509 "
+    },
+    {
+      "pid": 334634,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/c382453b5eba6c6441646ab70c76131f486cb509",
+      "argv": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python -m scripts.run_qlib_data_service --base /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade --database /root/qtrade-local/qlib-versions.sqlite --qlib-python /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/bin/python --source-revision c382453b5eba6c6441646ab70c76131f486cb509 --collection-database /root/qtrade-local/unified-data.sqlite "
+    }
+  ],
+  "paper_original_pid_unchanged": true
+}

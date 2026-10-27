@@ -47,6 +47,24 @@ def bound_training_definition(data_root: Path, config: dict[str, Any], revision:
     return definition
 
 
+def frozen_result_binding(stage: Path, config: dict[str, Any], revision: str,
+                          expected: str | None) -> dict[str, Any]:
+    """Read the archived contract again before sealing a long-running result."""
+    spec = config.get('workflow_spec', {})
+    if 'data_binding' not in spec:
+        if expected is not None:
+            raise ValueError('BOUND_RESEARCH_RESULT_INPUT_REQUIRED')
+        return {}
+    from qtrade.research.strategy_contract import validate_strategy
+
+    definition = validate_strategy(json.loads((stage/'strategy-definition.json').read_bytes()))
+    if (definition['strategy_version'] != expected or definition['source_revision'] != revision
+            or definition['spec'] != spec):
+        raise ValueError('BOUND_RESEARCH_RESULT_STRATEGY_CHANGED')
+    return {'strategy_definition': definition, 'strategy_version': definition['strategy_version'],
+            'data_binding': definition['spec']['data_binding']}
+
+
 def make_provider(
     dataset_root: Path, target: Path, *, source_snapshot: SourceSnapshot | None = None,
 ) -> dict[str, Any]:
@@ -234,7 +252,8 @@ def run(
     config = config_override or json.loads(
         (REPO / "configs/qlib_daily_baseline.json").read_text()
     )
-    strategy = bound_training_definition(data_root, config, source_revision, data_database,
+    strategy_definition = bound_training_definition(
+        data_root, config, source_revision, data_database,
         expected_strategy_version, restore_proof=restore_proof, pit_evidence_root=pit_evidence_root)
     import importlib.metadata
     import random
@@ -268,7 +287,7 @@ def run(
         processors.append({"class": "Float64Features",
                            "module_path": "qtrade.research.qlib_processors"})
         config["online_feature_precision"] = "FLOAT64_AFTER_FROZEN_NORMALIZATION_V1"
-    if strategy is not None and config != strategy['training_config']:
+    if strategy_definition is not None and config != strategy_definition['training_config']:
         raise ValueError('BOUND_RESEARCH_TRAINING_CONFIG_CHANGED')
     if re.fullmatch(r"[a-f0-9]{40}", source_revision) is None:
         raise ValueError("FULL_SOURCE_REVISION_REQUIRED")
@@ -289,7 +308,8 @@ def run(
             "data_manifest_sha256": checksum(data_root / "dataset.json"),
             "source_snapshot_sha256": source_snapshot.identity,
             **restore_request,
-            **({'strategy_definition': strategy} if strategy is not None else {}),
+            **({'strategy_definition': strategy_definition}
+               if strategy_definition is not None else {}),
         }
     )
     run_id = config["name"] + "-" + request["evidence_sha256"][:16]
@@ -307,8 +327,8 @@ def run(
     source_snapshot.freeze(stage / "pit-sources")
     write_json_atomic(stage / "request.json", request)
     write_json_atomic(stage / "pit-repair-coverage.json", pit_coverage)
-    if strategy is not None:
-        write_json_atomic(stage/'strategy-definition.json', strategy)
+    if strategy_definition is not None:
+        write_json_atomic(stage/'strategy-definition.json', strategy_definition)
 
     def status(state: str) -> None:
         write_json_atomic(
@@ -343,7 +363,7 @@ def run(
     instruments: str | list[str] = "qtrade1000"
     if config.get("universe_policy") == "supported_a_share":
         instruments = make_supported_universe(data_root, stage/'provider', dataset)
-    if strategy is not None:
+    if strategy_definition is not None:
         admitted_files = json.loads((data_root/'version.json').read_bytes())['files']
         expected_provider = {name: value for name, value in admitted_files.items()
                              if name.startswith('provider/')}
@@ -419,7 +439,7 @@ def run(
            'src/qtrade/research/rolling_policy.py', 'src/qtrade/research/qlib_training.py',
            'src/qtrade/research/data_versions.py'] if rolling_plan is not None else []),
         *(['src/qtrade/research/strategy_contract.py', 'src/qtrade/research/data_versions.py',
-           'src/qtrade/strategies/registry.py'] if strategy is not None else []),
+           'src/qtrade/strategies/registry.py'] if strategy_definition is not None else []),
     ):
         target = stage / "source" / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -475,7 +495,7 @@ def run(
         if signals.empty:
             raise ValueError("NO_VALID_OUT_OF_SAMPLE_SIGNAL_DAYS")
         status("BACKTESTING")
-        strategy = {
+        portfolio_strategy = {
             "class": "TopkDropoutStrategy",
             "module_path": "qlib.contrib.strategy.signal_strategy",
             "kwargs": {**config["portfolio"], "signal": prediction},
@@ -486,7 +506,7 @@ def run(
         report, positions = backtest_daily(
             start_time=config["segments"]["test"][0],
             end_time=config["segments"]["test"][1],
-            strategy=strategy,
+            strategy=portfolio_strategy,
             account=config["account"],
             benchmark=config["benchmark"],
             exchange_kwargs=exchange,
@@ -612,10 +632,7 @@ def run(
             "cost_description": config["cost_description"],
             "portfolio": config["portfolio"],
             "workflow_spec": config.get("workflow_spec"),
-            **({'strategy_definition': strategy,
-                'strategy_version': strategy['strategy_version'],
-                'data_binding': config['workflow_spec']['data_binding']}
-               if strategy is not None else {}),
+            **frozen_result_binding(stage, config, source_revision, expected_strategy_version),
             **({'rolling_plan': rolling_plan, 'trainer': 'qlib.model.trainer.TrainerR',
                 'model_activation': 'NOT_ACTIVATED'} if rolling_plan is not None else {}),
             "pit_repair_coverage": pit_coverage,

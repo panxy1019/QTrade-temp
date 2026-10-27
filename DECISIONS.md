@@ -3957,3 +3957,23 @@ Actual October27 C private/public, corrected D and twelve-book stock E acceptanc
 remain pinned to their original ACTIVE, approval and source revisions. Subsequent
 promotion or deployment requires new checks; it cannot relabel those receipts.
 
+## ADR-195 — Recheck persisted strategy identity when sealing trained results
+
+Status: corrective implementation; live rerun pending, 2026-10-27.
+
+A real c382453 bound experiment completed training, portfolio backtesting and
+independent fitted restore, then failed because its portfolio dictionary reused
+the frozen strategy variable. Integration gates before training did not cover
+this final result path. Keep the failed job, logs and partial archive immutable;
+cancel the still-unaccepted companion job through the existing signed queue.
+Never change FAILED/CANCELLED states or finish an old archive with a new revision.
+
+Use distinct frozen-definition and Qlib portfolio variables. Before sealing a
+bound result, reload and validate its persisted strategy-definition.json, match
+the selected spec, actual source revision and expected strategy version, and
+derive result bindings from that document. Legacy results receive no invented
+strategy identity. Tests cover both supported models, changed persisted bytes,
+spec/revision/version conflicts and the legacy case. New real jobs are required
+after reviewed Linux verification and deployment; successful restore alone is
+not a sealed experiment or proof of alpha.
+

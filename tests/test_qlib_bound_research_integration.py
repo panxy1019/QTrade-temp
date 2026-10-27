@@ -16,7 +16,7 @@ from qtrade.research.strategy_contract import bound_default_spec, freeze_strateg
 from qtrade.research.workflow import SCHEMA, build_config, digest
 from qtrade.strategies.registry import StrategyRegistry
 from scripts.qlib_research_contracts import ResearchContracts
-from scripts.run_qlib_baseline import bound_training_definition
+from scripts.run_qlib_baseline import bound_training_definition, frozen_result_binding
 
 REVISION = 'a'*40
 
@@ -127,3 +127,47 @@ def test_runner_independently_gates_bound_identity_restore_and_data(inputs):
             pit_evidence_root=root/'pit-sources')
     with pytest.raises(ValueError, match='IDENTITY'):
         contracts.root('../../other')
+
+
+@pytest.mark.parametrize('model', ['lightgbm', 'linear'])
+def test_completed_result_keeps_frozen_contract_separate_from_portfolio_config(inputs, tmp_path,
+                                                                              model):
+    _, _, original, _, _ = inputs
+    spec = bound_default_spec(original['data_binding'], model)
+    definition = freeze_strategy(spec, REVISION)
+    (tmp_path/'strategy-definition.json').write_text(json.dumps(definition))
+    config = deepcopy(definition['training_config'])
+    # Qlib's portfolio configuration has its own identity; it is not the
+    # admitted research definition, even after training and backtesting finish.
+    config['strategy'] = {'class': 'TopkDropoutStrategy', 'kwargs': {'topk': spec['topk']}}
+    result = frozen_result_binding(tmp_path, config, REVISION, definition['strategy_version'])
+    assert result == {'strategy_definition': definition,
+                      'strategy_version': definition['strategy_version'],
+                      'data_binding': spec['data_binding']}
+    assert result['strategy_definition']['signal']['model_artifact_id'] is None
+
+
+@pytest.mark.parametrize('change', ['version', 'revision', 'spec', 'file'])
+def test_result_sealing_rechecks_frozen_contract_after_training(inputs, tmp_path, change):
+    _, _, spec, definition, _ = inputs
+    path = tmp_path/'strategy-definition.json'
+    path.write_text(json.dumps(definition))
+    config = deepcopy(definition['training_config'])
+    revision, expected = REVISION, definition['strategy_version']
+    if change == 'version':
+        expected = 'f'*64
+    elif change == 'revision':
+        revision = 'b'*40
+    elif change == 'spec':
+        config['workflow_spec']['topk'] += 1
+    else:
+        definition['spec']['topk'] += 1
+        path.write_text(json.dumps(definition))
+    with pytest.raises(ValueError):
+        frozen_result_binding(tmp_path, config, revision, expected)
+
+
+def test_legacy_result_does_not_invent_a_frozen_strategy(tmp_path):
+    assert frozen_result_binding(tmp_path, {}, REVISION, None) == {}
+    with pytest.raises(ValueError, match='RESULT_INPUT_REQUIRED'):
+        frozen_result_binding(tmp_path, {}, REVISION, 'f'*64)

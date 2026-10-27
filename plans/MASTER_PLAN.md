@@ -24,6 +24,20 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+22:22 checkpoint: merged main40db6db is publicly verified, cluster c382453 runs
+only the two targeted research services, Linux313 and webpage304 pass. Actual
+production authenticated preview/submit/idempotent retry succeeds and old daily
+tools return410; browser observation times out and is not accepted. Standing
+LightGBM policy really activates candidate29589b44 with the new PAPER reservation
+guard; preserve original PAPER PID175982 and rolling OFF/LIVE false. Real bound
+training32f54fc0 nevertheless fails at final summary because the portfolio local
+variable overwrote the frozen strategy dictionary. Preserve that failure and
+cancelled Ridge79b67daa; never repair their DB state or label partial files sealed.
+Narrow runner correction plus final archived-contract verification passes60
+Windows tests. Verify the same correction on Linux, deploy a new actual revision
+only after current prediction/control finishes, and run new immutable requests.
+History60204/delisted67 remains bounded/backing off, not full historical PIT.
+
 21:40 checkpoint: real October 27 version/prediction/later candidate validation/
 signals exist. Private C plus real production C delivery, corrected D replay and
 actual-public twelve-book stock E pass for their pinned inputs. Preserve all

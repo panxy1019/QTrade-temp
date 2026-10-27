@@ -1,6 +1,35 @@
 # Current state
 
-Last updated: 2026-10-27 21:40 Shanghai, close-chain acceptance and source integration.
+Last updated: 2026-10-27 22:22 Shanghai, unified rollout and real-run correction.
+
+- PR32 merged as main 40db6db. Production provenance and full actual public
+  market probe pass on that revision; default research data ends October 27.
+  Cluster source c382453 passes 313 Linux tests, no skips; all 304 webpage tests
+  pass. Only workflow/data services switch to PIDs 334528/334634. Every other
+  supervised PID, including original PAPER 175982, remains unchanged. The
+  container's custom Supervisor RPC requires explicit targeted stop/start;
+  standard reread/group methods alone did not start the services.
+- Actual production login, immutable-spec preview, submit and identical retry
+  return 200/202 as expected; anonymous preview is 401 and old daily execution
+  is 410. Real browser DOM/screenshot transport times out, so rendering remains
+  unverified. Do not substitute API or unit checks for visual acceptance.
+- Standing policy 656f643b enables research LightGBM promotion under the user's
+  explicit consent. Actual approval fdb7526b applies: candidate 29589b44 becomes
+  ACTIVE, original model 2d78cc4c becomes RETIRED. Its new-code prediction is
+  running, not yet accepted. New PAPER identity 137ff4cd has a signed denial of
+  initialization/recovery; no old PAPER authorization is reused. Rolling is OFF.
+- Real bound LightGBM job 32f54fc0 fails after training/backtest and successful
+  independent fitted restore: the portfolio dictionary shadows the frozen
+  strategy definition at summary sealing (`KeyError: strategy_version`). Keep
+  its FAILED state, partial archive and private log. API-submitted Ridge job
+  79b67daa is explicitly cancelled; no request/claim is reset. A narrow variable
+  separation plus final persisted-contract recheck passes 60 related Windows
+  tests; correction still needs Linux verification, new source rollout and new
+  actual experiments. PR32's integration tests did not exercise this final path.
+- At 22:12 the observed history queue has 60,204 qualified rows (day 1,452 /
+  minute 58,752), independent delisted probe 67; both respect source backoff.
+  This sealed-receipt accounting is not full-lake recertification. Free space is
+  about 274.5 GiB; historical PIT, full history and all STEP1 remain unaccepted.
 
 - October 27 automatic completion is real at 20:23:26, version 09a67b13,
   987 current / 990 historical; original ACTIVE prediction completes at 20:26,

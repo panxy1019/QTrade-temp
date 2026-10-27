@@ -93,9 +93,30 @@ PAPER 等策略晋级不因模型自动批准而自动发生；独立因子注�
 ## 验证与发布门禁
 
 已验证：Windows 针对性后端集成、研究登录／规格冻结／队列签名、Registry 幂等、
-PAPER 初始化隔离、epoch ABA、失败恢复与审计链；网页构建、lint、旧档案与新版表单测试。
-Linux 同版本测试、实际新任务及生产交付需在真正完成后补充证据，不能以 Windows 测试
-替代。生产 revision、集群 worker revision 与每次实验来源分别记录。
+PAPER 初始化隔离、epoch ABA、失败恢复与审计链；网页构建、lint 与全部 304 项网页测试。
+集群 c382453 的 580 个执行范围文件逐项 Git blob 验真，实际 Linux 313 项全部通过、
+零跳过。PR32 合并后的生产 main40db6db 已通过真实全池身份／固定行情样本公开核验；
+只切换 workflow/data 服务，其他采集、发布与原 PAPER 进程 PID 不变。
+
+实际生产登录、规格预览、提交及同请求重试成功，匿名预览 401、旧日线入口 410。
+真实目录提供 10 月 27 日默认版本及历史 READY 选择；旧 10 月 23 日档案保留。
+浏览器 DOM 与截图接口持续超时，视觉与浏览器点击流程尚未通过。
+
+22:17 首个真实 LightGBM 任务 `32f54fc08c9a4b488910f71100f7674e` 暴露最终归档错误：
+训练、回测与独立恢复已经运行，恢复差异为零；但回测的 portfolio 字典覆盖冻结策略
+变量，结果封存时出现 `KeyError: strategy_version`。任务保持 FAILED，原 partial、
+完整日志与事件保留，不作为正式完成实验。通过生产 API 提交的 Ridge 任务
+`79b67daa7abe4d62a1d65e0c68c18dbf` 经签名取消，保留 CANCELLED 状态。
+
+窄修复分开两个变量，并在封存前重读实际持久化策略，复核签名、spec、revision 与
+expected strategy version；旧规格不补造策略身份。60 项相关 Windows 测试、Ruff、
+mypy 通过。首次新增测试因测试自身修改同一 expected 对象而失败的 XML 也保留；
+修正测试为深拷贝后另存通过结果。修复尚需同版 Linux、真实新请求及公开结果验证。
+
+签名自动审批政策已实际启用，允许唯一合格 LightGBM；实际批准 `fdb7526b` 将
+`29589b44` 设为 ACTIVE，原 `2d78cc4c` 退休。新 PAPER 账户 `137ff4cd` 预先放置
+禁止初始化／恢复标记，原 PAPER175982 未重启；新预测仍需完成及另行验收。
+生产 revision、集群 worker revision 与每次实验来源分别记录，不能互换。
 
 复现入口：
 
