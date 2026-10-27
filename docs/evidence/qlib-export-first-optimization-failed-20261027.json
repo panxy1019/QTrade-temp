@@ -1,0 +1,110 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-27T08:24:00.034224+00:00",
+  "source_revision": "8ef491d1fd459fda20397c577d361c18ff591356",
+  "controlled_snapshot_clock": "2026-10-27T08:09:58.026432+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_WALL_INCLUDES_POST_EXPORT_BYTE_COMPARISON",
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "pass_name": "cold",
+      "wall_seconds": 45.150627,
+      "profile": {
+        "signed": {
+          "calls": 2,
+          "inclusive_seconds": 0.000978
+        },
+        "store_read_blob": {
+          "calls": 12110,
+          "inclusive_seconds": 5.620161
+        },
+        "store_read_captures": {
+          "calls": 4844,
+          "inclusive_seconds": 5.147189
+        },
+        "store_load": {
+          "calls": 2422,
+          "inclusive_seconds": 9.50021
+        },
+        "replay": {
+          "calls": 2422,
+          "inclusive_seconds": 12.531977
+        },
+        "encoded": {
+          "calls": 2422,
+          "inclusive_seconds": 0.591669
+        },
+        "load": {
+          "calls": 2422,
+          "inclusive_seconds": 33.066697
+        },
+        "validate_bar": {
+          "calls": 138242,
+          "inclusive_seconds": 8.961255
+        }
+      },
+      "peak_rss_kib": 627792
+    },
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_EXPORT_BUDGET",
+      "pass_name": "warm",
+      "wall_seconds": 53.964899,
+      "profile": {
+        "signed": {
+          "calls": 4490,
+          "inclusive_seconds": 0.87346
+        },
+        "store_read_blob": {
+          "calls": 12990,
+          "inclusive_seconds": 5.760519
+        },
+        "load": {
+          "calls": 2694,
+          "inclusive_seconds": 28.510956
+        },
+        "validate_bar": {
+          "calls": 145022,
+          "inclusive_seconds": 9.513338
+        },
+        "store_read_captures": {
+          "calls": 5068,
+          "inclusive_seconds": 4.472456
+        },
+        "store_load": {
+          "calls": 2534,
+          "inclusive_seconds": 7.816708
+        },
+        "replay": {
+          "calls": 2534,
+          "inclusive_seconds": 11.299288
+        },
+        "encoded": {
+          "calls": 7022,
+          "inclusive_seconds": 0.919708
+        },
+        "validate_shard": {
+          "calls": 4488,
+          "inclusive_seconds": 10.869897
+        }
+      },
+      "peak_rss_kib": 741024
+    }
+  ],
+  "evidence_sha256": "94240c7ead873c8c06031e0b624f04df0630d381b62e16679c19080d2930f72d"
+}

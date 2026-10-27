@@ -1,0 +1,85 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.qlib-close-preparation-live.v1",
+  "checked_at": "2026-10-27T10:00:50.628535+00:00",
+  "state": "PREPARATION_ONLY",
+  "whole_step1_accepted": false,
+  "free_gib": 275.560546875,
+  "qlib-versions": [
+    {
+      "frequency": "day",
+      "version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+      "actual_end": "2026-10-26",
+      "admitted_at": "2026-10-26T14:02:55.608696+00:00"
+    }
+  ],
+  "online-models": [
+    {
+      "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "state": "ACTIVE",
+      "registered_at": "2026-10-26T13:22:46.923586+00:00",
+      "activated_at": "2026-10-26T14:52:26.286301+00:00",
+      "activation_count": 1
+    }
+  ],
+  "progress": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.forward-qlib-preparation.v1",
+    "request_sha256": "b0f90249f515ff6cc0e8a04d7c4218e7a55824fe95c2af4ee172ae608e7c53ab",
+    "day": "2026-10-27",
+    "updated_at": "2026-10-27T09:59:28.358958+00:00",
+    "requested_symbols": 990,
+    "qualified_current_daily_inputs": 987,
+    "prepared_symbols": 425,
+    "attempted_new_symbols": 26,
+    "failures": [
+      {
+        "symbol": "002827",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "600621",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "605258",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      }
+    ],
+    "pending_symbols": 562,
+    "retry_queue": {
+      "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+      "scope_symbols": 987,
+      "completed_symbols": 425,
+      "unresolved_symbols": 562,
+      "unattempted_symbols": 562,
+      "due_retry_symbols": 0,
+      "waiting_retry_symbols": 0,
+      "next_retry_at": null,
+      "historical_pit_certified": false
+    },
+    "state": "PREPARATION_ONLY_NOT_A_READY_QLIB_VERSION",
+    "provider_published": false,
+    "model_activated": false,
+    "historical_pit_certified": false,
+    "next_gates": [
+      "COMPLETE_BOUND_SOURCE_ADAPTATION",
+      "BENCHMARK_AND_CALENDAR_ADAPTATION",
+      "IMMUTABLE_PROVIDER_BUILD_AND_ATOMIC_READY_PUBLICATION"
+    ],
+    "evidence_sha256": "54ed839058557d5c7ee60529c892ff88cfe82fe0ff4a1859f8d090cd69b4e988"
+  },
+  "evidence_sha256": "a06b310c65a5394eb06becdd2cb55fb5f565e6f87680835fb53b7e00ea8a16a7"
+}

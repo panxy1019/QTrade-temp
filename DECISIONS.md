@@ -3786,3 +3786,89 @@ deadline before and after reads and before return, including delayed EOF. The
 network path plus processing; this is not a promise of hard cancellation during
 a blocked read. No retry, stale fallback or publication/freshness relaxation.
 
+## ADR-190 — Derive market metadata bounds and measure complete export work
+
+Status: implementation reviewed; actual performance recovery pending, 2026-10-27.
+
+Actual production retains the 14:10 market index while successful outer pushes
+continue. The source/gap audit reproduces 66,782 legitimate incremental chunk
+keys, exceeding a hardcoded 60,000 before compute starts. vn.py gateways do not
+solve this immutable observation/export boundary. Reuse the existing batch and
+SQLite ledger contracts: 12,000 batches x at most 50 symbols bounds metadata to
+600,000. Each frequency query takes only the cumulative remaining allowance plus
+one, then rejects overflow immediately. Re-observations and conflict provenance
+cannot be discarded to fit the former limit.
+
+This is a metadata bound, not a compute-capacity claim. Frozen read-only input
+with only that bound changed takes 71.47/60.02 seconds. The first reviewed compute
+reuse still fails the unchanged 45-second budget despite 367 Linux test passes.
+Keep those negative receipts; production deployment requires genuine budget and
+exact-output verification. Independent export-attempt diagnostics use actual
+clocks and safe fixed error codes; a failed attempt cannot advance last-success
+statistics or the public index. Retain 512 MB source reads, 128 MB estimated
+cache, 192 MB output, normal 90-second Git and existing freshness thresholds.
+
+The reviewed final path b2386c3 reuses one verified batch material per pass and
+validates retained rows once at the complete-shard boundary. Out-of-window rows,
+source replay, conflicts, raw hashes, final ledger comparison and full index
+checks remain enforced. All 4,488 frozen shard bytes and source references match;
+428 Linux tests pass. In actual-clock current-ledger isolation, the first cold
+export fails closed at 45.21s, preserving the prior pointer, then warm exports
+complete in 40.01/38.26s. Accept this as measured bounded startup behavior, not a
+cold-start performance guarantee or sustained publication SLA. An ordinary
+publisher export and independently pinned public delivery remain separate gates.
+
+## ADR-191 — Explicit ETF partial-attempt repair retains cumulative provenance
+
+Status: bounded repair and one explicit known-prefix continuation verified,
+2026-10-27. Preserve the original priority interruption as failed evidence.
+
+The once-per-day ETF collector intentionally has no automatic retry after a
+partial attempt. Its actual October 27 priority interruption leaves one complete
+raw response out of the frozen 30. Reuse its existing calendar, source gate,
+fetch, raw store and admission verifier; vn.py has no applicable repair of this
+data-provenance boundary. Add a separate read-only plan / explicitly approved
+plan-hash apply. Preserve original markers, freeze the same symbols and cap
+combined original/additional queries at 30. A cross-revision immutable claim
+prevents another revision from resetting that cap. Each new request needs a
+durable reservation before HTTP and a sealed raw response before the next call.
+Unknown requests consume allowance and cannot be automatically repeated.
+
+Gitless deployment uses an operator-attested manifest generated from the actual
+reviewed Git tree: all repository Python source plus the calendar, exact blob
+hashes, complete inventory, no symlink/path escape and a matching immutable
+release identity. Plan/apply independently bind the manifest bytes and original
+raw/documents. These checksums are integrity/provenance evidence, not a remote
+signature or PIT certification. Third-party runtime acceptance remains separate.
+
+Aggregate diagnostic existence alone cannot admit a repaired SHADOW source.
+Require fully replayed completion, exact public-pointer CAS, local completion,
+then a final resolution marker. Both candidate discovery and direct source use
+must verify that resolution; unresolved partials remain visible failures. Keep
+real collection priority, cooldown, time/storage gates, all trading limits and
+PAPER recovery authority unchanged.
+
+Actual repair seals 23 additional responses before another real priority change,
+so it remains STOPPED with six unsent and no resolution/latest advance. A future
+explicit continuation must prove every prior reservation has a unique complete
+response, accept only proven priority-stop codes, preserve all historical bytes,
+record actual continuation code separately, and issue only remaining global
+slots. It cannot be an automatic retry, claim reset, extra request burst or
+implicit completed-session acceptance.
+
+The separately reviewed continuation accepts only the actual 1+23+6 case and
+only a fully sealed prefix with one of the two known collection-priority stop
+codes. It records a new operator revision and full source manifest while keeping
+the original repair archive/bindings revision. The two manifest inventories must
+match critical source/store/gate/calendar blobs; the initial 23 pairs are never
+reissued or relabeled. One immutable continuation claim prohibits a second
+continuation after any interruption. Git-mode historical blob comparison is not
+certified by this manifest-mode production acceptance.
+
+Actual 17:51:40 continuation completes the remaining six and verifies final
+resolution. The independent actual-public-input ETF transition audit passes at
+18:04, replaying its raw sources and admission against the captured public bytes.
+Only ETF SHADOW is upgraded; PAPER is untouched. Preserve historical target
+implementation revisions, native-price/PIT/distribution limitations and empty
+execution/return fields. This is one pinned ETF transition, not whole STEP1.
+

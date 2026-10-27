@@ -1,0 +1,78 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-live-pilot.v1",
+  "checked_at": "2026-10-27T09:05:43.136643+00:00",
+  "source_revision": "b2386c3e53c766d9e9512e6ca0f5116583aa13c2",
+  "clock_scope": "ACTUAL_WALL_CLOCK_NO_OVERRIDE",
+  "seconds_limit": 45,
+  "live_ledger_read_only": true,
+  "seeded_existing_objects": 4488,
+  "original_index_sha256": "c040eaa6e1b9b96a632a949118f94c30cdbd5ac0582ea1c804418cfc558513e6",
+  "production_index_unchanged": true,
+  "production_output_modified": false,
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "previous_index_bytes_retained": true,
+      "pass_name": "cold",
+      "started_at": "2026-10-27T09:03:39.198435+00:00",
+      "completed_at": "2026-10-27T09:04:24.405647+00:00",
+      "wall_seconds": 45.207213
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 119843988,
+        "cached_batches": 203,
+        "replayed_batches": 2552,
+        "selected_chunks": 68279,
+        "selected_batches": 2755,
+        "export_seconds": 40.010395,
+        "total_bytes": 102968844,
+        "total_files": 4488,
+        "index_id": "d8dc90cfec8123b12c344417090258120e196a4a0200cd3777269b3d630718cc",
+        "cached_rows": 70409,
+        "cache_estimated_bytes": 127999623,
+        "quarantined_entries": 0
+      },
+      "index_id": "d8dc90cfec8123b12c344417090258120e196a4a0200cd3777269b3d630718cc",
+      "published_at": "2026-10-27T09:04:24.406770+00:00",
+      "pass_name": "warm",
+      "started_at": "2026-10-27T09:04:24.406731+00:00",
+      "completed_at": "2026-10-27T09:05:04.645375+00:00",
+      "wall_seconds": 40.238652
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 119843988,
+        "cached_batches": 203,
+        "replayed_batches": 2552,
+        "selected_chunks": 68279,
+        "selected_batches": 2755,
+        "export_seconds": 38.264655,
+        "total_bytes": 102968844,
+        "total_files": 4488,
+        "index_id": "adc528c7cbd6ff63b104a65b03eec1f2478a8343a455e57a11871a4fe92f20e9",
+        "cached_rows": 70409,
+        "cache_estimated_bytes": 127999623,
+        "quarantined_entries": 0
+      },
+      "index_id": "adc528c7cbd6ff63b104a65b03eec1f2478a8343a455e57a11871a4fe92f20e9",
+      "published_at": "2026-10-27T09:05:04.649965+00:00",
+      "pass_name": "second_warm",
+      "started_at": "2026-10-27T09:05:04.649931+00:00",
+      "completed_at": "2026-10-27T09:05:43.136542+00:00",
+      "wall_seconds": 38.486616
+    }
+  ],
+  "evidence_sha256": "fa4cd898c4071ea16ba6094fc2a4489fd8abaabde470210f552d3180bd0e3699"
+}

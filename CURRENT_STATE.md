@@ -1,6 +1,104 @@
 # Current state
 
-Last updated: 2026-10-27, afternoon investigation checkpoint.
+Last updated: 2026-10-27 18:04 Shanghai, actual post-close checkpoint.
+
+- Public market delivery has recovered: the one-time nonforce catch-up succeeds
+  in 225.07s, then the original publisher resumes as PID 294214 with its ordinary
+  90s Git limit unchanged. Actual full probes at 17:47 and 17:49 verify different
+  public commits, all 1,500 identities/3,000 entries and five sampled API series;
+  index/catalog ages are 145.20/106.84s and 91.92/68.32s, both FRESH_TRANSPORT.
+  The 17:36 stale probe is retained: downloading its 8 MB catalog took 95s.
+  Bounded gzip in the read-only probe reduces actual complete checks to 24.85s
+  and 18.12s without changing decoded Git bytes or any freshness/resource gate.
+  Coverage is still PARTIAL: daily 1,497/1,500 and five-minute 1,496/1,500.
+
+- ETF source recovery is complete for this day: the single explicit continuation
+  seals only the remaining six requests, retains all original/prefix bytes and
+  verifies final resolution at 17:51:40 (30/30 native-close inputs). Release
+  0a545a8 passes 446 Linux tests without skips. Only ETF SHADOW is upgraded,
+  PID 299932; PAPER 175982 and all other supervised PIDs remain unchanged.
+  Local transition audit passes at 18:00. Independent public capture at 18:02
+  is then replayed against the cluster's actual raw/admission evidence at 18:04:
+  PASSED, three selected closes, no missing input. The old prospective target
+  remains frozen with its original implementation provenance; no holdings,
+  fills, NAV or returns are implied. This accepts only the pinned ETF SHADOW
+  transition, not all E/C/D or STEP1. See the close recovery runbook/evidence.
+
+- Actual 18:00 Qlib preparation is 425/987 qualified inputs, with 562 unattempted
+  and no waiting/due retries. Original scope is 990 with three explicit current
+  daily exclusions; this is not prediction coverage or a READY provider. Formal
+  daily head still ends October 26. At the unchanged 25-new-symbol/5-minute
+  cadence, first-pass preparation is estimated around 19:50-20:00, followed by
+  provider build/reload, prediction, signals, later-version candidate validation
+  and independent C/D/E/public checks. ACTIVE LightGBM and rolling OFF stay fixed.
+  History queues contain 49,032 qualified rows plus 47 in the separate delisted
+  probe; these are limited queue counts, not the whole lake or certified years.
+  PIT's current 990-symbol refresh does not certify historical availability.
+  Free disk is 275.56 GiB; keep the 100 GiB reserve. STEP2 remains gated.
+
+- At 17:22 the explicit ETF repair reuses the original one response and seals 23
+  additional responses, then yields to current collection. It is STOPPED, with
+  no uncertain requests, no final resolution and the old public latest retained.
+  Original attempt/failure/raw bytes remain unchanged; no automatic retry runs.
+  A reviewed explicit continuation for the remaining six is being implemented.
+  Real Linux tests pass 204/204 after a test-only fixture cleanup correction;
+  the first Linux error receipt is preserved. Local ordinary market exports now
+  complete around 38 seconds, but ordinary Git pushes time out at 90 seconds:
+  two actual public probes remain STALE_TRANSPORT. Only the publisher was
+  gracefully stopped for a fixed-tip, nonforce operator catch-up (four retained
+  commits / 107.19 MB); ordinary budgets and PAPER 175982 remain unchanged.
+  Do not report website recovery or C/D/E completion before independent proof.
+
+- Actual close-export repair b2386c3 passes 428 Linux tests without skips and
+  independent review. All 4,488 frozen-output shard bytes and source references
+  match the diagnostic baseline. The actual-clock, current-ledger isolated pilot
+  selects 68,279 chunks / 2,755 batches: first cold export fails at 45.21s and
+  retains the old index; subsequent exports pass at 40.01s and 38.26s. Never label
+  this a cold-start pass or sustained SLA. Only the idle read-only publisher was
+  restarted, now PID 291302 on b2386c3; PAPER 175982 and all other supervised PIDs
+  are unchanged. Its first ordinary warm export passes at 37.86s; actual Git and
+  public delivery verification are still separate. The 45-second export,
+  90-second ordinary Git, source/cache/output and freshness bounds are unchanged.
+  At 17:04 Qlib preparation is 150/987, with 837 unattempted and three explicitly
+  excluded stocks. This is not a READY version or an accepted C/D/E transition.
+  ETF's 1/30 partial current-day attempt also remains blocked; an explicit
+  provenance-bound repair is under independent review, preserving original raw
+  captures/markers and cumulative source budgets. See the close recovery runbook.
+
+- Actual 16:05 production probe detects STALE_TRANSPORT: the market index is
+  frozen at 14:10 while the outer publisher still pushes successfully. A frozen
+  read-only ledger contains 66,782 legal chunks, exceeding the old 60,000 cap.
+  The derived 12,000-batch x 50-symbol metadata bound is 600,000; queries enforce
+  the shared remaining limit without truncation. A cap-only isolated diagnostic
+  takes 71.47/60.02 seconds, and the first reviewed optimization 8ef491d still
+  fails the unchanged 45-second cap (367 Linux tests pass). It is not deployed.
+  Same-batch verified material reuse and exact-byte comparison remain in progress.
+  At actual 16:27 all services run, PAPER 175982 and ACTIVE/OFF are unchanged,
+  1,496/1,500 minute targets reach 15:00, and 276.075 GiB remains free. Do not
+  conflate collection readiness, outer push success and market-index freshness.
+  See docs/QLIB_CLOSE_EXPORT_RECOVERY_20261027.md. Real completed-day C/D/E and
+  STEP2 remain gated; all negative performance and production receipts are kept.
+
+- A second actual production probe at 13:57 also returns FRESH_TRANSPORT, using
+  a newer immutable public commit: index/catalog ages 90.998/65.780 seconds. All
+  five samples again match its bytes; 688365 advances from 13:45 to 13:50. The
+  expected grid has meanwhile advanced to 13:55, which this catalog has not yet
+  reached (0/1,500 ready). This explicitly demonstrates publication freshness
+  does not certify data timeliness. Two observed frames are not an all-session
+  SLA. Keep current collection/publication lag and the 43.73s/45s export-budget
+  margin under review at 14:45; no limit has been relaxed.
+
+- PR30 is merged and production f3c55cb is independently verified. At actual
+  13:55 the permanent full public probe returns FRESH_TRANSPORT: index/catalog
+  ages 148.224/136.370 seconds, 1,500 identities and 3,000 entries verified, all
+  five API series match the same immutable publication commit and shard bytes.
+  Minute coverage is PARTIAL: 1,494/1,500 reach expected 13:50; 000032 is current,
+  688365 is one grid behind, 512580 has its retained 09:55 gap and 600621 NO_DATA.
+  This is one actual production frame, not sustained-SLA or completed-day C/D/E
+  acceptance. No service restart or PAPER/model/policy change. Actual separate
+  delisted queue observation now has 39 qualified rows across five limited
+  scopes; it still yields to current collection and has no PIT certification.
+  Next automatic checks are 14:45 and 16:45. STEP2 remains gated.
 
 - PR29 is merged; production a53aa03 is verified. At 13:11 the actual remote
   index contains 13:05 bars for 1,496 targets, changing exactly those 1,496 minute

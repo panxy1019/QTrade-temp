@@ -6,6 +6,7 @@ import json
 import os
 import re
 import time
+import zlib
 from collections import Counter
 from datetime import UTC, datetime, timedelta
 from hashlib import sha1, sha256
@@ -90,7 +91,7 @@ def _get(resource: str, deadline: float, version: str | None = None,
     started = utc_now()
     proxy, mode = delivery._proxy_handler()
     request = Request(url, method='GET', headers={
-        'Accept': 'application/json', 'Accept-Encoding': 'identity',
+        'Accept': 'application/json', 'Accept-Encoding': 'identity' if api else 'gzip, identity',
         'Cache-Control': 'no-cache', 'User-Agent': 'QTrade-readonly-unified-probe/1'})
     try:
         with build_opener(proxy, delivery._NoRedirect()).open(
@@ -101,7 +102,8 @@ def _get(resource: str, deadline: float, version: str | None = None,
             require(content_type.split(';')[0].strip().lower() in (
                 {'application/json'} if api else {'application/json', 'text/plain'}),
                 'HTTP_CONTENT_TYPE_INVALID')
-            require(response.headers.get('Content-Encoding', 'identity').lower() == 'identity',
+            encoding = response.headers.get('Content-Encoding', 'identity').strip().lower()
+            require(encoding in ({'identity'} if api else {'identity', 'gzip'}),
                     'HTTP_CONTENT_ENCODING_INVALID')
             cache = response.headers.get('Cache-Control', '')
             require(not api or 'no-store' in {part.strip().lower() for part in cache.split(',')},
@@ -109,18 +111,29 @@ def _get(resource: str, deadline: float, version: str | None = None,
             length = response.headers.get('Content-Length')
             require(length is None or length.isdigit() and 0 < int(length) <= bound,
                     'HTTP_BODY_BOUND_INVALID')
-            chunks, size = [], 0
+            chunks, size, transport_size = [], 0, 0
+            decoder = zlib.decompressobj(16+zlib.MAX_WBITS) if encoding == 'gzip' else None
             while True:
                 require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
-                chunk = response.read1(min(65536, bound+1-size))
+                chunk = response.read1(min(65536, bound+1-transport_size))
                 require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
                 if not chunk:
                     break
+                transport_size += len(chunk)
+                require(transport_size <= bound, 'HTTP_BODY_BOUND_INVALID')
+                if decoder is not None:
+                    # Limit allocation while inflating, including a single-byte overflow probe.
+                    chunk = decoder.decompress(chunk, bound+1-size)
+                    require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
+                    require(not decoder.unused_data, 'HTTP_GZIP_TRAILING_DATA')
                 size += len(chunk)
                 require(size <= bound, 'HTTP_BODY_BOUND_INVALID')
                 chunks.append(chunk)
+            require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
+            require(decoder is None or decoder.eof and not decoder.unconsumed_tail,
+                    'HTTP_GZIP_INCOMPLETE')
             raw = b''.join(chunks)
-            require(bool(raw) and (length is None or len(raw) == int(length)),
+            require(bool(raw) and (length is None or transport_size == int(length)),
                     'HTTP_BODY_INCOMPLETE')
             text = raw.decode('utf-8')
             json.dumps(json.loads(text), allow_nan=False)
@@ -128,12 +141,13 @@ def _get(resource: str, deadline: float, version: str | None = None,
         if error.code == 409:
             raise ValueError('UNIFIED_PROBE_VERSION_DRIFT_RETRY_REQUIRED') from None
         raise ValueError('UNIFIED_PROBE_HTTP_FETCH_FAILED') from None
-    except (OSError, URLError, HTTPException, UnicodeError):
+    except (OSError, URLError, HTTPException, UnicodeError, zlib.error):
         raise ValueError('UNIFIED_PROBE_HTTP_FETCH_FAILED') from None
     require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
     return {'url': url, 'status_code': 200, 'content_type': content_type,
             'cache_control': cache, 'requested_at': started.isoformat(),
             'received_at': utc_now().isoformat(), 'body_bytes': len(raw),
+            'transport_body_bytes': transport_size, 'content_encoding': encoding,
             'body_sha256': sha256(raw).hexdigest(), 'body_utf8': text,
             'proxy_configuration_mode': mode}
 

@@ -18,6 +18,7 @@ from typing import Any
 
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.research.etf_attempt_repair import require_resolved_archive, verify_resolution
 from qtrade.research.etf_research_contract import (
     BLOCKERS,
     EtfAllocationPolicy,
@@ -89,7 +90,7 @@ def source(root: Path, calendar: Calendar, now: datetime) -> dict[str, Any]:
     if root.is_symlink():
         raise ValueError('ETF_SHADOW_SOURCE_SYMLINK')
     checked_identity(root.name)
-    value = verify_etf_archive(root, calendar)
+    value = require_resolved_archive(root, calendar) or verify_etf_archive(root, calendar)
     receipt = load(root/'receipt.json')
     captures = UnifiedBatchStore(root/'capture-store').read_captures(receipt['raw'])
     observed = max(datetime.fromisoformat(row['received_at']) for row in captures)
@@ -123,6 +124,10 @@ def discover(root: Path, errors: set[str]) -> tuple[str | None, dict[str, list[s
             checked_identity(path.name)
             if path.is_symlink() or not path.is_dir():
                 raise ValueError('ETF_SHADOW_SOURCE_DIRECTORY_INVALID')
+            if (path/'repair-resolution.json').exists():
+                verify_resolution(path, Calendar(REPO/'configs/observer_calendar_2026.json'))
+                continue
+            require_resolved_archive(path, Calendar(REPO/'configs/observer_calendar_2026.json'))
             header = load(path/'diagnostic.json')
             day = date.fromisoformat(header['as_of']).isoformat()
             if day != header['as_of']:

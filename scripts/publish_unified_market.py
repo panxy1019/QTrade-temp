@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import io
 import json
 import os
 import shutil
@@ -14,12 +13,12 @@ from datetime import UTC, datetime
 from decimal import Context, localcontext
 from hashlib import sha256
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Any, Literal, cast
 from uuid import uuid4
 
-import pyarrow.parquet as pq  # type: ignore[import-untyped]
-
 from qtrade.api.unified_data import validate_publication
+from qtrade.data.storage import _fsync_directory
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.market_data.sina_incremental import (
     PRICE_BASIS,
@@ -41,12 +40,14 @@ from qtrade.research.unified_market import (
     validate_index,
     validate_shard,
 )
-from scripts.atomic_json import write_json_atomic, write_json_immutable
-from scripts.unified_store import UnifiedBatchStore
+from scripts.atomic_json import write_json_atomic
+from scripts.unified_store import UnifiedBatchStore, _BatchMaterial
 
 REPO = Path(__file__).resolve().parents[1]
-MAX_CHUNKS = 60_000
 MAX_BATCHES = 12_000
+# Each immutable batch admits at most 50 symbols, and the ledger key is
+# (batch_id, symbol). Bound metadata independently of source/cache/time budgets.
+MAX_CHUNKS = MAX_BATCHES*50
 SOURCE_BYTE_BUDGET = 512_000_000
 MAX_CACHE_ROWS = 100_000
 MAX_CACHE_ESTIMATED_BYTES = 128_000_000
@@ -54,15 +55,36 @@ _CACHE: dict[tuple[str, ...], tuple[dict[str, Any], list[dict[str, Any]]]] = {}
 _CACHE_SIZES: dict[tuple[str, ...], int] = {}
 
 
-def _replay(store: UnifiedBatchStore, manifest: dict[str, Any], rows: list[dict[str, Any]],
-            calendar: Calendar, kinds: dict[str, str]) -> None:
+def _write_object(path: Path, raw: bytes) -> None:
+    """Persist already encoded bytes with the existing immutable writer's durability contract."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary: Path | None = None
+    try:
+        with NamedTemporaryFile(dir=path.parent, prefix='.'+path.name+'.', suffix='.tmp',
+                                delete=False) as handle:
+            temporary = Path(handle.name)
+            handle.write(raw)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.link(temporary, path)
+        temporary.unlink()
+        _fsync_directory(path.parent)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+def _replay(material: _BatchMaterial, calendar: Calendar, kinds: dict[str, str]) -> None:
     """Reproduce collector admission from actual receipts before caching normalized rows."""
-    captures = store.read_captures(manifest['raw'])
+    manifest, captures, rows = material.validate()
     spec = manifest['spec']
     target = datetime.fromisoformat(spec['target_end']).astimezone(SHANGHAI)
     completed = datetime.fromisoformat(manifest['completed_at'])
     frequency = cast(Literal['day', '5min'], spec['frequency'])
-    for symbol in {row['symbol'] for row in rows}:
+    by_symbol: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in rows:
+        by_symbol[row['symbol']].append(row)
+    for symbol, actual in by_symbol.items():
         code = ('sh' if symbol.startswith(('5', '6')) else 'sz')+symbol
         klines = [row for row in captures if row['source_id'] == 'sina_klines'
                   and row['request']['symbol'] == code]
@@ -103,7 +125,6 @@ def _replay(store: UnifiedBatchStore, manifest: dict[str, Any], rows: list[dict[
                              > datetime.fromisoformat(after))}
             if {row.bar.timestamp for row in selected} != expected:
                 raise ValueError('UNIFIED_MARKET_RAW_MINUTE_WINDOW_INCOMPLETE')
-        actual = [row for row in rows if row['symbol'] == symbol]
         expected_rows = [{**row.row(), 'raw_pack_sha256': manifest['raw']['sha256'],
                           'source_hashes': [source['body_sha256'] for source in captures
                             if source in relevant]} for row in selected]
@@ -130,51 +151,47 @@ def _chunks(database: Path, universe: str, windows: dict[str, list[str]]) -> lis
                 AND NOT EXISTS (SELECT 1 FROM excluded_collection_chunks e
                                 WHERE e.batch_id=c.batch_id AND e.symbol=c.symbol)
                 ORDER BY c.end_time,c.batch_id,c.symbol LIMIT ?
-                ''', (universe, freq, days[0], days[-1], MAX_CHUNKS+1)))
-        if len(rows) > MAX_CHUNKS:
-            raise ValueError('UNIFIED_MARKET_CHUNK_BUDGET')
+                ''', (universe, freq, days[0], days[-1], MAX_CHUNKS-len(rows)+1)))
+            if len(rows) > MAX_CHUNKS:
+                raise ValueError('UNIFIED_MARKET_CHUNK_BUDGET')
         return rows
 
 
 def _load(store: UnifiedBatchStore, batch_id: str, stats: dict[str, Any],
-          calendar: Calendar, kinds: dict[str, str]
+          calendar: Calendar, kinds: dict[str, str], context: tuple[str, str]
           ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     path = store.batch_path(batch_id)
     if path.is_symlink() or path.stat().st_size > 2_000_000:
         raise ValueError('UNIFIED_MARKET_SOURCE_MANIFEST_BOUND')
-    manifest = json.loads(path.read_bytes())
-    if manifest['normalized'] is None:
-        raise ValueError('UNIFIED_MARKET_NORMALIZED_SOURCE_MISSING')
+    material = store._batch_material(batch_id)
+    manifest = material.manifest
     # Hash actual immutable object bytes every pass. Cache skips decompression and
     # Parquet decoding only; neither timestamps nor a previous schema PASS suffice.
-    raw = store.read_blob(manifest['raw'])
-    normalized = store.read_blob(manifest['normalized'])
-    stats['source_bytes_read'] += len(raw)+len(normalized)
+    stats['source_bytes_read'] += material.source_bytes_read
     if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
         raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
-    key = (sha256(path.read_bytes()).hexdigest(), sha256(raw).hexdigest(),
-           sha256(normalized).hexdigest(), signed(calendar.document)['evidence_sha256'],
-           signed(kinds)['evidence_sha256'])
+    if manifest['normalized'] is None:
+        raise ValueError('UNIFIED_MARKET_NORMALIZED_SOURCE_MISSING')
+
+    def recheck_manifest() -> None:
+        read_before = material.source_bytes_read
+        try:
+            material.check_manifest_unchanged()
+        finally:
+            stats['source_bytes_read'] += material.source_bytes_read-read_before
+        if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
+            raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
+
+    key = (*material.identities(), *context)
     if key in _CACHE:
+        recheck_manifest()
         stats['cached_batches'] += 1
         return _CACHE[key]
-    metadata = pq.ParquetFile(io.BytesIO(normalized)).metadata
-    if (not 1 <= metadata.num_rows <= 50*48
-            or sum(metadata.row_group(i).total_byte_size for i in range(metadata.num_row_groups))
-            > 16_000_000):
-        raise ValueError('UNIFIED_MARKET_SOURCE_PARQUET_BOUND')
-    checked = store.load(batch_id)
-    stats['source_bytes_read'] += len(raw)+len(normalized)
-    if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
-        raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
-    if checked != manifest:
-        raise ValueError('UNIFIED_MARKET_BATCH_CHANGED_DURING_REPLAY')
-    rows = pq.read_table(io.BytesIO(normalized)).to_pylist()
+    material.check_export_bounds()
+    checked, _, rows = material.validate()
     with localcontext(Context(prec=28)):
-        _replay(store, manifest, rows, calendar, kinds)
-    stats['source_bytes_read'] += len(raw)
-    if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
-        raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
+        _replay(material, calendar, kinds)
+    recheck_manifest()
     estimate = len(encoded({'rows': rows}))+len(rows)*1024
     if (len(_CACHE) < MAX_BATCHES
             and sum(len(value[1]) for value in _CACHE.values())+len(rows) <= MAX_CACHE_ROWS
@@ -220,6 +237,8 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
     stats: dict[str, Any] = {'source_bytes_read': 0, 'cached_batches': 0, 'replayed_batches': 0,
              'selected_chunks': len(chunks), 'selected_batches': len(grouped)}
     identities = {row['symbol']: row for row in targets}
+    kinds = {symbol: row['security_type'] for symbol, row in identities.items()}
+    context = (signed(calendar.document)['evidence_sha256'], signed(kinds)['evidence_sha256'])
     collected: dict[tuple[str, str], dict[str, dict[str, Any]]] = defaultdict(dict)
     sources: dict[tuple[str, str, str], dict[str, dict[str, Any]]] = defaultdict(dict)
     problems: dict[tuple[str, str], set[str]] = defaultdict(set)
@@ -228,16 +247,17 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
         if time.monotonic() > deadline:
             raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
         try:
-            manifest, rows = _load(store, batch_id, stats, calendar,
-                                   {symbol: row['security_type']
-                                    for symbol, row in identities.items()})
+            manifest, rows = _load(store, batch_id, stats, calendar, kinds, context)
+            by_symbol: dict[str, list[dict[str, Any]]] = defaultdict(list)
+            for row in rows:
+                by_symbol[row['symbol']].append(row)
             spec = manifest['spec']
             for chunk in selected:
                 symbol, freq = chunk['symbol'], chunk['frequency']
                 if symbol not in identities:
                     raise ValueError('UNIFIED_MARKET_NON_TARGET_CHUNK')
                 outcome = manifest['outcomes'][symbol]
-                selected_rows = [row for row in rows if row['symbol'] == symbol]
+                selected_rows = by_symbol[symbol]
                 if (manifest['evidence_sha256'] != chunk['manifest_sha256']
                         or spec['universe_version'] != master['universe_version']
                         or spec['frequency'] != freq or outcome['state'] != 'SUCCEEDED'
@@ -263,10 +283,12 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                     row = {key: original[key] for key in sorted(BAR_FIELDS)
                            if key != 'amount_basis'}
                     row['amount_basis'] = original['amount_basis']
-                    validate_bar(row, symbol, identities[symbol]['security_type'], freq,
-                                 calendar, now)
                     day = str(datetime.fromisoformat(row['timestamp']).astimezone(SHANGHAI).date())
                     if day not in windows[freq]:
+                        # Retained rows receive this full check in validate_shard below.
+                        # Discarded rows must still be checked before leaving this batch.
+                        validate_bar(row, symbol, identities[symbol]['security_type'], freq,
+                                     calendar, now)
                         continue
                     key = (symbol, freq)
                     old = collected[key].get(row['timestamp'])
@@ -310,7 +332,7 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                     validate_shard(shard, calendar, now)
                     raw = encoded(shard)
                     digest = sha256(raw).hexdigest()
-                    objects[digest] = shard
+                    objects[digest] = raw
                     entry['shards'].append({'sha256': digest,
                         'evidence_sha256': shard['evidence_sha256'], 'bytes': len(raw),
                         'start': rows[0]['timestamp'], 'end': rows[-1]['timestamp'],
@@ -318,7 +340,7 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                 if entry['shards']:
                     entry['state'] = 'AVAILABLE'
             entries.append(entry)
-    total = sum(len(encoded(value)) for value in objects.values())
+    total = sum(len(raw) for raw in objects.values())
     if total > TOTAL_LIMIT or time.monotonic() > deadline:
         raise ValueError('UNIFIED_MARKET_EXPORT_BUDGET')
     # New chunks may arrive while replay runs; excluded/changed selected chunks may not.
@@ -337,7 +359,7 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                          'src/qtrade/research/unified_market.py')}})
     validate_index(index, now)
     destination = base/'unified-data/market-public'
-    for digest, value in objects.items():
+    for digest, raw in objects.items():
         if time.monotonic() > deadline:
             raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
         path = destination/'unified-market/objects'/(digest+'.json')
@@ -345,7 +367,7 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
             if path.is_symlink() or file_hash(path) != digest:
                 raise ValueError('UNIFIED_MARKET_IMMUTABLE_OBJECT_CHANGED')
         else:
-            write_json_immutable(path, value)
+            _write_object(path, raw)
     if time.monotonic() > deadline:
         raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
     write_json_atomic(destination/'unified-market.json', index)
@@ -387,10 +409,27 @@ def publish_market_files(base: Path, publication: Path,
         return path
 
     if database is not None:
+        started_at = datetime.now(UTC)
+        started = time.monotonic()
+        attempt: dict[str, Any] = {**AUTHORITY,
+            'schema_version': 'qtrade.unified-market-export-attempt.v1',
+            'started_at': started_at.isoformat(), 'state': 'FAILED',
+            'index_id': None, 'error_class': None, 'error_code': None}
         try:
-            export_market(base, database)
-        except (OSError, ValueError, KeyError, TypeError, sqlite3.Error):
+            result = export_market(base, database)
+            attempt.update(state='SUCCEEDED', index_id=result['index']['evidence_sha256'])
+        except (OSError, ValueError, KeyError, TypeError, sqlite3.Error) as error:
+            attempt['error_class'] = type(error).__name__
+            if str(error) in {'UNIFIED_MARKET_TIME_BUDGET', 'UNIFIED_MARKET_EXPORT_BUDGET',
+                    'UNIFIED_MARKET_SOURCE_BYTE_BUDGET', 'UNIFIED_MARKET_CHUNK_BUDGET',
+                    'UNIFIED_MARKET_BATCH_BUDGET', 'UNIFIED_MARKET_LEDGER_OR_MASTER_CHANGED',
+                    'UNIFIED_MARKET_IMMUTABLE_OBJECT_CHANGED'}:
+                attempt['error_code'] = str(error)
             print('UNIFIED_MARKET_EXPORT_FAILED_RETAINING_LAST_SUCCESS', flush=True)
+        finally:
+            attempt.update(completed_at=datetime.now(UTC).isoformat(),
+                           elapsed_seconds=round(time.monotonic()-started, 6))
+            write_json_atomic(base/'unified-data/market-export-attempt.json', signed(attempt))
     root = publication if seed_existing else base/'unified-data/market-public'
     path = checked(root, 'unified-market.json')
     pointer = checked(publication, 'unified-market.json')

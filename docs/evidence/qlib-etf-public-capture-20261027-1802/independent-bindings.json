@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-10-27T10:03:40.785243+00:00",
+  "clock_basis": "ACTUAL_SYSTEM_WALL_CLOCK",
+  "source_receipt_and_diagnostic_match": true,
+  "target_weights_match": true,
+  "selected_close_values_match_exact_diagnostic_grid": true,
+  "scope": "PUBLIC_JSON_INTERNAL_BINDINGS_ONLY_NOT_CLUSTER_RAW_REPLAY",
+  "limitations": [
+    "ONE_ACTUAL_PUBLIC_FRAME_NOT_SUSTAINED_SLA",
+    "NO_CLUSTER_RAW_SOURCE_REPLAY_PERFORMED",
+    "NO_HISTORICAL_PIT_OR_ADJUSTMENT_CERTIFICATION",
+    "NO_PAPER_OR_EXECUTION_ADMISSION",
+    "NO_BROWSER_RENDERED_VERIFICATION",
+    "MUTABLE_PUBLIC_ENDPOINTS_CAPTURED_SEQUENTIALLY_CROSS_BINDINGS_CHECKED",
+    "API_DIAGNOSTIC_DOES_NOT_EXPOSE_DIAGNOSTIC_ID_FORWARD_OBSERVATION_BINDS_IT",
+    "FIRST_OFFLINE_CHECK_HAD_LOCAL_FIELD_NAME_KEYERROR_CORRECTED_FROM_TARGET_WEIGHTS_TO_WEIGHTS_NO_CAPTURE_CHANGED"
+  ],
+  "files": {
+    "E:\\QTrade-temp\\cluster-evidence\\public-etf-20261027T100234709882Z-cee2f11d\\deployment.body.json": {
+      "bytes": 239,
+      "sha256": "ab4cf08f2515af664d964f9f12276be92934ccd872084546bb949928c212a5f4"
+    },
+    "E:\\QTrade-temp\\cluster-evidence\\public-etf-20261027T100234709882Z-cee2f11d\\deployment.capture.json": {
+      "bytes": 1127,
+      "sha256": "15b275f14e722443a0ff8b8b815bbe885f742fcea2b80ad03ca637f1ad4f176e"
+    },
+    "E:\\QTrade-temp\\cluster-evidence\\public-etf-20261027T100234709882Z-cee2f11d\\forward.body.json": {
+      "bytes": 11079,
+      "sha256": "1b138a966ff48bcedd63da0d8bed73e4992297d61ecc7316d01edbb5304e6c47"
+    },
+    "E:\\QTrade-temp\\cluster-evidence\\public-etf-20261027T100234709882Z-cee2f11d\\forward.capture.json": {
+      "bytes": 6625,
+      "sha256": "43d6df1e3a684bfdb9a9ae2428be395892d71cb1514d3c0a920f77520b6e944b"
+    },
+    "E:\\QTrade-temp\\cluster-evidence\\public-etf-20261027T100234709882Z-cee2f11d\\report.json": {
+      "bytes": 10576,
+      "sha256": "8c8ac808af1118e06e0dc23d34203da55b821274a9955f422ad82ef01091806a"
+    },
+    "E:\\QTrade-temp\\cluster-evidence\\public-etf-20261027T100234709882Z-cee2f11d\\trend.body.json": {
+      "bytes": 26423,
+      "sha256": "a21568a182a3132c02bc25edc9ed82ddb8f186e6f37705fedec2ea590077aa3b"
+    },
+    "E:\\QTrade-temp\\cluster-evidence\\public-etf-20261027T100234709882Z-cee2f11d\\trend.capture.json": {
+      "bytes": 1671,
+      "sha256": "0beaac30f320f034458db2394755f4cf69c056d2026813ecf0c13172082b0a45"
+    }
+  }
+}

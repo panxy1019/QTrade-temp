@@ -1,0 +1,362 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.unified-production-probe.v1",
+  "state": "FRESH_TRANSPORT",
+  "transport_mode": "ACTUAL_HTTP_GET",
+  "started_at": "2026-10-27T05:56:59.524745+00:00",
+  "checked_at": "2026-10-27T05:57:22.978574+00:00",
+  "production_revision": "f3c55cbbac5f087a0921182626202cc45b7c1d32",
+  "catalog_id": "478d9f39e916019a5efda2295e83e65d3d650ed9c44f3082926664aa15679f8f",
+  "publication_revision": "84144f7e696556ad7afd6ea38b70ba719d12ceb3",
+  "catalog_source": {
+    "commit_sha": "84144f7e696556ad7afd6ea38b70ba719d12ceb3",
+    "git_blob_sha1": "cb55d66232987d70e6d28a6fce1b8019df594b00",
+    "sha256": "bb9d252c3d8f40bb6255eb71e6a5771f1e5d39dc670d958dbfa802ebfa6809be",
+    "bytes": 7972990
+  },
+  "catalog_master_sha256": "1ee368199b443e3a58d2011476c0ea7e6e3a31cef0d55f7b128f2e4354f8e639",
+  "index_id": "70520fd05026d9958bf826444f2deaae25c9ad25c021912eb56f250f15ac36e8",
+  "index_master_sha256": "b626f79580ff7862fed929bae90f513053b1784549fbc5cd6c37444838c724a9",
+  "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+  "target_count": 1500,
+  "index_entries": 3000,
+  "target_by_type": {
+    "ETF": 30,
+    "STOCK": 1470
+  },
+  "index_published_at": "2026-10-27T05:55:51.980896+00:00",
+  "catalog_built_at": "2026-10-27T05:56:17.198093+00:00",
+  "index_age_seconds": 90.997678,
+  "catalog_age_seconds": 65.780481,
+  "index_fresh": true,
+  "catalog_fresh": true,
+  "fresh_publication": true,
+  "freshness_limits_seconds": {
+    "index": 180,
+    "catalog": 1200
+  },
+  "series_states": {
+    "AVAILABLE": 2994,
+    "NO_DATA": 6
+  },
+  "incremental_freshness": {
+    "day": {
+      "status": "PARTIAL",
+      "ready_symbols": 1497,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-26T15:00:00+08:00"
+    },
+    "5min": {
+      "status": "PARTIAL",
+      "ready_symbols": 0,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-27T13:55:00+08:00"
+    }
+  },
+  "samples": [
+    {
+      "symbol": "000032",
+      "frequency": "day",
+      "state": "PARTIAL",
+      "freshness": "FRESH",
+      "count": 1,
+      "actual_end": "2026-10-26T15:00:00+08:00",
+      "expected_end": "2026-10-26T15:00:00+08:00",
+      "published_at": "2026-10-27T05:55:51.980896+00:00",
+      "manifest_sha256": "aa865ff0659e3fec1e763647687ead0f5da7e651466d0916c6fc120bbe9b9882",
+      "publication_revision": "84144f7e696556ad7afd6ea38b70ba719d12ceb3"
+    },
+    {
+      "symbol": "000032",
+      "frequency": "5min",
+      "state": "PARTIAL",
+      "freshness": "PARTIAL",
+      "count": 82,
+      "actual_end": "2026-10-27T13:50:00+08:00",
+      "expected_end": "2026-10-27T13:55:00+08:00",
+      "published_at": "2026-10-27T05:55:51.980896+00:00",
+      "manifest_sha256": "d41516a07f62db953f4fa5448d1783cbd2b550bb54e5175e46db0ffb5bef3b4c",
+      "publication_revision": "84144f7e696556ad7afd6ea38b70ba719d12ceb3"
+    },
+    {
+      "symbol": "688365",
+      "frequency": "5min",
+      "state": "PARTIAL",
+      "freshness": "PARTIAL",
+      "count": 82,
+      "actual_end": "2026-10-27T13:50:00+08:00",
+      "expected_end": "2026-10-27T13:55:00+08:00",
+      "published_at": "2026-10-27T05:55:51.980896+00:00",
+      "manifest_sha256": "24d0b4ea201b898d35a35a6e1d75da15354f4ff7060690068c0c3bb6585354f9",
+      "publication_revision": "84144f7e696556ad7afd6ea38b70ba719d12ceb3"
+    },
+    {
+      "symbol": "512580",
+      "frequency": "5min",
+      "state": "PARTIAL",
+      "freshness": "PARTIAL",
+      "count": 5,
+      "actual_end": "2026-10-27T09:55:00+08:00",
+      "expected_end": "2026-10-27T13:55:00+08:00",
+      "published_at": "2026-10-27T05:55:51.980896+00:00",
+      "manifest_sha256": "69dfccd1900be42a21cd7798c4bc9f43afed82a29e2ff9c0868341ca524b1694",
+      "publication_revision": "84144f7e696556ad7afd6ea38b70ba719d12ceb3"
+    },
+    {
+      "symbol": "600621",
+      "frequency": "5min",
+      "state": "NO_DATA",
+      "freshness": "NO_DATA",
+      "count": 0,
+      "actual_end": null,
+      "expected_end": "2026-10-27T13:55:00+08:00",
+      "published_at": "2026-10-27T05:55:51.980896+00:00",
+      "manifest_sha256": null,
+      "publication_revision": "84144f7e696556ad7afd6ea38b70ba719d12ceb3"
+    }
+  ],
+  "verified_shards": [
+    {
+      "sha256": "b47f46f99b9020fe912f191b02df8d4a9cee7effcb1cea0e4f47dd9294a67d53",
+      "evidence_sha256": "f4e558149be5ff3dde52cc3c351c0f64d281a1a298aa8e6be0ab9f899060ee0b",
+      "symbol": "000032",
+      "frequency": "day",
+      "count": 1
+    },
+    {
+      "sha256": "4099c4863c8a9d6cc37eeb34b5332cfea64f3d72df441319e1a6d46af3315738",
+      "evidence_sha256": "e200f8c4fc4b3454cf121f5fd7c729880e1ba4a8b04fddb8fac9f300554407a4",
+      "symbol": "000032",
+      "frequency": "5min",
+      "count": 48
+    },
+    {
+      "sha256": "b76cf62d905053d76abc3f651b739dabd3f10e6c22c5885c3d560f46d69932fb",
+      "evidence_sha256": "3a6d26c14ee8fdd8824afb7aac43678d6bd6f2d2e4e33d3a4a776b817aa0e3b1",
+      "symbol": "000032",
+      "frequency": "5min",
+      "count": 34
+    },
+    {
+      "sha256": "f9a6806200e850c80fab485a1dbda4824712c0821fac0d62eaf28f8725431c50",
+      "evidence_sha256": "9b351d29f16894890590d38208ff25a314b991f956eb0bf4eb908d156c4d92b0",
+      "symbol": "688365",
+      "frequency": "5min",
+      "count": 48
+    },
+    {
+      "sha256": "5068bce55225e091f414036750f47091e344cd2c00084bef4ebcbd9a90393daa",
+      "evidence_sha256": "7ec6e9d437c0e3e19f4fdd8cffef9ffbf8785b58b7a93e9568b3ba85f97ba9bd",
+      "symbol": "688365",
+      "frequency": "5min",
+      "count": 34
+    },
+    {
+      "sha256": "49b663f21cf672481ccc118308c3a606d04853ef645c5b4a9f932920a0e52670",
+      "evidence_sha256": "2305bca28bf76a6a078908d999692a2399793894d1036bde6d25a886b73969f9",
+      "symbol": "512580",
+      "frequency": "5min",
+      "count": 5
+    }
+  ],
+  "responses": [
+    {
+      "url": "https://q-trade-temp.vercel.app/api/deployment",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "public, max-age=15",
+      "requested_at": "2026-10-27T05:56:59.524753+00:00",
+      "received_at": "2026-10-27T05:57:00.233985+00:00",
+      "body_bytes": 239,
+      "body_sha256": "ab4cf08f2515af664d964f9f12276be92934ccd872084546bb949928c212a5f4",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/unified/summary",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-27T05:57:00.234031+00:00",
+      "received_at": "2026-10-27T05:57:01.728490+00:00",
+      "body_bytes": 11517,
+      "body_sha256": "7a8b63ac1b6703b9fd3f551cf0ad63a221d1f14031d447175206a7289cdb5cde",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/84144f7e696556ad7afd6ea38b70ba719d12ceb3/unified.json",
+      "status_code": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "cache_control": "max-age=300",
+      "requested_at": "2026-10-27T05:57:01.728647+00:00",
+      "received_at": "2026-10-27T05:57:08.482867+00:00",
+      "body_bytes": 7972990,
+      "body_sha256": "bb9d252c3d8f40bb6255eb71e6a5771f1e5d39dc670d958dbfa802ebfa6809be",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/84144f7e696556ad7afd6ea38b70ba719d12ceb3/unified-market.json",
+      "status_code": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "cache_control": "max-age=300",
+      "requested_at": "2026-10-27T05:57:08.680840+00:00",
+      "received_at": "2026-10-27T05:57:11.318836+00:00",
+      "body_bytes": 2274569,
+      "body_sha256": "e9f6fd9a56797541a2c47b96fcf01b76a2f428c27e8726757bace3644f50c30d",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/unified/bars?symbol=000032&frequency=day&limit=2000&publication_revision=84144f7e696556ad7afd6ea38b70ba719d12ceb3&version=70520fd05026d9958bf826444f2deaae25c9ad25c021912eb56f250f15ac36e8",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-27T05:57:11.395495+00:00",
+      "received_at": "2026-10-27T05:57:12.783335+00:00",
+      "body_bytes": 2543,
+      "body_sha256": "1e447e0adb28d7ac6e6a4246fb747d4e513937fa4fea557279a1916830e8d095",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/84144f7e696556ad7afd6ea38b70ba719d12ceb3/unified-market/objects/b47f46f99b9020fe912f191b02df8d4a9cee7effcb1cea0e4f47dd9294a67d53.json",
+      "status_code": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "cache_control": "max-age=300",
+      "requested_at": "2026-10-27T05:57:12.783388+00:00",
+      "received_at": "2026-10-27T05:57:13.634544+00:00",
+      "body_bytes": 1601,
+      "body_sha256": "b47f46f99b9020fe912f191b02df8d4a9cee7effcb1cea0e4f47dd9294a67d53",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/unified/bars?symbol=000032&frequency=5min&limit=2000&publication_revision=84144f7e696556ad7afd6ea38b70ba719d12ceb3&version=70520fd05026d9958bf826444f2deaae25c9ad25c021912eb56f250f15ac36e8",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-27T05:57:13.635046+00:00",
+      "received_at": "2026-10-27T05:57:14.816271+00:00",
+      "body_bytes": 35145,
+      "body_sha256": "dc166a47df6bb30bb065578efa19ea4a5048875aa5eb3a7eb204dbb69b3c0a8b",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/84144f7e696556ad7afd6ea38b70ba719d12ceb3/unified-market/objects/4099c4863c8a9d6cc37eeb34b5332cfea64f3d72df441319e1a6d46af3315738.json",
+      "status_code": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "cache_control": "max-age=300",
+      "requested_at": "2026-10-27T05:57:14.816456+00:00",
+      "received_at": "2026-10-27T05:57:15.666689+00:00",
+      "body_bytes": 26117,
+      "body_sha256": "4099c4863c8a9d6cc37eeb34b5332cfea64f3d72df441319e1a6d46af3315738",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/84144f7e696556ad7afd6ea38b70ba719d12ceb3/unified-market/objects/b76cf62d905053d76abc3f651b739dabd3f10e6c22c5885c3d560f46d69932fb.json",
+      "status_code": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "cache_control": "max-age=300",
+      "requested_at": "2026-10-27T05:57:15.668673+00:00",
+      "received_at": "2026-10-27T05:57:16.547876+00:00",
+      "body_bytes": 27366,
+      "body_sha256": "b76cf62d905053d76abc3f651b739dabd3f10e6c22c5885c3d560f46d69932fb",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/unified/bars?symbol=688365&frequency=5min&limit=2000&publication_revision=84144f7e696556ad7afd6ea38b70ba719d12ceb3&version=70520fd05026d9958bf826444f2deaae25c9ad25c021912eb56f250f15ac36e8",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-27T05:57:16.550160+00:00",
+      "received_at": "2026-10-27T05:57:17.787025+00:00",
+      "body_bytes": 35029,
+      "body_sha256": "6d5b91f74192b22384804dc75f4e30733cab17bfa89da90f3bb4bc7429c6363a",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/84144f7e696556ad7afd6ea38b70ba719d12ceb3/unified-market/objects/f9a6806200e850c80fab485a1dbda4824712c0821fac0d62eaf28f8725431c50.json",
+      "status_code": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "cache_control": "max-age=300",
+      "requested_at": "2026-10-27T05:57:17.787235+00:00",
+      "received_at": "2026-10-27T05:57:18.998028+00:00",
+      "body_bytes": 26058,
+      "body_sha256": "f9a6806200e850c80fab485a1dbda4824712c0821fac0d62eaf28f8725431c50",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/84144f7e696556ad7afd6ea38b70ba719d12ceb3/unified-market/objects/5068bce55225e091f414036750f47091e344cd2c00084bef4ebcbd9a90393daa.json",
+      "status_code": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "cache_control": "max-age=300",
+      "requested_at": "2026-10-27T05:57:18.999970+00:00",
+      "received_at": "2026-10-27T05:57:19.743691+00:00",
+      "body_bytes": 27308,
+      "body_sha256": "5068bce55225e091f414036750f47091e344cd2c00084bef4ebcbd9a90393daa",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/unified/bars?symbol=512580&frequency=5min&limit=2000&publication_revision=84144f7e696556ad7afd6ea38b70ba719d12ceb3&version=70520fd05026d9958bf826444f2deaae25c9ad25c021912eb56f250f15ac36e8",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-27T05:57:19.745902+00:00",
+      "received_at": "2026-10-27T05:57:20.737340+00:00",
+      "body_bytes": 7039,
+      "body_sha256": "578d9c1423bacfbaec3a72c888f85b07f2860488556015a4bc0044889cf1d199",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/84144f7e696556ad7afd6ea38b70ba719d12ceb3/unified-market/objects/49b663f21cf672481ccc118308c3a606d04853ef645c5b4a9f932920a0e52670.json",
+      "status_code": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "cache_control": "max-age=300",
+      "requested_at": "2026-10-27T05:57:20.737445+00:00",
+      "received_at": "2026-10-27T05:57:21.430986+00:00",
+      "body_bytes": 4303,
+      "body_sha256": "49b663f21cf672481ccc118308c3a606d04853ef645c5b4a9f932920a0e52670",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/unified/bars?symbol=600621&frequency=5min&limit=2000&publication_revision=84144f7e696556ad7afd6ea38b70ba719d12ceb3&version=70520fd05026d9958bf826444f2deaae25c9ad25c021912eb56f250f15ac36e8",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "requested_at": "2026-10-27T05:57:21.431700+00:00",
+      "received_at": "2026-10-27T05:57:22.375218+00:00",
+      "body_bytes": 5123,
+      "body_sha256": "911962e5eb8c469b743292024316d4fbbd6f16ecd7f8c2dd139969ad4ee0a2e7",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    },
+    {
+      "url": "https://q-trade-temp.vercel.app/api/deployment",
+      "status_code": 200,
+      "content_type": "application/json",
+      "cache_control": "public, max-age=15",
+      "requested_at": "2026-10-27T05:57:22.375531+00:00",
+      "received_at": "2026-10-27T05:57:22.978531+00:00",
+      "body_bytes": 239,
+      "body_sha256": "ab4cf08f2515af664d964f9f12276be92934ccd872084546bb949928c212a5f4",
+      "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+    }
+  ],
+  "integrity_checks_passed": true,
+  "sample_series_integrity_verified": true,
+  "all_series_bytes_verified": false,
+  "browser_rendered_verified": false,
+  "whole_step1_accepted": false,
+  "completed_session_cde_accepted": false,
+  "limitations": [
+    "ALL_1500_TARGET_IDENTITIES_AND_3000_INDEX_ENTRIES_VALIDATED",
+    "ONLY_FIVE_FIXED_API_SERIES_COMPARED_WITH_THEIR_PUBLIC_IMMUTABLE_SHARDS",
+    "COMPACT_SAMPLE_VERIFICATION_RECEIPT_NOT_A_STANDALONE_RAW_REPLAY_BUNDLE",
+    "PRIVATE_RAW_VENDOR_BATCHES_NOT_REPLAYED",
+    "FRESH_TRANSPORT_IS_NOT_COMPLETE_DATA",
+    "NO_RENDERED_UI_OR_COMPLETED_SESSION_CDE_ACCEPTANCE",
+    "HISTORICAL_PIT_AND_PRICE_ADJUSTMENT_UNCERTIFIED"
+  ],
+  "evidence_sha256": "4091e46996570ade3d00738fe2bc6d9b2585be6e423b92c8744771f54ac2427d"
+}

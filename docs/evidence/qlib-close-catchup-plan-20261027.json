@@ -1,0 +1,11 @@
+{
+  "schema_version": "qtrade.public-alias-bootstrap.v1",
+  "apply": false,
+  "state": "PLAN",
+  "checkpoint": "PRECONDITIONS_VERIFIED",
+  "base": "aba6562813953fe36a18ed60a28dd9edfc738f2d",
+  "tip": "15b20f8e916a20f83539e989aaac5ae9847a6eef",
+  "pending_commits": 4,
+  "pending_blob_bytes": 107193571,
+  "evidence_sha256": "884afddca5a60ef43def7204aa40caba6c20e6fb5f6fb1b2553a0b1f20ce8d80"
+}
