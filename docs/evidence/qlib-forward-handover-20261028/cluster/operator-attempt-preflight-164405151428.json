@@ -1,0 +1,14 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "action": "preflight",
+  "started_at": "2026-10-27T16:44:05.045741+00:00",
+  "state": "SUCCEEDED",
+  "finished_at": "2026-10-27T16:44:05.151415+00:00",
+  "evidence_sha256": "4b2833f7df3f98be3ab896e09fed814581babb193d2f01309ec73a9c56946b1f"
+}

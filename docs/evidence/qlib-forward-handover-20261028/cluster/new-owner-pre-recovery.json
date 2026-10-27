@@ -1,0 +1,61 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "NEW_OWNER_EXACT_SOURCE_AND_STOPPED_BOOKS_VERIFIED",
+  "at": "2026-10-27T16:56:16.595755+00:00",
+  "new_pid": 383859,
+  "new_instance": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.forward-service-instance.v1",
+    "instance_id": "74972257947a44dea8ca686421b5ad76",
+    "state": "RUNNING",
+    "paper_books": [
+      "21619692ab45d86df47ce168543e9aa5b96a4ee7af269a5f335cbb7c32044327",
+      "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe",
+      "2fb08e23a1e8c6f4e78b2013b1261429b421f0218585640f2890297642097352",
+      "979833e43f658601e1b63d0ad4a4fcafd4f3518af0f37d70aef2d6b9739b0847",
+      "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a",
+      "a703261181cbe90c61d1f5e6bb3c6be0323583b2d83772ee2172f91f8bd3be13",
+      "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0"
+    ],
+    "heartbeat_at": "2026-10-27T16:56:04.995803+00:00",
+    "evidence_sha256": "5db31bf862ff380f67b577a6f022b3b73c86f7bdc7b44a1536e993e00e2ccdf2"
+  },
+  "publication_sha256": "16274a01bd8257f6d24e3dfb573f17d1a454f79a92912502635b7f0ee1a8cab5",
+  "fingerprints_unchanged": true,
+  "retirement_receipts": [
+    "4178982fb19ce4f4e394fc3026adeb5ec28a53a84bf1beca69c62b8b13fd5f9f/retirements/7ad61c03e3b2772e9fced29662fae14e686cca348658c0cef0a9f7bad3cb8f0e.json",
+    "21619692ab45d86df47ce168543e9aa5b96a4ee7af269a5f335cbb7c32044327/retirements/7ad61c03e3b2772e9fced29662fae14e686cca348658c0cef0a9f7bad3cb8f0e.json"
+  ],
+  "services_unchanged": true,
+  "context": {
+    "active": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+    "approval_sha256": "6f1ec61bda1a28d918dd331ad0e0ae6ea7ebcc39320f8e4dade424bf726bd238",
+    "data_version": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "data_event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+    "model_states": {
+      "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707": "STAGED",
+      "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293": "RETIRED",
+      "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487": "ACTIVE",
+      "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c": "TRAINED",
+      "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444": "TRAINED"
+    }
+  },
+  "operator_check_sha256": "369be4cfc6b5490e78aea0b14879a7dc05ec7bed644b9cf0bc2c16b46a87128d",
+  "native_status_stdout": "qtrade-forward-research          Running   pid 383859, uptime 0:01:13\n",
+  "source_files_verified": 582,
+  "actual_process_environment_source_verified": true,
+  "initialize_paper_argument": false,
+  "evidence_sha256": "4cdf5052b2726708fd8af3523e76878db0792579e21fcf755e00d41ebbb5126b"
+}

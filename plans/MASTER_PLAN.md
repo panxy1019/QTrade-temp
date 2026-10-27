@@ -24,6 +24,21 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 01:08 checkpoint: the explicitly authorized one-time directed handover
+is applied, source9846a7f/PID383859. Same228 Windows/Linux cases,582 exact Git
+files and actual14-book copy replay pass. Six fresh current-instance PAPER
+requests reconcile and succeed; original frozen/book/recovery bytes and eight
+other owner PIDs remain unchanged. Two retired books prove stopped flat closure.
+Actual public control delivery on production4b86145 passes01:00 after an earlier
+stale STOPPED capture, both retained. Full public v2 day audit remains BLOCKED:
+10 baseline observations+2 closures pass, current model PAPER/SHADOW lack a real
+October27 observation; October28 close remains future. Do not backfill simulated
+history or count retirement as a daily observation. PR34 UI merge/default-release
+verification and visual acceptance remain pending. History finite queue76,824
+(day1,944/min74,880), separate delisted192, both yielding to current collection;
+free272.56GiB/reserve100. Preserve first-start PYTHONPATH and custom Supervisor
+RPC/backoff failures. LIVE false, rolling OFF, old claims consumed; STEP2 waits.
+
 October28 00:20 checkpoint: explicit human reply approves the documented directed
 forward-owner handover and fresh6-book reconciliation. The old no-restart PID
 constraint is superseded for this one operation; retired model/PAPER stays stopped,

@@ -1,0 +1,9 @@
+{
+  "state": "FAILED_BEFORE_PREFLIGHT_OR_SERVICE_MUTATION",
+  "observed_at": "2026-10-27T16:44:04.421598+00:00",
+  "error_type": "ImportError",
+  "cause": "operator.py helper basename shadows Python operator standard library; renamed own helper without changing bytes",
+  "operator_sha256": "75fcf061c30138ae3157909f67608aa9d817148894994a3d7d58244528871811",
+  "owner175982_alive": true,
+  "handover_claim_exists": false
+}

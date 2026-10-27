@@ -1,6 +1,39 @@
 # Current state
 
-Last updated: 2026-10-28 00:20 Shanghai, explicit directed handover authorized.
+Last updated: 2026-10-28 01:08 Shanghai, directed handover and actual public control delivery verified.
+
+- Authorized one-time forward handover is applied: old175982 exits, new383859
+  executes exact source9846a7f with582 verified files, new PYTHONPATH and no
+  initialize-paper argument. Original14-book target/session/admission/link/fill
+  fingerprints and all previous recovery-file bytes remain unchanged. Eight other
+  tracked owners keep their original PIDs/start ticks; LIVE false/rolling OFF stay.
+- Six fresh instance-bound requests succeed after reconciliation at00:57: only
+  five baseline PAPER books plus ACTIVE295. Two retired model books remain stopped
+  with signed flat closure; all14 books remain visible. Private handover passes
+  00:57:28. Actual default-origin public control delivery passes01:00:42 on
+  main4b86145: RUNNING, fresh, errors[], current6 PAPER NORMAL/running. Earlier
+  actual00:58 stale/STOPPED capture remains immutable; private is not public proof.
+- Full actual-public v2 stock audit correctly remains BLOCKED:10 baseline daily
+  observations plus2 retirement closures pass; the current model's PAPER/SHADOW
+  have no October27 session because activation is after that close. Their real
+  October28 observations remain future. Do not fabricate historical sessions or
+  call12 accepted rows full14-book/day/STEP1 acceptance. STEP2 still waits.
+- Same228 Windows and isolated Linux cases pass with zero skips; frontend310
+  tests/build/lint pass. Actual14-book copy replay passes before the switch. Keep
+  the failed standard Supervisor reread, first old-PYTHONPATH import failures and
+  asynchronous stop/start dispatch receipts. Native Running plus actual /proc,
+  imported source and fresh instance are required; "started" alone is not proof.
+- Latest sealed governance receipts: history76,824(day1,944/minute74,880), separate
+  delisted192. Both yield to current collection. These are finite-queue receipt
+  counts, not certified full history/PIT. Actual post-handover free272.56GiB,
+  reserve100GiB; ordinary45s/512MB/cache128MB/Git90s budgets are unchanged.
+- PR34/source9846 includes retirement UI; production UI still4b86145 pending
+  merge/redeployment. Latest Terra high retry cannot obtain DOM/screenshots due
+  to browser transport failure. Preserve earlier core-page screenshots and new
+  failure report; actual public API acceptance does not certify rendering.
+  See docs/QLIB_FORWARD_HANDOVER_20261028.md and its byte-preserved evidence.
+
+Previous2026-10-28 00:20 checkpoint (historical observations):
 
 - Human explicitly selects the documented directed handover: one forward-owner
   replacement and fresh reconciled requests for only5 baselines plus ACTIVE295

@@ -1,0 +1,63 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "RETIRED_RESEARCH_BOOK_READ_ONLY",
+  "book_id": "4178982fb19ce4f4e394fc3026adeb5ec28a53a84bf1beca69c62b8b13fd5f9f",
+  "model_event": {
+    "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+    "event_sequence": 18,
+    "event": {
+      "at": "2026-10-27T14:20:15.847042+00:00",
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "details": {
+        "replacement": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487"
+      },
+      "evidence_sha256": "7ad61c03e3b2772e9fced29662fae14e686cca348658c0cef0a9f7bad3cb8f0e",
+      "external_order_transmission": false,
+      "kind": "RETIRED",
+      "live_trading_enabled": false,
+      "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "point_in_time": false,
+      "promotion": "NOT_ELIGIBLE",
+      "real_data_paper_readiness": false,
+      "realtime_readiness": false
+    }
+  },
+  "snapshot": {
+    "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+    "model_retirement_sha256": "7ad61c03e3b2772e9fced29662fae14e686cca348658c0cef0a9f7bad3cb8f0e",
+    "retired_at": "2026-10-27T14:20:15.847042+00:00",
+    "stop_event": [
+      3,
+      "SYSTEM_STOP",
+      "2026-10-27T16:55:04.147090+00:00"
+    ],
+    "row_hashes": {
+      "forward:config": "c3e4b88308966e773d2035df8deac91998d83716bf4ff773dfa6a35a01b943d9",
+      "forward:targets": "57208dd3e684567cca8b5d58e2bf236a9b87fc7145562e6aca90e4358ec7f9af",
+      "forward:sessions": "f1098f0de28235cb1b25b398619382d6b280291b91bafde32793a7a7f07f1dd0",
+      "operations:fill_journal": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "operations:runtime_state": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "admission_hashes": {
+      "4166d1aee127e4904e04da65e840cb18cb4e193f300a4ab1f89f1deb87edfaaf.json": "f74b419a33540a229804f64997d4ce9a34d9a18fbd0d2af614489753e06fd63c",
+      "8263904417703e674e02288e360062919676aa72eee7c393a6039e9a0278b870.json": "c6496e80a21398bde92f54d8ae388b74b6d61b15d3115f124b34d6648cd83079"
+    },
+    "archive_link_sha256": "cdc6c01235db30996aa1375b1e0e3741f6cf4a4cdc2eb875c26263117a39f571",
+    "unexecuted_targets_blocked_by_retirement": [
+      "8263904417703e674e02288e360062919676aa72eee7c393a6039e9a0278b870"
+    ],
+    "cash": null,
+    "position_count": 0,
+    "fill_count": 0,
+    "scope": "READ_ONLY_RETIRED_BOOK_NOT_A_NEW_DAY_OBSERVATION"
+  },
+  "whole_step1_accepted": false,
+  "recorded_at": "2026-10-27T16:55:04.153763+00:00",
+  "evidence_sha256": "59ee67a5487104d576f00f4f94ee1a5e948236bc0dc8dffce38e783ae7670458"
+}

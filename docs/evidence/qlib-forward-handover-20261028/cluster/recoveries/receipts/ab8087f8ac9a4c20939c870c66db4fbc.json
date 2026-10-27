@@ -1,0 +1,16 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "request_id": "ab8087f8ac9a4c20939c870c66db4fbc",
+  "request_sha256": "b72bf24f27531853fce715be6b8d493785505faf2d240b6bf0f4b2ad37b666af",
+  "book_id": "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a",
+  "state": "SUCCEEDED",
+  "at": "2026-10-27T16:57:05.287227+00:00",
+  "code": null,
+  "evidence_sha256": "540d3deb746ca67a56f2865bfaec431f3b356b27454292572e0b1149e840b607"
+}

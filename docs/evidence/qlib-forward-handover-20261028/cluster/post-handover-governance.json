@@ -1,0 +1,98 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "READ_ONLY_POST_HANDOVER_GOVERNANCE_AND_SOURCE_PROGRESS",
+  "at": "2026-10-27T17:06:59.124574+00:00",
+  "progress": {
+    "history": {
+      "updated_at": "2026-10-27T17:03:48.429033+00:00",
+      "state": "YIELDED_TO_CURRENT_COLLECTION",
+      "qualified_rows": 76824,
+      "frequency_summary": {
+        "day": {
+          "planned_scopes": 1500,
+          "content_qualified_scopes": 162,
+          "qualified_rows": 1944,
+          "full_history_certified_scopes": 0,
+          "independent_source_reconciled_scopes": 0
+        },
+        "5min": {
+          "planned_scopes": 1500,
+          "content_qualified_scopes": 130,
+          "qualified_rows": 74880,
+          "full_history_certified_scopes": 0,
+          "independent_source_reconciled_scopes": 0
+        }
+      },
+      "historical_pit_certified": false,
+      "ten_year_history_certified": false,
+      "all_requested_windows_examined": false,
+      "published_qlib_versions": null,
+      "priority_reason": "CURRENT_PRIORITY_WORK_ACTIVE_OR_FAILED",
+      "raw_bytes": 3173463,
+      "raw_sha256": "b6c020cf2bdc131a23e007a641c8ecbd92b40810a40064773cd3ab2454ecff68",
+      "raw_path": "/root/qtrade-local/operator-evidence/forward-handover-9846a7f-20261028/governance-raw/history-progress.json"
+    },
+    "delisted": {
+      "updated_at": "2026-10-27T16:58:41.114070+00:00",
+      "state": "YIELDED_TO_CURRENT_COLLECTION",
+      "qualified_rows": 192,
+      "frequency_summary": null,
+      "historical_pit_certified": false,
+      "ten_year_history_certified": false,
+      "all_requested_windows_examined": false,
+      "published_qlib_versions": 0,
+      "priority_reason": "CURRENT_PRIORITY_WORK_ACTIVE_OR_FAILED",
+      "raw_bytes": 438652,
+      "raw_sha256": "956f2fbbb1b257f0c1b1bee47e12f83f64572c03158a147810d87e93ddfa4d0b",
+      "raw_path": "/root/qtrade-local/operator-evidence/forward-handover-9846a7f-20261028/governance-raw/delisted-progress.json"
+    }
+  },
+  "other_services": {
+    "workflow": {
+      "pid": 338258,
+      "start_ticks": "1014325467"
+    },
+    "data": {
+      "pid": 334634,
+      "start_ticks": "1014197281"
+    },
+    "publisher": {
+      "pid": 294214,
+      "start_ticks": "1012537254"
+    },
+    "etf-shadow": {
+      "pid": 299932,
+      "start_ticks": "1012716210"
+    },
+    "maintenance": {
+      "pid": 213587,
+      "start_ticks": "1010098278"
+    },
+    "history": {
+      "pid": 164340,
+      "start_ticks": "1006203844"
+    },
+    "pit": {
+      "pid": 153768,
+      "start_ticks": "1005737133"
+    },
+    "observer": {
+      "pid": 4471,
+      "start_ticks": "995191546"
+    }
+  },
+  "forward_pid": 383859,
+  "free_gib": 272.5546875,
+  "reserve_gib": 100,
+  "source_context_unchanged": true,
+  "original_frozen_book_fingerprints_unchanged": true,
+  "historical_pit_certified": false,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "132f124994a857cf45923061c96a356e5a1b2e3d4872ec93a78af1782c715981"
+}

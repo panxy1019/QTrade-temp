@@ -1,0 +1,22 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "AUTHORIZED_SIX_BOOK_RECOVERY_BATCH_CONSUMED",
+  "at": "2026-10-27T16:56:48.770697+00:00",
+  "authorization_sha256": "db6633bb249f833a21bfe062b6ef71dd7565fa380583c06502bff576d79e6ef5",
+  "books": [
+    "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+    "2fb08e23a1e8c6f4e78b2013b1261429b421f0218585640f2890297642097352",
+    "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a",
+    "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe",
+    "979833e43f658601e1b63d0ad4a4fcafd4f3518af0f37d70aef2d6b9739b0847",
+    "a703261181cbe90c61d1f5e6bb3c6be0323583b2d83772ee2172f91f8bd3be13"
+  ],
+  "instance_id": "74972257947a44dea8ca686421b5ad76",
+  "evidence_sha256": "cb61fe92f791c40fff173978955c3ff95181cfcac2797581eb454879637da42d"
+}

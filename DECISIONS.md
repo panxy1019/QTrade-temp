@@ -3981,9 +3981,10 @@ not a sealed experiment or proof of alpha.
 
 ## ADR-196 — First admitted execution target survives later research proposals
 
-Status: source ddebaa1 passes150 related Windows and150 isolated Linux cases;
-real14-book copy replay passes with12 immutable proposal receipts,2026-10-27.
-Not deployed to the original forward owner.
+Status: initial source ddebaa1 passes150 related Windows/Linux cases and real
+14-book copy replay,2026-10-27. Authorized combined source9846a7f is deployed
+to new owner383859 onOctober28;228 Windows/Linux cases and the current copy replay
+pass. Actual public control delivery is verified separately from day acceptance.
 
 After a new workflow revision emits fresh signal identities, the real persistent
 book rejects a second target at the same execution_at with a UNIQUE violation.
@@ -4015,8 +4016,9 @@ unchanged throughout; the copy test neither resumes PAPER nor publishes data.
 
 ## ADR-197 — Account for stopped retired models without hiding their books
 
-Status: implementing and testing before the authorized directed handover,
-2026-10-28. Not deployed yet.
+Status: source9846a7f deployed by the authorized directed handover,2026-10-28.
+Six fresh reconciled PAPER requests and actual public control delivery pass;
+full day acceptance still awaits current-model observations after a real close.
 
 The human explicitly approves PR34's directed owner replacement and successful
 reconciliation followed by fresh single-use requests for5 baseline/current
@@ -4044,4 +4046,15 @@ books visible and distinguishes retirement from a request to resume execution.
 Audit v2 counts12 current daily-observation books and2 retained retirement proofs
 separately; retirement is never today's observation or performance. Missing,
 unclassified or unsafe extra books block rather than disappearing from coverage.
+
+The operator's initial config update did not move PYTHONPATH with the release,
+and the installed Go Supervisor v0.6.8 has a nonstandard reload response and
+asynchronous stop/backoff loop. Preserve those failed starts and do not treat
+"started" as acceptance. Verify exact imports under the intended environment,
+actual process command/cwd/environment, all release bytes and a fresh new service
+instance before issuing recovery. Continue the already consumed handover only
+from its completed steps; never replay/reset its claim or carry initialize-paper.
+The actual public v2 audit retains14 books and correctly blocks the new model's
+two missing historical sessions while accepting10 baseline observations and2
+separate retirement closures. Do not create a pre-activation session to pass it.
 

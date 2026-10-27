@@ -1,0 +1,46 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "ALL_PRIOR_RECOVERY_FILES_BYTE_IDENTICAL_AFTER_HANDOVER",
+  "at": "2026-10-27T16:58:14.840236+00:00",
+  "files": [
+    {
+      "path": "consumed/9ea345992d804e16aadd570ebeef805f.json",
+      "bytes": 743,
+      "sha256": "82d449868dfbe448bb9706ec025921b9f3f7d54e8666a510defd29c91c24fbbd"
+    },
+    {
+      "path": "consumed/ca102037bb904e368de144d12c51687c.json",
+      "bytes": 719,
+      "sha256": "2d986819ce300b4a6cb6fa3259c8b7864f75c7b82eb99e9625d71bdad097a1d3"
+    },
+    {
+      "path": "receipts/9ea345992d804e16aadd570ebeef805f.json",
+      "bytes": 659,
+      "sha256": "8b3cfb506e0823997f62896ad6dbb54cad467d0fc6748e03a2cc240d995c7105"
+    },
+    {
+      "path": "receipts/ca102037bb904e368de144d12c51687c.json",
+      "bytes": 659,
+      "sha256": "b2223de622d6b9ead8db8db777d3408e54ff9a9d6542ab3e821d80b567f401a1"
+    },
+    {
+      "path": "requests/9ea345992d804e16aadd570ebeef805f.json",
+      "bytes": 749,
+      "sha256": "dfe2b11ecb6613af233021ca640c7abb2e9fcf8b0833feb30ad3a73042d0b96f"
+    },
+    {
+      "path": "requests/ca102037bb904e368de144d12c51687c.json",
+      "bytes": 725,
+      "sha256": "07f04137432553fb67d8cf4aff8a87f3b0ed3e9d430e9cb3e5cb47febd5d23b2"
+    }
+  ],
+  "new_requests_count": 6,
+  "old_claims_reused": false,
+  "evidence_sha256": "84c3c163102f1979fbb086d10d8b83cdf9863c05d5d53e169b6f6b1a5c5904e5"
+}
