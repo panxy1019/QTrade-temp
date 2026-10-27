@@ -2,6 +2,19 @@
 
 Last updated: 2026-10-27
 
+- Unified current-market export/API and standardized web pages are implemented
+  and independently reviewed. Linux 77 focused tests, frontend 281 tests plus
+  35 post-review regressions, whole-repo Ruff and src mypy pass. Actual cluster
+  export: cold 36.43s, warm 23.00s, 56.4MB/4,488 shards, 2,994 AVAILABLE of
+  3,000 symbol/frequency entries; measured RSS peaks at 591,844 KiB. Maintenance
+  and publisher use e44a134; PAPER PID 175982 is unchanged. At 10:43, 1,496
+  securities reach 10:40, one has an older gap and three have no admitted data.
+  Consecutive-failure migration repairs three proven inflated retry deadlines.
+  First bulk Git push hits the existing 90s timeout; publication migration and
+  production web/API delivery are being resolved, not yet accepted. See
+  docs/evidence/qlib-unified-market-rollout-20261027.json and page guide.
+  Genuine completed-day C/D/E acceptance and history/PIT remain open.
+
 - User requested implementation of the reopened unified-chart gap, intraday
   freshness improvements and standardized synchronized pages. Three GPT-6.1-sol
   high agents are implementing bounded lake export/API, frontend integration and

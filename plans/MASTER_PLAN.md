@@ -24,6 +24,14 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Integration checkpoint: bounded unified export/API and page responsibilities
+implemented, reviewed and tested. Cluster e44a134 has 77 passing Linux tests;
+1,496/1,500 minute tasks reach 10:40 at 10:43, with unknown gaps retained.
+Actual cold/warm export costs 36.43/23.00 seconds, 56.4MB, peak 591,844 KiB.
+Publisher migration is in progress after its first bulk push exceeds 90 seconds;
+production web/API acceptance remains pending. Recovered PAPER is untouched.
+See PLATFORM_PAGE_GUIDE.md and qlib-unified-market-rollout-20261027.json.
+
 User requested implementation of the remaining data/C/D/E and synchronized,
 standardized production pages. Work is active on codex/unified-market-workflow:
 
