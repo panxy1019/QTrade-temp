@@ -33,6 +33,13 @@ binds the observed master, universe, calendar, implementation file hashes, all o
 checksums/counts/bytes, window boundaries, and publication clock. Its pointer is
 replaced only after all objects exist and the selected ledger evidence remains valid.
 Transient IO or export-budget failure retains the dated previous index.
+Bar keys are inserted in a deterministic order before encoding, so restarting
+Python with a different hash seed cannot change shard bytes for identical admitted
+inputs. Existing immutable objects keep their original bytes; a first export under
+this ordering may create new object IDs once. Actual added/changed source evidence
+still changes the affected shard. A real cross-process regression exports the same
+ledger at a frozen fixture time under multiple `PYTHONHASHSEED` values and checks
+exact bytes/IDs, then confirms an added bar changes only its series.
 
 The existing publisher copies only referenced verified objects and the index through
 its existing Git queue. No separate remote or publication authority is introduced.

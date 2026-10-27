@@ -4,6 +4,7 @@ import json
 import os
 import sqlite3
 import subprocess
+import sys
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -150,6 +151,62 @@ def test_export_all_targets_without_queue_writer_and_cached_replay(source):
             shard = contract.verify_shard_bytes(path.read_bytes(), ref, first['index'], entry, NOW)
             if entry['frequency'] == '5min':
                 assert shard['bars'][0]['amount'] is None and shard['bars'][0]['vwap'] is None
+
+
+def test_export_bytes_are_identical_across_process_hash_seeds_and_track_real_changes(source):
+    base, database, _, _, store, add = source
+    add()
+    add(counter=2, minute=40)
+    add('day', counter=3)
+    add(symbol='600036', counter=4)
+    database_before = database.read_bytes()
+    inputs_before = {path: path.read_bytes() for path in store.root.rglob('*') if path.is_file()}
+    code = '''
+import json, os, sys
+from datetime import datetime
+from pathlib import Path
+from scripts import publish_unified_market as exporter
+if os.name == 'nt':
+    # The Windows fixture filesystem cannot fsync directory handles. Keep the
+    # actual atomic/immutable writes, accepting only that post-write limitation.
+    def compatible(writer):
+        def write(path, value, **kwargs):
+            try:
+                writer(path, value, **kwargs)
+            except PermissionError:
+                assert path.read_bytes() == exporter.encoded(value)
+        return write
+    exporter.write_json_atomic = compatible(exporter.write_json_atomic)
+    exporter.write_json_immutable = compatible(exporter.write_json_immutable)
+base, database = map(Path, sys.argv[1:3])
+index = exporter.export_market(base, database, now=datetime.fromisoformat(sys.argv[3]))['index']
+objects = {ref['sha256']: (base/'unified-data/market-public/unified-market/objects'/
+           (ref['sha256']+'.json')).read_bytes().hex()
+           for entry in index['entries'] for ref in entry['shards']}
+print(json.dumps({'index': index, 'objects': objects}))
+'''
+    def run(seed):
+        result = subprocess.run([sys.executable, '-c', code, str(base), str(database),
+                                 NOW.isoformat()], capture_output=True, text=True, timeout=30,
+            cwd=exporter.REPO, env={**os.environ, 'PYTHONHASHSEED': str(seed),
+                'LIVE_TRADING_ENABLED': 'false', 'PYTHONPATH': os.pathsep.join(
+                    (str(exporter.REPO/'src'), str(exporter.REPO)))})
+        assert result.returncode == 0, result.stderr
+        return json.loads(result.stdout)
+    first = run(1)
+    assert len(first['objects']) == 3
+    assert run(2) == run(8675309) == first
+    assert database.read_bytes() == database_before
+    assert all(path.read_bytes() == value for path, value in inputs_before.items())
+    add(counter=5, minute=45)
+    changed = run(3)
+    assert changed['index']['entries'] != first['index']['entries']
+    assert len(set(changed['objects'])-set(first['objects'])) == 1
+    assert len(set(changed['objects']) & set(first['objects'])) == 2
+    assert run(4) == changed
+    for digest, raw in first['objects'].items():
+        path = base/'unified-data/market-public/unified-market/objects'/(digest+'.json')
+        assert path.read_bytes() == bytes.fromhex(raw)
 
 
 @pytest.mark.parametrize('damage', ['conflict', 'excluded', 'not_complete', 'raw', 'ledger'])

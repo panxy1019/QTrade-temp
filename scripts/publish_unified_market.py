@@ -259,7 +259,9 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                             or datetime.fromisoformat(original['timestamp'])
                             > datetime.fromisoformat(spec['target_end'])):
                         raise ValueError('UNIFIED_MARKET_UNCLOSED_SOURCE')
-                    row = {key: original[key] for key in BAR_FIELDS if key != 'amount_basis'}
+                    # Byte identities must survive a new process/hash seed.
+                    row = {key: original[key] for key in sorted(BAR_FIELDS)
+                           if key != 'amount_basis'}
                     row['amount_basis'] = original['amount_basis']
                     validate_bar(row, symbol, identities[symbol]['security_type'], freq,
                                  calendar, now)
