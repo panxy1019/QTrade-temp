@@ -58,8 +58,8 @@ def _route(resource: str, publication_revision: str | None = None) -> tuple[str,
         name = 'unified.json' if resource == 'catalog' else 'unified-market.json'
         return RAW+revision+'/'+name, CATALOG_LIMIT if resource == 'catalog' else INDEX_LIMIT, False
     if re.fullmatch('shard:[a-f0-9]{64}', resource):
-        require(publication_revision is None, 'UNEXPECTED_PUBLICATION_REVISION')
-        return RAW+'main/unified-market/objects/'+resource[6:]+'.json', SHARD_LIMIT, False
+        revision = _revision(publication_revision)
+        return RAW+revision+'/unified-market/objects/'+resource[6:]+'.json', SHARD_LIMIT, False
     for symbol, frequency in SAMPLES:
         if resource == f'bars:{symbol}:{frequency}':
             revision = _revision(publication_revision)
@@ -112,6 +112,7 @@ def _get(resource: str, deadline: float, version: str | None = None,
             while True:
                 require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
                 chunk = response.read1(min(65536, bound+1-size))
+                require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
                 if not chunk:
                     break
                 size += len(chunk)
@@ -128,6 +129,7 @@ def _get(resource: str, deadline: float, version: str | None = None,
         raise ValueError('UNIFIED_PROBE_HTTP_FETCH_FAILED') from None
     except (OSError, URLError, HTTPException, UnicodeError):
         raise ValueError('UNIFIED_PROBE_HTTP_FETCH_FAILED') from None
+    require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
     return {'url': url, 'status_code': 200, 'content_type': content_type,
             'cache_control': cache, 'requested_at': started.isoformat(),
             'received_at': utc_now().isoformat(), 'body_bytes': len(raw),
@@ -214,6 +216,7 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
             ) -> tuple[dict[str, Any], dict[str, Any]]:
         require(time.monotonic() < deadline and len(captures) < 25, 'CAPTURE_BUDGET')
         capture = transport(resource, deadline, version, publication_revision)
+        require(time.monotonic() < deadline, 'CAPTURE_BUDGET')
         raw = capture['body_utf8'].encode('utf-8')
         require(capture['status_code'] == 200 and len(raw) == capture['body_bytes']
                 and sha256(raw).hexdigest() == capture['body_sha256'], 'CAPTURE_INVALID')
@@ -279,7 +282,7 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
                 'PUBLICATION_REVISION_DRIFT_RETRY_REQUIRED')
         entry, rows = entries[(symbol, frequency)], []
         for ref in entry['shards']:
-            _, shard_capture = get('shard:'+ref['sha256'])
+            _, shard_capture = get('shard:'+ref['sha256'], publication_revision=revision)
             shard = verify_shard(shard_capture['body_utf8'].encode('utf-8'), ref, index,
                                  entry, utc_now())
             rows.extend(shard['bars'])
@@ -329,6 +332,7 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
             'PRIVATE_RAW_VENDOR_BATCHES_NOT_REPLAYED', 'FRESH_TRANSPORT_IS_NOT_COMPLETE_DATA',
             'NO_RENDERED_UI_OR_COMPLETED_SESSION_CDE_ACCEPTANCE',
             'HISTORICAL_PIT_AND_PRICE_ADJUSTMENT_UNCERTIFIED']})
+    require(time.monotonic() < deadline, 'CAPTURE_BUDGET')
     with report_path.open('x', encoding='utf-8') as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2, allow_nan=False)
         handle.write('\n')

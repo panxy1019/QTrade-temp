@@ -112,7 +112,10 @@ def runtime(tmp_path, monkeypatch):
         return state.index
     monkeypatch.setattr(series_api, '_index', pinned_index)
     api_objects = dict(objects)
-    monkeypatch.setattr(series_api, '_object', lambda digest: api_objects[digest])
+    def pinned_object(digest, revision):
+        assert revision == COMMIT
+        return api_objects[digest]
+    monkeypatch.setattr(series_api, '_object', pinned_object)
     monkeypatch.setattr(catalog_api, 'catalog', lambda: state.catalog)
 
     def catalog_raw():
@@ -179,7 +182,7 @@ def test_fresh_transport_with_partial_and_no_data_has_sample_only_integrity(runt
     assert [resource for resource, _ in runtime.requests[:4]] == [
         'deployment', 'summary', 'catalog', 'index']
     assert all(revision == COMMIT for resource, revision in runtime.pins
-               if resource in {'catalog', 'index'} or resource.startswith('bars:'))
+               if resource in {'catalog', 'index'} or resource.startswith(('bars:', 'shard:')))
     assert result['incremental_freshness']['5min']['status'] == 'PARTIAL'
     assert result['incremental_freshness']['5min']['ready_symbols'] == 1496
     assert {sample['state'] for sample in result['samples']} == {'PARTIAL', 'NO_DATA'}
@@ -389,9 +392,10 @@ def test_get_uses_approved_routes_proxy_redirect_guard_get_and_actual_hashes(mon
                                      headers={'Content-Type': 'text/plain'})
         return SimpleNamespace(open=open_response)
     monkeypatch.setattr(module, 'build_opener', opener)
-    result = module._get('shard:'+'a'*64, module.time.monotonic()+30)
+    result = module._get('shard:'+'a'*64, module.time.monotonic()+30,
+                         publication_revision=COMMIT)
     request, options = calls[0]
-    assert request.full_url == module.RAW+'main/unified-market/objects/'+'a'*64+'.json'
+    assert request.full_url == module.RAW+COMMIT+'/unified-market/objects/'+'a'*64+'.json'
     assert request.get_method() == 'GET' and request.data is None
     assert not {'authorization', 'cookie'} & {key.lower() for key in request.headers}
     assert 0 < options['timeout'] <= 10
@@ -476,7 +480,7 @@ def test_catalog_bytes_must_match_all_three_source_identities(runtime, damage):
     assert ('catalog', COMMIT) in runtime.pins
 
 
-@pytest.mark.parametrize('resource', ['catalog', 'index', 'bars:000032:5min'])
+@pytest.mark.parametrize('resource', ['catalog', 'index', 'bars:000032:5min', 'shard:'+'a'*64])
 def test_fixed_commit_get_never_uses_rest_or_unpinned_main(monkeypatch, resource):
     calls = []
 
@@ -491,7 +495,9 @@ def test_fixed_commit_get_never_uses_rest_or_unpinned_main(monkeypatch, resource
     result = module._get(resource, module.time.monotonic()+30,
                          'a'*64 if resource.startswith('bars:') else None, COMMIT)
     request, = calls
-    if resource in {'catalog', 'index'}:
+    if resource.startswith('shard:'):
+        assert request.full_url == module.RAW+COMMIT+'/unified-market/objects/'+'a'*64+'.json'
+    elif resource in {'catalog', 'index'}:
         assert request.full_url == module.RAW+COMMIT+'/'+(
             'unified.json' if resource == 'catalog' else 'unified-market.json')
     else:
@@ -544,7 +550,7 @@ def test_commit_transport_errors_are_strict_without_auth_or_fallback(monkeypatch
 
 @pytest.mark.parametrize('revision', [None, '', 'main', 'a'*39, 'a'*41, 'A'*40,
                                      '../main', 'a'*40+'?private=1', 'https://other.invalid'])
-@pytest.mark.parametrize('resource', ['catalog', 'index', 'bars:000032:5min'])
+@pytest.mark.parametrize('resource', ['catalog', 'index', 'bars:000032:5min', 'shard:'+'a'*64])
 def test_commit_path_injection_rejected_before_network(monkeypatch, revision, resource):
     monkeypatch.setattr(module, 'build_opener', lambda *_: pytest.fail('unexpected network'))
     with pytest.raises(ValueError, match='PUBLICATION_REVISION_INVALID'):
@@ -620,9 +626,12 @@ def index(revision):
     assert revision == data['commit']
     return data['index']
 api._index = index
-api._object = lambda digest: data['objects'][digest].encode()
+def object_bytes(digest, revision):
+    assert revision == data['commit']
+    return data['objects'][digest].encode()
+api._object = object_bytes
 def transport(resource, deadline, version, publication_revision):
-    if resource in {'catalog', 'index'} or resource.startswith('bars:'):
+    if resource in {'catalog', 'index'} or resource.startswith(('bars:', 'shard:')):
         assert publication_revision == data['commit']
     capture = dict(data['captures'][resource])
     if resource.startswith('bars:'):
@@ -648,3 +657,86 @@ print(json.dumps({'publication_revision': result['publication_revision'],
         results.append(json.loads(completed.stdout))
     assert results[0] == results[1] == {'publication_revision': COMMIT,
         'index_id': runtime.index['evidence_sha256'], 'mode': 'SIMULATED_TRANSPORT'}
+
+
+@pytest.mark.parametrize('main_state', ['unavailable', 'lagging'])
+def test_new_shards_are_verified_at_pinned_commit_when_main_cannot_serve_them(
+        runtime, monkeypatch, main_state):
+    transport = runtime.transport
+    urls = []
+
+    def open_response(request, **kwargs):
+        urls.append(request.full_url)
+        if '/main/' in request.full_url:
+            if main_state == 'unavailable':
+                raise HTTPError(request.full_url, 404, 'not present at stale main', {}, None)
+            return TransportResponse(b'{}', url=request.full_url)
+        prefix = module.RAW+COMMIT+'/unified-market/objects/'
+        assert request.full_url.startswith(prefix)
+        digest = request.full_url[len(prefix):-5]
+        return TransportResponse(runtime.objects[digest], url=request.full_url)
+
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=open_response))
+
+    def fixed_shards(resource, deadline, version, publication_revision):
+        if resource.startswith('shard:'):
+            return module._get(resource, deadline, version, publication_revision)
+        return transport(resource, deadline, version, publication_revision)
+    report = module.probe(REVISION, runtime.report, _transport=fixed_shards)
+    assert report['sample_series_integrity_verified'] is True
+    assert report['transport_mode'] == 'SIMULATED_TRANSPORT'
+    assert len(urls) == 3
+    assert all('/'+COMMIT+'/' in url and '/main/' not in url for url in urls)
+
+
+def test_unavailable_shard_commit_never_falls_back_to_main(monkeypatch):
+    urls = []
+
+    def unavailable(request, **kwargs):
+        urls.append(request.full_url)
+        raise HTTPError(request.full_url, 404, 'TEST_ONLY_PRIVATE_ERROR', {}, None)
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=unavailable))
+    with pytest.raises(ValueError, match='HTTP_FETCH_FAILED'):
+        module._get('shard:'+'a'*64, module.time.monotonic()+30,
+                    publication_revision='d'*40)
+    assert urls == [module.RAW+'d'*40+'/unified-market/objects/'+'a'*64+'.json']
+
+
+@pytest.mark.parametrize('late_read', ['eof', 'final_data'])
+def test_deadline_is_rechecked_after_blocking_final_read(monkeypatch, late_read):
+    clock = [0.0]
+    url, _, _ = module._route('summary')
+    response = TransportResponse(url=url)
+    calls = []
+
+    def read1(size):
+        calls.append(size)
+        if len(calls) == 1:
+            if late_read == 'final_data':
+                clock[0] = 9.0
+            return b'{}'
+        clock[0] = 9.0
+        return b''
+    monkeypatch.setattr(response, 'read1', read1)
+    monkeypatch.setattr(module.time, 'monotonic', lambda: clock[0])
+    monkeypatch.setattr(module, 'build_opener',
+                        lambda *_: SimpleNamespace(open=lambda *a, **k: response))
+    with pytest.raises(ValueError, match='HTTP_DEADLINE_EXCEEDED'):
+        module._get('summary', 8.0)
+
+
+def test_final_deployment_cannot_complete_after_total_probe_deadline(runtime, monkeypatch):
+    clock, deployments = [0.0], [0]
+    transport = runtime.transport
+
+    def delayed(resource, deadline, version, publication_revision):
+        capture = transport(resource, deadline, version, publication_revision)
+        if resource == 'deployment':
+            deployments[0] += 1
+            if deployments[0] == 2:
+                clock[0] = module.MAX_SECONDS+1.0
+        return capture
+    monkeypatch.setattr(module.time, 'monotonic', lambda: clock[0])
+    with pytest.raises(ValueError, match='CAPTURE_BUDGET'):
+        module.probe(REVISION, runtime.report, _transport=delayed)
+    assert not runtime.report.exists()
