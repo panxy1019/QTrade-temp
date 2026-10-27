@@ -1,0 +1,205 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.afternoon-runtime.v1",
+  "observed_at": "2026-10-27T05:06:17.800855+00:00",
+  "checked_at": "2026-10-27T05:06:24.218740+00:00",
+  "remote_head": "c5af28babd46f489b08af3b8f9fc9785e10813ca",
+  "baseline_commit": "9a02870e221dc8cf6d3e983cf033185b79d5954b",
+  "index_id": "8567bfeedac543b77c2631a703d91c6ed2aba9236252c7c46642832b624c9858",
+  "index_published_at": "2026-10-27T05:05:11.638159+00:00",
+  "index_age_seconds": 72.580581,
+  "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+  "target_count": 1500,
+  "expected_minute_end": "2026-10-27T13:05:00+08:00",
+  "task_count": 1500,
+  "ready_tasks": 0,
+  "completed_end_state_counts": [
+    {
+      "completed_end": null,
+      "state": "FAILED",
+      "count": 3
+    },
+    {
+      "completed_end": "2026-10-27T01:55:00+00:00",
+      "state": "FAILED",
+      "count": 1
+    },
+    {
+      "completed_end": "2026-10-27T03:30:00+00:00",
+      "state": "SUCCEEDED",
+      "count": 1496
+    }
+  ],
+  "public_minute_end_counts": {
+    "2026-10-27T11:30:00+08:00": 1496,
+    "NO_DATA": 3,
+    "2026-10-27T09:55:00+08:00": 1
+  },
+  "changed_series_count": 0,
+  "changed_series_by_frequency": {},
+  "sample_minute_entries": [
+    {
+      "symbol": "000032",
+      "instrument_id": "SZSE.000032",
+      "security_type": "STOCK",
+      "name": "深桑达A",
+      "frequency": "5min",
+      "state": "AVAILABLE",
+      "issues": [],
+      "shards": [
+        {
+          "sha256": "4099c4863c8a9d6cc37eeb34b5332cfea64f3d72df441319e1a6d46af3315738",
+          "evidence_sha256": "e200f8c4fc4b3454cf121f5fd7c729880e1ba4a8b04fddb8fac9f300554407a4",
+          "bytes": 26117,
+          "start": "2026-10-26T09:35:00+08:00",
+          "end": "2026-10-26T15:00:00+08:00",
+          "count": 48
+        },
+        {
+          "sha256": "18acf598e0d25b51d498d0a7d04e8ca041f7efa45774e844c84dd9a12211ca4a",
+          "evidence_sha256": "7fafd6f04f49b0939cd77512232828ee7118fcc348de69082cceb96a192d0414",
+          "bytes": 18726,
+          "start": "2026-10-27T09:35:00+08:00",
+          "end": "2026-10-27T11:30:00+08:00",
+          "count": 24
+        }
+      ]
+    },
+    {
+      "symbol": "512580",
+      "instrument_id": "SSE.512580",
+      "security_type": "ETF",
+      "name": "广发中证环保ETF",
+      "frequency": "5min",
+      "state": "AVAILABLE",
+      "issues": [],
+      "shards": [
+        {
+          "sha256": "49b663f21cf672481ccc118308c3a606d04853ef645c5b4a9f932920a0e52670",
+          "evidence_sha256": "2305bca28bf76a6a078908d999692a2399793894d1036bde6d25a886b73969f9",
+          "bytes": 4303,
+          "start": "2026-10-27T09:35:00+08:00",
+          "end": "2026-10-27T09:55:00+08:00",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "symbol": "600621",
+      "instrument_id": "SSE.600621",
+      "security_type": "STOCK",
+      "name": "华鑫股份",
+      "frequency": "5min",
+      "state": "NO_DATA",
+      "issues": [],
+      "shards": []
+    },
+    {
+      "symbol": "688365",
+      "instrument_id": "SSE.688365",
+      "security_type": "STOCK",
+      "name": "光云科技",
+      "frequency": "5min",
+      "state": "AVAILABLE",
+      "issues": [],
+      "shards": [
+        {
+          "sha256": "f9a6806200e850c80fab485a1dbda4824712c0821fac0d62eaf28f8725431c50",
+          "evidence_sha256": "9b351d29f16894890590d38208ff25a314b991f956eb0bf4eb908d156c4d92b0",
+          "bytes": 26058,
+          "start": "2026-10-26T09:35:00+08:00",
+          "end": "2026-10-26T15:00:00+08:00",
+          "count": 48
+        },
+        {
+          "sha256": "632b1b6d3bbf4f76347f551398ffec69485282fa2d5dce69796774f91ce1a545",
+          "evidence_sha256": "047518ac14886f922c73c6c380b357befa3d56b0e04f23651b89c89c9f420707",
+          "bytes": 18678,
+          "start": "2026-10-27T09:35:00+08:00",
+          "end": "2026-10-27T11:30:00+08:00",
+          "count": 24
+        }
+      ]
+    }
+  ],
+  "collector": {
+    "state": "WAITING",
+    "heartbeat_at": "2026-10-27T05:05:26.293798+00:00",
+    "code_revision": "e44a134fab8bc0404b8d1c59674747150e170698",
+    "last_pass_state": "PASS_FINISHED"
+  },
+  "processes": {
+    "code-server": {
+      "pid": 81,
+      "statename": "Running"
+    },
+    "jupyterlab": {
+      "pid": 80,
+      "statename": "Running"
+    },
+    "qtrade-data-observer": {
+      "pid": 4471,
+      "statename": "Running"
+    },
+    "qtrade-etf-diagnostics": {
+      "pid": 179865,
+      "statename": "Running"
+    },
+    "qtrade-etf-shadow": {
+      "pid": 181180,
+      "statename": "Running"
+    },
+    "qtrade-forward-research": {
+      "pid": 175982,
+      "statename": "Running"
+    },
+    "qtrade-history-backfill": {
+      "pid": 164340,
+      "statename": "Running"
+    },
+    "qtrade-pit-repair": {
+      "pid": 153768,
+      "statename": "Running"
+    },
+    "qtrade-qlib-data": {
+      "pid": 179733,
+      "statename": "Running"
+    },
+    "qtrade-qlib-workflow": {
+      "pid": 173727,
+      "statename": "Running"
+    },
+    "qtrade-research-maintenance": {
+      "pid": 213587,
+      "statename": "Running"
+    },
+    "qtrade-research-publication": {
+      "pid": 240024,
+      "statename": "Running"
+    },
+    "tensorboard": {
+      "pid": 79,
+      "statename": "Running"
+    }
+  },
+  "publisher_pid": 240024,
+  "paper_pid": 175982,
+  "disk_free_gib": 277.94,
+  "all_series_bytes_verified": false,
+  "private_raw_vendor_batches_replayed": false,
+  "production_api_verified": false,
+  "completed_session_cde_accepted": false,
+  "whole_step1_accepted": false,
+  "limitations": [
+    "READ_ONLY_CURRENT_TASKS_AND_SIGNED_PUBLIC_METADATA",
+    "ACTUAL_HTTP_SAMPLE_PROBE_IS_SEPARATE",
+    "HISTORICAL_PIT_AND_PRICE_ADJUSTMENT_UNCERTIFIED"
+  ],
+  "evidence_sha256": "2e9fba6fe1a30132fbfbaab65aa91145b2aae4a86748cc40e2a003a468941b28"
+}

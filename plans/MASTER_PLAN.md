@@ -24,6 +24,28 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Afternoon checkpoint: PR29 is merged and production a53aa03 verified. The real
+remote index advances 1,496 minute targets to 13:05; a separate one-series API
+row check succeeds but reports a stale index at 13:20. Afternoon transport SLA
+is not accepted. Subsequent actual remote commits do advance the index; compare
+export state, commit and delivery clocks rather than snapshot push status alone.
+Three full probes correctly reject independently cached mutable catalog views.
+The final read repair binds catalog, index and API samples to an immutable
+commit resolved through bounded public Git reference GET, with no REST quota,
+credentials or new service. Final f0e0598 passes 354 Linux tests, no skips, and
+independent review; actual-HTTP local ASGI integration passes at 13:47. Vercel
+rollout remains pending. Only full catalog body transfer allows 15s, retaining
+the 8s socket/other-response limits and all existing publication/freshness gates.
+No writer/PAPER restart, recovery or candidate activation. Remaining data gaps,
+PIT and actual completed-session C/D/E stay explicit. See
+QLIB_AFTERNOON_PUBLICATION_20261027.md.
+
+13:50 actual services snapshot: all supervised services RUNNING, existing PAPER
+and publisher PIDs unchanged; 1,496 minute targets reach expected 13:45. History
+queue has 40,692 qualified rows and deliberately yields during current work;
+PIT refreshed 990/990 symbols, still without historical availability/full PIT.
+Free disk 276.80 GiB; retain 100 GiB reserve.
+
 12:53 Shanghai checkpoint: publisher c35bb84 / PID 240024 is RUNNING after the
 verified alias seed and one-time deterministic ordering migration. Six ordinary
 remote frames preserve 4,488 shard identities across restart; production 4cee136

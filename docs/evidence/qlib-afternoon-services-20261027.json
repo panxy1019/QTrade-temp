@@ -1,0 +1,197 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.afternoon-services.v1",
+  "checked_at": "2026-10-27T05:50:15.134985+00:00",
+  "processes": {
+    "code-server": {
+      "pid": 81,
+      "statename": "Running"
+    },
+    "jupyterlab": {
+      "pid": 80,
+      "statename": "Running"
+    },
+    "qtrade-data-observer": {
+      "pid": 4471,
+      "statename": "Running"
+    },
+    "qtrade-etf-diagnostics": {
+      "pid": 179865,
+      "statename": "Running"
+    },
+    "qtrade-etf-shadow": {
+      "pid": 181180,
+      "statename": "Running"
+    },
+    "qtrade-forward-research": {
+      "pid": 175982,
+      "statename": "Running"
+    },
+    "qtrade-history-backfill": {
+      "pid": 164340,
+      "statename": "Running"
+    },
+    "qtrade-pit-repair": {
+      "pid": 153768,
+      "statename": "Running"
+    },
+    "qtrade-qlib-data": {
+      "pid": 179733,
+      "statename": "Running"
+    },
+    "qtrade-qlib-workflow": {
+      "pid": 173727,
+      "statename": "Running"
+    },
+    "qtrade-research-maintenance": {
+      "pid": 213587,
+      "statename": "Running"
+    },
+    "qtrade-research-publication": {
+      "pid": 240024,
+      "statename": "Running"
+    },
+    "tensorboard": {
+      "pid": 79,
+      "statename": "Running"
+    }
+  },
+  "snapshots": {
+    "collector": {
+      "available": true,
+      "file_sha256": "bb8b8bc6aa2456e7acd3ff6eda3cd96f8a6a00e97cb20b998c279e99e4cf074f",
+      "mtime": "2026-10-27T05:49:32.179596+00:00",
+      "fields": {
+        "state": "WAITING",
+        "heartbeat_at": "2026-10-27T05:49:40.575583+00:00",
+        "last_pass_state": "PASS_FINISHED",
+        "code_revision": "e44a134fab8bc0404b8d1c59674747150e170698"
+      }
+    },
+    "publisher": {
+      "available": true,
+      "file_sha256": "b06915dd8f2313874cf281d20465c9b335a2f62193844e24ddfa39b7e04c8495",
+      "mtime": "2026-10-27T05:48:16.270933+00:00",
+      "fields": {
+        "outcome": "SUCCEEDED",
+        "published_at": "2026-10-27T05:46:47.444689+00:00"
+      }
+    },
+    "export": {
+      "available": true,
+      "file_sha256": "72cf7a6193c1f538b2fa57f072dc9e7a850664adddf23c38c46badb53fc7cd1e",
+      "mtime": "2026-10-27T05:49:00.204789+00:00",
+      "fields": {
+        "export_seconds": 43.727131,
+        "selected_batches": 1793,
+        "cached_batches": 160,
+        "replayed_batches": 1633,
+        "source_bytes_read": 70204039,
+        "index_id": "3d1e54c413115bc3f5af9e0f2939eb6dd528fce0477e23b5570fe3ea151562b7"
+      }
+    },
+    "history": {
+      "available": true,
+      "file_sha256": "f60b9ef53f8a4997e074f489983cca12b797239b32be6c0e8dceb0fed9654f4f",
+      "mtime": "2026-10-27T05:43:33.727129+00:00",
+      "fields": {
+        "state": "YIELDED_TO_CURRENT_COLLECTION",
+        "updated_at": "2026-10-27T05:43:41.921826+00:00",
+        "code_revision": "a69eb701e00516461e0f487dc25a2088c1e0dab3",
+        "frequency_summary": {
+          "day": {
+            "planned_scopes": 1500,
+            "content_qualified_scopes": 79,
+            "qualified_rows": 948,
+            "full_history_certified_scopes": 0,
+            "independent_source_reconciled_scopes": 0
+          },
+          "5min": {
+            "planned_scopes": 1500,
+            "content_qualified_scopes": 69,
+            "qualified_rows": 39744,
+            "full_history_certified_scopes": 0,
+            "independent_source_reconciled_scopes": 0
+          }
+        },
+        "qualified_rows": 40692,
+        "window_states": {
+          "CONTENT_QUALIFIED_WITH_UNRESOLVED_GAPS": 148,
+          "YIELDED_TO_CURRENT_COLLECTION": 55,
+          "QUALITY_REJECTED": 17
+        },
+        "historical_pit_certified": false,
+        "ten_year_history_certified": false,
+        "priority_reason": "CURRENT_PRIORITY_WORK_ACTIVE_OR_FAILED"
+      }
+    },
+    "history_service": {
+      "available": true,
+      "file_sha256": "a9700b45bbc3b2c078463a04992eecd06983b8083b0e261fd46a809e2eb012a0",
+      "mtime": "2026-10-27T05:49:59.355982+00:00",
+      "fields": {
+        "state": "WAITING",
+        "heartbeat_at": "2026-10-27T05:50:07.752689+00:00",
+        "last_pass_state": "YIELDED_TO_CURRENT_COLLECTION",
+        "completed_passes": 168,
+        "failed_passes": 0,
+        "code_revision": "a69eb701e00516461e0f487dc25a2088c1e0dab3",
+        "last_error_class": null
+      }
+    },
+    "delisted": {
+      "available": false
+    },
+    "pit": {
+      "available": true,
+      "file_sha256": "419824d16fccfc85644237e52ff421107f658f9346d604f0678a5fd5749e6608",
+      "mtime": "2026-10-27T05:37:59.580795+00:00",
+      "fields": {
+        "state": "SOURCE_BACKFILL_REQUIRES_RECONCILIATION",
+        "observed_at": "2026-10-27T05:38:01.634959+00:00",
+        "historical_pit_certified": false,
+        "input_symbols": 990,
+        "status_symbols": 990,
+        "status_rows": 2168788,
+        "historical_available_at_known": false
+      }
+    },
+    "pit_schedule": {
+      "available": true,
+      "file_sha256": "c28136c89239ea76672638aec345e3e7efe6734960e9b6bf669e70555a59d0b1",
+      "mtime": "2026-10-27T05:38:00.945915+00:00",
+      "fields": {
+        "outcome": "SUCCEEDED",
+        "next_attempt_at": "2026-10-27T11:38:09.341954+00:00",
+        "at": "2026-10-27T05:38:09.341954+00:00"
+      }
+    }
+  },
+  "incremental_freshness": {
+    "day": {
+      "status": "PARTIAL",
+      "ready_symbols": 1497,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-26T15:00:00+08:00"
+    },
+    "5min": {
+      "status": "PARTIAL",
+      "ready_symbols": 1496,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-27T13:45:00+08:00"
+    }
+  },
+  "disk_free_gib": 276.8,
+  "existing_paper_unchanged": true,
+  "new_activation_performed": false,
+  "gap_repair_apply_performed": false,
+  "whole_step1_accepted": false,
+  "completed_session_cde_accepted": false,
+  "evidence_sha256": "b7debfdafc504c7dd1a853e10719e2cf1b85109acad6c4f47fa0853e00527bd7"
+}

@@ -8,7 +8,7 @@ import re
 import time
 from collections import Counter
 from datetime import UTC, datetime, timedelta
-from hashlib import sha256
+from hashlib import sha1, sha256
 from http.client import HTTPException
 from pathlib import Path
 from typing import Any
@@ -24,7 +24,8 @@ from qtrade.research.unified_market import verify_shard_bytes as verify_shard
 from scripts import qlib_public_delivery as delivery
 
 ORIGIN = 'https://q-trade-temp.vercel.app'
-RAW = 'https://raw.githubusercontent.com/panxy1019/QTrade-observations/main/'
+RAW = 'https://raw.githubusercontent.com/panxy1019/QTrade-observations/'
+CATALOG_LIMIT = 12_000_000
 SAMPLES = (('000032', 'day'), ('000032', '5min'), ('688365', '5min'),
            ('512580', '5min'), ('600621', '5min'))
 TARGETS = 1500
@@ -41,30 +42,43 @@ def require(condition: bool, code: str) -> None:
         raise ValueError('UNIFIED_PROBE_'+code)
 
 
-def _route(resource: str) -> tuple[str, int, bool]:
+def _revision(value: Any) -> str:
+    require(type(value) is str and re.fullmatch('[a-f0-9]{40}', value) is not None
+            and value != '0'*40,
+            'PUBLICATION_REVISION_INVALID')
+    return str(value)
+
+
+def _route(resource: str, publication_revision: str | None = None) -> tuple[str, int, bool]:
     """Only internally named routes; neither URLs nor paths are CLI inputs."""
     if resource == 'summary':
+        require(publication_revision is None, 'UNEXPECTED_PUBLICATION_REVISION')
         return ORIGIN+'/api/unified/summary', 2_000_000, True
-    if resource in {'index', 'catalog'}:
-        name = 'unified-market.json' if resource == 'index' else 'unified.json'
-        return (RAW+name+'?v='+str(int(utc_now().timestamp())//60),
-                INDEX_LIMIT if resource == 'index' else 12_000_000, False)
+    if resource in {'catalog', 'index'}:
+        revision = _revision(publication_revision)
+        name = 'unified.json' if resource == 'catalog' else 'unified-market.json'
+        return RAW+revision+'/'+name, CATALOG_LIMIT if resource == 'catalog' else INDEX_LIMIT, False
     if re.fullmatch('shard:[a-f0-9]{64}', resource):
-        return RAW+'unified-market/objects/'+resource[6:]+'.json', SHARD_LIMIT, False
+        revision = _revision(publication_revision)
+        return RAW+revision+'/unified-market/objects/'+resource[6:]+'.json', SHARD_LIMIT, False
     for symbol, frequency in SAMPLES:
         if resource == f'bars:{symbol}:{frequency}':
-            # The pinned index is supplied separately below, never as a user URL.
+            revision = _revision(publication_revision)
+            # Pin both the immutable commit and its independently verified index identity.
             return ORIGIN+'/api/unified/bars?'+urlencode({
-                'symbol': symbol, 'frequency': frequency, 'limit': 2000}), 2_000_000, True
+                'symbol': symbol, 'frequency': frequency, 'limit': 2000,
+                'publication_revision': revision}), 2_000_000, True
     raise ValueError('UNIFIED_PROBE_RESOURCE_NOT_ALLOWED')
 
 
-def _get(resource: str, deadline: float, version: str | None = None) -> dict[str, Any]:
+def _get(resource: str, deadline: float, version: str | None = None,
+         publication_revision: str | None = None) -> dict[str, Any]:
     """Reuse the existing credential-free proxy/no-redirect transport safeguards."""
     if resource == 'deployment':
-        require(version is None and delivery.ORIGIN == ORIGIN, 'ORIGIN_INVALID')
+        require(version is None and publication_revision is None and delivery.ORIGIN == ORIGIN,
+                'ORIGIN_INVALID')
         return delivery._get(delivery.DEPLOYMENT, deadline)
-    url, bound, api = _route(resource)
+    url, bound, api = _route(resource, publication_revision)
     if resource.startswith('bars:'):
         if not isinstance(version, str) or re.fullmatch('[a-f0-9]{64}', version) is None:
             raise ValueError('UNIFIED_PROBE_VERSION_REQUIRED')
@@ -99,6 +113,7 @@ def _get(resource: str, deadline: float, version: str | None = None) -> dict[str
             while True:
                 require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
                 chunk = response.read1(min(65536, bound+1-size))
+                require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
                 if not chunk:
                     break
                 size += len(chunk)
@@ -115,6 +130,7 @@ def _get(resource: str, deadline: float, version: str | None = None) -> dict[str
         raise ValueError('UNIFIED_PROBE_HTTP_FETCH_FAILED') from None
     except (OSError, URLError, HTTPException, UnicodeError):
         raise ValueError('UNIFIED_PROBE_HTTP_FETCH_FAILED') from None
+    require(time.monotonic() < deadline, 'HTTP_DEADLINE_EXCEEDED')
     return {'url': url, 'status_code': 200, 'content_type': content_type,
             'cache_control': cache, 'requested_at': started.isoformat(),
             'received_at': utc_now().isoformat(), 'body_bytes': len(raw),
@@ -125,6 +141,22 @@ def _get(resource: str, deadline: float, version: str | None = None) -> dict[str
 def _authority(value: dict[str, Any]) -> None:
     require(all(type(value.get(key)) is type(expected) and value.get(key) == expected
                 for key, expected in AUTHORITY.items()), 'AUTHORITY_INVALID')
+
+
+def _catalog_source(value: Any) -> dict[str, Any]:
+    require(type(value) is dict
+            and set(value) == {'commit_sha', 'git_blob_sha1', 'sha256', 'bytes'},
+            'CATALOG_SOURCE_INVALID')
+    require(type(value['commit_sha']) is str
+            and re.fullmatch('[a-f0-9]{40}', value['commit_sha']) is not None
+            and value['commit_sha'] != '0'*40
+            and type(value['git_blob_sha1']) is str
+            and re.fullmatch('[a-f0-9]{40}', value['git_blob_sha1']) is not None
+            and type(value['sha256']) is str
+            and re.fullmatch('[a-f0-9]{64}', value['sha256']) is not None
+            and type(value['bytes']) is int and 1 <= value['bytes'] <= CATALOG_LIMIT,
+            'CATALOG_SOURCE_INVALID')
+    return dict(value)
 
 
 def _checked(value: dict[str, Any], capture: dict[str, Any]) -> datetime:
@@ -168,7 +200,7 @@ def _sample(series: dict[str, Any], entry: dict[str, Any], index: dict[str, Any]
     require(all(type(series.get(key)) is type(value) and delivery._same(series.get(key), value)
                 for key, value in wanted.items()), 'API_SERIES_MISMATCH')
     return {key: series[key] for key in ('symbol', 'frequency', 'state', 'freshness', 'count',
-        'actual_end', 'expected_end', 'published_at', 'manifest_sha256')}
+        'actual_end', 'expected_end', 'published_at', 'manifest_sha256', 'publication_revision')}
 
 
 def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) -> dict[str, Any]:
@@ -182,9 +214,11 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
     captures: list[dict[str, Any]] = []
     transport = _get if _transport is None else _transport
 
-    def get(resource: str, version: str | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
+    def get(resource: str, version: str | None = None, publication_revision: str | None = None
+            ) -> tuple[dict[str, Any], dict[str, Any]]:
         require(time.monotonic() < deadline and len(captures) < 25, 'CAPTURE_BUDGET')
-        capture = transport(resource, deadline, version)
+        capture = transport(resource, deadline, version, publication_revision)
+        require(time.monotonic() < deadline, 'CAPTURE_BUDGET')
         raw = capture['body_utf8'].encode('utf-8')
         require(capture['status_code'] == 200 and len(raw) == capture['body_bytes']
                 and sha256(raw).hexdigest() == capture['body_sha256'], 'CAPTURE_INVALID')
@@ -204,12 +238,23 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
         'git_commit_ref': 'main', 'external_order_transmission': False}
     require(all(type(deployment.get(key)) is type(value) and deployment.get(key) == value
                 for key, value in expected_deployment.items()), 'DEPLOYMENT_MISMATCH')
-    raw_index, _ = get('index')
-    index = validate_index(raw_index, utc_now())
-    raw_catalog, _ = get('catalog')
+    summary, summary_capture = get('summary')
+    _authority(summary)
+    checked = _checked(summary, summary_capture)
+    source = _catalog_source(summary.get('catalog_source'))
+    revision = source['commit_sha']
+    raw_catalog, catalog_capture = get('catalog', publication_revision=revision)
+    catalog_bytes = catalog_capture['body_utf8'].encode('utf-8')
+    require(len(catalog_bytes) == source['bytes']
+            and sha256(catalog_bytes).hexdigest() == source['sha256']
+            and sha1(b'blob '+str(len(catalog_bytes)).encode()+b'\0'+catalog_bytes,
+                     usedforsecurity=False).hexdigest()
+            == source['git_blob_sha1'], 'CATALOG_SOURCE_BYTES_MISMATCH')
     catalog = validate_publication(raw_catalog)
     _authority(catalog)
     _authority(catalog['master'])
+    raw_index, _ = get('index', publication_revision=revision)
+    index = validate_index(raw_index, utc_now())
     targets = {row['symbol']: row for row in catalog['master']['securities'] if row['in_target']}
     entries = {(row['symbol'], row['frequency']): row for row in index['entries']}
     require(len(targets) == TARGETS and len(entries) == TARGETS*2
@@ -219,9 +264,6 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
     require(all(all(entry[key] == targets[symbol][key]
                     for key in ('instrument_id', 'security_type', 'name'))
                 for (symbol, _), entry in entries.items()), 'ENTRY_IDENTITY_MISMATCH')
-    summary, capture = get('summary')
-    _authority(summary)
-    checked = _checked(summary, capture)
     require(summary.get('evidence_sha256') == catalog['evidence_sha256']
             and summary.get('built_at') == catalog['built_at']
             and delivery._same(summary.get('master'), {
@@ -235,12 +277,14 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
     samples, verified = [], []
     for symbol, frequency in SAMPLES:
         require((symbol, frequency) in entries, 'SAMPLE_TARGET_MISSING')
-        series, capture = get(f'bars:{symbol}:{frequency}', index['evidence_sha256'])
+        series, capture = get(f'bars:{symbol}:{frequency}', index['evidence_sha256'], revision)
         require(series.get('index_id') == index['evidence_sha256'],
                 'VERSION_DRIFT_RETRY_REQUIRED')
+        require(series.get('publication_revision') == revision,
+                'PUBLICATION_REVISION_DRIFT_RETRY_REQUIRED')
         entry, rows = entries[(symbol, frequency)], []
         for ref in entry['shards']:
-            _, shard_capture = get('shard:'+ref['sha256'])
+            _, shard_capture = get('shard:'+ref['sha256'], publication_revision=revision)
             shard = verify_shard(shard_capture['body_utf8'].encode('utf-8'), ref, index,
                                  entry, utc_now())
             rows.extend(shard['bars'])
@@ -265,6 +309,8 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
         'transport_mode': 'SIMULATED_TRANSPORT' if _transport is not None else 'ACTUAL_HTTP_GET',
         'started_at': started.isoformat(), 'checked_at': checked.isoformat(),
         'production_revision': expected_revision, 'catalog_id': catalog['evidence_sha256'],
+        'publication_revision': revision,
+        'catalog_source': source,
         'catalog_master_sha256': catalog['master']['evidence_sha256'],
         'index_id': index['evidence_sha256'], 'index_master_sha256': index['master_sha256'],
         'universe_version': index['universe_version'], 'target_count': len(targets),
@@ -288,6 +334,7 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
             'PRIVATE_RAW_VENDOR_BATCHES_NOT_REPLAYED', 'FRESH_TRANSPORT_IS_NOT_COMPLETE_DATA',
             'NO_RENDERED_UI_OR_COMPLETED_SESSION_CDE_ACCEPTANCE',
             'HISTORICAL_PIT_AND_PRICE_ADJUSTMENT_UNCERTIFIED']})
+    require(time.monotonic() < deadline, 'CAPTURE_BUDGET')
     with report_path.open('x', encoding='utf-8') as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2, allow_nan=False)
         handle.write('\n')

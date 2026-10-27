@@ -1,0 +1,97 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.afternoon-publication-latency.v1",
+  "checked_at": "2026-10-27T05:23:55.753196+00:00",
+  "remote_head": "186df15a88d5552b7f56af8c22bd002fae3e8540",
+  "frames": [
+    {
+      "commit": "186df15a88d5552b7f56af8c22bd002fae3e8540",
+      "committed_at": "2026-10-27T13:22:42+08:00",
+      "snapshot_published_at": "2026-10-27T05:21:46.121329+00:00",
+      "index_published_at": "2026-10-27T05:21:46.124788+00:00",
+      "index_id": "4dc7887a0cc8daf78ef7cf5e81dcc4827f6363cdd3057c36195112442e3e0ac2"
+    },
+    {
+      "commit": "17cf78f8dcd869774da7f0583b2f77f55e4beb33",
+      "committed_at": "2026-10-27T13:21:36+08:00",
+      "snapshot_published_at": "2026-10-27T05:20:43.007099+00:00",
+      "index_published_at": "2026-10-27T05:20:43.010697+00:00",
+      "index_id": "f50065015dab35fc034aaacd115f201594700b55c22a94b0ebbe38cbf5be16cb"
+    },
+    {
+      "commit": "6ea36c3283a3d93c767d9e48592da521b066d239",
+      "committed_at": "2026-10-27T13:20:34+08:00",
+      "snapshot_published_at": "2026-10-27T05:19:39.614348+00:00",
+      "index_published_at": "2026-10-27T05:19:39.618230+00:00",
+      "index_id": "c9ab30e9a800f007e7660f5ba443d7b0cb9fa5e345dc637591e55fba4c830c94"
+    },
+    {
+      "commit": "205ab2da7ec7e8b785a4c8a15611e9e639b1667c",
+      "committed_at": "2026-10-27T13:19:03+08:00",
+      "snapshot_published_at": "2026-10-27T05:17:59.972434+00:00",
+      "index_published_at": "2026-10-27T05:17:59.977041+00:00",
+      "index_id": "85664c5200f1d169a2539cf050e45acf2b6bfb4cc621e6ff86927dc7461de8fb"
+    },
+    {
+      "commit": "2901fbc28f6c1bc0344099b4b1345841c58954c9",
+      "committed_at": "2026-10-27T13:17:31+08:00",
+      "snapshot_published_at": "2026-10-27T05:16:36.203560+00:00",
+      "index_published_at": "2026-10-27T05:16:36.207188+00:00",
+      "index_id": "362b2444fc22c67f5f4b16d142667dddae80b199c8e974a65809ae0d1e2c1dd8"
+    },
+    {
+      "commit": "ded0fa590c979240f7e461b3f13c8bcee58b7b44",
+      "committed_at": "2026-10-27T13:16:26+08:00",
+      "snapshot_published_at": "2026-10-27T05:15:35.123009+00:00",
+      "index_published_at": "2026-10-27T05:15:35.126479+00:00",
+      "index_id": "eb2cab6668f0d616d312aa765e90cd036de3aec71f4d49afdfb43264d9c57d20"
+    }
+  ],
+  "files": {
+    "runtime/publication-state.json": {
+      "mtime": "2026-10-27T05:22:56.451510+00:00",
+      "document": {
+        "outcome": "SUCCEEDED",
+        "published_at": "2026-10-27T05:21:46.121329+00:00",
+        "evidence_sha256": "046db7b62dba8f07e1c24e8ea1d1db3911dc0b2f667ca3cd3c864aebda1c8f44"
+      }
+    },
+    "unified-data/market-export-state.json": {
+      "mtime": "2026-10-27T05:23:33.443758+00:00",
+      "document": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "source_bytes_read": 60933679,
+        "cached_batches": 160,
+        "replayed_batches": 1333,
+        "selected_chunks": 36862,
+        "selected_batches": 1493,
+        "export_seconds": 36.770286,
+        "total_bytes": 75798769,
+        "total_files": 4488,
+        "index_id": "f3c2ea4d4ba3a57e9ea0a27f1fcab038509c4afb0119c606a78d9486fbca8427",
+        "cached_rows": 70520,
+        "cache_estimated_bytes": 127999629,
+        "quarantined_entries": 0,
+        "evidence_sha256": "6287c29542f169a1d03a1fa602a9c636e33358b735b577cb54df7a5fbcfc5577"
+      }
+    }
+  },
+  "recent_whitelisted_stdout_messages": [],
+  "publisher_pid": 240024,
+  "paper_pid": 175982,
+  "whole_step1_accepted": false,
+  "completed_session_cde_accepted": false,
+  "evidence_sha256": "dbaacf009572814c357f9d0aedf6820b9c89e3e228426907392b2e77396f421c"
+}
