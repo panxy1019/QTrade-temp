@@ -1136,6 +1136,147 @@ def test_material_chain_reads_each_blob_once_and_decodes_only_misses(source, mon
     assert second['statistics']['source_bytes_read'] == sum(reads)+sum(manifest_reads)
 
 
+def test_every_published_bar_has_one_full_validation_and_cold_batches_still_replay(source):
+    base, _, _, _, _, add = source
+    add()
+    add(counter=2)  # Identical re-observation retains both receipt bindings.
+    add(counter=3, minute=40)
+    add('day', counter=4)
+    add(symbol='600036', counter=5)
+    for expected_replays in (5, 0):
+        checked, replayed = [], []
+        previous = sys.getprofile()
+        def observe(frame, event, arg, checked=checked, replayed=replayed):
+            if event == 'call':
+                if frame.f_code is contract.validate_bar.__code__:
+                    checked.append((dict(frame.f_locals['row']), frame.f_back.f_code.co_name))
+                elif frame.f_code is exporter._replay.__code__:
+                    replayed.append(frame.f_locals['material'].manifest['batch_id'])
+        try:
+            sys.setprofile(observe)
+            value = export(source)['index']
+        finally:
+            sys.setprofile(previous)
+        published = [bar for entry in value['entries'] for ref in entry['shards']
+                     for bar in json.loads((base/'unified-data/market-public/unified-market/objects'
+                                            /(ref['sha256']+'.json')).read_bytes())['bars']]
+        assert len(checked) == len(published) == 4
+        assert all(caller == 'validate_shard' for _, caller in checked)
+        assert sorted((bar['symbol'], bar['timestamp']) for bar, _ in checked) == sorted(
+            (bar['symbol'], bar['timestamp']) for bar in published)
+        assert len(replayed) == expected_replays
+
+
+@pytest.mark.parametrize(('field', 'invalid'), [
+    ('exchange', 'SSE'), ('frequency', 'day'), ('close', '100'), ('volume', '-1'),
+    ('amount_basis', 'UNVERIFIED'), ('price_basis', 'ADJUSTED'),
+    ('historical_available_at', NOW.isoformat()), ('trading_day', '2026-10-23'),
+    ('vwap', '11'),
+])
+def test_invalid_retained_cached_row_fails_entire_export_and_retains_last_success(
+    source, field, invalid,
+):
+    base, _, _, _, _, add = source
+    add()
+    add('day', counter=2)
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns
+    manifest, rows = next(value for value in exporter._CACHE.values()
+                          if value[0]['spec']['frequency'] == '5min')
+    assert manifest['batch_id'] == f'{1:032x}'
+    rows[0][field] = invalid
+    with pytest.raises(ValueError, match='UNIFIED_MARKET_|INVALID_OHLC|INVALID_SOURCE_NUMBER'):
+        export(source)
+    assert (pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns) == before
+
+
+@pytest.mark.parametrize(('field', 'different'), [
+    ('close', '11'), ('amount_basis', 'SAME_VENDOR_ENDPOINT_MATCH_NOT_INDEPENDENT_RECONCILIATION'),
+])
+def test_different_cached_duplicate_never_hides_conflict_in_retained_shard(
+    source, field, different,
+):
+    _, _, _, _, _, add = source
+    add()
+    add(counter=2)
+    export(source)
+    _, rows = next(value for value in exporter._CACHE.values()
+                   if value[0]['batch_id'] == f'{2:032x}')
+    rows[0][field] = different
+    entry = next(row for row in export(source)['index']['entries']
+                 if row['symbol'] == '301001' and row['frequency'] == '5min')
+    assert entry['state'] == 'QUARANTINED' and entry['shards'] == []
+    assert entry['issues'] == ['CONFLICTING_ACCEPTED_BARS']
+
+
+@pytest.mark.parametrize('invalid', [False, True])
+def test_outside_window_rows_still_receive_full_validation_before_discard(source, invalid):
+    base, database, _, _, store, add = source
+    manifest = add()
+    capture, = store.read_captures(manifest['raw'])
+    records = []
+    body = json.loads(capture['body'])
+    body.append({**body[0], 'day': '2026-10-26 09:40:00'})
+    capture['body'] = json.dumps(body).encode()
+    for minute in (35, 40):
+        stamp = datetime(2026, 10, 26, 9, minute, tzinfo=SHANGHAI)
+        bar = Bar('301001', 'SZSE', stamp, stamp.date(), Decimal('10'), Decimal('12'),
+                  Decimal('9'), Decimal('10'), Decimal('100'))
+        records.append(IncrementalBar(bar, '5min', None, None, None, 'VENDOR_CLAIM_UNVERIFIED'))
+    spec = deepcopy(manifest['spec'])
+    spec['target_end'] = records[-1].bar.timestamp.isoformat()
+    capture = {key: capture[key] for key in ('source_id', 'request', 'received_at',
+        'status_code', 'body', 'transport_error', 'body_complete')}
+    combined = store.commit('f'*32, spec, store.capture([capture]), records,
+                            {'301001': {'state': 'SUCCEEDED'}}, completed_at=NOW)
+    with sqlite3.connect(database) as connection:
+        connection.execute('DELETE FROM collection_chunks')
+        connection.execute('INSERT INTO collection_batches VALUES(?,?,?)',
+                           (combined['batch_id'], 'COMPLETE', combined['evidence_sha256']))
+        connection.execute('INSERT INTO collection_chunks VALUES(?,?,?,?,?,?,?)',
+            (combined['batch_id'], spec['universe_version'], '5min', '301001',
+             records[0].bar.timestamp.isoformat(), records[-1].bar.timestamp.isoformat(), 2))
+    # Establish real first-load receipt replay. Then inject a spanning cached batch:
+    # its older row must be checked even though only the recent row could be published.
+    first = export(source)
+    assert first['statistics']['replayed_batches'] == 1
+    cached_manifest, rows = next(iter(exporter._CACHE.values()))
+    rows[0]['timestamp'] = '2026-10-21T09:35:00+08:00'
+    rows[0]['trading_day'] = '2026-10-21'
+    if invalid:
+        rows[0]['close'] = '100'
+    cached_manifest['outcomes']['301001']['start'] = rows[0]['timestamp']
+    with sqlite3.connect(database) as connection:
+        connection.execute('UPDATE collection_chunks SET start_time=?', (rows[0]['timestamp'],))
+    checked = []
+    previous = sys.getprofile()
+    def observe(frame, event, arg):
+        if event == 'call' and frame.f_code is contract.validate_bar.__code__:
+            checked.append((frame.f_locals['row']['timestamp'], frame.f_back.f_code.co_name))
+    try:
+        sys.setprofile(observe)
+        value = export(source)['index']
+    finally:
+        sys.setprofile(previous)
+    entry = next(row for row in value['entries'] if row['symbol'] == '301001'
+                 and row['frequency'] == '5min')
+    assert checked[0] == (rows[0]['timestamp'], 'export_market')
+    if invalid:
+        assert entry['state'] == 'QUARANTINED' and entry['shards'] == []
+        assert entry['issues'] == ['SOURCE_REPLAY_FAILED']
+        assert len(checked) == 1
+    else:
+        assert entry['state'] == 'AVAILABLE'
+        ref, = entry['shards']
+        shard = json.loads((base/'unified-data/market-public/unified-market/objects'
+                            /(ref['sha256']+'.json')).read_bytes())
+        assert [row['timestamp'] for row in shard['bars']] == [rows[1]['timestamp']]
+        assert checked == [(rows[0]['timestamp'], 'export_market'),
+                           (rows[1]['timestamp'], 'validate_shard')]
+
+
 def test_manifest_switch_during_same_material_replay_is_rejected_before_cache(source, monkeypatch):
     _, _, calendar, _, store, add = source
     manifest = add()

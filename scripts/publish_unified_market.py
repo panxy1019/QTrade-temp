@@ -283,10 +283,12 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                     row = {key: original[key] for key in sorted(BAR_FIELDS)
                            if key != 'amount_basis'}
                     row['amount_basis'] = original['amount_basis']
-                    validate_bar(row, symbol, identities[symbol]['security_type'], freq,
-                                 calendar, now)
                     day = str(datetime.fromisoformat(row['timestamp']).astimezone(SHANGHAI).date())
                     if day not in windows[freq]:
+                        # Retained rows receive this full check in validate_shard below.
+                        # Discarded rows must still be checked before leaving this batch.
+                        validate_bar(row, symbol, identities[symbol]['security_type'], freq,
+                                     calendar, now)
                         continue
                     key = (symbol, freq)
                     old = collected[key].get(row['timestamp'])
