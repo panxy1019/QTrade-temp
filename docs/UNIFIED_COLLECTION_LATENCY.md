@@ -96,3 +96,43 @@ five-minute all-pool SLA. Source outages, suspended/invalid symbols and publicat
 transport remain independent constraints. Public history, original raw evidence,
 PIT limitations and `LIVE_TRADING_ENABLED=false` are unaffected. No historical
 availability, paper recovery or external trading authorization is created.
+
+## Consecutive-failure backoff repair
+
+The October 27 rollout exposed a separate delay: `attempts` counts every claimed
+request, including successful updates, but the old retry formula treated it as
+the number of consecutive failures. A single transient failure after several
+successful grids therefore waited much longer than its intended 60 seconds.
+
+`attempts` remains the cumulative audit count. `consecutive_failures` is a new
+queue column: successful admission resets it to zero, failed admission advances
+it, and an interrupted attempt preserves it. It saturates at nine because all
+higher values have the same existing retry delay. The retained schedule is
+60, 120, 240 seconds and so on up to the existing 15,360-second exponential cap;
+the former 21,600-second outer bound remains unchanged. This does not shorten a
+genuine continuous source outage to a first-failure retry.
+
+On first queue ownership after upgrade, one transaction adds the column and
+records `collection_metadata.failure_streak_v1`. For legacy rows with a last
+success, it verifies the successful batch's identity and counts up to nine later
+`COMPLETE` batches containing the same symbol, universe, frequency and trading
+date. Existing success metadata proves these later completions were failures.
+Receipt hashes, aware completion clocks, chronology and the cumulative attempt
+count must be consistent. Missing proof retains a conservative count and the
+existing retry deadline; rows without any success retain the conservative old
+attempt count. Batch receipts, source data and old successful checkpoints are
+never rewritten.
+
+A legacy failed deadline is repaired only if it exactly equals the actual last
+failed batch's `completed_at` plus the former cumulative-attempt formula. Only
+then can the proven streak replace that formula. The repaired deadline is based
+on that recorded completion time, even when already past; an unexplained or
+custom deadline is preserved. The migration marker records counts of examined
+tasks, proven streaks, repaired deadlines and conservative fallbacks, and prevents
+reapplying the repair on later queue construction.
+
+The focused queue tests include legacy databases with the new column removed,
+scope-mismatched noise batches, capped streaks, one-time migration, custom and
+unproven deadlines, source recovery and interrupted-process recovery. Production
+migration and the resulting actual source retries require the parent's separate
+review and deployment; this implementation task does not operate the service.

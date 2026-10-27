@@ -1,10 +1,12 @@
+import json
+import sqlite3
 from datetime import UTC, date, datetime, timedelta
 from unittest.mock import Mock
 
 import pytest
 
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
-from scripts.unified_queue import UnifiedCollectionQueue
+from scripts.unified_queue import UnifiedCollectionQueue, failure_delay
 from scripts.unified_store import SCHEMA
 
 NOW = datetime(2026, 10, 26, 9, tzinfo=UTC)
@@ -65,6 +67,7 @@ def test_persistent_failures_do_not_starve_new_symbols_and_retries_keep_backoff(
     row = next(r for r in q.snapshot(VERSION)["tasks"] if r["symbol"] == '600000'
                and r["frequency"] == 'day')
     assert row["attempts"] == 2
+    assert row['consecutive_failures'] == 2
     assert datetime.fromisoformat(row["next_attempt_at"]) == NOW + timedelta(seconds=181)
     assert row["last_success_batch"] is None
 
@@ -173,3 +176,158 @@ def test_legacy_price_only_admission_is_retained_but_requeued_once_for_amount(tm
     assert q.snapshot(VERSION)['data_ready_events'] == 1  # Original evidence remains.
     retry = claim(q)
     assert retry['spec']['after_by_symbol']['600000'] is None
+
+
+def successful_minute_history(queue, count=3):
+    now = NOW.replace(hour=2)
+    for _ in range(count):
+        queue.plan(master(1), CALENDAR, now)
+        batch = claim(queue, '5min', now=now)
+        queue.finish(receipt(batch), now=now)
+        now += timedelta(minutes=5)
+    return now, batch
+
+
+def fail_minute(queue, now):
+    queue.plan(master(1), CALENDAR, now)
+    batch = claim(queue, '5min', now=now)
+    failed = receipt(batch, batch['spec']['symbols'])
+    queue.finish(failed, now=now)
+    queue.finish(failed, now=now)  # Replaying a receipt does not extend the streak.
+    return batch
+
+
+def minute_task(queue):
+    return next(row for row in queue.snapshot(VERSION)['tasks'] if row['frequency'] == '5min')
+
+
+def make_legacy(queue, *, custom_deadline=False):
+    """Remove the new column/marker and reproduce the old cumulative-attempt deadline."""
+    task = minute_task(queue)
+    with queue.connect() as connection:
+        latest = connection.execute("SELECT completed_at FROM collection_batches "
+                                    "WHERE state='COMPLETE' ORDER BY rowid DESC LIMIT 1").fetchone()
+        deadline = datetime.fromisoformat(latest['completed_at']) + timedelta(
+            seconds=failure_delay(task['attempts']) + (37 if custom_deadline else 0))
+        connection.execute("UPDATE collection_tasks SET next_attempt_at=? WHERE frequency='5min'",
+                           (deadline.isoformat(timespec='seconds'),))
+        connection.execute("DELETE FROM collection_metadata WHERE key='failure_streak_v1'")
+        connection.execute('ALTER TABLE collection_tasks DROP COLUMN consecutive_failures')
+        batches = [dict(row) for row in connection.execute(
+            'SELECT rowid,* FROM collection_batches')]
+    return deadline, batches
+
+
+def test_successes_do_not_inflate_first_failure_and_recovery_resets_streak(tmp_path):
+    queue = UnifiedCollectionQueue(tmp_path/'queue.sqlite')
+    now, success = successful_minute_history(queue)
+    fail_minute(queue, now)
+    task = minute_task(queue)
+    assert task['attempts'] == 4 and task['consecutive_failures'] == 1
+    assert datetime.fromisoformat(task['next_attempt_at']) == now + timedelta(seconds=60)
+    assert task['last_success_batch'] == success['batch_id']
+    now += timedelta(seconds=61)
+    fail_minute(queue, now)
+    task = minute_task(queue)
+    assert task['attempts'] == 5 and task['consecutive_failures'] == 2
+    assert datetime.fromisoformat(task['next_attempt_at']) == now + timedelta(seconds=120)
+    now += timedelta(seconds=121)
+    recovered = claim(queue, '5min', now=now)
+    queue.finish(receipt(recovered), now=now)
+    assert minute_task(queue)['consecutive_failures'] == 0
+    now += timedelta(minutes=5)
+    fail_minute(queue, now)
+    task = minute_task(queue)
+    assert task['attempts'] == 7 and task['consecutive_failures'] == 1
+    assert datetime.fromisoformat(task['next_attempt_at']) == now + timedelta(seconds=60)
+
+
+@pytest.mark.parametrize('failure_count', [1, 2, 10])
+def test_legacy_migration_reconstructs_proven_streak_and_real_failure_deadline_once(
+    tmp_path, failure_count,
+):
+    database = tmp_path/'queue.sqlite'
+    queue = UnifiedCollectionQueue(database)
+    now, success = successful_minute_history(queue)
+    # Completed batches for other identities cannot inflate this symbol's streak.
+    with queue.connect() as connection:
+        for index, change in enumerate(({'symbols': ['600001']}, {'frequency': 'day'},
+                                       {'universe_version': 'c'*64},
+                                       {'target_end': '2026-10-25T02:10:00+00:00'})):
+            spec = {**success['spec'], **change}
+            connection.execute('INSERT INTO collection_batches VALUES(?,?,?,?,?,?)',
+                               (f'noise-{index}', json.dumps(spec), 'COMPLETE',
+                                now.isoformat(), now.isoformat(), 'd'*64))
+    for index in range(failure_count):
+        fail_minute(queue, now)
+        if index < failure_count - 1:
+            now += timedelta(seconds=failure_delay(index + 1) + 1)
+    previous = minute_task(queue)
+    old_deadline, batches = make_legacy(queue)
+    restored = UnifiedCollectionQueue(database)
+    task = minute_task(restored)
+    assert task['attempts'] == 3 + failure_count
+    assert task['consecutive_failures'] == min(9, failure_count)
+    corrected = now + timedelta(seconds=failure_delay(failure_count))
+    assert datetime.fromisoformat(task['next_attempt_at']) == corrected
+    assert corrected <= old_deadline
+    assert task['last_success_batch'] == previous['last_success_batch']
+    assert task['completed_end'] == previous['completed_end']
+    with restored.connect() as connection:
+        assert batches == [dict(row) for row in connection.execute(
+            'SELECT rowid,* FROM collection_batches')]
+        marker = connection.execute("SELECT value FROM collection_metadata "
+                                    "WHERE key='failure_streak_v1'").fetchone()['value']
+        metadata = json.loads(marker)
+        assert metadata['proven_streaks'] == 1
+        assert metadata['repaired_retry_deadlines'] == (failure_count < 9)
+        connection.execute("UPDATE collection_tasks SET next_attempt_at=? WHERE frequency='5min'",
+                           (old_deadline.isoformat(timespec='seconds'),))
+    # The one-time migration never overrides a later operator/custom scheduling change.
+    again = UnifiedCollectionQueue(database)
+    assert datetime.fromisoformat(minute_task(again)['next_attempt_at']) == old_deadline
+    with again.connect() as connection:
+        assert connection.execute("SELECT value FROM collection_metadata "
+                                  "WHERE key='failure_streak_v1'").fetchone()['value'] == marker
+
+
+def test_migration_preserves_unproven_or_custom_retry_deadlines(tmp_path):
+    for suffix, successes, custom, missing_anchor in [('never', 0, False, False),
+                                                     ('custom', 3, True, False),
+                                                     ('missing', 3, False, True)]:
+        database = tmp_path/(suffix+'.sqlite')
+        queue = UnifiedCollectionQueue(database)
+        now = NOW.replace(hour=2)
+        if successes:
+            now, _ = successful_minute_history(queue, successes)
+        fail_minute(queue, now)
+        deadline, _ = make_legacy(queue, custom_deadline=custom)
+        if missing_anchor:
+            with sqlite3.connect(database) as connection:
+                connection.execute("UPDATE collection_tasks SET last_success_batch='missing' "
+                                   "WHERE frequency='5min'")
+        restored = UnifiedCollectionQueue(database)
+        task = minute_task(restored)
+        assert datetime.fromisoformat(task['next_attempt_at']) == deadline
+        assert task['consecutive_failures'] == (1 if custom else successes + 1)
+
+
+def test_migration_preserves_failed_streak_through_running_and_interrupted_recovery(tmp_path):
+    database = tmp_path/'queue.sqlite'
+    queue = UnifiedCollectionQueue(database)
+    now, _ = successful_minute_history(queue)
+    fail_minute(queue, now)
+    now += timedelta(seconds=61)
+    claim(queue, '5min', now=now)
+    make_legacy(queue)
+    restored = UnifiedCollectionQueue(database)
+    assert minute_task(restored)['consecutive_failures'] == 1
+    store = Mock()
+    store.batch_path.return_value.is_file.return_value = False
+    restored.recover(store, now=now)
+    assert minute_task(restored)['consecutive_failures'] == 1
+    now += timedelta(seconds=61)
+    fail_minute(restored, now)
+    task = minute_task(restored)
+    assert task['consecutive_failures'] == 2
+    assert datetime.fromisoformat(task['next_attempt_at']) == now + timedelta(seconds=120)

@@ -34,6 +34,11 @@ def required_ends(calendar: Calendar, now: datetime) -> dict[str, str]:
     return {freq: clock(end) for freq, end in ends.items()}
 
 
+def failure_delay(streak: int) -> int:
+    """Keep the existing bounded schedule, driven only by consecutive failures."""
+    return min(21600, 60 * (1 << min(max(streak - 1, 0), 8)))
+
+
 class UnifiedCollectionQueue:
     def __init__(self, database: Path):
         self.database = database.resolve()
@@ -79,6 +84,7 @@ class UnifiedCollectionQueue:
                 );
             """)
         _claim_single_process_owner(self.database)
+        self._migrate_failure_streak(now=datetime.now(UTC))
 
     @contextmanager
     def connect(self) -> Iterator[sqlite3.Connection]:
@@ -95,6 +101,85 @@ class UnifiedCollectionQueue:
             raise
         finally:
             c.close()
+
+    def _migrate_failure_streak(self, *, now: datetime) -> None:
+        """Infer legacy streaks once; repair only a deadline explained by the old formula."""
+        with self.connect() as c:
+            columns = {row['name'] for row in c.execute('PRAGMA table_info(collection_tasks)')}
+            if 'consecutive_failures' not in columns:
+                c.execute('ALTER TABLE collection_tasks ADD COLUMN consecutive_failures '
+                          'INTEGER NOT NULL DEFAULT 0 CHECK(consecutive_failures BETWEEN 0 AND 9)')
+            if c.execute("SELECT 1 FROM collection_metadata "
+                         "WHERE key='failure_streak_v1'").fetchone():
+                return
+            stats: dict[str, Any] = {
+                'applied_at': clock(now), 'migrated_tasks': 0, 'proven_streaks': 0,
+                'repaired_retry_deadlines': 0, 'conservative_tasks': 0,
+            }
+            tasks = [dict(row) for row in c.execute(
+                "SELECT * FROM collection_tasks WHERE attempts>0 "
+                "AND state IN ('FAILED','INTERRUPTED','RUNNING')")]
+            for task in tasks:
+                # Without a last success, retain the old conservative failure count.
+                streak = min(9, max(0, task['attempts'] - (task['state'] == 'RUNNING')))
+                latest_failure: datetime | None = None
+                proven = False
+                if task['last_success_batch'] is not None:
+                    anchor = c.execute('SELECT rowid,* FROM collection_batches WHERE batch_id=?',
+                                       (task['last_success_batch'],)).fetchone()
+                    if anchor is not None and anchor['state'] == 'COMPLETE':
+                        spec = json.loads(anchor['spec'])
+                        if (spec['universe_version'] == task['universe_version']
+                                and spec['frequency'] == task['frequency']
+                                and task['symbol'] in spec['symbols']
+                                and str(datetime.fromisoformat(spec['target_end']).astimezone(
+                                    SHANGHAI).date()) == task['trading_day']):
+                            after = [dict(row) for row in c.execute('''
+                                SELECT rowid,completed_at,manifest_sha256 FROM collection_batches
+                                WHERE rowid>? AND state='COMPLETE'
+                                AND json_extract(spec,'$.universe_version')=?
+                                AND json_extract(spec,'$.frequency')=?
+                                AND substr(json_extract(spec,'$.target_end'),1,10)=?
+                                AND EXISTS (SELECT 1 FROM json_each(spec,'$.symbols')
+                                            WHERE value=? AND type='text')
+                                ORDER BY rowid DESC LIMIT 9
+                                ''', (anchor['rowid'], task['universe_version'], task['frequency'],
+                                      task['trading_day'], task['symbol']))]
+                            records = [dict(anchor), *after]
+                            clocks = [datetime.fromisoformat(row['completed_at'])
+                                      for row in records]
+                            if (all(stamp.tzinfo is not None and stamp <= now for stamp in clocks)
+                                    and all(re.fullmatch('[a-f0-9]{64}',
+                                                        row['manifest_sha256'] or '')
+                                            for row in records)
+                                    and all(stamp >= clocks[0] for stamp in clocks[1:])
+                                    and clocks[1:] == sorted(clocks[1:], reverse=True)
+                                    and len(after) < task['attempts']
+                                    and (after or task['state'] != 'FAILED')):
+                                streak, proven = len(after), True
+                                latest_failure = clocks[1] if after else None
+                retry_at = task['next_attempt_at']
+                if proven:
+                    stats['proven_streaks'] += 1
+                    if (task['state'] == 'FAILED' and latest_failure is not None
+                            and task['attempts'] > streak):
+                        old = clock(latest_failure + timedelta(
+                            seconds=failure_delay(task['attempts'])))
+                        corrected = clock(latest_failure + timedelta(seconds=failure_delay(streak)))
+                        # An unexplained/custom deadline is not authority to expedite a retry.
+                        if retry_at == old and corrected < old:
+                            retry_at = corrected
+                            stats['repaired_retry_deadlines'] += 1
+                else:
+                    stats['conservative_tasks'] += 1
+                c.execute('''
+                    UPDATE collection_tasks SET consecutive_failures=?,next_attempt_at=?
+                    WHERE universe_version=? AND frequency=? AND symbol=? AND trading_day=?
+                    ''', (streak, retry_at, task['universe_version'], task['frequency'],
+                          task['symbol'], task['trading_day']))
+                stats['migrated_tasks'] += 1
+            c.execute('INSERT INTO collection_metadata VALUES(?,?)',
+                      ('failure_streak_v1', json.dumps(stats, sort_keys=True)))
 
     def plan(self, master: dict[str, Any], calendar: Calendar, now: datetime) -> dict[str, str]:
         if (signed({k: v for k, v in master.items() if k != "evidence_sha256"}) != master
@@ -194,7 +279,8 @@ class UnifiedCollectionQueue:
                 end = (clock(datetime.fromisoformat(outcome["end"]))
                        if success else task["completed_end"])
                 ready = success and end >= task["desired_end"]
-                delay = min(21600, 60 * 2 ** min(task["attempts"] - 1, 8))
+                streak = 0 if success else min(9, task['consecutive_failures'] + 1)
+                delay = failure_delay(streak)
                 state = "SUCCEEDED" if ready else "PLANNED" if success else "FAILED"
                 error = outcome.get("error_code")
                 if error is not None and re.fullmatch(r"[A-Z_]{1,100}", error) is None:
@@ -202,10 +288,10 @@ class UnifiedCollectionQueue:
                 retry_at = now if ready else now + timedelta(seconds=60 if success else delay)
                 c.execute("""
                     UPDATE collection_tasks SET state=?,completed_end=?,next_attempt_at=?,
-                        active_batch=NULL,last_success_batch=?,last_error=?
+                        active_batch=NULL,last_success_batch=?,last_error=?,consecutive_failures=?
                     WHERE universe_version=? AND frequency=? AND symbol=? AND trading_day=?
                 """, (state, end, clock(retry_at),
-                      batch_id if success else task["last_success_batch"], error,
+                      batch_id if success else task["last_success_batch"], error, streak,
                       task["universe_version"], task["frequency"], symbol, task["trading_day"]))
                 if success:
                     c.execute("INSERT INTO collection_chunks VALUES(?,?,?,?,?,?,?)",
