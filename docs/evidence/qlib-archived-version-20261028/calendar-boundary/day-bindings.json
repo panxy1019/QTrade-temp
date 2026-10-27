@@ -1,0 +1,347 @@
+{
+  "books": [
+    {
+      "book_id": "05406b836b0a6b91e335b0e34b0e1b0c58f9f07b1ee3f649030f90013ac4e709",
+      "mode": "SHADOW",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "reversal5",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:54.975418+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "d2510d8672aefa163cb1d10fecf16fd5ddc6dca797c121c808b6dab5cbdb4e2d"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:04.072796+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "7b244b974e40f0771452388ffe1c9640ca4570c913a3d377eb6a7053f351e98a"
+        }
+      ]
+    },
+    {
+      "book_id": "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+      "mode": "PAPER",
+      "sessions": [],
+      "strategy_id": "approved_model_29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+      "targets": [
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T14:23:17.568580+00:00",
+          "generated_at": "2026-10-27 14:22:45.062695+00:00",
+          "target_id": "c8c591195b1ea75b0fa48b58161dab9d3018d48d4d9317e9b21b8aefb3e3bac0"
+        }
+      ]
+    },
+    {
+      "book_id": "21619692ab45d86df47ce168543e9aa5b96a4ee7af269a5f335cbb7c32044327",
+      "mode": "PAPER",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "approved_model_2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:23:31.293870+00:00",
+          "generated_at": "2026-10-26 17:23:15.344571+00:00",
+          "target_id": "4166d1aee127e4904e04da65e840cb18cb4e193f300a4ab1f89f1deb87edfaaf"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:26:32.973488+00:00",
+          "generated_at": "2026-10-27 12:25:43.741275+00:00",
+          "target_id": "8263904417703e674e02288e360062919676aa72eee7c393a6039e9a0278b870"
+        }
+      ]
+    },
+    {
+      "book_id": "23fa40eb5a4b6ee1b423bd2b55d1636fc1c3277a1770c7a57f96094f0a2b0903",
+      "mode": "SHADOW",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "momentum20",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:54.321291+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "097a7e598020209ce36a87d6749426e6cc0f1b66c756dde6b6c28647aa742e26"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:04.027938+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "7fac970b9e04629b3cbff7d29342008c87fe90998a5231cbe032d84ce2bf3f2b"
+        }
+      ]
+    },
+    {
+      "book_id": "2f174c2462a79f94ec170ea065cce548029f50989039271cd69da1a62e0d093f",
+      "mode": "SHADOW",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "equal_weight_universe",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:53.889939+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "931e2ad1862ea9adcfb884c4442ac0d6d5bf830815d6d71c0f077894ce9a3718"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:03.895846+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "a4ea6f815ea0e3e4e5a3bddfdcdc1a716f04b2b4db0ea7751712c41c2a03b9d6"
+        }
+      ]
+    },
+    {
+      "book_id": "2fb08e23a1e8c6f4e78b2013b1261429b421f0218585640f2890297642097352",
+      "mode": "PAPER",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "lowvol20",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:54.245279+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "0a965771443dfe92ccbc5e4cc7073f2883baf5a89061634912995571bd27b606"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:03.990268+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "bee7ad0f50f16bfd5fc1367dc18e2502b0af2f21804de9005c166bf21819bcde"
+        }
+      ]
+    },
+    {
+      "book_id": "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a",
+      "mode": "PAPER",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "multifactor_equal_rank",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:54.745569+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "43f39509ff19aba42ce5c09a4ac362086ef97d16acae51651ce9499481ad5451"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:04.067469+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "baf96cd326f32cd1f90f23dcd7bac5ad7a7b3a6120b39cac4bcfefe0e5e5d740"
+        }
+      ]
+    },
+    {
+      "book_id": "4178982fb19ce4f4e394fc3026adeb5ec28a53a84bf1beca69c62b8b13fd5f9f",
+      "mode": "SHADOW",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "approved_model_2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:23:31.217519+00:00",
+          "generated_at": "2026-10-26 17:23:15.344571+00:00",
+          "target_id": "4166d1aee127e4904e04da65e840cb18cb4e193f300a4ab1f89f1deb87edfaaf"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:26:32.948993+00:00",
+          "generated_at": "2026-10-27 12:25:43.741275+00:00",
+          "target_id": "8263904417703e674e02288e360062919676aa72eee7c393a6039e9a0278b870"
+        }
+      ]
+    },
+    {
+      "book_id": "88484ea1701bf191ebb69e5c6cfb768990d04357ec416717e54bd17814263563",
+      "mode": "SHADOW",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "multifactor_equal_rank",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:54.606765+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "43f39509ff19aba42ce5c09a4ac362086ef97d16acae51651ce9499481ad5451"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:04.045615+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "baf96cd326f32cd1f90f23dcd7bac5ad7a7b3a6120b39cac4bcfefe0e5e5d740"
+        }
+      ]
+    },
+    {
+      "book_id": "8b5c23f802b9cea1f882c17352f1fbf5356be253cbbe01e728c53a78a5cbdc04",
+      "mode": "SHADOW",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "lowvol20",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:54.183444+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "0a965771443dfe92ccbc5e4cc7073f2883baf5a89061634912995571bd27b606"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:03.974728+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "bee7ad0f50f16bfd5fc1367dc18e2502b0af2f21804de9005c166bf21819bcde"
+        }
+      ]
+    },
+    {
+      "book_id": "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe",
+      "mode": "PAPER",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "equal_weight_universe",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:54.059226+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "931e2ad1862ea9adcfb884c4442ac0d6d5bf830815d6d71c0f077894ce9a3718"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:03.933398+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "a4ea6f815ea0e3e4e5a3bddfdcdc1a716f04b2b4db0ea7751712c41c2a03b9d6"
+        }
+      ]
+    },
+    {
+      "book_id": "979833e43f658601e1b63d0ad4a4fcafd4f3518af0f37d70aef2d6b9739b0847",
+      "mode": "PAPER",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "momentum20",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:54.508647+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "097a7e598020209ce36a87d6749426e6cc0f1b66c756dde6b6c28647aa742e26"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:04.033134+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "7fac970b9e04629b3cbff7d29342008c87fe90998a5231cbe032d84ce2bf3f2b"
+        }
+      ]
+    },
+    {
+      "book_id": "a703261181cbe90c61d1f5e6bb3c6be0323583b2d83772ee2172f91f8bd3be13",
+      "mode": "PAPER",
+      "sessions": [
+        [
+          "2026-10-27",
+          "COMPLETE"
+        ]
+      ],
+      "strategy_id": "reversal5",
+      "targets": [
+        {
+          "execution_at": "2026-10-27 09:30:00+08:00",
+          "frozen_at": "2026-10-26T17:33:55.025928+00:00",
+          "generated_at": "2026-10-26 17:23:43.750359+00:00",
+          "target_id": "d2510d8672aefa163cb1d10fecf16fd5ddc6dca797c121c808b6dab5cbdb4e2d"
+        },
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T12:31:04.115924+00:00",
+          "generated_at": "2026-10-27 12:30:55.278318+00:00",
+          "target_id": "7b244b974e40f0771452388ffe1c9640ca4570c913a3d377eb6a7053f351e98a"
+        }
+      ]
+    },
+    {
+      "book_id": "afffe76e4da17bff4b46043e9eff8de1283dc2d270784257dc09293d4e8acbd0",
+      "mode": "SHADOW",
+      "sessions": [],
+      "strategy_id": "approved_model_29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+      "targets": [
+        {
+          "execution_at": "2026-10-28 09:30:00+08:00",
+          "frozen_at": "2026-10-27T14:23:17.526435+00:00",
+          "generated_at": "2026-10-27 14:22:45.062695+00:00",
+          "target_id": "c8c591195b1ea75b0fa48b58161dab9d3018d48d4d9317e9b21b8aefb3e3bac0"
+        }
+      ]
+    }
+  ],
+  "context": {
+    "active": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+    "approval_sha256": "6f1ec61bda1a28d918dd331ad0e0ae6ea7ebcc39320f8e4dade424bf726bd238",
+    "data_event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+    "data_version": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "model_states": {
+      "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487": "ACTIVE",
+      "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293": "RETIRED",
+      "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c": "TRAINED",
+      "98d27455a7cb224ef3ecbd7cf850455f386fbb93baf8137a4d789e142ab91795": "STAGED",
+      "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707": "STAGED",
+      "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444": "TRAINED"
+    }
+  },
+  "instance_id": "74972257947a44dea8ca686421b5ad76"
+}

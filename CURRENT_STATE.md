@@ -1,6 +1,26 @@
 # Current state
 
-Last updated: 2026-10-28 01:58 Shanghai, real historical version selection accepted.
+Last updated: 2026-10-28 02:20 Shanghai, automatic candidate validation boundary checked.
+
+- Actual02:17 read-only capture confirms the historical Ridge98d27455 automatically
+  reaches STAGED/zero activations at01:49:26. Validation job1ed2fd21 is COMPLETE;
+  all15 validation files and12 bound source files pass, with local Git replay of
+  the12 sources. The current lightgbm-only policy excludes this Ridge. ACTIVE295,
+  approval/data epoch, all14 book fingerprints, instance and tracked owners stay.
+- October27 input was admitted20:23, before this model trained October28 01:44.
+  Later data date therefore means compatibility only, not unseen forward evidence.
+  Current ACTIVE books have October28 09:30 targets and no session yet. Preserve
+  execution-day model identity separately from the model approved after that close.
+- The first operator attempt compared ISO timestamp strings with space/T separators
+  and failed. Actual timestamps were unchanged; v2 compares aware instants. Both
+  operator sources and the failure observation remain archived, not a source fix.
+  See the calendar-boundary section of the historical-version acceptance report.
+- Close follow-up must capture actual E day observations while their execution
+  model context is available, independently of later C/D preparation. A model
+  switch cannot turn next-day targets into today's observations; current readiness
+  after a switch remains a separate check. Whole STEP1 and browser gates stay open.
+
+Previous2026-10-28 01:58 checkpoint (historical observations):
 
 - A missing real acceptance case is now completed: production-authenticated
   Ridge job578bb610 selects admitted October26/d33a7466 while current default

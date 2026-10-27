@@ -72,6 +72,37 @@
 
 ## 证据与只读复现
 
+### 02:17补充：自动验证已发生，不能当作未见数据检验
+
+后台随后自动完成验证任务`1ed2fd215098f7e64421f9419584662f`。ModelRegistry在
+10月28日01:49:26记录VALIDATING→VALIDATED→STAGED，新Ridge的activation_count仍为0。
+实际15份验证档案逐份校验，12份绑定源码与096387b的Git对象一致；已拟合处理器不变、
+禁止fit。当前批准政策只允许lightgbm，因此这个Ridge没有替换ACTIVE29589b44。
+
+| 时间边界 | 实际上海时刻 | 含义 |
+| --- | --- | --- |
+| 10月27日数据准入 | 10月27日20:23:08 | 新输入当时已存在 |
+| 这个Ridge训练完成 | 10月28日01:44:38 | 使用固定10月26日研究版本 |
+| 兼容性验证生成 | 10月28日01:49:20 | 对已存在的27日输入恢复预测 |
+| 独立只读核验 | 10月28日02:17:16 | 确认自动生命周期、档案和未激活状态 |
+
+**数据截止日晚于训练样本截止日，不等于验证数据是在模型冻结后才出现的。**
+本例只接受输入兼容性，不认证未见数据、前向收益或整个STEP1。与此同时，当前ACTIVE
+LightGBM两本账本仅有10月28日09:30目标、尚无当日会话；14本指纹、批准/epoch、服务
+owner/instance均与原参考一致，没有新建或恢复该Ridge的PAPER。
+
+首版只读脚本曾将`2026-10-28 09:30:00+08:00`与带`T`的字符串直接比较，触发断言。
+第二版按带时区datetime比较相同瞬间后通过；未改动原时间或账本。保存了两版脚本及
+失败观察，原失败的stderr只存在工具记录，未声称另有原始stderr文件。
+
+对应[独立核验](evidence/qlib-archived-version-20261028/calendar-boundary/verification.json)、
+[验证档案](evidence/qlib-archived-version-20261028/calendar-boundary/validation.json)、
+[实际生命周期事件](evidence/qlib-archived-version-20261028/calendar-boundary/candidate-events.json)
+与[失败观察](evidence/qlib-archived-version-20261028/calendar-boundary/operator-failed-observation.json)
+保留不同范围。该检查只写新证据目录，所有业务数据库以mode=ro/query_only读取。
+
+### 原历史研究任务
+
 完整证据分开保存：
 
 - [生产提交与同请求重试](evidence/qlib-archived-version-20261028/production-submit/attempt.json)

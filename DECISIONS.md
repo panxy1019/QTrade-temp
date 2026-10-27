@@ -4070,3 +4070,30 @@ The actual public v2 audit retains14 books and correctly blocks the new model's
 two missing historical sessions while accepting10 baseline observations and2
 separate retirement closures. Do not create a pre-activation session to pass it.
 
+## ADR-198 — Separate execution-day observations from post-close model readiness
+
+Status: existing contract and read-only operator order clarified,2026-10-28.
+No runtime guard, approval scope or acceptance threshold is changed.
+
+Automatic candidate validation can legitimately stage a model trained on an old
+admitted version against a later dated version that already existed when training
+finished. Actual Ridge98d27455 supplies this case. Preserve data admission,
+training completion, validation generation and next execution clocks separately.
+Its15 validation files and12 Git-bound sources pass; that proves compatibility,
+not unseen inputs, performance superiority or a completed forward trading day.
+
+The model active after a close can differ from the model whose frozen target was
+admitted before that day's open. Capture the actual execution-day E observation
+and public delivery while its context is available, independently of new C/D
+construction. Preserve that receipt with its original model/day/publication scope.
+Do not relabel it as readiness of a replacement model. Current v2 remains strict:
+if an automatic promotion has changed the current model before a requested audit,
+retain BLOCKED instead of suppressing extra books or inventing a missing session.
+Current model readiness and any new PAPER recovery require their own evidence.
+
+The initial read-only operator incorrectly compared ISO strings differing only
+in the space/T separator. Keep the failed source and observation; compare aware
+instants in the corrected operator, without rewriting any original timestamp.
+All14 book fingerprints, current approval/data epoch, instance and tracked owners
+remain unchanged in the actual02:17 check. STEP1 and browser gates remain open.
+

@@ -24,6 +24,17 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 02:20 checkpoint: actual automatic validation of archived-version
+Ridge98d27455 is STAGED/unactivated. Its COMPLETE validation job and15 actual
+files/12 Git-bound sources verify. October27 inputs already existed before this
+retrospective training; no unseen-day or performance claim follows. Lightgbm-only
+promotion policy, ACTIVE295, approval/epoch,14-book fingerprints and owners stay.
+Record the initial operator ISO-string mismatch as failed; aware-datetime v2
+passes without changing any live timestamp. Capture execution-day E independently
+of new C/D generation after close. A later automatic model promotion cannot
+substitute its next-day target for today's observed model. No current readiness,
+new PAPER recovery, browser rendering or whole STEP1 acceptance is inferred.
+
 October28 01:58 checkpoint: real archived-version selection is now accepted.
 Production-authenticated Ridge578bb610 uses October26/d33a7466 while serving and
 default remain October27/09a67b13. COMPLETE01:46; independent01:49 replay verifies

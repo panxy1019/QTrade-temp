@@ -1,0 +1,13 @@
+{
+  "kind": "BOUNDED_CLOSE_FOLLOWUP_ORDER_UPDATED",
+  "automation_id": "qtrade-10-28",
+  "checked_at_utc": "2026-10-27 18:22:00 UTC",
+  "status": "ACTIVE",
+  "updated_at_unix_ms": 1793125278345,
+  "schedule_unchanged": true,
+  "target_thread_unchanged": true,
+  "maximum_checks_unchanged": 8,
+  "execution_day_e_capture_precedes_waiting_for_new_c_d": true,
+  "no_business_service_or_approval_changed": true,
+  "whole_step1_accepted": false
+}
