@@ -24,6 +24,14 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Opening-session verification found an actionable original-guide 9.2 gap: the
+1,500-security unified coverage catalog is not yet the current chart data path;
+the current endpoint still admits 30 ETFs / 75 minute stocks. Reopen bounded
+unified-pool chart/API integration before declaring STEP1 complete. Also measure
+collector/publisher lag: 09:52 data ranges 09:35–09:45 while required grid is 09:50.
+This corrects the earlier conclusion that only external acceptance gates remain.
+See docs/QLIB_MARKET_OPEN_CHECK_20261027.md. STEP2 is not started.
+
 User authorized one LightGBM PAPER recovery and reported visual acceptance.
 The live service reconciled and recovered once at 09:27:36 Shanghai, with public
 NORMAL/running confirmation; no service restart or model activation occurred.

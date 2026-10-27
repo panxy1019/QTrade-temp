@@ -1,0 +1,223 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-open-public-observation.v1",
+  "checked_at": "2026-10-27T01:53:12.090602+00:00",
+  "responses": {
+    "/api/unified/summary": {
+      "transport": {
+        "url": "https://q-trade-temp.vercel.app/api/unified/summary",
+        "status_code": 200,
+        "content_type": "application/json",
+        "cache_control": "no-store",
+        "requested_at": "2026-10-27T01:53:08.020255+00:00",
+        "received_at": "2026-10-27T01:53:09.135175+00:00",
+        "body_bytes": 11057,
+        "body_sha256": "59b745150236eb99a88de9bcad187342a1d40894522e32ca92fb384973334915",
+        "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+      },
+      "summary": {
+        "built_at": "2026-10-27T01:50:30.189003+00:00",
+        "checked_at": "2026-10-27T01:53:09.885113+00:00",
+        "incremental_freshness": {
+          "day": {
+            "status": "PARTIAL",
+            "ready_symbols": 1497,
+            "required_symbols": 1500,
+            "expected_end": "2026-10-26T15:00:00+08:00"
+          },
+          "5min": {
+            "status": "PARTIAL",
+            "ready_symbols": 0,
+            "required_symbols": 1500,
+            "expected_end": "2026-10-27T09:50:00+08:00"
+          }
+        },
+        "target_actual": 1500,
+        "incremental_counts": {
+          "day": {
+            "CONTENT_COVERAGE_VERIFIED": 1497,
+            "QUARANTINED": 3
+          },
+          "5min": {
+            "CONTENT_COVERAGE_VERIFIED": 1496,
+            "PLANNED": 1,
+            "QUARANTINED": 2,
+            "FAILED_RETAINING_LAST_SUCCESS": 1
+          }
+        }
+      }
+    },
+    "/api/current/datasets": {
+      "transport": {
+        "url": "https://q-trade-temp.vercel.app/api/current/datasets",
+        "status_code": 200,
+        "content_type": "application/json",
+        "cache_control": "no-store",
+        "requested_at": "2026-10-27T01:53:09.135244+00:00",
+        "received_at": "2026-10-27T01:53:09.721360+00:00",
+        "body_bytes": 60002,
+        "body_sha256": "ef244435b9618bb2e3fded29db6acc902c3214b8cf06d659e6028f7d40a910d3",
+        "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+      },
+      "summary": {
+        "published_at": "2026-10-27T01:50:29.388212+00:00",
+        "datasets": {
+          "daily": {
+            "data_version": "current-daily-6a9758d635efcea23d55",
+            "bar_count": 29970,
+            "freshness": "FRESH",
+            "minimum_latest_day": "2026-10-26",
+            "symbols": 30
+          },
+          "minute": {
+            "data_version": "current-minute-baef19f59a5af776f0be",
+            "bar_count": 147600,
+            "freshness": "FRESH",
+            "minimum_latest_day": "2026-10-26",
+            "symbols": 75
+          },
+          "intraday": {
+            "data_version": "observer-minute-20261027T014501651398Z",
+            "bar_count": 7120,
+            "freshness": "FRESH",
+            "minimum_latest_day": "2026-10-27",
+            "symbols": 75,
+            "last_timestamp_counts": {
+              "2026-10-27T09:40:00+08:00": 75
+            }
+          }
+        }
+      }
+    },
+    "/api/current/bars/intraday/000063": {
+      "transport": {
+        "url": "https://q-trade-temp.vercel.app/api/current/bars/intraday/000063",
+        "status_code": 200,
+        "content_type": "application/json",
+        "cache_control": "no-store",
+        "requested_at": "2026-10-27T01:53:09.721714+00:00",
+        "received_at": "2026-10-27T01:53:10.425390+00:00",
+        "body_bytes": 881,
+        "body_sha256": "e18f83c5375f8f5ae1ba15201fc27cd833c41fe22e143a83a77c887983106943",
+        "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+      },
+      "summary": {
+        "symbol": "000063",
+        "data_version": "observer-minute-20261027T014501651398Z",
+        "selected_trading_day": "2026-10-27",
+        "total_count": 2,
+        "bars": [
+          {
+            "symbol": "000063",
+            "exchange": "SZSE",
+            "timestamp": "2026-10-27T01:35:00+00:00",
+            "trading_day": "2026-10-27",
+            "open": "28.450",
+            "high": "28.800",
+            "low": "28.300",
+            "close": "28.790",
+            "volume": "11553398",
+            "data_version": "observer-minute-20261027T014501651398Z",
+            "observation_type": "HISTORICAL_MINUTE_BAR"
+          },
+          {
+            "symbol": "000063",
+            "exchange": "SZSE",
+            "timestamp": "2026-10-27T01:40:00+00:00",
+            "trading_day": "2026-10-27",
+            "open": "28.790",
+            "high": "28.970",
+            "low": "28.670",
+            "close": "28.970",
+            "volume": "7244600",
+            "data_version": "observer-minute-20261027T014501651398Z",
+            "observation_type": "HISTORICAL_MINUTE_BAR"
+          }
+        ]
+      }
+    },
+    "/api/research/online/catalog": {
+      "transport": {
+        "url": "https://q-trade-temp.vercel.app/api/research/online/catalog",
+        "status_code": 200,
+        "content_type": "application/json",
+        "cache_control": "no-store",
+        "requested_at": "2026-10-27T01:53:10.425435+00:00",
+        "received_at": "2026-10-27T01:53:11.385196+00:00",
+        "body_bytes": 63152,
+        "body_sha256": "3d0f1d5414e36e85367893c4408d3d1e2ac16d26c094e129db78437c67a7c567",
+        "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+      },
+      "summary": {
+        "published_at": "2026-10-27T01:51:18.983874+00:00",
+        "expected_complete_day": "2026-10-26",
+        "worker_fresh": true,
+        "data_schedule_fresh": true,
+        "current_prediction_usable": false,
+        "data_version": {
+          "version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+          "actual_end": "2026-10-26",
+          "state": "RESEARCH_READY_QUALIFIED_SUBSET",
+          "created_at": "2026-10-26T14:02:47.605534+00:00",
+          "blocked_symbols": [
+            "002827",
+            "600621",
+            "605258"
+          ],
+          "historical_pit_certified": false,
+          "external_execution_ready": false,
+          "evidence_sha256": "b313fba558f36f487c2180f05fdcaefc1e2fa6ff47efaa0a4b3608c1c9c25438",
+          "current_symbols": 987,
+          "historical_symbols": 990,
+          "observation_universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+          "data_event_id": "75c3aed2eed7a2c6af34025536575404d2e4d9cff9ad864f5c9d4185bda0475c"
+        },
+        "auto_predict": {
+          "schema_version": "qtrade.auto-prediction.v1",
+          "enabled": true,
+          "state": "BLOCKED_EXECUTION_WINDOW_PASSED",
+          "current_prediction_id": null,
+          "forward_return_observed": false
+        }
+      }
+    },
+    "/api/research/online/forward-books": {
+      "transport": {
+        "url": "https://q-trade-temp.vercel.app/api/research/online/forward-books",
+        "status_code": 200,
+        "content_type": "application/json",
+        "cache_control": "no-store",
+        "requested_at": "2026-10-27T01:53:11.385402+00:00",
+        "received_at": "2026-10-27T01:53:12.090376+00:00",
+        "body_bytes": 48818,
+        "body_sha256": "1da9b9a1c0d62f30bc396d89013c4e9829656d1e1f129c569a29533aae438fd4",
+        "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+      },
+      "summary": {
+        "publication_available": true,
+        "service_fresh": true,
+        "state": "DEGRADED",
+        "heartbeat_at": "2026-10-27T01:46:10.603018+00:00",
+        "errors": [
+          {
+            "strategy_id": null,
+            "mode": null,
+            "code": "FORWARD_SERVICE_PREDICTION_UNAVAILABLE"
+          }
+        ]
+      }
+    }
+  },
+  "runtime_sha256": "01b4947236ed8495826db04524eb0a46a484c49332bb40f234db659989cbf920",
+  "whole_step1_accepted": false,
+  "next_session_accepted": false,
+  "browser_rendered_by_agent": false,
+  "finding": "CURRENT_CHART_STILL_30_ETF_DAILY_AND_75_STOCK_MINUTE_NOT_1500_UNIFIED_BARS",
+  "evidence_sha256": "7c89f41699419f48d537d642c4de243c2909d4fe0ef5dae98f0a0b371bd8f51b"
+}

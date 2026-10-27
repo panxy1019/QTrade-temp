@@ -2,6 +2,16 @@
 
 Last updated: 2026-10-27
 
+- Opening-session runtime/API check at 09:52–09:53 proves today's five-minute
+  collection is working: 1,497 securities have observed data, distributed at
+  09:35/09:40/09:45, not all current through the expected 09:50 grid. Production
+  correctly reports PARTIAL / 0 fully-current securities. Crucially, current
+  chart API/UI still serves 30 daily ETFs and 75 minute/intraday stocks, while
+  the 1,500 unified catalog exposes coverage. Reopen the original unified-pool
+  chart/query requirement; the earlier external-gates-only audit missed it.
+  See docs/QLIB_MARKET_OPEN_CHECK_20261027.md and runtime/public evidence. PAPER
+  remains NORMAL, publication succeeds; no service restart or state mutation.
+
 - User explicitly approved single LightGBM PAPER recovery and reported visual
   acceptance. Request ca102037bb904e368de144d12c51687c was consumed once; actual
   reconciliation SUCCEEDED at 09:27:36 Shanghai, before market open. Production
