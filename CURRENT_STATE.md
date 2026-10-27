@@ -1,6 +1,53 @@
 # Current state
 
-Last updated: 2026-10-27 18:04 Shanghai, actual post-close checkpoint.
+Last updated: 2026-10-27 18:49 Shanghai, actual post-close checkpoint.
+
+- A second actual full production probe at 18:49 confirms main b64b5f9 and a
+  different public commit, 2dffe7dd. It is FRESH_TRANSPORT in 17.56s, with
+  index/catalog ages 118.62/106.92s; all identity/index/five-series checks pass.
+  An intervening HTTP_FETCH_FAILED attempt produced no acceptance report; its
+  explicit post-attempt failure observation is retained. These point checks
+  do not establish continuous availability or full-pool data completeness.
+
+- At actual 18:46 Qlib preparation reaches 600/987, with 387 unattempted and no
+  retry backlog; automatic completion is still absent and formal head ends
+  October 26. All supervised PIDs including PAPER 175982 remain unchanged;
+  ACTIVE activation count is one. Free disk is 275.49 GiB. Sixteen more useful
+  25-symbol slots are required, roughly 80 minutes of scheduled opportunities;
+  further jitter/source failures may extend this. First-pass planning estimate
+  is now 20:10-20:30, then provider/prediction/signals/validation and actual audits.
+
+- Cadence fix c3e08c2 independently reviewed, Ruff/mypy clean. All four related
+  suites pass on Windows (56) and in actual Linux isolation (56), zero skips;
+  these are the same cases on two platforms, not 112 unique tests. The first
+  Windows path failures and a fixed-date fixture failure remain documented;
+  only the fixture's two calls are bound explicitly to its synthetic date.
+  Linux verifies 250 source/test/config files against the committed Git blobs.
+  This is test acceptance only: the frozen source-55b5b004 data service was not
+  switched or restarted. Deploy the repair after that request resolves, using
+  its actual new revision. The remaining C/D/stock-forward checklist includes
+  exact RO lookups, failed-claim handling and public wrapper extraction.
+
+- PR31 is merged as b64b5f9. The actual default production endpoint now reports
+  that exact main revision. A new complete public probe at 18:24 passes in
+  18.48s: all 1,500 identities/3,000 entries, pinned catalog/index Git bytes and
+  five sampled API series agree with publication be60c348. Index/catalog ages
+  are 83.54/68.31s, FRESH_TRANSPORT; daily/minute coverage remains PARTIAL at
+  1,497/1,496 out of 1,500. This is a production delivery checkpoint, not UI
+  rendering acceptance, all-series byte replay or the entire C/D/E milestone.
+
+- The actual 18:27 read-only checkpoint is Qlib preparation 524/987: 462 inputs
+  unattempted and one waiting retry, 463 unresolved. No automatic completion
+  exists; the formal daily head still ends October 26 and ACTIVE activation
+  count stays one. All supervised services run; PAPER 175982 is unchanged.
+  An 18:18 child started 16ms before its persisted retry deadline and lost one
+  five-minute parent slot. A narrow cadence repair is under review. Do not
+  deploy it into this pending request: the request freezes revision 55b5b004,
+  so changing that revision blocks equality and disguising new code as the old
+  revision would invalidate provenance. Keep the current owner running. At the
+  existing cadence the remaining first pass is around 20:00, with network,
+  retries and subsequent provider/prediction/validation time still separate.
+  Actual receipts and the later deployment restriction are in the close runbook.
 
 - Public market delivery has recovered: the one-time nonforce catch-up succeeds
   in 225.07s, then the original publisher resumes as PID 294214 with its ordinary

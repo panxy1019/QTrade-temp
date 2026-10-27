@@ -24,6 +24,33 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+18:49 checkpoint: another full actual production frame passes on main b64b5f9,
+public commit 2dffe7dd, index/catalog ages 118.62/106.92s in 17.56s. Preserve the
+intervening HTTP fetch failure (no acceptance report); no continuous SLA claim.
+Real 18:46 prep is 600/987, 387 unattempted, no retries; formal head remains
+October 26 and automatic completion is absent. Sixteen useful slots remain;
+first-pass estimate is 20:10-20:30 with downstream work separate. All PIDs,
+ACTIVE and rolling OFF unchanged. Reviewed c3e08c2 cadence repair passes the
+same 56 cases on Windows and real Linux without skips, plus Ruff/mypy; the
+250-file isolated Git-blob verification is test evidence, not service rollout.
+Keep the current source-bound owner running and defer deployment until its
+frozen request resolves. Preserve failure receipts and the explicit fixture
+date correction. Remaining-gate runbook documents exact C/D/stock artifact and
+public-input requirements; neither STEP1 completion nor STEP2 is accepted.
+
+18:27 checkpoint: PR31 is merged as b64b5f9, and the default production API
+independently reports that exact main revision. Actual 18:24 full public probe
+is FRESH_TRANSPORT in 18.48s with index/catalog ages 83.54/68.31s. All 1,500
+identities/3,000 entries and five fixed API series agree with public be60c348;
+coverage is still PARTIAL. The real Qlib queue is 524/987, 462 unattempted plus
+one waiting retry, with no READY October 27 provider or completion marker.
+All service PIDs including PAPER 175982 remain unchanged. One 16ms early child
+launch caused a lost five-minute slot; review a bounded cadence repair without
+changing source budgets. Deploy only after the active frozen-source request is
+resolved, never relabel runtime code or weaken source equality to patch in place.
+First-pass preparation is now around 20:00, plus independent downstream work;
+C/D/stock E, full STEP1 and STEP2 remain gated. See the close recovery runbook.
+
 18:04 actual acceptance checkpoint: ordinary market publication is restored after
 one separately bounded, nonforce operator catch-up (225.07s). Publisher 294214
 keeps the ordinary 90s cap. Two distinct actual public frames pass all identity,

@@ -3872,3 +3872,32 @@ Only ETF SHADOW is upgraded; PAPER is untouched. Preserve historical target
 implementation revisions, native-price/PIT/distribution limitations and empty
 execution/return fields. This is one pinned ETF transition, not whole STEP1.
 
+## ADR-192 — Preserve frozen daily-source identity during cadence repairs
+
+Status: c3e08c2 reviewed and tested on Windows/Linux, 2026-10-27; deployment
+deferred until the current frozen daily request resolves.
+
+The supervised Qlib data service freezes source revision in its immutable daily
+request and rechecks full equality on every pass. Actual parent/child launch
+jitter can start a child milliseconds before the previous child's five-minute
+deadline, causing WAITING_FOR_RETRY followed by another full parent slot. This
+is a scheduling issue; vn.py gateways/event engines do not replace the existing
+source-bound request, lease, calendar or preparation budget contracts.
+
+Repair only the bounded scheduler boundary, retaining actual clocks, all source
+and resource gates, one owner, the 25-new/5-retry allowance and child deadline.
+Do not change a pending request's source revision, relabel changed executable
+code as the old revision, or bypass request equality to hot-patch this session.
+Review/test the new source separately and deploy after the frozen run completes
+or receives a separately audited resolution. Production delivery is verified by
+the actual default API revision and pinned public bytes, not a build-success
+status. A future scheduler fix does not retroactively certify this day's timing.
+
+The reviewed child wrapper absorbs at most one signed, timezone-aware retry
+deadline within the original 300 seconds, then re-enters every cycle gate using
+fresh actual UTC. A second WAITING returns without looping. The original single
+900-second child alarm includes both calls and the wait. Windows and isolated
+Linux each pass the same 56 related cases with no skips; production source,
+daily request, current owner and PAPER are unchanged. Explicit fixture dates are
+test inputs only, never a production-clock override.
+

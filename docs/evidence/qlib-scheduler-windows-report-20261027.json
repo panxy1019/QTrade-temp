@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-10-27T10:37:47.7425290Z",
+  "repository": "E:/QTrade-git",
+  "base_revision": "b64b5f9e9a77a59a140d366fc1cf9a0186a90cfa",
+  "status": "WINDOWS_FOCUSED_AND_RELATED_TESTS_PASS_LINUX_ACCEPTANCE_PENDING",
+  "files": {
+    "scripts/run_qlib_data_service.py": "49a8730eab6504ca6c0a9b0cc1ee5aba6deca6c477b6474a39f4cd1e0d242ac1",
+    "tests/test_qlib_data_service.py": "0f280fa2c3c9d09b9c3583777a4f764b16071ccb16499c15a1f9665670e2a8cc",
+    "tests/test_prepare_qlib_incremental.py": "ae690172111131e3c17ce455ac90525f27ced16faa45a66d3e514715112ae754"
+  },
+  "change": "One signed timezone-aware not_before wait bounded to300s, then one fresh actual-clock complete cycle recheck. No loop or production fake clock. Parent serialization, leases,300s/180s/900s and25new+5retry bounds and resource gates unchanged.",
+  "regression": "Real16ms boundary regression, unchanged attempt bytes, no early/double work, malformed/naive/overlong/expired/tampered deadlines rejected, non-retry outcomes not repeated, one900s alarm, actual subprocess termination.",
+  "initial_failures": {
+    "command": "$env:PYTHONPATH='src'; python -m pytest tests/test_qlib_data_service.py tests/test_daily_collection_binding.py -q",
+    "tests": 34,
+    "passed": 31,
+    "failed": 3,
+    "skipped": 0,
+    "failures": [
+      "test_exact_terminal_ledger_ignores_rotating_minute_snapshot_and_is_read_only",
+      "test_frozen_bindings_resume_after_collector_ids_and_progress_rotate",
+      "test_transient_receipt_io_retries_frozen_ids_without_permanent_exclusion"
+    ],
+    "preparation_reason": "FileNotFoundError",
+    "raw_artifact": null,
+    "evidence": "Actual tool output; no initial raw log or JUnit file was saved."
+  },
+  "head_baseline_equivalence": {
+    "command": "$env:PYTHONPATH='src'; @'\nimport subprocess\nimport sys\nimport types\nfrom pathlib import Path\nimport pytest\nimport scripts\nname = 'scripts.run_qlib_data_service'\nmodule = types.ModuleType(name)\nmodule.__file__ = str(Path('scripts/run_qlib_data_service.py').resolve())\nsource = subprocess.check_output(['git', 'show', 'HEAD:scripts/run_qlib_data_service.py'])\nsys.modules[name] = module\nsetattr(scripts, 'run_qlib_data_service', module)\nexec(compile(source, module.__file__, 'exec'), module.__dict__)\nraise SystemExit(pytest.main(['-q', 'tests/test_daily_collection_binding.py']))\n'@ | python -",
+    "tests": 13,
+    "passed": 10,
+    "failed": 3,
+    "skipped": 0,
+    "result": "Same three unchanged preparation failures when original HEAD service module is loaded in memory; checkout not edited.",
+    "raw_artifact": null
+  },
+  "short_path_remedy": {
+    "tests": 13,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "temporary_path": "E:/qb-nul0klya",
+    "result": "All13 binding tests pass on real Windows using short temporary paths; this supports path length as the cause of default-path FileNotFoundError. No preparation source change or skipped test."
+  },
+  "broadened_before_fixture_fix": {
+    "tests": 56,
+    "passed": 55,
+    "failed": 1,
+    "skipped": 0,
+    "test": "tests/test_prepare_qlib_incremental.py::test_failed_preparation_does_not_starve_unattempted_symbols_or_claim_version_ready",
+    "junit": "E:/QTrade-temp/cluster-evidence/qlib-scheduler-windows-before-fixture-fix-20261027.xml",
+    "sha256": "548180acb66f3d164e351672e2f3c132d5e87a5da83200ba7c2494f364e0b650",
+    "baseline": "Separate actual HEAD-service baseline single-test run reproduces0passed/1failed. Its raw artifact was not saved.",
+    "cause": "Fixture freezes2026-10-26 but calls prepare.run with no day; unchanged source derives actual current day.",
+    "authorized_fixture_correction": "Only two module.run calls now explicitly use day=NOW.date().isoformat(). Production source/default clocks unchanged."
+  },
+  "final": {
+    "command": "$env:PYTHONPATH='src'; @'\nimport tempfile\nfrom pathlib import Path\nimport pytest\nreceipt = Path('E:/QTrade-temp/cluster-evidence/qlib-scheduler-windows-short-20261027.xml')\nwith tempfile.TemporaryDirectory(prefix='qb-', dir='E:/') as folder:\n    target = Path(folder).resolve()\n    assert target.parent == Path('E:/') and target.name.startswith('qb-')\n    print('Short temporary path:', target)\n    result = pytest.main(['tests/test_qlib_data_service.py', 'tests/test_daily_collection_binding.py', 'tests/test_prepare_qlib_incremental.py', 'tests/test_pit_collection_queue.py', '-ra', '--basetemp='+str(target), '--junitxml='+str(receipt)])\nraise SystemExit(result)\n'@ | python -",
+    "tests": 56,
+    "passed": 56,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 2.5,
+    "junit": "E:/QTrade-temp/cluster-evidence/qlib-scheduler-windows-short-20261027.xml",
+    "sha256": "fb503b303b972013989a26c4e0e0c30032eb06e3dfe426763d0e1a96ee9648d4"
+  },
+  "focused_before_fixture_correction": {
+    "tests": 51,
+    "passed": 51,
+    "failed": 0,
+    "skipped": 0,
+    "junit": "E:/QTrade-temp/cluster-evidence/qlib-scheduler-windows-focused-20261027.xml",
+    "sha256": "3613e18b3caddfe1de590e115523b46018c4033bf20511768d0fc12e43ca17f6"
+  },
+  "checks": {
+    "ruff": "PASS all3changed files",
+    "git_diff_check": "PASS all3changed files"
+  },
+  "limitations": [
+    "Actual Linux tests not run by this agent; Windows result is not Linux integration acceptance.",
+    "No deploy, service restart, SSH or commit performed. PAPER175982, ACTIVE and rollingOFF unchanged; LIVE_TRADING_ENABLED=false.",
+    "Current Oct27 request freezes55b5b0044649a28fd84c77364ca9908df0cee7a4. A new source revision blocks equality; running new code under the old revision would falsify provenance. Deployment must wait until current frozen run is resolved.",
+    "Parent/fcntl behavior unchanged; actual POSIX SIGTERM assertion awaits Linux run."
+  ]
+}
