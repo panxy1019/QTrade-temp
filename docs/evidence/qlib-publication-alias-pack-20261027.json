@@ -1,0 +1,31 @@
+{
+  "schema_version": "qtrade.real-alias-pack-experiment.v1",
+  "checked_at": "2026-10-27T04:07:37.519735+00:00",
+  "source_revision": "56cf00ea64b86ceda4fe0df6ae8f13bf09ac2100",
+  "base": "332efcf84f32bbe65fdc53152ac2ae50aed4a17c",
+  "seed": "980c4b3fbe564c706c7ae5e78cf7117a6bea077c",
+  "seed_new_blobs": 0,
+  "aliases": 4488,
+  "git_version": "git version 2.34.1",
+  "cases": [
+    {
+      "pack_use_sparse": true,
+      "bytes": 10718392,
+      "objects": 4495,
+      "sha256": "c8f111da580da7927122455974a03b2f4a9b94a9dfd64c6bd81984b24db58a02",
+      "seconds": 1.138765873387456
+    },
+    {
+      "pack_use_sparse": false,
+      "bytes": 169904,
+      "objects": 7,
+      "sha256": "4f3af08996469e15481d20f67af486d7855514c09f344fa7c01d05784a0dd096",
+      "seconds": 0.040119847282767296
+    }
+  ],
+  "actual_remote": "332efcf84f32bbe65fdc53152ac2ae50aed4a17c",
+  "local_tip": "332efcf84f32bbe65fdc53152ac2ae50aed4a17c",
+  "tracked_clean": true,
+  "normal_cycle_or_freshness_accepted": false,
+  "evidence_sha256": "9b86afdb83af842981997d73e6f709696db564e5111c2f0eeddd70f62d376824"
+}

@@ -3686,3 +3686,65 @@ ordinary cycles retain their 90-second command cap. Collection, approved ACTIVE
 and recovered PAPER remain independent. Real local descendant-process tests and
 subsequent ordinary public publication provide separate acceptance evidence.
 
+## ADR-178 — Stable Git delta identities retain immutable market authority
+
+Status: accepted for implementation, 2026-10-27.
+
+The measured uplink makes repeated content-hash-only shard pushes exceed the
+ordinary publication deadline. Reuse the existing dedicated Git publication
+transport and content-addressed market objects. No vn.py component solves this
+transport boundary. Add hardlink aliases with stable security/frequency/session
+identities solely to improve Git delta matching; API references, verified bytes,
+raw lineage, publication clocks and freshness thresholds remain authoritative.
+
+The one-off Linux bootstrap pins the fixed observation origin and branch main,
+requires an exclusively stopped publisher and a clean tracked checkout, bounds
+pending history, and creates a backup ref. A separate index builds a seed from
+the already public index with zero new blobs and unchanged pointer bytes. Two
+non-force pushes retain both remote seed and pending local history; the final
+tree equals the latest local data plus aliases. Checkpoint reports survive
+failure. No reset, cleanup, automatic rollback, service restart, model activation
+or account recovery is part of this operator. Resume only the publisher explicitly
+after inspecting the confirmed remote/tree state.
+
+The local 1,500-symbol experiment reduces a 3,679,943-byte thin pack to 714,097
+bytes. This supports the transport choice but cannot certify runtime latency.
+Real Linux tests, bootstrap ancestry/tree proofs, a subsequent ordinary 90-second
+cycle and independently observed public freshness are separate acceptance gates.
+
+Actual bootstrap exposed Git's default sparse traversal resending all 4,488
+already public blobs. Pin `pack.useSparse=false` per command in both runners;
+the real same-parent pack falls from 10,718,392 bytes/4,495 objects to 169,904
+bytes/seven objects. Do not change repository/global configuration or deadlines.
+Also sort bar-field insertion before JSON encoding: a hash-seed change otherwise
+changes raw byte identities despite equal signed JSON. Retain old immutable
+bytes; migrate ordering once, with actual 4,488/4,488 semantic equality proof.
+The sequential publisher interval is measured between cycle starts, so work
+consumes the interval rather than adding an unnecessary post-work delay. No
+overlap or more than one start per configured interval is introduced.
+
+## ADR-179 — Prior-session incremental repair is an explicit bounded operator
+
+Status: implementation accepted, production apply deferred, 2026-10-27.
+
+The source/gap audit found that ordinary collection claims the current required
+session only. The frozen monthly BaoStock backfill cannot repair Sina incremental
+chunks or silently substitute its price basis. Reuse existing Sina collection,
+immutable raw/normalized storage, calendar, queue admission, vendor lease and
+priority checks; vn.py gateways do not solve this observation-recovery boundary.
+
+Default plan uses read-only SQLite and no queue construction, lease or network.
+Apply requires an already migrated ledger and a quiescent process owner, and is
+limited to at most three one-symbol batches in the last three prior sessions.
+Reject an absent failure-streak migration marker/schema before constructing the
+queue, avoiding global legacy-migration changes outside the repair scope. SQL
+filters those sessions before materializing rows. Keep retry not-before, storage
+reserve, current priority, source identity, raw capture and exact completed grid.
+
+Request at most 240 trailing source rows within the existing 1,970-row parser
+bound; select only the requested prior day after its admitted boundary. Missing
+bars/status remain unknown, old artifacts stay immutable, and no current/future
+session or historical PIT certification is implied. The real cluster read-only
+plan found six incomplete prior-session task scopes. No production repair or
+maintenance restart has been performed for this operator.
+

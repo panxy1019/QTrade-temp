@@ -1,0 +1,20 @@
+{
+  "schema_version": "qtrade.public-alias-bootstrap.v1",
+  "apply": true,
+  "state": "COMPLETE",
+  "checkpoint": "VERIFIED",
+  "base": "332efcf84f32bbe65fdc53152ac2ae50aed4a17c",
+  "tip": "332efcf84f32bbe65fdc53152ac2ae50aed4a17c",
+  "pending_commits": 0,
+  "pending_blob_bytes": 0,
+  "backup_ref": "refs/bootstrap-backup/0c87d25f65a047058c26795a881072d6",
+  "seed": "1b81d39c5d83b9ea112ec64b24204e1b25ca29e9",
+  "seed_aliases": 4488,
+  "seed_new_blobs": 0,
+  "base_index_blob": "3cd3c22d6a869418d53c46bc8ca6b6497b30c6df",
+  "tip_with_aliases": "d18d34ebb3bfd00dc4da35558bd03475bef7c950",
+  "tip_index_blob": "3cd3c22d6a869418d53c46bc8ca6b6497b30c6df",
+  "final_tree": "b71c6ca3b45b5935049cc68da912217d8018fa66",
+  "final": "f3fe11a8da99d6b7d2e6320d410278a45208034c",
+  "evidence_sha256": "d2c5f43f0e0c28f8b37de468f2d1795e58b40176a736606f82fcf1be054f1fea"
+}

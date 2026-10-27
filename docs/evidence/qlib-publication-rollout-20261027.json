@@ -1,0 +1,134 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.publication-rollout.v1",
+  "created_at": "2026-10-27T04:56:38.609875+00:00",
+  "writer_revision": "c35bb84095bdd3f7ec284fcd3bb25073a8e60ab7",
+  "operator_probe_revision": "34bba7c1d4c8c383f4cc7edc14874f64a37c5a8e",
+  "verified_production_revision": "4cee136c3b87445f36ef53f40f2389d874d01c25",
+  "ordinary_public_frames_verified": 6,
+  "public_index_fresh": true,
+  "public_catalog_fresh": true,
+  "target_count": 1500,
+  "index_entries": 3000,
+  "incremental_freshness": {
+    "day": {
+      "status": "PARTIAL",
+      "ready_symbols": 1497,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-26T15:00:00+08:00"
+    },
+    "5min": {
+      "status": "PARTIAL",
+      "ready_symbols": 1496,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-27T11:30:00+08:00"
+    }
+  },
+  "existing_paper_pid": 175982,
+  "publisher_pid": 240024,
+  "other_services_unchanged": true,
+  "history_qualified_rows": 36588,
+  "delisted_qualified_rows": 29,
+  "disk_free_gib": 277.96,
+  "maintenance_gap_apply_performed": false,
+  "afternoon_new_bar_accepted": false,
+  "complete_session_cde_accepted": false,
+  "browser_rendered_verified": false,
+  "whole_step1_accepted": false,
+  "step2_started": false,
+  "source_artifacts": [
+    {
+      "path": "docs/evidence/qlib-incremental-gap-plan-20261027.json",
+      "bytes": 2681,
+      "sha256": "17f3e5a4447c05184ae54ceddb2e26751468965c033c55f283c15a4a29599d33"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-alias-bootstrap-20261027.json",
+      "bytes": 859,
+      "sha256": "3cae07629f475b47fb464c7ab4105f6975a24fbc3057e6edbb7b7c7fb564d741"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-alias-first-failed-20261027.json",
+      "bytes": 652,
+      "sha256": "08e273312494f571d83b17e778bff792e388d50ca239258aed2199b86100f3d0"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-alias-pack-20261027.json",
+      "bytes": 1090,
+      "sha256": "6302bb572b32dafe3fc8cad465459f523e4c1a15a8059ef7968d2c78399b824e"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-data-catchup-20261027.json",
+      "bytes": 1292,
+      "sha256": "531f5a76edfccd5f94254dd088b8f43000cd5db34287c88c0663158f28a50420"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-deterministic-bootstrap-20261027.json",
+      "bytes": 1702,
+      "sha256": "ac79314356393240f52e431fd7a3726567856588ce1d26f6d19ed6a58ee42156"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-linux-c35bb84.xml",
+      "bytes": 23514,
+      "sha256": "057e2dbaeef507d818bb7c81ee5ee2c6783bf9d9ec23991179fe0e18f840a8ed"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-live-probe-4cee136-20261027.json",
+      "bytes": 15628,
+      "sha256": "3fd443192c4fbca96b3c979296f35383ac663d1ed6e2d99c16f5090932153f29"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-stable-resume-20261027.json",
+      "bytes": 1317,
+      "sha256": "3e3eed23dc30cd85079e80bb866b05165fe9c320aa0d7bb8a85f3537eb5b9598"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-stable-runtime-20261027.json",
+      "bytes": 9166,
+      "sha256": "343c208e34a91a4e6f051b5f5193ee8d0502724bed1f5c37e285e2587042be1c"
+    },
+    {
+      "path": "docs/evidence/qlib-unified-production-4cee136-initial-stale.json",
+      "bytes": 7667,
+      "sha256": "c6a5e778319a9b8c8ba2e5e7bb0af06a93a61f63856a7a4f0a243aa9e1669d78"
+    },
+    {
+      "path": "docs/evidence/qlib-unified-production-4cee136-stale-041713.json",
+      "bytes": 7650,
+      "sha256": "96f0121da798101d37b7375d0b63942f69cf343e7e2e2895a7aeefd58a536d3c"
+    },
+    {
+      "path": "docs/evidence/qlib-unified-production-4cee136.json",
+      "bytes": 7613,
+      "sha256": "29e8cbdd8338bed730671b05d289aaea2e7496f598e8f7155033d26a3b642488"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-probe-linux-34bba7c.xml",
+      "bytes": 14528,
+      "sha256": "371748c605748d7a39a1aae39e556ae7b1682bcef7cf219271b251616164a605"
+    }
+  ],
+  "validation": {
+    "combined_linux": {
+      "revision": "c35bb84095bdd3f7ec284fcd3bb25073a8e60ab7",
+      "passed": 157,
+      "skipped": 1,
+      "failures": 0,
+      "errors": 0
+    },
+    "read_only_probe_linux": {
+      "revision": "34bba7c1d4c8c383f4cc7edc14874f64a37c5a8e",
+      "passed": 95,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    }
+  },
+  "evidence_sha256": "4aca55eb6b5e31d633da4df4bc7567eab0da25b174a3385ace87985e4725ff0b"
+}

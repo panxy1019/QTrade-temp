@@ -24,6 +24,26 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+12:53 Shanghai checkpoint: publisher c35bb84 / PID 240024 is RUNNING after the
+verified alias seed and one-time deterministic ordering migration. Six ordinary
+remote frames preserve 4,488 shard identities across restart; production 4cee136
+sample bars independently match the public objects. The permanent read-only
+probe verifies FRESH index and catalog delivery, with ages 119.071/123.200 seconds,
+and its separate Linux suite passes all 95 tests. Coverage remains PARTIAL for
+the actual 1,497 daily / 1,496 minute ready tasks out of 1,500. Linux 157 focused
+tests pass with one Windows-only skip;
+the earlier whole c269ab9 suite has 1,841 passes/one skip. Normal 90s Git limit,
+freshness thresholds, all other services and recovered PAPER remain unchanged.
+
+PR29 records the reproducible probe, source and deployment evidence; preserve
+its exact observed deployment identities when production main advances.
+Actual afternoon new-frame behavior remains open; lunch's unchanged-data success
+cannot certify it. Follow-ups are 13:45 for that check and 16:45 for genuinely
+complete-session C/D/E. Prior-session repair only has a read-only six-scope plan;
+apply requires exclusive maintenance quiescence. History has 36,588 qualified rows,
+29 delisted rows and unresolved source/PIT limitations; 277.96 GiB remains free.
+No early complete-day acceptance or STEP2 activation.
+
 Integration checkpoint: bounded unified export/API and page responsibilities
 implemented, reviewed and tested. Cluster e44a134 has 77 passing Linux tests;
 1,496/1,500 minute tasks reach 10:40 at 10:43, with unknown gaps retained.

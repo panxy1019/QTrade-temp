@@ -60,7 +60,8 @@ def run_publication_git(publication: Path, arguments: list[str], *, timeout: flo
         raise RuntimeError('PUBLICATION_GIT_PROCESS_GROUP_REQUIRES_POSIX')
     if not 0 < timeout <= 90:
         raise ValueError('PUBLICATION_GIT_TIMEOUT_BOUND')
-    command = ['git', '-C', str(publication), *arguments]
+    # New alias paths reuse existing blobs; a sparse walk may resend those blobs.
+    command = ['git', '-c', 'pack.useSparse=false', '-C', str(publication), *arguments]
     process = subprocess.Popen(command, start_new_session=True, stdin=subprocess.DEVNULL,
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
@@ -394,6 +395,7 @@ def main() -> None:
     for sig in (signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, lambda *_: stop.set())
     while not stop.is_set():
+        cycle_started = time.monotonic()
         try:
             publish(args.root, args.experiment_root, args.publication,
                     unified_market_database=args.unified_market_database)
@@ -412,7 +414,7 @@ def main() -> None:
                 raise SystemExit(1) from None
         if args.once:
             break
-        stop.wait(args.interval_seconds)
+        stop.wait(max(0, args.interval_seconds-(time.monotonic()-cycle_started)))
 
 
 if __name__ == "__main__":

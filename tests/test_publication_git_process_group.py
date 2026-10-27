@@ -75,7 +75,8 @@ def fake_git(tmp_path, monkeypatch):
         report = tmp_path/(mode+'.json')
 
         def spawn(command, **kwargs):
-            assert command == ['git', '-C', str(tmp_path), 'push', 'origin',
+            assert command == ['git', '-c', 'pack.useSparse=false', '-C', str(tmp_path),
+                               'push', 'origin',
                                'HEAD:refs/heads/main']
             assert kwargs == {'start_new_session': True, 'stdin': subprocess.DEVNULL,
                               'stdout': subprocess.DEVNULL, 'stderr': subprocess.DEVNULL}
@@ -195,3 +196,25 @@ def test_timeout_or_interruption_is_preserved_after_owned_group_cleanup(
     assert caught.value is exception
     assert signals == [signal.SIGTERM, 0]
     assert process.calls == 2
+
+
+def test_git_runner_disables_sparse_walk_without_changing_default_deadline(tmp_path, monkeypatch):
+    calls = []
+    class Process:
+        def wait(self, timeout):
+            assert timeout == 90
+            return 0
+    process = Process()
+    def spawn(command, **kwargs):
+        assert command == ['git', '-c', 'pack.useSparse=false', '-C', str(tmp_path),
+                           'push', 'origin', 'HEAD:refs/heads/main']
+        assert kwargs == {'start_new_session': True, 'stdin': subprocess.DEVNULL,
+                          'stdout': subprocess.DEVNULL, 'stderr': subprocess.DEVNULL}
+        calls.append('spawn')
+        return process
+    monkeypatch.setattr(publisher, 'os', SimpleNamespace(name='posix'))
+    monkeypatch.setattr(publisher.subprocess, 'Popen', spawn)
+    monkeypatch.setattr(publisher, '_cleanup_git_group', lambda item:
+                        calls.append('cleanup') if item is process else pytest.fail('wrong group'))
+    publisher.run_publication_git(tmp_path, ['push', 'origin', 'HEAD:refs/heads/main'])
+    assert calls == ['spawn', 'cleanup']

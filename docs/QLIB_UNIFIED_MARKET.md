@@ -33,9 +33,32 @@ binds the observed master, universe, calendar, implementation file hashes, all o
 checksums/counts/bytes, window boundaries, and publication clock. Its pointer is
 replaced only after all objects exist and the selected ledger evidence remains valid.
 Transient IO or export-budget failure retains the dated previous index.
+Bar keys are inserted in a deterministic order before encoding, so restarting
+Python with a different hash seed cannot change shard bytes for identical admitted
+inputs. Existing immutable objects keep their original bytes; a first export under
+this ordering may create new object IDs once. Actual added/changed source evidence
+still changes the affected shard. A real cross-process regression exports the same
+ledger at a frozen fixture time under multiple `PYTHONHASHSEED` values and checks
+exact bytes/IDs, then confirms an added bar changes only its series.
 
 The existing publisher copies only referenced verified objects and the index through
 its existing Git queue. No separate remote or publication authority is introduced.
+The publication checkout also maintains hardlinks at
+`unified-market/.delta/20261027/M301001-<identityhash16>.json` for each minute session
+and `unified-market/.delta/day/D301001-<identityhash16>.json` for each daily window.
+The suffix is the first 16 SHA-256 hex characters of `symbol|frequency|group`, where
+group is the Shanghai session date in `YYYYMMDD` form or `day`. These stable names
+help Git select the preceding shard as its delta base. Both paths stage the same
+Git blob, so the aliases add tree entries without duplicate payload objects.
+
+An unchanged inode skips relinking. An update hardlinks the verified immutable
+publication object to a temporary sibling and atomically replaces only the alias;
+it never writes through the old alias or changes old content-addressed bytes.
+Symlink files/parents and resolved path escapes are rejected. Aliases are transport
+hints only: the signed index, immutable hash paths, schema, API and authority checks
+remain unchanged. Hardlink support on the publication filesystem is required;
+failure preserves the previous index. Old aliases and historical objects are not
+deleted by this change.
 
 ## Bounds and cache
 
@@ -99,6 +122,11 @@ directory that holds the SQLite ledger. The existing publisher accepts optional
 database path. `--interval-seconds` accepts 60 through 300 and defaults to 300 for
 compatibility. An operator should use 60 or 120 only after measuring export/push
 cost. No private service wrapper or environment is automatically modified.
+The interval measures sequential cycle starts: export/push duration consumes the
+interval, then the publisher waits only the remaining time. A cycle exceeding its
+interval starts the next one immediately after completion. Cycles never overlap,
+starts remain at least the configured interval apart, and the first cycle is
+immediate. Failed cycles use the same cadence; `--once` never waits or retries.
 
 Publication Git commands run in a newly owned POSIX process group with the
 existing 90-second command limit. Cleanup terminates the group, waits up to two
@@ -114,6 +142,68 @@ observed slow Git uplink. Keep the publisher paused during an explicitly bounded
 single-owner bootstrap; preserve original snapshot dates and verify the remote
 before resuming. Collection and PAPER need not restart. A bootstrap success is
 not evidence that ordinary subsequent cycles meet the freshness contract.
+
+Before the first new frame using stable aliases, seed aliases from the already
+published frame in a separate Git commit/push. Keep one publication owner and a
+clean tracked checkout. The reviewed operator supports a bounded local history
+ahead of the remote; it retains that history and a backup ref, adds a metadata-only
+remote seed, and joins both histories with the exact latest local tree. It never
+resets, force pushes, deletes unrelated files, or restarts a service. Failed apply
+keeps its report/checkpoint and backup for inspection, with no automatic rollback.
+Verify both pushes and resume the publisher explicitly afterward.
+`seed_existing=True` reads only the existing publication index and its verified
+referenced objects. It neither exports source data nor rewrites the pointer's bytes,
+publication time or filesystem modification time, and rejects a non-null database.
+This local-only reproduction prints the paths to stage with the existing Git queue:
+
+```sh
+PYTHONPATH=src:. python - "$QTRADE_DATA_ROOT" "$QTRADE_PUBLICATION_ROOT" <<'PY'
+import json
+import sys
+from pathlib import Path
+from scripts.publish_unified_market import publish_market_files
+print(json.dumps(publish_market_files(Path(sys.argv[1]), Path(sys.argv[2]),
+                                      seed_existing=True)))
+PY
+```
+
+For the actual dedicated Linux publication checkout, stop only
+`qtrade-research-publication`, verify Supervisor reports PID zero, then run the
+plan before apply. Use different, previously absent report paths outside the
+publication checkout. The CLI pins the existing public observation repository,
+requires branch `main`, validates the remote ancestry and pending-data bounds,
+and uses isolated Git indexes. Each bootstrap push has a 600-second bound; ordinary
+publication retains its 90-second command limit.
+Both Git runners pass command-scoped `-c pack.useSparse=false`. Git's default
+sparse object walk can resend already published payload blobs when the seed adds
+new alias paths; an exact walk excludes those old blobs and sends only new tree
+and commit metadata. This changes no repository/global Git configuration, remote,
+hook policy or process cleanup. See the official
+[`pack.useSparse` documentation](https://git-scm.com/docs/git-config#Documentation/git-config.txt-packuseSparse).
+
+```sh
+PYTHONPATH=src:. python -m scripts.bootstrap_public_aliases \
+  --base "$QTRADE_DATA_ROOT" --publication "$QTRADE_PUBLICATION_ROOT" \
+  --report "$QTRADE_DATA_ROOT/online-research/unified-alias-plan.json"
+PYTHONPATH=src:. python -m scripts.bootstrap_public_aliases \
+  --base "$QTRADE_DATA_ROOT" --publication "$QTRADE_PUBLICATION_ROOT" \
+  --report "$QTRADE_DATA_ROOT/online-research/unified-alias-apply.json" --apply
+```
+
+Require `state=COMPLETE` and `checkpoint=VERIFIED`, inspect the retained backup
+ref and pointer/blob identities, then deploy the alias-aware publisher and start
+only that service. Check an ordinary successful cycle and the independently
+served index/bar freshness before accepting the migration. Local real-Git tests
+exercise divergent retained history, unrelated untracked files, interruption,
+invalid destinations, symlinks, branch changes and duplicate-bootstrap rejection:
+`pytest tests/test_bootstrap_public_aliases.py`.
+Its real local pack regression reproduces sparse traversal resending 64 existing
+payload blobs and verifies that the exact walk transfers zero payload blobs.
+
+Seeding is transport preparation, not a freshness refresh. The local thin-pack
+experiment motivating this change reduced a 1,500-symbol shared-receipt frame
+from 3,679,943 to 714,097 bytes; actual remote pushes, subsequent ordinary-cycle
+timing and public freshness still require separate production evidence.
 
 Availability is limited to already admitted incremental lake data. If daily collection
 has one day, this endpoint has one day; a 20-session window does not claim 20 observed

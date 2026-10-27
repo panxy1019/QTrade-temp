@@ -1,0 +1,32 @@
+{
+  "schema_version": "qtrade.stable-publisher-resume.v1",
+  "checked_at": "2026-10-27T04:38:39.038164+00:00",
+  "source_revision": "c35bb84095bdd3f7ec284fcd3bb25073a8e60ab7",
+  "previous_revision": "79141f438ca732f5f57702c11f4fc9e79d85eb9b",
+  "bootstrap_evidence_sha256": "376813ca81da5b7e435aebf616f83befa94a85e04da53d77fc7805eba05537aa",
+  "public_bootstrap_tip": "d1bc14cceae552925290605305f84e97a3632407",
+  "wrapper_sha256": "c63ea8b30a0c58426cf5fba28b4339bebd709b9953fd5bf8de79ea5f534006f4",
+  "publisher_pid": 240024,
+  "paper_pid": 175982,
+  "other_processes_unchanged": true,
+  "observed_other_pids": {
+    "code-server": 81,
+    "jupyterlab": 80,
+    "qtrade-data-observer": 4471,
+    "qtrade-etf-diagnostics": 179865,
+    "qtrade-etf-shadow": 181180,
+    "qtrade-forward-research": 175982,
+    "qtrade-history-backfill": 164340,
+    "qtrade-pit-repair": 153768,
+    "qtrade-qlib-data": 179733,
+    "qtrade-qlib-workflow": 173727,
+    "qtrade-research-maintenance": 213587,
+    "tensorboard": 79
+  },
+  "source_identity_check": "EXACT_WRAPPER_REPLACEMENT_RUNNING_CWD_AND_PYTHONPATH",
+  "start_requests": 1,
+  "live_trading_enabled": false,
+  "ordinary_publication_verified": false,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "ba9432f8b9cd7dcf9e31ab86a9476bbc822824e7efe7234b7ef679d8d31d04b0"
+}
