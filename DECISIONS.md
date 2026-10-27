@@ -3901,3 +3901,59 @@ Linux each pass the same 56 related cases with no skips; production source,
 daily request, current owner and PAPER are unchanged. Explicit fixture dates are
 test inputs only, never a production-clock override.
 
+## ADR-193 — Freeze selectable Qlib research contracts in the strategy lifecycle
+
+Status: implemented and undergoing cluster/production acceptance, 2026-10-27.
+
+Reuse DataVersionCatalog, existing bounded workflow, fitted restore checks and
+StrategyRegistry. A historical READY version may be selected without being the
+serving head. Freeze its version/manifest/dataset/source/admission/universe hashes,
+the supported Alpha158 feature version, model/processor configuration, label and
+segments, portfolio/execution/cost rules and actual worker revision. The API
+previews a content-addressed strategy definition; submission carries its expected
+version. Ingest and runner independently verify real local archive bytes. A job
+must not silently rebind to latest or execute caller-supplied paths/code.
+
+Accepted jobs register EXPERIMENT with an immutable contract/job link. Completed
+fitted training supplies a separately identified model artifact, preserving the
+original unfitted contract. This does not automatically promote a strategy into
+PAPER, SHADOW or approved execution. Registry roles and lifecycle remain separate
+from model inference approval. vn.py gateways do not implement this identity
+boundary. Retire old five-template daily operations while retaining immutable
+historical records, minute research and the unified equal-weight control.
+
+An old signed factor diagnostic binds full historical API and factor source
+hashes. Preserve those exact Git source bytes beside that archive and verify the
+fixed original identities; do not re-sign the old result as today's API. Deployment
+evidence is byte-preserved with Git -text. A descriptor publication cache is not
+a fresh full-file scan; each actual job independently verifies the entire version
+and requires regenerated Provider bytes to agree with its admitted input.
+
+## ADR-194 — Human standing consent permits bounded research model promotion
+
+Status: explicit user consent recorded; implementation pending live acceptance,
+2026-10-27. LIVE_TRADING_ENABLED=false and rolling training OFF remain unchanged.
+
+The human explicitly answered "都允许批准" to both ACTIVE daily inference and
+validated-candidate activation. This supersedes the earlier per-candidate manual
+research activation requirement, while retaining all data/model/window and risk
+gates. A signed, initially OFF policy names allowed model IDs/families. A sole
+qualified STAGED model can receive a durable approval attempt and use the existing
+model-control adapter. Multiple candidates, invalid proof, failed/uncertain claims
+and data/ACTIVE changes block. Final control compares the actual admission event
+as well as the data head, preventing A-to-B-to-A ambiguity. Input compatibility
+does not establish performance superiority; this is no execution authorization.
+
+The original PAPER owner still carries an initial-start actor. Before automatic
+model activation, reserve the new PAPER directory with a signed explicit denial
+of initialization/recovery, without opening its database. The unchanged owner
+then sees a non-pristine directory and cannot reuse that old actor to recover the
+new account. Preserve old accounts, consumed recovery authorization and PID175982.
+Real old-owner code and a persistent book are tested to remain stopped. Unknown
+pre-existing directories or interrupted reservations fail closed. New model PAPER
+admission remains an independent explicit recovery/reconciliation decision.
+
+Actual October27 C private/public, corrected D and twelve-book stock E acceptance
+remain pinned to their original ACTIVE, approval and source revisions. Subsequent
+promotion or deployment requires new checks; it cannot relabel those receipts.
+

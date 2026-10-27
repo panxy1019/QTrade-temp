@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
@@ -12,7 +13,12 @@ from qtrade.research.data_epoch import current_epoch
 from qtrade.research.data_version_control import read_catalog
 from qtrade.research.data_versions import verify_version
 from qtrade.research.forward_prediction import verify_validation
-from qtrade.research.model_registry import ModelRegistry, checked_identity, control_command
+from qtrade.research.model_registry import (
+    ModelRegistry,
+    checked_document,
+    checked_identity,
+    control_command,
+)
 from qtrade.research.qlib_publication import verify_archive
 from scripts.atomic_json import write_json_immutable
 from scripts.prepare_qlib_incremental import load_signed
@@ -106,8 +112,11 @@ class OnlineModels:
             raise ValueError('DATA_HEAD_IDENTITY_CHANGED')
         return value
 
-    def execute(self, command: dict[str, Any], *, now: datetime) -> dict[str, Any]:
+    def execute(self, command: dict[str, Any], *, now: datetime,
+                expected_data_event_id: str | None = None) -> dict[str, Any]:
         command = control_command(command)
+        if expected_data_event_id is not None:
+            checked_identity(expected_data_event_id)
         prior = self.registry.receipt(command)
         if prior is not None:
             return prior
@@ -140,6 +149,19 @@ class OnlineModels:
             if head is None or head[0] != data['version_id']:
                 return self.registry.reject(command, 'READY_DATA_CHANGED_REFRESH_REQUIRED',
                                             now=final_clock)
+            if expected_data_event_id is not None:
+                epoch = connection.execute('SELECT event_id,payload FROM data_events '
+                                           'ORDER BY sequence DESC LIMIT 1').fetchone()
+                if epoch is None:
+                    return self.registry.reject(command, 'READY_DATA_EPOCH_CHANGED',
+                                                now=final_clock)
+                event = json.loads(epoch[1])
+                checked_document(event)
+                if (epoch[0] != expected_data_event_id or event['evidence_sha256'] != epoch[0]
+                        or event['version_id'] != data['version_id']
+                        or event['kind'] not in {'QLIB_DATA_READY', 'QLIB_DATA_ROLLBACK'}):
+                    return self.registry.reject(command, 'READY_DATA_EPOCH_CHANGED',
+                                                now=final_clock)
             if str(calendar.expected(final_clock, 'daily').date()) != data['actual_end']:
                 return self.registry.reject(command, 'READY_DATA_NOT_CURRENT', now=final_clock)
             return self.registry.apply(command, current_data_version=data['version_id'],

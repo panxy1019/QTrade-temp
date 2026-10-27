@@ -9,53 +9,21 @@ def _api(path: str) -> str:
     return f"/api?route={quote(path, safe='')}"
 
 
-def test_strategy_template_catalog_exposes_only_implemented_read_only_baselines() -> None:
-    client = TestClient(app)
-
-    response = client.get(_api("/strategy-templates"))
-
+def test_strategy_template_catalog_is_an_empty_read_only_retirement_marker() -> None:
+    response = TestClient(app).get(_api("/strategy-templates"))
     assert response.status_code == 200
     catalog = response.json()
-    assert catalog["classification"] == "READ_ONLY_IMPLEMENTED_BASELINE_STRATEGY_CATALOG"
-    assert catalog["template_count"] == 5
-    assert catalog["active_template_count"] == 4
-    assert catalog["benchmark_template_count"] == 1
-    assert catalog["causal_preview_template_count"] == 3
-    assert [template["template_id"] for template in catalog["templates"]] == [
-        "equal-weight-buy-hold-benchmark-v1",
-        "moving-average-trend-v1",
-        "etf-momentum-rotation-v1",
-        "etf-momentum-trend-volatility-v1",
-        "cross-sectional-factor-ranking-v1",
-    ]
-    assert [template["implementation_ref"] for template in catalog["templates"]] == [
-        "qtrade.research.multi_asset.EqualWeightBuyHold",
-        "qtrade.strategies.baselines.MovingAverageTrendStrategy",
-        "qtrade.research.multi_asset.MomentumAllocation",
-        "qtrade.research.multi_asset.MomentumAllocation",
-        "qtrade.research.multi_asset.RankedFactorAllocation",
-    ]
-    assert catalog["templates"][0]["role"] == "BENCHMARK_ONLY"
-    assert [
-        template["template_id"]
-        for template in catalog["templates"]
-        if template["causal_preview_supported"]
-    ] == [
-        "etf-momentum-rotation-v1",
-        "etf-momentum-trend-volatility-v1",
-        "cross-sectional-factor-ranking-v1",
-    ]
-    assert all(
-        template["validation_status"] == "IMPLEMENTED_NOT_PRODUCTION_VALIDATED"
-        for template in catalog["templates"]
-    )
-    assert catalog["selection_creates_experiment"] is False
-    assert catalog["selection_registers_strategy"] is False
-    assert catalog["paper_runtime_start"] is False
-    assert catalog["live_runtime_start"] is False
-    assert catalog["arbitrary_code_execution"] is False
-    assert catalog["external_order_transmission"] is False
-    assert catalog["next_step"] == "FREEZE_EXPERIMENT_RUN_SPEC_THEN_CAUSAL_BACKTEST"
+    assert catalog["classification"] == "RETIRED_LEGACY_TEMPLATES"
+    assert catalog["templates"] == []
+    for key in ("template_count", "active_template_count", "benchmark_template_count",
+                "causal_preview_template_count"):
+        assert catalog[key] == 0
+    for key in ("selection_creates_experiment", "selection_registers_strategy",
+                "paper_runtime_start", "live_runtime_start", "arbitrary_code_execution",
+                "external_order_transmission"):
+        assert catalog[key] is False
+    assert catalog["historical_artifacts_available"] is True
+    assert catalog["next_step"] == "USE_VERSION_BOUND_QLIB_RESEARCH"
 
 
 def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
@@ -281,61 +249,15 @@ def test_vercel_entry_is_read_only_and_loads_packaged_evidence() -> None:
     analytics = client.get(_api("/backtest-analytics")).json()
     assert analytics["leader"]["experiment_id"].endswith("momentum-vol-slow-20260812-v4")
     assert len(analytics["curve"]) == 632
-    preview = client.post(
-        _api("/backtest-preview"),
-        json={"start": "2025-01-01", "end": "2025-12-31"},
-    )
-    assert preview.status_code == 200
-    assert preview.json()["promotion"] == "NOT_ELIGIBLE"
-    assert preview.json()["external_order_transmission"] is False
-    assert preview.json()["benchmark"]["strategy_id"] == (
-        "equal-weight-buy-hold-benchmark-v1"
-    )
-    assert preview.json()["benchmark"]["first_decision_known_symbols_only"] is True
-    assert "benchmark_return" in preview.json()["metrics"]
-    assert "excess_return" in preview.json()["metrics"]
-    assert "information_ratio" in preview.json()["metrics"]
-    assert all(
-        "benchmark_equity" in point and "excess_return" in point
-        for point in preview.json()["curve"]
-    )
-    run_spec_payload = {
-        "template_id": "etf-momentum-rotation-v1",
-        "experiment_id": "vercel-read-only-draft",
-        "git_commit": "0" * 40,
-        "split": {
-            "train_start": "2022-09-06",
-            "train_end": "2024-12-31",
-            "validation_start": "2025-01-01",
-            "validation_end": "2025-06-30",
-            "test_start": "2025-07-01",
-            "test_end": "2025-12-31",
-        },
-        "backtest": {
-            "start": "2025-07-01",
-            "end": "2025-12-31",
-            "factor": "momentum",
-            "trend_window": None,
-            "volatility_window": None,
-            "target_annual_volatility": None,
-        },
-        "seed": 7,
-    }
-    run_spec_draft = client.post(
-        _api("/experiment-run-spec-draft"), json=run_spec_payload
-    )
-    assert run_spec_draft.status_code == 200
-    assert run_spec_draft.json()["creates_immutable_experiment"] is False
-    assert run_spec_draft.json()["gates"]["fresh_unseen_test_evidence"] is False
-    assert run_spec_draft.json()["external_order_transmission"] is False
-    bound_run = client.post(
-        _api("/experiment-run-spec-backtest"), json=run_spec_payload
-    )
-    assert bound_run.status_code == 200
-    assert bound_run.json()["spec_hash"] == run_spec_draft.json()["spec_hash"]
-    assert bound_run.json()["gates"]["single_request_spec_result_binding"] is True
-    assert bound_run.json()["creates_immutable_experiment"] is False
-    assert bound_run.json()["external_order_transmission"] is False
+    for route in ("/backtest-preview", "/experiment-run-spec-draft",
+                  "/experiment-run-spec-backtest", "/current/backtest-preview",
+                  "/current/experiment-run-spec-draft", "/current/experiment-run-spec-backtest"):
+        for request in ({"json": {"start": "2025-01-01", "end": "2025-12-31"}},
+                        {"content": b"invalid-json"}, {}):
+            retired = client.post(_api(route), **request)
+            assert retired.status_code == 410
+            assert retired.json()["detail"]["code"] == "LEGACY_DAILY_RESEARCH_RETIRED"
+            assert "cache-control" not in retired.headers
     single_stock = client.post(
         _api("/single-stock-five-minute-backtest"),
         json={

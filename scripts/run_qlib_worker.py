@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
+from qtrade.research.model_promotion_policy import ModelPromotionPolicy
 from qtrade.research.qlib_publication import verify_archive
 from qtrade.research.rolling_control import RollingControl
 from qtrade.research.source_constraints import capture_source, constraint_protocol
@@ -128,6 +129,12 @@ class Worker:
                                    database.with_name('qlib-versions.sqlite'))
         self.predictor = OnlinePredictor(self.online, python, revision)
         self.rolling = RollingControl(self.db)
+        from qtrade.strategies.registry import StrategyRegistry
+        from scripts.qlib_research_contracts import ResearchContracts
+
+        self.research_contracts = ResearchContracts(base, self.online.data_database, revision,
+            StrategyRegistry(database.with_name('strategies.sqlite')), workflow_database=database)
+        self.promotion = ModelPromotionPolicy(self.online, self.predictor.calendar)
 
     def freeze_source(self) -> str:
         root = self.base / "pit-repair"
@@ -161,6 +168,11 @@ class Worker:
                             or value['command']['request_id'] != identity):
                         raise ValueError('MODEL_CONTROL_ENVELOPE_INVALID')
                     self.online.execute(value['command'], now=datetime.now(UTC))
+                    continue
+                if value.get('kind') == 'QLIB_MODEL_PROMOTION_POLICY':
+                    if not key.startswith('requests/'):
+                        raise ValueError('PROMOTION_POLICY_ENVELOPE_INVALID')
+                    self.promotion.configure(envelope, self.secret, now=datetime.now(UTC))
                     continue
                 if value.get('kind') == 'QLIB_ROLLING_POLICY':
                     if (not key.startswith('requests/')
@@ -205,6 +217,12 @@ class Worker:
                     ).fetchone()[0]
                     if active > 3:
                         self.update(identity, "REJECTED", error="QUEUE_CAPACITY_EXCEEDED")
+                    elif 'data_binding' in spec:
+                        try:
+                            self.research_contracts.verify(value, register=True)
+                        except (ValueError, KeyError, TypeError, OSError, sqlite3.Error):
+                            self.update(identity, 'REJECTED',
+                                        error='IMMUTABLE_RESEARCH_INPUT_REJECTED')
                 self.db.commit()
             except (ValueError, KeyError, TypeError):
                 # Malformed queue items are not executable. Do not publish their body.
@@ -292,6 +310,10 @@ class Worker:
             "source_snapshot_sha256": summary.get("source_snapshot_sha256"),
             "state": "COMPLETE", "engine": "QLIB", "spec": spec,
             **({'rolling_plan': rolling} if rolling else {}),
+            **({'strategy_definition': summary['strategy_definition'],
+                'strategy_version': summary['strategy_version'],
+                'data_binding': summary['data_binding']}
+               if summary.get('strategy_definition') else {}),
             "model": summary["model"], "segments": summary["segments"],
             "data_end": summary["data_end"], "dataset_sha256": summary["dataset_sha256"],
             "symbols": summary.get("effective_universe_size", summary["symbols"]),
@@ -319,6 +341,9 @@ class Worker:
             "audit": detail["audit"], "completed_at": summary["completed_at"],
             "source_revision": summary["source_revision"],
             "comparison_protocol": detail["comparison_protocol"],
+            **({'strategy_version': summary['strategy_version'],
+                'strategy_id': summary['strategy_definition']['strategy_id']}
+               if summary.get('strategy_definition') else {}),
         }
 
     def publish(self, state: str = "IDLE") -> None:
@@ -364,11 +389,15 @@ class Worker:
             worker={"state": state, "heartbeat_at": clock(), "concurrency": 1,
                     "source_revision": self.revision, "max_job_seconds": 3600},
         )
+        available = self.research_contracts.publication()
+        value = signed({**{k: v for k, v in value.items() if k != 'evidence_sha256'},
+            **available, 'datasets': [*available['datasets'], *value['datasets']]})
         write_json_atomic(self.public / "workflow.json", value)
         online_value = self.online.publication(self.revision, now=datetime.now(UTC),
                                                 worker_state=state)
         online_value['auto_predict'] = self.predictor.publication(now=datetime.now(UTC))
         online_value['auto_train'] = self.rolling.publication()
+        online_value['model_promotion'] = self.promotion.current()
         write_json_atomic(self.public/'online.json', signed({
             k: v for k, v in online_value.items() if k != 'evidence_sha256'}))
         self.publish_signals()
@@ -450,19 +479,32 @@ class Worker:
                 '--source-revision', self.revision, '--policy', str(job/'policy.json')]
         else:
             write_json_atomic(job / "spec.json", request["spec"])
-            source_id = request["spec"].get("source_snapshot_sha256") or self.freeze_source()
-            source_root = self.root / "source-snapshots" / source_id
+            bound = 'data_binding' in request['spec']
+            if bound:
+                self.research_contracts.verify(request, register=True)
+                data_root = self.research_contracts.root(
+                    request['spec']['data_binding']['data_version_id'])
+                source_root = data_root/'pit-sources'
+            else:
+                data_root = self.base/'qlib-data-20261023'
+                source_id = request["spec"].get("source_snapshot_sha256") or self.freeze_source()
+                source_root = self.root / "source-snapshots" / source_id
+            source_id = request['spec'].get('source_snapshot_sha256') or self.freeze_source()
             if capture_source(source_root).identity != source_id:
                 raise ValueError("REQUESTED_SOURCE_SNAPSHOT_UNAVAILABLE")
             command = [
                 self.python, "-m", "scripts.run_qlib_baseline",
-                "--data-root", str(self.base / "qlib-data-20261023"),
+                "--data-root", str(data_root),
                 "--output", str(output),
                 "--tracking", "/root/qtrade-local/workflow-mlruns",
                 "--source-revision", self.revision,
                 "--workflow-spec", str(job / "spec.json"),
                 "--pit-evidence-root", str(source_root),
             ]
+            if bound:
+                command.extend(['--restore-proof', '--data-database',
+                    str(self.online.data_database), '--expected-strategy-version',
+                    request['expected_strategy_version']])
         self.update(identity, "RUNNING")
         self.publish("RUNNING")
         with (job / "runner.log").open("ab") as log, contextlib.ExitStack() as cleanup:
@@ -532,9 +574,10 @@ class Worker:
         summary = verify_archive(archive)
         if rolling and summary.get('rolling_plan') != request['plan']:
             raise ValueError('ROLLING_COMPLETED_PLAN_CHANGED')
-        if rolling:
-            self.online.import_trained(archive, now=datetime.now(UTC))
-        self.update(identity, "COMPLETE", result=self.archive_detail(summary, identity))
+        result = self.archive_detail(summary, identity)
+        if rolling or request.get('spec', {}).get('data_binding'):
+            result['model_artifact_id'] = self.online.import_trained(archive, now=datetime.now(UTC))
+        self.update(identity, "COMPLETE", result=result)
 
     def schedule_rolling(self) -> None:
         if (self.stop or self.predictor.child is not None
@@ -586,6 +629,7 @@ class Worker:
 
     def once(self) -> None:
         self.ingest()
+        self.schedule_model_promotion()
         self.predictor.tick(stop=self.stop)
         self.schedule_candidate_validation()
         self.schedule_signals()
@@ -599,6 +643,14 @@ class Worker:
             except Exception:
                 self.update(row[0], "FAILED", error="WORKER_JOB_VALIDATION_FAILED")
         self.publish('PREDICTING' if self.predictor.child is not None else 'IDLE')
+
+    def schedule_model_promotion(self) -> None:
+        if self.stop or self.predictor.child is not None:
+            return
+        if self.db.execute("SELECT count(*) FROM jobs WHERE state NOT IN "
+            "('COMPLETE','FAILED','CANCELLED','INTERRUPTED','REJECTED')").fetchone()[0]:
+            return
+        self.promotion.tick(now=datetime.now(UTC))
 
     def schedule_signals(self) -> None:
         from qtrade.research.data_epoch import current_epoch

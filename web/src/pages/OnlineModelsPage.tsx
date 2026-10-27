@@ -6,6 +6,7 @@ import { workflowGet, workflowPost } from '../research/qlibWorkflow'
 import { Login } from './QlibWorkflowPages'
 import { RollingPolicyPanel, type RollingCatalog } from '../components/RollingPolicyPanel'
 import { DataVersionsPanel } from '../components/DataVersionsPanel'
+import { ModelPromotionPanel, type PromotionPolicy } from '../components/ModelPromotionPanel'
 
 interface Definition {
   model_id: string; model_run_id: string; name: string; training_data_end: string
@@ -30,6 +31,7 @@ export interface Catalog {
   data_version: null | { version_id: string; actual_end: string; current_symbols: number; historical_symbols: number; blocked_symbols: string[] }
   commands: Array<{ request_id: string; state: string; operation: string; error_code: string | null; at: string }>
   current_prediction_usable?: boolean
+  model_promotion?: PromotionPolicy
   data_schedule?: { state: string; fresh: boolean; heartbeat_at?: string; last_cycle_state?: string; required_day?: string; data_end?: string }
   auto_predict?: { enabled: boolean; state: string; current_prediction_id?: string | null; predictions?: Array<{
     prediction_id: string; state: string; updated_at: string; error_code: string | null
@@ -114,6 +116,7 @@ export function OnlineModelsPage() {
     <Alert type="info" showIcon title={`每日自动预测：${catalog?.auto_predict?.enabled ? '已启用' : '未启用'}；自动重训：${catalog?.auto_train?.mode ?? '未接入'}`} description="当前候选输入验证与生产自动预测分开记录。验证分数未取得真实前向收益；完整历史 PIT、复权与交易规则认证仍有限制。" />
     <DataVersionsPanel authenticated={session.authenticated} ready={!!(catalog?.publication_available && catalog.worker_fresh)} expectedHead={data?.version_id} refreshModels={refresh} />
     <RollingPolicyPanel value={catalog?.auto_train} authenticated={session.authenticated} ready={!!catalog?.worker_fresh} refresh={refresh} />
+    <ModelPromotionPanel value={catalog?.model_promotion} authenticated={session.authenticated} ready={!!(catalog?.publication_available && catalog.worker_fresh)} refresh={refresh} />
     {catalog?.auto_predict?.enabled && <Card title="每日自动预测记录">
       <Typography.Paragraph>{predictionLabels[catalog.auto_predict.state] ?? catalog.auto_predict.state}。{catalog.current_prediction_usable ? '存在身份匹配且尚未过期的研究预测。' : '当前没有可使用的研究预测。'}分数仅用于研究排序，不是交易指令或收益承诺。</Typography.Paragraph>
       <Table rowKey="prediction_id" dataSource={catalog.auto_predict.predictions ?? []} pagination={{ pageSize: 5 }} scroll={{ x: 1000 }} columns={[
@@ -129,7 +132,7 @@ export function OnlineModelsPage() {
     <Card title="候选与历史模型" extra={<JsonExportButton filename="qtrade-online-models.json" value={catalog} />}>
       <Table<Model> rowKey={row => row.definition.model_id} dataSource={catalog?.models ?? []} pagination={false} scroll={{ x: 1000 }} columns={[
         { title: '模型', render: (_, row) => <Space orientation="vertical"><b>{row.definition.name}</b><Typography.Text copyable={{ text: row.definition.model_id }}>{row.definition.model_id.slice(0, 16)}</Typography.Text></Space> },
-        { title: '状态', render: (_, row) => <Tag color={row.state === 'ACTIVE' ? 'green' : 'orange'}>{labels[row.state] ?? row.state}</Tag> },
+        { title: '状态', render: (_, row) => <Tag color={row.state === 'ACTIVE' ? 'green' : 'orange'}>{row.state === 'STAGED' && catalog?.model_promotion?.policy.mode === 'ENABLED' ? '待批准政策校验' : labels[row.state] ?? row.state}</Tag> },
         { title: '训练数据截止', render: (_, row) => row.definition.training_data_end },
         { title: '最新输入验证', render: (_, row) => { const proof = latestProof(row); return proof ? `${proof.contract.data_end} · ${proof.score_count} 只策略合格证券` : '当前数据尚无通过的验证' } },
         { title: '组合', render: (_, row) => `Top${row.definition.portfolio.topk} / 淘汰${row.definition.portfolio.n_drop}` },

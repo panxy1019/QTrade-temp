@@ -3,7 +3,6 @@ from __future__ import annotations
 import io
 import json
 from datetime import UTC, date, datetime, timedelta
-from decimal import Decimal
 from hashlib import sha256
 from pathlib import Path
 
@@ -14,7 +13,6 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from qtrade.api import current_datasets as current
-from qtrade.data import Bar
 from qtrade.data.storage import _BAR_PARQUET_SCHEMA
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.market_data.sina_minute import SINA_FIVE_MINUTE_SESSION_TIMES
@@ -156,37 +154,22 @@ def test_stale_publication_cannot_remain_green(publication):
     assert current.validate_catalog(value)["minute"]["freshness"] == "STALE"
 
 
-def test_daily_preview_uses_real_current_inputs(publication, monkeypatch):
-    client, _, _ = publication
-    days = [date(2026, 1, 1) + timedelta(days=i) for i in range(296)]
-    days = [d for d in days if d.weekday() < 5]
-    source = [
-        Bar(
-            "510300",
-            "SSE",
-            datetime.combine(day, datetime.min.time(), SHANGHAI),
-            day,
-            Decimal(10),
-            Decimal(11),
-            Decimal(9),
-            Decimal(10),
-            Decimal(1000000),
-        )
-        for day in days
-    ]
-    row = {"data_version": "current-daily-new", "checksum": "a" * 64}
-    monkeypatch.setattr(current, "resolve", lambda kind, version: (row, source))
-    response = client.post(
-        "/current/backtest-preview",
-        headers={"X-QTrade-Data-Version": row["data_version"]},
-        json={
-            "start": "2026-01-01",
-            "end": "2026-10-23",
-            "factor": "momentum",
-            "horizons": [20],
-            "top_k": 1,
-        },
-    )
-    assert response.status_code == 200, response.text
-    assert response.json()["data_version"] == "current-daily-new"
-    assert response.json()["curve"][-1]["session"] == "2026-10-23"
+@pytest.mark.parametrize("route", [
+    "/backtest-preview", "/experiment-run-spec-draft", "/experiment-run-spec-backtest",
+])
+def test_current_daily_execution_is_retired_even_without_available_data(monkeypatch, route):
+    def forbidden(*args, **kwargs):
+        pytest.fail("retired daily route attempted source resolution or download")
+
+    monkeypatch.setattr(current, "resolve", forbidden)
+    monkeypatch.setattr(current, "catalog", forbidden)
+    monkeypatch.setattr(current, "download", forbidden)
+    app = FastAPI()
+    app.include_router(current.router)
+    client = TestClient(app)
+    for payload in ({}, {"start": "2026-01-01", "end": "2026-10-23"}):
+        for headers in ({}, {"X-QTrade-Data-Version": "old-or-unknown-version"}):
+            response = client.post("/current" + route, json=payload, headers=headers)
+            assert response.status_code == 410
+            assert response.json()["detail"]["code"] == "LEGACY_DAILY_RESEARCH_RETIRED"
+    assert client.post("/current" + route, content=b"not-json").status_code == 410

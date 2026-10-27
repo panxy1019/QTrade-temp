@@ -1,0 +1,15 @@
+{
+  "classification": "IMMUTABLE_HISTORICAL_IMPLEMENTATION_REFERENCE",
+  "current_execution_certified": false,
+  "files": {
+    "api_app.source": {
+      "sha256": "192940cc70fad85efd388944fc60463f50af96c475531343caec461214a4f87e",
+      "source_path": "src/qtrade/api/app.py"
+    },
+    "intraday_factor.source": {
+      "sha256": "706c2856617bd461888b5611025c5c106d6819ece6b2b1e31aace7588a18a6ec",
+      "source_path": "src/qtrade/research/intraday_factor.py"
+    }
+  },
+  "source_revision": "36db0a67d39fe38bf6a8d1c3f289c36a5866c71a"
+}

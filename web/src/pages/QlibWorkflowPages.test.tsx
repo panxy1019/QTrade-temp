@@ -3,12 +3,71 @@ import { Link, MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ResearchWorkflowProvider } from '../components/ResearchWorkflowProvider'
 import catalog from '../test/fixtures/qlib-workflow.json'
+import boundCatalog from '../test/fixtures/qlib-bound-workflow.json'
 import { QlibBacktestPage, QlibResearchPage, QlibStrategyPage } from './QlibWorkflowPages'
-import type { ArchivedResearchTemplate, ResearchSpec } from '../research/qlibWorkflow'
+import type { ArchivedResearchTemplate, ResearchSpec, WorkflowCatalog } from '../research/qlibWorkflow'
 import { sourceBoundProtocol } from '../research/qlibWorkflow'
 
 vi.mock('../charts/ChartRenderer', () => ({ default: () => <div /> }))
 afterEach(() => { vi.unstubAllGlobals(); sessionStorage.clear() })
+
+function mountBound({ mismatch = false, failFirstQueue = false, strategy = false } = {}) {
+  let queueCount = 0
+  const supplied = structuredClone(boundCatalog) as unknown as WorkflowCatalog
+  const first = supplied.strategy_versions![0]
+  const fetcher = vi.fn(async (input: RequestInfo | URL, options?: RequestInit) => {
+    const path = String(input)
+    if (path.endsWith('/specification')) {
+      const spec = JSON.parse(String(options?.body)).spec as ResearchSpec
+      const definition = { ...structuredClone(first), spec: mismatch ? { ...spec, topk: 99 } : spec,
+        signal: { ...first.signal, model: spec.model } }
+      return { ok: true, status: 200, json: async () => ({ ...definition,
+        schema_version: 'qtrade.qlib-specification-preview.v1', spec: definition.spec,
+        strategy_definition: definition, source_revision: definition.source_revision,
+        expected_strategy_version: definition.strategy_version }) }
+    }
+    if (path.endsWith('/jobs') && failFirstQueue && queueCount++ === 0) {
+      return { ok: false, status: 503, json: async () => ({ detail: 'test-only queue unavailable' }) }
+    }
+    const body = path.endsWith('/catalog') ? supplied : path.endsWith('/session')
+      ? { configured: true, authenticated: true, user: 'research-test' } : { state: 'QUEUED' }
+    return { ok: true, status: 200, json: async () => body }
+  })
+  vi.stubGlobal('fetch', fetcher)
+  const path = '/research' + (strategy ? '?strategy_version=' + first.strategy_version : '')
+  render(<ResearchWorkflowProvider><MemoryRouter initialEntries={[path]}><Routes>
+    <Route path="/research" element={<QlibResearchPage />} />
+    <Route path="/experiments" element={<div>已进入任务状态页</div>} />
+  </Routes></MemoryRouter></ResearchWorkflowProvider>)
+  return { supplied, fetcher, first }
+}
+
+it('freezes the selected immutable strategy before queueing and preserves a failed retry', async () => {
+  const { fetcher, first } = mountBound({ failFirstQueue: true, strategy: true })
+  await waitFor(() => expect(screen.getByLabelText('实验名称')).toHaveValue(first.spec.name))
+  fireEvent.click(screen.getByRole('button', { name: '提交集群研究任务' }))
+  await screen.findByText(/test-only queue unavailable/)
+  fireEvent.click(screen.getByRole('button', { name: '提交集群研究任务' }))
+  await screen.findByText('已进入任务状态页')
+  const queues = fetcher.mock.calls.filter(([url]) => String(url).endsWith('/jobs'))
+  expect(queues).toHaveLength(2)
+  expect(JSON.parse(String(queues[0][1]?.body))).toEqual(JSON.parse(String(queues[1][1]?.body)))
+  expect(JSON.parse(String(queues[0][1]?.body)).expected_strategy_version).toBe(first.strategy_version)
+  expect(JSON.parse(String(queues[0][1]?.body)).spec.data_binding).toEqual(first.spec.data_binding)
+  expect(fetcher.mock.calls.filter(([url]) => String(url).endsWith('/specification'))).toHaveLength(1)
+})
+
+it('keeps edited version selection stable across polling and refuses a drifted preview', async () => {
+  const { supplied, fetcher } = mountBound({ mismatch: true })
+  await waitFor(() => expect(screen.getByLabelText('实验名称')).toHaveValue(supplied.default_spec.name))
+  fireEvent.change(screen.getByLabelText('实验名称'), { target: { value: 'edited-current-day' } })
+  supplied.default_spec = structuredClone(supplied.default_linear_spec)
+  fireEvent.click(screen.getByRole('button', { name: '刷新研究目录' }))
+  await waitFor(() => expect(screen.getByLabelText('实验名称')).toHaveValue('edited-current-day'))
+  fireEvent.click(screen.getByRole('button', { name: '提交集群研究任务' }))
+  await screen.findByText(/冻结规格与本次编辑不一致/)
+  expect(fetcher.mock.calls.some(([url]) => String(url).endsWith('/jobs'))).toBe(false)
+})
 
 function mount(authenticated: boolean, page: 'research' | 'strategies' = 'research', source?: string) {
   const supplied = source ? { ...catalog, source_snapshot_sha256: source,

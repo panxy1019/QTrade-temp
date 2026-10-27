@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import type { BacktestPreview, ExperimentRunSpecBacktest, IntradayFactorBacktest, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
-import { cancelPaperOrder, controlRuntime, createExperimentRunSpecDraft, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runBacktestPreview, runExperimentRunSpecBacktest, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
+import type { IntradayFactorBacktest, PlatformSnapshot, SingleStockFiveMinuteBacktest } from '../types'
+import { cancelPaperOrder, controlRuntime, loadLongFiveMinuteBarSeries, loadMinuteBarSeries, runIntradayFactorBacktest, runSingleStockFiveMinuteBacktest } from '../api/client'
 import { formatDirectionalDelta } from '../research/intradayDirectional'
 import { canonicalJson, sha256Hex } from '../research/strategyIdentity'
 import { HistoricalBacktestPage as BacktestPage, DataCenterPage, ExperimentPage, HistoricalMarketPage as MarketPage, MonitorPage, OrdersPage, PaperPage, PositionsPage, ResearchPage, RiskPage, StrategyPage } from './DataPages'
@@ -46,9 +46,6 @@ vi.mock('../api/client', () => ({
       { symbol, exchange: 'SSE', timestamp: `${tradingDay}T09:40:00+08:00`, trading_day: tradingDay, open: '41.05', high: '41.2', low: '41', close: '41.1', volume: '120', data_version: 'baostock-five-minute-long-v1', observation_type: 'HISTORICAL_FIVE_MINUTE_BAR' },
     ],
   })),
-  runBacktestPreview: vi.fn(),
-  createExperimentRunSpecDraft: vi.fn(),
-  runExperimentRunSpecBacktest: vi.fn(),
   runIntradayFactorBacktest: vi.fn(),
   runSingleStockFiveMinuteBacktest: vi.fn(),
   controlRuntime: vi.fn(),
@@ -1218,226 +1215,15 @@ describe('verified backtest analytics', () => {
     expect(screen.getByText('本次会话个股回测对比（1/30，覆盖 1 个板块）')).toBeInTheDocument()
   })
 
-  it('loads a code-backed template and hashes a complete run-spec draft without persisting it', async () => {
-    window.localStorage.clear()
+  it('keeps frozen results but ignores retired template deep links', () => {
     window.location.hash = '#/backtest?template=etf-momentum-rotation-v1'
-    const preview: BacktestPreview = {
-      classification: 'AD_HOC_PREVIEW_CURRENT_UNIVERSE_NOT_PIT', promotion: 'NOT_ELIGIBLE',
-      promotion_reasons: ['AD_HOC_PARAMETERS_NOT_PREDECLARED'], data_version: 'akshare-bars-v1',
-      data_checksum: 'abc',
-      parameters: {
-        start: '2026-01-01', end: '2026-08-12', factor: 'momentum', horizons: [20, 60, 120], top_k: 3,
-        rebalance_every: 20, reserve: '0.05', trend_window: null, volatility_window: null,
-        target_annual_volatility: null, initial_cash: '1000000',
-        transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
-      },
-      session_count: 150, universe_size: 30,
-      metrics: { total_return: '0.01', annualized_return: '0.02', sharpe: '0.3', maximum_drawdown: '-0.04', benchmark_return: '0.03', excess_return: '-0.02', information_ratio: '-0.5' },
-      benchmark: { strategy_id: 'equal-weight-buy-hold-benchmark-v1', decision_timing: 'first session close, next open execution', first_decision_known_symbols_only: true, current_universe_survivorship_bias: true, reserve: '0.05', transaction_cost_rate: '0.0015', slippage_rate: '0.0005', execution_timing: 'close decision, next open execution', metrics: { total_return: '0.03' } }, curve: [],
-      terminal_positions: [], execution_timing: 'close decision, next open execution',
-      external_order_transmission: false, preview_hash: 'b'.repeat(64),
-    }
-    vi.mocked(runBacktestPreview).mockResolvedValueOnce(preview)
-    const spec = {
-      experiment_id: 'rotation-replay-001', strategy_id: 'etf-momentum-rotation-v1',
-      git_commit: '81e357cb069a69d6be4d8ba7a9fb1acdf7167083', data_version: 'akshare-bars-v1',
-      universe: ['510300'], factor_set: ['momentum_20', 'momentum_60', 'momentum_120'],
-      label: 'next_session_portfolio_return',
-      split: { train_start: '2024-01-02', train_end: '2024-12-31', validation_start: '2025-01-01', validation_end: '2025-12-31', test_start: '2026-01-01', test_end: '2026-08-12' },
-      model: 'qtrade.research.multi_asset.MomentumAllocation', parameters: [] as Array<[string, string]>,
-      cost_model_id: 'explicit-rate-plus-slippage-v1', transaction_cost: '0.0015', seed: 7,
-    }
-    vi.mocked(createExperimentRunSpecDraft).mockResolvedValueOnce({
-      classification: 'READ_ONLY_COMPLETE_EXPERIMENT_RUN_SPEC_DRAFT_NOT_PERSISTED',
-      draft_status: 'HASHED_COMPLETE_FIELDS_NOT_IMMUTABLY_STORED',
-      template_id: 'etf-momentum-rotation-v1', data_checksum: 'abc', dataset_point_in_time: false,
-      spec_hash: 'c'.repeat(64), spec,
-      gates: {
-        complete_experiment_run_spec_fields: true, verified_dataset_identity_bound: true,
-        implemented_template_bound: true, chronological_non_overlapping_split: true,
-        immutable_artifact_persisted: false, independent_leakage_review_passed: false,
-        fresh_unseen_test_evidence: false,
-      },
-      creates_immutable_experiment: false, registry_write: false, paper_runtime_start: false,
-      live_runtime_start: false, state_mutation: false, external_order_transmission: false,
-    })
-    const bound: ExperimentRunSpecBacktest = {
-      classification: 'READ_ONLY_HASH_BOUND_EXPERIMENT_PREVIEW_NOT_PERSISTED',
-      template_id: 'etf-momentum-rotation-v1', spec_hash: 'c'.repeat(64),
-      data_checksum: 'abc', dataset_point_in_time: false, spec,
-      preview_hash: 'b'.repeat(64), binding_hash: 'd'.repeat(64), result: preview,
-      gates: {
-        single_request_spec_result_binding: true, spec_hash_recomputed_before_run: true,
-        verified_dataset_reloaded_before_run: true, preview_hash_bound_to_spec_hash: true,
-        immutable_artifact_persisted: false, independent_leakage_review_passed: false,
-        fresh_unseen_test_evidence: false,
-      },
-      creates_immutable_experiment: false, registry_write: false, paper_runtime_start: false,
-      live_runtime_start: false, state_mutation: false, external_order_transmission: false,
-    }
-    vi.mocked(runExperimentRunSpecBacktest).mockResolvedValueOnce(bound)
-
     render(<BacktestPage data={data} />)
-
-    expect(screen.getByText('已载入模板：ETF 动量轮动')).toBeInTheDocument()
-    expect(screen.getByText(/模板参数只是预填值，不是已冻结规格/)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
-    await waitFor(() => expect(runBacktestPreview).toHaveBeenCalledWith(expect.objectContaining({
-      factor: 'momentum', trend_window: null, volatility_window: null,
-      target_annual_volatility: null,
-    })))
-
-    fireEvent.change(screen.getByLabelText('实验 ID'), { target: { value: 'rotation-replay-001' } })
-    fireEvent.click(screen.getByRole('button', { name: '生成哈希化运行规格草案' }))
-
-    await waitFor(() => expect(createExperimentRunSpecDraft).toHaveBeenCalledWith(expect.objectContaining({
-      template_id: 'etf-momentum-rotation-v1', experiment_id: 'rotation-replay-001', seed: 7,
-      backtest: expect.objectContaining({ trend_window: null, volatility_window: null }),
-    })))
-    expect(screen.getByText(/规格哈希 cccccccccccccccc/)).toBeInTheDocument()
-    expect(screen.getByText(/哈希完整但未写入不可变存储/)).toBeInTheDocument()
-    expect(screen.getByText(/当前历史测试窗此前可见，不能变成新的未见证据/)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /导出运行规格草案/ })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: '按该哈希运行因果回测' }))
-    await waitFor(() => expect(runExperimentRunSpecBacktest).toHaveBeenCalledWith(expect.objectContaining({
-      template_id: 'etf-momentum-rotation-v1', experiment_id: 'rotation-replay-001', seed: 7,
-      backtest: expect.objectContaining({ trend_window: null, volatility_window: null }),
-    })))
-    expect(screen.getByText(/规格→结果绑定 dddddddddddddddd/)).toBeInTheDocument()
-    expect(screen.getByText(/同一请求重新计算规格并运行，但仍未持久化为正式实验/)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /导出规格绑定回测/ })).toBeInTheDocument()
-    expect(screen.getByText('同窗 Buy-and-Hold')).toBeInTheDocument()
-    expect(screen.getAllByText('主动超额').length).toBeGreaterThan(0)
-    expect(screen.getByText(/同一窗口、初始资金、现金预留、成本、滑点和下一开盘执行/)).toBeInTheDocument()
-    fireEvent.change(screen.getByLabelText('本地实验名称'), { target: { value: '绑定动量方案' } })
-    fireEvent.click(screen.getByRole('button', { name: '保存到本地实验' }))
-    expect(screen.getByText(/已保存“绑定动量方案”/)).toBeInTheDocument()
-    expect(screen.getByText('绑定草案')).toBeInTheDocument()
-    expect(screen.getByText(/规格 cccccccccccc… · 绑定 dddddddddddd…/)).toBeInTheDocument()
-    fireEvent.change(screen.getByLabelText('实验 ID'), { target: { value: 'rotation-replay-002' } })
-    expect(screen.queryByRole('button', { name: '按该哈希运行因果回测' })).not.toBeInTheDocument()
-    expect(screen.queryByText(/规格→结果绑定 dddddddddddddddd/)).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: '载入参数' }))
-    expect(screen.getByText('已载入模板：ETF 动量轮动')).toBeInTheDocument()
-    expect(screen.getByLabelText('实验 ID')).toHaveValue('')
-    expect(screen.getByText(/历史规格 cccccccccccc… \/ 绑定 dddddddddddd… 仅用于识别/)).toBeInTheDocument()
-    expect(screen.getByText(/原 13 字段规格未恢复，实验 ID 已留空，必须重新填写并生成新草案哈希/)).toBeInTheDocument()
-    expect(screen.queryByText(/规格→结果绑定 dddddddddddddddd/)).not.toBeInTheDocument()
-    window.localStorage.clear()
-    window.location.hash = ''
-  }, 10_000)
-
-  it('runs an adjustable preview without presenting it as promotion evidence', async () => {
-    window.localStorage.clear()
-    const preview: BacktestPreview = {
-      classification: 'AD_HOC_PREVIEW_CURRENT_UNIVERSE_NOT_PIT', promotion: 'NOT_ELIGIBLE',
-      promotion_reasons: ['AD_HOC_PARAMETERS_NOT_PREDECLARED'], data_version: 'akshare-bars-v1',
-      data_checksum: 'abc',
-      parameters: {
-        start: '2024-01-02', end: '2026-08-12', factor: 'momentum', horizons: [20, 60, 120], top_k: 3,
-        rebalance_every: 20, reserve: '0.05', trend_window: 120, volatility_window: 20,
-        target_annual_volatility: '0.15', initial_cash: '1000000',
-        transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
-      },
-      session_count: 632, universe_size: 30,
-      metrics: { total_return: '0.03', annualized_return: '0.01', sharpe: '0.4', maximum_drawdown: '-0.09', benchmark_return: '0.02', excess_return: '0.01', information_ratio: '0.2', average_exposure: '0.5', number_of_trades: '42', turnover: '2', transaction_costs: '100' },
-      benchmark: { strategy_id: 'equal-weight-buy-hold-benchmark-v1', decision_timing: 'first session close, next open execution', first_decision_known_symbols_only: true, current_universe_survivorship_bias: true, reserve: '0.05', transaction_cost_rate: '0.0015', slippage_rate: '0.0005', execution_timing: 'close decision, next open execution', metrics: { total_return: '0.02' } },
-      curve: [{ session: '2024-01-02', equity: '1000000', drawdown: '0', benchmark_equity: '1000000', benchmark_drawdown: '0', excess_return: '0' }],
-      terminal_positions: [], execution_timing: 'close decision, next open execution',
-      external_order_transmission: false,
-      preview_hash: 'a'.repeat(64),
-    }
-    vi.mocked(runBacktestPreview).mockResolvedValueOnce(preview)
-    render(<BacktestPage data={data} />)
-    expect(screen.getByRole('button', { name: /导出本地对比/ })).toBeDisabled()
-    fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
-    expect(await screen.findByText('已完成 632 个会话、30 个标的 · 动量')).toBeInTheDocument()
-    expect(screen.getByText(/即时预览，不是策略晋级证据/)).toBeInTheDocument()
-    expect(screen.getAllByText(/结论固定为 NOT_ELIGIBLE/).length).toBeGreaterThan(0)
-    expect(runBacktestPreview).toHaveBeenCalledWith(expect.objectContaining({
-      factor: 'momentum', horizons: [20, 60, 120], top_k: 3, rebalance_every: 20,
-    }))
-    fireEvent.change(screen.getByLabelText('本地实验名称'), { target: { value: '动量方案 A' } })
-    fireEvent.click(screen.getByRole('button', { name: '保存到本地实验' }))
-    expect(screen.getByText(/已保存“动量方案 A”/)).toBeInTheDocument()
-    expect(screen.getAllByText('动量方案 A').length).toBeGreaterThan(0)
-    expect(screen.getByText('即时预览')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '载入参数' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /导出本地对比/ })).toBeEnabled()
-    expect(screen.getByText(/记录严格绑定当前数据版本与 checksum/)).toBeInTheDocument()
-    expect(screen.getByText(/可导出确定性只读 JSON 留档或跨设备核对，但不会自动同步/)).toBeInTheDocument()
-    const localComparison = screen.getByText('本地实验对比（1/30）').closest('.ant-card')
-    expect(localComparison).not.toBeNull()
-    const comparison = within(localComparison as HTMLElement)
-    expect(comparison.getAllByText('累计收益').length).toBeGreaterThan(0)
-    expect(comparison.getAllByText('年化收益').length).toBeGreaterThan(0)
-    expect(comparison.getAllByText('Sharpe').length).toBeGreaterThan(0)
-    expect(comparison.getAllByText('最大回撤').length).toBeGreaterThan(0)
-    expect(comparison.getAllByText('匹配基准').length).toBeGreaterThan(0)
-    expect(comparison.getAllByText('主动超额').length).toBeGreaterThan(0)
-    expect(comparison.getAllByText('信息比率').length).toBeGreaterThan(0)
-    expect(comparison.getAllByText('1.00%')).toHaveLength(2)
-    expect(comparison.getByText('2.00%')).toBeInTheDocument()
-    expect(comparison.getByText('0.200')).toBeInTheDocument()
-    expect(comparison.getByText(/匹配基准同样使用当前非 PIT 标的池，存在幸存者偏差/)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /导出完整结果/ })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: '载入参数' }))
-    expect(screen.getByText(/已载入“动量方案 A”的参数；请重新运行以验证当前结果/)).toBeInTheDocument()
-    expect(screen.queryByText(/已载入模板：/)).not.toBeInTheDocument()
-    expect(screen.queryByText(/历史规格/)).not.toBeInTheDocument()
-
-    vi.mocked(runBacktestPreview).mockResolvedValueOnce({ ...preview, preview_hash: 'b'.repeat(64) })
-    fireEvent.click(screen.getByRole('button', { name: '运行即时回测' }))
-    await waitFor(() => expect(runBacktestPreview).toHaveBeenCalledTimes(2))
-    fireEvent.change(screen.getByLabelText('本地实验名称'), { target: { value: '动量方案 B' } })
-    fireEvent.click(screen.getByRole('button', { name: '保存到本地实验' }))
-    expect(screen.getAllByRole('button', { name: '删除' })).toHaveLength(2)
-
-    fireEvent.click(screen.getAllByRole('button', { name: '删除' })[0])
-    fireEvent.click(await screen.findByRole('button', { name: 'OK' }))
-    await waitFor(() => expect(screen.queryByText('动量方案 B')).not.toBeInTheDocument())
-    fireEvent.click(screen.getByRole('button', { name: '删除' }))
-    fireEvent.click(await screen.findByRole('button', { name: 'OK' }))
-    await waitFor(() => expect(screen.queryByText('动量方案 A')).not.toBeInTheDocument())
-    expect(screen.getByText('运行回测后可保存结果，用于反复调参与对比。')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /导出本地对比/ })).toBeDisabled()
-    window.localStorage.clear()
-  }, 20_000)
-
-  it('does not restore a locally edited binding whose template and parameters disagree', () => {
-    window.localStorage.clear()
-    window.location.hash = '#/backtest'
-    window.localStorage.setItem('qtrade.local-backtest-experiments.v1', JSON.stringify([{
-      schema_version: 1,
-      name: '被篡改绑定',
-      saved_at: '2026-08-27T06:00:00+08:00',
-      preview_hash: 'e'.repeat(64),
-      data_version: 'akshare-bars-v1',
-      data_checksum: 'abc',
-      session_count: 100,
-      universe_size: 30,
-      parameters: {
-        start: '2026-01-01', end: '2026-08-12', factor: 'momentum',
-        horizons: [20, 60, 120], top_k: 3, rebalance_every: 20,
-        reserve: '0.05', trend_window: 120, volatility_window: 20,
-        target_annual_volatility: '0.15', initial_cash: '1000000',
-        transaction_cost_rate: '0.0015', slippage_rate: '0.0005',
-      },
-      metrics: { total_return: '0.01' },
-      binding: {
-        classification: 'BROWSER_LOCAL_REPLAY_BINDING_NOT_IMMUTABLE',
-        template_id: 'etf-momentum-rotation-v1',
-        spec_hash: 'f'.repeat(64), binding_hash: 'a'.repeat(64),
-        creates_immutable_experiment: false, registry_write: false,
-        paper_runtime_start: false, live_runtime_start: false,
-      },
-    }]))
-    render(<BacktestPage data={data} />)
-    fireEvent.click(screen.getByRole('button', { name: '载入参数' }))
-    expect(screen.getByText(/“被篡改绑定”的历史模板身份与参数不一致，仅载入参数且未恢复模板/)).toBeInTheDocument()
-    expect(screen.queryByText(/已载入模板：/)).not.toBeInTheDocument()
-    expect(screen.getByLabelText('实验 ID')).toHaveValue('')
-    window.localStorage.clear()
+    expect(screen.queryByLabelText('基线策略模板')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '运行即时回测' })).not.toBeInTheDocument()
+    expect(screen.queryByText('ExperimentRunSpec 哈希草案')).not.toBeInTheDocument()
+    expect(screen.getByText('旧日线本地实验档案')).toBeInTheDocument()
+    expect(screen.getByText('探索性领先者，不是 Champion')).toBeInTheDocument()
+    expect(screen.getByText('个股 5 分钟因果回测')).toBeInTheDocument()
     window.location.hash = ''
   })
 
@@ -2500,16 +2286,15 @@ describe('verified robustness evidence', () => {
 })
 
 describe('verified experiment candidates', () => {
-  it('starts from implemented baseline templates without pretending they are validated strategies', () => {
+  it('retains historical candidates without showing the retired template catalog', () => {
     render(<StrategyPage data={data} />)
-    expect(screen.getByText('已实现基线策略模板 · 5')).toBeInTheDocument()
-    expect(screen.getByText('ETF 动量轮动')).toBeInTheDocument()
-    expect(screen.getByText('4 个主动模板 + 1 个比较基准')).toBeInTheDocument()
-    expect(screen.getByText(/选择模板不会创建实验、注册策略或启动模拟盘/)).toBeInTheDocument()
-    expect(screen.getByText(/下一步：冻结 ExperimentRunSpec 后运行因果回测/)).toBeInTheDocument()
-    fireEvent.click(screen.getAllByRole('button', { name: '载入因果回测' })[0])
-    expect(window.location.hash).toBe('#/backtest?template=etf-momentum-rotation-v1')
-    window.location.hash = ''
+    expect(screen.getByRole('heading', { name: '历史实验候选' })).toBeInTheDocument()
+    expect(screen.getByText('abc123def456')).toBeInTheDocument()
+    expect(screen.queryByText(/已实现基线策略模板/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '载入因果回测' })).not.toBeInTheDocument()
+    for (const template of data.strategyTemplates.templates) {
+      expect(screen.queryByText(template.name)).not.toBeInTheDocument()
+    }
   })
 
   it('labels full-chain records as ineligible candidates rather than registered strategies', () => {

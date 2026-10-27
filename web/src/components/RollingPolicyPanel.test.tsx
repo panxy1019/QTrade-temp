@@ -23,7 +23,7 @@ it('preserves the reviewed policy and retry identity without implicitly enabling
   const refresh = vi.fn(async () => {})
   render(<RollingPolicyPanel value={value} ready authenticated refresh={refresh} />)
   fireEvent.click(screen.getByRole('button', { name: '配置训练政策' }))
-  expect(await screen.findByText('仅创建研究候选，人工激活保持独立')).toBeInTheDocument()
+  expect(await screen.findByText('仅创建研究候选，批准政策保持独立')).toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: '保存训练政策' }))
   await screen.findByText('Error: queue unavailable')
   await waitFor(() => expect(screen.getByRole('button', { name: '保存训练政策' })).not.toHaveClass('ant-btn-loading'))

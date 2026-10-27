@@ -24,6 +24,19 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+21:40 checkpoint: real October 27 version/prediction/later candidate validation/
+signals exist. Private C plus real production C delivery, corrected D replay and
+actual-public twelve-book stock E pass for their pinned inputs. Preserve all
+prior failure evidence. User now authorizes automatic candidate research approval
+as well as ACTIVE daily inference: implement signed standing policy with epoch
+CAS and no new PAPER initialization/recovery authority. Version-bound research
+contracts, registry/job/model linking and webpage selection are implemented;
+old five templates and daily tool endpoints are retired. Windows integration,
+build/lint and focused webpage checks pass; actual Linux, live new workflow,
+production and visual verification still need completing. Original PAPER PID and
+rolling OFF/LIVE false remain unchanged. Full PIT/history certification and all
+STEP1 acceptance are not inferred from these individual successes.
+
 19:38 report checkpoint: overall implementation/effect/roadmap documented in
 docs/QTRADE_OVERALL_PROGRESS_REPORT_20261027.md, backed by actual private state,
 eight fixed API captures and another full public probe (production b64b5f9,

@@ -1,0 +1,27 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "CANDIDATE_AUDITOR_OVERLAY_LINUX_TEST",
+  "overlay_revision": "36db0a6",
+  "base_release": "0a545a8a6741c9e210d3077c877d8912170fc9e9",
+  "files": {
+    "scripts/audit_qlib_candidate_transition.py": {
+      "sha256": "0a4d7c85933aa4f6e6a829d5a20265cf93f70d57462b13d42d2e863cadfcd878",
+      "gitblob": "f1636880e1dc7285c5eab96aa09f838967176cf2"
+    },
+    "tests/test_candidate_transition_audit.py": {
+      "sha256": "7377cf66688b5b2a8748b59d4c712f87bfe460ef7bb773de2467cc33cacd2b00",
+      "gitblob": "71db1e224c465b6388d20539e1586de25f1abecc"
+    }
+  },
+  "started_at": "2026-10-27T13:09:35.673947+00:00",
+  "finished_at": "2026-10-27T13:09:41.730563+00:00",
+  "returncode": 0,
+  "source_service_changed": false,
+  "evidence_sha256": "3623cf951c6caf64f4a463d445a9d0427901eb27f8336a0645bf2d7918a2d12d"
+}

@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/0a545a8a6741c9e210d3077c877d8912170fc9e9/scripts/audit_qlib_session_transition.py", line 65, in <module>
+    main()
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/0a545a8a6741c9e210d3077c877d8912170fc9e9/scripts/audit_qlib_session_transition.py", line 53, in main
+    delivery = verify_public_delivery(result, current, prediction, signals,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/0a545a8a6741c9e210d3077c877d8912170fc9e9/scripts/qlib_public_delivery.py", line 234, in verify_public_delivery
+    captures = [_get(path, deadline) for path in (DEPLOYMENT, CATALOG, VERSIONS, SIGNALS, CATALOG)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/0a545a8a6741c9e210d3077c877d8912170fc9e9/scripts/qlib_public_delivery.py", line 234, in <listcomp>
+    captures = [_get(path, deadline) for path in (DEPLOYMENT, CATALOG, VERSIONS, SIGNALS, CATALOG)]
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/0a545a8a6741c9e210d3077c877d8912170fc9e9/scripts/qlib_public_delivery.py", line 118, in _get
+    raise ValueError('PUBLIC_DELIVERY_HTTP_FETCH_FAILED') from None
+ValueError: PUBLIC_DELIVERY_HTTP_FETCH_FAILED

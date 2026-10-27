@@ -1,6 +1,27 @@
 # Current state
 
-Last updated: 2026-10-27 19:38 Shanghai, actual report checkpoint.
+Last updated: 2026-10-27 21:40 Shanghai, close-chain acceptance and source integration.
+
+- October 27 automatic completion is real at 20:23:26, version 09a67b13,
+  987 current / 990 historical; original ACTIVE prediction completes at 20:26,
+  candidate later-version validation at 20:30, then signals. C private replay
+  and actual public delivery pass separately (public at 21:08 on main b64b5f9).
+  D's corrected auditor passes the real replay at 21:11; original VALIDATING
+  false rejection is retained. Actual-public stock E passes all twelve books.
+  These pinned checks do not claim whole STEP1, rendering or future-session P&L.
+
+- User explicitly authorizes both automatic daily prediction and validated
+  research candidate activation. New standing policy is implemented with signed
+  scope, durable attempts, final ACTIVE/data-epoch CAS and new-PAPER initialization
+  isolation. Original PAPER 175982 is not restarted or recovered; rolling OFF
+  and LIVE false remain. Policy is not yet deployed/enabled. Immutable version/
+  feature/strategy form and Registry/job/model links are implemented; old five
+  templates and daily execution endpoints are retired in source. Linux/new-job/
+  production acceptance remains to run. See docs/QLIB_UNIFIED_RESEARCH_CLOSEOUT_20261027.md.
+
+- The old finite eight-run close heartbeat is deleted as obsolete after the
+  actual C/D/stock E observations and changed user authorization. Continue the
+  current human-requested work; do not replay its old pending-state instructions.
 
 - Overall implementation/effect/next-plan report is now in
   docs/QTRADE_OVERALL_PROGRESS_REPORT_20261027.md. Actual 19:26 full public

@@ -1,3 +1,30 @@
+import { canonicalJson } from './strategyIdentity'
+
+export const alpha158FeatureVersion = 'qlib-0.9.7-Alpha158-v1'
+
+interface ResearchAuthority {
+  live_trading_enabled: false
+  external_order_transmission: false
+  point_in_time: false
+  real_data_paper_readiness: false
+  promotion: 'NOT_ELIGIBLE'
+}
+
+export interface ResearchDataBinding extends ResearchAuthority {
+  schema_version: 'qtrade.qlib-research-data-binding.v1'
+  dataset_id: string
+  data_version_id: string
+  manifest_sha256: string
+  dataset_sha256: string
+  source_snapshot_sha256: string
+  ready_event_id: string
+  actual_end: string
+  start: string
+  supported_universe_sha256: string
+  supported_symbols: number
+  evidence_sha256: string
+}
+
 export interface ResearchSpec {
   name: string
   dataset_id: string
@@ -15,6 +42,46 @@ export interface ResearchSpec {
   seed: number
   universe_policy: 'supported_a_share'
   source_snapshot_sha256?: string
+  data_binding?: ResearchDataBinding
+  feature_set_version?: typeof alpha158FeatureVersion
+}
+
+export interface ResearchStrategyDefinition extends ResearchAuthority {
+  schema_version: 'qtrade.qlib-strategy-definition.v1'
+  strategy_id: string
+  strategy_version: string
+  evidence_sha256: string
+  spec: ResearchSpec
+  source_revision: string
+  signal: { kind: string; model: string; label: string; model_artifact_id: string | null }
+  feature_set: { id: string; version: string; feature_count: number; handler: string }
+  portfolio: { method: string; topk: number; n_drop: number; hold_thresh: number; risk_degree: number }
+  execution: { timing: string; deal_price: string; buy_cost_bps: number; sell_cost_bps: number; min_cost: number; rules_certified: false }
+  research_only: true
+  paper_admission: false
+  model_activation: false
+  [key: string]: unknown
+}
+
+export interface RegisteredResearchStrategy {
+  model_artifacts?: Array<{ job_id: string; model_id: string; run_id: string; data_version_id: string; source_revision: string }>
+  strategy_id: string
+  version: string
+  state: string
+  name?: string
+  family?: string
+  contract: ResearchStrategyDefinition
+  job_ids?: string[]
+  lineage?: Record<string, unknown> | null
+}
+
+export interface ResearchSpecification extends ResearchAuthority {
+  schema_version: 'qtrade.qlib-specification-preview.v1'
+  spec: ResearchSpec
+  source_revision: string
+  strategy_definition: ResearchStrategyDefinition
+  expected_strategy_version: string
+  [key: string]: unknown
 }
 
 export interface ResearchAudit {
@@ -57,11 +124,13 @@ export interface WorkflowCatalog {
   models: Array<{ id: string; name: string; parameters: Record<string, unknown> }>
   feature_sets: string[]
   portfolio_methods: string[]
-  datasets: Array<{ id: string; symbols: number; rows: number; start: string; end: string; status: string; audit: ResearchAudit }>
+  datasets: Array<{ id: string; symbols: number; rows: number; start: string; end: string; status: string; audit: ResearchAudit; data_binding?: ResearchDataBinding }>
+  strategy_versions?: ResearchStrategyDefinition[]
+  strategies?: RegisteredResearchStrategy[]
   default_spec: ResearchSpec
   default_linear_spec: ResearchSpec
   experiments: WorkflowExperiment[]
-  worker: { state: string; heartbeat_at?: string; concurrency?: number }
+  worker: { state: string; heartbeat_at?: string; concurrency?: number; source_revision?: string }
 }
 
 export interface WorkflowResult {
@@ -106,6 +175,55 @@ export interface ArchivedResearchTemplate {
 
 export const sourceBoundProtocol = 'ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V3'
 const sourceBoundProtocols = new Set([sourceBoundProtocol, 'ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V2'])
+
+function researchOnly(value: ResearchAuthority): boolean {
+  return value.live_trading_enabled === false && value.external_order_transmission === false &&
+    value.point_in_time === false && value.real_data_paper_readiness === false && value.promotion === 'NOT_ELIGIBLE'
+}
+
+export function bindResearchData(spec: ResearchSpec, binding: ResearchDataBinding): ResearchSpec {
+  const hashes = [binding.data_version_id, binding.manifest_sha256, binding.dataset_sha256,
+    binding.source_snapshot_sha256, binding.ready_event_id, binding.supported_universe_sha256, binding.evidence_sha256]
+  if (binding.schema_version !== 'qtrade.qlib-research-data-binding.v1' || !researchOnly(binding) ||
+    hashes.some(value => !/^[a-f0-9]{64}$/.test(value)) ||
+    binding.dataset_id !== 'qlib-version-' + binding.data_version_id ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(binding.start) || !/^\d{4}-\d{2}-\d{2}$/.test(binding.actual_end) ||
+    binding.start > binding.actual_end || !Number.isInteger(binding.supported_symbols) ||
+    binding.supported_symbols < 1 || binding.supported_symbols > 6000) {
+    throw new Error('READY 数据版本描述或研究权限不匹配，未载入')
+  }
+  return { ...structuredClone(spec), dataset_id: binding.dataset_id,
+    data_binding: structuredClone(binding), source_snapshot_sha256: binding.source_snapshot_sha256,
+    features: 'Alpha158', feature_set_version: alpha158FeatureVersion }
+}
+
+export function strategyDraft(definition: ResearchStrategyDefinition): ResearchSpec {
+  if (definition.schema_version !== 'qtrade.qlib-strategy-definition.v1' || !researchOnly(definition) ||
+    !/^[a-f0-9]{64}$/.test(definition.strategy_version) ||
+    definition.strategy_id !== 'qlib-' + definition.strategy_version ||
+    !/^[a-f0-9]{64}$/.test(definition.evidence_sha256) || !/^[a-f0-9]{40}$/.test(definition.source_revision) ||
+    definition.research_only !== true || definition.paper_admission !== false || definition.model_activation !== false ||
+    !definition.spec.data_binding || definition.spec.feature_set_version !== alpha158FeatureVersion ||
+    definition.feature_set.id !== 'Alpha158' || definition.feature_set.version !== alpha158FeatureVersion ||
+    definition.portfolio.method !== 'TopkDropout' || !['linear', 'lightgbm'].includes(definition.spec.model) ||
+    definition.signal.model !== definition.spec.model || definition.execution.rules_certified !== false) {
+    throw new Error('策略版本或受支持合同不匹配，未载入')
+  }
+  const checked = bindResearchData(definition.spec, definition.spec.data_binding)
+  if (canonicalJson(checked) !== canonicalJson(definition.spec)) throw new Error('策略版本的数据绑定不一致，未载入')
+  return checked
+}
+
+export function checkedSpecification(value: ResearchSpecification, expected: ResearchSpec): ResearchSpecification {
+  const selected = strategyDraft(value.strategy_definition)
+  if (value.schema_version !== 'qtrade.qlib-specification-preview.v1' || !researchOnly(value) ||
+    canonicalJson(value.spec) !== canonicalJson(expected) || canonicalJson(selected) !== canonicalJson(expected) ||
+    value.expected_strategy_version !== value.strategy_definition.strategy_version ||
+    value.source_revision !== value.strategy_definition.source_revision) {
+    throw new Error('冻结规格与本次编辑不一致，未提交任务')
+  }
+  return structuredClone(value)
+}
 
 export function canReuseArchivedResult(result: WorkflowResult): boolean {
   return result.comparison_protocol === sourceBoundProtocol && !!result.spec &&
@@ -170,7 +288,7 @@ export function comparisonIssue(left: WorkflowResult, right: WorkflowResult): st
     const { name, model, ...rest } = spec
     void name
     void model
-    return JSON.stringify(rest, Object.keys(rest).concat(['train', 'valid', 'test']).sort())
+    return canonicalJson(rest)
   }
   if (comparable(left.spec) !== comparable(right.spec)) return '时间切分、种子、组合或成本不一致；请仅改变模型后重跑'
   if (left.curve.map(r => r.date).join() !== right.curve.map(r => r.date).join()) return '评价日期未对齐'
