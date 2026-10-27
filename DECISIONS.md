@@ -3903,7 +3903,9 @@ test inputs only, never a production-clock override.
 
 ## ADR-193 — Freeze selectable Qlib research contracts in the strategy lifecycle
 
-Status: implemented and undergoing cluster/production acceptance, 2026-10-27.
+Status: deployed, with actual current-version and historical-version research
+accepted through production API and full archive replay,2026-10-28. Remaining
+browser and true next-day STEP1 gates are tracked independently.
 
 Reuse DataVersionCatalog, existing bounded workflow, fitted restore checks and
 StrategyRegistry. A historical READY version may be selected without being the
@@ -3928,6 +3930,14 @@ fixed original identities; do not re-sign the old result as today's API. Deploym
 evidence is byte-preserved with Git -text. A descriptor publication cache is not
 a fresh full-file scan; each actual job independently verifies the entire version
 and requires regenerated Provider bytes to agree with its admitted input.
+
+Actual Ridge job578bb610 selects October26/d33a7466 after the serving head has
+advanced to October27/09a67b13. Its complete12,486-file archive and580 executed
+source files verify, as do fitted restore, EXPERIMENT/job/model links and actual
+public result/reusable spec. The current head, ACTIVE, policy, existing models
+and forward accounts remain unchanged. Explicitly classify this as retrospective
+research: historical input selection does not establish that those source states
+were available at the time, nor does it create a new prospective day observation.
 
 ## ADR-194 — Human standing consent permits bounded research model promotion
 

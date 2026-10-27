@@ -1,6 +1,28 @@
 # Current state
 
-Last updated: 2026-10-28 01:22 Shanghai, PR34 merged and actual default production ae33 verified.
+Last updated: 2026-10-28 01:58 Shanghai, real historical version selection accepted.
+
+- A missing real acceptance case is now completed: production-authenticated
+  Ridge job578bb610 selects admitted October26/d33a7466 while current default
+  and serving head stay October27/09a67b13. Worker096 completes01:46:07;
+  independent replay passes01:49 after checking all12,486 archive files and580
+  actual source files against Git. Dataset2,158,792rows/990 retained partitions,
+  effective891, immutable strategy2e849335, TRAINED model98d27455/zero activations.
+- Fresh-process fitted restore differs2.359e-16 with unchanged processors and
+  fit forbidden. StrategyRegistry/job/model links agree; original models, ACTIVE
+  approval/data epoch, forward14-book fingerprints/owner/instance and other eight
+  tracked owners remain unchanged. Only the new Ridge training artifact is added;
+  existing promotion policy permits lightgbm only and is unchanged.
+- Actual default-origin catalog/result captures pass01:52 on mainae33 and retain
+  old selected data versus current default. The published reuse-template endpoint
+  passes01:53:58 and returns the exact original spec, with no default backfill.
+  This is retrospective research and API acceptance, not new-day/prospective
+  validation or browser rendering. See docs/QLIB_HISTORICAL_VERSION_RESEARCH_20261028.md.
+- STEP1 remains incomplete: October28 true close/current-model forward observations
+  and browser acceptance still wait. Bounded close heartbeat, LIVE false, rolling
+  OFF, consumed handover/recovery claims and every resource budget stay unchanged.
+
+Previous2026-10-28 01:22 checkpoint (historical observations):
 
 - PR34 merges as mainae33a7c8c27ea721eb3be1e4430b562a44b67f91. Vercel succeeds;
   actual default-origin C passes01:15 for ACTIVE295/source096 prediction/signals.

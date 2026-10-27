@@ -1,0 +1,81 @@
+{
+  "at": "2026-10-27T17:52:03.166881+00:00",
+  "browser_verified": false,
+  "captures": [
+    {
+      "at": "2026-10-27T17:52:00.845103+00:00",
+      "body_bytes": 239,
+      "headers": {
+        "Cache-Control": "public, max-age=15",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:50:30 GMT",
+        "X-Vercel-Id": "sfo1::iad1::vsmqg-1793123522412-f8e2bf04a28b"
+      },
+      "name": "deployment-before",
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72",
+      "status": 200,
+      "url": "https://q-trade-temp.vercel.app/api/deployment"
+    },
+    {
+      "at": "2026-10-27T17:52:01.813733+00:00",
+      "body_bytes": 428541,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:51:30 GMT",
+        "X-Vercel-Id": "sfo1::iad1::qxsrh-1793123522887-bdce371df6f1"
+      },
+      "name": "catalog",
+      "sha256": "4fbe0a9010533f9426dcd312d6301e76104e622e914ae1e83be7d14f52c4b8cb",
+      "status": 200,
+      "url": "https://q-trade-temp.vercel.app/api/research/catalog"
+    },
+    {
+      "at": "2026-10-27T17:52:02.693833+00:00",
+      "body_bytes": 184325,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:51:30 GMT",
+        "X-Vercel-Id": "sfo1::iad1::bqmnc-1793123523855-dd619c361117"
+      },
+      "name": "result",
+      "sha256": "671da4edacf993d1c9b0e03c79c88a5f5e94d68236af85baf564800c76f8b97a",
+      "status": 200,
+      "url": "https://q-trade-temp.vercel.app/api/research/experiments/578bb6107577406185782a08e1c499d7"
+    },
+    {
+      "at": "2026-10-27T17:52:03.166849+00:00",
+      "body_bytes": 239,
+      "headers": {
+        "Cache-Control": "public, max-age=15",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:50:30 GMT",
+        "X-Vercel-Id": "sfo1::iad1::crdbn-1793123524739-d43a8c4dde93"
+      },
+      "name": "deployment-after",
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72",
+      "status": 200,
+      "url": "https://q-trade-temp.vercel.app/api/deployment"
+    }
+  ],
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "comparison_protocol": "ALIGNED_SUPPORTED_UNIVERSE_SOURCE_BOUND_CONSTRAINTS_V3",
+  "default_data_end": "2026-10-27",
+  "default_version_unchanged": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+  "evidence_sha256": "cb0c5bb5034f817962c986c903e21132aa867d374683529aa8ab83f8863f0e63",
+  "external_order_transmission": false,
+  "job_id": "578bb6107577406185782a08e1c499d7",
+  "kind": "ACTUAL_PUBLIC_ARCHIVED_VERSION_RESEARCH_RESULT",
+  "live_trading_enabled": false,
+  "point_in_time": false,
+  "promotion": "NOT_ELIGIBLE",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "retrospective_replay_only": true,
+  "selected_data_end": "2026-10-26",
+  "selected_version": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+  "state": "PASSED_PUBLIC_VERSION_BINDING",
+  "strategy_version": "2e849335616ce055b72eb61c480ca378121f50d3a69d28ff2ba187ca371ddafb",
+  "whole_step1_accepted": false
+}

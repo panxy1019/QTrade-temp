@@ -1,0 +1,425 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "ACTUAL_ARCHIVED_JOB_ALREADY_RUNNING_REFERENCE",
+  "at": "2026-10-27T17:42:00.576226+00:00",
+  "job_id": "578bb6107577406185782a08e1c499d7",
+  "context": {
+    "active": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+    "approval_sha256": "6f1ec61bda1a28d918dd331ad0e0ae6ea7ebcc39320f8e4dade424bf726bd238",
+    "data_version": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "data_event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+    "model_states": {
+      "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707": "STAGED",
+      "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293": "RETIRED",
+      "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487": "ACTIVE",
+      "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c": "TRAINED",
+      "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444": "TRAINED"
+    }
+  },
+  "models": [
+    [
+      "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+      "ACTIVE",
+      "2026-10-27T14:20:15.847042+00:00",
+      1
+    ],
+    [
+      "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "RETIRED",
+      "2026-10-26T14:52:26.286301+00:00",
+      1
+    ],
+    [
+      "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c",
+      "TRAINED",
+      null,
+      0
+    ],
+    [
+      "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707",
+      "STAGED",
+      null,
+      0
+    ],
+    [
+      "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444",
+      "TRAINED",
+      null,
+      0
+    ]
+  ],
+  "services": {
+    "workflow": {
+      "pid": 338258,
+      "start_ticks": "1014325467"
+    },
+    "data": {
+      "pid": 334634,
+      "start_ticks": "1014197281"
+    },
+    "publisher": {
+      "pid": 294214,
+      "start_ticks": "1012537254"
+    },
+    "etf-shadow": {
+      "pid": 299932,
+      "start_ticks": "1012716210"
+    },
+    "maintenance": {
+      "pid": 213587,
+      "start_ticks": "1010098278"
+    },
+    "history": {
+      "pid": 164340,
+      "start_ticks": "1006203844"
+    },
+    "pit": {
+      "pid": 153768,
+      "start_ticks": "1005737133"
+    },
+    "observer": {
+      "pid": 4471,
+      "start_ticks": "995191546"
+    }
+  },
+  "forward_fingerprints": {
+    "roster_sha256": "c20a17cb0c6148f820cab1abd98170a288b22b904a69a2c437df272d5e021887",
+    "books": {
+      "05406b836b0a6b91e335b0e34b0e1b0c58f9f07b1ee3f649030f90013ac4e709": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "0a7daa70cbce93f04ec57b99bd62c2a415b3d3070b95df330f1af492f7afa5a4"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "77946563bf319aa2df0e67d98179143f1ea4df022bf35b6aef35f3c6540c0e51"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "4ad6883746c1fe7b08f37880e998746ee2a8e510e676eb817461b1c67e40ac8a"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "7b244b974e40f0771452388ffe1c9640ca4570c913a3d377eb6a7053f351e98a.json": "a7de6a81992064b5af3f18ae5683b2a56b549b9b8dc964acbe94529d8b253b44",
+          "d2510d8672aefa163cb1d10fecf16fd5ddc6dca797c121c808b6dab5cbdb4e2d.json": "39f534905a4ffd8b7c9ad3ccf6de5b1f3ac6eaa6cdf387a2a18e39afe7c80790"
+        },
+        "archive-link": "3b44238453c9a73255b09792ee9a76a3fde67b6eb1d219c8b13709cab464407b"
+      },
+      "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "b3aa3a3935d60d66ebb29a0d70daf65d42061cdaaa44bdcccddb9f54473ad989"
+        },
+        "forward.sqlite:targets": {
+          "count": 1,
+          "sha256": "b19b0b1e9796097c3e14e880746ec5a47893ec798e11344053ae3a0885c3fcc2"
+        },
+        "forward.sqlite:sessions": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "c8c591195b1ea75b0fa48b58161dab9d3018d48d4d9317e9b21b8aefb3e3bac0.json": "1779bff64130fb2549efdf25652aaf1b136a7ec186830d3e7c98ed1431239164"
+        },
+        "archive-link": "799603f7272ff210e49cdc10a9a2f04f878d9cf4d7d3dbd3dac985a0b7266c59"
+      },
+      "21619692ab45d86df47ce168543e9aa5b96a4ee7af269a5f335cbb7c32044327": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "14423b0dbe445513af9bfe51a7137e5ebfc1339158ebc85dffc171115e1f6a7e"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "517794c93a18f147b55d656a3252920c8a29d5894b46bee068fa10d1a6fb5760"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "04c667db14f6a40c5ca998edb4e8cae8dac5c4418adfa79f0161222a2508f6e6"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "4166d1aee127e4904e04da65e840cb18cb4e193f300a4ab1f89f1deb87edfaaf.json": "687ace9b2eaa18409627176b5b0786772e8d2bfec02b911f2ac3a0b093e4794f",
+          "8263904417703e674e02288e360062919676aa72eee7c393a6039e9a0278b870.json": "628b6118c1c1f21d0f6e174011ada2873be71c589043c48f12d02f9ba459ddf7"
+        },
+        "archive-link": "cdc6c01235db30996aa1375b1e0e3741f6cf4a4cdc2eb875c26263117a39f571"
+      },
+      "23fa40eb5a4b6ee1b423bd2b55d1636fc1c3277a1770c7a57f96094f0a2b0903": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "9cde053017f3361aba34171b0fd48ed6d98796267c0bd1e3ed5c1960549459e0"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "e0b0060a0909597a7d68564fb8ec8c99692a93228c0b30f83fcd51c030b4ae60"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "74b1eded4ac75eb2d2636b05e36ecfb0a1874b422fe3fac7e5b5cbbb1f8fd432"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "097a7e598020209ce36a87d6749426e6cc0f1b66c756dde6b6c28647aa742e26.json": "03d6b0f4a2b8d4e38755103cf60d39aa959228ca83dfabfe78f08c005ad5e697",
+          "7fac970b9e04629b3cbff7d29342008c87fe90998a5231cbe032d84ce2bf3f2b.json": "a92773022b2a592f1f123241694ee806bd00a1921cd4c46a7c32e6ca0357c5c7"
+        },
+        "archive-link": "adbcda71a994fc5fa6efb7a1b22c27d856f03e99547c210e82f025bc89538d0e"
+      },
+      "2f174c2462a79f94ec170ea065cce548029f50989039271cd69da1a62e0d093f": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "891a69ce1a39f8dcebbc09bac7afbc1ca980f4ef2fe8c96df09e40abc075e33a"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "137ab91fc7e451e342c25bddd30f3ecbc2082996b6544f50c250d62660cd182b"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "fe3a640f6e6c1eb34e28e74c43b1f476fea16f22d67baf57c6924a0d43262a3e"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "931e2ad1862ea9adcfb884c4442ac0d6d5bf830815d6d71c0f077894ce9a3718.json": "bcf92d22d951e3863b78fa2c9702caaff96cc6a28111e8e378dd7362a79a5ace",
+          "a4ea6f815ea0e3e4e5a3bddfdcdc1a716f04b2b4db0ea7751712c41c2a03b9d6.json": "d2277a84237c6c81179863a92693fb7c21c4bed21f210a7d335e26d4082c22e6"
+        },
+        "archive-link": "7cc04b2500bc1667579d5e3f6b0c3f8629fb51636151c32bff7d354ac18eb32d"
+      },
+      "2fb08e23a1e8c6f4e78b2013b1261429b421f0218585640f2890297642097352": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "719de2748c5a7dad7c0310e5d3a905905a5e904fd59f76dfda28294cd0f1eb84"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "56976e6a2d46d08fcaee051683904cf2a0913972fb548db37109b5be8b0c7904"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "e876128b3dff1f70577aadd700acf64749c981ac0d6ce4e2c304398cdb1a95ba"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "0a965771443dfe92ccbc5e4cc7073f2883baf5a89061634912995571bd27b606.json": "52c2957e5328b92d22e03abd165004aaabc871b06714535101b433abbb17b765",
+          "bee7ad0f50f16bfd5fc1367dc18e2502b0af2f21804de9005c166bf21819bcde.json": "4b8b13b94ba349050213cd4ea6f2101535bedf68aef7ffa6b2f28e9522566b44"
+        },
+        "archive-link": "83f940f0c55ce8704c259a13f6e93e40570b7c4e8229664cae529fee9caafb67"
+      },
+      "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "ad50be6740525cf89a0d50968f28558a66271234c49224ff4e241cf737961e35"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "fe59e55f00d337089320472bc6df395d66b4588b17f59614476ab941ddc926d3"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "a8882c7637512327877d730e7e9b53ee510f5d7c6efd411fff7e33af6af94061"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "43f39509ff19aba42ce5c09a4ac362086ef97d16acae51651ce9499481ad5451.json": "be1072f1e8815b46cf8fa8de8b53b083806110e129805de1519cfc90b88fc1ab",
+          "baf96cd326f32cd1f90f23dcd7bac5ad7a7b3a6120b39cac4bcfefe0e5e5d740.json": "b1d7085e1423d929719b154341bc642ca0dee37ca3159dbcf015aac73c4decb7"
+        },
+        "archive-link": "e6a45fecd1657816c6d2e0e37b6c34def01613f2440f121da1f1f2f16935d058"
+      },
+      "4178982fb19ce4f4e394fc3026adeb5ec28a53a84bf1beca69c62b8b13fd5f9f": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "c3e4b88308966e773d2035df8deac91998d83716bf4ff773dfa6a35a01b943d9"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "57208dd3e684567cca8b5d58e2bf236a9b87fc7145562e6aca90e4358ec7f9af"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "f1098f0de28235cb1b25b398619382d6b280291b91bafde32793a7a7f07f1dd0"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "4166d1aee127e4904e04da65e840cb18cb4e193f300a4ab1f89f1deb87edfaaf.json": "f74b419a33540a229804f64997d4ce9a34d9a18fbd0d2af614489753e06fd63c",
+          "8263904417703e674e02288e360062919676aa72eee7c393a6039e9a0278b870.json": "c6496e80a21398bde92f54d8ae388b74b6d61b15d3115f124b34d6648cd83079"
+        },
+        "archive-link": "cdc6c01235db30996aa1375b1e0e3741f6cf4a4cdc2eb875c26263117a39f571"
+      },
+      "88484ea1701bf191ebb69e5c6cfb768990d04357ec416717e54bd17814263563": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "ff20dfae03e54391af841464e3542eb30747b932d1c9ea420ac7a2576428432f"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "02749b2a61236119031e5f7da0abcfa304a28c869504fe70b7203e85608cd014"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "5557c7ccc8aeaed691ddca7b588c9d3d85b1b7884bb5db363f6342fc8d07108a"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "43f39509ff19aba42ce5c09a4ac362086ef97d16acae51651ce9499481ad5451.json": "7a771e73eb490ae9654bcb9254c0ebdb81e1e506abe62786050f016b9917eb6c",
+          "baf96cd326f32cd1f90f23dcd7bac5ad7a7b3a6120b39cac4bcfefe0e5e5d740.json": "87a3f5f901b32fb7273d3f674d63f531e2ee41f84cb832d67f151f138da8f466"
+        },
+        "archive-link": "e6a45fecd1657816c6d2e0e37b6c34def01613f2440f121da1f1f2f16935d058"
+      },
+      "8b5c23f802b9cea1f882c17352f1fbf5356be253cbbe01e728c53a78a5cbdc04": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "0f4878213db88629b22a63caca84e84e6c1d3b711429f6178039ed71120d2a20"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "637118239176eef6dd9431fc5b68733894ea166d3c85942bb58a86b829590f39"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "0e6a0259167dc95c7d393b4da775f494dc97d812d6a55b76c60f580f39fa8596"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "0a965771443dfe92ccbc5e4cc7073f2883baf5a89061634912995571bd27b606.json": "875d3e316a5fcd0caad9fde146fc081b2f96cfe6fd16f4c584de6011b6fa14c3",
+          "bee7ad0f50f16bfd5fc1367dc18e2502b0af2f21804de9005c166bf21819bcde.json": "5e7291b00a35949856fcc28522089083062aefc421a5098297127ebb46d5d18f"
+        },
+        "archive-link": "83f940f0c55ce8704c259a13f6e93e40570b7c4e8229664cae529fee9caafb67"
+      },
+      "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "4c1fe21c6316dbb9b4be793b1c0f83a6c6a22dcd20e32a865d8944d592287b49"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "a292df86ae88cee2854ffdb5fd94887913f010c0f07272b9426a8af9f52c2c2f"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "23218624209f330dc6ebcba26c2aa19f58e8718c45150a051816f147318ce923"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "931e2ad1862ea9adcfb884c4442ac0d6d5bf830815d6d71c0f077894ce9a3718.json": "c9c2ce15e75fcd077aa4472188c8382388c3081879622cf52ed0115d98a9171f",
+          "a4ea6f815ea0e3e4e5a3bddfdcdc1a716f04b2b4db0ea7751712c41c2a03b9d6.json": "157dd56c8c28bc172264ed173a8ed1d235aa773f5bd3edd2e78c83ab5530ea8a"
+        },
+        "archive-link": "7cc04b2500bc1667579d5e3f6b0c3f8629fb51636151c32bff7d354ac18eb32d"
+      },
+      "979833e43f658601e1b63d0ad4a4fcafd4f3518af0f37d70aef2d6b9739b0847": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "230b5c8e88cb01aede4988bffe4f92cdd0cdd0024da19990f9422b66941e0cb2"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "e21772c5e6afa3a40c9f4c76b17573764c7b028ddb55d16c8a970cd6dd6f6728"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "f0b85db5672975da7c5892f8ee801cda202453fe6598a84e343b6c3a018e2ad8"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "097a7e598020209ce36a87d6749426e6cc0f1b66c756dde6b6c28647aa742e26.json": "842726d4b9634a9bad14ee7c81140397752131784bcd1e4792899c614b273e71",
+          "7fac970b9e04629b3cbff7d29342008c87fe90998a5231cbe032d84ce2bf3f2b.json": "1dda5a440be505b805beecddb402069e114e64f3585e3f8a938e3a3f15779c0b"
+        },
+        "archive-link": "adbcda71a994fc5fa6efb7a1b22c27d856f03e99547c210e82f025bc89538d0e"
+      },
+      "a703261181cbe90c61d1f5e6bb3c6be0323583b2d83772ee2172f91f8bd3be13": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "6d099b912c6340caab4cd0676dc86905ebff02e7602891a2ce182b9ed1800466"
+        },
+        "forward.sqlite:targets": {
+          "count": 2,
+          "sha256": "8498060308d3b7a5f6d42545c0b8b20ac23e8c5166e99c20d4a30f912293c6ec"
+        },
+        "forward.sqlite:sessions": {
+          "count": 1,
+          "sha256": "929be3131613941bbf7a8e294c75902b0e15f6d3a5cd34c81fcf41ed3fc73f88"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "7b244b974e40f0771452388ffe1c9640ca4570c913a3d377eb6a7053f351e98a.json": "2e745121ce6c307fd0c4d3a7bdb9ac6ad048161bdff8be0400a43452e5d262a9",
+          "d2510d8672aefa163cb1d10fecf16fd5ddc6dca797c121c808b6dab5cbdb4e2d.json": "66a0ecb58cb65bed940a87dc24d9f11fff049e38e1a8b7e9d246d7978c0f37c8"
+        },
+        "archive-link": "3b44238453c9a73255b09792ee9a76a3fde67b6eb1d219c8b13709cab464407b"
+      },
+      "afffe76e4da17bff4b46043e9eff8de1283dc2d270784257dc09293d4e8acbd0": {
+        "forward.sqlite:config": {
+          "count": 1,
+          "sha256": "7a00604d16b64bff19f8013e8757f5df86fd23073084aea96ef31a5f42a07d58"
+        },
+        "forward.sqlite:targets": {
+          "count": 1,
+          "sha256": "7e142574a62d2cb0532180f9d6cb74cceaa6cce0442729652acf01f5ce965974"
+        },
+        "forward.sqlite:sessions": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "operations.sqlite:fill_journal": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "admissions": {
+          "c8c591195b1ea75b0fa48b58161dab9d3018d48d4d9317e9b21b8aefb3e3bac0.json": "018505f4ee952d67d9024e48ca11c0e5425c2f5dc32148c349e1162eab70bac7"
+        },
+        "archive-link": "799603f7272ff210e49cdc10a9a2f04f878d9cf4d7d3dbd3dac985a0b7266c59"
+      }
+    }
+  },
+  "forward_instance_id": "74972257947a44dea8ca686421b5ad76",
+  "policy_id": "656f643bf547556bf9b7b5ef30b36100191bbc64009d1b0c78295fc648a5dbda",
+  "allowed_model_families": [
+    "lightgbm"
+  ],
+  "model_family_this_job": "linear",
+  "serving_head_changed": false,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "67073864d9e6a5b9fa799672f9ad62ca455ee993b6650a3e24526b9f70628b05"
+}

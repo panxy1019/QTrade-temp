@@ -24,6 +24,17 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 01:58 checkpoint: real archived-version selection is now accepted.
+Production-authenticated Ridge578bb610 uses October26/d33a7466 while serving and
+default remain October27/09a67b13. COMPLETE01:46; independent01:49 replay verifies
+all12,486 archive files,580 exact source files, frozen strategy/job/model/registry
+bindings and fitted restore parity2.359e-16. Public catalog/result01:52 and exact
+reusable spec01:53 pass on mainae33. New model98d27455 is TRAINED/unactivated;
+original model lifecycle rows, ACTIVE/data epoch/policy,14-book fingerprints and
+all service owners remain unchanged. This is a historical, post-hoc replay and
+does not substitute for October28 later-day/forward or browser acceptance.
+No new implementation or STEP2 work is inferred from this evidence completion.
+
 October28 01:22 checkpoint: PR34 merged as mainae33, actual default production
 matches. C public and14-book control captures pass01:15; independent full1500
 public market transport passes with index/catalog ages124.22/137.90s and partial
