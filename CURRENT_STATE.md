@@ -2,6 +2,17 @@
 
 Last updated: 2026-10-27
 
+- User explicitly approved single LightGBM PAPER recovery and reported visual
+  acceptance. Request ca102037bb904e368de144d12c51687c was consumed once; actual
+  reconciliation SUCCEEDED at 09:27:36 Shanghai, before market open. Production
+  confirms running=true, NORMAL and recovery_required=false. No service restart
+  or candidate activation. Visual status is USER_REPORTED_PASS, not an automated
+  build-pinned screenshot. At 09:30 the 1,500-security incremental pool has
+  1,497 daily / 1,494 five-minute inputs through October 26; formal Qlib remains
+  987/990. Full history and PIT remain incomplete; forward discovery now reports
+  PREDICTION_UNAVAILABLE after the old prediction admission window. See
+  docs/QLIB_PROGRESS_20261027.md and its two evidence files. STEP2 not started.
+
 - Cluster public GET access is verified through a temporary loopback-only SSH
   relay using the existing local system proxy. Five actual requests succeed,
   both current catalogs validate and bind production 34c5118; the forward is

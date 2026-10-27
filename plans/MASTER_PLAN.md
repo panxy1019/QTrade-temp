@@ -24,6 +24,15 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+User authorized one LightGBM PAPER recovery and reported visual acceptance.
+The live service reconciled and recovered once at 09:27:36 Shanghai, with public
+NORMAL/running confirmation; no service restart or model activation occurred.
+Visual acceptance is human-reported, with no independently pinned build image.
+The actual October 27 complete-session C/D/E transition remains pending.
+Current data, history/PIT gaps and business-health warning are documented in
+docs/QLIB_PROGRESS_20261027.md. Do not create another recovery request from this
+authorization; it has been consumed. STEP2 remains gated on full STEP1.
+
 The cluster C public acceptance transport is now verified using a temporary,
 loopback-only SSH relay; five real requests and stable catalog checks pass.
 It closes afterward and requires the local host during acceptance. This resolves

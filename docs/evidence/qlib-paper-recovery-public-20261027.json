@@ -1,0 +1,276 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.paper-recovery-public-observation.v1",
+  "checked_at": "2026-10-27T01:32:41.811990+00:00",
+  "request_id": "ca102037bb904e368de144d12c51687c",
+  "response": {
+    "url": "https://q-trade-temp.vercel.app/api/research/online/forward-books",
+    "status_code": 200,
+    "content_type": "application/json",
+    "cache_control": "no-store",
+    "requested_at": "2026-10-27T01:32:41.179091+00:00",
+    "received_at": "2026-10-27T01:32:41.809547+00:00",
+    "body_bytes": 48818,
+    "body_sha256": "0c111d8179751b9066e32e03507abd53968dcdca1596fe49a610b488e449c7d8",
+    "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY"
+  },
+  "service_fresh": true,
+  "service_state": "DEGRADED",
+  "service_errors": [
+    {
+      "strategy_id": null,
+      "mode": null,
+      "code": "FORWARD_SERVICE_PREDICTION_UNAVAILABLE"
+    }
+  ],
+  "recovered_book": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.forward-book-summary.v1",
+    "strategy_id": "approved_model_2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+    "mode": "PAPER",
+    "archive": {
+      "kind": "approved-prediction",
+      "artifact_id": "924b3c35fa4163a01f76c0d95defa8ea7dd426bb241ce841fcc579a06a157af6",
+      "manifest_sha256": "cb7bf9bbf47d7014ae3f61731f2b42ce7a14fe39dd2c3f5b865a1309850c2669",
+      "strategy_id": "approved_model_2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293"
+    },
+    "risk_state": "NORMAL",
+    "running": true,
+    "recovery_required": false,
+    "sessions": [],
+    "frozen_targets": [
+      {
+        "target_id": "4166d1aee127e4904e04da65e840cb18cb4e193f300a4ab1f89f1deb87edfaaf",
+        "signal_id": "924b3c35fa4163a01f76c0d95defa8ea7dd426bb241ce841fcc579a06a157af6",
+        "data_version": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+        "source_revision": "19cbb2a1faa2f537ddb670dcbbf89d760e27acb7",
+        "generated_at": "2026-10-26 17:23:15.344571+00:00",
+        "execution_at": "2026-10-27 09:30:00+08:00",
+        "frozen_at": "2026-10-26T17:23:31.293870+00:00",
+        "weight_count": 50,
+        "weights": [
+          {
+            "instrument": "SH600176",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH600183",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH600206",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH600259",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH600367",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH600487",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH600722",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH601118",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH601208",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH601233",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH601579",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH601869",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH603067",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH603083",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH603115",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH603228",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH603618",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH603757",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH603773",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH603936",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH605111",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH605358",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SH605376",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ000636",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ000962",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ000993",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ002119",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ002245",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ002552",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ002579",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ002631",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ002636",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ002842",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ002975",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300209",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300331",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300408",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300475",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300593",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300666",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300671",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300748",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300757",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300835",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300843",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300903",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300943",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ300964",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ301018",
+            "weight": "0.019000000000"
+          },
+          {
+            "instrument": "SZ301093",
+            "weight": "0.019000000000"
+          }
+        ],
+        "weights_truncated": false
+      }
+    ],
+    "target_count": 1,
+    "generated_at": "2026-10-27T01:30:38.181860+00:00",
+    "evidence_sha256": "976ee242a09490c3ac5e8bbbae87737c2da65e5ce2e3c2360d9582eb67141372"
+  },
+  "whole_step1_accepted": false,
+  "next_session_accepted": false,
+  "evidence_sha256": "ea08f5cd5b14bfed6341f1e5afdc19c2890550d0059d7a5809cb0fa261833867"
+}
