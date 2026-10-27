@@ -7,6 +7,7 @@ import re
 from collections import Counter
 from datetime import UTC, datetime
 from functools import lru_cache
+from hashlib import sha1, sha256
 from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException, Query, Response
@@ -102,26 +103,36 @@ def collection_freshness(value: dict[str, Any], *, now: datetime | None = None) 
 
 
 @lru_cache(maxsize=1)
-def _load(minute: int) -> dict[str, Any]:
-    return validate_publication(json.loads(download("unified.json", 12_000_000)))
+def _load(minute: int) -> tuple[dict[str, Any], dict[str, Any]]:
+    raw = download("unified.json", 12_000_000)
+    value = validate_publication(json.loads(raw))
+    source = {"git_blob_sha1": sha1(b"blob "+str(len(raw)).encode("ascii")+b"\0"+raw,
+                                     usedforsecurity=False).hexdigest(),
+              "sha256": sha256(raw).hexdigest(), "bytes": len(raw)}
+    return value, source
 
 
-def catalog() -> dict[str, Any]:
+def _capture() -> tuple[dict[str, Any], dict[str, Any]]:
     try:
         return _load(int(datetime.now(UTC).timestamp()) // 60)
     except Exception as error:
         raise HTTPException(503, "unified observed catalog unavailable") from error
 
 
+def catalog() -> dict[str, Any]:
+    return _capture()[0]
+
+
 @router.get("/summary")
 def summary(response: Response) -> dict[str, Any]:
     response.headers["Cache-Control"] = "no-store"
-    value = catalog()
+    value, source = _capture()
     return {**AUTHORITY, "schema_version": value["schema_version"],
             "built_at": value["built_at"], "checked_at": datetime.now(UTC).isoformat(),
             "snapshot_age_seconds": (datetime.now(UTC) - datetime.fromisoformat(
                 value["built_at"])).total_seconds(),
             "evidence_sha256": value["evidence_sha256"], "read_only": True,
+            "catalog_source": dict(source),
             "incremental_freshness": collection_freshness(value),
             "master": {k: v for k, v in value["master"].items() if k != "securities"}}
 
