@@ -1,4 +1,7 @@
 import json
+import os
+import subprocess
+import sys
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
 from hashlib import sha1, sha256
@@ -19,6 +22,7 @@ from scripts import probe_unified_publication as module
 NOW = datetime(2026, 10, 27, 3, 45, tzinfo=UTC)
 REVISION = 'b'*40
 VERSION = 'a'*64
+COMMIT = 'c'*40
 
 
 def resign(value):
@@ -102,8 +106,11 @@ def runtime(tmp_path, monkeypatch):
         'status': 'AVAILABLE', 'target_environment': 'production', 'git_commit_sha': REVISION,
         'git_commit_ref': 'main', 'external_order_transmission': False}
     state = SimpleNamespace(index=index, catalog=catalog, deployment=deployment, objects=objects,
-                            report=tmp_path/'report.json', requests=[], damage=None)
-    monkeypatch.setattr(series_api, '_index', lambda _: state.index)
+        report=tmp_path/'report.json', requests=[], pins=[], captures=[], damage=None)
+    def pinned_index(revision):
+        assert revision == COMMIT
+        return state.index
+    monkeypatch.setattr(series_api, '_index', pinned_index)
     api_objects = dict(objects)
     monkeypatch.setattr(series_api, '_object', lambda digest: api_objects[digest])
     monkeypatch.setattr(catalog_api, 'catalog', lambda: state.catalog)
@@ -113,40 +120,46 @@ def runtime(tmp_path, monkeypatch):
 
     def catalog_source():
         raw = catalog_raw()
-        return {'git_blob_sha1': sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest(),
+        return {'commit_sha': COMMIT,
+                'git_blob_sha1': sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest(),
                 'sha256': sha256(raw).hexdigest(), 'bytes': len(raw)}
 
     monkeypatch.setattr(catalog_api, '_capture', lambda: (state.catalog, catalog_source()),
                         raising=False)
     state.catalog_source = catalog_source
 
-    def transport(resource, deadline, version):
+    def transport(resource, deadline, version, publication_revision):
         state.requests.append((resource, version))
+        state.pins.append((resource, publication_revision))
         if resource == 'deployment':
             value = state.deployment
         elif resource == 'index':
             value = state.index
-        elif resource.startswith('catalog-blob:'):
+        elif resource == 'catalog':
             value = state.catalog
         elif resource == 'summary':
             value = catalog_api.summary(Response())
         elif resource.startswith('bars:'):
             _, symbol, freq = resource.split(':')
-            value = series_api.bars(Response(), symbol, freq, None, None, version, 2000)
+            value = series_api.bars(Response(), symbol, freq, None, None, version, 2000,
+                                    publication_revision)
         else:
             value = json.loads(state.objects[resource[6:]])
         value = deepcopy(value)
         if state.damage:
             state.damage(resource, value)
         raw = (state.objects[resource[6:]] if resource.startswith('shard:')
-               else catalog_raw() if resource.startswith('catalog-blob:')
+               else catalog_raw() if resource == 'catalog'
                else json.dumps(value).encode())
-        return {'url': module.ORIGIN+'/api/deployment' if resource == 'deployment' else
-            module._route(resource)[0]+('&version='+version if version else ''),
+        url = (module.ORIGIN+'/api/deployment' if resource == 'deployment' else
+               module._route(resource, publication_revision)[0])
+        capture = {'url': url+('&version='+version if version else ''),
             'status_code': 200, 'content_type': 'application/json', 'cache_control': 'no-store',
             'requested_at': NOW.isoformat(), 'received_at': NOW.isoformat(),
             'body_bytes': len(raw), 'body_sha256': sha256(raw).hexdigest(),
             'body_utf8': raw.decode(), 'proxy_configuration_mode': 'SIMULATED'}
+        state.captures.append((resource, capture))
+        return capture
     state.transport = transport
     return state
 
@@ -162,8 +175,11 @@ def test_fresh_transport_with_partial_and_no_data_has_sample_only_integrity(runt
     assert result['state'] == 'FRESH_TRANSPORT' and result['fresh_publication'] is True
     assert result['target_count'] == 1500 and result['index_entries'] == 3000
     assert result['catalog_source'] == runtime.catalog_source()
+    assert result['publication_revision'] == COMMIT
     assert [resource for resource, _ in runtime.requests[:4]] == [
-        'deployment', 'summary', 'catalog-blob:'+runtime.catalog_source()['git_blob_sha1'], 'index']
+        'deployment', 'summary', 'catalog', 'index']
+    assert all(revision == COMMIT for resource, revision in runtime.pins
+               if resource in {'catalog', 'index'} or resource.startswith('bars:'))
     assert result['incremental_freshness']['5min']['status'] == 'PARTIAL'
     assert result['incremental_freshness']['5min']['ready_symbols'] == 1496
     assert {sample['state'] for sample in result['samples']} == {'PARTIAL', 'NO_DATA'}
@@ -267,8 +283,8 @@ def test_report_overwrite_or_invalid_configuration_never_fetches(runtime, monkey
 def test_capture_identity_and_real_clock_bounds_fail_without_receipt(runtime, damage):
     transport = runtime.transport
 
-    def damaged(resource, deadline, version):
-        capture = transport(resource, deadline, version)
+    def damaged(resource, deadline, version, publication_revision):
+        capture = transport(resource, deadline, version, publication_revision)
         if damage == 'capture_hash':
             capture['body_sha256'] = '0'*64
         elif damage == 'capture_size':
@@ -375,7 +391,7 @@ def test_get_uses_approved_routes_proxy_redirect_guard_get_and_actual_hashes(mon
     monkeypatch.setattr(module, 'build_opener', opener)
     result = module._get('shard:'+'a'*64, module.time.monotonic()+30)
     request, options = calls[0]
-    assert request.full_url == module.RAW+'unified-market/objects/'+'a'*64+'.json'
+    assert request.full_url == module.RAW+'main/unified-market/objects/'+'a'*64+'.json'
     assert request.get_method() == 'GET' and request.data is None
     assert not {'authorization', 'cookie'} & {key.lower() for key in request.headers}
     assert 0 < options['timeout'] <= 10
@@ -397,8 +413,9 @@ def test_credentials_in_discovered_proxy_fail_before_network(monkeypatch):
 
 @pytest.mark.parametrize('damage', ['missing', 'extra', 'not_dict', 'sha1_type', 'sha1_length',
     'sha1_uppercase', 'sha1_path', 'sha256_type', 'sha256_length', 'sha256_uppercase',
-    'bytes_bool', 'bytes_float', 'bytes_string', 'bytes_zero', 'bytes_negative', 'bytes_oversize'])
-def test_summary_source_must_be_exact_and_bounded_before_blob_request(runtime, damage):
+    'bytes_bool', 'bytes_float', 'bytes_string', 'bytes_zero', 'bytes_negative', 'bytes_oversize',
+    'commit_missing', 'commit_type', 'commit_length', 'commit_uppercase', 'commit_path'])
+def test_summary_source_must_be_exact_and_bounded_before_catalog_request(runtime, damage):
     def mutate(resource, value):
         if resource != 'summary':
             return
@@ -409,6 +426,11 @@ def test_summary_source_must_be_exact_and_bounded_before_blob_request(runtime, d
             source['url'] = 'https://unapproved.invalid/'
         elif damage == 'not_dict':
             value['catalog_source'] = [source]
+        elif damage == 'commit_missing':
+            del source['commit_sha']
+        elif damage.startswith('commit_'):
+            source['commit_sha'] = {'commit_type': None, 'commit_length': 'a'*39,
+                                   'commit_uppercase': 'A'*40, 'commit_path': '../main'}[damage]
         elif damage.startswith('sha1_'):
             source['git_blob_sha1'] = {'sha1_type': 1, 'sha1_length': 'a'*39,
                                      'sha1_uppercase': 'A'*40, 'sha1_path': '../private'}[damage]
@@ -426,24 +448,22 @@ def test_summary_source_must_be_exact_and_bounded_before_blob_request(runtime, d
 
 
 @pytest.mark.parametrize('damage', ['sha1', 'sha256', 'length', 'reserialized_bytes',
-                                   'base64_json_wrapper'])
-def test_blob_bytes_must_match_all_three_source_identities(runtime, damage):
+                                   'wrong_document'])
+def test_catalog_bytes_must_match_all_three_source_identities(runtime, damage):
     transport = runtime.transport
 
-    def damaged(resource, deadline, version):
-        capture = transport(resource, deadline, version)
+    def damaged(resource, deadline, version, publication_revision):
+        capture = transport(resource, deadline, version, publication_revision)
         value = json.loads(capture['body_utf8'])
         if resource == 'summary' and damage in {'sha1', 'sha256', 'length'}:
             field = {'sha1': 'git_blob_sha1', 'sha256': 'sha256', 'length': 'bytes'}[damage]
             value['catalog_source'][field] = (capture['body_bytes'] if damage == 'length'
                                                else '0'*(40 if damage == 'sha1' else 64))
             raw = json.dumps(value).encode()
-        elif resource.startswith('catalog-blob:') and damage == 'reserialized_bytes':
+        elif resource == 'catalog' and damage == 'reserialized_bytes':
             raw = json.dumps(value, indent=2).encode()
-        elif resource.startswith('catalog-blob:') and damage == 'base64_json_wrapper':
-            # A default GitHub JSON envelope is not the requested original raw blob.
-            raw = json.dumps({'sha': runtime.catalog_source()['git_blob_sha1'],
-                              'encoding': 'base64', 'content': 'e30='}).encode()
+        elif resource == 'catalog' and damage == 'wrong_document':
+            raw = json.dumps({'not_the_original_signed_catalog': True}).encode()
             capture['content_type'] = 'application/json'
         else:
             return capture
@@ -453,45 +473,50 @@ def test_blob_bytes_must_match_all_three_source_identities(runtime, damage):
     with pytest.raises(ValueError, match='CATALOG_SOURCE_BYTES_MISMATCH'):
         module.probe(REVISION, runtime.report, _transport=damaged)
     assert not runtime.report.exists()
-    assert not any(resource == 'catalog' for resource, _ in runtime.requests)
+    assert ('catalog', COMMIT) in runtime.pins
 
 
-@pytest.mark.parametrize('media', [module.RAW_BLOB_MEDIA, 'application/octet-stream',
-                                 'application/json; charset=utf-8'])
-def test_fixed_blob_get_requests_raw_media_without_credentials(monkeypatch, media):
+@pytest.mark.parametrize('resource', ['catalog', 'index', 'bars:000032:5min'])
+def test_fixed_commit_get_never_uses_rest_or_unpinned_main(monkeypatch, resource):
     calls = []
-    digest = 'a'*40
 
     def opener(*handlers):
         assert isinstance(handlers[1], module.delivery._NoRedirect)
         def open_response(request, **kwargs):
             calls.append(request)
             return TransportResponse(b'{ "x": 1 }\n', url=request.full_url,
-                                     headers={'Content-Type': media})
+                headers={'Content-Type': 'application/json', 'Cache-Control': 'no-store'})
         return SimpleNamespace(open=open_response)
     monkeypatch.setattr(module, 'build_opener', opener)
-    result = module._get('catalog-blob:'+digest, module.time.monotonic()+30)
+    result = module._get(resource, module.time.monotonic()+30,
+                         'a'*64 if resource.startswith('bars:') else None, COMMIT)
     request, = calls
-    assert request.full_url == module.CATALOG_BLOBS+digest
-    assert request.get_header('Accept') == 'application/vnd.github.raw+json'
+    if resource in {'catalog', 'index'}:
+        assert request.full_url == module.RAW+COMMIT+'/'+(
+            'unified.json' if resource == 'catalog' else 'unified-market.json')
+    else:
+        assert 'publication_revision='+COMMIT in request.full_url
+        assert 'version='+'a'*64 in request.full_url
+    assert 'api.github.com' not in request.full_url and '/main/' not in request.full_url
+    assert request.get_header('Accept') == 'application/json'
     assert request.get_method() == 'GET' and request.data is None
     assert not {'authorization', 'cookie'} & {key.lower() for key in request.headers}
     assert result['body_sha256'] == sha256(b'{ "x": 1 }\n').hexdigest()
 
 
-@pytest.mark.parametrize('damage', ['403', '429', '404', 'wrong_vendor_media', 'html',
-                                   'plain', 'redirect', 'oversize_header'])
-def test_blob_transport_errors_are_strict_without_auth_or_fallback(monkeypatch, damage):
-    resource = 'catalog-blob:'+'a'*40
-    url, _, _ = module._route(resource)
-    response = TransportResponse(url=url, headers={'Content-Type': module.RAW_BLOB_MEDIA})
+@pytest.mark.parametrize('damage', ['403', '429', '404', 'network', 'wrong_vendor_media', 'html',
+                                   'binary', 'redirect', 'oversize_header'])
+def test_commit_transport_errors_are_strict_without_auth_or_fallback(monkeypatch, damage):
+    resource = 'catalog'
+    url, _, _ = module._route(resource, COMMIT)
+    response = TransportResponse(url=url, headers={'Content-Type': 'application/json'})
     calls = []
     if damage == 'wrong_vendor_media':
         response.headers['Content-Type'] = 'application/vnd.github+json'
     elif damage == 'html':
         response.headers['Content-Type'] = 'text/html'
-    elif damage == 'plain':
-        response.headers['Content-Type'] = 'text/plain'
+    elif damage == 'binary':
+        response.headers['Content-Type'] = 'application/octet-stream'
     elif damage == 'redirect':
         response.url = 'https://unapproved.invalid/'
     elif damage == 'oversize_header':
@@ -501,17 +526,125 @@ def test_blob_transport_errors_are_strict_without_auth_or_fallback(monkeypatch, 
         calls.append(request)
         if damage.isdigit():
             raise HTTPError(url, int(damage), 'TEST_ONLY_PRIVATE_ERROR', {}, None)
+        if damage == 'network':
+            raise OSError('TEST_ONLY_PRIVATE_ERROR')
         return response
     monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=open_response))
     with pytest.raises(ValueError) as error:
-        module._get(resource, module.time.monotonic()+30)
-    if damage in {'403', '429'}:
-        assert str(error.value) == 'UNIFIED_PROBE_BLOB_RATE_LIMITED'
+        module._get(resource, module.time.monotonic()+30, publication_revision=COMMIT)
     assert 'TEST_ONLY_PRIVATE_ERROR' not in str(error.value)
     assert len(calls) == 1
     assert not {'authorization', 'cookie'} & {key.lower() for key in calls[0].headers}
-    with pytest.raises(ValueError, match='RESOURCE_NOT_ALLOWED'):
+    with pytest.raises(ValueError, match='PUBLICATION_REVISION_INVALID'):
         module._get('catalog', module.time.monotonic()+30)
     with pytest.raises(ValueError, match='RESOURCE_NOT_ALLOWED'):
-        module._get('catalog-blob:../private', module.time.monotonic()+30)
+        module._get('https://unapproved.invalid/arbitrary', module.time.monotonic()+30)
     assert len(calls) == 1
+
+
+@pytest.mark.parametrize('revision', [None, '', 'main', 'a'*39, 'a'*41, 'A'*40,
+                                     '../main', 'a'*40+'?private=1', 'https://other.invalid'])
+@pytest.mark.parametrize('resource', ['catalog', 'index', 'bars:000032:5min'])
+def test_commit_path_injection_rejected_before_network(monkeypatch, revision, resource):
+    monkeypatch.setattr(module, 'build_opener', lambda *_: pytest.fail('unexpected network'))
+    with pytest.raises(ValueError, match='PUBLICATION_REVISION_INVALID'):
+        module._get(resource, module.time.monotonic()+30,
+                    'a'*64 if resource.startswith('bars:') else None, revision)
+
+
+@pytest.mark.parametrize('damage', ['missing', 'different', 'wrong_type'])
+def test_every_series_must_return_the_requested_publication_commit(runtime, damage):
+    def mutate(resource, value):
+        if resource.startswith('bars:'):
+            if damage == 'missing':
+                del value['publication_revision']
+            else:
+                value['publication_revision'] = 'd'*40 if damage == 'different' else False
+    runtime.damage = mutate
+    with pytest.raises(ValueError, match='PUBLICATION_REVISION_DRIFT_RETRY_REQUIRED'):
+        run(runtime)
+    assert not runtime.report.exists()
+
+
+def test_forged_well_formed_summary_commit_never_falls_back_to_main(runtime, monkeypatch):
+    def mutate(resource, value):
+        if resource == 'summary':
+            value['catalog_source']['commit_sha'] = 'd'*40
+    runtime.damage = mutate
+    transport = runtime.transport
+
+    def unavailable(resource, deadline, version, publication_revision):
+        if resource == 'catalog':
+            return module._get(resource, deadline, version, publication_revision)
+        return transport(resource, deadline, version, publication_revision)
+
+    urls = []
+    def fail(request, **kwargs):
+        urls.append(request.full_url)
+        raise OSError('TEST_ONLY_UNAVAILABLE_COMMIT')
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=fail))
+    with pytest.raises(ValueError, match='HTTP_FETCH_FAILED'):
+        module.probe(REVISION, runtime.report, _transport=unavailable)
+    assert urls == [module.RAW+'d'*40+'/unified.json']
+    assert not runtime.report.exists()
+
+
+def test_fresh_api_processes_keep_one_commit_when_current_heads_differ(runtime, tmp_path):
+    run(runtime)
+    payload = tmp_path/'snapshot.json'
+    payload.write_text(json.dumps({'captures': dict(runtime.captures), 'index': runtime.index,
+        'objects': {key: value.decode() for key, value in runtime.objects.items()},
+        'clock': NOW.isoformat(), 'commit': COMMIT, 'revision': REVISION}))
+    code = '''
+import json, sys
+from datetime import UTC, datetime
+from hashlib import sha256
+from pathlib import Path
+from fastapi import Response
+from qtrade.api import unified_market as api
+from qtrade.api import unified_source
+from scripts import probe_unified_publication as probe
+data = json.loads(Path(sys.argv[1]).read_text())
+now = datetime.fromisoformat(data['clock'])
+class Clock(datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return now.astimezone(tz or UTC)
+api.datetime = Clock
+probe.utc_now = lambda: now
+# Each independent API process sees a different mutable head, while the client
+# pins the summary's commit. Any accidental default-head read must fail.
+unified_source.current_revision = lambda: sys.argv[3]
+api.current_revision = lambda: sys.argv[3]
+def index(revision):
+    assert revision == data['commit']
+    return data['index']
+api._index = index
+api._object = lambda digest: data['objects'][digest].encode()
+def transport(resource, deadline, version, publication_revision):
+    if resource in {'catalog', 'index'} or resource.startswith('bars:'):
+        assert publication_revision == data['commit']
+    capture = dict(data['captures'][resource])
+    if resource.startswith('bars:'):
+        _, symbol, frequency = resource.split(':')
+        value = api.bars(Response(), symbol, frequency, None, None, version, 2000,
+                         publication_revision)
+        raw = json.dumps(value).encode()
+        capture.update(body_utf8=raw.decode(), body_bytes=len(raw),
+                       body_sha256=sha256(raw).hexdigest())
+    return capture
+result = probe.probe(data['revision'], Path(sys.argv[2]), _transport=transport)
+print(json.dumps({'publication_revision': result['publication_revision'],
+                  'index_id': result['index_id'], 'mode': result['transport_mode']}))
+'''
+    results = []
+    for number, head in enumerate(('d'*40, 'e'*40)):
+        completed = subprocess.run([sys.executable, '-c', code, str(payload),
+            str(tmp_path/f'child-{number}.json'), head], capture_output=True, text=True, timeout=30,
+            cwd=module.delivery.REPO, env={**os.environ, 'LIVE_TRADING_ENABLED': 'false',
+                'PYTHONPATH': os.pathsep.join((str(module.delivery.REPO/'src'),
+                                              str(module.delivery.REPO)))})
+        assert completed.returncode == 0, completed.stderr
+        results.append(json.loads(completed.stdout))
+    assert results[0] == results[1] == {'publication_revision': COMMIT,
+        'index_id': runtime.index['evidence_sha256'], 'mode': 'SIMULATED_TRANSPORT'}
