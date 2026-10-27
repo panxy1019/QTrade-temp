@@ -1,6 +1,35 @@
 # Current state
 
-Last updated: 2026-10-27
+Last updated: 2026-10-27, 12:53 Shanghai public checkpoint.
+
+- Unified publication migration is complete and the publisher is RUNNING as
+  c35bb84 / PID 240024. Six actual ordinary public frames after the controlled
+  migration retain the same 4,488 canonical shard identities across a new Python
+  process; production 4cee136 sample APIs independently match public shard bytes
+  and report FRESH index delivery. The permanent read-only probe at 12:53 also
+  verifies FRESH catalog delivery (index/catalog ages 119.071/123.200 seconds),
+  separately from PARTIAL coverage: 1,497/1,500 daily and 1,496/1,500 minute tasks
+  through the expected ends. Its additional Linux suite passes all 95 tests.
+  This is lunch-period evidence: afternoon new-bar delivery remains to be tested.
+  All other service PIDs, including recovered PAPER 175982, remain unchanged.
+  Root fixed sparse Git overtransfer, hash-seed-dependent JSON ordering and extra
+  post-work delay; normal 90s commands and 180s index freshness remain unchanged.
+  Linux c35bb84: 157 passed, one Windows-only skip. Actual history qualified rows
+  now 36,588; delisted rows 29; free disk 277.96 GiB with 100 GiB reserve retained.
+  Historical PIT/adjustment/full years remain uncertified. The reviewed prior-
+  session repair tool has only run a read-only plan (six incomplete task scopes),
+  with no production apply or maintenance restart. PR29 contains these source
+  changes and the compact fixed-origin public probe; deployment acceptance is
+  pinned independently to its actual main revision. See
+  QLIB_PUBLICATION_RELIABILITY_20261027.md and its
+  signed runtime/negative/success evidence. Follow-ups are 13:45 for real intraday
+  frames and 16:45 for genuine completed-session C/D/E. STEP2 remains gated.
+
+- Earlier PR28 rollout: production 4cee136 ships the unified market API/page
+  roles. Full Linux c269ab9 has 1,841 passes and one Windows-only skip. Its initial
+  public integrity probes passed but transport freshness failed; those negative
+  receipts are preserved. The current entry above supersedes that deployment's
+  temporarily stopped publisher and failed 90s transfers.
 
 - Unified current-market export/API and standardized web pages are implemented
   and independently reviewed. Linux 77 focused tests, frontend 281 tests plus

@@ -1,0 +1,261 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.stable-publication-runtime.v1",
+  "checked_at": "2026-10-27T04:46:29.921899+00:00",
+  "source_revision": "c35bb84095bdd3f7ec284fcd3bb25073a8e60ab7",
+  "remote_head": "9a02870e221dc8cf6d3e983cf033185b79d5954b",
+  "ordinary_public_frames": [
+    {
+      "commit": "9a02870e221dc8cf6d3e983cf033185b79d5954b",
+      "snapshot_published_at": "2026-10-27T04:44:47.296044+00:00",
+      "snapshot_evidence_sha256": "a46ee8b981493625be684798552a0691b0ca8ef985b47b22312735b896ca72f8",
+      "index_published_at": "2026-10-27T04:44:47.299884+00:00",
+      "index_id": "08338c4533ea6fd4d9f2241e173e67e5960f14d9bc33067d30a61d47a7284441",
+      "shard_count": 4488,
+      "unchanged_canonical_shard_refs": true
+    },
+    {
+      "commit": "cb973f9a14a107c2a871df1369f893c4552c7d5d",
+      "snapshot_published_at": "2026-10-27T04:43:47.297932+00:00",
+      "snapshot_evidence_sha256": "75f024d0004d81b764f786036b78aa7ab95f83dae229a2904a8b99bb87e6ace8",
+      "index_published_at": "2026-10-27T04:43:47.301939+00:00",
+      "index_id": "a2948734c549a4ae5f962b72806375704365de59d6d4a62788ea9817ca737423",
+      "shard_count": 4488,
+      "unchanged_canonical_shard_refs": true
+    },
+    {
+      "commit": "3835a44d4afd6d08e34b7c957bb03dd51f53db52",
+      "snapshot_published_at": "2026-10-27T04:42:47.297549+00:00",
+      "snapshot_evidence_sha256": "6bcf0f64991642e76842c06d996aa92da42f2ad1706165bb047fef3cbf8f8650",
+      "index_published_at": "2026-10-27T04:42:47.300887+00:00",
+      "index_id": "198a055f92c922381afa82a86ef195fb2c15fb2cd7f49456d09e5099d085d019",
+      "shard_count": 4488,
+      "unchanged_canonical_shard_refs": true
+    },
+    {
+      "commit": "90288a896d4cc4da51a00af8f455ef753194d36f",
+      "snapshot_published_at": "2026-10-27T04:41:47.296239+00:00",
+      "snapshot_evidence_sha256": "fadb51c495eedec9e87ed0d4d2d16be74292ca40e798b49193a466243a856d4b",
+      "index_published_at": "2026-10-27T04:41:47.299568+00:00",
+      "index_id": "e7d10ca91cb49ab398b6c503149849667f630c40ed62b4eba06fd33b7680a4f2",
+      "shard_count": 4488,
+      "unchanged_canonical_shard_refs": true
+    },
+    {
+      "commit": "0732cfbeaaea6078e31be8127f6fe8a4e00f8860",
+      "snapshot_published_at": "2026-10-27T04:40:47.301604+00:00",
+      "snapshot_evidence_sha256": "f8f9bb7fd373ca7cedee242b5d5e324c81963932aaeafee3f22a28b6d92d2dc2",
+      "index_published_at": "2026-10-27T04:40:47.305169+00:00",
+      "index_id": "d1bcddc60db35a671c497a07f7699d0207ca7b1cc5cad0948bce33484ca079ea",
+      "shard_count": 4488,
+      "unchanged_canonical_shard_refs": true
+    },
+    {
+      "commit": "298d5433bb9fbfce7b87bfccabc4f9069f42ac39",
+      "snapshot_published_at": "2026-10-27T04:39:47.446459+00:00",
+      "snapshot_evidence_sha256": "d29be8cfd33f0143e132e0b1eb1beebff4321641a2e6afc779cb983a02fa223d",
+      "index_published_at": "2026-10-27T04:39:47.450444+00:00",
+      "index_id": "99a725fee909b38aa2b1d48a777112abe092eec841afee81a5e776b3c6038b29",
+      "shard_count": 4488,
+      "unchanged_canonical_shard_refs": true
+    }
+  ],
+  "ordinary_public_frames_count": 6,
+  "lunch_period_only": true,
+  "afternoon_new_bar_accepted": false,
+  "current_catalog_built_at": "2026-10-27T04:45:58.391029+00:00",
+  "current_catalog_sha256": "6538f47d4963bab0245e1661a596dfed0629549cb6c10c0c14e698b8e4b97370",
+  "latest_collection_tasks": [
+    {
+      "frequency": "day",
+      "task_day": "2026-10-26",
+      "completed_end_counts": [
+        {
+          "completed_end": null,
+          "count": 3
+        },
+        {
+          "completed_end": "2026-10-26T07:00:00+00:00",
+          "count": 1497
+        }
+      ]
+    },
+    {
+      "frequency": "5min",
+      "task_day": "2026-10-27",
+      "completed_end_counts": [
+        {
+          "completed_end": null,
+          "count": 3
+        },
+        {
+          "completed_end": "2026-10-27T01:55:00+00:00",
+          "count": 1
+        },
+        {
+          "completed_end": "2026-10-27T03:30:00+00:00",
+          "count": 1496
+        }
+      ]
+    }
+  ],
+  "files": {
+    "history": {
+      "state": "YIELDED_TO_CURRENT_COLLECTION",
+      "updated_at": "2026-10-27T04:43:41.307960+00:00",
+      "qualified_rows": 36588,
+      "target_securities": 1500,
+      "frequency_summary": {
+        "day": {
+          "planned_scopes": 1500,
+          "content_qualified_scopes": 73,
+          "qualified_rows": 876,
+          "full_history_certified_scopes": 0,
+          "independent_source_reconciled_scopes": 0
+        },
+        "5min": {
+          "planned_scopes": 1500,
+          "content_qualified_scopes": 62,
+          "qualified_rows": 35712,
+          "full_history_certified_scopes": 0,
+          "independent_source_reconciled_scopes": 0
+        }
+      },
+      "window_states": {
+        "CONTENT_QUALIFIED_WITH_UNRESOLVED_GAPS": 135,
+        "YIELDED_TO_CURRENT_COLLECTION": 50,
+        "QUALITY_REJECTED": 13
+      },
+      "historical_pit_certified": false,
+      "ten_year_history_certified": false,
+      "priority_reason": "CURRENT_PRIORITY_WORK_ACTIVE_OR_FAILED",
+      "file_sha256": "263b51552ad8dfbc1dc54611ccaae0204dcedd7bcad1f9b97cd47a26cf8857a2"
+    },
+    "delisted": {
+      "state": "YIELDED_TO_CURRENT_COLLECTION",
+      "updated_at": "2026-10-27T04:38:41.310026+00:00",
+      "qualified_rows": 29,
+      "planned_delisted_securities": 230,
+      "window_states": {
+        "QUALITY_REJECTED": 71,
+        "YIELDED_TO_CURRENT_COLLECTION": 33,
+        "CONTENT_QUALIFIED_WITH_UNRESOLVED_GAPS": 3
+      },
+      "historical_pit_certified": false,
+      "priority_reason": "CURRENT_PRIORITY_WORK_ACTIVE_OR_FAILED",
+      "file_sha256": "84d4b82fe70eee2d80de8c9442cee838144bf318019996728ad19135f972d766"
+    },
+    "history_service": {
+      "state": "WAITING",
+      "heartbeat_at": "2026-10-27T04:46:22.313658+00:00",
+      "completed_passes": 155,
+      "failed_passes": 0,
+      "last_pass_state": "YIELDED_TO_CURRENT_COLLECTION",
+      "last_error_class": null,
+      "file_sha256": "c8ba7f24c1e502b7a63c0df043065ff1c8655225423592e888c781291bd246f8"
+    },
+    "pit": {
+      "state": "SOURCE_BACKFILL_REQUIRES_RECONCILIATION",
+      "observed_at": "2026-10-26T23:34:52.121587+00:00",
+      "input_symbols": 990,
+      "status_symbols": 990,
+      "status_rows": 2168788,
+      "historical_pit_certified": false,
+      "historical_available_at_known": false,
+      "file_sha256": "426b39184e1d3df5a5b54445ed8c4cbe1aa8855d3e090439bd72617c2dc94d1d"
+    },
+    "collector": {
+      "state": "WAITING",
+      "heartbeat_at": "2026-10-27T04:45:58.750844+00:00",
+      "last_pass_state": "PASS_FINISHED",
+      "code_revision": "e44a134fab8bc0404b8d1c59674747150e170698",
+      "file_sha256": "14c02427468d1239b2d91dc07fbced63bcce52f84696b74dd74233738eec5795"
+    },
+    "export": {
+      "export_seconds": 31.627571,
+      "selected_batches": 1253,
+      "cached_batches": 160,
+      "replayed_batches": 1093,
+      "cached_rows": 70520,
+      "cache_estimated_bytes": 127999629,
+      "source_bytes_read": 53505532,
+      "total_bytes": 70634299,
+      "total_files": 4488,
+      "index_id": "92ff71b221a373964554e4537528f11a4a12e7278a4caf99e1cad408ab97d1eb",
+      "file_sha256": "8ffd161fab8bf6c92797ca540aaa4296fbf2826764177f67eff06c3dca863c89"
+    }
+  },
+  "processes": {
+    "code-server": {
+      "pid": 81,
+      "statename": "Running"
+    },
+    "jupyterlab": {
+      "pid": 80,
+      "statename": "Running"
+    },
+    "qtrade-data-observer": {
+      "pid": 4471,
+      "statename": "Running"
+    },
+    "qtrade-etf-diagnostics": {
+      "pid": 179865,
+      "statename": "Running"
+    },
+    "qtrade-etf-shadow": {
+      "pid": 181180,
+      "statename": "Running"
+    },
+    "qtrade-forward-research": {
+      "pid": 175982,
+      "statename": "Running"
+    },
+    "qtrade-history-backfill": {
+      "pid": 164340,
+      "statename": "Running"
+    },
+    "qtrade-pit-repair": {
+      "pid": 153768,
+      "statename": "Running"
+    },
+    "qtrade-qlib-data": {
+      "pid": 179733,
+      "statename": "Running"
+    },
+    "qtrade-qlib-workflow": {
+      "pid": 173727,
+      "statename": "Running"
+    },
+    "qtrade-research-maintenance": {
+      "pid": 213587,
+      "statename": "Running"
+    },
+    "qtrade-research-publication": {
+      "pid": 240024,
+      "statename": "Running"
+    },
+    "tensorboard": {
+      "pid": 79,
+      "statename": "Running"
+    }
+  },
+  "disk_free_gib": 277.96,
+  "ordinary_command_deadline_seconds": 90,
+  "index_freshness_threshold_seconds": 180,
+  "catalog_freshness_threshold_seconds": 1200,
+  "whole_step1_accepted": false,
+  "browser_rendered_verified": false,
+  "limitations": [
+    "PUBLIC_SOURCE_AND_PRICE_BASIS_UNCERTIFIED",
+    "HISTORICAL_PIT_INCOMPLETE",
+    "ONLY_LUNCH_UNCHANGED_DATA_NORMAL_CYCLES_OBSERVED",
+    "REAL_COMPLETED_SESSION_CDE_PENDING"
+  ],
+  "evidence_sha256": "8a5454e97f7a9d6a63fe481a3a1884a1a4617d5d49342f8e8bf1a92cf1627ac2"
+}
