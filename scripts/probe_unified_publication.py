@@ -8,7 +8,7 @@ import re
 import time
 from collections import Counter
 from datetime import UTC, datetime, timedelta
-from hashlib import sha256
+from hashlib import sha1, sha256
 from http.client import HTTPException
 from pathlib import Path
 from typing import Any
@@ -25,6 +25,9 @@ from scripts import qlib_public_delivery as delivery
 
 ORIGIN = 'https://q-trade-temp.vercel.app'
 RAW = 'https://raw.githubusercontent.com/panxy1019/QTrade-observations/main/'
+CATALOG_BLOBS = 'https://api.github.com/repos/panxy1019/QTrade-observations/git/blobs/'
+RAW_BLOB_MEDIA = 'application/vnd.github.raw+json'
+CATALOG_LIMIT = 12_000_000
 SAMPLES = (('000032', 'day'), ('000032', '5min'), ('688365', '5min'),
            ('512580', '5min'), ('600621', '5min'))
 TARGETS = 1500
@@ -45,10 +48,11 @@ def _route(resource: str) -> tuple[str, int, bool]:
     """Only internally named routes; neither URLs nor paths are CLI inputs."""
     if resource == 'summary':
         return ORIGIN+'/api/unified/summary', 2_000_000, True
-    if resource in {'index', 'catalog'}:
-        name = 'unified-market.json' if resource == 'index' else 'unified.json'
-        return (RAW+name+'?v='+str(int(utc_now().timestamp())//60),
-                INDEX_LIMIT if resource == 'index' else 12_000_000, False)
+    if resource == 'index':
+        return (RAW+'unified-market.json?v='+str(int(utc_now().timestamp())//60),
+                INDEX_LIMIT, False)
+    if re.fullmatch('catalog-blob:[a-f0-9]{40}', resource):
+        return CATALOG_BLOBS+resource[13:], CATALOG_LIMIT, False
     if re.fullmatch('shard:[a-f0-9]{64}', resource):
         return RAW+'unified-market/objects/'+resource[6:]+'.json', SHARD_LIMIT, False
     for symbol, frequency in SAMPLES:
@@ -75,8 +79,9 @@ def _get(resource: str, deadline: float, version: str | None = None) -> dict[str
     require(remaining > 0, 'HTTP_DEADLINE_EXCEEDED')
     started = utc_now()
     proxy, mode = delivery._proxy_handler()
+    blob = resource.startswith('catalog-blob:')
     request = Request(url, method='GET', headers={
-        'Accept': 'application/json', 'Accept-Encoding': 'identity',
+        'Accept': RAW_BLOB_MEDIA if blob else 'application/json', 'Accept-Encoding': 'identity',
         'Cache-Control': 'no-cache', 'User-Agent': 'QTrade-readonly-unified-probe/1'})
     try:
         with build_opener(proxy, delivery._NoRedirect()).open(
@@ -85,7 +90,9 @@ def _get(resource: str, deadline: float, version: str | None = None) -> dict[str
                     'HTTP_STATUS_OR_REDIRECT_INVALID')
             content_type = response.headers.get('Content-Type', '')
             require(content_type.split(';')[0].strip().lower() in (
-                {'application/json'} if api else {'application/json', 'text/plain'}),
+                {RAW_BLOB_MEDIA, 'application/octet-stream', 'application/json'} if blob
+                else {'application/json'} if api
+                else {'application/json', 'text/plain'}),
                 'HTTP_CONTENT_TYPE_INVALID')
             require(response.headers.get('Content-Encoding', 'identity').lower() == 'identity',
                     'HTTP_CONTENT_ENCODING_INVALID')
@@ -110,6 +117,8 @@ def _get(resource: str, deadline: float, version: str | None = None) -> dict[str
             text = raw.decode('utf-8')
             json.dumps(json.loads(text), allow_nan=False)
     except HTTPError as error:
+        if blob and error.code in {403, 429}:
+            raise ValueError('UNIFIED_PROBE_BLOB_RATE_LIMITED') from None
         if error.code == 409:
             raise ValueError('UNIFIED_PROBE_VERSION_DRIFT_RETRY_REQUIRED') from None
         raise ValueError('UNIFIED_PROBE_HTTP_FETCH_FAILED') from None
@@ -125,6 +134,18 @@ def _get(resource: str, deadline: float, version: str | None = None) -> dict[str
 def _authority(value: dict[str, Any]) -> None:
     require(all(type(value.get(key)) is type(expected) and value.get(key) == expected
                 for key, expected in AUTHORITY.items()), 'AUTHORITY_INVALID')
+
+
+def _catalog_source(value: Any) -> dict[str, Any]:
+    require(type(value) is dict and set(value) == {'git_blob_sha1', 'sha256', 'bytes'},
+            'CATALOG_SOURCE_INVALID')
+    require(type(value['git_blob_sha1']) is str
+            and re.fullmatch('[a-f0-9]{40}', value['git_blob_sha1']) is not None
+            and type(value['sha256']) is str
+            and re.fullmatch('[a-f0-9]{64}', value['sha256']) is not None
+            and type(value['bytes']) is int and 1 <= value['bytes'] <= CATALOG_LIMIT,
+            'CATALOG_SOURCE_INVALID')
+    return dict(value)
 
 
 def _checked(value: dict[str, Any], capture: dict[str, Any]) -> datetime:
@@ -204,12 +225,22 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
         'git_commit_ref': 'main', 'external_order_transmission': False}
     require(all(type(deployment.get(key)) is type(value) and deployment.get(key) == value
                 for key, value in expected_deployment.items()), 'DEPLOYMENT_MISMATCH')
-    raw_index, _ = get('index')
-    index = validate_index(raw_index, utc_now())
-    raw_catalog, _ = get('catalog')
+    summary, summary_capture = get('summary')
+    _authority(summary)
+    checked = _checked(summary, summary_capture)
+    source = _catalog_source(summary.get('catalog_source'))
+    raw_catalog, catalog_capture = get('catalog-blob:'+source['git_blob_sha1'])
+    catalog_bytes = catalog_capture['body_utf8'].encode('utf-8')
+    require(len(catalog_bytes) == source['bytes']
+            and sha256(catalog_bytes).hexdigest() == source['sha256']
+            and sha1(b'blob '+str(len(catalog_bytes)).encode()+b'\0'+catalog_bytes,
+                     usedforsecurity=False).hexdigest()
+            == source['git_blob_sha1'], 'CATALOG_SOURCE_BYTES_MISMATCH')
     catalog = validate_publication(raw_catalog)
     _authority(catalog)
     _authority(catalog['master'])
+    raw_index, _ = get('index')
+    index = validate_index(raw_index, utc_now())
     targets = {row['symbol']: row for row in catalog['master']['securities'] if row['in_target']}
     entries = {(row['symbol'], row['frequency']): row for row in index['entries']}
     require(len(targets) == TARGETS and len(entries) == TARGETS*2
@@ -219,9 +250,6 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
     require(all(all(entry[key] == targets[symbol][key]
                     for key in ('instrument_id', 'security_type', 'name'))
                 for (symbol, _), entry in entries.items()), 'ENTRY_IDENTITY_MISMATCH')
-    summary, capture = get('summary')
-    _authority(summary)
-    checked = _checked(summary, capture)
     require(summary.get('evidence_sha256') == catalog['evidence_sha256']
             and summary.get('built_at') == catalog['built_at']
             and delivery._same(summary.get('master'), {
@@ -265,6 +293,7 @@ def probe(expected_revision: str, report_path: Path, *, _transport: Any = None) 
         'transport_mode': 'SIMULATED_TRANSPORT' if _transport is not None else 'ACTUAL_HTTP_GET',
         'started_at': started.isoformat(), 'checked_at': checked.isoformat(),
         'production_revision': expected_revision, 'catalog_id': catalog['evidence_sha256'],
+        'catalog_source': source,
         'catalog_master_sha256': catalog['master']['evidence_sha256'],
         'index_id': index['evidence_sha256'], 'index_master_sha256': index['master_sha256'],
         'universe_version': index['universe_version'], 'target_count': len(targets),

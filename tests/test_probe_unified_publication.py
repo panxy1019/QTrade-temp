@@ -1,7 +1,7 @@
 import json
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
-from hashlib import sha256
+from hashlib import sha1, sha256
 from types import SimpleNamespace
 from urllib.error import HTTPError
 
@@ -108,13 +108,25 @@ def runtime(tmp_path, monkeypatch):
     monkeypatch.setattr(series_api, '_object', lambda digest: api_objects[digest])
     monkeypatch.setattr(catalog_api, 'catalog', lambda: state.catalog)
 
+    def catalog_raw():
+        return json.dumps(state.catalog).encode()
+
+    def catalog_source():
+        raw = catalog_raw()
+        return {'git_blob_sha1': sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest(),
+                'sha256': sha256(raw).hexdigest(), 'bytes': len(raw)}
+
+    monkeypatch.setattr(catalog_api, '_capture', lambda: (state.catalog, catalog_source()),
+                        raising=False)
+    state.catalog_source = catalog_source
+
     def transport(resource, deadline, version):
         state.requests.append((resource, version))
         if resource == 'deployment':
             value = state.deployment
         elif resource == 'index':
             value = state.index
-        elif resource == 'catalog':
+        elif resource.startswith('catalog-blob:'):
             value = state.catalog
         elif resource == 'summary':
             value = catalog_api.summary(Response())
@@ -127,6 +139,7 @@ def runtime(tmp_path, monkeypatch):
         if state.damage:
             state.damage(resource, value)
         raw = (state.objects[resource[6:]] if resource.startswith('shard:')
+               else catalog_raw() if resource.startswith('catalog-blob:')
                else json.dumps(value).encode())
         return {'url': module.ORIGIN+'/api/deployment' if resource == 'deployment' else
             module._route(resource)[0]+('&version='+version if version else ''),
@@ -148,6 +161,9 @@ def test_fresh_transport_with_partial_and_no_data_has_sample_only_integrity(runt
     assert result['transport_mode'] == 'SIMULATED_TRANSPORT'
     assert result['state'] == 'FRESH_TRANSPORT' and result['fresh_publication'] is True
     assert result['target_count'] == 1500 and result['index_entries'] == 3000
+    assert result['catalog_source'] == runtime.catalog_source()
+    assert [resource for resource, _ in runtime.requests[:4]] == [
+        'deployment', 'summary', 'catalog-blob:'+runtime.catalog_source()['git_blob_sha1'], 'index']
     assert result['incremental_freshness']['5min']['status'] == 'PARTIAL'
     assert result['incremental_freshness']['5min']['ready_symbols'] == 1496
     assert {sample['state'] for sample in result['samples']} == {'PARTIAL', 'NO_DATA'}
@@ -377,3 +393,125 @@ def test_credentials_in_discovered_proxy_fail_before_network(monkeypatch):
     monkeypatch.setattr(module, 'build_opener', lambda *_: pytest.fail('unexpected network'))
     with pytest.raises(ValueError, match='PUBLIC_DELIVERY_PROXY_CONFIGURATION_INVALID'):
         module._get('summary', module.time.monotonic()+30)
+
+
+@pytest.mark.parametrize('damage', ['missing', 'extra', 'not_dict', 'sha1_type', 'sha1_length',
+    'sha1_uppercase', 'sha1_path', 'sha256_type', 'sha256_length', 'sha256_uppercase',
+    'bytes_bool', 'bytes_float', 'bytes_string', 'bytes_zero', 'bytes_negative', 'bytes_oversize'])
+def test_summary_source_must_be_exact_and_bounded_before_blob_request(runtime, damage):
+    def mutate(resource, value):
+        if resource != 'summary':
+            return
+        source = value['catalog_source']
+        if damage == 'missing':
+            del value['catalog_source']
+        elif damage == 'extra':
+            source['url'] = 'https://unapproved.invalid/'
+        elif damage == 'not_dict':
+            value['catalog_source'] = [source]
+        elif damage.startswith('sha1_'):
+            source['git_blob_sha1'] = {'sha1_type': 1, 'sha1_length': 'a'*39,
+                                     'sha1_uppercase': 'A'*40, 'sha1_path': '../private'}[damage]
+        elif damage.startswith('sha256_'):
+            source['sha256'] = {'sha256_type': None, 'sha256_length': 'a'*63,
+                                'sha256_uppercase': 'A'*64}[damage]
+        else:
+            source['bytes'] = {'bytes_bool': True, 'bytes_float': 1.0, 'bytes_string': '1',
+                'bytes_zero': 0, 'bytes_negative': -1, 'bytes_oversize': 12_000_001}[damage]
+    runtime.damage = mutate
+    with pytest.raises(ValueError, match='CATALOG_SOURCE_INVALID'):
+        run(runtime)
+    assert [resource for resource, _ in runtime.requests] == ['deployment', 'summary']
+    assert not runtime.report.exists()
+
+
+@pytest.mark.parametrize('damage', ['sha1', 'sha256', 'length', 'reserialized_bytes',
+                                   'base64_json_wrapper'])
+def test_blob_bytes_must_match_all_three_source_identities(runtime, damage):
+    transport = runtime.transport
+
+    def damaged(resource, deadline, version):
+        capture = transport(resource, deadline, version)
+        value = json.loads(capture['body_utf8'])
+        if resource == 'summary' and damage in {'sha1', 'sha256', 'length'}:
+            field = {'sha1': 'git_blob_sha1', 'sha256': 'sha256', 'length': 'bytes'}[damage]
+            value['catalog_source'][field] = (capture['body_bytes'] if damage == 'length'
+                                               else '0'*(40 if damage == 'sha1' else 64))
+            raw = json.dumps(value).encode()
+        elif resource.startswith('catalog-blob:') and damage == 'reserialized_bytes':
+            raw = json.dumps(value, indent=2).encode()
+        elif resource.startswith('catalog-blob:') and damage == 'base64_json_wrapper':
+            # A default GitHub JSON envelope is not the requested original raw blob.
+            raw = json.dumps({'sha': runtime.catalog_source()['git_blob_sha1'],
+                              'encoding': 'base64', 'content': 'e30='}).encode()
+            capture['content_type'] = 'application/json'
+        else:
+            return capture
+        capture.update(body_utf8=raw.decode(), body_bytes=len(raw),
+                       body_sha256=sha256(raw).hexdigest())
+        return capture
+    with pytest.raises(ValueError, match='CATALOG_SOURCE_BYTES_MISMATCH'):
+        module.probe(REVISION, runtime.report, _transport=damaged)
+    assert not runtime.report.exists()
+    assert not any(resource == 'catalog' for resource, _ in runtime.requests)
+
+
+@pytest.mark.parametrize('media', [module.RAW_BLOB_MEDIA, 'application/octet-stream',
+                                 'application/json; charset=utf-8'])
+def test_fixed_blob_get_requests_raw_media_without_credentials(monkeypatch, media):
+    calls = []
+    digest = 'a'*40
+
+    def opener(*handlers):
+        assert isinstance(handlers[1], module.delivery._NoRedirect)
+        def open_response(request, **kwargs):
+            calls.append(request)
+            return TransportResponse(b'{ "x": 1 }\n', url=request.full_url,
+                                     headers={'Content-Type': media})
+        return SimpleNamespace(open=open_response)
+    monkeypatch.setattr(module, 'build_opener', opener)
+    result = module._get('catalog-blob:'+digest, module.time.monotonic()+30)
+    request, = calls
+    assert request.full_url == module.CATALOG_BLOBS+digest
+    assert request.get_header('Accept') == 'application/vnd.github.raw+json'
+    assert request.get_method() == 'GET' and request.data is None
+    assert not {'authorization', 'cookie'} & {key.lower() for key in request.headers}
+    assert result['body_sha256'] == sha256(b'{ "x": 1 }\n').hexdigest()
+
+
+@pytest.mark.parametrize('damage', ['403', '429', '404', 'wrong_vendor_media', 'html',
+                                   'plain', 'redirect', 'oversize_header'])
+def test_blob_transport_errors_are_strict_without_auth_or_fallback(monkeypatch, damage):
+    resource = 'catalog-blob:'+'a'*40
+    url, _, _ = module._route(resource)
+    response = TransportResponse(url=url, headers={'Content-Type': module.RAW_BLOB_MEDIA})
+    calls = []
+    if damage == 'wrong_vendor_media':
+        response.headers['Content-Type'] = 'application/vnd.github+json'
+    elif damage == 'html':
+        response.headers['Content-Type'] = 'text/html'
+    elif damage == 'plain':
+        response.headers['Content-Type'] = 'text/plain'
+    elif damage == 'redirect':
+        response.url = 'https://unapproved.invalid/'
+    elif damage == 'oversize_header':
+        response.headers['Content-Length'] = '12000001'
+
+    def open_response(request, **kwargs):
+        calls.append(request)
+        if damage.isdigit():
+            raise HTTPError(url, int(damage), 'TEST_ONLY_PRIVATE_ERROR', {}, None)
+        return response
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=open_response))
+    with pytest.raises(ValueError) as error:
+        module._get(resource, module.time.monotonic()+30)
+    if damage in {'403', '429'}:
+        assert str(error.value) == 'UNIFIED_PROBE_BLOB_RATE_LIMITED'
+    assert 'TEST_ONLY_PRIVATE_ERROR' not in str(error.value)
+    assert len(calls) == 1
+    assert not {'authorization', 'cookie'} & {key.lower() for key in calls[0].headers}
+    with pytest.raises(ValueError, match='RESOURCE_NOT_ALLOWED'):
+        module._get('catalog', module.time.monotonic()+30)
+    with pytest.raises(ValueError, match='RESOURCE_NOT_ALLOWED'):
+        module._get('catalog-blob:../private', module.time.monotonic()+30)
+    assert len(calls) == 1
