@@ -2,6 +2,27 @@
 
 Last updated: 2026-10-27, afternoon investigation checkpoint.
 
+- A second actual production probe at 13:57 also returns FRESH_TRANSPORT, using
+  a newer immutable public commit: index/catalog ages 90.998/65.780 seconds. All
+  five samples again match its bytes; 688365 advances from 13:45 to 13:50. The
+  expected grid has meanwhile advanced to 13:55, which this catalog has not yet
+  reached (0/1,500 ready). This explicitly demonstrates publication freshness
+  does not certify data timeliness. Two observed frames are not an all-session
+  SLA. Keep current collection/publication lag and the 43.73s/45s export-budget
+  margin under review at 14:45; no limit has been relaxed.
+
+- PR30 is merged and production f3c55cb is independently verified. At actual
+  13:55 the permanent full public probe returns FRESH_TRANSPORT: index/catalog
+  ages 148.224/136.370 seconds, 1,500 identities and 3,000 entries verified, all
+  five API series match the same immutable publication commit and shard bytes.
+  Minute coverage is PARTIAL: 1,494/1,500 reach expected 13:50; 000032 is current,
+  688365 is one grid behind, 512580 has its retained 09:55 gap and 600621 NO_DATA.
+  This is one actual production frame, not sustained-SLA or completed-day C/D/E
+  acceptance. No service restart or PAPER/model/policy change. Actual separate
+  delisted queue observation now has 39 qualified rows across five limited
+  scopes; it still yields to current collection and has no PIT certification.
+  Next automatic checks are 14:45 and 16:45. STEP2 remains gated.
+
 - PR29 is merged; production a53aa03 is verified. At 13:11 the actual remote
   index contains 13:05 bars for 1,496 targets, changing exactly those 1,496 minute
   series from lunch. At 13:20 one production API series independently matches

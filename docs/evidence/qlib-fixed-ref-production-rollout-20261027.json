@@ -1,0 +1,67 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.fixed-ref-production-rollout.v1",
+  "created_at": "2026-10-27T05:58:39.784853+00:00",
+  "production_revision": "f3c55cbbac5f087a0921182626202cc45b7c1d32",
+  "source_revision": "f0e05981766de7a78edd7086452530c27e9068dc",
+  "real_publication_frames_verified": 2,
+  "fixed_origin_transport_and_five_sample_integrity_verified": true,
+  "first_frame_incremental_freshness": {
+    "day": {
+      "status": "PARTIAL",
+      "ready_symbols": 1497,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-26T15:00:00+08:00"
+    },
+    "5min": {
+      "status": "PARTIAL",
+      "ready_symbols": 1494,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-27T13:50:00+08:00"
+    }
+  },
+  "second_frame_incremental_freshness": {
+    "day": {
+      "status": "PARTIAL",
+      "ready_symbols": 1497,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-26T15:00:00+08:00"
+    },
+    "5min": {
+      "status": "PARTIAL",
+      "ready_symbols": 0,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-27T13:55:00+08:00"
+    }
+  },
+  "all_session_timeliness_accepted": false,
+  "all_series_bytes_verified": false,
+  "browser_rendered_verified": false,
+  "completed_session_cde_accepted": false,
+  "whole_step1_accepted": false,
+  "step2_started": false,
+  "source_artifacts": [
+    {
+      "path": "docs/evidence/qlib-publication-live-probe-f3c55cb-20261027.json",
+      "bytes": 16916,
+      "sha256": "3418775388d21d81800053380d51a6bd519b2322d6166a756049c6176008c6ad"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-live-probe-f3c55cb-afternoon-next-20261027.json",
+      "bytes": 16913,
+      "sha256": "ff2d7ca2c6bbbd517b8a45e9ad09b3ccbdda8a1834b03278e7d64325fd2f02df"
+    },
+    {
+      "path": "docs/evidence/qlib-afternoon-delisted-20261027.json",
+      "bytes": 1094,
+      "sha256": "1233e68abf7afba5dca13b96b7ab521c6cdd1dae5a576487e5b624eb9bf92940"
+    }
+  ],
+  "evidence_sha256": "8671143eae3ede18767de47af5fcafdd28b044172ad7ebe32a6ee93b009092fb"
+}

@@ -24,6 +24,22 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+13:57 second complete production frame also passes transport/integrity, with
+index/catalog ages 90.998/65.780 seconds and new sample data. Actual expected
+minute end is now 13:55, still absent in this catalog (0/1,500 ready). Preserve
+PARTIAL and distinguish data lag from fresh delivery. Two observed frames do
+not certify sustained SLA; monitor collection/publish lag and the observed
+43.73s export against its unchanged 45s cap at the next 14:45 check.
+
+PR30 actual production checkpoint: f3c55cb serves the final fixed-commit read
+path. At 13:55 the full probe verifies all 1,500 target identities, 3,000 index
+entries and five API series against same-commit public bytes, with FRESH index/
+catalog ages 148.224/136.370 seconds. Actual minute coverage remains PARTIAL:
+1,494/1,500 through expected 13:50. This is a one-frame production proof; sustained
+freshness and complete-day C/D/E remain separate gates. Delisted queue has 39
+qualified rows, with gaps and no historical PIT certification. Runtime services,
+PAPER, ACTIVE and policy unchanged. Next real checks: 14:45 / 16:45.
+
 Afternoon checkpoint: PR29 is merged and production a53aa03 verified. The real
 remote index advances 1,496 minute targets to 13:05; a separate one-series API
 row check succeeds but reports a stale index at 13:20. Afternoon transport SLA

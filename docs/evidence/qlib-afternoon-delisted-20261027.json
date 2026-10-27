@@ -1,0 +1,28 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.afternoon-delisted.v1",
+  "checked_at": "2026-10-27T05:53:59.871619+00:00",
+  "source_relative_root": "pit-repair/delisted-execution/41ef4eedae6db050775c4bb9ccfe71bcf0de5cb13862b9ed3d4116d067e6e7e2",
+  "summary": {
+    "state": "YIELDED_TO_CURRENT_COLLECTION",
+    "updated_at": "2026-10-27T05:48:37.865559+00:00",
+    "qualified_rows": 39,
+    "planned_delisted_securities": 230,
+    "window_states": {
+      "QUALITY_REJECTED": 82,
+      "YIELDED_TO_CURRENT_COLLECTION": 40,
+      "CONTENT_QUALIFIED_WITH_UNRESOLVED_GAPS": 5
+    },
+    "historical_pit_certified": false,
+    "priority_reason": "CURRENT_PRIORITY_WORK_ACTIVE_OR_FAILED"
+  },
+  "historical_pit_certified": false,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "b9e8644c6f10233849c746e11a47766bc8fd26b4d9a7c1f9c170c785de303ddc"
+}
