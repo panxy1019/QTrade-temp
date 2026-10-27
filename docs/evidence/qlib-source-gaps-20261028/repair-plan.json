@@ -1,0 +1,115 @@
+{
+  "apply": false,
+  "batches": [],
+  "calendar_sha256": "b31af901ef888cf76f0137a06829e2bf3b9f27c430b85e9af80e48f9a2b1165c",
+  "candidate_count": 10,
+  "candidates": [
+    {
+      "completed_end": null,
+      "desired_end": "2026-10-26T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T03:21:50+00:00",
+      "state": "FAILED",
+      "symbol": "002811",
+      "trading_day": "2026-10-26"
+    },
+    {
+      "completed_end": null,
+      "desired_end": "2026-10-26T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T03:21:50+00:00",
+      "state": "FAILED",
+      "symbol": "002827",
+      "trading_day": "2026-10-26"
+    },
+    {
+      "completed_end": null,
+      "desired_end": "2026-10-26T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T03:30:02+00:00",
+      "state": "FAILED",
+      "symbol": "510660",
+      "trading_day": "2026-10-26"
+    },
+    {
+      "completed_end": null,
+      "desired_end": "2026-10-26T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T03:30:02+00:00",
+      "state": "FAILED",
+      "symbol": "512580",
+      "trading_day": "2026-10-26"
+    },
+    {
+      "completed_end": null,
+      "desired_end": "2026-10-26T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T03:30:02+00:00",
+      "state": "FAILED",
+      "symbol": "600621",
+      "trading_day": "2026-10-26"
+    },
+    {
+      "completed_end": null,
+      "desired_end": "2026-10-26T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T03:35:10+00:00",
+      "state": "FAILED",
+      "symbol": "605258",
+      "trading_day": "2026-10-26"
+    },
+    {
+      "completed_end": null,
+      "desired_end": "2026-10-27T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T18:43:53+00:00",
+      "state": "FAILED",
+      "symbol": "002827",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "completed_end": null,
+      "desired_end": "2026-10-27T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T18:49:03+00:00",
+      "state": "FAILED",
+      "symbol": "600621",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "completed_end": null,
+      "desired_end": "2026-10-27T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T18:51:07+00:00",
+      "state": "FAILED",
+      "symbol": "605258",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "completed_end": "2026-10-27T01:55:00+00:00",
+      "desired_end": "2026-10-27T07:00:00+00:00",
+      "next_attempt_at": "2026-10-27T19:44:31+00:00",
+      "state": "FAILED",
+      "symbol": "512580",
+      "trading_day": "2026-10-27"
+    }
+  ],
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "code_revision": "9846a7f30774d6ae4b4d41f02b493c5246be87d9",
+  "evidence_sha256": "c38cf41463e68174b3719cad35e04b309f602c19a7578e1c83392ff0ccd876a8",
+  "external_order_transmission": false,
+  "historical_pit_certified": false,
+  "limitations": [
+    "Maintenance window only; no current collector ownership bypass",
+    "Absent source grids remain unresolved; no inferred security status",
+    "No source substitution, history stitching or freshness promotion"
+  ],
+  "live_trading_enabled": false,
+  "master_sha256": "54e40b801fcfd88a153a5f5e93ae54ca18b0a005a0916ee8aaaf10cbee5c4278",
+  "max_batches": 2,
+  "observed_at": "2026-10-27T18:32:51.149304+00:00",
+  "point_in_time": false,
+  "previous_sessions": [
+    "2026-10-27",
+    "2026-10-26",
+    "2026-10-23"
+  ],
+  "promotion": "NOT_ELIGIBLE",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "schema_version": "qtrade.incremental-gap-repair.v1",
+  "state": "PLAN",
+  "trailing_rows": 240,
+  "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308"
+}

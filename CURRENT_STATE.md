@@ -1,6 +1,25 @@
 # Current state
 
-Last updated: 2026-10-28 02:20 Shanghai, automatic candidate validation boundary checked.
+Last updated: 2026-10-28 02:36 Shanghai, current source gaps replayed from raw bytes.
+
+- Actual02:32 raw replay covers all7 failed October27 tasks: day1497/1500 and
+  minute1496/1500. The3 stocks002827/600621/605258 return no October27 bars and
+  stop atOctober23. ETF512580 returns45/48 with10:00/11:30/14:30 absent; its
+  contiguous queue progress is09:55. HTTP200 is not complete source coverage.
+- All7 original manifests/raw packs and10 response bodies verify; Windows
+  independently replays the20 captured payloads, source bodies and missing grid.
+  Four reader/repair/calendar sources match Git9846; original collector e44a
+  provenance stays. No zero fill, suspension inference or source stitching.
+- Recent3-session RO repair plan has10 minute candidates. Maintenance213587 is
+  confirmed live by/proc; ownership guard refuses a separate apply. No apply,
+  queue/service mutation or PAPER action occurs. Initial operator missing-import
+  failure is retained separately. See docs/QLIB_SOURCE_GAP_DIAGNOSIS_20261028.md.
+- Actual02:24 checks confirmed forward383859, workflow338258, data334634,
+  publisher294214, ETF299932, maintenance213587, history164340, PIT153768 and
+  observer4471 alive; no nonterminal research jobs. These are live process checks,
+  not a new completed trading session. STEP1/visual/true-close gates remain open.
+
+Previous2026-10-28 02:20 checkpoint (historical observations):
 
 - Actual02:17 read-only capture confirms the historical Ridge98d27455 automatically
   reaches STAGED/zero activations at01:49:26. Validation job1ed2fd21 is COMPLETE;

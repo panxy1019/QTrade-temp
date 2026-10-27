@@ -24,6 +24,16 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 02:36 checkpoint: raw-source diagnosis now accounts for all7 failed
+October27 tasks. Three stocks have no current-day bars/latestOctober23; ETF512580
+has45/48 and lacks10:00/11:30/14:30, so contiguous progress remains09:55. Replay
+of7 manifests/raw packs and10 bodies plus4 Git-bound reader/calendar sources
+passes on cluster/Windows. HTTP200 does not certify complete data or suspension.
+The recent-session RO plan has10 candidates; active maintenance owner213587
+continues, no apply/service/queue/PAPER mutation. Source gaps stay unresolved.
+Continue verifiable source/status governance and independent real-close gates;
+do not spend prior handover authority or relax admission to erase these gaps.
+
 October28 02:20 checkpoint: actual automatic validation of archived-version
 Ridge98d27455 is STAGED/unactivated. Its COMPLETE validation job and15 actual
 files/12 Git-bound sources verify. October27 inputs already existed before this

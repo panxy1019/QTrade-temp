@@ -1,0 +1,66 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.incremental-collection-batch.v1",
+  "batch_id": "375660a678fd4a27a3012cad701db0d0",
+  "spec": {
+    "frequency": "day",
+    "target_end": "2026-10-27T07:00:00+00:00",
+    "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+    "symbols": [
+      "002827"
+    ],
+    "code_revision": "e44a134fab8bc0404b8d1c59674747150e170698",
+    "after_by_symbol": {
+      "002827": null
+    }
+  },
+  "completed_at": "2026-10-27T12:50:17.393972+00:00",
+  "raw": {
+    "sha256": "fcaa3fc80e5cba03c6750da20be9bdb23dcc7611270a69590427ec85b03b409f",
+    "bytes": 581,
+    "suffix": ".jsonl.gz",
+    "captures": 2,
+    "uncompressed_bytes": 1121,
+    "body_hashes": [
+      "5ad2ea9bd5d32b75e589249375424d41a594dd5044b761222748c319c98c8592",
+      "40e5fc073fea1385d74154e5b11b32e14e03c26416ddd88b50efb4a0432489f5"
+    ]
+  },
+  "normalized": null,
+  "bar_count": 0,
+  "outcomes": {
+    "002827": {
+      "state": "FAILED",
+      "error_code": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "warnings": [],
+      "decoded": true,
+      "parsed": false,
+      "same_vendor_matched": false,
+      "bar_count": 0,
+      "start": null,
+      "end": null,
+      "missing_amount_bars": 0
+    }
+  },
+  "price_basis": "SINA_NATIVE_ADJUSTMENT_UNCERTIFIED",
+  "admitted_rows_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "stage_counts": {
+    "requested": 2,
+    "downloaded": 2,
+    "parsed_symbols": 1,
+    "validated_symbols": 0,
+    "admitted_symbols": 0,
+    "admitted_rows": 0,
+    "same_vendor_endpoint_matched": 0,
+    "independent_source_reconciled": 0
+  },
+  "historical_pit_certified": false,
+  "independent_source_reconciled": false,
+  "evidence_sha256": "20102ae944b5147d9d57ff44ed35e63ac07a7204667fd3c24fee3278872c0724"
+}

@@ -1,0 +1,65 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.incremental-collection-batch.v1",
+  "batch_id": "f4d4a73d7e90407ca92d3b1945ecf79a",
+  "spec": {
+    "frequency": "5min",
+    "target_end": "2026-10-27T07:00:00+00:00",
+    "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+    "symbols": [
+      "512580"
+    ],
+    "code_revision": "e44a134fab8bc0404b8d1c59674747150e170698",
+    "after_by_symbol": {
+      "512580": "2026-10-27T01:55:00+00:00"
+    }
+  },
+  "completed_at": "2026-10-27T15:28:31.748978+00:00",
+  "raw": {
+    "sha256": "a84290c6c6d63678812b86aba198aedb2bcf6c3c0beca15cdbfd2c43dae6fbdd",
+    "bytes": 1719,
+    "suffix": ".jsonl.gz",
+    "captures": 1,
+    "uncompressed_bytes": 8050,
+    "body_hashes": [
+      "b5aedc3769ad81e723563d9b5b7d742d575e532b867bb50077f0b604e1b2e864"
+    ]
+  },
+  "normalized": null,
+  "bar_count": 0,
+  "outcomes": {
+    "512580": {
+      "state": "FAILED",
+      "error_code": "MINUTE_WINDOW_GAP_REASON_UNKNOWN",
+      "warnings": [],
+      "decoded": true,
+      "parsed": true,
+      "same_vendor_matched": false,
+      "bar_count": 0,
+      "start": null,
+      "end": null,
+      "missing_amount_bars": 0
+    }
+  },
+  "price_basis": "SINA_NATIVE_ADJUSTMENT_UNCERTIFIED",
+  "admitted_rows_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "stage_counts": {
+    "requested": 1,
+    "downloaded": 1,
+    "parsed_symbols": 1,
+    "validated_symbols": 1,
+    "admitted_symbols": 0,
+    "admitted_rows": 0,
+    "same_vendor_endpoint_matched": 0,
+    "independent_source_reconciled": 0
+  },
+  "historical_pit_certified": false,
+  "independent_source_reconciled": false,
+  "evidence_sha256": "0f7523f2ebfd7ee1ac0c34f37b4a1059955ab5e78e20e21b2e8536b2be6f47e4"
+}
