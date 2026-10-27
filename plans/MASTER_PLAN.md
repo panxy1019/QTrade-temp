@@ -24,6 +24,13 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 02:46 checkpoint: verified automatic collection retry on the live owner,
+not just a state file.002827/5min advances11→12, claimed21s after its02:43:53 due
+time and completes02:44:15. Fresh captured source still endsOctober23, so task
+remains FAILED and coverage unresolved. New raw/manifest/before-after evidence
+replays on Windows; no manual claim/reset/service restart. Next policy deadline
+07:00:15. Future close and browser gates remain, with no new experiment pending.
+
 October28 02:36 checkpoint: raw-source diagnosis now accounts for all7 failed
 October27 tasks. Three stocks have no current-day bars/latestOctober23; ETF512580
 has45/48 and lacks10:00/11:30/14:30, so contiguous progress remains09:55. Replay

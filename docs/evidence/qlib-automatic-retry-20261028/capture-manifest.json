@@ -1,0 +1,20 @@
+{
+  "files": {
+    "batch-manifest.json": {
+      "bytes": 2000,
+      "sha256": "a9394092b0982cf953c679d6a1f16195abb168991e4c42a62692b4e5d571b58c"
+    },
+    "raw.jsonl.gz": {
+      "bytes": 3859,
+      "sha256": "0dda5dc12de3a76c5d129393278653589037051dfc0fe20bf74d8fdd368662cf"
+    },
+    "verification.json": {
+      "bytes": 2756,
+      "sha256": "040f7ff216c819e5699803b4b50a00eb209e123954c778bee0e7e5917dd9284c"
+    }
+  },
+  "original_capture_repackaged_unchanged_after_local_orchestration_error": true,
+  "queue_mutated_by_operator": false,
+  "transport_sha256": "1b9ffd11f61fcc26540a2488cf3995eefccbb10a7a091b88d9d787c9d12d2380",
+  "whole_step1_accepted": false
+}

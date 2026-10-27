@@ -1,6 +1,19 @@
 # Current state
 
-Last updated: 2026-10-28 02:36 Shanghai, current source gaps replayed from raw bytes.
+Last updated: 2026-10-28 02:46 Shanghai, actual automatic retry observed and replayed.
+
+- Specific002827/5min retry advances11→12 automatically under live maintenance
+  owner213587. Due02:43:53, claimed02:44:14, COMPLETE batch02:44:15; queue outcome
+  stays FAILED because the new raw source still stopsOctober23. A batch COMPLETE
+  does not mean its symbol data succeeds. New immutable manifest/raw response and
+  before/after task snapshots verify independently on Windows;21s lag is for this
+  single claim only. Next existing deadline07:00:15; no early/manual retry/reset.
+- All9 supervised process handles were live at02:40; no pending research job,
+  ACTIVE295/head09a remain and current forward instance is unchanged. This turn
+  verified the specific live retry, not a future trading session. Retain all real
+  close/visual gates, original consumed recovery claims and service budgets.
+
+Previous2026-10-28 02:36 checkpoint (historical observations):
 
 - Actual02:32 raw replay covers all7 failed October27 tasks: day1497/1500 and
   minute1496/1500. The3 stocks002827/600621/605258 return no October27 bars and
