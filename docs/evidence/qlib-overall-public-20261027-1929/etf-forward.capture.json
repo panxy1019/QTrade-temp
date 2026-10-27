@@ -1,0 +1,21 @@
+{
+  "name": "etf-forward",
+  "url": "https://q-trade-temp.vercel.app/api/research/online/etf-forward",
+  "method": "GET",
+  "maximum_bytes": 1100000,
+  "requested_at": "2026-10-27T11:28:40.548442+00:00",
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "11079",
+    "Cache-Control": "no-store",
+    "Date": "Tue, 27 Oct 2026 11:28:36 GMT",
+    "X-Vercel-Id": "sfo1::iad1::ppz4g-1793100522340-6c43930aceb4"
+  },
+  "state": "JSON_CAPTURED_NOT_CDE_ACCEPTANCE",
+  "received_at": "2026-10-27T11:28:41.250238+00:00",
+  "body_bytes": 11079,
+  "body_sha256": "b0a1fe41cb7d631fe8d31b8e59e5840f4338a18260da4a24897de66916231fef",
+  "body_file": "etf-forward.body.json"
+}

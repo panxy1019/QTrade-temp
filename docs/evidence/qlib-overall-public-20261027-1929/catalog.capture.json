@@ -1,0 +1,21 @@
+{
+  "name": "catalog",
+  "url": "https://q-trade-temp.vercel.app/api/research/online/catalog",
+  "method": "GET",
+  "maximum_bytes": 3000000,
+  "requested_at": "2026-10-27T11:28:29.420055+00:00",
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "63136",
+    "Cache-Control": "no-store",
+    "Date": "Tue, 27 Oct 2026 11:28:34 GMT",
+    "X-Vercel-Id": "sfo1::iad1::gnn8g-1793100511186-6a282b8488b9"
+  },
+  "state": "JSON_CAPTURED_NOT_CDE_ACCEPTANCE",
+  "received_at": "2026-10-27T11:28:33.598257+00:00",
+  "body_bytes": 63136,
+  "body_sha256": "f3846cd0002cac5891c0479c0272094652b41bc0d7d9cfc41ab07e1f8252651b",
+  "body_file": "catalog.body.json"
+}

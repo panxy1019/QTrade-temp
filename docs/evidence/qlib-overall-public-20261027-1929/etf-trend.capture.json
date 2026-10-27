@@ -1,0 +1,21 @@
+{
+  "name": "etf-trend",
+  "url": "https://q-trade-temp.vercel.app/api/research/online/etf-trend",
+  "method": "GET",
+  "maximum_bytes": 320000,
+  "requested_at": "2026-10-27T11:28:39.492691+00:00",
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "26423",
+    "Cache-Control": "no-store",
+    "Date": "Tue, 27 Oct 2026 11:28:36 GMT",
+    "X-Vercel-Id": "sfo1::iad1::kzzsg-1793100521342-d0bdcd76fd84"
+  },
+  "state": "JSON_CAPTURED_NOT_CDE_ACCEPTANCE",
+  "received_at": "2026-10-27T11:28:40.546779+00:00",
+  "body_bytes": 26423,
+  "body_sha256": "a21568a182a3132c02bc25edc9ed82ddb8f186e6f37705fedec2ea590077aa3b",
+  "body_file": "etf-trend.body.json"
+}

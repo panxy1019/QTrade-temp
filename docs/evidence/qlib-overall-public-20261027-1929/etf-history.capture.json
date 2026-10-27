@@ -1,0 +1,21 @@
+{
+  "name": "etf-history",
+  "url": "https://q-trade-temp.vercel.app/api/research/online/etf-history",
+  "method": "GET",
+  "maximum_bytes": 3000000,
+  "requested_at": "2026-10-27T11:28:41.251583+00:00",
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "839174",
+    "Cache-Control": "no-store",
+    "Date": "Tue, 27 Oct 2026 11:28:36 GMT",
+    "X-Vercel-Id": "sfo1::iad1::q926b-1793100523070-41a008d7bad3"
+  },
+  "state": "JSON_CAPTURED_NOT_CDE_ACCEPTANCE",
+  "received_at": "2026-10-27T11:28:45.905473+00:00",
+  "body_bytes": 839174,
+  "body_sha256": "ffd2bbd9c4365836f1e472f485a286df90559763270379f3a71f05479950deb4",
+  "body_file": "etf-history.body.json"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "comparison",
+  "url": "https://q-trade-temp.vercel.app/api/research/online/strategy-comparison",
+  "method": "GET",
+  "maximum_bytes": 3000000,
+  "requested_at": "2026-10-27T11:28:35.040308+00:00",
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "529349",
+    "Cache-Control": "no-store",
+    "Date": "Tue, 27 Oct 2026 11:28:36 GMT",
+    "X-Vercel-Id": "sfo1::iad1::gnn8g-1793100516839-a4eee488418b"
+  },
+  "state": "JSON_CAPTURED_NOT_CDE_ACCEPTANCE",
+  "received_at": "2026-10-27T11:28:38.197791+00:00",
+  "body_bytes": 529349,
+  "body_sha256": "b5ad3b23d3cd3a833a4f47dcdb38f2ef6e1d9677029655ed6380c1b30770962f",
+  "body_file": "comparison.body.json"
+}

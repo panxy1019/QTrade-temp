@@ -1,6 +1,33 @@
 # Current state
 
-Last updated: 2026-10-27 18:49 Shanghai, actual post-close checkpoint.
+Last updated: 2026-10-27 19:38 Shanghai, actual report checkpoint.
+
+- Overall implementation/effect/next-plan report is now in
+  docs/QTRADE_OVERALL_PROGRESS_REPORT_20261027.md. Actual 19:26 full public
+  market probe passes on production main b64b5f9, public commit 6361e0b5, with
+  index/catalog ages 149.27/145.10s. Eight fixed public API captures succeed;
+  coverage remains daily 1,497 and minute 1,496 out of 1,500. This is bounded
+  public delivery evidence, not browser rendering or full STEP1 acceptance.
+
+- Actual 19:38 preparation is 847/987, with 137 unattempted and three waiting
+  retries (140 unresolved); formal head remains October 26, automatic completion
+  absent. All QTrade supervised PIDs remain Running and unchanged, including
+  PAPER 175982. ACTIVE activation count stays one; candidate TRAINED/unactivated,
+  rolling OFF. Free space is 275.39 GiB. At 19:27 history queue has 57,888 qualified
+  rows (day 1,440 / minute 56,448), independent delisted probe 67; these are sealed
+  queue counts, not total lake or full historical certification. Dataset signed
+  metadata has 990 retained stock partitions / 2,158,792 rows ending October 26;
+  no new full Parquet scan was performed for this report.
+
+- Actual public stock forward remains DEGRADED/FORWARD_SERVICE_DATA_STALE,
+  although all 12 books have October 27 observations. Six PAPER books are NORMAL,
+  running, no recovery required, zero fills/holdings and cash/NAV 1m each; the
+  1,135 blocked items are not execution/alpha evidence. ETF SHADOW remains Running
+  with current 30/30 close inputs and the previously accepted pinned observation;
+  tomorrow's target is prospective. PR32 remains Draft and the cadence repair is
+  not deployed into today's source-55b5b004 frozen request. C/D/stock E and STEP2
+  remain gated. Report clarifies existing factor/evaluation/StrategyRegistry cores
+  versus missing unified factor research and builder workflows.
 
 - A second actual full production probe at 18:49 confirms main b64b5f9 and a
   different public commit, 2dffe7dd. It is FRESH_TRANSPORT in 17.56s, with

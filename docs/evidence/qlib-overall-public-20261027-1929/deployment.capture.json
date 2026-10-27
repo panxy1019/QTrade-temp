@@ -1,0 +1,21 @@
+{
+  "name": "deployment",
+  "url": "https://q-trade-temp.vercel.app/api/deployment",
+  "method": "GET",
+  "maximum_bytes": 16000,
+  "requested_at": "2026-10-27T11:28:28.470384+00:00",
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "239",
+    "Cache-Control": "public, max-age=15",
+    "Date": "Tue, 27 Oct 2026 11:26:20 GMT",
+    "X-Vercel-Id": "sfo1::iad1::bdzfh-1793100510433-76901a087dfa"
+  },
+  "state": "JSON_CAPTURED_NOT_CDE_ACCEPTANCE",
+  "received_at": "2026-10-27T11:28:29.418725+00:00",
+  "body_bytes": 239,
+  "body_sha256": "0268dc4d9deb4ac1600861edb9ff66c4458e31c83f862d58b25d9e831a4c4fd3",
+  "body_file": "deployment.body.json"
+}

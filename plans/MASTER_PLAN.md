@@ -24,6 +24,22 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+19:38 report checkpoint: overall implementation/effect/roadmap documented in
+docs/QTRADE_OVERALL_PROGRESS_REPORT_20261027.md, backed by actual private state,
+eight fixed API captures and another full public probe (production b64b5f9,
+index/catalog 149.27/145.10s). Prep is 847/987, 137 unattempted and three waiting
+retries; formal head remains October 26 and automatic completion absent. All
+PIDs/ACTIVE/OFF remain unchanged, free 275.39 GiB. History queue reached 57,888
+qualified rows and separate delisted 67 at 19:27; no full-history certification.
+Public stock forward is still DEGRADED for stale formal data: six PAPER books
+hold cash with zero fills, not validated strategy returns. Pinned ETF SHADOW
+observation retains its independent pass. Keep PR32 Draft until the frozen
+source-bound daily request resolves, then roll out the already tested cadence
+repair. Complete real C/D/stock E and separately scoped production/visual checks
+before STEP2. Reuse existing factor metrics and StrategyRegistry core when
+building Factor Registry, independent evaluation, unified strategy registration
+and a version-bound builder; do not duplicate those foundations.
+
 18:49 checkpoint: another full actual production frame passes on main b64b5f9,
 public commit 2dffe7dd, index/catalog ages 118.62/106.92s in 17.56s. Preserve the
 intervening HTTP fetch failure (no acceptance report); no continuous SLA claim.

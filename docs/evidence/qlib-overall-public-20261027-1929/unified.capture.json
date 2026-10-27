@@ -1,0 +1,21 @@
+{
+  "name": "unified",
+  "url": "https://q-trade-temp.vercel.app/api/unified/summary",
+  "method": "GET",
+  "maximum_bytes": 2000000,
+  "requested_at": "2026-10-27T11:28:33.599614+00:00",
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "11566",
+    "Cache-Control": "no-store",
+    "Date": "Tue, 27 Oct 2026 11:28:34 GMT",
+    "X-Vercel-Id": "sfo1::iad1::v7n4r-1793100515360-121557ab2354"
+  },
+  "state": "JSON_CAPTURED_NOT_CDE_ACCEPTANCE",
+  "received_at": "2026-10-27T11:28:35.038883+00:00",
+  "body_bytes": 11566,
+  "body_sha256": "32e780741d855ff59693f061e8e693c9560f051584c33042483ad2673a6195f6",
+  "body_file": "unified.body.json"
+}

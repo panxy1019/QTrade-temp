@@ -1,0 +1,21 @@
+{
+  "name": "stock-forward",
+  "url": "https://q-trade-temp.vercel.app/api/research/online/forward-books",
+  "method": "GET",
+  "maximum_bytes": 3000000,
+  "requested_at": "2026-10-27T11:28:38.199475+00:00",
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "108558",
+    "Cache-Control": "no-store",
+    "Date": "Tue, 27 Oct 2026 11:28:36 GMT",
+    "X-Vercel-Id": "sfo1::iad1::tb6m4-1793100520099-d5740eb8ce93"
+  },
+  "state": "JSON_CAPTURED_NOT_CDE_ACCEPTANCE",
+  "received_at": "2026-10-27T11:28:39.491326+00:00",
+  "body_bytes": 108558,
+  "body_sha256": "88e173b44089b09b3cfd1e27ddeb74bea51176c7ede01f7b2521cbf1be516d13",
+  "body_file": "stock-forward.body.json"
+}

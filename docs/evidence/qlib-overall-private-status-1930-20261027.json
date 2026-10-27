@@ -1,0 +1,414 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.overall-status-private-readonly.v1",
+  "started_at": "2026-10-27T11:27:21.385615+00:00",
+  "clock_basis": "ACTUAL_UTC_AND_REPOSITORY_EXCHANGE_CALENDAR",
+  "expected_daily": "2026-10-27T15:00:00+08:00",
+  "whole_step1_accepted": false,
+  "free_gib": 275.4111328125,
+  "qlib-versions": [
+    {
+      "frequency": "day",
+      "version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+      "actual_end": "2026-10-26",
+      "manifest_sha256": "b313fba558f36f487c2180f05fdcaefc1e2fa6ff47efaa0a4b3608c1c9c25438",
+      "admitted_at": "2026-10-26T14:02:55.608696+00:00"
+    }
+  ],
+  "online-models": [
+    {
+      "model_id": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+      "state": "TRAINED",
+      "registered_at": "2026-10-26T15:51:43.127366+00:00",
+      "activated_at": null,
+      "activation_count": 0
+    },
+    {
+      "model_id": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+      "state": "ACTIVE",
+      "registered_at": "2026-10-26T13:22:46.923586+00:00",
+      "activated_at": "2026-10-26T14:52:26.286301+00:00",
+      "activation_count": 1
+    },
+    {
+      "model_id": "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707",
+      "state": "STAGED",
+      "registered_at": "2026-10-26T13:22:18.039230+00:00",
+      "activated_at": null,
+      "activation_count": 0
+    }
+  ],
+  "progress": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.forward-qlib-preparation.v1",
+    "request_sha256": "b0f90249f515ff6cc0e8a04d7c4218e7a55824fe95c2af4ee172ae608e7c53ab",
+    "day": "2026-10-27",
+    "updated_at": "2026-10-27T11:24:30.057079+00:00",
+    "requested_symbols": 990,
+    "qualified_current_daily_inputs": 987,
+    "prepared_symbols": 798,
+    "attempted_new_symbols": 25,
+    "failures": [
+      {
+        "symbol": "603011",
+        "reason": "URLError"
+      },
+      {
+        "symbol": "002827",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "600621",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "605258",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      }
+    ],
+    "pending_symbols": 188,
+    "retry_queue": {
+      "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+      "scope_symbols": 987,
+      "completed_symbols": 798,
+      "unresolved_symbols": 189,
+      "unattempted_symbols": 187,
+      "due_retry_symbols": 0,
+      "waiting_retry_symbols": 2,
+      "next_retry_at": "2026-10-27T11:38:49.582164+00:00",
+      "historical_pit_certified": false
+    },
+    "state": "PREPARATION_ONLY_NOT_A_READY_QLIB_VERSION",
+    "provider_published": false,
+    "model_activated": false,
+    "historical_pit_certified": false,
+    "next_gates": [
+      "COMPLETE_BOUND_SOURCE_ADAPTATION",
+      "BENCHMARK_AND_CALENDAR_ADAPTATION",
+      "IMMUTABLE_PROVIDER_BUILD_AND_ATOMIC_READY_PUBLICATION"
+    ],
+    "evidence_sha256": "97c02c304e398634b87f2ef63dcd30a16eca29291572715c27d327a241b16561"
+  },
+  "data_cycle": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "required_day": "2026-10-27",
+    "data_version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+    "data_end": "2026-10-26",
+    "provider_published": false,
+    "preparation": {
+      "request_sha256": "b0f90249f515ff6cc0e8a04d7c4218e7a55824fe95c2af4ee172ae608e7c53ab",
+      "prepared_symbols": 798,
+      "qualified_current_daily_inputs": 987,
+      "retry_queue": {
+        "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+        "scope_symbols": 987,
+        "completed_symbols": 798,
+        "unresolved_symbols": 189,
+        "unattempted_symbols": 187,
+        "due_retry_symbols": 0,
+        "waiting_retry_symbols": 2,
+        "next_retry_at": "2026-10-27T11:38:49.582164+00:00",
+        "historical_pit_certified": false
+      }
+    },
+    "state": "PREPARING_DAILY_INPUTS",
+    "updated_at": "2026-10-27T11:23:46.726553+00:00",
+    "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+    "evidence_sha256": "01a47668c37db41d6e84c291ea0e0b80310d67b2adfdf74672224892b2d6e067"
+  },
+  "data_service": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "state": "WAITING",
+    "heartbeat_at": "2026-10-27T11:27:16.276036+00:00",
+    "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+    "last_returncode": 0,
+    "evidence_sha256": "e44d2050b810e9db3675af981e3987216365b779992bd68607379eb40b22dcd3"
+  },
+  "automatic_completion_exists": false,
+  "documents": {
+    "unified-data/backfill/service-state.json": {
+      "bytes": 1450,
+      "sha256": "20cdd9b8fb3282151712de30e6a64db49825389edfb903cff777022b28163677",
+      "document": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.history-service.v1",
+        "state": "WAITING",
+        "started_at": "2026-10-26T15:53:29.639431+00:00",
+        "code_revision": "a69eb701e00516461e0f487dc25a2088c1e0dab3",
+        "plan_sha256": "649872fb2eef3ad84614ab0c11635e56517bdcda13fde7fe76d3a9d63bef3945",
+        "period_seconds": 300,
+        "pass_budget_seconds": 240,
+        "completed_passes": 235,
+        "failed_passes": 0,
+        "last_pass_state": "YIELDED_TO_CURRENT_COLLECTION",
+        "last_error_class": null,
+        "next_pass_not_before": "2026-10-27T11:28:29.665481+00:00",
+        "last_execution_sha256": "854964f53844d62cc8702d4c2f5e78eb273ec20c2b0b170ed39aea42b8513e16",
+        "delisted_probe_plan_sha256": "41ef4eedae6db050775c4bb9ccfe71bcf0de5cb13862b9ed3d4116d067e6e7e2",
+        "running_cohort": "OBSERVED",
+        "scheduling_policy": "ALTERNATE_OBSERVED_DELISTED",
+        "last_observed_execution_sha256": "854964f53844d62cc8702d4c2f5e78eb273ec20c2b0b170ed39aea42b8513e16",
+        "last_delisted_execution_sha256": "6daa57ef7f2025648fc7325ee33cb6e3f1d168bd4ee03ea7909b72bb95b94005",
+        "last_pass_cohort": "OBSERVED",
+        "heartbeat_at": "2026-10-27T11:27:10.062610+00:00",
+        "evidence_sha256": "297acee50ba1858526d35cb2dfd743e0a853305f04dcf04a1b94be389f3e8dda"
+      }
+    },
+    "unified-data/backfill/execution-latest.json": {
+      "bytes": 2494,
+      "sha256": "2c029d30be203fb9afba152cdbfbcc160b301c09886a11ead57c3b97baef3533",
+      "document": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.history-progress.v1",
+        "plan_sha256": "649872fb2eef3ad84614ab0c11635e56517bdcda13fde7fe76d3a9d63bef3945",
+        "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+        "updated_at": "2026-10-27T11:23:46.519594+00:00",
+        "frozen_scope_count": 3000,
+        "target_securities": 1500,
+        "window_states": {
+          "CONTENT_QUALIFIED_WITH_UNRESOLVED_GAPS": 218,
+          "YIELDED_TO_CURRENT_COLLECTION": 68,
+          "QUALITY_REJECTED": 20
+        },
+        "qualified_rows": 57888,
+        "frequency_summary": {
+          "day": {
+            "planned_scopes": 1500,
+            "content_qualified_scopes": 120,
+            "qualified_rows": 1440,
+            "full_history_certified_scopes": 0,
+            "independent_source_reconciled_scopes": 0
+          },
+          "5min": {
+            "planned_scopes": 1500,
+            "content_qualified_scopes": 98,
+            "qualified_rows": 56448,
+            "full_history_certified_scopes": 0,
+            "independent_source_reconciled_scopes": 0
+          }
+        },
+        "coverage_basis": "SEALED_RECEIPT_ACCOUNTING_NOT_A_NEW_BULK_REVALIDATION",
+        "global_next_attempt_at": null,
+        "all_requested_windows_examined": false,
+        "historical_pit_certified": false,
+        "ten_year_history_certified": false,
+        "independent_source_reconciled": false,
+        "historical_available_at": null,
+        "state": "YIELDED_TO_CURRENT_COLLECTION",
+        "priority_reason": "CURRENT_PRIORITY_WORK_ACTIVE_OR_FAILED",
+        "attempted_windows": 3,
+        "stage_counts_this_pass": {
+          "requested": 2,
+          "downloaded": 2,
+          "downloaded_rows": 24,
+          "parsed_rows": 24,
+          "qualified_rows_including_reobservations": 24,
+          "newly_qualified_rows": 24,
+          "independent_source_reconciled": 0,
+          "published_qlib_versions": 0
+        },
+        "recovery": {
+          "replayed_sealed_receipts": 0,
+          "interrupted_attempts": 0,
+          "repaired_frontiers": 0
+        },
+        "code_revision": "a69eb701e00516461e0f487dc25a2088c1e0dab3",
+        "shared_source_recovery": null,
+        "shared_source_backoff_sha256": "6aa83ec295ec4ca522dfa7014cde4c7c6b67397e05e07253f135ff73c8793f22",
+        "free_bytes": 295729889280,
+        "elapsed_seconds": 16.885,
+        "progress_sha256": "854964f53844d62cc8702d4c2f5e78eb273ec20c2b0b170ed39aea42b8513e16",
+        "evidence_sha256": "19ab025b9dfccfa2ec86d04f84f774cf8d0d569d3b28fe96d34f1cd897b82351"
+      }
+    },
+    "unified-data/backfill/delisted-execution-latest.json": {
+      "bytes": 2331,
+      "sha256": "639feaf9ab385c91510ddd6c32bbf77086544350b011689ca881f3dbcbe25de9",
+      "document": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.delisted-history-progress.v1",
+        "source_kind": "OFFICIAL_DELISTED_UNCERTIFIED",
+        "source_bundle_sha256": "5962f3e512cb28fae0db49c0c91f5b60c2b42a147b1de4aeb7f8e3eaa7b0c464",
+        "plan_sha256": "41ef4eedae6db050775c4bb9ccfe71bcf0de5cb13862b9ed3d4116d067e6e7e2",
+        "scope_version": "319d02b2938fef1dbd6e3dfd96a7cd00d8f6873a519bc061257df85d902fd0fe",
+        "updated_at": "2026-10-27T11:18:46.230883+00:00",
+        "frozen_scope_count": 230,
+        "planned_delisted_securities": 230,
+        "window_states": {
+          "QUALITY_REJECTED": 132,
+          "YIELDED_TO_CURRENT_COLLECTION": 65,
+          "LOGIN_FAILED": 1,
+          "CONTENT_QUALIFIED_WITH_UNRESOLVED_GAPS": 8
+        },
+        "qualified_rows": 67,
+        "coverage_basis": "SEALED_RECEIPT_ACCOUNTING_NOT_A_NEW_BULK_REVALIDATION",
+        "current_universe_coverage_delta": 0,
+        "published_qlib_versions": 0,
+        "global_next_attempt_at": null,
+        "all_requested_windows_examined": false,
+        "historical_pit_certified": false,
+        "complete_historical_pit_symbols": 0,
+        "ten_year_history_certified": false,
+        "independent_source_reconciled": false,
+        "historical_available_at": null,
+        "state": "YIELDED_TO_CURRENT_COLLECTION",
+        "priority_reason": "CURRENT_PRIORITY_WORK_ACTIVE_OR_FAILED",
+        "attempted_windows": 1,
+        "stage_counts_this_pass": {
+          "requested": 0,
+          "downloaded": 0,
+          "downloaded_rows": 0,
+          "parsed_rows": 0,
+          "qualified_rows_including_reobservations": 0,
+          "newly_qualified_rows": 0,
+          "independent_source_reconciled": 0,
+          "published_qlib_versions": 0
+        },
+        "recovery": {
+          "replayed_sealed_receipts": 0,
+          "interrupted_attempts": 0,
+          "repaired_frontiers": 0
+        },
+        "code_revision": "a69eb701e00516461e0f487dc25a2088c1e0dab3",
+        "shared_source_recovery": null,
+        "shared_source_backoff_sha256": "db74cc1da261141188a65200cb6eab87acbfc038c78659513c140ab57909def7",
+        "free_bytes": 295739326464,
+        "elapsed_seconds": 16.568,
+        "progress_sha256": "6daa57ef7f2025648fc7325ee33cb6e3f1d168bd4ee03ea7909b72bb95b94005",
+        "evidence_sha256": "71e11a83d5598ad3499fba2ca398a2ade6ed0f3f9c7452065ae586c077f1ca2d"
+      }
+    },
+    "pit-repair/next-pass.json": {
+      "bytes": 573,
+      "sha256": "c28136c89239ea76672638aec345e3e7efe6734960e9b6bf669e70555a59d0b1",
+      "document": {
+        "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+        "maximum": 990,
+        "at": "2026-10-27T05:38:09.341954+00:00",
+        "returncode": 0,
+        "receipt_valid": true,
+        "outcome": "SUCCEEDED",
+        "consecutive_failures": 0,
+        "collection_progress": {
+          "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+          "scope_symbols": 990,
+          "completed_symbols": 990,
+          "unresolved_symbols": 0,
+          "unattempted_symbols": 0,
+          "due_retry_symbols": 0,
+          "waiting_retry_symbols": 0,
+          "next_retry_at": null,
+          "historical_pit_certified": false
+        },
+        "next_attempt_at": "2026-10-27T11:38:09.341954+00:00"
+      }
+    },
+    "unified-data/service-state.json": {
+      "bytes": 213,
+      "sha256": "eba4aaca01d692d07d04386f5676b269a51e3b186fd3639340b189b3e930f06c",
+      "document": {
+        "state": "WAITING",
+        "heartbeat_at": "2026-10-27T11:27:17.102173+00:00",
+        "code_revision": "e44a134fab8bc0404b8d1c59674747150e170698",
+        "live_trading_enabled": false,
+        "last_pass_state": "PASS_FINISHED"
+      }
+    }
+  },
+  "services": [
+    {
+      "name": "qtrade-data-observer",
+      "pid": 4471,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-etf-diagnostics",
+      "pid": 179865,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-etf-shadow",
+      "pid": 299932,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-forward-research",
+      "pid": 175982,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-history-backfill",
+      "pid": 164340,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-pit-repair",
+      "pid": 153768,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-qlib-data",
+      "pid": 179733,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-qlib-workflow",
+      "pid": 173727,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-research-maintenance",
+      "pid": 213587,
+      "state": "Running"
+    },
+    {
+      "name": "qtrade-research-publication",
+      "pid": 294214,
+      "state": "Running"
+    }
+  ],
+  "checked_at": "2026-10-27T11:27:21.393084+00:00",
+  "evidence_sha256": "fef156e8b7e0f6ccea8270c13ceb66ff628e0b827dff8f8c54f8862c4e3ac62b"
+}
