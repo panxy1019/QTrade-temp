@@ -19,6 +19,7 @@ from qtrade.domain import RuntimeMode
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from qtrade.research.forward_publication import validate_forward_publication
+from qtrade.research.forward_retirement import closed_book_snapshot, retirement_event
 from qtrade.research.model_registry import checked_document, checked_identity
 from qtrade.research.signal_baselines import STRATEGIES
 from scripts.atomic_json import write_json_immutable
@@ -427,6 +428,84 @@ def audit_book(
     return row
 
 
+def audit_retired_book(
+    root: Path,
+    identity: str,
+    config: dict[str, Any],
+    public: dict[str, Any] | None,
+    event: dict[str, Any],
+    *,
+    now: datetime,
+) -> dict[str, Any]:
+    """Account for retained history explicitly, without inventing a current-day receipt."""
+    row: dict[str, Any] = {
+        "book_id": identity,
+        "strategy_id": config["strategy_id"],
+        "mode": config["mode"],
+        "scope": "READ_ONLY_RETIRED_BOOK_NOT_A_NEW_DAY_OBSERVATION",
+        "accepted": False,
+        "failures": [],
+        "retirement_sha256": None,
+    }
+    try:
+        require(signed(config)["evidence_sha256"] == identity, "BOOK_IDENTITY_MISMATCH")
+        path = root / identity / "retirements" / (event["event"]["evidence_sha256"] + ".json")
+        proof = document(path)
+        require(
+            proof["kind"] == "RETIRED_RESEARCH_BOOK_READ_ONLY"
+            and proof["book_id"] == identity
+            and proof["model_event"] == event
+            and proof["whole_step1_accepted"] is False,
+            "RETIRED_PROOF_IDENTITY_CHANGED",
+        )
+        recorded = datetime.fromisoformat(proof["recorded_at"])
+        snapshot = closed_book_snapshot(root / identity, config, event, now=now)
+        require(
+            proof["snapshot"] == snapshot
+            and recorded.tzinfo is not None
+            and datetime.fromisoformat(snapshot["stop_event"][2]) <= recorded <= now,
+            "RETIRED_BOOK_SNAPSHOT_CHANGED",
+        )
+        if public is None:
+            raise ValueError("FORWARD_AUDIT_RETIRED_PUBLIC_BOOK_MISSING")
+        require(
+            public["running"] is False
+            and public["recovery_required"] == (config["mode"] == "PAPER")
+            and 0 <= (now - datetime.fromisoformat(public["generated_at"])).total_seconds() <= 720,
+            "RETIRED_PUBLIC_BOOK_NOT_STOPPED_OR_FRESH",
+        )
+        with closing(readonly(root / identity / "forward.sqlite")) as db:
+            view: Any = SimpleNamespace(
+                db=db,
+                strategy_id=config["strategy_id"],
+                mode=RuntimeMode(config["mode"]),
+                bundle=SimpleNamespace(
+                    runtime=SimpleNamespace(status=SimpleNamespace(running=False)),
+                    risk=SimpleNamespace(state=SimpleNamespace(value=public["risk_state"])),
+                ),
+            )
+            link = document(root / identity / "archive-link.json")["archive"]
+            projected = public_book_summary(view, archive_link=link)
+        require(
+            {k: v for k, v in public.items() if k not in {"generated_at", "evidence_sha256"}}
+            == {k: v for k, v in projected.items() if k not in {"generated_at", "evidence_sha256"}},
+            "RETIRED_PUBLIC_BOOK_CHANGED",
+        )
+        row["retirement_sha256"] = proof["evidence_sha256"]
+        row["unexecuted_targets_blocked_by_retirement"] = snapshot[
+            "unexecuted_targets_blocked_by_retirement"
+        ]
+    except Exception as error:
+        message = str(error)
+        row["failures"].append(
+            message
+            if message.startswith(("FORWARD_AUDIT_", "FORWARD_RETIREMENT_"))
+            else "FORWARD_AUDIT_RETIRED_BOOK_EVIDENCE_INVALID"
+        )
+    row["accepted"] = not row["failures"]
+    return row
+
+
 def audit_transition(
     base: Path,
     local_root: Path,
@@ -436,6 +515,7 @@ def audit_transition(
     calendar: Calendar,
     *,
     now: datetime,
+    model_database: Path | None = None,
 ) -> dict[str, Any]:
     checked_identity(approved_model_id)
     require(now.tzinfo is not None, "AWARE_CLOCK_REQUIRED")
@@ -451,6 +531,8 @@ def audit_transition(
     close_at = datetime.combine(day, time(15), SHANGHAI)
     if not calendar.is_open(day) or now < close_at:
         failures.append("FORWARD_AUDIT_REAL_SESSION_NOT_COMPLETE")
+    required = set(expected)
+    retired: dict[tuple[str, str], dict[str, Any]] = {}
     public = {}
     try:
         validate_forward_publication(publication, now=now)
@@ -469,17 +551,40 @@ def audit_transition(
         public = {(b["strategy_id"], b["mode"]): b for b in publication["books"]}
     except Exception:
         pass
-    if set(public) != expected:
-        failures.append("FORWARD_AUDIT_PUBLIC_BOOK_COVERAGE_MISMATCH")
     local = {}
     try:
         roster = document(local_root / "roster.json")["books"]
         require(isinstance(roster, dict) and len(roster) <= 32, "ROSTER_BOUND_INVALID")
         local = {(c["strategy_id"], c["mode"]): (identity, c) for identity, c in roster.items()}
+        extras = set(local) - required
+        if extras:
+            classified = {}
+            if model_database is None:
+                raise ValueError("FORWARD_AUDIT_RETAINED_MODEL_REGISTRY_REQUIRED")
+            with closing(readonly(model_database)) as connection:
+                active = connection.execute(
+                    "SELECT model_id FROM active_model WHERE singleton=1"
+                ).fetchone()
+            require(active is not None and active[0] == approved_model_id,
+                    "CURRENT_MODEL_POINTER_CHANGED")
+            for strategy, mode in sorted(extras):
+                require(mode in {"PAPER", "SHADOW"} and strategy.startswith("approved_model_"),
+                        "UNCLASSIFIED_RETAINED_BOOK")
+                require({(strategy, "PAPER"), (strategy, "SHADOW")} <= extras,
+                        "RETIRED_BOOK_PAIR_INCOMPLETE")
+                event = retirement_event(model_database, strategy, now=now)
+                require(event is not None, "RETAINED_MODEL_NOT_RETIRED")
+                classified[(strategy, mode)] = event
+            retired.update(classified)
+            expected.update(retired)
         if set(local) != expected or len(local) != len(roster):
             failures.append("FORWARD_AUDIT_LOCAL_BOOK_COVERAGE_MISMATCH")
     except Exception:
         failures.append("FORWARD_AUDIT_LOCAL_ROSTER_INVALID")
+    if set(public) != expected:
+        failures.append("FORWARD_AUDIT_PUBLIC_BOOK_COVERAGE_MISMATCH")
+    if set(local) != expected:
+        failures.append("FORWARD_AUDIT_LOCAL_BOOK_COVERAGE_MISMATCH")
     books = []
     cache: dict[str, Any] = {}
     for strategy, mode in sorted(expected):
@@ -495,6 +600,12 @@ def audit_transition(
             )
             continue
         identity, config = local[(strategy, mode)]
+        if (strategy, mode) in retired:
+            books.append(audit_retired_book(
+                local_root, identity, config, public.get((strategy, mode)),
+                retired[(strategy, mode)], now=now,
+            ))
+            continue
         books.append(
             audit_book(
                 local_root,
@@ -512,12 +623,21 @@ def audit_transition(
     return signed(
         {
             **AUTHORITY,
-            "schema_version": "qtrade.forward-transition-audit.v1",
+            "schema_version": "qtrade.forward-transition-audit.v2" if retired
+            else "qtrade.forward-transition-audit.v1",
             "audited_at": now.isoformat(),
             "day": day.isoformat(),
             "state": "PASSED" if accepted else "BLOCKED",
             "forward_book_transition_accepted": accepted,
             "expected_book_count": len(expected),
+            "current_book_count": len(required),
+            "retired_book_count": len(retired),
+            "actual_local_book_count": len(local),
+            "actual_public_book_count": len(public),
+            "unclassified_local_books": [
+                {"strategy_id": strategy, "mode": mode}
+                for strategy, mode in sorted(set(local)-expected)
+            ],
             "publication_sha256": publication.get("evidence_sha256"),
             "failures": failures,
             "books": books,
@@ -530,6 +650,7 @@ def audit_transition(
                 "Unknown constraints must block PAPER orders; zero orders is a valid observation.",
                 "SHADOW has no fills or portfolio returns; ETFs are outside this stock adapter.",
                 "Hashes prove integrity, not external timestamps or independent PIT certification.",
+                "Retired books prove stopped flat closure only, never a new-day observation.",
             ],
         }
     )
@@ -540,6 +661,7 @@ def main() -> None:
     for name in ("base", "local-root", "published-forward", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--approved-model-id", required=True)
+    parser.add_argument("--model-database", type=Path)
     parser.add_argument("--day", type=date.fromisoformat, required=True)
     args = parser.parse_args()
     # No --now option and no book constructors: production acceptance uses wall time.
@@ -551,6 +673,7 @@ def main() -> None:
         args.approved_model_id,
         Calendar(REPO / "configs/observer_calendar_2026.json"),
         now=datetime.now(UTC),
+        model_database=args.model_database,
     )
     require(
         not args.output.resolve().is_relative_to(args.local_root.resolve())

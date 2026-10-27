@@ -13,4 +13,5 @@ docs/evidence/*.log -text -whitespace
 docs/evidence/qlib-browser-terra-retry-20261027/** -text -whitespace
 docs/evidence/qlib-close-20261027-browser-terra.md -text -whitespace
 docs/evidence/qlib-forward-slot-20261027/** -text -whitespace
+docs/evidence/qlib-forward-handover-20261028/** -text -whitespace
 deployment/evidence/** -text

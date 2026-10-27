@@ -1,6 +1,20 @@
 # Current state
 
-Last updated: 2026-10-27 23:54 Shanghai, scoped handover decision pending.
+Last updated: 2026-10-28 00:20 Shanghai, explicit directed handover authorized.
+
+- Human explicitly selects the documented directed handover: one forward-owner
+  replacement and fresh reconciled requests for only5 baselines plus ACTIVE295
+  PAPER. This supersedes the earlier PID175982 no-restart restriction for this
+  handover only; the retired original model stays stopped. No old recovery claim
+  is reused, and LIVE false/rolling OFF stay unchanged. Handover not yet applied.
+- Preflight confirms current model295 and one retired model2d78; original owner
+  is still alive. Before switching, implement explicit stopped/read-only retired
+  closure and14-book audit classification, avoiding a permanent false recovery
+  alarm for correctly stopped history. New module/event/flat-book tests pass18;
+  expanded14-book auditor checks pass47 combined. Source/UI integration, final
+  Windows/Linux/copy acceptance and the actual directed handover remain pending.
+
+Previous2026-10-27 23:54 checkpoint (historical observations):
 
 - PR34 is DRAFT; preview for checkpoint d6df1b6 succeeds, production remains4b86145.
   Retention source ddebaa1 is tested but not deployed. Asked only whether the

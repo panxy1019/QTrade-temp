@@ -24,6 +24,14 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 00:20 checkpoint: explicit human reply approves the documented directed
+forward-owner handover and fresh6-book reconciliation. The old no-restart PID
+constraint is superseded for this one operation; retired model/PAPER stays stopped,
+old claims consumed and LIVE false/rolling OFF remain. Before the actual switch,
+add proof-bound read-only retirement and full14-book classification. Event/closure
+and auditor cases pass47 combined; final source/UI/Linux/copy checks are pending.
+Do not confuse implemented retirement with an already applied production change.
+
 23:54 checkpoint: PR34 Draft contains retention source, actual recovery/public C,
 150 Windows +150 Linux and current14-book copy evidence. Preview succeeds;
 production4b86145 and original175982 stay unchanged. A pending scoped handover

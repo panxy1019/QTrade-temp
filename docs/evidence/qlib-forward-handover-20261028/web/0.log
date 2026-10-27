@@ -1,0 +1,141 @@
+
+> qtrade-web@0.2.0 test
+> vitest run --maxWorkers=2 --reporter=default --reporter=junit --outputFile.junit=E:/QTrade-temp/cluster-evidence/forward-handover-web-20261028/tests.xml
+
+
+ RUN  v3.2.7 E:/QTrade-git/web
+
+ ✓ src/components/IntradayFactorResearchLab.test.tsx (15 tests) 17504ms
+   ✓ intraday factor rule correlation > reruns two selected local rules on one bounded window and shows redundancy  1804ms
+   ✓ intraday factor rule correlation > saves the current entry factor before any strategy backtest  750ms
+   ✓ intraday factor rule correlation > hands an effective non-redundant entry factor to strategy construction without running it  2255ms
+   ✓ intraday factor rule correlation > fails closed when the factor-correlation response drifts from the requested dataset  919ms
+   ✓ intraday factor rule correlation > fails closed when the factor-correlation response drifts from the requested 75-stock scope  954ms
+   ✓ intraday factor rule correlation > fails closed when the factor-correlation matrix is asymmetric  1000ms
+   ✓ intraday factor rule correlation > fails closed when the reported Holm adjustment does not match the submitted family  989ms
+   ✓ intraday factor rule correlation > fails closed before displaying a strategy backtest with drifted data identity  550ms
+   ✓ intraday factor rule correlation > loads and submits the bounded bearish exit identity  957ms
+   ✓ intraday factor rule correlation > locks one training rule before the disjoint discovery test window  2996ms
+   ✓ intraday factor rule correlation > fails closed when a signed discovery response drifts from the requested dataset  875ms
+   ✓ intraday factor rule correlation > fails closed when a signed discovery response substitutes a candidate identity  871ms
+   ✓ intraday factor rule correlation > fails closed when a signed discovery response misstates its CSCV aggregate  849ms
+   ✓ intraday factor rule correlation > fails closed when a signed discovery response misstates its cross-sector breadth  854ms
+   ✓ intraday factor rule correlation > fails closed when a signed discovery response misstates its placebo probability  878ms
+ ✓ src/pages/DataPages.test.tsx (38 tests) 28626ms
+   ✓ durable monitoring > shows persisted audit alerts without claiming hash-chain integrity  454ms
+   ✓ persistent PAPER account pages > cancels an eligible local PAPER order with a page-stable idempotency key  439ms
+   ✓ verified historical data pages > shows finalized same-day minute observations without claiming realtime  534ms
+   ✓ verified backtest analytics > runs a selectable stock five-minute backtest against the verified long dataset  2640ms
+   ✓ verified backtest analytics > keeps frozen results but ignores retired template deep links  1299ms
+   ✓ verified backtest analytics > shows the verified leader without presenting it as Champion  1143ms
+   ✓ verified backtest analytics > does not present missing walk-forward evidence as three failed folds  813ms
+   ✓ verified robustness evidence > shows the signed 120-day intraday factor veto without claiming promotion  1912ms
+   ✓ verified robustness evidence > runs the full intraday factor gate without promoting a losing rule  12677ms
+   ✓ verified robustness evidence > does not present experiment records as a registered lineage  421ms
+   ✓ verified robustness evidence > labels reused observations as diagnostics rather than independent evidence  413ms
+   ✓ verified robustness evidence > shows the bounded factor search and its negative locked result  530ms
+   ✓ verified robustness evidence > shows the verified factor robustness gate without claiming promotion  486ms
+   ✓ verified robustness evidence > shows multi-sector stock transfer evidence and its survivorship boundary  564ms
+   ✓ verified robustness evidence > shows the development-only minute policy lock without claiming a new test  472ms
+   ✓ verified robustness evidence > shows the locked complete-session observer without claiming a blind test  598ms
+ ✓ src/components/SingleStockFiveMinuteBacktestLab.test.tsx (12 tests) 9532ms
+   ✓ single-stock cross-sector batch diagnostic > runs one deterministic representative per sector with identical parameters  1115ms
+   ✓ single-stock cross-sector batch diagnostic > retains bounded batch summaries across parameter changes without auto-selecting a winner  1370ms
+   ✓ single-stock cross-sector batch diagnostic > evicts the oldest batch summary after the five-run session limit  2232ms
+   ✓ single-stock cross-sector batch diagnostic > bounds the signed 15-sector universe at 15 or 30 deterministic stock requests  348ms
+   ✓ single-stock cross-sector batch diagnostic > can run two deterministic representatives per sector without changing shared parameters  708ms
+   ✓ single-stock cross-sector batch diagnostic > measures within-sector agreement only from a complete finite two-stock pair  674ms
+   ✓ single-stock cross-sector batch diagnostic > excludes a two-stock sector when one common risk metric is non-finite  643ms
+   ✓ single-stock cross-sector batch diagnostic > excludes an incomplete two-stock sector from the within-sector denominator  606ms
+   ✓ single-stock cross-sector batch diagnostic > reports partial coverage when one sector request fails  535ms
+   ✓ single-stock cross-sector batch diagnostic > excludes a successful response with non-finite metrics from the summary denominator  341ms
+   ✓ single-stock cross-sector batch diagnostic > does not create an aggregate summary when every representative request fails  449ms
+   ✓ single-stock cross-sector batch diagnostic > rejects responses whose parameters or safety identity drift from the batch request  511ms
+ ✓ src/pages/QlibWorkflowPages.test.tsx (10 tests) 4553ms
+   ✓ freezes the selected immutable strategy before queueing and preserves a failed retry  1049ms
+   ✓ keeps edited version selection stable across polling and refuses a drifted preview  673ms
+   ✓ Qlib research workflow pages > submits the fixed complete spec with a retry identity and follows the job  322ms
+   ✓ Qlib research workflow pages > shows and submits the pinned source identity alongside model configuration  432ms
+   ✓ Qlib research workflow pages > reuses archived inputs despite refreshed defaults and retries with the same request identity  957ms
+   ✓ Qlib research workflow pages > ignores a late response for a different archived configuration  315ms
+ ✓ src/pages/OnlineModelsPage.test.tsx (7 tests) 4521ms
+   ✓ shows qualified scope separately from candidate scores and prevents anonymous control  616ms
+   ✓ requires review of frozen evidence and preserves the request identity on queue failure  985ms
+   ✓ disables an open approval when its data version changes  761ms
+   ✓ ignores older in-flight catalog responses after a newer refresh  439ms
+   ✓ distinguishes enabled daily inference from having an approved current prediction  357ms
+   ✓ shows a historical data gap even while the version scheduler is alive  468ms
+   ✓ allows recovery to an admitted version when current data is stale but control is fresh  895ms
+ ✓ src/components/DataVersionsPanel.test.tsx (7 tests) 2239ms
+   ✓ requires login, fresh control, worker and matching head before exposing writes  482ms
+   ✓ preserves retry identity and shows queued receipt without declaring success  444ms
+   ✓ invalidates review if the head epoch changes even when version is unchanged  351ms
+   ✓ creates a new request identity if the reviewed reason changes after failed submission  459ms
+ ✓ src/components/UnifiedMarket.test.tsx (6 tests) 3005ms
+   ✓ unified target market > loads current target securities and discloses independent source clocks and prices  719ms
+   ✓ unified target market > searches the entire target catalog on the server, preserving no-data without legacy fallback  631ms
+   ✓ unified target market > clears old success on version drift or failed refresh  633ms
+   ✓ unified target market > retains valid stale bars only with a prominent historical warning  327ms
+   ✓ unified target market > does not draw future bars even when a reply claims current freshness  309ms
+   ✓ unified target market > cancels obsolete requests and ignores their late results  385ms
+ ✓ src/App.test.tsx (5 tests) 2107ms
+   ✓ QTrade web shell > renders Chinese navigation and makes the no-live boundary explicit  617ms
+   ✓ QTrade web shell > defaults market to the unified pool and loads old scopes only after explicit selection  718ms
+   ✓ QTrade web shell > opens historical candidates without requesting or displaying retired strategy templates  509ms
+ ✓ src/pages/ForwardResearchPage.test.tsx (11 tests) 2303ms
+   ✓ retains stopped retired books and history without suggesting automatic recovery  531ms
+   ✓ orders route shows bounded actual simulated orders and fills with processing clocks  302ms
+ ✓ src/components/UnifiedDataCatalog.test.tsx (4 tests) 1063ms
+   ✓ unified observed data > separates target and accepted coverage and queries symbols on the server  456ms
+ ✓ src/pages/OverviewPage.test.tsx (5 tests) 907ms
+   ✓ current business overview > separates actual target coverage, Qlib scope, frozen books and legacy history  394ms
+ ✓ src/charts/BacktestTimestamp.test.tsx (2 tests) 643ms
+   ✓ minute backtest timestamps > renders UTC evidence timestamps as China market time  332ms
+   ✓ minute backtest timestamps > renders reserved-tail evidence on the same China market clock  311ms
+ ✓ src/components/RollingPolicyPanel.test.tsx (3 tests) 555ms
+ ✓ src/components/EtfShadowPanel.test.tsx (5 tests) 621ms
+ ✓ src/components/EtfHistoryPanel.test.tsx (4 tests) 485ms
+   ✓ labels assumptions and displays simulation accounting separately from forward results  319ms
+ ✓ src/components/CurrentWorkspace.test.tsx (3 tests) 458ms
+ ✓ src/pages/SignalsPage.test.tsx (3 tests) 435ms
+   ✓ daily research signal observations > shows bounded input scores and indicative weights with execution limits  308ms
+ ✓ src/components/StrategyComparisonPanel.test.tsx (3 tests) 357ms
+ ✓ src/components/QlibBaseline.test.tsx (4 tests) 378ms
+ ✓ src/components/EtfTrendPanel.test.tsx (4 tests) 308ms
+ ✓ src/components/PublicResearchObservations.test.tsx (2 tests) 315ms
+ ✓ src/components/LegacyBacktestArchive.test.tsx (2 tests) 284ms
+ ✓ src/api/client.test.ts (9 tests) 208ms
+ ✓ src/components/FactorEvidenceCatalog.test.tsx (2 tests) 219ms
+ ✓ src/components/ModelPromotionPanel.test.tsx (2 tests) 173ms
+ ✓ src/research/unifiedMarket.test.ts (29 tests) 16ms
+ ✓ src/hooks/usePlatformSnapshot.test.tsx (2 tests) 13ms
+ ✓ src/components/PageErrorBoundary.test.tsx (1 test) 93ms
+ ✓ src/research/intradayBacktestPerformance.test.ts (11 tests) 10ms
+ ✓ src/research/localIntradayFactorExperiments.test.ts (8 tests) 10ms
+ ✓ src/research/localBacktestExperiments.test.ts (11 tests) 7ms
+ ✓ src/research/intradayPreviewHash.test.ts (3 tests) 5ms
+ ✓ src/research/strategyIdentity.test.ts (5 tests) 5ms
+ ✓ src/research/intradayRobustness.test.ts (3 tests) 5ms
+ ✓ src/research/qlibWorkflow.test.ts (7 tests) 4ms
+ ✓ src/research/intradayStability.test.ts (5 tests) 3ms
+ ✓ src/research/localIntradayFactorCandidates.test.ts (2 tests) 4ms
+ ✓ src/research/researchGate.test.ts (6 tests) 3ms
+ ✓ src/research/exitFactorValidation.test.ts (7 tests) 2ms
+ ✓ src/research/intradayFactorStrategyLineage.test.ts (3 tests) 2ms
+ ✓ src/research/intradayFactorValidation.test.ts (6 tests) 2ms
+ ✓ src/research/intradayEventSummary.test.ts (4 tests) 2ms
+ ✓ src/research/strategyRegistrationPreflight.test.ts (4 tests) 2ms
+ ✓ src/research/nextHypothesisPreregistration.test.ts (4 tests) 2ms
+ ✓ src/research/sequentialAdvancement.test.ts (4 tests) 2ms
+ ✓ src/research/l2FactorReadiness.test.ts (4 tests) 2ms
+ ✓ src/research/paperAdmission.test.ts (4 tests) 2ms
+ ✓ src/research/researchWorkflow.test.ts (4 tests) 2ms
+ ✓ src/research/causalBacktestContract.test.ts (4 tests) 2ms
+ ✓ src/charts/MinuteHistoryChart.test.tsx (1 test) 1ms
+
+ Test Files  50 passed (50)
+      Tests  310 passed (310)
+   Start at  00:28:13
+   Duration  73.52s (transform 889ms, setup 4.89s, collect 35.78s, tests 82.00s, environment 15.41s, prepare 2.34s)
+
+JUNIT report written to E:/QTrade-temp/cluster-evidence/forward-handover-web-20261028/tests.xml

@@ -66,6 +66,21 @@ describe('current business overview', () => {
     expect(await screen.findByText('当前研究预测不可用')).toBeInTheDocument()
     expect(screen.queryByText('当前研究预测有效')).not.toBeInTheDocument()
   })
+  it('keeps retired books visible and separates stopped history from current recovery', async () => {
+    const old = '1'.repeat(64), active = '2'.repeat(64)
+    const catalog = { ...online, active_model: active, models: [
+      { state: 'RETIRED', definition: { model_id: old, name: 'old fixture' } },
+      { state: 'ACTIVE', definition: { model_id: active, name: 'active fixture' } },
+    ] }
+    forward.publication.books[0].strategy_id = 'approved_model_' + old
+    vi.mocked(workflowGet).mockImplementation(async path => (path === '/online/catalog' ? catalog
+      : path === '/online/forward-books' ? forward : { publication_available: false, publication: null }) as never)
+    mount()
+    expect(await screen.findByText('退休模型历史账本')).toBeInTheDocument()
+    expect(screen.getByText('HALTED · 退休历史保留，不自动恢复')).toBeInTheDocument()
+    expect(screen.getByText('approved_model_' + old + ' · PAPER')).toBeInTheDocument()
+    expect(screen.queryByText('HALTED · 需人工恢复 · 停止')).not.toBeInTheDocument()
+  })
   it('expires prediction and forward freshness even while a cached API says fresh', async () => {
     vi.useFakeTimers()
     online = onlineCatalog(); forward = forwardReply()

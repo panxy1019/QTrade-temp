@@ -1,0 +1,10 @@
+
+> qtrade-web@0.2.0 lint
+> eslint .
+
+
+E:\QTrade-git\web\src\pages\ForwardResearchPage.test.tsx
+  22:45  error  '_options' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 1 problem (1 error, 0 warnings)
+

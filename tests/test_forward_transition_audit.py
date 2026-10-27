@@ -14,8 +14,10 @@ from test_collect_unified_data import CALENDAR, NOW, batch, fake_source
 from test_unified_store import store  # noqa: F401
 
 from qtrade.domain import RuntimeMode
+from qtrade.execution import FeeSchedule
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
-from qtrade.research.forward_paper import ForwardTarget
+from qtrade.research.forward_paper import ForwardPaperBook, ForwardTarget
+from qtrade.research.forward_retirement import closed_book_snapshot, retirement_event
 from scripts import audit_qlib_forward_transition as audit
 from scripts.collect_unified_data import collect_batch
 from scripts.qlib_forward_paper_adapter import observed_session, public_book_summary
@@ -211,7 +213,7 @@ def books(store, tmp_path):  # noqa: F811
     )
 
 
-def run(data, *, publication=None, day=date(2026, 10, 26), now=None):
+def run(data, *, publication=None, day=date(2026, 10, 26), now=None, model_database=None):
     return audit.audit_transition(
         data.base,
         data.root,
@@ -220,11 +222,199 @@ def run(data, *, publication=None, day=date(2026, 10, 26), now=None):
         data.model,
         CALENDAR,
         now=now or data.now,
+        model_database=model_database,
     )
 
 
 def all_failures(result):
     return result["failures"] + [f for book in result["books"] for f in book["failures"]]
+
+
+@pytest.fixture
+def retained_books(books, tmp_path):
+    """Two actual flat retired books augment twelve current observation fixtures."""
+    old = "1" * 64
+    strategy = "approved_model_" + old
+    now = datetime.now(UTC)
+    opened = []
+    roster = audit.document(books.root / "roster.json")["books"]
+    for mode in (RuntimeMode.PAPER, RuntimeMode.SHADOW):
+        config = {
+            "strategy_id": strategy,
+            "mode": mode.value,
+            "cash": "1000000",
+            "fee_version": "forward-research-cost-v1",
+        }
+        identity = signed(config)["evidence_sha256"]
+        roster[identity] = config
+        book = ForwardPaperBook(
+            books.root / identity,
+            strategy_id=strategy,
+            mode=mode,
+            opening_cash=Decimal("1000000"),
+            fees=FeeSchedule("forward-research-cost-v1", Decimal(".0003"), Decimal(".0005")),
+        )
+        target = ForwardTarget(
+            strategy,
+            "b" * 64,
+            "c" * 64,
+            "d" * 40,
+            now - timedelta(seconds=5),
+            now + timedelta(days=1),
+            {"SH600036": Decimal(".5")},
+            ("Synthetic retired book; no new-day performance",),
+        )
+        book.freeze(target, now=datetime.now(UTC))
+        link = {
+            "kind": "approved-prediction",
+            "artifact_id": target.signal_id,
+            "manifest_sha256": "e" * 64,
+            "strategy_id": strategy,
+            "model_id": old,
+            "data_event_id": "f" * 64,
+            "approval_sha256": "1" * 64,
+        }
+        write(
+            books.root / identity / "admissions" / (target.identity + ".json"),
+            signed(
+                {
+                    **AUTHORITY,
+                    "target_id": target.identity,
+                    "archive": link,
+                    "verified_at": datetime.now(UTC).isoformat(),
+                }
+            ),
+        )
+        write(books.root / identity / "archive-link.json", signed({**AUTHORITY, "archive": link}))
+        opened.append((identity, config, book, link))
+    retired_at = datetime.now(UTC)
+    event = signed(
+        {
+            **AUTHORITY,
+            "model_id": old,
+            "kind": "RETIRED",
+            "at": retired_at.isoformat(),
+            "details": {"replacement": books.model},
+        }
+    )
+    models = tmp_path / "retired-models.sqlite"
+    with sqlite3.connect(models) as db:
+        db.executescript(
+            "CREATE TABLE models(model_id TEXT,state TEXT,activated_at TEXT,"
+            "activation_count INTEGER); CREATE TABLE active_model(singleton INTEGER,"
+            "model_id TEXT); CREATE TABLE model_events(sequence INTEGER PRIMARY KEY,"
+            "model_id TEXT,at TEXT,kind TEXT,payload TEXT)"
+        )
+        db.execute(
+            "INSERT INTO models VALUES(?,'RETIRED',?,1)",
+            (old, (now - timedelta(minutes=1)).isoformat()),
+        )
+        db.execute("INSERT INTO active_model VALUES(1,?)", (books.model,))
+        db.execute(
+            "INSERT INTO model_events VALUES(1,?,?,'RETIRED',?)",
+            (old, retired_at.isoformat(), json.dumps(event)),
+        )
+    resolved = retirement_event(models, strategy, now=datetime.now(UTC))
+    for identity, config, book, link in opened:
+        book.bundle.runtime.stop(actor="synthetic-retirement")
+        snapshot = closed_book_snapshot(
+            books.root / identity, config, resolved, now=datetime.now(UTC)
+        )
+        proof = signed(
+            {
+                **AUTHORITY,
+                "kind": "RETIRED_RESEARCH_BOOK_READ_ONLY",
+                "book_id": identity,
+                "model_event": resolved,
+                "snapshot": snapshot,
+                "whole_step1_accepted": False,
+                "recorded_at": datetime.now(UTC).isoformat(),
+            }
+        )
+        write(books.root / identity / "retirements" / (event["evidence_sha256"] + ".json"), proof)
+        books.publication["books"].append(public_book_summary(book, archive_link=link))
+        book.db.close()
+    write(books.root / "roster.json", signed({**AUTHORITY, "books": roster}))
+    books.now = datetime.now(UTC)
+    books.publication.update(generated_at=books.now.isoformat(), heartbeat_at=books.now.isoformat())
+    books.publication = resign(books.publication)
+    books.model_database, books.retired_strategy, books.retired_id = models, strategy, opened[0][0]
+    return books
+
+
+def test_fourteen_book_acceptance_explicitly_separates_retired_closure_from_current_day(
+    retained_books,
+):
+    data = retained_books
+    before = {
+        p: p.read_bytes()
+        for p in data.root.rglob("*")
+        if p.is_file() and p.suffix in {".json", ".sqlite"}
+    }
+    result = run(data, model_database=data.model_database)
+    assert result["state"] == "PASSED", all_failures(result)
+    assert result["schema_version"] == "qtrade.forward-transition-audit.v2"
+    assert result["current_book_count"] == 12 and result["retired_book_count"] == 2
+    assert result["expected_book_count"] == len(result["books"]) == 14
+    retired = [r for r in result["books"] if r.get("scope")]
+    assert len(retired) == 2 and all(r["accepted"] for r in retired)
+    assert all("session_sha256" not in r for r in retired)
+    assert result["whole_step1_accepted"] is False and not result["unclassified_local_books"]
+    assert before == {p: p.read_bytes() for p in before}
+
+
+@pytest.mark.parametrize(
+    "damage",
+    ["registry_missing", "reactivated", "pair", "public_running", "proof", "account", "admission"],
+)
+def test_retained_history_cannot_hide_unclassified_or_unsafe_books(retained_books, damage):
+    data = retained_books
+    models = data.model_database
+    if damage == "registry_missing":
+        models = None
+    elif damage == "reactivated":
+        with sqlite3.connect(models) as db:
+            db.execute("UPDATE models SET state='ACTIVE'")
+    elif damage == "pair":
+        roster = audit.document(data.root / "roster.json")
+        roster["books"].pop(data.retired_id)
+        write(data.root / "roster.json", resign(roster))
+        data.publication["books"] = [
+            b
+            for b in data.publication["books"]
+            if not (b["strategy_id"] == data.retired_strategy and b["mode"] == "PAPER")
+        ]
+    elif damage == "public_running":
+        b = next(
+            b
+            for b in data.publication["books"]
+            if b["strategy_id"] == data.retired_strategy and b["mode"] == "PAPER"
+        )
+        b.update(running=True, recovery_required=False)
+    elif damage == "proof":
+        path = next((data.root / data.retired_id / "retirements").glob("*.json"))
+        proof = audit.document(path)
+        proof["model_event"]["event_sequence"] += 1
+        write(path, resign(proof))
+    elif damage == "account":
+        with sqlite3.connect(data.root / data.retired_id / "operations.sqlite") as db:
+            db.execute(
+                "INSERT INTO runtime_state VALUES('account',?,'fixture')",
+                (json.dumps({"cash": "999999", "positions": {}}),),
+            )
+    else:
+        next((data.root / data.retired_id / "admissions").glob("*.json")).unlink()
+    data.publication["books"] = [resign(b) for b in data.publication["books"]]
+    result = run(data, model_database=models, publication=resign(data.publication))
+    assert result["state"] == "BLOCKED" and not result["forward_book_transition_accepted"]
+
+
+def test_closed_retired_books_never_replace_a_future_current_day_observation(retained_books):
+    data = retained_books
+    future = (data.now + timedelta(days=3)).date()
+    result = run(data, model_database=data.model_database, day=future)
+    assert result["state"] == "BLOCKED"
+    assert "FORWARD_AUDIT_REAL_SESSION_NOT_COMPLETE" in result["failures"]
 
 
 def database(data, mode="PAPER", strategy="momentum20"):

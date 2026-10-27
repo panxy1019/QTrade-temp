@@ -4013,3 +4013,35 @@ that difference. Never clear production leases or reuse/reset a recovery claim.
 Separate fingerprints prove production targets/admissions/links/sessions/fills
 unchanged throughout; the copy test neither resumes PAPER nor publishes data.
 
+## ADR-197 — Account for stopped retired models without hiding their books
+
+Status: implementing and testing before the authorized directed handover,
+2026-10-28. Not deployed yet.
+
+The human explicitly approves PR34's directed owner replacement and successful
+reconciliation followed by fresh single-use requests for5 baseline/current
+LightGBM PAPER accounts. This supersedes the previous owner175982 no-restart
+constraint for this one handover. It never reuses consumed claims or authorizes
+retired-model recovery, automatic live trading or arbitrary failed-job resets.
+
+Retain every book and frozen target. Resolve current model state plus its latest
+signed RETIRED registry event, not a model-name heuristic or an old event after
+rollback. Stop retired execution first; then reconcile durable fills/cash/flat
+positions, pending sessions/orders/reservations, admission/target identities and
+the actual stop event. Preserve a signed immutable closure snapshot; changed,
+uncertain or held positions require review. A recovered current model cannot
+silently resume a previously retired account. Recheck retirement under the model/
+data writer guard immediately before recovery, after claim consumption.
+
+Reuse the existing runtime stop, journal, account and risk/OMS semantics. A vn.py
+gateway does not implement Qlib model-event/retained-book identity, so this narrow
+research adapter fills that gap without exposing a strategy-to-gateway path.
+
+Keep the v1 forward publication shape so existing publisher/API validators remain
+compatible. Overall readiness covers current books plus independently proven
+stopped retired history. The webpage joins a fresh model directory, keeps all
+books visible and distinguishes retirement from a request to resume execution.
+Audit v2 counts12 current daily-observation books and2 retained retirement proofs
+separately; retirement is never today's observation or performance. Missing,
+unclassified or unsafe extra books block rather than disappearing from coverage.
+

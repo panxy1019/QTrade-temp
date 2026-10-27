@@ -1,0 +1,75 @@
+{
+  "files": [
+    {
+      "path": "authorization.json",
+      "bytes": 1439,
+      "sha256": "28cb5a6a2acf062d4ec61c2eea74651f280a03ce1e863eeb92df57d7db3ddeb9"
+    },
+    {
+      "path": "forward-handover-windows-final-20261028.xml",
+      "bytes": 32806,
+      "sha256": "f07141fd496629d775d7adc51fed42e93c8a8adad6ccbfea0b6f4299def05355"
+    },
+    {
+      "path": "forward-handover-windows-final2-20261028.xml",
+      "bytes": 32955,
+      "sha256": "3d168a3e1081819aea7ce2b8a49efbd3ddcd6b0f747c249cc02c3434e3c10567"
+    },
+    {
+      "path": "forward-retirement-audit-more-windows-20261028.xml",
+      "bytes": 7937,
+      "sha256": "7f59fa5ff07ee0a1b54d43c4fcf53660c45be76d25e4db4e7a659777035acaba"
+    },
+    {
+      "path": "forward-retirement-audit-windows-20261028.xml",
+      "bytes": 7390,
+      "sha256": "04d20827844194102e046b2ae9d95bd35a71cac2b8609a3ff8c0a4cf56a00c0e"
+    },
+    {
+      "path": "forward-retirement-baseline-windows-20261028.xml",
+      "bytes": 8522,
+      "sha256": "41b8d4c24f7c80cefc948720e0fbfd704a379edcf210c6809924fb5f8504227d"
+    },
+    {
+      "path": "forward-retirement-new-windows-20261028.xml",
+      "bytes": 2963,
+      "sha256": "34292ed01d5f78aa7f6390dc5772fe56b7fab6c58f796309a41ef6782cd91c6b"
+    },
+    {
+      "path": "web/0.log",
+      "bytes": 12424,
+      "sha256": "ec99bbcb3e3eb11514a4b1819c4ad242a1c5d9f35cd81c474751ef89f18ab772"
+    },
+    {
+      "path": "web/1.log",
+      "bytes": 1898,
+      "sha256": "0277bffd6a4881617ef06f4e03e82f5d93723ebed195a94c29c294dfb6a9097a"
+    },
+    {
+      "path": "web/2.log",
+      "bytes": 221,
+      "sha256": "7d67891d268492b94bfbd991c102df439663e8230b7704f1b1692ccb5dcbed70"
+    },
+    {
+      "path": "web/attempt.json",
+      "bytes": 920,
+      "sha256": "42c0043f7dacd70860ae76f79e3163c5605630a2678840759b7696fc368cf6fe"
+    },
+    {
+      "path": "web/lint-corrected-attempt.json",
+      "bytes": 218,
+      "sha256": "471221dbda512d6ea444fcabf1a80b985d96883cd581749c307e2c4b0d2f2988"
+    },
+    {
+      "path": "web/lint-corrected.log",
+      "bytes": 37,
+      "sha256": "de345cdd1afbefa08b4d9603a54428bf784156662db7334040a538a5ba8c53ea"
+    },
+    {
+      "path": "web/tests.xml",
+      "bytes": 75178,
+      "sha256": "a4b5ea6bdf96191cee40db88f6658a14a26ce181c68c53991a16521e6ae59dd9"
+    }
+  ],
+  "production_handover_applied": false
+}

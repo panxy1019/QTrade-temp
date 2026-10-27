@@ -6,6 +6,7 @@ import { useResearchWorkflow } from '../components/ResearchWorkflowProvider'
 import { useReadOnlySnapshot } from '../hooks/useReadOnlySnapshot'
 import { workflowGet } from '../research/qlibWorkflow'
 import { ageSeconds, chinaTime } from '../research/unifiedMarket'
+import { bookRole, bookRoleNames } from '../research/forwardLifecycle'
 import type { Catalog as OnlineCatalog } from './OnlineModelsPage'
 import type { Reply as ForwardReply } from './ForwardResearchPage'
 import type { Reply as EtfReply } from '../components/EtfShadowPanel'
@@ -109,7 +110,10 @@ export function OverviewPage({ publicNode }: { data: PlatformSnapshot | null; da
         <Typography.Paragraph>股票前向 {bookPublication.state} · {bookFresh ? '心跳有效' : '心跳过期，仅历史记录'}；心跳 {chinaTime(bookPublication.heartbeat_at)}；生成 {chinaTime(bookPublication.generated_at)}。</Typography.Paragraph>
         <Table size="small" rowKey={row => `${row.strategy_id}:${row.mode}`} pagination={{ pageSize: 6 }} scroll={{ x: 850 }} dataSource={books} columns={[
           { title: '策略 / 模式', render: (_, row) => `${row.strategy_id} · ${row.mode}` },
-          { title: '风险 / 恢复', render: (_, row) => row.mode === 'SHADOW' ? `${row.risk_state} · 仅观察／不启用交易运行时` : `${row.risk_state}${row.recovery_required ? ' · 需人工恢复' : ''}${row.running ? ' · 运行' : ' · 停止'}` },
+          { title: '生命周期', render: (_, row) => bookRoleNames[bookRole(row.strategy_id, models, now)] },
+          { title: '风险 / 恢复', render: (_, row) => bookRole(row.strategy_id, models, now) === 'RETIRED_MODEL'
+            ? `${row.risk_state} · ${row.running ? '退休模型仍有运行标记，需核查' : '退休历史保留，不自动恢复'}`
+            : row.mode === 'SHADOW' ? `${row.risk_state} · 仅观察／不启用交易运行时` : `${row.risk_state}${row.recovery_required ? ' · 需人工恢复' : ''}${row.running ? ' · 运行' : ' · 停止'}` },
           { title: '最新冻结目标（上海）', render: (_, row) => chinaTime(row.frozen_targets[0]?.frozen_at) },
           { title: '最近已观察日', render: (_, row) => row.sessions[0]?.day ?? '尚无完整日观察' },
           { title: '最近观察 / 结果', render: (_, row) => `${row.sessions[0]?.state ?? '未发生'}；${row.mode === 'SHADOW' ? '仅目标与行情' : row.sessions[0]?.net_asset_value == null ? '净值尚无可报告值' : `模拟净值 ${row.sessions[0].net_asset_value}`}` },

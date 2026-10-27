@@ -412,6 +412,15 @@ def test_source_discovery_uses_verified_current_epoch_and_actual_archive(environ
 def discovery_sources(environment, monkeypatch):
     instance, item, now = environment(), target(), datetime.now(UTC)
     approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+    with sqlite3.connect(instance.model_database) as connection:
+        connection.executescript(
+            "CREATE TABLE models(model_id TEXT,state TEXT,activated_at TEXT,"
+            "activation_count INTEGER);"
+            "CREATE TABLE active_model(singleton INTEGER,model_id TEXT)"
+        )
+        connection.execute("INSERT INTO models VALUES(?,?,?,1)",
+                           (approval["model_id"], "ACTIVE", now.isoformat()))
+        connection.execute("INSERT INTO active_model VALUES(1,?)", (approval["model_id"],))
     model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
     model_link = {
         **link(),
