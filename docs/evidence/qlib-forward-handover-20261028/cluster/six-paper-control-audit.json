@@ -1,0 +1,107 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "READ_ONLY_SIX_BOOK_NEW_INSTANCE_CONTROL_AUDIT",
+  "at": "2026-10-27T17:05:40.261849+00:00",
+  "books": [
+    {
+      "book_id": "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+      "request_id": "82b06a51078549ad98ac385376847a68",
+      "successful_receipt_sha256": "e780f10d157242218c97b70c22afe49ee27f062b0f58f8bd892c74b0f7d372c8",
+      "control_event_sequence": 3,
+      "control_event_at": "2026-10-27T16:57:05.248560+00:00",
+      "control_event_payload": {
+        "message": "actor=panxy1019-directed-handover; reason=",
+        "portfolio_id": null,
+        "strategy_id": null
+      },
+      "uncertain_fills": 0,
+      "actual_process_owner": 383859,
+      "source_readiness_checked_before_system_start": true
+    },
+    {
+      "book_id": "2fb08e23a1e8c6f4e78b2013b1261429b421f0218585640f2890297642097352",
+      "request_id": "ba6fabbb38174db3b96f890e361c5e3c",
+      "successful_receipt_sha256": "e39afb64a3c6187c20cc5162ec1a7bf2d7b83b31cdb6929ba0f3d53c2941ce3f",
+      "control_event_sequence": 3,
+      "control_event_at": "2026-10-27T16:57:05.257987+00:00",
+      "control_event_payload": {
+        "message": "actor=panxy1019-directed-handover; reason=",
+        "portfolio_id": null,
+        "strategy_id": null
+      },
+      "uncertain_fills": 0,
+      "actual_process_owner": 383859,
+      "source_readiness_checked_before_system_start": true
+    },
+    {
+      "book_id": "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a",
+      "request_id": "ab8087f8ac9a4c20939c870c66db4fbc",
+      "successful_receipt_sha256": "540d3deb746ca67a56f2865bfaec431f3b356b27454292572e0b1149e840b607",
+      "control_event_sequence": 3,
+      "control_event_at": "2026-10-27T16:57:05.278164+00:00",
+      "control_event_payload": {
+        "message": "actor=panxy1019-directed-handover; reason=",
+        "portfolio_id": null,
+        "strategy_id": null
+      },
+      "uncertain_fills": 0,
+      "actual_process_owner": 383859,
+      "source_readiness_checked_before_system_start": true
+    },
+    {
+      "book_id": "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe",
+      "request_id": "aa15583c789f4b9a82a221bd0bbd1c6c",
+      "successful_receipt_sha256": "febcd473b8315f3bb8f16efaef1b18c2c1b156a2182dcc9cfafa5a90a6076317",
+      "control_event_sequence": 3,
+      "control_event_at": "2026-10-27T16:57:05.292712+00:00",
+      "control_event_payload": {
+        "message": "actor=panxy1019-directed-handover; reason=",
+        "portfolio_id": null,
+        "strategy_id": null
+      },
+      "uncertain_fills": 0,
+      "actual_process_owner": 383859,
+      "source_readiness_checked_before_system_start": true
+    },
+    {
+      "book_id": "979833e43f658601e1b63d0ad4a4fcafd4f3518af0f37d70aef2d6b9739b0847",
+      "request_id": "24764f208e6747a0a1f2bbe9ebe358aa",
+      "successful_receipt_sha256": "bb66034e20cf5712f277e09b1ab492fe5e891b8524e94d5e640356b5dafe08a1",
+      "control_event_sequence": 3,
+      "control_event_at": "2026-10-27T16:57:05.302043+00:00",
+      "control_event_payload": {
+        "message": "actor=panxy1019-directed-handover; reason=",
+        "portfolio_id": null,
+        "strategy_id": null
+      },
+      "uncertain_fills": 0,
+      "actual_process_owner": 383859,
+      "source_readiness_checked_before_system_start": true
+    },
+    {
+      "book_id": "a703261181cbe90c61d1f5e6bb3c6be0323583b2d83772ee2172f91f8bd3be13",
+      "request_id": "d84fd31163364c4886c4198c83baf6f8",
+      "successful_receipt_sha256": "7b17f0b60fe492f300e2ba68431e0e91f13e768cb9ef7dc5ca40c85a209aec0a",
+      "control_event_sequence": 3,
+      "control_event_at": "2026-10-27T16:57:05.318235+00:00",
+      "control_event_payload": {
+        "message": "actor=panxy1019-directed-handover; reason=",
+        "portfolio_id": null,
+        "strategy_id": null
+      },
+      "uncertain_fills": 0,
+      "actual_process_owner": 383859,
+      "source_readiness_checked_before_system_start": true
+    }
+  ],
+  "all_recovery_receipts_succeeded": true,
+  "no_real_gateway_or_orders": true,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "9c3cf7c6638e0f818600e9d341da36618d10a6e1c28b90c9322afd557222eb45"
+}

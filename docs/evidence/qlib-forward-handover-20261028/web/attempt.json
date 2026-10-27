@@ -1,0 +1,42 @@
+[
+  {
+    "args": [
+      "npm.cmd",
+      "--prefix",
+      "web",
+      "test",
+      "--",
+      "--maxWorkers=2",
+      "--reporter=default",
+      "--reporter=junit",
+      "--outputFile.junit=E:/QTrade-temp/cluster-evidence/forward-handover-web-20261028/tests.xml"
+    ],
+    "started_at": "2026-10-27T16:28:12.922707+00:00",
+    "returncode": 0,
+    "finished_at": "2026-10-27T16:29:27.325522+00:00"
+  },
+  {
+    "args": [
+      "npm.cmd",
+      "--prefix",
+      "web",
+      "run",
+      "build"
+    ],
+    "started_at": "2026-10-27T16:29:27.325536+00:00",
+    "returncode": 0,
+    "finished_at": "2026-10-27T16:29:36.161972+00:00"
+  },
+  {
+    "args": [
+      "npm.cmd",
+      "--prefix",
+      "web",
+      "run",
+      "lint"
+    ],
+    "started_at": "2026-10-27T16:29:36.161987+00:00",
+    "returncode": 1,
+    "finished_at": "2026-10-27T16:29:43.651459+00:00"
+  }
+]

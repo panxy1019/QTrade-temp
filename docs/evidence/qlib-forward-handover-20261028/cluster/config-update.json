@@ -1,0 +1,16 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "TARGETED_FORWARD_CONFIG_UPDATED",
+  "at": "2026-10-27T16:44:48.879914+00:00",
+  "old_sha256": "b9a742be9edd33e2b68639370be50f943e3e2b8d8183ea79261bcc67e3746ecb",
+  "new_sha256": "17493aa1fc24edddaa4f9bef765be0c6b77c7571468ef13882ebf8bdcd24144d",
+  "source_revision": "9846a7f30774d6ae4b4d41f02b493c5246be87d9",
+  "initialize_paper_argument": false,
+  "evidence_sha256": "716562895e8e3434d97f95ad47716244e9bcb61713677fe8b185245ee00994d1"
+}

@@ -1,0 +1,281 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "ACTUAL_DIRECTED_HANDOVER_SIX_RECONCILED_PAPER",
+  "state": "PASSED_PRIVATE_HANDOVER",
+  "at": "2026-10-27T16:57:28.158097+00:00",
+  "revision": "9846a7f30774d6ae4b4d41f02b493c5246be87d9",
+  "old_pid": 175982,
+  "old_pid_exited": true,
+  "new_pid": 383859,
+  "new_instance_id": "74972257947a44dea8ca686421b5ad76",
+  "recovered_current_paper_count": 6,
+  "retired_book_count": 2,
+  "all_book_count": 14,
+  "original_fingerprints_unchanged": true,
+  "other_services_unchanged": true,
+  "context": {
+    "active": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+    "approval_sha256": "6f1ec61bda1a28d918dd331ad0e0ae6ea7ebcc39320f8e4dade424bf726bd238",
+    "data_version": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "data_event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+    "model_states": {
+      "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707": "STAGED",
+      "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293": "RETIRED",
+      "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487": "ACTIVE",
+      "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c": "TRAINED",
+      "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444": "TRAINED"
+    }
+  },
+  "recoveries": [
+    {
+      "request": {
+        "book_id": "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+        "request_id": "82b06a51078549ad98ac385376847a68",
+        "request_sha256": "8b46b30590572e0b778ee7ce5187f34d0d67496ebdc31c47e9aa9213fef94b7e"
+      },
+      "consumed": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "82b06a51078549ad98ac385376847a68",
+        "request_sha256": "8b46b30590572e0b778ee7ce5187f34d0d67496ebdc31c47e9aa9213fef94b7e",
+        "book_id": "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+        "actor": "panxy1019-directed-handover",
+        "instance_id": "74972257947a44dea8ca686421b5ad76",
+        "state": "CONSUMED",
+        "at": "2026-10-27T16:57:05.243739+00:00",
+        "evidence_sha256": "ee46e07447eb62ecaea7f6198c87e6010e92b560f81ae7a666cfbc8a206a355f"
+      },
+      "receipt": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "82b06a51078549ad98ac385376847a68",
+        "request_sha256": "8b46b30590572e0b778ee7ce5187f34d0d67496ebdc31c47e9aa9213fef94b7e",
+        "book_id": "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+        "state": "SUCCEEDED",
+        "at": "2026-10-27T16:57:05.252606+00:00",
+        "code": null,
+        "evidence_sha256": "e780f10d157242218c97b70c22afe49ee27f062b0f58f8bd892c74b0f7d372c8"
+      }
+    },
+    {
+      "request": {
+        "book_id": "2fb08e23a1e8c6f4e78b2013b1261429b421f0218585640f2890297642097352",
+        "request_id": "ba6fabbb38174db3b96f890e361c5e3c",
+        "request_sha256": "73abf76c1bce4ae59947314be85f6f83899d404a3d0d659eb464300bde52b1e6"
+      },
+      "consumed": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "ba6fabbb38174db3b96f890e361c5e3c",
+        "request_sha256": "73abf76c1bce4ae59947314be85f6f83899d404a3d0d659eb464300bde52b1e6",
+        "book_id": "2fb08e23a1e8c6f4e78b2013b1261429b421f0218585640f2890297642097352",
+        "actor": "panxy1019-directed-handover",
+        "instance_id": "74972257947a44dea8ca686421b5ad76",
+        "state": "CONSUMED",
+        "at": "2026-10-27T16:57:05.254418+00:00",
+        "evidence_sha256": "8f36e2661623935fe0c1dc185d265d6f45a7b12c1e11da3e07405d6d0c8cf7b6"
+      },
+      "receipt": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "ba6fabbb38174db3b96f890e361c5e3c",
+        "request_sha256": "73abf76c1bce4ae59947314be85f6f83899d404a3d0d659eb464300bde52b1e6",
+        "book_id": "2fb08e23a1e8c6f4e78b2013b1261429b421f0218585640f2890297642097352",
+        "state": "SUCCEEDED",
+        "at": "2026-10-27T16:57:05.272417+00:00",
+        "code": null,
+        "evidence_sha256": "e39afb64a3c6187c20cc5162ec1a7bf2d7b83b31cdb6929ba0f3d53c2941ce3f"
+      }
+    },
+    {
+      "request": {
+        "book_id": "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a",
+        "request_id": "ab8087f8ac9a4c20939c870c66db4fbc",
+        "request_sha256": "b72bf24f27531853fce715be6b8d493785505faf2d240b6bf0f4b2ad37b666af"
+      },
+      "consumed": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "ab8087f8ac9a4c20939c870c66db4fbc",
+        "request_sha256": "b72bf24f27531853fce715be6b8d493785505faf2d240b6bf0f4b2ad37b666af",
+        "book_id": "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a",
+        "actor": "panxy1019-directed-handover",
+        "instance_id": "74972257947a44dea8ca686421b5ad76",
+        "state": "CONSUMED",
+        "at": "2026-10-27T16:57:05.274558+00:00",
+        "evidence_sha256": "2deb39c2b652f27c58967619f4dc9f5f552f0b991d3b9c5a9a91b25b51ec9b0c"
+      },
+      "receipt": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "ab8087f8ac9a4c20939c870c66db4fbc",
+        "request_sha256": "b72bf24f27531853fce715be6b8d493785505faf2d240b6bf0f4b2ad37b666af",
+        "book_id": "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a",
+        "state": "SUCCEEDED",
+        "at": "2026-10-27T16:57:05.287227+00:00",
+        "code": null,
+        "evidence_sha256": "540d3deb746ca67a56f2865bfaec431f3b356b27454292572e0b1149e840b607"
+      }
+    },
+    {
+      "request": {
+        "book_id": "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe",
+        "request_id": "aa15583c789f4b9a82a221bd0bbd1c6c",
+        "request_sha256": "df58f632614c3cc644743a65050ac37facd2845086cde650a2db2696ad1088df"
+      },
+      "consumed": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "aa15583c789f4b9a82a221bd0bbd1c6c",
+        "request_sha256": "df58f632614c3cc644743a65050ac37facd2845086cde650a2db2696ad1088df",
+        "book_id": "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe",
+        "actor": "panxy1019-directed-handover",
+        "instance_id": "74972257947a44dea8ca686421b5ad76",
+        "state": "CONSUMED",
+        "at": "2026-10-27T16:57:05.289229+00:00",
+        "evidence_sha256": "a5c3c2e8beff781b497e131c1682682fa2b49f258014e08af4a2485fbaa7cd0d"
+      },
+      "receipt": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "aa15583c789f4b9a82a221bd0bbd1c6c",
+        "request_sha256": "df58f632614c3cc644743a65050ac37facd2845086cde650a2db2696ad1088df",
+        "book_id": "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe",
+        "state": "SUCCEEDED",
+        "at": "2026-10-27T16:57:05.296701+00:00",
+        "code": null,
+        "evidence_sha256": "febcd473b8315f3bb8f16efaef1b18c2c1b156a2182dcc9cfafa5a90a6076317"
+      }
+    },
+    {
+      "request": {
+        "book_id": "979833e43f658601e1b63d0ad4a4fcafd4f3518af0f37d70aef2d6b9739b0847",
+        "request_id": "24764f208e6747a0a1f2bbe9ebe358aa",
+        "request_sha256": "de600c9c068cbb9868f737999a9de65c889a6a92adb020f4078b43e1a3930394"
+      },
+      "consumed": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "24764f208e6747a0a1f2bbe9ebe358aa",
+        "request_sha256": "de600c9c068cbb9868f737999a9de65c889a6a92adb020f4078b43e1a3930394",
+        "book_id": "979833e43f658601e1b63d0ad4a4fcafd4f3518af0f37d70aef2d6b9739b0847",
+        "actor": "panxy1019-directed-handover",
+        "instance_id": "74972257947a44dea8ca686421b5ad76",
+        "state": "CONSUMED",
+        "at": "2026-10-27T16:57:05.298697+00:00",
+        "evidence_sha256": "a983306269dff2805b9e6fee99d1f077a36bdbf598fed68694d5c27eecb7654d"
+      },
+      "receipt": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "24764f208e6747a0a1f2bbe9ebe358aa",
+        "request_sha256": "de600c9c068cbb9868f737999a9de65c889a6a92adb020f4078b43e1a3930394",
+        "book_id": "979833e43f658601e1b63d0ad4a4fcafd4f3518af0f37d70aef2d6b9739b0847",
+        "state": "SUCCEEDED",
+        "at": "2026-10-27T16:57:05.312604+00:00",
+        "code": null,
+        "evidence_sha256": "bb66034e20cf5712f277e09b1ab492fe5e891b8524e94d5e640356b5dafe08a1"
+      }
+    },
+    {
+      "request": {
+        "book_id": "a703261181cbe90c61d1f5e6bb3c6be0323583b2d83772ee2172f91f8bd3be13",
+        "request_id": "d84fd31163364c4886c4198c83baf6f8",
+        "request_sha256": "f1d67491d06073ccf7dc56dc332c5ee6915afe21915b3d8e1b9ece1877a7dac5"
+      },
+      "consumed": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "d84fd31163364c4886c4198c83baf6f8",
+        "request_sha256": "f1d67491d06073ccf7dc56dc332c5ee6915afe21915b3d8e1b9ece1877a7dac5",
+        "book_id": "a703261181cbe90c61d1f5e6bb3c6be0323583b2d83772ee2172f91f8bd3be13",
+        "actor": "panxy1019-directed-handover",
+        "instance_id": "74972257947a44dea8ca686421b5ad76",
+        "state": "CONSUMED",
+        "at": "2026-10-27T16:57:05.314596+00:00",
+        "evidence_sha256": "c6b8b18b4634e31e9330a45410a3713ee6246698189b0cd4f3e22e71857853a8"
+      },
+      "receipt": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "request_id": "d84fd31163364c4886c4198c83baf6f8",
+        "request_sha256": "f1d67491d06073ccf7dc56dc332c5ee6915afe21915b3d8e1b9ece1877a7dac5",
+        "book_id": "a703261181cbe90c61d1f5e6bb3c6be0323583b2d83772ee2172f91f8bd3be13",
+        "state": "SUCCEEDED",
+        "at": "2026-10-27T16:57:05.322200+00:00",
+        "code": null,
+        "evidence_sha256": "7b17f0b60fe492f300e2ba68431e0e91f13e768cb9ef7dc5ca40c85a209aec0a"
+      }
+    }
+  ],
+  "public_delivered": false,
+  "future_day_observed": false,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "d99c0e7dbb1c015770e2590f8d6bdfa8611db24af7dd62b341d05eb1d77792f4"
+}

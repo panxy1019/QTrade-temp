@@ -4,6 +4,66 @@ import { ForwardResearchPage } from './ForwardResearchPage'
 
 afterEach(() => vi.unstubAllGlobals())
 
+const oldModel = '1'.repeat(64)
+const currentModel = '2'.repeat(64)
+function modelCatalog() {
+  return { publication_available: true, worker_fresh: true, published_at: new Date().toISOString(),
+    active_model: currentModel, models: [
+      { state: 'RETIRED', definition: { model_id: oldModel } },
+      { state: 'ACTIVE', definition: { model_id: currentModel } },
+    ] }
+}
+function retiredPublication() {
+  const value = publication()
+  return { ...value, books: value.books.map(book => ({ ...book, strategy_id: 'approved_model_' + oldModel,
+    archive: { ...book.archive, kind: 'approved-prediction', model_id: oldModel } })) }
+}
+function serveLifecycle(value: unknown, catalog: unknown, failure = false) {
+  const fetcher = vi.fn(async (url: string, _options?: RequestInit) => {
+    void _options
+    if (url.endsWith('/online/catalog') && failure) throw new Error('model directory unavailable')
+    return { ok: true, json: async () => url.endsWith('/online/catalog') ? catalog
+      : ({ publication_available: true, service_fresh: true, publication: value }) }
+  })
+  vi.stubGlobal('fetch', fetcher)
+  return fetcher
+}
+
+it('retains stopped retired books and history without suggesting automatic recovery', async () => {
+  const value = retiredPublication()
+  const fetcher = serveLifecycle(value, modelCatalog())
+  render(<ForwardResearchPage />)
+  await screen.findByText('退休模型历史账本')
+  expect(screen.getByText('保持停止，不自动恢复')).toBeInTheDocument()
+  expect(screen.getByText('退休模型账本已停止；保留历史，不申请自动恢复')).toBeInTheDocument()
+  expect(screen.getByText('退休账本仍有历史持仓记录；停止运行不等于完成持仓处置')).toBeInTheDocument()
+  expect(screen.queryByText('PAPER 已停止接收新风险；需要人工对账与显式恢复')).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: /恢复|下单/ })).not.toBeInTheDocument()
+  expect(fetcher.mock.calls.every(([, options]) => !options?.method || options.method === 'GET')).toBe(true)
+})
+
+it('does not hide a running flag on a model already retired by the fresh registry', async () => {
+  const value = retiredPublication()
+  value.books[0].running = true
+  value.books[0].risk_state = 'NORMAL'
+  value.books[0].recovery_required = false
+  serveLifecycle(value, modelCatalog())
+  render(<ForwardResearchPage />)
+  await screen.findByText('退休模型仍有运行标记，尚未确认隔离')
+  expect(screen.getByText('退休模型仍有运行标记，需核查')).toBeInTheDocument()
+})
+
+it.each(['stale', 'unavailable', 'inconsistent'])('keeps model status unknown for %s registry evidence', async reason => {
+  const catalog = modelCatalog()
+  if (reason === 'stale') catalog.published_at = new Date(Date.now() - 721_000).toISOString()
+  if (reason === 'inconsistent') catalog.active_model = oldModel
+  serveLifecycle(retiredPublication(), catalog, reason === 'unavailable')
+  render(<ForwardResearchPage />)
+  await screen.findByText('模型状态待核验')
+  expect(screen.getByText('PAPER 已停止接收新风险；需要人工对账与显式恢复')).toBeInTheDocument()
+  expect(screen.queryByText('退休模型账本已停止；保留历史，不申请自动恢复')).not.toBeInTheDocument()
+})
+
 function publication() {
   return {
     schema_version: 'qtrade.forward-service.v1', generated_at: '2026-10-27T08:10:00+00:00',

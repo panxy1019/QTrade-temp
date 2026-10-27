@@ -1,0 +1,15 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "action": "stop",
+  "returncode": 0,
+  "stdout": "qtrade-forward-research: stopped\n",
+  "stderr": "",
+  "at": "2026-10-27T16:49:21.766640+00:00",
+  "evidence_sha256": "1b0870efed3ed514777b97e39a0b5922c4233fd3f5f7f90ddfed2efae3c8878e"
+}

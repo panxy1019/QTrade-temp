@@ -1,0 +1,17 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "request_id": "aa15583c789f4b9a82a221bd0bbd1c6c",
+  "request_sha256": "df58f632614c3cc644743a65050ac37facd2845086cde650a2db2696ad1088df",
+  "book_id": "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe",
+  "actor": "panxy1019-directed-handover",
+  "instance_id": "74972257947a44dea8ca686421b5ad76",
+  "state": "CONSUMED",
+  "at": "2026-10-27T16:57:05.289229+00:00",
+  "evidence_sha256": "a5c3c2e8beff781b497e131c1682682fa2b49f258014e08af4a2485fbaa7cd0d"
+}

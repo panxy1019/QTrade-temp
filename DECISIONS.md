@@ -3979,3 +3979,82 @@ spec/revision/version conflicts and the legacy case. New real jobs are required
 after reviewed Linux verification and deployment; successful restore alone is
 not a sealed experiment or proof of alpha.
 
+## ADR-196 — First admitted execution target survives later research proposals
+
+Status: initial source ddebaa1 passes150 related Windows/Linux cases and real
+14-book copy replay,2026-10-27. Authorized combined source9846a7f is deployed
+to new owner383859 onOctober28;228 Windows/Linux cases and the current copy replay
+pass. Actual public control delivery is verified separately from day acceptance.
+
+After a new workflow revision emits fresh signal identities, the real persistent
+book rejects a second target at the same execution_at with a UNIQUE violation.
+The old test substitute omitted that constraint. Keep the real constraint and
+align the substitute, then test with real ForwardPaperBook in PAPER and SHADOW.
+The first admitted slot is immutable: do not delete its target, rewrite its
+admission or relabel its archive/source to match a newer proposal.
+
+Under the existing data/model ledger guard, verify the first target identity,
+signed admission, original data epoch/current approval and prospective clock.
+Archive the later full proposal and disposition as an immutable signed receipt,
+explicitly not admitted. Bound receipts to256 per book and fail closed on missing
+or changed admission, changed receipt/context or elapsed execution clock. Retry
+must preserve original bytes, sessions and fill journal. Retained proposals do
+not grant recovery, enable live trading or supply a future observation.
+
+User's concrete new-account approval is separately consumed once by137ff4cd at
+23:15:08 with successful reconciliation, original owner175982 unchanged. It is
+not permission to rewrite a frozen slot or reuse the original consumed recovery.
+Deployment must preserve the original-owner constraint or obtain a specific
+reviewable handover decision; no in-memory patch or falsely labelled revision.
+
+A faithful SQLite backup retains the live process_owner lease and correctly
+rejects a second runtime. Preserve this initial copy failure. Detach only the
+newly-created isolated copies' process leases before replay, explicitly recording
+that difference. Never clear production leases or reuse/reset a recovery claim.
+Separate fingerprints prove production targets/admissions/links/sessions/fills
+unchanged throughout; the copy test neither resumes PAPER nor publishes data.
+
+## ADR-197 — Account for stopped retired models without hiding their books
+
+Status: source9846a7f deployed by the authorized directed handover,2026-10-28.
+Six fresh reconciled PAPER requests and actual public control delivery pass;
+full day acceptance still awaits current-model observations after a real close.
+
+The human explicitly approves PR34's directed owner replacement and successful
+reconciliation followed by fresh single-use requests for5 baseline/current
+LightGBM PAPER accounts. This supersedes the previous owner175982 no-restart
+constraint for this one handover. It never reuses consumed claims or authorizes
+retired-model recovery, automatic live trading or arbitrary failed-job resets.
+
+Retain every book and frozen target. Resolve current model state plus its latest
+signed RETIRED registry event, not a model-name heuristic or an old event after
+rollback. Stop retired execution first; then reconcile durable fills/cash/flat
+positions, pending sessions/orders/reservations, admission/target identities and
+the actual stop event. Preserve a signed immutable closure snapshot; changed,
+uncertain or held positions require review. A recovered current model cannot
+silently resume a previously retired account. Recheck retirement under the model/
+data writer guard immediately before recovery, after claim consumption.
+
+Reuse the existing runtime stop, journal, account and risk/OMS semantics. A vn.py
+gateway does not implement Qlib model-event/retained-book identity, so this narrow
+research adapter fills that gap without exposing a strategy-to-gateway path.
+
+Keep the v1 forward publication shape so existing publisher/API validators remain
+compatible. Overall readiness covers current books plus independently proven
+stopped retired history. The webpage joins a fresh model directory, keeps all
+books visible and distinguishes retirement from a request to resume execution.
+Audit v2 counts12 current daily-observation books and2 retained retirement proofs
+separately; retirement is never today's observation or performance. Missing,
+unclassified or unsafe extra books block rather than disappearing from coverage.
+
+The operator's initial config update did not move PYTHONPATH with the release,
+and the installed Go Supervisor v0.6.8 has a nonstandard reload response and
+asynchronous stop/backoff loop. Preserve those failed starts and do not treat
+"started" as acceptance. Verify exact imports under the intended environment,
+actual process command/cwd/environment, all release bytes and a fresh new service
+instance before issuing recovery. Continue the already consumed handover only
+from its completed steps; never replay/reset its claim or carry initialize-paper.
+The actual public v2 audit retains14 books and correctly blocks the new model's
+two missing historical sessions while accepting10 baseline observations and2
+separate retirement closures. Do not create a pre-activation session to pass it.
+

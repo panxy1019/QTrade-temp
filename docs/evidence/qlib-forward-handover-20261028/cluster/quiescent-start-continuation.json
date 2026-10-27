@@ -1,0 +1,17 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "TARGET_START_AFTER_BACKOFF_STOP_LOOP_QUIESCED",
+  "at": "2026-10-27T16:55:02.225200+00:00",
+  "authorization_sha256": "db6633bb249f833a21bfe062b6ef71dd7565fa380583c06502bff576d79e6ef5",
+  "existing_handover_claim_sha256": "ffdf53ce95bf587553b651c02841daabd3d56b454d614deba65be534d25860c4",
+  "previous_dispatch_not_acceptance": true,
+  "recovery_requested": false,
+  "log_quiet_seconds": 224.54704475402832,
+  "evidence_sha256": "5e373bdb0ec19d8db1ee5b4367a0e9367129021ff5450aa04ddb9ab55b30c99b"
+}

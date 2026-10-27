@@ -1,0 +1,115 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "ACTUAL_READ_ONLY_GOVERNANCE_AFTER_ISOLATED_COPY",
+  "observed_at": "2026-10-27T15:53:27.869980+00:00",
+  "progress": {
+    "history": {
+      "updated_at": "2026-10-27T15:43:46.548778+00:00",
+      "state": "PASS_FINISHED",
+      "qualified_rows": 67980,
+      "frequency_summary": {
+        "day": {
+          "planned_scopes": 1500,
+          "content_qualified_scopes": 145,
+          "qualified_rows": 1740,
+          "full_history_certified_scopes": 0,
+          "independent_source_reconciled_scopes": 0
+        },
+        "5min": {
+          "planned_scopes": 1500,
+          "content_qualified_scopes": 115,
+          "qualified_rows": 66240,
+          "full_history_certified_scopes": 0,
+          "independent_source_reconciled_scopes": 0
+        }
+      },
+      "historical_pit_certified": false,
+      "ten_year_history_certified": false,
+      "all_requested_windows_examined": false,
+      "published_qlib_versions": null,
+      "raw_bytes": 3067840,
+      "raw_sha256": "0d9fad0cee648fdf56a2d0cb6afd88b80bda5e946859f97b82191ca0d73261cf"
+    },
+    "delisted": {
+      "updated_at": "2026-10-27T15:48:41.540774+00:00",
+      "state": "PASS_FINISHED",
+      "qualified_rows": 131,
+      "frequency_summary": null,
+      "historical_pit_certified": false,
+      "ten_year_history_certified": false,
+      "all_requested_windows_examined": false,
+      "published_qlib_versions": 0,
+      "raw_bytes": 411502,
+      "raw_sha256": "135ef13d68c59dd410940d2412014698ac39423e5cbece2f06405fb4a9ef81b9"
+    }
+  },
+  "services": {
+    "workflow": {
+      "pid": 338258,
+      "alive": true,
+      "state": "S",
+      "start_ticks": "1014325467"
+    },
+    "data": {
+      "pid": 334634,
+      "alive": true,
+      "state": "S",
+      "start_ticks": "1014197281"
+    },
+    "forward": {
+      "pid": 175982,
+      "alive": true,
+      "state": "S",
+      "start_ticks": "1006806790"
+    },
+    "publisher": {
+      "pid": 294214,
+      "alive": true,
+      "state": "R",
+      "start_ticks": "1012537254"
+    },
+    "etf-shadow": {
+      "pid": 299932,
+      "alive": true,
+      "state": "S",
+      "start_ticks": "1012716210"
+    },
+    "maintenance": {
+      "pid": 213587,
+      "alive": true,
+      "state": "S",
+      "start_ticks": "1010098278"
+    },
+    "history": {
+      "pid": 164340,
+      "alive": true,
+      "state": "S",
+      "start_ticks": "1006203844"
+    },
+    "pit": {
+      "pid": 153768,
+      "alive": true,
+      "state": "S",
+      "start_ticks": "1005737133"
+    },
+    "observer": {
+      "pid": 4471,
+      "alive": true,
+      "state": "S",
+      "start_ticks": "995191546"
+    }
+  },
+  "free_gib": 272.678,
+  "reserve_gib": 100,
+  "services_changed": false,
+  "production_fix_deployed": false,
+  "whole_step1_accepted": false,
+  "coverage_basis": "sealed finite-queue receipts, not full-lake certification",
+  "evidence_sha256": "077feb39c77f587baa8fe75a2597cf993cb78cca7a0305fd72fc9c9380e2a0ac"
+}

@@ -1,0 +1,128 @@
+{
+  "started_at": "2026-10-27T15:27:55.430454+00:00",
+  "state": "PUBLIC_API_BEHAVIOR_VERIFIED",
+  "browser_rendered_verified": false,
+  "observations": [
+    {
+      "name": "deployment-before",
+      "path": "/api/deployment",
+      "method": "GET",
+      "status": 200,
+      "at": "2026-10-27T15:27:56.067587+00:00",
+      "sha256": "94ed11f9b77aaa0c51ff0b1fc517f5b68fcb33e1c460cb4fc2e3f1bf67dfe5d5",
+      "bytes": 239,
+      "headers": {
+        "Cache-Control": "public, max-age=15",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 15:26:08 GMT",
+        "X-Vercel-Cache": "HIT"
+      }
+    },
+    {
+      "name": "workflow",
+      "path": "/api/research/catalog",
+      "method": "GET",
+      "status": 200,
+      "at": "2026-10-27T15:27:58.435098+00:00",
+      "sha256": "dcc01dd6d8c546c97c41aabcb7c7d9a21054bedf5f3239512b15010321a6eabd",
+      "bytes": 357949,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 15:27:58 GMT",
+        "X-Vercel-Cache": "MISS"
+      }
+    },
+    {
+      "name": "online",
+      "path": "/api/research/online/catalog",
+      "method": "GET",
+      "status": 200,
+      "at": "2026-10-27T15:27:57.625621+00:00",
+      "sha256": "b343c373ed01e54168b8b37d7347e53d8d8cdda9b792bd44f3448bf26f95c99c",
+      "bytes": 135557,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 15:27:38 GMT",
+        "X-Vercel-Cache": "MISS"
+      }
+    },
+    {
+      "name": "forward",
+      "path": "/api/research/online/forward-books",
+      "method": "GET",
+      "status": 200,
+      "at": "2026-10-27T15:27:57.627275+00:00",
+      "sha256": "d9ad0442008f56127611cbe1a864ad4ab22ab00775a936ba18827b7067cef400",
+      "bytes": 123731,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 15:26:08 GMT",
+        "X-Vercel-Cache": "MISS"
+      }
+    },
+    {
+      "name": "templates",
+      "path": "/api/strategy-templates",
+      "method": "GET",
+      "status": 200,
+      "at": "2026-10-27T15:27:58.235128+00:00",
+      "sha256": "cb0fbfa27437fdfad8d39a0af8d0ffdabd3a2abc7183c1acc25b7d96207c7442",
+      "bytes": 450,
+      "headers": {
+        "Cache-Control": "public, max-age=15",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 15:27:59 GMT",
+        "X-Vercel-Cache": "MISS"
+      }
+    },
+    {
+      "name": "retired",
+      "path": "/api/backtest-preview",
+      "method": "POST",
+      "status": 410,
+      "at": "2026-10-27T15:27:58.235237+00:00",
+      "sha256": "b6cac03a82bab1dba177109efff41923422a24d7b704b27b72afe48e5f3a699a",
+      "bytes": 192,
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 15:27:58 GMT",
+        "X-Vercel-Cache": "MISS"
+      }
+    },
+    {
+      "name": "anonymous-specification",
+      "path": "/api/research/specification",
+      "method": "POST",
+      "status": 401,
+      "at": "2026-10-27T15:27:58.810587+00:00",
+      "sha256": "7cd6415054e206f6280ac709ce9ddae1ad6c3401cb901ba20cca692ea62986e4",
+      "bytes": 37,
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 15:27:59 GMT",
+        "X-Vercel-Cache": "MISS"
+      }
+    },
+    {
+      "name": "deployment-after",
+      "path": "/api/deployment",
+      "method": "GET",
+      "status": 200,
+      "at": "2026-10-27T15:27:59.453918+00:00",
+      "sha256": "94ed11f9b77aaa0c51ff0b1fc517f5b68fcb33e1c460cb4fc2e3f1bf67dfe5d5",
+      "bytes": 239,
+      "headers": {
+        "Cache-Control": "public, max-age=15",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 15:26:08 GMT",
+        "X-Vercel-Cache": "HIT"
+      }
+    }
+  ],
+  "finished_at": "2026-10-27T15:27:59.454319+00:00"
+}

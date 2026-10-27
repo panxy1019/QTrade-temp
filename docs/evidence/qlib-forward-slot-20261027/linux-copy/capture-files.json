@@ -1,0 +1,61 @@
+{
+  "transfer_bytes": 229234,
+  "transfer_sha256": "09ad3532e4b072d7280ea4caa79e608aa5f0fcf71e9b01938b0eff346c5e466b",
+  "files": [
+    {
+      "path": "copy-failure/attempt.json",
+      "bytes": 354,
+      "sha256": "efe2b2c9703a382e43d1040db71b81f8d136dc57ee06e2c25761dda66a748a04"
+    },
+    {
+      "path": "copy-replay-v2.py",
+      "bytes": 7881,
+      "sha256": "e4db2ee8642039cb48dd2fc2309eb14344a725886f327884c2b29c95c4aa6c9f"
+    },
+    {
+      "path": "copy-replay.py",
+      "bytes": 7125,
+      "sha256": "df37d0e4141e967d9d645df7a3d4c56111492699734eb38bbcc088088cf4874c"
+    },
+    {
+      "path": "copy-success/attempt.json",
+      "bytes": 434,
+      "sha256": "ba3f65aacfabb2065775c73c914866e81621d3e9d8c66c8ce6b500e07f47ffc4"
+    },
+    {
+      "path": "copy-success/verification.json",
+      "bytes": 20588,
+      "sha256": "6e0b0c5165c522b51a4d69d38de7394a12eed8d89ecca9f61272342207d4f817"
+    },
+    {
+      "path": "linux-attempt.json",
+      "bytes": 788,
+      "sha256": "8a34904b07908b9da674e7437684065819e85333e01ce3e1728d8118a8884cb0"
+    },
+    {
+      "path": "linux.log",
+      "bytes": 847,
+      "sha256": "6d2867d019e90714c8342bb2d19bbb544c9ffec95dae20d18b27e64281e41e10"
+    },
+    {
+      "path": "linux.xml",
+      "bytes": 21423,
+      "sha256": "279cf3efdc2a5aeb9fbbfdfe31236ab4cbd8dc063a1ec3404d9a2ccda40c0ffa"
+    },
+    {
+      "path": "setup-failure-1.json",
+      "bytes": 183,
+      "sha256": "dd3fca2e1ba394b9ed11307344a6bda788d243d38f1bb29679397e7377e96266"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 111939,
+      "sha256": "21a6c6c7f6510aa761a73571f646f5298f2b14beee0590f4b68ca84d7aa77a0c"
+    },
+    {
+      "path": "source-verification.json",
+      "bytes": 148,
+      "sha256": "5411aff657d60bdcfc60a9d1af501ab439e5ec233cb151e3d2133496c4920c26"
+    }
+  ]
+}

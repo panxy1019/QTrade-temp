@@ -1,0 +1,17 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "SUPERVISED_FIRST_START_IMPORT_FAILURE",
+  "at": "2026-10-27T16:49:21.614017+00:00",
+  "raw_log_sha256": "c85d3a146cbc098dcc1049b89ba27c6d206cae9e37e30fa178f237747ce703d6",
+  "error": "ModuleNotFoundError: qtrade.research.forward_retirement",
+  "other_services_unchanged": true,
+  "fingerprints_unchanged": true,
+  "recovery_requested": false,
+  "evidence_sha256": "1df79d0dd76143f8c9557bd44601b817520d16acd1664e622b431832e3c402ac"
+}

@@ -1,0 +1,1 @@
+{"kind": "ACTUAL_CURRENT_BOOKS_ISOLATED_PROPOSAL_REPLAY", "revision": "ddebaa1a5b1564c3dd641d9a33aa60a63cc4389a", "started_at": "2026-10-27T15:38:08.746505+00:00", "services_changed": false, "production_recovered": false, "whole_step1_accepted": false, "state": "FAILED", "error_type": "AssertionError", "finished_at": "2026-10-27T15:38:09.659163+00:00"}

@@ -24,6 +24,60 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 01:08 checkpoint: the explicitly authorized one-time directed handover
+is applied, source9846a7f/PID383859. Same228 Windows/Linux cases,582 exact Git
+files and actual14-book copy replay pass. Six fresh current-instance PAPER
+requests reconcile and succeed; original frozen/book/recovery bytes and eight
+other owner PIDs remain unchanged. Two retired books prove stopped flat closure.
+Actual public control delivery on production4b86145 passes01:00 after an earlier
+stale STOPPED capture, both retained. Full public v2 day audit remains BLOCKED:
+10 baseline observations+2 closures pass, current model PAPER/SHADOW lack a real
+October27 observation; October28 close remains future. Do not backfill simulated
+history or count retirement as a daily observation. PR34 UI merge/default-release
+verification and visual acceptance remain pending. History finite queue76,824
+(day1,944/min74,880), separate delisted192, both yielding to current collection;
+free272.56GiB/reserve100. Preserve first-start PYTHONPATH and custom Supervisor
+RPC/backoff failures. LIVE false, rolling OFF, old claims consumed; STEP2 waits.
+
+October28 00:20 checkpoint: explicit human reply approves the documented directed
+forward-owner handover and fresh6-book reconciliation. The old no-restart PID
+constraint is superseded for this one operation; retired model/PAPER stays stopped,
+old claims consumed and LIVE false/rolling OFF remain. Before the actual switch,
+add proof-bound read-only retirement and full14-book classification. Event/closure
+and auditor cases pass47 combined; final source/UI/Linux/copy checks are pending.
+Do not confuse implemented retirement with an already applied production change.
+
+23:54 checkpoint: PR34 Draft contains retention source, actual recovery/public C,
+150 Windows +150 Linux and current14-book copy evidence. Preview succeeds;
+production4b86145 and original175982 stay unchanged. A pending scoped handover
+question resolves the earlier no-restart constraint; do not repeat completed
+new-account recovery or deploy based on elapsed time. RO23:53 confirms9 known
+owners alive,272.678GiB free, latest history67,980(day1,740/min66,240), delisted131.
+These bounded completed-pass receipts do not certify the whole historical lake.
+
+23:45 checkpoint: source ddebaa1 verifies580 Git blobs in an isolated operator
+directory;150 Linux cases pass with no skips. Real14-book backups replay6 current
+families with12 immutable non-admitted proposals, preserving every original
+target/admission/link/session/fill and proving production fingerprints unchanged.
+The copied live-owner lease correctly blocks first replay; preserve that failed
+attempt and only detach isolated copy leases for a new successful replay. Source
+is pushed but not deployed. Prepare the explicit limited owner handover and
+current6-book reconciliation plan; never recover retired books as a side effect.
+Production/PAPER175982, actual-future-day acceptance and STEP2 are unchanged.
+
+23:31 checkpoint: PR33 merged4b86145 is actual production; fresh actual public C
+passes23:13 and full1500 delivery stays fresh/partially covered1497/1496. The user
+explicitly approves the named new-PAPER recovery. One request9ea34599 succeeds
+23:15:08 after reconciliation without restarting owner175982 or reusing an old
+claim. Public23:27 confirms running, but14-book forward state is DEGRADED from12
+same-execution-slot UNIQUE collisions. Retain original frozen identities. A
+narrow first-admission retention fix passes150 related Windows cases plus lint
+and scoped types; isolated Linux/current-book-copy verification is pending. Do
+not deploy into or restart original owner under the new account recovery scope.
+Keep old retired books visible and separately define their lifecycle audit;
+never silently filter a14-book roster into a passing12-book result. October28
+real observations remain prospective. Whole STEP1/STEP2 remain incomplete.
+
 23:04 checkpoint: narrow096387b runner correction passes320 actual Linux cases
 and is deployed only to workflow338258. Both new API-bound experiments really
 COMPLETE; independent replay checks12,924 files each, fitted restore and exact

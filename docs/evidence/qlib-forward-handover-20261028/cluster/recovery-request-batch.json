@@ -1,0 +1,44 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "FRESH_SIX_BOOK_INSTANCE_BOUND_REQUESTS",
+  "at": "2026-10-27T16:56:48.805389+00:00",
+  "requests": [
+    {
+      "book_id": "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+      "request_id": "82b06a51078549ad98ac385376847a68",
+      "request_sha256": "8b46b30590572e0b778ee7ce5187f34d0d67496ebdc31c47e9aa9213fef94b7e"
+    },
+    {
+      "book_id": "2fb08e23a1e8c6f4e78b2013b1261429b421f0218585640f2890297642097352",
+      "request_id": "ba6fabbb38174db3b96f890e361c5e3c",
+      "request_sha256": "73abf76c1bce4ae59947314be85f6f83899d404a3d0d659eb464300bde52b1e6"
+    },
+    {
+      "book_id": "3ff09edb6e5f82dca7b76b9c58b4e7ec995cd0cb5c3ef41257cb6717fe91446a",
+      "request_id": "ab8087f8ac9a4c20939c870c66db4fbc",
+      "request_sha256": "b72bf24f27531853fce715be6b8d493785505faf2d240b6bf0f4b2ad37b666af"
+    },
+    {
+      "book_id": "8e4417bb6bda7471be89b836ce320269c335bc2d970204c82604e2d1edb2f0fe",
+      "request_id": "aa15583c789f4b9a82a221bd0bbd1c6c",
+      "request_sha256": "df58f632614c3cc644743a65050ac37facd2845086cde650a2db2696ad1088df"
+    },
+    {
+      "book_id": "979833e43f658601e1b63d0ad4a4fcafd4f3518af0f37d70aef2d6b9739b0847",
+      "request_id": "24764f208e6747a0a1f2bbe9ebe358aa",
+      "request_sha256": "de600c9c068cbb9868f737999a9de65c889a6a92adb020f4078b43e1a3930394"
+    },
+    {
+      "book_id": "a703261181cbe90c61d1f5e6bb3c6be0323583b2d83772ee2172f91f8bd3be13",
+      "request_id": "d84fd31163364c4886c4198c83baf6f8",
+      "request_sha256": "f1d67491d06073ccf7dc56dc332c5ee6915afe21915b3d8e1b9ece1877a7dac5"
+    }
+  ],
+  "evidence_sha256": "975b79a4681855521dc933b8f4305fa5422e60b24d0effe1397b10315256ab39"
+}

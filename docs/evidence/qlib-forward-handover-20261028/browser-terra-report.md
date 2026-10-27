@@ -1,0 +1,3 @@
+# Browser handover attempt 2026-10-28
+
+Read-only production UI acceptance could not start. CUA `getState()` returned Chrome extension browser ID 1 with no listed tabs and inventory error `Browser 1: Error: nodeRepl.fetch request failed`. A single `createBrowserTab('chrome', 'https://q-trade-temp.vercel.app/', {sessionName: 'QTrade acceptance'})` attempt returned `nodeRepl.fetch request failed`. No DOM or screenshot was obtained; this is a browser automation access error and does not establish a website fault. Strategy center, historical workspace, old version selection, and console remain unverified. No login, submit, activation, recovery, trading, deployment or account action was performed.

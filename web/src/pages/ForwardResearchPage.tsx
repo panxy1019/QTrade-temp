@@ -3,6 +3,7 @@ import { Alert, Button, Card, Descriptions, Empty, Select, Space, Table, Tabs, T
 import { JsonExportButton } from '../components/JsonExportButton'
 import { workflowGet } from '../research/qlibWorkflow'
 import { EtfShadowPanel } from '../components/EtfShadowPanel'
+import { bookRole, bookRoleNames, type ForwardModels } from '../research/forwardLifecycle'
 
 type Focus = 'overview' | 'holdings' | 'fills' | 'risk'
 interface Holding { instrument: string; quantity: number }
@@ -72,6 +73,7 @@ function bounded(shown: number, total: number | null, truncated: boolean) {
 export function ForwardResearchPage({ focus = 'overview' }: { focus?: Focus }) {
   const [reply, setReply] = useState<Reply | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [models, setModels] = useState<ForwardModels | null>(null)
   const [loading, setLoading] = useState(true)
   const [refresh, setRefresh] = useState(0)
   const [selected, setSelected] = useState('')
@@ -84,8 +86,15 @@ export function ForwardResearchPage({ focus = 'overview' }: { focus?: Focus }) {
       if (inFlight) return
       inFlight = true
       try {
-        const result = await workflowGet<Reply>('/online/forward-books')
-        if (active) { setReply(result); setError(null); setLoading(false) }
+        const [result, lifecycle] = await Promise.allSettled([
+          workflowGet<Reply>('/online/forward-books'), workflowGet<ForwardModels>('/online/catalog'),
+        ])
+        if (active) {
+          setModels(lifecycle.status === 'fulfilled' ? lifecycle.value : null)
+          if (result.status === 'fulfilled') { setReply(result.value); setError(null) }
+          else { setReply(null); setError('前向账本读取失败；当前没有可展示的已校验发布。') }
+          setLoading(false)
+        }
       } catch {
         if (active) { setReply(null); setError('前向账本读取失败；当前没有可展示的已校验发布。'); setLoading(false) }
       } finally { inFlight = false }
@@ -99,6 +108,7 @@ export function ForwardResearchPage({ focus = 'overview' }: { focus?: Focus }) {
   const chosen = books.find(book => keyOf(book) === selected) ?? books[0]
   const latest = chosen?.sessions[0]
   const frozen = chosen?.frozen_targets[0]
+  const retired = chosen && bookRole(chosen.strategy_id, models) === 'RETIRED_MODEL'
 
   return <Space orientation="vertical" style={{ width: '100%' }}>
     <Space wrap><Typography.Title level={3} style={{ margin: 0 }}>{headings[focus]}</Typography.Title>
@@ -109,16 +119,20 @@ export function ForwardResearchPage({ focus = 'overview' }: { focus?: Focus }) {
     {error && <Alert type="error" showIcon title={error} />}
     {!publication && <Card loading={loading}><Empty description="尚无通过校验的前向账本发布；不展示示例持仓或收益。" /></Card>}
     {publication && <>
-      <Alert type={reply?.service_fresh ? 'info' : 'warning'} showIcon
+      <Alert type={reply?.service_fresh && publication.state === 'RUNNING' ? 'info' : 'warning'} showIcon
         title={reply?.service_fresh ? `前向服务：${publication.state} · 心跳有效` : '前向服务心跳已过期或停止；以下仅为最后一次发布'}
         description={`服务心跳 ${publication.heartbeat_at}；发布生成 ${publication.generated_at}。服务运行不等于发生模拟成交；真实下一交易日尚未发生时，成交和收益保持空值。`} />
       <Alert type="warning" showIcon title="研究约束仍需明确核验" description="未知 ST、停牌、精确涨跌停、公司行动或上一交易日成交量时，PAPER 阻断调仓。公开日线来源尚未独立认证未复权价格；SHADOW 不产生订单、持仓或组合收益。" />
+      <Typography.Paragraph>全部账本保留。当前基线与 ACTIVE 模型用于当前研究；退休模型保持停止，仅保留历史及未执行目标，不自动恢复。退休关闭证明不代表新的交易日观察。</Typography.Paragraph>
       <Card title="独立策略账本" extra={<JsonExportButton filename="qtrade-forward-books.json" value={publication} />}>
         <Table<ForwardBook> rowKey={keyOf} pagination={false} dataSource={books} scroll={{ x: 1000 }} columns={[
           { title: '策略', render: (_, book) => nameOf(book.strategy_id) },
+          { title: '生命周期', render: (_, book) => bookRoleNames[bookRole(book.strategy_id, models)] },
           { title: '模式', dataIndex: 'mode', render: mode => <Tag color={mode === 'PAPER' ? 'blue' : 'default'}>{mode}</Tag> },
           { title: '风险状态', render: (_, book) => <Tag color={book.risk_state === 'HALTED' ? 'red' : 'default'}>{book.risk_state}</Tag> },
-          { title: '恢复', render: (_, book) => book.recovery_required ? '人工对账与显式恢复待完成' : book.mode === 'SHADOW' ? '仅观察' : '运行中' },
+          { title: '恢复', render: (_, book) => bookRole(book.strategy_id, models) === 'RETIRED_MODEL'
+            ? book.running ? '退休模型仍有运行标记，需核查' : '保持停止，不自动恢复'
+            : book.recovery_required ? '人工对账与显式恢复待完成' : book.mode === 'SHADOW' ? '仅观察' : '运行中' },
           { title: '已冻结目标', dataIndex: 'target_count' },
           { title: '最近完整观察', render: (_, book) => book.sessions[0]?.observed_at ?? '尚未观察' },
           { title: '持仓数', render: (_, book) => book.sessions[0]?.holding_count ?? '尚无完整收据' },
@@ -130,7 +144,13 @@ export function ForwardResearchPage({ focus = 'overview' }: { focus?: Focus }) {
         <Space orientation="vertical" style={{ width: '100%' }}>
           <Select aria-label="选择前向研究账本" style={{ width: 'min(100%, 480px)' }} value={keyOf(chosen)} onChange={setSelected}
             options={books.map(book => ({ value: keyOf(book), label: `${nameOf(book.strategy_id)} · ${book.mode}` }))} />
-          {chosen.recovery_required && <Alert type="error" showIcon title="PAPER 已停止接收新风险；需要人工对账与显式恢复" description="此页面只读。自动轮询或进程重启不会恢复 HALTED 账本。" />}
+          {retired && <Alert type={chosen.running ? 'error' : 'info'} showIcon
+            title={chosen.running ? '退休模型仍有运行标记，尚未确认隔离' : '退休模型账本已停止；保留历史，不申请自动恢复'}
+            description="模型状态来自新鲜的在线模型目录。历史持仓、目标及观察仍按原收据展示；如要重新进入当前研究，需新的模型验证、批准及人工对账。" />}
+          {retired && (latest?.holding_count ?? 0) > 0 && <Alert type="warning" showIcon
+            title="退休账本仍有历史持仓记录；停止运行不等于完成持仓处置"
+            description="请核对关闭对账凭证与最新账本；有持仓或未决交易时，服务应保留阻断，不能自动清空或恢复。" />}
+          {!retired && chosen.recovery_required && <Alert type="error" showIcon title="PAPER 已停止接收新风险；需要人工对账与显式恢复" description="此页面只读。自动轮询或进程重启不会恢复 HALTED 账本。" />}
           <Descriptions size="small" column={2} items={[
             { key: 'strategy', label: '策略身份', children: chosen.strategy_id },
             { key: 'observed', label: '最近实际观察时间', children: latest?.observed_at ?? '尚未观察' },
@@ -174,7 +194,7 @@ export function ForwardResearchPage({ focus = 'overview' }: { focus?: Focus }) {
               ]} />
             </Space> },
             { key: 'risk', label: '风险与阻断', children: <Space orientation="vertical" style={{ width: '100%' }}>
-              <Typography.Text>风险状态 {chosen.risk_state}；{chosen.running ? '执行管线运行中' : '执行管线未启动'}；{chosen.recovery_required ? '需要人工恢复' : '无待处理恢复'}</Typography.Text>
+              <Typography.Text>风险状态 {chosen.risk_state}；{chosen.running ? '执行管线运行中' : '执行管线未启动'}；{retired ? '退休历史保留，不自动恢复' : chosen.recovery_required ? '需要人工恢复' : '无待处理恢复'}</Typography.Text>
               <Table rowKey="reason" pagination={false} dataSource={Object.entries(latest?.blocked_reasons ?? {}).map(([reason, count]) => ({ reason, count }))} columns={[
                 { title: '交易阻断原因', dataIndex: 'reason', render: reason => blockerNames[reason] ?? reason }, { title: '涉及证券数', dataIndex: 'count' },
               ]} />

@@ -1,0 +1,65 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "ACTUAL_POST_DIRECTED_HANDOVER_HEALTH",
+  "at": "2026-10-27T16:58:14.843132+00:00",
+  "shanghai_time": "2026-10-28T00:58:14.843147+08:00",
+  "free_gib": 272.564453125,
+  "reserve_gib": 100,
+  "forward_pid": 383859,
+  "other_services": {
+    "workflow": {
+      "pid": 338258,
+      "start_ticks": "1014325467"
+    },
+    "data": {
+      "pid": 334634,
+      "start_ticks": "1014197281"
+    },
+    "publisher": {
+      "pid": 294214,
+      "start_ticks": "1012537254"
+    },
+    "etf-shadow": {
+      "pid": 299932,
+      "start_ticks": "1012716210"
+    },
+    "maintenance": {
+      "pid": 213587,
+      "start_ticks": "1010098278"
+    },
+    "history": {
+      "pid": 164340,
+      "start_ticks": "1006203844"
+    },
+    "pit": {
+      "pid": 153768,
+      "start_ticks": "1005737133"
+    },
+    "observer": {
+      "pid": 4471,
+      "start_ticks": "995191546"
+    }
+  },
+  "context": {
+    "active": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+    "approval_sha256": "6f1ec61bda1a28d918dd331ad0e0ae6ea7ebcc39320f8e4dade424bf726bd238",
+    "data_version": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "data_event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+    "model_states": {
+      "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707": "STAGED",
+      "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293": "RETIRED",
+      "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487": "ACTIVE",
+      "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c": "TRAINED",
+      "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444": "TRAINED"
+    }
+  },
+  "rolling_policy_changed": false,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "6cf1525c2589586dff8d61c4c42c3799b717df4244c23538fa0ca84f57b1a7cb"
+}

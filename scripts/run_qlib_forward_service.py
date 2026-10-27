@@ -12,6 +12,7 @@ import signal
 import sqlite3
 import sys
 from collections.abc import Iterator
+from dataclasses import asdict
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -27,6 +28,7 @@ from qtrade.research.data_epoch import current_epoch
 from qtrade.research.data_versions import content_id, file_hash
 from qtrade.research.forward_paper import ForwardPaperBook, ForwardTarget
 from qtrade.research.forward_publication import validate_forward_publication
+from qtrade.research.forward_retirement import closed_book_snapshot, retirement_event
 from qtrade.research.model_registry import checked_document, checked_identity
 from qtrade.research.prediction_registry import active_approval
 from scripts.atomic_json import write_json_atomic, write_json_immutable
@@ -44,6 +46,8 @@ LIMITATIONS = [
     "Unknown ST, suspension, limits and corporate actions block simulated orders.",
     "PAPER restarts require explicit human reconciliation; SHADOW has no fills or returns.",
     "Current universe has survivor bias; historical PIT and available_at remain uncertified.",
+    "Each execution slot retains its first admitted target; later proposals are not executed.",
+    "Readiness covers current strategies; retired model books remain stopped and read-only.",
 ]
 RECOVERY_SCHEMA = "qtrade.forward-recovery-request.v1"
 
@@ -214,6 +218,7 @@ class ForwardService:
         self.links: dict[str, dict[str, Any]] = {}
         self.startup_errors: list[dict[str, Any]] = []
         self.discovery_errors: list[str] = []
+        self.retired_books: set[str] = set()
         roster = self.root / "roster.json"
         self.roster: dict[str, Any] = load(roster)["books"] if roster.exists() else {}
         if not isinstance(self.roster, dict) or len(self.roster) > 32:
@@ -305,6 +310,15 @@ class ForwardService:
             ).fetchone()
             with context_guard(self.data_database, self.model_database):
                 self.check_context(target, link)
+                slot = book.db.execute(
+                    "SELECT id,payload FROM targets WHERE execution_at=?",
+                    (target.execution_at.isoformat(),),
+                ).fetchall()
+                if len(slot) > 1:
+                    raise ValueError("FORWARD_SERVICE_FROZEN_SLOT_AMBIGUOUS")
+                if slot and slot[0][0] != target.identity:
+                    self.retain_frozen_slot(identity, target, link, slot[0], now=now)
+                    continue
                 if already_frozen:
                     if not admission.exists():
                         raise ValueError("FORWARD_SERVICE_ADMISSION_RECONCILIATION_REQUIRED")
@@ -330,6 +344,47 @@ class ForwardService:
                 self.root / identity / "archive-link.json", signed({**AUTHORITY, "archive": link})
             )
 
+    def retain_frozen_slot(
+        self, identity: str, proposed: ForwardTarget, link: dict[str, Any],
+        slot: tuple[str, str], *, now: datetime,
+    ) -> None:
+        """Keep a verified first admission; never replace it with a later proposal."""
+        frozen = load_target(json.loads(slot[1]))
+        if (slot[0] != frozen.identity or frozen.strategy_id != proposed.strategy_id
+                or frozen.execution_at != proposed.execution_at):
+            raise ValueError("FORWARD_SERVICE_FROZEN_SLOT_IDENTITY_CHANGED")
+        admission = self.root / identity / "admissions" / (frozen.identity + ".json")
+        if not admission.is_file():
+            raise ValueError("FORWARD_SERVICE_FROZEN_ADMISSION_MISSING")
+        proof = load(admission)
+        if proof["target_id"] != frozen.identity:
+            raise ValueError("FORWARD_SERVICE_FROZEN_ADMISSION_CHANGED")
+        admitted = datetime.fromisoformat(proof["verified_at"])
+        if (now.tzinfo is None or admitted.tzinfo is None
+                or not frozen.generated_at <= admitted <= now < frozen.execution_at
+                or not proposed.generated_at <= now):
+            raise ValueError("FORWARD_SERVICE_FROZEN_SLOT_CLOCK_INVALID")
+        self.check_context(frozen, proof["archive"])
+        body = {
+            **AUTHORITY, "kind": "FORWARD_EXECUTION_SLOT_PROPOSAL_DISPOSITION",
+            "state": "RETAINED_FIRST_ADMITTED_EXECUTION_TARGET", "book_id": identity,
+            "execution_at": frozen.execution_at.isoformat(),
+            "frozen_target_id": frozen.identity,
+            "frozen_admission_sha256": proof["evidence_sha256"],
+            "proposed_target_id": proposed.identity,
+            "proposed_target": json.loads(json.dumps(asdict(proposed), default=str)),
+            "proposed_archive": link, "proposal_admitted": False,
+        }
+        path = self.root / identity / "rejected-targets" / (proposed.identity + ".json")
+        if path.exists():
+            prior = load(path)
+            if signed({**body, "observed_at": prior["observed_at"]}) != prior:
+                raise ValueError("FORWARD_SERVICE_FROZEN_PROPOSAL_RECEIPT_CHANGED")
+        else:
+            if len(list(path.parent.glob("*.json"))) >= 256:
+                raise ValueError("FORWARD_SERVICE_FROZEN_PROPOSAL_RECEIPT_BOUND")
+            write_json_immutable(path, signed({**body, "observed_at": now.isoformat()}))
+
     def check_context(self, target: ForwardTarget, link: dict[str, Any]) -> None:
         if current_epoch(self.data_database, target.data_version) != link["data_event_id"]:
             raise ValueError("FORWARD_SERVICE_DATA_EPOCH_CHANGED")
@@ -338,6 +393,45 @@ class ForwardService:
                 approval = active_approval(c)
             if approval is None or approval["evidence_sha256"] != link["approval_sha256"]:
                 raise ValueError("FORWARD_SERVICE_APPROVAL_CHANGED")
+
+    def retire_book(self, identity: str, *, now: datetime) -> bool:
+        """Stop retired models, then prove a flat reconciled account without new execution."""
+        book = self.books[identity]
+        if not book.strategy_id.startswith("approved_model_"):
+            return False
+        with context_guard(self.data_database, self.model_database):
+            try:
+                event = retirement_event(self.model_database, book.strategy_id, now=now)
+            except Exception:
+                if book.bundle.runtime.status.running:
+                    book.bundle.runtime.stop(actor="model-lifecycle-unverifiable")
+                raise
+            if event is None:
+                self.retired_books.discard(identity)
+                return False
+            path = (self.root / identity / "retirements"
+                    / (event["event"]["evidence_sha256"] + ".json"))
+            if not path.exists() or book.bundle.runtime.status.running:
+                book.bundle.runtime.stop(actor="research-model-retirement")
+            snapshot = closed_book_snapshot(self.root / identity, self.roster[identity], event,
+                                            now=datetime.now(UTC))
+            if (any(p.quantity for p in book.bundle.ledger.account.positions.values())
+                    or book.mode is RuntimeMode.PAPER
+                    and Decimal(snapshot["cash"]) != book.bundle.ledger.account.cash):
+                raise ValueError("FORWARD_SERVICE_RETIRED_LIVE_ACCOUNT_UNRECONCILED")
+            body = {**AUTHORITY, "kind": "RETIRED_RESEARCH_BOOK_READ_ONLY",
+                    "book_id": identity, "model_event": event, "snapshot": snapshot,
+                    "whole_step1_accepted": False}
+            if path.exists():
+                prior = load(path)
+                if signed({**body, "recorded_at": prior["recorded_at"]}) != prior:
+                    raise ValueError("FORWARD_SERVICE_RETIRED_BOOK_CHANGED_REVIEW_REQUIRED")
+            else:
+                write_json_immutable(
+                    path, signed({**body, "recorded_at": datetime.now(UTC).isoformat()})
+                )
+            self.retired_books.add(identity)
+            return True
 
     def current_targets(self, now: datetime) -> list[tuple[ForwardTarget, dict[str, Any]]]:
         self.discovery_errors = []
@@ -619,6 +713,8 @@ class ForwardService:
                     or book.bundle.runtime.status.running
                 ):
                     raise ValueError("FORWARD_SERVICE_RECOVERY_BOOK_NOT_HALTED_PAPER")
+                if retirement_event(self.model_database, book.strategy_id, now=now) is not None:
+                    raise ValueError("FORWARD_SERVICE_RETIRED_MODEL_RECOVERY_FORBIDDEN")
             except Exception:
                 code = "FORWARD_SERVICE_RECOVERY_REQUEST_REJECTED"
                 write_json_immutable(
@@ -657,7 +753,11 @@ class ForwardService:
                 validate_recovery_request(
                     request, identity=identity, instance_id=self.instance_id, now=datetime.now(UTC)
                 )
-                book.recover(actor=request["actor"])
+                with context_guard(self.data_database, self.model_database):
+                    if retirement_event(self.model_database, book.strategy_id,
+                                        now=datetime.now(UTC)) is not None:
+                        raise ValueError("FORWARD_SERVICE_RETIRED_MODEL_RECOVERY_FORBIDDEN")
+                    book.recover(actor=request["actor"])
             except Exception:
                 book.bundle.report_incident("explicit forward recovery failed")
                 state = "FAILED"
@@ -707,6 +807,7 @@ class ForwardService:
                 write_json_immutable(path, detail)
 
         if not stopped:
+            self.retired_books.clear()
             self.discovery_errors = []
             storage_ready = shutil.disk_usage(self.base).free >= 100 * 1024**3
             if storage_ready:
@@ -729,9 +830,10 @@ class ForwardService:
                 error(None, None, ValueError(code))
             # Previously frozen books do not depend on today's new model/signal being ready.
             if storage_ready:
-                for book in self.books.values():
+                for identity, book in self.books.items():
                     try:
-                        self.observe_book(book, now=now)
+                        if not self.retire_book(identity, now=now):
+                            self.observe_book(book, now=now)
                     except Exception as exc:
                         error(book.strategy_id, book.mode.value, exc)
 
@@ -761,7 +863,8 @@ class ForwardService:
                 error(book.strategy_id, book.mode.value, exc)
         recovery = any(
             b.mode is RuntimeMode.PAPER and not b.bundle.runtime.status.running
-            for b in self.books.values()
+            and identity not in self.retired_books
+            for identity, b in self.books.items()
         )
         state = (
             "STOPPED"

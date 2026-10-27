@@ -1,0 +1,15 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "action": "handover",
+  "started_at": "2026-10-27T16:44:46.849450+00:00",
+  "state": "FAILED",
+  "error_type": "AssertionError",
+  "finished_at": "2026-10-27T16:44:49.027442+00:00",
+  "evidence_sha256": "f2cb7fa36d255c42e2d7981a3762818be8cf9afd350408399106ddc53ec2dab7"
+}

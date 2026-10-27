@@ -1,0 +1,19 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "TARGETED_FORWARD_PYTHONPATH_CORRECTION",
+  "at": "2026-10-27T16:49:51.148530+00:00",
+  "old_config_sha256": "17493aa1fc24edddaa4f9bef765be0c6b77c7571468ef13882ebf8bdcd24144d",
+  "new_config_sha256": "e7076c1d7a9cd1274ad511f6ac409812dc4c3c17eadf548716ad47518730516e",
+  "old_pythonpath": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/e107eb9c74001822dda220b1e6ca96a55ee00ef6/src",
+  "new_pythonpath": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/9846a7f30774d6ae4b4d41f02b493c5246be87d9/src",
+  "only_target_service": true,
+  "initialize_paper_argument": false,
+  "private_environment_preserved": true,
+  "evidence_sha256": "c7789c86e9936f8b5c6348aef0ce108e7478a1454bde8ae225ea731f256428b6"
+}

@@ -1,0 +1,15 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "action": "status",
+  "returncode": 0,
+  "stdout": "qtrade-forward-research          Running   pid 383859, uptime 0:00:27\n",
+  "stderr": "",
+  "at": "2026-10-27T16:55:29.691588+00:00",
+  "evidence_sha256": "98ad15c48bb095ce2ee73b4b2090a9a9a64de84e2daebabb189577aa0b476737"
+}

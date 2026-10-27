@@ -1,6 +1,102 @@
 # Current state
 
-Last updated: 2026-10-27 23:04 Shanghai, sealed real experiments and fresh private C.
+Last updated: 2026-10-28 01:08 Shanghai, directed handover and actual public control delivery verified.
+
+- Authorized one-time forward handover is applied: old175982 exits, new383859
+  executes exact source9846a7f with582 verified files, new PYTHONPATH and no
+  initialize-paper argument. Original14-book target/session/admission/link/fill
+  fingerprints and all previous recovery-file bytes remain unchanged. Eight other
+  tracked owners keep their original PIDs/start ticks; LIVE false/rolling OFF stay.
+- Six fresh instance-bound requests succeed after reconciliation at00:57: only
+  five baseline PAPER books plus ACTIVE295. Two retired model books remain stopped
+  with signed flat closure; all14 books remain visible. Private handover passes
+  00:57:28. Actual default-origin public control delivery passes01:00:42 on
+  main4b86145: RUNNING, fresh, errors[], current6 PAPER NORMAL/running. Earlier
+  actual00:58 stale/STOPPED capture remains immutable; private is not public proof.
+- Full actual-public v2 stock audit correctly remains BLOCKED:10 baseline daily
+  observations plus2 retirement closures pass; the current model's PAPER/SHADOW
+  have no October27 session because activation is after that close. Their real
+  October28 observations remain future. Do not fabricate historical sessions or
+  call12 accepted rows full14-book/day/STEP1 acceptance. STEP2 still waits.
+- Same228 Windows and isolated Linux cases pass with zero skips; frontend310
+  tests/build/lint pass. Actual14-book copy replay passes before the switch. Keep
+  the failed standard Supervisor reread, first old-PYTHONPATH import failures and
+  asynchronous stop/start dispatch receipts. Native Running plus actual /proc,
+  imported source and fresh instance are required; "started" alone is not proof.
+- Latest sealed governance receipts: history76,824(day1,944/minute74,880), separate
+  delisted192. Both yield to current collection. These are finite-queue receipt
+  counts, not certified full history/PIT. Actual post-handover free272.56GiB,
+  reserve100GiB; ordinary45s/512MB/cache128MB/Git90s budgets are unchanged.
+- PR34/source9846 includes retirement UI; production UI still4b86145 pending
+  merge/redeployment. Latest Terra high retry cannot obtain DOM/screenshots due
+  to browser transport failure. Preserve earlier core-page screenshots and new
+  failure report; actual public API acceptance does not certify rendering.
+  See docs/QLIB_FORWARD_HANDOVER_20261028.md and its byte-preserved evidence.
+
+Previous2026-10-28 00:20 checkpoint (historical observations):
+
+- Human explicitly selects the documented directed handover: one forward-owner
+  replacement and fresh reconciled requests for only5 baselines plus ACTIVE295
+  PAPER. This supersedes the earlier PID175982 no-restart restriction for this
+  handover only; the retired original model stays stopped. No old recovery claim
+  is reused, and LIVE false/rolling OFF stay unchanged. Handover not yet applied.
+- Preflight confirms current model295 and one retired model2d78; original owner
+  is still alive. Before switching, implement explicit stopped/read-only retired
+  closure and14-book audit classification, avoiding a permanent false recovery
+  alarm for correctly stopped history. New module/event/flat-book tests pass18;
+  expanded14-book auditor checks pass47 combined. Source/UI integration, final
+  Windows/Linux/copy acceptance and the actual directed handover remain pending.
+
+Previous2026-10-27 23:54 checkpoint (historical observations):
+
+- PR34 is DRAFT; preview for checkpoint d6df1b6 succeeds, production remains4b86145.
+  Retention source ddebaa1 is tested but not deployed. Asked only whether the
+  earlier original-owner no-restart constraint may change for the documented
+  directed handover/current6-book reconciliation; new PAPER recovery is already
+  completed and is not being requested again. No response means no handover.
+- Actual23:53 read-only health sees all9 known PIDs alive and272.678GiB free.
+  Last sealed history receipt23:43 totals67,980(day1,740/minute66,240), separate
+  delisted receipt23:48 totals131; both latest passes finished. These finite
+  queue observations do not certify full history or historical PIT. Preserve
+  signed health-2353.json and remote immutable raw progress captures.
+
+Previous23:45 checkpoint (historical observations):
+
+- Forward retention source ddebaa1 is publicly pushed and verified against580 Git
+  blobs. The same150 related Linux cases pass without skips. Actual14-book SQLite
+  backups then replay six current proposal families:12 immutable non-admitted
+  receipts, idempotent retry, unchanged targets/admissions/archive links/sessions/
+  fill journals. Original production fingerprints and PID175982 remain unchanged.
+  Copy replay first fails on the copied live-owner lease; preserve failure, detach
+  only isolated copy process leases and replay under a new output path. No
+  production lease, target or claim is cleared. This is NOT deployed acceptance.
+- Only current6 PAPER books would qualify for a future owner handover/recovery
+  review; original retired model history must remain visible and not auto-resume.
+  A scoped handover decision must resolve the previous original-owner constraint.
+
+Previous23:31 checkpoint (historical observations):
+
+- PR33 merged as main4b86145; actual production deployment matches. Actual public
+  C passes at23:13 for ACTIVE29589b44/source096 prediction and signals, separately
+  from the private replay. Another full1500 public probe is FRESH_TRANSPORT with
+  day1497/min1496 coverage; partial coverage remains partial.
+- Explicit user reply to the named new-PAPER recovery request authorizes one
+  recovery for137ff4cd. Request9ea34599 is consumed once and SUCCEEDED23:15:08,
+  with reconciliation and SYSTEM_START audit proof; original owner175982 stays
+  alive and original consumed authorization is not reused. No future session or
+  fill exists. Actual23:27 public capture observes the new PAPER running.
+- Current forward publication is nevertheless DEGRADED:12 registration errors
+  arise when fresh proposals collide with the first frozen execution slot.
+  Keep all14 books, frozen targets/admissions and earlier public failures.
+  A narrow first-admission retention fix plus real SQLite regressions passes150
+  related Windows cases, Ruff and scoped mypy. It is NOT deployed. Original
+  forward sourcee107/owner175982 remains unchanged; an owner change is not implied
+  by the new account's recovery authorization.
+- Whole STEP1 remains unaccepted: future October28 observations, retained model
+  book lifecycle/coverage and complete browser entry checks still need evidence.
+  STEP2 waits; LIVE false, rolling OFF and all resource budgets remain unchanged.
+
+Previous23:04 checkpoint (historical observations):
 
 - Corrective source 096387b is deployed to workflow PID338258 only. Exact 580
   execution files verify; 320 actual Linux cases pass without skips. Data stays

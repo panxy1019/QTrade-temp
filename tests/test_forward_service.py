@@ -25,7 +25,7 @@ class Book:
         self.db = sqlite3.connect(root / "forward.sqlite")
         self.db.executescript(
             "CREATE TABLE IF NOT EXISTS targets "
-            "(id TEXT PRIMARY KEY,payload TEXT,execution_at TEXT); "
+            "(id TEXT PRIMARY KEY,payload TEXT,execution_at TEXT UNIQUE); "
             "CREATE TABLE IF NOT EXISTS sessions(day TEXT,target_id TEXT,status TEXT)"
         )
         self.bundle = SimpleNamespace(
@@ -412,6 +412,15 @@ def test_source_discovery_uses_verified_current_epoch_and_actual_archive(environ
 def discovery_sources(environment, monkeypatch):
     instance, item, now = environment(), target(), datetime.now(UTC)
     approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+    with sqlite3.connect(instance.model_database) as connection:
+        connection.executescript(
+            "CREATE TABLE models(model_id TEXT,state TEXT,activated_at TEXT,"
+            "activation_count INTEGER);"
+            "CREATE TABLE active_model(singleton INTEGER,model_id TEXT)"
+        )
+        connection.execute("INSERT INTO models VALUES(?,?,?,1)",
+                           (approval["model_id"], "ACTIVE", now.isoformat()))
+        connection.execute("INSERT INTO active_model VALUES(1,?)", (approval["model_id"],))
     model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
     model_link = {
         **link(),
@@ -919,3 +928,113 @@ def test_live_explicit_recovery_runs_real_reconciliation_and_preserves_pending_g
     assert (
         book.db.execute("SELECT COUNT(*) FROM sessions WHERE status='PENDING'").fetchone()[0] == 1
     )
+
+
+@pytest.mark.parametrize("mode", [RuntimeMode.SHADOW, RuntimeMode.PAPER])
+@pytest.mark.parametrize("change", ["revision", "signal", "weights"])
+def test_later_proposal_keeps_first_admitted_execution_slot(environment, monkeypatch, mode, change):
+    """Real UNIQUE execution slot: deployment must not replace a frozen target."""
+    monkeypatch.setattr(service, "ForwardPaperBook", RealBook)
+    instance = environment(modes=(mode,))
+    first = target()
+    instance.register(first, link(), now=datetime.now(UTC))
+    identity, book = next(iter(instance.books.items()))
+    admission = instance.root / identity / "admissions" / (first.identity + ".json")
+    original_admission = admission.read_bytes()
+    original_targets = book.db.execute("SELECT * FROM targets").fetchall()
+    original_link = (instance.root / identity / "archive-link.json").read_bytes()
+    if change == "revision":
+        proposed = replace(first, source_revision="f" * 40)
+    elif change == "signal":
+        proposed = replace(first, signal_id="f" * 64)
+    else:
+        proposed = replace(first, weights={"SH600036": Decimal(".4")})
+    proposed_link = {**link(), "artifact_id": proposed.signal_id, "manifest_sha256": "f" * 64}
+    instance.register(proposed, proposed_link, now=datetime.now(UTC))
+    rejected = instance.root / identity / "rejected-targets" / (proposed.identity + ".json")
+    receipt = service.load(rejected)
+    assert receipt["state"] == "RETAINED_FIRST_ADMITTED_EXECUTION_TARGET"
+    assert receipt["frozen_target_id"] == first.identity
+    assert receipt["proposed_target_id"] == proposed.identity
+    assert receipt["proposal_admitted"] is False
+    before_retry = rejected.read_bytes()
+    instance.register(proposed, proposed_link, now=datetime.now(UTC))
+    assert rejected.read_bytes() == before_retry
+    assert book.db.execute("SELECT * FROM targets").fetchall() == original_targets
+    assert admission.read_bytes() == original_admission
+    assert (instance.root / identity / "archive-link.json").read_bytes() == original_link
+    assert not (instance.root / identity / "admissions" / (proposed.identity + ".json")).exists()
+    assert book.db.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 0
+    with sqlite3.connect((instance.root / identity / "operations.sqlite").as_uri()
+                         + "?mode=ro", uri=True) as connection:
+        assert connection.execute("SELECT COUNT(*) FROM fill_journal").fetchone()[0] == 0
+    assert not book.bundle.runtime.status.running
+
+
+@pytest.mark.parametrize("damage", ["missing_admission", "target_id", "admission_target"])
+def test_conflicting_slot_cannot_hide_an_unverifiable_first_target(
+    environment, monkeypatch, damage,
+):
+    monkeypatch.setattr(service, "ForwardPaperBook", RealBook)
+    instance = environment()
+    first = target()
+    instance.register(first, link(), now=datetime.now(UTC))
+    identity, book = next(iter(instance.books.items()))
+    admission = instance.root / identity / "admissions" / (first.identity + ".json")
+    if damage == "missing_admission":
+        admission.unlink()
+    elif damage == "target_id":
+        book.db.execute("UPDATE targets SET id=?", ("0" * 64,))
+    else:
+        value = service.load(admission)
+        value["target_id"] = "0" * 64
+        admission.write_text(json.dumps(signed({k: v for k, v in value.items()
+                                               if k != "evidence_sha256"})))
+    proposed = replace(first, source_revision="f" * 40)
+    with pytest.raises(ValueError, match="FORWARD_SERVICE_FROZEN"):
+        instance.register(proposed, link(), now=datetime.now(UTC))
+    assert not (instance.root / identity / "rejected-targets").exists()
+    assert book.db.execute("SELECT COUNT(*) FROM targets").fetchone()[0] == 1
+
+
+@pytest.mark.parametrize("damage", ["epoch", "late", "receipt", "archive", "bound"])
+def test_frozen_slot_retention_rechecks_context_clock_and_immutable_receipts(
+    environment, monkeypatch, damage,
+):
+    monkeypatch.setattr(service, "ForwardPaperBook", RealBook)
+    instance = environment()
+    first = target()
+    instance.register(first, link(), now=datetime.now(UTC))
+    identity, book = next(iter(instance.books.items()))
+    original = book.db.execute("SELECT * FROM targets").fetchall()
+    proposed = replace(first, signal_id="f" * 64)
+    proposed_link = link()
+    now = datetime.now(UTC)
+    if damage in {"receipt", "archive"}:
+        instance.register(proposed, proposed_link, now=now)
+        if damage == "receipt":
+            path = instance.root / identity / "rejected-targets" / (proposed.identity + ".json")
+            value = service.load(path)
+            value["proposal_admitted"] = True
+            path.write_text(json.dumps(signed({k: v for k, v in value.items()
+                                               if k != "evidence_sha256"})))
+        else:
+            proposed_link = {**proposed_link, "manifest_sha256": "f" * 64}
+    elif damage == "epoch":
+        # The proposal is valid at the current epoch, but its frozen predecessor is not.
+        admission = instance.root / identity / "admissions" / (first.identity + ".json")
+        value = service.load(admission)
+        value["archive"]["data_event_id"] = "f" * 64
+        admission.write_text(json.dumps(signed({k: v for k, v in value.items()
+                                               if k != "evidence_sha256"})))
+    elif damage == "late":
+        now = first.execution_at
+    else:
+        directory = instance.root / identity / "rejected-targets"
+        directory.mkdir()
+        for index in range(256):
+            (directory / f"{index}.json").write_text("{}")
+    with pytest.raises(ValueError, match="FORWARD_SERVICE_"):
+        instance.register(proposed, proposed_link, now=now)
+    assert book.db.execute("SELECT * FROM targets").fetchall() == original
+    assert book.db.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 0

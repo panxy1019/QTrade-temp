@@ -1,0 +1,17 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "SUPERVISOR_RELOAD_CONFIG_AFTER_ENV_CORRECTION",
+  "at": "2026-10-27T16:51:27.747471+00:00",
+  "returncode": 1,
+  "stdout": "error: <class 'ValueError'>, not enough values to unpack (expected 3, got 0): file: /usr/lib/python3/dist-packages/supervisor/supervisorctl.py line: 1043\n",
+  "stderr": "",
+  "other_services_unchanged": true,
+  "recovery_requested": false,
+  "evidence_sha256": "58502c4f6d6c1a26f07fb3fd735195b38f45428e4ce3fab2629149dfa1e7194d"
+}
