@@ -24,6 +24,14 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+23:54 checkpoint: PR34 Draft contains retention source, actual recovery/public C,
+150 Windows +150 Linux and current14-book copy evidence. Preview succeeds;
+production4b86145 and original175982 stay unchanged. A pending scoped handover
+question resolves the earlier no-restart constraint; do not repeat completed
+new-account recovery or deploy based on elapsed time. RO23:53 confirms9 known
+owners alive,272.678GiB free, latest history67,980(day1,740/min66,240), delisted131.
+These bounded completed-pass receipts do not certify the whole historical lake.
+
 23:45 checkpoint: source ddebaa1 verifies580 Git blobs in an isolated operator
 directory;150 Linux cases pass with no skips. Real14-book backups replay6 current
 families with12 immutable non-admitted proposals, preserving every original

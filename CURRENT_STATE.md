@@ -1,6 +1,19 @@
 # Current state
 
-Last updated: 2026-10-27 23:45 Shanghai, isolated Linux and current-book-copy replay pass.
+Last updated: 2026-10-27 23:54 Shanghai, scoped handover decision pending.
+
+- PR34 is DRAFT; preview for checkpoint d6df1b6 succeeds, production remains4b86145.
+  Retention source ddebaa1 is tested but not deployed. Asked only whether the
+  earlier original-owner no-restart constraint may change for the documented
+  directed handover/current6-book reconciliation; new PAPER recovery is already
+  completed and is not being requested again. No response means no handover.
+- Actual23:53 read-only health sees all9 known PIDs alive and272.678GiB free.
+  Last sealed history receipt23:43 totals67,980(day1,740/minute66,240), separate
+  delisted receipt23:48 totals131; both latest passes finished. These finite
+  queue observations do not certify full history or historical PIT. Preserve
+  signed health-2353.json and remote immutable raw progress captures.
+
+Previous23:45 checkpoint (historical observations):
 
 - Forward retention source ddebaa1 is publicly pushed and verified against580 Git
   blobs. The same150 related Linux cases pass without skips. Actual14-book SQLite
