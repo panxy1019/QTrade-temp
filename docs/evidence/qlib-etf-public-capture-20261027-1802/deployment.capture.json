@@ -1,0 +1,30 @@
+{
+  "url": "https://q-trade-temp.vercel.app/api/deployment",
+  "method": "GET",
+  "requested_at": "2026-10-27T10:02:34.710363+00:00",
+  "maximum_bytes": 16000,
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "239",
+    "Cache-Control": "public, max-age=15",
+    "Date": "Tue, 27 Oct 2026 10:02:39 GMT",
+    "X-Vercel-Id": "sfo1::iad1::qs49f-1793095356441-88cc548eb5b2"
+  },
+  "transport_complete": true,
+  "summary": {
+    "classification": "PUBLIC_BUILD_PROVENANCE",
+    "provider": "VERCEL",
+    "status": "AVAILABLE",
+    "target_environment": "production",
+    "git_commit_sha": "f3c55cbbac5f087a0921182626202cc45b7c1d32",
+    "git_commit_ref": "main",
+    "external_order_transmission": false
+  },
+  "validation": "PASSED",
+  "received_at": "2026-10-27T10:02:38.398479+00:00",
+  "raw_body_path": "E:\\QTrade-temp\\cluster-evidence\\public-etf-20261027T100234709882Z-cee2f11d\\deployment.body.json",
+  "body_bytes": 239,
+  "body_sha256": "ab4cf08f2515af664d964f9f12276be92934ccd872084546bb949928c212a5f4"
+}

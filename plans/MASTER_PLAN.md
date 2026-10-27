@@ -24,6 +24,30 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+18:04 actual acceptance checkpoint: ordinary market publication is restored after
+one separately bounded, nonforce operator catch-up (225.07s). Publisher 294214
+keeps the ordinary 90s cap. Two distinct actual public frames pass all identity,
+index and fixed-series checks with index ages 145.20/91.92s; the earlier stale
+95s catalog-download receipt remains. Reviewed bounded gzip changes only the
+operator reader's transfer encoding, retaining exact decoded Git bytes and all
+limits. Native daily/minute coverage remains 1,497/1,496 out of 1,500, PARTIAL.
+
+ETF's only explicit continuation uses the six unissued slots and completes
+30/30 source verification without changing original failure/raw evidence. Real
+Linux release 0a545a8 passes 446 tests, zero skips. Only the ETF SHADOW process is
+upgraded (299932); PAPER 175982 and every other supervised PID are unchanged.
+The pinned October 27 ETF transition passes both local and actual-public-input
+independent raw/admission audits: three selected closes, none missing. Future
+October 28 target remains prospective. No execution, holdings or return proof.
+
+Qlib remains PREPARATION_ONLY at 425/987 (562 unattempted, no retry backlog) at
+18:00; formal daily head is still October 26. First-pass estimate is 19:50-20:00
+plus real provider/prediction/signals/candidate-validation work, not a final SLA.
+Require separate actual C/D/stock-forward and production acceptance before all
+STEP1 or STEP2. History qualified queue rows are 49,032, independent delisted
+probe 47; full historical PIT/adjustment/years remain uncertified. Keep ACTIVE,
+rolling OFF, LIVE false and the previously consumed PAPER recovery unchanged.
+
 17:22 verified interruption: ETF explicit repair seals 23/29 additional responses
 then yields to current collection, preserving its original one and all old
 markers/raw. No final resolution, no public latest advance, no automatic retry.

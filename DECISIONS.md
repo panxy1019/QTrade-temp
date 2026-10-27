@@ -3820,8 +3820,8 @@ publisher export and independently pinned public delivery remain separate gates.
 
 ## ADR-191 — Explicit ETF partial-attempt repair retains cumulative provenance
 
-Status: bounded repair implemented; actual priority interruption retained,
-2026-10-27. A known-prefix continuation is a separate pending implementation.
+Status: bounded repair and one explicit known-prefix continuation verified,
+2026-10-27. Preserve the original priority interruption as failed evidence.
 
 The once-per-day ETF collector intentionally has no automatic retry after a
 partial attempt. Its actual October 27 priority interruption leaves one complete
@@ -3855,4 +3855,20 @@ response, accept only proven priority-stop codes, preserve all historical bytes,
 record actual continuation code separately, and issue only remaining global
 slots. It cannot be an automatic retry, claim reset, extra request burst or
 implicit completed-session acceptance.
+
+The separately reviewed continuation accepts only the actual 1+23+6 case and
+only a fully sealed prefix with one of the two known collection-priority stop
+codes. It records a new operator revision and full source manifest while keeping
+the original repair archive/bindings revision. The two manifest inventories must
+match critical source/store/gate/calendar blobs; the initial 23 pairs are never
+reissued or relabeled. One immutable continuation claim prohibits a second
+continuation after any interruption. Git-mode historical blob comparison is not
+certified by this manifest-mode production acceptance.
+
+Actual 17:51:40 continuation completes the remaining six and verifies final
+resolution. The independent actual-public-input ETF transition audit passes at
+18:04, replaying its raw sources and admission against the captured public bytes.
+Only ETF SHADOW is upgraded; PAPER is untouched. Preserve historical target
+implementation revisions, native-price/PIT/distribution limitations and empty
+execution/return fields. This is one pinned ETF transition, not whole STEP1.
 

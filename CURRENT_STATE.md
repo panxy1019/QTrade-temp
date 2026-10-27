@@ -1,6 +1,40 @@
 # Current state
 
-Last updated: 2026-10-27, afternoon investigation checkpoint.
+Last updated: 2026-10-27 18:04 Shanghai, actual post-close checkpoint.
+
+- Public market delivery has recovered: the one-time nonforce catch-up succeeds
+  in 225.07s, then the original publisher resumes as PID 294214 with its ordinary
+  90s Git limit unchanged. Actual full probes at 17:47 and 17:49 verify different
+  public commits, all 1,500 identities/3,000 entries and five sampled API series;
+  index/catalog ages are 145.20/106.84s and 91.92/68.32s, both FRESH_TRANSPORT.
+  The 17:36 stale probe is retained: downloading its 8 MB catalog took 95s.
+  Bounded gzip in the read-only probe reduces actual complete checks to 24.85s
+  and 18.12s without changing decoded Git bytes or any freshness/resource gate.
+  Coverage is still PARTIAL: daily 1,497/1,500 and five-minute 1,496/1,500.
+
+- ETF source recovery is complete for this day: the single explicit continuation
+  seals only the remaining six requests, retains all original/prefix bytes and
+  verifies final resolution at 17:51:40 (30/30 native-close inputs). Release
+  0a545a8 passes 446 Linux tests without skips. Only ETF SHADOW is upgraded,
+  PID 299932; PAPER 175982 and all other supervised PIDs remain unchanged.
+  Local transition audit passes at 18:00. Independent public capture at 18:02
+  is then replayed against the cluster's actual raw/admission evidence at 18:04:
+  PASSED, three selected closes, no missing input. The old prospective target
+  remains frozen with its original implementation provenance; no holdings,
+  fills, NAV or returns are implied. This accepts only the pinned ETF SHADOW
+  transition, not all E/C/D or STEP1. See the close recovery runbook/evidence.
+
+- Actual 18:00 Qlib preparation is 425/987 qualified inputs, with 562 unattempted
+  and no waiting/due retries. Original scope is 990 with three explicit current
+  daily exclusions; this is not prediction coverage or a READY provider. Formal
+  daily head still ends October 26. At the unchanged 25-new-symbol/5-minute
+  cadence, first-pass preparation is estimated around 19:50-20:00, followed by
+  provider build/reload, prediction, signals, later-version candidate validation
+  and independent C/D/E/public checks. ACTIVE LightGBM and rolling OFF stay fixed.
+  History queues contain 49,032 qualified rows plus 47 in the separate delisted
+  probe; these are limited queue counts, not the whole lake or certified years.
+  PIT's current 990-symbol refresh does not certify historical availability.
+  Free disk is 275.56 GiB; keep the 100 GiB reserve. STEP2 remains gated.
 
 - At 17:22 the explicit ETF repair reuses the original one response and seals 23
   additional responses, then yields to current collection. It is STOPPED, with

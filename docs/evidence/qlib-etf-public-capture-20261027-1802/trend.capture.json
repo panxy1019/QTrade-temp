@@ -1,0 +1,42 @@
+{
+  "url": "https://q-trade-temp.vercel.app/api/research/online/etf-trend",
+  "method": "GET",
+  "requested_at": "2026-10-27T10:02:38.399648+00:00",
+  "maximum_bytes": 320000,
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "status_code": 200,
+  "headers": {
+    "Content-Type": "application/json",
+    "Content-Length": "26423",
+    "Cache-Control": "no-store",
+    "Date": "Tue, 27 Oct 2026 10:02:39 GMT",
+    "X-Vercel-Id": "sfo1::iad1::x9s6f-1793095360106-4ef7855342e9"
+  },
+  "transport_complete": true,
+  "summary": {
+    "publication_available": true,
+    "current_input": true,
+    "as_of": "2026-10-27",
+    "state": "CLOSE_DIAGNOSTIC_READY",
+    "qualified_close_symbols": 30,
+    "required_symbols": 30,
+    "evidence_sha256": "9aaa1fa4c365e68e5c9df5c6f86e4b16eda164a0557eeb33a0120329676a1686",
+    "receipt_sha256": "06f0093e404b63da56aba2fbae9af71626bca392743dbc9ed6ac72c366d5081e",
+    "bindings": {
+      "master_sha256": "aea0fe389a3cb016f020b68fe327e9e9c910e53a90ff61fff2dc81a96adc6fa5",
+      "as_of": "2026-10-27",
+      "code_revision": "56b8a3444b5ed5334585a218f93c4e8cce2f333a",
+      "calendar_sha256": "b31af901ef888cf76f0137a06829e2bf3b9f27c430b85e9af80e48f9a2b1165c",
+      "contract": "ETF_CLOSE_DIAGNOSTIC_V1"
+    },
+    "excluded": [],
+    "execution_admitted": false,
+    "fills": [],
+    "forward_return": null
+  },
+  "validation": "PASSED",
+  "received_at": "2026-10-27T10:02:39.445601+00:00",
+  "raw_body_path": "E:\\QTrade-temp\\cluster-evidence\\public-etf-20261027T100234709882Z-cee2f11d\\trend.body.json",
+  "body_bytes": 26423,
+  "body_sha256": "a21568a182a3132c02bc25edc9ed82ddb8f186e6f37705fedec2ea590077aa3b"
+}

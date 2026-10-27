@@ -1,0 +1,272 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.close-live-service-check.v1",
+  "checked_at": "2026-10-27T09:37:20.969630+00:00",
+  "clock_source": "ACTUAL_SYSTEM_UTC",
+  "services": [
+    {
+      "name": "code-server",
+      "pid": 81,
+      "statename": "Running"
+    },
+    {
+      "name": "jupyterlab",
+      "pid": 80,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-data-observer",
+      "pid": 4471,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-etf-diagnostics",
+      "pid": 179865,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-etf-shadow",
+      "pid": 181180,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-forward-research",
+      "pid": 175982,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-history-backfill",
+      "pid": 164340,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-pit-repair",
+      "pid": 153768,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-qlib-data",
+      "pid": 179733,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-qlib-workflow",
+      "pid": 173727,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-research-maintenance",
+      "pid": 213587,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-research-publication",
+      "pid": 294214,
+      "statename": "Running"
+    },
+    {
+      "name": "tensorboard",
+      "pid": 79,
+      "statename": "Running"
+    }
+  ],
+  "paper_same_pid": true,
+  "disk_free_gib": 275.612,
+  "services_modified": false,
+  "whole_step1_accepted": false,
+  "export_attempt": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.unified-market-export-attempt.v1",
+    "started_at": "2026-10-27T09:36:02.738080+00:00",
+    "state": "SUCCEEDED",
+    "index_id": "54354a96fc6166481fd77bcc3b3f7a827ec7ea02472bfadd5930d40aae7e2f97",
+    "error_class": null,
+    "error_code": null,
+    "completed_at": "2026-10-27T09:36:39.203975+00:00",
+    "elapsed_seconds": 36.46592,
+    "evidence_sha256": "3ed7be181f435a3512fb0b83077688d2aa55583eb983fbd18833c7b3b30f1aea"
+  },
+  "export_attempt_file_modified_at": "2026-10-27T09:36:30.792149+00:00",
+  "publication_state": {
+    "outcome": "SUCCEEDED",
+    "published_at": "2026-10-27T09:36:02.734508+00:00",
+    "evidence_sha256": "bc57972b99faad4435236af7203b9d6d14b47c2cad588aa47c3171846387e1ec"
+  },
+  "publication_state_file_modified_at": "2026-10-27T09:36:59.772694+00:00",
+  "preparation": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.forward-qlib-preparation.v1",
+    "request_sha256": "b0f90249f515ff6cc0e8a04d7c4218e7a55824fe95c2af4ee172ae608e7c53ab",
+    "day": "2026-10-27",
+    "updated_at": "2026-10-27T09:34:20.850289+00:00",
+    "requested_symbols": 990,
+    "qualified_current_daily_inputs": 987,
+    "prepared_symbols": 298,
+    "attempted_new_symbols": 25,
+    "failures": [
+      {
+        "symbol": "002827",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "600621",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      },
+      {
+        "symbol": "605258",
+        "reason": "NO_QUALIFIED_CURRENT_DAILY_BATCH"
+      }
+    ],
+    "pending_symbols": 689,
+    "retry_queue": {
+      "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+      "scope_symbols": 987,
+      "completed_symbols": 298,
+      "unresolved_symbols": 689,
+      "unattempted_symbols": 687,
+      "due_retry_symbols": 0,
+      "waiting_retry_symbols": 2,
+      "next_retry_at": "2026-10-27T09:38:53.903917+00:00",
+      "historical_pit_certified": false
+    },
+    "state": "PREPARATION_ONLY_NOT_A_READY_QLIB_VERSION",
+    "provider_published": false,
+    "model_activated": false,
+    "historical_pit_certified": false,
+    "next_gates": [
+      "COMPLETE_BOUND_SOURCE_ADAPTATION",
+      "BENCHMARK_AND_CALENDAR_ADAPTATION",
+      "IMMUTABLE_PROVIDER_BUILD_AND_ATOMIC_READY_PUBLICATION"
+    ],
+    "evidence_sha256": "b4687bb14c85b58947e3481cb8269aff2fc8300c9425c3632ca5646f842cf70a"
+  },
+  "preparation_file_modified_at": "2026-10-27T09:34:12.438004+00:00",
+  "qlib-versions_schemas": {
+    "data_heads": [
+      {
+        "cid": 0,
+        "name": "frequency",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "version_id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      }
+    ],
+    "data_versions": [
+      {
+        "cid": 0,
+        "name": "version_id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "manifest_sha256",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "actual_end",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "admitted_at",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      }
+    ]
+  },
+  "online-models_schemas": {
+    "models": [
+      {
+        "cid": 0,
+        "name": "model_id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "definition",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "state",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "registered_at",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "activated_at",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "activation_count",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": "0",
+        "pk": 0
+      }
+    ]
+  },
+  "local_public_head": "7e3734092a89c26d737d603188a36a47ef53f536",
+  "local_public_index_id": "54354a96fc6166481fd77bcc3b3f7a827ec7ea02472bfadd5930d40aae7e2f97",
+  "committed_ordinary_snapshot_started_at": "2026-10-27T09:36:02.734508+00:00",
+  "evidence_sha256": "9dda473998f370d44f0980fd5140e11f826365b692c14e5a610de9398a97363e"
+}

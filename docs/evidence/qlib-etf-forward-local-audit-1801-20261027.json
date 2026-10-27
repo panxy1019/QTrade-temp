@@ -1,0 +1,90 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.etf-forward-transition-audit.v1",
+  "started_at": "2026-10-27T10:00:50.351585+00:00",
+  "audited_at": "2026-10-27T10:00:50.627599+00:00",
+  "day": "2026-10-27",
+  "clock_basis": "SYSTEM_WALL_CLOCK",
+  "state": "PASSED",
+  "etf_shadow_transition_accepted": true,
+  "security_type": "ETF",
+  "mode": "SHADOW",
+  "publication_input_kind": "SIGNED_SERVICE_PUBLICATION",
+  "bindings": {
+    "target_id": "463cff4d89878ef3c29c785d97e86835d9c71fc19d77102433b1171a1385d299",
+    "implementation_revision": "0a545a8a6741c9e210d3077c877d8912170fc9e9",
+    "calendar_sha256": "b31af901ef888cf76f0137a06829e2bf3b9f27c430b85e9af80e48f9a2b1165c",
+    "publication_sha256": "702103be7e56199b2329715b826fc596bb640207d0a271bb3ffa20ec2325de65",
+    "publication_file_sha256": "a802084f6b2b3e9dab84d8240181d7a25b4e03df3501f1981a26816fcbd6e077",
+    "contract_id": "7e5dc8a24e53a36249050fbfc85014e5d7bf309233d5343e8505c1c6f8f80459",
+    "intent_sha256": "9a1437524c365aea2fdeffb8771d383a5a1be64050fbf989e57b7e971b468c40",
+    "target_binding_sha256": "b2d935a55a5c26f9f9c08cf240905396bd4418ea63973b873f2b7571daadf1f0",
+    "target_sha256": "1da533a5932d1b78f33ac415a5610e067b47370458e8317db238e42ede427e93",
+    "admission_sha256": "ae4df5271fbae5fd3f68268b696b01c8e6f7d17fad82b93235652feed3f1af94",
+    "observation_id": "d3e23c5c3b4e095c0cfea26e7395d85e4ecdd62086b437bf64a53d9dd521ab12",
+    "observation_sha256": "3a3aff8c4b198b1f206e3df7c4c41ba1fb0f128dd082330b211be2a111b5e279",
+    "local_file_sha256": {
+      "intent": "c94a7b3a6d628bd62961a60308b42b7e9a4d04a60b772e2317fc467a60975034",
+      "target_binding": "7d712c10b3f3fa7ead39474683093fd629fdb349245cff84452413b2b19573cb",
+      "observation_source": "053f194b1c31db4344e3346cd6c63e90ca04d2b92060377c870e294f004116a5",
+      "completion": "4ddefdd1097c750c2e7f4401bd73758706723dc2c920ac45d6b009c8ccaacb77",
+      "target": "9656394e8cc8a42f5db9df94250922f9c787f005a0107347db873ad0b00472b3",
+      "admission": "bfb6415ab22054753722e3e61ed21ce1fe8debf7bcebf642c384f6375c69a630",
+      "observation": "2614fc5bdfc8f910b2eab4dd87c6ccc2a1f77daec8a32e83a793e53dcb683824"
+    },
+    "target_source": {
+      "diagnostic_id": "b3cd61f630c17146a4c2d3b0fa3060a3e1b98ff8faf3735387a3f24b196296d4",
+      "diagnostic_sha256": "9dee067715e3b4f0d171b4ff30a26f69c3317c496e5d85de16e38e1ab27163de",
+      "receipt_sha256": "0f4bc4676110c3a9ae2f4a1a3c1ebee3165a7d40b5d0f047fab3247cf4507c83",
+      "file_sha256": {
+        "diagnostic": "e234e141653890f2de290805f4c7765434cb6a980de0fbfc29e3d871cc46a389",
+        "receipt": "0f4bc4676110c3a9ae2f4a1a3c1ebee3165a7d40b5d0f047fab3247cf4507c83",
+        "raw_object": "f70b3db8a5198554eb2424b4fac5462e962b4f219e0847bd8ecae6873cbff1bc"
+      }
+    },
+    "observation_source": {
+      "diagnostic_id": "764f12449cae536a141188aaf8aa3e9680de344463586f8dfe679c72f9ffc292",
+      "diagnostic_sha256": "9aaa1fa4c365e68e5c9df5c6f86e4b16eda164a0557eeb33a0120329676a1686",
+      "receipt_sha256": "06f0093e404b63da56aba2fbae9af71626bca392743dbc9ed6ac72c366d5081e",
+      "file_sha256": {
+        "diagnostic": "b36440c7ea5cb4de4f27679858fa9b74327375c84565d4fc927cf935844113cf",
+        "receipt": "06f0093e404b63da56aba2fbae9af71626bca392743dbc9ed6ac72c366d5081e",
+        "raw_object": "f13c0583f6f41defcb375bf7b772135cdff4b8b04f7f5de38a7ea81c18d58a9b"
+      }
+    },
+    "frozen_at": "2026-10-26T18:28:25.348232+00:00",
+    "durable_at": "2026-10-26T18:28:25.350851+00:00",
+    "expected_execution_at": "2026-10-27T09:30:00+08:00",
+    "observed_at": "2026-10-27T09:51:38.708961+00:00",
+    "processed_at": "2026-10-27T09:52:23.977280+00:00"
+  },
+  "failures": [],
+  "observed_close_count": 3,
+  "missing_selected_close_count": 0,
+  "execution_admitted": false,
+  "paper_admission": "BLOCKED",
+  "orders": [],
+  "fills": [],
+  "holdings": [],
+  "cash": null,
+  "net_asset_value": null,
+  "forward_return": null,
+  "whole_step1_accepted": false,
+  "historical_pit_certified": false,
+  "browser_verified": false,
+  "limitations": [
+    "ONLY_PINNED_ETF_TARGET_AND_EXACT_COMPLETED_NEXT_SESSION_AUDITED",
+    "SHADOW_HAS_NO_EXECUTION_OR_PORTFOLIO_RETURN",
+    "ETF_TRADING_RULES_ADJUSTMENTS_DISTRIBUTIONS_AND_SPLITS_NOT_CERTIFIED",
+    "HASHES_ARE_INTEGRITY_BINDINGS_NOT_EXTERNAL_TIMESTAMP_OR_PIT_CERTIFICATION",
+    "FILE_INPUT_BINDING_DOES_NOT_CERTIFY_NETWORK_DELIVERY_OR_BROWSER_RENDERING",
+    "SYNTHETIC_TEST_CLOCKS_ARE_NOT_REAL_SESSION_ACCEPTANCE"
+  ],
+  "evidence_sha256": "c8659228b8ef1cfb92defe0228d8ea1c03d80988abecbb0af86b635c57e033a6"
+}
