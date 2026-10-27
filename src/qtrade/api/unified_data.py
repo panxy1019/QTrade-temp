@@ -12,7 +12,7 @@ from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException, Query, Response
 
-from qtrade.api.current_datasets import download
+from qtrade.api.unified_source import download
 from qtrade.instruments.observed import SCHEMA, instrument_id
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 
@@ -104,9 +104,10 @@ def collection_freshness(value: dict[str, Any], *, now: datetime | None = None) 
 
 @lru_cache(maxsize=1)
 def _load(minute: int) -> tuple[dict[str, Any], dict[str, Any]]:
-    raw = download("unified.json", 12_000_000)
+    raw, revision = download("unified.json", 12_000_000)
     value = validate_publication(json.loads(raw))
-    source = {"git_blob_sha1": sha1(b"blob "+str(len(raw)).encode("ascii")+b"\0"+raw,
+    source = {"commit_sha": revision,
+              "git_blob_sha1": sha1(b"blob "+str(len(raw)).encode("ascii")+b"\0"+raw,
                                      usedforsecurity=False).hexdigest(),
               "sha256": sha256(raw).hexdigest(), "bytes": len(raw)}
     return value, source

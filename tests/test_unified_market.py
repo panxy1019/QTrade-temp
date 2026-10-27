@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import json
 import os
 import sqlite3
@@ -8,6 +9,7 @@ import sys
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from email.message import Message
 from pathlib import Path
 
 import pyarrow as pa
@@ -17,6 +19,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from qtrade.api import unified_market as api
+from qtrade.api import unified_source as public_source
 from qtrade.data import Bar
 from qtrade.instruments.observed import build_observed_master
 from qtrade.market_data.akshare import SHANGHAI
@@ -27,6 +30,7 @@ from scripts import publish_unified_market as exporter
 from scripts.unified_store import FIELDS, UnifiedBatchStore, canonical
 
 NOW = datetime(2026, 10, 26, 10, tzinfo=UTC)
+REVISION = 'c'*40
 
 
 def resign(value):
@@ -244,7 +248,8 @@ def http(source, monkeypatch):
     value = export(source)['index']
     root = base/'unified-data/market-public'
     monkeypatch.setattr(api, '_index', lambda _: value)
-    monkeypatch.setattr(api, '_object', lambda digest:
+    monkeypatch.setattr(api, 'current_revision', lambda: REVISION)
+    monkeypatch.setattr(api, '_object', lambda digest, revision:
         (root/'unified-market/objects'/(digest+'.json')).read_bytes())
     class Clock(datetime):
         @classmethod
@@ -263,6 +268,7 @@ def test_api_query_new_target_both_frequencies_and_empty_target_without_legacy_f
     assert response.status_code == 200 and response.headers['cache-control'] == 'no-store'
     body = response.json()
     assert body['index_id'] == body['version'] == index['evidence_sha256']
+    assert body['publication_revision'] == REVISION
     assert body['universe_version'] == index['universe_version']
     assert body['state'] == 'PARTIAL' and body['freshness'] == 'PARTIAL'
     assert body['count'] == 1 and body['total_count'] == 2 and body['truncated']
@@ -280,6 +286,143 @@ def test_api_query_new_target_both_frequencies_and_empty_target_without_legacy_f
     ('symbol=301001&version='+'0'*64, 409), ('symbol=../../secret', 422)])
 def test_api_range_identity_and_resource_bounds(http, query, status):
     assert http[0].get('/unified/bars?'+query).status_code == status
+
+
+def test_explicit_revision_pins_index_while_default_head_advances_and_version_still_binds(
+    http, monkeypatch,
+):
+    client, original, _ = http
+    newer = deepcopy(original)
+    newer['published_at'] = (NOW-timedelta(seconds=1)).isoformat()
+    newer = resign(newer)
+    head, requests = [], []
+    def current():
+        head.append('d'*40)
+        return 'd'*40
+    def index(revision):
+        requests.append(revision)
+        return original if revision == REVISION else newer
+    monkeypatch.setattr(api, 'current_revision', current)
+    monkeypatch.setattr(api, '_index', index)
+    query = '/unified/bars?symbol=301001&publication_revision='+REVISION
+    pinned = client.get(query+'&version='+original['evidence_sha256'])
+    assert pinned.status_code == 200 and pinned.json()['publication_revision'] == REVISION
+    assert pinned.json()['index_id'] == original['evidence_sha256'] and head == []
+    default = client.get('/unified/bars?symbol=301001')
+    assert default.status_code == 200 and default.json()['publication_revision'] == 'd'*40
+    assert default.json()['index_id'] == newer['evidence_sha256']
+    assert requests == [REVISION, 'd'*40] and head == ['d'*40]
+    mismatch = client.get(query+'&version='+newer['evidence_sha256'])
+    assert mismatch.status_code == 409
+    assert mismatch.json()['detail'] == 'UNIFIED_MARKET_VERSION_CHANGED_REFRESH_REQUIRED'
+
+
+@pytest.mark.parametrize('revision', ['main', 'c'*39, 'C'*40, '../unified.json',
+                                    'https://other.invalid/unified.json'])
+def test_invalid_revision_is_rejected_before_source_access(http, monkeypatch, revision):
+    def forbidden():
+        pytest.fail('invalid revision must not discover or read a source')
+    monkeypatch.setattr(api, 'current_revision', forbidden)
+    assert http[0].get('/unified/bars', params={'symbol': '301001',
+        'publication_revision': revision}).status_code == 422
+
+
+def test_default_head_failure_never_reuses_previous_successful_index(http, monkeypatch):
+    client, _, _ = http
+    assert client.get('/unified/bars?symbol=301001').status_code == 200
+    def failed():
+        raise ValueError('UNIFIED_SOURCE_HTTP_FETCH_FAILED')
+    monkeypatch.setattr(api, 'current_revision', failed)
+    result = client.get('/unified/bars?symbol=301001')
+    assert result.status_code == 503
+    assert result.json()['detail'] == 'UNIFIED_MARKET_PUBLICATION_UNAVAILABLE'
+
+
+def test_index_cache_key_and_validated_bytes_use_exact_same_revision(source, monkeypatch):
+    source[-1]()
+    original = export(source)['index']
+    newer = resign({**original, 'published_at': (NOW-timedelta(seconds=1)).isoformat()})
+    requests = []
+    actual = [REVISION]
+    def download(name, limit, *, publication_revision):
+        assert name == 'unified-market.json' and limit == contract.INDEX_LIMIT
+        requests.append(publication_revision)
+        value = original if publication_revision == REVISION else newer
+        return contract.encoded(value), actual[0]
+    monkeypatch.setattr(api, 'download', download)
+    api._index.cache_clear()
+    try:
+        assert api._index(REVISION) == original
+        assert api._index(REVISION) == original and requests == [REVISION]
+        with pytest.raises(ValueError, match='SOURCE_REVISION_MISMATCH'):
+            api._index('d'*40)
+        actual[0] = 'd'*40
+        assert api._index('d'*40) == newer
+        assert requests == [REVISION, 'd'*40, 'd'*40]
+    finally:
+        api._index.cache_clear()
+
+
+def test_new_shard_uses_pinned_commit_when_main_is_unavailable_without_cross_revision_fallback(
+    source, monkeypatch,
+):
+    base, _, _, _, _, add = source
+    add()
+    index = export(source)['index']
+    root = base/'unified-data/market-public'
+    requests = []
+    class Clock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return NOW.astimezone(tz or UTC)
+    class Response(io.BytesIO):
+        status = 200
+        def __init__(self, raw, url):
+            super().__init__(raw)
+            self.url = url
+            self.headers = Message()
+            self.headers['Content-Type'] = 'text/plain; charset=utf-8'
+            self.headers['Content-Length'] = str(len(raw))
+        def geturl(self):
+            return self.url
+    class Opener:
+        def open(self, request, timeout):
+            from urllib.error import HTTPError
+            url = request.full_url
+            requests.append(url)
+            assert request.get_method() == 'GET' and timeout == 8
+            assert '/main/' not in url
+            revision, name = url.removeprefix(public_source.RAW_ROOT).split('/', 1)
+            assert revision in {REVISION, 'd'*40}
+            if name == 'unified-market.json':
+                return Response(contract.encoded(index), url)
+            # This commit's newly published object is available even though main
+            # is unavailable. A different commit's failed read cannot use it.
+            if revision == 'd'*40:
+                raise HTTPError(url, 404, 'fixture missing snapshot', {}, None)
+            return Response((root/name).read_bytes(), url)
+    monkeypatch.setattr(api, 'datetime', Clock)
+    monkeypatch.setattr(public_source, 'getproxies', lambda: {})
+    monkeypatch.setattr(public_source, 'build_opener', lambda *handlers: Opener())
+    monkeypatch.setattr(api, 'current_revision', lambda: pytest.fail('commit is pinned'))
+    api._index.cache_clear()
+    api._object.cache_clear()
+    app = FastAPI()
+    app.include_router(api.router)
+    try:
+        with TestClient(app) as client:
+            query = '/unified/bars?symbol=301001&frequency=5min&version='+index['evidence_sha256']
+            pinned = client.get(query+'&publication_revision='+REVISION)
+            assert pinned.status_code == 200 and pinned.json()['count'] == 1
+            assert pinned.json()['publication_revision'] == REVISION
+            absent = client.get(query+'&publication_revision='+'d'*40)
+            assert absent.status_code == 503
+            assert absent.json()['detail'] == 'UNIFIED_MARKET_SHARD_UNAVAILABLE'
+        assert len(requests) == 4 and all('/main/' not in url for url in requests)
+        assert api._object.cache_info().maxsize == 128
+    finally:
+        api._index.cache_clear()
+        api._object.cache_clear()
 
 
 def test_requested_old_window_is_explicit_without_inventing_history(http):

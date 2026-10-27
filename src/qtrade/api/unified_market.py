@@ -5,16 +5,19 @@ import json
 from datetime import UTC, date, datetime
 from functools import lru_cache
 from typing import Any, Literal
-from urllib.request import Request, urlopen
 
 from fastapi import APIRouter, HTTPException, Query, Response
 
-from qtrade.api.current_datasets import ROOT, download
+from qtrade.api.unified_source import (
+    current_revision,
+    download,
+    download_shard,
+    validate_revision,
+)
 from qtrade.market_data.sina_incremental import PRICE_BASIS
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from qtrade.research.unified_market import (
     INDEX_LIMIT,
-    SHARD_LIMIT,
     grid,
     validate_index,
     verify_shard_bytes,
@@ -24,32 +27,33 @@ router = APIRouter(prefix='/unified')
 
 
 @lru_cache(maxsize=1)
-def _index(minute: int) -> dict[str, Any]:
-    return validate_index(json.loads(download('unified-market.json', INDEX_LIMIT)))
+def _index(revision: str) -> dict[str, Any]:
+    raw, actual = download('unified-market.json', INDEX_LIMIT, publication_revision=revision)
+    if actual != revision:
+        raise ValueError('UNIFIED_MARKET_SOURCE_REVISION_MISMATCH')
+    return validate_index(json.loads(raw))
 
 
 @lru_cache(maxsize=128)
-def _object(digest: str) -> bytes:
-    # Content-hash objects are immutable: unlike the index they need no minute cache key.
-    with urlopen(Request(ROOT+'unified-market/objects/'+digest+'.json',
-                         headers={'User-Agent': 'QTrade-Research/1'}), timeout=8) as response:
-        raw = bytes(response.read(SHARD_LIMIT+1))
-    if len(raw) > SHARD_LIMIT:
-        raise ValueError('UNIFIED_MARKET_SHARD_BOUND')
-    return raw
+def _object(digest: str, revision: str) -> bytes:
+    return download_shard(digest, revision)
 
 
 @router.get('/bars')
 def bars(response: Response, symbol: str = Query(pattern=r'^\d{6}$'),
          frequency: Literal['day', '5min'] = 'day', start: date | None = None,
          end: date | None = None, version: str | None = Query(None, pattern=r'^[a-f0-9]{64}$'),
-         limit: int = Query(500, ge=1, le=2000)) -> dict[str, Any]:
+         limit: int = Query(500, ge=1, le=2000),
+         publication_revision: str | None = Query(None, pattern=r'^[a-f0-9]{40}$')
+         ) -> dict[str, Any]:
     response.headers['Cache-Control'] = 'no-store'
     if start is not None and end is not None and start > end:
         raise HTTPException(422, 'UNIFIED_MARKET_RANGE_INVALID')
     now = datetime.now(UTC)
     try:
-        index = validate_index(_index(int(now.timestamp())//60), now)
+        revision = (current_revision() if publication_revision is None
+                    else validate_revision(publication_revision))
+        index = validate_index(_index(revision), now)
     except (OSError, ValueError, KeyError, TypeError):
         raise HTTPException(503, 'UNIFIED_MARKET_PUBLICATION_UNAVAILABLE') from None
     identity = index['evidence_sha256']
@@ -67,7 +71,7 @@ def bars(response: Response, symbol: str = Query(pattern=r'^\d{6}$'),
     rows = []
     try:
         for ref in entry['shards']:
-            shard = verify_shard_bytes(_object(ref['sha256']), ref, index, entry, now)
+            shard = verify_shard_bytes(_object(ref['sha256'], revision), ref, index, entry, now)
             rows.extend(shard['bars'])
     except (OSError, ValueError, KeyError, TypeError):
         raise HTTPException(503, 'UNIFIED_MARKET_SHARD_UNAVAILABLE') from None
@@ -96,7 +100,7 @@ def bars(response: Response, symbol: str = Query(pattern=r'^\d{6}$'),
         'publication_available': True, 'state': state, 'symbol': symbol,
         'instrument_id': entry['instrument_id'], 'security_type': entry['security_type'],
         'frequency': frequency, 'universe_version': index['universe_version'],
-        'index_id': identity, 'version': identity,
+        'index_id': identity, 'version': identity, 'publication_revision': revision,
         'manifest_sha256': signed(entry)['evidence_sha256'] if entry['shards'] else None,
         'published_at': index['published_at'], 'checked_at': now.isoformat(),
         'window_start': window[0], 'window_end': window[-1],

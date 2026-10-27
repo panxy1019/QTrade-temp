@@ -11,6 +11,8 @@ from qtrade.api import unified_data as api
 from qtrade.instruments.observed import build_observed_master
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 
+REVISION = 'c'*40
+
 
 @pytest.fixture(autouse=True)
 def clear_catalog_cache():
@@ -44,8 +46,8 @@ def test_unified_query_is_bounded_filtered_readonly_and_preserves_inactive(
     publication, monkeypatch,
 ):
     api._load.cache_clear()
-    monkeypatch.setattr(api, "download", lambda name, limit: __import__("json").dumps(
-        publication).encode())
+    monkeypatch.setattr(api, "download", lambda name, limit: (
+        json.dumps(publication).encode(), REVISION))
     app = FastAPI()
     app.include_router(api.router)
     with TestClient(app) as client:
@@ -89,8 +91,9 @@ def test_unified_catalog_rejects_inconsistent_evidence_even_if_rehashed(publicat
         api.validate_publication(value)
 
 
-def source_identity(raw):
-    return {'git_blob_sha1': sha1(b'blob '+str(len(raw)).encode('ascii')+b'\0'+raw,
+def source_identity(raw, revision=REVISION):
+    return {'commit_sha': revision,
+            'git_blob_sha1': sha1(b'blob '+str(len(raw)).encode('ascii')+b'\0'+raw,
                                   usedforsecurity=False).hexdigest(),
             'sha256': sha256(raw).hexdigest(), 'bytes': len(raw)}
 
@@ -105,7 +108,7 @@ def test_summary_source_binds_exact_download_bytes_without_reencoding(publicatio
         requests = []
         def download(name, limit, *, raw=raw, requests=requests):
             requests.append((name, limit))
-            return raw
+            return raw, REVISION
         monkeypatch.setattr(api, 'download', download)
         response = Response()
         result = api.summary(response)
@@ -132,14 +135,14 @@ def test_minute_cache_keeps_document_and_raw_metadata_paired(publication, monkey
     newer = signed({**{key: value for key, value in publication.items()
                       if key != 'evidence_sha256'}, 'built_at': clock[0].isoformat()})
     second_raw = json.dumps(newer, separators=(',', ':')).encode()
-    available = [first_raw]
+    available = [(first_raw, REVISION)]
     requests = []
     def download(name, limit):
         requests.append((name, limit))
         return available[0]
     monkeypatch.setattr(api, 'download', download)
     first = api.summary(Response())
-    available[0] = second_raw
+    available[0] = second_raw, 'd'*40
     clock[0] += timedelta(seconds=20)
     assert api.catalog() == publication
     cached = api.summary(Response())
@@ -150,18 +153,18 @@ def test_minute_cache_keeps_document_and_raw_metadata_paired(publication, monkey
     refreshed = api.summary(Response())
     assert api.catalog() == newer
     assert refreshed['evidence_sha256'] == newer['evidence_sha256']
-    assert refreshed['catalog_source'] == source_identity(second_raw)
+    assert refreshed['catalog_source'] == source_identity(second_raw, 'd'*40)
     assert len(requests) == 2
 
 
 def test_source_claims_in_document_or_returned_summary_cannot_poison_provenance(
     publication, monkeypatch,
 ):
-    forged = {'git_blob_sha1': 'a'*40, 'sha256': 'b'*64, 'bytes': 1}
+    forged = {'commit_sha': 'f'*40, 'git_blob_sha1': 'a'*40, 'sha256': 'b'*64, 'bytes': 1}
     value = signed({**{key: item for key, item in publication.items()
                       if key != 'evidence_sha256'}, 'catalog_source': forged})
     raw = json.dumps(value).encode()
-    monkeypatch.setattr(api, 'download', lambda name, limit: raw)
+    monkeypatch.setattr(api, 'download', lambda name, limit: (raw, REVISION))
     result = api.summary(Response())
     assert result['catalog_source'] == source_identity(raw)
     assert result['catalog_source'] != forged
@@ -172,7 +175,7 @@ def test_source_claims_in_document_or_returned_summary_cannot_poison_provenance(
 def test_invalid_raw_cannot_create_source_proof_or_poison_next_cache_load(publication, monkeypatch):
     invalid = deepcopy(publication)
     invalid['master']['target_actual'] += 1
-    available = [json.dumps(invalid).encode()]
+    available = [(json.dumps(invalid).encode(), REVISION)]
     calls = []
     def download(name, limit):
         calls.append(name)
@@ -182,6 +185,6 @@ def test_invalid_raw_cannot_create_source_proof_or_poison_next_cache_load(public
         api.summary(Response())
     assert caught.value.status_code == 503
     valid = json.dumps(publication).encode()
-    available[0] = valid
+    available[0] = valid, REVISION
     assert api.summary(Response())['catalog_source'] == source_identity(valid)
     assert len(calls) == 2
