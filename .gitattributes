@@ -4,3 +4,5 @@
 *.jpg -text
 *.png -text
 *.zip -text
+# Evidence manifests refer to captured file bytes; retain their original newlines.
+docs/evidence/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
