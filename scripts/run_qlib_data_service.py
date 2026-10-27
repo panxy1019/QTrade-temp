@@ -173,6 +173,32 @@ def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datet
     return outcome('DAILY_VERSION_PUBLISHED')
 
 
+def cycle_when_due(base: Path, database: Path, python: Path, revision: str, *,
+                   collection_database: Path | None = None) -> dict[str, Any]:
+    """Absorb child-start jitter with one actual-clock wait under the child alarm."""
+    observed = datetime.now(UTC)
+    value = cycle(base, database, python, revision, now=observed,
+                  collection_database=collection_database)
+    if value['state'] != 'WAITING_FOR_RETRY':
+        return value
+    try:
+        deadline = datetime.fromisoformat(value['not_before'])
+        if (signed({k: v for k, v in value.items() if k != 'evidence_sha256'}) != value
+                or deadline.tzinfo is None or not 0 < (deadline-observed).total_seconds() <= 300):
+            raise ValueError
+    except (KeyError, TypeError, ValueError):
+        raise ValueError('DATA_SERVICE_RETRY_DEADLINE_INVALID') from None
+    remaining = (deadline-datetime.now(UTC)).total_seconds()
+    if remaining > 300:
+        raise ValueError('DATA_SERVICE_RETRY_DEADLINE_INVALID')
+    if remaining > 0:
+        time.sleep(remaining)
+    # Recheck all source, clock, storage and identity gates. Never loop or bypass
+    # the persisted deadline if the actual wall clock moved during the wait.
+    return cycle(base, database, python, revision, now=datetime.now(UTC),
+                 collection_database=collection_database)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('base', 'database', 'qlib-python'):
@@ -190,9 +216,9 @@ def main() -> None:
         # Hard independent deadline also applies after supervisor-parent SIGKILL.
         signal.signal(signal.SIGALRM, signal.SIG_DFL)
         signal.alarm(900)
-        print(json.dumps(cycle(args.base, args.database, args.qlib_python,
-                               args.source_revision, now=datetime.now(UTC),
-                               collection_database=args.collection_database)))
+        print(json.dumps(cycle_when_due(args.base, args.database, args.qlib_python,
+                                       args.source_revision,
+                                       collection_database=args.collection_database)))
         return
     import fcntl
 

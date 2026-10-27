@@ -1,7 +1,12 @@
 import json
 import os
+import signal
+import subprocess
+import sys
+import time
 from contextlib import nullcontext
 from datetime import UTC, datetime, timedelta
+from types import SimpleNamespace
 
 import pytest
 
@@ -121,3 +126,175 @@ def test_collection_marker_requires_fresh_nonfuture_idle_heartbeat(tmp_path):
         ('WAITING', NOW+timedelta(seconds=1), False)]:
         marker.write_text(json.dumps({'state': state, 'heartbeat_at': clock.isoformat()}))
         assert service.collection_idle(tmp_path, NOW) is expected
+
+
+@pytest.mark.parametrize('next_state', [
+    'PREPARING_DAILY_INPUTS', 'WAITING_FOR_CURRENT_COLLECTION', 'WAITING_FOR_RETRY'])
+def test_child_absorbs_actual_clock_boundary_jitter_once(tmp_path, monkeypatch, next_state):
+    calls = []
+    prepared = []
+    waits = []
+    real_sleep = time.sleep
+    attempt = tmp_path/'attempt.json'
+    attempt_bytes = None
+    deadline = None
+
+    def gated_cycle(*args, now, **kwargs):
+        nonlocal deadline, attempt_bytes
+        calls.append((now, kwargs))
+        if len(calls) == 1:
+            deadline = datetime.now(UTC)+timedelta(milliseconds=16)
+            attempt.write_text(json.dumps(signed({'not_before': deadline.isoformat()})))
+            attempt_bytes = attempt.read_bytes()
+            return signed({'state': 'WAITING_FOR_RETRY', 'not_before': deadline.isoformat()})
+        assert len(calls) == 2  # A second wait result must never spin or repeat work.
+        assert now >= deadline
+        assert attempt.read_bytes() == attempt_bytes
+        if next_state == 'PREPARING_DAILY_INPUTS':
+            prepared.append(now)
+        return {'state': next_state}
+
+    monkeypatch.setattr(service, 'cycle', gated_cycle)
+
+    def wait(seconds):
+        waits.append(seconds)
+        real_sleep(seconds)
+
+    monkeypatch.setattr(service.time, 'sleep', wait)
+    ledger = tmp_path/'collection.sqlite'
+    result = service.cycle_when_due(tmp_path, tmp_path/'db', tmp_path/'python', 'f'*40,
+                                   collection_database=ledger)
+    assert result['state'] == next_state
+    assert len(calls) == 2
+    assert calls[0][0] < deadline <= calls[1][0]
+    assert all(kwargs == {'collection_database': ledger} for _, kwargs in calls)
+    assert len(prepared) == (1 if next_state == 'PREPARING_DAILY_INPUTS' else 0)
+    assert all(0 < seconds <= 0.016 for seconds in waits)
+
+
+@pytest.mark.parametrize('defect', [
+    'missing', 'malformed', 'naive', 'overlong', 'expired', 'unsigned'])
+def test_child_rejects_invalid_retry_deadline_without_sleep_or_second_cycle(
+    tmp_path, monkeypatch, defect
+):
+    calls = []
+
+    def invalid_cycle(*args, now, **kwargs):
+        calls.append(now)
+        deadline = now+timedelta(seconds=301 if defect == 'overlong' else 1)
+        if defect == 'expired':
+            deadline = now
+        if defect == 'naive':
+            deadline = deadline.replace(tzinfo=None)
+        value = {'state': 'WAITING_FOR_RETRY', 'not_before': deadline.isoformat()}
+        if defect == 'missing':
+            del value['not_before']
+        if defect == 'malformed':
+            value['not_before'] = 'invalid'
+        value = signed(value)
+        if defect == 'unsigned':
+            value['not_before'] = (now+timedelta(seconds=2)).isoformat()
+        return value
+
+    monkeypatch.setattr(service, 'cycle', invalid_cycle)
+    monkeypatch.setattr(service.time, 'sleep', lambda _: pytest.fail('invalid deadline slept'))
+    with pytest.raises(ValueError, match='DATA_SERVICE_RETRY_DEADLINE_INVALID'):
+        service.cycle_when_due(tmp_path, tmp_path/'db', tmp_path/'python', 'f'*40)
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize('state', ['PREPARING_DAILY_INPUTS', 'WAITING_FOR_CURRENT_COLLECTION',
+                                  'WAITING_FOR_BUILD_RETRY'])
+def test_child_does_not_repeat_or_wait_after_other_cycle_outcomes(tmp_path, monkeypatch, state):
+    calls = []
+    expected = {'state': state}
+
+    def cycle(*args, **kwargs):
+        calls.append(kwargs)
+        return expected
+
+    monkeypatch.setattr(service, 'cycle', cycle)
+    monkeypatch.setattr(service.time, 'sleep', lambda _: pytest.fail('unexpected wait'))
+    assert service.cycle_when_due(tmp_path, tmp_path/'db', tmp_path/'python', 'f'*40) is expected
+    assert len(calls) == 1
+
+
+def test_child_does_not_wait_again_after_deadline_passes_during_first_result(tmp_path, monkeypatch):
+    calls = []
+    deadline = None
+
+    def gated_cycle(*args, now, **kwargs):
+        nonlocal deadline
+        calls.append(now)
+        if len(calls) == 1:
+            deadline = datetime.now(UTC)+timedelta(milliseconds=16)
+            service.time.sleep(0.03)
+            return signed({'state': 'WAITING_FOR_RETRY', 'not_before': deadline.isoformat()})
+        assert now >= deadline
+        return {'state': 'PREPARING_DAILY_INPUTS'}
+
+    monkeypatch.setattr(service, 'cycle', gated_cycle)
+    result = service.cycle_when_due(tmp_path, tmp_path/'db', tmp_path/'python', 'f'*40)
+    assert result['state'] == 'PREPARING_DAILY_INPUTS' and len(calls) == 2
+
+
+def test_cycle_cli_retains_single_900_second_alarm_around_wait_and_recheck(tmp_path, monkeypatch):
+    alarms = []
+    calls = []
+    monkeypatch.setenv('LIVE_TRADING_ENABLED', 'false')
+    monkeypatch.setenv('QTRADE_AKSHARE_NONCOMMERCIAL_ACK', 'true')
+    monkeypatch.setattr(service, 'signal', SimpleNamespace(
+        SIGALRM=14, SIG_DFL=0, signal=lambda *args: None, alarm=alarms.append))
+
+    def run(*args, **kwargs):
+        assert alarms == [900]
+        calls.append((args, kwargs))
+        return {'state': 'PREPARING_DAILY_INPUTS'}
+
+    monkeypatch.setattr(service, 'cycle_when_due', run)
+    monkeypatch.setattr(service.sys, 'argv', ['data-service', '--cycle', '--once',
+        '--base', str(tmp_path), '--database', str(tmp_path/'db'),
+        '--qlib-python', str(tmp_path/'python'), '--source-revision', 'f'*40,
+        '--collection-database', str(tmp_path/'collection')])
+    service.main()
+    assert alarms == [900] and len(calls) == 1
+    assert calls[0] == ((tmp_path, tmp_path/'db', tmp_path/'python', 'f'*40),
+                        {'collection_database': tmp_path/'collection'})
+
+
+def test_terminating_waiting_child_cannot_start_preparation(tmp_path):
+    worker = """
+import sys
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+from scripts import run_qlib_data_service as service
+base = Path(sys.argv[1])
+def cycle(*args, now, **kwargs):
+    if (base/'waiting').exists():
+        (base/'prepared').write_text('unexpected preparation')
+        return {'state': 'PREPARING_DAILY_INPUTS'}
+    (base/'waiting').write_text('waiting')
+    return service.signed({'state': 'WAITING_FOR_RETRY',
+        'not_before': (now+timedelta(seconds=300)).isoformat()})
+service.cycle = cycle
+service.cycle_when_due(base, base/'db', base/'python', 'f'*40)
+"""
+    child = subprocess.Popen([sys.executable, '-c', worker, str(tmp_path)],
+        cwd=service.REPO, env={**os.environ, 'PYTHONPATH': str(service.REPO/'src')},
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        deadline = time.monotonic()+10
+        while not (tmp_path/'waiting').exists() and child.poll() is None:
+            if time.monotonic() >= deadline:
+                pytest.fail('child did not reach retry wait')
+            time.sleep(0.01)
+        assert (tmp_path/'waiting').exists()
+        child.terminate()
+        child.communicate(timeout=5)
+        if os.name != 'nt':
+            assert child.returncode == -signal.SIGTERM
+        assert child.returncode != 0 and not (tmp_path/'prepared').exists()
+    finally:
+        if child.poll() is None:
+            child.kill()
+        child.communicate(timeout=5)
