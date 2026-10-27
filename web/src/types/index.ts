@@ -2536,3 +2536,52 @@ export interface UnifiedSecurities {
   rows: UnifiedSecurity[]
   live_trading_enabled: false
 }
+
+export interface UnifiedBar {
+  symbol: string
+  exchange: string
+  frequency: 'day' | '5min'
+  timestamp: string
+  trading_day: string
+  open: string
+  high: string
+  low: string
+  close: string
+  volume: string
+  amount: string | null
+  vwap: string | null
+  amount_basis: string
+  price_basis: string
+  historical_available_at: null
+}
+export interface UnifiedBarSeries {
+  schema_version: 'qtrade.unified-market-series.v1'
+  publication_available: boolean
+  live_trading_enabled: false
+  external_order_transmission: false
+  state: 'AVAILABLE' | 'PARTIAL' | 'NO_DATA' | 'QUARANTINED' | 'OUTSIDE_WINDOW'
+  symbol: string
+  instrument_id: string
+  security_type: string
+  frequency: 'day' | '5min'
+  universe_version: string
+  index_id: string
+  version: string
+  manifest_sha256: string | null
+  published_at: string
+  checked_at: string
+  window_start: string
+  window_end: string
+  available_start: string | null
+  available_end: string | null
+  actual_end: string | null
+  expected_end: string
+  price_basis: 'SINA_NATIVE_ADJUSTMENT_UNCERTIFIED'
+  freshness: 'FRESH' | 'PARTIAL' | 'NO_DATA' | 'QUARANTINED' | 'STALE_PUBLICATION'
+  gaps: { missing_timestamps: string[]; requested_outside_window: boolean }
+  limitations: string[]
+  bars: UnifiedBar[]
+  count: number
+  total_count: number
+  truncated: boolean
+}

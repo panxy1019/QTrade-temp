@@ -4,7 +4,7 @@ import type { HistoricalBarSeries } from '../types'
 
 const ChartRenderer = lazy(() => import('./ChartRenderer'))
 
-export function MarketHistoryChart({ series, loading = false }: { series: HistoricalBarSeries | null; loading?: boolean }) {
+export function MarketHistoryChart({ series, loading = false }: { series: { bars: Array<Pick<HistoricalBarSeries['bars'][number], 'trading_day' | 'open' | 'close' | 'low' | 'high' | 'volume'>> } | null; loading?: boolean }) {
   if (loading) {
     return <div role="status" style={{ alignItems: 'center', display: 'flex', height: 430, justifyContent: 'center' }}>正在加载已验证历史 K 线…</div>
   }

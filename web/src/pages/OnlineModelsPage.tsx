@@ -23,7 +23,7 @@ interface Command {
   request_id: string; operation: 'ACTIVATE' | 'ROLLBACK'; model_id: string
   expected_active: string | null; data_version_id: string; validation_id: string
 }
-interface Catalog {
+export interface Catalog {
   publication_available: boolean; worker_fresh: boolean; published_at?: string; data_schedule_fresh?: boolean
   active_model: string | null; models: Model[]; validations: Validation[]
   expected_complete_day: string | null

@@ -19,7 +19,7 @@ interface Publication {
   contract: { portfolio: { top_k: number; risk_degree: string; rebalance_sessions: number } }
   entries: Entry[]; errors: unknown[]; limitations: string[]
 }
-interface Reply {
+export interface Reply {
   publication_available: boolean; service_fresh: boolean; current_target: boolean
   publication: Publication | null
 }

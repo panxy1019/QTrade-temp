@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App'
@@ -19,19 +19,15 @@ describe('QTrade web shell', () => {
     expect(screen.getByText('策略研究')).toBeInTheDocument()
     expect(screen.getByText('实盘模式不可用')).toBeInTheDocument()
     expect(screen.queryByText('实盘交易')).not.toBeInTheDocument()
-    await waitFor(() => expect(screen.getByText('PAPER 现金')).toBeInTheDocument())
-    expect(screen.getByText('完整量化晋级路径（顺序闸门）')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '数据与因子定义' })).toHaveAttribute('href', '#/archive')
-    expect(screen.getByRole('link', { name: '有效性、相关性与稳健性' })).toHaveAttribute('href', '#/archive')
-    expect(screen.getByRole('link', { name: '策略构造' })).toHaveAttribute('href', '#/strategies')
-    expect(screen.getByRole('link', { name: '因果回测' })).toHaveAttribute('href', '#/backtest')
-    expect(screen.getByRole('link', { name: 'PAPER / SHADOW' })).toHaveAttribute('href', '#/paper')
-    expect(screen.getByText(/须全部闸门通过并由用户另行明确授权/)).toBeInTheDocument()
-    expect(screen.getByText(/不是当前 PAPER 权益/)).toBeInTheDocument()
-    expect(screen.getByText('30 个数据分区异常')).toBeInTheDocument()
-    expect(screen.getByText(/已保留其余成功分区/)).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByText('1 · 统一目标池与日常采集')).toBeInTheDocument())
+    expect(screen.queryByText('PAPER 现金')).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '已完成历史回测对照' })).toHaveAttribute('href', '#/backtest')
+    expect(screen.getByRole('link', { name: '查看冻结目标与观察明细' })).toHaveAttribute('href', '#/paper')
+    expect(screen.getByText(/LIVE_TRADING_ENABLED=false/)).toBeInTheDocument()
     const requested = vi.mocked(fetch).mock.calls.map(([input]) => String(input))
-    expect(requested).toContain('/api/minute-research-snapshot')
+    expect(requested).toContain('/api/unified/summary')
+    expect(requested).not.toContain('/api/minute-research-snapshot')
+    expect(requested).not.toContain('/api/current/datasets')
     expect(requested).not.toContain('/api/long-five-minute-research')
     expect(requested).not.toContain('/api/intraday-breadth-observation')
   })
@@ -52,7 +48,20 @@ describe('QTrade web shell', () => {
     render(<App />)
     await waitFor(() => expect(screen.getByRole('heading', { name: '总览' })).toBeInTheDocument())
     expect(screen.queryByText('QTrade')).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '刷新平台快照' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '刷新业务状态' })).toBeInTheDocument()
     matchMedia.mockRestore()
+  })
+
+  it('defaults market to the unified pool and loads old scopes only after explicit selection', async () => {
+    vi.mocked(fetch).mockClear()
+    window.location.hash = '#/market'
+    render(<App />)
+    await screen.findByRole('heading', { name: '行情中心' })
+    expect(screen.getByRole('tab', { name: '统一池当前行情' })).toHaveAttribute('aria-selected', 'true')
+    await waitFor(() => expect(vi.mocked(fetch).mock.calls.some(([path]) => String(path).includes('/unified/securities?'))).toBe(true))
+    expect(vi.mocked(fetch).mock.calls.some(([path]) => String(path).includes('/current/datasets'))).toBe(false)
+    fireEvent.click(screen.getByRole('tab', { name: '旧范围参考（30 ETF / 75 股）' }))
+    expect(await screen.findByText('旧范围参考：仅 30 ETF 日线 / 75 股分钟，不代表统一目标池')).toBeInTheDocument()
+    await waitFor(() => expect(vi.mocked(fetch).mock.calls.some(([path]) => String(path).includes('/current/datasets'))).toBe(true))
   })
 })
