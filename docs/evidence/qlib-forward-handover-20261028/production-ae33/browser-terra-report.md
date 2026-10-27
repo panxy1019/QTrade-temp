@@ -1,0 +1,3 @@
+# Production browser acceptance attempt — 2026-10-28
+
+After resetting CUA, the first call was `cua.createBrowserTab('iab', 'https://q-trade-temp.vercel.app/', {visible:true})`. It returned exactly `Browser is not available: iab`. Per the bounded retry instruction, no further attempt was made. No actual page DOM or screenshot was captured, so the ae33 production revision, 14 ledger visibility, six active PAPER ledgers, retired model PAPER/SHADOW status and recovery controls, home, strategy center, historical workspace, version selection, and console remain visually unverified. This is an automation availability error, not evidence of site failure. No account, submission, activation, recovery, trading, or deployment action was performed.

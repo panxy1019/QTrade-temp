@@ -1,0 +1,52 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "ACTUAL_SOURCE_PRIORITY_STATE_DIAGNOSIS",
+  "at": "2026-10-27T17:19:59.957887+00:00",
+  "states": [
+    {
+      "state": "WAITING",
+      "phase": null,
+      "outcome": null,
+      "last_outcome": null,
+      "error": null,
+      "reason": null,
+      "current_session": null,
+      "target_session": null,
+      "session_day": null,
+      "latest_completed_day": null,
+      "heartbeat_at": "2026-10-27T17:19:11.718099+00:00",
+      "updated_at": null,
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/service-state.json",
+      "bytes": 213,
+      "raw_sha256": "e921edaa7f4b20acd2f7867fd346524fd29cc02bcce5fbc9f7f4b00bb6459cea",
+      "age_seconds": 48.239788
+    },
+    {
+      "state": "WAITING",
+      "phase": null,
+      "outcome": null,
+      "last_outcome": null,
+      "error": null,
+      "reason": null,
+      "current_session": null,
+      "target_session": null,
+      "session_day": null,
+      "latest_completed_day": null,
+      "heartbeat_at": "2026-10-27T17:19:51.072165+00:00",
+      "updated_at": null,
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/qlib-schedule/service-state.json",
+      "bytes": 519,
+      "raw_sha256": "96252dcf08dc013f03c588b9c50a1fa70e4701854708959da5d3bfb5162d567b",
+      "age_seconds": 8.885722
+    }
+  ],
+  "services_changed": false,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "c15acf4ad2722f5e36ebe303e8f8393bcf15958ae1b179d0b64cb85750bc7935"
+}

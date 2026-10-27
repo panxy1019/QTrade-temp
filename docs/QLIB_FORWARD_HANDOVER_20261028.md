@@ -1,6 +1,6 @@
 # 2026-10-28 forward 定向交接
 
-核验至上海时间01:08。**定向交接、6本PAPER对账恢复及实际公网控制状态交付已完成；
+核验至上海时间01:22。**定向交接、6本PAPER对账恢复及实际公网控制状态交付已完成；
 完整跨日STEP1尚未通过。** 当前模型的首个完整前向日要等待10月28日真实收盘。
 
 ## 授权及范围
@@ -93,9 +93,11 @@ forward owner175982的定向替换，以及成功逐账对账后为5个基线和
 五分钟74,880；独立退市探针192条。两者本轮让位当前采集；不是进程停止或全历史完成。
 完整历史PIT、复权和连续多年数据尚未认证。交接后空间272.56GiB，仍保留100GiB。
 
-PR34的退休账本网页标注等待main合并/实际部署核对。最新Terra high尝试因浏览器扩展
-`nodeRepl.fetch request failed`未取得DOM/截图，见[原报告](evidence/qlib-forward-handover-20261028/browser-terra-report.md)。
-此前核心页面截图有效范围不变，不用API通过代替这次视觉验收。
+PR34已合并为main`ae33a7c8c27ea721eb3be1e4430b562a44b67f91`，默认生产地址实际C、
+14本控制与全池发布探针通过。HTML/JS实际交付了退休与保留账本标注。
+Terra high的Chrome入口返回`nodeRepl.fetch request failed`，新IAB入口返回
+`Browser is not available: iab`，均未取得本轮DOM/截图。此前核心页面截图有效范围不变，
+静态文件交付不替代视觉验收。详见[合并后正式交付记录](QLIB_FORWARD_PRODUCTION_ACCEPTANCE_20261028.md)。
 
 ## 复现检查
 

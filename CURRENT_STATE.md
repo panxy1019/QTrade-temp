@@ -1,6 +1,38 @@
 # Current state
 
-Last updated: 2026-10-28 01:08 Shanghai, directed handover and actual public control delivery verified.
+Last updated: 2026-10-28 01:22 Shanghai, PR34 merged and actual default production ae33 verified.
+
+- PR34 merges as mainae33a7c8c27ea721eb3be1e4430b562a44b67f91. Vercel succeeds;
+  actual default-origin C passes01:15 for ACTIVE295/source096 prediction/signals.
+  Independently captured public14-book control is fresh RUNNING with current6
+  PAPER running/NORMAL, two retired books stopped and no errors. Forward owner
+  remains383859/source9846; web main and cluster revision are distinct identities.
+- Full actual public market probe passes01:15:20 on publicf810733b, all1500
+  identities/3000entries and five fixed series, index/catalog ages124.22/137.90s.
+  It is FRESH_TRANSPORT, still PARTIAL day1497/min1496, not full-pool/day SLA.
+- Production HTML/entry/forward chunk bytes and adjacent deployment responses
+  confirm the new retained-book/retirement labels are actually delivered. This is
+  asset content acceptance only. Terra high's new IAB attempt returns "Browser is
+  not available: iab"; previous Chrome transport also fails. No new DOM/screenshot
+  or visual acceptance is claimed. Old core-page screenshots retain their scope.
+- The full current14-book v2 day result remains BLOCKED for the ACTIVE model's
+  two pre-activation October27 sessions. Only10 baseline daily observations plus
+  two separate retirement closures pass. Await real October28 close/source data
+  and then the new version/prediction/later-validation/signals/forward/public
+  chain. Do not fabricate missing sessions or start STEP2. Budgets, LIVE false,
+  rolling OFF, consumed claims and original frozen identities remain unchanged.
+- Latest captured history queue76,824/day1,944/min74,880 and delisted192 are sealed
+  queue counts, not full history/PIT. The brief current-work yield is not a stopped
+  collector; actual01:20 current collector and Qlib data states both WAITING with
+  fresh heartbeats. See docs/QLIB_FORWARD_PRODUCTION_ACCEPTANCE_20261028.md.
+- A new bounded same-chat heartbeat qtrade-10-28 is ACTIVE for October28
+  16:40-23:40 Shanghai, hourly/eight checks. Preserve real clocks and immutable
+  audits; stay quiet during normal waiting, remove on completion/obsolescence/end,
+  never mark unpassed STEP1 complete. It does not revive the deleted old heartbeat
+  or replay any handover/recovery. Local follow-up needs this computer/app running;
+  supervised cluster collection and publication remain independent of it.
+
+Previous2026-10-28 01:08 checkpoint (historical observations):
 
 - Authorized one-time forward handover is applied: old175982 exits, new383859
   executes exact source9846a7f with582 verified files, new PYTHONPATH and no

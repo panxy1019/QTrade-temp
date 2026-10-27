@@ -4018,7 +4018,9 @@ unchanged throughout; the copy test neither resumes PAPER nor publishes data.
 
 Status: source9846a7f deployed by the authorized directed handover,2026-10-28.
 Six fresh reconciled PAPER requests and actual public control delivery pass;
-full day acceptance still awaits current-model observations after a real close.
+PR34 is merged as mainae33 and actual public C/control/market probes pass.
+Full day acceptance still awaits current-model observations after a real close;
+delivered asset content does not replace currently unavailable browser rendering.
 
 The human explicitly approves PR34's directed owner replacement and successful
 reconciliation followed by fresh single-use requests for5 baseline/current

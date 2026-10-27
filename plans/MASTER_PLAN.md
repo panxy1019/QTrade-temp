@@ -24,6 +24,22 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 01:22 checkpoint: PR34 merged as mainae33, actual default production
+matches. C public and14-book control captures pass01:15; independent full1500
+public market transport passes with index/catalog ages124.22/137.90s and partial
+day1497/min1496. Actual delivered forward asset has the retirement/retained-book
+labels, but this is not DOM/rendering. Terra high IAB entry is unavailable, Chrome
+transport had also failed. Whole14-book/day acceptance still BLOCKED only for the
+new ACTIVE model's two pre-activation October27 sessions;10 baseline observations
+and2 separate retired closures pass. Await real October28 close and downstream
+data/model/signal/forward/public evidence. Keep source9846/owner383859 stable,
+old claims consumed, LIVE false/rolling OFF and resource budgets unchanged.
+STEP2 remains gated. Post-merge evidence is preserved on the acceptance branch.
+Bounded same-chat qtrade-10-28 schedules eight October28 close checks at hourly
+16:40-23:40 Shanghai. Normal waiting stays quiet; delete once done/obsolete/ended,
+preserving all unmet gates. Local app availability affects this follow-up only,
+not the supervised cluster services. No handover or recovery is replayed.
+
 October28 01:08 checkpoint: the explicitly authorized one-time directed handover
 is applied, source9846a7f/PID383859. Same228 Windows/Linux cases,582 exact Git
 files and actual14-book copy replay pass. Six fresh current-instance PAPER

@@ -1,0 +1,24 @@
+{
+  "automation_id": "qtrade-10-28",
+  "cluster_services_require_local_app": false,
+  "created_at": "2026-10-27T17:28:48.891618+00:00",
+  "date": "2026-10-28",
+  "does_not_repeat_handover_or_recovery": true,
+  "intended_local_hours": [
+    "16:40",
+    "17:40",
+    "18:40",
+    "19:40",
+    "20:40",
+    "21:40",
+    "22:40",
+    "23:40"
+  ],
+  "kind": "SAME_CHAT_BOUNDED_CLOSE_ACCEPTANCE_FOLLOWUP",
+  "local_followup_requires_running_computer_and_app": true,
+  "local_windows_timezone": "China Standard Time",
+  "maximum_occurrences": 8,
+  "normal_waiting_reported": false,
+  "tool_created_status": "ACTIVE",
+  "whole_step1_accepted": false
+}
