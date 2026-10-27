@@ -132,7 +132,11 @@ def job_chain(job: dict[str, Any], facts: dict[str, Any],
               now: datetime) -> tuple[datetime, datetime]:
     require(job['state'] == 'COMPLETE' and job['error'] is None, 'JOB_NOT_COMPLETE')
     events = facts['job_events'][job['id']]
-    require([row['state'] for row in events] == ['QUEUED', 'RUNNING', 'COMPLETE'],
+    # The worker may observe the candidate runner's VALIDATING status before
+    # completion, or miss it when the child finishes between status polls.
+    require([row['state'] for row in events] in (
+                ['QUEUED', 'RUNNING', 'COMPLETE'],
+                ['QUEUED', 'RUNNING', 'VALIDATING', 'COMPLETE']),
             'JOB_EVENT_CHAIN_INVALID')
     times = [clock(row['at'], now) for row in events]
     require(times == sorted(times) and times[-1] <= clock(job['updated'], now),
