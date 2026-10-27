@@ -38,7 +38,8 @@ def _git(root: Path, args: list[str], *, data: bytes | None = None,
     env['GIT_TERMINAL_PROMPT'] = '0'
     if index is not None:
         env['GIT_INDEX_FILE'] = str(index)
-    process = subprocess.Popen(['git', '-c', 'core.hooksPath=/dev/null', '-C', str(root),
+    process = subprocess.Popen(['git', '-c', 'core.hooksPath=/dev/null',
+                                '-c', 'pack.useSparse=false', '-C', str(root),
                                 *args], env=env, start_new_session=True,
                                stdin=subprocess.PIPE if data is not None else subprocess.DEVNULL,
                                stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)

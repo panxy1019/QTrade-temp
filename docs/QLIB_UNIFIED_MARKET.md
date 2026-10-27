@@ -162,6 +162,12 @@ publication checkout. The CLI pins the existing public observation repository,
 requires branch `main`, validates the remote ancestry and pending-data bounds,
 and uses isolated Git indexes. Each bootstrap push has a 600-second bound; ordinary
 publication retains its 90-second command limit.
+Both Git runners pass command-scoped `-c pack.useSparse=false`. Git's default
+sparse object walk can resend already published payload blobs when the seed adds
+new alias paths; an exact walk excludes those old blobs and sends only new tree
+and commit metadata. This changes no repository/global Git configuration, remote,
+hook policy or process cleanup. See the official
+[`pack.useSparse` documentation](https://git-scm.com/docs/git-config#Documentation/git-config.txt-packuseSparse).
 
 ```sh
 PYTHONPATH=src:. python -m scripts.bootstrap_public_aliases \
@@ -179,6 +185,8 @@ served index/bar freshness before accepting the migration. Local real-Git tests
 exercise divergent retained history, unrelated untracked files, interruption,
 invalid destinations, symlinks, branch changes and duplicate-bootstrap rejection:
 `pytest tests/test_bootstrap_public_aliases.py`.
+Its real local pack regression reproduces sparse traversal resending 64 existing
+payload blobs and verifies that the exact walk transfers zero payload blobs.
 
 Seeding is transport preparation, not a freshness refresh. The local thin-pack
 experiment motivating this change reduced a 1,500-symbol shared-receipt frame

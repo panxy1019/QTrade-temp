@@ -60,7 +60,8 @@ def run_publication_git(publication: Path, arguments: list[str], *, timeout: flo
         raise RuntimeError('PUBLICATION_GIT_PROCESS_GROUP_REQUIRES_POSIX')
     if not 0 < timeout <= 90:
         raise ValueError('PUBLICATION_GIT_TIMEOUT_BOUND')
-    command = ['git', '-C', str(publication), *arguments]
+    # New alias paths reuse existing blobs; a sparse walk may resend those blobs.
+    command = ['git', '-c', 'pack.useSparse=false', '-C', str(publication), *arguments]
     process = subprocess.Popen(command, start_new_session=True, stdin=subprocess.DEVNULL,
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:

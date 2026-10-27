@@ -350,3 +350,86 @@ def test_supervisor_quiescence_accepts_verified_mixed_case_state(monkeypatch, st
     monkeypatch.setattr('scripts.bootstrap_public_aliases.xmlrpc.client.ServerProxy', proxy)
     _quiescent()
 
+
+@pytest.mark.parametrize('timeout', [90, 600])
+def test_bootstrap_runner_disables_sparse_walk_preserving_hooks_environment_and_group(
+    tmp_path, monkeypatch, timeout,
+):
+    from scripts import bootstrap_public_aliases as module
+    from scripts import publish_research_snapshot as publisher
+
+    index = tmp_path/'isolated-index'
+    calls = []
+    class Process:
+        returncode = 0
+        def communicate(self, data, timeout):
+            assert data == b'local-input' and timeout == expected_timeout
+            return b'local-output', None
+    expected_timeout = timeout
+    process = Process()
+    def spawn(command, **kwargs):
+        assert command == ['git', '-c', 'core.hooksPath=/dev/null',
+                           '-c', 'pack.useSparse=false', '-C', str(tmp_path),
+                           'push', 'origin', 'HEAD:refs/heads/main']
+        assert kwargs['start_new_session'] is True
+        assert kwargs['stdin'] == subprocess.PIPE and kwargs['stdout'] == subprocess.PIPE
+        assert kwargs['stderr'] == subprocess.DEVNULL
+        assert kwargs['env']['GIT_INDEX_FILE'] == str(index)
+        assert kwargs['env']['GIT_TERMINAL_PROMPT'] == '0'
+        assert 'GIT_DIR' not in kwargs['env'] and 'GIT_WORK_TREE' not in kwargs['env']
+        calls.append('spawn')
+        return process
+    monkeypatch.setattr(module, 'os', SimpleNamespace(name='posix', environ={
+        'GIT_DIR': 'ignored', 'GIT_WORK_TREE': 'ignored', 'GIT_INDEX_FILE': 'ignored'}))
+    monkeypatch.setattr(module.subprocess, 'Popen', spawn)
+    monkeypatch.setattr(publisher, '_cleanup_git_group', lambda item:
+                        calls.append('cleanup') if item is process else pytest.fail('wrong group'))
+    assert module._git(tmp_path, ['push', 'origin', 'HEAD:refs/heads/main'],
+                       data=b'local-input', index=index, timeout=timeout) == b'local-output'
+    assert calls == ['spawn', 'cleanup']
+
+
+def test_real_git_alias_seed_pack_excludes_all_preexisting_payload_blobs(tmp_path):
+    publication = tmp_path/'pack-source'
+    publication.mkdir()
+    git(publication, ['init', '--initial-branch=main'])
+    git(publication, ['config', 'user.name', 'Local Test'])
+    git(publication, ['config', 'user.email', 'local@example.invalid'])
+    objects = publication/'unified-market/objects'
+    objects.mkdir(parents=True)
+    for symbol in range(64):
+        raw = json.dumps({'symbol': f'{symbol:06}', 'bars': [sha256(
+            f'{symbol}|{bar}'.encode()).hexdigest() for bar in range(64)]}).encode()
+        (objects/(sha256(raw).hexdigest()+'.json')).write_bytes(raw)
+    git(publication, ['add', '.'])
+    git(publication, ['commit', '-m', 'Existing immutable public payloads'])
+    base = git(publication, ['rev-parse', 'HEAD']).decode().strip()
+    old_blobs = {row.split()[2] for row in
+                 git(publication, ['ls-tree', '-r', base]).splitlines()}
+    aliases = publication/ALIAS/'day'
+    aliases.mkdir(parents=True)
+    for number, path in enumerate(sorted(objects.iterdir())):
+        os.link(path, aliases/f'D{number:06}.json')
+    git(publication, ['add', '.'])
+    git(publication, ['commit', '-m', 'Metadata-only stable alias seed'])
+    seeded = git(publication, ['rev-parse', 'HEAD']).decode().strip()
+    revisions = f'{seeded}\n^{base}\n'.encode()
+    packs = {}
+    for sparse in ('true', 'false'):
+        packed = git(publication, ['-c', 'pack.useSparse='+sparse, 'pack-objects',
+                                  '--revs', '--stdout', '--delta-base-offset'], data=revisions)
+        receiver = tmp_path/('pack-receiver-'+sparse)
+        receiver.mkdir()
+        git(receiver, ['init', '--bare'])
+        digest = git(receiver, ['index-pack', '--stdin'], data=packed).decode().split()[-1]
+        rows = git(receiver, ['verify-pack', '-v',
+                             str(receiver/'objects/pack'/('pack-'+digest+'.idx'))]).splitlines()
+        blobs = {row.split()[0] for row in rows if len(row.split()) >= 5
+                 and row.split()[1] == b'blob'}
+        packs[sparse] = (len(packed), blobs)
+    # Reproduce sparse traversal's unnecessary old payload transfer, then prove
+    # the command-scoped setting sends only new commit/tree metadata instead.
+    assert packs['true'][1] == old_blobs and len(old_blobs) == 64
+    assert packs['false'][1] == set()
+    assert packs['false'][0] < packs['true'][0]/10
+
