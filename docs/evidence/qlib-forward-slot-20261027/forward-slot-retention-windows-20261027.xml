@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="7" failures="0" skipped="0" tests="54" time="3.478" timestamp="2026-10-27T23:23:23.091205+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="tests.test_forward_service" name="test_only_explicit_pristine_paper_initializes_never_restart" time="0.040" /><testcase classname="tests.test_forward_service" name="test_default_shadow_never_recovers_or_initializes_paper" time="0.027" /><testcase classname="tests.test_forward_service" name="test_stale_new_inputs_do_not_prevent_processing_existing_frozen_book" time="0.038" /><testcase classname="tests.test_forward_service" name="test_storage_reserve_blocks_freeze_and_observe" time="0.009" /><testcase classname="tests.test_forward_service" name="test_errors_in_one_book_do_not_skip_other_books" time="0.056" /><testcase classname="tests.test_forward_service" name="test_epoch_changed_before_freeze_rejects_prospective_admission" time="0.003" /><testcase classname="tests.test_forward_service" name="test_missing_observation_day_does_not_skip_ahead" time="0.035" /><testcase classname="tests.test_forward_service" name="test_live_and_unrequested_paper_initialization_are_rejected" time="0.004" /><testcase classname="tests.test_forward_service" name="test_atomic_admission_reserves_both_ledgers_without_mutation" time="0.030" /><testcase classname="tests.test_forward_service" name="test_epoch_change_during_freeze_leaves_unadmitted_target" time="0.034" /><testcase classname="tests.test_forward_service" name="test_restart_shadow_excludes_persisted_paper" time="0.058" /><testcase classname="tests.test_forward_service" name="test_signed_real_book_and_service_publication_contract" time="0.147" /><testcase classname="tests.test_forward_service" name="test_collection_database_replays_exact_old_day_and_stays_read_only" time="0.013" /><testcase classname="tests.test_forward_service" name="test_source_discovery_uses_verified_current_epoch_and_actual_archive" time="0.020" /><testcase classname="tests.test_forward_service" name="test_discovery_isolates_independent_sources_and_publishes_diagnostics[missing-signal]" time="0.021"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe0\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'&quot;">self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_isolates_indepe0/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe0\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+environment = &lt;function environment.&lt;locals&gt;.create at 0x000001C2EC065590&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001C2EC064E10&gt;
+
+    @pytest.fixture
+    def discovery_sources(environment, monkeypatch):
+        instance, item, now = environment(), target(), datetime.now(UTC)
+        approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+        model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
+        model_link = {
+            **link(),
+            "kind": "approved-prediction",
+            "strategy_id": model.strategy_id,
+            "artifact_id": model.signal_id,
+            "model_id": approval["model_id"],
+        }
+        online = signed(
+            {
+                **AUTHORITY,
+                "worker": {"heartbeat_at": now.isoformat(), "source_revision": "a" * 40},
+                "data_version": {
+                    "version_id": item.data_version,
+                    "data_event_id": "e" * 64,
+                    "actual_end": instance.calendar.expected(now, "daily").date().isoformat(),
+                },
+                "auto_predict": {"current_prediction_id": model.signal_id},
+            }
+        )
+        service.write_json_atomic(instance.base / "workflow/public/online.json", online)
+        with sqlite3.connect(instance.workflow_database) as connection:
+            connection.execute("CREATE TABLE jobs(id TEXT,request TEXT,result TEXT,state TEXT)")
+            connection.execute(
+                "INSERT INTO jobs VALUES(?,?,?,?)",
+                (
+                    "a" * 32,
+                    json.dumps(
+                        {
+                            "kind": "QLIB_SIGNAL_JOB",
+                            "data_version_id": item.data_version,
+                            "data_event_id": "e" * 64,
+                        }
+                    ),
+                    json.dumps({"signal_family_id": item.signal_id}),
+                    "COMPLETE",
+                ),
+            )
+        signal_root = instance.base / "workflow/jobs" / ("a" * 32) / "output" / item.signal_id
+        prediction_root = (
+            instance.base / "online-research/control/predictions" / model.signal_id / "output"
+        )
+        prediction_root /= model.signal_id
+        service.write_json_atomic(
+            signal_root / "manifest.json",
+            signed({**AUTHORITY, "bindings": {"data_event_id": "e" * 64}}),
+        )
+&gt;       service.write_json_atomic(
+            prediction_root / "manifest.json",
+            signed(
+                {
+                    **AUTHORITY,
+                    "bindings": {
+                        "data_event_id": "e" * 64,
+                        "approval_sha256": approval["evidence_sha256"],
+                    },
+                }
+            ),
+        )
+
+tests\test_forward_service.py:462: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_forward_service.py:67: in atomic
+    path.parent.mkdir(parents=True, exist_ok=True)
+C:\Python314\Lib\pathlib\__init__.py:1016: in mkdir
+    self.mkdir(mode, parents=False, exist_ok=exist_ok)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_isolates_indepe0/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = False, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe0\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.test_forward_service" name="test_discovery_isolates_independent_sources_and_publishes_diagnostics[missing-prediction]" time="0.019"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe1\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'&quot;">self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_isolates_indepe1/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe1\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+environment = &lt;function environment.&lt;locals&gt;.create at 0x000001C2EC0266C0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001C2EC027490&gt;
+
+    @pytest.fixture
+    def discovery_sources(environment, monkeypatch):
+        instance, item, now = environment(), target(), datetime.now(UTC)
+        approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+        model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
+        model_link = {
+            **link(),
+            "kind": "approved-prediction",
+            "strategy_id": model.strategy_id,
+            "artifact_id": model.signal_id,
+            "model_id": approval["model_id"],
+        }
+        online = signed(
+            {
+                **AUTHORITY,
+                "worker": {"heartbeat_at": now.isoformat(), "source_revision": "a" * 40},
+                "data_version": {
+                    "version_id": item.data_version,
+                    "data_event_id": "e" * 64,
+                    "actual_end": instance.calendar.expected(now, "daily").date().isoformat(),
+                },
+                "auto_predict": {"current_prediction_id": model.signal_id},
+            }
+        )
+        service.write_json_atomic(instance.base / "workflow/public/online.json", online)
+        with sqlite3.connect(instance.workflow_database) as connection:
+            connection.execute("CREATE TABLE jobs(id TEXT,request TEXT,result TEXT,state TEXT)")
+            connection.execute(
+                "INSERT INTO jobs VALUES(?,?,?,?)",
+                (
+                    "a" * 32,
+                    json.dumps(
+                        {
+                            "kind": "QLIB_SIGNAL_JOB",
+                            "data_version_id": item.data_version,
+                            "data_event_id": "e" * 64,
+                        }
+                    ),
+                    json.dumps({"signal_family_id": item.signal_id}),
+                    "COMPLETE",
+                ),
+            )
+        signal_root = instance.base / "workflow/jobs" / ("a" * 32) / "output" / item.signal_id
+        prediction_root = (
+            instance.base / "online-research/control/predictions" / model.signal_id / "output"
+        )
+        prediction_root /= model.signal_id
+        service.write_json_atomic(
+            signal_root / "manifest.json",
+            signed({**AUTHORITY, "bindings": {"data_event_id": "e" * 64}}),
+        )
+&gt;       service.write_json_atomic(
+            prediction_root / "manifest.json",
+            signed(
+                {
+                    **AUTHORITY,
+                    "bindings": {
+                        "data_event_id": "e" * 64,
+                        "approval_sha256": approval["evidence_sha256"],
+                    },
+                }
+            ),
+        )
+
+tests\test_forward_service.py:462: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_forward_service.py:67: in atomic
+    path.parent.mkdir(parents=True, exist_ok=True)
+C:\Python314\Lib\pathlib\__init__.py:1016: in mkdir
+    self.mkdir(mode, parents=False, exist_ok=exist_ok)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_isolates_indepe1/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = False, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe1\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.test_forward_service" name="test_discovery_isolates_independent_sources_and_publishes_diagnostics[corrupt-signal]" time="0.018"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe2\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'&quot;">self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_isolates_indepe2/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe2\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+environment = &lt;function environment.&lt;locals&gt;.create at 0x000001C2EC044040&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001C2EC072030&gt;
+
+    @pytest.fixture
+    def discovery_sources(environment, monkeypatch):
+        instance, item, now = environment(), target(), datetime.now(UTC)
+        approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+        model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
+        model_link = {
+            **link(),
+            "kind": "approved-prediction",
+            "strategy_id": model.strategy_id,
+            "artifact_id": model.signal_id,
+            "model_id": approval["model_id"],
+        }
+        online = signed(
+            {
+                **AUTHORITY,
+                "worker": {"heartbeat_at": now.isoformat(), "source_revision": "a" * 40},
+                "data_version": {
+                    "version_id": item.data_version,
+                    "data_event_id": "e" * 64,
+                    "actual_end": instance.calendar.expected(now, "daily").date().isoformat(),
+                },
+                "auto_predict": {"current_prediction_id": model.signal_id},
+            }
+        )
+        service.write_json_atomic(instance.base / "workflow/public/online.json", online)
+        with sqlite3.connect(instance.workflow_database) as connection:
+            connection.execute("CREATE TABLE jobs(id TEXT,request TEXT,result TEXT,state TEXT)")
+            connection.execute(
+                "INSERT INTO jobs VALUES(?,?,?,?)",
+                (
+                    "a" * 32,
+                    json.dumps(
+                        {
+                            "kind": "QLIB_SIGNAL_JOB",
+                            "data_version_id": item.data_version,
+                            "data_event_id": "e" * 64,
+                        }
+                    ),
+                    json.dumps({"signal_family_id": item.signal_id}),
+                    "COMPLETE",
+                ),
+            )
+        signal_root = instance.base / "workflow/jobs" / ("a" * 32) / "output" / item.signal_id
+        prediction_root = (
+            instance.base / "online-research/control/predictions" / model.signal_id / "output"
+        )
+        prediction_root /= model.signal_id
+        service.write_json_atomic(
+            signal_root / "manifest.json",
+            signed({**AUTHORITY, "bindings": {"data_event_id": "e" * 64}}),
+        )
+&gt;       service.write_json_atomic(
+            prediction_root / "manifest.json",
+            signed(
+                {
+                    **AUTHORITY,
+                    "bindings": {
+                        "data_event_id": "e" * 64,
+                        "approval_sha256": approval["evidence_sha256"],
+                    },
+                }
+            ),
+        )
+
+tests\test_forward_service.py:462: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_forward_service.py:67: in atomic
+    path.parent.mkdir(parents=True, exist_ok=True)
+C:\Python314\Lib\pathlib\__init__.py:1016: in mkdir
+    self.mkdir(mode, parents=False, exist_ok=exist_ok)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_isolates_indepe2/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = False, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe2\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.test_forward_service" name="test_discovery_isolates_independent_sources_and_publishes_diagnostics[corrupt-prediction]" time="0.017"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe3\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'&quot;">self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_isolates_indepe3/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe3\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+environment = &lt;function environment.&lt;locals&gt;.create at 0x000001C2EC044880&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001C2EC071F90&gt;
+
+    @pytest.fixture
+    def discovery_sources(environment, monkeypatch):
+        instance, item, now = environment(), target(), datetime.now(UTC)
+        approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+        model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
+        model_link = {
+            **link(),
+            "kind": "approved-prediction",
+            "strategy_id": model.strategy_id,
+            "artifact_id": model.signal_id,
+            "model_id": approval["model_id"],
+        }
+        online = signed(
+            {
+                **AUTHORITY,
+                "worker": {"heartbeat_at": now.isoformat(), "source_revision": "a" * 40},
+                "data_version": {
+                    "version_id": item.data_version,
+                    "data_event_id": "e" * 64,
+                    "actual_end": instance.calendar.expected(now, "daily").date().isoformat(),
+                },
+                "auto_predict": {"current_prediction_id": model.signal_id},
+            }
+        )
+        service.write_json_atomic(instance.base / "workflow/public/online.json", online)
+        with sqlite3.connect(instance.workflow_database) as connection:
+            connection.execute("CREATE TABLE jobs(id TEXT,request TEXT,result TEXT,state TEXT)")
+            connection.execute(
+                "INSERT INTO jobs VALUES(?,?,?,?)",
+                (
+                    "a" * 32,
+                    json.dumps(
+                        {
+                            "kind": "QLIB_SIGNAL_JOB",
+                            "data_version_id": item.data_version,
+                            "data_event_id": "e" * 64,
+                        }
+                    ),
+                    json.dumps({"signal_family_id": item.signal_id}),
+                    "COMPLETE",
+                ),
+            )
+        signal_root = instance.base / "workflow/jobs" / ("a" * 32) / "output" / item.signal_id
+        prediction_root = (
+            instance.base / "online-research/control/predictions" / model.signal_id / "output"
+        )
+        prediction_root /= model.signal_id
+        service.write_json_atomic(
+            signal_root / "manifest.json",
+            signed({**AUTHORITY, "bindings": {"data_event_id": "e" * 64}}),
+        )
+&gt;       service.write_json_atomic(
+            prediction_root / "manifest.json",
+            signed(
+                {
+                    **AUTHORITY,
+                    "bindings": {
+                        "data_event_id": "e" * 64,
+                        "approval_sha256": approval["evidence_sha256"],
+                    },
+                }
+            ),
+        )
+
+tests\test_forward_service.py:462: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_forward_service.py:67: in atomic
+    path.parent.mkdir(parents=True, exist_ok=True)
+C:\Python314\Lib\pathlib\__init__.py:1016: in mkdir
+    self.mkdir(mode, parents=False, exist_ok=exist_ok)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_isolates_indepe3/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = False, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_isolates_indepe3\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.test_forward_service" name="test_discovery_common_final_gate_rejects_all_targets[epoch]" time="0.018"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_common_final_ga0\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'&quot;">self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_common_final_ga0/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_common_final_ga0\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+environment = &lt;function environment.&lt;locals&gt;.create at 0x000001C2EC046B90&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001C2EC0CD9A0&gt;
+
+    @pytest.fixture
+    def discovery_sources(environment, monkeypatch):
+        instance, item, now = environment(), target(), datetime.now(UTC)
+        approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+        model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
+        model_link = {
+            **link(),
+            "kind": "approved-prediction",
+            "strategy_id": model.strategy_id,
+            "artifact_id": model.signal_id,
+            "model_id": approval["model_id"],
+        }
+        online = signed(
+            {
+                **AUTHORITY,
+                "worker": {"heartbeat_at": now.isoformat(), "source_revision": "a" * 40},
+                "data_version": {
+                    "version_id": item.data_version,
+                    "data_event_id": "e" * 64,
+                    "actual_end": instance.calendar.expected(now, "daily").date().isoformat(),
+                },
+                "auto_predict": {"current_prediction_id": model.signal_id},
+            }
+        )
+        service.write_json_atomic(instance.base / "workflow/public/online.json", online)
+        with sqlite3.connect(instance.workflow_database) as connection:
+            connection.execute("CREATE TABLE jobs(id TEXT,request TEXT,result TEXT,state TEXT)")
+            connection.execute(
+                "INSERT INTO jobs VALUES(?,?,?,?)",
+                (
+                    "a" * 32,
+                    json.dumps(
+                        {
+                            "kind": "QLIB_SIGNAL_JOB",
+                            "data_version_id": item.data_version,
+                            "data_event_id": "e" * 64,
+                        }
+                    ),
+                    json.dumps({"signal_family_id": item.signal_id}),
+                    "COMPLETE",
+                ),
+            )
+        signal_root = instance.base / "workflow/jobs" / ("a" * 32) / "output" / item.signal_id
+        prediction_root = (
+            instance.base / "online-research/control/predictions" / model.signal_id / "output"
+        )
+        prediction_root /= model.signal_id
+        service.write_json_atomic(
+            signal_root / "manifest.json",
+            signed({**AUTHORITY, "bindings": {"data_event_id": "e" * 64}}),
+        )
+&gt;       service.write_json_atomic(
+            prediction_root / "manifest.json",
+            signed(
+                {
+                    **AUTHORITY,
+                    "bindings": {
+                        "data_event_id": "e" * 64,
+                        "approval_sha256": approval["evidence_sha256"],
+                    },
+                }
+            ),
+        )
+
+tests\test_forward_service.py:462: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_forward_service.py:67: in atomic
+    path.parent.mkdir(parents=True, exist_ok=True)
+C:\Python314\Lib\pathlib\__init__.py:1016: in mkdir
+    self.mkdir(mode, parents=False, exist_ok=exist_ok)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_common_final_ga0/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = False, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_common_final_ga0\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.test_forward_service" name="test_discovery_common_final_gate_rejects_all_targets[approval]" time="0.017"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_common_final_ga1\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'&quot;">self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_common_final_ga1/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_common_final_ga1\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+environment = &lt;function environment.&lt;locals&gt;.create at 0x000001C2EC046FB0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001C2EC2E1C50&gt;
+
+    @pytest.fixture
+    def discovery_sources(environment, monkeypatch):
+        instance, item, now = environment(), target(), datetime.now(UTC)
+        approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+        model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
+        model_link = {
+            **link(),
+            "kind": "approved-prediction",
+            "strategy_id": model.strategy_id,
+            "artifact_id": model.signal_id,
+            "model_id": approval["model_id"],
+        }
+        online = signed(
+            {
+                **AUTHORITY,
+                "worker": {"heartbeat_at": now.isoformat(), "source_revision": "a" * 40},
+                "data_version": {
+                    "version_id": item.data_version,
+                    "data_event_id": "e" * 64,
+                    "actual_end": instance.calendar.expected(now, "daily").date().isoformat(),
+                },
+                "auto_predict": {"current_prediction_id": model.signal_id},
+            }
+        )
+        service.write_json_atomic(instance.base / "workflow/public/online.json", online)
+        with sqlite3.connect(instance.workflow_database) as connection:
+            connection.execute("CREATE TABLE jobs(id TEXT,request TEXT,result TEXT,state TEXT)")
+            connection.execute(
+                "INSERT INTO jobs VALUES(?,?,?,?)",
+                (
+                    "a" * 32,
+                    json.dumps(
+                        {
+                            "kind": "QLIB_SIGNAL_JOB",
+                            "data_version_id": item.data_version,
+                            "data_event_id": "e" * 64,
+                        }
+                    ),
+                    json.dumps({"signal_family_id": item.signal_id}),
+                    "COMPLETE",
+                ),
+            )
+        signal_root = instance.base / "workflow/jobs" / ("a" * 32) / "output" / item.signal_id
+        prediction_root = (
+            instance.base / "online-research/control/predictions" / model.signal_id / "output"
+        )
+        prediction_root /= model.signal_id
+        service.write_json_atomic(
+            signal_root / "manifest.json",
+            signed({**AUTHORITY, "bindings": {"data_event_id": "e" * 64}}),
+        )
+&gt;       service.write_json_atomic(
+            prediction_root / "manifest.json",
+            signed(
+                {
+                    **AUTHORITY,
+                    "bindings": {
+                        "data_event_id": "e" * 64,
+                        "approval_sha256": approval["evidence_sha256"],
+                    },
+                }
+            ),
+        )
+
+tests\test_forward_service.py:462: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_forward_service.py:67: in atomic
+    path.parent.mkdir(parents=True, exist_ok=True)
+C:\Python314\Lib\pathlib\__init__.py:1016: in mkdir
+    self.mkdir(mode, parents=False, exist_ok=exist_ok)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_common_final_ga1/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = False, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_common_final_ga1\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.test_forward_service" name="test_discovery_reports_missing_sources_and_clears_transient_failures" time="0.020"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_reports_missing0\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'&quot;">self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_reports_missing0/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_reports_missing0\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+environment = &lt;function environment.&lt;locals&gt;.create at 0x000001C2EC0447D0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001C2EC2E3850&gt;
+
+    @pytest.fixture
+    def discovery_sources(environment, monkeypatch):
+        instance, item, now = environment(), target(), datetime.now(UTC)
+        approval = {"model_id": "7" * 64, "evidence_sha256": "8" * 64}
+        model = replace(item, strategy_id="approved_model_" + approval["model_id"], signal_id="9" * 64)
+        model_link = {
+            **link(),
+            "kind": "approved-prediction",
+            "strategy_id": model.strategy_id,
+            "artifact_id": model.signal_id,
+            "model_id": approval["model_id"],
+        }
+        online = signed(
+            {
+                **AUTHORITY,
+                "worker": {"heartbeat_at": now.isoformat(), "source_revision": "a" * 40},
+                "data_version": {
+                    "version_id": item.data_version,
+                    "data_event_id": "e" * 64,
+                    "actual_end": instance.calendar.expected(now, "daily").date().isoformat(),
+                },
+                "auto_predict": {"current_prediction_id": model.signal_id},
+            }
+        )
+        service.write_json_atomic(instance.base / "workflow/public/online.json", online)
+        with sqlite3.connect(instance.workflow_database) as connection:
+            connection.execute("CREATE TABLE jobs(id TEXT,request TEXT,result TEXT,state TEXT)")
+            connection.execute(
+                "INSERT INTO jobs VALUES(?,?,?,?)",
+                (
+                    "a" * 32,
+                    json.dumps(
+                        {
+                            "kind": "QLIB_SIGNAL_JOB",
+                            "data_version_id": item.data_version,
+                            "data_event_id": "e" * 64,
+                        }
+                    ),
+                    json.dumps({"signal_family_id": item.signal_id}),
+                    "COMPLETE",
+                ),
+            )
+        signal_root = instance.base / "workflow/jobs" / ("a" * 32) / "output" / item.signal_id
+        prediction_root = (
+            instance.base / "online-research/control/predictions" / model.signal_id / "output"
+        )
+        prediction_root /= model.signal_id
+        service.write_json_atomic(
+            signal_root / "manifest.json",
+            signed({**AUTHORITY, "bindings": {"data_event_id": "e" * 64}}),
+        )
+&gt;       service.write_json_atomic(
+            prediction_root / "manifest.json",
+            signed(
+                {
+                    **AUTHORITY,
+                    "bindings": {
+                        "data_event_id": "e" * 64,
+                        "approval_sha256": approval["evidence_sha256"],
+                    },
+                }
+            ),
+        )
+
+tests\test_forward_service.py:462: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_forward_service.py:67: in atomic
+    path.parent.mkdir(parents=True, exist_ok=True)
+C:\Python314\Lib\pathlib\__init__.py:1016: in mkdir
+    self.mkdir(mode, parents=False, exist_ok=exist_ok)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-660/test_discovery_reports_missing0/base...999999999999999999999999999999999999999999999/output/9999999999999999999999999999999999999999999999999999999999999999')
+mode = 511, parents = False, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\panxy1019\\AppData\\Local\\Temp\\pytest-of-panxy1019\\pytest-660\\test_discovery_reports_missing0\\base\\online-research\\control\\predictions\\9999999999999999999999999999999999999999999999999999999999999999\\output\\9999999999999999999999999999999999999999999999999999999999999999'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.test_forward_service" name="test_invalid_book_does_not_prevent_other_books_restoring" time="0.057" /><testcase classname="tests.test_forward_service" name="test_diagnostics_do_not_persist_exception_messages" time="0.010" /><testcase classname="tests.test_forward_service" name="test_observation_rejects_any_rollback_after_frozen_epoch" time="0.026" /><testcase classname="tests.test_forward_service" name="test_observation_allows_only_verified_descendant_data" time="0.048" /><testcase classname="tests.test_forward_service" name="test_explicit_recovery_prepare_does_not_open_or_recover_book_then_live_consumes_once" time="0.063" /><testcase classname="tests.test_forward_service" name="test_invalid_recovery_request_is_rejected_and_never_replayed[expired]" time="0.052" /><testcase classname="tests.test_forward_service" name="test_invalid_recovery_request_is_rejected_and_never_replayed[future]" time="0.056" /><testcase classname="tests.test_forward_service" name="test_invalid_recovery_request_is_rejected_and_never_replayed[wrong_book]" time="0.056" /><testcase classname="tests.test_forward_service" name="test_invalid_recovery_request_is_rejected_and_never_replayed[shadow]" time="0.054" /><testcase classname="tests.test_forward_service" name="test_invalid_recovery_request_is_rejected_and_never_replayed[old_instance]" time="0.057" /><testcase classname="tests.test_forward_service" name="test_invalid_recovery_request_is_rejected_and_never_replayed[extra]" time="0.063" /><testcase classname="tests.test_forward_service" name="test_invalid_recovery_request_is_rejected_and_never_replayed[long_ttl]" time="0.077" /><testcase classname="tests.test_forward_service" name="test_invalid_recovery_request_is_rejected_and_never_replayed[actor]" time="0.069" /><testcase classname="tests.test_forward_service" name="test_prepare_rejects_nonpaper_and_stale_service_without_writing_request" time="0.065" /><testcase classname="tests.test_forward_service" name="test_recovery_requires_exact_authority_values_and_types[live_trading_enabled-0]" time="0.058" /><testcase classname="tests.test_forward_service" name="test_recovery_requires_exact_authority_values_and_types[external_order_transmission-0.0]" time="0.059" /><testcase classname="tests.test_forward_service" name="test_recovery_requires_exact_authority_values_and_types[point_in_time-0]" time="0.061" /><testcase classname="tests.test_forward_service" name="test_recovery_requires_exact_authority_values_and_types[real_data_paper_readiness-True]" time="0.064" /><testcase classname="tests.test_forward_service" name="test_recovery_requires_exact_authority_values_and_types[classification-TRADE_READY]" time="0.064" /><testcase classname="tests.test_forward_service" name="test_recovery_failure_is_durable_halted_and_not_retried" time="0.057" /><testcase classname="tests.test_forward_service" name="test_crash_after_consume_never_retries_in_live_or_restarted_service" time="0.065" /><testcase classname="tests.test_forward_service" name="test_unconsumed_request_cannot_recover_a_restarted_service" time="0.060" /><testcase classname="tests.test_forward_service" name="test_recovery_prepare_cli_only_writes_request" time="0.057" /><testcase classname="tests.test_forward_service" name="test_live_explicit_recovery_runs_real_reconciliation_and_preserves_pending_gate" time="0.132" /><testcase classname="tests.test_forward_service" name="test_later_proposal_keeps_first_admitted_execution_slot[revision-SHADOW]" time="0.077" /><testcase classname="tests.test_forward_service" name="test_later_proposal_keeps_first_admitted_execution_slot[revision-PAPER]" time="0.089" /><testcase classname="tests.test_forward_service" name="test_later_proposal_keeps_first_admitted_execution_slot[signal-SHADOW]" time="0.070" /><testcase classname="tests.test_forward_service" name="test_later_proposal_keeps_first_admitted_execution_slot[signal-PAPER]" time="0.071" /><testcase classname="tests.test_forward_service" name="test_later_proposal_keeps_first_admitted_execution_slot[weights-SHADOW]" time="0.076" /><testcase classname="tests.test_forward_service" name="test_later_proposal_keeps_first_admitted_execution_slot[weights-PAPER]" time="0.079" /><testcase classname="tests.test_forward_service" name="test_conflicting_slot_cannot_hide_an_unverifiable_first_target[missing_admission]" time="0.072" /><testcase classname="tests.test_forward_service" name="test_conflicting_slot_cannot_hide_an_unverifiable_first_target[target_id]" time="0.060" /><testcase classname="tests.test_forward_service" name="test_conflicting_slot_cannot_hide_an_unverifiable_first_target[admission_target]" time="0.062" /></testsuite></testsuites>

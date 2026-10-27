@@ -1,6 +1,28 @@
 # Current state
 
-Last updated: 2026-10-27 23:04 Shanghai, sealed real experiments and fresh private C.
+Last updated: 2026-10-27 23:31 Shanghai, production C and authorized new PAPER recovery.
+
+- PR33 merged as main4b86145; actual production deployment matches. Actual public
+  C passes at23:13 for ACTIVE29589b44/source096 prediction and signals, separately
+  from the private replay. Another full1500 public probe is FRESH_TRANSPORT with
+  day1497/min1496 coverage; partial coverage remains partial.
+- Explicit user reply to the named new-PAPER recovery request authorizes one
+  recovery for137ff4cd. Request9ea34599 is consumed once and SUCCEEDED23:15:08,
+  with reconciliation and SYSTEM_START audit proof; original owner175982 stays
+  alive and original consumed authorization is not reused. No future session or
+  fill exists. Actual23:27 public capture observes the new PAPER running.
+- Current forward publication is nevertheless DEGRADED:12 registration errors
+  arise when fresh proposals collide with the first frozen execution slot.
+  Keep all14 books, frozen targets/admissions and earlier public failures.
+  A narrow first-admission retention fix plus real SQLite regressions passes150
+  related Windows cases, Ruff and scoped mypy. It is NOT deployed. Original
+  forward sourcee107/owner175982 remains unchanged; an owner change is not implied
+  by the new account's recovery authorization.
+- Whole STEP1 remains unaccepted: future October28 observations, retained model
+  book lifecycle/coverage and complete browser entry checks still need evidence.
+  STEP2 waits; LIVE false, rolling OFF and all resource budgets remain unchanged.
+
+Previous23:04 checkpoint (historical observations):
 
 - Corrective source 096387b is deployed to workflow PID338258 only. Exact 580
   execution files verify; 320 actual Linux cases pass without skips. Data stays

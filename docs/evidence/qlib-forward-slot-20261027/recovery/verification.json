@@ -1,0 +1,46 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "ACTUAL_NEW_PAPER_RECOVERY_AFTER_EXPLICIT_USER_REPLY",
+  "checked_at": "2026-10-27T15:16:02.773637+00:00",
+  "request_id": "9ea345992d804e16aadd570ebeef805f",
+  "book_id": "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+  "receipt": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "request_id": "9ea345992d804e16aadd570ebeef805f",
+    "request_sha256": "0a45198d07e6889516798f321a54a326e9476953f953cf3b40e1dd3e12182211",
+    "book_id": "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+    "state": "SUCCEEDED",
+    "at": "2026-10-27T15:15:08.040798+00:00",
+    "code": null,
+    "evidence_sha256": "e3d87a31154e51eefd2eeaba74ad8eb4b6e257b2ac686feeaf8457962546a4b2"
+  },
+  "runtime_state": [],
+  "latest_audit_events": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-10-27T15:15:08.036439+00:00",
+      "event_type": "SYSTEM_START",
+      "service": "control",
+      "severity": "INFO",
+      "payload": "{\"message\": \"actor=panxy1019-explicit-paper-20261027; reason=\", \"portfolio_id\": null, \"strategy_id\": null}"
+    }
+  ],
+  "fill_journal_count": 0,
+  "owner_pid_175982_unchanged": true,
+  "original_recovery_authorization_reused": false,
+  "whole_step1_accepted": false,
+  "future_session_observed": false,
+  "evidence_sha256": "cd643a16ed319af9c292ed624e3d991c26f7cee882b7ef337ddfa4b0b92d5107"
+}

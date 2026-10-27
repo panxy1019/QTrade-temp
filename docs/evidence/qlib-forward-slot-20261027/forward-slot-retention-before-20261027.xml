@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.491" timestamp="2026-10-27T23:22:32.169465+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="tests.test_forward_service" name="test_later_proposal_keeps_first_admitted_execution_slot[revision-SHADOW]" time="0.067"><failure message="sqlite3.IntegrityError: UNIQUE constraint failed: targets.execution_at">environment = &lt;function environment.&lt;locals&gt;.create at 0x000001B0FEE92610&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001B0FEEB08A0&gt;
+mode = &lt;RuntimeMode.SHADOW: 'SHADOW'&gt;, change = 'revision'
+
+    @pytest.mark.parametrize("mode", [RuntimeMode.SHADOW, RuntimeMode.PAPER])
+    @pytest.mark.parametrize("change", ["revision", "signal", "weights"])
+    def test_later_proposal_keeps_first_admitted_execution_slot(environment, monkeypatch, mode, change):
+        """Real UNIQUE execution slot: deployment must not replace a frozen target."""
+        monkeypatch.setattr(service, "ForwardPaperBook", RealBook)
+        instance = environment(modes=(mode,))
+        first = target()
+        instance.register(first, link(), now=datetime.now(UTC))
+        identity, book = next(iter(instance.books.items()))
+        admission = instance.root / identity / "admissions" / (first.identity + ".json")
+        original_admission = admission.read_bytes()
+        original_targets = book.db.execute("SELECT * FROM targets").fetchall()
+        original_link = (instance.root / identity / "archive-link.json").read_bytes()
+        if change == "revision":
+            proposed = replace(first, source_revision="f" * 40)
+        elif change == "signal":
+            proposed = replace(first, signal_id="f" * 64)
+        else:
+            proposed = replace(first, weights={"SH600036": Decimal(".4")})
+        proposed_link = {**link(), "artifact_id": proposed.signal_id, "manifest_sha256": "f" * 64}
+&gt;       instance.register(proposed, proposed_link, now=datetime.now(UTC))
+
+tests\test_forward_service.py:944: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+scripts\run_qlib_forward_service.py:314: in register
+    book.freeze(target, now=max(now, datetime.now(UTC)))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;qtrade.research.forward_paper.ForwardPaperBook object at 0x000001B0FEDE6BA0&gt;
+target = ForwardTarget(strategy_id='momentum20', signal_id='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', ...5, 22, 32, 484908, tzinfo=datetime.timezone.utc), weights={'SH600036': Decimal('0.5')}, limitations=('Research only',))
+now = datetime.datetime(2026, 10, 27, 15, 22, 32, 541369, tzinfo=datetime.timezone.utc)
+
+    def freeze(self, target: ForwardTarget, *, now: datetime | None = None) -&gt; str:
+        stamp = now or datetime.now(UTC)
+        _time(stamp)
+        identity = target.identity
+        if target.strategy_id != self.strategy_id:
+            raise ValueError("strategy mismatch")
+        with self._lock:
+            existing = self.db.execute(
+                "SELECT payload FROM targets WHERE id=?", (identity,)
+            ).fetchone()
+            if existing:
+                return identity
+            if not target.generated_at &lt;= stamp &lt; target.execution_at:
+                raise ValueError("target must be frozen prospectively before execution")
+&gt;           self.db.execute(
+                "INSERT INTO targets VALUES (?, ?, ?, ?)",
+                (
+                    identity,
+                    target.execution_at.isoformat(),
+                    _json(asdict(target)),
+                    stamp.isoformat(),
+                ),
+            )
+E           sqlite3.IntegrityError: UNIQUE constraint failed: targets.execution_at
+
+src\qtrade\research\forward_paper.py:254: IntegrityError</failure></testcase></testsuite></testsuites>

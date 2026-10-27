@@ -3979,3 +3979,29 @@ spec/revision/version conflicts and the legacy case. New real jobs are required
 after reviewed Linux verification and deployment; successful restore alone is
 not a sealed experiment or proof of alpha.
 
+## ADR-196 — First admitted execution target survives later research proposals
+
+Status: implemented and Windows verified; isolated Linux/copy replay pending,
+2026-10-27. Not deployed to the original forward owner.
+
+After a new workflow revision emits fresh signal identities, the real persistent
+book rejects a second target at the same execution_at with a UNIQUE violation.
+The old test substitute omitted that constraint. Keep the real constraint and
+align the substitute, then test with real ForwardPaperBook in PAPER and SHADOW.
+The first admitted slot is immutable: do not delete its target, rewrite its
+admission or relabel its archive/source to match a newer proposal.
+
+Under the existing data/model ledger guard, verify the first target identity,
+signed admission, original data epoch/current approval and prospective clock.
+Archive the later full proposal and disposition as an immutable signed receipt,
+explicitly not admitted. Bound receipts to256 per book and fail closed on missing
+or changed admission, changed receipt/context or elapsed execution clock. Retry
+must preserve original bytes, sessions and fill journal. Retained proposals do
+not grant recovery, enable live trading or supply a future observation.
+
+User's concrete new-account approval is separately consumed once by137ff4cd at
+23:15:08 with successful reconciliation, original owner175982 unchanged. It is
+not permission to rewrite a frozen slot or reuse the original consumed recovery.
+Deployment must preserve the original-owner constraint or obtain a specific
+reviewable handover decision; no in-memory patch or falsely labelled revision.
+

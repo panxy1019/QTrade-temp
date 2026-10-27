@@ -12,6 +12,7 @@ import signal
 import sqlite3
 import sys
 from collections.abc import Iterator
+from dataclasses import asdict
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -44,6 +45,7 @@ LIMITATIONS = [
     "Unknown ST, suspension, limits and corporate actions block simulated orders.",
     "PAPER restarts require explicit human reconciliation; SHADOW has no fills or returns.",
     "Current universe has survivor bias; historical PIT and available_at remain uncertified.",
+    "Each execution slot retains its first admitted target; later proposals are not executed.",
 ]
 RECOVERY_SCHEMA = "qtrade.forward-recovery-request.v1"
 
@@ -305,6 +307,15 @@ class ForwardService:
             ).fetchone()
             with context_guard(self.data_database, self.model_database):
                 self.check_context(target, link)
+                slot = book.db.execute(
+                    "SELECT id,payload FROM targets WHERE execution_at=?",
+                    (target.execution_at.isoformat(),),
+                ).fetchall()
+                if len(slot) > 1:
+                    raise ValueError("FORWARD_SERVICE_FROZEN_SLOT_AMBIGUOUS")
+                if slot and slot[0][0] != target.identity:
+                    self.retain_frozen_slot(identity, target, link, slot[0], now=now)
+                    continue
                 if already_frozen:
                     if not admission.exists():
                         raise ValueError("FORWARD_SERVICE_ADMISSION_RECONCILIATION_REQUIRED")
@@ -329,6 +340,47 @@ class ForwardService:
             write_json_atomic(
                 self.root / identity / "archive-link.json", signed({**AUTHORITY, "archive": link})
             )
+
+    def retain_frozen_slot(
+        self, identity: str, proposed: ForwardTarget, link: dict[str, Any],
+        slot: tuple[str, str], *, now: datetime,
+    ) -> None:
+        """Keep a verified first admission; never replace it with a later proposal."""
+        frozen = load_target(json.loads(slot[1]))
+        if (slot[0] != frozen.identity or frozen.strategy_id != proposed.strategy_id
+                or frozen.execution_at != proposed.execution_at):
+            raise ValueError("FORWARD_SERVICE_FROZEN_SLOT_IDENTITY_CHANGED")
+        admission = self.root / identity / "admissions" / (frozen.identity + ".json")
+        if not admission.is_file():
+            raise ValueError("FORWARD_SERVICE_FROZEN_ADMISSION_MISSING")
+        proof = load(admission)
+        if proof["target_id"] != frozen.identity:
+            raise ValueError("FORWARD_SERVICE_FROZEN_ADMISSION_CHANGED")
+        admitted = datetime.fromisoformat(proof["verified_at"])
+        if (now.tzinfo is None or admitted.tzinfo is None
+                or not frozen.generated_at <= admitted <= now < frozen.execution_at
+                or not proposed.generated_at <= now):
+            raise ValueError("FORWARD_SERVICE_FROZEN_SLOT_CLOCK_INVALID")
+        self.check_context(frozen, proof["archive"])
+        body = {
+            **AUTHORITY, "kind": "FORWARD_EXECUTION_SLOT_PROPOSAL_DISPOSITION",
+            "state": "RETAINED_FIRST_ADMITTED_EXECUTION_TARGET", "book_id": identity,
+            "execution_at": frozen.execution_at.isoformat(),
+            "frozen_target_id": frozen.identity,
+            "frozen_admission_sha256": proof["evidence_sha256"],
+            "proposed_target_id": proposed.identity,
+            "proposed_target": json.loads(json.dumps(asdict(proposed), default=str)),
+            "proposed_archive": link, "proposal_admitted": False,
+        }
+        path = self.root / identity / "rejected-targets" / (proposed.identity + ".json")
+        if path.exists():
+            prior = load(path)
+            if signed({**body, "observed_at": prior["observed_at"]}) != prior:
+                raise ValueError("FORWARD_SERVICE_FROZEN_PROPOSAL_RECEIPT_CHANGED")
+        else:
+            if len(list(path.parent.glob("*.json"))) >= 256:
+                raise ValueError("FORWARD_SERVICE_FROZEN_PROPOSAL_RECEIPT_BOUND")
+            write_json_immutable(path, signed({**body, "observed_at": now.isoformat()}))
 
     def check_context(self, target: ForwardTarget, link: dict[str, Any]) -> None:
         if current_epoch(self.data_database, target.data_version) != link["data_event_id"]:

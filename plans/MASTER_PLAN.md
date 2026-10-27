@@ -24,6 +24,19 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+23:31 checkpoint: PR33 merged4b86145 is actual production; fresh actual public C
+passes23:13 and full1500 delivery stays fresh/partially covered1497/1496. The user
+explicitly approves the named new-PAPER recovery. One request9ea34599 succeeds
+23:15:08 after reconciliation without restarting owner175982 or reusing an old
+claim. Public23:27 confirms running, but14-book forward state is DEGRADED from12
+same-execution-slot UNIQUE collisions. Retain original frozen identities. A
+narrow first-admission retention fix passes150 related Windows cases plus lint
+and scoped types; isolated Linux/current-book-copy verification is pending. Do
+not deploy into or restart original owner under the new account recovery scope.
+Keep old retired books visible and separately define their lifecycle audit;
+never silently filter a14-book roster into a passing12-book result. October28
+real observations remain prospective. Whole STEP1/STEP2 remain incomplete.
+
 23:04 checkpoint: narrow096387b runner correction passes320 actual Linux cases
 and is deployed only to workflow338258. Both new API-bound experiments really
 COMPLETE; independent replay checks12,924 files each, fitted restore and exact

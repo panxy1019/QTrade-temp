@@ -1,0 +1,32 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "authorization_sha256": "8d1d0e746904526771f259ed4a19d699f734276daafd0c0aa5d83068be4097b4",
+  "args": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-B",
+    "-m",
+    "scripts.run_qlib_forward_service",
+    "--local-root",
+    "/root/qtrade-local/forward-research",
+    "--prepare-recovery-book",
+    "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+    "--recovery-actor",
+    "panxy1019-explicit-paper-20261027",
+    "--recovery-request-id",
+    "9ea345992d804e16aadd570ebeef805f"
+  ],
+  "returncode": 0,
+  "issued_at": "2026-10-27T15:15:05.978139+00:00",
+  "finished_at": "2026-10-27T15:15:06.509540+00:00",
+  "request_id": "9ea345992d804e16aadd570ebeef805f",
+  "book_id": "137ff4cdfc5c201ff2f733893073fff2beda156156ae5f39b45245a9692e9ac0",
+  "owner_not_restarted": true,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "7f8e92d37f14b02a195f8456cb934ae8b9313fa8da5a0ea8e0edf2b681fc92a1"
+}
