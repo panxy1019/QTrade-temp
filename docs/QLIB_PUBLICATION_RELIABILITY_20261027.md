@@ -56,6 +56,8 @@ python -m pytest tests/test_probe_unified_publication.py tests/test_qlib_public_
 
 仅允许固定 HTTPS 来源及 GET，限制响应大小、请求数量和总耗时，拒绝跳转、压缩/长度异常、身份漂移、校验错误，以及声明实盘或晋级权限的发布物。报告保留实际捕获时钟、大小、哈希和校验身份；不重复存储完整目录正文，是紧凑抽查凭证。新鲜有效结果退出 0；有效但过期结果保存为过期并退出 2；完整性、传输或版本漂移退出 1，不创建通过凭证。版本在读取期间变化时应重新检查当前部署并重试，不能使用旧数据兜底。
 
+固定不可变 commit 的 raw 目录、索引和样本碎片请求支持 `gzip, identity`，API 请求继续使用 `identity`。传输字节与解压后的原始 Git 文件字节各自受同一资源大小上限约束；流式解压限制单次输出分配，并在每次读取、解压及 EOF 后检查原总截止时钟。拒绝截断、尾随数据、多个 gzip member、未知编码、校验失败和传输 Content-Length 不符。报告新增 `transport_body_bytes`、`content_encoding`；原 `body_bytes`、`body_sha256` 和目录 Git blob 身份仍绑定精确解压字节。180 秒总探针预算、25 请求、48 MB 累计解压捕获量及 180/1,200 秒新鲜度阈值不变；此支持本身不代表新的生产性能验收。
+
 12:53 的[真实公网抽查](evidence/qlib-publication-live-probe-4cee136-20261027.json)固定生产 `4cee136`，索引和目录年龄分别为 119.071 / 123.200 秒，均通过原新鲜度门限。覆盖仍为 `PARTIAL`，且已知缺口与无数据样本如实返回。该工具及既有公开交付校验在真实 Linux `34bba7c` 上 [95 项通过、无跳过](evidence/qlib-publication-probe-linux-34bba7c.xml)。[汇总凭证](evidence/qlib-publication-rollout-20261027.json)记录各独立证据的原字节哈希，保留早先的失败凭证。
 
 ## 仍需独立验收

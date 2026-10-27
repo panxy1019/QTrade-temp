@@ -1,3 +1,4 @@
+import gzip
 import json
 import os
 import subprocess
@@ -506,9 +507,169 @@ def test_fixed_commit_get_never_uses_rest_or_unpinned_main(monkeypatch, resource
         assert 'version='+'a'*64 in request.full_url
     assert 'api.github.com' not in request.full_url and '/main/' not in request.full_url
     assert request.get_header('Accept') == 'application/json'
+    assert request.get_header('Accept-encoding') == (
+        'identity' if resource.startswith('bars:') else 'gzip, identity')
     assert request.get_method() == 'GET' and request.data is None
     assert not {'authorization', 'cookie'} & {key.lower() for key in request.headers}
     assert result['body_sha256'] == sha256(b'{ "x": 1 }\n').hexdigest()
+
+
+@pytest.mark.parametrize('resource', ['catalog', 'index', 'shard:'+'a'*64])
+@pytest.mark.parametrize('encoding', ['gzip', 'identity'])
+def test_fixed_raw_gzip_preserves_exact_decoded_git_bytes(monkeypatch, resource, encoding):
+    raw = ('{ "x": "'+('行情'*1000)+'" }\n').encode()
+    wire = gzip.compress(raw, mtime=0) if encoding == 'gzip' else raw
+    calls = []
+    def open_response(request, **kwargs):
+        calls.append(request)
+        response = TransportResponse(wire, url=request.full_url, headers={
+            'Content-Type': 'text/plain', 'Content-Encoding': encoding,
+            'Content-Length': str(len(wire))})
+        read = response.read1
+        response.read1 = lambda size: read(min(size, 7))
+        return response
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=open_response))
+    result = module._get(resource, module.time.monotonic()+30, publication_revision=COMMIT)
+    assert calls[0].get_header('Accept-encoding') == 'gzip, identity'
+    assert result['body_utf8'].encode() == raw
+    assert result['body_bytes'] == len(raw)
+    assert result['body_sha256'] == sha256(raw).hexdigest()
+    assert result['transport_body_bytes'] == len(wire)
+    assert result['content_encoding'] == encoding
+
+
+@pytest.mark.parametrize('damage', [
+    'bomb', 'wire_bound', 'header_bound', 'truncated', 'trailer_missing', 'trailing',
+    'member', 'corrupt', 'unknown_encoding', 'stacked_encoding', 'wrong_length',
+])
+def test_fixed_raw_gzip_rejects_invalid_or_unbounded_streams(monkeypatch, damage):
+    bound = 128
+    raw = b'{"x":"'+b'a'*32+b'"}'
+    wire = gzip.compress(raw, mtime=0)
+    headers = {'Content-Type': 'application/json', 'Content-Encoding': 'gzip'}
+    if damage == 'bomb':
+        wire = gzip.compress(b'{"x":"'+b'a'*10000+b'"}', mtime=0)
+        assert len(wire) < bound  # The decoded bound must reject this independently.
+    elif damage == 'wire_bound':
+        # A valid oversized gzip header must hit the transport bound even with tiny output.
+        wire = wire[:3]+bytes([wire[3] | 8])+wire[4:10]+b'n'*200+b'\0'+wire[10:]
+    elif damage == 'header_bound':
+        headers['Content-Length'] = str(bound+1)
+    elif damage == 'truncated':
+        wire = wire[:12]
+    elif damage == 'trailer_missing':
+        wire = wire[:-1]
+    elif damage == 'trailing':
+        wire += b'x'
+    elif damage == 'member':
+        wire += gzip.compress(b'{}', mtime=0)
+    elif damage == 'corrupt':
+        wire = wire[:-8]+b'bad!'+wire[-4:]
+    elif damage == 'unknown_encoding':
+        headers['Content-Encoding'] = 'br'
+    elif damage == 'stacked_encoding':
+        headers['Content-Encoding'] = 'gzip, identity'
+    elif damage == 'wrong_length':
+        headers['Content-Length'] = str(len(wire)-1)
+    monkeypatch.setattr(module, 'CATALOG_LIMIT', bound)
+    def open_response(request, **kwargs):
+        return TransportResponse(wire, url=request.full_url, headers=headers)
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=open_response))
+    with pytest.raises(ValueError, match='UNIFIED_PROBE_HTTP_'):
+        module._get('catalog', module.time.monotonic()+30, publication_revision=COMMIT)
+
+
+@pytest.mark.parametrize('extra', [0, 1])
+def test_gzip_decoded_bound_accepts_exact_limit_and_rejects_next_byte(monkeypatch, extra):
+    raw = b'{"x":"'+b'a'*(120+extra)+b'"}'
+    assert len(raw) == 128+extra
+    wire = gzip.compress(raw, mtime=0)
+    monkeypatch.setattr(module, 'CATALOG_LIMIT', 128)
+    def open_response(request, **kwargs):
+        return TransportResponse(wire, url=request.full_url, headers={
+            'Content-Type': 'text/plain', 'Content-Encoding': 'gzip',
+            'Content-Length': str(len(wire))})
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=open_response))
+    if extra:
+        with pytest.raises(ValueError, match='HTTP_BODY_BOUND_INVALID'):
+            module._get('catalog', module.time.monotonic()+30, publication_revision=COMMIT)
+    else:
+        result = module._get('catalog', module.time.monotonic()+30, publication_revision=COMMIT)
+        assert result['body_utf8'].encode() == raw
+        assert result['body_bytes'] == 128 and result['transport_body_bytes'] == len(wire)
+
+
+@pytest.mark.parametrize('tail', [b'x', gzip.compress(b'{}', mtime=0)])
+def test_gzip_trailing_data_in_later_read_is_rejected(monkeypatch, tail):
+    wire = gzip.compress(b'{}', mtime=0)
+    def open_response(request, **kwargs):
+        response = TransportResponse(wire+tail, url=request.full_url,
+            headers={'Content-Type': 'text/plain', 'Content-Encoding': 'gzip'})
+        read = response.read1
+        response.read1 = lambda size: read(min(size, len(wire)))
+        return response
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=open_response))
+    with pytest.raises(ValueError, match='HTTP_GZIP_TRAILING_DATA'):
+        module._get('index', module.time.monotonic()+30, publication_revision=COMMIT)
+
+
+@pytest.mark.parametrize('late', ['decompress', 'data', 'eof'])
+def test_gzip_deadline_is_checked_after_decode_and_final_reads(monkeypatch, late):
+    clock = [0.0]
+    wire = gzip.compress(b'{}', mtime=0)
+    original = module.zlib.decompressobj
+    class Decoder:
+        def __init__(self, *args):
+            self.decoder = original(*args)
+        def __getattr__(self, name):
+            return getattr(self.decoder, name)
+        def decompress(self, *args):
+            result = self.decoder.decompress(*args)
+            if late == 'decompress':
+                clock[0] = 9.0
+            return result
+    def open_response(request, **kwargs):
+        response = TransportResponse(wire, url=request.full_url,
+            headers={'Content-Type': 'text/plain', 'Content-Encoding': 'gzip'})
+        read = response.read1
+        def read1(size):
+            result = read(size)
+            if late == ('data' if result else 'eof'):
+                clock[0] = 9.0
+            return result
+        response.read1 = read1
+        return response
+    monkeypatch.setattr(module.zlib, 'decompressobj', Decoder)
+    monkeypatch.setattr(module.time, 'monotonic', lambda: clock[0])
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=open_response))
+    with pytest.raises(ValueError, match='HTTP_DEADLINE_EXCEEDED'):
+        module._get('index', 8.0, publication_revision=COMMIT)
+
+
+def test_full_probe_gzip_raw_reads_keep_original_catalog_and_shard_identities(runtime, monkeypatch):
+    original = runtime.transport
+    def open_response(request, **kwargs):
+        prefix = module.RAW+COMMIT+'/'
+        assert request.full_url.startswith(prefix)
+        name = request.full_url[len(prefix):]
+        resource = ('catalog' if name == 'unified.json' else 'index'
+                    if name == 'unified-market.json' else 'shard:'+name.split('/')[-1][:-5])
+        capture = original(resource, module.time.monotonic()+30, None, COMMIT)
+        wire = gzip.compress(capture['body_utf8'].encode(), mtime=0)
+        return TransportResponse(wire, url=request.full_url, headers={
+            'Content-Type': 'text/plain', 'Content-Encoding': 'gzip',
+            'Content-Length': str(len(wire))})
+    monkeypatch.setattr(module, 'build_opener', lambda *_: SimpleNamespace(open=open_response))
+    def transport(resource, deadline, version, publication_revision):
+        if resource in {'catalog', 'index'} or resource.startswith('shard:'):
+            return module._get(resource, deadline, version, publication_revision)
+        return original(resource, deadline, version, publication_revision)
+    result = module.probe(REVISION, runtime.report, _transport=transport)
+    assert result['state'] == 'FRESH_TRANSPORT'
+    assert result['sample_series_integrity_verified'] is True
+    compressed = [row for row in result['responses'] if row.get('content_encoding') == 'gzip']
+    assert len(compressed) == 5
+    assert all(row['transport_body_bytes'] < row['body_bytes'] for row in compressed)
 
 
 @pytest.mark.parametrize('damage', ['403', '429', '404', 'network', 'wrong_vendor_media', 'html',
