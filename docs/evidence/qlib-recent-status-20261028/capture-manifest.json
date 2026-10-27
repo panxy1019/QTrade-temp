@@ -1,0 +1,35 @@
+{
+  "business_database_or_dataset_written": false,
+  "files": {
+    "002827.json": {
+      "bytes": 1738,
+      "sha256": "fb1167b12fb71760a4122311b9406fc6b3d4bc8bdac9f655dbb91ee1b26cca16"
+    },
+    "600621.json": {
+      "bytes": 1738,
+      "sha256": "5953a9d145002577a634eef66ad706ee50186497ee9ab2e7923c11a8b81f04b3"
+    },
+    "605258.json": {
+      "bytes": 1738,
+      "sha256": "b98cae03fbaba3c720468fb63d3df7062420f9da748656443b97877758bd12ce"
+    },
+    "operator-source.py": {
+      "bytes": 4903,
+      "sha256": "26418daa41c2d9403cb5e4ff2c6d2bbf453b253d13623456acba20470049bc54"
+    },
+    "source-verification.json": {
+      "bytes": 566,
+      "sha256": "655c0158f3b70b6392463fb37e5b7d8d47abbd79c5f3c673105926b551c653b7"
+    },
+    "verification.json": {
+      "bytes": 5107,
+      "sha256": "8bf18156013c8b4798c0014cc83535a92b39faa5cf141a0a5c39c9e0f416c188"
+    }
+  },
+  "historical_pit_certified": false,
+  "raw_transport_bytes_captured": false,
+  "sdk_rows_verified": 6,
+  "source_files_git_verified": 4,
+  "transport_sha256": "7c068929361ce0ec071c98c61c7cbbd4a102d3e664569cda71c1c316a9c9c53a",
+  "whole_step1_accepted": false
+}

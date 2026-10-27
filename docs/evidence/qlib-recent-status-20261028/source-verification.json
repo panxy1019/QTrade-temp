@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-27T21:49:38.312811+00:00",
+  "files": {
+    "configs/observer_calendar_2026.json": "065c0c1a0411a730fa5e1f4f56b14d6c3074883f3aaae5fd989bbdf5f7f675a4",
+    "scripts/collect_pit_evidence.py": "8b42dde6607265b4182652f3484004b042e28d0727da6c1222ea4c1844d5ad59",
+    "scripts/vendor_session.py": "5d066a688767e39fddab6812c4c9a9e02c148c34916f41f343ae563672d4d3b3",
+    "src/qtrade/research/pit_quality.py": "c7b929913b68ce0272ca2b7fdec544e537a29c9be79084cfb7ffbdb9c8921a15"
+  },
+  "source_revision": "9846a7f30774d6ae4b4d41f02b493c5246be87d9"
+}

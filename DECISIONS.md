@@ -4097,3 +4097,22 @@ instants in the corrected operator, without rewriting any original timestamp.
 All14 book fingerprints, current approval/data epoch, instance and tracked owners
 remain unchanged in the actual02:17 check. STEP1 and browser gates remain open.
 
+## ADR-199 — Recent vendor observations cannot rewrite frozen historical knowledge
+
+Status: bounded six-row observation captured05:44 October28; no runtime admission changed.
+
+The historical PIT collector intentionally reads a fixed dataset endingOctober23.
+Master refresh and historical checkpoint validation do not extend that status
+window. A separate bounded anonymous BaoStock query returnsOctober26/27 rows for
+the3 missing stocks, with vendor tradestatus=0,isST=0. Preserve these SDK-decoded
+observations with their actualOctober28 capture time and source/version; they
+are neither raw socket captures nor independent exchange/PIT certification.
+
+Keep historical_available_at null and certified_at_decision false. Never backdate
+the observations, rewrite original failed Sina receipts, fill price bars, or grant
+new model/PAPER authority. Original historical files remain byte-identical. Reuse
+the existing nonblocking vendor-session lease and content-quality checks rather
+than introducing concurrent uncoordinated vendor access. A continuous current
+status window needs its own versioned observations/schedule and remains future
+work; this one-off evidence capture does not implement it or finish STEP1.
+

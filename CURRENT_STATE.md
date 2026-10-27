@@ -1,6 +1,29 @@
 # Current state
 
-Last updated: 2026-10-28 02:46 Shanghai, actual automatic retry observed and replayed.
+Last updated: 2026-10-28 05:58 Shanghai, recent vendor status and pre-open transport checked.
+
+- Actual05:44 bounded anonymous BaoStock read obtains6 rows for3 missing stocks
+  onOctober26/27: tradestatus=0,isST=0. It is a vendor-reported status observation
+  capturedOctober28, not decision-time PIT or exchange certification. SDK0.9.3,
+  six payloads/four Git9846 reader sources verify on Windows. No dataset/admission,
+  model, queue or PAPER mutation; old historical status files remain byte-identical.
+- The existing PIT collector's fixed input really endsOctober23. A newly observed
+  master does not make its990 cached status histories current throughOctober27.
+  Recent observations remain separate; a current-window incremental status feed
+  is still future engineering, not implemented by this one-off read.
+- Four observed close-heartbeat notifications arrivedShanghai02:55-05:41 before
+  the intended window. Replace the ambiguous schedule on the same automation with
+  explicitUTC DTSTART forOctober28 08:40, hourly/eight occurrences, corresponding
+  toShanghai16:40-23:40. Tool update/persisted file match; actual corrected firing
+  is still prospective. Keep early queued callbacks quiet and delete after the
+  finite window/end without calling an unmet gate complete.
+- Actual05:56 production market probe passesFRESH_TRANSPORT onmainae33/public
+  e9cdf8ed: all1500 identities/3000entries and5 fixed series checked. Index/catalog
+  ages114.50/128.93s; stillday1497/min1496 PARTIAL. Compact probe is not a full raw
+  HTTP replay bundle or completed CDE/visual acceptance. Actual05:55 owner handles,
+  forward instance and ACTIVE295/head09a stay; no pending job,free271.40GiB.
+
+Previous2026-10-28 02:46 checkpoint (historical observations):
 
 - Specific002827/5min retry advances11→12 automatically under live maintenance
   owner213587. Due02:43:53, claimed02:44:14, COMPLETE batch02:44:15; queue outcome

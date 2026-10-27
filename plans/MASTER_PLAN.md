@@ -24,6 +24,17 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 05:58 checkpoint: six post-hoc BaoStock status rows for the3 missing
+stocks onOctober26/27 are captured05:44, vendor flags0/0. Old990 PIT backfill is
+fixed throughOctober23, not today's status feed. Preserve old files and observed
+availability; no new dataset, execution admission or current-status service is
+claimed. Six payloads/four Git sources replay on Windows. Correct the mis-timed
+same-chat close follow-up using an explicitUTC future anchor for16:40-23:40
+Shanghai/eight occurrences; real corrected firing remains unverified. Actual
+05:56 public market probe is fresh onmainae33/publice9cdf8ed,1500/3000 identities
+and5 fixed series; underlyingday1497/min1496 remains PARTIAL. Existing owner
+handles/ACTIVE/head unchanged05:55, no pending job; future close/browser gates stay.
+
 October28 02:46 checkpoint: verified automatic collection retry on the live owner,
 not just a state file.002827/5min advances11→12, claimed21s after its02:43:53 due
 time and completes02:44:15. Fresh captured source still endsOctober23, so task

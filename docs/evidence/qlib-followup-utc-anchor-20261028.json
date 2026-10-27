@@ -1,0 +1,57 @@
+{
+  "kind": "BOUNDED_CLOSE_FOLLOWUP_EXPLICIT_UTC_ANCHOR",
+  "checked_at_utc": "2026-10-27 21:50:35 UTC",
+  "automation_id": "qtrade-10-28",
+  "status": "ACTIVE",
+  "updated_at_unix_ms": 1793137555225,
+  "intended_display_timezone": "Asia/Shanghai",
+  "local_windows_timezone_observed": "China Standard Time",
+  "target_thread_unchanged": true,
+  "explicit_utc_start_persisted": true,
+  "maximum_close_checks": 8,
+  "planned_occurrences": [
+    {
+      "utc": "2026-10-28T08:40:00.000Z",
+      "shanghai": "2026-10-28T16:40:00.000+08:00"
+    },
+    {
+      "utc": "2026-10-28T09:40:00.000Z",
+      "shanghai": "2026-10-28T17:40:00.000+08:00"
+    },
+    {
+      "utc": "2026-10-28T10:40:00.000Z",
+      "shanghai": "2026-10-28T18:40:00.000+08:00"
+    },
+    {
+      "utc": "2026-10-28T11:40:00.000Z",
+      "shanghai": "2026-10-28T19:40:00.000+08:00"
+    },
+    {
+      "utc": "2026-10-28T12:40:00.000Z",
+      "shanghai": "2026-10-28T20:40:00.000+08:00"
+    },
+    {
+      "utc": "2026-10-28T13:40:00.000Z",
+      "shanghai": "2026-10-28T21:40:00.000+08:00"
+    },
+    {
+      "utc": "2026-10-28T14:40:00.000Z",
+      "shanghai": "2026-10-28T22:40:00.000+08:00"
+    },
+    {
+      "utc": "2026-10-28T15:40:00.000Z",
+      "shanghai": "2026-10-28T23:40:00.000+08:00"
+    }
+  ],
+  "actual_early_notifications_observed": [
+    "2026-10-27T18:55:19.693Z",
+    "2026-10-27T19:38:20.378Z",
+    "2026-10-27T20:39:23.078Z",
+    "2026-10-27T21:41:53.945Z"
+  ],
+  "observed_early_notifications_are_close_acceptance": false,
+  "old_queued_messages_must_obey_actual_clock_guard": true,
+  "corrected_invocation_delivery_verified": false,
+  "cluster_services_or_live_controls_changed": false,
+  "whole_step1_accepted": false
+}
