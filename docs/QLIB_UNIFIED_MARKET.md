@@ -132,9 +132,13 @@ before resuming. Collection and PAPER need not restart. A bootstrap success is
 not evidence that ordinary subsequent cycles meet the freshness contract.
 
 Before the first new frame using stable aliases, seed aliases from the already
-published frame in a separate Git commit/push. Keep one publication owner, verify
-the publication checkout is clean and its HEAD equals the remote branch first,
-and verify that seed reaches the remote before resuming ordinary publication.
+published frame in a separate Git commit/push. Keep one publication owner and a
+clean tracked checkout. The reviewed operator supports a bounded local history
+ahead of the remote; it retains that history and a backup ref, adds a metadata-only
+remote seed, and joins both histories with the exact latest local tree. It never
+resets, force pushes, deletes unrelated files, or restarts a service. Failed apply
+keeps its report/checkpoint and backup for inspection, with no automatic rollback.
+Verify both pushes and resume the publisher explicitly afterward.
 `seed_existing=True` reads only the existing publication index and its verified
 referenced objects. It neither exports source data nor rewrites the pointer's bytes,
 publication time or filesystem modification time, and rejects a non-null database.
@@ -150,6 +154,31 @@ print(json.dumps(publish_market_files(Path(sys.argv[1]), Path(sys.argv[2]),
                                       seed_existing=True)))
 PY
 ```
+
+For the actual dedicated Linux publication checkout, stop only
+`qtrade-research-publication`, verify Supervisor reports PID zero, then run the
+plan before apply. Use different, previously absent report paths outside the
+publication checkout. The CLI pins the existing public observation repository,
+requires branch `main`, validates the remote ancestry and pending-data bounds,
+and uses isolated Git indexes. Each bootstrap push has a 600-second bound; ordinary
+publication retains its 90-second command limit.
+
+```sh
+PYTHONPATH=src:. python -m scripts.bootstrap_public_aliases \
+  --base "$QTRADE_DATA_ROOT" --publication "$QTRADE_PUBLICATION_ROOT" \
+  --report "$QTRADE_DATA_ROOT/online-research/unified-alias-plan.json"
+PYTHONPATH=src:. python -m scripts.bootstrap_public_aliases \
+  --base "$QTRADE_DATA_ROOT" --publication "$QTRADE_PUBLICATION_ROOT" \
+  --report "$QTRADE_DATA_ROOT/online-research/unified-alias-apply.json" --apply
+```
+
+Require `state=COMPLETE` and `checkpoint=VERIFIED`, inspect the retained backup
+ref and pointer/blob identities, then deploy the alias-aware publisher and start
+only that service. Check an ordinary successful cycle and the independently
+served index/bar freshness before accepting the migration. Local real-Git tests
+exercise divergent retained history, unrelated untracked files, interruption,
+invalid destinations, symlinks, branch changes and duplicate-bootstrap rejection:
+`pytest tests/test_bootstrap_public_aliases.py`.
 
 Seeding is transport preparation, not a freshness refresh. The local thin-pack
 experiment motivating this change reduced a 1,500-symbol shared-receipt frame
