@@ -511,18 +511,23 @@ def test_git_mode_rejects_untracked_importable_python(runtime, monkeypatch):
 
 def test_every_created_directory_entry_is_flushed_before_source_work(runtime, monkeypatch):
     flushed, descriptors = [], {}
+    real_open = repair.os.open
 
-    def opened(path, flags):
+    def opened(path, flags, *args, **kwargs):
+        if args or kwargs:
+            return real_open(path, flags, *args, **kwargs)
         descriptor = len(descriptors)+10
         descriptors[descriptor] = Path(path)
         return descriptor
 
-    monkeypatch.setattr(repair.os, 'open', opened)
-    monkeypatch.setattr(repair.os, 'fsync', lambda descriptor:
-                        flushed.append(descriptors[descriptor]))
-    monkeypatch.setattr(repair.os, 'close', lambda descriptor: None)
-    monkeypatch.setattr(repair, '_durable_directory', DURABLE_DIRECTORY)
     target = runtime.root/'new/a/b'
-    DURABLE_DIRECTORY(target)
+    # Restore the global os module before TemporaryDirectory fixture teardown.
+    with monkeypatch.context() as directory_spy:
+        directory_spy.setattr(repair.os, 'open', opened)
+        directory_spy.setattr(repair.os, 'fsync', lambda descriptor:
+                              flushed.append(descriptors[descriptor]))
+        directory_spy.setattr(repair.os, 'close', lambda descriptor: None)
+        directory_spy.setattr(repair, '_durable_directory', DURABLE_DIRECTORY)
+        DURABLE_DIRECTORY(target)
     assert target.is_dir()
     assert set(flushed) == {runtime.root, runtime.root/'new', runtime.root/'new/a', target}
