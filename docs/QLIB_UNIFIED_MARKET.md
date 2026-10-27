@@ -122,6 +122,11 @@ directory that holds the SQLite ledger. The existing publisher accepts optional
 database path. `--interval-seconds` accepts 60 through 300 and defaults to 300 for
 compatibility. An operator should use 60 or 120 only after measuring export/push
 cost. No private service wrapper or environment is automatically modified.
+The interval measures sequential cycle starts: export/push duration consumes the
+interval, then the publisher waits only the remaining time. A cycle exceeding its
+interval starts the next one immediately after completion. Cycles never overlap,
+starts remain at least the configured interval apart, and the first cycle is
+immediate. Failed cycles use the same cadence; `--once` never waits or retries.
 
 Publication Git commands run in a newly owned POSIX process group with the
 existing 90-second command limit. Cleanup terminates the group, waits up to two

@@ -395,6 +395,7 @@ def main() -> None:
     for sig in (signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, lambda *_: stop.set())
     while not stop.is_set():
+        cycle_started = time.monotonic()
         try:
             publish(args.root, args.experiment_root, args.publication,
                     unified_market_database=args.unified_market_database)
@@ -413,7 +414,7 @@ def main() -> None:
                 raise SystemExit(1) from None
         if args.once:
             break
-        stop.wait(args.interval_seconds)
+        stop.wait(max(0, args.interval_seconds-(time.monotonic()-cycle_started)))
 
 
 if __name__ == "__main__":
