@@ -22,7 +22,9 @@ RAW_ROOT = 'https://raw.githubusercontent.com/panxy1019/QTrade-observations/'
 REFS_LIMIT = 262_144
 LIMITS = {'unified.json': 12_000_000, 'unified-market.json': 4_000_000}
 SHARD_LIMIT = 1_000_000
-TIMEOUT = 8
+SOCKET_TIMEOUT = 8
+BODY_TIMEOUT = 8
+CATALOG_BODY_TIMEOUT = 15
 
 
 def _require(condition: bool, code: str) -> None:
@@ -64,20 +66,24 @@ def _proxy() -> ProxyHandler:
 
 def _get(url: str, limit: int, *, refs: bool = False) -> bytes:
     maximum = REFS_LIMIT if refs and url == REFS_URL else 0
+    body_timeout = BODY_TIMEOUT
     if not refs:
         match = re.fullmatch(re.escape(RAW_ROOT)+r'([a-f0-9]{40})/(unified\.json|'
             r'unified-market\.json|unified-market/objects/[a-f0-9]{64}\.json)', url)
         if match:
             validate_revision(match[1])
             maximum = LIMITS.get(match[2], SHARD_LIMIT)
+            if match[2] == 'unified.json':
+                body_timeout = CATALOG_BODY_TIMEOUT
     _require(type(limit) is int and 0 < limit <= maximum, 'PATH_OR_BOUND')
-    deadline = time.monotonic()+TIMEOUT
+    deadline = time.monotonic()+body_timeout
     request = Request(url, method='GET', headers={
         'Accept': 'application/x-git-upload-pack-advertisement' if refs else 'application/json',
         'Accept-Encoding': 'identity', 'Cache-Control': 'no-cache',
         'User-Agent': 'QTrade-readonly-unified-source/1'})
     try:
-        with build_opener(_proxy(), _NoRedirect()).open(request, timeout=TIMEOUT) as response:
+        with build_opener(_proxy(), _NoRedirect()).open(request,
+                                                        timeout=SOCKET_TIMEOUT) as response:
             _require(response.status == 200 and response.geturl() == url,
                      'HTTP_STATUS_OR_REDIRECT_INVALID')
             content_type = response.headers.get('Content-Type', '').split(';')[0].strip().lower()

@@ -122,7 +122,7 @@ def http(monkeypatch):
         assert len(handlers) == 2 and isinstance(handlers[0], ProxyHandler)
         assert isinstance(handlers[1], source._NoRedirect)
         def open_request(request, timeout):
-            assert request.get_method() == 'GET' and timeout == source.TIMEOUT == 8
+            assert request.get_method() == 'GET' and timeout == source.SOCKET_TIMEOUT == 8
             assert request.get_header('Authorization') is None
             assert request.get_header('Cookie') is None
             assert request.get_header('Proxy-authorization') is None
@@ -264,12 +264,47 @@ def test_delayed_final_eof_cannot_accept_a_response_past_deadline(http, monkeypa
         def read1(self, size):
             value = super().read1(size)
             if not value:
-                clock[0] = source.TIMEOUT+1
+                clock[0] = source.CATALOG_BODY_TIMEOUT+1
             return value
     response[0] = DelayedEOF(length=None)
     monkeypatch.setattr(source.time, 'monotonic', lambda: clock[0])
     with pytest.raises(ValueError, match='HTTP_DEADLINE_EXCEEDED'):
         source.download('unified.json', 100, publication_revision=FIRST)
+
+
+@pytest.mark.parametrize(('resource', 'eof_at', 'accepted'), [
+    ('catalog', 9, True), ('catalog', 16, False), ('refs', 9, False),
+    ('index', 9, False), ('shard', 9, False)])
+def test_only_catalog_has_fifteen_second_body_budget_with_eight_second_socket_timeout(
+    http, monkeypatch, resource, eof_at, accepted,
+):
+    _, response = http
+    clock = [0]
+    raw = advertisement() if resource == 'refs' else b'{ "fixture": true }\n'
+    class Progress(Response):
+        reads = 0
+        def read1(self, size):
+            value = super().read1(min(size, max(1, len(raw)//2)))
+            self.reads += 1
+            # Each data read makes progress within the unchanged 8s socket
+            # timeout; the complete transfer nevertheless needs nine seconds.
+            clock[0] = min(9, self.reads*4.5) if value else eof_at
+            return value
+    response[0] = Progress(raw, content_type=(
+        'application/x-git-upload-pack-advertisement' if resource == 'refs' else 'text/plain'))
+    monkeypatch.setattr(source.time, 'monotonic', lambda: clock[0])
+    def fetch():
+        if resource == 'refs':
+            return source.current_revision()
+        if resource == 'shard':
+            return source.download_shard('c'*64, FIRST)
+        name = 'unified.json' if resource == 'catalog' else 'unified-market.json'
+        return source.download(name, source.LIMITS[name], publication_revision=FIRST)
+    if accepted:
+        assert fetch() == (raw, FIRST)
+    else:
+        with pytest.raises(ValueError, match='HTTP_DEADLINE_EXCEEDED'):
+            fetch()
 
 
 @pytest.mark.parametrize('route', ['http://user:secret@proxy:8080', 'http://proxy:bad',
