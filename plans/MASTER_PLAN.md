@@ -24,6 +24,33 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+23:04 checkpoint: narrow096387b runner correction passes320 actual Linux cases
+and is deployed only to workflow338258. Both new API-bound experiments really
+COMPLETE; independent replay checks12,924 files each, fitted restore and exact
+data/feature/strategy/model/Registry association. Preserve FAILED32f54fc0 and
+CANCELLED79b67daa. Active295/source096 prediction and signals complete; fresh
+private C passes. Current new TRAINED artifacts must wait for a genuinely later
+data day before candidate policy can admit them. User-requested Terra retry
+reopens production and now observes real DOM/screenshot; page sweep ongoing.
+Merge PR33 after evidence checkpoint, then verify actual production/public C.
+New model PAPER remains stopped/recovery-required and prospective SHADOW cannot
+prove tomorrow's returns. Whole STEP1 and STEP2 remain unaccepted. History63204
+and delisted99 are bounded receipts; maintain original safety/resource budgets.
+
+22:22 checkpoint: merged main40db6db is publicly verified, cluster c382453 runs
+only the two targeted research services, Linux313 and webpage304 pass. Actual
+production authenticated preview/submit/idempotent retry succeeds and old daily
+tools return410; browser observation times out and is not accepted. Standing
+LightGBM policy really activates candidate29589b44 with the new PAPER reservation
+guard; preserve original PAPER PID175982 and rolling OFF/LIVE false. Real bound
+training32f54fc0 nevertheless fails at final summary because the portfolio local
+variable overwrote the frozen strategy dictionary. Preserve that failure and
+cancelled Ridge79b67daa; never repair their DB state or label partial files sealed.
+Narrow runner correction plus final archived-contract verification passes60
+Windows tests. Verify the same correction on Linux, deploy a new actual revision
+only after current prediction/control finishes, and run new immutable requests.
+History60204/delisted67 remains bounded/backing off, not full historical PIT.
+
 21:40 checkpoint: real October 27 version/prediction/later candidate validation/
 signals exist. Private C plus real production C delivery, corrected D replay and
 actual-public twelve-book stock E pass for their pinned inputs. Preserve all

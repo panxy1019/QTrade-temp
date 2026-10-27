@@ -8,4 +8,8 @@
 docs/evidence/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Native JUnit failure traces retain original newlines and assertion whitespace.
 docs/evidence/*.xml -text whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Preserve actual runner failure bytes, including native progress-line returns.
+docs/evidence/*.log -text -whitespace
+docs/evidence/qlib-browser-terra-retry-20261027/** -text -whitespace
+docs/evidence/qlib-close-20261027-browser-terra.md -text -whitespace
 deployment/evidence/** -text

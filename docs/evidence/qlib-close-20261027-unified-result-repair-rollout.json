@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-27T14:27:09.812368+00:00",
+  "revision": "096387b8088e4361c9e5cd9cd2c165e21819fead",
+  "worker_pid": 338258,
+  "actual_argv": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python -m scripts.run_qlib_worker --base /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade --database /root/qtrade-local/workflow.sqlite --python /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/bin/python --source-revision 096387b8088e4361c9e5cd9cd2c165e21819fead ",
+  "actual_cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/096387b8088e4361c9e5cd9cd2c165e21819fead",
+  "all_other_supervised_pids_unchanged": true,
+  "original_paper_pid_unchanged": true,
+  "data_service_source_revision": "c382453b5eba6c6441646ab70c76131f486cb509",
+  "failed_jobs_untouched": true
+}

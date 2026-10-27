@@ -1,0 +1,141 @@
+{
+  "after": [
+    {
+      "name": "code-server",
+      "pid": 81,
+      "statename": "Running"
+    },
+    {
+      "name": "jupyterlab",
+      "pid": 80,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-data-observer",
+      "pid": 4471,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-etf-diagnostics",
+      "pid": 179865,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-etf-shadow",
+      "pid": 299932,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-forward-research",
+      "pid": 175982,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-history-backfill",
+      "pid": 164340,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-pit-repair",
+      "pid": 153768,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-qlib-data",
+      "pid": 0,
+      "statename": "Exited"
+    },
+    {
+      "name": "qtrade-qlib-workflow",
+      "pid": 0,
+      "statename": "Exited"
+    },
+    {
+      "name": "qtrade-research-maintenance",
+      "pid": 213587,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-research-publication",
+      "pid": 294214,
+      "statename": "Running"
+    },
+    {
+      "name": "tensorboard",
+      "pid": 79,
+      "statename": "Running"
+    }
+  ],
+  "at": "2026-10-27T14:04:29.556347+00:00",
+  "before": [
+    {
+      "name": "code-server",
+      "pid": 81,
+      "statename": "Running"
+    },
+    {
+      "name": "jupyterlab",
+      "pid": 80,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-data-observer",
+      "pid": 4471,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-etf-diagnostics",
+      "pid": 179865,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-etf-shadow",
+      "pid": 299932,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-forward-research",
+      "pid": 175982,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-history-backfill",
+      "pid": 164340,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-pit-repair",
+      "pid": 153768,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-qlib-data",
+      "pid": 179733,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-qlib-workflow",
+      "pid": 173727,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-research-maintenance",
+      "pid": 213587,
+      "statename": "Running"
+    },
+    {
+      "name": "qtrade-research-publication",
+      "pid": 294214,
+      "statename": "Running"
+    },
+    {
+      "name": "tensorboard",
+      "pid": 79,
+      "statename": "Running"
+    }
+  ],
+  "first_control_method": "SUPERVISORCTL_REREAD_PARSES_THREE_LIST_RPC_INCORRECTLY_NO_SERVICE_CHANGED",
+  "other_pids_unchanged": true,
+  "paper_original_pid_unchanged": true,
+  "source_revision": "c382453b5eba6c6441646ab70c76131f486cb509"
+}
