@@ -179,3 +179,80 @@ publication require separate deployment evidence. Preserve native-close,
 adjustment, distribution, PIT and execution limitations. No holdings, fills,
 portfolio returns, research model activation or STEP2 completion follow from
 this tool.
+
+## One explicit sealed-prefix continuation
+
+The original repair remains a once-only attempt. A separately selected operator
+mode permits **one** continuation of the actual known priority interruption:
+one reused original response, exactly 23 sealed repair requests/responses, and
+exactly six unissued slots. It cannot continue arbitrary partial counts or
+uncertain work. It does not delete or reset the original claim, stop record,
+request reservations or raw evidence. A second continuation is always rejected.
+
+The read-only planner requires the original stopped reason to be exactly
+`ETF_SERVICE_WAITING_CURRENT_COLLECTION` or
+`ETF_SERVICE_WAITING_CURRENT_COLLECTION_RETRY`, and verifies original stage
+start/deadline/stop clocks and all 23 contiguous reservation/response/raw pairs.
+Missing, corrupt, extra, duplicate, unhealthy or uncertain evidence blocks the
+plan. HTTP/transport failure, deadline, process error and other stop reasons do
+not qualify. The original collector source documents, claim, original repair
+plan, historical source manifest and old publication pointer must still match.
+
+Run the new reviewed operator release, with a new complete source manifest:
+
+```bash
+python -B -m scripts.repair_etf_daily_attempt \
+  --base "$B" --local-root /root/qtrade-local/etf-trend-service \
+  --day 2026-10-27 --source-revision "$CONTINUATION_OPERATOR_REVISION" \
+  --source-manifest /tmp/etf-continuation-source-manifest.json \
+  --continue-plan "$ORIGINAL_REPAIR_PLAN_SHA256" \
+  > /tmp/etf-continuation-reviewed-plan.json
+```
+
+The new continuation plan hashes the original plan/claim bytes, original signed
+started/stopped bytes, exact 23 reservation/response file hashes, remaining six
+symbols, global sequence 24, total budget 30 and both source provenance records.
+The core source adapter, raw store, close verifier, calendar and daily gate module
+Git blobs must be identical across the two manifests. Only orchestration may
+change. Manifests remain operator-verified checksums, not remote signatures.
+The local Git mode verifies its current full source tree but does not compare
+historical critical-module blobs across stages; this continuation acceptance is
+for the manifest mode used by the immutable cluster release.
+
+After reviewing this concrete plan, apply it explicitly:
+
+```bash
+python -B -m scripts.repair_etf_daily_attempt \
+  --base "$B" --local-root /root/qtrade-local/etf-trend-service \
+  --day 2026-10-27 --source-revision "$CONTINUATION_OPERATOR_REVISION" \
+  --source-manifest /tmp/etf-continuation-source-manifest.json \
+  --continue-plan "$ORIGINAL_REPAIR_PLAN_SHA256" \
+  --apply-plan /tmp/etf-continuation-reviewed-plan.json \
+  --approved-plan-sha256 "$REVIEWED_CONTINUATION_PLAN_SHA256" \
+  --deadline-seconds 900
+```
+
+Apply recomputes the plan under the same original daily cycle lease before
+claiming the continuation. A new immutable `continuation-claim.json` and
+`continuation/{plan,started}.json` record the once-only operation. Original stage
+started/stopped files are copied byte-identically for independent public-source
+replay. The operator's new source manifest is archived separately. Each new
+global reservation/response at sequence 24 through 29 includes the continuation
+plan SHA and actual operator revision. The old 23 reservation/response pairs are
+never rewritten or relabeled.
+
+The original `repair_revision`, archive identity and `bindings.code_revision`
+remain the frozen repair contract identity. They **do not claim** that new code
+ran under that old revision. Aggregate receipt and completion explicitly record
+`operator.bindings_code_revision_role=FROZEN_REPAIR_CONTRACT_REVISION`, original
+collector revision, initial repair operator revision, actual final sealing
+operator revision, both manifests, and each source phase's sequence range.
+SHADOW resolution independently verifies both manifests and the complete
+original/prefix/continuation lineage before admitting the repaired source.
+
+Any repeated priority change, source failure, uncertain reservation, deadline or
+publication failure creates an immutable continuation `stopped.json`. There is
+no second continuation, no automatic retry and no claim-reset command. Successful
+six-response sealing creates `continuation/sealed.json`; final publication still
+uses the original exact-pointer CAS and only writes resolution after durable
+completion. No historical failed evidence is removed or represented as success.

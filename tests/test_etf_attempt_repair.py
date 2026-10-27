@@ -381,12 +381,17 @@ def test_deadline_must_be_explicitly_bounded(runtime, seconds):
     assert runtime.calls == []
 
 
-def source_manifest(runtime, monkeypatch):
-    release = runtime.root/'releases'/NEW
-    for name, body in {'src/qtrade/example.py': b'x = 1\n',
+def source_manifest(runtime, monkeypatch, revision=NEW):
+    release = runtime.root/'releases'/revision
+    contents = {'src/qtrade/example.py': b'x = 1\n',
                        'scripts/example.py': b'x = 2\n',
                        'configs/observer_calendar_2026.json': (
-                           repair.REPO/'configs/observer_calendar_2026.json').read_bytes()}.items():
+                           repair.REPO/'configs/observer_calendar_2026.json').read_bytes()}
+    for name in ('scripts/run_etf_trend_service.py', 'scripts/collect_unified_data.py',
+                 'scripts/unified_store.py', 'src/qtrade/research/etf_trend.py',
+                 'src/qtrade/monitoring/data_freshness.py'):
+        contents[name] = (repair.REPO/name).read_bytes()
+    for name, body in contents.items():
         path = release/name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(body)
@@ -397,8 +402,8 @@ def source_manifest(runtime, monkeypatch):
             files[str(path.relative_to(release)).replace('\\', '/')] = sha1(
                 b'blob '+str(len(payload)).encode()+b'\0'+payload).hexdigest()
     manifest = signed({**AUTHORITY, 'schema_version': 'qtrade.etf-repair-source-manifest.v1',
-                       'revision': NEW, 'files': files})
-    path = runtime.root/'source-manifest.json'
+                       'revision': revision, 'files': files})
+    path = runtime.root/('source-manifest-'+revision+'.json')
     write(path, manifest)
     monkeypatch.setattr(repair, 'REPO', release)
     return path, release
@@ -531,3 +536,239 @@ def test_every_created_directory_entry_is_flushed_before_source_work(runtime, mo
         DURABLE_DIRECTORY(target)
     assert target.is_dir()
     assert set(flushed) == {runtime.root, runtime.root/'new', runtime.root/'new/a', target}
+
+
+def preempted_prefix(runtime, monkeypatch, manifest=None):
+    value = repair.plan(runtime.base, runtime.local, DAY, NEW, source_manifest=manifest)
+    monkeypatch.setattr(repair, 'source_gate', lambda *args, **kwargs:
+                        ('ETF_SERVICE_WAITING_CURRENT_COLLECTION'
+                         if len(runtime.calls) >= 23 else None))
+    with pytest.raises(ValueError, match='ETF_SERVICE_WAITING_CURRENT_COLLECTION'):
+        repair.apply(runtime.base, runtime.local, value, value['evidence_sha256'],
+                     source_manifest=manifest)
+    monkeypatch.setattr(repair, 'source_gate', lambda *args, **kwargs: None)
+    runtime.clock[0] += timedelta(seconds=60)
+    assert len(runtime.calls) == 23
+    return value
+
+
+def continuation_value(runtime, original, manifest=None):
+    return repair.continuation_plan(runtime.base, runtime.local, DAY, 'c'*40,
+                                    original['evidence_sha256'], source_manifest=manifest)
+
+
+def test_explicit_continuation_reuses_1_plus_23_and_only_requests_final_six(runtime, monkeypatch):
+    original = preempted_prefix(runtime, monkeypatch)
+    new = runtime.archives/original['repair_diagnostic_id']
+    preserved = tree(runtime.old), tree(new), tree(runtime.local/'repairs')
+    value = continuation_value(runtime, original)
+    assert (tree(runtime.old), tree(new), tree(runtime.local/'repairs')) == preserved
+    assert value['maximum_additional_queries'] == 6 and value['next_sequence'] == 24
+    completion = repair.continue_apply(runtime.base, runtime.local, value, value['evidence_sha256'])
+    assert len(runtime.calls) == 29 and len(set(runtime.calls)) == 29
+    assert completion['repair_revision'] == NEW
+    assert completion['operator']['final_sealing_operator_revision'] == 'c'*40
+    role = completion['operator']['bindings_code_revision_role']
+    assert role == 'FROZEN_REPAIR_CONTRACT_REVISION'
+    diagnostic = shadow.source(new, runtime.cal, runtime.clock[0])
+    assert diagnostic['qualified_close_symbols'] == 30
+    assert diagnostic['bindings']['code_revision'] == NEW
+    for name, payload in preserved[0].items():
+        assert (runtime.old/name).read_bytes() == payload
+    for name, payload in preserved[1].items():
+        assert (new/name).read_bytes() == payload
+    for name, payload in preserved[2].items():
+        assert (runtime.local/'repairs'/name).read_bytes() == payload
+    with pytest.raises(ValueError, match='ALREADY_ATTEMPTED_OR_SEALED'):
+        continuation_value(runtime, original)
+
+
+@pytest.mark.parametrize('damage', [
+    'missing_response', 'missing_request', 'extra_request', 'extra_response', 'duplicate_symbol',
+    'raw_corrupt', 'http', 'nonpriority', 'future_clock', 'different_local_origin'])
+def test_continuation_rejects_any_unproven_prefix(runtime, monkeypatch, damage):
+    original = preempted_prefix(runtime, monkeypatch)
+    new = runtime.archives/original['repair_diagnostic_id']
+    if damage == 'missing_response':
+        (new/'repair-receipts/23.json').unlink()
+    elif damage == 'missing_request':
+        (new/'repair-requests/23.json').unlink()
+    elif damage in {'extra_request', 'extra_response'}:
+        directory = new/('repair-requests' if damage == 'extra_request' else 'repair-receipts')
+        shutil.copyfile(directory/'23.json', directory/'24.json')
+    elif damage == 'raw_corrupt':
+        ref = repair.read(new/'repair-receipts/23.json')['raw']
+        (new/'capture-store/objects'/(ref['sha256']+'.jsonl.gz')).write_bytes(b'bad')
+    elif damage in {'http', 'duplicate_symbol', 'future_clock'}:
+        path = new/'repair-requests/23.json'
+        document = repair.read(path)
+        if damage == 'duplicate_symbol':
+            document['symbol'] = original['remaining_symbols'][0]
+        elif damage == 'future_clock':
+            document['reserved_at'] = (runtime.clock[0]+timedelta(days=1)).isoformat()
+        else:
+            path = runtime.local/'repairs'/original['evidence_sha256']/'stopped.json'
+            document = repair.read(path)
+            document['reason'] = 'ETF_REPAIR_SOURCE_UNHEALTHY'
+        write(path, resign(document))
+    elif damage == 'nonpriority':
+        path = runtime.local/'repairs'/original['evidence_sha256']/'stopped.json'
+        document = repair.read(path)
+        document['reason'] = 'ETF_REPAIR_DEADLINE'
+        write(path, resign(document))
+    else:
+        path = runtime.job/'failed.json'
+        document = repair.read(path)
+        document['at'] = '2026-10-27T08:34:06+00:00'
+        write(path, resign(document))
+    before = len(runtime.calls)
+    with pytest.raises((ValueError, OSError)):
+        continuation_value(runtime, original)
+    assert len(runtime.calls) == before
+
+
+def test_continuation_rechecks_reviewed_prefix_before_request(runtime, monkeypatch):
+    original = preempted_prefix(runtime, monkeypatch)
+    value = continuation_value(runtime, original)
+    new = runtime.archives/original['repair_diagnostic_id']
+    path = new/'repair-requests/23.json'
+    document = repair.read(path)
+    document['reserved_at'] = (runtime.clock[0]-timedelta(seconds=59)).isoformat()
+    write(path, resign(document))
+    with pytest.raises(ValueError):
+        repair.continue_apply(runtime.base, runtime.local, value, value['evidence_sha256'])
+    assert len(runtime.calls) == 23 and not (new/'continuation-claim.json').exists()
+
+
+@pytest.mark.parametrize('failure', ['priority', 'uncertain', 'http', 'deadline'])
+def test_continuation_second_stop_is_persistent_and_never_resumed(runtime, monkeypatch, failure):
+    original = preempted_prefix(runtime, monkeypatch)
+    value = continuation_value(runtime, original)
+    new = runtime.archives/original['repair_diagnostic_id']
+    fetch = repair.fetch
+
+    def interrupted(*args):
+        if failure == 'uncertain':
+            raise OSError('test-only-uncertain-request')
+        result = fetch(*args)
+        if failure == 'http':
+            result['status_code'] = 429
+        if failure == 'deadline':
+            runtime.clock[0] += timedelta(seconds=901)
+        return result
+
+    monkeypatch.setattr(repair, 'fetch', interrupted)
+    if failure == 'priority':
+        monkeypatch.setattr(repair, 'source_gate', lambda *args, **kwargs:
+                            repair.FAILURE if len(runtime.calls) >= 24 else None)
+    with pytest.raises((ValueError, OSError, TimeoutError)):
+        repair.continue_apply(runtime.base, runtime.local, value, value['evidence_sha256'])
+    count = len(runtime.calls)
+    assert (new/'continuation/stopped.json').exists()
+    assert not (runtime.old/'repair-resolution.json').exists()
+    with pytest.raises(ValueError, match='ALREADY_ATTEMPTED_OR_SEALED'):
+        continuation_value(runtime, original)
+    with pytest.raises(ValueError, match='ALREADY_ATTEMPTED_OR_SEALED'):
+        repair.continue_apply(runtime.base, runtime.local, value, value['evidence_sha256'])
+    assert len(runtime.calls) == count
+
+
+def test_continuation_binds_both_actual_manifest_revisions(runtime, monkeypatch):
+    historical, _ = source_manifest(runtime, monkeypatch)
+    original = preempted_prefix(runtime, monkeypatch, historical)
+    current, _ = source_manifest(runtime, monkeypatch, 'c'*40)
+    value = continuation_value(runtime, original, current)
+    assert value['historical_source_verification']['revision'] == NEW
+    assert value['source_verification']['revision'] == 'c'*40
+    completion = repair.continue_apply(runtime.base, runtime.local, value, value['evidence_sha256'],
+                                       source_manifest=current)
+    new = runtime.archives/original['repair_diagnostic_id']
+    assert repair.verify_resolution(runtime.old, runtime.cal)['qualified_close_symbols'] == 30
+    operator = completion['operator']
+    historical_sha = operator['historical_source_verification']['manifest_file_sha256']
+    current_sha = operator['continuation_source_verification']['manifest_file_sha256']
+    assert historical_sha == file_hash(historical)
+    assert current_sha == file_hash(current)
+    (new/'continuation/source-manifest.json').write_text('{}')
+    with pytest.raises(ValueError):
+        shadow.source(new, runtime.cal, runtime.clock[0])
+
+
+@pytest.mark.parametrize('boundary', [
+    'sealed', 'diagnostic', 'completion', 'latest', 'local_completion', 'resolution'])
+def test_continuation_publication_failure_never_admits_unresolved_source(
+        runtime, monkeypatch, boundary):
+    original = preempted_prefix(runtime, monkeypatch)
+    value = continuation_value(runtime, original)
+    new = runtime.archives/original['repair_diagnostic_id']
+    original_immutable, original_atomic = repair.write_json_immutable, repair.write_json_atomic
+
+    def fail_immutable(path, document):
+        selected = {'sealed': new/'continuation/sealed.json',
+            'diagnostic': new/'diagnostic.json', 'completion': new/'repair-completed.json',
+            'local_completion': runtime.local/'repairs'/original['evidence_sha256']/
+                'continuation'/value['evidence_sha256']/'completed.json',
+            'resolution': runtime.old/'repair-resolution.json'}.get(boundary)
+        if path == selected:
+            raise OSError('test-only-continuation-publication-boundary')
+        return original_immutable(path, document)
+
+    def fail_atomic(path, document):
+        if boundary == 'latest' and path == runtime.archives/'latest.json':
+            raise OSError('test-only-continuation-latest-boundary')
+        return original_atomic(path, document)
+
+    monkeypatch.setattr(repair, 'write_json_immutable', fail_immutable)
+    monkeypatch.setattr(repair, 'write_json_atomic', fail_atomic)
+    with pytest.raises(OSError):
+        repair.continue_apply(runtime.base, runtime.local, value, value['evidence_sha256'])
+    assert len(runtime.calls) == 29
+    assert (new/'continuation/stopped.json').exists()
+    errors = set()
+    _, candidates = shadow.discover(runtime.archives, errors)
+    assert new.name not in sum(candidates.values(), [])
+    with pytest.raises((ValueError, FileNotFoundError)):
+        shadow.source(new, runtime.cal, runtime.clock[0])
+
+
+@pytest.mark.parametrize('damage', ['initial_stopped', 'prefix', 'new_response', 'operator',
+                                   'claim', 'stage_sealed', 'historical_manifest'])
+def test_continuation_resolution_rejects_corrupt_stage_lineage(runtime, monkeypatch, damage):
+    historical, _ = source_manifest(runtime, monkeypatch)
+    original = preempted_prefix(runtime, monkeypatch, historical)
+    current, _ = source_manifest(runtime, monkeypatch, 'c'*40)
+    value = continuation_value(runtime, original, current)
+    repair.continue_apply(runtime.base, runtime.local, value, value['evidence_sha256'],
+                          source_manifest=current)
+    new = runtime.archives/original['repair_diagnostic_id']
+    if damage == 'operator':
+        path = new/'receipt.json'
+        document = repair.read(path)
+        document['operator']['final_sealing_operator_revision'] = NEW
+    else:
+        path = {'initial_stopped': new/'continuation/initial-stopped.json',
+            'prefix': new/'repair-receipts/23.json',
+            'new_response': new/'repair-receipts/24.json',
+            'claim': new/'continuation-claim.json',
+            'stage_sealed': new/'continuation/sealed.json',
+            'historical_manifest': new/'source-manifest.json'}[damage]
+        document = repair.read(path)
+        document['unexpected_change'] = True
+    write(path, resign(document))
+    with pytest.raises(ValueError):
+        shadow.source(new, runtime.cal, runtime.clock[0])
+
+
+def test_continuation_manifest_cannot_change_existing_source_gate_contract(runtime, monkeypatch):
+    historical, _ = source_manifest(runtime, monkeypatch)
+    original = preempted_prefix(runtime, monkeypatch, historical)
+    current, release = source_manifest(runtime, monkeypatch, 'c'*40)
+    path = release/'scripts/run_etf_trend_service.py'
+    path.write_bytes(path.read_bytes()+b'\n# changed source gate\n')
+    document = repair.read(current)
+    payload = path.read_bytes()
+    document['files']['scripts/run_etf_trend_service.py'] = sha1(
+        b'blob '+str(len(payload)).encode()+b'\0'+payload).hexdigest()
+    write(current, resign(document))
+    with pytest.raises(ValueError, match='SOURCE_OR_GATE_CONTRACT_CHANGED'):
+        continuation_value(runtime, original, current)
