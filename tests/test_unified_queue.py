@@ -102,6 +102,33 @@ def test_new_intraday_target_advances_plan_but_keeps_previous_success(tmp_path):
     assert row["completed_end"] == first["spec"]["target_end"]
 
 
+def test_new_grids_do_not_reset_oldest_progress_or_starve_the_remaining_pool(tmp_path):
+    q = UnifiedCollectionQueue(tmp_path / 'queue.sqlite')
+    morning = NOW.replace(hour=2)
+    q.plan(master(4), CALENDAR, morning)
+    first = claim(q, '5min', limit=2, now=morning)
+    q.finish(receipt(first), now=morning)
+    later = morning + timedelta(minutes=5)
+    q.plan(master(4), CALENDAR, later)
+    remaining = claim(q, '5min', limit=2, now=later)
+    assert set(remaining['spec']['symbols']).isdisjoint(first['spec']['symbols'])
+    assert remaining['spec']['target_end'] > first['spec']['target_end']
+    q.finish(receipt(remaining), now=later)
+    newest = later + timedelta(minutes=5)
+    q.plan(master(4), CALENDAR, newest)
+    oldest = claim(q, '5min', limit=2, now=newest)
+    assert oldest['spec']['symbols'] == first['spec']['symbols']
+    assert all(v == first['spec']['target_end']
+               for v in oldest['spec']['after_by_symbol'].values())
+    # A grid update cannot rewrite an already claimed batch's clock or row boundary.
+    q.plan(master(4), CALENDAR, newest + timedelta(minutes=5))
+    q.finish(receipt(oldest), now=newest + timedelta(minutes=5))
+    row = next(t for t in q.snapshot(VERSION)['tasks'] if t['symbol'] == '600000')
+    assert row['state'] == 'PLANNED'
+    assert row['completed_end'] == oldest['spec']['target_end']
+    assert row['desired_end'] > row['completed_end']
+
+
 def test_wrong_specs_corrupt_universe_and_unknown_receipts_do_not_advance_queue(tmp_path):
     q = UnifiedCollectionQueue(tmp_path / 'queue.sqlite')
     bad = master()

@@ -24,6 +24,28 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+User requested implementation of the remaining data/C/D/E and synchronized,
+standardized production pages. Work is active on codex/unified-market-workflow:
+
+1. Publish bounded, verified unified-lake series for every target security;
+   add a strict read-only symbol/frequency/window/version API. Evidence: actual
+   ledger/raw-normalized lineage tests, bounded-export timings and cluster run.
+2. Replace the default current-chart source with the unified pool; synchronize
+   operational summaries and make page responsibilities explicit. Preserve old
+   experiments/archives and their dates. Evidence: meaningful frontend tests,
+   build/lint, production API and rendered/manual acceptance where available.
+3. Measure and improve the real collector bottleneck without increasing vendor
+   concurrency or weakening fsync, raw capture, quality or risk gates. Evidence:
+   controlled HTTP connection reuse benchmark and real subsequent collection.
+4. Deploy the reviewed code to the cluster and Vercel; use the same data identities
+   and Shanghai clocks on pages. Do not restart the recovered PAPER service.
+5. Once genuinely complete October 27 data is available, run actual C/D/E audits
+   against immutable outputs. History/PIT remain ongoing, source-bounded work;
+   missing years or official states must stay explicit. STEP2 remains gated.
+
+Owners: comparison_review_high backend/export/API, forward_adapter_high web,
+collector_latency_high collector/queue; parent integration, runtime and review.
+
 Opening-session verification found an actionable original-guide 9.2 gap: the
 1,500-security unified coverage catalog is not yet the current chart data path;
 the current endpoint still admits 30 ETFs / 75 minute stocks. Reopen bounded

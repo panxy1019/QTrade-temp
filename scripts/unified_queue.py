@@ -24,6 +24,16 @@ def clock(value: datetime) -> str:
     return value.astimezone(UTC).isoformat(timespec="seconds")
 
 
+def required_ends(calendar: Calendar, now: datetime) -> dict[str, str]:
+    ends = {freq: calendar.expected(now, "daily" if freq == "day" else "minute")
+            for freq in ("day", "5min")}
+    local = now.astimezone(SHANGHAI)
+    # Before today's close a quote cannot supply yesterday's cash amount.
+    if calendar.is_open(local.date()) and ends["day"].date() < local.date():
+        del ends["day"]
+    return {freq: clock(end) for freq, end in ends.items()}
+
+
 class UnifiedCollectionQueue:
     def __init__(self, database: Path):
         self.database = database.resolve()
@@ -94,14 +104,10 @@ class UnifiedCollectionQueue:
         targets = [r for r in master["securities"] if r["in_target"]]
         if len(targets) != master["target_actual"]:
             raise ValueError("COLLECTION_UNIVERSE_TARGET_COUNT_MISMATCH")
-        ends = {freq: calendar.expected(now, "daily" if freq == "day" else "minute")
-                for freq in ("day", "5min")}
-        local = now.astimezone(SHANGHAI)
-        # Before today's close a quote cannot supply yesterday's cash amount.
-        if calendar.is_open(local.date()) and ends["day"].date() < local.date():
-            del ends["day"]
+        ends = required_ends(calendar, now)
         with self.connect() as c:
             for freq, end in ends.items():
+                trading_day = datetime.fromisoformat(end).astimezone(SHANGHAI).date()
                 for row in targets:
                     if row["status"] != "ACTIVE_OBSERVED" or row["issues"]:
                         raise ValueError("UNSAFE_OBSERVED_COLLECTION_IDENTITY")
@@ -119,9 +125,9 @@ class UnifiedCollectionQueue:
                                 THEN excluded.next_attempt_at
                                 ELSE collection_tasks.next_attempt_at END,
                             desired_end=MAX(collection_tasks.desired_end,excluded.desired_end)
-                    """, (master["universe_version"], freq, row["symbol"], str(end.date()),
-                          row["security_type"], clock(end), clock(now)))
-        return {freq: clock(end) for freq, end in ends.items()}
+                    """, (master["universe_version"], freq, row["symbol"], str(trading_day),
+                          row["security_type"], end, clock(now)))
+        return ends
 
     def claim(
         self, universe_version: str, frequency: str, day: date, *, now: datetime,
@@ -134,7 +140,7 @@ class UnifiedCollectionQueue:
                 SELECT * FROM collection_tasks WHERE universe_version=? AND frequency=?
                     AND trading_day=? AND state IN ('PLANNED','FAILED','INTERRUPTED')
                     AND next_attempt_at<=? AND (completed_end IS NULL OR completed_end<desired_end)
-                ORDER BY next_attempt_at,symbol
+                ORDER BY completed_end IS NOT NULL,completed_end,next_attempt_at,symbol
             """, (universe_version, frequency, str(day), clock(now)))]
             fresh = [r for r in rows if r["state"] == "PLANNED"]
             retry = [r for r in rows if r["state"] != "PLANNED"]

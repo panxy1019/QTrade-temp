@@ -3645,3 +3645,26 @@ or historical PIT. A specified later historical validation is not current-servin
 admission, portfolio performance or authority to replace ACTIVE. CLI uses actual
 wall time; synthetic clocks are visibly marked. All whole-STEP1 flags stay false.
 
+## ADR-176 — Unified current charts publish bounded admitted data
+
+Status: accepted for implementation, 2026-10-27.
+
+Reuse the unified collection ledger, immutable raw/normalized batch store,
+existing publisher, read-only Vercel API and existing charts. The source/gap audit
+found no 1,500-security bars endpoint; vn.py gateways and execution components do
+not solve this read-only chart boundary and are not introduced. Retain the old
+30-ETF/75-stock route only as an explicitly scoped reference/archive.
+
+Export only admitted, non-excluded chunks from a short read-only ledger snapshot
+into content-addressed bounded per-security/frequency fragments and a universe-
+bound index. All targets retain a metadata entry, including no-data/quarantine.
+Window limits, checksum/authority verification and API query bounds are mandatory;
+unknown amount, VWAP, price adjustment, gaps and historical eligibility stay
+explicit. Do not merge other sources or old Qlib prices to fill chart history.
+
+The website queries selected security, frequency and time range, not the entire
+data lake. Operational freshness uses actual completed exchange grids and source
+clocks; daily predictions wait for completed daily inputs. Historical experiments
+keep their frozen dates and identities. Continuous research observation does not
+enable real execution, recover halted books, or activate candidate models.
+

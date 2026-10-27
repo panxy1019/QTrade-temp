@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-27
 
+- User requested implementation of the reopened unified-chart gap, intraday
+  freshness improvements and standardized synchronized pages. Three GPT-6.1-sol
+  high agents are implementing bounded lake export/API, frontend integration and
+  collector/queue optimization respectively. Root integrates and deploys after
+  review. Actual network response times dominate sampled 25-symbol batches
+  (6–16 seconds), so connection reuse is being measured with concurrency capped
+  at four. Current production is not yet changed; recovered PAPER is not restarted.
+
 - Opening-session runtime/API check at 09:52–09:53 proves today's five-minute
   collection is working: 1,497 securities have observed data, distributed at
   09:35/09:40/09:45, not all current through the expected 09:50 grid. Production
