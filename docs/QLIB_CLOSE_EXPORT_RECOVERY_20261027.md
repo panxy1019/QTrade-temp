@@ -102,6 +102,8 @@ Windows [56 项最终测试](evidence/qlib-scheduler-windows-short-20261027.xml)
 
 [Windows 报告](evidence/qlib-scheduler-windows-report-20261027.json)如实保留最初三个 FileNotFoundError 的工具观察、原 HEAD 复现及短临时路径全部通过的结果；路径长度是证据支持的推断，不冒充保存了初次原始日志。扩大测试还发现固定 10 月 26 日 fixture 使用真实当前日默认值，[55 通过/1 失败原始 XML](evidence/qlib-scheduler-windows-before-fixture-fix-20261027.xml)保留；只给该测试的两次调用补上 fixture 日期，生产默认时钟和准备逻辑未改。
 
+原始 XML 与 JSON 都通过 Git `-text` 属性保留字节。失败 XML 的原始断言空白和 Windows 换行也是凭证内容，不能为了通用空白检查而重排；归档后再次比较 Git blob 与捕获 SHA256，防止换行归一化破坏报告引用。
+
 **修复没有部署到当前 data owner。** 今日冻结请求必须继续用 `55b5b004`；等其完成或有另行审查的解决后，才使用新真实 revision 部署。当前 Linux 目录只是隔离测试产物，不能当作新服务来源或今天 C/D/E 已通过。
 
 ## 复现与验收界限
