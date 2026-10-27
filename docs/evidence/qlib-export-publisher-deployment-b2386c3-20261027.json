@@ -1,0 +1,41 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-publisher-deployment.v1",
+  "checked_at": "2026-10-27T09:08:58.241294+00:00",
+  "source_revision": "b2386c3e53c766d9e9512e6ca0f5116583aa13c2",
+  "previous_revision": "c35bb84095bdd3f7ec284fcd3bb25073a8e60ab7",
+  "pilot_evidence_sha256": "fa4cd898c4071ea16ba6094fc2a4489fd8abaabde470210f552d3180bd0e3699",
+  "wrapper_sha256": "b0dca3c97d79995f7c8a6ab988b9e5cc469f59b40ffb02147bf72e05565b5c8f",
+  "previous_pid": 240024,
+  "publisher_pid": 291302,
+  "paper_pid": 175982,
+  "idle_before_stop": true,
+  "operator_notes": [
+    "Initial stop returned Exited rather than uppercase STOPPED; corrected state normalization before the only start request",
+    "Immediate start-time cwd assertion ran before wrapper exec; independently verified settled cwd/environment without another restart"
+  ],
+  "other_processes_unchanged": true,
+  "observed_other_pids": {
+    "code-server": 81,
+    "jupyterlab": 80,
+    "qtrade-data-observer": 4471,
+    "qtrade-etf-diagnostics": 179865,
+    "qtrade-etf-shadow": 181180,
+    "qtrade-forward-research": 175982,
+    "qtrade-history-backfill": 164340,
+    "qtrade-pit-repair": 153768,
+    "qtrade-qlib-data": 179733,
+    "qtrade-qlib-workflow": 173727,
+    "qtrade-research-maintenance": 213587,
+    "tensorboard": 79
+  },
+  "production_delivery_verified": false,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "34181a17ae4cb92819f39c8d0b228708c4ae5d710789b596142e6a5b51fc9add"
+}

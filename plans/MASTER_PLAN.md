@@ -24,6 +24,42 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+17:22 verified interruption: ETF explicit repair seals 23/29 additional responses
+then yields to current collection, preserving its original one and all old
+markers/raw. No final resolution, no public latest advance, no automatic retry.
+Implement only a reviewed, known-prefix explicit continuation for the remaining
+six within the original total 30; unknown reservations remain non-resumable.
+Linux ETF suite is 204/204; retain its earlier test-fixture teardown failure too.
+Market export itself has ordinary ~38s successes, but Git's 90s cap still times
+out and two fresh HTTP captures remain STALE_TRANSPORT. A nonforce pinned-tip
+operator catch-up is separate from ordinary service acceptance; publisher is
+deliberately stopped and PAPER 175982 is unchanged. Require ordinary cycles and
+fresh public bytes after any catch-up, then independent C/D/E and PIT gates.
+
+Close-repair checkpoint: b2386c3 has 428 passing Linux tests, independent review
+and exact equality for all 4,488 frozen shard bytes/source references. Actual-clock
+current-ledger warm exports pass at 40.01/38.26s after one bounded cold failure;
+do not claim cold-start or sustained-SLA acceptance. Only the read-only publisher
+was restarted as PID 291302; its first ordinary warm export completes in 37.86s.
+Git delivery/public freshness still require actual proof. PAPER 175982, ACTIVE,
+rolling OFF and all source/time/freshness limits remain unchanged. Qlib adaptation
+is 150/987 at 17:04, still PREPARATION_ONLY; the first-pass ETA is approximately
+19:50 plus provider construction and downstream gates. ETF 1/30 priority-aborted
+source requires reviewed, bounded, explicitly applied repair before its shadow
+transition can be accepted. STEP1 total and STEP2 remain gated.
+
+16:05 actual production is STALE_TRANSPORT despite running services and successful
+outer pushes: the market index has stopped at 14:10. The frozen read-only source
+contains 66,782 legal chunks, exceeding the old 60,000 metadata cap. Derive 600,000
+from the existing 12,000-batch/50-symbol contract and enforce cumulative queries;
+do not truncate. Cap-only compute still needs 71.47/60.02 seconds. First reviewed
+optimization 8ef491d passes 367 Linux tests but fails the real unchanged 45-second
+budget, so it is not deployed. Verified same-batch material reuse, all-shard byte
+comparison, actual production delivery and real post-16:30 C/D/E are pending.
+At 16:27 collection reaches 15:00 for 1,496/1,500 minute targets; original PAPER
+PID/ACTIVE/OFF remain unchanged. Preserve negative receipts and independent gates
+in QLIB_CLOSE_EXPORT_RECOVERY_20261027.md; STEP2 stays gated.
+
 13:57 second complete production frame also passes transport/integrity, with
 index/catalog ages 90.998/65.780 seconds and new sample data. Actual expected
 minute end is now 13:55, still absent in this catalog (0/1,500 ready). Preserve

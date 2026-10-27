@@ -1,0 +1,231 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.export-recovery-runtime.v1",
+  "checked_at": "2026-10-27T08:27:45.586235+00:00",
+  "clock_source": "SYSTEM_UTC",
+  "services": [
+    {
+      "name": "code-server",
+      "pid": 81,
+      "state": "Running",
+      "start": 1792724458
+    },
+    {
+      "name": "jupyterlab",
+      "pid": 80,
+      "state": "Running",
+      "start": 1792724458
+    },
+    {
+      "name": "qtrade-data-observer",
+      "pid": 4471,
+      "state": "Running",
+      "start": 1792919880
+    },
+    {
+      "name": "qtrade-etf-diagnostics",
+      "pid": 179865,
+      "state": "Running",
+      "start": 1793038124
+    },
+    {
+      "name": "qtrade-etf-shadow",
+      "pid": 181180,
+      "state": "Running",
+      "start": 1793039323
+    },
+    {
+      "name": "qtrade-forward-research",
+      "pid": 175982,
+      "state": "Running",
+      "start": 1793036033
+    },
+    {
+      "name": "qtrade-history-backfill",
+      "pid": 164340,
+      "state": "Running",
+      "start": 1793030003
+    },
+    {
+      "name": "qtrade-pit-repair",
+      "pid": 153768,
+      "state": "Running",
+      "start": 1793025336
+    },
+    {
+      "name": "qtrade-qlib-data",
+      "pid": 179733,
+      "state": "Running",
+      "start": 1793038111
+    },
+    {
+      "name": "qtrade-qlib-workflow",
+      "pid": 173727,
+      "state": "Running",
+      "start": 1793035260
+    },
+    {
+      "name": "qtrade-research-maintenance",
+      "pid": 213587,
+      "state": "Running",
+      "start": 1793068947
+    },
+    {
+      "name": "qtrade-research-publication",
+      "pid": 240024,
+      "state": "Running",
+      "start": 1793075908
+    },
+    {
+      "name": "tensorboard",
+      "pid": 79,
+      "state": "Running",
+      "start": 1792724458
+    }
+  ],
+  "paper_expected_pid": 175982,
+  "paper_same_pid": true,
+  "active_model": "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293",
+  "catalog_built_at": "2026-10-27T08:27:22.735015+00:00",
+  "target_count": 1500,
+  "incremental_freshness": {
+    "day": {
+      "status": "PARTIAL",
+      "ready_symbols": 1497,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-26T15:00:00+08:00"
+    },
+    "5min": {
+      "status": "PARTIAL",
+      "ready_symbols": 1496,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-27T15:00:00+08:00"
+    }
+  },
+  "tasks": [
+    {
+      "trading_day": "2026-10-26",
+      "frequency": "5min",
+      "state": "FAILED",
+      "tasks": 6,
+      "at_desired_end": 0
+    },
+    {
+      "trading_day": "2026-10-26",
+      "frequency": "5min",
+      "state": "SUCCEEDED",
+      "tasks": 1494,
+      "at_desired_end": 1494
+    },
+    {
+      "trading_day": "2026-10-26",
+      "frequency": "day",
+      "state": "FAILED",
+      "tasks": 3,
+      "at_desired_end": 0
+    },
+    {
+      "trading_day": "2026-10-26",
+      "frequency": "day",
+      "state": "SUCCEEDED",
+      "tasks": 1497,
+      "at_desired_end": 1497
+    },
+    {
+      "trading_day": "2026-10-27",
+      "frequency": "5min",
+      "state": "FAILED",
+      "tasks": 4,
+      "at_desired_end": 0
+    },
+    {
+      "trading_day": "2026-10-27",
+      "frequency": "5min",
+      "state": "SUCCEEDED",
+      "tasks": 1496,
+      "at_desired_end": 1496
+    }
+  ],
+  "chunks": [
+    {
+      "trading_day": "2026-10-26",
+      "frequency": "5min",
+      "chunks": 1494,
+      "batches": 63,
+      "symbols": 1494,
+      "bars": 71712
+    },
+    {
+      "trading_day": "2026-10-26",
+      "frequency": "day",
+      "chunks": 1522,
+      "batches": 64,
+      "symbols": 1497,
+      "bars": 1522
+    },
+    {
+      "trading_day": "2026-10-27",
+      "frequency": "5min",
+      "chunks": 63791,
+      "batches": 2568,
+      "symbols": 1497,
+      "bars": 71813
+    }
+  ],
+  "market_index_id": "eedcdca80d5a9868d61b3e440328f205b2cca27ed7a6c5bd0aab9d151577164a",
+  "market_index_published_at": "2026-10-27T06:10:05.215060+00:00",
+  "market_export_state": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "source_bytes_read": 77638991,
+    "cached_batches": 160,
+    "replayed_batches": 1874,
+    "selected_chunks": 50326,
+    "selected_batches": 2034,
+    "export_seconds": 43.949941,
+    "total_bytes": 87416857,
+    "total_files": 4488,
+    "index_id": "eedcdca80d5a9868d61b3e440328f205b2cca27ed7a6c5bd0aab9d151577164a",
+    "cached_rows": 70520,
+    "cache_estimated_bytes": 127999629,
+    "quarantined_entries": 0,
+    "evidence_sha256": "5744719042ad7708993615c703c84ce1805d7ece52a01f98c4d90e329523a840"
+  },
+  "day_cycle": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "required_day": "2026-10-26",
+    "data_version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+    "data_end": "2026-10-26",
+    "provider_published": false,
+    "state": "CURRENT_DAY_ALREADY_READY",
+    "updated_at": "2026-10-27T08:23:44.138416+00:00",
+    "source_revision": "55b5b0044649a28fd84c77364ca9908df0cee7a4",
+    "evidence_sha256": "8da8dd067f84b6379ea7ab1cca12f55e890cb0a1f664a8ae56b3b96f2dc73406"
+  },
+  "disk_free_gib": 276.075,
+  "memory_kib": {
+    "MemTotal": 527465532,
+    "MemAvailable": 468368544
+  },
+  "services_modified": false,
+  "whole_step1_accepted": false,
+  "completed_session_cde_accepted": false,
+  "evidence_sha256": "84e63d425321e727e895d47f26d2228504aa447c698155b89f80942186875517"
+}

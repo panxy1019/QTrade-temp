@@ -1,0 +1,149 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-27T08:17:08.089901+00:00",
+  "source_revision": "f0e05981766de7a78edd7086452530c27e9068dc",
+  "controlled_metadata_chunk_limit": 600000,
+  "metadata_limit_override_scope": "ISOLATED_BENCHMARK_ONLY_TO_MEASURE_EXISTING_COMPUTE_PATH",
+  "controlled_snapshot_clock": "2026-10-27T08:09:58.026432+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 120,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "results": [
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 117009711,
+        "cached_batches": 0,
+        "replayed_batches": 2694,
+        "selected_chunks": 66782,
+        "selected_batches": 2694,
+        "export_seconds": 71.27177,
+        "total_bytes": 101622974,
+        "total_files": 4488,
+        "index_id": "99bc78c2dc6160733288f4d24f9f3de4783ee85eeb506a65518aee610e09153f",
+        "cached_rows": 70520,
+        "cache_estimated_bytes": 127999629,
+        "quarantined_entries": 0
+      },
+      "index_id": "99bc78c2dc6160733288f4d24f9f3de4783ee85eeb506a65518aee610e09153f",
+      "pass_name": "cold",
+      "wall_seconds": 71.465581,
+      "profile": {
+        "store_read_blob": {
+          "calls": 13470,
+          "inclusive_seconds": 6.276268
+        },
+        "signed": {
+          "calls": 9878,
+          "inclusive_seconds": 1.854811
+        },
+        "store_read_captures": {
+          "calls": 5388,
+          "inclusive_seconds": 5.630302
+        },
+        "store_load": {
+          "calls": 2694,
+          "inclusive_seconds": 10.151685
+        },
+        "replay": {
+          "calls": 2694,
+          "inclusive_seconds": 14.123196
+        },
+        "encoded": {
+          "calls": 11670,
+          "inclusive_seconds": 1.787449
+        },
+        "load": {
+          "calls": 2694,
+          "inclusive_seconds": 37.199151
+        },
+        "validate_bar": {
+          "calls": 145022,
+          "inclusive_seconds": 9.35599
+        },
+        "validate_shard": {
+          "calls": 4488,
+          "inclusive_seconds": 10.865434
+        },
+        "validate_index": {
+          "calls": 1,
+          "inclusive_seconds": 0.075044
+        }
+      },
+      "peak_rss_kib": 764272
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 98172658,
+        "cached_batches": 160,
+        "replayed_batches": 2534,
+        "selected_chunks": 66782,
+        "selected_batches": 2694,
+        "export_seconds": 59.822192,
+        "total_bytes": 101622974,
+        "total_files": 4488,
+        "index_id": "99bc78c2dc6160733288f4d24f9f3de4783ee85eeb506a65518aee610e09153f",
+        "cached_rows": 70520,
+        "cache_estimated_bytes": 127999629,
+        "quarantined_entries": 0
+      },
+      "index_id": "99bc78c2dc6160733288f4d24f9f3de4783ee85eeb506a65518aee610e09153f",
+      "pass_name": "warm",
+      "wall_seconds": 60.016033,
+      "profile": {
+        "store_read_blob": {
+          "calls": 12990,
+          "inclusive_seconds": 5.934025
+        },
+        "signed": {
+          "calls": 9878,
+          "inclusive_seconds": 1.900056
+        },
+        "load": {
+          "calls": 2694,
+          "inclusive_seconds": 29.702849
+        },
+        "validate_bar": {
+          "calls": 145022,
+          "inclusive_seconds": 9.474078
+        },
+        "store_read_captures": {
+          "calls": 5068,
+          "inclusive_seconds": 4.385082
+        },
+        "store_load": {
+          "calls": 2534,
+          "inclusive_seconds": 7.721617
+        },
+        "replay": {
+          "calls": 2534,
+          "inclusive_seconds": 11.268574
+        },
+        "encoded": {
+          "calls": 11510,
+          "inclusive_seconds": 1.529108
+        },
+        "validate_shard": {
+          "calls": 4488,
+          "inclusive_seconds": 10.7193
+        },
+        "validate_index": {
+          "calls": 1,
+          "inclusive_seconds": 0.073809
+        }
+      },
+      "peak_rss_kib": 778116
+    }
+  ],
+  "whole_step1_accepted": false,
+  "evidence_sha256": "34d0078fe44e36f18529bba6f5b90450c960c9d9936d8e622a9102287fe9a131"
+}

@@ -1,0 +1,114 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-27T08:57:05.839887+00:00",
+  "source_revision": "b2386c3e53c766d9e9512e6ca0f5116583aa13c2",
+  "controlled_snapshot_clock": "2026-10-27T08:09:58.026432+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_WALL_INCLUDES_POST_EXPORT_BYTE_COMPARISON",
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "pass_name": "cold",
+      "wall_seconds": 45.215586,
+      "profile": {
+        "signed": {
+          "calls": 4491,
+          "inclusive_seconds": 0.89184
+        },
+        "store_read_blob": {
+          "calls": 5388,
+          "inclusive_seconds": 2.705906
+        },
+        "replay": {
+          "calls": 2694,
+          "inclusive_seconds": 11.159693
+        },
+        "encoded": {
+          "calls": 7182,
+          "inclusive_seconds": 1.146604
+        },
+        "load": {
+          "calls": 2694,
+          "inclusive_seconds": 25.012551
+        },
+        "validate_shard": {
+          "calls": 4488,
+          "inclusive_seconds": 10.875014
+        },
+        "validate_index": {
+          "calls": 1,
+          "inclusive_seconds": 0.07349
+        }
+      },
+      "peak_rss_kib": 807536
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 117379707,
+        "cached_batches": 160,
+        "replayed_batches": 2534,
+        "selected_chunks": 66782,
+        "selected_batches": 2694,
+        "export_seconds": 41.139474,
+        "total_bytes": 101622974,
+        "total_files": 4488,
+        "index_id": "ccfa76a172c05ad6ee68f8f269065def697e611bd94b3cb3d68f8575b8cd83dd",
+        "cached_rows": 70520,
+        "cache_estimated_bytes": 127999629,
+        "quarantined_entries": 0
+      },
+      "index_id": "ccfa76a172c05ad6ee68f8f269065def697e611bd94b3cb3d68f8575b8cd83dd",
+      "all_entry_references_equal": true,
+      "exact_equal_shards": 4488,
+      "baseline_total_shards": 4488,
+      "pass_name": "warm",
+      "wall_seconds": 44.058553,
+      "profile": {
+        "signed": {
+          "calls": 4492,
+          "inclusive_seconds": 0.864065
+        },
+        "store_read_blob": {
+          "calls": 5388,
+          "inclusive_seconds": 2.184104
+        },
+        "load": {
+          "calls": 2694,
+          "inclusive_seconds": 18.939686
+        },
+        "replay": {
+          "calls": 2534,
+          "inclusive_seconds": 8.91737
+        },
+        "encoded": {
+          "calls": 7022,
+          "inclusive_seconds": 0.8924
+        },
+        "validate_shard": {
+          "calls": 4488,
+          "inclusive_seconds": 11.148493
+        },
+        "validate_index": {
+          "calls": 1,
+          "inclusive_seconds": 0.078754
+        }
+      },
+      "peak_rss_kib": 811432
+    }
+  ],
+  "evidence_sha256": "5475e3a46255028a968dc5ce1aa9a88b6eee57077faf940261a0cf07e54902b6"
+}
