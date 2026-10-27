@@ -28,6 +28,7 @@ from qtrade.market_data.sina_minute import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from qtrade.research import unified_market as contract
 from scripts import publish_unified_market as exporter
+from scripts import unified_store as store_module
 from scripts.unified_store import FIELDS, UnifiedBatchStore, canonical
 
 NOW = datetime(2026, 10, 26, 10, tzinfo=UTC)
@@ -1085,5 +1086,128 @@ def test_single_frequency_chunk_cap_and_cap_plus_one_reject_without_new_pointer(
     with pytest.raises(ValueError, match='CHUNK_BUDGET'):
         export(source)
     assert pointer.read_bytes() == before
+
+
+def test_material_chain_reads_each_blob_once_and_decodes_only_misses(source, monkeypatch):
+    _, _, _, _, store, add = source
+    add()
+    add('day', counter=2)
+    reads, decodes, parquet_reads, manifest_reads = [], [], [], []
+    original_blob = store_module.UnifiedBatchStore.read_blob
+    original_decode = store_module._decode_captures
+    original_file = store_module.pq.ParquetFile
+    original_bytes = Path.read_bytes
+    def read_blob(self, ref):
+        raw = original_blob(self, ref)
+        reads.append(len(raw))
+        return raw
+    def decode(ref, raw):
+        decodes.append(ref['sha256'])
+        return original_decode(ref, raw)
+    class Parquet:
+        def __init__(self, *args, **kwargs):
+            self.file = original_file(*args, **kwargs)
+        def __getattr__(self, name):
+            return getattr(self.file, name)
+        def read(self, *args, **kwargs):
+            parquet_reads.append(1)
+            return self.file.read(*args, **kwargs)
+    def read_bytes(path):
+        raw = original_bytes(path)
+        if path.parent == store.root/'batches':
+            manifest_reads.append(len(raw))
+        return raw
+    monkeypatch.setattr(store_module.UnifiedBatchStore, 'read_blob', read_blob)
+    monkeypatch.setattr(store_module, '_decode_captures', decode)
+    monkeypatch.setattr(store_module.pq, 'ParquetFile', Parquet)
+    monkeypatch.setattr(Path, 'read_bytes', read_bytes)
+    first = export(source)
+    assert len(reads) == 4 and len(decodes) == len(parquet_reads) == 2
+    assert len(manifest_reads) == 4  # Recheck exact manifest bytes after each admission replay.
+    assert first['statistics']['source_bytes_read'] == sum(reads)+sum(manifest_reads)
+    reads.clear()
+    decodes.clear()
+    parquet_reads.clear()
+    manifest_reads.clear()
+    second = export(source)
+    assert first['index'] == second['index']
+    assert len(reads) == 4 and decodes == parquet_reads == []
+    assert len(manifest_reads) == 4
+    assert second['statistics']['source_bytes_read'] == sum(reads)+sum(manifest_reads)
+
+
+def test_manifest_switch_during_same_material_replay_is_rejected_before_cache(source, monkeypatch):
+    _, _, calendar, _, store, add = source
+    manifest = add()
+    kinds = {'301001': 'STOCK', '600036': 'STOCK'}
+    context = (signed(calendar.document)['evidence_sha256'], signed(kinds)['evidence_sha256'])
+    original = exporter._replay
+    def replay(material, *args, **kwargs):
+        original(material, *args, **kwargs)
+        path = store.batch_path(manifest['batch_id'])
+        # Same parsed document, different physical source.
+        path.write_bytes(path.read_bytes()+b'\n')
+    monkeypatch.setattr(exporter, '_replay', replay)
+    stats = {'source_bytes_read': 0, 'cached_batches': 0, 'replayed_batches': 0}
+    with pytest.raises(ValueError, match='BATCH_CHANGED_DURING_REPLAY'):
+        exporter._load(store, manifest['batch_id'], stats, calendar, kinds, context)
+    assert exporter._CACHE == {} and stats['replayed_batches'] == 0
+
+
+def test_cached_material_rechecks_manifest_after_physical_blob_read(source, monkeypatch):
+    _, _, calendar, _, store, add = source
+    manifest = add()
+    export(source)
+    kinds = {'301001': 'STOCK', '600036': 'STOCK'}
+    context = (signed(calendar.document)['evidence_sha256'], signed(kinds)['evidence_sha256'])
+    original = store.read_blob
+    def read_blob(ref):
+        raw = original(ref)
+        if ref['suffix'] == '.parquet':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(path.read_bytes()+b'\n')
+        return raw
+    monkeypatch.setattr(store, 'read_blob', read_blob)
+    stats = {'source_bytes_read': 0, 'cached_batches': 0, 'replayed_batches': 0}
+    with pytest.raises(ValueError, match='BATCH_CHANGED_DURING_REPLAY'):
+        exporter._load(store, manifest['batch_id'], stats, calendar, kinds, context)
+    assert stats['cached_batches'] == stats['replayed_batches'] == 0
+    manifest_size = store.batch_path(manifest['batch_id']).stat().st_size
+    assert stats['source_bytes_read'] == (manifest['raw']['bytes']+manifest['normalized']['bytes']
+                                         +2*manifest_size-1)
+
+
+def test_private_material_has_no_caller_supplied_source_or_validation_bypass(source):
+    import inspect
+    _, _, _, _, store, add = source
+    manifest = add()
+    assert list(inspect.signature(store._batch_material).parameters) == ['batch_id']
+    assert list(inspect.signature(store.load).parameters) == ['batch_id']
+    with pytest.raises(TypeError):
+        store._batch_material(manifest['batch_id'], raw=b'forged')
+    with pytest.raises(TypeError):
+        store.load(manifest['batch_id'], captures=[])
+
+
+def test_missing_normalized_source_still_counts_material_reads_toward_budget(source, monkeypatch):
+    _, _, calendar, _, store, add = source
+    manifest = add()
+    manifest['normalized'] = None
+    manifest = resign(manifest)
+    path = store.batch_path(manifest['batch_id'])
+    raw_manifest = contract.encoded(manifest)
+    path.write_bytes(raw_manifest)
+    kinds = {'301001': 'STOCK', '600036': 'STOCK'}
+    context = (signed(calendar.document)['evidence_sha256'], signed(kinds)['evidence_sha256'])
+    stats = {'source_bytes_read': 0, 'cached_batches': 0, 'replayed_batches': 0}
+    with pytest.raises(ValueError, match='NORMALIZED_SOURCE_MISSING'):
+        exporter._load(store, manifest['batch_id'], stats, calendar, kinds, context)
+    actual = len(raw_manifest)+manifest['raw']['bytes']
+    assert stats['source_bytes_read'] == actual
+    monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', actual)
+    with pytest.raises(ValueError, match='SOURCE_BYTE_BUDGET'):
+        exporter._load(store, manifest['batch_id'], stats, calendar, kinds, context)
+    assert stats['source_bytes_read'] == 2*actual
+    assert exporter._CACHE == {}
 
 

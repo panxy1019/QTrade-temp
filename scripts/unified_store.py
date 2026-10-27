@@ -40,6 +40,92 @@ def canonical(value: object) -> bytes:
                       allow_nan=False).encode()
 
 
+def _decode_captures(ref: dict[str, Any], raw: bytes) -> list[dict[str, Any]]:
+    """Decode bytes already checksum-verified by this store's physical read."""
+    with gzip.GzipFile(fileobj=io.BytesIO(raw)) as handle:
+        payload = handle.read(64_000_001)
+    if len(payload) > 64_000_000 or len(payload) != ref["uncompressed_bytes"]:
+        raise ValueError("RAW_CAPTURE_DECOMPRESSION_LIMIT_OR_SIZE_MISMATCH")
+    rows = [json.loads(line) for line in payload.splitlines()]
+    if len(rows) != ref["captures"]:
+        raise ValueError("RAW_CAPTURE_COUNT_MISMATCH")
+    for row in rows:
+        body = base64.b64decode(row.pop("body_base64"), validate=True)
+        if sha256(body).hexdigest() != row["body_sha256"]:
+            raise ValueError("RAW_RESPONSE_CHECKSUM_MISMATCH")
+        row["body"] = body
+    if [r["body_sha256"] for r in rows] != ref["body_hashes"]:
+        raise ValueError("RAW_CAPTURE_LINEAGE_MISMATCH")
+    return rows
+
+
+class _BatchMaterial:
+    """One store-owned physical read; callers cannot supply source bytes or decoded rows."""
+
+    def __init__(self, store: UnifiedBatchStore, batch_id: str):
+        self._path = store.batch_path(batch_id)
+        self._manifest_bytes = self._path.read_bytes()
+        self.manifest: dict[str, Any] = json.loads(self._manifest_bytes)
+        value = self.manifest
+        if (value.get("schema_version") != SCHEMA or value.get("batch_id") != batch_id
+                or signed({k: v for k, v in value.items() if k != "evidence_sha256"}) != value
+                or any(value.get(k) != v for k, v in AUTHORITY.items())):
+            raise ValueError("COLLECTION_BATCH_HASH_OR_AUTHORITY_MISMATCH")
+        self._raw = store.read_blob(self.manifest['raw'])
+        self._normalized = (store.read_blob(self.manifest['normalized'])
+                            if self.manifest['normalized'] is not None else None)
+        self.source_bytes_read = len(self._manifest_bytes)+len(self._raw)+len(
+            self._normalized or b'')
+        self._file: pq.ParquetFile | None = None
+        self._verified: (
+            tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]] | None) = None
+
+    def identities(self) -> tuple[str, str, str]:
+        # read_blob has just checked each physical blob against these exact IDs.
+        return (sha256(self._manifest_bytes).hexdigest(), self.manifest['raw']['sha256'],
+                self.manifest['normalized']['sha256'] if self._normalized is not None else '')
+
+    def _parquet(self) -> pq.ParquetFile:
+        if self._normalized is None:
+            raise ValueError('NORMALIZED_INCREMENTAL_SOURCE_MISSING')
+        if self._file is None:
+            self._file = pq.ParquetFile(io.BytesIO(self._normalized))
+        return self._file
+
+    def check_export_bounds(self) -> None:
+        # Ordinary store.load retains its existing schema/count policy. Only the
+        # bounded market exporter requests these pre-decode working-set checks.
+        metadata = self._parquet().metadata
+        if (not 1 <= metadata.num_rows <= 50*48 or sum(
+                metadata.row_group(i).total_byte_size for i in range(metadata.num_row_groups))
+                > 16_000_000):
+            raise ValueError('UNIFIED_MARKET_SOURCE_PARQUET_BOUND')
+
+    def validate(self) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
+        if self._verified is None:
+            value = self.manifest
+            captures = _decode_captures(value['raw'], self._raw)
+            rows = []
+            if self._normalized is not None:
+                file = self._parquet()
+                if (not file.schema_arrow.equals(FIELDS, check_metadata=False)
+                        or file.metadata.num_rows != value["bar_count"]):
+                    raise ValueError("NORMALIZED_INCREMENTAL_SCHEMA_OR_COUNT_MISMATCH")
+                rows = file.read().to_pylist()
+                plain = [{k: v for k, v in row.items()
+                          if k not in {"raw_pack_sha256", "source_hashes"}} for row in rows]
+                if sha256(canonical(plain)).hexdigest() != value["admitted_rows_sha256"]:
+                    raise ValueError("NORMALIZED_ROW_CONTENT_MISMATCH")
+            self._verified = value, captures, rows
+        return self._verified
+
+    def check_manifest_unchanged(self) -> None:
+        actual = self._path.read_bytes()
+        self.source_bytes_read += len(actual)
+        if actual != self._manifest_bytes:
+            raise ValueError('UNIFIED_MARKET_BATCH_CHANGED_DURING_REPLAY')
+
+
 class UnifiedBatchStore:
     def __init__(self, root: Path):
         self.root = root.resolve()
@@ -134,21 +220,7 @@ class UnifiedBatchStore:
                 "body_hashes": [row["body_sha256"] for row in entries]}
 
     def read_captures(self, ref: dict[str, Any]) -> list[dict[str, Any]]:
-        with gzip.GzipFile(fileobj=io.BytesIO(self.read_blob(ref))) as handle:
-            payload = handle.read(64_000_001)
-        if len(payload) > 64_000_000 or len(payload) != ref["uncompressed_bytes"]:
-            raise ValueError("RAW_CAPTURE_DECOMPRESSION_LIMIT_OR_SIZE_MISMATCH")
-        rows = [json.loads(line) for line in payload.splitlines()]
-        if len(rows) != ref["captures"]:
-            raise ValueError("RAW_CAPTURE_COUNT_MISMATCH")
-        for row in rows:
-            body = base64.b64decode(row.pop("body_base64"), validate=True)
-            if sha256(body).hexdigest() != row["body_sha256"]:
-                raise ValueError("RAW_RESPONSE_CHECKSUM_MISMATCH")
-            row["body"] = body
-        if [r["body_sha256"] for r in rows] != ref["body_hashes"]:
-            raise ValueError("RAW_CAPTURE_LINEAGE_MISMATCH")
-        return rows
+        return _decode_captures(ref, self.read_blob(ref))
 
     def batch_path(self, batch_id: str) -> Path:
         if re.fullmatch(r"[a-f0-9]{32}", batch_id) is None:
@@ -251,20 +323,7 @@ class UnifiedBatchStore:
         return manifest
 
     def load(self, batch_id: str) -> dict[str, Any]:
-        value: dict[str, Any] = json.loads(self.batch_path(batch_id).read_text())
-        if (value.get("schema_version") != SCHEMA or value.get("batch_id") != batch_id
-                or signed({k: v for k, v in value.items() if k != "evidence_sha256"}) != value
-                or any(value.get(k) != v for k, v in AUTHORITY.items())):
-            raise ValueError("COLLECTION_BATCH_HASH_OR_AUTHORITY_MISMATCH")
-        self.read_captures(value["raw"])
-        if value["normalized"] is not None:
-            data = self.read_blob(value["normalized"])
-            file = pq.ParquetFile(io.BytesIO(data))
-            if (not file.schema_arrow.equals(FIELDS, check_metadata=False)
-                    or file.metadata.num_rows != value["bar_count"]):
-                raise ValueError("NORMALIZED_INCREMENTAL_SCHEMA_OR_COUNT_MISMATCH")
-            rows = [{k: v for k, v in row.items() if k not in {"raw_pack_sha256", "source_hashes"}}
-                    for row in file.read().to_pylist()]
-            if sha256(canonical(rows)).hexdigest() != value["admitted_rows_sha256"]:
-                raise ValueError("NORMALIZED_ROW_CONTENT_MISMATCH")
-        return value
+        return self._batch_material(batch_id).validate()[0]
+
+    def _batch_material(self, batch_id: str) -> _BatchMaterial:
+        return _BatchMaterial(self, batch_id)

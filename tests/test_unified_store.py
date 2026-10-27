@@ -1,3 +1,4 @@
+import io
 import json
 import os
 from dataclasses import replace
@@ -5,11 +6,14 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
 
+import pyarrow as pa
+import pyarrow.parquet as pq
 import pytest
 
 from qtrade.data import Bar
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.market_data.sina_incremental import IncrementalBar
+from qtrade.monitoring.data_freshness import signed
 from scripts import unified_store as module
 from scripts.unified_store import UnifiedBatchStore
 
@@ -129,3 +133,50 @@ def test_content_addressed_paths_cannot_escape_the_storage_root(store, tmp_path:
         store._blob_path("../escape", ".parquet")
     with pytest.raises(ValueError):
         store.batch_path("../escape")
+
+
+@pytest.mark.parametrize('damage', ['rows', 'uncompressed_bytes'])
+def test_market_material_bounds_precede_decode_without_tightening_ordinary_load(store,
+                                                                             monkeypatch, damage):
+    value = commit(store, capture(store))
+    rows = pq.read_table(io.BytesIO(store.read_blob(value['normalized']))).to_pylist()
+    if damage == 'rows':
+        rows *= 2401
+    else:
+        rows[0]['amount_basis'] = 'x'*16_000_001
+    buffer = io.BytesIO()
+    pq.write_table(pa.Table.from_pylist(rows, schema=module.FIELDS), buffer, compression='zstd')
+    value['normalized'] = store._put_blob(buffer.getvalue(), '.parquet')
+    value['bar_count'] = len(rows)
+    plain = [{key: item for key, item in row.items()
+              if key not in {'raw_pack_sha256', 'source_hashes'}} for row in rows]
+    value['admitted_rows_sha256'] = module.sha256(module.canonical(plain)).hexdigest()
+    value = signed({key: item for key, item in value.items() if key != 'evidence_sha256'})
+    store.batch_path(BATCH).write_bytes(json.dumps(value).encode())
+    # Generic store.load continues its original schema/count/content-hash policy;
+    # market-only row and decoded-size bounds are not silently imposed upon it.
+    assert store.load(BATCH) == value
+    material = store._batch_material(BATCH)
+    monkeypatch.setattr(module, '_decode_captures', lambda *args:
+                        pytest.fail('market footer bounds must fail before any decode'))
+    with pytest.raises(ValueError, match='UNIFIED_MARKET_SOURCE_PARQUET_BOUND'):
+        material.check_export_bounds()
+
+
+@pytest.mark.parametrize('damage', ['manifest', 'count', 'content', 'raw_lineage'])
+def test_shared_material_validator_rejects_forged_semantics_in_ordinary_load(store, damage):
+    value = commit(store, capture(store))
+    if damage == 'manifest':
+        value['live_trading_enabled'] = True
+    elif damage == 'count':
+        value['bar_count'] += 1
+    elif damage == 'content':
+        value['admitted_rows_sha256'] = '0'*64
+    else:
+        value['raw']['body_hashes'] = ['0'*64]
+    value = signed({key: item for key, item in value.items() if key != 'evidence_sha256'})
+    store.batch_path(BATCH).write_bytes(json.dumps(value).encode())
+    with pytest.raises(ValueError):
+        store.load(BATCH)
+    with pytest.raises(ValueError):
+        store._batch_material(BATCH).validate()

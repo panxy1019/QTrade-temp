@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import io
 import json
 import os
 import shutil
@@ -17,8 +16,6 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Any, Literal, cast
 from uuid import uuid4
-
-import pyarrow.parquet as pq  # type: ignore[import-untyped]
 
 from qtrade.api.unified_data import validate_publication
 from qtrade.data.storage import _fsync_directory
@@ -44,7 +41,7 @@ from qtrade.research.unified_market import (
     validate_shard,
 )
 from scripts.atomic_json import write_json_atomic
-from scripts.unified_store import UnifiedBatchStore
+from scripts.unified_store import UnifiedBatchStore, _BatchMaterial
 
 REPO = Path(__file__).resolve().parents[1]
 MAX_BATCHES = 12_000
@@ -77,10 +74,9 @@ def _write_object(path: Path, raw: bytes) -> None:
             temporary.unlink(missing_ok=True)
 
 
-def _replay(store: UnifiedBatchStore, manifest: dict[str, Any], rows: list[dict[str, Any]],
-            calendar: Calendar, kinds: dict[str, str]) -> None:
+def _replay(material: _BatchMaterial, calendar: Calendar, kinds: dict[str, str]) -> None:
     """Reproduce collector admission from actual receipts before caching normalized rows."""
-    captures = store.read_captures(manifest['raw'])
+    manifest, captures, rows = material.validate()
     spec = manifest['spec']
     target = datetime.fromisoformat(spec['target_end']).astimezone(SHANGHAI)
     completed = datetime.fromisoformat(manifest['completed_at'])
@@ -167,38 +163,35 @@ def _load(store: UnifiedBatchStore, batch_id: str, stats: dict[str, Any],
     path = store.batch_path(batch_id)
     if path.is_symlink() or path.stat().st_size > 2_000_000:
         raise ValueError('UNIFIED_MARKET_SOURCE_MANIFEST_BOUND')
-    manifest = json.loads(path.read_bytes())
-    if manifest['normalized'] is None:
-        raise ValueError('UNIFIED_MARKET_NORMALIZED_SOURCE_MISSING')
+    material = store._batch_material(batch_id)
+    manifest = material.manifest
     # Hash actual immutable object bytes every pass. Cache skips decompression and
     # Parquet decoding only; neither timestamps nor a previous schema PASS suffice.
-    raw = store.read_blob(manifest['raw'])
-    normalized = store.read_blob(manifest['normalized'])
-    stats['source_bytes_read'] += len(raw)+len(normalized)
+    stats['source_bytes_read'] += material.source_bytes_read
     if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
         raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
-    key = (sha256(path.read_bytes()).hexdigest(), sha256(raw).hexdigest(),
-           sha256(normalized).hexdigest(), *context)
+    if manifest['normalized'] is None:
+        raise ValueError('UNIFIED_MARKET_NORMALIZED_SOURCE_MISSING')
+
+    def recheck_manifest() -> None:
+        read_before = material.source_bytes_read
+        try:
+            material.check_manifest_unchanged()
+        finally:
+            stats['source_bytes_read'] += material.source_bytes_read-read_before
+        if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
+            raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
+
+    key = (*material.identities(), *context)
     if key in _CACHE:
+        recheck_manifest()
         stats['cached_batches'] += 1
         return _CACHE[key]
-    metadata = pq.ParquetFile(io.BytesIO(normalized)).metadata
-    if (not 1 <= metadata.num_rows <= 50*48
-            or sum(metadata.row_group(i).total_byte_size for i in range(metadata.num_row_groups))
-            > 16_000_000):
-        raise ValueError('UNIFIED_MARKET_SOURCE_PARQUET_BOUND')
-    checked = store.load(batch_id)
-    stats['source_bytes_read'] += len(raw)+len(normalized)
-    if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
-        raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
-    if checked != manifest:
-        raise ValueError('UNIFIED_MARKET_BATCH_CHANGED_DURING_REPLAY')
-    rows = pq.read_table(io.BytesIO(normalized)).to_pylist()
+    material.check_export_bounds()
+    checked, _, rows = material.validate()
     with localcontext(Context(prec=28)):
-        _replay(store, manifest, rows, calendar, kinds)
-    stats['source_bytes_read'] += len(raw)
-    if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
-        raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
+        _replay(material, calendar, kinds)
+    recheck_manifest()
     estimate = len(encoded({'rows': rows}))+len(rows)*1024
     if (len(_CACHE) < MAX_BATCHES
             and sum(len(value[1]) for value in _CACHE.values())+len(rows) <= MAX_CACHE_ROWS
