@@ -124,7 +124,8 @@ def build_snapshot(root: Path, experiment_root: Path) -> dict[str, Any]:
     return snapshot
 
 
-def publish(root: Path, experiment_root: Path, publication: Path) -> None:
+def publish(root: Path, experiment_root: Path, publication: Path, *,
+            unified_market_database: Path | None = None) -> None:
     if not (publication / ".git").is_dir():
         raise ValueError("DEDICATED_PUBLICATION_REPOSITORY_REQUIRED")
     remote = subprocess.check_output(
@@ -134,6 +135,9 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         raise ValueError("PUBLICATION_DESTINATION_MISMATCH")
     snapshot = build_snapshot(root, experiment_root)
     current_files: list[str] = []
+    from scripts.publish_unified_market import publish_market_files
+
+    current_files.extend(publish_market_files(root.parent, publication, unified_market_database))
     workflow_root = root.parent / "workflow/public"
     workflow_catalog = workflow_root / "workflow.json"
     if workflow_catalog.is_file():
@@ -305,7 +309,7 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         "Read-only latest market observations and persisted experiment summaries.\n"
         "Public-source historical data, non-PIT, not trading or promotion authority.\n"
         "Bounded current-chart Parquet is public; full research archives stay on the cluster.\n"
-        "Published every five minutes; consumers must check source clocks and publication age.\n"
+        "Publication interval is configured; consumers must check source clocks and age.\n"
         "Historical simulation ledgers are explicitly labeled and carry no execution authority.\n"
         "No credentials, live account state or arbitrary executable code are published.\n"
     )
@@ -338,6 +342,8 @@ def main() -> None:
     parser.add_argument("--experiment-root", type=Path, required=True)
     parser.add_argument("--publication", type=Path, required=True)
     parser.add_argument("--once", action="store_true")
+    parser.add_argument('--unified-market-database', type=Path)
+    parser.add_argument('--interval-seconds', type=int, default=300, choices=range(60, 301))
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("live trading must remain disabled")
@@ -346,7 +352,8 @@ def main() -> None:
         signal.signal(sig, lambda *_: stop.set())
     while not stop.is_set():
         try:
-            publish(args.root, args.experiment_root, args.publication)
+            publish(args.root, args.experiment_root, args.publication,
+                    unified_market_database=args.unified_market_database)
             print("PUBLICATION_SUCCEEDED", flush=True)
         except Exception as error:
             write_json_atomic(
@@ -362,7 +369,7 @@ def main() -> None:
                 raise SystemExit(1) from None
         if args.once:
             break
-        stop.wait(300)
+        stop.wait(args.interval_seconds)
 
 
 if __name__ == "__main__":
