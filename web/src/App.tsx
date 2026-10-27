@@ -10,7 +10,7 @@ import { usePlatformSnapshot } from './hooks/usePlatformSnapshot'
 import { StatusTag } from './components/StatusTag'
 import { PageErrorBoundary } from './components/PageErrorBoundary'
 import { isPublicResearchNode } from './runtime/environment'
-import { CurrentDataProvider, CurrentDataStatus } from './components/CurrentWorkspace'
+import { CurrentDataProvider } from './components/CurrentWorkspace'
 import { ResearchWorkflowProvider } from './components/ResearchWorkflowProvider'
 import './styles.css'
 
@@ -50,10 +50,12 @@ const menu = [
 function Shell() {
   const [dark, setDark] = useState(true)
   const [collapsed, setCollapsed] = useState(false)
-  const { data, error, loading, refreshing, lastUpdated, refresh } = usePlatformSnapshot()
   const publicNode = isPublicResearchNode()
   const runtimeLabel = publicNode ? '公开研究结果 · 登录后提交研究' : '本地安全核心'
   const location = useLocation()
+  const legacyRoute = ['/archive', '/data', '/monitor'].includes(location.pathname)
+    || (!publicNode && ['/paper', '/positions', '/orders', '/risk'].includes(location.pathname))
+  const { data, error, loading, refreshing, lastUpdated, refresh } = usePlatformSnapshot(undefined, legacyRoute)
   const researchRoute = ['/strategies', '/research', '/experiments', '/backtest', '/models', '/signals'].includes(location.pathname)
   const navigate = useNavigate()
   const algorithm = dark ? theme.darkAlgorithm : theme.defaultAlgorithm
@@ -76,16 +78,16 @@ function Shell() {
       <Layout>
         <Layout.Header className="topbar">
           <Space wrap>
-            {researchRoute ? <Tag color="blue">Qlib 研究</Tag> : <StatusTag value={data?.system.mode ?? 'PAPER'} prominent />}
-            <Typography.Text type={error ? 'danger' : 'secondary'}>{error ?? runtimeLabel}</Typography.Text>
-            {failedSections.length > 0 && <Tag color="orange">{failedSections.length} 个数据分区异常</Tag>}
-            <Typography.Text type="secondary">{lastUpdated ? `更新 ${lastUpdated.toLocaleTimeString('zh-CN', { hour12: false })}` : loading ? '首次加载中…' : '尚未更新'}</Typography.Text>
-            <Button aria-label="刷新平台快照" size="small" icon={<ReloadOutlined />} loading={refreshing} onClick={() => { void refresh() }}>刷新</Button>
+            {legacyRoute ? <StatusTag value={data?.system.mode ?? 'PAPER'} prominent /> : <Tag color="blue">{researchRoute ? 'Qlib 研究' : '统一研究工作流'}</Tag>}
+            <Typography.Text type={legacyRoute && error ? 'danger' : 'secondary'}>{legacyRoute ? error ?? runtimeLabel : runtimeLabel}</Typography.Text>
+            {legacyRoute && failedSections.length > 0 && <Tag color="orange">{failedSections.length} 个参考分区异常</Tag>}
+            {legacyRoute ? <><Typography.Text type="secondary">{lastUpdated ? `参考快照更新 ${lastUpdated.toLocaleTimeString('zh-CN', { hour12: false })}` : loading ? '首次加载中…' : '尚未更新'}</Typography.Text>
+              <Button aria-label="刷新平台快照" size="small" icon={<ReloadOutlined />} loading={refreshing} onClick={() => { void refresh() }}>刷新</Button></>
+              : <Typography.Text type="secondary">各业务分区按自身时间与身份刷新</Typography.Text>}
           </Space>
           <Space><span>深色模式</span><Switch checked={dark} onChange={setDark} /></Space>
         </Layout.Header>
         <Layout.Content className="content">
-          {!researchRoute && <CurrentDataStatus archive={location.pathname !== '/market'} />}
           <PageErrorBoundary key={location.pathname}>
             <Suspense fallback={<Typography.Text type="secondary">页面加载中…</Typography.Text>}>
               <Routes>
@@ -97,12 +99,12 @@ function Shell() {
                 <Route path="/signals" element={<SignalsPage />} />
                 <Route path="/experiments" element={<QlibExperimentPage />} />
                 <Route path="/backtest" element={<QlibBacktestPage />} />
-                <Route path="/archive" element={<QlibArchivePage><Tabs items={[
+                <Route path="/archive" element={<CurrentDataProvider><QlibArchivePage><Tabs items={[
                   { key: 'strategies', label: '原策略目录', children: <StrategyPage data={data} /> },
                   { key: 'research', label: '因子与分钟研究', children: <ResearchPage data={data} /> },
                   { key: 'experiments', label: '原实验档案', children: <ExperimentPage data={data} /> },
                   { key: 'backtest', label: 'ETF/分钟回测工具', children: <BacktestPage data={data} /> },
-                ]} /></QlibArchivePage>} />
+                ]} /></QlibArchivePage></CurrentDataProvider>} />
                 <Route path="/paper" element={publicNode ? <ForwardResearchPage /> : <PaperPage data={data} publicNode={publicNode} onRefresh={async () => { await refresh() }} />} />
                 <Route path="/positions" element={publicNode ? <ForwardResearchPage focus="holdings" /> : <PositionsPage data={data} />} />
                 <Route path="/orders" element={publicNode ? <ForwardResearchPage focus="fills" /> : <OrdersPage data={data} publicNode={publicNode} onRefresh={async () => { await refresh() }} />} />
@@ -119,4 +121,4 @@ function Shell() {
   </ConfigProvider>
 }
 
-export default function App() { return <CurrentDataProvider><ResearchWorkflowProvider><HashRouter><Shell /></HashRouter></ResearchWorkflowProvider></CurrentDataProvider> }
+export default function App() { return <ResearchWorkflowProvider><HashRouter><Shell /></HashRouter></ResearchWorkflowProvider> }

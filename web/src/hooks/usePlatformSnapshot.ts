@@ -5,7 +5,7 @@ import type { PlatformSnapshot } from '../types'
 const DEFAULT_REFRESH_MS = import.meta.env.MODE === 'vercel' ? 60_000 : 5_000
 const INITIAL_RETRY_MS = 5_000
 
-export function usePlatformSnapshot(refreshMs = DEFAULT_REFRESH_MS) {
+export function usePlatformSnapshot(refreshMs = DEFAULT_REFRESH_MS, enabled = true) {
   const [data, setData] = useState<PlatformSnapshot | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -34,6 +34,7 @@ export function usePlatformSnapshot(refreshMs = DEFAULT_REFRESH_MS) {
   }, [])
 
   useEffect(() => {
+    if (!enabled) return
     let retry: number | null = null
     let cancelled = false
     const initial = window.setTimeout(() => {
@@ -57,7 +58,7 @@ export function usePlatformSnapshot(refreshMs = DEFAULT_REFRESH_MS) {
       if (retry !== null) window.clearTimeout(retry)
       window.clearInterval(timer)
     }
-  }, [refresh, refreshMs])
+  }, [refresh, refreshMs, enabled])
 
   return { data, error, loading, refreshing, lastUpdated, refresh }
 }

@@ -1,7 +1,7 @@
 import json
 from contextlib import nullcontext
 from copy import deepcopy
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 import pytest
 from test_history_backfill import platform_writers as history_writers  # noqa: F401
@@ -12,10 +12,33 @@ from test_public_delisted_plan import platform_writers as official_writers  # no
 from qtrade.monitoring.data_freshness import signed
 from scripts import audit_delisted_history as audit_module
 from scripts import delisted_history_queue as queue_module
+from scripts import history_backfill_store as store_module
 from scripts.delisted_history_queue import SECURITY_STATUS, SOURCE_KIND, DelistedHistoryQueue
 from scripts.history_backfill_store import HistoryStore, fields, request_for
 
 official_inputs = official_fixture
+
+
+@pytest.fixture(autouse=True)
+def synthetic_receipt_clock(monkeypatch):
+    # Claims and audits use a fixed synthetic NOW. Seal each synthetic capture at
+    # its claim time too; real wall time would make these receipts future-dated
+    # relative to the controlled audit once the calendar advances.
+    original = HistoryStore.seal
+
+    def seal_at_claim_time(self, attempt, raw, **kwargs):
+        stamp = datetime.fromisoformat(attempt["started_at"])
+
+        class SyntheticDatetime(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return stamp.astimezone(tz) if tz is not None else stamp.replace(tzinfo=None)
+
+        with monkeypatch.context() as clock_patch:
+            clock_patch.setattr(store_module, "datetime", SyntheticDatetime)
+            return original(self, attempt, raw, **kwargs)
+
+    monkeypatch.setattr(HistoryStore, "seal", seal_at_claim_time)
 
 
 @pytest.fixture(autouse=True)

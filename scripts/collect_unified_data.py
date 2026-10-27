@@ -10,7 +10,7 @@ import shutil
 import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import suppress
+from contextlib import nullcontext, suppress
 from datetime import UTC, datetime
 from pathlib import Path
 from threading import Event
@@ -30,13 +30,54 @@ from qtrade.market_data.sina_incremental import (
 from qtrade.market_data.sina_minute import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from scripts.atomic_json import write_json_atomic
-from scripts.unified_queue import UnifiedCollectionQueue
+from scripts.unified_queue import UnifiedCollectionQueue, required_ends
 from scripts.unified_store import UnifiedBatchStore
 
 REPO = Path(__file__).resolve().parents[1]
 KLINE = "https://quotes.sina.cn/cn/api/json_v2.php/CN_MarketDataService.getKLineData"
 QUOTE = "https://hq.sinajs.cn/"
 Source = Callable[[str, dict[str, str]], dict[str, Any]]
+
+
+class PooledSinaSource:
+    """One pass owns at most four reusable verified-TLS connections, with no retries."""
+
+    def __enter__(self) -> PooledSinaSource:
+        import httpx
+
+        self.client = httpx.Client(
+            limits=httpx.Limits(max_connections=4, max_keepalive_connections=4,
+                                keepalive_expiry=30),
+            timeout=12, follow_redirects=False,
+            headers={"User-Agent": "QTrade noncommercial historical research",
+                     "Referer": "https://finance.sina.com.cn/", "Accept-Encoding": "identity"},
+        )
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        self.client.close()
+
+    def __call__(self, source_id: str, params: dict[str, str]) -> dict[str, Any]:
+        if source_id not in {"sina_klines", "sina_quote"}:
+            raise ValueError("UNAPPROVED_SOURCE")
+        url = (KLINE + "?" + urlencode(params) if source_id == "sina_klines"
+               else QUOTE + "list=" + params["list"])
+        body, status, error = bytearray(), None, None
+        complete = False
+        try:
+            with self.client.stream("GET", url) as response:
+                status = response.status_code
+                for chunk in response.iter_raw():
+                    body.extend(chunk[:2_000_001 - len(body)])
+                    if len(body) > 2_000_000:
+                        del body[2_000_000:]
+                        raise ValueError("SOURCE_SIZE_LIMIT")
+                complete = True
+        except Exception as exc:
+            error = type(exc).__name__
+        return {"source_id": source_id, "request": params,
+                "received_at": datetime.now(UTC).isoformat(), "status_code": status,
+                "transport_error": error, "body": bytes(body), "body_complete": complete}
 
 
 def fetch(source_id: str, params: dict[str, str]) -> dict[str, Any]:
@@ -82,10 +123,11 @@ def error_code(error: Exception) -> str:
 
 def collect_batch(
     store: UnifiedBatchStore, batch: dict[str, Any], calendar: Calendar, *,
-    source: Source = fetch, workers: int = 4,
+    source: Source = fetch, workers: int = 4, timings: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     if store.batch_path(batch["batch_id"]).exists():
         return store.load(batch["batch_id"])
+    started = time.monotonic()
     spec, kinds = batch["spec"], batch["security_types"]
     target = datetime.fromisoformat(spec["target_end"]).astimezone(SHANGHAI)
     day, freq = target.date(), spec["frequency"]
@@ -107,8 +149,10 @@ def collect_batch(
 
     with ThreadPoolExecutor(max_workers=min(4, max(1, workers))) as pool:
         responses = list(pool.map(request_symbol, symbols))
+    downloaded = time.monotonic()
     captures = ([quote_capture] if quote_capture is not None else []) + responses
     raw_ref = store.capture(captures)  # No response is parsed before its bytes are durable.
+    captured = time.monotonic()
     quote_lines = {}
     if quote_capture is not None:
         try:
@@ -177,7 +221,15 @@ def collect_batch(
                                 "decoded": decoded_ok, "parsed": parsed_ok,
                                 "same_vendor_matched": False}
     completed = max(datetime.fromisoformat(c["received_at"]) for c in captures)
-    return store.commit(batch["batch_id"], spec, raw_ref, rows, outcomes, completed_at=completed)
+    parsed_at = time.monotonic()
+    manifest = store.commit(batch["batch_id"], spec, raw_ref, rows, outcomes,
+                            completed_at=completed)
+    if timings is not None:
+        timings.update(download_seconds=downloaded - started,
+                       raw_capture_seconds=captured - downloaded,
+                       parse_seconds=parsed_at - captured,
+                       commit_seconds=time.monotonic() - parsed_at)
+    return manifest
 
 
 def run_pass(
@@ -209,51 +261,77 @@ def run_pass(
         "admitted_symbols", "admitted_rows",
         "same_vendor_endpoint_matched", "independent_source_reconciled",
     )}
+    state["phase_seconds"] = {key: 0.0 for key in (
+        "download_seconds", "raw_capture_seconds", "parse_seconds", "commit_seconds",
+        "queue_finish_seconds", "snapshot_seconds", "progress_write_seconds",
+        "publication_seconds",
+    )}
     last_publication = -1000.0
 
     def save() -> None:
         nonlocal last_publication
+        snapshot_started = time.monotonic()
+        snapshot = queue.snapshot(master["universe_version"])
+        state["phase_seconds"]["snapshot_seconds"] += time.monotonic() - snapshot_started
         state.update(updated_at=datetime.now(UTC).isoformat(), attempted_symbols=attempted,
                      completed_batches=batches,
                      elapsed_seconds=round(time.monotonic() - started, 3),
                      free_bytes=shutil.disk_usage(base).free,
-                     **queue.snapshot(master["universe_version"]))
+                     **snapshot)
+        write_started = time.monotonic()
         write_json_atomic(base / "unified-data/collection-progress.json", signed(state))
+        state["phase_seconds"]["progress_write_seconds"] += time.monotonic() - write_started
         if publish_progress and (time.monotonic() - last_publication >= 60
                                  or state.get("state") != "COLLECTING"):
+            publication_started = time.monotonic()
             publish_progress(state)
+            state["phase_seconds"]["publication_seconds"] += time.monotonic() - publication_started
             last_publication = time.monotonic()
 
-    while (not stop.is_set() and time.monotonic() - started < seconds
-           and attempted < maximum_symbols):
-        any_claimed = False
-        for freq in ("day", "5min"):
-            if freq not in ends or stop.is_set() or attempted >= maximum_symbols:
-                continue
-            if shutil.disk_usage(base).free < 100 * 1024**3:
-                state["state"] = "STORAGE_RESERVE_PAUSED"
+    with (PooledSinaSource() if source is fetch else nullcontext(source)) as active_source:
+        while (not stop.is_set() and time.monotonic() - started < seconds
+               and attempted < maximum_symbols):
+            any_claimed = False
+            for freq in ("day", "5min"):
+                now = datetime.now(UTC)
+                if required_ends(calendar, now) != ends:
+                    ends = queue.plan(master, calendar, now)
+                    state["required_through"] = ends
+                if (freq not in ends or stop.is_set() or attempted >= maximum_symbols
+                        or time.monotonic() - started >= seconds):
+                    continue
+                if shutil.disk_usage(base).free < 100 * 1024**3:
+                    state["state"] = "STORAGE_RESERVE_PAUSED"
+                    save()
+                    return state
+                batch = queue.claim(
+                    master["universe_version"], freq,
+                    datetime.fromisoformat(ends[freq]).astimezone(SHANGHAI).date(), now=now,
+                    code_revision=code_revision, limit=min(group_size, maximum_symbols - attempted),
+                )
+                if batch is None:
+                    continue
+                any_claimed = True
+                state["state"] = "COLLECTING"
+                state["active_batch"] = batch["batch_id"]
                 save()
-                return state
-            batch = queue.claim(master["universe_version"], freq,
-                                datetime.fromisoformat(ends[freq]).date(), now=datetime.now(UTC),
-                                code_revision=code_revision, limit=min(group_size,
-                                                                      maximum_symbols - attempted))
-            if batch is None:
-                continue
-            any_claimed = True
-            state["state"] = "COLLECTING"
-            state["active_batch"] = batch["batch_id"]
-            save()
-            manifest = collect_batch(store, batch, calendar, source=source)
-            queue.finish(manifest, now=datetime.now(UTC))
-            for key, count in manifest["stage_counts"].items():
-                state["stage_counts"][key] += count
-            attempted += len(batch["spec"]["symbols"])
-            batches += 1
-            state["active_batch"] = None
-            save()
-        if not any_claimed:
-            break
+                timings: dict[str, float] = {}
+                manifest = collect_batch(store, batch, calendar, source=active_source,
+                                         timings=timings)
+                finish_started = time.monotonic()
+                queue.finish(manifest, now=datetime.now(UTC))
+                timings["queue_finish_seconds"] = time.monotonic() - finish_started
+                state["last_batch_timings"] = timings
+                for key, duration in timings.items():
+                    state["phase_seconds"][key] += duration
+                for key, count in manifest["stage_counts"].items():
+                    state["stage_counts"][key] += count
+                attempted += len(batch["spec"]["symbols"])
+                batches += 1
+                state["active_batch"] = None
+                save()
+            if not any_claimed:
+                break
     state["state"] = "STOPPED" if stop.is_set() else "PASS_FINISHED"
     save()
     return state

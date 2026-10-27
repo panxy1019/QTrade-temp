@@ -1,0 +1,141 @@
+{
+  "benchmark_top_fields": [
+    "schema_version",
+    "results"
+  ],
+  "checked_at": "2026-10-27T02:43:41.399105+00:00",
+  "disk": {
+    "free_bytes": 299589697536,
+    "total_bytes": 536870912000
+  },
+  "export_statistics": {
+    "cache_estimated_bytes": 127992346,
+    "cached_batches": 0,
+    "cached_rows": 70516,
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "evidence_sha256": "e8c37eb3acfde648db50da4d29b2cd79c8a9954107e5ded299646a70079e9c4f",
+    "export_seconds": 38.031185,
+    "external_order_transmission": false,
+    "index_id": "ec65735f71e977b058af2ebfb2b83ca28c2bfba04ee90bf12eac540dd21257ce",
+    "live_trading_enabled": false,
+    "point_in_time": false,
+    "promotion": "NOT_ELIGIBLE",
+    "quarantined_entries": 0,
+    "real_data_paper_readiness": false,
+    "realtime_readiness": false,
+    "replayed_batches": 608,
+    "selected_batches": 608,
+    "selected_chunks": 14872,
+    "source_bytes_read": 52520898,
+    "total_bytes": 56820747,
+    "total_files": 4488
+  },
+  "failure_streak_migration": {
+    "applied_at": "2026-10-27T02:42:29+00:00",
+    "conservative_tasks": 12,
+    "migrated_tasks": 15,
+    "proven_streaks": 3,
+    "repaired_retry_deadlines": 3
+  },
+  "linux_tests": {
+    "errors": 0,
+    "failures": 0,
+    "sha256": "c72980c95405edcc4fb5dfd768e77ba17edec65e3d090a7a750336c0bdf754a2",
+    "skips": 0,
+    "tests": 77
+  },
+  "live_trading_enabled": false,
+  "maintenance-deployment-e44a134": {
+    "applied_at": "2026-10-27T02:42:27.892892+00:00",
+    "live_trading_enabled": false,
+    "maintenance_pid_after": 213587,
+    "maintenance_pid_before": 210910,
+    "other_processes_unchanged": true,
+    "paper_pid": 175982,
+    "publisher_pid": 213327,
+    "source_revision": "e44a134fab8bc0404b8d1c59674747150e170698"
+  },
+  "minute_latest_counts": [
+    {
+      "count": 3,
+      "end": null
+    },
+    {
+      "count": 1,
+      "end": "2026-10-27T01:55:00+00:00"
+    },
+    {
+      "count": 1496,
+      "end": "2026-10-27T02:40:00+00:00"
+    }
+  ],
+  "publication": {
+    "evidence_sha256": "ea19a068310aa1ab2a5f4f3dcd538b84739a9852b69343d2091283766af03c8b",
+    "outcome": "SUCCEEDED",
+    "published_at": "2026-10-27T02:39:02.474623+00:00"
+  },
+  "publisher-deployment-e44a134": {
+    "applied_at": "2026-10-27T02:42:01.613734+00:00",
+    "interval_seconds": 60,
+    "live_trading_enabled": false,
+    "other_processes_unchanged": true,
+    "paper_pid": 175982,
+    "publisher_pid_after": 213327,
+    "publisher_pid_before": 183766,
+    "source_revision": "e44a134fab8bc0404b8d1c59674747150e170698",
+    "unified_database": "/root/qtrade-local/unified-data.sqlite"
+  },
+  "transport_benchmark_archive_sha256": "f1c9a668c8add3ffa13614137dead510fadb4eb5f984cefd0ccce3b44a9b303a",
+  "unified-market-export-9764c00": {
+    "revision": "9764c004889a3d9e2f3739139bc746c8d4cadd16",
+    "runs": [
+      {
+        "cache_estimated_bytes": 127992346,
+        "cached_batches": 0,
+        "cached_rows": 70516,
+        "entries": 3000,
+        "export_seconds": 36.427992,
+        "index_id": "527dfbb641d209302d2724a0cef5e19bf531a57c746d7a5287b2f49eee9332d1",
+        "label": "cold",
+        "max_rss_kib": 579820,
+        "quarantined_entries": 0,
+        "replayed_batches": 588,
+        "selected_batches": 588,
+        "selected_chunks": 14420,
+        "source_bytes_read": 51936848,
+        "states": {
+          "AVAILABLE": 2994,
+          "NO_DATA": 6,
+          "QUARANTINED": 0
+        },
+        "status": "SUCCEEDED",
+        "total_bytes": 56425549,
+        "total_files": 4488
+      },
+      {
+        "cache_estimated_bytes": 127992346,
+        "cached_batches": 158,
+        "cached_rows": 70516,
+        "entries": 3000,
+        "export_seconds": 23.000519,
+        "index_id": "ea4e6b86a42ce8aeaa520b8fbaa3b86dbe4417b873c0303c5191015be7caf9f5",
+        "label": "warm",
+        "max_rss_kib": 591844,
+        "quarantined_entries": 0,
+        "replayed_batches": 430,
+        "selected_batches": 588,
+        "selected_chunks": 14420,
+        "source_bytes_read": 33115734,
+        "states": {
+          "AVAILABLE": 2994,
+          "NO_DATA": 6,
+          "QUARANTINED": 0
+        },
+        "status": "SUCCEEDED",
+        "total_bytes": 56425549,
+        "total_files": 4488
+      }
+    ]
+  },
+  "whole_step1_accepted": false
+}

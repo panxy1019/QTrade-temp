@@ -2,6 +2,63 @@
 
 Last updated: 2026-10-27
 
+- Unified current-market export/API and standardized web pages are implemented
+  and independently reviewed. Linux 77 focused tests, frontend 281 tests plus
+  35 post-review regressions, whole-repo Ruff and src mypy pass. Actual cluster
+  export: cold 36.43s, warm 23.00s, 56.4MB/4,488 shards, 2,994 AVAILABLE of
+  3,000 symbol/frequency entries; measured RSS peaks at 591,844 KiB. Maintenance
+  and publisher use e44a134; PAPER PID 175982 is unchanged. At 10:43, 1,496
+  securities reach 10:40, one has an older gap and three have no admitted data.
+  Consecutive-failure migration repairs three proven inflated retry deadlines.
+  First bulk Git push hits the existing 90s timeout; publication migration and
+  production web/API delivery are being resolved, not yet accepted. See
+  docs/evidence/qlib-unified-market-rollout-20261027.json and page guide.
+  Genuine completed-day C/D/E acceptance and history/PIT remain open.
+
+- User requested implementation of the reopened unified-chart gap, intraday
+  freshness improvements and standardized synchronized pages. Three GPT-6.1-sol
+  high agents are implementing bounded lake export/API, frontend integration and
+  collector/queue optimization respectively. Root integrates and deploys after
+  review. Actual network response times dominate sampled 25-symbol batches
+  (6–16 seconds), so connection reuse is being measured with concurrency capped
+  at four. Current production is not yet changed; recovered PAPER is not restarted.
+
+- Opening-session runtime/API check at 09:52–09:53 proves today's five-minute
+  collection is working: 1,497 securities have observed data, distributed at
+  09:35/09:40/09:45, not all current through the expected 09:50 grid. Production
+  correctly reports PARTIAL / 0 fully-current securities. Crucially, current
+  chart API/UI still serves 30 daily ETFs and 75 minute/intraday stocks, while
+  the 1,500 unified catalog exposes coverage. Reopen the original unified-pool
+  chart/query requirement; the earlier external-gates-only audit missed it.
+  See docs/QLIB_MARKET_OPEN_CHECK_20261027.md and runtime/public evidence. PAPER
+  remains NORMAL, publication succeeds; no service restart or state mutation.
+
+- User explicitly approved single LightGBM PAPER recovery and reported visual
+  acceptance. Request ca102037bb904e368de144d12c51687c was consumed once; actual
+  reconciliation SUCCEEDED at 09:27:36 Shanghai, before market open. Production
+  confirms running=true, NORMAL and recovery_required=false. No service restart
+  or candidate activation. Visual status is USER_REPORTED_PASS, not an automated
+  build-pinned screenshot. At 09:30 the 1,500-security incremental pool has
+  1,497 daily / 1,494 five-minute inputs through October 26; formal Qlib remains
+  987/990. Full history and PIT remain incomplete; forward discovery now reports
+  PREDICTION_UNAVAILABLE after the old prediction admission window. See
+  docs/QLIB_PROGRESS_20261027.md and its two evidence files. STEP2 not started.
+
+- Cluster public GET access is verified through a temporary loopback-only SSH
+  relay using the existing local system proxy. Five actual requests succeed,
+  both current catalogs validate and bind production 34c5118; the forward is
+  closed afterward. No global network settings or services were changed.
+  Evidence: docs/evidence/qlib-cluster-public-tunnel-c5c280f.json; reproduction:
+  docs/QLIB_CLUSTER_PUBLIC_ACCEPTANCE_TRANSPORT.md. This supplies an operator
+  acceptance path, not unattended cluster egress or next-session acceptance.
+
+- PR27 is merged and production now verifies main 34c5118. All eight online
+  research routes return available HTTP 200 responses; the current catalog and
+  full public ETF historical report/artifacts independently validate. Evidence:
+  docs/evidence/qlib-step1-vercel-34c5118.json. Rendered browser acceptance and
+  the real October 27 completed-session transition remain unverified. STEP2 is
+  not started. Cluster audit tools remain c5c280f; no writer restart was needed.
+
 - C/D audit tools at c5c280f are installed as an immutable cluster release;
   all 103 focused Linux tests pass with zero skips. The real D CLI run against
   the actual current data head returns BLOCKED / CANDIDATE_NOT_UNACTIVATED_STAGED:

@@ -112,7 +112,7 @@ export function UnifiedDataCatalog() {
           <Space wrap>{Object.entries(master.collection.stage_counts).map(([stage, count]) => <Tag key={stage}>{stageLabels[stage] ?? stage}：{count}</Tag>)}</Space>
           <Typography.Text type="secondary">上方阶段计数属于本轮；日线与分钟分别算采集任务，不能相加视为独立证券数。同供应商两接口一致不等于独立来源对账。</Typography.Text>
         </>}
-        <Typography.Text type="secondary">目录快照年龄 {Math.round(summary.snapshot_age_seconds)} 秒。目录时间不代表行情时间；内容验收尚未认证完整历史交易日历、成交额、复权时点和交易规则。Qlib 新版本及每日预测链路仍在开发。</Typography.Text>
+        <Typography.Text type="secondary">目录快照年龄 {Math.round(summary.snapshot_age_seconds)} 秒。目录时间不代表行情时间；内容验收尚未认证完整历史交易日历、成交额、复权时点和交易规则。Qlib 日版本与每日预测状态在“在线模型”中独立核对，采集成功不代表模型输入已就绪。</Typography.Text>
       </>}
       <Space wrap>
         <Input.Search aria-label="查询统一证券" placeholder="证券代码或名称，回车查询" allowClear onSearch={(v) => { setQuery(v); setPage(1) }} style={{ width: 260 }} />

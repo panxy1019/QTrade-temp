@@ -24,6 +24,66 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+Integration checkpoint: bounded unified export/API and page responsibilities
+implemented, reviewed and tested. Cluster e44a134 has 77 passing Linux tests;
+1,496/1,500 minute tasks reach 10:40 at 10:43, with unknown gaps retained.
+Actual cold/warm export costs 36.43/23.00 seconds, 56.4MB, peak 591,844 KiB.
+Publisher migration is in progress after its first bulk push exceeds 90 seconds;
+production web/API acceptance remains pending. Recovered PAPER is untouched.
+See PLATFORM_PAGE_GUIDE.md and qlib-unified-market-rollout-20261027.json.
+
+User requested implementation of the remaining data/C/D/E and synchronized,
+standardized production pages. Work is active on codex/unified-market-workflow:
+
+1. Publish bounded, verified unified-lake series for every target security;
+   add a strict read-only symbol/frequency/window/version API. Evidence: actual
+   ledger/raw-normalized lineage tests, bounded-export timings and cluster run.
+2. Replace the default current-chart source with the unified pool; synchronize
+   operational summaries and make page responsibilities explicit. Preserve old
+   experiments/archives and their dates. Evidence: meaningful frontend tests,
+   build/lint, production API and rendered/manual acceptance where available.
+3. Measure and improve the real collector bottleneck without increasing vendor
+   concurrency or weakening fsync, raw capture, quality or risk gates. Evidence:
+   controlled HTTP connection reuse benchmark and real subsequent collection.
+4. Deploy the reviewed code to the cluster and Vercel; use the same data identities
+   and Shanghai clocks on pages. Do not restart the recovered PAPER service.
+5. Once genuinely complete October 27 data is available, run actual C/D/E audits
+   against immutable outputs. History/PIT remain ongoing, source-bounded work;
+   missing years or official states must stay explicit. STEP2 remains gated.
+
+Owners: comparison_review_high backend/export/API, forward_adapter_high web,
+collector_latency_high collector/queue; parent integration, runtime and review.
+
+Opening-session verification found an actionable original-guide 9.2 gap: the
+1,500-security unified coverage catalog is not yet the current chart data path;
+the current endpoint still admits 30 ETFs / 75 minute stocks. Reopen bounded
+unified-pool chart/API integration before declaring STEP1 complete. Also measure
+collector/publisher lag: 09:52 data ranges 09:35–09:45 while required grid is 09:50.
+This corrects the earlier conclusion that only external acceptance gates remain.
+See docs/QLIB_MARKET_OPEN_CHECK_20261027.md. STEP2 is not started.
+
+User authorized one LightGBM PAPER recovery and reported visual acceptance.
+The live service reconciled and recovered once at 09:27:36 Shanghai, with public
+NORMAL/running confirmation; no service restart or model activation occurred.
+Visual acceptance is human-reported, with no independently pinned build image.
+The actual October 27 complete-session C/D/E transition remains pending.
+Current data, history/PIT gaps and business-health warning are documented in
+docs/QLIB_PROGRESS_20261027.md. Do not create another recovery request from this
+authorization; it has been consumed. STEP2 remains gated on full STEP1.
+
+The cluster C public acceptance transport is now verified using a temporary,
+loopback-only SSH relay; five real requests and stable catalog checks pass.
+It closes afterward and requires the local host during acceptance. This resolves
+the operator acceptance route without changing unattended publisher networking.
+See docs/QLIB_CLUSTER_PUBLIC_ACCEPTANCE_TRANSPORT.md. Real next-session, human
+PAPER recovery and rendered visual acceptance remain open.
+
+PR27 production main 34c5118 is verified with all eight available online routes,
+current catalog validation and independent ETF artifact checks. Evidence:
+docs/evidence/qlib-step1-vercel-34c5118.json. This closes the production deployment
+follow-up only; actual next-session, PAPER human recovery, cluster egress and
+rendered visual acceptance remain open. STEP2 remains gated on full STEP1.
+
 C/D tools c5c280f pass all 103 Linux checks. The actual D pretransition audit is
 BLOCKED because the candidate is still TRAINED, with zero activations. The tool
 release is installed without restarting writers; real later-input validation

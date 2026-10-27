@@ -8,6 +8,8 @@ import os
 import shutil
 import signal
 import subprocess
+import time
+from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path
 from threading import Event
@@ -22,6 +24,53 @@ from scripts.atomic_json import write_json_atomic
 from scripts.run_data_observer import read_report
 
 REPO = Path(__file__).resolve().parents[1]
+
+
+def _cleanup_git_group(process: subprocess.Popen[bytes]) -> None:
+    """Stop the owned Git session even if its leader exited before SSH/send-pack."""
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        return
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline:
+        process.poll()  # Reap the direct child; an exited leader does not prove group exit.
+        try:
+            os.killpg(process.pid, 0)
+        except ProcessLookupError:
+            break
+        time.sleep(0.05)
+    else:
+        with suppress(ProcessLookupError):
+            os.killpg(process.pid, signal.SIGKILL)
+    try:
+        process.wait(timeout=2)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError('PUBLICATION_GIT_CLEANUP_FAILED') from None
+
+
+def run_publication_git(publication: Path, arguments: list[str], *, timeout: float = 90) -> None:
+    """Run fixed publisher Git arguments with a 90s command / 4s cleanup bound.
+
+    Git and its ordinary SSH/send-pack descendants share a newly owned POSIX
+    session. No shell, output capture or global Git/SSH configuration is involved.
+    Windows has no equivalent process-group kill here and fails before spawning.
+    """
+    if os.name != 'posix':
+        raise RuntimeError('PUBLICATION_GIT_PROCESS_GROUP_REQUIRES_POSIX')
+    if not 0 < timeout <= 90:
+        raise ValueError('PUBLICATION_GIT_TIMEOUT_BOUND')
+    command = ['git', '-C', str(publication), *arguments]
+    process = subprocess.Popen(command, start_new_session=True, stdin=subprocess.DEVNULL,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        returncode = process.wait(timeout=timeout)
+    finally:
+        # Cleanup on timeout, interruption and normal/nonzero leader exit. In
+        # particular, wait() returning cannot leave inherited-channel children.
+        _cleanup_git_group(process)
+    if returncode:
+        raise subprocess.CalledProcessError(returncode, command)
 
 
 def online_publication(source: Path) -> dict[str, Any]:
@@ -124,7 +173,8 @@ def build_snapshot(root: Path, experiment_root: Path) -> dict[str, Any]:
     return snapshot
 
 
-def publish(root: Path, experiment_root: Path, publication: Path) -> None:
+def publish(root: Path, experiment_root: Path, publication: Path, *,
+            unified_market_database: Path | None = None) -> None:
     if not (publication / ".git").is_dir():
         raise ValueError("DEDICATED_PUBLICATION_REPOSITORY_REQUIRED")
     remote = subprocess.check_output(
@@ -134,6 +184,9 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         raise ValueError("PUBLICATION_DESTINATION_MISMATCH")
     snapshot = build_snapshot(root, experiment_root)
     current_files: list[str] = []
+    from scripts.publish_unified_market import publish_market_files
+
+    current_files.extend(publish_market_files(root.parent, publication, unified_market_database))
     workflow_root = root.parent / "workflow/public"
     workflow_catalog = workflow_root / "workflow.json"
     if workflow_catalog.is_file():
@@ -305,7 +358,7 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         "Read-only latest market observations and persisted experiment summaries.\n"
         "Public-source historical data, non-PIT, not trading or promotion authority.\n"
         "Bounded current-chart Parquet is public; full research archives stay on the cluster.\n"
-        "Published every five minutes; consumers must check source clocks and publication age.\n"
+        "Publication interval is configured; consumers must check source clocks and age.\n"
         "Historical simulation ledgers are explicitly labeled and carry no execution authority.\n"
         "No credentials, live account state or arbitrary executable code are published.\n"
     )
@@ -315,13 +368,7 @@ def publish(root: Path, experiment_root: Path, publication: Path) -> None:
         ["push", "origin", "HEAD:refs/heads/main"],
     ]
     for arguments in commands:
-        subprocess.run(
-            ["git", "-C", str(publication), *arguments],
-            check=True,
-            timeout=90,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+        run_publication_git(publication, arguments)
     write_json_atomic(
         root / "publication-state.json",
         {
@@ -338,6 +385,8 @@ def main() -> None:
     parser.add_argument("--experiment-root", type=Path, required=True)
     parser.add_argument("--publication", type=Path, required=True)
     parser.add_argument("--once", action="store_true")
+    parser.add_argument('--unified-market-database', type=Path)
+    parser.add_argument('--interval-seconds', type=int, default=300, choices=range(60, 301))
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("live trading must remain disabled")
@@ -346,7 +395,8 @@ def main() -> None:
         signal.signal(sig, lambda *_: stop.set())
     while not stop.is_set():
         try:
-            publish(args.root, args.experiment_root, args.publication)
+            publish(args.root, args.experiment_root, args.publication,
+                    unified_market_database=args.unified_market_database)
             print("PUBLICATION_SUCCEEDED", flush=True)
         except Exception as error:
             write_json_atomic(
@@ -362,7 +412,7 @@ def main() -> None:
                 raise SystemExit(1) from None
         if args.once:
             break
-        stop.wait(300)
+        stop.wait(args.interval_seconds)
 
 
 if __name__ == "__main__":

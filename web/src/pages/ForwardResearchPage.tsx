@@ -35,7 +35,7 @@ interface Publication {
   books: ForwardBook[]; errors: Array<{ strategy_id: string | null; mode: string | null; code: string }>
   limitations: string[]
 }
-interface Reply { publication_available: boolean; service_fresh: boolean; publication: Publication | null }
+export interface Reply { publication_available: boolean; service_fresh: boolean; publication: Publication | null }
 
 const strategyNames: Record<string, string> = {
   momentum20: '20日动量', reversal5: '5日反转', lowvol20: '20日低波动',

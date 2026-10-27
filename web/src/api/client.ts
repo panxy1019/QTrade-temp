@@ -16,16 +16,25 @@ export function loadPublicResearchObservations() {
   return getJson<import('../types').PublicResearchObservation>('/observations/latest')
 }
 
-async function acquireGetSlot(): Promise<void> {
+async function acquireGetSlot(signal?: AbortSignal): Promise<void> {
+  if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
   if (activeGets < MAX_CONCURRENT_GETS) {
     activeGets += 1
     return
   }
-  await new Promise<void>((resolve) => {
-    getWaiters.push(() => {
+  await new Promise<void>((resolve, reject) => {
+    const start = () => {
+      signal?.removeEventListener('abort', cancel)
       activeGets += 1
       resolve()
-    })
+    }
+    const cancel = () => {
+      const index = getWaiters.indexOf(start)
+      if (index >= 0) getWaiters.splice(index, 1)
+      reject(new DOMException('Aborted', 'AbortError'))
+    }
+    getWaiters.push(start)
+    signal?.addEventListener('abort', cancel, { once: true })
   })
 }
 
@@ -35,19 +44,25 @@ function releaseGetSlot(): void {
   if (next) next()
 }
 
-async function getJson<T>(path: string): Promise<T> {
-  await acquireGetSlot()
+async function getJson<T>(path: string, options?: { signal?: AbortSignal }): Promise<T> {
+  await acquireGetSlot(options?.signal)
   const controller = new AbortController()
-  const timeoutId = globalThis.setTimeout(() => controller.abort(), GET_TIMEOUT_MS)
+  let timedOut = false
+  const cancel = () => controller.abort()
+  options?.signal?.addEventListener('abort', cancel, { once: true })
+  const timeoutId = globalThis.setTimeout(() => { timedOut = true; controller.abort() }, GET_TIMEOUT_MS)
   try {
+    if (options?.signal?.aborted) throw new DOMException('Aborted', 'AbortError')
     const response = await fetch(`${API_BASE}${path}`, { cache: 'no-store', signal: controller.signal })
     if (!response.ok) throw new Error(`请求失败：${response.status}`)
     return await response.json() as T
   } catch (reason) {
-    if (controller.signal.aborted) throw new Error('请求超时：30 秒')
+    if (options?.signal?.aborted) throw new DOMException('Aborted', 'AbortError')
+    if (timedOut) throw new Error('请求超时：30 秒')
     throw reason
   } finally {
     globalThis.clearTimeout(timeoutId)
+    options?.signal?.removeEventListener('abort', cancel)
     releaseGetSlot()
   }
 }
@@ -408,13 +423,31 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
     historicalBars: historicalBars.value, audit: audit.value, availability: { failures },
   }
 }
-export function loadUnifiedSummary() {
-  return getJson<import('../types').UnifiedSummary>('/unified/summary')
+export function loadUnifiedSummary(options?: { signal?: AbortSignal }) {
+  return getJson<import('../types').UnifiedSummary>('/unified/summary', options)
+}
+export function loadDeployment(options?: { signal?: AbortSignal }) {
+  return getJson<import('../types').DeploymentProvenance>('/deployment', options)
 }
 export function loadUnifiedSecurities(filters: {
   query: string; frequency: 'day' | '5min'; quality: string; target_only: boolean; offset: number
   coverage?: 'historical' | 'incremental'
-}) {
+}, options?: { signal?: AbortSignal }) {
   const params = new URLSearchParams(Object.entries(filters).map(([key, value]) => [key, String(value)]))
-  return getJson<import('../types').UnifiedSecurities>(`/unified/securities?${params}`)
+  return getJson<import('../types').UnifiedSecurities>(`/unified/securities?${params}`, options)
+}
+
+export function loadUnifiedBars(query: {
+  symbol: string; frequency: 'day' | '5min'; start?: string; end?: string; version?: string; limit?: number
+}, options?: { signal?: AbortSignal }) {
+  if (!/^\d{6}$/.test(query.symbol) || !['day', '5min'].includes(query.frequency)
+    || !Number.isInteger(query.limit ?? 500) || (query.limit ?? 500) < 1 || (query.limit ?? 500) > 2000
+    || [query.start, query.end].some(day => day !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(day))
+    || (query.start && query.end && query.start > query.end)
+    || (query.version !== undefined && !/^[a-f0-9]{64}$/.test(query.version))) {
+    return Promise.reject(new Error('统一行情查询范围或版本无效'))
+  }
+  const params = new URLSearchParams(Object.entries({ ...query, limit: query.limit ?? 500 })
+    .filter(([, value]) => value !== undefined).map(([key, value]) => [key, String(value)]))
+  return getJson<import('../types').UnifiedBarSeries>(`/unified/bars?${params}`, options)
 }

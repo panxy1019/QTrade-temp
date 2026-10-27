@@ -4,6 +4,7 @@ from unittest.mock import Mock
 from uuid import uuid4
 
 import pytest
+from test_unified_queue import master
 
 # Shared store fixture exercises real Parquet and immutable files on Linux.
 from test_unified_store import store as platform_store
@@ -150,6 +151,63 @@ def test_retry_of_sealed_batch_does_not_fetch_or_rewrite_any_old_artifact(store)
     forbidden = Mock(side_effect=AssertionError('must replay sealed batch'))
     assert collect_batch(store, job, CALENDAR, source=forbidden) == result
     forbidden.assert_not_called()
+
+
+@pytest.mark.parametrize('start_hour,maximum,frequencies,rows', [
+    (2, 4, ['5min', '5min'], 22),
+    (9, 8, ['day', '5min', 'day', '5min'], 196),
+], ids=['new-intraday-grid', 'daily-and-minute-fairness'])
+def test_pass_replans_between_batches_without_rewriting_claimed_targets_or_skipping_pool(
+    store, tmp_path, monkeypatch, start_hour, maximum, frequencies, rows,
+):
+    from datetime import timedelta
+    from types import SimpleNamespace
+
+    current = [NOW.replace(hour=start_hour)]
+
+    class Clock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return current[0].astimezone(tz)
+
+    publication = tmp_path / 'unified-data/public/unified.json'
+    publication.parent.mkdir(parents=True)
+    publication.write_text(json.dumps({'master': master(4)}))
+    monkeypatch.setattr(collector, 'datetime', Clock)
+    monkeypatch.setattr(collector, 'validate_publication', lambda _: None)
+    monkeypatch.setattr(collector, 'UnifiedBatchStore', lambda _: store)
+    monkeypatch.setattr(collector.shutil, 'disk_usage',
+                        lambda _: SimpleNamespace(free=200 * 1024**3))
+    monkeypatch.setattr(collector, 'write_json_atomic', lambda *_: None)
+    source, _ = fake_source()
+
+    def timed_source(source_id, params):
+        return {**source(source_id, params), 'received_at': current[0].isoformat()}
+
+    original = collector.collect_batch
+    sealed = []
+
+    def collect(*args, **kwargs):
+        result = original(*args, **kwargs)
+        sealed.append(result)
+        current[0] += timedelta(minutes=5)
+        return result
+
+    monkeypatch.setattr(collector, 'collect_batch', collect)
+    result = collector.run_pass(tmp_path, tmp_path / 'queue.sqlite', code_revision='b' * 40,
+                                maximum_symbols=maximum, group_size=2, source=timed_source)
+    assert [r['spec']['frequency'] for r in sealed] == frequencies
+    minute = [r for r in sealed if r['spec']['frequency'] == '5min']
+    assert minute[0]['spec']['symbols'] == ['600000', '600001']
+    assert minute[1]['spec']['symbols'] == ['600002', '600003']
+    if start_hour == 2:
+        assert minute[0]['spec']['target_end'] < minute[1]['spec']['target_end']
+    assert result['required_through']['5min'] == minute[-1]['spec']['target_end']
+    assert result['stage_counts']['admitted_symbols'] == maximum
+    assert result['stage_counts']['admitted_rows'] == rows
+    assert all(value >= 0 for value in result['phase_seconds'].values())
+    assert result['phase_seconds']['download_seconds'] > 0
+    assert all(store.load(r['batch_id']) == r for r in sealed)
 
 
 def test_fetch_uses_quote_url_contract_and_records_actual_response_completeness(monkeypatch):

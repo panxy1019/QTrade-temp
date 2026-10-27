@@ -235,7 +235,7 @@ export function QlibExperimentPage() {
     try { await workflowPost('/jobs/' + id + '/cancel', {}); await refresh() }
     catch (reason) { setError(String(reason)) }
   }
-  return <Layout title="实验中心" description="统一查看Qlib任务状态、固定规格、归档身份与逐实验限制。">
+  return <Layout title="实验中心" description="查看研究任务进度与原日期归档；已完成历史结果到回测分析对照，前向目标和后来观察到模拟交易查看。">
     <Login />
     <Card title="集群执行器"><Descriptions items={[
       { key: 'state', label: '状态', children: catalog?.worker.state ?? '不可用' },
@@ -254,7 +254,8 @@ export function QlibExperimentPage() {
     </Space> }} columns={[
       { title: '实验', dataIndex: 'name' }, { title: '模型', dataIndex: 'model' },
       { title: '状态', render: (_, row) => <Tag color={row.state === 'COMPLETE' ? 'blue' : finalStates.has(row.state) ? 'orange' : 'processing'}>{stageLabels[row.state] ?? row.state}</Tag> },
-      { title: '累计收益', render: (_, row) => percent(row.metrics?.total_return_net) },
+      { title: '历史测试区间 / 完成时间', render: (_, row) => `${row.spec?.segments.test.join(' 至 ') ?? '原区间见档案'}；完成 ${row.completed_at ?? '尚未完成'}` },
+      { title: '历史累计收益', render: (_, row) => percent(row.metrics?.total_return_net) },
       { title: '研究结论', render: () => <Tag color="orange">非PIT诊断·不可晋级</Tag> },
       { title: '操作', render: (_, row) => <Space>
         {row.state === 'COMPLETE' && <Button href={'#/backtest?experiment=' + row.experiment_id}>分析结果</Button>}
@@ -340,7 +341,7 @@ export function QlibBacktestPage() {
     return () => { active = false; window.clearTimeout(timer) }
   }, [compareId])
   const issue = result && other ? comparisonIssue(result, other) : null
-  return <Layout title="回测分析" description="选择已完成Qlib实验，查看固定结果；统一协议后进行模型对照。">
+  return <Layout title="回测分析" description="仅对照已完成的历史实验，保留各自测试区间、来源和成本假设；此处净值不是今天的 PAPER 或 SHADOW 结果。">
     <StrategyComparisonPanel />
     <EtfHistoryPanel />
     <Space wrap>

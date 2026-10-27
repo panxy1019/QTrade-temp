@@ -1,11 +1,56 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ExperimentRunSpecDraftRequest, IntradayFactorBacktestRequest, IntradayFactorCorrelationRequest, IntradayFactorDiscoveryRequest } from '../types'
-import { loadMinuteBarSeries, loadPlatformSnapshot, runExperimentRunSpecBacktest, runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from './client'
+import { loadMinuteBarSeries, loadPlatformSnapshot, loadUnifiedBars, runExperimentRunSpecBacktest, runIntradayFactorBacktest, runIntradayFactorCorrelation, runIntradayFactorDiscovery } from './client'
 
 describe('platform snapshot request fan-out', () => {
   afterEach(() => {
     vi.useRealTimers()
     vi.unstubAllGlobals()
+  })
+
+  it('removes cancelled queued unified requests without consuming a GET slot', async () => {
+    const finish: Array<() => void> = []
+    const fetcher = vi.fn((_: RequestInfo | URL, init?: RequestInit) => new Promise((resolve, reject) => {
+      const done = () => resolve({ ok: true, status: 200, json: async () => ({ bars: [] }) })
+      if (finish.length < 6) finish.push(done)
+      else done()
+      init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true })
+    }))
+    vi.stubGlobal('fetch', fetcher)
+    const requests = Array.from({ length: 6 }, () => loadUnifiedBars({ symbol: '000063', frequency: 'day' }))
+    await vi.waitFor(() => expect(fetcher).toHaveBeenCalledTimes(6))
+    const controller = new AbortController()
+    const queued = loadUnifiedBars({ symbol: '000063', frequency: '5min' }, { signal: controller.signal })
+    controller.abort()
+    await expect(queued).rejects.toMatchObject({ name: 'AbortError' })
+    expect(fetcher).toHaveBeenCalledTimes(6)
+    finish.forEach(resolve => resolve())
+    await Promise.all(requests)
+    await loadUnifiedBars({ symbol: '000063', frequency: 'day' })
+    expect(fetcher).toHaveBeenCalledTimes(7)
+  })
+
+  it('aborts an active unified GET and permits the next bounded request', async () => {
+    const controller = new AbortController()
+    const fetcher = vi.fn().mockImplementationOnce((_: RequestInfo | URL, init?: RequestInit) => new Promise((_, reject) => {
+      init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true })
+    })).mockResolvedValue({ ok: true, json: async () => ({ bars: [] }) })
+    vi.stubGlobal('fetch', fetcher)
+    const request = loadUnifiedBars({ symbol: '000063', frequency: 'day' }, { signal: controller.signal })
+    await vi.waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1))
+    controller.abort()
+    await expect(request).rejects.toMatchObject({ name: 'AbortError' })
+    await loadUnifiedBars({ symbol: '000063', frequency: '5min', start: '2026-10-26', end: '2026-10-27', version: 'a'.repeat(64), limit: 2000 })
+    expect(fetcher.mock.calls[1][0]).toContain('/unified/bars?symbol=000063&frequency=5min&start=2026-10-26&end=2026-10-27&version=')
+  })
+
+  it('refuses unbounded or inverted unified queries before fetching', async () => {
+    const fetcher = vi.fn()
+    vi.stubGlobal('fetch', fetcher)
+    await expect(loadUnifiedBars({ symbol: '000063', frequency: 'day', limit: 2001 })).rejects.toThrow(/范围/)
+    await expect(loadUnifiedBars({ symbol: '000063', frequency: 'day', start: '2026-10-27', end: '2026-10-26' })).rejects.toThrow(/范围/)
+    await expect(loadUnifiedBars({ symbol: '000063.SZ', frequency: 'day' })).rejects.toThrow(/范围/)
+    expect(fetcher).not.toHaveBeenCalled()
   })
 
   it('limits concurrent GETs and uses the minute evidence bundle', async () => {
