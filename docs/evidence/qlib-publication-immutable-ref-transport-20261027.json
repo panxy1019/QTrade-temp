@@ -1,0 +1,81 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.fixed-ref-public-transport.v1",
+  "checked_at": "2026-10-27T05:30:10.911632+00:00",
+  "transport_mode": "ACTUAL_HTTP_GET",
+  "publication_revision": "0dbd10e9c0221c9c57306db7e90f269ec50151ed",
+  "target_count": 1500,
+  "index_entries": 3000,
+  "index_id": "ffadebcecdc063025ae905754946b420657fad597e8fad0ed20be6b9ceb6e4e0",
+  "catalog_id": "81ee35a6307ddd76457b2c7e0218973ad5c9587d5cc827149d29e8596e0e88a2",
+  "catalog_source": {
+    "commit_sha": "0dbd10e9c0221c9c57306db7e90f269ec50151ed",
+    "git_blob_sha1": "9831bab4a8cd6da35c6c76f81e91a6556feed729",
+    "sha256": "119e8249a98fb3dc82a3962674a20afe0703710312b8e4efc9d94a0789bf13a5",
+    "bytes": 7975972
+  },
+  "index_published_at": "2026-10-27T05:28:13.507876+00:00",
+  "catalog_built_at": "2026-10-27T05:28:21.782164+00:00",
+  "index_age_seconds": 117.403756,
+  "catalog_age_seconds": 109.129468,
+  "index_fresh": true,
+  "catalog_fresh": true,
+  "incremental_freshness": {
+    "day": {
+      "status": "PARTIAL",
+      "ready_symbols": 1497,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-26T15:00:00+08:00"
+    },
+    "5min": {
+      "status": "PARTIAL",
+      "ready_symbols": 1496,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-27T13:25:00+08:00"
+    }
+  },
+  "responses": [
+    {
+      "url": "https://github.com/panxy1019/QTrade-observations.git/info/refs?service=git-upload-pack",
+      "status_code": 200,
+      "requested_at": "2026-10-27T05:30:01.554700+00:00",
+      "received_at": "2026-10-27T05:30:02.292843+00:00",
+      "content_type": "application/x-git-upload-pack-advertisement",
+      "cache_control": "no-cache, max-age=0, must-revalidate",
+      "body_bytes": 444,
+      "body_sha256": "d497a0498ea24525e0ebe7c02f0165e110d29947c7c66b9c9eaa1d7c8b98a19b"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/0dbd10e9c0221c9c57306db7e90f269ec50151ed/unified.json",
+      "status_code": 200,
+      "requested_at": "2026-10-27T05:30:02.292964+00:00",
+      "received_at": "2026-10-27T05:30:08.695305+00:00",
+      "content_type": "text/plain",
+      "cache_control": "max-age=300",
+      "body_bytes": 7975972,
+      "body_sha256": "119e8249a98fb3dc82a3962674a20afe0703710312b8e4efc9d94a0789bf13a5"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/panxy1019/QTrade-observations/0dbd10e9c0221c9c57306db7e90f269ec50151ed/unified-market.json",
+      "status_code": 200,
+      "requested_at": "2026-10-27T05:30:08.698423+00:00",
+      "received_at": "2026-10-27T05:30:10.910726+00:00",
+      "content_type": "text/plain",
+      "cache_control": "max-age=300",
+      "body_bytes": 2274569,
+      "body_sha256": "627a6c7e19f81189dff7519949675297b69cb69648bbdc39dc8dc8e03378c070"
+    }
+  ],
+  "production_api_verified": false,
+  "all_series_bytes_verified": false,
+  "whole_step1_accepted": false,
+  "completed_session_cde_accepted": false,
+  "browser_rendered_verified": false,
+  "evidence_sha256": "3301604f7ea2f9c49552a54a9be6091abb02d32c7b283f6dfec94a3dba73d904"
+}

@@ -1,6 +1,31 @@
 # Current state
 
-Last updated: 2026-10-27, 12:53 Shanghai public checkpoint.
+Last updated: 2026-10-27, afternoon investigation checkpoint.
+
+- PR29 is merged; production a53aa03 is verified. At 13:11 the actual remote
+  index contains 13:05 bars for 1,496 targets, changing exactly those 1,496 minute
+  series from lunch. At 13:20 one production API series independently matches
+  all referenced public shard rows, but its index is STALE_PUBLICATION: afternoon
+  transport acceptance remains open. Six subsequent remote commits have distinct
+  actual market index identities, so snapshot success is being checked against
+  export state and remote identity rather than treated as market freshness.
+  Cross-edge mutable catalog reads also make three full probes fail closed.
+  The final read-path repair now resolves the public Git main over bounded GET
+  and pins catalog, index and sample requests to one immutable commit. It uses
+  no REST quota, credentials or additional service. Source f0e0598 passes all
+  354 focused Linux tests without skips, plus independent final review. A local
+  ASGI integration using actual public HTTP verifies summary and same-commit
+  bars at 13:47; separate Vercel rollout remains pending. Only the full catalog
+  response has a 15s body budget; socket/ref/index/shard limits remain 8s and
+  publication/freshness budgets are unchanged. Writer/PAPER/ACTIVE/OFF unchanged.
+  Actual 13:50 services snapshot confirms all supervised processes RUNNING, the
+  same PAPER/publisher PIDs, 1,496 minute targets through expected 13:45, 40,692
+  qualified history-queue rows and 276.80 GiB free. History yields to current
+  collection; PIT refreshed 990/990 and 2,168,788 status rows without certifying
+  historical availability or full PIT. These are queue counts, not total lake
+  inventory or full-year coverage.
+  Complete-day C/D/E, historical PIT and STEP2 remain gated. See
+  docs/QLIB_AFTERNOON_PUBLICATION_20261027.md for timestamped evidence and limits.
 
 - Unified publication migration is complete and the publisher is RUNNING as
   c35bb84 / PID 240024. Six actual ordinary public frames after the controlled

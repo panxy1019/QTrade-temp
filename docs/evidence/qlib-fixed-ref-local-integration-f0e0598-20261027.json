@@ -1,0 +1,68 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.fixed-ref-local-integration.v1",
+  "started_at": "2026-10-27T05:47:22.499539+00:00",
+  "checked_at": "2026-10-27T05:47:37.152203+00:00",
+  "source_revision": "f0e05981766de7a78edd7086452530c27e9068dc",
+  "transport_mode": "LOCAL_ASGI_USING_ACTUAL_PUBLIC_HTTP",
+  "publication_revision": "75487158624a68dd19d6f93f5338b644180c7d1f",
+  "catalog_source": {
+    "commit_sha": "75487158624a68dd19d6f93f5338b644180c7d1f",
+    "git_blob_sha1": "187ecead3ffd3ed872784df6791880ba567035b9",
+    "sha256": "c6870f4dff215ec819c5dc5403520100ec590880eb2fdc844e5165bd1b6e2359",
+    "bytes": 7972968
+  },
+  "catalog_built_at": "2026-10-27T05:46:27.546860+00:00",
+  "catalog_freshness": {
+    "day": {
+      "status": "PARTIAL",
+      "ready_symbols": 1497,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-26T15:00:00+08:00"
+    },
+    "5min": {
+      "status": "PARTIAL",
+      "ready_symbols": 0,
+      "required_symbols": 1500,
+      "expected_end": "2026-10-27T13:45:00+08:00"
+    }
+  },
+  "series": {
+    "symbol": "000032",
+    "frequency": "5min",
+    "version": "908ce29610c36cd6a0db33f90e7a75413541ac49b4e347621053119a47a9de5c",
+    "publication_revision": "75487158624a68dd19d6f93f5338b644180c7d1f",
+    "published_at": "2026-10-27T05:45:38.759432+00:00",
+    "checked_at": "2026-10-27T05:47:32.634821+00:00",
+    "actual_end": "2026-10-27T13:40:00+08:00",
+    "expected_end": "2026-10-27T13:45:00+08:00",
+    "freshness": "PARTIAL",
+    "count": 80,
+    "state": "PARTIAL"
+  },
+  "local_api_responses": [
+    {
+      "path": "/unified/summary",
+      "status": 200,
+      "bytes": 11515,
+      "sha256": "3ebec8543fb9dc3d5126fe4c83253a87ad740fc1664aebdf9802af4837f0078a"
+    },
+    {
+      "path": "/unified/bars",
+      "status": 200,
+      "bytes": 34361,
+      "sha256": "a96d2af02af4720dc4db047abfc33fe525baa3db42b067cb89806583cb1bab96"
+    }
+  ],
+  "production_api_verified": false,
+  "whole_step1_accepted": false,
+  "completed_session_cde_accepted": false,
+  "browser_rendered_verified": false,
+  "evidence_sha256": "ddadbb8f99103371a5336b8823c1b5a9e9cabef5b25645d94d2d84fbf51f099c"
+}

@@ -3748,3 +3748,41 @@ session or historical PIT certification is implied. The real cluster read-only
 plan found six incomplete prior-session task scopes. No production repair or
 maintenance restart has been performed for this operator.
 
+## ADR-189 — Public reads pin one immutable publication commit
+
+Status: implementation accepted, production verification separate, 2026-10-27.
+
+Actual probes observe different mutable catalog identities across local and
+Vercel CDN edges; one later API series verifies its bytes but reports a stale
+index. Ordinary snapshot pushes and market-export freshness are different gates.
+Reuse the existing public Git repository and immutable commit trees. No vn.py
+component solves this read-provenance boundary. Read only the fixed repository's
+smart Git reference advertisement through a bounded HTTPS GET, require HEAD and
+main to agree, and pin raw catalog/index reads to that validated commit. Cache
+head discovery per actual UTC minute; failures cannot return a previous head.
+
+Cache each validated catalog with its actual raw-byte SHA256, byte length,
+Git blob locator and commit identity as one pair. The operator probe independently
+downloads those exact public bytes and validates the full signed document and
+master. Pin all five API samples to the same commit and preserve their original
+index version check, row/shard replay, authority checks, actual clocks and
+180/1,200-second freshness limits. Only fixed names and validated 40-hex commit
+identities form paths; no arbitrary URL, redirect, upload, write, authentication,
+cookie, REST quota or older mutable-pointer fallback is introduced.
+
+The source/gap audit considered GitHub's public blob REST endpoint, but actual
+unauthenticated rate limiting makes it unsuitable as this verification dependency.
+Git reference GET plus commit-addressed raw reads reuses the existing transport
+without new storage, services or credentials. This is a read-only provenance
+repair, not new PIT, data completeness, trading or promotion authority. Real
+production freshness and completed-session C/D/E still require separate evidence.
+
+Actual 8 MB catalog transfer exposes a distinction from the old downloader's
+socket timeout: the new whole-response budget cannot be only eight seconds.
+Keep socket progress, references, index and shards at eight seconds; allow only
+the exact fixed catalog path a 15-second complete-response budget. Check the
+deadline before and after reads and before return, including delayed EOF. The
+30-second serverless function permits a 23-second cold successful head+catalog
+network path plus processing; this is not a promise of hard cancellation during
+a blocked read. No retry, stale fallback or publication/freshness relaxation.
+

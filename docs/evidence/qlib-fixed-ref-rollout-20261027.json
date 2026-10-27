@@ -1,0 +1,85 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.fixed-ref-rollout.v1",
+  "created_at": "2026-10-27T05:51:27.173163+00:00",
+  "source_revision": "f0e05981766de7a78edd7086452530c27e9068dc",
+  "production_revision_observed": "a53aa03625f8d0566c2fa2b234090030f63a3ac4",
+  "final_source_production_verified": false,
+  "final_linux_tests": {
+    "passed": 354,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0
+  },
+  "independent_final_source_review": "PASS",
+  "actual_public_http_local_api_verified": true,
+  "actual_immutable_public_ref_fresh_at_1330": true,
+  "actual_afternoon_new_bars_observed": true,
+  "continuous_production_afternoon_freshness_accepted": false,
+  "browser_rendered_verified": false,
+  "completed_session_cde_accepted": false,
+  "whole_step1_accepted": false,
+  "step2_started": false,
+  "publisher_pid": 240024,
+  "paper_pid": 175982,
+  "other_services_restarted": false,
+  "source_artifacts": [
+    {
+      "path": "docs/evidence/qlib-afternoon-publication-latency-20261027.json",
+      "bytes": 4085,
+      "sha256": "2eb1d31f5ccddc4441c424c2dcc4c7492fe682c4313160ec1da0cb1ef19d8575"
+    },
+    {
+      "path": "docs/evidence/qlib-afternoon-runtime-1311-20261027.json",
+      "bytes": 6078,
+      "sha256": "5e41cc8ef99ea6e55405c28a007d7f62ddb71640df77ac0620c871743b95c303"
+    },
+    {
+      "path": "docs/evidence/qlib-afternoon-runtime-before-new-bars-20261027.json",
+      "bytes": 6063,
+      "sha256": "c2c2cdf0afe43abe9b682ec70771163f14e3a3d9666516b26246ab088419cb54"
+    },
+    {
+      "path": "docs/evidence/qlib-afternoon-services-20261027.json",
+      "bytes": 6125,
+      "sha256": "04203a1b79859dd2a70e87d7e59c5948c711e30c1ac41d1d459f155893943517"
+    },
+    {
+      "path": "docs/evidence/qlib-catalog-blob-linux-294c81f.xml",
+      "bytes": 31013,
+      "sha256": "777aa9a5f29c040b7080bdec3304addf80d34a4aae3e0b404d22797a3cfbc65f"
+    },
+    {
+      "path": "docs/evidence/qlib-fixed-ref-linux-2bd4795.xml",
+      "bytes": 56955,
+      "sha256": "244d441939f4a0557ec83576fe60803adc33264f286b21a5076773c0cb483439"
+    },
+    {
+      "path": "docs/evidence/qlib-fixed-ref-linux-f0e0598.xml",
+      "bytes": 57793,
+      "sha256": "5ff0b1752b77b3460494f0d81207eb10c30e1cbf31961ba87cd13bf49abfd546"
+    },
+    {
+      "path": "docs/evidence/qlib-fixed-ref-local-integration-f0e0598-20261027.json",
+      "bytes": 2392,
+      "sha256": "856a5122309bda6ec8aa1f33535ef933a7bd840bcce5d4e451ccb51fa163cf13"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-afternoon-one-series-a53aa03-20261027.json",
+      "bytes": 4580,
+      "sha256": "764d92200c4fec98a0369a3bd07378c73fd1217a223110cfaa10218abd6de285"
+    },
+    {
+      "path": "docs/evidence/qlib-publication-immutable-ref-transport-20261027.json",
+      "bytes": 3311,
+      "sha256": "b0faafe9f4ec34ebedef989e8e7e69c838dcb5e761764d0f391e40d44a565d32"
+    }
+  ],
+  "evidence_sha256": "08f7b89d4003dc1b2d13ac5213414bf5f2b872d9c44f1dbd0a43d04c826ac531"
+}
