@@ -3981,8 +3981,9 @@ not a sealed experiment or proof of alpha.
 
 ## ADR-196 — First admitted execution target survives later research proposals
 
-Status: implemented and Windows verified; isolated Linux/copy replay pending,
-2026-10-27. Not deployed to the original forward owner.
+Status: source ddebaa1 passes150 related Windows and150 isolated Linux cases;
+real14-book copy replay passes with12 immutable proposal receipts,2026-10-27.
+Not deployed to the original forward owner.
 
 After a new workflow revision emits fresh signal identities, the real persistent
 book rejects a second target at the same execution_at with a UNIQUE violation.
@@ -4004,4 +4005,11 @@ User's concrete new-account approval is separately consumed once by137ff4cd at
 not permission to rewrite a frozen slot or reuse the original consumed recovery.
 Deployment must preserve the original-owner constraint or obtain a specific
 reviewable handover decision; no in-memory patch or falsely labelled revision.
+
+A faithful SQLite backup retains the live process_owner lease and correctly
+rejects a second runtime. Preserve this initial copy failure. Detach only the
+newly-created isolated copies' process leases before replay, explicitly recording
+that difference. Never clear production leases or reuse/reset a recovery claim.
+Separate fingerprints prove production targets/admissions/links/sessions/fills
+unchanged throughout; the copy test neither resumes PAPER nor publishes data.
 

@@ -1,6 +1,20 @@
 # Current state
 
-Last updated: 2026-10-27 23:31 Shanghai, production C and authorized new PAPER recovery.
+Last updated: 2026-10-27 23:45 Shanghai, isolated Linux and current-book-copy replay pass.
+
+- Forward retention source ddebaa1 is publicly pushed and verified against580 Git
+  blobs. The same150 related Linux cases pass without skips. Actual14-book SQLite
+  backups then replay six current proposal families:12 immutable non-admitted
+  receipts, idempotent retry, unchanged targets/admissions/archive links/sessions/
+  fill journals. Original production fingerprints and PID175982 remain unchanged.
+  Copy replay first fails on the copied live-owner lease; preserve failure, detach
+  only isolated copy process leases and replay under a new output path. No
+  production lease, target or claim is cleared. This is NOT deployed acceptance.
+- Only current6 PAPER books would qualify for a future owner handover/recovery
+  review; original retired model history must remain visible and not auto-resume.
+  A scoped handover decision must resolve the previous original-owner constraint.
+
+Previous23:31 checkpoint (historical observations):
 
 - PR33 merged as main4b86145; actual production deployment matches. Actual public
   C passes at23:13 for ACTIVE29589b44/source096 prediction and signals, separately

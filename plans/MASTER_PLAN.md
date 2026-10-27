@@ -24,6 +24,16 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+23:45 checkpoint: source ddebaa1 verifies580 Git blobs in an isolated operator
+directory;150 Linux cases pass with no skips. Real14-book backups replay6 current
+families with12 immutable non-admitted proposals, preserving every original
+target/admission/link/session/fill and proving production fingerprints unchanged.
+The copied live-owner lease correctly blocks first replay; preserve that failed
+attempt and only detach isolated copy leases for a new successful replay. Source
+is pushed but not deployed. Prepare the explicit limited owner handover and
+current6-book reconciliation plan; never recover retired books as a side effect.
+Production/PAPER175982, actual-future-day acceptance and STEP2 are unchanged.
+
 23:31 checkpoint: PR33 merged4b86145 is actual production; fresh actual public C
 passes23:13 and full1500 delivery stays fresh/partially covered1497/1496. The user
 explicitly approves the named new-PAPER recovery. One request9ea34599 succeeds
