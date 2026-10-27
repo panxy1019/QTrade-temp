@@ -8,6 +8,8 @@ import os
 import shutil
 import signal
 import subprocess
+import time
+from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path
 from threading import Event
@@ -22,6 +24,53 @@ from scripts.atomic_json import write_json_atomic
 from scripts.run_data_observer import read_report
 
 REPO = Path(__file__).resolve().parents[1]
+
+
+def _cleanup_git_group(process: subprocess.Popen[bytes]) -> None:
+    """Stop the owned Git session even if its leader exited before SSH/send-pack."""
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        return
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline:
+        process.poll()  # Reap the direct child; an exited leader does not prove group exit.
+        try:
+            os.killpg(process.pid, 0)
+        except ProcessLookupError:
+            break
+        time.sleep(0.05)
+    else:
+        with suppress(ProcessLookupError):
+            os.killpg(process.pid, signal.SIGKILL)
+    try:
+        process.wait(timeout=2)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError('PUBLICATION_GIT_CLEANUP_FAILED') from None
+
+
+def run_publication_git(publication: Path, arguments: list[str], *, timeout: float = 90) -> None:
+    """Run fixed publisher Git arguments with a 90s command / 4s cleanup bound.
+
+    Git and its ordinary SSH/send-pack descendants share a newly owned POSIX
+    session. No shell, output capture or global Git/SSH configuration is involved.
+    Windows has no equivalent process-group kill here and fails before spawning.
+    """
+    if os.name != 'posix':
+        raise RuntimeError('PUBLICATION_GIT_PROCESS_GROUP_REQUIRES_POSIX')
+    if not 0 < timeout <= 90:
+        raise ValueError('PUBLICATION_GIT_TIMEOUT_BOUND')
+    command = ['git', '-C', str(publication), *arguments]
+    process = subprocess.Popen(command, start_new_session=True, stdin=subprocess.DEVNULL,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        returncode = process.wait(timeout=timeout)
+    finally:
+        # Cleanup on timeout, interruption and normal/nonzero leader exit. In
+        # particular, wait() returning cannot leave inherited-channel children.
+        _cleanup_git_group(process)
+    if returncode:
+        raise subprocess.CalledProcessError(returncode, command)
 
 
 def online_publication(source: Path) -> dict[str, Any]:
@@ -319,13 +368,7 @@ def publish(root: Path, experiment_root: Path, publication: Path, *,
         ["push", "origin", "HEAD:refs/heads/main"],
     ]
     for arguments in commands:
-        subprocess.run(
-            ["git", "-C", str(publication), *arguments],
-            check=True,
-            timeout=90,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+        run_publication_git(publication, arguments)
     write_json_atomic(
         root / "publication-state.json",
         {

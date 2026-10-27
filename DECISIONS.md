@@ -3668,3 +3668,21 @@ clocks; daily predictions wait for completed daily inputs. Historical experiment
 keep their frozen dates and identities. Continuous research observation does not
 enable real execution, recover halted books, or activate candidate models.
 
+## ADR-177 — Public Git timeout owns its complete process group
+
+Status: accepted, 2026-10-27.
+
+The first unified-market migration exposed an ordinary Git timeout leaving
+orphan SSH descendants. Reuse the dedicated publication repository and existing
+fixed Git command pipeline; no vn.py component applies to Git process ownership.
+Each command starts a separate POSIX session. Timeout, interruption and leader
+exit all perform bounded group cleanup, preserving the original failure and
+never printing private output. Reject unsupported Windows execution before spawn.
+
+A timeout cannot reverse a remote ref update already accepted. Pin and inspect
+the actual remote state before any controlled bootstrap, preserve source clocks,
+and keep only one publication owner. Bootstrap may use a longer explicit bound;
+ordinary cycles retain their 90-second command cap. Collection, approved ACTIVE
+and recovered PAPER remain independent. Real local descendant-process tests and
+subsequent ordinary public publication provide separate acceptance evidence.
+

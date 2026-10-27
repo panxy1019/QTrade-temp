@@ -100,6 +100,21 @@ database path. `--interval-seconds` accepts 60 through 300 and defaults to 300 f
 compatibility. An operator should use 60 or 120 only after measuring export/push
 cost. No private service wrapper or environment is automatically modified.
 
+Publication Git commands run in a newly owned POSIX process group with the
+existing 90-second command limit. Cleanup terminates the group, waits up to two
+seconds, then kills remaining members and bounds direct-child reaping. A timed-out
+leader cannot leave an ordinary SSH/send-pack descendant uploading alongside the
+next attempt. Windows is rejected before launch. This does not undo a ref update
+already accepted by the remote; verify actual remote/public state after a timeout.
+The real process-tree regression tests use local artificial programs, no network
+or credentials: `pytest tests/test_publication_git_process_group.py` on Linux.
+
+The first large public-object migration can exceed the ordinary limit on the
+observed slow Git uplink. Keep the publisher paused during an explicitly bounded,
+single-owner bootstrap; preserve original snapshot dates and verify the remote
+before resuming. Collection and PAPER need not restart. A bootstrap success is
+not evidence that ordinary subsequent cycles meet the freshness contract.
+
 Availability is limited to already admitted incremental lake data. If daily collection
 has one day, this endpoint has one day; a 20-session window does not claim 20 observed
 sessions. Public API delivery, all-target production coverage, latest-bar latency,
