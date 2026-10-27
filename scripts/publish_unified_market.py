@@ -15,6 +15,7 @@ from decimal import Context, localcontext
 from hashlib import sha256
 from pathlib import Path
 from typing import Any, Literal, cast
+from uuid import uuid4
 
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
 
@@ -364,17 +365,37 @@ def main() -> None:
 
 
 def publish_market_files(base: Path, publication: Path,
-                         database: Path | None = None) -> list[str]:
+                         database: Path | None = None, *,
+                         seed_existing: bool = False) -> list[str]:
     """Use the existing public Git queue; a failed export retains its dated last success."""
+    if seed_existing and database is not None:
+        raise ValueError('UNIFIED_MARKET_DELTA_SEED_DATABASE_FORBIDDEN')
+
+    def checked(root: Path, name: str) -> Path:
+        path = root/name
+        if root.is_symlink():
+            raise ValueError('UNIFIED_MARKET_PUBLIC_PATH_INVALID')
+        current = root
+        for part in Path(name).parts:
+            current = current/part
+            if current.is_symlink():
+                raise ValueError('UNIFIED_MARKET_PUBLIC_PATH_INVALID')
+        if not path.resolve().is_relative_to(root.resolve()):
+            raise ValueError('UNIFIED_MARKET_PUBLIC_PATH_INVALID')
+        return path
+
     if database is not None:
         try:
             export_market(base, database)
         except (OSError, ValueError, KeyError, TypeError, sqlite3.Error):
             print('UNIFIED_MARKET_EXPORT_FAILED_RETAINING_LAST_SUCCESS', flush=True)
-    root = base/'unified-data/market-public'
-    path = root/'unified-market.json'
+    root = publication if seed_existing else base/'unified-data/market-public'
+    path = checked(root, 'unified-market.json')
+    pointer = checked(publication, 'unified-market.json')
     if not path.is_file():
-        write_json_atomic(publication/'unified-market.json', signed({**AUTHORITY,
+        if seed_existing or path.exists():
+            raise ValueError('UNIFIED_MARKET_PUBLIC_INDEX_INVALID')
+        write_json_atomic(pointer, signed({**AUTHORITY,
             'state': 'NO_VERIFIED_UNIFIED_MARKET_PUBLICATION'}))
         return ['unified-market.json']
     if path.is_symlink() or path.stat().st_size > 4_000_000:
@@ -384,7 +405,7 @@ def publish_market_files(base: Path, publication: Path,
     for entry in index['entries']:
         for ref in entry['shards']:
             name = 'unified-market/objects/'+ref['sha256']+'.json'
-            source, target = root/name, publication/name
+            source, target = checked(root, name), checked(publication, name)
             if (source.is_symlink() or not source.resolve().is_relative_to(root.resolve())
                     or source.stat().st_size != ref['bytes'] or file_hash(source) != ref['sha256']):
                 raise ValueError('UNIFIED_MARKET_PUBLIC_OBJECT_INVALID')
@@ -397,7 +418,33 @@ def publish_market_files(base: Path, publication: Path,
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(source, target)
             names.append(name)
-    write_json_atomic(publication/'unified-market.json', index)
+            # Stable identity names let Git select the previous shard as a delta
+            # base. They are transport hints only; consumers still use hash paths.
+            group = 'day'
+            if entry['frequency'] == '5min':
+                start = datetime.fromisoformat(ref['start']).astimezone(SHANGHAI).date()
+                end = datetime.fromisoformat(ref['end']).astimezone(SHANGHAI).date()
+                if start != end:
+                    raise ValueError('UNIFIED_MARKET_DELTA_SESSION_INVALID')
+                group = start.strftime('%Y%m%d')
+            identity = f"{entry['symbol']}|{entry['frequency']}|{group}"
+            suffix = sha256(identity.encode()).hexdigest()[:16]
+            prefix = 'M' if entry['frequency'] == '5min' else 'D'
+            alias_name = f"unified-market/.delta/{group}/{prefix}{entry['symbol']}-{suffix}.json"
+            alias = checked(publication, alias_name)
+            if alias.exists() and not alias.is_file():
+                raise ValueError('UNIFIED_MARKET_DELTA_ALIAS_INVALID')
+            if not alias.exists() or not alias.samefile(target):
+                alias.parent.mkdir(parents=True, exist_ok=True)
+                temporary = alias.with_name('.'+alias.name+'.'+uuid4().hex+'.tmp')
+                try:
+                    os.link(target, temporary)
+                    os.replace(temporary, alias)
+                finally:
+                    temporary.unlink(missing_ok=True)
+            names.append(alias_name)
+    if not seed_existing:
+        write_json_atomic(pointer, index)
     return ['unified-market.json', *sorted(set(names))]
 
 

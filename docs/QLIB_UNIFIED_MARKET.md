@@ -36,6 +36,22 @@ Transient IO or export-budget failure retains the dated previous index.
 
 The existing publisher copies only referenced verified objects and the index through
 its existing Git queue. No separate remote or publication authority is introduced.
+The publication checkout also maintains hardlinks at
+`unified-market/.delta/20261027/M301001-<identityhash16>.json` for each minute session
+and `unified-market/.delta/day/D301001-<identityhash16>.json` for each daily window.
+The suffix is the first 16 SHA-256 hex characters of `symbol|frequency|group`, where
+group is the Shanghai session date in `YYYYMMDD` form or `day`. These stable names
+help Git select the preceding shard as its delta base. Both paths stage the same
+Git blob, so the aliases add tree entries without duplicate payload objects.
+
+An unchanged inode skips relinking. An update hardlinks the verified immutable
+publication object to a temporary sibling and atomically replaces only the alias;
+it never writes through the old alias or changes old content-addressed bytes.
+Symlink files/parents and resolved path escapes are rejected. Aliases are transport
+hints only: the signed index, immutable hash paths, schema, API and authority checks
+remain unchanged. Hardlink support on the publication filesystem is required;
+failure preserves the previous index. Old aliases and historical objects are not
+deleted by this change.
 
 ## Bounds and cache
 
@@ -114,6 +130,31 @@ observed slow Git uplink. Keep the publisher paused during an explicitly bounded
 single-owner bootstrap; preserve original snapshot dates and verify the remote
 before resuming. Collection and PAPER need not restart. A bootstrap success is
 not evidence that ordinary subsequent cycles meet the freshness contract.
+
+Before the first new frame using stable aliases, seed aliases from the already
+published frame in a separate Git commit/push. Keep one publication owner, verify
+the publication checkout is clean and its HEAD equals the remote branch first,
+and verify that seed reaches the remote before resuming ordinary publication.
+`seed_existing=True` reads only the existing publication index and its verified
+referenced objects. It neither exports source data nor rewrites the pointer's bytes,
+publication time or filesystem modification time, and rejects a non-null database.
+This local-only reproduction prints the paths to stage with the existing Git queue:
+
+```sh
+PYTHONPATH=src:. python - "$QTRADE_DATA_ROOT" "$QTRADE_PUBLICATION_ROOT" <<'PY'
+import json
+import sys
+from pathlib import Path
+from scripts.publish_unified_market import publish_market_files
+print(json.dumps(publish_market_files(Path(sys.argv[1]), Path(sys.argv[2]),
+                                      seed_existing=True)))
+PY
+```
+
+Seeding is transport preparation, not a freshness refresh. The local thin-pack
+experiment motivating this change reduced a 1,500-symbol shared-receipt frame
+from 3,679,943 to 714,097 bytes; actual remote pushes, subsequent ordinary-cycle
+timing and public freshness still require separate production evidence.
 
 Availability is limited to already admitted incremental lake data. If daily collection
 has one day, this endpoint has one day; a 20-session window does not claim 20 observed
