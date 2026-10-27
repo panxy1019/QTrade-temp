@@ -43,7 +43,8 @@ def require(condition: bool, code: str) -> None:
 
 
 def _revision(value: Any) -> str:
-    require(type(value) is str and re.fullmatch('[a-f0-9]{40}', value) is not None,
+    require(type(value) is str and re.fullmatch('[a-f0-9]{40}', value) is not None
+            and value != '0'*40,
             'PUBLICATION_REVISION_INVALID')
     return str(value)
 
@@ -148,6 +149,7 @@ def _catalog_source(value: Any) -> dict[str, Any]:
             'CATALOG_SOURCE_INVALID')
     require(type(value['commit_sha']) is str
             and re.fullmatch('[a-f0-9]{40}', value['commit_sha']) is not None
+            and value['commit_sha'] != '0'*40
             and type(value['git_blob_sha1']) is str
             and re.fullmatch('[a-f0-9]{40}', value['git_blob_sha1']) is not None
             and type(value['sha256']) is str

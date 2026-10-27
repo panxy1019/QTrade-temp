@@ -418,7 +418,8 @@ def test_credentials_in_discovered_proxy_fail_before_network(monkeypatch):
 @pytest.mark.parametrize('damage', ['missing', 'extra', 'not_dict', 'sha1_type', 'sha1_length',
     'sha1_uppercase', 'sha1_path', 'sha256_type', 'sha256_length', 'sha256_uppercase',
     'bytes_bool', 'bytes_float', 'bytes_string', 'bytes_zero', 'bytes_negative', 'bytes_oversize',
-    'commit_missing', 'commit_type', 'commit_length', 'commit_uppercase', 'commit_path'])
+    'commit_missing', 'commit_type', 'commit_length', 'commit_uppercase', 'commit_path',
+    'commit_zero'])
 def test_summary_source_must_be_exact_and_bounded_before_catalog_request(runtime, damage):
     def mutate(resource, value):
         if resource != 'summary':
@@ -434,7 +435,7 @@ def test_summary_source_must_be_exact_and_bounded_before_catalog_request(runtime
             del source['commit_sha']
         elif damage.startswith('commit_'):
             source['commit_sha'] = {'commit_type': None, 'commit_length': 'a'*39,
-                                   'commit_uppercase': 'A'*40, 'commit_path': '../main'}[damage]
+                'commit_uppercase': 'A'*40, 'commit_path': '../main', 'commit_zero': '0'*40}[damage]
         elif damage.startswith('sha1_'):
             source['git_blob_sha1'] = {'sha1_type': 1, 'sha1_length': 'a'*39,
                                      'sha1_uppercase': 'A'*40, 'sha1_path': '../private'}[damage]
@@ -548,7 +549,7 @@ def test_commit_transport_errors_are_strict_without_auth_or_fallback(monkeypatch
     assert len(calls) == 1
 
 
-@pytest.mark.parametrize('revision', [None, '', 'main', 'a'*39, 'a'*41, 'A'*40,
+@pytest.mark.parametrize('revision', [None, '', 'main', 'a'*39, 'a'*41, 'A'*40, '0'*40,
                                      '../main', 'a'*40+'?private=1', 'https://other.invalid'])
 @pytest.mark.parametrize('resource', ['catalog', 'index', 'bars:000032:5min', 'shard:'+'a'*64])
 def test_commit_path_injection_rejected_before_network(monkeypatch, revision, resource):
