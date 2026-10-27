@@ -1,6 +1,32 @@
 # Current state
 
-Last updated: 2026-10-27 22:22 Shanghai, unified rollout and real-run correction.
+Last updated: 2026-10-27 23:04 Shanghai, sealed real experiments and fresh private C.
+
+- Corrective source 096387b is deployed to workflow PID338258 only. Exact 580
+  execution files verify; 320 actual Linux cases pass without skips. Data stays
+  c382453/PID334634; original PAPER175982 and other supervised owners unchanged.
+- Real production API jobs 8377ca63 (LightGBM,22:40:58) and 713e9f4d
+  (Ridge,22:51:01) are COMPLETE. An independent replay verifies all 12,924 files
+  in each sealed archive, persisted strategy/spec/version identity, independent
+  fitted restore, TRAINED model import and EXPERIMENT Registry/job association.
+  New artifacts68d9287e/e0036a4f have zero activations; no later day exists yet.
+- ACTIVE29589b44's source096 prediction3f633559 completes22:30:00; matching
+  signals04da9a51 complete22:30:23. A fresh full private C audit passes at its
+  actual receipt clock. Prior C/D/12-book E receipts retain their original scope.
+  New model PAPER137ff4cd is stopped/recovery-required, not silently admitted.
+- User-requested Terra high retry obtains actual DOM/screenshots of home,
+  research, models, experiments, backtest and data; both new results are visible.
+  Legacy strategy/history entry exhaustion, version-change clicks and console
+  remain unverified after another session-entry failure. Preserve both reports.
+- History queue at22:53 has63,204 qualified rows(day1,572/minute61,632); separate
+  delisted probe at22:58 has99. Both yield to current collection. These are sealed
+  receipt counts, not full history certification. Free272.7GiB, reserve100GiB.
+- PR33 is draft until final evidence/docs checkpoint; production still main40db6db.
+  After merge verify actual production revision and public C delivery independently.
+  Whole STEP1/STEP2 remain incomplete; live false, rolling OFF, old recovery unused.
+  See docs/QTRADE_STEP1_DELIVERY_REPORT_20261027.md, closeout and final-* evidence.
+
+Previous 22:22 checkpoint (historical observations, superseded where stated above):
 
 - PR32 merged as main 40db6db. Production provenance and full actual public
   market probe pass on that revision; default research data ends October 27.

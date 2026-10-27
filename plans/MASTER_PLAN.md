@@ -24,6 +24,19 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+23:04 checkpoint: narrow096387b runner correction passes320 actual Linux cases
+and is deployed only to workflow338258. Both new API-bound experiments really
+COMPLETE; independent replay checks12,924 files each, fitted restore and exact
+data/feature/strategy/model/Registry association. Preserve FAILED32f54fc0 and
+CANCELLED79b67daa. Active295/source096 prediction and signals complete; fresh
+private C passes. Current new TRAINED artifacts must wait for a genuinely later
+data day before candidate policy can admit them. User-requested Terra retry
+reopens production and now observes real DOM/screenshot; page sweep ongoing.
+Merge PR33 after evidence checkpoint, then verify actual production/public C.
+New model PAPER remains stopped/recovery-required and prospective SHADOW cannot
+prove tomorrow's returns. Whole STEP1 and STEP2 remain unaccepted. History63204
+and delisted99 are bounded receipts; maintain original safety/resource budgets.
+
 22:22 checkpoint: merged main40db6db is publicly verified, cluster c382453 runs
 only the two targeted research services, Linux313 and webpage304 pass. Actual
 production authenticated preview/submit/idempotent retry succeeds and old daily

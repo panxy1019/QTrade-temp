@@ -3931,8 +3931,9 @@ and requires regenerated Provider bytes to agree with its admitted input.
 
 ## ADR-194 — Human standing consent permits bounded research model promotion
 
-Status: explicit user consent recorded; implementation pending live acceptance,
-2026-10-27. LIVE_TRADING_ENABLED=false and rolling training OFF remain unchanged.
+Status: implemented; signed policy656f643b actually applies approvalfdb7526b to
+candidate29589b44 on2026-10-27. New PAPER admission remains separate and blocked.
+LIVE_TRADING_ENABLED=false and rolling training OFF remain unchanged.
 
 The human explicitly answered "都允许批准" to both ACTIVE daily inference and
 validated-candidate activation. This supersedes the earlier per-candidate manual
@@ -3959,7 +3960,8 @@ promotion or deployment requires new checks; it cannot relabel those receipts.
 
 ## ADR-195 — Recheck persisted strategy identity when sealing trained results
 
-Status: corrective implementation; live rerun pending, 2026-10-27.
+Status: corrected source096387b deployed; both new real experiments and
+independent full archive replay pass, 2026-10-27. Public/UI closeout continues.
 
 A real c382453 bound experiment completed training, portfolio backtesting and
 independent fitted restore, then failed because its portfolio dictionary reused

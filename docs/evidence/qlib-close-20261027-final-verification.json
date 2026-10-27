@@ -1,0 +1,327 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "ACTUAL_IMMUTABLE_BOUND_EXPERIMENT_REPLAY",
+  "checked_at": "2026-10-27T14:57:58.225711+00:00",
+  "state": "PASSED",
+  "source_revision": "096387b8088e4361c9e5cd9cd2c165e21819fead",
+  "experiments": [
+    {
+      "job_id": "8377ca63d95f45b18593e23f1332ad51",
+      "state": "COMPLETE",
+      "worker_completed_at": "2026-10-27T14:40:58.809480+00:00",
+      "run_id": "unified-bound-lightgbm-repair-20261027-6a8b085b11e20679",
+      "archive": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/workflow/jobs/8377ca63d95f45b18593e23f1332ad51/output/runs/unified-bound-lightgbm-repair-20261027-6a8b085b11e20679",
+      "source_revision": "096387b8088e4361c9e5cd9cd2c165e21819fead",
+      "strategy_version": "858c59fcd3e36e96aedc2d6349e081a3e82c845d159e4aac8b9e0353209b3117",
+      "strategy_id": "qlib-858c59fcd3e36e96aedc2d6349e081a3e82c845d159e4aac8b9e0353209b3117",
+      "feature_set_version": "qlib-0.9.7-Alpha158-v1",
+      "data_binding": {
+        "actual_end": "2026-10-27",
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+        "dataset_id": "qlib-version-09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+        "dataset_sha256": "b52a40230fa49b46cde7fc25014638234de85e05de0d1ff93705e49d3a977df3",
+        "evidence_sha256": "e19fba2b11aa60b5b67b5e308635a6f6e647dee646c4c0025c6d472c10fc3b16",
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "manifest_sha256": "3e3406bc45e3a366bdcc57631648c3f05917e98f2d47a70df5c7482e8425f79b",
+        "point_in_time": false,
+        "promotion": "NOT_ELIGIBLE",
+        "ready_event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+        "real_data_paper_readiness": false,
+        "realtime_readiness": false,
+        "schema_version": "qtrade.qlib-research-data-binding.v1",
+        "source_snapshot_sha256": "467366395184edc65dd2ac079982393efdd516302302604c0a0fbfce664ef449",
+        "start": "2016-10-24",
+        "supported_symbols": 891,
+        "supported_universe_sha256": "3da952813acf86a0f53b7a299f7faac95f105c12014959bb61bd36e63a608e26"
+      },
+      "model_artifact_id": "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c",
+      "model_registry": {
+        "model_id": "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c",
+        "state": "TRAINED",
+        "registered_at": "2026-10-27T14:40:03.695100+00:00",
+        "activated_at": null,
+        "activation_count": 0
+      },
+      "strategy_registry": {
+        "job_id": "8377ca63d95f45b18593e23f1332ad51",
+        "strategy_id": "qlib-858c59fcd3e36e96aedc2d6349e081a3e82c845d159e4aac8b9e0353209b3117",
+        "status": "EXPERIMENT",
+        "role": "NONE",
+        "version": "858c59fcd3e36e96aedc2d6349e081a3e82c845d159e4aac8b9e0353209b3117"
+      },
+      "archive_manifest_sha256": "31b44ddab2ec80dc2e69c965a9b63a5a435c66b58c16d8f03763240744c0ecb5",
+      "archive_files": 12924,
+      "summary_sha256": "5403518c4525398dc78ce17a3ea4cb293e7e8e70c7903402759bb5679b67646a",
+      "restore_sha256": "2de305a50098d4d718c5ce8840a53f6d3f4599eea964b9e5ab67f9319c1e91e1",
+      "restore": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.qlib-independent-restore.v1",
+        "state": "PARITY_VERIFIED_NOT_ACTIVATED",
+        "verified_at": "2026-10-27T14:38:51.959328+00:00",
+        "bundle_sha256": "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c",
+        "pid": 340218,
+        "feature_count": 158,
+        "reference_rows": 17811,
+        "reference_start": "2026-09-22",
+        "reference_end": "2026-10-27",
+        "handler_start": "2016-10-24",
+        "max_absolute_score_difference": 0.0,
+        "fitted_processors_unchanged": true,
+        "fit_methods_forbidden": true,
+        "official_loader": "qlib.workflow.online.update.RMDLoader",
+        "handler_init_type": "DataHandlerLP.IT_LS",
+        "model_activated": false,
+        "limitations": [
+          "FROZEN_DATA_RESTORE_ONLY_NOT_NEW_DAY_PREDICTION",
+          "CURRENT_UNIVERSE_NON_PIT",
+          "MANUAL_ACTIVATION_STILL_REQUIRED"
+        ],
+        "evidence_sha256": "2de305a50098d4d718c5ce8840a53f6d3f4599eea964b9e5ab67f9319c1e91e1"
+      },
+      "metrics": {
+        "ic": 0.02433118142233131,
+        "rank_ic": 0.05223231104689514,
+        "icir": 0.16502503907917399,
+        "rank_icir": 0.3262951020297696,
+        "total_return_net": 1.0248349801703256,
+        "annual_return_net": 0.29880632260295514,
+        "sharpe_net": 1.1045634701357672,
+        "max_drawdown": -0.3234064074736792,
+        "mean_daily_turnover": 0.17675494675636086,
+        "benchmark_return": 0.1802468208718675,
+        "annualized_volatility": 0.26988644874817924
+      },
+      "segments": {
+        "test": [
+          "2024-01-02",
+          "2026-10-27"
+        ],
+        "train": [
+          "2017-04-05",
+          "2021-12-28"
+        ],
+        "valid": [
+          "2022-01-04",
+          "2023-12-26"
+        ]
+      },
+      "signal_evaluation": {
+        "start": "2024-01-02",
+        "end": "2026-10-23",
+        "days": 678,
+        "label": "Ref($open,-2)/Ref($open,-1)-1"
+      },
+      "portfolio_evaluation": {
+        "start": "2024-01-02",
+        "end": "2026-10-27",
+        "days": 680,
+        "benchmark": "SH000300"
+      },
+      "effective_universe_size": 891,
+      "data_rows": 2159779,
+      "historical_pit_certified": false,
+      "conclusion": "DIAGNOSTIC_NON_PIT_NOT_ELIGIBLE"
+    },
+    {
+      "job_id": "713e9f4de8bb456aa7fc906bf636dce6",
+      "state": "COMPLETE",
+      "worker_completed_at": "2026-10-27T14:51:01.144562+00:00",
+      "run_id": "unified-bound-ridge-repair-20261027-4a6f63ee966a766f",
+      "archive": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/workflow/jobs/713e9f4de8bb456aa7fc906bf636dce6/output/runs/unified-bound-ridge-repair-20261027-4a6f63ee966a766f",
+      "source_revision": "096387b8088e4361c9e5cd9cd2c165e21819fead",
+      "strategy_version": "90ab2e9fbd5c552cecbed3ad3d27ffd5a6a0ae63469ef936c47c5610954216ef",
+      "strategy_id": "qlib-90ab2e9fbd5c552cecbed3ad3d27ffd5a6a0ae63469ef936c47c5610954216ef",
+      "feature_set_version": "qlib-0.9.7-Alpha158-v1",
+      "data_binding": {
+        "actual_end": "2026-10-27",
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+        "dataset_id": "qlib-version-09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+        "dataset_sha256": "b52a40230fa49b46cde7fc25014638234de85e05de0d1ff93705e49d3a977df3",
+        "evidence_sha256": "e19fba2b11aa60b5b67b5e308635a6f6e647dee646c4c0025c6d472c10fc3b16",
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "manifest_sha256": "3e3406bc45e3a366bdcc57631648c3f05917e98f2d47a70df5c7482e8425f79b",
+        "point_in_time": false,
+        "promotion": "NOT_ELIGIBLE",
+        "ready_event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+        "real_data_paper_readiness": false,
+        "realtime_readiness": false,
+        "schema_version": "qtrade.qlib-research-data-binding.v1",
+        "source_snapshot_sha256": "467366395184edc65dd2ac079982393efdd516302302604c0a0fbfce664ef449",
+        "start": "2016-10-24",
+        "supported_symbols": 891,
+        "supported_universe_sha256": "3da952813acf86a0f53b7a299f7faac95f105c12014959bb61bd36e63a608e26"
+      },
+      "model_artifact_id": "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444",
+      "model_registry": {
+        "model_id": "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444",
+        "state": "TRAINED",
+        "registered_at": "2026-10-27T14:50:07.758340+00:00",
+        "activated_at": null,
+        "activation_count": 0
+      },
+      "strategy_registry": {
+        "job_id": "713e9f4de8bb456aa7fc906bf636dce6",
+        "strategy_id": "qlib-90ab2e9fbd5c552cecbed3ad3d27ffd5a6a0ae63469ef936c47c5610954216ef",
+        "status": "EXPERIMENT",
+        "role": "NONE",
+        "version": "90ab2e9fbd5c552cecbed3ad3d27ffd5a6a0ae63469ef936c47c5610954216ef"
+      },
+      "archive_manifest_sha256": "b221039aa4776231506b585358cafd6095e46b2011db4b1598ce095e9fa4679d",
+      "archive_files": 12924,
+      "summary_sha256": "2e355705ff0cf94652b7325a8cfb5f20e39bcf8653afb5474c0a1082745b5ea7",
+      "restore_sha256": "88641973794b4c003a90bbdd3e94f51d35d589a05551eee66b0e3188ab603c99",
+      "restore": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.qlib-independent-restore.v1",
+        "state": "PARITY_VERIFIED_NOT_ACTIVATED",
+        "verified_at": "2026-10-27T14:49:00.135707+00:00",
+        "bundle_sha256": "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444",
+        "pid": 341926,
+        "feature_count": 158,
+        "reference_rows": 17811,
+        "reference_start": "2026-09-22",
+        "reference_end": "2026-10-27",
+        "handler_start": "2016-10-24",
+        "max_absolute_score_difference": 1.1102230246251565e-16,
+        "fitted_processors_unchanged": true,
+        "fit_methods_forbidden": true,
+        "official_loader": "qlib.workflow.online.update.RMDLoader",
+        "handler_init_type": "DataHandlerLP.IT_LS",
+        "model_activated": false,
+        "limitations": [
+          "FROZEN_DATA_RESTORE_ONLY_NOT_NEW_DAY_PREDICTION",
+          "CURRENT_UNIVERSE_NON_PIT",
+          "MANUAL_ACTIVATION_STILL_REQUIRED"
+        ],
+        "evidence_sha256": "88641973794b4c003a90bbdd3e94f51d35d589a05551eee66b0e3188ab603c99"
+      },
+      "metrics": {
+        "ic": 0.01949921484489947,
+        "rank_ic": 0.04717201680605108,
+        "icir": 0.13668165740649119,
+        "rank_icir": 0.31122410217892466,
+        "total_return_net": 0.8665605054681029,
+        "annual_return_net": 0.26021604081627503,
+        "sharpe_net": 1.2014508062600135,
+        "max_drawdown": -0.3251018287441678,
+        "mean_daily_turnover": 0.17708021006806723,
+        "benchmark_return": 0.1802468208718675,
+        "annualized_volatility": 0.211158754622153
+      },
+      "segments": {
+        "test": [
+          "2024-01-02",
+          "2026-10-27"
+        ],
+        "train": [
+          "2017-04-05",
+          "2021-12-28"
+        ],
+        "valid": [
+          "2022-01-04",
+          "2023-12-26"
+        ]
+      },
+      "signal_evaluation": {
+        "start": "2024-01-02",
+        "end": "2026-10-23",
+        "days": 678,
+        "label": "Ref($open,-2)/Ref($open,-1)-1"
+      },
+      "portfolio_evaluation": {
+        "start": "2024-01-02",
+        "end": "2026-10-27",
+        "days": 680,
+        "benchmark": "SH000300"
+      },
+      "effective_universe_size": 891,
+      "data_rows": 2159779,
+      "historical_pit_certified": false,
+      "conclusion": "DIAGNOSTIC_NON_PIT_NOT_ELIGIBLE"
+    }
+  ],
+  "active_model": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+  "rolling_policy": {
+    "custom_sessions": null,
+    "mode": "OFF",
+    "model": "lightgbm",
+    "seed": 20261026,
+    "test_sessions": 60,
+    "train_sessions": 1260,
+    "valid_sessions": 126
+  },
+  "processes": {
+    "338258": {
+      "live": true,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/096387b8088e4361c9e5cd9cd2c165e21819fead",
+      "start_ticks": "1014325467"
+    },
+    "334634": {
+      "live": true,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/c382453b5eba6c6441646ab70c76131f486cb509",
+      "start_ticks": "1014197281"
+    },
+    "175982": {
+      "live": true,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/e107eb9c74001822dda220b1e6ca96a55ee00ef6",
+      "start_ticks": "1006806790"
+    },
+    "294214": {
+      "live": true,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/b2386c3e53c766d9e9512e6ca0f5116583aa13c2",
+      "start_ticks": "1012537254"
+    },
+    "299932": {
+      "live": true,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/0a545a8a6741c9e210d3077c877d8912170fc9e9",
+      "start_ticks": "1012716210"
+    },
+    "213587": {
+      "live": true,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/e44a134fab8bc0404b8d1c59674747150e170698",
+      "start_ticks": "1010098278"
+    },
+    "164340": {
+      "live": true,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/a69eb701e00516461e0f487dc25a2088c1e0dab3",
+      "start_ticks": "1006203844"
+    },
+    "153768": {
+      "live": true,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/5d4e7bfb36d23cc70f600ca8f63cf183075e5177",
+      "start_ticks": "1005737133"
+    },
+    "4471": {
+      "live": true,
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/300497adc5ecee88d07cfc9d752b0c03f86f06b3",
+      "start_ticks": "995191546"
+    }
+  },
+  "free_gib": 272.73828125,
+  "whole_step1_accepted": false,
+  "browser_verified": false,
+  "paper_recovered": false,
+  "evidence_sha256": "a1170179ed04f3633cd8507a02afe24ae3accbb674523b33f6828c2302441d78"
+}

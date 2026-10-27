@@ -1,0 +1,31 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.qlib-independent-restore.v1",
+  "state": "PARITY_VERIFIED_NOT_ACTIVATED",
+  "verified_at": "2026-10-27T14:17:13.599744+00:00",
+  "bundle_sha256": "de651e0736675def7320224277b94a1668a08b6d76d1b0458b7fd20e840ebffc",
+  "pid": 335937,
+  "feature_count": 158,
+  "reference_rows": 17811,
+  "reference_start": "2026-09-22",
+  "reference_end": "2026-10-27",
+  "handler_start": "2016-10-24",
+  "max_absolute_score_difference": 0.0,
+  "fitted_processors_unchanged": true,
+  "fit_methods_forbidden": true,
+  "official_loader": "qlib.workflow.online.update.RMDLoader",
+  "handler_init_type": "DataHandlerLP.IT_LS",
+  "model_activated": false,
+  "limitations": [
+    "FROZEN_DATA_RESTORE_ONLY_NOT_NEW_DAY_PREDICTION",
+    "CURRENT_UNIVERSE_NON_PIT",
+    "MANUAL_ACTIVATION_STILL_REQUIRED"
+  ],
+  "evidence_sha256": "03c97daf65706d065107292519bb770ffe6d2541f358ee2887286673f0dce4eb"
+}
