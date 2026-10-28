@@ -4116,3 +4116,28 @@ than introducing concurrent uncoordinated vendor access. A continuous current
 status window needs its own versioned observations/schedule and remains future
 work; this one-off evidence capture does not implement it or finish STEP1.
 
+## ADR-200 — Version recent status windows and check both information clocks
+
+Status: implementation and78 Windows tests pass; actual Linux/source deployment
+and recurring collection need independent receipts,2026-10-28.
+
+Reuse the existing nonblocking vendor lease, bounded symbol queue/retry,
+status_quality, calendar and immutable/atomic JSON writers. Preserve the frozen
+legacy PIT backfill. The new recent-status collector accepts an explicit dataset,
+versions three closed sessions by dataset/calendar/window identity, and stores
+each response plus accepted record and immutable coverage receipt. Watch mode
+waits300s between20-new/5-retry passes with100GiB reserve. A missing row stays
+missing; vendor flags are not independent exchange certification or a price fill.
+
+Both available_at and observed_at must be no later than a decision. A newly
+retrieved historical announcement cannot leak into an older decision through an
+earlier claimed publication date. The existing known_state reference adapter
+receives this missing clock check; current execution constraints and original
+frozen model/PAPER inputs are not replaced by the new observations.
+
+Keep system_available_at equal to actual observation, historical_available_at
+null and historical_pit_certified false. The explicit990-stock research sample
+does not become the1500-security pool or a historical full-market universe.
+The vn.py gap audit has no vendor temporal-evidence contract to reuse; use these
+small research adapters rather than adding an execution/gateway integration.
+
