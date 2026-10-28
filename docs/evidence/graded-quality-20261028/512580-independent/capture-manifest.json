@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-10-28T03:02:04.537477+00:00",
+  "directory": "/root/qtrade-local/operator-evidence/512580-independent-20261028T030204Z",
+  "files": [
+    {
+      "bytes": 3951,
+      "name": "eastmoney-5min-body.bin",
+      "sha256": "eedd4be43a2b7f51ff9c9082f05529f66bf25799ed85c52ef65d29bbf0f49ed3"
+    },
+    {
+      "bytes": 1504,
+      "name": "eastmoney-5min-metadata.json",
+      "sha256": "6483b65e23e263e5da22281ef52c5e7fe5f20707f015e4777cf3b23d82e075e8"
+    },
+    {
+      "bytes": 0,
+      "name": "tencent-5min-body.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 902,
+      "name": "tencent-5min-metadata.json",
+      "sha256": "4769f4351ce16c6fd66c47e5cd5427280a3d963ff22067a2c986ff5f8529cbb2"
+    }
+  ],
+  "scope": "READ_ONLY_PUBLIC_VENDOR_OBSERVATION_NO_ADMISSION"
+}

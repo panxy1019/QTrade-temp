@@ -1,0 +1,42 @@
+{
+  "attempts": 1,
+  "authorization": false,
+  "base_url": "https://push2his.eastmoney.com/api/qt/stock/kline/get",
+  "body_complete": true,
+  "body_sha256": "eedd4be43a2b7f51ff9c9082f05529f66bf25799ed85c52ef65d29bbf0f49ed3",
+  "bytes": 3951,
+  "cookie": false,
+  "elapsed_seconds": 0.024053,
+  "maximum_body_bytes": 2000000,
+  "public_response_headers": {
+    "Cache-Control": "no-cache",
+    "Content-Length": "3951",
+    "Content-Type": "application/json; charset=UTF-8",
+    "Date": "Wed, 28 Oct 2026 03:02:04 GMT",
+    "Server": "Microsoft-IIS/10.0"
+  },
+  "received_at": "2026-10-28T03:02:04.476939+00:00",
+  "request": {
+    "beg": "20261027",
+    "end": "20261027",
+    "fields1": "f1,f2,f3,f4,f5,f6",
+    "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61",
+    "fqt": "0",
+    "klt": "5",
+    "lmt": "96",
+    "secid": "1.512580"
+  },
+  "request_headers": {
+    "Accept-Encoding": "identity",
+    "Referer": "https://quote.eastmoney.com/",
+    "User-Agent": "QTrade noncommercial historical research"
+  },
+  "request_method": "GET",
+  "requested_at": "2026-10-28T03:02:04.452876+00:00",
+  "response_headers_at": "2026-10-28T03:02:04.476840+00:00",
+  "source_id": "eastmoney-5min",
+  "status_code": 200,
+  "timeout_seconds": 15,
+  "transport_error": null,
+  "url": "https://push2his.eastmoney.com/api/qt/stock/kline/get?secid=1.512580&klt=5&fqt=0&beg=20261027&end=20261027&lmt=96&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61"
+}

@@ -1,0 +1,28 @@
+{
+  "attempts": 1,
+  "authorization": false,
+  "base_url": "https://web.ifzq.gtimg.cn/appstock/app/kline/mkline",
+  "body_complete": false,
+  "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "bytes": 0,
+  "cookie": false,
+  "elapsed_seconds": 0.059992,
+  "maximum_body_bytes": 2000000,
+  "reason_errno": -2,
+  "reason_type": "gaierror",
+  "received_at": "2026-10-28T03:02:04.537215+00:00",
+  "request": {
+    "param": "sh512580,m5,,320"
+  },
+  "request_headers": {
+    "Accept-Encoding": "identity",
+    "Referer": "https://gu.qq.com/",
+    "User-Agent": "QTrade noncommercial historical research"
+  },
+  "request_method": "GET",
+  "requested_at": "2026-10-28T03:02:04.477231+00:00",
+  "source_id": "tencent-5min",
+  "timeout_seconds": 15,
+  "transport_error": "URLError",
+  "url": "https://web.ifzq.gtimg.cn/appstock/app/kline/mkline?param=sh512580%2Cm5%2C%2C320"
+}
