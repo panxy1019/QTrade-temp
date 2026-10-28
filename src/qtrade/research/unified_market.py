@@ -10,7 +10,11 @@ from typing import Any, Literal, cast
 
 from qtrade.instruments.observed import instrument_id
 from qtrade.market_data.akshare import SHANGHAI
-from qtrade.market_data.sina_incremental import PRICE_BASIS, completed_klines
+from qtrade.market_data.sina_incremental import (
+    PRICE_BASIS,
+    _ConstructedKlineRows,
+    completed_kline_rows,
+)
 from qtrade.market_data.sina_minute import SINA_FIVE_MINUTE_SESSION_TIMES
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 
@@ -36,13 +40,21 @@ def identity(value: Any, length: int = 64) -> None:
         raise ValueError('UNIFIED_MARKET_IDENTITY_INVALID')
 
 
-def document(value: dict[str, Any], fields: set[str], maximum: int) -> None:
-    if (set(value) != fields | set(AUTHORITY) | {'evidence_sha256'}
-            or len(encoded(value)) > maximum
+def _document_bytes(value: dict[str, Any], fields: set[str], maximum: int) -> tuple[bytes, str]:
+    if set(value) != fields | set(AUTHORITY) | {'evidence_sha256'}:
+        raise ValueError('UNIFIED_MARKET_DOCUMENT_INVALID')
+    digest = value['evidence_sha256']
+    raw = encoded(value)
+    if (len(raw) > maximum
             or any(type(value.get(k)) is not type(v) or value.get(k) != v
                    for k, v in AUTHORITY.items())
             or signed({k: v for k, v in value.items() if k != 'evidence_sha256'}) != value):
         raise ValueError('UNIFIED_MARKET_DOCUMENT_INVALID')
+    return raw, digest
+
+
+def document(value: dict[str, Any], fields: set[str], maximum: int) -> None:
+    _document_bytes(value, fields, maximum)
 
 
 def sessions(calendar: Calendar, end: date, count: int) -> list[str]:
@@ -65,9 +77,12 @@ def grid(calendar: Calendar, frequency: str, days: list[str], now: datetime) -> 
 
 
 def _validate_bar(row: dict[str, Any], symbol: str, kind: str, frequency: str,
-                 calendar: Calendar, now: datetime) -> None:
+                 calendar: Calendar, now: datetime, *,
+                 _validator: _ConstructedKlineRows | None = None,
+                 _exchange: str | None = None) -> None:
     if (set(row) != BAR_FIELDS or row['symbol'] != symbol or row['frequency'] != frequency
-            or row['exchange'] != instrument_id(symbol, kind).split('.')[0]
+            or row['exchange'] != (_exchange if _exchange is not None else
+                                   instrument_id(symbol, kind).split('.')[0])
             or row['price_basis'] != PRICE_BASIS or row['historical_available_at'] is not None
             or row['amount_basis'] not in {'VENDOR_CLAIM_UNVERIFIED',
                 'SAME_VENDOR_ENDPOINT_MATCH_NOT_INDEPENDENT_RECONCILIATION'}):
@@ -90,10 +105,12 @@ def _validate_bar(row: dict[str, Any], symbol: str, kind: str, frequency: str,
               **{k: row[k] for k in ('open', 'high', 'low', 'close', 'volume')}}
     if row['amount'] is not None:
         source['amount'] = row['amount']
-    parsed, = completed_klines(json.dumps([source]).encode(), symbol=symbol, security_type=kind,
-        frequency=cast(Literal['day', '5min'], frequency), requested_day=day,
-        observed_at=now, calendar=calendar,
-        require_complete_session=False)
+    if _validator is None:
+        parsed, = completed_kline_rows([source], symbol=symbol, security_type=kind,
+            frequency=cast(Literal['day', '5min'], frequency), requested_day=day,
+            observed_at=now, calendar=calendar, require_complete_session=False)
+    else:
+        parsed, = _validator.parse([source], day)
     if parsed.bar.timestamp != stamp or (str(parsed.vwap) if parsed.vwap is not None else None
                                          ) != row['vwap']:
         raise ValueError('UNIFIED_MARKET_BAR_VWAP_OR_COMPLETION_INVALID')
@@ -108,10 +125,12 @@ def validate_bar(row: dict[str, Any], symbol: str, kind: str, frequency: str,
         raise ValueError('UNIFIED_MARKET_BAR_INVALID') from error
 
 
-def validate_shard(value: dict[str, Any], calendar: Calendar, now: datetime) -> dict[str, Any]:
+def _validated_shard_bytes(value: dict[str, Any], calendar: Calendar, now: datetime
+                           ) -> tuple[dict[str, Any], bytes]:
     try:
-        document(value, {'schema_version', 'universe_version', 'symbol', 'security_type',
-            'instrument_id', 'frequency', 'price_basis', 'bars', 'source_batches'}, SHARD_LIMIT)
+        raw, digest = _document_bytes(value, {'schema_version', 'universe_version', 'symbol',
+            'security_type', 'instrument_id', 'frequency', 'price_basis', 'bars', 'source_batches'},
+            SHARD_LIMIT)
         identity(value['universe_version'])
         if (value['schema_version'] != 'qtrade.unified-market-shard.v1'
                 or value['instrument_id'] != instrument_id(value['symbol'], value['security_type'])
@@ -126,15 +145,32 @@ def validate_shard(value: dict[str, Any], calendar: Calendar, now: datetime) -> 
             identity(source['batch_id'], 32)
             for key in ('manifest_sha256', 'raw_sha256', 'normalized_sha256'):
                 identity(source[key])
-        for row in value['bars']:
-            validate_bar(row, value['symbol'], value['security_type'], value['frequency'],
-                         calendar, now)
+        validator = _ConstructedKlineRows(value['symbol'], value['security_type'],
+            value['frequency'], now, calendar)
+        with localcontext(Context(prec=28, rounding=ROUND_HALF_EVEN)) as context:
+            for row in value['bars']:
+                context.clear_flags()  # Match each standalone bar's fresh Decimal context.
+                try:
+                    _validate_bar(row, value['symbol'], value['security_type'], value['frequency'],
+                                  calendar, now, _validator=validator,
+                                  _exchange=value['instrument_id'].split('.')[0])
+                except (KeyError, TypeError, AttributeError, DecimalException) as error:
+                    raise ValueError('UNIFIED_MARKET_BAR_INVALID') from error
         clocks = [datetime.fromisoformat(row['timestamp']) for row in value['bars']]
         if clocks != sorted(set(clocks)):
             raise ValueError('UNIFIED_MARKET_DUPLICATE_OR_UNORDERED_BAR')
-        return value
+        # The returned encoding was captured before validation. Bind it to the
+        # same content after all checks, including mutation during validation.
+        if (value['evidence_sha256'] != digest
+                or signed({k: v for k, v in value.items() if k != 'evidence_sha256'}) != value):
+            raise ValueError('UNIFIED_MARKET_DOCUMENT_INVALID')
+        return value, raw
     except (KeyError, TypeError, AttributeError, DecimalException) as error:
         raise ValueError('UNIFIED_MARKET_SHARD_INVALID') from error
+
+
+def validate_shard(value: dict[str, Any], calendar: Calendar, now: datetime) -> dict[str, Any]:
+    return _validated_shard_bytes(value, calendar, now)[0]
 
 
 def validate_index(value: dict[str, Any], now: datetime | None = None) -> dict[str, Any]:

@@ -9,11 +9,12 @@ import json
 import os
 import re
 from collections import Counter
+from collections.abc import Callable
 from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Any
+from typing import Any, Literal
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
@@ -33,6 +34,21 @@ FIELDS = pa.schema([
         "completion_status", "historical_available_at", "raw_pack_sha256",
     )
 ] + [("source_hashes", pa.list_(pa.string()))])
+_ReadObserver = Callable[[int, Literal['before', 'after', 'failed']], None]
+
+
+def _read_bytes(path: Path, observer: _ReadObserver | None = None, *,
+                verified_size: int | None = None) -> bytes:
+    if observer is None:
+        return path.read_bytes()
+    observer(path.stat().st_size if verified_size is None else verified_size, 'before')
+    try:
+        raw = path.read_bytes()
+    except BaseException:
+        observer(0, 'failed')
+        raise
+    observer(len(raw), 'after')
+    return raw
 
 
 def canonical(value: object) -> bytes:
@@ -62,17 +78,23 @@ def _decode_captures(ref: dict[str, Any], raw: bytes) -> list[dict[str, Any]]:
 class _BatchMaterial:
     """One store-owned physical read; callers cannot supply source bytes or decoded rows."""
 
-    def __init__(self, store: UnifiedBatchStore, batch_id: str):
+    def __init__(self, store: UnifiedBatchStore, batch_id: str, *,
+                 _read_observer: _ReadObserver | None = None):
+        self._read_observer = _read_observer
         self._path = store.batch_path(batch_id)
-        self._manifest_bytes = self._path.read_bytes()
+        self._manifest_bytes = _read_bytes(self._path, _read_observer)
         self.manifest: dict[str, Any] = json.loads(self._manifest_bytes)
         value = self.manifest
         if (value.get("schema_version") != SCHEMA or value.get("batch_id") != batch_id
                 or signed({k: v for k, v in value.items() if k != "evidence_sha256"}) != value
                 or any(value.get(k) != v for k, v in AUTHORITY.items())):
             raise ValueError("COLLECTION_BATCH_HASH_OR_AUTHORITY_MISMATCH")
-        self._raw = store.read_blob(self.manifest['raw'])
-        self._normalized = (store.read_blob(self.manifest['normalized'])
+        def read_blob(ref: dict[str, Any]) -> bytes:
+            if _read_observer is None:
+                return store.read_blob(ref)
+            return store.read_blob(ref, _read_observer=_read_observer)
+        self._raw = read_blob(self.manifest['raw'])
+        self._normalized = (read_blob(self.manifest['normalized'])
                             if self.manifest['normalized'] is not None else None)
         self.source_bytes_read = len(self._manifest_bytes)+len(self._raw)+len(
             self._normalized or b'')
@@ -120,7 +142,7 @@ class _BatchMaterial:
         return self._verified
 
     def check_manifest_unchanged(self) -> None:
-        actual = self._path.read_bytes()
+        actual = _read_bytes(self._path, self._read_observer)
         self.source_bytes_read += len(actual)
         if actual != self._manifest_bytes:
             raise ValueError('UNIFIED_MARKET_BATCH_CHANGED_DURING_REPLAY')
@@ -164,11 +186,12 @@ class UnifiedBatchStore:
                 temporary.unlink(missing_ok=True)
         return {"sha256": digest, "bytes": len(raw), "suffix": suffix}
 
-    def read_blob(self, ref: dict[str, Any]) -> bytes:
+    def read_blob(self, ref: dict[str, Any], *,
+                  _read_observer: _ReadObserver | None = None) -> bytes:
         path = self._blob_path(ref["sha256"], ref["suffix"])
         if not 0 < ref["bytes"] <= 64_000_000 or path.stat().st_size != ref["bytes"]:
             raise ValueError("INCREMENTAL_BLOB_SIZE_MISMATCH")
-        raw = path.read_bytes()
+        raw = _read_bytes(path, _read_observer, verified_size=ref['bytes'])
         if sha256(raw).hexdigest() != ref["sha256"]:
             raise ValueError("INCREMENTAL_BLOB_CHECKSUM_MISMATCH")
         return raw
@@ -325,5 +348,6 @@ class UnifiedBatchStore:
     def load(self, batch_id: str) -> dict[str, Any]:
         return self._batch_material(batch_id).validate()[0]
 
-    def _batch_material(self, batch_id: str) -> _BatchMaterial:
-        return _BatchMaterial(self, batch_id)
+    def _batch_material(self, batch_id: str, *,
+                        _read_observer: _ReadObserver | None = None) -> _BatchMaterial:
+        return _BatchMaterial(self, batch_id, _read_observer=_read_observer)

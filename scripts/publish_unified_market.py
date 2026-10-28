@@ -6,8 +6,11 @@ import json
 import os
 import shutil
 import sqlite3
+import threading
 import time
-from collections import defaultdict
+from collections import Counter, defaultdict
+from collections.abc import Iterable, Iterator
+from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from contextlib import closing
 from datetime import UTC, datetime
 from decimal import Context, localcontext
@@ -22,6 +25,7 @@ from qtrade.data.storage import _fsync_directory
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.market_data.sina_incremental import (
     PRICE_BASIS,
+    _CapturedKlineReader,
     completed_klines,
     completed_quotes,
     reconcile_day,
@@ -34,11 +38,11 @@ from qtrade.research.unified_market import (
     LIMITATIONS,
     MAX_TARGETS,
     TOTAL_LIMIT,
+    _validated_shard_bytes,
     encoded,
     sessions,
     validate_bar,
     validate_index,
-    validate_shard,
 )
 from scripts.atomic_json import write_json_atomic
 from scripts.unified_store import UnifiedBatchStore, _BatchMaterial
@@ -51,11 +55,12 @@ MAX_CHUNKS = MAX_BATCHES*50
 SOURCE_BYTE_BUDGET = 512_000_000
 MAX_CACHE_ROWS = 100_000
 MAX_CACHE_ESTIMATED_BYTES = 128_000_000
+MAX_OBJECT_IO = 16
 _CACHE: dict[tuple[str, ...], tuple[dict[str, Any], list[dict[str, Any]]]] = {}
 _CACHE_SIZES: dict[tuple[str, ...], int] = {}
 
 
-def _write_object(path: Path, raw: bytes) -> None:
+def _write_object(path: Path, raw: bytes, *, _sync_directory: bool = True) -> None:
     """Persist already encoded bytes with the existing immutable writer's durability contract."""
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary: Path | None = None
@@ -68,13 +73,71 @@ def _write_object(path: Path, raw: bytes) -> None:
             os.fsync(handle.fileno())
         os.link(temporary, path)
         temporary.unlink()
-        _fsync_directory(path.parent)
+        if _sync_directory:
+            _fsync_directory(path.parent)
     finally:
         if temporary is not None:
             temporary.unlink(missing_ok=True)
 
 
-def _replay(material: _BatchMaterial, calendar: Calendar, kinds: dict[str, str]) -> None:
+def _persist_objects(destination: Path, objects: Iterable[tuple[str, bytes]], deadline: float
+                     ) -> None:
+    """Bound immutable I/O to sixteen in-flight objects; publish no index on any failure."""
+    def persist(digest: str, raw: bytes) -> None:
+        if time.monotonic() > deadline:
+            raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
+        path = destination/'unified-market/objects'/(digest+'.json')
+        if path.exists():
+            if path.is_symlink() or file_hash(path) != digest:
+                raise ValueError('UNIFIED_MARKET_IMMUTABLE_OBJECT_CHANGED')
+        else:
+            _write_object(path, raw, _sync_directory=False)
+
+    remaining = iter(objects)
+    pending: set[Future[None]] = set()
+    with ThreadPoolExecutor(max_workers=MAX_OBJECT_IO, thread_name_prefix='market-object') as pool:
+        def submit() -> bool:
+            if time.monotonic() > deadline:
+                raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
+            item = next(remaining, None)
+            if item is None:
+                return False
+            pending.add(pool.submit(persist, *item))
+            return True
+
+        try:
+            for _ in range(MAX_OBJECT_IO):
+                if not submit():
+                    break
+            while pending:
+                finished, pending = wait(pending, timeout=max(0, deadline-time.monotonic()),
+                                         return_when=FIRST_COMPLETED)
+                if not finished:
+                    raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
+                for future in finished:
+                    future.result()
+                for _ in finished:
+                    if not submit():
+                        break
+        finally:
+            for future in pending:
+                future.cancel()
+            close = getattr(remaining, 'close', None)
+            if close is not None:
+                close()  # Join the one source prefetch even when object I/O fails.
+    directory = destination/'unified-market/objects'
+    if directory.exists():
+        # Every file is already fsynced. Make all immutable names and newly-created
+        # ancestors durable before any index can reference them, including retries
+        # whose earlier failed attempt left all object files present.
+        for parent in (directory, directory.parent, destination, destination.parent):
+            if time.monotonic() > deadline:
+                raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
+            _fsync_directory(parent)
+
+
+def _replay(material: _BatchMaterial, calendar: Calendar, kinds: dict[str, str],
+            reader: _CapturedKlineReader | None = None) -> None:
     """Reproduce collector admission from actual receipts before caching normalized rows."""
     manifest, captures, rows = material.validate()
     spec = manifest['spec']
@@ -84,12 +147,24 @@ def _replay(material: _BatchMaterial, calendar: Calendar, kinds: dict[str, str])
     by_symbol: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
         by_symbol[row['symbol']].append(row)
+    klines_by_code: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    quotes_by_code: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    lineage_by_code: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for capture in captures:
+        if capture['source_id'] == 'sina_klines':
+            code = capture['request']['symbol']
+            klines_by_code[code].append(capture)
+            lineage_by_code[code].append(capture)
+        elif capture['source_id'] == 'sina_quote':
+            for code in dict.fromkeys(capture['request']['list'].split(',')):
+                quotes_by_code[code].append(capture)
+                lineage_by_code[code].append(capture)
+    session_ends = tuple(stamp for clock in SINA_FIVE_MINUTE_SESSION_TIMES
+                         if (stamp := datetime.combine(target.date(), clock, SHANGHAI)) <= target)
+    expected_windows: dict[datetime | None, set[datetime]] = {}
     for symbol, actual in by_symbol.items():
         code = ('sh' if symbol.startswith(('5', '6')) else 'sz')+symbol
-        klines = [row for row in captures if row['source_id'] == 'sina_klines'
-                  and row['request']['symbol'] == code]
-        quotes = [row for row in captures if row['source_id'] == 'sina_quote'
-                  and code in row['request']['list'].split(',')]
+        klines, quotes = klines_by_code[code], quotes_by_code[code]
         relevant = klines+quotes
         if (len(klines) != 1 or len(quotes) != (1 if frequency == 'day' else 0)
                 or any(row['status_code'] != 200 or row['body_complete'] is not True
@@ -101,12 +176,14 @@ def _replay(material: _BatchMaterial, calendar: Calendar, kinds: dict[str, str])
                 or klines[0]['request']['ma'] != 'no'):
             raise ValueError('UNIFIED_MARKET_RAW_SOURCE_OR_CLOCK_INVALID')
         kline = klines[0]
-        parsed = completed_klines(kline['body'], symbol=symbol, security_type=kinds[symbol],
+        parse_klines = reader.parse if reader is not None else completed_klines
+        parsed = parse_klines(kline['body'], symbol=symbol, security_type=kinds[symbol],
             frequency=frequency, requested_day=target.date(),
             observed_at=datetime.fromisoformat(kline['received_at']), calendar=calendar)
         after = spec['after_by_symbol'][symbol]
+        after_stamp = datetime.fromisoformat(after) if after is not None else None
         selected = [row for row in parsed if row.bar.timestamp <= target and
-                    (after is None or row.bar.timestamp > datetime.fromisoformat(after))]
+                    (after_stamp is None or row.bar.timestamp > after_stamp)]
         if frequency == 'day':
             quote = quotes[0]
             lines = [line for line in quote['body'].splitlines()
@@ -118,16 +195,15 @@ def _replay(material: _BatchMaterial, calendar: Calendar, kinds: dict[str, str])
                     quote['received_at']), calendar=calendar)[symbol]
             selected = [reconcile_day(selected[0], candidate)]
         else:
-            expected = {datetime.combine(target.date(), clock, SHANGHAI)
-                        for clock in SINA_FIVE_MINUTE_SESSION_TIMES
-                        if datetime.combine(target.date(), clock, SHANGHAI) <= target
-                        and (after is None or datetime.combine(target.date(), clock, SHANGHAI)
-                             > datetime.fromisoformat(after))}
+            if after_stamp not in expected_windows:
+                expected_windows[after_stamp] = {stamp for stamp in session_ends
+                                                if after_stamp is None or stamp > after_stamp}
+            expected = expected_windows[after_stamp]
             if {row.bar.timestamp for row in selected} != expected:
                 raise ValueError('UNIFIED_MARKET_RAW_MINUTE_WINDOW_INCOMPLETE')
+        source_hashes = [source['body_sha256'] for source in lineage_by_code[code]]
         expected_rows = [{**row.row(), 'raw_pack_sha256': manifest['raw']['sha256'],
-                          'source_hashes': [source['body_sha256'] for source in captures
-                            if source in relevant]} for row in selected]
+                          'source_hashes': source_hashes} for row in selected]
         if (not selected or selected[-1].bar.timestamp != target
                 or sorted(actual, key=lambda row: row['timestamp']) != expected_rows):
             raise ValueError('UNIFIED_MARKET_RAW_NORMALIZED_REPLAY_MISMATCH')
@@ -157,30 +233,64 @@ def _chunks(database: Path, universe: str, windows: dict[str, list[str]]) -> lis
         return rows
 
 
+class _SourceReads:
+    """Account physical reads across the main thread and one bounded prefetch."""
+
+    def __init__(self, stats: dict[str, Any], deadline: float = float('inf')):
+        self._stats, self._deadline = stats, deadline
+        self._lock = threading.Lock()
+        self._reserved: dict[int, int] = {}
+
+    def check(self) -> None:
+        with self._lock:
+            if self._stats['source_bytes_read']+sum(self._reserved.values()) > SOURCE_BYTE_BUDGET:
+                raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
+
+    def observe(self, count: int, stage: Literal['before', 'after', 'failed']) -> None:
+        with self._lock:
+            thread = threading.get_ident()
+            if stage == 'before':
+                if (self._stats['source_bytes_read']+sum(self._reserved.values())+count
+                        > SOURCE_BYTE_BUDGET):
+                    raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
+                self._reserved[thread] = count
+            else:
+                self._reserved.pop(thread, None)
+                if stage == 'after':
+                    self._stats['source_bytes_read'] += count
+                    if (self._stats['source_bytes_read']+sum(self._reserved.values())
+                            > SOURCE_BYTE_BUDGET):
+                        raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
+
+    def material(self, store: UnifiedBatchStore, batch_id: str) -> _BatchMaterial:
+        if time.monotonic() > self._deadline:
+            raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
+        self.check()
+        path = store.batch_path(batch_id)
+        if path.is_symlink() or path.stat().st_size > 2_000_000:
+            raise ValueError('UNIFIED_MARKET_SOURCE_MANIFEST_BOUND')
+        # The observer reserves verified physical sizes, then accounts actual
+        # returned bytes before parse/hash checks, even for failed/unused reads.
+        return store._batch_material(batch_id, _read_observer=self.observe)
+
+
 def _load(store: UnifiedBatchStore, batch_id: str, stats: dict[str, Any],
-          calendar: Calendar, kinds: dict[str, str], context: tuple[str, str]
+          calendar: Calendar, kinds: dict[str, str], context: tuple[str, str],
+          reader: _CapturedKlineReader | None = None, *,
+          _source: _SourceReads | None = None, _prepared: Future[_BatchMaterial] | None = None
           ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    path = store.batch_path(batch_id)
-    if path.is_symlink() or path.stat().st_size > 2_000_000:
-        raise ValueError('UNIFIED_MARKET_SOURCE_MANIFEST_BOUND')
-    material = store._batch_material(batch_id)
+    source = _source if _source is not None else _SourceReads(stats)
+    material = source.material(store, batch_id) if _prepared is None else _prepared.result()
     manifest = material.manifest
     # Hash actual immutable object bytes every pass. Cache skips decompression and
     # Parquet decoding only; neither timestamps nor a previous schema PASS suffice.
-    stats['source_bytes_read'] += material.source_bytes_read
-    if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
-        raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
+    source.check()
     if manifest['normalized'] is None:
         raise ValueError('UNIFIED_MARKET_NORMALIZED_SOURCE_MISSING')
 
     def recheck_manifest() -> None:
-        read_before = material.source_bytes_read
-        try:
-            material.check_manifest_unchanged()
-        finally:
-            stats['source_bytes_read'] += material.source_bytes_read-read_before
-        if stats['source_bytes_read'] > SOURCE_BYTE_BUDGET:
-            raise ValueError('UNIFIED_MARKET_SOURCE_BYTE_BUDGET')
+        material.check_manifest_unchanged()
+        source.check()
 
     key = (*material.identities(), *context)
     if key in _CACHE:
@@ -190,15 +300,21 @@ def _load(store: UnifiedBatchStore, batch_id: str, stats: dict[str, Any],
     material.check_export_bounds()
     checked, _, rows = material.validate()
     with localcontext(Context(prec=28)):
-        _replay(material, calendar, kinds)
+        _replay(material, calendar, kinds, reader)
     recheck_manifest()
-    estimate = len(encoded({'rows': rows}))+len(rows)*1024
+    if 'cached_rows' not in stats:
+        stats['cached_rows'] = sum(len(value[1]) for value in _CACHE.values())
+        stats['cache_estimated_bytes'] = sum(_CACHE_SIZES.get(old, 0) for old in _CACHE)
+    cached_rows, cached_bytes = stats['cached_rows'], stats['cache_estimated_bytes']
     if (len(_CACHE) < MAX_BATCHES
-            and sum(len(value[1]) for value in _CACHE.values())+len(rows) <= MAX_CACHE_ROWS
-            and sum(_CACHE_SIZES.get(old, 0) for old in _CACHE)+estimate
-            <= MAX_CACHE_ESTIMATED_BYTES):
-        _CACHE[key] = (checked, rows)
-        _CACHE_SIZES[key] = estimate
+            and cached_rows+len(rows) <= MAX_CACHE_ROWS
+            and cached_bytes+len(rows)*1024 < MAX_CACHE_ESTIMATED_BYTES):
+        estimate = len(encoded({'rows': rows}))+len(rows)*1024
+        if cached_bytes+estimate <= MAX_CACHE_ESTIMATED_BYTES:
+            _CACHE[key] = (checked, rows)
+            _CACHE_SIZES[key] = estimate
+            stats['cached_rows'] += len(rows)
+            stats['cache_estimated_bytes'] += estimate
     stats['replayed_batches'] += 1
     return checked, rows
 
@@ -235,19 +351,26 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
             del _CACHE[key]
             _CACHE_SIZES.pop(key, None)
     stats: dict[str, Any] = {'source_bytes_read': 0, 'cached_batches': 0, 'replayed_batches': 0,
-             'selected_chunks': len(chunks), 'selected_batches': len(grouped)}
+             'selected_chunks': len(chunks), 'selected_batches': len(grouped),
+             'cached_rows': sum(len(value[1]) for value in _CACHE.values()),
+             'cache_estimated_bytes': sum(_CACHE_SIZES.get(key, 0) for key in _CACHE)}
     identities = {row['symbol']: row for row in targets}
     kinds = {symbol: row['security_type'] for symbol, row in identities.items()}
     context = (signed(calendar.document)['evidence_sha256'], signed(kinds)['evidence_sha256'])
+    reader = _CapturedKlineReader(calendar)
+    ordered_bar_fields = tuple(key for key in sorted(BAR_FIELDS) if key != 'amount_basis')
     collected: dict[tuple[str, str], dict[str, dict[str, Any]]] = defaultdict(dict)
     sources: dict[tuple[str, str, str], dict[str, dict[str, Any]]] = defaultdict(dict)
     problems: dict[tuple[str, str], set[str]] = defaultdict(set)
     store = UnifiedBatchStore(base/'unified-data/lake')
-    for batch_id, selected in grouped.items():
+    source = _SourceReads(stats, deadline)
+    def collect_batch(batch_id: str, selected: list[dict[str, Any]],
+                      prepared: Future[_BatchMaterial]) -> None:
         if time.monotonic() > deadline:
             raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
         try:
-            manifest, rows = _load(store, batch_id, stats, calendar, kinds, context)
+            manifest, rows = _load(store, batch_id, stats, calendar, kinds, context, reader,
+                                   _source=source, _prepared=prepared)
             by_symbol: dict[str, list[dict[str, Any]]] = defaultdict(list)
             for row in rows:
                 by_symbol[row['symbol']].append(row)
@@ -280,8 +403,7 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                             > datetime.fromisoformat(spec['target_end'])):
                         raise ValueError('UNIFIED_MARKET_UNCLOSED_SOURCE')
                     # Byte identities must survive a new process/hash seed.
-                    row = {key: original[key] for key in sorted(BAR_FIELDS)
-                           if key != 'amount_basis'}
+                    row = {key: original[key] for key in ordered_bar_fields}
                     row['amount_basis'] = original['amount_basis']
                     day = str(datetime.fromisoformat(row['timestamp']).astimezone(SHANGHAI).date())
                     if day not in windows[freq]:
@@ -307,39 +429,101 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                 raise
             for chunk in selected:
                 problems[(chunk['symbol'], chunk['frequency'])].add('SOURCE_REPLAY_FAILED')
-    objects = {}
-    entries = []
+    objects: dict[str, bytes] = {}
+    entries: list[dict[str, Any]] = []
+    destination = base/'unified-data/market-public'
+
+    built_bytes = 0
+    sealed: dict[tuple[str, str], dict[str, Any]] = {}
+
+    def seal_pair(symbol: str, freq: str) -> Iterator[tuple[str, bytes]]:
+        nonlocal built_bytes
+        target = identities[symbol]
+        key = (target['symbol'], freq)
+        entry = {field: target[field] for field in ('symbol', 'instrument_id',
+                                                   'security_type', 'name')}
+        entry.update(frequency=freq, state='NO_DATA', issues=sorted(problems[key]),
+                     shards=[])
+        if problems[key]:
+            entry['state'] = 'QUARANTINED'
+        else:
+            groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
+            for row in collected[key].values():
+                groups[row['trading_day'] if freq == '5min' else 'window'].append(row)
+            for group, rows in sorted(groups.items()):
+                rows.sort(key=lambda row: datetime.fromisoformat(row['timestamp']))
+                refs = list(sources[(target['symbol'], freq, group)].values())
+                shard = signed({**AUTHORITY,
+                    'schema_version': 'qtrade.unified-market-shard.v1',
+                    'universe_version': master['universe_version'], **{field: target[field]
+                    for field in ('symbol', 'instrument_id', 'security_type')},
+                    'frequency': freq, 'price_basis': PRICE_BASIS, 'bars': rows,
+                    'source_batches': sorted(refs, key=lambda row: row['batch_id'])})
+                _, raw = _validated_shard_bytes(shard, calendar, now)
+                digest = sha256(raw).hexdigest()
+                entry['shards'].append({'sha256': digest,
+                    'evidence_sha256': shard['evidence_sha256'], 'bytes': len(raw),
+                    'start': rows[0]['timestamp'], 'end': rows[-1]['timestamp'],
+                    'count': len(rows)})
+                if digest not in objects:
+                    built_bytes += len(raw)
+                    if built_bytes > TOTAL_LIMIT:
+                        raise ValueError('UNIFIED_MARKET_EXPORT_BUDGET')
+                    objects[digest] = raw
+                    yield digest, raw
+            if entry['shards']:
+                entry['state'] = 'AVAILABLE'
+        sealed[key] = entry
+
+
+    # Count every selected chunk, including repeated chunks for one pair. A pair
+    # can seal only after its complete batch outcomes and all conflicts are known.
+    remaining = Counter((chunk['symbol'], chunk['frequency']) for chunk in chunks)
+
+    def build_objects() -> Iterator[tuple[str, bytes]]:
+        # Cohorts finish early enough for immutable I/O to overlap later source
+        # replay. Source membership is unchanged; bars, refs and entries are sorted.
+        batches = sorted(grouped.items(), key=lambda item: (
+            tuple(sorted(str(chunk['symbol']) for chunk in item[1])), str(item[0])))
+        with ThreadPoolExecutor(max_workers=1, thread_name_prefix='market-source') as pool:
+            prepared = pool.submit(source.material, store, batches[0][0]) if batches else None
+            try:
+                for position, (batch_id, selected) in enumerate(batches):
+                    assert prepared is not None
+                    finished, _ = wait({prepared}, timeout=max(0, deadline-time.monotonic()))
+                    if not finished or time.monotonic() > deadline:
+                        raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
+                    current = prepared
+                    # Only the next physical read/hash overlaps main-thread decode,
+                    # replay and cache work. Its exception is consumed by that batch.
+                    prepared = (pool.submit(source.material, store, batches[position+1][0])
+                                if position+1 < len(batches) else None)
+                    collect_batch(batch_id, selected, current)
+                    # Mark all selected pairs on failure before these counts decrease.
+                    for chunk in selected:
+                        key = (chunk['symbol'], chunk['frequency'])
+                        remaining[key] -= 1
+                        if remaining[key] == 0 and key not in sealed and key[0] in identities:
+                            yield from seal_pair(*key)
+            finally:
+                if prepared is not None:
+                    prepared.cancel()
+
+    # Persist only fully validated immutable shards while the next shard is built.
+    # Any later gate failure leaves unreferenced objects and the old index intact.
+    _persist_objects(destination, build_objects(), deadline)
+    if any(remaining.values()):
+        raise ValueError('UNIFIED_MARKET_INCOMPLETE_CHUNK_ACCOUNTING')
     for target in sorted(targets, key=lambda row: row['symbol']):
         for freq in ('day', '5min'):
             key = (target['symbol'], freq)
-            entry = {field: target[field] for field in ('symbol', 'instrument_id',
-                                                       'security_type', 'name')}
-            entry.update(frequency=freq, state='NO_DATA', issues=sorted(problems[key]), shards=[])
-            if problems[key]:
-                entry['state'] = 'QUARANTINED'
-            else:
-                groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
-                for row in collected[key].values():
-                    groups[row['trading_day'] if freq == '5min' else 'window'].append(row)
-                for group, rows in groups.items():
-                    rows.sort(key=lambda row: datetime.fromisoformat(row['timestamp']))
-                    refs = list(sources[(target['symbol'], freq, group)].values())
-                    shard = signed({**AUTHORITY, 'schema_version': 'qtrade.unified-market-shard.v1',
-                        'universe_version': master['universe_version'], **{field: target[field]
-                        for field in ('symbol', 'instrument_id', 'security_type')},
-                        'frequency': freq, 'price_basis': PRICE_BASIS, 'bars': rows,
-                        'source_batches': sorted(refs, key=lambda row: row['batch_id'])})
-                    validate_shard(shard, calendar, now)
-                    raw = encoded(shard)
-                    digest = sha256(raw).hexdigest()
-                    objects[digest] = raw
-                    entry['shards'].append({'sha256': digest,
-                        'evidence_sha256': shard['evidence_sha256'], 'bytes': len(raw),
-                        'start': rows[0]['timestamp'], 'end': rows[-1]['timestamp'],
-                        'count': len(rows)})
-                if entry['shards']:
-                    entry['state'] = 'AVAILABLE'
-            entries.append(entry)
+            if key not in sealed:
+                entry = {field: target[field] for field in ('symbol', 'instrument_id',
+                                                           'security_type', 'name')}
+                entry.update(frequency=freq, state='NO_DATA', issues=sorted(problems[key]),
+                             shards=[])
+                sealed[key] = entry
+            entries.append(sealed[key])
     total = sum(len(raw) for raw in objects.values())
     if total > TOTAL_LIMIT or time.monotonic() > deadline:
         raise ValueError('UNIFIED_MARKET_EXPORT_BUDGET')
@@ -358,16 +542,6 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
             for name in ('scripts/publish_unified_market.py',
                          'src/qtrade/research/unified_market.py')}})
     validate_index(index, now)
-    destination = base/'unified-data/market-public'
-    for digest, raw in objects.items():
-        if time.monotonic() > deadline:
-            raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
-        path = destination/'unified-market/objects'/(digest+'.json')
-        if path.exists():
-            if path.is_symlink() or file_hash(path) != digest:
-                raise ValueError('UNIFIED_MARKET_IMMUTABLE_OBJECT_CHANGED')
-        else:
-            _write_object(path, raw)
     if time.monotonic() > deadline:
         raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
     write_json_atomic(destination/'unified-market.json', index)
