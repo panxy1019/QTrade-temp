@@ -1,0 +1,30 @@
+{
+  "all_owned_workers_reaped": true,
+  "cold_initial_empty_output_db_sidecars": {
+    "database_exists": false,
+    "new_process": true,
+    "object_count": 0,
+    "sidecar_root_exists": false
+  },
+  "diagnostic_seconds": 120,
+  "failed_attempt_and_startup_status_correction_retained": true,
+  "guarded_validator_identity_unchanged_in_successful_attempt": true,
+  "helper_hashes_match_retained_bytes": true,
+  "inclusive_timers_additive": false,
+  "kind": "PROFILE_EVIDENCE_SCOPE_AND_HASH_VERIFICATION",
+  "output_ref_bytes_equal": true,
+  "private_raw_mountinfo_in_package": false,
+  "production_performance_acceptance": false,
+  "refs_count": 5986,
+  "shard_bytes": 166050382,
+  "source_files_verified": 2194,
+  "source_manifest_bound_before_and_after": true,
+  "source_revision": "fba51aade2ee2410dda087e95cf054e53375ed3a",
+  "verified_at": "2026-10-28T11:43:36.688825+00:00",
+  "warm_same_directory_has_objects_db_sidecars": {
+    "database_exists": true,
+    "new_process": true,
+    "object_count": 5986,
+    "sidecar_root_exists": true
+  }
+}

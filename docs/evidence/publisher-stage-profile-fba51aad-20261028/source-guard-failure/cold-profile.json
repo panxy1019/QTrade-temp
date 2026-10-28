@@ -1,0 +1,117 @@
+{
+  "cache_estimated_byte_budget_unchanged": 128000000,
+  "calibration": {
+    "approx_extra_nanoseconds_per_span": 2066.89855,
+    "calls": 20000,
+    "not_subtracted_from_actual_measurements": true,
+    "plain_seconds": 0.000958219,
+    "wrapped_seconds": 0.04229619
+  },
+  "children_at_completion": "",
+  "diagnostic_seconds": 120,
+  "error_class": "ValueError",
+  "error_code": "UNIFIED_MARKET_WORKER_IMPORTED_SOURCE_MISMATCH",
+  "exclusive_scope": "Exclusive subtraction is per thread and only among instrumented spans; waits and uninstrumented work stay in enclosing stage.",
+  "finished_at": "2026-10-28T11:29:26.839152+00:00",
+  "initial": {
+    "database_exists": false,
+    "new_process": true,
+    "object_count": 0,
+    "sidecar_root_exists": false
+  },
+  "kind": "PROFILED_FROZEN_DIAGNOSTIC_NOT_45_SECOND_GATE",
+  "native_cpu_scope": "thread_time omits uninstrumented native-library threads; process CPU and reaped child CPU are reported separately.",
+  "overlap_warning": "Inclusive spans nest; threads and worker processes overlap. Do not add inclusive stages to total wall.",
+  "owned_workers": [],
+  "pass_name": "cold",
+  "peak_rss_kib": 276080,
+  "pid": 642800,
+  "process_cpu_seconds": 2.0268009999999994,
+  "production_export_seconds": 45,
+  "production_performance_acceptance": false,
+  "profiling_enabled": true,
+  "reaped_children_cpu_seconds": 0.0,
+  "source_bytes_budget_unchanged": 512000000,
+  "start_ticks": "1021899862",
+  "started_at": "2026-10-28T11:29:24.792496+00:00",
+  "state": "FAILED",
+  "threads": [
+    {
+      "stages": {
+        "export.full_call": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.353037225,
+          "exclusive_wall_seconds": 0.364939387,
+          "inclusive_thread_cpu_seconds": 1.98731719,
+          "inclusive_wall_seconds": 2.006984669
+        },
+        "generation.canonical_identity": {
+          "calls": 3003,
+          "exclusive_thread_cpu_seconds": 0.456047026,
+          "exclusive_wall_seconds": 0.456750013,
+          "inclusive_thread_cpu_seconds": 0.456047026,
+          "inclusive_wall_seconds": 0.456750013
+        },
+        "generation.checkpoint_read_and_validation": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 4.7344e-05,
+          "exclusive_wall_seconds": 4.7233e-05,
+          "inclusive_thread_cpu_seconds": 4.7344e-05,
+          "inclusive_wall_seconds": 4.7233e-05
+        },
+        "generation.pair_fingerprints": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.093339731,
+          "exclusive_wall_seconds": 0.093503921,
+          "inclusive_thread_cpu_seconds": 0.549319801,
+          "inclusive_wall_seconds": 0.550186128
+        },
+        "metadata.selected_chunks_sqlite_and_materialization": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.544918559,
+          "exclusive_wall_seconds": 0.545997389,
+          "inclusive_thread_cpu_seconds": 1.083307315,
+          "inclusive_wall_seconds": 1.085987362
+        },
+        "physical.file_hash_read_total": {
+          "calls": 15,
+          "exclusive_thread_cpu_seconds": 0.000613469,
+          "exclusive_wall_seconds": 0.00061559,
+          "inclusive_thread_cpu_seconds": 0.000613469,
+          "inclusive_wall_seconds": 0.00061559
+        },
+        "source.worker_inventory_hash": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.000124287,
+          "exclusive_wall_seconds": 0.000125755,
+          "inclusive_thread_cpu_seconds": 0.000124287,
+          "inclusive_wall_seconds": 0.000125755
+        },
+        "sqlite.metadata.execute": {
+          "calls": 4,
+          "exclusive_thread_cpu_seconds": 0.538388756,
+          "exclusive_wall_seconds": 0.539989973,
+          "inclusive_thread_cpu_seconds": 0.538388756,
+          "inclusive_wall_seconds": 0.539989973
+        },
+        "sqlite.receipts.execute": {
+          "calls": 2,
+          "exclusive_thread_cpu_seconds": 0.000168547,
+          "exclusive_wall_seconds": 0.000169488,
+          "inclusive_thread_cpu_seconds": 0.000168547,
+          "inclusive_wall_seconds": 0.000169488
+        },
+        "sqlite.receipts.executescript": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.000632246,
+          "exclusive_wall_seconds": 0.00484592,
+          "inclusive_thread_cpu_seconds": 0.000632246,
+          "inclusive_wall_seconds": 0.00484592
+        }
+      },
+      "thread_id": 140599691540288,
+      "thread_name": "MainThread"
+    }
+  ],
+  "wall_seconds": 2.0465414188802242
+}

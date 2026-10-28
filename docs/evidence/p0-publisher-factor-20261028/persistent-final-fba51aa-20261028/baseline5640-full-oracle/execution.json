@@ -1,0 +1,8 @@
+{
+  "remote": "/root/qtrade-local/operator-evidence/market-current-nfs-independent-oracle-20261028T105823Z",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-independent-oracle-20261028T105823Z",
+  "exit_code": 0,
+  "oracle_source_sha256": "11f9be8ad56cba365df3af14c07d9c18e007fb8086d484cd6ae26e9e6245a1ca",
+  "production_actions": false,
+  "report_sha256": "c927428f42a3e82eec63f9667ff87560c56d6cf5ab757464388fbe1c81053995"
+}

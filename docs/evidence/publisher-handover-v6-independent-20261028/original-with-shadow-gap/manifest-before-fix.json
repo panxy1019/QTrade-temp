@@ -1,0 +1,54 @@
+{
+  "files": {
+    "independent-9.xml": {
+      "bytes": 1902,
+      "sha256": "6c13f788904155ea4b0665b81c89efff26704969fe2935b0486d185da04cf423"
+    },
+    "independent-summary-before-fix.json": {
+      "bytes": 749,
+      "sha256": "7ffce79871eb53e9c3c1c59cf4ec192d099e10ae4cee888b6966253c29353548"
+    },
+    "independent-verification.json": {
+      "bytes": 437,
+      "sha256": "c44d403d4edea1b13b04a70b264ecae4f20c6ec74837069db40f6ca6b57d211c"
+    },
+    "publisher_actual_composite_v6_20261028.py": {
+      "bytes": 17799,
+      "sha256": "bb732a46fb20ed3b148daabdeda685410f4285616732ecbd6d3b47fe1b2db7ba"
+    },
+    "publisher_actual_evidence_v6_20261028.py": {
+      "bytes": 22843,
+      "sha256": "ef3665447333b16ff8b04f53e37562a15dae53902d21016db5de7e06adbff0a6"
+    },
+    "publisher_handover_bridge_v6_20261028.py": {
+      "bytes": 14678,
+      "sha256": "4cbd30179f10e5b9a6b04519fd174298e93cecf50149a0841f5f614e47e7e072"
+    },
+    "publisher_handover_v6_preparation_20261028.py": {
+      "bytes": 41710,
+      "sha256": "03e186c184a33ef48c60a43aa15bf137a5659003abc19c18598c4a29df33c7ad"
+    },
+    "reproduced-47.xml": {
+      "bytes": 9706,
+      "sha256": "125490d1a9dca12bb2fb792d3a3477a9ff5ccb4d45028e567e502b3f7595da96"
+    },
+    "test_publisher_actual_composite_v6_20261028.py": {
+      "bytes": 9835,
+      "sha256": "b87693c6810a1995536f71e9ae1ad718c82ca6c72522383ed0a176331078866e"
+    },
+    "test_publisher_actual_evidence_v6_20261028.py": {
+      "bytes": 15841,
+      "sha256": "0777aa259025a60d319004fc43d3810729884485871c776a68982ce2bf6356a5"
+    },
+    "test_v6_independent_boundaries.py": {
+      "bytes": 7649,
+      "sha256": "7ecbd362d49cfc8f25ec773246c456b2ce21f42b9dafba0b17d724da86f3d057"
+    }
+  },
+  "private_raw_package_copied": false,
+  "production_mutations": false,
+  "recorded_at": "2026-10-28T11:57:00.587993+00:00",
+  "schema_version": "qtrade.independent-review-artifacts.v1",
+  "source_inventory_count": 2194,
+  "state": "FROZEN_ORIGINAL_V6_WITH_CONFIRMED_SHADOW_GAP"
+}

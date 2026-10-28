@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101729Z-1fa4c320/operator.py", line 2, in <module>
+    import os,sys,shutil,tarfile,hashlib,json,subprocess,time
+  File "/root/miniconda3/lib/python3.14/shutil.py", line 10, in <module>
+    import fnmatch
+  File "/root/miniconda3/lib/python3.14/fnmatch.py", line 13, in <module>
+    import functools
+  File "/root/miniconda3/lib/python3.14/functools.py", line 18, in <module>
+    from collections import namedtuple
+  File "/root/miniconda3/lib/python3.14/collections/__init__.py", line 39, in <module>
+    from operator import eq as _eq
+  File "/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101729Z-1fa4c320/operator.py", line 2, in <module>
+    import os,sys,shutil,tarfile,hashlib,json,subprocess,time
+  File "/root/miniconda3/lib/python3.14/tarfile.py", line 47, in <module>
+    import re
+  File "/root/miniconda3/lib/python3.14/re/__init__.py", line 374, in <module>
+    @functools.lru_cache(_MAXCACHE)
+AttributeError: partially initialized module 'functools' from '/root/miniconda3/lib/python3.14/functools.py' has no attribute 'lru_cache' (most likely due to a circular import)

@@ -1,0 +1,112 @@
+{
+  "files": {
+    "fixed-origin-review/caller-optimized-3.xml": {
+      "bytes": 827,
+      "sha256": "993199ec69afaa18e81e43da347129eef273fe551a9bafa211ab92b037ae5641"
+    },
+    "fixed-origin-review/independent-fixed-9.xml": {
+      "bytes": 1949,
+      "sha256": "29fef30a5d6a34da712bd3fc4110b4f3dfbb619a78d6a1ab5326f6909a48fd0f"
+    },
+    "fixed-origin-review/publisher_actual_composite_v6_20261028.py": {
+      "bytes": 17799,
+      "sha256": "bb732a46fb20ed3b148daabdeda685410f4285616732ecbd6d3b47fe1b2db7ba"
+    },
+    "fixed-origin-review/publisher_actual_evidence_v6_20261028.py": {
+      "bytes": 22843,
+      "sha256": "ef3665447333b16ff8b04f53e37562a15dae53902d21016db5de7e06adbff0a6"
+    },
+    "fixed-origin-review/publisher_handover_bridge_v6_20261028.py": {
+      "bytes": 14678,
+      "sha256": "689af7db40b33f804283068c3f6bd7756fafcd65160af674a2937b3c66c06bbf"
+    },
+    "fixed-origin-review/publisher_handover_v6_preparation_20261028.py": {
+      "bytes": 44882,
+      "sha256": "0fd5100d029e6234039c765639b4ddb89094795918d6c7779ce199efe98f68f2"
+    },
+    "fixed-origin-review/publisher_v6_control_call_20261028.py": {
+      "bytes": 4814,
+      "sha256": "9293cd719f398dcdd5c8603a89a6b4a9e77eb1598ae7766f1141544ce61f3e8c"
+    },
+    "fixed-origin-review/reproduced-52.xml": {
+      "bytes": 10652,
+      "sha256": "d0caf7702e4547b0551e04493171d2e60d8b7c0539e9d0870e1ece053a28dd84"
+    },
+    "fixed-origin-review/test_publisher_actual_composite_v6_20261028.py": {
+      "bytes": 9835,
+      "sha256": "b87693c6810a1995536f71e9ae1ad718c82ca6c72522383ed0a176331078866e"
+    },
+    "fixed-origin-review/test_publisher_actual_evidence_v6_20261028.py": {
+      "bytes": 15841,
+      "sha256": "0777aa259025a60d319004fc43d3810729884485871c776a68982ce2bf6356a5"
+    },
+    "fixed-origin-review/test_publisher_v6_current_origins_20261028.py": {
+      "bytes": 6267,
+      "sha256": "dd1aac96bc4784164b12aeef949243a2d63cebabdff72053766f49538898af8c"
+    },
+    "fixed-origin-review/test_v6_caller_safe_interpreter.py": {
+      "bytes": 786,
+      "sha256": "67ab9e5e9bbd6357945aaf666fd5c5c6c1cccb76e3af15ffaacd7509166d4301"
+    },
+    "fixed-origin-review/test_v6_independent_boundaries_fixed.py": {
+      "bytes": 7879,
+      "sha256": "629400b7cabb79b3310cb1f4c99a8706aa5d000a56b6b662a296995e71870b23"
+    },
+    "original-with-shadow-gap/independent-9.xml": {
+      "bytes": 1902,
+      "sha256": "6c13f788904155ea4b0665b81c89efff26704969fe2935b0486d185da04cf423"
+    },
+    "original-with-shadow-gap/independent-summary-before-fix.json": {
+      "bytes": 749,
+      "sha256": "7ffce79871eb53e9c3c1c59cf4ec192d099e10ae4cee888b6966253c29353548"
+    },
+    "original-with-shadow-gap/independent-verification.json": {
+      "bytes": 437,
+      "sha256": "c44d403d4edea1b13b04a70b264ecae4f20c6ec74837069db40f6ca6b57d211c"
+    },
+    "original-with-shadow-gap/manifest-before-fix.json": {
+      "bytes": 2076,
+      "sha256": "21feeb60d2c8475827fd54a4e87edd9084933cf6d3e0b08bf72dc623bf28622d"
+    },
+    "original-with-shadow-gap/publisher_actual_composite_v6_20261028.py": {
+      "bytes": 17799,
+      "sha256": "bb732a46fb20ed3b148daabdeda685410f4285616732ecbd6d3b47fe1b2db7ba"
+    },
+    "original-with-shadow-gap/publisher_actual_evidence_v6_20261028.py": {
+      "bytes": 22843,
+      "sha256": "ef3665447333b16ff8b04f53e37562a15dae53902d21016db5de7e06adbff0a6"
+    },
+    "original-with-shadow-gap/publisher_handover_bridge_v6_20261028.py": {
+      "bytes": 14678,
+      "sha256": "4cbd30179f10e5b9a6b04519fd174298e93cecf50149a0841f5f614e47e7e072"
+    },
+    "original-with-shadow-gap/publisher_handover_v6_preparation_20261028.py": {
+      "bytes": 41710,
+      "sha256": "03e186c184a33ef48c60a43aa15bf137a5659003abc19c18598c4a29df33c7ad"
+    },
+    "original-with-shadow-gap/reproduced-47.xml": {
+      "bytes": 9706,
+      "sha256": "125490d1a9dca12bb2fb792d3a3477a9ff5ccb4d45028e567e502b3f7595da96"
+    },
+    "original-with-shadow-gap/test_publisher_actual_composite_v6_20261028.py": {
+      "bytes": 9835,
+      "sha256": "b87693c6810a1995536f71e9ae1ad718c82ca6c72522383ed0a176331078866e"
+    },
+    "original-with-shadow-gap/test_publisher_actual_evidence_v6_20261028.py": {
+      "bytes": 15841,
+      "sha256": "0777aa259025a60d319004fc43d3810729884485871c776a68982ce2bf6356a5"
+    },
+    "original-with-shadow-gap/test_v6_independent_boundaries.py": {
+      "bytes": 7649,
+      "sha256": "7ecbd362d49cfc8f25ec773246c456b2ce21f42b9dafba0b17d724da86f3d057"
+    },
+    "review-summary.json": {
+      "bytes": 1555,
+      "sha256": "b8ff1597ae38220cacfddef8d423837f23563ae61ea8a766803c73189ee1789e"
+    }
+  },
+  "private_bundle_copy_forbidden": true,
+  "production_mutations": false,
+  "recorded_at": "2026-10-28T12:02:47.707730+00:00",
+  "schema_version": "qtrade.immutable-independent-review-manifest.v1"
+}

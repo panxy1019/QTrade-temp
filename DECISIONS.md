@@ -4380,3 +4380,55 @@ isolated Linux/cluster tests, gated publisher deployment and delivery acceptance
 Require exact source/full oracle and measured performance evidence before owner
 handover. Keep LIVE false, rolling OFF, ACTIVE and all immutable ledgers intact.
 STEP1 actual audits and STEP2 can proceed in parallel.
+
+### Incremental publication evidence boundary — 2026-10-28 19:56 Shanghai
+
+Freeze P0 runtime at publicGit fba51aad, independently verify the entire2194-file
+tree, and keep subsequent STEP2 changes separate. On baseline5640 batches, full
+cold diagnostics103–107s and DB-index-loss recovery50–63s do not satisfy normal45s.
+The valid-checkpoint path and20 actual5701 normal rounds satisfy45s; p95=37.13s
+does not meet the30s margin target. All-source original458 oracles establish
+content equality for each distinct frozen scope, not public delivery or future
+cross-day performance. PhysicalSHA/source/quality/fsync remain required.
+
+Production keeps45s without diagnostic prewarming or imported test receipts.
+Initial failures may accumulate only actually validated durable receipts, with
+the old publichead retained; expose those failures rather than relabeling them
+as cold45 success. Deployment requires original-evidence v6 gates and a fresh
+pre-write import-origin check, one publisher-only handover, then each actual
+export/Git/publicindex/API boundary. Unit mocks and staging cannot grant success.
+
+STEP2 can use qualified retrospective data while STEP1 waits for actual completion,
+under the user's latest parallel authorization. Preserve the16-day891-stock
+four-factor experiment as a new revalidation, including unknown input clocks,
+selection bias and gross-label limits. The first protected new queue kind only
+registers a factor/evaluation/strategy contract at EXPERIMENT/NONE. It must not
+pretend that a factor signal adapter or portfolio backtest has already run, or
+grant model activation/PAPER recovery. Reuse existing HMAC/GitQueue/worker and
+StrategyRegistry; the worker must resolve actual archives independently of a
+bounded public preview descriptor.
+
+### Publisher-only ownership and actual downstream failure — 2026-10-28 20:23
+
+Actual v6 gate parses the original35 performance rounds, both independent full
+oracles, scopedfault XML, NFSnegative/recovery and2194Git source/origin artifacts.
+The final operator additionally verifies the live exact source fileset and7
+PathFinder origins immediately before wrapper replace andTERM, rejecting later
+shadow packages. Its immutable attempt persists one TERM intent; uncertain
+delivery never retries. Realhandover only changes publisher at20:03 observation.
+
+Successful localexports do not imply successful transport. The ordinary90s Git
+path now times out on the first large missing-object set. A future auxiliary-ref
+pretransfer may reuse Git's advertised reachable objects while leaving main and
+its index unchanged. It needs an isolated bare protocol proof, exact publicobject
+allowlist, bounded batches and independent review; no such publicpush has occurred
+at this checkpoint. Do not raise90s or report publicfreshness from Running.
+
+An existing standing approval policy independently promotes68d after its real
+validation at20:07:51. Record that event separately from the earlier handover's
+unchanged-controls proof. Do not restore the formerACTIVE to satisfy an auditor,
+rewrite ledger history, or apply old fixed-model claims to the new currentmodel.
+Legacy98d candidate acceptance also cannot be fixed by adding missing fields to
+its archive or relabeling a new revalidation as the old four-event staging chain.
+Keep originalstrict auditors/failed outputs and design any compatibility contract
+as a separate version with independent negative tests before acceptance changes.

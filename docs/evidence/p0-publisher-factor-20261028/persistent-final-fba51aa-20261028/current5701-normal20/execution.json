@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "after-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "before-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "benchmark-report.json": "a8be89d9c1e142c5731790c1b1d9c6cfb2504a92f1f4ba7f06791db29c08dbae",
+    "benchmark.py": "04966f3bb1a978417779b0ed09dcfc3d6b057f96d335ba6c24b3fba16de5a1d4",
+    "incremental-output-refs.json": "d82b83fb823c284cce2d1dd1a5be7045bf740eb74b10110bb2854b59e589d75b",
+    "pass_driver.py": "5516c37feb6ae79c81f0dc716274db5b7dfc048d4377f0b22d9bdf50ddac16f9",
+    "restart19-output-refs.json": "d82b83fb823c284cce2d1dd1a5be7045bf740eb74b10110bb2854b59e589d75b",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout.log": "2129530226b80c8d7fffb534a721e41da7a208800f2402cb8b2f38bd7130ab81"
+  },
+  "exit_code": 0,
+  "helper_sha256": "04966f3bb1a978417779b0ed09dcfc3d6b057f96d335ba6c24b3fba16de5a1d4",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-persistent-continuity-nfs-20261028T105730Z",
+  "remote": "/root/qtrade-local/operator-evidence/market-persistent-continuity-nfs-20261028T105730Z",
+  "source_evidence": "/root/qtrade-local/operator-evidence/market-checkpoint-exact-git-20261028T105253Z"
+}

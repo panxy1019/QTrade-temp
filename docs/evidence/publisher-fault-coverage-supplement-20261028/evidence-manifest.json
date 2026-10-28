@@ -1,0 +1,61 @@
+{
+  "all_faults_real_acceptance": false,
+  "created_at": "2026-10-28T11:36:22.725285+00:00",
+  "document": {
+    "bytes": 4591,
+    "path": "E:\\QTrade-git\\docs\\PUBLISHER_FAULT_COVERAGE_SUPPLEMENT_20261028.md",
+    "sha256": "ee72217f576304a14411860aa05bb1b8bd76baa2e52d588d92ca399c020c2790"
+  },
+  "files": {
+    "fault-coverage-map-nfs-latency.json": {
+      "bytes": 17234,
+      "sha256": "e27ac9ef14a789ec4fca8d4eb2f98fbc05688a0e5e9d091d88b98ee93d940edf"
+    },
+    "fault-coverage-map-supplement.json": {
+      "bytes": 16594,
+      "sha256": "ccd5ff7232b1ed834d90a9d18d8c4f7f41e0f8b0d3ad2a20a4fbce801fa7bec4"
+    },
+    "fault-coverage-map-v2.json": {
+      "bytes": 17330,
+      "sha256": "4a073d061957f4f5b78e9a8257b8be93c798cf4d0a1de507a168b3257cef729c"
+    },
+    "manifest.json": {
+      "bytes": 320802,
+      "sha256": "34f573ad910e833acdc9f03c81fe24b3c5f748e447fbfeaa60464ee355f17a6e"
+    },
+    "same-nfs-latency-benchmark.py": {
+      "bytes": 6903,
+      "sha256": "8b3879dac3b6d13e6e8910394f3e607046b367bd7ce4042916bb8b0b8ae8a6c5"
+    },
+    "same-nfs-latency-execution.json": {
+      "bytes": 981,
+      "sha256": "fc39eba6f52b6fdcee4a8596cd1af0e04e876f8f80c4a0c4143f3a76d305b1cb"
+    },
+    "same-nfs-latency-sanitized.json": {
+      "bytes": 3210,
+      "sha256": "ab91d28dc32e7dd4f884f483b288210caace1aeff2c4f23d81ad11e008f56161"
+    },
+    "test_market_incremental_failure_boundaries.py": {
+      "bytes": 7071,
+      "sha256": "a362654162f85cd5c5f375f03fdabadd475c5f5cb6d69ea12cdd3d30cf177c53"
+    },
+    "tests.log": {
+      "bytes": 684,
+      "sha256": "726357a9890fa7d2826ec6b8de58405b82ba2954e785917e6d0200e161609544"
+    },
+    "tests.xml": {
+      "bytes": 1067,
+      "sha256": "300ac263afbe1fb7a7501143c6d4d89f59225f57bfff1ecc30c0bd9fb02423f0"
+    },
+    "verify.log": {
+      "bytes": 169,
+      "sha256": "1a0757134242a29bdaf40d438e7a6389ce0cfc13dc3fc9dcc789817c3569ecb3"
+    }
+  },
+  "kind": "ADDITIVE_FAULT_REVIEW_EVIDENCE_MANIFEST",
+  "linux_new_tests_passed": 5,
+  "linux_new_tests_skipped": 0,
+  "prior_review_or_failure_overwritten": false,
+  "private_raw_mountinfo_in_git": false,
+  "production_mutations": false
+}

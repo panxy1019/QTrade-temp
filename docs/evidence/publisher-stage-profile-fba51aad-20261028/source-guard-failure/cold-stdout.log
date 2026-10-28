@@ -1,0 +1,1 @@
+{"pass_name": "cold", "state": "FAILED", "wall_seconds": 2.0465414188802242, "process_cpu_seconds": 2.0268009999999994, "reaped_children_cpu_seconds": 0.0, "initial": {"database_exists": false, "sidecar_root_exists": false, "object_count": 0, "new_process": true}, "children_at_completion": ""}

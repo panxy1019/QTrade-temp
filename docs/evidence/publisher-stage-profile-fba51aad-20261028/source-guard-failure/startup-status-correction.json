@@ -1,0 +1,8 @@
+{
+  "at": "2026-10-28T11:33:06.013747+00:00",
+  "corrects": "aborted-sftp-preparation.json",
+  "correction": "The runner had already exited when process check ran; Stop-Process branch did not execute. Earlier only-benchmark.py observation was stale. Full attempt did start, preserved cold failed2.0465s with UNIFIED_MARKET_WORKER_IMPORTED_SOURCE_MISMATCH before workers. No production change. Original misleading intermediate metadata retained as failed operator observation.",
+  "actual_local_runner_stopped": false,
+  "actual_profile_result": "FAILED",
+  "production_mutations": false
+}

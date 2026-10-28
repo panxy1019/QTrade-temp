@@ -1,0 +1,36 @@
+{
+  "SSH_or_production_RPC_executed": false,
+  "complete_real_fault_suite_accepted": false,
+  "created_at": "2026-10-28T11:06:40.606606+00:00",
+  "kind": "INDEPENDENT_NONPRODUCTION_HANDOVER_REVIEW_TEST_PROVENANCE",
+  "original_tools_unchanged_during_review": true,
+  "passing_review_test_meaning": "109 mock assertions confirm schema boundaries and lifecycle protections; counterexample acceptance is NOT real measurement PASS.",
+  "prior_failure_reasons": {
+    "tests-complete.xml": "One independent mock failed because Windows Path != PurePosixPath; synthetic v2 platform adapter fixed. No tool implementation changed.",
+    "tests.xml": "Frozen-copy collection missing two legacy mock helper modules; originals not changed."
+  },
+  "private_wrapper_body_read": false,
+  "production_mutations": false,
+  "root_ongoing_NFS_benchmark_results_reviewed": false,
+  "target_source_commit": "fba51aade2ee2410dda087e95cf054e53375ed3a",
+  "test_attempts": {
+    "tests-complete-v2.xml": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 109
+    },
+    "tests-complete.xml": {
+      "errors": 0,
+      "failures": 1,
+      "skipped": 0,
+      "tests": 109
+    },
+    "tests.xml": {
+      "errors": 1,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 1
+    }
+  }
+}

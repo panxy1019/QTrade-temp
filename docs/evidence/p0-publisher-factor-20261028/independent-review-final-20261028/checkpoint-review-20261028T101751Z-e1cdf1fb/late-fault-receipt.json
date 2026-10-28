@@ -1,0 +1,55 @@
+[
+  {
+    "mode": "deadline_during_prepare",
+    "returned": true,
+    "state": "AVAILABLE",
+    "statistics": {
+      "source_bytes_read": 10357,
+      "cached_batches": 0,
+      "replayed_batches": 0,
+      "selected_chunks": 1,
+      "selected_batches": 1,
+      "cached_rows": 0,
+      "cache_estimated_bytes": 0,
+      "receipt_hits": 1,
+      "receipt_writes": 0,
+      "reused_pairs": 1,
+      "rebuilt_pairs": 0,
+      "reused_shards": 1,
+      "checkpoint_id": "41f8913b126c3675862fc3a4fa0792a5029cd2e3c6375e6d293619b49125bbf4",
+      "export_seconds": 2.0,
+      "total_bytes": 1509,
+      "total_files": 1,
+      "index_id": "5d50c8144dc98b91cb761461d6ee5c883d2cc954a82b0c0d525c4b9a37b5cdde",
+      "quarantined_entries": 0
+    },
+    "head_unchanged": false
+  },
+  {
+    "mode": "new_conflict_during_prepare",
+    "returned": true,
+    "state": "AVAILABLE",
+    "statistics": {
+      "source_bytes_read": 10357,
+      "cached_batches": 0,
+      "replayed_batches": 0,
+      "selected_chunks": 1,
+      "selected_batches": 1,
+      "cached_rows": 0,
+      "cache_estimated_bytes": 0,
+      "receipt_hits": 1,
+      "receipt_writes": 0,
+      "reused_pairs": 1,
+      "rebuilt_pairs": 0,
+      "reused_shards": 1,
+      "checkpoint_id": "41f8913b126c3675862fc3a4fa0792a5029cd2e3c6375e6d293619b49125bbf4",
+      "export_seconds": 0.076181,
+      "total_bytes": 1509,
+      "total_files": 1,
+      "index_id": "5d50c8144dc98b91cb761461d6ee5c883d2cc954a82b0c0d525c4b9a37b5cdde",
+      "quarantined_entries": 0
+    },
+    "head_unchanged": false,
+    "current_full_replay_state": "QUARANTINED"
+  }
+]

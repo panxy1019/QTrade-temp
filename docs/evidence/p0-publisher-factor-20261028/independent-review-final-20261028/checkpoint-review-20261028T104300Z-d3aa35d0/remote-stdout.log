@@ -1,0 +1,77 @@
+{
+  "returncode": 1,
+  "elapsed_seconds": 9.214896699413657,
+  "command": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104300Z-d3aa35d0/tmp/pytest",
+    "tests/test_unified_market_checkpoint_independent.py",
+    "--junitxml=/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104300Z-d3aa35d0/independent-green.xml"
+  ],
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jun 18 2026, 21:28:09) [GCC 14.3.0]",
+  "overlays": {
+    "scripts/unified_market_checkpoint.py": {
+      "sha256": "0f2c512f7abf7cbc99d34def6edfa7dfeaa73e564031a36a5b33653759a2f485",
+      "bytes": 6673
+    },
+    "scripts/publish_unified_market.py": {
+      "sha256": "64caab0023626ef0f531f563c3a392d4a2429a9a6c004c5789af17321bbd8d8a",
+      "bytes": 66618
+    },
+    "src/qtrade/research/market_validation_receipts.py": {
+      "sha256": "2152eed8405ace883c2bd8de388b72ec42875a3feaffa314e616c58c1147f79a",
+      "bytes": 22118
+    },
+    "tests/test_unified_market_checkpoints.py": {
+      "sha256": "0488a5edbd64f882171036ea3db1292d6e1a5ee581aad2165282c86377bd535d",
+      "bytes": 8220
+    },
+    "tests/test_unified_market_checkpoint_independent.py": {
+      "sha256": "491923ce038419f1cf50bb5fbcf3d081d70241c4c12965a4871648c1ce552eee",
+      "bytes": 22844
+    }
+  }
+}
+...........................F.....                                        [100%]
+=================================== FAILURES ===================================
+_______ test_recovery_directory_fsync_failure_blocks_checkpoint_and_head _______
+
+source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104300Z-d3aa35d0/tmp/pytest/test_recovery_..., <scripts.unified_store.UnifiedBatchStore object at 0x7f48d5951fe0>, <function source.<locals>.add at 0x7f48d34685c0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f48d341da90>
+
+    def test_recovery_directory_fsync_failure_blocks_checkpoint_and_head(source, monkeypatch):
+        base, _, _, _, _, add = source
+        add()
+        run(source)
+        head = base / "unified-data/market-public/unified-market.json"
+        before = head.read_bytes()
+    
+        def fail(_path):
+            raise OSError("independent head recovery directory fsync failure")
+    
+        def no_checkpoint(*args, **kwargs):
+            raise AssertionError("checkpoint read before head recovery durability")
+    
+        monkeypatch.setattr(exporter, "_fsync_directory", fail)
+        monkeypatch.setattr(checkpoints, "load", no_checkpoint)
+>       with pytest.raises(OSError, match="recovery directory fsync failure"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'recovery directory fsync failure'
+E         Actual message: 'UNIFIED_MARKET_COMMIT_UNCERTAIN'
+
+tests/test_unified_market_checkpoint_independent.py:486: AssertionError
+=============================== warnings summary ===============================
+../../../../siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_unified_market_checkpoint_independent.py::test_recovery_directory_fsync_failure_blocks_checkpoint_and_head
+1 failed, 32 passed, 1 warning in 8.41s
+

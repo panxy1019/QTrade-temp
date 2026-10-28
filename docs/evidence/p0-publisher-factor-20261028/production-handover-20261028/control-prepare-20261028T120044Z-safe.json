@@ -1,0 +1,22 @@
+{
+  "original_private_root": "E:\\QTrade-temp\\cluster-evidence\\control-prepare-20261028T120044Z",
+  "raw_bodies_not_copied": true,
+  "raw_files": {
+    "driver.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "driver.stdout": {
+      "bytes": 232,
+      "sha256": "57adcf406df191c0350debf3fcc2f9f5426152ab6d2528d9516f0cb4c58465a4"
+    },
+    "result.stderr": {
+      "bytes": 1410,
+      "sha256": "2f75edf26de384b80d9d4f84f87e104ff960dd284491b35af1c8ef441b0c1bcf"
+    },
+    "result.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

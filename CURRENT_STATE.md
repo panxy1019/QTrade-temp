@@ -1,5 +1,59 @@
 # Current state
 
+## Production boundary checkpoint: 2026-10-28 20:23 Shanghai
+
+- Publisher-only one-time handover succeeded provisionally: new647839/ticks1022098698
+  runs exactfba2194 sources and7 verified origins. Original294214 exited. Actual
+  20:03:34 controls compare equal except publisher owner (all14books/context/other
+  owners/rolling unchanged). TERM was sent once through immutable113923 attempt;
+  no restart/recovery/secondadvance. Linuxfinal52/0skip and independent9/0skip
+  close the live pre-write shadow gap. Preserve original47+shadow failure evidence.
+- Production local exports now succeed44.379s and37.008s within45, but ordinary
+  Gitpush repeatedly times out90s. Actual roughly23.63MB stored-compressed missing
+  objects; sampled SSH/pack pipe backpressure supports a transport bottleneck,
+  not localcommit CPU. Public freshness is NOTrestored. Independent bounded
+  auxiliary-ref pretransfer is nonproduction design/test work; no auxpublicpush.
+- Oct28 formalday b82baaac is READY (11:57:40Z); prep988/988. Predictionf9a443b2
+  for former29589 completed20:01:08. Existing standing research approval policy,
+  enabledOct27, automatically activated68d9287e at20:07:51/receipt750de28e. This
+  was not a publisher action or an operator model activation. Keep event records;
+  do not rollback, restore books or call the original frozen-current assertion true.
+- Fixed-scope STEP1 C failed ADMISSION_EPOCH_MISMATCH (oldsignals/newprediction),
+  fixedD98d failed original archive contract (no rolling_plan, STAGED not scheduled
+  for another version), E20:03 accepted12+2 locally but globalSIGNAL_UNAVAILABLE.
+  After automatic promotion, old295 E changes scope/retirement and remainsBLOCKED.
+  New current-model C readiness is being read separately. Do not relabel failures.
+- STEP2 protected factor registration/API/Builder implemented in workingtree only:
+  API53 passes including oldQLIB, browser pure-contract+oldpage15 passes. Actual
+  worker/Linux integration and protected UI acceptance remain. Registration means
+  EXPERIMENT/NONE, nofactor backtest/signal adapter/PAPER/model authority. fba
+  production source is untouched by these pending STEP2 changes.
+
+## Active checkpoint: 2026-10-28 19:53 Shanghai
+
+- Public Git fba51aad is the frozen P0 runtime candidate. Exact2194-file Linux
+  regression793/0skip; independent final33 fault checks pass. Actual5640 full cold
+  diagnostics103.10–107.47s, valid-checkpoint restart34.23–36.08s; DB-loss recovery
+  49.71–63.00s is NOT45s-ready. Current5701 normal20/20 pass45s, max38.61s,
+  p95=37.13s (30s margin target unmet). Original-source full oracles validate all
+  3000 entries and5986/5987 shards for the two frozen scopes. No budget increase.
+- Release fba is staged only. Production294214/b2386c3 and public deploymentae33
+  are unchanged. V6 original-evidence gate and47 Linux counterexamples pass;
+  final independent review found a pre-write import-shadow gap. Add live origin
+  verification before actual wrapper/TERM, then independently retest. No TERM or
+  wrapper installation has occurred. Real public freshness remains unaccepted.
+- Actual19:47 Qlib preparation950/988,38unattempted/unresolved,0retry. Formal
+  head stillOct27/09a67b13; ACTIVE29589b44 unchanged. Oct28 E12 observations and
+  2 retired closures accepted individually, globalpublicDEGRADED remainsBLOCKED.
+- STEP2 S2-C immutable factor-to-StrategyRegistry adapter committeda89d45f;
+  Linux303/0skip, Windows302+1Linux-onlyskip. S2-B new891-stock/16-session/four-factor
+  retrospective report completes, independent616044 checks pass. Original report
+  bytes preserved. Protected queue/Builder implementation begins in isolation.
+- Current evidence and limitations: P0_PERSISTENT_CHECKPOINT_PROGRESS,
+  PUBLISHER_STAGE_PROFILE_FBA51AAD, STEP2_LONGER_FACTOR_EVALUATION (all20261028).
+  A/B/C authorization active; automation remainsPAUSED. LIVEfalse/rollingOFF,
+  forward383859/all14books and immutable historical controls remain unchanged.
+
 ## Resumed implementation checkpoint: 2026-10-28 18:50 Shanghai
 
 - A/B/C authorization is active. P0 persistent receipts + immutable generations

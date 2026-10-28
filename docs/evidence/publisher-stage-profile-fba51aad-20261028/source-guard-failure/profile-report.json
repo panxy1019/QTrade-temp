@@ -1,0 +1,76 @@
+{
+  "NFS_resource_exclusivity_claimed": false,
+  "cold_warm_same_refs": false,
+  "controlled_snapshot_clock": "2026-10-28T07:09:45.831362+00:00",
+  "diagnostic_seconds": 120,
+  "freeze_evidence_sha256": "8a4ea3ab27939dcec28d94f5cb95b805b7cfeeb16e7b37c3ea594168f7a6d63c",
+  "helpers_sha256": {
+    "benchmark.py": "1f7fc797bced5c03e80988537b5f08583c7e92fdd74559e0fae22de415bc04de",
+    "profile_driver.py": "321fcd19a0f5d4e65dfbaa1de6783a2a183af1f91daf1d915ff615d96ca38c9b",
+    "profile_runtime.py": "c3efcbf45c0946a76a25e2f73519a592669c4ec88cfae2df2e1eb8d45c40bc7c",
+    "profile_worker.py": "66ce148b2409b94dcc538ce99b8ce8d67bdebf391693dcc5c9f704f2962a5ee4"
+  },
+  "inclusive_stages_must_not_be_added": true,
+  "kind": "PROFILED_FROZEN_COLD_AND_WARM_DIAGNOSTIC",
+  "mount_after": {
+    "filesystem_type": "nfs4",
+    "major_minor": "0:66",
+    "mount_id": "1080",
+    "mountinfo_raw_sha256": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "output_st_dev": 66,
+    "production_st_dev": 66,
+    "raw_mountinfo_retained_privately_outside_git": true,
+    "same_production_device": true
+  },
+  "mount_before": {
+    "filesystem_type": "nfs4",
+    "major_minor": "0:66",
+    "mount_id": "1080",
+    "mountinfo_raw_sha256": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "output_st_dev": 66,
+    "production_st_dev": 66,
+    "raw_mountinfo_retained_privately_outside_git": true,
+    "same_production_device": true
+  },
+  "output_base": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-stage-profile-20261028T112217Z",
+  "production_export_seconds": 45,
+  "production_mutations": false,
+  "production_performance_acceptance": false,
+  "profiling_enabled": true,
+  "raw_mountinfo_not_for_git": true,
+  "recorded_at": "2026-10-28T11:29:27.181420+00:00",
+  "results": [
+    {
+      "pass_name": "cold",
+      "state": "FAILED",
+      "wall_seconds": 2.0465414188802242
+    }
+  ],
+  "source_after": {
+    "freeze_file_sha256": "49da216655e1fd1fc7e78f8443b8a766b17d47c1ac874cf2ada51a0b4eb94894",
+    "label": "after",
+    "ledger_sha256": "2ac25f2b081be72a82380c1989562f58d66efab34cd326826842c12f363faecc",
+    "source_files_verified": 2194,
+    "source_manifest_sha256": "109fc8efe00cd0ab8009a8880114fe6697a058bfd5cc27cb2942ade19a2c0e82"
+  },
+  "source_before": {
+    "freeze_file_sha256": "49da216655e1fd1fc7e78f8443b8a766b17d47c1ac874cf2ada51a0b4eb94894",
+    "label": "before",
+    "ledger_sha256": "2ac25f2b081be72a82380c1989562f58d66efab34cd326826842c12f363faecc",
+    "source_files_verified": 2194,
+    "source_manifest_sha256": "109fc8efe00cd0ab8009a8880114fe6697a058bfd5cc27cb2942ade19a2c0e82"
+  },
+  "source_revision": "fba51aade2ee2410dda087e95cf054e53375ed3a",
+  "space_after": {
+    "local_available_bytes": 19827412992,
+    "local_reserve_bytes": 2147483648,
+    "nfs_available_bytes": 284016246784,
+    "nfs_reserve_bytes": 107374182400
+  },
+  "space_before": {
+    "local_available_bytes": 19827441664,
+    "local_reserve_bytes": 2147483648,
+    "nfs_available_bytes": 284025683968,
+    "nfs_reserve_bytes": 107374182400
+  }
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.848" timestamp="2026-10-28T18:44:42.435832+08:00" hostname="73ec830048ca"><testcase classname="tests.test_unified_market_checkpoint_independent" name="test_second_recovery_fsync_failure_cannot_transport_a_previously_uncertain_head" time="0.540"><failure message="Failed: DID NOT RAISE OSError">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104439Z-90ed5180/tmp/pytest/test_second_re..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f70cbe242f0&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f70cbd243b0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f70cbecefd0&gt;
+
+    def test_second_recovery_fsync_failure_cannot_transport_a_previously_uncertain_head(
+        source, monkeypatch
+    ):
+        base, database, _, _, _, add = source
+        add()
+        transport, state = base / "transport", base / "local/publisher-state"
+        exporter.publish_market_files(base, transport, database, state_root=state)
+        head = base / "unified-data/market-public/unified-market.json"
+        old_transport = (transport / "unified-market.json").read_bytes()
+        add(counter=2, minute=40)
+        original = exporter.write_json_atomic
+        first = [True]
+    
+        def write(path, value, **kwargs):
+            original(path, value, **kwargs)
+            if path == head and first[0]:
+                first[0] = False
+                raise OSError("independent initial uncertain head")
+    
+        monkeypatch.setattr(exporter, "write_json_atomic", write)
+        with pytest.raises(OSError):
+            exporter.publish_market_files(base, transport, database, state_root=state)
+        visible_head = head.read_bytes()
+    
+        def fail(_path):
+            raise OSError("independent repeated head directory fsync failure")
+    
+        monkeypatch.setattr(exporter, "_fsync_directory", fail)
+&gt;       with pytest.raises(OSError):
+             ^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE OSError
+
+tests/test_unified_market_checkpoint_independent.py:576: Failed</failure></testcase></testsuite></testsuites>

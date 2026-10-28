@@ -1,0 +1,33 @@
+{
+  "activation_by_this_audit": false,
+  "actor": "standing-policy-656f643bf547556b",
+  "actual_active_model": "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c",
+  "allowed_models": [
+    "lightgbm"
+  ],
+  "applied_at": "2026-10-28T12:07:51.433816+00:00",
+  "approval_sha256": "750de28e05933013e4cacf828a10ee28f638861d7d3adbc6ef7566f0d09cd510",
+  "authorization_source": "USER_EXPLICIT_INSTRUCTION_2026-10-27",
+  "automatic_revalidation_skipped_due_to_staged": true,
+  "checked_at": "2026-10-28T12:17:56.093213+00:00",
+  "current_policy_id": "656f643bf547556bf9b7b5ef30b36100191bbc64009d1b0c78295fc648a5dbda",
+  "enabled_at": "2026-10-27T14:07:59.998990+00:00",
+  "independent_hmac_verification_performed": false,
+  "matching_policy_approval_and_control_command": true,
+  "policy_changed_by_this_audit": false,
+  "previous_active": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+  "production_mutations": false,
+  "request_id": "1533438747a8578580dd3acff37a7cc3",
+  "ridge98_new_binding_job_id": "a2b0cdd3cce8df2649b13b96014d4e80",
+  "ridge98_new_job_exists": false,
+  "ridge_activation_count": 0,
+  "ridge_state": "STAGED",
+  "schema_version": "qtrade.readonly-promotion-chain-check.v1",
+  "signed_documents_verified": 17,
+  "source096_matches_observed9846_files": {
+    "scripts/run_qlib_worker.py": "d1f1b05aad48de7f74afeee1c3e7604e5263311e25ac4bf7369960515eb9ad36",
+    "src/qtrade/research/model_promotion_policy.py": "ad4f4c4dd1f30fcb7eb7a990d6e74ee496973ae30f4adec7ef07c50ad00b21d7"
+  },
+  "source_evidence_file_sha256": "47f6e6e79c978dcd700174da4e0dcde860e3678c7e21abcd6445a85936ce5c99",
+  "validation_id": "1306b6042469db7631f4da1394a8048325fde5faf5664e0ba76b24d4d524bdf0"
+}

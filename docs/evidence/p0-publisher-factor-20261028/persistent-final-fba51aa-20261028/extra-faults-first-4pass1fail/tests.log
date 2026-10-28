@@ -1,0 +1,39 @@
+...F.                                                                    [100%]
+=================================== FAILURES ===================================
+______ test_slow_generation_io_exceeds_real_deadline_without_moving_head _______
+
+source = (PosixPath('/root/qtrade-local/operator-evidence/market-fault-boundaries-tests-20261028T110757Z/pytest-fixtures/test_s..., <scripts.unified_store.UnifiedBatchStore object at 0x7f6ea18e6030>, <function source.<locals>.add at 0x7f6ea1877b60>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6ee1a2fce0>
+
+    def test_slow_generation_io_exceeds_real_deadline_without_moving_head(source, monkeypatch):
+        base, *_rest, add = source
+        add()
+        run(source)
+        head = base/'unified-data/market-public/unified-market.json'
+        before = head.read_bytes()
+        prepare = checkpoints.prepare
+        called = []
+    
+        def slow(*args, **kwargs):
+            value = prepare(*args, **kwargs)
+            called.append(value)
+            time.sleep(0.35)  # Real elapsed latency, not an altered monotonic clock.
+            return value
+    
+        monkeypatch.setattr(checkpoints, 'prepare', slow)
+>       with pytest.raises(ValueError, match='TIME_BUDGET'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'TIME_BUDGET'
+E         Actual message: 'UNIFIED_MARKET_CLOCK_OR_BUDGET_INVALID'
+
+tests/test_market_incremental_failure_boundaries.py:109: AssertionError
+=============================== warnings summary ===============================
+../../../../siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_market_incremental_failure_boundaries.py::test_slow_generation_io_exceeds_real_deadline_without_moving_head
+1 failed, 4 passed, 1 warning in 2.95s

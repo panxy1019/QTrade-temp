@@ -1,0 +1,42 @@
+{
+  "closed_finding": "P1 pre-write untracked shadow origin: reject extra source entries and re-resolve seven protected module origins immediately before replacement/TERM.",
+  "private_wrapper_read": false,
+  "production_apply_authorized": false,
+  "production_mutations": false,
+  "raw_mount_copied": false,
+  "recorded_at": "2026-10-28T12:02:47.703223+00:00",
+  "schema_version": "qtrade.publisher-v6-independent-review.v2",
+  "state": "NO_REMAINING_BLOCKER_IN_REVIEWED_NONPRODUCTION_WIRING",
+  "test_reports": {
+    "fixed-origin-review/caller-optimized-3.xml": {
+      "cases": 3,
+      "failures": 0,
+      "sha256": "993199ec69afaa18e81e43da347129eef273fe551a9bafa211ab92b037ae5641",
+      "skips": 0
+    },
+    "fixed-origin-review/independent-fixed-9.xml": {
+      "cases": 9,
+      "failures": 0,
+      "sha256": "29fef30a5d6a34da712bd3fc4110b4f3dfbb619a78d6a1ab5326f6909a48fd0f",
+      "skips": 0
+    },
+    "fixed-origin-review/reproduced-52.xml": {
+      "cases": 52,
+      "failures": 0,
+      "sha256": "d0caf7702e4547b0551e04493171d2e60d8b7c0539e9d0870e1ece053a28dd84",
+      "skips": 0
+    },
+    "original-with-shadow-gap/independent-9.xml": {
+      "cases": 9,
+      "failures": 0,
+      "sha256": "6c13f788904155ea4b0665b81c89efff26704969fe2935b0486d185da04cf423",
+      "skips": 0
+    },
+    "original-with-shadow-gap/reproduced-47.xml": {
+      "cases": 47,
+      "failures": 0,
+      "sha256": "125490d1a9dca12bb2fb792d3a3477a9ff5ccb4d45028e567e502b3f7595da96",
+      "skips": 0
+    }
+  }
+}

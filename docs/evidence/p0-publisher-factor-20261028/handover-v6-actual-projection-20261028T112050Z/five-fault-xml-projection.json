@@ -1,0 +1,11 @@
+{
+  "actual_test_count": 5,
+  "verified_required_testcases": [
+    "tests.test_market_incremental_failure_boundaries::test_enospc_during_new_object_write_preserves_committed_head",
+    "tests.test_market_incremental_failure_boundaries::test_historical_backfill_rebuilds_complete_window_and_keeps_both_sources",
+    "tests.test_market_incremental_failure_boundaries::test_quarantine_release_revalidates_restored_source_without_altering_old_generation",
+    "tests.test_market_incremental_failure_boundaries::test_real_non_fast_forward_push_cannot_report_new_publication_success",
+    "tests.test_market_incremental_failure_boundaries::test_slow_generation_io_exceeds_real_deadline_without_moving_head"
+  ],
+  "xml_sha256": "300ac263afbe1fb7a7501143c6d4d89f59225f57bfff1ecc30c0bd9fb02423f0"
+}

@@ -1,0 +1,33 @@
+{
+  "adapter_sha256": "a7368bbc00f6d21b074e25e945793fe4a5d923db1ed9fcc29d90ce03178da9c3",
+  "independent_git_files_verified": 2194,
+  "private_raw_mount_copied_to_git": false,
+  "production_apply_authorized": false,
+  "schema_version": "qtrade.publisher-v6-actual-safe-projection.v1",
+  "scopes": {
+    "baseline": {
+      "max_wall_seconds": 107.4743745662272,
+      "modes": [
+        "checkpoint_new_process",
+        "cold_bootstrap",
+        "local_db_loss_sidecar_recovery"
+      ],
+      "report_sha256": "7b79cecb0fcb10457bf0d996099611053e7bc80e6338aa4c89ad10fe48b7c887",
+      "runs": 15,
+      "scope_batches": 5640
+    },
+    "current": {
+      "max_wall_seconds": 38.606807528063655,
+      "modes": [
+        "normal_incremental"
+      ],
+      "report_sha256": "a8be89d9c1e142c5731790c1b1d9c6cfb2504a92f1f4ba7f06791db29c08dbae",
+      "runs": 20,
+      "scope_batches": 5701
+    }
+  },
+  "source_manifest_sha256": "109fc8efe00cd0ab8009a8880114fe6697a058bfd5cc27cb2942ade19a2c0e82",
+  "source_revision": "fba51aade2ee2410dda087e95cf054e53375ed3a",
+  "state": "ACTUAL_MEASUREMENTS_DERIVED_COMPOSITE_GATE_STILL_PENDING",
+  "unique_semantic_executions": 35
+}

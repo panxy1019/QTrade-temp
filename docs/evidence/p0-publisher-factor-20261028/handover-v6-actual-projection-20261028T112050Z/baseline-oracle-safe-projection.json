@@ -1,0 +1,16 @@
+{
+  "baseline_imports_equal": true,
+  "candidate_git_files_equal": true,
+  "candidate_manifest_original_sha256": "fd4bb3eb42b59974caac232d677c48b2d2befd64bfae46b052000a6572ca7de7",
+  "entry_count": 3000,
+  "index_raw_sha256": "1c9181a077f741bf139ea86bdf0f2cf699d949b22b8ff8485e047920193eb53b",
+  "measured_outputs_bound": 15,
+  "oracle_sha256": "c927428f42a3e82eec63f9667ff87560c56d6cf5ab757464388fbe1c81053995",
+  "output_bytes": 166050382,
+  "production_apply_authorized": false,
+  "scope_batches": 5640,
+  "selected_chunks": 140136,
+  "source_manifest_bindings_sha256": "2a24ee29b77f0f372d4321bafc3465935ec1c15aaf0bd6466f65f085a43676d4",
+  "state": "ACTUAL_ORACLE_PARSED_NO_DEPLOYMENT_AUTHORITY",
+  "unique_shards": 5986
+}

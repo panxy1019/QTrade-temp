@@ -83,3 +83,81 @@ target字段失效。新候选保持JSON边界验证，将内部已检查树的�
 生产publisher仍294214/b2386c3，未改wrapper、未发TERM。正常45秒、源512MB、估算
 batch缓存128MB及Git90秒不变。全冷诊断120秒仅非生产；若生产首轮需要多轮积累
 已验证收据，超时仍明确失败且保留旧head，不能隐去预热成本或将其称为45秒冷恢复。
+
+## 19:12最终公开Git源的真实性能与完整内容核验
+
+最终源为公开Git `fba51aade2ee2410dda087e95cf054e53375ed3a`，publisher64caab00、
+receipt2152eed8、checkpoint0f2c512f，完整SHA见归档。精确Git归档2194文件在Linux
+运行前后完整比对，**793项通过、0skip**，66.12秒；最终33项独立故障检查也通过。
+
+| 实际隔离模式 | 冻结范围 | 次数 | 整export调用秒 | 判定 |
+| --- | --- | ---: | --- | --- |
+| 无DB/sidecar/输出全冷诊断 |5640|5|103.102、105.434、107.474、106.908、104.075|各在非生产120秒诊断内 |
+| 有效持久化检查点的新进程 |5640|5|36.085、34.959、34.356、34.782、34.232|各≤45秒 |
+| 本地DB丢失、从sidecar恢复 |5640|5|51.439、55.103、63.002、49.709、50.611|非生产诊断；**不符合45秒正常路径** |
+| 正常增量及后续无变化轮次 |5701|20|max38.607、median34.179、nearest-rank p95=37.133|各≤45秒；p95≤30秒余量目标未达到 |
+
+normal首轮从真实5640检查点进入5701/141634快照，日频完成日窗口从Oct27滚到Oct28：
+5640收据命中、61批次重放、1498 pair重建/1498复用。后19轮均5701命中、零重放、
+2996 pair/5987 shards复用。两个冻结点都是Oct28实际捕获，不冒称已完成未来Oct29
+生产跨日观察。cold诊断、全量oracle曾与normal并行，共享NFS竞争已披露，不是独占。
+源512MB、估算batch缓存128MB及正常45秒不变；不将诊断预算导入生产。
+
+正常每轮实际hash源239718748 bytes；另读sidecar约195283641 bytes及公开shard
+167397950 bytes。**源字节数不是总IO**。sidecar另记账，缺/坏视miss，I/O错误传播；
+没有以mtime、本地DB payload或先前PASS替代其实际耐久证据。
+
+原458552d独立oracle禁用候选收据，不调用候选exporter/validator，读取全部raw与
+Parquet、重放全部来源，再逐字节比较输出：
+
+- baseline5640：3000 entry、5986 shard、166050382 output bytes、140422 capture、
+  218376 normalized rows，77.242秒、source_failures=0，PASS。
+- current5701：3000 entry、5987 shard、167397950 output bytes、141986 capture、
+  219874 normalized rows，75.960秒、source_failures=0，PASS。
+
+当前refs清单hash为d82b83fb823c284cce2d1dd1a5be7045bf740eb74b10110bb2854b59e589d75b；
+基线refs仍为8b5fe618…，不能混淆两个范围的计数和字节数。
+
+新增五项专门接口故障测试在精确fba源加单测试overlay的Linux隔离包通过，0skip：
+历史窗口补入、解除隔离、ENOSPC对象写、真实延迟超预算及本地bare Git非快进拒绝。
+首轮4pass/1fail因测试0.25秒低于既有最小1秒合同；保留失败，改为合法1秒预算加
+真实1.15秒延迟后5pass。未改生产合同、填满磁盘、破坏生产NFS或调用公网Git。
+这些是故障注入，不能冒称生产实际磁盘故障/网络断连认证。
+
+证据：docs/evidence/p0-publisher-factor-20261028/persistent-final-fba51aa-20261028/manifest.json。
+原mountinfo留在私有operator证据，Git仅存安全metadata投影和原bytes hash。
+
+**尚未生产交接。** v5的legacy gate仍未接新测量，normalized收据未逐字段绑定
+原report、样本可能按空白重计、新模块缺preflight等独立审查阻断正在v6修复。
+102/109 mock通过不是生产门禁通过。实际证据适配和组合安全门禁通过独立审查后，
+才按已获A/B/C授权执行单次publisher交接及真实export→Git→生产index→API新鲜度验收。
+
+## 20:25实际交接与下游传输阻断
+
+最终v6逐字段解析35轮原始运行、两个全量oracle、实际XML、慢NFS负例/恢复、源码
+和fresh foundation；不再使用自述PASS或legacy cold45字段。独立审发现的未跟踪
+shadow package已由exact fileset+临写前7origin PathFinder核验修复。最终Linux52项
+0skip，独立9项反例及caller3项通过；实际--check与只读prepare通过。
+
+113923单次attempt于20:01:57发送唯一命名TERM；旧294214在Supervisor记录中
+20:02:32正常exit0，新647839在20:02:42自动启动。20:03:34 actual PID/source/argv/
+2194文件与7origin通过；除publisher外各owner、ACTIVE/context、rolling及14本账本
+相同。没有stop/start、重复advance、PAPER恢复或模型激活。缺少TERM前完整历史子进程
+身份清单，不能声称已追溯证明任意旧reparented进程绝无残留。
+
+真实生产首次若干45秒失败按原样保留（覆盖型latest文件不能复原未捕获轮次）。
+随后两轮localexport分别44.379250秒和37.008315秒，实际SUCCEEDED，预算保持45秒。
+**公网尚未恢复**：Gitpush多轮90秒TimeoutExpired，主分支仍5a0925f4，localHEAD领先。
+只读对象统计约23.63MB既有压缩存储待传（非精确wirepack大小）；实际pack/SSH管道
+背压与输出增长支持传输或远端消费瓶颈，不能据此区分具体网络和服务端原因。
+正在隔离bare环境测试有界辅助refs预传不可变对象，最后仍由正常publisher推进main；
+未作公网辅助push，未提高90秒，不把localexport或aux预传当完整公开交付。
+
+20:07:51既有standing模型政策独立激活68d；必须与20:03交接不变证明分时点记录，
+不能把之后context/books合法演进归因为publisher覆盖，也不能回滚来凑旧断言。
+实际原件保存在授权cluster operator目录；Git只保留安全投影/原hash，不复制私有
+wrapper、SSH环境、配置正文或rawmount。
+
+交接证据：production-handover-20261028/manifest.json（32payload，7b69b9c3…），
+post-handover-readonly-20261028T122511Z/README.md，及
+docs/PUBLISHER_HANDOVER_V6_INDEPENDENT_REVIEW_20261028.md。

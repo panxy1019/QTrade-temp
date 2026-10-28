@@ -1,0 +1,66 @@
+{
+  "remote_root": "/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9",
+  "files": [
+    {
+      "file": "public-uncertainty-red.xml",
+      "bytes": 8554,
+      "sha256": "d6c2855b1209929ae3b30c0ad53a787d154bfd7a6171aad3b42d270fe0099a11"
+    },
+    {
+      "file": "remote-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "remote-stdout.log",
+      "bytes": 10288,
+      "sha256": "e6569ac976d68977f42bd11d9c48da5031abaa557b1a564408e689f4ab9fce39"
+    },
+    {
+      "file": "resources-before.json",
+      "bytes": 49,
+      "sha256": "a52da1e972f60185f7033a56a2be425a47a63a593878f9e62fad6b9ee38fd468"
+    },
+    {
+      "file": "result.json",
+      "bytes": 1569,
+      "sha256": "620ad1b4981a35d1d33962b865806458638e2dd05bd6433c06a6abf3fee5a438"
+    },
+    {
+      "file": "review-overlay.tar",
+      "bytes": 133120,
+      "sha256": "5671c783b0f79cdb516e4eb188fb827d34ec05592f54753c6ee26b4f1212bbf1"
+    },
+    {
+      "file": "run_checkpoint_review.py",
+      "bytes": 2501,
+      "sha256": "1544b642ac66bce1e3566bdd4aa328b998d9721eb8959f44d1bcc7a58b0f1a6a"
+    },
+    {
+      "file": "source-after.json",
+      "bytes": 392597,
+      "sha256": "51da50fd5a276903a6244098de0adf630a2c5b40da8903156b50bb782288336a"
+    },
+    {
+      "file": "source-before.json",
+      "bytes": 392597,
+      "sha256": "51da50fd5a276903a6244098de0adf630a2c5b40da8903156b50bb782288336a"
+    },
+    {
+      "file": "source-manifest.json",
+      "bytes": 401978,
+      "sha256": "c70d23c0039389e1318674e0c6d4d747d280d6baa2258d61aa01152c1967ffe6"
+    },
+    {
+      "file": "stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "stdout.log",
+      "bytes": 8535,
+      "sha256": "43a328134e0d42f365c07855a0c9fbfa5d8a050c868c7b375e63f9262b78890f"
+    }
+  ],
+  "operator_status": 0
+}

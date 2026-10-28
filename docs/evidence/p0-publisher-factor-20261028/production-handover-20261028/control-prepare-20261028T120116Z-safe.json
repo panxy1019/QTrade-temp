@@ -1,0 +1,77 @@
+{
+  "active_model_id": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+  "bridge_sha256": "689af7db40b33f804283068c3f6bd7756fafcd65160af674a2937b3c66c06bbf",
+  "caller_sha256": "9293cd719f398dcdd5c8603a89a6b4a9e77eb1598ae7766f1141544ce61f3e8c",
+  "checked_at": "2026-10-28T12:01:20.156219+00:00",
+  "controls_sha256": "70a2c8700f6c35baddede3728ccc18b61a6f2e23ef7d5e491fabf26281faae24",
+  "data_version_id": "b82baaac956745f4e02a520a35b2aa277b0037510a4d164d798db803ce77e0d5",
+  "frozen_controls_sha256": "da8380fb10e7206e35db3d543119f2d0f2375eb182e68577a81474cdd774aa11",
+  "mode": "prepare",
+  "operator_sha256": "0fd5100d029e6234039c765639b4ddb89094795918d6c7779ce199efe98f68f2",
+  "original_private_root": "E:\\QTrade-temp\\cluster-evidence\\control-prepare-20261028T120116Z",
+  "owners": {
+    "data": {
+      "pid": 493083,
+      "start_ticks": "1019159068"
+    },
+    "etf-shadow": {
+      "pid": 299932,
+      "start_ticks": "1012716210"
+    },
+    "forward": {
+      "pid": 383859,
+      "start_ticks": "1015213725"
+    },
+    "history": {
+      "pid": 164340,
+      "start_ticks": "1006203844"
+    },
+    "maintenance": {
+      "pid": 213587,
+      "start_ticks": "1010098278"
+    },
+    "observer": {
+      "pid": 4471,
+      "start_ticks": "995191546"
+    },
+    "pit": {
+      "pid": 153768,
+      "start_ticks": "1005737133"
+    },
+    "publisher": {
+      "pid": 294214,
+      "start_ticks": "1012537254"
+    },
+    "status": {
+      "pid": 493858,
+      "start_ticks": "1019179249"
+    },
+    "workflow": {
+      "pid": 338258,
+      "start_ticks": "1014325467"
+    }
+  },
+  "raw_bodies_not_copied": true,
+  "raw_files": {
+    "driver.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "driver.stdout": {
+      "bytes": 232,
+      "sha256": "7418bc0cb5ce1f7a8cc1987fa2cb0b9c58ee4f92074ce2ff3d3add281f688a5c"
+    },
+    "result.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "result.stdout": {
+      "bytes": 41805,
+      "sha256": "94c36e7eba8d9594aadaa4b1bff664de63a2d8051e85425613a5aea4f080f13d"
+    }
+  },
+  "result": {
+    "state": "ACTUAL_READONLY_PREPARATION_PASS"
+  },
+  "runtime_source_file_count": 242
+}

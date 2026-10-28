@@ -1,5 +1,25 @@
 # Master plan
 
+October28 20:23: onepublisher handover now actual647839/fba with old294214 exited;
+20:03 controlsequal exceptpublisher. Productionexport44.38/37.01 pass, butGit90
+repeatedlytimesout on~23.63MB coldobjects; publicfreshnessNOTaccepted. Prepare
+boundedauxiliaryref transport only in isolation; retain90s/main index atomicity.
+Oct28 READYb82 +old295prediction complete. Standingpolicy independently promoted
+68d at20:07:51; preserve proper authorization/events and distinct day/current
+scope. OriginalC/D/E failures remain. S2-D API/Builderworkingtree53Python/15web
+passes, source/worker/Linux/public/visual gates still open. FullSTEP1 remainsopen.
+
+October28 19:53 A/B/C: exactfba runtime793Linux passes, baseline5cold/5restart/
+5DB-loss and current20normal rounds sealed. Normal20/20 within45s (max38.61),
+fullcold103–107s andDB-loss50–63s remain separate diagnostics. Two original-source
+all-source oracles pass3000 entries/5986 and5987 shards. Staged release is not
+deployment; finalv6 independent pre-write import-origin repair remains before
+singlepublisher handover and actualexport/Git/public/API acceptance.19:47 prep
+950/988,0retry, headOct27. STEP1 globalE blocked by staleprovider. S2-C committed
+and dual-platform tested; S2-B16sessions891stocks independent616044 checks pass.
+Protectedfactor queue/Builder design approved for isolated implementation; no
+production research endpoint/worker changes until separate actual validation.
+
 October28 18:50 active A/B/C: final persistent-receipt/atomic-generation candidate
 passes33 independent Linux faults; final complete regression,5cold/recovery and
 20normal incremental rounds, full original-source oracle, exactGit/production

@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-28T11:30:18.690806+00:00",
+  "state": "ABORTED_BEFORE_BENCHMARK_STARTED",
+  "reason": "SFTP put stalled after first helper; independently observed only benchmark.py remote; owned local runner terminated",
+  "production_mutations": false,
+  "remote_partial_directory_preserved": true
+}

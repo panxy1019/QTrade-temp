@@ -1,0 +1,1128 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "files": {
+    "after.json": {
+      "bytes": 19212,
+      "sha256": "e5eac2de644989afe43b665f53dc44f01e6b1a840849e51ea234560f856c3e2f"
+    },
+    "before.json": {
+      "bytes": 19212,
+      "sha256": "e5eac2de644989afe43b665f53dc44f01e6b1a840849e51ea234560f856c3e2f"
+    },
+    "factors.sqlite": {
+      "bytes": 32768,
+      "sha256": "ebab315c6b64ca8741a12f99c7d8fc9a567167fda7a12aa485d4e16a5f906763"
+    },
+    "factors.sqlite-shm": {
+      "bytes": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    "factors.sqlite-wal": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "receipt.json": {
+      "bytes": 12053,
+      "sha256": "dcc01f35c5f551aba690ea25b8db643bdc950bb468bdc444cfcc0a590cf5cf2f"
+    },
+    "report.json.gz": {
+      "bytes": 1995167,
+      "sha256": "47bed3add84aff16f901531115c17ac4534cfd667b6716595a1ce098b9af37dd"
+    },
+    "request.json": {
+      "bytes": 16047,
+      "sha256": "e51c7acce2fdc5e04f7a677180631c6ce05a22319c4e2361695033c75615968c"
+    },
+    "results/evaluations.sqlite": {
+      "bytes": 34373632,
+      "sha256": "a2606dfa5e6604fa48b78663c7a4d7f72cd1d320df85e4c0aaed87d61576458f"
+    },
+    "results/factor-eval-9ca107f1ff4843769b813d4b663eed63.json": {
+      "bytes": 61775392,
+      "sha256": "b84e0a99dad149e43ceac9d788302a8ad6d28222a400f962e317d7548e4a90c6"
+    },
+    "run_factor_observation.py": {
+      "bytes": 5022,
+      "sha256": "73275a4dbdcb9211c2c7544d759ff7afe40ec0636dc1efa65c9323acf333a31d"
+    },
+    "runtime-source.tar": {
+      "bytes": 3235840,
+      "sha256": "6af7fe9da305b125b0099411ba08af2ac7e9f64a63796af6d1d4b072a6622fdc"
+    },
+    "source/configs/akshare_etf_universe_v1.json": {
+      "bytes": 1075,
+      "sha256": "3b5fdb02eec6b4da1f3f14cd35f80b8e74eb0b99cb0f8b13abfb68fdc242da6f"
+    },
+    "source/configs/experiments/continuation-momentum-v1.json": {
+      "bytes": 755,
+      "sha256": "1f1afb24af813250b81ad193d3308c9c7d07ad6551ffd6aae11fe50851c8ed01"
+    },
+    "source/configs/experiments/continuation-reversal-v1.json": {
+      "bytes": 742,
+      "sha256": "5964aedcd6419e719b9e287996ef05d29fa4655002b21c159be07430a1c1cd30"
+    },
+    "source/configs/experiments/continuation-risk-v1.json": {
+      "bytes": 758,
+      "sha256": "1467a323a5fff3482059215ee8353046f5dc49a4342c5abe506e02d26fbe8656"
+    },
+    "source/configs/observer_calendar_2026.json": {
+      "bytes": 499,
+      "sha256": "065c0c1a0411a730fa5e1f4f56b14d6c3074883f3aaae5fd989bbdf5f7f675a4"
+    },
+    "source/configs/qlib_daily_baseline.json": {
+      "bytes": 2267,
+      "sha256": "9ad718c764ff952e6ac47c7a61f49265bdebcb8aff9029f6fa513171cf25305a"
+    },
+    "source/configs/sina_minute_universe_v1.json": {
+      "bytes": 2264,
+      "sha256": "fe6d1c3f08ee4dfeff7c13ecd0c684a22300a72f0822864cb2aff048b5c69fec"
+    },
+    "source/pyproject.toml": {
+      "bytes": 1017,
+      "sha256": "f789f6379921d3e75d1af164e3d457164307b8334f3b306a9891dfd7a33932c4"
+    },
+    "source/requirements-qlib.txt": {
+      "bytes": 278,
+      "sha256": "1ac653c15815addbaae08bbb083eac6adf2670e123a96ebbf3d8e22dc1d6f63a"
+    },
+    "source/scripts/accept_qlib_prediction.py": {
+      "bytes": 6645,
+      "sha256": "2a449e36f618964def2d6568adb6d4a64cf30a3c383d5df15f6c2aab9263938a"
+    },
+    "source/scripts/akshare_history_ingest.py": {
+      "bytes": 4948,
+      "sha256": "650fd6aa2a5d241cd5787f715e710774c9c794b86140fc5e5f7451f21d045677"
+    },
+    "source/scripts/akshare_probe.py": {
+      "bytes": 1331,
+      "sha256": "d316ebe0d9371c14fe74503b24682164de1ea7d6b5a3cf1e9d4495287f555d68"
+    },
+    "source/scripts/akshare_stock_history_ingest.py": {
+      "bytes": 16650,
+      "sha256": "d258b9fec59193a3d47c9c5b2f4f447242fe09a2bc5cbf2fdc08223a3a4920c2"
+    },
+    "source/scripts/atomic_json.py": {
+      "bytes": 2138,
+      "sha256": "91b521c84f887a66c93e0ff1e86b17b5033bf08b17f547b079692996db541ecd"
+    },
+    "source/scripts/audit_delisted_history.py": {
+      "bytes": 13549,
+      "sha256": "8bf0a2a3b08088cb95bc7ca4116d201125ba03ee98ea499872622eee2149f45b"
+    },
+    "source/scripts/audit_etf_forward_transition.py": {
+      "bytes": 15815,
+      "sha256": "49e6debf36ce5b42212b6e67e12ae7993a67047b2aa95d85697c78f2802ee8d9"
+    },
+    "source/scripts/audit_etf_history.py": {
+      "bytes": 17463,
+      "sha256": "1c1c6889094ab12da14946d6b84bba29d2433430cabfea18f882b308adcf4f4c"
+    },
+    "source/scripts/audit_expansion_minutes.py": {
+      "bytes": 2944,
+      "sha256": "410cb8e061afea2d321a89b85da9f499ec2e14ae5e0dccfe7be998e3f1246a04"
+    },
+    "source/scripts/audit_history_backfill.py": {
+      "bytes": 17840,
+      "sha256": "061482ef281e5bdfd2cb0b50f95defa0c86a199ae4bb347d24b5d337504c1c96"
+    },
+    "source/scripts/audit_public_minute_bars.py": {
+      "bytes": 9377,
+      "sha256": "aecf713116bf47c1da26557679cd79ae707f970f692e7b81652108751ede76fd"
+    },
+    "source/scripts/audit_public_pit.py": {
+      "bytes": 6848,
+      "sha256": "6e3403341d0f5318d8ffe0fad7316990f6241772dd42db0dd0fbb1b11e650259"
+    },
+    "source/scripts/audit_qlib_candidate_transition.py": {
+      "bytes": 29186,
+      "sha256": "0a4d7c85933aa4f6e6a829d5a20265cf93f70d57462b13d42d2e863cadfcd878"
+    },
+    "source/scripts/audit_qlib_forward_transition.py": {
+      "bytes": 30150,
+      "sha256": "a7634c1cbb5987ebdaa90bda06319405d8b975cb743a745048afa126aa8215f4"
+    },
+    "source/scripts/audit_qlib_session_transition.py": {
+      "bytes": 3166,
+      "sha256": "21ca31bb8ee7b1690e53f129e43046e6f591d398131da19d0d07086065684a2c"
+    },
+    "source/scripts/baostock_five_minute_history_ingest.py": {
+      "bytes": 14873,
+      "sha256": "4422d6f112dd5f502d11ecf500bc7b2e1f7a40f0afd05b384bfea86a8d1b43e5"
+    },
+    "source/scripts/benchmark_unified_transport.py": {
+      "bytes": 1790,
+      "sha256": "9fdba259a48a749522859685ae9663a32766250f6dd2ad8b521e4497b2427a79"
+    },
+    "source/scripts/bootstrap_public_aliases.py": {
+      "bytes": 15695,
+      "sha256": "bebdee677c3e199aa7d46e080fc805b5a75dc3b4bf83d61e291668ee45888a9d"
+    },
+    "source/scripts/build_akshare_sector_stock_universe.py": {
+      "bytes": 7293,
+      "sha256": "9950c816f03e8dc86e616b780d146d15f9446f20bdf8f7f5bf43d0c85ccaa46f"
+    },
+    "source/scripts/build_data_quality_summary.py": {
+      "bytes": 8932,
+      "sha256": "af1b0cf40494daef750e5847182b27c226d973d2b4ced46230b70d6574ba6d17"
+    },
+    "source/scripts/build_intraday_factor_long_window_evidence.py": {
+      "bytes": 9654,
+      "sha256": "c5b138fd356a269d423976ad9f0138353b1b5835441742831d2b8b312cb723d7"
+    },
+    "source/scripts/build_observed_universe.py": {
+      "bytes": 8462,
+      "sha256": "8d02a45703c01a78991d05d1f63d3688284cef70540c78a6c821190b6260b737"
+    },
+    "source/scripts/build_qlib_daily_version.py": {
+      "bytes": 20228,
+      "sha256": "d69bd505743a36b7200a456b38108e48528dcde939e7128d80a85fd3d9e68529"
+    },
+    "source/scripts/collect_pit_evidence.py": {
+      "bytes": 16827,
+      "sha256": "8b42dde6607265b4182652f3484004b042e28d0727da6c1222ea4c1844d5ad59"
+    },
+    "source/scripts/collect_recent_status.py": {
+      "bytes": 14230,
+      "sha256": "c5ac2109117cb4ec72c1d0fd6c26341220eed5ad4550f1146ac2df3604ddde2e"
+    },
+    "source/scripts/collect_unified_data.py": {
+      "bytes": 18014,
+      "sha256": "7d6d2866c3802e9278bf873a5f6bb44d9493394eb5de68f971fb56f1ef4a8292"
+    },
+    "source/scripts/data_version_control.py": {
+      "bytes": 2245,
+      "sha256": "52cb020cf76aa7d90d3b7df99ad392921c538f53d42204bd3be25ed3713b2cd8"
+    },
+    "source/scripts/delisted_history_queue.py": {
+      "bytes": 16305,
+      "sha256": "9e6b11978a43f8552a8de988b50de4c21d0e944ae08b0d94699d1030939ebedd"
+    },
+    "source/scripts/expand_research_data.py": {
+      "bytes": 14545,
+      "sha256": "773e6a891f90d8e35f1db49977d003d1361ae53ae59c22bdc2153247b765efb7"
+    },
+    "source/scripts/history_backfill_queue.py": {
+      "bytes": 18643,
+      "sha256": "872dc3b9af7d43aedd78e8cd66b36313d9db8f416e6ba808d1a984ee96fb932c"
+    },
+    "source/scripts/history_backfill_store.py": {
+      "bytes": 16127,
+      "sha256": "333eddf81231609e8b8bb94df6f1543f96a36c633845ba991d405da6df55bab1"
+    },
+    "source/scripts/history_source_gate.py": {
+      "bytes": 12918,
+      "sha256": "973b5c7671daf1375dbd6a7d79ec4afb6af1bfb63b03060b0eeffd1483889170"
+    },
+    "source/scripts/online_model_control.py": {
+      "bytes": 13600,
+      "sha256": "aee8ae1639d06a7d7df2af78ad271e2e0eb50aac716df24953cd51e2aae163b4"
+    },
+    "source/scripts/online_prediction_worker.py": {
+      "bytes": 12873,
+      "sha256": "c4c7a4590afcb3f3e5617dccdb76bba1e6534d4ae0f207bf73f7189bc657a9e9"
+    },
+    "source/scripts/persist_research_experiment.py": {
+      "bytes": 17471,
+      "sha256": "23a7b304509faec307fd2b18b6795469f48ed5d1356c1c5b04b339c60aa1abc7"
+    },
+    "source/scripts/pit_collection_queue.py": {
+      "bytes": 5184,
+      "sha256": "2364688d60111ba121a87576f740fc8a2a6dcff8f3ce61e51c24a4a312eb959c"
+    },
+    "source/scripts/plan_public_delisted_history.py": {
+      "bytes": 10062,
+      "sha256": "4f64736aaa691831ddf3b6775ad4bf53c295ba064f5bc64fb1df3847ce5013c9"
+    },
+    "source/scripts/plan_unified_backfill.py": {
+      "bytes": 1895,
+      "sha256": "484be38911bbda3d3e852f47cb73bc90f5e5c777fd1eafdef353382d63d11f8e"
+    },
+    "source/scripts/prepare_baostock_forward_preregistration.py": {
+      "bytes": 11376,
+      "sha256": "0492a879568b2903449407c889effafe7ba652d865d3b87b045cecc9e392fe4d"
+    },
+    "source/scripts/prepare_qlib_data.py": {
+      "bytes": 9266,
+      "sha256": "9062d71e1abdb3a861c56b1347d32091a3e283ea8ae7d2e08524db9682ba984f"
+    },
+    "source/scripts/prepare_qlib_incremental.py": {
+      "bytes": 24287,
+      "sha256": "d8a32e72bd54e6fd3cc7d3108ed3de9e1661d27f14bfbb90b73527f693b590ac"
+    },
+    "source/scripts/probe_baostock_forward_coverage.py": {
+      "bytes": 15478,
+      "sha256": "53c503f8ce8c7f9fd176726c6d6e46c967ab04d2244278d969b5573a40b897ec"
+    },
+    "source/scripts/probe_baostock_forward_session.py": {
+      "bytes": 10226,
+      "sha256": "d1934024fc23b334dd8c4cda40ca3e55a0e200719d80d60201e3aed42bb357d1"
+    },
+    "source/scripts/probe_rqdata_readonly.py": {
+      "bytes": 2294,
+      "sha256": "7631ae722eb2fcbd2193e3d9fb040afd391a969c5d19a6a6eb5a35d414ebe64c"
+    },
+    "source/scripts/probe_sina_intraday_breadth.py": {
+      "bytes": 12473,
+      "sha256": "e11c4db8bb34fd5353d9912dbadcd85f7411d60efa41625428da61436ec81114"
+    },
+    "source/scripts/probe_sina_intraday_observation.py": {
+      "bytes": 9257,
+      "sha256": "fb4ad5bce7632a24508d68fe83d2bd3fff1ba67c85ee0ac5d9b559763d736c66"
+    },
+    "source/scripts/probe_unified_history.py": {
+      "bytes": 10640,
+      "sha256": "90b631d99668ae493b641181aee3a13d5e1fe4d1017fffd82a4bb0185b15a46a"
+    },
+    "source/scripts/probe_unified_publication.py": {
+      "bytes": 21659,
+      "sha256": "eda247b66a0551c588cd9a4d2231e7e0e90a5a841f7d5bb0e3b076708e4f25e2"
+    },
+    "source/scripts/promote_baostock_forward_observation.py": {
+      "bytes": 15523,
+      "sha256": "562c016735791567a69cf3c28a7a4bd4fe7cde3e1cf5fb6f28e53fc86b0a7ab5"
+    },
+    "source/scripts/provider_readiness.py": {
+      "bytes": 1003,
+      "sha256": "c81e57be33559c17efbd311e823ec91c3a96c1414885de3288ef4b967fa64d2e"
+    },
+    "source/scripts/publish_research_snapshot.py": {
+      "bytes": 20202,
+      "sha256": "0d29c88c9b82aa6c3f900b2977194c65222beb80b7d7ed7136452c40ec33c6c2"
+    },
+    "source/scripts/publish_unified_collection.py": {
+      "bytes": 5674,
+      "sha256": "6daf0452249ad894babc551b4f24a392feeda1d713b91b80a831149a5e222089"
+    },
+    "source/scripts/publish_unified_market.py": {
+      "bytes": 26771,
+      "sha256": "873d356a82dec3b73524929658421d2ccc696b071410e4ea7ec41be2f1dd411a"
+    },
+    "source/scripts/qlib_forward_paper_adapter.py": {
+      "bytes": 18856,
+      "sha256": "9c2c41e0f3c8049690be1ecc948d3ce89edba69704f8e71be3a1f92dfa376140"
+    },
+    "source/scripts/qlib_public_delivery.py": {
+      "bytes": 14875,
+      "sha256": "929ca71c77d5622b00368d3c706ad55e9978419491c26b9b3e0fa3146cd1fa00"
+    },
+    "source/scripts/qlib_research_contracts.py": {
+      "bytes": 7419,
+      "sha256": "908bfaa7145de92470f731f02332d740cc0530728a3fdd69153d4bbd8143569d"
+    },
+    "source/scripts/qlib_restore_bundle.py": {
+      "bytes": 11100,
+      "sha256": "55e6eff43f9b52dbcf204840bb85c5b384e14a334bddea8523f3e7be9550c996"
+    },
+    "source/scripts/qlib_rolling_adapter.py": {
+      "bytes": 2962,
+      "sha256": "5a41704cf75d56908aded7619d87cf597ec6b4e2147f36e311741267caf656db"
+    },
+    "source/scripts/reconcile_official_master.py": {
+      "bytes": 3858,
+      "sha256": "aded393f905cabafd511e50892c4c890538691fc0c912ac28e309988a33fff78"
+    },
+    "source/scripts/refresh_current_datasets.py": {
+      "bytes": 7240,
+      "sha256": "f2cbd4709102812e00b0619a893367001a2bd1b09fb1b030a162c31c46c014c2"
+    },
+    "source/scripts/reload_qlib_provider.py": {
+      "bytes": 4772,
+      "sha256": "5543c6a644397ff5d951ad2f785d49aa4e1b1abca92a2ea7107d8bf9d2972f3f"
+    },
+    "source/scripts/repair_etf_daily_attempt.py": {
+      "bytes": 2692,
+      "sha256": "22596e6019ca9523dba3307c8fe4edfc6f57379eeff77628817fa7d232adc052"
+    },
+    "source/scripts/repair_incremental_gaps.py": {
+      "bytes": 12052,
+      "sha256": "5e9aa660cd86288391ef64a63db15d98255d578432af7b8614a14e2bed6dfb2e"
+    },
+    "source/scripts/run_akshare_etf_experiments.py": {
+      "bytes": 10421,
+      "sha256": "4d97acb1d3354c660c27e2a88d89c04773b90ad0d7700a9902b16ab2542c67d3"
+    },
+    "source/scripts/run_akshare_etf_factor_search.py": {
+      "bytes": 11298,
+      "sha256": "dc816bab003523dd22832d0ad75958d888f1054e719aeb6d942fa6e32ceb2a78"
+    },
+    "source/scripts/run_akshare_etf_robust_factor_search.py": {
+      "bytes": 22048,
+      "sha256": "75cbf96dba1a70e6d7ded1d8b0cbf5fb04e852a2bdaeaa8dd824c30be0719670"
+    },
+    "source/scripts/run_akshare_etf_robustness.py": {
+      "bytes": 7508,
+      "sha256": "801fdafece3060b07c1a719af1b3430090c057917601bde416610eea618132fd"
+    },
+    "source/scripts/run_akshare_etf_walk_forward.py": {
+      "bytes": 6029,
+      "sha256": "b78e97d782e54ebf49dac8218b48fb101b742aa50c86b05dc1b99277b160248e"
+    },
+    "source/scripts/run_akshare_stock_sector_transfer.py": {
+      "bytes": 16332,
+      "sha256": "b5b60cf71734842f2f3c3a09f3df4fada281db633d93c2606e7149e209ba16b1"
+    },
+    "source/scripts/run_baostock_development_policy_search.py": {
+      "bytes": 9461,
+      "sha256": "917e429f1db2aa1fde1c4e36daae444f7c18f407c5382fc13cc47275507ae631"
+    },
+    "source/scripts/run_baostock_locked_forward_observation.py": {
+      "bytes": 11832,
+      "sha256": "0294ac923744c3101b9810142ddfa9efb2e5e3069aa348ae3251b292c49535fa"
+    },
+    "source/scripts/run_baostock_reserved_tail_diagnostic.py": {
+      "bytes": 14881,
+      "sha256": "073cdfed5e8e2adbd8795eee31a98bea843fffd0150377704df2c2144f40a7e5"
+    },
+    "source/scripts/run_baseline_workflow.py": {
+      "bytes": 1486,
+      "sha256": "74115927f230d81f10d8ce4abe94382f717d1d707043d63af60dded0d84c2b7a"
+    },
+    "source/scripts/run_control_plane.py": {
+      "bytes": 5075,
+      "sha256": "5bf71fca30dd5533064c706ee65cb4b4b6976ede5e2e5f2e48a61207473fcd30"
+    },
+    "source/scripts/run_daily_factor_evaluation.py": {
+      "bytes": 3378,
+      "sha256": "291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3"
+    },
+    "source/scripts/run_data_observer.py": {
+      "bytes": 13161,
+      "sha256": "fd6ee26beb102914896cc40197d52fb4184e4bcc0a838d2ee8d1fab98a21ce4f"
+    },
+    "source/scripts/run_etf_history_comparison.py": {
+      "bytes": 22449,
+      "sha256": "36ffbd725e729843ba89d4f967ff28e1e8d888bb60074cd2aa92a0085706e1e7"
+    },
+    "source/scripts/run_etf_shadow_service.py": {
+      "bytes": 19235,
+      "sha256": "88816c34f5aee3758b5dd92b984bcfb006c1c72c6448870d219ff7f7b3f43308"
+    },
+    "source/scripts/run_etf_trend.py": {
+      "bytes": 4019,
+      "sha256": "9891d2aad887687bc897e36c363fa948a67b97172aed0e0e962daf9b4bbe16ef"
+    },
+    "source/scripts/run_etf_trend_service.py": {
+      "bytes": 17989,
+      "sha256": "4dc9b8775b473d4e7dbaee46894da36f299ca371609b946cb499ec17c02c11f8"
+    },
+    "source/scripts/run_history_backfill.py": {
+      "bytes": 24644,
+      "sha256": "bab9910995984b7f2c2393aa4d0633cd37d798f983704e35a2c01cfa6ef2bbc8"
+    },
+    "source/scripts/run_history_backfill_service.py": {
+      "bytes": 8472,
+      "sha256": "b7870228f9a8ed98820b4b67e733a74be68dd7127cf2e92dd089e20af9a2999c"
+    },
+    "source/scripts/run_pit_repair.py": {
+      "bytes": 9535,
+      "sha256": "401c4850a84303dcb332fc530a89dd6a8444b800910b7339eb8dd4a18f05119a"
+    },
+    "source/scripts/run_qlib_baseline.py": {
+      "bytes": 33842,
+      "sha256": "b144d8dc64872c7b436fbc131d6b16c2543478c3bffe486110cfeb5d95ca09fa"
+    },
+    "source/scripts/run_qlib_candidate_validation.py": {
+      "bytes": 1875,
+      "sha256": "4479ef3f394fc20b6b770d9c6a15d35c1eb3327bd21b00f0594bf2cf6e0a0e69"
+    },
+    "source/scripts/run_qlib_data_service.py": {
+      "bytes": 14717,
+      "sha256": "cae8405d303922fa6a8704a280d518ed3f687175d7b6d2d210eba6ac1e03bf7a"
+    },
+    "source/scripts/run_qlib_forward_paper.py": {
+      "bytes": 4997,
+      "sha256": "50f681f032d4bb96b93ec04530646dbaa622cabe11cb070c67bc604859969e09"
+    },
+    "source/scripts/run_qlib_forward_service.py": {
+      "bytes": 45071,
+      "sha256": "c50f2b0ef1d3c0c350f22d029f9edae9ce85be07017c3f76e2d610519da9e187"
+    },
+    "source/scripts/run_qlib_prediction.py": {
+      "bytes": 8240,
+      "sha256": "f12a28f2b4a6ab19d3431cc20a496e5ae21d9e25a5158f40f7ba353d1090efdf"
+    },
+    "source/scripts/run_qlib_rolling.py": {
+      "bytes": 3045,
+      "sha256": "2e1bee41e562496334e539715f53c104fe8e16803e5cf9f014e6959d08dcf990"
+    },
+    "source/scripts/run_qlib_signal_baselines.py": {
+      "bytes": 6573,
+      "sha256": "8950bc8d51edfbd47bd3f396199115fe4fc124f4e1b6e28c93b51aee2d7b21d8"
+    },
+    "source/scripts/run_qlib_strategy_comparison.py": {
+      "bytes": 12482,
+      "sha256": "0d858a9aa108295fc10b64232e842c4804991b179a6874fbeaef7757116a7b14"
+    },
+    "source/scripts/run_qlib_worker.py": {
+      "bytes": 40488,
+      "sha256": "d1f1b05aad48de7f74afeee1c3e7604e5263311e25ac4bf7369960515eb9ad36"
+    },
+    "source/scripts/run_research_maintenance.py": {
+      "bytes": 6963,
+      "sha256": "c5beccf8c778da63639fb5870f124f22ca57d398088f312e8f7376985fe93b99"
+    },
+    "source/scripts/run_sina_five_minute_walk_forward.py": {
+      "bytes": 23527,
+      "sha256": "1bf788c6a53d12b23ab3d8c15b1ea35c7539ab38bb5966750ae87887bf267bae"
+    },
+    "source/scripts/run_sina_minute_overlay_backtest.py": {
+      "bytes": 13845,
+      "sha256": "17c5ad4f3f8d4aa62e71f88fa3371f0a6d87f9b55f5cc663cd8ad9d9e3d6903f"
+    },
+    "source/scripts/sina_minute_history_ingest.py": {
+      "bytes": 13646,
+      "sha256": "5854877e32125a9a4a78914527f27d840d2ce5aef702a5825f455fd0abdc10ab"
+    },
+    "source/scripts/stage_qlib_model.py": {
+      "bytes": 947,
+      "sha256": "95b167e0ba75e14a483e9e5622199a2817221c1f924dc754a891d30ba2aa3ee0"
+    },
+    "source/scripts/unified_queue.py": {
+      "bytes": 25710,
+      "sha256": "13fe16304d3568cecc9a1c9320e690819308f3f4a1de7257e72fba0571eab19b"
+    },
+    "source/scripts/unified_store.py": {
+      "bytes": 17573,
+      "sha256": "01e6fa4230ccf7c2b88c7e8a00e3ee0dc67d4a26a3ec6b99bbdc02dd3f62ff5d"
+    },
+    "source/scripts/update_baostock_forward_coverage_history.py": {
+      "bytes": 17709,
+      "sha256": "be0803bef1affefba8edadd7945b087930cb1c2d85619c4528e7b9a94e76669e"
+    },
+    "source/scripts/update_intraday_continuity.py": {
+      "bytes": 10475,
+      "sha256": "b1380550af944029a8764f7d5b6e36f013cec335b0a38fc7279909bcc0d1d277"
+    },
+    "source/scripts/validate_qlib_forward.py": {
+      "bytes": 9398,
+      "sha256": "530d39d5caf45e77645594937a2f3dc505e3298d4bfe5ecc5706b54ce0078cdb"
+    },
+    "source/scripts/vendor_session.py": {
+      "bytes": 627,
+      "sha256": "5d066a688767e39fddab6812c4c9a9e02c148c34916f41f343ae563672d4d3b3"
+    },
+    "source/src/qtrade/__init__.py": {
+      "bytes": 62,
+      "sha256": "d68bf5f6a063d2264b1a31edd7c5a247af616f52140456df9900005b5cfb6bf6"
+    },
+    "source/src/qtrade/accounting/__init__.py": {
+      "bytes": 267,
+      "sha256": "dae5a507f60349128898ff6242135ed93332a0e470de052567823ac6e991b9c7"
+    },
+    "source/src/qtrade/accounting/ledger.py": {
+      "bytes": 3010,
+      "sha256": "5f081f8314bfcd8c5a84f55c7678b1cf6351ba89a706ccfac6157b5243baf099"
+    },
+    "source/src/qtrade/accounting/sellability.py": {
+      "bytes": 3132,
+      "sha256": "9a3c1a5221324a1cf0c591ea28bd3e7cc1533d3c2c0349e020054a993e4afa8d"
+    },
+    "source/src/qtrade/adapters/__init__.py": {
+      "bytes": 42,
+      "sha256": "63bad7b59b5d35a32557be3c689f6f36b00fdbe10c35a6cb41c6c2662d4f61f3"
+    },
+    "source/src/qtrade/adapters/vnpy/__init__.py": {
+      "bytes": 259,
+      "sha256": "ac51a740500f47e97e22fff079178f29f9e84acca6bde0f6b3ba21238e496e01"
+    },
+    "source/src/qtrade/adapters/vnpy/protocol.py": {
+      "bytes": 3909,
+      "sha256": "8fb2d2625331fab154e3d4074805252bf0621bd355bbaf866a171ba0c1b55e09"
+    },
+    "source/src/qtrade/api/__init__.py": {
+      "bytes": 198,
+      "sha256": "481757013bc16098c27f981dfcc18346b7e20b4691a00540abbd0755460a7d94"
+    },
+    "source/src/qtrade/api/app.py": {
+      "bytes": 438622,
+      "sha256": "651d7931725990b4d96db861f4ed191064460a2e217d6cbaa3d27948e86938cb"
+    },
+    "source/src/qtrade/api/current_datasets.py": {
+      "bytes": 12230,
+      "sha256": "21f9d02434865f16f61438b6e8036328caa45ca58787a36963ecaeb653eb06ec"
+    },
+    "source/src/qtrade/api/dashboard.html": {
+      "bytes": 1963,
+      "sha256": "a43f531e94d9cceb3805d9001cac490ed3fa161f6152e4614dc167a149695a39"
+    },
+    "source/src/qtrade/api/online_research.py": {
+      "bytes": 27615,
+      "sha256": "9497ae72fa572ac36989fba5532607b718dbfc0d940f79d5d104931c475273c2"
+    },
+    "source/src/qtrade/api/public_observations.py": {
+      "bytes": 7186,
+      "sha256": "a9e3fa75ccb9548ab77e0ac3caf80ab26ffd9d4246ab66738a0e3a7aac7d8e2a"
+    },
+    "source/src/qtrade/api/qlib_baseline.py": {
+      "bytes": 1272,
+      "sha256": "5ccf8f32ee134212e4c45e543c3295ef47296bae6f15145308d23e808f4d9eec"
+    },
+    "source/src/qtrade/api/research_workflow.py": {
+      "bytes": 16551,
+      "sha256": "01639e04861fa146629c8c6275615c2c7af47e9ec6d59061ba163d98e79ba1c8"
+    },
+    "source/src/qtrade/api/unified_data.py": {
+      "bytes": 9442,
+      "sha256": "eadc757bb43f8f72e3843ef7452858fd0689dc9068773da61248ab5ce6880713"
+    },
+    "source/src/qtrade/api/unified_market.py": {
+      "bytes": 5840,
+      "sha256": "f0caa88f788add48a3eaa5a4b8b888aec542e3af6e998133b0676e94f418b86b"
+    },
+    "source/src/qtrade/api/unified_source.py": {
+      "bytes": 8734,
+      "sha256": "1bd4a0e877e674df14b87cd875e4c67095bfb6f02dd113736bab1d0d5ce16294"
+    },
+    "source/src/qtrade/api/vercel.py": {
+      "bytes": 6097,
+      "sha256": "656bf63ce6aa03080cf499a4be077a468e1631112a07c36b192ad4dfc0b877bf"
+    },
+    "source/src/qtrade/audit/__init__.py": {
+      "bytes": 164,
+      "sha256": "2eb3602b946c08ef237d6ea3a1cf2351a7d83f1bec9d84b4fd508be4c5903864"
+    },
+    "source/src/qtrade/audit/log.py": {
+      "bytes": 3742,
+      "sha256": "166e54f6d697ac47cbb3b2022536e2eab468ce984fc92fbab42e7708ea743a77"
+    },
+    "source/src/qtrade/backtest/__init__.py": {
+      "bytes": 217,
+      "sha256": "bdd2368f6b8b8d8b1a308db270142ee39cdf477980bf3cb677eb8849ab1b9a7f"
+    },
+    "source/src/qtrade/backtest/engine.py": {
+      "bytes": 6016,
+      "sha256": "d2ac065a9153b125472773f15e0df8ea09da76fc57192932cdd99a5e39827c1b"
+    },
+    "source/src/qtrade/broker_bridge/__init__.py": {
+      "bytes": 432,
+      "sha256": "c8ee0ddf7243f4b4ea0aceded9d6445fa2c457288a724b10893a5957a4a388d1"
+    },
+    "source/src/qtrade/broker_bridge/models.py": {
+      "bytes": 3361,
+      "sha256": "7bbc969e8a60b71cbcc06777cc0008281be10d406a9d10b719517da7a1d5e333"
+    },
+    "source/src/qtrade/config.py": {
+      "bytes": 1099,
+      "sha256": "ecf671a7cb6c9e1d17c127d980573a2f2e955fa41429b6a65b9f1311554fd774"
+    },
+    "source/src/qtrade/control/__init__.py": {
+      "bytes": 239,
+      "sha256": "e62855f1e111c367be95a58e26f6f4a61454db7b1946fb51f5f59ac076ccbdf1"
+    },
+    "source/src/qtrade/control/readiness.py": {
+      "bytes": 966,
+      "sha256": "f02b92ac4755103e41c090ee7bb7ea5af6f329c4736a8fca4538cef6f5a09bd4"
+    },
+    "source/src/qtrade/control/runtime.py": {
+      "bytes": 3909,
+      "sha256": "25f6c385c20e62872c9e1cacb405da062b987050240eb81707403cab775027a3"
+    },
+    "source/src/qtrade/data/__init__.py": {
+      "bytes": 900,
+      "sha256": "b1d3685e3dc44466099d014eda15a1ea894de2354195953d9e3f755cf63af3d7"
+    },
+    "source/src/qtrade/data/adjustments.py": {
+      "bytes": 2421,
+      "sha256": "138f6e6ec68a25dfa6d774d2896f4d9f4af96cc74911c809578e847493f94505"
+    },
+    "source/src/qtrade/data/csv_import.py": {
+      "bytes": 4229,
+      "sha256": "6ca7f92bef85c5086fe5cd69841cb9139c9fa69980307f4e7d6bcfe38007e635"
+    },
+    "source/src/qtrade/data/minute_admission.py": {
+      "bytes": 4974,
+      "sha256": "ee4de60f6dd5c281fd64d91d70a7c4779c4304da408370848d3f85a142cd2c0e"
+    },
+    "source/src/qtrade/data/models.py": {
+      "bytes": 2110,
+      "sha256": "8435fe27941c20781df9678ca46e27ad7cc2a132ee38f3476fdfd3847329dd2e"
+    },
+    "source/src/qtrade/data/pit.py": {
+      "bytes": 1939,
+      "sha256": "4ceeabd876e25df61513de3aae2da8a0b94293e60114fbdf9af7189aeb9e7125"
+    },
+    "source/src/qtrade/data/quality.py": {
+      "bytes": 4525,
+      "sha256": "5f1dc90eb2fbf3cfa312378cc71a98ed7fd6b5b3786545f17f292f331f520ff5"
+    },
+    "source/src/qtrade/data/storage.py": {
+      "bytes": 6251,
+      "sha256": "8e0cf06956ec1161464154006718b00c2316a8166d4d2c2ac85680156670d154"
+    },
+    "source/src/qtrade/domain/__init__.py": {
+      "bytes": 441,
+      "sha256": "41d5a3fbdef76679c10ce0646d21b7474720b766be03061ebad7f97a37ed8a17"
+    },
+    "source/src/qtrade/domain/models.py": {
+      "bytes": 4617,
+      "sha256": "aea7b3533cb82181338e5bb670438968eba1367cd878737a327fb29c6fc3729c"
+    },
+    "source/src/qtrade/execution/__init__.py": {
+      "bytes": 393,
+      "sha256": "333de411774144db6a6eaef25d09eb9daebdc33ebdd7a44584c560121f581f90"
+    },
+    "source/src/qtrade/execution/paper.py": {
+      "bytes": 16294,
+      "sha256": "23a1f3c283d22c17877dab04b0879c1013f09b8aa5e3397cc31955c61f2b8d65"
+    },
+    "source/src/qtrade/execution/reservations.py": {
+      "bytes": 4331,
+      "sha256": "38d19a8b39a4a6f36014bf656d923bb386afc2ea6cdfa13403a238482048a986"
+    },
+    "source/src/qtrade/instruments/__init__.py": {
+      "bytes": 453,
+      "sha256": "b83fa22f14dca350bba90cac25665b8700831338cfa445adbb76e67f856b95a3"
+    },
+    "source/src/qtrade/instruments/calendar.py": {
+      "bytes": 1787,
+      "sha256": "3a1502bc0b0ec7a07ec368d8547c11a0d9b8e00b9a8788814a4a62b3480305c3"
+    },
+    "source/src/qtrade/instruments/master.py": {
+      "bytes": 1453,
+      "sha256": "f8c5995e934c31ae53c86fc41244e5c7ced453310f4e27992b905d98f7edf938"
+    },
+    "source/src/qtrade/instruments/observed.py": {
+      "bytes": 8135,
+      "sha256": "5a8a43f106fccad697dc15d9e14547510de9271c1a37853fc6117611d0612b23"
+    },
+    "source/src/qtrade/instruments/rules.py": {
+      "bytes": 1830,
+      "sha256": "f833b260e4647e28e666412d3f50d52a6efb9e1489d12a65258aba371bd69df9"
+    },
+    "source/src/qtrade/market_data/__init__.py": {
+      "bytes": 3527,
+      "sha256": "e302735463ee5163f504f57d95b652c2673c54c1803356c72d270b951084df65"
+    },
+    "source/src/qtrade/market_data/akshare.py": {
+      "bytes": 33905,
+      "sha256": "2a4651b604ff3d90f4aeed33c23d28acbe80f7e32bae24f261ffb2d3e2ccc687"
+    },
+    "source/src/qtrade/market_data/backfill_plan.py": {
+      "bytes": 5997,
+      "sha256": "1eb16fd97de70323070b741d774761c147f403bb2ca4d7970c6af8689ea6d5dc"
+    },
+    "source/src/qtrade/market_data/baostock_five_minute.py": {
+      "bytes": 5128,
+      "sha256": "2654ade287fecb24c8b5011d5067a1d0a4b5cd0fa3d013191a8fea5946ce34ea"
+    },
+    "source/src/qtrade/market_data/models.py": {
+      "bytes": 4734,
+      "sha256": "0a2f95d3cf03dbef02043e2bc9333ec6b367292b6368d486500e92296c5e908f"
+    },
+    "source/src/qtrade/market_data/paper_session.py": {
+      "bytes": 11219,
+      "sha256": "4028de2f0c4442c12fd5e4bee38bc9537382b1f7050e3c819d4b0d73c903970c"
+    },
+    "source/src/qtrade/market_data/provider.py": {
+      "bytes": 2226,
+      "sha256": "05b9b8e0a415d629a8af40d97a5f6d799b6f518613f49e0beefa8b81d7c40b54"
+    },
+    "source/src/qtrade/market_data/quality.py": {
+      "bytes": 6176,
+      "sha256": "e365b0240f92679fe647ff67f42f414db19533f822845a4e7d93a57dea588796"
+    },
+    "source/src/qtrade/market_data/readiness.py": {
+      "bytes": 2691,
+      "sha256": "c4799a4829e5414547dbedd1c6c24eb3c169feec805cb40ef01aaf7158c57ae9"
+    },
+    "source/src/qtrade/market_data/recording.py": {
+      "bytes": 11575,
+      "sha256": "60fb16efe8b7fa30f6c5766363fce8494795ad8984206916aebf357fce066caf"
+    },
+    "source/src/qtrade/market_data/rqdata.py": {
+      "bytes": 5860,
+      "sha256": "b6c2afb2abe05bfe1410d1ad19bc915b7c7107089b49fe16e1821cd529d2d7fe"
+    },
+    "source/src/qtrade/market_data/rqdata_native.py": {
+      "bytes": 22874,
+      "sha256": "76acd3b6afa8de3809250a6b26053feee42ca6d5696660337576fc9deccb0988"
+    },
+    "source/src/qtrade/market_data/selection.py": {
+      "bytes": 3183,
+      "sha256": "6e593d195b84bf7efe6cd3efcb5f9b1765d9daf97d2a4bcc5ab688483245f0f5"
+    },
+    "source/src/qtrade/market_data/sina_incremental.py": {
+      "bytes": 8876,
+      "sha256": "8e5ede25d78fa182a2d7c7b7038a5c8c9dd0e98a6ab0f7423fd5eef98b57f440"
+    },
+    "source/src/qtrade/market_data/sina_minute.py": {
+      "bytes": 8742,
+      "sha256": "53e03b3f8aa1f1d5108acedd007eaa445917d0ea742e5a32c1a71db3a5ae5a97"
+    },
+    "source/src/qtrade/market_data/xtdata.py": {
+      "bytes": 5685,
+      "sha256": "5f8a06a9f3eb3812e6979729632d2b7b9b61b042232b64d3f48d10d4e4609529"
+    },
+    "source/src/qtrade/monitoring/__init__.py": {
+      "bytes": 268,
+      "sha256": "63d21676990ba1c969c2a3530807aaf8f85dcb6e379dc07a9ed01aa9cd386bd1"
+    },
+    "source/src/qtrade/monitoring/data_freshness.py": {
+      "bytes": 4371,
+      "sha256": "b9b640555a42c5268ec917df0bd07a41eb7d1709da64539bb953f17fb19b7624"
+    },
+    "source/src/qtrade/monitoring/prometheus.py": {
+      "bytes": 3132,
+      "sha256": "9b242eb1203b84a14bca2952ab52e397ed2c88f567dac9c1910205f60ea385fc"
+    },
+    "source/src/qtrade/monitoring/registry.py": {
+      "bytes": 3548,
+      "sha256": "74648e07a0ce0a448edb7e0abcf9b090792d4a27085d2ffc912941127bf7f0f4"
+    },
+    "source/src/qtrade/oms/__init__.py": {
+      "bytes": 211,
+      "sha256": "7f72a47428de73bfa2e90f9458d3454cc5753e4567df4aa46183dea9aa93789e"
+    },
+    "source/src/qtrade/oms/manager.py": {
+      "bytes": 6552,
+      "sha256": "c103eeddf387f2dc8c46330354746a9bf27b4ff0bc6b7b6f0004ffea4830807d"
+    },
+    "source/src/qtrade/persistence/__init__.py": {
+      "bytes": 343,
+      "sha256": "b8a2138a65037e15d3826fc3d950417889346a7514c5c32110c90e80a7232364"
+    },
+    "source/src/qtrade/persistence/catalog.py": {
+      "bytes": 4946,
+      "sha256": "4c0671743f07513bb36491c5cf66513bc4c5f082c8a6054f11db39dc7e1b4105"
+    },
+    "source/src/qtrade/persistence/sqlite.py": {
+      "bytes": 19806,
+      "sha256": "0dd45c5e59ee902f2f1aece5848ec9d18779bdab6b88e9b0fff05e860403f1a3"
+    },
+    "source/src/qtrade/portfolio/__init__.py": {
+      "bytes": 221,
+      "sha256": "e4bb0b2e432be0b9ad79b0ee40944b7b774b61fbe28b052f8d0d69f059cdb1a4"
+    },
+    "source/src/qtrade/portfolio/construction.py": {
+      "bytes": 1796,
+      "sha256": "49f1d407e9a076b92c111da318aa2f128ebf212f70040e4cba59f23d4bda1d34"
+    },
+    "source/src/qtrade/reconciliation/__init__.py": {
+      "bytes": 180,
+      "sha256": "f9259220d987f7475c83a40f4d3b33f2946f64e8f91351f451ee913f4430bd42"
+    },
+    "source/src/qtrade/reconciliation/engine.py": {
+      "bytes": 2984,
+      "sha256": "0d8f3d8a656614f00978620b57c10caea96a1824fb992b1a4a3a7c6ba2b99d83"
+    },
+    "source/src/qtrade/recovery/__init__.py": {
+      "bytes": 172,
+      "sha256": "ea65c734de3a6cdbe07a7f4243023b25a445a286fcef5fdcb0483a9f026fe7d1"
+    },
+    "source/src/qtrade/recovery/coordinator.py": {
+      "bytes": 1968,
+      "sha256": "8ae19e254a159963a307b7f1e3bf837f36510ab5f3fbadf041d8be8814331615"
+    },
+    "source/src/qtrade/reporting/__init__.py": {
+      "bytes": 417,
+      "sha256": "cc9701791761feaee5bb62ed8feee387b3e8c814f4b6e1f6c3a9dfaa070c1689"
+    },
+    "source/src/qtrade/reporting/daily.py": {
+      "bytes": 2286,
+      "sha256": "30d88257618641e72373ce2f17650377852c7022c7805001b1ad6813f9bce04e"
+    },
+    "source/src/qtrade/reporting/scheduler.py": {
+      "bytes": 10078,
+      "sha256": "de5cdce0ba4a1e08c77f41e3a6506461c67600a03be6edfa42b926e239fc6c60"
+    },
+    "source/src/qtrade/research/__init__.py": {
+      "bytes": 5542,
+      "sha256": "38c7c598f0dca3e72e2d6aae46e2aa99ae992b955fc1241741c73059abea92ee"
+    },
+    "source/src/qtrade/research/artifacts.py": {
+      "bytes": 1401,
+      "sha256": "3a691c7a3fcd5479fa9cd297c11ead8cfb54da1917cf168cd19a00f2164bc46b"
+    },
+    "source/src/qtrade/research/collection_retry_policy.py": {
+      "bytes": 5624,
+      "sha256": "5743eab6d7f81b33a0490c9e02392596f32c8c63113478e77b170ab7f212d9bd"
+    },
+    "source/src/qtrade/research/data_epoch.py": {
+      "bytes": 1079,
+      "sha256": "379928e505864a711ce805ec02dc2eec7331c50345573148b5bf8aec6e8da910"
+    },
+    "source/src/qtrade/research/data_quality.py": {
+      "bytes": 14612,
+      "sha256": "9ea12d74f7895a99f733262e8879bb62737c817346873b8165d3743f87e2b50c"
+    },
+    "source/src/qtrade/research/data_quality_policy.py": {
+      "bytes": 3531,
+      "sha256": "7bf1236c16adff9cd2910a061c7caf2333db59b011ec57ff90f007f65231beb5"
+    },
+    "source/src/qtrade/research/data_version_control.py": {
+      "bytes": 14920,
+      "sha256": "adef34633af8c42a0ab212861586e75961337353a58c89ac131fa42295051b5b"
+    },
+    "source/src/qtrade/research/data_versions.py": {
+      "bytes": 15951,
+      "sha256": "2a741757eb0a5578cfb334db8e6ed9293171e61bce9f7f058302f40f020c9398"
+    },
+    "source/src/qtrade/research/delisted_probe_plan.py": {
+      "bytes": 10173,
+      "sha256": "7c0b6eda3975a03f6f41140e91658d46d3e5bc7c6a908daadbffeb9aaa19472a"
+    },
+    "source/src/qtrade/research/etf_attempt_repair.py": {
+      "bytes": 50935,
+      "sha256": "0b265fe1d130d1230f2b3edf92d4c82f9cbbebaae52c529908ec9b30c58b56fd"
+    },
+    "source/src/qtrade/research/etf_history_publication.py": {
+      "bytes": 35700,
+      "sha256": "ccf0ea7ddcdec2bb0a04b79330d6a85ba56701e81e997e66a41b855f3f6dd6f2"
+    },
+    "source/src/qtrade/research/etf_research_contract.py": {
+      "bytes": 25156,
+      "sha256": "17639ffda51b99497c5a08241a156805aeb4722940ee78f471d895abe0581580"
+    },
+    "source/src/qtrade/research/etf_shadow_publication.py": {
+      "bytes": 6247,
+      "sha256": "21bbdbbd65152ab731cee227d7fae36a06d7cd73653735631be86aa97b3a14b8"
+    },
+    "source/src/qtrade/research/etf_trend.py": {
+      "bytes": 12513,
+      "sha256": "0b040546d4919b81f7e82d8e7b5d0956675e7b76aca778546d51ae381a4fdf10"
+    },
+    "source/src/qtrade/research/experiment.py": {
+      "bytes": 1406,
+      "sha256": "f63c76ffa7403043a57b1b5c87ebcbf4ec5d719798da69fa2577344127c9d04b"
+    },
+    "source/src/qtrade/research/factor_evaluation.py": {
+      "bytes": 46237,
+      "sha256": "782f245d2845ab6b06e18c8c99aa7f844fae2f953fde96e4604a99a4c76e5b3d"
+    },
+    "source/src/qtrade/research/factor_registry.py": {
+      "bytes": 15921,
+      "sha256": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d"
+    },
+    "source/src/qtrade/research/factor_search.py": {
+      "bytes": 3744,
+      "sha256": "03b7bad02686e34b19536c5132277f9ca4049d3f4618da46b2536413bce6d94a"
+    },
+    "source/src/qtrade/research/factors.py": {
+      "bytes": 3725,
+      "sha256": "9082aaa603729651199ec3b5c37a7acf93f9931bf32dd348da4eeb9ccd6cb39d"
+    },
+    "source/src/qtrade/research/feature_precision.py": {
+      "bytes": 452,
+      "sha256": "477ed52f90406a44787c493c4f7ce05796c6ac9d1cd88fac3834b400f67ab747"
+    },
+    "source/src/qtrade/research/forward_paper.py": {
+      "bytes": 21452,
+      "sha256": "0421da35e97f505eda6b71c15685e112a44daeb44b2708a4778ffcfdf17583c8"
+    },
+    "source/src/qtrade/research/forward_prediction.py": {
+      "bytes": 5761,
+      "sha256": "1bced20d12a4e7f72bc6b73d5ff525d708cd80591135193f8d00a271f5068603"
+    },
+    "source/src/qtrade/research/forward_publication.py": {
+      "bytes": 14964,
+      "sha256": "bed0c0c6f7d6b095828baacd865891fca7a0b7a002eebd1d48bd61631863f958"
+    },
+    "source/src/qtrade/research/forward_retirement.py": {
+      "bytes": 12413,
+      "sha256": "4ca45a44bac21f80d379d268d3de34725b67d3e5e42974090e9461d01bf49d50"
+    },
+    "source/src/qtrade/research/governance.py": {
+      "bytes": 7289,
+      "sha256": "c13f7e843d9821d6bcd56cceb7fe93f68a00b250964df635cc8444722705693c"
+    },
+    "source/src/qtrade/research/intraday_factor.py": {
+      "bytes": 115521,
+      "sha256": "706c2856617bd461888b5611025c5c106d6819ece6b2b1e31aace7588a18a6ec"
+    },
+    "source/src/qtrade/research/metrics.py": {
+      "bytes": 11670,
+      "sha256": "7f01665d08ed0469d42372288b76e1703279593dfa22c7c8f9dd443e5fabccfa"
+    },
+    "source/src/qtrade/research/minute_backtest.py": {
+      "bytes": 15043,
+      "sha256": "792d300d2df913f9f42576d0d96ebc66c70e042969ea26a4357895c0ec52fa2c"
+    },
+    "source/src/qtrade/research/model_promotion_policy.py": {
+      "bytes": 18185,
+      "sha256": "ad4f4c4dd1f30fcb7eb7a990d6e74ee496973ae30f4adec7ef07c50ad00b21d7"
+    },
+    "source/src/qtrade/research/model_registry.py": {
+      "bytes": 15969,
+      "sha256": "01ddd7dcee47f941599063b9913a752a8fcbbd06381aa99e372f40a1d99d46cb"
+    },
+    "source/src/qtrade/research/multi_asset.py": {
+      "bytes": 21218,
+      "sha256": "334a8394fb3c85b6de2439974123588402935a47e09aa88034ad672e6a99ab8c"
+    },
+    "source/src/qtrade/research/official_master.py": {
+      "bytes": 5924,
+      "sha256": "70fe204a0fe7775f75ba1eb961ab6b8cc11a25871394d925b92d2035793eeb12"
+    },
+    "source/src/qtrade/research/pit_quality.py": {
+      "bytes": 4683,
+      "sha256": "c7b929913b68ce0272ca2b7fdec544e537a29c9be79084cfb7ffbdb9c8921a15"
+    },
+    "source/src/qtrade/research/pit_repair.py": {
+      "bytes": 4728,
+      "sha256": "5576d1ac6f339a4775095d3b9d439af6ba4eb1060ee3656fbb861ba52a6d4c86"
+    },
+    "source/src/qtrade/research/prediction_registry.py": {
+      "bytes": 11600,
+      "sha256": "47a479ea9e9aa1469095a6f843ba848f57a28998bc32a39e24c7241c3ff03784"
+    },
+    "source/src/qtrade/research/preview.py": {
+      "bytes": 11365,
+      "sha256": "f3b8948e4464986bcc6179c0d0f6e067c3f3d9b50b6d4ba7e46f2f7b9e272b64"
+    },
+    "source/src/qtrade/research/public_pit_audit.py": {
+      "bytes": 9148,
+      "sha256": "459837d6f5eb9e9ba7d31327fcca68d83f2af22d99ecbaf5cac31cbaa23fb729"
+    },
+    "source/src/qtrade/research/qlib_adapter.py": {
+      "bytes": 9215,
+      "sha256": "766dd2a7576f666ff1dac9b10946bca451883ed4cb538de80d1b56a822463b2d"
+    },
+    "source/src/qtrade/research/qlib_processors.py": {
+      "bytes": 544,
+      "sha256": "e3bc17fd0029f3fe465cb3fd0ec2efa82c34839967dfdf406197a18aaf07e405"
+    },
+    "source/src/qtrade/research/qlib_publication.py": {
+      "bytes": 8328,
+      "sha256": "a5ad15f191116ac0661b2457ced86663aed2cbf274779f4a774d4278442dabfd"
+    },
+    "source/src/qtrade/research/qlib_training.py": {
+      "bytes": 759,
+      "sha256": "091a3d0ab621230f536af5b420759eadee44014619660654d7315c7768c13799"
+    },
+    "source/src/qtrade/research/robust_factor_search.py": {
+      "bytes": 12408,
+      "sha256": "2817c4251d6f1c75bfa6968f12d8b8f0df00edeba740346431a6dd9a579df94f"
+    },
+    "source/src/qtrade/research/rolling_control.py": {
+      "bytes": 7829,
+      "sha256": "99a42eb5fb7646ac120ed8831b33598d3e7574677279ed64ee2ce4a13de2c102"
+    },
+    "source/src/qtrade/research/rolling_policy.py": {
+      "bytes": 4773,
+      "sha256": "3504923b6935daf2ec96bc2f79f12350b23a71da772b95fbc9f856787a0054ae"
+    },
+    "source/src/qtrade/research/runner.py": {
+      "bytes": 6826,
+      "sha256": "e73450952002b9c21eb23aa8d19245a0e832221d8247cd6abd26abebb4062a00"
+    },
+    "source/src/qtrade/research/session_acceptance.py": {
+      "bytes": 5463,
+      "sha256": "c5464a5ced92f174e664880dd938e24f8919e66b0f558d0ca7781e22fbd56a5d"
+    },
+    "source/src/qtrade/research/signal_baselines.py": {
+      "bytes": 4597,
+      "sha256": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138"
+    },
+    "source/src/qtrade/research/signal_publication.py": {
+      "bytes": 5121,
+      "sha256": "2837dd7e7c48d4339b46b41adaedc0f242259b29e2ebd59df2b07600d19ee3fd"
+    },
+    "source/src/qtrade/research/source_constraints.py": {
+      "bytes": 11609,
+      "sha256": "2d7aaae54ee6956a2f7dc7ed6120e3f383156d0c100ffa8cf0bd3f1a3cde786f"
+    },
+    "source/src/qtrade/research/strategy_comparison.py": {
+      "bytes": 13076,
+      "sha256": "c4251d6fa6d7f849f11487ec7218f4d5fa5ce1ca5048a353366f429e1f194612"
+    },
+    "source/src/qtrade/research/strategy_contract.py": {
+      "bytes": 12923,
+      "sha256": "01317cf0816b9ed8e1576bda31db5d4e9dcfa9838df35f1b461c0eac1834ca6c"
+    },
+    "source/src/qtrade/research/unified_market.py": {
+      "bytes": 13147,
+      "sha256": "248925e0b70a341b9b17a47d81b988ea7a0b0bafc0de845cf4eef0486efaab77"
+    },
+    "source/src/qtrade/research/walk_forward.py": {
+      "bytes": 2388,
+      "sha256": "00b137a5512846af99088f284110a401ef97918f4fb9b172261749d4c39fb5d9"
+    },
+    "source/src/qtrade/research/walk_forward_runner.py": {
+      "bytes": 6325,
+      "sha256": "61fef7a4ba4462e55252d0cac99d7ccf3fcde642795a6bfc50aba0166b67c1d3"
+    },
+    "source/src/qtrade/research/workflow.py": {
+      "bytes": 12876,
+      "sha256": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd"
+    },
+    "source/src/qtrade/research/workflow_queue.py": {
+      "bytes": 7013,
+      "sha256": "3d77ee81eff8912b5dbc32a22c7bc757ae45123b030026a71917f6270772dec2"
+    },
+    "source/src/qtrade/risk/__init__.py": {
+      "bytes": 234,
+      "sha256": "40c68e8b36b8f0a1de59ab557827ff6dd2a80ec39e7e91e5a6a8fa885df82a27"
+    },
+    "source/src/qtrade/risk/engine.py": {
+      "bytes": 8718,
+      "sha256": "7e8fa5a7a29f890fa797f952bca5118da887068bee54ab859823fb46b52736da"
+    },
+    "source/src/qtrade/runtime/__init__.py": {
+      "bytes": 1001,
+      "sha256": "96c9a4f39d6bd6b25dad18a892e5cc865883df31d8f5094d8c44b8fd0288f86b"
+    },
+    "source/src/qtrade/runtime/minute_overlay.py": {
+      "bytes": 22303,
+      "sha256": "2353151815f9f2274cfb17fe7399f58e5c39abce9d57e6798397e8ce482c3d15"
+    },
+    "source/src/qtrade/runtime/orchestrator.py": {
+      "bytes": 10618,
+      "sha256": "ee58f60500a7cc1e9b124020b1ed28d0f18efdba877648ee6aeaf640e7768e8f"
+    },
+    "source/src/qtrade/runtime/paper.py": {
+      "bytes": 24236,
+      "sha256": "e022d69f1e6735812ba0c5b3b6dcfd4ebe3ad98727d0794eb183d84dd1466b8d"
+    },
+    "source/src/qtrade/runtime/realtime.py": {
+      "bytes": 13394,
+      "sha256": "f93f0e8ff28d8e08354f690366bdebe6c4d4eab2ca9a72f178745c72cc4d63d1"
+    },
+    "source/src/qtrade/service.py": {
+      "bytes": 6344,
+      "sha256": "ece7175ccf3385d16bb40dc37a5467d729c68d476df1c96d093a43f9c7232502"
+    },
+    "source/src/qtrade/strategies/__init__.py": {
+      "bytes": 1422,
+      "sha256": "df820e9f891e73bede219a9658f2e9f3729930947714ffe6172a6ad329bfcbd9"
+    },
+    "source/src/qtrade/strategies/baselines.py": {
+      "bytes": 970,
+      "sha256": "bad65ff9918e105efa3d09cdaefbe773e102a394cd29bcce80f6c9dbf85be64f"
+    },
+    "source/src/qtrade/strategies/families.py": {
+      "bytes": 5783,
+      "sha256": "26559c004bdc7b503770e3888d7c435ca12a831e5605a1e3f8ecfa0a422839c7"
+    },
+    "source/src/qtrade/strategies/health.py": {
+      "bytes": 5324,
+      "sha256": "115301d25a1e5b1713025ef513c799e94e75a6095a91a8366298ec6e6ecb00b7"
+    },
+    "source/src/qtrade/strategies/promotion.py": {
+      "bytes": 5644,
+      "sha256": "e6daa9b8f6fe26ea4927d552253e61fe733831f2ab9ab3dcb3a179dfcdf5fa49"
+    },
+    "source/src/qtrade/strategies/registry.py": {
+      "bytes": 27219,
+      "sha256": "d1da75570a3333d2bdbba59a6a83787858296c1d259836fdda8d734ed9c0f1ec"
+    },
+    "source/src/qtrade/workflows/__init__.py": {
+      "bytes": 172,
+      "sha256": "f021ebae8a4d1d4596d55682f19a6737e441f61f5c099b55d73b5eecafbd0e60"
+    },
+    "source/src/qtrade/workflows/baseline.py": {
+      "bytes": 4463,
+      "sha256": "8b9912d10e1aeff0d18bed5aaa55507a6f5671927f07370e015e686a96a46cde"
+    },
+    "source-manifest.json": {
+      "bytes": 28448,
+      "sha256": "98562403ad222558acae3ff587be88c45303c110cab30ade83f247351dfaa286"
+    }
+  },
+  "evidence_sha256": "482d0acaf267384dd14dfc888400bd3e245e42fde1b748db54267ab299961140"
+}

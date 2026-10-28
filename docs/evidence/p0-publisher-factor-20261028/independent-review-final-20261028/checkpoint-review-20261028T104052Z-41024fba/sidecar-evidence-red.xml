@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="2.107" timestamp="2026-10-28T18:40:55.321487+08:00" hostname="73ec830048ca"><testcase classname="tests.test_unified_market_checkpoint_independent" name="test_sqlite_hit_requires_current_durable_sidecar_evidence[missing]" time="0.408"><failure message="AssertionError: assert ({'admitted_rows_sha256': '626e23e2838d3f71853ea4c6c545db03b37f0c4c40c51ed88463e660db989098', 'bar_count': 1, 'batch_i......}, [{'amount': None, 'amount_basis': 'VENDOR_CLAIM_UNVERIFIED', 'close': '10', 'completion_status': 'CLOSED', ...}]) is None&#10; +  where ({'admitted_rows_sha256': '626e23e2838d3f71853ea4c6c545db03b37f0c4c40c51ed88463e660db989098', 'bar_count': 1, 'batch_i......}, [{'amount': None, 'amount_basis': 'VENDOR_CLAIM_UNVERIFIED', 'close': '10', 'completion_status': 'CLOSED', ...}]) = get(ReceiptKey(batch_id='00000000000000000000000000000001', manifest_sha256='1d5c2161dde16ef7b513ab3694c8524b7cb5a872fbcc8...7c5ae3d6018da9aab33d09a013ad1042aa', context_sha256='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'), now=(datetime.datetime(2026, 10, 26, 10, 0, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=1)))&#10; +    where get = &lt;qtrade.research.market_validation_receipts.MarketValidationReceiptStore object at 0x7f9b66436e40&gt;.get&#10; +    and   datetime.timedelta(seconds=1) = timedelta(seconds=1)">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104052Z-41024fba/tmp/pytest/test_sqlite_hi..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f9b68700050&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f9c16ffd590&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f9b688a2fd0&gt;
+damage = 'missing'
+
+    @pytest.mark.parametrize("damage", ["missing", "corrupt", "io"])
+    def test_sqlite_hit_requires_current_durable_sidecar_evidence(source, monkeypatch, damage):
+        base, _, _, _, lake, add = source
+        manifest = add()
+        material = lake._batch_material(manifest["batch_id"])
+        checked, _, rows = material.validate()
+        key = receipts.receipt_key(manifest["batch_id"], material.identities(), "e" * 64)
+        root = base / "durable-receipts"
+        with receipts.MarketValidationReceiptStore(
+            base / "local/durable.sqlite", sidecar_root=root
+        ) as store:
+            receipt_id = store.put_success(key, checked, rows, validated_at=NOW)
+            path = root / key.key_sha256 / (receipt_id + ".json")
+            if damage == "missing":
+                path.rename(base / "retained-old-sidecar.json")
+            elif damage == "corrupt":
+                path.write_bytes(b'{"broken":true}')
+            else:
+                original = Path.open
+    
+                def fail(candidate, *args, **kwargs):
+                    if candidate == path:
+                        raise OSError("independent sidecar storage I/O failure")
+                    return original(candidate, *args, **kwargs)
+    
+                monkeypatch.setattr(Path, "open", fail)
+                with pytest.raises(OSError, match="sidecar storage I/O failure"):
+                    store.get(key, now=NOW + timedelta(seconds=1))
+                return
+&gt;           assert store.get(key, now=NOW + timedelta(seconds=1)) is None
+E           AssertionError: assert ({'admitted_rows_sha256': '626e23e2838d3f71853ea4c6c545db03b37f0c4c40c51ed88463e660db989098', 'bar_count': 1, 'batch_i......}, [{'amount': None, 'amount_basis': 'VENDOR_CLAIM_UNVERIFIED', 'close': '10', 'completion_status': 'CLOSED', ...}]) is None
+E            +  where ({'admitted_rows_sha256': '626e23e2838d3f71853ea4c6c545db03b37f0c4c40c51ed88463e660db989098', 'bar_count': 1, 'batch_i......}, [{'amount': None, 'amount_basis': 'VENDOR_CLAIM_UNVERIFIED', 'close': '10', 'completion_status': 'CLOSED', ...}]) = get(ReceiptKey(batch_id='00000000000000000000000000000001', manifest_sha256='1d5c2161dde16ef7b513ab3694c8524b7cb5a872fbcc8...7c5ae3d6018da9aab33d09a013ad1042aa', context_sha256='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'), now=(datetime.datetime(2026, 10, 26, 10, 0, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=1)))
+E            +    where get = &lt;qtrade.research.market_validation_receipts.MarketValidationReceiptStore object at 0x7f9b66436e40&gt;.get
+E            +    and   datetime.timedelta(seconds=1) = timedelta(seconds=1)
+
+tests/test_unified_market_checkpoint_independent.py:520: AssertionError</failure></testcase><testcase classname="tests.test_unified_market_checkpoint_independent" name="test_sqlite_hit_requires_current_durable_sidecar_evidence[corrupt]" time="0.144"><failure message="AssertionError: assert ({'admitted_rows_sha256': '626e23e2838d3f71853ea4c6c545db03b37f0c4c40c51ed88463e660db989098', 'bar_count': 1, 'batch_i......}, [{'amount': None, 'amount_basis': 'VENDOR_CLAIM_UNVERIFIED', 'close': '10', 'completion_status': 'CLOSED', ...}]) is None&#10; +  where ({'admitted_rows_sha256': '626e23e2838d3f71853ea4c6c545db03b37f0c4c40c51ed88463e660db989098', 'bar_count': 1, 'batch_i......}, [{'amount': None, 'amount_basis': 'VENDOR_CLAIM_UNVERIFIED', 'close': '10', 'completion_status': 'CLOSED', ...}]) = get(ReceiptKey(batch_id='00000000000000000000000000000001', manifest_sha256='1d5c2161dde16ef7b513ab3694c8524b7cb5a872fbcc8...7c5ae3d6018da9aab33d09a013ad1042aa', context_sha256='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'), now=(datetime.datetime(2026, 10, 26, 10, 0, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=1)))&#10; +    where get = &lt;qtrade.research.market_validation_receipts.MarketValidationReceiptStore object at 0x7f9b662a1590&gt;.get&#10; +    and   datetime.timedelta(seconds=1) = timedelta(seconds=1)">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104052Z-41024fba/tmp/pytest/test_sqlite_hi..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f9b662a1090&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f9b662fa820&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f9b688a2650&gt;
+damage = 'corrupt'
+
+    @pytest.mark.parametrize("damage", ["missing", "corrupt", "io"])
+    def test_sqlite_hit_requires_current_durable_sidecar_evidence(source, monkeypatch, damage):
+        base, _, _, _, lake, add = source
+        manifest = add()
+        material = lake._batch_material(manifest["batch_id"])
+        checked, _, rows = material.validate()
+        key = receipts.receipt_key(manifest["batch_id"], material.identities(), "e" * 64)
+        root = base / "durable-receipts"
+        with receipts.MarketValidationReceiptStore(
+            base / "local/durable.sqlite", sidecar_root=root
+        ) as store:
+            receipt_id = store.put_success(key, checked, rows, validated_at=NOW)
+            path = root / key.key_sha256 / (receipt_id + ".json")
+            if damage == "missing":
+                path.rename(base / "retained-old-sidecar.json")
+            elif damage == "corrupt":
+                path.write_bytes(b'{"broken":true}')
+            else:
+                original = Path.open
+    
+                def fail(candidate, *args, **kwargs):
+                    if candidate == path:
+                        raise OSError("independent sidecar storage I/O failure")
+                    return original(candidate, *args, **kwargs)
+    
+                monkeypatch.setattr(Path, "open", fail)
+                with pytest.raises(OSError, match="sidecar storage I/O failure"):
+                    store.get(key, now=NOW + timedelta(seconds=1))
+                return
+&gt;           assert store.get(key, now=NOW + timedelta(seconds=1)) is None
+E           AssertionError: assert ({'admitted_rows_sha256': '626e23e2838d3f71853ea4c6c545db03b37f0c4c40c51ed88463e660db989098', 'bar_count': 1, 'batch_i......}, [{'amount': None, 'amount_basis': 'VENDOR_CLAIM_UNVERIFIED', 'close': '10', 'completion_status': 'CLOSED', ...}]) is None
+E            +  where ({'admitted_rows_sha256': '626e23e2838d3f71853ea4c6c545db03b37f0c4c40c51ed88463e660db989098', 'bar_count': 1, 'batch_i......}, [{'amount': None, 'amount_basis': 'VENDOR_CLAIM_UNVERIFIED', 'close': '10', 'completion_status': 'CLOSED', ...}]) = get(ReceiptKey(batch_id='00000000000000000000000000000001', manifest_sha256='1d5c2161dde16ef7b513ab3694c8524b7cb5a872fbcc8...7c5ae3d6018da9aab33d09a013ad1042aa', context_sha256='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'), now=(datetime.datetime(2026, 10, 26, 10, 0, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=1)))
+E            +    where get = &lt;qtrade.research.market_validation_receipts.MarketValidationReceiptStore object at 0x7f9b662a1590&gt;.get
+E            +    and   datetime.timedelta(seconds=1) = timedelta(seconds=1)
+
+tests/test_unified_market_checkpoint_independent.py:520: AssertionError</failure></testcase><testcase classname="tests.test_unified_market_checkpoint_independent" name="test_sqlite_hit_requires_current_durable_sidecar_evidence[io]" time="0.094"><failure message="Failed: DID NOT RAISE OSError">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104052Z-41024fba/tmp/pytest/test_sqlite_hi..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f9b662a2210&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f9b662fa980&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f9b6642b530&gt;
+damage = 'io'
+
+    @pytest.mark.parametrize("damage", ["missing", "corrupt", "io"])
+    def test_sqlite_hit_requires_current_durable_sidecar_evidence(source, monkeypatch, damage):
+        base, _, _, _, lake, add = source
+        manifest = add()
+        material = lake._batch_material(manifest["batch_id"])
+        checked, _, rows = material.validate()
+        key = receipts.receipt_key(manifest["batch_id"], material.identities(), "e" * 64)
+        root = base / "durable-receipts"
+        with receipts.MarketValidationReceiptStore(
+            base / "local/durable.sqlite", sidecar_root=root
+        ) as store:
+            receipt_id = store.put_success(key, checked, rows, validated_at=NOW)
+            path = root / key.key_sha256 / (receipt_id + ".json")
+            if damage == "missing":
+                path.rename(base / "retained-old-sidecar.json")
+            elif damage == "corrupt":
+                path.write_bytes(b'{"broken":true}')
+            else:
+                original = Path.open
+    
+                def fail(candidate, *args, **kwargs):
+                    if candidate == path:
+                        raise OSError("independent sidecar storage I/O failure")
+                    return original(candidate, *args, **kwargs)
+    
+                monkeypatch.setattr(Path, "open", fail)
+&gt;               with pytest.raises(OSError, match="sidecar storage I/O failure"):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               Failed: DID NOT RAISE OSError
+
+tests/test_unified_market_checkpoint_independent.py:517: Failed</failure></testcase><testcase classname="tests.test_unified_market_checkpoint_independent" name="test_corrupt_old_sidecar_does_not_deduplicate_a_new_durable_receipt" time="0.092"><failure message="AssertionError: assert 'ad227c2033eb3889624d4ed990a75a12d73887340ed908eabc0c87bb9d60dab5' != 'ad227c2033eb3889624d4ed990a75a12d73887340ed908eabc0c87bb9d60dab5'">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104052Z-41024fba/tmp/pytest/test_corrupt_o..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f9b6641f6f0&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f9b662fafb0&gt;)
+
+    def test_corrupt_old_sidecar_does_not_deduplicate_a_new_durable_receipt(source):
+        base, _, _, _, lake, add = source
+        manifest = add()
+        material = lake._batch_material(manifest["batch_id"])
+        checked, _, rows = material.validate()
+        key = receipts.receipt_key(manifest["batch_id"], material.identities(), "f" * 64)
+        root = base / "durable-receipts"
+        with receipts.MarketValidationReceiptStore(
+            base / "local/durable.sqlite", sidecar_root=root
+        ) as store:
+            old_id = store.put_success(key, checked, rows, validated_at=NOW)
+            old_path = root / key.key_sha256 / (old_id + ".json")
+            old_path.write_bytes(b'{"retained_corruption":true}')
+            new_id = store.put_success(key, checked, rows, validated_at=NOW + timedelta(seconds=1))
+&gt;           assert new_id != old_id
+E           AssertionError: assert 'ad227c2033eb3889624d4ed990a75a12d73887340ed908eabc0c87bb9d60dab5' != 'ad227c2033eb3889624d4ed990a75a12d73887340ed908eabc0c87bb9d60dab5'
+
+tests/test_unified_market_checkpoint_independent.py:537: AssertionError</failure></testcase></testsuite></testsuites>

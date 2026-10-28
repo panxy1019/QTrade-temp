@@ -1,0 +1,1 @@
+{"pass_name": "warm", "state": "SUCCEEDED", "wall_seconds": 37.40652960911393, "process_cpu_seconds": 30.084611, "reaped_children_cpu_seconds": 4.393470000000001, "initial": {"database_exists": true, "sidecar_root_exists": true, "object_count": 5986, "new_process": true}, "children_at_completion": ""}

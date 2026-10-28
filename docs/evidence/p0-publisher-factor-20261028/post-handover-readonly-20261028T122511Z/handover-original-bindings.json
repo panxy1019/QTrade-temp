@@ -1,0 +1,17 @@
+{
+  "observe_at": "2026-10-28T12:03:34.897364+00:00",
+  "observe_raw_sha256": "8d4c11bf014b287b480477d676227d623c3730b56356cef87284159348006554",
+  "original_comparison": {
+    "automatic_restore_or_rewrite": false,
+    "books_equal": true,
+    "changed_top_level": [
+      "owners"
+    ],
+    "context_equal": true,
+    "frozen_controls_equal": true,
+    "independent_review_required": false,
+    "publisher_matches_observed_new": true,
+    "unrelated_owners_equal": true
+  },
+  "prepare_raw_sha256": "94c36e7eba8d9594aadaa4b1bff664de63a2d8051e85425613a5aea4f080f13d"
+}

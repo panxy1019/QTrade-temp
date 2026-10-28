@@ -1,0 +1,74 @@
+{
+  "checked_at": "2026-10-28T11:28:15.081756+00:00",
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "evidence_sha256": "f7dab4135ec87f0ed40005966d00d87242a239ee47f3b406e90f32d06906d965",
+  "external_order_transmission": false,
+  "extracted_at": "2026-10-28T11:34:51.349660+00:00",
+  "freeze_evidence_sha256": "b9db9ec5b959d3423ea840de1dd4f70ebda6877c98b35e7cc48bed67beff755a",
+  "injected_elapsed_seconds": [
+    16.00006076693535
+  ],
+  "injection_scope": "ACTUAL_ISOLATED_NFS_GENERATION_WITH_CONTROLLED_POST_FSYNC_LATENCY_NOT_REAL_OUTAGE",
+  "kind": "SANITIZED_EXTRACT_OF_ACTUAL_ISOLATED_NFS_LATENCY_INJECTION",
+  "live_trading_enabled": false,
+  "logical_clock_scope": "FROZEN_DIAGNOSTIC_ONLY",
+  "mount_binding": {
+    "mount_after": {
+      "filesystem_type": "nfs4",
+      "mount_id": "1080",
+      "mountinfo_raw_sha256": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+      "output_st_dev": 66,
+      "production_st_dev": 66
+    },
+    "mount_before": {
+      "filesystem_type": "nfs4",
+      "mount_id": "1080",
+      "mountinfo_raw_sha256": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+      "output_st_dev": 66,
+      "production_st_dev": 66
+    }
+  },
+  "negative_export": {
+    "error_class": "ValueError",
+    "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+    "wall_seconds": 53.91129173710942
+  },
+  "negative_head_preserved": true,
+  "new_recovery_head": "c0b073d0b1bf7c5f09b48030261e86792f20d8af3fb170999b98116050c81191",
+  "normal_seconds_limit_unchanged": 45,
+  "original_evidence_sha256": "970f0f86acc4e80693a9b0eb428eff5e41cffa7a591363b530a2dcf43f5bc40d",
+  "original_head": "1c9181a077f741bf139ea86bdf0f2cf699d949b22b8ff8485e047920193eb53b",
+  "original_report_path": "E:\\QTrade-temp\\cluster-evidence\\market-same-nfs-latency-20261028T112633Z\\benchmark-report.json",
+  "original_report_sha256": "dc837c767ef00ad26f01a467637b9939bec165872fc243faee73504e76a0f83f",
+  "point_in_time": false,
+  "production_output_modified": false,
+  "promotion": "NOT_ELIGIBLE",
+  "raw_mountinfo_retained_outside_git": true,
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "recovery_statistics": {
+    "cache_estimated_bytes": 0,
+    "cached_batches": 0,
+    "cached_rows": 0,
+    "checkpoint_id": "49c8ab21d12440a7ad6551520927f4bb4f71c46892119335e5b6bb8c4a398fa3",
+    "export_seconds": 34.234317,
+    "index_id": "0693a090dc4fac29492ff08b5b1a1b77af53b6f9f705c9d6b74d9869a6ecef8f",
+    "quarantined_entries": 0,
+    "rebuilt_pairs": 1498,
+    "receipt_hits": 5701,
+    "receipt_sidecar_bytes_read": 195283641,
+    "receipt_writes": 0,
+    "replayed_batches": 0,
+    "reused_pairs": 1498,
+    "reused_shards": 4489,
+    "selected_batches": 5701,
+    "selected_chunks": 141634,
+    "source_bytes_read": 239718748,
+    "total_bytes": 167397950,
+    "total_files": 5987
+  },
+  "schema_version": "qtrade.same-nfs-latency-injection.v1",
+  "source_manifest_sha256": "109fc8efe00cd0ab8009a8880114fe6697a058bfd5cc27cb2942ade19a2c0e82",
+  "source_revision": "fba51aade2ee2410dda087e95cf054e53375ed3a",
+  "state": "EXPECTED_FAILURE_AND_RECOVERY_VERIFIED"
+}

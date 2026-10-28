@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.250" timestamp="2026-10-28T18:59:39.812873+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="" name="publisher-v5-independent-review-20261028T105905Z.test_publisher_handover_v4_20261028" time="0.000"><error message="collection failure">E:\QTrade-temp\publisher-v5-independent-review-20261028T105905Z\test_publisher_handover_v4_20261028.py:24: in &lt;module&gt;
+    legacy_bridge = load("legacy_bridge_tests", "test_publisher_handover_bridge_safe_module_v3_20261028.py")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E:\QTrade-temp\publisher-v5-independent-review-20261028T105905Z\test_publisher_handover_v4_20261028.py:17: in load
+    spec.loader.exec_module(module)
+&lt;frozen importlib._bootstrap_external&gt;:755: in exec_module
+    ???
+&lt;frozen importlib._bootstrap_external&gt;:892: in get_code
+    ???
+&lt;frozen importlib._bootstrap_external&gt;:950: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: 'E:\\QTrade-temp\\publisher-v5-independent-review-20261028T105905Z\\test_publisher_handover_bridge_safe_module_v3_20261028.py'</error></testcase></testsuite></testsuites>
