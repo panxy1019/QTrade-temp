@@ -34,6 +34,22 @@ from scripts.vendor_session import baostock_session
 REPO = Path(__file__).resolve().parents[1]
 
 
+def next_pass_delay(base: Path, now: datetime) -> float:
+    """A watcher restart must not spend another batch before the durable cadence is due."""
+    path = base / 'recent-status/current.json'
+    if not path.exists():
+        return 0
+    value = json.loads(path.read_bytes())
+    if (signed({k: v for k, v in value.items() if k != 'evidence_sha256'}) != value
+            or value.get('schema_version') != 'qtrade.recent-status-coverage.v1'
+            or any(value.get(k) != v for k, v in AUTHORITY.items())):
+        raise ValueError('RECENT_STATUS_SCHEDULE_IDENTITY_INVALID')
+    at = datetime.fromisoformat(value['observed_at'])
+    if now.tzinfo is None or at.tzinfo is None or at > now:
+        raise ValueError('RECENT_STATUS_SCHEDULE_CLOCK_INVALID')
+    return max(0, 300 - (now - at).total_seconds())
+
+
 def window_scope(
     dataset: dict[str, Any], calendar: Calendar, now: datetime,
 ) -> dict[str, Any]:
@@ -206,6 +222,12 @@ def main() -> None:
         fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
         while not stop.is_set():
             try:
+                if delay := next_pass_delay(args.base, datetime.now(UTC)):
+                    if not args.watch:
+                        print('RECENT_STATUS_PASS_NOT_DUE', flush=True)
+                        return
+                    stop.wait(min(60, delay))
+                    continue
                 result = collect_pass(
                     args.base, json.loads(args.dataset.read_bytes()),
                     Calendar(REPO / 'configs/observer_calendar_2026.json'),

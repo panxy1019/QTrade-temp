@@ -202,3 +202,25 @@ def test_window_uses_verified_calendar_and_closed_daily_cutoff(setup):
     assert scope['source_dataset_sha256'] == digest(DATASET)
     with pytest.raises(ValueError, match='CALENDAR_OUTSIDE'):
         collector.window_scope(DATASET, calendar, datetime(2027, 1, 1, tzinfo=UTC))
+
+
+def test_watcher_restart_obeys_durable_cadence(setup):
+    base, _, _, _ = setup
+    assert collector.next_pass_delay(base, NOW) == 0
+    run(setup)
+    assert collector.next_pass_delay(base, NOW) == 300
+    assert collector.next_pass_delay(base, NOW + timedelta(seconds=299)) == 1
+    assert collector.next_pass_delay(base, NOW + timedelta(seconds=301)) == 0
+    with pytest.raises(ValueError, match='SCHEDULE_CLOCK'):
+        collector.next_pass_delay(base, NOW - timedelta(seconds=1))
+
+
+def test_corrupt_schedule_cannot_release_another_vendor_batch(setup):
+    base, _, _, _ = setup
+    run(setup)
+    path = base / 'recent-status/current.json'
+    value = json.loads(path.read_bytes())
+    value['observed_at'] = '2020-01-01T00:00:00+00:00'
+    path.write_text(json.dumps(value))
+    with pytest.raises(ValueError, match='SCHEDULE_IDENTITY'):
+        collector.next_pass_delay(base, NOW)
