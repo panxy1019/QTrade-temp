@@ -1,0 +1,107 @@
+{
+  "files": {
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171449Z-befe0da0\\commands.json": {
+      "bytes": 1046,
+      "sha256": "8ab35ca6ff3358b67f35adab11022be20f88fbec004006683941b525c94f0a01"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171449Z-befe0da0\\diagnose_abe_catalog_lineage_readonly_20261029.py": {
+      "bytes": 7228,
+      "sha256": "a88dc636d794e737cde0b319b63dcc08e1d8fc466e516aa59961089e0e8278ac"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171449Z-befe0da0\\dispatch.json": {
+      "bytes": 206,
+      "sha256": "eb9ae9de79ee77857cb5216e6fee83d91433c3f30886b132495c5ab30fd5cb0d"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171449Z-befe0da0\\driver.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171449Z-befe0da0\\driver.stdout": {
+      "bytes": 193,
+      "sha256": "a6823c36b25ad3670aefd7825d38aa7b8a99b06583f03a0e49dbcb0fe1005d2f"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171449Z-befe0da0\\result.json": {
+      "bytes": 619,
+      "sha256": "7875abfa04fbc211f7985ffd1c1c8df8a89ca9220815bf02ce83977dadccb55b"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558\\blobs\\779f47292fa92fca6f15a2e46db9f29afcd1c09a.json": {
+      "bytes": 2796236,
+      "sha256": "164a721fd517567004fa10c4be9bc2cfbc478feb9354e5cd66948644510daf46"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558\\blobs\\a317af8c977924c31e0f993543c3b864976a820f.json": {
+      "bytes": 7976216,
+      "sha256": "c4a40629a78a7bb19945b9443a6753e9e8870da6bcdb7151612c49442e6a4b67"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558\\commands.json": {
+      "bytes": 25266,
+      "sha256": "69e2da55174847cf5ffb8c77abec60d911fd7def8cc9f5ac0b86f8a342d7f534"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558\\diagnose_abe_catalog_lineage_readonly_v2_20261029.py": {
+      "bytes": 7332,
+      "sha256": "7bbc9e8b1c1df1a8b71d4d6a1dba690ad5ec8468d5c7c7bc8039a1ecbe51456a"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558\\dispatch.json": {
+      "bytes": 206,
+      "sha256": "2347bf4b34818cb6b7e93fa1da30659111877a5d4623d8f4e05ee0f6419b5319"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558\\driver.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558\\driver.stdout": {
+      "bytes": 194,
+      "sha256": "b872e5b9add1b438fc640ff1ece8f4299d1456e72c6da15c0a2d1767265842a4"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558\\local-head-observation.json": {
+      "bytes": 359,
+      "sha256": "ed9df395f00526b61d1e3acf69fe7f0d3006dffc4a3a2db1a5a82c04181d94ed"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558\\result.json": {
+      "bytes": 384604,
+      "sha256": "48f0cf67b6ceed18adca1eed47603718b9f7daf7613f108636dae4df88aec95a"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171858Z-af641892\\blobs\\779f47292fa92fca6f15a2e46db9f29afcd1c09a.json": {
+      "bytes": 2796236,
+      "sha256": "164a721fd517567004fa10c4be9bc2cfbc478feb9354e5cd66948644510daf46"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171858Z-af641892\\blobs\\a317af8c977924c31e0f993543c3b864976a820f.json": {
+      "bytes": 7976216,
+      "sha256": "c4a40629a78a7bb19945b9443a6753e9e8870da6bcdb7151612c49442e6a4b67"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171858Z-af641892\\commands.json": {
+      "bytes": 25266,
+      "sha256": "0ba80984a0ff8b3689febfe64bff085b32faa762a5bf7b8f86cf3495ebc4337e"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171858Z-af641892\\diagnose_abe_catalog_lineage_readonly_v3_20261029.py": {
+      "bytes": 7442,
+      "sha256": "5b81c38d75dfd675b3dbd7c33e835407ca44d3dd8b331539f93cca4af30a36ef"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171858Z-af641892\\dispatch.json": {
+      "bytes": 206,
+      "sha256": "efce08754bf301630b3dd60f153cdf92579461b208701f7106e62970d4ffb87a"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171858Z-af641892\\driver.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171858Z-af641892\\driver.stdout": {
+      "bytes": 193,
+      "sha256": "3e58376f488a2a0b9759d2cb59374f0e247a8c834cabde774be186f3eef79369"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171858Z-af641892\\result.json": {
+      "bytes": 384664,
+      "sha256": "afb73e4278f0ac692f2f8e46935aaf0754bef64c7e954c2e28a8dfd78c526b0c"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-review-20261028T172118Z\\README.md": {
+      "bytes": 5017,
+      "sha256": "379d5dbe0c669ed13ed22e9aecc2ced12302513dd869a9d5613fd6be3476fb1c"
+    },
+    "E:\\QTrade-temp\\abe-catalog-lineage-review-20261028T172118Z\\summary.json": {
+      "bytes": 19271,
+      "sha256": "5e7e45ff9f9ac79efd24fd9fe1222ee4954db722c5757442cc9e59600c527684"
+    }
+  },
+  "no_matching_original_found_within_bounds": true,
+  "production_changed": false,
+  "schema_version": "qtrade.abe-lineage-readonly-evidence-manifest.v1"
+}

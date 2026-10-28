@@ -1,0 +1,169 @@
+{
+  "cluster_activity": "ONE_SHORT_READONLY_FACT_CAPTURE",
+  "files": {
+    "E-ded438-pre-unique-slot.py": {
+      "bytes": 35331,
+      "sha256": "ded43819708d732d7cbd11b1f51b4fb1738a463fb1a6f4546e62a6da1024833a"
+    },
+    "E-tests-ea19-pre-unique-slot.py": {
+      "bytes": 12951,
+      "sha256": "ea19e7ac8ad5d8fb9f9fd3afa824a4d65b126dfba9962abf4a7d27e624ff16a8"
+    },
+    "README.md": {
+      "bytes": 8375,
+      "sha256": "e79ad0bfac0539d6f9d010984a524ff1c3e764ccdef1356237ecf99aafcb8c9b"
+    },
+    "audit_qlib_execution_day_scope.py": {
+      "bytes": 35946,
+      "sha256": "f1ffc80fdab0d45621bb8ff8a473e5c402e1b3c7c3d33ae4455a83811c3e2c5a"
+    },
+    "audit_qlib_staged_revalidation.py": {
+      "bytes": 34698,
+      "sha256": "a33c3d172735f22daecb070b24921e87502461d967ea4cb7464cacca5ab3beee"
+    },
+    "capture-step1-scope-facts-20261029.py": {
+      "bytes": 4928,
+      "sha256": "119a34d6d1ed49338f12f1619e2adfcac6cdf1dc4551b13b9ee53863a070490d"
+    },
+    "facts.json": {
+      "bytes": 24259,
+      "sha256": "7a18c34f7b8f9f365b229a06e59f83f17487629d4d33e59bf3205abadf097663"
+    },
+    "facts.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "facts.stdout": {
+      "bytes": 18818,
+      "sha256": "da7fa2ff370f535a10c08ed2f7a97db6b3ca97036ca35e68dfdd3ba020dcd791"
+    },
+    "legacy-training-source-manifest-927a9455.json": {
+      "bytes": 112935,
+      "sha256": "927a94559103916de0eacfda382634d1fd8586e63cbc4336f78707f52c15fb03"
+    },
+    "step1-execution-day-scope-tests-20261029-v2.xml": {
+      "bytes": 4132,
+      "sha256": "ad26aa5933352db92a7761728a6414bab55ffe9cf5df26e4b49ab12ff2975341"
+    },
+    "step1-execution-day-scope-tests-20261029.xml": {
+      "bytes": 1379,
+      "sha256": "327e31858fa2a4617f97d25941f99614b693f7537ee71544060d2a3a7a489cdc"
+    },
+    "step1-scoped-final-exact-20261029-v5.xml": {
+      "bytes": 24783,
+      "sha256": "f6a23f4ede3b21477a7d11a1eaf2d5e9bc7ab2db4e08c87c4ba585da9816c694"
+    },
+    "step1-scoped-final-new-20261029-v6.xml": {
+      "bytes": 12883,
+      "sha256": "2cb8ae0cda7396be31d955bfdeecee69f83743fc828277f821b5c5ac4bbfca72"
+    },
+    "step1-scoped-final-with-original-regression-20261029.xml": {
+      "bytes": 23382,
+      "sha256": "63a8b3971bc1054f286dac008a5b7cba67a1578562f86a64821141d25bc364bb"
+    },
+    "step1-scoped-readonly-contracts-20261029-v1.xml": {
+      "bytes": 9552,
+      "sha256": "00871a0af2956a10119d499d98540779c8554d66d9aa2a0414024f82ed3615a5"
+    },
+    "step1-scoped-readonly-contracts-20261029-v3.xml": {
+      "bytes": 11144,
+      "sha256": "7120a24c4eb448fe1112609edeb30a963607f617e465264c06c85648da227804"
+    },
+    "step1-scoped-source-complete-20261029-v4.xml": {
+      "bytes": 12545,
+      "sha256": "c2d15726e7afec46d673b25c34d6d786622c5e3d256c3a0f5ebb8d2219b2e52b"
+    },
+    "step1-scoped-with-original-regression-20261029-v2.xml": {
+      "bytes": 21790,
+      "sha256": "e10d725117094f23aa81415c156ec68681880d756864539a38e2fd5088ccd851"
+    },
+    "test_execution_day_scope_audit.py": {
+      "bytes": 13531,
+      "sha256": "e2c2c9981eacd530abca136fc50dcb6af4257e26f8ddc60379c9c0787ae62b21"
+    },
+    "test_staged_revalidation_scope_audit.py": {
+      "bytes": 11828,
+      "sha256": "606e766f985f08efe6ba70246fd2e3dd738b7738591609dcd93b79fa185caf9d"
+    }
+  },
+  "jobs_submitted": false,
+  "model_activated": false,
+  "new_readers_deployed": false,
+  "old_auditors": {
+    "scripts/audit_qlib_candidate_transition.py": {
+      "matches_HEAD": true,
+      "sha256": "0a4d7c85933aa4f6e6a829d5a20265cf93f70d57462b13d42d2e863cadfcd878"
+    },
+    "scripts/audit_qlib_forward_transition.py": {
+      "matches_HEAD": true,
+      "sha256": "a7634c1cbb5987ebdaa90bda06319405d8b975cb743a745048afa126aa8215f4"
+    }
+  },
+  "paper_recovered": false,
+  "schema_version": "qtrade.step1-scoped-readonly-nonproduction-evidence.v1",
+  "sealed_at": "2026-10-28T16:44:10.686251+00:00",
+  "sources": {
+    "scripts/audit_qlib_execution_day_scope.py": "f1ffc80fdab0d45621bb8ff8a473e5c402e1b3c7c3d33ae4455a83811c3e2c5a",
+    "scripts/audit_qlib_staged_revalidation.py": "a33c3d172735f22daecb070b24921e87502461d967ea4cb7464cacca5ab3beee",
+    "tests/test_execution_day_scope_audit.py": "e2c2c9981eacd530abca136fc50dcb6af4257e26f8ddc60379c9c0787ae62b21",
+    "tests/test_staged_revalidation_scope_audit.py": "606e766f985f08efe6ba70246fd2e3dd738b7738591609dcd93b79fa185caf9d"
+  },
+  "state": "NONPRODUCTION_READERS_IMPLEMENTED_LOCAL_TESTS_PASSED_REAL_READER_AUDIT_PENDING",
+  "tests": {
+    "step1-execution-day-scope-tests-20261029-v2.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "25"
+    },
+    "step1-execution-day-scope-tests-20261029.xml": {
+      "errors": "1",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "1"
+    },
+    "step1-scoped-final-exact-20261029-v5.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "154"
+    },
+    "step1-scoped-final-new-20261029-v6.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "80"
+    },
+    "step1-scoped-final-with-original-regression-20261029.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "146"
+    },
+    "step1-scoped-readonly-contracts-20261029-v1.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "60"
+    },
+    "step1-scoped-readonly-contracts-20261029-v3.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "70"
+    },
+    "step1-scoped-source-complete-20261029-v4.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "78"
+    },
+    "step1-scoped-with-original-regression-20261029-v2.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "136"
+    }
+  },
+  "whole_step1_accepted": false
+}

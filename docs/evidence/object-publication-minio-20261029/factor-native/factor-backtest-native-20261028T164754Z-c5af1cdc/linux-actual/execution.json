@@ -1,0 +1,17 @@
+{
+  "base_git_revision": "f59cc8923bfc247009d2c92f391231bc92333571",
+  "elapsed_seconds": 2.127309063449502,
+  "error_class": null,
+  "network_queue_or_real_dataset_used": false,
+  "original_registry_or_report_written": false,
+  "overlay_sha256": {
+    "scripts/run_factor_strategy_backtest.py": "b6902a2a13f3e13dae1998d7fe0d68d3bc054d0a5943aedf03ee2ccdc2d1a907",
+    "src/qtrade/research/factor_strategy_backtest.py": "8864f939e86ea2d031b93617a9621aba5f43ad54da5caeff801e0f16fbe492a8",
+    "tests/test_factor_strategy_backtest.py": "e484eff0374a65b93acc4e0fe0e666218dacf7d660f2679fb0044615c0287d5f"
+  },
+  "qlib_origin": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/qlib/__init__.py",
+  "qlib_version": "0.9.7",
+  "returncode": 1,
+  "selected_git_plus_overlays_not_pure_git": true,
+  "source_before_after_equal": true
+}

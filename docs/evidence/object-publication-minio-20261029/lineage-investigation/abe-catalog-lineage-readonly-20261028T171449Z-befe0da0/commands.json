@@ -1,0 +1,44 @@
+[
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "gc.auto=0",
+      "-c",
+      "maintenance.auto=false",
+      "--no-optional-locks",
+      "log",
+      "-1",
+      "--format=%H",
+      "abe2986c"
+    ],
+    "returncode": 0,
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 41,
+    "stdout_sha256": "93fb80ffa97aaf2be5ec90b98ab9d09fba3e21e6804426d027af89b0d70403d3"
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "gc.auto=0",
+      "-c",
+      "maintenance.auto=false",
+      "--no-optional-locks",
+      "ls-tree",
+      "-r",
+      "--name-only",
+      "abe2986cd6e3f3faeb4984454498e4c67f1646d3"
+    ],
+    "returncode": 0,
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 7282831,
+    "stdout_sha256": "081ca4cc07f42066eadce09c0ee308e79e3229fc6f28ce6e3322cffbfc60efc4"
+  }
+]

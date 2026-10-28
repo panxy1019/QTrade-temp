@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "<stdin>", line 9, in <module>
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/fba51aade2ee2410dda087e95cf054e53375ed3a/scripts/publish_research_snapshot.py", line 23, in <module>
+    from scripts.atomic_json import write_json_atomic
+ModuleNotFoundError: No module named 'scripts'

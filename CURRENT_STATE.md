@@ -1,5 +1,53 @@
 # Current state
 
+## Local S3 checkpoint: 2026-10-29 01:16 Shanghai
+
+01:21 supplement: independent bounded readonly search verifies index master38f5
+versus catalogc4ed, both self-checksums valid and same1500 identities. Neither
+of two explicitly fixed20-change Git windows supplies a matching original;
+public root has no history folder. This is not an exhaustive history claim.
+Full MinIO bundle remains correctly blocked; next capture coherent producer
+inputs in a new generation without changing the original abe package.
+
+- User explicitly selects local MinIO before a cloud account. Pinned official
+  source builds in an isolated cluster directory; module verification passes.
+  Loopback-only real S3 tests pass7 protocol cases, including conditional writes,
+  competing writers, ACK-loss reconciliation, old-head retention and corruption
+  rejection. Both actual test servers stop successfully; no production service.
+- Full abe frozen bundle is correctly rejected by the new core on index/catalog
+  master lineage mismatch, before its full upload. Preserve this failure and the
+  earlier import-origin rejection. Investigate matching original inputs; never
+  re-sign data or weaken the contract to get a pass. Fullload/performance pending.
+- Core d11c and SDK d266 pass86 Linux/0skip, exact463-file selected source with
+  5 declared overlays. Independent combined112/0skip closes original manifest-ID
+  and SDK-discovery/logging defects; original sources/failures remain archived.
+- Approved single180 Git cold send timed out, outcome UNCERTAIN; no replay.
+  Actual01:08 public GET still5a09/STALE_PUBLICATION, productionwebae33. Local
+  MinIO is not public delivery, R2/ACL/TLS acceptance or45/90 performance proof.
+- STEP2 native adapter Linux33/0skip uses actualQlib0.9.7, synthetic execution
+  cases; real891 run/worker/UI wiring remain. New STEP1 scope readers80 local
+  tests; actual later Ridge proof absent and full cluster reader gates pending.
+- LIVEfalse/rollingOFF and existing production owners/ledgers preserved. No
+  recovery/activation, cloud purchase or automation resume. Detailed results:
+  docs/OBJECT_PUBLICATION_MINIO_20261029.md; fullSTEP1 remainsopen.
+
+## Approved execution checkpoint: 2026-10-29 00:15 Shanghai
+
+- User explicitly approves the reviewed next-stage plan and continued execution,
+  including its single180 cold-delivery experiment. Real00:13 directreadonly
+  advertisement still5a0925f4; exact738c/9a459c19 owner/space/absence checks
+  pass, newcreate-only/fsynced authority54dc6a9f created00:15. Onecoldsend is
+  running; no outcome or publicfreshness acceptance yet. Oldclaim remains intact.
+  A preliminary desktop authorizer syntaxfailure executed no remotestatement;
+  originalstderr/source retained before a raw-program quoting fix. No resend.
+- Parallel authorized nonproduction work: immutable object-publication protocol
+  using currentvalidators; separate execution-day/current-readiness andlegacy
+  candidate audits; existingfactor score→Qlibportfolio backtestadapter. Reuse
+  currentcomponents, preserve oldcontracts andsource versions. Cloudstore actual
+  account/connection andbrowser gates remain; noaccount created orservice bought.
+- LIVEfalse/rollingOFF, existingACTIVE/ledgers/recoveryclaims untouched; noowner
+  restart. Automation remainsPAUSED; this resumed scope is human-triggered.
+
 ## Prepared cold exception checkpoint: 2026-10-28 23:00 Shanghai
 
 - Final cold operator738c fixes independent-review unbounded cleanup wait in

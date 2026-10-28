@@ -1,0 +1,1 @@
+{"local_head": "2b37ebba62cb926ad38eeaff4746cf3e784763f3", "returncode": 0, "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "stderr_bytes": 0, "argv": ["git", "-c", "core.hooksPath=/dev/null", "-c", "gc.auto=0", "-c", "maintenance.auto=false", "--no-optional-locks", "log", "-1", "--format=%H", "HEAD"], "readonly": true}

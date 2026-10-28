@@ -1,0 +1,10 @@
+{
+  "node_id": "MDM6UmVmMjkyNjE0NzM6cmVmcy90YWdzL1JFTEVBU0UuMjAyNS0wOS0wN1QxNi0xMy0wOVo=",
+  "object": {
+    "sha": "01ce918d8279a20e4706b96a64396146894adee4",
+    "type": "tag",
+    "url": "https://api.github.com/repos/minio/minio/git/tags/01ce918d8279a20e4706b96a64396146894adee4"
+  },
+  "ref": "refs/tags/RELEASE.2025-09-07T16-13-09Z",
+  "url": "https://api.github.com/repos/minio/minio/git/refs/tags/RELEASE.2025-09-07T16-13-09Z"
+}

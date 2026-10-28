@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/bin/python3.11",
+    "-P",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp",
+    "/root/qtrade-local/operator-evidence/factor-backtest-native-20261028T164408Z-7923ce9a/pytest-work",
+    "--junitxml=/root/qtrade-local/operator-evidence/factor-backtest-native-20261028T164408Z-7923ce9a/evidence/linux-results.xml",
+    "/root/qtrade-local/operator-evidence/factor-backtest-native-20261028T164408Z-7923ce9a/source/tests/test_factor_strategy_backtest.py"
+  ],
+  "cleanup_source_sha256": "eed5960ee4aa35135cddbff04235e500c4c8209464d3b14745a5a52afc585918",
+  "pgid": 707847,
+  "pid": 707847,
+  "start_ticks": "1023799435",
+  "timeout_seconds": 240
+}

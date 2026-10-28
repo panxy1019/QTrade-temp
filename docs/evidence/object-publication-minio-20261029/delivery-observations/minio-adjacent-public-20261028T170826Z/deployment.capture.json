@@ -1,0 +1,12 @@
+{
+  "body_bytes": 239,
+  "body_sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72",
+  "body_utf8": "{\"classification\":\"PUBLIC_BUILD_PROVENANCE\",\"provider\":\"VERCEL\",\"status\":\"AVAILABLE\",\"target_environment\":\"production\",\"git_commit_sha\":\"ae33a7c8c27ea721eb3be1e4430b562a44b67f91\",\"git_commit_ref\":\"main\",\"external_order_transmission\":false}",
+  "cache_control": "public, max-age=15",
+  "content_type": "application/json",
+  "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+  "received_at": "2026-10-28T17:08:31.173339+00:00",
+  "requested_at": "2026-10-28T17:08:26.403739+00:00",
+  "status_code": 200,
+  "url": "https://q-trade-temp.vercel.app/api/deployment"
+}

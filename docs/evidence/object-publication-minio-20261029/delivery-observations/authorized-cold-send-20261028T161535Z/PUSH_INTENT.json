@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-28T16:15:44.635326+00:00",
+  "expected_remote_main": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+  "force_push": false,
+  "legacy_uncertain_claims": {
+    "attempt_root": "/root/qtrade-local/operator-evidence/publication-relay-cold-20261028T130000Z",
+    "intent_sha256": "e890b57749ef3cf849ec317acab2b83febb437968c948df0d2df8fcc4107429f",
+    "old_claims_modified": false,
+    "old_target_commit": "dde33b30a54d46beb0197a80ddbcb35afb5830da",
+    "old_target_plan_sha256": "f33c80814b18cc6e77150535b68b93e6525a1ccdadfaa0bd021707d4cc87416a",
+    "uncertain_sha256": "1ad55b8098aba6f1532191373d818b9615b453fb30f94ae7bad77f9210a75859"
+  },
+  "no_retry_on_uncertain": true,
+  "one_shot_cold_push_seconds": 180,
+  "operator_sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa",
+  "ordinary_export_budget_seconds": 45,
+  "ordinary_git_budget_seconds": 90,
+  "schema_version": "qtrade.one-shot-direct-cold-intent.v1",
+  "target_commit": "abe2986cd6e3f3faeb4984454498e4c67f1646d3",
+  "target_plan_sha256": "9a459c194021e6cadc1cec8dd09ecb8f7e86d8c5cab81d972a1108e7edbf4fb8",
+  "transport": "DIRECT_SSH",
+  "user_authorization_sha256": "54dc6a9fb71fa203c6fece692c070f1daf4cf3ce7c3b884acb1a37b2590d9b95"
+}

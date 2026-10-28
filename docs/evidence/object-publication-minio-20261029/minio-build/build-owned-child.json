@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/root/qtrade-local/operator-evidence/minio-protocol-20261029T163700Z/build-mirror-20261028T165956Z-f5217074/go/bin/go",
+    "build",
+    "-p",
+    "4",
+    "-trimpath",
+    "-buildvcs=false",
+    "-o",
+    "/root/qtrade-local/operator-evidence/minio-protocol-20261029T163700Z/build-mirror-20261028T165956Z-f5217074/minio",
+    "."
+  ],
+  "budget_seconds": 600,
+  "cleanup_source_sha256": "eed5960ee4aa35135cddbff04235e500c4c8209464d3b14745a5a52afc585918",
+  "pgid": 710926,
+  "pid": 710926,
+  "start_ticks": "1023883927"
+}

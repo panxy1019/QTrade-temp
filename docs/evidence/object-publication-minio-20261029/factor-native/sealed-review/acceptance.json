@@ -1,0 +1,106 @@
+{
+  "backend_double_runner_tests": 1,
+  "base_git_revision": "f59cc8923bfc247009d2c92f391231bc92333571",
+  "created_at": "2026-10-28T16:52:46.169238+00:00",
+  "existing_registration_rewritten": false,
+  "known_warnings": [
+    "MLFLOW_PYDANTIC_DEPRECATION_2",
+    "QLIB_MEAN_EMPTY_SLICE_2_ALL_REPORT_FINITE_CHECKS_PASSED"
+  ],
+  "live_trading_enabled": false,
+  "native_tests": 2,
+  "network_queue_or_real_891_data_used": false,
+  "overlay_sha256": {
+    "scripts/run_factor_strategy_backtest.py": "b6902a2a13f3e13dae1998d7fe0d68d3bc054d0a5943aedf03ee2ccdc2d1a907",
+    "src/qtrade/research/factor_strategy_backtest.py": "8864f939e86ea2d031b93617a9621aba5f43ad54da5caeff801e0f16fbe492a8",
+    "tests/test_factor_strategy_backtest.py": "e484eff0374a65b93acc4e0fe0e666218dacf7d660f2679fb0044615c0287d5f"
+  },
+  "pending": [
+    "INDEPENDENT_REVIEW",
+    "EXPLICIT_REAL_READY_REGISTERED_ARTIFACT_BACKTEST_AUTHORIZATION",
+    "SHARED_WORKER_API_SOURCE_COMPATIBILITY_POLICY"
+  ],
+  "prerequisite_failures_preserved": [
+    "factor-backtest-native-20261028T164408Z-7923ce9a",
+    "factor-backtest-native-20261028T164754Z-c5af1cdc"
+  ],
+  "production_changes": false,
+  "real_native_outputs_validated_in_memory_not_separately_exported": true,
+  "selected_source_file_count": 461,
+  "source_provenance": "EXACT_SELECTED_GIT_SRC_SCRIPTS_CONFIGS_TESTS_PLUS_EXPLICIT_THREE_UNCOMMITTED_OVERLAYS",
+  "state": "NATIVE_SYNTHETIC_FIXTURE_ACCEPTED_NOT_REAL_891_BACKTEST",
+  "test_results": [
+    {
+      "errors": "5",
+      "failures": "0",
+      "hostname": "DESKTOP-F1JPIV2",
+      "name": "pytest",
+      "path": "windows-admission.xml",
+      "sha256": "20db850fb545aae398717cb6228bd2d3c521c4d6fa3334cde7d57ab9b6e76aee",
+      "skipped": "3",
+      "tests": "33",
+      "time": "14.274",
+      "timestamp": "2026-10-29T00:35:15.958249+08:00"
+    },
+    {
+      "errors": "0",
+      "failures": "0",
+      "hostname": "DESKTOP-F1JPIV2",
+      "name": "pytest",
+      "path": "windows-clock-fixtures.xml",
+      "sha256": "9a36fc28d1ce6fe4083abb82db93fd6b1f28f8021c035cd107aceb8fc737ba3c",
+      "skipped": "3",
+      "tests": "28",
+      "time": "11.845",
+      "timestamp": "2026-10-29T00:31:10.951429+08:00"
+    },
+    {
+      "errors": "1",
+      "failures": "0",
+      "hostname": "DESKTOP-F1JPIV2",
+      "name": "pytest",
+      "path": "windows-initial.xml",
+      "sha256": "9a0560f9cef664f8662f916de28b1cf61dfec2e61a28a2f2642683259a2394df",
+      "skipped": "0",
+      "tests": "1",
+      "time": "0.694",
+      "timestamp": "2026-10-29T00:29:01.153419+08:00"
+    },
+    {
+      "errors": "0",
+      "failures": "0",
+      "hostname": "DESKTOP-F1JPIV2",
+      "name": "pytest",
+      "path": "windows-short-path.xml",
+      "sha256": "0f307caa2386a1d4397b7d15f03d34d516529a05dc76dedadcb449b146a1c901",
+      "skipped": "3",
+      "tests": "33",
+      "time": "11.258",
+      "timestamp": "2026-10-29T00:37:08.682013+08:00"
+    },
+    {
+      "errors": "0",
+      "failures": "4",
+      "hostname": "DESKTOP-F1JPIV2",
+      "name": "pytest",
+      "path": "windows-source-path.xml",
+      "sha256": "0a15e7c708fb7d3aabc210d08cb2e18ace7c1053881cb7d515082c8805ffb537",
+      "skipped": "3",
+      "tests": "28",
+      "time": "10.051",
+      "timestamp": "2026-10-29T00:29:15.421373+08:00"
+    },
+    {
+      "errors": "0",
+      "failures": "0",
+      "hostname": "73ec830048ca",
+      "name": "pytest",
+      "path": "factor-backtest-native-20261028T164928Z-3defc87d/linux-actual/linux-results.xml",
+      "sha256": "2c7e52f45313bd832643b729b1f50abb23c201f28c30b3d8ac270696affe23ce",
+      "skipped": "0",
+      "tests": "33",
+      "time": "20.015",
+      "timestamp": "2026-10-29T00:50:13.212004+08:00"
+    }
+  ]
+}

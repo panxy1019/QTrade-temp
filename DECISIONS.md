@@ -1,5 +1,41 @@
 # Architecture decisions
 
+## ADR-208 — Verify S3 locally before independent cloud/public acceptance
+
+Status: user explicitly chooses MinIO-first nonproduction protocol verification;
+real7 local S3 cases pass, frozen full bundle fails lineage admission. No cloud
+account, production object-store route or publication performance acceptance.
+
+Reuse existing strict index/catalog/quality/shard validators and atomic immutable
+JSON writer. Content-address immutable objects and manifest; use conditional
+create for the first latest pointer and parent ETag CAS for successors. ETags
+are opaque, not hashes. Persist fsynced create-only intent/receipts; unknown CAS
+never silently replays. Separate independent full audits from future measured
+incremental optimization. Current prototype repeats full GETs and safely stalls
+on unknown immutable upload+404; neither limit is a production-ready SLA claim.
+
+The public reconcile entry must bind manifest SHA/ID/source/clock/parent and the
+actual committed manifest, not only a matching head. Original d362 failed an
+independent counterexample; d11c closes it. Preserve old source/XML. Optional
+boto3/botocore1.43.120 factory uses explicit R2 HTTPS origin/credentials, isolated
+SDK configuration/models/plugins, one wire attempt and sanitized errors. DEBUG
+guards are steady-state checks, not protection from malicious same-process code.
+
+A local MinIO seam uses a separate MINIO_NONPRODUCTION scope and owned loopback
+service. Do not weaken the production R2 factory to accept localhost or HTTP.
+Random fixture credentials are memory-only; no banners/config/credentials enter
+evidence. Parent process-group cleanup includes the child server, and stopped
+server/clean clients are required for a pass. Root fixture tests do not certify
+least privilege, WORM, external deletion protection, R2 behavior or TLS.
+
+Refuse an index/catalog master mismatch in a frozen source bundle. Locate real
+matching original documents or create a newly sourced coherent generation; do
+not rewrite old hashes or clocks. Git source IDs are separate from object
+publication SHA256 IDs. Caller provenance must bind actual source bytes, not
+only a plausible Git40 string. Original failed Git180 delivery remains immutable
+and separate from local MinIO success. Existing LIVE/rolling/model/ledger and
+45/512/cache128/Git90 contracts remain unchanged.
+
 ## ADR-207 — Persist replay receipts and commit complete materialized generations
 
 Status: user authorizes A/B/C at2026-10-28 17:34; isolated candidate only, production
@@ -4494,3 +4530,21 @@ LS is not across-transactionCAS; knownhost bytes rechecked are not anOSlock.
 Writing100% is notACK; ACKneeds independentremote/public reconciliation andat
 least3naturalordinary45/90rounds beforecontinuousrecoveryacceptance. Actual
 22:54 publicstillstale; fullSTEP1 andproductionSTEP2 remainunaccepted.
+
+### Reviewed plan explicitly approved — 2026-10-29 00:15 Shanghai
+
+Human user says “审阅完成，同意按照方案执行，请你继续推进” after the reviewed
+plan including P0-2 single180 experiment. Treat this as authorization of that
+specific prepared plan, not an unlimited timeout or retry policy. Freshactual
+remote5a09, fixed738c/9a459c19 andoriginalowner/space/claim checks precede new
+create-only/fsynced54dc authority; never replace oldUNCERTAIN orreuse it. Keep
+the preliminary authorizer syntaxfailure as failure; it ran no remotestatement
+and created noauthority/intent. The singlecoldsend requires actualresult and
+independent publicandordinary-cycle verification before anyrecoveryclaim.
+
+Approvedparallel work stays nonproduction for objectstoretransport andfactor
+portfolioexecution. New independentSTEP1 audits must separate execution-day
+frozenadmission from postclose-currentreadiness andlegacy revalidation from a
+newmodel lifecycle. Preserve originalauditor/output and all immutablehistory.
+Cloudaccount availability is unresolved; no fictitious realR2 result orautomatic
+accountpurchase. ExistingLIVE/rolling/ACTIVE/PAPER/owner constraints remain.

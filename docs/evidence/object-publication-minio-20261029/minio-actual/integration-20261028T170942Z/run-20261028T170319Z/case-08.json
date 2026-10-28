@@ -1,0 +1,6 @@
+{
+  "case": "actual_frozen_3000_entry_5987_shard_two_generations",
+  "error_class": "ValueError",
+  "seconds": 0.00871439278125763,
+  "state": "FAILED"
+}

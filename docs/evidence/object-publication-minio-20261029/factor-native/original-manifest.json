@@ -1,0 +1,292 @@
+{
+  "files": {
+    "factor-backtest-native-20261028T164408Z-7923ce9a/dispatch.json": {
+      "bytes": 149,
+      "sha256": "d0c4831cb235904ef63d949a20064aa74766e3cbcc82ec7329e9daf2565eef5d"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/driver-result.json": {
+      "bytes": 325,
+      "sha256": "557d3a61dc9cbaa26be51f0495a914dd077a561f39ae6c61a50fa32a5a391749"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/driver.stderr": {
+      "bytes": 570,
+      "sha256": "419c84de8e5d118d154bd17627b4a30a24c77a5e17408f507a498d88e836b007"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/driver.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/linux-actual/after.json": {
+      "bytes": 51179,
+      "sha256": "d16adc2a378b094db4d6e2ef83bad842b6a5f2bfc42ce5ae107fc47b1e8068ed"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/linux-actual/before.json": {
+      "bytes": 51179,
+      "sha256": "d697439d888cb994cf46363c1002576274a97b3fb8c2df93f5a2fd997796789a"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/linux-actual/execution.json": {
+      "bytes": 873,
+      "sha256": "542d081bd40b3456d18f3eb8ad5848bdca25e470c72d3774d84fe21e9f2079a9"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/linux-actual/owned-child.json": {
+      "bytes": 775,
+      "sha256": "b3335cb773017a87eb31b82562d4f7378fe340e60c51b511aa879bd51470e0a0"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/linux-actual/stderr.txt": {
+      "bytes": 105,
+      "sha256": "21e3e031fdbfab23c5a7922ccfa1b83ab9807685eb36053ca250ef57e6a3ad6a"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/linux-actual/stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/linux_native_driver.py": {
+      "bytes": 5316,
+      "sha256": "3cc7014ee57ef0333b1226efd3735f3fd44798e88a44996e1caa9ab498c1524a"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/overlay.tar": {
+      "bytes": 61440,
+      "sha256": "3490d9b2cb2881e832e64aba323e766114e82a15fc4d8286f5edef8d0fadcc87"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/package-manifest.json": {
+      "bytes": 51638,
+      "sha256": "86e035691cb4c0689b993f3ad1359a89cb455ca738022bfc43e7c195b906913b"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/run_linux_native.py": {
+      "bytes": 5304,
+      "sha256": "7ec7d5c2814e6602a8595924698d9a108acbb6a3c75f6a7bebf1c4b1b6941c86"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/source.tar": {
+      "bytes": 5550080,
+      "sha256": "991824c182bc4dc3e7791b5d9587da905eb370a0e0104f6e42a72587a8b68d90"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/stage.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164408Z-7923ce9a/stage.stdout": {
+      "bytes": 73,
+      "sha256": "0252995e5c306eec1204dcbc97eed50965a984d5e3b27eca96c43e010e67f8f7"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/dispatch.json": {
+      "bytes": 149,
+      "sha256": "6a468164b6b4acd0d3c6fb47d4a731751f3af0caa98b1f06086cbac32965295f"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/driver-result.json": {
+      "bytes": 325,
+      "sha256": "c978e71017cb40dae02e9d11c7bad17c8ec5ad4ca1e7c8726299660ddf8d411a"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/driver.stderr": {
+      "bytes": 578,
+      "sha256": "13b6dac5ef138b2c2b77d2da2aa094019fc9ca4275b114ea2bb099e21480d69b"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/driver.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/linux-actual/after.json": {
+      "bytes": 51179,
+      "sha256": "eb75959e68fe8909ace3dd3a199da48cbacfa4fddc8160fd61f6a56eaac65736"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/linux-actual/before.json": {
+      "bytes": 51179,
+      "sha256": "a1a7d4a9213204e01fe318ccfb88694dfa06ff7d3b36fe9f6e65c1f564193c69"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/linux-actual/execution.json": {
+      "bytes": 872,
+      "sha256": "38dfbeaaa23041e1707218286600994a6aac9103f8077ecfc22f549900588524"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/linux-actual/owned-child.json": {
+      "bytes": 775,
+      "sha256": "8918d51b197461949c6fdd25891be27d9f6dd6e996c16789dd4bb0ec529c1bb6"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/linux-actual/stderr.txt": {
+      "bytes": 1378,
+      "sha256": "ab98982a7e25798271b51d976ead2d66b501d38fb81ac7197c8e85d21c376558"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/linux-actual/stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/linux-actual/test-vendor-manifest.json": {
+      "bytes": 14716,
+      "sha256": "0ff51ce2b3391894d49209b2dd19e1514a11b97ac560be0fb752d8cfb0b3f0ba"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/linux_native_driver_v2.py": {
+      "bytes": 6594,
+      "sha256": "c14c8a9270d6bbd39bc7a6150bee10696631bfb58c1ede6c3db543fafd0f417d"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/overlay.tar": {
+      "bytes": 61440,
+      "sha256": "3490d9b2cb2881e832e64aba323e766114e82a15fc4d8286f5edef8d0fadcc87"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/package-manifest.json": {
+      "bytes": 51638,
+      "sha256": "86e035691cb4c0689b993f3ad1359a89cb455ca738022bfc43e7c195b906913b"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/run_linux_native_v2.py": {
+      "bytes": 5310,
+      "sha256": "4772fc82ab5549642ee9fee1c1f6b32854347f17811644e143b77163ffa4a908"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/source.tar": {
+      "bytes": 5550080,
+      "sha256": "991824c182bc4dc3e7791b5d9587da905eb370a0e0104f6e42a72587a8b68d90"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/stage.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164754Z-c5af1cdc/stage.stdout": {
+      "bytes": 73,
+      "sha256": "0252995e5c306eec1204dcbc97eed50965a984d5e3b27eca96c43e010e67f8f7"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/dispatch.json": {
+      "bytes": 149,
+      "sha256": "2c484049414fde02fcead51206c808d13449901d580c3ef427decb64d549881a"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/driver-result.json": {
+      "bytes": 325,
+      "sha256": "d8dc9b1f9f0ab48af8127a0900ede8f33f784b882ab771a390456540044cad82"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/driver.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/driver.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/linux-actual/after.json": {
+      "bytes": 51179,
+      "sha256": "8444a6c65e8d6dfef974908f10be78330c309e36db20ee03c0ec3606516b4f83"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/linux-actual/before.json": {
+      "bytes": 51179,
+      "sha256": "57dec9f8c6a3bc4e5d45ce4f94fe2521e0c02af1911cf5950c6bb078101ee6c9"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/linux-actual/execution.json": {
+      "bytes": 873,
+      "sha256": "4797bfb9a9e8c766e4d31273f5495737f12cf2977ef88dd31504efa826dd74a4"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/linux-actual/linux-results.xml": {
+      "bytes": 5582,
+      "sha256": "2c7e52f45313bd832643b729b1f50abb23c201f28c30b3d8ac270696affe23ce"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/linux-actual/owned-child.json": {
+      "bytes": 775,
+      "sha256": "118ab9482c57a6929f828aea21f4a0a52ce6317d62cc054d47f32f9d70039d7e"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/linux-actual/stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/linux-actual/stdout.txt": {
+      "bytes": 1837,
+      "sha256": "01cab46483d7bf1d0ca6f4d76298862942dcaf2cafee90e45f2c38c7ae2728f9"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/linux-actual/test-vendor-manifest.json": {
+      "bytes": 14854,
+      "sha256": "39f2c2b674a5f529605c7dad72d40410af038271a93e8043b0332962096bc576"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/linux_native_driver_v3.py": {
+      "bytes": 6934,
+      "sha256": "6acec24316e4aee84228a047791900e9195cba80c915b506d5835ce65662caa1"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/overlay.tar": {
+      "bytes": 61440,
+      "sha256": "3490d9b2cb2881e832e64aba323e766114e82a15fc4d8286f5edef8d0fadcc87"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/package-manifest.json": {
+      "bytes": 51638,
+      "sha256": "86e035691cb4c0689b993f3ad1359a89cb455ca738022bfc43e7c195b906913b"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/run_linux_native_v3.py": {
+      "bytes": 5310,
+      "sha256": "da59a22ec298b2312f6cc04d55724e2ce86ace9dd8d889d5246dd4222b619539"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/source.tar": {
+      "bytes": 5550080,
+      "sha256": "991824c182bc4dc3e7791b5d9587da905eb370a0e0104f6e42a72587a8b68d90"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/stage.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-backtest-native-20261028T164928Z-3defc87d/stage.stdout": {
+      "bytes": 73,
+      "sha256": "0252995e5c306eec1204dcbc97eed50965a984d5e3b27eca96c43e010e67f8f7"
+    },
+    "linux_native_driver.py": {
+      "bytes": 5316,
+      "sha256": "3cc7014ee57ef0333b1226efd3735f3fd44798e88a44996e1caa9ab498c1524a"
+    },
+    "linux_native_driver_v2.py": {
+      "bytes": 6594,
+      "sha256": "c14c8a9270d6bbd39bc7a6150bee10696631bfb58c1ede6c3db543fafd0f417d"
+    },
+    "linux_native_driver_v3.py": {
+      "bytes": 6934,
+      "sha256": "6acec24316e4aee84228a047791900e9195cba80c915b506d5835ce65662caa1"
+    },
+    "run_linux_native.py": {
+      "bytes": 5304,
+      "sha256": "7ec7d5c2814e6602a8595924698d9a108acbb6a3c75f6a7bebf1c4b1b6941c86"
+    },
+    "run_linux_native_v2.py": {
+      "bytes": 5310,
+      "sha256": "4772fc82ab5549642ee9fee1c1f6b32854347f17811644e143b77163ffa4a908"
+    },
+    "run_linux_native_v3.py": {
+      "bytes": 5310,
+      "sha256": "da59a22ec298b2312f6cc04d55724e2ce86ace9dd8d889d5246dd4222b619539"
+    },
+    "sealed-review/README.md": {
+      "bytes": 9136,
+      "sha256": "1cd70df104674b424cd69bc8db1047c22738c84cd253ab9ae04bd4334b5ad0ff"
+    },
+    "sealed-review/acceptance.json": {
+      "bytes": 3711,
+      "sha256": "dedc05590e4e41ab9120fc16dc0bbd9ee3fc65d8da91e28f70bd049db90cef76"
+    },
+    "sealed-review/candidate-source/scripts/run_factor_strategy_backtest.py": {
+      "bytes": 18904,
+      "sha256": "b6902a2a13f3e13dae1998d7fe0d68d3bc054d0a5943aedf03ee2ccdc2d1a907"
+    },
+    "sealed-review/candidate-source/src/qtrade/research/factor_strategy_backtest.py": {
+      "bytes": 16068,
+      "sha256": "8864f939e86ea2d031b93617a9621aba5f43ad54da5caeff801e0f16fbe492a8"
+    },
+    "sealed-review/candidate-source/tests/test_factor_strategy_backtest.py": {
+      "bytes": 18177,
+      "sha256": "e484eff0374a65b93acc4e0fe0e666218dacf7d660f2679fb0044615c0287d5f"
+    },
+    "sealed-review/static-checks.json": {
+      "bytes": 727,
+      "sha256": "bbe0fa9b1f762846f110e7f8ef50c103d2ddc8b5205877224d427f6c12b6d67c"
+    },
+    "windows-admission.xml": {
+      "bytes": 43833,
+      "sha256": "20db850fb545aae398717cb6228bd2d3c521c4d6fa3334cde7d57ab9b6e76aee"
+    },
+    "windows-clock-fixtures.xml": {
+      "bytes": 5237,
+      "sha256": "9a36fc28d1ce6fe4083abb82db93fd6b1f28f8021c035cd107aceb8fc737ba3c"
+    },
+    "windows-initial.xml": {
+      "bytes": 1562,
+      "sha256": "9a0560f9cef664f8662f916de28b1cf61dfec2e61a28a2f2642683259a2394df"
+    },
+    "windows-short-path.xml": {
+      "bytes": 5988,
+      "sha256": "0f307caa2386a1d4397b7d15f03d34d516529a05dc76dedadcb449b146a1c901"
+    },
+    "windows-source-path.xml": {
+      "bytes": 10089,
+      "sha256": "0a15e7c708fb7d3aabc210d08cb2e18ace7c1053881cb7d515082c8805ffb537"
+    }
+  },
+  "production_changed": false,
+  "real_891_backtest_run": false,
+  "schema_version": "qtrade.factor-backtest-native-acceptance-manifest.v1",
+  "scope": "STATIC_EVIDENCE_ONLY_DYNAMIC_PYTEST_WORK_EXCLUDED"
+}

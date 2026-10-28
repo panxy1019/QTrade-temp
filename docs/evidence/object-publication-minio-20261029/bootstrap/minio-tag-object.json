@@ -1,0 +1,24 @@
+{
+  "message": "Release version RELEASE.2025-09-07T16-13-09Z\n-----BEGIN PGP SIGNATURE-----\n\niQJFBAABCAAvFiEERAXz8N26G55oox0lEsdDkPmqxygFAmi9yKIRHHRydXN0ZWRA\nbWluaW8uaW8ACgkQEsdDkPmqxyi4Lg//elPLvA3iR2XUZto3TCABLulc+GZ6Mile\nNnLoJ5DN0LMAsxigw6u4XluAHlXcmPas9grCGQ0Q5zlEdH/CeM2bujXAX9v7R8Ce\nk1ow9raFxj+b5miYgyK8U02lzmZEl6THuhUn09bMDV1GeU4g2myGRGndjDnW0X9X\n7cFCeDOJW6ArxRttJ537OobcBzIhCSpFrVw413Du5NVzJ8g8r+10D4/MnaO4FN/K\n6f+AmSiMglEAYK4rHEZahVGSLNDIQ7aPabpIoy0bJ0oSrwbPFM7vMvVgvOvYaCAV\nti1Bmh0pNG8ye2LV4SV0UMHCRYgtSqicHqcY+bxmk/gfDWlCXtQQdnZGvx9+1kF5\nwaV5LizGlk96zNdO7ylK9DUoZgtiF9B0SE64jm6UkkWVMh8xR7ZIAxH8LayV8WuN\nZdH+QvzaVpeAB+ltDwuTfD01StG/MXZ3756Xq1+0IB77wOam8HxMV6qHD/J0d0Hb\ng+pRpdNUKwpqaQaiAcOWxRhFQd+FRLtRCqFS3gKvx4OrFMyCgHGFx9TmYVhM6jry\n1McHdNZezJrUvpLhM39Tae+tz0ChtOfC85fY6iPSRNKMd23lumOB7XGVexWI6QXc\nQPwNgWTmBa4pxhoP/DfZTfc/vatfmqLN8G46Wpw/TfhZTv0MBwDAGpYYTsDMQSHD\nV2LV3UdmtOY=\n=H9A6\n-----END PGP SIGNATURE-----\n",
+  "node_id": "TA_kwDOAb5-odoAKDAxY2U5MThkODI3OWEyMGU0NzA2Yjk2YTY0Mzk2MTQ2ODk0YWRlZTQ",
+  "object": {
+    "sha": "07c3a429bfed433e49018cb0f78a52145d4bedeb",
+    "type": "commit",
+    "url": "https://api.github.com/repos/minio/minio/git/commits/07c3a429bfed433e49018cb0f78a52145d4bedeb"
+  },
+  "sha": "01ce918d8279a20e4706b96a64396146894adee4",
+  "tag": "RELEASE.2025-09-07T16-13-09Z",
+  "tagger": {
+    "date": "2025-09-07T18:02:10Z",
+    "email": "trusted@minio.io",
+    "name": "Minio Trusted"
+  },
+  "url": "https://api.github.com/repos/minio/minio/git/tags/01ce918d8279a20e4706b96a64396146894adee4",
+  "verification": {
+    "payload": "object 07c3a429bfed433e49018cb0f78a52145d4bedeb\ntype commit\ntag RELEASE.2025-09-07T16-13-09Z\ntagger Minio Trusted <trusted@minio.io> 1757268130 +0000\n\nRelease version RELEASE.2025-09-07T16-13-09Z\n",
+    "reason": "valid",
+    "signature": "-----BEGIN PGP SIGNATURE-----\n\niQJFBAABCAAvFiEERAXz8N26G55oox0lEsdDkPmqxygFAmi9yKIRHHRydXN0ZWRA\nbWluaW8uaW8ACgkQEsdDkPmqxyi4Lg//elPLvA3iR2XUZto3TCABLulc+GZ6Mile\nNnLoJ5DN0LMAsxigw6u4XluAHlXcmPas9grCGQ0Q5zlEdH/CeM2bujXAX9v7R8Ce\nk1ow9raFxj+b5miYgyK8U02lzmZEl6THuhUn09bMDV1GeU4g2myGRGndjDnW0X9X\n7cFCeDOJW6ArxRttJ537OobcBzIhCSpFrVw413Du5NVzJ8g8r+10D4/MnaO4FN/K\n6f+AmSiMglEAYK4rHEZahVGSLNDIQ7aPabpIoy0bJ0oSrwbPFM7vMvVgvOvYaCAV\nti1Bmh0pNG8ye2LV4SV0UMHCRYgtSqicHqcY+bxmk/gfDWlCXtQQdnZGvx9+1kF5\nwaV5LizGlk96zNdO7ylK9DUoZgtiF9B0SE64jm6UkkWVMh8xR7ZIAxH8LayV8WuN\nZdH+QvzaVpeAB+ltDwuTfD01StG/MXZ3756Xq1+0IB77wOam8HxMV6qHD/J0d0Hb\ng+pRpdNUKwpqaQaiAcOWxRhFQd+FRLtRCqFS3gKvx4OrFMyCgHGFx9TmYVhM6jry\n1McHdNZezJrUvpLhM39Tae+tz0ChtOfC85fY6iPSRNKMd23lumOB7XGVexWI6QXc\nQPwNgWTmBa4pxhoP/DfZTfc/vatfmqLN8G46Wpw/TfhZTv0MBwDAGpYYTsDMQSHD\nV2LV3UdmtOY=\n=H9A6\n-----END PGP SIGNATURE-----\n",
+    "verified": true,
+    "verified_at": "2025-09-07T18:02:22Z"
+  }
+}

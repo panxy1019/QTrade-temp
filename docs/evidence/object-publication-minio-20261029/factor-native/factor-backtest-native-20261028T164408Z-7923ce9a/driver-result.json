@@ -1,0 +1,7 @@
+{
+  "remote_root": "/root/qtrade-local/operator-evidence/factor-backtest-native-20261028T164408Z-7923ce9a",
+  "returncode": 1,
+  "source_files": 461,
+  "stderr_sha256": "419c84de8e5d118d154bd17627b4a30a24c77a5e17408f507a498d88e836b007",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

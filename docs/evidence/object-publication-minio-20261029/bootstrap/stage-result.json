@@ -1,0 +1,9 @@
+{
+  "files": 463,
+  "rc": 0,
+  "upload_sha256": {
+    "candidate-source-manifest.json": "abf098694bd1ff1fb17eba4835257fd2aeef454d9b21620927cb452e18459d2e",
+    "candidate.tar.gz": "964e9e5344375a1efcc554e1f45e8cfff4906814ba8a46a200ae9962f5b7b770",
+    "minio_s3_fixture_check_20261029.py": "ffd6691b3486b01a0630adee64d84ae673c26c5a1078ab616382303b2f1bc601"
+  }
+}

@@ -1,0 +1,17 @@
+.................................                                        [100%]
+=============================== warnings summary ===============================
+source/tests/test_factor_strategy_backtest.py::test_real_native_qlib_first_execution_uses_previous_score_and_real_fees[False]
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/mlflow/utils/pydantic_utils.py:33: PydanticDeprecatedSince212: Using `@model_validator` with mode='after' on a classmethod is deprecated. Instead, use an instance method. See the documentation at https://pydantic.dev/docs/validation/2.14/concepts/validators/#model-after-validator. Deprecated in Pydantic V2.12 to be removed in V3.0.
+    return pydantic_model_validator(mode=mode)(func)
+
+source/tests/test_factor_strategy_backtest.py::test_real_native_qlib_first_execution_uses_previous_score_and_real_fees[False]
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/mlflow/gateway/config.py:454: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.14/migration/
+    class Route(ConfigModel):
+
+source/tests/test_factor_strategy_backtest.py::test_real_native_qlib_first_execution_uses_previous_score_and_real_fees[False]
+source/tests/test_factor_strategy_backtest.py::test_real_native_qlib_first_execution_uses_previous_score_and_real_fees[True]
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/qlib/utils/index_data.py:492: RuntimeWarning: Mean of empty slice
+    return np.nanmean(self.data)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+33 passed, 4 warnings in 20.01s

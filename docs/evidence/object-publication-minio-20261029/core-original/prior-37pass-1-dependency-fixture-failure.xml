@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="38" time="2.729" timestamp="2026-10-29T00:28:30.355555+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="tests.test_object_publication" name="test_local_real_full_wal_persistence_and_git40_distinct_from_publication64" time="0.132" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[https://example.invalid/a]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[s3://bucket/key]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[../market/latest.json]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[/market/latest.json]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[market/latest.json?x=1]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[market/%2e%2e/latest.json]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[market/shards/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[private/config.json]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[market/latest.json/extra]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_key_allowlist_rejects_arbitrary_urls_and_aliases[market/shards/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.json]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_immutable_create_only_and_content_hash_not_etag" time="0.038" /><testcase classname="tests.test_object_publication" name="test_current_physical_source_recheck_is_required_even_with_persistent_receipts" time="0.122" /><testcase classname="tests.test_object_publication" name="test_real_asset_validators_reject_semantic_mismatch_before_upload[quality_universe]" time="0.036" /><testcase classname="tests.test_object_publication" name="test_real_asset_validators_reject_semantic_mismatch_before_upload[catalog_lineage]" time="0.034" /><testcase classname="tests.test_object_publication" name="test_real_asset_validators_reject_semantic_mismatch_before_upload[authority]" time="0.036" /><testcase classname="tests.test_object_publication" name="test_real_asset_validators_reject_semantic_mismatch_before_upload[future]" time="0.037" /><testcase classname="tests.test_object_publication" name="test_real_asset_validators_reject_semantic_mismatch_before_upload[quality_hash]" time="0.038" /><testcase classname="tests.test_object_publication" name="test_same_digest_occurrence_is_not_validated_only_for_last_entry" time="0.034" /><testcase classname="tests.test_object_publication" name="test_new_generation_parent_fences_stale_writer_and_failure_retains_head" time="0.170" /><testcase classname="tests.test_object_publication" name="test_lost_cas_ack_reconciles_without_reissuing_write" time="0.122" /><testcase classname="tests.test_object_publication" name="test_negative_read_does_not_cancel_inflight_cas_and_restart_never_retries" time="0.132" /><testcase classname="tests.test_object_publication" name="test_uncertain_upload_get404_is_not_automatic_reupload" time="0.050" /><testcase classname="tests.test_object_publication" name="test_upload_failure_preserves_old_head" time="0.150" /><testcase classname="tests.test_object_publication" name="test_remote_corrupt_bytes_with_same_etag_are_not_receipt_hits" time="0.120" /><testcase classname="tests.test_object_publication" name="test_journal_tamper_is_preserved_and_rejected" time="0.111" /><testcase classname="tests.test_object_publication" name="test_real_independent_sqlite_connections_allow_only_one_conditional_create" time="0.039" /><testcase classname="tests.test_object_publication" name="test_summary_is_explicit_readonly_extension_with_separate_contract_identity" time="0.136" /><testcase classname="tests.test_object_publication" name="test_etag_cannot_inject_wildcard_or_multiple_cas_conditions[*]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_etag_cannot_inject_wildcard_or_multiple_cas_conditions[&quot;*&quot;]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_etag_cannot_inject_wildcard_or_multiple_cas_conditions[W/&quot;a&quot;]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_etag_cannot_inject_wildcard_or_multiple_cas_conditions[&quot;a&quot;, &quot;b&quot;]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_etag_cannot_inject_wildcard_or_multiple_cas_conditions[a\r\nb]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_etag_cannot_inject_wildcard_or_multiple_cas_conditions[ a]" time="0.000" /><testcase classname="tests.test_object_publication" name="test_same_journal_concurrent_claim_has_exactly_one_owner" time="0.051" /><testcase classname="tests.test_object_publication" name="test_two_real_publishers_compete_on_same_parent_without_partial_head" time="0.156" /><testcase classname="tests.test_object_publication" name="test_journal_fsync_error_stops_before_any_remote_write" time="0.036" /><testcase classname="tests.test_object_publication" name="test_new_process_reopens_real_db_and_receipts_without_rewriting_latest" time="0.224"><failure message="AssertionError: b'Traceback (most recent call last):\r&#10;    File &quot;&lt;string&gt;&quot;, line 5, in &lt;module&gt;\r&#10;      from qtrade.research.object_publ...pa  # type: ignore[import-untyped]\r&#10;      ^^^^^^^^^^^^^^^^^^^^\r&#10;  ModuleNotFoundError: No module named \'pyarrow\'\r&#10;  '&#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['C:\\Python314\\python.exe', '-B', '-P', '-c', &quot;\nimport json,sys\nfrom datetime import datetim...a  # type: ignore[import-untyped]\r\n    ^^^^^^^^^^^^^^^^^^^^\r\nModuleNotFoundError: No module named \'pyarrow\'\r\n').returncode">setup = ({'unified-market.json': b'{\n  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",\n  "point_in_time": false...87aa45f3d1fd15797bdcad538f4029ec3"\n}\n'}, &lt;qtrade.research.object_publication.Publisher object at 0x00000146E0135EB0&gt;)
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-761/test_new_process_reopens_real_0')
+
+    def test_new_process_reopens_real_db_and_receipts_without_rewriting_latest(setup, tmp_path):
+        data, store, prepared, _, publisher = setup
+        publisher.publish(prepared, now=NOW)
+        before = store.get(op.LATEST)
+        source = tmp_path / "source-fixture.json"
+        source.write_text(json.dumps({key: raw.decode() for key, raw in data.items()}))
+        script = """
+    import json,sys
+    from datetime import datetime
+    from pathlib import Path
+    from qtrade.research.object_publication import Publisher,SQLiteObjectStore,prepare_market
+    root=Path(sys.argv[1]);data=json.loads((root/'source-fixture.json').read_text())
+    reader=lambda name:data[name].encode()
+    prepared,_=prepare_market(reader,parent=None,source_git_commit='c'*40,
+        now=datetime.fromisoformat('2026-10-28T12:00:00+00:00'))
+    store=SQLiteObjectStore(root/'store.sqlite')
+    result=Publisher(store,root/'receipts').reconcile(prepared)
+    print(json.dumps({'state':result.state,'publication_id':result.publication_id}))
+    store.close()
+    """
+        repository = Path(__file__).resolve().parents[1]
+        env = {
+            "PYTHONPATH": str(repository / "src") + os.pathsep + str(repository),
+            "PYTHONSAFEPATH": "1",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "LIVE_TRADING_ENABLED": "false",
+        }
+        if os.name == "nt":
+            env["SYSTEMROOT"] = os.environ["SYSTEMROOT"]
+        result = subprocess.run(
+            [sys.executable, "-B", "-P", "-c", script, str(tmp_path)],
+            capture_output=True,
+            timeout=15,
+            env=env,
+        )
+&gt;       assert result.returncode == 0, result.stderr
+E       AssertionError: b'Traceback (most recent call last):\r
+E           File "&lt;string&gt;", line 5, in &lt;module&gt;\r
+E             from qtrade.research.object_publ...pa  # type: ignore[import-untyped]\r
+E             ^^^^^^^^^^^^^^^^^^^^\r
+E         ModuleNotFoundError: No module named \'pyarrow\'\r
+E         '
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['C:\\Python314\\python.exe', '-B', '-P', '-c', "\nimport json,sys\nfrom datetime import datetim...a  # type: ignore[import-untyped]\r\n    ^^^^^^^^^^^^^^^^^^^^\r\nModuleNotFoundError: No module named \'pyarrow\'\r\n').returncode
+
+tests\test_object_publication.py:581: AssertionError</failure></testcase></testsuite></testsuites>

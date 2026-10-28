@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-28T16:15:44.549575+00:00",
+  "cross_transaction_lock": false,
+  "elapsed_seconds": 6.539698500186205,
+  "expected_remote_main": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+  "public_write": false,
+  "remote_main": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+  "state": "DIRECT_MAIN_ADVERTISEMENT",
+  "target_commit": "abe2986cd6e3f3faeb4984454498e4c67f1646d3"
+}

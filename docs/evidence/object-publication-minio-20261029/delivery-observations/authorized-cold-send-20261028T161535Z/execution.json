@@ -1,0 +1,16 @@
+{
+  "captured_at": "2026-10-28T16:18:55.219130+00:00",
+  "elapsed_seconds": 199.8449882999994,
+  "mode": "send",
+  "no_retry": true,
+  "operator_sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa",
+  "plan_sha256": "9a459c194021e6cadc1cec8dd09ecb8f7e86d8c5cab81d972a1108e7edbf4fb8",
+  "result": {
+    "code": "FAIL_CLOSED",
+    "error_class": "TimeoutExpired",
+    "state": "STOPPED_NO_AUTOMATIC_RETRY"
+  },
+  "returncode": 2,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "3e9b7f3e15987e22fad861e9a15687988d146390d3e2f88c7abd86286044f791"
+}

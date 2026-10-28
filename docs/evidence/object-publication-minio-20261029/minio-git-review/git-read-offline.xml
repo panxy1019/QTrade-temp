@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="10" skipped="0" tests="11" time="0.192" timestamp="2026-10-29T01:10:02.390523+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_exact_command_environment_and_finished_child" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">def test_exact_command_environment_and_finished_child():
+        child = Child()
+&gt;       read, calls = extracted(child)
+                      ^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8BB5F90&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_mutating_commands_rejected_before_popen[push]" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">command = 'push'
+
+    @pytest.mark.parametrize('command', ['push', 'fetch', 'config', 'checkout'])
+    def test_mutating_commands_rejected_before_popen(command):
+&gt;       read, calls = extracted(Child())
+                      ^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8C19350&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_mutating_commands_rejected_before_popen[fetch]" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">command = 'fetch'
+
+    @pytest.mark.parametrize('command', ['push', 'fetch', 'config', 'checkout'])
+    def test_mutating_commands_rejected_before_popen(command):
+&gt;       read, calls = extracted(Child())
+                      ^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8C19CD0&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_mutating_commands_rejected_before_popen[config]" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">command = 'config'
+
+    @pytest.mark.parametrize('command', ['push', 'fetch', 'config', 'checkout'])
+    def test_mutating_commands_rejected_before_popen(command):
+&gt;       read, calls = extracted(Child())
+                      ^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8C26B10&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_mutating_commands_rejected_before_popen[checkout]" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">command = 'checkout'
+
+    @pytest.mark.parametrize('command', ['push', 'fetch', 'config', 'checkout'])
+    def test_mutating_commands_rejected_before_popen(command):
+&gt;       read, calls = extracted(Child())
+                      ^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8B91590&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_timeout_owned_child_cleanup_and_original_failure[False]" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">resist = False
+
+    @pytest.mark.parametrize('resist', [False, True])
+    def test_timeout_owned_child_cleanup_and_original_failure(resist):
+        child = Child(timeout=True, resist=resist)
+&gt;       read, _ = extracted(child)
+                  ^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8B917B0&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_timeout_owned_child_cleanup_and_original_failure[True]" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">resist = True
+
+    @pytest.mark.parametrize('resist', [False, True])
+    def test_timeout_owned_child_cleanup_and_original_failure(resist):
+        child = Child(timeout=True, resist=resist)
+&gt;       read, _ = extracted(child)
+                  ^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8D1E050&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_nonzero_or_over_limit_is_rejected_after_pipe_close[child0]" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">child = &lt;test_git_read_independent.Child object at 0x000001DAC8BCBE00&gt;
+
+    @pytest.mark.parametrize('child', [Child(rc=1), Child(raw=b'12345')])
+    def test_nonzero_or_over_limit_is_rejected_after_pipe_close(child):
+&gt;       read, _ = extracted(child)
+                  ^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8BCBE00&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_nonzero_or_over_limit_is_rejected_after_pipe_close[child1]" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">child = &lt;test_git_read_independent.Child object at 0x000001DAC8BB6D50&gt;
+
+    @pytest.mark.parametrize('child', [Child(rc=1), Child(raw=b'12345')])
+    def test_nonzero_or_over_limit_is_rejected_after_pipe_close(child):
+&gt;       read, _ = extracted(child)
+                  ^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8BB6D50&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_all_metadata_and_listing_use_literal_frozen_commit" time="0.004" /><testcase classname="minio-full-load-git-independent-review-20261029.test_git_read_independent" name="test_open_readonly_gap_missing_no_lazy_fetch_is_recorded" time="0.001"><failure message="AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'&#10;  &#10;  - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453&#10;  + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126">def test_open_readonly_gap_missing_no_lazy_fetch_is_recorded():
+&gt;       read, calls = extracted(Child())
+                      ^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+child = &lt;test_git_read_independent.Child object at 0x000001DAC8D1EA50&gt;
+
+    def extracted(child):
+&gt;       assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
+E       AssertionError: assert 'f3495e4f74d2...e4cda8bd31126' == '97a93ec0b0f2...3c035cd09c453'
+E         
+E         - 97a93ec0b0f2bdde9e89e4538ffe5ec1d3857a6d586292ad2613c035cd09c453
+E         + f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126
+
+E:\QTrade-temp\minio-full-load-git-independent-review-20261029\test_git_read_independent.py:46: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,35 @@
+{
+  "schema": "qtrade.object-publication-reconcile-author-validation.v1",
+  "source_sha256": "d11c801a90142d4b7142b8f67c422c341b30b84201999dd297c186c3582fa7d0",
+  "tests_sha256": "f55e4a4bec2f01c193a82904be67ea7468bc615218ac68597f2c336e49a36806",
+  "core_author_passed": 45,
+  "sdk_author_passed": 41,
+  "inverse_sdk_counterexamples_passed": 6,
+  "total_author_passed": 92,
+  "total_author_skipped": 0,
+  "independent_core_reported_passed": 15,
+  "actual_cloud": "NOT_RUN_NO_ACCOUNT",
+  "actual_minio": "PENDING_PARENT_LOOPBACK",
+  "files": [
+    {
+      "name": "author-final-92.xml",
+      "bytes": 13316,
+      "sha256": "e8702341da03900cdd05c8f3a8ddc546d05904389d04e035a65628fce81440ed"
+    },
+    {
+      "name": "object_publication.py",
+      "bytes": 30442,
+      "sha256": "d11c801a90142d4b7142b8f67c422c341b30b84201999dd297c186c3582fa7d0"
+    },
+    {
+      "name": "README.md",
+      "bytes": 3498,
+      "sha256": "0b8f9b16bdfea7205296673d3cda4035978eb91a1c740cbb566a7bdf56bd2dd2"
+    },
+    {
+      "name": "test_object_publication.py",
+      "bytes": 26156,
+      "sha256": "f55e4a4bec2f01c193a82904be67ea7468bc615218ac68597f2c336e49a36806"
+    }
+  ]
+}

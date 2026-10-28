@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="5" failures="0" skipped="3" tests="33" time="14.274" timestamp="2026-10-29T00:35:15.958249+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="tests.test_factor_strategy_backtest" name="test_all_four_scores_match_independent_price_oracle_and_next_session[0]" time="0.424" /><testcase classname="tests.test_factor_strategy_backtest" name="test_all_four_scores_match_independent_price_oracle_and_next_session[1]" time="0.390" /><testcase classname="tests.test_factor_strategy_backtest" name="test_all_four_scores_match_independent_price_oracle_and_next_session[2]" time="0.401" /><testcase classname="tests.test_factor_strategy_backtest" name="test_all_four_scores_match_independent_price_oracle_and_next_session[3]" time="0.423" /><testcase classname="tests.test_factor_strategy_backtest" name="test_future_diagnostic_label_change_does_not_change_any_score" time="0.660" /><testcase classname="tests.test_factor_strategy_backtest" name="test_null_label_does_not_remove_feature_score" time="0.529" /><testcase classname="tests.test_factor_strategy_backtest" name="test_late_feature_clock_excludes_observed_but_retrospective_discloses[available_at]" time="0.960" /><testcase classname="tests.test_factor_strategy_backtest" name="test_late_feature_clock_excludes_observed_but_retrospective_discloses[observed_at]" time="1.049" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_common_grid_is_excluded_without_compressing_history" time="0.919" /><testcase classname="tests.test_factor_strategy_backtest" name="test_actual_ready_mutation_rejected" time="0.578" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$factor-nan-DISABLE_LOTS]" time="0.007" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$capacity-nan-MISSING]" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$capacity--1-INVALID]" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$buy_block-2-INVALID]" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$sell_block-nan-MISSING]" time="0.004" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$open-nan-NOT_EXPLICITLY_BLOCKED]" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_quote_requires_explicit_both_side_block_and_zero_capacity" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_native_config_reuses_frozen_costs_and_holding_policy" time="0.497" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[kind-FACTOR_STRATEGY_REGISTER_V1]" time="0.498" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[job_id-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]" time="0.492" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[strategy_version-unknown]" time="0.458" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[live_trading_enabled-True]" time="0.461" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[actor-../../unsafe]" time="0.499" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[source_revision-True]" time="0.516" /><testcase classname="tests.test_factor_strategy_backtest" name="test_actual_registered_and_archive_drift_stops_before_backend[job]" time="0.480"><error message="failed on setup with &quot;shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc0\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc0\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc0\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc0\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]&quot;">strategy_data = namespace(data=namespace(build=&lt;function contract.&lt;locals&gt;.build at 0x000001FD75E32350&gt;, evaluate=&lt;function contract.&lt;...factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc0/strategies.sqlite'))
+tmp_path = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc0')
+
+    @pytest.fixture
+    def archive(strategy_data, tmp_path):  # noqa: F811
+        setup = strategy_data
+        base = tmp_path / "worker-base"
+        root = base / "unified-data/qlib-versions/versions" / setup.root.name
+&gt;       shutil.copytree(setup.root, root)
+
+tests\test_factor_research_worker.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\shutil.py:654: in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+entries = [&lt;DirEntry 'dataset.json'&gt;, &lt;DirEntry 'preparation-request.json'&gt;, &lt;DirEntry 'provider'&gt;, &lt;DirEntry 'provider-reload.json'&gt;, &lt;DirEntry 'stocks'&gt;, &lt;DirEntry 'version.json'&gt;]
+src = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc0/archive/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+dst = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_...arc0/worker-base/unified-data/qlib-versions/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+symlinks = False, ignore = None
+copy_function = &lt;function copy2 at 0x000001FD09A51170&gt;
+ignore_dangling_symlinks = False, dirs_exist_ok = False
+
+    def _copytree(entries, src, dst, symlinks, ignore, copy_function,
+                  ignore_dangling_symlinks, dirs_exist_ok=False):
+        if ignore is not None:
+            ignored_names = ignore(os.fspath(src), [x.name for x in entries])
+        else:
+            ignored_names = ()
+    
+        os.makedirs(dst, exist_ok=dirs_exist_ok)
+        errors = []
+        use_srcentry = copy_function is copy2 or copy_function is copy
+    
+        for srcentry in entries:
+            if srcentry.name in ignored_names:
+                continue
+            srcname = os.path.join(src, srcentry.name)
+            dstname = os.path.join(dst, srcentry.name)
+            srcobj = srcentry if use_srcentry else srcname
+            try:
+                is_symlink = srcentry.is_symlink()
+                if is_symlink and os.name == 'nt':
+                    # Special check for directory junctions, which appear as
+                    # symlinks but we want to recurse.
+                    lstat = srcentry.stat(follow_symlinks=False)
+                    if lstat.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT:
+                        is_symlink = False
+                if is_symlink:
+                    linkto = os.readlink(srcname)
+                    if symlinks:
+                        # We can't just leave it to `copy_function` because legacy
+                        # code with a custom `copy_function` may rely on copytree
+                        # doing the right thing.
+                        os.symlink(linkto, dstname)
+                        copystat(srcobj, dstname, follow_symlinks=not symlinks)
+                    else:
+                        # ignore dangling symlink if the flag is on
+                        if not os.path.exists(linkto) and ignore_dangling_symlinks:
+                            continue
+                        # otherwise let the copy occur. copy2 will raise an error
+                        if srcentry.is_dir():
+                            copytree(srcobj, dstname, symlinks, ignore,
+                                     copy_function, ignore_dangling_symlinks,
+                                     dirs_exist_ok)
+                        else:
+                            copy_function(srcobj, dstname)
+                elif srcentry.is_dir():
+                    copytree(srcobj, dstname, symlinks, ignore, copy_function,
+                             ignore_dangling_symlinks, dirs_exist_ok)
+                else:
+                    # Will raise a SpecialFileError for unsupported file types
+                    copy_function(srcobj, dstname)
+            # catch the Error from the recursive copytree so that we can
+            # continue with other files
+            except Error as err:
+                errors.extend(err.args[0])
+            except OSError as why:
+                errors.append((srcname, dstname, str(why)))
+        try:
+            copystat(src, dst)
+        except OSError as why:
+            # Copying file access times may fail on Windows
+            if getattr(why, 'winerror', None) is None:
+                errors.append((src, dst, str(why)))
+        if errors:
+&gt;           raise Error(errors)
+E           shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc0\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc0\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc0\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc0\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]
+
+C:\Python314\Lib\shutil.py:608: Error</error></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_actual_registered_and_archive_drift_stops_before_backend[contract]" time="0.435"><error message="failed on setup with &quot;shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc1\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc1\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc1\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc1\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]&quot;">strategy_data = namespace(data=namespace(build=&lt;function contract.&lt;locals&gt;.build at 0x000001FD76FB4D50&gt;, evaluate=&lt;function contract.&lt;...factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc1/strategies.sqlite'))
+tmp_path = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc1')
+
+    @pytest.fixture
+    def archive(strategy_data, tmp_path):  # noqa: F811
+        setup = strategy_data
+        base = tmp_path / "worker-base"
+        root = base / "unified-data/qlib-versions/versions" / setup.root.name
+&gt;       shutil.copytree(setup.root, root)
+
+tests\test_factor_research_worker.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\shutil.py:654: in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+entries = [&lt;DirEntry 'dataset.json'&gt;, &lt;DirEntry 'preparation-request.json'&gt;, &lt;DirEntry 'provider'&gt;, &lt;DirEntry 'provider-reload.json'&gt;, &lt;DirEntry 'stocks'&gt;, &lt;DirEntry 'version.json'&gt;]
+src = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc1/archive/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+dst = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_...arc1/worker-base/unified-data/qlib-versions/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+symlinks = False, ignore = None
+copy_function = &lt;function copy2 at 0x000001FD09A51170&gt;
+ignore_dangling_symlinks = False, dirs_exist_ok = False
+
+    def _copytree(entries, src, dst, symlinks, ignore, copy_function,
+                  ignore_dangling_symlinks, dirs_exist_ok=False):
+        if ignore is not None:
+            ignored_names = ignore(os.fspath(src), [x.name for x in entries])
+        else:
+            ignored_names = ()
+    
+        os.makedirs(dst, exist_ok=dirs_exist_ok)
+        errors = []
+        use_srcentry = copy_function is copy2 or copy_function is copy
+    
+        for srcentry in entries:
+            if srcentry.name in ignored_names:
+                continue
+            srcname = os.path.join(src, srcentry.name)
+            dstname = os.path.join(dst, srcentry.name)
+            srcobj = srcentry if use_srcentry else srcname
+            try:
+                is_symlink = srcentry.is_symlink()
+                if is_symlink and os.name == 'nt':
+                    # Special check for directory junctions, which appear as
+                    # symlinks but we want to recurse.
+                    lstat = srcentry.stat(follow_symlinks=False)
+                    if lstat.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT:
+                        is_symlink = False
+                if is_symlink:
+                    linkto = os.readlink(srcname)
+                    if symlinks:
+                        # We can't just leave it to `copy_function` because legacy
+                        # code with a custom `copy_function` may rely on copytree
+                        # doing the right thing.
+                        os.symlink(linkto, dstname)
+                        copystat(srcobj, dstname, follow_symlinks=not symlinks)
+                    else:
+                        # ignore dangling symlink if the flag is on
+                        if not os.path.exists(linkto) and ignore_dangling_symlinks:
+                            continue
+                        # otherwise let the copy occur. copy2 will raise an error
+                        if srcentry.is_dir():
+                            copytree(srcobj, dstname, symlinks, ignore,
+                                     copy_function, ignore_dangling_symlinks,
+                                     dirs_exist_ok)
+                        else:
+                            copy_function(srcobj, dstname)
+                elif srcentry.is_dir():
+                    copytree(srcobj, dstname, symlinks, ignore, copy_function,
+                             ignore_dangling_symlinks, dirs_exist_ok)
+                else:
+                    # Will raise a SpecialFileError for unsupported file types
+                    copy_function(srcobj, dstname)
+            # catch the Error from the recursive copytree so that we can
+            # continue with other files
+            except Error as err:
+                errors.extend(err.args[0])
+            except OSError as why:
+                errors.append((srcname, dstname, str(why)))
+        try:
+            copystat(src, dst)
+        except OSError as why:
+            # Copying file access times may fail on Windows
+            if getattr(why, 'winerror', None) is None:
+                errors.append((src, dst, str(why)))
+        if errors:
+&gt;           raise Error(errors)
+E           shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc1\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc1\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc1\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc1\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]
+
+C:\Python314\Lib\shutil.py:608: Error</error></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_actual_registered_and_archive_drift_stops_before_backend[active]" time="0.455"><error message="failed on setup with &quot;shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc2\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc2\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc2\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc2\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]&quot;">strategy_data = namespace(data=namespace(build=&lt;function contract.&lt;locals&gt;.build at 0x000001FD76FB68D0&gt;, evaluate=&lt;function contract.&lt;...factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc2/strategies.sqlite'))
+tmp_path = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc2')
+
+    @pytest.fixture
+    def archive(strategy_data, tmp_path):  # noqa: F811
+        setup = strategy_data
+        base = tmp_path / "worker-base"
+        root = base / "unified-data/qlib-versions/versions" / setup.root.name
+&gt;       shutil.copytree(setup.root, root)
+
+tests\test_factor_research_worker.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\shutil.py:654: in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+entries = [&lt;DirEntry 'dataset.json'&gt;, &lt;DirEntry 'preparation-request.json'&gt;, &lt;DirEntry 'provider'&gt;, &lt;DirEntry 'provider-reload.json'&gt;, &lt;DirEntry 'stocks'&gt;, &lt;DirEntry 'version.json'&gt;]
+src = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc2/archive/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+dst = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_...arc2/worker-base/unified-data/qlib-versions/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+symlinks = False, ignore = None
+copy_function = &lt;function copy2 at 0x000001FD09A51170&gt;
+ignore_dangling_symlinks = False, dirs_exist_ok = False
+
+    def _copytree(entries, src, dst, symlinks, ignore, copy_function,
+                  ignore_dangling_symlinks, dirs_exist_ok=False):
+        if ignore is not None:
+            ignored_names = ignore(os.fspath(src), [x.name for x in entries])
+        else:
+            ignored_names = ()
+    
+        os.makedirs(dst, exist_ok=dirs_exist_ok)
+        errors = []
+        use_srcentry = copy_function is copy2 or copy_function is copy
+    
+        for srcentry in entries:
+            if srcentry.name in ignored_names:
+                continue
+            srcname = os.path.join(src, srcentry.name)
+            dstname = os.path.join(dst, srcentry.name)
+            srcobj = srcentry if use_srcentry else srcname
+            try:
+                is_symlink = srcentry.is_symlink()
+                if is_symlink and os.name == 'nt':
+                    # Special check for directory junctions, which appear as
+                    # symlinks but we want to recurse.
+                    lstat = srcentry.stat(follow_symlinks=False)
+                    if lstat.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT:
+                        is_symlink = False
+                if is_symlink:
+                    linkto = os.readlink(srcname)
+                    if symlinks:
+                        # We can't just leave it to `copy_function` because legacy
+                        # code with a custom `copy_function` may rely on copytree
+                        # doing the right thing.
+                        os.symlink(linkto, dstname)
+                        copystat(srcobj, dstname, follow_symlinks=not symlinks)
+                    else:
+                        # ignore dangling symlink if the flag is on
+                        if not os.path.exists(linkto) and ignore_dangling_symlinks:
+                            continue
+                        # otherwise let the copy occur. copy2 will raise an error
+                        if srcentry.is_dir():
+                            copytree(srcobj, dstname, symlinks, ignore,
+                                     copy_function, ignore_dangling_symlinks,
+                                     dirs_exist_ok)
+                        else:
+                            copy_function(srcobj, dstname)
+                elif srcentry.is_dir():
+                    copytree(srcobj, dstname, symlinks, ignore, copy_function,
+                             ignore_dangling_symlinks, dirs_exist_ok)
+                else:
+                    # Will raise a SpecialFileError for unsupported file types
+                    copy_function(srcobj, dstname)
+            # catch the Error from the recursive copytree so that we can
+            # continue with other files
+            except Error as err:
+                errors.extend(err.args[0])
+            except OSError as why:
+                errors.append((srcname, dstname, str(why)))
+        try:
+            copystat(src, dst)
+        except OSError as why:
+            # Copying file access times may fail on Windows
+            if getattr(why, 'winerror', None) is None:
+                errors.append((src, dst, str(why)))
+        if errors:
+&gt;           raise Error(errors)
+E           shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc2\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc2\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc2\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc2\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]
+
+C:\Python314\Lib\shutil.py:608: Error</error></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_actual_registered_and_archive_drift_stops_before_backend[archive]" time="0.489"><error message="failed on setup with &quot;shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc3\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc3\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc3\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc3\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]&quot;">strategy_data = namespace(data=namespace(build=&lt;function contract.&lt;locals&gt;.build at 0x000001FD772443B0&gt;, evaluate=&lt;function contract.&lt;...factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc3/strategies.sqlite'))
+tmp_path = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc3')
+
+    @pytest.fixture
+    def archive(strategy_data, tmp_path):  # noqa: F811
+        setup = strategy_data
+        base = tmp_path / "worker-base"
+        root = base / "unified-data/qlib-versions/versions" / setup.root.name
+&gt;       shutil.copytree(setup.root, root)
+
+tests\test_factor_research_worker.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\shutil.py:654: in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+entries = [&lt;DirEntry 'dataset.json'&gt;, &lt;DirEntry 'preparation-request.json'&gt;, &lt;DirEntry 'provider'&gt;, &lt;DirEntry 'provider-reload.json'&gt;, &lt;DirEntry 'stocks'&gt;, &lt;DirEntry 'version.json'&gt;]
+src = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc3/archive/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+dst = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_...arc3/worker-base/unified-data/qlib-versions/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+symlinks = False, ignore = None
+copy_function = &lt;function copy2 at 0x000001FD09A51170&gt;
+ignore_dangling_symlinks = False, dirs_exist_ok = False
+
+    def _copytree(entries, src, dst, symlinks, ignore, copy_function,
+                  ignore_dangling_symlinks, dirs_exist_ok=False):
+        if ignore is not None:
+            ignored_names = ignore(os.fspath(src), [x.name for x in entries])
+        else:
+            ignored_names = ()
+    
+        os.makedirs(dst, exist_ok=dirs_exist_ok)
+        errors = []
+        use_srcentry = copy_function is copy2 or copy_function is copy
+    
+        for srcentry in entries:
+            if srcentry.name in ignored_names:
+                continue
+            srcname = os.path.join(src, srcentry.name)
+            dstname = os.path.join(dst, srcentry.name)
+            srcobj = srcentry if use_srcentry else srcname
+            try:
+                is_symlink = srcentry.is_symlink()
+                if is_symlink and os.name == 'nt':
+                    # Special check for directory junctions, which appear as
+                    # symlinks but we want to recurse.
+                    lstat = srcentry.stat(follow_symlinks=False)
+                    if lstat.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT:
+                        is_symlink = False
+                if is_symlink:
+                    linkto = os.readlink(srcname)
+                    if symlinks:
+                        # We can't just leave it to `copy_function` because legacy
+                        # code with a custom `copy_function` may rely on copytree
+                        # doing the right thing.
+                        os.symlink(linkto, dstname)
+                        copystat(srcobj, dstname, follow_symlinks=not symlinks)
+                    else:
+                        # ignore dangling symlink if the flag is on
+                        if not os.path.exists(linkto) and ignore_dangling_symlinks:
+                            continue
+                        # otherwise let the copy occur. copy2 will raise an error
+                        if srcentry.is_dir():
+                            copytree(srcobj, dstname, symlinks, ignore,
+                                     copy_function, ignore_dangling_symlinks,
+                                     dirs_exist_ok)
+                        else:
+                            copy_function(srcobj, dstname)
+                elif srcentry.is_dir():
+                    copytree(srcobj, dstname, symlinks, ignore, copy_function,
+                             ignore_dangling_symlinks, dirs_exist_ok)
+                else:
+                    # Will raise a SpecialFileError for unsupported file types
+                    copy_function(srcobj, dstname)
+            # catch the Error from the recursive copytree so that we can
+            # continue with other files
+            except Error as err:
+                errors.extend(err.args[0])
+            except OSError as why:
+                errors.append((srcname, dstname, str(why)))
+        try:
+            copystat(src, dst)
+        except OSError as why:
+            # Copying file access times may fail on Windows
+            if getattr(why, 'winerror', None) is None:
+                errors.append((src, dst, str(why)))
+        if errors:
+&gt;           raise Error(errors)
+E           shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc3\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc3\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc3\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc3\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]
+
+C:\Python314\Lib\shutil.py:608: Error</error></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_actual_registered_and_archive_drift_stops_before_backend[factors]" time="0.471"><error message="failed on setup with &quot;shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc4\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc4\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc4\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc4\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]&quot;">strategy_data = namespace(data=namespace(build=&lt;function contract.&lt;locals&gt;.build at 0x000001FD76FB7320&gt;, evaluate=&lt;function contract.&lt;...factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc4/strategies.sqlite'))
+tmp_path = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc4')
+
+    @pytest.fixture
+    def archive(strategy_data, tmp_path):  # noqa: F811
+        setup = strategy_data
+        base = tmp_path / "worker-base"
+        root = base / "unified-data/qlib-versions/versions" / setup.root.name
+&gt;       shutil.copytree(setup.root, root)
+
+tests\test_factor_research_worker.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\shutil.py:654: in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+entries = [&lt;DirEntry 'dataset.json'&gt;, &lt;DirEntry 'preparation-request.json'&gt;, &lt;DirEntry 'provider'&gt;, &lt;DirEntry 'provider-reload.json'&gt;, &lt;DirEntry 'stocks'&gt;, &lt;DirEntry 'version.json'&gt;]
+src = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_and_arc4/archive/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+dst = WindowsPath('E:/QTrade-temp/factor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-admission/test_actual_registered_...arc4/worker-base/unified-data/qlib-versions/versions/e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c')
+symlinks = False, ignore = None
+copy_function = &lt;function copy2 at 0x000001FD09A51170&gt;
+ignore_dangling_symlinks = False, dirs_exist_ok = False
+
+    def _copytree(entries, src, dst, symlinks, ignore, copy_function,
+                  ignore_dangling_symlinks, dirs_exist_ok=False):
+        if ignore is not None:
+            ignored_names = ignore(os.fspath(src), [x.name for x in entries])
+        else:
+            ignored_names = ()
+    
+        os.makedirs(dst, exist_ok=dirs_exist_ok)
+        errors = []
+        use_srcentry = copy_function is copy2 or copy_function is copy
+    
+        for srcentry in entries:
+            if srcentry.name in ignored_names:
+                continue
+            srcname = os.path.join(src, srcentry.name)
+            dstname = os.path.join(dst, srcentry.name)
+            srcobj = srcentry if use_srcentry else srcname
+            try:
+                is_symlink = srcentry.is_symlink()
+                if is_symlink and os.name == 'nt':
+                    # Special check for directory junctions, which appear as
+                    # symlinks but we want to recurse.
+                    lstat = srcentry.stat(follow_symlinks=False)
+                    if lstat.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT:
+                        is_symlink = False
+                if is_symlink:
+                    linkto = os.readlink(srcname)
+                    if symlinks:
+                        # We can't just leave it to `copy_function` because legacy
+                        # code with a custom `copy_function` may rely on copytree
+                        # doing the right thing.
+                        os.symlink(linkto, dstname)
+                        copystat(srcobj, dstname, follow_symlinks=not symlinks)
+                    else:
+                        # ignore dangling symlink if the flag is on
+                        if not os.path.exists(linkto) and ignore_dangling_symlinks:
+                            continue
+                        # otherwise let the copy occur. copy2 will raise an error
+                        if srcentry.is_dir():
+                            copytree(srcobj, dstname, symlinks, ignore,
+                                     copy_function, ignore_dangling_symlinks,
+                                     dirs_exist_ok)
+                        else:
+                            copy_function(srcobj, dstname)
+                elif srcentry.is_dir():
+                    copytree(srcobj, dstname, symlinks, ignore, copy_function,
+                             ignore_dangling_symlinks, dirs_exist_ok)
+                else:
+                    # Will raise a SpecialFileError for unsupported file types
+                    copy_function(srcobj, dstname)
+            # catch the Error from the recursive copytree so that we can
+            # continue with other files
+            except Error as err:
+                errors.extend(err.args[0])
+            except OSError as why:
+                errors.append((srcname, dstname, str(why)))
+        try:
+            copystat(src, dst)
+        except OSError as why:
+            # Copying file access times may fail on Windows
+            if getattr(why, 'winerror', None) is None:
+                errors.append((src, dst, str(why)))
+        if errors:
+&gt;           raise Error(errors)
+E           shutil.Error: [('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc4\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc4\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\calendars\\day_future.txt', '[WinError 3] 系统找不到指定的路径。'), ('E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc4\\archive\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', 'E:\\QTrade-temp\\factor-backtest-adapter-20261028T162443Z-d9e1c094\\pytest-admission\\test_actual_registered_and_arc4\\worker-base\\unified-data\\qlib-versions\\versions\\e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c\\provider\\instruments\\workflow_supported.txt', '[WinError 3] 系统找不到指定的路径。')]
+
+C:\Python314\Lib\shutil.py:608: Error</error></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_runner_uses_existing_registered_job_and_owned_state_without_original_writes" time="0.000"><skipped type="pytest.skip" message="existing POSIX immutable writer">E:\QTrade-git\tests\test_factor_strategy_backtest.py:349: existing POSIX immutable writer</skipped></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_real_native_qlib_first_execution_uses_previous_score_and_real_fees[False]" time="0.427"><skipped type="pytest.skip" message="Native Qlib is absent; cannot claim execution acceptance">E:\QTrade-git\tests\test_factor_strategy_backtest.py:397: Native Qlib is absent; cannot claim execution acceptance</skipped></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_real_native_qlib_first_execution_uses_previous_score_and_real_fees[True]" time="0.446"><skipped type="pytest.skip" message="Native Qlib is absent; cannot claim execution acceptance">E:\QTrade-git\tests\test_factor_strategy_backtest.py:397: Native Qlib is absent; cannot claim execution acceptance</skipped></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_live_true_blocks_before_any_execution" time="0.001" /></testsuite></testsuites>

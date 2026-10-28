@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.694" timestamp="2026-10-29T00:29:01.153419+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="" name="tests.test_factor_strategy_backtest" time="0.000"><error message="collection failure">ImportError while importing test module 'E:\QTrade-git\tests\test_factor_strategy_backtest.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_factor_strategy_backtest.py:18: in &lt;module&gt;
+    from test_factor_research_worker import archive  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_factor_research_worker.py:17: in &lt;module&gt;
+    from test_factor_strategy_contract import setup as strategy_data  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_factor_strategy_contract.py:13: in &lt;module&gt;
+    from test_qlib_strategy_contract import admitted as qlib_data  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_qlib_strategy_contract.py:9: in &lt;module&gt;
+    from qtrade.monitoring.data_freshness import AUTHORITY, signed
+E   ModuleNotFoundError: No module named 'qtrade.monitoring.data_freshness'</error></testcase></testsuite></testsuites>

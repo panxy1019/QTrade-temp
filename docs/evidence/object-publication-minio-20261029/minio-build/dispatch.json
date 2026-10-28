@@ -1,0 +1,6 @@
+{
+  "remote_root": "/root/qtrade-local/operator-evidence/minio-protocol-20261029T163700Z/build-mirror-20261028T165956Z-f5217074",
+  "builder_sha256": "17a239e8e98c935f9e54e7c69e3f0b44ca246ca889d0261150b3f8dd6f63166f",
+  "source_commit": "07c3a429bfed433e49018cb0f78a52145d4bedeb",
+  "service_started": false
+}

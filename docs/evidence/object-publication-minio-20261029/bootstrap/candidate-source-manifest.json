@@ -1,0 +1,2797 @@
+{
+  "base_git_revision": "f59cc8923bfc247009d2c92f391231bc92333571",
+  "declared_overlays": [
+    "src/qtrade/research/object_publication.py",
+    "src/qtrade/research/r2_object_store.py",
+    "tests/test_object_publication.py",
+    "tests/unit/test_r2_object_store.py",
+    "pyproject.toml"
+  ],
+  "files": {
+    "configs/akshare_etf_universe_v1.json": {
+      "bytes": 1075,
+      "git_blob_sha1": "b5fd1acdb8eb183987fb939aaa9857f7d37dad72",
+      "overlay": false,
+      "sha256": "3b5fdb02eec6b4da1f3f14cd35f80b8e74eb0b99cb0f8b13abfb68fdc242da6f"
+    },
+    "configs/experiments/continuation-momentum-v1.json": {
+      "bytes": 755,
+      "git_blob_sha1": "86b94d7abb9983375bdb0bc89be4846d325b6189",
+      "overlay": false,
+      "sha256": "1f1afb24af813250b81ad193d3308c9c7d07ad6551ffd6aae11fe50851c8ed01"
+    },
+    "configs/experiments/continuation-reversal-v1.json": {
+      "bytes": 742,
+      "git_blob_sha1": "53a96ffed68d67a114ae3e29c40135ea1978ce43",
+      "overlay": false,
+      "sha256": "5964aedcd6419e719b9e287996ef05d29fa4655002b21c159be07430a1c1cd30"
+    },
+    "configs/experiments/continuation-risk-v1.json": {
+      "bytes": 758,
+      "git_blob_sha1": "429cb26597fe86e341a6dbbfcbfe090860264941",
+      "overlay": false,
+      "sha256": "1467a323a5fff3482059215ee8353046f5dc49a4342c5abe506e02d26fbe8656"
+    },
+    "configs/observer_calendar_2026.json": {
+      "bytes": 499,
+      "git_blob_sha1": "e6fa7663e0bcbc628ce213508727d2ee9fbe2afd",
+      "overlay": false,
+      "sha256": "065c0c1a0411a730fa5e1f4f56b14d6c3074883f3aaae5fd989bbdf5f7f675a4"
+    },
+    "configs/qlib_daily_baseline.json": {
+      "bytes": 2267,
+      "git_blob_sha1": "f6fb49dfa7c577348b32064cf08da54d185c5fe0",
+      "overlay": false,
+      "sha256": "9ad718c764ff952e6ac47c7a61f49265bdebcb8aff9029f6fa513171cf25305a"
+    },
+    "configs/sina_minute_universe_v1.json": {
+      "bytes": 2264,
+      "git_blob_sha1": "030f5aa6d1209b9ffc0f4aaafd91e6fed5dd3176",
+      "overlay": false,
+      "sha256": "fe6d1c3f08ee4dfeff7c13ecd0c684a22300a72f0822864cb2aff048b5c69fec"
+    },
+    "pyproject.toml": {
+      "base_blob_sha1": "5a0b098f96cd50bbbfa299ad25c8d3115e375aba",
+      "bytes": 1131,
+      "git_blob_sha1": null,
+      "overlay": true,
+      "sha256": "4efd709a5d51d0fcc95db81e1326c12709790047f59b8f002da0b32f2ab01b08"
+    },
+    "scripts/accept_qlib_prediction.py": {
+      "bytes": 6645,
+      "git_blob_sha1": "fa7d48a53a00fd738d641420c8ffa946794c5107",
+      "overlay": false,
+      "sha256": "2a449e36f618964def2d6568adb6d4a64cf30a3c383d5df15f6c2aab9263938a"
+    },
+    "scripts/akshare_history_ingest.py": {
+      "bytes": 4948,
+      "git_blob_sha1": "397447bed6be0ce0065f3198c7f917b03f173797",
+      "overlay": false,
+      "sha256": "650fd6aa2a5d241cd5787f715e710774c9c794b86140fc5e5f7451f21d045677"
+    },
+    "scripts/akshare_probe.py": {
+      "bytes": 1331,
+      "git_blob_sha1": "05f09e1fbb24204e897dc32f791d7085639beb5d",
+      "overlay": false,
+      "sha256": "d316ebe0d9371c14fe74503b24682164de1ea7d6b5a3cf1e9d4495287f555d68"
+    },
+    "scripts/akshare_stock_history_ingest.py": {
+      "bytes": 16650,
+      "git_blob_sha1": "993adea55b8af72e426cf07accbc357baf8c820c",
+      "overlay": false,
+      "sha256": "d258b9fec59193a3d47c9c5b2f4f447242fe09a2bc5cbf2fdc08223a3a4920c2"
+    },
+    "scripts/atomic_json.py": {
+      "bytes": 2138,
+      "git_blob_sha1": "831970c974526d7dbcba5b4767704bdc9c220c28",
+      "overlay": false,
+      "sha256": "91b521c84f887a66c93e0ff1e86b17b5033bf08b17f547b079692996db541ecd"
+    },
+    "scripts/audit_delisted_history.py": {
+      "bytes": 13549,
+      "git_blob_sha1": "488fdeb6587ba2f74cf68b08b661eea14bae5920",
+      "overlay": false,
+      "sha256": "8bf0a2a3b08088cb95bc7ca4116d201125ba03ee98ea499872622eee2149f45b"
+    },
+    "scripts/audit_etf_forward_transition.py": {
+      "bytes": 15815,
+      "git_blob_sha1": "d612b7cba88b87945a1ea8dc6c50fe807d6c47f6",
+      "overlay": false,
+      "sha256": "49e6debf36ce5b42212b6e67e12ae7993a67047b2aa95d85697c78f2802ee8d9"
+    },
+    "scripts/audit_etf_history.py": {
+      "bytes": 17463,
+      "git_blob_sha1": "95427c843daef6f5c35d2002dc4f4e4f2ced8391",
+      "overlay": false,
+      "sha256": "1c1c6889094ab12da14946d6b84bba29d2433430cabfea18f882b308adcf4f4c"
+    },
+    "scripts/audit_expansion_minutes.py": {
+      "bytes": 2944,
+      "git_blob_sha1": "9db297b368bcef30985b95aa96b38d9a2a44c72f",
+      "overlay": false,
+      "sha256": "410cb8e061afea2d321a89b85da9f499ec2e14ae5e0dccfe7be998e3f1246a04"
+    },
+    "scripts/audit_history_backfill.py": {
+      "bytes": 17840,
+      "git_blob_sha1": "55c9f9645a7a9bffd23545271e73f78366edb2e2",
+      "overlay": false,
+      "sha256": "061482ef281e5bdfd2cb0b50f95defa0c86a199ae4bb347d24b5d337504c1c96"
+    },
+    "scripts/audit_public_minute_bars.py": {
+      "bytes": 9377,
+      "git_blob_sha1": "e31d565c34ae254207040a50cd67fb63883505fb",
+      "overlay": false,
+      "sha256": "aecf713116bf47c1da26557679cd79ae707f970f692e7b81652108751ede76fd"
+    },
+    "scripts/audit_public_pit.py": {
+      "bytes": 6848,
+      "git_blob_sha1": "bd5e09c34cfe9d424db90aff13dad933d4f79da4",
+      "overlay": false,
+      "sha256": "6e3403341d0f5318d8ffe0fad7316990f6241772dd42db0dd0fbb1b11e650259"
+    },
+    "scripts/audit_qlib_candidate_transition.py": {
+      "bytes": 29186,
+      "git_blob_sha1": "f1636880e1dc7285c5eab96aa09f838967176cf2",
+      "overlay": false,
+      "sha256": "0a4d7c85933aa4f6e6a829d5a20265cf93f70d57462b13d42d2e863cadfcd878"
+    },
+    "scripts/audit_qlib_forward_transition.py": {
+      "bytes": 30150,
+      "git_blob_sha1": "5411784e03e457102190ae56278dd48e7f720485",
+      "overlay": false,
+      "sha256": "a7634c1cbb5987ebdaa90bda06319405d8b975cb743a745048afa126aa8215f4"
+    },
+    "scripts/audit_qlib_session_transition.py": {
+      "bytes": 3166,
+      "git_blob_sha1": "38d3ecaa61be124f8e56c06ed224f18b9c3ae2cf",
+      "overlay": false,
+      "sha256": "21ca31bb8ee7b1690e53f129e43046e6f591d398131da19d0d07086065684a2c"
+    },
+    "scripts/baostock_five_minute_history_ingest.py": {
+      "bytes": 14873,
+      "git_blob_sha1": "d29e7ce3c61e703301f5c4e4aca1a6472a4e78bf",
+      "overlay": false,
+      "sha256": "4422d6f112dd5f502d11ecf500bc7b2e1f7a40f0afd05b384bfea86a8d1b43e5"
+    },
+    "scripts/benchmark_unified_transport.py": {
+      "bytes": 1790,
+      "git_blob_sha1": "b6def420d53991bfd0634a71c5f5570f4ea58a9e",
+      "overlay": false,
+      "sha256": "9fdba259a48a749522859685ae9663a32766250f6dd2ad8b521e4497b2427a79"
+    },
+    "scripts/bootstrap_public_aliases.py": {
+      "bytes": 15695,
+      "git_blob_sha1": "f600498b38d32b042bb9d3c1d96872a3892b42ab",
+      "overlay": false,
+      "sha256": "bebdee677c3e199aa7d46e080fc805b5a75dc3b4bf83d61e291668ee45888a9d"
+    },
+    "scripts/build_akshare_sector_stock_universe.py": {
+      "bytes": 7293,
+      "git_blob_sha1": "32e652189c60d37f107bf3cc18f47fc9e78fa073",
+      "overlay": false,
+      "sha256": "9950c816f03e8dc86e616b780d146d15f9446f20bdf8f7f5bf43d0c85ccaa46f"
+    },
+    "scripts/build_data_quality_summary.py": {
+      "bytes": 8932,
+      "git_blob_sha1": "58bbac91f545e3caa5e9387963d885a5ba49b12d",
+      "overlay": false,
+      "sha256": "af1b0cf40494daef750e5847182b27c226d973d2b4ced46230b70d6574ba6d17"
+    },
+    "scripts/build_intraday_factor_long_window_evidence.py": {
+      "bytes": 9654,
+      "git_blob_sha1": "786793b1848c48411a0c58af6c8e76280b5b467f",
+      "overlay": false,
+      "sha256": "c5b138fd356a269d423976ad9f0138353b1b5835441742831d2b8b312cb723d7"
+    },
+    "scripts/build_observed_universe.py": {
+      "bytes": 8462,
+      "git_blob_sha1": "236dd7134804fe94aa0156b10ac78fd1ac6f4982",
+      "overlay": false,
+      "sha256": "8d02a45703c01a78991d05d1f63d3688284cef70540c78a6c821190b6260b737"
+    },
+    "scripts/build_qlib_daily_version.py": {
+      "bytes": 20228,
+      "git_blob_sha1": "ea7594e745d93fa04be8994adb22703288de7e50",
+      "overlay": false,
+      "sha256": "d69bd505743a36b7200a456b38108e48528dcde939e7128d80a85fd3d9e68529"
+    },
+    "scripts/collect_pit_evidence.py": {
+      "bytes": 16827,
+      "git_blob_sha1": "b61f72604e90b7d88c122abfe08e44fda90d31e7",
+      "overlay": false,
+      "sha256": "8b42dde6607265b4182652f3484004b042e28d0727da6c1222ea4c1844d5ad59"
+    },
+    "scripts/collect_recent_status.py": {
+      "bytes": 14230,
+      "git_blob_sha1": "edcbcc515b2bdbdb4a39b51fff71748893be9b8b",
+      "overlay": false,
+      "sha256": "c5ac2109117cb4ec72c1d0fd6c26341220eed5ad4550f1146ac2df3604ddde2e"
+    },
+    "scripts/collect_unified_data.py": {
+      "bytes": 18014,
+      "git_blob_sha1": "f1b007b3e1a49a1840134ee8fba93a4c3b1fb499",
+      "overlay": false,
+      "sha256": "7d6d2866c3802e9278bf873a5f6bb44d9493394eb5de68f971fb56f1ef4a8292"
+    },
+    "scripts/data_version_control.py": {
+      "bytes": 2245,
+      "git_blob_sha1": "578f6169034c48e88ad89c556fe8a107f2f94753",
+      "overlay": false,
+      "sha256": "52cb020cf76aa7d90d3b7df99ad392921c538f53d42204bd3be25ed3713b2cd8"
+    },
+    "scripts/delisted_history_queue.py": {
+      "bytes": 16305,
+      "git_blob_sha1": "1f218b64f9ea20e2a2068af46c84f8eb1284ff15",
+      "overlay": false,
+      "sha256": "9e6b11978a43f8552a8de988b50de4c21d0e944ae08b0d94699d1030939ebedd"
+    },
+    "scripts/expand_research_data.py": {
+      "bytes": 14545,
+      "git_blob_sha1": "d6f607f14dc956e159a767275c2bab5903672f4c",
+      "overlay": false,
+      "sha256": "773e6a891f90d8e35f1db49977d003d1361ae53ae59c22bdc2153247b765efb7"
+    },
+    "scripts/factor_research_contracts.py": {
+      "bytes": 16981,
+      "git_blob_sha1": "abc8b8c64d9d4a848761c8231dedec3a016f321f",
+      "overlay": false,
+      "sha256": "114b3c24ab03a8ba8ecb2181041dc2c0470b08bc54b257b596696e31dd2d0dc6"
+    },
+    "scripts/history_backfill_queue.py": {
+      "bytes": 18643,
+      "git_blob_sha1": "45fc42be515eab1e6a4fdf0e0b687d2af3fae01a",
+      "overlay": false,
+      "sha256": "872dc3b9af7d43aedd78e8cd66b36313d9db8f416e6ba808d1a984ee96fb932c"
+    },
+    "scripts/history_backfill_store.py": {
+      "bytes": 16127,
+      "git_blob_sha1": "55391e6877f2a8cbfb060d8dca8a987d75e6aea4",
+      "overlay": false,
+      "sha256": "333eddf81231609e8b8bb94df6f1543f96a36c633845ba991d405da6df55bab1"
+    },
+    "scripts/history_source_gate.py": {
+      "bytes": 12918,
+      "git_blob_sha1": "9739b928979831bb0fbb0e42ea52fe2ed54ce48d",
+      "overlay": false,
+      "sha256": "973b5c7671daf1375dbd6a7d79ec4afb6af1bfb63b03060b0eeffd1483889170"
+    },
+    "scripts/online_model_control.py": {
+      "bytes": 13600,
+      "git_blob_sha1": "ec516b6047f36415055b92b20d5cc72df9d4ab13",
+      "overlay": false,
+      "sha256": "aee8ae1639d06a7d7df2af78ad271e2e0eb50aac716df24953cd51e2aae163b4"
+    },
+    "scripts/online_prediction_worker.py": {
+      "bytes": 12873,
+      "git_blob_sha1": "f68a1d8ef5de8dfcb07d7d13ab9b2e0a3c67dab4",
+      "overlay": false,
+      "sha256": "c4c7a4590afcb3f3e5617dccdb76bba1e6534d4ae0f207bf73f7189bc657a9e9"
+    },
+    "scripts/persist_research_experiment.py": {
+      "bytes": 17471,
+      "git_blob_sha1": "d83ba6dd5096de010c5af855a62b47edc9587cd9",
+      "overlay": false,
+      "sha256": "23a7b304509faec307fd2b18b6795469f48ed5d1356c1c5b04b339c60aa1abc7"
+    },
+    "scripts/pit_collection_queue.py": {
+      "bytes": 5184,
+      "git_blob_sha1": "6d6dd5e5f7a5240553c5dba839cb8169cd735520",
+      "overlay": false,
+      "sha256": "2364688d60111ba121a87576f740fc8a2a6dcff8f3ce61e51c24a4a312eb959c"
+    },
+    "scripts/plan_public_delisted_history.py": {
+      "bytes": 10062,
+      "git_blob_sha1": "c6f8d2170a8313338345d3e23b978308144edf3e",
+      "overlay": false,
+      "sha256": "4f64736aaa691831ddf3b6775ad4bf53c295ba064f5bc64fb1df3847ce5013c9"
+    },
+    "scripts/plan_unified_backfill.py": {
+      "bytes": 1895,
+      "git_blob_sha1": "ef8bddca8a089e61ba715c8238e3d5740f909c92",
+      "overlay": false,
+      "sha256": "484be38911bbda3d3e852f47cb73bc90f5e5c777fd1eafdef353382d63d11f8e"
+    },
+    "scripts/prepare_baostock_forward_preregistration.py": {
+      "bytes": 11376,
+      "git_blob_sha1": "5f7814bf8a3cf417dac980d488b3680e1af4aa06",
+      "overlay": false,
+      "sha256": "0492a879568b2903449407c889effafe7ba652d865d3b87b045cecc9e392fe4d"
+    },
+    "scripts/prepare_qlib_data.py": {
+      "bytes": 9266,
+      "git_blob_sha1": "9b19bcb8dc03930801bf144416dbc826445f3c26",
+      "overlay": false,
+      "sha256": "9062d71e1abdb3a861c56b1347d32091a3e283ea8ae7d2e08524db9682ba984f"
+    },
+    "scripts/prepare_qlib_incremental.py": {
+      "bytes": 24287,
+      "git_blob_sha1": "b1c67e2e41b8f0a0df855b3935b71b83955b7fcd",
+      "overlay": false,
+      "sha256": "d8a32e72bd54e6fd3cc7d3108ed3de9e1661d27f14bfbb90b73527f693b590ac"
+    },
+    "scripts/probe_baostock_forward_coverage.py": {
+      "bytes": 15478,
+      "git_blob_sha1": "ab7cd318a0fadf31bbb4988937454d22351f4774",
+      "overlay": false,
+      "sha256": "53c503f8ce8c7f9fd176726c6d6e46c967ab04d2244278d969b5573a40b897ec"
+    },
+    "scripts/probe_baostock_forward_session.py": {
+      "bytes": 10226,
+      "git_blob_sha1": "411eee402ec9803ef002b5205b2546d229a7ee65",
+      "overlay": false,
+      "sha256": "d1934024fc23b334dd8c4cda40ca3e55a0e200719d80d60201e3aed42bb357d1"
+    },
+    "scripts/probe_rqdata_readonly.py": {
+      "bytes": 2294,
+      "git_blob_sha1": "84bd0769169833f261ac0b35bb25378b0685a4c1",
+      "overlay": false,
+      "sha256": "7631ae722eb2fcbd2193e3d9fb040afd391a969c5d19a6a6eb5a35d414ebe64c"
+    },
+    "scripts/probe_sina_intraday_breadth.py": {
+      "bytes": 12473,
+      "git_blob_sha1": "1d5b0fd7d4e0673182913883769a46c14a0de5fa",
+      "overlay": false,
+      "sha256": "e11c4db8bb34fd5353d9912dbadcd85f7411d60efa41625428da61436ec81114"
+    },
+    "scripts/probe_sina_intraday_observation.py": {
+      "bytes": 9257,
+      "git_blob_sha1": "9d681bbc7c63838491dc27f235dd645a0f6bfcac",
+      "overlay": false,
+      "sha256": "fb4ad5bce7632a24508d68fe83d2bd3fff1ba67c85ee0ac5d9b559763d736c66"
+    },
+    "scripts/probe_unified_history.py": {
+      "bytes": 10640,
+      "git_blob_sha1": "69d01ad2de902dcb8a59f65d67092050a60cdf8b",
+      "overlay": false,
+      "sha256": "90b631d99668ae493b641181aee3a13d5e1fe4d1017fffd82a4bb0185b15a46a"
+    },
+    "scripts/probe_unified_publication.py": {
+      "bytes": 21659,
+      "git_blob_sha1": "f9c025165b0ae62a1e7f6dfee63e03641e220b5c",
+      "overlay": false,
+      "sha256": "eda247b66a0551c588cd9a4d2231e7e0e90a5a841f7d5bb0e3b076708e4f25e2"
+    },
+    "scripts/promote_baostock_forward_observation.py": {
+      "bytes": 15523,
+      "git_blob_sha1": "8831609a8a58a624c05b3092d7e1fab6767dd42e",
+      "overlay": false,
+      "sha256": "562c016735791567a69cf3c28a7a4bd4fe7cde3e1cf5fb6f28e53fc86b0a7ab5"
+    },
+    "scripts/provider_readiness.py": {
+      "bytes": 1003,
+      "git_blob_sha1": "22d2a9302b7d3e77c3994628632c98390de284c3",
+      "overlay": false,
+      "sha256": "c81e57be33559c17efbd311e823ec91c3a96c1414885de3288ef4b967fa64d2e"
+    },
+    "scripts/publish_research_snapshot.py": {
+      "bytes": 21715,
+      "git_blob_sha1": "3d5a5ad84f4430afadcae277afea326895780f8e",
+      "overlay": false,
+      "sha256": "6bb527d9faeeb6979150a4b4163035bfc7e5b73fc7b2bd88aa5afdf0a7c42de5"
+    },
+    "scripts/publish_unified_collection.py": {
+      "bytes": 5674,
+      "git_blob_sha1": "7c1a725de49d284bc966edb952ac5492e4e9b537",
+      "overlay": false,
+      "sha256": "6daf0452249ad894babc551b4f24a392feeda1d713b91b80a831149a5e222089"
+    },
+    "scripts/publish_unified_market.py": {
+      "bytes": 66618,
+      "git_blob_sha1": "b330e6d452530e3de39f39af39b2776639baef17",
+      "overlay": false,
+      "sha256": "64caab0023626ef0f531f563c3a392d4a2429a9a6c004c5789af17321bbd8d8a"
+    },
+    "scripts/qlib_forward_paper_adapter.py": {
+      "bytes": 18856,
+      "git_blob_sha1": "54ec2c72fcaadad8185b63003b9838babf6e730b",
+      "overlay": false,
+      "sha256": "9c2c41e0f3c8049690be1ecc948d3ce89edba69704f8e71be3a1f92dfa376140"
+    },
+    "scripts/qlib_public_delivery.py": {
+      "bytes": 14875,
+      "git_blob_sha1": "bace0259cdbeda968d0bce3865fd99ec72119c0b",
+      "overlay": false,
+      "sha256": "929ca71c77d5622b00368d3c706ad55e9978419491c26b9b3e0fa3146cd1fa00"
+    },
+    "scripts/qlib_research_contracts.py": {
+      "bytes": 7419,
+      "git_blob_sha1": "ff95cd898800f084487e0e9abb8a62d0860f1c34",
+      "overlay": false,
+      "sha256": "908bfaa7145de92470f731f02332d740cc0530728a3fdd69153d4bbd8143569d"
+    },
+    "scripts/qlib_restore_bundle.py": {
+      "bytes": 11100,
+      "git_blob_sha1": "2f911e09a59ca2ee1af5897323fcca8e25c126d8",
+      "overlay": false,
+      "sha256": "55e6eff43f9b52dbcf204840bb85c5b384e14a334bddea8523f3e7be9550c996"
+    },
+    "scripts/qlib_rolling_adapter.py": {
+      "bytes": 2962,
+      "git_blob_sha1": "a01b78188656a97dec88af12aa19a6591c7e9502",
+      "overlay": false,
+      "sha256": "5a41704cf75d56908aded7619d87cf597ec6b4e2147f36e311741267caf656db"
+    },
+    "scripts/reconcile_official_master.py": {
+      "bytes": 3858,
+      "git_blob_sha1": "9b4d67f3aa60b609a457210cc801ec3867e1d94f",
+      "overlay": false,
+      "sha256": "aded393f905cabafd511e50892c4c890538691fc0c912ac28e309988a33fff78"
+    },
+    "scripts/refresh_current_datasets.py": {
+      "bytes": 7240,
+      "git_blob_sha1": "8393ee62a336225b480d322a7155ba35e3f35d79",
+      "overlay": false,
+      "sha256": "f2cbd4709102812e00b0619a893367001a2bd1b09fb1b030a162c31c46c014c2"
+    },
+    "scripts/reload_qlib_provider.py": {
+      "bytes": 4772,
+      "git_blob_sha1": "d7e7e052877894174af8c7a73e18dc788996be76",
+      "overlay": false,
+      "sha256": "5543c6a644397ff5d951ad2f785d49aa4e1b1abca92a2ea7107d8bf9d2972f3f"
+    },
+    "scripts/repair_etf_daily_attempt.py": {
+      "bytes": 2692,
+      "git_blob_sha1": "20c3f5a54f35c598c556ea95f749be2d8111e0c1",
+      "overlay": false,
+      "sha256": "22596e6019ca9523dba3307c8fe4edfc6f57379eeff77628817fa7d232adc052"
+    },
+    "scripts/repair_incremental_gaps.py": {
+      "bytes": 12052,
+      "git_blob_sha1": "e2fd78bc84cd9dbe5b6854c01256c8d6750ba3c9",
+      "overlay": false,
+      "sha256": "5e9aa660cd86288391ef64a63db15d98255d578432af7b8614a14e2bed6dfb2e"
+    },
+    "scripts/run_akshare_etf_experiments.py": {
+      "bytes": 10421,
+      "git_blob_sha1": "62557b136892dc8d1c78021316c3ab1fa999917f",
+      "overlay": false,
+      "sha256": "4d97acb1d3354c660c27e2a88d89c04773b90ad0d7700a9902b16ab2542c67d3"
+    },
+    "scripts/run_akshare_etf_factor_search.py": {
+      "bytes": 11298,
+      "git_blob_sha1": "9acf1c135943a533478892199abba7f0a5f795e9",
+      "overlay": false,
+      "sha256": "dc816bab003523dd22832d0ad75958d888f1054e719aeb6d942fa6e32ceb2a78"
+    },
+    "scripts/run_akshare_etf_robust_factor_search.py": {
+      "bytes": 22048,
+      "git_blob_sha1": "5a244f7360e49c9e9431088c64d0f9b57f0e560d",
+      "overlay": false,
+      "sha256": "75cbf96dba1a70e6d7ded1d8b0cbf5fb04e852a2bdaeaa8dd824c30be0719670"
+    },
+    "scripts/run_akshare_etf_robustness.py": {
+      "bytes": 7508,
+      "git_blob_sha1": "13c62c3f262545d53d98fb715ee446c23b0db4ae",
+      "overlay": false,
+      "sha256": "801fdafece3060b07c1a719af1b3430090c057917601bde416610eea618132fd"
+    },
+    "scripts/run_akshare_etf_walk_forward.py": {
+      "bytes": 6029,
+      "git_blob_sha1": "99dc4dc3c8b93a947b0200abc7c2cbfd6270a13b",
+      "overlay": false,
+      "sha256": "b78e97d782e54ebf49dac8218b48fb101b742aa50c86b05dc1b99277b160248e"
+    },
+    "scripts/run_akshare_stock_sector_transfer.py": {
+      "bytes": 16332,
+      "git_blob_sha1": "b11f9281f33910f8aa6c8c91904baf8c2a9a412f",
+      "overlay": false,
+      "sha256": "b5b60cf71734842f2f3c3a09f3df4fada281db633d93c2606e7149e209ba16b1"
+    },
+    "scripts/run_baostock_development_policy_search.py": {
+      "bytes": 9461,
+      "git_blob_sha1": "757e1b4d936de7e4476bbfef91fbbb2893ec05fb",
+      "overlay": false,
+      "sha256": "917e429f1db2aa1fde1c4e36daae444f7c18f407c5382fc13cc47275507ae631"
+    },
+    "scripts/run_baostock_locked_forward_observation.py": {
+      "bytes": 11832,
+      "git_blob_sha1": "07562cb96fd310cc762060ba0bdb94dca4cab0c4",
+      "overlay": false,
+      "sha256": "0294ac923744c3101b9810142ddfa9efb2e5e3069aa348ae3251b292c49535fa"
+    },
+    "scripts/run_baostock_reserved_tail_diagnostic.py": {
+      "bytes": 14881,
+      "git_blob_sha1": "11d76f351bf3a7e10079e2be3b3100f0163e032e",
+      "overlay": false,
+      "sha256": "073cdfed5e8e2adbd8795eee31a98bea843fffd0150377704df2c2144f40a7e5"
+    },
+    "scripts/run_baseline_workflow.py": {
+      "bytes": 1486,
+      "git_blob_sha1": "d0989f08b374573c11b883fed0b22cfac90b367a",
+      "overlay": false,
+      "sha256": "74115927f230d81f10d8ce4abe94382f717d1d707043d63af60dded0d84c2b7a"
+    },
+    "scripts/run_control_plane.py": {
+      "bytes": 5075,
+      "git_blob_sha1": "ab5bac4220c8b09468f5fd357a40c378f11f0e57",
+      "overlay": false,
+      "sha256": "5bf71fca30dd5533064c706ee65cb4b4b6976ede5e2e5f2e48a61207473fcd30"
+    },
+    "scripts/run_daily_factor_evaluation.py": {
+      "bytes": 3378,
+      "git_blob_sha1": "fb931506d6f7530c5475726822d5fecda27c90a3",
+      "overlay": false,
+      "sha256": "291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3"
+    },
+    "scripts/run_data_observer.py": {
+      "bytes": 13161,
+      "git_blob_sha1": "a948fbe096810817e385a7e2daa4a4e07af6608a",
+      "overlay": false,
+      "sha256": "fd6ee26beb102914896cc40197d52fb4184e4bcc0a838d2ee8d1fab98a21ce4f"
+    },
+    "scripts/run_etf_history_comparison.py": {
+      "bytes": 22449,
+      "git_blob_sha1": "964c42b0de6b956682fd26e8e21771206ffc01ee",
+      "overlay": false,
+      "sha256": "36ffbd725e729843ba89d4f967ff28e1e8d888bb60074cd2aa92a0085706e1e7"
+    },
+    "scripts/run_etf_shadow_service.py": {
+      "bytes": 19235,
+      "git_blob_sha1": "9c14628124b5b04b544b532b6ccb45d0387faa58",
+      "overlay": false,
+      "sha256": "88816c34f5aee3758b5dd92b984bcfb006c1c72c6448870d219ff7f7b3f43308"
+    },
+    "scripts/run_etf_trend.py": {
+      "bytes": 4019,
+      "git_blob_sha1": "b8f6db219a7c16cb1bc6127455849d813c10ceca",
+      "overlay": false,
+      "sha256": "9891d2aad887687bc897e36c363fa948a67b97172aed0e0e962daf9b4bbe16ef"
+    },
+    "scripts/run_etf_trend_service.py": {
+      "bytes": 17989,
+      "git_blob_sha1": "5c3a859e34a2221e1e38e8c84a8fd255d8aacbca",
+      "overlay": false,
+      "sha256": "4dc9b8775b473d4e7dbaee46894da36f299ca371609b946cb499ec17c02c11f8"
+    },
+    "scripts/run_factor_strategy_registration.py": {
+      "bytes": 3508,
+      "git_blob_sha1": "d2b72df053a878fb1f7fc6fab7c73e9f575fb6e3",
+      "overlay": false,
+      "sha256": "72fec4144bc1b600d9471685e9e28f53e48af9ad433da3ad88006d6fc1f78aa1"
+    },
+    "scripts/run_history_backfill.py": {
+      "bytes": 24644,
+      "git_blob_sha1": "652794ea26d147493c0d1891f78fe57b07278838",
+      "overlay": false,
+      "sha256": "bab9910995984b7f2c2393aa4d0633cd37d798f983704e35a2c01cfa6ef2bbc8"
+    },
+    "scripts/run_history_backfill_service.py": {
+      "bytes": 8472,
+      "git_blob_sha1": "1f5e92c8333e5ea6f8e942e5e178df231bc85aad",
+      "overlay": false,
+      "sha256": "b7870228f9a8ed98820b4b67e733a74be68dd7127cf2e92dd089e20af9a2999c"
+    },
+    "scripts/run_pit_repair.py": {
+      "bytes": 9535,
+      "git_blob_sha1": "363422b97c8df54f4b73fcc1e4fe43aa6ad98723",
+      "overlay": false,
+      "sha256": "401c4850a84303dcb332fc530a89dd6a8444b800910b7339eb8dd4a18f05119a"
+    },
+    "scripts/run_qlib_baseline.py": {
+      "bytes": 33842,
+      "git_blob_sha1": "d5c4ec69a11e2acb34552ba014c462d6d84565f9",
+      "overlay": false,
+      "sha256": "b144d8dc64872c7b436fbc131d6b16c2543478c3bffe486110cfeb5d95ca09fa"
+    },
+    "scripts/run_qlib_candidate_validation.py": {
+      "bytes": 1875,
+      "git_blob_sha1": "1e52c05bf5255c7646b39881370fac8082b51d0f",
+      "overlay": false,
+      "sha256": "4479ef3f394fc20b6b770d9c6a15d35c1eb3327bd21b00f0594bf2cf6e0a0e69"
+    },
+    "scripts/run_qlib_data_service.py": {
+      "bytes": 14717,
+      "git_blob_sha1": "31a4ecd587494e6162c19c91a27d23fe1c243fdf",
+      "overlay": false,
+      "sha256": "cae8405d303922fa6a8704a280d518ed3f687175d7b6d2d210eba6ac1e03bf7a"
+    },
+    "scripts/run_qlib_forward_paper.py": {
+      "bytes": 4997,
+      "git_blob_sha1": "e4fd97908343969109076d5d4e16a3833adcccf3",
+      "overlay": false,
+      "sha256": "50f681f032d4bb96b93ec04530646dbaa622cabe11cb070c67bc604859969e09"
+    },
+    "scripts/run_qlib_forward_service.py": {
+      "bytes": 45071,
+      "git_blob_sha1": "14fe3ffd89a806e711a1e349ba2e2dca3c52af38",
+      "overlay": false,
+      "sha256": "c50f2b0ef1d3c0c350f22d029f9edae9ce85be07017c3f76e2d610519da9e187"
+    },
+    "scripts/run_qlib_prediction.py": {
+      "bytes": 8240,
+      "git_blob_sha1": "9a5ef264f04e80c22f39a28d579f1d6217cf9a5b",
+      "overlay": false,
+      "sha256": "f12a28f2b4a6ab19d3431cc20a496e5ae21d9e25a5158f40f7ba353d1090efdf"
+    },
+    "scripts/run_qlib_rolling.py": {
+      "bytes": 3045,
+      "git_blob_sha1": "9866776c1941c3e3d47bd02d38337c629b1c9085",
+      "overlay": false,
+      "sha256": "2e1bee41e562496334e539715f53c104fe8e16803e5cf9f014e6959d08dcf990"
+    },
+    "scripts/run_qlib_signal_baselines.py": {
+      "bytes": 6573,
+      "git_blob_sha1": "c4329309276df8ef3e02bfa6b225663c8f86cfa5",
+      "overlay": false,
+      "sha256": "8950bc8d51edfbd47bd3f396199115fe4fc124f4e1b6e28c93b51aee2d7b21d8"
+    },
+    "scripts/run_qlib_strategy_comparison.py": {
+      "bytes": 12482,
+      "git_blob_sha1": "ec26742789d3c11fe0a15ec0e602fe3219339ec2",
+      "overlay": false,
+      "sha256": "0d858a9aa108295fc10b64232e842c4804991b179a6874fbeaef7757116a7b14"
+    },
+    "scripts/run_qlib_worker.py": {
+      "bytes": 46552,
+      "git_blob_sha1": "aa3aee45986c04719aa872e5b252e7e374a5ca4a",
+      "overlay": false,
+      "sha256": "f1b0ada2063340383316a9cf65a1e2d02a3c22e796434cb42ceb0042f059dbdb"
+    },
+    "scripts/run_research_maintenance.py": {
+      "bytes": 6963,
+      "git_blob_sha1": "fda5de8a228d8de5c564b1c709bfb209a3a2e6b9",
+      "overlay": false,
+      "sha256": "c5beccf8c778da63639fb5870f124f22ca57d398088f312e8f7376985fe93b99"
+    },
+    "scripts/run_sina_five_minute_walk_forward.py": {
+      "bytes": 23527,
+      "git_blob_sha1": "7ea2eb3c3b4e80d623d6f3b3dcaf20d6e5141857",
+      "overlay": false,
+      "sha256": "1bf788c6a53d12b23ab3d8c15b1ea35c7539ab38bb5966750ae87887bf267bae"
+    },
+    "scripts/run_sina_minute_overlay_backtest.py": {
+      "bytes": 13845,
+      "git_blob_sha1": "5e3b63dfa313c75cc8db5559afed0b32b3d3b485",
+      "overlay": false,
+      "sha256": "17c5ad4f3f8d4aa62e71f88fa3371f0a6d87f9b55f5cc663cd8ad9d9e3d6903f"
+    },
+    "scripts/sina_minute_history_ingest.py": {
+      "bytes": 13646,
+      "git_blob_sha1": "b4c68142f4957eefc90c20a453c58e6d0264aac5",
+      "overlay": false,
+      "sha256": "5854877e32125a9a4a78914527f27d840d2ce5aef702a5825f455fd0abdc10ab"
+    },
+    "scripts/stage_qlib_model.py": {
+      "bytes": 947,
+      "git_blob_sha1": "001383ad4b116ec5d02f018bd235596bf7125fd5",
+      "overlay": false,
+      "sha256": "95b167e0ba75e14a483e9e5622199a2817221c1f924dc754a891d30ba2aa3ee0"
+    },
+    "scripts/unified_market_checkpoint.py": {
+      "bytes": 6673,
+      "git_blob_sha1": "40a4183d98614edf84a689cfb8d2f010a27f6eea",
+      "overlay": false,
+      "sha256": "0f2c512f7abf7cbc99d34def6edfa7dfeaa73e564031a36a5b33653759a2f485"
+    },
+    "scripts/unified_queue.py": {
+      "bytes": 25710,
+      "git_blob_sha1": "8c24d793c54a4d64b30dc8ab85638bcdb8586033",
+      "overlay": false,
+      "sha256": "13fe16304d3568cecc9a1c9320e690819308f3f4a1de7257e72fba0571eab19b"
+    },
+    "scripts/unified_store.py": {
+      "bytes": 19788,
+      "git_blob_sha1": "37fec500926aef8e05fa48bc6ea15dabe7d8ca8d",
+      "overlay": false,
+      "sha256": "673d461eb2f41b5d43b7efa3a1ff299af36d3f89a6cd98145c2478f52a935510"
+    },
+    "scripts/update_baostock_forward_coverage_history.py": {
+      "bytes": 17709,
+      "git_blob_sha1": "290dc0d3181cd1a1155967241718fad7a8b8dd60",
+      "overlay": false,
+      "sha256": "be0803bef1affefba8edadd7945b087930cb1c2d85619c4528e7b9a94e76669e"
+    },
+    "scripts/update_intraday_continuity.py": {
+      "bytes": 10475,
+      "git_blob_sha1": "33e8a13c2b81b7e3f2fead802fe433137dfb99b0",
+      "overlay": false,
+      "sha256": "b1380550af944029a8764f7d5b6e36f013cec335b0a38fc7279909bcc0d1d277"
+    },
+    "scripts/validate_qlib_forward.py": {
+      "bytes": 9398,
+      "git_blob_sha1": "a6babe7f97170f320fe093ca87f39d9938906dd9",
+      "overlay": false,
+      "sha256": "530d39d5caf45e77645594937a2f3dc505e3298d4bfe5ecc5706b54ce0078cdb"
+    },
+    "scripts/vendor_session.py": {
+      "bytes": 627,
+      "git_blob_sha1": "377bb4d983468cb0ccfdaf4e05c663ab88e623a2",
+      "overlay": false,
+      "sha256": "5d066a688767e39fddab6812c4c9a9e02c148c34916f41f343ae563672d4d3b3"
+    },
+    "src/qtrade/__init__.py": {
+      "bytes": 62,
+      "git_blob_sha1": "5e2173bff8015c3da19646ef316be0dfb0ae7180",
+      "overlay": false,
+      "sha256": "d68bf5f6a063d2264b1a31edd7c5a247af616f52140456df9900005b5cfb6bf6"
+    },
+    "src/qtrade/accounting/__init__.py": {
+      "bytes": 267,
+      "git_blob_sha1": "ce1d37f59df64d51213cb6405e3ab3e99bc062ac",
+      "overlay": false,
+      "sha256": "dae5a507f60349128898ff6242135ed93332a0e470de052567823ac6e991b9c7"
+    },
+    "src/qtrade/accounting/ledger.py": {
+      "bytes": 3010,
+      "git_blob_sha1": "e5a53774be79a4828d91e1e43584a0ab726c5f78",
+      "overlay": false,
+      "sha256": "5f081f8314bfcd8c5a84f55c7678b1cf6351ba89a706ccfac6157b5243baf099"
+    },
+    "src/qtrade/accounting/sellability.py": {
+      "bytes": 3132,
+      "git_blob_sha1": "ab30fd56dae63cbef3cb9590c7cfb5f7a00f29be",
+      "overlay": false,
+      "sha256": "9a3c1a5221324a1cf0c591ea28bd3e7cc1533d3c2c0349e020054a993e4afa8d"
+    },
+    "src/qtrade/adapters/__init__.py": {
+      "bytes": 42,
+      "git_blob_sha1": "bd57407c2b10285523dc03e4ee30466efa272580",
+      "overlay": false,
+      "sha256": "63bad7b59b5d35a32557be3c689f6f36b00fdbe10c35a6cb41c6c2662d4f61f3"
+    },
+    "src/qtrade/adapters/vnpy/__init__.py": {
+      "bytes": 259,
+      "git_blob_sha1": "3c56818a2ceec227f2f84cb0e38db0a486fd92c8",
+      "overlay": false,
+      "sha256": "ac51a740500f47e97e22fff079178f29f9e84acca6bde0f6b3ba21238e496e01"
+    },
+    "src/qtrade/adapters/vnpy/protocol.py": {
+      "bytes": 3909,
+      "git_blob_sha1": "2841dcfba20cb565509fc7d385a99df40466286f",
+      "overlay": false,
+      "sha256": "8fb2d2625331fab154e3d4074805252bf0621bd355bbaf866a171ba0c1b55e09"
+    },
+    "src/qtrade/api/__init__.py": {
+      "bytes": 198,
+      "git_blob_sha1": "da276b1eed42b2b3825470ba907534a7568d9e19",
+      "overlay": false,
+      "sha256": "481757013bc16098c27f981dfcc18346b7e20b4691a00540abbd0755460a7d94"
+    },
+    "src/qtrade/api/app.py": {
+      "bytes": 438622,
+      "git_blob_sha1": "e319e3b9cd3661b08cd7de10617ccd54c6bc5157",
+      "overlay": false,
+      "sha256": "651d7931725990b4d96db861f4ed191064460a2e217d6cbaa3d27948e86938cb"
+    },
+    "src/qtrade/api/current_datasets.py": {
+      "bytes": 12230,
+      "git_blob_sha1": "ce1402fcf9d79056acff8f5ee9921e483dc76b37",
+      "overlay": false,
+      "sha256": "21f9d02434865f16f61438b6e8036328caa45ca58787a36963ecaeb653eb06ec"
+    },
+    "src/qtrade/api/dashboard.html": {
+      "bytes": 1963,
+      "git_blob_sha1": "df2fec8a4277b35dc4aff82800c161e204e5d5fd",
+      "overlay": false,
+      "sha256": "a43f531e94d9cceb3805d9001cac490ed3fa161f6152e4614dc167a149695a39"
+    },
+    "src/qtrade/api/online_research.py": {
+      "bytes": 27615,
+      "git_blob_sha1": "0252b857fa734f14fc0d421f41b02154463462e8",
+      "overlay": false,
+      "sha256": "9497ae72fa572ac36989fba5532607b718dbfc0d940f79d5d104931c475273c2"
+    },
+    "src/qtrade/api/public_observations.py": {
+      "bytes": 7186,
+      "git_blob_sha1": "0e175030ff5680d3b5ed6b27bee2d4ebcc383ecd",
+      "overlay": false,
+      "sha256": "a9e3fa75ccb9548ab77e0ac3caf80ab26ffd9d4246ab66738a0e3a7aac7d8e2a"
+    },
+    "src/qtrade/api/qlib_baseline.py": {
+      "bytes": 1272,
+      "git_blob_sha1": "2fa50e2b267f3ba633a0b0e6f71b23481455fb74",
+      "overlay": false,
+      "sha256": "5ccf8f32ee134212e4c45e543c3295ef47296bae6f15145308d23e808f4d9eec"
+    },
+    "src/qtrade/api/research_workflow.py": {
+      "bytes": 24176,
+      "git_blob_sha1": "46f0d72b822727dcc11c90238334fab662fa25c4",
+      "overlay": false,
+      "sha256": "1d47a7c3d776ba9d74fd5667d127dedddda2064c5a03d620a674f21812966a1a"
+    },
+    "src/qtrade/api/unified_data.py": {
+      "bytes": 9442,
+      "git_blob_sha1": "f6cf7d4cf0337fb8fa38d3a3b48f0ea85db9baf8",
+      "overlay": false,
+      "sha256": "eadc757bb43f8f72e3843ef7452858fd0689dc9068773da61248ab5ce6880713"
+    },
+    "src/qtrade/api/unified_market.py": {
+      "bytes": 5840,
+      "git_blob_sha1": "cae0fcf84a578ed90b456c2c221e586331368524",
+      "overlay": false,
+      "sha256": "f0caa88f788add48a3eaa5a4b8b888aec542e3af6e998133b0676e94f418b86b"
+    },
+    "src/qtrade/api/unified_source.py": {
+      "bytes": 8734,
+      "git_blob_sha1": "660299dc834bded4db3c2c36d300d5895c63e507",
+      "overlay": false,
+      "sha256": "1bd4a0e877e674df14b87cd875e4c67095bfb6f02dd113736bab1d0d5ce16294"
+    },
+    "src/qtrade/api/vercel.py": {
+      "bytes": 6097,
+      "git_blob_sha1": "86fc28e2c3794dbb283a506fd7068210cdf178f8",
+      "overlay": false,
+      "sha256": "656bf63ce6aa03080cf499a4be077a468e1631112a07c36b192ad4dfc0b877bf"
+    },
+    "src/qtrade/audit/__init__.py": {
+      "bytes": 164,
+      "git_blob_sha1": "366e0ab48ad926aaca4bc61137e24210869d409a",
+      "overlay": false,
+      "sha256": "2eb3602b946c08ef237d6ea3a1cf2351a7d83f1bec9d84b4fd508be4c5903864"
+    },
+    "src/qtrade/audit/log.py": {
+      "bytes": 3742,
+      "git_blob_sha1": "ca18f5602c197f9797ff7f0bcd57ff6948b8507b",
+      "overlay": false,
+      "sha256": "166e54f6d697ac47cbb3b2022536e2eab468ce984fc92fbab42e7708ea743a77"
+    },
+    "src/qtrade/backtest/__init__.py": {
+      "bytes": 217,
+      "git_blob_sha1": "463d961f8b693acd80e0686c56f819eef36c97b2",
+      "overlay": false,
+      "sha256": "bdd2368f6b8b8d8b1a308db270142ee39cdf477980bf3cb677eb8849ab1b9a7f"
+    },
+    "src/qtrade/backtest/engine.py": {
+      "bytes": 6016,
+      "git_blob_sha1": "b19dcc7cdba7f8d824c414ea0b7d426cfd8aea99",
+      "overlay": false,
+      "sha256": "d2ac065a9153b125472773f15e0df8ea09da76fc57192932cdd99a5e39827c1b"
+    },
+    "src/qtrade/broker_bridge/__init__.py": {
+      "bytes": 432,
+      "git_blob_sha1": "0b932543d7a07c6f16c623c28fee6e8c924ef5cf",
+      "overlay": false,
+      "sha256": "c8ee0ddf7243f4b4ea0aceded9d6445fa2c457288a724b10893a5957a4a388d1"
+    },
+    "src/qtrade/broker_bridge/models.py": {
+      "bytes": 3361,
+      "git_blob_sha1": "45650327cae7f56f1cd8fdf52d671574ff46a73a",
+      "overlay": false,
+      "sha256": "7bbc969e8a60b71cbcc06777cc0008281be10d406a9d10b719517da7a1d5e333"
+    },
+    "src/qtrade/config.py": {
+      "bytes": 1099,
+      "git_blob_sha1": "4cfc7c1226a991600bc3c928b16c14c950a17630",
+      "overlay": false,
+      "sha256": "ecf671a7cb6c9e1d17c127d980573a2f2e955fa41429b6a65b9f1311554fd774"
+    },
+    "src/qtrade/control/__init__.py": {
+      "bytes": 239,
+      "git_blob_sha1": "097f28c9195537430d1aec317241df10f976120a",
+      "overlay": false,
+      "sha256": "e62855f1e111c367be95a58e26f6f4a61454db7b1946fb51f5f59ac076ccbdf1"
+    },
+    "src/qtrade/control/readiness.py": {
+      "bytes": 966,
+      "git_blob_sha1": "a7be27039836719282e4d6d102913c32c555f13d",
+      "overlay": false,
+      "sha256": "f02b92ac4755103e41c090ee7bb7ea5af6f329c4736a8fca4538cef6f5a09bd4"
+    },
+    "src/qtrade/control/runtime.py": {
+      "bytes": 3909,
+      "git_blob_sha1": "f692c3979ad219395cd82e967d686dd3a597c1cb",
+      "overlay": false,
+      "sha256": "25f6c385c20e62872c9e1cacb405da062b987050240eb81707403cab775027a3"
+    },
+    "src/qtrade/data/__init__.py": {
+      "bytes": 900,
+      "git_blob_sha1": "d78417851a13648cfdbfb740634e6573e5a1d470",
+      "overlay": false,
+      "sha256": "b1d3685e3dc44466099d014eda15a1ea894de2354195953d9e3f755cf63af3d7"
+    },
+    "src/qtrade/data/adjustments.py": {
+      "bytes": 2421,
+      "git_blob_sha1": "71eee3c63392be3452582172e482d667c0dc99ff",
+      "overlay": false,
+      "sha256": "138f6e6ec68a25dfa6d774d2896f4d9f4af96cc74911c809578e847493f94505"
+    },
+    "src/qtrade/data/csv_import.py": {
+      "bytes": 4229,
+      "git_blob_sha1": "80512351505a38822203334df0b7ef7ce6833c9a",
+      "overlay": false,
+      "sha256": "6ca7f92bef85c5086fe5cd69841cb9139c9fa69980307f4e7d6bcfe38007e635"
+    },
+    "src/qtrade/data/minute_admission.py": {
+      "bytes": 4974,
+      "git_blob_sha1": "2dd782d5e11a1c12ffabe1fe05da6c4b29eca642",
+      "overlay": false,
+      "sha256": "ee4de60f6dd5c281fd64d91d70a7c4779c4304da408370848d3f85a142cd2c0e"
+    },
+    "src/qtrade/data/models.py": {
+      "bytes": 2110,
+      "git_blob_sha1": "75ace0bf02e8399cdb724e686360ecabae7fd9bb",
+      "overlay": false,
+      "sha256": "8435fe27941c20781df9678ca46e27ad7cc2a132ee38f3476fdfd3847329dd2e"
+    },
+    "src/qtrade/data/pit.py": {
+      "bytes": 1939,
+      "git_blob_sha1": "a6796386469e01fb7232ef4bf08bb8088c76563b",
+      "overlay": false,
+      "sha256": "4ceeabd876e25df61513de3aae2da8a0b94293e60114fbdf9af7189aeb9e7125"
+    },
+    "src/qtrade/data/quality.py": {
+      "bytes": 4525,
+      "git_blob_sha1": "d1be5609234de7f56a0366a8c4fe954fd17fcb9b",
+      "overlay": false,
+      "sha256": "5f1dc90eb2fbf3cfa312378cc71a98ed7fd6b5b3786545f17f292f331f520ff5"
+    },
+    "src/qtrade/data/storage.py": {
+      "bytes": 6251,
+      "git_blob_sha1": "e6c46ec7f19fa670e9f4baec3550a5a4712b0e6f",
+      "overlay": false,
+      "sha256": "8e0cf06956ec1161464154006718b00c2316a8166d4d2c2ac85680156670d154"
+    },
+    "src/qtrade/domain/__init__.py": {
+      "bytes": 441,
+      "git_blob_sha1": "38af1dae5553140bd9dd9948f5e568979e4eb0c9",
+      "overlay": false,
+      "sha256": "41d5a3fbdef76679c10ce0646d21b7474720b766be03061ebad7f97a37ed8a17"
+    },
+    "src/qtrade/domain/models.py": {
+      "bytes": 4617,
+      "git_blob_sha1": "3d0335280f5e541ccef195366893b6f662475d58",
+      "overlay": false,
+      "sha256": "aea7b3533cb82181338e5bb670438968eba1367cd878737a327fb29c6fc3729c"
+    },
+    "src/qtrade/execution/__init__.py": {
+      "bytes": 393,
+      "git_blob_sha1": "c7765f1c65f5442785a0793c45e0da32d83d63c7",
+      "overlay": false,
+      "sha256": "333de411774144db6a6eaef25d09eb9daebdc33ebdd7a44584c560121f581f90"
+    },
+    "src/qtrade/execution/paper.py": {
+      "bytes": 16294,
+      "git_blob_sha1": "fd25407867398d2edca88d778e5500e2d168df28",
+      "overlay": false,
+      "sha256": "23a1f3c283d22c17877dab04b0879c1013f09b8aa5e3397cc31955c61f2b8d65"
+    },
+    "src/qtrade/execution/reservations.py": {
+      "bytes": 4331,
+      "git_blob_sha1": "fc157bda877b367c62d8d627fcbbbdec6758df62",
+      "overlay": false,
+      "sha256": "38d19a8b39a4a6f36014bf656d923bb386afc2ea6cdfa13403a238482048a986"
+    },
+    "src/qtrade/instruments/__init__.py": {
+      "bytes": 453,
+      "git_blob_sha1": "f43416dcaf5ec4579ef2d2e04fb81b0248130267",
+      "overlay": false,
+      "sha256": "b83fa22f14dca350bba90cac25665b8700831338cfa445adbb76e67f856b95a3"
+    },
+    "src/qtrade/instruments/calendar.py": {
+      "bytes": 1787,
+      "git_blob_sha1": "e31fb2d84e38d3abc741f97ce54b9430bbe41f93",
+      "overlay": false,
+      "sha256": "3a1502bc0b0ec7a07ec368d8547c11a0d9b8e00b9a8788814a4a62b3480305c3"
+    },
+    "src/qtrade/instruments/master.py": {
+      "bytes": 1453,
+      "git_blob_sha1": "3ee58d748c98f4e7c356638b9039e65a821efa9b",
+      "overlay": false,
+      "sha256": "f8c5995e934c31ae53c86fc41244e5c7ced453310f4e27992b905d98f7edf938"
+    },
+    "src/qtrade/instruments/observed.py": {
+      "bytes": 8135,
+      "git_blob_sha1": "8ab08bb62c174ca9312180903013e5e2ba3f373f",
+      "overlay": false,
+      "sha256": "5a8a43f106fccad697dc15d9e14547510de9271c1a37853fc6117611d0612b23"
+    },
+    "src/qtrade/instruments/rules.py": {
+      "bytes": 1830,
+      "git_blob_sha1": "409aab9fe4287040cc253f72b175a4079d189c79",
+      "overlay": false,
+      "sha256": "f833b260e4647e28e666412d3f50d52a6efb9e1489d12a65258aba371bd69df9"
+    },
+    "src/qtrade/market_data/__init__.py": {
+      "bytes": 3527,
+      "git_blob_sha1": "3ab944ed12e9fae05a8ed936c875243901a94473",
+      "overlay": false,
+      "sha256": "e302735463ee5163f504f57d95b652c2673c54c1803356c72d270b951084df65"
+    },
+    "src/qtrade/market_data/akshare.py": {
+      "bytes": 33905,
+      "git_blob_sha1": "16f1ea4d941625675d20a41ce61b1f861a3b3c38",
+      "overlay": false,
+      "sha256": "2a4651b604ff3d90f4aeed33c23d28acbe80f7e32bae24f261ffb2d3e2ccc687"
+    },
+    "src/qtrade/market_data/backfill_plan.py": {
+      "bytes": 5997,
+      "git_blob_sha1": "6bf2515a29cea3ceeb34f790c815a285b10a41da",
+      "overlay": false,
+      "sha256": "1eb16fd97de70323070b741d774761c147f403bb2ca4d7970c6af8689ea6d5dc"
+    },
+    "src/qtrade/market_data/baostock_five_minute.py": {
+      "bytes": 5128,
+      "git_blob_sha1": "f280a323e78aa34631bbdfc013f65c6cca0ac177",
+      "overlay": false,
+      "sha256": "2654ade287fecb24c8b5011d5067a1d0a4b5cd0fa3d013191a8fea5946ce34ea"
+    },
+    "src/qtrade/market_data/models.py": {
+      "bytes": 4734,
+      "git_blob_sha1": "0610c8f5a8317856af33737d7debab529c0a3b5b",
+      "overlay": false,
+      "sha256": "0a2f95d3cf03dbef02043e2bc9333ec6b367292b6368d486500e92296c5e908f"
+    },
+    "src/qtrade/market_data/paper_session.py": {
+      "bytes": 11219,
+      "git_blob_sha1": "7c13c8215460b7a1f0be68034df370b02c4c117f",
+      "overlay": false,
+      "sha256": "4028de2f0c4442c12fd5e4bee38bc9537382b1f7050e3c819d4b0d73c903970c"
+    },
+    "src/qtrade/market_data/provider.py": {
+      "bytes": 2226,
+      "git_blob_sha1": "9ee3559d13a23f99536bb43486f262c3c4c7fece",
+      "overlay": false,
+      "sha256": "05b9b8e0a415d629a8af40d97a5f6d799b6f518613f49e0beefa8b81d7c40b54"
+    },
+    "src/qtrade/market_data/quality.py": {
+      "bytes": 6176,
+      "git_blob_sha1": "11076ebcf6100663300bc4f53ed859021c9cec8c",
+      "overlay": false,
+      "sha256": "e365b0240f92679fe647ff67f42f414db19533f822845a4e7d93a57dea588796"
+    },
+    "src/qtrade/market_data/readiness.py": {
+      "bytes": 2691,
+      "git_blob_sha1": "c5833be9545886110c8fe2b8d0695e2f0fa1d84a",
+      "overlay": false,
+      "sha256": "c4799a4829e5414547dbedd1c6c24eb3c169feec805cb40ef01aaf7158c57ae9"
+    },
+    "src/qtrade/market_data/recording.py": {
+      "bytes": 11575,
+      "git_blob_sha1": "d1acaf630926363260980aa3aef78b2ef5f737db",
+      "overlay": false,
+      "sha256": "60fb16efe8b7fa30f6c5766363fce8494795ad8984206916aebf357fce066caf"
+    },
+    "src/qtrade/market_data/rqdata.py": {
+      "bytes": 5860,
+      "git_blob_sha1": "eefea85812406d8b6ebac5b5a380c6a81886fb2a",
+      "overlay": false,
+      "sha256": "b6c2afb2abe05bfe1410d1ad19bc915b7c7107089b49fe16e1821cd529d2d7fe"
+    },
+    "src/qtrade/market_data/rqdata_native.py": {
+      "bytes": 22874,
+      "git_blob_sha1": "0bf79fb5cab60a9c215cc6c15ac2bc96bdac55cc",
+      "overlay": false,
+      "sha256": "76acd3b6afa8de3809250a6b26053feee42ca6d5696660337576fc9deccb0988"
+    },
+    "src/qtrade/market_data/selection.py": {
+      "bytes": 3183,
+      "git_blob_sha1": "39be223e28a13338c97cb3a00769b36785ba24a4",
+      "overlay": false,
+      "sha256": "6e593d195b84bf7efe6cd3efcb5f9b1765d9daf97d2a4bcc5ab688483245f0f5"
+    },
+    "src/qtrade/market_data/sina_incremental.py": {
+      "bytes": 14692,
+      "git_blob_sha1": "f31e853388ed9832f72051806b2d8f1a0927234d",
+      "overlay": false,
+      "sha256": "c0f783604750ac2648c8dcb2496e2e02994ddb3cf469d6a69e762ebfb9bff63b"
+    },
+    "src/qtrade/market_data/sina_minute.py": {
+      "bytes": 8742,
+      "git_blob_sha1": "10e1a785510608598b8241012f3b9bf9b01a918e",
+      "overlay": false,
+      "sha256": "53e03b3f8aa1f1d5108acedd007eaa445917d0ea742e5a32c1a71db3a5ae5a97"
+    },
+    "src/qtrade/market_data/xtdata.py": {
+      "bytes": 5685,
+      "git_blob_sha1": "727f24f033a00919e497e76b121f998062b381dc",
+      "overlay": false,
+      "sha256": "5f8a06a9f3eb3812e6979729632d2b7b9b61b042232b64d3f48d10d4e4609529"
+    },
+    "src/qtrade/monitoring/__init__.py": {
+      "bytes": 268,
+      "git_blob_sha1": "bd9151cc0f380b71b3350259346203e0635af2f1",
+      "overlay": false,
+      "sha256": "63d21676990ba1c969c2a3530807aaf8f85dcb6e379dc07a9ed01aa9cd386bd1"
+    },
+    "src/qtrade/monitoring/data_freshness.py": {
+      "bytes": 4371,
+      "git_blob_sha1": "f516e31ce62541cd534aaca4c3a84a1567895f7a",
+      "overlay": false,
+      "sha256": "b9b640555a42c5268ec917df0bd07a41eb7d1709da64539bb953f17fb19b7624"
+    },
+    "src/qtrade/monitoring/prometheus.py": {
+      "bytes": 3132,
+      "git_blob_sha1": "40372e92997f49678da6da5355caff46916dfea9",
+      "overlay": false,
+      "sha256": "9b242eb1203b84a14bca2952ab52e397ed2c88f567dac9c1910205f60ea385fc"
+    },
+    "src/qtrade/monitoring/registry.py": {
+      "bytes": 3548,
+      "git_blob_sha1": "6673f91e684bf409f12b99c07e07f5c94078aea0",
+      "overlay": false,
+      "sha256": "74648e07a0ce0a448edb7e0abcf9b090792d4a27085d2ffc912941127bf7f0f4"
+    },
+    "src/qtrade/oms/__init__.py": {
+      "bytes": 211,
+      "git_blob_sha1": "f9171a95750ce29065fb93c2552f0737ee1bad04",
+      "overlay": false,
+      "sha256": "7f72a47428de73bfa2e90f9458d3454cc5753e4567df4aa46183dea9aa93789e"
+    },
+    "src/qtrade/oms/manager.py": {
+      "bytes": 6552,
+      "git_blob_sha1": "2982e174f0fdbbed804fbc69f9ad7dae3d81545a",
+      "overlay": false,
+      "sha256": "c103eeddf387f2dc8c46330354746a9bf27b4ff0bc6b7b6f0004ffea4830807d"
+    },
+    "src/qtrade/persistence/__init__.py": {
+      "bytes": 343,
+      "git_blob_sha1": "11b572f6ad266fb2e5481e47803269cdee611257",
+      "overlay": false,
+      "sha256": "b8a2138a65037e15d3826fc3d950417889346a7514c5c32110c90e80a7232364"
+    },
+    "src/qtrade/persistence/catalog.py": {
+      "bytes": 4946,
+      "git_blob_sha1": "07f3e8eb7829f1dd1807307a8873278412be635c",
+      "overlay": false,
+      "sha256": "4c0671743f07513bb36491c5cf66513bc4c5f082c8a6054f11db39dc7e1b4105"
+    },
+    "src/qtrade/persistence/sqlite.py": {
+      "bytes": 19806,
+      "git_blob_sha1": "17cedb03e69ffd9e13f88013dedaba0e08362cc3",
+      "overlay": false,
+      "sha256": "0dd45c5e59ee902f2f1aece5848ec9d18779bdab6b88e9b0fff05e860403f1a3"
+    },
+    "src/qtrade/portfolio/__init__.py": {
+      "bytes": 221,
+      "git_blob_sha1": "f58249c008e8a48333c145c65965e32b425a0791",
+      "overlay": false,
+      "sha256": "e4bb0b2e432be0b9ad79b0ee40944b7b774b61fbe28b052f8d0d69f059cdb1a4"
+    },
+    "src/qtrade/portfolio/construction.py": {
+      "bytes": 1796,
+      "git_blob_sha1": "4c0fd75993bb85e8b49ddafe8c2d6dea9e45c8e6",
+      "overlay": false,
+      "sha256": "49f1d407e9a076b92c111da318aa2f128ebf212f70040e4cba59f23d4bda1d34"
+    },
+    "src/qtrade/reconciliation/__init__.py": {
+      "bytes": 180,
+      "git_blob_sha1": "0ebe62357fa26524b405615eb23f74eaea666d64",
+      "overlay": false,
+      "sha256": "f9259220d987f7475c83a40f4d3b33f2946f64e8f91351f451ee913f4430bd42"
+    },
+    "src/qtrade/reconciliation/engine.py": {
+      "bytes": 2984,
+      "git_blob_sha1": "732ef73e01827bef62850d3c1b1f4d4f7020269b",
+      "overlay": false,
+      "sha256": "0d8f3d8a656614f00978620b57c10caea96a1824fb992b1a4a3a7c6ba2b99d83"
+    },
+    "src/qtrade/recovery/__init__.py": {
+      "bytes": 172,
+      "git_blob_sha1": "cabdd6706e7e27fe111393a6f4e7f1b7f01829a4",
+      "overlay": false,
+      "sha256": "ea65c734de3a6cdbe07a7f4243023b25a445a286fcef5fdcb0483a9f026fe7d1"
+    },
+    "src/qtrade/recovery/coordinator.py": {
+      "bytes": 1968,
+      "git_blob_sha1": "e556939853cda4fa8ec494355209296485b1a45e",
+      "overlay": false,
+      "sha256": "8ae19e254a159963a307b7f1e3bf837f36510ab5f3fbadf041d8be8814331615"
+    },
+    "src/qtrade/reporting/__init__.py": {
+      "bytes": 417,
+      "git_blob_sha1": "3b9e0705099ebf080f441864f4bd1db24c758983",
+      "overlay": false,
+      "sha256": "cc9701791761feaee5bb62ed8feee387b3e8c814f4b6e1f6c3a9dfaa070c1689"
+    },
+    "src/qtrade/reporting/daily.py": {
+      "bytes": 2286,
+      "git_blob_sha1": "fa0837a71932555389ab6dfd17106a0a688f66fd",
+      "overlay": false,
+      "sha256": "30d88257618641e72373ce2f17650377852c7022c7805001b1ad6813f9bce04e"
+    },
+    "src/qtrade/reporting/scheduler.py": {
+      "bytes": 10078,
+      "git_blob_sha1": "125354dcd2cac13ae8e9a5bbb5437e83db0aa11c",
+      "overlay": false,
+      "sha256": "de5cdce0ba4a1e08c77f41e3a6506461c67600a03be6edfa42b926e239fc6c60"
+    },
+    "src/qtrade/research/__init__.py": {
+      "bytes": 5542,
+      "git_blob_sha1": "14798519a9b0edd21bf1ae4bc1f548cb3f59c01b",
+      "overlay": false,
+      "sha256": "38c7c598f0dca3e72e2d6aae46e2aa99ae992b955fc1241741c73059abea92ee"
+    },
+    "src/qtrade/research/artifacts.py": {
+      "bytes": 1401,
+      "git_blob_sha1": "d07d70eb631baf0a4faefc08c67c58c96247f2ec",
+      "overlay": false,
+      "sha256": "3a691c7a3fcd5479fa9cd297c11ead8cfb54da1917cf168cd19a00f2164bc46b"
+    },
+    "src/qtrade/research/collection_retry_policy.py": {
+      "bytes": 5624,
+      "git_blob_sha1": "aa53a7f64183d03562649a607742b64368c09e8d",
+      "overlay": false,
+      "sha256": "5743eab6d7f81b33a0490c9e02392596f32c8c63113478e77b170ab7f212d9bd"
+    },
+    "src/qtrade/research/data_epoch.py": {
+      "bytes": 1079,
+      "git_blob_sha1": "c86cd07666733cb133dd44f516c73c08203b9200",
+      "overlay": false,
+      "sha256": "379928e505864a711ce805ec02dc2eec7331c50345573148b5bf8aec6e8da910"
+    },
+    "src/qtrade/research/data_quality.py": {
+      "bytes": 14612,
+      "git_blob_sha1": "e4322890b4d7f2a293ea98ede3e9d8ba2c17f239",
+      "overlay": false,
+      "sha256": "9ea12d74f7895a99f733262e8879bb62737c817346873b8165d3743f87e2b50c"
+    },
+    "src/qtrade/research/data_quality_policy.py": {
+      "bytes": 3531,
+      "git_blob_sha1": "00fa80c75c519d38300b7f86101b81a697f3141e",
+      "overlay": false,
+      "sha256": "7bf1236c16adff9cd2910a061c7caf2333db59b011ec57ff90f007f65231beb5"
+    },
+    "src/qtrade/research/data_version_control.py": {
+      "bytes": 14920,
+      "git_blob_sha1": "a3ab1bfafcc785cd4042db22562e97eaa8f60240",
+      "overlay": false,
+      "sha256": "adef34633af8c42a0ab212861586e75961337353a58c89ac131fa42295051b5b"
+    },
+    "src/qtrade/research/data_versions.py": {
+      "bytes": 15951,
+      "git_blob_sha1": "92113970599f6fdef365cf20599a461a16431ac3",
+      "overlay": false,
+      "sha256": "2a741757eb0a5578cfb334db8e6ed9293171e61bce9f7f058302f40f020c9398"
+    },
+    "src/qtrade/research/delisted_probe_plan.py": {
+      "bytes": 10173,
+      "git_blob_sha1": "c8339c462e33a65af3283996357135b2aaf72cdc",
+      "overlay": false,
+      "sha256": "7c0b6eda3975a03f6f41140e91658d46d3e5bc7c6a908daadbffeb9aaa19472a"
+    },
+    "src/qtrade/research/etf_attempt_repair.py": {
+      "bytes": 50935,
+      "git_blob_sha1": "8d937c0e80da77413043bb14bfd0fe55da4c131e",
+      "overlay": false,
+      "sha256": "0b265fe1d130d1230f2b3edf92d4c82f9cbbebaae52c529908ec9b30c58b56fd"
+    },
+    "src/qtrade/research/etf_history_publication.py": {
+      "bytes": 35700,
+      "git_blob_sha1": "d20517e26d094be7a09589f48be87d634b991504",
+      "overlay": false,
+      "sha256": "ccf0ea7ddcdec2bb0a04b79330d6a85ba56701e81e997e66a41b855f3f6dd6f2"
+    },
+    "src/qtrade/research/etf_research_contract.py": {
+      "bytes": 25156,
+      "git_blob_sha1": "f79c3f5d7da242c7e3ebd05e891a4392651e2827",
+      "overlay": false,
+      "sha256": "17639ffda51b99497c5a08241a156805aeb4722940ee78f471d895abe0581580"
+    },
+    "src/qtrade/research/etf_shadow_publication.py": {
+      "bytes": 6247,
+      "git_blob_sha1": "60bd43caf3f0f922078913e345ead3b7b8bea38a",
+      "overlay": false,
+      "sha256": "21bbdbbd65152ab731cee227d7fae36a06d7cd73653735631be86aa97b3a14b8"
+    },
+    "src/qtrade/research/etf_trend.py": {
+      "bytes": 12513,
+      "git_blob_sha1": "c36bdf7fb8fd5419424cc40779289e8aa2e45cb3",
+      "overlay": false,
+      "sha256": "0b040546d4919b81f7e82d8e7b5d0956675e7b76aca778546d51ae381a4fdf10"
+    },
+    "src/qtrade/research/experiment.py": {
+      "bytes": 1406,
+      "git_blob_sha1": "d57c999dfa9d7c4340488793b689011124a3d4ba",
+      "overlay": false,
+      "sha256": "f63c76ffa7403043a57b1b5c87ebcbf4ec5d719798da69fa2577344127c9d04b"
+    },
+    "src/qtrade/research/factor_evaluation.py": {
+      "bytes": 52226,
+      "git_blob_sha1": "cb3d27b88e731aac72a0d1caf0c049834ee2fcdd",
+      "overlay": false,
+      "sha256": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f"
+    },
+    "src/qtrade/research/factor_registry.py": {
+      "bytes": 15921,
+      "git_blob_sha1": "8c629d7112406f93ac61a290434392789be3ed30",
+      "overlay": false,
+      "sha256": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d"
+    },
+    "src/qtrade/research/factor_search.py": {
+      "bytes": 3744,
+      "git_blob_sha1": "581de36249ab586c68c067a10dc608806490dad0",
+      "overlay": false,
+      "sha256": "03b7bad02686e34b19536c5132277f9ca4049d3f4618da46b2536413bce6d94a"
+    },
+    "src/qtrade/research/factor_strategy_catalog.py": {
+      "bytes": 12092,
+      "git_blob_sha1": "8ad7b092cd7e98690f8af7890a085f607a7f4d9c",
+      "overlay": false,
+      "sha256": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad"
+    },
+    "src/qtrade/research/factor_strategy_contract.py": {
+      "bytes": 23009,
+      "git_blob_sha1": "1dd9331da52b09c9de79c6ec9333fb740ebb27cf",
+      "overlay": false,
+      "sha256": "92d19c483f80a00080debe1304fcdd8ec906496e86b00047d96dd52b806cce76"
+    },
+    "src/qtrade/research/factors.py": {
+      "bytes": 3725,
+      "git_blob_sha1": "4d4d80c98a358faa0f84320875ecb31f232f86f8",
+      "overlay": false,
+      "sha256": "9082aaa603729651199ec3b5c37a7acf93f9931bf32dd348da4eeb9ccd6cb39d"
+    },
+    "src/qtrade/research/feature_precision.py": {
+      "bytes": 452,
+      "git_blob_sha1": "eb0d35ca557a6cbecb3b9227d48795fc1b479c72",
+      "overlay": false,
+      "sha256": "477ed52f90406a44787c493c4f7ce05796c6ac9d1cd88fac3834b400f67ab747"
+    },
+    "src/qtrade/research/forward_paper.py": {
+      "bytes": 21452,
+      "git_blob_sha1": "5b2af11d068e7fcadcc37362b36409a9f0c0b259",
+      "overlay": false,
+      "sha256": "0421da35e97f505eda6b71c15685e112a44daeb44b2708a4778ffcfdf17583c8"
+    },
+    "src/qtrade/research/forward_prediction.py": {
+      "bytes": 5761,
+      "git_blob_sha1": "8cd10e1c7a437aef320ddc596333a87defcdd670",
+      "overlay": false,
+      "sha256": "1bced20d12a4e7f72bc6b73d5ff525d708cd80591135193f8d00a271f5068603"
+    },
+    "src/qtrade/research/forward_publication.py": {
+      "bytes": 14964,
+      "git_blob_sha1": "29333293ef520d1ea32c3d48f2176e9202b4becf",
+      "overlay": false,
+      "sha256": "bed0c0c6f7d6b095828baacd865891fca7a0b7a002eebd1d48bd61631863f958"
+    },
+    "src/qtrade/research/forward_retirement.py": {
+      "bytes": 12413,
+      "git_blob_sha1": "6f76423b31352c85897fffd9c39297a92f5c8dc1",
+      "overlay": false,
+      "sha256": "4ca45a44bac21f80d379d268d3de34725b67d3e5e42974090e9461d01bf49d50"
+    },
+    "src/qtrade/research/governance.py": {
+      "bytes": 7289,
+      "git_blob_sha1": "d103b5be67f7c477eb3ef47a8fdd5bca95ba6670",
+      "overlay": false,
+      "sha256": "c13f7e843d9821d6bcd56cceb7fe93f68a00b250964df635cc8444722705693c"
+    },
+    "src/qtrade/research/intraday_factor.py": {
+      "bytes": 115521,
+      "git_blob_sha1": "9154ea3db94dd5c9e577a0ef3f730a1ed136387e",
+      "overlay": false,
+      "sha256": "706c2856617bd461888b5611025c5c106d6819ece6b2b1e31aace7588a18a6ec"
+    },
+    "src/qtrade/research/market_validation_receipts.py": {
+      "bytes": 22118,
+      "git_blob_sha1": "2f3325ea76eec7686848325bbeb782963830cc8b",
+      "overlay": false,
+      "sha256": "2152eed8405ace883c2bd8de388b72ec42875a3feaffa314e616c58c1147f79a"
+    },
+    "src/qtrade/research/metrics.py": {
+      "bytes": 11670,
+      "git_blob_sha1": "b6eaa0b608909b242f8f351bb7bad46fa5cf8068",
+      "overlay": false,
+      "sha256": "7f01665d08ed0469d42372288b76e1703279593dfa22c7c8f9dd443e5fabccfa"
+    },
+    "src/qtrade/research/minute_backtest.py": {
+      "bytes": 15043,
+      "git_blob_sha1": "8a900e0305a4564e099531d667ce5d2ad435c925",
+      "overlay": false,
+      "sha256": "792d300d2df913f9f42576d0d96ebc66c70e042969ea26a4357895c0ec52fa2c"
+    },
+    "src/qtrade/research/model_promotion_policy.py": {
+      "bytes": 18185,
+      "git_blob_sha1": "099ce32f2884feb4837b7a0598d90e346e7a5cf1",
+      "overlay": false,
+      "sha256": "ad4f4c4dd1f30fcb7eb7a990d6e74ee496973ae30f4adec7ef07c50ad00b21d7"
+    },
+    "src/qtrade/research/model_registry.py": {
+      "bytes": 15969,
+      "git_blob_sha1": "25619a29f610e65883fa7ccf62fb4de6478ccbd9",
+      "overlay": false,
+      "sha256": "01ddd7dcee47f941599063b9913a752a8fcbbd06381aa99e372f40a1d99d46cb"
+    },
+    "src/qtrade/research/multi_asset.py": {
+      "bytes": 21218,
+      "git_blob_sha1": "7defbf21dfc3aa34e84469687a5361f50da8bb45",
+      "overlay": false,
+      "sha256": "334a8394fb3c85b6de2439974123588402935a47e09aa88034ad672e6a99ab8c"
+    },
+    "src/qtrade/research/object_publication.py": {
+      "base_blob_sha1": null,
+      "bytes": 30442,
+      "git_blob_sha1": null,
+      "overlay": true,
+      "sha256": "d11c801a90142d4b7142b8f67c422c341b30b84201999dd297c186c3582fa7d0"
+    },
+    "src/qtrade/research/official_master.py": {
+      "bytes": 5924,
+      "git_blob_sha1": "615d071cf7a7c352dc649189a44c3b66d2382e9a",
+      "overlay": false,
+      "sha256": "70fe204a0fe7775f75ba1eb961ab6b8cc11a25871394d925b92d2035793eeb12"
+    },
+    "src/qtrade/research/pit_quality.py": {
+      "bytes": 4683,
+      "git_blob_sha1": "dd5e348b78d27ac548037a03cc9c5735d058745f",
+      "overlay": false,
+      "sha256": "c7b929913b68ce0272ca2b7fdec544e537a29c9be79084cfb7ffbdb9c8921a15"
+    },
+    "src/qtrade/research/pit_repair.py": {
+      "bytes": 4728,
+      "git_blob_sha1": "2d41934d585f016e375720ec3114482725087b86",
+      "overlay": false,
+      "sha256": "5576d1ac6f339a4775095d3b9d439af6ba4eb1060ee3656fbb861ba52a6d4c86"
+    },
+    "src/qtrade/research/prediction_registry.py": {
+      "bytes": 11600,
+      "git_blob_sha1": "a0c0c2415e5fe5b11ca5ab9e78d0580b3df1bf13",
+      "overlay": false,
+      "sha256": "47a479ea9e9aa1469095a6f843ba848f57a28998bc32a39e24c7241c3ff03784"
+    },
+    "src/qtrade/research/preview.py": {
+      "bytes": 11365,
+      "git_blob_sha1": "839eea80fe39d2d658c2af4c39f8cb5e9778c0fe",
+      "overlay": false,
+      "sha256": "f3b8948e4464986bcc6179c0d0f6e067c3f3d9b50b6d4ba7e46f2f7b9e272b64"
+    },
+    "src/qtrade/research/public_pit_audit.py": {
+      "bytes": 9148,
+      "git_blob_sha1": "bfc233969189621989ce014fbaf63b8df8e7b6b8",
+      "overlay": false,
+      "sha256": "459837d6f5eb9e9ba7d31327fcca68d83f2af22d99ecbaf5cac31cbaa23fb729"
+    },
+    "src/qtrade/research/qlib_adapter.py": {
+      "bytes": 9215,
+      "git_blob_sha1": "7857138374a1b3e802526b3542844eedede7d8ee",
+      "overlay": false,
+      "sha256": "766dd2a7576f666ff1dac9b10946bca451883ed4cb538de80d1b56a822463b2d"
+    },
+    "src/qtrade/research/qlib_processors.py": {
+      "bytes": 544,
+      "git_blob_sha1": "8fad5169fb1e6ec3185e448e4400a6802bafde9a",
+      "overlay": false,
+      "sha256": "e3bc17fd0029f3fe465cb3fd0ec2efa82c34839967dfdf406197a18aaf07e405"
+    },
+    "src/qtrade/research/qlib_publication.py": {
+      "bytes": 8328,
+      "git_blob_sha1": "db250e033a8d24a08ed77df683578ddcc67c3d14",
+      "overlay": false,
+      "sha256": "a5ad15f191116ac0661b2457ced86663aed2cbf274779f4a774d4278442dabfd"
+    },
+    "src/qtrade/research/qlib_training.py": {
+      "bytes": 759,
+      "git_blob_sha1": "74127cc6927abde69aa67983a4f23b2f8dd17f55",
+      "overlay": false,
+      "sha256": "091a3d0ab621230f536af5b420759eadee44014619660654d7315c7768c13799"
+    },
+    "src/qtrade/research/r2_object_store.py": {
+      "base_blob_sha1": null,
+      "bytes": 12296,
+      "git_blob_sha1": null,
+      "overlay": true,
+      "sha256": "d26685bf8f95db48ef3db8d0c8d4716aaac56d68963fd2c302fa9b5c62c16202"
+    },
+    "src/qtrade/research/robust_factor_search.py": {
+      "bytes": 12408,
+      "git_blob_sha1": "0906bf4efd96247c244c56d02ebb4f1104d6d60d",
+      "overlay": false,
+      "sha256": "2817c4251d6f1c75bfa6968f12d8b8f0df00edeba740346431a6dd9a579df94f"
+    },
+    "src/qtrade/research/rolling_control.py": {
+      "bytes": 7829,
+      "git_blob_sha1": "900dd39c1a97314d93fa14e8cf9dbaf22d2d7ec2",
+      "overlay": false,
+      "sha256": "99a42eb5fb7646ac120ed8831b33598d3e7574677279ed64ee2ce4a13de2c102"
+    },
+    "src/qtrade/research/rolling_policy.py": {
+      "bytes": 4773,
+      "git_blob_sha1": "ad322520d7826ebcb2326bbaa3cbad5636401f38",
+      "overlay": false,
+      "sha256": "3504923b6935daf2ec96bc2f79f12350b23a71da772b95fbc9f856787a0054ae"
+    },
+    "src/qtrade/research/runner.py": {
+      "bytes": 6826,
+      "git_blob_sha1": "3f1567d4d252311a83b6bb0bc5f715b44fadc404",
+      "overlay": false,
+      "sha256": "e73450952002b9c21eb23aa8d19245a0e832221d8247cd6abd26abebb4062a00"
+    },
+    "src/qtrade/research/session_acceptance.py": {
+      "bytes": 5463,
+      "git_blob_sha1": "d031b736421444cf65a8126165e527d71106b413",
+      "overlay": false,
+      "sha256": "c5464a5ced92f174e664880dd938e24f8919e66b0f558d0ca7781e22fbd56a5d"
+    },
+    "src/qtrade/research/signal_baselines.py": {
+      "bytes": 4597,
+      "git_blob_sha1": "af5d9a44d1a9e443e8000a47fc1a58d3011a98b0",
+      "overlay": false,
+      "sha256": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138"
+    },
+    "src/qtrade/research/signal_publication.py": {
+      "bytes": 5121,
+      "git_blob_sha1": "0b54531c3fbf5f49ca11814594b6eb1cfc223378",
+      "overlay": false,
+      "sha256": "2837dd7e7c48d4339b46b41adaedc0f242259b29e2ebd59df2b07600d19ee3fd"
+    },
+    "src/qtrade/research/source_constraints.py": {
+      "bytes": 11609,
+      "git_blob_sha1": "b6bfecbe2ada806336a9ef3e9ef5a7d677af3462",
+      "overlay": false,
+      "sha256": "2d7aaae54ee6956a2f7dc7ed6120e3f383156d0c100ffa8cf0bd3f1a3cde786f"
+    },
+    "src/qtrade/research/strategy_comparison.py": {
+      "bytes": 13076,
+      "git_blob_sha1": "1efcc8c3011c0dd43e2919b3c404b2dbe2a9b7fa",
+      "overlay": false,
+      "sha256": "c4251d6fa6d7f849f11487ec7218f4d5fa5ce1ca5048a353366f429e1f194612"
+    },
+    "src/qtrade/research/strategy_contract.py": {
+      "bytes": 12923,
+      "git_blob_sha1": "967c55346698693aa6b09d07780535c2f7239bee",
+      "overlay": false,
+      "sha256": "01317cf0816b9ed8e1576bda31db5d4e9dcfa9838df35f1b461c0eac1834ca6c"
+    },
+    "src/qtrade/research/unified_market.py": {
+      "bytes": 14958,
+      "git_blob_sha1": "e2271a492f8a1baf1135beaa86d64a7c315f1c93",
+      "overlay": false,
+      "sha256": "64982440d5c876a58c282fb7c8ab4923d03376864c489e8224565a9aff760bb6"
+    },
+    "src/qtrade/research/walk_forward.py": {
+      "bytes": 2388,
+      "git_blob_sha1": "930b85e4e81cbaa977300d087a319a6d2e0c8508",
+      "overlay": false,
+      "sha256": "00b137a5512846af99088f284110a401ef97918f4fb9b172261749d4c39fb5d9"
+    },
+    "src/qtrade/research/walk_forward_runner.py": {
+      "bytes": 6325,
+      "git_blob_sha1": "d220ab4c2e260408faa8ef8a9ff8826308a3f0db",
+      "overlay": false,
+      "sha256": "61fef7a4ba4462e55252d0cac99d7ccf3fcde642795a6bfc50aba0166b67c1d3"
+    },
+    "src/qtrade/research/workflow.py": {
+      "bytes": 12876,
+      "git_blob_sha1": "3493342bb525b5d850d17f186add44a149b56018",
+      "overlay": false,
+      "sha256": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd"
+    },
+    "src/qtrade/research/workflow_queue.py": {
+      "bytes": 7013,
+      "git_blob_sha1": "d35eab03bd2ac2c6e51630c3a6e52630fce8c1b5",
+      "overlay": false,
+      "sha256": "3d77ee81eff8912b5dbc32a22c7bc757ae45123b030026a71917f6270772dec2"
+    },
+    "src/qtrade/risk/__init__.py": {
+      "bytes": 234,
+      "git_blob_sha1": "44bef059c5984bdc523bd745b1b946024edd3f19",
+      "overlay": false,
+      "sha256": "40c68e8b36b8f0a1de59ab557827ff6dd2a80ec39e7e91e5a6a8fa885df82a27"
+    },
+    "src/qtrade/risk/engine.py": {
+      "bytes": 8718,
+      "git_blob_sha1": "d864b45ff9c5cdafe7d9f6103b2b0141391f1af3",
+      "overlay": false,
+      "sha256": "7e8fa5a7a29f890fa797f952bca5118da887068bee54ab859823fb46b52736da"
+    },
+    "src/qtrade/runtime/__init__.py": {
+      "bytes": 1001,
+      "git_blob_sha1": "1c70244119f6d542082d3c1a87d191bfd46ca80c",
+      "overlay": false,
+      "sha256": "96c9a4f39d6bd6b25dad18a892e5cc865883df31d8f5094d8c44b8fd0288f86b"
+    },
+    "src/qtrade/runtime/minute_overlay.py": {
+      "bytes": 22303,
+      "git_blob_sha1": "1f794defc316c8cee86fc130bfa4a5f977fe0f56",
+      "overlay": false,
+      "sha256": "2353151815f9f2274cfb17fe7399f58e5c39abce9d57e6798397e8ce482c3d15"
+    },
+    "src/qtrade/runtime/orchestrator.py": {
+      "bytes": 10618,
+      "git_blob_sha1": "0fcaca031eac558010529f9dde14d42f57b079b9",
+      "overlay": false,
+      "sha256": "ee58f60500a7cc1e9b124020b1ed28d0f18efdba877648ee6aeaf640e7768e8f"
+    },
+    "src/qtrade/runtime/paper.py": {
+      "bytes": 24236,
+      "git_blob_sha1": "dbbb1f6a38d87c3b0e29e4307737fce37bc7d320",
+      "overlay": false,
+      "sha256": "e022d69f1e6735812ba0c5b3b6dcfd4ebe3ad98727d0794eb183d84dd1466b8d"
+    },
+    "src/qtrade/runtime/realtime.py": {
+      "bytes": 13394,
+      "git_blob_sha1": "5baaeecc4010656e830dae93c92a0d5ec74a4fba",
+      "overlay": false,
+      "sha256": "f93f0e8ff28d8e08354f690366bdebe6c4d4eab2ca9a72f178745c72cc4d63d1"
+    },
+    "src/qtrade/service.py": {
+      "bytes": 6344,
+      "git_blob_sha1": "2a26b9dc1c4a9cc6909c38bc64d938ab3190df2e",
+      "overlay": false,
+      "sha256": "ece7175ccf3385d16bb40dc37a5467d729c68d476df1c96d093a43f9c7232502"
+    },
+    "src/qtrade/strategies/__init__.py": {
+      "bytes": 1422,
+      "git_blob_sha1": "b2277d4becc0b18ee54a2e5ac315877c5133702e",
+      "overlay": false,
+      "sha256": "df820e9f891e73bede219a9658f2e9f3729930947714ffe6172a6ad329bfcbd9"
+    },
+    "src/qtrade/strategies/baselines.py": {
+      "bytes": 970,
+      "git_blob_sha1": "95a3c5a5b4f64266c853f7bb6fdb6866c6a1b768",
+      "overlay": false,
+      "sha256": "bad65ff9918e105efa3d09cdaefbe773e102a394cd29bcce80f6c9dbf85be64f"
+    },
+    "src/qtrade/strategies/families.py": {
+      "bytes": 5783,
+      "git_blob_sha1": "ba73e954ea887f639614e1d6c03ce3404c6f75bb",
+      "overlay": false,
+      "sha256": "26559c004bdc7b503770e3888d7c435ca12a831e5605a1e3f8ecfa0a422839c7"
+    },
+    "src/qtrade/strategies/health.py": {
+      "bytes": 5324,
+      "git_blob_sha1": "2b037a6802c9f131364e4fac4e603a8c1e16957b",
+      "overlay": false,
+      "sha256": "115301d25a1e5b1713025ef513c799e94e75a6095a91a8366298ec6e6ecb00b7"
+    },
+    "src/qtrade/strategies/promotion.py": {
+      "bytes": 5644,
+      "git_blob_sha1": "ff25a193983b2ade538d5d90e7555fa2e74fbfa3",
+      "overlay": false,
+      "sha256": "e6daa9b8f6fe26ea4927d552253e61fe733831f2ab9ab3dcb3a179dfcdf5fa49"
+    },
+    "src/qtrade/strategies/registry.py": {
+      "bytes": 32307,
+      "git_blob_sha1": "e696ced7e186ce0ead258521e9f4a6c4aac09b84",
+      "overlay": false,
+      "sha256": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4"
+    },
+    "src/qtrade/workflows/__init__.py": {
+      "bytes": 172,
+      "git_blob_sha1": "a2121bc3f90a95001271cd0b7c022edd311a310f",
+      "overlay": false,
+      "sha256": "f021ebae8a4d1d4596d55682f19a6737e441f61f5c099b55d73b5eecafbd0e60"
+    },
+    "src/qtrade/workflows/baseline.py": {
+      "bytes": 4463,
+      "git_blob_sha1": "253b21f1044f73b993df9f233b6f626b93278333",
+      "overlay": false,
+      "sha256": "8b9912d10e1aeff0d18bed5aaa55507a6f5671927f07370e015e686a96a46cde"
+    },
+    "tests/fixtures/factor_strategy_register_v1.json": {
+      "bytes": 81768,
+      "git_blob_sha1": "3aefb7ef3eaf3dce04a41592000c868950693a5c",
+      "overlay": false,
+      "sha256": "daba424e9010cf657184bddc954554c7eb8897cbadc079f15f0aa7d3e8df9e9f"
+    },
+    "tests/fixtures/factor_strategy_s2c13_archived.json": {
+      "bytes": 28065,
+      "git_blob_sha1": "1954046f7984f14d8c8f236b9382e1b42ebf05ca",
+      "overlay": false,
+      "sha256": "f728b11244661ef3682c80b0bfdbf2b9d88d666716fea3bbded0819a073cad8c"
+    },
+    "tests/test_akshare_factor_search.py": {
+      "bytes": 446,
+      "git_blob_sha1": "4d3d96c401750c2b63bbb3f13a179df424305704",
+      "overlay": false,
+      "sha256": "4c3929acb3448bc8797c43b19d8372e38d5be41134e0247206c6fdea8ab6738f"
+    },
+    "tests/test_akshare_history_ingest.py": {
+      "bytes": 476,
+      "git_blob_sha1": "08487b3a5aa771aa3862eddfa59bf864572243c3",
+      "overlay": false,
+      "sha256": "b5309ac4761f0ee55765fc7ed7aee524fc60d283a1ee71a9cac7e05cc9074cdb"
+    },
+    "tests/test_akshare_provider.py": {
+      "bytes": 13467,
+      "git_blob_sha1": "da95267842d36988a61c5b06c4fc78787b892f68",
+      "overlay": false,
+      "sha256": "01067d181c4ecf99bf75ceeb17b9cf416945b96045b461fe1d95773656e0f2cc"
+    },
+    "tests/test_akshare_robust_factor_search.py": {
+      "bytes": 836,
+      "git_blob_sha1": "7e730173284b66bfae0fb761d96011164a7cf4f8",
+      "overlay": false,
+      "sha256": "0e77abb6a3a4506187ecea60261f7da9ab93483b7ad221bd703a3da37569fe02"
+    },
+    "tests/test_akshare_robustness.py": {
+      "bytes": 936,
+      "git_blob_sha1": "602b22f08b635c21119c36e4043b10967aa44c1f",
+      "overlay": false,
+      "sha256": "ba553f0d1eff41bad2718ce52c54f36b23a8e2e195ec6d59a153fbec9dabfc9e"
+    },
+    "tests/test_akshare_stock_history_ingest.py": {
+      "bytes": 4409,
+      "git_blob_sha1": "58917a4852b4338f875d7d113eafdb3ae9549f12",
+      "overlay": false,
+      "sha256": "606058adde5a3d7b154fde9ed082ddde09449551b8551c2671e6f91ee3bdaad9"
+    },
+    "tests/test_architecture.py": {
+      "bytes": 1597,
+      "git_blob_sha1": "f55e4f534317fdd1bcdfc2c4b63859755262b943",
+      "overlay": false,
+      "sha256": "dc01d7da4f80e839fc38874866d0629e2471ab986fd67a65af1b9e6a37d53748"
+    },
+    "tests/test_atomic_json.py": {
+      "bytes": 2036,
+      "git_blob_sha1": "7086aa3623002e59c9fb2a2c8d22dfab6dbf6974",
+      "overlay": false,
+      "sha256": "2d3b44d78504f18103d833ccc0a339afe5cd8db396e3072f7347d028ad9de68c"
+    },
+    "tests/test_audit.py": {
+      "bytes": 1613,
+      "git_blob_sha1": "c6847a33f69fa656196ca5caa41423357dddb22a",
+      "overlay": false,
+      "sha256": "069e35c2455646cd775fb74ddf273ebf96234caa14d612f2b4ceb7a57a00b2d1"
+    },
+    "tests/test_audit_etf_history.py": {
+      "bytes": 15956,
+      "git_blob_sha1": "5821d830762b7c68bacf4af263e870e94d6e977a",
+      "overlay": false,
+      "sha256": "da625fad6f990728cc76b9de81c8285b5ee97e6440db2cd7729ec8b65dda8c0e"
+    },
+    "tests/test_backtest.py": {
+      "bytes": 3783,
+      "git_blob_sha1": "8e71eff9329109c8b57d07598652ba0b4d1d25e3",
+      "overlay": false,
+      "sha256": "9c7091bcd5dfe2a274280d2dac3d5ed8f0eff678e3a9e566751e1e6b8edd5199"
+    },
+    "tests/test_backtest_preview.py": {
+      "bytes": 10085,
+      "git_blob_sha1": "2f1bc478330e7cfc8627d98f943b2c6104774f9e",
+      "overlay": false,
+      "sha256": "bdfa67897857422f298356ec8054a3bd5872f9aa63ea87bad1ef1ff33e4d9ecb"
+    },
+    "tests/test_backtest_risk_artifact.py": {
+      "bytes": 1000,
+      "git_blob_sha1": "3d5f26ba1d72d80271f3e60303b890a46700fab6",
+      "overlay": false,
+      "sha256": "04e4542a35a017ff8589a7d87bef886d71f8e43acb1b482b9952b87f1eae9b8c"
+    },
+    "tests/test_baostock_five_minute.py": {
+      "bytes": 4603,
+      "git_blob_sha1": "f54a8a79bdf621f8fc9e8acd252eb07d0921b49b",
+      "overlay": false,
+      "sha256": "12df15d64a96602c5c60a14245df1384f2e2e1acd50a24d05526238289c3aeef"
+    },
+    "tests/test_baostock_five_minute_history_ingest.py": {
+      "bytes": 1912,
+      "git_blob_sha1": "7a299998b9c0f20798065cde058346841cd5e024",
+      "overlay": false,
+      "sha256": "23c9a3dab9115be6f6e8cba4b348aad4af618cf6f6327c761ab0f7403b38953c"
+    },
+    "tests/test_baostock_forward_coverage.py": {
+      "bytes": 5051,
+      "git_blob_sha1": "914ccdfa0689c9b14a7c91ed2466c71ec78ab672",
+      "overlay": false,
+      "sha256": "a0ccbefd63d2388f38f4fbb6424cd91453890ba18b6fc7da7a4838848fb97274"
+    },
+    "tests/test_baostock_forward_observation.py": {
+      "bytes": 5543,
+      "git_blob_sha1": "54a3563da028ef0bd315172e173d2f02d91d9f71",
+      "overlay": false,
+      "sha256": "e5665fa4b1bde12395abb7a17ad360e44ae7bed42f9fb23ae5b7cf98f40907c9"
+    },
+    "tests/test_baostock_reserved_tail_diagnostic.py": {
+      "bytes": 1057,
+      "git_blob_sha1": "f11c4b47ad3d90a349156827b05c5ac42e046d43",
+      "overlay": false,
+      "sha256": "6e908533f28484d7e8a203d10a6ac31844cf60e9f682ad4f4c8c9d4a58967a40"
+    },
+    "tests/test_bootstrap_public_aliases.py": {
+      "bytes": 20527,
+      "git_blob_sha1": "5160e0a8e0bf7b1f8ccfd6a7587877581eea04dc",
+      "overlay": false,
+      "sha256": "5701ae86385a2d90e9358cf74a62e6d58ae7d8cae98416ba3733553c4f2d2991"
+    },
+    "tests/test_broker_bridge.py": {
+      "bytes": 1298,
+      "git_blob_sha1": "883780a389ac75212beec354c023d4089a25ab4b",
+      "overlay": false,
+      "sha256": "87b094bd66d0c4939071b79bb91fc4e28943304ae75caf01473cfe426d92a89e"
+    },
+    "tests/test_build_qlib_daily_version.py": {
+      "bytes": 7898,
+      "git_blob_sha1": "2d86071a4c9774f847da742da76a8ebb7e1b321e",
+      "overlay": false,
+      "sha256": "331ad73714dd4c71a9feceba9a3bc998b8a5930662816a244dc94ccbba6216be"
+    },
+    "tests/test_candidate_transition_audit.py": {
+      "bytes": 35655,
+      "git_blob_sha1": "71db1e224c465b6388d20539e1586de25f1abecc",
+      "overlay": false,
+      "sha256": "7377cf66688b5b2a8748b59d4c712f87bfe460ef7bb773de2467cc33cacd2b00"
+    },
+    "tests/test_collect_unified_data.py": {
+      "bytes": 10491,
+      "git_blob_sha1": "5a5e5d9b2f4e0e6cbb92cb7e280d21f5bbc5c8dc",
+      "overlay": false,
+      "sha256": "4ef340cbf828b90ae486f716b64a3287364f283b1c5f8ba94cc05fbc432f9fc9"
+    },
+    "tests/test_collection_retry_policy.py": {
+      "bytes": 7494,
+      "git_blob_sha1": "5205c4f0008048d07ac93fd0fdf5416c0924b143",
+      "overlay": false,
+      "sha256": "2734559ffc1c8e7efb111369673213e80411a77fd4b38acd5dfd3bfcee7a0928"
+    },
+    "tests/test_control_plane.py": {
+      "bytes": 60378,
+      "git_blob_sha1": "8fd270ab7b61881f26b4794cc3a5efbe1f00c8a3",
+      "overlay": false,
+      "sha256": "28ff3259e736b24fa0d47abf0c8337080a950736b569fa8d05d01e3f02751557"
+    },
+    "tests/test_csv_import.py": {
+      "bytes": 2526,
+      "git_blob_sha1": "c16d2a1a97ad28895bb08d7c6e0c14cc27350ada",
+      "overlay": false,
+      "sha256": "eb45f716894d0e74cb6eee117e08717cf209119c8ac30f5255e8529229b36e1a"
+    },
+    "tests/test_current_datasets.py": {
+      "bytes": 6777,
+      "git_blob_sha1": "d097541ce8a2648b736c65f15df95a19cbe87e6e",
+      "overlay": false,
+      "sha256": "7182694b9a93b897af2fba557f72392125846d0f6de0662c91a4816e698cd913"
+    },
+    "tests/test_daily_collection_binding.py": {
+      "bytes": 14039,
+      "git_blob_sha1": "3cf39cd40cbb8f2d2fd177c12c4419939f16e901",
+      "overlay": false,
+      "sha256": "436d0193c6b7835fed4b84b621ad20fb9d71c86b3020863ec5300452c7b9f1da"
+    },
+    "tests/test_daily_factor_evaluation.py": {
+      "bytes": 27026,
+      "git_blob_sha1": "54c224b76dfef33bdf5059ea3aac072c7e351731",
+      "overlay": false,
+      "sha256": "a5404e5df5b3924f7dd86d79c465da7607e4d1713bc6388527c45d4279b32310"
+    },
+    "tests/test_daily_prediction_artifact.py": {
+      "bytes": 3757,
+      "git_blob_sha1": "c160f7bd28a6ec720eee9f9c5597b6b4f6c4772f",
+      "overlay": false,
+      "sha256": "d65c4f9ea05195ea48ee9345596936ac7b90e72b5af9e9d7d7666c656e99cf59"
+    },
+    "tests/test_daily_report.py": {
+      "bytes": 7314,
+      "git_blob_sha1": "1234ed431509c5de2ffcabe504b62f321469d210",
+      "overlay": false,
+      "sha256": "d7396fb46c9ca6a70066063ca535ae138eb013af0d1379b82f57226a35cdd03f"
+    },
+    "tests/test_data_epoch.py": {
+      "bytes": 1074,
+      "git_blob_sha1": "5fd998aa9be34a1a81e9ae5ded949835e7c6be0d",
+      "overlay": false,
+      "sha256": "c9c2bf5595375ee65badcd077451345beef920e618da3adf40a009a1d20adaf6"
+    },
+    "tests/test_data_foundation.py": {
+      "bytes": 5631,
+      "git_blob_sha1": "5ffa8829abb8521f1413aea714958b81533bbea9",
+      "overlay": false,
+      "sha256": "1a0f4cd6510d518ab5a0d7508331223661f9582ee1b7c8a79eb61514368a18af"
+    },
+    "tests/test_data_observer.py": {
+      "bytes": 4551,
+      "git_blob_sha1": "3c80c25c003759746a6b7a5ccd490dff6aeef9a4",
+      "overlay": false,
+      "sha256": "098d803a2183d5e208be270c740b87c29b586f62562b56ceb40bed68daef264e"
+    },
+    "tests/test_data_quality.py": {
+      "bytes": 7843,
+      "git_blob_sha1": "4937797cea7d8a56a37a0e92d2f9efcbd758c473",
+      "overlay": false,
+      "sha256": "25ec43be1ef16858a8b04e0fc33b58069715bc8971e95a89bef5a5e3aa5f41ce"
+    },
+    "tests/test_data_quality_policy.py": {
+      "bytes": 5211,
+      "git_blob_sha1": "04d7df5f546c03e1e1f3615f6845e092a5aefa7d",
+      "overlay": false,
+      "sha256": "7a010fdf17c2aa903c222c7b9ad8757810406c112c18cd3afe3cd02fb1e3baea"
+    },
+    "tests/test_data_version_control.py": {
+      "bytes": 7755,
+      "git_blob_sha1": "5ac99e32791ff19033ceb446354c2c907eaa1ff4",
+      "overlay": false,
+      "sha256": "e4837d913c5b367cd26564f08ec1019e737589cc7dece397d5db60df4243d364"
+    },
+    "tests/test_data_versions.py": {
+      "bytes": 7653,
+      "git_blob_sha1": "e1ee65f5c1a0f9835704332ec65a2b3d1d92eca5",
+      "overlay": false,
+      "sha256": "b830e67cc8d2775ad543c70b12932dbe71b6f3583c62f0e8efb5ce1aab5bbd48"
+    },
+    "tests/test_delisted_history_queue.py": {
+      "bytes": 13980,
+      "git_blob_sha1": "00154b6d4a2dc56aad9fd950cfdb450c235017ac",
+      "overlay": false,
+      "sha256": "94083418882e5819a4b8d3f515e3323b30f5fa65d2a84ca90753445d4fcb1933"
+    },
+    "tests/test_deployment_lock.py": {
+      "bytes": 1051,
+      "git_blob_sha1": "2765f04f35200a253b38a1d5385ac5ab61156dc6",
+      "overlay": false,
+      "sha256": "ea79a40801511f186e812adcfef223234d31435ddc49382ef999ac597e1fca5c"
+    },
+    "tests/test_development_policy_search.py": {
+      "bytes": 1823,
+      "git_blob_sha1": "5ca493febed106a35af50824db9d483b253caeab",
+      "overlay": false,
+      "sha256": "21c1ba71683fcbc16e975d524c1dd903da763975696fd0028292d790296682f8"
+    },
+    "tests/test_development_policy_search_api.py": {
+      "bytes": 2274,
+      "git_blob_sha1": "55348e8d3e0b034d3c5319c471bbcd63d3cbf96f",
+      "overlay": false,
+      "sha256": "1adb49d5674ae475aa6be6b16f42d1beac86b9724336eb4f24ceb160738a140c"
+    },
+    "tests/test_etf_attempt_repair.py": {
+      "bytes": 37255,
+      "git_blob_sha1": "86459593a3a052ab4808b16257a83163f9c56214",
+      "overlay": false,
+      "sha256": "31419f529639010ee290b53df69eec5aefc54ca2982a6cf7a99d9468da6a1710"
+    },
+    "tests/test_etf_forward_transition_audit.py": {
+      "bytes": 14858,
+      "git_blob_sha1": "3061358a73bab4290f0ac80f70a95598d4a7aa23",
+      "overlay": false,
+      "sha256": "8cadd3825b274fe80b954520da00ca4525ae31780f07f1d7a71019b6271fa785"
+    },
+    "tests/test_etf_history_api.py": {
+      "bytes": 4925,
+      "git_blob_sha1": "2b63137f709df8cd898f1925bce8854e1dda1560",
+      "overlay": false,
+      "sha256": "52b1d9fc159f467f73c684ee185959963d4e2b09166c3a4ca94267d212f588fb"
+    },
+    "tests/test_etf_history_comparison.py": {
+      "bytes": 21539,
+      "git_blob_sha1": "8661dabaa6c704aff46b28c47708dbb54df2063b",
+      "overlay": false,
+      "sha256": "3a2f091dedb86ef177436ce03d45b040e1bfafdbbb66daba0dc587463a956efb"
+    },
+    "tests/test_etf_history_publication.py": {
+      "bytes": 8953,
+      "git_blob_sha1": "953624731a2a146bb461b97ec3b1526ded420d50",
+      "overlay": false,
+      "sha256": "a07c4e3900a86957d5ac42d8b22b25d6d02dce1e5507ed35d76d55c60bfceadf"
+    },
+    "tests/test_etf_research_contract.py": {
+      "bytes": 20090,
+      "git_blob_sha1": "1a8ef3cb4a45edfd7af53dd446997e914359fbd8",
+      "overlay": false,
+      "sha256": "90864dde9f46ac4d84ef8313cb9ef377ef861ede44019108b87a1545e4b82427"
+    },
+    "tests/test_etf_shadow_api.py": {
+      "bytes": 5609,
+      "git_blob_sha1": "6230665483b4a42b95ff67c4299cbb4a35ce8321",
+      "overlay": false,
+      "sha256": "83475d4da17cacffb9dc76b0aa7fe930d53cc0a9a1276e12f052962a526d31cb"
+    },
+    "tests/test_etf_shadow_publication.py": {
+      "bytes": 8478,
+      "git_blob_sha1": "d9a7ec94a68b5bb5ead14deca955bb9a5380a9de",
+      "overlay": false,
+      "sha256": "0dc22d9db4dc47d105a22dfeeeb870cddf8edac171426b841cf67152d698a637"
+    },
+    "tests/test_etf_shadow_service.py": {
+      "bytes": 21024,
+      "git_blob_sha1": "b75ea1940d916d8470d877787aedf5678e3801da",
+      "overlay": false,
+      "sha256": "b84119ebd83a604f2984d3a19a30ae41d583a39ce6864a7d13f0fd8edbc95efd"
+    },
+    "tests/test_etf_trend.py": {
+      "bytes": 2868,
+      "git_blob_sha1": "b3a66989501c66d99854a4793025fd7d48c0cdb7",
+      "overlay": false,
+      "sha256": "e9840a8b7091a04fc0509cdde62f9146ab019b0c2be00219096622832d8d8394"
+    },
+    "tests/test_etf_trend_publication.py": {
+      "bytes": 6936,
+      "git_blob_sha1": "117c80b78ae106422e39d00f5d50cea002c15976",
+      "overlay": false,
+      "sha256": "5aa43f6689c2ed05ceb3e9ad0f90ea4762251bdbd4bf199c6e072d9ab16f28f0"
+    },
+    "tests/test_etf_trend_service.py": {
+      "bytes": 23978,
+      "git_blob_sha1": "5fba8b7044a7da1a13abd3534fd4edacf19470fa",
+      "overlay": false,
+      "sha256": "8342c54a430283c8b6581f779f9ba7bcaafaa6082214fbfb84faaf548320b5af"
+    },
+    "tests/test_experiment_health.py": {
+      "bytes": 6598,
+      "git_blob_sha1": "da32ae06e8de35e41ef0066725016466539b9c67",
+      "overlay": false,
+      "sha256": "e7bb74076278b91b0c7579114d07b0f23154cab4cc341849356c2c7a8628991f"
+    },
+    "tests/test_factor_registry.py": {
+      "bytes": 16226,
+      "git_blob_sha1": "36299335e2b41bf1188ef79c39129edc724cd6b3",
+      "overlay": false,
+      "sha256": "0f08113b5c0e3d58cb970e8d4c8d4730bbc0b55d1b45ac6bb4c2b3823b625464"
+    },
+    "tests/test_factor_research_api.py": {
+      "bytes": 9925,
+      "git_blob_sha1": "5a40affda461842afdcac43ab20e1b72c8bfe1c4",
+      "overlay": false,
+      "sha256": "ec5af0e228d60954fb1428d551c7fb4da8214425e26009b0dcf62d402e1c8508"
+    },
+    "tests/test_factor_research_worker.py": {
+      "bytes": 25218,
+      "git_blob_sha1": "b94f99325223ae098a1212ed7a49a1c369009760",
+      "overlay": false,
+      "sha256": "aa938730c9db674dc6171bdf9f9a8d61bb3ca0f45ce2a464fb053871631c2863"
+    },
+    "tests/test_factor_search.py": {
+      "bytes": 3294,
+      "git_blob_sha1": "3b59679bc8240ff6aa2befd68fd037a9091f83b1",
+      "overlay": false,
+      "sha256": "66949fd53005a97653393b30d7df5c9df4288c2bd4225bb50f7315eb38049a16"
+    },
+    "tests/test_factor_strategy_contract.py": {
+      "bytes": 22003,
+      "git_blob_sha1": "91cec063cc1f1bd77368ae55a74c9d533ffe66bf",
+      "overlay": false,
+      "sha256": "f7296001f23afc7917e99f239aca578ab11b37320273ce0ba48fec8319ff355f"
+    },
+    "tests/test_feature_precision.py": {
+      "bytes": 1128,
+      "git_blob_sha1": "e2bbf9f036de418dcdd859e89d35fc9e82cb47cf",
+      "overlay": false,
+      "sha256": "d664cdab9d6d5fe6e4d3f7f66f98ee0cafdf632146bffc6daa30a50306f63797"
+    },
+    "tests/test_fee_schedule.py": {
+      "bytes": 2388,
+      "git_blob_sha1": "010c54f65189f20093588de03adbca371d7545b0",
+      "overlay": false,
+      "sha256": "4c70f9224ca5b85904f3671ed055ca06e9fda84123a7315fc37f31d701a3700e"
+    },
+    "tests/test_five_minute_api.py": {
+      "bytes": 2028,
+      "git_blob_sha1": "deec398c1f90d9bdf6cdc0d9a787a3dcde8265db",
+      "overlay": false,
+      "sha256": "f1a18caa71ebb86478414e2047bfe5a57d7c225b5574b828fd5f0776fae5d850"
+    },
+    "tests/test_forward_observation_api.py": {
+      "bytes": 23003,
+      "git_blob_sha1": "6f18ef8e6d2c7bca4228fcef38f3b4f1c877b99c",
+      "overlay": false,
+      "sha256": "3a7380fc9b001d85bba449006033d39b08bad30e4263fe608bff7d3e83a3c475"
+    },
+    "tests/test_forward_observation_promotion.py": {
+      "bytes": 10506,
+      "git_blob_sha1": "a9a944082cc3ca36707d6bfd7b964b448d920387",
+      "overlay": false,
+      "sha256": "d51e2f954366bda64f1f40278f52aed60a90f6fc338768787faf258baa818e36"
+    },
+    "tests/test_forward_paper.py": {
+      "bytes": 9487,
+      "git_blob_sha1": "5af67b7acb73d76ede7a4118d0f92a08612b71df",
+      "overlay": false,
+      "sha256": "cd27709ddd6f97a6ecce0c52fbf66d890c8b4761b30f5be89b96ba237a01c8b3"
+    },
+    "tests/test_forward_paper_adapter.py": {
+      "bytes": 12537,
+      "git_blob_sha1": "d516d29a629cc450fbdb8e419e78bcf2e9eded9f",
+      "overlay": false,
+      "sha256": "49cdb2aa69df0b4e68c72c371b3a521f54dff62f80fcf170df45960817b96a45"
+    },
+    "tests/test_forward_prediction.py": {
+      "bytes": 7012,
+      "git_blob_sha1": "8bd6c91a0771000424071014dffdeb1cfcbd18ed",
+      "overlay": false,
+      "sha256": "4528c44b8c44c908865d762d8b66b2df688899923dd9c7f7e504ea58f73dbed9"
+    },
+    "tests/test_forward_publication.py": {
+      "bytes": 6255,
+      "git_blob_sha1": "8ea47c59232bc7c1bc6a06561b3dcc6724e74cec",
+      "overlay": false,
+      "sha256": "2e20e4452eaf8ce0214166f154aea665957d6659f8ad0a809a6556b6747e1c8b"
+    },
+    "tests/test_forward_retirement.py": {
+      "bytes": 16181,
+      "git_blob_sha1": "6b353becfb0b0a0ba8d0b27dc0a99df3dba45d6a",
+      "overlay": false,
+      "sha256": "054b3605e3605cb4f0c7b022367c44f9f7f3bfdd64b5d75cf12a87715ba785a0"
+    },
+    "tests/test_forward_service.py": {
+      "bytes": 44117,
+      "git_blob_sha1": "6e1f1ae8e3347ea9c5ae003477a419620e61a1d2",
+      "overlay": false,
+      "sha256": "52e322bc28ecc207cb0bbb919943166333e19d6535ad7acb0abd19e304658c82"
+    },
+    "tests/test_forward_source_coverage_api.py": {
+      "bytes": 8176,
+      "git_blob_sha1": "532d6c9b7c432afae7f1c304b22e73cd9e452553",
+      "overlay": false,
+      "sha256": "08a420cc3372f53ed8740f2e934a0b8e38133bc3465fefd9989ca9be76e1437a"
+    },
+    "tests/test_forward_source_coverage_history.py": {
+      "bytes": 5385,
+      "git_blob_sha1": "cb02ebad30c0fc5ccc9f3cf35b48e066802e78f9",
+      "overlay": false,
+      "sha256": "7d633d7badfd507efe6a4f1522d65c0223cfed264f2bf425edd6274440ab77da"
+    },
+    "tests/test_forward_transition_audit.py": {
+      "bytes": 25694,
+      "git_blob_sha1": "2496959c326679f169911fb54cc9f9420e2c378b",
+      "overlay": false,
+      "sha256": "69589e6592bf74c8ec7d1b215c1cf345817e4ab83f95937b47cddb5be478f7f8"
+    },
+    "tests/test_history_backfill.py": {
+      "bytes": 54943,
+      "git_blob_sha1": "142ca1a9bcea36f63736ecc47e44b4f406f03884",
+      "overlay": false,
+      "sha256": "e11c91325fa635a96c9026e3543c91e44610293e81c68d47ca5a870e48a807f8"
+    },
+    "tests/test_history_shared_execution.py": {
+      "bytes": 20181,
+      "git_blob_sha1": "264b57d032cca0e9362ad93e6827b8c8a9e28f0a",
+      "overlay": false,
+      "sha256": "40925e794a2baf5b7ce2b2c2afce4b424bad0bf053a0f4532ae423cb4e9e8f50"
+    },
+    "tests/test_instrument_master.py": {
+      "bytes": 2752,
+      "git_blob_sha1": "3b3d0e93e747a562d990fee5a2d5478169ffdb0d",
+      "overlay": false,
+      "sha256": "e9d70dca7e7f6b50d41270c94c1361829e85a6c31604ad9b66d81efbbb0bb557"
+    },
+    "tests/test_intraday_breadth_api.py": {
+      "bytes": 4449,
+      "git_blob_sha1": "e320d37ca773e96bb531594f514a9f91ef7037d4",
+      "overlay": false,
+      "sha256": "eef8538562cbd9ae08d480aaae305cee91911b0618b285644262a516c1f57e0f"
+    },
+    "tests/test_intraday_continuity_api.py": {
+      "bytes": 4254,
+      "git_blob_sha1": "21c14c2958b71b0bebb529a7a5e8abfae21a09c7",
+      "overlay": false,
+      "sha256": "347517dbd21ed91261fa2ae072c3fe2df39324449af794f3662e1322b115d251"
+    },
+    "tests/test_intraday_continuity_script.py": {
+      "bytes": 2900,
+      "git_blob_sha1": "0117928c4e089104cda9a36375307f0b8d97cca0",
+      "overlay": false,
+      "sha256": "032c2450a8c5022a8441df6d565856ba8e83051a4154caa51cdbb348dc37d6f9"
+    },
+    "tests/test_intraday_factor_api.py": {
+      "bytes": 42527,
+      "git_blob_sha1": "fcec376ab7d61d5b192c3777f6529a6c10c43e8d",
+      "overlay": false,
+      "sha256": "d2b31664b93cfaa52672338969feb7c766ce0a0471947b184f83b081bb153cd9"
+    },
+    "tests/test_intraday_factor_correlation_api.py": {
+      "bytes": 5527,
+      "git_blob_sha1": "f00fa9bc19c83ce09094fa7d6b9b489d19575e9c",
+      "overlay": false,
+      "sha256": "225e5d3b329c23b9fc674f0b3896ecad9a45388b94bae32b0389158244a25ca0"
+    },
+    "tests/test_intraday_factor_long_window_api.py": {
+      "bytes": 12031,
+      "git_blob_sha1": "d6f82482db46ba797366caa0a2ed03fc1ae7f84e",
+      "overlay": false,
+      "sha256": "5ada64cc2b06b0b89958bb389f60e618c497be8985e7089a6dbb37175e9418e2"
+    },
+    "tests/test_intraday_factor_research.py": {
+      "bytes": 36611,
+      "git_blob_sha1": "7f91ee7bdb6f7bf355f839f35d6a8a901e0cf38e",
+      "overlay": false,
+      "sha256": "de12a723e4a3881c1b06560644d65ac06625764e8a5ed86727c0a6b895b9d595"
+    },
+    "tests/test_intraday_observation_api.py": {
+      "bytes": 3385,
+      "git_blob_sha1": "74073dfc99bd3c8b3e6b072da2d16a7ac08fe71b",
+      "overlay": false,
+      "sha256": "eddb06771792f0108e2508c06e65da6478cfa3cd7b05212fe14ec07e83644265"
+    },
+    "tests/test_long_five_minute_api.py": {
+      "bytes": 4707,
+      "git_blob_sha1": "e4d29599e3154a7d0b041019a07c010dd1d3e696",
+      "overlay": false,
+      "sha256": "dd2f6ed6e5489cbaa8291bbc197b90a6d2a38351940c8b62ab03c05be633231b"
+    },
+    "tests/test_market_data.py": {
+      "bytes": 13438,
+      "git_blob_sha1": "02ef7bb1e5d8f6fadd51643af6ca303ec188d3f4",
+      "overlay": false,
+      "sha256": "736af816953edd12ad2bf485acc16fc2c4682ee61364fb656ec0d40e5301755d"
+    },
+    "tests/test_market_incremental_failure_boundaries.py": {
+      "bytes": 7071,
+      "git_blob_sha1": "387d45e317a5335be1d076e1c1ed79627ba4cd1f",
+      "overlay": false,
+      "sha256": "a362654162f85cd5c5f375f03fdabadd475c5f5cb6d69ea12cdd3d30cf177c53"
+    },
+    "tests/test_minute_admission.py": {
+      "bytes": 3811,
+      "git_blob_sha1": "bd94b6b361a7a04a6421f44d24eeef5748033376",
+      "overlay": false,
+      "sha256": "d403e494bda5c8f70165b4f73188ac5f48af0df3b119427f9db6e05ea83a99e8"
+    },
+    "tests/test_minute_api.py": {
+      "bytes": 1425,
+      "git_blob_sha1": "cd38887b0278ad3cbe1bc0ff3d12258089ee092f",
+      "overlay": false,
+      "sha256": "c76898b223a485903713e3e77df7552bb934a34c3b84cb84e2d014cf6049bf99"
+    },
+    "tests/test_minute_backtest.py": {
+      "bytes": 4536,
+      "git_blob_sha1": "b4992160107746a1f03a47dbe62810e418f80da7",
+      "overlay": false,
+      "sha256": "70b6620ea343cd79b07188f6f96d2ffed6b638f776a2a1b9ca9171e3291a7b8c"
+    },
+    "tests/test_minute_overlay.py": {
+      "bytes": 13408,
+      "git_blob_sha1": "cb5bd593a45eb81bbedbdcdf854c1e64ca243cd7",
+      "overlay": false,
+      "sha256": "52a0db79d1f6ae46501c60d36a3fb028674d77aeedcaa82579dfd89acbcb35f7"
+    },
+    "tests/test_minute_research_snapshot_api.py": {
+      "bytes": 2568,
+      "git_blob_sha1": "03e0a60f2b6d85ffb3d052b903520cbb227c903b",
+      "overlay": false,
+      "sha256": "0bababfca20373e02aaa342e0214360aed41fb2b09628df73572b163db5d8756"
+    },
+    "tests/test_model_promotion_policy.py": {
+      "bytes": 24561,
+      "git_blob_sha1": "6cd97a1a7021c45033b2529a68c2a16cd5c5f89b",
+      "overlay": false,
+      "sha256": "b0d41718ef64a0e9e4392495795e0e63fc9c1db1cc14107c2369e85c8603b73f"
+    },
+    "tests/test_model_registry.py": {
+      "bytes": 7059,
+      "git_blob_sha1": "fe2eca5ba245bd45ba98ae93c87bf0cb998abdf9",
+      "overlay": false,
+      "sha256": "bd57cd4c2854b336723fd48ee4ef94302aed7ddae06c4ddc4339f85af19c7681"
+    },
+    "tests/test_multi_asset_research.py": {
+      "bytes": 3975,
+      "git_blob_sha1": "7207c806ec60a9a6c536e0e1aaae1500903e0d77",
+      "overlay": false,
+      "sha256": "58099eb4a81a6b533deb9729c7ea2f8463c3ef8d97958130be6d462554686dc7"
+    },
+    "tests/test_multi_asset_walk_forward.py": {
+      "bytes": 3857,
+      "git_blob_sha1": "b98a749b788c55d8f1aee35c4bcd1454ecbb8f3c",
+      "overlay": false,
+      "sha256": "8ea580113d100fdc29e4ed687772bbd32bb5bf2356bbfee909d244a125d73562"
+    },
+    "tests/test_object_publication.py": {
+      "base_blob_sha1": null,
+      "bytes": 26156,
+      "git_blob_sha1": null,
+      "overlay": true,
+      "sha256": "f55e4a4bec2f01c193a82904be67ea7468bc615218ac68597f2c336e49a36806"
+    },
+    "tests/test_observed_master.py": {
+      "bytes": 3548,
+      "git_blob_sha1": "9fa5da64c78b3b7265c8215b7b19b56cc2375e71",
+      "overlay": false,
+      "sha256": "dba9901fc4bc530901e263fec5e35fbf2715c81275a7373c4d52895e21655c95"
+    },
+    "tests/test_official_master.py": {
+      "bytes": 3331,
+      "git_blob_sha1": "cb486ae69ba28acf0feeca15e8e6f9ec95aa1897",
+      "overlay": false,
+      "sha256": "351dff2ec58ef0a58f11b390a98656ea8d4aa81d12708fa7636a35aa06dd686c"
+    },
+    "tests/test_online_model_control.py": {
+      "bytes": 7868,
+      "git_blob_sha1": "67fd97b1a77ec0fae9a7c52d462c4698f86a4e68",
+      "overlay": false,
+      "sha256": "8af929733ee25f6623a4405faeba499f46a372d5fbb37a0fc7d861111e19b323"
+    },
+    "tests/test_online_prediction_worker.py": {
+      "bytes": 6617,
+      "git_blob_sha1": "ab897a6b85011bcd9f1b9e861d3fa003a119b057",
+      "overlay": false,
+      "sha256": "530405433554ea98331e3884644312a3c74d71f5024975217856cbf12d700395"
+    },
+    "tests/test_online_research.py": {
+      "bytes": 18180,
+      "git_blob_sha1": "c0a08e92ea38eccca6f480738d073ceb4193d6e1",
+      "overlay": false,
+      "sha256": "d45b04973cc22d00345545f8dd4d09dd09b51bedccbb10ad521bb5d0bf0ef9aa"
+    },
+    "tests/test_paper_orchestrator.py": {
+      "bytes": 16133,
+      "git_blob_sha1": "4959d526a064c73438e5f7ed532147c84b3ce805",
+      "overlay": false,
+      "sha256": "9f6c35b4ae3b019ef28a9d9b9e7631f36ba81022c9924d8282be2084fa2d6d4a"
+    },
+    "tests/test_persisted_research.py": {
+      "bytes": 4068,
+      "git_blob_sha1": "9f77b29070d960be6efe11c2d7e25a57c77ba1d7",
+      "overlay": false,
+      "sha256": "0689c6dc557f43a3cc2d2871f56810c120d7e051c90af3981f1a5d10d4581677"
+    },
+    "tests/test_persistence.py": {
+      "bytes": 5981,
+      "git_blob_sha1": "b38239c2e4a21c1d562bff7380e5cea5bd178e26",
+      "overlay": false,
+      "sha256": "dd51d127b72d1562b77656fd9fe9c897d525914c0fb45b1c97b96ce0f7a248c2"
+    },
+    "tests/test_pit_collection_queue.py": {
+      "bytes": 6739,
+      "git_blob_sha1": "b75b7315496a3dd6b61565748fb4914eed1f5e3c",
+      "overlay": false,
+      "sha256": "472a26d68ba39ea5cce4e54dddfef49f5934be617a296e89084f053e0e2b1aa8"
+    },
+    "tests/test_pit_source.py": {
+      "bytes": 14770,
+      "git_blob_sha1": "8b1e456a45cdde5273a5ccf8f739ed01193c2089",
+      "overlay": false,
+      "sha256": "89d1195626d843806b4d9ed2364d731107fd6875af9083d0b392eb523b4f6277"
+    },
+    "tests/test_pit_status_quality.py": {
+      "bytes": 5617,
+      "git_blob_sha1": "faa9d694a1c74af02f54cfedf55095f4db94f88d",
+      "overlay": false,
+      "sha256": "58810aec32a900e5398bb6c09d2d7eb100a651de12aad66e6e13aa342c1ac923"
+    },
+    "tests/test_prediction_registry.py": {
+      "bytes": 6312,
+      "git_blob_sha1": "3846f7d302a2388753aca6737b83b16ff76d9f67",
+      "overlay": false,
+      "sha256": "41d48b7fbe39425d76e34cf0027c4ff6801bc19a4bbf27d16ea47c5b8e22b2f4"
+    },
+    "tests/test_prepare_qlib_incremental.py": {
+      "bytes": 8545,
+      "git_blob_sha1": "5004b748dfedc4c10e91cf9c1c22131f4be02cb8",
+      "overlay": false,
+      "sha256": "ae690172111131e3c17ce455ac90525f27ced16faa45a66d3e514715112ae754"
+    },
+    "tests/test_probe_unified_history.py": {
+      "bytes": 7227,
+      "git_blob_sha1": "8ff7f2d0030f6f329fb6d9d0d0fb7204168b1d13",
+      "overlay": false,
+      "sha256": "f25b3cb9f138ed66a5dc9de434900f78a67b9c67571773292103e7ff2977c024"
+    },
+    "tests/test_probe_unified_publication.py": {
+      "bytes": 44830,
+      "git_blob_sha1": "4d410767b71e53796c6ed66db27176e885d85a62",
+      "overlay": false,
+      "sha256": "29b526f292d609cbb8cbca6706f8e59840538874a348c10d4c0a70165b5b146a"
+    },
+    "tests/test_public_delisted_plan.py": {
+      "bytes": 12710,
+      "git_blob_sha1": "41c3bb29b8531782bdc2ed69a38889214f836c45",
+      "overlay": false,
+      "sha256": "21cb1375dd91d556c56bbdb7d1360e70b02ce0bd1bf54c4235a5622bf5d8111f"
+    },
+    "tests/test_public_minute_audit.py": {
+      "bytes": 3030,
+      "git_blob_sha1": "d0758c3b9b0519e9fb8ed48791ddfa4844d38c8f",
+      "overlay": false,
+      "sha256": "0ecf087bb291c461bb398ef9a701d8ff30fcfdf36bd71228e2d49a103cbe52de"
+    },
+    "tests/test_public_minute_audit_api.py": {
+      "bytes": 2067,
+      "git_blob_sha1": "94015e661f91d5e2c05105dc64aa0873991ba6b0",
+      "overlay": false,
+      "sha256": "b3c4dad102ad3411cee97fe337157fa34a705ac076ca896127f1e7f968fffbb8"
+    },
+    "tests/test_public_observations.py": {
+      "bytes": 5261,
+      "git_blob_sha1": "c8302ac021dbc1164d4c642f986440e894ba432c",
+      "overlay": false,
+      "sha256": "c796eaf553ca3bf36f0fc965aa732a1ff1ae85c00dd685b7370aa5986fa18b94"
+    },
+    "tests/test_public_pit_audit.py": {
+      "bytes": 6775,
+      "git_blob_sha1": "964e2f3391f1c05bb9e7f99bbd8dc14b035b1b19",
+      "overlay": false,
+      "sha256": "a3d090a9812b43f0960e048509bdb4d8fec90ff97c84a47047a241894f41a82c"
+    },
+    "tests/test_publication_cadence.py": {
+      "bytes": 5436,
+      "git_blob_sha1": "970aa9758d49a16717010b74458c929aba64b57a",
+      "overlay": false,
+      "sha256": "6785ac2c170ab58895ad4a58a309e15e87b9d6ec26383d8955b975c1b1527bf8"
+    },
+    "tests/test_publication_git_process_group.py": {
+      "bytes": 8477,
+      "git_blob_sha1": "20e5e96be11e04eb578032cac9d732f765d6a7d9",
+      "overlay": false,
+      "sha256": "e67f314051c08010b2c93fafdd548c63dcb3cdbfda611df5a15ab7d9e62a9422"
+    },
+    "tests/test_publish_unified_collection.py": {
+      "bytes": 5008,
+      "git_blob_sha1": "b74bf277889704b6e2be7f402d3f3a0a7281ce8a",
+      "overlay": false,
+      "sha256": "b193a5e2093e21434b363ae886913e1fdc8168a4adc116a13489c2ea98076d71"
+    },
+    "tests/test_qlib_adapter.py": {
+      "bytes": 4015,
+      "git_blob_sha1": "2279b828b30ff07bd504d148b6a0a56487ba173c",
+      "overlay": false,
+      "sha256": "8e2708bfc1532d9e03ddb816b4d34a78f1e8eb5e5371be289b5571d1fde75230"
+    },
+    "tests/test_qlib_archived_template.py": {
+      "bytes": 4904,
+      "git_blob_sha1": "5b564f082d964a5e064c245ab5251095d41c09aa",
+      "overlay": false,
+      "sha256": "e39d225376daa4d858f3cc112ba1599f83b30c1478959bd62491496456a6f846"
+    },
+    "tests/test_qlib_bound_research_integration.py": {
+      "bytes": 8663,
+      "git_blob_sha1": "4d0b38510f54d98a9765ead93c5a2ff57ce24325",
+      "overlay": false,
+      "sha256": "8457fe55c11fa86aa0254c6d01806ff08d32a2baaf47890628e32f264f12656c"
+    },
+    "tests/test_qlib_data_service.py": {
+      "bytes": 12600,
+      "git_blob_sha1": "695af1b24a07dc70bd80c3462a4baa1c5aedefca",
+      "overlay": false,
+      "sha256": "0f280fa2c3c9d09b9c3583777a4f764b16071ccb16499c15a1f9665670e2a8cc"
+    },
+    "tests/test_qlib_forward_daily.py": {
+      "bytes": 3260,
+      "git_blob_sha1": "0dd44086f91aa2adce3323ab09347fb1b57f3381",
+      "overlay": false,
+      "sha256": "3c1151b34ae9564fe320b02640a56d89415c17fcd80ec95f05643e07582ac25c"
+    },
+    "tests/test_qlib_public_delivery.py": {
+      "bytes": 18475,
+      "git_blob_sha1": "46f031760550e977c3d70c772b4a6542ef31a237",
+      "overlay": false,
+      "sha256": "0ba048f1c935257875c16098449789246ee07c81c40a28b23cfdc255776a891a"
+    },
+    "tests/test_qlib_publication.py": {
+      "bytes": 5423,
+      "git_blob_sha1": "4efd530864c6ebf0db78527d4845bb5c9d52921a",
+      "overlay": false,
+      "sha256": "16fa0f9fb067a3040c424b90b6dbc0ccae5b1f85f240265b8d09e321a86c55ac"
+    },
+    "tests/test_qlib_restore_bundle.py": {
+      "bytes": 3801,
+      "git_blob_sha1": "527f4747ab5cb28b628716dd4a28eb282a531f71",
+      "overlay": false,
+      "sha256": "84f4ca51dddb2cf3018aec18abdb873a1a438aa85c28ed0bd49c27b7822363e4"
+    },
+    "tests/test_qlib_rolling_adapter.py": {
+      "bytes": 1465,
+      "git_blob_sha1": "1392104992325e1b9dd6d426807d13076f02c032",
+      "overlay": false,
+      "sha256": "2eccff415149a523225e91119ac74f468375847f7e6b1358fe63e362b9efee10"
+    },
+    "tests/test_qlib_strategy_contract.py": {
+      "bytes": 16086,
+      "git_blob_sha1": "94b648f53c731e6bda380d96233a6ba15e7d3a5d",
+      "overlay": false,
+      "sha256": "9d0be2aa8ba4148110ceba3a830877a6d6a6f69c4459656c8d486e98b25b9216"
+    },
+    "tests/test_qlib_worker.py": {
+      "bytes": 12270,
+      "git_blob_sha1": "4d95d4dcf3f3f166aa247de7cbb12c54a9f1fa7b",
+      "overlay": false,
+      "sha256": "f3df1a58cb66b809a8122546c45993287effd8d13a6a65de088e2eb821a8015b"
+    },
+    "tests/test_qlib_workflow.py": {
+      "bytes": 13625,
+      "git_blob_sha1": "a76aa14b860d530c7835fa70975f64ad49fc38ac",
+      "overlay": false,
+      "sha256": "494b5a727a4782d7a74ea4dc0ad65f8a0059fc5ede29c0e3b734c58bef26149d"
+    },
+    "tests/test_real_data_paper.py": {
+      "bytes": 13826,
+      "git_blob_sha1": "982996f3a2746f7f05ca25fd3f1e72b696295b0c",
+      "overlay": false,
+      "sha256": "be1456a71d7f639bbeec4af2d62e324f1602b694753783591dda7935092019f5"
+    },
+    "tests/test_recent_status.py": {
+      "bytes": 9460,
+      "git_blob_sha1": "d0f66ed161cda7b3af4e43802e1170b0f101a35c",
+      "overlay": false,
+      "sha256": "a746829286418c8119d0c90a98dcedef5e422d5e6c200f1c92974626057337ef"
+    },
+    "tests/test_reconciliation_recovery.py": {
+      "bytes": 1498,
+      "git_blob_sha1": "fcdbb71886305cdc1b2d13a10ed131ba2b265472",
+      "overlay": false,
+      "sha256": "e178ae945dbeccb0f0be8c08ed99bbe95e05a7eeb380448dea9bacd625c421e0"
+    },
+    "tests/test_recorded_paper_session.py": {
+      "bytes": 9965,
+      "git_blob_sha1": "a2a1000a13316e2b52caa2a9121f130a245a223f",
+      "overlay": false,
+      "sha256": "bf3e6a27c3389c73d20efad4c5e31c9bbb121c2f6ce9544fa50e3cb05ce1de46"
+    },
+    "tests/test_repair_incremental_gaps.py": {
+      "bytes": 16398,
+      "git_blob_sha1": "1a0dcbe177429fb2de451284ca8f60d66ad0f645",
+      "overlay": false,
+      "sha256": "4b3d2132deb75d7724760599fb3071b38e36e75c3bddc32ed284901b0ba23afd"
+    },
+    "tests/test_research_governance.py": {
+      "bytes": 5614,
+      "git_blob_sha1": "d83cb907a739d5a8076a776f721d0eea969e0640",
+      "overlay": false,
+      "sha256": "39141f1cb8cc86900b321537096b2359d224b5c9a59a596fce4416e5ba9e6809"
+    },
+    "tests/test_research_portfolio.py": {
+      "bytes": 7005,
+      "git_blob_sha1": "4f18a04bb7b2ef4607426bad38a5bcc781883acf",
+      "overlay": false,
+      "sha256": "a8962e209a465275c7651c7c0e5a2c4c7b149e05b14cbd5c5654bec01b957a5c"
+    },
+    "tests/test_reserved_tail_api.py": {
+      "bytes": 2738,
+      "git_blob_sha1": "179b92d8d0d029881fad2342f0541f1ef314d2de",
+      "overlay": false,
+      "sha256": "90b7ad244f3a98cdb6ef13a64c72aefd3a1ef74a408e393c43a5506e6a4f4c5d"
+    },
+    "tests/test_reserved_tail_preregistration.py": {
+      "bytes": 3316,
+      "git_blob_sha1": "ed8ebce08170184875e08b426efbadcb9410ea96",
+      "overlay": false,
+      "sha256": "e629cd1775998c2cd9babde7054d99b82c3d71ea37e03a5b6170ef2f7b5beea3"
+    },
+    "tests/test_robust_factor_api.py": {
+      "bytes": 9187,
+      "git_blob_sha1": "fe7de27013ca197e1dbd211b988813b702376fd7",
+      "overlay": false,
+      "sha256": "f087c4846e3a16869f0c3a83916c9096ab09e44430f17048ba3d94ee515772ed"
+    },
+    "tests/test_robust_factor_search.py": {
+      "bytes": 4369,
+      "git_blob_sha1": "add89766a715b2ae6c20d305c013e6202f42dbd6",
+      "overlay": false,
+      "sha256": "588e089c5f22021f473f11aaaff33059b92db28189730b57cdf9d10be70a7cc4"
+    },
+    "tests/test_rolling_control.py": {
+      "bytes": 3788,
+      "git_blob_sha1": "24170f6085f82f18c1c7a294712bbf28a583bae5",
+      "overlay": false,
+      "sha256": "9804862d8cb3995cef6bda58392af4ee2a3d364da66d01a443a05d8e24aff0fb"
+    },
+    "tests/test_rolling_failure_isolation.py": {
+      "bytes": 11737,
+      "git_blob_sha1": "66606c5fbaf5364bab5cbbaeee47d51f8eb0aebf",
+      "overlay": false,
+      "sha256": "ecc38779412e3cb08c52cc0628b8659a454a880649d9f33b035c11455fc78f3d"
+    },
+    "tests/test_rolling_policy.py": {
+      "bytes": 3327,
+      "git_blob_sha1": "c5d7a8e13aae2267bb0e46f5d3cdf14df1426e06",
+      "overlay": false,
+      "sha256": "2d756fe0c60d9d6819e70acfc6eddfb55123515407f9bf1999c20bfeec22e85d"
+    },
+    "tests/test_rqdata_native.py": {
+      "bytes": 11300,
+      "git_blob_sha1": "eb1c819c8d92a2b3da4cd41fa02b9754c31e3a83",
+      "overlay": false,
+      "sha256": "c014c9faedd10f12f8036e1cc31d10db832e825f02203a0eec1ce405f4a5726b"
+    },
+    "tests/test_runtime_integration.py": {
+      "bytes": 20489,
+      "git_blob_sha1": "0d3cb0a6f7aa58c966ddfa6190297441d9518ea1",
+      "overlay": false,
+      "sha256": "7d40937d343759517f8668652817ffe06fbabf7d3109e3e51c06dd466f0ae3a2"
+    },
+    "tests/test_safety_kernel.py": {
+      "bytes": 16281,
+      "git_blob_sha1": "1a38e49250b066786dcd8070c43a2af9a795ef7b",
+      "overlay": false,
+      "sha256": "8749eaeb048906a55add5b16138bcd409d95ac1a900e30ad0a2c637a98de265c"
+    },
+    "tests/test_sector_stock_universe.py": {
+      "bytes": 3211,
+      "git_blob_sha1": "4861ab818f25f6a3c998fa77838093144e5547ce",
+      "overlay": false,
+      "sha256": "df01154dde03df69b5721e36a404364ec38e00a311ecaf4d1abd53e1d3d0419c"
+    },
+    "tests/test_session_acceptance.py": {
+      "bytes": 4009,
+      "git_blob_sha1": "b3390eb6a704464722d2de1f2e2dd0caf19f2a15",
+      "overlay": false,
+      "sha256": "44889e87de9f7b83fe1df9e7665431f50a8281afb623c1afbc2e7835c03be440"
+    },
+    "tests/test_session_transition_cli.py": {
+      "bytes": 4622,
+      "git_blob_sha1": "06df861171052c691e0188c88e3c043aff080269",
+      "overlay": false,
+      "sha256": "800bb59348662050bf41398c95bb46ccb495cbd0343e8a26c236aaf980d9152e"
+    },
+    "tests/test_signal_baselines.py": {
+      "bytes": 3707,
+      "git_blob_sha1": "9c9daba7c444bcfbade5d88c629122b6717d6b06",
+      "overlay": false,
+      "sha256": "92a7783549d8b11c05df973e0def4789f0dd39036d47cd825e3be94d47dce28b"
+    },
+    "tests/test_signal_publication.py": {
+      "bytes": 5284,
+      "git_blob_sha1": "7d5f8992ea50c7ec790597e6cfb33da859ad15dd",
+      "overlay": false,
+      "sha256": "b10ec59fe1bd9ad2689f8acf7b7e33da775ec6e3db77eb5a4e29217c8195e6bd"
+    },
+    "tests/test_sina_five_minute_walk_forward.py": {
+      "bytes": 3333,
+      "git_blob_sha1": "b2a85f9ecdef2074b19f766bd14559b6e9254f00",
+      "overlay": false,
+      "sha256": "d9c09bc62c6bd919a539243f026225c08808c181eaec74fe21f06c9b4fa29b4f"
+    },
+    "tests/test_sina_incremental.py": {
+      "bytes": 4250,
+      "git_blob_sha1": "08b97d6c6352aaa988b40b8debf42247a32b7d60",
+      "overlay": false,
+      "sha256": "849033fcdd81179de3508a0983350abd59106423b96915f3446fb59af1c531ba"
+    },
+    "tests/test_sina_intraday_observation.py": {
+      "bytes": 1519,
+      "git_blob_sha1": "fc91b897edbb807c44798bdbc31e0eeb012decd3",
+      "overlay": false,
+      "sha256": "01d39a0a57da97fa8abc47973eb5d0180497e2cb11e7e5f866240bbf0d296512"
+    },
+    "tests/test_sina_minute.py": {
+      "bytes": 4248,
+      "git_blob_sha1": "0cb834501dcf82b43ec2016d9c1b1e0886f74f4d",
+      "overlay": false,
+      "sha256": "b1704210d3ee972d8bf0b82b39fe3053498768387c9efcde10bb5735512951af"
+    },
+    "tests/test_sina_minute_history_ingest.py": {
+      "bytes": 2574,
+      "git_blob_sha1": "270b279dba1021f51ce207c1a8a20104b338c0ba",
+      "overlay": false,
+      "sha256": "357293ba7853f2dfe044527bf8a7a600152cd897eed58f241a505b8a5335a524"
+    },
+    "tests/test_single_stock_five_minute_backtest_api.py": {
+      "bytes": 9138,
+      "git_blob_sha1": "e35c8f4430de211823b6dd0dcc472fecc0ebc9f6",
+      "overlay": false,
+      "sha256": "ea6759bd17a76fb2b9df4f845e8bb0630685bd82cafca5cb63a70c65980c4502"
+    },
+    "tests/test_source_constraints.py": {
+      "bytes": 12686,
+      "git_blob_sha1": "3fe9cd9a99fd87a5c8401811104be41996a279c8",
+      "overlay": false,
+      "sha256": "33c5b5db869d8d0e77505967a5e9f476545b6333786649b4624db594a4b1c30b"
+    },
+    "tests/test_sqlite_process_owner.py": {
+      "bytes": 1616,
+      "git_blob_sha1": "ffaa86d58c79e940a9c4d22b1089238ebd8ffcd9",
+      "overlay": false,
+      "sha256": "3a934ce983fa8d868dfeee676e6a7763f445bc0952f4d05344e163e96ff867a4"
+    },
+    "tests/test_step2_factor_contract_independent.py": {
+      "bytes": 24832,
+      "git_blob_sha1": "bde0214a2c858ad2de9ac9cfcc2e907dd4dd051f",
+      "overlay": false,
+      "sha256": "76473a69d527bf1a6bbcfbdfad57de402cb0fd2a807d1f75de0c8fbee5e3050e"
+    },
+    "tests/test_step2_factor_contract_readiness.py": {
+      "bytes": 8611,
+      "git_blob_sha1": "22ce79b4b9045dbd7057b4cad70050ea1ee186a5",
+      "overlay": false,
+      "sha256": "72ba9bd82463a9ed1468e5fca1c1ff518b88d70e72601c8e9bd8db473449b1e9"
+    },
+    "tests/test_step2_strategy_readiness.py": {
+      "bytes": 10174,
+      "git_blob_sha1": "6c441815ccb526b212a01ba3e161f432735aad27",
+      "overlay": false,
+      "sha256": "b37cdc10ceaafc3782da59d12fa9df0447bf0e75a8fa8a0eba83822f712c9390"
+    },
+    "tests/test_stock_sector_transfer.py": {
+      "bytes": 1624,
+      "git_blob_sha1": "a10490a6dd8399a920ad8f5e147d22c14f1a8dc2",
+      "overlay": false,
+      "sha256": "dd694e7c0bded64f0c3ee7f0d01cbbc12c1441520785c4cb2213dabfa0fe3437"
+    },
+    "tests/test_stock_sector_transfer_api.py": {
+      "bytes": 5789,
+      "git_blob_sha1": "ce643e159efdfa2e00a97c67ca2fcbaa9a2b584e",
+      "overlay": false,
+      "sha256": "2df235d5687ea0a56b631a51694dde6e30407cb1cbc46c82045553c999e6a1bd"
+    },
+    "tests/test_storage_artifacts.py": {
+      "bytes": 11108,
+      "git_blob_sha1": "e11b12f4475626013fcb547f5cd449c14b717ec2",
+      "overlay": false,
+      "sha256": "72afe09c32484da323c71087f068ac485a6e348f181d626765e74fb0825eabcf"
+    },
+    "tests/test_strategy_comparison.py": {
+      "bytes": 12595,
+      "git_blob_sha1": "fa3b5839431cde2b112114a2ba1fff67f5aea0e0",
+      "overlay": false,
+      "sha256": "30a038b02a63d3519e2ba65a336534cba84c919e4ee456edaa0957fbd52ec9d4"
+    },
+    "tests/test_strategy_families.py": {
+      "bytes": 3361,
+      "git_blob_sha1": "d73a3587dab00332589ecfb4e30728938ca3f5d4",
+      "overlay": false,
+      "sha256": "d41a846be05c7eba3b91c46485bd7676b9da03a01d45177d83ab352f757bbd40"
+    },
+    "tests/test_strategy_registry.py": {
+      "bytes": 10842,
+      "git_blob_sha1": "3af5252f3636a7640acda4cffbb1383ef297b514",
+      "overlay": false,
+      "sha256": "d6511182b4fa9d75fa89258605bc66b72ea0bc69481737accb23504984883a2f"
+    },
+    "tests/test_trading_rules.py": {
+      "bytes": 1645,
+      "git_blob_sha1": "8f0f0d7e709c1bd748e429c5e84942279a402b14",
+      "overlay": false,
+      "sha256": "f4bed2df5d0b9004217c22a4e5dfbbbbdf118a0b1961b2481ba7ca5c53499463"
+    },
+    "tests/test_unified_backfill_plan.py": {
+      "bytes": 4403,
+      "git_blob_sha1": "6ab2da0a5ac938c46bb7f4ae3fc4598d996469f8",
+      "overlay": false,
+      "sha256": "7b79305ccfe445caeae1fa56a1a4d5e3d48f2d8f504c787e4a190e613a483466"
+    },
+    "tests/test_unified_catalog_api.py": {
+      "bytes": 8603,
+      "git_blob_sha1": "274a7f720650df04f8d9e9cb2ef6718df9ae29fb",
+      "overlay": false,
+      "sha256": "80a3fdff299c65cc59e350ba481039cfdd80a9aaeeb4ea9ce96584d7a291bd41"
+    },
+    "tests/test_unified_export_rows.py": {
+      "bytes": 3660,
+      "git_blob_sha1": "ae7fdd2f30ba43da1c15c719c19858d7b2281493",
+      "overlay": false,
+      "sha256": "4e2da919eb2fb764ea7e61ee7da8df09db7c0fbbcb2e1387978aaf38e2d2bb0c"
+    },
+    "tests/test_unified_maintenance.py": {
+      "bytes": 1374,
+      "git_blob_sha1": "390e58e0604c2c8c9536f73ac0557fb46048a30a",
+      "overlay": false,
+      "sha256": "d42f7c53aafc92364f6639a41b6c3a85b3b29c60c80c0224b06e674518ae0672"
+    },
+    "tests/test_unified_market.py": {
+      "bytes": 120991,
+      "git_blob_sha1": "5c6281f1e827e827f777d7c75a5a652193313af5",
+      "overlay": false,
+      "sha256": "ce45fda4f53e71ce3dbb8431bb01a50ee308ae46a3d43d30b3aaf2ba24a38a8a"
+    },
+    "tests/test_unified_market_checkpoint_independent.py": {
+      "bytes": 23046,
+      "git_blob_sha1": "e884aab2966f9839e99f28a3f97af3b64f32c267",
+      "overlay": false,
+      "sha256": "4e61709f707986d94248773dfd32dd496245231d4d654d2d2249a4ec01e05e17"
+    },
+    "tests/test_unified_market_checkpoints.py": {
+      "bytes": 8220,
+      "git_blob_sha1": "d8e955fca133feb564ffd35b8786313a72cc16c4",
+      "overlay": false,
+      "sha256": "0488a5edbd64f882171036ea3db1292d6e1a5ee581aad2165282c86377bd535d"
+    },
+    "tests/test_unified_queue.py": {
+      "bytes": 16143,
+      "git_blob_sha1": "aac83e15695fd66bf39187b5a46df7b1b7e04609",
+      "overlay": false,
+      "sha256": "e9dd4facc7b73df2ac7858a36d5166e3589876a11f709ebae7fa6395e81b6170"
+    },
+    "tests/test_unified_source.py": {
+      "bytes": 13818,
+      "git_blob_sha1": "99574823517a77618177537877088aaa0e73e7ff",
+      "overlay": false,
+      "sha256": "6501b72b47001312a55c5edfd346067082aef630427744d5a81b0095aea3b86e"
+    },
+    "tests/test_unified_store.py": {
+      "bytes": 7976,
+      "git_blob_sha1": "0ec2d256f5fa6df3d00386ef4e69c1870bd97569",
+      "overlay": false,
+      "sha256": "21d41f60f539f1545cdb964c030f044a11b15d0e367472da90fcdd895883d6ac"
+    },
+    "tests/test_unified_transport.py": {
+      "bytes": 5422,
+      "git_blob_sha1": "ca087202b23219ca48f70c2b47a041e2bfe43881",
+      "overlay": false,
+      "sha256": "0a3103b5005efbb6bff98896758ae202492a289aaec3fd6a160a1f3eedc1f05c"
+    },
+    "tests/test_vercel_entry.py": {
+      "bytes": 16533,
+      "git_blob_sha1": "d929b565330dd98d2ac13abd5b6689c8eb633775",
+      "overlay": false,
+      "sha256": "696df18f81c645d995f6a56de69ff50f9c4e841950e9a00df3cacce5196040a9"
+    },
+    "tests/test_vnpy_protocol.py": {
+      "bytes": 3074,
+      "git_blob_sha1": "732efe42edebc8b2ad6126c7c76d88ee0e4eaa46",
+      "overlay": false,
+      "sha256": "5469f4670cdccffd450b1647e6001b548ad021b63624b9b284e88ceed41cff12"
+    },
+    "tests/test_workflow.py": {
+      "bytes": 1686,
+      "git_blob_sha1": "7862e025b5fbec76b9377e075550f06b6c4ea3dd",
+      "overlay": false,
+      "sha256": "3f0be015ec69b7ed560782abc51d959deb881582718944c0fcdf57a4ebe8664a"
+    },
+    "tests/unit/test_r2_object_store.py": {
+      "base_blob_sha1": null,
+      "bytes": 18374,
+      "git_blob_sha1": null,
+      "overlay": true,
+      "sha256": "16c2034f0782258d1058906c11adaa8d2175e39458650a573f2903c3f71bb1d0"
+    }
+  },
+  "not_a_pure_git_tree": true,
+  "schema_version": "qtrade.minio-candidate-source.v1"
+}

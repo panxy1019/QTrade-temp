@@ -1,0 +1,107 @@
+{
+  "at": "2026-10-28T17:09:49.415537+00:00",
+  "boto3_version": "1.43.120",
+  "botocore_version": "1.43.120",
+  "cases": [
+    {
+      "case": "native_conditional_put_and_full_get",
+      "seconds": 0.16391476057469845,
+      "state": "PASSED"
+    },
+    {
+      "case": "native_two_writer_conditional_create",
+      "seconds": 0.17684356123209,
+      "state": "PASSED"
+    },
+    {
+      "case": "committed_cas_ack_loss_readonly_reconciliation",
+      "seconds": 0.2728117126971483,
+      "state": "PASSED"
+    },
+    {
+      "case": "negative_read_and_restart_never_resend_cas",
+      "seconds": 0.19185312651097775,
+      "state": "PASSED"
+    },
+    {
+      "case": "immutable_upload_ack_loss_readback_resume",
+      "seconds": 0.1833204086869955,
+      "state": "PASSED"
+    },
+    {
+      "case": "incomplete_generation_keeps_old_head_and_resumes",
+      "seconds": 0.2932075038552284,
+      "state": "PASSED"
+    },
+    {
+      "case": "remote_bytes_corruption_is_not_a_receipt_hit",
+      "seconds": 0.44051803834736347,
+      "state": "PASSED"
+    },
+    {
+      "case": "actual_frozen_3000_entry_5987_shard_two_generations",
+      "error_class": "ValueError",
+      "safe_error_code": "OBJECT_PUBLICATION_INDEX_CATALOG_LINEAGE_MISMATCH",
+      "seconds": 1.0778916832059622,
+      "state": "FAILED"
+    }
+  ],
+  "cloud_account_used": false,
+  "credentials_persisted": false,
+  "details": {
+    "client_close_errors": 0,
+    "committed_cas_ack_loss_readonly_reconciliation": {
+      "fault": "APPLICATION_ACK_LOSS_AFTER_REAL_S3_COMMIT",
+      "latest_puts": 1
+    },
+    "immutable_upload_ack_loss_readback_resume": {
+      "fault": "APPLICATION_ACK_LOSS_AFTER_REAL_IMMUTABLE_PUT",
+      "recovery": "FULL_BODY_READBACK"
+    },
+    "incomplete_generation_keeps_old_head_and_resumes": {
+      "fault": "APPLICATION_FAILURE_BEFORE_POINTER",
+      "immutable_reuploads": 0,
+      "latest_puts": 1
+    },
+    "listener": {
+      "addresses": [
+        "0100007F:AFB3"
+      ],
+      "loopback_only": true,
+      "owned_pid": 721009
+    },
+    "native_conditional_put_and_full_get": {
+      "create_412": true,
+      "sha256_not_etag": true,
+      "stale_etag_412": true
+    },
+    "native_two_writer_conditional_create": {
+      "results": [
+        "REJECTED",
+        "WIN"
+      ]
+    },
+    "negative_read_and_restart_never_resend_cas": {
+      "blind_retry": false,
+      "fault": "APPLICATION_DELAYED_REAL_S3_CAS"
+    },
+    "owned_server_stopped": true,
+    "remote_bytes_corruption_is_not_a_receipt_hit": {
+      "delete_acl_certified": false,
+      "privileged_fixture_overwrite_rejected": true
+    },
+    "server_cleanup_error_class": null
+  },
+  "fixture_kind": "LOCAL_MINIO_ONLY",
+  "max_child_rss_kib": 282272,
+  "minio_binary_sha256": "ea71aa0735f6930c3ae3fcc27f0dc2d670f941043085d9a501cad323a393db2d",
+  "production_changed": false,
+  "public_api_accepted": false,
+  "python_max_rss_kib": 382388,
+  "r2_accepted": false,
+  "schema_version": "qtrade.local-minio-protocol-check.v1",
+  "seconds": 3.3744271639734507,
+  "source_commit": "07c3a429bfed433e49018cb0f78a52145d4bedeb",
+  "source_sha256": "f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126",
+  "state": "FAILED"
+}
