@@ -1,0 +1,8 @@
+{
+  "action": "reread",
+  "at": "2026-10-28T01:49:48.594014+00:00",
+  "exit_code": 1,
+  "only_group": null,
+  "stderr": "",
+  "stdout": "error: <class 'ValueError'>, not enough values to unpack (expected 3, got 1): file: /usr/lib/python3/dist-packages/supervisor/supervisorctl.py line: 1043\n"
+}

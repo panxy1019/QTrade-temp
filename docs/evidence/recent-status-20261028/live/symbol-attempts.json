@@ -1,0 +1,254 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.pit-symbol-attempts.v1",
+  "dataset_identity": "ca410d3ca33c6aa30a021fd37ffdafa80c477ca31318e0fdc3407a1dbde3a78c",
+  "entries": {
+    "000001": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:37.850664+00:00",
+      "next_attempt_at": "2026-10-28T02:16:37.850664+00:00"
+    },
+    "000002": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:37.879717+00:00",
+      "next_attempt_at": "2026-10-28T02:16:37.879717+00:00"
+    },
+    "000011": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:37.949471+00:00",
+      "next_attempt_at": "2026-10-28T02:16:37.949471+00:00"
+    },
+    "000021": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:37.991973+00:00",
+      "next_attempt_at": "2026-10-28T02:16:37.991973+00:00"
+    },
+    "000032": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:38.028740+00:00",
+      "next_attempt_at": "2026-10-28T02:16:38.028740+00:00"
+    },
+    "000034": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:38.078429+00:00",
+      "next_attempt_at": "2026-10-28T02:16:38.078429+00:00"
+    },
+    "000060": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:38.091504+00:00",
+      "next_attempt_at": "2026-10-28T02:16:38.091504+00:00"
+    },
+    "000062": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:38.115747+00:00",
+      "next_attempt_at": "2026-10-28T02:16:38.115747+00:00"
+    },
+    "000063": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:38.132425+00:00",
+      "next_attempt_at": "2026-10-28T02:16:38.132425+00:00"
+    },
+    "000066": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:38.148821+00:00",
+      "next_attempt_at": "2026-10-28T02:16:38.148821+00:00"
+    },
+    "000070": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:39.838790+00:00",
+      "next_attempt_at": "2026-10-28T02:16:39.838790+00:00"
+    },
+    "000100": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:39.882955+00:00",
+      "next_attempt_at": "2026-10-28T02:16:39.882955+00:00"
+    },
+    "000157": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:40.826461+00:00",
+      "next_attempt_at": "2026-10-28T02:16:40.826461+00:00"
+    },
+    "000158": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:40.925490+00:00",
+      "next_attempt_at": "2026-10-28T02:16:40.925490+00:00"
+    },
+    "000166": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:40.962408+00:00",
+      "next_attempt_at": "2026-10-28T02:16:40.962408+00:00"
+    },
+    "000333": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:40.995447+00:00",
+      "next_attempt_at": "2026-10-28T02:16:40.995447+00:00"
+    },
+    "000400": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:41.741720+00:00",
+      "next_attempt_at": "2026-10-28T02:16:41.741720+00:00"
+    },
+    "000408": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:41.771722+00:00",
+      "next_attempt_at": "2026-10-28T02:16:41.771722+00:00"
+    },
+    "000420": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:41.797472+00:00",
+      "next_attempt_at": "2026-10-28T02:16:41.797472+00:00"
+    },
+    "000425": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:46:41.817222+00:00",
+      "next_attempt_at": "2026-10-28T02:16:41.817222+00:00"
+    },
+    "000426": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:47.686214+00:00",
+      "next_attempt_at": "2026-10-28T02:21:47.686214+00:00"
+    },
+    "000503": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:47.910748+00:00",
+      "next_attempt_at": "2026-10-28T02:21:47.910748+00:00"
+    },
+    "000506": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:48.361529+00:00",
+      "next_attempt_at": "2026-10-28T02:21:48.361529+00:00"
+    },
+    "000510": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:48.390441+00:00",
+      "next_attempt_at": "2026-10-28T02:21:48.390441+00:00"
+    },
+    "000513": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:48.645419+00:00",
+      "next_attempt_at": "2026-10-28T02:21:48.645419+00:00"
+    },
+    "000519": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:48.682035+00:00",
+      "next_attempt_at": "2026-10-28T02:21:48.682035+00:00"
+    },
+    "000523": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:48.703980+00:00",
+      "next_attempt_at": "2026-10-28T02:21:48.703980+00:00"
+    },
+    "000538": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:48.745422+00:00",
+      "next_attempt_at": "2026-10-28T02:21:48.745422+00:00"
+    },
+    "000547": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:49.560060+00:00",
+      "next_attempt_at": "2026-10-28T02:21:49.560060+00:00"
+    },
+    "000559": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:49.841303+00:00",
+      "next_attempt_at": "2026-10-28T02:21:49.841303+00:00"
+    },
+    "000568": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:49.877316+00:00",
+      "next_attempt_at": "2026-10-28T02:21:49.877316+00:00"
+    },
+    "000582": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:49.904951+00:00",
+      "next_attempt_at": "2026-10-28T02:21:49.904951+00:00"
+    },
+    "000592": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:49.916967+00:00",
+      "next_attempt_at": "2026-10-28T02:21:49.916967+00:00"
+    },
+    "000596": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:49.939927+00:00",
+      "next_attempt_at": "2026-10-28T02:21:49.939927+00:00"
+    },
+    "000601": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:49.968942+00:00",
+      "next_attempt_at": "2026-10-28T02:21:49.968942+00:00"
+    },
+    "000603": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:50.240904+00:00",
+      "next_attempt_at": "2026-10-28T02:21:50.240904+00:00"
+    },
+    "000612": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:51.465205+00:00",
+      "next_attempt_at": "2026-10-28T02:21:51.465205+00:00"
+    },
+    "000617": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:51.498729+00:00",
+      "next_attempt_at": "2026-10-28T02:21:51.498729+00:00"
+    },
+    "000620": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:51.523889+00:00",
+      "next_attempt_at": "2026-10-28T02:21:51.523889+00:00"
+    },
+    "000625": {
+      "state": "SUCCEEDED",
+      "attempts": 1,
+      "attempted_at": "2026-10-28T01:51:52.251602+00:00",
+      "next_attempt_at": "2026-10-28T02:21:52.251602+00:00"
+    }
+  },
+  "evidence_sha256": "17174d8ca6a0f9d6b79cc8c440730f6f03d102c6e0b99adccbbffe2d4ceb4724"
+}

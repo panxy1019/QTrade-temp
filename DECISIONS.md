@@ -4118,8 +4118,9 @@ work; this one-off evidence capture does not implement it or finish STEP1.
 
 ## ADR-200 — Version recent status windows and check both information clocks
 
-Status: implementation and78 Windows tests pass; actual Linux/source deployment
-and recurring collection need independent receipts,2026-10-28.
+Status: source60c8313 deployed to independent observer466733. Final Windows/Linux
+80 each/0skip and429 Git sources verify. Actual09:51:52 automatic20→40/990 and
+09:52:43 desktop120-row replay pass. Full990/later window/Web remain prospective.
 
 Reuse the existing nonblocking vendor lease, bounded symbol queue/retry,
 status_quality, calendar and immutable/atomic JSON writers. Preserve the frozen
@@ -4135,9 +4136,21 @@ earlier claimed publication date. The existing known_state reference adapter
 receives this missing clock check; current execution constraints and original
 frozen model/PAPER inputs are not replaced by the new observations.
 
+This is actual system-knowledge admission. Independently certified archival
+publication metadata can later support an explicitly labelled historical market
+information reconstruction contract; it cannot backdate observed_at or substitute
+for the system's original prospective observation record.
+
 Keep system_available_at equal to actual observation, historical_available_at
 null and historical_pit_certified false. The explicit990-stock research sample
 does not become the1500-security pool or a historical full-market universe.
 The vn.py gap audit has no vendor temporal-evidence contract to reuse; use these
 small research adapters rather than adding an execution/gateway integration.
+
+Only add the new supervisor group. Preserve the installed Go Supervisor's
+nonstandard reread result/clientValueError/exit1 and the targeted add0 separately;
+actual argv/cwd/env, unchanged existing start_ticks and automatic progress supply
+acceptance. Do not globally update/restart existing data or forward services.
+Initial3b/78-test source and real first20 records retain their own provenance;
+the final source does not relabel cached earlier observations as new executions.
 

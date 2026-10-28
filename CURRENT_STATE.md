@@ -1,6 +1,39 @@
 # Current state
 
-Last updated: 2026-10-28 05:58 Shanghai, recent vendor status and pre-open transport checked.
+Last updated: 2026-10-28 09:57 Shanghai, independent recent-state observer deployed.
+
+- New source60c8313/observer466733 runs qtrade-recent-status without replacing any
+  old service.429 Git source files match; final Windows/Linux80 tests each pass,
+  zero failures/errors/skips, Ruff/mypy pass. Initial3b36252/78-test source and its
+  real20-stock first pass are retained separately. New supervisor group add0 and
+  actual argv/cwd/LIVE=false/automatic progress verify; reread client ValueError/
+  exit1 is preserved, not silently treated as a successful control response.
+- Actual09:51:52 automatic pass advances20→40/990, coveringOctober23/26/27.
+  Desktop09:52:43 replays40 accepted states/40 decoded SDK responses/120rows and
+  rejects all40 decisions predating observation.100 payloads plus bound Git/test/
+  process/failure evidence retain the exact scope.950 remain unattempted in this
+  snapshot; full990 and later-window operation are not yet accepted. New state
+  feed is not integrated into webpage or execution constraints. Legacy bytes and
+  existing owner start_ticks are unchanged. See RECENT_STATUS_KNOWABILITY.md.
+- The known_state research adapter now checks observed_at as well as available_at.
+  Historical publication claims cannot make today's retrieval known yesterday.
+  Current execution sources/frozen targets are not replaced. Keep historical PIT,
+  exact limits, independent full-market universe and adjustment certification open.
+- Three issuer PDFs captured/visually checked09:40 supportOctober26 halt starts
+  for002827/600621/605258. Full halt interval/resumption/exact publication instant
+  remain uncertified. Raw PDFs stay local; public source URLs/HTTP headers/hashes/
+  factual annotations are archived. Original Sina task/raw bytes are not changed.
+- Actual09:45 ETF512580 still45/48, missing10:00/11:30/14:30. No repair apply while
+  owner213587 lives. October27day1497/min1496 stays PARTIAL; October28 intraday
+  counts change separately:09:54minute1495/5failed,09:55failed list only002827 and
+  605258. These are not today's full-close results. Historical queue09:53 reports
+  126324 rows(day3060/min123264), receipt metadata only, not whole-lake coverage.
+- Actual09:54 ACTIVE295/approval/head09a and forward instance remain;free271.47GiB.
+  All consumed handover/recovery claims, LIVE=false, rolling OFF and resource
+  budgets stay. Real October28 C/D/E/production/visual gates still open; STEP2 gated.
+  See docs/QLIB_DATA_GOVERNANCE_PROGRESS_20261028.md for evidence and next conditions.
+
+Previous2026-10-28 05:58 checkpoint (historical observations):
 
 - Actual05:44 bounded anonymous BaoStock read obtains6 rows for3 missing stocks
   onOctober26/27: tradestatus=0,isST=0. It is a vendor-reported status observation

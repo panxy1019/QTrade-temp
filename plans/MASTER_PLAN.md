@@ -24,6 +24,22 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 09:57 checkpoint: implement/deploy independent recent-state source60c8313,
+observer466733.429 Git files match; final Windows/Linux80 each,0skip,Ruff/mypy pass.
+Actual automatic20→40/990 at09:51:52 and desktop120-row replay09:52:43 prove this
+window only; full990/new-window/Web integration remains. Preserve first3b/78 tests,
+supervisor reread ValueError/exit1 and targeted add0 separately. All old owner
+start_ticks/legacy files remain. Fix known_state to reject a post-decision actual
+observation even when a source claims earlier availability. No frozen input or
+execution constraint is replaced. Three issuer PDFs supportOctober26 halt starts,
+not exact historical knowledge/full interval;09:45 ETF still45/48. Market-day
+counts and history126324 receipt rows remain scoped, not full coverage. Maintenance
+owner active means RO repair only. See docs/QLIB_DATA_GOVERNANCE_PROGRESS_20261028.md.
+Continue recent990 actual completion/later window, publish distinct data/observed
+clocks, extend verifiable state/event chain and eventually target-pool scope.
+Retain every real-close/production/browser/PIT gate and existing resource/authority
+limits; fullSTEP1 and STEP2 gate are unchanged.
+
 October28 05:58 checkpoint: six post-hoc BaoStock status rows for the3 missing
 stocks onOctober26/27 are captured05:44, vendor flags0/0. Old990 PIT backfill is
 fixed throughOctober23, not today's status feed. Preserve old files and observed

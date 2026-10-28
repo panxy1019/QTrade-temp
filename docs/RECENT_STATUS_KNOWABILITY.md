@@ -31,6 +31,10 @@
 直到今天才获取，不能给昨天已冻结的交易决策提供依据。此处是研究适配器校验，
 尚未把新来源替换进现有交易执行约束。
 
+这里检查的是“系统在当时实际已经取得的信息”。日后若获得能独立认证的历史公告
+发布时间，可另建明确标注的“历史市场信息集重建”研究口径；它与真实系统前向记录
+不同，不能通过倒填 observed_at 来通过本门禁。
+
 近期记录的 `system_available_at=observed_at` 为实际本次获取时刻；历史公告发布时间
 未认证时保留空值。`historical_available_at=null`、`certified_at_decision=false`、
 `historical_pit_certified=false` 不变。文件哈希是内容身份校验，不是供应商数字签名。
@@ -69,3 +73,23 @@ python -B -m mypy --follow-imports=silent scripts/collect_recent_status.py `
 精确涨跌停价、公告变更链或当日开盘状态。近期状态也不会删除原 Sina 失败收据或
 自动更改研究股票池/模型/交易准入。分钟缺口治理在维护 owner 活跃时仍仅做只读计划。
 完整 STEP1 仍需要当日真实收盘链路和网页验收。
+
+## 2026年10月28日实际部署与验收
+
+最终执行源为60c83131aefd667abadb84a360b7bf225893776a，429份源码与公开Git对象
+逐字节一致。Windows、Linux各80项检查通过，失败/错误/跳过为0；Ruff/mypy通过。
+先前3b36252的78项Linux及首轮20只实际观察另行保留，不改写为最终版本。
+
+09:49只新增 `qtrade-recent-status`，实际PID466733；9个原有服务的start_ticks和
+旧数据集/三只历史状态文件字节不变。既有Go Supervisor的reread返回结构使Python
+客户端报ValueError/退出1，原错误收据保留；定向add新组退出0。随后独立核对实际
+进程cwd、argv、LIVE=false、源码和自动进度，不能用add成功代替验收。
+
+09:51:52已观察到最终服务的自动轮次将20提升至40/990，剩950未尝试。09:52:43
+独立重放40份状态/40份SDK响应，共120行，并逐条验证不能用于获取时刻以前的
+决策。100份载荷保留来源、运行、测试、失败与前后证据；原始transport仍未捕获。
+见[实际验收](evidence/recent-status-20261028/verification.json)及
+[不可变载荷清单](evidence/recent-status-20261028/capture-manifest.json)。
+
+这证明一次自动后续轮次及对应40只覆盖；全990只、后续新交易日滚动、服务重启后
+持续调度和网页发布仍需实际观察。重启调度保护通过测试，尚未以重启生产服务作验收。
