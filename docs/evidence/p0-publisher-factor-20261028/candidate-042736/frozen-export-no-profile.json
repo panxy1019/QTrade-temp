@@ -1,0 +1,57 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-28T04:29:24.705501+00:00",
+  "source_revision": "uncommitted:9568c6d2a367266737d48c74158e9d15beeeaab129bc1ebd1cc952550d3b6c2f",
+  "controlled_snapshot_clock": "2026-10-27T08:09:58.026432+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "profiling_enabled": false,
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_WALL_INCLUDES_POST_EXPORT_BYTE_COMPARISON",
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "pass_name": "cold",
+      "wall_seconds": 45.219848,
+      "profile": {},
+      "peak_rss_kib": 804984
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 117379707,
+        "cached_batches": 160,
+        "replayed_batches": 2534,
+        "selected_chunks": 66782,
+        "selected_batches": 2694,
+        "export_seconds": 36.781487,
+        "total_bytes": 101622974,
+        "total_files": 4488,
+        "index_id": "dba92fe76766fe3126588eaef06d55084af1f2bfea3d7a05fff4c9bcec24d0fb",
+        "cached_rows": 70520,
+        "cache_estimated_bytes": 127999629,
+        "quarantined_entries": 0
+      },
+      "index_id": "dba92fe76766fe3126588eaef06d55084af1f2bfea3d7a05fff4c9bcec24d0fb",
+      "all_entry_references_equal": true,
+      "exact_equal_shards": 4488,
+      "baseline_total_shards": 4488,
+      "pass_name": "warm",
+      "wall_seconds": 38.285377,
+      "profile": {},
+      "peak_rss_kib": 808996
+    }
+  ],
+  "evidence_sha256": "3d1a921323f292e105a85eb35b0029e4c596cab477d497901303553a9b31d378"
+}

@@ -1,6 +1,39 @@
 # Current state
 
-Last updated: 2026-10-28 12:05 Shanghai, scoped rollout and STEP2 preparation.
+Last updated: 2026-10-28 12:58 Shanghai, actual non-production factor evaluation.
+
+- FactorRegistry db4ded3 and evaluator8e038c8 implement four existing daily factors,
+  immutable versions/results, explicit clocks and scope, independent IC/RankIC,
+  groups, stability and redundancy. Windows/Linux78 each pass,0skip; independent
+  numerical-consistency and output-alias regressions pass. No production API/UI.
+- Actual12:51:27--12:52:01 isolated cluster evaluation uses fixed Oct27 READY09a67b,
+  891 supported stocks, five mature decision sessions Oct20/21/22/23/26, four
+  factors,307395 dependency cells.33.46s,520972KiB RSS; factor/day pairs885--891.
+  Experiment factor-eval-9ca107f1ff4843769b813d4b663eed63, source8e038c8/266 Git
+  runtime files. Production control fingerprints unchanged. This is retrospective
+  engineering diagnostics, not unseen alpha/PIT/adjustment or STEP1 acceptance.
+- Current4200-batch publisher cold/warm tests remain in progress. Eight-worker
+  bounded I/O/memo candidate passes independent10 fault tests and10664 baseline
+  comparisons; no deployment until actual45s cold+warm/current lineage gates.
+  Production index remains last-observed stale; Running and outer Git success
+  are not accepted as export/public freshness. Budgets and other owners unchanged.
+- Clock is before Oct28 close. Real forward/accounting/current C/D/E and actual
+  public/browser gates remain open; no fabricated sessions or PAPER recovery.
+
+Previous12:22 scope checkpoint:
+
+- New user scope explicitly starts non-production Factor Registry and independent
+  Factor Evaluation implementation alongside publisher recovery. Existing factors
+  first; registry/evaluator work is delegated separately from cold/warm profiling.
+- Actual12:20 public probe remains STALE_TRANSPORT on production ae33. No publisher
+  deployment: final candidate cold45.330s fails while warm42.568s passes all4488
+  shard bytes. Preserve both outcomes. Additional110-test regressions pass on
+  short Windows paths; old458 and candidate both fail the same3 long-path cases.
+- STEP1 real-close/book/public acceptance remains separate and open. New research
+  implementation must append immutable experiments and disclose selection/PIT
+  limits; no production model, signal, book or recovery authority changes.
+
+Previous12:05 scoped rollout and STEP2 preparation:
 
 - Approved policies staged11:51 against990-stock dataset. Data owner493083/source
   458552d runs automatic WAITING/return0; olddata exit0 confirmed. Its original

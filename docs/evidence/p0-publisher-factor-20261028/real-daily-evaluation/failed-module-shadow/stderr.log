@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/step2-real-daily-20261028T044932Z/operator.py", line 2, in <module>
+    import json,time,resource,shutil,importlib.util,gzip
+  File "/root/miniconda3/lib/python3.14/json/__init__.py", line 106, in <module>
+    from .decoder import JSONDecoder, JSONDecodeError
+  File "/root/miniconda3/lib/python3.14/json/decoder.py", line 3, in <module>
+    import re
+  File "/root/miniconda3/lib/python3.14/re/__init__.py", line 127, in <module>
+    import functools
+  File "/root/miniconda3/lib/python3.14/functools.py", line 18, in <module>
+    from collections import namedtuple
+  File "/root/miniconda3/lib/python3.14/collections/__init__.py", line 39, in <module>
+    from operator import eq as _eq
+  File "/root/qtrade-local/operator-evidence/step2-real-daily-20261028T044932Z/operator.py", line 2, in <module>
+    import json,time,resource,shutil,importlib.util,gzip
+  File "/root/miniconda3/lib/python3.14/shutil.py", line 10, in <module>
+    import fnmatch
+  File "/root/miniconda3/lib/python3.14/fnmatch.py", line 42, in <module>
+    @functools.lru_cache(maxsize=32768, typed=True)
+AttributeError: partially initialized module 'functools' from '/root/miniconda3/lib/python3.14/functools.py' has no attribute 'lru_cache' (most likely due to a circular import)

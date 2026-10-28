@@ -24,6 +24,23 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 12:58: existing-factor registry and independent evaluator implemented
+at db4ded3/8e038c8; Windows/Linux78 each0skip. Actual isolated891-stock/five-mature-
+session/four-factor run completes33.46s with unchanged production controls and
+immutable report; only retrospective diagnostics, sample/PIT limits retained.
+StrategyRegistry/Builder connection remains next, not production-enabled by this
+run. Current4200-batch45s publisher cold/warm/source/lineage acceptance ongoing;
+production remains last-observed stale. Real Oct28 close gates are still future.
+
+October28 12:22: user authorizes actual non-production implementation of existing
+factor version registration and independent evaluation as a parallel P0. Three
+workstreams: phased cold/warm publisher profiling under unchanged45s/hash/quality
+contracts; export/Git/production-index/API freshness proof; isolated FactorRegistry
+and evaluator implementation/tests. Real STEP1 close remains separately required.
+Latest public probe still stale; cold candidate45.330s blocks deployment despite
+warm42.568s exact4488-shard success. Three Windows collection failures reproduce
+on oldsource long paths; both old/candidate110pass on short paths. Retain failures.
+
 October28 12:05: factor/strategy interface designs and19 new isolated tests pass
 on Windows/Linux0skip. Begin native pinnedQlib descriptors/metrics audit without
 provider/training/production writes; production FactorRegistry is still absent.

@@ -1,5 +1,58 @@
 # Architecture decisions
 
+## ADR-204 — Existing daily factors and retrospective evaluation have separate authority
+
+Status: non-production implementation db4ded3/8e038c8, actual isolated run at
+12:52 October28. Production API/queue/strategy execution remain separate work.
+
+Register momentum20, reversal5, lowvol20 and equal-rank combination using existing
+PriceFactorSpec and metrics, with exact dependency/content/source identities.
+No user expression evaluation or arbitrary imports. Immutable SQLite identities,
+explicit output directories and alias guards prevent accidental input overwrite.
+Factor outputs use fixed numeric contexts; old definitions remain readable when
+runtime source changes but cannot silently execute as the old implementation.
+
+Independent evaluation binds existing READY validation, supported universe,
+continuous session grid, exact factor versions, dependency clocks, mature labels
+and rejection reasons. OBSERVED_SYSTEM requires both clocks before decision;
+RETROSPECTIVE_RECONSTRUCTION preserves unknown clocks and cannot grant historical
+PAPER admission. Computed time is the actual clock. IC/RankIC use average ranks,
+explicit nulls and sample-ddof1 nonannualized IR; groups are gross-label diagnostics,
+not executed portfolio returns. No search, winner or unseen-data claim.
+
+Store source snapshots, policies, samples, metrics and limits in immutable bundles.
+Report reads replay metrics and fixed-policy invariants, rather than trusting a
+consistent checksum alone. This is internal consistency, not a cryptographic
+signature or independent certification of vendor prices. Improved data/PIT uses
+a new version and linked evaluation identity; originals remain unchanged.
+
+The actual891-stock/five-session run is engineering evidence only. Retain the two
+operator preflight failures and short-window/sample-selection/PIT/adjustment limits.
+Do not infer UI delivery, new model or trade authority, or full STEP1 acceptance.
+
+## ADR-203 — Independent publisher recovery and non-production factor implementation
+
+Status: explicitly authorized by the user, October28 12:19 work checkpoint.
+
+STEP2 now proceeds beyond preparation: implement version registration and
+independent evaluation of existing factors in isolated stores. Reuse existing
+factor/metric/immutable registry contracts; no arbitrary executable formula input
+or production queue expansion. Qualified daily scope is sufficient when each
+experiment binds its exact version, securities, exclusions, clocks and limitations.
+Future PIT improvements append linked revalidation, never replace old evidence.
+
+Publisher recovery is independent. Profile cold and warm paths by actual query,
+raw replay, codec, shard and index work while preserving the45-second deadline,
+512MB source-byte and128MB estimated-cache budgets. OS memory and output size are
+separate measurements. Test old frozen equivalence and the current larger workload;
+a warm pass or an old smaller snapshot does not establish stable cold performance.
+Deployment requires exact source binding and unchanged hash/quality contracts.
+
+Observe export attempt, outer Git push, public fixed-commit index and actual API
+separately. October28 12:21 demonstrates outer SUCCEEDED with a failed export and
+an index still dated10:36. Retain the stale result; process Running is not delivery.
+No changes to ACTIVE, frozen signals, book recovery, rollingOFF or LIVEfalse.
+
 ## ADR-202 — Separate policy approval, consumer activation and observed exit evidence
 
 Status: two human-approved policies staged11:51 October28; data/status consumers
