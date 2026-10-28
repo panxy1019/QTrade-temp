@@ -141,6 +141,45 @@ python -m ruff check src/qtrade/research/factor_registry.py tests/test_factor_re
 python -m mypy src/qtrade/research/factor_registry.py --follow-imports=silent
 ```
 
+## 独立评价模块的交叉审查
+
+登记器完成后，按主任务要求另行审查 evaluator/CLI；没有直接修改其他 agent 的文件。
+审查使用逐文件保留字节的隔离源快照和真实临时 SQLite/Parquet 格式，未访问生产数据。
+最初发现的评分预算未限制全历史 Parquet 解码、重签后的指标与样本不一致仍能通过、
+输出 SQLite 硬链接能够修改保护输入等问题，均将可复现证据发给实现者并在修复后复核。
+
+最终实际复核快照时间为 2026-10-28 12:43:49 上海，源码 SHA256：
+
+| 文件 | SHA256 |
+| --- | --- |
+| `factor_registry.py` | `72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d` |
+| `factor_evaluation.py` | `782f245d2845ab6b06e18c8c99aa7f844fae2f953fde96e4604a99a4c76e5b3d` |
+| `run_daily_factor_evaluation.py` | `291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3` |
+
+复核通过：
+
+- 15:00 上海收盘前 1 微秒的日频决策被拒绝；未来标签端点尚未收盘时有效标签数为 0。
+- OBSERVED_SYSTEM 中 available_at、observed_at 分别晚 1 微秒的两个证券被剔除，
+  第三个证券未知时钟也剔除；其余三个合格证券保留，未回填或补造时钟。
+- 调用者 prec=6、ROUND_DOWN、Inexact/Rounded traps 开启时，指标完全相同且上下文不变。
+- 一次 reversal5 决策实际只读取每证券需要的 7 行和 4 列，使用日期过滤；未读全历史。
+- 改变一个 IC 并重算报告各层 hash，仍因与样本数值回放不一致而拒绝。
+- 将输出 evaluations.sqlite 硬链接到保护的因子数据库，在打开/建表前拒绝，保护
+  数据库的 SHA256 不变，仍只有 factor_definitions 表。
+- 构造评价 store 后才增加的硬链接也在 start 前拒绝，数据库字节不变。
+- 移除限制、宣称可执行成本收益、替换标签公式、宣称未见测试或改变数值政策，
+  即使重新计算各层 hash，也因固定研究合同不一致而拒绝。
+
+本机独立审查证据与各次源快照保存在
+`E:/QTrade-temp/factor-evaluation-review-20261028T044349Z-f33bfb3d/`；早期失败复现
+`...T043449Z-5c05ccac/`、`...T043728Z-3ac7b545/` 另存，没有改写成成功。
+可运行 `python E:/QTrade-temp/review-daily-factor-evaluation-20261028.py` 对当前源码
+创建新的独立快照复核；上述 hash 限定本次结论，后续源码变化须重新审查。
+
+本次没有发现阻断该有界非生产路径的剩余具体问题。工作量/压缩字节/解压字节上限
+不等于最坏情形 RSS 已获证明；主任务仍需分别记录真实隔离运行的峰值内存、时限与
+所用合格数据范围。本次审查也不证明真实历史 PIT、策略可交易性或生产交付。
+
 ## 限制和下一验收
 
 12:40 后主任务补充：同一候选源文件哈希在集群独立目录核验，新增32项及相关13项

@@ -1,0 +1,144 @@
+{
+  "hardlink_output_error": null,
+  "hardlink_output_run_succeeded": true,
+  "protected_factor_database_bytes_changed": true,
+  "protected_factor_database_tables": [
+    "factor_definitions",
+    "factor_evaluations",
+    "factor_evaluation_attempts",
+    "factor_evaluation_failures"
+  ],
+  "read_calls": [
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    }
+  ],
+  "required_calendar_rows_per_security": 7,
+  "resigned_inconsistent_metric_accepted": false,
+  "scope": "TINY_SYNTHETIC_NONPRODUCTION_SNAPSHOT_ONLY",
+  "scoring_dependency_cells": 36,
+  "source_hashes": {
+    "scripts/run_daily_factor_evaluation.py": "1166fa48a45af6bb672090544ba6da64a27ef216ce827368fcecaaded6873b6d",
+    "src/qtrade/research/factor_evaluation.py": "52ac7f2ce2b5fa6e275494fe4689a16eb485950329eea0401ce6847a0b173571",
+    "src/qtrade/research/factor_registry.py": "4d45507c68524dc37f0b740a24aec55b4009a06e2242138fd5e73aed702e04a2",
+    "tests/test_daily_factor_evaluation.py": "0fb2f28b847fc22166919ff4b9fd40ab6c3ad12086cb9569a49744b7ddd59694"
+  },
+  "validator_error": "ValueError:FACTOR_EVALUATION_ARCHIVED_DAILY_NUMERICAL_REPLAY_MISMATCH"
+}

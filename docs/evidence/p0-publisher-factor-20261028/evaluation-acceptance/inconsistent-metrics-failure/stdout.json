@@ -1,0 +1,75 @@
+{
+  "read_calls": [
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    },
+    {
+      "columns": [
+        "date",
+        "close",
+        "available_at",
+        "observed_at"
+      ],
+      "has_filters": true,
+      "rows": 7
+    }
+  ],
+  "required_calendar_rows_per_security": 7,
+  "resigned_inconsistent_metric_accepted": true,
+  "scope": "TINY_SYNTHETIC_NONPRODUCTION_SNAPSHOT_ONLY",
+  "scoring_dependency_cells": 36,
+  "source_hashes": {
+    "scripts/run_daily_factor_evaluation.py": "1166fa48a45af6bb672090544ba6da64a27ef216ce827368fcecaaded6873b6d",
+    "src/qtrade/research/factor_evaluation.py": "f2bc424bcc47748e2951ad5d8e11db81011310a56f7c8780c366541a6091549d",
+    "src/qtrade/research/factor_registry.py": "4d45507c68524dc37f0b740a24aec55b4009a06e2242138fd5e73aed702e04a2",
+    "tests/test_daily_factor_evaluation.py": "3f74be6b4d2f0c91638087ad87f50a838f26cf565dc67d47f80a65222b58fd8e"
+  },
+  "validator_error": null
+}
