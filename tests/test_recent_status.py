@@ -224,3 +224,14 @@ def test_corrupt_schedule_cannot_release_another_vendor_batch(setup):
     path.write_text(json.dumps(value))
     with pytest.raises(ValueError, match='SCHEDULE_IDENTITY'):
         collector.next_pass_delay(base, NOW)
+
+
+def test_gap_priority_reorders_only_new_work_without_changing_the_window_identity(setup):
+    base, calendar, vendor, requests = setup
+    scope = collector.window_scope(DATASET, calendar, NOW)
+    result = collector.collect_pass(base, DATASET, calendar, batch_size=1,
+        revision=REVISION, vendor=vendor, priority_symbols=('600621',))
+    assert requests[0]['code'] == 'sh.600621'
+    assert result['window_sha256'] == digest(scope)
+    assert result['collection_progress']['completed_symbols'] == 1
+    assert not (base / 'pit-repair').exists()

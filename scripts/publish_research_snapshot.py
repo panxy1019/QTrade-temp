@@ -86,6 +86,18 @@ def online_publication(source: Path) -> dict[str, Any]:
         return unavailable_catalog()
 
 
+def quality_publication(source: Path) -> dict[str, Any]:
+    from qtrade.research.data_quality import validate_quality
+
+    try:
+        if source.is_symlink() or source.stat().st_size > 1_500_000:
+            raise ValueError('QUALITY_PUBLICATION_TOO_LARGE')
+        return validate_quality(json.loads(source.read_bytes()), now=datetime.now(UTC))
+    except (OSError, ValueError, KeyError, TypeError):
+        # A quality side channel failure must not suppress unrelated market publication.
+        return signed({**AUTHORITY, 'state': 'NO_VERIFIED_QUALITY_PUBLICATION'})
+
+
 def etf_shadow_publication(source: Path) -> dict[str, Any]:
     from qtrade.research.etf_shadow_publication import validate_etf_shadow_publication
 
@@ -300,6 +312,9 @@ def publish(root: Path, experiment_root: Path, publication: Path, *,
         unified = validate_publication(json.loads(raw_unified))
         write_json_atomic(publication / "unified.json", unified, compact=True)
         current_files.append("unified.json")
+    write_json_atomic(publication / 'quality.json', quality_publication(
+        root.parent / 'data-quality/public/quality.json'), compact=True)
+    current_files.append('quality.json')
     write_json_atomic(publication / "latest.json", snapshot)
     online_file = workflow_root/'online.json'
     write_json_atomic(publication/'online.json', online_publication(online_file))

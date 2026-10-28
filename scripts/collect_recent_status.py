@@ -10,6 +10,8 @@ import re
 import shutil
 import signal
 import socket
+import sqlite3
+from contextlib import closing
 from datetime import UTC, datetime, timedelta
 from importlib import import_module
 from pathlib import Path
@@ -97,7 +99,7 @@ def verified_recent(path: Path, scope: dict[str, Any], now: datetime) -> dict[st
 
 def collect_pass(
     base: Path, dataset: dict[str, Any], calendar: Calendar, *,
-    batch_size: int = 20, revision: str, vendor: Any,
+    batch_size: int = 20, revision: str, vendor: Any, priority_symbols: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     if (os.environ.get('LIVE_TRADING_ENABLED', 'false').lower() != 'false'
             or re.fullmatch(r'[0-9a-f]{40}', revision) is None
@@ -121,7 +123,9 @@ def collect_pass(
             raise ValueError('RECENT_STATUS_SYMBOL_MISMATCH')
         completed.add(path.stem)
         checksums[path.stem] = value['evidence_sha256']
-    selected = select_batch(symbols, completed, entries, now, batch_size)
+    priority = set(priority_symbols)
+    ordered = [s for s in symbols if s in priority] + [s for s in symbols if s not in priority]
+    selected = select_batch(ordered, completed, entries, now, batch_size)
     outcome = 'NO_QUERY_NEEDED'
     observations: list[dict[str, Any]] = []
     if selected:
@@ -202,11 +206,26 @@ def collect_pass(
     return summary
 
 
+def current_gap_priorities(database: Path | None) -> tuple[str, ...]:
+    if database is None:
+        return ()
+    try:
+        with closing(sqlite3.connect(database.resolve().as_uri() + '?mode=ro', uri=True)) as conn:
+            conn.execute('PRAGMA query_only=ON')
+            return tuple(r[0] for r in conn.execute(
+                "SELECT DISTINCT symbol FROM collection_tasks WHERE state='FAILED' "
+                "AND security_type='STOCK' ORDER BY symbol LIMIT 50"))
+    except (OSError, sqlite3.DatabaseError):
+        # Optional prioritization cannot stop the independent status queue.
+        return ()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--base', type=Path, required=True)
     parser.add_argument('--dataset', type=Path, required=True)
     parser.add_argument('--source-revision', required=True)
+    parser.add_argument('--collection-database', type=Path)
     parser.add_argument('--watch', action='store_true')
     args = parser.parse_args()
     fcntl = import_module('fcntl')
@@ -231,9 +250,16 @@ def main() -> None:
                 result = collect_pass(
                     args.base, json.loads(args.dataset.read_bytes()),
                     Calendar(REPO / 'configs/observer_calendar_2026.json'),
-                    revision=args.source_revision, vendor=bs)
+                    revision=args.source_revision, vendor=bs,
+                    priority_symbols=current_gap_priorities(args.collection_database))
                 print(json.dumps({'state': result['state'], 'outcome': result['outcome'],
                                   'progress': result['collection_progress']}), flush=True)
+                if args.collection_database:
+                    try:
+                        from scripts.build_data_quality_summary import build
+                        build(args.base, args.collection_database, revision=args.source_revision)
+                    except Exception as error:
+                        print('OPTIONAL_QUALITY_SUMMARY_FAILED:' + type(error).__name__, flush=True)
             except Exception as error:
                 # Never log vendor payloads, private config or arbitrary exception text.
                 print('RECENT_STATUS_PASS_FAILED:' + type(error).__name__, flush=True)

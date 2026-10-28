@@ -124,6 +124,30 @@ def catalog() -> dict[str, Any]:
     return _capture()[0]
 
 
+@lru_cache(maxsize=1)
+def _load_quality(minute: int) -> tuple[dict[str, Any], str, str, int]:
+    from qtrade.research.data_quality import validate_quality
+
+    raw, revision = download('quality.json', 1_500_000)
+    value = validate_quality(json.loads(raw), now=datetime.now(UTC))
+    return value, revision, sha256(raw).hexdigest(), len(raw)
+
+
+@router.get('/quality')
+def quality_summary(response: Response) -> dict[str, Any]:
+    response.headers['Cache-Control'] = 'no-store'
+    now = datetime.now(UTC)
+    try:
+        value, revision, identity, size = _load_quality(int(now.timestamp()) // 60)
+    except (ValueError, KeyError, TypeError, OSError):
+        raise HTTPException(503, 'independent quality summary unavailable') from None
+    age = (now - datetime.fromisoformat(value['observed_at'])).total_seconds()
+    return {**AUTHORITY, 'publication': value, 'checked_at': now.isoformat(),
+            'snapshot_age_seconds': age, 'stale': age > 1200,
+            'source': {'commit_sha': revision, 'sha256': identity, 'bytes': size},
+            'read_only': True}
+
+
 @router.get("/summary")
 def summary(response: Response) -> dict[str, Any]:
     response.headers["Cache-Control"] = "no-store"

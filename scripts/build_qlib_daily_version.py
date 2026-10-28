@@ -17,6 +17,7 @@ from typing import Any
 from uuid import uuid4
 
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.research.data_quality_policy import request_policy
 from qtrade.research.data_versions import (
     SCHEMA,
     DataVersionCatalog,
@@ -234,6 +235,8 @@ def build(
     if (preparation.name != request['evidence_sha256'] or not request['batches']
             or any(request.get(k) != v for k, v in AUTHORITY.items())):
         raise ValueError('PROVIDER_PREPARATION_REQUEST_INVALID')
+    policy = (request_policy(request, load_signed(previous/'dataset.json'), datetime.now(UTC))
+              if {'input_scope_policy', 'input_scope_policy_sha256'} & request.keys() else None)
     ready = {s for s in request['batches']
              if (preparation/'stocks'/s/'manifest.json').is_file()}
     missing = set(request['batches'])-ready
@@ -277,6 +280,8 @@ def build(
         'source_snapshot_sha256': snapshot.identity,
         'observation_universe_version': request['universe_version'], 'code_revision': revision,
     }
+    if policy is not None:
+        binding['input_scope_policy_sha256'] = policy['evidence_sha256']
     archive = base/'unified-data/qlib-versions'
     build_id = signed(binding)['evidence_sha256']
     stage = archive/'staging'/build_id

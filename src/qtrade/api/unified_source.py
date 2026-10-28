@@ -20,7 +20,8 @@ REFS_URL = ('https://github.com/panxy1019/QTrade-observations.git/'
             'info/refs?service=git-upload-pack')
 RAW_ROOT = 'https://raw.githubusercontent.com/panxy1019/QTrade-observations/'
 REFS_LIMIT = 262_144
-LIMITS = {'unified.json': 12_000_000, 'unified-market.json': 4_000_000}
+LIMITS = {'unified.json': 12_000_000, 'unified-market.json': 4_000_000,
+          'quality.json': 1_500_000}
 SHARD_LIMIT = 1_000_000
 SOCKET_TIMEOUT = 8
 BODY_TIMEOUT = 8
@@ -68,7 +69,7 @@ def _get(url: str, limit: int, *, refs: bool = False) -> bytes:
     maximum = REFS_LIMIT if refs and url == REFS_URL else 0
     body_timeout = BODY_TIMEOUT
     if not refs:
-        match = re.fullmatch(re.escape(RAW_ROOT)+r'([a-f0-9]{40})/(unified\.json|'
+        match = re.fullmatch(re.escape(RAW_ROOT)+r'([a-f0-9]{40})/(unified\.json|quality\.json|'
             r'unified-market\.json|unified-market/objects/[a-f0-9]{64}\.json)', url)
         if match:
             validate_revision(match[1])
