@@ -1,0 +1,49 @@
+{
+  "accepted_current_observations": 0,
+  "accepted_retired_proofs": 2,
+  "approved_model_id": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+  "audit_failures": [
+    "FORWARD_AUDIT_REAL_SESSION_NOT_COMPLETE",
+    "FORWARD_AUDIT_PUBLICATION_INVALID_STALE_OR_DEGRADED"
+  ],
+  "audit_file": "E-private-20261028T065752117254Z.json",
+  "audit_sha256": "3b35a8857b25d2026fe8d43508c626a02314e588656c246d4553b3cc274df20b",
+  "audit_source_revision": "9846a7f30774d6ae4b4d41f02b493c5246be87d9",
+  "audit_state": "BLOCKED",
+  "auditor_source_sha256": "a7634c1cbb5987ebdaa90bda06319405d8b975cb743a745048afa126aa8215f4",
+  "browser_verified": false,
+  "capture_directory": "E:\\QTrade-temp\\cluster-evidence\\stock-public-20261028T065057Z-516c24b9",
+  "capture_evidence_sha256": "2dd5dcb7595b47de5b62dfa31cbfbf6d3112c32279fbd0de54fc7e241c99be36",
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "current_book_count": 12,
+  "day": "2026-10-28",
+  "deployment_matches": true,
+  "evidence_sha256": "6e497c29c887f13049e7b55105771c175673076fd847f1454617472e0fa79d0d",
+  "expected_book_count": 14,
+  "expected_production_revision": "ae33a7c8c27ea721eb3be1e4430b562a44b67f91",
+  "external_order_transmission": false,
+  "inner_file_sha256": "17bb123d2bbc77ad86701bbd43b0d4a91269298f6f5ac081a466efebc5bb8f89",
+  "kind": "ACTUAL_OCT28_STOCK_E_HTTP_AND_READ_ONLY_AUDIT_BINDING",
+  "live_trading_enabled": false,
+  "point_in_time": false,
+  "production_mutations": false,
+  "production_revision": "ae33a7c8c27ea721eb3be1e4430b562a44b67f91",
+  "promotion": "NOT_ELIGIBLE",
+  "publication_available": true,
+  "publication_errors": [
+    {
+      "code": "FORWARD_SERVICE_PREDICTION_UNAVAILABLE",
+      "mode": null,
+      "strategy_id": null
+    }
+  ],
+  "publication_sha256": "aa244672d9df5289b518d4673a8510052a74162549ef0737cdb62f091e518430",
+  "publication_state": "DEGRADED",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "recorded_at": "2026-10-28T06:57:52.118955+00:00",
+  "retired_book_count": 2,
+  "service_fresh": true,
+  "state": "BLOCKED",
+  "whole_step1_accepted": false
+}

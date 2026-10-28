@@ -1,0 +1,34 @@
+{
+  "observed_at": "2026-10-28T07:07:16.125827+00:00",
+  "state": "EXACT_REMOTE_HELPER_AND_RECEIPT_BINDING_PASS",
+  "remote": "/root/qtrade-local/operator-evidence/publisher-old-runtime-20261028T065936Z",
+  "files": [
+    {
+      "name": "bridge.py",
+      "bytes": 13002,
+      "sha256": "579d597f45af73ba6e216bc3e5c1d1017e59e35b769395190185807b6f989b04"
+    },
+    {
+      "name": "handover.py",
+      "bytes": 30707,
+      "sha256": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc"
+    },
+    {
+      "name": "probe.py",
+      "bytes": 1574,
+      "sha256": "b168aef6a2fc93764b15ce45bb9ad1911f2451267a61a7920aea1d598cc8e5ba"
+    },
+    {
+      "name": "git-runtime-inventory.json",
+      "bytes": 25774,
+      "sha256": "8bd45210885526adaaebc920ef4d13f4a84d1281614393f5641211948288bee0"
+    },
+    {
+      "name": "receipt.json",
+      "bytes": 26753,
+      "sha256": "3fd8bf457d4bad5161d7cddefb4d85a101fc10c590f6cffd3517b01acd4a0fc2"
+    }
+  ],
+  "production_actions": false,
+  "scope": "AFTER_THE_FACT_BYTE_BINDING_NOT_LIVE_SYS_MODULES_OR_NEW_RUNTIME_AUDIT"
+}

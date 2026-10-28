@@ -1,0 +1,89 @@
+{
+  "cpu_seconds": 35.448541413,
+  "metrics": {
+    "_chunks.main": {
+      "count": 2,
+      "cpu": 1.6434018240000052,
+      "wall": 1.6472405139356852
+    },
+    "_load.main": {
+      "count": 4860,
+      "cpu": 24.013140758999977,
+      "wall": 27.73581423982978
+    },
+    "_persist_objects.main": {
+      "count": 1,
+      "cpu": 32.439840882999995,
+      "wall": 41.441584972664714
+    },
+    "_replay.main": {
+      "count": 4860,
+      "cpu": 12.409930465000098,
+      "wall": 12.454817194491625
+    },
+    "_worker_compact.main": {
+      "count": 5988,
+      "cpu": 0.7780145049999851,
+      "wall": 0.780351160094142
+    },
+    "_worker_inventory.main": {
+      "count": 4,
+      "cpu": 0.002250791999996782,
+      "wall": 0.002259382978081703
+    },
+    "encoded.main": {
+      "count": 1778,
+      "cpu": 0.33340772499999427,
+      "wall": 0.33471392281353474
+    },
+    "pool.close.main": {
+      "count": 2,
+      "cpu": 0.0009343329999964567,
+      "wall": 0.09301701933145523
+    },
+    "pool.pump.main": {
+      "count": 21922,
+      "cpu": 2.310765032999989,
+      "wall": 6.625170584768057
+    },
+    "pool.response.main": {
+      "count": 5988,
+      "cpu": 1.9538247419999435,
+      "wall": 1.9923557490110397
+    },
+    "pool.send.main": {
+      "count": 5988,
+      "cpu": 0.07180842399985043,
+      "wall": 0.07417844980955124
+    },
+    "signed.main": {
+      "count": 11976,
+      "cpu": 2.4737359730002573,
+      "wall": 2.6138992216438055
+    },
+    "validate_index.main": {
+      "count": 1,
+      "cpu": 0.1039718790000066,
+      "wall": 0.10423715598881245
+    }
+  },
+  "peak_rss_kib": 1114968,
+  "pid": 558845,
+  "source_sha256": "c5c787943a720c48f4795fddbf1984d741e43453b7935df4357aa342e86fe9ab",
+  "state": "SUCCEEDED",
+  "statistics": {
+    "cache_estimated_bytes": 127999793,
+    "cached_batches": 0,
+    "cached_rows": 70536,
+    "export_seconds": 44.080223,
+    "index_id": "59a57e41ee894d5552772ea8e5fd73dff6029067fbb0e4997e5ffd03c40ca387",
+    "quarantined_entries": 0,
+    "replayed_batches": 4860,
+    "selected_batches": 4860,
+    "selected_chunks": 120685,
+    "source_bytes_read": 206638600,
+    "total_bytes": 149263840,
+    "total_files": 5986
+  },
+  "wall_seconds": 44.4730979334563
+}

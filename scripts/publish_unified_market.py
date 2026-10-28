@@ -4,12 +4,16 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import selectors
 import shutil
 import sqlite3
+import struct
+import subprocess
+import sys
 import threading
 import time
-from collections import Counter, defaultdict
-from collections.abc import Iterable, Iterator
+from collections import Counter, defaultdict, deque
+from collections.abc import Generator, Iterable, Iterator
 from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from contextlib import closing
 from datetime import UTC, datetime
@@ -35,8 +39,10 @@ from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from qtrade.research.data_versions import file_hash
 from qtrade.research.unified_market import (
     BAR_FIELDS,
+    INDEX_LIMIT,
     LIMITATIONS,
     MAX_TARGETS,
+    SHARD_LIMIT,
     TOTAL_LIMIT,
     _validated_shard_bytes,
     encoded,
@@ -60,9 +66,452 @@ _CACHE: dict[tuple[str, ...], tuple[dict[str, Any], list[dict[str, Any]]]] = {}
 _CACHE_SIZES: dict[tuple[str, ...], int] = {}
 
 
-def _write_object(path: Path, raw: bytes, *, _sync_directory: bool = True) -> None:
+# Two owned processes validate/encode only constructed shards. At most one job
+# is pending per child; raw source, cache and source-byte authority stay here.
+_SHARD_WORKER_MIN_TARGETS = 32
+_UNREAPED_SHARD_WORKERS: list[subprocess.Popen[bytes]] = []
+_WORKER_INPUT_LIMIT = INDEX_LIMIT + 4096
+_WORKER_OUTPUT_LIMIT = SHARD_LIMIT + 5
+_WORKER_FRAME_LIMITS = {
+    b"I": _WORKER_INPUT_LIMIT,
+    b"J": SHARD_LIMIT + 5,
+    b"R": 16_384,
+    b"O": SHARD_LIMIT + 5,
+    b"E": 4096,
+}
+_WORKER_SOURCES = (
+    "scripts/publish_unified_market.py",
+    "scripts/unified_store.py",
+    "src/qtrade/research/unified_market.py",
+    "src/qtrade/market_data/sina_incremental.py",
+    "src/qtrade/data/quality.py",
+    "src/qtrade/data/models.py",
+    "src/qtrade/monitoring/data_freshness.py",
+    "src/qtrade/instruments/observed.py",
+)
+
+
+def _worker_inventory() -> dict[str, str]:
+    from qtrade.data import BarQualityGate
+    from qtrade.market_data.sina_incremental import number
+
+    for function, name in [
+        (_validated_shard_bytes, _WORKER_SOURCES[2]),
+        (number, _WORKER_SOURCES[3]),
+        (BarQualityGate.validate, _WORKER_SOURCES[4]),
+        (Calendar.expected, _WORKER_SOURCES[6]),
+    ]:
+        if Path(function.__code__.co_filename).resolve() != (REPO / name).resolve():
+            raise ValueError("UNIFIED_MARKET_WORKER_IMPORTED_SOURCE_MISMATCH")
+    return {name: sha256((REPO / name).read_bytes()).hexdigest() for name in _WORKER_SOURCES}
+
+
+def _worker_compact(value: Any) -> bytes:
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
+
+
+def _worker_frame(body: bytes, limit: int) -> bytes:
+    if not 1 <= len(body) <= min(limit, _WORKER_FRAME_LIMITS.get(body[:1], 0)):
+        raise ValueError("UNIFIED_MARKET_WORKER_FRAME_BOUND")
+    return struct.pack("!I", len(body)) + body
+
+
+def _read_worker_frame(handle: Any, limit: int) -> bytes | None:
+    header = handle.read(4)
+    if not header:
+        return None
+    if len(header) != 4:
+        raise ValueError("UNIFIED_MARKET_WORKER_INCOMPLETE_FRAME")
+    (count,) = struct.unpack("!I", header)
+    if not 1 <= count <= limit:
+        raise ValueError("UNIFIED_MARKET_WORKER_FRAME_BOUND")
+    tag = handle.read(1)
+    if len(tag) != 1 or count > _WORKER_FRAME_LIMITS.get(tag, 0):
+        raise ValueError("UNIFIED_MARKET_WORKER_FRAME_BOUND")
+    chunks = [tag]
+    count -= 1
+    while count:
+        raw = handle.read(count)
+        if not raw:
+            raise ValueError("UNIFIED_MARKET_WORKER_INCOMPLETE_FRAME")
+        chunks.append(raw)
+        count -= len(raw)
+    return b"".join(chunks)
+
+
+def _shard_worker() -> int:
+    job = 0
+    try:
+        if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
+            raise ValueError("UNIFIED_MARKET_WORKER_LIVE_DISABLED_REQUIRED")
+        body = _read_worker_frame(sys.stdin.buffer, _WORKER_INPUT_LIMIT)
+        if body is None or body[:1] != b"I":
+            raise ValueError("UNIFIED_MARKET_WORKER_INIT_INVALID")
+        context = json.loads(body[1:])
+        actual = _worker_inventory()
+        if set(context) != {"sources", "calendar", "clock"} or context["sources"] != actual:
+            raise ValueError("UNIFIED_MARKET_WORKER_SOURCE_MISMATCH")
+        calendar = Calendar(context["calendar"])
+        clock = datetime.fromisoformat(context["clock"])
+        if clock.tzinfo is None:
+            raise ValueError("UNIFIED_MARKET_WORKER_CLOCK_INVALID")
+        context_hash = sha256(
+            json.dumps(
+                {k: context[k] for k in ("calendar", "clock")},
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=False,
+                allow_nan=False,
+            ).encode()
+        ).hexdigest()
+        ready = {"sources": actual, "context_sha256": context_hash}
+        sys.stdout.buffer.write(_worker_frame(b"R" + _worker_compact(ready), _WORKER_OUTPUT_LIMIT))
+        sys.stdout.buffer.flush()
+        while (body := _read_worker_frame(sys.stdin.buffer, _WORKER_INPUT_LIMIT)) is not None:
+            if len(body) < 6 or body[:1] != b"J":
+                raise ValueError("UNIFIED_MARKET_WORKER_JOB_INVALID")
+            (job,) = struct.unpack("!I", body[1:5])
+            shard = json.loads(body[5:])
+            _, raw = _validated_shard_bytes(shard, calendar, clock)
+            sys.stdout.buffer.write(
+                _worker_frame(b"O" + struct.pack("!I", job) + raw, _WORKER_OUTPUT_LIMIT)
+            )
+            sys.stdout.buffer.flush()
+    except BaseException as error:
+        code = _worker_compact({"class": type(error).__name__, "code": str(error)[:256]})
+        try:
+            sys.stdout.buffer.write(
+                _worker_frame(b"E" + struct.pack("!I", job) + code, _WORKER_OUTPUT_LIMIT)
+            )
+            sys.stdout.buffer.flush()
+        except BaseException:
+            pass
+        return 1
+    return 0
+
+
+class _ShardEncoders:
+    def __init__(self, calendar: Calendar, clock: datetime, deadline: float):
+        _UNREAPED_SHARD_WORKERS[:] = [p for p in _UNREAPED_SHARD_WORKERS if p.poll() is None]
+        if _UNREAPED_SHARD_WORKERS:
+            raise ValueError("UNIFIED_MARKET_WORKER_PREVIOUS_CHILD_UNREAPED")
+        self.deadline = deadline
+        self.expected = _worker_inventory()
+        self.selector = selectors.DefaultSelector()
+        self.workers: list[dict[str, Any]] = []
+        self.finished = False
+        self.closing = False
+        self.context = {"calendar": calendar.document, "clock": clock.isoformat()}
+        self.context_hash = sha256(
+            json.dumps(
+                self.context,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=False,
+                allow_nan=False,
+            ).encode()
+        ).hexdigest()
+        command = [
+            sys.executable,
+            "-B",
+            "-m",
+            "scripts.publish_unified_market",
+            "--private-shard-worker",
+        ]
+        try:
+            for _ in range(2):
+                env = dict(
+                    os.environ,
+                    LIVE_TRADING_ENABLED="false",
+                    PYTHONPATH=str(REPO / "src") + os.pathsep + str(REPO),
+                )
+                proc = subprocess.Popen(
+                    command,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.DEVNULL,
+                    bufsize=0,
+                    cwd=REPO,
+                    env=env,
+                )
+                state = {
+                    "process": proc,
+                    "input": bytearray(),
+                    "output": None,
+                    "offset": 0,
+                    "ready": False,
+                    "job": None,
+                    "result": None,
+                    "eof": False,
+                    "evidence": None,
+                }
+                self.workers.append(state)
+                assert proc.stdin is not None and proc.stdout is not None
+                set_blocking = os.set_blocking
+                set_blocking(proc.stdin.fileno(), False)
+                set_blocking(proc.stdout.fileno(), False)
+                self.selector.register(proc.stdout, selectors.EVENT_READ, (state, "read"))
+                self.send(state, b"I" + _worker_compact({"sources": self.expected, **self.context}))
+            while not all(item["ready"] for item in self.workers):
+                self.pump()
+        except BaseException:
+            self.close(False)
+            raise
+
+    def send(self, state: dict[str, Any], body: bytes) -> None:
+        if state["output"] is not None:
+            raise ValueError("UNIFIED_MARKET_WORKER_SEND_WHILE_BUSY")
+        state["output"] = _worker_frame(body, _WORKER_INPUT_LIMIT)
+        state["offset"] = 0
+        self.selector.register(state["process"].stdin, selectors.EVENT_WRITE, (state, "write"))
+
+    def response(self, state: dict[str, Any], body: bytes) -> None:
+        if body[:1] == b"R":
+            expected = {"sources": self.expected, "context_sha256": self.context_hash}
+            if state["ready"] or state["job"] is not None or json.loads(body[1:]) != expected:
+                raise ValueError("UNIFIED_MARKET_WORKER_HANDSHAKE_INVALID")
+            state["ready"] = True
+            return
+        if len(body) < 5 or body[:1] not in {b"O", b"E"}:
+            raise ValueError("UNIFIED_MARKET_WORKER_RESPONSE_INVALID")
+        (job,) = struct.unpack("!I", body[1:5])
+        if body[:1] == b"E":
+            if state["ready"] and state["job"] != job or not state["ready"] and job != 0:
+                raise ValueError("UNIFIED_MARKET_WORKER_JOB_BINDING_INVALID")
+            error = json.loads(body[5:])
+            if (
+                set(error) != {"class", "code"}
+                or not isinstance(error["class"], str)
+                or not isinstance(error["code"], str)
+            ):
+                raise ValueError("UNIFIED_MARKET_WORKER_ERROR_FRAME_INVALID")
+            if error["class"] == "ValueError":
+                raise ValueError(error["code"])
+            raise ValueError("UNIFIED_MARKET_WORKER_FAILED:" + error["class"])
+        if not state["ready"] or state["job"] != job or state["result"] is not None:
+            raise ValueError("UNIFIED_MARKET_WORKER_JOB_BINDING_INVALID")
+        raw = body[5:]
+        if not 1 <= len(raw) <= SHARD_LIMIT:
+            raise ValueError("UNIFIED_MARKET_WORKER_OUTPUT_BOUND")
+        value = json.loads(raw)
+        if (
+            value["evidence_sha256"] != state["evidence"]
+            or signed({k: v for k, v in value.items() if k != "evidence_sha256"}) != value
+        ):
+            raise ValueError("UNIFIED_MARKET_WORKER_RESULT_EVIDENCE_MISMATCH")
+        state["result"] = (value, raw)
+
+    def pump(self) -> None:
+        remaining = self.deadline - time.monotonic()
+        if remaining <= 0:
+            raise ValueError("UNIFIED_MARKET_WORKER_TIME_BUDGET")
+        events = self.selector.select(remaining)
+        if not events:
+            raise ValueError("UNIFIED_MARKET_WORKER_TIME_BUDGET")
+        for key, _mask in events:
+            state, kind = key.data
+            proc = state["process"]
+            if kind == "write":
+                try:
+                    count = os.write(
+                        proc.stdin.fileno(), memoryview(state["output"])[state["offset"] :]
+                    )
+                except BlockingIOError:
+                    continue
+                if count <= 0:
+                    raise ValueError("UNIFIED_MARKET_WORKER_WRITE_FAILED")
+                state["offset"] += count
+                if state["offset"] == len(state["output"]):
+                    self.selector.unregister(proc.stdin)
+                    state["output"] = None
+            else:
+                buffered = state["input"]
+                if len(buffered) < 4:
+                    needed = 4 - len(buffered)
+                elif len(buffered) < 5:
+                    needed = 5 - len(buffered)
+                else:
+                    needed = min(65_536, 4 + struct.unpack("!I", buffered[:4])[0] - len(buffered))
+                try:
+                    raw = os.read(proc.stdout.fileno(), needed)
+                except BlockingIOError:
+                    continue
+                if not raw:
+                    if self.closing and state["job"] is None and not buffered:
+                        self.selector.unregister(proc.stdout)
+                        state["eof"] = True
+                        continue
+                    raise ValueError("UNIFIED_MARKET_WORKER_EXITED:" + str(proc.poll()))
+                state["input"].extend(raw)
+                while len(state["input"]) >= 4:
+                    (count,) = struct.unpack("!I", state["input"][:4])
+                    if not 1 <= count <= _WORKER_OUTPUT_LIMIT:
+                        raise ValueError("UNIFIED_MARKET_WORKER_FRAME_BOUND")
+                    if len(state["input"]) < 5:
+                        break
+                    if count > _WORKER_FRAME_LIMITS.get(bytes(state["input"][4:5]), 0):
+                        raise ValueError("UNIFIED_MARKET_WORKER_FRAME_BOUND")
+                    if len(state["input"]) < 4 + count:
+                        break
+                    body = bytes(state["input"][4 : 4 + count])
+                    del state["input"][: 4 + count]
+                    self.response(state, body)
+
+    def encode(self, shards: Iterable[dict[str, Any]]) -> Iterator[tuple[dict[str, Any], bytes]]:
+        source = iter(shards)
+        pending: deque[dict[str, Any]] = deque()
+        sequence = 0
+
+        def submit(state: dict[str, Any]) -> bool:
+            nonlocal sequence
+            item = next(source, None)
+            if item is None:
+                return False
+            state["job"] = sequence
+            state["result"] = None
+            state["evidence"] = item.get("evidence_sha256")
+            self.send(state, b"J" + struct.pack("!I", sequence) + _worker_compact(item))
+            # Start validation before the next source shard is constructed.
+            # Merely registering a writable pipe defers work until a later wait.
+            while state["output"] is not None:
+                self.pump()
+            pending.append(state)
+            sequence += 1
+            return True
+
+        try:
+            for state in self.workers:
+                submit(state)
+            while pending:
+                state = pending[0]
+                while state["result"] is None:
+                    self.pump()
+                raw = state["result"]
+                state["result"] = None
+                state["job"] = None
+                pending.popleft()
+                yield cast(tuple[dict[str, Any], bytes], raw)
+                submit(state)
+            self.close(True)
+        finally:
+            try:
+                self.close(False)
+            finally:
+                close = getattr(source, "close", None)
+                if close is not None:
+                    close()
+
+    def close(self, success: bool) -> None:
+        if self.finished:
+            return
+        self.finished = True
+        cleanup_errors: list[str] = []
+        try:
+            if success:
+                self.closing = True
+                for state in self.workers:
+                    state["process"].stdin.close()
+                while not all(state["eof"] for state in self.workers):
+                    self.pump()
+                for state in self.workers:
+                    remaining = self.deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise ValueError("UNIFIED_MARKET_WORKER_TIME_BUDGET")
+                    try:
+                        code = state["process"].wait(timeout=remaining)
+                    except subprocess.TimeoutExpired:
+                        raise ValueError("UNIFIED_MARKET_WORKER_TIME_BUDGET") from None
+                    if code:
+                        raise ValueError("UNIFIED_MARKET_WORKER_EXIT_FAILED:" + str(code))
+                if _worker_inventory() != self.expected:
+                    raise ValueError("UNIFIED_MARKET_WORKER_PARENT_SOURCE_CHANGED")
+                if time.monotonic() > self.deadline:
+                    raise ValueError("UNIFIED_MARKET_WORKER_TIME_BUDGET")
+                return
+        finally:
+
+            def live(proc: subprocess.Popen[bytes]) -> bool:
+                try:
+                    return proc.poll() is None
+                except BaseException as error:
+                    cleanup_errors.append(type(error).__name__)
+                    return True
+
+            alive = [s["process"] for s in self.workers if live(s["process"])]
+            for proc in alive:
+                try:
+                    proc.terminate()
+                except BaseException as error:
+                    cleanup_errors.append(type(error).__name__)
+            until = time.monotonic() + 0.5
+            for proc in alive:
+                try:
+                    proc.wait(timeout=max(0, until - time.monotonic()))
+                except subprocess.TimeoutExpired:
+                    pass
+                except BaseException as error:
+                    cleanup_errors.append(type(error).__name__)
+            alive = [proc for proc in alive if live(proc)]
+            for proc in alive:
+                try:
+                    proc.kill()
+                except BaseException as error:
+                    cleanup_errors.append(type(error).__name__)
+            until = time.monotonic() + 0.5
+            for proc in alive:
+                try:
+                    proc.wait(timeout=max(0, until - time.monotonic()))
+                except BaseException as error:
+                    cleanup_errors.append(type(error).__name__)
+            for state in self.workers:
+                for pipe in (state["process"].stdin, state["process"].stdout):
+                    try:
+                        pipe.close()
+                    except BaseException as error:
+                        cleanup_errors.append(type(error).__name__)
+            try:
+                self.selector.close()
+            except BaseException as error:
+                cleanup_errors.append(type(error).__name__)
+            _UNREAPED_SHARD_WORKERS.extend(
+                state["process"] for state in self.workers if live(state["process"])
+            )
+            if cleanup_errors or _UNREAPED_SHARD_WORKERS:
+                raise ValueError("UNIFIED_MARKET_WORKER_REAP_FAILED:" + ",".join(cleanup_errors))
+
+
+def _parallel_shards(target_count: int) -> bool:
+    # Windows pipes do not support this POSIX selector protocol. Small exports
+    # avoid process startup; capability selection happens before any child starts.
+    return (os.name == 'posix' and callable(getattr(os, 'set_blocking', None))
+            and target_count >= _SHARD_WORKER_MIN_TARGETS)
+
+
+def _encode_shards(shards: Iterable[dict[str, Any]], calendar: Calendar, clock: datetime,
+                   deadline: float, parallel: bool
+                   ) -> Generator[tuple[dict[str, Any], bytes], None, None]:
+    source = iter(shards)
+    try:
+        if parallel:
+            yield from _ShardEncoders(calendar, clock, deadline).encode(source)
+        else:
+            for shard in source:
+                if time.monotonic() > deadline:
+                    raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
+                _, raw = _validated_shard_bytes(shard, calendar, clock)
+                # Ref metadata always belongs to the immutable validated bytes.
+                yield json.loads(raw), raw
+    finally:
+        close = getattr(source, 'close', None)
+        if close is not None:
+            close()
+
+
+def _write_object(path: Path, raw: bytes, *, _sync_directory: bool = True,
+                  _parent_ready: bool = False) -> None:
     """Persist already encoded bytes with the existing immutable writer's durability contract."""
-    path.parent.mkdir(parents=True, exist_ok=True)
+    if not _parent_ready:
+        path.parent.mkdir(parents=True, exist_ok=True)
     temporary: Path | None = None
     try:
         with NamedTemporaryFile(dir=path.parent, prefix='.'+path.name+'.', suffix='.tmp',
@@ -73,6 +522,7 @@ def _write_object(path: Path, raw: bytes, *, _sync_directory: bool = True) -> No
             os.fsync(handle.fileno())
         os.link(temporary, path)
         temporary.unlink()
+        temporary = None
         if _sync_directory:
             _fsync_directory(path.parent)
     finally:
@@ -83,15 +533,18 @@ def _write_object(path: Path, raw: bytes, *, _sync_directory: bool = True) -> No
 def _persist_objects(destination: Path, objects: Iterable[tuple[str, bytes]], deadline: float
                      ) -> None:
     """Bound immutable I/O to sixteen in-flight objects; publish no index on any failure."""
+    directory = destination/'unified-market/objects'
+    directory.mkdir(parents=True, exist_ok=True)
+
     def persist(digest: str, raw: bytes) -> None:
         if time.monotonic() > deadline:
             raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
-        path = destination/'unified-market/objects'/(digest+'.json')
+        path = directory/(digest+'.json')
         if path.exists():
             if path.is_symlink() or file_hash(path) != digest:
                 raise ValueError('UNIFIED_MARKET_IMMUTABLE_OBJECT_CHANGED')
         else:
-            _write_object(path, raw, _sync_directory=False)
+            _write_object(path, raw, _sync_directory=False, _parent_ready=True)
 
     remaining = iter(objects)
     pending: set[Future[None]] = set()
@@ -125,7 +578,6 @@ def _persist_objects(destination: Path, objects: Iterable[tuple[str, bytes]], de
             close = getattr(remaining, 'close', None)
             if close is not None:
                 close()  # Join the one source prefetch even when object I/O fails.
-    directory = destination/'unified-market/objects'
     if directory.exists():
         # Every file is already fsynced. Make all immutable names and newly-created
         # ancestors durable before any index can reference them, including retries
@@ -433,17 +885,16 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
     entries: list[dict[str, Any]] = []
     destination = base/'unified-data/market-public'
 
-    built_bytes = 0
     sealed: dict[tuple[str, str], dict[str, Any]] = {}
 
-    def seal_pair(symbol: str, freq: str) -> Iterator[tuple[str, bytes]]:
-        nonlocal built_bytes
+    def seal_pair(symbol: str, freq: str) -> Iterator[tuple[dict[str, Any], dict[str, Any]]]:
         target = identities[symbol]
         key = (target['symbol'], freq)
         entry = {field: target[field] for field in ('symbol', 'instrument_id',
                                                    'security_type', 'name')}
         entry.update(frequency=freq, state='NO_DATA', issues=sorted(problems[key]),
                      shards=[])
+        sealed[key] = entry
         if problems[key]:
             entry['state'] = 'QUARANTINED'
         else:
@@ -459,28 +910,15 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                     for field in ('symbol', 'instrument_id', 'security_type')},
                     'frequency': freq, 'price_basis': PRICE_BASIS, 'bars': rows,
                     'source_batches': sorted(refs, key=lambda row: row['batch_id'])})
-                _, raw = _validated_shard_bytes(shard, calendar, now)
-                digest = sha256(raw).hexdigest()
-                entry['shards'].append({'sha256': digest,
-                    'evidence_sha256': shard['evidence_sha256'], 'bytes': len(raw),
-                    'start': rows[0]['timestamp'], 'end': rows[-1]['timestamp'],
-                    'count': len(rows)})
-                if digest not in objects:
-                    built_bytes += len(raw)
-                    if built_bytes > TOTAL_LIMIT:
-                        raise ValueError('UNIFIED_MARKET_EXPORT_BUDGET')
-                    objects[digest] = raw
-                    yield digest, raw
-            if entry['shards']:
-                entry['state'] = 'AVAILABLE'
-        sealed[key] = entry
+                yield entry, shard
+
 
 
     # Count every selected chunk, including repeated chunks for one pair. A pair
     # can seal only after its complete batch outcomes and all conflicts are known.
     remaining = Counter((chunk['symbol'], chunk['frequency']) for chunk in chunks)
 
-    def build_objects() -> Iterator[tuple[str, bytes]]:
+    def build_shards() -> Generator[tuple[dict[str, Any], dict[str, Any]], None, None]:
         # Cohorts finish early enough for immutable I/O to overlap later source
         # replay. Source membership is unchanged; bars, refs and entries are sorted.
         batches = sorted(grouped.items(), key=lambda item: (
@@ -509,8 +947,38 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                 if prepared is not None:
                     prepared.cancel()
 
-    # Persist only fully validated immutable shards while the next shard is built.
-    # Any later gate failure leaves unreferenced objects and the old index intact.
+    worker_sources = _worker_inventory() if _parallel_shards(len(targets)) else None
+
+    def build_objects() -> Iterator[tuple[str, bytes]]:
+        entries_pending: deque[dict[str, Any]] = deque()
+        def shards() -> Iterator[dict[str, Any]]:
+            with closing(build_shards()) as pending:
+                for entry, shard in pending:
+                    entries_pending.append(entry)
+                    yield shard
+        built_bytes = 0
+        with closing(_encode_shards(shards(), calendar, now, deadline,
+                                   worker_sources is not None)) as validated:
+            for shard, raw in validated:
+                entry = entries_pending.popleft()
+                rows = shard['bars']
+                digest = sha256(raw).hexdigest()
+                entry['shards'].append({'sha256': digest,
+                    'evidence_sha256': shard['evidence_sha256'], 'bytes': len(raw),
+                    'start': rows[0]['timestamp'], 'end': rows[-1]['timestamp'],
+                    'count': len(rows)})
+                entry['state'] = 'AVAILABLE'
+                if digest not in objects:
+                    built_bytes += len(raw)
+                    if built_bytes > TOTAL_LIMIT:
+                        raise ValueError('UNIFIED_MARKET_EXPORT_BUDGET')
+                    objects[digest] = raw
+                    yield digest, raw
+        if entries_pending:
+            raise ValueError('UNIFIED_MARKET_INCOMPLETE_SHARD_ACCOUNTING')
+
+    # All worker processes have exited normally before object directory sync,
+    # final source/ledger checks and the index commit. Failures retain the pointer.
     _persist_objects(destination, build_objects(), deadline)
     if any(remaining.values()):
         raise ValueError('UNIFIED_MARKET_INCOMPLETE_CHUNK_ACCOUNTING')
@@ -544,6 +1012,8 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
     validate_index(index, now)
     if time.monotonic() > deadline:
         raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
+    if worker_sources is not None and _worker_inventory() != worker_sources:
+        raise ValueError('UNIFIED_MARKET_WORKER_PARENT_SOURCE_CHANGED')
     write_json_atomic(destination/'unified-market.json', index)
     stats.update(export_seconds=round(time.monotonic()-started, 6), total_bytes=total,
                  total_files=len(objects), index_id=index['evidence_sha256'],
@@ -555,6 +1025,8 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
 
 
 def main() -> None:
+    if sys.argv[1:] == ['--private-shard-worker']:
+        raise SystemExit(_shard_worker())
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--base', type=Path, required=True)
     parser.add_argument('--database', type=Path, required=True)

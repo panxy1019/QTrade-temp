@@ -24,6 +24,17 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 15:36: bounded two-process shard validation with actual pipe submission
+passesLinux536 and independent42; current5640-batch cold still fails45.021938s
+despite older4860 cold44.797564s. No deployment. Bounded validated Arrow decoding
+candidate passesLinux626, independent407 passes; currentNFS cold45.020515s fails, warm38.759323s passes. Keep45s and full
+source/quality/hash contracts. Actual15:00 E remainsBLOCKED:12sessions absent,
+2retired closures pass, publicfreshbutDEGRADED on expired prospective prediction.
+Automatic daily observation cannot start before16:30 calendar cutoff. Old frozen
+admission is intact; retain strict current audit and distinct next-target readiness.
+Worker/close/private-safe evidence: docs/evidence/p0-publisher-factor-20261028/
+workers-close-checkpoint/manifest.json. All recovery claims/production owners unchanged.
+
 October28 14:12: new4860-batch13:58 freeze on exactGit aaca/1821files fails NFS
 cold45.247439s, warm39.568944s passes. Do not deploy from older4200 narrowpass.
 Residual is CPU after I/O overlap; prepare bounded shard-only child processes

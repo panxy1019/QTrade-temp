@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import gzip
+import importlib.util
 import io
 import json
 import os
@@ -14,7 +15,7 @@ from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
@@ -35,6 +36,23 @@ FIELDS = pa.schema([
     )
 ] + [("source_hashes", pa.list_(pa.string()))])
 _ReadObserver = Callable[[int, Literal['before', 'after', 'failed']], None]
+
+
+def _export_rows(table: Any) -> list[dict[str, Any]]:
+    """Decode the fixed bounded export schema without changing malformed-data behavior."""
+    if importlib.util.find_spec('numpy') is None:
+        return cast(list[dict[str, Any]], table.to_pylist())
+    try:
+        # NumPy conversion alone replaces invalid UTF-8. Only fully valid Arrow
+        # buffers may use that path; the original decoder owns every failure.
+        table.validate(full=True)
+    except pa.ArrowInvalid:
+        return cast(list[dict[str, Any]], table.to_pylist())
+    names = FIELDS.names
+    columns = [column.to_pylist() if name == 'source_hashes' else
+               column.to_numpy(zero_copy_only=False)
+               for name, column in zip(names, table.columns, strict=True)]
+    return [dict(zip(names, row, strict=True)) for row in zip(*columns, strict=True)]
 
 
 def _read_bytes(path: Path, observer: _ReadObserver | None = None, *,
@@ -99,6 +117,7 @@ class _BatchMaterial:
         self.source_bytes_read = len(self._manifest_bytes)+len(self._raw)+len(
             self._normalized or b'')
         self._file: pq.ParquetFile | None = None
+        self._export_bounds_checked = False
         self._verified: (
             tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]] | None) = None
 
@@ -122,18 +141,21 @@ class _BatchMaterial:
                 metadata.row_group(i).total_byte_size for i in range(metadata.num_row_groups))
                 > 16_000_000):
             raise ValueError('UNIFIED_MARKET_SOURCE_PARQUET_BOUND')
+        self._export_bounds_checked = True
 
     def validate(self) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
         if self._verified is None:
             value = self.manifest
             captures = _decode_captures(value['raw'], self._raw)
-            rows = []
+            rows: list[dict[str, Any]] = []
             if self._normalized is not None:
                 file = self._parquet()
                 if (not file.schema_arrow.equals(FIELDS, check_metadata=False)
                         or file.metadata.num_rows != value["bar_count"]):
                     raise ValueError("NORMALIZED_INCREMENTAL_SCHEMA_OR_COUNT_MISMATCH")
-                rows = file.read().to_pylist()
+                table = file.read()
+                rows = (_export_rows(table) if self._export_bounds_checked
+                        else table.to_pylist())
                 plain = [{k: v for k, v in row.items()
                           if k not in {"raw_pack_sha256", "source_hashes"}} for row in rows]
                 if sha256(canonical(plain)).hexdigest() != value["admitted_rows_sha256"]:

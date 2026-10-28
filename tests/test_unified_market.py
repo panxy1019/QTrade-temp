@@ -2271,3 +2271,178 @@ def test_missing_normalized_source_still_counts_material_reads_toward_budget(sou
     assert exporter._CACHE == {}
 
 
+
+
+def test_serial_shard_refs_come_from_validated_bytes(source, monkeypatch):
+    base, _, _, _, _, add = source
+    add()
+    original = exporter._validated_shard_bytes
+    def mutate_after_validation(shard, *args):
+        value, raw = original(shard, *args)
+        shard['evidence_sha256'] = '0'*64
+        shard['bars'][0]['timestamp'] = '1900-01-01T00:00:00+08:00'
+        return value, raw
+    monkeypatch.setattr(exporter, '_validated_shard_bytes', mutate_after_validation)
+    value = export(source)['index']
+    ref = next(row['shards'][0] for row in value['entries'] if row['shards'])
+    raw = (base/'unified-data/market-public/unified-market/objects'
+           /(ref['sha256']+'.json')).read_bytes()
+    shard = json.loads(raw)
+    assert ref == {'sha256': sha256(raw).hexdigest(), 'bytes': len(raw),
+        'evidence_sha256': shard['evidence_sha256'], 'count': len(shard['bars']),
+        'start': shard['bars'][0]['timestamp'], 'end': shard['bars'][-1]['timestamp']}
+
+
+def test_worker_frame_bounds_before_body_read():
+    import struct
+    class HeaderOnly(io.BytesIO):
+        def read(self, count=-1):
+            assert self.tell() < 5, 'BODY_MUST_NOT_BE_READ'
+            return super().read(count)
+    for tag, limit in exporter._WORKER_FRAME_LIMITS.items():
+        source = HeaderOnly(struct.pack('!I', limit+1)+tag)
+        with pytest.raises(ValueError, match='WORKER_FRAME_BOUND'):
+            exporter._read_worker_frame(source, exporter._WORKER_INPUT_LIMIT)
+    with pytest.raises(ValueError, match='WORKER_FRAME_BOUND'):
+        exporter._read_worker_frame(HeaderOnly(struct.pack('!I', 20)+b'X'),
+                                    exporter._WORKER_INPUT_LIMIT)
+
+
+def test_unreaped_owned_worker_blocks_new_spawn(monkeypatch):
+    class Unreaped:
+        def poll(self):
+            return None
+    monkeypatch.setattr(exporter, '_UNREAPED_SHARD_WORKERS', [Unreaped()])
+    def forbidden(*args, **kwargs):
+        raise AssertionError('MUST_NOT_SPAWN')
+    monkeypatch.setattr(exporter.subprocess, 'Popen', forbidden)
+    with pytest.raises(ValueError, match='PREVIOUS_CHILD_UNREAPED'):
+        exporter._ShardEncoders(None, NOW, time.monotonic()+5)
+
+
+def test_worker_job_enters_pipe_before_building_the_next_shard(monkeypatch):
+    pool = object.__new__(exporter._ShardEncoders)
+    pool.workers = [{'output': None}, {'output': None}]
+    monkeypatch.setattr(pool, 'close', lambda success: None)
+    def send(state, body):
+        state['output'] = body
+    def pump():
+        for state in pool.workers:
+            if state['output'] is not None:
+                state['result'] = (json.loads(state['output'][5:]), b'validated')
+                state['output'] = None
+    monkeypatch.setattr(pool, 'send', send)
+    monkeypatch.setattr(pool, 'pump', pump)
+    def shards():
+        yield {'evidence_sha256': '1'*64}
+        # Source replay can be expensive. A merely queued selector write leaves
+        # the child idle during this work and turns validation into serial waves.
+        assert pool.workers[0]['output'] is None
+        yield {'evidence_sha256': '2'*64}
+    assert len(list(pool.encode(shards()))) == 2
+
+
+@pytest.fixture
+def force_shard_workers(source, monkeypatch):
+    if os.name != 'posix':
+        pytest.skip('POSIX selector pipes; Windows chooses serial before spawn')
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 0)
+    owned = []
+    original = exporter.subprocess.Popen
+    def create(*args, **kwargs):
+        proc = original(*args, **kwargs)
+        owned.append(proc)
+        return proc
+    monkeypatch.setattr(exporter.subprocess, 'Popen', create)
+    yield owned
+    assert all(proc.poll() is not None for proc in owned)
+    assert not exporter._UNREAPED_SHARD_WORKERS
+    assert not any(thread.name.startswith('market-source') for thread in threading.enumerate())
+
+
+def test_real_worker_export_exact_serial_bytes_and_join_before_index(
+    source, force_shard_workers, monkeypatch,
+):
+    base, _, _, _, _, add = source
+    add()
+    add('day', counter=2)
+    add(symbol='600036', counter=3)
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 99)
+    expected = export(source)['index']
+    expected_bytes = {path.name: path.read_bytes() for path in
+        (base/'unified-data/market-public/unified-market/objects').glob('*.json')}
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 0)
+    atomic = exporter.write_json_atomic
+    def write(path, value, **kwargs):
+        if path.name == 'unified-market.json':
+            assert len(force_shard_workers) == 2
+            assert all(proc.poll() == 0 for proc in force_shard_workers)
+        atomic(path, value, **kwargs)
+    monkeypatch.setattr(exporter, 'write_json_atomic', write)
+    actual = export(source)['index']
+    assert actual == expected
+    assert {path.name: path.read_bytes() for path in
+        (base/'unified-data/market-public/unified-market/objects').glob('*.json')} == expected_bytes
+
+
+@pytest.mark.parametrize('failure', ['worker', 'object', 'ledger', 'parent_source', 'deadline'])
+def test_real_workers_all_failures_reap_and_preserve_index(
+    source, force_shard_workers, monkeypatch, failure,
+):
+    base, _, _, _, _, add = source
+    add()
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 99)
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = (pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns)
+    add('day', counter=2)
+    add(symbol='600036', counter=3)
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 0)
+    if failure == 'worker':
+        original = exporter._ShardEncoders.send
+        def send(pool, worker, body):
+            if body[:1] == b'J':
+                worker['process'].kill()
+            original(pool, worker, body)
+        monkeypatch.setattr(exporter._ShardEncoders, 'send', send)
+    elif failure == 'object':
+        monkeypatch.setattr(exporter, 'MAX_OBJECT_IO', 1)
+        def fail(*args, **kwargs):
+            raise OSError('OBJECT_FAULT')
+        monkeypatch.setattr(exporter, '_write_object', fail)
+    elif failure == 'ledger':
+        original = exporter._chunks
+        calls = 0
+        def chunks(*args):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                assert all(proc.poll() == 0 for proc in force_shard_workers)
+                return []
+            return original(*args)
+        monkeypatch.setattr(exporter, '_chunks', chunks)
+    elif failure == 'parent_source':
+        inventory = exporter._worker_inventory
+        changed = False
+        def validate(*args):
+            nonlocal changed
+            changed = True
+        def sources():
+            value = inventory()
+            if changed:
+                value['scripts/publish_unified_market.py'] = '0'*64
+            return value
+        monkeypatch.setattr(exporter, 'validate_index', validate)
+        monkeypatch.setattr(exporter, '_worker_inventory', sources)
+    else:
+        original = exporter._ShardEncoders.send
+        def send(pool, worker, body):
+            original(pool, worker, body)
+            if body[:1] == b'J':
+                pool.deadline = time.monotonic()-1
+        monkeypatch.setattr(exporter._ShardEncoders, 'send', send)
+    with pytest.raises((ValueError, OSError)):
+        export(source)
+    assert len(force_shard_workers) == 2
+    assert (pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns) == before

@@ -1,0 +1,122 @@
+{
+  "scope": "SAFE_METADATA_PROJECTION_NOT_ORIGINAL_SIGNED_REPORT",
+  "original_sha256": "7960fd797aaf38240cf9afb66c3e2e87dae4e9d7e83eb9a70acab51948065054",
+  "private_mount_configuration_omitted": true,
+  "document": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.market-export-worker-benchmark.v1",
+    "checked_at": "2026-10-28T07:37:16.569073+00:00",
+    "source_base_revision": "4fa9f7b27a521f6acc1f683a9d06752117995fad",
+    "source_scope": "TRACKED_GIT_ARCHIVE_WITH_TWO_UNCOMMITTED_CANDIDATE_FILES",
+    "source_manifest_sha256": "efbf602abf84a2d538eac075394fb174656e96f9a78e76be6eefb5ba2731b072",
+    "candidate_files": {
+      "scripts/publish_unified_market.py": "ccba53072e0dbafa24a4621173c7d2b0747674cbc12d3c3f89cb3079f8bf1b79",
+      "tests/test_unified_market.py": "b83947ed2e0d7cf5f3d0de02853b3f1ff789ddfedfcd3acd2acc3fdc0fcef68f",
+      "scripts/unified_store.py": "f57688003c43a5b57dc2342f7f18db2889913c8b29033add523caa6ad054ec72",
+      "tests/test_unified_export_rows.py": "4e2da919eb2fb764ea7e61ee7da8df09db7c0fbbcb2e1387978aaf38e2d2bb0c"
+    },
+    "worker_sources": {
+      "scripts/publish_unified_market.py": "ccba53072e0dbafa24a4621173c7d2b0747674cbc12d3c3f89cb3079f8bf1b79",
+      "scripts/unified_store.py": "f57688003c43a5b57dc2342f7f18db2889913c8b29033add523caa6ad054ec72",
+      "src/qtrade/research/unified_market.py": "64982440d5c876a58c282fb7c8ab4923d03376864c489e8224565a9aff760bb6",
+      "src/qtrade/market_data/sina_incremental.py": "c0f783604750ac2648c8dcb2496e2e02994ddb3cf469d6a69e762ebfb9bff63b",
+      "src/qtrade/data/quality.py": "5f1dc90eb2fbf3cfa312378cc71a98ed7fd6b5b3786545f17f292f331f520ff5",
+      "src/qtrade/data/models.py": "8435fe27941c20781df9678ca46e27ad7cc2a132ee38f3476fdfd3847329dd2e",
+      "src/qtrade/monitoring/data_freshness.py": "b9b640555a42c5268ec917df0bd07a41eb7d1709da64539bb953f17fb19b7624",
+      "src/qtrade/instruments/observed.py": "5a8a43f106fccad697dc15d9e14547510de9271c1a37853fc6117611d0612b23"
+    },
+    "source_files_verified": 1943,
+    "freeze": "/root/qtrade-local/operator-evidence/market-current-freeze-20261028T070943Z",
+    "freeze_evidence_sha256": "8a4ea3ab27939dcec28d94f5cb95b805b7cfeeb16e7b37c3ea594168f7a6d63c",
+    "controlled_snapshot_clock": "2026-10-28T07:09:45.831362+00:00",
+    "output_base": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-validated-arrow-nfs-20261028T073547Z",
+    "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+    "production_output_modified": false,
+    "profiling_enabled": false,
+    "controlled_seconds_limit": 45,
+    "production_seconds_limit_unchanged": 45,
+    "source_byte_budget": 512000000,
+    "cache_estimated_byte_budget": 128000000,
+    "parent_pid": 575787,
+    "parent_start_ticks": "1020498580",
+    "mount_before": {
+      "raw_sha256": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+      "selected_mount": {
+        "mount_id": "1080",
+        "parent_id": "989",
+        "major_minor": "0:66",
+        "fs_type": "nfs4"
+      },
+      "output_st_dev": 66,
+      "production_st_dev": 66,
+      "available_bytes": 288406634496
+    },
+    "mount_after": {
+      "raw_sha256": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+      "selected_mount": {
+        "mount_id": "1080",
+        "parent_id": "989",
+        "major_minor": "0:66",
+        "fs_type": "nfs4"
+      },
+      "output_st_dev": 66,
+      "production_st_dev": 66,
+      "available_bytes": 288230473728
+    },
+    "children_at_completion": "",
+    "results": [
+      {
+        "state": "FAILED",
+        "error_class": "ValueError",
+        "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+        "wall_seconds": 45.020515,
+        "within_45_seconds": false,
+        "pass_name": "cold",
+        "pid": 575787,
+        "parent_start_ticks": "1020498580",
+        "decoded_cache_empty_at_start": true,
+        "destination_objects_at_start": 0,
+        "peak_rss_kib": 1093220,
+        "max_source_cache_note": "SOURCE_BYTES_ARE_CUMULATIVE_ACCOUNTED_READS_AND_CACHE_END_TOTAL_IS_MONOTONIC_DERIVATION_NOT_A_SAMPLED_PEAK"
+      },
+      {
+        "state": "SUCCEEDED",
+        "statistics": {
+          "source_bytes_read": 237250656,
+          "cached_batches": 1831,
+          "replayed_batches": 3809,
+          "selected_chunks": 140136,
+          "selected_batches": 5640,
+          "cached_rows": 70547,
+          "cache_estimated_bytes": 127998993,
+          "export_seconds": 38.399424,
+          "total_bytes": 166050382,
+          "total_files": 5986,
+          "index_id": "10b3ff6afcedbcaf947471b04b19f39f5f4a491fbb7ab5b855d83184ef126873",
+          "quarantined_entries": 0
+        },
+        "wall_seconds": 38.759323,
+        "within_45_seconds": true,
+        "index_raw_sha256": "c21e9b5645231a6e089ca5488072a08739361bcc52f146979bb25fe8427f2dd0",
+        "output_refs_manifest_sha256": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645",
+        "output_refs_count": 5986,
+        "previous_success_used_as_oracle": false,
+        "independent_full_current_audit": "PENDING",
+        "pass_name": "warm",
+        "pid": 575787,
+        "parent_start_ticks": "1020498580",
+        "decoded_cache_empty_at_start": false,
+        "destination_objects_at_start": 5820,
+        "peak_rss_kib": 1343852,
+        "max_source_cache_note": "SOURCE_BYTES_ARE_CUMULATIVE_ACCOUNTED_READS_AND_CACHE_END_TOTAL_IS_MONOTONIC_DERIVATION_NOT_A_SAMPLED_PEAK"
+      }
+    ],
+    "evidence_sha256": "917f0347be909cd4d583509a9bd329379ebfcd06bf9bbc5dca22f220610aaab8"
+  }
+}

@@ -1,5 +1,44 @@
 # Architecture decisions
 
+## ADR-206 — Bound shard workers and preserve execution-day evidence separately
+
+Status: isolated worker tests pass; current5640-batch cold performance fails;
+production is unchanged. Readonly October28 post-close audit remains BLOCKED.
+
+Use two explicitly owned Popen processes only for original full shard validation
+and encoding. Parent keeps source reads, replay, cache, ledger and source-byte
+authority. Bounded framed pipes admit one job per child; fixed module entry and
+source/context handshake replace implicit spawning. Return metadata derives from
+validated raw bytes, not later reads of mutable submitted dictionaries. Successful
+workers exit and join before final ledger/index commit. Failures terminate/reap
+only retained owned handles; no group kills, PID discovery or replacement retries.
+Windows and small exports select the original serial path before any child starts.
+
+Registering a writable selector is not sending a job. Flush the bounded job frame
+while servicing other ready pipes before constructing the next shard, so source
+work can overlap actual child validation. Preserve original pre-fix failures and
+the independent regression. This is a scheduling change, not reduced validation.
+
+Unchecked NumPy string conversion was rejected because it can replace malformed
+UTF-8. The new isolated bounded-export candidate first validates complete Arrow
+buffers; on invalid buffers it calls the original decoder, preserving its exact
+result/exception. Missing optional NumPy also keeps the original decoder. Ordinary
+store use does not enter this optimization. Tests do not establish performance or
+production acceptance; independent review and complete original-source oracle remain.
+
+The actual forward predictor stops advertising a prospective prediction after its
+execution deadline. That does not erase the first admitted execution-day target.
+The service still observes retained books independently, but today's E v2 also
+requires an undegraded public service. Preserve its BLOCKED result; do not relabel
+the admission, alter the clock, replace targets or weaken the auditor. A future
+separation of execution-day observation proof from next-target discovery requires
+its own schema/contract review. Daily source/observation cutoff is16:30 Shanghai.
+
+Publisher handover preparation uses actual -m/cwd/interpreter/source proofs.
+Explicit PYTHONPATH may contain only src because -m adds cwd, but reject flags
+or PYTHONSAFEPATH that disable that assumption. The proof is PathFinder replay,
+not live sys.modules introspection. No readonly preparation grants mutation authority.
+
 ## ADR-205 — Pipeline complete export checks and account failed physical reads
 
 Status: source aaca9d7 independently reviewed and tested in isolation; not deployed.

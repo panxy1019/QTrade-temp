@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/market-worker-close-freeze-nfs-20261028T071131Z/benchmark.py", line 130, in <module>
+    assert all(item['state']=='SUCCEEDED' and item['within_45_seconds'] for item in results), 'CURRENT_FROZEN_EXPORT_NOT_ACCEPTED'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: CURRENT_FROZEN_EXPORT_NOT_ACCEPTED

@@ -1,0 +1,48 @@
+{
+  "accepted_current_observations": 0,
+  "accepted_retired_proofs": 2,
+  "approved_model_id": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+  "audit_failures": [
+    "FORWARD_AUDIT_PUBLICATION_INVALID_STALE_OR_DEGRADED"
+  ],
+  "audit_file": "E-private-20261028T070057440907Z.json",
+  "audit_sha256": "994ec5ad9aaca10a75a1ae1500782ab97b969623bf24c858686747a20a1cef95",
+  "audit_source_revision": "9846a7f30774d6ae4b4d41f02b493c5246be87d9",
+  "audit_state": "BLOCKED",
+  "auditor_source_sha256": "a7634c1cbb5987ebdaa90bda06319405d8b975cb743a745048afa126aa8215f4",
+  "browser_verified": false,
+  "capture_directory": "E:\\QTrade-temp\\cluster-evidence\\stock-public-20261028T070041Z-ce3c4965",
+  "capture_evidence_sha256": "4f038ce28ccaec51bcb3eeaaa6c75f15d0e49004d3a123cce2c5feaac779ea2f",
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "current_book_count": 12,
+  "day": "2026-10-28",
+  "deployment_matches": true,
+  "evidence_sha256": "4103707284e75128ff342e7e1d4dbda4674debd7200e492c1de2ffe9eb9aa19d",
+  "expected_book_count": 14,
+  "expected_production_revision": "ae33a7c8c27ea721eb3be1e4430b562a44b67f91",
+  "external_order_transmission": false,
+  "inner_file_sha256": "f9791a856df5c272f780da5617a9e53a80020b6a77800daa2ea3843cc5ab31f2",
+  "kind": "ACTUAL_OCT28_STOCK_E_HTTP_AND_READ_ONLY_AUDIT_BINDING",
+  "live_trading_enabled": false,
+  "point_in_time": false,
+  "production_mutations": false,
+  "production_revision": "ae33a7c8c27ea721eb3be1e4430b562a44b67f91",
+  "promotion": "NOT_ELIGIBLE",
+  "publication_available": true,
+  "publication_errors": [
+    {
+      "code": "FORWARD_SERVICE_PREDICTION_UNAVAILABLE",
+      "mode": null,
+      "strategy_id": null
+    }
+  ],
+  "publication_sha256": "3fd34d400bcd90d3ffa471c2e245d8cf5c332ce0aa47b15676aa38f0ace62e76",
+  "publication_state": "DEGRADED",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "recorded_at": "2026-10-28T07:00:57.442453+00:00",
+  "retired_book_count": 2,
+  "service_fresh": true,
+  "state": "BLOCKED",
+  "whole_step1_accepted": false
+}

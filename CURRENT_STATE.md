@@ -1,6 +1,26 @@
 # Current state
 
-Last updated: 2026-10-28 14:12 Shanghai, afternoon cold failure and recent-state completion.
+Last updated: 2026-10-28 15:36 Shanghai, bounded worker checks and actual close blockage.
+
+- Two-owned-process shard candidate ccba5307 and prompt pipe submission pass
+  Linux536/0skip and independent42/0skip. 4860-batch NFS cold44.797564s passes,
+  but new15:09 freeze5640batches/140136chunks fails cold45.021938s; warm39.973388s
+  passes. No production deployment. Preserve every failure/source/output scope.
+- Bounded-only Arrow decode candidate f5768800 validates full Arrow buffers before
+  NumPy conversion and preserves original decoding on invalid buffers/absent NumPy.
+  Ordinary store decoding is unchanged. Linux626/0skip passes; independent407/0skip passes; current5640 cold45.020515s FAIL/warm38.759323s PASS. Never use unchecked UTF-8 conversion.
+- Actual15:00:57 E is BLOCKED: real-close time gate clears,12current-book sessions
+  absent,2retired closures pass. Forward is fresh but DEGRADED because prospective
+  prediction discovery expires at execution deadline. Frozen admitted prediction
+  files remain valid and observation loop is independent. Calendar daily cutoff is
+ 16:30; do not invent earlier automatic sessions or relax current public E contract.
+- Readonly old publisher242 Git runtime files/import-origin replay verifies current
+ 294214. Bridge v3 guards implicit module cwd against -P/-I/PYTHONSAFEPATH;31independent
+  synthetic guards and actualRO proof pass. No wrapper/RPC TERM/recovery action.
+- STEP2 four-factor implementation remains nonproduction. Alpha158 descriptor audit
+  is not individual registration; Factor→Strategy/Builder production wiring remains.
+
+Previous14:12 afternoon cold failure and recent-state completion:
 
 - Exact Git aaca9d7/1821 files on new13:58:40 freeze4860batches/120685chunks:
   actual NFS cold45.247439s FAIL, warm39.568944s fullcall PASS. Full new output
