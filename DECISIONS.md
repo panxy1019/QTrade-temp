@@ -4472,3 +4472,25 @@ onlytransport is localGit/loopback, not GitHub/TLS/browser. Retain this distinct
 and the original malformed JUnit serialization with explicit normalization; no
 second registration merely to replace evidence. Original reports/data versions
 and currentproductioncontrols remain intact.
+
+### Exact prepared cold exception remains gated — 2026-10-28 23:00 Shanghai
+
+Final738c operator repairs independent-review unbounded Popen contextwait in
+generic Git cleanup-error paths; the originalv3/production are unchanged. Freeze
+the newsource/tests, retain original failures, and distinguish64offlineplatform
+checks and7independentchecks from actual180performance. Initial realprepare
+binding rejection is preserved; do not waive export/head equality to get aplan.
+Actual secondprepare binds abe2986c/9a459c19 after successful32.702sexport,
+all3000entries/5987currentrefs and167397950bytes in15.914s. Broader historical
+tree metadata is not allhistoricalbytevalidation. Currentlocal563process scan
+does not certify unseen serverprocesses. Never log privateSSH/key/config bodies.
+
+User's A/B/C approval does not automatically approve a separatelyproposed cold
+budget. New exactplan humanapproval, create-only/fsync authority and one new
+intent are required before180send; noauthority/intentexists atthischeckpoint.
+OldUNCERTAIN remainsimmutable, normal45/90 unchanged, force/replay prohibited.
+LS is not across-transactionCAS; knownhost bytes rechecked are not anOSlock.
+180+2+2 onlybounds thecold child andcleanup, not thewhole multistage operation.
+Writing100% is notACK; ACKneeds independentremote/public reconciliation andat
+least3naturalordinary45/90rounds beforecontinuousrecoveryacceptance. Actual
+22:54 publicstillstale; fullSTEP1 andproductionSTEP2 remainunaccepted.

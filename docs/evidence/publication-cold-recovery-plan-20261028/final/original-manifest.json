@@ -1,0 +1,194 @@
+{
+  "schema_version": "qtrade.cold-recovery-preparation-manifest.v1",
+  "root": "E:\\QTrade-temp\\publication-cold-recovery-final-20261028T145240Z-ad5676c1",
+  "files": {
+    "evidence-summary.json": {
+      "bytes": 2448,
+      "sha256": "5ae3fccf88816127488b96378a65241f918ebf1beedddf5f8c40454322420241"
+    },
+    "fixtures/PUSH_INTENT.json": {
+      "bytes": 235,
+      "sha256": "e890b57749ef3cf849ec317acab2b83febb437968c948df0d2df8fcc4107429f"
+    },
+    "fixtures/PUSH_UNCERTAIN.json": {
+      "bytes": 44,
+      "sha256": "1ad55b8098aba6f1532191373d818b9615b453fb30f94ae7bad77f9210a75859"
+    },
+    "linux-actual/execution.json": {
+      "bytes": 1116,
+      "sha256": "6e021e27c5dfb80ac04f3f4cd658ac982addb38d325694bdbd31ed434e660daf"
+    },
+    "linux-actual/linux-results.xml": {
+      "bytes": 15475,
+      "sha256": "d8c68c1dffb9d4975faf95774b32cf155a9c23dc005b5fa66c99c13fc546bba8"
+    },
+    "linux-actual/stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "linux-actual/stdout.txt": {
+      "bytes": 99,
+      "sha256": "4c24e8ab78b85d5cb86ca53c67d518a8a3d9da21ea61242af734e708512c4eb7"
+    },
+    "native_receive_pack_barrier.py": {
+      "bytes": 1853,
+      "sha256": "08dc859427e6fc4d1172aa6296f46d2dd7c3678383f7ed71365685d912fcb3d6"
+    },
+    "PREPARATION.md": {
+      "bytes": 10231,
+      "sha256": "bbe1b9a83b0691c9895b4887550646a70a4d6bd1a9b57107e7df696a9d2aca90"
+    },
+    "publication_cold_recovery_operator_20261028.py": {
+      "bytes": 36443,
+      "sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa"
+    },
+    "publication_native_relay_operator_v3_20261028.py": {
+      "bytes": 20513,
+      "sha256": "76bf3e2653ab51491b966db9f62c415c0d7161b4d642e7f89cefc30b687a61fc"
+    },
+    "README.md": {
+      "bytes": 1007,
+      "sha256": "a599b8479a07342751599ff33973cd859a0315fea34ef5200840c7dbd548d98d"
+    },
+    "retained-native/windows57-red-native-cas-raw-result.json": {
+      "bytes": 1587,
+      "sha256": "be750b5b6009a10398514fbd3ffccc6cc75b655fbf306f3058ddff9fda3a3e98"
+    },
+    "retained-native/windows57-red-native-commands.json": {
+      "bytes": 15081,
+      "sha256": "f409c0097af3b881f452a1891afe973f464ceadb4f6b4972644b61202ec26143"
+    },
+    "retained-native/windows60-green-native-cas-raw-result.json": {
+      "bytes": 1617,
+      "sha256": "84a1ba2e70e0f9b54a6891154b45675fb180c825f0fac426fe7e3aac12a9c725"
+    },
+    "retained-native/windows60-green-native-commands.json": {
+      "bytes": 16533,
+      "sha256": "2b3bcee62a4a7d780bd1ab26d906811c7efb444b35ceaa342d9c23431fd17ff6"
+    },
+    "retained-native/windows60-red-native-cas-raw-result.json": {
+      "bytes": 1617,
+      "sha256": "4fbe1be053dbd0d4dd96d9c2b4680e622add6c1032ebfd4db18eb0b42b80d1e8"
+    },
+    "retained-native/windows60-red-native-commands.json": {
+      "bytes": 16533,
+      "sha256": "931d664ec626eb27710c53bf7c68dc84b0d72455f78ceeb8cb64595ddb5d71cc"
+    },
+    "retained-native/windows61-native-cas-raw-result.json": {
+      "bytes": 1622,
+      "sha256": "f634920bec6502d1f86d4ac88f93ed36db66538d591f02ff7732943ffe481c85"
+    },
+    "retained-native/windows61-native-commands.json": {
+      "bytes": 16562,
+      "sha256": "e36b99564f908ef2415dc1cd46992d5eea41de876719accec0e85d57322333c0"
+    },
+    "retained-native/windows64-native-cas-raw-result.json": {
+      "bytes": 1551,
+      "sha256": "fedb30c959627fc4a0840ad347489ae7f2038202312db4e28802459bbd4e59bc"
+    },
+    "retained-native/windows64-native-commands.json": {
+      "bytes": 16185,
+      "sha256": "26aa6915ee74850ae4b83aeebe2aa0a3a461f23c448c42baca8e198ba6c0aa06"
+    },
+    "seal_preparation.py": {
+      "bytes": 6123,
+      "sha256": "73a9d474d181aef92054019858377875ac83037879a773e7cac1b23d83b3c739"
+    },
+    "source-diff.patch": {
+      "bytes": 29608,
+      "sha256": "346eafb84a5d222eaeaec26b0e2c682575bd612365e40520fc9c4c6502d37238"
+    },
+    "test_publication_cold_recovery_operator_20261028.py": {
+      "bytes": 24566,
+      "sha256": "c00aeac29cf2697b68b68046f56a877d28c205f6e4023868c20510fa30e8742f"
+    },
+    "windows-results.xml": {
+      "bytes": 14134,
+      "sha256": "f5a7d691cbb7552ad0734bf347d49d18221328f464d1199a1befb2cd2319fd11"
+    }
+  },
+  "intermediate_reference": {
+    "root": "E:\\QTrade-temp\\publication-cold-recovery-preparation-20261028T143911Z-9d25431d",
+    "files": {
+      "publication_cold_recovery_operator_20261028.py": {
+        "bytes": 36314,
+        "sha256": "7ec53cc558c62c56dade0cf390ba274ff34de2c97c80ddb664a6103e6ce79f09"
+      },
+      "publication_native_relay_operator_v3_20261028.py": {
+        "bytes": 20513,
+        "sha256": "76bf3e2653ab51491b966db9f62c415c0d7161b4d642e7f89cefc30b687a61fc"
+      },
+      "test_publication_cold_recovery_operator_20261028.py": {
+        "bytes": 22670,
+        "sha256": "93ee73337dee4260a8fdd14b2526d0989f162991623bc3446004735814cbaf5c"
+      },
+      "native_receive_pack_barrier.py": {
+        "bytes": 1853,
+        "sha256": "08dc859427e6fc4d1172aa6296f46d2dd7c3678383f7ed71365685d912fcb3d6"
+      },
+      "first-red-test-source.py": {
+        "bytes": 18841,
+        "sha256": "5c4c3c6b99160eb97a02185ac4074e297e96871296f201e53c0ad52657f8107b"
+      },
+      "second-red-test-source.py": {
+        "bytes": 22413,
+        "sha256": "f7c8dba5809f0582db28c6e7bce10bc8975fe4a3e4f0976ac768829f2d76dd60"
+      },
+      "operator-before-explicit-close.py": {
+        "bytes": 36195,
+        "sha256": "9588920e2f451720018b0c977860b6df449089ad5b065ab59b4b55f0fb3281f2"
+      },
+      "windows-results.xml": {
+        "bytes": 15568,
+        "sha256": "d0cebd019dcf4fd5eeb694364a12b711d6a6f883eca6f52fce899ce019547c16"
+      },
+      "windows-final-results.xml": {
+        "bytes": 27238,
+        "sha256": "13cc5169a6527c3ea6d9fb2fb566ff4bc0d0080647f08c2e5f325a0986952fd3"
+      },
+      "windows-green-results.xml": {
+        "bytes": 13556,
+        "sha256": "e75372e076a1550cf6be9b89c9bbbd7ed518841c4e1ef78bfe5bcb284f1a44e5"
+      },
+      "windows-frozen-results.xml": {
+        "bytes": 13796,
+        "sha256": "58ec529e8c13c4bcbe3e00a39aad6215a03d33cb5cf63740192e87de87c6ec5a"
+      },
+      "linux-actual/execution.json": {
+        "bytes": 1109,
+        "sha256": "5bb087fdfe9d529150d453513d288c171207ea51ad80d2bfd1982860f5cdd2b5"
+      },
+      "linux-actual/linux-results.xml": {
+        "bytes": 14342,
+        "sha256": "42c9e697a6a022c7924e66ab7276bd4d49610567843375075b44110fb5e73cb7"
+      },
+      "linux-actual/stdout.txt": {
+        "bytes": 99,
+        "sha256": "2bd45610fc678f2318c5061481ae016cf782e5dc681992d44c0f8c9b5692aac3"
+      },
+      "linux-actual/stderr.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fixtures/PUSH_INTENT.json": {
+        "bytes": 235,
+        "sha256": "e890b57749ef3cf849ec317acab2b83febb437968c948df0d2df8fcc4107429f"
+      },
+      "fixtures/PUSH_UNCERTAIN.json": {
+        "bytes": 44,
+        "sha256": "1ad55b8098aba6f1532191373d818b9615b453fb30f94ae7bad77f9210a75859"
+      },
+      "PREPARATION.md": {
+        "bytes": 9477,
+        "sha256": "b5a15fceedf4e2cdf64a0499da8f4c3812cec62584027841ff632c06c19b4480"
+      }
+    }
+  },
+  "dynamic_pytest_work_excluded": true,
+  "source_sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa",
+  "test_sha256": "c00aeac29cf2697b68b68046f56a877d28c205f6e4023868c20510fa30e8742f",
+  "ordinary_export_seconds": 45,
+  "ordinary_git_seconds": 90,
+  "cold180_status": "PROPOSED_NOT_APPROVED_NOT_PERFORMANCE_PASSED",
+  "actual_send_executed": false
+}

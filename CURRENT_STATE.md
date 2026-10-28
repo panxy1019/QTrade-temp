@@ -1,5 +1,25 @@
 # Current state
 
+## Prepared cold exception checkpoint: 2026-10-28 23:00 Shanghai
+
+- Final cold operator738c fixes independent-review unbounded cleanup wait in
+  its generic Git helper; Windows64/Linux64 and independent7 pass with0skip.
+  Production/v3 untouched; earlier failures and7ec61 results retained. Actual
+  isolated init/directreadonlyls/fullprepare performed, no send or newauthority.
+- Exact target abe2986c, plan9a459c19: successful32.701586s export, complete3000
+  entries/5987 current shards/167397950bytes verified15.914s. First transition
+  binding failure retained; subsequent genuine matchingHEAD allowed preparation.
+  Actual22:59 readable563process reconciliation finds nooldrelay-scope client;
+  oldclaims unchanged, newAUTH/PREFLIGHT/INTENT/SEND files absent. Owner647839
+  andLIVEfalse verified. Server-side receivepack remains unobservable.
+- Actual22:54 publicprobe stillSTALE_TRANSPORT at5a0925f4 (mainae33), index10:36,
+  catalog20:07. Proposed one-shot180 needs new explicit exact-plan authorization
+  under the user's separatecold-budget requirement. Ordinary45/90 remain; no
+  replay or secondhandover. ACK would still require public/API and3ordinaryrounds.
+- Detailed approval boundary and actualnegative evidence:
+  docs/PUBLICATION_COLD_RECOVERY_APPROVAL_PLAN_20261028.md. STEP1 remainsopen;
+  STEP2 isolated factor-registration success is not a productionportfolio backtest.
+
 ## Verified checkpoint: 2026-10-28 22:25 Shanghai
 
 - P0 local exporter succeeds32.346s/33.593s within45. Actual full frozen

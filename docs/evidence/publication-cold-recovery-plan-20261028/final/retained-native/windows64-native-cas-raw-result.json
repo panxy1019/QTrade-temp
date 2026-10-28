@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+    "-c",
+    "protocol.allow=never",
+    "-c",
+    "protocol.file.allow=always",
+    "-c",
+    "core.hooksPath=/dev/null",
+    "-c",
+    "core.autocrlf=false",
+    "-C",
+    "E:\\QTrade-temp\\publication-cold-recovery-final-20261028T145240Z-ad5676c1\\pytest-work\\test_native_server_old_oid_cas0\\source",
+    "push",
+    "--receive-pack=C:/Python314/python.exe -B E:/QTrade-temp/publication-cold-recovery-final-20261028T145240Z-ad5676c1/native_receive_pack_barrier.py E:/QTrade-temp/publication-cold-recovery-final-20261028T145240Z-ad5676c1/pytest-work/test_native_server_old_oid_cas0/barrier",
+    "E:\\QTrade-temp\\publication-cold-recovery-final-20261028T145240Z-ad5676c1\\pytest-work\\test_native_server_old_oid_cas0\\remote.git",
+    "78eaa89166acb2e9bea44c943338c53eef45bdbc:refs/heads/main"
+  ],
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "To E:\\QTrade-temp\\publication-cold-recovery-final-20261028T145240Z-ad5676c1\\pytest-work\\test_native_server_old_oid_cas0\\remote.git\n ! [remote rejected] 78eaa89166acb2e9bea44c943338c53eef45bdbc -> main (incorrect old value provided)\nerror: failed to push some refs to 'E:\\QTrade-temp\\publication-cold-recovery-final-20261028T145240Z-ad5676c1\\pytest-work\\test_native_server_old_oid_cas0\\remote.git'\n",
+  "method": "native receive-pack advertisement then real concurrent update-ref, byte relay only; no hooks or fabricated protocol"
+}

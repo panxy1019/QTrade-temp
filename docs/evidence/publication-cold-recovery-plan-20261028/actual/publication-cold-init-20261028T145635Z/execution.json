@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-10-28T14:56:37.016993+00:00",
+  "elapsed_seconds": 1.4467326998710632,
+  "isolated_preparation_files_written": true,
+  "mode": "init",
+  "operator_sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa",
+  "plan_sha256": null,
+  "public_write": false,
+  "push_intent_created": false,
+  "remote_attempt": "/root/qtrade-local/operator-evidence/publication-cold-recovery-20261028T143000Z",
+  "result": {
+    "state": "ISOLATED_REPOSITORY_INITIALIZED_NO_PUBLIC_WRITE"
+  },
+  "returncode": 0,
+  "source_or_production_config_changed": false,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "2ef77c67737b78bc2f8545865f6878d3f4dd8ab2ca574257a564e2c4170c2b26",
+  "user_authorization_created": false
+}

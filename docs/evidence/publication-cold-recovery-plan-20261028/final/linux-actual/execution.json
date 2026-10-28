@@ -1,0 +1,17 @@
+{
+  "captured_at": "2026-10-28T14:53:50.587268+00:00",
+  "elapsed_seconds": 2.0099595999345183,
+  "network_git_push_performed": false,
+  "ordinary_production_changed": false,
+  "remote_root": "/root/qtrade-local/operator-evidence/publication-cold-offline-final-20261028T145500Z",
+  "returncode": 0,
+  "scope": "actual Linux offline fixtures only; no real cold180 performance or approval",
+  "source_sha256": {
+    "fixtures/PUSH_INTENT.json": "e890b57749ef3cf849ec317acab2b83febb437968c948df0d2df8fcc4107429f",
+    "fixtures/PUSH_UNCERTAIN.json": "1ad55b8098aba6f1532191373d818b9615b453fb30f94ae7bad77f9210a75859",
+    "native_receive_pack_barrier.py": "08dc859427e6fc4d1172aa6296f46d2dd7c3678383f7ed71365685d912fcb3d6",
+    "publication_cold_recovery_operator_20261028.py": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa",
+    "publication_native_relay_operator_v3_20261028.py": "76bf3e2653ab51491b966db9f62c415c0d7161b4d642e7f89cefc30b687a61fc",
+    "test_publication_cold_recovery_operator_20261028.py": "c00aeac29cf2697b68b68046f56a877d28c205f6e4023868c20510fa30e8742f"
+  }
+}
