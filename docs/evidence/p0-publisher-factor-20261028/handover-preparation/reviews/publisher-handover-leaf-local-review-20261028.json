@@ -1,0 +1,646 @@
+{
+  "check_count": 111,
+  "checks": [
+    {
+      "check": "path:backup-fsync-fault/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:backup-fsync-fault/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "path:backup-fsync-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:backup-fsync-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "path:backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "path:backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/private/wrapper.old.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/private/wrapper.old.py",
+      "pass": true
+    },
+    {
+      "check": "path:backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "path:backup-fsync-fault/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:backup-fsync-fault/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "path:backup-fsync-fault/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "artifact:backup-fsync-fault/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "path:backup-fsync-fault/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "artifact:backup-fsync-fault/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "path:candidate-fault/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:candidate-fault/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "path:candidate-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:candidate-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "path:candidate-fault/fixture-evidence/publisher-handover-candidate-fault/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:candidate-fault/fixture-evidence/publisher-handover-candidate-fault/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "path:candidate-fault/fixture-evidence/publisher-handover-candidate-fault/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:candidate-fault/fixture-evidence/publisher-handover-candidate-fault/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "path:candidate-fault/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:candidate-fault/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "path:candidate-fault/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "artifact:candidate-fault/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "path:candidate-fault/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "artifact:candidate-fault/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "path:fake-rpc-calls.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:fake-rpc-calls.json",
+      "pass": true
+    },
+    {
+      "check": "path:fixture_owner.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:fixture_owner.py",
+      "pass": true
+    },
+    {
+      "check": "path:fsync-events.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:fsync-events.json",
+      "pass": true
+    },
+    {
+      "check": "path:journal-parent-fault/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:journal-parent-fault/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "path:journal-parent-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:journal-parent-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "path:journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "path:journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "path:journal-parent-fault/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:journal-parent-fault/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "path:journal-parent-fault/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "artifact:journal-parent-fault/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "path:journal-parent-fault/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "artifact:journal-parent-fault/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "path:publisher_handover_draft_20261028.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:publisher_handover_draft_20261028.py",
+      "pass": true
+    },
+    {
+      "check": "path:publisher_handover_leaf_probe_20261028.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:publisher_handover_leaf_probe_20261028.py",
+      "pass": true
+    },
+    {
+      "check": "path:success/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:success/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "path:success/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:success/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "path:success/fixture-evidence/publisher-handover-success/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:success/fixture-evidence/publisher-handover-success/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "path:success/fixture-evidence/publisher-handover-success/private/wrapper.old.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:success/fixture-evidence/publisher-handover-success/private/wrapper.old.py",
+      "pass": true
+    },
+    {
+      "check": "path:success/fixture-evidence/publisher-handover-success/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:success/fixture-evidence/publisher-handover-success/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "path:success/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:success/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "path:success/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "artifact:success/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "path:success/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "artifact:success/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "path:written-bytes-fault/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:written-bytes-fault/fixture-base/private/run-publisher-workflow.py",
+      "pass": true
+    },
+    {
+      "check": "path:written-bytes-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:written-bytes-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "pass": true
+    },
+    {
+      "check": "path:written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/000-PREPARED.json",
+      "pass": true
+    },
+    {
+      "check": "path:written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/private/wrapper.old.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/private/wrapper.old.py",
+      "pass": true
+    },
+    {
+      "check": "path:written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "artifact:written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/wrapper.candidate.py",
+      "pass": true
+    },
+    {
+      "check": "path:written-bytes-fault/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "artifact:written-bytes-fault/fixture-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "path:written-bytes-fault/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "artifact:written-bytes-fault/fixture-only.conf",
+      "pass": true
+    },
+    {
+      "check": "path:written-bytes-fault/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "artifact:written-bytes-fault/owner.ready",
+      "pass": true
+    },
+    {
+      "check": "all_five_cases",
+      "pass": true
+    },
+    {
+      "check": "real_overlay",
+      "pass": true
+    },
+    {
+      "check": "scope",
+      "pass": true
+    },
+    {
+      "check": "production_identity_unchanged",
+      "pass": true
+    },
+    {
+      "check": "all_fixture_children_clean",
+      "pass": true
+    },
+    {
+      "check": "no_signal_rpc_group_or_kill",
+      "pass": true
+    },
+    {
+      "check": "exact_frozen_source",
+      "pass": true
+    },
+    {
+      "check": "exact_testcase",
+      "pass": true
+    },
+    {
+      "check": "synthetic_manifest",
+      "pass": true
+    },
+    {
+      "check": "one_exact_old_path",
+      "pass": true
+    },
+    {
+      "check": "exact_replacement_replayed",
+      "pass": true
+    },
+    {
+      "check": "backup_target_digests",
+      "pass": true
+    },
+    {
+      "check": "exactly_one_fixture_replace",
+      "pass": true
+    },
+    {
+      "check": "backup_file_fsync_before_replace",
+      "pass": true
+    },
+    {
+      "check": "backup_parent_fsync_before_replace",
+      "pass": true
+    },
+    {
+      "check": "attempt_ancestor_fsync:/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success",
+      "pass": true
+    },
+    {
+      "check": "attempt_ancestor_fsync:/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence",
+      "pass": true
+    },
+    {
+      "check": "attempt_ancestor_fsync:/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success",
+      "pass": true
+    },
+    {
+      "check": "attempt_ancestor_fsync:/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7",
+      "pass": true
+    },
+    {
+      "check": "attempt_ancestor_fsync:/root/qtrade-local/operator-evidence",
+      "pass": true
+    },
+    {
+      "check": "attempt_ancestor_fsync:/root/qtrade-local",
+      "pass": true
+    },
+    {
+      "check": "attempt_ancestor_fsync:/root",
+      "pass": true
+    },
+    {
+      "check": "attempt_ancestor_fsync:/",
+      "pass": true
+    },
+    {
+      "check": "target_parent_fsync_after_replace",
+      "pass": true
+    },
+    {
+      "check": "fake_readonly_rpc_only",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "No crash/power-loss injection",
+    "No production filesystem qualification",
+    "No production manifest or real Supervisor RPC",
+    "No production handover authorization"
+  ],
+  "production_private_bodies_included": false,
+  "safe_payload_count": 44,
+  "safe_payloads": {
+    "backup-fsync-fault/fixture-base/private/run-publisher-workflow.py": {
+      "bytes": 260,
+      "sha256": "8628d7cbae19485c99b4eae3a110dc8721f1d9d6f8ab5b468df7e79ef6213719"
+    },
+    "backup-fsync-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py": {
+      "bytes": 20,
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7"
+    },
+    "backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/000-PREPARED.json": {
+      "bytes": 562,
+      "sha256": "5328f4031854747059bd9d3c1c9ce1d841f4b2f2bf65b12cf9433b8979474d95"
+    },
+    "backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/private/wrapper.old.py": {
+      "bytes": 260,
+      "sha256": "8628d7cbae19485c99b4eae3a110dc8721f1d9d6f8ab5b468df7e79ef6213719"
+    },
+    "backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/wrapper.candidate.py": {
+      "bytes": 260,
+      "sha256": "ecbc3b70eb82b5521eda959b8f33b6dd2fdeb6cedb06c986d2d1787b129d669c"
+    },
+    "backup-fsync-fault/fixture-manifest.json": {
+      "bytes": 1785,
+      "sha256": "c4048fcbf54a3abbe1ad544a9f669633dbb449285daedb4065d468ae6831538d"
+    },
+    "backup-fsync-fault/fixture-only.conf": {
+      "bytes": 40,
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c"
+    },
+    "backup-fsync-fault/owner.ready": {
+      "bytes": 6,
+      "sha256": "7c0a1a48f651b4439cf183e7225f4ae75944282c85042cbe836ec5b15a1e624a"
+    },
+    "candidate-fault/fixture-base/private/run-publisher-workflow.py": {
+      "bytes": 257,
+      "sha256": "d00c32067bed1c1dc4026f0f3e79c3446bc48f38162bb97f8617b80810b5e42b"
+    },
+    "candidate-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py": {
+      "bytes": 20,
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7"
+    },
+    "candidate-fault/fixture-evidence/publisher-handover-candidate-fault/000-PREPARED.json": {
+      "bytes": 562,
+      "sha256": "75488e21c2b0f3476fbfb21ae252714ec020b7ca98a3b4273ec7b19ae84f4738"
+    },
+    "candidate-fault/fixture-evidence/publisher-handover-candidate-fault/wrapper.candidate.py": {
+      "bytes": 276,
+      "sha256": "490bd3e0bd19943b7acf05c489c58f3ae68fe7f2b0bec6bae2ed08bfab1b02ef"
+    },
+    "candidate-fault/fixture-manifest.json": {
+      "bytes": 1764,
+      "sha256": "fcb64eeda8ba51f331882bb5f862d6a7ff3b8b35d341fcf7fd2e35b0ed3aa505"
+    },
+    "candidate-fault/fixture-only.conf": {
+      "bytes": 40,
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c"
+    },
+    "candidate-fault/owner.ready": {
+      "bytes": 6,
+      "sha256": "08039cf3003e358ebc2ad61bdefb67dcaf6628019ebe6ade0333f4cfb9ec7466"
+    },
+    "fake-rpc-calls.json": {
+      "bytes": 703,
+      "sha256": "d1ef22fdef8cfedb4ae02b126ce17ca7e1aa9b89c6ff44766162ede389160d88"
+    },
+    "fixture_owner.py": {
+      "bytes": 195,
+      "sha256": "4188f654e49728e201b84bd44d549a9e505ee1e07ff16457426066062b7f6a50"
+    },
+    "fsync-events.json": {
+      "bytes": 13611,
+      "sha256": "3449ac692eda0f0a2ba7e2fe410b1af2688feeca1af76cf73e155f53db927fc6"
+    },
+    "journal-parent-fault/fixture-base/private/run-publisher-workflow.py": {
+      "bytes": 262,
+      "sha256": "575fb6a1b3b798e2de4caf9517ac690165a602c3570461b6fd718e3f41f53fb7"
+    },
+    "journal-parent-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py": {
+      "bytes": 20,
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7"
+    },
+    "journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/000-PREPARED.json": {
+      "bytes": 562,
+      "sha256": "9121cb1dbb133f1ece2e4be82b2921b41a6d2218c82a29378d05aed5b67e4515"
+    },
+    "journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/wrapper.candidate.py": {
+      "bytes": 262,
+      "sha256": "d4c8b298a5483e74a12a6b856497f1183058676d6421d9259c249542c4f106a6"
+    },
+    "journal-parent-fault/fixture-manifest.json": {
+      "bytes": 1799,
+      "sha256": "ca1036183b03629d2e0ae10fc3da4168f0a9dc3522db3ca46c794ceaabe70c8c"
+    },
+    "journal-parent-fault/fixture-only.conf": {
+      "bytes": 40,
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c"
+    },
+    "journal-parent-fault/owner.ready": {
+      "bytes": 6,
+      "sha256": "787bae4bbe93ed1472ad066e2517365d7241929bae344d96cc0ed23956d6ee3d"
+    },
+    "publisher_handover_draft_20261028.py": {
+      "bytes": 30707,
+      "sha256": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc"
+    },
+    "publisher_handover_leaf_probe_20261028.py": {
+      "bytes": 14530,
+      "sha256": "5e7d5ba39fbee8975e55800b9165fe697e031e46fd4cfa6bc30e10a2094fcd88"
+    },
+    "success/fixture-base/private/run-publisher-workflow.py": {
+      "bytes": 249,
+      "sha256": "e5a9373d0b34203dc52f5e3bac92412d403ba1229f39789bc7187acc26fd10fc"
+    },
+    "success/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py": {
+      "bytes": 20,
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7"
+    },
+    "success/fixture-evidence/publisher-handover-success/000-PREPARED.json": {
+      "bytes": 562,
+      "sha256": "3ac030255624924e4ae396f9ce458d8cbc8a5b1015b0215081ece72e608cca22"
+    },
+    "success/fixture-evidence/publisher-handover-success/private/wrapper.old.py": {
+      "bytes": 249,
+      "sha256": "a44ed5d48b7743cb138d2bd6c547714832e7b8c5d5c19de5414c40d23eaa35ba"
+    },
+    "success/fixture-evidence/publisher-handover-success/wrapper.candidate.py": {
+      "bytes": 249,
+      "sha256": "e5a9373d0b34203dc52f5e3bac92412d403ba1229f39789bc7187acc26fd10fc"
+    },
+    "success/fixture-manifest.json": {
+      "bytes": 1708,
+      "sha256": "8d4e5b2ba2d631feef594656ed181d3bff336ac6c25a7980e0fac2e17456b812"
+    },
+    "success/fixture-only.conf": {
+      "bytes": 40,
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c"
+    },
+    "success/owner.ready": {
+      "bytes": 6,
+      "sha256": "cf8d9d145a1e029eebd7d00799e1cdfb24be3a8bbaab6a6def87bd77b4be3c43"
+    },
+    "summary.json": {
+      "bytes": 11633,
+      "sha256": "f0ef852bfaebb9ed9b78edc90745a745aaf0158e11a8b84d835f1e3146853f34"
+    },
+    "written-bytes-fault/fixture-base/private/run-publisher-workflow.py": {
+      "bytes": 261,
+      "sha256": "f2f1c6e1377ca5a80fc802046c182a8488e5aba5b1ea9d592455a145a7688dfd"
+    },
+    "written-bytes-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py": {
+      "bytes": 20,
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7"
+    },
+    "written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/000-PREPARED.json": {
+      "bytes": 562,
+      "sha256": "9fb1c8089e6e6e9f01aa2e45fad5c42385a329ddd7c202a7e14529fde73b05c0"
+    },
+    "written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/private/wrapper.old.py": {
+      "bytes": 261,
+      "sha256": "f2f1c6e1377ca5a80fc802046c182a8488e5aba5b1ea9d592455a145a7688dfd"
+    },
+    "written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/wrapper.candidate.py": {
+      "bytes": 261,
+      "sha256": "a6614aa6c77c4cba75e97a75b9de827adb4d624d1e4320f97ed4e061c3827e2c"
+    },
+    "written-bytes-fault/fixture-manifest.json": {
+      "bytes": 1792,
+      "sha256": "8d0f3ba30f1a626ba7957f6ae3b5904ab5bee613e9672d359dc590aa99918a5f"
+    },
+    "written-bytes-fault/fixture-only.conf": {
+      "bytes": 40,
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c"
+    },
+    "written-bytes-fault/owner.ready": {
+      "bytes": 6,
+      "sha256": "494934c0abe7a57b8d0872b79796d53dc703cc290fa069f8025087fda7156121"
+    }
+  },
+  "scope": "LOCAL_COMPLETED_FIXTURE_REVIEW_ONLY",
+  "source_sha256": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc",
+  "state": "PASS",
+  "summary_sha256": "f0ef852bfaebb9ed9b78edc90745a745aaf0158e11a8b84d835f1e3146853f34",
+  "testcase_sha256": "5e7d5ba39fbee8975e55800b9165fe697e031e46fd4cfa6bc30e10a2094fcd88",
+  "total_regular_files": 47,
+  "transport_files_excluded_from_safe_payloads": [
+    "ssh.stdout.log",
+    "ssh.stderr.log",
+    "transport-receipt.json"
+  ]
+}

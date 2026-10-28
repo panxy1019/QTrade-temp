@@ -1,0 +1,21 @@
+{
+  "scope": "READ_ONLY_ACTUAL_EXPORT_GIT_PUBLIC_INDEX_API_OBSERVATIONS",
+  "state": "STALE_TRANSPORT",
+  "production_mutations": false,
+  "files": [
+    {
+      "path": "public-probe.json",
+      "bytes": 22073,
+      "sha256": "fe3091d98d46c5bfda185778d341c54d1b450787683bd7fb48026d7138bdc134",
+      "original_bytes": 22073,
+      "original_sha256": "fe3091d98d46c5bfda185778d341c54d1b450787683bd7fb48026d7138bdc134"
+    },
+    {
+      "path": "cluster-layers.json.gz",
+      "bytes": 1131389,
+      "sha256": "31ef91024bb08cf3af6088e636f3bbe0731cf1111550d0988cae2d34644eb717",
+      "original_bytes": 4334256,
+      "original_sha256": "0823c498de0f8943b61950604f77b05c2a2454207f4c77424df5d51481cbb842"
+    }
+  ]
+}

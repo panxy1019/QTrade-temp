@@ -1,0 +1,18 @@
+{
+  "bytes": 623,
+  "calls_os_execv": true,
+  "calls_os_execve": false,
+  "calls_os_execvp": false,
+  "has_dash_m_literal": true,
+  "has_loop_ast": false,
+  "has_module_literal": true,
+  "has_script_filename_literal": false,
+  "has_subprocess_call_ast": false,
+  "mode": "0o700",
+  "nlink": 1,
+  "old_release_exact_occurrences": 1,
+  "private_body_recorded": false,
+  "production_mutation": false,
+  "python_ast_valid": true,
+  "sha256": "b0dca3c97d79995f7c8a6ab988b9e5cc469f59b40ffb02147bf72e05565b5c8f"
+}

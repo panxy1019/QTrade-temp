@@ -1,0 +1,240 @@
+{
+  "current_freeze_evidence_sha256": "7439a61ee403f81479c68deb97c62c84ef75e4f962c464b149b4774150620f2e",
+  "evidence": {
+    "afternoon_benchmark": {
+      "bytes": 3239,
+      "path": "E:\\QTrade-temp\\cluster-evidence\\market-afternoon-git-nfs-20261028T060141Z\\frozen-export-no-profile.json",
+      "sha256": "fa6520d40e9846d31e804e842c0d568b96cc7f79dc87a2db570e906e015ba653"
+    },
+    "afternoon_freeze": {
+      "bytes": 1843,
+      "path": "E:\\QTrade-temp\\cluster-evidence\\market-current-freeze-20261028T055837Z\\freeze.json",
+      "sha256": "55d77efce14e9543c730fa6938477d0eb2b1b03608337f4261674f87e15cb66c"
+    },
+    "bridge_bindings": {
+      "bytes": 672,
+      "path": "E:\\QTrade-temp\\publisher-bridge-readonly-bindings-20261028.json",
+      "sha256": "b79c7d27a83d8380fb45359848f32ab266bbdd17ec25e57ebef09ac308f3ec1c"
+    },
+    "bridge_draft": {
+      "bytes": 12707,
+      "path": "E:\\QTrade-temp\\publisher_handover_bridge_draft_20261028.py",
+      "sha256": "1649a768667cba95dba93e540a0079f0beebc8234e2590179910a73cabc3bbfc"
+    },
+    "bridge_tests": {
+      "bytes": 2020,
+      "path": "E:\\QTrade-temp\\publisher-handover-bridge-tests-20261028.xml",
+      "sha256": "98ca3e6ae69906952296647bd9cc960d02f8fae5a125ad2dc46f5fabc16d0c7d"
+    },
+    "candidate_linux_tests": {
+      "bytes": 60070,
+      "path": "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-prefetch-candidate-20261028T054748Z\\pytest.xml",
+      "sha256": "4a9532f08264fc4270fbcad4840c388c300ec343aa581a37fd05549d717ea2b2"
+    },
+    "candidate_manifest": {
+      "bytes": 654,
+      "path": "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-prefetch-candidate-20261028T054748Z\\candidate-manifest.json",
+      "sha256": "fd8d11be151b3adac9455f73fd72f6cff9bc4ddc3c1be07842bb280f7d279b7a"
+    },
+    "final_git_source": {
+      "bytes": 245084,
+      "path": "E:\\QTrade-temp\\cluster-evidence\\market-afternoon-git-nfs-20261028T060141Z\\git-source-manifest.json",
+      "sha256": "c887964410956fb807c3869543301b2bda8c2c722f8fa10eb0169ad970768cf7"
+    },
+    "final_git_verification": {
+      "bytes": 92,
+      "path": "E:\\QTrade-temp\\cluster-evidence\\market-afternoon-git-nfs-20261028T060141Z\\verify.log",
+      "sha256": "771187f83b18765de6cf7cd23fe03baf4889520d6867e83ea7e8d49a1553d7bb"
+    },
+    "leaf_independent_review": {
+      "bytes": 16863,
+      "path": "E:\\QTrade-temp\\publisher-handover-leaf-independent-review-20261028.json",
+      "sha256": "4dbd9e4b26d6994da8cfc44e05dea8f89358295bf5bb6b90843d7b0a0b742605"
+    },
+    "leaf_summary": {
+      "bytes": 11633,
+      "path": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\summary.json",
+      "sha256": "f0ef852bfaebb9ed9b78edc90745a745aaf0158e11a8b84d835f1e3146853f34"
+    },
+    "old_freeze_benchmark": {
+      "bytes": 4218,
+      "path": "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-prefetch-candidate-20261028T054748Z\\frozen-export-no-profile.json",
+      "sha256": "18106d6849c472c762f86265abf790103f980b0b5b2bda5cd735d0c80c2d4843"
+    },
+    "old_freeze_oracle": {
+      "bytes": 3856,
+      "path": "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-independent-oracle-20261028T055202Z\\oracle-report.json",
+      "sha256": "3694a81fc28fe8f0fe9946088c6e9f670550407446caa5b9ca5ffacd023633e8"
+    },
+    "operator_draft": {
+      "bytes": 30707,
+      "path": "E:\\QTrade-temp\\publisher_handover_draft_20261028.py",
+      "sha256": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc"
+    },
+    "source_review": {
+      "bytes": 11719,
+      "path": "E:\\QTrade-temp\\export-source-prefetch-review-20261028.md",
+      "sha256": "4ac9f183d30bb7298cf13ada9185714dc148fb847f9b8da0afdca08d07d8d758"
+    },
+    "supervisor_safe_manifest": {
+      "bytes": 20580,
+      "path": "E:\\QTrade-temp\\supervisor-semantics-safe-evidence-20261028\\payload-manifest.json",
+      "sha256": "9e67c7aa22a723ce30a95e87cfd4e8837de7d2ab42bbb063b61f50c66166a8fe"
+    },
+    "supervisor_semantics": {
+      "bytes": 17239,
+      "path": "E:\\QTrade-temp\\supervisor-semantics-safe-evidence-20261028\\rpc-pass\\summary.json",
+      "sha256": "4d0ded50acb12a3658e9ac5e2a810413008822a5cb59a34b05a72fb50af79166"
+    },
+    "wrapper_format": {
+      "bytes": 525,
+      "path": "E:\\QTrade-temp\\publisher-wrapper-format-20261028.json",
+      "sha256": "47233414068564f17c723e484c13cb61e77a006b23406da31a2419c9c3612480"
+    }
+  },
+  "mapping": [
+    {
+      "evidence": [
+        "final_git_source",
+        "final_git_verification"
+      ],
+      "fields": "manifest.new_revision / runtime_files / source_inventory",
+      "mapping_and_limits": "Full aaca9d7bc550cffcf75e6939f7bc251574ecbbda Git archive,1821 files verified. Populate actual immutable release inventory/import audit; no uncommitted retag or default file count.",
+      "status": "AVAILABLE_FINAL_GIT_NOT_DEPLOYED"
+    },
+    {
+      "evidence": [
+        "afternoon_freeze"
+      ],
+      "fields": "manifest.required_freeze / gates.freeze",
+      "mapping_and_limits": "Use new 4860 batches/120685 chunks, clock05:58:40.189606Z, evidence7439a61e..., ledger9115831a..., catalog7d04fa4f... with exact windows. Old4200 freeze is historical scope.",
+      "status": "AVAILABLE_AFTERNOON_FREEZE"
+    },
+    {
+      "evidence": [
+        "afternoon_benchmark"
+      ],
+      "fields": "gates.cold state/elapsed/wall",
+      "mapping_and_limits": "Cold FAILED UNIFIED_MARKET_TIME_BUDGET, wall45.247439s, empty decode and zero objects at start. No export_seconds success metric exists; do not derive or fill it from wall.",
+      "status": "BLOCKED_LATEST_COLD_FAILED"
+    },
+    {
+      "evidence": [
+        "afternoon_benchmark"
+      ],
+      "fields": "gates.warm / repeat",
+      "mapping_and_limits": "Warm39.209export/39.568944wall succeeded after failed cold with5651 existing objects. It does not supply a successful current cold/warm pair or repeat stability.",
+      "status": "WARM_ONLY_NOT_A_PASS_PAIR"
+    },
+    {
+      "evidence": [
+        "old_freeze_benchmark",
+        "candidate_manifest"
+      ],
+      "fields": "old cold/warm performance",
+      "mapping_and_limits": "Old4200 cold44.466431/44.860369 and warm33.691126/33.992167 remain valid for those bytes/freeze. Never substitute for new4860 failure or rewrite old receipt.",
+      "status": "PASS_OLD_FREEZE_UNCOMMITTED_ONLY"
+    },
+    {
+      "evidence": [
+        "afternoon_benchmark"
+      ],
+      "fields": "filesystem production equivalence / mountinfo",
+      "mapping_and_limits": "Existing output/production st_dev66+statfs=nfs is actual same-NFS evidence. New reviewed receipt may add selected mountinfo hash/mount-id/device and after recheck; do not edit old receipt.",
+      "status": "PARTIAL_VALID_SAME_NFS_NEW_MOUNTINFO_PENDING"
+    },
+    {
+      "evidence": [
+        "afternoon_benchmark"
+      ],
+      "fields": "cold.new_process / empty destination/decode",
+      "mapping_and_limits": "decoded_cache_empty_at_start=true and destination_objects_at_start=0. Launch command supports fresh-process inference; bind actual process/test source in new successful receipt. No manual-prewarm assumption may be invented.",
+      "status": "EMPTY_OBSERVED_BUT_COLD_FAILED"
+    },
+    {
+      "evidence": [
+        "afternoon_benchmark",
+        "source_review"
+      ],
+      "fields": "measured source/cache / unchanged_runtime_policy",
+      "mapping_and_limits": "Warm physical source206638600 bytes; final cached_rows70536/estimated127999793. Cache evicts only at export start then grows monotonically, so final==per-export peak can be a labeled reviewed derivation, not relabeled instrumentation. New runs may record peak explicitly. Keep45/512000000/100000/128000000/Git90/cleanup2+2.",
+      "status": "SOURCE_ACTUAL_CACHE_PEAK_DERIVATION_REVIEW_REQUIRED"
+    },
+    {
+      "evidence": [
+        "afternoon_benchmark",
+        "old_freeze_oracle"
+      ],
+      "fields": "current_oracle new freeze / index / objects",
+      "mapping_and_limits": "Separate old4200 oracle PASS validates3000 entries/5986 exact shards/104501 captures/182458 normalized rows. New4860 warm indexae13e954... still has full audit=PENDING; requires its own raw/normalized/all-shard/lineage proof.",
+      "status": "PENDING_NEW4860_FULL_ORACLE"
+    },
+    {
+      "evidence": [
+        "old_freeze_oracle"
+      ],
+      "fields": "output_objects_manifest_sha256",
+      "mapping_and_limits": "Canonical sorted output shard refs may produce a new explicitly derived manifest bound to exact index raw SHA and oracle byte verification. Input source_manifest_bindings_sha256 is batch lineage and MUST NOT fill this output field. Existing report has no output-object-manifest field.",
+      "status": "DERIVE_ONLY_FROM_SUCCESS_INDEX_REFS_THEN_ORACLE_BIND"
+    },
+    {
+      "evidence": [
+        "candidate_linux_tests",
+        "source_review",
+        "final_git_source"
+      ],
+      "fields": "tests / independent_review / source_import_audit",
+      "mapping_and_limits": "Candidate Linux suite398pass/0skip plus independent reviewed exact five-file hashes. Bind final committed Git inventory and exact reviewed source; final release import-origin audit remains distinct. No458 numeric defaults.",
+      "status": "CANDIDATE_TESTS_AVAILABLE_FINAL_BINDING_PENDING"
+    },
+    {
+      "evidence": [
+        "supervisor_semantics",
+        "supervisor_safe_manifest"
+      ],
+      "fields": "supervisor_semantics / signal_contract",
+      "mapping_and_limits": "Same binary normalexit+112s drain autorestarts once, controls unchanged/clean. Named-program RPC is non-CAS, reply not delivery proof; pidfdENOSYS remains preserved.",
+      "status": "AVAILABLE_BOUNDED_ISOLATED_PASS"
+    },
+    {
+      "evidence": [
+        "wrapper_format",
+        "bridge_bindings",
+        "leaf_summary"
+      ],
+      "fields": "old_owner / config / wrapper / reader bindings",
+      "mapping_and_limits": "Wrapper hash b0dca3c9...623bytes Pythonexecv/-m; reader3dd14200/context75fcf pins; socketstat dev61/inode9666103661/uid0. Refresh/check actual config hashes/settings, owner identity/env and socket before action. No private bodies archived.",
+      "status": "PINNED_PRIOR_PROOF_RECHECK_BEFORE_MUTATION"
+    },
+    {
+      "evidence": [
+        "operator_draft",
+        "leaf_summary",
+        "leaf_independent_review"
+      ],
+      "fields": "journal / backup / exact wrapper replacement",
+      "mapping_and_limits": "Five real overlay file leaves PASS,43internal payload hashes+summary independently checked, all fixture children clean. Real NFS/power-loss durability not claimed.",
+      "status": "LINUX_OVERLAY_LEAF_PASS"
+    },
+    {
+      "evidence": [
+        "bridge_draft",
+        "bridge_tests",
+        "bridge_bindings"
+      ],
+      "fields": "bridge check/prepare / PID/import callback",
+      "mapping_and_limits": "12mock/serialization/no-retry tests PASS. Prepare uses readonly helper/RPC, no phase intent or wrapper/signal. Runtime probe checks actualPID/cwd/env/files and PathFinder resolution replay; no live sys.modules/stack introspection. Old complete file inventory is required or proof stays pending.",
+      "status": "PREPARATION_ONLY_TESTED_WITH_MOCKS"
+    },
+    {
+      "evidence": [],
+      "fields": "old natural exit / one restart / ordinary public chain",
+      "mapping_and_limits": "PROVISIONAL_RUNTIME_READY is not handover/public acceptance. Preserve after owner/context/books differences; never restore. Require naturalexit/cleanup/once restart logs and ordinary autonomous export/index/Git/public/API proof separately.",
+      "status": "FUTURE_PRODUCTION_EVIDENCE_NOT_RUN"
+    }
+  ],
+  "production_gate_bundle_constructed": false,
+  "production_mutation": false,
+  "source_revision": "aaca9d7bc550cffcf75e6939f7bc251574ecbbda",
+  "state": "BLOCKED_CURRENT_COLD_FAIL_NO_PRODUCTION_PASS_BUNDLE"
+}

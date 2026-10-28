@@ -1,0 +1,26 @@
+{
+  "attempt_root": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success",
+  "fixture_only": true,
+  "new_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "old_owner": {
+    "cmdline_sha256": "6e853b8872543fe1430263d8ebe95e83c4ba1200fffc17a2a13f904017d2d31a",
+    "cwd_sha256": "ebd77e94b9a35ee7198b06dabd9430e8abf88982794a5f1b265febf5545f66b7",
+    "live_trading_enabled": false,
+    "pid": 527097,
+    "ppid": 527095,
+    "pythonpath_sha256": "a18ae68a27bb164edc61f31ec74943a801fb0982d184b5eca54ee99fc97adb94",
+    "start_ticks": "1019901561"
+  },
+  "old_revision": "b2386c3e53c766d9e9512e6ca0f5116583aa13c2",
+  "release_root": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "runtime_files": {
+    "fixture_module.py": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7"
+  },
+  "supervisor_config_files": {
+    "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-only.conf": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c"
+  },
+  "wrapper_candidate": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success/wrapper.candidate.py",
+  "wrapper_new_sha256": "e5a9373d0b34203dc52f5e3bac92412d403ba1229f39789bc7187acc26fd10fc",
+  "wrapper_old_sha256": "a44ed5d48b7743cb138d2bd6c547714832e7b8c5d5c19de5414c40d23eaa35ba",
+  "wrapper_target": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-base/private/run-publisher-workflow.py"
+}

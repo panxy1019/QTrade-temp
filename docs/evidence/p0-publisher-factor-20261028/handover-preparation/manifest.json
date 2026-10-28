@@ -1,0 +1,638 @@
+{
+  "credential_helper_or_secrets_included": false,
+  "external_reference": {
+    "copied_into_new_pack": false,
+    "git_commit": "453ad2eff6e636d5c8703f48176f5b9bdb32746e",
+    "payload_count": 69,
+    "payload_manifest_sha256": "9e67c7aa22a723ce30a95e87cfd4e8837de7d2ab42bbb063b61f50c66166a8fe",
+    "repository_path": "docs/evidence/p0-publisher-factor-20261028/supervisor-semantics",
+    "scope": "PRIOR_NAMED_RPC_PASS_AND_ORIGINAL_PIDFD_IMPORT_FAILURES_WITH_CLEANUP"
+  },
+  "fixture_private_files_are_synthetic": true,
+  "groups": {
+    "FINAL_DRAFT_AND_PURE_TEST_SOURCE": 4,
+    "MOCK_GREEN_AND_ORIGINAL_RED_RETAINED": 5,
+    "PACK_SCOPE_AND_REPRODUCTION": 1,
+    "READONLY_HASH_BOOLEAN_SOCKET_METADATA_ONLY": 2,
+    "REVIEWS_AND_NONPASS_GATE_MAP": 8,
+    "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS": 9,
+    "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP": 44
+  },
+  "included_new_payloads": [
+    {
+      "bytes": 3232,
+      "group": "PACK_SCOPE_AND_REPRODUCTION",
+      "path": "README.md",
+      "sha256": "6c4ed9524baf921a7755494ca3f3fb2f45d4bda99fe2dea70e6e4f0b451cc6d3",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-safe-pack-readme-20261028.md"
+    },
+    {
+      "bytes": 12707,
+      "group": "FINAL_DRAFT_AND_PURE_TEST_SOURCE",
+      "path": "drafts/publisher_handover_bridge_draft_20261028.py",
+      "sha256": "1649a768667cba95dba93e540a0079f0beebc8234e2590179910a73cabc3bbfc",
+      "source_provenance": "E:\\QTrade-temp\\publisher_handover_bridge_draft_20261028.py"
+    },
+    {
+      "bytes": 30707,
+      "group": "FINAL_DRAFT_AND_PURE_TEST_SOURCE",
+      "path": "drafts/publisher_handover_draft_20261028.py",
+      "sha256": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc",
+      "source_provenance": "E:\\QTrade-temp\\publisher_handover_draft_20261028.py"
+    },
+    {
+      "bytes": 7125,
+      "group": "FINAL_DRAFT_AND_PURE_TEST_SOURCE",
+      "path": "drafts/test_publisher_handover_bridge_20261028.py",
+      "sha256": "c65fbdb8ad5139717c8f34d19a6f9b93fa21af47e24ebc4675a9e5ac5b540f8e",
+      "source_provenance": "E:\\QTrade-temp\\test_publisher_handover_bridge_20261028.py"
+    },
+    {
+      "bytes": 24631,
+      "group": "FINAL_DRAFT_AND_PURE_TEST_SOURCE",
+      "path": "drafts/test_publisher_handover_draft_20261028.py",
+      "sha256": "6eba26283726e2c2b2fae81fac0a5d7005a642cdbeae47cb080c76354b49e201",
+      "source_provenance": "E:\\QTrade-temp\\test_publisher_handover_draft_20261028.py"
+    },
+    {
+      "bytes": 3239,
+      "group": "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS",
+      "path": "gate-evidence/afternoon_benchmark-frozen-export-no-profile.json",
+      "sha256": "fa6520d40e9846d31e804e842c0d568b96cc7f79dc87a2db570e906e015ba653",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\market-afternoon-git-nfs-20261028T060141Z\\frozen-export-no-profile.json"
+    },
+    {
+      "bytes": 1843,
+      "group": "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS",
+      "path": "gate-evidence/afternoon_freeze-freeze.json",
+      "sha256": "55d77efce14e9543c730fa6938477d0eb2b1b03608337f4261674f87e15cb66c",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\market-current-freeze-20261028T055837Z\\freeze.json"
+    },
+    {
+      "bytes": 60070,
+      "group": "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS",
+      "path": "gate-evidence/candidate_linux_tests-pytest.xml",
+      "sha256": "4a9532f08264fc4270fbcad4840c388c300ec343aa581a37fd05549d717ea2b2",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-prefetch-candidate-20261028T054748Z\\pytest.xml"
+    },
+    {
+      "bytes": 654,
+      "group": "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS",
+      "path": "gate-evidence/candidate_manifest-candidate-manifest.json",
+      "sha256": "fd8d11be151b3adac9455f73fd72f6cff9bc4ddc3c1be07842bb280f7d279b7a",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-prefetch-candidate-20261028T054748Z\\candidate-manifest.json"
+    },
+    {
+      "bytes": 245084,
+      "group": "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS",
+      "path": "gate-evidence/final_git_source-git-source-manifest.json",
+      "sha256": "c887964410956fb807c3869543301b2bda8c2c722f8fa10eb0169ad970768cf7",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\market-afternoon-git-nfs-20261028T060141Z\\git-source-manifest.json"
+    },
+    {
+      "bytes": 92,
+      "group": "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS",
+      "path": "gate-evidence/final_git_verification-verify.log",
+      "sha256": "771187f83b18765de6cf7cd23fe03baf4889520d6867e83ea7e8d49a1553d7bb",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\market-afternoon-git-nfs-20261028T060141Z\\verify.log"
+    },
+    {
+      "bytes": 4218,
+      "group": "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS",
+      "path": "gate-evidence/old_freeze_benchmark-frozen-export-no-profile.json",
+      "sha256": "18106d6849c472c762f86265abf790103f980b0b5b2bda5cd735d0c80c2d4843",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-prefetch-candidate-20261028T054748Z\\frozen-export-no-profile.json"
+    },
+    {
+      "bytes": 3856,
+      "group": "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS",
+      "path": "gate-evidence/old_freeze_oracle-oracle-report.json",
+      "sha256": "3694a81fc28fe8f0fe9946088c6e9f670550407446caa5b9ca5ffacd023633e8",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-independent-oracle-20261028T055202Z\\oracle-report.json"
+    },
+    {
+      "bytes": 11719,
+      "group": "SCOPED_REAL_EVIDENCE_NOT_PRODUCTION_PASS",
+      "path": "gate-evidence/source_review-export-source-prefetch-review-20261028.md",
+      "sha256": "4ac9f183d30bb7298cf13ada9185714dc148fb847f9b8da0afdca08d07d8d758",
+      "source_provenance": "E:\\QTrade-temp\\export-source-prefetch-review-20261028.md"
+    },
+    {
+      "bytes": 260,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/backup-fsync-fault/fixture-base/private/run-publisher-workflow.py",
+      "sha256": "8628d7cbae19485c99b4eae3a110dc8721f1d9d6f8ab5b468df7e79ef6213719",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-base\\private\\run-publisher-workflow.py"
+    },
+    {
+      "bytes": 20,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/backup-fsync-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py"
+    },
+    {
+      "bytes": 562,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/000-PREPARED.json",
+      "sha256": "5328f4031854747059bd9d3c1c9ce1d841f4b2f2bf65b12cf9433b8979474d95",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-evidence\\publisher-handover-backup-fsync-fault\\000-PREPARED.json"
+    },
+    {
+      "bytes": 260,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/private/wrapper.old.py",
+      "sha256": "8628d7cbae19485c99b4eae3a110dc8721f1d9d6f8ab5b468df7e79ef6213719",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-evidence\\publisher-handover-backup-fsync-fault\\private\\wrapper.old.py"
+    },
+    {
+      "bytes": 260,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/wrapper.candidate.py",
+      "sha256": "ecbc3b70eb82b5521eda959b8f33b6dd2fdeb6cedb06c986d2d1787b129d669c",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-evidence\\publisher-handover-backup-fsync-fault\\wrapper.candidate.py"
+    },
+    {
+      "bytes": 1785,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/backup-fsync-fault/fixture-manifest.json",
+      "sha256": "c4048fcbf54a3abbe1ad544a9f669633dbb449285daedb4065d468ae6831538d",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-manifest.json"
+    },
+    {
+      "bytes": 40,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/backup-fsync-fault/fixture-only.conf",
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-only.conf"
+    },
+    {
+      "bytes": 6,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/backup-fsync-fault/owner.ready",
+      "sha256": "7c0a1a48f651b4439cf183e7225f4ae75944282c85042cbe836ec5b15a1e624a",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\owner.ready"
+    },
+    {
+      "bytes": 257,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/candidate-fault/fixture-base/private/run-publisher-workflow.py",
+      "sha256": "d00c32067bed1c1dc4026f0f3e79c3446bc48f38162bb97f8617b80810b5e42b",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-base\\private\\run-publisher-workflow.py"
+    },
+    {
+      "bytes": 20,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/candidate-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py"
+    },
+    {
+      "bytes": 562,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/candidate-fault/fixture-evidence/publisher-handover-candidate-fault/000-PREPARED.json",
+      "sha256": "75488e21c2b0f3476fbfb21ae252714ec020b7ca98a3b4273ec7b19ae84f4738",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-evidence\\publisher-handover-candidate-fault\\000-PREPARED.json"
+    },
+    {
+      "bytes": 276,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/candidate-fault/fixture-evidence/publisher-handover-candidate-fault/wrapper.candidate.py",
+      "sha256": "490bd3e0bd19943b7acf05c489c58f3ae68fe7f2b0bec6bae2ed08bfab1b02ef",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-evidence\\publisher-handover-candidate-fault\\wrapper.candidate.py"
+    },
+    {
+      "bytes": 1764,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/candidate-fault/fixture-manifest.json",
+      "sha256": "fcb64eeda8ba51f331882bb5f862d6a7ff3b8b35d341fcf7fd2e35b0ed3aa505",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-manifest.json"
+    },
+    {
+      "bytes": 40,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/candidate-fault/fixture-only.conf",
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-only.conf"
+    },
+    {
+      "bytes": 6,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/candidate-fault/owner.ready",
+      "sha256": "08039cf3003e358ebc2ad61bdefb67dcaf6628019ebe6ade0333f4cfb9ec7466",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\owner.ready"
+    },
+    {
+      "bytes": 703,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/fake-rpc-calls.json",
+      "sha256": "d1ef22fdef8cfedb4ae02b126ce17ca7e1aa9b89c6ff44766162ede389160d88",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\fake-rpc-calls.json"
+    },
+    {
+      "bytes": 195,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/fixture_owner.py",
+      "sha256": "4188f654e49728e201b84bd44d549a9e505ee1e07ff16457426066062b7f6a50",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\fixture_owner.py"
+    },
+    {
+      "bytes": 13611,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/fsync-events.json",
+      "sha256": "3449ac692eda0f0a2ba7e2fe410b1af2688feeca1af76cf73e155f53db927fc6",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\fsync-events.json"
+    },
+    {
+      "bytes": 262,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/journal-parent-fault/fixture-base/private/run-publisher-workflow.py",
+      "sha256": "575fb6a1b3b798e2de4caf9517ac690165a602c3570461b6fd718e3f41f53fb7",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-base\\private\\run-publisher-workflow.py"
+    },
+    {
+      "bytes": 20,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/journal-parent-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py"
+    },
+    {
+      "bytes": 562,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/000-PREPARED.json",
+      "sha256": "9121cb1dbb133f1ece2e4be82b2921b41a6d2218c82a29378d05aed5b67e4515",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-evidence\\publisher-handover-journal-parent-fault\\000-PREPARED.json"
+    },
+    {
+      "bytes": 262,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/wrapper.candidate.py",
+      "sha256": "d4c8b298a5483e74a12a6b856497f1183058676d6421d9259c249542c4f106a6",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-evidence\\publisher-handover-journal-parent-fault\\wrapper.candidate.py"
+    },
+    {
+      "bytes": 1799,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/journal-parent-fault/fixture-manifest.json",
+      "sha256": "ca1036183b03629d2e0ae10fc3da4168f0a9dc3522db3ca46c794ceaabe70c8c",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-manifest.json"
+    },
+    {
+      "bytes": 40,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/journal-parent-fault/fixture-only.conf",
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-only.conf"
+    },
+    {
+      "bytes": 6,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/journal-parent-fault/owner.ready",
+      "sha256": "787bae4bbe93ed1472ad066e2517365d7241929bae344d96cc0ed23956d6ee3d",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\owner.ready"
+    },
+    {
+      "bytes": 30707,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/publisher_handover_draft_20261028.py",
+      "sha256": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\publisher_handover_draft_20261028.py"
+    },
+    {
+      "bytes": 14530,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/publisher_handover_leaf_probe_20261028.py",
+      "sha256": "5e7d5ba39fbee8975e55800b9165fe697e031e46fd4cfa6bc30e10a2094fcd88",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\publisher_handover_leaf_probe_20261028.py"
+    },
+    {
+      "bytes": 249,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/success/fixture-base/private/run-publisher-workflow.py",
+      "sha256": "e5a9373d0b34203dc52f5e3bac92412d403ba1229f39789bc7187acc26fd10fc",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-base\\private\\run-publisher-workflow.py"
+    },
+    {
+      "bytes": 20,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/success/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py"
+    },
+    {
+      "bytes": 562,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/success/fixture-evidence/publisher-handover-success/000-PREPARED.json",
+      "sha256": "3ac030255624924e4ae396f9ce458d8cbc8a5b1015b0215081ece72e608cca22",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-evidence\\publisher-handover-success\\000-PREPARED.json"
+    },
+    {
+      "bytes": 249,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/success/fixture-evidence/publisher-handover-success/private/wrapper.old.py",
+      "sha256": "a44ed5d48b7743cb138d2bd6c547714832e7b8c5d5c19de5414c40d23eaa35ba",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-evidence\\publisher-handover-success\\private\\wrapper.old.py"
+    },
+    {
+      "bytes": 249,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/success/fixture-evidence/publisher-handover-success/wrapper.candidate.py",
+      "sha256": "e5a9373d0b34203dc52f5e3bac92412d403ba1229f39789bc7187acc26fd10fc",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-evidence\\publisher-handover-success\\wrapper.candidate.py"
+    },
+    {
+      "bytes": 1708,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/success/fixture-manifest.json",
+      "sha256": "8d4e5b2ba2d631feef594656ed181d3bff336ac6c25a7980e0fac2e17456b812",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-manifest.json"
+    },
+    {
+      "bytes": 40,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/success/fixture-only.conf",
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-only.conf"
+    },
+    {
+      "bytes": 6,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/success/owner.ready",
+      "sha256": "cf8d9d145a1e029eebd7d00799e1cdfb24be3a8bbaab6a6def87bd77b4be3c43",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\owner.ready"
+    },
+    {
+      "bytes": 11633,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/summary.json",
+      "sha256": "f0ef852bfaebb9ed9b78edc90745a745aaf0158e11a8b84d835f1e3146853f34",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\summary.json"
+    },
+    {
+      "bytes": 261,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/written-bytes-fault/fixture-base/private/run-publisher-workflow.py",
+      "sha256": "f2f1c6e1377ca5a80fc802046c182a8488e5aba5b1ea9d592455a145a7688dfd",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-base\\private\\run-publisher-workflow.py"
+    },
+    {
+      "bytes": 20,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/written-bytes-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+      "sha256": "f48889a10e6aae96400e7827d8625e01e196f66ec904d8e0beca73809caec0f7",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py"
+    },
+    {
+      "bytes": 562,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/000-PREPARED.json",
+      "sha256": "9fb1c8089e6e6e9f01aa2e45fad5c42385a329ddd7c202a7e14529fde73b05c0",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-evidence\\publisher-handover-written-bytes-fault\\000-PREPARED.json"
+    },
+    {
+      "bytes": 261,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/private/wrapper.old.py",
+      "sha256": "f2f1c6e1377ca5a80fc802046c182a8488e5aba5b1ea9d592455a145a7688dfd",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-evidence\\publisher-handover-written-bytes-fault\\private\\wrapper.old.py"
+    },
+    {
+      "bytes": 261,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/wrapper.candidate.py",
+      "sha256": "a6614aa6c77c4cba75e97a75b9de827adb4d624d1e4320f97ed4e061c3827e2c",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-evidence\\publisher-handover-written-bytes-fault\\wrapper.candidate.py"
+    },
+    {
+      "bytes": 1792,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/written-bytes-fault/fixture-manifest.json",
+      "sha256": "8d0f3ba30f1a626ba7957f6ae3b5904ab5bee613e9672d359dc590aa99918a5f",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-manifest.json"
+    },
+    {
+      "bytes": 40,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/written-bytes-fault/fixture-only.conf",
+      "sha256": "68297ba8973020cb6e67b5c14cdd1cefba9f47a28901c00c08c011c36cb2900c",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-only.conf"
+    },
+    {
+      "bytes": 6,
+      "group": "SYNTHETIC_OVERLAY_LEAF_WITH_CLEANUP",
+      "path": "linux-leaf/written-bytes-fault/owner.ready",
+      "sha256": "494934c0abe7a57b8d0872b79796d53dc703cc290fa069f8025087fda7156121",
+      "source_provenance": "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\owner.ready"
+    },
+    {
+      "bytes": 672,
+      "group": "READONLY_HASH_BOOLEAN_SOCKET_METADATA_ONLY",
+      "path": "readonly-hashes/publisher-bridge-readonly-bindings-20261028.json",
+      "sha256": "b79c7d27a83d8380fb45359848f32ab266bbdd17ec25e57ebef09ac308f3ec1c",
+      "source_provenance": "E:\\QTrade-temp\\publisher-bridge-readonly-bindings-20261028.json"
+    },
+    {
+      "bytes": 525,
+      "group": "READONLY_HASH_BOOLEAN_SOCKET_METADATA_ONLY",
+      "path": "readonly-hashes/publisher-wrapper-format-20261028.json",
+      "sha256": "47233414068564f17c723e484c13cb61e77a006b23406da31a2419c9c3612480",
+      "source_provenance": "E:\\QTrade-temp\\publisher-wrapper-format-20261028.json"
+    },
+    {
+      "bytes": 783,
+      "group": "REVIEWS_AND_NONPASS_GATE_MAP",
+      "path": "reviews/publisher-handover-bridge-independent-review-20261028.json",
+      "sha256": "a77ec3e6c9886584838a0eb7c9c36167f911df600507cb2ac62892c1535e544d",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-bridge-independent-review-20261028.json"
+    },
+    {
+      "bytes": 3861,
+      "group": "REVIEWS_AND_NONPASS_GATE_MAP",
+      "path": "reviews/publisher-handover-bridge-review-20261028.md",
+      "sha256": "df53f8f79b9ec1bd33bfbe977c057747a4e4dc550ae1fd07b567437cdb8fb336",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-bridge-review-20261028.md"
+    },
+    {
+      "bytes": 7600,
+      "group": "REVIEWS_AND_NONPASS_GATE_MAP",
+      "path": "reviews/publisher-handover-draft-notes-20261028.md",
+      "sha256": "8aaa03feb717094503f571a1f627836b4db536f856233641267d2f3ff841c850",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-draft-notes-20261028.md"
+    },
+    {
+      "bytes": 12013,
+      "group": "REVIEWS_AND_NONPASS_GATE_MAP",
+      "path": "reviews/publisher-handover-draft-review-20261028.md",
+      "sha256": "ee4ed8a6c79916e2c798ce300d6d8d126dc6a470ce62be3e5ea747194d1681ab",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-draft-review-20261028.md"
+    },
+    {
+      "bytes": 12128,
+      "group": "REVIEWS_AND_NONPASS_GATE_MAP",
+      "path": "reviews/publisher-handover-gate-evidence-map-20261028.json",
+      "sha256": "6839ae148b2ee5e9ca30e10999ec11cb99bbfede4191565d330b303a94e988e3",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-gate-evidence-map-20261028.json"
+    },
+    {
+      "bytes": 10307,
+      "group": "REVIEWS_AND_NONPASS_GATE_MAP",
+      "path": "reviews/publisher-handover-gate-evidence-map-20261028.md",
+      "sha256": "17a17ee0bccb44b999534b26ed7ebe7e174afc2193d9ff58047f9d88f01ec56c",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-gate-evidence-map-20261028.md"
+    },
+    {
+      "bytes": 16863,
+      "group": "REVIEWS_AND_NONPASS_GATE_MAP",
+      "path": "reviews/publisher-handover-leaf-independent-review-20261028.json",
+      "sha256": "4dbd9e4b26d6994da8cfc44e05dea8f89358295bf5bb6b90843d7b0a0b742605",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-leaf-independent-review-20261028.json"
+    },
+    {
+      "bytes": 21751,
+      "group": "REVIEWS_AND_NONPASS_GATE_MAP",
+      "path": "reviews/publisher-handover-leaf-local-review-20261028.json",
+      "sha256": "ea3b4ea0f1fd95f4a496a1f61e315550da9baccb10d137b767589333cd28ea9f",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-leaf-local-review-20261028.json"
+    },
+    {
+      "bytes": 2020,
+      "group": "MOCK_GREEN_AND_ORIGINAL_RED_RETAINED",
+      "path": "tests/publisher-handover-bridge-independent-tests-20261028.xml",
+      "sha256": "7adc5585a857af5484ac9703b6762f2c8114049d75d2d1076907da939772911d",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-bridge-independent-tests-20261028.xml"
+    },
+    {
+      "bytes": 2020,
+      "group": "MOCK_GREEN_AND_ORIGINAL_RED_RETAINED",
+      "path": "tests/publisher-handover-bridge-tests-20261028.xml",
+      "sha256": "98ca3e6ae69906952296647bd9cc960d02f8fae5a125ad2dc46f5fabc16d0c7d",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-bridge-tests-20261028.xml"
+    },
+    {
+      "bytes": 3207,
+      "group": "MOCK_GREEN_AND_ORIGINAL_RED_RETAINED",
+      "path": "tests/publisher-handover-bridge-tests-windows-mock-red-20261028.xml",
+      "sha256": "80aed676c06dbeb3c42bd975e493a17d673b4c7d8b831ca52af5350efe320aa5",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-bridge-tests-windows-mock-red-20261028.xml"
+    },
+    {
+      "bytes": 10196,
+      "group": "MOCK_GREEN_AND_ORIGINAL_RED_RETAINED",
+      "path": "tests/publisher-handover-independent-final-mock-tests-20261028.xml",
+      "sha256": "199df7dd6da6e2c1532559a7079bffb515ec77a1434b08414ca5957783a9bc1b",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-independent-final-mock-tests-20261028.xml"
+    },
+    {
+      "bytes": 10196,
+      "group": "MOCK_GREEN_AND_ORIGINAL_RED_RETAINED",
+      "path": "tests/publisher-handover-mock-tests-20261028.xml",
+      "sha256": "e68c06577fe34edf2ac50ba0fc87df3336e9098c848bdf5f44d5ca5cd20d80b0",
+      "source_provenance": "E:\\QTrade-temp\\publisher-handover-mock-tests-20261028.xml"
+    }
+  ],
+  "latest_gate_state": "BLOCKED_CURRENT_COLD_FAIL_NO_PRODUCTION_PASS_BUNDLE",
+  "payload_count": 73,
+  "production_apply": false,
+  "production_private_wrapper_config_env_bodies_included": false,
+  "production_raw_argv_included": false,
+  "retained_mock_red_is_not_recast_as_pass": true,
+  "source_to_external_reference": {
+    "E:\\QTrade-temp\\supervisor-semantics-safe-evidence-20261028\\payload-manifest.json": {
+      "copied_into_new_pack": false,
+      "file": "payload-manifest.json",
+      "git_commit": "453ad2eff6e636d5c8703f48176f5b9bdb32746e",
+      "payload_count": 69,
+      "payload_manifest_sha256": "9e67c7aa22a723ce30a95e87cfd4e8837de7d2ab42bbb063b61f50c66166a8fe",
+      "repository_path": "docs/evidence/p0-publisher-factor-20261028/supervisor-semantics",
+      "scope": "PRIOR_NAMED_RPC_PASS_AND_ORIGINAL_PIDFD_IMPORT_FAILURES_WITH_CLEANUP",
+      "sha256": "9e67c7aa22a723ce30a95e87cfd4e8837de7d2ab42bbb063b61f50c66166a8fe"
+    },
+    "E:\\QTrade-temp\\supervisor-semantics-safe-evidence-20261028\\rpc-pass\\summary.json": {
+      "copied_into_new_pack": false,
+      "file": "rpc-pass/summary.json",
+      "git_commit": "453ad2eff6e636d5c8703f48176f5b9bdb32746e",
+      "payload_count": 69,
+      "payload_manifest_sha256": "9e67c7aa22a723ce30a95e87cfd4e8837de7d2ab42bbb063b61f50c66166a8fe",
+      "repository_path": "docs/evidence/p0-publisher-factor-20261028/supervisor-semantics",
+      "scope": "PRIOR_NAMED_RPC_PASS_AND_ORIGINAL_PIDFD_IMPORT_FAILURES_WITH_CLEANUP",
+      "sha256": "4d0ded50acb12a3658e9ac5e2a810413008822a5cb59a34b05a72fb50af79166"
+    }
+  },
+  "source_to_pack": {
+    "E:\\QTrade-temp\\cluster-evidence\\market-afternoon-git-nfs-20261028T060141Z\\frozen-export-no-profile.json": "gate-evidence/afternoon_benchmark-frozen-export-no-profile.json",
+    "E:\\QTrade-temp\\cluster-evidence\\market-afternoon-git-nfs-20261028T060141Z\\git-source-manifest.json": "gate-evidence/final_git_source-git-source-manifest.json",
+    "E:\\QTrade-temp\\cluster-evidence\\market-afternoon-git-nfs-20261028T060141Z\\verify.log": "gate-evidence/final_git_verification-verify.log",
+    "E:\\QTrade-temp\\cluster-evidence\\market-current-freeze-20261028T055837Z\\freeze.json": "gate-evidence/afternoon_freeze-freeze.json",
+    "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-independent-oracle-20261028T055202Z\\oracle-report.json": "gate-evidence/old_freeze_oracle-oracle-report.json",
+    "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-prefetch-candidate-20261028T054748Z\\candidate-manifest.json": "gate-evidence/candidate_manifest-candidate-manifest.json",
+    "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-prefetch-candidate-20261028T054748Z\\frozen-export-no-profile.json": "gate-evidence/old_freeze_benchmark-frozen-export-no-profile.json",
+    "E:\\QTrade-temp\\cluster-evidence\\market-current-nfs-prefetch-candidate-20261028T054748Z\\pytest.xml": "gate-evidence/candidate_linux_tests-pytest.xml",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-base\\private\\run-publisher-workflow.py": "linux-leaf/backup-fsync-fault/fixture-base/private/run-publisher-workflow.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py": "linux-leaf/backup-fsync-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-evidence\\publisher-handover-backup-fsync-fault\\000-PREPARED.json": "linux-leaf/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/000-PREPARED.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-evidence\\publisher-handover-backup-fsync-fault\\private\\wrapper.old.py": "linux-leaf/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/private/wrapper.old.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-evidence\\publisher-handover-backup-fsync-fault\\wrapper.candidate.py": "linux-leaf/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/wrapper.candidate.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-manifest.json": "linux-leaf/backup-fsync-fault/fixture-manifest.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\fixture-only.conf": "linux-leaf/backup-fsync-fault/fixture-only.conf",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\backup-fsync-fault\\owner.ready": "linux-leaf/backup-fsync-fault/owner.ready",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-base\\private\\run-publisher-workflow.py": "linux-leaf/candidate-fault/fixture-base/private/run-publisher-workflow.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py": "linux-leaf/candidate-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-evidence\\publisher-handover-candidate-fault\\000-PREPARED.json": "linux-leaf/candidate-fault/fixture-evidence/publisher-handover-candidate-fault/000-PREPARED.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-evidence\\publisher-handover-candidate-fault\\wrapper.candidate.py": "linux-leaf/candidate-fault/fixture-evidence/publisher-handover-candidate-fault/wrapper.candidate.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-manifest.json": "linux-leaf/candidate-fault/fixture-manifest.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\fixture-only.conf": "linux-leaf/candidate-fault/fixture-only.conf",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\candidate-fault\\owner.ready": "linux-leaf/candidate-fault/owner.ready",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\fake-rpc-calls.json": "linux-leaf/fake-rpc-calls.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\fixture_owner.py": "linux-leaf/fixture_owner.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\fsync-events.json": "linux-leaf/fsync-events.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-base\\private\\run-publisher-workflow.py": "linux-leaf/journal-parent-fault/fixture-base/private/run-publisher-workflow.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py": "linux-leaf/journal-parent-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-evidence\\publisher-handover-journal-parent-fault\\000-PREPARED.json": "linux-leaf/journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/000-PREPARED.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-evidence\\publisher-handover-journal-parent-fault\\wrapper.candidate.py": "linux-leaf/journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/wrapper.candidate.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-manifest.json": "linux-leaf/journal-parent-fault/fixture-manifest.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\fixture-only.conf": "linux-leaf/journal-parent-fault/fixture-only.conf",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\journal-parent-fault\\owner.ready": "linux-leaf/journal-parent-fault/owner.ready",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\publisher_handover_draft_20261028.py": "linux-leaf/publisher_handover_draft_20261028.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\publisher_handover_leaf_probe_20261028.py": "linux-leaf/publisher_handover_leaf_probe_20261028.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-base\\private\\run-publisher-workflow.py": "linux-leaf/success/fixture-base/private/run-publisher-workflow.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py": "linux-leaf/success/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-evidence\\publisher-handover-success\\000-PREPARED.json": "linux-leaf/success/fixture-evidence/publisher-handover-success/000-PREPARED.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-evidence\\publisher-handover-success\\private\\wrapper.old.py": "linux-leaf/success/fixture-evidence/publisher-handover-success/private/wrapper.old.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-evidence\\publisher-handover-success\\wrapper.candidate.py": "linux-leaf/success/fixture-evidence/publisher-handover-success/wrapper.candidate.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-manifest.json": "linux-leaf/success/fixture-manifest.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\fixture-only.conf": "linux-leaf/success/fixture-only.conf",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\success\\owner.ready": "linux-leaf/success/owner.ready",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\summary.json": "linux-leaf/summary.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-base\\private\\run-publisher-workflow.py": "linux-leaf/written-bytes-fault/fixture-base/private/run-publisher-workflow.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-base\\releases\\aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\fixture_module.py": "linux-leaf/written-bytes-fault/fixture-base/releases/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/fixture_module.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-evidence\\publisher-handover-written-bytes-fault\\000-PREPARED.json": "linux-leaf/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/000-PREPARED.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-evidence\\publisher-handover-written-bytes-fault\\private\\wrapper.old.py": "linux-leaf/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/private/wrapper.old.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-evidence\\publisher-handover-written-bytes-fault\\wrapper.candidate.py": "linux-leaf/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/wrapper.candidate.py",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-manifest.json": "linux-leaf/written-bytes-fault/fixture-manifest.json",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\fixture-only.conf": "linux-leaf/written-bytes-fault/fixture-only.conf",
+    "E:\\QTrade-temp\\cluster-evidence\\publisher-leaf-20261028T055617Z-7a76f7\\written-bytes-fault\\owner.ready": "linux-leaf/written-bytes-fault/owner.ready",
+    "E:\\QTrade-temp\\export-source-prefetch-review-20261028.md": "gate-evidence/source_review-export-source-prefetch-review-20261028.md",
+    "E:\\QTrade-temp\\publisher-bridge-readonly-bindings-20261028.json": "readonly-hashes/publisher-bridge-readonly-bindings-20261028.json",
+    "E:\\QTrade-temp\\publisher-handover-bridge-independent-review-20261028.json": "reviews/publisher-handover-bridge-independent-review-20261028.json",
+    "E:\\QTrade-temp\\publisher-handover-bridge-independent-tests-20261028.xml": "tests/publisher-handover-bridge-independent-tests-20261028.xml",
+    "E:\\QTrade-temp\\publisher-handover-bridge-review-20261028.md": "reviews/publisher-handover-bridge-review-20261028.md",
+    "E:\\QTrade-temp\\publisher-handover-bridge-tests-20261028.xml": "tests/publisher-handover-bridge-tests-20261028.xml",
+    "E:\\QTrade-temp\\publisher-handover-bridge-tests-windows-mock-red-20261028.xml": "tests/publisher-handover-bridge-tests-windows-mock-red-20261028.xml",
+    "E:\\QTrade-temp\\publisher-handover-draft-notes-20261028.md": "reviews/publisher-handover-draft-notes-20261028.md",
+    "E:\\QTrade-temp\\publisher-handover-draft-review-20261028.md": "reviews/publisher-handover-draft-review-20261028.md",
+    "E:\\QTrade-temp\\publisher-handover-gate-evidence-map-20261028.json": "reviews/publisher-handover-gate-evidence-map-20261028.json",
+    "E:\\QTrade-temp\\publisher-handover-gate-evidence-map-20261028.md": "reviews/publisher-handover-gate-evidence-map-20261028.md",
+    "E:\\QTrade-temp\\publisher-handover-independent-final-mock-tests-20261028.xml": "tests/publisher-handover-independent-final-mock-tests-20261028.xml",
+    "E:\\QTrade-temp\\publisher-handover-leaf-independent-review-20261028.json": "reviews/publisher-handover-leaf-independent-review-20261028.json",
+    "E:\\QTrade-temp\\publisher-handover-leaf-local-review-20261028.json": "reviews/publisher-handover-leaf-local-review-20261028.json",
+    "E:\\QTrade-temp\\publisher-handover-mock-tests-20261028.xml": "tests/publisher-handover-mock-tests-20261028.xml",
+    "E:\\QTrade-temp\\publisher-handover-safe-pack-readme-20261028.md": "README.md",
+    "E:\\QTrade-temp\\publisher-wrapper-format-20261028.json": "readonly-hashes/publisher-wrapper-format-20261028.json",
+    "E:\\QTrade-temp\\publisher_handover_bridge_draft_20261028.py": "drafts/publisher_handover_bridge_draft_20261028.py",
+    "E:\\QTrade-temp\\publisher_handover_draft_20261028.py": "drafts/publisher_handover_draft_20261028.py",
+    "E:\\QTrade-temp\\test_publisher_handover_bridge_20261028.py": "drafts/test_publisher_handover_bridge_20261028.py",
+    "E:\\QTrade-temp\\test_publisher_handover_draft_20261028.py": "drafts/test_publisher_handover_draft_20261028.py"
+  },
+  "state": "READY_FOR_PARENT_REVIEW_ONLY_NO_PRODUCTION_APPLY"
+}

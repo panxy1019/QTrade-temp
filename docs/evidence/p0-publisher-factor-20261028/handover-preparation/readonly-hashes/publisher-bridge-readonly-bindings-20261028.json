@@ -1,0 +1,21 @@
+{
+  "helpers": {
+    "context": {
+      "path": "/root/qtrade-local/operator-evidence/forward-handover-9846a7f-20261028/directed_handover.py",
+      "sha256": "75fcf061c30138ae3157909f67608aa9d817148894994a3d7d58244528871811"
+    },
+    "reader": {
+      "path": "/root/qtrade-local/operator-evidence/graded-quality-458552d-20261028/rollout-operator-3dd14200cc7a8a6d.py",
+      "sha256": "3dd14200cc7a8a6db9aa6cdcbf8528795cfb8ea3f1be3f1b21ac0cca117acdf7"
+    }
+  },
+  "readonly": true,
+  "socket": {
+    "device": 61,
+    "inode": 9666103661,
+    "is_unix_socket": true,
+    "mode": "0o755",
+    "path": "/var/run/supervisor.sock",
+    "uid": 0
+  }
+}

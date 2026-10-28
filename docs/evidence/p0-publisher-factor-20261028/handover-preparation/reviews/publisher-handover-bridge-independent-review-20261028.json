@@ -1,0 +1,15 @@
+{
+  "state": "PASS",
+  "checked_at": "2026-10-28T06:17:49.499145+00:00",
+  "scope": "LOCAL_READONLY_MAPPING_BINDINGS_AND_MOCK_REVIEW_NO_REAL_PREPARE_RPC_OR_NFS",
+  "map_sha256": "6839ae148b2ee5e9ca30e10999ec11cb99bbfede4191565d330b303a94e988e3",
+  "artifacts": 18,
+  "mapping_rows": 16,
+  "failures": [],
+  "production_gate_bundle_constructed": false,
+  "production_mutation": false,
+  "bridge_source_sha256": "1649a768667cba95dba93e540a0079f0beebc8234e2590179910a73cabc3bbfc",
+  "bridge_tests_sha256": "c65fbdb8ad5139717c8f34d19a6f9b93fa21af47e24ebc4675a9e5ac5b540f8e",
+  "independent_tests_xml_sha256": "7adc5585a857af5484ac9703b6762f2c8114049d75d2d1076907da939772911d",
+  "reader_source_sha256": "3dd14200cc7a8a6db9aa6cdcbf8528795cfb8ea3f1be3f1b21ac0cca117acdf7"
+}
