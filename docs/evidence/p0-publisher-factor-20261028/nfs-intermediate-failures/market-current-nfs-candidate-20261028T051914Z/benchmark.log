@@ -1,0 +1,7 @@
+{"state": "FAILED", "error_class": "ValueError", "error_code": "UNIFIED_MARKET_TIME_BUDGET", "decoded_cache_empty_at_start": true, "destination_objects_at_start": 0, "pass_name": "cold", "wall_seconds": 45.224801, "profile": {}, "peak_rss_kib": 849616}
+{"state": "SUCCEEDED", "statistics": {"source_bytes_read": 180712399, "cached_batches": 1667, "replayed_batches": 2533, "selected_chunks": 104218, "selected_batches": 4200, "cached_rows": 70524, "cache_estimated_bytes": 127998373, "export_seconds": 36.708828, "total_bytes": 135052142, "total_files": 5986, "index_id": "f7bc663b9b1c6b43c29f4e2a03ab2f1fdc94dad6acac404abeabd392c5aaff9e", "quarantined_entries": 0}, "previous_success_used_as_oracle": false, "independent_full_current_audit": "PENDING", "decoded_cache_empty_at_start": false, "destination_objects_at_start": 5784, "pass_name": "warm", "wall_seconds": 37.011502, "profile": {}, "peak_rss_kib": 1039176}
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/market-current-nfs-candidate-20261028T051914Z/benchmark.py", line 87, in <module>
+    assert all(item['state'] == 'SUCCEEDED' for item in results), 'CURRENT_FROZEN_EXPORT_NOT_ACCEPTED'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: CURRENT_FROZEN_EXPORT_NOT_ACCEPTED

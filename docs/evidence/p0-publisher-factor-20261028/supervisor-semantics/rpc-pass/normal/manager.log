@@ -1,0 +1,56 @@
+time="2026-10-28T13:25:02+08:00" level=info msg="create process:sentinel-b"
+time="2026-10-28T13:25:02+08:00" level=info msg="create process:controlled"
+time="2026-10-28T13:25:02+08:00" level=info msg="create process:sentinel-a"
+time="2026-10-28T13:25:02+08:00" level=info msg="stop listening"
+time="2026-10-28T13:25:02+08:00" level=info msg="success to listen on address" addr=/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/rpc.sock protocol=unix
+time="2026-10-28T13:25:02+08:00" level=info msg="try to start program" program=sentinel-b
+time="2026-10-28T13:25:02+08:00" level=info msg="try to start program" program=controlled
+time="2026-10-28T13:25:02+08:00" level=info msg="try to start program" program=sentinel-a
+time="2026-10-28T13:25:02+08:00" level=debug msg="wait program exit" program=controlled
+time="2026-10-28T13:25:02+08:00" level=debug msg="wait program exit" program=sentinel-a
+time="2026-10-28T13:25:02+08:00" level=debug msg="wait program exit" program=sentinel-b
+time="2026-10-28T13:25:02+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:02+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:03+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:03+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:03+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:03+08:00" level=info msg="success to start program" program=controlled
+time="2026-10-28T13:25:03+08:00" level=info msg="success to start program" program=sentinel-a
+time="2026-10-28T13:25:03+08:00" level=info msg="success to start program" program=sentinel-b
+time="2026-10-28T13:25:03+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:03+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:03+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:04+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:04+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:04+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:04+08:00" level=info msg="program stopped with status:exit status 0" program=controlled
+time="2026-10-28T13:25:04+08:00" level=info msg="program exited" program=controlled
+time="2026-10-28T13:25:04+08:00" level=debug msg="wait program exit" program=controlled
+time="2026-10-28T13:25:04+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:04+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:05+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:05+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:05+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:05+08:00" level=info msg="success to start program" program=controlled
+time="2026-10-28T13:25:05+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:25:07+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:27:06+08:00" level=debug msg="no auth required"
+time="2026-10-28T13:27:06+08:00" level=info msg="received rpc request to stop all processes & exit"
+time="2026-10-28T13:27:06+08:00" level=info msg="stop the program" program=sentinel-a
+time="2026-10-28T13:27:06+08:00" level=info msg="stop the program" program=sentinel-b
+time="2026-10-28T13:27:06+08:00" level=info msg="stop the program" program=controlled
+time="2026-10-28T13:27:06+08:00" level=info msg="send stop signal to program" program=controlled signal=TERM
+time="2026-10-28T13:27:06+08:00" level=info msg="Send signal to program" program=controlled signal=terminated
+time="2026-10-28T13:27:06+08:00" level=info msg="send stop signal to program" program=sentinel-b signal=TERM
+time="2026-10-28T13:27:06+08:00" level=info msg="Send signal to program" program=sentinel-b signal=terminated
+time="2026-10-28T13:27:06+08:00" level=info msg="send stop signal to program" program=sentinel-a signal=TERM
+time="2026-10-28T13:27:06+08:00" level=info msg="Send signal to program" program=sentinel-a signal=terminated
+time="2026-10-28T13:27:06+08:00" level=info msg="program stopped with status:exit status 0" program=sentinel-a
+time="2026-10-28T13:27:06+08:00" level=info msg="program exited" program=sentinel-a
+time="2026-10-28T13:27:06+08:00" level=info msg="Stopped by user, don't start it again" program=sentinel-a
+time="2026-10-28T13:27:06+08:00" level=info msg="program stopped with status:exit status 0" program=controlled
+time="2026-10-28T13:27:06+08:00" level=info msg="program stopped with status:exit status 0" program=sentinel-b
+time="2026-10-28T13:27:06+08:00" level=info msg="program exited" program=sentinel-b
+time="2026-10-28T13:27:06+08:00" level=info msg="Stopped by user, don't start it again" program=sentinel-b
+time="2026-10-28T13:27:06+08:00" level=info msg="program exited" program=controlled
+time="2026-10-28T13:27:06+08:00" level=info msg="Stopped by user, don't start it again" program=controlled

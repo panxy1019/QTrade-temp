@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/svsem-20261028T051219Z-17524d/fixture_cleanup_probe.py", line 65, in <module>
+    receipt['rpc_methods'] = rpc('system.listMethods')
+  File "/root/qtrade-local/operator-evidence/svsem-20261028T051219Z-17524d/fixture_cleanup_probe.py", line 46, in rpc
+    assert response.status == 200
+AssertionError

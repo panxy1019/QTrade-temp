@@ -1,0 +1,90 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-28T05:31:06.291449+00:00",
+  "source_revision": "uncommitted:620fd69e8b347cf956a683f7a576fbf017e1d0be79289afaab8c2b357203c2e9",
+  "controlled_snapshot_clock": "2026-10-28T04:23:39.263755+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "profiling_enabled": false,
+  "filesystem": {
+    "source_overlay": {
+      "path": "/root/qtrade-local/operator-evidence/market-current-nfs-tested-candidate-20261028T052918Z",
+      "resolved": "/root/qtrade-local/operator-evidence/market-current-nfs-tested-candidate-20261028T052918Z",
+      "st_dev": 61,
+      "fs_type": "overlayfs",
+      "available_bytes": 27802021888
+    },
+    "isolated_output": {
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-current-nfs-tested-candidate-20261028T052918Z",
+      "resolved": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-current-nfs-tested-candidate-20261028T052918Z",
+      "st_dev": 66,
+      "fs_type": "nfs",
+      "available_bytes": 290475474944
+    },
+    "production_output": {
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/market-public",
+      "resolved": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/market-public",
+      "st_dev": 66,
+      "fs_type": "nfs",
+      "available_bytes": 290475474944
+    },
+    "immutable_lake": {
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-current-nfs-tested-candidate-20261028T052918Z/unified-data/lake",
+      "resolved": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/lake",
+      "st_dev": 66,
+      "fs_type": "nfs",
+      "available_bytes": 290475474944
+    }
+  },
+  "freeze_evidence_sha256": "75cb08efcdc1eeec775a579f4811ccce3ddccb2e2ab1e80f79781d8908da69d3",
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_AND_PARALLEL_WRITE_TIMES_SUM_NOT_WALL",
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "decoded_cache_empty_at_start": true,
+      "destination_objects_at_start": 0,
+      "pass_name": "cold",
+      "wall_seconds": 45.250686,
+      "profile": {},
+      "peak_rss_kib": 848564
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 180712399,
+        "cached_batches": 1667,
+        "replayed_batches": 2533,
+        "selected_chunks": 104218,
+        "selected_batches": 4200,
+        "cached_rows": 70524,
+        "cache_estimated_bytes": 127998373,
+        "export_seconds": 36.291137,
+        "total_bytes": 135052142,
+        "total_files": 5986,
+        "index_id": "b93f39fb0e1bd672dac43578afe661d32fc3d92ae3d876c3c101deb5d7dec1ba",
+        "quarantined_entries": 0
+      },
+      "previous_success_used_as_oracle": false,
+      "independent_full_current_audit": "PENDING",
+      "decoded_cache_empty_at_start": false,
+      "destination_objects_at_start": 5749,
+      "pass_name": "warm",
+      "wall_seconds": 36.55598,
+      "profile": {},
+      "peak_rss_kib": 1046924
+    }
+  ],
+  "evidence_sha256": "d611ad266177625b6cd1c031e770995515a6d4104dde80f3757857dd3f6ab128"
+}

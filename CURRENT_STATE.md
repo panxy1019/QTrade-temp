@@ -1,6 +1,27 @@
 # Current state
 
-Last updated: 2026-10-28 12:58 Shanghai, actual non-production factor evaluation.
+Last updated: 2026-10-28 13:39 Shanghai, separate publisher and factor gates.
+
+- Actual public HTTP probe13:39 remains STALE_TRANSPORT: index10969.45s old,
+  catalog167.61s, publication31c5f1f2, productionae33. Production publisher294214
+  has not been upgraded. Fresh catalog/Git transport does not refresh old index.
+- Current frozen4200-batch/104218-chunk original458 independent replay passes
+  every3000 entry and5986 shard/135052142 bytes with complete source lineage.
+  This55.04s correctness audit is not a45s exporter performance pass.
+- Production-equivalent NFS isolated candidate still fails cold45.193611s;
+  warm36.963300s full call passes. Linux379 tests and14708 independent differential
+  cases/38 fault+regression tests pass for that exact candidate. New bounded
+  material-prefetch candidate is under review, not deployed. Failed experiments
+  and differing source hashes remain immutable; no budget or data-window change.
+- Same-Supervisor isolated named TERM/natural112.10s drain/autorestart semantics
+  pass; other fixture processes and actual production owner remain unchanged.
+  No expected-PID atomic CAS exists. Publisher-only handover tool is still under
+  fault testing; no production wrapper/signal/restart action has occurred.
+- Four-factor registry/evaluator and actual891-stock retrospective test below
+  remain completed in isolation. Production API/Builder and real Oct28 close
+  C/D/E/accounting/public/visual gates remain open. ACTIVE/14books/LIVE unchanged.
+
+Previous12:58 actual non-production factor evaluation:
 
 - FactorRegistry db4ded3 and evaluator8e038c8 implement four existing daily factors,
   immutable versions/results, explicit clocks and scope, independent IC/RankIC,

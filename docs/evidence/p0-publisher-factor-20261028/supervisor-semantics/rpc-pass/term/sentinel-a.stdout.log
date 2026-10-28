@@ -1,0 +1,2 @@
+{"event": "START", "generation": 1, "monotonic": 10197142.74240854, "name": "sentinel-a", "pid": 516856, "ppid": 516840, "release": "fixed", "start_ticks": "1019714271"}
+{"event": "NATURAL_EXIT_ZERO", "generation": 1, "monotonic": 10197259.04407876, "name": "sentinel-a", "pid": 516856, "ppid": 516840, "release": "fixed", "start_ticks": "1019714271"}

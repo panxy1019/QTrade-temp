@@ -24,6 +24,16 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 13:39: actual public index still stale10969s whilecatalog168s. Full
+current original458 oracle passes3000entries/5986shards/4200batches; this is
+correctness only. ActualNFS cold45.193611s fails despite warm36.963300s and
+Linux379 plus independent14708 differential/38 fault+regression passes. Continue
+bounded physical-material prefetch with true source-byte accounting; no budget
+increase or production change. Same-Supervisor isolated targetedTERM/autorestart
+semantics pass; publisher-only operator review remains separate from performance
+and real export/Git/public/API acceptance. Factor nonproduction actual run below
+is complete; production wiring and genuine Oct28 close still pending.
+
 October28 12:58: existing-factor registry and independent evaluator implemented
 at db4ded3/8e038c8; Windows/Linux78 each0skip. Actual isolated891-stock/five-mature-
 session/four-factor run completes33.46s with unchanged production controls and

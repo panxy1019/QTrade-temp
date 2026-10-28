@@ -1,0 +1,120 @@
+{
+  "scope": "FAILED_INTERMEDIATE_COLD_EXPORTS_NOT_DEPLOYMENT_ACCEPTANCE",
+  "files": [
+    {
+      "file": "public-market-1308.json",
+      "sha256": "cfbad973b23cd85267beb3041a484613ce329fa8819ba2e4159c6e2266ad81fb",
+      "bytes": 22072
+    },
+    {
+      "file": "pipeline-review-8worker.md",
+      "sha256": "421981f39ea04081fea867c5eae1ae05a1d085bb10f9e6d104d5460e5116f559",
+      "bytes": 14457
+    },
+    {
+      "file": "publisher-rollout-contract-review.md",
+      "sha256": "2ff761bdb124c79f8e64144d8beca40fb9b0b980ea2f62edb970759b84d2804d",
+      "bytes": 17016
+    },
+    {
+      "file": "market-current-cold-phase-candidate-20261028T044436Z/benchmark.log",
+      "sha256": "2c8273589b7cbc105df6d9ba391f7cf94c76a7ef8fa6d7fb418a7468bc00b0f5",
+      "bytes": 1132
+    },
+    {
+      "file": "market-current-cold-phase-candidate-20261028T044436Z/candidate-manifest.json",
+      "sha256": "eedefae94e6fe455b49a4d82c2cc73fc018522cccf82c1d6d455a38d454c038c",
+      "bytes": 558
+    },
+    {
+      "file": "market-current-cold-phase-candidate-20261028T044436Z/frozen-export-no-profile.json",
+      "sha256": "4e98f5c6f8adc7368940cf90e2f148d717b3719a1202ba5fc4f71f3ebdd217f5",
+      "bytes": 2225
+    },
+    {
+      "file": "market-current-cold-phase-candidate-20261028T044436Z/verify.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "market-current-cold-phase-candidate-20261028T045533Z/benchmark.log",
+      "sha256": "b98898b4c15f5a9c225252fd4ea2a47da05168f877e461d3775b0402951d6069",
+      "bytes": 1133
+    },
+    {
+      "file": "market-current-cold-phase-candidate-20261028T045533Z/candidate-manifest.json",
+      "sha256": "6413b4cfbdd15d2dc6106f2faf3fc65ee2225145f98c587e8f4ae094d3355b42",
+      "bytes": 558
+    },
+    {
+      "file": "market-current-cold-phase-candidate-20261028T045533Z/frozen-export-no-profile.json",
+      "sha256": "214218491494105f3f01f2883eb1c187a47e2f43604bf8a8e317ddeebcd3acde",
+      "bytes": 2226
+    },
+    {
+      "file": "market-current-cold-phase-candidate-20261028T045533Z/verify.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "market-current-candidate-20261028T050652Z/benchmark.log",
+      "sha256": "6d1701db5a08fb55d1cdd51b5d5c64d2b1610beff362bdaf7db7f8e60a5b2432",
+      "bytes": 1296
+    },
+    {
+      "file": "market-current-candidate-20261028T050652Z/candidate-manifest.json",
+      "sha256": "116c5d08270970b87f0124df24566aeb9aa39fe9da1b2c5c5c0058c4aad68878",
+      "bytes": 558
+    },
+    {
+      "file": "market-current-candidate-20261028T050652Z/frozen-export-no-profile.json",
+      "sha256": "96b62d5505d1c929b9d6a8a137169c68e55ac931defd31a5e38c66e30a9024e3",
+      "bytes": 2238
+    },
+    {
+      "file": "market-current-candidate-20261028T050652Z/verify.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "market-export-phase-candidate-20261028T042027Z/benchmark.log",
+      "sha256": "5e051e8754cf9ab1b3fbe8070856ab833ce4b7a79568e2b85f17e47167f9006b",
+      "bytes": 1951
+    },
+    {
+      "file": "market-export-phase-candidate-20261028T042027Z/candidate-manifest.json",
+      "sha256": "a8ee0dea69e74f06fc93d11ed00528ac1bc235e1432a5580570595235ebcc4a2",
+      "bytes": 558
+    },
+    {
+      "file": "market-export-phase-candidate-20261028T042027Z/frozen-export-no-profile.json",
+      "sha256": "c997557d1b0c9c5b3f6e010321330baf1b16bda39d0b14a1fc6a4d3958e373df",
+      "bytes": 3470
+    },
+    {
+      "file": "market-export-phase-candidate-20261028T042027Z/verify.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "market-export-fsync-phase-candidate-20261028T044132Z/benchmark.log",
+      "sha256": "710231d16cfad10d2fe0f62c6d1264d525c5f79b8978e1afa482db7c71037456",
+      "bytes": 2711
+    },
+    {
+      "file": "market-export-fsync-phase-candidate-20261028T044132Z/candidate-manifest.json",
+      "sha256": "ba2a7504d01a4fae40f5036e845edeafeddde956adf25e45a667b2334e7e5b3d",
+      "bytes": 558
+    },
+    {
+      "file": "market-export-fsync-phase-candidate-20261028T044132Z/frozen-export-no-profile.json",
+      "sha256": "533950324a6598a7a7eaac5e028cf39e091ab6aab1def305c8230df5425e18ab",
+      "bytes": 4498
+    },
+    {
+      "file": "market-export-fsync-phase-candidate-20261028T044132Z/verify.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ]
+}

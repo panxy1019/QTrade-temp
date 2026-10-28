@@ -1,0 +1,127 @@
+{
+  "errors": [],
+  "registered": {
+    "516808": {
+      "identity": {
+        "cmdline_sha256": "5077e311fbbd640923b51c327a32ba0936a4de855fdc109a3dfa88c90a38e4e5",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+        "pid": 516808,
+        "ppid": 516807,
+        "start_ticks": "1019713735",
+        "state": "R"
+      },
+      "role": "isolated-manager"
+    },
+    "516820": {
+      "identity": {
+        "cmdline_sha256": "914fb210f588032e906358ae20fbc84ae9946cde9a7eb30b243bc3911371fac2",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+        "pid": 516820,
+        "ppid": 516808,
+        "start_ticks": "1019713744",
+        "state": "S"
+      },
+      "role": "controlled"
+    },
+    "516821": {
+      "identity": {
+        "cmdline_sha256": "950c3c43cca5cdf66c4aa2924d345ab13272dcb1bd4eceb7edc003b99d51adce",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+        "pid": 516821,
+        "ppid": 516808,
+        "start_ticks": "1019713744",
+        "state": "S"
+      },
+      "role": "sentinel-a"
+    },
+    "516822": {
+      "identity": {
+        "cmdline_sha256": "ed914004cdea4c23e4df9e3991ddb98d872bde4f16aa18e6c7221ec5d4976ad8",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+        "pid": 516822,
+        "ppid": 516808,
+        "start_ticks": "1019713744",
+        "state": "S"
+      },
+      "role": "sentinel-b"
+    },
+    "516839": {
+      "identity": {
+        "cmdline_sha256": "914fb210f588032e906358ae20fbc84ae9946cde9a7eb30b243bc3911371fac2",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+        "pid": 516839,
+        "ppid": 516808,
+        "start_ticks": "1019713948",
+        "state": "S"
+      },
+      "role": "controlled-new-generation"
+    },
+    "516840": {
+      "identity": {
+        "cmdline_sha256": "7e97adaa082c74abe430bb68b2e1f282d0ba736347241bc2633fc5af1420f59f",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+        "pid": 516840,
+        "ppid": 516807,
+        "start_ticks": "1019714263",
+        "state": "R"
+      },
+      "role": "isolated-manager"
+    },
+    "516854": {
+      "identity": {
+        "cmdline_sha256": "88e0cdb467df89c38890277d92221702c627de2fe4d5b4806713455c5df26125",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+        "pid": 516854,
+        "ppid": 516840,
+        "start_ticks": "1019714271",
+        "state": "S"
+      },
+      "role": "sentinel-b"
+    },
+    "516855": {
+      "identity": {
+        "cmdline_sha256": "06bd11ad4cc0e932917e97336ed3057cabbe5fd07b5b214a74ffac94ad532e78",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+        "pid": 516855,
+        "ppid": 516840,
+        "start_ticks": "1019714271",
+        "state": "S"
+      },
+      "role": "controlled"
+    },
+    "516856": {
+      "identity": {
+        "cmdline_sha256": "04cf4eae08278fed51894ac1ba40dc2c196d3aebcc8b51fa89d49394a899d215",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+        "pid": 516856,
+        "ppid": 516840,
+        "start_ticks": "1019714271",
+        "state": "S"
+      },
+      "role": "sentinel-a"
+    },
+    "516992": {
+      "identity": {
+        "cmdline_sha256": "b1708fdb40210244bd6728b222c53b2dcda24934e6414c6f182d87e8a0fed47a",
+        "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+        "pid": 516992,
+        "ppid": 516840,
+        "start_ticks": "1019725598",
+        "state": "S"
+      },
+      "role": "controlled-new-generation"
+    }
+  },
+  "remaining_non_zombie_fixture_pids": [],
+  "signals": [
+    {
+      "at_monotonic": 10197143.856257364,
+      "method": "supervisor.signalProcess",
+      "name": "controlled",
+      "pid": 516855,
+      "role": "single-named-fixture-controlled-term",
+      "signal": 15,
+      "start_ticks": "1019714271"
+    }
+  ]
+}

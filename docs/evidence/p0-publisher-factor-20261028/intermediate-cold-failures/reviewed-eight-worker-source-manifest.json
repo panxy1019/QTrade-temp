@@ -1,0 +1,11 @@
+{
+  "file": "reviewed-eight-worker-source.zip",
+  "sha256": "a685718d27f94f95133029419c763f20804b37efb7ba3f956e8a9326493a21a8",
+  "files": {
+    "scripts/publish_unified_market.py": "173773bb14960bc6f0841b47564fd625eec6690c8a170be475991205cc68fb32",
+    "src/qtrade/research/unified_market.py": "2c38be59279d206f7de331f97117265b44296c6e6a4997198d7ddbac7e52778c",
+    "src/qtrade/market_data/sina_incremental.py": "c0f783604750ac2648c8dcb2496e2e02994ddb3cf469d6a69e762ebfb9bff63b",
+    "tests/test_unified_market.py": "a804955d87a121eec1ae4193dc251546f0d9d46b9376577f7b03ca3432173aae"
+  },
+  "scope": "FAILED_COLD_CANDIDATE_NOT_DEPLOYED"
+}

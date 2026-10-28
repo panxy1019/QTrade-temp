@@ -1,0 +1,18 @@
+{
+  "version": {
+    "exit_code": 0,
+    "stdout": "v0.6.8\n",
+    "stderr": ""
+  },
+  "ctl_help": {
+    "exit_code": 0,
+    "stdout": "Usage:\n  supervisord [OPTIONS] ctl [ctl-OPTIONS] <command>\n\nThe ctl subcommand resembles supervisorctl command of original daemon.\n\nApplication Options:\n  -c, --configuration= the configuration file\n  -d, --daemon         run as daemon\n      --env-file=      the environment file\n\nHelp Options:\n  -h, --help           Show this help message\n\n[ctl command options]\n      -s, --serverurl= URL on which supervisord server is listening\n      -u, --user=      the user name\n      -P, --password=  the password\n      -v, --verbose    Show verbose debug information\n\nAvailable commands:\n  logtail   get the standard output&standard error of the program\n  pid       get the pid of specified program\n  reload    reload the programs\n  restart   restart programs\n  shutdown  shutdown supervisord\n  signal    send signal to program\n  start     start programs\n  status    show program status\n  stop      stop programs\n\n",
+    "stderr": ""
+  },
+  "signal_help": {
+    "exit_code": 0,
+    "stdout": "Usage:\n  supervisord [OPTIONS] ctl [ctl-OPTIONS] signal\n\nsend signal to program\n\nApplication Options:\n  -c, --configuration= the configuration file\n  -d, --daemon         run as daemon\n      --env-file=      the environment file\n\nHelp Options:\n  -h, --help           Show this help message\n\n[ctl command options]\n\n    Control a running daemon:\n      -s, --serverurl= URL on which supervisord server is listening\n      -u, --user=      the user name\n      -P, --password=  the password\n      -v, --verbose    Show verbose debug information\n\n",
+    "stderr": ""
+  },
+  "binary_sha256": "c0e12d2e498d00a2285161372cbb0a46b795b94e9a42511351eba7980f408569"
+}

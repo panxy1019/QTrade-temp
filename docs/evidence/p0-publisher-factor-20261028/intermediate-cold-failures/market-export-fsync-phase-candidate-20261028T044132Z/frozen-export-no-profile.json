@@ -1,0 +1,155 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-28T04:42:52.372412+00:00",
+  "source_revision": "uncommitted:ba2a7504d01a4fae40f5036e845edeafeddde956adf25e45a667b2334e7e5b3d",
+  "controlled_snapshot_clock": "2026-10-27T08:09:58.026432+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "profiling_enabled": true,
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_WALL_INCLUDES_POST_EXPORT_BYTE_COMPARISON",
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "pass_name": "cold",
+      "wall_seconds": 45.15814,
+      "profile": {
+        "json_loads": {
+          "calls": 136451,
+          "inclusive_seconds": 1.645984
+        },
+        "json_dumps": {
+          "calls": 22209,
+          "inclusive_seconds": 3.799007
+        },
+        "chunks": {
+          "calls": 1,
+          "inclusive_seconds": 0.47893
+        },
+        "store__batch_material": {
+          "calls": 2694,
+          "inclusive_seconds": 3.871395
+        },
+        "replay": {
+          "calls": 2694,
+          "inclusive_seconds": 8.979287
+        },
+        "load": {
+          "calls": 2694,
+          "inclusive_seconds": 21.370905
+        },
+        "validate_shard": {
+          "calls": 4148,
+          "inclusive_seconds": 6.585926
+        },
+        "os_fsync": {
+          "calls": 8296,
+          "inclusive_seconds": 59.808351
+        },
+        "fsync_directory": {
+          "calls": 4148,
+          "inclusive_seconds": 11.466467
+        },
+        "write_object": {
+          "calls": 4148,
+          "inclusive_seconds": 69.619991
+        },
+        "persist_objects": {
+          "calls": 1,
+          "inclusive_seconds": 21.189338
+        }
+      },
+      "peak_rss_kib": 676188
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 117379707,
+        "cached_batches": 160,
+        "replayed_batches": 2534,
+        "selected_chunks": 66782,
+        "selected_batches": 2694,
+        "export_seconds": 30.258204,
+        "total_bytes": 101622974,
+        "total_files": 4488,
+        "index_id": "fab7a564b2829f2ce2d0d0e7a2337036402c08dc72e36dbff2c7539685b1b243",
+        "cached_rows": 70520,
+        "cache_estimated_bytes": 127999629,
+        "quarantined_entries": 0
+      },
+      "index_id": "fab7a564b2829f2ce2d0d0e7a2337036402c08dc72e36dbff2c7539685b1b243",
+      "all_entry_references_equal": true,
+      "exact_equal_shards": 4488,
+      "baseline_total_shards": 4488,
+      "pass_name": "warm",
+      "wall_seconds": 31.889565,
+      "profile": {
+        "json_loads": {
+          "calls": 128774,
+          "inclusive_seconds": 1.439609
+        },
+        "json_dumps": {
+          "calls": 23190,
+          "inclusive_seconds": 3.436898
+        },
+        "chunks": {
+          "calls": 2,
+          "inclusive_seconds": 0.858996
+        },
+        "store__batch_material": {
+          "calls": 2694,
+          "inclusive_seconds": 2.933658
+        },
+        "load": {
+          "calls": 2694,
+          "inclusive_seconds": 16.461171
+        },
+        "replay": {
+          "calls": 2534,
+          "inclusive_seconds": 7.260031
+        },
+        "validate_shard": {
+          "calls": 4488,
+          "inclusive_seconds": 6.755426
+        },
+        "file_hash": {
+          "calls": 4150,
+          "inclusive_seconds": 8.865302
+        },
+        "os_fsync": {
+          "calls": 684,
+          "inclusive_seconds": 6.202582
+        },
+        "fsync_directory": {
+          "calls": 340,
+          "inclusive_seconds": 1.043227
+        },
+        "write_object": {
+          "calls": 340,
+          "inclusive_seconds": 7.328976
+        },
+        "persist_objects": {
+          "calls": 1,
+          "inclusive_seconds": 10.338725
+        },
+        "validate_index": {
+          "calls": 1,
+          "inclusive_seconds": 0.160658
+        }
+      },
+      "peak_rss_kib": 809796
+    }
+  ],
+  "evidence_sha256": "6d5cdac3c5290aef75842f34d41ef5989ea66ffe6edec17a98f16930ba756fc8"
+}

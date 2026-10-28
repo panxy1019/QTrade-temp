@@ -1,0 +1,60 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-28T05:08:18.110467+00:00",
+  "source_revision": "uncommitted:116c5d08270970b87f0124df24566aeb9aa39fe9da1b2c5c5c0058c4aad68878",
+  "controlled_snapshot_clock": "2026-10-28T04:23:39.263755+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "profiling_enabled": false,
+  "freeze_evidence_sha256": "75cb08efcdc1eeec775a579f4811ccce3ddccb2e2ab1e80f79781d8908da69d3",
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_AND_PARALLEL_WRITE_TIMES_SUM_NOT_WALL",
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "decoded_cache_empty_at_start": true,
+      "destination_objects_at_start": 0,
+      "pass_name": "cold",
+      "wall_seconds": 45.003198,
+      "profile": {},
+      "peak_rss_kib": 803588
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 180712399,
+        "cached_batches": 1667,
+        "replayed_batches": 2533,
+        "selected_chunks": 104218,
+        "selected_batches": 4200,
+        "cached_rows": 70524,
+        "cache_estimated_bytes": 127998373,
+        "export_seconds": 36.562636,
+        "total_bytes": 135052142,
+        "total_files": 5986,
+        "index_id": "f7bc663b9b1c6b43c29f4e2a03ab2f1fdc94dad6acac404abeabd392c5aaff9e",
+        "quarantined_entries": 0
+      },
+      "previous_success_used_as_oracle": false,
+      "independent_full_current_audit": "PENDING",
+      "decoded_cache_empty_at_start": false,
+      "destination_objects_at_start": 5056,
+      "pass_name": "warm",
+      "wall_seconds": 36.868755,
+      "profile": {},
+      "peak_rss_kib": 1048716
+    }
+  ],
+  "evidence_sha256": "a7092f85b4bc3082f0816d8310641c2008aacac72bce756a2d6ff15ba8820419"
+}
