@@ -1,5 +1,53 @@
 # Current state
 
+## Verified checkpoint: 2026-10-28 22:25 Shanghai
+
+- P0 local exporter succeeds32.346s/33.593s within45. Actual full frozen
+  delivery preflight verifies3000 entries/5987 current shards/167397950bytes
+  in15.926s. This does not establish publicdelivery: single assisted nativepush
+  stilltimesout90s; originalINTENT/UNCERTAIN retained withoutreplay. Both13:42
+  and13:49 actualremote advertisements remain5a0925f4, no matchingoperator
+  client remains, and21:46 actualAPIprobe returnsSTALE_TRANSPORT (ae33 prod).
+- Further isolation rejects speculative optimizations: metadata/aux/pre-negotiate
+  six exactwire cases stillresend stagedblobs; nondelta packcache increases
+  wire19.445MB to42.750MB, so NOTinstalled. SOURCE packgeneration2.699s,
+  privateSFTP19.4MB8.428s andloopback5MiB0.885s narrow the unknown to the
+  GitHub publishing/confirmation path. Newcold180 operator/acceptance is only
+  being prepared for separate explicit approval; normal45/90unchanged.
+- STEP2 exactGit45de isolated ASGI/localGitQueue/ownedWorker/Registry/API
+  completion passes. Full18829-file786448967byte READYmirror, real100GiB
+  NFSgate, source/data/archives/control beforeaftermatch. Fourteen HTTPflows
+  and14 groupedLinux checks; original andnormalized XMLbothretained. This is
+  registrationEXPERIMENT/NONE, nofactor portfolioexecution. GitHub/TLS and
+  productionworker enablement remain. Terra retry againfails transport; noDOM
+  or screenshot, no visualacceptance andno webtasksubmission.
+- STEP1 current-model privateC passes butpublicC/wholeSTEP1 remainblocked.
+  Original fixedmodelD/E failures andretired ledgers arepreserved. NoPAPER
+  recovery, modeloperatoractivation, sourceGitcacheinstall, additionalowner
+  restart or historyrewrite. LIVEfalse/rollingOFF; automationremainsPAUSED.
+
+## Implementation checkpoint: 2026-10-28 21:12 Shanghai
+
+- PR35 source45de5bd is pushed: protected factor registration/API/Builder and
+  original-source archive compatibility, not production deployment. Final Linux
+  backend377/0skip, Windows373+4POSIXskip, API53, web20, build/lint pass. Two real
+  isolated Registry registrations preserve parent lineage and old reports. Actual
+  GitQueue/API roundtrip, Terra DOM and production enablement remain unaccepted.
+- Publisher647839/fba keeps the45s export and90s Git budgets. Local exports have
+  succeeded but remote main remains5a0925f4 at the last actual observation. Two
+  isolated auxiliary-object schemes fail to reduce native Git retransmission;
+  preserve those negatives. A temporary desktop loopback relay is under independent
+  review; its first readonly ls bypassed the relay (zero channels/bytes), so it is
+  NOT transport acceptance. No assisted publicpush has occurred.
+- Oct28 formalb82baaac READY, preparation988/988; current68d prediction889 rows
+  and886 qualified signals are distinct scopes. Current-model private C transition
+  passes; actual five-response public C remainsBLOCKED on stale catalog. Original
+  fixed-model C/D/E failures remain. Legacy/STAGED candidate revalidation adapter
+  is a design with metadata counterexamples, not actual D acceptance.
+- Existing standing model policy accounts for the68d promotion; no operator
+  activation, PAPER recovery, owner restart, historical rewrite or budget change.
+  LIVE false/rolling OFF; automation remains PAUSED. FullSTEP1 remains open.
+
 ## Production boundary checkpoint: 2026-10-28 20:23 Shanghai
 
 - Publisher-only one-time handover succeeded provisionally: new647839/ticks1022098698

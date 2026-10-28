@@ -1,0 +1,634 @@
+{
+  "schema": "qtrade.local-bounded-git-fixture.v1",
+  "fixture_only": true,
+  "production_access": false,
+  "network_transport": false,
+  "push": false,
+  "live_trading_enabled": false,
+  "root": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+  "git_binary": "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+  "git_version": "git version 2.53.0.windows.3",
+  "python_version": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "bounds": {
+    "base_tar_bytes": 2000000,
+    "increment_bundle_bytes": 2000000,
+    "increment_pack_objects": 64,
+    "target_blob_bytes": 1000000,
+    "advertised_refs": 1,
+    "prerequisites": 1,
+    "header_bytes": 65536
+  },
+  "frozen": {
+    "ancestor": "08c91695853a4d83afa58ecdca23bffe0a771378",
+    "base": "f0ed92e43fe3ac419cb849aa4068f10922adfc9b",
+    "middle": "6aea75a6c42c448c7a48fbebba836188f40e8a63",
+    "target": "dd3999c9103a282cdc8628c2ea7cad148a9cf513",
+    "target_ref": "refs/heads/frozen-head",
+    "target_tree": "aa4a884531681524a52aba7f6aa29104ffad5a33",
+    "target_files": [
+      {
+        "path": "README.txt",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5",
+        "bytes": 54,
+        "sha256": "0a84583dfd3685dded1bb18b0b77f7b2f0855eb355388f9a15adab38de6d9c2b"
+      },
+      {
+        "path": "public/changed.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "20233a13f474aa54b2be4945fb3e46b02f1aa64f",
+        "bytes": 196609,
+        "sha256": "72c19db5e6c72c1a31f15ed2199581cac2a958e847a49d7753a1fcd69133589d"
+      },
+      {
+        "path": "public/new.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "59c7d400050a30dc3d6c900a839f451d291ca303",
+        "bytes": 131072,
+        "sha256": "6150a12dde17e9cfae160654866edc1c2893669946f05316c1d26b6f056d6929"
+      },
+      {
+        "path": "reuse/reuse-a.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "975ffb825966cf6f32c08065e9ac87de4935bee4",
+        "bytes": 131072,
+        "sha256": "23f138ace2685f228460c651e91f8f19ebfcb760d89d374320443f6d75127447"
+      },
+      {
+        "path": "reuse/reuse-b.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "a2689f90449225a06d4bcb9f2dc7db10b3409e4b",
+        "bytes": 262144,
+        "sha256": "ec7e4071e4c7a038c8ad5a72027011eb6cd2755fa3339163e09bcdb379098c61"
+      },
+      {
+        "path": "reuse/reuse-c.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "4695f9e24b622d530e1e33149840165b266f804b",
+        "bytes": 32768,
+        "sha256": "973295b5b16033176565122d360f8577cc3f4a4ddfa53557e3506d60d3c57794"
+      }
+    ],
+    "base_files": [
+      {
+        "path": "README.txt",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5"
+      },
+      {
+        "path": "public/changed.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "c328ca2b1fdc8e124441ad445a19a07086f9f4af"
+      },
+      {
+        "path": "public/deleted-from-base.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "bc217f8fc94fe75c6915b4280fa964254b50ad1d"
+      },
+      {
+        "path": "reuse/reuse-a.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "975ffb825966cf6f32c08065e9ac87de4935bee4"
+      },
+      {
+        "path": "reuse/reuse-b.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "a2689f90449225a06d4bcb9f2dc7db10b3409e4b"
+      },
+      {
+        "path": "reuse/reuse-c.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "4695f9e24b622d530e1e33149840165b266f804b"
+      }
+    ],
+    "historical_only_oid": "647bc4bdffa87097c8fda31f43293576e32b3051",
+    "intermediate_deleted_public_oid": "1ef1c790863520f223ffb02fd6fa52d94312d985",
+    "intermediate_deleted_public_sha256": "e702f2dc789e86e7cf32c688d9cbc9aa782d18aa01c65ea520d63e54205022b8"
+  },
+  "increment_bundle": {
+    "prerequisites": [
+      {
+        "oid": "f0ed92e43fe3ac419cb849aa4068f10922adfc9b",
+        "message": "complete shallow base"
+      }
+    ],
+    "advertised_refs": [
+      {
+        "oid": "dd3999c9103a282cdc8628c2ea7cad148a9cf513",
+        "name": "refs/heads/frozen-head"
+      }
+    ],
+    "bundle_bytes": 427114,
+    "bundle_sha256": "05ac34724ccf90d920fa17aab3ae039ce34ad9a1355643381f41a633e7549110",
+    "pack_offset": 145,
+    "pack_objects": 9,
+    "pack_version": 2,
+    "header_bytes": 145
+  },
+  "pack_objects": [
+    [
+      "dd3999c9103a282cdc8628c2ea7cad148a9cf513",
+      "commit",
+      "268",
+      "174",
+      "12"
+    ],
+    [
+      "6aea75a6c42c448c7a48fbebba836188f40e8a63",
+      "commit",
+      "294",
+      "191",
+      "186"
+    ],
+    [
+      "aa4a884531681524a52aba7f6aa29104ffad5a33",
+      "tree",
+      "103",
+      "109",
+      "377"
+    ],
+    [
+      "08407e724a67b13381e41f0c2e75b6658cfb435a",
+      "tree",
+      "74",
+      "78",
+      "486"
+    ],
+    [
+      "20233a13f474aa54b2be4945fb3e46b02f1aa64f",
+      "blob",
+      "196609",
+      "196678",
+      "564"
+    ],
+    [
+      "59c7d400050a30dc3d6c900a839f451d291ca303",
+      "blob",
+      "131072",
+      "131121",
+      "197242"
+    ],
+    [
+      "281daf162ed2d6c104ca670226c67d83086f3b4c",
+      "tree",
+      "103",
+      "110",
+      "328363"
+    ],
+    [
+      "2a295b22d1eb7cd78c97d6d8c06ee31dae8f5dbf",
+      "tree",
+      "140",
+      "133",
+      "328473"
+    ],
+    [
+      "1ef1c790863520f223ffb02fd6fa52d94312d985",
+      "blob",
+      "98304",
+      "98343",
+      "328606"
+    ]
+  ],
+  "file_filter_control": {
+    "stderr": "Cloning into bare repository 'E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\file-filter-control.git'...\nwarning: filtering not recognized by server, ignoring\n",
+    "all_base_blobs_physically_present": true,
+    "physical_objects": {
+      "4695f9e24b622d530e1e33149840165b266f804b": {
+        "type": "blob",
+        "bytes": 32768
+      },
+      "4d085e726feb68ecb286f65ae492cf6229b3f619": {
+        "type": "tree",
+        "bytes": 88
+      },
+      "591531554ea795e9251e1c216f07e98fb6816ea8": {
+        "type": "tree",
+        "bytes": 117
+      },
+      "6562f1d677724f8b5c0d3d632f391c65d4968828": {
+        "type": "tree",
+        "bytes": 103
+      },
+      "975ffb825966cf6f32c08065e9ac87de4935bee4": {
+        "type": "blob",
+        "bytes": 131072
+      },
+      "a2689f90449225a06d4bcb9f2dc7db10b3409e4b": {
+        "type": "blob",
+        "bytes": 262144
+      },
+      "ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5": {
+        "type": "blob",
+        "bytes": 54
+      },
+      "bc217f8fc94fe75c6915b4280fa964254b50ad1d": {
+        "type": "blob",
+        "bytes": 65536
+      },
+      "c328ca2b1fdc8e124441ad445a19a07086f9f4af": {
+        "type": "blob",
+        "bytes": 196608
+      },
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b": {
+        "type": "commit",
+        "bytes": 268
+      }
+    },
+    "not_used_as_metadata_only_fixture": true
+  },
+  "metadata_only_fixture": {
+    "method": "manual copy of exact base commit/tree raw bytes plus explicit shallow boundary; NOT genuine partial-clone certification",
+    "before_objects": {
+      "4d085e726feb68ecb286f65ae492cf6229b3f619": {
+        "type": "tree",
+        "bytes": 88
+      },
+      "591531554ea795e9251e1c216f07e98fb6816ea8": {
+        "type": "tree",
+        "bytes": 117
+      },
+      "6562f1d677724f8b5c0d3d632f391c65d4968828": {
+        "type": "tree",
+        "bytes": 103
+      },
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b": {
+        "type": "commit",
+        "bytes": 268
+      }
+    },
+    "missing_base_blobs": [
+      {
+        "path": "README.txt",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5"
+      },
+      {
+        "path": "public/changed.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "c328ca2b1fdc8e124441ad445a19a07086f9f4af"
+      },
+      {
+        "path": "public/deleted-from-base.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "bc217f8fc94fe75c6915b4280fa964254b50ad1d"
+      },
+      {
+        "path": "reuse/reuse-a.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "975ffb825966cf6f32c08065e9ac87de4935bee4"
+      },
+      {
+        "path": "reuse/reuse-b.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "a2689f90449225a06d4bcb9f2dc7db10b3409e4b"
+      },
+      {
+        "path": "reuse/reuse-c.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "4695f9e24b622d530e1e33149840165b266f804b"
+      }
+    ]
+  },
+  "base_package": {
+    "path": "base.tar",
+    "bytes": 747520,
+    "sha256": "e46e7344cf10a55b5a8427d5efde44f54f703f22dc1b9bff456a7bbe64dbd409",
+    "files": {
+      "config": {
+        "bytes": 104,
+        "sha256": "74c63b4eae3533b3ff4c0e285897778464d6c04815c33457729279ded1e2a947"
+      },
+      "description": {
+        "bytes": 73,
+        "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+      },
+      "HEAD": {
+        "bytes": 21,
+        "sha256": "560b95b63a73ba07d4a487a0a3780c2c2f690f175816fde255fb1a5e9aa4e1a1"
+      },
+      "hooks/applypatch-msg.sample": {
+        "bytes": 478,
+        "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+      },
+      "hooks/commit-msg.sample": {
+        "bytes": 896,
+        "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437"
+      },
+      "hooks/fsmonitor-watchman.sample": {
+        "bytes": 4726,
+        "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0"
+      },
+      "hooks/post-update.sample": {
+        "bytes": 189,
+        "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+      },
+      "hooks/pre-applypatch.sample": {
+        "bytes": 424,
+        "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+      },
+      "hooks/pre-commit.sample": {
+        "bytes": 1649,
+        "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+      },
+      "hooks/pre-merge-commit.sample": {
+        "bytes": 416,
+        "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+      },
+      "hooks/pre-push.sample": {
+        "bytes": 1374,
+        "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+      },
+      "hooks/pre-rebase.sample": {
+        "bytes": 4898,
+        "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+      },
+      "hooks/pre-receive.sample": {
+        "bytes": 544,
+        "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+      },
+      "hooks/prepare-commit-msg.sample": {
+        "bytes": 1492,
+        "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+      },
+      "hooks/push-to-checkout.sample": {
+        "bytes": 2783,
+        "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+      },
+      "hooks/sendemail-validate.sample": {
+        "bytes": 2308,
+        "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+      },
+      "hooks/update.sample": {
+        "bytes": 3650,
+        "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+      },
+      "info/exclude": {
+        "bytes": 240,
+        "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+      },
+      "objects/pack/pack-6c85143e6f75f0a664c3ac4e2673a907816b1e33.idx": {
+        "bytes": 1352,
+        "sha256": "be3fc8bf75cdda80f1d2433b283a0f60fc711b17f51c497b5fe718d4e0428682"
+      },
+      "objects/pack/pack-6c85143e6f75f0a664c3ac4e2673a907816b1e33.pack": {
+        "bytes": 688959,
+        "sha256": "7f43a4c8f8bc7c4c2f562c6fac6b97e244eec154cfa77f151d9faa6d1f1d2979"
+      },
+      "objects/pack/pack-6c85143e6f75f0a664c3ac4e2673a907816b1e33.rev": {
+        "bytes": 92,
+        "sha256": "4c89da90e1ceaf089fc2d5365cb2abedf02ef9f0700bdcc27d78ecae6bbf2821"
+      },
+      "packed-refs": {
+        "bytes": 103,
+        "sha256": "3872210a876cb8063ebb0e0dbba4045565e394f0939ca33e90265cb9b1bf633c"
+      },
+      "shallow": {
+        "bytes": 41,
+        "sha256": "24ef734ab183958b8db65eddde0354e89650a65c2379498bf2c15e057cf5deb3"
+      }
+    },
+    "directories": [
+      "hooks",
+      "info",
+      "objects",
+      "objects/info",
+      "objects/pack",
+      "refs",
+      "refs/heads",
+      "refs/tags"
+    ]
+  },
+  "offline_gate": {
+    "source_path_absent": true,
+    "base_image_path_absent": true,
+    "all_git_transports_disabled_after_gate": true,
+    "os_network_firewall_claim": false,
+    "no_alternates_no_promisor_no_remote_on_receiver": true
+  },
+  "metadata_only_result": {
+    "bundle_verify_returncode": 0,
+    "unbundle_returncode": 0,
+    "target_blob_missing": [
+      {
+        "path": "README.txt",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5",
+        "bytes": 54,
+        "sha256": "0a84583dfd3685dded1bb18b0b77f7b2f0855eb355388f9a15adab38de6d9c2b"
+      },
+      {
+        "path": "reuse/reuse-a.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "975ffb825966cf6f32c08065e9ac87de4935bee4",
+        "bytes": 131072,
+        "sha256": "23f138ace2685f228460c651e91f8f19ebfcb760d89d374320443f6d75127447"
+      },
+      {
+        "path": "reuse/reuse-b.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "a2689f90449225a06d4bcb9f2dc7db10b3409e4b",
+        "bytes": 262144,
+        "sha256": "ec7e4071e4c7a038c8ad5a72027011eb6cd2755fa3339163e09bcdb379098c61"
+      },
+      {
+        "path": "reuse/reuse-c.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "4695f9e24b622d530e1e33149840165b266f804b",
+        "bytes": 32768,
+        "sha256": "973295b5b16033176565122d360f8577cc3f4a4ddfa53557e3506d60d3c57794"
+      }
+    ],
+    "target_blob_present": [
+      {
+        "path": "public/changed.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "20233a13f474aa54b2be4945fb3e46b02f1aa64f",
+        "bytes": 196609,
+        "sha256": "72c19db5e6c72c1a31f15ed2199581cac2a958e847a49d7753a1fcd69133589d"
+      },
+      {
+        "path": "public/new.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "59c7d400050a30dc3d6c900a839f451d291ca303",
+        "bytes": 131072,
+        "sha256": "6150a12dde17e9cfae160654866edc1c2893669946f05316c1d26b6f056d6929"
+      }
+    ],
+    "fsck_returncode": 2,
+    "publication_gate": "REJECT_INCOMPLETE_BASE_BLOBS"
+  },
+  "positive_result": {
+    "state": "PASS_EXACT_CURRENT_TREE_AND_BLOBS",
+    "target": "dd3999c9103a282cdc8628c2ea7cad148a9cf513",
+    "target_tree": "aa4a884531681524a52aba7f6aa29104ffad5a33",
+    "verified_files": [
+      {
+        "path": "README.txt",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5",
+        "bytes": 54,
+        "sha256": "0a84583dfd3685dded1bb18b0b77f7b2f0855eb355388f9a15adab38de6d9c2b",
+        "verified_sha256": "0a84583dfd3685dded1bb18b0b77f7b2f0855eb355388f9a15adab38de6d9c2b"
+      },
+      {
+        "path": "public/changed.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "20233a13f474aa54b2be4945fb3e46b02f1aa64f",
+        "bytes": 196609,
+        "sha256": "72c19db5e6c72c1a31f15ed2199581cac2a958e847a49d7753a1fcd69133589d",
+        "verified_sha256": "72c19db5e6c72c1a31f15ed2199581cac2a958e847a49d7753a1fcd69133589d"
+      },
+      {
+        "path": "public/new.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "59c7d400050a30dc3d6c900a839f451d291ca303",
+        "bytes": 131072,
+        "sha256": "6150a12dde17e9cfae160654866edc1c2893669946f05316c1d26b6f056d6929",
+        "verified_sha256": "6150a12dde17e9cfae160654866edc1c2893669946f05316c1d26b6f056d6929"
+      },
+      {
+        "path": "reuse/reuse-a.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "975ffb825966cf6f32c08065e9ac87de4935bee4",
+        "bytes": 131072,
+        "sha256": "23f138ace2685f228460c651e91f8f19ebfcb760d89d374320443f6d75127447",
+        "verified_sha256": "23f138ace2685f228460c651e91f8f19ebfcb760d89d374320443f6d75127447"
+      },
+      {
+        "path": "reuse/reuse-b.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "a2689f90449225a06d4bcb9f2dc7db10b3409e4b",
+        "bytes": 262144,
+        "sha256": "ec7e4071e4c7a038c8ad5a72027011eb6cd2755fa3339163e09bcdb379098c61",
+        "verified_sha256": "ec7e4071e4c7a038c8ad5a72027011eb6cd2755fa3339163e09bcdb379098c61"
+      },
+      {
+        "path": "reuse/reuse-c.bin",
+        "mode": "100644",
+        "type": "blob",
+        "oid": "4695f9e24b622d530e1e33149840165b266f804b",
+        "bytes": 32768,
+        "sha256": "973295b5b16033176565122d360f8577cc3f4a4ddfa53557e3506d60d3c57794",
+        "verified_sha256": "973295b5b16033176565122d360f8577cc3f4a4ddfa53557e3506d60d3c57794"
+      }
+    ],
+    "blob_bytes": 753719,
+    "fsck_returncode": 0,
+    "physical_objects": {
+      "08407e724a67b13381e41f0c2e75b6658cfb435a": {
+        "type": "tree",
+        "bytes": 74
+      },
+      "1ef1c790863520f223ffb02fd6fa52d94312d985": {
+        "type": "blob",
+        "bytes": 98304
+      },
+      "20233a13f474aa54b2be4945fb3e46b02f1aa64f": {
+        "type": "blob",
+        "bytes": 196609
+      },
+      "281daf162ed2d6c104ca670226c67d83086f3b4c": {
+        "type": "tree",
+        "bytes": 103
+      },
+      "2a295b22d1eb7cd78c97d6d8c06ee31dae8f5dbf": {
+        "type": "tree",
+        "bytes": 140
+      },
+      "4695f9e24b622d530e1e33149840165b266f804b": {
+        "type": "blob",
+        "bytes": 32768
+      },
+      "4d085e726feb68ecb286f65ae492cf6229b3f619": {
+        "type": "tree",
+        "bytes": 88
+      },
+      "591531554ea795e9251e1c216f07e98fb6816ea8": {
+        "type": "tree",
+        "bytes": 117
+      },
+      "59c7d400050a30dc3d6c900a839f451d291ca303": {
+        "type": "blob",
+        "bytes": 131072
+      },
+      "6562f1d677724f8b5c0d3d632f391c65d4968828": {
+        "type": "tree",
+        "bytes": 103
+      },
+      "6aea75a6c42c448c7a48fbebba836188f40e8a63": {
+        "type": "commit",
+        "bytes": 294
+      },
+      "975ffb825966cf6f32c08065e9ac87de4935bee4": {
+        "type": "blob",
+        "bytes": 131072
+      },
+      "a2689f90449225a06d4bcb9f2dc7db10b3409e4b": {
+        "type": "blob",
+        "bytes": 262144
+      },
+      "aa4a884531681524a52aba7f6aa29104ffad5a33": {
+        "type": "tree",
+        "bytes": 103
+      },
+      "ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5": {
+        "type": "blob",
+        "bytes": 54
+      },
+      "bc217f8fc94fe75c6915b4280fa964254b50ad1d": {
+        "type": "blob",
+        "bytes": 65536
+      },
+      "c328ca2b1fdc8e124441ad445a19a07086f9f4af": {
+        "type": "blob",
+        "bytes": 196608
+      },
+      "dd3999c9103a282cdc8628c2ea7cad148a9cf513": {
+        "type": "commit",
+        "bytes": 268
+      },
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b": {
+        "type": "commit",
+        "bytes": 268
+      }
+    },
+    "shallow_boundary": "f0ed92e43fe3ac419cb849aa4068f10922adfc9b",
+    "full_ancestor_history_claim": false
+  },
+  "state": "PASS_FIXTURE_METADATA_SCHEME_DISPROVED_FULL_SHALLOW_BASE_POSITIVE",
+  "elapsed_seconds": 5.35805380018428,
+  "command_count": 77,
+  "checks": 25,
+  "check_failures": 0,
+  "execution_error": null
+}

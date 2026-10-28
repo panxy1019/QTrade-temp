@@ -1,0 +1,19 @@
+{
+  "row": [
+    [
+      "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+      "3e3406bc45e3a366bdcc57631648c3f05917e98f2d47a70df5c7482e8425f79b",
+      "2026-10-27",
+      "2026-10-27T12:23:08.063121+00:00"
+    ]
+  ],
+  "event": [
+    [
+      3,
+      "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+      "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+      "QLIB_DATA_READY",
+      "{\"classification\": \"PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY\", \"point_in_time\": false, \"realtime_readiness\": false, \"real_data_paper_readiness\": false, \"external_order_transmission\": false, \"live_trading_enabled\": false, \"promotion\": \"NOT_ELIGIBLE\", \"kind\": \"QLIB_DATA_READY\", \"version_id\": \"09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407\", \"manifest_sha256\": \"3e3406bc45e3a366bdcc57631648c3f05917e98f2d47a70df5c7482e8425f79b\", \"actual_end\": \"2026-10-27\", \"admitted_at\": \"2026-10-27T12:23:08.063121+00:00\", \"scope\": \"QUALIFIED_RESEARCH_SUBSET_NOT_FULL_PIT_OR_TRADE_READINESS\", \"evidence_sha256\": \"69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c\"}"
+    ]
+  ]
+}

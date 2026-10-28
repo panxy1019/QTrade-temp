@@ -1,0 +1,16 @@
+{
+  "state": "PASS_LOCAL_PROTOCOL_ONLY",
+  "scope": "SYNTHETIC_PROTOCOL_PAYLOADS",
+  "cases": [
+    "actual_clone_append_read_hmac",
+    "identical_append_has_no_second_commit",
+    "same_id_changed_payload_rejected_without_ref_change",
+    "section_and_identity_path_guards",
+    "real_local_ref_CAS_loses_to_concurrent_append_without_overwrite",
+    "explicit_CAS_retry_preserves_both_commits",
+    "HMAC_rejects_modified_payload"
+  ],
+  "bare_head": "1e233cab9509d8bc05bdafad7d5d7afdf1f98db0",
+  "production_queue_accessed": false,
+  "ssh_vendor_used": false
+}

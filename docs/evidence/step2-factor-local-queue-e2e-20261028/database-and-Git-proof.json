@@ -1,0 +1,22 @@
+{
+  "workflow.sqlite": {
+    "bytes": 28672,
+    "sha256": "c4380f897d34367c4361f08bdefcaaf3cdfc875547df3c32320cc438765269b7"
+  },
+  "strategies.sqlite": {
+    "bytes": 94208,
+    "sha256": "ff51b5b825ab7f316048d98418c26cac847d9bb8de52f2a8498f6222f9f6713e"
+  },
+  "online-models.sqlite": {
+    "bytes": 77824,
+    "sha256": "c7cecd32c82ac305ba5a915fd80786e70e88950738bccd151762502a7b2ae748"
+  },
+  "qlib-versions.sqlite": {
+    "bytes": 45056,
+    "sha256": "d5f5cfda48c4ec6add2fa05b47fbf2454678726439fde39d72afba90a7958238"
+  },
+  "local-queue.bundle": {
+    "bytes": 2592,
+    "sha256": "5d1e54803b363ef5513c7142c35107351644df5f30d4989ca0bc150097fc1035"
+  }
+}

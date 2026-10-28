@@ -1,0 +1,5 @@
+{
+  "status": 0,
+  "command": "LIVE_TRADING_ENABLED=false PYTHONDONTWRITEBYTECODE=1 /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python -P -B /root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/stage_factor_api_queue_e2e_20261028.py /root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a",
+  "remote_root": "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a"
+}

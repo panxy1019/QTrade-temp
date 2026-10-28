@@ -1,0 +1,1 @@
+{"state": "PASS_LATE_CAS_AFTER_REF_ADVERTISEMENT", "fixture_payloads_only": true, "error": "QUEUE_PUSH_NOT_ACCEPTED", "competitor_ref_preserved": true, "pending_ref_not_published": true, "unreachable_imported_objects_possible": true, "production_queue_accessed": false, "bare_head": "9262413cf61471e0d7a20cc984b71dd1c34c060e"}

@@ -1,0 +1,3 @@
+[fixture-work (root-commit) 08c9169] historical ancestor outside shallow base
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 historical-only.bin

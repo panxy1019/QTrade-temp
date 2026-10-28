@@ -1,0 +1,48 @@
+{
+  "created_at": "2026-10-28T14:18:13.210429+00:00",
+  "files": [
+    {
+      "bytes": 14220,
+      "file": "publication_pack_cache_fixture_installer_20261028.py",
+      "original_path": "E:\\QTrade-temp\\publication_pack_cache_fixture_installer_20261028.py",
+      "sha256": "8a71ba8e329b74fbbb6f0212d71f861e4717e0b56c90cc6079154a3d2b36e9aa"
+    },
+    {
+      "bytes": 14044,
+      "file": "test_publication_pack_cache_fixture_installer_20261028.py",
+      "original_path": "E:\\QTrade-temp\\test_publication_pack_cache_fixture_installer_20261028.py",
+      "sha256": "3d10a4e9668f1ffed125ff85640ebd55118a3fbdd570bdac61613106e1adedee"
+    },
+    {
+      "bytes": 3063,
+      "file": "author-tests-final-17.xml",
+      "original_path": "E:\\QTrade-temp\\packcache-installer-author-tests-20261028T142000Z.xml",
+      "sha256": "34cb2f41281c27b6f293e39b5402f51dff6187dd6c2ebe292137b291f7644c06"
+    },
+    {
+      "bytes": 5014,
+      "file": "author-tests-first-15-1fixturefailure.xml",
+      "original_path": "E:\\QTrade-temp\\packcache-installer-author-tests-20261028T141600Z.xml",
+      "sha256": "092a131a2fcafc2f1d000c9a50a0cced3515f47a76e1b96f60fda80d5df88071"
+    },
+    {
+      "bytes": 12097,
+      "file": "tests-before-windows-readonly-fixture-fix.py",
+      "original_path": "E:\\QTrade-temp\\packcache-installer-author-tests-before-fixture-readonly-fix-20261028T141600Z.py",
+      "sha256": "9a69fec1108ddce88d64c2785e86eb41d927500352897bbba426e6160c94fcf6"
+    },
+    {
+      "bytes": 818,
+      "file": "actual-linux-wire-comparison.json",
+      "original_path": "E:\\QTrade-temp\\cluster-evidence\\publication-wire-pack-20261028T141408Z\\report.json",
+      "sha256": "7f5dc55b52a94d1fc3d215a89f85452f31ca5e4693ec9ff8411a042a6e2c61c0"
+    },
+    {
+      "bytes": 4853,
+      "file": "README.md",
+      "sha256": "44c72edbb51a912959dba52847d9132f18f4b3b96914572a6f8d815c2050d521"
+    }
+  ],
+  "production_candidate_approved": false,
+  "schema": "qtrade.rejected-pack-cache-fixture-safe-seal.v1"
+}

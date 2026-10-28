@@ -1,0 +1,322 @@
+{
+  "cases": [
+    {
+      "final_pack_bytes": 152543,
+      "final_pack_objects": 9,
+      "final_packs": [
+        {
+          "bytes": 152543,
+          "sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e",
+          "verify_pack": "6cd841275808ae43602ffe8e06bb781bda83626f commit 263 182 12\nf3f3ecd5895a535fb5c88f07d22a12ec4a578ca3 tree   127 117 194\n4ba825ce6f075ef5fcb416c803f63984c5d7ff1f blob   35 45 311\n022132bde47c583894cc8ab30b317e12a4e28d32 tree   34 43 356\ncedbf5ec410a3b468b7f7e3defcff4561af2cb95 tree   388 321 399\nd07adcecf0c85e9b6bfedf818ad0cee07030cae2 blob   65592 37952 720\nbc5ed6e121eba2ffbd195586e6169b4313fef854 blob   65592 37964 38672\n9bfdf09d71816b88ad35e43e6c7669c914908c33 blob   65592 37936 76636\n3dd2dce3f3987a0ea33e1584c473c2153f65c225 blob   65592 37951 114572\nnon delta: 9 objects\nE:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-0-localref-0-negotiate-0\\remote.git\\objects\\pack\\pack-80acd8a4dad4b821461d27fd204dc01a67c12996.pack: ok\n"
+        }
+      ],
+      "fixture_root": "E:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-0-localref-0-negotiate-0",
+      "has_upload_pack_negotiation": false,
+      "main_unchanged_during_aux_staging": true,
+      "metadata_installed": false,
+      "metadata_pack_bytes": 0,
+      "old_main": "4642edb82efb2a2694a41a58976ad8f28a4b5579",
+      "packet_trace_sha256": "09ff5cb6986d5d9681d0c180998e63281adda23687e20936e1359cd2bea6ff1f",
+      "push_negotiate": false,
+      "sender_aux_ref_added_diagnostic_only": false,
+      "source_refs_unchanged_during_main_push": true,
+      "staged_blob_retransmission_count": 5,
+      "staged_blob_retransmitted": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "target_main": "6cd841275808ae43602ffe8e06bb781bda83626f",
+      "target_public_blob_oids": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "transmitted_objects": [
+        "022132bde47c583894cc8ab30b317e12a4e28d32",
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "6cd841275808ae43602ffe8e06bb781bda83626f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "cedbf5ec410a3b468b7f7e3defcff4561af2cb95",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2",
+        "f3f3ecd5895a535fb5c88f07d22a12ec4a578ca3"
+      ],
+      "wire_equals_stored_pack": true,
+      "wire_pack_bytes": 152543,
+      "wire_pack_object_count": 9,
+      "wire_pack_sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e"
+    },
+    {
+      "final_pack_bytes": 152543,
+      "final_pack_objects": 9,
+      "final_packs": [
+        {
+          "bytes": 152543,
+          "sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e",
+          "verify_pack": "6cd841275808ae43602ffe8e06bb781bda83626f commit 263 182 12\nf3f3ecd5895a535fb5c88f07d22a12ec4a578ca3 tree   127 117 194\n4ba825ce6f075ef5fcb416c803f63984c5d7ff1f blob   35 45 311\n022132bde47c583894cc8ab30b317e12a4e28d32 tree   34 43 356\ncedbf5ec410a3b468b7f7e3defcff4561af2cb95 tree   388 321 399\nd07adcecf0c85e9b6bfedf818ad0cee07030cae2 blob   65592 37952 720\nbc5ed6e121eba2ffbd195586e6169b4313fef854 blob   65592 37964 38672\n9bfdf09d71816b88ad35e43e6c7669c914908c33 blob   65592 37936 76636\n3dd2dce3f3987a0ea33e1584c473c2153f65c225 blob   65592 37951 114572\nnon delta: 9 objects\nE:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-0-localref-0-negotiate-1\\remote.git\\objects\\pack\\pack-80acd8a4dad4b821461d27fd204dc01a67c12996.pack: ok\n"
+        }
+      ],
+      "fixture_root": "E:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-0-localref-0-negotiate-1",
+      "has_upload_pack_negotiation": true,
+      "main_unchanged_during_aux_staging": true,
+      "metadata_installed": false,
+      "metadata_pack_bytes": 0,
+      "old_main": "4642edb82efb2a2694a41a58976ad8f28a4b5579",
+      "packet_trace_sha256": "4477ca60fd8393890d6432b9ec60d30038a7a771248f93964fe31e92f8cb90ed",
+      "push_negotiate": true,
+      "sender_aux_ref_added_diagnostic_only": false,
+      "source_refs_unchanged_during_main_push": true,
+      "staged_blob_retransmission_count": 5,
+      "staged_blob_retransmitted": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "target_main": "6cd841275808ae43602ffe8e06bb781bda83626f",
+      "target_public_blob_oids": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "transmitted_objects": [
+        "022132bde47c583894cc8ab30b317e12a4e28d32",
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "6cd841275808ae43602ffe8e06bb781bda83626f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "cedbf5ec410a3b468b7f7e3defcff4561af2cb95",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2",
+        "f3f3ecd5895a535fb5c88f07d22a12ec4a578ca3"
+      ],
+      "wire_equals_stored_pack": true,
+      "wire_pack_bytes": 152543,
+      "wire_pack_object_count": 9,
+      "wire_pack_sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e"
+    },
+    {
+      "final_pack_bytes": 152543,
+      "final_pack_objects": 9,
+      "final_packs": [
+        {
+          "bytes": 152543,
+          "sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e",
+          "verify_pack": "6cd841275808ae43602ffe8e06bb781bda83626f commit 263 182 12\nf3f3ecd5895a535fb5c88f07d22a12ec4a578ca3 tree   127 117 194\n4ba825ce6f075ef5fcb416c803f63984c5d7ff1f blob   35 45 311\n022132bde47c583894cc8ab30b317e12a4e28d32 tree   34 43 356\ncedbf5ec410a3b468b7f7e3defcff4561af2cb95 tree   388 321 399\nd07adcecf0c85e9b6bfedf818ad0cee07030cae2 blob   65592 37952 720\nbc5ed6e121eba2ffbd195586e6169b4313fef854 blob   65592 37964 38672\n9bfdf09d71816b88ad35e43e6c7669c914908c33 blob   65592 37936 76636\n3dd2dce3f3987a0ea33e1584c473c2153f65c225 blob   65592 37951 114572\nnon delta: 9 objects\nE:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-1-localref-0-negotiate-0\\remote.git\\objects\\pack\\pack-80acd8a4dad4b821461d27fd204dc01a67c12996.pack: ok\n"
+        }
+      ],
+      "fixture_root": "E:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-1-localref-0-negotiate-0",
+      "has_upload_pack_negotiation": false,
+      "main_unchanged_during_aux_staging": true,
+      "metadata_installed": true,
+      "metadata_pack_bytes": 335,
+      "old_main": "4642edb82efb2a2694a41a58976ad8f28a4b5579",
+      "packet_trace_sha256": "6d770200fb674d93f2785fdb5aed6f3ca1d0a49e220dca6223723e079efff585",
+      "push_negotiate": false,
+      "sender_aux_ref_added_diagnostic_only": false,
+      "source_refs_unchanged_during_main_push": true,
+      "staged_blob_retransmission_count": 5,
+      "staged_blob_retransmitted": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "target_main": "6cd841275808ae43602ffe8e06bb781bda83626f",
+      "target_public_blob_oids": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "transmitted_objects": [
+        "022132bde47c583894cc8ab30b317e12a4e28d32",
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "6cd841275808ae43602ffe8e06bb781bda83626f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "cedbf5ec410a3b468b7f7e3defcff4561af2cb95",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2",
+        "f3f3ecd5895a535fb5c88f07d22a12ec4a578ca3"
+      ],
+      "wire_equals_stored_pack": true,
+      "wire_pack_bytes": 152543,
+      "wire_pack_object_count": 9,
+      "wire_pack_sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e"
+    },
+    {
+      "final_pack_bytes": 152543,
+      "final_pack_objects": 9,
+      "final_packs": [
+        {
+          "bytes": 152543,
+          "sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e",
+          "verify_pack": "6cd841275808ae43602ffe8e06bb781bda83626f commit 263 182 12\nf3f3ecd5895a535fb5c88f07d22a12ec4a578ca3 tree   127 117 194\n4ba825ce6f075ef5fcb416c803f63984c5d7ff1f blob   35 45 311\n022132bde47c583894cc8ab30b317e12a4e28d32 tree   34 43 356\ncedbf5ec410a3b468b7f7e3defcff4561af2cb95 tree   388 321 399\nd07adcecf0c85e9b6bfedf818ad0cee07030cae2 blob   65592 37952 720\nbc5ed6e121eba2ffbd195586e6169b4313fef854 blob   65592 37964 38672\n9bfdf09d71816b88ad35e43e6c7669c914908c33 blob   65592 37936 76636\n3dd2dce3f3987a0ea33e1584c473c2153f65c225 blob   65592 37951 114572\nnon delta: 9 objects\nE:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-1-localref-0-negotiate-1\\remote.git\\objects\\pack\\pack-80acd8a4dad4b821461d27fd204dc01a67c12996.pack: ok\n"
+        }
+      ],
+      "fixture_root": "E:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-1-localref-0-negotiate-1",
+      "has_upload_pack_negotiation": true,
+      "main_unchanged_during_aux_staging": true,
+      "metadata_installed": true,
+      "metadata_pack_bytes": 335,
+      "old_main": "4642edb82efb2a2694a41a58976ad8f28a4b5579",
+      "packet_trace_sha256": "77581c010774cbf5024be77429221c2b7157ac07d5af8b0b06d288c728fec4f5",
+      "push_negotiate": true,
+      "sender_aux_ref_added_diagnostic_only": false,
+      "source_refs_unchanged_during_main_push": true,
+      "staged_blob_retransmission_count": 5,
+      "staged_blob_retransmitted": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "target_main": "6cd841275808ae43602ffe8e06bb781bda83626f",
+      "target_public_blob_oids": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "transmitted_objects": [
+        "022132bde47c583894cc8ab30b317e12a4e28d32",
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "6cd841275808ae43602ffe8e06bb781bda83626f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "cedbf5ec410a3b468b7f7e3defcff4561af2cb95",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2",
+        "f3f3ecd5895a535fb5c88f07d22a12ec4a578ca3"
+      ],
+      "wire_equals_stored_pack": true,
+      "wire_pack_bytes": 152543,
+      "wire_pack_object_count": 9,
+      "wire_pack_sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e"
+    },
+    {
+      "final_pack_bytes": 152543,
+      "final_pack_objects": 9,
+      "final_packs": [
+        {
+          "bytes": 152543,
+          "sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e",
+          "verify_pack": "6cd841275808ae43602ffe8e06bb781bda83626f commit 263 182 12\nf3f3ecd5895a535fb5c88f07d22a12ec4a578ca3 tree   127 117 194\n4ba825ce6f075ef5fcb416c803f63984c5d7ff1f blob   35 45 311\n022132bde47c583894cc8ab30b317e12a4e28d32 tree   34 43 356\ncedbf5ec410a3b468b7f7e3defcff4561af2cb95 tree   388 321 399\nd07adcecf0c85e9b6bfedf818ad0cee07030cae2 blob   65592 37952 720\nbc5ed6e121eba2ffbd195586e6169b4313fef854 blob   65592 37964 38672\n9bfdf09d71816b88ad35e43e6c7669c914908c33 blob   65592 37936 76636\n3dd2dce3f3987a0ea33e1584c473c2153f65c225 blob   65592 37951 114572\nnon delta: 9 objects\nE:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-1-localref-1-negotiate-0\\remote.git\\objects\\pack\\pack-80acd8a4dad4b821461d27fd204dc01a67c12996.pack: ok\n"
+        }
+      ],
+      "fixture_root": "E:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-1-localref-1-negotiate-0",
+      "has_upload_pack_negotiation": false,
+      "main_unchanged_during_aux_staging": true,
+      "metadata_installed": true,
+      "metadata_pack_bytes": 335,
+      "old_main": "4642edb82efb2a2694a41a58976ad8f28a4b5579",
+      "packet_trace_sha256": "6d7de920536eda56b9cb17e3fadfa7fa96c37355bbd291a7011e50294324dd09",
+      "push_negotiate": false,
+      "sender_aux_ref_added_diagnostic_only": true,
+      "source_refs_unchanged_during_main_push": true,
+      "staged_blob_retransmission_count": 5,
+      "staged_blob_retransmitted": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "target_main": "6cd841275808ae43602ffe8e06bb781bda83626f",
+      "target_public_blob_oids": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "transmitted_objects": [
+        "022132bde47c583894cc8ab30b317e12a4e28d32",
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "6cd841275808ae43602ffe8e06bb781bda83626f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "cedbf5ec410a3b468b7f7e3defcff4561af2cb95",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2",
+        "f3f3ecd5895a535fb5c88f07d22a12ec4a578ca3"
+      ],
+      "wire_equals_stored_pack": true,
+      "wire_pack_bytes": 152543,
+      "wire_pack_object_count": 9,
+      "wire_pack_sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e"
+    },
+    {
+      "final_pack_bytes": 152543,
+      "final_pack_objects": 9,
+      "final_packs": [
+        {
+          "bytes": 152543,
+          "sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e",
+          "verify_pack": "6cd841275808ae43602ffe8e06bb781bda83626f commit 263 182 12\nf3f3ecd5895a535fb5c88f07d22a12ec4a578ca3 tree   127 117 194\n4ba825ce6f075ef5fcb416c803f63984c5d7ff1f blob   35 45 311\n022132bde47c583894cc8ab30b317e12a4e28d32 tree   34 43 356\ncedbf5ec410a3b468b7f7e3defcff4561af2cb95 tree   388 321 399\nd07adcecf0c85e9b6bfedf818ad0cee07030cae2 blob   65592 37952 720\nbc5ed6e121eba2ffbd195586e6169b4313fef854 blob   65592 37964 38672\n9bfdf09d71816b88ad35e43e6c7669c914908c33 blob   65592 37936 76636\n3dd2dce3f3987a0ea33e1584c473c2153f65c225 blob   65592 37951 114572\nnon delta: 9 objects\nE:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-1-localref-1-negotiate-1\\remote.git\\objects\\pack\\pack-80acd8a4dad4b821461d27fd204dc01a67c12996.pack: ok\n"
+        }
+      ],
+      "fixture_root": "E:\\QTrade-temp\\push-negotiate-wire-probe-v2-20261028T135533Z\\metadata-1-localref-1-negotiate-1",
+      "has_upload_pack_negotiation": true,
+      "main_unchanged_during_aux_staging": true,
+      "metadata_installed": true,
+      "metadata_pack_bytes": 335,
+      "old_main": "4642edb82efb2a2694a41a58976ad8f28a4b5579",
+      "packet_trace_sha256": "06ea7a969d02d3e7f83b28c122bb76e6f1b92f1740a24ab8fc72cda747e7fa2d",
+      "push_negotiate": true,
+      "sender_aux_ref_added_diagnostic_only": true,
+      "source_refs_unchanged_during_main_push": true,
+      "staged_blob_retransmission_count": 5,
+      "staged_blob_retransmitted": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "target_main": "6cd841275808ae43602ffe8e06bb781bda83626f",
+      "target_public_blob_oids": [
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2"
+      ],
+      "transmitted_objects": [
+        "022132bde47c583894cc8ab30b317e12a4e28d32",
+        "3dd2dce3f3987a0ea33e1584c473c2153f65c225",
+        "4ba825ce6f075ef5fcb416c803f63984c5d7ff1f",
+        "6cd841275808ae43602ffe8e06bb781bda83626f",
+        "9bfdf09d71816b88ad35e43e6c7669c914908c33",
+        "bc5ed6e121eba2ffbd195586e6169b4313fef854",
+        "cedbf5ec410a3b468b7f7e3defcff4561af2cb95",
+        "d07adcecf0c85e9b6bfedf818ad0cee07030cae2",
+        "f3f3ecd5895a535fb5c88f07d22a12ec4a578ca3"
+      ],
+      "wire_equals_stored_pack": true,
+      "wire_pack_bytes": 152543,
+      "wire_pack_object_count": 9,
+      "wire_pack_sha256": "c93c23b88b44fe47324b177e61105555cc65c90092d705bc9e2c51180cad9d2e"
+    }
+  ],
+  "credentials_accessed": false,
+  "git_version": "git version 2.53.0.windows.3",
+  "network_calls": false,
+  "production_actions": false,
+  "schema": "qtrade.push-negotiate-local-bare-wire-probe.v2",
+  "source_sha256": "8323e1d0f5392f3845a86ca607b42d720cd6e2055b8a7092e8c5aed485d4f9e1"
+}

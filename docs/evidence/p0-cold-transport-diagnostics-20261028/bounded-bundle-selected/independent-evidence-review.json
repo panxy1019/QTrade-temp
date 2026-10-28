@@ -1,0 +1,59 @@
+{
+  "schema": "qtrade.local-bounded-git-independent-evidence-review.v1",
+  "state": "PASS",
+  "first_failed_execution_retained": {
+    "root": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T135524Z-d8621924",
+    "state": "ERROR_EVIDENCE_RETAINED",
+    "checks": 12,
+    "execution_errors": 1,
+    "commands": 59,
+    "result": {
+      "bytes": 15605,
+      "sha256": "cf69d24730a754fd1476151de586b95b1696dc8766fd2b3d7e14cd239e4bfc8a"
+    },
+    "xml": {
+      "bytes": 12143,
+      "sha256": "14e14a22f896010abca2d222c6fc06e8029df8b1f4dee90ac0db293444373180"
+    },
+    "driver": {
+      "bytes": 27204,
+      "sha256": "f8b3ff1660192d0c1924240cb3460f76666b516e5b04d114cb322422c7cbf1e5"
+    },
+    "original_manifest": {
+      "bytes": 18931,
+      "sha256": "6dd2de7c5c51032f29873f2fef15e350fc8fbb69d737f99b6c1966465e465b3f"
+    }
+  },
+  "final": {
+    "root": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "state": "PASS_FIXTURE_METADATA_SCHEME_DISPROVED_FULL_SHALLOW_BASE_POSITIVE",
+    "checks": 25,
+    "execution_errors": 0,
+    "commands": 77,
+    "result": {
+      "bytes": 19620,
+      "sha256": "67dd9ba691de2ea92810d2889c30d141009d0a81afe264bf84931074b68bc394"
+    },
+    "xml": {
+      "bytes": 16787,
+      "sha256": "1c2d33164f5082648c65d026ab525cff30712bda0b7109d0c9bef06fe0111899"
+    },
+    "driver": {
+      "bytes": 27712,
+      "sha256": "5ef2a32453bf17feb8e59c65de11087da812134a2f007768903f6ea444a73fe0"
+    },
+    "original_manifest": {
+      "bytes": 25998,
+      "sha256": "2206ba0bbea6fb641c8fe17fd1b522db41c71e9b06579d0189c3a3b9b590a24d"
+    }
+  },
+  "target_files_independently_read": 6,
+  "target_blob_bytes": 753719,
+  "physical_combined_uncompressed_object_bytes": 1115725,
+  "command_stream_sha_checks": 272,
+  "notes": [
+    "Independent evidence consistency review; no Git command rerun and no production or network operation.",
+    "Header parser gates are experimental local fixture code, not installed production validation.",
+    "First execution error is preserved; final pass only applies to final driver bytes."
+  ]
+}

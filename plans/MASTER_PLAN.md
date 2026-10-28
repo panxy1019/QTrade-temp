@@ -1,5 +1,26 @@
 # Master plan
 
+October28 22:25: retain P0 genuine failure and rejected transport/cache ideas.
+Full frozenpreflight15.93s passes; single manual90s push uncertain, publicactual
+stale. Nativewire generation2.70s; nondelta cache doubles wireandisnotinstalled.
+Prepare a separatelyapproved singlecold180 proposal/operator withphase-only
+telemetry, oldclaim crossbinding and fulltests; nosecondmainpush now. Then actual
+remote/public/API andordinary90 naturalround gates, not just coldACK.
+STEP2 exact45de actuallocalGitQueue/ASGI/ownedchild/Registry completion now passes
+with fullREADYmirror andactualspace checks. ProductionGitHub/TLS/browser gates
+remain; Terra browserconnectionunavailable isnotvisualPASS. STEP1 currentC
+privateonly; D/E fixedscope failures preserved. Keep allresearchproduction
+activation/recovery boundaries; new factorportfoliobacktest isfuture work.
+
+October28 21:12: PR35 source45de5bd freezes protected factor registration/UI;
+Linux377/0skip and web20 pass, but no productionfactor enablement or actual
+GitQueue/DOM acceptance. Complete newGit identity roundtrip in isolation next.
+Public P0 stillblocked by Git90 timeout; two auxref protocol ideas failed, preserve
+negatives. Reviewed temporary loopback relay is next transport experiment, first
+readonly zerochannel ls is NOTproof. No publicpush yet. Current68/b82 privateC
+passes but actualpublicC catalog stale. LegacyD metadata draft not realacceptance.
+Continue realpublic boundary checks without replacing original fixedscope failures.
+
 October28 20:23: onepublisher handover now actual647839/fba with old294214 exited;
 20:03 controlsequal exceptpublisher. Productionexport44.38/37.01 pass, butGit90
 repeatedlytimesout on~23.63MB coldobjects; publicfreshnessNOTaccepted. Prepare

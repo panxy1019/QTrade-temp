@@ -1,0 +1,19 @@
+21:55:39.552624 pkt-line.c:85           packet: receive-pack> 4642edb82efb2a2694a41a58976ad8f28a4b5579 refs/heads/main\0report-status report-status-v2 delete-refs side-band-64k quiet atomic ofs-delta object-format=sha1 agent=git/2.53.0.windows.3-Windows
+21:55:39.553640 pkt-line.c:85           packet: receive-pack> 632e6ac5247085e5f0094c316268118e6f6cd69e refs/heads/qtrade-object-stage/synthetic-0001
+21:55:39.553640 pkt-line.c:85           packet: receive-pack> 0000
+21:55:39.553640 pkt-line.c:85           packet:         push< 4642edb82efb2a2694a41a58976ad8f28a4b5579 refs/heads/main\0report-status report-status-v2 delete-refs side-band-64k quiet atomic ofs-delta object-format=sha1 agent=git/2.53.0.windows.3-Windows
+21:55:39.554636 pkt-line.c:85           packet:         push< 632e6ac5247085e5f0094c316268118e6f6cd69e refs/heads/qtrade-object-stage/synthetic-0001
+21:55:39.554636 pkt-line.c:85           packet:         push< 0000
+21:55:39.555633 pkt-line.c:85           packet:         push> 4642edb82efb2a2694a41a58976ad8f28a4b5579 6cd841275808ae43602ffe8e06bb781bda83626f refs/heads/main\0 report-status-v2 side-band-64k quiet object-format=sha1 agent=git/2.53.0.windows.3-Windows
+21:55:39.555633 pkt-line.c:85           packet:         push> 0000
+21:55:39.555633 pkt-line.c:85           packet: receive-pack< 4642edb82efb2a2694a41a58976ad8f28a4b5579 6cd841275808ae43602ffe8e06bb781bda83626f refs/heads/main\0 report-status-v2 side-band-64k quiet object-format=sha1 agent=git/2.53.0.windows.3-Windows
+21:55:39.555633 pkt-line.c:85           packet: receive-pack< 0000
+21:55:39.686099 pkt-line.c:85           packet: receive-pack> unpack ok
+21:55:39.686099 pkt-line.c:85           packet: receive-pack> ok refs/heads/main
+21:55:39.687106 pkt-line.c:85           packet: receive-pack> 0000
+21:55:39.687106 pkt-line.c:85           packet:     sideband< \1000eunpack ok0017ok refs/heads/main0000
+21:55:39.687106 pkt-line.c:85           packet:         push< unpack ok
+21:55:39.687106 pkt-line.c:85           packet:         push< ok refs/heads/main
+21:55:39.687106 pkt-line.c:85           packet:         push< 0000
+21:55:39.712080 pkt-line.c:85           packet: receive-pack> 0000
+21:55:39.712080 pkt-line.c:85           packet:     sideband< 0000

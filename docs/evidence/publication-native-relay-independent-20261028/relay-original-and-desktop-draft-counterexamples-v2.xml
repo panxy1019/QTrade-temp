@@ -1,0 +1,1171 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="0" tests="27" time="1.018" timestamp="2026-10-28T21:12:39.786000+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_v1_cross_entry_duplicate_digest_only_last_occurrence_is_verified" time="0.061" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_v1_malformed_export_attempt_is_accepted[unsigned]" time="0.040" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_v1_malformed_export_attempt_is_accepted[bad_checksum]" time="0.039" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_v1_malformed_export_attempt_is_accepted[negative_elapsed]" time="0.039" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_v1_malformed_export_attempt_is_accepted[boolean_elapsed]" time="0.039" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_v1_malformed_export_attempt_is_accepted[wrong_schema]" time="0.040" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_v1_malformed_export_attempt_is_accepted[future_unordered_clocks]" time="0.039" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_v1_malformed_export_attempt_is_accepted[nonnull_error]" time="0.049" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_clean_env_drops_git_override_and_trace" time="0.002" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_non_directory_ancestor[41471]" time="0.002" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_non_directory_ancestor[33152]" time="0.002" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_non_directory_ancestor[4480]" time="0.002" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_nonregular_source_before_open[41471]" time="0.004" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_nonregular_source_before_open[16832]" time="0.004" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_nonregular_source_before_open[4480]" time="0.004" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_exclusive_new_source_and_after_upload_hash" time="0.005" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_existing_changed_source_without_overwrite" time="0.005" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_paramiko_wx_has_write_create_and_exclusive_flags" time="0.124" /><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_git_success_without_complete_relay_attestation[zero_channels]" time="0.007"><failure message="TypeError: a bytes-like object is required, not 'str'">desktop = &lt;module 'relay_desktop_v2_offline' from 'E:\\QTrade-temp\\relay-independent-review-20261028\\run_publication_desktop_relay_v2_20261028.py'&gt;
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-753/test_desktop_v2_rejects_git_su0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000165CA6E31D0&gt;
+scenario = 'zero_channels'
+
+    @pytest.mark.parametrize('scenario', ['zero_channels','zero_outbound','zero_inbound',
+        'pump_error','pump_alive','wrong_origin','wrong_server','wrong_port','duplicate'])
+    def test_desktop_v2_rejects_git_success_without_complete_relay_attestation(
+        desktop,tmp_path,monkeypatch,scenario):
+        """Entire main wiring with fake transport. No actual connect/socket/thread."""
+        raw=b'SYNTHETIC_PUBLIC_TOOL';(tmp_path/'tool.py').write_bytes(raw)
+        (tmp_path/'cluster-evidence').mkdir()
+        monkeypatch.setattr(desktop,'LOCAL',tmp_path)
+        monkeypatch.setattr(desktop,'FILES',{'tool.py':hashlib.sha256(raw).hexdigest()})
+        monkeypatch.setattr(desktop,'remote_directory',lambda *a:None)
+        monkeypatch.setattr(desktop,'checked_source',lambda *a:None)
+        class Channel:
+            closed=False
+            def close(self):self.closed=True
+            def recv_exit_status(self):return 0
+            def shutdown_write(self):pass
+        class Stream(io.BytesIO):
+            channel=Channel()
+        class Transport:
+            cancelled=[]
+            def request_port_forward(self,host,port,handler):
+                assert (host,port)==('127.0.0.1',0)
+                self.handler=handler;return 44000
+            def cancel_port_forward(self,host,port):self.cancelled.append((host,port))
+        transport=Transport()
+        class Connection:
+            commands=[];closed=False
+            def get_transport(self):return transport
+            def open_sftp(self):return types.SimpleNamespace(mkdir=lambda *a:None,close=lambda:None)
+            def exec_command(self,command,timeout):
+                self.commands.append(command)
+                if len(self.commands)==1:
+                    output=b'{"loopback_only":true,"listeners":1}'
+                else:
+                    if scenario!='zero_channels':
+                        origin=('0.0.0.0' if scenario=='wrong_origin' else '127.0.0.1',9)
+                        server=('0.0.0.0' if scenario=='wrong_server' else '127.0.0.1',
+                            44001 if scenario=='wrong_port' else 44000)
+                        transport.handler(Channel(),origin,server)
+                        if scenario=='duplicate':
+                            transport.handler(Channel(),origin,server)
+                    output=b'{"state":"OPERATOR_ASSISTED_NATIVE_PUSH_ACKNOWLEDGED"}'
+                return Stream(),Stream(output),Stream()
+            def close(self):self.closed=True
+        connection=Connection();monkeypatch.setattr(desktop,'connect',lambda:connection)
+        class Thread:
+            def __init__(self,*,target,args,daemon):self.target=target
+            def start(self):
+                closure=dict(zip(self.target.__code__.co_freevars,
+                    (cell.cell_contents for cell in self.target.__closure__),strict=True))
+                stats=closure['stats']
+                stats.update(to_github_bytes=0 if scenario=='zero_outbound' else 10,
+                    from_github_bytes=0 if scenario=='zero_inbound' else 10)
+                if scenario=='pump_error':stats['pump_error_types'].append('SyntheticError')
+            def join(self,timeout):pass
+            def is_alive(self):return scenario=='pump_alive'
+        monkeypatch.setattr(desktop.threading,'Thread',Thread)
+        monkeypatch.setattr(desktop.socket,'create_connection',
+            lambda *a,**k:pytest.fail('actual socket forbidden'))
+        monkeypatch.setattr(sys,'argv',['offline-desktop','push','--expected-plan-sha256','a'*64])
+        with pytest.raises(ValueError,match='REAL_RELAY_NOT_ATTESTED_NO_RETRY_AFTER_PUSH'):
+&gt;           desktop.main()
+
+E:\QTrade-temp\relay-independent-review-20261028\test_relay_independent_20261028.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def main():
+        parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['init','ls','prepare','push'])
+        parser.add_argument('--expected-plan-sha256');args=parser.parse_args()
+        require(args.mode!='push' or args.expected_plan_sha256 is not None,'EXPLICIT_REVIEWED_TARGET_REQUIRED')
+        for name,digest in FILES.items():require(sha256((LOCAL/name).read_bytes()).hexdigest()==digest,'SOURCE_CHANGED')
+        c=connect();transport=c.get_transport();stop=threading.Event();lock=threading.Lock()
+        stats={'accepted_channels':0,'rejected_channels':0,'to_github_bytes':0,'from_github_bytes':0,'pump_error_types':[]}
+        threads=[];port=None;started=time.monotonic();lease_started=started
+        def pump(channel):
+            remote=None
+            try:
+                remote=socket.create_connection(('ssh.github.com',443),timeout=5)
+                remote.settimeout(5);channel.settimeout(5)
+                inputs=[channel,remote]
+                while inputs and not stop.is_set() and time.monotonic()-lease_started&lt;100:
+                    ready,_,_=select.select(inputs,[],[],0.5)
+                    for source in ready:
+                        raw=source.recv(32768)
+                        if not raw:
+                            inputs.remove(source)
+                            if source is channel:remote.shutdown(socket.SHUT_WR)
+                            else:channel.shutdown_write()
+                        elif source is channel:
+                            remote.sendall(raw);stats['to_github_bytes']+=len(raw)
+                        else:
+                            channel.sendall(raw);stats['from_github_bytes']+=len(raw)
+            except Exception as exc:
+                stats['pump_error_types'].append(type(exc).__name__)
+            finally:
+                if remote is not None:remote.close()
+                channel.close()
+        def accepted(channel,origin,server):
+            # This callback must return immediately so Paramiko can read channel data.
+            with lock:
+                if (stats['accepted_channels'] or origin[0]!='127.0.0.1'
+                        or server[0]!='127.0.0.1' or server[1]!=port):
+                    stats['rejected_channels']+=1;channel.close();return
+                stats['accepted_channels']+=1
+            worker=threading.Thread(target=pump,args=(channel,),daemon=True);threads.append(worker);worker.start()
+        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')
+        dest=LOCAL/'cluster-evidence'/('publication-relay-'+args.mode+'-'+stamp);dest.mkdir()
+        try:
+            s=c.open_sftp()
+            remote_directory(s,REMOTE.rsplit('/',1)[0])
+            try:s.mkdir(REMOTE,0o700)
+            except OSError:pass
+            remote_directory(s,REMOTE)
+            for name,digest in FILES.items():
+                checked_source(s,name,digest)
+            s.close()
+            if args.mode in {'ls','push'}:
+                lease_started=time.monotonic()
+                port=transport.request_port_forward('127.0.0.1',0,handler=accepted)
+                require(1024&lt;=port&lt;=65535,'SERVER_LEASE_PORT')
+                check="from pathlib import Path; import json; port="+repr(format(port,'04X'))+"; rows=[x.split()[1] for f in ['/proc/net/tcp','/proc/net/tcp6'] for x in Path(f).read_text().splitlines()[1:] if x.split()[1].endswith(':'+port) and x.split()[3]=='0A']; assert rows and all(x.split(':')[0]=='0100007F' for x in rows);print(json.dumps({'loopback_only':True,'listeners':len(rows)}))"
+&gt;               inp,out,err=c.exec_command(shlex.quote(BASE+'/venv/bin/python')+' -B -',timeout=10);inp.write(check);inp.channel.shutdown_write()
+                                                                                                    ^^^^^^^^^^^^^^^^
+E               TypeError: a bytes-like object is required, not 'str'
+
+E:\QTrade-temp\relay-independent-review-20261028\run_publication_desktop_relay_v2_20261028.py:96: TypeError</failure></testcase><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_git_success_without_complete_relay_attestation[zero_outbound]" time="0.007"><failure message="TypeError: a bytes-like object is required, not 'str'">desktop = &lt;module 'relay_desktop_v2_offline' from 'E:\\QTrade-temp\\relay-independent-review-20261028\\run_publication_desktop_relay_v2_20261028.py'&gt;
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-753/test_desktop_v2_rejects_git_su1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000165F303A6D0&gt;
+scenario = 'zero_outbound'
+
+    @pytest.mark.parametrize('scenario', ['zero_channels','zero_outbound','zero_inbound',
+        'pump_error','pump_alive','wrong_origin','wrong_server','wrong_port','duplicate'])
+    def test_desktop_v2_rejects_git_success_without_complete_relay_attestation(
+        desktop,tmp_path,monkeypatch,scenario):
+        """Entire main wiring with fake transport. No actual connect/socket/thread."""
+        raw=b'SYNTHETIC_PUBLIC_TOOL';(tmp_path/'tool.py').write_bytes(raw)
+        (tmp_path/'cluster-evidence').mkdir()
+        monkeypatch.setattr(desktop,'LOCAL',tmp_path)
+        monkeypatch.setattr(desktop,'FILES',{'tool.py':hashlib.sha256(raw).hexdigest()})
+        monkeypatch.setattr(desktop,'remote_directory',lambda *a:None)
+        monkeypatch.setattr(desktop,'checked_source',lambda *a:None)
+        class Channel:
+            closed=False
+            def close(self):self.closed=True
+            def recv_exit_status(self):return 0
+            def shutdown_write(self):pass
+        class Stream(io.BytesIO):
+            channel=Channel()
+        class Transport:
+            cancelled=[]
+            def request_port_forward(self,host,port,handler):
+                assert (host,port)==('127.0.0.1',0)
+                self.handler=handler;return 44000
+            def cancel_port_forward(self,host,port):self.cancelled.append((host,port))
+        transport=Transport()
+        class Connection:
+            commands=[];closed=False
+            def get_transport(self):return transport
+            def open_sftp(self):return types.SimpleNamespace(mkdir=lambda *a:None,close=lambda:None)
+            def exec_command(self,command,timeout):
+                self.commands.append(command)
+                if len(self.commands)==1:
+                    output=b'{"loopback_only":true,"listeners":1}'
+                else:
+                    if scenario!='zero_channels':
+                        origin=('0.0.0.0' if scenario=='wrong_origin' else '127.0.0.1',9)
+                        server=('0.0.0.0' if scenario=='wrong_server' else '127.0.0.1',
+                            44001 if scenario=='wrong_port' else 44000)
+                        transport.handler(Channel(),origin,server)
+                        if scenario=='duplicate':
+                            transport.handler(Channel(),origin,server)
+                    output=b'{"state":"OPERATOR_ASSISTED_NATIVE_PUSH_ACKNOWLEDGED"}'
+                return Stream(),Stream(output),Stream()
+            def close(self):self.closed=True
+        connection=Connection();monkeypatch.setattr(desktop,'connect',lambda:connection)
+        class Thread:
+            def __init__(self,*,target,args,daemon):self.target=target
+            def start(self):
+                closure=dict(zip(self.target.__code__.co_freevars,
+                    (cell.cell_contents for cell in self.target.__closure__),strict=True))
+                stats=closure['stats']
+                stats.update(to_github_bytes=0 if scenario=='zero_outbound' else 10,
+                    from_github_bytes=0 if scenario=='zero_inbound' else 10)
+                if scenario=='pump_error':stats['pump_error_types'].append('SyntheticError')
+            def join(self,timeout):pass
+            def is_alive(self):return scenario=='pump_alive'
+        monkeypatch.setattr(desktop.threading,'Thread',Thread)
+        monkeypatch.setattr(desktop.socket,'create_connection',
+            lambda *a,**k:pytest.fail('actual socket forbidden'))
+        monkeypatch.setattr(sys,'argv',['offline-desktop','push','--expected-plan-sha256','a'*64])
+        with pytest.raises(ValueError,match='REAL_RELAY_NOT_ATTESTED_NO_RETRY_AFTER_PUSH'):
+&gt;           desktop.main()
+
+E:\QTrade-temp\relay-independent-review-20261028\test_relay_independent_20261028.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def main():
+        parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['init','ls','prepare','push'])
+        parser.add_argument('--expected-plan-sha256');args=parser.parse_args()
+        require(args.mode!='push' or args.expected_plan_sha256 is not None,'EXPLICIT_REVIEWED_TARGET_REQUIRED')
+        for name,digest in FILES.items():require(sha256((LOCAL/name).read_bytes()).hexdigest()==digest,'SOURCE_CHANGED')
+        c=connect();transport=c.get_transport();stop=threading.Event();lock=threading.Lock()
+        stats={'accepted_channels':0,'rejected_channels':0,'to_github_bytes':0,'from_github_bytes':0,'pump_error_types':[]}
+        threads=[];port=None;started=time.monotonic();lease_started=started
+        def pump(channel):
+            remote=None
+            try:
+                remote=socket.create_connection(('ssh.github.com',443),timeout=5)
+                remote.settimeout(5);channel.settimeout(5)
+                inputs=[channel,remote]
+                while inputs and not stop.is_set() and time.monotonic()-lease_started&lt;100:
+                    ready,_,_=select.select(inputs,[],[],0.5)
+                    for source in ready:
+                        raw=source.recv(32768)
+                        if not raw:
+                            inputs.remove(source)
+                            if source is channel:remote.shutdown(socket.SHUT_WR)
+                            else:channel.shutdown_write()
+                        elif source is channel:
+                            remote.sendall(raw);stats['to_github_bytes']+=len(raw)
+                        else:
+                            channel.sendall(raw);stats['from_github_bytes']+=len(raw)
+            except Exception as exc:
+                stats['pump_error_types'].append(type(exc).__name__)
+            finally:
+                if remote is not None:remote.close()
+                channel.close()
+        def accepted(channel,origin,server):
+            # This callback must return immediately so Paramiko can read channel data.
+            with lock:
+                if (stats['accepted_channels'] or origin[0]!='127.0.0.1'
+                        or server[0]!='127.0.0.1' or server[1]!=port):
+                    stats['rejected_channels']+=1;channel.close();return
+                stats['accepted_channels']+=1
+            worker=threading.Thread(target=pump,args=(channel,),daemon=True);threads.append(worker);worker.start()
+        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')
+        dest=LOCAL/'cluster-evidence'/('publication-relay-'+args.mode+'-'+stamp);dest.mkdir()
+        try:
+            s=c.open_sftp()
+            remote_directory(s,REMOTE.rsplit('/',1)[0])
+            try:s.mkdir(REMOTE,0o700)
+            except OSError:pass
+            remote_directory(s,REMOTE)
+            for name,digest in FILES.items():
+                checked_source(s,name,digest)
+            s.close()
+            if args.mode in {'ls','push'}:
+                lease_started=time.monotonic()
+                port=transport.request_port_forward('127.0.0.1',0,handler=accepted)
+                require(1024&lt;=port&lt;=65535,'SERVER_LEASE_PORT')
+                check="from pathlib import Path; import json; port="+repr(format(port,'04X'))+"; rows=[x.split()[1] for f in ['/proc/net/tcp','/proc/net/tcp6'] for x in Path(f).read_text().splitlines()[1:] if x.split()[1].endswith(':'+port) and x.split()[3]=='0A']; assert rows and all(x.split(':')[0]=='0100007F' for x in rows);print(json.dumps({'loopback_only':True,'listeners':len(rows)}))"
+&gt;               inp,out,err=c.exec_command(shlex.quote(BASE+'/venv/bin/python')+' -B -',timeout=10);inp.write(check);inp.channel.shutdown_write()
+                                                                                                    ^^^^^^^^^^^^^^^^
+E               TypeError: a bytes-like object is required, not 'str'
+
+E:\QTrade-temp\relay-independent-review-20261028\run_publication_desktop_relay_v2_20261028.py:96: TypeError</failure></testcase><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_git_success_without_complete_relay_attestation[zero_inbound]" time="0.007"><failure message="TypeError: a bytes-like object is required, not 'str'">desktop = &lt;module 'relay_desktop_v2_offline' from 'E:\\QTrade-temp\\relay-independent-review-20261028\\run_publication_desktop_relay_v2_20261028.py'&gt;
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-753/test_desktop_v2_rejects_git_su2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000165F2CAFF50&gt;
+scenario = 'zero_inbound'
+
+    @pytest.mark.parametrize('scenario', ['zero_channels','zero_outbound','zero_inbound',
+        'pump_error','pump_alive','wrong_origin','wrong_server','wrong_port','duplicate'])
+    def test_desktop_v2_rejects_git_success_without_complete_relay_attestation(
+        desktop,tmp_path,monkeypatch,scenario):
+        """Entire main wiring with fake transport. No actual connect/socket/thread."""
+        raw=b'SYNTHETIC_PUBLIC_TOOL';(tmp_path/'tool.py').write_bytes(raw)
+        (tmp_path/'cluster-evidence').mkdir()
+        monkeypatch.setattr(desktop,'LOCAL',tmp_path)
+        monkeypatch.setattr(desktop,'FILES',{'tool.py':hashlib.sha256(raw).hexdigest()})
+        monkeypatch.setattr(desktop,'remote_directory',lambda *a:None)
+        monkeypatch.setattr(desktop,'checked_source',lambda *a:None)
+        class Channel:
+            closed=False
+            def close(self):self.closed=True
+            def recv_exit_status(self):return 0
+            def shutdown_write(self):pass
+        class Stream(io.BytesIO):
+            channel=Channel()
+        class Transport:
+            cancelled=[]
+            def request_port_forward(self,host,port,handler):
+                assert (host,port)==('127.0.0.1',0)
+                self.handler=handler;return 44000
+            def cancel_port_forward(self,host,port):self.cancelled.append((host,port))
+        transport=Transport()
+        class Connection:
+            commands=[];closed=False
+            def get_transport(self):return transport
+            def open_sftp(self):return types.SimpleNamespace(mkdir=lambda *a:None,close=lambda:None)
+            def exec_command(self,command,timeout):
+                self.commands.append(command)
+                if len(self.commands)==1:
+                    output=b'{"loopback_only":true,"listeners":1}'
+                else:
+                    if scenario!='zero_channels':
+                        origin=('0.0.0.0' if scenario=='wrong_origin' else '127.0.0.1',9)
+                        server=('0.0.0.0' if scenario=='wrong_server' else '127.0.0.1',
+                            44001 if scenario=='wrong_port' else 44000)
+                        transport.handler(Channel(),origin,server)
+                        if scenario=='duplicate':
+                            transport.handler(Channel(),origin,server)
+                    output=b'{"state":"OPERATOR_ASSISTED_NATIVE_PUSH_ACKNOWLEDGED"}'
+                return Stream(),Stream(output),Stream()
+            def close(self):self.closed=True
+        connection=Connection();monkeypatch.setattr(desktop,'connect',lambda:connection)
+        class Thread:
+            def __init__(self,*,target,args,daemon):self.target=target
+            def start(self):
+                closure=dict(zip(self.target.__code__.co_freevars,
+                    (cell.cell_contents for cell in self.target.__closure__),strict=True))
+                stats=closure['stats']
+                stats.update(to_github_bytes=0 if scenario=='zero_outbound' else 10,
+                    from_github_bytes=0 if scenario=='zero_inbound' else 10)
+                if scenario=='pump_error':stats['pump_error_types'].append('SyntheticError')
+            def join(self,timeout):pass
+            def is_alive(self):return scenario=='pump_alive'
+        monkeypatch.setattr(desktop.threading,'Thread',Thread)
+        monkeypatch.setattr(desktop.socket,'create_connection',
+            lambda *a,**k:pytest.fail('actual socket forbidden'))
+        monkeypatch.setattr(sys,'argv',['offline-desktop','push','--expected-plan-sha256','a'*64])
+        with pytest.raises(ValueError,match='REAL_RELAY_NOT_ATTESTED_NO_RETRY_AFTER_PUSH'):
+&gt;           desktop.main()
+
+E:\QTrade-temp\relay-independent-review-20261028\test_relay_independent_20261028.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def main():
+        parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['init','ls','prepare','push'])
+        parser.add_argument('--expected-plan-sha256');args=parser.parse_args()
+        require(args.mode!='push' or args.expected_plan_sha256 is not None,'EXPLICIT_REVIEWED_TARGET_REQUIRED')
+        for name,digest in FILES.items():require(sha256((LOCAL/name).read_bytes()).hexdigest()==digest,'SOURCE_CHANGED')
+        c=connect();transport=c.get_transport();stop=threading.Event();lock=threading.Lock()
+        stats={'accepted_channels':0,'rejected_channels':0,'to_github_bytes':0,'from_github_bytes':0,'pump_error_types':[]}
+        threads=[];port=None;started=time.monotonic();lease_started=started
+        def pump(channel):
+            remote=None
+            try:
+                remote=socket.create_connection(('ssh.github.com',443),timeout=5)
+                remote.settimeout(5);channel.settimeout(5)
+                inputs=[channel,remote]
+                while inputs and not stop.is_set() and time.monotonic()-lease_started&lt;100:
+                    ready,_,_=select.select(inputs,[],[],0.5)
+                    for source in ready:
+                        raw=source.recv(32768)
+                        if not raw:
+                            inputs.remove(source)
+                            if source is channel:remote.shutdown(socket.SHUT_WR)
+                            else:channel.shutdown_write()
+                        elif source is channel:
+                            remote.sendall(raw);stats['to_github_bytes']+=len(raw)
+                        else:
+                            channel.sendall(raw);stats['from_github_bytes']+=len(raw)
+            except Exception as exc:
+                stats['pump_error_types'].append(type(exc).__name__)
+            finally:
+                if remote is not None:remote.close()
+                channel.close()
+        def accepted(channel,origin,server):
+            # This callback must return immediately so Paramiko can read channel data.
+            with lock:
+                if (stats['accepted_channels'] or origin[0]!='127.0.0.1'
+                        or server[0]!='127.0.0.1' or server[1]!=port):
+                    stats['rejected_channels']+=1;channel.close();return
+                stats['accepted_channels']+=1
+            worker=threading.Thread(target=pump,args=(channel,),daemon=True);threads.append(worker);worker.start()
+        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')
+        dest=LOCAL/'cluster-evidence'/('publication-relay-'+args.mode+'-'+stamp);dest.mkdir()
+        try:
+            s=c.open_sftp()
+            remote_directory(s,REMOTE.rsplit('/',1)[0])
+            try:s.mkdir(REMOTE,0o700)
+            except OSError:pass
+            remote_directory(s,REMOTE)
+            for name,digest in FILES.items():
+                checked_source(s,name,digest)
+            s.close()
+            if args.mode in {'ls','push'}:
+                lease_started=time.monotonic()
+                port=transport.request_port_forward('127.0.0.1',0,handler=accepted)
+                require(1024&lt;=port&lt;=65535,'SERVER_LEASE_PORT')
+                check="from pathlib import Path; import json; port="+repr(format(port,'04X'))+"; rows=[x.split()[1] for f in ['/proc/net/tcp','/proc/net/tcp6'] for x in Path(f).read_text().splitlines()[1:] if x.split()[1].endswith(':'+port) and x.split()[3]=='0A']; assert rows and all(x.split(':')[0]=='0100007F' for x in rows);print(json.dumps({'loopback_only':True,'listeners':len(rows)}))"
+&gt;               inp,out,err=c.exec_command(shlex.quote(BASE+'/venv/bin/python')+' -B -',timeout=10);inp.write(check);inp.channel.shutdown_write()
+                                                                                                    ^^^^^^^^^^^^^^^^
+E               TypeError: a bytes-like object is required, not 'str'
+
+E:\QTrade-temp\relay-independent-review-20261028\run_publication_desktop_relay_v2_20261028.py:96: TypeError</failure></testcase><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_git_success_without_complete_relay_attestation[pump_error]" time="0.007"><failure message="TypeError: a bytes-like object is required, not 'str'">desktop = &lt;module 'relay_desktop_v2_offline' from 'E:\\QTrade-temp\\relay-independent-review-20261028\\run_publication_desktop_relay_v2_20261028.py'&gt;
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-753/test_desktop_v2_rejects_git_su3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000165F3021FD0&gt;
+scenario = 'pump_error'
+
+    @pytest.mark.parametrize('scenario', ['zero_channels','zero_outbound','zero_inbound',
+        'pump_error','pump_alive','wrong_origin','wrong_server','wrong_port','duplicate'])
+    def test_desktop_v2_rejects_git_success_without_complete_relay_attestation(
+        desktop,tmp_path,monkeypatch,scenario):
+        """Entire main wiring with fake transport. No actual connect/socket/thread."""
+        raw=b'SYNTHETIC_PUBLIC_TOOL';(tmp_path/'tool.py').write_bytes(raw)
+        (tmp_path/'cluster-evidence').mkdir()
+        monkeypatch.setattr(desktop,'LOCAL',tmp_path)
+        monkeypatch.setattr(desktop,'FILES',{'tool.py':hashlib.sha256(raw).hexdigest()})
+        monkeypatch.setattr(desktop,'remote_directory',lambda *a:None)
+        monkeypatch.setattr(desktop,'checked_source',lambda *a:None)
+        class Channel:
+            closed=False
+            def close(self):self.closed=True
+            def recv_exit_status(self):return 0
+            def shutdown_write(self):pass
+        class Stream(io.BytesIO):
+            channel=Channel()
+        class Transport:
+            cancelled=[]
+            def request_port_forward(self,host,port,handler):
+                assert (host,port)==('127.0.0.1',0)
+                self.handler=handler;return 44000
+            def cancel_port_forward(self,host,port):self.cancelled.append((host,port))
+        transport=Transport()
+        class Connection:
+            commands=[];closed=False
+            def get_transport(self):return transport
+            def open_sftp(self):return types.SimpleNamespace(mkdir=lambda *a:None,close=lambda:None)
+            def exec_command(self,command,timeout):
+                self.commands.append(command)
+                if len(self.commands)==1:
+                    output=b'{"loopback_only":true,"listeners":1}'
+                else:
+                    if scenario!='zero_channels':
+                        origin=('0.0.0.0' if scenario=='wrong_origin' else '127.0.0.1',9)
+                        server=('0.0.0.0' if scenario=='wrong_server' else '127.0.0.1',
+                            44001 if scenario=='wrong_port' else 44000)
+                        transport.handler(Channel(),origin,server)
+                        if scenario=='duplicate':
+                            transport.handler(Channel(),origin,server)
+                    output=b'{"state":"OPERATOR_ASSISTED_NATIVE_PUSH_ACKNOWLEDGED"}'
+                return Stream(),Stream(output),Stream()
+            def close(self):self.closed=True
+        connection=Connection();monkeypatch.setattr(desktop,'connect',lambda:connection)
+        class Thread:
+            def __init__(self,*,target,args,daemon):self.target=target
+            def start(self):
+                closure=dict(zip(self.target.__code__.co_freevars,
+                    (cell.cell_contents for cell in self.target.__closure__),strict=True))
+                stats=closure['stats']
+                stats.update(to_github_bytes=0 if scenario=='zero_outbound' else 10,
+                    from_github_bytes=0 if scenario=='zero_inbound' else 10)
+                if scenario=='pump_error':stats['pump_error_types'].append('SyntheticError')
+            def join(self,timeout):pass
+            def is_alive(self):return scenario=='pump_alive'
+        monkeypatch.setattr(desktop.threading,'Thread',Thread)
+        monkeypatch.setattr(desktop.socket,'create_connection',
+            lambda *a,**k:pytest.fail('actual socket forbidden'))
+        monkeypatch.setattr(sys,'argv',['offline-desktop','push','--expected-plan-sha256','a'*64])
+        with pytest.raises(ValueError,match='REAL_RELAY_NOT_ATTESTED_NO_RETRY_AFTER_PUSH'):
+&gt;           desktop.main()
+
+E:\QTrade-temp\relay-independent-review-20261028\test_relay_independent_20261028.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def main():
+        parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['init','ls','prepare','push'])
+        parser.add_argument('--expected-plan-sha256');args=parser.parse_args()
+        require(args.mode!='push' or args.expected_plan_sha256 is not None,'EXPLICIT_REVIEWED_TARGET_REQUIRED')
+        for name,digest in FILES.items():require(sha256((LOCAL/name).read_bytes()).hexdigest()==digest,'SOURCE_CHANGED')
+        c=connect();transport=c.get_transport();stop=threading.Event();lock=threading.Lock()
+        stats={'accepted_channels':0,'rejected_channels':0,'to_github_bytes':0,'from_github_bytes':0,'pump_error_types':[]}
+        threads=[];port=None;started=time.monotonic();lease_started=started
+        def pump(channel):
+            remote=None
+            try:
+                remote=socket.create_connection(('ssh.github.com',443),timeout=5)
+                remote.settimeout(5);channel.settimeout(5)
+                inputs=[channel,remote]
+                while inputs and not stop.is_set() and time.monotonic()-lease_started&lt;100:
+                    ready,_,_=select.select(inputs,[],[],0.5)
+                    for source in ready:
+                        raw=source.recv(32768)
+                        if not raw:
+                            inputs.remove(source)
+                            if source is channel:remote.shutdown(socket.SHUT_WR)
+                            else:channel.shutdown_write()
+                        elif source is channel:
+                            remote.sendall(raw);stats['to_github_bytes']+=len(raw)
+                        else:
+                            channel.sendall(raw);stats['from_github_bytes']+=len(raw)
+            except Exception as exc:
+                stats['pump_error_types'].append(type(exc).__name__)
+            finally:
+                if remote is not None:remote.close()
+                channel.close()
+        def accepted(channel,origin,server):
+            # This callback must return immediately so Paramiko can read channel data.
+            with lock:
+                if (stats['accepted_channels'] or origin[0]!='127.0.0.1'
+                        or server[0]!='127.0.0.1' or server[1]!=port):
+                    stats['rejected_channels']+=1;channel.close();return
+                stats['accepted_channels']+=1
+            worker=threading.Thread(target=pump,args=(channel,),daemon=True);threads.append(worker);worker.start()
+        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')
+        dest=LOCAL/'cluster-evidence'/('publication-relay-'+args.mode+'-'+stamp);dest.mkdir()
+        try:
+            s=c.open_sftp()
+            remote_directory(s,REMOTE.rsplit('/',1)[0])
+            try:s.mkdir(REMOTE,0o700)
+            except OSError:pass
+            remote_directory(s,REMOTE)
+            for name,digest in FILES.items():
+                checked_source(s,name,digest)
+            s.close()
+            if args.mode in {'ls','push'}:
+                lease_started=time.monotonic()
+                port=transport.request_port_forward('127.0.0.1',0,handler=accepted)
+                require(1024&lt;=port&lt;=65535,'SERVER_LEASE_PORT')
+                check="from pathlib import Path; import json; port="+repr(format(port,'04X'))+"; rows=[x.split()[1] for f in ['/proc/net/tcp','/proc/net/tcp6'] for x in Path(f).read_text().splitlines()[1:] if x.split()[1].endswith(':'+port) and x.split()[3]=='0A']; assert rows and all(x.split(':')[0]=='0100007F' for x in rows);print(json.dumps({'loopback_only':True,'listeners':len(rows)}))"
+&gt;               inp,out,err=c.exec_command(shlex.quote(BASE+'/venv/bin/python')+' -B -',timeout=10);inp.write(check);inp.channel.shutdown_write()
+                                                                                                    ^^^^^^^^^^^^^^^^
+E               TypeError: a bytes-like object is required, not 'str'
+
+E:\QTrade-temp\relay-independent-review-20261028\run_publication_desktop_relay_v2_20261028.py:96: TypeError</failure></testcase><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_git_success_without_complete_relay_attestation[pump_alive]" time="0.007"><failure message="TypeError: a bytes-like object is required, not 'str'">desktop = &lt;module 'relay_desktop_v2_offline' from 'E:\\QTrade-temp\\relay-independent-review-20261028\\run_publication_desktop_relay_v2_20261028.py'&gt;
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-753/test_desktop_v2_rejects_git_su4')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000165F3023AF0&gt;
+scenario = 'pump_alive'
+
+    @pytest.mark.parametrize('scenario', ['zero_channels','zero_outbound','zero_inbound',
+        'pump_error','pump_alive','wrong_origin','wrong_server','wrong_port','duplicate'])
+    def test_desktop_v2_rejects_git_success_without_complete_relay_attestation(
+        desktop,tmp_path,monkeypatch,scenario):
+        """Entire main wiring with fake transport. No actual connect/socket/thread."""
+        raw=b'SYNTHETIC_PUBLIC_TOOL';(tmp_path/'tool.py').write_bytes(raw)
+        (tmp_path/'cluster-evidence').mkdir()
+        monkeypatch.setattr(desktop,'LOCAL',tmp_path)
+        monkeypatch.setattr(desktop,'FILES',{'tool.py':hashlib.sha256(raw).hexdigest()})
+        monkeypatch.setattr(desktop,'remote_directory',lambda *a:None)
+        monkeypatch.setattr(desktop,'checked_source',lambda *a:None)
+        class Channel:
+            closed=False
+            def close(self):self.closed=True
+            def recv_exit_status(self):return 0
+            def shutdown_write(self):pass
+        class Stream(io.BytesIO):
+            channel=Channel()
+        class Transport:
+            cancelled=[]
+            def request_port_forward(self,host,port,handler):
+                assert (host,port)==('127.0.0.1',0)
+                self.handler=handler;return 44000
+            def cancel_port_forward(self,host,port):self.cancelled.append((host,port))
+        transport=Transport()
+        class Connection:
+            commands=[];closed=False
+            def get_transport(self):return transport
+            def open_sftp(self):return types.SimpleNamespace(mkdir=lambda *a:None,close=lambda:None)
+            def exec_command(self,command,timeout):
+                self.commands.append(command)
+                if len(self.commands)==1:
+                    output=b'{"loopback_only":true,"listeners":1}'
+                else:
+                    if scenario!='zero_channels':
+                        origin=('0.0.0.0' if scenario=='wrong_origin' else '127.0.0.1',9)
+                        server=('0.0.0.0' if scenario=='wrong_server' else '127.0.0.1',
+                            44001 if scenario=='wrong_port' else 44000)
+                        transport.handler(Channel(),origin,server)
+                        if scenario=='duplicate':
+                            transport.handler(Channel(),origin,server)
+                    output=b'{"state":"OPERATOR_ASSISTED_NATIVE_PUSH_ACKNOWLEDGED"}'
+                return Stream(),Stream(output),Stream()
+            def close(self):self.closed=True
+        connection=Connection();monkeypatch.setattr(desktop,'connect',lambda:connection)
+        class Thread:
+            def __init__(self,*,target,args,daemon):self.target=target
+            def start(self):
+                closure=dict(zip(self.target.__code__.co_freevars,
+                    (cell.cell_contents for cell in self.target.__closure__),strict=True))
+                stats=closure['stats']
+                stats.update(to_github_bytes=0 if scenario=='zero_outbound' else 10,
+                    from_github_bytes=0 if scenario=='zero_inbound' else 10)
+                if scenario=='pump_error':stats['pump_error_types'].append('SyntheticError')
+            def join(self,timeout):pass
+            def is_alive(self):return scenario=='pump_alive'
+        monkeypatch.setattr(desktop.threading,'Thread',Thread)
+        monkeypatch.setattr(desktop.socket,'create_connection',
+            lambda *a,**k:pytest.fail('actual socket forbidden'))
+        monkeypatch.setattr(sys,'argv',['offline-desktop','push','--expected-plan-sha256','a'*64])
+        with pytest.raises(ValueError,match='REAL_RELAY_NOT_ATTESTED_NO_RETRY_AFTER_PUSH'):
+&gt;           desktop.main()
+
+E:\QTrade-temp\relay-independent-review-20261028\test_relay_independent_20261028.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def main():
+        parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['init','ls','prepare','push'])
+        parser.add_argument('--expected-plan-sha256');args=parser.parse_args()
+        require(args.mode!='push' or args.expected_plan_sha256 is not None,'EXPLICIT_REVIEWED_TARGET_REQUIRED')
+        for name,digest in FILES.items():require(sha256((LOCAL/name).read_bytes()).hexdigest()==digest,'SOURCE_CHANGED')
+        c=connect();transport=c.get_transport();stop=threading.Event();lock=threading.Lock()
+        stats={'accepted_channels':0,'rejected_channels':0,'to_github_bytes':0,'from_github_bytes':0,'pump_error_types':[]}
+        threads=[];port=None;started=time.monotonic();lease_started=started
+        def pump(channel):
+            remote=None
+            try:
+                remote=socket.create_connection(('ssh.github.com',443),timeout=5)
+                remote.settimeout(5);channel.settimeout(5)
+                inputs=[channel,remote]
+                while inputs and not stop.is_set() and time.monotonic()-lease_started&lt;100:
+                    ready,_,_=select.select(inputs,[],[],0.5)
+                    for source in ready:
+                        raw=source.recv(32768)
+                        if not raw:
+                            inputs.remove(source)
+                            if source is channel:remote.shutdown(socket.SHUT_WR)
+                            else:channel.shutdown_write()
+                        elif source is channel:
+                            remote.sendall(raw);stats['to_github_bytes']+=len(raw)
+                        else:
+                            channel.sendall(raw);stats['from_github_bytes']+=len(raw)
+            except Exception as exc:
+                stats['pump_error_types'].append(type(exc).__name__)
+            finally:
+                if remote is not None:remote.close()
+                channel.close()
+        def accepted(channel,origin,server):
+            # This callback must return immediately so Paramiko can read channel data.
+            with lock:
+                if (stats['accepted_channels'] or origin[0]!='127.0.0.1'
+                        or server[0]!='127.0.0.1' or server[1]!=port):
+                    stats['rejected_channels']+=1;channel.close();return
+                stats['accepted_channels']+=1
+            worker=threading.Thread(target=pump,args=(channel,),daemon=True);threads.append(worker);worker.start()
+        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')
+        dest=LOCAL/'cluster-evidence'/('publication-relay-'+args.mode+'-'+stamp);dest.mkdir()
+        try:
+            s=c.open_sftp()
+            remote_directory(s,REMOTE.rsplit('/',1)[0])
+            try:s.mkdir(REMOTE,0o700)
+            except OSError:pass
+            remote_directory(s,REMOTE)
+            for name,digest in FILES.items():
+                checked_source(s,name,digest)
+            s.close()
+            if args.mode in {'ls','push'}:
+                lease_started=time.monotonic()
+                port=transport.request_port_forward('127.0.0.1',0,handler=accepted)
+                require(1024&lt;=port&lt;=65535,'SERVER_LEASE_PORT')
+                check="from pathlib import Path; import json; port="+repr(format(port,'04X'))+"; rows=[x.split()[1] for f in ['/proc/net/tcp','/proc/net/tcp6'] for x in Path(f).read_text().splitlines()[1:] if x.split()[1].endswith(':'+port) and x.split()[3]=='0A']; assert rows and all(x.split(':')[0]=='0100007F' for x in rows);print(json.dumps({'loopback_only':True,'listeners':len(rows)}))"
+&gt;               inp,out,err=c.exec_command(shlex.quote(BASE+'/venv/bin/python')+' -B -',timeout=10);inp.write(check);inp.channel.shutdown_write()
+                                                                                                    ^^^^^^^^^^^^^^^^
+E               TypeError: a bytes-like object is required, not 'str'
+
+E:\QTrade-temp\relay-independent-review-20261028\run_publication_desktop_relay_v2_20261028.py:96: TypeError</failure></testcase><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_git_success_without_complete_relay_attestation[wrong_origin]" time="0.007"><failure message="TypeError: a bytes-like object is required, not 'str'">desktop = &lt;module 'relay_desktop_v2_offline' from 'E:\\QTrade-temp\\relay-independent-review-20261028\\run_publication_desktop_relay_v2_20261028.py'&gt;
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-753/test_desktop_v2_rejects_git_su5')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000165F3021C50&gt;
+scenario = 'wrong_origin'
+
+    @pytest.mark.parametrize('scenario', ['zero_channels','zero_outbound','zero_inbound',
+        'pump_error','pump_alive','wrong_origin','wrong_server','wrong_port','duplicate'])
+    def test_desktop_v2_rejects_git_success_without_complete_relay_attestation(
+        desktop,tmp_path,monkeypatch,scenario):
+        """Entire main wiring with fake transport. No actual connect/socket/thread."""
+        raw=b'SYNTHETIC_PUBLIC_TOOL';(tmp_path/'tool.py').write_bytes(raw)
+        (tmp_path/'cluster-evidence').mkdir()
+        monkeypatch.setattr(desktop,'LOCAL',tmp_path)
+        monkeypatch.setattr(desktop,'FILES',{'tool.py':hashlib.sha256(raw).hexdigest()})
+        monkeypatch.setattr(desktop,'remote_directory',lambda *a:None)
+        monkeypatch.setattr(desktop,'checked_source',lambda *a:None)
+        class Channel:
+            closed=False
+            def close(self):self.closed=True
+            def recv_exit_status(self):return 0
+            def shutdown_write(self):pass
+        class Stream(io.BytesIO):
+            channel=Channel()
+        class Transport:
+            cancelled=[]
+            def request_port_forward(self,host,port,handler):
+                assert (host,port)==('127.0.0.1',0)
+                self.handler=handler;return 44000
+            def cancel_port_forward(self,host,port):self.cancelled.append((host,port))
+        transport=Transport()
+        class Connection:
+            commands=[];closed=False
+            def get_transport(self):return transport
+            def open_sftp(self):return types.SimpleNamespace(mkdir=lambda *a:None,close=lambda:None)
+            def exec_command(self,command,timeout):
+                self.commands.append(command)
+                if len(self.commands)==1:
+                    output=b'{"loopback_only":true,"listeners":1}'
+                else:
+                    if scenario!='zero_channels':
+                        origin=('0.0.0.0' if scenario=='wrong_origin' else '127.0.0.1',9)
+                        server=('0.0.0.0' if scenario=='wrong_server' else '127.0.0.1',
+                            44001 if scenario=='wrong_port' else 44000)
+                        transport.handler(Channel(),origin,server)
+                        if scenario=='duplicate':
+                            transport.handler(Channel(),origin,server)
+                    output=b'{"state":"OPERATOR_ASSISTED_NATIVE_PUSH_ACKNOWLEDGED"}'
+                return Stream(),Stream(output),Stream()
+            def close(self):self.closed=True
+        connection=Connection();monkeypatch.setattr(desktop,'connect',lambda:connection)
+        class Thread:
+            def __init__(self,*,target,args,daemon):self.target=target
+            def start(self):
+                closure=dict(zip(self.target.__code__.co_freevars,
+                    (cell.cell_contents for cell in self.target.__closure__),strict=True))
+                stats=closure['stats']
+                stats.update(to_github_bytes=0 if scenario=='zero_outbound' else 10,
+                    from_github_bytes=0 if scenario=='zero_inbound' else 10)
+                if scenario=='pump_error':stats['pump_error_types'].append('SyntheticError')
+            def join(self,timeout):pass
+            def is_alive(self):return scenario=='pump_alive'
+        monkeypatch.setattr(desktop.threading,'Thread',Thread)
+        monkeypatch.setattr(desktop.socket,'create_connection',
+            lambda *a,**k:pytest.fail('actual socket forbidden'))
+        monkeypatch.setattr(sys,'argv',['offline-desktop','push','--expected-plan-sha256','a'*64])
+        with pytest.raises(ValueError,match='REAL_RELAY_NOT_ATTESTED_NO_RETRY_AFTER_PUSH'):
+&gt;           desktop.main()
+
+E:\QTrade-temp\relay-independent-review-20261028\test_relay_independent_20261028.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def main():
+        parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['init','ls','prepare','push'])
+        parser.add_argument('--expected-plan-sha256');args=parser.parse_args()
+        require(args.mode!='push' or args.expected_plan_sha256 is not None,'EXPLICIT_REVIEWED_TARGET_REQUIRED')
+        for name,digest in FILES.items():require(sha256((LOCAL/name).read_bytes()).hexdigest()==digest,'SOURCE_CHANGED')
+        c=connect();transport=c.get_transport();stop=threading.Event();lock=threading.Lock()
+        stats={'accepted_channels':0,'rejected_channels':0,'to_github_bytes':0,'from_github_bytes':0,'pump_error_types':[]}
+        threads=[];port=None;started=time.monotonic();lease_started=started
+        def pump(channel):
+            remote=None
+            try:
+                remote=socket.create_connection(('ssh.github.com',443),timeout=5)
+                remote.settimeout(5);channel.settimeout(5)
+                inputs=[channel,remote]
+                while inputs and not stop.is_set() and time.monotonic()-lease_started&lt;100:
+                    ready,_,_=select.select(inputs,[],[],0.5)
+                    for source in ready:
+                        raw=source.recv(32768)
+                        if not raw:
+                            inputs.remove(source)
+                            if source is channel:remote.shutdown(socket.SHUT_WR)
+                            else:channel.shutdown_write()
+                        elif source is channel:
+                            remote.sendall(raw);stats['to_github_bytes']+=len(raw)
+                        else:
+                            channel.sendall(raw);stats['from_github_bytes']+=len(raw)
+            except Exception as exc:
+                stats['pump_error_types'].append(type(exc).__name__)
+            finally:
+                if remote is not None:remote.close()
+                channel.close()
+        def accepted(channel,origin,server):
+            # This callback must return immediately so Paramiko can read channel data.
+            with lock:
+                if (stats['accepted_channels'] or origin[0]!='127.0.0.1'
+                        or server[0]!='127.0.0.1' or server[1]!=port):
+                    stats['rejected_channels']+=1;channel.close();return
+                stats['accepted_channels']+=1
+            worker=threading.Thread(target=pump,args=(channel,),daemon=True);threads.append(worker);worker.start()
+        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')
+        dest=LOCAL/'cluster-evidence'/('publication-relay-'+args.mode+'-'+stamp);dest.mkdir()
+        try:
+            s=c.open_sftp()
+            remote_directory(s,REMOTE.rsplit('/',1)[0])
+            try:s.mkdir(REMOTE,0o700)
+            except OSError:pass
+            remote_directory(s,REMOTE)
+            for name,digest in FILES.items():
+                checked_source(s,name,digest)
+            s.close()
+            if args.mode in {'ls','push'}:
+                lease_started=time.monotonic()
+                port=transport.request_port_forward('127.0.0.1',0,handler=accepted)
+                require(1024&lt;=port&lt;=65535,'SERVER_LEASE_PORT')
+                check="from pathlib import Path; import json; port="+repr(format(port,'04X'))+"; rows=[x.split()[1] for f in ['/proc/net/tcp','/proc/net/tcp6'] for x in Path(f).read_text().splitlines()[1:] if x.split()[1].endswith(':'+port) and x.split()[3]=='0A']; assert rows and all(x.split(':')[0]=='0100007F' for x in rows);print(json.dumps({'loopback_only':True,'listeners':len(rows)}))"
+&gt;               inp,out,err=c.exec_command(shlex.quote(BASE+'/venv/bin/python')+' -B -',timeout=10);inp.write(check);inp.channel.shutdown_write()
+                                                                                                    ^^^^^^^^^^^^^^^^
+E               TypeError: a bytes-like object is required, not 'str'
+
+E:\QTrade-temp\relay-independent-review-20261028\run_publication_desktop_relay_v2_20261028.py:96: TypeError</failure></testcase><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_git_success_without_complete_relay_attestation[wrong_server]" time="0.007"><failure message="TypeError: a bytes-like object is required, not 'str'">desktop = &lt;module 'relay_desktop_v2_offline' from 'E:\\QTrade-temp\\relay-independent-review-20261028\\run_publication_desktop_relay_v2_20261028.py'&gt;
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-753/test_desktop_v2_rejects_git_su6')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000165F303CB40&gt;
+scenario = 'wrong_server'
+
+    @pytest.mark.parametrize('scenario', ['zero_channels','zero_outbound','zero_inbound',
+        'pump_error','pump_alive','wrong_origin','wrong_server','wrong_port','duplicate'])
+    def test_desktop_v2_rejects_git_success_without_complete_relay_attestation(
+        desktop,tmp_path,monkeypatch,scenario):
+        """Entire main wiring with fake transport. No actual connect/socket/thread."""
+        raw=b'SYNTHETIC_PUBLIC_TOOL';(tmp_path/'tool.py').write_bytes(raw)
+        (tmp_path/'cluster-evidence').mkdir()
+        monkeypatch.setattr(desktop,'LOCAL',tmp_path)
+        monkeypatch.setattr(desktop,'FILES',{'tool.py':hashlib.sha256(raw).hexdigest()})
+        monkeypatch.setattr(desktop,'remote_directory',lambda *a:None)
+        monkeypatch.setattr(desktop,'checked_source',lambda *a:None)
+        class Channel:
+            closed=False
+            def close(self):self.closed=True
+            def recv_exit_status(self):return 0
+            def shutdown_write(self):pass
+        class Stream(io.BytesIO):
+            channel=Channel()
+        class Transport:
+            cancelled=[]
+            def request_port_forward(self,host,port,handler):
+                assert (host,port)==('127.0.0.1',0)
+                self.handler=handler;return 44000
+            def cancel_port_forward(self,host,port):self.cancelled.append((host,port))
+        transport=Transport()
+        class Connection:
+            commands=[];closed=False
+            def get_transport(self):return transport
+            def open_sftp(self):return types.SimpleNamespace(mkdir=lambda *a:None,close=lambda:None)
+            def exec_command(self,command,timeout):
+                self.commands.append(command)
+                if len(self.commands)==1:
+                    output=b'{"loopback_only":true,"listeners":1}'
+                else:
+                    if scenario!='zero_channels':
+                        origin=('0.0.0.0' if scenario=='wrong_origin' else '127.0.0.1',9)
+                        server=('0.0.0.0' if scenario=='wrong_server' else '127.0.0.1',
+                            44001 if scenario=='wrong_port' else 44000)
+                        transport.handler(Channel(),origin,server)
+                        if scenario=='duplicate':
+                            transport.handler(Channel(),origin,server)
+                    output=b'{"state":"OPERATOR_ASSISTED_NATIVE_PUSH_ACKNOWLEDGED"}'
+                return Stream(),Stream(output),Stream()
+            def close(self):self.closed=True
+        connection=Connection();monkeypatch.setattr(desktop,'connect',lambda:connection)
+        class Thread:
+            def __init__(self,*,target,args,daemon):self.target=target
+            def start(self):
+                closure=dict(zip(self.target.__code__.co_freevars,
+                    (cell.cell_contents for cell in self.target.__closure__),strict=True))
+                stats=closure['stats']
+                stats.update(to_github_bytes=0 if scenario=='zero_outbound' else 10,
+                    from_github_bytes=0 if scenario=='zero_inbound' else 10)
+                if scenario=='pump_error':stats['pump_error_types'].append('SyntheticError')
+            def join(self,timeout):pass
+            def is_alive(self):return scenario=='pump_alive'
+        monkeypatch.setattr(desktop.threading,'Thread',Thread)
+        monkeypatch.setattr(desktop.socket,'create_connection',
+            lambda *a,**k:pytest.fail('actual socket forbidden'))
+        monkeypatch.setattr(sys,'argv',['offline-desktop','push','--expected-plan-sha256','a'*64])
+        with pytest.raises(ValueError,match='REAL_RELAY_NOT_ATTESTED_NO_RETRY_AFTER_PUSH'):
+&gt;           desktop.main()
+
+E:\QTrade-temp\relay-independent-review-20261028\test_relay_independent_20261028.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def main():
+        parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['init','ls','prepare','push'])
+        parser.add_argument('--expected-plan-sha256');args=parser.parse_args()
+        require(args.mode!='push' or args.expected_plan_sha256 is not None,'EXPLICIT_REVIEWED_TARGET_REQUIRED')
+        for name,digest in FILES.items():require(sha256((LOCAL/name).read_bytes()).hexdigest()==digest,'SOURCE_CHANGED')
+        c=connect();transport=c.get_transport();stop=threading.Event();lock=threading.Lock()
+        stats={'accepted_channels':0,'rejected_channels':0,'to_github_bytes':0,'from_github_bytes':0,'pump_error_types':[]}
+        threads=[];port=None;started=time.monotonic();lease_started=started
+        def pump(channel):
+            remote=None
+            try:
+                remote=socket.create_connection(('ssh.github.com',443),timeout=5)
+                remote.settimeout(5);channel.settimeout(5)
+                inputs=[channel,remote]
+                while inputs and not stop.is_set() and time.monotonic()-lease_started&lt;100:
+                    ready,_,_=select.select(inputs,[],[],0.5)
+                    for source in ready:
+                        raw=source.recv(32768)
+                        if not raw:
+                            inputs.remove(source)
+                            if source is channel:remote.shutdown(socket.SHUT_WR)
+                            else:channel.shutdown_write()
+                        elif source is channel:
+                            remote.sendall(raw);stats['to_github_bytes']+=len(raw)
+                        else:
+                            channel.sendall(raw);stats['from_github_bytes']+=len(raw)
+            except Exception as exc:
+                stats['pump_error_types'].append(type(exc).__name__)
+            finally:
+                if remote is not None:remote.close()
+                channel.close()
+        def accepted(channel,origin,server):
+            # This callback must return immediately so Paramiko can read channel data.
+            with lock:
+                if (stats['accepted_channels'] or origin[0]!='127.0.0.1'
+                        or server[0]!='127.0.0.1' or server[1]!=port):
+                    stats['rejected_channels']+=1;channel.close();return
+                stats['accepted_channels']+=1
+            worker=threading.Thread(target=pump,args=(channel,),daemon=True);threads.append(worker);worker.start()
+        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')
+        dest=LOCAL/'cluster-evidence'/('publication-relay-'+args.mode+'-'+stamp);dest.mkdir()
+        try:
+            s=c.open_sftp()
+            remote_directory(s,REMOTE.rsplit('/',1)[0])
+            try:s.mkdir(REMOTE,0o700)
+            except OSError:pass
+            remote_directory(s,REMOTE)
+            for name,digest in FILES.items():
+                checked_source(s,name,digest)
+            s.close()
+            if args.mode in {'ls','push'}:
+                lease_started=time.monotonic()
+                port=transport.request_port_forward('127.0.0.1',0,handler=accepted)
+                require(1024&lt;=port&lt;=65535,'SERVER_LEASE_PORT')
+                check="from pathlib import Path; import json; port="+repr(format(port,'04X'))+"; rows=[x.split()[1] for f in ['/proc/net/tcp','/proc/net/tcp6'] for x in Path(f).read_text().splitlines()[1:] if x.split()[1].endswith(':'+port) and x.split()[3]=='0A']; assert rows and all(x.split(':')[0]=='0100007F' for x in rows);print(json.dumps({'loopback_only':True,'listeners':len(rows)}))"
+&gt;               inp,out,err=c.exec_command(shlex.quote(BASE+'/venv/bin/python')+' -B -',timeout=10);inp.write(check);inp.channel.shutdown_write()
+                                                                                                    ^^^^^^^^^^^^^^^^
+E               TypeError: a bytes-like object is required, not 'str'
+
+E:\QTrade-temp\relay-independent-review-20261028\run_publication_desktop_relay_v2_20261028.py:96: TypeError</failure></testcase><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_git_success_without_complete_relay_attestation[wrong_port]" time="0.007"><failure message="TypeError: a bytes-like object is required, not 'str'">desktop = &lt;module 'relay_desktop_v2_offline' from 'E:\\QTrade-temp\\relay-independent-review-20261028\\run_publication_desktop_relay_v2_20261028.py'&gt;
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-753/test_desktop_v2_rejects_git_su7')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000165F3023BD0&gt;
+scenario = 'wrong_port'
+
+    @pytest.mark.parametrize('scenario', ['zero_channels','zero_outbound','zero_inbound',
+        'pump_error','pump_alive','wrong_origin','wrong_server','wrong_port','duplicate'])
+    def test_desktop_v2_rejects_git_success_without_complete_relay_attestation(
+        desktop,tmp_path,monkeypatch,scenario):
+        """Entire main wiring with fake transport. No actual connect/socket/thread."""
+        raw=b'SYNTHETIC_PUBLIC_TOOL';(tmp_path/'tool.py').write_bytes(raw)
+        (tmp_path/'cluster-evidence').mkdir()
+        monkeypatch.setattr(desktop,'LOCAL',tmp_path)
+        monkeypatch.setattr(desktop,'FILES',{'tool.py':hashlib.sha256(raw).hexdigest()})
+        monkeypatch.setattr(desktop,'remote_directory',lambda *a:None)
+        monkeypatch.setattr(desktop,'checked_source',lambda *a:None)
+        class Channel:
+            closed=False
+            def close(self):self.closed=True
+            def recv_exit_status(self):return 0
+            def shutdown_write(self):pass
+        class Stream(io.BytesIO):
+            channel=Channel()
+        class Transport:
+            cancelled=[]
+            def request_port_forward(self,host,port,handler):
+                assert (host,port)==('127.0.0.1',0)
+                self.handler=handler;return 44000
+            def cancel_port_forward(self,host,port):self.cancelled.append((host,port))
+        transport=Transport()
+        class Connection:
+            commands=[];closed=False
+            def get_transport(self):return transport
+            def open_sftp(self):return types.SimpleNamespace(mkdir=lambda *a:None,close=lambda:None)
+            def exec_command(self,command,timeout):
+                self.commands.append(command)
+                if len(self.commands)==1:
+                    output=b'{"loopback_only":true,"listeners":1}'
+                else:
+                    if scenario!='zero_channels':
+                        origin=('0.0.0.0' if scenario=='wrong_origin' else '127.0.0.1',9)
+                        server=('0.0.0.0' if scenario=='wrong_server' else '127.0.0.1',
+                            44001 if scenario=='wrong_port' else 44000)
+                        transport.handler(Channel(),origin,server)
+                        if scenario=='duplicate':
+                            transport.handler(Channel(),origin,server)
+                    output=b'{"state":"OPERATOR_ASSISTED_NATIVE_PUSH_ACKNOWLEDGED"}'
+                return Stream(),Stream(output),Stream()
+            def close(self):self.closed=True
+        connection=Connection();monkeypatch.setattr(desktop,'connect',lambda:connection)
+        class Thread:
+            def __init__(self,*,target,args,daemon):self.target=target
+            def start(self):
+                closure=dict(zip(self.target.__code__.co_freevars,
+                    (cell.cell_contents for cell in self.target.__closure__),strict=True))
+                stats=closure['stats']
+                stats.update(to_github_bytes=0 if scenario=='zero_outbound' else 10,
+                    from_github_bytes=0 if scenario=='zero_inbound' else 10)
+                if scenario=='pump_error':stats['pump_error_types'].append('SyntheticError')
+            def join(self,timeout):pass
+            def is_alive(self):return scenario=='pump_alive'
+        monkeypatch.setattr(desktop.threading,'Thread',Thread)
+        monkeypatch.setattr(desktop.socket,'create_connection',
+            lambda *a,**k:pytest.fail('actual socket forbidden'))
+        monkeypatch.setattr(sys,'argv',['offline-desktop','push','--expected-plan-sha256','a'*64])
+        with pytest.raises(ValueError,match='REAL_RELAY_NOT_ATTESTED_NO_RETRY_AFTER_PUSH'):
+&gt;           desktop.main()
+
+E:\QTrade-temp\relay-independent-review-20261028\test_relay_independent_20261028.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def main():
+        parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['init','ls','prepare','push'])
+        parser.add_argument('--expected-plan-sha256');args=parser.parse_args()
+        require(args.mode!='push' or args.expected_plan_sha256 is not None,'EXPLICIT_REVIEWED_TARGET_REQUIRED')
+        for name,digest in FILES.items():require(sha256((LOCAL/name).read_bytes()).hexdigest()==digest,'SOURCE_CHANGED')
+        c=connect();transport=c.get_transport();stop=threading.Event();lock=threading.Lock()
+        stats={'accepted_channels':0,'rejected_channels':0,'to_github_bytes':0,'from_github_bytes':0,'pump_error_types':[]}
+        threads=[];port=None;started=time.monotonic();lease_started=started
+        def pump(channel):
+            remote=None
+            try:
+                remote=socket.create_connection(('ssh.github.com',443),timeout=5)
+                remote.settimeout(5);channel.settimeout(5)
+                inputs=[channel,remote]
+                while inputs and not stop.is_set() and time.monotonic()-lease_started&lt;100:
+                    ready,_,_=select.select(inputs,[],[],0.5)
+                    for source in ready:
+                        raw=source.recv(32768)
+                        if not raw:
+                            inputs.remove(source)
+                            if source is channel:remote.shutdown(socket.SHUT_WR)
+                            else:channel.shutdown_write()
+                        elif source is channel:
+                            remote.sendall(raw);stats['to_github_bytes']+=len(raw)
+                        else:
+                            channel.sendall(raw);stats['from_github_bytes']+=len(raw)
+            except Exception as exc:
+                stats['pump_error_types'].append(type(exc).__name__)
+            finally:
+                if remote is not None:remote.close()
+                channel.close()
+        def accepted(channel,origin,server):
+            # This callback must return immediately so Paramiko can read channel data.
+            with lock:
+                if (stats['accepted_channels'] or origin[0]!='127.0.0.1'
+                        or server[0]!='127.0.0.1' or server[1]!=port):
+                    stats['rejected_channels']+=1;channel.close();return
+                stats['accepted_channels']+=1
+            worker=threading.Thread(target=pump,args=(channel,),daemon=True);threads.append(worker);worker.start()
+        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')
+        dest=LOCAL/'cluster-evidence'/('publication-relay-'+args.mode+'-'+stamp);dest.mkdir()
+        try:
+            s=c.open_sftp()
+            remote_directory(s,REMOTE.rsplit('/',1)[0])
+            try:s.mkdir(REMOTE,0o700)
+            except OSError:pass
+            remote_directory(s,REMOTE)
+            for name,digest in FILES.items():
+                checked_source(s,name,digest)
+            s.close()
+            if args.mode in {'ls','push'}:
+                lease_started=time.monotonic()
+                port=transport.request_port_forward('127.0.0.1',0,handler=accepted)
+                require(1024&lt;=port&lt;=65535,'SERVER_LEASE_PORT')
+                check="from pathlib import Path; import json; port="+repr(format(port,'04X'))+"; rows=[x.split()[1] for f in ['/proc/net/tcp','/proc/net/tcp6'] for x in Path(f).read_text().splitlines()[1:] if x.split()[1].endswith(':'+port) and x.split()[3]=='0A']; assert rows and all(x.split(':')[0]=='0100007F' for x in rows);print(json.dumps({'loopback_only':True,'listeners':len(rows)}))"
+&gt;               inp,out,err=c.exec_command(shlex.quote(BASE+'/venv/bin/python')+' -B -',timeout=10);inp.write(check);inp.channel.shutdown_write()
+                                                                                                    ^^^^^^^^^^^^^^^^
+E               TypeError: a bytes-like object is required, not 'str'
+
+E:\QTrade-temp\relay-independent-review-20261028\run_publication_desktop_relay_v2_20261028.py:96: TypeError</failure></testcase><testcase classname="relay-independent-review-20261028.test_relay_independent_20261028" name="test_desktop_v2_rejects_git_success_without_complete_relay_attestation[duplicate]" time="0.007"><failure message="TypeError: a bytes-like object is required, not 'str'">desktop = &lt;module 'relay_desktop_v2_offline' from 'E:\\QTrade-temp\\relay-independent-review-20261028\\run_publication_desktop_relay_v2_20261028.py'&gt;
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-753/test_desktop_v2_rejects_git_su8')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000165F3023AF0&gt;
+scenario = 'duplicate'
+
+    @pytest.mark.parametrize('scenario', ['zero_channels','zero_outbound','zero_inbound',
+        'pump_error','pump_alive','wrong_origin','wrong_server','wrong_port','duplicate'])
+    def test_desktop_v2_rejects_git_success_without_complete_relay_attestation(
+        desktop,tmp_path,monkeypatch,scenario):
+        """Entire main wiring with fake transport. No actual connect/socket/thread."""
+        raw=b'SYNTHETIC_PUBLIC_TOOL';(tmp_path/'tool.py').write_bytes(raw)
+        (tmp_path/'cluster-evidence').mkdir()
+        monkeypatch.setattr(desktop,'LOCAL',tmp_path)
+        monkeypatch.setattr(desktop,'FILES',{'tool.py':hashlib.sha256(raw).hexdigest()})
+        monkeypatch.setattr(desktop,'remote_directory',lambda *a:None)
+        monkeypatch.setattr(desktop,'checked_source',lambda *a:None)
+        class Channel:
+            closed=False
+            def close(self):self.closed=True
+            def recv_exit_status(self):return 0
+            def shutdown_write(self):pass
+        class Stream(io.BytesIO):
+            channel=Channel()
+        class Transport:
+            cancelled=[]
+            def request_port_forward(self,host,port,handler):
+                assert (host,port)==('127.0.0.1',0)
+                self.handler=handler;return 44000
+            def cancel_port_forward(self,host,port):self.cancelled.append((host,port))
+        transport=Transport()
+        class Connection:
+            commands=[];closed=False
+            def get_transport(self):return transport
+            def open_sftp(self):return types.SimpleNamespace(mkdir=lambda *a:None,close=lambda:None)
+            def exec_command(self,command,timeout):
+                self.commands.append(command)
+                if len(self.commands)==1:
+                    output=b'{"loopback_only":true,"listeners":1}'
+                else:
+                    if scenario!='zero_channels':
+                        origin=('0.0.0.0' if scenario=='wrong_origin' else '127.0.0.1',9)
+                        server=('0.0.0.0' if scenario=='wrong_server' else '127.0.0.1',
+                            44001 if scenario=='wrong_port' else 44000)
+                        transport.handler(Channel(),origin,server)
+                        if scenario=='duplicate':
+                            transport.handler(Channel(),origin,server)
+                    output=b'{"state":"OPERATOR_ASSISTED_NATIVE_PUSH_ACKNOWLEDGED"}'
+                return Stream(),Stream(output),Stream()
+            def close(self):self.closed=True
+        connection=Connection();monkeypatch.setattr(desktop,'connect',lambda:connection)
+        class Thread:
+            def __init__(self,*,target,args,daemon):self.target=target
+            def start(self):
+                closure=dict(zip(self.target.__code__.co_freevars,
+                    (cell.cell_contents for cell in self.target.__closure__),strict=True))
+                stats=closure['stats']
+                stats.update(to_github_bytes=0 if scenario=='zero_outbound' else 10,
+                    from_github_bytes=0 if scenario=='zero_inbound' else 10)
+                if scenario=='pump_error':stats['pump_error_types'].append('SyntheticError')
+            def join(self,timeout):pass
+            def is_alive(self):return scenario=='pump_alive'
+        monkeypatch.setattr(desktop.threading,'Thread',Thread)
+        monkeypatch.setattr(desktop.socket,'create_connection',
+            lambda *a,**k:pytest.fail('actual socket forbidden'))
+        monkeypatch.setattr(sys,'argv',['offline-desktop','push','--expected-plan-sha256','a'*64])
+        with pytest.raises(ValueError,match='REAL_RELAY_NOT_ATTESTED_NO_RETRY_AFTER_PUSH'):
+&gt;           desktop.main()
+
+E:\QTrade-temp\relay-independent-review-20261028\test_relay_independent_20261028.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def main():
+        parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['init','ls','prepare','push'])
+        parser.add_argument('--expected-plan-sha256');args=parser.parse_args()
+        require(args.mode!='push' or args.expected_plan_sha256 is not None,'EXPLICIT_REVIEWED_TARGET_REQUIRED')
+        for name,digest in FILES.items():require(sha256((LOCAL/name).read_bytes()).hexdigest()==digest,'SOURCE_CHANGED')
+        c=connect();transport=c.get_transport();stop=threading.Event();lock=threading.Lock()
+        stats={'accepted_channels':0,'rejected_channels':0,'to_github_bytes':0,'from_github_bytes':0,'pump_error_types':[]}
+        threads=[];port=None;started=time.monotonic();lease_started=started
+        def pump(channel):
+            remote=None
+            try:
+                remote=socket.create_connection(('ssh.github.com',443),timeout=5)
+                remote.settimeout(5);channel.settimeout(5)
+                inputs=[channel,remote]
+                while inputs and not stop.is_set() and time.monotonic()-lease_started&lt;100:
+                    ready,_,_=select.select(inputs,[],[],0.5)
+                    for source in ready:
+                        raw=source.recv(32768)
+                        if not raw:
+                            inputs.remove(source)
+                            if source is channel:remote.shutdown(socket.SHUT_WR)
+                            else:channel.shutdown_write()
+                        elif source is channel:
+                            remote.sendall(raw);stats['to_github_bytes']+=len(raw)
+                        else:
+                            channel.sendall(raw);stats['from_github_bytes']+=len(raw)
+            except Exception as exc:
+                stats['pump_error_types'].append(type(exc).__name__)
+            finally:
+                if remote is not None:remote.close()
+                channel.close()
+        def accepted(channel,origin,server):
+            # This callback must return immediately so Paramiko can read channel data.
+            with lock:
+                if (stats['accepted_channels'] or origin[0]!='127.0.0.1'
+                        or server[0]!='127.0.0.1' or server[1]!=port):
+                    stats['rejected_channels']+=1;channel.close();return
+                stats['accepted_channels']+=1
+            worker=threading.Thread(target=pump,args=(channel,),daemon=True);threads.append(worker);worker.start()
+        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')
+        dest=LOCAL/'cluster-evidence'/('publication-relay-'+args.mode+'-'+stamp);dest.mkdir()
+        try:
+            s=c.open_sftp()
+            remote_directory(s,REMOTE.rsplit('/',1)[0])
+            try:s.mkdir(REMOTE,0o700)
+            except OSError:pass
+            remote_directory(s,REMOTE)
+            for name,digest in FILES.items():
+                checked_source(s,name,digest)
+            s.close()
+            if args.mode in {'ls','push'}:
+                lease_started=time.monotonic()
+                port=transport.request_port_forward('127.0.0.1',0,handler=accepted)
+                require(1024&lt;=port&lt;=65535,'SERVER_LEASE_PORT')
+                check="from pathlib import Path; import json; port="+repr(format(port,'04X'))+"; rows=[x.split()[1] for f in ['/proc/net/tcp','/proc/net/tcp6'] for x in Path(f).read_text().splitlines()[1:] if x.split()[1].endswith(':'+port) and x.split()[3]=='0A']; assert rows and all(x.split(':')[0]=='0100007F' for x in rows);print(json.dumps({'loopback_only':True,'listeners':len(rows)}))"
+&gt;               inp,out,err=c.exec_command(shlex.quote(BASE+'/venv/bin/python')+' -B -',timeout=10);inp.write(check);inp.channel.shutdown_write()
+                                                                                                    ^^^^^^^^^^^^^^^^
+E               TypeError: a bytes-like object is required, not 'str'
+
+E:\QTrade-temp\relay-independent-review-20261028\run_publication_desktop_relay_v2_20261028.py:96: TypeError</failure></testcase></testsuite></testsuites>

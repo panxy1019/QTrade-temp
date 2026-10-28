@@ -1,0 +1,10 @@
+{
+  "local": "E:\\QTrade-temp\\cluster-evidence\\relay-v3-root-review-20261028T133524Z",
+  "network_or_production_writes": false,
+  "returncode": 0,
+  "root": "/root/qtrade-local/operator-evidence/relay-v3-root-review-20261028T133524Z",
+  "source_sha256": {
+    "publication_native_relay_operator_v3_20261028.py": "76bf3e2653ab51491b966db9f62c415c0d7161b4d642e7f89cefc30b687a61fc",
+    "test_publication_relay_v3_root_independent_20261028.py": "7df2b9a399f14f6415fcd687cd434ad567afc242270a4642e25ac18717e84c1e"
+  }
+}

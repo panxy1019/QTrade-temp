@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="late-cas" tests="1" failures="False" errors="0" skipped="0"><testcase classname="late-cas" name="native_receiver_compare_and_swap_rejects_late_ref_change" /></testsuite>

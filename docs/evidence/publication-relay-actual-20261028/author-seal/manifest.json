@@ -1,0 +1,42 @@
+{
+  "created_at": "2026-10-28T13:37:52.575817+00:00",
+  "files": [
+    {
+      "bytes": 20513,
+      "file": "publication_native_relay_operator_v3_20261028.py",
+      "original_path": "E:\\QTrade-temp\\publication_native_relay_operator_v3_20261028.py",
+      "sha256": "76bf3e2653ab51491b966db9f62c415c0d7161b4d642e7f89cefc30b687a61fc"
+    },
+    {
+      "bytes": 11096,
+      "file": "test_publication_native_relay_v3_author_20261028.py",
+      "original_path": "E:\\QTrade-temp\\test_publication_native_relay_v3_author_20261028.py",
+      "sha256": "7427bc1295b71bc85d6b3410b37011c0674f2df1aa7b2a296e15634ca8a1a5cf"
+    },
+    {
+      "bytes": 15268,
+      "file": "relay-independent-review-20261028/test_relay_independent_20261028.py",
+      "original_path": "E:\\QTrade-temp\\relay-independent-review-20261028\\test_relay_independent_20261028.py",
+      "sha256": "f83e82bddf2e56a59a31266131ad5943c0dda1c20beb7134090eb09d051ef8d3"
+    },
+    {
+      "bytes": 8163,
+      "file": "author-tests-39.xml",
+      "original_path": "E:\\QTrade-temp\\relay-v3-author-tests-20261028T213600.xml",
+      "sha256": "4f47413c94f968adcc229de7963ecd11482b66d1bb6f445a69dd11fc64b5e18c"
+    },
+    {
+      "bytes": 5725,
+      "file": "root-independent-linux-25.xml",
+      "original_path": "E:\\QTrade-temp\\cluster-evidence\\relay-v3-root-review-20261028T133524Z\\independent-linux.xml",
+      "sha256": "7ea38f7de5a82d84b66f78be373ee2f18a6d1df8089f18abd0801901f727caed"
+    },
+    {
+      "bytes": 3737,
+      "file": "README.md",
+      "sha256": "8d9f552a6deb26a42b8d5acb7521d2e6184d41dd7ac2f8342ce2aa27c5e479d2"
+    }
+  ],
+  "operator_sha256": "76bf3e2653ab51491b966db9f62c415c0d7161b4d642e7f89cefc30b687a61fc",
+  "schema": "qtrade.relay-v3-author-safe-seal.v1"
+}

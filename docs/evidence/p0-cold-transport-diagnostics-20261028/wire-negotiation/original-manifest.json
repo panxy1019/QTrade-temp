@@ -1,0 +1,88 @@
+{
+  "case_count": 6,
+  "files": [
+    {
+      "bytes": 18598,
+      "file": "report.json",
+      "sha256": "a651c345c4e5317225309071abd343aa25d9d0692e760b856152367749b947f0"
+    },
+    {
+      "bytes": 2784,
+      "file": "README.md",
+      "sha256": "1d8be879469052624959de0f527c792fd854d87f9fa657129ccc8797d541aef8"
+    },
+    {
+      "bytes": 9290,
+      "file": "publication_push_negotiate_wire_probe_v2_20261028.py",
+      "sha256": "8323e1d0f5392f3845a86ca607b42d720cd6e2055b8a7092e8c5aed485d4f9e1"
+    },
+    {
+      "bytes": 1582,
+      "file": "publication_local_receive_capture_20261028.py",
+      "sha256": "da80c22e1faec2a422141a68f2ad194ef193c58cfb2e5a30c3e6f5e15f69235a"
+    },
+    {
+      "bytes": 152740,
+      "file": "metadata-0-localref-0-negotiate-0/wire-input.bin",
+      "sha256": "907f3bea9261a5745d1f9efc7d90a721526f97199bcfcfc4a857b6345152823b"
+    },
+    {
+      "bytes": 2258,
+      "file": "metadata-0-localref-0-negotiate-0/final-push-packets.log",
+      "sha256": "09ff5cb6986d5d9681d0c180998e63281adda23687e20936e1359cd2bea6ff1f"
+    },
+    {
+      "bytes": 152740,
+      "file": "metadata-0-localref-0-negotiate-1/wire-input.bin",
+      "sha256": "907f3bea9261a5745d1f9efc7d90a721526f97199bcfcfc4a857b6345152823b"
+    },
+    {
+      "bytes": 5242,
+      "file": "metadata-0-localref-0-negotiate-1/final-push-packets.log",
+      "sha256": "4477ca60fd8393890d6432b9ec60d30038a7a771248f93964fe31e92f8cb90ed"
+    },
+    {
+      "bytes": 152740,
+      "file": "metadata-1-localref-0-negotiate-0/wire-input.bin",
+      "sha256": "907f3bea9261a5745d1f9efc7d90a721526f97199bcfcfc4a857b6345152823b"
+    },
+    {
+      "bytes": 2258,
+      "file": "metadata-1-localref-0-negotiate-0/final-push-packets.log",
+      "sha256": "6d770200fb674d93f2785fdb5aed6f3ca1d0a49e220dca6223723e079efff585"
+    },
+    {
+      "bytes": 152740,
+      "file": "metadata-1-localref-0-negotiate-1/wire-input.bin",
+      "sha256": "907f3bea9261a5745d1f9efc7d90a721526f97199bcfcfc4a857b6345152823b"
+    },
+    {
+      "bytes": 5242,
+      "file": "metadata-1-localref-0-negotiate-1/final-push-packets.log",
+      "sha256": "77581c010774cbf5024be77429221c2b7157ac07d5af8b0b06d288c728fec4f5"
+    },
+    {
+      "bytes": 152740,
+      "file": "metadata-1-localref-1-negotiate-0/wire-input.bin",
+      "sha256": "907f3bea9261a5745d1f9efc7d90a721526f97199bcfcfc4a857b6345152823b"
+    },
+    {
+      "bytes": 2258,
+      "file": "metadata-1-localref-1-negotiate-0/final-push-packets.log",
+      "sha256": "6d7de920536eda56b9cb17e3fadfa7fa96c37355bbd291a7011e50294324dd09"
+    },
+    {
+      "bytes": 152740,
+      "file": "metadata-1-localref-1-negotiate-1/wire-input.bin",
+      "sha256": "907f3bea9261a5745d1f9efc7d90a721526f97199bcfcfc4a857b6345152823b"
+    },
+    {
+      "bytes": 5242,
+      "file": "metadata-1-localref-1-negotiate-1/final-push-packets.log",
+      "sha256": "06ea7a969d02d3e7f83b28c122bb76e6f1b92f1740a24ab8fc72cda747e7fa2d"
+    }
+  ],
+  "network_calls": false,
+  "production_actions": false,
+  "schema": "qtrade.local-negotiate-wire-safe-seal.v1"
+}

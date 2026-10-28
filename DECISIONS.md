@@ -4432,3 +4432,43 @@ Legacy98d candidate acceptance also cannot be fixed by adding missing fields to
 its archive or relabeling a new revalidation as the old four-event staging chain.
 Keep originalstrict auditors/failed outputs and design any compatibility contract
 as a separate version with independent negative tests before acceptance changes.
+
+### Transport diagnostics and factor registration boundary — 2026-10-28 21:12
+
+Two isolated auxiliary-object protocols do not suppress normal Git retransmission;
+discard them as a delivery solution and retain the failed experiments. A temporary
+desktop SSH byte relay may be used only after fixed effective destination, exact
+operator source/import origins, complete immutable shard relations, actual signed
+export receipt and owned90s cleanup are independently checked. Require a real
+one-channel bidirectional read-only proof before any one-time frozen nonforcepush.
+Zero-channel success proves only direct connectivity. Operator-assisted transport
+does not establish autonomous publisher recovery; those observations remain separate.
+
+STEP2 source45de5bd enables only immutable factor research registration. Keep its
+queue kind and result engine separate from Qlib backtests and retain the existing
+EXPERIMENT/NONE lifecycle. Final isolated worker/Registry and interface tests do
+not authorize claims of production queue delivery or browser rendering. New Git
+identity requires a new frozen runtime contract; old13-file contracts are readable
+archives and cannot execute as the current20-file source contract.
+
+### Reject adverse wire optimization; separate cold exception — 2026-10-28 22:25
+
+Decide using actual wire volume and original failures, not cache-generation speed.
+The real isolated nondelta cache cuts only0.60s generation but grows19.445MB to
+42.750MB, so do not install it. Auxiliary metadata/negotiate experiments are also
+negative after exact wire capture; no speculative production Gitconfig change.
+Keep sourceobjects/refs/index/config untouched by these trials. PrivateSFTP and
+loopback are fast in bounded samples; do not infer a general bandwidthSLA or assert
+that the remote fullyreceived a packet solely from encrypted bytecount.
+
+Normal Git90 andexport45 remain. Any separate180 cold exception needs a new
+specific plan and explicit human approval, complete frozen index/shards, fresh
+remote/client reconciliation, oldINTENT/UNCERTAIN hashes, onecreate-only newclaim
+and actualpublic/downstream checks. Preserve uncertain oldclaim rather than rename
+it or reuse its permission. Coldsuccess never implies ordinarycontinuousrecovery.
+
+STEP2 isolated end-to-end success uses actual HMAC/CAS, ASGIauth andworker child;
+onlytransport is localGit/loopback, not GitHub/TLS/browser. Retain this distinction
+and the original malformed JUnit serialization with explicit normalization; no
+second registration merely to replace evidence. Original reports/data versions
+and currentproductioncontrols remain intact.
