@@ -1,0 +1,24 @@
+LINUX_TESTS {"started_at": "2026-10-28T09:40:35.683438+00:00", "finished_at": "2026-10-28T09:40:53.523258+00:00", "elapsed_seconds": 17.839826634153724, "returncode": 0, "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jun 18 2026, 21:28:09) [GCC 14.3.0]", "command": ["/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python", "-B", "-m", "pytest", "-p", "no:cacheprovider", "--basetemp=/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/tmp/pytest", "tests/test_step2_factor_contract_independent.py", "tests/test_daily_factor_evaluation.py", "tests/test_factor_registry.py", "tests/test_step2_factor_contract_readiness.py", "tests/test_factor_search.py", "tests/test_signal_baselines.py", "--junitxml=/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/evidence/linux-junit.xml"], "live_trading_enabled": "false", "pythonpath": "/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/source/src:/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/source", "tmpdir": "/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/tmp", "max_child_rss_kib": 182200, "tests": {"tests": 120, "failures": 0, "errors": 0, "skipped": 0}}
+COMPLETE {
+  "linux_returncode": 0,
+  "replay_returncode": 0,
+  "source_verified_before_and_after": true,
+  "original_report_unchanged": true,
+  "runtime_source_sha256": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+  "result": "PASSED",
+  "base_commit": "f036bca197272df4b1f885dfe8165a27b67c36cd",
+  "overlay_files": {
+    "src/qtrade/research/factor_evaluation.py": {
+      "sha256": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+      "bytes": 52226
+    },
+    "tests/test_step2_factor_contract_independent.py": {
+      "sha256": "76473a69d527bf1a6bbcfbdfad57de402cb0fd2a807d1f75de0c8fbee5e3050e",
+      "bytes": 24832
+    },
+    "docs/STEP2_FACTOR_CONTRACT_ACCEPTANCE_20261028.md": {
+      "sha256": "8eaf7ebbb74665e691ec4918c784d3161b4aa2ba6371e44d736a7eeacf9558c2",
+      "bytes": 7768
+    }
+  }
+}

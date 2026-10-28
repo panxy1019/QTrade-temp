@@ -602,6 +602,77 @@ def validate_report(report: dict[str, Any]) -> dict[str, Any]:
     return dict(report)
 
 
+def _verify_saved_temporal_contract(spec: dict[str, Any], definitions: list[dict[str, Any]],
+                                    ledger: dict[tuple[str, int, str], Any]) -> None:
+    """Replay the clocks/grid present in v1 archives, without inventing raw facts.
+
+    The v1 bundle does not contain label-exit clocks or eligibility interval file
+    bytes. Their source truth still requires the original verified data version.
+    """
+    request, calendar = spec["request"], spec["calendar"]
+    _require(isinstance(calendar, list) and 1 <= len(calendar) <= 4096
+             and all(isinstance(day, str) and date.fromisoformat(day).isoformat() == day
+                     for day in calendar)
+             and calendar == sorted(set(calendar)) and spec["calendar_sha256"] == _hash(calendar)
+             and calendar[0] == spec["data_binding"]["start"]
+             and calendar[-1] == spec["data_binding"]["actual_end"],
+             "ARCHIVED_CALENDAR_GRID_MISMATCH")
+    sessions = [item["session"] for item in request["decisions"]]
+    _require(set(sessions) <= set(calendar), "ARCHIVED_DECISION_GRID_MISMATCH")
+    positions = [calendar.index(day) for day in sessions]
+    _require(positions == list(range(positions[0], positions[-1] + 1)),
+             "ARCHIVED_DECISION_GRID_MISMATCH")
+    barrier = _instant(spec["label"]["maturity_barrier"])
+    pre_clock_reasons = {"INSUFFICIENT_COMMON_CALENDAR_WARMUP",
+        "OUTSIDE_FROZEN_ELIGIBILITY_INTERVAL", "MISSING_COMMON_SESSION_CLOSE", "INVALID_CLOSE"}
+    label_reasons = {None, "LABEL_NOT_MATURE_IN_FROZEN_VERSION",
+        "LABEL_OUTSIDE_FROZEN_ELIGIBILITY_INTERVAL", "LABEL_CLOSE_MISSING_OR_INVALID",
+        "LABEL_NOT_AVAILABLE_AT_EVALUATION", "LABEL_AVAILABILITY_UNKNOWN"}
+    for decision, position in zip(request["decisions"], positions, strict=True):
+        feature_barrier = _instant(decision["decision_at"])
+        endpoint = position + request["label_horizon_sessions"]
+        target = calendar[endpoint] if endpoint < len(calendar) else None
+        immature = target is None or datetime.combine(date.fromisoformat(target),
+            wall_time(15), SHANGHAI) > barrier
+        for index, definition in enumerate(definitions):
+            required = definition["required_closes"]
+            grid = calendar[max(0, position - required + 1):position + 1]
+            for instrument in request["instruments"]:
+                fact = ledger[(decision["session"], index, instrument)]
+                clocks = fact["dependency_clocks"]
+                _require(fact["history_sessions"] == grid and isinstance(clocks, list)
+                    and len(clocks) == len(grid)
+                    and all(isinstance(clock, dict)
+                            and set(clock) == {"session", "available_at", "observed_at"}
+                            and clock["session"] == session
+                            for session, clock in zip(grid, clocks, strict=True)),
+                    "ARCHIVED_DEPENDENCY_GRID_MISMATCH")
+                # Parse even excluded inputs so malformed clocks cannot hide in a rejection.
+                for clock in clocks:
+                    _clock(clock["available_at"])
+                    _clock(clock["observed_at"])
+                reason = fact["feature_reason"]
+                _require(reason in pre_clock_reasons | {None,
+                    "DEPENDENCY_AVAILABILITY_UNKNOWN", "DEPENDENCY_NOT_KNOWN_AT_DECISION"}
+                    and (reason == "INSUFFICIENT_COMMON_CALENDAR_WARMUP")
+                    == (len(grid) < required), "ARCHIVED_FEATURE_GRID_REASON_MISMATCH")
+                if reason in pre_clock_reasons:
+                    known, clock_reason = False, None
+                else:
+                    known, clock_reason = _known(clocks, feature_barrier)
+                    _require(reason == (clock_reason if request["knowledge_mode"]
+                             == "OBSERVED_SYSTEM" and not known else None),
+                             "ARCHIVED_FEATURE_CLOCK_REASON_MISMATCH")
+                _require(type(fact["dependencies_known_at_barrier"]) is bool
+                         and fact["dependencies_known_at_barrier"] == known
+                         and fact["clock_reason"] == clock_reason,
+                         "ARCHIVED_DEPENDENCY_CLOCK_MISMATCH")
+                _require(fact["label_exit_session"] == target
+                         and fact["label_reason"] in label_reasons
+                         and (fact["label_reason"] == "LABEL_NOT_MATURE_IN_FROZEN_VERSION")
+                         == immature, "ARCHIVED_LABEL_MATURITY_MISMATCH")
+
+
 def _verify_saved_values(documents: dict[str, Any]) -> None:
     """Replay archived values/policy, independently of cached metrics and summary.
 
@@ -640,6 +711,24 @@ def _verify_saved_values(documents: dict[str, Any]) -> None:
              == spec["runtime_source_sha256"]
              == {name: item["sha256"] for name, item in documents["source_snapshot"].items()},
              "ARCHIVED_SOURCE_BINDING_MISMATCH")
+    _require(set(spec["runtime_source_sha256"]) == {
+        "research/factor_evaluation.py", "research/factors.py", "research/metrics.py",
+        "research/signal_baselines.py", "research/factor_registry.py",
+        "research/strategy_contract.py", "research/data_versions.py",
+        "research/model_registry.py", "monitoring/data_freshness.py", "research/workflow.py"},
+        "ARCHIVED_SOURCE_INVENTORY_MISMATCH")
+    _require(spec["schema_version"] == SCHEMA
+             and spec["universe"] == {"instruments": request["instruments"],
+                 "selection": "EXPLICIT_SUBSET_OF_CURRENT_READY_SUPPORTED_UNIVERSE"}
+             and all(definition["frequency"] == "day"
+                 and definition["price_basis"] == "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED"
+                 and all(name.startswith("src/qtrade/")
+                         and spec["runtime_source_sha256"].get(name.removeprefix("src/qtrade/"))
+                         == digest for name, digest in definition["source"]["files"].items())
+                 for definition in definitions), "ARCHIVED_FACTOR_SOURCE_OR_SCOPE_MISMATCH")
+    _require(len(request["instruments"]) * len(request["decisions"])
+             * sum(item["required_closes"] for item in definitions) <= 1_000_000,
+             "ARCHIVED_NONPRODUCTION_DEPENDENCY_CELL_BUDGET_EXCEEDED")
     keys = {(decision["session"], index, instrument)
             for decision in request["decisions"] for index in range(len(definitions))
             for instrument in request["instruments"]}
@@ -650,6 +739,7 @@ def _verify_saved_values(documents: dict[str, Any]) -> None:
     _require(set(sample_map) == set(ledger_map) == keys
              and len(documents["samples"]) == len(documents["eligibility_ledger"]) == len(keys),
              "ARCHIVED_EXACT_SAMPLE_SCOPE_MISMATCH")
+    _verify_saved_temporal_contract(spec, definitions, ledger_map)
     daily: dict[str, list[dict[str, Any]]] = {str(index): [] for index in range(len(definitions))}
     previous: dict[str, set[str] | None] = dict.fromkeys(daily)
     redundancy = []

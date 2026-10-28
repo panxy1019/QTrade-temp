@@ -66,6 +66,10 @@ _CACHE: dict[tuple[str, ...], tuple[dict[str, Any], list[dict[str, Any]]]] = {}
 _CACHE_SIZES: dict[tuple[str, ...], int] = {}
 
 
+class MarketPublicationUncertain(OSError):
+    """The head write may have replaced its name without directory durability."""
+
+
 # Two owned processes validate/encode only constructed shards. At most one job
 # is pending per child; raw source, cache and source-byte authority stay here.
 _SHARD_WORKER_MIN_TARGETS = 32
@@ -685,6 +689,31 @@ def _chunks(database: Path, universe: str, windows: dict[str, list[str]]) -> lis
         return rows
 
 
+def _verify_selected_snapshot(initial: list[dict[str, Any]],
+                              final: list[dict[str, Any]]) -> None:
+    before = {tuple(sorted(row.items())) for row in initial}
+    after = {tuple(sorted(row.items())) for row in final}
+    if not before <= after:
+        raise ValueError('UNIFIED_MARKET_LEDGER_OR_MASTER_CHANGED')
+    added = [row for row in final if tuple(sorted(row.items())) not in before]
+    if not added:
+        return
+    spans: dict[tuple[str, str], tuple[datetime, datetime]] = {}
+    for row in initial:
+        key = (row['symbol'], row['frequency'])
+        start, end = (datetime.fromisoformat(row[k]) for k in ('start_time', 'end_time'))
+        if key in spans:
+            start, end = min(start, spans[key][0]), max(end, spans[key][1])
+        spans[key] = start, end
+    for row in added:
+        span = spans.get((row['symbol'], row['frequency']))
+        if span is not None and (datetime.fromisoformat(row['start_time']) <= span[1]
+                                and datetime.fromisoformat(row['end_time']) >= span[0]):
+            # New overlapping admissions can change conflict status or lineage.
+            # Read them in the next generation rather than publish an unchecked S.
+            raise ValueError('UNIFIED_MARKET_LEDGER_OR_MASTER_CHANGED')
+
+
 class _SourceReads:
     """Account physical reads across the main thread and one bounded prefetch."""
 
@@ -729,7 +758,8 @@ class _SourceReads:
 def _load(store: UnifiedBatchStore, batch_id: str, stats: dict[str, Any],
           calendar: Calendar, kinds: dict[str, str], context: tuple[str, str],
           reader: _CapturedKlineReader | None = None, *,
-          _source: _SourceReads | None = None, _prepared: Future[_BatchMaterial] | None = None
+          _source: _SourceReads | None = None, _prepared: Future[_BatchMaterial] | None = None,
+          _receipts: Any = None
           ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     source = _source if _source is not None else _SourceReads(stats)
     material = source.material(store, batch_id) if _prepared is None else _prepared.result()
@@ -745,7 +775,17 @@ def _load(store: UnifiedBatchStore, batch_id: str, stats: dict[str, Any],
         source.check()
 
     key = (*material.identities(), *context)
-    if key in _CACHE:
+    receipt = None
+    if _receipts is not None:
+        from qtrade.research.market_validation_receipts import receipt_key
+        from scripts.unified_market_checkpoint import identity
+        receipt = receipt_key(batch_id, material.identities(), identity(context))
+        restored = _receipts.get(receipt, now=datetime.now(UTC))
+        if restored is not None and restored[0] == manifest:
+            recheck_manifest()
+            stats['receipt_hits'] += 1
+            return cast(tuple[dict[str, Any], list[dict[str, Any]]], restored)
+    if _receipts is None and key in _CACHE:
         recheck_manifest()
         stats['cached_batches'] += 1
         return _CACHE[key]
@@ -754,6 +794,11 @@ def _load(store: UnifiedBatchStore, batch_id: str, stats: dict[str, Any],
     with localcontext(Context(prec=28)):
         _replay(material, calendar, kinds, reader)
     recheck_manifest()
+    if _receipts is not None:
+        _receipts.put_success(receipt, checked, rows, validated_at=datetime.now(UTC))
+        stats['receipt_writes'] += 1
+        stats['replayed_batches'] += 1
+        return checked, rows
     if 'cached_rows' not in stats:
         stats['cached_rows'] = sum(len(value[1]) for value in _CACHE.values())
         stats['cache_estimated_bytes'] = sum(_CACHE_SIZES.get(old, 0) for old in _CACHE)
@@ -772,7 +817,24 @@ def _load(store: UnifiedBatchStore, batch_id: str, stats: dict[str, Any],
 
 
 def export_market(base: Path, database: Path, *, now: datetime | None = None,
-                  seconds: float = 45) -> dict[str, Any]:
+                  seconds: float = 45, receipt_database: Path | None = None,
+                  checkpoint_root: Path | None = None) -> dict[str, Any]:
+    if (receipt_database is None) != (checkpoint_root is None):
+        raise ValueError('UNIFIED_MARKET_CHECKPOINT_PATHS_REQUIRED')
+    if receipt_database is None:
+        return _export_market(base, database, now=now, seconds=seconds)
+    from qtrade.research.market_validation_receipts import MarketValidationReceiptStore
+    from scripts.unified_market_checkpoint import publication_lease
+    assert checkpoint_root is not None
+    with publication_lease(receipt_database), MarketValidationReceiptStore(
+            receipt_database, sidecar_root=checkpoint_root/'receipts') as receipts:
+        return _export_market(base, database, now=now, seconds=seconds,
+                              _receipts=receipts, _checkpoint_root=checkpoint_root)
+
+
+def _export_market(base: Path, database: Path, *, now: datetime | None = None,
+                   seconds: float = 45, _receipts: Any = None,
+                   _checkpoint_root: Path | None = None) -> dict[str, Any]:
     if os.environ.get('LIVE_TRADING_ENABLED', 'false').lower() != 'false':
         raise ValueError('UNIFIED_MARKET_LIVE_DISABLED_REQUIRED')
     now = now or datetime.now(UTC)
@@ -806,9 +868,53 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
              'selected_chunks': len(chunks), 'selected_batches': len(grouped),
              'cached_rows': sum(len(value[1]) for value in _CACHE.values()),
              'cache_estimated_bytes': sum(_CACHE_SIZES.get(key, 0) for key in _CACHE)}
+    if _receipts is not None:
+        stats.update(receipt_hits=0, receipt_writes=0, reused_pairs=0, rebuilt_pairs=0,
+                     reused_shards=0)
     identities = {row['symbol']: row for row in targets}
     kinds = {symbol: row['security_type'] for symbol, row in identities.items()}
     context = (signed(calendar.document)['evidence_sha256'], signed(kinds)['evidence_sha256'])
+    checkpoint = None
+    pair_fingerprints: dict[str, str] = {}
+    replay_sources: dict[str, str] = {}
+    if _receipts is not None:
+        import importlib.metadata
+        import platform
+
+        from scripts import unified_market_checkpoint as checkpoints
+        replay_paths = (*_WORKER_SOURCES, 'scripts/unified_market_checkpoint.py',
+                        'src/qtrade/data/__init__.py',
+                        'src/qtrade/market_data/akshare.py',
+                        'src/qtrade/market_data/sina_minute.py',
+                        'src/qtrade/data/storage.py', 'scripts/atomic_json.py',
+                        'src/qtrade/research/market_validation_receipts.py')
+        replay_sources = {name: file_hash(REPO/name) for name in replay_paths}
+        context = (checkpoints.identity({'calendar': calendar.document,
+                    'sources': replay_sources, 'python': platform.python_version(),
+                    'arrow': importlib.metadata.version('pyarrow'),
+                    'decimal': str(Context(prec=28)),
+                    'price_basis': PRICE_BASIS}), context[1])
+        assert _checkpoint_root is not None
+        durable_head = base/'unified-data/market-public/unified-market.json'
+        if durable_head.exists():
+            # A previous atomic replace may have succeeded before its directory
+            # fsync failed. Establish namespace durability before cache recovery.
+            try:
+                _fsync_directory(durable_head.parent)
+            except OSError as error:
+                raise MarketPublicationUncertain('UNIFIED_MARKET_COMMIT_UNCERTAIN') from error
+        checkpoint = checkpoints.load(_checkpoint_root,
+            base/'unified-data/market-public/unified-market.json', checkpoints.identity(context))
+        pair_fingerprints = checkpoints.fingerprints(chunks, targets,
+                                                     checkpoints.identity(context), windows)
+    public_head = base/'unified-data/market-public/unified-market.json'
+    initial_head_hash = (file_hash(public_head)
+                         if _receipts is not None and public_head.exists() else None)
+    reused = {} if checkpoint is None else {
+        (entry['symbol'], entry['frequency']): entry for entry in checkpoint['index']['entries']
+        if entry['state'] == 'AVAILABLE' and checkpoint['fingerprints'].get(
+            entry['symbol']+':'+entry['frequency']) == pair_fingerprints.get(
+            entry['symbol']+':'+entry['frequency'])}
     reader = _CapturedKlineReader(calendar)
     ordered_bar_fields = tuple(key for key in sorted(BAR_FIELDS) if key != 'amount_basis')
     collected: dict[tuple[str, str], dict[str, dict[str, Any]]] = defaultdict(dict)
@@ -821,8 +927,9 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
         if time.monotonic() > deadline:
             raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
         try:
+            receipt_arguments = {} if _receipts is None else {'_receipts': _receipts}
             manifest, rows = _load(store, batch_id, stats, calendar, kinds, context, reader,
-                                   _source=source, _prepared=prepared)
+                                   _source=source, _prepared=prepared, **receipt_arguments)
             by_symbol: dict[str, list[dict[str, Any]]] = defaultdict(list)
             for row in rows:
                 by_symbol[row['symbol']].append(row)
@@ -849,6 +956,8 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                         or manifest['price_basis'] != PRICE_BASIS
                         or datetime.fromisoformat(manifest['completed_at']) > now):
                     raise ValueError('UNIFIED_MARKET_CHUNK_SOURCE_MISMATCH')
+                if (symbol, freq) in reused:
+                    continue  # Immutable receipt and current source bytes were checked above.
                 for original in selected_rows:
                     if (original['completion_status'] != 'CLOSED'
                             or datetime.fromisoformat(original['timestamp'])
@@ -897,7 +1006,23 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
         sealed[key] = entry
         if problems[key]:
             entry['state'] = 'QUARANTINED'
+        elif key in reused:
+            previous = reused[key]
+            stats['reused_pairs'] += 1
+            for ref in previous['shards']:
+                path = destination/'unified-market/objects'/(ref['sha256']+'.json')
+                if path.is_symlink() or path.stat().st_size != ref['bytes']:
+                    raise ValueError('UNIFIED_MARKET_IMMUTABLE_OBJECT_CHANGED')
+                raw = path.read_bytes()
+                if sha256(raw).hexdigest() != ref['sha256']:
+                    raise ValueError('UNIFIED_MARKET_IMMUTABLE_OBJECT_CHANGED')
+                if ref['sha256'] not in objects:
+                    objects[ref['sha256']] = raw
+                stats['reused_shards'] += 1
+            entry.update(state='AVAILABLE', shards=previous['shards'])
         else:
+            if _receipts is not None:
+                stats['rebuilt_pairs'] += 1
             groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
             for row in collected[key].values():
                 groups[row['trading_day'] if freq == '5min' else 'window'].append(row)
@@ -918,13 +1043,24 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
     # can seal only after its complete batch outcomes and all conflicts are known.
     remaining = Counter((chunk['symbol'], chunk['frequency']) for chunk in chunks)
 
+    def prepare_batch(batch_id: str) -> _BatchMaterial:
+        material = source.material(store, batch_id)
+        # Exactly one bounded material is prepared ahead. Arrow/gzip decoding
+        # can overlap source replay and shard I/O; admission and cache ownership
+        # stay on the main thread. Warm entries still rehash every physical blob.
+        if (_receipts is None and material.manifest['normalized'] is not None
+                and (*material.identities(), *context) not in _CACHE):
+            material.check_export_bounds()
+            material.validate()
+        return material
+
     def build_shards() -> Generator[tuple[dict[str, Any], dict[str, Any]], None, None]:
         # Cohorts finish early enough for immutable I/O to overlap later source
         # replay. Source membership is unchanged; bars, refs and entries are sorted.
         batches = sorted(grouped.items(), key=lambda item: (
             tuple(sorted(str(chunk['symbol']) for chunk in item[1])), str(item[0])))
         with ThreadPoolExecutor(max_workers=1, thread_name_prefix='market-source') as pool:
-            prepared = pool.submit(source.material, store, batches[0][0]) if batches else None
+            prepared = pool.submit(prepare_batch, batches[0][0]) if batches else None
             try:
                 for position, (batch_id, selected) in enumerate(batches):
                     assert prepared is not None
@@ -932,9 +1068,9 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
                     if not finished or time.monotonic() > deadline:
                         raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
                     current = prepared
-                    # Only the next physical read/hash overlaps main-thread decode,
-                    # replay and cache work. Its exception is consumed by that batch.
-                    prepared = (pool.submit(source.material, store, batches[position+1][0])
+                    # Its read/decode exception is consumed by the same batch;
+                    # it cannot admit rows or update the main-thread cache.
+                    prepared = (pool.submit(prepare_batch, batches[position+1][0])
                                 if position+1 < len(batches) else None)
                     collect_batch(batch_id, selected, current)
                     # Mark all selected pairs on failure before these counts decrease.
@@ -1014,12 +1150,46 @@ def export_market(base: Path, database: Path, *, now: datetime | None = None,
         raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
     if worker_sources is not None and _worker_inventory() != worker_sources:
         raise ValueError('UNIFIED_MARKET_WORKER_PARENT_SOURCE_CHANGED')
-    write_json_atomic(destination/'unified-market.json', index)
+    if _receipts is not None:
+        if any(file_hash(REPO/name) != digest for name, digest in replay_sources.items()):
+            raise ValueError('UNIFIED_MARKET_WORKER_PARENT_SOURCE_CHANGED')
+        assert _checkpoint_root is not None
+        if (file_hash(public_head) if public_head.exists() else None) != initial_head_hash:
+            raise ValueError('UNIFIED_MARKET_CHECKPOINT_HEAD_CHANGED')
+        stats['checkpoint_id'] = checkpoints.prepare(_checkpoint_root, index,
+            checkpoints.identity(context), pair_fingerprints,
+            None if checkpoint is None else checkpoint['index']['evidence_sha256'], now)
+        # Preparing a durable NFS generation may block. Recheck after it, not
+        # just before it, so a changed head or exclusion cannot be overwritten.
+        _verify_selected_snapshot(chunks, _chunks(database, master['universe_version'], windows))
+        current_master = validate_publication(json.loads(publication.read_bytes()))['master']
+        if (current_master['universe_version'] != master['universe_version']
+                or current_master['collection']['calendar'] != master['collection']['calendar']
+                or {row['symbol']: {key: row[key] for key in ('instrument_id',
+                        'security_type', 'name')} for row in current_master['securities']
+                    if row['in_target']} != {symbol: {key: row[key] for key in (
+                        'instrument_id', 'security_type', 'name')}
+                        for symbol, row in identities.items()}):
+            raise ValueError('UNIFIED_MARKET_LEDGER_OR_MASTER_CHANGED')
+        if any(file_hash(REPO/name) != digest for name, digest in replay_sources.items()):
+            raise ValueError('UNIFIED_MARKET_WORKER_PARENT_SOURCE_CHANGED')
+        if (file_hash(public_head) if public_head.exists() else None) != initial_head_hash:
+            raise ValueError('UNIFIED_MARKET_CHECKPOINT_HEAD_CHANGED')
+        if time.monotonic() > deadline:
+            raise ValueError('UNIFIED_MARKET_TIME_BUDGET')
+    try:
+        write_json_atomic(destination/'unified-market.json', index)
+    except OSError as error:
+        # Do not copy a possibly non-durable new pointer to Git as a retained
+        # last success. A later pass must reestablish durability and revalidate.
+        raise MarketPublicationUncertain('UNIFIED_MARKET_COMMIT_UNCERTAIN') from error
     stats.update(export_seconds=round(time.monotonic()-started, 6), total_bytes=total,
                  total_files=len(objects), index_id=index['evidence_sha256'],
                  cached_rows=sum(len(value[1]) for value in _CACHE.values()),
                  cache_estimated_bytes=sum(_CACHE_SIZES.get(key, 0) for key in _CACHE),
                  quarantined_entries=sum(row['state'] == 'QUARANTINED' for row in entries))
+    if _receipts is not None:
+        stats['receipt_sidecar_bytes_read'] = _receipts.sidecar_bytes_read
     write_json_atomic(base/'unified-data/market-export-state.json', signed({**AUTHORITY, **stats}))
     return {'index': index, 'statistics': stats}
 
@@ -1036,10 +1206,12 @@ def main() -> None:
 
 def publish_market_files(base: Path, publication: Path,
                          database: Path | None = None, *,
-                         seed_existing: bool = False) -> list[str]:
+                         seed_existing: bool = False, state_root: Path | None = None) -> list[str]:
     """Use the existing public Git queue; a failed export retains its dated last success."""
     if seed_existing and database is not None:
         raise ValueError('UNIFIED_MARKET_DELTA_SEED_DATABASE_FORBIDDEN')
+    if state_root is not None and (database is None or seed_existing):
+        raise ValueError('UNIFIED_MARKET_CHECKPOINT_DATABASE_REQUIRED')
 
     def checked(root: Path, name: str) -> Path:
         path = root/name
@@ -1062,8 +1234,16 @@ def publish_market_files(base: Path, publication: Path,
             'started_at': started_at.isoformat(), 'state': 'FAILED',
             'index_id': None, 'error_class': None, 'error_code': None}
         try:
-            result = export_market(base, database)
+            checkpoint_arguments: dict[str, Any] = {} if state_root is None else {
+                'receipt_database': state_root/'validation.sqlite',
+                'checkpoint_root': base/'unified-data/market-checkpoints'}
+            result = export_market(base, database, **checkpoint_arguments)
             attempt.update(state='SUCCEEDED', index_id=result['index']['evidence_sha256'])
+        except MarketPublicationUncertain:
+            attempt.update(state='UNCERTAIN', error_class='MarketPublicationUncertain',
+                           error_code='UNIFIED_MARKET_COMMIT_UNCERTAIN')
+            print('UNIFIED_MARKET_COMMIT_UNCERTAIN_STOPPED', flush=True)
+            raise
         except (OSError, ValueError, KeyError, TypeError, sqlite3.Error) as error:
             attempt['error_class'] = type(error).__name__
             if str(error) in {'UNIFIED_MARKET_TIME_BUDGET', 'UNIFIED_MARKET_EXPORT_BUDGET',

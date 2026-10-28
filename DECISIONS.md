@@ -1,5 +1,45 @@
 # Architecture decisions
 
+## ADR-207 — Persist replay receipts and commit complete materialized generations
+
+Status: user authorizes A/B/C at2026-10-28 17:34; isolated candidate only, production
+handover and actual public freshness remain gated by measured evidence.
+
+Reuse UnifiedBatchStore, original semantic replay, quality isolation, immutable
+Parquet objects and atomic JSON publication. Store replay receipts in local
+SQLite/WAL/FULL plus immutable fsynced NFS sidecars. Every pass still physically
+hashes selected source bytes and reused public shards; receipts never replace
+source authority. Bind actual rule dependencies, calendar, security types,
+numeric/runtime policy and complete material identity. Cache corruption is a
+miss, transient storage failure propagates, failures never become PASS receipts.
+
+Recompute changed security/frequency/window from its complete selected source
+set. Reuse certified unchanged shard bytes. Fingerprint only consumed descriptor
+fields, while retaining each frequency's full window and source metadata. New
+lineage invalidates a pair even at identical prices. After generation persistence,
+recheck source/head/selected chunks/consumed descriptors/deadline; new overlapping
+admissions conservatively reject this candidate. Additions outside selected spans
+may wait for a later generation without being advertised as processed.
+
+Fsync immutable generation before replacing the public index. The actual public
+index identifies the committed generation; SQLite and a later status log are not
+commit authority. A same-host lease requires a single configuration and verified
+old-writer exit on deployment, not a distributed CAS claim. Retry failed directory
+fsync before recovering orphan sidecars or reusing an already-linked generation.
+Do not replay a TERM intent or uncertain service-control RPC.
+
+Keep normal45 seconds/source512MB/estimated batch cache128MB/Git90 seconds. Separate
+nonproduction120-second full bootstrap measurements from valid-checkpoint process
+restart and normal increment measurements. First cold production cycles may fail
+explicitly while retaining verified receipt progress and the old head; no silent
+budget extension, prewarming claim or age-only timestamp refresh is allowed.
+Independent original-source all-entry/all-shard/lineage audits remain mandatory.
+
+Independent failure injection found and preserved seven real edge conditions.
+The second candidate passes640 Linux integration and25 independent checks; these
+are engineering results, not completed performance/production/STEP1 acceptance.
+
+
 ## ADR-206 — Bound shard workers and preserve execution-day evidence separately
 
 Status: isolated worker tests pass; current5640-batch cold performance fails;
@@ -4319,3 +4359,24 @@ acceptance. Do not globally update/restart existing data or forward services.
 Initial3b/78-test source and real first20 records retain their own provenance;
 the final source does not relabel cached earlier observations as new executions.
 
+
+
+### Pause checkpoint — 2026-10-28 16:08 Shanghai
+
+The user explicitly pauses development and requests a progress review. Mark the
+active goal PAUSED, verify the related automation is PAUSED, allow the already
+running finite isolated benchmark to finish collecting its own evidence, and
+start no new benchmark, production mutation or acceptance run. Leave existing
+collector/predictor/publisher/forward services unchanged. Preserve uncommitted
+prefetch and factor archive validation changes; no production eligibility follows
+from their unit-test passes. See docs/QTRADE_PAUSED_PROGRESS_20261028.md.
+
+
+### A/B/C authorization — 2026-10-28 17:34 Shanghai
+
+Human explicitly approves all three stages of the incremental-publication
+proposal and sustained execution. Prior pause revoked for scoped implementation,
+isolated Linux/cluster tests, gated publisher deployment and delivery acceptance.
+Require exact source/full oracle and measured performance evidence before owner
+handover. Keep LIVE false, rolling OFF, ACTIVE and all immutable ledgers intact.
+STEP1 actual audits and STEP2 can proceed in parallel.

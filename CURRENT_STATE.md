@@ -1,5 +1,50 @@
 # Current state
 
+## Resumed implementation checkpoint: 2026-10-28 18:50 Shanghai
+
+- A/B/C authorization is active. P0 persistent receipts + immutable generations
+  are implemented behind an explicit flag; production294214/b2386c3 is unchanged.
+  Final candidate64ca/2152/0f2c passes33 independent Linux fault checks. Earlier
+  640 integration pass predates final uncertainty/sidecar repairs; final complete
+  regression is pending. Preserve 672pass/1old-expectation failure and all reds.
+- Original5640 candidate374d full cold diagnostic108.787s, valid-checkpoint new
+  processes37.618/35.680/34.511s. These are intermediate-source results, not final
+  source/performance/public acceptance. Old8cc5701 increment timed out repeatedly.
+  Final-source5cold/recovery and20normal rounds plus all-source oracle remain.
+- STEP1 actual17:40 E accepts12/12 current observations and2/2 retired closure,
+  but globalBLOCKED on publicDEGRADED/FORWARD_SERVICE_DATA_STALE. Actual18:39
+  preparation623/988,363unattempted,365unresolved; retry300846/300852 are first
+  URLError, distinct from out-of-scope missing002827/605258. Head remainsOct27.
+- STEP2 S2-A exactGit+overlay2070-file package passes120/0skip on Linux and
+  Windows; original891stock5day report bytes unchanged. Factor/strategy contract
+  wiring, longer-window experiment and protected Builder remain nonproduction work.
+- Details: docs/P0_PERSISTENT_CHECKPOINT_PROGRESS_20261028.md,
+  docs/STEP1_OCT28_RESUMED_AUDIT_20261028.md and
+  docs/STEP2_FACTOR_CONTRACT_ACCEPTANCE_20261028.md. Safety/ACTIVE/rolling/ledgers
+  unchanged. Historical pause entries below are retained as evidence.
+
+## User authorization: 2026-10-28 17:34 Shanghai
+
+User explicitly authorizes proposal A/B/C and sustained execution. Resume scoped
+development, isolated tests, production deployment only after its evidence gates,
+and actual delivery acceptance. This revokes the earlier pause for these tasks.
+Automation remains PAUSED unless explicitly resumed; goal UI may retain paused
+state because the goal tools have no agent resume operation. No LIVE, rolling,
+ACTIVE or PAPER recovery authority expands. Three scoped agents cover receipt
+store, STEP2 Linux acceptance and STEP1 actual auditing.
+
+
+## User pause: 2026-10-28 16:08 Shanghai
+
+Goal and qtrade-10-28 automation are PAUSED. No new development/deployment/audit
+work until user resumes. Existing production services were not stopped/restarted.
+Latest isolated5640 cold45.020351s FAILED/warm40.753777s passed; Linux628/0skip.
+Public last actual15:48 probe remains stale10:36 index; production unchanged.
+STEP2 archive temporal repair local120/0skip, original891 report preserved, not
+committed/deployed. Pending code and exact evidence locations are listed in
+`docs/QTRADE_PAUSED_PROGRESS_20261028.md`. STEP1 remains unaccepted.
+
+
 Last updated: 2026-10-28 15:36 Shanghai, bounded worker checks and actual close blockage.
 
 - Two-owned-process shard candidate ccba5307 and prompt pipe submission pass

@@ -187,7 +187,8 @@ def build_snapshot(root: Path, experiment_root: Path) -> dict[str, Any]:
 
 
 def publish(root: Path, experiment_root: Path, publication: Path, *,
-            unified_market_database: Path | None = None) -> None:
+            unified_market_database: Path | None = None,
+            unified_market_state_root: Path | None = None) -> None:
     if not (publication / ".git").is_dir():
         raise ValueError("DEDICATED_PUBLICATION_REPOSITORY_REQUIRED")
     remote = subprocess.check_output(
@@ -199,7 +200,10 @@ def publish(root: Path, experiment_root: Path, publication: Path, *,
     current_files: list[str] = []
     from scripts.publish_unified_market import publish_market_files
 
-    current_files.extend(publish_market_files(root.parent, publication, unified_market_database))
+    market_arguments: dict[str, Any] = {} if unified_market_state_root is None else {
+        'state_root': unified_market_state_root}
+    current_files.extend(publish_market_files(root.parent, publication, unified_market_database,
+                                               **market_arguments))
     workflow_root = root.parent / "workflow/public"
     workflow_catalog = workflow_root / "workflow.json"
     if workflow_catalog.is_file():
@@ -402,6 +406,7 @@ def main() -> None:
     parser.add_argument("--publication", type=Path, required=True)
     parser.add_argument("--once", action="store_true")
     parser.add_argument('--unified-market-database', type=Path)
+    parser.add_argument('--unified-market-state-root', type=Path)
     parser.add_argument('--interval-seconds', type=int, default=300, choices=range(60, 301))
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
@@ -412,8 +417,10 @@ def main() -> None:
     while not stop.is_set():
         cycle_started = time.monotonic()
         try:
+            market_arguments = {} if args.unified_market_state_root is None else {
+                'unified_market_state_root': args.unified_market_state_root}
             publish(args.root, args.experiment_root, args.publication,
-                    unified_market_database=args.unified_market_database)
+                    unified_market_database=args.unified_market_database, **market_arguments)
             print("PUBLICATION_SUCCEEDED", flush=True)
         except Exception as error:
             write_json_atomic(

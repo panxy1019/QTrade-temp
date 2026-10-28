@@ -1,0 +1,28 @@
+{
+  "artifacts": {
+    "after-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "before-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "benchmark-report.json": "1821fd763702a833beb32254a07426673ac359a076bfd7fe438776d0d7904ddb",
+    "benchmark.py": "587217e7e92e3dce0645bcda6213ef32c2e9382ea8bfbf498583d0b25acf1ff4",
+    "bootstrap-output-refs.json": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645",
+    "bootstrap-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bootstrap-stdout.log": "b9db34e47e46d75fbdd1cc6c5f748859a87bcd1a90ae1e1ce7be2ceb9f5776ed",
+    "pass_driver.py": "5516c37feb6ae79c81f0dc716274db5b7dfc048d4377f0b22d9bdf50ddac16f9",
+    "restart1-output-refs.json": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645",
+    "restart1-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "restart1-stdout.log": "fdbfc2cceafd55988e10ffdb1fd63c144dc0ecc1d342d54cc426f460e12161ad",
+    "restart2-output-refs.json": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645",
+    "restart2-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "restart2-stdout.log": "576952b8f4f912579d63d563fd02d4d689bcb6d9a13b4873184de012bba898b2",
+    "restart3-output-refs.json": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645",
+    "restart3-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "restart3-stdout.log": "84f05d7012aa64236ae70f2c8161c6b879317205a576532923d1988d13bbd867",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout.log": "5228a7c8f899a1245509bf98add7bac2b0ee0a1ef169bf4ee24603927a88898f"
+  },
+  "exit_code": 0,
+  "helper_sha256": "587217e7e92e3dce0645bcda6213ef32c2e9382ea8bfbf498583d0b25acf1ff4",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-persistent-checkpoint-nfs-20261028T095849Z",
+  "remote": "/root/qtrade-local/operator-evidence/market-persistent-checkpoint-nfs-20261028T095849Z",
+  "source_evidence": "/root/qtrade-local/operator-evidence/market-checkpoint-integration-tests-20261028T095758Z"
+}

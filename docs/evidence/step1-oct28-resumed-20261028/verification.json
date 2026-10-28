@@ -1,0 +1,215 @@
+{
+  "accepted_current_observations": 12,
+  "accepted_retired_proofs": 2,
+  "audit_state": "BLOCKED",
+  "checked_at": "2026-10-28T10:44:07.191567+00:00",
+  "checks": {
+    "adjacent_deployment_equal": true,
+    "audit_and_binding_signatures": true,
+    "captured_model_validation_proof_signatures": true,
+    "captured_prediction_request_result_signatures": true,
+    "cd_snapshot_and_signed_documents": true,
+    "fixed_request_and_ledger_identity": true,
+    "http_body_hashes": true,
+    "outer_inner_publication_equal": true,
+    "parent_latest_nested_signed_documents": true,
+    "retry_symbols_distinct_from_excluded_missing_inputs": true,
+    "three_retry_runtime_sources_match_git458552d": true
+  },
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "evidence_sha256": "478f44529d616ef2d4100c16a5cccb02ec6de63c5e52dca69a8eabdbfc470b8c",
+  "external_order_transmission": false,
+  "failures": [
+    "FORWARD_AUDIT_PUBLICATION_INVALID_STALE_OR_DEGRADED"
+  ],
+  "kind": "LOCAL_CAPTURE_HASH_SIGNATURE_AND_LEDGER_BINDING_VERIFICATION",
+  "live_trading_enabled": false,
+  "observations": [
+    {
+      "blocked_count": 886,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 886
+      },
+      "cash": null,
+      "fill_count": 0,
+      "forward_return": null,
+      "holding_count": 0,
+      "mode": "SHADOW",
+      "net_asset_value": null,
+      "order_count": 0,
+      "strategy_id": "equal_weight_universe",
+      "turnover": null
+    },
+    {
+      "blocked_count": 886,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 886
+      },
+      "cash": "1000000",
+      "fill_count": 0,
+      "forward_return": "0",
+      "holding_count": 0,
+      "mode": "PAPER",
+      "net_asset_value": "1000000",
+      "order_count": 0,
+      "strategy_id": "equal_weight_universe",
+      "turnover": "0"
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": null,
+      "fill_count": 0,
+      "forward_return": null,
+      "holding_count": 0,
+      "mode": "SHADOW",
+      "net_asset_value": null,
+      "order_count": 0,
+      "strategy_id": "lowvol20",
+      "turnover": null
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": "1000000",
+      "fill_count": 0,
+      "forward_return": "0",
+      "holding_count": 0,
+      "mode": "PAPER",
+      "net_asset_value": "1000000",
+      "order_count": 0,
+      "strategy_id": "lowvol20",
+      "turnover": "0"
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": null,
+      "fill_count": 0,
+      "forward_return": null,
+      "holding_count": 0,
+      "mode": "SHADOW",
+      "net_asset_value": null,
+      "order_count": 0,
+      "strategy_id": "momentum20",
+      "turnover": null
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": "1000000",
+      "fill_count": 0,
+      "forward_return": "0",
+      "holding_count": 0,
+      "mode": "PAPER",
+      "net_asset_value": "1000000",
+      "order_count": 0,
+      "strategy_id": "momentum20",
+      "turnover": "0"
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": null,
+      "fill_count": 0,
+      "forward_return": null,
+      "holding_count": 0,
+      "mode": "SHADOW",
+      "net_asset_value": null,
+      "order_count": 0,
+      "strategy_id": "multifactor_equal_rank",
+      "turnover": null
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": "1000000",
+      "fill_count": 0,
+      "forward_return": "0",
+      "holding_count": 0,
+      "mode": "PAPER",
+      "net_asset_value": "1000000",
+      "order_count": 0,
+      "strategy_id": "multifactor_equal_rank",
+      "turnover": "0"
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": null,
+      "fill_count": 0,
+      "forward_return": null,
+      "holding_count": 0,
+      "mode": "SHADOW",
+      "net_asset_value": null,
+      "order_count": 0,
+      "strategy_id": "reversal5",
+      "turnover": null
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": "1000000",
+      "fill_count": 0,
+      "forward_return": "0",
+      "holding_count": 0,
+      "mode": "PAPER",
+      "net_asset_value": "1000000",
+      "order_count": 0,
+      "strategy_id": "reversal5",
+      "turnover": "0"
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": null,
+      "fill_count": 0,
+      "forward_return": null,
+      "holding_count": 0,
+      "mode": "SHADOW",
+      "net_asset_value": null,
+      "order_count": 0,
+      "strategy_id": "approved_model_29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+      "turnover": null
+    },
+    {
+      "blocked_count": 50,
+      "blocked_reasons": {
+        "UNKNOWN_TRADING_CONSTRAINTS": 50
+      },
+      "cash": "1000000",
+      "fill_count": 0,
+      "forward_return": "0",
+      "holding_count": 0,
+      "mode": "PAPER",
+      "net_asset_value": "1000000",
+      "order_count": 0,
+      "strategy_id": "approved_model_29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+      "turnover": "0"
+    }
+  ],
+  "point_in_time": false,
+  "production_mutations": false,
+  "promotion": "NOT_ELIGIBLE",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "whole_step1_accepted": false
+}

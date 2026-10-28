@@ -1,0 +1,23 @@
+{
+  "linux_returncode": 0,
+  "replay_returncode": 0,
+  "source_verified_before_and_after": true,
+  "original_report_unchanged": true,
+  "runtime_source_sha256": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+  "result": "PASSED",
+  "base_commit": "f036bca197272df4b1f885dfe8165a27b67c36cd",
+  "overlay_files": {
+    "src/qtrade/research/factor_evaluation.py": {
+      "sha256": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+      "bytes": 52226
+    },
+    "tests/test_step2_factor_contract_independent.py": {
+      "sha256": "76473a69d527bf1a6bbcfbdfad57de402cb0fd2a807d1f75de0c8fbee5e3050e",
+      "bytes": 24832
+    },
+    "docs/STEP2_FACTOR_CONTRACT_ACCEPTANCE_20261028.md": {
+      "sha256": "8eaf7ebbb74665e691ec4918c784d3161b4aa2ba6371e44d736a7eeacf9558c2",
+      "bytes": 7768
+    }
+  }
+}

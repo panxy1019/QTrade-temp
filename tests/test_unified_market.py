@@ -2446,3 +2446,35 @@ def test_real_workers_all_failures_reap_and_preserve_index(
         export(source)
     assert len(force_shard_workers) == 2
     assert (pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns) == before
+
+
+@pytest.mark.parametrize('failure', [ValueError, OSError])
+def test_prefetched_decode_failure_preserves_quarantine_or_old_pointer(source, monkeypatch,
+                                                                       failure):
+    base, _, _, _, _, add = source
+    add()
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes()
+    add(counter=2, minute=40)
+    original = store_module._BatchMaterial.validate
+    main_thread = threading.get_ident()
+    failed_threads = []
+    def validate(material):
+        if material.manifest['batch_id'] == f'{2:032x}':
+            failed_threads.append(threading.get_ident())
+            raise failure('PREFETCHED_DECODE_SOURCE_FAULT')
+        return original(material)
+    monkeypatch.setattr(store_module._BatchMaterial, 'validate', validate)
+    if failure is OSError:
+        with pytest.raises(OSError, match='^PREFETCHED_DECODE_SOURCE_FAULT$'):
+            export(source)
+        assert (pointer.read_bytes(), state.read_bytes()) == before
+    else:
+        entry = next(row for row in export(source)['index']['entries']
+                     if row['symbol'] == '301001' and row['frequency'] == '5min')
+        assert entry['state'] == 'QUARANTINED' and entry['shards'] == []
+        assert entry['issues'] == ['SOURCE_REPLAY_FAILED']
+    assert failed_threads and all(thread != main_thread for thread in failed_threads)
+    assert not any(thread.name.startswith('market-source') for thread in threading.enumerate())
