@@ -1,5 +1,36 @@
 # Architecture decisions
 
+## ADR-205 — Pipeline complete export checks and account failed physical reads
+
+Status: source aaca9d7 independently reviewed and tested in isolation; not deployed.
+
+Preserve the original full collection metadata, raw-response replay, normalized
+data checks, source lineage, shard quality/hash contract and immutable index
+commit. Reuse existing store, parsers and validators; vn.py gateway components
+do not supply this data-publication contract. Bound object persistence to16
+in-flight tasks and physical-material prefetch to one next batch. Keep decode,
+replay, cache and full pair completion on the main thread. A late failure cannot
+seal an incomplete pair or publish a partial new index. All workers join before
+return; failed writes may leave only unreferenced immutable objects.
+
+An independent test exposed an existing budget hole: malformed or checksum-failed
+materials had returned bytes but constructor failure prevented accounting. The
+store now accepts an optional private read observer that receives sizes/stages,
+never substitute bytes. Reserve verified sizes before reads, account actual
+returned lengths before parsing/checksum, and retain accounting for unused
+prefetches. Concurrent reservations and main-thread manifest rechecks share one
+budget. OSError aborts rather than becoming a permanent quality exclusion. The
+default store path and its raw bytes/quality checks remain unchanged.
+
+Linux398 and Windows386 tests pass (12 platform skips on Windows); independent
+fault/differential checks and full original458 current4200-batch oracle pass.
+First NFS cold fullcall44.860369s and warm33.992167s pass the45s bound but provide
+insufficient cold margin. This is a fixed12:23 capture, not the growing afternoon
+workload. Preserve both original failures and successful evidence. Require newer
+input, stable timing, final Git binding and actual export/Git/public/API proof
+before declaring production restored. Keep45s/512000000 source bytes/128000000
+estimated cache/Git90s limits. Source bytes are not an RSS ceiling.
+
 ## ADR-204 — Existing daily factors and retrospective evaluation have separate authority
 
 Status: non-production implementation db4ded3/8e038c8, actual isolated run at

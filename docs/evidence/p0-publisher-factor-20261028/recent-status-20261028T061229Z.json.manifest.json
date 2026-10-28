@@ -1,0 +1,30 @@
+{
+  "raw_sha256": "5c55203e8f19ea5127e1c93ef4b3dd2a9b2dcae0e94cfe0280bb53062b92d9c8",
+  "raw_bytes": 132075,
+  "gzip_sha256": "bbbd18ae4057302fef653b6e4da2b38e9b0bcd6266ff946d3170de7c3a36e3c8",
+  "gzip_bytes": 52551,
+  "observed_at": "2026-10-28T06:12:29.187703+00:00",
+  "scope_expected_days": [
+    "2026-10-23",
+    "2026-10-26",
+    "2026-10-27"
+  ],
+  "progress": {
+    "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+    "scope_symbols": 990,
+    "completed_symbols": 990,
+    "unresolved_symbols": 0,
+    "unattempted_symbols": 0,
+    "due_retry_symbols": 0,
+    "waiting_retry_symbols": 0,
+    "next_retry_at": null,
+    "historical_pit_certified": false
+  },
+  "missing": [
+    "HISTORICAL_INFORMATION_AVAILABILITY",
+    "EXACT_PRICE_LIMITS",
+    "INDEPENDENT_EXCHANGE_STATE_RECONCILIATION"
+  ],
+  "execution_enforcement": "NOT_USED",
+  "purpose": "READONLY_RECENT_STATUS_990_OF_990_NOT_HISTORICAL_PIT_OR_EXECUTION_CERTIFICATION"
+}

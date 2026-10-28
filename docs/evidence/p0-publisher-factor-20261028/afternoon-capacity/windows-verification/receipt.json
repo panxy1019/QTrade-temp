@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-28T05:55:01.507056+00:00",
+  "candidate_files": {
+    "scripts/publish_unified_market.py": "81ac2ed440de3a9afcca719f187bf5fe1cffc843292248704ca1427a375848f7",
+    "scripts/unified_store.py": "123ac2fbf6d31d5bb4f26bd5901b510f39cf5e964bc50baaddba3489fda944b2",
+    "src/qtrade/research/unified_market.py": "64982440d5c876a58c282fb7c8ab4923d03376864c489e8224565a9aff760bb6",
+    "src/qtrade/market_data/sina_incremental.py": "c0f783604750ac2648c8dcb2496e2e02994ddb3cf469d6a69e762ebfb9bff63b",
+    "tests/test_unified_market.py": "8a35e355c711372d238871747d66b0867cfafd25d044e16716c922ae75ce1c0c"
+  },
+  "results": [
+    {
+      "check": "windows-focused",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-o",
+        "addopts=",
+        "tests/test_unified_market.py",
+        "tests/test_sina_incremental.py",
+        "tests/test_data_quality.py",
+        "tests/test_data_quality_policy.py",
+        "tests/test_unified_store.py",
+        "--junitxml=E:\\QTrade-temp\\market-prefetch-local-verification-20261028T055441Z\\pytest.xml"
+      ],
+      "exit_code": 0
+    },
+    {
+      "check": "ruff",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "-m",
+        "ruff",
+        "check",
+        "scripts/publish_unified_market.py",
+        "scripts/unified_store.py",
+        "src/qtrade/research/unified_market.py",
+        "src/qtrade/market_data/sina_incremental.py",
+        "tests/test_unified_market.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "check": "mypy",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "-m",
+        "mypy",
+        "--explicit-package-bases",
+        "-m",
+        "scripts.publish_unified_market",
+        "-m",
+        "scripts.unified_store",
+        "-m",
+        "qtrade.research.unified_market",
+        "-m",
+        "qtrade.market_data.sina_incremental"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

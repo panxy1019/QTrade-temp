@@ -1,6 +1,37 @@
 # Current state
 
-Last updated: 2026-10-28 13:39 Shanghai, separate publisher and factor gates.
+Last updated: 2026-10-28 14:12 Shanghai, afternoon cold failure and recent-state completion.
+
+- Exact Git aaca9d7/1821 files on new13:58:40 freeze4860batches/120685chunks:
+  actual NFS cold45.247439s FAIL, warm39.568944s fullcall PASS. Full new output
+  5986shards/149263840bytes; source206638600bytes. Earlier4200 firstpass does not
+  cover current workload. Publisher294214 unchanged; no production recovery.
+- Earlier4200-batch profile identifies main CPU as residual bottleneck: main38.58s CPU,
+  source-future wait0.91s/object wait0.46s; replay11.68s and shard checks10.63s
+  CPU are included sub-timers, not additive whole-call figures. Evaluate bounded
+  two-owned-process shard validation with unchanged parser/hash/quality/45s gates.
+  Actual cgroup quota13CPU, memorylimit60GiB; affinity128 is not exclusive capacity.
+- Actual14:12 recent status COMPLETE990/990,0unattempted/0retry,990checksums,
+  windowOct23/26/27. Missing historical availability/exactlimits/independent state
+  reconciliation remains, execution_enforcement NOT_USED. No Oct28 close claim.
+
+Previous13:53 first narrow-margin isolated pass:
+
+- Publisher source aaca9d7 fixes failed physical-read accounting and pipelines
+  complete validation with one next-material prefetch. First actualNFS frozen
+  cold44.860369s fullcall/warm33.992167s pass; Linux398 and Windows386 pass with
+ 12 platform skips on Windows. Independent original458 oracle verifies all4200
+  batches,3000entries,5986shards/135052142bytes and lineage. Five committed source
+  bytes match the tested candidate; original uncommitted provenance remains.
+- Cold margin is only0.14s and inputs remain12:23 frozen. New-afternoon workload,
+  stable final-commit performance and production delivery are NOT accepted. No
+  production handover; most recent public13:39 index remains10:36/stale. Separate
+  detailed profiling continues without relaxing45s/hash/quality/source/cache/Git.
+- Recent-state automatic collection13:44 reaches920/990,70unattempted,0retry;
+  actual data service WAITING/return0 and ACTIVE/head/approval unchanged. This
+  does not certify historical PIT or solve public index freshness.
+
+Previous13:39 publisher and factor checkpoint:
 
 - Actual public HTTP probe13:39 remains STALE_TRANSPORT: index10969.45s old,
   catalog167.61s, publication31c5f1f2, productionae33. Production publisher294214

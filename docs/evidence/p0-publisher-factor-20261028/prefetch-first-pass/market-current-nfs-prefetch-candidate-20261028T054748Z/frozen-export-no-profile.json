@@ -1,0 +1,104 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-28T05:49:33.125609+00:00",
+  "source_revision": "uncommitted:fd8d11be151b3adac9455f73fd72f6cff9bc4ddc3c1be07842bb280f7d279b7a",
+  "controlled_snapshot_clock": "2026-10-28T04:23:39.263755+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "profiling_enabled": false,
+  "filesystem": {
+    "source_overlay": {
+      "path": "/root/qtrade-local/operator-evidence/market-current-nfs-prefetch-candidate-20261028T054748Z",
+      "resolved": "/root/qtrade-local/operator-evidence/market-current-nfs-prefetch-candidate-20261028T054748Z",
+      "st_dev": 61,
+      "fs_type": "overlayfs",
+      "available_bytes": 27761381376
+    },
+    "isolated_output": {
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-current-nfs-prefetch-candidate-20261028T054748Z",
+      "resolved": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-current-nfs-prefetch-candidate-20261028T054748Z",
+      "st_dev": 66,
+      "fs_type": "nfs",
+      "available_bytes": 289692188672
+    },
+    "production_output": {
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/market-public",
+      "resolved": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/market-public",
+      "st_dev": 66,
+      "fs_type": "nfs",
+      "available_bytes": 289692188672
+    },
+    "immutable_lake": {
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-current-nfs-prefetch-candidate-20261028T054748Z/unified-data/lake",
+      "resolved": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/lake",
+      "st_dev": 66,
+      "fs_type": "nfs",
+      "available_bytes": 289692188672
+    }
+  },
+  "freeze_evidence_sha256": "75cb08efcdc1eeec775a579f4811ccce3ddccb2e2ab1e80f79781d8908da69d3",
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_AND_PARALLEL_WRITE_TIMES_SUM_NOT_WALL",
+  "results": [
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 180712399,
+        "cached_batches": 0,
+        "replayed_batches": 4200,
+        "selected_chunks": 104218,
+        "selected_batches": 4200,
+        "cached_rows": 70524,
+        "cache_estimated_bytes": 127998373,
+        "export_seconds": 44.466431,
+        "total_bytes": 135052142,
+        "total_files": 5986,
+        "index_id": "40e9051944f815ca0edefc52366654bdb8937fc1489f5fed98e8933b3f39bf5c",
+        "quarantined_entries": 0
+      },
+      "previous_success_used_as_oracle": false,
+      "independent_full_current_audit": "PENDING",
+      "decoded_cache_empty_at_start": true,
+      "destination_objects_at_start": 0,
+      "pass_name": "cold",
+      "wall_seconds": 44.860369,
+      "profile": {},
+      "peak_rss_kib": 1042972
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 180712399,
+        "cached_batches": 1667,
+        "replayed_batches": 2533,
+        "selected_chunks": 104218,
+        "selected_batches": 4200,
+        "cached_rows": 70524,
+        "cache_estimated_bytes": 127998373,
+        "export_seconds": 33.691126,
+        "total_bytes": 135052142,
+        "total_files": 5986,
+        "index_id": "40e9051944f815ca0edefc52366654bdb8937fc1489f5fed98e8933b3f39bf5c",
+        "quarantined_entries": 0
+      },
+      "previous_success_used_as_oracle": false,
+      "independent_full_current_audit": "PENDING",
+      "decoded_cache_empty_at_start": false,
+      "destination_objects_at_start": 5986,
+      "pass_name": "warm",
+      "wall_seconds": 33.992167,
+      "profile": {},
+      "peak_rss_kib": 1062392
+    }
+  ],
+  "evidence_sha256": "36a789d7e4a668cba7f4a37ffcc3bbf641d0d6a38e30d62edf623d0f6fd32cf2"
+}

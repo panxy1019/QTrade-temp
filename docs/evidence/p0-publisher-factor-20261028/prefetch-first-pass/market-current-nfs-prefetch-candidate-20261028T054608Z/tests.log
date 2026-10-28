@@ -1,0 +1,59 @@
+........................................................................ [ 18%]
+........................................................................ [ 36%]
+........................................................................ [ 54%]
+........................................................................ [ 72%]
+.......................................................FF............... [ 90%]
+......................................                                   [100%]
+=================================== FAILURES ===================================
+___ test_private_material_has_no_caller_supplied_source_or_validation_bypass ___
+
+source = (PosixPath('/tmp/pytest-of-root/pytest-93/test_private_material_has_no_c0'), PosixPath('/tmp/pytest-of-root/pytest-93/..., <scripts.unified_store.UnifiedBatchStore object at 0x7fd4577458b0>, <function source.<locals>.add at 0x7fd5a9130d50>)
+
+    def test_private_material_has_no_caller_supplied_source_or_validation_bypass(source):
+        import inspect
+        _, _, _, _, store, add = source
+        manifest = add()
+>       assert list(inspect.signature(store._batch_material).parameters) == ['batch_id']
+E       AssertionError: assert ['batch_id', '_read_observer'] == ['batch_id']
+E         
+E         Left contains one more item: '_read_observer'
+E         Use -v to get more diff
+
+tests/test_unified_market.py:2234: AssertionError
+___ test_missing_normalized_source_still_counts_material_reads_toward_budget ___
+
+source = (PosixPath('/tmp/pytest-of-root/pytest-93/test_missing_normalized_source0'), PosixPath('/tmp/pytest-of-root/pytest-93/..., <scripts.unified_store.UnifiedBatchStore object at 0x7fd49441ab20>, <function source.<locals>.add at 0x7fd5a9133ab0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd4fa8b95c0>
+
+    def test_missing_normalized_source_still_counts_material_reads_toward_budget(source, monkeypatch):
+        _, _, calendar, _, store, add = source
+        manifest = add()
+        manifest['normalized'] = None
+        manifest = resign(manifest)
+        path = store.batch_path(manifest['batch_id'])
+        raw_manifest = contract.encoded(manifest)
+        path.write_bytes(raw_manifest)
+        kinds = {'301001': 'STOCK', '600036': 'STOCK'}
+        context = (signed(calendar.document)['evidence_sha256'], signed(kinds)['evidence_sha256'])
+        stats = {'source_bytes_read': 0, 'cached_batches': 0, 'replayed_batches': 0}
+        with pytest.raises(ValueError, match='NORMALIZED_SOURCE_MISSING'):
+            exporter._load(store, manifest['batch_id'], stats, calendar, kinds, context)
+        actual = len(raw_manifest)+manifest['raw']['bytes']
+        assert stats['source_bytes_read'] == actual
+        monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', actual)
+        with pytest.raises(ValueError, match='SOURCE_BYTE_BUDGET'):
+            exporter._load(store, manifest['batch_id'], stats, calendar, kinds, context)
+>       assert stats['source_bytes_read'] == 2*actual
+E       assert 2232 == (2 * 2232)
+
+tests/test_unified_market.py:2260: AssertionError
+=============================== warnings summary ===============================
+../../../../siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_unified_market.py::test_private_material_has_no_caller_supplied_source_or_validation_bypass
+FAILED tests/test_unified_market.py::test_missing_normalized_source_still_counts_material_reads_toward_budget
+2 failed, 396 passed, 1 warning in 21.96s

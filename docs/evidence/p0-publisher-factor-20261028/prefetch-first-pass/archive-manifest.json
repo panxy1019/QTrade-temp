@@ -1,0 +1,114 @@
+{
+  "scope": "FIRST_CURRENT_FROZEN_NFS_PASS_NO_STABLE_MARGIN_NOT_DEPLOYED",
+  "source_commit": "aaca9d7bc550cffcf75e6939f7bc251574ecbbda",
+  "commit_binding_scope": "Five candidate bytes checked against committed Git blobs after isolated run; this does not relabel the original uncommitted-run provenance.",
+  "candidate_files": {
+    "scripts/publish_unified_market.py": "81ac2ed440de3a9afcca719f187bf5fe1cffc843292248704ca1427a375848f7",
+    "scripts/unified_store.py": "123ac2fbf6d31d5bb4f26bd5901b510f39cf5e964bc50baaddba3489fda944b2",
+    "src/qtrade/market_data/sina_incremental.py": "c0f783604750ac2648c8dcb2496e2e02994ddb3cf469d6a69e762ebfb9bff63b",
+    "src/qtrade/research/unified_market.py": "64982440d5c876a58c282fb7c8ab4923d03376864c489e8224565a9aff760bb6",
+    "tests/test_unified_market.py": "8a35e355c711372d238871747d66b0867cfafd25d044e16716c922ae75ce1c0c"
+  },
+  "files": [
+    {
+      "file": "market-current-nfs-prefetch-candidate-20261028T054608Z/tests.log",
+      "sha256": "36cbdf75c70f1a40c19cfce5e6f05b1d22e137a1644d8156815120483562aec3",
+      "bytes": 3986
+    },
+    {
+      "file": "market-current-nfs-prefetch-candidate-20261028T054748Z/benchmark.log",
+      "sha256": "f1c346f2ef289e5f1b675ca243e005ac6f67706590bc666dd6574254c27d0ef1",
+      "bytes": 1325
+    },
+    {
+      "file": "market-current-nfs-prefetch-candidate-20261028T054748Z/candidate-manifest.json",
+      "sha256": "fd8d11be151b3adac9455f73fd72f6cff9bc4ddc3c1be07842bb280f7d279b7a",
+      "bytes": 654
+    },
+    {
+      "file": "market-current-nfs-prefetch-candidate-20261028T054748Z/frozen-export-no-profile.json",
+      "sha256": "18106d6849c472c762f86265abf790103f980b0b5b2bda5cd735d0c80c2d4843",
+      "bytes": 4218
+    },
+    {
+      "file": "market-current-nfs-prefetch-candidate-20261028T054748Z/pytest.xml",
+      "sha256": "4a9532f08264fc4270fbcad4840c388c300ec343aa581a37fd05549d717ea2b2",
+      "bytes": 60070
+    },
+    {
+      "file": "market-current-nfs-prefetch-candidate-20261028T054748Z/tests.log",
+      "sha256": "ec045fe29b7eb16d0befcb09515cf2ce83f89b5f6dc36bdffa67d1345f3be123",
+      "bytes": 1087
+    },
+    {
+      "file": "market-current-nfs-independent-oracle-20261028T055202Z/execution.json",
+      "sha256": "d60da4a50924dfb39651f2041d946a265ab8fcc149d803cbf8e41823e80b796b",
+      "bytes": 452
+    },
+    {
+      "file": "market-current-nfs-independent-oracle-20261028T055202Z/oracle-report.json",
+      "sha256": "3694a81fc28fe8f0fe9946088c6e9f670550407446caa5b9ca5ffacd023633e8",
+      "bytes": 3856
+    },
+    {
+      "file": "market-current-nfs-independent-oracle-20261028T055202Z/oracle.py",
+      "sha256": "11f9be8ad56cba365df3af14c07d9c18e007fb8086d484cd6ae26e9e6245a1ca",
+      "bytes": 21949
+    },
+    {
+      "file": "market-current-nfs-independent-oracle-20261028T055202Z/stdout.log",
+      "sha256": "d4bf90b2154ced427396a7aa1b5a3199f7c350373b25e2a764828a4dcaa0ebd6",
+      "bytes": 4129
+    },
+    {
+      "file": "export-source-prefetch-review-20261028.md",
+      "sha256": "4ac9f183d30bb7298cf13ada9185714dc148fb847f9b8da0afdca08d07d8d758",
+      "bytes": 11719
+    },
+    {
+      "file": "export-prefetch-failed-read-finding-20261028.md",
+      "sha256": "df38e0f631546f2360b9ea5a120ee8cb84d16b151d7e888f38a1109373f013e9",
+      "bytes": 2551
+    },
+    {
+      "file": "test_export_prefetch_failed_reads_review_20261028.py",
+      "sha256": "0863f669f86653170b770f4b66cc18fb28cafa34b1df3e07489dc193be1d4c34",
+      "bytes": 2392
+    },
+    {
+      "file": "export-prefetch-accounting-green-20261028.xml",
+      "sha256": "e77e19b8cb8a8fe7aa0eb305db17259d11ed07818ffc39c2b7870ffd33cae140",
+      "bytes": 2190
+    },
+    {
+      "file": "export-prefetch-failed-accounting-red-20261028.xml",
+      "sha256": "6457788837e0203a1a23c925591f90e7e214ecad4f7270517a65ec634cfaeefb",
+      "bytes": 16908
+    },
+    {
+      "file": "export-prefetch-failed-reads-review-20261028.xml",
+      "sha256": "31f12e59076a7a2dc2ec0c07235e02c5febb5f1a023ba4d9044004ca4439f2f2",
+      "bytes": 8898
+    },
+    {
+      "file": "export-prefetch-final-assertions-tests-20261028.xml",
+      "sha256": "4847f22d704695e0a3c7fb842a08dd379e69efe77dec3437ce2c6a2e6a610214",
+      "bytes": 537
+    },
+    {
+      "file": "export-prefetch-generic-store-tests-20261028.xml",
+      "sha256": "1f9707c5dd3866f2a1994c7ce007846edc4fdce2f9799717acb50cb3e29252ca",
+      "bytes": 2374
+    },
+    {
+      "file": "export-prefetch-independent-fixed-tests-20261028.xml",
+      "sha256": "e4808aa1e24fa667f78be591789989732f731aff15c401a040c64642695489a0",
+      "bytes": 4486
+    },
+    {
+      "file": "export-prefetch-source-observer-tests-20261028.xml",
+      "sha256": "d50e205a9ec8074cef25dd5fee9cd7803f436de42242d04e8b4dd8124532be21",
+      "bytes": 3144
+    }
+  ]
+}

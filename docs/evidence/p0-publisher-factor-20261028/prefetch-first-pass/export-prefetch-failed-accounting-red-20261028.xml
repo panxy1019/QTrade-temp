@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="8" time="1.550" timestamp="2026-10-28T13:43:08.970978+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="tests.test_unified_market" name="test_failed_source_reads_are_charged_even_for_unused_prefetch[False-manifest]" time="0.337"><failure message="assert ([101] and 0 == 101)&#10; +  where 101 = sum([101])">source = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-712/test_failed_source_reads_are_c0'), ...ts.unified_store.UnifiedBatchStore object at 0x000001E000170830&gt;, &lt;function source.&lt;locals&gt;.add at 0x000001E000249900&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E00015DBA0&gt;
+damage = 'manifest', unused_future = False
+
+    @pytest.mark.parametrize('damage', ['manifest', 'raw_checksum', 'normalized_checksum', 'raw_parse'])
+    @pytest.mark.parametrize('unused_future', [False, True])
+    def test_failed_source_reads_are_charged_even_for_unused_prefetch(
+        source, monkeypatch, damage, unused_future,
+    ):
+        _, _, _, _, store, add = source
+        manifest = add()
+        if damage == 'manifest':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(b' '*100+b'{')
+        elif damage in {'raw_checksum', 'normalized_checksum'}:
+            ref = manifest['raw' if damage == 'raw_checksum' else 'normalized']
+            path = store._blob_path(ref['sha256'], ref['suffix'])
+            raw = path.read_bytes()
+            path.write_bytes(b'x'+raw[1:])
+        else:
+            ref = store._put_blob(b'not gzip', '.jsonl.gz')
+            manifest['raw'] = {**manifest['raw'], **ref}
+            store.batch_path(manifest['batch_id']).write_bytes(contract.encoded(resign(manifest)))
+        physical = []
+        original_read = Path.read_bytes
+        def read(path):
+            raw = original_read(path)
+            if store.root in path.parents:
+                physical.append(len(raw))
+            return raw
+        monkeypatch.setattr(Path, 'read_bytes', read)
+        stats = {'source_bytes_read': 0}
+        accounting = exporter._SourceReads(stats)
+        if unused_future:
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(accounting.material, store, manifest['batch_id'])
+            if damage != 'raw_parse':
+                assert isinstance(future.exception(), ValueError)
+        else:
+            with pytest.raises((ValueError, OSError)):
+                accounting.material(store, manifest['batch_id']).validate()
+&gt;       assert physical and stats['source_bytes_read'] == sum(physical)
+E       assert ([101] and 0 == 101)
+E        +  where 101 = sum([101])
+
+tests\test_unified_market.py:565: AssertionError</failure></testcase><testcase classname="tests.test_unified_market" name="test_failed_source_reads_are_charged_even_for_unused_prefetch[False-raw_checksum]" time="0.032"><failure message="assert ([2019, 340] and 0 == 2359)&#10; +  where 2359 = sum([2019, 340])">source = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-712/test_failed_source_reads_are_c1'), ...ts.unified_store.UnifiedBatchStore object at 0x000001E002468050&gt;, &lt;function source.&lt;locals&gt;.add at 0x000001E0023CA1F0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E00015DA70&gt;
+damage = 'raw_checksum', unused_future = False
+
+    @pytest.mark.parametrize('damage', ['manifest', 'raw_checksum', 'normalized_checksum', 'raw_parse'])
+    @pytest.mark.parametrize('unused_future', [False, True])
+    def test_failed_source_reads_are_charged_even_for_unused_prefetch(
+        source, monkeypatch, damage, unused_future,
+    ):
+        _, _, _, _, store, add = source
+        manifest = add()
+        if damage == 'manifest':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(b' '*100+b'{')
+        elif damage in {'raw_checksum', 'normalized_checksum'}:
+            ref = manifest['raw' if damage == 'raw_checksum' else 'normalized']
+            path = store._blob_path(ref['sha256'], ref['suffix'])
+            raw = path.read_bytes()
+            path.write_bytes(b'x'+raw[1:])
+        else:
+            ref = store._put_blob(b'not gzip', '.jsonl.gz')
+            manifest['raw'] = {**manifest['raw'], **ref}
+            store.batch_path(manifest['batch_id']).write_bytes(contract.encoded(resign(manifest)))
+        physical = []
+        original_read = Path.read_bytes
+        def read(path):
+            raw = original_read(path)
+            if store.root in path.parents:
+                physical.append(len(raw))
+            return raw
+        monkeypatch.setattr(Path, 'read_bytes', read)
+        stats = {'source_bytes_read': 0}
+        accounting = exporter._SourceReads(stats)
+        if unused_future:
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(accounting.material, store, manifest['batch_id'])
+            if damage != 'raw_parse':
+                assert isinstance(future.exception(), ValueError)
+        else:
+            with pytest.raises((ValueError, OSError)):
+                accounting.material(store, manifest['batch_id']).validate()
+&gt;       assert physical and stats['source_bytes_read'] == sum(physical)
+E       assert ([2019, 340] and 0 == 2359)
+E        +  where 2359 = sum([2019, 340])
+
+tests\test_unified_market.py:565: AssertionError</failure></testcase><testcase classname="tests.test_unified_market" name="test_failed_source_reads_are_charged_even_for_unused_prefetch[False-normalized_checksum]" time="0.029"><failure message="assert ([2019, 340, 5979] and 0 == 8338)&#10; +  where 8338 = sum([2019, 340, 5979])">source = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-712/test_failed_source_reads_are_c2'), ...ts.unified_store.UnifiedBatchStore object at 0x000001E002468A50&gt;, &lt;function source.&lt;locals&gt;.add at 0x000001E0023CA140&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E0022CFAD0&gt;
+damage = 'normalized_checksum', unused_future = False
+
+    @pytest.mark.parametrize('damage', ['manifest', 'raw_checksum', 'normalized_checksum', 'raw_parse'])
+    @pytest.mark.parametrize('unused_future', [False, True])
+    def test_failed_source_reads_are_charged_even_for_unused_prefetch(
+        source, monkeypatch, damage, unused_future,
+    ):
+        _, _, _, _, store, add = source
+        manifest = add()
+        if damage == 'manifest':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(b' '*100+b'{')
+        elif damage in {'raw_checksum', 'normalized_checksum'}:
+            ref = manifest['raw' if damage == 'raw_checksum' else 'normalized']
+            path = store._blob_path(ref['sha256'], ref['suffix'])
+            raw = path.read_bytes()
+            path.write_bytes(b'x'+raw[1:])
+        else:
+            ref = store._put_blob(b'not gzip', '.jsonl.gz')
+            manifest['raw'] = {**manifest['raw'], **ref}
+            store.batch_path(manifest['batch_id']).write_bytes(contract.encoded(resign(manifest)))
+        physical = []
+        original_read = Path.read_bytes
+        def read(path):
+            raw = original_read(path)
+            if store.root in path.parents:
+                physical.append(len(raw))
+            return raw
+        monkeypatch.setattr(Path, 'read_bytes', read)
+        stats = {'source_bytes_read': 0}
+        accounting = exporter._SourceReads(stats)
+        if unused_future:
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(accounting.material, store, manifest['batch_id'])
+            if damage != 'raw_parse':
+                assert isinstance(future.exception(), ValueError)
+        else:
+            with pytest.raises((ValueError, OSError)):
+                accounting.material(store, manifest['batch_id']).validate()
+&gt;       assert physical and stats['source_bytes_read'] == sum(physical)
+E       assert ([2019, 340, 5979] and 0 == 8338)
+E        +  where 8338 = sum([2019, 340, 5979])
+
+tests\test_unified_market.py:565: AssertionError</failure></testcase><testcase classname="tests.test_unified_market" name="test_failed_source_reads_are_charged_even_for_unused_prefetch[False-raw_parse]" time="0.034" /><testcase classname="tests.test_unified_market" name="test_failed_source_reads_are_charged_even_for_unused_prefetch[True-manifest]" time="0.028"><failure message="assert ([101] and 0 == 101)&#10; +  where 101 = sum([101])">source = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-712/test_failed_source_reads_are_c4'), ...ts.unified_store.UnifiedBatchStore object at 0x000001E0023C10F0&gt;, &lt;function source.&lt;locals&gt;.add at 0x000001E0023CA2A0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E002382360&gt;
+damage = 'manifest', unused_future = True
+
+    @pytest.mark.parametrize('damage', ['manifest', 'raw_checksum', 'normalized_checksum', 'raw_parse'])
+    @pytest.mark.parametrize('unused_future', [False, True])
+    def test_failed_source_reads_are_charged_even_for_unused_prefetch(
+        source, monkeypatch, damage, unused_future,
+    ):
+        _, _, _, _, store, add = source
+        manifest = add()
+        if damage == 'manifest':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(b' '*100+b'{')
+        elif damage in {'raw_checksum', 'normalized_checksum'}:
+            ref = manifest['raw' if damage == 'raw_checksum' else 'normalized']
+            path = store._blob_path(ref['sha256'], ref['suffix'])
+            raw = path.read_bytes()
+            path.write_bytes(b'x'+raw[1:])
+        else:
+            ref = store._put_blob(b'not gzip', '.jsonl.gz')
+            manifest['raw'] = {**manifest['raw'], **ref}
+            store.batch_path(manifest['batch_id']).write_bytes(contract.encoded(resign(manifest)))
+        physical = []
+        original_read = Path.read_bytes
+        def read(path):
+            raw = original_read(path)
+            if store.root in path.parents:
+                physical.append(len(raw))
+            return raw
+        monkeypatch.setattr(Path, 'read_bytes', read)
+        stats = {'source_bytes_read': 0}
+        accounting = exporter._SourceReads(stats)
+        if unused_future:
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(accounting.material, store, manifest['batch_id'])
+            if damage != 'raw_parse':
+                assert isinstance(future.exception(), ValueError)
+        else:
+            with pytest.raises((ValueError, OSError)):
+                accounting.material(store, manifest['batch_id']).validate()
+&gt;       assert physical and stats['source_bytes_read'] == sum(physical)
+E       assert ([101] and 0 == 101)
+E        +  where 101 = sum([101])
+
+tests\test_unified_market.py:565: AssertionError</failure></testcase><testcase classname="tests.test_unified_market" name="test_failed_source_reads_are_charged_even_for_unused_prefetch[True-raw_checksum]" time="0.031"><failure message="assert ([2019, 340] and 0 == 2359)&#10; +  where 2359 = sum([2019, 340])">source = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-712/test_failed_source_reads_are_c5'), ...ts.unified_store.UnifiedBatchStore object at 0x000001E00243C5F0&gt;, &lt;function source.&lt;locals&gt;.add at 0x000001E0023CA6C0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E00238AF50&gt;
+damage = 'raw_checksum', unused_future = True
+
+    @pytest.mark.parametrize('damage', ['manifest', 'raw_checksum', 'normalized_checksum', 'raw_parse'])
+    @pytest.mark.parametrize('unused_future', [False, True])
+    def test_failed_source_reads_are_charged_even_for_unused_prefetch(
+        source, monkeypatch, damage, unused_future,
+    ):
+        _, _, _, _, store, add = source
+        manifest = add()
+        if damage == 'manifest':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(b' '*100+b'{')
+        elif damage in {'raw_checksum', 'normalized_checksum'}:
+            ref = manifest['raw' if damage == 'raw_checksum' else 'normalized']
+            path = store._blob_path(ref['sha256'], ref['suffix'])
+            raw = path.read_bytes()
+            path.write_bytes(b'x'+raw[1:])
+        else:
+            ref = store._put_blob(b'not gzip', '.jsonl.gz')
+            manifest['raw'] = {**manifest['raw'], **ref}
+            store.batch_path(manifest['batch_id']).write_bytes(contract.encoded(resign(manifest)))
+        physical = []
+        original_read = Path.read_bytes
+        def read(path):
+            raw = original_read(path)
+            if store.root in path.parents:
+                physical.append(len(raw))
+            return raw
+        monkeypatch.setattr(Path, 'read_bytes', read)
+        stats = {'source_bytes_read': 0}
+        accounting = exporter._SourceReads(stats)
+        if unused_future:
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(accounting.material, store, manifest['batch_id'])
+            if damage != 'raw_parse':
+                assert isinstance(future.exception(), ValueError)
+        else:
+            with pytest.raises((ValueError, OSError)):
+                accounting.material(store, manifest['batch_id']).validate()
+&gt;       assert physical and stats['source_bytes_read'] == sum(physical)
+E       assert ([2019, 340] and 0 == 2359)
+E        +  where 2359 = sum([2019, 340])
+
+tests\test_unified_market.py:565: AssertionError</failure></testcase><testcase classname="tests.test_unified_market" name="test_failed_source_reads_are_charged_even_for_unused_prefetch[True-normalized_checksum]" time="0.032"><failure message="assert ([2019, 340, 5979] and 0 == 8338)&#10; +  where 8338 = sum([2019, 340, 5979])">source = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-712/test_failed_source_reads_are_c6'), ...ts.unified_store.UnifiedBatchStore object at 0x000001E002383130&gt;, &lt;function source.&lt;locals&gt;.add at 0x000001E0023CB060&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E00238BD50&gt;
+damage = 'normalized_checksum', unused_future = True
+
+    @pytest.mark.parametrize('damage', ['manifest', 'raw_checksum', 'normalized_checksum', 'raw_parse'])
+    @pytest.mark.parametrize('unused_future', [False, True])
+    def test_failed_source_reads_are_charged_even_for_unused_prefetch(
+        source, monkeypatch, damage, unused_future,
+    ):
+        _, _, _, _, store, add = source
+        manifest = add()
+        if damage == 'manifest':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(b' '*100+b'{')
+        elif damage in {'raw_checksum', 'normalized_checksum'}:
+            ref = manifest['raw' if damage == 'raw_checksum' else 'normalized']
+            path = store._blob_path(ref['sha256'], ref['suffix'])
+            raw = path.read_bytes()
+            path.write_bytes(b'x'+raw[1:])
+        else:
+            ref = store._put_blob(b'not gzip', '.jsonl.gz')
+            manifest['raw'] = {**manifest['raw'], **ref}
+            store.batch_path(manifest['batch_id']).write_bytes(contract.encoded(resign(manifest)))
+        physical = []
+        original_read = Path.read_bytes
+        def read(path):
+            raw = original_read(path)
+            if store.root in path.parents:
+                physical.append(len(raw))
+            return raw
+        monkeypatch.setattr(Path, 'read_bytes', read)
+        stats = {'source_bytes_read': 0}
+        accounting = exporter._SourceReads(stats)
+        if unused_future:
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(accounting.material, store, manifest['batch_id'])
+            if damage != 'raw_parse':
+                assert isinstance(future.exception(), ValueError)
+        else:
+            with pytest.raises((ValueError, OSError)):
+                accounting.material(store, manifest['batch_id']).validate()
+&gt;       assert physical and stats['source_bytes_read'] == sum(physical)
+E       assert ([2019, 340, 5979] and 0 == 8338)
+E        +  where 8338 = sum([2019, 340, 5979])
+
+tests\test_unified_market.py:565: AssertionError</failure></testcase><testcase classname="tests.test_unified_market" name="test_failed_source_reads_are_charged_even_for_unused_prefetch[True-raw_parse]" time="0.034" /></testsuite></testsuites>

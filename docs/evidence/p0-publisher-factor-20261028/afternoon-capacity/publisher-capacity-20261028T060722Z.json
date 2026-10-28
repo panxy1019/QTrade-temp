@@ -1,0 +1,14 @@
+{
+  "observed_at": "2026-10-28T06:07:22.117043+00:00",
+  "readonly": true,
+  "cpu_count": 128,
+  "affinity_count": 128,
+  "cgroup": {
+    "/sys/fs/cgroup/cpu/cpu.cfs_quota_us": "1300000",
+    "/sys/fs/cgroup/cpu/cpu.cfs_period_us": "100000",
+    "/sys/fs/cgroup/cpu,cpuacct/cpu.cfs_quota_us": "1300000",
+    "/sys/fs/cgroup/cpu,cpuacct/cpu.cfs_period_us": "100000",
+    "/sys/fs/cgroup/memory/memory.limit_in_bytes": "64424509440",
+    "/sys/fs/cgroup/memory/memory.usage_in_bytes": "40830734336"
+  }
+}

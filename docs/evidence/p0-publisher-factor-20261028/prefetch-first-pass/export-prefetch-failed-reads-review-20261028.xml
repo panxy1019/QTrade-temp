@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="1.172" timestamp="2026-10-28T13:40:33.910734+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="test_export_prefetch_failed_reads_review_20261028" name="test_failed_physical_constructor_reads_cannot_bypass_source_budget[manifest_json]" time="0.365"><failure message="Failed: Physical failed-constructor reads bypassed the one-byte source budget">source = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-711/test_failed_physical_construct0'), ...ts.unified_store.UnifiedBatchStore object at 0x000001A461836E40&gt;, &lt;function source.&lt;locals&gt;.add at 0x000001A46196F8A0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001A4619590F0&gt;
+failure = 'manifest_json'
+
+    @pytest.mark.parametrize('failure', ['manifest_json', 'raw_checksum', 'normalized_checksum'])
+    def test_failed_physical_constructor_reads_cannot_bypass_source_budget(source, monkeypatch, failure):
+        base, _, _, _, store, add = source
+        manifest = add()
+        export(source)
+        pointer = base/'unified-data/market-public/unified-market.json'
+        state = base/'unified-data/market-export-state.json'
+        before = pointer.read_bytes(), state.read_bytes()
+        if failure == 'manifest_json':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(b'{' + b' '*400)
+        else:
+            ref = manifest['raw' if failure == 'raw_checksum' else 'normalized']
+            path = store._blob_path(ref['sha256'], ref['suffix'])
+            raw = path.read_bytes()
+            path.write_bytes(bytes([raw[0] ^ 1])+raw[1:])
+        actual_reads = []
+        original = Path.read_bytes
+        def read(path):
+            raw = original(path)
+            if path.is_relative_to(store.root):
+                actual_reads.append((str(path), len(raw)))
+            return raw
+        monkeypatch.setattr(Path, 'read_bytes', read)
+        monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', 1)
+        result = None
+        try:
+            result = export(source)
+        except ValueError as error:
+            assert str(error) == 'UNIFIED_MARKET_SOURCE_BYTE_BUDGET'
+            assert (pointer.read_bytes(), state.read_bytes()) == before
+            return
+        actual = sum(count for _, count in actual_reads)
+        print(json.dumps({'failure': failure, 'actual_source_bytes_read': actual,
+                          'reported_source_bytes_read': result['statistics']['source_bytes_read'],
+                          'test_source_byte_budget': 1,
+                          'published_state': [e['state'] for e in result['index']['entries']]}))
+&gt;       pytest.fail('Physical failed-constructor reads bypassed the one-byte source budget')
+E       Failed: Physical failed-constructor reads bypassed the one-byte source budget
+
+E:\QTrade-temp\test_export_prefetch_failed_reads_review_20261028.py:55: Failed</failure></testcase><testcase classname="test_export_prefetch_failed_reads_review_20261028" name="test_failed_physical_constructor_reads_cannot_bypass_source_budget[raw_checksum]" time="0.047"><failure message="Failed: Physical failed-constructor reads bypassed the one-byte source budget">source = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-711/test_failed_physical_construct1'), ...ts.unified_store.UnifiedBatchStore object at 0x000001A4A3C30180&gt;, &lt;function source.&lt;locals&gt;.add at 0x000001A463AB2400&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001A461959220&gt;
+failure = 'raw_checksum'
+
+    @pytest.mark.parametrize('failure', ['manifest_json', 'raw_checksum', 'normalized_checksum'])
+    def test_failed_physical_constructor_reads_cannot_bypass_source_budget(source, monkeypatch, failure):
+        base, _, _, _, store, add = source
+        manifest = add()
+        export(source)
+        pointer = base/'unified-data/market-public/unified-market.json'
+        state = base/'unified-data/market-export-state.json'
+        before = pointer.read_bytes(), state.read_bytes()
+        if failure == 'manifest_json':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(b'{' + b' '*400)
+        else:
+            ref = manifest['raw' if failure == 'raw_checksum' else 'normalized']
+            path = store._blob_path(ref['sha256'], ref['suffix'])
+            raw = path.read_bytes()
+            path.write_bytes(bytes([raw[0] ^ 1])+raw[1:])
+        actual_reads = []
+        original = Path.read_bytes
+        def read(path):
+            raw = original(path)
+            if path.is_relative_to(store.root):
+                actual_reads.append((str(path), len(raw)))
+            return raw
+        monkeypatch.setattr(Path, 'read_bytes', read)
+        monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', 1)
+        result = None
+        try:
+            result = export(source)
+        except ValueError as error:
+            assert str(error) == 'UNIFIED_MARKET_SOURCE_BYTE_BUDGET'
+            assert (pointer.read_bytes(), state.read_bytes()) == before
+            return
+        actual = sum(count for _, count in actual_reads)
+        print(json.dumps({'failure': failure, 'actual_source_bytes_read': actual,
+                          'reported_source_bytes_read': result['statistics']['source_bytes_read'],
+                          'test_source_byte_budget': 1,
+                          'published_state': [e['state'] for e in result['index']['entries']]}))
+&gt;       pytest.fail('Physical failed-constructor reads bypassed the one-byte source budget')
+E       Failed: Physical failed-constructor reads bypassed the one-byte source budget
+
+E:\QTrade-temp\test_export_prefetch_failed_reads_review_20261028.py:55: Failed</failure></testcase><testcase classname="test_export_prefetch_failed_reads_review_20261028" name="test_failed_physical_constructor_reads_cannot_bypass_source_budget[normalized_checksum]" time="0.049"><failure message="Failed: Physical failed-constructor reads bypassed the one-byte source budget">source = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-711/test_failed_physical_construct2'), ...ts.unified_store.UnifiedBatchStore object at 0x000001A463AA5480&gt;, &lt;function source.&lt;locals&gt;.add at 0x000001A463AB3270&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001A4639F2F90&gt;
+failure = 'normalized_checksum'
+
+    @pytest.mark.parametrize('failure', ['manifest_json', 'raw_checksum', 'normalized_checksum'])
+    def test_failed_physical_constructor_reads_cannot_bypass_source_budget(source, monkeypatch, failure):
+        base, _, _, _, store, add = source
+        manifest = add()
+        export(source)
+        pointer = base/'unified-data/market-public/unified-market.json'
+        state = base/'unified-data/market-export-state.json'
+        before = pointer.read_bytes(), state.read_bytes()
+        if failure == 'manifest_json':
+            path = store.batch_path(manifest['batch_id'])
+            path.write_bytes(b'{' + b' '*400)
+        else:
+            ref = manifest['raw' if failure == 'raw_checksum' else 'normalized']
+            path = store._blob_path(ref['sha256'], ref['suffix'])
+            raw = path.read_bytes()
+            path.write_bytes(bytes([raw[0] ^ 1])+raw[1:])
+        actual_reads = []
+        original = Path.read_bytes
+        def read(path):
+            raw = original(path)
+            if path.is_relative_to(store.root):
+                actual_reads.append((str(path), len(raw)))
+            return raw
+        monkeypatch.setattr(Path, 'read_bytes', read)
+        monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', 1)
+        result = None
+        try:
+            result = export(source)
+        except ValueError as error:
+            assert str(error) == 'UNIFIED_MARKET_SOURCE_BYTE_BUDGET'
+            assert (pointer.read_bytes(), state.read_bytes()) == before
+            return
+        actual = sum(count for _, count in actual_reads)
+        print(json.dumps({'failure': failure, 'actual_source_bytes_read': actual,
+                          'reported_source_bytes_read': result['statistics']['source_bytes_read'],
+                          'test_source_byte_budget': 1,
+                          'published_state': [e['state'] for e in result['index']['entries']]}))
+&gt;       pytest.fail('Physical failed-constructor reads bypassed the one-byte source budget')
+E       Failed: Physical failed-constructor reads bypassed the one-byte source budget
+
+E:\QTrade-temp\test_export_prefetch_failed_reads_review_20261028.py:55: Failed</failure></testcase></testsuite></testsuites>

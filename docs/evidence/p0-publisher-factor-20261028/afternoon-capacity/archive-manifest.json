@@ -1,0 +1,114 @@
+{
+  "scope": "NEW_AFTERNOON_GIT_SOURCE_COLD_FAILURE_NOT_DEPLOYMENT_ACCEPTANCE",
+  "note": "Profiled runs measure attribution, not budget success. Empty logs excluded. operator.py archived verbatim as .py.txt; original ran via stdin. CPU affinity is not cgroup CPU quota.",
+  "files": [
+    {
+      "file": "market-current-freeze-20261028T055837Z/freeze.json",
+      "original_filename": "freeze.json",
+      "sha256": "55d77efce14e9543c730fa6938477d0eb2b1b03608337f4261674f87e15cb66c",
+      "bytes": 1843
+    },
+    {
+      "file": "market-current-freeze-20261028T055837Z/operator.py.txt",
+      "original_filename": "operator.py",
+      "sha256": "c21264d30c65ab6f01e36d3d748dc60805a77e5552579cdab9970b9a3461d023",
+      "bytes": 3465
+    },
+    {
+      "file": "market-current-freeze-20261028T055837Z/result.json",
+      "original_filename": "result.json",
+      "sha256": "247e9bcb219ed9d3a09d866ed9aac2a31e3cdc4f2e7296c64105142035d55162",
+      "bytes": 1726
+    },
+    {
+      "file": "market-prefetch-nfs-detail-candidate-20261028T055441Z/benchmark.log",
+      "original_filename": "benchmark.log",
+      "sha256": "dcdad67c6aae59de229f0f6cab36ba9a7864bdd989331bf9eb21ad5f0aab8558",
+      "bytes": 5175
+    },
+    {
+      "file": "market-prefetch-nfs-detail-candidate-20261028T055441Z/candidate-manifest.json",
+      "original_filename": "candidate-manifest.json",
+      "sha256": "fd8d11be151b3adac9455f73fd72f6cff9bc4ddc3c1be07842bb280f7d279b7a",
+      "bytes": 654
+    },
+    {
+      "file": "market-prefetch-nfs-detail-candidate-20261028T055441Z/frozen-export-no-profile.json",
+      "original_filename": "frozen-export-no-profile.json",
+      "sha256": "2d2bb0020c9c61f7888d0045f2651b75dcabd117b43d928af3eef5f1461fd14f",
+      "bytes": 9594
+    },
+    {
+      "file": "market-afternoon-git-nfs-20261028T060141Z/benchmark.log",
+      "original_filename": "benchmark.log",
+      "sha256": "03a5885cd41c217f46048e04ee28f4f9bb0d11a5087fa0a927a82fa1006030da",
+      "bytes": 1293
+    },
+    {
+      "file": "market-afternoon-git-nfs-20261028T060141Z/frozen-export-no-profile.json",
+      "original_filename": "frozen-export-no-profile.json",
+      "sha256": "fa6520d40e9846d31e804e842c0d568b96cc7f79dc87a2db570e906e015ba653",
+      "bytes": 3239
+    },
+    {
+      "file": "market-afternoon-git-nfs-20261028T060141Z/git-source-manifest.json",
+      "original_filename": "git-source-manifest.json",
+      "sha256": "c887964410956fb807c3869543301b2bda8c2c722f8fa10eb0169ad970768cf7",
+      "bytes": 245084
+    },
+    {
+      "file": "market-afternoon-git-nfs-20261028T060141Z/verify.log",
+      "original_filename": "verify.log",
+      "sha256": "771187f83b18765de6cf7cd23fe03baf4889520d6867e83ea7e8d49a1553d7bb",
+      "bytes": 92
+    },
+    {
+      "file": "windows-verification/mypy.log",
+      "original_filename": "mypy.log",
+      "sha256": "d9a5631f7d87a741fbecc3236286d1792d22d349ff13846d71cdc9217307bb76",
+      "bytes": 44
+    },
+    {
+      "file": "windows-verification/pytest.xml",
+      "original_filename": "pytest.xml",
+      "sha256": "cfe2266de7a4376bef68df9b19d5522cb9084131ee7425fe9388b0e90c331137",
+      "bytes": 62270
+    },
+    {
+      "file": "windows-verification/receipt.json",
+      "original_filename": "receipt.json",
+      "sha256": "071ac53d4816b70d2092f66cbe96e89f880343d90737386e3ac3d460ee16005c",
+      "bytes": 2069
+    },
+    {
+      "file": "windows-verification/ruff.log",
+      "original_filename": "ruff.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "file": "windows-verification/windows-focused.log",
+      "original_filename": "windows-focused.log",
+      "sha256": "afc3a46e1ca85d32521274352bf106e3224d49fc0c2e5e9d617bcac3b2b81dc3",
+      "bytes": 1055
+    },
+    {
+      "file": "publisher-capacity-20261028T060708Z.json",
+      "original_filename": "publisher-capacity-20261028T060708Z.json",
+      "sha256": "fc013e5ef9537910b4eb5bb9c388ac14a1b41e0486a71f49234497d40223ea5d",
+      "bytes": 144
+    },
+    {
+      "file": "publisher-capacity-20261028T060722Z.json",
+      "original_filename": "publisher-capacity-20261028T060722Z.json",
+      "sha256": "a7f527129c20224eefcbccbafdc852c5bd8f45ee15b6e7f86d78614b2539d8ff",
+      "bytes": 517
+    },
+    {
+      "file": "source-review-with-full-oracle.md",
+      "original_filename": "export-source-prefetch-review-20261028.md",
+      "sha256": "4ac9f183d30bb7298cf13ada9185714dc148fb847f9b8da0afdca08d07d8d758",
+      "bytes": 11719
+    }
+  ]
+}

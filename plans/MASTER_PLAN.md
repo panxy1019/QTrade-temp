@@ -24,6 +24,21 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 14:12: new4860-batch13:58 freeze on exactGit aaca/1821files fails NFS
+cold45.247439s, warm39.568944s passes. Do not deploy from older4200 narrowpass.
+Residual is CPU after I/O overlap; prepare bounded shard-only child processes
+with exact validators and owned-process cleanup, independent review before
+integration. Recentstate completes990/990 forOct23/26/27 with0retry; fullPIT,
+execution certification and actualOct28 C/D/E/public/visual remain open.
+
+October28 13:53: sourceaaca9d7 adds bounded one-ahead material prefetch and fixes
+physical-read accounting on failed materials. Linux398/Windows386+12platformskip;
+independent whole4200-batch original458 oracle passes3000entries/5986allshards.
+First NFS fullcallcold44.860369/warm33.992167 passes, but0.14s margin and old12:23
+freeze cannot certify stability or afternoon workload. Continue profile/newfreeze
+before any production mutation. Actualstatus13:44 reaches920/990,0retry; ACTIVE
+and head unchanged. Nonproduction four-factor evaluation is complete separately.
+
 October28 13:39: actual public index still stale10969s whilecatalog168s. Full
 current original458 oracle passes3000entries/5986shards/4200batches; this is
 correctness only. ActualNFS cold45.193611s fails despite warm36.963300s and
