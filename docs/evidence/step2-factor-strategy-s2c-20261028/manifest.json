@@ -1,0 +1,421 @@
+{
+  "schema_version": "qtrade.factor-strategy-s2c-acceptance.v1",
+  "created_at": "2026-10-28T11:22:35.596124+00:00",
+  "final_run": "factor-strategy-s2c-20261028T111832Z-22bd6f85",
+  "baseline_commit": "fba51aade2ee2410dda087e95cf054e53375ed3a",
+  "baseline_tar_sha256": "a33407eab813ca93cc446e05a5cbef64097a6b87f655185b67fcbe448581b1ab",
+  "baseline_tar_original_path": "E:\\QTrade-temp\\factor-strategy-s2c-20261028T111832Z-22bd6f85\\baseline.tar",
+  "baseline_reproduction": "git archive fba51aade2ee2410dda087e95cf054e53375ed3a -o baseline.tar",
+  "candidate_file_count": 2196,
+  "overlays": {
+    "src/qtrade/research/factor_strategy_contract.py": {
+      "sha256": "2434723896a8f3d646d08c325f3bb4bcf8b6f03d227c67bba0e8e45dcec5ec37",
+      "bytes": 21093
+    },
+    "src/qtrade/strategies/registry.py": {
+      "sha256": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4",
+      "bytes": 32307
+    },
+    "tests/test_factor_strategy_contract.py": {
+      "sha256": "f7296001f23afc7917e99f239aca578ab11b37320273ce0ba48fec8319ff355f",
+      "bytes": 22003
+    }
+  },
+  "linux": {
+    "passed": 303,
+    "skipped": 0,
+    "pytest_seconds": 59.87
+  },
+  "windows": {
+    "passed": 302,
+    "skipped": 1,
+    "pytest_seconds": 66.92,
+    "skip": "test_recovery_does_not_signal_an_unrelated_reused_pid: Linux-specific"
+  },
+  "independent_contract_tests": {
+    "passed_each_platform": 73,
+    "skipped_each_platform": 0
+  },
+  "nonfinal_runs": {
+    "factor-strategy-s2c-20261028T110802Z-4721fc9b": "72 independent tests / narrower runtime dependency inventory",
+    "factor-strategy-s2c-20261028T111046Z-b8079bd5": "same final semantics but mixed CRLF Registry; includes preserved Windows path errors"
+  },
+  "scope": "Nonproduction contract/registry association only; API/queue/worker/execution not connected.",
+  "files": [
+    {
+      "file": "candidate/factor_strategy_contract.py",
+      "bytes": 21093,
+      "sha256": "2434723896a8f3d646d08c325f3bb4bcf8b6f03d227c67bba0e8e45dcec5ec37"
+    },
+    {
+      "file": "candidate/registry.py",
+      "bytes": 32307,
+      "sha256": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4"
+    },
+    {
+      "file": "candidate/STEP2_FACTOR_STRATEGY_CONTRACT_20261028.md",
+      "bytes": 10713,
+      "sha256": "971f278518a91ac667c73a05e0635f870d5b593401c4cd43a943c41b09bf5a29"
+    },
+    {
+      "file": "candidate/test_factor_strategy_contract.py",
+      "bytes": 22003,
+      "sha256": "f7296001f23afc7917e99f239aca578ab11b37320273ce0ba48fec8319ff355f"
+    },
+    {
+      "file": "development/factor-strategy-first-20261028.xml",
+      "bytes": 9994,
+      "sha256": "7f4b0d27747b2d81ab7525ebca2875349e16409e3095cd918c2c19e6c506fa43"
+    },
+    {
+      "file": "development/factor-strategy-lf-normalization-20261028.json",
+      "bytes": 750,
+      "sha256": "b97b10b30f10756f3ffcd60c7c14c5450ae5bac174370645eb2448ec31f0679c"
+    },
+    {
+      "file": "development/factor-strategy-windows-final-regression-20261028.xml",
+      "bytes": 45680,
+      "sha256": "e1edab9994d34f4be9b4f6398e0bf0e510dc6e51cbaae0156e424dbaf967cc29"
+    },
+    {
+      "file": "development/factor-strategy-windows-regression-20261028.xml",
+      "bytes": 33977,
+      "sha256": "5f44867fd54f45828258cc6d7569be2b3b17e8696348c2317b8f657314385aa0"
+    },
+    {
+      "file": "development/windows-long-path-extraction-failure.json",
+      "bytes": 547,
+      "sha256": "b37479b51d14cc9d9879ca2a7dedc5bec4cb34517de7f04e9bf3fe3ee7a47b02"
+    },
+    {
+      "file": "drivers/run_factor_strategy_acceptance_20261028.py",
+      "bytes": 7435,
+      "sha256": "b19a48c3a12d97235a2a11534a77989bb048dad0003d1c02215628d3c7b1bd9e"
+    },
+    {
+      "file": "drivers/run_factor_strategy_windows_package_20261028.py",
+      "bytes": 2461,
+      "sha256": "a023d60dbf9b8cb303f309f32071f48dd72b7ac382a18f02b54d89984adb6b08"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/evidence-manifest.json",
+      "bytes": 2502,
+      "sha256": "567de6804703c5efb902c0c007113238ea8e0f0c32e3cfd3abf227219210a89f"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/old-report-replay.json",
+      "bytes": 372,
+      "sha256": "9aa81821b7279e3cc022049647cb6b6964e5dd53982eec39c11dfc66b47d71ae"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/overlay.tar",
+      "bytes": 81920,
+      "sha256": "f9b9dfecbe289085c89f2ab72324b41bd79b50e80c00cd9382b1563aaf8b32d7"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/package-manifest.json",
+      "bytes": 857329,
+      "sha256": "1a21c43c6a25134a7cc5f1c095d78628e24baff50072951e8534dea137589242"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/regression.xml",
+      "bytes": 45518,
+      "sha256": "781df4b76c7f90575c334d9efef03fdd31bcc0e7a953d9cc3af8765d5c9c58c5"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/remote-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/remote-stdout.log",
+      "bytes": 3062,
+      "sha256": "a26792078b74e4f11e3eb20ef679a65fe379f7a7dbe62a8ccc23b48aa1258bf8"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/resources-after.json",
+      "bytes": 50,
+      "sha256": "6d01ff85f8a69c0e40146cf6885b30de53da0470d7177fa6cfc61536036ab9e3"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/resources-before.json",
+      "bytes": 50,
+      "sha256": "a308545091d1d6dbddb524b91752d1f0407d416b435d8f0fe903ed53d3dfe104"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/result.json",
+      "bytes": 1608,
+      "sha256": "cbedddcc8787d45c208b5ea9e626b4bafe53381f618be1df6dba68f6968b0d04"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/run_factor_strategy_review.py",
+      "bytes": 3292,
+      "sha256": "e2bcc91ff878b87d8db09de5eb67eb4dfc4f82fd6b5d77eace85d65a20bb2834"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/source-after.json",
+      "bytes": 419398,
+      "sha256": "a2406e0fd334ba10b0a669bcc9474bfa55c276808219b1ef0ba79000a89f97a5"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/source-before.json",
+      "bytes": 419398,
+      "sha256": "a2406e0fd334ba10b0a669bcc9474bfa55c276808219b1ef0ba79000a89f97a5"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T110802Z-4721fc9b/stdout.log",
+      "bytes": 1017,
+      "sha256": "ad235f97d5f7a1ef4be2b2d611b2caf2414cba2dbe0bdc7fb1b0e3c504816b00"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/evidence-manifest.json",
+      "bytes": 2981,
+      "sha256": "a751a020f4966624626737129b8100042ca3f12381a463187e0dfbf2eb43b8b2"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/old-report-replay.json",
+      "bytes": 372,
+      "sha256": "a0d781515cee7bb31098c0d0a1a7b14f1410942e879e7de3428b79e65245a3e5"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/overlay.tar",
+      "bytes": 81920,
+      "sha256": "d3d79856fe0b55d280f44fb39fb040743c49dd11595ccc112720111479aa2eb5"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/package-manifest.json",
+      "bytes": 857329,
+      "sha256": "6023e390861f15ba7e1767aeef3e7719f8381dbe0c4e5ad1052a41fa6bf7a126"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/regression.xml",
+      "bytes": 45680,
+      "sha256": "8276f3a9447d05862e950504d31ec472c8b50eec344a3b6bc095141d5f68ba55"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/remote-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/remote-stdout.log",
+      "bytes": 3063,
+      "sha256": "846339ffb94d14260a83739f9a8bf4ebf369a2b612bbe0dad6a044dc0ea9102b"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/resources-after.json",
+      "bytes": 50,
+      "sha256": "64eb1a749132e4285835226e8d3852ed6b84c990a926bbe35950c572d44d7a38"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/resources-before.json",
+      "bytes": 50,
+      "sha256": "2cd516ade6962e733289017fd91df8b34b36c2fabb17951ef9bbc6b4891287a2"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/result.json",
+      "bytes": 1609,
+      "sha256": "7270232052e56a0e003a1f99aefe573af24fc3cc850ff75233f9c728f0a1d227"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/run_factor_strategy_review.py",
+      "bytes": 3292,
+      "sha256": "e2bcc91ff878b87d8db09de5eb67eb4dfc4f82fd6b5d77eace85d65a20bb2834"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/source-after.json",
+      "bytes": 419398,
+      "sha256": "b41b5f41e78201a26247c77b428088332a244a1c7717370890023f23d1a8c6a3"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/source-before.json",
+      "bytes": 419398,
+      "sha256": "b41b5f41e78201a26247c77b428088332a244a1c7717370890023f23d1a8c6a3"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/stdout.log",
+      "bytes": 1017,
+      "sha256": "e933933ae5b0d8624199e99ea28b3cb103dabe5c726716990f191e313eb0c85b"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-final-regression.xml",
+      "bytes": 45856,
+      "sha256": "edb7d4e32eaf64a0dbe52289396a0c5d9f1fe3083818be7e58799e19c97ead09"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-final-result.json",
+      "bytes": 1509,
+      "sha256": "7bdfa9b75eae5fcd1be309dfa68bf3ddc438431c25047e47bbe0667804901628"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-final-source-after.json",
+      "bytes": 428185,
+      "sha256": "d448b2ef6fe1ca58a223590bddeae12e4acddb4198d82d0a64cf82388d9d2c8f"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-final-source-before.json",
+      "bytes": 428185,
+      "sha256": "d448b2ef6fe1ca58a223590bddeae12e4acddb4198d82d0a64cf82388d9d2c8f"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-final-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-final-stdout.log",
+      "bytes": 983,
+      "sha256": "ae318d96a86d4f04c5fba104802020abe7a0e90ae13a6758f4de11b5ad4c3549"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-regression.xml",
+      "bytes": 115168,
+      "sha256": "3eaf24c176aeca8a167f4ee3a8325241afc30ea5054c27bbb594a1963f7e7bc3"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-result.json",
+      "bytes": 1550,
+      "sha256": "dd1e5c04dda85c6fcf2d771544051318b06728d98bb33aeae304a6df70eb7b78"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-source-after.json",
+      "bytes": 428185,
+      "sha256": "d448b2ef6fe1ca58a223590bddeae12e4acddb4198d82d0a64cf82388d9d2c8f"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-source-before.json",
+      "bytes": 428185,
+      "sha256": "d448b2ef6fe1ca58a223590bddeae12e4acddb4198d82d0a64cf82388d9d2c8f"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111046Z-b8079bd5/windows-stdout.log",
+      "bytes": 65007,
+      "sha256": "54a60734be84a0f4a81bd14defa1c0f2172bacb7b08dbe4744b9454d6d10b728"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/evidence-manifest.json",
+      "bytes": 3000,
+      "sha256": "c3c31286473f9d651abd5ad9ba947c156dba4cf13261831c0b6996926b08b3ba"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/old-report-replay.json",
+      "bytes": 373,
+      "sha256": "35dd7e6fcecc13772d9e3ea014c1bdda68d2b5383b81ab0b89fee58d085e9ce1"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/overlay.tar",
+      "bytes": 81920,
+      "sha256": "149f1ffe683e58bbf080b4e91d28dfbe284480b48e0583368843fdac58075f76"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/package-manifest.json",
+      "bytes": 857329,
+      "sha256": "845f327bb1ec880937e9996d00fce90fed6a6e32b8895a50a4064499375d59e3"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/regression.xml",
+      "bytes": 45680,
+      "sha256": "50ad295bb22d169dc4908771dd015f815f075523c4174382ff545b22ccdc9d83"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/remote-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/remote-stdout.log",
+      "bytes": 3053,
+      "sha256": "0ecd9d8daba61f425ea5893586ddec39f58e7cfdceac109554c6ee5f3f4a0678"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/resources-after.json",
+      "bytes": 50,
+      "sha256": "7666450c5676763217384e55abc02e7a23e4042c69cc1fc3707a004ba2b1767c"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/resources-before.json",
+      "bytes": 50,
+      "sha256": "f95bc7448b5d41ac6d5fa5ab781316527cf2e64e2e9865dd856461448d7746b9"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/result.json",
+      "bytes": 1608,
+      "sha256": "4f2482c938418bb7420da0cf6b8c9dbaa857b8e7cdf139c32af92080eadff99b"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/run_factor_strategy_review.py",
+      "bytes": 3292,
+      "sha256": "e2bcc91ff878b87d8db09de5eb67eb4dfc4f82fd6b5d77eace85d65a20bb2834"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/source-after.json",
+      "bytes": 419398,
+      "sha256": "60f954865fc8ef1017dd63a178b704e231fef8c02ef0aa3cec33cf5da193417e"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/source-before.json",
+      "bytes": 419398,
+      "sha256": "60f954865fc8ef1017dd63a178b704e231fef8c02ef0aa3cec33cf5da193417e"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/stdout.log",
+      "bytes": 1007,
+      "sha256": "0c31982c43feb28d42dd2100eaf41e64d21b441f78dbb2d630c30f00ba681d39"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/windows-final-regression.xml",
+      "bytes": 45856,
+      "sha256": "d4401a1c7947a2c94586f283c1a9466d5f3fd2a012d6acc7ee8200477923e6bb"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/windows-final-result.json",
+      "bytes": 1509,
+      "sha256": "1445a10d7345db43820a2c6363309fc73e78f285341da6416dc5ca6654aadfad"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/windows-final-source-after.json",
+      "bytes": 428185,
+      "sha256": "18e4476c85cc6b4686f592b8bf03dddc7fbbc6e066300abe81d87b54015a1344"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/windows-final-source-before.json",
+      "bytes": 428185,
+      "sha256": "18e4476c85cc6b4686f592b8bf03dddc7fbbc6e066300abe81d87b54015a1344"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/windows-final-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-strategy-s2c-20261028T111832Z-22bd6f85/windows-final-stdout.log",
+      "bytes": 983,
+      "sha256": "a963c24ddeb07f83fee5be8263e16b61aa4431198ad0e775472b00cb3ccc2882"
+    },
+    {
+      "file": "registry-diff.patch",
+      "bytes": 7643,
+      "sha256": "a81519304c85d9916d71393cfc1bfa805ddf46fea6a3d9e994cd5ffbc4387647"
+    }
+  ]
+}

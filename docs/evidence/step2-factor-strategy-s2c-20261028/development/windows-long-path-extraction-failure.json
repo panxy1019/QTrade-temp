@@ -1,0 +1,9 @@
+{
+  "observed_from": "original tool output; no pytest was started by this extraction attempt",
+  "run": "factor-strategy-s2c-20261028T111046Z-b8079bd5",
+  "error_class": "FileNotFoundError",
+  "errno": 2,
+  "cause": "Windows MAX_PATH in Git archive evidence tree under the original long windows-source prefix",
+  "preserved_partial_source": "E:\\QTrade-temp\\factor-strategy-s2c-20261028T111046Z-b8079bd5\\windows-source",
+  "repair": "Short owned source directory. Later short basetemp also required; original 11 setup errors retained."
+}

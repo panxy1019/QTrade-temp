@@ -1,0 +1,81 @@
+{
+  "remote_root": "/root/qtrade-local/operator-evidence/factor-strategy-s2c-20261028T110802Z-4721fc9b",
+  "operator_status": 0,
+  "files": [
+    {
+      "file": "baseline.tar",
+      "bytes": 88883200,
+      "sha256": "a33407eab813ca93cc446e05a5cbef64097a6b87f655185b67fcbe448581b1ab"
+    },
+    {
+      "file": "old-report-replay.json",
+      "bytes": 372,
+      "sha256": "9aa81821b7279e3cc022049647cb6b6964e5dd53982eec39c11dfc66b47d71ae"
+    },
+    {
+      "file": "overlay.tar",
+      "bytes": 81920,
+      "sha256": "f9b9dfecbe289085c89f2ab72324b41bd79b50e80c00cd9382b1563aaf8b32d7"
+    },
+    {
+      "file": "package-manifest.json",
+      "bytes": 857329,
+      "sha256": "1a21c43c6a25134a7cc5f1c095d78628e24baff50072951e8534dea137589242"
+    },
+    {
+      "file": "regression.xml",
+      "bytes": 45518,
+      "sha256": "781df4b76c7f90575c334d9efef03fdd31bcc0e7a953d9cc3af8765d5c9c58c5"
+    },
+    {
+      "file": "remote-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "remote-stdout.log",
+      "bytes": 3062,
+      "sha256": "a26792078b74e4f11e3eb20ef679a65fe379f7a7dbe62a8ccc23b48aa1258bf8"
+    },
+    {
+      "file": "resources-after.json",
+      "bytes": 50,
+      "sha256": "6d01ff85f8a69c0e40146cf6885b30de53da0470d7177fa6cfc61536036ab9e3"
+    },
+    {
+      "file": "resources-before.json",
+      "bytes": 50,
+      "sha256": "a308545091d1d6dbddb524b91752d1f0407d416b435d8f0fe903ed53d3dfe104"
+    },
+    {
+      "file": "result.json",
+      "bytes": 1608,
+      "sha256": "cbedddcc8787d45c208b5ea9e626b4bafe53381f618be1df6dba68f6968b0d04"
+    },
+    {
+      "file": "run_factor_strategy_review.py",
+      "bytes": 3292,
+      "sha256": "e2bcc91ff878b87d8db09de5eb67eb4dfc4f82fd6b5d77eace85d65a20bb2834"
+    },
+    {
+      "file": "source-after.json",
+      "bytes": 419398,
+      "sha256": "a2406e0fd334ba10b0a669bcc9474bfa55c276808219b1ef0ba79000a89f97a5"
+    },
+    {
+      "file": "source-before.json",
+      "bytes": 419398,
+      "sha256": "a2406e0fd334ba10b0a669bcc9474bfa55c276808219b1ef0ba79000a89f97a5"
+    },
+    {
+      "file": "stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "stdout.log",
+      "bytes": 1017,
+      "sha256": "ad235f97d5f7a1ef4be2b2d611b2caf2414cba2dbe0bdc7fb1b0e3c504816b00"
+    }
+  ]
+}

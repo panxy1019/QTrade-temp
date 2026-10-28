@@ -1,0 +1,5 @@
+{
+  "returncode": 0,
+  "stdout": "{\"evaluation_id\": \"factor-eval-9ca107f1ff4843769b813d4b663eed63\", \"report_sha256\": \"47bed3add84aff16f901531115c17ac4534cfd667b6716595a1ce098b9af37dd\", \"bytes_preserved\": true, \"manifest_sha256\": \"61208f117890d0a453e084f92b6edc1d6b931b195d415b1b184104d72fbdb536\", \"elapsed_seconds\": 2.2983942199498415}\n",
+  "stderr": ""
+}
