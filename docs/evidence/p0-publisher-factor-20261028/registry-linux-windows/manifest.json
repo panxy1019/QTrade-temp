@@ -1,0 +1,1 @@
+{"base_revision": "458552de1fea1faf77d02dcd9ec69251a0c364b7", "candidate_files": {"src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d", "tests/test_factor_registry.py": "0f08113b5c0e3d58cb970e8d4c8d4730bbc0b55d1b45ac6bb4c2b3823b625464"}, "production_writes": false, "scope": "ISOLATED_NONPRODUCTION_FACTOR_REGISTRY_TESTS"}
