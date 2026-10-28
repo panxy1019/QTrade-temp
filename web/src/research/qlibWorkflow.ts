@@ -95,12 +95,14 @@ export interface WorkflowExperiment {
   experiment_id: string
   name: string
   model: string
-  engine: 'QLIB'
+  engine: 'QLIB' | 'FACTOR_REGISTRATION'
   state: string
   stage?: string
   updated_at?: string
   completed_at?: string
   spec: ResearchSpec | null
+  kind?: string
+  factor_spec?: import('./factorStrategy').FactorSpec
   spec_sha256?: string
   source_revision?: string
   run_id?: string
@@ -254,7 +256,7 @@ export function comparisonDraft(
 
 export const finalStates = new Set(['COMPLETE', 'FAILED', 'CANCELLED', 'INTERRUPTED', 'REJECTED'])
 export function completedExperiments(rows: WorkflowExperiment[]): WorkflowExperiment[] {
-  return rows.filter(row => row.state === 'COMPLETE').sort((a, b) =>
+  return rows.filter(row => row.state === 'COMPLETE' && row.engine === 'QLIB').sort((a, b) =>
     Date.parse(b.completed_at ?? '1970-01-01') - Date.parse(a.completed_at ?? '1970-01-01'))
 }
 export const stageLabels: Record<string, string> = {

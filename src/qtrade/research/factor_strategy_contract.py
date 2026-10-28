@@ -15,13 +15,12 @@ from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from hashlib import sha256
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Protocol, cast
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
 from qtrade.research.experiment import TimeSplit
 from qtrade.research.factor_evaluation import (
     LIMITATIONS,
-    FactorEvaluationStore,
     _cost_policy,
     _label_policy,
     _split_policy,
@@ -44,7 +43,7 @@ from qtrade.strategies.registry import (
 SCHEMA = "qtrade.factor-strategy-definition.v1"
 FAMILY = "QTRADE_EXISTING_FACTOR"
 MAX_BYTES = 256_000
-_SOURCE_FILES = (
+_S2C_SOURCE_FILES = (
     "src/qtrade/research/factor_strategy_contract.py",
     "src/qtrade/research/factor_registry.py",
     "src/qtrade/research/factor_evaluation.py",
@@ -59,6 +58,16 @@ _SOURCE_FILES = (
     "src/qtrade/strategies/registry.py",
     "src/qtrade/monitoring/data_freshness.py",
 )
+_SOURCE_FILES = (
+    *_S2C_SOURCE_FILES,
+    "src/qtrade/research/factor_strategy_catalog.py",
+    "scripts/factor_research_contracts.py",
+    "scripts/run_factor_strategy_registration.py",
+    "scripts/run_qlib_worker.py",
+    "scripts/atomic_json.py",
+    "scripts/run_daily_factor_evaluation.py",
+    "src/qtrade/research/workflow_queue.py",
+)
 _SPEC_FIELDS = {"name", "factor_ref", "evaluation_ref", "signal_kind", "segments",
                 "portfolio", "execution", "parent"}
 _CONTEXT_FIELDS = {"data_binding", "ordered_factor_refs", "instruments", "decision_scope",
@@ -66,6 +75,12 @@ _CONTEXT_FIELDS = {"data_binding", "ordered_factor_refs", "instruments", "decisi
     "calendar_sha256", "eligibility_ledger_sha256", "factor_definitions_sha256",
     "selected_factor_summary_sha256", "selected_valid_ic_days", "evaluation_state",
     "computed_at", "limitations"}
+
+
+class EvaluationReader(Protocol):
+    """Saved diagnostics can be resolved from SQLite or a read-only sealed archive."""
+
+    def get(self, evaluation_id: str) -> dict[str, Any]: ...
 
 
 def _require(condition: bool, code: str) -> None:
@@ -261,7 +276,8 @@ def _compose(spec: dict[str, Any], definition: dict[str, Any], context: dict[str
         and type(source["revision"]) is str
         and re.fullmatch(r"[a-f0-9]{40}", source["revision"]) is not None
         and source["binding"] == "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION"
-        and type(source["files"]) is dict and set(source["files"]) == set(_SOURCE_FILES)
+        and type(source["files"]) is dict
+        and set(source["files"]) in (set(_S2C_SOURCE_FILES), set(_SOURCE_FILES))
         and all(_hash(value) for value in source["files"].values()), "SOURCE_BINDING_INVALID")
     body = {**AUTHORITY, "schema_version": SCHEMA, "spec": spec,
         "factor_definition": definition, "evaluation_context": context, "source": source,
@@ -286,9 +302,8 @@ def _compose(spec: dict[str, Any], definition: dict[str, Any], context: dict[str
                                              "strategy_id": "factor-" + identity})))
 
 
-def _check_calendar(definition: dict[str, Any], report: dict[str, Any]) -> None:
+def _check_calendar(definition: dict[str, Any], calendar: list[str]) -> None:
     segments = definition["spec"]["segments"]
-    calendar = report["documents"]["specification"]["calendar"]
     horizon = definition["evaluation_context"]["label"]["horizon_sessions"]
     _require(all(day in calendar for pair in segments.values() for day in pair),
              "SPLIT_BOUNDARY_NOT_EXCHANGE_SESSION")
@@ -314,7 +329,33 @@ def freeze_strategy(spec: dict[str, Any], *, factors: FactorRegistry,
     source = {"revision": source_revision, "files": _sources(),
               "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION"}
     definition = _compose(spec, factor, _context(evaluation, spec["factor_ref"]), source)
-    _check_calendar(definition, evaluation)
+    _check_calendar(definition, evaluation["documents"]["specification"]["calendar"])
+    return definition
+
+
+def preview_strategy(template: Any, spec: dict[str, Any], *,
+                     calendar: list[str]) -> dict[str, Any]:
+    """Pure preview from published evidence; a worker must re-resolve all refs.
+
+    The API never supplies the evidence context from its request body. Choosing
+    another factor/evaluation requires its corresponding verified template.
+    """
+    template = validate_strategy(template)
+    spec, calendar = _copy(spec), _copy(calendar)
+    _require(type(spec) is dict and set(spec) == _SPEC_FIELDS, "SPEC_FIELDS_INVALID")
+    _require(all(spec[key] == template["spec"][key]
+                 for key in ("factor_ref", "evaluation_ref", "signal_kind")),
+             "PREVIEW_REFERENCE_MISMATCH")
+    context = template["evaluation_context"]
+    _require(type(calendar) is list and 1 <= len(calendar) <= 4096
+             and all(type(day) is str and date.fromisoformat(day).isoformat() == day
+                     for day in calendar)
+             and calendar == sorted(set(calendar))
+             and calendar[0] == context["data_binding"]["start"]
+             and calendar[-1] == context["data_binding"]["actual_end"]
+             and digest(calendar) == context["calendar_sha256"], "PREVIEW_CALENDAR_MISMATCH")
+    definition = _compose(spec, template["factor_definition"], context, template["source"])
+    _check_calendar(definition, calendar)
     return definition
 
 
@@ -334,7 +375,7 @@ def validate_strategy(value: Any, *, verify_runtime_source: bool = False) -> dic
 
 
 def verify_bound_strategy(value: Any, *, factors: FactorRegistry,
-                          evaluations: FactorEvaluationStore, version_root: Path,
+                          evaluations: EvaluationReader, version_root: Path,
                           data_database: Path) -> dict[str, Any]:
     """Resolve exact versions and actual admitted bytes, never mutable latest heads."""
     value = validate_strategy(value, verify_runtime_source=True)
@@ -383,7 +424,7 @@ def strategy_lineage(value: Any, *, now: datetime) -> StrategyLineage | None:
 
 
 def register_strategy(registry: StrategyRegistry, definition: Any, *, factors: FactorRegistry,
-                      evaluations: FactorEvaluationStore, version_root: Path, data_database: Path,
+                      evaluations: EvaluationReader, version_root: Path, data_database: Path,
                       job_id: str, actor: str, now: datetime) -> StrategyRecord:
     """Verify local evidence and atomically associate EXPERIMENT/NONE only."""
     _disabled()

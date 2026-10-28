@@ -1,0 +1,4 @@
+{
+  "status": 0,
+  "command": "LIVE_TRADING_ENABLED=false PYTHONDONTWRITEBYTECODE=1 /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python -P -B /root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/run_factor_queue_final_actual_20261028.py /root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807"
+}

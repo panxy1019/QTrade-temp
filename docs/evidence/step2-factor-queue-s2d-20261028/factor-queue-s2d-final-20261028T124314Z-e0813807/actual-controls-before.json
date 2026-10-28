@@ -1,0 +1,11 @@
+{
+  "live_trading_enabled": false,
+  "write_scope": "/root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807",
+  "active_model": [
+    [
+      "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c"
+    ]
+  ],
+  "published_active_model": "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c",
+  "published_auto_train_mode": "OFF"
+}

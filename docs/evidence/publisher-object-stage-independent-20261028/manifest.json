@@ -1,0 +1,72 @@
+{
+  "files": {
+    "counterexamples-5-v3.xml": {
+      "bytes": 1285,
+      "sha256": "09b1c81c098768b23ac5c8333e674a3f64adde253f1661bd97bdfd85f268aa6e"
+    },
+    "git-dir-isolation-counterexample.json": {
+      "bytes": 481,
+      "sha256": "504289ad1ca77695438883df7460a803223bfe8ba048164fc47f76a89984b498"
+    },
+    "git-object-directory-counterexample.json": {
+      "bytes": 486,
+      "sha256": "5c60d1f5b35570725c96f11a5154273325257501bba3426c2c831b7cd5d8188e"
+    },
+    "independent-5-v2.xml": {
+      "bytes": 5636,
+      "sha256": "f6410de2b2397a5d1e358e9c40f3e721d2ffa094ca6faea17a79faafbd296afe"
+    },
+    "independent-5.xml": {
+      "bytes": 4012,
+      "sha256": "447a627982de695567134ecefa0fd5c587a32893ca3331fc4299e887b80e7d01"
+    },
+    "independent-metadata-graph-visibility-proof.json": {
+      "bytes": 1579,
+      "sha256": "7e962cdb79eeba7b05a8e0d08eb5cf0c1cc9c9c403af53c357ee39f86e3aa764"
+    },
+    "independent-unknown-aux-graph-counterexample.json": {
+      "bytes": 713,
+      "sha256": "90a0ea109fcc9f4f620014a91296f2ce25d73528d8a92a426199d589381228cb"
+    },
+    "mock-uncertain-plan-replay-counterexample.json": {
+      "bytes": 290,
+      "sha256": "602428767e36347d666973607da01f97788155e011ca11f25eec0bbf8088530e"
+    },
+    "original-windows-16.xml": {
+      "bytes": 5246,
+      "sha256": "4e23ab338b3eb00129e5530c41842093b3e4b3ac183e3a4a6a56c3f4127e4ffa"
+    },
+    "publisher_object_stage_nonproduction_20261028.py": {
+      "bytes": 16539,
+      "sha256": "ae0937027b993aa2390269817adfa5c3a379e88ae594956917a4d885c18cf707"
+    },
+    "publisher_object_stage_nonproduction_design_20261028.md": {
+      "bytes": 5152,
+      "sha256": "378caea4892cbbd6062c26af2c2c3491cdb6022e81d339eaff04784ceeee44a3"
+    },
+    "review-summary.json": {
+      "bytes": 1092,
+      "sha256": "f7342d06106cb217b814eaf3447a017c886e309922b735afadcfdaa333859ad1"
+    },
+    "test_independent_object_stage_boundaries.py": {
+      "bytes": 8250,
+      "sha256": "8b7a449e5d69df2991d6a6793eca208538065f6db8162fd6521b4c95e9d134a8"
+    },
+    "test_independent_object_stage_boundaries_v2.py": {
+      "bytes": 8397,
+      "sha256": "a03f939f195bfbb09004dc7d4368e216f23df47ba4e42380970a2a99d5e5e622"
+    },
+    "test_independent_object_stage_counterexamples_v3.py": {
+      "bytes": 8462,
+      "sha256": "1950764f2fccadeadcf5ddd2467a30b234893a71f90a43d92576779dd349629a"
+    },
+    "test_publisher_object_stage_nonproduction_20261028.py": {
+      "bytes": 11170,
+      "sha256": "92a6c0ff203c0fe2e577e2f66bc5c75babdc9f3695ed1d5c113c55524edc726f"
+    }
+  },
+  "fixture_repositories_not_copied_into_git": true,
+  "production_actions": false,
+  "recorded_at": "2026-10-28T12:53:28.218891+00:00",
+  "schema_version": "qtrade.immutable-independent-review-manifest.v1"
+}

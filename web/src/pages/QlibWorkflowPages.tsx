@@ -5,6 +5,8 @@ import { useResearchWorkflow } from '../components/ResearchWorkflowProvider'
 import { StrategyComparisonPanel } from '../components/StrategyComparisonPanel'
 import { EtfHistoryPanel } from '../components/EtfHistoryPanel'
 import { JsonExportButton } from '../components/JsonExportButton'
+import { FactorStrategyBuilder } from '../components/FactorStrategyBuilder'
+import { FactorRegistrationReceipt } from '../components/FactorRegistrationReceipt'
 import ChartRenderer from '../charts/ChartRenderer'
 import { alpha158FeatureVersion, bindResearchData, canReuseArchivedResult, checkedSpecification, comparisonDraft, comparisonIssue, completedExperiments, finalStates, limitationLabels, stageLabels, strategyDraft, workflowGet, workflowPost } from '../research/qlibWorkflow'
 import type { ArchivedResearchTemplate, ResearchAudit, ResearchSpec, ResearchSpecification, WorkflowExperiment, WorkflowResult } from '../research/qlibWorkflow'
@@ -259,6 +261,7 @@ export function QlibResearchPage() {
   const dataset = catalog?.datasets.find(row => row.id === initialization?.spec.dataset_id)
   return <Layout title="策略研究" description="冻结数据、时间切分、模型、组合与成本后，提交集群任务。">
     <Login />
+    <FactorStrategyBuilder />
     {baseId !== null && !ready && initializationError?.key !== configurationKey && <Alert type="info" title="正在校验并载入归档配置，提交入口暂不可用" />}
     {initializationError?.key === configurationKey && <Alert type="error" showIcon title={initializationError.message} description="不会使用当前默认值补齐或替代归档配置。" action={<Space><Button onClick={() => setReloadVersion(v => v + 1)}>重试载入</Button><Button href="#/research">新建默认研究</Button></Space>} />}
     {template && <Alert type="info" showIcon title="已载入归档实验的固定配置" description={<>
@@ -349,17 +352,18 @@ export function QlibExperimentPage() {
       <Typography.Text copyable>规格哈希：{row.spec_sha256 ?? '原始基线参见归档'}</Typography.Text>
       <Typography.Text copyable>代码：{row.source_revision ?? '待执行器绑定'}</Typography.Text>
       {row.error_code && <Alert type="error" title={row.error_code} />}
+      {row.engine === 'FACTOR_REGISTRATION' && row.state === 'COMPLETE' && <FactorRegistrationReceipt jobId={row.experiment_id} />}
       <Timeline items={(row.events ?? []).map(event => ({ children: event.at + ' · ' + (stageLabels[event.state] ?? event.state) }))} />
       <Audit audit={row.audit} />
       <JsonExportButton filename={row.experiment_id + '.json'} value={row} label="导出实验记录" />
     </Space> }} columns={[
-      { title: '实验', dataIndex: 'name' }, { title: '模型', dataIndex: 'model' },
+      { title: '实验', dataIndex: 'name' }, { title: '研究类型 / 模型', render: (_, row) => row.engine === 'FACTOR_REGISTRATION' ? '因子策略登记 · 无模型训练' : row.model },
       { title: '状态', render: (_, row) => <Tag color={row.state === 'COMPLETE' ? 'blue' : finalStates.has(row.state) ? 'orange' : 'processing'}>{stageLabels[row.state] ?? row.state}</Tag> },
-      { title: '历史测试区间 / 完成时间', render: (_, row) => `${row.spec?.segments.test.join(' 至 ') ?? '原区间见档案'}；完成 ${row.completed_at ?? '尚未完成'}` },
-      { title: '历史累计收益', render: (_, row) => percent(row.metrics?.total_return_net) },
+      { title: '历史测试区间 / 完成时间', render: (_, row) => `${row.engine === 'FACTOR_REGISTRATION' ? '仅登记；无回测区间' : row.spec?.segments.test.join(' 至 ') ?? '原区间见档案'}；完成 ${row.completed_at ?? '尚未完成'}` },
+      { title: '历史累计收益', render: (_, row) => row.engine === 'FACTOR_REGISTRATION' ? '未运行回测' : percent(row.metrics?.total_return_net) },
       { title: '研究结论', render: () => <Tag color="orange">非PIT诊断·不可晋级</Tag> },
       { title: '操作', render: (_, row) => <Space>
-        {row.state === 'COMPLETE' && <Button href={'#/backtest?experiment=' + row.experiment_id}>分析结果</Button>}
+        {row.state === 'COMPLETE' && row.engine === 'QLIB' && <Button href={'#/backtest?experiment=' + row.experiment_id}>分析结果</Button>}
         {!finalStates.has(row.state) && <Button disabled={!session.authenticated} onClick={() => void cancel(row.experiment_id)}>申请取消</Button>}
       </Space> },
     ]} />

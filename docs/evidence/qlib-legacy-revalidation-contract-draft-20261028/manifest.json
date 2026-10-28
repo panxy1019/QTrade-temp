@@ -1,0 +1,28 @@
+{
+  "files": {
+    "contract-negative-examples.xml": {
+      "bytes": 4978,
+      "sha256": "f9aa676b20224073e1a4e916f253d1ffaf24e8ad798eb1c6e67d05576cb57620"
+    },
+    "contract_draft.py": {
+      "bytes": 7246,
+      "sha256": "4a6920cdfd5b644a8ecd83d87a616cc40ed65a4718237c6d369e664f324352a3"
+    },
+    "reuse-source-and-fixture-hashes.json": {
+      "bytes": 829,
+      "sha256": "3dbd87a8a55212902ef9dc0e0de0213ae0035a88334317ebfae3a130a2203ecf"
+    },
+    "test_contract_negative_examples.py": {
+      "bytes": 7183,
+      "sha256": "f8367d22407471f2267e17e3906398f703d465c08bac6652d06232c9ddc9ea9d"
+    }
+  },
+  "new_validation_job_enqueued": false,
+  "old_auditor_modified": false,
+  "production_mutations": false,
+  "real_adapter_implemented": false,
+  "real_archive_replayed": false,
+  "recorded_at": "2026-10-28T12:35:50.583078+00:00",
+  "schema_version": "qtrade.contract-draft-evidence.v1",
+  "state": "DESIGN_AND_METADATA_COUNTEREXAMPLES_ONLY_REAL_ACCEPTANCE_PENDING"
+}

@@ -1,0 +1,25 @@
+# Nonproduction object-stage protocol and open acceptance boundary
+
+The public chain is still failed in the sealed 20:22 observation: local export succeeds within 45 seconds, while ordinary Git push reaches its unchanged 90-second timeout. Read-only inventory found 3030 missing objects, 111,772,932 uncompressed bytes and 23,630,117 bytes of existing compressed storage. This is not an exact future wire-pack measurement.
+
+`publisher_object_stage_nonproduction_20261028.py` is an isolated local-bare protocol proof, with no SSH/public endpoint API. The supplied public certificate binds the source revision, full source-inventory SHA256, exact target commit, and every target public path and content SHA256. Unknown fields, special Git modes, private source paths, unlisted bytes, credential JSON fields, live authority and target-unreachable objects are rejected. The public certificate remains an externally approved trust input; the module does not manufacture approval from an assertion.
+
+The isolated repository reads source objects through an alternates file. New trees/commits/packs are written only in that new repository. A batch synthesizes a complete tree of certified blobs or complete original target subtrees. It has no target-commit parent and includes no private source tree. Exact prebuilt pack bytes are checked before transfer, capped at 2 MiB, and sent without repacking. New refs have the fixed form `refs/heads/qtrade-object-stage/<certificate-prefix>-NNNN`; the protocol declares old=zero, never force, never main. It binds the complete actual advertisement to the planned one and accepts success only with unpack/ref ACK and an exact after-ref map. A truncated pack cannot expose a partial ref. Lost ACK remains uncertain, and the same ref is not retried. Every transfer is POSIX-only with the existing TERM/wait/KILL owned-group cleanup pattern and a 90-second deadline.
+
+The first implementation uses a minimal receive-pack packet exchange only as a **nonproduction protocol experiment**. Production must reuse mature Git/Dulwich transport instead. The installed Dulwich 0.24.10 `TraditionalGitClient.send_pack` accepts `generate_pack_data(have,want,...)` and serializes its result through `PackChunkGenerator`. `PackData.iter_unpacked(include_comp=True)` provides original compressed chunks, and `PackChunkGenerator(...,reuse_compressed=True)` can be tested for exact equality with a prebuilt no-delta pack. Existing `GitQueue` binds a Paramiko SSHGitClient vendor to the fixed host/port/user and RejectPolicy. A production adapter should reuse that pinning, keep key/host configuration in memory only, bind the expected remote URL hash, run in an owned 90-second worker, and never implement a new SSH authentication protocol. No private environment/configuration has been read for this design.
+
+## Critical actual bare counterexample: unknown auxiliary graph
+
+The proposed one-way alternates arrangement is insufficient on its own. A real local-bare experiment in `E:/QTrade-temp/stage-negotiation-local-sf4pkczx/result.json` stages all six certified blobs under an auxiliary commit created only in the isolated repository. The ordinary source repository cannot resolve that auxiliary commit. The remote advertises it, yet ordinary `git -c pack.useSparse=false push ... HEAD:refs/heads/main` retransmits all five newly staged blobs (the sixth was already reachable from old main). The final pack has nine objects. This is an actual failed acceptance condition, not a mock or timing inference.
+
+An auxiliary ref names a commit, not a list of blob haves. Ordinary Git needs the auxiliary graph locally to traverse its advertised ref and exclude those blobs. Before claiming the cold-transport solution, the final design must supply a separately approved way for ordinary publisher Git to resolve this graph (or demonstrate an alternative existing local-commit anchor). Merely advertising unknown synthetic commits, setting `pack.useSparse=false`, or switching the auxiliary sender to Dulwich does not solve that graph visibility problem. This prototype deliberately does not alter production objects, alternates, refs, index, owner or environment to conceal the gap.
+
+## Evidence and reproduction
+
+Tests: `E:/QTrade-temp/test_publisher_object_stage_nonproduction_20261028.py`. Windows planning/rejection suite: 10 passed, 6 POSIX protocol cases explicitly skipped; Linux must run the complete protocol suite. The intended positive ordinary-push exclusion case currently has the counterexample above and must not be represented as passed. Earlier Windows alternates formatting failures are preserved in their original XML files. All fixtures contain synthetic public JSON only.
+
+```powershell
+python -B -m pytest -q -p no:cacheprovider --tb=short E:/QTrade-temp/test_publisher_object_stage_nonproduction_20261028.py --junitxml=<new-unique-xml>
+```
+
+No public push, ordinary publication invocation, restart, TERM, production repository/index/ref write, credential read/archive or budget increase is authorized by this prototype. Independent review and a complete isolated Linux proof are required before production adaptation.

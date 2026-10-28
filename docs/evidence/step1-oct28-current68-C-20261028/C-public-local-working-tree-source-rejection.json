@@ -1,0 +1,9 @@
+{
+  "recorded_at": "2026-10-28T12:27:14.026157+00:00",
+  "state": "FAILED_SOURCE_PREFLIGHT_BEFORE_HTTP",
+  "mismatched_file": "src/qtrade/monitoring/data_freshness.py",
+  "expected_sha256": "b9b640555a42c5268ec917df0bd07a41eb7d1709da64539bb953f17fb19b7624",
+  "working_tree_sha256": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+  "original_stderr_saved_as_file": false,
+  "observation": "Actual AssertionError retained in tool output; no HTTP or production mutation occurred."
+}

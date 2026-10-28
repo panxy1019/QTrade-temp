@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="5" time="0.427" timestamp="2026-10-28T20:42:04.708677+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="tests.test_factor_research_worker" name="test_actual_s2c13_archived_contract_remains_readable_without_rewriting_bytes" time="0.002"><failure message="ValueError: FACTOR_STRATEGY_SOURCE_BINDING_INVALID">def test_actual_s2c13_archived_contract_remains_readable_without_rewriting_bytes():
+        from qtrade.research.factor_strategy_contract import validate_strategy
+    
+        path, definition = legacy_contract()
+        before = path.read_bytes()
+        assert len(definition['source']['files']) == 13
+&gt;       assert validate_strategy(definition) == definition
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_factor_research_worker.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\qtrade\research\factor_strategy_contract.py:363: in validate_strategy
+    expected = _compose(value["spec"], value["factor_definition"],
+src\qtrade\research\factor_strategy_contract.py:272: in _compose
+    _require(type(source) is dict and set(source) == {"revision", "files", "binding"}
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False, code = 'SOURCE_BINDING_INVALID'
+
+    def _require(condition: bool, code: str) -&gt; None:
+        if not condition:
+&gt;           raise ValueError("FACTOR_STRATEGY_" + code)
+E           ValueError: FACTOR_STRATEGY_SOURCE_BINDING_INVALID
+
+src\qtrade\research\factor_strategy_contract.py:85: ValueError</failure></testcase><testcase classname="tests.test_factor_research_worker" name="test_legacy_source_set_cannot_grant_current_runtime_registration" time="0.002"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'RUNTIME_SOURCE_MISMATCH'&#10;  Actual message: 'FACTOR_STRATEGY_SOURCE_BINDING_INVALID'">def test_legacy_source_set_cannot_grant_current_runtime_registration():
+        from qtrade.research.factor_strategy_contract import validate_strategy
+    
+        _, definition = legacy_contract()
+&gt;       with pytest.raises(ValueError, match='RUNTIME_SOURCE_MISMATCH'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'RUNTIME_SOURCE_MISMATCH'
+E         Actual message: 'FACTOR_STRATEGY_SOURCE_BINDING_INVALID'
+
+tests\test_factor_research_worker.py:109: AssertionError</failure></testcase><testcase classname="tests.test_factor_research_worker" name="test_rehashed_unknown_archived_source_sets_are_rejected[missing]" time="0.002" /><testcase classname="tests.test_factor_research_worker" name="test_rehashed_unknown_archived_source_sets_are_rejected[extra]" time="0.002" /><testcase classname="tests.test_factor_research_worker" name="test_rehashed_unknown_archived_source_sets_are_rejected[intermediate17]" time="0.006" /></testsuite></testsuites>

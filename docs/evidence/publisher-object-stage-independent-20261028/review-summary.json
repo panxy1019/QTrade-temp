@@ -1,0 +1,38 @@
+{
+  "credentials_read": false,
+  "findings": [
+    "ORDINARY_PUSH_RETRANSMITS_WITH_UNKNOWN_AUX_GRAPH",
+    "ORDINARY_PUSH_STILL_RETRANSMITS_AFTER_METADATA_GRAPH_IMPORT",
+    "INHERITED_GIT_DIR_AND_OBJECT_DIRECTORY_ESCAPE_REQUESTED_REPO",
+    "UNCERTAIN_SAME_PLAN_RETRY_NOT_CONSUMED"
+  ],
+  "mock_scope": "UNCERTAIN_REPLAY_PROTOCOL_CONTROL_FLOW_ONLY",
+  "production_actions": false,
+  "real_tests_scope": "NEW_WINDOWS_LOCAL_BARE_FIXTURES_ONLY",
+  "recorded_at": "2026-10-28T12:53:28.216234+00:00",
+  "schema_version": "qtrade.nonproduction-object-stage-independent-review.v1",
+  "ssh_endpoint_used": false,
+  "state": "BLOCKED_NOT_A_COLD_GIT_DELIVERY_SOLUTION",
+  "xml": {
+    "counterexamples-5-v3.xml": {
+      "cases": 5,
+      "failures": 0,
+      "skips": 0
+    },
+    "independent-5-v2.xml": {
+      "cases": 5,
+      "failures": 1,
+      "skips": 0
+    },
+    "independent-5.xml": {
+      "cases": 5,
+      "failures": 1,
+      "skips": 0
+    },
+    "original-windows-16.xml": {
+      "cases": 16,
+      "failures": 0,
+      "skips": 6
+    }
+  }
+}

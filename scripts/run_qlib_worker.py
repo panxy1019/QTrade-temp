@@ -16,6 +16,8 @@ from pathlib import Path
 from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, signed
+from qtrade.research.factor_strategy_catalog import KIND as FACTOR_KIND
+from qtrade.research.factor_strategy_catalog import validate_registration_request
 from qtrade.research.model_promotion_policy import ModelPromotionPolicy
 from qtrade.research.qlib_publication import verify_archive
 from qtrade.research.rolling_control import RollingControl
@@ -49,20 +51,28 @@ def terminate(child: subprocess.Popen[Any]) -> None:
 
 def recover_child(job: Path) -> None:
     path = job / "child.json"
+    request = job / 'request.json'
+    factor_job = (request.is_file()
+                  and json.loads(request.read_bytes()).get('kind') == FACTOR_KIND)
     if not path.exists():
         request = job/'request.json'
         if request.exists() and json.loads(request.read_text()).get('kind') in {
-                'QLIB_ROLLING_JOB', 'QLIB_MODEL_VALIDATION', 'QLIB_SIGNAL_JOB'}:
+                'QLIB_ROLLING_JOB', 'QLIB_MODEL_VALIDATION', 'QLIB_SIGNAL_JOB', FACTOR_KIND}:
             # Cover a crash after spawn but before child.json is sealed.
             for proc in Path('/proc').iterdir():
                 if not proc.name.isdigit():
                     continue
                 try:
                     args = (proc/'cmdline').read_bytes().split(b'\0')
-                    match = (any(m in args for m in (b'scripts.run_qlib_rolling',
+                    modules = ((b'scripts.run_factor_strategy_registration',) if factor_job else (
+                                b'scripts.run_qlib_rolling',
                                 b'scripts.run_qlib_candidate_validation',
-                                b'scripts.run_qlib_signal_baselines')) and b'--output' in args
+                                b'scripts.run_qlib_signal_baselines'))
+                    match = (any(m in args for m in modules)
+                             and b'--output' in args
                              and args[args.index(b'--output')+1] == str(job/'output').encode())
+                    if factor_job:
+                        match = _factor_child_command(args, job)
                     if match:
                         if os.getpgid(int(proc.name)) != int(proc.name):
                             raise ValueError('ROLLING_ORPHAN_PROCESS_GROUP_UNCERTAIN')
@@ -76,9 +86,19 @@ def recover_child(job: Path) -> None:
         return
     command = (proc / "cmdline").read_bytes()
     start = (proc / "stat").read_text().split()[21]
+    if factor_job:
+        args = command.split(b'\0')
+        if (start != value['start_ticks'] or not _factor_child_command(args, job)
+                or os.getpgid(int(value['pid']))
+                != int(value['pid'])):
+            raise ValueError('UNCERTAIN_CHILD_IDENTITY_REQUIRES_HUMAN_RECONCILIATION')
+        with contextlib.suppress(ProcessLookupError):
+            os.killpg(int(value['pid']), signal.SIGKILL)
+        return
     if start != value["start_ticks"] or not any(module in command for module in (
         b"scripts.run_qlib_baseline", b"scripts.run_qlib_rolling",
-        b'scripts.run_qlib_candidate_validation', b'scripts.run_qlib_signal_baselines')) or (
+        b'scripts.run_qlib_candidate_validation', b'scripts.run_qlib_signal_baselines',
+        b'scripts.run_factor_strategy_registration')) or (
         str(job / "output").encode() not in command
     ):
         raise ValueError("UNCERTAIN_CHILD_IDENTITY_REQUIRES_HUMAN_RECONCILIATION")
@@ -86,8 +106,17 @@ def recover_child(job: Path) -> None:
         os.killpg(int(value["pid"]), signal.SIGKILL)
 
 
+def _factor_child_command(args: list[bytes], job: Path) -> bool:
+    """An argument containing the module/path text is not proof of child identity."""
+    return (args.count(b'-m') == 1 and args.index(b'-m') + 1 < len(args)
+        and args[args.index(b'-m') + 1] == b'scripts.run_factor_strategy_registration'
+        and args.count(b'--output') == 1 and args.index(b'--output') + 1 < len(args)
+        and args[args.index(b'--output') + 1] == str(job / 'output').encode())
+
+
 class Worker:
-    def __init__(self, base: Path, database: Path, python: str, revision: str) -> None:
+    def __init__(self, base: Path, database: Path, python: str, revision: str,
+                 factor_archive: Path | None = None) -> None:
         self.base, self.python, self.revision = base, python, revision
         self.root = base / "workflow"
         self.root.mkdir(exist_ok=True)
@@ -134,6 +163,14 @@ class Worker:
 
         self.research_contracts = ResearchContracts(base, self.online.data_database, revision,
             StrategyRegistry(database.with_name('strategies.sqlite')), workflow_database=database)
+        self.strategies_database = database.with_name('strategies.sqlite')
+        self.factor_contracts = None
+        if factor_archive is not None:
+            from scripts.factor_research_contracts import FactorResearchContracts
+
+            self.factor_contracts = FactorResearchContracts(
+                base, self.online.data_database, revision,
+                StrategyRegistry(database.with_name('strategies.sqlite')), factor_archive)
         self.promotion = ModelPromotionPolicy(self.online, self.predictor.calendar)
 
     def freeze_source(self) -> str:
@@ -193,13 +230,18 @@ class Worker:
                         raise ValueError("INVALID_CANCELLATION")
                     self.cancellations.add(identity)
                     continue
-                if value["kind"] != "QLIB_RESEARCH_JOB" or (
-                    value["live_trading_enabled"] is not False
-                ):
-                    raise ValueError("JOB_AUTHORITY_MISMATCH")
-                spec = validate_spec(value["spec"])
-                if digest(spec) != value["spec_sha256"]:
-                    raise ValueError("SPEC_HASH_MISMATCH")
+                factor_job = value.get('kind') == FACTOR_KIND
+                if factor_job:
+                    value = validate_registration_request(value)
+                    spec = value['factor_spec']
+                else:
+                    if value["kind"] != "QLIB_RESEARCH_JOB" or (
+                        value["live_trading_enabled"] is not False
+                    ):
+                        raise ValueError("JOB_AUTHORITY_MISMATCH")
+                    spec = validate_spec(value["spec"])
+                    if digest(spec) != value["spec_sha256"]:
+                        raise ValueError("SPEC_HASH_MISMATCH")
                 raw = json.dumps(value, sort_keys=True)
                 old = self.db.execute("SELECT request FROM jobs WHERE id=?", (identity,)).fetchone()
                 if old is not None and old[0] != raw:
@@ -217,7 +259,10 @@ class Worker:
                     ).fetchone()[0]
                     if active > 3:
                         self.update(identity, "REJECTED", error="QUEUE_CAPACITY_EXCEEDED")
-                    elif 'data_binding' in spec:
+                    elif factor_job and (self.factor_contracts is None
+                            or value['source_revision'] != self.revision):
+                        self.update(identity, 'REJECTED', error='FACTOR_REGISTRATION_UNAVAILABLE')
+                    elif not factor_job and 'data_binding' in spec:
                         try:
                             self.research_contracts.verify(value, register=True)
                         except (ValueError, KeyError, TypeError, OSError, sqlite3.Error):
@@ -370,11 +415,16 @@ class Worker:
             if request.get('kind') in {'QLIB_MODEL_VALIDATION', 'QLIB_SIGNAL_JOB'}:
                 continue  # Listed with candidate controls, not as a portfolio experiment.
             rolling = request.get('kind') == 'QLIB_ROLLING_JOB'
+            factor_job = request.get('kind') == FACTOR_KIND
             rows.append({
                 "experiment_id": identity,
-                "name": request['name'] if rolling else request["spec"]["name"],
-                "model": request['model'] if rolling else request["spec"]["model"],
-                "engine": "QLIB",
+                "name": (request['factor_spec']['name'] if factor_job else
+                         request['name'] if rolling else request["spec"]["name"]),
+                "model": ("NONE_FIXED_FACTOR_SCORE" if factor_job else
+                          request['model'] if rolling else request["spec"]["model"]),
+                "engine": "FACTOR_REGISTRATION" if factor_job else "QLIB",
+                **({'kind': FACTOR_KIND, 'factor_spec': request['factor_spec'],
+                    'registration_only': True} if factor_job else {}),
                 "state": job_state, "stage": job_state, "updated_at": updated,
                 "spec": request.get("spec"), "spec_sha256": request.get("spec_sha256"),
                 "audit": data_audit(), "error_code": error,
@@ -393,6 +443,13 @@ class Worker:
         value = signed({**{k: v for k, v in value.items() if k != 'evidence_sha256'},
             **available, 'datasets': [*available['datasets'], *value['datasets']]})
         write_json_atomic(self.public / "workflow.json", value)
+        if self.factor_contracts is not None:
+            try:
+                catalog = self.factor_contracts.publication()
+                write_json_atomic(self.public / 'factor-catalog.json', catalog)
+            except (ValueError, KeyError, TypeError, OSError, sqlite3.Error):
+                # A failed descriptor never keeps refreshing an old capability.
+                (self.public / 'factor-catalog.json').unlink(missing_ok=True)
         online_value = self.online.publication(self.revision, now=datetime.now(UTC),
                                                 worker_state=state)
         online_value['auto_predict'] = self.predictor.publication(now=datetime.now(UTC))
@@ -430,7 +487,19 @@ class Worker:
         signal_job = request.get('kind') == 'QLIB_SIGNAL_JOB'
         rolling = request.get('kind') == 'QLIB_ROLLING_JOB'
         validation = request.get('kind') == 'QLIB_MODEL_VALIDATION'
-        if signal_job:
+        factor_job = request.get('kind') == FACTOR_KIND
+        if factor_job:
+            validate_registration_request(request)
+            if self.factor_contracts is None or request['source_revision'] != self.revision:
+                self.update(identity, 'REJECTED', error='FACTOR_REGISTRATION_UNAVAILABLE')
+                return
+            command = [self.python, '-B', '-m', 'scripts.run_factor_strategy_registration',
+                '--base', str(self.base), '--data-database', str(self.online.data_database),
+                '--strategy-database', str(self.strategies_database),
+                '--archive-root', str(self.factor_contracts.archive_root),
+                '--request', str(job / 'request.json'), '--output', str(output),
+                '--source-revision', self.revision]
+        elif signal_job:
             from qtrade.research.data_epoch import current_epoch
 
             data = self.online.data_head(verify=False)
@@ -515,7 +584,8 @@ class Worker:
                         if not k.startswith("QTRADE_RESEARCH_")},
                      "PYTHONPATH": str(REPO / "src"),
                      "LIVE_TRADING_ENABLED": "false",
-                     "OMP_NUM_THREADS": '2' if rolling or validation or signal_job else '6'},
+                     "OMP_NUM_THREADS": '2' if rolling or validation or signal_job or factor_job
+                     else '6'},
             )
             cleanup.callback(terminate, child)
             write_json_atomic(job / "child.json", {
@@ -527,7 +597,8 @@ class Worker:
             while child.poll() is None:
                 self.predictor.tick(stop=self.stop)
                 if self.stop or identity in self.cancellations or (
-                    time.monotonic() - started > (900 if validation or signal_job else 3600)
+                    time.monotonic() - started > (300 if factor_job else
+                                                 900 if validation or signal_job else 3600)
                 ):
                     terminate(child)
                     state = "CANCELLED" if identity in self.cancellations else "INTERRUPTED"
@@ -544,7 +615,36 @@ class Worker:
                 with contextlib.suppress(Exception):
                     self.ingest()
         if child.returncode:
-            self.update(identity, "FAILED", error="QLIB_RUN_FAILED_SEE_PRIVATE_CLUSTER_LOG")
+            if factor_job and (output / 'rejection.json').is_file():
+                from scripts.factor_research_contracts import (
+                    bounded_bytes,
+                    decode_json,
+                    rejection_receipt,
+                )
+
+                rejection = decode_json(bounded_bytes(output / 'rejection.json', 16_000))
+                if rejection == rejection_receipt(request, rejection['rejected_at']):
+                    self.update(identity, 'REJECTED', error=rejection['error_code'])
+                    return
+            self.update(identity, "FAILED", error=("FACTOR_REGISTRATION_FAILED_RECONCILE_REGISTRY"
+                if factor_job else "QLIB_RUN_FAILED_SEE_PRIVATE_CLUSTER_LOG"))
+            return
+        if factor_job:
+            assert self.factor_contracts is not None
+            receipt = self.factor_contracts.completion(request, output)
+            relative = 'workflow-results/' + receipt['evidence_sha256'] + '.json'
+            destination = self.public / relative
+            if destination.exists():
+                if json.loads(destination.read_bytes()) != receipt:
+                    raise ValueError('FACTOR_REGISTRATION_DETAIL_CONFLICT')
+            else:
+                write_json_immutable(destination, receipt)
+            self.update(identity, 'COMPLETE', result={'detail_file': relative,
+                'detail_sha256': receipt['evidence_sha256'], 'registration_only': True,
+                'strategy_id': receipt['strategy_id'],
+                'strategy_version': receipt['strategy_version'],
+                'contract_sha256': receipt['contract_sha256'], 'data_version_id': request[
+                    'data_version_id'], 'source_revision': self.revision})
             return
         if signal_job:
             from qtrade.research.signal_publication import verify_signal_archive
@@ -738,6 +838,7 @@ def main() -> None:
     parser.add_argument("--python", required=True)
     parser.add_argument("--source-revision", required=True)
     parser.add_argument("--once", action="store_true")
+    parser.add_argument("--factor-archive", type=Path)
     args = parser.parse_args()
     # Container-local exclusive process lease; a second supervisor cannot run jobs.
     import fcntl
@@ -746,7 +847,8 @@ def main() -> None:
     fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
         raise RuntimeError("live trading must remain disabled")
-    worker = Worker(args.base, args.database, args.python, args.source_revision)
+    worker = Worker(args.base, args.database, args.python, args.source_revision,
+                    args.factor_archive)
     for sig in (signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, lambda *_: setattr(worker, "stop", True))
     while not worker.stop:

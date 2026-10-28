@@ -1,0 +1,16 @@
+{
+  "fixture_root": "E:\\QTrade-temp\\stage-negotiation-local-sf4pkczx",
+  "staged_blob_count": 6,
+  "actual_main_push_blob_overlap": [
+    "570f2dca17aaa8b8d9c54cc123a5c3b5b03de816",
+    "57a04a2ab68dc1992bd31c7a0970ae42cce57497",
+    "876f41d570855aa99ce4b37561875f85599b17f0",
+    "9da3e1b69f763f961b26221fda5e96730ba25ce6",
+    "c1edae1642c0123bbae1bc9127d31060bfdc453d"
+  ],
+  "actual_final_pack_objects": 9,
+  "old_main": "f9e7f76be02075d111f3fdf0306bc55ab5e87429",
+  "new_main": "82696d1b8c8a5ddf156dc20cfd68689e509d4c03",
+  "source_has_aux_commit": false,
+  "no_production_actions": true
+}

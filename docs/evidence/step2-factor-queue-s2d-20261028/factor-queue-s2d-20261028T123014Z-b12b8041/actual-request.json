@@ -1,0 +1,55 @@
+{
+  "schema_version": "qtrade.factor-strategy-register-request.v1",
+  "kind": "FACTOR_STRATEGY_REGISTER_V1",
+  "job_id": "762688be9f7a49018cb64a63d6ab970d",
+  "actor": "nonproduction-independent-acceptance",
+  "factor_spec": {
+    "name": "step2-actual-factor-register-0",
+    "factor_ref": {
+      "definition_sha256": "62fa55321229f24cd61681c0a612f28d7aeef5c3192acb64a5f8ec388502158d",
+      "factor_id": "qtrade.price.momentum20",
+      "factor_version": "a56c5325a6e10a717dbe9dcd256ccba99ee39671594e21c3d2f272289a92f857"
+    },
+    "evaluation_ref": {
+      "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+      "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de",
+      "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9"
+    },
+    "signal_kind": "FACTOR_SINGLE",
+    "segments": {
+      "train": [
+        "2017-04-05",
+        "2021-12-28"
+      ],
+      "valid": [
+        "2022-01-04",
+        "2023-12-26"
+      ],
+      "test": [
+        "2024-01-02",
+        "2026-10-27"
+      ]
+    },
+    "portfolio": {
+      "method": "TopkDropout",
+      "topk": 50,
+      "n_drop": 5,
+      "hold_thresh": 2,
+      "risk_degree": "0.8"
+    },
+    "execution": {
+      "buy_cost_bps": "8",
+      "sell_cost_bps": "13",
+      "min_cost": "5",
+      "initial_cash": "1000000",
+      "slippage_bps": "0"
+    },
+    "parent": null
+  },
+  "factor_spec_sha256": "5f2e31dc8f76d0ae8f88b8fcaa721a23a3bcce5dc506b249532c69f662af4982",
+  "expected_strategy_version": "2983861cbc2e6a4891bac485028f117962e339e3594c73e11d7b93c397934711",
+  "expected_catalog_sha256": "d3fd51484b8a22c930e965f799a23fb5490d758fbf436ad725e3519116ca24ab",
+  "source_revision": "a89d45f96f0b89811ad07464e9ebb7ee3a9bbf12",
+  "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+  "live_trading_enabled": false
+}

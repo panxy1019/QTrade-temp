@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="5" time="10.596" timestamp="2026-10-28T20:47:16.710382+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries" name="test_inherited_git_dir_redirects_requested_repo_to_another_owned_fixture" time="1.615" /><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries" name="test_inherited_git_object_directory_writes_outside_requested_object_store" time="1.602" /><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries" name="test_original_unknown_aux_graph_retransmits_staged_public_blobs" time="2.505" /><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries" name="test_metadata_only_pack_makes_advertised_graph_visible_without_old_file_changes" time="2.785"><failure message="AssertionError: assert ({'.git/objects/pack/pack-5c1cd2d3e0e9f5bc6d001c9c60c00f35cb035f48.idx', '.git/objects/pack/pack-5c1cd2d3e0e9f5bc6d001c9c60c00f35cb035f48.pack', '.git/objects/pack/pack-5c1cd2d3e0e9f5bc6d001c9c60c00f35cb035f48.rev'} and False)&#10; +  where False = all(&lt;generator object test_metadata_only_pack_makes_advertised_graph_visible_without_old_file_changes.&lt;locals&gt;.&lt;genexpr&gt; at 0x000001F5D7EBA880&gt;)">fixture = (WindowsPath('E:/QTrade-temp/object-stage-independent-review-20261028/independent-fixtures/test_metadata_only_pack_mak...bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'target_commit': '82696d1b8c8a5ddf156dc20cfd68689e509d4c03', ...}, ...)
+
+    def test_metadata_only_pack_makes_advertised_graph_visible_without_old_file_changes(fixture):
+        source,remote,isolated,old,new,cert,target,transport=fixture
+        plan=stage_with_mature_local_git(fixture)
+        before={p.relative_to(source).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in source.rglob('*') if p.is_file()}
+        metadata=[plan.commit,plan.tree]
+        raw_objects={oid:run(isolated,['cat-file',run(isolated,['cat-file','-t',oid]).decode().strip(),oid])
+                     for oid in metadata}
+        for oid,raw in raw_objects.items():
+            kind=run(isolated,['cat-file','-t',oid]).decode().strip()
+            assert kind in ['commit','tree']
+            assert hashlib.sha1((kind+' '+str(len(raw))+'\0').encode()+raw).hexdigest()==oid
+        pack=run(isolated,['pack-objects','--stdout','--window=0','--depth=0'],
+                 ('\n'.join(metadata)+'\n').encode())
+        assert len(pack)&lt;=2*1024*1024
+        run(source,['index-pack','--strict','--stdin'],pack)
+        after={p.relative_to(source).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+               for p in source.rglob('*') if p.is_file()}
+        assert all(after[path]==value for path,value in before.items())
+        added=set(after)-set(before)
+&gt;       assert added and all(path.startswith('.git/objects/pack/') and
+            path.endswith(('.pack','.idx')) for path in added)
+E       AssertionError: assert ({'.git/objects/pack/pack-5c1cd2d3e0e9f5bc6d001c9c60c00f35cb035f48.idx', '.git/objects/pack/pack-5c1cd2d3e0e9f5bc6d001c9c60c00f35cb035f48.pack', '.git/objects/pack/pack-5c1cd2d3e0e9f5bc6d001c9c60c00f35cb035f48.rev'} and False)
+E        +  where False = all(&lt;generator object test_metadata_only_pack_makes_advertised_graph_visible_without_old_file_changes.&lt;locals&gt;.&lt;genexpr&gt; at 0x000001F5D7EBA880&gt;)
+
+E:\QTrade-temp\object-stage-independent-review-20261028\test_independent_object_stage_boundaries.py:93: AssertionError</failure></testcase><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries" name="test_mock_uncertain_failure_has_no_consumed_intent_and_allows_same_plan_retry" time="1.866" /></testsuite></testsuites>

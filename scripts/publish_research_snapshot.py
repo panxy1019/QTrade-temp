@@ -86,6 +86,23 @@ def online_publication(source: Path) -> dict[str, Any]:
         return unavailable_catalog()
 
 
+def factor_strategy_publication(source: Path) -> dict[str, Any]:
+    """Optional bounded registration catalog cannot suppress market transport."""
+    from qtrade.research.factor_strategy_catalog import validate_catalog
+
+    try:
+        if source.is_symlink():
+            raise ValueError('FACTOR_CATALOG_ALIAS')
+        with source.open('rb') as handle:
+            raw = handle.read(1_000_001)
+        if len(raw) > 1_000_000:
+            raise ValueError('FACTOR_CATALOG_TOO_LARGE')
+        return validate_catalog(json.loads(raw))
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return signed({**AUTHORITY, 'schema_version': 'qtrade.factor-strategy-unavailable.v1',
+                       'state': 'NO_VERIFIED_FACTOR_STRATEGY_CATALOG'})
+
+
 def quality_publication(source: Path) -> dict[str, Any]:
     from qtrade.research.data_quality import validate_quality
 
@@ -231,6 +248,10 @@ def publish(root: Path, experiment_root: Path, publication: Path, *,
             current_files.append(relative)
         write_json_atomic(publication / "workflow.json", workflow)
         current_files.append("workflow.json")
+    write_json_atomic(publication/'factor-catalog.json',
+                      factor_strategy_publication(workflow_root/'factor-catalog.json'),
+                      compact=True)
+    current_files.append('factor-catalog.json')
     from qtrade.research.qlib_publication import build_publication
 
     calendar = json.loads((REPO / "configs/observer_calendar_2026.json").read_text())

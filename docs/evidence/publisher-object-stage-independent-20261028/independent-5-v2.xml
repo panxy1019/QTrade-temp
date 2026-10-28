@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="5" time="10.402" timestamp="2026-10-28T20:48:01.309877+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries_v2" name="test_inherited_git_dir_redirects_requested_repo_to_another_owned_fixture" time="1.371" /><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries_v2" name="test_inherited_git_object_directory_writes_outside_requested_object_store" time="1.337" /><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries_v2" name="test_original_unknown_aux_graph_retransmits_staged_public_blobs" time="2.290" /><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries_v2" name="test_metadata_only_pack_makes_advertised_graph_visible_without_old_file_changes" time="3.309"><failure message="AssertionError: assert ({'2abd46458f926d794bb8474c20064cfbb12825d1', '570f2dca17aaa8b8d9c54cc123a5c3b5b03de816', '57a04a2ab68dc1992bd31c7a0970...96fee22059f7e67a4f318501', '82696d1b8c8a5ddf156dc20cfd68689e509d4c03', '876f41d570855aa99ce4b37561875f85599b17f0', ...} and not ({'2abd46458f926d794bb8474c20064cfbb12825d1', '570f2dca17aaa8b8d9c54cc123a5c3b5b03de816', '57a04a2ab68dc1992bd31c7a0970...96fee22059f7e67a4f318501', '82696d1b8c8a5ddf156dc20cfd68689e509d4c03', '876f41d570855aa99ce4b37561875f85599b17f0', ...} &amp; {'2d4501b0314dbd3844700536cf10e1808b6ff7ad', '570f2dca17aaa8b8d9c54cc123a5c3b5b03de816', '57a04a2ab68dc1992bd31c7a0970...55aa99ce4b37561875f85599b17f0', '9da3e1b69f763f961b26221fda5e96730ba25ce6', 'c1edae1642c0123bbae1bc9127d31060bfdc453d'}))&#10; +  where {'2d4501b0314dbd3844700536cf10e1808b6ff7ad', '570f2dca17aaa8b8d9c54cc123a5c3b5b03de816', '57a04a2ab68dc1992bd31c7a0970...55aa99ce4b37561875f85599b17f0', '9da3e1b69f763f961b26221fda5e96730ba25ce6', 'c1edae1642c0123bbae1bc9127d31060bfdc453d'} = &lt;object_stage_nonproduction.CertifiedTarget object at 0x000001D1C6A0D6E0&gt;.blobs">fixture = (WindowsPath('E:/QTrade-temp/object-stage-independent-review-20261028/independent-fixtures-v2/test_metadata_only_pack_...bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'target_commit': '82696d1b8c8a5ddf156dc20cfd68689e509d4c03', ...}, ...)
+
+    def test_metadata_only_pack_makes_advertised_graph_visible_without_old_file_changes(fixture):
+        source,remote,isolated,old,new,cert,target,transport=fixture
+        plan=stage_with_mature_local_git(fixture)
+        before={p.relative_to(source).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in source.rglob('*') if p.is_file()}
+        metadata=[plan.commit,plan.tree]
+        raw_objects={oid:run(isolated,['cat-file',run(isolated,['cat-file','-t',oid]).decode().strip(),oid])
+                     for oid in metadata}
+        for oid,raw in raw_objects.items():
+            kind=run(isolated,['cat-file','-t',oid]).decode().strip()
+            assert kind in ['commit','tree']
+            assert hashlib.sha1((kind+' '+str(len(raw))+'\0').encode()+raw).hexdigest()==oid
+        pack=run(isolated,['pack-objects','--stdout','--window=0','--depth=0'],
+                 ('\n'.join(metadata)+'\n').encode())
+        assert len(pack)&lt;=2*1024*1024
+        run(source,['index-pack','--strict','--stdin'],pack)
+        after={p.relative_to(source).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+               for p in source.rglob('*') if p.is_file()}
+        assert all(after[path]==value for path,value in before.items())
+        added=set(after)-set(before)
+        assert added and all(path.startswith('.git/objects/pack/') and
+            path.endswith(('.pack','.idx','.rev')) for path in added)
+        assert run(source,['cat-file','-t',plan.commit]).strip()==b'commit'
+        assert transport.refs()['refs/heads/main']==old
+        transmitted=final_wire_objects(source,remote)
+&gt;       assert transmitted and not(transmitted&amp;target.blobs)
+E       AssertionError: assert ({'2abd46458f926d794bb8474c20064cfbb12825d1', '570f2dca17aaa8b8d9c54cc123a5c3b5b03de816', '57a04a2ab68dc1992bd31c7a0970...96fee22059f7e67a4f318501', '82696d1b8c8a5ddf156dc20cfd68689e509d4c03', '876f41d570855aa99ce4b37561875f85599b17f0', ...} and not ({'2abd46458f926d794bb8474c20064cfbb12825d1', '570f2dca17aaa8b8d9c54cc123a5c3b5b03de816', '57a04a2ab68dc1992bd31c7a0970...96fee22059f7e67a4f318501', '82696d1b8c8a5ddf156dc20cfd68689e509d4c03', '876f41d570855aa99ce4b37561875f85599b17f0', ...} &amp; {'2d4501b0314dbd3844700536cf10e1808b6ff7ad', '570f2dca17aaa8b8d9c54cc123a5c3b5b03de816', '57a04a2ab68dc1992bd31c7a0970...55aa99ce4b37561875f85599b17f0', '9da3e1b69f763f961b26221fda5e96730ba25ce6', 'c1edae1642c0123bbae1bc9127d31060bfdc453d'}))
+E        +  where {'2d4501b0314dbd3844700536cf10e1808b6ff7ad', '570f2dca17aaa8b8d9c54cc123a5c3b5b03de816', '57a04a2ab68dc1992bd31c7a0970...55aa99ce4b37561875f85599b17f0', '9da3e1b69f763f961b26221fda5e96730ba25ce6', 'c1edae1642c0123bbae1bc9127d31060bfdc453d'} = &lt;object_stage_nonproduction.CertifiedTarget object at 0x000001D1C6A0D6E0&gt;.blobs
+
+E:\QTrade-temp\object-stage-independent-review-20261028\test_independent_object_stage_boundaries_v2.py:98: AssertionError</failure></testcase><testcase classname="object-stage-independent-review-20261028.test_independent_object_stage_boundaries_v2" name="test_mock_uncertain_failure_has_no_consumed_intent_and_allows_same_plan_retry" time="1.883" /></testsuite></testsuites>

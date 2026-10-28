@@ -1,0 +1,195 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.factor-research-archive-index.v1",
+  "registry_sha256": "ebab315c6b64ca8741a12f99c7d8fc9a567167fda7a12aa485d4e16a5f906763",
+  "evaluations": [
+    {
+      "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+      "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de",
+      "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9",
+      "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+      "gzip_sha256": "74c246d7822b4e860706dcc2c212763ede3aef62f38f5b94297237acf5457ada"
+    }
+  ],
+  "templates": [
+    {
+      "name": "step2-actual-factor-register-0",
+      "factor_ref": {
+        "definition_sha256": "62fa55321229f24cd61681c0a612f28d7aeef5c3192acb64a5f8ec388502158d",
+        "factor_id": "qtrade.price.momentum20",
+        "factor_version": "a56c5325a6e10a717dbe9dcd256ccba99ee39671594e21c3d2f272289a92f857"
+      },
+      "evaluation_ref": {
+        "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+        "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de",
+        "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9"
+      },
+      "signal_kind": "FACTOR_SINGLE",
+      "segments": {
+        "train": [
+          "2017-04-05",
+          "2021-12-28"
+        ],
+        "valid": [
+          "2022-01-04",
+          "2023-12-26"
+        ],
+        "test": [
+          "2024-01-02",
+          "2026-10-27"
+        ]
+      },
+      "portfolio": {
+        "method": "TopkDropout",
+        "topk": 50,
+        "n_drop": 5,
+        "hold_thresh": 2,
+        "risk_degree": "0.8"
+      },
+      "execution": {
+        "buy_cost_bps": "8",
+        "sell_cost_bps": "13",
+        "min_cost": "5",
+        "initial_cash": "1000000",
+        "slippage_bps": "0"
+      },
+      "parent": null
+    },
+    {
+      "name": "step2-actual-factor-register-1",
+      "factor_ref": {
+        "definition_sha256": "d7f6d6d71fea45acfff6f1a35fedef21ef61276ab6ac13621f27587c24bde217",
+        "factor_id": "qtrade.price.reversal5",
+        "factor_version": "79b4651024a5371be545f094a792c0e30d31bcfdb6264fe6438a2bc044298a0c"
+      },
+      "evaluation_ref": {
+        "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+        "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de",
+        "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9"
+      },
+      "signal_kind": "FACTOR_SINGLE",
+      "segments": {
+        "train": [
+          "2017-04-05",
+          "2021-12-28"
+        ],
+        "valid": [
+          "2022-01-04",
+          "2023-12-26"
+        ],
+        "test": [
+          "2024-01-02",
+          "2026-10-27"
+        ]
+      },
+      "portfolio": {
+        "method": "TopkDropout",
+        "topk": 50,
+        "n_drop": 5,
+        "hold_thresh": 2,
+        "risk_degree": "0.8"
+      },
+      "execution": {
+        "buy_cost_bps": "8",
+        "sell_cost_bps": "13",
+        "min_cost": "5",
+        "initial_cash": "1000000",
+        "slippage_bps": "0"
+      },
+      "parent": null
+    },
+    {
+      "name": "step2-actual-factor-register-2",
+      "factor_ref": {
+        "definition_sha256": "b5aaddd7d97cafc988cf80d5eb5d44f0f0ec62aa84479f17b91d14e0def50ebc",
+        "factor_id": "qtrade.price.lowvol20",
+        "factor_version": "12940ad6a5accd2e087a013caa8f84dabc3c6798df151f2dc52b37007bc8737b"
+      },
+      "evaluation_ref": {
+        "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+        "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de",
+        "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9"
+      },
+      "signal_kind": "FACTOR_SINGLE",
+      "segments": {
+        "train": [
+          "2017-04-05",
+          "2021-12-28"
+        ],
+        "valid": [
+          "2022-01-04",
+          "2023-12-26"
+        ],
+        "test": [
+          "2024-01-02",
+          "2026-10-27"
+        ]
+      },
+      "portfolio": {
+        "method": "TopkDropout",
+        "topk": 50,
+        "n_drop": 5,
+        "hold_thresh": 2,
+        "risk_degree": "0.8"
+      },
+      "execution": {
+        "buy_cost_bps": "8",
+        "sell_cost_bps": "13",
+        "min_cost": "5",
+        "initial_cash": "1000000",
+        "slippage_bps": "0"
+      },
+      "parent": null
+    },
+    {
+      "name": "step2-actual-factor-register-3",
+      "factor_ref": {
+        "definition_sha256": "188bf9cfd9544b3bb0fc4fb0cf60cf6b57ad55b04022dfcc7127d82678c4d5b7",
+        "factor_id": "qtrade.composite.multifactor_equal_rank",
+        "factor_version": "1100fac3ac3d8b2f19217c8ec83d3e14549f7d1bb080a673adf6baed17baa00e"
+      },
+      "evaluation_ref": {
+        "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+        "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de",
+        "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9"
+      },
+      "signal_kind": "FACTOR_COMPOSITE",
+      "segments": {
+        "train": [
+          "2017-04-05",
+          "2021-12-28"
+        ],
+        "valid": [
+          "2022-01-04",
+          "2023-12-26"
+        ],
+        "test": [
+          "2024-01-02",
+          "2026-10-27"
+        ]
+      },
+      "portfolio": {
+        "method": "TopkDropout",
+        "topk": 50,
+        "n_drop": 5,
+        "hold_thresh": 2,
+        "risk_degree": "0.8"
+      },
+      "execution": {
+        "buy_cost_bps": "8",
+        "sell_cost_bps": "13",
+        "min_cost": "5",
+        "initial_cash": "1000000",
+        "slippage_bps": "0"
+      },
+      "parent": null
+    }
+  ],
+  "evidence_sha256": "4df8b9ac73befe0f49886c17e796679c49d4cca0285fcbea765142db9bf98cc8"
+}

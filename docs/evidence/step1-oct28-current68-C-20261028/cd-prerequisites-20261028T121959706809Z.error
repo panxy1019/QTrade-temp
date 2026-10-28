@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "<stdin>", line 10, in <module>
+  File "/root/qtrade-local/operator-evidence/forward-handover-9846a7f-20261028/directed_handover.py", line 56, in context
+    assert approval and approval['model_id']==MODEL
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

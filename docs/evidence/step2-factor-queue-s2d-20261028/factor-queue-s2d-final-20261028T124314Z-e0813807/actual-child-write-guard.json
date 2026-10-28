@@ -1,0 +1,95 @@
+{
+  "sqlite": [
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": false,
+      "database": "/root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/isolated-strategies.sqlite"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/qlib-versions.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/approved-factor-archive/factors.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/qlib-versions.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/qlib-versions.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/approved-factor-archive/factors.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/approved-factor-archive/factors.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/approved-factor-archive/factors.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/qlib-versions.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": false,
+      "database": "/root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/isolated-strategies.sqlite"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": false,
+      "database": "/root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/isolated-strategies.sqlite"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/qlib-versions.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/approved-factor-archive/factors.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/qlib-versions.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/qlib-versions.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": true,
+      "database": "file:///root/qtrade-local/qlib-versions.sqlite?mode=ro"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": false,
+      "database": "/root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/isolated-strategies.sqlite"
+    },
+    {
+      "event": "sqlite3.connect",
+      "read_only_uri": false,
+      "database": "/root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807/isolated-strategies.sqlite"
+    }
+  ],
+  "writes_confined_to": "/root/qtrade-local/operator-evidence/factor-queue-s2d-final-20261028T124314Z-e0813807"
+}

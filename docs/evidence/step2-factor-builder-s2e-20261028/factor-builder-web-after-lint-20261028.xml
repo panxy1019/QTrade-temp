@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="19" failures="0" errors="0" time="4.9945017">
+    <testsuite name="src/components/FactorStrategyBuilder.test.tsx" timestamp="2026-10-28T12:33:34.117Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.8913351">
+        <testcase classname="src/components/FactorStrategyBuilder.test.tsx" name="factor strategy registration controls &gt; closes an unverifiable catalog without fabricated default choices" time="0.1025538">
+        </testcase>
+        <testcase classname="src/components/FactorStrategyBuilder.test.tsx" name="factor strategy registration controls &gt; requires login and invalidates preview when the draft changes" time="0.2956661">
+        </testcase>
+        <testcase classname="src/components/FactorStrategyBuilder.test.tsx" name="factor strategy registration controls &gt; reuses one request id after a lost response and never claims a backtest" time="0.3850113">
+        </testcase>
+        <testcase classname="src/components/FactorStrategyBuilder.test.tsx" name="factor strategy registration controls &gt; keeps mutations disabled for anonymous readers" time="0.1074452">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/QlibWorkflowPages.test.tsx" timestamp="2026-10-28T12:33:34.119Z" hostname="DESKTOP-F1JPIV2" tests="10" failures="0" errors="0" skipped="0" time="4.0827928">
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="freezes the selected immutable strategy before queueing and preserves a failed retry" time="1.020438">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="keeps edited version selection stable across polling and refuses a drifted preview" time="0.607894">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; lists only integrated models and exposes the non-PIT boundary" time="0.2268117">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; keeps anonymous submission disabled" time="0.157692">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; submits the fixed complete spec with a retry identity and follows the job" time="0.3034635">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; explains applied source restrictions separately from historical certification" time="0.1144147">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; shows and submits the pinned source identity alongside model configuration" time="0.3802518">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; reuses archived inputs despite refreshed defaults and retries with the same request identity" time="0.7914245">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; keeps submission closed after a legacy template error instead of falling back to defaults" time="0.2194678">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; ignores a late response for a different archived configuration" time="0.2602292">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/factorStrategy.test.ts" timestamp="2026-10-28T12:33:34.121Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="0.0203738">
+        <testcase classname="src/research/factorStrategy.test.ts" name="factor registration browser boundary &gt; accepts the actual shared contract and a fully bound preview" time="0.008359">
+        </testcase>
+        <testcase classname="src/research/factorStrategy.test.ts" name="factor registration browser boundary &gt; keeps stable content identity separate from heartbeat identity" time="0.0044574">
+        </testcase>
+        <testcase classname="src/research/factorStrategy.test.ts" name="factor registration browser boundary &gt; rejects unsupported catalogs and tampered diagnostic identities" time="0.000847">
+        </testcase>
+        <testcase classname="src/research/factorStrategy.test.ts" name="factor registration browser boundary &gt; rejects a resigned preview for another spec, source or catalog" time="0.0023938">
+        </testcase>
+        <testcase classname="src/research/factorStrategy.test.ts" name="factor registration browser boundary &gt; does not turn a resigned registry definition into execution authority" time="0.0034938">
+        </testcase>
+    </testsuite>
+</testsuites>

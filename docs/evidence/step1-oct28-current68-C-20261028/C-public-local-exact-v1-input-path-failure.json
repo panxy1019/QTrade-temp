@@ -1,0 +1,8 @@
+{
+  "recorded_at": "2026-10-28T12:27:44.106967+00:00",
+  "state": "FAILED_INPUT_FETCH_BEFORE_HTTP",
+  "cause": "Wrapper incorrectly requested current version manifest.json; original verify_version uses version.json. No original auditor or artifact changed.",
+  "original_stderr_saved_as_file": false,
+  "http_captures": 0,
+  "production_mutations": false
+}
