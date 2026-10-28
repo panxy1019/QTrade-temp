@@ -1,6 +1,46 @@
 # Current state
 
-Last updated: 2026-10-28 09:57 Shanghai, independent recent-state observer deployed.
+Last updated: 2026-10-28 12:05 Shanghai, scoped rollout and STEP2 preparation.
+
+- Approved policies staged11:51 against990-stock dataset. Data owner493083/source
+  458552d runs automatic WAITING/return0; olddata exit0 confirmed. Its original
+  deployment check failed during Supervisor Starting; retain failure and missing
+  persisted before-book snapshot, never rerun the stop action as a retry.
+- Status owner493858/source458552d automatically reaches520/990 and regenerates
+  quality11:59:49. Its deployment control/old-PIT fingerprints pass, but actual
+  oldowner stop was killed. Both old/current configs omit stopsignal; do not infer
+  graceful exit from ctl0 or a literal SIGKILL matcher. Maintenance213587 remains
+  HOLD for actual signal/background-child review; retry policy staged, not consumed.
+- Quality cases12SUSPENDED/3DATA_GAP/4UNKNOWN are security/frequency/day records,
+  not security counts. Actual11:49 public probe is STALE_TRANSPORT: catalog93.56s,
+  index4373.28s. Further exporter candidates stay isolated pending cold+warm45s
+  and exact shard/lineage checks; unchanged budgets and failures retained.
+- STEP2 factor/strategy design and interface audits completed. New19 isolated
+  readiness tests pass on Windows and Linux with0skip; they do not run Qlib
+  training or write production registries. Native pinned0.9.7 audit12:04:37 binds
+  158actual name/formula pairs and tinyIC parity<=2e-16;42 payloads verify, no
+  Provider/init/eval/train calls. NaN/0,ddof andlabel differences remain explicit.
+  See docs/STEP2_EXECUTION_DESIGN_20261028.md and
+  docs/GRADED_QUALITY_ROLLOUT_20261028.md. Full real-close/production/visual gates
+  remain; ACTIVE295, forward383859, rollingOFF and LIVEfalse stay.
+
+Previous2026-10-28 11:43 scope checkpoint:
+
+- The latest human instruction permits STEP2 design, interface audit and
+  non-production test preparation alongside STEP1. Qualified daily research may
+  proceed with explicit sample-selection/survivorship limitations; improved PIT
+  must create new version-bound revalidation experiments, never overwrite old
+  results. This supersedes the older blanket STEP2 preparation gate below.
+- A new tracked goal is active. Independent GPT-6.1-sol xhigh agents audit factor
+  and strategy interfaces and the approved STEP1 rollout operator. Production
+  close/book/public acceptance remains separately open; the clock is before close.
+- The two explicit graded-quality policies were approved by the user. Source
+  458552d has prior independent/Linux evidence; production policy staging and
+  targeted consumer upgrades are still pending final operator review. Publication
+  upgrade remains blocked by real 45-second frozen-export failures. The uncommitted
+  exporter optimization is under verification, not deployed source.
+
+Previous2026-10-28 09:57 checkpoint:
 
 - New source60c8313/observer466733 runs qtrade-recent-status without replacing any
   old service.429 Git source files match; final Windows/Linux80 tests each pass,

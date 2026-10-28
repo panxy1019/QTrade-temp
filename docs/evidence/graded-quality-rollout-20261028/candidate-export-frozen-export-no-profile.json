@@ -1,0 +1,41 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-28T03:49:04.255140+00:00",
+  "source_revision": "uncommitted:543fa48fffa5b4c306bc2becdd65f3f01acafe72f94012ccc110848582c94fc2",
+  "controlled_snapshot_clock": "2026-10-27T08:09:58.026432+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "profiling_enabled": false,
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_WALL_INCLUDES_POST_EXPORT_BYTE_COMPARISON",
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "pass_name": "cold",
+      "wall_seconds": 45.26805,
+      "profile": {},
+      "peak_rss_kib": 804884
+    },
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "pass_name": "warm",
+      "wall_seconds": 45.2627,
+      "profile": {},
+      "peak_rss_kib": 810116
+    }
+  ],
+  "evidence_sha256": "14dcce7ecd25822eae38af29cb3455c52bf60ec994b084c10bca195232ca0995"
+}

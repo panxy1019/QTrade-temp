@@ -1,0 +1,10 @@
+{
+  "archived_at": "2026-10-28T04:02:12.979236+00:00",
+  "files": {
+    "manifest.json": "206ff0635c3911bce136261355d69b87e3344955f5a5d0d55b21f05ce4fd836a",
+    "tests.log": "e7b64a22e43343549005a7ad076e659c4f47acd05e5a942dba3449d2ce51bcb6",
+    "tests.xml": "70e9733ea5d1aac38e710ffd2072f17917dd96ca2714dafe8e6afbe92b7d9751",
+    "windows-tests.xml": "88b0f79bab62e2cd88401c0e496e22518b6c1f7e54f7f93df09b3baa960e5ffa"
+  },
+  "scope": "CAPTURED_EVIDENCE_NOT_WHOLE_STEP1_ACCEPTANCE"
+}

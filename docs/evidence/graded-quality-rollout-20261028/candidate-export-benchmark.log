@@ -1,0 +1,7 @@
+{"state": "FAILED", "error_class": "ValueError", "error_code": "UNIFIED_MARKET_TIME_BUDGET", "pass_name": "cold", "wall_seconds": 45.26805, "profile": {}, "peak_rss_kib": 804884}
+{"state": "FAILED", "error_class": "ValueError", "error_code": "UNIFIED_MARKET_TIME_BUDGET", "pass_name": "warm", "wall_seconds": 45.2627, "profile": {}, "peak_rss_kib": 810116}
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/market-export-candidate-20261028T034710Z/benchmark.py", line 47, in <module>
+    assert all(x['state']=='SUCCEEDED' for x in results),'FROZEN_EXPORT_NOT_ACCEPTED'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FROZEN_EXPORT_NOT_ACCEPTED

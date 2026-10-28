@@ -1,5 +1,47 @@
 # Architecture decisions
 
+## ADR-202 — Separate policy approval, consumer activation and observed exit evidence
+
+Status: two human-approved policies staged11:51 October28; data/status consumers
+updated, retry maintenance consumer and publisher not yet updated.
+
+Approval binds new daily requests to the frozen990 required daily scope and
+permits finite exact-day evidenced failed-task retry deferral. It does not change
+PAPER admission, existing frozen requests, model activation or recovery authority.
+Activation is per consumer; existence of approval files is not functional proof.
+
+The data upgrade's immediate Supervisor PID assertion failed while Starting;
+preserve that failure and the absent durable before-book snapshot. Subsequent
+read-only evidence proves correct Running source and automatic cycle return0,
+not a retroactively successful original operator. Never repeat the stop action.
+
+The status upgrade held the existing nonblocking vendor lease in a fresh idle
+window and retained before/after control equality. Actual Supervisor logs still
+show killed termination, so graceful handoff remains failed. A false literal
+SIGKILL match is not evidence of normal exit. The installed Go Supervisor config
+omits stopsignal; verify explicit/effective stop behavior rather than assuming
+Python Supervisor defaults. No further maintenance upgrade until stop semantics
+and its background refresh child are understood; retry rules remain staged.
+
+## ADR-201 — Parallel STEP2 preparation and version-bound research revalidation
+
+Status: explicitly authorized by the user,2026-10-28; design/audit/non-production
+test work started. Production STEP2 activation is not claimed.
+
+The latest directive supersedes the earlier blanket requirement to finish STEP1
+before any STEP2 work. Continue real STEP1 acceptance independently while auditing
+Factor Registry/Evaluation and Strategy Registry/Builder interfaces and preparing
+isolated tests. Reuse Qlib expressions/evaluation/Exchange/TopkDropout and existing
+QTrade factors, metrics, StrategySpec/StrategyRegistry and the task queue.
+
+An admitted daily research scope can support explicitly scoped factor evaluation
+despite unrelated ETF minute gaps or incomplete long-term historical PIT. Freeze
+the data version, exact symbols, exclusions, factors, labels, splits and source
+versions in each experiment and disclose selection/survivorship bias. This grants
+no new PAPER execution admission and does not assert historical PIT certification.
+When evidence improves, create a new immutable dataset and linked experiment;
+preserve original results, limitations and failures. Do not rewrite past decisions.
+
 ## ADR-187 — STEP1 completion gates research expansion and rollback epochs bind outputs
 
 Status: implementing locally, 2026-10-27.

@@ -1,0 +1,22 @@
+{
+  "archived_at": "2026-10-28T04:02:12.987821+00:00",
+  "files": {
+    "candidate-export-benchmark.log": "903d268c1972a450276621b873fc2abec4b8e4e332a93029f9c5109978d3dbb1",
+    "candidate-export-candidate-manifest.json": "543fa48fffa5b4c306bc2becdd65f3f01acafe72f94012ccc110848582c94fc2",
+    "candidate-export-frozen-export-no-profile.json": "ad911a4808f2bc1687bd8e9f26ba685eda841b8f5b18156d594f3766272cc229",
+    "candidate-export-linux-tests.xml": "0bfc38ebdac4cae6ef2511f8d195b554342b0d6dc0337ecf3266dd72e1a81da9",
+    "completed-status-035603049591.json": "48e07fff8d3e4cc63f577b97e4742786a56fc5d179810217c9cf17a14bf1dc77",
+    "data-035236299390-attempt.json": "3ea89d4bdbb7e315711c2c92743fa3e4a513f0444c254c4b53e341d8ef8de758",
+    "data-035236299390.log": "8ad756bdaec4d519eb2095a25084f52aa10ea153bbbc5f1b925a3a4b52a6f628",
+    "observation-035936625495.json": "6b590f4a4fa5aec4efa13386a9564be2cda96f35f7e9ba8190bdd2e977d59dbb",
+    "observation-035949094507.json": "be697f1915eaa07d718ffac81fc0447f660b6f491d9b7985f0d5650b3f1e32ca",
+    "observation-040020307616.json": "02fea5fa7eb4a73b7a6330ee747c44649f1728760aaadad3edf3553b1f00f457",
+    "pre-upgrade-data-035234404025.json": "65d9d6ef392255716bb8b40b90972fb94240cf8660a2ed0a4d1f14df35ca558b",
+    "pre-upgrade-status-035556194191.json": "5eda25ed5b6c6c98cec99f4491a8f35710a34c26be6487696be4c256042096df",
+    "preflight-1147.json": "980f73a98b6aa7c6e724807f3a1a4e47ef5f954b29d4faafa7f43354a49c5f99",
+    "public-market-stale-1149.json": "22b43ce56763768f9c0008b93f12718f3260d5a49b3ffcae2aaedac31efea4ec",
+    "read-only-data-035302537441.json": "61b5e81f68c22d4090c5ed5d048560d5505a048896b987473a4345fe3c647915",
+    "stage-035119916031.json": "ea6f48d71519e76358e0bef861e010cd4d390b9bbb87f5a25fac2f9dc544344e"
+  },
+  "scope": "CAPTURED_EVIDENCE_NOT_WHOLE_STEP1_ACCEPTANCE"
+}

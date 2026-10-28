@@ -24,6 +24,26 @@ Audit date: 2026-08-12.
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
 
+October28 12:05: factor/strategy interface designs and19 new isolated tests pass
+on Windows/Linux0skip. Begin native pinnedQlib descriptors/metrics audit without
+provider/training/production writes; production FactorRegistry is still absent.
+Approved quality policies staged11:51; data493083 and status493858 use458552d,
+status520/990+quality actualautomatic. Preserve dataStarting assertion failure;
+status actualkilled exit is nongraceful despite frozen-control equality. Review
+maintenance's effective signal/backgroundchild before upgrade, no stop replay.
+Public index11:49 stale4373s whilecatalogfresh93s; optimize without45sec or byte/
+cache/Git budget increases. Cold+warm/exactlineage required before publisher
+upgrade. See docs/GRADED_QUALITY_ROLLOUT_20261028.md for distinct pending gates.
+
+October28 11:43 directive: continue STEP1 while starting STEP2 design, interface
+audit and non-production test preparation. Current qualified daily scope is
+sufficient for scoped factor research with disclosed selection/survivorship bias;
+complete historical PIT is an independent long-term track. Future PIT versions
+must append new linked experiments instead of rewriting earlier evidence. See
+plans/STEP1_STEP2_EXECUTION.md for the revised stage boundary. Factor and strategy
+interface audits are delegated to GPT-6.1-sol xhigh; final rollout review proceeds
+independently. No real-close, production or browser gate is declared complete.
+
 October28 09:57 checkpoint: implement/deploy independent recent-state source60c8313,
 observer466733.429 Git files match; final Windows/Linux80 each,0skip,Ruff/mypy pass.
 Actual automatic20→40/990 at09:51:52 and desktop120-row replay09:52:43 prove this

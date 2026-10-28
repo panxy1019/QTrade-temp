@@ -1,0 +1,21 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "at": "2026-10-28T03:52:34.403994+00:00",
+  "action": "TARGETED_SERVICE_SOURCE_UPGRADE",
+  "kind": "data",
+  "only_group": "qtrade-qlib-data",
+  "old_pid": 334634,
+  "old_ticks": "1014197281",
+  "source_revision": "458552de1fea1faf77d02dcd9ec69251a0c364b7",
+  "new_source": "/root/qtrade-local/operator-evidence/graded-quality-458552d-20261028/source",
+  "original_config_sha256": "ad2f057ebc4a5b0b10ffd2b3e4c5464b5310e6ede57b70fbfbbf6b87e27fbda9",
+  "forward_recovery_or_model_action": false,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "d58a9575fa002cb372338a4e43df648348f3dcc4b4f780d7fc8db4d94a4ca2d9"
+}

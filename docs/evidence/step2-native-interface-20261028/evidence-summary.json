@@ -1,0 +1,55 @@
+{
+  "accepted_capture": "20261028T040432Z-c51fea0d/stdout.json",
+  "accepted_transport": "20261028T040432Z-c51fea0d/transport.json",
+  "audit": {
+    "blocked": [],
+    "import_blocked_attempts": [
+      {
+        "event": "subprocess.Popen",
+        "kind": "NETWORK_OR_PROCESS"
+      },
+      {
+        "event": "socket.__new__",
+        "kind": "NETWORK_OR_PROCESS"
+      }
+    ],
+    "installed_env_read_file_count": 2211,
+    "null_sink_open_count": 4
+  },
+  "checks": {
+    "constant_is_nan": true,
+    "descriptor_count_unique_158": true,
+    "dropna_removes_constant_day": true,
+    "forbidden_calls_zero": true,
+    "index_reorder_invariant": true,
+    "no_network_or_subprocess": true,
+    "no_persistent_file_writes": true,
+    "no_production_input_reads": true
+  },
+  "descriptor_sha256": "23badba179ce07b691a394f60844b85b6401a5c238d4d3a9d3338ab94760828d",
+  "earlier_successful_captures_preserved": [
+    "20261028T035907Z-5da0eb7f",
+    "20261028T040205Z-47cdfa7e",
+    "20261028T040348Z-872c0a3e"
+  ],
+  "failed_attempts_preserved": [
+    "20261028T035841Z-e56314db",
+    "20261028T040050Z-086b1128",
+    "20261028T040107Z-5033002a",
+    "20261028T040124Z-9ded9eb1"
+  ],
+  "free_gib": 271.044921875,
+  "guard_counts": {
+    "BaseProvider.features": 0,
+    "DataHandlerLP.__init__": 0,
+    "ExpressionProvider.get_expression_instance": 0,
+    "QlibDataLoader.load": 0,
+    "builtins.eval": 0,
+    "qlib.init": 0
+  },
+  "local_replay": "accepted-local-replay.json",
+  "observed_at": "2026-10-28T04:04:37.271439+00:00",
+  "operator_matches_executed_bytes": true,
+  "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+  "source_read_and_final_hashes_agree": true
+}
