@@ -1,5 +1,38 @@
 # Current state
 
+## Research-first handoff: 2026-10-29 09:33 Shanghai
+
+- Latest human direction supersedes the old sequencing: STEP2 factor/strategy/
+  real backtests75%, daily data/minimal checks20%, advanced publication reserve5%.
+  These are target effort shares, not measured time or runtime resource limits.
+- Daily STEP1 target is an automatic coherent, integrity-checked, Qlib-readable
+  immutable snapshot with previous-head retention on failure. Public delivery,
+  historical98d/D and full CDE evidence remain separately unaccepted; they do
+  not gate unrelated offline research on a verified frozen READY subset.
+- Actual09:32 RO observation: dayhead b82baaac / actual_endOct28;990historical,
+  988current; supported891 DISTINCT instruments over1726interval rows. Old09a67
+  also891 DISTINCT over1725interval rows. Do not call these rectangular10year
+  histories. This was metadata/SQL/scope inspection, not full19816file reverify.
+- Actual09:33 API stillae33 production / observations5a09 STALE_PUBLICATION.
+  ACTIVE68d and prior647839/383859 owner identities remain observed; no control
+  operation. Prior tests and genuine failures remain unchanged.
+- Important09:49 correction: the old native seven-strategy comparison DOES exist,
+  678sessions/601013common rows with netcost metrics. Its old data/common-panel
+  identity is not automatically the current891/09a67/b82. Reuse/audit that archive
+  first; do not redo or describe all historical portfolio work as absent.
+  At09:52 actual verify_comparison rechecks28 original outputfiles/61877590bytes
+  andpasses; this is not a backtest rerun or training-input/new-registry proof.
+- Immediate gap is the NEW registered-factor execution/long-evaluation lineage
+  and repeatable unified workflow.891×16 actual independent diagnostics exist.
+  Evaluation1million dependency
+  cap and backtest100k score cap need a bounded long-window design, not blind
+  constant enlargement. Old20file runtime fingerprints need explicit compatibility.
+- This turn only audits/writes handoff: no runtime development/deployment/jobs,
+  model activation, PAPER recovery or automation resume. LIVEfalse/rollingOFF.
+  New-window entry: docs/handoffs/2026-10-29-new-window-prompt.md;
+  detailed state/config/reproduction/plan:
+  docs/handoffs/2026-10-29-step2-research-priority.md.
+
 ## Local S3 checkpoint: 2026-10-29 01:16 Shanghai
 
 01:21 supplement: independent bounded readonly search verifies index master38f5

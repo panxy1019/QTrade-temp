@@ -1,5 +1,40 @@
 # Architecture decisions
 
+## ADR-209 — Prioritize frozen-data research and separate delivery gates
+
+Status: explicit human direction at2026-10-29. STEP2 factor/strategy/backtest75%,
+daily data/minimum checks20%, advanced publication reserve5%; target effort,
+not measured time or resource quotas. This supersedes previous scheduling text
+requiring all STEP1 acceptance before any STEP2 offline work.
+
+Define daily-data delivery around automatic coherent immutable input, integrity
+and Qlib-readability checks, qualified scope and previous-head retention on
+failure. Keep public publishing, original CDE/98d/D failures and forward-account
+readiness as independent gates. No old success/failure is relabeled; no input,
+trade constraint, ledger recovery or LIVE rule is relaxed by this decision.
+
+Reuse current FactorRegistry, metrics, StrategyRegistry, Qlib0.9.7 Exchange/
+TopkDropout and queue. Reuse the existing native seven-strategy678-session
+historical comparison; distinguish its original common panel from new891 READY
+versions. First establish NEW registered-factor portfolio execution lineage, then
+bounded multi-year factor evaluation, frozen chronological splits and costed
+benchmarks. Current actual factor diagnostics span16days; native33 tests use
+synthetic execution quotes. Neither alone proves the new registered891 workflow;
+this does not erase or deny the separate old multi-year native comparison.
+
+Keep old v1 limits/reports and runtime fingerprints immutable. Long-window
+execution needs an explicit bounded experiment policy with warmup/label-boundary
+checks and continuous portfolio state, not silently increased caps or independent
+cash resets. Worker/source upgrades need explicit release compatibility without
+rewriting registrations. Existing ACTIVE is not a shortcut for historical OOS
+if it has trained on that period. New historical results disclose viewed history,
+selection/survivorship, unknown PIT clocks and adjustment limitations; future
+data improvements create new revalidation versions, never overwrite old ones.
+
+Negative results are valid research delivery. Public freshness and future Paper
+activation remain separate. Latest audit/handoff changes documentation only;
+LIVEfalse/rollingOFF, existing owners/ledgers/consumed authorities unchanged.
+
 ## ADR-208 — Verify S3 locally before independent cloud/public acceptance
 
 Status: user explicitly chooses MinIO-first nonproduction protocol verification;

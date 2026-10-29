@@ -1,5 +1,25 @@
 # Master plan
 
+October29 09:33 latest human priority: STEP2 research75 / daily snapshot20 /
+advanced publication reserve5 (target effort, not actual measured allocation).
+Do not resume MinIO/R2/state-machine expansion as the main project. Daily
+coherent immutable/Qlib-readable snapshot and old-head retention are the minimal
+STEP1 delivery goal; public delivery and historical98d/D/fullCDE keep original
+failed/pending statuses without blocking qualified frozen offline research.
+
+Execute next in the new window: M0 reuse/audit existing seven-strategy678-session
+archive, actual891 coverage/splits/source/spec freeze;
+M1 minimal real16-session replay for NEW registration lineage, not redoing old
+native comparison, then fourfactor/equalweight allocation control with common
+execution/cost assumptions;
+M2 bounded multi-year evaluation with label-boundary purge and train-only fitting;
+M3 net-cost/OOS/benchmark/reproducible report; M4 protected queue/UI wiring with
+explicit old-source compatibility; M5 independent Paper path, never live.
+Retain data/PIT/survivorship/adjustment limits and all original experiments.
+Negative research results can satisfy delivery; profit is not an acceptance test.
+Handoff: docs/handoffs/2026-10-29-step2-research-priority.md. No new runtime work,
+jobs/control/deployments or old automation resume occurred in this audit turn.
+
 October29 01:16: local MinIO first under explicit user direction. Verified source
 build and real7 S3 protocol cases pass; test services stop. Full frozenabe bundle
 fails index/catalog master lineage equality before full upload; preserve original

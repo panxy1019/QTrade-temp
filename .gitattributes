@@ -46,6 +46,7 @@ docs/evidence/step2-factor-local-queue-e2e-20261028/** -text -whitespace
 docs/evidence/p0-cold-transport-diagnostics-20261028/** -text -whitespace
 docs/evidence/publication-cold-recovery-plan-20261028/** -text -whitespace
 docs/evidence/object-publication-minio-20261029/** -text -whitespace
+docs/handoffs/evidence-20261029/** -text -whitespace
 # These independently sealed audit readers retain their reviewed raw SHA256.
 scripts/audit_qlib_execution_day_scope.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 scripts/audit_qlib_staged_revalidation.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
