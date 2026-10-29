@@ -1,0 +1,1695 @@
+{
+  "notes": "SYNTHETIC TEST FIXTURE ONLY. Refresh heartbeat and resign in freshness tests. Source hashes describe fixture creation bytes, not production admission.",
+  "catalog": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.factor-strategy-catalog.v1",
+    "worker": {
+      "heartbeat_at": "2026-10-28T12:19:45.804844+00:00",
+      "source_revision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "implementation_sources": {
+        "src/qtrade/research/factor_strategy_contract.py": "fe23ae88d7abfb374e4c41a28cd5176debe94c728df41ac0825e4dbcff43fbe0",
+        "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+        "src/qtrade/research/factor_evaluation.py": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+        "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+        "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+        "src/qtrade/research/metrics.py": "2a4317d786ae63dbebc2ffd22ddbed372fca537f8de749bbd37c82f55692188e",
+        "src/qtrade/research/strategy_contract.py": "01317cf0816b9ed8e1576bda31db5d4e9dcfa9838df35f1b461c0eac1834ca6c",
+        "src/qtrade/research/data_versions.py": "2a741757eb0a5578cfb334db8e6ed9293171e61bce9f7f058302f40f020c9398",
+        "src/qtrade/research/model_registry.py": "01ddd7dcee47f941599063b9913a752a8fcbbd06381aa99e372f40a1d99d46cb",
+        "src/qtrade/research/experiment.py": "0ff7a8a39d91f14ff8d101ce8316992850613d2698aa55917f84cbc2f4ed8805",
+        "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd",
+        "src/qtrade/strategies/registry.py": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4",
+        "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+        "src/qtrade/research/factor_strategy_catalog.py": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad",
+        "scripts/factor_research_contracts.py": "eda933984b93328b1e9c0f1c8a253a6bfc73b4ac896a6cff416b48d26ae62762",
+        "scripts/run_factor_strategy_registration.py": "750a24ef40086c5c13e11c3ad37eefee16facb24972ee063129704bdea621837",
+        "scripts/run_qlib_worker.py": "3b5222399e2c0bb350459572e09fbab5d77f1bfaaa41f3a4b966df9a8482b814",
+        "scripts/atomic_json.py": "608804942d3ac86fda27560491da83f4a920e37762fbae37db099807c0fc32ad",
+        "scripts/run_daily_factor_evaluation.py": "291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3",
+        "src/qtrade/research/workflow_queue.py": "3d77ee81eff8912b5dbc32a22c7bc757ae45123b030026a71917f6270772dec2"
+      },
+      "supported_kinds": [
+        "FACTOR_STRATEGY_REGISTER_V1"
+      ]
+    },
+    "datasets": [
+      {
+        "data_binding": {
+          "actual_end": "2021-02-15",
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "data_version_id": "e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+          "dataset_id": "qlib-version-e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+          "dataset_sha256": "bb5fcd81c557777e17f51dfe7052b0760d69ddf64400efe1253f312e19ea8cd6",
+          "evidence_sha256": "501593eb98ea796c32df071eec5847b7882ddd235917d165b6a6466913150464",
+          "external_order_transmission": false,
+          "live_trading_enabled": false,
+          "manifest_sha256": "e74fac1ed8ccdb4236fcf67cbf6d48174c8d37fc642f20426c4c640f5c1b4073",
+          "point_in_time": false,
+          "promotion": "NOT_ELIGIBLE",
+          "ready_event_id": "af768ff24bb075f839b41bb701b098c28b64417e5bb15d060ffc0d722a21ee31",
+          "real_data_paper_readiness": false,
+          "realtime_readiness": false,
+          "schema_version": "qtrade.qlib-research-data-binding.v1",
+          "source_snapshot_sha256": "1ffbd7ef4975ad1f31ee773433f2131279de8317b1cd2c6e6162b4e6badc2456",
+          "start": "2021-01-04",
+          "supported_symbols": 8,
+          "supported_universe_sha256": "19beeaa2646017ffba4d826f9b2666433759adc4b9aecc0693d48294cecfbde9"
+        },
+        "calendar": [
+          "2021-01-04",
+          "2021-01-05",
+          "2021-01-06",
+          "2021-01-07",
+          "2021-01-08",
+          "2021-01-11",
+          "2021-01-12",
+          "2021-01-13",
+          "2021-01-14",
+          "2021-01-15",
+          "2021-01-18",
+          "2021-01-19",
+          "2021-01-20",
+          "2021-01-21",
+          "2021-01-22",
+          "2021-01-25",
+          "2021-01-26",
+          "2021-01-27",
+          "2021-01-28",
+          "2021-01-29",
+          "2021-02-01",
+          "2021-02-02",
+          "2021-02-03",
+          "2021-02-04",
+          "2021-02-05",
+          "2021-02-08",
+          "2021-02-09",
+          "2021-02-10",
+          "2021-02-11",
+          "2021-02-12",
+          "2021-02-15"
+        ],
+        "calendar_sha256": "85ba9bb9649b19aaad61aaeaacc4f1ab8d8210869acc1bd6ec95fca8f56a9a24"
+      }
+    ],
+    "templates": [
+      {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "evaluation_context": {
+          "calendar_sha256": "85ba9bb9649b19aaad61aaeaacc4f1ab8d8210869acc1bd6ec95fca8f56a9a24",
+          "computed_at": "2026-10-28T12:01:09.755558+00:00",
+          "data_binding": {
+            "actual_end": "2021-02-15",
+            "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+            "data_version_id": "e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+            "dataset_id": "qlib-version-e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+            "dataset_sha256": "bb5fcd81c557777e17f51dfe7052b0760d69ddf64400efe1253f312e19ea8cd6",
+            "evidence_sha256": "501593eb98ea796c32df071eec5847b7882ddd235917d165b6a6466913150464",
+            "external_order_transmission": false,
+            "live_trading_enabled": false,
+            "manifest_sha256": "e74fac1ed8ccdb4236fcf67cbf6d48174c8d37fc642f20426c4c640f5c1b4073",
+            "point_in_time": false,
+            "promotion": "NOT_ELIGIBLE",
+            "ready_event_id": "af768ff24bb075f839b41bb701b098c28b64417e5bb15d060ffc0d722a21ee31",
+            "real_data_paper_readiness": false,
+            "realtime_readiness": false,
+            "schema_version": "qtrade.qlib-research-data-binding.v1",
+            "source_snapshot_sha256": "1ffbd7ef4975ad1f31ee773433f2131279de8317b1cd2c6e6162b4e6badc2456",
+            "start": "2021-01-04",
+            "supported_symbols": 8,
+            "supported_universe_sha256": "19beeaa2646017ffba4d826f9b2666433759adc4b9aecc0693d48294cecfbde9"
+          },
+          "decision_scope": {
+            "count": 5,
+            "decisions_sha256": "fe17117c2344ea1dfe978eb82024c6b0a9937825f61ee514bb814680a618f3bc",
+            "first_session": "2021-02-01",
+            "last_session": "2021-02-05"
+          },
+          "diagnostic_cost_policy": {
+            "executable_return_claim": false,
+            "fees_applied": false,
+            "kind": "GROSS_LABEL_DIAGNOSTIC",
+            "slippage_applied": false
+          },
+          "diagnostic_split_policy": {
+            "fitting": false,
+            "kind": "ONE_PREDECLARED_POSTHOC_DIAGNOSTIC_WINDOW",
+            "parameter_selection": false,
+            "purge": "NOT_APPLICABLE_NO_FIT_OR_SPLITS",
+            "unseen_test_claim": false
+          },
+          "eligibility_ledger_sha256": "66813fafb4173ec3d4fda9056dd44d1a44b21df6434b4c0e379bc19b074937f7",
+          "evaluation_state": "DIAGNOSTICS_COMPUTED",
+          "factor_definitions_sha256": "6e13e496485642d1707b282f667eff7b3801f3f0363b6d9158ea20249a1e521b",
+          "instruments": [
+            "SH600101",
+            "SH600102",
+            "SH600103",
+            "SH600104",
+            "SH600105",
+            "SH600106",
+            "SH600107",
+            "SH600108"
+          ],
+          "knowledge_mode": "OBSERVED_SYSTEM",
+          "label": {
+            "entry_offset": 0,
+            "exit_offset": 1,
+            "formula": "close[t+h]/close[t]-1",
+            "frequency": "day",
+            "horizon_sessions": 1,
+            "kind": "RAW_CLOSE_TO_CLOSE",
+            "maturity_barrier": "2026-10-28T12:01:09.634845+00:00",
+            "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+            "session_maturity": "SHANGHAI_SESSION_15_00_SCHEDULE_NOT_SOURCE_CLOCK",
+            "unknown_exact_availability": "RETROSPECTIVE_SESSION_SCHEDULE_MATURITY_ONLY"
+          },
+          "limitations": [
+            "CURRENT_LIQUIDITY_UNIVERSE_SURVIVORSHIP_AND_SELECTION_BIAS",
+            "POST_HOC_VIEWED_HISTORY_NOT_UNSEEN_FORWARD_EVIDENCE",
+            "HISTORICAL_PIT_NOT_CERTIFIED",
+            "HISTORICAL_MASTER_DELISTED_STATUS_AND_LIMIT_PRICE_COVERAGE_UNCERTIFIED",
+            "VENDOR_ADJUSTMENT_AND_CORPORATE_ACTIONS_NOT_INDEPENDENTLY_CERTIFIED",
+            "CLOSE_LABEL_DIAGNOSTIC_NOT_EXECUTED_PORTFOLIO_NET_RETURN",
+            "NO_PARAMETER_SEARCH_MULTIPLE_TESTING_OR_ALPHA_SIGNIFICANCE_CLAIM"
+          ],
+          "ordered_factor_refs": [
+            {
+              "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+              "factor_id": "qtrade.price.momentum20",
+              "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d"
+            },
+            {
+              "definition_sha256": "d22901fc937f52bb638d9ad1e532edd112bcb2f366f7107da504d9b3fd84abab",
+              "factor_id": "qtrade.price.reversal5",
+              "factor_version": "a019eb28f1617a03b5b0907631ddfc00912883fc214e2e0fa86dd2cd28d6f055"
+            },
+            {
+              "definition_sha256": "1d9b62c2c8faba540feece24ced347315ad2b25fbaae4af7326f070357bcf6e8",
+              "factor_id": "qtrade.price.lowvol20",
+              "factor_version": "e73507fa7d2d443f3b1c30d78648e3ea19d91b9fe870eb1a1a757855c32350c2"
+            },
+            {
+              "definition_sha256": "2ce7fc35bce3411fa93fb23f9635b23894da45e427a7944389ec3c4b2dcf6298",
+              "factor_id": "qtrade.composite.multifactor_equal_rank",
+              "factor_version": "433ad1b15b0ead1a148da5afc5d145063455feb85a10457c391ccc22ca55bfc7"
+            }
+          ],
+          "selected_factor_summary_sha256": "9d0cae4b0e942f67edbb08945fb97266c6eb9ad84aa9102d4474caf66bbebefe",
+          "selected_valid_ic_days": 5
+        },
+        "evidence_sha256": "c9e1eb88e0ca62699bca078d93258377f3369b5258d8d81129f659885f189081",
+        "execution": {
+          "backtest_implemented": false,
+          "buy_cost_bps": "8",
+          "costs_applied_to_diagnostic": false,
+          "deal_price": "open",
+          "frequency": "day",
+          "impact_cost": "0",
+          "initial_cash": "1000000",
+          "limit_threshold": [
+            "$buy_block",
+            "$sell_block"
+          ],
+          "min_cost": "5",
+          "rules_certified": false,
+          "sell_cost_bps": "13",
+          "slippage_bps": "0",
+          "timing": "PREVIOUS_SIGNAL_NEXT_SESSION_OPEN",
+          "trade_unit": 100,
+          "volume_threshold": [
+            "cum",
+            "$capacity"
+          ]
+        },
+        "external_order_transmission": false,
+        "factor_definition": {
+          "alias": "momentum20",
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+          "dependencies": [],
+          "engine": "QTRADE_PRICE_FACTOR_SPEC",
+          "external_order_transmission": false,
+          "factor_id": "qtrade.price.momentum20",
+          "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d",
+          "formula": "close[t]/close[t-20]-1",
+          "frequency": "day",
+          "input_fields": [
+            "close"
+          ],
+          "live_trading_enabled": false,
+          "missing_policy": "REJECT_MISSING_NONFINITE_OR_NONPOSITIVE_CLOSES",
+          "numeric_policy": {
+            "capitals": 1,
+            "clamp": 0,
+            "decimal_precision": 28,
+            "emax": 999999,
+            "emin": -999999,
+            "rounding": "ROUND_HALF_EVEN",
+            "traps": [
+              "DivisionByZero",
+              "InvalidOperation",
+              "Overflow"
+            ],
+            "volatility": "EXISTING_FLOAT_POPULATION_STD_RUNTIME_VERSION_IN_EVALUATION"
+          },
+          "parameters": {
+            "lookback": 20,
+            "name": "momentum",
+            "skip": 0
+          },
+          "point_in_time": false,
+          "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+          "promotion": "NOT_ELIGIBLE",
+          "real_data_paper_readiness": false,
+          "realtime_readiness": false,
+          "required_closes": 21,
+          "schema_version": "qtrade.factor-definition.v1",
+          "security_types": [
+            "STOCK",
+            "ETF"
+          ],
+          "session_policy": "EXACT_EXCHANGE_SESSION_GRID_REQUIRED_BY_EVALUATOR",
+          "source": {
+            "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+            "files": {
+              "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+              "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+              "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+              "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+              "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd"
+            },
+            "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "time_policy": {
+            "available_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+            "computed_at": "ACTUAL_COMPUTATION_TIME_NEVER_BACKDATED",
+            "observed_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+            "unknown_clock": "RETROSPECTIVE_ONLY_WITH_EXPLICIT_DISCLOSURE"
+          }
+        },
+        "live_trading_enabled": false,
+        "model_activation": false,
+        "paper_admission": false,
+        "point_in_time": false,
+        "portfolio": {
+          "hold_thresh": 2,
+          "hold_thresh_semantics": "MINIMUM_HOLDING_BEFORE_DROPOUT_NOT_FIXED_EXIT",
+          "method": "TopkDropout",
+          "n_drop": 1,
+          "rebalance": "EVERY_EXCHANGE_SESSION",
+          "risk_degree": "0.8",
+          "topk": 4
+        },
+        "promotion": "NOT_ELIGIBLE",
+        "real_data_paper_readiness": false,
+        "realtime_readiness": false,
+        "research_only": true,
+        "schema_version": "qtrade.factor-strategy-definition.v1",
+        "signal": {
+          "adapter_implemented": false,
+          "dependency_refs": [],
+          "direction": "HIGH_SCORE_LONG_ONLY_NO_SIGN_SELECTION",
+          "kind": "FACTOR_SINGLE",
+          "knowledge_mode": "OBSERVED_SYSTEM",
+          "missing_policy": "EXCLUDE_UNAVAILABLE_NO_FILL"
+        },
+        "source": {
+          "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+          "files": {
+            "scripts/atomic_json.py": "608804942d3ac86fda27560491da83f4a920e37762fbae37db099807c0fc32ad",
+            "scripts/factor_research_contracts.py": "eda933984b93328b1e9c0f1c8a253a6bfc73b4ac896a6cff416b48d26ae62762",
+            "scripts/run_daily_factor_evaluation.py": "291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3",
+            "scripts/run_factor_strategy_registration.py": "750a24ef40086c5c13e11c3ad37eefee16facb24972ee063129704bdea621837",
+            "scripts/run_qlib_worker.py": "3b5222399e2c0bb350459572e09fbab5d77f1bfaaa41f3a4b966df9a8482b814",
+            "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+            "src/qtrade/research/data_versions.py": "2a741757eb0a5578cfb334db8e6ed9293171e61bce9f7f058302f40f020c9398",
+            "src/qtrade/research/experiment.py": "0ff7a8a39d91f14ff8d101ce8316992850613d2698aa55917f84cbc2f4ed8805",
+            "src/qtrade/research/factor_evaluation.py": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+            "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+            "src/qtrade/research/factor_strategy_catalog.py": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad",
+            "src/qtrade/research/factor_strategy_contract.py": "fe23ae88d7abfb374e4c41a28cd5176debe94c728df41ac0825e4dbcff43fbe0",
+            "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+            "src/qtrade/research/metrics.py": "2a4317d786ae63dbebc2ffd22ddbed372fca537f8de749bbd37c82f55692188e",
+            "src/qtrade/research/model_registry.py": "01ddd7dcee47f941599063b9913a752a8fcbbd06381aa99e372f40a1d99d46cb",
+            "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+            "src/qtrade/research/strategy_contract.py": "01317cf0816b9ed8e1576bda31db5d4e9dcfa9838df35f1b461c0eac1834ca6c",
+            "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd",
+            "src/qtrade/research/workflow_queue.py": "3d77ee81eff8912b5dbc32a22c7bc757ae45123b030026a71917f6270772dec2",
+            "src/qtrade/strategies/registry.py": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4"
+          },
+          "revision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "spec": {
+          "evaluation_ref": {
+            "evaluation_id": "factor-eval-3a92beaa186b457e9946fea979701e79",
+            "report_manifest_sha256": "a0b9205f56ea84d259c5b4f25c3667f6d04411ad60a98f62b6ac8ba60f159ace",
+            "specification_sha256": "ecebabeb124394f40908f6ec01994195caf7968a859e1ba1e0f9104776fb1278"
+          },
+          "execution": {
+            "buy_cost_bps": "8",
+            "initial_cash": "1000000",
+            "min_cost": "5",
+            "sell_cost_bps": "13",
+            "slippage_bps": "0"
+          },
+          "factor_ref": {
+            "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+            "factor_id": "qtrade.price.momentum20",
+            "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d"
+          },
+          "name": "synthetic-factor-registration",
+          "parent": null,
+          "portfolio": {
+            "hold_thresh": 2,
+            "method": "TopkDropout",
+            "n_drop": 1,
+            "risk_degree": "0.8",
+            "topk": 4
+          },
+          "segments": {
+            "test": [
+              "2021-02-01",
+              "2021-02-15"
+            ],
+            "train": [
+              "2021-01-04",
+              "2021-01-14"
+            ],
+            "valid": [
+              "2021-01-18",
+              "2021-01-28"
+            ]
+          },
+          "signal_kind": "FACTOR_SINGLE"
+        },
+        "split_policy": {
+          "diagnostic_reference_is_split_performance": false,
+          "fitting": false,
+          "kind": "DECLARED_RESEARCH_SEGMENTS",
+          "label_purge": "EXACT_CALENDAR_HORIZON_BEFORE_NEXT_SEGMENT",
+          "unseen_test_claim": false
+        },
+        "strategy_id": "factor-43aca936cfdf733a63954204febe817d70ae15e77ab7ecd54b54c232f63b0f57",
+        "strategy_version": "43aca936cfdf733a63954204febe817d70ae15e77ab7ecd54b54c232f63b0f57"
+      },
+      {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "evaluation_context": {
+          "calendar_sha256": "85ba9bb9649b19aaad61aaeaacc4f1ab8d8210869acc1bd6ec95fca8f56a9a24",
+          "computed_at": "2026-10-28T12:01:09.755558+00:00",
+          "data_binding": {
+            "actual_end": "2021-02-15",
+            "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+            "data_version_id": "e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+            "dataset_id": "qlib-version-e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+            "dataset_sha256": "bb5fcd81c557777e17f51dfe7052b0760d69ddf64400efe1253f312e19ea8cd6",
+            "evidence_sha256": "501593eb98ea796c32df071eec5847b7882ddd235917d165b6a6466913150464",
+            "external_order_transmission": false,
+            "live_trading_enabled": false,
+            "manifest_sha256": "e74fac1ed8ccdb4236fcf67cbf6d48174c8d37fc642f20426c4c640f5c1b4073",
+            "point_in_time": false,
+            "promotion": "NOT_ELIGIBLE",
+            "ready_event_id": "af768ff24bb075f839b41bb701b098c28b64417e5bb15d060ffc0d722a21ee31",
+            "real_data_paper_readiness": false,
+            "realtime_readiness": false,
+            "schema_version": "qtrade.qlib-research-data-binding.v1",
+            "source_snapshot_sha256": "1ffbd7ef4975ad1f31ee773433f2131279de8317b1cd2c6e6162b4e6badc2456",
+            "start": "2021-01-04",
+            "supported_symbols": 8,
+            "supported_universe_sha256": "19beeaa2646017ffba4d826f9b2666433759adc4b9aecc0693d48294cecfbde9"
+          },
+          "decision_scope": {
+            "count": 5,
+            "decisions_sha256": "fe17117c2344ea1dfe978eb82024c6b0a9937825f61ee514bb814680a618f3bc",
+            "first_session": "2021-02-01",
+            "last_session": "2021-02-05"
+          },
+          "diagnostic_cost_policy": {
+            "executable_return_claim": false,
+            "fees_applied": false,
+            "kind": "GROSS_LABEL_DIAGNOSTIC",
+            "slippage_applied": false
+          },
+          "diagnostic_split_policy": {
+            "fitting": false,
+            "kind": "ONE_PREDECLARED_POSTHOC_DIAGNOSTIC_WINDOW",
+            "parameter_selection": false,
+            "purge": "NOT_APPLICABLE_NO_FIT_OR_SPLITS",
+            "unseen_test_claim": false
+          },
+          "eligibility_ledger_sha256": "66813fafb4173ec3d4fda9056dd44d1a44b21df6434b4c0e379bc19b074937f7",
+          "evaluation_state": "DIAGNOSTICS_COMPUTED",
+          "factor_definitions_sha256": "6e13e496485642d1707b282f667eff7b3801f3f0363b6d9158ea20249a1e521b",
+          "instruments": [
+            "SH600101",
+            "SH600102",
+            "SH600103",
+            "SH600104",
+            "SH600105",
+            "SH600106",
+            "SH600107",
+            "SH600108"
+          ],
+          "knowledge_mode": "OBSERVED_SYSTEM",
+          "label": {
+            "entry_offset": 0,
+            "exit_offset": 1,
+            "formula": "close[t+h]/close[t]-1",
+            "frequency": "day",
+            "horizon_sessions": 1,
+            "kind": "RAW_CLOSE_TO_CLOSE",
+            "maturity_barrier": "2026-10-28T12:01:09.634845+00:00",
+            "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+            "session_maturity": "SHANGHAI_SESSION_15_00_SCHEDULE_NOT_SOURCE_CLOCK",
+            "unknown_exact_availability": "RETROSPECTIVE_SESSION_SCHEDULE_MATURITY_ONLY"
+          },
+          "limitations": [
+            "CURRENT_LIQUIDITY_UNIVERSE_SURVIVORSHIP_AND_SELECTION_BIAS",
+            "POST_HOC_VIEWED_HISTORY_NOT_UNSEEN_FORWARD_EVIDENCE",
+            "HISTORICAL_PIT_NOT_CERTIFIED",
+            "HISTORICAL_MASTER_DELISTED_STATUS_AND_LIMIT_PRICE_COVERAGE_UNCERTIFIED",
+            "VENDOR_ADJUSTMENT_AND_CORPORATE_ACTIONS_NOT_INDEPENDENTLY_CERTIFIED",
+            "CLOSE_LABEL_DIAGNOSTIC_NOT_EXECUTED_PORTFOLIO_NET_RETURN",
+            "NO_PARAMETER_SEARCH_MULTIPLE_TESTING_OR_ALPHA_SIGNIFICANCE_CLAIM"
+          ],
+          "ordered_factor_refs": [
+            {
+              "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+              "factor_id": "qtrade.price.momentum20",
+              "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d"
+            },
+            {
+              "definition_sha256": "d22901fc937f52bb638d9ad1e532edd112bcb2f366f7107da504d9b3fd84abab",
+              "factor_id": "qtrade.price.reversal5",
+              "factor_version": "a019eb28f1617a03b5b0907631ddfc00912883fc214e2e0fa86dd2cd28d6f055"
+            },
+            {
+              "definition_sha256": "1d9b62c2c8faba540feece24ced347315ad2b25fbaae4af7326f070357bcf6e8",
+              "factor_id": "qtrade.price.lowvol20",
+              "factor_version": "e73507fa7d2d443f3b1c30d78648e3ea19d91b9fe870eb1a1a757855c32350c2"
+            },
+            {
+              "definition_sha256": "2ce7fc35bce3411fa93fb23f9635b23894da45e427a7944389ec3c4b2dcf6298",
+              "factor_id": "qtrade.composite.multifactor_equal_rank",
+              "factor_version": "433ad1b15b0ead1a148da5afc5d145063455feb85a10457c391ccc22ca55bfc7"
+            }
+          ],
+          "selected_factor_summary_sha256": "6bae10a60d1845c7ff85b230c3132cdf8771e4f0205f860f8aa4b34cd6e79c84",
+          "selected_valid_ic_days": 5
+        },
+        "evidence_sha256": "ca22d62704479c27082c0c64b4c01fc27d3d33a360606d1f72aa9ee207a9e565",
+        "execution": {
+          "backtest_implemented": false,
+          "buy_cost_bps": "8",
+          "costs_applied_to_diagnostic": false,
+          "deal_price": "open",
+          "frequency": "day",
+          "impact_cost": "0",
+          "initial_cash": "1000000",
+          "limit_threshold": [
+            "$buy_block",
+            "$sell_block"
+          ],
+          "min_cost": "5",
+          "rules_certified": false,
+          "sell_cost_bps": "13",
+          "slippage_bps": "0",
+          "timing": "PREVIOUS_SIGNAL_NEXT_SESSION_OPEN",
+          "trade_unit": 100,
+          "volume_threshold": [
+            "cum",
+            "$capacity"
+          ]
+        },
+        "external_order_transmission": false,
+        "factor_definition": {
+          "alias": "reversal5",
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "definition_sha256": "d22901fc937f52bb638d9ad1e532edd112bcb2f366f7107da504d9b3fd84abab",
+          "dependencies": [],
+          "engine": "QTRADE_PRICE_FACTOR_SPEC",
+          "external_order_transmission": false,
+          "factor_id": "qtrade.price.reversal5",
+          "factor_version": "a019eb28f1617a03b5b0907631ddfc00912883fc214e2e0fa86dd2cd28d6f055",
+          "formula": "-(close[t]/close[t-5]-1)",
+          "frequency": "day",
+          "input_fields": [
+            "close"
+          ],
+          "live_trading_enabled": false,
+          "missing_policy": "REJECT_MISSING_NONFINITE_OR_NONPOSITIVE_CLOSES",
+          "numeric_policy": {
+            "capitals": 1,
+            "clamp": 0,
+            "decimal_precision": 28,
+            "emax": 999999,
+            "emin": -999999,
+            "rounding": "ROUND_HALF_EVEN",
+            "traps": [
+              "DivisionByZero",
+              "InvalidOperation",
+              "Overflow"
+            ],
+            "volatility": "EXISTING_FLOAT_POPULATION_STD_RUNTIME_VERSION_IN_EVALUATION"
+          },
+          "parameters": {
+            "lookback": 5,
+            "name": "reversal",
+            "skip": 0
+          },
+          "point_in_time": false,
+          "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+          "promotion": "NOT_ELIGIBLE",
+          "real_data_paper_readiness": false,
+          "realtime_readiness": false,
+          "required_closes": 6,
+          "schema_version": "qtrade.factor-definition.v1",
+          "security_types": [
+            "STOCK",
+            "ETF"
+          ],
+          "session_policy": "EXACT_EXCHANGE_SESSION_GRID_REQUIRED_BY_EVALUATOR",
+          "source": {
+            "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+            "files": {
+              "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+              "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+              "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+              "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+              "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd"
+            },
+            "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "time_policy": {
+            "available_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+            "computed_at": "ACTUAL_COMPUTATION_TIME_NEVER_BACKDATED",
+            "observed_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+            "unknown_clock": "RETROSPECTIVE_ONLY_WITH_EXPLICIT_DISCLOSURE"
+          }
+        },
+        "live_trading_enabled": false,
+        "model_activation": false,
+        "paper_admission": false,
+        "point_in_time": false,
+        "portfolio": {
+          "hold_thresh": 2,
+          "hold_thresh_semantics": "MINIMUM_HOLDING_BEFORE_DROPOUT_NOT_FIXED_EXIT",
+          "method": "TopkDropout",
+          "n_drop": 1,
+          "rebalance": "EVERY_EXCHANGE_SESSION",
+          "risk_degree": "0.8",
+          "topk": 4
+        },
+        "promotion": "NOT_ELIGIBLE",
+        "real_data_paper_readiness": false,
+        "realtime_readiness": false,
+        "research_only": true,
+        "schema_version": "qtrade.factor-strategy-definition.v1",
+        "signal": {
+          "adapter_implemented": false,
+          "dependency_refs": [],
+          "direction": "HIGH_SCORE_LONG_ONLY_NO_SIGN_SELECTION",
+          "kind": "FACTOR_SINGLE",
+          "knowledge_mode": "OBSERVED_SYSTEM",
+          "missing_policy": "EXCLUDE_UNAVAILABLE_NO_FILL"
+        },
+        "source": {
+          "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+          "files": {
+            "scripts/atomic_json.py": "608804942d3ac86fda27560491da83f4a920e37762fbae37db099807c0fc32ad",
+            "scripts/factor_research_contracts.py": "eda933984b93328b1e9c0f1c8a253a6bfc73b4ac896a6cff416b48d26ae62762",
+            "scripts/run_daily_factor_evaluation.py": "291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3",
+            "scripts/run_factor_strategy_registration.py": "750a24ef40086c5c13e11c3ad37eefee16facb24972ee063129704bdea621837",
+            "scripts/run_qlib_worker.py": "3b5222399e2c0bb350459572e09fbab5d77f1bfaaa41f3a4b966df9a8482b814",
+            "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+            "src/qtrade/research/data_versions.py": "2a741757eb0a5578cfb334db8e6ed9293171e61bce9f7f058302f40f020c9398",
+            "src/qtrade/research/experiment.py": "0ff7a8a39d91f14ff8d101ce8316992850613d2698aa55917f84cbc2f4ed8805",
+            "src/qtrade/research/factor_evaluation.py": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+            "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+            "src/qtrade/research/factor_strategy_catalog.py": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad",
+            "src/qtrade/research/factor_strategy_contract.py": "fe23ae88d7abfb374e4c41a28cd5176debe94c728df41ac0825e4dbcff43fbe0",
+            "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+            "src/qtrade/research/metrics.py": "2a4317d786ae63dbebc2ffd22ddbed372fca537f8de749bbd37c82f55692188e",
+            "src/qtrade/research/model_registry.py": "01ddd7dcee47f941599063b9913a752a8fcbbd06381aa99e372f40a1d99d46cb",
+            "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+            "src/qtrade/research/strategy_contract.py": "01317cf0816b9ed8e1576bda31db5d4e9dcfa9838df35f1b461c0eac1834ca6c",
+            "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd",
+            "src/qtrade/research/workflow_queue.py": "3d77ee81eff8912b5dbc32a22c7bc757ae45123b030026a71917f6270772dec2",
+            "src/qtrade/strategies/registry.py": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4"
+          },
+          "revision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "spec": {
+          "evaluation_ref": {
+            "evaluation_id": "factor-eval-3a92beaa186b457e9946fea979701e79",
+            "report_manifest_sha256": "a0b9205f56ea84d259c5b4f25c3667f6d04411ad60a98f62b6ac8ba60f159ace",
+            "specification_sha256": "ecebabeb124394f40908f6ec01994195caf7968a859e1ba1e0f9104776fb1278"
+          },
+          "execution": {
+            "buy_cost_bps": "8",
+            "initial_cash": "1000000",
+            "min_cost": "5",
+            "sell_cost_bps": "13",
+            "slippage_bps": "0"
+          },
+          "factor_ref": {
+            "definition_sha256": "d22901fc937f52bb638d9ad1e532edd112bcb2f366f7107da504d9b3fd84abab",
+            "factor_id": "qtrade.price.reversal5",
+            "factor_version": "a019eb28f1617a03b5b0907631ddfc00912883fc214e2e0fa86dd2cd28d6f055"
+          },
+          "name": "synthetic-factor-registration",
+          "parent": null,
+          "portfolio": {
+            "hold_thresh": 2,
+            "method": "TopkDropout",
+            "n_drop": 1,
+            "risk_degree": "0.8",
+            "topk": 4
+          },
+          "segments": {
+            "test": [
+              "2021-02-01",
+              "2021-02-15"
+            ],
+            "train": [
+              "2021-01-04",
+              "2021-01-14"
+            ],
+            "valid": [
+              "2021-01-18",
+              "2021-01-28"
+            ]
+          },
+          "signal_kind": "FACTOR_SINGLE"
+        },
+        "split_policy": {
+          "diagnostic_reference_is_split_performance": false,
+          "fitting": false,
+          "kind": "DECLARED_RESEARCH_SEGMENTS",
+          "label_purge": "EXACT_CALENDAR_HORIZON_BEFORE_NEXT_SEGMENT",
+          "unseen_test_claim": false
+        },
+        "strategy_id": "factor-24192890882fa9f67ea0c5aace1d976decd6d157c701b7f87f8cdffaeccac34b",
+        "strategy_version": "24192890882fa9f67ea0c5aace1d976decd6d157c701b7f87f8cdffaeccac34b"
+      },
+      {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "evaluation_context": {
+          "calendar_sha256": "85ba9bb9649b19aaad61aaeaacc4f1ab8d8210869acc1bd6ec95fca8f56a9a24",
+          "computed_at": "2026-10-28T12:01:09.755558+00:00",
+          "data_binding": {
+            "actual_end": "2021-02-15",
+            "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+            "data_version_id": "e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+            "dataset_id": "qlib-version-e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+            "dataset_sha256": "bb5fcd81c557777e17f51dfe7052b0760d69ddf64400efe1253f312e19ea8cd6",
+            "evidence_sha256": "501593eb98ea796c32df071eec5847b7882ddd235917d165b6a6466913150464",
+            "external_order_transmission": false,
+            "live_trading_enabled": false,
+            "manifest_sha256": "e74fac1ed8ccdb4236fcf67cbf6d48174c8d37fc642f20426c4c640f5c1b4073",
+            "point_in_time": false,
+            "promotion": "NOT_ELIGIBLE",
+            "ready_event_id": "af768ff24bb075f839b41bb701b098c28b64417e5bb15d060ffc0d722a21ee31",
+            "real_data_paper_readiness": false,
+            "realtime_readiness": false,
+            "schema_version": "qtrade.qlib-research-data-binding.v1",
+            "source_snapshot_sha256": "1ffbd7ef4975ad1f31ee773433f2131279de8317b1cd2c6e6162b4e6badc2456",
+            "start": "2021-01-04",
+            "supported_symbols": 8,
+            "supported_universe_sha256": "19beeaa2646017ffba4d826f9b2666433759adc4b9aecc0693d48294cecfbde9"
+          },
+          "decision_scope": {
+            "count": 5,
+            "decisions_sha256": "fe17117c2344ea1dfe978eb82024c6b0a9937825f61ee514bb814680a618f3bc",
+            "first_session": "2021-02-01",
+            "last_session": "2021-02-05"
+          },
+          "diagnostic_cost_policy": {
+            "executable_return_claim": false,
+            "fees_applied": false,
+            "kind": "GROSS_LABEL_DIAGNOSTIC",
+            "slippage_applied": false
+          },
+          "diagnostic_split_policy": {
+            "fitting": false,
+            "kind": "ONE_PREDECLARED_POSTHOC_DIAGNOSTIC_WINDOW",
+            "parameter_selection": false,
+            "purge": "NOT_APPLICABLE_NO_FIT_OR_SPLITS",
+            "unseen_test_claim": false
+          },
+          "eligibility_ledger_sha256": "66813fafb4173ec3d4fda9056dd44d1a44b21df6434b4c0e379bc19b074937f7",
+          "evaluation_state": "DIAGNOSTICS_COMPUTED",
+          "factor_definitions_sha256": "6e13e496485642d1707b282f667eff7b3801f3f0363b6d9158ea20249a1e521b",
+          "instruments": [
+            "SH600101",
+            "SH600102",
+            "SH600103",
+            "SH600104",
+            "SH600105",
+            "SH600106",
+            "SH600107",
+            "SH600108"
+          ],
+          "knowledge_mode": "OBSERVED_SYSTEM",
+          "label": {
+            "entry_offset": 0,
+            "exit_offset": 1,
+            "formula": "close[t+h]/close[t]-1",
+            "frequency": "day",
+            "horizon_sessions": 1,
+            "kind": "RAW_CLOSE_TO_CLOSE",
+            "maturity_barrier": "2026-10-28T12:01:09.634845+00:00",
+            "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+            "session_maturity": "SHANGHAI_SESSION_15_00_SCHEDULE_NOT_SOURCE_CLOCK",
+            "unknown_exact_availability": "RETROSPECTIVE_SESSION_SCHEDULE_MATURITY_ONLY"
+          },
+          "limitations": [
+            "CURRENT_LIQUIDITY_UNIVERSE_SURVIVORSHIP_AND_SELECTION_BIAS",
+            "POST_HOC_VIEWED_HISTORY_NOT_UNSEEN_FORWARD_EVIDENCE",
+            "HISTORICAL_PIT_NOT_CERTIFIED",
+            "HISTORICAL_MASTER_DELISTED_STATUS_AND_LIMIT_PRICE_COVERAGE_UNCERTIFIED",
+            "VENDOR_ADJUSTMENT_AND_CORPORATE_ACTIONS_NOT_INDEPENDENTLY_CERTIFIED",
+            "CLOSE_LABEL_DIAGNOSTIC_NOT_EXECUTED_PORTFOLIO_NET_RETURN",
+            "NO_PARAMETER_SEARCH_MULTIPLE_TESTING_OR_ALPHA_SIGNIFICANCE_CLAIM"
+          ],
+          "ordered_factor_refs": [
+            {
+              "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+              "factor_id": "qtrade.price.momentum20",
+              "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d"
+            },
+            {
+              "definition_sha256": "d22901fc937f52bb638d9ad1e532edd112bcb2f366f7107da504d9b3fd84abab",
+              "factor_id": "qtrade.price.reversal5",
+              "factor_version": "a019eb28f1617a03b5b0907631ddfc00912883fc214e2e0fa86dd2cd28d6f055"
+            },
+            {
+              "definition_sha256": "1d9b62c2c8faba540feece24ced347315ad2b25fbaae4af7326f070357bcf6e8",
+              "factor_id": "qtrade.price.lowvol20",
+              "factor_version": "e73507fa7d2d443f3b1c30d78648e3ea19d91b9fe870eb1a1a757855c32350c2"
+            },
+            {
+              "definition_sha256": "2ce7fc35bce3411fa93fb23f9635b23894da45e427a7944389ec3c4b2dcf6298",
+              "factor_id": "qtrade.composite.multifactor_equal_rank",
+              "factor_version": "433ad1b15b0ead1a148da5afc5d145063455feb85a10457c391ccc22ca55bfc7"
+            }
+          ],
+          "selected_factor_summary_sha256": "33da8799c7dfb30e033e158587479591140fd7e627cc40dea4dccef1bd1b2373",
+          "selected_valid_ic_days": 5
+        },
+        "evidence_sha256": "cb3ea3ac0ae2fed29ab5012ce832ffa1e976705e992988f3dde30b648bd59915",
+        "execution": {
+          "backtest_implemented": false,
+          "buy_cost_bps": "8",
+          "costs_applied_to_diagnostic": false,
+          "deal_price": "open",
+          "frequency": "day",
+          "impact_cost": "0",
+          "initial_cash": "1000000",
+          "limit_threshold": [
+            "$buy_block",
+            "$sell_block"
+          ],
+          "min_cost": "5",
+          "rules_certified": false,
+          "sell_cost_bps": "13",
+          "slippage_bps": "0",
+          "timing": "PREVIOUS_SIGNAL_NEXT_SESSION_OPEN",
+          "trade_unit": 100,
+          "volume_threshold": [
+            "cum",
+            "$capacity"
+          ]
+        },
+        "external_order_transmission": false,
+        "factor_definition": {
+          "alias": "lowvol20",
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "definition_sha256": "1d9b62c2c8faba540feece24ced347315ad2b25fbaae4af7326f070357bcf6e8",
+          "dependencies": [],
+          "engine": "QTRADE_PRICE_FACTOR_SPEC",
+          "external_order_transmission": false,
+          "factor_id": "qtrade.price.lowvol20",
+          "factor_version": "e73507fa7d2d443f3b1c30d78648e3ea19d91b9fe870eb1a1a757855c32350c2",
+          "formula": "-population_std(simple_close_returns[t-19:t+1],ddof=0)",
+          "frequency": "day",
+          "input_fields": [
+            "close"
+          ],
+          "live_trading_enabled": false,
+          "missing_policy": "REJECT_MISSING_NONFINITE_OR_NONPOSITIVE_CLOSES",
+          "numeric_policy": {
+            "capitals": 1,
+            "clamp": 0,
+            "decimal_precision": 28,
+            "emax": 999999,
+            "emin": -999999,
+            "rounding": "ROUND_HALF_EVEN",
+            "traps": [
+              "DivisionByZero",
+              "InvalidOperation",
+              "Overflow"
+            ],
+            "volatility": "EXISTING_FLOAT_POPULATION_STD_RUNTIME_VERSION_IN_EVALUATION"
+          },
+          "parameters": {
+            "lookback": 20,
+            "name": "low_volatility",
+            "skip": 0
+          },
+          "point_in_time": false,
+          "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+          "promotion": "NOT_ELIGIBLE",
+          "real_data_paper_readiness": false,
+          "realtime_readiness": false,
+          "required_closes": 21,
+          "schema_version": "qtrade.factor-definition.v1",
+          "security_types": [
+            "STOCK",
+            "ETF"
+          ],
+          "session_policy": "EXACT_EXCHANGE_SESSION_GRID_REQUIRED_BY_EVALUATOR",
+          "source": {
+            "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+            "files": {
+              "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+              "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+              "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+              "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+              "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd"
+            },
+            "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "time_policy": {
+            "available_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+            "computed_at": "ACTUAL_COMPUTATION_TIME_NEVER_BACKDATED",
+            "observed_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+            "unknown_clock": "RETROSPECTIVE_ONLY_WITH_EXPLICIT_DISCLOSURE"
+          }
+        },
+        "live_trading_enabled": false,
+        "model_activation": false,
+        "paper_admission": false,
+        "point_in_time": false,
+        "portfolio": {
+          "hold_thresh": 2,
+          "hold_thresh_semantics": "MINIMUM_HOLDING_BEFORE_DROPOUT_NOT_FIXED_EXIT",
+          "method": "TopkDropout",
+          "n_drop": 1,
+          "rebalance": "EVERY_EXCHANGE_SESSION",
+          "risk_degree": "0.8",
+          "topk": 4
+        },
+        "promotion": "NOT_ELIGIBLE",
+        "real_data_paper_readiness": false,
+        "realtime_readiness": false,
+        "research_only": true,
+        "schema_version": "qtrade.factor-strategy-definition.v1",
+        "signal": {
+          "adapter_implemented": false,
+          "dependency_refs": [],
+          "direction": "HIGH_SCORE_LONG_ONLY_NO_SIGN_SELECTION",
+          "kind": "FACTOR_SINGLE",
+          "knowledge_mode": "OBSERVED_SYSTEM",
+          "missing_policy": "EXCLUDE_UNAVAILABLE_NO_FILL"
+        },
+        "source": {
+          "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+          "files": {
+            "scripts/atomic_json.py": "608804942d3ac86fda27560491da83f4a920e37762fbae37db099807c0fc32ad",
+            "scripts/factor_research_contracts.py": "eda933984b93328b1e9c0f1c8a253a6bfc73b4ac896a6cff416b48d26ae62762",
+            "scripts/run_daily_factor_evaluation.py": "291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3",
+            "scripts/run_factor_strategy_registration.py": "750a24ef40086c5c13e11c3ad37eefee16facb24972ee063129704bdea621837",
+            "scripts/run_qlib_worker.py": "3b5222399e2c0bb350459572e09fbab5d77f1bfaaa41f3a4b966df9a8482b814",
+            "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+            "src/qtrade/research/data_versions.py": "2a741757eb0a5578cfb334db8e6ed9293171e61bce9f7f058302f40f020c9398",
+            "src/qtrade/research/experiment.py": "0ff7a8a39d91f14ff8d101ce8316992850613d2698aa55917f84cbc2f4ed8805",
+            "src/qtrade/research/factor_evaluation.py": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+            "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+            "src/qtrade/research/factor_strategy_catalog.py": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad",
+            "src/qtrade/research/factor_strategy_contract.py": "fe23ae88d7abfb374e4c41a28cd5176debe94c728df41ac0825e4dbcff43fbe0",
+            "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+            "src/qtrade/research/metrics.py": "2a4317d786ae63dbebc2ffd22ddbed372fca537f8de749bbd37c82f55692188e",
+            "src/qtrade/research/model_registry.py": "01ddd7dcee47f941599063b9913a752a8fcbbd06381aa99e372f40a1d99d46cb",
+            "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+            "src/qtrade/research/strategy_contract.py": "01317cf0816b9ed8e1576bda31db5d4e9dcfa9838df35f1b461c0eac1834ca6c",
+            "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd",
+            "src/qtrade/research/workflow_queue.py": "3d77ee81eff8912b5dbc32a22c7bc757ae45123b030026a71917f6270772dec2",
+            "src/qtrade/strategies/registry.py": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4"
+          },
+          "revision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "spec": {
+          "evaluation_ref": {
+            "evaluation_id": "factor-eval-3a92beaa186b457e9946fea979701e79",
+            "report_manifest_sha256": "a0b9205f56ea84d259c5b4f25c3667f6d04411ad60a98f62b6ac8ba60f159ace",
+            "specification_sha256": "ecebabeb124394f40908f6ec01994195caf7968a859e1ba1e0f9104776fb1278"
+          },
+          "execution": {
+            "buy_cost_bps": "8",
+            "initial_cash": "1000000",
+            "min_cost": "5",
+            "sell_cost_bps": "13",
+            "slippage_bps": "0"
+          },
+          "factor_ref": {
+            "definition_sha256": "1d9b62c2c8faba540feece24ced347315ad2b25fbaae4af7326f070357bcf6e8",
+            "factor_id": "qtrade.price.lowvol20",
+            "factor_version": "e73507fa7d2d443f3b1c30d78648e3ea19d91b9fe870eb1a1a757855c32350c2"
+          },
+          "name": "synthetic-factor-registration",
+          "parent": null,
+          "portfolio": {
+            "hold_thresh": 2,
+            "method": "TopkDropout",
+            "n_drop": 1,
+            "risk_degree": "0.8",
+            "topk": 4
+          },
+          "segments": {
+            "test": [
+              "2021-02-01",
+              "2021-02-15"
+            ],
+            "train": [
+              "2021-01-04",
+              "2021-01-14"
+            ],
+            "valid": [
+              "2021-01-18",
+              "2021-01-28"
+            ]
+          },
+          "signal_kind": "FACTOR_SINGLE"
+        },
+        "split_policy": {
+          "diagnostic_reference_is_split_performance": false,
+          "fitting": false,
+          "kind": "DECLARED_RESEARCH_SEGMENTS",
+          "label_purge": "EXACT_CALENDAR_HORIZON_BEFORE_NEXT_SEGMENT",
+          "unseen_test_claim": false
+        },
+        "strategy_id": "factor-3273d94e3d2190b10743dff576556c37600fc837ebccea90d6e6956d35195a65",
+        "strategy_version": "3273d94e3d2190b10743dff576556c37600fc837ebccea90d6e6956d35195a65"
+      },
+      {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "evaluation_context": {
+          "calendar_sha256": "85ba9bb9649b19aaad61aaeaacc4f1ab8d8210869acc1bd6ec95fca8f56a9a24",
+          "computed_at": "2026-10-28T12:01:09.755558+00:00",
+          "data_binding": {
+            "actual_end": "2021-02-15",
+            "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+            "data_version_id": "e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+            "dataset_id": "qlib-version-e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+            "dataset_sha256": "bb5fcd81c557777e17f51dfe7052b0760d69ddf64400efe1253f312e19ea8cd6",
+            "evidence_sha256": "501593eb98ea796c32df071eec5847b7882ddd235917d165b6a6466913150464",
+            "external_order_transmission": false,
+            "live_trading_enabled": false,
+            "manifest_sha256": "e74fac1ed8ccdb4236fcf67cbf6d48174c8d37fc642f20426c4c640f5c1b4073",
+            "point_in_time": false,
+            "promotion": "NOT_ELIGIBLE",
+            "ready_event_id": "af768ff24bb075f839b41bb701b098c28b64417e5bb15d060ffc0d722a21ee31",
+            "real_data_paper_readiness": false,
+            "realtime_readiness": false,
+            "schema_version": "qtrade.qlib-research-data-binding.v1",
+            "source_snapshot_sha256": "1ffbd7ef4975ad1f31ee773433f2131279de8317b1cd2c6e6162b4e6badc2456",
+            "start": "2021-01-04",
+            "supported_symbols": 8,
+            "supported_universe_sha256": "19beeaa2646017ffba4d826f9b2666433759adc4b9aecc0693d48294cecfbde9"
+          },
+          "decision_scope": {
+            "count": 5,
+            "decisions_sha256": "fe17117c2344ea1dfe978eb82024c6b0a9937825f61ee514bb814680a618f3bc",
+            "first_session": "2021-02-01",
+            "last_session": "2021-02-05"
+          },
+          "diagnostic_cost_policy": {
+            "executable_return_claim": false,
+            "fees_applied": false,
+            "kind": "GROSS_LABEL_DIAGNOSTIC",
+            "slippage_applied": false
+          },
+          "diagnostic_split_policy": {
+            "fitting": false,
+            "kind": "ONE_PREDECLARED_POSTHOC_DIAGNOSTIC_WINDOW",
+            "parameter_selection": false,
+            "purge": "NOT_APPLICABLE_NO_FIT_OR_SPLITS",
+            "unseen_test_claim": false
+          },
+          "eligibility_ledger_sha256": "66813fafb4173ec3d4fda9056dd44d1a44b21df6434b4c0e379bc19b074937f7",
+          "evaluation_state": "DIAGNOSTICS_COMPUTED",
+          "factor_definitions_sha256": "6e13e496485642d1707b282f667eff7b3801f3f0363b6d9158ea20249a1e521b",
+          "instruments": [
+            "SH600101",
+            "SH600102",
+            "SH600103",
+            "SH600104",
+            "SH600105",
+            "SH600106",
+            "SH600107",
+            "SH600108"
+          ],
+          "knowledge_mode": "OBSERVED_SYSTEM",
+          "label": {
+            "entry_offset": 0,
+            "exit_offset": 1,
+            "formula": "close[t+h]/close[t]-1",
+            "frequency": "day",
+            "horizon_sessions": 1,
+            "kind": "RAW_CLOSE_TO_CLOSE",
+            "maturity_barrier": "2026-10-28T12:01:09.634845+00:00",
+            "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+            "session_maturity": "SHANGHAI_SESSION_15_00_SCHEDULE_NOT_SOURCE_CLOCK",
+            "unknown_exact_availability": "RETROSPECTIVE_SESSION_SCHEDULE_MATURITY_ONLY"
+          },
+          "limitations": [
+            "CURRENT_LIQUIDITY_UNIVERSE_SURVIVORSHIP_AND_SELECTION_BIAS",
+            "POST_HOC_VIEWED_HISTORY_NOT_UNSEEN_FORWARD_EVIDENCE",
+            "HISTORICAL_PIT_NOT_CERTIFIED",
+            "HISTORICAL_MASTER_DELISTED_STATUS_AND_LIMIT_PRICE_COVERAGE_UNCERTIFIED",
+            "VENDOR_ADJUSTMENT_AND_CORPORATE_ACTIONS_NOT_INDEPENDENTLY_CERTIFIED",
+            "CLOSE_LABEL_DIAGNOSTIC_NOT_EXECUTED_PORTFOLIO_NET_RETURN",
+            "NO_PARAMETER_SEARCH_MULTIPLE_TESTING_OR_ALPHA_SIGNIFICANCE_CLAIM"
+          ],
+          "ordered_factor_refs": [
+            {
+              "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+              "factor_id": "qtrade.price.momentum20",
+              "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d"
+            },
+            {
+              "definition_sha256": "d22901fc937f52bb638d9ad1e532edd112bcb2f366f7107da504d9b3fd84abab",
+              "factor_id": "qtrade.price.reversal5",
+              "factor_version": "a019eb28f1617a03b5b0907631ddfc00912883fc214e2e0fa86dd2cd28d6f055"
+            },
+            {
+              "definition_sha256": "1d9b62c2c8faba540feece24ced347315ad2b25fbaae4af7326f070357bcf6e8",
+              "factor_id": "qtrade.price.lowvol20",
+              "factor_version": "e73507fa7d2d443f3b1c30d78648e3ea19d91b9fe870eb1a1a757855c32350c2"
+            },
+            {
+              "definition_sha256": "2ce7fc35bce3411fa93fb23f9635b23894da45e427a7944389ec3c4b2dcf6298",
+              "factor_id": "qtrade.composite.multifactor_equal_rank",
+              "factor_version": "433ad1b15b0ead1a148da5afc5d145063455feb85a10457c391ccc22ca55bfc7"
+            }
+          ],
+          "selected_factor_summary_sha256": "d5d10bd9d8b1fb2bbeab767e04b3016cd649e70ad0ded6e86e5cc036c8960fc5",
+          "selected_valid_ic_days": 5
+        },
+        "evidence_sha256": "e53597b702e9d7bdd3245f355013ecf8e64279c90eb37314e05cddcd3470a27a",
+        "execution": {
+          "backtest_implemented": false,
+          "buy_cost_bps": "8",
+          "costs_applied_to_diagnostic": false,
+          "deal_price": "open",
+          "frequency": "day",
+          "impact_cost": "0",
+          "initial_cash": "1000000",
+          "limit_threshold": [
+            "$buy_block",
+            "$sell_block"
+          ],
+          "min_cost": "5",
+          "rules_certified": false,
+          "sell_cost_bps": "13",
+          "slippage_bps": "0",
+          "timing": "PREVIOUS_SIGNAL_NEXT_SESSION_OPEN",
+          "trade_unit": 100,
+          "volume_threshold": [
+            "cum",
+            "$capacity"
+          ]
+        },
+        "external_order_transmission": false,
+        "factor_definition": {
+          "alias": "multifactor_equal_rank",
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "definition_sha256": "2ce7fc35bce3411fa93fb23f9635b23894da45e427a7944389ec3c4b2dcf6298",
+          "dependencies": [
+            {
+              "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+              "factor_id": "qtrade.price.momentum20",
+              "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d"
+            },
+            {
+              "definition_sha256": "d22901fc937f52bb638d9ad1e532edd112bcb2f366f7107da504d9b3fd84abab",
+              "factor_id": "qtrade.price.reversal5",
+              "factor_version": "a019eb28f1617a03b5b0907631ddfc00912883fc214e2e0fa86dd2cd28d6f055"
+            },
+            {
+              "definition_sha256": "1d9b62c2c8faba540feece24ced347315ad2b25fbaae4af7326f070357bcf6e8",
+              "factor_id": "qtrade.price.lowvol20",
+              "factor_version": "e73507fa7d2d443f3b1c30d78648e3ea19d91b9fe870eb1a1a757855c32350c2"
+            }
+          ],
+          "engine": "QTRADE_EQUAL_RANK",
+          "external_order_transmission": false,
+          "factor_id": "qtrade.composite.multifactor_equal_rank",
+          "factor_version": "433ad1b15b0ead1a148da5afc5d145063455feb85a10457c391ccc22ca55bfc7",
+          "formula": "mean(cross_sectional_average_percentile_rank(each_dependency))",
+          "frequency": "day",
+          "input_fields": [
+            "close"
+          ],
+          "live_trading_enabled": false,
+          "missing_policy": "REJECT_MISSING_NONFINITE_OR_NONPOSITIVE_CLOSES",
+          "numeric_policy": {
+            "capitals": 1,
+            "clamp": 0,
+            "decimal_precision": 28,
+            "emax": 999999,
+            "emin": -999999,
+            "rounding": "ROUND_HALF_EVEN",
+            "traps": [
+              "DivisionByZero",
+              "InvalidOperation",
+              "Overflow"
+            ],
+            "volatility": "EXISTING_FLOAT_POPULATION_STD_RUNTIME_VERSION_IN_EVALUATION"
+          },
+          "parameters": {
+            "singleton_rank": "0.5",
+            "tie_policy": "AVERAGE_RANK",
+            "universe_policy": "SAME_ELIGIBLE_INSTRUMENTS_FOR_ALL_DEPENDENCIES",
+            "weights": [
+              "1/3",
+              "1/3",
+              "1/3"
+            ]
+          },
+          "point_in_time": false,
+          "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+          "promotion": "NOT_ELIGIBLE",
+          "real_data_paper_readiness": false,
+          "realtime_readiness": false,
+          "required_closes": 21,
+          "schema_version": "qtrade.factor-definition.v1",
+          "security_types": [
+            "STOCK",
+            "ETF"
+          ],
+          "session_policy": "EXACT_EXCHANGE_SESSION_GRID_REQUIRED_BY_EVALUATOR",
+          "source": {
+            "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+            "files": {
+              "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+              "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+              "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+              "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+              "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd"
+            },
+            "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "time_policy": {
+            "available_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+            "computed_at": "ACTUAL_COMPUTATION_TIME_NEVER_BACKDATED",
+            "observed_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+            "unknown_clock": "RETROSPECTIVE_ONLY_WITH_EXPLICIT_DISCLOSURE"
+          }
+        },
+        "live_trading_enabled": false,
+        "model_activation": false,
+        "paper_admission": false,
+        "point_in_time": false,
+        "portfolio": {
+          "hold_thresh": 2,
+          "hold_thresh_semantics": "MINIMUM_HOLDING_BEFORE_DROPOUT_NOT_FIXED_EXIT",
+          "method": "TopkDropout",
+          "n_drop": 1,
+          "rebalance": "EVERY_EXCHANGE_SESSION",
+          "risk_degree": "0.8",
+          "topk": 4
+        },
+        "promotion": "NOT_ELIGIBLE",
+        "real_data_paper_readiness": false,
+        "realtime_readiness": false,
+        "research_only": true,
+        "schema_version": "qtrade.factor-strategy-definition.v1",
+        "signal": {
+          "adapter_implemented": false,
+          "dependency_refs": [
+            {
+              "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+              "factor_id": "qtrade.price.momentum20",
+              "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d"
+            },
+            {
+              "definition_sha256": "d22901fc937f52bb638d9ad1e532edd112bcb2f366f7107da504d9b3fd84abab",
+              "factor_id": "qtrade.price.reversal5",
+              "factor_version": "a019eb28f1617a03b5b0907631ddfc00912883fc214e2e0fa86dd2cd28d6f055"
+            },
+            {
+              "definition_sha256": "1d9b62c2c8faba540feece24ced347315ad2b25fbaae4af7326f070357bcf6e8",
+              "factor_id": "qtrade.price.lowvol20",
+              "factor_version": "e73507fa7d2d443f3b1c30d78648e3ea19d91b9fe870eb1a1a757855c32350c2"
+            }
+          ],
+          "direction": "HIGH_SCORE_LONG_ONLY_NO_SIGN_SELECTION",
+          "kind": "FACTOR_COMPOSITE",
+          "knowledge_mode": "OBSERVED_SYSTEM",
+          "missing_policy": "EXCLUDE_UNAVAILABLE_NO_FILL"
+        },
+        "source": {
+          "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+          "files": {
+            "scripts/atomic_json.py": "608804942d3ac86fda27560491da83f4a920e37762fbae37db099807c0fc32ad",
+            "scripts/factor_research_contracts.py": "eda933984b93328b1e9c0f1c8a253a6bfc73b4ac896a6cff416b48d26ae62762",
+            "scripts/run_daily_factor_evaluation.py": "291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3",
+            "scripts/run_factor_strategy_registration.py": "750a24ef40086c5c13e11c3ad37eefee16facb24972ee063129704bdea621837",
+            "scripts/run_qlib_worker.py": "3b5222399e2c0bb350459572e09fbab5d77f1bfaaa41f3a4b966df9a8482b814",
+            "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+            "src/qtrade/research/data_versions.py": "2a741757eb0a5578cfb334db8e6ed9293171e61bce9f7f058302f40f020c9398",
+            "src/qtrade/research/experiment.py": "0ff7a8a39d91f14ff8d101ce8316992850613d2698aa55917f84cbc2f4ed8805",
+            "src/qtrade/research/factor_evaluation.py": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+            "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+            "src/qtrade/research/factor_strategy_catalog.py": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad",
+            "src/qtrade/research/factor_strategy_contract.py": "fe23ae88d7abfb374e4c41a28cd5176debe94c728df41ac0825e4dbcff43fbe0",
+            "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+            "src/qtrade/research/metrics.py": "2a4317d786ae63dbebc2ffd22ddbed372fca537f8de749bbd37c82f55692188e",
+            "src/qtrade/research/model_registry.py": "01ddd7dcee47f941599063b9913a752a8fcbbd06381aa99e372f40a1d99d46cb",
+            "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+            "src/qtrade/research/strategy_contract.py": "01317cf0816b9ed8e1576bda31db5d4e9dcfa9838df35f1b461c0eac1834ca6c",
+            "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd",
+            "src/qtrade/research/workflow_queue.py": "3d77ee81eff8912b5dbc32a22c7bc757ae45123b030026a71917f6270772dec2",
+            "src/qtrade/strategies/registry.py": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4"
+          },
+          "revision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "spec": {
+          "evaluation_ref": {
+            "evaluation_id": "factor-eval-3a92beaa186b457e9946fea979701e79",
+            "report_manifest_sha256": "a0b9205f56ea84d259c5b4f25c3667f6d04411ad60a98f62b6ac8ba60f159ace",
+            "specification_sha256": "ecebabeb124394f40908f6ec01994195caf7968a859e1ba1e0f9104776fb1278"
+          },
+          "execution": {
+            "buy_cost_bps": "8",
+            "initial_cash": "1000000",
+            "min_cost": "5",
+            "sell_cost_bps": "13",
+            "slippage_bps": "0"
+          },
+          "factor_ref": {
+            "definition_sha256": "2ce7fc35bce3411fa93fb23f9635b23894da45e427a7944389ec3c4b2dcf6298",
+            "factor_id": "qtrade.composite.multifactor_equal_rank",
+            "factor_version": "433ad1b15b0ead1a148da5afc5d145063455feb85a10457c391ccc22ca55bfc7"
+          },
+          "name": "synthetic-factor-registration",
+          "parent": null,
+          "portfolio": {
+            "hold_thresh": 2,
+            "method": "TopkDropout",
+            "n_drop": 1,
+            "risk_degree": "0.8",
+            "topk": 4
+          },
+          "segments": {
+            "test": [
+              "2021-02-01",
+              "2021-02-15"
+            ],
+            "train": [
+              "2021-01-04",
+              "2021-01-14"
+            ],
+            "valid": [
+              "2021-01-18",
+              "2021-01-28"
+            ]
+          },
+          "signal_kind": "FACTOR_COMPOSITE"
+        },
+        "split_policy": {
+          "diagnostic_reference_is_split_performance": false,
+          "fitting": false,
+          "kind": "DECLARED_RESEARCH_SEGMENTS",
+          "label_purge": "EXACT_CALENDAR_HORIZON_BEFORE_NEXT_SEGMENT",
+          "unseen_test_claim": false
+        },
+        "strategy_id": "factor-e6c902a0382e8f9d5bc3239b8576e92998089fb7495e758714e3f2e4169d05d8",
+        "strategy_version": "e6c902a0382e8f9d5bc3239b8576e92998089fb7495e758714e3f2e4169d05d8"
+      }
+    ],
+    "parents": [],
+    "limitations": [
+      "CURRENT_LIQUIDITY_UNIVERSE_SURVIVORSHIP_AND_SELECTION_BIAS",
+      "POST_HOC_VIEWED_HISTORY_NOT_UNSEEN_FORWARD_EVIDENCE",
+      "HISTORICAL_PIT_NOT_CERTIFIED",
+      "HISTORICAL_MASTER_DELISTED_STATUS_AND_LIMIT_PRICE_COVERAGE_UNCERTIFIED",
+      "VENDOR_ADJUSTMENT_AND_CORPORATE_ACTIONS_NOT_INDEPENDENTLY_CERTIFIED",
+      "CLOSE_LABEL_DIAGNOSTIC_NOT_EXECUTED_PORTFOLIO_NET_RETURN",
+      "NO_PARAMETER_SEARCH_MULTIPLE_TESTING_OR_ALPHA_SIGNIFICANCE_CLAIM"
+    ],
+    "catalog_sha256": "0730f4f44bda725cce98ec1e7a8fb22ddf84a93c1b47bbb4b37ef6c095480956",
+    "evidence_sha256": "d7771265604ffae3707c50f3885094c65aeded5ddb66e486b560456e054ac934"
+  },
+  "spec": {
+    "name": "synthetic-factor-registration",
+    "factor_ref": {
+      "factor_id": "qtrade.price.momentum20",
+      "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d",
+      "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0"
+    },
+    "evaluation_ref": {
+      "evaluation_id": "factor-eval-3a92beaa186b457e9946fea979701e79",
+      "specification_sha256": "ecebabeb124394f40908f6ec01994195caf7968a859e1ba1e0f9104776fb1278",
+      "report_manifest_sha256": "a0b9205f56ea84d259c5b4f25c3667f6d04411ad60a98f62b6ac8ba60f159ace"
+    },
+    "signal_kind": "FACTOR_SINGLE",
+    "segments": {
+      "train": [
+        "2021-01-04",
+        "2021-01-14"
+      ],
+      "valid": [
+        "2021-01-18",
+        "2021-01-28"
+      ],
+      "test": [
+        "2021-02-01",
+        "2021-02-15"
+      ]
+    },
+    "portfolio": {
+      "method": "TopkDropout",
+      "topk": 4,
+      "n_drop": 1,
+      "hold_thresh": 2,
+      "risk_degree": "0.8"
+    },
+    "execution": {
+      "buy_cost_bps": "8",
+      "sell_cost_bps": "13",
+      "min_cost": "5",
+      "initial_cash": "1000000",
+      "slippage_bps": "0"
+    },
+    "parent": null
+  },
+  "definition": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "evaluation_context": {
+      "calendar_sha256": "85ba9bb9649b19aaad61aaeaacc4f1ab8d8210869acc1bd6ec95fca8f56a9a24",
+      "computed_at": "2026-10-28T12:01:09.755558+00:00",
+      "data_binding": {
+        "actual_end": "2021-02-15",
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "data_version_id": "e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+        "dataset_id": "qlib-version-e19a68626cde3fa5701d37743cdfc88fc8ada66eb66c8f0e00a9c4cb608e235c",
+        "dataset_sha256": "bb5fcd81c557777e17f51dfe7052b0760d69ddf64400efe1253f312e19ea8cd6",
+        "evidence_sha256": "501593eb98ea796c32df071eec5847b7882ddd235917d165b6a6466913150464",
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "manifest_sha256": "e74fac1ed8ccdb4236fcf67cbf6d48174c8d37fc642f20426c4c640f5c1b4073",
+        "point_in_time": false,
+        "promotion": "NOT_ELIGIBLE",
+        "ready_event_id": "af768ff24bb075f839b41bb701b098c28b64417e5bb15d060ffc0d722a21ee31",
+        "real_data_paper_readiness": false,
+        "realtime_readiness": false,
+        "schema_version": "qtrade.qlib-research-data-binding.v1",
+        "source_snapshot_sha256": "1ffbd7ef4975ad1f31ee773433f2131279de8317b1cd2c6e6162b4e6badc2456",
+        "start": "2021-01-04",
+        "supported_symbols": 8,
+        "supported_universe_sha256": "19beeaa2646017ffba4d826f9b2666433759adc4b9aecc0693d48294cecfbde9"
+      },
+      "decision_scope": {
+        "count": 5,
+        "decisions_sha256": "fe17117c2344ea1dfe978eb82024c6b0a9937825f61ee514bb814680a618f3bc",
+        "first_session": "2021-02-01",
+        "last_session": "2021-02-05"
+      },
+      "diagnostic_cost_policy": {
+        "executable_return_claim": false,
+        "fees_applied": false,
+        "kind": "GROSS_LABEL_DIAGNOSTIC",
+        "slippage_applied": false
+      },
+      "diagnostic_split_policy": {
+        "fitting": false,
+        "kind": "ONE_PREDECLARED_POSTHOC_DIAGNOSTIC_WINDOW",
+        "parameter_selection": false,
+        "purge": "NOT_APPLICABLE_NO_FIT_OR_SPLITS",
+        "unseen_test_claim": false
+      },
+      "eligibility_ledger_sha256": "66813fafb4173ec3d4fda9056dd44d1a44b21df6434b4c0e379bc19b074937f7",
+      "evaluation_state": "DIAGNOSTICS_COMPUTED",
+      "factor_definitions_sha256": "6e13e496485642d1707b282f667eff7b3801f3f0363b6d9158ea20249a1e521b",
+      "instruments": [
+        "SH600101",
+        "SH600102",
+        "SH600103",
+        "SH600104",
+        "SH600105",
+        "SH600106",
+        "SH600107",
+        "SH600108"
+      ],
+      "knowledge_mode": "OBSERVED_SYSTEM",
+      "label": {
+        "entry_offset": 0,
+        "exit_offset": 1,
+        "formula": "close[t+h]/close[t]-1",
+        "frequency": "day",
+        "horizon_sessions": 1,
+        "kind": "RAW_CLOSE_TO_CLOSE",
+        "maturity_barrier": "2026-10-28T12:01:09.634845+00:00",
+        "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+        "session_maturity": "SHANGHAI_SESSION_15_00_SCHEDULE_NOT_SOURCE_CLOCK",
+        "unknown_exact_availability": "RETROSPECTIVE_SESSION_SCHEDULE_MATURITY_ONLY"
+      },
+      "limitations": [
+        "CURRENT_LIQUIDITY_UNIVERSE_SURVIVORSHIP_AND_SELECTION_BIAS",
+        "POST_HOC_VIEWED_HISTORY_NOT_UNSEEN_FORWARD_EVIDENCE",
+        "HISTORICAL_PIT_NOT_CERTIFIED",
+        "HISTORICAL_MASTER_DELISTED_STATUS_AND_LIMIT_PRICE_COVERAGE_UNCERTIFIED",
+        "VENDOR_ADJUSTMENT_AND_CORPORATE_ACTIONS_NOT_INDEPENDENTLY_CERTIFIED",
+        "CLOSE_LABEL_DIAGNOSTIC_NOT_EXECUTED_PORTFOLIO_NET_RETURN",
+        "NO_PARAMETER_SEARCH_MULTIPLE_TESTING_OR_ALPHA_SIGNIFICANCE_CLAIM"
+      ],
+      "ordered_factor_refs": [
+        {
+          "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+          "factor_id": "qtrade.price.momentum20",
+          "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d"
+        },
+        {
+          "definition_sha256": "d22901fc937f52bb638d9ad1e532edd112bcb2f366f7107da504d9b3fd84abab",
+          "factor_id": "qtrade.price.reversal5",
+          "factor_version": "a019eb28f1617a03b5b0907631ddfc00912883fc214e2e0fa86dd2cd28d6f055"
+        },
+        {
+          "definition_sha256": "1d9b62c2c8faba540feece24ced347315ad2b25fbaae4af7326f070357bcf6e8",
+          "factor_id": "qtrade.price.lowvol20",
+          "factor_version": "e73507fa7d2d443f3b1c30d78648e3ea19d91b9fe870eb1a1a757855c32350c2"
+        },
+        {
+          "definition_sha256": "2ce7fc35bce3411fa93fb23f9635b23894da45e427a7944389ec3c4b2dcf6298",
+          "factor_id": "qtrade.composite.multifactor_equal_rank",
+          "factor_version": "433ad1b15b0ead1a148da5afc5d145063455feb85a10457c391ccc22ca55bfc7"
+        }
+      ],
+      "selected_factor_summary_sha256": "9d0cae4b0e942f67edbb08945fb97266c6eb9ad84aa9102d4474caf66bbebefe",
+      "selected_valid_ic_days": 5
+    },
+    "evidence_sha256": "c9e1eb88e0ca62699bca078d93258377f3369b5258d8d81129f659885f189081",
+    "execution": {
+      "backtest_implemented": false,
+      "buy_cost_bps": "8",
+      "costs_applied_to_diagnostic": false,
+      "deal_price": "open",
+      "frequency": "day",
+      "impact_cost": "0",
+      "initial_cash": "1000000",
+      "limit_threshold": [
+        "$buy_block",
+        "$sell_block"
+      ],
+      "min_cost": "5",
+      "rules_certified": false,
+      "sell_cost_bps": "13",
+      "slippage_bps": "0",
+      "timing": "PREVIOUS_SIGNAL_NEXT_SESSION_OPEN",
+      "trade_unit": 100,
+      "volume_threshold": [
+        "cum",
+        "$capacity"
+      ]
+    },
+    "external_order_transmission": false,
+    "factor_definition": {
+      "alias": "momentum20",
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+      "dependencies": [],
+      "engine": "QTRADE_PRICE_FACTOR_SPEC",
+      "external_order_transmission": false,
+      "factor_id": "qtrade.price.momentum20",
+      "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d",
+      "formula": "close[t]/close[t-20]-1",
+      "frequency": "day",
+      "input_fields": [
+        "close"
+      ],
+      "live_trading_enabled": false,
+      "missing_policy": "REJECT_MISSING_NONFINITE_OR_NONPOSITIVE_CLOSES",
+      "numeric_policy": {
+        "capitals": 1,
+        "clamp": 0,
+        "decimal_precision": 28,
+        "emax": 999999,
+        "emin": -999999,
+        "rounding": "ROUND_HALF_EVEN",
+        "traps": [
+          "DivisionByZero",
+          "InvalidOperation",
+          "Overflow"
+        ],
+        "volatility": "EXISTING_FLOAT_POPULATION_STD_RUNTIME_VERSION_IN_EVALUATION"
+      },
+      "parameters": {
+        "lookback": 20,
+        "name": "momentum",
+        "skip": 0
+      },
+      "point_in_time": false,
+      "price_basis": "QLIB_NORMALIZED_ADJUSTMENT_UNCERTIFIED",
+      "promotion": "NOT_ELIGIBLE",
+      "real_data_paper_readiness": false,
+      "realtime_readiness": false,
+      "required_closes": 21,
+      "schema_version": "qtrade.factor-definition.v1",
+      "security_types": [
+        "STOCK",
+        "ETF"
+      ],
+      "session_policy": "EXACT_EXCHANGE_SESSION_GRID_REQUIRED_BY_EVALUATOR",
+      "source": {
+        "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+        "files": {
+          "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+          "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+          "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+          "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+          "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd"
+        },
+        "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "time_policy": {
+        "available_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+        "computed_at": "ACTUAL_COMPUTATION_TIME_NEVER_BACKDATED",
+        "observed_at": "ALL_REQUIRED_INPUTS_NO_LATER_THAN_DECISION",
+        "unknown_clock": "RETROSPECTIVE_ONLY_WITH_EXPLICIT_DISCLOSURE"
+      }
+    },
+    "live_trading_enabled": false,
+    "model_activation": false,
+    "paper_admission": false,
+    "point_in_time": false,
+    "portfolio": {
+      "hold_thresh": 2,
+      "hold_thresh_semantics": "MINIMUM_HOLDING_BEFORE_DROPOUT_NOT_FIXED_EXIT",
+      "method": "TopkDropout",
+      "n_drop": 1,
+      "rebalance": "EVERY_EXCHANGE_SESSION",
+      "risk_degree": "0.8",
+      "topk": 4
+    },
+    "promotion": "NOT_ELIGIBLE",
+    "real_data_paper_readiness": false,
+    "realtime_readiness": false,
+    "research_only": true,
+    "schema_version": "qtrade.factor-strategy-definition.v1",
+    "signal": {
+      "adapter_implemented": false,
+      "dependency_refs": [],
+      "direction": "HIGH_SCORE_LONG_ONLY_NO_SIGN_SELECTION",
+      "kind": "FACTOR_SINGLE",
+      "knowledge_mode": "OBSERVED_SYSTEM",
+      "missing_policy": "EXCLUDE_UNAVAILABLE_NO_FILL"
+    },
+    "source": {
+      "binding": "EXACT_FILE_BYTES_REVISION_LABEL_NOT_GIT_CERTIFICATION",
+      "files": {
+        "scripts/atomic_json.py": "608804942d3ac86fda27560491da83f4a920e37762fbae37db099807c0fc32ad",
+        "scripts/factor_research_contracts.py": "eda933984b93328b1e9c0f1c8a253a6bfc73b4ac896a6cff416b48d26ae62762",
+        "scripts/run_daily_factor_evaluation.py": "291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3",
+        "scripts/run_factor_strategy_registration.py": "750a24ef40086c5c13e11c3ad37eefee16facb24972ee063129704bdea621837",
+        "scripts/run_qlib_worker.py": "3b5222399e2c0bb350459572e09fbab5d77f1bfaaa41f3a4b966df9a8482b814",
+        "src/qtrade/monitoring/data_freshness.py": "d4d53a0296181a882da419ba867572651bf2ca121f5ab869c6219772b72ff8cf",
+        "src/qtrade/research/data_versions.py": "2a741757eb0a5578cfb334db8e6ed9293171e61bce9f7f058302f40f020c9398",
+        "src/qtrade/research/experiment.py": "0ff7a8a39d91f14ff8d101ce8316992850613d2698aa55917f84cbc2f4ed8805",
+        "src/qtrade/research/factor_evaluation.py": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+        "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+        "src/qtrade/research/factor_strategy_catalog.py": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad",
+        "src/qtrade/research/factor_strategy_contract.py": "fe23ae88d7abfb374e4c41a28cd5176debe94c728df41ac0825e4dbcff43fbe0",
+        "src/qtrade/research/factors.py": "3b49dfc7ab3259135703f4fde68d8f8fcf8d47504fdbde111dd044757e4de50c",
+        "src/qtrade/research/metrics.py": "2a4317d786ae63dbebc2ffd22ddbed372fca537f8de749bbd37c82f55692188e",
+        "src/qtrade/research/model_registry.py": "01ddd7dcee47f941599063b9913a752a8fcbbd06381aa99e372f40a1d99d46cb",
+        "src/qtrade/research/signal_baselines.py": "ea4d0370148060cec05c3d0e211626cc6b4576ee18abb20abfa41a276c15f138",
+        "src/qtrade/research/strategy_contract.py": "01317cf0816b9ed8e1576bda31db5d4e9dcfa9838df35f1b461c0eac1834ca6c",
+        "src/qtrade/research/workflow.py": "66b2cd1515ea222f4cc3440f9ee89a4c6fa3aa339859d72acec7040a87d7e8bd",
+        "src/qtrade/research/workflow_queue.py": "3d77ee81eff8912b5dbc32a22c7bc757ae45123b030026a71917f6270772dec2",
+        "src/qtrade/strategies/registry.py": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4"
+      },
+      "revision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    "spec": {
+      "evaluation_ref": {
+        "evaluation_id": "factor-eval-3a92beaa186b457e9946fea979701e79",
+        "report_manifest_sha256": "a0b9205f56ea84d259c5b4f25c3667f6d04411ad60a98f62b6ac8ba60f159ace",
+        "specification_sha256": "ecebabeb124394f40908f6ec01994195caf7968a859e1ba1e0f9104776fb1278"
+      },
+      "execution": {
+        "buy_cost_bps": "8",
+        "initial_cash": "1000000",
+        "min_cost": "5",
+        "sell_cost_bps": "13",
+        "slippage_bps": "0"
+      },
+      "factor_ref": {
+        "definition_sha256": "c75070c43aaa5b9d2b346575619158fce789f798bf83ede8bc0eaaca44beace0",
+        "factor_id": "qtrade.price.momentum20",
+        "factor_version": "994b53a2be3f51ed53e9a4670f6283b43ac66d84d4a632d8f7132824ad63720d"
+      },
+      "name": "synthetic-factor-registration",
+      "parent": null,
+      "portfolio": {
+        "hold_thresh": 2,
+        "method": "TopkDropout",
+        "n_drop": 1,
+        "risk_degree": "0.8",
+        "topk": 4
+      },
+      "segments": {
+        "test": [
+          "2021-02-01",
+          "2021-02-15"
+        ],
+        "train": [
+          "2021-01-04",
+          "2021-01-14"
+        ],
+        "valid": [
+          "2021-01-18",
+          "2021-01-28"
+        ]
+      },
+      "signal_kind": "FACTOR_SINGLE"
+    },
+    "split_policy": {
+      "diagnostic_reference_is_split_performance": false,
+      "fitting": false,
+      "kind": "DECLARED_RESEARCH_SEGMENTS",
+      "label_purge": "EXACT_CALENDAR_HORIZON_BEFORE_NEXT_SEGMENT",
+      "unseen_test_claim": false
+    },
+    "strategy_id": "factor-43aca936cfdf733a63954204febe817d70ae15e77ab7ecd54b54c232f63b0f57",
+    "strategy_version": "43aca936cfdf733a63954204febe817d70ae15e77ab7ecd54b54c232f63b0f57"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "browser_rendered_verified": false,
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "evidence_sha256": "25e0164f08cb480c7d553e255909cda4ee00121c301d992af620e6eba2e9595e",
+  "external_order_transmission": false,
+  "finished_at": "2026-10-27T17:18:59.288415+00:00",
+  "labels_present": {
+    "保持停止，不自动恢复": true,
+    "全部账本保留": true,
+    "退休模型账本已停止": true
+  },
+  "live_trading_enabled": false,
+  "point_in_time": false,
+  "production_revision": "ae33a7c8c27ea721eb3be1e4430b562a44b67f91",
+  "promotion": "NOT_ELIGIBLE",
+  "raw_public_asset_directory": "E:\\QTrade-temp\\cluster-evidence\\handover-asset-delivery-20261027T171855Z",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "records": [
+    {
+      "bytes": 239,
+      "file": "deployment-before.json",
+      "headers": {
+        "Cache-Control": "public, max-age=15",
+        "Content-Length": "239",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:16:08 GMT",
+        "X-Vercel-Id": "sfo1::iad1::kxfhp-1793121537754-490fdc492992"
+      },
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:18:56.247130+00:00",
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72",
+      "status": 200,
+      "url": "https://q-trade-temp.vercel.app/api/deployment"
+    },
+    {
+      "bytes": 543,
+      "file": "index.html",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Content-Length": "543",
+        "Content-Type": "text/html; charset=utf-8",
+        "Date": "Tue, 27 Oct 2026 17:18:58 GMT",
+        "X-Vercel-Id": "sfo1::hpcf4-1793121538273-4539fe3438b8"
+      },
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:18:56.727594+00:00",
+      "sha256": "9808ed19e4510c0118c3f186d1a12b663e7545a612bf42397320c710227b52c1",
+      "status": 200,
+      "url": "https://q-trade-temp.vercel.app/"
+    },
+    {
+      "bytes": 868541,
+      "file": "entry.js",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Content-Length": "868541",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Date": "Tue, 27 Oct 2026 17:18:58 GMT",
+        "X-Vercel-Id": "sfo1::gmvnh-1793121538745-a5a4d4905f22"
+      },
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:18:58.226402+00:00",
+      "sha256": "a12a3cae4c2219284f14169f83d03f69fbe8c5cbae90c364c302aa25f998fb8e",
+      "status": 200,
+      "url": "https://q-trade-temp.vercel.app/assets/index-BjzBjdrS.js"
+    },
+    {
+      "bytes": 12275,
+      "file": "forward-page.js",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Content-Length": "12275",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Date": "Tue, 27 Oct 2026 17:19:00 GMT",
+        "X-Vercel-Id": "sfo1::r2frc-1793121540239-ab04d092b51f"
+      },
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:18:58.806240+00:00",
+      "sha256": "2ea01f037d8bd1cb47cc1d19da4aa9649602f0f7be9339a6e90d0830789fa239",
+      "status": 200,
+      "url": "https://q-trade-temp.vercel.app/assets/ForwardResearchPage-BgH6AxXk.js"
+    },
+    {
+      "bytes": 239,
+      "file": "deployment-after.json",
+      "headers": {
+        "Cache-Control": "public, max-age=15",
+        "Content-Length": "239",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:16:08 GMT",
+        "X-Vercel-Id": "sfo1::iad1::6jpfc-1793121540832-2f5a7543588b"
+      },
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:18:59.288386+00:00",
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72",
+      "status": 200,
+      "url": "https://q-trade-temp.vercel.app/api/deployment"
+    }
+  ],
+  "started_at": "2026-10-27T17:18:55.719562+00:00",
+  "state": "VERIFIED_DEPLOYED_ASSET_CONTENT_ONLY",
+  "whole_step1_accepted": false
+}

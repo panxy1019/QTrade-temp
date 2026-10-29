@@ -1,0 +1,74 @@
+{
+  "actions": [
+    {
+      "expected_manager_pid": 512541,
+      "kind": "ISOLATED_MANAGER_RPC_SHUTDOWN",
+      "method": "supervisor.shutdown",
+      "unix_socket": "/root/qtrade-local/operator-evidence/svsem-20261028T051219Z-17524d/normal/rpc.sock"
+    },
+    {
+      "kind": "RECORDED_FIXTURE_WORKER_TERM",
+      "pid": 512556,
+      "production_fallback": false,
+      "start_ticks": "1019637684"
+    }
+  ],
+  "fixture_after": {
+    "512541": null,
+    "512553": null,
+    "512555": null,
+    "512556": null
+  },
+  "fixture_before": {
+    "512541": {
+      "cmdline_sha256": "f32b04c1d3d1b1bb3f4eccc04b6cd344acea441d214e2666cb1e41ebdd627e25",
+      "cwd_sha256": "6fad7d969624d273dc02c216111fe89a9867359bbd24e42858c31791f3052c9b",
+      "pid": 512541,
+      "start_ticks": "1019637672",
+      "state": "S"
+    },
+    "512553": {
+      "cmdline_sha256": "10257fc4164e11bacfaf56c85692619f9c76e1d1326367ee7fc290325a0a7825",
+      "cwd_sha256": "6fad7d969624d273dc02c216111fe89a9867359bbd24e42858c31791f3052c9b",
+      "pid": 512553,
+      "start_ticks": "1019637680",
+      "state": "S"
+    },
+    "512555": {
+      "cmdline_sha256": "91a634aa8edfa30dd29b0df733e660e4ba45d109f56ba11ca00d876bf74971b3",
+      "cwd_sha256": "6fad7d969624d273dc02c216111fe89a9867359bbd24e42858c31791f3052c9b",
+      "pid": 512555,
+      "start_ticks": "1019637680",
+      "state": "S"
+    },
+    "512556": {
+      "cmdline_sha256": "4b21eded1b7b439e550faf5d2dedbea111766dfb238618f9cca4d6459d3dba90",
+      "cwd_sha256": "6fad7d969624d273dc02c216111fe89a9867359bbd24e42858c31791f3052c9b",
+      "pid": 512556,
+      "start_ticks": "1019637684",
+      "state": "S"
+    }
+  },
+  "production_after": {
+    "cmdline_sha256": "e05e695af1833e617bc89bb70c61644abb5f49b6a01c1293f963855f3dc8c09c",
+    "cwd_sha256": "98a1c5389fd2f147aee156887f2e27435ba68f1d5fe115491d64c822107413a7",
+    "pid": 294214,
+    "start_ticks": "1012537254",
+    "state": "R"
+  },
+  "production_before": {
+    "cmdline_sha256": "e05e695af1833e617bc89bb70c61644abb5f49b6a01c1293f963855f3dc8c09c",
+    "cwd_sha256": "98a1c5389fd2f147aee156887f2e27435ba68f1d5fe115491d64c822107413a7",
+    "pid": 294214,
+    "start_ticks": "1012537254",
+    "state": "R"
+  },
+  "production_identity_unchanged": true,
+  "production_mutations": false,
+  "redaction": "OMITS_FULL_PRODUCTION_ARGV_AND_CWD_NO_CONFIG_OR_ENV_CAPTURE",
+  "remaining": [],
+  "scope": "RECORDED_FAILED_FIXTURE_CLEANUP_ONLY",
+  "shutdown_result": true,
+  "source_original_receipt_sha256": "6674e44e4e9dccf94b67df26892d6b956791e13d254f36316d51a10091396789",
+  "state": "CLEANUP_PASS"
+}

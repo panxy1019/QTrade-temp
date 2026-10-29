@@ -1,0 +1,47 @@
+{
+  "scope": "INDEPENDENT_ORIGINAL_CURRENT_OUTPUT_TRUTH_NOT_EXPORT_PERFORMANCE",
+  "files": [
+    {
+      "file": "execution.json",
+      "sha256": "de62f333e5b39167604f6a60f2eb9827320e28772917a983fa125ab20334cbbe",
+      "bytes": 444
+    },
+    {
+      "file": "metadata-export-operator.py",
+      "sha256": "2632f452c8a6bec492333851bcadd23c6c14feb1011aac0a1ff006ea60f0bf9d",
+      "bytes": 2002
+    },
+    {
+      "file": "metadata-export-result.json",
+      "sha256": "bdb0f5b0bfaf74a10043145e226f4e7e765f41fa1bb3b274e18ba322505bf99e",
+      "bytes": 415
+    },
+    {
+      "file": "oracle-report.json",
+      "sha256": "19535cc8b4445bdd8f77950a003a2c43b0c11d52e68a38d04d6282364b07581b",
+      "bytes": 3566
+    },
+    {
+      "file": "oracle.py",
+      "sha256": "004ae036cd1af340cbc2eb35c1396838cfeebc833fbec69ceafdcba114c7c123",
+      "bytes": 21365
+    },
+    {
+      "file": "selected-chunk-metadata.json.gz",
+      "sha256": "9707c2e2c8e48012f72e78b97b1f0a2472c4ba2b7c02ce1a99246168693df881",
+      "bytes": 387273,
+      "original_sha256": "a2404179813048a2398b20381128291b23b9d2faa09d595fde4fd08ca96205f1",
+      "original_bytes": 5520804
+    },
+    {
+      "file": "stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "stdout.log",
+      "sha256": "e1bfbab0486cd97ae98b6cfe5cf3ccc5d060b8df46a53fd8da8dffbd4ba7ef1a",
+      "bytes": 3847
+    }
+  ]
+}

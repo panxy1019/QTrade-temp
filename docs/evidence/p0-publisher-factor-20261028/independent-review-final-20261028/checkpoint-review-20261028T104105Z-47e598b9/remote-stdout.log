@@ -1,0 +1,182 @@
+{
+  "returncode": 1,
+  "elapsed_seconds": 3.54834296181798,
+  "command": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest",
+    "tests/test_unified_market_checkpoint_independent.py",
+    "-k",
+    "public_head_directory_fsync_uncertainty or retry_fsyncs_visible_head or recovery_directory_fsync",
+    "--junitxml=/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/public-uncertainty-red.xml"
+  ],
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jun 18 2026, 21:28:09) [GCC 14.3.0]",
+  "overlays": {
+    "scripts/unified_market_checkpoint.py": {
+      "sha256": "0f2c512f7abf7cbc99d34def6edfa7dfeaa73e564031a36a5b33653759a2f485",
+      "bytes": 6673
+    },
+    "scripts/publish_unified_market.py": {
+      "sha256": "374d1467590cb56140ea6bcac0dfe8269cf9f0d805e31beeb8f00be6bca3a61d",
+      "bytes": 65327
+    },
+    "src/qtrade/research/market_validation_receipts.py": {
+      "sha256": "d95d0b66fd7b2c67f85e30abc2deed805fd2e3b45d4c2ab958bd11c7845d151c",
+      "bytes": 21242
+    },
+    "tests/test_unified_market_checkpoints.py": {
+      "sha256": "0488a5edbd64f882171036ea3db1292d6e1a5ee581aad2165282c86377bd535d",
+      "bytes": 8220
+    },
+    "tests/test_unified_market_checkpoint_independent.py": {
+      "sha256": "b47f41f5c406021dd5731c468ec6119fcdf32fd3beecddda5116401d9a2d70c1",
+      "bytes": 21343
+    }
+  }
+}
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_______ test_public_head_directory_fsync_uncertainty_stops_git_transport _______
+
+source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_public_he..., <scripts.unified_store.UnifiedBatchStore object at 0x7fb1c86f81a0>, <function source.<locals>.add at 0x7fb276f75590>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb1c88a2fd0>
+
+    def test_public_head_directory_fsync_uncertainty_stops_git_transport(source, monkeypatch):
+        base, database, _, _, _, add = source
+        add()
+        transport, state = base / "transport", base / "local/publisher-state"
+        exporter.publish_market_files(base, transport, database, state_root=state)
+        head = base / "unified-data/market-public/unified-market.json"
+        before = head.read_bytes()
+        old_transport = (transport / "unified-market.json").read_bytes()
+        add(counter=2, minute=40)
+        original = exporter.write_json_atomic
+    
+        def fail_after_replace(path, value, **kwargs):
+            original(path, value, **kwargs)
+            if path == head:
+                raise OSError("independent public head directory fsync uncertainty")
+    
+        monkeypatch.setattr(exporter, "write_json_atomic", fail_after_replace)
+>       with pytest.raises(OSError):
+             ^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE OSError
+
+tests/test_unified_market_checkpoint_independent.py:425: Failed
+----------------------------- Captured stdout call -----------------------------
+UNIFIED_MARKET_EXPORT_FAILED_RETAINING_LAST_SUCCESS
+___________ test_retry_fsyncs_visible_head_before_loading_checkpoint ___________
+
+source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsy..., <scripts.unified_store.UnifiedBatchStore object at 0x7fb1c6393820>, <function source.<locals>.add at 0x7fb1c628c880>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb1c6393100>
+
+    def test_retry_fsyncs_visible_head_before_loading_checkpoint(source, monkeypatch):
+        base, _, _, _, _, add = source
+        add()
+        run(source)
+        head = base / "unified-data/market-public/unified-market.json"
+        original_write = exporter.write_json_atomic
+        fail_once = [True]
+    
+        def write(path, value, **kwargs):
+            original_write(path, value, **kwargs)
+            if path == head and fail_once[0]:
+                fail_once[0] = False
+                raise OSError("independent uncertain head replacement")
+    
+        monkeypatch.setattr(exporter, "write_json_atomic", write)
+        with pytest.raises(OSError):
+            run(source, now=NOW + timedelta(seconds=1))
+        visible = json.loads(head.read_bytes())
+        syncs, original_sync, original_load = [], exporter._fsync_directory, checkpoints.load
+    
+        def sync(path):
+            syncs.append(path)
+            original_sync(path)
+    
+        def load(*args, **kwargs):
+            assert head.parent in syncs, "visible head was reused before directory durability"
+            return original_load(*args, **kwargs)
+    
+        monkeypatch.setattr(exporter, "_fsync_directory", sync)
+        monkeypatch.setattr(checkpoints, "load", load)
+>       restored = run(source, now=NOW + timedelta(seconds=2))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_unified_market_checkpoint_independent.py:463: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_unified_market_checkpoint_independent.py:30: in run
+    return exporter.export_market(
+scripts/publish_unified_market.py:827: in export_market
+    return _export_market(base, database, now=now, seconds=seconds,
+scripts/publish_unified_market.py:894: in _export_market
+    checkpoint = checkpoints.load(_checkpoint_root,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsy...0/unified-data/market-public/unified-market.json'), '523a073b4b1b4815c58b2dd6ce63aa263a9351bb5434196781219ace434433c6')
+kwargs = {}
+
+    def load(*args, **kwargs):
+>       assert head.parent in syncs, "visible head was reused before directory durability"
+E       AssertionError: visible head was reused before directory durability
+E       assert PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsyncs_visible_head0/unified-data/market-public') in []
+E        +  where PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsyncs_visible_head0/unified-data/market-public') = PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsyncs_visible_head0/unified-data/market-public/unified-market.json').parent
+
+tests/test_unified_market_checkpoint_independent.py:458: AssertionError
+_______ test_recovery_directory_fsync_failure_blocks_checkpoint_and_head _______
+
+source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_recovery_..., <scripts.unified_store.UnifiedBatchStore object at 0x7fb1c620e250>, <function source.<locals>.add at 0x7fb1c628d430>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb1840f0170>
+
+    def test_recovery_directory_fsync_failure_blocks_checkpoint_and_head(source, monkeypatch):
+        base, _, _, _, _, add = source
+        add()
+        run(source)
+        head = base / "unified-data/market-public/unified-market.json"
+        before = head.read_bytes()
+    
+        def fail(_path):
+            raise OSError("independent head recovery directory fsync failure")
+    
+        def no_checkpoint(*args, **kwargs):
+            raise AssertionError("checkpoint read before head recovery durability")
+    
+        monkeypatch.setattr(exporter, "_fsync_directory", fail)
+        monkeypatch.setattr(checkpoints, "load", no_checkpoint)
+        with pytest.raises(OSError, match="recovery directory fsync failure"):
+>           run(source, now=NOW + timedelta(seconds=1))
+
+tests/test_unified_market_checkpoint_independent.py:487: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_unified_market_checkpoint_independent.py:30: in run
+    return exporter.export_market(
+scripts/publish_unified_market.py:827: in export_market
+    return _export_market(base, database, now=now, seconds=seconds,
+scripts/publish_unified_market.py:894: in _export_market
+    checkpoint = checkpoints.load(_checkpoint_root,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_recovery_...0/unified-data/market-public/unified-market.json'), '523a073b4b1b4815c58b2dd6ce63aa263a9351bb5434196781219ace434433c6')
+kwargs = {}
+
+    def no_checkpoint(*args, **kwargs):
+>       raise AssertionError("checkpoint read before head recovery durability")
+E       AssertionError: checkpoint read before head recovery durability
+
+tests/test_unified_market_checkpoint_independent.py:482: AssertionError
+=============================== warnings summary ===============================
+../../../../siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_unified_market_checkpoint_independent.py::test_public_head_directory_fsync_uncertainty_stops_git_transport
+FAILED tests/test_unified_market_checkpoint_independent.py::test_retry_fsyncs_visible_head_before_loading_checkpoint
+FAILED tests/test_unified_market_checkpoint_independent.py::test_recovery_directory_fsync_failure_blocks_checkpoint_and_head
+3 failed, 29 deselected, 1 warning in 2.58s
+

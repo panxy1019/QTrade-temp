@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="5" time="2.947" timestamp="2026-10-28T19:08:06.184132+08:00" hostname="73ec830048ca"><testcase classname="tests.test_market_incremental_failure_boundaries" name="test_historical_backfill_rebuilds_complete_window_and_keeps_both_sources" time="0.600" /><testcase classname="tests.test_market_incremental_failure_boundaries" name="test_quarantine_release_revalidates_restored_source_without_altering_old_generation" time="0.317" /><testcase classname="tests.test_market_incremental_failure_boundaries" name="test_enospc_during_new_object_write_preserves_committed_head" time="0.165" /><testcase classname="tests.test_market_incremental_failure_boundaries" name="test_slow_generation_io_exceeds_real_deadline_without_moving_head" time="0.257"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'TIME_BUDGET'&#10;  Actual message: 'UNIFIED_MARKET_CLOCK_OR_BUDGET_INVALID'">source = (PosixPath('/root/qtrade-local/operator-evidence/market-fault-boundaries-tests-20261028T110757Z/pytest-fixtures/test_s..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f6ea18e6030&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f6ea1877b60&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6ee1a2fce0&gt;
+
+    def test_slow_generation_io_exceeds_real_deadline_without_moving_head(source, monkeypatch):
+        base, *_rest, add = source
+        add()
+        run(source)
+        head = base/'unified-data/market-public/unified-market.json'
+        before = head.read_bytes()
+        prepare = checkpoints.prepare
+        called = []
+    
+        def slow(*args, **kwargs):
+            value = prepare(*args, **kwargs)
+            called.append(value)
+            time.sleep(0.35)  # Real elapsed latency, not an altered monotonic clock.
+            return value
+    
+        monkeypatch.setattr(checkpoints, 'prepare', slow)
+&gt;       with pytest.raises(ValueError, match='TIME_BUDGET'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'TIME_BUDGET'
+E         Actual message: 'UNIFIED_MARKET_CLOCK_OR_BUDGET_INVALID'
+
+tests/test_market_incremental_failure_boundaries.py:109: AssertionError</failure></testcase><testcase classname="tests.test_market_incremental_failure_boundaries" name="test_real_non_fast_forward_push_cannot_report_new_publication_success" time="0.242" /></testsuite></testsuites>

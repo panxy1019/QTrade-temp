@@ -1,5 +1,117 @@
 # Master plan
 
+October29 09:33 latest human priority: STEP2 research75 / daily snapshot20 /
+advanced publication reserve5 (target effort, not actual measured allocation).
+Do not resume MinIO/R2/state-machine expansion as the main project. Daily
+coherent immutable/Qlib-readable snapshot and old-head retention are the minimal
+STEP1 delivery goal; public delivery and historical98d/D/fullCDE keep original
+failed/pending statuses without blocking qualified frozen offline research.
+
+Execute next in the new window: M0 reuse/audit existing seven-strategy678-session
+archive, actual891 coverage/splits/source/spec freeze;
+M1 minimal real16-session replay for NEW registration lineage, not redoing old
+native comparison, then fourfactor/equalweight allocation control with common
+execution/cost assumptions;
+M2 bounded multi-year evaluation with label-boundary purge and train-only fitting;
+M3 net-cost/OOS/benchmark/reproducible report; M4 protected queue/UI wiring with
+explicit old-source compatibility; M5 independent Paper path, never live.
+Retain data/PIT/survivorship/adjustment limits and all original experiments.
+Negative research results can satisfy delivery; profit is not an acceptance test.
+Handoff: docs/handoffs/2026-10-29-step2-research-priority.md. No new runtime work,
+jobs/control/deployments or old automation resume occurred in this audit turn.
+
+October29 01:16: local MinIO first under explicit user direction. Verified source
+build and real7 S3 protocol cases pass; test services stop. Full frozenabe bundle
+fails index/catalog master lineage equality before full upload; preserve original
+failure and find authentic matched inputs/new explicitly bound generation, not
+re-signing or admission weakening. Linux86/0skip and independent112/0skip prove
+scoped core/SDK engineering; fullload, incremental latency, cloud ACL/reader and
+public freshness remain distinct gates. Single180 Git attempt is UNCERTAIN and
+never replayed; actual01:08 public still5a09 stale. Inparallel nativeQlib33 passes
+but real891/queue wiring pending; new STEP1 readers80 local tests need Linux and
+actual proof/public gates. LIVEfalse/rollingOFF, ACTIVE/ledgers/owners unchanged.
+See docs/OBJECT_PUBLICATION_MINIO_20261029.md. Automation remainsPAUSED.
+
+October29 00:15: user approves reviewed execution plan. Exactprepared single180
+send is executing once after fresh5a09 advertisement anddurable54dc authority;
+waitfor actualoutcome, independentlyreconcile remote/public/API, thenobserve
+3naturalordinaryrounds onlyif deliverypasses. Do not replayuncertainty. Normal
+45/90 remain. Inparallel build nonproductionobjectstoreprotocol, separateSTEP1
+date/modelscopeaudit andfactorQlibportfolioadapter withindependenttests. No
+cloudaccount/prodstorepurchase, PAPERrecovery, ownerrestart orliveauthority.
+
+October28 23:00: finalcold operator738c Windows64/Linux64+independent7 passes;
+actual completeprepare15.914s binds newtargetabe2986c/plan9a459c19 andsigned
+export32.702s, all3000/5987 currentcontent. Preservefirsttransition rejection,
+olduncertainclaim andrawresults. NewAUTH/INTENT/SENDabsent; sourceownerunchanged.
+Actual22:54 publicstillstale5a09. Submit exactprepared singlecold180 request;
+do not sendbefore newexplicitapproval. Normal45/90 unchanged. Afterapproval,
+oneattempt thenactualremote/public/API and3ordinarynaturalrounds; noautorerun.
+STEP1 currentCpublic,Dlegacy,Eexecutiondate/currentmodel scopes remainopen.
+STEP2 existingfactor registrationisolatedclosedloop accepted, productionGitHub/
+TLS/browser/worker andfactorportfolioexecution stillseparatefuturegates.
+
+October28 22:25: retain P0 genuine failure and rejected transport/cache ideas.
+Full frozenpreflight15.93s passes; single manual90s push uncertain, publicactual
+stale. Nativewire generation2.70s; nondelta cache doubles wireandisnotinstalled.
+Prepare a separatelyapproved singlecold180 proposal/operator withphase-only
+telemetry, oldclaim crossbinding and fulltests; nosecondmainpush now. Then actual
+remote/public/API andordinary90 naturalround gates, not just coldACK.
+STEP2 exact45de actuallocalGitQueue/ASGI/ownedchild/Registry completion now passes
+with fullREADYmirror andactualspace checks. ProductionGitHub/TLS/browser gates
+remain; Terra browserconnectionunavailable isnotvisualPASS. STEP1 currentC
+privateonly; D/E fixedscope failures preserved. Keep allresearchproduction
+activation/recovery boundaries; new factorportfoliobacktest isfuture work.
+
+October28 21:12: PR35 source45de5bd freezes protected factor registration/UI;
+Linux377/0skip and web20 pass, but no productionfactor enablement or actual
+GitQueue/DOM acceptance. Complete newGit identity roundtrip in isolation next.
+Public P0 stillblocked by Git90 timeout; two auxref protocol ideas failed, preserve
+negatives. Reviewed temporary loopback relay is next transport experiment, first
+readonly zerochannel ls is NOTproof. No publicpush yet. Current68/b82 privateC
+passes but actualpublicC catalog stale. LegacyD metadata draft not realacceptance.
+Continue realpublic boundary checks without replacing original fixedscope failures.
+
+October28 20:23: onepublisher handover now actual647839/fba with old294214 exited;
+20:03 controlsequal exceptpublisher. Productionexport44.38/37.01 pass, butGit90
+repeatedlytimesout on~23.63MB coldobjects; publicfreshnessNOTaccepted. Prepare
+boundedauxiliaryref transport only in isolation; retain90s/main index atomicity.
+Oct28 READYb82 +old295prediction complete. Standingpolicy independently promoted
+68d at20:07:51; preserve proper authorization/events and distinct day/current
+scope. OriginalC/D/E failures remain. S2-D API/Builderworkingtree53Python/15web
+passes, source/worker/Linux/public/visual gates still open. FullSTEP1 remainsopen.
+
+October28 19:53 A/B/C: exactfba runtime793Linux passes, baseline5cold/5restart/
+5DB-loss and current20normal rounds sealed. Normal20/20 within45s (max38.61),
+fullcold103–107s andDB-loss50–63s remain separate diagnostics. Two original-source
+all-source oracles pass3000 entries/5986 and5987 shards. Staged release is not
+deployment; finalv6 independent pre-write import-origin repair remains before
+singlepublisher handover and actualexport/Git/public/API acceptance.19:47 prep
+950/988,0retry, headOct27. STEP1 globalE blocked by staleprovider. S2-C committed
+and dual-platform tested; S2-B16sessions891stocks independent616044 checks pass.
+Protectedfactor queue/Builder design approved for isolated implementation; no
+production research endpoint/worker changes until separate actual validation.
+
+October28 18:50 active A/B/C: final persistent-receipt/atomic-generation candidate
+passes33 independent Linux faults; final complete regression,5cold/recovery and
+20normal incremental rounds, full original-source oracle, exactGit/production
+handover and public freshness remain gated. Keep intermediate performance and
+original failures distinct. STEP1 E local12+retired2 accepted but publicDEGRADED
+globalBLOCKED;18:39 prep623/988, formalOct27 head. S2-A120Linux+Windows accepted
+with original report bytes unchanged; factor→strategy contract/Builder remain.
+
+Latest user explicitly approves A/B/C implementation, gated deployment and actual
+acceptance at 2026-10-28 17:34 Shanghai. Execute the incremental-publication
+proposal; retain historical pause entries and evidence. Do not weaken safety or
+mark the project complete from partial tests.
+
+
+User paused execution at 2026-10-28 16:06 Shanghai. Goal/automation PAUSED;
+production services unchanged. Preserve pending changes and failed benchmarks.
+Resume ordering and per-stage acceptance: `docs/QTRADE_PAUSED_PROGRESS_20261028.md`.
+No STEP1 completion or production freshness recovery has been declared.
+
+
 This is the living execution record for the long-horizon engineering goal.
 
 ## Objective
@@ -23,6 +135,161 @@ Audit date: 2026-08-12.
 ## Milestones
 
 ### STEP1 completion then STEP2 research core, 2026-10-27 (active)
+
+October28 15:36: bounded two-process shard validation with actual pipe submission
+passesLinux536 and independent42; current5640-batch cold still fails45.021938s
+despite older4860 cold44.797564s. No deployment. Bounded validated Arrow decoding
+candidate passesLinux626, independent407 passes; currentNFS cold45.020515s fails, warm38.759323s passes. Keep45s and full
+source/quality/hash contracts. Actual15:00 E remainsBLOCKED:12sessions absent,
+2retired closures pass, publicfreshbutDEGRADED on expired prospective prediction.
+Automatic daily observation cannot start before16:30 calendar cutoff. Old frozen
+admission is intact; retain strict current audit and distinct next-target readiness.
+Worker/close/private-safe evidence: docs/evidence/p0-publisher-factor-20261028/
+workers-close-checkpoint/manifest.json. All recovery claims/production owners unchanged.
+
+October28 14:12: new4860-batch13:58 freeze on exactGit aaca/1821files fails NFS
+cold45.247439s, warm39.568944s passes. Do not deploy from older4200 narrowpass.
+Residual is CPU after I/O overlap; prepare bounded shard-only child processes
+with exact validators and owned-process cleanup, independent review before
+integration. Recentstate completes990/990 forOct23/26/27 with0retry; fullPIT,
+execution certification and actualOct28 C/D/E/public/visual remain open.
+
+October28 13:53: sourceaaca9d7 adds bounded one-ahead material prefetch and fixes
+physical-read accounting on failed materials. Linux398/Windows386+12platformskip;
+independent whole4200-batch original458 oracle passes3000entries/5986allshards.
+First NFS fullcallcold44.860369/warm33.992167 passes, but0.14s margin and old12:23
+freeze cannot certify stability or afternoon workload. Continue profile/newfreeze
+before any production mutation. Actualstatus13:44 reaches920/990,0retry; ACTIVE
+and head unchanged. Nonproduction four-factor evaluation is complete separately.
+
+October28 13:39: actual public index still stale10969s whilecatalog168s. Full
+current original458 oracle passes3000entries/5986shards/4200batches; this is
+correctness only. ActualNFS cold45.193611s fails despite warm36.963300s and
+Linux379 plus independent14708 differential/38 fault+regression passes. Continue
+bounded physical-material prefetch with true source-byte accounting; no budget
+increase or production change. Same-Supervisor isolated targetedTERM/autorestart
+semantics pass; publisher-only operator review remains separate from performance
+and real export/Git/public/API acceptance. Factor nonproduction actual run below
+is complete; production wiring and genuine Oct28 close still pending.
+
+October28 12:58: existing-factor registry and independent evaluator implemented
+at db4ded3/8e038c8; Windows/Linux78 each0skip. Actual isolated891-stock/five-mature-
+session/four-factor run completes33.46s with unchanged production controls and
+immutable report; only retrospective diagnostics, sample/PIT limits retained.
+StrategyRegistry/Builder connection remains next, not production-enabled by this
+run. Current4200-batch45s publisher cold/warm/source/lineage acceptance ongoing;
+production remains last-observed stale. Real Oct28 close gates are still future.
+
+October28 12:22: user authorizes actual non-production implementation of existing
+factor version registration and independent evaluation as a parallel P0. Three
+workstreams: phased cold/warm publisher profiling under unchanged45s/hash/quality
+contracts; export/Git/production-index/API freshness proof; isolated FactorRegistry
+and evaluator implementation/tests. Real STEP1 close remains separately required.
+Latest public probe still stale; cold candidate45.330s blocks deployment despite
+warm42.568s exact4488-shard success. Three Windows collection failures reproduce
+on oldsource long paths; both old/candidate110pass on short paths. Retain failures.
+
+October28 12:05: factor/strategy interface designs and19 new isolated tests pass
+on Windows/Linux0skip. Begin native pinnedQlib descriptors/metrics audit without
+provider/training/production writes; production FactorRegistry is still absent.
+Approved quality policies staged11:51; data493083 and status493858 use458552d,
+status520/990+quality actualautomatic. Preserve dataStarting assertion failure;
+status actualkilled exit is nongraceful despite frozen-control equality. Review
+maintenance's effective signal/backgroundchild before upgrade, no stop replay.
+Public index11:49 stale4373s whilecatalogfresh93s; optimize without45sec or byte/
+cache/Git budget increases. Cold+warm/exactlineage required before publisher
+upgrade. See docs/GRADED_QUALITY_ROLLOUT_20261028.md for distinct pending gates.
+
+October28 11:43 directive: continue STEP1 while starting STEP2 design, interface
+audit and non-production test preparation. Current qualified daily scope is
+sufficient for scoped factor research with disclosed selection/survivorship bias;
+complete historical PIT is an independent long-term track. Future PIT versions
+must append new linked experiments instead of rewriting earlier evidence. See
+plans/STEP1_STEP2_EXECUTION.md for the revised stage boundary. Factor and strategy
+interface audits are delegated to GPT-6.1-sol xhigh; final rollout review proceeds
+independently. No real-close, production or browser gate is declared complete.
+
+October28 09:57 checkpoint: implement/deploy independent recent-state source60c8313,
+observer466733.429 Git files match; final Windows/Linux80 each,0skip,Ruff/mypy pass.
+Actual automatic20→40/990 at09:51:52 and desktop120-row replay09:52:43 prove this
+window only; full990/new-window/Web integration remains. Preserve first3b/78 tests,
+supervisor reread ValueError/exit1 and targeted add0 separately. All old owner
+start_ticks/legacy files remain. Fix known_state to reject a post-decision actual
+observation even when a source claims earlier availability. No frozen input or
+execution constraint is replaced. Three issuer PDFs supportOctober26 halt starts,
+not exact historical knowledge/full interval;09:45 ETF still45/48. Market-day
+counts and history126324 receipt rows remain scoped, not full coverage. Maintenance
+owner active means RO repair only. See docs/QLIB_DATA_GOVERNANCE_PROGRESS_20261028.md.
+Continue recent990 actual completion/later window, publish distinct data/observed
+clocks, extend verifiable state/event chain and eventually target-pool scope.
+Retain every real-close/production/browser/PIT gate and existing resource/authority
+limits; fullSTEP1 and STEP2 gate are unchanged.
+
+October28 05:58 checkpoint: six post-hoc BaoStock status rows for the3 missing
+stocks onOctober26/27 are captured05:44, vendor flags0/0. Old990 PIT backfill is
+fixed throughOctober23, not today's status feed. Preserve old files and observed
+availability; no new dataset, execution admission or current-status service is
+claimed. Six payloads/four Git sources replay on Windows. Correct the mis-timed
+same-chat close follow-up using an explicitUTC future anchor for16:40-23:40
+Shanghai/eight occurrences; real corrected firing remains unverified. Actual
+05:56 public market probe is fresh onmainae33/publice9cdf8ed,1500/3000 identities
+and5 fixed series; underlyingday1497/min1496 remains PARTIAL. Existing owner
+handles/ACTIVE/head unchanged05:55, no pending job; future close/browser gates stay.
+
+October28 02:46 checkpoint: verified automatic collection retry on the live owner,
+not just a state file.002827/5min advances11→12, claimed21s after its02:43:53 due
+time and completes02:44:15. Fresh captured source still endsOctober23, so task
+remains FAILED and coverage unresolved. New raw/manifest/before-after evidence
+replays on Windows; no manual claim/reset/service restart. Next policy deadline
+07:00:15. Future close and browser gates remain, with no new experiment pending.
+
+October28 02:36 checkpoint: raw-source diagnosis now accounts for all7 failed
+October27 tasks. Three stocks have no current-day bars/latestOctober23; ETF512580
+has45/48 and lacks10:00/11:30/14:30, so contiguous progress remains09:55. Replay
+of7 manifests/raw packs and10 bodies plus4 Git-bound reader/calendar sources
+passes on cluster/Windows. HTTP200 does not certify complete data or suspension.
+The recent-session RO plan has10 candidates; active maintenance owner213587
+continues, no apply/service/queue/PAPER mutation. Source gaps stay unresolved.
+Continue verifiable source/status governance and independent real-close gates;
+do not spend prior handover authority or relax admission to erase these gaps.
+
+October28 02:20 checkpoint: actual automatic validation of archived-version
+Ridge98d27455 is STAGED/unactivated. Its COMPLETE validation job and15 actual
+files/12 Git-bound sources verify. October27 inputs already existed before this
+retrospective training; no unseen-day or performance claim follows. Lightgbm-only
+promotion policy, ACTIVE295, approval/epoch,14-book fingerprints and owners stay.
+Record the initial operator ISO-string mismatch as failed; aware-datetime v2
+passes without changing any live timestamp. Capture execution-day E independently
+of new C/D generation after close. A later automatic model promotion cannot
+substitute its next-day target for today's observed model. No current readiness,
+new PAPER recovery, browser rendering or whole STEP1 acceptance is inferred.
+
+October28 01:58 checkpoint: real archived-version selection is now accepted.
+Production-authenticated Ridge578bb610 uses October26/d33a7466 while serving and
+default remain October27/09a67b13. COMPLETE01:46; independent01:49 replay verifies
+all12,486 archive files,580 exact source files, frozen strategy/job/model/registry
+bindings and fitted restore parity2.359e-16. Public catalog/result01:52 and exact
+reusable spec01:53 pass on mainae33. New model98d27455 is TRAINED/unactivated;
+original model lifecycle rows, ACTIVE/data epoch/policy,14-book fingerprints and
+all service owners remain unchanged. This is a historical, post-hoc replay and
+does not substitute for October28 later-day/forward or browser acceptance.
+No new implementation or STEP2 work is inferred from this evidence completion.
+
+October28 01:22 checkpoint: PR34 merged as mainae33, actual default production
+matches. C public and14-book control captures pass01:15; independent full1500
+public market transport passes with index/catalog ages124.22/137.90s and partial
+day1497/min1496. Actual delivered forward asset has the retirement/retained-book
+labels, but this is not DOM/rendering. Terra high IAB entry is unavailable, Chrome
+transport had also failed. Whole14-book/day acceptance still BLOCKED only for the
+new ACTIVE model's two pre-activation October27 sessions;10 baseline observations
+and2 separate retired closures pass. Await real October28 close and downstream
+data/model/signal/forward/public evidence. Keep source9846/owner383859 stable,
+old claims consumed, LIVE false/rolling OFF and resource budgets unchanged.
+STEP2 remains gated. Post-merge evidence is preserved on the acceptance branch.
+Bounded same-chat qtrade-10-28 schedules eight October28 close checks at hourly
+16:40-23:40 Shanghai. Normal waiting stays quiet; delete once done/obsolete/ended,
+preserving all unmet gates. Local app availability affects this follow-up only,
+not the supervised cluster services. No handover or recovery is replayed.
 
 October28 01:08 checkpoint: the explicitly authorized one-time directed handover
 is applied, source9846a7f/PID383859. Same228 Windows/Linux cases,582 exact Git

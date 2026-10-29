@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="2.585" timestamp="2026-10-28T18:41:08.617495+08:00" hostname="73ec830048ca"><testcase classname="tests.test_unified_market_checkpoint_independent" name="test_public_head_directory_fsync_uncertainty_stops_git_transport" time="0.550"><failure message="Failed: DID NOT RAISE OSError">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_public_he..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7fb1c86f81a0&gt;, &lt;function source.&lt;locals&gt;.add at 0x7fb276f75590&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fb1c88a2fd0&gt;
+
+    def test_public_head_directory_fsync_uncertainty_stops_git_transport(source, monkeypatch):
+        base, database, _, _, _, add = source
+        add()
+        transport, state = base / "transport", base / "local/publisher-state"
+        exporter.publish_market_files(base, transport, database, state_root=state)
+        head = base / "unified-data/market-public/unified-market.json"
+        before = head.read_bytes()
+        old_transport = (transport / "unified-market.json").read_bytes()
+        add(counter=2, minute=40)
+        original = exporter.write_json_atomic
+    
+        def fail_after_replace(path, value, **kwargs):
+            original(path, value, **kwargs)
+            if path == head:
+                raise OSError("independent public head directory fsync uncertainty")
+    
+        monkeypatch.setattr(exporter, "write_json_atomic", fail_after_replace)
+&gt;       with pytest.raises(OSError):
+             ^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE OSError
+
+tests/test_unified_market_checkpoint_independent.py:425: Failed</failure></testcase><testcase classname="tests.test_unified_market_checkpoint_independent" name="test_retry_fsyncs_visible_head_before_loading_checkpoint" time="0.208"><failure message="AssertionError: visible head was reused before directory durability&#10;assert PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsyncs_visible_head0/unified-data/market-public') in []&#10; +  where PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsyncs_visible_head0/unified-data/market-public') = PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsyncs_visible_head0/unified-data/market-public/unified-market.json').parent">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsy..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7fb1c6393820&gt;, &lt;function source.&lt;locals&gt;.add at 0x7fb1c628c880&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fb1c6393100&gt;
+
+    def test_retry_fsyncs_visible_head_before_loading_checkpoint(source, monkeypatch):
+        base, _, _, _, _, add = source
+        add()
+        run(source)
+        head = base / "unified-data/market-public/unified-market.json"
+        original_write = exporter.write_json_atomic
+        fail_once = [True]
+    
+        def write(path, value, **kwargs):
+            original_write(path, value, **kwargs)
+            if path == head and fail_once[0]:
+                fail_once[0] = False
+                raise OSError("independent uncertain head replacement")
+    
+        monkeypatch.setattr(exporter, "write_json_atomic", write)
+        with pytest.raises(OSError):
+            run(source, now=NOW + timedelta(seconds=1))
+        visible = json.loads(head.read_bytes())
+        syncs, original_sync, original_load = [], exporter._fsync_directory, checkpoints.load
+    
+        def sync(path):
+            syncs.append(path)
+            original_sync(path)
+    
+        def load(*args, **kwargs):
+            assert head.parent in syncs, "visible head was reused before directory durability"
+            return original_load(*args, **kwargs)
+    
+        monkeypatch.setattr(exporter, "_fsync_directory", sync)
+        monkeypatch.setattr(checkpoints, "load", load)
+&gt;       restored = run(source, now=NOW + timedelta(seconds=2))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_unified_market_checkpoint_independent.py:463: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_unified_market_checkpoint_independent.py:30: in run
+    return exporter.export_market(
+scripts/publish_unified_market.py:827: in export_market
+    return _export_market(base, database, now=now, seconds=seconds,
+scripts/publish_unified_market.py:894: in _export_market
+    checkpoint = checkpoints.load(_checkpoint_root,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsy...0/unified-data/market-public/unified-market.json'), '523a073b4b1b4815c58b2dd6ce63aa263a9351bb5434196781219ace434433c6')
+kwargs = {}
+
+    def load(*args, **kwargs):
+&gt;       assert head.parent in syncs, "visible head was reused before directory durability"
+E       AssertionError: visible head was reused before directory durability
+E       assert PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsyncs_visible_head0/unified-data/market-public') in []
+E        +  where PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsyncs_visible_head0/unified-data/market-public') = PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_retry_fsyncs_visible_head0/unified-data/market-public/unified-market.json').parent
+
+tests/test_unified_market_checkpoint_independent.py:458: AssertionError</failure></testcase><testcase classname="tests.test_unified_market_checkpoint_independent" name="test_recovery_directory_fsync_failure_blocks_checkpoint_and_head" time="0.281"><failure message="AssertionError: checkpoint read before head recovery durability">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_recovery_..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7fb1c620e250&gt;, &lt;function source.&lt;locals&gt;.add at 0x7fb1c628d430&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fb1840f0170&gt;
+
+    def test_recovery_directory_fsync_failure_blocks_checkpoint_and_head(source, monkeypatch):
+        base, _, _, _, _, add = source
+        add()
+        run(source)
+        head = base / "unified-data/market-public/unified-market.json"
+        before = head.read_bytes()
+    
+        def fail(_path):
+            raise OSError("independent head recovery directory fsync failure")
+    
+        def no_checkpoint(*args, **kwargs):
+            raise AssertionError("checkpoint read before head recovery durability")
+    
+        monkeypatch.setattr(exporter, "_fsync_directory", fail)
+        monkeypatch.setattr(checkpoints, "load", no_checkpoint)
+        with pytest.raises(OSError, match="recovery directory fsync failure"):
+&gt;           run(source, now=NOW + timedelta(seconds=1))
+
+tests/test_unified_market_checkpoint_independent.py:487: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_unified_market_checkpoint_independent.py:30: in run
+    return exporter.export_market(
+scripts/publish_unified_market.py:827: in export_market
+    return _export_market(base, database, now=now, seconds=seconds,
+scripts/publish_unified_market.py:894: in _export_market
+    checkpoint = checkpoints.load(_checkpoint_root,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104105Z-47e598b9/tmp/pytest/test_recovery_...0/unified-data/market-public/unified-market.json'), '523a073b4b1b4815c58b2dd6ce63aa263a9351bb5434196781219ace434433c6')
+kwargs = {}
+
+    def no_checkpoint(*args, **kwargs):
+&gt;       raise AssertionError("checkpoint read before head recovery durability")
+E       AssertionError: checkpoint read before head recovery durability
+
+tests/test_unified_market_checkpoint_independent.py:482: AssertionError</failure></testcase></testsuite></testsuites>

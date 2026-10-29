@@ -1,0 +1,42 @@
+{
+  "returncode": 0,
+  "elapsed_seconds": 65.84772922843695,
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jun 18 2026, 21:28:09) [GCC 14.3.0]",
+  "maxrss_kib": 228680,
+  "command": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=/root/qtrade-local/operator-evidence/factor-strategy-s2c-20261028T110802Z-4721fc9b/tmp/pytest",
+    "tests/test_factor_strategy_contract.py",
+    "tests/test_factor_registry.py",
+    "tests/test_daily_factor_evaluation.py",
+    "tests/test_step2_factor_contract_independent.py",
+    "tests/test_step2_factor_contract_readiness.py",
+    "tests/test_qlib_strategy_contract.py",
+    "tests/test_step2_strategy_readiness.py",
+    "tests/test_qlib_bound_research_integration.py",
+    "tests/test_qlib_worker.py",
+    "tests/test_qlib_workflow.py",
+    "tests/test_strategy_registry.py",
+    "tests/test_strategy_comparison.py",
+    "--junitxml=/root/qtrade-local/operator-evidence/factor-strategy-s2c-20261028T110802Z-4721fc9b/regression.xml"
+  ],
+  "overlays": {
+    "src/qtrade/research/factor_strategy_contract.py": {
+      "sha256": "a28e7524c4fed82efe784d921dcda832cf8eb09504a3eae6b78fcccef1857e7e",
+      "bytes": 20970
+    },
+    "src/qtrade/strategies/registry.py": {
+      "sha256": "d0903de34bd690263dbe4029846145e913f2d08c8599c7b2dbf3b0fd01165739",
+      "bytes": 33032
+    },
+    "tests/test_factor_strategy_contract.py": {
+      "sha256": "189b9d548309c0fb2966e38631455ed659d82ce042961724ad7ee340525fd2ea",
+      "bytes": 21830
+    }
+  }
+}

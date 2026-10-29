@@ -1,0 +1,65 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.incremental-collection-batch.v1",
+  "batch_id": "7a7f070b670f4b23adcd2c6fe5778f27",
+  "spec": {
+    "frequency": "5min",
+    "target_end": "2026-10-27T07:00:00+00:00",
+    "universe_version": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+    "symbols": [
+      "605258"
+    ],
+    "code_revision": "e44a134fab8bc0404b8d1c59674747150e170698",
+    "after_by_symbol": {
+      "605258": null
+    }
+  },
+  "completed_at": "2026-10-27T14:35:07.306909+00:00",
+  "raw": {
+    "sha256": "1b2525d7fe839857e041377da344492f458eae9e6d40bfa9523a3c804fc5c9ce",
+    "bytes": 3951,
+    "suffix": ".jsonl.gz",
+    "captures": 1,
+    "uncompressed_bytes": 17734,
+    "body_hashes": [
+      "5cc06821813853b6bd864cb7e250bb1815cd76db67209b2199ea677ad0358fab"
+    ]
+  },
+  "normalized": null,
+  "bar_count": 0,
+  "outcomes": {
+    "605258": {
+      "state": "FAILED",
+      "error_code": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "warnings": [],
+      "decoded": true,
+      "parsed": false,
+      "same_vendor_matched": false,
+      "bar_count": 0,
+      "start": null,
+      "end": null,
+      "missing_amount_bars": 0
+    }
+  },
+  "price_basis": "SINA_NATIVE_ADJUSTMENT_UNCERTIFIED",
+  "admitted_rows_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "stage_counts": {
+    "requested": 1,
+    "downloaded": 1,
+    "parsed_symbols": 1,
+    "validated_symbols": 0,
+    "admitted_symbols": 0,
+    "admitted_rows": 0,
+    "same_vendor_endpoint_matched": 0,
+    "independent_source_reconciled": 0
+  },
+  "historical_pit_certified": false,
+  "independent_source_reconciled": false,
+  "evidence_sha256": "e46350fcb2ea4375a686ac9f6591970cb9686cf4d2fec6fdd9d303935f6aeec7"
+}

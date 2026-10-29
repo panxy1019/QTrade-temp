@@ -139,6 +139,22 @@ def test_missing_and_future_state_cannot_be_called_certified_tradable():
     )[0]
 
 
+def test_old_publication_cannot_make_a_later_observation_known_earlier():
+    state = {
+        "symbol": "600001", "date": "2020-01-02",
+        "available_at": "2020-01-01T16:00:00+00:00",
+        "observed_at": "2026-10-28T01:00:00+00:00",
+        "source": "archived announcement", "source_sha256": "a" * 64,
+    }
+    with pytest.raises(ValueError, match="STATE_NOT_KNOWN_AT_DECISION"):
+        known_state(state, symbol="600001", day="2020-01-02",
+                    decision_at=datetime(2020, 1, 2, 1, 30, tzinfo=UTC))
+    assert known_state(
+        state, symbol="600001", day="2020-01-02",
+        decision_at=datetime(2026, 10, 28, 1, tzinfo=UTC),
+    ) == state
+
+
 @pytest.fixture
 def client(monkeypatch):
     password = "test-only-long-password-for-research"

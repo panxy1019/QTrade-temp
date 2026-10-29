@@ -1,0 +1,214 @@
+{
+  "generated_at": "2026-10-28T10:06:28.332147+00:00",
+  "base_commit": "f036bca197272df4b1f885dfe8165a27b67c36cd",
+  "linux": {
+    "started_at": "2026-10-28T09:40:35.683438+00:00",
+    "finished_at": "2026-10-28T09:40:53.523258+00:00",
+    "elapsed_seconds": 17.839826634153724,
+    "returncode": 0,
+    "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jun 18 2026, 21:28:09) [GCC 14.3.0]",
+    "command": [
+      "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+      "-B",
+      "-m",
+      "pytest",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/tmp/pytest",
+      "tests/test_step2_factor_contract_independent.py",
+      "tests/test_daily_factor_evaluation.py",
+      "tests/test_factor_registry.py",
+      "tests/test_step2_factor_contract_readiness.py",
+      "tests/test_factor_search.py",
+      "tests/test_signal_baselines.py",
+      "--junitxml=/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/evidence/linux-junit.xml"
+    ],
+    "live_trading_enabled": "false",
+    "pythonpath": "/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/source/src:/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/source",
+    "tmpdir": "/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42/tmp",
+    "max_child_rss_kib": 182200,
+    "tests": {
+      "tests": 120,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "windows": {
+    "returncode": 0,
+    "elapsed_seconds": 18.66805090010166,
+    "command": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "-m",
+      "pytest",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=E:\\QTrade-temp\\fca-5f0cef2a\\tmp\\pytest",
+      "tests/test_step2_factor_contract_independent.py",
+      "tests/test_daily_factor_evaluation.py",
+      "tests/test_factor_registry.py",
+      "tests/test_step2_factor_contract_readiness.py",
+      "tests/test_factor_search.py",
+      "tests/test_signal_baselines.py",
+      "--junitxml=E:\\QTrade-temp\\factor-contract-s2a-20261028T094016Z-01e1eb42\\downloaded\\windows-junit.xml"
+    ],
+    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+    "live_trading_enabled": "false",
+    "tests": {
+      "tests": 120,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "files": [
+    {
+      "file": "baseline.tar",
+      "bytes": 80343040,
+      "sha256": "ada8d0263838f8b208650bd660af1ca4a07f319a3d0648b537542f52162f992b"
+    },
+    {
+      "file": "candidate-overlay.tar",
+      "bytes": 92160,
+      "sha256": "fa73526e67ccdedb9a53d6c3505e729b97df69e0846cb9ef860e2b78184d28d6"
+    },
+    {
+      "file": "downloaded/final-status.json",
+      "bytes": 838,
+      "sha256": "e85e928c95379e7fc10854c8c3a247415995dd66c3fb3e4ce6aeddd3876f4bfc"
+    },
+    {
+      "file": "downloaded/linux-junit.xml",
+      "bytes": 18713,
+      "sha256": "f291f1dcf25e514f58810206c570b74b87f73f78b539b42724702baf6dbda840"
+    },
+    {
+      "file": "downloaded/linux-runtime.json",
+      "bytes": 1391,
+      "sha256": "31cb8965090168853e39eb91d4cc9ffcf848a81b799df5b14cf16b30e44b0d4d"
+    },
+    {
+      "file": "downloaded/linux-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "downloaded/linux-stdout.log",
+      "bytes": 181,
+      "sha256": "efac5d073729b77dac362bb6db0dc77d4b254851730874899237ae81c7dd41a6"
+    },
+    {
+      "file": "downloaded/old-report-replay.json",
+      "bytes": 563,
+      "sha256": "ef9fa1cd2e850e0acd63f71d5dfa0cb629fab4b656c9a8bebe22ca66675f76f0"
+    },
+    {
+      "file": "downloaded/old-report-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "downloaded/old-report-stdout.log",
+      "bytes": 338,
+      "sha256": "39029c3d8d406c70d05ece90027fce9532f64593c10df72da5ceb49784808554"
+    },
+    {
+      "file": "downloaded/postflight.json",
+      "bytes": 321,
+      "sha256": "6a7bafeb20b7de1e932035d94608a56d65d339b476b1e00056e13501fb34a67e"
+    },
+    {
+      "file": "downloaded/preflight.json",
+      "bytes": 321,
+      "sha256": "eab278f1f7247d66fa33406890c693c0e833a245cf239f02cb46389ef62b8c9a"
+    },
+    {
+      "file": "downloaded/source-after.json",
+      "bytes": 392332,
+      "sha256": "bda4c3ee7211dbbd28953c1272979a2eef5e2bd3cf9f074080905afa5316d07d"
+    },
+    {
+      "file": "downloaded/source-before.json",
+      "bytes": 392332,
+      "sha256": "bda4c3ee7211dbbd28953c1272979a2eef5e2bd3cf9f074080905afa5316d07d"
+    },
+    {
+      "file": "downloaded/windows-junit.xml",
+      "bytes": 18716,
+      "sha256": "1c8cdf87c8a049873722bbb743599bb95079e8dea5ad8d26503eca948cb489cf"
+    },
+    {
+      "file": "downloaded/windows-runtime.json",
+      "bytes": 864,
+      "sha256": "8d0ddff6b5a896bba22a98afdd49e406b8cf4beff10b5fb318b87cc7b7fcb5a7"
+    },
+    {
+      "file": "downloaded/windows-source-after.json",
+      "bytes": 400662,
+      "sha256": "236f5588e044ef44b18fa062d169a45b379128ae6964ed787f8b135db0d6d103"
+    },
+    {
+      "file": "downloaded/windows-source-before.json",
+      "bytes": 400662,
+      "sha256": "236f5588e044ef44b18fa062d169a45b379128ae6964ed787f8b135db0d6d103"
+    },
+    {
+      "file": "downloaded/windows-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "downloaded/windows-stdout.log",
+      "bytes": 184,
+      "sha256": "17c687eaae98218df9cb717ba6477b53caf1d9a01c54bcea2e99e35383e67184"
+    },
+    {
+      "file": "evidence-manifest.json",
+      "bytes": 3586,
+      "sha256": "ae282b95287034f0fbbcdcce23de42ab4f3964cdcca2e1e1c4cab3a5a8d2c706"
+    },
+    {
+      "file": "independent-review.json",
+      "bytes": 880,
+      "sha256": "101c86303ded08c564298b0e14ae51cb104a8d62ed7a1d1cf0e8e7d0d05281bd"
+    },
+    {
+      "file": "package-manifest.json",
+      "bytes": 802206,
+      "sha256": "d7d0f90951e9cb47737e8f0863e70c2be967c8981c52720e3fd353df8efbf6a6"
+    },
+    {
+      "file": "post-acceptance-STEP2_FACTOR_CONTRACT_ACCEPTANCE_20261028.md",
+      "bytes": 13737,
+      "sha256": "3fb7260678ed318eac8cdc3333d7620dbcca288110e40969be3bf72c3429cbc2"
+    },
+    {
+      "file": "prior-windows-evidence.tar",
+      "bytes": 245760,
+      "sha256": "c7157dd074261a2f7a6d3fb6c89eb2493bf853c555ff08d76b3d77c72c8d8097"
+    },
+    {
+      "file": "remote-command-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "remote-command-stdout.log",
+      "bytes": 2172,
+      "sha256": "6a446fcdbf463fa727d5840a660528213dbba7af7bcc0d02c76886917b670f22"
+    },
+    {
+      "file": "remote-operator.py",
+      "bytes": 6008,
+      "sha256": "f7fa0359dd4e3953f53b6a5d6313ac35458c19017a71698a8b71c56c7b014233"
+    },
+    {
+      "file": "upload-preflight.json",
+      "bytes": 67,
+      "sha256": "c4c4a8b469cec14eab505cd6e7e89591c5e505a3a10e3f251c15eebe227c9064"
+    }
+  ],
+  "result": "S2A_DUAL_PLATFORM_PASSED",
+  "assembly_note": "Initial receipt assembly used an incorrect linux-source filename and failed before final manifest creation; corrected to the actual source-before/source-after files without rerunning or changing tests."
+}

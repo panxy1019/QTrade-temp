@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/svsem-20261028T051219Z-17524d/fixture_supervisor_probe.py", line 368, in <module>
+    summary['cases'] = [run_case('normal'), run_case('term')]
+  File "/root/qtrade-local/operator-evidence/svsem-20261028T051219Z-17524d/fixture_supervisor_probe.py", line 298, in run_case
+    final = wait_status(case, lambda state: state['controlled']['pid'] != old
+  File "/root/qtrade-local/operator-evidence/svsem-20261028T051219Z-17524d/fixture_supervisor_probe.py", line 134, in wait_status
+    raise AssertionError('ISOLATED_NATIVE_RUNNING_OBSERVATION_TIMEOUT')
+AssertionError: ISOLATED_NATIVE_RUNNING_OBSERVATION_TIMEOUT

@@ -19,6 +19,7 @@ from urllib.request import urlopen
 from fastapi import APIRouter, HTTPException, Request, Response
 
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.research.factor_strategy_catalog import preview_from_catalog, validate_catalog
 from qtrade.research.strategy_contract import freeze_strategy, validate_strategy
 from qtrade.research.workflow import SCHEMA, archived_template, capabilities, digest, validate_spec
 from qtrade.research.workflow_queue import GitQueue, seal
@@ -376,3 +377,143 @@ async def cancel(job_id: str, request: Request) -> dict[str, Any]:
         _queue_failure("cancel", error)
         raise HTTPException(503, "取消请求未获确认") from None
     return {"job_id": job_id, "state": "CANCEL_REQUESTED"}
+
+
+def _factor_catalog() -> dict[str, Any]:
+    """Only the fixed trusted publication; no client paths or archive downloads."""
+    try:
+        value = read_public("factor-catalog.json", maximum=1_000_000)
+        return validate_catalog(value)
+    except Exception:
+        raise HTTPException(503, "因子目录未发布或校验失败，登记入口保持关闭") from None
+
+
+def _factor_worker(catalog: dict[str, Any]) -> dict[str, Any]:
+    """Both catalogs must describe the same currently supported worker source."""
+    try:
+        listing = read_public("workflow.json")
+        if listing.get("schema_version") != SCHEMA:
+            raise ValueError("WORKFLOW_SCHEMA_MISMATCH")
+        now = datetime.now(UTC)
+        for worker in (catalog["worker"], listing["worker"]):
+            heartbeat = datetime.fromisoformat(worker["heartbeat_at"])
+            if heartbeat.tzinfo is None or not -60 <= (now-heartbeat).total_seconds() <= 720:
+                raise ValueError("WORKER_STALE")
+        if (catalog["worker"]["source_revision"] != listing["worker"]["source_revision"]
+                or "FACTOR_STRATEGY_REGISTER_V1" not in catalog["worker"]["supported_kinds"]):
+            raise ValueError("FACTOR_WORKER_NOT_SUPPORTED")
+        return listing
+    except Exception:
+        raise HTTPException(503, "因子目录与当前执行器不一致或已过期，请等待重新发布") from None
+
+
+@router.get("/factor-strategies/catalog")
+def factor_catalog(response: Response) -> dict[str, Any]:
+    response.headers["Cache-Control"] = "no-store"
+    return _factor_catalog()
+
+
+@router.get("/factor-strategies/jobs/{job_id}")
+def factor_registration(job_id: str, response: Response) -> dict[str, Any]:
+    response.headers["Cache-Control"] = "no-store"
+    if re.fullmatch(r"[a-f0-9]{32}", job_id) is None:
+        raise HTTPException(422, "登记任务标识无效")
+    try:
+        listing = read_public("workflow.json")
+        if listing.get("schema_version") != SCHEMA:
+            raise ValueError("WORKFLOW_SCHEMA_MISMATCH")
+        rows = [row for row in listing["experiments"] if row["experiment_id"] == job_id
+                and row["state"] == "COMPLETE" and row.get("engine") == "FACTOR_REGISTRATION"]
+        if not rows:
+            raise HTTPException(404, "未找到已完成的因子登记回执")
+        if len(rows) != 1:
+            raise ValueError("AMBIGUOUS_REGISTRATION_RESULT")
+        row = rows[0]
+        if not re.fullmatch(r"workflow-results/[a-f0-9]{64}\.json", row["detail_file"]):
+            raise ValueError("REGISTRATION_RESULT_PATH_INVALID")
+        value = read_public(row["detail_file"], maximum=100_000)
+        if (value["evidence_sha256"] != row["detail_sha256"] or value["job_id"] != job_id
+                or value.get("schema_version") != "qtrade.factor-strategy-registration.v1"
+                or value.get("kind") != "FACTOR_STRATEGY_REGISTER_V1"
+                or value.get("state") != "COMPLETE" or value.get("registration_only") is not True
+                or value.get("status") != "EXPERIMENT" or value.get("role") != "NONE"
+                or any(value.get(key) is not False for key in (
+                    "backtest_implemented", "paper_admission", "model_activation"))):
+            raise ValueError("REGISTRATION_RESULT_IDENTITY_INVALID")
+        return value
+    except HTTPException:
+        raise
+    except (OSError, ValueError, KeyError, TypeError):
+        raise HTTPException(503, "登记回执不可用或校验失败") from None
+
+
+def _factor_preview(spec: Any, catalog: dict[str, Any]) -> dict[str, Any]:
+    try:
+        return preview_from_catalog(catalog, spec)
+    except (ValueError, KeyError, TypeError):
+        raise HTTPException(422, "因子、评价、数据或组合规格不符合已发布的登记合同") from None
+
+
+@router.post("/factor-strategies/specification")
+async def factor_specification(request: Request, response: Response) -> dict[str, Any]:
+    actor(request)
+    response.headers["Cache-Control"] = "no-store"
+    body = await _body(request)
+    if set(body) != {"spec"}:
+        raise HTTPException(422, "因子预览仅接受规格字段")
+    catalog = _factor_catalog()
+    _factor_worker(catalog)
+    definition = _factor_preview(body["spec"], catalog)
+    return signed({**AUTHORITY, "schema_version": "qtrade.factor-strategy-preview.v1",
+        "spec": definition["spec"], "source_revision": catalog["worker"]["source_revision"],
+        "strategy_definition": definition,
+        "expected_strategy_version": definition["strategy_version"],
+        "expected_catalog_sha256": catalog["catalog_sha256"]})
+
+
+@router.post("/factor-strategies/jobs", status_code=202)
+async def submit_factor_strategy(request: Request, response: Response) -> dict[str, Any]:
+    user = actor(request)
+    response.headers["Cache-Control"] = "no-store"
+    body = await _body(request)
+    if (set(body) != {"spec", "request_id", "expected_strategy_version",
+                     "expected_catalog_sha256"}
+            or type(body["request_id"]) is not str
+            or re.fullmatch(r"[a-f0-9]{32}", body["request_id"]) is None):
+        raise HTTPException(422, "因子登记需要完整预览绑定及幂等请求标识")
+    catalog = _factor_catalog()
+    listing = _factor_worker(catalog)
+    definition = _factor_preview(body["spec"], catalog)
+    if (body["expected_strategy_version"] != definition["strategy_version"]
+            or body["expected_catalog_sha256"] != catalog["catalog_sha256"]):
+        raise HTTPException(409, "因子目录或冻结策略已变化，请重新预览")
+    try:
+        pending = [row for row in listing["experiments"] if row["state"] not in {
+            "COMPLETE", "FAILED", "CANCELLED", "INTERRUPTED", "REJECTED"}]
+    except (ValueError, KeyError, TypeError):
+        raise HTTPException(503, "研究队列状态不可核验，未提交登记") from None
+    if len(pending) >= 3:
+        raise HTTPException(429, "研究队列已满，请等待当前任务完成")
+    identity = body["request_id"]
+    value = {"schema_version": "qtrade.factor-strategy-register-request.v1",
+        "kind": "FACTOR_STRATEGY_REGISTER_V1", "job_id": identity, "actor": user,
+        "factor_spec": definition["spec"], "factor_spec_sha256": digest(definition["spec"]),
+        "expected_strategy_version": definition["strategy_version"],
+        "expected_catalog_sha256": catalog["catalog_sha256"],
+        "source_revision": catalog["worker"]["source_revision"],
+        "data_version_id": definition["evaluation_context"]["data_binding"]["data_version_id"],
+        "live_trading_enabled": False}
+    try:
+        GitQueue.from_environment().append("requests", identity, seal(
+            value, os.environ["QTRADE_RESEARCH_QUEUE_SECRET"]))
+    except ValueError as error:
+        if str(error) == "IMMUTABLE_JOB_ID_CONFLICT":
+            raise HTTPException(409, "请求标识已绑定另一份登记规格") from None
+        _queue_failure("factor_strategy_register", error)
+        raise HTTPException(503, "登记队列配置无效，未确认提交") from None
+    except Exception as error:
+        _queue_failure("factor_strategy_register", error)
+        raise HTTPException(503, "登记未获确认；请使用同一请求标识重试") from None
+    return {**AUTHORITY, "job_id": identity, "state": "QUEUED",
+        "kind": "FACTOR_STRATEGY_REGISTER_V1", "strategy_version": definition["strategy_version"],
+        "spec_sha256": digest(definition["spec"]), "registration_only": True}

@@ -1,0 +1,5 @@
+[fixture-work dd3999c] frozen current target
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 public/deleted-from-base.bin
+ delete mode 100644 public/intermediate-deleted.bin
+ create mode 100644 public/new.bin

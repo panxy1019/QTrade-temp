@@ -1,0 +1,993 @@
+{
+  "schema_version": "qtrade.factor-queue-backend-acceptance.v1",
+  "sealed_at": "2026-10-28T12:52:49.176050+00:00",
+  "state": "PASS_NONPRODUCTION_REGISTRATION_ONLY",
+  "remote_parent": "/root/qtrade-local/operator-evidence",
+  "packages": [
+    {
+      "root": "factor-queue-s2d-20261028T123014Z-b12b8041",
+      "baseline_commit": "a89d45f96f0b89811ad07464e9ebb7ee3a9bbf12",
+      "baseline_tar_sha256": "144b76610d0bf40ab0921a2b24151e1618213252421bf16494069fb6496f3175",
+      "overlay_sha256": "f0b222d10b2c64af5f432e426b113bd4d065ffc4c5cc1fb11b8faf601ab6c798",
+      "file_count": 2279,
+      "overlays": {
+        "src/qtrade/research/factor_strategy_contract.py": {
+          "sha256": "fe23ae88d7abfb374e4c41a28cd5176debe94c728df41ac0825e4dbcff43fbe0",
+          "bytes": 22927
+        },
+        "src/qtrade/research/factor_strategy_catalog.py": {
+          "sha256": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad",
+          "bytes": 12092
+        },
+        "scripts/factor_research_contracts.py": {
+          "sha256": "114b3c24ab03a8ba8ecb2181041dc2c0470b08bc54b257b596696e31dd2d0dc6",
+          "bytes": 16981
+        },
+        "scripts/run_factor_strategy_registration.py": {
+          "sha256": "72fec4144bc1b600d9471685e9e28f53e48af9ad433da3ad88006d6fc1f78aa1",
+          "bytes": 3508
+        },
+        "scripts/run_qlib_worker.py": {
+          "sha256": "f1b0ada2063340383316a9cf65a1e2d02a3c22e796434cb42ceb0042f059dbdb",
+          "bytes": 46552
+        },
+        "tests/test_factor_research_worker.py": {
+          "sha256": "7d09744ba07a0fe5a95e875900558747353ef366a84b1237084cb286b4efd18e",
+          "bytes": 22572
+        },
+        "tests/fixtures/factor_strategy_register_v1.json": {
+          "sha256": "daba424e9010cf657184bddc954554c7eb8897cbadc079f15f0aa7d3e8df9e9f",
+          "bytes": 81768
+        },
+        "src/qtrade/api/research_workflow.py": {
+          "sha256": "1d47a7c3d776ba9d74fd5667d127dedddda2064c5a03d620a674f21812966a1a",
+          "bytes": 24176
+        },
+        "scripts/publish_research_snapshot.py": {
+          "sha256": "6bb527d9faeeb6979150a4b4163035bfc7e5b73fc7b2bd88aa5afdf0a7c42de5",
+          "bytes": 21715
+        },
+        "tests/test_factor_research_api.py": {
+          "sha256": "ec5af0e228d60954fb1428d551c7fb4da8214425e26009b0dcf62d402e1c8508",
+          "bytes": 9925
+        }
+      },
+      "regression": [
+        {
+          "file": "regression.xml",
+          "suites": [
+            {
+              "name": "pytest",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "tests": "371",
+              "time": "100.724",
+              "timestamp": "2026-10-28T20:30:38.967746+08:00",
+              "hostname": "73ec830048ca"
+            }
+          ]
+        },
+        {
+          "file": "windows-final-regression.xml",
+          "suites": [
+            {
+              "name": "pytest",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "4",
+              "tests": "371",
+              "time": "106.053",
+              "timestamp": "2026-10-28T20:31:00.292969+08:00",
+              "hostname": "DESKTOP-F1JPIV2"
+            }
+          ]
+        }
+      ],
+      "actual_acceptance_evidence_sha256": "82e2355b5170fed484d179744807c343babe432d39cdb04aba9bb617f1bbbdf6",
+      "registration": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.factor-strategy-registration.v1",
+        "kind": "FACTOR_STRATEGY_REGISTER_V1",
+        "state": "COMPLETE",
+        "registration_only": true,
+        "job_id": "762688be9f7a49018cb64a63d6ab970d",
+        "actor": "nonproduction-independent-acceptance",
+        "registered_at": "2026-10-28T12:37:53.189418+00:00",
+        "strategy_id": "factor-2983861cbc2e6a4891bac485028f117962e339e3594c73e11d7b93c397934711",
+        "strategy_version": "2983861cbc2e6a4891bac485028f117962e339e3594c73e11d7b93c397934711",
+        "contract_sha256": "d7df0a55abbd986dfb50d48e5f9cf715f51f2bea0b6bf84090204e54a2530e43",
+        "catalog_sha256": "d3fd51484b8a22c930e965f799a23fb5490d758fbf436ad725e3519116ca24ab",
+        "source_revision": "a89d45f96f0b89811ad07464e9ebb7ee3a9bbf12",
+        "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+        "factor_spec_sha256": "5f2e31dc8f76d0ae8f88b8fcaa721a23a3bcce5dc506b249532c69f662af4982",
+        "factor_ref": {
+          "definition_sha256": "62fa55321229f24cd61681c0a612f28d7aeef5c3192acb64a5f8ec388502158d",
+          "factor_id": "qtrade.price.momentum20",
+          "factor_version": "a56c5325a6e10a717dbe9dcd256ccba99ee39671594e21c3d2f272289a92f857"
+        },
+        "evaluation_ref": {
+          "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+          "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9",
+          "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de"
+        },
+        "status": "EXPERIMENT",
+        "role": "NONE",
+        "backtest_implemented": false,
+        "paper_admission": false,
+        "model_activation": false,
+        "limitations": [
+          "CURRENT_LIQUIDITY_UNIVERSE_SURVIVORSHIP_AND_SELECTION_BIAS",
+          "POST_HOC_VIEWED_HISTORY_NOT_UNSEEN_FORWARD_EVIDENCE",
+          "HISTORICAL_PIT_NOT_CERTIFIED",
+          "HISTORICAL_MASTER_DELISTED_STATUS_AND_LIMIT_PRICE_COVERAGE_UNCERTIFIED",
+          "VENDOR_ADJUSTMENT_AND_CORPORATE_ACTIONS_NOT_INDEPENDENTLY_CERTIFIED",
+          "CLOSE_LABEL_DIAGNOSTIC_NOT_EXECUTED_PORTFOLIO_NET_RETURN",
+          "NO_PARAMETER_SEARCH_MULTIPLE_TESTING_OR_ALPHA_SIGNIFICANCE_CLAIM"
+        ],
+        "evidence_sha256": "1cb8f8af30b64279b90115cb6d8f63e25be724d89d019590298656ed0bc93152"
+      },
+      "registry_counts": {
+        "strategies": 1,
+        "strategy_research_contracts": 1,
+        "strategy_research_jobs": 1,
+        "strategy_transitions": 1
+      }
+    },
+    {
+      "root": "factor-queue-s2d-final-20261028T124314Z-e0813807",
+      "baseline_commit": "a89d45f96f0b89811ad07464e9ebb7ee3a9bbf12",
+      "baseline_tar_sha256": "144b76610d0bf40ab0921a2b24151e1618213252421bf16494069fb6496f3175",
+      "overlay_sha256": "b92514fb6263a6dcbabc2e4d24c2c0f08907eefb8f3c8aaed1a9c669884c95fb",
+      "file_count": 2280,
+      "overlays": {
+        "src/qtrade/research/factor_strategy_contract.py": {
+          "sha256": "92d19c483f80a00080debe1304fcdd8ec906496e86b00047d96dd52b806cce76",
+          "bytes": 23009
+        },
+        "src/qtrade/research/factor_strategy_catalog.py": {
+          "sha256": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad",
+          "bytes": 12092
+        },
+        "scripts/factor_research_contracts.py": {
+          "sha256": "114b3c24ab03a8ba8ecb2181041dc2c0470b08bc54b257b596696e31dd2d0dc6",
+          "bytes": 16981
+        },
+        "scripts/run_factor_strategy_registration.py": {
+          "sha256": "72fec4144bc1b600d9471685e9e28f53e48af9ad433da3ad88006d6fc1f78aa1",
+          "bytes": 3508
+        },
+        "scripts/run_qlib_worker.py": {
+          "sha256": "f1b0ada2063340383316a9cf65a1e2d02a3c22e796434cb42ceb0042f059dbdb",
+          "bytes": 46552
+        },
+        "tests/test_factor_research_worker.py": {
+          "sha256": "aa938730c9db674dc6171bdf9f9a8d61bb3ca0f45ce2a464fb053871631c2863",
+          "bytes": 25218
+        },
+        "tests/fixtures/factor_strategy_register_v1.json": {
+          "sha256": "daba424e9010cf657184bddc954554c7eb8897cbadc079f15f0aa7d3e8df9e9f",
+          "bytes": 81768
+        },
+        "src/qtrade/api/research_workflow.py": {
+          "sha256": "1d47a7c3d776ba9d74fd5667d127dedddda2064c5a03d620a674f21812966a1a",
+          "bytes": 24176
+        },
+        "scripts/publish_research_snapshot.py": {
+          "sha256": "6bb527d9faeeb6979150a4b4163035bfc7e5b73fc7b2bd88aa5afdf0a7c42de5",
+          "bytes": 21715
+        },
+        "tests/test_factor_research_api.py": {
+          "sha256": "ec5af0e228d60954fb1428d551c7fb4da8214425e26009b0dcf62d402e1c8508",
+          "bytes": 9925
+        },
+        "tests/fixtures/factor_strategy_s2c13_archived.json": {
+          "sha256": "f728b11244661ef3682c80b0bfdbf2b9d88d666716fea3bbded0819a073cad8c",
+          "bytes": 28065
+        }
+      },
+      "regression": [
+        {
+          "file": "regression.xml",
+          "suites": [
+            {
+              "name": "pytest",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "tests": "377",
+              "time": "95.594",
+              "timestamp": "2026-10-28T20:43:36.695963+08:00",
+              "hostname": "73ec830048ca"
+            }
+          ]
+        },
+        {
+          "file": "windows-final-regression.xml",
+          "suites": [
+            {
+              "name": "pytest",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "4",
+              "tests": "377",
+              "time": "104.523",
+              "timestamp": "2026-10-28T20:43:58.796256+08:00",
+              "hostname": "DESKTOP-F1JPIV2"
+            }
+          ]
+        }
+      ],
+      "actual_acceptance_evidence_sha256": "79f1a8eef1a8e9846df376822b2301483338cd6aeb84e472afc16d4037a7eb72",
+      "registration": {
+        "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+        "point_in_time": false,
+        "realtime_readiness": false,
+        "real_data_paper_readiness": false,
+        "external_order_transmission": false,
+        "live_trading_enabled": false,
+        "promotion": "NOT_ELIGIBLE",
+        "schema_version": "qtrade.factor-strategy-registration.v1",
+        "kind": "FACTOR_STRATEGY_REGISTER_V1",
+        "state": "COMPLETE",
+        "registration_only": true,
+        "job_id": "1cfad5d88fad4f70bd7b029a57efd9d2",
+        "actor": "nonproduction-independent-acceptance",
+        "registered_at": "2026-10-28T12:48:05.506357+00:00",
+        "strategy_id": "factor-469641828717ccc398e1bf07a4c272740c9d24534cddad81818e7c09224e6ca2",
+        "strategy_version": "469641828717ccc398e1bf07a4c272740c9d24534cddad81818e7c09224e6ca2",
+        "contract_sha256": "b34c0a91b42beb630e62bbe8e6f5f1d53d608f7631fe7c5ddf5c07713cea87cc",
+        "catalog_sha256": "c1215b1f415365f81a646a8689a834b0fbee1089a1a3da83c271cfaef6994035",
+        "source_revision": "a89d45f96f0b89811ad07464e9ebb7ee3a9bbf12",
+        "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+        "factor_spec_sha256": "08b02163a1cd11f5a8c5f556a16033954fca32a3b0208669bcc5d2b7ffe66919",
+        "factor_ref": {
+          "definition_sha256": "62fa55321229f24cd61681c0a612f28d7aeef5c3192acb64a5f8ec388502158d",
+          "factor_id": "qtrade.price.momentum20",
+          "factor_version": "a56c5325a6e10a717dbe9dcd256ccba99ee39671594e21c3d2f272289a92f857"
+        },
+        "evaluation_ref": {
+          "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+          "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9",
+          "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de"
+        },
+        "status": "EXPERIMENT",
+        "role": "NONE",
+        "backtest_implemented": false,
+        "paper_admission": false,
+        "model_activation": false,
+        "limitations": [
+          "CURRENT_LIQUIDITY_UNIVERSE_SURVIVORSHIP_AND_SELECTION_BIAS",
+          "POST_HOC_VIEWED_HISTORY_NOT_UNSEEN_FORWARD_EVIDENCE",
+          "HISTORICAL_PIT_NOT_CERTIFIED",
+          "HISTORICAL_MASTER_DELISTED_STATUS_AND_LIMIT_PRICE_COVERAGE_UNCERTIFIED",
+          "VENDOR_ADJUSTMENT_AND_CORPORATE_ACTIONS_NOT_INDEPENDENTLY_CERTIFIED",
+          "CLOSE_LABEL_DIAGNOSTIC_NOT_EXECUTED_PORTFOLIO_NET_RETURN",
+          "NO_PARAMETER_SEARCH_MULTIPLE_TESTING_OR_ALPHA_SIGNIFICANCE_CLAIM"
+        ],
+        "evidence_sha256": "ee290dad340e740d4a6c9877a7fc93ad05cbd787c8f169f015783f3b3fe5d0f6"
+      },
+      "registry_counts": {
+        "strategies": 2,
+        "strategy_research_contracts": 2,
+        "strategy_research_jobs": 2,
+        "strategy_transitions": 2
+      }
+    }
+  ],
+  "current_overlay_bytes_match_final": true,
+  "old_report_gzip_sha256": "47bed3add84aff16f901531115c17ac4534cfd667b6716595a1ce098b9af37dd",
+  "longer_report_gzip_sha256": "74c246d7822b4e860706dcc2c212763ede3aef62f38f5b94297237acf5457ada",
+  "old_c_definition_sha256": "f728b11244661ef3682c80b0bfdbf2b9d88d666716fea3bbded0819a073cad8c",
+  "live_trading_enabled": false,
+  "production_queue_accessed": false,
+  "production_deployed": false,
+  "backtest_implemented": false,
+  "paper_admission": false,
+  "model_activation": false,
+  "limitations": [
+    "RETROSPECTIVE_GROSS_LABEL_ONLY",
+    "NO_FACTOR_EXECUTION_OR_PORTFOLIO_BACKTEST",
+    "NO_PRODUCTION_DELIVERY_ACCEPTANCE",
+    "REVISION_LABEL_PLUS_EXPLICIT_OVERLAYS_NOT_GIT_CERTIFICATION",
+    "REGISTRY_AND_WORKFLOW_DATABASE_COMMITS_ARE_NOT_ONE_TRANSACTION"
+  ],
+  "files": [
+    {
+      "file": "development/s2d-legacy-green.xml",
+      "bytes": 1126,
+      "sha256": "15a930ad4bb92d7474b1abe0b545a59b1aed8d893a621f3e4707695a6c5d84b9"
+    },
+    {
+      "file": "development/s2d-legacy-red.xml",
+      "bytes": 3103,
+      "sha256": "ec94b6ee75b63af433605977711bf08768c2283cf4a43de7264070168e756447"
+    },
+    {
+      "file": "development/s2d-target.xml",
+      "bytes": 10001,
+      "sha256": "45b28129b8324a6328d510aa1b9f677a769a9ca985a33868e17036f321ccee9e"
+    },
+    {
+      "file": "development/s2d-target2.xml",
+      "bytes": 23636,
+      "sha256": "3dde9d6849c1c38c85841167982609f8405cc214f99c34be809a1d30a06f6030"
+    },
+    {
+      "file": "development/s2d-target3.xml",
+      "bytes": 8716,
+      "sha256": "6f126242e0281563c5c4518e4284d674c7cff1b25e31262d90fb959e05320951"
+    },
+    {
+      "file": "drivers/build_factor_s2c13_archive_20261028.py",
+      "bytes": 2385,
+      "sha256": "611e19cf24152861e7c537778aa9d7d2920a662a5b1a7db2852afdbb7a9ee440"
+    },
+    {
+      "file": "drivers/dispatch_factor_queue_actual_20261028.py",
+      "bytes": 2044,
+      "sha256": "4e591bdc40a237165c7ea3b672d022e5bb2064493f8113e997a46b9ae5c92d94"
+    },
+    {
+      "file": "drivers/dispatch_factor_queue_final_actual_20261028.py",
+      "bytes": 2157,
+      "sha256": "1c440633376cd14a11af5e277fd2ce2ebc6ddc5a0a8dee03ab2dd574ca08e2fd"
+    },
+    {
+      "file": "drivers/dispatch_factor_s2c13_archive_20261028.py",
+      "bytes": 1490,
+      "sha256": "61c24b929cb5f1b98e679ba93004bb4dc08e594983f8c5d08073b572ed2bd615"
+    },
+    {
+      "file": "drivers/retrieve_factor_queue_databases_20261028.py",
+      "bytes": 1573,
+      "sha256": "901d08de30e5d2a6760c91c4db9560b171ec74c6728642442ec904ad99fb6cb6"
+    },
+    {
+      "file": "drivers/run_factor_queue_acceptance_20261028.py",
+      "bytes": 7884,
+      "sha256": "ec7ee1e24aafc524f788cf090200c0e25fd6d1f73998e9267dea4ed3ab7ba143"
+    },
+    {
+      "file": "drivers/run_factor_queue_actual_20261028.py",
+      "bytes": 10905,
+      "sha256": "ef557f1ec5e374407469cf04a775fda05025664f3877efa24b8e3f2b96b20057"
+    },
+    {
+      "file": "drivers/run_factor_queue_final_acceptance_20261028.py",
+      "bytes": 7945,
+      "sha256": "ff62eb6a7ce845d6982a2808381b3452f13c59823156b1a7df367a2b7ae70fbd"
+    },
+    {
+      "file": "drivers/run_factor_queue_final_actual_20261028.py",
+      "bytes": 13831,
+      "sha256": "05cdd8b9996f91318dfa4c824ae264d184d7d96a67408ac86f55b4d0875e96ac"
+    },
+    {
+      "file": "drivers/run_factor_queue_windows_package_20261028.py",
+      "bytes": 2458,
+      "sha256": "f2ce006e98ea7413d639d6cd6f8b53b9f703119a0c51b1fb2e44e84adb5cafd7"
+    },
+    {
+      "file": "drivers/seal_factor_queue_s2d_20261028.py",
+      "bytes": 4420,
+      "sha256": "23fb1b9452a4ae954e04851ad5aba56a09273fa4cd4a653f2f2a0bcaf5564add"
+    },
+    {
+      "file": "factor-legacy-s2c13-20261028T124119Z/factor_strategy_s2c13_archived.json",
+      "bytes": 28065,
+      "sha256": "f728b11244661ef3682c80b0bfdbf2b9d88d666716fea3bbded0819a073cad8c"
+    },
+    {
+      "file": "factor-legacy-s2c13-20261028T124119Z/legacy-provenance.json",
+      "bytes": 2252,
+      "sha256": "4eeddce7eb3e355469658795b4314069d170031f4519a9aa55785ef4cba6186f"
+    },
+    {
+      "file": "factor-legacy-s2c13-20261028T124119Z/location.json",
+      "bytes": 100,
+      "sha256": "34935285aa19a389a8d78a6bd800e15784b3d5b21bee6fc97bc8fa51c5851ac3"
+    },
+    {
+      "file": "factor-legacy-s2c13-20261028T124119Z/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-legacy-s2c13-20261028T124119Z/stdout.log",
+      "bytes": 2169,
+      "sha256": "df8509bafb4b33cc29ed31a2d487916d354e618d478fc8e97248ce2fa26d8b9a"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-acceptance.json",
+      "bytes": 12166,
+      "sha256": "8466dd775acf133f1a07798f0651ad0607dee00186f5880342aa014fbfa7fede"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-catalog.json",
+      "bytes": 194768,
+      "sha256": "b09bb72d8d6aeb4debe2c78e26c3d205d7f02722e9b0890fbaa080f5c8008805"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-child-output/registration.json",
+      "bytes": 2413,
+      "sha256": "ca9184a4504875587c5f2be5ada6febf03fee96dfad7dc02d1b18f42a8df95dd"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-child-output/strategy-definition.json",
+      "bytes": 28859,
+      "sha256": "198da9ad2770b369a8c5930e04c56ac3b895f988743b94204b099229fd79ac60"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-child-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-child-stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-child-write-guard.json",
+      "bytes": 3302,
+      "sha256": "e0c20730a7bb0ed1ba62873947e3ad3da4ee61962e48740286463cf12482f376"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-controls-after.json",
+      "bytes": 380,
+      "sha256": "8255eaa92064870e7995d4914d4f37aae97dc0572637c5b16f1de9aa75c2ac2b"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-controls-before.json",
+      "bytes": 380,
+      "sha256": "8255eaa92064870e7995d4914d4f37aae97dc0572637c5b16f1de9aa75c2ac2b"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-operator-status.json",
+      "bytes": 364,
+      "sha256": "466c099fd96e136cf6fdffe3b2eddbef2ad67329ae135bfafb5da741f2d1d9ed"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-operator-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-operator-stdout.log",
+      "bytes": 12470,
+      "sha256": "cf69c819ba3f3575749f72b8691bc7312395cb45df4afdaaafb4c3431725045d"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-originals-after.json",
+      "bytes": 47953,
+      "sha256": "a52597b37c168b66caaf22f9ff75e2c2a5a2419ce6dfc0f891c324b520c29dc2"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-originals-before.json",
+      "bytes": 47953,
+      "sha256": "a52597b37c168b66caaf22f9ff75e2c2a5a2419ce6dfc0f891c324b520c29dc2"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-preview.json",
+      "bytes": 28859,
+      "sha256": "198da9ad2770b369a8c5930e04c56ac3b895f988743b94204b099229fd79ac60"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-request.json",
+      "bytes": 1906,
+      "sha256": "a04c0197b21767454890ad69abfca7900513b9f56fdf034bf6363a9066f90ff8"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-resources-after.json",
+      "bytes": 50,
+      "sha256": "70d131dc0778fc0544c83f64adf98af58ba84549bf49bd74e772e1e89379936e"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-resources-before.json",
+      "bytes": 50,
+      "sha256": "8ad62b6b5c24a67e4b0255b239c2d3124da034bae2af5eda3561b2d348036fc0"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-source-after.json",
+      "bytes": 419896,
+      "sha256": "3e50c8c3950c2369cbf0103535b3b692a6ff89a672f31229e8a9290a4cb5771a"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual-source-before.json",
+      "bytes": 419896,
+      "sha256": "3e50c8c3950c2369cbf0103535b3b692a6ff89a672f31229e8a9290a4cb5771a"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/actual_guarded_runner.py",
+      "bytes": 1404,
+      "sha256": "b11d220697625e357d978656469897741ae27bc3dc671c9be412593462b9954c"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/approved-factor-archive/index.json",
+      "bytes": 6201,
+      "sha256": "3f33d5e13bec122e21d07d920a158c815b1cffc4817308e3d750b5b5568620b5"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/scripts/factor_research_contracts.py",
+      "bytes": 16981,
+      "sha256": "114b3c24ab03a8ba8ecb2181041dc2c0470b08bc54b257b596696e31dd2d0dc6"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/scripts/publish_research_snapshot.py",
+      "bytes": 21715,
+      "sha256": "6bb527d9faeeb6979150a4b4163035bfc7e5b73fc7b2bd88aa5afdf0a7c42de5"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/scripts/run_factor_strategy_registration.py",
+      "bytes": 3508,
+      "sha256": "72fec4144bc1b600d9471685e9e28f53e48af9ad433da3ad88006d6fc1f78aa1"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/scripts/run_qlib_worker.py",
+      "bytes": 46552,
+      "sha256": "f1b0ada2063340383316a9cf65a1e2d02a3c22e796434cb42ceb0042f059dbdb"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/src/qtrade/api/research_workflow.py",
+      "bytes": 24176,
+      "sha256": "1d47a7c3d776ba9d74fd5667d127dedddda2064c5a03d620a674f21812966a1a"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/src/qtrade/research/factor_strategy_catalog.py",
+      "bytes": 12092,
+      "sha256": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/src/qtrade/research/factor_strategy_contract.py",
+      "bytes": 22927,
+      "sha256": "fe23ae88d7abfb374e4c41a28cd5176debe94c728df41ac0825e4dbcff43fbe0"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/tests/fixtures/factor_strategy_register_v1.json",
+      "bytes": 81768,
+      "sha256": "daba424e9010cf657184bddc954554c7eb8897cbadc079f15f0aa7d3e8df9e9f"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/tests/test_factor_research_api.py",
+      "bytes": 9925,
+      "sha256": "ec5af0e228d60954fb1428d551c7fb4da8214425e26009b0dcf62d402e1c8508"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/candidate/tests/test_factor_research_worker.py",
+      "bytes": 22572,
+      "sha256": "7d09744ba07a0fe5a95e875900558747353ef366a84b1237084cb286b4efd18e"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/database-transfer-proof.json",
+      "bytes": 133,
+      "sha256": "a2cc746e5b41b14679e222421027dfa44d7612eddfcb21ad2e954cd8e7a24ccf"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/evidence-manifest.json",
+      "bytes": 2998,
+      "sha256": "6a7ad43cf884e59cd5b8afd50bafd939b1c44340cb8fee5452a2ec412410fa5d"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/isolated-strategies.sqlite.gz",
+      "bytes": 10066,
+      "sha256": "9ebabefab9db56044bafe8dfbe7703c31581a1290c9fc04599fa5a921945d0b7"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/old-report-replay.json",
+      "bytes": 373,
+      "sha256": "8f973ff61513de07fcf9b7557b37b950158cf504692a810e7a0947e05d76dd50"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/overlay.tar",
+      "bytes": 276480,
+      "sha256": "f0b222d10b2c64af5f432e426b113bd4d065ffc4c5cc1fb11b8faf601ab6c798"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/package-manifest.json",
+      "bytes": 896101,
+      "sha256": "6d848dab760921406ad71c62f372211434725f639432bfe850d6c616cb850cfa"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/regression.xml",
+      "bytes": 55546,
+      "sha256": "7b5d8eca1f76585efbc9efdc134702e74ed53f804e49e806d4427bcbb39317e9"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/remote-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/remote-stdout.log",
+      "bytes": 4374,
+      "sha256": "ccd60419887fa5b7d0d61d90fedfa8fbbcf30ad6c6e478c8561782e9e7558264"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/resources-after.json",
+      "bytes": 50,
+      "sha256": "79c8cdf448cbb3e22a0ae79e70801df0b3e0737e74b64a1259f30063ddce7d51"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/resources-before.json",
+      "bytes": 50,
+      "sha256": "3e12b9c07765f7f4b610dd24f5f1782a544387d2ba116e028744ef57a0ed67a8"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/result.json",
+      "bytes": 2807,
+      "sha256": "48a9a374a8462aa4d07675118bb5bf4909f6c536ae4ec7ba67b0f813f7d43a47"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/run_factor_queue_actual_20261028.py",
+      "bytes": 10905,
+      "sha256": "ef557f1ec5e374407469cf04a775fda05025664f3877efa24b8e3f2b96b20057"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/run_factor_strategy_review.py",
+      "bytes": 3292,
+      "sha256": "08d7a3fac14921995c6216f124959ed7b8c195671acad0a12bd5de8dba300b72"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/source-after.json",
+      "bytes": 438164,
+      "sha256": "47c2f52431635fe74ecf4add4f6a91aede80dde25f1bf4d6bd14819292d8d132"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/source-before.json",
+      "bytes": 438164,
+      "sha256": "47c2f52431635fe74ecf4add4f6a91aede80dde25f1bf4d6bd14819292d8d132"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/stdout.log",
+      "bytes": 1098,
+      "sha256": "9e7ee6da0c1da879912638753e4281a2c0411862e801e4e5aca4ea84a9cf15b1"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/windows-final-regression.xml",
+      "bytes": 56275,
+      "sha256": "c39ec8f2601d9c3ad1c4ef607aeed83365ceeb65e866dcea6d2e12ccf98beeb6"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/windows-final-result.json",
+      "bytes": 2741,
+      "sha256": "3b86156a5d9784bd026ff177c73ed1cea5058c37a6deca5a5d4939a4e9c4289c"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/windows-final-source-after.json",
+      "bytes": 447283,
+      "sha256": "c1a2add77af2f4e5647c8f1c8c27f8afee636c304bb2baf76f3e1c8f1b135b50"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/windows-final-source-before.json",
+      "bytes": 447283,
+      "sha256": "c1a2add77af2f4e5647c8f1c8c27f8afee636c304bb2baf76f3e1c8f1b135b50"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/windows-final-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-20261028T123014Z-b12b8041/windows-final-stdout.log",
+      "bytes": 1065,
+      "sha256": "b53f0a7592522f3e92c89e61c7b2316ccccc76b777a31e52df5dd55b73536d5d"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-acceptance.json",
+      "bytes": 13853,
+      "sha256": "f660f9a37b10a3d0ed7f25247898dfd3d9987d3e284a145cb0c1fb596992aa9c"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-catalog.json",
+      "bytes": 195159,
+      "sha256": "1935faf6bf53f31eb3149e90925660e43ad3c7067f97b19735c8cfff81260831"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-child-output/registration.json",
+      "bytes": 2413,
+      "sha256": "342d8f7155d5f7a0dfa8854c5958b3b9485a764c118916f71e2f53e2d2978ae4"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-child-output/strategy-definition.json",
+      "bytes": 29466,
+      "sha256": "6cc735902206b76a3bd9c245873bd14fcee7cdaeec44d83def7d80c43df28652"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-child-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-child-stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-child-write-guard.json",
+      "bytes": 3572,
+      "sha256": "5a67ce9048a36da7627e0742a266ec6253449c2352eb59b10c282db75614470b"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-controls-after.json",
+      "bytes": 386,
+      "sha256": "1e892bfbe5152fb9638a841c32471eee86c4c48d9daf032282bc32292aa6e1ae"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-controls-before.json",
+      "bytes": 386,
+      "sha256": "1e892bfbe5152fb9638a841c32471eee86c4c48d9daf032282bc32292aa6e1ae"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-legacy-replay.json",
+      "bytes": 210,
+      "sha256": "d1d11676c1f6374f359a14ef894d3f37f4766ee848929712c9cca85cad527f71"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-operator-status.json",
+      "bytes": 382,
+      "sha256": "a2fdb044f29e321833529b45e5b95c6e29b285c46a6d804743504ca97d5c071d"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-operator-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-operator-stdout.log",
+      "bytes": 14190,
+      "sha256": "c97f4eebc5f09cfbad244f3b266e7f4fbcc8a979d03935837afcee8a39c47fb8"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-originals-after.json",
+      "bytes": 47953,
+      "sha256": "a52597b37c168b66caaf22f9ff75e2c2a5a2419ce6dfc0f891c324b520c29dc2"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-originals-before.json",
+      "bytes": 47953,
+      "sha256": "a52597b37c168b66caaf22f9ff75e2c2a5a2419ce6dfc0f891c324b520c29dc2"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-parent-after.json",
+      "bytes": 521,
+      "sha256": "04ef6c422be396193a3d093c79e865318f1d79e0062b6a3f5b452da6e74e9c2b"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-parent-before.json",
+      "bytes": 521,
+      "sha256": "04ef6c422be396193a3d093c79e865318f1d79e0062b6a3f5b452da6e74e9c2b"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-preview.json",
+      "bytes": 29466,
+      "sha256": "6cc735902206b76a3bd9c245873bd14fcee7cdaeec44d83def7d80c43df28652"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-request.json",
+      "bytes": 2513,
+      "sha256": "4c223c3fec8d3f387d43efd867caebc14166a0c6057f86c62271d55737d72852"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-resources-after.json",
+      "bytes": 50,
+      "sha256": "06c50aa93abc5ddb903d3dc75fea7eb9663fb331cb980adaba33a73bd7e64e65"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-resources-before.json",
+      "bytes": 50,
+      "sha256": "d7dfa95ad71ec9d9c28abd26e4ec4a2600205205c9cfa3519a555aa1d9e30628"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-source-after.json",
+      "bytes": 420060,
+      "sha256": "84fd1c6a33fe05acf031b00e85939bfbc9319042682f4ed906e4c60ccc9cc587"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual-source-before.json",
+      "bytes": 420060,
+      "sha256": "84fd1c6a33fe05acf031b00e85939bfbc9319042682f4ed906e4c60ccc9cc587"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/actual_guarded_runner.py",
+      "bytes": 1404,
+      "sha256": "b11d220697625e357d978656469897741ae27bc3dc671c9be412593462b9954c"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/approved-factor-archive/index.json",
+      "bytes": 6201,
+      "sha256": "3f33d5e13bec122e21d07d920a158c815b1cffc4817308e3d750b5b5568620b5"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/scripts/factor_research_contracts.py",
+      "bytes": 16981,
+      "sha256": "114b3c24ab03a8ba8ecb2181041dc2c0470b08bc54b257b596696e31dd2d0dc6"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/scripts/publish_research_snapshot.py",
+      "bytes": 21715,
+      "sha256": "6bb527d9faeeb6979150a4b4163035bfc7e5b73fc7b2bd88aa5afdf0a7c42de5"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/scripts/run_factor_strategy_registration.py",
+      "bytes": 3508,
+      "sha256": "72fec4144bc1b600d9471685e9e28f53e48af9ad433da3ad88006d6fc1f78aa1"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/scripts/run_qlib_worker.py",
+      "bytes": 46552,
+      "sha256": "f1b0ada2063340383316a9cf65a1e2d02a3c22e796434cb42ceb0042f059dbdb"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/src/qtrade/api/research_workflow.py",
+      "bytes": 24176,
+      "sha256": "1d47a7c3d776ba9d74fd5667d127dedddda2064c5a03d620a674f21812966a1a"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/src/qtrade/research/factor_strategy_catalog.py",
+      "bytes": 12092,
+      "sha256": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/src/qtrade/research/factor_strategy_contract.py",
+      "bytes": 23009,
+      "sha256": "92d19c483f80a00080debe1304fcdd8ec906496e86b00047d96dd52b806cce76"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/tests/fixtures/factor_strategy_register_v1.json",
+      "bytes": 81768,
+      "sha256": "daba424e9010cf657184bddc954554c7eb8897cbadc079f15f0aa7d3e8df9e9f"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/tests/fixtures/factor_strategy_s2c13_archived.json",
+      "bytes": 28065,
+      "sha256": "f728b11244661ef3682c80b0bfdbf2b9d88d666716fea3bbded0819a073cad8c"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/tests/test_factor_research_api.py",
+      "bytes": 9925,
+      "sha256": "ec5af0e228d60954fb1428d551c7fb4da8214425e26009b0dcf62d402e1c8508"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/candidate/tests/test_factor_research_worker.py",
+      "bytes": 25218,
+      "sha256": "aa938730c9db674dc6171bdf9f9a8d61bb3ca0f45ce2a464fb053871631c2863"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/database-transfer-proof.json",
+      "bytes": 134,
+      "sha256": "7552d40a6ccc110d57d36a64be3ca6a4003edcd4d82c62f69bb71095296e6501"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/evidence-manifest.json",
+      "bytes": 3004,
+      "sha256": "8d2827edb66529f86468cc3ef91a2c745dbbf578a35a8ac3df70dccd9b777e11"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/isolated-strategies.sqlite.gz",
+      "bytes": 14902,
+      "sha256": "2a40ee6c284edc0c6e4b9d03fde94d84ce75215859ae595f01b6386ac2d6a230"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/old-report-replay.json",
+      "bytes": 373,
+      "sha256": "3febf994c7c45aac4fade005ccd3eb4b9fa0ab32bbbb63337ae494e8a98d9d27"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/overlay.tar",
+      "bytes": 307200,
+      "sha256": "b92514fb6263a6dcbabc2e4d24c2c0f08907eefb8f3c8aaed1a9c669884c95fb"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/package-manifest.json",
+      "bytes": 896453,
+      "sha256": "b0181c43289e143f674dc26c8201cad27ecb3249365b0018df693df62ce7a9d5"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/regression.xml",
+      "bytes": 56420,
+      "sha256": "86d1941009827d69274a9c7c8f548fb0028c609044a18df395dc5f1008122a3d"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/remote-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/remote-stdout.log",
+      "bytes": 4560,
+      "sha256": "539d48817a0fed69598bb03bdc71f894303f279205e4e9132772ceb9a30c34a6"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/resources-after.json",
+      "bytes": 50,
+      "sha256": "f0a6311173314a496818fee2392f76d39df7ce0d9f602a893457f072d74ece07"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/resources-before.json",
+      "bytes": 50,
+      "sha256": "13cc9ceb6437e7cb9a893980fcf49b970885dd63b54350434ad0b30205156022"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/result.json",
+      "bytes": 2990,
+      "sha256": "f809d40253f7ffa81f06efea426279b6535bc14aba2c5d8706ba78060ccb8178"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/run_factor_queue_final_actual_20261028.py",
+      "bytes": 13831,
+      "sha256": "05cdd8b9996f91318dfa4c824ae264d184d7d96a67408ac86f55b4d0875e96ac"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/run_factor_strategy_review.py",
+      "bytes": 3292,
+      "sha256": "08d7a3fac14921995c6216f124959ed7b8c195671acad0a12bd5de8dba300b72"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/source-after.json",
+      "bytes": 438336,
+      "sha256": "d3caf6dde4b61454779f1f771685c2b4ec6924153aad8d61a814c30dec28fe37"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/source-before.json",
+      "bytes": 438336,
+      "sha256": "d3caf6dde4b61454779f1f771685c2b4ec6924153aad8d61a814c30dec28fe37"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/stdout.log",
+      "bytes": 1097,
+      "sha256": "cc80ddf4a3b22c82a9a2e958cb81f8e9f3353d9026ce230892f528c688915f4d"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/windows-final-regression.xml",
+      "bytes": 57151,
+      "sha256": "98a7450f7b1c1aafd009e87695aba4c65b232b9fbf29ef10a60f966c602adfd1"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/windows-final-result.json",
+      "bytes": 2922,
+      "sha256": "94f28a0d71bba46a51a60bfe8ab8874443c271751f7a961dbcaf1b108513b9db"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/windows-final-source-after.json",
+      "bytes": 447459,
+      "sha256": "bece818fd95e06a317ea57cd1e41a4de36e6759ab04b0778a2619cc2bad3594e"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/windows-final-source-before.json",
+      "bytes": 447459,
+      "sha256": "bece818fd95e06a317ea57cd1e41a4de36e6759ab04b0778a2619cc2bad3594e"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/windows-final-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "factor-queue-s2d-final-20261028T124314Z-e0813807/windows-final-stdout.log",
+      "bytes": 1065,
+      "sha256": "b974d1511b05a8350a7b3f6f3899db503152a8964424b6b793cddea881e3e512"
+    },
+    {
+      "file": "STEP2_FACTOR_QUEUE_BACKEND_ACCEPTANCE_20261028.md",
+      "bytes": 10310,
+      "sha256": "2d9aa4c268151835ba213604d2ed43f4ae7d4f1f108c0f842bdb627bd133a64b"
+    }
+  ]
+}

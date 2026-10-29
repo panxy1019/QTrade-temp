@@ -1,0 +1,11 @@
+{
+  "business_data_mutated": false,
+  "correction": "Restore sqlite3 import; corrected source is operator-source.py",
+  "failure": "NameError: sqlite3 is not defined at row_factory assignment",
+  "failure_preserved_in_tool_transcript": true,
+  "observed_at": "2026-10-27T18:33:44.276564+00:00",
+  "operator": "operator-v1.py",
+  "operator_sha256": "db28f68b575af1fda1dd06aff7fbef2df186b3e9f212e7fdfbf296790475c79a",
+  "raw_stderr_captured_to_file": false,
+  "state": "OPERATOR_IMPORT_FAILED_BEFORE_DATABASE_QUERY"
+}

@@ -1,0 +1,39 @@
+{
+  "concurrency_scope": "Shared production-equivalent NFS; other authorized benchmark/services may run concurrently. No exclusive resource claim.",
+  "freeze": "/root/qtrade-local/operator-evidence/market-current-freeze-20261028T070943Z",
+  "freeze_evidence_sha256": "8a4ea3ab27939dcec28d94f5cb95b805b7cfeeb16e7b37c3ea594168f7a6d63c",
+  "helpers_sha256": {
+    "benchmark.py": "1f7fc797bced5c03e80988537b5f08583c7e92fdd74559e0fae22de415bc04de",
+    "profile_driver.py": "321fcd19a0f5d4e65dfbaa1de6783a2a183af1f91daf1d915ff615d96ca38c9b",
+    "profile_runtime.py": "181f75ba8ab541d771ec8d9333da5f9610a30dbbaf11fb90ea462d90a61449d9",
+    "profile_worker.py": "8cfc39e556122a0cf2841bafb7e4506d0f9abd5e8ccbef950a849b9ee432c87b"
+  },
+  "kind": "ISOLATED_PROFILE_PREFLIGHT",
+  "mount": {
+    "filesystem_type": "nfs4",
+    "major_minor": "0:66",
+    "mount_id": "1080",
+    "mountinfo_raw_sha256": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "output_st_dev": 66,
+    "production_st_dev": 66,
+    "raw_mountinfo_retained_privately_outside_git": true,
+    "same_production_device": true
+  },
+  "output_base": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-stage-profile-20261028T113018Z",
+  "production_performance_acceptance": false,
+  "profiling_enabled": true,
+  "recorded_at": "2026-10-28T11:33:07.786591+00:00",
+  "source": {
+    "freeze_file_sha256": "49da216655e1fd1fc7e78f8443b8a766b17d47c1ac874cf2ada51a0b4eb94894",
+    "label": "before",
+    "ledger_sha256": "2ac25f2b081be72a82380c1989562f58d66efab34cd326826842c12f363faecc",
+    "source_files_verified": 2194,
+    "source_manifest_sha256": "109fc8efe00cd0ab8009a8880114fe6697a058bfd5cc27cb2942ade19a2c0e82"
+  },
+  "space": {
+    "local_available_bytes": 19504709632,
+    "local_reserve_bytes": 2147483648,
+    "nfs_available_bytes": 284011003904,
+    "nfs_reserve_bytes": 107374182400
+  }
+}

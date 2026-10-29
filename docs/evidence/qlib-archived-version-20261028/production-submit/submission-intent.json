@@ -1,0 +1,57 @@
+{
+  "expected_strategy_version": "2e849335616ce055b72eb61c480ca378121f50d3a69d28ff2ba187ca371ddafb",
+  "request_id": "578bb6107577406185782a08e1c499d7",
+  "spec": {
+    "buy_cost_bps": 8,
+    "data_binding": {
+      "actual_end": "2026-10-26",
+      "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+      "data_version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+      "dataset_id": "qlib-version-d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+      "dataset_sha256": "4a4289533c73828efabd8fe386416a3f0dbbbe381310834d71095b2d5de0cf5f",
+      "evidence_sha256": "bcc5f26f3a0263a013053fb704b96deb9c4c08fe72608aa2cb2787a6105d52fb",
+      "external_order_transmission": false,
+      "live_trading_enabled": false,
+      "manifest_sha256": "b313fba558f36f487c2180f05fdcaefc1e2fa6ff47efaa0a4b3608c1c9c25438",
+      "point_in_time": false,
+      "promotion": "NOT_ELIGIBLE",
+      "ready_event_id": "75c3aed2eed7a2c6af34025536575404d2e4d9cff9ad864f5c9d4185bda0475c",
+      "real_data_paper_readiness": false,
+      "realtime_readiness": false,
+      "schema_version": "qtrade.qlib-research-data-binding.v1",
+      "source_snapshot_sha256": "d9b25863af0ba5fcfd99b8e2a88fc2a74720ab482a41422ce72347c2b30135e3",
+      "start": "2016-10-24",
+      "supported_symbols": 891,
+      "supported_universe_sha256": "3da952813acf86a0f53b7a299f7faac95f105c12014959bb61bd36e63a608e26"
+    },
+    "dataset_id": "qlib-version-d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+    "feature_set_version": "qlib-0.9.7-Alpha158-v1",
+    "features": "Alpha158",
+    "hold_thresh": 2,
+    "initial_cash": 10000000,
+    "min_cost": 5,
+    "model": "linear",
+    "n_drop": 5,
+    "name": "archived-oct26-ridge-binding-check-20261028",
+    "risk_degree": 0.95,
+    "seed": 20261026,
+    "segments": {
+      "test": [
+        "2024-01-02",
+        "2026-10-26"
+      ],
+      "train": [
+        "2017-04-05",
+        "2021-12-28"
+      ],
+      "valid": [
+        "2022-01-04",
+        "2023-12-26"
+      ]
+    },
+    "sell_cost_bps": 13,
+    "source_snapshot_sha256": "d9b25863af0ba5fcfd99b8e2a88fc2a74720ab482a41422ce72347c2b30135e3",
+    "topk": 50,
+    "universe_policy": "supported_a_share"
+  }
+}

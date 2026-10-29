@@ -1,0 +1,46 @@
+{
+  "causal_checks": {
+    "hostile_numeric_context_isolated": true,
+    "late_or_unknown_feature_rejections": {
+      "SH600001": "DEPENDENCY_NOT_KNOWN_AT_DECISION",
+      "SH600002": "DEPENDENCY_NOT_KNOWN_AT_DECISION",
+      "SH600003": "DEPENDENCY_AVAILABILITY_UNKNOWN"
+    },
+    "observed_feature_valid_three": true,
+    "preclose_rejected": true,
+    "unclosed_label_has_zero_valid": true
+  },
+  "hardlink_output_error": "ValueError:FACTOR_EVALUATION_STORE_HARDLINK_FORBIDDEN",
+  "hardlink_output_run_succeeded": false,
+  "postconstructor_database_bytes_unchanged": true,
+  "postconstructor_hardlink_error": "ValueError:FACTOR_EVALUATION_STORE_HARDLINK_FORBIDDEN",
+  "protected_factor_database_bytes_changed": false,
+  "protected_factor_database_tables": [
+    "factor_definitions"
+  ],
+  "read_window_checks": {
+    "all_date_filters_present": true,
+    "calls": 24,
+    "each_rows": [
+      7
+    ]
+  },
+  "required_calendar_rows_per_security": 7,
+  "resigned_inconsistent_metric_accepted": false,
+  "resigned_policy_changes_rejected": {
+    "cost": true,
+    "label": true,
+    "limitations": true,
+    "numeric": true,
+    "split": true
+  },
+  "scope": "TINY_SYNTHETIC_NONPRODUCTION_SNAPSHOT_ONLY",
+  "scoring_dependency_cells": 36,
+  "source_hashes": {
+    "scripts/run_daily_factor_evaluation.py": "291f97c72ec29794906a448976a537541c3d51207f6693825c05cdfceca387a3",
+    "src/qtrade/research/factor_evaluation.py": "782f245d2845ab6b06e18c8c99aa7f844fae2f953fde96e4604a99a4c76e5b3d",
+    "src/qtrade/research/factor_registry.py": "72fa94ba956b27a155c7d8debd9a079b2c6b6dfefa0b137476c51adb3510145d",
+    "tests/test_daily_factor_evaluation.py": "a5404e5df5b3924f7dd86d79c465da7607e4d1713bc6388527c45d4279b32310"
+  },
+  "validator_error": "ValueError:FACTOR_EVALUATION_ARCHIVED_DAILY_NUMERICAL_REPLAY_MISMATCH"
+}

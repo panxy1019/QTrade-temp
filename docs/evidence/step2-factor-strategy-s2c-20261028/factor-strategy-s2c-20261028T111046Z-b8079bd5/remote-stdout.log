@@ -1,0 +1,62 @@
+{
+  "returncode": 0,
+  "elapsed_seconds": 62.947475764900446,
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jun 18 2026, 21:28:09) [GCC 14.3.0]",
+  "maxrss_kib": 223656,
+  "command": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=/root/qtrade-local/operator-evidence/factor-strategy-s2c-20261028T111046Z-b8079bd5/tmp/pytest",
+    "tests/test_factor_strategy_contract.py",
+    "tests/test_factor_registry.py",
+    "tests/test_daily_factor_evaluation.py",
+    "tests/test_step2_factor_contract_independent.py",
+    "tests/test_step2_factor_contract_readiness.py",
+    "tests/test_qlib_strategy_contract.py",
+    "tests/test_step2_strategy_readiness.py",
+    "tests/test_qlib_bound_research_integration.py",
+    "tests/test_qlib_worker.py",
+    "tests/test_qlib_workflow.py",
+    "tests/test_strategy_registry.py",
+    "tests/test_strategy_comparison.py",
+    "--junitxml=/root/qtrade-local/operator-evidence/factor-strategy-s2c-20261028T111046Z-b8079bd5/regression.xml"
+  ],
+  "overlays": {
+    "src/qtrade/research/factor_strategy_contract.py": {
+      "sha256": "2434723896a8f3d646d08c325f3bb4bcf8b6f03d227c67bba0e8e45dcec5ec37",
+      "bytes": 21093
+    },
+    "src/qtrade/strategies/registry.py": {
+      "sha256": "d0903de34bd690263dbe4029846145e913f2d08c8599c7b2dbf3b0fd01165739",
+      "bytes": 33032
+    },
+    "tests/test_factor_strategy_contract.py": {
+      "sha256": "f7296001f23afc7917e99f239aca578ab11b37320273ce0ba48fec8319ff355f",
+      "bytes": 22003
+    }
+  }
+}
+
+........................................................................ [ 23%]
+........................................................................ [ 47%]
+........................................................................ [ 71%]
+........................................................................ [ 95%]
+...............                                                          [100%]
+=============================== warnings summary ===============================
+../../../../siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+303 passed, 1 warning in 62.27s (0:01:02)
+
+{
+  "returncode": 0,
+  "stdout": "{\"evaluation_id\": \"factor-eval-9ca107f1ff4843769b813d4b663eed63\", \"report_sha256\": \"47bed3add84aff16f901531115c17ac4534cfd667b6716595a1ce098b9af37dd\", \"bytes_preserved\": true, \"manifest_sha256\": \"61208f117890d0a453e084f92b6edc1d6b931b195d415b1b184104d72fbdb536\", \"elapsed_seconds\": 2.268537113443017}\n",
+  "stderr": ""
+}
+

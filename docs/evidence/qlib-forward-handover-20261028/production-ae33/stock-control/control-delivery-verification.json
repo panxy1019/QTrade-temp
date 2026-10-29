@@ -1,0 +1,23 @@
+{
+  "all_books": 14,
+  "at": "2026-10-27T17:18:55.718460+00:00",
+  "browser_verified": false,
+  "capture_sha256": "329c3348214626632f56570d9247fc6453aa9d2902160597e7be28a7c209c733",
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "current_paper_running": 6,
+  "evidence_sha256": "ba7c9693c1d8f2b381a92db718c4d92d7e3d7bcced72afd41b766bafce282d9b",
+  "external_order_transmission": false,
+  "forward_source_revision": "9846a7f30774d6ae4b4d41f02b493c5246be87d9",
+  "full_day_transition_accepted": false,
+  "kind": "ACTUAL_PRODUCTION_AE33_FORWARD_CONTROL_DELIVERY",
+  "live_trading_enabled": false,
+  "point_in_time": false,
+  "production_revision": "ae33a7c8c27ea721eb3be1e4430b562a44b67f91",
+  "promotion": "NOT_ELIGIBLE",
+  "publication_sha256": "2b6adae874c2f3f14595f798a9c4117bb08f58011e0bf89b696c94f068655a45",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "retired_books_stopped": 2,
+  "state": "PASSED_PUBLIC_CONTROL_DELIVERY",
+  "whole_step1_accepted": false
+}

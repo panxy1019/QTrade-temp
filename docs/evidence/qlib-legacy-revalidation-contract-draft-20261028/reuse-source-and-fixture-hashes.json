@@ -1,0 +1,8 @@
+{
+  "docs/evidence/qlib-archived-version-20261028/calendar-boundary/operator-v2.py": "a3dc227ff9fef8ced7fc81d67a796ed6ddabb52de87f44057db052386adbabd8",
+  "docs/evidence/qlib-archived-version-20261028/cluster/job-and-registry.json": "b536858da4f48e901f2181b0f44a19f8bdf20b306a5dc6358b8fe11766ca4d3e",
+  "docs/evidence/qlib-archived-version-20261028/cluster/summary.json": "d7871639ab3a72bdf54d38714b1fd5bec81f05515e6c56d6d1c82088ec395861",
+  "docs/evidence/qlib-archived-version-20261028/cluster/verify-archived-version.py": "42b2d4f08de749c500d364990c56a92c063b982e789473b3938ac0f602edd623",
+  "scripts/audit_qlib_candidate_transition.py": "0a4d7c85933aa4f6e6a829d5a20265cf93f70d57462b13d42d2e863cadfcd878",
+  "src/qtrade/research/model_registry.py": "01ddd7dcee47f941599063b9913a752a8fcbbd06381aa99e372f40a1d99d46cb"
+}

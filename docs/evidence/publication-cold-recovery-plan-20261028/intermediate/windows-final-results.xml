@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="60" time="6.801" timestamp="2026-10-28T22:44:04.095277+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_frozen_base_and_unchanged_safety_helpers" time="0.015" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_ordinary_git_cannot_receive_cold_budget[0]" time="0.000" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_ordinary_git_cannot_receive_cold_budget[-1]" time="0.000" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_ordinary_git_cannot_receive_cold_budget[91]" time="0.000" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_ordinary_git_cannot_receive_cold_budget[180]" time="0.000" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_ordinary_git_cannot_receive_cold_budget[inf]" time="0.000" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_ordinary_git_cannot_receive_cold_budget[nan]" time="0.000" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_ordinary_git_cannot_receive_cold_budget[True]" time="0.000" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_generic_git_push_forbidden_before_network" time="0.000" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_direct_parser_keeps_one_existing_identity_and_known_hosts" time="0.002" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_direct_parser_rejects_ambiguous_or_override_options[ProxyCommand=secret-proxy]" time="0.001" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_direct_parser_rejects_ambiguous_or_override_options[ControlMaster=yes]" time="0.001" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_direct_parser_rejects_ambiguous_or_override_options[UserKnownHostsFile=none]" time="0.001" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_direct_parser_rejects_ambiguous_or_override_options[UserKnownHostsFile=/a /b]" time="0.001" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_direct_parser_rejects_ambiguous_or_override_options[UserKnownHostsFile=/a,/b]" time="0.001" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_direct_parser_rejects_ambiguous_or_override_options[IdentitiesOnly=no]" time="0.001" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_direct_parser_rejects_ambiguous_or_override_options[StrictHostKeyChecking=no]" time="0.001" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_direct_parser_rejects_changed_existing_command" time="0.001" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_bounded_regular_input_and_hardlink_rejection" time="0.002" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_actual_old_claim_bytes_are_bound_and_immutable" time="0.004" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_exact_current_stage_authorization_required" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[authorization_kind-ABC_CONTINUING_AUTHORIZATION]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[plan_sha256-0000000000000000000000000000000000000000000000000000000000000000]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[one_shot_cold_push_seconds-90]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[ordinary_budgets_unchanged-False]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[automatic_retry-True]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[force_push-True]" time="0.007" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[authorized_at-2026-10-28T15:01:00+00:00]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[authorized_at-2026-10-28T12:00:00+00:00]" time="0.007" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[authorized_at-2026-10-28T14:59:00]" time="0.007" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_approval_rejects_wrong_scope_budget_or_clock[authorized_at-2026-10-28T14:57:00+00:00]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[operator_sha256-0000000000000000000000000000000000000000000000000000000000000000]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[expected_remote_main-0000000000000000000000000000000000000000]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[index_entries-2999]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[shard_count-5986]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[ordinary_git_budget_seconds-180]" time="0.007" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[ordinary_export_budget_seconds-46]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[export_elapsed_seconds-45.01]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[frozen_shard_audit_seconds-90.01]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[force_push-True]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[automatic_retry-True]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_prepared_scope_is_strict[approval_state-ABC_ALREADY_APPROVED]" time="0.006" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_document_duplicate_keys_and_nonfinite_rejected" time="0.003" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_progress_never_exports_sensitive_unknown_text" time="0.000" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_progress_storage_and_chunk_bounds" time="0.009" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_sender_drift_stops_before_intent_and_never_retries" time="0.002" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_sender_already_target_does_not_send" time="0.002" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_sender_one_durable_claim_only" time="0.003" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_uncertain_push_persists_claim_and_is_not_retried[failure0]" time="0.003" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_uncertain_push_persists_claim_and_is_not_retried[failure1]" time="0.003" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_uncertain_push_persists_claim_and_is_not_retried[failure2]" time="0.003" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_sender_requires_authority_before_advertisement" time="0.001" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_cli_cannot_run_from_unapproved_path_or_windows" time="0.082" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_cli_help_is_safe_and_successful" time="0.075" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_only_cold_child_uses_180_with_safe_telemetry_and_owned_cleanup[ack]" time="0.003"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'open'">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000255ED973150&gt;
+tmp_path = WindowsPath('E:/QTrade-temp/publication-cold-recovery-preparation-20261028T143911Z-9d25431d/pytest-work-final/test_only_cold_child_uses_180_0')
+kind = 'ack'
+
+    @pytest.mark.parametrize('kind',['ack','timeout','spawn-error'])
+    def test_only_cold_child_uses_180_with_safe_telemetry_and_owned_cleanup(monkeypatch,tmp_path,kind):
+        plan={'target_commit':'b'*40}
+        monkeypatch.setattr(op,'ROOT',tmp_path)
+        write(tmp_path/'PUSH_INTENT.json',{'target_commit':plan['target_commit'],
+            'target_plan_sha256':'1'*64,'user_authorization_sha256':'2'*64})
+        monkeypatch.setattr(op,'approved_plan',lambda *args:plan)
+        monkeypatch.setattr(op,'guard_repository',lambda **kwargs:None)
+        monkeypatch.setattr(op,'runtime_origins',lambda:None)
+        monkeypatch.setattr(op,'guard_owner',lambda:None)
+        monkeypatch.setattr(op,'save',portable_save(tmp_path))
+        calls={'cleanup':0,'spawn':0}
+        child=types.SimpleNamespace(returncode=0)
+        class Pipe:
+            def fileno(self):return 42
+        child.stderr=Pipe();child.poll=lambda:child.returncode
+        class Context:
+            def __enter__(self):return child
+            def __exit__(self,*args):return False
+        def popen(command,**kwargs):
+            calls['spawn']+=1
+            assert command[-4:]==['push','--progress','origin',plan['target_commit']+':refs/heads/main']
+            assert not any('force' in part or 'lease' in part for part in command)
+            assert kwargs['stdout']==subprocess.DEVNULL and kwargs['stderr']==subprocess.PIPE
+            assert kwargs['start_new_session'] is True and kwargs['stdin']==subprocess.DEVNULL
+            if kind=='spawn-error':raise OSError('SYNTHETIC_PRIVATE_MESSAGE_NOT_LOGGED')
+            return Context()
+        monkeypatch.setattr(op.subprocess,'Popen',popen)
+        def cleanup(process):
+            assert process is child;calls['cleanup']+=1
+        fake_module=types.ModuleType('scripts.publish_research_snapshot');fake_module._cleanup_git_group=cleanup
+        monkeypatch.setitem(sys.modules,'scripts.publish_research_snapshot',fake_module)
+        chunks=iter([b'Writing objects: 100% (2/2), done.\nUNSAFE_PRIVATE_TEXT\n',b''])
+        os_proxy=types.SimpleNamespace(name='posix',read=lambda *args:next(chunks))
+        monkeypatch.setattr(op,'os',os_proxy)
+        ticks=iter([0.0,181.0]) if kind=='timeout' else None
+        last=[0.0]
+        def clock():
+            if ticks is not None:last[0]=next(ticks,last[0])
+            return last[0]
+        monkeypatch.setattr(op,'time',types.SimpleNamespace(monotonic=clock))
+        class Selector:
+            def __enter__(self):return self
+            def __exit__(self,*args):return False
+            def register(self,*args):pass
+            def unregister(self,*args):pass
+            def select(self,*args):return [(types.SimpleNamespace(fileobj=child.stderr),1)]
+        monkeypatch.setattr(op.selectors,'DefaultSelector',Selector)
+&gt;       if kind=='ack':op.cold_push(plan,{'fixture':'no-real-key'})
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_publication_cold_recovery_operator_20261028.py:336: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+publication_cold_recovery_operator_20261028.py:518: in cold_push
+    intent_raw=bounded_regular_bytes(ROOT/'PUSH_INTENT.json',16384);intent=json.loads(intent_raw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('E:/QTrade-temp/publication-cold-recovery-preparation-20261028T143911Z-9d25431d/pytest-work-final/test_only_cold_child_uses_180_0/PUSH_INTENT.json')
+maximum = 16384
+
+    def bounded_regular_bytes(path, maximum):
+        require(path.is_absolute() and not any(p.is_symlink() for p in (path,*path.parents)),
+            'REGULAR_INPUT_PATH_REQUIRED')
+&gt;       descriptor=os.open(path,os.O_RDONLY|getattr(os,'O_NOFOLLOW',0)|getattr(os,'O_NONBLOCK',0))
+                   ^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'open'
+
+publication_cold_recovery_operator_20261028.py:243: AttributeError</failure></testcase><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_only_cold_child_uses_180_with_safe_telemetry_and_owned_cleanup[timeout]" time="0.003"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'open'">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000255EDAE1390&gt;
+tmp_path = WindowsPath('E:/QTrade-temp/publication-cold-recovery-preparation-20261028T143911Z-9d25431d/pytest-work-final/test_only_cold_child_uses_180_1')
+kind = 'timeout'
+
+    @pytest.mark.parametrize('kind',['ack','timeout','spawn-error'])
+    def test_only_cold_child_uses_180_with_safe_telemetry_and_owned_cleanup(monkeypatch,tmp_path,kind):
+        plan={'target_commit':'b'*40}
+        monkeypatch.setattr(op,'ROOT',tmp_path)
+        write(tmp_path/'PUSH_INTENT.json',{'target_commit':plan['target_commit'],
+            'target_plan_sha256':'1'*64,'user_authorization_sha256':'2'*64})
+        monkeypatch.setattr(op,'approved_plan',lambda *args:plan)
+        monkeypatch.setattr(op,'guard_repository',lambda **kwargs:None)
+        monkeypatch.setattr(op,'runtime_origins',lambda:None)
+        monkeypatch.setattr(op,'guard_owner',lambda:None)
+        monkeypatch.setattr(op,'save',portable_save(tmp_path))
+        calls={'cleanup':0,'spawn':0}
+        child=types.SimpleNamespace(returncode=0)
+        class Pipe:
+            def fileno(self):return 42
+        child.stderr=Pipe();child.poll=lambda:child.returncode
+        class Context:
+            def __enter__(self):return child
+            def __exit__(self,*args):return False
+        def popen(command,**kwargs):
+            calls['spawn']+=1
+            assert command[-4:]==['push','--progress','origin',plan['target_commit']+':refs/heads/main']
+            assert not any('force' in part or 'lease' in part for part in command)
+            assert kwargs['stdout']==subprocess.DEVNULL and kwargs['stderr']==subprocess.PIPE
+            assert kwargs['start_new_session'] is True and kwargs['stdin']==subprocess.DEVNULL
+            if kind=='spawn-error':raise OSError('SYNTHETIC_PRIVATE_MESSAGE_NOT_LOGGED')
+            return Context()
+        monkeypatch.setattr(op.subprocess,'Popen',popen)
+        def cleanup(process):
+            assert process is child;calls['cleanup']+=1
+        fake_module=types.ModuleType('scripts.publish_research_snapshot');fake_module._cleanup_git_group=cleanup
+        monkeypatch.setitem(sys.modules,'scripts.publish_research_snapshot',fake_module)
+        chunks=iter([b'Writing objects: 100% (2/2), done.\nUNSAFE_PRIVATE_TEXT\n',b''])
+        os_proxy=types.SimpleNamespace(name='posix',read=lambda *args:next(chunks))
+        monkeypatch.setattr(op,'os',os_proxy)
+        ticks=iter([0.0,181.0]) if kind=='timeout' else None
+        last=[0.0]
+        def clock():
+            if ticks is not None:last[0]=next(ticks,last[0])
+            return last[0]
+        monkeypatch.setattr(op,'time',types.SimpleNamespace(monotonic=clock))
+        class Selector:
+            def __enter__(self):return self
+            def __exit__(self,*args):return False
+            def register(self,*args):pass
+            def unregister(self,*args):pass
+            def select(self,*args):return [(types.SimpleNamespace(fileobj=child.stderr),1)]
+        monkeypatch.setattr(op.selectors,'DefaultSelector',Selector)
+        if kind=='ack':op.cold_push(plan,{'fixture':'no-real-key'})
+        else:
+            with pytest.raises(subprocess.TimeoutExpired if kind=='timeout' else OSError):
+&gt;               op.cold_push(plan,{'fixture':'no-real-key'})
+
+test_publication_cold_recovery_operator_20261028.py:339: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+publication_cold_recovery_operator_20261028.py:518: in cold_push
+    intent_raw=bounded_regular_bytes(ROOT/'PUSH_INTENT.json',16384);intent=json.loads(intent_raw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('E:/QTrade-temp/publication-cold-recovery-preparation-20261028T143911Z-9d25431d/pytest-work-final/test_only_cold_child_uses_180_1/PUSH_INTENT.json')
+maximum = 16384
+
+    def bounded_regular_bytes(path, maximum):
+        require(path.is_absolute() and not any(p.is_symlink() for p in (path,*path.parents)),
+            'REGULAR_INPUT_PATH_REQUIRED')
+&gt;       descriptor=os.open(path,os.O_RDONLY|getattr(os,'O_NOFOLLOW',0)|getattr(os,'O_NONBLOCK',0))
+                   ^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'open'
+
+publication_cold_recovery_operator_20261028.py:243: AttributeError</failure></testcase><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_only_cold_child_uses_180_with_safe_telemetry_and_owned_cleanup[spawn-error]" time="0.003"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'open'">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000255EDAE3230&gt;
+tmp_path = WindowsPath('E:/QTrade-temp/publication-cold-recovery-preparation-20261028T143911Z-9d25431d/pytest-work-final/test_only_cold_child_uses_180_2')
+kind = 'spawn-error'
+
+    @pytest.mark.parametrize('kind',['ack','timeout','spawn-error'])
+    def test_only_cold_child_uses_180_with_safe_telemetry_and_owned_cleanup(monkeypatch,tmp_path,kind):
+        plan={'target_commit':'b'*40}
+        monkeypatch.setattr(op,'ROOT',tmp_path)
+        write(tmp_path/'PUSH_INTENT.json',{'target_commit':plan['target_commit'],
+            'target_plan_sha256':'1'*64,'user_authorization_sha256':'2'*64})
+        monkeypatch.setattr(op,'approved_plan',lambda *args:plan)
+        monkeypatch.setattr(op,'guard_repository',lambda **kwargs:None)
+        monkeypatch.setattr(op,'runtime_origins',lambda:None)
+        monkeypatch.setattr(op,'guard_owner',lambda:None)
+        monkeypatch.setattr(op,'save',portable_save(tmp_path))
+        calls={'cleanup':0,'spawn':0}
+        child=types.SimpleNamespace(returncode=0)
+        class Pipe:
+            def fileno(self):return 42
+        child.stderr=Pipe();child.poll=lambda:child.returncode
+        class Context:
+            def __enter__(self):return child
+            def __exit__(self,*args):return False
+        def popen(command,**kwargs):
+            calls['spawn']+=1
+            assert command[-4:]==['push','--progress','origin',plan['target_commit']+':refs/heads/main']
+            assert not any('force' in part or 'lease' in part for part in command)
+            assert kwargs['stdout']==subprocess.DEVNULL and kwargs['stderr']==subprocess.PIPE
+            assert kwargs['start_new_session'] is True and kwargs['stdin']==subprocess.DEVNULL
+            if kind=='spawn-error':raise OSError('SYNTHETIC_PRIVATE_MESSAGE_NOT_LOGGED')
+            return Context()
+        monkeypatch.setattr(op.subprocess,'Popen',popen)
+        def cleanup(process):
+            assert process is child;calls['cleanup']+=1
+        fake_module=types.ModuleType('scripts.publish_research_snapshot');fake_module._cleanup_git_group=cleanup
+        monkeypatch.setitem(sys.modules,'scripts.publish_research_snapshot',fake_module)
+        chunks=iter([b'Writing objects: 100% (2/2), done.\nUNSAFE_PRIVATE_TEXT\n',b''])
+        os_proxy=types.SimpleNamespace(name='posix',read=lambda *args:next(chunks))
+        monkeypatch.setattr(op,'os',os_proxy)
+        ticks=iter([0.0,181.0]) if kind=='timeout' else None
+        last=[0.0]
+        def clock():
+            if ticks is not None:last[0]=next(ticks,last[0])
+            return last[0]
+        monkeypatch.setattr(op,'time',types.SimpleNamespace(monotonic=clock))
+        class Selector:
+            def __enter__(self):return self
+            def __exit__(self,*args):return False
+            def register(self,*args):pass
+            def unregister(self,*args):pass
+            def select(self,*args):return [(types.SimpleNamespace(fileobj=child.stderr),1)]
+        monkeypatch.setattr(op.selectors,'DefaultSelector',Selector)
+        if kind=='ack':op.cold_push(plan,{'fixture':'no-real-key'})
+        else:
+            with pytest.raises(subprocess.TimeoutExpired if kind=='timeout' else OSError):
+&gt;               op.cold_push(plan,{'fixture':'no-real-key'})
+
+test_publication_cold_recovery_operator_20261028.py:339: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+publication_cold_recovery_operator_20261028.py:518: in cold_push
+    intent_raw=bounded_regular_bytes(ROOT/'PUSH_INTENT.json',16384);intent=json.loads(intent_raw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('E:/QTrade-temp/publication-cold-recovery-preparation-20261028T143911Z-9d25431d/pytest-work-final/test_only_cold_child_uses_180_2/PUSH_INTENT.json')
+maximum = 16384
+
+    def bounded_regular_bytes(path, maximum):
+        require(path.is_absolute() and not any(p.is_symlink() for p in (path,*path.parents)),
+            'REGULAR_INPUT_PATH_REQUIRED')
+&gt;       descriptor=os.open(path,os.O_RDONLY|getattr(os,'O_NOFOLLOW',0)|getattr(os,'O_NONBLOCK',0))
+                   ^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'open'
+
+publication_cold_recovery_operator_20261028.py:243: AttributeError</failure></testcase><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_native_nonforce_rejects_divergent_change_after_ls" time="1.644" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_native_ls_send_gap_can_allow_safe_forward_change" time="2.265" /><testcase classname="publication-cold-recovery-preparation-20261028T143911Z-9d25431d.test_publication_cold_recovery_operator_20261028" name="test_native_server_old_oid_cas_after_its_advertisement" time="2.297" /></testsuite></testsuites>

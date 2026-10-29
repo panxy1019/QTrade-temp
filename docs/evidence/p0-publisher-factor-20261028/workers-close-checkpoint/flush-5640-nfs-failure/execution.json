@@ -1,0 +1,16 @@
+{
+  "artifacts": {
+    "after-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "before-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "benchmark-report.json": "a247b70ba5932c2656f23e60aaf2e4ede05b63dfd133d57e53d7271896305878",
+    "benchmark.py": "d848b126bec7fcfb6d708d98e6354f46ecf10be02cefa7a8ca32c313ca8a185a",
+    "stderr.log": "d8640c634b1694c1310163cc9c7f283f6442f79bcda7e2f3d2021fad079df848",
+    "stdout.log": "27046800a413efbfc3bb180674e5eb87d279f14665d43b3a70a923d6eebda490",
+    "warm-output-refs.json": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645"
+  },
+  "exit_code": 1,
+  "helper_sha256": "d848b126bec7fcfb6d708d98e6354f46ecf10be02cefa7a8ca32c313ca8a185a",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-worker-close-freeze-nfs-20261028T071131Z",
+  "remote": "/root/qtrade-local/operator-evidence/market-worker-close-freeze-nfs-20261028T071131Z",
+  "source_evidence": "/root/qtrade-local/operator-evidence/market-worker-flush-integrated-tests-20261028T070448Z"
+}

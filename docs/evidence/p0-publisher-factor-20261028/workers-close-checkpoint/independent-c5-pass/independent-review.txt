@@ -1,0 +1,24 @@
+Independent review: integrated shard workers, 2026-10-28
+
+Reviewed exporter SHA256: c5c787943a720c48f4795fddbf1984d741e43453b7935df4357aa342e86fe9ab
+Reviewed repository test SHA256: 3b87d24221e092f4cad2b5547cd792c666b04d69cabe046eb3055619aef2a92c
+Frozen HEAD: 4fa9f7b27a521f6acc1f683a9d06752117995fad, with only those two files overlaid.
+HEAD archive SHA256: 2e1725e2b971b1a57e76433b18800633e1e08ebe9c51861f8325cbcf181a7061
+Independent v2 test SHA256: e7d32aba7f978d7beaa8eccba515b33afa4a7a3040985ce09b58a56f5ebdee2e
+
+Result: 42 passed, 0 skipped, 58.41 seconds for the complete suite.
+Evidence directory: E:/QTrade-temp/cluster-evidence/market-worker-integrated-independent-20261028T065507Z
+Remote directory: /root/qtrade-local/operator-evidence/market-worker-integrated-independent-20261028T065507Z
+
+16 direct worker tests use real Popen workers and original458 byte/error checks. They cover insertion order, OHLC/source/duplicate validation, malformed/oversized/truncated/unknown/duplicate/wrong-job/evidence/dead peer responses, wrong initialization, second spawn failure, deadline, TERM-ignoring child requiring SIGKILL, generator-close fault, mutation after submission, and parent Decimal state. Unrelated sentinel children survive; every retained worker process is reaped and both pipes close.
+
+26 integrated export cases force _SHARD_WORKER_MIN_TARGETS=0 against the existing two-target local fixture and assert actual pairs of owned children were launched and reaped. They cover serial parity plus original458 bytes, returned raw-byte reference fields, successful child exit before index write, eight protocol/death faults preserving exact prior index/state/mtime, final-pair raw failure/conflict, complete-batch failure, repeated selected chunks, selected metadata/exclusion/raw/ledger behavior, four hash-valid normalized forgeries, and four invalid cached quality cases. Source/object I/O threads are joined. These use temporary lake data only, without a production lake read or service action.
+
+Source review found no blocker in this candidate. Parent retains selected metadata/full raw replay, source-read and decoded-cache authority; shard work alone moves to two fixed-entry POSIX processes. Nonblocking bounded framing avoids child-pipe deadlocks, per-child jobs bind IDs/evidence, refs derive from returned immutable bytes, and normal child exits precede final ledger/source checks and index commit. Cleanup addresses only retained Popen handles and remembers unreaped children to prevent another worker launch. No Arrow.to_numpy path was introduced.
+
+Preserved initial run: market-worker-integrated-independent-20261028T065247Z, 41 passed/1 failed. The failure was in the independent temporary adapter's generator-expression wrapper: output.close failed to propagate the underlying source.close exception, producing an unraisable warning. Production uses direct yield-from and was not implicated. V2 adapter closes its underlying generator explicitly; repository source is unchanged. Initial test SHA256: cc4b4cd5b2215d07c135ac0817bda34580eace7a178e958573049de5a02df572.
+
+Reproduction: python E:/QTrade-temp/launch_market_worker_integrated_independent_v2_20261028.py
+This creates a fresh isolated Linux overlay and new immutable evidence directory using authorized_cluster_read.connect. It asserts the source hashes before uploading. It does not edit the repository or production sources.
+
+Limits: this suite is small-fixture engineering evidence, not a full4860-batch replay, NFS cold/warm45-second pass, final Git binding, deployment, public freshness, or production recovery. Full current frozen original458 oracle and real whole-call performance remain separate mandatory gates handled by root and integration owner.

@@ -1,0 +1,12 @@
+{
+  "scripts/publish_research_snapshot.py": "6bb527d9faeeb6979150a4b4163035bfc7e5b73fc7b2bd88aa5afdf0a7c42de5",
+  "src/qtrade/api/research_workflow.py": "1d47a7c3d776ba9d74fd5667d127dedddda2064c5a03d620a674f21812966a1a",
+  "tests/test_factor_research_api.py": "ec5af0e228d60954fb1428d551c7fb4da8214425e26009b0dcf62d402e1c8508",
+  "web/src/components/FactorRegistrationReceipt.tsx": "bfdd511bd4e340c4cf9c139502f5859cfdf551395e67a20ae0391c2a59f4cee7",
+  "web/src/components/FactorStrategyBuilder.test.tsx": "e3fedf8444ded011f026b2c87abf8ef4178f21b2bdfedfeb8b05bd583e369b04",
+  "web/src/components/FactorStrategyBuilder.tsx": "5a4702057905d48774125164bc4b0ef97560d89114c2bb9c10c953bcc9813e37",
+  "web/src/pages/QlibWorkflowPages.tsx": "cccfaabf33b8201990b763e089a8604b5879a61080cb0f637442667ad902d3ce",
+  "web/src/research/factorStrategy.test.ts": "28f7713be8011720dcfe5c58939b2d5ce8be823fe01c850fc8ed26c17428b75c",
+  "web/src/research/factorStrategy.ts": "dae45e88b0f388db21e31dc91eda341e7233aa37bad4242b531874a082668307",
+  "web/src/research/qlibWorkflow.ts": "4cadf02c37789a6e67f77a57c625c0b3ef487d8e51779ec1c917e9eceb19a7a6"
+}

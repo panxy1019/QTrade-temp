@@ -1,0 +1,410 @@
+{
+  "at": "2026-10-28T17:21:18.684957+00:00",
+  "catalog_built_at": "2026-10-28T14:56:20.042776+00:00",
+  "catalog_master_sha256": "c4eddb82a4c8db41198cfdd6c18ed8a547a9027560f88d8c1d088ef691f2018a",
+  "catalog_rewritten_or_resigned": false,
+  "frozen_commit": "abe2986cd6e3f3faeb4984454498e4c67f1646d3",
+  "history_scopes": [
+    {
+      "all_master_checksums_valid": true,
+      "count": 20,
+      "elapsed_seconds": 8.516131468117237,
+      "history_blob_refs": [
+        {
+          "blob_oid": "a317af8c977924c31e0f993543c3b864976a820f",
+          "bytes": 7976216,
+          "commit": "abe2986cd6e3f3faeb4984454498e4c67f1646d3",
+          "local_artifact": "blobs/a317af8c977924c31e0f993543c3b864976a820f.json",
+          "path": "unified.json",
+          "raw_sha256": "c4a40629a78a7bb19945b9443a6753e9e8870da6bcdb7151612c49442e6a4b67"
+        },
+        {
+          "blob_oid": "2184e08b600d746bb5efbfb93c791d02f5f5b0a3",
+          "bytes": 7976214,
+          "commit": "153cc4e91ca1c6f3da5f5ecf048573a37e3f925b",
+          "local_artifact": "blobs/2184e08b600d746bb5efbfb93c791d02f5f5b0a3.json",
+          "path": "unified.json",
+          "raw_sha256": "cc41e4bae3d1353ba003b0871ce39db547ef080673b494be453126d37f288ab7"
+        },
+        {
+          "blob_oid": "8e56a827aae6d521269fee2938ab3bc9773b51f5",
+          "bytes": 7976215,
+          "commit": "8a052e784922654fd7c02b4777d35c1da84c553a",
+          "local_artifact": "blobs/8e56a827aae6d521269fee2938ab3bc9773b51f5.json",
+          "path": "unified.json",
+          "raw_sha256": "df2378523432955538372b4304c52a8a15008f50881c9d4d35a737452a2e86a9"
+        },
+        {
+          "blob_oid": "88374393d35c8db563c0acab8fe4724ea5578b2f",
+          "bytes": 7976215,
+          "commit": "4871cfaf19d990b3d05b331468a657adc823339c",
+          "local_artifact": "blobs/88374393d35c8db563c0acab8fe4724ea5578b2f.json",
+          "path": "unified.json",
+          "raw_sha256": "8091d7b608a930afe0a1eba91964c480fcbe93e09ba72cd544eeae2f85f84df8"
+        },
+        {
+          "blob_oid": "8b62f0d7b81d6dbcd438a729d68af94e2afe8245",
+          "bytes": 7976215,
+          "commit": "f360870c8c5d87b2862fb4d8d2309d0693c0d820",
+          "local_artifact": "blobs/8b62f0d7b81d6dbcd438a729d68af94e2afe8245.json",
+          "path": "unified.json",
+          "raw_sha256": "f5d82e1d4aa43a93407a1d5e6d703bad99eb851162d6f1b8a474f8a2ecfa4cca"
+        },
+        {
+          "blob_oid": "688715963c2c5fb15176eba550a77b129b1a618e",
+          "bytes": 7976212,
+          "commit": "6ff37b1ffdcfdc6e685076d292011c5fe1c97f22",
+          "local_artifact": "blobs/688715963c2c5fb15176eba550a77b129b1a618e.json",
+          "path": "unified.json",
+          "raw_sha256": "2117b14424c69a5626bb94dd47a83c15e56806cf7e95b3afaa1c5c647e1195f3"
+        },
+        {
+          "blob_oid": "9f43a5517c7e4126d3b8a8a32217a9397fd2f457",
+          "bytes": 7976215,
+          "commit": "cefc925f63467b2bcdac63a0670bc7a2087eb357",
+          "local_artifact": "blobs/9f43a5517c7e4126d3b8a8a32217a9397fd2f457.json",
+          "path": "unified.json",
+          "raw_sha256": "8691856b959d883e8a891b68ae33d06763ea4ab99a7017f8d7f1b433d31229ed"
+        },
+        {
+          "blob_oid": "566d24847f584a17ad13e481853c66e9b3d05276",
+          "bytes": 7976214,
+          "commit": "8c1bfe70a8c29be00bf11905b0c17eb75ef3b081",
+          "local_artifact": "blobs/566d24847f584a17ad13e481853c66e9b3d05276.json",
+          "path": "unified.json",
+          "raw_sha256": "1e1158db9ef6f8f1105668773bb9a35ae0e670e302d6e62e93b18e8998d218fe"
+        },
+        {
+          "blob_oid": "c46180c2316a1e1d1570a50df48ce6b2c69c0c6e",
+          "bytes": 7976216,
+          "commit": "96ef06e09852f17a44e7e87fce0400c4df32e44c",
+          "local_artifact": "blobs/c46180c2316a1e1d1570a50df48ce6b2c69c0c6e.json",
+          "path": "unified.json",
+          "raw_sha256": "38e763847fecfdc0078eb4af8198432329e5f49943ffcbe51b7c85090c6f2300"
+        },
+        {
+          "blob_oid": "a5922564c20fbda84a6508f55c64154b23dec5e4",
+          "bytes": 7976216,
+          "commit": "6b389ba0409c56ba4e8f098a892a04ac819cfb11",
+          "local_artifact": "blobs/a5922564c20fbda84a6508f55c64154b23dec5e4.json",
+          "path": "unified.json",
+          "raw_sha256": "2c998a6bbd39204ea9aa6586d46066272f43e9f0226a171b33a92d5c32219681"
+        },
+        {
+          "blob_oid": "9ddbed867a5657f829ec7b7bd973671349e23734",
+          "bytes": 7976215,
+          "commit": "d3a18d45864e78726a352d6458f47c01ad756955",
+          "local_artifact": "blobs/9ddbed867a5657f829ec7b7bd973671349e23734.json",
+          "path": "unified.json",
+          "raw_sha256": "db535b59b724ae5232924cfbb2773adc29a31d7f61dbb56c6a939f6a994f0c25"
+        },
+        {
+          "blob_oid": "7661c7e8ca06a311f355766c023103680528a729",
+          "bytes": 7976215,
+          "commit": "2587df21e421e1d51b84e0c4f22b675144caa4bc",
+          "local_artifact": "blobs/7661c7e8ca06a311f355766c023103680528a729.json",
+          "path": "unified.json",
+          "raw_sha256": "34607dd47d9a814af659f8c1baf96e3b1f32368eaca3cd50364f2315d79e7f07"
+        },
+        {
+          "blob_oid": "59c5f662ff1db681476ed4f23dbb1226752ea74b",
+          "bytes": 7976215,
+          "commit": "4d0c88b6f958679a8823758421197de0eda27147",
+          "local_artifact": "blobs/59c5f662ff1db681476ed4f23dbb1226752ea74b.json",
+          "path": "unified.json",
+          "raw_sha256": "3da9a98425372552cbadee1f27198880c6f9b0bfed24cf4bfa9ea383e9b33770"
+        },
+        {
+          "blob_oid": "237f3fe2dd65a92fbe6695f6dbfac50804807960",
+          "bytes": 7976214,
+          "commit": "ac2e2e90c889175201f8117c3076d7992fe1afbc",
+          "local_artifact": "blobs/237f3fe2dd65a92fbe6695f6dbfac50804807960.json",
+          "path": "unified.json",
+          "raw_sha256": "966a3945e46c13fbc50400b08c20f68a2c7e641a74b2ca2bfc8d1cfdae29636f"
+        },
+        {
+          "blob_oid": "986479f03c5538b1dade56fa2ea336804b747bc5",
+          "bytes": 7976214,
+          "commit": "c751d8ef1b2c0cb9a68ff71ca1e648199619b3b0",
+          "local_artifact": "blobs/986479f03c5538b1dade56fa2ea336804b747bc5.json",
+          "path": "unified.json",
+          "raw_sha256": "ad22d6ad1dc8754b6643ecc139c3834fdc33cf6992a90fdebba38dc5a86b1a03"
+        },
+        {
+          "blob_oid": "47516f89cbb8a5a7e9eeb8af0f7ce9fc312eab6e",
+          "bytes": 7976215,
+          "commit": "244ad9d8fea7fdbb04344484bc1afe54182412bf",
+          "local_artifact": "blobs/47516f89cbb8a5a7e9eeb8af0f7ce9fc312eab6e.json",
+          "path": "unified.json",
+          "raw_sha256": "bc9e257c1fa69fe5fddcc3adb6632465d438af5b0abb766086b17cc581673706"
+        },
+        {
+          "blob_oid": "844297af29eeaa44c185b6a986e7243e46e3946f",
+          "bytes": 7976216,
+          "commit": "6df91bce7f77f4d0e686931df18f316e32575b36",
+          "local_artifact": "blobs/844297af29eeaa44c185b6a986e7243e46e3946f.json",
+          "path": "unified.json",
+          "raw_sha256": "09905ac93c4d9a728aa8c481fdea2c885e16bfbfb3ac881f55f271dfc1a6cfbd"
+        },
+        {
+          "blob_oid": "b292160dfcc908b8f83b5e7efdddd22457dee344",
+          "bytes": 7976216,
+          "commit": "1cee395804ed68788ee643fb441a283c7b687838",
+          "local_artifact": "blobs/b292160dfcc908b8f83b5e7efdddd22457dee344.json",
+          "path": "unified.json",
+          "raw_sha256": "84ca6672a398cc12eadd71ef9694c68186a2d199fb8d1fb32a2a0069bbe3cb08"
+        },
+        {
+          "blob_oid": "3f47cb3d2f7eb4326ef3d6dd098dc88fc1dd8335",
+          "bytes": 7976215,
+          "commit": "fa8282a97e86c4915424fc638b82df5b1117ecb7",
+          "local_artifact": "blobs/3f47cb3d2f7eb4326ef3d6dd098dc88fc1dd8335.json",
+          "path": "unified.json",
+          "raw_sha256": "d9fea281db4069ead7951b8aebef1572c2818c1fafda0e093416a7f002316a5f"
+        },
+        {
+          "blob_oid": "57a9db0add04fda28e1fcd2196f1d55359dcc8de",
+          "bytes": 7976215,
+          "commit": "5e1b3cb104285429d1224b579b6737f36b2988d5",
+          "local_artifact": "blobs/57a9db0add04fda28e1fcd2196f1d55359dcc8de.json",
+          "path": "unified.json",
+          "raw_sha256": "769693020bd56b481ef12c5ea207350ef8dfd2d600f3af9bf5791885f9a9f354"
+        }
+      ],
+      "history_tip": "abe2986cd6e3f3faeb4984454498e4c67f1646d3",
+      "local_evidence": "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558",
+      "match_count": 0,
+      "newest_built_at": "2026-10-28T14:56:20.042776+00:00",
+      "oldest_built_at": "2026-10-28T14:06:47.571988+00:00",
+      "remote_evidence": "/root/qtrade-local/operator-evidence/abe-catalog-lineage-readonly-20261028T171550Z-ac9cf558",
+      "scope": "frozen_abe_ancestor_changes"
+    },
+    {
+      "all_master_checksums_valid": true,
+      "count": 20,
+      "elapsed_seconds": 8.62832397595048,
+      "history_blob_refs": [
+        {
+          "blob_oid": "e8bf05ee304727ecfa63cf579ec8a01c73b919b8",
+          "bytes": 7976181,
+          "commit": "2b37ebba62cb926ad38eeaff4746cf3e784763f3",
+          "local_artifact": "blobs/e8bf05ee304727ecfa63cf579ec8a01c73b919b8.json",
+          "path": "unified.json",
+          "raw_sha256": "32ede61cb8681665465c5c3574b06364a017569f80872d86e729c60849726dc0"
+        },
+        {
+          "blob_oid": "1f75ba62a02c085ce0d4011c691210c0936f61e9",
+          "bytes": 7976180,
+          "commit": "14c3f456f26788b390c7ee90f08758848a5b234a",
+          "local_artifact": "blobs/1f75ba62a02c085ce0d4011c691210c0936f61e9.json",
+          "path": "unified.json",
+          "raw_sha256": "d067d814400387023bcb8c96ec11f935bd8be646894ab09c06ba144cd4e34ee9"
+        },
+        {
+          "blob_oid": "e4ae9ba01fa9283cb28f1627093ded38b63b3d37",
+          "bytes": 7976180,
+          "commit": "e2df5d575194a8d3ad640cd3595b67e6da76d0f6",
+          "local_artifact": "blobs/e4ae9ba01fa9283cb28f1627093ded38b63b3d37.json",
+          "path": "unified.json",
+          "raw_sha256": "07fbbf75013b89863870266ad45b073990a669c0fbe098b9a0a1aa242b80ce69"
+        },
+        {
+          "blob_oid": "a59fac0fdc2b16a1f96f5852d74650fd2b976419",
+          "bytes": 7976179,
+          "commit": "2fcc26cb597d22c02aa2437dddd9cdbf7e0ae38e",
+          "local_artifact": "blobs/a59fac0fdc2b16a1f96f5852d74650fd2b976419.json",
+          "path": "unified.json",
+          "raw_sha256": "02f30ca56aa3e4bc209d5d0fd1334fdc1f401a52ee61a1cc2e36c07961bbcf33"
+        },
+        {
+          "blob_oid": "c49a7d1cf7ebeea1d730a55ad52e82f4dacf003b",
+          "bytes": 7976181,
+          "commit": "5a0f89e2d8ff13021102288cf4f0e277dbbddd88",
+          "local_artifact": "blobs/c49a7d1cf7ebeea1d730a55ad52e82f4dacf003b.json",
+          "path": "unified.json",
+          "raw_sha256": "87779f5b89041cac7e41063588a0b07a01563123e0636d46e83771b0bf51e3d5"
+        },
+        {
+          "blob_oid": "1633a43d0417d685821f1d5457644f242212d5d0",
+          "bytes": 7976180,
+          "commit": "95929d9d48da896c68edc4f0ae0e32c1f50b30db",
+          "local_artifact": "blobs/1633a43d0417d685821f1d5457644f242212d5d0.json",
+          "path": "unified.json",
+          "raw_sha256": "be2972f5cd4b7b73d14059129e5198335f8c8d835963c406323b06ea65bbd095"
+        },
+        {
+          "blob_oid": "65b95037616ba6d24a8cf1272f118f55aca669cb",
+          "bytes": 7976181,
+          "commit": "16da06e5899186ec7807296eeee755b537ff908e",
+          "local_artifact": "blobs/65b95037616ba6d24a8cf1272f118f55aca669cb.json",
+          "path": "unified.json",
+          "raw_sha256": "b5293e4187bc2ce4a1a28be53f0a88adfbe87c244800e1e63619b20a93e6a311"
+        },
+        {
+          "blob_oid": "f3054731e1a8794dfc6071a30f9cf81f031888c9",
+          "bytes": 7976181,
+          "commit": "2c5aa0d1d34371c68d49101cb5ba7dfb84bc58a9",
+          "local_artifact": "blobs/f3054731e1a8794dfc6071a30f9cf81f031888c9.json",
+          "path": "unified.json",
+          "raw_sha256": "aa2cedd0217af2b461ab204e2efc725122e4044060e6c8e8a66afbb1f7ae6e94"
+        },
+        {
+          "blob_oid": "fe799af8051f16537cedad9f6780a7570c3e3fb1",
+          "bytes": 7976180,
+          "commit": "38a10f36d1e6cfff711be5aeee8c85acf5d5640e",
+          "local_artifact": "blobs/fe799af8051f16537cedad9f6780a7570c3e3fb1.json",
+          "path": "unified.json",
+          "raw_sha256": "24871c2cc7530ad43a772438f748503e165981f80ff7c9cc90e1948c5b7adca0"
+        },
+        {
+          "blob_oid": "92cdd0b963424f4e825a0f8fef071ca6d8b6b84c",
+          "bytes": 7976182,
+          "commit": "e946a3d8dbb3a6bd8ff19f0ee0b11f1f686657fa",
+          "local_artifact": "blobs/92cdd0b963424f4e825a0f8fef071ca6d8b6b84c.json",
+          "path": "unified.json",
+          "raw_sha256": "f91ea3b83f94adb1a7ddebfa0983ea0c3623037e84a2adfc84a856d6158e83d7"
+        },
+        {
+          "blob_oid": "13e89b4bf59309e57566595a0148c5d985406711",
+          "bytes": 7976178,
+          "commit": "376586c127a7ff10db9310399ce6cd837c03f56e",
+          "local_artifact": "blobs/13e89b4bf59309e57566595a0148c5d985406711.json",
+          "path": "unified.json",
+          "raw_sha256": "6c2b2ba8096b41a1ad8f96d5a08a33f9203f38ac2c138bd58f5d5eb8650808e8"
+        },
+        {
+          "blob_oid": "9caf9354c6ed3a7852c3e937a6955cc1002ff830",
+          "bytes": 7976182,
+          "commit": "66c1f88bd63bea41576469ab6ef556ee2a06cbbc",
+          "local_artifact": "blobs/9caf9354c6ed3a7852c3e937a6955cc1002ff830.json",
+          "path": "unified.json",
+          "raw_sha256": "dc706b7029c34ce7082b10f3f455b45c691d68bf4f1dd01ea73b08a6990730be"
+        },
+        {
+          "blob_oid": "6bb405eb5abef46f1af538e79bb774f8d4f80457",
+          "bytes": 7976180,
+          "commit": "eb9c8bda69d57e8a4bec103ac545171488319169",
+          "local_artifact": "blobs/6bb405eb5abef46f1af538e79bb774f8d4f80457.json",
+          "path": "unified.json",
+          "raw_sha256": "37612782636692c991fc40de1265b0a8d7afdc11cd4ee8101b0580fccb3b1568"
+        },
+        {
+          "blob_oid": "a6a3ed29c6e286945c58e5ab92d190b9f0700573",
+          "bytes": 7976181,
+          "commit": "cff495974c999f20888e8259c2dd4f59f8189eed",
+          "local_artifact": "blobs/a6a3ed29c6e286945c58e5ab92d190b9f0700573.json",
+          "path": "unified.json",
+          "raw_sha256": "e62180f72fe35a4f2bcd5d340ab1bc0d693d3e9b8441949bac91bfb61efac1c2"
+        },
+        {
+          "blob_oid": "6e4095e6f62e7827fd425df52109deaaa92e6f5d",
+          "bytes": 7976182,
+          "commit": "f721257d41baf02bacab18e52446a982de74ffd9",
+          "local_artifact": "blobs/6e4095e6f62e7827fd425df52109deaaa92e6f5d.json",
+          "path": "unified.json",
+          "raw_sha256": "654053310f0e4717bea008f654160bf0c4a94f1fb2c1503ddb927af2d6139d38"
+        },
+        {
+          "blob_oid": "491f24dfcc448c402604206867888a60dd6af515",
+          "bytes": 7976182,
+          "commit": "6465176aff9b2670108ddd721031edf01bed3b24",
+          "local_artifact": "blobs/491f24dfcc448c402604206867888a60dd6af515.json",
+          "path": "unified.json",
+          "raw_sha256": "fae5c7d434b35c446445a3587f39123f5ca75bd3a913c85580f9a3503f608afa"
+        },
+        {
+          "blob_oid": "2018b9aea7de2c553483db9f59be83d141c49e06",
+          "bytes": 7976180,
+          "commit": "c5e2d892c44b6cfc21218e83c0f840240a768b75",
+          "local_artifact": "blobs/2018b9aea7de2c553483db9f59be83d141c49e06.json",
+          "path": "unified.json",
+          "raw_sha256": "5fc740df19ea8246a010c69c1a5bf024e280783cc1cd245a1fec50858003abe5"
+        },
+        {
+          "blob_oid": "31889b0b0e9bfad1879075e282cc6d7a99f59089",
+          "bytes": 7976178,
+          "commit": "e468f52592f3158f99794cbdc5f0fc22d63f60e9",
+          "local_artifact": "blobs/31889b0b0e9bfad1879075e282cc6d7a99f59089.json",
+          "path": "unified.json",
+          "raw_sha256": "516aa06a752ad519bec89bcd0c3da96e834099d3a0fd6b0276ac5a98dc968d4a"
+        },
+        {
+          "blob_oid": "bc4e191b427e7b2cd4d6a60ceae3f85d77abdfaa",
+          "bytes": 7976181,
+          "commit": "90aeea07c1816b27d0ebe9df8fdee75e84df7da0",
+          "local_artifact": "blobs/bc4e191b427e7b2cd4d6a60ceae3f85d77abdfaa.json",
+          "path": "unified.json",
+          "raw_sha256": "05d94b2a0f2e963d02ae7f0f8a4572b159c5ebe98d4bbc6e712e5d0fe5f553b7"
+        },
+        {
+          "blob_oid": "0fe2eec753fe021b690058e8d185bc7a59581e16",
+          "bytes": 7976180,
+          "commit": "45529e194d2a23d1fa601782cf216d873403c956",
+          "local_artifact": "blobs/0fe2eec753fe021b690058e8d185bc7a59581e16.json",
+          "path": "unified.json",
+          "raw_sha256": "f903d3aa387611f8fc4330b80f2bb1434ff8a6b7f9b9a1f005ca820e9d9332d1"
+        }
+      ],
+      "history_tip": "2b37ebba62cb926ad38eeaff4746cf3e784763f3",
+      "local_evidence": "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171858Z-af641892",
+      "match_count": 0,
+      "newest_built_at": "2026-10-28T17:16:11.639701+00:00",
+      "oldest_built_at": "2026-10-28T16:25:49.015589+00:00",
+      "remote_evidence": "/root/qtrade-local/operator-evidence/abe-catalog-lineage-readonly-20261028T171858Z-af641892",
+      "scope": "latest_local_HEAD_observed_and_frozen"
+    }
+  ],
+  "index_entries": 3000,
+  "index_master_sha256": "38f5d70670c6f2b1397bd3637e75794b9743849ee44a1ab3797a7e7f2ec9bd2e",
+  "index_published_at": "2026-10-28T14:56:16.629025+00:00",
+  "index_ref": {
+    "blob_oid": "779f47292fa92fca6f15a2e46db9f29afcd1c09a",
+    "bytes": 2796236,
+    "commit": "abe2986cd6e3f3faeb4984454498e4c67f1646d3",
+    "local_artifact": "blobs/779f47292fa92fca6f15a2e46db9f29afcd1c09a.json",
+    "path": "unified-market.json",
+    "raw_sha256": "164a721fd517567004fa10c4be9bc2cfbc478feb9354e5cd66948644510daf46"
+  },
+  "index_self_checksum_valid": true,
+  "index_total_bytes": 167397950,
+  "index_total_files": 5987,
+  "index_unique_instruments": 1500,
+  "initial_failure_preserved": "E:\\QTrade-temp\\abe-catalog-lineage-readonly-20261028T171449Z-befe0da0",
+  "master_observed_at": "2026-10-26T08:59:06.887581+00:00",
+  "master_securities": 5594,
+  "master_self_checksum_valid": true,
+  "master_target_types": {
+    "ETF": 30,
+    "STOCK": 1470
+  },
+  "master_targets": 1500,
+  "public_send_or_fetch_or_server": false,
+  "public_top_level": {
+    "entries": [
+      {
+        "is_dir": false,
+        "is_symlink": false,
+        "name": "unified.json"
+      }
+    ],
+    "exists": true,
+    "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/public",
+    "total_entries": 1,
+    "truncated": false
+  },
+  "schema_version": "qtrade.abe-catalog-lineage-investigation.v1",
+  "state": "NO_MATCHING_ORIGINAL_CATALOG_WITHIN_BOUNDED_SCOPES",
+  "target_set_sha256": "65e4eadb56a426683d0f5b0c4ad800f9de07c2883db09a07c4f6178dc38cf6e8",
+  "target_sets_equal": true,
+  "unified_ref": {
+    "blob_oid": "a317af8c977924c31e0f993543c3b864976a820f",
+    "bytes": 7976216,
+    "commit": "abe2986cd6e3f3faeb4984454498e4c67f1646d3",
+    "local_artifact": "blobs/a317af8c977924c31e0f993543c3b864976a820f.json",
+    "path": "unified.json",
+    "raw_sha256": "c4a40629a78a7bb19945b9443a6753e9e8870da6bcdb7151612c49442e6a4b67"
+  },
+  "unified_self_checksum_valid": true,
+  "universe_version_index": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308",
+  "universe_version_master": "482c81a9b0981a677e9023197fa865b3c52510bcb249c115dc6c5affa30da308"
+}

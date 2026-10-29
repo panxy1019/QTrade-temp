@@ -1,0 +1,61 @@
+{
+  "at": "2026-10-28T17:01:47.927390+00:00",
+  "binary_bytes": 151037391,
+  "binary_sha256": "ea71aa0735f6930c3ae3fcc27f0dc2d670f941043085d9a501cad323a393db2d",
+  "binary_version": "minio version DEVELOPMENT.GOGET (commit-id=DEVELOPMENT.GOGET)\nRuntime: go1.24.13 linux/amd64\nLicense: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html\nCopyright: 2015-0000 MinIO, Inc.",
+  "checksum_verification_disabled": false,
+  "cloud_account_used": false,
+  "elapsed_seconds": 109.5234183780849,
+  "failure": null,
+  "go_archive_sha256": "1fc94b57134d51669c72173ad5d49fd62afb0f1db9bf3f798fd98ee423f8d730",
+  "go_mod_sha256": "e362dbf17ddb50992fe199e0d777b3da147ec398e6db9e590fef2a573060acb1",
+  "go_sum_sha256": "e81f196b31076aa8928bcf74456d1a9c20113aca174089bc5c7d0642de3b316f",
+  "goproxy": "https://goproxy.cn",
+  "gosumdb": "sum.golang.org",
+  "local_free_bytes": 14695690240,
+  "max_child_rss_kib": 1431092,
+  "minio_source_commit": "07c3a429bfed433e49018cb0f78a52145d4bedeb",
+  "module_verify_passed": true,
+  "module_zip_count": 342,
+  "nfs_free_bytes": 281086525440,
+  "original_before_after_equal": true,
+  "phases": {
+    "binary-build-info": {
+      "private_log_bytes": 22482,
+      "private_log_sha256": "8bac78a3ee4258a99067081ef50222db6986c6000e3b651aa507bac33532ef01",
+      "returncode": 0,
+      "seconds": 3.661029040813446e-05
+    },
+    "binary-version": {
+      "private_log_bytes": 191,
+      "private_log_sha256": "90d03e8745d53d82e83675bd9f96739da1be89fe81ac54089ac5460d33df266b",
+      "returncode": 0,
+      "seconds": 6.076879799365997e-05
+    },
+    "build": {
+      "private_log_bytes": 13233,
+      "private_log_sha256": "d88b7b99ff225abce548e85c8d54c5dacd3558cc099859c3ac7e26f1a2b4ec60",
+      "returncode": 0,
+      "seconds": 94.98213949799538
+    },
+    "go-version": {
+      "private_log_bytes": 33,
+      "private_log_sha256": "07b0d66d21bcdfdc8456adcb17203f3af8656dc11549da62e6940f99b8d45444",
+      "returncode": 0,
+      "seconds": 6.517022848129272e-05
+    },
+    "module-verify": {
+      "private_log_bytes": 21,
+      "private_log_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "returncode": 0,
+      "seconds": 7.722356706857681
+    }
+  },
+  "production_changed": false,
+  "schema_version": "qtrade.minio-checksummed-mirror-build.v1",
+  "service_started": false,
+  "source_archive_sha256": "8819e3e7817e46b7b3798f8f200ead208562e571563c2e040352378031abe9f2",
+  "source_before_after_equal": true,
+  "source_file_count": 1365,
+  "state": "BUILT_VERIFIED_NOT_STARTED"
+}

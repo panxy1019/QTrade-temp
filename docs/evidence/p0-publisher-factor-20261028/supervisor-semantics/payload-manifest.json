@@ -1,0 +1,485 @@
+{
+  "credentials_or_connection_helper_included": false,
+  "fixture_config_scope": "ONLY_NEW_PRIVATE_UNIX_SOCKET_NO_INET_NO_AUTH_NO_PRIVATE_VALUES",
+  "historical_operator_filename_warning": "Original failed operator.py renamed .py.txt; reproduce only the reviewed fixture_supervisor_probe.py or stdin form",
+  "limitations": [
+    "PIDFD_SYSCALL_ENOSYS_PRODUCTION_PIDFD_SCHEME_NOT_CERTIFIED",
+    "FIXTURE_V2_RELEASE_MARKER_NOT_REAL_RELEASE_SOURCE_OR_FUNCTIONAL_PUBLICATION",
+    "NAME_RPC_NO_EXPECTED_PID_CAS_AND_SUCCESS_REPLY_NOT_DELIVERY_PROOF",
+    "COLD_PERFORMANCE_SOURCE_LINEAGE_AND_OPERATOR_REVIEW_GATES_REMAIN_SEPARATE"
+  ],
+  "named_rpc_expected_pid_cas": false,
+  "original_rpc_internal_45": {
+    "child.py": "24abc78ba99d08719fd4d4e099fbffeb08d6b88a56e955c28523f30c18c3da44",
+    "cleanup.json": "0b742e91821d0a0bf5fdfdc6d1f528caff4b60a5d8ad9d50498e7850eb8df0a0",
+    "design.json": "a0c0db6752161c90a81543d80ec6512f20eab465d23873dbc12fa1b9809c1c75",
+    "fixture_supervisor_probe.py": "87f39a038f93523ac458de4958afdbbfbf3ff5b0a5d63e70bd3080213f6a7817",
+    "normal/child.events.jsonl": "fecd9a9d890623e94fa8e99f621d9d428a3d7ae63134f663a42494d98b12b8d3",
+    "normal/controlled.counter": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+    "normal/controlled.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/controlled.stdout.log": "fbca03f97bf54eb599a1ed38c0f3f37a8adbc3c60c19219381dbb452ccdc5b41",
+    "normal/fixture-cleanup-abort": "34559daa48aab68bc87be1563c61c74cb12c87396936fb2a90afd2dece1f1bfa",
+    "normal/manager.log": "3019c806be0a032e7b83af7c54ac619f394ca24e7d5fddac26a47ba16bfd1523",
+    "normal/manager.pid": "c348dab7664152c26753856b918fad5102af05e7dfd0e2faef0cb483ef4a2439",
+    "normal/manager.stdout.log": "33fe004649bd97ec1dde6a61483a52bfe87c67c62e40899c9b0db35b0edbb262",
+    "normal/result.json": "c5ef0c54be4df35572aab6f3ec768f6b27405918deea9de53efab5cb62919d45",
+    "normal/rpc-status.jsonl": "ec854a18fcccc6bffa101ff4f691ae69f052cecd41b45a12edb108ff9ab5a8e4",
+    "normal/sentinel-a.counter": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "normal/sentinel-a.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/sentinel-a.stdout.log": "f9bbf5de75fbe1ac763dc1bfbf7267aa3298fd3ac33ff9cd52be7e1bdc4bfbb8",
+    "normal/sentinel-b.counter": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "normal/sentinel-b.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/sentinel-b.stdout.log": "34a1b3c5f3d920931b3ed3fcbf4dc16e5bf5c79adb85decf6f99ee77886672fe",
+    "normal/supervisord.conf": "65e777813db72f73fe2424dbfb7f610415da53dce5e75063a3b370a5e8d02f8b",
+    "normal/wrapper": "336701c29998e08f786bd0eec0e4e6a52aeb8fd79629c505c69a32cf8d2a8b09",
+    "normal/wrapper-v1.sh": "336701c29998e08f786bd0eec0e4e6a52aeb8fd79629c505c69a32cf8d2a8b09",
+    "operator.events.jsonl": "904ea76baa0bd5be23d37ae21aee1cc0b4328d200a999463c212dc9f7c4e97ab",
+    "production-before.json": "9ac0506a759b9f19952b588c08ddd906a64c0580c2cf0adadd4a0a55aefc4904",
+    "term/child.events.jsonl": "147d281c43ea58f0f27710097b84b945b32f01e251145a871a069794f6e6aa0f",
+    "term/controlled.counter": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+    "term/controlled.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "term/controlled.stdout.log": "8e36776fcaec8f2e011f7e026cacf2ab032439b88f4632d12728ca9590d9adc0",
+    "term/fixture-cleanup-abort": "34559daa48aab68bc87be1563c61c74cb12c87396936fb2a90afd2dece1f1bfa",
+    "term/manager.log": "3034fd092ca7254506ca88ab00dbd4dd2cb48112760fdf874f4aa2bb1ebd3bc5",
+    "term/manager.pid": "d921a1c09c3a47c292c3f60dbcf6d868a51b27e2bff660866c6a2317adfad733",
+    "term/manager.stdout.log": "0a43371193da986299e7c3cb2945510b185fc25caa89f211c29543e55a69eb92",
+    "term/result.json": "1e7e952838a3233b139efb3b6aff7e45dff6f7036affb06060b6541b2d2d0015",
+    "term/rpc-status.jsonl": "52e9a657cea826fed991c5dd891c287fc55eee43a2c22bd02d0580981c1161fe",
+    "term/sentinel-a.counter": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "term/sentinel-a.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "term/sentinel-a.stdout.log": "37982701be94c1256a44eba385b8e7e8a47b15baed15c4a3d2ceea6606f63692",
+    "term/sentinel-b.counter": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "term/sentinel-b.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "term/sentinel-b.stdout.log": "8135e10de9d8b0b735c32cb6ab81f2a915848e46e55430e7246397b4c22f6ffa",
+    "term/supervisord.conf": "b49bdd2a8c42fe506d80463892c6b89e5d02408d3856c98c2094e9eb7e2c622a",
+    "term/wrapper": "8ae6e7a2b966c0fa069657d0a23ff6af866c1217e9c4f97b8be9463e386a7621",
+    "term/wrapper-v1.sh": "74beaa0dcc359f67a36f4cd688b7a8a06f146144ad649cf602bde77fe245cb3c",
+    "term/wrapper-v2.sh": "8ae6e7a2b966c0fa069657d0a23ff6af866c1217e9c4f97b8be9463e386a7621"
+  },
+  "payloads": [
+    {
+      "bytes": 892,
+      "group": "IMPORT_SHADOW_FAILURE_RETAINED",
+      "path": "import-failure/design.json",
+      "sha256": "6fac2cc1ad9fb1d8c05f7b849fd3877f6f910b2e026978a750844403be6bfc1f"
+    },
+    {
+      "bytes": 18029,
+      "group": "IMPORT_SHADOW_FAILURE_RETAINED",
+      "path": "import-failure/failed_probe_source.py.txt",
+      "sha256": "57021984648f33aba53745245a1884068679b999af6d208aa5c611c551db14ba"
+    },
+    {
+      "bytes": 1316,
+      "group": "IMPORT_SHADOW_FAILURE_RETAINED",
+      "path": "import-failure/ssh.stderr.log",
+      "sha256": "985674a00dc3788d70f3c9bc0bf8d1e0bb842d1207e2f0451dd44d993236cb6b"
+    },
+    {
+      "bytes": 2253,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/child.py",
+      "sha256": "0bfff22f56a11b203b6a48277241ff8357ba36d1162201757a9a7917c7c2da1d"
+    },
+    {
+      "bytes": 2661,
+      "group": "PIDFD_FAILURE_CLEANUP_RECEIPT",
+      "path": "pidfd-failure/cleanup-receipt.sanitized.json",
+      "sha256": "71bfb7f035abb3dadbc1478c8f20db6db7f894744c3c60544be49efd184f4e67"
+    },
+    {
+      "bytes": 380,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/cleanup-ssh.stderr.log",
+      "sha256": "4017990224d8be39e62f6884b1b43bcb31248ec6f384bb42f40a26a2ce1cfb65"
+    },
+    {
+      "bytes": 0,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/cleanup-v2-ssh.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1842,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/cleanup-v2-ssh.stdout.log",
+      "sha256": "f21c807f47bbbc8015d3d7eaf053bfd14fcb8b906b32a5619cff18b2105c265c"
+    },
+    {
+      "bytes": 892,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/design.json",
+      "sha256": "ef4a57ecc89aeecb6f2d7394f75e7d037164f36c10517eb4ab0aa6a39c7ad92c"
+    },
+    {
+      "bytes": 691,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/failure-traceback.txt",
+      "sha256": "f6f5b21eb21d20a6d74a34c761d84ffcd84ac68dea15d85cf99d07832b4edeed"
+    },
+    {
+      "bytes": 4597,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/fixture_cleanup_probe.py",
+      "sha256": "e50f240df8588075ad1050ef209d6de2a55bf6c247677d2a1bdb414b8bf4bbc8"
+    },
+    {
+      "bytes": 4534,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/fixture_cleanup_probe_v2.py",
+      "sha256": "975daf087e42e44926be8a55cb45603293e55a25152c118de9f6f49df85548bb"
+    },
+    {
+      "bytes": 18029,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/fixture_supervisor_probe.py",
+      "sha256": "57021984648f33aba53745245a1884068679b999af6d208aa5c611c551db14ba"
+    },
+    {
+      "bytes": 1290,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/normal/child.events.jsonl",
+      "sha256": "66db8a7f1b9dbcb4614650670c6bc513721cad0ac425b12b5c91e7166bfc6b16"
+    },
+    {
+      "bytes": 220,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/normal/controlled.stderr.log",
+      "sha256": "42df2fc860930d5a3bc25fd6cd5fa7a89ecf75b14236351e9180ecd7a1e6966f"
+    },
+    {
+      "bytes": 582,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/normal/controlled.stdout.log",
+      "sha256": "da270e5c1e9bbb0ea5e7e714129f19c87fc0a4ea54fda48084566a454b56dc0f"
+    },
+    {
+      "bytes": 8476,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/normal/manager.log",
+      "sha256": "d969183c5e57d43e1fbc41de7db1c51bfe4389e5b6bf6beb2c45d28a33c8cb90"
+    },
+    {
+      "bytes": 175,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/normal/manager.stdout.log",
+      "sha256": "7011d44f3fab9acdb458e343adaf008eb6a9c94ceca399ea4bd0e791f50ba6a6"
+    },
+    {
+      "bytes": 2586,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/normal/supervisord.conf",
+      "sha256": "dc43057466c0522cacced07adb445db4f9074d971f3f375d917ec6c608c9c666"
+    },
+    {
+      "bytes": 203,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/normal/wrapper-v1.sh",
+      "sha256": "0f5b73da0e21251e6a02c35a4787ee189630c748b137efd85ed66ec4bdd61cea"
+    },
+    {
+      "bytes": 2767,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/operator.events.jsonl",
+      "sha256": "226ccb2b6b7af78a39dfc322ece5d311ca61072d5a12dbe6ed43b53f3828b8d6"
+    },
+    {
+      "bytes": 1825,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/readonly-signal-interface.json",
+      "sha256": "15a59161f0e1d02ef772e78bc30788df64831f6fd5cf5a3678a8f408bc91dbca"
+    },
+    {
+      "bytes": 585,
+      "group": "PIDFD_FAILURE_RETAINED",
+      "path": "pidfd-failure/ssh.stderr.log",
+      "sha256": "7cc534404920958243bc8f66be0c7fe615021ff1791e60389c8865002fe220f5"
+    },
+    {
+      "bytes": 2893,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/child.py",
+      "sha256": "24abc78ba99d08719fd4d4e099fbffeb08d6b88a56e955c28523f30c18c3da44"
+    },
+    {
+      "bytes": 4130,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/cleanup.json",
+      "sha256": "0b742e91821d0a0bf5fdfdc6d1f528caff4b60a5d8ad9d50498e7850eb8df0a0"
+    },
+    {
+      "bytes": 1053,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/design.json",
+      "sha256": "a0c0db6752161c90a81543d80ec6512f20eab465d23873dbc12fa1b9809c1c75"
+    },
+    {
+      "bytes": 21729,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/fixture_supervisor_probe.py",
+      "sha256": "87f39a038f93523ac458de4958afdbbfbf3ff5b0a5d63e70bd3080213f6a7817"
+    },
+    {
+      "bytes": 2520,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/child.events.jsonl",
+      "sha256": "fecd9a9d890623e94fa8e99f621d9d428a3d7ae63134f663a42494d98b12b8d3"
+    },
+    {
+      "bytes": 1,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/controlled.counter",
+      "sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "bytes": 0,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/controlled.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1812,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/controlled.stdout.log",
+      "sha256": "fbca03f97bf54eb599a1ed38c0f3f37a8adbc3c60c19219381dbb452ccdc5b41"
+    },
+    {
+      "bytes": 38,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/fixture-cleanup-abort",
+      "sha256": "34559daa48aab68bc87be1563c61c74cb12c87396936fb2a90afd2dece1f1bfa"
+    },
+    {
+      "bytes": 4884,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/manager.log",
+      "sha256": "3019c806be0a032e7b83af7c54ac619f394ca24e7d5fddac26a47ba16bfd1523"
+    },
+    {
+      "bytes": 6,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/manager.pid",
+      "sha256": "c348dab7664152c26753856b918fad5102af05e7dfd0e2faef0cb483ef4a2439"
+    },
+    {
+      "bytes": 179,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/manager.stdout.log",
+      "sha256": "33fe004649bd97ec1dde6a61483a52bfe87c67c62e40899c9b0db35b0edbb262"
+    },
+    {
+      "bytes": 3214,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/result.json",
+      "sha256": "c5ef0c54be4df35572aab6f3ec768f6b27405918deea9de53efab5cb62919d45"
+    },
+    {
+      "bytes": 33540,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/rpc-status.jsonl",
+      "sha256": "ec854a18fcccc6bffa101ff4f691ae69f052cecd41b45a12edb108ff9ab5a8e4"
+    },
+    {
+      "bytes": 1,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/sentinel-a.counter",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "bytes": 0,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/sentinel-a.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 354,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/sentinel-a.stdout.log",
+      "sha256": "f9bbf5de75fbe1ac763dc1bfbf7267aa3298fd3ac33ff9cd52be7e1bdc4bfbb8"
+    },
+    {
+      "bytes": 1,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/sentinel-b.counter",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "bytes": 0,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/sentinel-b.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 354,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/sentinel-b.stdout.log",
+      "sha256": "34a1b3c5f3d920931b3ed3fcbf4dc16e5bf5c79adb85decf6f99ee77886672fe"
+    },
+    {
+      "bytes": 2662,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/supervisord.conf",
+      "sha256": "65e777813db72f73fe2424dbfb7f610415da53dce5e75063a3b370a5e8d02f8b"
+    },
+    {
+      "bytes": 211,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/wrapper",
+      "sha256": "336701c29998e08f786bd0eec0e4e6a52aeb8fd79629c505c69a32cf8d2a8b09"
+    },
+    {
+      "bytes": 211,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/normal/wrapper-v1.sh",
+      "sha256": "336701c29998e08f786bd0eec0e4e6a52aeb8fd79629c505c69a32cf8d2a8b09"
+    },
+    {
+      "bytes": 7827,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/operator.events.jsonl",
+      "sha256": "904ea76baa0bd5be23d37ae21aee1cc0b4328d200a999463c212dc9f7c4e97ab"
+    },
+    {
+      "bytes": 288,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/production-before.json",
+      "sha256": "9ac0506a759b9f19952b588c08ddd906a64c0580c2cf0adadd4a0a55aefc4904"
+    },
+    {
+      "bytes": 17239,
+      "group": "RPC_PASS_SUMMARY",
+      "path": "rpc-pass/summary.json",
+      "sha256": "4d0ded50acb12a3658e9ac5e2a810413008822a5cb59a34b05a72fb50af79166"
+    },
+    {
+      "bytes": 2673,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/child.events.jsonl",
+      "sha256": "147d281c43ea58f0f27710097b84b945b32f01e251145a871a069794f6e6aa0f"
+    },
+    {
+      "bytes": 1,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/controlled.counter",
+      "sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "bytes": 0,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/controlled.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1970,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/controlled.stdout.log",
+      "sha256": "8e36776fcaec8f2e011f7e026cacf2ab032439b88f4632d12728ca9590d9adc0"
+    },
+    {
+      "bytes": 38,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/fixture-cleanup-abort",
+      "sha256": "34559daa48aab68bc87be1563c61c74cb12c87396936fb2a90afd2dece1f1bfa"
+    },
+    {
+      "bytes": 35116,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/manager.log",
+      "sha256": "3034fd092ca7254506ca88ab00dbd4dd2cb48112760fdf874f4aa2bb1ebd3bc5"
+    },
+    {
+      "bytes": 6,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/manager.pid",
+      "sha256": "d921a1c09c3a47c292c3f60dbcf6d868a51b27e2bff660866c6a2317adfad733"
+    },
+    {
+      "bytes": 177,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/manager.stdout.log",
+      "sha256": "0a43371193da986299e7c3cb2945510b185fc25caa89f211c29543e55a69eb92"
+    },
+    {
+      "bytes": 3286,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/result.json",
+      "sha256": "1e7e952838a3233b139efb3b6aff7e45dff6f7036affb06060b6541b2d2d0015"
+    },
+    {
+      "bytes": 841626,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/rpc-status.jsonl",
+      "sha256": "52e9a657cea826fed991c5dd891c287fc55eee43a2c22bd02d0580981c1161fe"
+    },
+    {
+      "bytes": 1,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/sentinel-a.counter",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "bytes": 0,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/sentinel-a.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 352,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/sentinel-a.stdout.log",
+      "sha256": "37982701be94c1256a44eba385b8e7e8a47b15baed15c4a3d2ceea6606f63692"
+    },
+    {
+      "bytes": 1,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/sentinel-b.counter",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "bytes": 0,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/sentinel-b.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 351,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/sentinel-b.stdout.log",
+      "sha256": "8135e10de9d8b0b735c32cb6ab81f2a915848e46e55430e7246397b4c22f6ffa"
+    },
+    {
+      "bytes": 2628,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/supervisord.conf",
+      "sha256": "b49bdd2a8c42fe506d80463892c6b89e5d02408d3856c98c2094e9eb7e2c622a"
+    },
+    {
+      "bytes": 207,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/wrapper",
+      "sha256": "8ae6e7a2b966c0fa069657d0a23ff6af866c1217e9c4f97b8be9463e386a7621"
+    },
+    {
+      "bytes": 207,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/wrapper-v1.sh",
+      "sha256": "74beaa0dcc359f67a36f4cd688b7a8a06f146144ad649cf602bde77fe245cb3c"
+    },
+    {
+      "bytes": 207,
+      "group": "RPC_PASS_INTERNAL_45",
+      "path": "rpc-pass/term/wrapper-v2.sh",
+      "sha256": "8ae6e7a2b966c0fa069657d0a23ff6af866c1217e9c4f97b8be9463e386a7621"
+    }
+  ],
+  "pidfd_failure_cleanup_raw_receipts_excluded": true,
+  "production_environment_captured": false,
+  "production_handover_authorized_by_this_pack": false,
+  "production_private_config_captured": false,
+  "rpc_count_explanation": "45 internal artifacts + summary.json + local ssh.stdout.log + local ssh.stderr.log + local transport-receipt.json = 49; archive chooses internal45 and summary, not duplicate SSH logs or transport receipt",
+  "rpc_internal_artifact_count": 45,
+  "rpc_original_regular_file_count": 49,
+  "state": "WHITELISTED_SAFE_EVIDENCE_PACK",
+  "transport_receipt_sha256": "77845e39f2c10789111941e05f8c3532f287f98fa64154885c3bdfb0400c917b",
+  "transport_remote_exit_code": 0
+}

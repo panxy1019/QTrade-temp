@@ -1,0 +1,12 @@
+{
+  "captured_at": "2026-10-28T16:14:37.266780+00:00",
+  "elapsed_seconds": 0.6599557001609355,
+  "mode": "authorize",
+  "no_retry": true,
+  "operator_sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa",
+  "plan_sha256": "9a459c194021e6cadc1cec8dd09ecb8f7e86d8c5cab81d972a1108e7edbf4fb8",
+  "result": null,
+  "returncode": 1,
+  "stderr_sha256": "67841cda86303d72d7ff309a1079f3259e523766f58e6270f175cea14f2f0071",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

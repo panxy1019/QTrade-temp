@@ -1,0 +1,7 @@
+{
+  "observed_at": "2026-10-28T06:07:08.403061+00:00",
+  "readonly": true,
+  "cpu_count": 128,
+  "affinity_count": 128,
+  "cgroup": {}
+}

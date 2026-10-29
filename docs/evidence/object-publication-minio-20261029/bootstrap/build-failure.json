@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-28T16:49:34.060595+00:00",
+  "error_class": "TimeoutExpired",
+  "production_changed": false,
+  "service_started": false,
+  "state": "FIXTURE_BUILD_FAILED"
+}

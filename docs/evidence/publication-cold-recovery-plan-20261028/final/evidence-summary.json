@@ -1,0 +1,87 @@
+{
+  "schema_version": "qtrade.cold-recovery-preparation-evidence.v1",
+  "source_sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa",
+  "test_sha256": "c00aeac29cf2697b68b68046f56a877d28c205f6e4023868c20510fa30e8742f",
+  "base_v3_sha256": "76bf3e2653ab51491b966db9f62c415c0d7161b4d642e7f89cefc30b687a61fc",
+  "results": {
+    "windows64": {
+      "tests": 64,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "file": {
+        "bytes": 14134,
+        "sha256": "f5a7d691cbb7552ad0734bf347d49d18221328f464d1199a1befb2cd2319fd11"
+      }
+    },
+    "linux64": {
+      "tests": 64,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "file": {
+        "bytes": 15475,
+        "sha256": "d8c68c1dffb9d4975faf95774b32cf155a9c23dc005b5fa66c99c13fc546bba8"
+      }
+    },
+    "retained_windows57_red": {
+      "tests": 57,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "file": {
+        "bytes": 15568,
+        "sha256": "d0cebd019dcf4fd5eeb694364a12b711d6a6f883eca6f52fce899ce019547c16"
+      }
+    },
+    "retained_windows60_red": {
+      "tests": 60,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0,
+      "file": {
+        "bytes": 27238,
+        "sha256": "13cc5169a6527c3ea6d9fb2fb566ff4bc0d0080647f08c2e5f325a0986952fd3"
+      }
+    },
+    "intermediate_windows60": {
+      "tests": 60,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "file": {
+        "bytes": 13556,
+        "sha256": "e75372e076a1550cf6be9b89c9bbbd7ed518841c4e1ef78bfe5bcb284f1a44e5"
+      }
+    },
+    "intermediate_windows61": {
+      "tests": 61,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "file": {
+        "bytes": 13796,
+        "sha256": "58ec529e8c13c4bcbe3e00a39aad6215a03d33cb5cf63740192e87de87c6ec5a"
+      }
+    },
+    "intermediate_linux61": {
+      "tests": 61,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "file": {
+        "bytes": 14342,
+        "sha256": "42c9e697a6a022c7924e66ab7276bd4d49610567843375075b44110fb5e73cb7"
+      }
+    }
+  },
+  "source_freeze_verified": true,
+  "linux_report_source_inventory_verified": true,
+  "ordinary_export_seconds": 45,
+  "ordinary_git_seconds": 90,
+  "proposed_cold_push_seconds": 180,
+  "cold180_real_performance_pass": false,
+  "new_user_push_approval_obtained": false,
+  "this_agent_network_or_production_operation": false,
+  "normal_production_source_modified": false
+}

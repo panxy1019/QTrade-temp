@@ -1,0 +1,8 @@
+{
+  "at": "2026-10-28T16:37:33.542342+00:00",
+  "root": "/root/qtrade-local/operator-evidence/minio-protocol-20261029T163700Z",
+  "sources": {
+    "build_minio_protocol_fixture_20261029.py": "81b76a48047e3030e87d298bacd590cedb794817ca1b7cdc5a3eb52a11de3355",
+    "sdk.tar.gz": "b7de47947668a358dad70b26c2c5beeb16dd058de1d4f605bea29ec9841ce1d6"
+  }
+}

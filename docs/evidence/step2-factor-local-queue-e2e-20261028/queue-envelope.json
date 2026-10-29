@@ -1,0 +1,56 @@
+{
+  "actor": "local-e2e-research",
+  "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+  "expected_catalog_sha256": "cdfb7b26db4cb12b23a9cbcd6d7f91d25c07dbddf353e39e225d3de4db6ffe5b",
+  "expected_strategy_version": "03639b67de9d3644ecb03d950a63a1cef4eafee8ce15fca506af436e8ca6058a",
+  "factor_spec": {
+    "evaluation_ref": {
+      "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+      "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9",
+      "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de"
+    },
+    "execution": {
+      "buy_cost_bps": "8",
+      "initial_cash": "1000000",
+      "min_cost": "5",
+      "sell_cost_bps": "13",
+      "slippage_bps": "0"
+    },
+    "factor_ref": {
+      "definition_sha256": "62fa55321229f24cd61681c0a612f28d7aeef5c3192acb64a5f8ec388502158d",
+      "factor_id": "qtrade.price.momentum20",
+      "factor_version": "a56c5325a6e10a717dbe9dcd256ccba99ee39671594e21c3d2f272289a92f857"
+    },
+    "name": "step2-http-gitqueue-owned-worker",
+    "parent": null,
+    "portfolio": {
+      "hold_thresh": 2,
+      "method": "TopkDropout",
+      "n_drop": 5,
+      "risk_degree": "0.8",
+      "topk": 50
+    },
+    "segments": {
+      "test": [
+        "2024-01-02",
+        "2026-10-27"
+      ],
+      "train": [
+        "2017-04-05",
+        "2021-12-28"
+      ],
+      "valid": [
+        "2022-01-04",
+        "2023-12-26"
+      ]
+    },
+    "signal_kind": "FACTOR_SINGLE"
+  },
+  "factor_spec_sha256": "ee135722dd6bec9926d6550236ef8d856669dcb2bcabad69382fc2978a10b0d8",
+  "job_id": "1cece3d0695616f629f540391fde7479",
+  "kind": "FACTOR_STRATEGY_REGISTER_V1",
+  "live_trading_enabled": false,
+  "queue_signature": "0c877fd92290a21ba417864aec784753d512a209a39a5b8b8ed2c9e1f50f7433",
+  "schema_version": "qtrade.factor-strategy-register-request.v1",
+  "source_revision": "45de5bd2455b9ed6bdaddc1646d69e148846e3da"
+}

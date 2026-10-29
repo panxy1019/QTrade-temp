@@ -22,6 +22,7 @@ from typing import Any
 from qtrade.market_data.akshare import SHANGHAI
 from qtrade.market_data.sina_incremental import completed_klines
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+from qtrade.research.data_quality_policy import request_policy, validate_policy
 from qtrade.research.qlib_adapter import extend_normalized_daily
 from scripts.atomic_json import write_json_atomic, write_json_immutable
 from scripts.pit_collection_queue import (
@@ -49,19 +50,27 @@ def load_signed(path: Path) -> dict[str, Any]:
 
 
 def daily_tasks(
-    base: Path, dataset: dict[str, Any], day: str, universe: str, database: Path | None
+    base: Path, dataset: dict[str, Any], day: str, universe: str, database: Path | None,
+    input_scope_policy: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]] | None:
     """Snapshot an exact terminal daily scope; rotating minute progress is not daily proof."""
     required = {row["symbol"] for row in dataset["stocks"]}
+    dataset_required = set(required)
+    if input_scope_policy is not None:
+        validate_policy(input_scope_policy, dataset, universe, day, datetime.now(UTC))
     master_path = base / "unified-data/public/unified.json"
     if master_path.exists():
         master = load_signed(master_path)["master"]
         if load_signed_document(master) is False or master["universe_version"] != universe:
             return None
         target = [r for r in master["securities"] if r["in_target"] is True]
-        required = {r["symbol"] for r in target}
-        if not required or len(required) != len(target):
+        target_required = {r["symbol"] for r in target}
+        if not target_required or len(target_required) != len(target):
             raise ValueError("FORWARD_COLLECTION_MASTER_SCOPE_INVALID")
+        if input_scope_policy is None:
+            required = target_required
+        elif not dataset_required <= target_required:
+            raise ValueError('QUALITY_SCOPE_DATASET_OUTSIDE_OBSERVED_TARGET')
     if database is not None:
         with closing(sqlite3.connect(database.resolve().as_uri() + "?mode=ro", uri=True)) as c:
             c.row_factory = sqlite3.Row
@@ -90,6 +99,8 @@ def daily_tasks(
             for r in progress.get("tasks", [])
             if r["frequency"] == "day" and r["trading_day"] == day
         ]
+    if input_scope_policy is not None:
+        tasks = [r for r in tasks if r['symbol'] in required]
     symbols = {r["symbol"] for r in tasks}
     if (
         not 1 <= len(tasks) <= 6000
@@ -131,6 +142,7 @@ def preparation_request(
     universe: str,
     collection_database: Path | None,
     store: UnifiedBatchStore,
+    input_scope_policy: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     context = {
         "base_dataset_sha256": dataset["evidence_sha256"],
@@ -138,6 +150,9 @@ def preparation_request(
         "day": day,
         "code_revision": revision,
     }
+    if input_scope_policy is not None:
+        validate_policy(input_scope_policy, dataset, universe, day, datetime.now(UTC))
+        context['input_scope_policy_sha256'] = input_scope_policy['evidence_sha256']
     scope = base / "unified-data/qlib-preparation/input-scopes" / signed(context)["evidence_sha256"]
     frozen_path, request_path = scope / "collection.json", scope / "request.json"
     if frozen_path.exists():
@@ -145,7 +160,7 @@ def preparation_request(
         if not load_signed_document(snapshot) or snapshot["context"] != context:
             raise ValueError("FORWARD_FROZEN_COLLECTION_CONTEXT_CHANGED")
     else:
-        tasks = daily_tasks(base, dataset, day, universe, collection_database)
+        tasks = daily_tasks(base, dataset, day, universe, collection_database, input_scope_policy)
         if tasks is None:
             return None
         snapshot = signed({**AUTHORITY, "context": context, "tasks": tasks,
@@ -161,6 +176,8 @@ def preparation_request(
             or request["collection_snapshot_sha256"] != snapshot["evidence_sha256"]
         ):
             raise ValueError("FORWARD_FROZEN_PREPARATION_CONTEXT_CHANGED")
+        if request_policy(request, dataset, datetime.now(UTC)) != input_scope_policy:
+            raise ValueError('FORWARD_FROZEN_SCOPE_APPROVAL_CHANGED')
         return request
     frozen_tasks = {r["symbol"]: r for r in snapshot["tasks"]}
     batches: dict[str, Any] = {}
@@ -205,6 +222,8 @@ def preparation_request(
             "collection_snapshot_sha256": snapshot["evidence_sha256"],
             "excluded_current_inputs": excluded,
             'batch_manifests': manifests,
+            **({'input_scope_policy': input_scope_policy}
+               if input_scope_policy is not None else {}),
         }
     )
     write_json_immutable(request_path, request)
@@ -329,6 +348,7 @@ def run(
     collection_database: Path | None = None,
     day: str | None = None,
     universe_version: str | None = None,
+    input_scope_policy: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if not 1 <= maximum <= 50 or re.fullmatch(r'[a-f0-9]{40}', revision) is None:
         raise ValueError('BOUNDED_FORWARD_PREPARATION_REQUIRED')
@@ -393,6 +413,7 @@ def run(
         universe=universe,
         collection_database=collection_database,
         store=store,
+        input_scope_policy=input_scope_policy,
     )
     if request is None:
         return waiting

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/factor-backtest-native-20261028T164408Z-7923ce9a/linux_native_driver.py", line 94, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/root/qtrade-local/operator-evidence/factor-backtest-native-20261028T164408Z-7923ce9a/linux_native_driver.py", line 91, in main
+    assert rc==0 and error is None and after['source_sha256']==before['source_sha256']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

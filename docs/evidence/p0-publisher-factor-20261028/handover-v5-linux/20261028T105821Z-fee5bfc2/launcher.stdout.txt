@@ -1,0 +1,1 @@
+{"counts": {"errors": 0, "failures": 0, "skipped": 0, "tests": 102}, "remote_root": "/root/qtrade-local/operator-evidence/handover-v5-linux-20261028T105821Z-fee5bfc2", "result_sha256": "ae2fb82988b6b3f3f88591aa61a88bf58f194b1376da93776f15b05f0dd266da", "source_unchanged": true, "state": "PASS"}

@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/publisher-old-runtime-20261028T064802Z/probe.py", line 12, in <module>
+    proof=bridge.runtime_probe(op,294214,op.OLD_REVISION,inventory['files'])
+  File "/root/qtrade-local/operator-evidence/publisher-old-runtime-20261028T064802Z/bridge.py", line 152, in runtime_probe
+    require(
+    ~~~~~~~^
+        root in paths
+        ^^^^^^^^^^^^^
+    ...<2 lines>...
+        "ACTUAL_PYTHONPATH_REQUIRED",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/root/qtrade-local/operator-evidence/publisher-old-runtime-20261028T064802Z/bridge.py", line 42, in require
+    raise ValueError("PUBLISHER_BRIDGE_" + code)
+ValueError: PUBLISHER_BRIDGE_ACTUAL_PYTHONPATH_REQUIRED

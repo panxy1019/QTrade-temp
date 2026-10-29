@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "--no-pager",
+    "help",
+    "--config"
+  ],
+  "returncode": 0,
+  "stdout_bytes": 20453,
+  "stdout_sha256": "a7b55ebd0617f3b160f06781a17e35f2f9d389e552b760798d8d634b9d71878c",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pack_reuseDeltas_listed": false,
+  "pack_reuseObjects_listed": false,
+  "pack_window_listed": true
+}

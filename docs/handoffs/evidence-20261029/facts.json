@@ -1,0 +1,111 @@
+{
+  "active": [
+    {
+      "activated_at": "2026-10-28T12:07:51.433816+00:00",
+      "model_id": "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c",
+      "state": "ACTIVE"
+    }
+  ],
+  "at": "2026-10-29T01:32:23.450797+00:00",
+  "heads": [
+    {
+      "actual_end": "2026-10-28",
+      "admitted_at": "2026-10-28T11:57:40.694469+00:00",
+      "frequency": "day",
+      "version_id": "b82baaac956745f4e02a520a35b2aa277b0037510a4d164d798db803ce77e0d5"
+    }
+  ],
+  "jobs_submitted": false,
+  "local_free_bytes": 13556867072,
+  "nfs_free_bytes": 279243128832,
+  "previous_owners": [
+    {
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/fba51aade2ee2410dda087e95cf054e53375ed3a",
+      "exists": true,
+      "previous_owner_pid": 647839,
+      "start_ticks": "1022098698"
+    },
+    {
+      "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/9846a7f30774d6ae4b4d41f02b493c5246be87d9",
+      "exists": true,
+      "previous_owner_pid": 383859,
+      "start_ticks": "1015213725"
+    }
+  ],
+  "read_only": true,
+  "recent_versions": [
+    {
+      "actual_end": "2026-10-28",
+      "admitted_at": "2026-10-28T11:57:40.694469+00:00",
+      "version_id": "b82baaac956745f4e02a520a35b2aa277b0037510a4d164d798db803ce77e0d5"
+    },
+    {
+      "actual_end": "2026-10-27",
+      "admitted_at": "2026-10-27T12:23:08.063121+00:00",
+      "version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407"
+    },
+    {
+      "actual_end": "2026-10-26",
+      "admitted_at": "2026-10-26T14:02:55.608696+00:00",
+      "version_id": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa"
+    },
+    {
+      "actual_end": "2026-10-26",
+      "admitted_at": "2026-10-26T12:45:55.972486+00:00",
+      "version_id": "384ce479913266c3e65798e28a85c22bec3b6d3db90629b2c8928c0c141c83c6"
+    }
+  ],
+  "scopes": [
+    {
+      "actual_end": "2026-10-28",
+      "blocked_symbols": [
+        "002827",
+        "605258"
+      ],
+      "calendar_actual_sessions": 2432,
+      "calendar_last": "2026-11-02",
+      "calendar_start": "2016-10-24",
+      "current_symbols": 988,
+      "dataset_accepted_symbols": 990,
+      "full_verify_version_rerun": false,
+      "historical_symbols": 990,
+      "manifest_file_count": 19816,
+      "root": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/qlib-versions/versions/b82baaac956745f4e02a520a35b2aa277b0037510a4d164d798db803ce77e0d5",
+      "state": "RESEARCH_READY_QUALIFIED_SUBSET",
+      "stock_starts_max": "2021-11-10",
+      "stock_starts_min": "2016-10-24",
+      "subset_891_is_not_rectangular_certification": true,
+      "supported_instruments": 1726,
+      "supported_universe_raw_sha256": "a55d84fadcd7428989263dfb93d06d5f61ad7f32c0f6315a97a97f3a37a7b26f",
+      "version_id": "b82baaac956745f4e02a520a35b2aa277b0037510a4d164d798db803ce77e0d5",
+      "version_raw_sha256": "d9621b47ee1c5080cd36fd03985fde47c4d6639a8c96dbfd88d1df67944830d3"
+    },
+    {
+      "actual_end": "2026-10-27",
+      "blocked_symbols": [
+        "002827",
+        "600621",
+        "605258"
+      ],
+      "calendar_actual_sessions": 2431,
+      "calendar_last": "2026-10-30",
+      "calendar_start": "2016-10-24",
+      "current_symbols": 987,
+      "dataset_accepted_symbols": 990,
+      "full_verify_version_rerun": false,
+      "historical_symbols": 990,
+      "manifest_file_count": 18828,
+      "root": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/qlib-versions/versions/09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+      "state": "RESEARCH_READY_QUALIFIED_SUBSET",
+      "stock_starts_max": "2021-11-10",
+      "stock_starts_min": "2016-10-24",
+      "subset_891_is_not_rectangular_certification": true,
+      "supported_instruments": 1725,
+      "supported_universe_raw_sha256": "d54336fc7a044a5c41b9960237e3ac79601c81f2a52daad9cd5f2f8882ce65d5",
+      "version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+      "version_raw_sha256": "6caf76c8f8536bd873efc3a6cb2ed52813d760a3b1b99ad4d5aadd1e549a69cc"
+    }
+  ],
+  "secrets_read_or_logged": false,
+  "services_changed": false
+}

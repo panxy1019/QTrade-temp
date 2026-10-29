@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-10-28T16:15:04.186889+00:00",
+  "elapsed_seconds": 0.9005483000073582,
+  "mode": "authorize",
+  "no_retry": true,
+  "operator_sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa",
+  "plan_sha256": "9a459c194021e6cadc1cec8dd09ecb8f7e86d8c5cab81d972a1108e7edbf4fb8",
+  "result": {
+    "approval_sha256": "54dc6a9fb71fa203c6fece692c070f1daf4cf3ce7c3b884acb1a37b2590d9b95",
+    "authorized_at": "2026-10-28T16:15:04.373442+00:00",
+    "plan_sha256": "9a459c194021e6cadc1cec8dd09ecb8f7e86d8c5cab81d972a1108e7edbf4fb8",
+    "public_write": false,
+    "send_started": false,
+    "state": "NEW_EXPLICIT_HUMAN_AUTHORIZATION_DURABLE"
+  },
+  "returncode": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "c27b92f900f2d3204a4073e587946e806a9b5388c48bc579403386282e78bfbf"
+}

@@ -1,0 +1,15 @@
+{
+  "artifacts": {
+    "after-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "before-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "benchmark-report.json": "dc837c767ef00ad26f01a467637b9939bec165872fc243faee73504e76a0f83f",
+    "benchmark.py": "8b3879dac3b6d13e6e8910394f3e607046b367bd7ce4042916bb8b0b8ae8a6c5",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout.log": "8eec9aa9346554dff804ed9ce3c02d4b271aafda37011dcd9d89c19fae294a5f"
+  },
+  "exit_code": 0,
+  "helper_sha256": "8b3879dac3b6d13e6e8910394f3e607046b367bd7ce4042916bb8b0b8ae8a6c5",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-same-nfs-latency-20261028T112633Z",
+  "remote": "/root/qtrade-local/operator-evidence/market-same-nfs-latency-20261028T112633Z",
+  "source_evidence": "/root/qtrade-local/operator-evidence/market-checkpoint-exact-git-20261028T105253Z"
+}

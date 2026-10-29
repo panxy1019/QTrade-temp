@@ -6,10 +6,14 @@ import os
 import sqlite3
 import subprocess
 import sys
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
-from decimal import Decimal
+from decimal import ROUND_DOWN, Context, Decimal, Inexact, getcontext, localcontext
 from email.message import Message
+from hashlib import sha256
 from pathlib import Path
 
 import pyarrow as pa
@@ -158,6 +162,797 @@ def test_export_all_targets_without_queue_writer_and_cached_replay(source):
             shard = contract.verify_shard_bytes(path.read_bytes(), ref, first['index'], entry, NOW)
             if entry['frequency'] == '5min':
                 assert shard['bars'][0]['amount'] is None and shard['bars'][0]['vwap'] is None
+
+
+def test_immutable_object_io_is_bounded_and_existing_bytes_are_rehashed(tmp_path, monkeypatch):
+    objects = {sha256(raw).hexdigest(): raw for index in range(exporter.MAX_OBJECT_IO*3)
+               for raw in [contract.encoded({'object': index})]}
+    barrier, lock = threading.Barrier(exporter.MAX_OBJECT_IO), threading.Lock()
+    active, peak, calls = 0, 0, []
+    flushed = []
+    monkeypatch.setattr(exporter, '_fsync_directory', flushed.append)
+    def write(path, raw, **kwargs):
+        nonlocal active, peak
+        with lock:
+            active += 1
+            peak = max(active, peak)
+            calls.append(path.name)
+        try:
+            barrier.wait(timeout=5)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(raw)
+        finally:
+            with lock:
+                active -= 1
+    monkeypatch.setattr(exporter, '_write_object', write)
+    exporter._persist_objects(tmp_path, objects.items(), time.monotonic()+10)
+    assert peak == exporter.MAX_OBJECT_IO == 16 and active == 0 and len(calls) == len(objects)
+    assert sorted(calls) == sorted(digest+'.json' for digest in objects)
+    directory = tmp_path/'unified-market/objects'
+    expected_flushes = [directory, directory.parent, tmp_path, tmp_path.parent]
+    assert flushed == expected_flushes
+    def forbidden(*args):
+        raise AssertionError('EXISTING_IMMUTABLE_OBJECT_MUST_NOT_BE_REWRITTEN')
+    monkeypatch.setattr(exporter, '_write_object', forbidden)
+    exporter._persist_objects(tmp_path, objects.items(), time.monotonic()+10)
+    assert flushed == expected_flushes*2
+    digest = next(iter(objects))
+    path = tmp_path/'unified-market/objects'/(digest+'.json')
+    path.write_bytes(b'changed')
+    with pytest.raises(ValueError, match='UNIFIED_MARKET_IMMUTABLE_OBJECT_CHANGED'):
+        exporter._persist_objects(tmp_path, objects.items(), time.monotonic()+10)
+    assert path.read_bytes() == b'changed'
+    assert not any(thread.name.startswith('market-object') for thread in threading.enumerate())
+
+
+def test_object_file_fsync_is_required_even_when_directory_sync_is_deferred(tmp_path, monkeypatch):
+    file_syncs, directory_syncs = [], []
+    monkeypatch.setattr(exporter.os, 'fsync', file_syncs.append)
+    monkeypatch.setattr(exporter, '_fsync_directory', directory_syncs.append)
+    exporter._write_object(tmp_path/'deferred.json', b'deferred', _sync_directory=False)
+    assert len(file_syncs) == 1 and directory_syncs == []
+    exporter._write_object(tmp_path/'standalone.json', b'standalone')
+    assert len(file_syncs) == 2 and directory_syncs == [tmp_path]
+    assert (tmp_path/'deferred.json').read_bytes() == b'deferred'
+    assert (tmp_path/'standalone.json').read_bytes() == b'standalone'
+
+
+@pytest.mark.parametrize('failure', ['io', 'deadline'])
+def test_object_io_stops_submission_and_joins_bounded_inflight_writes(
+    tmp_path, monkeypatch, failure,
+):
+    objects = {sha256(raw).hexdigest(): raw for index in range(exporter.MAX_OBJECT_IO*2)
+               for raw in [contract.encoded({'object': index})]}
+    calls, lock, release = [], threading.Lock(), threading.Event()
+    def write(path, raw, **kwargs):
+        with lock:
+            calls.append(path.name)
+        if failure == 'io':
+            raise OSError('immutable object storage unavailable')
+        assert release.wait(timeout=5)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(raw)
+    monkeypatch.setattr(exporter, '_write_object', write)
+    timer = threading.Timer(0.1, release.set)
+    timer.start()
+    try:
+        with pytest.raises(OSError if failure == 'io' else ValueError,
+                           match='storage unavailable|UNIFIED_MARKET_TIME_BUDGET'):
+            exporter._persist_objects(tmp_path, objects.items(),
+                                      time.monotonic()+(10 if failure == 'io' else 0.02))
+    finally:
+        release.set()
+        timer.join()
+    assert 1 <= len(calls) <= exporter.MAX_OBJECT_IO
+    assert not any(thread.name.startswith('market-object') for thread in threading.enumerate())
+
+
+def test_object_io_failure_retains_previous_index_and_export_state(source, monkeypatch):
+    base, _, _, _, _, add = source
+    add()
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns
+    add(counter=2, minute=40)
+    def fail(path, raw, **kwargs):
+        raise OSError('immutable object storage unavailable')
+    monkeypatch.setattr(exporter, '_write_object', fail)
+    with pytest.raises(OSError, match='storage unavailable'):
+        export(source)
+    assert (pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns) == before
+    assert not any(thread.name.startswith('market-object') for thread in threading.enumerate())
+
+
+@pytest.mark.parametrize('gate', ['ledger', 'index'])
+def test_post_write_gate_failure_leaves_only_unreferenced_objects_and_old_index(
+    source, monkeypatch, gate,
+):
+    base, database, _, _, _, add = source
+    add()
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns
+    manifest = add('day', counter=2)
+    original, written = exporter._write_object, []
+    def write(path, raw, **kwargs):
+        original(path, raw, **kwargs)
+        written.append(path)
+        if gate == 'ledger':
+            with sqlite3.connect(database) as connection:
+                connection.execute('INSERT INTO excluded_collection_chunks VALUES(?,?)',
+                                   (manifest['batch_id'], '301001'))
+    monkeypatch.setattr(exporter, '_write_object', write)
+    if gate == 'index':
+        def reject(*args):
+            raise ValueError('UNIFIED_MARKET_INDEX_SCOPE_INVALID')
+        monkeypatch.setattr(exporter, 'validate_index', reject)
+    with pytest.raises(ValueError, match='UNIFIED_MARKET_LEDGER_OR_MASTER_CHANGED|'
+                                        'UNIFIED_MARKET_INDEX_SCOPE_INVALID'):
+        export(source)
+    assert written and all(path.is_file() for path in written)
+    old = json.loads(before[0])
+    referenced = {ref['sha256']+'.json' for entry in old['entries'] for ref in entry['shards']}
+    assert all(path.name not in referenced for path in written)
+    assert (pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns) == before
+    assert not any(thread.name.startswith('market-object') for thread in threading.enumerate())
+
+
+def test_directory_sync_failure_blocks_index_and_retry_syncs_all_existing_objects(
+    source, monkeypatch,
+):
+    base, _, _, _, _, add = source
+    add()
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns
+    add('day', counter=2)
+    def fail(path):
+        raise OSError('immutable object directory sync unavailable')
+    monkeypatch.setattr(exporter, '_fsync_directory', fail)
+    with pytest.raises(OSError, match='directory sync unavailable'):
+        export(source)
+    assert (pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns) == before
+    flushed = []
+    monkeypatch.setattr(exporter, '_fsync_directory', flushed.append)
+    def forbidden(*args, **kwargs):
+        raise AssertionError('RETRY_MUST_REUSE_ALREADY_WRITTEN_IMMUTABLE_OBJECTS')
+    monkeypatch.setattr(exporter, '_write_object', forbidden)
+    result = export(source)
+    directory = base/'unified-data/market-public/unified-market/objects'
+    assert flushed == [directory, directory.parent, directory.parent.parent,
+                       directory.parent.parent.parent]
+    assert result['statistics']['total_files'] == 2
+    assert pointer.read_bytes() != before[0]
+
+
+@pytest.mark.parametrize('damage', ['late_raw_failure', 'late_conflict'])
+def test_pair_is_not_written_before_its_last_frozen_batch_is_qualified(source, monkeypatch, damage):
+    _, _, _, _, store, add = source
+    add(counter=1)
+    add(symbol='600036', counter=2)
+    late = add(counter=3, minute=35 if damage == 'late_conflict' else 40,
+               close='11' if damage == 'late_conflict' else '10')
+    if damage == 'late_raw_failure':
+        store._blob_path(late['raw']['sha256'], late['raw']['suffix']).write_bytes(b'corrupt')
+    original, written = exporter._write_object, []
+    def write(path, raw, **kwargs):
+        written.append(json.loads(raw)['symbol'])
+        original(path, raw, **kwargs)
+    monkeypatch.setattr(exporter, '_write_object', write)
+    result = export(source)['index']
+    affected = next(row for row in result['entries']
+                    if row['symbol'] == '301001' and row['frequency'] == '5min')
+    assert affected['state'] == 'QUARANTINED' and affected['shards'] == []
+    assert affected['issues'] == (['SOURCE_REPLAY_FAILED'] if damage == 'late_raw_failure'
+                                  else ['CONFLICTING_ACCEPTED_BARS'])
+    assert written == ['600036']
+
+
+def test_entire_batch_failure_is_marked_before_any_selected_pair_can_seal(source, monkeypatch):
+    _, database, _, _, _, _ = source
+    material = grouped_replay_material(source, '5min')
+    manifest = material.manifest
+    with sqlite3.connect(database) as connection:
+        connection.execute('DELETE FROM collection_chunks')
+        connection.execute('DELETE FROM collection_batches')
+        connection.execute('INSERT INTO collection_batches VALUES(?,?,?)',
+                           (manifest['batch_id'], 'COMPLETE', manifest['evidence_sha256']))
+        connection.executemany('INSERT INTO collection_chunks VALUES(?,?,?,?,?,?,?)', [
+            (manifest['batch_id'], manifest['spec']['universe_version'], '5min', symbol,
+             start, '2026-10-26T09:40:00+08:00', 2) for symbol, start in
+            [('301001', '2026-10-26T09:35:00+08:00'),
+             ('600036', '2026-10-26T09:40:00+08:00')]])
+    def forbidden(*args, **kwargs):
+        raise AssertionError('NO_PAIR_FROM_PARTIALLY_FAILED_BATCH_MAY_SEAL')
+    monkeypatch.setattr(exporter, '_write_object', forbidden)
+    value = export(source)['index']
+    assert len(value['entries']) == 4
+    minute = [row for row in value['entries'] if row['frequency'] == '5min']
+    assert all(row['state'] == 'QUARANTINED' and row['shards'] == []
+               and row['issues'] == ['SOURCE_REPLAY_FAILED'] for row in minute)
+
+
+def test_pair_completion_counts_every_repeated_selected_chunk_without_deduplication(source):
+    base, database, _, _, _, add = source
+    add()
+    with sqlite3.connect(database) as connection:
+        connection.execute('INSERT INTO collection_chunks SELECT * FROM collection_chunks')
+    result = export(source)
+    assert result['statistics']['selected_chunks'] == 2
+    assert result['statistics']['selected_batches'] == 1
+    entry = next(row for row in result['index']['entries']
+                 if row['symbol'] == '301001' and row['frequency'] == '5min')
+    assert entry['state'] == 'AVAILABLE' and len(entry['shards']) == 1
+    ref, = entry['shards']
+    raw = (base/'unified-data/market-public/unified-market/objects'
+           /(ref['sha256']+'.json')).read_bytes()
+    assert len(json.loads(raw)['bars']) == len(json.loads(raw)['source_batches']) == 1
+
+
+def test_source_prefetch_overlaps_one_read_and_keeps_replay_on_main(source, monkeypatch):
+    _, _, _, _, _, add = source
+    add()
+    add(counter=2, minute=40)
+    add(symbol='600036', counter=3)
+    main_thread = threading.get_ident()
+    started, release = threading.Event(), threading.Event()
+    active, peak, reads, processed = 0, 0, [], []
+    lock = threading.Lock()
+    original_material, original_load, original_replay = (
+        exporter._SourceReads.material, exporter._load, exporter._replay)
+    def material(self, store, batch_id):
+        nonlocal active, peak
+        assert threading.get_ident() != main_thread
+        with lock:
+            active += 1
+            peak = max(peak, active)
+            reads.append(batch_id)
+        try:
+            if batch_id == f'{2:032x}':
+                started.set()
+                assert release.wait(timeout=5)
+            return original_material(self, store, batch_id)
+        finally:
+            with lock:
+                active -= 1
+    def load(*args, **kwargs):
+        assert threading.get_ident() == main_thread
+        if not processed:
+            assert started.wait(timeout=5), 'next physical read must overlap current validation'
+            release.set()
+        processed.append(args[1])
+        return original_load(*args, **kwargs)
+    def replay(*args, **kwargs):
+        assert threading.get_ident() == main_thread
+        return original_replay(*args, **kwargs)
+    monkeypatch.setattr(exporter._SourceReads, 'material', material)
+    monkeypatch.setattr(exporter, '_load', load)
+    monkeypatch.setattr(exporter, '_replay', replay)
+    try:
+        result = export(source)
+    finally:
+        release.set()
+    assert peak == 1 and active == 0 and len(reads) == len(processed) == 3
+    assert result['statistics']['replayed_batches'] == 3
+    assert not any(thread.name.startswith('market-source') for thread in threading.enumerate())
+
+
+@pytest.mark.parametrize('failure', [ValueError, OSError])
+def test_prefetched_physical_errors_keep_batch_classification_and_no_lingering_read(
+    source, monkeypatch, failure,
+):
+    base, _, _, _, _, add = source
+    add()
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes()
+    add(counter=2, minute=40)
+    original = store_module.UnifiedBatchStore._batch_material
+    def material(self, batch_id, **kwargs):
+        if batch_id == f'{2:032x}':
+            raise failure('PREFETCHED_PHYSICAL_SOURCE_FAULT')
+        return original(self, batch_id, **kwargs)
+    monkeypatch.setattr(store_module.UnifiedBatchStore, '_batch_material', material)
+    if failure is OSError:
+        with pytest.raises(OSError, match='^PREFETCHED_PHYSICAL_SOURCE_FAULT$'):
+            export(source)
+        assert (pointer.read_bytes(), state.read_bytes()) == before
+    else:
+        entry = next(row for row in export(source)['index']['entries']
+                     if row['symbol'] == '301001' and row['frequency'] == '5min')
+        assert entry['state'] == 'QUARANTINED' and entry['shards'] == []
+        assert entry['issues'] == ['SOURCE_REPLAY_FAILED']
+    assert not any(thread.name.startswith('market-source') for thread in threading.enumerate())
+
+
+def test_prefetch_source_byte_gate_counts_all_reads_at_exact_boundary(source, monkeypatch):
+    base, _, _, _, _, add = source
+    add()
+    add(counter=2, minute=40)
+    add('day', counter=3)
+    expected = export(source)['statistics']['source_bytes_read']
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes()
+    exporter._CACHE.clear()
+    monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', expected)
+    assert export(source)['statistics']['source_bytes_read'] == expected
+    before = pointer.read_bytes(), state.read_bytes()
+    exporter._CACHE.clear()
+    monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', expected-1)
+    with pytest.raises(ValueError, match='^UNIFIED_MARKET_SOURCE_BYTE_BUDGET$'):
+        export(source)
+    assert (pointer.read_bytes(), state.read_bytes()) == before
+    assert not any(thread.name.startswith('market-source') for thread in threading.enumerate())
+
+
+def test_object_failure_explicitly_closes_and_joins_source_generator(tmp_path, monkeypatch):
+    release, started = threading.Event(), threading.Event()
+    closed = []
+    def read():
+        started.set()
+        assert release.wait(timeout=5)
+    def objects():
+        try:
+            with ThreadPoolExecutor(max_workers=1, thread_name_prefix='market-source') as pool:
+                pending = pool.submit(read)
+                try:
+                    assert started.wait(timeout=5)
+                    for index in range(exporter.MAX_OBJECT_IO*2):
+                        raw = str(index).encode()
+                        yield sha256(raw).hexdigest(), raw
+                finally:
+                    pending.cancel()
+        finally:
+            closed.append(True)
+    def fail(*args, **kwargs):
+        raise OSError('OBJECT_FAILURE_WITH_SOURCE_IN_FLIGHT')
+    monkeypatch.setattr(exporter, '_write_object', fail)
+    timer = threading.Timer(.1, release.set)
+    timer.start()
+    try:
+        with pytest.raises(OSError, match='^OBJECT_FAILURE_WITH_SOURCE_IN_FLIGHT$'):
+            exporter._persist_objects(tmp_path, objects(), time.monotonic()+5)
+    finally:
+        release.set()
+        timer.join()
+    assert closed == [True]
+    assert not any(thread.name.startswith(('market-source', 'market-object'))
+                   for thread in threading.enumerate())
+
+
+@pytest.mark.parametrize('damage', ['manifest', 'raw_checksum', 'normalized_checksum', 'raw_parse'])
+@pytest.mark.parametrize('unused_future', [False, True])
+def test_failed_source_reads_are_charged_even_for_unused_prefetch(
+    source, monkeypatch, damage, unused_future,
+):
+    _, _, _, _, store, add = source
+    manifest = add()
+    if damage == 'manifest':
+        path = store.batch_path(manifest['batch_id'])
+        path.write_bytes(b' '*100+b'{')
+    elif damage in {'raw_checksum', 'normalized_checksum'}:
+        ref = manifest['raw' if damage == 'raw_checksum' else 'normalized']
+        path = store._blob_path(ref['sha256'], ref['suffix'])
+        raw = path.read_bytes()
+        path.write_bytes(b'x'+raw[1:])
+    else:
+        ref = store._put_blob(b'not gzip', '.jsonl.gz')
+        manifest['raw'] = {**manifest['raw'], **ref}
+        store.batch_path(manifest['batch_id']).write_bytes(contract.encoded(resign(manifest)))
+    physical = []
+    original_read = Path.read_bytes
+    def read(path):
+        raw = original_read(path)
+        if store.root in path.parents:
+            physical.append(len(raw))
+        return raw
+    monkeypatch.setattr(Path, 'read_bytes', read)
+    stats = {'source_bytes_read': 0}
+    accounting = exporter._SourceReads(stats)
+    if unused_future:
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            future = pool.submit(accounting.material, store, manifest['batch_id'])
+        if damage != 'raw_parse':
+            assert isinstance(future.exception(), ValueError)
+    else:
+        with pytest.raises((ValueError, OSError)):
+            accounting.material(store, manifest['batch_id']).validate()
+    assert physical and stats['source_bytes_read'] == sum(physical)
+
+
+@pytest.mark.parametrize('change', ['grow', 'short', 'oserror', 'missing', 'before_budget'])
+def test_observed_read_reservation_releases_on_every_exit(tmp_path, monkeypatch, change):
+    path = tmp_path/'actual-bytes'
+    path.write_bytes(b'abcde')
+    stats = {'source_bytes_read': 0}
+    accounting = exporter._SourceReads(stats)
+    monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', 4 if change == 'before_budget' else 5)
+    original, calls = Path.read_bytes, []
+    def read(target):
+        calls.append(target)
+        if change == 'oserror':
+            raise OSError('PHYSICAL_READ_FAILED')
+        if change in {'grow', 'short'}:
+            target.write_bytes(b'abcdef' if change == 'grow' else b'abc')
+        return original(target)
+    monkeypatch.setattr(Path, 'read_bytes', read)
+    if change == 'missing':
+        path.unlink()
+    if change == 'short':
+        assert store_module._read_bytes(path, accounting.observe) == b'abc'
+        assert stats['source_bytes_read'] == 3
+    else:
+        with pytest.raises((ValueError, OSError)):
+            store_module._read_bytes(path, accounting.observe)
+        assert stats['source_bytes_read'] == (6 if change == 'grow' else 0)
+    assert accounting._reserved == {}
+    assert len(calls) == (0 if change in {'missing', 'before_budget'} else 1)
+
+
+def test_prefetch_reservation_contention_aborts_before_pointer_and_accounts_joined_read(
+    source, monkeypatch,
+):
+    base, _, _, _, store, add = source
+    first = add()
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes()
+    second = add(symbol='600036', counter=2)
+    first_size = (store.batch_path(first['batch_id']).stat().st_size
+                  +first['raw']['bytes']+first['normalized']['bytes'])
+    limit = first_size+store.batch_path(first['batch_id']).stat().st_size+store.batch_path(
+        second['batch_id']).stat().st_size-1
+    monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', limit)
+    original_read, original_load, original_init = (
+        Path.read_bytes, exporter._load, exporter._SourceReads.__init__)
+    started, release = threading.Event(), threading.Event()
+    physical, accounting = [], []
+    def initialize(self, *args, **kwargs):
+        original_init(self, *args, **kwargs)
+        accounting.append(self)
+    def read(path):
+        if path == store.batch_path(second['batch_id']):
+            started.set()
+            assert release.wait(timeout=5)
+        raw = original_read(path)
+        if store.root in path.parents:
+            physical.append(len(raw))
+        return raw
+    def load(*args, **kwargs):
+        assert started.wait(timeout=5)
+        return original_load(*args, **kwargs)
+    monkeypatch.setattr(exporter._SourceReads, '__init__', initialize)
+    monkeypatch.setattr(Path, 'read_bytes', read)
+    monkeypatch.setattr(exporter, '_load', load)
+    timer = threading.Timer(.2, release.set)
+    timer.start()
+    try:
+        with pytest.raises(ValueError, match='^UNIFIED_MARKET_SOURCE_BYTE_BUDGET$'):
+            export(source)
+    finally:
+        release.set()
+        timer.join()
+    assert accounting[-1]._stats['source_bytes_read'] == sum(physical)
+    assert accounting[-1]._reserved == {} and sum(physical) <= limit
+    assert (pointer.read_bytes(), state.read_bytes()) == before
+    assert not any(thread.name.startswith('market-source') for thread in threading.enumerate())
+
+
+def constructed_bar(**changes):
+    return {'symbol': '301001', 'exchange': 'SZSE', 'frequency': '5min',
+        'timestamp': '2026-10-26T09:35:00+08:00', 'trading_day': '2026-10-26',
+        'open': '10', 'high': '12', 'low': '9', 'close': '10', 'volume': '100',
+        'amount': None, 'vwap': None, 'amount_basis': 'VENDOR_CLAIM_UNVERIFIED',
+        'price_basis': contract.PRICE_BASIS, 'historical_available_at': None, **changes}
+
+
+def constructed_shard():
+    return signed({**AUTHORITY, 'schema_version': 'qtrade.unified-market-shard.v1',
+        'universe_version': '1'*64, 'symbol': '301001', 'security_type': 'STOCK',
+        'instrument_id': 'SZSE.301001', 'frequency': '5min', 'price_basis': contract.PRICE_BASIS,
+        'bars': [constructed_bar()], 'source_batches': [{'batch_id': '2'*32,
+            'manifest_sha256': '3'*64, 'raw_sha256': '4'*64, 'normalized_sha256': '5'*64}]})
+
+
+@pytest.mark.parametrize('foreign_decimal_context', [False, True])
+def test_validated_shard_encoding_is_exact_at_size_boundary_and_preserves_context(
+    monkeypatch, foreign_decimal_context,
+):
+    shard = constructed_shard()
+    calendar = Calendar(Path('configs/observer_calendar_2026.json'))
+    expected = contract.encoded(shard)
+    context = Context(prec=6, rounding=ROUND_DOWN)
+    context.traps[Inexact] = True
+    context.flags[Inexact] = True
+    with localcontext(context if foreign_decimal_context else getcontext()):
+        before = getcontext().copy()
+        monkeypatch.setattr(contract, 'SHARD_LIMIT', len(expected))
+        value, raw = contract._validated_shard_bytes(shard, calendar, NOW)
+        assert value is shard and raw == expected and json.loads(raw) == shard
+        assert contract.validate_shard(shard, calendar, NOW) is shard
+        monkeypatch.setattr(contract, 'SHARD_LIMIT', len(expected)-1)
+        for validate in (contract.validate_shard, contract._validated_shard_bytes):
+            with pytest.raises(ValueError, match='^UNIFIED_MARKET_DOCUMENT_INVALID$'):
+                validate(shard, calendar, NOW)
+        assert getcontext().prec == before.prec and getcontext().rounding == before.rounding
+        assert getcontext().traps == before.traps and getcontext().flags == before.flags
+
+
+@pytest.mark.parametrize('stage', ['encoding', 'quality'])
+@pytest.mark.parametrize('resign_mutation', [False, True])
+def test_validated_encoding_rejects_content_mutation_before_return(
+    monkeypatch, stage, resign_mutation,
+):
+    shard = constructed_shard()
+    calendar = Calendar(Path('configs/observer_calendar_2026.json'))
+    def mutate():
+        shard['bars'][0]['close'] = '11'
+        if resign_mutation:
+            shard.update(resign(shard))
+    if stage == 'encoding':
+        original = contract.encoded
+        def encode(value):
+            raw = original(value)
+            mutate()
+            return raw
+        monkeypatch.setattr(contract, 'encoded', encode)
+    else:
+        original_bar = contract._validate_bar
+        def validate_bar(*args, **kwargs):
+            original_bar(*args, **kwargs)
+            mutate()
+        monkeypatch.setattr(contract, '_validate_bar', validate_bar)
+    with pytest.raises(ValueError, match='^UNIFIED_MARKET_DOCUMENT_INVALID$'):
+        contract._validated_shard_bytes(shard, calendar, NOW)
+
+
+def test_export_validation_fault_uses_encoded_validator_and_retains_pointer(source, monkeypatch):
+    base, _, _, _, _, add = source
+    add()
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes()
+    add(counter=2, minute=40)
+    calls = []
+    def reject(*args):
+        calls.append(args[0]['symbol'])
+        raise ValueError('ENCODED_SHARD_VALIDATION_FAULT')
+    monkeypatch.setattr(exporter, '_validated_shard_bytes', reject)
+    with pytest.raises(ValueError, match='^ENCODED_SHARD_VALIDATION_FAULT$'):
+        export(source)
+    assert calls and (pointer.read_bytes(), state.read_bytes()) == before
+
+
+def validation_outcome(call):
+    try:
+        return ('ACCEPTED', call())
+    except (ValueError, TypeError, OverflowError) as error:
+        return (type(error).__name__, str(error))
+
+
+@pytest.mark.parametrize('changes', [
+    {}, {'amount': '1000', 'vwap': '10'},
+    {'amount': '1000', 'vwap': '10.0'}, {'amount': '1', 'vwap': '0.01'},
+    {'amount': '0', 'volume': '0'}, {'amount': '1', 'volume': '0'},
+    {'amount': '0'}, {'amount': '-1'}, {'volume': '-1'},
+    {'amount': '1000', 'volume': '3', 'high': '400', 'vwap': str(Decimal(1000)/3)},
+    {'close': '13'}, {'low': '11'}, {'open': '0'}, {'close': '-1'},
+    {'close': 'NaN'}, {'close': 'sNaN'}, {'close': 'Infinity'}, {'close': 'x'},
+    {'close': 10}, {'volume': None}, {'close': '1'*81}, {'close': ''},
+    {'open': '1e999999', 'high': '1e999999', 'low': '1e999999', 'close': '1e999999',
+     'amount': '1e999999', 'volume': '0.00001', 'vwap': '1e1000004'},
+    {'timestamp': '2026-10-26T01:35:00Z'},
+    {'timestamp': '2026-10-26T09:35:00'},
+    {'timestamp': '2026-10-26T09:36:00+08:00'},
+    {'timestamp': '2026-10-26T09:30:00+08:00'},
+    {'timestamp': '2026-10-26T09:35:00.000001+08:00'},
+    {'timestamp': '2026-10-26T09:35:00+08:00:01'},
+    {'timestamp': '2026-10-26T09:35:00+09:00'},
+    {'trading_day': '20261026'}, {'trading_day': '2026-10-23'},
+    {'timestamp': 'bad'}, {'trading_day': 'bad'},
+    {'historical_available_at': NOW.isoformat()}, {'price_basis': 'ADJUSTED'},
+    {'amount_basis': 'UNVERIFIED'}, {'exchange': 'SSE'}, {'extra': True},
+    {'frequency': 'day', 'timestamp': '2026-10-26T15:00:00+08:00'},
+    {'frequency': 'day', 'timestamp': '2026-10-26T14:59:00+08:00'},
+    {'frequency': 'unknown'},
+])
+@pytest.mark.parametrize('foreign_decimal_context', [False, True])
+@pytest.mark.parametrize('scope', ['bar', 'shard'])
+def test_constructed_row_path_matches_original_json_path_exactly(
+    monkeypatch, changes, foreign_decimal_context, scope,
+):
+    from qtrade.market_data.sina_incremental import completed_klines
+    calendar = Calendar(Path('configs/observer_calendar_2026.json'))
+    row = constructed_bar(**changes)
+    shard = signed({**AUTHORITY, 'schema_version': 'qtrade.unified-market-shard.v1',
+        'universe_version': '1'*64, 'symbol': '301001', 'security_type': 'STOCK',
+        'instrument_id': 'SZSE.301001', 'frequency': row['frequency'],
+        'price_basis': contract.PRICE_BASIS, 'bars': [row],
+        'source_batches': [{'batch_id': '2'*32, 'manifest_sha256': '3'*64,
+                            'raw_sha256': '4'*64, 'normalized_sha256': '5'*64}]})
+    def validate():
+        if scope == 'shard':
+            return contract.validate_shard(shard, calendar, NOW)
+        return contract.validate_bar(row, '301001', 'STOCK', row['frequency'], calendar, NOW)
+    class LegacyRows:
+        def __init__(self, symbol, kind, frequency, observed_at, cal):
+            self.kwargs = {'symbol': symbol, 'security_type': kind, 'frequency': frequency,
+                           'observed_at': observed_at, 'calendar': cal}
+        def parse(self, rows, day):
+            with localcontext(Context(prec=28)):
+                return completed_klines(json.dumps(rows).encode(), requested_day=day, **self.kwargs)
+    context = Context(prec=6, rounding=ROUND_DOWN)
+    context.traps[Inexact] = True
+    with localcontext(context if foreign_decimal_context else getcontext()):
+        before = getcontext().copy()
+        actual = validation_outcome(validate)
+        with monkeypatch.context() as patch:
+            patch.setattr(contract, 'completed_kline_rows',
+                lambda rows, **kwargs: completed_klines(json.dumps(rows).encode(), **kwargs))
+            patch.setattr(contract, '_ConstructedKlineRows', LegacyRows)
+            expected = validation_outcome(validate)
+        assert actual == expected
+        assert getcontext().prec == before.prec and getcontext().rounding == before.rounding
+        assert getcontext().traps == before.traps and getcontext().flags == before.flags
+
+
+@pytest.mark.parametrize(('payload', 'updates'), [
+    (None, {}), ({}, {}), ([], {}), ([None], {}), ([{}], {}), ([{'day': 1}], {}),
+    ([{'day': 'bad'}], {}), ([{'day': '2026-10-23'}], {}),
+    ([{'day': '2026-10-26'}], {}),
+    ([{'day': '2026-10-26T15:00:00'}], {'frequency': 'day'}),
+    ([{'day': '2026-10-26 09:35:00+08:00'}], {}),
+    ([{'day': '2026-10-26 09:36:00'}], {}),
+    ([{'day': '2026-10-26 09:35:00'}]*1971, {}),
+])
+def test_decoded_kline_helper_keeps_original_shape_and_clock_errors(payload, updates):
+    from qtrade.market_data.sina_incremental import completed_kline_rows, completed_klines
+    kwargs = {'symbol': '301001', 'security_type': 'STOCK', 'frequency': '5min',
+        'requested_day': datetime(2026, 10, 26).date(), 'observed_at': NOW,
+        'calendar': Calendar(Path('configs/observer_calendar_2026.json')), **updates}
+    actual = validation_outcome(lambda: completed_kline_rows(payload, **kwargs))
+    expected = validation_outcome(lambda: completed_klines(json.dumps(payload).encode(), **kwargs))
+    assert actual == expected and actual[0] != 'ACCEPTED'
+
+
+@pytest.mark.parametrize('updates', [
+    {'observed_at': datetime(2026, 10, 26)}, {'requested_day': datetime(2026, 10, 25).date()},
+    {'requested_day': datetime(2026, 10, 27).date()}, {'frequency': 'invalid'},
+    {'symbol': '123'}, {'security_type': 'unknown'},
+    {'observed_at': datetime(2026, 10, 26, 9, 34, tzinfo=SHANGHAI)},
+    {'require_complete_session': True},
+])
+def test_decoded_kline_helper_keeps_original_admission_errors(updates):
+    from qtrade.market_data.sina_incremental import completed_kline_rows, completed_klines
+    row = constructed_bar()
+    payload = [{'day': '2026-10-26 09:35:00',
+                **{key: row[key] for key in ('open', 'high', 'low', 'close', 'volume')}}]
+    kwargs = {'symbol': '301001', 'security_type': 'STOCK', 'frequency': '5min',
+        'requested_day': datetime(2026, 10, 26).date(), 'observed_at': NOW,
+        'calendar': Calendar(Path('configs/observer_calendar_2026.json')), **updates}
+    actual = validation_outcome(lambda: completed_kline_rows(payload, **kwargs))
+    expected = validation_outcome(lambda: completed_klines(json.dumps(payload).encode(), **kwargs))
+    assert actual == expected and actual[0] != 'ACCEPTED'
+
+
+def test_raw_kline_path_keeps_byte_and_json_guards_before_decoded_rows(monkeypatch):
+    from qtrade.market_data import sina_incremental as incremental
+    kwargs = {'symbol': '301001', 'security_type': 'STOCK', 'frequency': '5min',
+        'requested_day': datetime(2026, 10, 26).date(), 'observed_at': NOW,
+        'calendar': Calendar(Path('configs/observer_calendar_2026.json'))}
+    def forbidden(*args, **kwargs):
+        raise AssertionError('INVALID_RAW_INPUT_REACHED_DECODED_ROW_VALIDATION')
+    monkeypatch.setattr(incremental, '_completed_kline_rows', forbidden)
+    with pytest.raises(ValueError, match='BOUNDED_SOURCE_RESPONSE_TOO_LARGE'):
+        incremental.completed_klines(b' '*2_000_001, **kwargs)
+    for raw in (b'', b'[', b'\xff', b'[] trailing'):
+        with pytest.raises((ValueError, UnicodeDecodeError)):
+            incremental.completed_klines(raw, **kwargs)
+
+
+@pytest.mark.parametrize('frequency', ['day', '5min'])
+def test_captured_reader_minute_memo_matches_uncached_clocks_and_errors(frequency):
+    from qtrade.market_data.sina_incremental import _CapturedKlineReader, completed_klines
+    calendar = Calendar(Path('configs/observer_calendar_2026.json'))
+    reader = _CapturedKlineReader(calendar)
+    raw = json.dumps([{'day': '2026-10-26' if frequency == 'day' else '2026-10-26 09:35:00',
+        'open': '10', 'high': '12', 'low': '9', 'close': '10', 'volume': '100'}]).encode()
+    kwargs = {'symbol': '301001', 'security_type': 'STOCK', 'frequency': frequency,
+              'requested_day': datetime(2026, 10, 26).date(), 'calendar': calendar}
+    for day in (23, 24, 25, 26, 27):
+        for hour, minute in ((9, 34), (9, 35), (9, 36), (11, 30), (11, 31), (12, 0),
+                             (13, 4), (13, 5), (13, 6), (15, 0), (15, 1),
+                             (16, 29), (16, 30), (16, 31), (23, 59)):
+            for second, microsecond in ((0, 0), (1, 1), (30, 500000), (59, 999999)):
+                for zone in (SHANGHAI, UTC):
+                    observed = datetime(2026, 10, day, hour, minute, second, microsecond,
+                                        tzinfo=SHANGHAI).astimezone(zone)
+                    actual = validation_outcome(lambda observed=observed: reader.parse(
+                        raw, observed_at=observed, **kwargs))
+                    expected = validation_outcome(lambda observed=observed: completed_klines(
+                        raw, observed_at=observed, **kwargs))
+                    assert actual == expected
+    for observed in (datetime(2026, 10, 26), datetime(2027, 1, 1, tzinfo=SHANGHAI)):
+        assert validation_outcome(lambda observed=observed: reader.parse(
+            raw, observed_at=observed, **kwargs)) == validation_outcome(
+                lambda observed=observed: completed_klines(raw, observed_at=observed, **kwargs))
+    for invalid in (b'', b'[', b'\xff', b'[] trailing', b' '*2_000_001):
+        assert validation_outcome(lambda invalid=invalid: reader.parse(
+            invalid, observed_at=NOW, **kwargs)) == validation_outcome(
+                lambda invalid=invalid: completed_klines(invalid, observed_at=NOW, **kwargs))
+
+
+def test_captured_reader_memo_is_bounded_and_does_not_cross_calendar_objects():
+    from qtrade.market_data.sina_incremental import _CapturedKlineReader, completed_klines
+    calendar = Calendar({'valid_from': '2000-01-01', 'valid_through': '2040-12-31',
+                         'weekday_closures': []})
+    reader = _CapturedKlineReader(calendar)
+    start = datetime(2026, 1, 1, tzinfo=SHANGHAI)
+    for index in range(4100):
+        assert reader.identity(f'{index:06d}', 'STOCK') == 'SZSE.'+f'{index:06d}'
+        reader.is_open((start+timedelta(days=index)).date())
+        stamp = start+timedelta(minutes=index)
+        assert reader.expected(stamp, 'minute') == calendar.expected(stamp, 'minute')
+    assert len(reader._identities) == len(reader._days) == len(reader._cutoffs) == 4096
+    raw = json.dumps([{'day': '2026-10-26 09:35:00', 'open': '10', 'high': '12',
+                       'low': '9', 'close': '10', 'volume': '100'}]).encode()
+    closed = Calendar({**calendar.document, 'weekday_closures': ['2026-10-26']})
+    kwargs = {'symbol': '301001', 'security_type': 'STOCK', 'frequency': '5min',
+              'requested_day': datetime(2026, 10, 26).date(), 'observed_at': NOW,
+              'calendar': closed}
+    assert validation_outcome(lambda: reader.parse(raw, **kwargs)) == (
+        validation_outcome(lambda: completed_klines(raw, **kwargs)))
+
+
+@pytest.mark.parametrize(('kind', 'symbol', 'amount', 'vwap', 'accepted'), [
+    ('STOCK', '600036', '1000.5', '10.005', True),
+    ('ETF', '510300', '1000.05', '10.0005', True),
+    ('ETF', '510300', '1000.5', '10.005', False),
+])
+def test_constructed_rows_keep_security_specific_amount_tolerance(
+    monkeypatch, kind, symbol, amount, vwap, accepted,
+):
+    from qtrade.market_data.sina_incremental import completed_klines
+    row = constructed_bar(symbol=symbol, exchange='SSE', open='10', high='10', low='10',
+                          close='10', amount=amount, vwap=vwap)
+    calendar = Calendar(Path('configs/observer_calendar_2026.json'))
+    def validate():
+        return contract.validate_bar(row, symbol, kind, '5min', calendar, NOW)
+    actual = validation_outcome(validate)
+    monkeypatch.setattr(contract, 'completed_kline_rows',
+        lambda rows, **kwargs: completed_klines(json.dumps(rows).encode(), **kwargs))
+    assert actual == validation_outcome(validate)
+    assert (actual[0] == 'ACCEPTED') is accepted
+
+
+@pytest.mark.parametrize('damage', [None, 'duplicate', 'unordered'])
+def test_shard_keeps_independent_bar_quality_and_duplicate_order_scope(damage):
+    bars = [constructed_bar(), constructed_bar(timestamp='2026-10-26T09:40:00+08:00',
+             open='100', high='101', low='99', close='100')]
+    if damage == 'duplicate':
+        bars[1]['timestamp'] = bars[0]['timestamp']
+    elif damage == 'unordered':
+        bars.reverse()
+    shard = signed({**AUTHORITY, 'schema_version': 'qtrade.unified-market-shard.v1',
+        'universe_version': '1'*64, 'symbol': '301001', 'security_type': 'STOCK',
+        'instrument_id': 'SZSE.301001', 'frequency': '5min', 'price_basis': contract.PRICE_BASIS,
+        'bars': bars, 'source_batches': [{'batch_id': '2'*32, 'manifest_sha256': '3'*64,
+                                         'raw_sha256': '4'*64, 'normalized_sha256': '5'*64}]})
+    calendar = Calendar(Path('configs/observer_calendar_2026.json'))
+    if damage:
+        with pytest.raises(ValueError, match='UNIFIED_MARKET_DUPLICATE_OR_UNORDERED_BAR'):
+            contract.validate_shard(shard, calendar, NOW)
+    else:
+        # The existing contract validates each retained bar independently; a new
+        # bulk parser must not invent a cross-bar jump admission rule here.
+        assert contract.validate_shard(shard, calendar, NOW) == shard
 
 
 def test_export_bytes_are_identical_across_process_hash_seeds_and_track_real_changes(source):
@@ -808,6 +1603,114 @@ def test_decoded_cache_budget_preserves_existing_verified_working_set(source, mo
     assert first['index'] == second['index']
 
 
+@pytest.mark.parametrize('budget', ['rows', 'bytes'])
+def test_uncacheable_batches_keep_full_output_and_replay_without_size_encoding(
+    source, monkeypatch, budget,
+):
+    _, _, _, _, _, add = source
+    add()
+    add('day', counter=2)
+    expected = export(source)['index']
+    exporter._CACHE.clear()
+    if budget == 'rows':
+        monkeypatch.setattr(exporter, 'MAX_CACHE_ROWS', 0)
+    else:
+        # One row's fixed overhead already consumes this entire allowance.
+        monkeypatch.setattr(exporter, 'MAX_CACHE_ESTIMATED_BYTES', 1024)
+    original = exporter.encoded
+    sized = []
+    def encode(value):
+        if set(value) == {'rows'}:
+            sized.append(value)
+        return original(value)
+    monkeypatch.setattr(exporter, 'encoded', encode)
+    result = export(source)
+    assert result['index'] == expected
+    assert result['statistics']['replayed_batches'] == 2
+    assert result['statistics']['cached_batches'] == result['statistics']['cached_rows'] == 0
+    assert result['statistics']['cache_estimated_bytes'] == 0
+    assert sized == []
+
+
+def grouped_replay_material(source, frequency, damage=None):
+    _, _, _, _, store, add = source
+    manifests = [add(frequency, counter=1),
+                 add(frequency, symbol='600036', counter=2,
+                     minute=40 if frequency == '5min' else 35)]
+    if frequency == '5min':
+        manifests.append(add(counter=3, minute=40))
+    captures = []
+    records = []
+    for manifest in manifests:
+        for capture in store.read_captures(manifest['raw']):
+            captures.append({key: capture[key] for key in ('source_id', 'request',
+                'received_at', 'status_code', 'body', 'transport_error', 'body_complete')})
+        rows = pq.read_table(io.BytesIO(store.read_blob(manifest['normalized']))).to_pylist()
+        for row in rows:
+            stamp = datetime.fromisoformat(row['timestamp'])
+            bar = Bar(row['symbol'], row['exchange'], stamp, stamp.date(),
+                      *(Decimal(row[field]) for field in
+                        ('open', 'high', 'low', 'close', 'volume')))
+            records.append(IncrementalBar(bar, frequency,
+                Decimal(row['amount']) if row['amount'] is not None else None,
+                Decimal(row['vwap']) if row['vwap'] is not None else None,
+                datetime.fromisoformat(row['source_clock']) if row['source_clock'] else None,
+                row['amount_basis']))
+    if frequency == '5min':
+        first, other, last = captures
+        first['body'] = json.dumps(json.loads(first['body'])+json.loads(last['body'])).encode()
+        captures = [other, first]
+        if damage == 'missing_minute':
+            first['body'] = json.dumps(json.loads(first['body'])[:1]).encode()
+    else:
+        kline_a, quote_a, kline_b, quote_b = captures
+        captures = [quote_b, kline_a, quote_a, kline_b]
+    if damage == 'duplicate_kline':
+        captures.append(next(capture for capture in captures
+                             if capture['source_id'] == 'sina_klines'))
+    spec = deepcopy(manifests[0]['spec'])
+    spec['symbols'] = ['301001', '600036']
+    if frequency == '5min':
+        spec['target_end'] = '2026-10-26T09:40:00+08:00'
+        spec['after_by_symbol'] = {'301001': '2026-10-26T09:30:00+08:00',
+                                   '600036': '2026-10-26T09:35:00+08:00'}
+    else:
+        spec['after_by_symbol'] = dict.fromkeys(spec['symbols'])
+    manifest = store.commit('e'*32, spec, store.capture(captures), records,
+        {symbol: {'state': 'SUCCEEDED'} for symbol in spec['symbols']}, completed_at=NOW)
+    return store._batch_material(manifest['batch_id'])
+
+
+@pytest.mark.parametrize('frequency', ['day', '5min'])
+def test_grouped_replay_preserves_capture_order_and_each_symbols_own_window(source, frequency):
+    _, _, calendar, _, _, _ = source
+    material = grouped_replay_material(source, frequency)
+    _, captures, rows = material.validate()
+    for row in rows:
+        code = ('sh' if row['symbol'].startswith('6') else 'sz')+row['symbol']
+        expected = [capture['body_sha256'] for capture in captures
+                    if capture['request'].get('symbol') == code
+                    or code in capture['request'].get('list', '').split(',')]
+        assert row['source_hashes'] == expected
+    exporter._replay(material, calendar, {'301001': 'STOCK', '600036': 'STOCK'})
+    assert len(rows) == (3 if frequency == '5min' else 2)
+    if frequency == 'day':
+        rows[0]['source_hashes'].reverse()
+        with pytest.raises(ValueError, match='RAW_NORMALIZED_REPLAY_MISMATCH'):
+            exporter._replay(material, calendar, {'301001': 'STOCK', '600036': 'STOCK'})
+
+
+@pytest.mark.parametrize(('damage', 'error'), [
+    ('missing_minute', 'RAW_MINUTE_WINDOW_INCOMPLETE'),
+    ('duplicate_kline', 'RAW_SOURCE_OR_CLOCK_INVALID'),
+])
+def test_grouped_replay_still_rejects_missing_window_or_duplicate_response(source, damage, error):
+    _, _, calendar, _, _, _ = source
+    material = grouped_replay_material(source, '5min', damage)
+    with pytest.raises(ValueError, match=error):
+        exporter._replay(material, calendar, {'301001': 'STOCK', '600036': 'STOCK'})
+
+
 def test_export_context_is_signed_once_and_distinct_contexts_cannot_reuse_cached_replay(
     source, monkeypatch,
 ):
@@ -925,13 +1828,13 @@ def test_shards_are_encoded_once_and_identical_raw_bytes_drive_reference_and_wri
     add()
     add('day', counter=2)
     calls = []
-    original = exporter.encoded
+    original = contract.encoded
     def encode(value):
         raw = original(value)
         if value.get('schema_version') == 'qtrade.unified-market-shard.v1':
             calls.append(raw)
         return raw
-    monkeypatch.setattr(exporter, 'encoded', encode)
+    monkeypatch.setattr(contract, 'encoded', encode)
     value = export(source)['index']
     assert len(calls) == value['total_files'] == 2
     assert sum(map(len, calls)) == value['total_bytes']
@@ -1097,8 +2000,8 @@ def test_material_chain_reads_each_blob_once_and_decodes_only_misses(source, mon
     original_decode = store_module._decode_captures
     original_file = store_module.pq.ParquetFile
     original_bytes = Path.read_bytes
-    def read_blob(self, ref):
-        raw = original_blob(self, ref)
+    def read_blob(self, ref, **kwargs):
+        raw = original_blob(self, ref, **kwargs)
         reads.append(len(raw))
         return raw
     def decode(ref, raw):
@@ -1148,8 +2051,11 @@ def test_every_published_bar_has_one_full_validation_and_cold_batches_still_repl
         previous = sys.getprofile()
         def observe(frame, event, arg, checked=checked, replayed=replayed):
             if event == 'call':
-                if frame.f_code is contract.validate_bar.__code__:
-                    checked.append((dict(frame.f_locals['row']), frame.f_back.f_code.co_name))
+                if frame.f_code is contract._validate_bar.__code__:
+                    caller = frame.f_back
+                    if caller.f_code.co_name == 'validate_bar':
+                        caller = caller.f_back
+                    checked.append((dict(frame.f_locals['row']), caller.f_code.co_name))
                 elif frame.f_code is exporter._replay.__code__:
                     replayed.append(frame.f_locals['material'].manifest['batch_id'])
         try:
@@ -1161,7 +2067,7 @@ def test_every_published_bar_has_one_full_validation_and_cold_batches_still_repl
                      for bar in json.loads((base/'unified-data/market-public/unified-market/objects'
                                             /(ref['sha256']+'.json')).read_bytes())['bars']]
         assert len(checked) == len(published) == 4
-        assert all(caller == 'validate_shard' for _, caller in checked)
+        assert all(caller == '_validated_shard_bytes' for _, caller in checked)
         assert sorted((bar['symbol'], bar['timestamp']) for bar, _ in checked) == sorted(
             (bar['symbol'], bar['timestamp']) for bar in published)
         assert len(replayed) == expected_replays
@@ -1253,8 +2159,11 @@ def test_outside_window_rows_still_receive_full_validation_before_discard(source
     checked = []
     previous = sys.getprofile()
     def observe(frame, event, arg):
-        if event == 'call' and frame.f_code is contract.validate_bar.__code__:
-            checked.append((frame.f_locals['row']['timestamp'], frame.f_back.f_code.co_name))
+        if event == 'call' and frame.f_code is contract._validate_bar.__code__:
+            caller = frame.f_back
+            if caller.f_code.co_name == 'validate_bar':
+                caller = caller.f_back
+            checked.append((frame.f_locals['row']['timestamp'], caller.f_code.co_name))
     try:
         sys.setprofile(observe)
         value = export(source)['index']
@@ -1262,7 +2171,7 @@ def test_outside_window_rows_still_receive_full_validation_before_discard(source
         sys.setprofile(previous)
     entry = next(row for row in value['entries'] if row['symbol'] == '301001'
                  and row['frequency'] == '5min')
-    assert checked[0] == (rows[0]['timestamp'], 'export_market')
+    assert checked[0] == (rows[0]['timestamp'], 'collect_batch')
     if invalid:
         assert entry['state'] == 'QUARANTINED' and entry['shards'] == []
         assert entry['issues'] == ['SOURCE_REPLAY_FAILED']
@@ -1273,8 +2182,8 @@ def test_outside_window_rows_still_receive_full_validation_before_discard(source
         shard = json.loads((base/'unified-data/market-public/unified-market/objects'
                             /(ref['sha256']+'.json')).read_bytes())
         assert [row['timestamp'] for row in shard['bars']] == [rows[1]['timestamp']]
-        assert checked == [(rows[0]['timestamp'], 'export_market'),
-                           (rows[1]['timestamp'], 'validate_shard')]
+        assert checked == [(rows[0]['timestamp'], 'collect_batch'),
+                           (rows[1]['timestamp'], '_validated_shard_bytes')]
 
 
 def test_manifest_switch_during_same_material_replay_is_rejected_before_cache(source, monkeypatch):
@@ -1302,8 +2211,8 @@ def test_cached_material_rechecks_manifest_after_physical_blob_read(source, monk
     kinds = {'301001': 'STOCK', '600036': 'STOCK'}
     context = (signed(calendar.document)['evidence_sha256'], signed(kinds)['evidence_sha256'])
     original = store.read_blob
-    def read_blob(ref):
-        raw = original(ref)
+    def read_blob(ref, **kwargs):
+        raw = original(ref, **kwargs)
         if ref['suffix'] == '.parquet':
             path = store.batch_path(manifest['batch_id'])
             path.write_bytes(path.read_bytes()+b'\n')
@@ -1322,8 +2231,15 @@ def test_private_material_has_no_caller_supplied_source_or_validation_bypass(sou
     import inspect
     _, _, _, _, store, add = source
     manifest = add()
-    assert list(inspect.signature(store._batch_material).parameters) == ['batch_id']
+    parameters = inspect.signature(store._batch_material).parameters
+    assert list(parameters) == ['batch_id', '_read_observer']
+    assert parameters['_read_observer'].kind is inspect.Parameter.KEYWORD_ONLY
+    assert parameters['_read_observer'].default is None
     assert list(inspect.signature(store.load).parameters) == ['batch_id']
+    # An observer can return any value; it cannot supply or replace source bytes.
+    observed = store._batch_material(manifest['batch_id'],
+                                     _read_observer=lambda count, stage: b'forged')
+    assert observed.validate()[0] == manifest
     with pytest.raises(TypeError):
         store._batch_material(manifest['batch_id'], raw=b'forged')
     with pytest.raises(TypeError):
@@ -1346,9 +2262,219 @@ def test_missing_normalized_source_still_counts_material_reads_toward_budget(sou
     actual = len(raw_manifest)+manifest['raw']['bytes']
     assert stats['source_bytes_read'] == actual
     monkeypatch.setattr(exporter, 'SOURCE_BYTE_BUDGET', actual)
+    def forbidden(path):
+        raise AssertionError('EXHAUSTED_BUDGET_MUST_PRECEDE_ANOTHER_PHYSICAL_READ')
+    monkeypatch.setattr(Path, 'read_bytes', forbidden)
     with pytest.raises(ValueError, match='SOURCE_BYTE_BUDGET'):
         exporter._load(store, manifest['batch_id'], stats, calendar, kinds, context)
-    assert stats['source_bytes_read'] == 2*actual
+    assert stats['source_bytes_read'] == actual
     assert exporter._CACHE == {}
 
 
+
+
+def test_serial_shard_refs_come_from_validated_bytes(source, monkeypatch):
+    base, _, _, _, _, add = source
+    add()
+    original = exporter._validated_shard_bytes
+    def mutate_after_validation(shard, *args):
+        value, raw = original(shard, *args)
+        shard['evidence_sha256'] = '0'*64
+        shard['bars'][0]['timestamp'] = '1900-01-01T00:00:00+08:00'
+        return value, raw
+    monkeypatch.setattr(exporter, '_validated_shard_bytes', mutate_after_validation)
+    value = export(source)['index']
+    ref = next(row['shards'][0] for row in value['entries'] if row['shards'])
+    raw = (base/'unified-data/market-public/unified-market/objects'
+           /(ref['sha256']+'.json')).read_bytes()
+    shard = json.loads(raw)
+    assert ref == {'sha256': sha256(raw).hexdigest(), 'bytes': len(raw),
+        'evidence_sha256': shard['evidence_sha256'], 'count': len(shard['bars']),
+        'start': shard['bars'][0]['timestamp'], 'end': shard['bars'][-1]['timestamp']}
+
+
+def test_worker_frame_bounds_before_body_read():
+    import struct
+    class HeaderOnly(io.BytesIO):
+        def read(self, count=-1):
+            assert self.tell() < 5, 'BODY_MUST_NOT_BE_READ'
+            return super().read(count)
+    for tag, limit in exporter._WORKER_FRAME_LIMITS.items():
+        source = HeaderOnly(struct.pack('!I', limit+1)+tag)
+        with pytest.raises(ValueError, match='WORKER_FRAME_BOUND'):
+            exporter._read_worker_frame(source, exporter._WORKER_INPUT_LIMIT)
+    with pytest.raises(ValueError, match='WORKER_FRAME_BOUND'):
+        exporter._read_worker_frame(HeaderOnly(struct.pack('!I', 20)+b'X'),
+                                    exporter._WORKER_INPUT_LIMIT)
+
+
+def test_unreaped_owned_worker_blocks_new_spawn(monkeypatch):
+    class Unreaped:
+        def poll(self):
+            return None
+    monkeypatch.setattr(exporter, '_UNREAPED_SHARD_WORKERS', [Unreaped()])
+    def forbidden(*args, **kwargs):
+        raise AssertionError('MUST_NOT_SPAWN')
+    monkeypatch.setattr(exporter.subprocess, 'Popen', forbidden)
+    with pytest.raises(ValueError, match='PREVIOUS_CHILD_UNREAPED'):
+        exporter._ShardEncoders(None, NOW, time.monotonic()+5)
+
+
+def test_worker_job_enters_pipe_before_building_the_next_shard(monkeypatch):
+    pool = object.__new__(exporter._ShardEncoders)
+    pool.workers = [{'output': None}, {'output': None}]
+    monkeypatch.setattr(pool, 'close', lambda success: None)
+    def send(state, body):
+        state['output'] = body
+    def pump():
+        for state in pool.workers:
+            if state['output'] is not None:
+                state['result'] = (json.loads(state['output'][5:]), b'validated')
+                state['output'] = None
+    monkeypatch.setattr(pool, 'send', send)
+    monkeypatch.setattr(pool, 'pump', pump)
+    def shards():
+        yield {'evidence_sha256': '1'*64}
+        # Source replay can be expensive. A merely queued selector write leaves
+        # the child idle during this work and turns validation into serial waves.
+        assert pool.workers[0]['output'] is None
+        yield {'evidence_sha256': '2'*64}
+    assert len(list(pool.encode(shards()))) == 2
+
+
+@pytest.fixture
+def force_shard_workers(source, monkeypatch):
+    if os.name != 'posix':
+        pytest.skip('POSIX selector pipes; Windows chooses serial before spawn')
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 0)
+    owned = []
+    original = exporter.subprocess.Popen
+    def create(*args, **kwargs):
+        proc = original(*args, **kwargs)
+        owned.append(proc)
+        return proc
+    monkeypatch.setattr(exporter.subprocess, 'Popen', create)
+    yield owned
+    assert all(proc.poll() is not None for proc in owned)
+    assert not exporter._UNREAPED_SHARD_WORKERS
+    assert not any(thread.name.startswith('market-source') for thread in threading.enumerate())
+
+
+def test_real_worker_export_exact_serial_bytes_and_join_before_index(
+    source, force_shard_workers, monkeypatch,
+):
+    base, _, _, _, _, add = source
+    add()
+    add('day', counter=2)
+    add(symbol='600036', counter=3)
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 99)
+    expected = export(source)['index']
+    expected_bytes = {path.name: path.read_bytes() for path in
+        (base/'unified-data/market-public/unified-market/objects').glob('*.json')}
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 0)
+    atomic = exporter.write_json_atomic
+    def write(path, value, **kwargs):
+        if path.name == 'unified-market.json':
+            assert len(force_shard_workers) == 2
+            assert all(proc.poll() == 0 for proc in force_shard_workers)
+        atomic(path, value, **kwargs)
+    monkeypatch.setattr(exporter, 'write_json_atomic', write)
+    actual = export(source)['index']
+    assert actual == expected
+    assert {path.name: path.read_bytes() for path in
+        (base/'unified-data/market-public/unified-market/objects').glob('*.json')} == expected_bytes
+
+
+@pytest.mark.parametrize('failure', ['worker', 'object', 'ledger', 'parent_source', 'deadline'])
+def test_real_workers_all_failures_reap_and_preserve_index(
+    source, force_shard_workers, monkeypatch, failure,
+):
+    base, _, _, _, _, add = source
+    add()
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 99)
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = (pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns)
+    add('day', counter=2)
+    add(symbol='600036', counter=3)
+    monkeypatch.setattr(exporter, '_SHARD_WORKER_MIN_TARGETS', 0)
+    if failure == 'worker':
+        original = exporter._ShardEncoders.send
+        def send(pool, worker, body):
+            if body[:1] == b'J':
+                worker['process'].kill()
+            original(pool, worker, body)
+        monkeypatch.setattr(exporter._ShardEncoders, 'send', send)
+    elif failure == 'object':
+        monkeypatch.setattr(exporter, 'MAX_OBJECT_IO', 1)
+        def fail(*args, **kwargs):
+            raise OSError('OBJECT_FAULT')
+        monkeypatch.setattr(exporter, '_write_object', fail)
+    elif failure == 'ledger':
+        original = exporter._chunks
+        calls = 0
+        def chunks(*args):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                assert all(proc.poll() == 0 for proc in force_shard_workers)
+                return []
+            return original(*args)
+        monkeypatch.setattr(exporter, '_chunks', chunks)
+    elif failure == 'parent_source':
+        inventory = exporter._worker_inventory
+        changed = False
+        def validate(*args):
+            nonlocal changed
+            changed = True
+        def sources():
+            value = inventory()
+            if changed:
+                value['scripts/publish_unified_market.py'] = '0'*64
+            return value
+        monkeypatch.setattr(exporter, 'validate_index', validate)
+        monkeypatch.setattr(exporter, '_worker_inventory', sources)
+    else:
+        original = exporter._ShardEncoders.send
+        def send(pool, worker, body):
+            original(pool, worker, body)
+            if body[:1] == b'J':
+                pool.deadline = time.monotonic()-1
+        monkeypatch.setattr(exporter._ShardEncoders, 'send', send)
+    with pytest.raises((ValueError, OSError)):
+        export(source)
+    assert len(force_shard_workers) == 2
+    assert (pointer.read_bytes(), state.read_bytes(), pointer.stat().st_mtime_ns) == before
+
+
+@pytest.mark.parametrize('failure', [ValueError, OSError])
+def test_prefetched_decode_failure_preserves_quarantine_or_old_pointer(source, monkeypatch,
+                                                                       failure):
+    base, _, _, _, _, add = source
+    add()
+    export(source)
+    pointer = base/'unified-data/market-public/unified-market.json'
+    state = base/'unified-data/market-export-state.json'
+    before = pointer.read_bytes(), state.read_bytes()
+    add(counter=2, minute=40)
+    original = store_module._BatchMaterial.validate
+    main_thread = threading.get_ident()
+    failed_threads = []
+    def validate(material):
+        if material.manifest['batch_id'] == f'{2:032x}':
+            failed_threads.append(threading.get_ident())
+            raise failure('PREFETCHED_DECODE_SOURCE_FAULT')
+        return original(material)
+    monkeypatch.setattr(store_module._BatchMaterial, 'validate', validate)
+    if failure is OSError:
+        with pytest.raises(OSError, match='^PREFETCHED_DECODE_SOURCE_FAULT$'):
+            export(source)
+        assert (pointer.read_bytes(), state.read_bytes()) == before
+    else:
+        entry = next(row for row in export(source)['index']['entries']
+                     if row['symbol'] == '301001' and row['frequency'] == '5min')
+        assert entry['state'] == 'QUARANTINED' and entry['shards'] == []
+        assert entry['issues'] == ['SOURCE_REPLAY_FAILED']
+    assert failed_threads and all(thread != main_thread for thread in failed_threads)
+    assert not any(thread.name.startswith('market-source') for thread in threading.enumerate())

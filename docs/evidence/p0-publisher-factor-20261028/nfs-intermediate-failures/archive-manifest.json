@@ -1,0 +1,116 @@
+{
+  "scope": "FAILED_COLD_NFS_CANDIDATES_NOT_DEPLOYMENT_ACCEPTANCE",
+  "note": "Profile timers overlap. Warm passes do not imply cold success. Empty verify.log files excluded; no independent success claimed from them.",
+  "files": [
+    {
+      "file": "market-current-nfs-candidate-20261028T051914Z/benchmark.log",
+      "sha256": "459f922982debaab3cf5207c6fb26e75ce58bfcbc7edb8a9012577e06e438b3f",
+      "bytes": 1300
+    },
+    {
+      "file": "market-current-nfs-candidate-20261028T051914Z/candidate-manifest.json",
+      "sha256": "116c5d08270970b87f0124df24566aeb9aa39fe9da1b2c5c5c0058c4aad68878",
+      "bytes": 558
+    },
+    {
+      "file": "market-current-nfs-candidate-20261028T051914Z/frozen-export-no-profile.json",
+      "sha256": "a625edc1aab94f7612915f324909dff9cc3f67148007aad7780b6f269e3ac24b",
+      "bytes": 3657
+    },
+    {
+      "file": "market-current-nfs-detail-candidate-20261028T052125Z/benchmark.log",
+      "sha256": "43be1edb8c91201f0c57446fcae3b22d68e67e17edd2491cd920f65135ad7d08",
+      "bytes": 3532
+    },
+    {
+      "file": "market-current-nfs-detail-candidate-20261028T052125Z/candidate-manifest.json",
+      "sha256": "116c5d08270970b87f0124df24566aeb9aa39fe9da1b2c5c5c0058c4aad68878",
+      "bytes": 558
+    },
+    {
+      "file": "market-current-nfs-detail-candidate-20261028T052125Z/frozen-export-no-profile.json",
+      "sha256": "48804afd77afe0e0eee2c748ac591a65ec8068a3b7a35ec42e11c9a48fa1a115",
+      "bytes": 7223
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052351Z/benchmark.log",
+      "sha256": "6101319fee93dafef7be3071f1badb1be0d336a97074eddff4ab25f9acf15f84",
+      "bytes": 1307
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052351Z/candidate-manifest.json",
+      "sha256": "2780db91522d156f79b425044f0a6348de33060fc5fa94682bf05ac4fbf8f325",
+      "bytes": 558
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052351Z/frozen-export-no-profile.json",
+      "sha256": "9478c3b87e6b9aacb7bcbdc8a160ad99f422995c107861bb4d155d3707214341",
+      "bytes": 3692
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052351Z/pytest.xml",
+      "sha256": "130d4b45e0a6727b1d30439113bca2a79a6b0369de1f082e12c7581957ebe188",
+      "bytes": 56431
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052351Z/tests.log",
+      "sha256": "638d44482d6710793177f1baded02be26f8c43afb54b94ec58a06c7e543b9fd6",
+      "bytes": 1087
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052918Z/benchmark.log",
+      "sha256": "0252a4c7c7ac616e6fa0e45a4e67d0ce27bff545f0ab2ee852f0ef2f65385b10",
+      "bytes": 1306
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052918Z/candidate-manifest.json",
+      "sha256": "620fd69e8b347cf956a683f7a576fbf017e1d0be79289afaab8c2b357203c2e9",
+      "bytes": 558
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052918Z/frozen-export-no-profile.json",
+      "sha256": "c77c71f2f5687226cdff39444dadd4b22e5bbc893cceb54d0c98c2841f8e5822",
+      "bytes": 3691
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052918Z/pytest.xml",
+      "sha256": "bfeed626aea6923bd4fc46408d193936763960ffb66066edcef7b4531b79ded4",
+      "bytes": 57324
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T052918Z/tests.log",
+      "sha256": "c8c86444858b84869d40d08015ee3bb634fb9b6be24a86319e4d552f93a418d6",
+      "bytes": 1087
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T053324Z/benchmark.log",
+      "sha256": "293cdef286b4ae5610cec7be97992722cf589584d9136f090c109949515b3c34",
+      "bytes": 1305
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T053324Z/candidate-manifest.json",
+      "sha256": "4e4a880003f9d9dadaf7267bf1ae9eecdb0dde0539bcc025ba762cc6f7106c49",
+      "bytes": 558
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T053324Z/frozen-export-no-profile.json",
+      "sha256": "46e706d6e8590c18a8740a9fe59c586b18539bed8014a90b6c9087b05662b2a0",
+      "bytes": 3690
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T053324Z/pytest.xml",
+      "sha256": "a6a9fa0d295768007cd6c2f753d7d0abf851cec6956275e8943518c94f636f0b",
+      "bytes": 57312
+    },
+    {
+      "file": "market-current-nfs-tested-candidate-20261028T053324Z/tests.log",
+      "sha256": "9aa372bded9b9f40874b012c82950700f4d4c9f18505d4f6516388b05812f3a6",
+      "bytes": 1087
+    },
+    {
+      "file": "encoded-reuse-review.md",
+      "sha256": "b3825f1e27035d3f0fc3458c881c7705c882b819735717f6686c8eba0c085619",
+      "bytes": 7845
+    }
+  ]
+}

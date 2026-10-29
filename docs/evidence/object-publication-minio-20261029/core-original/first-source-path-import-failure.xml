@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.173" timestamp="2026-10-29T00:24:02.610008+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="" name="tests.test_object_publication" time="0.000"><error message="collection failure">ImportError while importing test module 'E:\QTrade-git\tests\test_object_publication.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_object_publication.py:15: in &lt;module&gt;
+    from qtrade.instruments.observed import build_observed_master
+E   ModuleNotFoundError: No module named 'qtrade.instruments.observed'</error></testcase></testsuite></testsuites>

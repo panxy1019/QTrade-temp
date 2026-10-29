@@ -1,0 +1,47 @@
+{
+  "boto3": {
+    "path": "E:\\QTrade-temp\\r2-sdk-20261029\\boto3\\__init__.py",
+    "sha256": "3175fc46eaebbdccd11fc4afd09f4a16e895cfe61172a2ca319288bf1c9800c5",
+    "version": "1.43.120"
+  },
+  "boto3.session": {
+    "path": "E:\\QTrade-temp\\r2-sdk-20261029\\boto3\\session.py",
+    "sha256": "c113623eabf46a1438af30940513cdd54b94ede6d7b6894743d5f7e1d18b9a78",
+    "version": null
+  },
+  "botocore": {
+    "path": "E:\\QTrade-temp\\r2-sdk-20261029\\botocore\\__init__.py",
+    "sha256": "12b34c3ba1b66d988ce0039979461161b0315ada2e815f91284e8941248cfcb6",
+    "version": "1.43.120"
+  },
+  "botocore.auth": {
+    "path": "E:\\QTrade-temp\\r2-sdk-20261029\\botocore\\auth.py",
+    "sha256": "dfc81be195bad2ed02a10354647155c942c1945833cbdce7f5646312701ef99b",
+    "version": null
+  },
+  "botocore.config": {
+    "path": "E:\\QTrade-temp\\r2-sdk-20261029\\botocore\\config.py",
+    "sha256": "3ff88b9f5af4b19a41792e5696918135e0bfc64011dcb4843fb515922239014f",
+    "version": null
+  },
+  "botocore.endpoint": {
+    "path": "E:\\QTrade-temp\\r2-sdk-20261029\\botocore\\endpoint.py",
+    "sha256": "0ce924a118e3ad98a2c71293541508efc1b3e0f84fb1b80272394829ba656262",
+    "version": null
+  },
+  "botocore.loaders": {
+    "path": "E:\\QTrade-temp\\r2-sdk-20261029\\botocore\\loaders.py",
+    "sha256": "aa2be08c3dd386f52681b27e325d28664cd9c6b9cdbd6cf8eff7d2eda66aea42",
+    "version": null
+  },
+  "botocore.plugin": {
+    "path": "E:\\QTrade-temp\\r2-sdk-20261029\\botocore\\plugin.py",
+    "sha256": "2973c75c473565edbbdbe5b3a3993e1446cdb3e6b61ffacd0a53da2b3d85d851",
+    "version": null
+  },
+  "botocore.session": {
+    "path": "E:\\QTrade-temp\\r2-sdk-20261029\\botocore\\session.py",
+    "sha256": "1da939f2ac5ee705775c5e5601177d97174f5ce0755ed695015118cb64c61d6c",
+    "version": "1.43.120"
+  }
+}

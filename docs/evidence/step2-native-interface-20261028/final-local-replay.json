@@ -1,0 +1,58 @@
+{
+  "all_checks_passed": true,
+  "alpha158_descriptor_sha256": "23badba179ce07b691a394f60844b85b6401a5c238d4d3a9d3338ab94760828d",
+  "capture_sha256": "5950b3259409adf19ec2631f68e65c4cd573974f54bb7c91cb5bb95c4c1bbfdc",
+  "comparison_rows": [
+    {
+      "classification": "PAIRED_NUMERIC_MATCH",
+      "day": "2020-01-02",
+      "ic_error": "1.418577197656E-16",
+      "rank_ic_error": "1.965824313169E-16",
+      "valid_pairs": 6
+    },
+    {
+      "classification": "PAIRED_NUMERIC_MATCH",
+      "day": "2020-01-03",
+      "ic_error": "8.57142857143E-17",
+      "rank_ic_error": "8.57142857143E-17",
+      "valid_pairs": 6
+    },
+    {
+      "classification": "EXPLICIT_UNDEFINED_DIFFERENCE",
+      "day": "2020-01-06",
+      "native_ic": null,
+      "qtrade_ic": "0"
+    },
+    {
+      "classification": "PAIRED_NUMERIC_MATCH",
+      "day": "2020-01-07",
+      "ic_error": "2E-16",
+      "rank_ic_error": "0.0",
+      "valid_pairs": 4
+    }
+  ],
+  "descriptor_count": 158,
+  "direct_ref_audit_is_not_full_dependency_window_certification": true,
+  "direct_ref_offsets": [
+    1,
+    5,
+    10,
+    20,
+    30,
+    60
+  ],
+  "local_metrics_source_sha256": "2a4317d786ae63dbebc2ffd22ddbed372fca537f8de749bbd37c82f55692188e",
+  "maximum_ic_or_rank_ic_absolute_error": "2E-16",
+  "native_sigana_source_policy_ddof1": "-0.022114380465606685",
+  "qtrade_icir_ddof0": "-0.03127445677793964571716032346",
+  "raw_fields": [
+    "close",
+    "high",
+    "low",
+    "open",
+    "volume",
+    "vwap"
+  ],
+  "schema_version": "qtrade.step2-native-capture-replay.v1",
+  "scope": "SYNTHETIC_METRIC_REPLAY_NOT_FACTOR_OR_PRODUCTION_ACCEPTANCE"
+}

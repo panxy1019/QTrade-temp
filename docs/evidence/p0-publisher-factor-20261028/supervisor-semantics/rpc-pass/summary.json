@@ -1,0 +1,395 @@
+{
+  "artifact_sha256": {
+    "child.py": "24abc78ba99d08719fd4d4e099fbffeb08d6b88a56e955c28523f30c18c3da44",
+    "cleanup.json": "0b742e91821d0a0bf5fdfdc6d1f528caff4b60a5d8ad9d50498e7850eb8df0a0",
+    "design.json": "a0c0db6752161c90a81543d80ec6512f20eab465d23873dbc12fa1b9809c1c75",
+    "fixture_supervisor_probe.py": "87f39a038f93523ac458de4958afdbbfbf3ff5b0a5d63e70bd3080213f6a7817",
+    "normal/child.events.jsonl": "fecd9a9d890623e94fa8e99f621d9d428a3d7ae63134f663a42494d98b12b8d3",
+    "normal/controlled.counter": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+    "normal/controlled.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/controlled.stdout.log": "fbca03f97bf54eb599a1ed38c0f3f37a8adbc3c60c19219381dbb452ccdc5b41",
+    "normal/fixture-cleanup-abort": "34559daa48aab68bc87be1563c61c74cb12c87396936fb2a90afd2dece1f1bfa",
+    "normal/manager.log": "3019c806be0a032e7b83af7c54ac619f394ca24e7d5fddac26a47ba16bfd1523",
+    "normal/manager.pid": "c348dab7664152c26753856b918fad5102af05e7dfd0e2faef0cb483ef4a2439",
+    "normal/manager.stdout.log": "33fe004649bd97ec1dde6a61483a52bfe87c67c62e40899c9b0db35b0edbb262",
+    "normal/result.json": "c5ef0c54be4df35572aab6f3ec768f6b27405918deea9de53efab5cb62919d45",
+    "normal/rpc-status.jsonl": "ec854a18fcccc6bffa101ff4f691ae69f052cecd41b45a12edb108ff9ab5a8e4",
+    "normal/sentinel-a.counter": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "normal/sentinel-a.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/sentinel-a.stdout.log": "f9bbf5de75fbe1ac763dc1bfbf7267aa3298fd3ac33ff9cd52be7e1bdc4bfbb8",
+    "normal/sentinel-b.counter": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "normal/sentinel-b.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/sentinel-b.stdout.log": "34a1b3c5f3d920931b3ed3fcbf4dc16e5bf5c79adb85decf6f99ee77886672fe",
+    "normal/supervisord.conf": "65e777813db72f73fe2424dbfb7f610415da53dce5e75063a3b370a5e8d02f8b",
+    "normal/wrapper": "336701c29998e08f786bd0eec0e4e6a52aeb8fd79629c505c69a32cf8d2a8b09",
+    "normal/wrapper-v1.sh": "336701c29998e08f786bd0eec0e4e6a52aeb8fd79629c505c69a32cf8d2a8b09",
+    "operator.events.jsonl": "904ea76baa0bd5be23d37ae21aee1cc0b4328d200a999463c212dc9f7c4e97ab",
+    "production-before.json": "9ac0506a759b9f19952b588c08ddd906a64c0580c2cf0adadd4a0a55aefc4904",
+    "term/child.events.jsonl": "147d281c43ea58f0f27710097b84b945b32f01e251145a871a069794f6e6aa0f",
+    "term/controlled.counter": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+    "term/controlled.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "term/controlled.stdout.log": "8e36776fcaec8f2e011f7e026cacf2ab032439b88f4632d12728ca9590d9adc0",
+    "term/fixture-cleanup-abort": "34559daa48aab68bc87be1563c61c74cb12c87396936fb2a90afd2dece1f1bfa",
+    "term/manager.log": "3034fd092ca7254506ca88ab00dbd4dd2cb48112760fdf874f4aa2bb1ebd3bc5",
+    "term/manager.pid": "d921a1c09c3a47c292c3f60dbcf6d868a51b27e2bff660866c6a2317adfad733",
+    "term/manager.stdout.log": "0a43371193da986299e7c3cb2945510b185fc25caa89f211c29543e55a69eb92",
+    "term/result.json": "1e7e952838a3233b139efb3b6aff7e45dff6f7036affb06060b6541b2d2d0015",
+    "term/rpc-status.jsonl": "52e9a657cea826fed991c5dd891c287fc55eee43a2c22bd02d0580981c1161fe",
+    "term/sentinel-a.counter": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "term/sentinel-a.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "term/sentinel-a.stdout.log": "37982701be94c1256a44eba385b8e7e8a47b15baed15c4a3d2ceea6606f63692",
+    "term/sentinel-b.counter": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "term/sentinel-b.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "term/sentinel-b.stdout.log": "8135e10de9d8b0b735c32cb6ab81f2a915848e46e55430e7246397b4c22f6ffa",
+    "term/supervisord.conf": "b49bdd2a8c42fe506d80463892c6b89e5d02408d3856c98c2094e9eb7e2c622a",
+    "term/wrapper": "8ae6e7a2b966c0fa069657d0a23ff6af866c1217e9c4f97b8be9463e386a7621",
+    "term/wrapper-v1.sh": "74beaa0dcc359f67a36f4cd688b7a8a06f146144ad649cf602bde77fe245cb3c",
+    "term/wrapper-v2.sh": "8ae6e7a2b966c0fa069657d0a23ff6af866c1217e9c4f97b8be9463e386a7621"
+  },
+  "binary_after_sha256": "c0e12d2e498d00a2285161372cbb0a46b795b94e9a42511351eba7980f408569",
+  "binary_sha256": "c0e12d2e498d00a2285161372cbb0a46b795b94e9a42511351eba7980f408569",
+  "cases": [
+    {
+      "case": "normal",
+      "exactly_two_generations": true,
+      "external_main_term_count": 0,
+      "native_new_running": {
+        "controlled": {
+          "description": "pid 516839, uptime 0:00:03",
+          "exitstatus": 0,
+          "group": "controlled",
+          "logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/controlled.stdout.log",
+          "name": "controlled",
+          "now": 1793165107,
+          "pid": 516839,
+          "spawnerr": "",
+          "start": 1793165104,
+          "state": 20,
+          "statename": "Running",
+          "stderr_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/controlled.stderr.log",
+          "stdout_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/controlled.stdout.log",
+          "stop": 0
+        },
+        "sentinel-a": {
+          "description": "pid 516821, uptime 0:00:05",
+          "exitstatus": 0,
+          "group": "sentinel-a",
+          "logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/sentinel-a.stdout.log",
+          "name": "sentinel-a",
+          "now": 1793165107,
+          "pid": 516821,
+          "spawnerr": "",
+          "start": 1793165102,
+          "state": 20,
+          "statename": "Running",
+          "stderr_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/sentinel-a.stderr.log",
+          "stdout_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/sentinel-a.stdout.log",
+          "stop": 0
+        },
+        "sentinel-b": {
+          "description": "pid 516822, uptime 0:00:05",
+          "exitstatus": 0,
+          "group": "sentinel-b",
+          "logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/sentinel-b.stdout.log",
+          "name": "sentinel-b",
+          "now": 1793165107,
+          "pid": 516822,
+          "spawnerr": "",
+          "start": 1793165102,
+          "state": 20,
+          "statename": "Running",
+          "stderr_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/sentinel-b.stderr.log",
+          "stdout_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal/sentinel-b.stdout.log",
+          "stop": 0
+        }
+      },
+      "new_pid": 516839,
+      "normal_exit_zero_event": {
+        "event": "NATURAL_EXIT_ZERO",
+        "generation": 1,
+        "monotonic": 10197139.473717708,
+        "name": "controlled",
+        "pid": 516820,
+        "ppid": 516808,
+        "release": "v1",
+        "start_ticks": "1019713744"
+      },
+      "old_pid": 516820,
+      "owned_worker_cleanup": {
+        "event": "OWNED_WORKER_CLEANED",
+        "monotonic": 10197139.470945757,
+        "name": "controlled",
+        "pid": 516820,
+        "ppid": 516808,
+        "release": "v1",
+        "start_ticks": "1019713744",
+        "worker_pid": 516823,
+        "worker_returncode": -15
+      },
+      "same_group_helper_cleanup": {
+        "event": "INGROUP_HELPER_CLEANED",
+        "helper_returncode": -15,
+        "ingroup_pid": 516824,
+        "monotonic": 10197139.472897928,
+        "name": "controlled",
+        "pid": 516820,
+        "ppid": 516808,
+        "release": "v1",
+        "start_ticks": "1019713744"
+      },
+      "sentinel_identities_unchanged": true,
+      "state": "PASS",
+      "stopProcess_invocations": 0,
+      "stopwaitsecs_config": 110,
+      "wrapper_release_on_restart": "v1"
+    },
+    {
+      "alive_and_native_running_after_110_seconds": true,
+      "case": "term",
+      "drain_seconds": 112.10042770020664,
+      "exactly_two_generations": true,
+      "external_main_term_count": 1,
+      "native_new_running": {
+        "controlled": {
+          "description": "pid 516992, uptime 0:00:03",
+          "exitstatus": 0,
+          "group": "controlled",
+          "logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term/controlled.stdout.log",
+          "name": "controlled",
+          "now": 1793165224,
+          "pid": 516992,
+          "spawnerr": "",
+          "start": 1793165221,
+          "state": 20,
+          "statename": "Running",
+          "stderr_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term/controlled.stderr.log",
+          "stdout_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term/controlled.stdout.log",
+          "stop": 0
+        },
+        "sentinel-a": {
+          "description": "pid 516856, uptime 0:01:56",
+          "exitstatus": 0,
+          "group": "sentinel-a",
+          "logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term/sentinel-a.stdout.log",
+          "name": "sentinel-a",
+          "now": 1793165224,
+          "pid": 516856,
+          "spawnerr": "",
+          "start": 1793165107,
+          "state": 20,
+          "statename": "Running",
+          "stderr_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term/sentinel-a.stderr.log",
+          "stdout_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term/sentinel-a.stdout.log",
+          "stop": 0
+        },
+        "sentinel-b": {
+          "description": "pid 516854, uptime 0:01:56",
+          "exitstatus": 0,
+          "group": "sentinel-b",
+          "logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term/sentinel-b.stdout.log",
+          "name": "sentinel-b",
+          "now": 1793165224,
+          "pid": 516854,
+          "spawnerr": "",
+          "start": 1793165107,
+          "state": 20,
+          "statename": "Running",
+          "stderr_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term/sentinel-b.stderr.log",
+          "stdout_logfile": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term/sentinel-b.stdout.log",
+          "stop": 0
+        }
+      },
+      "new_pid": 516992,
+      "normal_exit_zero_event": {
+        "event": "NATURAL_EXIT_ZERO",
+        "generation": 1,
+        "monotonic": 10197255.97780791,
+        "name": "controlled",
+        "pid": 516855,
+        "ppid": 516840,
+        "release": "v1",
+        "start_ticks": "1019714271"
+      },
+      "old_pid": 516855,
+      "owned_worker_cleanup": {
+        "event": "OWNED_WORKER_CLEANED",
+        "monotonic": 10197255.968494268,
+        "name": "controlled",
+        "pid": 516855,
+        "ppid": 516840,
+        "release": "v1",
+        "start_ticks": "1019714271",
+        "worker_pid": 516857,
+        "worker_returncode": -15
+      },
+      "same_group_helper_cleanup": {
+        "event": "INGROUP_HELPER_CLEANED",
+        "helper_returncode": -15,
+        "ingroup_pid": 516858,
+        "monotonic": 10197255.976508183,
+        "name": "controlled",
+        "pid": 516855,
+        "ppid": 516840,
+        "release": "v1",
+        "start_ticks": "1019714271"
+      },
+      "sentinel_identities_unchanged": true,
+      "state": "PASS",
+      "stopProcess_invocations": 0,
+      "stopwaitsecs_config": 110,
+      "wrapper_release_on_restart": "v2"
+    }
+  ],
+  "cleanup": {
+    "errors": [],
+    "registered": {
+      "516808": {
+        "identity": {
+          "cmdline_sha256": "5077e311fbbd640923b51c327a32ba0936a4de855fdc109a3dfa88c90a38e4e5",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+          "pid": 516808,
+          "ppid": 516807,
+          "start_ticks": "1019713735",
+          "state": "R"
+        },
+        "role": "isolated-manager"
+      },
+      "516820": {
+        "identity": {
+          "cmdline_sha256": "914fb210f588032e906358ae20fbc84ae9946cde9a7eb30b243bc3911371fac2",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+          "pid": 516820,
+          "ppid": 516808,
+          "start_ticks": "1019713744",
+          "state": "S"
+        },
+        "role": "controlled"
+      },
+      "516821": {
+        "identity": {
+          "cmdline_sha256": "950c3c43cca5cdf66c4aa2924d345ab13272dcb1bd4eceb7edc003b99d51adce",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+          "pid": 516821,
+          "ppid": 516808,
+          "start_ticks": "1019713744",
+          "state": "S"
+        },
+        "role": "sentinel-a"
+      },
+      "516822": {
+        "identity": {
+          "cmdline_sha256": "ed914004cdea4c23e4df9e3991ddb98d872bde4f16aa18e6c7221ec5d4976ad8",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+          "pid": 516822,
+          "ppid": 516808,
+          "start_ticks": "1019713744",
+          "state": "S"
+        },
+        "role": "sentinel-b"
+      },
+      "516839": {
+        "identity": {
+          "cmdline_sha256": "914fb210f588032e906358ae20fbc84ae9946cde9a7eb30b243bc3911371fac2",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/normal",
+          "pid": 516839,
+          "ppid": 516808,
+          "start_ticks": "1019713948",
+          "state": "S"
+        },
+        "role": "controlled-new-generation"
+      },
+      "516840": {
+        "identity": {
+          "cmdline_sha256": "7e97adaa082c74abe430bb68b2e1f282d0ba736347241bc2633fc5af1420f59f",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+          "pid": 516840,
+          "ppid": 516807,
+          "start_ticks": "1019714263",
+          "state": "R"
+        },
+        "role": "isolated-manager"
+      },
+      "516854": {
+        "identity": {
+          "cmdline_sha256": "88e0cdb467df89c38890277d92221702c627de2fe4d5b4806713455c5df26125",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+          "pid": 516854,
+          "ppid": 516840,
+          "start_ticks": "1019714271",
+          "state": "S"
+        },
+        "role": "sentinel-b"
+      },
+      "516855": {
+        "identity": {
+          "cmdline_sha256": "06bd11ad4cc0e932917e97336ed3057cabbe5fd07b5b214a74ffac94ad532e78",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+          "pid": 516855,
+          "ppid": 516840,
+          "start_ticks": "1019714271",
+          "state": "S"
+        },
+        "role": "controlled"
+      },
+      "516856": {
+        "identity": {
+          "cmdline_sha256": "04cf4eae08278fed51894ac1ba40dc2c196d3aebcc8b51fa89d49394a899d215",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+          "pid": 516856,
+          "ppid": 516840,
+          "start_ticks": "1019714271",
+          "state": "S"
+        },
+        "role": "sentinel-a"
+      },
+      "516992": {
+        "identity": {
+          "cmdline_sha256": "b1708fdb40210244bd6728b222c53b2dcda24934e6414c6f182d87e8a0fed47a",
+          "cwd": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025/term",
+          "pid": 516992,
+          "ppid": 516840,
+          "start_ticks": "1019725598",
+          "state": "S"
+        },
+        "role": "controlled-new-generation"
+      }
+    },
+    "remaining_non_zombie_fixture_pids": [],
+    "signals": [
+      {
+        "at_monotonic": 10197143.856257364,
+        "method": "supervisor.signalProcess",
+        "name": "controlled",
+        "pid": 516855,
+        "role": "single-named-fixture-controlled-term",
+        "signal": 15,
+        "start_ticks": "1019714271"
+      }
+    ]
+  },
+  "isolation_root": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025",
+  "pidfd_self_probe": {
+    "available": false,
+    "errno": 38
+  },
+  "production_after": {
+    "cmdline_sha256": "e05e695af1833e617bc89bb70c61644abb5f49b6a01c1293f963855f3dc8c09c",
+    "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/b2386c3e53c766d9e9512e6ca0f5116583aa13c2",
+    "pid": 294214,
+    "ppid": 56,
+    "start_ticks": "1012537254",
+    "state": "S"
+  },
+  "production_before": {
+    "cmdline_sha256": "e05e695af1833e617bc89bb70c61644abb5f49b6a01c1293f963855f3dc8c09c",
+    "cwd": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/releases/b2386c3e53c766d9e9512e6ca0f5116583aa13c2",
+    "pid": 294214,
+    "ppid": 56,
+    "start_ticks": "1012537254",
+    "state": "R"
+  },
+  "production_ctl_invocations": 0,
+  "production_identity_unchanged": true,
+  "production_mutations": false,
+  "state": "PASS"
+}

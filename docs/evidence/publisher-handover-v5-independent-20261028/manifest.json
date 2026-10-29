@@ -1,0 +1,128 @@
+{
+  "all_faults_real_acceptance": false,
+  "created_at": "2026-10-28T11:06:40.610716+00:00",
+  "document": {
+    "bytes": 11849,
+    "path": "E:\\QTrade-git\\docs\\PUBLISHER_HANDOVER_V5_INDEPENDENT_REVIEW_20261028.md",
+    "sha256": "fd512b973364a145b12161138136ef585b832f08bcbb21099fa2af203853aa23"
+  },
+  "files": {
+    "fault-coverage-map.json": {
+      "bytes": 14312,
+      "sha256": "1ca7a7b430c008901aa47ab6e582869fa15cd2daf00b529e850e36603599b5d4"
+    },
+    "git-fba51aad/tests/test_probe_unified_publication.py": {
+      "bytes": 44830,
+      "sha256": "29b526f292d609cbb8cbca6706f8e59840538874a348c10d4c0a70165b5b146a"
+    },
+    "git-fba51aad/tests/test_unified_market.py": {
+      "bytes": 120991,
+      "sha256": "ce45fda4f53e71ce3dbb8431bb01a50ee308ae46a3d43d30b3aaf2ba24a38a8a"
+    },
+    "git-fba51aad/tests/test_unified_market_checkpoint_independent.py": {
+      "bytes": 23046,
+      "sha256": "4e61709f707986d94248773dfd32dd496245231d4d654d2d2249a4ec01e05e17"
+    },
+    "git-fba51aad/tests/test_unified_market_checkpoints.py": {
+      "bytes": 8220,
+      "sha256": "0488a5edbd64f882171036ea3db1292d6e1a5ee581aad2165282c86377bd535d"
+    },
+    "independent109-source.xml": {
+      "bytes": 22323,
+      "sha256": "6788a3f699dbb9b72276128537a6b066888d54f60f9031dee8e9dd3578411fa8"
+    },
+    "linux-exact-source/execution.json": {
+      "bytes": 200,
+      "sha256": "b5c5a3f2e4ff832d5b9b246c3db4d7e5989905f7de7493f5a82f4c79dc1199d5"
+    },
+    "linux-exact-source/manifest.json": {
+      "bytes": 322931,
+      "sha256": "109fc8efe00cd0ab8009a8880114fe6697a058bfd5cc27cb2942ade19a2c0e82"
+    },
+    "linux793-source.xml": {
+      "bytes": 121219,
+      "sha256": "c9f8f77f551edfae94bb57ee77f649fe8795a8a9970e44458c1aedc0efd0f1db"
+    },
+    "publisher_handover_bridge_safe_module_v3_20261028.py": {
+      "bytes": 13002,
+      "sha256": "579d597f45af73ba6e216bc3e5c1d1017e59e35b769395190185807b6f989b04"
+    },
+    "publisher_handover_bridge_v4_20261028.py": {
+      "bytes": 14678,
+      "sha256": "3d8c4f65af8e65abbaf3a52bdff706c0f47d8ddba5af9976a8cc5e1f35de7acd"
+    },
+    "publisher_handover_bridge_v5_20261028.py": {
+      "bytes": 14678,
+      "sha256": "f60b83490b7ef6ba6d46b4ba728120a847e38b6a40aca0ff136e2f8409ddb1fb"
+    },
+    "publisher_handover_draft_20261028.py": {
+      "bytes": 30707,
+      "sha256": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc"
+    },
+    "publisher_handover_v4_20261028.py": {
+      "bytes": 34260,
+      "sha256": "fe42741b681e51e5b662d380f3d59ad12c8a3ec6c380c27c6e6d253c4cd871f6"
+    },
+    "publisher_handover_v5_20261028.py": {
+      "bytes": 34832,
+      "sha256": "980d288602f35160f9904a164893b40ef147b2ee882e2a91a0f973043824ebb4"
+    },
+    "publisher_incremental_gates_v4_20261028.py": {
+      "bytes": 12583,
+      "sha256": "4f05e880c19096ea78d2a8b392d463348d9b955d39f8a7a8b75ee5dd344d2954"
+    },
+    "test-provenance.json": {
+      "bytes": 1291,
+      "sha256": "68398335f00826c7242864e254650275d42d4e81a2eec90774cf8fa956b1e077"
+    },
+    "test_publisher_handover_bridge_safe_module_v3_20261028.py": {
+      "bytes": 7134,
+      "sha256": "8f18334d28642923aa4af06dd37b2a190a2fdf5de5f058aba47c47f9e945616d"
+    },
+    "test_publisher_handover_draft_20261028.py": {
+      "bytes": 24631,
+      "sha256": "6eba26283726e2c2b2fae81fac0a5d7005a642cdbeae47cb080c76354b49e201"
+    },
+    "test_publisher_handover_v4_20261028.py": {
+      "bytes": 9741,
+      "sha256": "fbcbc417cf5825421824275d1c668b3fa033ffaa19235bde6f7d34d553f1a3a9"
+    },
+    "test_publisher_handover_v5_20261028.py": {
+      "bytes": 6765,
+      "sha256": "a94e3ad37430d16c8b86c651b21fea7fd42a78d3307003070ee8a120ce9079ca"
+    },
+    "test_publisher_incremental_gates_v4_20261028.py": {
+      "bytes": 9300,
+      "sha256": "1e419b65ba2baabd379aad8170888c6891976cfbadf653e7b0c272ae15c4bcb3"
+    },
+    "test_publisher_v5_independent_review.py": {
+      "bytes": 4879,
+      "sha256": "e8827ffa444054664cc84c5de85622b4ed60c27277b38df50ff261ad253bd379"
+    },
+    "test_publisher_v5_independent_review_v2.py": {
+      "bytes": 5036,
+      "sha256": "a3f328323ef942655e156263ee017b56753a8611f444c21f9edf5e9fbf76163c"
+    },
+    "tests-complete-v2.xml": {
+      "bytes": 22323,
+      "sha256": "6788a3f699dbb9b72276128537a6b066888d54f60f9031dee8e9dd3578411fa8"
+    },
+    "tests-complete.xml": {
+      "bytes": 24052,
+      "sha256": "b2c88a7e97157347ba5b411071489d9641b218c77c6c67cfc64088c63784ff5b"
+    },
+    "tests.xml": {
+      "bytes": 1338,
+      "sha256": "bb69c434a5fcec587eeda73d7040d6826a8454e94e12c47b184f8fe0e8376073"
+    },
+    "tools102-source.xml": {
+      "bytes": 15924,
+      "sha256": "7f77e642cc780518b248f12b51d7847fb8733e9b23d1c78988116c885f9c6b00"
+    }
+  },
+  "independent_pure_mock_tests_passed": 109,
+  "kind": "PUBLISHER_V5_INDEPENDENT_REVIEW_IMMUTABLE_ARTIFACT_MANIFEST",
+  "production_apply_accepted": false,
+  "production_mutations": false,
+  "skips": 0
+}

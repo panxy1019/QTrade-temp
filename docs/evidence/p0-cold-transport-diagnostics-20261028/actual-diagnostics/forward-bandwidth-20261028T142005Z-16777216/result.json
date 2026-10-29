@@ -1,0 +1,17 @@
+{
+  "actual_result": {
+    "bytes": 5242880,
+    "elapsed_seconds": 2.199766607955098,
+    "publication_write": false,
+    "sha256": "fdc023c584815e685a001bea3e9d5eca22ed34bfde852d524c8b74676a296230"
+  },
+  "all_threads_joined": true,
+  "bytes": 5242880,
+  "channels": 1,
+  "elapsed_seconds": 2.4934493000619113,
+  "errors": [],
+  "expected_bytes": 5242880,
+  "prefix_sha256": "fdc023c584815e685a001bea3e9d5eca22ed34bfde852d524c8b74676a296230",
+  "returncode": 0,
+  "window_size": 16777216
+}

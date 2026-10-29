@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.182" timestamp="2026-10-29T00:24:37.994108+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="" name="tests.test_execution_day_scope_audit" time="0.000"><error message="collection failure">ImportError while importing test module 'E:\QTrade-git\tests\test_execution_day_scope_audit.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_execution_day_scope_audit.py:9: in &lt;module&gt;
+    from test_forward_transition_audit import books  # noqa:F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_forward_transition_audit.py:13: in &lt;module&gt;
+    from test_collect_unified_data import CALENDAR, NOW, batch, fake_source
+tests\test_collect_unified_data.py:7: in &lt;module&gt;
+    from test_unified_queue import master
+tests\test_unified_queue.py:8: in &lt;module&gt;
+    from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
+E   ModuleNotFoundError: No module named 'qtrade.monitoring.data_freshness'</error></testcase></testsuite></testsuites>

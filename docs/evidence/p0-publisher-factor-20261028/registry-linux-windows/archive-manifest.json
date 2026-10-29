@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "bytes": 378,
+      "file": "manifest.json",
+      "sha256": "16a306326d4c651b406bb57838d4aaf80af39ab295b257f49fd423794baf467c"
+    },
+    {
+      "bytes": 3032,
+      "file": "operator.py",
+      "sha256": "9cedb020c106f16bb5a5529b10ce4966db30a8f98b3ced6f5d0d03da61b49033"
+    },
+    {
+      "bytes": 99,
+      "file": "tests.log",
+      "sha256": "cb31117b912c1db071dd2e2e18949e80b54f3c07863ccc146e3ff056c7986546"
+    },
+    {
+      "bytes": 6604,
+      "file": "tests.xml",
+      "sha256": "fddf23e717197fe39dfe46fc80c30a443e590cf9ed78e28d3b505612d8f457e7"
+    },
+    {
+      "bytes": 0,
+      "file": "verify.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6607,
+      "file": "windows-tests.xml",
+      "sha256": "93a6524af40367d9909a04298b4de3d9325951dae881688dedc7aeaf1f93b153"
+    }
+  ],
+  "scope": "NONPRODUCTION_REGISTRY_WINDOWS_LINUX_45_EACH"
+}

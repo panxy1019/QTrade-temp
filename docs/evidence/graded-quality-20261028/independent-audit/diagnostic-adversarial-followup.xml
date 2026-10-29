@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="13" time="0.636" timestamp="2026-10-28T10:43:47.243611+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_valid_diagnostic_fixture_is_accepted_before_mutation" time="0.001"><failure message="ValueError: QUALITY_PUBLICATION_CASE_INVALID">E:\QTrade-temp\graded-quality-contract-audit-20261028\test_diagnostic_adversarial.py:40: in test_valid_diagnostic_fixture_is_accepted_before_mutation
+    assert validate_quality(publication(), now=NOW)["case_counts"] == {"UNKNOWN": 1}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\qtrade\research\data_quality.py:171: in validate_quality
+    raise ValueError('QUALITY_PUBLICATION_CASE_INVALID')
+E   ValueError: QUALITY_PUBLICATION_CASE_INVALID</failure></testcase><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_resigned_semantically_invalid_diagnostic_is_rejected[future_source]" time="0.001" /><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_resigned_semantically_invalid_diagnostic_is_rejected[source_after_summary]" time="0.000" /><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_resigned_semantically_invalid_diagnostic_is_rejected[future_recent]" time="0.000" /><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_resigned_semantically_invalid_diagnostic_is_rejected[wrong_counts]" time="0.000" /><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_resigned_semantically_invalid_diagnostic_is_rejected[invalid_revision]" time="0.000" /><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_resigned_semantically_invalid_diagnostic_is_rejected[elevated_case_authority]" time="0.000" /><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_retained_other_universe_failure_does_not_break_current_diagnostics" time="0.020"><failure message="ValueError: QUALITY_PUBLICATION_CASE_INVALID">E:\QTrade-temp\graded-quality-contract-audit-20261028\test_diagnostic_adversarial.py:96: in test_retained_other_universe_failure_does_not_break_current_diagnostics
+    result = builder.build(base, database, revision="a"*40)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\build_data_quality_summary.py:152: in build
+    validate_quality(value, now=now)
+src\qtrade\research\data_quality.py:171: in validate_quality
+    raise ValueError('QUALITY_PUBLICATION_CASE_INVALID')
+E   ValueError: QUALITY_PUBLICATION_CASE_INVALID</failure></testcase><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_record_outside_pointer_symbol_scope_is_quarantined" time="0.009"><failure message="ValueError: QUALITY_PUBLICATION_CASE_INVALID">E:\QTrade-temp\graded-quality-contract-audit-20261028\test_diagnostic_adversarial.py:127: in test_record_outside_pointer_symbol_scope_is_quarantined
+    result = builder.build(base, database, revision="a"*40)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\build_data_quality_summary.py:152: in build
+    validate_quality(value, now=now)
+src\qtrade\research\data_quality.py:171: in validate_quality
+    raise ValueError('QUALITY_PUBLICATION_CASE_INVALID')
+E   ValueError: QUALITY_PUBLICATION_CASE_INVALID</failure></testcase><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_nonobject_json_in_optional_channel_does_not_break_market_publisher" time="0.232" /><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_one_nonobject_optional_evidence_source_is_quarantined_not_global_failure[supplemental]" time="0.009"><failure message="AttributeError: 'list' object has no attribute 'items'">E:\QTrade-temp\graded-quality-contract-audit-20261028\test_diagnostic_adversarial.py:148: in test_one_nonobject_optional_evidence_source_is_quarantined_not_global_failure
+    result = builder.build(base, database, revision="a"*40)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\build_data_quality_summary.py:122: in build
+    observations.append(checked_observation(json.loads(path.read_bytes()), now))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\qtrade\research\data_quality.py:20: in checked_observation
+    if signed({k: v for k, v in value.items() if k != 'evidence_sha256'}) != value:
+                                ^^^^^^^^^^^
+E   AttributeError: 'list' object has no attribute 'items'</failure></testcase><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_one_nonobject_optional_evidence_source_is_quarantined_not_global_failure[recent_pointer]" time="0.008"><failure message="AttributeError: 'list' object has no attribute 'items'">E:\QTrade-temp\graded-quality-contract-audit-20261028\test_diagnostic_adversarial.py:148: in test_one_nonobject_optional_evidence_source_is_quarantined_not_global_failure
+    result = builder.build(base, database, revision="a"*40)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\build_data_quality_summary.py:86: in build
+    if (signed({k: v for k, v in current.items() if k != 'evidence_sha256'}) != current
+                                 ^^^^^^^^^^^^^
+E   AttributeError: 'list' object has no attribute 'items'</failure></testcase><testcase classname="graded-quality-contract-audit-20261028.test_diagnostic_adversarial" name="test_one_nonobject_optional_evidence_source_is_quarantined_not_global_failure[issuer_index]" time="0.007"><failure message="AttributeError: 'list' object has no attribute 'items'">E:\QTrade-temp\graded-quality-contract-audit-20261028\test_diagnostic_adversarial.py:148: in test_one_nonobject_optional_evidence_source_is_quarantined_not_global_failure
+    result = builder.build(base, database, revision="a"*40)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\build_data_quality_summary.py:126: in build
+    starts = _issuer_starts(root, now)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\build_data_quality_summary.py:43: in _issuer_starts
+    if signed({k: v for k, v in value.items() if k != 'evidence_sha256'}) != value:
+                                ^^^^^^^^^^^
+E   AttributeError: 'list' object has no attribute 'items'</failure></testcase></testsuite></testsuites>

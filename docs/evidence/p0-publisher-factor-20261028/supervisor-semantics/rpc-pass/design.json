@@ -1,0 +1,21 @@
+{
+  "scope": "INDEPENDENT_OVERLAY_GO_SUPERVISOR_FIXTURES_ONLY",
+  "binary_sha256": "c0e12d2e498d00a2285161372cbb0a46b795b94e9a42511351eba7980f408569",
+  "operator_sha256": "87f39a038f93523ac458de4958afdbbfbf3ff5b0a5d63e70bd3080213f6a7817",
+  "review_contract_sha256": "0c6ceb612c6133954d8ba85573c5579b0ca66dbf1148e06d0e1e0b9ee45f0480",
+  "remote_root": "/root/qtrade-local/operator-evidence/svsem-rpc-20261028T052500Z-39e025",
+  "nfs_access": false,
+  "production_mutations": false,
+  "production_control_invocations": 0,
+  "named_fixture_signal_calls": 1,
+  "signal_method": "supervisor.signalProcess(controlled,TERM)",
+  "pidfd_production_scheme": "BLOCKED_ENOSYS",
+  "name_rpc_has_expected_pid_cas": false,
+  "external_term_drain_seconds": 112,
+  "stopwaitsecs": 110,
+  "independent_unix_socket_per_manager": true,
+  "inet_server_configured": false,
+  "new_child_stabilizes_after_second_generation": true,
+  "cleanup_targets": "ONLY_REGISTERED_NEW_MANAGER_AND_FIXTURE_PID_START_IDENTITIES",
+  "reviewed_before_execution": true
+}

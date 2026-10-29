@@ -1,0 +1,36 @@
+{
+  "base_commit": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+  "captured_at": "2026-10-28T14:05:51.899778+00:00",
+  "cold_staging_budget_seconds": 120,
+  "elapsed_seconds": 20.431841326877475,
+  "failed_manual_plan_sha256": "f33c80814b18cc6e77150535b68b93e6525a1ccdadfaa0bd021707d4cc87416a",
+  "historical_public_graph_allowlist_audited": false,
+  "limitation": "READ_ONLY_SOURCE_DIAGNOSTIC_NO_CACHE_INSTALLATION_OR_DELIVERY_ACCEPTANCE",
+  "main_push_attempted": false,
+  "manual_intent_replayed": false,
+  "network_fixed": false,
+  "normal_export_budget_seconds": 45,
+  "normal_git_budget_seconds": 90,
+  "pack": {
+    "bytes": 62011423,
+    "elapsed_seconds": 8.288017082959414,
+    "sha256": "44e5f3638c5bb91d1ef7c708ad3b079fa8279d8fcd563bb270582ac7d3961944"
+  },
+  "pack_id": "6765f72b990e45137c0f03c664eb454ab8dcfca2",
+  "pack_index_sha256": "63e39f48fccc508b34c4e4e74dde41a7860f5cf5b10e9a0d42c3646ec50881dc",
+  "phase_seconds": {
+    "index-pack --strict": 7.5871925093233585,
+    "init --bare": 0.0023991670459508896,
+    "merge-base --is-ancestor": 0.005300099030137062,
+    "rev-list --objects": 0.07926699332892895,
+    "verify-pack -v": 3.7857085783034563
+  },
+  "production_cache_installed": false,
+  "schema_version": "qtrade.cold-pack-stage-profile.v1",
+  "selected_object_count": 3350,
+  "selected_object_list_sha256": "a89461c5f6fbabeea379608aeec32a648dcf86ce62f8ba2981be8de360438190",
+  "source_config_unchanged": true,
+  "source_objects_or_refs_written": false,
+  "state": "CANDIDATE_VALIDATED_NOT_INSTALLED",
+  "target_commit": "dde33b30a54d46beb0197a80ddbcb35afb5830da"
+}

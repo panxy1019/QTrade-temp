@@ -1,0 +1,1331 @@
+[
+  {
+    "formula": "($close-$open)/$open",
+    "name": "KMID",
+    "ordinal": 0,
+    "raw_fields": [
+      "close",
+      "open"
+    ]
+  },
+  {
+    "formula": "($high-$low)/$open",
+    "name": "KLEN",
+    "ordinal": 1,
+    "raw_fields": [
+      "high",
+      "low",
+      "open"
+    ]
+  },
+  {
+    "formula": "($close-$open)/($high-$low+1e-12)",
+    "name": "KMID2",
+    "ordinal": 2,
+    "raw_fields": [
+      "close",
+      "high",
+      "low",
+      "open"
+    ]
+  },
+  {
+    "formula": "($high-Greater($open, $close))/$open",
+    "name": "KUP",
+    "ordinal": 3,
+    "raw_fields": [
+      "close",
+      "high",
+      "open"
+    ]
+  },
+  {
+    "formula": "($high-Greater($open, $close))/($high-$low+1e-12)",
+    "name": "KUP2",
+    "ordinal": 4,
+    "raw_fields": [
+      "close",
+      "high",
+      "low",
+      "open"
+    ]
+  },
+  {
+    "formula": "(Less($open, $close)-$low)/$open",
+    "name": "KLOW",
+    "ordinal": 5,
+    "raw_fields": [
+      "close",
+      "low",
+      "open"
+    ]
+  },
+  {
+    "formula": "(Less($open, $close)-$low)/($high-$low+1e-12)",
+    "name": "KLOW2",
+    "ordinal": 6,
+    "raw_fields": [
+      "close",
+      "high",
+      "low",
+      "open"
+    ]
+  },
+  {
+    "formula": "(2*$close-$high-$low)/$open",
+    "name": "KSFT",
+    "ordinal": 7,
+    "raw_fields": [
+      "close",
+      "high",
+      "low",
+      "open"
+    ]
+  },
+  {
+    "formula": "(2*$close-$high-$low)/($high-$low+1e-12)",
+    "name": "KSFT2",
+    "ordinal": 8,
+    "raw_fields": [
+      "close",
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "$open/$close",
+    "name": "OPEN0",
+    "ordinal": 9,
+    "raw_fields": [
+      "close",
+      "open"
+    ]
+  },
+  {
+    "formula": "$high/$close",
+    "name": "HIGH0",
+    "ordinal": 10,
+    "raw_fields": [
+      "close",
+      "high"
+    ]
+  },
+  {
+    "formula": "$low/$close",
+    "name": "LOW0",
+    "ordinal": 11,
+    "raw_fields": [
+      "close",
+      "low"
+    ]
+  },
+  {
+    "formula": "$vwap/$close",
+    "name": "VWAP0",
+    "ordinal": 12,
+    "raw_fields": [
+      "close",
+      "vwap"
+    ]
+  },
+  {
+    "formula": "Ref($close, 5)/$close",
+    "name": "ROC5",
+    "ordinal": 13,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Ref($close, 10)/$close",
+    "name": "ROC10",
+    "ordinal": 14,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Ref($close, 20)/$close",
+    "name": "ROC20",
+    "ordinal": 15,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Ref($close, 30)/$close",
+    "name": "ROC30",
+    "ordinal": 16,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Ref($close, 60)/$close",
+    "name": "ROC60",
+    "ordinal": 17,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close, 5)/$close",
+    "name": "MA5",
+    "ordinal": 18,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close, 10)/$close",
+    "name": "MA10",
+    "ordinal": 19,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close, 20)/$close",
+    "name": "MA20",
+    "ordinal": 20,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close, 30)/$close",
+    "name": "MA30",
+    "ordinal": 21,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close, 60)/$close",
+    "name": "MA60",
+    "ordinal": 22,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Std($close, 5)/$close",
+    "name": "STD5",
+    "ordinal": 23,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Std($close, 10)/$close",
+    "name": "STD10",
+    "ordinal": 24,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Std($close, 20)/$close",
+    "name": "STD20",
+    "ordinal": 25,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Std($close, 30)/$close",
+    "name": "STD30",
+    "ordinal": 26,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Std($close, 60)/$close",
+    "name": "STD60",
+    "ordinal": 27,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Slope($close, 5)/$close",
+    "name": "BETA5",
+    "ordinal": 28,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Slope($close, 10)/$close",
+    "name": "BETA10",
+    "ordinal": 29,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Slope($close, 20)/$close",
+    "name": "BETA20",
+    "ordinal": 30,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Slope($close, 30)/$close",
+    "name": "BETA30",
+    "ordinal": 31,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Slope($close, 60)/$close",
+    "name": "BETA60",
+    "ordinal": 32,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rsquare($close, 5)",
+    "name": "RSQR5",
+    "ordinal": 33,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rsquare($close, 10)",
+    "name": "RSQR10",
+    "ordinal": 34,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rsquare($close, 20)",
+    "name": "RSQR20",
+    "ordinal": 35,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rsquare($close, 30)",
+    "name": "RSQR30",
+    "ordinal": 36,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rsquare($close, 60)",
+    "name": "RSQR60",
+    "ordinal": 37,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Resi($close, 5)/$close",
+    "name": "RESI5",
+    "ordinal": 38,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Resi($close, 10)/$close",
+    "name": "RESI10",
+    "ordinal": 39,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Resi($close, 20)/$close",
+    "name": "RESI20",
+    "ordinal": 40,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Resi($close, 30)/$close",
+    "name": "RESI30",
+    "ordinal": 41,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Resi($close, 60)/$close",
+    "name": "RESI60",
+    "ordinal": 42,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Max($high, 5)/$close",
+    "name": "MAX5",
+    "ordinal": 43,
+    "raw_fields": [
+      "close",
+      "high"
+    ]
+  },
+  {
+    "formula": "Max($high, 10)/$close",
+    "name": "MAX10",
+    "ordinal": 44,
+    "raw_fields": [
+      "close",
+      "high"
+    ]
+  },
+  {
+    "formula": "Max($high, 20)/$close",
+    "name": "MAX20",
+    "ordinal": 45,
+    "raw_fields": [
+      "close",
+      "high"
+    ]
+  },
+  {
+    "formula": "Max($high, 30)/$close",
+    "name": "MAX30",
+    "ordinal": 46,
+    "raw_fields": [
+      "close",
+      "high"
+    ]
+  },
+  {
+    "formula": "Max($high, 60)/$close",
+    "name": "MAX60",
+    "ordinal": 47,
+    "raw_fields": [
+      "close",
+      "high"
+    ]
+  },
+  {
+    "formula": "Min($low, 5)/$close",
+    "name": "MIN5",
+    "ordinal": 48,
+    "raw_fields": [
+      "close",
+      "low"
+    ]
+  },
+  {
+    "formula": "Min($low, 10)/$close",
+    "name": "MIN10",
+    "ordinal": 49,
+    "raw_fields": [
+      "close",
+      "low"
+    ]
+  },
+  {
+    "formula": "Min($low, 20)/$close",
+    "name": "MIN20",
+    "ordinal": 50,
+    "raw_fields": [
+      "close",
+      "low"
+    ]
+  },
+  {
+    "formula": "Min($low, 30)/$close",
+    "name": "MIN30",
+    "ordinal": 51,
+    "raw_fields": [
+      "close",
+      "low"
+    ]
+  },
+  {
+    "formula": "Min($low, 60)/$close",
+    "name": "MIN60",
+    "ordinal": 52,
+    "raw_fields": [
+      "close",
+      "low"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 5, 0.8)/$close",
+    "name": "QTLU5",
+    "ordinal": 53,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 10, 0.8)/$close",
+    "name": "QTLU10",
+    "ordinal": 54,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 20, 0.8)/$close",
+    "name": "QTLU20",
+    "ordinal": 55,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 30, 0.8)/$close",
+    "name": "QTLU30",
+    "ordinal": 56,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 60, 0.8)/$close",
+    "name": "QTLU60",
+    "ordinal": 57,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 5, 0.2)/$close",
+    "name": "QTLD5",
+    "ordinal": 58,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 10, 0.2)/$close",
+    "name": "QTLD10",
+    "ordinal": 59,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 20, 0.2)/$close",
+    "name": "QTLD20",
+    "ordinal": 60,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 30, 0.2)/$close",
+    "name": "QTLD30",
+    "ordinal": 61,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Quantile($close, 60, 0.2)/$close",
+    "name": "QTLD60",
+    "ordinal": 62,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rank($close, 5)",
+    "name": "RANK5",
+    "ordinal": 63,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rank($close, 10)",
+    "name": "RANK10",
+    "ordinal": 64,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rank($close, 20)",
+    "name": "RANK20",
+    "ordinal": 65,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rank($close, 30)",
+    "name": "RANK30",
+    "ordinal": 66,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Rank($close, 60)",
+    "name": "RANK60",
+    "ordinal": 67,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "($close-Min($low, 5))/(Max($high, 5)-Min($low, 5)+1e-12)",
+    "name": "RSV5",
+    "ordinal": 68,
+    "raw_fields": [
+      "close",
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "($close-Min($low, 10))/(Max($high, 10)-Min($low, 10)+1e-12)",
+    "name": "RSV10",
+    "ordinal": 69,
+    "raw_fields": [
+      "close",
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "($close-Min($low, 20))/(Max($high, 20)-Min($low, 20)+1e-12)",
+    "name": "RSV20",
+    "ordinal": 70,
+    "raw_fields": [
+      "close",
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "($close-Min($low, 30))/(Max($high, 30)-Min($low, 30)+1e-12)",
+    "name": "RSV30",
+    "ordinal": 71,
+    "raw_fields": [
+      "close",
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "($close-Min($low, 60))/(Max($high, 60)-Min($low, 60)+1e-12)",
+    "name": "RSV60",
+    "ordinal": 72,
+    "raw_fields": [
+      "close",
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "IdxMax($high, 5)/5",
+    "name": "IMAX5",
+    "ordinal": 73,
+    "raw_fields": [
+      "high"
+    ]
+  },
+  {
+    "formula": "IdxMax($high, 10)/10",
+    "name": "IMAX10",
+    "ordinal": 74,
+    "raw_fields": [
+      "high"
+    ]
+  },
+  {
+    "formula": "IdxMax($high, 20)/20",
+    "name": "IMAX20",
+    "ordinal": 75,
+    "raw_fields": [
+      "high"
+    ]
+  },
+  {
+    "formula": "IdxMax($high, 30)/30",
+    "name": "IMAX30",
+    "ordinal": 76,
+    "raw_fields": [
+      "high"
+    ]
+  },
+  {
+    "formula": "IdxMax($high, 60)/60",
+    "name": "IMAX60",
+    "ordinal": 77,
+    "raw_fields": [
+      "high"
+    ]
+  },
+  {
+    "formula": "IdxMin($low, 5)/5",
+    "name": "IMIN5",
+    "ordinal": 78,
+    "raw_fields": [
+      "low"
+    ]
+  },
+  {
+    "formula": "IdxMin($low, 10)/10",
+    "name": "IMIN10",
+    "ordinal": 79,
+    "raw_fields": [
+      "low"
+    ]
+  },
+  {
+    "formula": "IdxMin($low, 20)/20",
+    "name": "IMIN20",
+    "ordinal": 80,
+    "raw_fields": [
+      "low"
+    ]
+  },
+  {
+    "formula": "IdxMin($low, 30)/30",
+    "name": "IMIN30",
+    "ordinal": 81,
+    "raw_fields": [
+      "low"
+    ]
+  },
+  {
+    "formula": "IdxMin($low, 60)/60",
+    "name": "IMIN60",
+    "ordinal": 82,
+    "raw_fields": [
+      "low"
+    ]
+  },
+  {
+    "formula": "(IdxMax($high, 5)-IdxMin($low, 5))/5",
+    "name": "IMXD5",
+    "ordinal": 83,
+    "raw_fields": [
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "(IdxMax($high, 10)-IdxMin($low, 10))/10",
+    "name": "IMXD10",
+    "ordinal": 84,
+    "raw_fields": [
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "(IdxMax($high, 20)-IdxMin($low, 20))/20",
+    "name": "IMXD20",
+    "ordinal": 85,
+    "raw_fields": [
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "(IdxMax($high, 30)-IdxMin($low, 30))/30",
+    "name": "IMXD30",
+    "ordinal": 86,
+    "raw_fields": [
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "(IdxMax($high, 60)-IdxMin($low, 60))/60",
+    "name": "IMXD60",
+    "ordinal": 87,
+    "raw_fields": [
+      "high",
+      "low"
+    ]
+  },
+  {
+    "formula": "Corr($close, Log($volume+1), 5)",
+    "name": "CORR5",
+    "ordinal": 88,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Corr($close, Log($volume+1), 10)",
+    "name": "CORR10",
+    "ordinal": 89,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Corr($close, Log($volume+1), 20)",
+    "name": "CORR20",
+    "ordinal": 90,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Corr($close, Log($volume+1), 30)",
+    "name": "CORR30",
+    "ordinal": 91,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Corr($close, Log($volume+1), 60)",
+    "name": "CORR60",
+    "ordinal": 92,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Corr($close/Ref($close,1), Log($volume/Ref($volume, 1)+1), 5)",
+    "name": "CORD5",
+    "ordinal": 93,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Corr($close/Ref($close,1), Log($volume/Ref($volume, 1)+1), 10)",
+    "name": "CORD10",
+    "ordinal": 94,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Corr($close/Ref($close,1), Log($volume/Ref($volume, 1)+1), 20)",
+    "name": "CORD20",
+    "ordinal": 95,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Corr($close/Ref($close,1), Log($volume/Ref($volume, 1)+1), 30)",
+    "name": "CORD30",
+    "ordinal": 96,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Corr($close/Ref($close,1), Log($volume/Ref($volume, 1)+1), 60)",
+    "name": "CORD60",
+    "ordinal": 97,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 5)",
+    "name": "CNTP5",
+    "ordinal": 98,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 10)",
+    "name": "CNTP10",
+    "ordinal": 99,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 20)",
+    "name": "CNTP20",
+    "ordinal": 100,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 30)",
+    "name": "CNTP30",
+    "ordinal": 101,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 60)",
+    "name": "CNTP60",
+    "ordinal": 102,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close<Ref($close, 1), 5)",
+    "name": "CNTN5",
+    "ordinal": 103,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close<Ref($close, 1), 10)",
+    "name": "CNTN10",
+    "ordinal": 104,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close<Ref($close, 1), 20)",
+    "name": "CNTN20",
+    "ordinal": 105,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close<Ref($close, 1), 30)",
+    "name": "CNTN30",
+    "ordinal": 106,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close<Ref($close, 1), 60)",
+    "name": "CNTN60",
+    "ordinal": 107,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 5)-Mean($close<Ref($close, 1), 5)",
+    "name": "CNTD5",
+    "ordinal": 108,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 10)-Mean($close<Ref($close, 1), 10)",
+    "name": "CNTD10",
+    "ordinal": 109,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 20)-Mean($close<Ref($close, 1), 20)",
+    "name": "CNTD20",
+    "ordinal": 110,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 30)-Mean($close<Ref($close, 1), 30)",
+    "name": "CNTD30",
+    "ordinal": 111,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($close>Ref($close, 1), 60)-Mean($close<Ref($close, 1), 60)",
+    "name": "CNTD60",
+    "ordinal": 112,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($close-Ref($close, 1), 0), 5)/(Sum(Abs($close-Ref($close, 1)), 5)+1e-12)",
+    "name": "SUMP5",
+    "ordinal": 113,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($close-Ref($close, 1), 0), 10)/(Sum(Abs($close-Ref($close, 1)), 10)+1e-12)",
+    "name": "SUMP10",
+    "ordinal": 114,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($close-Ref($close, 1), 0), 20)/(Sum(Abs($close-Ref($close, 1)), 20)+1e-12)",
+    "name": "SUMP20",
+    "ordinal": 115,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($close-Ref($close, 1), 0), 30)/(Sum(Abs($close-Ref($close, 1)), 30)+1e-12)",
+    "name": "SUMP30",
+    "ordinal": 116,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($close-Ref($close, 1), 0), 60)/(Sum(Abs($close-Ref($close, 1)), 60)+1e-12)",
+    "name": "SUMP60",
+    "ordinal": 117,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($close, 1)-$close, 0), 5)/(Sum(Abs($close-Ref($close, 1)), 5)+1e-12)",
+    "name": "SUMN5",
+    "ordinal": 118,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($close, 1)-$close, 0), 10)/(Sum(Abs($close-Ref($close, 1)), 10)+1e-12)",
+    "name": "SUMN10",
+    "ordinal": 119,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($close, 1)-$close, 0), 20)/(Sum(Abs($close-Ref($close, 1)), 20)+1e-12)",
+    "name": "SUMN20",
+    "ordinal": 120,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($close, 1)-$close, 0), 30)/(Sum(Abs($close-Ref($close, 1)), 30)+1e-12)",
+    "name": "SUMN30",
+    "ordinal": 121,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($close, 1)-$close, 0), 60)/(Sum(Abs($close-Ref($close, 1)), 60)+1e-12)",
+    "name": "SUMN60",
+    "ordinal": 122,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($close-Ref($close, 1), 0), 5)-Sum(Greater(Ref($close, 1)-$close, 0), 5))/(Sum(Abs($close-Ref($close, 1)), 5)+1e-12)",
+    "name": "SUMD5",
+    "ordinal": 123,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($close-Ref($close, 1), 0), 10)-Sum(Greater(Ref($close, 1)-$close, 0), 10))/(Sum(Abs($close-Ref($close, 1)), 10)+1e-12)",
+    "name": "SUMD10",
+    "ordinal": 124,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($close-Ref($close, 1), 0), 20)-Sum(Greater(Ref($close, 1)-$close, 0), 20))/(Sum(Abs($close-Ref($close, 1)), 20)+1e-12)",
+    "name": "SUMD20",
+    "ordinal": 125,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($close-Ref($close, 1), 0), 30)-Sum(Greater(Ref($close, 1)-$close, 0), 30))/(Sum(Abs($close-Ref($close, 1)), 30)+1e-12)",
+    "name": "SUMD30",
+    "ordinal": 126,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($close-Ref($close, 1), 0), 60)-Sum(Greater(Ref($close, 1)-$close, 0), 60))/(Sum(Abs($close-Ref($close, 1)), 60)+1e-12)",
+    "name": "SUMD60",
+    "ordinal": 127,
+    "raw_fields": [
+      "close"
+    ]
+  },
+  {
+    "formula": "Mean($volume, 5)/($volume+1e-12)",
+    "name": "VMA5",
+    "ordinal": 128,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Mean($volume, 10)/($volume+1e-12)",
+    "name": "VMA10",
+    "ordinal": 129,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Mean($volume, 20)/($volume+1e-12)",
+    "name": "VMA20",
+    "ordinal": 130,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Mean($volume, 30)/($volume+1e-12)",
+    "name": "VMA30",
+    "ordinal": 131,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Mean($volume, 60)/($volume+1e-12)",
+    "name": "VMA60",
+    "ordinal": 132,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std($volume, 5)/($volume+1e-12)",
+    "name": "VSTD5",
+    "ordinal": 133,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std($volume, 10)/($volume+1e-12)",
+    "name": "VSTD10",
+    "ordinal": 134,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std($volume, 20)/($volume+1e-12)",
+    "name": "VSTD20",
+    "ordinal": 135,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std($volume, 30)/($volume+1e-12)",
+    "name": "VSTD30",
+    "ordinal": 136,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std($volume, 60)/($volume+1e-12)",
+    "name": "VSTD60",
+    "ordinal": 137,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std(Abs($close/Ref($close, 1)-1)*$volume, 5)/(Mean(Abs($close/Ref($close, 1)-1)*$volume, 5)+1e-12)",
+    "name": "WVMA5",
+    "ordinal": 138,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std(Abs($close/Ref($close, 1)-1)*$volume, 10)/(Mean(Abs($close/Ref($close, 1)-1)*$volume, 10)+1e-12)",
+    "name": "WVMA10",
+    "ordinal": 139,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std(Abs($close/Ref($close, 1)-1)*$volume, 20)/(Mean(Abs($close/Ref($close, 1)-1)*$volume, 20)+1e-12)",
+    "name": "WVMA20",
+    "ordinal": 140,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std(Abs($close/Ref($close, 1)-1)*$volume, 30)/(Mean(Abs($close/Ref($close, 1)-1)*$volume, 30)+1e-12)",
+    "name": "WVMA30",
+    "ordinal": 141,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Std(Abs($close/Ref($close, 1)-1)*$volume, 60)/(Mean(Abs($close/Ref($close, 1)-1)*$volume, 60)+1e-12)",
+    "name": "WVMA60",
+    "ordinal": 142,
+    "raw_fields": [
+      "close",
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($volume-Ref($volume, 1), 0), 5)/(Sum(Abs($volume-Ref($volume, 1)), 5)+1e-12)",
+    "name": "VSUMP5",
+    "ordinal": 143,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($volume-Ref($volume, 1), 0), 10)/(Sum(Abs($volume-Ref($volume, 1)), 10)+1e-12)",
+    "name": "VSUMP10",
+    "ordinal": 144,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($volume-Ref($volume, 1), 0), 20)/(Sum(Abs($volume-Ref($volume, 1)), 20)+1e-12)",
+    "name": "VSUMP20",
+    "ordinal": 145,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($volume-Ref($volume, 1), 0), 30)/(Sum(Abs($volume-Ref($volume, 1)), 30)+1e-12)",
+    "name": "VSUMP30",
+    "ordinal": 146,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater($volume-Ref($volume, 1), 0), 60)/(Sum(Abs($volume-Ref($volume, 1)), 60)+1e-12)",
+    "name": "VSUMP60",
+    "ordinal": 147,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($volume, 1)-$volume, 0), 5)/(Sum(Abs($volume-Ref($volume, 1)), 5)+1e-12)",
+    "name": "VSUMN5",
+    "ordinal": 148,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($volume, 1)-$volume, 0), 10)/(Sum(Abs($volume-Ref($volume, 1)), 10)+1e-12)",
+    "name": "VSUMN10",
+    "ordinal": 149,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($volume, 1)-$volume, 0), 20)/(Sum(Abs($volume-Ref($volume, 1)), 20)+1e-12)",
+    "name": "VSUMN20",
+    "ordinal": 150,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($volume, 1)-$volume, 0), 30)/(Sum(Abs($volume-Ref($volume, 1)), 30)+1e-12)",
+    "name": "VSUMN30",
+    "ordinal": 151,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "Sum(Greater(Ref($volume, 1)-$volume, 0), 60)/(Sum(Abs($volume-Ref($volume, 1)), 60)+1e-12)",
+    "name": "VSUMN60",
+    "ordinal": 152,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($volume-Ref($volume, 1), 0), 5)-Sum(Greater(Ref($volume, 1)-$volume, 0), 5))/(Sum(Abs($volume-Ref($volume, 1)), 5)+1e-12)",
+    "name": "VSUMD5",
+    "ordinal": 153,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($volume-Ref($volume, 1), 0), 10)-Sum(Greater(Ref($volume, 1)-$volume, 0), 10))/(Sum(Abs($volume-Ref($volume, 1)), 10)+1e-12)",
+    "name": "VSUMD10",
+    "ordinal": 154,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($volume-Ref($volume, 1), 0), 20)-Sum(Greater(Ref($volume, 1)-$volume, 0), 20))/(Sum(Abs($volume-Ref($volume, 1)), 20)+1e-12)",
+    "name": "VSUMD20",
+    "ordinal": 155,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($volume-Ref($volume, 1), 0), 30)-Sum(Greater(Ref($volume, 1)-$volume, 0), 30))/(Sum(Abs($volume-Ref($volume, 1)), 30)+1e-12)",
+    "name": "VSUMD30",
+    "ordinal": 156,
+    "raw_fields": [
+      "volume"
+    ]
+  },
+  {
+    "formula": "(Sum(Greater($volume-Ref($volume, 1), 0), 60)-Sum(Greater(Ref($volume, 1)-$volume, 0), 60))/(Sum(Abs($volume-Ref($volume, 1)), 60)+1e-12)",
+    "name": "VSUMD60",
+    "ordinal": 157,
+    "raw_fields": [
+      "volume"
+    ]
+  }
+]

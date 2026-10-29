@@ -1,0 +1,157 @@
+{
+  "business_database_or_dataset_written": false,
+  "checked_at": "2026-10-27T21:44:39.529276+00:00",
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "current_exchange_state_certified": false,
+  "evidence_sha256": "69dbe06eff4fef76a899cc94e18cb0f6273b652ebef35c2a7cb406bca1898630",
+  "external_order_transmission": false,
+  "historical_pit_certified": false,
+  "kind": "RECENT_PUBLIC_STATUS_WINDOW_PROBE",
+  "legacy_dataset_end": "2026-10-23",
+  "legacy_dataset_sha256": "a56d093e439345619d2a0419be4e6191886164d8bc849ee05ef25452c26a0759",
+  "legacy_files_unchanged": true,
+  "legacy_status_checkpoints": {
+    "002827": {
+      "file_sha256": "c8a12bb82f24959b9ae3043bdbc8cf5337a3bc74ff818c640070ffc09ca99e8b",
+      "last_date": "2026-10-23",
+      "observed_at": "2026-10-26T08:01:37.596277+00:00",
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/pit-repair/status/002827.json"
+    },
+    "600621": {
+      "file_sha256": "ff119299dd4e934d7a740ea45ca0caed90de5c71af086e6d9ed54f51bf8b7c11",
+      "last_date": "2026-10-23",
+      "observed_at": "2026-10-26T15:47:36.377509+00:00",
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/pit-repair/status/600621.json"
+    },
+    "605258": {
+      "file_sha256": "50edcdd1a14fc165d573f14319d40569da3154221f2cd4b18a8a903b2810bc50",
+      "last_date": "2026-10-23",
+      "observed_at": "2026-10-26T16:12:29.768126+00:00",
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/pit-repair/status/605258.json"
+    }
+  },
+  "live_trading_enabled": false,
+  "new_admission_or_paper_authority": false,
+  "observations": [
+    {
+      "dates": [
+        "2026-10-26",
+        "2026-10-27"
+      ],
+      "observation_sha256": "b0172f003b4c89d2347e9281073ab3f31ccd194e7bd0ffcbe0a725737a6e6585",
+      "quality": {
+        "calendar_coverage_certified": false,
+        "exact_price_limits_certified": false,
+        "first_date": "2026-10-26",
+        "historical_available_at": null,
+        "historical_pit_certified": false,
+        "last_date": "2026-10-27",
+        "missing_price_rows": 2,
+        "rows": 2,
+        "schema_version": "qtrade.pit-status-quality.v1",
+        "source_st_rows": 0,
+        "source_suspended_rows": 2,
+        "unknown_st_state_rows": 0,
+        "unknown_trade_state_rows": 0
+      },
+      "rows": 2,
+      "symbol": "002827",
+      "vendor_trade_flags": [
+        {
+          "date": "2026-10-26",
+          "isST": "0",
+          "tradestatus": "0"
+        },
+        {
+          "date": "2026-10-27",
+          "isST": "0",
+          "tradestatus": "0"
+        }
+      ]
+    },
+    {
+      "dates": [
+        "2026-10-26",
+        "2026-10-27"
+      ],
+      "observation_sha256": "5a3966fa224bf6dbc37784de459902fd0e1765dcb051c5108471011b30fe3cc8",
+      "quality": {
+        "calendar_coverage_certified": false,
+        "exact_price_limits_certified": false,
+        "first_date": "2026-10-26",
+        "historical_available_at": null,
+        "historical_pit_certified": false,
+        "last_date": "2026-10-27",
+        "missing_price_rows": 2,
+        "rows": 2,
+        "schema_version": "qtrade.pit-status-quality.v1",
+        "source_st_rows": 0,
+        "source_suspended_rows": 2,
+        "unknown_st_state_rows": 0,
+        "unknown_trade_state_rows": 0
+      },
+      "rows": 2,
+      "symbol": "600621",
+      "vendor_trade_flags": [
+        {
+          "date": "2026-10-26",
+          "isST": "0",
+          "tradestatus": "0"
+        },
+        {
+          "date": "2026-10-27",
+          "isST": "0",
+          "tradestatus": "0"
+        }
+      ]
+    },
+    {
+      "dates": [
+        "2026-10-26",
+        "2026-10-27"
+      ],
+      "observation_sha256": "7041bc7ff817d32b9a45f87f9218779622514c943b76686724ad48b3562f3e6e",
+      "quality": {
+        "calendar_coverage_certified": false,
+        "exact_price_limits_certified": false,
+        "first_date": "2026-10-26",
+        "historical_available_at": null,
+        "historical_pit_certified": false,
+        "last_date": "2026-10-27",
+        "missing_price_rows": 2,
+        "rows": 2,
+        "schema_version": "qtrade.pit-status-quality.v1",
+        "source_st_rows": 0,
+        "source_suspended_rows": 2,
+        "unknown_st_state_rows": 0,
+        "unknown_trade_state_rows": 0
+      },
+      "rows": 2,
+      "symbol": "605258",
+      "vendor_trade_flags": [
+        {
+          "date": "2026-10-26",
+          "isST": "0",
+          "tradestatus": "0"
+        },
+        {
+          "date": "2026-10-27",
+          "isST": "0",
+          "tradestatus": "0"
+        }
+      ]
+    }
+  ],
+  "operator_sha256": "26418daa41c2d9403cb5e4ff2c6d2bbf453b253d13623456acba20470049bc54",
+  "point_in_time": false,
+  "promotion": "NOT_ELIGIBLE",
+  "raw_transport_bytes_captured": false,
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "requested_end": "2026-10-27",
+  "requested_symbols": 3,
+  "started_at": "2026-10-27T21:44:38.197543+00:00",
+  "state": "BOUNDED_READ_COMPLETE_NOT_ADMITTED",
+  "vendor_sdk_version": "0.9.3",
+  "whole_step1_accepted": false
+}

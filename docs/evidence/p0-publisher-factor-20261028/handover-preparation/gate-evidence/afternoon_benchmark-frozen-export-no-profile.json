@@ -1,0 +1,83 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-28T06:04:03.348032+00:00",
+  "source_revision": "aaca9d7bc550cffcf75e6939f7bc251574ecbbda",
+  "controlled_snapshot_clock": "2026-10-28T05:58:40.189606+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "profiling_enabled": false,
+  "filesystem": {
+    "source_overlay": {
+      "path": "/root/qtrade-local/operator-evidence/market-afternoon-git-nfs-20261028T060141Z",
+      "resolved": "/root/qtrade-local/operator-evidence/market-afternoon-git-nfs-20261028T060141Z",
+      "st_dev": 61,
+      "fs_type": "overlayfs",
+      "available_bytes": 27387785216
+    },
+    "isolated_output": {
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-afternoon-git-nfs-20261028T060141Z",
+      "resolved": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/operator-checks/market-afternoon-git-nfs-20261028T060141Z",
+      "st_dev": 66,
+      "fs_type": "nfs",
+      "available_bytes": 289360838656
+    },
+    "production_output": {
+      "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/market-public",
+      "resolved": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/unified-data/market-public",
+      "st_dev": 66,
+      "fs_type": "nfs",
+      "available_bytes": 289360838656
+    }
+  },
+  "freeze_evidence_sha256": "7439a61ee403f81479c68deb97c62c84ef75e4f962c464b149b4774150620f2e",
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_AND_PARALLEL_WRITE_TIMES_SUM_NOT_WALL",
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "decoded_cache_empty_at_start": true,
+      "destination_objects_at_start": 0,
+      "pass_name": "cold",
+      "wall_seconds": 45.247439,
+      "profile": {},
+      "peak_rss_kib": 910020
+    },
+    {
+      "state": "SUCCEEDED",
+      "statistics": {
+        "source_bytes_read": 206638600,
+        "cached_batches": 1773,
+        "replayed_batches": 3087,
+        "selected_chunks": 120685,
+        "selected_batches": 4860,
+        "cached_rows": 70536,
+        "cache_estimated_bytes": 127999793,
+        "export_seconds": 39.209,
+        "total_bytes": 149263840,
+        "total_files": 5986,
+        "index_id": "ae13e9544f333a89f8f380c26fd884e9b156bfebf9efbc21355691ad54aaaa50",
+        "quarantined_entries": 0
+      },
+      "previous_success_used_as_oracle": false,
+      "independent_full_current_audit": "PENDING",
+      "decoded_cache_empty_at_start": false,
+      "destination_objects_at_start": 5651,
+      "pass_name": "warm",
+      "wall_seconds": 39.568944,
+      "profile": {},
+      "peak_rss_kib": 1135236
+    }
+  ],
+  "evidence_sha256": "2bfbd7cc55269d57948eddef808ebc532b2434a3317f875fd7696d028f0f56dd"
+}

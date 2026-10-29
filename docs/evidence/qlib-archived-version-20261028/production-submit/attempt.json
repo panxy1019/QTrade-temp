@@ -1,0 +1,143 @@
+{
+  "browser_verified": false,
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "credentials_saved": false,
+  "evidence_sha256": "f8e335c3e51a225580d60bd6b4a548e73ba3f38b3f7779856727f28419ec1bd0",
+  "external_order_transmission": false,
+  "finished_at": "2026-10-27T17:37:20.419156+00:00",
+  "historical_version": "d33a74663373b1d4a0d7cf1ecf1622b34657a6fda08aacc7bacadb70d47ec4fa",
+  "job_id": "578bb6107577406185782a08e1c499d7",
+  "kind": "ACTUAL_AUTHENTICATED_ARCHIVED_VERSION_RESEARCH",
+  "live_trading_enabled": false,
+  "model_activation_authorized_by_this_job": false,
+  "model_family": "linear",
+  "observations": [
+    {
+      "body_bytes": 357949,
+      "body_file": "catalog-before.json",
+      "body_sha256": "c5f3f6ac1ea9f6367b0699bb6ba0635cb0f1fb2a115ec800714647444b2fc0d5",
+      "endpoint": "/api/research/catalog",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:36:31 GMT",
+        "X-Vercel-Id": "sfo1::iad1::pcfqq-1793122635376-4b8d7ed79459"
+      },
+      "method": "GET",
+      "name": "catalog-before",
+      "private_response_body_saved": false,
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:37:14.281995+00:00",
+      "requested_at": "2026-10-27T17:37:13.337344+00:00",
+      "status": 200
+    },
+    {
+      "body_bytes": 70,
+      "body_sha256": "7e00aab790fdc87f6038bf11191912d0f0b7ce3d47a82906c1f7f7d9e6bcf8d6",
+      "endpoint": "/api/research/login",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:36:31 GMT",
+        "X-Vercel-Id": "sfo1::iad1::lv9ls-1793122636316-93d249044bb0"
+      },
+      "method": "POST",
+      "name": "login",
+      "private_response_body_saved": false,
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:37:14.937553+00:00",
+      "requested_at": "2026-10-27T17:37:14.285092+00:00",
+      "status": 200
+    },
+    {
+      "body_bytes": 10431,
+      "body_file": "specification.json",
+      "body_sha256": "10b3c5a244ce1759447311c19d26c64295c365b548ca9837ca1d8b1b776622d4",
+      "endpoint": "/api/research/specification",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:36:31 GMT",
+        "X-Vercel-Id": "sfo1::iad1::mnnn7-1793122636971-1a1d61ca18f5"
+      },
+      "method": "POST",
+      "name": "specification",
+      "private_response_body_saved": false,
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:37:15.529759+00:00",
+      "requested_at": "2026-10-27T17:37:14.937623+00:00",
+      "status": 200
+    },
+    {
+      "body_bytes": 463,
+      "body_file": "submit.json",
+      "body_sha256": "a2b434cbc689b985b5b5160bed9ede7e107adf2d93004087bca76eb66175f354",
+      "endpoint": "/api/research/jobs",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:36:31 GMT",
+        "X-Vercel-Id": "sfo1::iad1::hrljt-1793122637584-665d2a360fc3"
+      },
+      "method": "POST",
+      "name": "submit",
+      "private_response_body_saved": false,
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:37:18.376764+00:00",
+      "requested_at": "2026-10-27T17:37:15.531100+00:00",
+      "status": 202
+    },
+    {
+      "body_bytes": 463,
+      "body_file": "idempotent-replay.json",
+      "body_sha256": "a2b434cbc689b985b5b5160bed9ede7e107adf2d93004087bca76eb66175f354",
+      "endpoint": "/api/research/jobs",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:36:31 GMT",
+        "X-Vercel-Id": "sfo1::iad1::q792l-1793122640430-e71d491c7f39"
+      },
+      "method": "POST",
+      "name": "idempotent-replay",
+      "private_response_body_saved": false,
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:37:19.449308+00:00",
+      "requested_at": "2026-10-27T17:37:18.377505+00:00",
+      "status": 202
+    },
+    {
+      "body_bytes": 357949,
+      "body_file": "catalog-after.json",
+      "body_sha256": "c25e116bdd687a50e4dfc7a5a7b2ccea8e3caf96eb0fb555faeb065ab8568751",
+      "endpoint": "/api/research/catalog",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Date": "Tue, 27 Oct 2026 17:37:20 GMT",
+        "X-Vercel-Id": "sfo1::iad1::j8478-1793122641482-75284fcba1b4"
+      },
+      "method": "GET",
+      "name": "catalog-after",
+      "private_response_body_saved": false,
+      "proxy_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+      "received_at": "2026-10-27T17:37:20.416343+00:00",
+      "requested_at": "2026-10-27T17:37:19.450391+00:00",
+      "status": 200
+    }
+  ],
+  "observed_current_version": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+  "paper_admission_authorized": false,
+  "point_in_time": false,
+  "promotion": "NOT_ELIGIBLE",
+  "prospective_validation_claimed": false,
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "retrospective_replay_only": true,
+  "session_tokens_saved": false,
+  "source_revision": "096387b8088e4361c9e5cd9cd2c165e21819fead",
+  "started_at": "2026-10-27T17:37:13.337200+00:00",
+  "state": "ARCHIVED_VERSION_ACCEPTED_THROUGH_PRODUCTION_API",
+  "strategy_version": "2e849335616ce055b72eb61c480ca378121f50d3a69d28ff2ba187ca371ddafb",
+  "whole_step1_accepted": false
+}

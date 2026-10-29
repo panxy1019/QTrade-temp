@@ -1,0 +1,93 @@
+{
+  "after_sha256": {
+    "publisher_handover_bridge_safe_module_v3_20261028.py": "579d597f45af73ba6e216bc3e5c1d1017e59e35b769395190185807b6f989b04",
+    "publisher_handover_bridge_v4_20261028.py": "3d8c4f65af8e65abbaf3a52bdff706c0f47d8ddba5af9976a8cc5e1f35de7acd",
+    "publisher_handover_bridge_v5_20261028.py": "f60b83490b7ef6ba6d46b4ba728120a847e38b6a40aca0ff136e2f8409ddb1fb",
+    "publisher_handover_draft_20261028.py": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc",
+    "publisher_handover_v4_20261028.py": "fe42741b681e51e5b662d380f3d59ad12c8a3ec6c380c27c6e6d253c4cd871f6",
+    "publisher_handover_v5_20261028.py": "980d288602f35160f9904a164893b40ef147b2ee882e2a91a0f973043824ebb4",
+    "publisher_incremental_gates_v4_20261028.py": "4f05e880c19096ea78d2a8b392d463348d9b955d39f8a7a8b75ee5dd344d2954",
+    "run_handover_v5_linux_isolated_20261028.py": "452f11951b9472b546dab70f89dcbc0c9dfbaa7b37e5c025ac2eecde00f0fe5e",
+    "test_publisher_handover_bridge_safe_module_v3_20261028.py": "8f18334d28642923aa4af06dd37b2a190a2fdf5de5f058aba47c47f9e945616d",
+    "test_publisher_handover_draft_20261028.py": "6eba26283726e2c2b2fae81fac0a5d7005a642cdbeae47cb080c76354b49e201",
+    "test_publisher_handover_v4_20261028.py": "fbcbc417cf5825421824275d1c668b3fa033ffaa19235bde6f7d34d553f1a3a9",
+    "test_publisher_handover_v5_20261028.py": "a94e3ad37430d16c8b86c651b21fea7fd42a78d3307003070ee8a120ce9079ca",
+    "test_publisher_incremental_gates_v4_20261028.py": "1e419b65ba2baabd379aad8170888c6891976cfbadf653e7b0c272ae15c4bcb3"
+  },
+  "before_sha256": {
+    "publisher_handover_bridge_safe_module_v3_20261028.py": "579d597f45af73ba6e216bc3e5c1d1017e59e35b769395190185807b6f989b04",
+    "publisher_handover_bridge_v4_20261028.py": "3d8c4f65af8e65abbaf3a52bdff706c0f47d8ddba5af9976a8cc5e1f35de7acd",
+    "publisher_handover_bridge_v5_20261028.py": "f60b83490b7ef6ba6d46b4ba728120a847e38b6a40aca0ff136e2f8409ddb1fb",
+    "publisher_handover_draft_20261028.py": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc",
+    "publisher_handover_v4_20261028.py": "fe42741b681e51e5b662d380f3d59ad12c8a3ec6c380c27c6e6d253c4cd871f6",
+    "publisher_handover_v5_20261028.py": "980d288602f35160f9904a164893b40ef147b2ee882e2a91a0f973043824ebb4",
+    "publisher_incremental_gates_v4_20261028.py": "4f05e880c19096ea78d2a8b392d463348d9b955d39f8a7a8b75ee5dd344d2954",
+    "run_handover_v5_linux_isolated_20261028.py": "452f11951b9472b546dab70f89dcbc0c9dfbaa7b37e5c025ac2eecde00f0fe5e",
+    "test_publisher_handover_bridge_safe_module_v3_20261028.py": "8f18334d28642923aa4af06dd37b2a190a2fdf5de5f058aba47c47f9e945616d",
+    "test_publisher_handover_draft_20261028.py": "6eba26283726e2c2b2fae81fac0a5d7005a642cdbeae47cb080c76354b49e201",
+    "test_publisher_handover_v4_20261028.py": "fbcbc417cf5825421824275d1c668b3fa033ffaa19235bde6f7d34d553f1a3a9",
+    "test_publisher_handover_v5_20261028.py": "a94e3ad37430d16c8b86c651b21fea7fd42a78d3307003070ee8a120ce9079ca",
+    "test_publisher_incremental_gates_v4_20261028.py": "1e419b65ba2baabd379aad8170888c6891976cfbadf653e7b0c272ae15c4bcb3"
+  },
+  "cache_created": [],
+  "command": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-c",
+    "/dev/null",
+    "-p",
+    "no:cacheprovider",
+    "--noconftest",
+    "--import-mode=importlib",
+    "/root/qtrade-local/operator-evidence/handover-v5-linux-20261028T105821Z-fee5bfc2/test_publisher_handover_v4_20261028.py",
+    "/root/qtrade-local/operator-evidence/handover-v5-linux-20261028T105821Z-fee5bfc2/test_publisher_handover_v5_20261028.py",
+    "/root/qtrade-local/operator-evidence/handover-v5-linux-20261028T105821Z-fee5bfc2/test_publisher_incremental_gates_v4_20261028.py",
+    "--junitxml=/root/qtrade-local/operator-evidence/handover-v5-linux-20261028T105821Z-fee5bfc2/pytest.xml"
+  ],
+  "completed_at": "2026-10-28T10:58:24.250840+00:00",
+  "counts": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 102
+  },
+  "elapsed_seconds": 0.6081001833081245,
+  "initial_free_bytes": {
+    "data": 285396172800,
+    "local": 22619246592
+  },
+  "live_trading_enabled": false,
+  "outputs": {
+    "pytest.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pytest.stdout.txt": {
+      "bytes": 180,
+      "sha256": "f167ce284d3db8346fcb5b5350a8c435614fa4bc8f0a70c83985c722ff66a032"
+    },
+    "pytest.xml": {
+      "bytes": 12045,
+      "sha256": "19c50800161acb29dbb2a311469f40c5dcaa72c163ae696c7d1b2b4b082ef648"
+    }
+  },
+  "package_sha256": "78bc4a0e5f5fa8d28ba94a8b479ddb131fa2ed8fcecf4323803a6b6d6ceafe53",
+  "private_wrapper_read": false,
+  "production_service_control": false,
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jun 18 2026, 21:28:09) [GCC 14.3.0]",
+  "python_executable": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+  "real_rpc_connected": false,
+  "remote_root": "/root/qtrade-local/operator-evidence/handover-v5-linux-20261028T105821Z-fee5bfc2",
+  "retained_reserve_bytes": {
+    "data": 107374182400,
+    "local": 2147483648
+  },
+  "schema_version": "qtrade.handover-v5-isolated-linux-result.v1",
+  "scope": "SYNTHETIC_ONLY_NO_REAL_RPC_PRIVATE_WRAPPER_OR_PRODUCTION_CONTROL",
+  "source_unchanged": true,
+  "started_at": "2026-10-28T10:58:23.639889+00:00",
+  "state": "PASS"
+}

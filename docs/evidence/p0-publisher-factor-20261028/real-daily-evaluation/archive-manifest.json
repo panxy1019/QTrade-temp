@@ -1,0 +1,78 @@
+{
+  "scope": "NONPRODUCTION_RETROSPECTIVE_DIAGNOSTIC_NOT_ALPHA_OR_STEP1_ACCEPTANCE",
+  "empty_download_placeholders_not_receipts": true,
+  "files": [
+    {
+      "file": "failed-module-shadow/operator.py",
+      "bytes": 5094,
+      "sha256": "8a5198dc1d777a73feb1274aed8d47679112876dee07ed9a85aff8efdeb50c69"
+    },
+    {
+      "file": "failed-module-shadow/source-manifest.json",
+      "bytes": 28448,
+      "sha256": "98562403ad222558acae3ff587be88c45303c110cab30ade83f247351dfaa286"
+    },
+    {
+      "file": "failed-module-shadow/stderr.log",
+      "bytes": 1334,
+      "sha256": "04ba132b0b17921c359bb7535844ed9073dacdcbd778d4e868e0d205238e2491"
+    },
+    {
+      "file": "failed-source-preflight/run_factor_observation.py",
+      "bytes": 5094,
+      "sha256": "878f22f61e06b24c6a45b2ec3b4d5838a2a72c2e90c257c0d0d8743b8c09cabe"
+    },
+    {
+      "file": "failed-source-preflight/source-manifest.json",
+      "bytes": 28448,
+      "sha256": "98562403ad222558acae3ff587be88c45303c110cab30ade83f247351dfaa286"
+    },
+    {
+      "file": "failed-source-preflight/stderr.log",
+      "bytes": 946,
+      "sha256": "417c0022a9e721379c2eb3fb9264d73575f6af4d03e401dab763c140c40be6d3"
+    },
+    {
+      "file": "actual-891-stock/after.json",
+      "bytes": 19212,
+      "sha256": "e5eac2de644989afe43b665f53dc44f01e6b1a840849e51ea234560f856c3e2f"
+    },
+    {
+      "file": "actual-891-stock/before.json",
+      "bytes": 19212,
+      "sha256": "e5eac2de644989afe43b665f53dc44f01e6b1a840849e51ea234560f856c3e2f"
+    },
+    {
+      "file": "actual-891-stock/receipt.json",
+      "bytes": 12053,
+      "sha256": "dcc01f35c5f551aba690ea25b8db643bdc950bb468bdc444cfcc0a590cf5cf2f"
+    },
+    {
+      "file": "actual-891-stock/report.json.gz",
+      "bytes": 1995167,
+      "sha256": "47bed3add84aff16f901531115c17ac4534cfd667b6716595a1ce098b9af37dd",
+      "original_bytes": 61775392,
+      "original_sha256": "b84e0a99dad149e43ceac9d788302a8ad6d28222a400f962e317d7548e4a90c6"
+    },
+    {
+      "file": "actual-891-stock/request.json",
+      "bytes": 16047,
+      "sha256": "e51c7acce2fdc5e04f7a677180631c6ce05a22319c4e2361695033c75615968c"
+    },
+    {
+      "file": "actual-891-stock/run_factor_observation.py",
+      "bytes": 5087,
+      "sha256": "7e619b6a57bb9641547e4a1bb2b1286b66d7a658a06b9bec6f290d043254cc69"
+    },
+    {
+      "file": "actual-891-stock/source-manifest.json",
+      "bytes": 28448,
+      "sha256": "98562403ad222558acae3ff587be88c45303c110cab30ade83f247351dfaa286"
+    },
+    {
+      "file": "actual-891-stock/stdout.log",
+      "bytes": 605,
+      "sha256": "31e072444c3fda94c4c8385986289f2d29c88d0fe7b99f823ab0eb3b57c4ad9e"
+    }
+  ]
+}

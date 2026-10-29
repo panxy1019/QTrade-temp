@@ -1,0 +1,9 @@
+{
+  "scope": "COMPLETE_REAL_READY_BYTES_AND_CONSISTENT_RO_CATALOG_BACKUP",
+  "version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+  "archive_bytes_unchanged": true,
+  "selected_admission_unchanged": true,
+  "nfs_base": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/step2-factor-api-queue-3bcecd4a",
+  "local_databases": "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/db",
+  "readonly_original_db": "/root/qtrade-local/qlib-versions.sqlite"
+}

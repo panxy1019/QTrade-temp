@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="314" failures="0" errors="0" time="84.2557984">
+    <testsuite name="src/App.test.tsx" timestamp="2026-10-28T02:57:51.697Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="2.0339453">
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; renders Chinese navigation and makes the no-live boundary explicit" time="0.604636">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; redirects an unknown hash route back to the overview" time="0.11453">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; starts with the navigation collapsed at the phone breakpoint" time="0.1372919">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; defaults market to the unified pool and loads old scopes only after explicit selection" time="0.6863927">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; opens historical candidates without requesting or displaying retired strategy templates" time="0.4904555">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/client.test.ts" timestamp="2026-10-28T02:57:51.702Z" hostname="DESKTOP-F1JPIV2" tests="9" failures="0" errors="0" skipped="0" time="0.2017538">
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; removes cancelled queued unified requests without consuming a GET slot" time="0.0566776">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; aborts an active unified GET and permits the next bounded request" time="0.0613732">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; refuses unbounded or inverted unified queries before fetching" time="0.0008207">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; limits concurrent GETs and uses the minute evidence bundle" time="0.0780365">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; times out stalled GETs and releases the queued request" time="0.0018369">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; surfaces an unavailable section inside a successful minute bundle" time="0.000549">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; retries only a network failure for the stateless intraday factor request" time="0.0005031">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; posts the selected bounded rules to the stateless correlation endpoint" time="0.0009742">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; posts the fixed intraday discovery window without mutation authority" time="0.0003515">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/hooks/usePlatformSnapshot.test.tsx" timestamp="2026-10-28T02:57:51.708Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.0119305">
+        <testcase classname="src/hooks/usePlatformSnapshot.test.tsx" name="platform snapshot cold-start recovery &gt; retries one partial initial snapshot after five seconds" time="0.0102451">
+        </testcase>
+        <testcase classname="src/hooks/usePlatformSnapshot.test.tsx" name="platform snapshot cold-start recovery &gt; does not retry a complete initial snapshot" time="0.0011249">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/DataPages.test.tsx" timestamp="2026-10-28T02:57:51.710Z" hostname="DESKTOP-F1JPIV2" tests="38" failures="0" errors="0" skipped="0" time="32.6052611">
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; shows persisted audit alerts without claiming hash-chain integrity" time="0.3688588">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; filters durable audit events without changing the source snapshot" time="0.1183915">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; distinguishes unavailable audit history from zero alerts" time="0.0893957">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; does not report zero alerts before the first platform snapshot" time="0.0860636">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; shows per-symbol causal minute corrections" time="0.0953758">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; shows persistent PAPER account facts without inventing equity" time="0.0727563">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; keeps runtime controls off the public read-only node" time="0.0581385">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; sends a local runtime action only with an in-memory control token" time="0.2035426">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; shows dated sellability and keeps market valuation unavailable" time="0.0599941">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; shows traceable PAPER orders and simulated fills" time="0.0855064">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; cancels an eligible local PAPER order with a page-stable idempotency key" time="0.3600545">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; labels recomputable cost-basis exposure and unavailable drawdown" time="0.0170933">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; formats directional checkpoint changes without hiding their sign" time="0.0002301">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows verified history without claiming realtime readiness" time="0.1538938">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows checksum-bound multi-asset minute history without calling it realtime" time="0.1826515">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; does not present a pending verified minute request as missing evidence" time="0.1560343">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows finalized same-day minute observations without claiming realtime" time="0.3705089">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows checksum-bound native five-minute history without presenting a resample" time="0.1788419">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows a checksum-bound long five-minute day without presenting it as realtime or PIT" time="0.1811745">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; filters verified historical rows without inventing snapshots" time="0.0820033">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; removes the chart immediately when verified evidence disappears" time="0.0988825">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; keeps provider connectivity separate from execution gateway health" time="0.1689245">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified backtest analytics &gt; runs a selectable stock five-minute backtest against the verified long dataset" time="1.755593">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified backtest analytics &gt; keeps frozen results but ignores retired template deep links" time="1.2133685">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified backtest analytics &gt; shows the verified leader without presenting it as Champion" time="1.4529612">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified backtest analytics &gt; does not present missing walk-forward evidence as three failed folds" time="1.0063858">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the signed 120-day intraday factor veto without claiming promotion" time="2.3869686">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; runs the full intraday factor gate without promoting a losing rule" time="15.8782786">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; does not present experiment records as a registered lineage" time="0.6495559">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; labels reused observations as diagnostics rather than independent evidence" time="0.6168762">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the bounded factor search and its negative locked result" time="0.7940586">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the verified factor robustness gate without claiming promotion" time="0.7228511">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows multi-sector stock transfer evidence and its survivorship boundary" time="0.8706436">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the development-only minute policy lock without claiming a new test" time="0.685723">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the locked complete-session observer without claiming a blind test" time="0.8292426">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified experiment candidates &gt; retains historical candidates without showing the retired template catalog" time="0.2759327">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified experiment candidates &gt; labels full-chain records as ineligible candidates rather than registered strategies" time="0.1516697">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified experiment candidates &gt; shows immutable model parameters and held-out split without claiming promotion" time="0.1253708">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/ForwardResearchPage.test.tsx" timestamp="2026-10-28T02:57:51.732Z" hostname="DESKTOP-F1JPIV2" tests="11" failures="0" errors="0" skipped="0" time="2.0471213">
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="retains stopped retired books and history without suggesting automatic recovery" time="0.4714921">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="does not hide a running flag on a model already retired by the fresh registry" time="0.1544136">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="keeps model status unknown for stale registry evidence" time="0.1451805">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="keeps model status unknown for unavailable registry evidence" time="0.1501312">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="keeps model status unknown for inconsistent registry evidence" time="0.1520638">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="shows prospective target timestamps and keeps paper recovery explicit without write controls" time="0.2271975">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="positions route opens actual holdings rather than target weights" time="0.1430276">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="orders route shows bounded actual simulated orders and fills with processing clocks" time="0.2754873">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="risk route shows actual constraint blockers and stale service warning" time="0.1464394">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="keeps absent future sessions and all shadow metrics unreported" time="0.1195792">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="unavailable or failed publication never falls back to previous or sample holdings" time="0.0614468">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/OnlineModelsPage.test.tsx" timestamp="2026-10-28T02:57:51.739Z" hostname="DESKTOP-F1JPIV2" tests="7" failures="0" errors="0" skipped="0" time="3.9166043">
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="shows qualified scope separately from candidate scores and prevents anonymous control" time="0.5520697">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="requires review of frozen evidence and preserves the request identity on queue failure" time="0.8442385">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="disables an open approval when its data version changes" time="0.6486098">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="ignores older in-flight catalog responses after a newer refresh" time="0.4036085">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="distinguishes enabled daily inference from having an approved current prediction" time="0.3242472">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="shows a historical data gap even while the version scheduler is alive" time="0.4308658">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="allows recovery to an admitted version when current data is stale but control is fresh" time="0.7123697">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/OverviewPage.test.tsx" timestamp="2026-10-28T02:57:51.743Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="0.8632901">
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; separates actual target coverage, Qlib scope, frozen books and legacy history" time="0.3728677">
+        </testcase>
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; does not treat mismatched prediction identities as current" time="0.1094169">
+        </testcase>
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; keeps retired books visible and separates stopped history from current recovery" time="0.1064656">
+        </testcase>
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; expires prediction and forward freshness even while a cached API says fresh" time="0.1160726">
+        </testcase>
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; clears a failed source independently and cancels page requests on unmount" time="0.1578111">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/QlibWorkflowPages.test.tsx" timestamp="2026-10-28T02:57:51.747Z" hostname="DESKTOP-F1JPIV2" tests="10" failures="0" errors="0" skipped="0" time="4.4842807">
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="freezes the selected immutable strategy before queueing and preserves a failed retry" time="1.0674472">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="keeps edited version selection stable across polling and refuses a drifted preview" time="0.7058299">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; lists only integrated models and exposes the non-PIT boundary" time="0.2346554">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; keeps anonymous submission disabled" time="0.1971321">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; submits the fixed complete spec with a retry identity and follows the job" time="0.3721336">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; explains applied source restrictions separately from historical certification" time="0.1337627">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; shows and submits the pinned source identity alongside model configuration" time="0.4743382">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; reuses archived inputs despite refreshed defaults and retries with the same request identity" time="0.8488692">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; keeps submission closed after a legacy template error instead of falling back to defaults" time="0.1679475">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; ignores a late response for a different archived configuration" time="0.2813981">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/SignalsPage.test.tsx" timestamp="2026-10-28T02:57:51.754Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.3791117">
+        <testcase classname="src/pages/SignalsPage.test.tsx" name="daily research signal observations &gt; shows bounded input scores and indicative weights with execution limits" time="0.2657003">
+        </testcase>
+        <testcase classname="src/pages/SignalsPage.test.tsx" name="daily research signal observations &gt; keeps expired archives visible with a clear current-input block" time="0.0838011">
+        </testcase>
+        <testcase classname="src/pages/SignalsPage.test.tsx" name="daily research signal observations &gt; does not replace missing publication with sample scores" time="0.0289698">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/CurrentWorkspace.test.tsx" timestamp="2026-10-28T02:57:51.757Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.4996862">
+        <testcase classname="src/components/CurrentWorkspace.test.tsx" name="current workspace uses the current chart identity and latest date" time="0.1485816">
+        </testcase>
+        <testcase classname="src/components/CurrentWorkspace.test.tsx" name="a failed channel shows an error without an August fallback" time="0.0268856">
+        </testcase>
+        <testcase classname="src/components/CurrentWorkspace.test.tsx" name="current backtest workspace retains minute research and only reads archived daily results" time="0.3235944">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/DataQualitySummary.test.tsx" timestamp="2026-10-28T02:57:51.759Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.3632113">
+        <testcase classname="src/components/DataQualitySummary.test.tsx" name="independent data quality &gt; separates window, actual observation and scoped partial data from authority" time="0.2168483">
+        </testcase>
+        <testcase classname="src/components/DataQualitySummary.test.tsx" name="independent data quality &gt; removes previous quality success after error without depending on the market directory" time="0.0702566">
+        </testcase>
+        <testcase classname="src/components/DataQualitySummary.test.tsx" name="independent data quality &gt; does not present an elevated permission payload as a diagnostic success" time="0.0303705">
+        </testcase>
+        <testcase classname="src/components/DataQualitySummary.test.tsx" name="independent data quality &gt; labels old data as stale without treating current retrieval as a new data window" time="0.0451105">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/DataVersionsPanel.test.tsx" timestamp="2026-10-28T02:57:51.761Z" hostname="DESKTOP-F1JPIV2" tests="7" failures="0" errors="0" skipped="0" time="2.1518766">
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="requires login, fresh control, worker and matching head before exposing writes" time="0.4457339">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="preserves retry identity and shows queued receipt without declaring success" time="0.4362274">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="invalidates review if the head epoch changes even when version is unchanged" time="0.3296045">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="clears unavailable catalog and prevents stale review submission" time="0.2587514">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="renders actual rejected receipts and research limitations" time="0.0781214">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="creates a new request identity if the reviewed reason changes after failed submission" time="0.4465637">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="ignores a delayed older successful fetch after newer publication failure" time="0.1562254">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/EtfHistoryPanel.test.tsx" timestamp="2026-10-28T02:57:51.764Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.4532229">
+        <testcase classname="src/components/EtfHistoryPanel.test.tsx" name="labels assumptions and displays simulation accounting separately from forward results" time="0.2947359">
+        </testcase>
+        <testcase classname="src/components/EtfHistoryPanel.test.tsx" name="does not display supplied payload when publication fails validation" time="0.0307115">
+        </testcase>
+        <testcase classname="src/components/EtfHistoryPanel.test.tsx" name="clears the prior report on failed refresh" time="0.1073855">
+        </testcase>
+        <testcase classname="src/components/EtfHistoryPanel.test.tsx" name="bounds a hanging fetch and ignores a late successful response" time="0.0198017">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/EtfShadowPanel.test.tsx" timestamp="2026-10-28T02:57:51.766Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="0.5602101">
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="shows frozen ETF allocation and pending observation without invented performance" time="0.2383355">
+        </testcase>
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="retains stale history with a warning and separates unallocated target from actual cash" time="0.0728907">
+        </testcase>
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="hides unavailable or wrong-schema publications rather than displaying targets" time="0.0330042">
+        </testcase>
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="clears old targets after refresh failure" time="0.1290288">
+        </testcase>
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="expires a prospective target locally before the next poll and times out a hung refresh" time="0.086337">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/EtfTrendPanel.test.tsx" timestamp="2026-10-28T02:57:51.769Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.3105174">
+        <testcase classname="src/components/EtfTrendPanel.test.tsx" name="shows ETF coverage, positive scores and qualified nonpositive ETF without invented scores" time="0.2073989">
+        </testcase>
+        <testcase classname="src/components/EtfTrendPanel.test.tsx" name="keeps an expired ETF archive visible with current-input warning" time="0.0470212">
+        </testcase>
+        <testcase classname="src/components/EtfTrendPanel.test.tsx" name="does not use a diagnostic when publication is unavailable" time="0.0240638">
+        </testcase>
+        <testcase classname="src/components/EtfTrendPanel.test.tsx" name="clears data and reports a request failure" time="0.0314392">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/FactorEvidenceCatalog.test.tsx" timestamp="2026-10-28T02:57:51.774Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.208942">
+        <testcase classname="src/components/FactorEvidenceCatalog.test.tsx" name="factor evidence catalog &gt; binds daily, entry, exit and unavailable L2 definitions without inventing readiness" time="0.0014222">
+        </testcase>
+        <testcase classname="src/components/FactorEvidenceCatalog.test.tsx" name="factor evidence catalog &gt; renders a read-only exportable catalog and does not synthesize L2 without its contract" time="0.2069292">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/IntradayFactorResearchLab.test.tsx" timestamp="2026-10-28T02:57:51.776Z" hostname="DESKTOP-F1JPIV2" tests="15" failures="0" errors="0" skipped="0" time="17.9165028">
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; reruns two selected local rules on one bounded window and shows redundancy" time="1.3364057">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; saves the current entry factor before any strategy backtest" time="0.5047771">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; hands an effective non-redundant entry factor to strategy construction without running it" time="1.558078">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when the factor-correlation response drifts from the requested dataset" time="0.6755812">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when the factor-correlation response drifts from the requested 75-stock scope" time="0.6632514">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when the factor-correlation matrix is asymmetric" time="0.6575208">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when the reported Holm adjustment does not match the submitted family" time="0.9415">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed before displaying a strategy backtest with drifted data identity" time="0.7847617">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; loads and submits the bounded bearish exit identity" time="1.318677">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; locks one training rule before the disjoint discovery test window" time="3.8758942">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response drifts from the requested dataset" time="1.1376742">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response substitutes a candidate identity" time="1.1400622">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response misstates its CSCV aggregate" time="1.1252263">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response misstates its cross-sector breadth" time="1.1167379">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response misstates its placebo probability" time="1.0792689">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/LegacyBacktestArchive.test.tsx" timestamp="2026-10-28T02:57:51.784Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.2705991">
+        <testcase classname="src/components/LegacyBacktestArchive.test.tsx" name="preserves and exports original saved records without replay or mutation controls" time="0.2308114">
+        </testcase>
+        <testcase classname="src/components/LegacyBacktestArchive.test.tsx" name="does not relabel unmatched saved records with the current dataset identity" time="0.0392223">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/ModelPromotionPanel.test.tsx" timestamp="2026-10-28T02:57:51.787Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.1672096">
+        <testcase classname="src/components/ModelPromotionPanel.test.tsx" name="queues an explicit bounded policy and retains a failed request identity" time="0.1422867">
+        </testcase>
+        <testcase classname="src/components/ModelPromotionPanel.test.tsx" name="disables controls for anonymous or unverified policy observations" time="0.0243725">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/PageErrorBoundary.test.tsx" timestamp="2026-10-28T02:57:51.788Z" hostname="DESKTOP-F1JPIV2" tests="1" failures="0" errors="0" skipped="0" time="0.0888236">
+        <testcase classname="src/components/PageErrorBoundary.test.tsx" name="keeps a generic recovery screen when a page throws" time="0.0883624">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/PublicResearchObservations.test.tsx" timestamp="2026-10-28T02:57:51.790Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.3019544">
+        <testcase classname="src/components/PublicResearchObservations.test.tsx" name="unavailable publication never displays a healthy state" time="0.1981893">
+        </testcase>
+        <testcase classname="src/components/PublicResearchObservations.test.tsx" name="a failed refresh replaces the prior healthy label" time="0.1032075">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/QlibBaseline.test.tsx" timestamp="2026-10-28T02:57:51.791Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.3466039">
+        <testcase classname="src/components/QlibBaseline.test.tsx" name="shows actual preparation coverage without fabricated metrics" time="0.0879877">
+        </testcase>
+        <testcase classname="src/components/QlibBaseline.test.tsx" name="hides previous success when a refresh fails" time="0.0753385">
+        </testcase>
+        <testcase classname="src/components/QlibBaseline.test.tsx" name="rejects a complete result without a persisted Alpha158 contract" time="0.0305549">
+        </testcase>
+        <testcase classname="src/components/QlibBaseline.test.tsx" name="renders persisted metrics and labels an older fixed result as historical" time="0.1521746">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/RollingPolicyPanel.test.tsx" timestamp="2026-10-28T02:57:51.794Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.5570501">
+        <testcase classname="src/components/RollingPolicyPanel.test.tsx" name="does not expose a write action without authentication or a ready control" time="0.2042264">
+        </testcase>
+        <testcase classname="src/components/RollingPolicyPanel.test.tsx" name="preserves the reviewed policy and retry identity without implicitly enabling training" time="0.2449303">
+        </testcase>
+        <testcase classname="src/components/RollingPolicyPanel.test.tsx" name="invalidates the open policy review when its bound revision changes" time="0.1071605">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" timestamp="2026-10-28T02:57:51.796Z" hostname="DESKTOP-F1JPIV2" tests="12" failures="0" errors="0" skipped="0" time="8.5269046">
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; runs one deterministic representative per sector with identical parameters" time="0.7391989">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; retains bounded batch summaries across parameter changes without auto-selecting a winner" time="0.8959479">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; evicts the oldest batch summary after the five-run session limit" time="1.6666632">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; bounds the signed 15-sector universe at 15 or 30 deterministic stock requests" time="0.2611886">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; can run two deterministic representatives per sector without changing shared parameters" time="0.6422819">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; measures within-sector agreement only from a complete finite two-stock pair" time="0.6160657">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; excludes a two-stock sector when one common risk metric is non-finite" time="0.6039256">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; excludes an incomplete two-stock sector from the within-sector denominator" time="0.5815747">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; reports partial coverage when one sector request fails" time="0.4704288">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; excludes a successful response with non-finite metrics from the summary denominator" time="0.5486126">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; does not create an aggregate summary when every representative request fails" time="0.7225935">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; rejects responses whose parameters or safety identity drift from the batch request" time="0.7774924">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/StrategyComparisonPanel.test.tsx" timestamp="2026-10-28T02:57:51.804Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.3201582">
+        <testcase classname="src/components/StrategyComparisonPanel.test.tsx" name="shows historical evidence and missing metrics without fake zeros" time="0.264091">
+        </testcase>
+        <testcase classname="src/components/StrategyComparisonPanel.test.tsx" name="does not substitute fallback results when publication is unavailable" time="0.0205405">
+        </testcase>
+        <testcase classname="src/components/StrategyComparisonPanel.test.tsx" name="shows unavailable on request error" time="0.0349431">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/UnifiedDataCatalog.test.tsx" timestamp="2026-10-28T02:57:51.806Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.9932648">
+        <testcase classname="src/components/UnifiedDataCatalog.test.tsx" name="unified observed data &gt; separates target and accepted coverage and queries symbols on the server" time="0.4396598">
+        </testcase>
+        <testcase classname="src/components/UnifiedDataCatalog.test.tsx" name="unified observed data &gt; rejects mismatched versions and hides previous success after refresh failure" time="0.243159">
+        </testcase>
+        <testcase classname="src/components/UnifiedDataCatalog.test.tsx" name="unified observed data &gt; queries current and historical coverage separately without relabelling legacy data" time="0.2379234">
+        </testcase>
+        <testcase classname="src/components/UnifiedDataCatalog.test.tsx" name="unified observed data &gt; rejects two different catalog snapshots even when membership is unchanged" time="0.0718987">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/UnifiedMarket.test.tsx" timestamp="2026-10-28T02:57:51.808Z" hostname="DESKTOP-F1JPIV2" tests="6" failures="0" errors="0" skipped="0" time="2.9240368">
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; loads current target securities and discloses independent source clocks and prices" time="0.688459">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; searches the entire target catalog on the server, preserving no-data without legacy fallback" time="0.615308">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; clears old success on version drift or failed refresh" time="0.6287776">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; retains valid stale bars only with a prominent historical warning" time="0.325923">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; does not draw future bars even when a reply claims current freshness" time="0.2935419">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; cancels obsolete requests and ignores their late results" time="0.3713921">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/charts/BacktestTimestamp.test.tsx" timestamp="2026-10-28T02:57:51.810Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.6591435">
+        <testcase classname="src/charts/BacktestTimestamp.test.tsx" name="minute backtest timestamps &gt; renders UTC evidence timestamps as China market time" time="0.3362757">
+        </testcase>
+        <testcase classname="src/charts/BacktestTimestamp.test.tsx" name="minute backtest timestamps &gt; renders reserved-tail evidence on the same China market clock" time="0.3222519">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/charts/MinuteHistoryChart.test.tsx" timestamp="2026-10-28T02:57:51.812Z" hostname="DESKTOP-F1JPIV2" tests="1" failures="0" errors="0" skipped="0" time="0.0012343">
+        <testcase classname="src/charts/MinuteHistoryChart.test.tsx" name="minute history timestamps &gt; renders provider UTC timestamps in the A-share session timezone" time="0.0007246">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/causalBacktestContract.test.ts" timestamp="2026-10-28T02:57:51.813Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0016251">
+        <testcase classname="src/research/causalBacktestContract.test.ts" name="intraday causal backtest contract &gt; accepts the exact fixed T+1 open-exit clock" time="0.0007539">
+        </testcase>
+        <testcase classname="src/research/causalBacktestContract.test.ts" name="intraday causal backtest contract &gt; accepts the exact conditional-exit and fallback clocks" time="0.0001338">
+        </testcase>
+        <testcase classname="src/research/causalBacktestContract.test.ts" name="intraday causal backtest contract &gt; rejects same-bar timing, label and extra-field drift" time="0.0001133">
+        </testcase>
+        <testcase classname="src/research/causalBacktestContract.test.ts" name="intraday causal backtest contract &gt; rejects a causal clock from the other exit branch" time="0.0000698">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/exitFactorValidation.test.ts" timestamp="2026-10-28T02:57:51.814Z" hostname="DESKTOP-F1JPIV2" tests="7" failures="0" errors="0" skipped="0" time="0.0022333">
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; accepts a reproducible triggered exit diagnostic" time="0.0007589">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; accepts the fixed T+1 exit branch without an exit diagnostic" time="0.0001022">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; rejects entry, trigger, fallback and clustered-session count drift" time="0.0002188">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; rejects forged trigger rate and non-integral hit counts" time="0.0001058">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; rejects Newey-West lag, t statistic and confidence interval drift" time="0.0001915">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; rejects missing, reordered or forged criteria and pass bindings" time="0.0001921">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; accepts a zero-trigger diagnostic only when all undefined statistics are zero" time="0.0000966">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayBacktestPerformance.test.ts" timestamp="2026-10-28T02:57:51.818Z" hostname="DESKTOP-F1JPIV2" tests="11" failures="0" errors="0" skipped="0" time="0.0095629">
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; accepts an internally reproducible curve and core metrics" time="0.006714">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects selected-session and source-bar drift" time="0.0001352">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged daily equity, signal totals and cumulative metrics" time="0.000169">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged drawdown, win rate, exposure and trade counts" time="0.0002">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged annualization and risk ratios" time="0.0001939">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects missing or unexpected fixed cost rows" time="0.0001499">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged base and stressed transaction costs" time="0.0002396">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects a strategy return on a day without signals" time="0.0000732">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects missing, duplicate or misbound stock and sector identities" time="0.0002801">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged group observation, signal and weighted event aggregates" time="0.0004014">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects impossible group hit counts and metric identities" time="0.000349">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayEventSummary.test.ts" timestamp="2026-10-28T02:57:51.823Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0019997">
+        <testcase classname="src/research/intradayEventSummary.test.ts" name="intraday event summary response &gt; accepts exact counts, means and clustered Newey-West arithmetic" time="0.0007969">
+        </testcase>
+        <testcase classname="src/research/intradayEventSummary.test.ts" name="intraday event summary response &gt; rejects forged counts, rates, means and hit counts" time="0.0003355">
+        </testcase>
+        <testcase classname="src/research/intradayEventSummary.test.ts" name="intraday event summary response &gt; rejects forged Newey-West lag, t statistic and confidence interval" time="0.0001938">
+        </testcase>
+        <testcase classname="src/research/intradayEventSummary.test.ts" name="intraday event summary response &gt; accepts a conservative all-zero no-signal diagnostic" time="0.000103">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayFactorStrategyLineage.test.ts" timestamp="2026-10-28T02:57:51.825Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.0023236">
+        <testcase classname="src/research/intradayFactorStrategyLineage.test.ts" name="intraday factor-to-strategy lineage &gt; binds one manually admitted factor to the exact later strategy preview" time="0.001471">
+        </testcase>
+        <testcase classname="src/research/intradayFactorStrategyLineage.test.ts" name="intraday factor-to-strategy lineage &gt; fails closed when the strategy window or entry factor drifts after handoff" time="0.0001833">
+        </testcase>
+        <testcase classname="src/research/intradayFactorStrategyLineage.test.ts" name="intraday factor-to-strategy lineage &gt; fails closed when either evidence surface relaxes the no-authority boundary" time="0.0001035">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayFactorValidation.test.ts" timestamp="2026-10-28T02:57:51.826Z" hostname="DESKTOP-F1JPIV2" tests="6" failures="0" errors="0" skipped="0" time="0.0019708">
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; accepts reproducible signal and non-signal return groups" time="0.0007197">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; rejects period and instrument scope drift" time="0.0001834">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; rejects missing, extra and forged grouped returns or spread" time="0.0001726">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; rejects event conditional-excess drift" time="0.0000744">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; rejects non-finite or out-of-range IC and turnover diagnostics" time="0.0001364">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; derives a zero non-signal mean when every observation signals" time="0.0001223">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayPreviewHash.test.ts" timestamp="2026-10-28T02:57:51.830Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.0048406">
+        <testcase classname="src/research/intradayPreviewHash.test.ts" name="intraday preview response hash &gt; accepts the SHA-256 of the full unsigned response with Unicode content" time="0.0035852">
+        </testcase>
+        <testcase classname="src/research/intradayPreviewHash.test.ts" name="intraday preview response hash &gt; rejects a well-formed hash after any nested evidence drift" time="0.0003031">
+        </testcase>
+        <testcase classname="src/research/intradayPreviewHash.test.ts" name="intraday preview response hash &gt; rejects missing, malformed and unrelated digests" time="0.0003471">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayRobustness.test.ts" timestamp="2026-10-28T02:57:51.831Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.0046526">
+        <testcase classname="src/research/intradayRobustness.test.ts" name="intraday walk-forward robustness response &gt; accepts an exactly recomputed rolling out-of-sample result" time="0.0020085">
+        </testcase>
+        <testcase classname="src/research/intradayRobustness.test.ts" name="intraday walk-forward robustness response &gt; rejects forged fold metrics, curve equity and temporal boundaries" time="0.0008031">
+        </testcase>
+        <testcase classname="src/research/intradayRobustness.test.ts" name="intraday walk-forward robustness response &gt; rejects forged threshold sensitivity, benchmark binding and gate flags" time="0.0011861">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayStability.test.ts" timestamp="2026-10-28T02:57:51.833Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="0.0023907">
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; accepts four reproducible contiguous blocks" time="0.0008253">
+        </testcase>
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; rejects block identity, boundary and size drift" time="0.0002882">
+        </testcase>
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; rejects observation, signal and signal-session decomposition drift" time="0.0002473">
+        </testcase>
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; rejects forged weighted mean, positive count, worst block and contribution share" time="0.0002457">
+        </testcase>
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; rejects missing, reordered or forged stability criteria and pass" time="0.0001788">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/l2FactorReadiness.test.ts" timestamp="2026-10-28T02:57:51.836Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0017188">
+        <testcase classname="src/research/l2FactorReadiness.test.ts" name="unavailable L2 factor readiness admission &gt; admits the exact fail-closed five-level contract" time="0.0008216">
+        </testcase>
+        <testcase classname="src/research/l2FactorReadiness.test.ts" name="unavailable L2 factor readiness admission &gt; rejects a contract with an incomplete five-level schema" time="0.0001344">
+        </testcase>
+        <testcase classname="src/research/l2FactorReadiness.test.ts" name="unavailable L2 factor readiness admission &gt; rejects forged readiness gate arithmetic" time="0.0000937">
+        </testcase>
+        <testcase classname="src/research/l2FactorReadiness.test.ts" name="unavailable L2 factor readiness admission &gt; rejects future-book or OHLCV substitution capability" time="0.0001037">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/localBacktestExperiments.test.ts" timestamp="2026-10-28T02:57:51.838Z" hostname="DESKTOP-F1JPIV2" tests="11" failures="0" errors="0" skipped="0" time="0.0070662">
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; labels an ordinary preview as browser-local without a run-spec binding" time="0.0012346">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; preserves the exact template, spec, and binding identity for a bound preview" time="0.0005565">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; rejects a mismatched bound preview by 结果哈希 without writing local data" time="0.0004889">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; rejects a mismatched bound preview by 数据 checksum without writing local data" time="0.0001292">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; loads legacy schema-v1 records without binding metadata as ordinary previews" time="0.0002924">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; binds records to the exact dataset identity and replaces duplicate results" time="0.0002066">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; ignores corrupt local data instead of presenting it as a valid experiment" time="0.00009">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; deletes only the selected local result" time="0.0001473">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; rejects blank names and does not write an experiment" time="0.0001285">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; keeps only the thirty most recently saved summaries" time="0.0028097">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; builds a deterministic portable comparison without granting runtime authority" time="0.0003624">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/localIntradayFactorCandidates.test.ts" timestamp="2026-10-28T02:57:51.842Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.0025572">
+        <testcase classname="src/research/localIntradayFactorCandidates.test.ts" name="local intraday factor candidates &gt; stores entry-factor drafts before any strategy or backtest result exists" time="0.0014467">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorCandidates.test.ts" name="local intraday factor candidates &gt; rejects unsafe rules and deletes only the selected browser-local draft" time="0.0005866">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/localIntradayFactorExperiments.test.ts" timestamp="2026-10-28T02:57:51.843Z" hostname="DESKTOP-F1JPIV2" tests="8" failures="0" errors="0" skipped="0" time="0.0096473">
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; binds records to the exact minute dataset and replaces duplicate results" time="0.0020432">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; round-trips the bounded bearish exit and rejects unsafe exit identity" time="0.0003472">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; ignores corrupted or safety-relaxed local records" time="0.0001887">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; normalizes legacy records without strategy identity and rejects a relaxed identity" time="0.0006276">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; rejects unsafe, blank, or incomplete results before writing" time="0.0002203">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; deletes only the selected result and preserves parameter identity" time="0.0003895">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; keeps only the thirty most recent summaries" time="0.0047498">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; builds a deterministic portable factor comparison without selecting a winner" time="0.0004505">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/nextHypothesisPreregistration.test.ts" timestamp="2026-10-28T02:57:51.846Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0017919">
+        <testcase classname="src/research/nextHypothesisPreregistration.test.ts" name="matchesNextHypothesisPreregistration &gt; admits the exact blocked preregistration contract" time="0.000813">
+        </testcase>
+        <testcase classname="src/research/nextHypothesisPreregistration.test.ts" name="matchesNextHypothesisPreregistration &gt; derives the research-admitted status from the sequential next action" time="0.0001231">
+        </testcase>
+        <testcase classname="src/research/nextHypothesisPreregistration.test.ts" name="matchesNextHypothesisPreregistration &gt; rejects missing, reordered, or drifted governance requirements" time="0.0001562">
+        </testcase>
+        <testcase classname="src/research/nextHypothesisPreregistration.test.ts" name="matchesNextHypothesisPreregistration &gt; rejects evidence reuse, lifecycle, or authority drift" time="0.0001416">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/paperAdmission.test.ts" timestamp="2026-10-28T02:57:51.849Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0016225">
+        <testcase classname="src/research/paperAdmission.test.ts" name="matchesBlockedPaperAdmission &gt; admits the exact blocked eight-gate contract" time="0.0007899">
+        </testcase>
+        <testcase classname="src/research/paperAdmission.test.ts" name="matchesBlockedPaperAdmission &gt; rejects forged gate-count arithmetic" time="0.0001179">
+        </testcase>
+        <testcase classname="src/research/paperAdmission.test.ts" name="matchesBlockedPaperAdmission &gt; rejects a duplicated gate that hides a required gate" time="0.0000753">
+        </testcase>
+        <testcase classname="src/research/paperAdmission.test.ts" name="matchesBlockedPaperAdmission &gt; rejects drifted evidence or an extra authority field" time="0.000102">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/qlibWorkflow.test.ts" timestamp="2026-10-28T02:57:51.851Z" hostname="DESKTOP-F1JPIV2" tests="7" failures="0" errors="0" skipped="0" time="0.0056636">
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; defaults to the newest completed run, ahead of the imported old reference" time="0.0009905">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; accepts model-only changes despite JSON property ordering" time="0.0003028">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; rejects legacy, changed inputs, costs, dates and source" time="0.000458">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; binds model comparisons to identical historical source evidence" time="0.0003282">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; creates a model-only draft without mutating any archived input" time="0.0007417">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; rejects misbound templates and does not offer legacy configuration reuse" time="0.0009968">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; preserves the server explanation when an archived template cannot be reused" time="0.0012356">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/researchGate.test.ts" timestamp="2026-10-28T02:57:51.856Z" hostname="DESKTOP-F1JPIV2" tests="6" failures="0" errors="0" skipped="0" time="0.0025382">
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; accepts an exactly derived base gate" time="0.0008371">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; accepts a conditional exit gate only when its failed result is appended" time="0.0002027">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; rejects missing, extra or reordered criteria" time="0.0002365">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; rejects criteria forged against event, factor, correlation and base-cost facts" time="0.0003131">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; rejects walk-forward ratios forged against fold and threshold metrics" time="0.0001199">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; rejects inconsistent sub-gate and aggregate pass flags" time="0.0002518">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/researchWorkflow.test.ts" timestamp="2026-10-28T02:57:51.860Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0016282">
+        <testcase classname="src/research/researchWorkflow.test.ts" name="matchesResearchWorkflow &gt; admits the exact eight-stage conditional-exit workflow" time="0.0007603">
+        </testcase>
+        <testcase classname="src/research/researchWorkflow.test.ts" name="matchesResearchWorkflow &gt; derives the research-admitted and successful-backtest branch" time="0.0001232">
+        </testcase>
+        <testcase classname="src/research/researchWorkflow.test.ts" name="matchesResearchWorkflow &gt; distinguishes an entry-only factor validation detail" time="0.000075">
+        </testcase>
+        <testcase classname="src/research/researchWorkflow.test.ts" name="matchesResearchWorkflow &gt; rejects forged, reordered, extra, or non-boolean workflow state" time="0.0001252">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/sequentialAdvancement.test.ts" timestamp="2026-10-28T02:57:51.863Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0016859">
+        <testcase classname="src/research/sequentialAdvancement.test.ts" name="matchesSequentialAdvancement &gt; admits the exact ordered read-only advancement contract" time="0.0007801">
+        </testcase>
+        <testcase classname="src/research/sequentialAdvancement.test.ts" name="matchesSequentialAdvancement &gt; derives the admitted research and successful-backtest branch" time="0.000122">
+        </testcase>
+        <testcase classname="src/research/sequentialAdvancement.test.ts" name="matchesSequentialAdvancement &gt; rejects forged counts, reordered stages, or inconsistent blocking stages" time="0.0001312">
+        </testcase>
+        <testcase classname="src/research/sequentialAdvancement.test.ts" name="matchesSequentialAdvancement &gt; rejects promotion authority, extra fields, or non-boolean context drift" time="0.000106">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/strategyIdentity.test.ts" timestamp="2026-10-28T02:57:51.865Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="0.0051854">
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; recomputes the exact conditional-exit behavior hash" time="0.0037273">
+        </testcase>
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; recomputes the fixed T+1 open-exit behavior hash" time="0.0003413">
+        </testcase>
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; rejects behavior, hash-scope and digest drift" time="0.0003093">
+        </testcase>
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; binds observed exit counts without including them in the behavior digest" time="0.0000974">
+        </testcase>
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; requires the exact factor contract derived from the request" time="0.0001371">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/strategyRegistrationPreflight.test.ts" timestamp="2026-10-28T02:57:51.869Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0018413">
+        <testcase classname="src/research/strategyRegistrationPreflight.test.ts" name="matchesBlockedStrategyRegistrationPreflight &gt; admits the exact blocked nine-gate contract" time="0.0008257">
+        </testcase>
+        <testcase classname="src/research/strategyRegistrationPreflight.test.ts" name="matchesBlockedStrategyRegistrationPreflight &gt; derives research and backtest gate counts dynamically" time="0.000135">
+        </testcase>
+        <testcase classname="src/research/strategyRegistrationPreflight.test.ts" name="matchesBlockedStrategyRegistrationPreflight &gt; rejects forged counts or a duplicated gate" time="0.0001313">
+        </testcase>
+        <testcase classname="src/research/strategyRegistrationPreflight.test.ts" name="matchesBlockedStrategyRegistrationPreflight &gt; rejects field-readiness, transition, or authority drift" time="0.0001813">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/unifiedMarket.test.ts" timestamp="2026-10-28T02:57:51.871Z" hostname="DESKTOP-F1JPIV2" tests="29" failures="0" errors="0" skipped="0" time="0.0168016">
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; retains no-data, partial gaps and null amount explicitly" time="0.0108918">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects version drift" time="0.0004798">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects universe_version drift" time="0.0001154">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects symbol drift" time="0.0000845">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects frequency drift" time="0.0000876">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects impossible closing price NaN" time="0.0002852">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects impossible closing price Infinity" time="0.0002078">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects impossible closing price -1" time="0.0001906">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects impossible closing price 0" time="0.0002218">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects unordered bars and completion-clock violations" time="0.0004538">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects bars outside the requested date window instead of silently widening it" time="0.0002045">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects catalog snapshots from different signed inventories" time="0.0002173">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a future-clock payload against the actual clock by default" time="0.0000991">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; binds controlled test clocks without using a publication clock as now" time="0.000361">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free published_at" time="0.0000833">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free checked_at" time="0.0000656">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free expected_end" time="0.000044">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free available_start" time="0.0000531">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free available_end" time="0.0000506">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free bars and a mismatched Shanghai trading day" time="0.0002379">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects bars that did not exist when the index was published" time="0.0001025">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a five-minute bar outside completed session clock 2026-10-27T01:31:00Z" time="0.0001829">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a five-minute bar outside completed session clock 2026-10-27T04:00:00Z" time="0.0001454">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a five-minute bar outside completed session clock 2026-10-27T05:00:00Z" time="0.0001307">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a five-minute bar outside completed session clock 2026-10-27T01:40:01Z" time="0.0002409">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; accepts offset-aware Shanghai session clocks and rejects a daily non-close timestamp" time="0.000357">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; binds security type and exchange to the selected catalog member" time="0.0001528">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; requires a source manifest and available bounds for nonempty bars" time="0.0002013">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects inconsistent isolation states while retaining valid stale history" time="0.000148">
+        </testcase>
+    </testsuite>
+</testsuites>

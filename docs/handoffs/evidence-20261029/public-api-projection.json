@@ -1,0 +1,63 @@
+[
+  {
+    "body_bytes": 239,
+    "body_sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72",
+    "body_stored_outside_git": "E:\\QTrade-temp\\cluster-evidence\\handoff-readonly-20261029T013221Z\\public-deployment.capture.json",
+    "cache_control": "public, max-age=15",
+    "content_type": "application/json",
+    "projection": {
+      "classification": "PUBLIC_BUILD_PROVENANCE",
+      "external_order_transmission": false,
+      "git_commit_ref": "main",
+      "git_commit_sha": "ae33a7c8c27ea721eb3be1e4430b562a44b67f91",
+      "provider": "VERCEL",
+      "status": "AVAILABLE",
+      "target_environment": "production"
+    },
+    "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+    "received_at": "2026-10-29T01:33:32.028944+00:00",
+    "requested_at": "2026-10-29T01:33:31.418426+00:00",
+    "scope": "ACTUAL_GET_PROJECTION_NOT_FULL_PUBLIC_ACCEPTANCE",
+    "status_code": 200,
+    "url": "https://q-trade-temp.vercel.app/api/deployment"
+  },
+  {
+    "body_bytes": 11587,
+    "body_sha256": "8af6411a8a2487b15a02a68251109a29c3235634ab66fa34adc9618b72c29e76",
+    "body_stored_outside_git": "E:\\QTrade-temp\\cluster-evidence\\handoff-readonly-20261029T013221Z\\public-summary.capture.json",
+    "cache_control": "no-store",
+    "content_encoding": "identity",
+    "content_type": "application/json",
+    "projection": {
+      "built_at": "2026-10-28T12:07:27.281232+00:00",
+      "catalog_source": {
+        "bytes": 7976215,
+        "commit_sha": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+        "git_blob_sha1": "5e60dc537d21328c189324d8fe1eba1aa1cf611f",
+        "sha256": "efe178698b4a0e50f7b76d13104d375ee741b8529c0d93f167044b302689270e"
+      },
+      "checked_at": "2026-10-29T01:33:34.692454+00:00",
+      "incremental_freshness": {
+        "5min": {
+          "expected_end": "2026-10-28T15:00:00+08:00",
+          "ready_symbols": 1496,
+          "required_symbols": 1500,
+          "status": "STALE_PUBLICATION"
+        },
+        "day": {
+          "expected_end": "2026-10-28T15:00:00+08:00",
+          "ready_symbols": 1498,
+          "required_symbols": 1500,
+          "status": "STALE_PUBLICATION"
+        }
+      }
+    },
+    "proxy_configuration_mode": "CONFIGURED_CREDENTIAL_FREE_PROXY",
+    "received_at": "2026-10-29T01:33:33.485925+00:00",
+    "requested_at": "2026-10-29T01:33:32.029932+00:00",
+    "scope": "ACTUAL_GET_PROJECTION_NOT_FULL_PUBLIC_ACCEPTANCE",
+    "status_code": 200,
+    "transport_body_bytes": 11587,
+    "url": "https://q-trade-temp.vercel.app/api/unified/summary"
+  }
+]

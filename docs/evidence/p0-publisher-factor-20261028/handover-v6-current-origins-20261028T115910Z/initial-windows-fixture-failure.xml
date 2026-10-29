@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="52" time="1.265" timestamp="2026-10-28T19:54:35.569194+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="test_publisher_v6_current_origins_20261028" name="test_clean_current_origins_do_not_execute_modules_or_create_pycache" time="0.088" /><testcase classname="test_publisher_v6_current_origins_20261028" name="test_untracked_shadow_rejected_while_all_git_hashes_remain_equal" time="0.031" /><testcase classname="test_publisher_v6_current_origins_20261028" name="test_shadow_inserted_after_inventory_scan_is_caught_by_fresh_pathfinder" time="0.100" /><testcase classname="test_publisher_v6_current_origins_20261028" name="test_shadow_during_temporary_wrapper_fsync_blocks_replace" time="0.089"><failure message="AttributeError: module 'os' has no attribute 'O_NOFOLLOW'">release = (WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-741/test_shadow_during_temporary_w0/bas...al": "src/qtrade/market_data/sina_incremental.py"}']], &lt;function release.&lt;locals&gt;.fixture_child at 0x000001DE64ECDC70&gt;)
+tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-741/test_shadow_during_temporary_w0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001DE64E39260&gt;
+
+    def test_shadow_during_temporary_wrapper_fsync_blocks_replace(release, tmp_path, monkeypatch):
+        root, adapter, _, _ = release
+        target = tmp_path / "private/wrapper.py"
+        target.parent.mkdir()
+        old, new = b"SYNTHETIC old wrapper, never executed\n", b"SYNTHETIC candidate, never executed\n"
+        target.write_bytes(old)
+        attempt = tmp_path / "attempt"
+        attempt.mkdir()
+        adapter.manifest.update(wrapper_target=str(target), wrapper_candidate=str(tmp_path / "candidate.py"),
+            wrapper_old_sha256=hashlib.sha256(old).hexdigest(), wrapper_new_sha256=hashlib.sha256(new).hexdigest(),
+            attempt_root=str(attempt))
+        monkeypatch.setattr(h, "WRAPPER", target)
+        monkeypatch.setattr(h, "durable_directory", lambda path, **kwargs: path.mkdir(parents=True, exist_ok=True))
+        monkeypatch.setattr(h, "fsync_directory", lambda _: None)
+        monkeypatch.setattr(h.os, "fchmod", lambda *args: None, raising=False)
+        monkeypatch.setattr(h.os, "fchown", lambda *args: None, raising=False)
+        monkeypatch.setattr(adapter, "_mutation_guard", lambda: None)  # Synthetic lifecycle leaf only.
+        monkeypatch.setattr(adapter, "guard_old", lambda: None)
+        monkeypatch.setattr(adapter, "guard_config", lambda: None)
+        monkeypatch.setattr(adapter, "_wrapper_raw", lambda: (old, new))
+        monkeypatch.setattr(adapter, "controls", lambda: {})
+        original = h.os.fsync
+        count = 0
+    
+        def insert_on_second_fsync(fd):
+            nonlocal count
+            count += 1
+            original(fd)
+            if count == 2:  # Backup, then the fully written temporary candidate.
+                shadow(root)
+    
+        monkeypatch.setattr(h.os, "fsync", insert_on_second_fsync)
+        with pytest.raises(ValueError, match="UNTRACKED_RELEASE_SOURCE_FORBIDDEN"):
+&gt;           adapter.install_wrapper({}, attempt / "private/wrapper.old.py")
+
+E:\QTrade-temp\test_publisher_v6_current_origins_20261028.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;v6_current_origin_operator.PublisherOnlyAdapter object at 0x000001DE63CE75C0&gt;
+before = {}
+backup = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-741/test_shadow_during_temporary_w0/attempt/private/wrapper.old.py')
+
+    def install_wrapper(self, before: dict[str, Any], backup: Path) -&gt; dict[str, Any]:
+        self._mutation_guard()
+        self.guard_old()
+        self.check_release()
+        require(self.controls() == before, "BEFORE_CONTROLS_CHANGED")
+        target = Path(self.manifest["wrapper_target"])
+        require(
+            target == WRAPPER and not any(p.is_symlink() for p in (target, *target.parents)),
+            "WRAPPER_PATH_ALIAS",
+        )
+        metadata = target.stat()
+        require(
+            stat.S_ISREG(metadata.st_mode)
+            and metadata.st_nlink == 1
+            and self.wrapper_hash() == self.manifest["wrapper_old_sha256"],
+            "OLD_WRAPPER_CHANGED",
+        )
+        require(
+            backup == Path(self.manifest["attempt_root"]) / "private/wrapper.old.py",
+            "BOUND_PRIVATE_BACKUP_REQUIRED",
+        )
+        durable_directory(backup.parent, create=True)
+        old_raw, raw = self._wrapper_raw()
+&gt;       descriptor = os.open(backup, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+                                                                            ^^^^^^^^^^^^^
+E       AttributeError: module 'os' has no attribute 'O_NOFOLLOW'
+
+E:\QTrade-temp\publisher_handover_v6_preparation_20261028.py:750: AttributeError</failure></testcase><testcase classname="test_publisher_v6_current_origins_20261028" name="test_shadow_after_initial_term_source_check_blocks_rpc" time="0.100" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_actual_report_values_are_derived_with_honest_unknowns[baseline_modes-15-5640]" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_actual_report_values_are_derived_with_honest_unknowns[current_continuity-20-5701]" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_failed_original_cannot_be_wrapped_as_succeeded38" time="0.001" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_original999_seconds_cannot_be_replaced_by_normalized38" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_same_execution_json_whitespace_does_not_add_samples" time="0.003" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_tmpfs_original_cannot_be_declared_nfs" time="0.001" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_mount_device_must_match_raw_and_production_before_after" time="0.001" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_baseline5640_never_relabeled_current5701" time="0.001" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_new_dependency_missing_fails_before_mutation[scripts/unified_market_checkpoint.py]" time="0.001" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_new_dependency_missing_fails_before_mutation[src/qtrade/research/market_validation_receipts.py]" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_git_full_inventory_subset_is_rejected" time="0.001" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_handover_entry_has_no_legacy4200_fallback[legacy0]" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_handover_entry_has_no_legacy4200_fallback[legacy1]" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_handover_entry_has_no_legacy4200_fallback[legacy2]" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_even_v6_discriminator_alone_never_grants_mutation" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_self_attested_fault_suite_cannot_replace_actual_xml" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_actual_fault_test_failure_or_skip_is_not_pass[failure]" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_actual_fault_test_failure_or_skip_is_not_pass[error]" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_actual_fault_test_failure_or_skip_is_not_pass[skipped]" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_missing_round_stdout_cannot_borrow_report_fields" time="0.001" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_unreviewed_driver_is_not_original_measurement_authority" time="0.001" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_real_handover_entry_refuses_legacy_before_any_action" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_direct_adapter_mutation_cannot_skip_v6_gate" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_actual_source_preflight_refuses_missing_modules_before_path_io" time="0.000" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_actual_original_oracle_is_parsed_and_bound_to_each_measured_output" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_bad_oracle_assertion_cannot_replace_actual_comparison[state-FAILED]" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_bad_oracle_assertion_cannot_replace_actual_comparison[candidate_validator_called-True]" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_bad_oracle_assertion_cannot_replace_actual_comparison[selected_batches-4200]" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_bad_oracle_assertion_cannot_replace_actual_comparison[entry_count-2694]" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_bad_oracle_assertion_cannot_replace_actual_comparison[unique_shards-5987]" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_bad_oracle_assertion_cannot_replace_actual_comparison[index_raw_sha256-0000000000000000000000000000000000000000000000000000000000000000]" time="0.002" /><testcase classname="test_publisher_actual_evidence_v6_20261028" name="test_xml_declared_count_cannot_multiply_one_actual_execution" time="0.000" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_actual_35_oracles_25_faults_origins_and_nfs_probe_positive" time="0.061" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_actual_failed_stdout_cannot_be_wrapped_as_38s_success" time="0.034" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_report_stdout_mismatch_rejected_even_with_recomputed_outer_hashes" time="0.035" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_original_failed_oracle_cannot_be_opaque_pass" time="0.041" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_actual_origin_proof_missing_new_dependency_rejected" time="0.041" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_arbitrary_unknown_artifact_is_rejected_before_reading_any_content" time="0.001" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_source_hash_change_without_manifest_rebinding_is_rejected" time="0.001" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_fault_xml_failure_is_not_hidden_by_complete_flag" time="0.045" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_injection_scope_cannot_be_relabeled_actual_outage" time="0.046" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_fault_self_attestation_and_legacy_gate_never_fallback" time="0.001" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_real_operator_foundation_and_actual_bundle_positive" time="0.057" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_fresh_raw_settings_cannot_be_replaced_by_normalized_expected_settings" time="0.056" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_fresh_raw_owner_cannot_be_ignored" time="0.056" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_failed_raw_supervisor_experiment_never_becomes_opaque_pass" time="0.057" /><testcase classname="test_publisher_actual_composite_v6_20261028" name="test_good_old_cold_fields_never_override_actual_v6_contract" time="0.008" /></testsuite></testsuites>

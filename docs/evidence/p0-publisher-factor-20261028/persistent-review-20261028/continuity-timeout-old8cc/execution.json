@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "before-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "benchmark.py": "0b25c71f9d1fe5f3109df1e38e547a9c9dbf578c07321ea560aded7a62bcff25",
+    "pass_driver.py": "5516c37feb6ae79c81f0dc716274db5b7dfc048d4377f0b22d9bdf50ddac16f9",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout.log": "103ff5ee0befe4f1facc9db83a246305213676f44873358117d40b468eb14b77"
+  },
+  "exit_code": -1,
+  "helper_sha256": "0b25c71f9d1fe5f3109df1e38e547a9c9dbf578c07321ea560aded7a62bcff25",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-persistent-continuity-nfs-20261028T101117Z",
+  "remote": "/root/qtrade-local/operator-evidence/market-persistent-continuity-nfs-20261028T101117Z",
+  "source_evidence": "/root/qtrade-local/operator-evidence/market-checkpoint-integration-tests-20261028T095758Z"
+}

@@ -1,0 +1,62 @@
+{
+  "initial_seal_aborted": true,
+  "initial_error_type": "AssertionError",
+  "cause": "Temporary harness emitted JUnit failures=False instead of numeric 0; original XML preserved.",
+  "results_not_rerun_or_reclassified": true,
+  "records": [
+    {
+      "original_file": "integration.xml",
+      "original_sha256": "424bbe1f8f7ccdd744ee548d20336bb0d9290b39ce29aaea87effbc89cc7c254",
+      "original_attributes": {
+        "name": "real-e2e",
+        "tests": "6",
+        "failures": "False",
+        "errors": "0",
+        "skipped": "0"
+      },
+      "normalized_file": "integration-normalized.xml",
+      "normalized_sha256": "5ec7f0c8d08d227b60328919fa80f917dc583cd9205a6a0f30af852cce17e3e0",
+      "testcases_unchanged": true,
+      "change": "BOOLEAN_FALSE_COUNTER_TO_NUMERIC_ZERO_ONLY",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "original_file": "linux-protocol-negative/integration.xml",
+      "original_sha256": "a9907d320009c06e32a40b66aa080cedea0737aed299303f9e533eedcc03113e",
+      "original_attributes": {
+        "name": "negative",
+        "tests": "7",
+        "failures": "False",
+        "errors": "0",
+        "skipped": "0"
+      },
+      "normalized_file": "linux-protocol-negative/integration-normalized.xml",
+      "normalized_sha256": "97b7bded118e89fb2a2290a683b035116e6eb03d3e6c0358705492fe835cc813",
+      "testcases_unchanged": true,
+      "change": "BOOLEAN_FALSE_COUNTER_TO_NUMERIC_ZERO_ONLY",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "original_file": "late-cas-negative/integration.xml",
+      "original_sha256": "271a6b0a29a7303553d3aa9ffcdaa585ec6462221532ce4906b11cf9a7026f06",
+      "original_attributes": {
+        "name": "late-cas",
+        "tests": "1",
+        "failures": "False",
+        "errors": "0",
+        "skipped": "0"
+      },
+      "normalized_file": "late-cas-negative/integration-normalized.xml",
+      "normalized_sha256": "c5bcbad45dec4838e2609b738afc7d22890ae99d1b72baa6728c2f32714b7497",
+      "testcases_unchanged": true,
+      "change": "BOOLEAN_FALSE_COUNTER_TO_NUMERIC_ZERO_ONLY",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0
+    }
+  ]
+}

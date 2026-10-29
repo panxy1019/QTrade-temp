@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-10-28T10:06:13.400591+00:00",
+  "source_sha256": "3e1c6b4c57a4483fac160d7b410daa28eede4d75580fe9383e3ea1f6c3815f8f",
+  "independent_review_result": "NO_NEW_BLOCKING_DEFECT_IN_SCOPED_S2A_REPAIR",
+  "checks": [
+    "calendar and dependency grid reconstructed from frozen specification",
+    "dual clocks and known/reason booleans recomputed",
+    "scheduled label endpoint and Shanghai close maturity recomputed",
+    "source inventory and factor definition byte bindings checked",
+    "exact sample coverage then numerical replay retained",
+    "old v1 report accepted without rewriting bytes",
+    "new Linux and Windows packages verified before and after"
+  ],
+  "limitations": [
+    "v1 has no label exit clocks or eligibility interval source bytes",
+    "no new long-window alpha experiment or performance/production acceptance"
+  ]
+}

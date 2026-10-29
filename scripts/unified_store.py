@@ -4,16 +4,18 @@ from __future__ import annotations
 
 import base64
 import gzip
+import importlib.util
 import io
 import json
 import os
 import re
 from collections import Counter
+from collections.abc import Callable
 from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Any
+from typing import Any, Literal, cast
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
@@ -33,6 +35,38 @@ FIELDS = pa.schema([
         "completion_status", "historical_available_at", "raw_pack_sha256",
     )
 ] + [("source_hashes", pa.list_(pa.string()))])
+_ReadObserver = Callable[[int, Literal['before', 'after', 'failed']], None]
+
+
+def _export_rows(table: Any) -> list[dict[str, Any]]:
+    """Decode the fixed bounded export schema without changing malformed-data behavior."""
+    if importlib.util.find_spec('numpy') is None:
+        return cast(list[dict[str, Any]], table.to_pylist())
+    try:
+        # NumPy conversion alone replaces invalid UTF-8. Only fully valid Arrow
+        # buffers may use that path; the original decoder owns every failure.
+        table.validate(full=True)
+    except pa.ArrowInvalid:
+        return cast(list[dict[str, Any]], table.to_pylist())
+    names = FIELDS.names
+    columns = [column.to_pylist() if name == 'source_hashes' else
+               column.to_numpy(zero_copy_only=False)
+               for name, column in zip(names, table.columns, strict=True)]
+    return [dict(zip(names, row, strict=True)) for row in zip(*columns, strict=True)]
+
+
+def _read_bytes(path: Path, observer: _ReadObserver | None = None, *,
+                verified_size: int | None = None) -> bytes:
+    if observer is None:
+        return path.read_bytes()
+    observer(path.stat().st_size if verified_size is None else verified_size, 'before')
+    try:
+        raw = path.read_bytes()
+    except BaseException:
+        observer(0, 'failed')
+        raise
+    observer(len(raw), 'after')
+    return raw
 
 
 def canonical(value: object) -> bytes:
@@ -62,21 +96,28 @@ def _decode_captures(ref: dict[str, Any], raw: bytes) -> list[dict[str, Any]]:
 class _BatchMaterial:
     """One store-owned physical read; callers cannot supply source bytes or decoded rows."""
 
-    def __init__(self, store: UnifiedBatchStore, batch_id: str):
+    def __init__(self, store: UnifiedBatchStore, batch_id: str, *,
+                 _read_observer: _ReadObserver | None = None):
+        self._read_observer = _read_observer
         self._path = store.batch_path(batch_id)
-        self._manifest_bytes = self._path.read_bytes()
+        self._manifest_bytes = _read_bytes(self._path, _read_observer)
         self.manifest: dict[str, Any] = json.loads(self._manifest_bytes)
         value = self.manifest
         if (value.get("schema_version") != SCHEMA or value.get("batch_id") != batch_id
                 or signed({k: v for k, v in value.items() if k != "evidence_sha256"}) != value
                 or any(value.get(k) != v for k, v in AUTHORITY.items())):
             raise ValueError("COLLECTION_BATCH_HASH_OR_AUTHORITY_MISMATCH")
-        self._raw = store.read_blob(self.manifest['raw'])
-        self._normalized = (store.read_blob(self.manifest['normalized'])
+        def read_blob(ref: dict[str, Any]) -> bytes:
+            if _read_observer is None:
+                return store.read_blob(ref)
+            return store.read_blob(ref, _read_observer=_read_observer)
+        self._raw = read_blob(self.manifest['raw'])
+        self._normalized = (read_blob(self.manifest['normalized'])
                             if self.manifest['normalized'] is not None else None)
         self.source_bytes_read = len(self._manifest_bytes)+len(self._raw)+len(
             self._normalized or b'')
         self._file: pq.ParquetFile | None = None
+        self._export_bounds_checked = False
         self._verified: (
             tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]] | None) = None
 
@@ -100,18 +141,21 @@ class _BatchMaterial:
                 metadata.row_group(i).total_byte_size for i in range(metadata.num_row_groups))
                 > 16_000_000):
             raise ValueError('UNIFIED_MARKET_SOURCE_PARQUET_BOUND')
+        self._export_bounds_checked = True
 
     def validate(self) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
         if self._verified is None:
             value = self.manifest
             captures = _decode_captures(value['raw'], self._raw)
-            rows = []
+            rows: list[dict[str, Any]] = []
             if self._normalized is not None:
                 file = self._parquet()
                 if (not file.schema_arrow.equals(FIELDS, check_metadata=False)
                         or file.metadata.num_rows != value["bar_count"]):
                     raise ValueError("NORMALIZED_INCREMENTAL_SCHEMA_OR_COUNT_MISMATCH")
-                rows = file.read().to_pylist()
+                table = file.read()
+                rows = (_export_rows(table) if self._export_bounds_checked
+                        else table.to_pylist())
                 plain = [{k: v for k, v in row.items()
                           if k not in {"raw_pack_sha256", "source_hashes"}} for row in rows]
                 if sha256(canonical(plain)).hexdigest() != value["admitted_rows_sha256"]:
@@ -120,7 +164,7 @@ class _BatchMaterial:
         return self._verified
 
     def check_manifest_unchanged(self) -> None:
-        actual = self._path.read_bytes()
+        actual = _read_bytes(self._path, self._read_observer)
         self.source_bytes_read += len(actual)
         if actual != self._manifest_bytes:
             raise ValueError('UNIFIED_MARKET_BATCH_CHANGED_DURING_REPLAY')
@@ -164,11 +208,12 @@ class UnifiedBatchStore:
                 temporary.unlink(missing_ok=True)
         return {"sha256": digest, "bytes": len(raw), "suffix": suffix}
 
-    def read_blob(self, ref: dict[str, Any]) -> bytes:
+    def read_blob(self, ref: dict[str, Any], *,
+                  _read_observer: _ReadObserver | None = None) -> bytes:
         path = self._blob_path(ref["sha256"], ref["suffix"])
         if not 0 < ref["bytes"] <= 64_000_000 or path.stat().st_size != ref["bytes"]:
             raise ValueError("INCREMENTAL_BLOB_SIZE_MISMATCH")
-        raw = path.read_bytes()
+        raw = _read_bytes(path, _read_observer, verified_size=ref['bytes'])
         if sha256(raw).hexdigest() != ref["sha256"]:
             raise ValueError("INCREMENTAL_BLOB_CHECKSUM_MISMATCH")
         return raw
@@ -325,5 +370,6 @@ class UnifiedBatchStore:
     def load(self, batch_id: str) -> dict[str, Any]:
         return self._batch_material(batch_id).validate()[0]
 
-    def _batch_material(self, batch_id: str) -> _BatchMaterial:
-        return _BatchMaterial(self, batch_id)
+    def _batch_material(self, batch_id: str, *,
+                        _read_observer: _ReadObserver | None = None) -> _BatchMaterial:
+        return _BatchMaterial(self, batch_id, _read_observer=_read_observer)

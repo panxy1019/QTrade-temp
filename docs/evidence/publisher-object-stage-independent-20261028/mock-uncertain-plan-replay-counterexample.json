@@ -1,0 +1,9 @@
+{
+  "first_attempt_ref_absent": true,
+  "no_consumed_intent_enforced": true,
+  "production_actions": false,
+  "recorded_at": "2026-10-28T12:50:48.179594+00:00",
+  "same_plan_send_attempts": 2,
+  "scope": "SYNTHETIC_PROTOCOL_FLOW_NOT_ACTUAL_SSH",
+  "second_attempt_allowed": true
+}

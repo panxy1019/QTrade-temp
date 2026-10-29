@@ -1,0 +1,59 @@
+{
+  "created_at": "2026-10-28T10:58:21.224380+00:00",
+  "files": {
+    "publisher_handover_bridge_safe_module_v3_20261028.py": {
+      "bytes": 13002,
+      "sha256": "579d597f45af73ba6e216bc3e5c1d1017e59e35b769395190185807b6f989b04"
+    },
+    "publisher_handover_bridge_v4_20261028.py": {
+      "bytes": 14678,
+      "sha256": "3d8c4f65af8e65abbaf3a52bdff706c0f47d8ddba5af9976a8cc5e1f35de7acd"
+    },
+    "publisher_handover_bridge_v5_20261028.py": {
+      "bytes": 14678,
+      "sha256": "f60b83490b7ef6ba6d46b4ba728120a847e38b6a40aca0ff136e2f8409ddb1fb"
+    },
+    "publisher_handover_draft_20261028.py": {
+      "bytes": 30707,
+      "sha256": "eb2acf2cc2bad3103bb2478ff6317bca47ba085a275ec602bc372a9ea8545edc"
+    },
+    "publisher_handover_v4_20261028.py": {
+      "bytes": 34260,
+      "sha256": "fe42741b681e51e5b662d380f3d59ad12c8a3ec6c380c27c6e6d253c4cd871f6"
+    },
+    "publisher_handover_v5_20261028.py": {
+      "bytes": 34832,
+      "sha256": "980d288602f35160f9904a164893b40ef147b2ee882e2a91a0f973043824ebb4"
+    },
+    "publisher_incremental_gates_v4_20261028.py": {
+      "bytes": 12583,
+      "sha256": "4f05e880c19096ea78d2a8b392d463348d9b955d39f8a7a8b75ee5dd344d2954"
+    },
+    "run_handover_v5_linux_isolated_20261028.py": {
+      "bytes": 6490,
+      "sha256": "452f11951b9472b546dab70f89dcbc0c9dfbaa7b37e5c025ac2eecde00f0fe5e"
+    },
+    "test_publisher_handover_bridge_safe_module_v3_20261028.py": {
+      "bytes": 7134,
+      "sha256": "8f18334d28642923aa4af06dd37b2a190a2fdf5de5f058aba47c47f9e945616d"
+    },
+    "test_publisher_handover_draft_20261028.py": {
+      "bytes": 24631,
+      "sha256": "6eba26283726e2c2b2fae81fac0a5d7005a642cdbeae47cb080c76354b49e201"
+    },
+    "test_publisher_handover_v4_20261028.py": {
+      "bytes": 9741,
+      "sha256": "fbcbc417cf5825421824275d1c668b3fa033ffaa19235bde6f7d34d553f1a3a9"
+    },
+    "test_publisher_handover_v5_20261028.py": {
+      "bytes": 6765,
+      "sha256": "a94e3ad37430d16c8b86c651b21fea7fd42a78d3307003070ee8a120ce9079ca"
+    },
+    "test_publisher_incremental_gates_v4_20261028.py": {
+      "bytes": 9300,
+      "sha256": "1e419b65ba2baabd379aad8170888c6891976cfbadf653e7b0c272ae15c4bcb3"
+    }
+  },
+  "schema_version": "qtrade.handover-v5-isolated-package.v1",
+  "scope": "SYNTHETIC_TESTS_ONLY"
+}

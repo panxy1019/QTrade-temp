@@ -1,0 +1,66 @@
+{
+  "remote_root": "/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101729Z-1fa4c320",
+  "files": [
+    {
+      "file": "independent-red.xml",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "operator.py",
+      "bytes": 2391,
+      "sha256": "a78878f2674c698a01eaa618ff4d1806ebc59d2c7e67c7e74b5409ec20b77909"
+    },
+    {
+      "file": "remote-stderr.log",
+      "bytes": 1227,
+      "sha256": "3cd29e5857b5f9fb7d537a6bf8b4bec504455d623f4adab81d98a52ff5e1534e"
+    },
+    {
+      "file": "remote-stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "resources-before.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "result.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "review-overlay.tar",
+      "bytes": 112640,
+      "sha256": "f2040fcb93125f7dd8d9c19dca523a851ffc8a23d103ac66713fa6799761c348"
+    },
+    {
+      "file": "source-after.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "source-before.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "source-manifest.json",
+      "bytes": 401978,
+      "sha256": "53fd96932db11a5c0e9e04bb63e70f9e6f5fa4aa72a61e90c8c22685d65517c9"
+    },
+    {
+      "file": "stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "operator_status": 1
+}

@@ -1,0 +1,32 @@
+{
+  "bridge_sha256": "689af7db40b33f804283068c3f6bd7756fafcd65160af674a2937b3c66c06bbf",
+  "caller_sha256": "9293cd719f398dcdd5c8603a89a6b4a9e77eb1598ae7766f1141544ce61f3e8c",
+  "checked_at": "2026-10-28T12:01:57.073756+00:00",
+  "mode": "advance",
+  "operator_sha256": "0fd5100d029e6234039c765639b4ddb89094795918d6c7779ce199efe98f68f2",
+  "original_private_root": "E:\\QTrade-temp\\cluster-evidence\\control-advance-20261028T120148Z",
+  "raw_bodies_not_copied": true,
+  "raw_files": {
+    "driver.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "driver.stdout": {
+      "bytes": 232,
+      "sha256": "715480923d75e8f0b335dbca1e1aa4b394ac7da1fff0d2e2a72685cf62d20380"
+    },
+    "result.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "result.stdout": {
+      "bytes": 988,
+      "sha256": "6db2f4a58882932fc2bc9e22ebb4f4ac96167b157ba62df4addcb22e6f9f0aed"
+    }
+  },
+  "result": {
+    "functional_acceptance": "SEPARATE_ORDINARY_AUTONOMOUS_EVIDENCE_REQUIRED",
+    "state": "DRAIN_PENDING"
+  },
+  "runtime_source_file_count": 0
+}

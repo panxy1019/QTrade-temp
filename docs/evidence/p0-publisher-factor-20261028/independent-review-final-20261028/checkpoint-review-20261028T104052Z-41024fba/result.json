@@ -1,0 +1,40 @@
+{
+  "returncode": 1,
+  "elapsed_seconds": 2.8531335070729256,
+  "command": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104052Z-41024fba/tmp/pytest",
+    "tests/test_unified_market_checkpoint_independent.py",
+    "-k",
+    "sqlite_hit_requires_current_durable_sidecar or corrupt_old_sidecar",
+    "--junitxml=/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104052Z-41024fba/sidecar-evidence-red.xml"
+  ],
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jun 18 2026, 21:28:09) [GCC 14.3.0]",
+  "overlays": {
+    "scripts/unified_market_checkpoint.py": {
+      "sha256": "0f2c512f7abf7cbc99d34def6edfa7dfeaa73e564031a36a5b33653759a2f485",
+      "bytes": 6673
+    },
+    "scripts/publish_unified_market.py": {
+      "sha256": "ab19268bf9e5f1ce484b39e040da7cfeddffbdb7d433c33959e14260c16d64a2",
+      "bytes": 66360
+    },
+    "src/qtrade/research/market_validation_receipts.py": {
+      "sha256": "8afd9ec70a779d9d9ac7584e74104b1b29baabc7fb82d54f5ab451b1868a3ff0",
+      "bytes": 21240
+    },
+    "tests/test_unified_market_checkpoints.py": {
+      "sha256": "0488a5edbd64f882171036ea3db1292d6e1a5ee581aad2165282c86377bd535d",
+      "bytes": 8220
+    },
+    "tests/test_unified_market_checkpoint_independent.py": {
+      "sha256": "b47f41f5c406021dd5731c468ec6119fcdf32fd3beecddda5116401d9a2d70c1",
+      "bytes": 21343
+    }
+  }
+}

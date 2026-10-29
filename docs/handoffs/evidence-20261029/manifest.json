@@ -1,0 +1,60 @@
+{
+  "browser_acceptance_this_turn": false,
+  "clarification": "facts.supported_instruments counts interval rows; universe-distinct-counts supplies actual891 unique codes",
+  "files": {
+    "capture.py": {
+      "bytes": 2976,
+      "sha256": "2601d9f9b4dad56b75a7233b10d03380258051b7eb72830cf919a0dda999814e"
+    },
+    "facts.json": {
+      "bytes": 4290,
+      "sha256": "33c0e021272a5fb250279d725324a6202d864f6284dd5efb32dafe15efb4a1fa"
+    },
+    "legacy-comparison-capture.py": {
+      "bytes": 1265,
+      "sha256": "f0c2fa33887260e9eb381b6f7f456658897833bf9487257635b155d398d4cc4b"
+    },
+    "legacy-comparison.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "legacy-comparison.stdout.json": {
+      "bytes": 5548,
+      "sha256": "f47b75106548f80b697dd73d264acafc76f10b717e9eacd5a561a35967cf1478"
+    },
+    "legacy-output-verify.json": {
+      "bytes": 385,
+      "sha256": "50a3d6016f58d0620f56840ee32dcbce9663552def35639f663a24e5c66062f0"
+    },
+    "legacy-output-verify.py": {
+      "bytes": 1206,
+      "sha256": "9e58952f48cbd4eab56981d9d70e9cf89479352a2eea77ebe77f56ae7fb9c04a"
+    },
+    "legacy-output-verify.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public-api-projection.json": {
+      "bytes": 2624,
+      "sha256": "5484cc0970228113b547946e2dbd2a335233fccb05de2984d2e264ef1eacd0e1"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout.json": {
+      "bytes": 3587,
+      "sha256": "1d9b445d89744b67313d85bfdaab3a897e7823554b56629a3c87701c0a4af77a"
+    },
+    "universe-distinct-counts.json": {
+      "bytes": 22062,
+      "sha256": "bca7bf02475566d14be5707ef536fa7938f10d04d4094218a6285fe867882d8b"
+    }
+  },
+  "full_ready_validation_this_turn": false,
+  "legacy_archive_check": "28 output files/61877590 bytes verified; not a rerun or original training-input verification",
+  "read_only": true,
+  "runtime_changes": false,
+  "schema_version": "qtrade.research-handoff-observation.v1",
+  "source_code_baseline": "be4faa79dd29d145ed6fb490777a9a91f8d302ca"
+}

@@ -304,10 +304,20 @@ def run_pass(
                     state["state"] = "STORAGE_RESERVE_PAUSED"
                     save()
                     return state
+                from qtrade.research.collection_retry_policy import retry_deferrals
+
+                retry_control = retry_deferrals(
+                    base, master['universe_version'], freq,
+                    str(datetime.fromisoformat(ends[freq]).astimezone(SHANGHAI).date()),
+                    now=now)
+                state.setdefault('retry_controls', {})[freq + ':'
+                    + retry_control['trading_day']] = retry_control
                 batch = queue.claim(
                     master["universe_version"], freq,
                     datetime.fromisoformat(ends[freq]).astimezone(SHANGHAI).date(), now=now,
                     code_revision=code_revision, limit=min(group_size, maximum_symbols - attempted),
+                    **({'deferred_tasks': tuple(retry_control['deferrals'])}
+                       if retry_control['deferrals'] else {}),
                 )
                 if batch is None:
                     continue

@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/publication-relay-cold-20261028T130000Z/publication_native_relay_operator_v2_20261028.py", line 289, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/root/qtrade-local/operator-evidence/publication-relay-cold-20261028T130000Z/publication_native_relay_operator_v2_20261028.py", line 252, in main
+    elif args.mode=='prepare':result=prepare()
+                                     ~~~~~~~^^
+  File "/root/qtrade-local/operator-evidence/publication-relay-cold-20261028T130000Z/publication_native_relay_operator_v2_20261028.py", line 192, in prepare
+    validate_export_attempt(attempt,index,now)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/root/qtrade-local/operator-evidence/publication-relay-cold-20261028T130000Z/publication_native_relay_operator_v2_20261028.py", line 131, in validate_export_attempt
+    require(attempt['schema_version']=='qtrade.unified-market-export-attempt.v1'
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        and attempt['state']=='SUCCEEDED' and attempt['error_class'] is None
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        and type(attempt['started_at']) is str and type(attempt['completed_at']) is str,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        'ACTUAL_SUCCESSFUL_EXPORT_BINDING_REQUIRED')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/qtrade-local/operator-evidence/publication-relay-cold-20261028T130000Z/publication_native_relay_operator_v2_20261028.py", line 29, in require
+    if not value: raise ValueError('NATIVE_RELAY_'+code)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: NATIVE_RELAY_ACTUAL_SUCCESSFUL_EXPORT_BINDING_REQUIRED

@@ -1,0 +1,11 @@
+{
+  "private_trace_sha256": "f53d818a1e135e666d52ec262f1761a6d5dd06ba2796c4da4c461c3991aa0b22",
+  "private_trace_bytes": 337911,
+  "private_trace_path": "E:\\QTrade-temp\\factor-api-queue-e2e-20261028T132322Z-3bcecd4a\\http-exchanges.json",
+  "http_exchanges": 14,
+  "harness_already_omitted_password_values": true,
+  "cookie_session_values_recorded": false,
+  "auth_material_exported": false,
+  "Git_representation": "SAFE_PROJECTION_NOT_PRIVATE_TRACE",
+  "HMAC_in_public_queue_envelope_is_checksum_not_secret": true
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "arguments": [
+      "qtrade-research-publication"
+    ],
+    "fixture_pid": 527097,
+    "method": "supervisor.getProcessInfo"
+  },
+  {
+    "arguments": [
+      "qtrade-research-publication"
+    ],
+    "fixture_pid": 527097,
+    "method": "supervisor.getProcessInfo"
+  },
+  {
+    "arguments": [
+      "qtrade-research-publication"
+    ],
+    "fixture_pid": 527098,
+    "method": "supervisor.getProcessInfo"
+  },
+  {
+    "arguments": [
+      "qtrade-research-publication"
+    ],
+    "fixture_pid": 527099,
+    "method": "supervisor.getProcessInfo"
+  },
+  {
+    "arguments": [
+      "qtrade-research-publication"
+    ],
+    "fixture_pid": 527100,
+    "method": "supervisor.getProcessInfo"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "packages": {
+    "numpy": "1.26.4",
+    "pandas": "2.2.3",
+    "pyqlib": "0.9.7",
+    "scipy": "1.17.1"
+  },
+  "signatures": {
+    "Alpha158": "(instruments='csi500', start_time=None, end_time=None, freq='day', infer_processors=[], learn_processors=[{'class': 'DropnaLabel'}, {'class': 'CSZScoreNorm', 'kwargs': {'fields_group': 'label'}}], fit_start_time=None, fit_end_time=None, process_type='append', filter_pipe=None, inst_processors=None, **kwargs)",
+    "Alpha158.get_feature_config": "(self)",
+    "Alpha158DL.get_feature_config": "(config={'kbar': {}, 'price': {'windows': [0], 'feature': ['OPEN', 'HIGH', 'LOW', 'VWAP']}, 'rolling': {}})",
+    "Corr": "(feature_left, feature_right, N)",
+    "DataHandlerLP": "(instruments=None, start_time=None, end_time=None, data_loader: Union[dict, str, qlib.data.dataset.loader.DataLoader] = None, infer_processors: List = [], learn_processors: List = [], shared_processors: List = [], process_type='append', drop_raw=False, **kwargs)",
+    "ExpressionProvider.get_expression_instance": "(self, field)",
+    "Mean": "(feature, N)",
+    "QlibDataLoader": "(config: Tuple[list, tuple, dict], filter_pipe: List = None, swap_level: bool = True, freq: Union[str, dict] = 'day', inst_processors: Union[dict, list] = None)",
+    "Ref": "(feature, N)",
+    "Ref.get_extended_window_size": "(self)",
+    "Rolling": "(feature, N, func)",
+    "SigAnaRecord": "(recorder, ana_long_short=False, ann_scaler=252, label_col=0, skip_existing=False)",
+    "SigAnaRecord._generate": "(self, label: Optional[pandas.core.frame.DataFrame] = None, **kwargs)",
+    "Std": "(feature, N)",
+    "calc_ic": "(pred: pandas.core.series.Series, label: pandas.core.series.Series, date_col='datetime', dropna=False) -> (<class 'pandas.core.series.Series'>, <class 'pandas.core.series.Series'>)"
+  },
+  "source_hashes": {
+    "qlib/contrib/data/handler.py": "b621481c6009c39066c67c71390fd2bea635f56daf9f2c4e38817eff268e3232",
+    "qlib/contrib/data/loader.py": "814b7f7ab3d418ae3c87ce352220080b239eba2670eac9e38376b794be4075cb",
+    "qlib/contrib/eva/alpha.py": "f8e6eb2a4647cb7b2f6ce316fec36f875dcf9125d21515790a145435f5d26229",
+    "qlib/data/data.py": "9156bfef585b9e2d22d4d1ba5831efdb63b419d24846ee738eee237090ff6a24",
+    "qlib/data/dataset/handler.py": "8fc3732631bc5e199f8c925827fb0dc7775cfc4edcf3d16e2ac591ec71a4ae90",
+    "qlib/data/dataset/loader.py": "9a3d784f2b8dc0cd535929f8b8db5ed6437b79b6330475d19feb293b64e30c60",
+    "qlib/data/ops.py": "6f648355725a85a9f17528d864281fc065f8a4f887261a9909f7495d5db42760",
+    "qlib/workflow/record_temp.py": "ef07266b594e9b7e80cce0ed11c9663ab67c2828f20306371f7de5b71e226fb7"
+  }
+}

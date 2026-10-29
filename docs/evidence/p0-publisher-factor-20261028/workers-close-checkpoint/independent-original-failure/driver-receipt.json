@@ -1,0 +1,10 @@
+{
+  "exit_code": 1,
+  "pytest_pid": 545139,
+  "own_popen": true,
+  "scope": "ONLY_TEMP_LAKE_FIXTURES_NO_PRODUCTION_ACTIONS",
+  "sources": {
+    "scripts/publish_unified_market.py": "c5c787943a720c48f4795fddbf1984d741e43453b7935df4357aa342e86fe9ab",
+    "tests/test_unified_market.py": "3b87d24221e092f4cad2b5547cd792c666b04d69cabe046eb3055619aef2a92c"
+  }
+}

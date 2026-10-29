@@ -1,0 +1,3 @@
+login success!
+logout success!
+{"state": "PARTIAL", "outcome": "BOUNDED_PASS_FINISHED", "progress": {"mode": "BOUNDED_UNIVERSE_QUEUE_V2", "scope_symbols": 990, "completed_symbols": 20, "unresolved_symbols": 970, "unattempted_symbols": 970, "due_retry_symbols": 0, "waiting_retry_symbols": 0, "next_retry_at": null, "historical_pit_certified": false}}

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/root/qtrade-local/operator-evidence/minio-protocol-20261029T163700Z/build-mirror-20261028T165956Z-f5217074/minio",
+    "--version"
+  ],
+  "budget_seconds": 10,
+  "cleanup_source_sha256": "eed5960ee4aa35135cddbff04235e500c4c8209464d3b14745a5a52afc585918",
+  "pgid": 719140,
+  "pid": 719140,
+  "start_ticks": "1023894202"
+}

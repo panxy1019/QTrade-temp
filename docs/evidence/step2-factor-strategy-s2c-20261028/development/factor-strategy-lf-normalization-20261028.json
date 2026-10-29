@@ -1,0 +1,17 @@
+{
+  "src/qtrade/research/factor_strategy_contract.py": {
+    "before_sha256": "2434723896a8f3d646d08c325f3bb4bcf8b6f03d227c67bba0e8e45dcec5ec37",
+    "crlf": 0,
+    "after_sha256": "2434723896a8f3d646d08c325f3bb4bcf8b6f03d227c67bba0e8e45dcec5ec37"
+  },
+  "src/qtrade/strategies/registry.py": {
+    "before_sha256": "d0903de34bd690263dbe4029846145e913f2d08c8599c7b2dbf3b0fd01165739",
+    "crlf": 725,
+    "after_sha256": "6426cf4b376a99b216177aa17841760b80f5636389f21562b3fe0454f5f245a4"
+  },
+  "tests/test_factor_strategy_contract.py": {
+    "before_sha256": "f7296001f23afc7917e99f239aca578ab11b37320273ce0ba48fec8319ff355f",
+    "crlf": 0,
+    "after_sha256": "f7296001f23afc7917e99f239aca578ab11b37320273ce0ba48fec8319ff355f"
+  }
+}

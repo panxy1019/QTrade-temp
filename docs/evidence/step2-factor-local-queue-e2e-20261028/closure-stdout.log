@@ -1,0 +1,9 @@
+{
+  "state": "MIRROR_AND_EXACT_GIT_SOURCE_STILL_IMMUTABLE_AFTER_COLLECTION",
+  "source_files": 3001,
+  "ready_mirror_files": 18829,
+  "ready_mirror_bytes": 786448967,
+  "source_unchanged": true,
+  "ready_mirror_unchanged": true
+}
+

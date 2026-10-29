@@ -1,0 +1,75 @@
+{
+  "apply_guard_code": "REPAIR_CURRENT_COLLECTOR_OWNER_ALIVE",
+  "checked_at": "2026-10-27T18:32:51.475204+00:00",
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "counts": [
+    [
+      "5min",
+      "FAILED",
+      4
+    ],
+    [
+      "5min",
+      "SUCCEEDED",
+      1496
+    ],
+    [
+      "day",
+      "FAILED",
+      3
+    ],
+    [
+      "day",
+      "SUCCEEDED",
+      1497
+    ]
+  ],
+  "etf_contiguous_completed_end": "2026-10-27T01:55:00+00:00",
+  "etf_missing_times": [
+    "10:00",
+    "11:30",
+    "14:30"
+  ],
+  "etf_symbol": "512580",
+  "evidence_sha256": "b14af35fa6de7f74ae6cbe51c48af7899539e71c2ddd839d5a1f694e91633de8",
+  "external_order_transmission": false,
+  "failed_tasks_replayed": 7,
+  "full_pool_sla_certified": false,
+  "historical_pit_certified": false,
+  "kind": "CURRENT_FAILED_TASK_RAW_SOURCE_REPLAY",
+  "limitations": [
+    "RAW_RESPONSE_REPLAY_NOT_INDEPENDENT_EXCHANGE_STATUS",
+    "MISSING_GRID_IS_NOT_ZERO_VOLUME_OR_SUSPENSION",
+    "NO_FILL_FORWARD_OR_SOURCE_STITCHING",
+    "READ_ONLY_PLAN_DOES_NOT_AUTHORIZE_APPLY_WHILE_OWNER_IS_ALIVE"
+  ],
+  "live_trading_enabled": false,
+  "maintenance_owner_pid": 213587,
+  "operator_sha256": "427f8e30336a9d7466f1d09b2a941dd907679c17bcdd368ce53f9a508e4fdb30",
+  "owner_process_confirmed_live": true,
+  "point_in_time": false,
+  "promotion": "NOT_ELIGIBLE",
+  "queue_or_service_mutated": false,
+  "read_only_plan_candidates": 10,
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "source_files": {
+    "configs/observer_calendar_2026.json": "065c0c1a0411a730fa5e1f4f56b14d6c3074883f3aaae5fd989bbdf5f7f675a4",
+    "scripts/repair_incremental_gaps.py": "5e9aa660cd86288391ef64a63db15d98255d578432af7b8614a14e2bed6dfb2e",
+    "scripts/unified_store.py": "01e6fa4230ccf7c2b88c7e8a00e3ee0dc67d4a26a3ec6b99bbdc02dd3f62ff5d",
+    "src/qtrade/market_data/sina_minute.py": "53e03b3f8aa1f1d5108acedd007eaa445917d0ea742e5a32c1a71db3a5ae5a97"
+  },
+  "source_gap_repaired": false,
+  "source_revision": "9846a7f30774d6ae4b4d41f02b493c5246be87d9",
+  "stale_source_last_day": "2026-10-23",
+  "stale_source_symbols": [
+    "002827",
+    "600621",
+    "605258"
+  ],
+  "started_at": "2026-10-27T18:32:50.962568+00:00",
+  "state": "DIAGNOSIS_VERIFIED_SOURCE_GAPS_REMAIN",
+  "suspension_or_no_trade_inferred": false,
+  "trading_day": "2026-10-27",
+  "whole_step1_accepted": false
+}

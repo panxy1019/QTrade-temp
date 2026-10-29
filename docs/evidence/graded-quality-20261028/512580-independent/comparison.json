@@ -1,0 +1,207 @@
+{
+  "admission_changed": false,
+  "amount_exact_matches": 4,
+  "eastmoney_body_sha256": "eedd4be43a2b7f51ff9c9082f05529f66bf25799ed85c52ef65d29bbf0f49ed3",
+  "eastmoney_count": 48,
+  "eastmoney_high_low_enclose_its_open_relative_to_sina_exceptions": [],
+  "eastmoney_within_session_open_previous_close_checked": 46,
+  "eastmoney_within_session_open_previous_close_exceptions": [
+    "2026-10-27 09:50:00",
+    "2026-10-27 09:55:00",
+    "2026-10-27 10:10:00",
+    "2026-10-27 10:30:00",
+    "2026-10-27 10:35:00",
+    "2026-10-27 10:45:00",
+    "2026-10-27 10:55:00",
+    "2026-10-27 11:15:00",
+    "2026-10-27 13:15:00",
+    "2026-10-27 13:40:00",
+    "2026-10-27 13:50:00",
+    "2026-10-27 14:35:00",
+    "2026-10-27 14:40:00"
+  ],
+  "eastmoney_zero_volume_records": {
+    "2026-10-27 10:00:00": {
+      "amount": "0.000",
+      "amplitude": "0.00",
+      "close": "1.011",
+      "high": "1.011",
+      "low": "1.011",
+      "open": "1.011",
+      "pct_change": "0.00",
+      "price_change": "0.000",
+      "turnover": "0.00",
+      "volume": "0"
+    },
+    "2026-10-27 11:30:00": {
+      "amount": "0.000",
+      "amplitude": "0.00",
+      "close": "1.010",
+      "high": "1.010",
+      "low": "1.010",
+      "open": "1.010",
+      "pct_change": "0.00",
+      "price_change": "0.000",
+      "turnover": "0.00",
+      "volume": "0"
+    },
+    "2026-10-27 14:30:00": {
+      "amount": "0.000",
+      "amplitude": "0.00",
+      "close": "1.003",
+      "high": "1.003",
+      "low": "1.003",
+      "open": "1.003",
+      "pct_change": "0.00",
+      "price_change": "0.000",
+      "turnover": "0.00",
+      "volume": "0"
+    }
+  },
+  "field_mismatch_counts": {
+    "close": 0,
+    "high": 7,
+    "low": 5,
+    "open": 13
+  },
+  "interpretation": "Observed OHLC representation differences; no official construction semantics or exchange truth certified",
+  "market_truth_certified": false,
+  "max_amount_absolute_difference": "0.9007",
+  "ohlc_mismatch_count": 13,
+  "ohlc_mismatches": {
+    "2026-10-27 09:45:00": {
+      "high": [
+        "1.018",
+        "1.017"
+      ],
+      "open": [
+        "1.018",
+        "1.016"
+      ]
+    },
+    "2026-10-27 10:50:00": {
+      "high": [
+        "1.011",
+        "1.009"
+      ],
+      "open": [
+        "1.011",
+        "1.009"
+      ]
+    },
+    "2026-10-27 11:00:00": {
+      "high": [
+        "1.010",
+        "1.009"
+      ],
+      "open": [
+        "1.010",
+        "1.009"
+      ]
+    },
+    "2026-10-27 11:10:00": {
+      "low": [
+        "1.007",
+        "1.010"
+      ],
+      "open": [
+        "1.007",
+        "1.010"
+      ]
+    },
+    "2026-10-27 11:25:00": {
+      "low": [
+        "1.009",
+        "1.010"
+      ],
+      "open": [
+        "1.009",
+        "1.010"
+      ]
+    },
+    "2026-10-27 13:20:00": {
+      "open": [
+        "1.006",
+        "1.005"
+      ]
+    },
+    "2026-10-27 13:25:00": {
+      "high": [
+        "1.006",
+        "1.005"
+      ],
+      "open": [
+        "1.006",
+        "1.005"
+      ]
+    },
+    "2026-10-27 13:30:00": {
+      "high": [
+        "1.005",
+        "1.004"
+      ],
+      "open": [
+        "1.005",
+        "1.004"
+      ]
+    },
+    "2026-10-27 13:35:00": {
+      "low": [
+        "1.004",
+        "1.005"
+      ],
+      "open": [
+        "1.004",
+        "1.005"
+      ]
+    },
+    "2026-10-27 13:55:00": {
+      "low": [
+        "1.004",
+        "1.005"
+      ],
+      "open": [
+        "1.004",
+        "1.005"
+      ]
+    },
+    "2026-10-27 14:05:00": {
+      "low": [
+        "1.007",
+        "1.009"
+      ],
+      "open": [
+        "1.007",
+        "1.009"
+      ]
+    },
+    "2026-10-27 14:20:00": {
+      "high": [
+        "1.006",
+        "1.005"
+      ],
+      "open": [
+        "1.006",
+        "1.004"
+      ]
+    },
+    "2026-10-27 14:25:00": {
+      "high": [
+        "1.005",
+        "1.003"
+      ],
+      "open": [
+        "1.005",
+        "1.003"
+      ]
+    }
+  },
+  "overlap_count": 45,
+  "scope": "CROSS_VENDOR_OBSERVATION_ONLY_NOT_ADMISSION",
+  "sina_body_sha256": "74908484c5eefbacf0113bcb7893b4724f3e25efe6214444589addf7fb81346b",
+  "sina_count": 45,
+  "sina_repaired": false,
+  "sina_volume_div_eastmoney_distribution": {
+    "100": 45
+  }
+}

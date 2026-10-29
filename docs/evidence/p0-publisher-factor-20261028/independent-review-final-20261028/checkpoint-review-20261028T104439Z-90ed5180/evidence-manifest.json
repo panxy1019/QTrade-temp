@@ -1,0 +1,66 @@
+{
+  "remote_root": "/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104439Z-90ed5180",
+  "files": [
+    {
+      "file": "remote-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "remote-stdout.log",
+      "bytes": 4600,
+      "sha256": "2fc9f4846450801ef8e6a10ed757062d2563efbfe1f272b6e0cfdd9880676c42"
+    },
+    {
+      "file": "repeated-uncertainty-red.xml",
+      "bytes": 2255,
+      "sha256": "ccdd0c081da8883990c334e0920dc5acb1bb5fc675c7d51065039765d7de8edf"
+    },
+    {
+      "file": "resources-before.json",
+      "bytes": 49,
+      "sha256": "dc44c4b98c738e61b44573d758a0f42fdc54245fa0fa1b86969232922df5cd89"
+    },
+    {
+      "file": "result.json",
+      "bytes": 1506,
+      "sha256": "f78e3dd26a0c2e369c8f99ba0d54fddb94ad50342a1de89416099956e3aa4343"
+    },
+    {
+      "file": "review-overlay.tar",
+      "bytes": 133120,
+      "sha256": "b5a41491a57bf1b76e7768b87d0ce34f9a07c6350ab6185f469f1b5dceffd382"
+    },
+    {
+      "file": "run_checkpoint_review.py",
+      "bytes": 2436,
+      "sha256": "ee90abeeadcb632e2f3429620ff084769df4ab3419f9b514a283e84bbc4be7a6"
+    },
+    {
+      "file": "source-after.json",
+      "bytes": 392597,
+      "sha256": "038ad82ee5e7fd4a9373841bd73def17a0f1665f3584964f7f8b588b7a28a454"
+    },
+    {
+      "file": "source-before.json",
+      "bytes": 392597,
+      "sha256": "038ad82ee5e7fd4a9373841bd73def17a0f1665f3584964f7f8b588b7a28a454"
+    },
+    {
+      "file": "source-manifest.json",
+      "bytes": 401978,
+      "sha256": "312294b6fbe50b99b7f05935ef683a1b13b34b1c29cda87583edee67d0a4c46c"
+    },
+    {
+      "file": "stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "stdout.log",
+      "bytes": 2999,
+      "sha256": "d286f3beee0741853d6c30ffd12e8c61b7f980dc6138a5e7f4ec39ed55b303d8"
+    }
+  ],
+  "operator_status": 0
+}

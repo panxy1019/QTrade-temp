@@ -1,0 +1,2 @@
+PHASE preflight_started
+{"state": "PREFLIGHT_COMPLETE", "root": "/root/qtrade-local/operator-evidence/factor-longer-s2b-20261028T112943Z-86cd84da", "dates": ["2026-09-28", "2026-09-29", "2026-09-30", "2026-10-08", "2026-10-09", "2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15", "2026-10-16", "2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22", "2026-10-23", "2026-10-26"], "warmup_first": "2026-08-28", "label_last": "2026-10-27", "dependency_cells": 983664, "complete_date_grid_instruments": 884}

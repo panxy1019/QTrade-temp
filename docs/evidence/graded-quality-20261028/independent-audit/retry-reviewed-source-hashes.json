@@ -1,0 +1,11 @@
+{
+  "observed_at": "2026-10-28T02:58:00.931955+00:00",
+  "scope": "LOCAL_RETRY_CONTROL_NOT_DEPLOYED_OR_APPROVED",
+  "files": {
+    "src/qtrade/research/collection_retry_policy.py": "5743eab6d7f81b33a0490c9e02392596f32c8c63113478e77b170ab7f212d9bd",
+    "src/qtrade/research/data_quality.py": "9ea12d74f7895a99f733262e8879bb62737c817346873b8165d3743f87e2b50c",
+    "scripts/unified_queue.py": "13fe16304d3568cecc9a1c9320e690819308f3f4a1de7257e72fba0571eab19b",
+    "scripts/collect_unified_data.py": "7d6d2866c3802e9278bf873a5f6bb44d9493394eb5de68f971fb56f1ef4a8292",
+    "scripts/build_data_quality_summary.py": "af1b0cf40494daef750e5847182b27c226d973d2b4ced46230b70d6574ba6d17"
+  }
+}

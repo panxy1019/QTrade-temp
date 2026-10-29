@@ -1,0 +1,107 @@
+{
+  "cpu_seconds": 36.179811882,
+  "error_class": "ValueError",
+  "error_code": "UNIFIED_MARKET_WORKER_TIME_BUDGET",
+  "metrics": {
+    "_chunks.main": {
+      "count": 1,
+      "cpu": 1.024451391,
+      "wall": 1.0273139774799347
+    },
+    "_load.main": {
+      "count": 5550,
+      "cpu": 25.75869021099991,
+      "wall": 29.800616709515452
+    },
+    "_persist_objects.main": {
+      "count": 1,
+      "cpu": 34.597894346,
+      "wall": 43.66326881758869
+    },
+    "_replay.main": {
+      "count": 5550,
+      "cpu": 13.493399654999898,
+      "wall": 13.544565740972757
+    },
+    "_worker_compact.main": {
+      "count": 5845,
+      "cpu": 0.8207948109999501,
+      "wall": 0.8234779573976994
+    },
+    "_worker_inventory.main": {
+      "count": 2,
+      "cpu": 0.0009968910000002218,
+      "wall": 0.0010002590715885162
+    },
+    "encoded.main": {
+      "count": 2457,
+      "cpu": 0.4140811809999776,
+      "wall": 0.4153677076101303
+    },
+    "material._parquet.main": {
+      "count": 11100,
+      "cpu": 1.1112955480000637,
+      "wall": 1.3450829088687897
+    },
+    "material.check_export_bounds.main": {
+      "count": 5550,
+      "cpu": 1.1500826800001742,
+      "wall": 1.3887024819850922
+    },
+    "material.check_manifest_unchanged.main": {
+      "count": 5550,
+      "cpu": 0.3735434769999664,
+      "wall": 2.101698523387313
+    },
+    "material.validate.main": {
+      "count": 11100,
+      "cpu": 10.053735196999984,
+      "wall": 11.870023053139448
+    },
+    "pool.close.main": {
+      "count": 1,
+      "cpu": 0.0009784699999997315,
+      "wall": 0.01619071327149868
+    },
+    "pool.pump.main": {
+      "count": 21233,
+      "cpu": 2.4379349429997905,
+      "wall": 6.6761294938623905
+    },
+    "pool.response.main": {
+      "count": 5843,
+      "cpu": 2.0819089099998913,
+      "wall": 2.118338206782937
+    },
+    "pool.send.main": {
+      "count": 5845,
+      "cpu": 0.06992978200011724,
+      "wall": 0.07004426419734955
+    },
+    "signed.main": {
+      "count": 11686,
+      "cpu": 2.493180220999887,
+      "wall": 2.6220463402569294
+    },
+    "store._decode_captures.main": {
+      "count": 5550,
+      "cpu": 3.0658327370000973,
+      "wall": 3.5357584226876497
+    },
+    "store._export_rows.main": {
+      "count": 5550,
+      "cpu": 2.8779985430001016,
+      "wall": 3.098072163760662
+    },
+    "store.canonical.main": {
+      "count": 5550,
+      "cpu": 1.2686631649998716,
+      "wall": 1.2727072946727276
+    }
+  },
+  "peak_rss_kib": 1093096,
+  "pid": 577341,
+  "source_sha256": "ccba53072e0dbafa24a4621173c7d2b0747674cbc12d3c3f89cb3079f8bf1b79",
+  "state": "FAILED",
+  "wall_seconds": 45.2553647570312
+}

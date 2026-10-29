@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-28T17:12:13.667931+00:00",
+  "files": {
+    "README.md": {
+      "bytes": 4511,
+      "sha256": "d3725897be6529aac949848d2f899bd459b08bd690f3c98c63c896dc05509d72"
+    },
+    "git-read-final-f3495-offline-v2.xml": {
+      "bytes": 2153,
+      "sha256": "016ed08bb3071aa2272bf7c9a6536082c2899f63b51074fc6a93a04c5f5da632"
+    },
+    "git-read-final-f3495-offline.xml": {
+      "bytes": 3355,
+      "sha256": "5fee988e5ac718da0567fa9aba65b23c4b40d393db9f7a26e4be2f421e869bc7"
+    },
+    "git-read-offline.xml": {
+      "bytes": 14913,
+      "sha256": "d42eb76a36ae738a18085cc9af5c4d69111135733265903f4b13573589ec01ef"
+    },
+    "harness_f3495e4f.py": {
+      "bytes": 21918,
+      "sha256": "f3495e4f74d2407618d447491e9c2d062921c7f25ebb4dc7246e4cda8bd31126"
+    },
+    "seal_review.py": {
+      "bytes": 1105,
+      "sha256": "4a5792d411755e9adcbcf4714957caba7e141ab5dffc26c7dfb4401528039629"
+    },
+    "test_git_read_independent.py": {
+      "bytes": 5006,
+      "sha256": "8d971ff0cbbd89310b3d098d1ebbf6a1e9a6b3982107b2dc8c2ae157cc4fa0f9"
+    },
+    "test_git_read_v1_pin_drift_preserved.py": {
+      "bytes": 5046,
+      "sha256": "b42eee946238e0891932ab6a9f9fd15dc9378325d7f1274f555cb73b44bd2b19"
+    }
+  },
+  "network_used": false,
+  "passed": 11,
+  "production_changed": false,
+  "scope": "OFFLINE_NARROW_GIT_READER_REVIEW",
+  "skipped": 0
+}

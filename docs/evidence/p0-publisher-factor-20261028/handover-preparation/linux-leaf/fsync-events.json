@@ -1,0 +1,438 @@
+[
+  {
+    "kind": "directory_fsync",
+    "order": 0,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 1,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 2,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 3,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 4,
+    "path": "/root/qtrade-local/operator-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 5,
+    "path": "/root/qtrade-local"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 6,
+    "path": "/root"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 7,
+    "path": "/"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 8,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success/000-PREPARED.json"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 9,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 10,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success/private"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 11,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 12,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 13,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 14,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 15,
+    "path": "/root/qtrade-local/operator-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 16,
+    "path": "/root/qtrade-local"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 17,
+    "path": "/root"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 18,
+    "path": "/"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 19,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success/private/wrapper.old.py"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 20,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-evidence/publisher-handover-success/private"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 21,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-base/private/.publisher-wrapper-sxegkkrg"
+  },
+  {
+    "kind": "replace",
+    "order": 22,
+    "source": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-base/private/.publisher-wrapper-sxegkkrg",
+    "target": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-base/private/run-publisher-workflow.py"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 23,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/success/fixture-base/private"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 24,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/candidate-fault/fixture-evidence/publisher-handover-candidate-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 25,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/candidate-fault/fixture-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 26,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/candidate-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 27,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 28,
+    "path": "/root/qtrade-local/operator-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 29,
+    "path": "/root/qtrade-local"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 30,
+    "path": "/root"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 31,
+    "path": "/"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 32,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/candidate-fault/fixture-evidence/publisher-handover-candidate-fault/000-PREPARED.json"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 33,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/candidate-fault/fixture-evidence/publisher-handover-candidate-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 34,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 35,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault/fixture-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 36,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 37,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 38,
+    "path": "/root/qtrade-local/operator-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 39,
+    "path": "/root/qtrade-local"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 40,
+    "path": "/root"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 41,
+    "path": "/"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 42,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/000-PREPARED.json"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 43,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 44,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/private"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 45,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 46,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault/fixture-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 47,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 48,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 49,
+    "path": "/root/qtrade-local/operator-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 50,
+    "path": "/root/qtrade-local"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 51,
+    "path": "/root"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 52,
+    "path": "/"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 53,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/backup-fsync-fault/fixture-evidence/publisher-handover-backup-fsync-fault/private/wrapper.old.py"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 54,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 55,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 56,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 57,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 58,
+    "path": "/root/qtrade-local/operator-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 59,
+    "path": "/root/qtrade-local"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 60,
+    "path": "/root"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 61,
+    "path": "/"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 62,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/000-PREPARED.json"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 63,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 64,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/private"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 65,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 66,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 67,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 68,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 69,
+    "path": "/root/qtrade-local/operator-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 70,
+    "path": "/root/qtrade-local"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 71,
+    "path": "/root"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 72,
+    "path": "/"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 73,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/private/wrapper.old.py"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 74,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-evidence/publisher-handover-written-bytes-fault/private"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 75,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/written-bytes-fault/fixture-base/private/.publisher-wrapper-bvzo8vaf"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 76,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 77,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/journal-parent-fault/fixture-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 78,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/journal-parent-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 79,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 80,
+    "path": "/root/qtrade-local/operator-evidence"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 81,
+    "path": "/root/qtrade-local"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 82,
+    "path": "/root"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 83,
+    "path": "/"
+  },
+  {
+    "kind": "file_fsync",
+    "order": 84,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault/000-PREPARED.json"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 85,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/journal-parent-fault/fixture-evidence/publisher-handover-journal-parent-fault"
+  },
+  {
+    "kind": "directory_fsync",
+    "order": 86,
+    "path": "/root/qtrade-local/operator-evidence/publisher-leaf-20261028T055617Z-7a76f7/journal-parent-fault/fixture-evidence/publisher-handover-fsync-reject"
+  }
+]

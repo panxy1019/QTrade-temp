@@ -1,0 +1,25 @@
+{
+  "base": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+  "diagnostic_total_budget_seconds": 120,
+  "filesystem_cache_purged": false,
+  "git_push_accepted": false,
+  "network_used": false,
+  "production_cache_installed": false,
+  "results": {
+    "isolated_cached": {
+      "bytes": 42749932,
+      "elapsed_seconds": 2.102264003828168,
+      "sha256": "c76fdcc59703c3aec1d266bbd65198121fab3ccf861329f2af7e12b53be73b16",
+      "wire_object_count": 3350
+    },
+    "source": {
+      "bytes": 19444657,
+      "elapsed_seconds": 2.698772255331278,
+      "sha256": "86d812f5ebc300e5b4054a321c48d4ecb91f9e3c34e3b4f17f8601134fbe401e",
+      "wire_object_count": 3350
+    }
+  },
+  "schema_version": "qtrade.wire-pack-comparison.v1",
+  "source_objects_written": false,
+  "target": "dde33b30a54d46beb0197a80ddbcb35afb5830da"
+}

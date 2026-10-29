@@ -1,0 +1,13 @@
+{
+  "nfs": {
+    "path": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade",
+    "free_bytes": 287156731904,
+    "device": 66
+  },
+  "local": {
+    "path": "/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42",
+    "free_bytes": 25802891264,
+    "device": 61
+  },
+  "passes": true
+}

@@ -1,0 +1,7 @@
+{"event": "START", "generation": 1, "monotonic": 10196376.824054116, "name": "sentinel-a", "pid": 512553, "ppid": 512541, "release": "fixed", "start_ticks": "1019637680"}
+{"event": "START", "generation": 1, "monotonic": 10196376.82454066, "name": "controlled", "pid": 512554, "ppid": 512541, "release": "v1", "start_ticks": "1019637680"}
+{"event": "START", "generation": 1, "monotonic": 10196376.824583212, "name": "sentinel-b", "pid": 512555, "ppid": 512541, "release": "fixed", "start_ticks": "1019637680"}
+{"event": "OWNED_WORKER_START", "monotonic": 10196376.841028942, "name": "controlled", "pid": 512554, "ppid": 512541, "release": "v1", "start_ticks": "1019637680", "worker_pid": 512556, "worker_session": 512556, "worker_start_ticks": "1019637684"}
+{"event": "NORMAL_PHASE_COMPLETE", "monotonic": 10196378.844325311, "name": "controlled", "pid": 512554, "ppid": 512541, "release": "v1", "start_ticks": "1019637680"}
+{"event": "NATURAL_EXIT_ZERO", "generation": 1, "monotonic": 10196634.063015915, "name": "sentinel-a", "pid": 512553, "ppid": 512541, "release": "fixed", "start_ticks": "1019637680"}
+{"event": "NATURAL_EXIT_ZERO", "generation": 1, "monotonic": 10196634.063086638, "name": "sentinel-b", "pid": 512555, "ppid": 512541, "release": "fixed", "start_ticks": "1019637680"}

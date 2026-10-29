@@ -1,0 +1,229 @@
+{
+  "active_approval_transition": {
+    "active_model": "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c",
+    "actor": "standing-policy-656f643bf547556b",
+    "at": "2026-10-28T12:07:51.433816+00:00",
+    "command_sha256": "2e0175a5a1334a00fb9c2ae48572d98236b60341634a2792b38c6b1b10273f74",
+    "evidence_sha256": "750de28e05933013e4cacf828a10ee28f638861d7d3adbc6ef7566f0d09cd510",
+    "model_id": "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c",
+    "operation": "ACTIVATE",
+    "payload_sha256": "ba743e63cc419ae763111de5be65ea2e8dd6e4d322db55edef3d95f58d3a00fc",
+    "previous_active": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+    "sequence": 32,
+    "state": "APPLIED"
+  },
+  "control_rpc_calls": 0,
+  "historical_old_child_inventory_available": false,
+  "journal_phases": [
+    {
+      "filename": "000-PREPARED.json",
+      "phase": "PREPARED",
+      "raw_sha256": "4498b4a62d092b5136100e24bc429ff3ab53f94ccbeb1e7c8695bfcb5dcc916d"
+    },
+    {
+      "filename": "001-WRAPPER_INTENT.json",
+      "phase": "WRAPPER_INTENT",
+      "raw_sha256": "f8ceff65c63e2cfb77275655cd9d8b575469f436a55335401cafafb83d83237c"
+    },
+    {
+      "filename": "002-WRAPPER_INSTALLED.json",
+      "phase": "WRAPPER_INSTALLED",
+      "raw_sha256": "8c7b94a05b6e682554c2391bed077185e425c6cf57c850e0765bd45f818dcf03"
+    },
+    {
+      "filename": "003-TERM_INTENT.json",
+      "phase": "TERM_INTENT",
+      "raw_sha256": "23148feafd655874bcd42934d8ef9f043d8b86db68c1dfebf90c58460d3bd48e"
+    },
+    {
+      "filename": "004-TERM_RESULT.json",
+      "phase": "TERM_RESULT",
+      "raw_sha256": "29ca2c474fedf008620f34e4eb579d0fccd63a4712fd12b3e3db67ebebaa760c"
+    },
+    {
+      "filename": "005-DRAIN_PENDING.json",
+      "phase": "DRAIN_PENDING",
+      "raw_sha256": "26e3faf5c3e72ac12e679eb4a8f9f585b54d076bf42a3a72da98e83629d9bd89"
+    }
+  ],
+  "last_observed_at": "2026-10-28T12:22:37.187064+00:00",
+  "new_owner": {
+    "cmdline_sha256": "5edb1d4cc029fb2c5ee053966b8fc4910c47ac5821f25d1daecde95300febc18",
+    "cwd_sha256": "129fc74c078821df91e4651221a8095bd71907988ecc5a9c40fd69194a729c61",
+    "live_trading_enabled": false,
+    "pid": 647839,
+    "ppid": 56,
+    "pythonpath_sha256": "bfcefca3dc2628f0e07d63a3931a9bba83e39dc194b39b415be7f9dd1d75cdab",
+    "start_ticks": "1022098698"
+  },
+  "new_owner_unchanged": true,
+  "observations": [
+    {
+      "completed_at": "2026-10-28T12:11:53.287778+00:00",
+      "export_attempt": {
+        "bytes": 705,
+        "exists": true,
+        "raw_sha256": "4e2c236a7f01e6cbb1606ac2bdf37280253a2b8a92f44e275a9b859055263387",
+        "value": {
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "completed_at": "2026-10-28T12:09:09.041814+00:00",
+          "elapsed_seconds": 44.37925,
+          "error_class": null,
+          "error_code": null,
+          "evidence_sha256": "78e1a11dece7eaa4df0258c52bf51643fa29ac68c3d622e30671a919a18d03a6",
+          "external_order_transmission": false,
+          "index_id": "6a5e5149046f24fda57af9057df6ed4e83c14b781053583630145329f183a1e3",
+          "live_trading_enabled": false,
+          "point_in_time": false,
+          "promotion": "NOT_ELIGIBLE",
+          "real_data_paper_readiness": false,
+          "realtime_readiness": false,
+          "schema_version": "qtrade.unified-market-export-attempt.v1",
+          "started_at": "2026-10-28T12:08:24.662585+00:00",
+          "state": "SUCCEEDED"
+        }
+      },
+      "head": "936771bcf7139c00ac30733191e8c3d29e9b7245",
+      "publication_state": {
+        "bytes": 109,
+        "exists": true,
+        "raw_sha256": "9c13adcba4b5003f17392356d6d78111af2a275deea68a5ee413fa15238325ac",
+        "value": {
+          "attempted_at": "2026-10-28T12:11:41.688508+00:00",
+          "error": "TimeoutExpired",
+          "outcome": "FAILED"
+        }
+      },
+      "remote_main": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+      "started_at": "2026-10-28T12:11:44.847856+00:00",
+      "unrelated_owners_equal_to_first": true
+    },
+    {
+      "completed_at": "2026-10-28T12:15:01.342727+00:00",
+      "export_attempt": {
+        "bytes": 706,
+        "exists": true,
+        "raw_sha256": "0435ca72452ed31d71c2e72acfc5d83ddfc89e5f38fbc47fdf6e243135de36a9",
+        "value": {
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "completed_at": "2026-10-28T12:12:18.963168+00:00",
+          "elapsed_seconds": 37.008315,
+          "error_class": null,
+          "error_code": null,
+          "evidence_sha256": "415cdeb9df47c0d8296c8dff48265dba3ea57a7c93cf8057c4b9117b6cb1f261",
+          "external_order_transmission": false,
+          "index_id": "648f3f783652a1ee1d5b7f719e9a8c459f0a4cf96c6b01cc8192de01e38e6c2c",
+          "live_trading_enabled": false,
+          "point_in_time": false,
+          "promotion": "NOT_ELIGIBLE",
+          "real_data_paper_readiness": false,
+          "realtime_readiness": false,
+          "schema_version": "qtrade.unified-market-export-attempt.v1",
+          "started_at": "2026-10-28T12:11:41.954872+00:00",
+          "state": "SUCCEEDED"
+        }
+      },
+      "head": "796df643e245dd3702569883d82c7a1fcb043ef0",
+      "publication_state": {
+        "bytes": 109,
+        "exists": true,
+        "raw_sha256": "8b6da01fdca9bf637c233f3a3282a16255abb768972fe79198979d2b6b1866b2",
+        "value": {
+          "attempted_at": "2026-10-28T12:14:25.361372+00:00",
+          "error": "TimeoutExpired",
+          "outcome": "FAILED"
+        }
+      },
+      "remote_main": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+      "started_at": "2026-10-28T12:14:51.200348+00:00",
+      "unrelated_owners_equal_to_first": true
+    },
+    {
+      "completed_at": "2026-10-28T12:21:35.590300+00:00",
+      "export_attempt": {
+        "bytes": 706,
+        "exists": true,
+        "raw_sha256": "aa9c25eb987dfce8af14ac7019410d07882f62b0c96ce2f076827c8db91e7839",
+        "value": {
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "completed_at": "2026-10-28T12:20:22.482190+00:00",
+          "elapsed_seconds": 34.730093,
+          "error_class": null,
+          "error_code": null,
+          "evidence_sha256": "dd90c55687907f08e25ac62d96c243c2e8adabceb3d8ee1b966ad608d606828c",
+          "external_order_transmission": false,
+          "index_id": "f9defd758cbb21306e77d7782533c941bcb4bde19fe58921be182ada4db2077b",
+          "live_trading_enabled": false,
+          "point_in_time": false,
+          "promotion": "NOT_ELIGIBLE",
+          "real_data_paper_readiness": false,
+          "realtime_readiness": false,
+          "schema_version": "qtrade.unified-market-export-attempt.v1",
+          "started_at": "2026-10-28T12:19:47.752116+00:00",
+          "state": "SUCCEEDED"
+        }
+      },
+      "head": "c7e5ac8e4d29f03f65eaa6046224702aa15adfba",
+      "publication_state": {
+        "bytes": 109,
+        "exists": true,
+        "raw_sha256": "f337315830542962173dc2a7b20cff76e4ffb3d1516bb4369223f6644d2675e2",
+        "value": {
+          "attempted_at": "2026-10-28T12:19:47.491609+00:00",
+          "error": "TimeoutExpired",
+          "outcome": "FAILED"
+        }
+      },
+      "remote_main": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+      "started_at": "2026-10-28T12:21:27.338111+00:00",
+      "unrelated_owners_equal_to_first": true
+    },
+    {
+      "completed_at": "2026-10-28T12:22:37.187064+00:00",
+      "export_attempt": {
+        "bytes": 706,
+        "exists": true,
+        "raw_sha256": "aa9c25eb987dfce8af14ac7019410d07882f62b0c96ce2f076827c8db91e7839",
+        "value": {
+          "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+          "completed_at": "2026-10-28T12:20:22.482190+00:00",
+          "elapsed_seconds": 34.730093,
+          "error_class": null,
+          "error_code": null,
+          "evidence_sha256": "dd90c55687907f08e25ac62d96c243c2e8adabceb3d8ee1b966ad608d606828c",
+          "external_order_transmission": false,
+          "index_id": "f9defd758cbb21306e77d7782533c941bcb4bde19fe58921be182ada4db2077b",
+          "live_trading_enabled": false,
+          "point_in_time": false,
+          "promotion": "NOT_ELIGIBLE",
+          "real_data_paper_readiness": false,
+          "realtime_readiness": false,
+          "schema_version": "qtrade.unified-market-export-attempt.v1",
+          "started_at": "2026-10-28T12:19:47.752116+00:00",
+          "state": "SUCCEEDED"
+        }
+      },
+      "head": "c7e5ac8e4d29f03f65eaa6046224702aa15adfba",
+      "publication_state": {
+        "bytes": 109,
+        "exists": true,
+        "raw_sha256": "5d023093937e01921feeae05094ab93cdb51d27ccdb19e0b2b5ec0cc8eeda786",
+        "value": {
+          "attempted_at": "2026-10-28T12:22:29.214447+00:00",
+          "error": "TimeoutExpired",
+          "outcome": "FAILED"
+        }
+      },
+      "remote_main": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+      "started_at": "2026-10-28T12:22:29.061028+00:00",
+      "unrelated_owners_equal_to_first": true
+    }
+  ],
+  "old_pid_absent": true,
+  "private_wrapper_read": false,
+  "production_mutations_by_this_audit": false,
+  "runtime_source_file_count": 2194,
+  "schema_version": "qtrade.publisher-post-handover-independent-summary.v1",
+  "source_revision": "fba51aade2ee2410dda087e95cf054e53375ed3a",
+  "state": "RUNTIME_HANDOVER_SUPPORTED_PUBLICATION_CHAIN_NOT_RECOVERED"
+}

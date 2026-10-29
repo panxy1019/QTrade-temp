@@ -1,0 +1,32 @@
+[
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "-m",
+      "ruff",
+      "check",
+      "src/qtrade/research/factor_strategy_backtest.py",
+      "scripts/run_factor_strategy_backtest.py",
+      "tests/test_factor_strategy_backtest.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "All checks passed!\n"
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "-m",
+      "mypy",
+      "--explicit-package-bases",
+      "--follow-imports=silent",
+      "src/qtrade/research/factor_strategy_backtest.py",
+      "scripts/run_factor_strategy_backtest.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "Success: no issues found in 2 source files\r\n"
+  }
+]

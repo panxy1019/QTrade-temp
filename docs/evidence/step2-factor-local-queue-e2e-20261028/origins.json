@@ -1,0 +1,30 @@
+{
+  "qtrade": {
+    "file": "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source/src/qtrade/__init__.py",
+    "sha256": "d68bf5f6a063d2264b1a31edd7c5a247af616f52140456df9900005b5cfb6bf6"
+  },
+  "qtrade.api.research_workflow": {
+    "file": "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source/src/qtrade/api/research_workflow.py",
+    "sha256": "1d47a7c3d776ba9d74fd5667d127dedddda2064c5a03d620a674f21812966a1a"
+  },
+  "qtrade.research.factor_strategy_catalog": {
+    "file": "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source/src/qtrade/research/factor_strategy_catalog.py",
+    "sha256": "3e40d5c7b9a00ae40e7fb9d5c080182e6977e5af7f972bdc408babd4ae357fad"
+  },
+  "qtrade.research.factor_strategy_contract": {
+    "file": "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source/src/qtrade/research/factor_strategy_contract.py",
+    "sha256": "92d19c483f80a00080debe1304fcdd8ec906496e86b00047d96dd52b806cce76"
+  },
+  "qtrade.research.workflow_queue": {
+    "file": "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source/src/qtrade/research/workflow_queue.py",
+    "sha256": "3d77ee81eff8912b5dbc32a22c7bc757ae45123b030026a71917f6270772dec2"
+  },
+  "scripts.run_qlib_worker": {
+    "file": "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source/scripts/run_qlib_worker.py",
+    "sha256": "f1b0ada2063340383316a9cf65a1e2d02a3c22e796434cb42ceb0042f059dbdb"
+  },
+  "scripts.run_factor_strategy_registration": {
+    "file": "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source/scripts/run_factor_strategy_registration.py",
+    "sha256": "72fec4144bc1b600d9471685e9e28f53e48af9ad433da3ad88006d6fc1f78aa1"
+  }
+}

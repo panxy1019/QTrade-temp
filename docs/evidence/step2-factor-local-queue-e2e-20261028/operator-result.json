@@ -1,0 +1,27 @@
+{
+  "returncode": 0,
+  "elapsed_seconds": 131.9615312051028,
+  "maxrss_kib": 1291940,
+  "command": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-P",
+    "-B",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/factor_api_queue_e2e_20261028.py",
+    "--mode",
+    "real-e2e",
+    "--source",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source",
+    "--owned",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a",
+    "--revision",
+    "45de5bd2455b9ed6bdaddc1646d69e148846e3da",
+    "--base",
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/step2-factor-api-queue-3bcecd4a",
+    "--database",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/db/workflow.sqlite",
+    "--archive",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/approved-factor-archive",
+    "--source-manifest",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source-manifest.json"
+  ]
+}

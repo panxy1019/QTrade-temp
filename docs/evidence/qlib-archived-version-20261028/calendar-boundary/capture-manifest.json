@@ -1,0 +1,48 @@
+{
+  "files": {
+    "candidate-events.json": {
+      "bytes": 3524,
+      "sha256": "18b69ab988a8c20167e3cdee159e017e730f7b548be34c80d8d2a207e258e8e0"
+    },
+    "day-bindings.json": {
+      "bytes": 12482,
+      "sha256": "ab682a613e80c96856f1693f2142c12cbe93f7ed7177a14a4ceec2089240bc4c"
+    },
+    "definition.json": {
+      "bytes": 3604,
+      "sha256": "9453f27ac3c12e1c168bf8004080f6e5e3a798eae1302efb71c2c76f47def36a"
+    },
+    "operator-failed-observation.json": {
+      "bytes": 717,
+      "sha256": "47776ef63dccc4e604f2f6509e4fbe5e5b7800a54f232f02edf90fac49c89282"
+    },
+    "operator-v1.py": {
+      "bytes": 8931,
+      "sha256": "ef118167c4483781de846648d35db2e350c4252bab9f4f4b0be680b6171322ca"
+    },
+    "operator-v2.py": {
+      "bytes": 8979,
+      "sha256": "a3dc227ff9fef8ced7fc81d67a796ed6ddabb52de87f44057db052386adbabd8"
+    },
+    "validation-index.json": {
+      "bytes": 759,
+      "sha256": "aa228a87da90895b355ff93dffabc8ae30f93767fae8d9b3d464352699e0811f"
+    },
+    "validation-job.json": {
+      "bytes": 1133,
+      "sha256": "a256f5d8f32e816f877a4ed5bf6eb4647e3e3bf1fe55199c2ac1ae3aeb4267bf"
+    },
+    "validation.json": {
+      "bytes": 22837,
+      "sha256": "7a4e3a11b251f9307e87faf8b17b351c6c2ab7b9edb7906b3c999020640e6df1"
+    },
+    "verification.json": {
+      "bytes": 2661,
+      "sha256": "8e9c7b333836eff28712e5c8b67d7ef5f1d6bc2194c47712aa253efa6860c446"
+    }
+  },
+  "git_source_files_verified": 12,
+  "read_only_capture": true,
+  "step1_accepted": false,
+  "transport_raw_sha256": "856efbb581d2bf465757506e0638acca23323237a458afd94d1e9e72e03dc851"
+}

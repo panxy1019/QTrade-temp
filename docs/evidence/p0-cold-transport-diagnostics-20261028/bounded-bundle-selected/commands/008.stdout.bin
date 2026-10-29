@@ -1,0 +1,9 @@
+[fixture-work f0ed92e] complete shallow base
+ 7 files changed, 1 insertion(+)
+ create mode 100644 README.txt
+ delete mode 100644 historical-only.bin
+ create mode 100644 public/changed.bin
+ create mode 100644 public/deleted-from-base.bin
+ create mode 100644 reuse/reuse-a.bin
+ create mode 100644 reuse/reuse-b.bin
+ create mode 100644 reuse/reuse-c.bin

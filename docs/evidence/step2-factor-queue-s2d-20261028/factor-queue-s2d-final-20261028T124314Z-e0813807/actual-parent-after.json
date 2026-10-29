@@ -1,0 +1,7 @@
+{
+  "isolated-strategies.sqlite": "2ea35bbce875a7912389f49003dc9d0431378f04e2168052e80d42324dae63ce",
+  "actual-acceptance.json": "8466dd775acf133f1a07798f0651ad0607dee00186f5880342aa014fbfa7fede",
+  "actual-request.json": "a04c0197b21767454890ad69abfca7900513b9f56fdf034bf6363a9066f90ff8",
+  "actual-child-output/registration.json": "ca9184a4504875587c5f2be5ada6febf03fee96dfad7dc02d1b18f42a8df95dd",
+  "actual-child-output/strategy-definition.json": "198da9ad2770b369a8c5930e04c56ac3b895f988743b94204b099229fd79ac60"
+}

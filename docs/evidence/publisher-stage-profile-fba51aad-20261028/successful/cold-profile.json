@@ -1,0 +1,791 @@
+{
+  "cache_estimated_byte_budget_unchanged": 128000000,
+  "calibration": {
+    "approx_extra_nanoseconds_per_span": 2081.89355,
+    "calls": 20000,
+    "not_subtracted_from_actual_measurements": true,
+    "plain_seconds": 0.000954148,
+    "wrapped_seconds": 0.042592019
+  },
+  "children_at_completion": "",
+  "diagnostic_seconds": 120,
+  "exclusive_scope": "Exclusive subtraction is per thread and only among instrumented spans; waits and uninstrumented work stay in enclosing stage.",
+  "finished_at": "2026-10-28T11:34:54.428657+00:00",
+  "index_raw_sha256": "1c9181a077f741bf139ea86bdf0f2cf699d949b22b8ff8485e047920193eb53b",
+  "initial": {
+    "database_exists": false,
+    "new_process": true,
+    "object_count": 0,
+    "sidecar_root_exists": false
+  },
+  "kind": "PROFILED_FROZEN_DIAGNOSTIC_NOT_45_SECOND_GATE",
+  "native_cpu_scope": "thread_time omits uninstrumented native-library threads; process CPU and reaped child CPU are reported separately.",
+  "overlap_warning": "Inclusive spans nest; threads and worker processes overlap. Do not add inclusive stages to total wall.",
+  "owned_workers": [
+    {
+      "diagnostic_argv": [
+        "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+        "-B",
+        "/root/qtrade-local/operator-evidence/market-stage-profile-20261028T113018Z/profile_worker.py",
+        "/root/qtrade-local/operator-evidence/market-stage-profile-20261028T113018Z",
+        "cold"
+      ],
+      "helper_sha256": "8cfc39e556122a0cf2841bafb7e4506d0f9abd5e8ccbef950a849b9ee432c87b",
+      "only_exact_owned_worker_command_intercepted": true,
+      "original_argv": [
+        "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+        "-B",
+        "-m",
+        "scripts.publish_unified_market",
+        "--private-shard-worker"
+      ],
+      "pid": 643631
+    },
+    {
+      "diagnostic_argv": [
+        "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+        "-B",
+        "/root/qtrade-local/operator-evidence/market-stage-profile-20261028T113018Z/profile_worker.py",
+        "/root/qtrade-local/operator-evidence/market-stage-profile-20261028T113018Z",
+        "cold"
+      ],
+      "helper_sha256": "8cfc39e556122a0cf2841bafb7e4506d0f9abd5e8ccbef950a849b9ee432c87b",
+      "only_exact_owned_worker_command_intercepted": true,
+      "original_argv": [
+        "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+        "-B",
+        "-m",
+        "scripts.publish_unified_market",
+        "--private-shard-worker"
+      ],
+      "pid": 643632
+    }
+  ],
+  "pass_name": "cold",
+  "peak_rss_kib": 1384456,
+  "pid": 643566,
+  "process_cpu_seconds": 87.378344,
+  "production_export_seconds": 45,
+  "production_performance_acceptance": false,
+  "profiling_enabled": true,
+  "reaped_children_cpu_seconds": 17.374586,
+  "refs_count": 5986,
+  "refs_sha256": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645",
+  "source_bytes_budget_unchanged": 512000000,
+  "start_ticks": "1021922268",
+  "started_at": "2026-10-28T11:33:08.824226+00:00",
+  "state": "SUCCEEDED",
+  "statistics": {
+    "cache_estimated_bytes": 0,
+    "cached_batches": 0,
+    "cached_rows": 0,
+    "checkpoint_id": "d3306e3cab516d1cb27250319d2f837b380be43fc9b03211928d1e2de721a853",
+    "export_seconds": 105.105322,
+    "index_id": "afa23a7c2100e3b05270390808151d9cb82e601589817d77136752e153af1ff3",
+    "quarantined_entries": 0,
+    "rebuilt_pairs": 2995,
+    "receipt_hits": 0,
+    "receipt_sidecar_bytes_read": 0,
+    "receipt_writes": 5640,
+    "replayed_batches": 5640,
+    "reused_pairs": 0,
+    "reused_shards": 0,
+    "selected_batches": 5640,
+    "selected_chunks": 140136,
+    "source_bytes_read": 237250656,
+    "total_bytes": 166050382,
+    "total_files": 5986
+  },
+  "threads": [
+    {
+      "stages": {
+        "decode.arrow_validation_and_numpy_rows": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 2.252817028,
+          "exclusive_wall_seconds": 2.498063948,
+          "inclusive_thread_cpu_seconds": 2.252817028,
+          "inclusive_wall_seconds": 2.498063948
+        },
+        "decode.gzip_raw_capture_json_and_body_hash": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 3.727639643,
+          "exclusive_wall_seconds": 4.02951338,
+          "inclusive_thread_cpu_seconds": 3.959118654,
+          "inclusive_wall_seconds": 4.272623756
+        },
+        "decode.material_validation_total": {
+          "calls": 11280,
+          "exclusive_thread_cpu_seconds": 2.579237354,
+          "exclusive_wall_seconds": 2.648629308,
+          "inclusive_thread_cpu_seconds": 10.211233355,
+          "inclusive_wall_seconds": 11.539195213
+        },
+        "decode.parquet_bounds": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 0.064607399,
+          "exclusive_wall_seconds": 0.066943456,
+          "inclusive_thread_cpu_seconds": 1.180696062,
+          "inclusive_wall_seconds": 1.905152173
+        },
+        "decode.parquet_file_read": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 1.29457784,
+          "exclusive_wall_seconds": 1.93249284,
+          "inclusive_thread_cpu_seconds": 1.29457784,
+          "inclusive_wall_seconds": 1.93249284
+        },
+        "decode.parquet_metadata_open": {
+          "calls": 11280,
+          "exclusive_thread_cpu_seconds": 1.122234992,
+          "exclusive_wall_seconds": 1.84445022,
+          "inclusive_thread_cpu_seconds": 1.122234992,
+          "inclusive_wall_seconds": 1.84445022
+        },
+        "export.full_call": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 1.559397746,
+          "exclusive_wall_seconds": 1.626011273,
+          "inclusive_thread_cpu_seconds": 75.684313873,
+          "inclusive_wall_seconds": 105.60428673
+        },
+        "generation.canonical_identity": {
+          "calls": 8644,
+          "exclusive_thread_cpu_seconds": 0.533653943,
+          "exclusive_wall_seconds": 0.534838474,
+          "inclusive_thread_cpu_seconds": 0.533653943,
+          "inclusive_wall_seconds": 0.534838474
+        },
+        "generation.checkpoint_read_and_validation": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 4.3613e-05,
+          "exclusive_wall_seconds": 4.3572e-05,
+          "inclusive_thread_cpu_seconds": 4.3613e-05,
+          "inclusive_wall_seconds": 4.3572e-05
+        },
+        "generation.fsync_syscall": {
+          "calls": 9,
+          "exclusive_thread_cpu_seconds": 0.001053046,
+          "exclusive_wall_seconds": 0.008897102,
+          "inclusive_thread_cpu_seconds": 0.001053046,
+          "inclusive_wall_seconds": 0.008897102
+        },
+        "generation.index_atomic_write": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.024976543,
+          "exclusive_wall_seconds": 0.026982368,
+          "inclusive_thread_cpu_seconds": 0.025473733,
+          "inclusive_wall_seconds": 0.031477246
+        },
+        "generation.index_schema_validation": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.078882563,
+          "exclusive_wall_seconds": 0.079010619,
+          "inclusive_thread_cpu_seconds": 0.102024741,
+          "inclusive_wall_seconds": 0.102188699
+        },
+        "generation.pair_fingerprints": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.091787075,
+          "exclusive_wall_seconds": 0.092059607,
+          "inclusive_thread_cpu_seconds": 0.545625936,
+          "inclusive_wall_seconds": 0.547007577
+        },
+        "generation.prepare_write_and_durability_total": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.043450835,
+          "exclusive_wall_seconds": 0.044816186,
+          "inclusive_thread_cpu_seconds": 0.043994975,
+          "inclusive_wall_seconds": 0.049116463
+        },
+        "generation.state_atomic_write": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.000320088,
+          "exclusive_wall_seconds": 0.001485348,
+          "inclusive_thread_cpu_seconds": 0.000331804,
+          "inclusive_wall_seconds": 0.001587295
+        },
+        "metadata.final_snapshot_comparison": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.890137364,
+          "exclusive_wall_seconds": 0.892198193,
+          "inclusive_thread_cpu_seconds": 0.890137364,
+          "inclusive_wall_seconds": 0.892198193
+        },
+        "metadata.selected_chunks_sqlite_and_materialization": {
+          "calls": 3,
+          "exclusive_thread_cpu_seconds": 2.224179181,
+          "exclusive_wall_seconds": 2.228906049,
+          "inclusive_thread_cpu_seconds": 3.831261007,
+          "inclusive_wall_seconds": 3.839704742
+        },
+        "other.fsync_syscall": {
+          "calls": 4,
+          "exclusive_thread_cpu_seconds": 8.113e-06,
+          "exclusive_wall_seconds": 1.0088e-05,
+          "inclusive_thread_cpu_seconds": 8.113e-06,
+          "inclusive_wall_seconds": 1.0088e-05
+        },
+        "physical.file_hash_read_total": {
+          "calls": 47,
+          "exclusive_thread_cpu_seconds": 0.002072864,
+          "exclusive_wall_seconds": 0.002091525,
+          "inclusive_thread_cpu_seconds": 0.002072864,
+          "inclusive_wall_seconds": 0.002091525
+        },
+        "physical.source_read_with_accounting": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 0.407278479,
+          "exclusive_wall_seconds": 2.280159642,
+          "inclusive_thread_cpu_seconds": 0.407278479,
+          "inclusive_wall_seconds": 2.280159642
+        },
+        "physical.source_sha256_constructor": {
+          "calls": 157342,
+          "exclusive_thread_cpu_seconds": 0.55687894,
+          "exclusive_wall_seconds": 1.011365607,
+          "inclusive_thread_cpu_seconds": 0.55687894,
+          "inclusive_wall_seconds": 1.011365607
+        },
+        "pipeline.encode_generator_active_including_source": {
+          "calls": 5987,
+          "exclusive_thread_cpu_seconds": 5.908559045,
+          "exclusive_wall_seconds": 6.054622142,
+          "inclusive_thread_cpu_seconds": 68.281900258,
+          "inclusive_wall_seconds": 98.040684305
+        },
+        "pipeline.encode_generator_active_including_source.close": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 9.71e-07,
+          "exclusive_wall_seconds": 1.019e-06,
+          "inclusive_thread_cpu_seconds": 9.71e-07,
+          "inclusive_wall_seconds": 1.019e-06
+        },
+        "pipeline.object_dispatch_including_source_and_wait": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.399883095,
+          "exclusive_wall_seconds": 0.455770505,
+          "inclusive_thread_cpu_seconds": 68.681792437,
+          "inclusive_wall_seconds": 98.496465917
+        },
+        "public.json_encode": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.023142178,
+          "exclusive_wall_seconds": 0.02317808,
+          "inclusive_thread_cpu_seconds": 0.023142178,
+          "inclusive_wall_seconds": 0.02317808
+        },
+        "receipt.canonical_json_tree_validation_total": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 2.63172568,
+          "exclusive_wall_seconds": 2.640270715,
+          "inclusive_thread_cpu_seconds": 4.337683679,
+          "inclusive_wall_seconds": 4.35111843
+        },
+        "receipt.fsync_syscall": {
+          "calls": 22560,
+          "exclusive_thread_cpu_seconds": 0.102698437,
+          "exclusive_wall_seconds": 0.989464943,
+          "inclusive_thread_cpu_seconds": 0.102698437,
+          "inclusive_wall_seconds": 0.989464943
+        },
+        "receipt.get_total": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 0.49480908,
+          "exclusive_wall_seconds": 1.036898742,
+          "inclusive_thread_cpu_seconds": 1.039414249,
+          "inclusive_wall_seconds": 1.731220117
+        },
+        "receipt.insert_transaction_total": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 0.30193061,
+          "exclusive_wall_seconds": 0.305337232,
+          "inclusive_thread_cpu_seconds": 4.199616101,
+          "inclusive_wall_seconds": 23.873470236
+        },
+        "receipt.json_decode_and_schema_validation": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 4.99427153,
+          "exclusive_wall_seconds": 5.010334437,
+          "inclusive_thread_cpu_seconds": 14.051331914,
+          "inclusive_wall_seconds": 14.100030149
+        },
+        "receipt.json_encode": {
+          "calls": 84600,
+          "exclusive_thread_cpu_seconds": 13.233887128,
+          "exclusive_wall_seconds": 13.279100203,
+          "inclusive_thread_cpu_seconds": 13.233887128,
+          "inclusive_wall_seconds": 13.279100203
+        },
+        "receipt.nfs_sidecar_write_total": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 2.17152904,
+          "exclusive_wall_seconds": 8.63342343,
+          "inclusive_thread_cpu_seconds": 2.339323151,
+          "inclusive_wall_seconds": 9.688239912
+        },
+        "receipt.payload_sha256_constructor": {
+          "calls": 78960,
+          "exclusive_thread_cpu_seconds": 1.202931957,
+          "exclusive_wall_seconds": 1.260622914,
+          "inclusive_thread_cpu_seconds": 1.202931957,
+          "inclusive_wall_seconds": 1.260622914
+        },
+        "receipt.put_success_total": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 0.397987439,
+          "exclusive_wall_seconds": 0.400615058,
+          "inclusive_thread_cpu_seconds": 31.420963835,
+          "inclusive_wall_seconds": 51.242345698
+        },
+        "receipt.records_sqlite_nfs_validation_total": {
+          "calls": 11280,
+          "exclusive_thread_cpu_seconds": 0.253037006,
+          "exclusive_wall_seconds": 0.2554145,
+          "inclusive_thread_cpu_seconds": 0.856004292,
+          "inclusive_wall_seconds": 1.007274389
+        },
+        "receipt.result_schema_and_row_hash": {
+          "calls": 11280,
+          "exclusive_thread_cpu_seconds": 5.308983462,
+          "exclusive_wall_seconds": 5.32863412,
+          "inclusive_thread_cpu_seconds": 8.667347891,
+          "inclusive_wall_seconds": 8.735302692
+        },
+        "shard.pipe_protocol_json_encode": {
+          "calls": 5988,
+          "exclusive_thread_cpu_seconds": 0.845731949,
+          "exclusive_wall_seconds": 0.850495958,
+          "inclusive_thread_cpu_seconds": 0.845731949,
+          "inclusive_wall_seconds": 0.850495958
+        },
+        "shard.worker_join_cleanup": {
+          "calls": 2,
+          "exclusive_thread_cpu_seconds": 0.000360428,
+          "exclusive_wall_seconds": 0.00036221,
+          "inclusive_thread_cpu_seconds": 0.001206429,
+          "inclusive_wall_seconds": 0.117361634
+        },
+        "shard.worker_pipe_pump_wait_and_response": {
+          "calls": 21732,
+          "exclusive_thread_cpu_seconds": 0.383393109,
+          "exclusive_wall_seconds": 4.941019059,
+          "inclusive_thread_cpu_seconds": 2.47771756,
+          "inclusive_wall_seconds": 7.067968763
+        },
+        "shard.worker_response_decode": {
+          "calls": 5988,
+          "exclusive_thread_cpu_seconds": 2.094324451,
+          "exclusive_wall_seconds": 2.126949704,
+          "inclusive_thread_cpu_seconds": 2.094324451,
+          "inclusive_wall_seconds": 2.126949704
+        },
+        "shard.worker_start_and_handshake": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.000719535,
+          "exclusive_wall_seconds": 0.000980002,
+          "inclusive_thread_cpu_seconds": 0.001433618,
+          "inclusive_wall_seconds": 1.029003471
+        },
+        "source.batch_admission_and_reuse_total": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 0.626416062,
+          "exclusive_wall_seconds": 0.691798149,
+          "inclusive_thread_cpu_seconds": 59.047559949,
+          "inclusive_wall_seconds": 84.064999203
+        },
+        "source.original_raw_semantic_replay": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 13.875763631,
+          "exclusive_wall_seconds": 14.008211799,
+          "inclusive_thread_cpu_seconds": 13.881442127,
+          "inclusive_wall_seconds": 14.013930582
+        },
+        "source.worker_inventory_hash": {
+          "calls": 4,
+          "exclusive_thread_cpu_seconds": 0.00254504,
+          "exclusive_wall_seconds": 0.002554466,
+          "inclusive_thread_cpu_seconds": 0.00254504,
+          "inclusive_wall_seconds": 0.002554466
+        },
+        "sqlite.metadata.execute": {
+          "calls": 12,
+          "exclusive_thread_cpu_seconds": 1.607081826,
+          "exclusive_wall_seconds": 1.610798693,
+          "inclusive_thread_cpu_seconds": 1.607081826,
+          "inclusive_wall_seconds": 1.610798693
+        },
+        "sqlite.receipts.execute": {
+          "calls": 28202,
+          "exclusive_thread_cpu_seconds": 1.366736452,
+          "exclusive_wall_seconds": 13.833600283,
+          "inclusive_thread_cpu_seconds": 1.366736452,
+          "inclusive_wall_seconds": 13.833600283
+        },
+        "sqlite.receipts.executescript": {
+          "calls": 1,
+          "exclusive_thread_cpu_seconds": 0.000630083,
+          "exclusive_wall_seconds": 0.014859562,
+          "inclusive_thread_cpu_seconds": 0.000630083,
+          "inclusive_wall_seconds": 0.014859562
+        }
+      },
+      "thread_id": 140508747056960,
+      "thread_name": "MainThread"
+    },
+    {
+      "stages": {
+        "physical.blob_read_and_hash_total": {
+          "calls": 11280,
+          "exclusive_thread_cpu_seconds": 1.332833479,
+          "exclusive_wall_seconds": 4.621149442,
+          "inclusive_thread_cpu_seconds": 1.958176156,
+          "inclusive_wall_seconds": 18.760660791
+        },
+        "physical.source_read_with_accounting": {
+          "calls": 16920,
+          "exclusive_thread_cpu_seconds": 0.805135376,
+          "exclusive_wall_seconds": 11.184713303,
+          "inclusive_thread_cpu_seconds": 0.805135376,
+          "inclusive_wall_seconds": 11.184713303
+        },
+        "physical.source_sha256_constructor": {
+          "calls": 11280,
+          "exclusive_thread_cpu_seconds": 0.135796543,
+          "exclusive_wall_seconds": 5.488371036,
+          "inclusive_thread_cpu_seconds": 0.135796543,
+          "inclusive_wall_seconds": 5.488371036
+        },
+        "source.prefetch_material_total": {
+          "calls": 5640,
+          "exclusive_thread_cpu_seconds": 1.764374659,
+          "exclusive_wall_seconds": 2.386038387,
+          "inclusive_thread_cpu_seconds": 4.038140057,
+          "inclusive_wall_seconds": 23.680272168
+        }
+      },
+      "thread_id": 140505657296448,
+      "thread_name": "market-source_0"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 392,
+          "exclusive_thread_cpu_seconds": 0.006415633,
+          "exclusive_wall_seconds": 0.112696534,
+          "inclusive_thread_cpu_seconds": 0.006415633,
+          "inclusive_wall_seconds": 0.112696534
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 392,
+          "exclusive_thread_cpu_seconds": 0.100400664,
+          "exclusive_wall_seconds": 0.904489339,
+          "inclusive_thread_cpu_seconds": 0.106816297,
+          "inclusive_wall_seconds": 1.017185873
+        }
+      },
+      "thread_id": 140504375617088,
+      "thread_name": "market-object_0"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 392,
+          "exclusive_thread_cpu_seconds": 0.006107571,
+          "exclusive_wall_seconds": 0.11829329,
+          "inclusive_thread_cpu_seconds": 0.006107571,
+          "inclusive_wall_seconds": 0.11829329
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 392,
+          "exclusive_thread_cpu_seconds": 0.095388349,
+          "exclusive_wall_seconds": 0.901870027,
+          "inclusive_thread_cpu_seconds": 0.10149592,
+          "inclusive_wall_seconds": 1.020163317
+        }
+      },
+      "thread_id": 140504367224384,
+      "thread_name": "market-object_1"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 394,
+          "exclusive_thread_cpu_seconds": 0.006399103,
+          "exclusive_wall_seconds": 0.116785106,
+          "inclusive_thread_cpu_seconds": 0.006399103,
+          "inclusive_wall_seconds": 0.116785106
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 394,
+          "exclusive_thread_cpu_seconds": 0.100063105,
+          "exclusive_wall_seconds": 0.923342602,
+          "inclusive_thread_cpu_seconds": 0.106462208,
+          "inclusive_wall_seconds": 1.040127708
+        }
+      },
+      "thread_id": 140502942807616,
+      "thread_name": "market-object_2"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 391,
+          "exclusive_thread_cpu_seconds": 0.006231758,
+          "exclusive_wall_seconds": 0.117375878,
+          "inclusive_thread_cpu_seconds": 0.006231758,
+          "inclusive_wall_seconds": 0.117375878
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 391,
+          "exclusive_thread_cpu_seconds": 0.096944256,
+          "exclusive_wall_seconds": 0.914015691,
+          "inclusive_thread_cpu_seconds": 0.103176014,
+          "inclusive_wall_seconds": 1.031391569
+        }
+      },
+      "thread_id": 140502934414912,
+      "thread_name": "market-object_3"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 387,
+          "exclusive_thread_cpu_seconds": 0.006149492,
+          "exclusive_wall_seconds": 0.120485681,
+          "inclusive_thread_cpu_seconds": 0.006149492,
+          "inclusive_wall_seconds": 0.120485681
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 387,
+          "exclusive_thread_cpu_seconds": 0.095987801,
+          "exclusive_wall_seconds": 0.886551313,
+          "inclusive_thread_cpu_seconds": 0.102137293,
+          "inclusive_wall_seconds": 1.007036994
+        }
+      },
+      "thread_id": 140502926022208,
+      "thread_name": "market-object_4"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 385,
+          "exclusive_thread_cpu_seconds": 0.006072572,
+          "exclusive_wall_seconds": 0.114604214,
+          "inclusive_thread_cpu_seconds": 0.006072572,
+          "inclusive_wall_seconds": 0.114604214
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 385,
+          "exclusive_thread_cpu_seconds": 0.094847346,
+          "exclusive_wall_seconds": 0.952462815,
+          "inclusive_thread_cpu_seconds": 0.100919918,
+          "inclusive_wall_seconds": 1.067067029
+        }
+      },
+      "thread_id": 140502917629504,
+      "thread_name": "market-object_5"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 381,
+          "exclusive_thread_cpu_seconds": 0.006061616,
+          "exclusive_wall_seconds": 0.116559977,
+          "inclusive_thread_cpu_seconds": 0.006061616,
+          "inclusive_wall_seconds": 0.116559977
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 381,
+          "exclusive_thread_cpu_seconds": 0.093682781,
+          "exclusive_wall_seconds": 0.990378247,
+          "inclusive_thread_cpu_seconds": 0.099744397,
+          "inclusive_wall_seconds": 1.106938224
+        }
+      },
+      "thread_id": 140502909236800,
+      "thread_name": "market-object_6"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 383,
+          "exclusive_thread_cpu_seconds": 0.006107269,
+          "exclusive_wall_seconds": 0.110294252,
+          "inclusive_thread_cpu_seconds": 0.006107269,
+          "inclusive_wall_seconds": 0.110294252
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 383,
+          "exclusive_thread_cpu_seconds": 0.095194814,
+          "exclusive_wall_seconds": 0.912071784,
+          "inclusive_thread_cpu_seconds": 0.101302083,
+          "inclusive_wall_seconds": 1.022366036
+        }
+      },
+      "thread_id": 140502900844096,
+      "thread_name": "market-object_7"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 382,
+          "exclusive_thread_cpu_seconds": 0.006107378,
+          "exclusive_wall_seconds": 0.11387947,
+          "inclusive_thread_cpu_seconds": 0.006107378,
+          "inclusive_wall_seconds": 0.11387947
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 382,
+          "exclusive_thread_cpu_seconds": 0.097328502,
+          "exclusive_wall_seconds": 0.913047268,
+          "inclusive_thread_cpu_seconds": 0.10343588,
+          "inclusive_wall_seconds": 1.026926738
+        }
+      },
+      "thread_id": 140502892451392,
+      "thread_name": "market-object_8"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 382,
+          "exclusive_thread_cpu_seconds": 0.00601874,
+          "exclusive_wall_seconds": 0.113933005,
+          "inclusive_thread_cpu_seconds": 0.00601874,
+          "inclusive_wall_seconds": 0.113933005
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 382,
+          "exclusive_thread_cpu_seconds": 0.094507201,
+          "exclusive_wall_seconds": 0.954229694,
+          "inclusive_thread_cpu_seconds": 0.100525941,
+          "inclusive_wall_seconds": 1.068162699
+        }
+      },
+      "thread_id": 140502406002240,
+      "thread_name": "market-object_9"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 372,
+          "exclusive_thread_cpu_seconds": 0.006180827,
+          "exclusive_wall_seconds": 0.113355042,
+          "inclusive_thread_cpu_seconds": 0.006180827,
+          "inclusive_wall_seconds": 0.113355042
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 372,
+          "exclusive_thread_cpu_seconds": 0.095633998,
+          "exclusive_wall_seconds": 0.87948792,
+          "inclusive_thread_cpu_seconds": 0.101814825,
+          "inclusive_wall_seconds": 0.992842962
+        }
+      },
+      "thread_id": 140502397609536,
+      "thread_name": "market-object_10"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 365,
+          "exclusive_thread_cpu_seconds": 0.005690429,
+          "exclusive_wall_seconds": 0.112422441,
+          "inclusive_thread_cpu_seconds": 0.005690429,
+          "inclusive_wall_seconds": 0.112422441
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 365,
+          "exclusive_thread_cpu_seconds": 0.090879921,
+          "exclusive_wall_seconds": 0.872907666,
+          "inclusive_thread_cpu_seconds": 0.09657035,
+          "inclusive_wall_seconds": 0.985330107
+        }
+      },
+      "thread_id": 140502386071104,
+      "thread_name": "market-object_11"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 362,
+          "exclusive_thread_cpu_seconds": 0.005684429,
+          "exclusive_wall_seconds": 0.108324294,
+          "inclusive_thread_cpu_seconds": 0.005684429,
+          "inclusive_wall_seconds": 0.108324294
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 362,
+          "exclusive_thread_cpu_seconds": 0.089977148,
+          "exclusive_wall_seconds": 0.859777469,
+          "inclusive_thread_cpu_seconds": 0.095661577,
+          "inclusive_wall_seconds": 0.968101763
+        }
+      },
+      "thread_id": 140502377678400,
+      "thread_name": "market-object_12"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 352,
+          "exclusive_thread_cpu_seconds": 0.005975804,
+          "exclusive_wall_seconds": 0.110633686,
+          "inclusive_thread_cpu_seconds": 0.005975804,
+          "inclusive_wall_seconds": 0.110633686
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 352,
+          "exclusive_thread_cpu_seconds": 0.096334364,
+          "exclusive_wall_seconds": 0.890672591,
+          "inclusive_thread_cpu_seconds": 0.102310168,
+          "inclusive_wall_seconds": 1.001306277
+        }
+      },
+      "thread_id": 140502359848512,
+      "thread_name": "market-object_13"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 352,
+          "exclusive_thread_cpu_seconds": 0.005482926,
+          "exclusive_wall_seconds": 0.10082161,
+          "inclusive_thread_cpu_seconds": 0.005482926,
+          "inclusive_wall_seconds": 0.10082161
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 352,
+          "exclusive_thread_cpu_seconds": 0.087182274,
+          "exclusive_wall_seconds": 0.866300246,
+          "inclusive_thread_cpu_seconds": 0.0926652,
+          "inclusive_wall_seconds": 0.967121856
+        }
+      },
+      "thread_id": 140501936240192,
+      "thread_name": "market-object_14"
+    },
+    {
+      "stages": {
+        "object.fsync_syscall": {
+          "calls": 314,
+          "exclusive_thread_cpu_seconds": 0.005026167,
+          "exclusive_wall_seconds": 0.097110849,
+          "inclusive_thread_cpu_seconds": 0.005026167,
+          "inclusive_wall_seconds": 0.097110849
+        },
+        "object.immutable_write_link_flush_total": {
+          "calls": 314,
+          "exclusive_thread_cpu_seconds": 0.080432883,
+          "exclusive_wall_seconds": 0.792604902,
+          "inclusive_thread_cpu_seconds": 0.08545905,
+          "inclusive_wall_seconds": 0.889715751
+        }
+      },
+      "thread_id": 140501902681664,
+      "thread_name": "market-object_15"
+    }
+  ],
+  "wall_seconds": 105.60432952083647
+}

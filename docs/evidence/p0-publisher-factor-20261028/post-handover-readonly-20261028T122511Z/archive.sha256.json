@@ -1,0 +1,22 @@
+{
+  "README.md": "efaf136946022315ca3688f067a550af962e741e3216cfdf6ff75b0f27bb4fad",
+  "handover-original-bindings.json": "3006f307a11f2bd4d2eacb9bb80b90d4c7a896988a3abda0c57eda84d4bf1fea",
+  "publisher-git-phase-readonly-20261028T121646Z/capture.json": "7647a4a7d947bd5ab673bb67339672c99317c367d4126c70d23f17bde85d367d",
+  "publisher-git-phase-readonly-20261028T121646Z/samples.jsonl": "15b17898b0b3e818100505b12e622cfa04ad98b376dced164a7ad83660662200",
+  "publisher-pending-objects-readonly-20261028T121804Z/capture.json": "5529ed2a160afc7b1fd67a18232898f57f0ebe1192df05693492d362073e6707",
+  "publisher-pending-objects-readonly-20261028T121804Z/result.json": "7a02f5897ba0cc2e87bf94150bf19e98b643f0777a23d772f9274699d732777d",
+  "publisher-post-handover-readonly-20261028T121143Z/capture.json": "5200dde1a0e6fcafd4dcf0cfd0b7b278b61f4d7c9927d772951141877111cb22",
+  "publisher-post-handover-readonly-20261028T121143Z/safe-result.json": "378e2995d589f568813a224fe249d1a446e18cc992a711c5d20cd340e1b7c98f",
+  "publisher-post-handover-readonly-20261028T121449Z/capture.json": "cbfed6f00d3925265f3ddd2b02bb47179eca166940ba0e84f7b42b2594598d8d",
+  "publisher-post-handover-readonly-20261028T121449Z/safe-result.json": "b89cdaea6d894829b1a2d270d8f15d76c5f4dd0e4b15cbcee7796e5e1582b1d5",
+  "publisher-post-handover-readonly-20261028T122125Z/capture.json": "b36e70d76d3265ce4a2f20ac73682a4678d3b9ed4e4fd267ca4f41655ab6b879",
+  "publisher-post-handover-readonly-20261028T122125Z/safe-result.json": "508dbda6ef143915d55ebddc41278aa7958f40b9ed0ae25096cf2fb06ca42274",
+  "publisher-post-handover-readonly-20261028T122226Z/capture.json": "cee9c01c2b5a8021c6f1f90c298f2c55497a5e646609b6edf6fca6d1b2246dff",
+  "publisher-post-handover-readonly-20261028T122226Z/safe-result.json": "f379c9664db40181e8ce15457c2cefa88a986ca78e2280b30b34216739ee57d2",
+  "publisher-supervisor-lifecycle-readonly-20261028T122032Z/result.json": "edeaa993dcaf681490d27eb5c1723988fcefb3c4fb91149e15481163ba9fdffb",
+  "source/capture_publisher_post_handover_readonly_20261028.py": "b8a250641677c8bf15af4e922ffd677af34a13c234812ae86133c633a3238a3a",
+  "source/publisher_git_phase_readonly_20261028.py": "f97c7b6749ed297f6879e8ac8b4ccd9479fabaefd5a7a5fb3f79ef5c60c7869b",
+  "source/publisher_pending_objects_readonly_20261028.py": "d5ae780e7fc64a5327cb657f24ccc5fd0b7fd232c664122870363733aab67bcf",
+  "source/publisher_post_handover_readonly_20261028.py": "d9141ad4a3cc96589b24789a66535dd83b0f9289a1348257ebf2e52568fa5aa3",
+  "summary.json": "713843bc4b930ba1665ba1a23a37935992c093d95c9cf7716ff0a0595b5b3ec4"
+}

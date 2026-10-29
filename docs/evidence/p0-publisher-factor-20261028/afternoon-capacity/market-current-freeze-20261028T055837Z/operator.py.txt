@@ -1,0 +1,52 @@
+
+import json,sqlite3,shutil,time
+from contextlib import closing
+from pathlib import Path
+from hashlib import sha256
+from datetime import UTC,datetime
+from scripts.publish_unified_market import _chunks
+from scripts.atomic_json import write_json_immutable
+from qtrade.api.unified_data import validate_publication
+from qtrade.monitoring.data_freshness import signed,AUTHORITY,Calendar
+from qtrade.research.unified_market import sessions,validate_index
+b=Path('/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade');p=Path('/root/qtrade-local/operator-evidence/market-current-freeze-20261028T055837Z')
+assert shutil.disk_usage(b).free>101*1024**3
+p.mkdir(mode=0o700)
+catalog_path=b/'unified-data/public/unified.json'
+catalog_bytes=catalog_path.read_bytes();catalog=validate_publication(json.loads(catalog_bytes))
+index_bytes=(b/'unified-data/market-public/unified-market.json').read_bytes()
+index=validate_index(json.loads(index_bytes))
+started=datetime.now(UTC);deadline=time.monotonic()+30
+def progress(*args):
+ if time.monotonic()>deadline: raise TimeoutError('READONLY_BACKUP_DEADLINE')
+with closing(sqlite3.connect('file:/root/qtrade-local/unified-data.sqlite?mode=ro',uri=True,timeout=5)) as src:
+ src.execute('PRAGMA query_only=ON')
+ with closing(sqlite3.connect(p/'frozen.sqlite')) as dst:
+  src.backup(dst,pages=512,progress=progress,sleep=0.01)
+  assert dst.execute('PRAGMA quick_check').fetchone()[0]=='ok'
+captured=datetime.now(UTC)
+assert catalog_path.read_bytes()==catalog_bytes,'CATALOG_CHANGED_DURING_FREEZE'
+snap=p/'snapshot/unified-data';(snap/'public').mkdir(parents=True)
+(snap/'public/unified.json').write_bytes(catalog_bytes)
+(snap/'lake').symlink_to(b/'unified-data/lake',target_is_directory=True)
+old=snap/'market-public';(old/'unified-market/objects').mkdir(parents=True)
+(old/'unified-market.json').write_bytes(index_bytes)
+refs={r['sha256']:r for e in index['entries'] for r in e['shards']}
+for digest,ref in refs.items():
+ raw=(b/'unified-data/market-public/unified-market/objects'/(digest+'.json')).read_bytes()
+ assert len(raw)==ref['bytes'] and sha256(raw).hexdigest()==digest
+ (old/'unified-market/objects'/(digest+'.json')).write_bytes(raw)
+master=catalog['master'];calendar=Calendar(master['collection']['calendar'])
+windows={freq:sessions(calendar,calendar.expected(captured,'daily' if freq=='day' else 'minute').date(),20 if freq=='day' else 3) for freq in ('day','5min')}
+chunks=_chunks(p/'frozen.sqlite',master['universe_version'],windows)
+record=signed({**AUTHORITY,'schema_version':'qtrade.market-benchmark-freeze.v2',
+ 'started_at':started.isoformat(),'captured_at':captured.isoformat(),'completed_at':datetime.now(UTC).isoformat(),
+ 'ledger_copy':'SQLITE_READ_ONLY_BACKUP','ledger_sha256':sha256((p/'frozen.sqlite').read_bytes()).hexdigest(),
+ 'catalog_raw_sha256':sha256(catalog_bytes).hexdigest(),'catalog_signed_sha256':catalog['evidence_sha256'],
+ 'selected_chunks':len(chunks),'selected_batches':len({c['batch_id'] for c in chunks}),
+ 'windows':windows,'previous_success_index_at':index['published_at'],
+ 'previous_success_index_sha256':sha256(index_bytes).hexdigest(),'previous_success_shards':len(refs),
+ 'previous_success_is_current_snapshot_oracle':False,
+ 'original_lake_read_only_by_operator':True,'production_output_modified':False,'whole_step1_accepted':False})
+write_json_immutable(p/'freeze.json',record)
+print(json.dumps({'path':str(p),'freeze':record}))

@@ -1,0 +1,60 @@
+{
+  "scope": "LOCAL_SYNTHETIC_ARROW_API_MICROBENCH_NOT_EXPORT_ACCEPTANCE",
+  "exact_value_and_type_comparisons": 38,
+  "timings_seconds_100_iterations": [
+    {
+      "rows": 0,
+      "bytes": 3304,
+      "True_False": 0.031032499857246876,
+      "True_True": 0.03964360011741519,
+      "False_False": 0.02094099996611476,
+      "False_True": 0.021642700070515275
+    },
+    {
+      "rows": 1,
+      "bytes": 5171,
+      "True_False": 0.04144820012152195,
+      "True_True": 0.05163819994777441,
+      "False_False": 0.03540019993670285,
+      "False_True": 0.03630430018529296
+    },
+    {
+      "rows": 25,
+      "bytes": 6311,
+      "True_False": 0.10250089992769063,
+      "True_True": 0.05820739991031587,
+      "False_False": 0.05601100018247962,
+      "False_True": 0.045584999956190586
+    },
+    {
+      "rows": 50,
+      "bytes": 6546,
+      "True_False": 0.09278040006756783,
+      "True_True": 0.08809689991176128,
+      "False_False": 0.07932289992459118,
+      "False_True": 0.05797829991206527
+    },
+    {
+      "rows": 512,
+      "bytes": 7227,
+      "True_False": 0.5066976000089198,
+      "True_True": 0.2603410000447184,
+      "False_False": 0.516736299963668,
+      "False_True": 0.27456039981916547
+    },
+    {
+      "rows": 2400,
+      "bytes": 7887,
+      "True_False": 2.239060499938205,
+      "True_True": 1.1590497000142932,
+      "False_False": 2.3395140999928117,
+      "False_True": 1.2482634000480175
+    }
+  ],
+  "malicious_utf8_result": [
+    "UnicodeDecodeError",
+    "'utf-8' codec can't decode byte 0xff in position 0: invalid start byte"
+  ],
+  "new_mandatory_dependency": false,
+  "fallback": "ORIGINAL_DECODER_IF_NUMPY_ABSENT_OR_FULL_ARROW_VALIDATION_FAILS"
+}

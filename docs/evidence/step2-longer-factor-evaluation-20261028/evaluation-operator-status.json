@@ -1,0 +1,5 @@
+{
+  "returncode": 0,
+  "command": "nice -n 10 /usr/bin/timeout --signal=TERM --kill-after=5 300s env LIVE_TRADING_ENABLED=false PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/root/qtrade-local/operator-evidence/factor-strategy-s2c-20261028T111832Z-22bd6f85/source/src:/root/qtrade-local/operator-evidence/factor-strategy-s2c-20261028T111832Z-22bd6f85/source /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python -P -B /root/qtrade-local/operator-evidence/factor-longer-s2b-20261028T112943Z-86cd84da/run_longer_factor_observation.py /root/qtrade-local/operator-evidence/factor-longer-s2b-20261028T112943Z-86cd84da /root/qtrade-local/operator-evidence/factor-strategy-s2c-20261028T111832Z-22bd6f85/source evaluate",
+  "scope": "single owned nonproduction child only"
+}

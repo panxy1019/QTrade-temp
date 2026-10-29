@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.961" timestamp="2026-10-28T15:03:29.701130+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="tests.test_unified_market" name="test_worker_job_enters_pipe_before_building_the_next_shard" time="0.001"><failure message="assert b'J\x00\x00\x00\x00{&quot;evidence_sha256&quot;:&quot;1111111111111111111111111111111111111111111111111111111111111111&quot;}' is None">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001FF7F73E190&gt;
+
+    def test_worker_job_enters_pipe_before_building_the_next_shard(monkeypatch):
+        pool = object.__new__(exporter._ShardEncoders)
+        pool.workers = [{'output': None}, {'output': None}]
+        monkeypatch.setattr(pool, 'close', lambda success: None)
+        def send(state, body):
+            state['output'] = body
+        def pump():
+            for state in pool.workers:
+                if state['output'] is not None:
+                    state['result'] = (json.loads(state['output'][5:]), b'validated')
+                    state['output'] = None
+        monkeypatch.setattr(pool, 'send', send)
+        monkeypatch.setattr(pool, 'pump', pump)
+        def shards():
+            yield {'evidence_sha256': '1'*64}
+            # Source replay can be expensive. A merely queued selector write leaves
+            # the child idle during this work and turns validation into serial waves.
+            assert pool.workers[0]['output'] is None
+            yield {'evidence_sha256': '2'*64}
+&gt;       assert len(list(pool.encode(shards()))) == 2
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_unified_market.py:2342: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+scripts\publish_unified_market.py:380: in encode
+    submit(state)
+scripts\publish_unified_market.py:367: in submit
+    item = next(source, None)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def shards():
+        yield {'evidence_sha256': '1'*64}
+        # Source replay can be expensive. A merely queued selector write leaves
+        # the child idle during this work and turns validation into serial waves.
+&gt;       assert pool.workers[0]['output'] is None
+E       assert b'J\x00\x00\x00\x00{"evidence_sha256":"1111111111111111111111111111111111111111111111111111111111111111"}' is None
+
+tests\test_unified_market.py:2340: AssertionError</failure></testcase></testsuite></testsuites>

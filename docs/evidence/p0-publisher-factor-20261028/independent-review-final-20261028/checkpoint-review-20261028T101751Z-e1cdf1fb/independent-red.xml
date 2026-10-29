@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="7" time="5.297" timestamp="2026-10-28T18:17:53.773163+08:00" hostname="73ec830048ca"><testcase classname="tests.test_checkpoint_contract_independent_review" name="test_recovered_sidecar_reestablishes_directory_durability_before_sqlite_commit" time="0.373"><failure message="AssertionError: ('Recovered a sidecar whose directory fsync failed and COMMITed its local index without re-establishing the immutable ...23032362d31302d32365431303a30303a30302b30303a3030227d')&quot;, 'COMMIT', 'SELECT count(*) FROM market_validation_receipts'])&#10;assert False&#10; +  where False = any(&lt;generator object test_recovered_sidecar_reestablishes_directory_durability_before_sqlite_commit.&lt;locals&gt;.&lt;genexpr&gt; at 0x7f6cb7fdaf40&gt;)">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101751Z-e1cdf1fb/tmp/pytest/test_recovered..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f6cba647e00&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f6cba41f5e0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6cba5b6650&gt;
+
+    def test_recovered_sidecar_reestablishes_directory_durability_before_sqlite_commit(source, monkeypatch):
+        base, _, _, _, lake, add = source
+        manifest = add()
+        material = lake._batch_material(manifest['batch_id'])
+        checked, _, rows = material.validate()
+        key = receipts.receipt_key(manifest['batch_id'], material.identities(), 'a'*64)
+        directory = base/'receipt-sidecars'
+        with receipts.MarketValidationReceiptStore(base/'local/fault.sqlite',
+                                                   sidecar_root=directory) as store:
+            def fail(_path):
+                raise OSError('independent linked-sidecar directory fsync failure')
+            monkeypatch.setattr(receipts, '_fsync_directory', fail)
+            with pytest.raises(OSError, match='linked-sidecar'):
+                store.put_success(key, checked, rows, validated_at=NOW)
+            assert store._connection.execute('SELECT count(*) FROM market_validation_receipts').fetchone()[0] == 0
+            assert len(list((directory/key.key_sha256).glob('*.json'))) == 1
+            events = []
+            monkeypatch.setattr(receipts, '_fsync_directory', lambda path: events.append(str(path)))
+            store._connection.set_trace_callback(lambda statement: events.append(statement))
+            assert store.get(key, now=NOW+timedelta(seconds=1)) is not None
+            assert store._connection.execute('SELECT count(*) FROM market_validation_receipts').fetchone()[0] == 1
+            commit = next(index for index, event in enumerate(events) if event == 'COMMIT')
+&gt;           assert any(event == str(directory/key.key_sha256) for event in events[:commit]), (
+                'Recovered a sidecar whose directory fsync failed and COMMITed its local index '
+                'without re-establishing the immutable sidecar directory durability', events)
+E           AssertionError: ('Recovered a sidecar whose directory fsync failed and COMMITed its local index without re-establishing the immutable ...23032362d31302d32365431303a30303a30302b30303a3030227d')", 'COMMIT', 'SELECT count(*) FROM market_validation_receipts'])
+E           assert False
+E            +  where False = any(&lt;generator object test_recovered_sidecar_reestablishes_directory_durability_before_sqlite_commit.&lt;locals&gt;.&lt;genexpr&gt; at 0x7f6cb7fdaf40&gt;)
+
+tests/test_checkpoint_contract_independent_review.py:52: AssertionError</failure></testcase><testcase classname="tests.test_checkpoint_contract_independent_review" name="test_changed_public_head_during_generation_fsync_is_not_overwritten" time="0.226"><failure message="Failed: DID NOT RAISE ValueError">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101751Z-e1cdf1fb/tmp/pytest/test_changed_p..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f6c746a8690&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f6cb8059010&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6cb818dcd0&gt;
+
+    def test_changed_public_head_during_generation_fsync_is_not_overwritten(source, monkeypatch):
+        base, _, _, _, _, add = source
+        add(); first = run(source)
+        pointer = base/'unified-data/market-public/unified-market.json'
+        original = checkpoints.prepare
+        external = signed({k: v for k, v in {**first['index'],
+            'published_at':(NOW+timedelta(microseconds=1)).isoformat()}.items()
+            if k != 'evidence_sha256'})
+        def race(*args, **kwargs):
+            result = original(*args, **kwargs)
+            pointer.write_text(json.dumps(external))
+            return result
+        monkeypatch.setattr(checkpoints, 'prepare', race)
+&gt;       with pytest.raises(ValueError, match='CHECKPOINT_HEAD_CHANGED'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_checkpoint_contract_independent_review.py:70: Failed</failure></testcase><testcase classname="tests.test_checkpoint_contract_independent_review" name="test_exclusion_during_generation_fsync_blocks_old_source_publication" time="0.150"><failure message="Failed: DID NOT RAISE ValueError">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101751Z-e1cdf1fb/tmp/pytest/test_exclusion..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f6cb818ec40&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f6cb80589e0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6cb8197530&gt;
+
+    def test_exclusion_during_generation_fsync_blocks_old_source_publication(source, monkeypatch):
+        base, database, _, _, _, add = source
+        manifest = add(); run(source)
+        pointer = base/'unified-data/market-public/unified-market.json'
+        before = pointer.read_bytes()
+        original = checkpoints.prepare
+        def race(*args, **kwargs):
+            result = original(*args, **kwargs)
+            with sqlite3.connect(database) as db:
+                db.execute('INSERT INTO excluded_collection_chunks VALUES(?,?)',
+                           (manifest['batch_id'], '301001'))
+            return result
+        monkeypatch.setattr(checkpoints, 'prepare', race)
+&gt;       with pytest.raises(ValueError, match='LEDGER_OR_MASTER_CHANGED'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_checkpoint_contract_independent_review.py:88: Failed</failure></testcase><testcase classname="tests.test_checkpoint_contract_independent_review" name="test_future_generation_clock_is_corrupt_checkpoint_cache_miss" time="0.107"><failure message="AssertionError: assert {'classification': 'PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY', 'point_in_time': False, 'realtime_readiness': False, 'real_data_paper_readiness': False, ...} is None&#10; +  where {'classification': 'PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY', 'point_in_time': False, 'realtime_readiness': False, 'real_data_paper_readiness': False, ...} = &lt;function load at 0x7f6cba41ceb0&gt;((PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101751Z-e1cdf1fb/tmp/pytest/test_future_generation_clock_i0') / 'checkpoints'), PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101751Z-e1cdf1fb/tmp/pytest/test_future_generation_clock_i0/unified-data/market-public/unified-market.json'), '9251cf0dd66560bb1911b27c135c0371bb1f3863692c1d67e2ab631852ba0d9e')&#10; +    where &lt;function load at 0x7f6cba41ceb0&gt; = checkpoints.load">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101751Z-e1cdf1fb/tmp/pytest/test_future_ge..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f6cb8011480&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f6cb8058b40&gt;)
+
+    def test_future_generation_clock_is_corrupt_checkpoint_cache_miss(source):
+        base, _, _, _, _, add = source
+        add(); first = run(source)
+        head = base/'unified-data/market-public/unified-market.json'
+        path = base/'checkpoints/generations'/(first['index']['evidence_sha256']+'.json')
+        doc = json.loads(path.read_bytes())
+        doc['created_at'] = '2099-01-01T00:00:00+00:00'
+        doc = signed({k: v for k, v in doc.items() if k != 'evidence_sha256'})
+        path.write_text(json.dumps(doc))
+&gt;       assert checkpoints.load(base/'checkpoints', head, doc['context_sha256']) is None
+E       AssertionError: assert {'classification': 'PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY', 'point_in_time': False, 'realtime_readiness': False, 'real_data_paper_readiness': False, ...} is None
+E        +  where {'classification': 'PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY', 'point_in_time': False, 'realtime_readiness': False, 'real_data_paper_readiness': False, ...} = &lt;function load at 0x7f6cba41ceb0&gt;((PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101751Z-e1cdf1fb/tmp/pytest/test_future_generation_clock_i0') / 'checkpoints'), PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101751Z-e1cdf1fb/tmp/pytest/test_future_generation_clock_i0/unified-data/market-public/unified-market.json'), '9251cf0dd66560bb1911b27c135c0371bb1f3863692c1d67e2ab631852ba0d9e')
+E        +    where &lt;function load at 0x7f6cba41ceb0&gt; = checkpoints.load
+
+tests/test_checkpoint_contract_independent_review.py:102: AssertionError</failure></testcase><testcase classname="tests.test_checkpoint_contract_independent_review" name="test_physical_hash_rejects_same_size_raw_change_with_original_mtime" time="0.129" /><testcase classname="tests.test_checkpoint_contract_independent_review" name="test_future_receipt_is_not_usable_at_earlier_actual_clock" time="0.084" /><testcase classname="tests.test_checkpoint_contract_independent_review" name="test_replay_fingerprint_invalidates_changed_bar_import_policy" time="2.941"><failure message="AssertionError: ('Changed qtrade.data.Bar import policy affects full replay but is absent from persistent receipt fingerprint; stale s...ANTINED', 'stats': {'source_bytes_read': 8338, 'cached_batches': 0, 'replayed_batches': 0, 'selected_chunks': 1, ...}})&#10;assert 'AVAILABLE' == 'QUARANTINED'&#10;  &#10;  - QUARANTINED&#10;  + AVAILABLE">source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T101751Z-e1cdf1fb/tmp/pytest/test_replay_fi..., &lt;scripts.unified_store.UnifiedBatchStore object at 0x7f6cb801add0&gt;, &lt;function source.&lt;locals&gt;.add at 0x7f6c7466d220&gt;)
+
+    def test_replay_fingerprint_invalidates_changed_bar_import_policy(source):
+        base,database,*_,add=source
+        add();run(source)
+        # Only an owned isolated package may be changed for this semantic-upgrade probe.
+        assert 'checkpoint-review-' in str(exporter.REPO) and exporter.REPO.name=='source'
+        barrel=exporter.REPO/'src/qtrade/data/__init__.py'
+        original=barrel.read_bytes()
+        policy=b'\n_OriginalReviewBar = Bar\ndef Bar(*args, **kwargs):\n    raise ValueError("INDEPENDENT_NEW_BAR_ADMISSION_POLICY")\n'
+        code='''import json,sys
+    from pathlib import Path
+    from datetime import timedelta
+    from scripts import publish_unified_market as e
+    from test_unified_market import NOW
+    base=Path(sys.argv[1]);database=Path(sys.argv[2]);warm=sys.argv[3]=='warm'
+    kw={'receipt_database':base/'local/receipts.sqlite','checkpoint_root':base/'checkpoints'} if warm else {}
+    result=e.export_market(base,database,now=NOW+timedelta(seconds=1 if warm else 2),**kw)
+    pair=next(row for row in result['index']['entries'] if row['symbol']=='301001' and row['frequency']=='5min')
+    print(json.dumps({'state':pair['state'],'stats':result['statistics']}))
+    '''
+        env={**os.environ,'PYTHONPATH':str(exporter.REPO/'src')+':'+str(exporter.REPO)+':'+str(exporter.REPO/'tests'),
+             'PYTHONDONTWRITEBYTECODE':'1','LIVE_TRADING_ENABLED':'false'}
+        try:
+            barrel.write_bytes(original+policy)
+            warm=subprocess.run([sys.executable,'-B','-c',code,str(base),str(database),'warm'],
+                                cwd=exporter.REPO,env=env,capture_output=True,text=True,check=True)
+            plain=subprocess.run([sys.executable,'-B','-c',code,str(base),str(database),'plain'],
+                                 cwd=exporter.REPO,env=env,capture_output=True,text=True,check=True)
+            warm,plain=json.loads(warm.stdout),json.loads(plain.stdout)
+        finally:
+            barrel.write_bytes(original)
+&gt;       assert warm['state']==plain['state'], (
+            'Changed qtrade.data.Bar import policy affects full replay but is absent from '
+            'persistent receipt fingerprint; stale semantic receipts survived a new process',warm,plain)
+E       AssertionError: ('Changed qtrade.data.Bar import policy affects full replay but is absent from persistent receipt fingerprint; stale s...ANTINED', 'stats': {'source_bytes_read': 8338, 'cached_batches': 0, 'replayed_batches': 0, 'selected_chunks': 1, ...}})
+E       assert 'AVAILABLE' == 'QUARANTINED'
+E         
+E         - QUARANTINED
+E         + AVAILABLE
+
+tests/test_checkpoint_contract_independent_review.py:159: AssertionError</failure></testcase></testsuite></testsuites>

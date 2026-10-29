@@ -1,0 +1,59 @@
+..............F...........................                               [100%]
+=================================== FAILURES ===================================
+_____________ test_input_generator_close_fault_still_reaps_workers _____________
+
+inputs = (<qtrade.monitoring.data_freshness.Calendar object at 0x7fc2f364a5b0>, datetime.datetime(2026, 10, 28, 6, 0, tzinfo=da...m '/root/qtrade-local/operator-evidence/graded-quality-458552d-20261028/source/src/qtrade/research/unified_market.py'>)
+pools = [<test_workers.ReviewEncoders object at 0x7fc2f364b5f0>]
+
+    def test_input_generator_close_fault_still_reaps_workers(inputs, pools):
+        pool = opened(inputs, pools)
+        def shards():
+            try:
+                while True:yield inputs[2]
+            finally:
+                raise OSError('FIXTURE_INPUT_CLOSE_FAILED')
+        output = pool.encode(shards())
+        next(output)
+>       with pytest.raises(OSError, match='FIXTURE_INPUT_CLOSE_FAILED'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE OSError
+
+../test_workers.py:237: Failed
+=============================== warnings summary ===============================
+../../../../siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+test_workers.py::test_input_generator_close_fault_still_reaps_workers
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored while closing generator <generator object _ShardEncoders.encode at 0x7fc2f47c4a40>: None
+  
+  Traceback (most recent call last):
+    File "/root/qtrade-local/operator-evidence/market-worker-integrated-independent-20261028T065247Z/source/scripts/publish_unified_market.py", line 389, in encode
+      yield cast(tuple[dict[str, Any], bytes], raw)
+  GeneratorExit
+  
+  During handling of the above exception, another exception occurred:
+  
+  Traceback (most recent call last):
+    File "/root/qtrade-local/operator-evidence/market-worker-integrated-independent-20261028T065247Z/test_workers.py", line 232, in shards
+      while True:yield inputs[2]
+                 ^^^^^^^^^^^^^^^
+  GeneratorExit
+  
+  During handling of the above exception, another exception occurred:
+  
+  Traceback (most recent call last):
+    File "/root/qtrade-local/operator-evidence/market-worker-integrated-independent-20261028T065247Z/source/scripts/publish_unified_market.py", line 398, in encode
+      close()
+      ~~~~~^^
+    File "/root/qtrade-local/operator-evidence/market-worker-integrated-independent-20261028T065247Z/test_workers.py", line 234, in shards
+      raise OSError('FIXTURE_INPUT_CLOSE_FAILED')
+  OSError: FIXTURE_INPUT_CLOSE_FAILED
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../test_workers.py::test_input_generator_close_fault_still_reaps_workers
+1 failed, 41 passed, 2 warnings in 50.86s

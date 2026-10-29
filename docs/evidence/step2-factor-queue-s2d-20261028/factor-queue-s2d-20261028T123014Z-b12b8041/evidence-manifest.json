@@ -1,0 +1,96 @@
+{
+  "remote_root": "/root/qtrade-local/operator-evidence/factor-queue-s2d-20261028T123014Z-b12b8041",
+  "operator_status": 0,
+  "files": [
+    {
+      "file": "baseline.tar",
+      "bytes": 97566720,
+      "sha256": "144b76610d0bf40ab0921a2b24151e1618213252421bf16494069fb6496f3175"
+    },
+    {
+      "file": "old-report-replay.json",
+      "bytes": 373,
+      "sha256": "8f973ff61513de07fcf9b7557b37b950158cf504692a810e7a0947e05d76dd50"
+    },
+    {
+      "file": "overlay.tar",
+      "bytes": 276480,
+      "sha256": "f0b222d10b2c64af5f432e426b113bd4d065ffc4c5cc1fb11b8faf601ab6c798"
+    },
+    {
+      "file": "package-manifest.json",
+      "bytes": 896101,
+      "sha256": "6d848dab760921406ad71c62f372211434725f639432bfe850d6c616cb850cfa"
+    },
+    {
+      "file": "regression.xml",
+      "bytes": 55546,
+      "sha256": "7b5d8eca1f76585efbc9efdc134702e74ed53f804e49e806d4427bcbb39317e9"
+    },
+    {
+      "file": "remote-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "remote-stdout.log",
+      "bytes": 4374,
+      "sha256": "ccd60419887fa5b7d0d61d90fedfa8fbbcf30ad6c6e478c8561782e9e7558264"
+    },
+    {
+      "file": "resources-after.json",
+      "bytes": 50,
+      "sha256": "79c8cdf448cbb3e22a0ae79e70801df0b3e0737e74b64a1259f30063ddce7d51"
+    },
+    {
+      "file": "resources-before.json",
+      "bytes": 50,
+      "sha256": "3e12b9c07765f7f4b610dd24f5f1782a544387d2ba116e028744ef57a0ed67a8"
+    },
+    {
+      "file": "result.json",
+      "bytes": 2807,
+      "sha256": "48a9a374a8462aa4d07675118bb5bf4909f6c536ae4ec7ba67b0f813f7d43a47"
+    },
+    {
+      "file": "run_factor_strategy_review.py",
+      "bytes": 3292,
+      "sha256": "08d7a3fac14921995c6216f124959ed7b8c195671acad0a12bd5de8dba300b72"
+    },
+    {
+      "file": "source-after.json",
+      "bytes": 438164,
+      "sha256": "47c2f52431635fe74ecf4add4f6a91aede80dde25f1bf4d6bd14819292d8d132"
+    },
+    {
+      "file": "source-before.json",
+      "bytes": 438164,
+      "sha256": "47c2f52431635fe74ecf4add4f6a91aede80dde25f1bf4d6bd14819292d8d132"
+    },
+    {
+      "file": "stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "stdout.log",
+      "bytes": 1098,
+      "sha256": "9e7ee6da0c1da879912638753e4281a2c0411862e801e4e5aca4ea84a9cf15b1"
+    },
+    {
+      "file": "windows-final-source-before.json",
+      "bytes": 447283,
+      "sha256": "c1a2add77af2f4e5647c8f1c8c27f8afee636c304bb2baf76f3e1c8f1b135b50"
+    },
+    {
+      "file": "windows-final-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "windows-final-stdout.log",
+      "bytes": 361,
+      "sha256": "b6ec6f0d7b969180a28f8caed08ebdb6a234c5cb91b9fec0dd3da8483bf2aae3"
+    }
+  ]
+}

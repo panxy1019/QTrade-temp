@@ -1,0 +1,26 @@
+{
+  "error": null,
+  "id": "1ed2fd215098f7e64421f9419584662f",
+  "request": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "evidence_sha256": "01ec3a09a4940d7c28b814c61994b87c43b800213367b6a514e6b8e958287e49",
+    "external_order_transmission": false,
+    "job_id": "1ed2fd215098f7e64421f9419584662f",
+    "kind": "QLIB_MODEL_VALIDATION",
+    "live_trading_enabled": false,
+    "model_id": "98d27455a7cb224ef3ecbd7cf850455f386fbb93baf8137a4d789e142ab91795",
+    "point_in_time": false,
+    "promotion": "NOT_ELIGIBLE",
+    "real_data_paper_readiness": false,
+    "realtime_readiness": false,
+    "source_revision": "096387b8088e4361c9e5cd9cd2c165e21819fead"
+  },
+  "result": {
+    "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "model_id": "98d27455a7cb224ef3ecbd7cf850455f386fbb93baf8137a4d789e142ab91795",
+    "validation_id": "f76197221f81a89e76896848b85b0e81c623e0b162802143a2c3940ba9502474"
+  },
+  "state": "COMPLETE",
+  "updated": "2026-10-27T17:50:35.767088+00:00"
+}

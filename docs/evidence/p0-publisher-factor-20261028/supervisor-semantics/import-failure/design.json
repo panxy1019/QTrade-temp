@@ -1,0 +1,18 @@
+{
+  "scope": "INDEPENDENT_OVERLAY_GO_SUPERVISOR_FIXTURES_ONLY",
+  "binary_sha256": "c0e12d2e498d00a2285161372cbb0a46b795b94e9a42511351eba7980f408569",
+  "operator_sha256": "57021984648f33aba53745245a1884068679b999af6d208aa5c611c551db14ba",
+  "review_contract_sha256": "2ff761bdb124c79f8e64144d8beca40fb9b0b980ea2f62edb970759b84d2804d",
+  "remote_root": "/root/qtrade-local/operator-evidence/svsem-20261028T051154Z-53d7c6",
+  "nfs_access": false,
+  "production_mutations": false,
+  "production_control_invocations": 0,
+  "direct_fixture_main_terms": 1,
+  "external_term_drain_seconds": 112,
+  "stopwaitsecs": 110,
+  "independent_unix_socket_per_manager": true,
+  "inet_server_configured": false,
+  "new_child_stabilizes_after_second_generation": true,
+  "cleanup_targets": "ONLY_REGISTERED_NEW_MANAGER_AND_FIXTURE_PID_START_IDENTITIES",
+  "reviewed_before_execution": true
+}

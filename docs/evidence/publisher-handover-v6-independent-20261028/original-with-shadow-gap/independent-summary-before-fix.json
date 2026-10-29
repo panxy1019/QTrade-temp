@@ -1,0 +1,23 @@
+{
+  "schema": "qtrade.publisher-v6-independent-review.v1",
+  "reviewed_at_utc": "2026-10-28T11:55:43.748911+00:00",
+  "state": "BLOCKED_PREWRITE_ORIGIN_SHADOW",
+  "p1": "Tracked .py hash passes while untracked same-name package changes PathFinder origin.",
+  "production_write_or_control": false,
+  "private_wrapper_read": false,
+  "raw_mount_copied": false,
+  "tests": {
+    "reproduced-47.xml": {
+      "sha256": "125490d1a9dca12bb2fb792d3a3477a9ff5ccb4d45028e567e502b3f7595da96",
+      "cases": 47,
+      "failures": 0,
+      "skips": 0
+    },
+    "independent-9.xml": {
+      "sha256": "6c13f788904155ea4b0665b81c89efff26704969fe2935b0486d185da04cf423",
+      "cases": 9,
+      "failures": 0,
+      "skips": 0
+    }
+  }
+}

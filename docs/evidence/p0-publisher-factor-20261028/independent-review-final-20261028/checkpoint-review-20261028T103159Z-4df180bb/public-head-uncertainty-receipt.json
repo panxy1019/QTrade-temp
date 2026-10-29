@@ -1,0 +1,25 @@
+{
+  "old_head": "6d9b2eda5215ce84060ef087f34e0cfec5fb636f734192d1b761563e2f15bc49",
+  "head_after": "a0d2297e1a145d254e720c5f12b43c512d6bef95bae6a45a39b4a8b781be6989",
+  "head_moved": true,
+  "public_transport_head": "a0d2297e1a145d254e720c5f12b43c512d6bef95bae6a45a39b4a8b781be6989",
+  "attempt": {
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "point_in_time": false,
+    "realtime_readiness": false,
+    "real_data_paper_readiness": false,
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "promotion": "NOT_ELIGIBLE",
+    "schema_version": "qtrade.unified-market-export-attempt.v1",
+    "started_at": "2026-10-28T10:34:19.959295+00:00",
+    "state": "FAILED",
+    "index_id": null,
+    "error_class": "OSError",
+    "error_code": null,
+    "completed_at": "2026-10-28T10:34:19.993475+00:00",
+    "elapsed_seconds": 0.034187,
+    "evidence_sha256": "d78f2e2fa88a80819e23341a537478c73f7800a1ed50ce800ef7aa5acab1efae"
+  },
+  "returned_transport_files": 3
+}

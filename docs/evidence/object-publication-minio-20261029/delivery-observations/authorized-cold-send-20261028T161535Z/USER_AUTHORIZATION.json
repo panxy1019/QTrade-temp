@@ -1,0 +1,11 @@
+{
+  "authorization_kind": "EXPLICIT_NEW_USER_APPROVAL_OF_EXACT_PREPARED_PLAN",
+  "authorization_reference": "Human user message 2026-10-29 Asia/Shanghai: \u5ba1\u9605\u5b8c\u6210\uff0c\u540c\u610f\u6309\u7167\u65b9\u6848\u6267\u884c\uff0c\u8bf7\u4f60\u7ee7\u7eed\u63a8\u8fdb; reviewed P0-2 single180 cold delivery plan9a459c19.",
+  "authorized_at": "2026-10-28T16:15:04.373442+00:00",
+  "automatic_retry": false,
+  "force_push": false,
+  "one_shot_cold_push_seconds": 180,
+  "ordinary_budgets_unchanged": true,
+  "plan_sha256": "9a459c194021e6cadc1cec8dd09ecb8f7e86d8c5cab81d972a1108e7edbf4fb8",
+  "schema_version": "qtrade.one-shot-cold-user-authorization.v1"
+}

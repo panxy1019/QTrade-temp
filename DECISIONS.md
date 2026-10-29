@@ -1,5 +1,281 @@
 # Architecture decisions
 
+## ADR-209 — Prioritize frozen-data research and separate delivery gates
+
+Status: explicit human direction at2026-10-29. STEP2 factor/strategy/backtest75%,
+daily data/minimum checks20%, advanced publication reserve5%; target effort,
+not measured time or resource quotas. This supersedes previous scheduling text
+requiring all STEP1 acceptance before any STEP2 offline work.
+
+Define daily-data delivery around automatic coherent immutable input, integrity
+and Qlib-readability checks, qualified scope and previous-head retention on
+failure. Keep public publishing, original CDE/98d/D failures and forward-account
+readiness as independent gates. No old success/failure is relabeled; no input,
+trade constraint, ledger recovery or LIVE rule is relaxed by this decision.
+
+Reuse current FactorRegistry, metrics, StrategyRegistry, Qlib0.9.7 Exchange/
+TopkDropout and queue. Reuse the existing native seven-strategy678-session
+historical comparison; distinguish its original common panel from new891 READY
+versions. First establish NEW registered-factor portfolio execution lineage, then
+bounded multi-year factor evaluation, frozen chronological splits and costed
+benchmarks. Current actual factor diagnostics span16days; native33 tests use
+synthetic execution quotes. Neither alone proves the new registered891 workflow;
+this does not erase or deny the separate old multi-year native comparison.
+
+Keep old v1 limits/reports and runtime fingerprints immutable. Long-window
+execution needs an explicit bounded experiment policy with warmup/label-boundary
+checks and continuous portfolio state, not silently increased caps or independent
+cash resets. Worker/source upgrades need explicit release compatibility without
+rewriting registrations. Existing ACTIVE is not a shortcut for historical OOS
+if it has trained on that period. New historical results disclose viewed history,
+selection/survivorship, unknown PIT clocks and adjustment limitations; future
+data improvements create new revalidation versions, never overwrite old ones.
+
+Negative results are valid research delivery. Public freshness and future Paper
+activation remain separate. Latest audit/handoff changes documentation only;
+LIVEfalse/rollingOFF, existing owners/ledgers/consumed authorities unchanged.
+
+## ADR-208 — Verify S3 locally before independent cloud/public acceptance
+
+Status: user explicitly chooses MinIO-first nonproduction protocol verification;
+real7 local S3 cases pass, frozen full bundle fails lineage admission. No cloud
+account, production object-store route or publication performance acceptance.
+
+Reuse existing strict index/catalog/quality/shard validators and atomic immutable
+JSON writer. Content-address immutable objects and manifest; use conditional
+create for the first latest pointer and parent ETag CAS for successors. ETags
+are opaque, not hashes. Persist fsynced create-only intent/receipts; unknown CAS
+never silently replays. Separate independent full audits from future measured
+incremental optimization. Current prototype repeats full GETs and safely stalls
+on unknown immutable upload+404; neither limit is a production-ready SLA claim.
+
+The public reconcile entry must bind manifest SHA/ID/source/clock/parent and the
+actual committed manifest, not only a matching head. Original d362 failed an
+independent counterexample; d11c closes it. Preserve old source/XML. Optional
+boto3/botocore1.43.120 factory uses explicit R2 HTTPS origin/credentials, isolated
+SDK configuration/models/plugins, one wire attempt and sanitized errors. DEBUG
+guards are steady-state checks, not protection from malicious same-process code.
+
+A local MinIO seam uses a separate MINIO_NONPRODUCTION scope and owned loopback
+service. Do not weaken the production R2 factory to accept localhost or HTTP.
+Random fixture credentials are memory-only; no banners/config/credentials enter
+evidence. Parent process-group cleanup includes the child server, and stopped
+server/clean clients are required for a pass. Root fixture tests do not certify
+least privilege, WORM, external deletion protection, R2 behavior or TLS.
+
+Refuse an index/catalog master mismatch in a frozen source bundle. Locate real
+matching original documents or create a newly sourced coherent generation; do
+not rewrite old hashes or clocks. Git source IDs are separate from object
+publication SHA256 IDs. Caller provenance must bind actual source bytes, not
+only a plausible Git40 string. Original failed Git180 delivery remains immutable
+and separate from local MinIO success. Existing LIVE/rolling/model/ledger and
+45/512/cache128/Git90 contracts remain unchanged.
+
+## ADR-207 — Persist replay receipts and commit complete materialized generations
+
+Status: user authorizes A/B/C at2026-10-28 17:34; isolated candidate only, production
+handover and actual public freshness remain gated by measured evidence.
+
+Reuse UnifiedBatchStore, original semantic replay, quality isolation, immutable
+Parquet objects and atomic JSON publication. Store replay receipts in local
+SQLite/WAL/FULL plus immutable fsynced NFS sidecars. Every pass still physically
+hashes selected source bytes and reused public shards; receipts never replace
+source authority. Bind actual rule dependencies, calendar, security types,
+numeric/runtime policy and complete material identity. Cache corruption is a
+miss, transient storage failure propagates, failures never become PASS receipts.
+
+Recompute changed security/frequency/window from its complete selected source
+set. Reuse certified unchanged shard bytes. Fingerprint only consumed descriptor
+fields, while retaining each frequency's full window and source metadata. New
+lineage invalidates a pair even at identical prices. After generation persistence,
+recheck source/head/selected chunks/consumed descriptors/deadline; new overlapping
+admissions conservatively reject this candidate. Additions outside selected spans
+may wait for a later generation without being advertised as processed.
+
+Fsync immutable generation before replacing the public index. The actual public
+index identifies the committed generation; SQLite and a later status log are not
+commit authority. A same-host lease requires a single configuration and verified
+old-writer exit on deployment, not a distributed CAS claim. Retry failed directory
+fsync before recovering orphan sidecars or reusing an already-linked generation.
+Do not replay a TERM intent or uncertain service-control RPC.
+
+Keep normal45 seconds/source512MB/estimated batch cache128MB/Git90 seconds. Separate
+nonproduction120-second full bootstrap measurements from valid-checkpoint process
+restart and normal increment measurements. First cold production cycles may fail
+explicitly while retaining verified receipt progress and the old head; no silent
+budget extension, prewarming claim or age-only timestamp refresh is allowed.
+Independent original-source all-entry/all-shard/lineage audits remain mandatory.
+
+Independent failure injection found and preserved seven real edge conditions.
+The second candidate passes640 Linux integration and25 independent checks; these
+are engineering results, not completed performance/production/STEP1 acceptance.
+
+
+## ADR-206 — Bound shard workers and preserve execution-day evidence separately
+
+Status: isolated worker tests pass; current5640-batch cold performance fails;
+production is unchanged. Readonly October28 post-close audit remains BLOCKED.
+
+Use two explicitly owned Popen processes only for original full shard validation
+and encoding. Parent keeps source reads, replay, cache, ledger and source-byte
+authority. Bounded framed pipes admit one job per child; fixed module entry and
+source/context handshake replace implicit spawning. Return metadata derives from
+validated raw bytes, not later reads of mutable submitted dictionaries. Successful
+workers exit and join before final ledger/index commit. Failures terminate/reap
+only retained owned handles; no group kills, PID discovery or replacement retries.
+Windows and small exports select the original serial path before any child starts.
+
+Registering a writable selector is not sending a job. Flush the bounded job frame
+while servicing other ready pipes before constructing the next shard, so source
+work can overlap actual child validation. Preserve original pre-fix failures and
+the independent regression. This is a scheduling change, not reduced validation.
+
+Unchecked NumPy string conversion was rejected because it can replace malformed
+UTF-8. The new isolated bounded-export candidate first validates complete Arrow
+buffers; on invalid buffers it calls the original decoder, preserving its exact
+result/exception. Missing optional NumPy also keeps the original decoder. Ordinary
+store use does not enter this optimization. Tests do not establish performance or
+production acceptance; independent review and complete original-source oracle remain.
+
+The actual forward predictor stops advertising a prospective prediction after its
+execution deadline. That does not erase the first admitted execution-day target.
+The service still observes retained books independently, but today's E v2 also
+requires an undegraded public service. Preserve its BLOCKED result; do not relabel
+the admission, alter the clock, replace targets or weaken the auditor. A future
+separation of execution-day observation proof from next-target discovery requires
+its own schema/contract review. Daily source/observation cutoff is16:30 Shanghai.
+
+Publisher handover preparation uses actual -m/cwd/interpreter/source proofs.
+Explicit PYTHONPATH may contain only src because -m adds cwd, but reject flags
+or PYTHONSAFEPATH that disable that assumption. The proof is PathFinder replay,
+not live sys.modules introspection. No readonly preparation grants mutation authority.
+
+## ADR-205 — Pipeline complete export checks and account failed physical reads
+
+Status: source aaca9d7 independently reviewed and tested in isolation; not deployed.
+
+Preserve the original full collection metadata, raw-response replay, normalized
+data checks, source lineage, shard quality/hash contract and immutable index
+commit. Reuse existing store, parsers and validators; vn.py gateway components
+do not supply this data-publication contract. Bound object persistence to16
+in-flight tasks and physical-material prefetch to one next batch. Keep decode,
+replay, cache and full pair completion on the main thread. A late failure cannot
+seal an incomplete pair or publish a partial new index. All workers join before
+return; failed writes may leave only unreferenced immutable objects.
+
+An independent test exposed an existing budget hole: malformed or checksum-failed
+materials had returned bytes but constructor failure prevented accounting. The
+store now accepts an optional private read observer that receives sizes/stages,
+never substitute bytes. Reserve verified sizes before reads, account actual
+returned lengths before parsing/checksum, and retain accounting for unused
+prefetches. Concurrent reservations and main-thread manifest rechecks share one
+budget. OSError aborts rather than becoming a permanent quality exclusion. The
+default store path and its raw bytes/quality checks remain unchanged.
+
+Linux398 and Windows386 tests pass (12 platform skips on Windows); independent
+fault/differential checks and full original458 current4200-batch oracle pass.
+First NFS cold fullcall44.860369s and warm33.992167s pass the45s bound but provide
+insufficient cold margin. This is a fixed12:23 capture, not the growing afternoon
+workload. Preserve both original failures and successful evidence. Require newer
+input, stable timing, final Git binding and actual export/Git/public/API proof
+before declaring production restored. Keep45s/512000000 source bytes/128000000
+estimated cache/Git90s limits. Source bytes are not an RSS ceiling.
+
+## ADR-204 — Existing daily factors and retrospective evaluation have separate authority
+
+Status: non-production implementation db4ded3/8e038c8, actual isolated run at
+12:52 October28. Production API/queue/strategy execution remain separate work.
+
+Register momentum20, reversal5, lowvol20 and equal-rank combination using existing
+PriceFactorSpec and metrics, with exact dependency/content/source identities.
+No user expression evaluation or arbitrary imports. Immutable SQLite identities,
+explicit output directories and alias guards prevent accidental input overwrite.
+Factor outputs use fixed numeric contexts; old definitions remain readable when
+runtime source changes but cannot silently execute as the old implementation.
+
+Independent evaluation binds existing READY validation, supported universe,
+continuous session grid, exact factor versions, dependency clocks, mature labels
+and rejection reasons. OBSERVED_SYSTEM requires both clocks before decision;
+RETROSPECTIVE_RECONSTRUCTION preserves unknown clocks and cannot grant historical
+PAPER admission. Computed time is the actual clock. IC/RankIC use average ranks,
+explicit nulls and sample-ddof1 nonannualized IR; groups are gross-label diagnostics,
+not executed portfolio returns. No search, winner or unseen-data claim.
+
+Store source snapshots, policies, samples, metrics and limits in immutable bundles.
+Report reads replay metrics and fixed-policy invariants, rather than trusting a
+consistent checksum alone. This is internal consistency, not a cryptographic
+signature or independent certification of vendor prices. Improved data/PIT uses
+a new version and linked evaluation identity; originals remain unchanged.
+
+The actual891-stock/five-session run is engineering evidence only. Retain the two
+operator preflight failures and short-window/sample-selection/PIT/adjustment limits.
+Do not infer UI delivery, new model or trade authority, or full STEP1 acceptance.
+
+## ADR-203 — Independent publisher recovery and non-production factor implementation
+
+Status: explicitly authorized by the user, October28 12:19 work checkpoint.
+
+STEP2 now proceeds beyond preparation: implement version registration and
+independent evaluation of existing factors in isolated stores. Reuse existing
+factor/metric/immutable registry contracts; no arbitrary executable formula input
+or production queue expansion. Qualified daily scope is sufficient when each
+experiment binds its exact version, securities, exclusions, clocks and limitations.
+Future PIT improvements append linked revalidation, never replace old evidence.
+
+Publisher recovery is independent. Profile cold and warm paths by actual query,
+raw replay, codec, shard and index work while preserving the45-second deadline,
+512MB source-byte and128MB estimated-cache budgets. OS memory and output size are
+separate measurements. Test old frozen equivalence and the current larger workload;
+a warm pass or an old smaller snapshot does not establish stable cold performance.
+Deployment requires exact source binding and unchanged hash/quality contracts.
+
+Observe export attempt, outer Git push, public fixed-commit index and actual API
+separately. October28 12:21 demonstrates outer SUCCEEDED with a failed export and
+an index still dated10:36. Retain the stale result; process Running is not delivery.
+No changes to ACTIVE, frozen signals, book recovery, rollingOFF or LIVEfalse.
+
+## ADR-202 — Separate policy approval, consumer activation and observed exit evidence
+
+Status: two human-approved policies staged11:51 October28; data/status consumers
+updated, retry maintenance consumer and publisher not yet updated.
+
+Approval binds new daily requests to the frozen990 required daily scope and
+permits finite exact-day evidenced failed-task retry deferral. It does not change
+PAPER admission, existing frozen requests, model activation or recovery authority.
+Activation is per consumer; existence of approval files is not functional proof.
+
+The data upgrade's immediate Supervisor PID assertion failed while Starting;
+preserve that failure and the absent durable before-book snapshot. Subsequent
+read-only evidence proves correct Running source and automatic cycle return0,
+not a retroactively successful original operator. Never repeat the stop action.
+
+The status upgrade held the existing nonblocking vendor lease in a fresh idle
+window and retained before/after control equality. Actual Supervisor logs still
+show killed termination, so graceful handoff remains failed. A false literal
+SIGKILL match is not evidence of normal exit. The installed Go Supervisor config
+omits stopsignal; verify explicit/effective stop behavior rather than assuming
+Python Supervisor defaults. No further maintenance upgrade until stop semantics
+and its background refresh child are understood; retry rules remain staged.
+
+## ADR-201 — Parallel STEP2 preparation and version-bound research revalidation
+
+Status: explicitly authorized by the user,2026-10-28; design/audit/non-production
+test work started. Production STEP2 activation is not claimed.
+
+The latest directive supersedes the earlier blanket requirement to finish STEP1
+before any STEP2 work. Continue real STEP1 acceptance independently while auditing
+Factor Registry/Evaluation and Strategy Registry/Builder interfaces and preparing
+isolated tests. Reuse Qlib expressions/evaluation/Exchange/TopkDropout and existing
+QTrade factors, metrics, StrategySpec/StrategyRegistry and the task queue.
+
+An admitted daily research scope can support explicitly scoped factor evaluation
+despite unrelated ETF minute gaps or incomplete long-term historical PIT. Freeze
+the data version, exact symbols, exclusions, factors, labels, splits and source
+versions in each experiment and disclose selection/survivorship bias. This grants
+no new PAPER execution admission and does not assert historical PIT certification.
+When evidence improves, create a new immutable dataset and linked experiment;
+preserve original results, limitations and failures. Do not rewrite past decisions.
+
 ## ADR-187 — STEP1 completion gates research expansion and rollback epochs bind outputs
 
 Status: implementing locally, 2026-10-27.
@@ -3903,7 +4179,9 @@ test inputs only, never a production-clock override.
 
 ## ADR-193 — Freeze selectable Qlib research contracts in the strategy lifecycle
 
-Status: implemented and undergoing cluster/production acceptance, 2026-10-27.
+Status: deployed, with actual current-version and historical-version research
+accepted through production API and full archive replay,2026-10-28. Remaining
+browser and true next-day STEP1 gates are tracked independently.
 
 Reuse DataVersionCatalog, existing bounded workflow, fitted restore checks and
 StrategyRegistry. A historical READY version may be selected without being the
@@ -3928,6 +4206,14 @@ fixed original identities; do not re-sign the old result as today's API. Deploym
 evidence is byte-preserved with Git -text. A descriptor publication cache is not
 a fresh full-file scan; each actual job independently verifies the entire version
 and requires regenerated Provider bytes to agree with its admitted input.
+
+Actual Ridge job578bb610 selects October26/d33a7466 after the serving head has
+advanced to October27/09a67b13. Its complete12,486-file archive and580 executed
+source files verify, as do fitted restore, EXPERIMENT/job/model links and actual
+public result/reusable spec. The current head, ACTIVE, policy, existing models
+and forward accounts remain unchanged. Explicitly classify this as retrospective
+research: historical input selection does not establish that those source states
+were available at the time, nor does it create a new prospective day observation.
 
 ## ADR-194 — Human standing consent permits bounded research model promotion
 
@@ -4018,7 +4304,9 @@ unchanged throughout; the copy test neither resumes PAPER nor publishes data.
 
 Status: source9846a7f deployed by the authorized directed handover,2026-10-28.
 Six fresh reconciled PAPER requests and actual public control delivery pass;
-full day acceptance still awaits current-model observations after a real close.
+PR34 is merged as mainae33 and actual public C/control/market probes pass.
+Full day acceptance still awaits current-model observations after a real close;
+delivered asset content does not replace currently unavailable browser rendering.
 
 The human explicitly approves PR34's directed owner replacement and successful
 reconciliation followed by fresh single-use requests for5 baseline/current
@@ -4058,3 +4346,240 @@ The actual public v2 audit retains14 books and correctly blocks the new model's
 two missing historical sessions while accepting10 baseline observations and2
 separate retirement closures. Do not create a pre-activation session to pass it.
 
+## ADR-198 — Separate execution-day observations from post-close model readiness
+
+Status: existing contract and read-only operator order clarified,2026-10-28.
+No runtime guard, approval scope or acceptance threshold is changed.
+
+Automatic candidate validation can legitimately stage a model trained on an old
+admitted version against a later dated version that already existed when training
+finished. Actual Ridge98d27455 supplies this case. Preserve data admission,
+training completion, validation generation and next execution clocks separately.
+Its15 validation files and12 Git-bound sources pass; that proves compatibility,
+not unseen inputs, performance superiority or a completed forward trading day.
+
+The model active after a close can differ from the model whose frozen target was
+admitted before that day's open. Capture the actual execution-day E observation
+and public delivery while its context is available, independently of new C/D
+construction. Preserve that receipt with its original model/day/publication scope.
+Do not relabel it as readiness of a replacement model. Current v2 remains strict:
+if an automatic promotion has changed the current model before a requested audit,
+retain BLOCKED instead of suppressing extra books or inventing a missing session.
+Current model readiness and any new PAPER recovery require their own evidence.
+
+The initial read-only operator incorrectly compared ISO strings differing only
+in the space/T separator. Keep the failed source and observation; compare aware
+instants in the corrected operator, without rewriting any original timestamp.
+All14 book fingerprints, current approval/data epoch, instance and tracked owners
+remain unchanged in the actual02:17 check. STEP1 and browser gates remain open.
+
+## ADR-199 — Recent vendor observations cannot rewrite frozen historical knowledge
+
+Status: bounded six-row observation captured05:44 October28; no runtime admission changed.
+
+The historical PIT collector intentionally reads a fixed dataset endingOctober23.
+Master refresh and historical checkpoint validation do not extend that status
+window. A separate bounded anonymous BaoStock query returnsOctober26/27 rows for
+the3 missing stocks, with vendor tradestatus=0,isST=0. Preserve these SDK-decoded
+observations with their actualOctober28 capture time and source/version; they
+are neither raw socket captures nor independent exchange/PIT certification.
+
+Keep historical_available_at null and certified_at_decision false. Never backdate
+the observations, rewrite original failed Sina receipts, fill price bars, or grant
+new model/PAPER authority. Original historical files remain byte-identical. Reuse
+the existing nonblocking vendor-session lease and content-quality checks rather
+than introducing concurrent uncoordinated vendor access. A continuous current
+status window needs its own versioned observations/schedule and remains future
+work; this one-off evidence capture does not implement it or finish STEP1.
+
+## ADR-200 — Version recent status windows and check both information clocks
+
+Status: source60c8313 deployed to independent observer466733. Final Windows/Linux
+80 each/0skip and429 Git sources verify. Actual09:51:52 automatic20→40/990 and
+09:52:43 desktop120-row replay pass. Full990/later window/Web remain prospective.
+
+Reuse the existing nonblocking vendor lease, bounded symbol queue/retry,
+status_quality, calendar and immutable/atomic JSON writers. Preserve the frozen
+legacy PIT backfill. The new recent-status collector accepts an explicit dataset,
+versions three closed sessions by dataset/calendar/window identity, and stores
+each response plus accepted record and immutable coverage receipt. Watch mode
+waits300s between20-new/5-retry passes with100GiB reserve. A missing row stays
+missing; vendor flags are not independent exchange certification or a price fill.
+
+Both available_at and observed_at must be no later than a decision. A newly
+retrieved historical announcement cannot leak into an older decision through an
+earlier claimed publication date. The existing known_state reference adapter
+receives this missing clock check; current execution constraints and original
+frozen model/PAPER inputs are not replaced by the new observations.
+
+This is actual system-knowledge admission. Independently certified archival
+publication metadata can later support an explicitly labelled historical market
+information reconstruction contract; it cannot backdate observed_at or substitute
+for the system's original prospective observation record.
+
+Keep system_available_at equal to actual observation, historical_available_at
+null and historical_pit_certified false. The explicit990-stock research sample
+does not become the1500-security pool or a historical full-market universe.
+The vn.py gap audit has no vendor temporal-evidence contract to reuse; use these
+small research adapters rather than adding an execution/gateway integration.
+
+Only add the new supervisor group. Preserve the installed Go Supervisor's
+nonstandard reread result/clientValueError/exit1 and the targeted add0 separately;
+actual argv/cwd/env, unchanged existing start_ticks and automatic progress supply
+acceptance. Do not globally update/restart existing data or forward services.
+Initial3b/78-test source and real first20 records retain their own provenance;
+the final source does not relabel cached earlier observations as new executions.
+
+
+
+### Pause checkpoint — 2026-10-28 16:08 Shanghai
+
+The user explicitly pauses development and requests a progress review. Mark the
+active goal PAUSED, verify the related automation is PAUSED, allow the already
+running finite isolated benchmark to finish collecting its own evidence, and
+start no new benchmark, production mutation or acceptance run. Leave existing
+collector/predictor/publisher/forward services unchanged. Preserve uncommitted
+prefetch and factor archive validation changes; no production eligibility follows
+from their unit-test passes. See docs/QTRADE_PAUSED_PROGRESS_20261028.md.
+
+
+### A/B/C authorization — 2026-10-28 17:34 Shanghai
+
+Human explicitly approves all three stages of the incremental-publication
+proposal and sustained execution. Prior pause revoked for scoped implementation,
+isolated Linux/cluster tests, gated publisher deployment and delivery acceptance.
+Require exact source/full oracle and measured performance evidence before owner
+handover. Keep LIVE false, rolling OFF, ACTIVE and all immutable ledgers intact.
+STEP1 actual audits and STEP2 can proceed in parallel.
+
+### Incremental publication evidence boundary — 2026-10-28 19:56 Shanghai
+
+Freeze P0 runtime at publicGit fba51aad, independently verify the entire2194-file
+tree, and keep subsequent STEP2 changes separate. On baseline5640 batches, full
+cold diagnostics103–107s and DB-index-loss recovery50–63s do not satisfy normal45s.
+The valid-checkpoint path and20 actual5701 normal rounds satisfy45s; p95=37.13s
+does not meet the30s margin target. All-source original458 oracles establish
+content equality for each distinct frozen scope, not public delivery or future
+cross-day performance. PhysicalSHA/source/quality/fsync remain required.
+
+Production keeps45s without diagnostic prewarming or imported test receipts.
+Initial failures may accumulate only actually validated durable receipts, with
+the old publichead retained; expose those failures rather than relabeling them
+as cold45 success. Deployment requires original-evidence v6 gates and a fresh
+pre-write import-origin check, one publisher-only handover, then each actual
+export/Git/publicindex/API boundary. Unit mocks and staging cannot grant success.
+
+STEP2 can use qualified retrospective data while STEP1 waits for actual completion,
+under the user's latest parallel authorization. Preserve the16-day891-stock
+four-factor experiment as a new revalidation, including unknown input clocks,
+selection bias and gross-label limits. The first protected new queue kind only
+registers a factor/evaluation/strategy contract at EXPERIMENT/NONE. It must not
+pretend that a factor signal adapter or portfolio backtest has already run, or
+grant model activation/PAPER recovery. Reuse existing HMAC/GitQueue/worker and
+StrategyRegistry; the worker must resolve actual archives independently of a
+bounded public preview descriptor.
+
+### Publisher-only ownership and actual downstream failure — 2026-10-28 20:23
+
+Actual v6 gate parses the original35 performance rounds, both independent full
+oracles, scopedfault XML, NFSnegative/recovery and2194Git source/origin artifacts.
+The final operator additionally verifies the live exact source fileset and7
+PathFinder origins immediately before wrapper replace andTERM, rejecting later
+shadow packages. Its immutable attempt persists one TERM intent; uncertain
+delivery never retries. Realhandover only changes publisher at20:03 observation.
+
+Successful localexports do not imply successful transport. The ordinary90s Git
+path now times out on the first large missing-object set. A future auxiliary-ref
+pretransfer may reuse Git's advertised reachable objects while leaving main and
+its index unchanged. It needs an isolated bare protocol proof, exact publicobject
+allowlist, bounded batches and independent review; no such publicpush has occurred
+at this checkpoint. Do not raise90s or report publicfreshness from Running.
+
+An existing standing approval policy independently promotes68d after its real
+validation at20:07:51. Record that event separately from the earlier handover's
+unchanged-controls proof. Do not restore the formerACTIVE to satisfy an auditor,
+rewrite ledger history, or apply old fixed-model claims to the new currentmodel.
+Legacy98d candidate acceptance also cannot be fixed by adding missing fields to
+its archive or relabeling a new revalidation as the old four-event staging chain.
+Keep originalstrict auditors/failed outputs and design any compatibility contract
+as a separate version with independent negative tests before acceptance changes.
+
+### Transport diagnostics and factor registration boundary — 2026-10-28 21:12
+
+Two isolated auxiliary-object protocols do not suppress normal Git retransmission;
+discard them as a delivery solution and retain the failed experiments. A temporary
+desktop SSH byte relay may be used only after fixed effective destination, exact
+operator source/import origins, complete immutable shard relations, actual signed
+export receipt and owned90s cleanup are independently checked. Require a real
+one-channel bidirectional read-only proof before any one-time frozen nonforcepush.
+Zero-channel success proves only direct connectivity. Operator-assisted transport
+does not establish autonomous publisher recovery; those observations remain separate.
+
+STEP2 source45de5bd enables only immutable factor research registration. Keep its
+queue kind and result engine separate from Qlib backtests and retain the existing
+EXPERIMENT/NONE lifecycle. Final isolated worker/Registry and interface tests do
+not authorize claims of production queue delivery or browser rendering. New Git
+identity requires a new frozen runtime contract; old13-file contracts are readable
+archives and cannot execute as the current20-file source contract.
+
+### Reject adverse wire optimization; separate cold exception — 2026-10-28 22:25
+
+Decide using actual wire volume and original failures, not cache-generation speed.
+The real isolated nondelta cache cuts only0.60s generation but grows19.445MB to
+42.750MB, so do not install it. Auxiliary metadata/negotiate experiments are also
+negative after exact wire capture; no speculative production Gitconfig change.
+Keep sourceobjects/refs/index/config untouched by these trials. PrivateSFTP and
+loopback are fast in bounded samples; do not infer a general bandwidthSLA or assert
+that the remote fullyreceived a packet solely from encrypted bytecount.
+
+Normal Git90 andexport45 remain. Any separate180 cold exception needs a new
+specific plan and explicit human approval, complete frozen index/shards, fresh
+remote/client reconciliation, oldINTENT/UNCERTAIN hashes, onecreate-only newclaim
+and actualpublic/downstream checks. Preserve uncertain oldclaim rather than rename
+it or reuse its permission. Coldsuccess never implies ordinarycontinuousrecovery.
+
+STEP2 isolated end-to-end success uses actual HMAC/CAS, ASGIauth andworker child;
+onlytransport is localGit/loopback, not GitHub/TLS/browser. Retain this distinction
+and the original malformed JUnit serialization with explicit normalization; no
+second registration merely to replace evidence. Original reports/data versions
+and currentproductioncontrols remain intact.
+
+### Exact prepared cold exception remains gated — 2026-10-28 23:00 Shanghai
+
+Final738c operator repairs independent-review unbounded Popen contextwait in
+generic Git cleanup-error paths; the originalv3/production are unchanged. Freeze
+the newsource/tests, retain original failures, and distinguish64offlineplatform
+checks and7independentchecks from actual180performance. Initial realprepare
+binding rejection is preserved; do not waive export/head equality to get aplan.
+Actual secondprepare binds abe2986c/9a459c19 after successful32.702sexport,
+all3000entries/5987currentrefs and167397950bytes in15.914s. Broader historical
+tree metadata is not allhistoricalbytevalidation. Currentlocal563process scan
+does not certify unseen serverprocesses. Never log privateSSH/key/config bodies.
+
+User's A/B/C approval does not automatically approve a separatelyproposed cold
+budget. New exactplan humanapproval, create-only/fsync authority and one new
+intent are required before180send; noauthority/intentexists atthischeckpoint.
+OldUNCERTAIN remainsimmutable, normal45/90 unchanged, force/replay prohibited.
+LS is not across-transactionCAS; knownhost bytes rechecked are not anOSlock.
+180+2+2 onlybounds thecold child andcleanup, not thewhole multistage operation.
+Writing100% is notACK; ACKneeds independentremote/public reconciliation andat
+least3naturalordinary45/90rounds beforecontinuousrecoveryacceptance. Actual
+22:54 publicstillstale; fullSTEP1 andproductionSTEP2 remainunaccepted.
+
+### Reviewed plan explicitly approved — 2026-10-29 00:15 Shanghai
+
+Human user says “审阅完成，同意按照方案执行，请你继续推进” after the reviewed
+plan including P0-2 single180 experiment. Treat this as authorization of that
+specific prepared plan, not an unlimited timeout or retry policy. Freshactual
+remote5a09, fixed738c/9a459c19 andoriginalowner/space/claim checks precede new
+create-only/fsynced54dc authority; never replace oldUNCERTAIN orreuse it. Keep
+the preliminary authorizer syntaxfailure as failure; it ran no remotestatement
+and created noauthority/intent. The singlecoldsend requires actualresult and
+independent publicandordinary-cycle verification before anyrecoveryclaim.
+
+Approvedparallel work stays nonproduction for objectstoretransport andfactor
+portfolioexecution. New independentSTEP1 audits must separate execution-day
+frozenadmission from postclose-currentreadiness andlegacy revalidation from a
+newmodel lifecycle. Preserve originalauditor/output and all immutablehistory.
+Cloudaccount availability is unresolved; no fictitious realR2 result orautomatic
+accountpurchase. ExistingLIVE/rolling/ACTIVE/PAPER/owner constraints remain.

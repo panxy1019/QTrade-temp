@@ -1,0 +1,81 @@
+{
+  "cpu_seconds": 35.043084961,
+  "error_class": "ValueError",
+  "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+  "failed_statistics": {
+    "cache_estimated_bytes": 0,
+    "cached_batches": 0,
+    "cached_rows": 0,
+    "rebuilt_pairs": 2973,
+    "receipt_hits": 5665,
+    "receipt_writes": 0,
+    "replayed_batches": 0,
+    "reused_pairs": 0,
+    "reused_shards": 0,
+    "selected_batches": 5701,
+    "selected_chunks": 141634,
+    "source_bytes_read": 238557148
+  },
+  "metrics": {
+    "_chunks.main": {
+      "count": 1,
+      "cpu": 1.137660533,
+      "wall": 1.142976162955165
+    },
+    "_load.main": {
+      "count": 5665,
+      "cpu": 23.654242422999925,
+      "wall": 27.329549305140972
+    },
+    "_persist_objects.main": {
+      "count": 1,
+      "cpu": 32.487816566,
+      "wall": 42.76836332306266
+    },
+    "_worker_compact.main": {
+      "count": 5924,
+      "cpu": 0.8178092440000295,
+      "wall": 0.8203672748059034
+    },
+    "_worker_inventory.main": {
+      "count": 2,
+      "cpu": 0.0011361359999995102,
+      "wall": 0.0011483188718557358
+    },
+    "pool.close.main": {
+      "count": 1,
+      "cpu": 0.0011544489999977259,
+      "wall": 0.016365520656108856
+    },
+    "pool.pump.main": {
+      "count": 21930,
+      "cpu": 2.438679002999864,
+      "wall": 6.872305957600474
+    },
+    "pool.response.main": {
+      "count": 5923,
+      "cpu": 2.0803589850000757,
+      "wall": 2.0917710214853287
+    },
+    "pool.send.main": {
+      "count": 5924,
+      "cpu": 0.0729296440000553,
+      "wall": 0.07515469565987587
+    },
+    "receipt.get.main": {
+      "count": 5665,
+      "cpu": 22.781237054000176,
+      "wall": 24.434291902929544
+    },
+    "signed.main": {
+      "count": 11845,
+      "cpu": 2.5191605130003656,
+      "wall": 2.5760638676583767
+    }
+  },
+  "peak_rss_kib": 767976,
+  "pid": 610954,
+  "source_sha256": "8cca31458d73cacee97ae1909c7996e92ab010ff000b46adfb26c4a7bc069cae",
+  "state": "FAILED",
+  "wall_seconds": 45.41430965065956
+}

@@ -414,6 +414,10 @@ export async function loadPlatformSnapshot(): Promise<PlatformSnapshot> {
 export function loadUnifiedSummary(options?: { signal?: AbortSignal }) {
   return getJson<import('../types').UnifiedSummary>('/unified/summary', options)
 }
+export function loadDataQuality(options?: { signal?: AbortSignal }) {
+  return getJson<import('../components/DataQualitySummary').DataQualityResponse>(
+    '/unified/quality', options)
+}
 export function loadDeployment(options?: { signal?: AbortSignal }) {
   return getJson<import('../types').DeploymentProvenance>('/deployment', options)
 }

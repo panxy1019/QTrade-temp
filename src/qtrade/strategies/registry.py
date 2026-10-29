@@ -352,9 +352,73 @@ class StrategyRegistry:
         expected = strategy_spec(contract, universe=spec.universe, now=spec.created_at)
         if spec != expected:
             raise ValueError("RESEARCH_STRATEGY_SPEC_CONTRACT_MISMATCH")
+        return self._register_validated_research_experiment(
+            spec, contract=contract, job_id=job_id, actor=actor)
+
+    def register_factor_research_experiment(
+        self, spec: StrategySpec, *, contract: dict[str, Any], job_id: str, actor: str
+    ) -> StrategyRecord:
+        """Associate a strict factor definition; never accept Qlib/arbitrary schemas.
+
+        This is structural registry admission, like the Qlib entry point. The
+        factor_strategy_contract.register_strategy adapter additionally resolves
+        the actual local factor/evaluation stores and admitted data archive.
+        """
+        from qtrade.research.factor_strategy_contract import (
+            strategy_lineage,
+            strategy_spec,
+            validate_strategy,
+        )
+
+        if (os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false"
+                or re.fullmatch("[a-f0-9]{32}", job_id) is None
+                or re.fullmatch(r"[A-Za-z0-9._@-]{1,80}", actor) is None):
+            raise ValueError("RESEARCH_REGISTRATION_AUTHORITY_OR_JOB_INVALID")
+        contract = validate_strategy(contract, verify_runtime_source=True)
+        if spec != strategy_spec(contract, now=spec.created_at):
+            raise ValueError("RESEARCH_STRATEGY_SPEC_CONTRACT_MISMATCH")
+        return self._register_validated_research_experiment(spec, contract=contract,
+            job_id=job_id, actor=actor, lineage=strategy_lineage(contract, now=spec.created_at),
+            parent=contract["spec"]["parent"], factor_only=True)
+
+    def _register_validated_research_experiment(
+        self, spec: StrategySpec, *, contract: dict[str, Any], job_id: str, actor: str,
+        lineage: StrategyLineage | None = None, parent: dict[str, Any] | None = None,
+        factor_only: bool = False,
+    ) -> StrategyRecord:
+        """Private shared transaction; public entry points validate fixed schemas."""
+        if ((spec.parent_strategy_id is None) != (lineage is None)
+                or (lineage is None) != (parent is None)
+                or lineage is not None and (lineage.child_strategy_id != spec.strategy_id
+                    or lineage.parent_strategy_id != spec.parent_strategy_id)):
+            raise ValueError("RESEARCH_PARENT_LINEAGE_MISMATCH")
+        registered_at = spec.created_at
         raw = json.dumps(contract, sort_keys=True, separators=(",", ":"), allow_nan=False)
         with self._connect() as connection:
+            connection.execute("PRAGMA synchronous=FULL")
             connection.execute("BEGIN IMMEDIATE")
+            if parent is not None:
+                registered_parent = connection.execute(
+                    "SELECT s.family,s.version,c.contract_sha256,c.contract_json,s.spec_json "
+                    "FROM strategies s "
+                    "JOIN strategy_research_contracts c ON c.strategy_id=s.strategy_id "
+                    "WHERE s.strategy_id=?", (spec.parent_strategy_id,),
+                ).fetchone()
+                if (registered_parent is None or registered_parent[:3] != (
+                        spec.family, parent["strategy_version"], parent["contract_sha256"])):
+                    raise ValueError("RESEARCH_PARENT_NOT_REGISTERED_OR_CHANGED")
+                if factor_only:
+                    from qtrade.research import factor_strategy_contract as factor_contract
+
+                    parent_contract = factor_contract.validate_strategy(
+                        json.loads(registered_parent[3]))
+                    parent_spec = self._decode_spec(registered_parent[4])
+                    expected_parent = factor_contract.strategy_spec(
+                        parent_contract, now=parent_spec.created_at)
+                    if (parent_contract["evidence_sha256"] != parent["contract_sha256"]
+                            or parent_spec != replace(expected_parent,
+                                                      updated_at=parent_spec.updated_at)):
+                        raise ValueError("RESEARCH_PARENT_NOT_REGISTERED_OR_CHANGED")
             job = connection.execute("SELECT strategy_id,actor FROM strategy_research_jobs "
                                      "WHERE job_id=?", (job_id,)).fetchone()
             if job is not None and job != (spec.strategy_id, actor):
@@ -371,12 +435,17 @@ class StrategyRegistry:
                 connection.execute("INSERT INTO strategy_research_contracts VALUES(?,?,?)", (
                     spec.strategy_id, contract["evidence_sha256"], raw,
                 ))
+                if lineage is not None:
+                    connection.execute("INSERT INTO strategy_lineage VALUES(?,?,?)", (
+                        spec.strategy_id, spec.parent_strategy_id, self._encode_lineage(lineage),
+                    ))
                 connection.execute(
                     "INSERT INTO strategy_transitions(strategy_id,before_status,after_status,"
                     "actor,reason,occurred_at) VALUES(?,?,?,?,?,?)", (
                         spec.strategy_id, StrategyStatus.IDEA.value,
                         StrategyStatus.EXPERIMENT.value,
-                        actor, "Accepted immutable Qlib research job " + job_id,
+                        actor, "Accepted immutable " + ("factor" if factor_only else "Qlib")
+                        + " research job " + job_id,
                         spec.created_at.isoformat(),
                     ),
                 )
@@ -394,11 +463,25 @@ class StrategyRegistry:
                     raise ValueError("IMMUTABLE_RESEARCH_STRATEGY_CONFLICT")
                 spec = stored
                 status, role = StrategyStatus(existing[1]), StrategyRole(existing[2])
+                if factor_only:
+                    if status != StrategyStatus.EXPERIMENT or role != StrategyRole.NONE:
+                        raise ValueError("FACTOR_RESEARCH_REGISTRATION_REQUIRES_EXPERIMENT_NONE")
+                    stored_lineage = connection.execute(
+                        "SELECT lineage_json FROM strategy_lineage WHERE child_strategy_id=?",
+                        (spec.strategy_id,),
+                    ).fetchone()
+                    if lineage is None:
+                        if stored_lineage is not None:
+                            raise ValueError("IMMUTABLE_RESEARCH_LINEAGE_CONFLICT")
+                    elif (stored_lineage is None or replace(lineage, created_at=
+                            self._decode_lineage(stored_lineage[0]).created_at)
+                            != self._decode_lineage(stored_lineage[0])):
+                        raise ValueError("IMMUTABLE_RESEARCH_LINEAGE_CONFLICT")
                 if job is None and status in {StrategyStatus.REJECTED, StrategyStatus.RETIRED}:
                     raise ValueError("RESEARCH_STRATEGY_LIFECYCLE_CLOSED")
             if job is None:
                 connection.execute("INSERT INTO strategy_research_jobs VALUES(?,?,?,?)", (
-                    job_id, spec.strategy_id, actor, expected.created_at.isoformat(),
+                    job_id, spec.strategy_id, actor, registered_at.isoformat(),
                 ))
         return StrategyRecord(spec, status, role)
 

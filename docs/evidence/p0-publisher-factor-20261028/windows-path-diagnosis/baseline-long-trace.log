@@ -1,0 +1,186 @@
+..........PREPARE_STOCK_EXCEPTION={"line": 297, "class": "FileNotFoundError", "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-base-20261028T041431Z\\\\test_exact_terminal_ledger_ign0\\\\unified-data\\\\qlib-preparation\\\\9c0ef3451168ff6472108d374cd2f798d8b24a9c187420a75093311c59fd2d70\\\\stocks\\\\600036\\\\.factors-7c9edbf7be39ff54d873b2c717f1fe09f78d9101d02219c140ba67daa96291cc.json.7lpntnvn.tmp'", "filename": "E:\\qtest-export-collection-base-20261028T041431Z\\test_exact_terminal_ledger_ign0\\unified-data\\qlib-preparation\\9c0ef3451168ff6472108d374cd2f798d8b24a9c187420a75093311c59fd2d70\\stocks\\600036\\.factors-7c9edbf7be39ff54d873b2c717f1fe09f78d9101d02219c140ba67daa96291cc.json.7lpntnvn.tmp", "filename_length": 281, "parent_exists": true}
+FPREPARE_STOCK_EXCEPTION={"line": 297, "class": "FileNotFoundError", "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-base-20261028T041431Z\\\\test_frozen_bindings_resume_af0\\\\unified-data\\\\qlib-preparation\\\\e88b1f2641e6f03f64994f998811943fa8557424f2203d43eef5a329ff8de407\\\\stocks\\\\600036\\\\.factors-15cc9aaca8d1e8a0d3b7f2a2bdf246340772e8fa957dbd74db73cae645852a34.json.qnn4p64o.tmp'", "filename": "E:\\qtest-export-collection-base-20261028T041431Z\\test_frozen_bindings_resume_af0\\unified-data\\qlib-preparation\\e88b1f2641e6f03f64994f998811943fa8557424f2203d43eef5a329ff8de407\\stocks\\600036\\.factors-15cc9aaca8d1e8a0d3b7f2a2bdf246340772e8fa957dbd74db73cae645852a34.json.qnn4p64o.tmp", "filename_length": 281, "parent_exists": true}
+F........PREPARE_STOCK_EXCEPTION={"line": 297, "class": "FileNotFoundError", "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-base-20261028T041431Z\\\\test_transient_receipt_io_retr0\\\\unified-data\\\\qlib-preparation\\\\ddf256bec392bcebfa83396559a60784d26e08182adece4e33a70d056bb07103\\\\stocks\\\\600036\\\\.factors-138d59df5221e0b673209ca132850c1b99b97d86c5f1596f3bea779edd1e9058.json.7qvcgjrx.tmp'", "filename": "E:\\qtest-export-collection-base-20261028T041431Z\\test_transient_receipt_io_retr0\\unified-data\\qlib-preparation\\ddf256bec392bcebfa83396559a60784d26e08182adece4e33a70d056bb07103\\stocks\\600036\\.factors-138d59df5221e0b673209ca132850c1b99b97d86c5f1596f3bea779edd1e9058.json.7qvcgjrx.tmp", "filename_length": 281, "parent_exists": true}
+F.PREPARE_STOCK_EXCEPTION={"line": 297, "class": "FileNotFoundError", "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-base-20261028T041431Z\\\\test_frozen_scope_binds_source0\\\\unified-data\\\\qlib-preparation\\\\78a33850d231d90b81ef01b1543aa42db57e43dd27a305f3c492599da0c35b55\\\\stocks\\\\600036\\\\.factors-63fbb033de2b9d57086bbde01243483b6227d556b1399daa34208f01771efe46.json.72j84dmw.tmp'", "filename": "E:\\qtest-export-collection-base-20261028T041431Z\\test_frozen_scope_binds_source0\\unified-data\\qlib-preparation\\78a33850d231d90b81ef01b1543aa42db57e43dd27a305f3c492599da0c35b55\\stocks\\600036\\.factors-63fbb033de2b9d57086bbde01243483b6227d556b1399daa34208f01771efe46.json.72j84dmw.tmp", "filename_length": 281, "parent_exists": true}
+........................................................................................
+================================== FAILURES ===================================
+_ test_exact_terminal_ledger_ignores_rotating_minute_snapshot_and_is_read_only _
+
+daily = namespace(base=WindowsPath('E:/qtest-export-collection-base-20261028T041431Z/test_exact_terminal_ledger_ign0'), previo...lake=WindowsPath('E:/qtest-export-collection-base-20261028T041431Z/test_exact_terminal_ledger_ign0/unified-data/lake'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001EED79E7D90>
+
+    def test_exact_terminal_ledger_ignores_rotating_minute_snapshot_and_is_read_only(
+        daily, monkeypatch
+    ):
+        before = daily.database.read_bytes()
+        original = preparation.UnifiedBatchStore.load
+    
+        def adapt(*args, **kwargs):
+            snapshots = list(
+                (daily.base / "unified-data/qlib-preparation/input-scopes").glob("*/collection.json")
+            )
+            assert len(snapshots) == 1  # Metadata is durable before the first batch is read.
+            return original(*args, **kwargs)
+    
+        monkeypatch.setattr(preparation.UnifiedBatchStore, "load", adapt)
+        result = run(daily)
+>       assert result["prepared_symbols"] == result["qualified_current_daily_inputs"] == 1
+E       assert 0 == 1
+
+tests\test_daily_collection_binding.py:142: AssertionError
+_____ test_frozen_bindings_resume_after_collector_ids_and_progress_rotate _____
+
+daily = namespace(base=WindowsPath('E:/qtest-export-collection-base-20261028T041431Z/test_frozen_bindings_resume_af0'), previo...lake=WindowsPath('E:/qtest-export-collection-base-20261028T041431Z/test_frozen_bindings_resume_af0/unified-data/lake'))
+
+    def test_frozen_bindings_resume_after_collector_ids_and_progress_rotate(daily):
+        first = run(daily)
+        with sqlite3.connect(daily.database) as connection:
+            connection.execute(
+                "UPDATE collection_tasks SET last_success_batch=? WHERE state='SUCCEEDED'", ("f" * 32,)
+            )
+        # The later collector pointer is not silently substituted into an existing preparation.
+        second = run(daily)
+        assert second["request_sha256"] == first["request_sha256"]
+>       assert second["prepared_symbols"] == 1
+E       assert 0 == 1
+
+tests\test_daily_collection_binding.py:165: AssertionError
+__ test_transient_receipt_io_retries_frozen_ids_without_permanent_exclusion ___
+
+daily = namespace(base=WindowsPath('E:/qtest-export-collection-base-20261028T041431Z/test_transient_receipt_io_retr0'), previo...lake=WindowsPath('E:/qtest-export-collection-base-20261028T041431Z/test_transient_receipt_io_retr0/unified-data/lake'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001EED7ABED50>
+
+    def test_transient_receipt_io_retries_frozen_ids_without_permanent_exclusion(daily, monkeypatch):
+        original = preparation.UnifiedBatchStore.load
+        attempted = []
+    
+        def read(store, identity):
+            attempted.append(identity)
+            if len(attempted) == 1:
+                raise OSError("temporary mount read failure")
+            return original(store, identity)
+    
+        monkeypatch.setattr(preparation.UnifiedBatchStore, "load", read)
+        with pytest.raises(OSError, match="temporary mount"):
+            run(daily)
+        scope = next((daily.base / "unified-data/qlib-preparation/input-scopes").iterdir())
+        assert (scope / "collection.json").exists() and not (scope / "request.json").exists()
+        snapshot = (scope / "collection.json").read_bytes()
+        recovered = run(daily)
+>       assert recovered["prepared_symbols"] == recovered["qualified_current_daily_inputs"] == 1
+E       assert 0 == 1
+
+tests\test_daily_collection_binding.py:283: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_daily_collection_binding.py::test_exact_terminal_ledger_ignores_rotating_minute_snapshot_and_is_read_only
+FAILED tests/test_daily_collection_binding.py::test_frozen_bindings_resume_after_collector_ids_and_progress_rotate
+FAILED tests/test_daily_collection_binding.py::test_transient_receipt_io_retries_frozen_ids_without_permanent_exclusion
+3 failed, 107 passed in 2.61s
+Traceback (most recent call last):
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\scripts\prepare_qlib_incremental.py", line 297, in prepare_stock
+    write_json_immutable(target/raw_name, raw)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\tests\test_prepare_qlib_incremental.py", line 37, in write
+    _original(path, value)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\scripts\atomic_json.py", line 48, in write_json_immutable
+    with NamedTemporaryFile(
+         ~~~~~~~~~~~~~~~~~~^
+        mode="wb",
+        ^^^^^^^^^^
+    ...<3 lines>...
+        delete=False,
+        ^^^^^^^^^^^^^
+    ) as handle:
+    ^
+  File "C:\Python314\Lib\tempfile.py", line 603, in NamedTemporaryFile
+    file = _io.open(dir, mode, buffering=buffering,
+                    newline=newline, encoding=encoding, errors=errors,
+                    opener=opener)
+  File "C:\Python314\Lib\tempfile.py", line 600, in opener
+    fd, name = _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\tempfile.py", line 255, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+FileNotFoundError: [Errno 2] No such file or directory: 'E:\\qtest-export-collection-base-20261028T041431Z\\test_exact_terminal_ledger_ign0\\unified-data\\qlib-preparation\\9c0ef3451168ff6472108d374cd2f798d8b24a9c187420a75093311c59fd2d70\\stocks\\600036\\.factors-7c9edbf7be39ff54d873b2c717f1fe09f78d9101d02219c140ba67daa96291cc.json.7lpntnvn.tmp'
+Traceback (most recent call last):
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\scripts\prepare_qlib_incremental.py", line 297, in prepare_stock
+    write_json_immutable(target/raw_name, raw)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\tests\test_prepare_qlib_incremental.py", line 37, in write
+    _original(path, value)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\scripts\atomic_json.py", line 48, in write_json_immutable
+    with NamedTemporaryFile(
+         ~~~~~~~~~~~~~~~~~~^
+        mode="wb",
+        ^^^^^^^^^^
+    ...<3 lines>...
+        delete=False,
+        ^^^^^^^^^^^^^
+    ) as handle:
+    ^
+  File "C:\Python314\Lib\tempfile.py", line 603, in NamedTemporaryFile
+    file = _io.open(dir, mode, buffering=buffering,
+                    newline=newline, encoding=encoding, errors=errors,
+                    opener=opener)
+  File "C:\Python314\Lib\tempfile.py", line 600, in opener
+    fd, name = _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\tempfile.py", line 255, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+FileNotFoundError: [Errno 2] No such file or directory: 'E:\\qtest-export-collection-base-20261028T041431Z\\test_frozen_bindings_resume_af0\\unified-data\\qlib-preparation\\e88b1f2641e6f03f64994f998811943fa8557424f2203d43eef5a329ff8de407\\stocks\\600036\\.factors-15cc9aaca8d1e8a0d3b7f2a2bdf246340772e8fa957dbd74db73cae645852a34.json.qnn4p64o.tmp'
+Traceback (most recent call last):
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\scripts\prepare_qlib_incremental.py", line 297, in prepare_stock
+    write_json_immutable(target/raw_name, raw)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\tests\test_prepare_qlib_incremental.py", line 37, in write
+    _original(path, value)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\scripts\atomic_json.py", line 48, in write_json_immutable
+    with NamedTemporaryFile(
+         ~~~~~~~~~~~~~~~~~~^
+        mode="wb",
+        ^^^^^^^^^^
+    ...<3 lines>...
+        delete=False,
+        ^^^^^^^^^^^^^
+    ) as handle:
+    ^
+  File "C:\Python314\Lib\tempfile.py", line 603, in NamedTemporaryFile
+    file = _io.open(dir, mode, buffering=buffering,
+                    newline=newline, encoding=encoding, errors=errors,
+                    opener=opener)
+  File "C:\Python314\Lib\tempfile.py", line 600, in opener
+    fd, name = _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\tempfile.py", line 255, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+FileNotFoundError: [Errno 2] No such file or directory: 'E:\\qtest-export-collection-base-20261028T041431Z\\test_transient_receipt_io_retr0\\unified-data\\qlib-preparation\\ddf256bec392bcebfa83396559a60784d26e08182adece4e33a70d056bb07103\\stocks\\600036\\.factors-138d59df5221e0b673209ca132850c1b99b97d86c5f1596f3bea779edd1e9058.json.7qvcgjrx.tmp'
+Traceback (most recent call last):
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\scripts\prepare_qlib_incremental.py", line 297, in prepare_stock
+    write_json_immutable(target/raw_name, raw)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\tests\test_prepare_qlib_incremental.py", line 37, in write
+    _original(path, value)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "E:\QTrade-temp\export-collection-diagnosis-20261028T041431Z\baseline-short\scripts\atomic_json.py", line 48, in write_json_immutable
+    with NamedTemporaryFile(
+         ~~~~~~~~~~~~~~~~~~^
+        mode="wb",
+        ^^^^^^^^^^
+    ...<3 lines>...
+        delete=False,
+        ^^^^^^^^^^^^^
+    ) as handle:
+    ^
+  File "C:\Python314\Lib\tempfile.py", line 603, in NamedTemporaryFile
+    file = _io.open(dir, mode, buffering=buffering,
+                    newline=newline, encoding=encoding, errors=errors,
+                    opener=opener)
+  File "C:\Python314\Lib\tempfile.py", line 600, in opener
+    fd, name = _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\tempfile.py", line 255, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+FileNotFoundError: [Errno 2] No such file or directory: 'E:\\qtest-export-collection-base-20261028T041431Z\\test_frozen_scope_binds_source0\\unified-data\\qlib-preparation\\78a33850d231d90b81ef01b1543aa42db57e43dd27a305f3c492599da0c35b55\\stocks\\600036\\.factors-63fbb033de2b9d57086bbde01243483b6227d556b1399daa34208f01771efe46.json.72j84dmw.tmp'

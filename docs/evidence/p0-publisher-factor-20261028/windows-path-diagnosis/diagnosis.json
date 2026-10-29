@@ -1,0 +1,120 @@
+{
+  "checked_at": "2026-10-28T04:16:21.205526+00:00",
+  "base_revision": "458552de1fea1faf77d02dcd9ec69251a0c364b7",
+  "candidate_files": {
+    "scripts/publish_unified_market.py": "c04b3a3ecb194f18e331924fbaa49f67f7f6b885911666e827048526e9697a78",
+    "src/qtrade/research/unified_market.py": "c06680d31508947154906faeb7b8ad261c42198d8df648ecbdad3e5262d51a55",
+    "src/qtrade/market_data/sina_incremental.py": "0fb0165a0deca5e6cddd9239f7bf6ca43e4eb4d05a07d578ee11c41afcca7a80",
+    "tests/test_unified_market.py": "6556303a4041d8acd6f94f77f1830f16cf019707b77632b0130cb7ff3fa6734c"
+  },
+  "unchanged_critical_sources": {
+    "scripts/prepare_qlib_incremental.py": "d8a32e72bd54e6fd3cc7d3108ed3de9e1661d27f14bfbb90b73527f693b590ac",
+    "scripts/atomic_json.py": "91b521c84f887a66c93e0ff1e86b17b5033bf08b17f547b079692996db541ecd",
+    "tests/test_daily_collection_binding.py": "436d0193c6b7835fed4b84b621ad20fb9d71c86b3020863ec5300452c7b9f1da",
+    "tests/test_prepare_qlib_incremental.py": "ae690172111131e3c17ce455ac90525f27ced16faa45a66d3e514715112ae754"
+  },
+  "runs": [
+    {
+      "label": "candidate-long-trace",
+      "tests": 110,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0,
+      "trace_exceptions": [
+        {
+          "line": 297,
+          "class": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-trace-20261028T041431Z\\\\test_exact_terminal_ledger_ign0\\\\unified-data\\\\qlib-preparation\\\\3179924dabde032cf9304ad0ab88e1205a09e882dedc613b08da4926fc852fdc\\\\stocks\\\\600036\\\\.factors-7cca5cec4c6b334e361e157f673c5977c7dc8e07ada5c33db822e0856925e9d5.json.alzi47pf.tmp'",
+          "filename": "E:\\qtest-export-collection-trace-20261028T041431Z\\test_exact_terminal_ledger_ign0\\unified-data\\qlib-preparation\\3179924dabde032cf9304ad0ab88e1205a09e882dedc613b08da4926fc852fdc\\stocks\\600036\\.factors-7cca5cec4c6b334e361e157f673c5977c7dc8e07ada5c33db822e0856925e9d5.json.alzi47pf.tmp",
+          "filename_length": 282,
+          "parent_exists": true
+        },
+        {
+          "line": 297,
+          "class": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-trace-20261028T041431Z\\\\test_frozen_bindings_resume_af0\\\\unified-data\\\\qlib-preparation\\\\80be2c4bc9fef9fc0728e02e54861bbc044f2055f31b3580232008862d051f9d\\\\stocks\\\\600036\\\\.factors-a4d9a67f34b08a07135cb25d9944f8190898aeb628f16f49f595842964151f2f.json.1jzn9aw7.tmp'",
+          "filename": "E:\\qtest-export-collection-trace-20261028T041431Z\\test_frozen_bindings_resume_af0\\unified-data\\qlib-preparation\\80be2c4bc9fef9fc0728e02e54861bbc044f2055f31b3580232008862d051f9d\\stocks\\600036\\.factors-a4d9a67f34b08a07135cb25d9944f8190898aeb628f16f49f595842964151f2f.json.1jzn9aw7.tmp",
+          "filename_length": 282,
+          "parent_exists": true
+        },
+        {
+          "line": 297,
+          "class": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-trace-20261028T041431Z\\\\test_transient_receipt_io_retr0\\\\unified-data\\\\qlib-preparation\\\\65409f741c4df5328ca2ec8ff7466c5c8dba63399238a5639be086582200b098\\\\stocks\\\\600036\\\\.factors-2122ab823b139a50cff4405a8206797bfb7e1fa0e7ad3d6424e57867cbc7eb87.json._iiwsvrc.tmp'",
+          "filename": "E:\\qtest-export-collection-trace-20261028T041431Z\\test_transient_receipt_io_retr0\\unified-data\\qlib-preparation\\65409f741c4df5328ca2ec8ff7466c5c8dba63399238a5639be086582200b098\\stocks\\600036\\.factors-2122ab823b139a50cff4405a8206797bfb7e1fa0e7ad3d6424e57867cbc7eb87.json._iiwsvrc.tmp",
+          "filename_length": 282,
+          "parent_exists": true
+        },
+        {
+          "line": 297,
+          "class": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-trace-20261028T041431Z\\\\test_frozen_scope_binds_source0\\\\unified-data\\\\qlib-preparation\\\\ed95000091c28b3e05ef9220b026a72bb62f1806328dfa25f2e3dd9d7f6e020a\\\\stocks\\\\600036\\\\.factors-8496725e967b1fe5e0603adbbd6f1ea4b43bf354fe784b63f1114d302f51e5a1.json.a5vjmo8p.tmp'",
+          "filename": "E:\\qtest-export-collection-trace-20261028T041431Z\\test_frozen_scope_binds_source0\\unified-data\\qlib-preparation\\ed95000091c28b3e05ef9220b026a72bb62f1806328dfa25f2e3dd9d7f6e020a\\stocks\\600036\\.factors-8496725e967b1fe5e0603adbbd6f1ea4b43bf354fe784b63f1114d302f51e5a1.json.a5vjmo8p.tmp",
+          "filename_length": 282,
+          "parent_exists": true
+        }
+      ]
+    },
+    {
+      "label": "baseline-long-trace",
+      "tests": 110,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0,
+      "trace_exceptions": [
+        {
+          "line": 297,
+          "class": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-base-20261028T041431Z\\\\test_exact_terminal_ledger_ign0\\\\unified-data\\\\qlib-preparation\\\\9c0ef3451168ff6472108d374cd2f798d8b24a9c187420a75093311c59fd2d70\\\\stocks\\\\600036\\\\.factors-7c9edbf7be39ff54d873b2c717f1fe09f78d9101d02219c140ba67daa96291cc.json.7lpntnvn.tmp'",
+          "filename": "E:\\qtest-export-collection-base-20261028T041431Z\\test_exact_terminal_ledger_ign0\\unified-data\\qlib-preparation\\9c0ef3451168ff6472108d374cd2f798d8b24a9c187420a75093311c59fd2d70\\stocks\\600036\\.factors-7c9edbf7be39ff54d873b2c717f1fe09f78d9101d02219c140ba67daa96291cc.json.7lpntnvn.tmp",
+          "filename_length": 281,
+          "parent_exists": true
+        },
+        {
+          "line": 297,
+          "class": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-base-20261028T041431Z\\\\test_frozen_bindings_resume_af0\\\\unified-data\\\\qlib-preparation\\\\e88b1f2641e6f03f64994f998811943fa8557424f2203d43eef5a329ff8de407\\\\stocks\\\\600036\\\\.factors-15cc9aaca8d1e8a0d3b7f2a2bdf246340772e8fa957dbd74db73cae645852a34.json.qnn4p64o.tmp'",
+          "filename": "E:\\qtest-export-collection-base-20261028T041431Z\\test_frozen_bindings_resume_af0\\unified-data\\qlib-preparation\\e88b1f2641e6f03f64994f998811943fa8557424f2203d43eef5a329ff8de407\\stocks\\600036\\.factors-15cc9aaca8d1e8a0d3b7f2a2bdf246340772e8fa957dbd74db73cae645852a34.json.qnn4p64o.tmp",
+          "filename_length": 281,
+          "parent_exists": true
+        },
+        {
+          "line": 297,
+          "class": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-base-20261028T041431Z\\\\test_transient_receipt_io_retr0\\\\unified-data\\\\qlib-preparation\\\\ddf256bec392bcebfa83396559a60784d26e08182adece4e33a70d056bb07103\\\\stocks\\\\600036\\\\.factors-138d59df5221e0b673209ca132850c1b99b97d86c5f1596f3bea779edd1e9058.json.7qvcgjrx.tmp'",
+          "filename": "E:\\qtest-export-collection-base-20261028T041431Z\\test_transient_receipt_io_retr0\\unified-data\\qlib-preparation\\ddf256bec392bcebfa83396559a60784d26e08182adece4e33a70d056bb07103\\stocks\\600036\\.factors-138d59df5221e0b673209ca132850c1b99b97d86c5f1596f3bea779edd1e9058.json.7qvcgjrx.tmp",
+          "filename_length": 281,
+          "parent_exists": true
+        },
+        {
+          "line": 297,
+          "class": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'E:\\\\qtest-export-collection-base-20261028T041431Z\\\\test_frozen_scope_binds_source0\\\\unified-data\\\\qlib-preparation\\\\78a33850d231d90b81ef01b1543aa42db57e43dd27a305f3c492599da0c35b55\\\\stocks\\\\600036\\\\.factors-63fbb033de2b9d57086bbde01243483b6227d556b1399daa34208f01771efe46.json.72j84dmw.tmp'",
+          "filename": "E:\\qtest-export-collection-base-20261028T041431Z\\test_frozen_scope_binds_source0\\unified-data\\qlib-preparation\\78a33850d231d90b81ef01b1543aa42db57e43dd27a305f3c492599da0c35b55\\stocks\\600036\\.factors-63fbb033de2b9d57086bbde01243483b6227d556b1399daa34208f01771efe46.json.72j84dmw.tmp",
+          "filename_length": 281,
+          "parent_exists": true
+        }
+      ]
+    },
+    {
+      "label": "baseline-short",
+      "tests": 110,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "trace_exceptions": []
+    },
+    {
+      "label": "candidate-short",
+      "tests": 110,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "trace_exceptions": []
+    }
+  ],
+  "cause": "WINDOWS_LONG_FACTOR_ATOMIC_TEMP_PATH",
+  "source_or_fixture_modified": false,
+  "production_output_modified": false,
+  "conclusion": "BASELINE_AND_CANDIDATE_SAME_LONG_PATH_FAILURE_AND_SAME_110_SHORT_PATH_PASS"
+}

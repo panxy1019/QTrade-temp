@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/graded-quality-458552d-20261028/rollout-operator-e16497d482e79ddb.py", line 368, in <module>
+    else:upgrade(args.action)
+         ~~~~~~~^^^^^^^^^^^^^
+  File "/root/qtrade-local/operator-evidence/graded-quality-458552d-20261028/rollout-operator-e16497d482e79ddb.py", line 348, in upgrade
+    assert re.search(r'pid\s*[:=]?\s*'+process.name+r'\b',status,re.I)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

@@ -1,0 +1,6 @@
+{"state": "FAILED", "error_class": "ValueError", "error_code": "UNIFIED_MARKET_TIME_BUDGET", "pass_name": "cold", "wall_seconds": 45.249523, "profile": {"json_loads": {"calls": 212920, "inclusive_seconds": 2.638119}, "json_dumps": {"calls": 16659, "inclusive_seconds": 3.082732}, "chunks": {"calls": 1, "inclusive_seconds": 0.715136}, "store__batch_material": {"calls": 4200, "inclusive_seconds": 6.140293}, "replay": {"calls": 4200, "inclusive_seconds": 13.285998}, "load": {"calls": 4200, "inclusive_seconds": 32.982465}, "validate_shard": {"calls": 2013, "inclusive_seconds": 2.999918}, "write_object": {"calls": 2013, "inclusive_seconds": 26.866932}, "persist_objects": {"calls": 1, "inclusive_seconds": 8.585595}}, "peak_rss_kib": 714208}
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/market-current-cold-phase-candidate-20261028T044436Z/benchmark.py", line 83, in <module>
+    assert all(item['state'] == 'SUCCEEDED' for item in results), 'CURRENT_FROZEN_EXPORT_NOT_ACCEPTED'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: CURRENT_FROZEN_EXPORT_NOT_ACCEPTED

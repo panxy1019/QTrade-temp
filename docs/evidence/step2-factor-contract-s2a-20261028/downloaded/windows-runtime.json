@@ -1,0 +1,28 @@
+{
+  "returncode": 0,
+  "elapsed_seconds": 18.66805090010166,
+  "command": [
+    "C:\\Python314\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=E:\\QTrade-temp\\fca-5f0cef2a\\tmp\\pytest",
+    "tests/test_step2_factor_contract_independent.py",
+    "tests/test_daily_factor_evaluation.py",
+    "tests/test_factor_registry.py",
+    "tests/test_step2_factor_contract_readiness.py",
+    "tests/test_factor_search.py",
+    "tests/test_signal_baselines.py",
+    "--junitxml=E:\\QTrade-temp\\factor-contract-s2a-20261028T094016Z-01e1eb42\\downloaded\\windows-junit.xml"
+  ],
+  "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "live_trading_enabled": "false",
+  "tests": {
+    "tests": 120,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

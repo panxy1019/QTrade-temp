@@ -1,0 +1,10 @@
+{
+  "files": {
+    "profile_publication_pack_cache_cold_20261028.py": "7731b6bad66840db360d86d4084aa0562917d192220d78890b630296ef977d16",
+    "test_cold_pack_stream_20261028.py": "64a0090310e79d4b6b54e92fbd12f19d3fc7b56751656a02b4b3d389278d55bf"
+  },
+  "production_cache_installed": false,
+  "remote_root": "/root/qtrade-local/operator-evidence/publication-pack-cache-stage-20261028T140134Z",
+  "source_objects_written": false,
+  "test_returncode": 0
+}

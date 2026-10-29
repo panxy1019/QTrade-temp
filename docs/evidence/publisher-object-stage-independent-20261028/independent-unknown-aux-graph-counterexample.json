@@ -1,0 +1,17 @@
+{
+  "actual_final_pack_objects": 9,
+  "aux_pack_bytes": 10648,
+  "fixture_root": "E:\\QTrade-temp\\object-stage-independent-review-20261028\\counterexample-fixtures-v3\\test_original_unknown_aux_grap0",
+  "production_actions": false,
+  "recorded_at": "2026-10-28T12:50:42.850790+00:00",
+  "source_has_aux_commit_before_main_push": false,
+  "staged_blob_retransmission": [
+    "570f2dca17aaa8b8d9c54cc123a5c3b5b03de816",
+    "57a04a2ab68dc1992bd31c7a0970ae42cce57497",
+    "876f41d570855aa99ce4b37561875f85599b17f0",
+    "9da3e1b69f763f961b26221fda5e96730ba25ce6",
+    "c1edae1642c0123bbae1bc9127d31060bfdc453d"
+  ],
+  "staged_blobs": 6,
+  "transport_scope": "ACTUAL_MATURE_GIT_LOCAL_BARE_ONLY"
+}

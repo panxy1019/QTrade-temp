@@ -217,9 +217,12 @@ class UnifiedCollectionQueue:
     def claim(
         self, universe_version: str, frequency: str, day: date, *, now: datetime,
         code_revision: str, limit: int = 25,
+        deferred_tasks: tuple[dict[str, Any], ...] = (),
     ) -> dict[str, Any] | None:
         if not 1 <= limit <= 50 or frequency not in {"day", "5min"}:
             raise ValueError("INVALID_COLLECTION_CLAIM")
+        if not isinstance(deferred_tasks, tuple) or len(deferred_tasks) > 50:
+            raise ValueError('INVALID_COLLECTION_RETRY_DEFERRAL')
         with self.connect() as c:
             rows = [dict(r) for r in c.execute("""
                 SELECT * FROM collection_tasks WHERE universe_version=? AND frequency=?
@@ -227,8 +230,38 @@ class UnifiedCollectionQueue:
                     AND next_attempt_at<=? AND (completed_end IS NULL OR completed_end<desired_end)
                 ORDER BY completed_end IS NOT NULL,completed_end,next_attempt_at,symbol
             """, (universe_version, frequency, str(day), clock(now)))]
+            # Recheck actual time and task content while holding the claim transaction.
+            # A stale summary can never suppress a different attempt or newer target.
+            from qtrade.research.data_quality import retry_task_identity
+
+            checked_at = datetime.now(UTC)
+            deferred_symbols = set()
+            for row in rows:
+                for item in deferred_tasks:
+                    try:
+                        expiry = datetime.fromisoformat(item['expires_at'])
+                        quality_at = datetime.fromisoformat(item['quality_observed_at'])
+                        source_at = datetime.fromisoformat(item['source_observed_at'])
+                        if (expiry.tzinfo is not None and checked_at < expiry
+                                and (expiry - checked_at).total_seconds() <= 21_600
+                                and re.fullmatch('[a-f0-9]{64}', item['quality_sha256'])
+                                and re.fullmatch('[a-f0-9]{64}', item['policy_sha256'])
+                                and quality_at.tzinfo is not None and source_at.tzinfo is not None
+                                and 0 <= (checked_at - quality_at).total_seconds() <= 1_200
+                                and 0 <= (checked_at - source_at).total_seconds() <= 86_400
+                                and item['universe_version'] == universe_version
+                                and item['frequency'] == frequency
+                                and item['trading_day'] == str(day)
+                                and item['symbol'] == row['symbol']
+                                and item['desired_end'] == row['desired_end']
+                                and item['task_sha256'] == retry_task_identity(row)):
+                            deferred_symbols.add(row['symbol'])
+                    except (ValueError, TypeError, KeyError):
+                        continue  # A damaged/expired optional token restores the original retry.
             fresh = [r for r in rows if r["state"] == "PLANNED"]
-            retry = [r for r in rows if r["state"] != "PLANNED"]
+            retry = [r for r in rows if r["state"] != "PLANNED" and not (
+                r['state'] == 'FAILED' and r['completed_end'] is None
+                and r['symbol'] in deferred_symbols)]
             retry_budget = min(len(retry), max(1, limit // 5))
             selected = fresh[:limit - retry_budget]
             selected += retry[:limit - len(selected)]

@@ -1,0 +1,16 @@
+{
+  "artifacts": {
+    "after-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "before-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "benchmark-report.json": "7960fd797aaf38240cf9afb66c3e2e87dae4e9d7e83eb9a70acab51948065054",
+    "benchmark.py": "373c56c9667f5590ad0205a239c9dd3fd67dab145e15d5dfcfce2500a6618e6c",
+    "stderr.log": "783eecdc4d93fa54fd9171b11b0b1db66f22b5e22c97dfc5a93318753a29a5b1",
+    "stdout.log": "a2827ab791333ec91730dfe599860a885a1e06ee8fe9354bd5c73a5686df86bb",
+    "warm-output-refs.json": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645"
+  },
+  "exit_code": 1,
+  "helper_sha256": "373c56c9667f5590ad0205a239c9dd3fd67dab145e15d5dfcfce2500a6618e6c",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-validated-arrow-nfs-20261028T073547Z",
+  "remote": "/root/qtrade-local/operator-evidence/market-validated-arrow-nfs-20261028T073547Z",
+  "source_evidence": "/root/qtrade-local/operator-evidence/market-validated-arrow-tests-20261028T073326Z"
+}

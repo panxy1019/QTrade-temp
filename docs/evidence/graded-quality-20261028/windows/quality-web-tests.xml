@@ -1,0 +1,1303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="314" failures="3" errors="0" time="167.9569372">
+    <testsuite name="src/App.test.tsx" timestamp="2026-10-28T02:52:43.026Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="5.2980893">
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; renders Chinese navigation and makes the no-live boundary explicit" time="1.2131643">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; redirects an unknown hash route back to the overview" time="0.5705376">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; starts with the navigation collapsed at the phone breakpoint" time="0.6636361">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; defaults market to the unified pool and loads old scopes only after explicit selection" time="1.365628">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="QTrade web shell &gt; opens historical candidates without requesting or displaying retired strategy templates" time="1.483974">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/hooks/usePlatformSnapshot.test.tsx" timestamp="2026-10-28T02:52:43.030Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.0196703">
+        <testcase classname="src/hooks/usePlatformSnapshot.test.tsx" name="platform snapshot cold-start recovery &gt; retries one partial initial snapshot after five seconds" time="0.0168139">
+        </testcase>
+        <testcase classname="src/hooks/usePlatformSnapshot.test.tsx" name="platform snapshot cold-start recovery &gt; does not retry a complete initial snapshot" time="0.0019455">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/client.test.ts" timestamp="2026-10-28T02:52:43.031Z" hostname="DESKTOP-F1JPIV2" tests="9" failures="0" errors="0" skipped="0" time="0.2178888">
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; removes cancelled queued unified requests without consuming a GET slot" time="0.0712222">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; aborts an active unified GET and permits the next bounded request" time="0.0595451">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; refuses unbounded or inverted unified queries before fetching" time="0.0012863">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; limits concurrent GETs and uses the minute evidence bundle" time="0.0770848">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; times out stalled GETs and releases the queued request" time="0.0033301">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; surfaces an unavailable section inside a successful minute bundle" time="0.0009699">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; retries only a network failure for the stateless intraday factor request" time="0.0011007">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; posts the selected bounded rules to the stateless correlation endpoint" time="0.0016697">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="platform snapshot request fan-out &gt; posts the fixed intraday discovery window without mutation authority" time="0.0006475">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/DataPages.test.tsx" timestamp="2026-10-28T02:52:43.035Z" hostname="DESKTOP-F1JPIV2" tests="38" failures="0" errors="0" skipped="0" time="44.8924006">
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; shows persisted audit alerts without claiming hash-chain integrity" time="1.2489645">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; filters durable audit events without changing the source snapshot" time="0.6354417">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; distinguishes unavailable audit history from zero alerts" time="0.4919512">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; does not report zero alerts before the first platform snapshot" time="0.4672477">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="durable monitoring &gt; shows per-symbol causal minute corrections" time="0.5339883">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; shows persistent PAPER account facts without inventing equity" time="0.4257635">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; keeps runtime controls off the public read-only node" time="0.3505105">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; sends a local runtime action only with an in-memory control token" time="1.1029579">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; shows dated sellability and keeps market valuation unavailable" time="0.1923503">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; shows traceable PAPER orders and simulated fills" time="0.3215465">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; cancels an eligible local PAPER order with a page-stable idempotency key" time="1.2148126">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="persistent PAPER account pages &gt; labels recomputable cost-basis exposure and unavailable drawdown" time="0.051071">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; formats directional checkpoint changes without hiding their sign" time="0.0004633">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows verified history without claiming realtime readiness" time="0.546482">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows checksum-bound multi-asset minute history without calling it realtime" time="0.5413914">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; does not present a pending verified minute request as missing evidence" time="0.420998">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows finalized same-day minute observations without claiming realtime" time="1.0008038">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows checksum-bound native five-minute history without presenting a resample" time="0.4788703">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; shows a checksum-bound long five-minute day without presenting it as realtime or PIT" time="0.4607497">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; filters verified historical rows without inventing snapshots" time="0.217746">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; removes the chart immediately when verified evidence disappears" time="0.2631111">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified historical data pages &gt; keeps provider connectivity separate from execution gateway health" time="0.4695354">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified backtest analytics &gt; runs a selectable stock five-minute backtest against the verified long dataset" time="4.5006595">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified backtest analytics &gt; keeps frozen results but ignores retired template deep links" time="2.0769501">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified backtest analytics &gt; shows the verified leader without presenting it as Champion" time="1.6633504">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified backtest analytics &gt; does not present missing walk-forward evidence as three failed folds" time="1.1671096">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the signed 120-day intraday factor veto without claiming promotion" time="2.4977159">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; runs the full intraday factor gate without promoting a losing rule" time="15.671315">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; does not present experiment records as a registered lineage" time="0.6446572">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; labels reused observations as diagnostics rather than independent evidence" time="0.6441098">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the bounded factor search and its negative locked result" time="0.7930075">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the verified factor robustness gate without claiming promotion" time="0.7371257">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows multi-sector stock transfer evidence and its survivorship boundary" time="0.8653716">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the development-only minute policy lock without claiming a new test" time="0.7290623">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified robustness evidence &gt; shows the locked complete-session observer without claiming a blind test" time="0.8714691">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified experiment candidates &gt; retains historical candidates without showing the retired template catalog" time="0.3099998">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified experiment candidates &gt; labels full-chain records as ineligible candidates rather than registered strategies" time="0.1553293">
+        </testcase>
+        <testcase classname="src/pages/DataPages.test.tsx" name="verified experiment candidates &gt; shows immutable model parameters and held-out split without claiming promotion" time="0.1250941">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/ForwardResearchPage.test.tsx" timestamp="2026-10-28T02:52:43.052Z" hostname="DESKTOP-F1JPIV2" tests="11" failures="0" errors="0" skipped="0" time="8.3240142">
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="retains stopped retired books and history without suggesting automatic recovery" time="1.3137823">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="does not hide a running flag on a model already retired by the fresh registry" time="0.7868827">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="keeps model status unknown for stale registry evidence" time="0.8034773">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="keeps model status unknown for unavailable registry evidence" time="0.8150271">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="keeps model status unknown for inconsistent registry evidence" time="0.9112037">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="shows prospective target timestamps and keeps paper recovery explicit without write controls" time="1.1674792">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="positions route opens actual holdings rather than target weights" time="0.5124687">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="orders route shows bounded actual simulated orders and fills with processing clocks" time="0.9795864">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="risk route shows actual constraint blockers and stale service warning" time="0.5248254">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="keeps absent future sessions and all shadow metrics unreported" time="0.3899476">
+        </testcase>
+        <testcase classname="src/pages/ForwardResearchPage.test.tsx" name="unavailable or failed publication never falls back to previous or sample holdings" time="0.1176786">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/OnlineModelsPage.test.tsx" timestamp="2026-10-28T02:52:43.057Z" hostname="DESKTOP-F1JPIV2" tests="7" failures="0" errors="0" skipped="0" time="13.1557037">
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="shows qualified scope separately from candidate scores and prevents anonymous control" time="3.0189227">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="requires review of frozen evidence and preserves the request identity on queue failure" time="3.4453675">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="disables an open approval when its data version changes" time="1.9392923">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="ignores older in-flight catalog responses after a newer refresh" time="1.0580458">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="distinguishes enabled daily inference from having an approved current prediction" time="0.8218678">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="shows a historical data gap even while the version scheduler is alive" time="0.9983696">
+        </testcase>
+        <testcase classname="src/pages/OnlineModelsPage.test.tsx" name="allows recovery to an admitted version when current data is stale but control is fresh" time="1.8726406">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/OverviewPage.test.tsx" timestamp="2026-10-28T02:52:43.062Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="2.2898968">
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; separates actual target coverage, Qlib scope, frozen books and legacy history" time="1.0440068">
+        </testcase>
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; does not treat mismatched prediction identities as current" time="0.2738132">
+        </testcase>
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; keeps retired books visible and separates stopped history from current recovery" time="0.2297995">
+        </testcase>
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; expires prediction and forward freshness even while a cached API says fresh" time="0.2806926">
+        </testcase>
+        <testcase classname="src/pages/OverviewPage.test.tsx" name="current business overview &gt; clears a failed source independently and cancels page requests on unmount" time="0.4603837">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/QlibWorkflowPages.test.tsx" timestamp="2026-10-28T02:52:43.069Z" hostname="DESKTOP-F1JPIV2" tests="10" failures="0" errors="0" skipped="0" time="13.3037936">
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="freezes the selected immutable strategy before queueing and preserves a failed retry" time="4.0628501">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="keeps edited version selection stable across polling and refuses a drifted preview" time="2.6208548">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; lists only integrated models and exposes the non-PIT boundary" time="0.6900323">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; keeps anonymous submission disabled" time="0.5382207">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; submits the fixed complete spec with a retry identity and follows the job" time="0.8254007">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; explains applied source restrictions separately from historical certification" time="0.2717517">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; shows and submits the pinned source identity alongside model configuration" time="1.1048786">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; reuses archived inputs despite refreshed defaults and retries with the same request identity" time="2.1994169">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; keeps submission closed after a legacy template error instead of falling back to defaults" time="0.4594898">
+        </testcase>
+        <testcase classname="src/pages/QlibWorkflowPages.test.tsx" name="Qlib research workflow pages &gt; ignores a late response for a different archived configuration" time="0.5293027">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/SignalsPage.test.tsx" timestamp="2026-10-28T02:52:43.079Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="1.1058385">
+        <testcase classname="src/pages/SignalsPage.test.tsx" name="daily research signal observations &gt; shows bounded input scores and indicative weights with execution limits" time="0.8130553">
+        </testcase>
+        <testcase classname="src/pages/SignalsPage.test.tsx" name="daily research signal observations &gt; keeps expired archives visible with a clear current-input block" time="0.1879138">
+        </testcase>
+        <testcase classname="src/pages/SignalsPage.test.tsx" name="daily research signal observations &gt; does not replace missing publication with sample scores" time="0.1037629">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/causalBacktestContract.test.ts" timestamp="2026-10-28T02:52:43.083Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0027005">
+        <testcase classname="src/research/causalBacktestContract.test.ts" name="intraday causal backtest contract &gt; accepts the exact fixed T+1 open-exit clock" time="0.0012095">
+        </testcase>
+        <testcase classname="src/research/causalBacktestContract.test.ts" name="intraday causal backtest contract &gt; accepts the exact conditional-exit and fallback clocks" time="0.000203">
+        </testcase>
+        <testcase classname="src/research/causalBacktestContract.test.ts" name="intraday causal backtest contract &gt; rejects same-bar timing, label and extra-field drift" time="0.0001948">
+        </testcase>
+        <testcase classname="src/research/causalBacktestContract.test.ts" name="intraday causal backtest contract &gt; rejects a causal clock from the other exit branch" time="0.000129">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/exitFactorValidation.test.ts" timestamp="2026-10-28T02:52:43.087Z" hostname="DESKTOP-F1JPIV2" tests="7" failures="0" errors="0" skipped="0" time="0.004027">
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; accepts a reproducible triggered exit diagnostic" time="0.0013395">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; accepts the fixed T+1 exit branch without an exit diagnostic" time="0.0001832">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; rejects entry, trigger, fallback and clustered-session count drift" time="0.0003766">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; rejects forged trigger rate and non-integral hit counts" time="0.0002145">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; rejects Newey-West lag, t statistic and confidence interval drift" time="0.0003975">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; rejects missing, reordered or forged criteria and pass bindings" time="0.0003608">
+        </testcase>
+        <testcase classname="src/research/exitFactorValidation.test.ts" name="intraday exit factor validation response &gt; accepts a zero-trigger diagnostic only when all undefined statistics are zero" time="0.0001802">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayBacktestPerformance.test.ts" timestamp="2026-10-28T02:52:43.103Z" hostname="DESKTOP-F1JPIV2" tests="11" failures="0" errors="0" skipped="0" time="0.0150945">
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; accepts an internally reproducible curve and core metrics" time="0.0100491">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects selected-session and source-bar drift" time="0.0002388">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged daily equity, signal totals and cumulative metrics" time="0.000289">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged drawdown, win rate, exposure and trade counts" time="0.0003354">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged annualization and risk ratios" time="0.0003418">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects missing or unexpected fixed cost rows" time="0.0002545">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged base and stressed transaction costs" time="0.0004608">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects a strategy return on a day without signals" time="0.0001509">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects missing, duplicate or misbound stock and sector identities" time="0.0006193">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects forged group observation, signal and weighted event aggregates" time="0.0007745">
+        </testcase>
+        <testcase classname="src/research/intradayBacktestPerformance.test.ts" name="intraday backtest performance response &gt; rejects impossible group hit counts and metric identities" time="0.0005508">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayEventSummary.test.ts" timestamp="2026-10-28T02:52:43.107Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0030359">
+        <testcase classname="src/research/intradayEventSummary.test.ts" name="intraday event summary response &gt; accepts exact counts, means and clustered Newey-West arithmetic" time="0.0013534">
+        </testcase>
+        <testcase classname="src/research/intradayEventSummary.test.ts" name="intraday event summary response &gt; rejects forged counts, rates, means and hit counts" time="0.0003735">
+        </testcase>
+        <testcase classname="src/research/intradayEventSummary.test.ts" name="intraday event summary response &gt; rejects forged Newey-West lag, t statistic and confidence interval" time="0.0002118">
+        </testcase>
+        <testcase classname="src/research/intradayEventSummary.test.ts" name="intraday event summary response &gt; accepts a conservative all-zero no-signal diagnostic" time="0.0001985">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayFactorStrategyLineage.test.ts" timestamp="2026-10-28T02:52:43.109Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.0039133">
+        <testcase classname="src/research/intradayFactorStrategyLineage.test.ts" name="intraday factor-to-strategy lineage &gt; binds one manually admitted factor to the exact later strategy preview" time="0.0024901">
+        </testcase>
+        <testcase classname="src/research/intradayFactorStrategyLineage.test.ts" name="intraday factor-to-strategy lineage &gt; fails closed when the strategy window or entry factor drifts after handoff" time="0.0003659">
+        </testcase>
+        <testcase classname="src/research/intradayFactorStrategyLineage.test.ts" name="intraday factor-to-strategy lineage &gt; fails closed when either evidence surface relaxes the no-authority boundary" time="0.0002172">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayFactorValidation.test.ts" timestamp="2026-10-28T02:52:43.110Z" hostname="DESKTOP-F1JPIV2" tests="6" failures="0" errors="0" skipped="0" time="0.0033751">
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; accepts reproducible signal and non-signal return groups" time="0.0013043">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; rejects period and instrument scope drift" time="0.0003495">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; rejects missing, extra and forged grouped returns or spread" time="0.0003058">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; rejects event conditional-excess drift" time="0.0001363">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; rejects non-finite or out-of-range IC and turnover diagnostics" time="0.0001734">
+        </testcase>
+        <testcase classname="src/research/intradayFactorValidation.test.ts" name="intraday factor validation response &gt; derives a zero non-signal mean when every observation signals" time="0.0001105">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayPreviewHash.test.ts" timestamp="2026-10-28T02:52:43.114Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.0142823">
+        <testcase classname="src/research/intradayPreviewHash.test.ts" name="intraday preview response hash &gt; accepts the SHA-256 of the full unsigned response with Unicode content" time="0.0122713">
+        </testcase>
+        <testcase classname="src/research/intradayPreviewHash.test.ts" name="intraday preview response hash &gt; rejects a well-formed hash after any nested evidence drift" time="0.0004656">
+        </testcase>
+        <testcase classname="src/research/intradayPreviewHash.test.ts" name="intraday preview response hash &gt; rejects missing, malformed and unrelated digests" time="0.0005895">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayRobustness.test.ts" timestamp="2026-10-28T02:52:43.117Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.0079951">
+        <testcase classname="src/research/intradayRobustness.test.ts" name="intraday walk-forward robustness response &gt; accepts an exactly recomputed rolling out-of-sample result" time="0.0034752">
+        </testcase>
+        <testcase classname="src/research/intradayRobustness.test.ts" name="intraday walk-forward robustness response &gt; rejects forged fold metrics, curve equity and temporal boundaries" time="0.001647">
+        </testcase>
+        <testcase classname="src/research/intradayRobustness.test.ts" name="intraday walk-forward robustness response &gt; rejects forged threshold sensitivity, benchmark binding and gate flags" time="0.0018728">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/intradayStability.test.ts" timestamp="2026-10-28T02:52:43.118Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="0.0044974">
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; accepts four reproducible contiguous blocks" time="0.0014435">
+        </testcase>
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; rejects block identity, boundary and size drift" time="0.0005616">
+        </testcase>
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; rejects observation, signal and signal-session decomposition drift" time="0.0005107">
+        </testcase>
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; rejects forged weighted mean, positive count, worst block and contribution share" time="0.0005572">
+        </testcase>
+        <testcase classname="src/research/intradayStability.test.ts" name="intraday temporal stability response &gt; rejects missing, reordered or forged stability criteria and pass" time="0.000413">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/l2FactorReadiness.test.ts" timestamp="2026-10-28T02:52:43.121Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0019168">
+        <testcase classname="src/research/l2FactorReadiness.test.ts" name="unavailable L2 factor readiness admission &gt; admits the exact fail-closed five-level contract" time="0.0009582">
+        </testcase>
+        <testcase classname="src/research/l2FactorReadiness.test.ts" name="unavailable L2 factor readiness admission &gt; rejects a contract with an incomplete five-level schema" time="0.0001648">
+        </testcase>
+        <testcase classname="src/research/l2FactorReadiness.test.ts" name="unavailable L2 factor readiness admission &gt; rejects forged readiness gate arithmetic" time="0.0000991">
+        </testcase>
+        <testcase classname="src/research/l2FactorReadiness.test.ts" name="unavailable L2 factor readiness admission &gt; rejects future-book or OHLCV substitution capability" time="0.0000941">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/localBacktestExperiments.test.ts" timestamp="2026-10-28T02:52:43.123Z" hostname="DESKTOP-F1JPIV2" tests="11" failures="0" errors="0" skipped="0" time="0.0118102">
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; labels an ordinary preview as browser-local without a run-spec binding" time="0.0017835">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; preserves the exact template, spec, and binding identity for a bound preview" time="0.0009218">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; rejects a mismatched bound preview by 结果哈希 without writing local data" time="0.0007839">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; rejects a mismatched bound preview by 数据 checksum without writing local data" time="0.0002151">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; loads legacy schema-v1 records without binding metadata as ordinary previews" time="0.0004958">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; binds records to the exact dataset identity and replaces duplicate results" time="0.0003653">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; ignores corrupt local data instead of presenting it as a valid experiment" time="0.0001737">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; deletes only the selected local result" time="0.0002696">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; rejects blank names and does not write an experiment" time="0.0002376">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; keeps only the thirty most recently saved summaries" time="0.0049546">
+        </testcase>
+        <testcase classname="src/research/localBacktestExperiments.test.ts" name="local backtest experiments &gt; builds a deterministic portable comparison without granting runtime authority" time="0.0006671">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/localIntradayFactorCandidates.test.ts" timestamp="2026-10-28T02:52:43.127Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.0042764">
+        <testcase classname="src/research/localIntradayFactorCandidates.test.ts" name="local intraday factor candidates &gt; stores entry-factor drafts before any strategy or backtest result exists" time="0.0024235">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorCandidates.test.ts" name="local intraday factor candidates &gt; rejects unsafe rules and deletes only the selected browser-local draft" time="0.0010076">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/localIntradayFactorExperiments.test.ts" timestamp="2026-10-28T02:52:43.128Z" hostname="DESKTOP-F1JPIV2" tests="8" failures="0" errors="0" skipped="0" time="0.0172574">
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; binds records to the exact minute dataset and replaces duplicate results" time="0.0032735">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; round-trips the bounded bearish exit and rejects unsafe exit identity" time="0.0006476">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; ignores corrupted or safety-relaxed local records" time="0.0003776">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; normalizes legacy records without strategy identity and rejects a relaxed identity" time="0.0010033">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; rejects unsafe, blank, or incomplete results before writing" time="0.0004042">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; deletes only the selected result and preserves parameter identity" time="0.0006951">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; keeps only the thirty most recent summaries" time="0.0089375">
+        </testcase>
+        <testcase classname="src/research/localIntradayFactorExperiments.test.ts" name="local intraday factor experiments &gt; builds a deterministic portable factor comparison without selecting a winner" time="0.0008807">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/nextHypothesisPreregistration.test.ts" timestamp="2026-10-28T02:52:43.132Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0032007">
+        <testcase classname="src/research/nextHypothesisPreregistration.test.ts" name="matchesNextHypothesisPreregistration &gt; admits the exact blocked preregistration contract" time="0.0013931">
+        </testcase>
+        <testcase classname="src/research/nextHypothesisPreregistration.test.ts" name="matchesNextHypothesisPreregistration &gt; derives the research-admitted status from the sequential next action" time="0.000276">
+        </testcase>
+        <testcase classname="src/research/nextHypothesisPreregistration.test.ts" name="matchesNextHypothesisPreregistration &gt; rejects missing, reordered, or drifted governance requirements" time="0.0003356">
+        </testcase>
+        <testcase classname="src/research/nextHypothesisPreregistration.test.ts" name="matchesNextHypothesisPreregistration &gt; rejects evidence reuse, lifecycle, or authority drift" time="0.0002787">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/paperAdmission.test.ts" timestamp="2026-10-28T02:52:43.134Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0017877">
+        <testcase classname="src/research/paperAdmission.test.ts" name="matchesBlockedPaperAdmission &gt; admits the exact blocked eight-gate contract" time="0.0008516">
+        </testcase>
+        <testcase classname="src/research/paperAdmission.test.ts" name="matchesBlockedPaperAdmission &gt; rejects forged gate-count arithmetic" time="0.0001265">
+        </testcase>
+        <testcase classname="src/research/paperAdmission.test.ts" name="matchesBlockedPaperAdmission &gt; rejects a duplicated gate that hides a required gate" time="0.0000952">
+        </testcase>
+        <testcase classname="src/research/paperAdmission.test.ts" name="matchesBlockedPaperAdmission &gt; rejects drifted evidence or an extra authority field" time="0.0001206">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/qlibWorkflow.test.ts" timestamp="2026-10-28T02:52:43.137Z" hostname="DESKTOP-F1JPIV2" tests="7" failures="0" errors="0" skipped="0" time="0.0065084">
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; defaults to the newest completed run, ahead of the imported old reference" time="0.0015678">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; accepts model-only changes despite JSON property ordering" time="0.0004654">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; rejects legacy, changed inputs, costs, dates and source" time="0.0004273">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; binds model comparisons to identical historical source evidence" time="0.000347">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; creates a model-only draft without mutating any archived input" time="0.0006802">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; rejects misbound templates and does not offer legacy configuration reuse" time="0.0008752">
+        </testcase>
+        <testcase classname="src/research/qlibWorkflow.test.ts" name="controlled Qlib comparisons &gt; preserves the server explanation when an archived template cannot be reused" time="0.0011507">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/researchGate.test.ts" timestamp="2026-10-28T02:52:43.140Z" hostname="DESKTOP-F1JPIV2" tests="6" failures="0" errors="0" skipped="0" time="0.0046885">
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; accepts an exactly derived base gate" time="0.0014452">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; accepts a conditional exit gate only when its failed result is appended" time="0.0003934">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; rejects missing, extra or reordered criteria" time="0.0004328">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; rejects criteria forged against event, factor, correlation and base-cost facts" time="0.0006297">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; rejects walk-forward ratios forged against fold and threshold metrics" time="0.0002706">
+        </testcase>
+        <testcase classname="src/research/researchGate.test.ts" name="intraday research gate response &gt; rejects inconsistent sub-gate and aggregate pass flags" time="0.0005689">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/researchWorkflow.test.ts" timestamp="2026-10-28T02:52:43.142Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.002465">
+        <testcase classname="src/research/researchWorkflow.test.ts" name="matchesResearchWorkflow &gt; admits the exact eight-stage conditional-exit workflow" time="0.0011539">
+        </testcase>
+        <testcase classname="src/research/researchWorkflow.test.ts" name="matchesResearchWorkflow &gt; derives the research-admitted and successful-backtest branch" time="0.0001938">
+        </testcase>
+        <testcase classname="src/research/researchWorkflow.test.ts" name="matchesResearchWorkflow &gt; distinguishes an entry-only factor validation detail" time="0.00011">
+        </testcase>
+        <testcase classname="src/research/researchWorkflow.test.ts" name="matchesResearchWorkflow &gt; rejects forged, reordered, extra, or non-boolean workflow state" time="0.0001897">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/sequentialAdvancement.test.ts" timestamp="2026-10-28T02:52:43.144Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0028684">
+        <testcase classname="src/research/sequentialAdvancement.test.ts" name="matchesSequentialAdvancement &gt; admits the exact ordered read-only advancement contract" time="0.0013126">
+        </testcase>
+        <testcase classname="src/research/sequentialAdvancement.test.ts" name="matchesSequentialAdvancement &gt; derives the admitted research and successful-backtest branch" time="0.0002345">
+        </testcase>
+        <testcase classname="src/research/sequentialAdvancement.test.ts" name="matchesSequentialAdvancement &gt; rejects forged counts, reordered stages, or inconsistent blocking stages" time="0.0002339">
+        </testcase>
+        <testcase classname="src/research/sequentialAdvancement.test.ts" name="matchesSequentialAdvancement &gt; rejects promotion authority, extra fields, or non-boolean context drift" time="0.0001912">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/strategyIdentity.test.ts" timestamp="2026-10-28T02:52:43.145Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="0.0280399">
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; recomputes the exact conditional-exit behavior hash" time="0.0214447">
+        </testcase>
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; recomputes the fixed T+1 open-exit behavior hash" time="0.0012941">
+        </testcase>
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; rejects behavior, hash-scope and digest drift" time="0.0038562">
+        </testcase>
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; binds observed exit counts without including them in the behavior digest" time="0.0002456">
+        </testcase>
+        <testcase classname="src/research/strategyIdentity.test.ts" name="intraday strategy identity &gt; requires the exact factor contract derived from the request" time="0.0002645">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/strategyRegistrationPreflight.test.ts" timestamp="2026-10-28T02:52:43.163Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.0031876">
+        <testcase classname="src/research/strategyRegistrationPreflight.test.ts" name="matchesBlockedStrategyRegistrationPreflight &gt; admits the exact blocked nine-gate contract" time="0.0013644">
+        </testcase>
+        <testcase classname="src/research/strategyRegistrationPreflight.test.ts" name="matchesBlockedStrategyRegistrationPreflight &gt; derives research and backtest gate counts dynamically" time="0.0002866">
+        </testcase>
+        <testcase classname="src/research/strategyRegistrationPreflight.test.ts" name="matchesBlockedStrategyRegistrationPreflight &gt; rejects forged counts or a duplicated gate" time="0.0002165">
+        </testcase>
+        <testcase classname="src/research/strategyRegistrationPreflight.test.ts" name="matchesBlockedStrategyRegistrationPreflight &gt; rejects field-readiness, transition, or authority drift" time="0.0003595">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/research/unifiedMarket.test.ts" timestamp="2026-10-28T02:52:43.166Z" hostname="DESKTOP-F1JPIV2" tests="29" failures="0" errors="0" skipped="0" time="0.027482">
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; retains no-data, partial gaps and null amount explicitly" time="0.0169814">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects version drift" time="0.00092">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects universe_version drift" time="0.0002441">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects symbol drift" time="0.000184">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects frequency drift" time="0.0001844">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects impossible closing price NaN" time="0.0005766">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects impossible closing price Infinity" time="0.0004285">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects impossible closing price -1" time="0.0003042">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects impossible closing price 0" time="0.0003576">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects unordered bars and completion-clock violations" time="0.0007326">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects bars outside the requested date window instead of silently widening it" time="0.0004019">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects catalog snapshots from different signed inventories" time="0.0004006">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a future-clock payload against the actual clock by default" time="0.0002015">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; binds controlled test clocks without using a publication clock as now" time="0.0006194">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free published_at" time="0.00011">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free checked_at" time="0.0000576">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free expected_end" time="0.0000545">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free available_start" time="0.000063">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free available_end" time="0.0000991">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects timezone-free bars and a mismatched Shanghai trading day" time="0.0004864">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects bars that did not exist when the index was published" time="0.0001373">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a five-minute bar outside completed session clock 2026-10-27T01:31:00Z" time="0.0003241">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a five-minute bar outside completed session clock 2026-10-27T04:00:00Z" time="0.0003202">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a five-minute bar outside completed session clock 2026-10-27T05:00:00Z" time="0.0002996">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects a five-minute bar outside completed session clock 2026-10-27T01:40:01Z" time="0.00028">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; accepts offset-aware Shanghai session clocks and rejects a daily non-close timestamp" time="0.0005953">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; binds security type and exchange to the selected catalog member" time="0.0002331">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; requires a source manifest and available bounds for nonempty bars" time="0.0003756">
+        </testcase>
+        <testcase classname="src/research/unifiedMarket.test.ts" name="unified chart admission &gt; rejects inconsistent isolation states while retaining valid stale history" time="0.0003369">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/charts/BacktestTimestamp.test.tsx" timestamp="2026-10-28T02:52:43.178Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.669785">
+        <testcase classname="src/charts/BacktestTimestamp.test.tsx" name="minute backtest timestamps &gt; renders UTC evidence timestamps as China market time" time="0.347925">
+        </testcase>
+        <testcase classname="src/charts/BacktestTimestamp.test.tsx" name="minute backtest timestamps &gt; renders reserved-tail evidence on the same China market clock" time="0.32026">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/charts/MinuteHistoryChart.test.tsx" timestamp="2026-10-28T02:52:43.181Z" hostname="DESKTOP-F1JPIV2" tests="1" failures="0" errors="0" skipped="0" time="0.0014908">
+        <testcase classname="src/charts/MinuteHistoryChart.test.tsx" name="minute history timestamps &gt; renders provider UTC timestamps in the A-share session timezone" time="0.0008846">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/CurrentWorkspace.test.tsx" timestamp="2026-10-28T02:52:43.182Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="1.2217532">
+        <testcase classname="src/components/CurrentWorkspace.test.tsx" name="current workspace uses the current chart identity and latest date" time="0.3984172">
+        </testcase>
+        <testcase classname="src/components/CurrentWorkspace.test.tsx" name="a failed channel shows an error without an August fallback" time="0.0194922">
+        </testcase>
+        <testcase classname="src/components/CurrentWorkspace.test.tsx" name="current backtest workspace retains minute research and only reads archived daily results" time="0.8025515">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/DataQualitySummary.test.tsx" timestamp="2026-10-28T02:52:43.184Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.9389701">
+        <testcase classname="src/components/DataQualitySummary.test.tsx" name="independent data quality &gt; separates window, actual observation and scoped partial data from authority" time="0.5110365">
+        </testcase>
+        <testcase classname="src/components/DataQualitySummary.test.tsx" name="independent data quality &gt; removes previous quality success after error without depending on the market directory" time="0.226354">
+        </testcase>
+        <testcase classname="src/components/DataQualitySummary.test.tsx" name="independent data quality &gt; does not present an elevated permission payload as a diagnostic success" time="0.0768079">
+        </testcase>
+        <testcase classname="src/components/DataQualitySummary.test.tsx" name="independent data quality &gt; labels old data as stale without treating current retrieval as a new data window" time="0.1237876">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/DataVersionsPanel.test.tsx" timestamp="2026-10-28T02:52:43.188Z" hostname="DESKTOP-F1JPIV2" tests="7" failures="0" errors="0" skipped="0" time="7.77584">
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="requires login, fresh control, worker and matching head before exposing writes" time="1.0586095">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="preserves retry identity and shows queued receipt without declaring success" time="0.9463426">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="invalidates review if the head epoch changes even when version is unchanged" time="1.0277139">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="clears unavailable catalog and prevents stale review submission" time="1.1057512">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="renders actual rejected receipts and research limitations" time="0.427902">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="creates a new request identity if the reviewed reason changes after failed submission" time="2.5043514">
+        </testcase>
+        <testcase classname="src/components/DataVersionsPanel.test.tsx" name="ignores a delayed older successful fetch after newer publication failure" time="0.7040219">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/EtfHistoryPanel.test.tsx" timestamp="2026-10-28T02:52:43.191Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="1.2452783">
+        <testcase classname="src/components/EtfHistoryPanel.test.tsx" name="labels assumptions and displays simulation accounting separately from forward results" time="0.7558154">
+        </testcase>
+        <testcase classname="src/components/EtfHistoryPanel.test.tsx" name="does not display supplied payload when publication fails validation" time="0.1371925">
+        </testcase>
+        <testcase classname="src/components/EtfHistoryPanel.test.tsx" name="clears the prior report on failed refresh" time="0.3040273">
+        </testcase>
+        <testcase classname="src/components/EtfHistoryPanel.test.tsx" name="bounds a hanging fetch and ignores a late successful response" time="0.0474097">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/EtfShadowPanel.test.tsx" timestamp="2026-10-28T02:52:43.193Z" hostname="DESKTOP-F1JPIV2" tests="5" failures="0" errors="0" skipped="0" time="1.3601521">
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="shows frozen ETF allocation and pending observation without invented performance" time="0.5417562">
+        </testcase>
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="retains stale history with a warning and separates unallocated target from actual cash" time="0.2034876">
+        </testcase>
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="hides unavailable or wrong-schema publications rather than displaying targets" time="0.0829575">
+        </testcase>
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="clears old targets after refresh failure" time="0.3281859">
+        </testcase>
+        <testcase classname="src/components/EtfShadowPanel.test.tsx" name="expires a prospective target locally before the next poll and times out a hung refresh" time="0.2028551">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/EtfTrendPanel.test.tsx" timestamp="2026-10-28T02:52:43.195Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.5780861">
+        <testcase classname="src/components/EtfTrendPanel.test.tsx" name="shows ETF coverage, positive scores and qualified nonpositive ETF without invented scores" time="0.3796308">
+        </testcase>
+        <testcase classname="src/components/EtfTrendPanel.test.tsx" name="keeps an expired ETF archive visible with current-input warning" time="0.1039748">
+        </testcase>
+        <testcase classname="src/components/EtfTrendPanel.test.tsx" name="does not use a diagnostic when publication is unavailable" time="0.0473516">
+        </testcase>
+        <testcase classname="src/components/EtfTrendPanel.test.tsx" name="clears data and reports a request failure" time="0.0462197">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/FactorEvidenceCatalog.test.tsx" timestamp="2026-10-28T02:52:43.197Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.4476086">
+        <testcase classname="src/components/FactorEvidenceCatalog.test.tsx" name="factor evidence catalog &gt; binds daily, entry, exit and unavailable L2 definitions without inventing readiness" time="0.0040387">
+        </testcase>
+        <testcase classname="src/components/FactorEvidenceCatalog.test.tsx" name="factor evidence catalog &gt; renders a read-only exportable catalog and does not synthesize L2 without its contract" time="0.4426744">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/IntradayFactorResearchLab.test.tsx" timestamp="2026-10-28T02:52:43.198Z" hostname="DESKTOP-F1JPIV2" tests="15" failures="2" errors="0" skipped="0" time="29.435321">
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; reruns two selected local rules on one bounded window and shows redundancy" time="5.6499493">
+            <failure message="Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with &quot;testTimeout&quot;." type="Error">
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with &quot;testTimeout&quot;.
+ ❯ src/components/IntradayFactorResearchLab.test.tsx:619:3
+            </failure>
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; saves the current entry factor before any strategy backtest" time="1.7365459">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; hands an effective non-redundant entry factor to strategy construction without running it" time="3.034639">
+            <failure message="Unable to find role=&quot;button&quot; and name &quot;载入“混合方向 B”进入策略构造&quot;
+
+Ignored nodes: comments, script, style
+[36m&lt;body&gt;[39m
+  [36m&lt;div&gt;[39m
+    [36m&lt;div[39m
+      [33mclass[39m=[32m&quot;ant-card ant-card-bordered css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+    [36m&gt;[39m
+      [36m&lt;div[39m
+        [33mclass[39m=[32m&quot;ant-card-head&quot;[39m
+      [36m&gt;[39m
+        [36m&lt;div[39m
+          [33mclass[39m=[32m&quot;ant-card-head-wrapper&quot;[39m
+        [36m&gt;[39m
+          [36m&lt;div[39m
+            [33mclass[39m=[32m&quot;ant-card-head-title&quot;[39m
+          [36m&gt;[39m
+            [0m分钟因子研究工作台[0m
+          [36m&lt;/div&gt;[39m
+          [36m&lt;div[39m
+            [33mclass[39m=[32m&quot;ant-card-extra&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;span[39m
+              [33mclass[39m=[32m&quot;ant-typography ant-typography-secondary css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+            [36m&gt;[39m
+              [0m75[0m
+              [0m 股 · [0m
+              [0m15[0m
+              [0m 板块 · 原生 5 分钟[0m
+            [36m&lt;/span&gt;[39m
+          [36m&lt;/div&gt;[39m
+        [36m&lt;/div&gt;[39m
+      [36m&lt;/div&gt;[39m
+      [36m&lt;div[39m
+        [33mclass[39m=[32m&quot;ant-card-body&quot;[39m
+      [36m&gt;[39m
+        [36m&lt;div[39m
+          [33mclass[39m=[32m&quot;ant-space css-dev-only-do-not-override-12q6fii ant-space-vertical css-var-root&quot;[39m
+          [33mstyle[39m=[32m&quot;column-gap: 16px; row-gap: 16px; width: 100%;&quot;[39m
+        [36m&gt;[39m
+          [36m&lt;div[39m
+            [33mclass[39m=[32m&quot;ant-space-item&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;div[39m
+              [33mclass[39m=[32m&quot;ant-alert ant-alert-info ant-alert-outlined ant-alert-with-description css-var-root css-dev-only-do-not-override-12q6fii&quot;[39m
+              [33mdata-show[39m=[32m&quot;true&quot;[39m
+              [33mrole[39m=[32m&quot;alert&quot;[39m
+            [36m&gt;[39m
+              [36m&lt;span[39m
+                [33mclass[39m=[32m&quot;ant-alert-icon&quot;[39m
+              [36m&gt;[39m
+                [36m&lt;span[39m
+                  [33maria-label[39m=[32m&quot;info-circle&quot;[39m
+                  [33mclass[39m=[32m&quot;anticon anticon-info-circle&quot;[39m
+                  [33mrole[39m=[32m&quot;img&quot;[39m
+                [36m&gt;[39m
+                  [36m&lt;svg[39m
+                    [33maria-hidden[39m=[32m&quot;true&quot;[39m
+                    [33mdata-icon[39m=[32m&quot;info-circle&quot;[39m
+                    [33mfill[39m=[32m&quot;currentColor&quot;[39m
+                    [33mfocusable[39m=[32m&quot;false&quot;[39m
+                    [33mheight[39m=[32m&quot;1em&quot;[39m
+                    [33mviewBox[39m=[32m&quot;64 64 896 896&quot;[39m
+                    [33mwidth[39m=[32m&quot;1em&quot;[39m
+                  [36m&gt;[39m
+                    [36m&lt;path[39m
+                      [33md[39m=[32m&quot;M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm32 664c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V456c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272zm-32-344a48.01 48.01 0 010-96 48.01 48.01 0 010 96z&quot;[39m
+                    [36m/&gt;[39m
+                  [36m&lt;/svg&gt;[39m
+                [36m&lt;/span&gt;[39m
+              [36m&lt;/span&gt;[39m
+              [36m&lt;div[39m
+                [33mclass[39m=[32m&quot;ant-alert-section&quot;[39m
+              [36m&gt;[39m
+                [36m&lt;div[39m
+                  [33mclass[39m=[32m&quot;ant-alert-title&quot;[39m
+                [36m&gt;[39m
+                  [0m从因子到模拟盘的完整门控[0m
+                [36m&lt;/div&gt;[39m
+                [36m&lt;div[39m
+                  [33mclass[39m=[32m&quot;ant-alert-description&quot;[39m
+                [36m&gt;[39m
+                  [0m开仓因子在 10:00 确认，10:05 标记的下一根原生 5 分钟 Bar 开盘买入；平仓可固定为 T+1 09:30 开盘，或在 T+1 10:00 确认三根十分钟阴线后于下一 Bar 开盘退出，未触发则用 15:00 标记 Bar 的开盘价（区间起点 14:55）时间退出。当前事后非 PIT 研究永远不会自动进入 PAPER 或 LIVE。[0m
+                [36m&lt;/div&gt;[39m
+              [36m&lt;/div&gt;[39m
+            [36m&lt;/div&gt;[39m
+          [36m&lt;/div&gt;[39m
+          [36m&lt;div[39m
+            [33mclass[39m=[32m&quot;ant-space-item&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;form[39m
+              [33mclass[39m=[32m&quot;ant-form ant-form-vertical css-var-root ant-form-css-var css-dev-only-do-not-override-12q6fii&quot;[39m
+              [33mid[39m=[32m&quot;intraday-factor-research-backtest&quot;[39m
+            [36m&gt;[39m
+              [36m&lt;div[39m
+                [33mclass[39m=[32m&quot;backtest-lab-grid&quot;[39m
+              [36m&gt;[39m
+                [36m&lt;div[39m
+                  [33mclass[39m=[32m&quot;ant-form-item css-var-root ant-form-css-var css-dev-only-do-not-override-12q6fii ant-form-item-vertical&quot;[39m
+                [36m&gt;[39m
+                  [36m&lt;div[39m
+                    [33mclass[39m=[32m&quot;ant-row ant-form-item-row css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+                  [36m&gt;[39m
+                    [36m&lt;div[39m
+                      [33mclass[39m=[32m&quot;ant-col ant-form-item-label css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+                    [36m&gt;[39m
+                      [36m&lt;label[39m
+                        [33mclass[39m=[32m&quot;ant-form-item-required&quot;[39m
+                        [33mfor[39m=[32m&quot;intraday-factor-research-backtest_factor&quot;[39m
+                        [33mtitle[39m=[32m&quot;因子&quot;[39m
+                      [36m&gt;[39m
+                        [0m因子[0m
+                      [36m&lt;/label&gt;[39m
+                    [36m&lt;/div&gt;[39m
+                    [36m&lt;div[39m
+                      [33mclass[39m=[32m&quot;ant-col ant-form-item-control css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+                    [36m&gt;[39m
+                      [36m&lt;div[39m
+                        [33mclass[39m=[32m&quot;ant-form-item-control-input&quot;[39m
+                      [36m&gt;[39m
+                        [36m&lt;div[39m
+                          [33mclass[39m=[32m&quot;ant-form-item-control-input-content&quot;[39m
+                        [36m&gt;[39m
+                          [36m&lt;div[39m
+                            [33mclass[39m=[32m&quot;ant-select ant-select-outlined ant-select-in-form-item css-var-root ant-select-css-var css-dev-only-do-not-override-12q6fii ant-select-single ant-select-show-arrow&quot;[39m
+                          [36m&gt;[39m
+                            [36m&lt;div[39m
+                              [33mclass[39m=[32m&quot;ant-select-content ant-select-content-has-value&quot;[39m
+                              [33mtitle[39m=[32m&quot;09:30 起三根 10 分钟阳线&quot;[39m
+                            [36m&gt;[39m
+                              [0m09:30 起三根 10 分钟阳线[0m
+                              [36m&lt;input[39m
+                                [33maria-autocomplete[39m=[32m&quot;list&quot;[39m
+                                [33maria-expanded[39m=[32m&quot;false&quot;[39m
+                                [33maria-haspopup[39m=[32m&quot;listbox&quot;[39m
+                                [33maria-required[39m=[32m&quot;true&quot;[39m
+                                [33mautocomplete[39m=[32m&quot;new-password&quot;[39m
+                                [33mclass[39m=[32m&quot;ant-select-input&quot;[39m
+                                [33mid[39m=[32m&quot;intraday-fac...
+
+Ignored nodes: comments, script, style
+[36m&lt;body&gt;[39m
+  [36m&lt;div&gt;[39m
+    [36m&lt;div[39m
+      [33mclass[39m=[32m&quot;ant-card ant-card-bordered css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+    [36m&gt;[39m
+      [36m&lt;div[39m
+        [33mclass[39m=[32m&quot;ant-card-head&quot;[39m
+      [36m&gt;[39m
+        [36m&lt;div[39m
+          [33mclass[39m=[32m&quot;ant-card-head-wrapper&quot;[39m
+        [36m&gt;[39m
+          [36m&lt;div[39m
+            [33mclass[39m=[32m&quot;ant-card-head-title&quot;[39m
+          [36m&gt;[39m
+            [0m分钟因子研究工作台[0m
+          [36m&lt;/div&gt;[39m
+          [36m&lt;div[39m
+            [33mclass[39m=[32m&quot;ant-card-extra&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;span[39m
+              [33mclass[39m=[32m&quot;ant-typography ant-typography-secondary css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+            [36m&gt;[39m
+              [0m75[0m
+              [0m 股 · [0m
+              [0m15[0m
+              [0m 板块 · 原生 5 分钟[0m
+            [36m&lt;/span&gt;[39m
+          [36m&lt;/div&gt;[39m
+        [36m&lt;/div&gt;[39m
+      [36m&lt;/div&gt;[39m
+      [36m&lt;div[39m
+        [33mclass[39m=[32m&quot;ant-card-body&quot;[39m
+      [36m&gt;[39m
+        [36m&lt;div[39m
+          [33mclass[39m=[32m&quot;ant-space css-dev-only-do-not-override-12q6fii ant-space-vertical css-var-root&quot;[39m
+          [33mstyle[39m=[32m&quot;column-gap: 16px; row-gap: 16px; width: 100%;&quot;[39m
+        [36m&gt;[39m
+          [36m&lt;div[39m
+            [33mclass[39m=[32m&quot;ant-space-item&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;div[39m
+              [33mclass[39m=[32m&quot;ant-alert ant-alert-info ant-alert-outlined ant-alert-with-description css-var-root css-dev-only-do-not-override-12q6fii&quot;[39m
+              [33mdata-show[39m=[32m&quot;true&quot;[39m
+              [33mrole[39m=[32m&quot;alert&quot;[39m
+            [36m&gt;[39m
+              [36m&lt;span[39m
+                [33mclass[39m=[32m&quot;ant-alert-icon&quot;[39m
+              [36m&gt;[39m
+                [36m&lt;span[39m
+                  [33maria-label[39m=[32m&quot;info-circle&quot;[39m
+                  [33mclass[39m=[32m&quot;anticon anticon-info-circle&quot;[39m
+                  [33mrole[39m=[32m&quot;img&quot;[39m
+                [36m&gt;[39m
+                  [36m&lt;svg[39m
+                    [33maria-hidden[39m=[32m&quot;true&quot;[39m
+                    [33mdata-icon[39m=[32m&quot;info-circle&quot;[39m
+                    [33mfill[39m=[32m&quot;currentColor&quot;[39m
+                    [33mfocusable[39m=[32m&quot;false&quot;[39m
+                    [33mheight[39m=[32m&quot;1em&quot;[39m
+                    [33mviewBox[39m=[32m&quot;64 64 896 896&quot;[39m
+                    [33mwidth[39m=[32m&quot;1em&quot;[39m
+                  [36m&gt;[39m
+                    [36m&lt;path[39m
+                      [33md[39m=[32m&quot;M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm32 664c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V456c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272zm-32-344a48.01 48.01 0 010-96 48.01 48.01 0 010 96z&quot;[39m
+                    [36m/&gt;[39m
+                  [36m&lt;/svg&gt;[39m
+                [36m&lt;/span&gt;[39m
+              [36m&lt;/span&gt;[39m
+              [36m&lt;div[39m
+                [33mclass[39m=[32m&quot;ant-alert-section&quot;[39m
+              [36m&gt;[39m
+                [36m&lt;div[39m
+                  [33mclass[39m=[32m&quot;ant-alert-title&quot;[39m
+                [36m&gt;[39m
+                  [0m从因子到模拟盘的完整门控[0m
+                [36m&lt;/div&gt;[39m
+                [36m&lt;div[39m
+                  [33mclass[39m=[32m&quot;ant-alert-description&quot;[39m
+                [36m&gt;[39m
+                  [0m开仓因子在 10:00 确认，10:05 标记的下一根原生 5 分钟 Bar 开盘买入；平仓可固定为 T+1 09:30 开盘，或在 T+1 10:00 确认三根十分钟阴线后于下一 Bar 开盘退出，未触发则用 15:00 标记 Bar 的开盘价（区间起点 14:55）时间退出。当前事后非 PIT 研究永远不会自动进入 PAPER 或 LIVE。[0m
+                [36m&lt;/div&gt;[39m
+              [36m&lt;/div&gt;[39m
+            [36m&lt;/div&gt;[39m
+          [36m&lt;/div&gt;[39m
+          [36m&lt;div[39m
+            [33mclass[39m=[32m&quot;ant-space-item&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;form[39m
+              [33mclass[39m=[32m&quot;ant-form ant-form-vertical css-var-root ant-form-css-var css-dev-only-do-not-override-12q6fii&quot;[39m
+              [33mid[39m=[32m&quot;intraday-factor-research-backtest&quot;[39m
+            [36m&gt;[39m
+              [36m&lt;div[39m
+                [33mclass[39m=[32m&quot;backtest-lab-grid&quot;[39m
+              [36m&gt;[39m
+                [36m&lt;div[39m
+                  [33mclass[39m=[32m&quot;ant-form-item css-var-root ant-form-css-var css-dev-only-do-not-override-12q6fii ant-form-item-vertical&quot;[39m
+                [36m&gt;[39m
+                  [36m&lt;div[39m
+                    [33mclass[39m=[32m&quot;ant-row ant-form-item-row css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+                  [36m&gt;[39m
+                    [36m&lt;div[39m
+                      [33mclass[39m=[32m&quot;ant-col ant-form-item-label css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+                    [36m&gt;[39m
+                      [36m&lt;label[39m
+                        [33mclass[39m=[32m&quot;ant-form-item-required&quot;[39m
+                        [33mfor[39m=[32m&quot;intraday-factor-research-backtest_factor&quot;[39m
+                        [33mtitle[39m=[32m&quot;因子&quot;[39m
+                      [36m&gt;[39m
+                        [0m因子[0m
+                      [36m&lt;/label&gt;[39m
+                    [36m&lt;/div&gt;[39m
+                    [36m&lt;div[39m
+                      [33mclass[39m=[32m&quot;ant-col ant-form-item-control css-dev-only-do-not-override-12q6fii css-var-root&quot;[39m
+                    [36m&gt;[39m
+                      [36m&lt;div[39m
+                        [33mclass[39m=[32m&quot;ant-form-item-control-input&quot;[39m
+                      [36m&gt;[39m
+                        [36m&lt;div[39m
+                          [33mclass[39m=[32m&quot;ant-form-item-control-input-content&quot;[39m
+                        [36m&gt;[39m
+                          [36m&lt;div[39m
+                            [33mclass[39m=[32m&quot;ant-select ant-select-outlined ant-select-in-form-item css-var-root ant-select-css-var css-dev-only-do-not-override-12q6fii ant-select-single ant-select-show-arrow&quot;[39m
+                          [36m&gt;[39m
+                            [36m&lt;div[39m
+                              [33mclass[39m=[32m&quot;ant-select-content ant-select-content-has-value&quot;[39m
+                              [33mtitle[39m=[32m&quot;09:30 起三根 10 分钟阳线&quot;[39m
+                            [36m&gt;[39m
+                              [0m09:30 起三根 10 分钟阳线[0m
+                              [36m&lt;input[39m
+                                [33maria-autocomplete[39m=[32m&quot;list&quot;[39m
+                                [33maria-expanded[39m=[32m&quot;false&quot;[39m
+                                [33maria-haspopup[39m=[32m&quot;listbox&quot;[39m
+                                [33maria-required[39m=[32m&quot;true&quot;[39m
+                                [33mautocomplete[39m=[32m&quot;new-password&quot;[39m
+                                [33mclass[39m=[32m&quot;ant-select-input&quot;[39m
+                                [33mid[39m=[32m&quot;intraday-fac..." type="TestingLibraryElementError">
+TestingLibraryElementError: Unable to find role=&quot;button&quot; and name &quot;载入“混合方向 B”进入策略构造&quot;
+
+Ignored nodes: comments, script, style
+&lt;body&gt;
+  &lt;div&gt;
+    &lt;div
+      class=&quot;ant-card ant-card-bordered css-dev-only-do-not-override-12q6fii css-var-root&quot;
+    &gt;
+      &lt;div
+        class=&quot;ant-card-head&quot;
+      &gt;
+        &lt;div
+          class=&quot;ant-card-head-wrapper&quot;
+        &gt;
+          &lt;div
+            class=&quot;ant-card-head-title&quot;
+          &gt;
+            分钟因子研究工作台
+          &lt;/div&gt;
+          &lt;div
+            class=&quot;ant-card-extra&quot;
+          &gt;
+            &lt;span
+              class=&quot;ant-typography ant-typography-secondary css-dev-only-do-not-override-12q6fii css-var-root&quot;
+            &gt;
+              75
+               股 · 
+              15
+               板块 · 原生 5 分钟
+            &lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div
+        class=&quot;ant-card-body&quot;
+      &gt;
+        &lt;div
+          class=&quot;ant-space css-dev-only-do-not-override-12q6fii ant-space-vertical css-var-root&quot;
+          style=&quot;column-gap: 16px; row-gap: 16px; width: 100%;&quot;
+        &gt;
+          &lt;div
+            class=&quot;ant-space-item&quot;
+          &gt;
+            &lt;div
+              class=&quot;ant-alert ant-alert-info ant-alert-outlined ant-alert-with-description css-var-root css-dev-only-do-not-override-12q6fii&quot;
+              data-show=&quot;true&quot;
+              role=&quot;alert&quot;
+            &gt;
+              &lt;span
+                class=&quot;ant-alert-icon&quot;
+              &gt;
+                &lt;span
+                  aria-label=&quot;info-circle&quot;
+                  class=&quot;anticon anticon-info-circle&quot;
+                  role=&quot;img&quot;
+                &gt;
+                  &lt;svg
+                    aria-hidden=&quot;true&quot;
+                    data-icon=&quot;info-circle&quot;
+                    fill=&quot;currentColor&quot;
+                    focusable=&quot;false&quot;
+                    height=&quot;1em&quot;
+                    viewBox=&quot;64 64 896 896&quot;
+                    width=&quot;1em&quot;
+                  &gt;
+                    &lt;path
+                      d=&quot;M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm32 664c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V456c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272zm-32-344a48.01 48.01 0 010-96 48.01 48.01 0 010 96z&quot;
+                    /&gt;
+                  &lt;/svg&gt;
+                &lt;/span&gt;
+              &lt;/span&gt;
+              &lt;div
+                class=&quot;ant-alert-section&quot;
+              &gt;
+                &lt;div
+                  class=&quot;ant-alert-title&quot;
+                &gt;
+                  从因子到模拟盘的完整门控
+                &lt;/div&gt;
+                &lt;div
+                  class=&quot;ant-alert-description&quot;
+                &gt;
+                  开仓因子在 10:00 确认，10:05 标记的下一根原生 5 分钟 Bar 开盘买入；平仓可固定为 T+1 09:30 开盘，或在 T+1 10:00 确认三根十分钟阴线后于下一 Bar 开盘退出，未触发则用 15:00 标记 Bar 的开盘价（区间起点 14:55）时间退出。当前事后非 PIT 研究永远不会自动进入 PAPER 或 LIVE。
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div
+            class=&quot;ant-space-item&quot;
+          &gt;
+            &lt;form
+              class=&quot;ant-form ant-form-vertical css-var-root ant-form-css-var css-dev-only-do-not-override-12q6fii&quot;
+              id=&quot;intraday-factor-research-backtest&quot;
+            &gt;
+              &lt;div
+                class=&quot;backtest-lab-grid&quot;
+              &gt;
+                &lt;div
+                  class=&quot;ant-form-item css-var-root ant-form-css-var css-dev-only-do-not-override-12q6fii ant-form-item-vertical&quot;
+                &gt;
+                  &lt;div
+                    class=&quot;ant-row ant-form-item-row css-dev-only-do-not-override-12q6fii css-var-root&quot;
+                  &gt;
+                    &lt;div
+                      class=&quot;ant-col ant-form-item-label css-dev-only-do-not-override-12q6fii css-var-root&quot;
+                    &gt;
+                      &lt;label
+                        class=&quot;ant-form-item-required&quot;
+                        for=&quot;intraday-factor-research-backtest_factor&quot;
+                        title=&quot;因子&quot;
+                      &gt;
+                        因子
+                      &lt;/label&gt;
+                    &lt;/div&gt;
+                    &lt;div
+                      class=&quot;ant-col ant-form-item-control css-dev-only-do-not-override-12q6fii css-var-root&quot;
+                    &gt;
+                      &lt;div
+                        class=&quot;ant-form-item-control-input&quot;
+                      &gt;
+                        &lt;div
+                          class=&quot;ant-form-item-control-input-content&quot;
+                        &gt;
+                          &lt;div
+                            class=&quot;ant-select ant-select-outlined ant-select-in-form-item css-var-root ant-select-css-var css-dev-only-do-not-override-12q6fii ant-select-single ant-select-show-arrow&quot;
+                          &gt;
+                            &lt;div
+                              class=&quot;ant-select-content ant-select-content-has-value&quot;
+                              title=&quot;09:30 起三根 10 分钟阳线&quot;
+                            &gt;
+                              09:30 起三根 10 分钟阳线
+                              &lt;input
+                                aria-autocomplete=&quot;list&quot;
+                                aria-expanded=&quot;false&quot;
+                                aria-haspopup=&quot;listbox&quot;
+                                aria-required=&quot;true&quot;
+                                autocomplete=&quot;new-password&quot;
+                                class=&quot;ant-select-input&quot;
+                                id=&quot;intraday-fac...
+
+Ignored nodes: comments, script, style
+&lt;body&gt;
+  &lt;div&gt;
+    &lt;div
+      class=&quot;ant-card ant-card-bordered css-dev-only-do-not-override-12q6fii css-var-root&quot;
+    &gt;
+      &lt;div
+        class=&quot;ant-card-head&quot;
+      &gt;
+        &lt;div
+          class=&quot;ant-card-head-wrapper&quot;
+        &gt;
+          &lt;div
+            class=&quot;ant-card-head-title&quot;
+          &gt;
+            分钟因子研究工作台
+          &lt;/div&gt;
+          &lt;div
+            class=&quot;ant-card-extra&quot;
+          &gt;
+            &lt;span
+              class=&quot;ant-typography ant-typography-secondary css-dev-only-do-not-override-12q6fii css-var-root&quot;
+            &gt;
+              75
+               股 · 
+              15
+               板块 · 原生 5 分钟
+            &lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div
+        class=&quot;ant-card-body&quot;
+      &gt;
+        &lt;div
+          class=&quot;ant-space css-dev-only-do-not-override-12q6fii ant-space-vertical css-var-root&quot;
+          style=&quot;column-gap: 16px; row-gap: 16px; width: 100%;&quot;
+        &gt;
+          &lt;div
+            class=&quot;ant-space-item&quot;
+          &gt;
+            &lt;div
+              class=&quot;ant-alert ant-alert-info ant-alert-outlined ant-alert-with-description css-var-root css-dev-only-do-not-override-12q6fii&quot;
+              data-show=&quot;true&quot;
+              role=&quot;alert&quot;
+            &gt;
+              &lt;span
+                class=&quot;ant-alert-icon&quot;
+              &gt;
+                &lt;span
+                  aria-label=&quot;info-circle&quot;
+                  class=&quot;anticon anticon-info-circle&quot;
+                  role=&quot;img&quot;
+                &gt;
+                  &lt;svg
+                    aria-hidden=&quot;true&quot;
+                    data-icon=&quot;info-circle&quot;
+                    fill=&quot;currentColor&quot;
+                    focusable=&quot;false&quot;
+                    height=&quot;1em&quot;
+                    viewBox=&quot;64 64 896 896&quot;
+                    width=&quot;1em&quot;
+                  &gt;
+                    &lt;path
+                      d=&quot;M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm32 664c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V456c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272zm-32-344a48.01 48.01 0 010-96 48.01 48.01 0 010 96z&quot;
+                    /&gt;
+                  &lt;/svg&gt;
+                &lt;/span&gt;
+              &lt;/span&gt;
+              &lt;div
+                class=&quot;ant-alert-section&quot;
+              &gt;
+                &lt;div
+                  class=&quot;ant-alert-title&quot;
+                &gt;
+                  从因子到模拟盘的完整门控
+                &lt;/div&gt;
+                &lt;div
+                  class=&quot;ant-alert-description&quot;
+                &gt;
+                  开仓因子在 10:00 确认，10:05 标记的下一根原生 5 分钟 Bar 开盘买入；平仓可固定为 T+1 09:30 开盘，或在 T+1 10:00 确认三根十分钟阴线后于下一 Bar 开盘退出，未触发则用 15:00 标记 Bar 的开盘价（区间起点 14:55）时间退出。当前事后非 PIT 研究永远不会自动进入 PAPER 或 LIVE。
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div
+            class=&quot;ant-space-item&quot;
+          &gt;
+            &lt;form
+              class=&quot;ant-form ant-form-vertical css-var-root ant-form-css-var css-dev-only-do-not-override-12q6fii&quot;
+              id=&quot;intraday-factor-research-backtest&quot;
+            &gt;
+              &lt;div
+                class=&quot;backtest-lab-grid&quot;
+              &gt;
+                &lt;div
+                  class=&quot;ant-form-item css-var-root ant-form-css-var css-dev-only-do-not-override-12q6fii ant-form-item-vertical&quot;
+                &gt;
+                  &lt;div
+                    class=&quot;ant-row ant-form-item-row css-dev-only-do-not-override-12q6fii css-var-root&quot;
+                  &gt;
+                    &lt;div
+                      class=&quot;ant-col ant-form-item-label css-dev-only-do-not-override-12q6fii css-var-root&quot;
+                    &gt;
+                      &lt;label
+                        class=&quot;ant-form-item-required&quot;
+                        for=&quot;intraday-factor-research-backtest_factor&quot;
+                        title=&quot;因子&quot;
+                      &gt;
+                        因子
+                      &lt;/label&gt;
+                    &lt;/div&gt;
+                    &lt;div
+                      class=&quot;ant-col ant-form-item-control css-dev-only-do-not-override-12q6fii css-var-root&quot;
+                    &gt;
+                      &lt;div
+                        class=&quot;ant-form-item-control-input&quot;
+                      &gt;
+                        &lt;div
+                          class=&quot;ant-form-item-control-input-content&quot;
+                        &gt;
+                          &lt;div
+                            class=&quot;ant-select ant-select-outlined ant-select-in-form-item css-var-root ant-select-css-var css-dev-only-do-not-override-12q6fii ant-select-single ant-select-show-arrow&quot;
+                          &gt;
+                            &lt;div
+                              class=&quot;ant-select-content ant-select-content-has-value&quot;
+                              title=&quot;09:30 起三根 10 分钟阳线&quot;
+                            &gt;
+                              09:30 起三根 10 分钟阳线
+                              &lt;input
+                                aria-autocomplete=&quot;list&quot;
+                                aria-expanded=&quot;false&quot;
+                                aria-haspopup=&quot;listbox&quot;
+                                aria-required=&quot;true&quot;
+                                autocomplete=&quot;new-password&quot;
+                                class=&quot;ant-select-input&quot;
+                                id=&quot;intraday-fac...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/components/IntradayFactorResearchLab.test.tsx:693:34
+            </failure>
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when the factor-correlation response drifts from the requested dataset" time="1.7992654">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when the factor-correlation response drifts from the requested 75-stock scope" time="1.7788383">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when the factor-correlation matrix is asymmetric" time="1.6811164">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when the reported Holm adjustment does not match the submitted family" time="1.6623799">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed before displaying a strategy backtest with drifted data identity" time="0.8501604">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; loads and submits the bounded bearish exit identity" time="1.4957796">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; locks one training rule before the disjoint discovery test window" time="4.1726883">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response drifts from the requested dataset" time="1.1648938">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response substitutes a candidate identity" time="1.1170154">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response misstates its CSCV aggregate" time="1.0962004">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response misstates its cross-sector breadth" time="1.0765076">
+        </testcase>
+        <testcase classname="src/components/IntradayFactorResearchLab.test.tsx" name="intraday factor rule correlation &gt; fails closed when a signed discovery response misstates its placebo probability" time="1.1179078">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/LegacyBacktestArchive.test.tsx" timestamp="2026-10-28T02:52:43.207Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.5597066">
+        <testcase classname="src/components/LegacyBacktestArchive.test.tsx" name="preserves and exports original saved records without replay or mutation controls" time="0.4676524">
+        </testcase>
+        <testcase classname="src/components/LegacyBacktestArchive.test.tsx" name="does not relabel unmatched saved records with the current dataset identity" time="0.091138">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/ModelPromotionPanel.test.tsx" timestamp="2026-10-28T02:52:43.208Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.3852607">
+        <testcase classname="src/components/ModelPromotionPanel.test.tsx" name="queues an explicit bounded policy and retains a failed request identity" time="0.3321554">
+        </testcase>
+        <testcase classname="src/components/ModelPromotionPanel.test.tsx" name="disables controls for anonymous or unverified policy observations" time="0.0522974">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/PageErrorBoundary.test.tsx" timestamp="2026-10-28T02:52:43.209Z" hostname="DESKTOP-F1JPIV2" tests="1" failures="0" errors="0" skipped="0" time="0.169079">
+        <testcase classname="src/components/PageErrorBoundary.test.tsx" name="keeps a generic recovery screen when a page throws" time="0.1682859">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/PublicResearchObservations.test.tsx" timestamp="2026-10-28T02:52:43.210Z" hostname="DESKTOP-F1JPIV2" tests="2" failures="0" errors="0" skipped="0" time="0.6146795">
+        <testcase classname="src/components/PublicResearchObservations.test.tsx" name="unavailable publication never displays a healthy state" time="0.425095">
+        </testcase>
+        <testcase classname="src/components/PublicResearchObservations.test.tsx" name="a failed refresh replaces the prior healthy label" time="0.1887357">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/QlibBaseline.test.tsx" timestamp="2026-10-28T02:52:43.212Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="0.9026422">
+        <testcase classname="src/components/QlibBaseline.test.tsx" name="shows actual preparation coverage without fabricated metrics" time="0.209357">
+        </testcase>
+        <testcase classname="src/components/QlibBaseline.test.tsx" name="hides previous success when a refresh fails" time="0.1889565">
+        </testcase>
+        <testcase classname="src/components/QlibBaseline.test.tsx" name="rejects a complete result without a persisted Alpha158 contract" time="0.0507122">
+        </testcase>
+        <testcase classname="src/components/QlibBaseline.test.tsx" name="renders persisted metrics and labels an older fixed result as historical" time="0.4527221">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/RollingPolicyPanel.test.tsx" timestamp="2026-10-28T02:52:43.215Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="1.3420777">
+        <testcase classname="src/components/RollingPolicyPanel.test.tsx" name="does not expose a write action without authentication or a ready control" time="0.4217319">
+        </testcase>
+        <testcase classname="src/components/RollingPolicyPanel.test.tsx" name="preserves the reviewed policy and retry identity without implicitly enabling training" time="0.5992917">
+        </testcase>
+        <testcase classname="src/components/RollingPolicyPanel.test.tsx" name="invalidates the open policy review when its bound revision changes" time="0.3199704">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" timestamp="2026-10-28T02:52:43.216Z" hostname="DESKTOP-F1JPIV2" tests="12" failures="1" errors="0" skipped="0" time="23.4279023">
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; runs one deterministic representative per sector with identical parameters" time="2.0026069">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; retains bounded batch summaries across parameter changes without auto-selecting a winner" time="3.8762053">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; evicts the oldest batch summary after the five-run session limit" time="5.3598046">
+            <failure message="Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with &quot;testTimeout&quot;." type="Error">
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with &quot;testTimeout&quot;.
+ ❯ src/components/SingleStockFiveMinuteBacktestLab.test.tsx:182:3
+            </failure>
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; bounds the signed 15-sector universe at 15 or 30 deterministic stock requests" time="0.7369753">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; can run two deterministic representatives per sector without changing shared parameters" time="4.3695809">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; measures within-sector agreement only from a complete finite two-stock pair" time="1.3859685">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; excludes a two-stock sector when one common risk metric is non-finite" time="1.3131032">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; excludes an incomplete two-stock sector from the within-sector denominator" time="1.2254142">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; reports partial coverage when one sector request fails" time="0.8836979">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; excludes a successful response with non-finite metrics from the summary denominator" time="0.6242097">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; does not create an aggregate summary when every representative request fails" time="0.8275586">
+        </testcase>
+        <testcase classname="src/components/SingleStockFiveMinuteBacktestLab.test.tsx" name="single-stock cross-sector batch diagnostic &gt; rejects responses whose parameters or safety identity drift from the batch request" time="0.8212776">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/StrategyComparisonPanel.test.tsx" timestamp="2026-10-28T02:52:43.222Z" hostname="DESKTOP-F1JPIV2" tests="3" failures="0" errors="0" skipped="0" time="0.6362286">
+        <testcase classname="src/components/StrategyComparisonPanel.test.tsx" name="shows historical evidence and missing metrics without fake zeros" time="0.5317904">
+        </testcase>
+        <testcase classname="src/components/StrategyComparisonPanel.test.tsx" name="does not substitute fallback results when publication is unavailable" time="0.0589942">
+        </testcase>
+        <testcase classname="src/components/StrategyComparisonPanel.test.tsx" name="shows unavailable on request error" time="0.0446163">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/UnifiedDataCatalog.test.tsx" timestamp="2026-10-28T02:52:43.223Z" hostname="DESKTOP-F1JPIV2" tests="4" failures="0" errors="0" skipped="0" time="2.6515749">
+        <testcase classname="src/components/UnifiedDataCatalog.test.tsx" name="unified observed data &gt; separates target and accepted coverage and queries symbols on the server" time="1.2429468">
+        </testcase>
+        <testcase classname="src/components/UnifiedDataCatalog.test.tsx" name="unified observed data &gt; rejects mismatched versions and hides previous success after refresh failure" time="0.6454846">
+        </testcase>
+        <testcase classname="src/components/UnifiedDataCatalog.test.tsx" name="unified observed data &gt; queries current and historical coverage separately without relabelling legacy data" time="0.5970433">
+        </testcase>
+        <testcase classname="src/components/UnifiedDataCatalog.test.tsx" name="unified observed data &gt; rejects two different catalog snapshots even when membership is unchanged" time="0.1650617">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/UnifiedMarket.test.tsx" timestamp="2026-10-28T02:52:43.225Z" hostname="DESKTOP-F1JPIV2" tests="6" failures="0" errors="0" skipped="0" time="4.8117946">
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; loads current target securities and discloses independent source clocks and prices" time="1.3424889">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; searches the entire target catalog on the server, preserving no-data without legacy fallback" time="0.8437232">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; clears old success on version drift or failed refresh" time="0.8777026">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; retains valid stale bars only with a prominent historical warning" time="0.4671822">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; does not draw future bars even when a reply claims current freshness" time="0.4803044">
+        </testcase>
+        <testcase classname="src/components/UnifiedMarket.test.tsx" name="unified target market &gt; cancels obsolete requests and ignores their late results" time="0.7982515">
+        </testcase>
+    </testsuite>
+</testsuites>

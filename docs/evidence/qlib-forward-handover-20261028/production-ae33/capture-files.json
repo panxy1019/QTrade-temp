@@ -1,0 +1,70 @@
+{
+  "asset_raw_bytes_retained_outside_git": "E:/QTrade-temp/cluster-evidence/handover-asset-delivery-20261027T171855Z",
+  "browser_verified": false,
+  "created_at": "2026-10-27T17:28:48.897338+00:00",
+  "files": {
+    "C-public/C-public.json": {
+      "bytes": 320269,
+      "sha256": "04f00775e11ce51e722ddd8182c3b46a6d0662693ee0799d9a82275d230dab63"
+    },
+    "C-public/attempt.json": {
+      "bytes": 1555,
+      "sha256": "6a9197485cc365a2a59dd5bb2204825d97901572c640abde1f2e902a843075fd"
+    },
+    "asset-content-verification.json": {
+      "bytes": 4119,
+      "sha256": "d0905e056a0d08070916ea8b96f805e90c5f6737e9e6889b538ed49f85ea4d30"
+    },
+    "bounded-followup-setup.json": {
+      "bytes": 645,
+      "sha256": "0ce828dde8da53c962d1a069aeca4e85a7d85db897a6d62cd35a44c52140982d"
+    },
+    "browser-terra-report.md": {
+      "bytes": 749,
+      "sha256": "136ee48e88ed841e7137861f55adba849a6f884b3fff17351dcca1ec419ca5e8"
+    },
+    "current-priority-diagnosis.json": {
+      "bytes": 1757,
+      "sha256": "3e21e9e885d2da6040b4815d19e0a2861e86baab5462e6a0a17569bb0678a624"
+    },
+    "handover-market-ae33-20261027T171504Z-ecb9a4.attempt.json": {
+      "bytes": 1228,
+      "sha256": "e474ef6345faec13fda09a40b2eebe1a5ff71c14934f06d6e0e0c2bcdc62275f"
+    },
+    "handover-market-ae33-20261027T171504Z-ecb9a4.json": {
+      "bytes": 17952,
+      "sha256": "659fe0b1e113c37e2fa7cdcbbe49b06c7f0655cdd3da2cfd6342350167108003"
+    },
+    "stock-control/capture.json": {
+      "bytes": 4127,
+      "sha256": "cda8cae00eb6c99f65fe5180ce79e501b8c3ded453c7537c078b7448ab21642a"
+    },
+    "stock-control/control-delivery-verification.json": {
+      "bytes": 1008,
+      "sha256": "50cc95c6f6fc11540c90a8fbe09730d78628311225f866986b15fa6b9cf2c4c6"
+    },
+    "stock-control/deployment-after.json": {
+      "bytes": 239,
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72"
+    },
+    "stock-control/deployment-before.json": {
+      "bytes": 239,
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72"
+    },
+    "stock-control/publication.json": {
+      "bytes": 211891,
+      "sha256": "53fb44f11e09a6831aef3640112797118dd8fac9b86ddcd3ee94ce4c902a5e9f"
+    },
+    "stock-control/stock-forward.json": {
+      "bytes": 122911,
+      "sha256": "8690c16e23f121beab765e8f873682a308bcdc95c20a410c1735fd07c7186b18"
+    },
+    "verify-production-operator.py": {
+      "bytes": 5668,
+      "sha256": "1f5bec860af63f8da2f1065f957e38a528daf8f0f315c300ec694a293e12371c"
+    }
+  },
+  "production_revision": "ae33a7c8c27ea721eb3be1e4430b562a44b67f91",
+  "raw_bytes_preserved": true,
+  "whole_step1_accepted": false
+}

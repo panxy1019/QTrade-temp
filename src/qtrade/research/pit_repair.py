@@ -66,6 +66,7 @@ def causal_intervals(
 def known_state(
     evidence: dict[str, Any], *, symbol: str, day: str, decision_at: datetime
 ) -> dict[str, Any]:
+    """Both source availability and system observation must precede the decision."""
     if decision_at.tzinfo is None:
         raise ValueError("TIMEZONE_REQUIRED")
     if evidence.get("symbol") != symbol or evidence.get("date") != day:
@@ -76,7 +77,8 @@ def known_state(
         raise ValueError("STATE_AVAILABILITY_UNKNOWN")
     available = datetime.fromisoformat(evidence["available_at"])
     observed = datetime.fromisoformat(evidence["observed_at"])
-    if available.tzinfo is None or observed.tzinfo is None or available > decision_at:
+    if (available.tzinfo is None or observed.tzinfo is None
+            or available > decision_at or observed > decision_at):
         raise ValueError("STATE_NOT_KNOWN_AT_DECISION")
     if not evidence.get("source") or not evidence.get("source_sha256"):
         raise ValueError("STATE_SOURCE_REQUIRED")

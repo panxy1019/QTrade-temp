@@ -1,0 +1,144 @@
+{
+  "closed_findings": [
+    "RECONCILE_PREPARED_MANIFEST_ID_AND_REMOTE_MANIFEST_BINDING"
+  ],
+  "files": {
+    "README.md": {
+      "bytes": 8414,
+      "sha256": "a82d2d3d5b6006ba32c0496c063b0fe841b9f563db78c41e1b76df14e76e2664"
+    },
+    "actual-sdk-source-metadata.json": {
+      "bytes": 1843,
+      "sha256": "df91f5a7656389a4c97e2475fc0ca27f005c9291f8505b152f1c1a162a2c9bd4"
+    },
+    "final-fixed-core-sdk-combined.xml": {
+      "bytes": 15615,
+      "sha256": "5f6d0f634b69aee838d31e43a30ce4e52d8f701fc0ec26ddff17f6ae5f4d6dfe"
+    },
+    "fixed-core-independent-v2.xml": {
+      "bytes": 3165,
+      "sha256": "6ee11f9e6c4f061184b670bcf7d9f86f9dec6e1410fd584ed6d23407e8359fc3"
+    },
+    "fixed-sdk-author-inverse-independent-replay.xml": {
+      "bytes": 6666,
+      "sha256": "cb7314579d180eebde6c2639dae1ddeed85f5fd14223abcbf87b41eb7c3ac6d7"
+    },
+    "fixed-sdk-new-independent-v3.xml": {
+      "bytes": 1086,
+      "sha256": "9721cfbe1b06c9dcfcbb83a78d227f6180d7c5ab9a8d46ad9b0372ebf738c95b"
+    },
+    "frozen-sources.json": {
+      "bytes": 202,
+      "sha256": "d0cdb20da9db20cd40fa4a802f0715d32441a59e03b2e6c2b8c15f97d5293062"
+    },
+    "independent-desired-contract-v1.xml": {
+      "bytes": 2236,
+      "sha256": "2257fad724cd69cbb72c6e3a177d183da0a81153b96a8b3d77dc8d1d567cd31f"
+    },
+    "make_fixed_review_tests.py": {
+      "bytes": 667,
+      "sha256": "fd8d4d61cf1fdbd2ceebddef93e2fba0b02c7044cefa85a5c1db9c6913e31f01"
+    },
+    "object_publication.py": {
+      "bytes": 28599,
+      "sha256": "d362529ba56f2283a0308c10103abe55b27e8feff9bdcf75513b42cc2f21d8dc"
+    },
+    "object_publication_d11_fixed.py": {
+      "bytes": 30442,
+      "sha256": "d11c801a90142d4b7142b8f67c422c341b30b84201999dd297c186c3582fa7d0"
+    },
+    "original-core-tests.xml": {
+      "bytes": 5991,
+      "sha256": "05a05cd0a13aac7a41f3e3735754bc6e5b4800f44b9432f9cd25e6c1d320d532"
+    },
+    "prior-sdk-evidence-references.json": {
+      "bytes": 946,
+      "sha256": "42ccc489f004341780309ade3c6b44bb1c689b427918a974587a80306c98840c"
+    },
+    "r2_object_store_d266_frozen.py": {
+      "bytes": 12296,
+      "sha256": "d26685bf8f95db48ef3db8d0c8d4716aaac56d68963fd2c302fa9b5c62c16202"
+    },
+    "seal_review.py": {
+      "bytes": 4096,
+      "sha256": "bed15e3bd73990d416213366d63814d2ce3d2cf459deac958ddb9911ed75fbf1"
+    },
+    "test_object_core_fixed_independent.py": {
+      "bytes": 9508,
+      "sha256": "0a63b3afad9746c40d2e1568d34876178166a6495f3d5e6d53dc49a50deb26e3"
+    },
+    "test_object_core_independent.py": {
+      "bytes": 7988,
+      "sha256": "08bc811c4c8d1e039991b053e25196bb6181fb3b57affb640bfbc293c6f83f1c"
+    },
+    "test_object_publication.py": {
+      "bytes": 23756,
+      "sha256": "ca66f89ac761e1efb5ed379b87c3d5c57eb7b009c5a2d4bc584da333f52a2032"
+    },
+    "test_object_publication_d11_author.py": {
+      "bytes": 26156,
+      "sha256": "f55e4a4bec2f01c193a82904be67ea7468bc615218ac68597f2c336e49a36806"
+    },
+    "test_r2_object_store_d266_author.py": {
+      "bytes": 18374,
+      "sha256": "16c2034f0782258d1058906c11adaa8d2175e39458650a573f2903c3f71bb1d0"
+    },
+    "test_sdk_independent_current.py": {
+      "bytes": 5378,
+      "sha256": "6a60c25b444fcfc32acbba5646df1b1a33f3a02328cd4a03b9d6ff636380b063"
+    }
+  },
+  "minio_or_r2_accepted_by_this_review": false,
+  "network_or_cloud_access_performed": false,
+  "original_core_sha256": "d362529ba56f2283a0308c10103abe55b27e8feff9bdcf75513b42cc2f21d8dc",
+  "performance_sla_accepted": false,
+  "production_mutation_performed": false,
+  "reviewed_sources": {
+    "src/qtrade/research/object_publication.py": "d11c801a90142d4b7142b8f67c422c341b30b84201999dd297c186c3582fa7d0",
+    "src/qtrade/research/r2_object_store.py": "d26685bf8f95db48ef3db8d0c8d4716aaac56d68963fd2c302fa9b5c62c16202",
+    "tests/test_object_publication.py": "f55e4a4bec2f01c193a82904be67ea7468bc615218ac68597f2c336e49a36806",
+    "tests/unit/test_r2_object_store.py": "16c2034f0782258d1058906c11adaa8d2175e39458650a573f2903c3f71bb1d0"
+  },
+  "reviewer_modified_core_or_sdk": false,
+  "schema_version": "qtrade.object-core-sdk-independent-review.v1",
+  "sealed_at": "2026-10-28T17:05:12.297594+00:00",
+  "state": "FIXED_CODE_OFFLINE_REVIEW_PASSED_CLOUD_ACCEPTANCE_SEPARATE",
+  "test_runs": {
+    "final-fixed-core-sdk-combined.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "112"
+    },
+    "fixed-core-independent-v2.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "15"
+    },
+    "fixed-sdk-author-inverse-independent-replay.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "47"
+    },
+    "fixed-sdk-new-independent-v3.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "5"
+    },
+    "independent-desired-contract-v1.xml": {
+      "errors": "0",
+      "failures": "1",
+      "skipped": "0",
+      "tests": "9"
+    },
+    "original-core-tests.xml": {
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "39"
+    }
+  }
+}

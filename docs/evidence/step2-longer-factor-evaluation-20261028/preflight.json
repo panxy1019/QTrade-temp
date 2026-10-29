@@ -1,0 +1,4687 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "state": "READY_FOR_16_SESSION_NONPRODUCTION_DIAGNOSTIC",
+  "checked_at": "2026-10-28T11:29:58.774345+00:00",
+  "original_evaluation_ref": {
+    "evaluation_id": "factor-eval-9ca107f1ff4843769b813d4b663eed63",
+    "specification_sha256": "03c8bf2afcc220b98077fc1b3786c5cd72985816ba429fa5ce79e3289b85683e",
+    "report_manifest_sha256": "61208f117890d0a453e084f92b6edc1d6b931b195d415b1b184104d72fbdb536"
+  },
+  "data_binding": {
+    "actual_end": "2026-10-27",
+    "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+    "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "dataset_id": "qlib-version-09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "dataset_sha256": "b52a40230fa49b46cde7fc25014638234de85e05de0d1ff93705e49d3a977df3",
+    "evidence_sha256": "e19fba2b11aa60b5b67b5e308635a6f6e647dee646c4c0025c6d472c10fc3b16",
+    "external_order_transmission": false,
+    "live_trading_enabled": false,
+    "manifest_sha256": "3e3406bc45e3a366bdcc57631648c3f05917e98f2d47a70df5c7482e8425f79b",
+    "point_in_time": false,
+    "promotion": "NOT_ELIGIBLE",
+    "ready_event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+    "real_data_paper_readiness": false,
+    "realtime_readiness": false,
+    "schema_version": "qtrade.qlib-research-data-binding.v1",
+    "source_snapshot_sha256": "467366395184edc65dd2ac079982393efdd516302302604c0a0fbfce664ef449",
+    "start": "2016-10-24",
+    "supported_symbols": 891,
+    "supported_universe_sha256": "3da952813acf86a0f53b7a299f7faac95f105c12014959bb61bd36e63a608e26"
+  },
+  "calendar_count": 2431,
+  "calendar_sha256": "ad128afe08074301f9ae5efb3efa61b867d056c1e9a8e284f378cc76c4e7f207",
+  "required_calendar": [
+    "2026-08-28",
+    "2026-08-31",
+    "2026-09-01",
+    "2026-09-02",
+    "2026-09-03",
+    "2026-09-04",
+    "2026-09-07",
+    "2026-09-08",
+    "2026-09-09",
+    "2026-09-10",
+    "2026-09-11",
+    "2026-09-14",
+    "2026-09-15",
+    "2026-09-16",
+    "2026-09-17",
+    "2026-09-18",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-08",
+    "2026-10-09",
+    "2026-10-12",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-26",
+    "2026-10-27"
+  ],
+  "decision_sessions": [
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-08",
+    "2026-10-09",
+    "2026-10-12",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-26"
+  ],
+  "label_exit_sessions": [
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-08",
+    "2026-10-09",
+    "2026-10-12",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-26",
+    "2026-10-27"
+  ],
+  "date_grid_counts": {
+    "2026-08-28": 891,
+    "2026-08-31": 891,
+    "2026-09-01": 891,
+    "2026-09-02": 891,
+    "2026-09-03": 891,
+    "2026-09-04": 891,
+    "2026-09-07": 891,
+    "2026-09-08": 891,
+    "2026-09-09": 890,
+    "2026-09-10": 890,
+    "2026-09-11": 890,
+    "2026-09-14": 890,
+    "2026-09-15": 889,
+    "2026-09-16": 889,
+    "2026-09-17": 889,
+    "2026-09-18": 889,
+    "2026-09-21": 890,
+    "2026-09-22": 890,
+    "2026-09-23": 891,
+    "2026-09-24": 891,
+    "2026-09-28": 891,
+    "2026-09-29": 891,
+    "2026-09-30": 891,
+    "2026-10-08": 890,
+    "2026-10-09": 890,
+    "2026-10-12": 891,
+    "2026-10-13": 891,
+    "2026-10-14": 891,
+    "2026-10-15": 891,
+    "2026-10-16": 891,
+    "2026-10-19": 891,
+    "2026-10-20": 891,
+    "2026-10-21": 891,
+    "2026-10-22": 891,
+    "2026-10-23": 891,
+    "2026-10-26": 888,
+    "2026-10-27": 888
+  },
+  "instrument_history_presence": [
+    {
+      "instrument": "SH600000",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600010",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600011",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600015",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600016",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600018",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600019",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600023",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600025",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600026",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600027",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600028",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600030",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600031",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600032",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600036",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600048",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600050",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600059",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600066",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600072",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600089",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600095",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600096",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600103",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600104",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600105",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600108",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600110",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600111",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600114",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600115",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600118",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600121",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600127",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600141",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600143",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600150",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600152",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600157",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600160",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600162",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600166",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600170",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600172",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600176",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600183",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600184",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600186",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600188",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600196",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600206",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600219",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600226",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600227",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600233",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600237",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600241",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600246",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600256",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600259",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600267",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600276",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600298",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600301",
+      "present_sessions": 32,
+      "missing_sessions": [
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18"
+      ]
+    },
+    {
+      "instrument": "SH600309",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600310",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600312",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600316",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600330",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600331",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600338",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600343",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600345",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600346",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600352",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600353",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600354",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600360",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600362",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600367",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600371",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600378",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600391",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600392",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600396",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600397",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600400",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600403",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600406",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600408",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600410",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600415",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600418",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600426",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600436",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600438",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600460",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600482",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600487",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600488",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600489",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600497",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600498",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600499",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600500",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600519",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600521",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600522",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600531",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600536",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600547",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600549",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600556",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600562",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600563",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600570",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600577",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600580",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600584",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600585",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600588",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600593",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600595",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600596",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600598",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600601",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600613",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600621",
+      "present_sessions": 35,
+      "missing_sessions": [
+        "2026-10-26",
+        "2026-10-27"
+      ]
+    },
+    {
+      "instrument": "SH600629",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600637",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600641",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600660",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600664",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600667",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600673",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600674",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600685",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600690",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600693",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600699",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600703",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600707",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600711",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600721",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600722",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600732",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600737",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600741",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600760",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600795",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600802",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600809",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600812",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600843",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600863",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600865",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600869",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600875",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600879",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600884",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600885",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600886",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600887",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600888",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600893",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600895",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600900",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600905",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600909",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600919",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600926",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600958",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600961",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600967",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600977",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600986",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600988",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600989",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH600999",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601001",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601006",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601009",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601012",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601020",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601058",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601066",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601069",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601077",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601086",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601088",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601099",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601100",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601108",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601111",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601117",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601118",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601126",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601127",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601128",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601138",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601162",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601166",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601168",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601169",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601179",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601208",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601211",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601212",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601218",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601225",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601229",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601231",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601233",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601288",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601318",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601319",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601328",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601336",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601360",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601377",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601390",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601398",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601519",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601566",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601579",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601600",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601601",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601606",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601609",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601615",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601628",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601658",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601665",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601668",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601669",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601677",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601678",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601688",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601689",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601698",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601699",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601727",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601728",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601766",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601778",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601811",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601816",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601818",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601838",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601857",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601858",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601868",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601869",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601872",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601877",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601881",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601890",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601898",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601899",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601916",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601918",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601919",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601929",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601939",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601958",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601975",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601985",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601988",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601991",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH601995",
+      "present_sessions": 31,
+      "missing_sessions": [
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22"
+      ]
+    },
+    {
+      "instrument": "SH601998",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603000",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603002",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603005",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603011",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603019",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603026",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603031",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603039",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603042",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603063",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603067",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603068",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603078",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603083",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603087",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603099",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603105",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603110",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603115",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603127",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603129",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603138",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603155",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603156",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603171",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603179",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603186",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603200",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603221",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603228",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603232",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603236",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603256",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603259",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603268",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603269",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603283",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603288",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603290",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603306",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603308",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603319",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603330",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603345",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603358",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603369",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603379",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603386",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603399",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603444",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603456",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603501",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603516",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603533",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603538",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603588",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603596",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603598",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603601",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603605",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603606",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603618",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603619",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603626",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603629",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603650",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603659",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603663",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603667",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603669",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603688",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603690",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603728",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603738",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603757",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603773",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603799",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603806",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603823",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603881",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603882",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603890",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603893",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603906",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603920",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603929",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603936",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603938",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603939",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603950",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603978",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603979",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603980",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603989",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603990",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603991",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603993",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH603997",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605006",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605058",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605111",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605117",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605178",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605196",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605258",
+      "present_sessions": 35,
+      "missing_sessions": [
+        "2026-10-26",
+        "2026-10-27"
+      ]
+    },
+    {
+      "instrument": "SH605287",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605358",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605376",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605499",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SH605577",
+      "present_sessions": 34,
+      "missing_sessions": [
+        "2026-09-09",
+        "2026-09-10",
+        "2026-09-11"
+      ]
+    },
+    {
+      "instrument": "SH605589",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000001",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000002",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000011",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000021",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000032",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000034",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000060",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000062",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000063",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000066",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000070",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000100",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000157",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000158",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000166",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000333",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000400",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000408",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000420",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000425",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000426",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000503",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000506",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000510",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000513",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000519",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000523",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000538",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000547",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000559",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000568",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000582",
+      "present_sessions": 35,
+      "missing_sessions": [
+        "2026-10-08",
+        "2026-10-09"
+      ]
+    },
+    {
+      "instrument": "SZ000592",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000596",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000601",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000603",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000612",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000617",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000620",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000625",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000628",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000630",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000636",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000651",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000657",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000661",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000676",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000678",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000681",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000688",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000690",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000700",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000703",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000710",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000712",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000725",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000733",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000737",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000739",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000759",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000768",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000776",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000783",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000786",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000807",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000811",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000815",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000823",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000831",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000833",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000858",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000859",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000878",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000880",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000887",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000892",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000893",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000895",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000933",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000949",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000960",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000962",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000967",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000969",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000973",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000975",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000977",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000980",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000981",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000983",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000988",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000993",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ000999",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ001203",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ001211",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ001216",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ001696",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ001896",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ001979",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002001",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002008",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002011",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002015",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002027",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002028",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002029",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002031",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002044",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002046",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002049",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002050",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002074",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002077",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002078",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002080",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002081",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002083",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002085",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002104",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002115",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002119",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002126",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002128",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002134",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002138",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002141",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002142",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002145",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002149",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002151",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002155",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002156",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002157",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002164",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002167",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002172",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002173",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002174",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002176",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002179",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002181",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002185",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002192",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002195",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002201",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002202",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002203",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002212",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002222",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002223",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002230",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002232",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002236",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002238",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002240",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002242",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002244",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002245",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002246",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002252",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002261",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002264",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002265",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002266",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002271",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002273",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002285",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002290",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002291",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002292",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002294",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002300",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002303",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002311",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002317",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002326",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002335",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002340",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002342",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002352",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002353",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002361",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002364",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002371",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002378",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002379",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002384",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002389",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002396",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002400",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002402",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002407",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002409",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002413",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002414",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002415",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002421",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002422",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002428",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002430",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002432",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002437",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002439",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002443",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002460",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002463",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002465",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002466",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002467",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002472",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002475",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002484",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002487",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002490",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002491",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002493",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002497",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002498",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002506",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002515",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002517",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002518",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002531",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002532",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002541",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002549",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002552",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002555",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002558",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002565",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002579",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002580",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002585",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002600",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002602",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002614",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002617",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002624",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002625",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002631",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002636",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002639",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002645",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002647",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002648",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002653",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002654",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002655",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002674",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002702",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002708",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002714",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002716",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002724",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002733",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002734",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002738",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002739",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002741",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002756",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002768",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002792",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002805",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002811",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002815",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002824",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002827",
+      "present_sessions": 35,
+      "missing_sessions": [
+        "2026-10-26",
+        "2026-10-27"
+      ]
+    },
+    {
+      "instrument": "SZ002841",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002842",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002850",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002851",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002866",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002881",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002882",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002885",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002886",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002896",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002897",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002902",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002912",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002916",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002920",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002929",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002938",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002947",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002957",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002965",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002966",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002971",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002975",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002979",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ002980",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ003006",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ003018",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ003026",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ003031",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ003036",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ003040",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ003816",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300001",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300002",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300005",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300006",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300015",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300033",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300042",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300045",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300049",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300054",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300058",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300059",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300061",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300065",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300073",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300077",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300083",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300085",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300102",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300111",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300115",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300120",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300122",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300124",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300131",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300133",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300136",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300139",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300142",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300151",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300164",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300166",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300170",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300179",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300182",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300184",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300189",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300192",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300199",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300207",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300209",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300221",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300223",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300229",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300236",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300244",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300251",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300253",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300255",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300260",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300274",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300283",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300291",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300300",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300302",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300308",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300311",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300315",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300316",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300322",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300323",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300324",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300328",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300331",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300333",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300339",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300342",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300346",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300347",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300363",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300368",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300373",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300378",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300390",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300394",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300395",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300404",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300408",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300409",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300410",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300413",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300418",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300432",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300433",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300434",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300436",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300438",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300442",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300454",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300456",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300459",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300461",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300468",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300469",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300473",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300474",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300475",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300476",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300480",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300489",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300491",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300498",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300499",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300522",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300530",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300548",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300558",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300566",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300568",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300570",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300576",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300589",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300593",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300607",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300613",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300620",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300624",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300638",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300642",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300647",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300655",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300657",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300661",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300666",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300671",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300672",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300676",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300677",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300679",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300681",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300684",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300687",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300693",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300709",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300720",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300724",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300725",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300726",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300738",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300739",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300740",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300747",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300748",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300750",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300751",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300757",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300759",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300760",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300762",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300763",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300766",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300769",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300776",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300779",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300782",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300785",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300790",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300792",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300798",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300803",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300806",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300811",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300814",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300820",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300821",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300825",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300829",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300832",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300835",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300842",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300843",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300846",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300850",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300852",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300857",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300862",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300866",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300870",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300895",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300896",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300900",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300903",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300911",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300913",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300917",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300919",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300943",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300951",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300953",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300964",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300972",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300975",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300990",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ300999",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301002",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301005",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301008",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301013",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301018",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301021",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301041",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301047",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301052",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301080",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301085",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301086",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301093",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ301128",
+      "present_sessions": 37,
+      "missing_sessions": []
+    },
+    {
+      "instrument": "SZ302132",
+      "present_sessions": 37,
+      "missing_sessions": []
+    }
+  ],
+  "complete_date_grid_instruments": 884,
+  "factor_refs": [
+    {
+      "factor_id": "qtrade.price.momentum20",
+      "factor_version": "a56c5325a6e10a717dbe9dcd256ccba99ee39671594e21c3d2f272289a92f857",
+      "definition_sha256": "62fa55321229f24cd61681c0a612f28d7aeef5c3192acb64a5f8ec388502158d"
+    },
+    {
+      "factor_id": "qtrade.price.reversal5",
+      "factor_version": "79b4651024a5371be545f094a792c0e30d31bcfdb6264fe6438a2bc044298a0c",
+      "definition_sha256": "d7f6d6d71fea45acfff6f1a35fedef21ef61276ab6ac13621f27587c24bde217"
+    },
+    {
+      "factor_id": "qtrade.price.lowvol20",
+      "factor_version": "12940ad6a5accd2e087a013caa8f84dabc3c6798df151f2dc52b37007bc8737b",
+      "definition_sha256": "b5aaddd7d97cafc988cf80d5eb5d44f0f0ec62aa84479f17b91d14e0def50ebc"
+    },
+    {
+      "factor_id": "qtrade.composite.multifactor_equal_rank",
+      "factor_version": "1100fac3ac3d8b2f19217c8ec83d3e14549f7d1bb080a673adf6baed17baa00e",
+      "definition_sha256": "188bf9cfd9544b3bb0fc4fb0cf60cf6b57ad55b04022dfcc7127d82678c4d5b7"
+    }
+  ],
+  "required_closes": [
+    21,
+    6,
+    21,
+    21
+  ],
+  "dependency_cells": 983664,
+  "request_sha256": "148bd2184cfbc05ca6f5c85685fc4b5a7c0695f226411dbb862d1e420c43004c",
+  "original_factor_database_sha256": "ebab315c6b64ca8741a12f99c7d8fc9a567167fda7a12aa485d4e16a5f906763",
+  "admission": {
+    "version": {
+      "version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+      "manifest_sha256": "3e3406bc45e3a366bdcc57631648c3f05917e98f2d47a70df5c7482e8425f79b",
+      "actual_end": "2026-10-27",
+      "admitted_at": "2026-10-27T12:23:08.063121+00:00"
+    },
+    "event": {
+      "event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+      "payload": "{\"classification\": \"PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY\", \"point_in_time\": false, \"realtime_readiness\": false, \"real_data_paper_readiness\": false, \"external_order_transmission\": false, \"live_trading_enabled\": false, \"promotion\": \"NOT_ELIGIBLE\", \"kind\": \"QLIB_DATA_READY\", \"version_id\": \"09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407\", \"manifest_sha256\": \"3e3406bc45e3a366bdcc57631648c3f05917e98f2d47a70df5c7482e8425f79b\", \"actual_end\": \"2026-10-27\", \"admitted_at\": \"2026-10-27T12:23:08.063121+00:00\", \"scope\": \"QUALIFIED_RESEARCH_SUBSET_NOT_FULL_PIT_OR_TRADE_READINESS\", \"evidence_sha256\": \"69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c\"}"
+    }
+  },
+  "maturity": "SESSION_15_00_ONLY_NOT_EXACT_HISTORICAL_INFORMATION_CLOCK",
+  "selection": "EXACT_ORIGINAL_891_INSTRUMENTS_NO_SHRINK_OR_NEW_SAMPLE",
+  "price_validity_not_certified_by_date_preflight": true,
+  "evidence_sha256": "61b76f969bfaeff160fd8b9213fbc9eb6c60fb77189c602add0e99beb62cf2aa"
+}

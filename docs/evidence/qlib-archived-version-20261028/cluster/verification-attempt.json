@@ -1,0 +1,23 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "kind": "ARCHIVED_VERSION_INDEPENDENT_REPLAY_ATTEMPT",
+  "started_at": "2026-10-27T17:48:23.472731+00:00",
+  "finished_at": "2026-10-27T17:49:15.651178+00:00",
+  "returncode": 0,
+  "args": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-B",
+    "/root/qtrade-local/operator-evidence/archived-version-578bb610-20261028/verify-archived-version.py"
+  ],
+  "operator_sha256": "42b2d4f08de749c500d364990c56a92c063b982e789473b3938ac0f602edd623",
+  "stdout_sha256": "92171dac221a98187a638d549aa06e730e659ef5f608b16e4c2ad868302c0cc5",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "whole_step1_accepted": false,
+  "evidence_sha256": "e245c7f777eaabe33641659a454e05e5018e0f592db9189222cf1a4fca8013b6"
+}

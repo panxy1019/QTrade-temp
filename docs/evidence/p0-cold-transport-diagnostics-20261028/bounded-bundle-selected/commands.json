@@ -1,0 +1,3060 @@
+[
+  {
+    "id": 1,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "--version"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.041588000021874905,
+    "stdout": {
+      "path": "commands\\001.stdout.bin",
+      "bytes": 29,
+      "sha256": "c5edede02fe21b2f2c938647bec500fe0b763e9bf18bd027ebf3e02857850c18"
+    },
+    "stderr": {
+      "path": "commands\\001.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "git version 2.53.0.windows.3\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 2,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "init",
+      "--initial-branch=fixture-work",
+      "--object-format=sha1",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.0750874001532793,
+    "stdout": {
+      "path": "commands\\002.stdout.bin",
+      "bytes": 113,
+      "sha256": "549003b3470e3917df9e314a79fcaed00a2d9706c11d821d5438624ac1b6e39b"
+    },
+    "stderr": {
+      "path": "commands\\002.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "Initialized empty Git repository in E:/QTrade-temp/p0-bounded-git-fixture-20261028T140010Z-76ef46bf/source/.git/\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 3,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "add",
+      "--all"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.08511679992079735,
+    "stdout": {
+      "path": "commands\\003.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\003.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 4,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "-c",
+      "user.name=Synthetic Local Fixture",
+      "-c",
+      "user.email=fixture@example.invalid",
+      "-c",
+      "commit.gpgsign=false",
+      "commit",
+      "--no-verify",
+      "-m",
+      "historical ancestor outside shallow base"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.07887289999052882,
+    "stdout": {
+      "path": "commands\\004.stdout.bin",
+      "bytes": 167,
+      "sha256": "6e13d79b9abc290daee2df0f649d321c0a21bb0c0bfe6db4c33b781d49fcd0c7"
+    },
+    "stderr": {
+      "path": "commands\\004.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "[fixture-work (root-commit) 08c9169] historical ancestor outside shallow base\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 historical-only.bin\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 5,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05482119997031987,
+    "stdout": {
+      "path": "commands\\005.stdout.bin",
+      "bytes": 41,
+      "sha256": "9f48c6de9125bf4ecbe027531a2c4f2ed1ec39322ffd6ad9ad10af3e5ed0a0c0"
+    },
+    "stderr": {
+      "path": "commands\\005.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "08c91695853a4d83afa58ecdca23bffe0a771378\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 6,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "rev-parse",
+      "HEAD:historical-only.bin"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04763210006058216,
+    "stdout": {
+      "path": "commands\\006.stdout.bin",
+      "bytes": 41,
+      "sha256": "fae7411d3fbe634c6ed5ece63c51674dcecd95bf12295276512283d3b8f7c7c7"
+    },
+    "stderr": {
+      "path": "commands\\006.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "647bc4bdffa87097c8fda31f43293576e32b3051\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 7,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "add",
+      "--all"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.1202362000476569,
+    "stdout": {
+      "path": "commands\\007.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\007.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 8,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "-c",
+      "user.name=Synthetic Local Fixture",
+      "-c",
+      "user.email=fixture@example.invalid",
+      "-c",
+      "commit.gpgsign=false",
+      "commit",
+      "--no-verify",
+      "-m",
+      "complete shallow base"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.06363200000487268,
+    "stdout": {
+      "path": "commands\\008.stdout.bin",
+      "bytes": 351,
+      "sha256": "4d4510d17018799284d4aade55c3668a6de2609a9c79d4464ebe39b5955d7660"
+    },
+    "stderr": {
+      "path": "commands\\008.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "[fixture-work f0ed92e] complete shallow base\n 7 files changed, 1 insertion(+)\n create mode 100644 README.txt\n delete mode 100644 historical-only.bin\n create mode 100644 public/changed.bin\n create mode 100644 public/deleted-from-base.bin\n create mode 100644 reuse/reuse-a.bin\n create mode 100644 reuse/reuse-b.bin\n create mode 100644 reuse/reuse-c.bin\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 9,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04768530000001192,
+    "stdout": {
+      "path": "commands\\009.stdout.bin",
+      "bytes": 41,
+      "sha256": "24ef734ab183958b8db65eddde0354e89650a65c2379498bf2c15e057cf5deb3"
+    },
+    "stderr": {
+      "path": "commands\\009.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "f0ed92e43fe3ac419cb849aa4068f10922adfc9b\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 10,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "branch",
+      "base",
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.06067040003836155,
+    "stdout": {
+      "path": "commands\\010.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\010.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 11,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "add",
+      "--all"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.08704019989818335,
+    "stdout": {
+      "path": "commands\\011.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\011.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 12,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "-c",
+      "user.name=Synthetic Local Fixture",
+      "-c",
+      "user.email=fixture@example.invalid",
+      "-c",
+      "commit.gpgsign=false",
+      "commit",
+      "--no-verify",
+      "-m",
+      "intermediate contains later-deleted public blob"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.06369340000674129,
+    "stdout": {
+      "path": "commands\\012.stdout.bin",
+      "bytes": 173,
+      "sha256": "da68243e83163756960abf9617709f89af10b5d8c756054c2ca2bcd56e0dcbd8"
+    },
+    "stderr": {
+      "path": "commands\\012.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "[fixture-work 6aea75a] intermediate contains later-deleted public blob\n 2 files changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 public/intermediate-deleted.bin\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 13,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05352719989605248,
+    "stdout": {
+      "path": "commands\\013.stdout.bin",
+      "bytes": 41,
+      "sha256": "ac8e345d30eb90449ab9ec424d98bc9a110e42770f0a0b81ee5c27eda2861caf"
+    },
+    "stderr": {
+      "path": "commands\\013.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "6aea75a6c42c448c7a48fbebba836188f40e8a63\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 14,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "rev-parse",
+      "HEAD:public/intermediate-deleted.bin"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04983179992996156,
+    "stdout": {
+      "path": "commands\\014.stdout.bin",
+      "bytes": 41,
+      "sha256": "d2c3d41fe195b63ac6056eca9e8817343c48ae66ab711f958d5e07bd0a4281be"
+    },
+    "stderr": {
+      "path": "commands\\014.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "1ef1c790863520f223ffb02fd6fa52d94312d985\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 15,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "add",
+      "--all"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.07629420002922416,
+    "stdout": {
+      "path": "commands\\015.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\015.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 16,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "-c",
+      "user.name=Synthetic Local Fixture",
+      "-c",
+      "user.email=fixture@example.invalid",
+      "-c",
+      "commit.gpgsign=false",
+      "commit",
+      "--no-verify",
+      "-m",
+      "frozen current target"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.06893340009264648,
+    "stdout": {
+      "path": "commands\\016.stdout.bin",
+      "bytes": 231,
+      "sha256": "3848d4cd5963082e51fe20b1b2a9e2d22202d1c7c8cf8a7c533f9ee6498ef0d7"
+    },
+    "stderr": {
+      "path": "commands\\016.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "[fixture-work dd3999c] frozen current target\n 3 files changed, 0 insertions(+), 0 deletions(-)\n delete mode 100644 public/deleted-from-base.bin\n delete mode 100644 public/intermediate-deleted.bin\n create mode 100644 public/new.bin\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 17,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.060186499962583184,
+    "stdout": {
+      "path": "commands\\017.stdout.bin",
+      "bytes": 41,
+      "sha256": "e7250d3e0c66b532decfa24d417a71d2f3e942bbc493540e1d8d24fde57fab1f"
+    },
+    "stderr": {
+      "path": "commands\\017.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "dd3999c9103a282cdc8628c2ea7cad148a9cf513\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 18,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "branch",
+      "frozen-head",
+      "dd3999c9103a282cdc8628c2ea7cad148a9cf513"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.06293369992636144,
+    "stdout": {
+      "path": "commands\\018.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\018.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 19,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "ls-tree",
+      "-r",
+      "-z",
+      "--full-tree",
+      "dd3999c9103a282cdc8628c2ea7cad148a9cf513"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.03945080004632473,
+    "stdout": {
+      "path": "commands\\019.stdout.bin",
+      "bytes": 417,
+      "sha256": "9d7056db7e8a49ee341f1782f5127516c3684d7e5fcc5359b40119e38bbf812e"
+    },
+    "stderr": {
+      "path": "commands\\019.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 20,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "ls-tree",
+      "-r",
+      "-z",
+      "--full-tree",
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05167419998906553,
+    "stdout": {
+      "path": "commands\\020.stdout.bin",
+      "bytes": 431,
+      "sha256": "8493dccf55ddfd1c88e30b69ff0161cefb70f297a8e33a64614142863cf2f0b1"
+    },
+    "stderr": {
+      "path": "commands\\020.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 21,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "rev-parse",
+      "dd3999c9103a282cdc8628c2ea7cad148a9cf513^{tree}"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.049704400124028325,
+    "stdout": {
+      "path": "commands\\021.stdout.bin",
+      "bytes": 41,
+      "sha256": "7f994ae0b44e5daa18d9666ab9b2b6cbfb1be9810141a272d2074a909ac8da8c"
+    },
+    "stderr": {
+      "path": "commands\\021.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "aa4a884531681524a52aba7f6aa29104ffad5a33\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 22,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "-c",
+      "pack.window=0",
+      "-c",
+      "pack.reuseDeltas=false",
+      "-c",
+      "pack.reuseObjects=false",
+      "bundle",
+      "create",
+      "--version=2",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\increment.bundle",
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b..refs/heads/frozen-head"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.08081419998779893,
+    "stdout": {
+      "path": "commands\\022.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\022.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 23,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "bundle",
+      "list-heads",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\increment.bundle"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.03297429997473955,
+    "stdout": {
+      "path": "commands\\023.stdout.bin",
+      "bytes": 64,
+      "sha256": "0435270ccefc0c02d1cade49456a6cb1b0d5fd0fb7388bdb819e894915d7c3aa"
+    },
+    "stderr": {
+      "path": "commands\\023.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "dd3999c9103a282cdc8628c2ea7cad148a9cf513 refs/heads/frozen-head\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 24,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "init",
+      "--bare",
+      "--object-format=sha1",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\pack-inspector.git"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.06201069988310337,
+    "stdout": {
+      "path": "commands\\024.stdout.bin",
+      "bytes": 120,
+      "sha256": "a7ef81e5c85162d4688a1489314e4f7e1d6954c7b9f2ac776159f3d0269ce411"
+    },
+    "stderr": {
+      "path": "commands\\024.stderr.bin",
+      "bytes": 586,
+      "sha256": "3e70934f1909b0f5a846d62237fcc1509d733b9fb0321187024723dfc67176d3"
+    },
+    "stdout_text": "Initialized empty Git repository in E:/QTrade-temp/p0-bounded-git-fixture-20261028T140010Z-76ef46bf/pack-inspector.git/\n",
+    "stderr_text": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+  },
+  {
+    "id": 25,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\pack-inspector.git",
+      "index-pack",
+      "--stdin",
+      "--fix-thin"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": {
+      "bytes": 426969,
+      "sha256": "d878dac6585f47d96772c7dc77c9e063c419269bf323c151614047dcec1e8f79"
+    },
+    "returncode": 0,
+    "seconds": 0.07829440012574196,
+    "stdout": {
+      "path": "commands\\025.stdout.bin",
+      "bytes": 46,
+      "sha256": "cc710ef75ef8319178160980f532141270f56fe40f26e438abedc64b9e43f3ba"
+    },
+    "stderr": {
+      "path": "commands\\025.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "pack\t4baf6a122c820e1d2b9f9593499faa7bd51f5709\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 26,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\pack-inspector.git",
+      "verify-pack",
+      "-v",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\pack-inspector.git\\objects\\pack\\pack-4baf6a122c820e1d2b9f9593499faa7bd51f5709.idx"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.07033320004120469,
+    "stdout": {
+      "path": "commands\\026.stdout.bin",
+      "bytes": 737,
+      "sha256": "58b81358aa07a4cedfefee822de65524722d7d080789e28735d02bf2157e5e88"
+    },
+    "stderr": {
+      "path": "commands\\026.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "dd3999c9103a282cdc8628c2ea7cad148a9cf513 commit 268 174 12\n6aea75a6c42c448c7a48fbebba836188f40e8a63 commit 294 191 186\naa4a884531681524a52aba7f6aa29104ffad5a33 tree   103 109 377\n08407e724a67b13381e41f0c2e75b6658cfb435a tree   74 78 486\n20233a13f474aa54b2be4945fb3e46b02f1aa64f blob   196609 196678 564\n59c7d400050a30dc3d6c900a839f451d291ca303 blob   131072 131121 197242\n281daf162ed2d6c104ca670226c67d83086f3b4c tree   103 110 328363\n2a295b22d1eb7cd78c97d6d8c06ee31dae8f5dbf tree   140 133 328473\n1ef1c790863520f223ffb02fd6fa52d94312d985 blob   98304 98343 328606\nnon delta: 9 objects\nE:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\pack-inspector.git\\objects\\pack\\pack-4baf6a122c820e1d2b9f9593499faa7bd51f5709.pack: ok\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 27,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "clone",
+      "--bare",
+      "--no-hardlinks",
+      "--depth=1",
+      "--single-branch",
+      "--branch",
+      "base",
+      "--no-tags",
+      "--filter=blob:none",
+      "file:///E:/QTrade-temp/p0-bounded-git-fixture-20261028T140010Z-76ef46bf/source",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\file-filter-control.git"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.2605906999669969,
+    "stdout": {
+      "path": "commands\\027.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\027.stderr.bin",
+      "bytes": 176,
+      "sha256": "589d2631f9ba6d2c3515f836b21f0fdb143477932e39af7e1ddb78d9883f8942"
+    },
+    "stdout_text": "",
+    "stderr_text": "Cloning into bare repository 'E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\file-filter-control.git'...\nwarning: filtering not recognized by server, ignoring\n"
+  },
+  {
+    "id": 28,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\file-filter-control.git",
+      "cat-file",
+      "--batch-all-objects",
+      "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05276999995112419,
+    "stdout": {
+      "path": "commands\\028.stdout.bin",
+      "bytes": 513,
+      "sha256": "d82fb5b156d04a91dc5ed31f69d4a730fd4899ec1c49a2887cbe086f4700fa13"
+    },
+    "stderr": {
+      "path": "commands\\028.stderr.bin",
+      "bytes": 80,
+      "sha256": "e9c1e943ba36926d8826ec0e39b9c3ed51ed7e2e7378647493a6f81ccb4c7e01"
+    },
+    "stdout_text": "4695f9e24b622d530e1e33149840165b266f804b blob 32768\n4d085e726feb68ecb286f65ae492cf6229b3f619 tree 88\n591531554ea795e9251e1c216f07e98fb6816ea8 tree 117\n6562f1d677724f8b5c0d3d632f391c65d4968828 tree 103\n975ffb825966cf6f32c08065e9ac87de4935bee4 blob 131072\na2689f90449225a06d4bcb9f2dc7db10b3409e4b blob 262144\nab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5 blob 54\nbc217f8fc94fe75c6915b4280fa964254b50ad1d blob 65536\nc328ca2b1fdc8e124441ad445a19a07086f9f4af blob 196608\nf0ed92e43fe3ac419cb849aa4068f10922adfc9b commit 268\n",
+    "stderr_text": "warning: This repository uses promisor remotes. Some objects may not be loaded.\n"
+  },
+  {
+    "id": 29,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "init",
+      "--bare",
+      "--object-format=sha1",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.08243880001828074,
+    "stdout": {
+      "path": "commands\\029.stdout.bin",
+      "bytes": 119,
+      "sha256": "8d7b6a4475a3d27dde721f08355c7af10d14973ca7a33de33d8439c0a864720a"
+    },
+    "stderr": {
+      "path": "commands\\029.stderr.bin",
+      "bytes": 586,
+      "sha256": "3e70934f1909b0f5a846d62237fcc1509d733b9fb0321187024723dfc67176d3"
+    },
+    "stdout_text": "Initialized empty Git repository in E:/QTrade-temp/p0-bounded-git-fixture-20261028T140010Z-76ef46bf/metadata-only.git/\n",
+    "stderr_text": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+  },
+  {
+    "id": 30,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "rev-parse",
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b^{tree}"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.06637989985756576,
+    "stdout": {
+      "path": "commands\\030.stdout.bin",
+      "bytes": 41,
+      "sha256": "8ab5f1cc3e4e7700b2bc1042fc2fcc4bc3434c1f312bb7b21b826f67af445655"
+    },
+    "stderr": {
+      "path": "commands\\030.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "6562f1d677724f8b5c0d3d632f391c65d4968828\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 31,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "ls-tree",
+      "-r",
+      "-t",
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04875209997408092,
+    "stdout": {
+      "path": "commands\\031.stdout.bin",
+      "bytes": 550,
+      "sha256": "df8c7e5a8d910bbd6a26e7a3c2722960e18e04afafc8326698b691e8bae80a49"
+    },
+    "stderr": {
+      "path": "commands\\031.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "100644 blob ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5\tREADME.txt\n040000 tree 4d085e726feb68ecb286f65ae492cf6229b3f619\tpublic\n100644 blob c328ca2b1fdc8e124441ad445a19a07086f9f4af\tpublic/changed.bin\n100644 blob bc217f8fc94fe75c6915b4280fa964254b50ad1d\tpublic/deleted-from-base.bin\n040000 tree 591531554ea795e9251e1c216f07e98fb6816ea8\treuse\n100644 blob 975ffb825966cf6f32c08065e9ac87de4935bee4\treuse/reuse-a.bin\n100644 blob a2689f90449225a06d4bcb9f2dc7db10b3409e4b\treuse/reuse-b.bin\n100644 blob 4695f9e24b622d530e1e33149840165b266f804b\treuse/reuse-c.bin\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 32,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "cat-file",
+      "commit",
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.0477318000048399,
+    "stdout": {
+      "path": "commands\\032.stdout.bin",
+      "bytes": 268,
+      "sha256": "f3d7f7ce94d040771c1cf5946cfd7252a5e5367f029575f10a6dedf0080b221d"
+    },
+    "stderr": {
+      "path": "commands\\032.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "tree 6562f1d677724f8b5c0d3d632f391c65d4968828\nparent 08c91695853a4d83afa58ecdca23bffe0a771378\nauthor Synthetic Local Fixture <fixture@example.invalid> 1790902800 +0000\ncommitter Synthetic Local Fixture <fixture@example.invalid> 1790902800 +0000\n\ncomplete shallow base\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 33,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "hash-object",
+      "-w",
+      "-t",
+      "commit",
+      "--stdin"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": {
+      "bytes": 268,
+      "sha256": "f3d7f7ce94d040771c1cf5946cfd7252a5e5367f029575f10a6dedf0080b221d"
+    },
+    "returncode": 0,
+    "seconds": 0.049409399973228574,
+    "stdout": {
+      "path": "commands\\033.stdout.bin",
+      "bytes": 41,
+      "sha256": "24ef734ab183958b8db65eddde0354e89650a65c2379498bf2c15e057cf5deb3"
+    },
+    "stderr": {
+      "path": "commands\\033.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "f0ed92e43fe3ac419cb849aa4068f10922adfc9b\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 34,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "cat-file",
+      "tree",
+      "4d085e726feb68ecb286f65ae492cf6229b3f619"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04799810005351901,
+    "stdout": {
+      "path": "commands\\034.stdout.bin",
+      "bytes": 88,
+      "sha256": "c33d4788e3b1bde1480836a421df14ea0598aca6f5681f5ccff25db9a01c2621"
+    },
+    "stderr": {
+      "path": "commands\\034.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 35,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "hash-object",
+      "-w",
+      "-t",
+      "tree",
+      "--stdin"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": {
+      "bytes": 88,
+      "sha256": "c33d4788e3b1bde1480836a421df14ea0598aca6f5681f5ccff25db9a01c2621"
+    },
+    "returncode": 0,
+    "seconds": 0.050965100061148405,
+    "stdout": {
+      "path": "commands\\035.stdout.bin",
+      "bytes": 41,
+      "sha256": "a5b66495711a0240326d9b7db6a673951fda444b16b648b20219fd3f57f95863"
+    },
+    "stderr": {
+      "path": "commands\\035.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "4d085e726feb68ecb286f65ae492cf6229b3f619\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 36,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "cat-file",
+      "tree",
+      "591531554ea795e9251e1c216f07e98fb6816ea8"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.047400200041010976,
+    "stdout": {
+      "path": "commands\\036.stdout.bin",
+      "bytes": 117,
+      "sha256": "69bb1e62044b66c4fa9ac195d81d7aba0814e4adaef5ddd72d39266c01062760"
+    },
+    "stderr": {
+      "path": "commands\\036.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 37,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "hash-object",
+      "-w",
+      "-t",
+      "tree",
+      "--stdin"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": {
+      "bytes": 117,
+      "sha256": "69bb1e62044b66c4fa9ac195d81d7aba0814e4adaef5ddd72d39266c01062760"
+    },
+    "returncode": 0,
+    "seconds": 0.04913699999451637,
+    "stdout": {
+      "path": "commands\\037.stdout.bin",
+      "bytes": 41,
+      "sha256": "416f5f1b907baaaf9498f937ab153774751eef3c1e544b58a5c4e72908326361"
+    },
+    "stderr": {
+      "path": "commands\\037.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "591531554ea795e9251e1c216f07e98fb6816ea8\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 38,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\source",
+      "cat-file",
+      "tree",
+      "6562f1d677724f8b5c0d3d632f391c65d4968828"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04953430010937154,
+    "stdout": {
+      "path": "commands\\038.stdout.bin",
+      "bytes": 103,
+      "sha256": "510d11472d354e1df687ca9e10e0007728ac46629cb5b652b8a0d3eb01764706"
+    },
+    "stderr": {
+      "path": "commands\\038.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 39,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "hash-object",
+      "-w",
+      "-t",
+      "tree",
+      "--stdin"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": {
+      "bytes": 103,
+      "sha256": "510d11472d354e1df687ca9e10e0007728ac46629cb5b652b8a0d3eb01764706"
+    },
+    "returncode": 0,
+    "seconds": 0.04932999983429909,
+    "stdout": {
+      "path": "commands\\039.stdout.bin",
+      "bytes": 41,
+      "sha256": "8ab5f1cc3e4e7700b2bc1042fc2fcc4bc3434c1f312bb7b21b826f67af445655"
+    },
+    "stderr": {
+      "path": "commands\\039.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "6562f1d677724f8b5c0d3d632f391c65d4968828\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 40,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "update-ref",
+      "refs/heads/base",
+      "f0ed92e43fe3ac419cb849aa4068f10922adfc9b"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04856689996086061,
+    "stdout": {
+      "path": "commands\\040.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\040.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 41,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "cat-file",
+      "--batch-all-objects",
+      "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.036347800167277455,
+    "stdout": {
+      "path": "commands\\041.stdout.bin",
+      "bytes": 201,
+      "sha256": "8b70a6ddf005d015ec38586061f2613f160d1f4eec249a6f981133fe88dbf6bb"
+    },
+    "stderr": {
+      "path": "commands\\041.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "4d085e726feb68ecb286f65ae492cf6229b3f619 tree 88\n591531554ea795e9251e1c216f07e98fb6816ea8 tree 117\n6562f1d677724f8b5c0d3d632f391c65d4968828 tree 103\nf0ed92e43fe3ac419cb849aa4068f10922adfc9b commit 268\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 42,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "clone",
+      "--bare",
+      "--no-hardlinks",
+      "--depth=1",
+      "--single-branch",
+      "--branch",
+      "base",
+      "--no-tags",
+      "file:///E:/QTrade-temp/p0-bounded-git-fixture-20261028T140010Z-76ef46bf/source",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\full-base.git"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.28926870017312467,
+    "stdout": {
+      "path": "commands\\042.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\042.stderr.bin",
+      "bytes": 112,
+      "sha256": "c6cc6b3e090d7d5b55a34fe9472103463b9a523d229bb6a48606fd236024e653"
+    },
+    "stdout_text": "",
+    "stderr_text": "Cloning into bare repository 'E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\full-base.git'...\n"
+  },
+  {
+    "id": 43,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\full-base.git",
+      "remote",
+      "remove",
+      "origin"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05112099996767938,
+    "stdout": {
+      "path": "commands\\043.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\043.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 44,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\full-base.git",
+      "cat-file",
+      "--batch-all-objects",
+      "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.03653039992786944,
+    "stdout": {
+      "path": "commands\\044.stdout.bin",
+      "bytes": 513,
+      "sha256": "d82fb5b156d04a91dc5ed31f69d4a730fd4899ec1c49a2887cbe086f4700fa13"
+    },
+    "stderr": {
+      "path": "commands\\044.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "4695f9e24b622d530e1e33149840165b266f804b blob 32768\n4d085e726feb68ecb286f65ae492cf6229b3f619 tree 88\n591531554ea795e9251e1c216f07e98fb6816ea8 tree 117\n6562f1d677724f8b5c0d3d632f391c65d4968828 tree 103\n975ffb825966cf6f32c08065e9ac87de4935bee4 blob 131072\na2689f90449225a06d4bcb9f2dc7db10b3409e4b blob 262144\nab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5 blob 54\nbc217f8fc94fe75c6915b4280fa964254b50ad1d blob 65536\nc328ca2b1fdc8e124441ad445a19a07086f9f4af blob 196608\nf0ed92e43fe3ac419cb849aa4068f10922adfc9b commit 268\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 45,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\full-base.git",
+      "rev-parse",
+      "--is-shallow-repository"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04819220001809299,
+    "stdout": {
+      "path": "commands\\045.stdout.bin",
+      "bytes": 5,
+      "sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74"
+    },
+    "stderr": {
+      "path": "commands\\045.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "true\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 46,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\full-base.git",
+      "rev-list",
+      "--count",
+      "--all"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04847180005162954,
+    "stdout": {
+      "path": "commands\\046.stdout.bin",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "stderr": {
+      "path": "commands\\046.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "1\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 47,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=always",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\full-base.git",
+      "fsck",
+      "--full",
+      "--no-reflogs"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": false,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.10970799997448921,
+    "stdout": {
+      "path": "commands\\047.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\047.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 48,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "bundle",
+      "verify",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\increment.bundle"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.054116300074383616,
+    "stdout": {
+      "path": "commands\\048.stdout.bin",
+      "bytes": 208,
+      "sha256": "8f46e2094de3b577a9e32ab6e97a715f5062ffee01dae7e4b4e9610d63d6cfe9"
+    },
+    "stderr": {
+      "path": "commands\\048.stderr.bin",
+      "bytes": 89,
+      "sha256": "598c1604a072cd7f5e3ec233099edac789e2f33e3edef44804f485bef144a838"
+    },
+    "stdout_text": "The bundle contains this ref:\ndd3999c9103a282cdc8628c2ea7cad148a9cf513 refs/heads/frozen-head\nThe bundle requires this ref:\nf0ed92e43fe3ac419cb849aa4068f10922adfc9b \nThe bundle uses this hash algorithm: sha1\n",
+    "stderr_text": "E:/QTrade-temp/p0-bounded-git-fixture-20261028T140010Z-76ef46bf/increment.bundle is okay\n"
+  },
+  {
+    "id": 49,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "bundle",
+      "unbundle",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\increment.bundle"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.11621190002188087,
+    "stdout": {
+      "path": "commands\\049.stdout.bin",
+      "bytes": 64,
+      "sha256": "0435270ccefc0c02d1cade49456a6cb1b0d5fd0fb7388bdb819e894915d7c3aa"
+    },
+    "stderr": {
+      "path": "commands\\049.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "dd3999c9103a282cdc8628c2ea7cad148a9cf513 refs/heads/frozen-head\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 50,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "cat-file",
+      "--batch-all-objects",
+      "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05358860013075173,
+    "stdout": {
+      "path": "commands\\050.stdout.bin",
+      "bytes": 662,
+      "sha256": "4d07047fb96090b698841ef9cf86bcbc1693c4c7dc231ebe4a999f117f6f46f6"
+    },
+    "stderr": {
+      "path": "commands\\050.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "08407e724a67b13381e41f0c2e75b6658cfb435a tree 74\n1ef1c790863520f223ffb02fd6fa52d94312d985 blob 98304\n20233a13f474aa54b2be4945fb3e46b02f1aa64f blob 196609\n281daf162ed2d6c104ca670226c67d83086f3b4c tree 103\n2a295b22d1eb7cd78c97d6d8c06ee31dae8f5dbf tree 140\n4d085e726feb68ecb286f65ae492cf6229b3f619 tree 88\n591531554ea795e9251e1c216f07e98fb6816ea8 tree 117\n59c7d400050a30dc3d6c900a839f451d291ca303 blob 131072\n6562f1d677724f8b5c0d3d632f391c65d4968828 tree 103\n6aea75a6c42c448c7a48fbebba836188f40e8a63 commit 294\naa4a884531681524a52aba7f6aa29104ffad5a33 tree 103\ndd3999c9103a282cdc8628c2ea7cad148a9cf513 commit 268\nf0ed92e43fe3ac419cb849aa4068f10922adfc9b commit 268\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 51,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "update-ref",
+      "refs/heads/frozen-head",
+      "dd3999c9103a282cdc8628c2ea7cad148a9cf513"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.052951299818232656,
+    "stdout": {
+      "path": "commands\\051.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\051.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 52,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "cat-file",
+      "blob",
+      "ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 128,
+    "seconds": 0.03601310006342828,
+    "stdout": {
+      "path": "commands\\052.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\052.stderr.bin",
+      "bytes": 71,
+      "sha256": "5507129b801e1e3997dcc1ce55eb5af92944f45fcc618ce11914c8685905ef5e"
+    },
+    "stdout_text": "",
+    "stderr_text": "fatal: git cat-file ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5: bad file\n"
+  },
+  {
+    "id": 53,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "cat-file",
+      "blob",
+      "20233a13f474aa54b2be4945fb3e46b02f1aa64f"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05179119994863868,
+    "stdout": {
+      "path": "commands\\053.stdout.bin",
+      "bytes": 196609,
+      "sha256": "72c19db5e6c72c1a31f15ed2199581cac2a958e847a49d7753a1fcd69133589d"
+    },
+    "stderr": {
+      "path": "commands\\053.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 54,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "cat-file",
+      "blob",
+      "59c7d400050a30dc3d6c900a839f451d291ca303"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05161169986240566,
+    "stdout": {
+      "path": "commands\\054.stdout.bin",
+      "bytes": 131072,
+      "sha256": "6150a12dde17e9cfae160654866edc1c2893669946f05316c1d26b6f056d6929"
+    },
+    "stderr": {
+      "path": "commands\\054.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 55,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "cat-file",
+      "blob",
+      "975ffb825966cf6f32c08065e9ac87de4935bee4"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 128,
+    "seconds": 0.05400340002961457,
+    "stdout": {
+      "path": "commands\\055.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\055.stderr.bin",
+      "bytes": 71,
+      "sha256": "49db522f9bc35a8cedd23695b3402c610da04c0fbc8f433d130346a104e9d0b9"
+    },
+    "stdout_text": "",
+    "stderr_text": "fatal: git cat-file 975ffb825966cf6f32c08065e9ac87de4935bee4: bad file\n"
+  },
+  {
+    "id": 56,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "cat-file",
+      "blob",
+      "a2689f90449225a06d4bcb9f2dc7db10b3409e4b"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 128,
+    "seconds": 0.056215399876236916,
+    "stdout": {
+      "path": "commands\\056.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\056.stderr.bin",
+      "bytes": 71,
+      "sha256": "aa471eea399842fc18c23d294cb326e3c0a9e006837ad39aa64a91c9eb66a4de"
+    },
+    "stdout_text": "",
+    "stderr_text": "fatal: git cat-file a2689f90449225a06d4bcb9f2dc7db10b3409e4b: bad file\n"
+  },
+  {
+    "id": 57,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "cat-file",
+      "blob",
+      "4695f9e24b622d530e1e33149840165b266f804b"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 128,
+    "seconds": 0.056002500001341105,
+    "stdout": {
+      "path": "commands\\057.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\057.stderr.bin",
+      "bytes": 71,
+      "sha256": "8661a3d2330542528b5fc2071234ebb760bbd0f9b5461f84e6904f76b0716e6c"
+    },
+    "stdout_text": "",
+    "stderr_text": "fatal: git cat-file 4695f9e24b622d530e1e33149840165b266f804b: bad file\n"
+  },
+  {
+    "id": 58,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\metadata-only.git",
+      "fsck",
+      "--full",
+      "--no-reflogs"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 2,
+    "seconds": 0.13222730020061135,
+    "stdout": {
+      "path": "commands\\058.stdout.bin",
+      "bytes": 1116,
+      "sha256": "235c67f6f4768bfc2442c44cab44bae28a485339c71d12147084255a85f7fc8f"
+    },
+    "stderr": {
+      "path": "commands\\058.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "broken link from    tree 281daf162ed2d6c104ca670226c67d83086f3b4c\n              to    blob ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5\nbroken link from    tree 591531554ea795e9251e1c216f07e98fb6816ea8\n              to    blob 975ffb825966cf6f32c08065e9ac87de4935bee4\nbroken link from    tree 591531554ea795e9251e1c216f07e98fb6816ea8\n              to    blob a2689f90449225a06d4bcb9f2dc7db10b3409e4b\nbroken link from    tree 591531554ea795e9251e1c216f07e98fb6816ea8\n              to    blob 4695f9e24b622d530e1e33149840165b266f804b\nbroken link from    tree 2a295b22d1eb7cd78c97d6d8c06ee31dae8f5dbf\n              to    blob bc217f8fc94fe75c6915b4280fa964254b50ad1d\nbroken link from    tree 4d085e726feb68ecb286f65ae492cf6229b3f619\n              to    blob c328ca2b1fdc8e124441ad445a19a07086f9f4af\nmissing blob c328ca2b1fdc8e124441ad445a19a07086f9f4af\nmissing blob 4695f9e24b622d530e1e33149840165b266f804b\nmissing blob 975ffb825966cf6f32c08065e9ac87de4935bee4\nmissing blob a2689f90449225a06d4bcb9f2dc7db10b3409e4b\nmissing blob ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5\nmissing blob bc217f8fc94fe75c6915b4280fa964254b50ad1d\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 59,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "bundle",
+      "verify",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\increment.bundle"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.08045750018209219,
+    "stdout": {
+      "path": "commands\\059.stdout.bin",
+      "bytes": 208,
+      "sha256": "8f46e2094de3b577a9e32ab6e97a715f5062ffee01dae7e4b4e9610d63d6cfe9"
+    },
+    "stderr": {
+      "path": "commands\\059.stderr.bin",
+      "bytes": 89,
+      "sha256": "598c1604a072cd7f5e3ec233099edac789e2f33e3edef44804f485bef144a838"
+    },
+    "stdout_text": "The bundle contains this ref:\ndd3999c9103a282cdc8628c2ea7cad148a9cf513 refs/heads/frozen-head\nThe bundle requires this ref:\nf0ed92e43fe3ac419cb849aa4068f10922adfc9b \nThe bundle uses this hash algorithm: sha1\n",
+    "stderr_text": "E:/QTrade-temp/p0-bounded-git-fixture-20261028T140010Z-76ef46bf/increment.bundle is okay\n"
+  },
+  {
+    "id": 60,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "bundle",
+      "unbundle",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\increment.bundle"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.13855509995482862,
+    "stdout": {
+      "path": "commands\\060.stdout.bin",
+      "bytes": 64,
+      "sha256": "0435270ccefc0c02d1cade49456a6cb1b0d5fd0fb7388bdb819e894915d7c3aa"
+    },
+    "stderr": {
+      "path": "commands\\060.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "dd3999c9103a282cdc8628c2ea7cad148a9cf513 refs/heads/frozen-head\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 61,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "update-ref",
+      "refs/heads/frozen-head",
+      "dd3999c9103a282cdc8628c2ea7cad148a9cf513"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.08017039997503161,
+    "stdout": {
+      "path": "commands\\061.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\061.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 62,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "ls-tree",
+      "-r",
+      "-z",
+      "--full-tree",
+      "refs/heads/frozen-head"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04070170014165342,
+    "stdout": {
+      "path": "commands\\062.stdout.bin",
+      "bytes": 417,
+      "sha256": "9d7056db7e8a49ee341f1782f5127516c3684d7e5fcc5359b40119e38bbf812e"
+    },
+    "stderr": {
+      "path": "commands\\062.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 63,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "rev-parse",
+      "refs/heads/frozen-head^{tree}"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05574660003185272,
+    "stdout": {
+      "path": "commands\\063.stdout.bin",
+      "bytes": 41,
+      "sha256": "7f994ae0b44e5daa18d9666ab9b2b6cbfb1be9810141a272d2074a909ac8da8c"
+    },
+    "stderr": {
+      "path": "commands\\063.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "aa4a884531681524a52aba7f6aa29104ffad5a33\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 64,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "cat-file",
+      "blob",
+      "ab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05626560002565384,
+    "stdout": {
+      "path": "commands\\064.stdout.bin",
+      "bytes": 54,
+      "sha256": "0a84583dfd3685dded1bb18b0b77f7b2f0855eb355388f9a15adab38de6d9c2b"
+    },
+    "stderr": {
+      "path": "commands\\064.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "Synthetic local-only Git cold-reconstruction fixture.\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 65,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "cat-file",
+      "blob",
+      "20233a13f474aa54b2be4945fb3e46b02f1aa64f"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.0537414001300931,
+    "stdout": {
+      "path": "commands\\065.stdout.bin",
+      "bytes": 196609,
+      "sha256": "72c19db5e6c72c1a31f15ed2199581cac2a958e847a49d7753a1fcd69133589d"
+    },
+    "stderr": {
+      "path": "commands\\065.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 66,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "cat-file",
+      "blob",
+      "59c7d400050a30dc3d6c900a839f451d291ca303"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.053795999847352505,
+    "stdout": {
+      "path": "commands\\066.stdout.bin",
+      "bytes": 131072,
+      "sha256": "6150a12dde17e9cfae160654866edc1c2893669946f05316c1d26b6f056d6929"
+    },
+    "stderr": {
+      "path": "commands\\066.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 67,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "cat-file",
+      "blob",
+      "975ffb825966cf6f32c08065e9ac87de4935bee4"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05243549984879792,
+    "stdout": {
+      "path": "commands\\067.stdout.bin",
+      "bytes": 131072,
+      "sha256": "23f138ace2685f228460c651e91f8f19ebfcb760d89d374320443f6d75127447"
+    },
+    "stderr": {
+      "path": "commands\\067.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 68,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "cat-file",
+      "blob",
+      "a2689f90449225a06d4bcb9f2dc7db10b3409e4b"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.053792200051248074,
+    "stdout": {
+      "path": "commands\\068.stdout.bin",
+      "bytes": 262144,
+      "sha256": "ec7e4071e4c7a038c8ad5a72027011eb6cd2755fa3339163e09bcdb379098c61"
+    },
+    "stderr": {
+      "path": "commands\\068.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 69,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "cat-file",
+      "blob",
+      "4695f9e24b622d530e1e33149840165b266f804b"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05298949987627566,
+    "stdout": {
+      "path": "commands\\069.stdout.bin",
+      "bytes": 32768,
+      "sha256": "973295b5b16033176565122d360f8577cc3f4a4ddfa53557e3506d60d3c57794"
+    },
+    "stderr": {
+      "path": "commands\\069.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": null,
+    "stderr_text": ""
+  },
+  {
+    "id": 70,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "fsck",
+      "--full",
+      "--no-reflogs"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.124210299924016,
+    "stdout": {
+      "path": "commands\\070.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\070.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 71,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "--git-dir",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "--work-tree",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-current-tree",
+      "checkout",
+      "--force",
+      "frozen-head"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.060393699910491705,
+    "stdout": {
+      "path": "commands\\071.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\071.stderr.bin",
+      "bytes": 33,
+      "sha256": "7dd525fcd15a369d18553b1cd2b78b0156d3ac2991b2aa66692b962354b0236b"
+    },
+    "stdout_text": "",
+    "stderr_text": "Switched to branch 'frozen-head'\n"
+  },
+  {
+    "id": 72,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "cat-file",
+      "--batch-all-objects",
+      "--batch-check=%(objectname) %(objecttype) %(objectsize)"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.05579150002449751,
+    "stdout": {
+      "path": "commands\\072.stdout.bin",
+      "bytes": 974,
+      "sha256": "6c82fc9112bea928da2a0b2bed810abbb26938a660808864885a55339139a876"
+    },
+    "stderr": {
+      "path": "commands\\072.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "08407e724a67b13381e41f0c2e75b6658cfb435a tree 74\n1ef1c790863520f223ffb02fd6fa52d94312d985 blob 98304\n20233a13f474aa54b2be4945fb3e46b02f1aa64f blob 196609\n281daf162ed2d6c104ca670226c67d83086f3b4c tree 103\n2a295b22d1eb7cd78c97d6d8c06ee31dae8f5dbf tree 140\n4695f9e24b622d530e1e33149840165b266f804b blob 32768\n4d085e726feb68ecb286f65ae492cf6229b3f619 tree 88\n591531554ea795e9251e1c216f07e98fb6816ea8 tree 117\n59c7d400050a30dc3d6c900a839f451d291ca303 blob 131072\n6562f1d677724f8b5c0d3d632f391c65d4968828 tree 103\n6aea75a6c42c448c7a48fbebba836188f40e8a63 commit 294\n975ffb825966cf6f32c08065e9ac87de4935bee4 blob 131072\na2689f90449225a06d4bcb9f2dc7db10b3409e4b blob 262144\naa4a884531681524a52aba7f6aa29104ffad5a33 tree 103\nab1c9d96b73ef7c17f3c25421d1e7f2bb77142d5 blob 54\nbc217f8fc94fe75c6915b4280fa964254b50ad1d blob 65536\nc328ca2b1fdc8e124441ad445a19a07086f9f4af blob 196608\ndd3999c9103a282cdc8628c2ea7cad148a9cf513 commit 268\nf0ed92e43fe3ac419cb849aa4068f10922adfc9b commit 268\n",
+    "stderr_text": ""
+  },
+  {
+    "id": 73,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "init",
+      "--bare",
+      "--object-format=sha1",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\wrong-prerequisite-receiver.git"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.053557399893179536,
+    "stdout": {
+      "path": "commands\\073.stdout.bin",
+      "bytes": 133,
+      "sha256": "a573cc782a7b8b683589f85e747d7d4701cf16444da455973518542d978b0fc5"
+    },
+    "stderr": {
+      "path": "commands\\073.stderr.bin",
+      "bytes": 586,
+      "sha256": "3e70934f1909b0f5a846d62237fcc1509d733b9fb0321187024723dfc67176d3"
+    },
+    "stdout_text": "Initialized empty Git repository in E:/QTrade-temp/p0-bounded-git-fixture-20261028T140010Z-76ef46bf/wrong-prerequisite-receiver.git/\n",
+    "stderr_text": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+  },
+  {
+    "id": 74,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\wrong-prerequisite-receiver.git",
+      "bundle",
+      "verify",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\increment.bundle"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 1,
+    "seconds": 0.07252940000034869,
+    "stdout": {
+      "path": "commands\\074.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\074.stderr.bin",
+      "bytes": 101,
+      "sha256": "32d91f0c663e79b6d58c760439d31ebda1d0c6897e344d98d30970eb41576fbf"
+    },
+    "stdout_text": "",
+    "stderr_text": "error: Repository lacks these prerequisite commits:\nerror: f0ed92e43fe3ac419cb849aa4068f10922adfc9b \n"
+  },
+  {
+    "id": 75,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\wrong-prerequisite-receiver.git",
+      "bundle",
+      "unbundle",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\increment.bundle"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 1,
+    "seconds": 0.05716869980096817,
+    "stdout": {
+      "path": "commands\\075.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\075.stderr.bin",
+      "bytes": 101,
+      "sha256": "32d91f0c663e79b6d58c760439d31ebda1d0c6897e344d98d30970eb41576fbf"
+    },
+    "stdout_text": "",
+    "stderr_text": "error: Repository lacks these prerequisite commits:\nerror: f0ed92e43fe3ac419cb849aa4068f10922adfc9b \n"
+  },
+  {
+    "id": 76,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "remote"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 0,
+    "seconds": 0.04704890004359186,
+    "stdout": {
+      "path": "commands\\076.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\076.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  },
+  {
+    "id": 77,
+    "argv": [
+      "C:\\Users\\panxy1019\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.EXE",
+      "-c",
+      "core.hooksPath=E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\no-hooks",
+      "-c",
+      "protocol.allow=never",
+      "-c",
+      "protocol.file.allow=never",
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.safecrlf=false",
+      "-C",
+      "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf\\cold-receiver\\base.git",
+      "config",
+      "--get-regexp",
+      "promisor|partialclone"
+    ],
+    "cwd": "E:\\QTrade-temp\\p0-bounded-git-fixture-20261028T140010Z-76ef46bf",
+    "offline_phase": true,
+    "environment_policy": "all inherited GIT_* removed; global/system config disabled; hooks disabled; file only before gate, every transport disabled after gate; lazy fetch disabled",
+    "stdin": null,
+    "returncode": 1,
+    "seconds": 0.03522160020656884,
+    "stdout": {
+      "path": "commands\\077.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "commands\\077.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout_text": "",
+    "stderr_text": ""
+  }
+]

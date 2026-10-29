@@ -1,0 +1,62 @@
+{
+  "schema_version": "qtrade.factor-strategy-register-request.v1",
+  "kind": "FACTOR_STRATEGY_REGISTER_V1",
+  "job_id": "1cfad5d88fad4f70bd7b029a57efd9d2",
+  "actor": "nonproduction-independent-acceptance",
+  "factor_spec": {
+    "name": "step2-factor-source-compatibility-revalidation",
+    "factor_ref": {
+      "definition_sha256": "62fa55321229f24cd61681c0a612f28d7aeef5c3192acb64a5f8ec388502158d",
+      "factor_id": "qtrade.price.momentum20",
+      "factor_version": "a56c5325a6e10a717dbe9dcd256ccba99ee39671594e21c3d2f272289a92f857"
+    },
+    "evaluation_ref": {
+      "evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486",
+      "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de",
+      "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9"
+    },
+    "signal_kind": "FACTOR_SINGLE",
+    "segments": {
+      "train": [
+        "2017-04-05",
+        "2021-12-28"
+      ],
+      "valid": [
+        "2022-01-04",
+        "2023-12-26"
+      ],
+      "test": [
+        "2024-01-02",
+        "2026-10-27"
+      ]
+    },
+    "portfolio": {
+      "method": "TopkDropout",
+      "topk": 50,
+      "n_drop": 5,
+      "hold_thresh": 2,
+      "risk_degree": "0.8"
+    },
+    "execution": {
+      "buy_cost_bps": "8",
+      "sell_cost_bps": "13",
+      "min_cost": "5",
+      "initial_cash": "1000000",
+      "slippage_bps": "0"
+    },
+    "parent": {
+      "strategy_id": "factor-2983861cbc2e6a4891bac485028f117962e339e3594c73e11d7b93c397934711",
+      "strategy_version": "2983861cbc2e6a4891bac485028f117962e339e3594c73e11d7b93c397934711",
+      "contract_sha256": "d7df0a55abbd986dfb50d48e5f9cf715f51f2bea0b6bf84090204e54a2530e43",
+      "reason": "SOURCE_CONTRACT_COMPATIBILITY_REVALIDATION",
+      "hypothesis": "Archived S2-C13 stays readable while current runtime requires exact20 source bytes.",
+      "change_summary": "Explicit source upgrade; same frozen factor, evaluation, data and cost assumptions; no backtest or promotion."
+    }
+  },
+  "factor_spec_sha256": "08b02163a1cd11f5a8c5f556a16033954fca32a3b0208669bcc5d2b7ffe66919",
+  "expected_strategy_version": "469641828717ccc398e1bf07a4c272740c9d24534cddad81818e7c09224e6ca2",
+  "expected_catalog_sha256": "c1215b1f415365f81a646a8689a834b0fbee1089a1a3da83c271cfaef6994035",
+  "source_revision": "a89d45f96f0b89811ad07464e9ebb7ee3a9bbf12",
+  "data_version_id": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+  "live_trading_enabled": false
+}

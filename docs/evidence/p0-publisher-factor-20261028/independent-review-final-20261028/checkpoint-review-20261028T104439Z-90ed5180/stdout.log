@@ -1,0 +1,52 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_second_recovery_fsync_failure_cannot_transport_a_previously_uncertain_head _
+
+source = (PosixPath('/root/qtrade-local/operator-evidence/checkpoint-review-20261028T104439Z-90ed5180/tmp/pytest/test_second_re..., <scripts.unified_store.UnifiedBatchStore object at 0x7f70cbe242f0>, <function source.<locals>.add at 0x7f70cbd243b0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f70cbecefd0>
+
+    def test_second_recovery_fsync_failure_cannot_transport_a_previously_uncertain_head(
+        source, monkeypatch
+    ):
+        base, database, _, _, _, add = source
+        add()
+        transport, state = base / "transport", base / "local/publisher-state"
+        exporter.publish_market_files(base, transport, database, state_root=state)
+        head = base / "unified-data/market-public/unified-market.json"
+        old_transport = (transport / "unified-market.json").read_bytes()
+        add(counter=2, minute=40)
+        original = exporter.write_json_atomic
+        first = [True]
+    
+        def write(path, value, **kwargs):
+            original(path, value, **kwargs)
+            if path == head and first[0]:
+                first[0] = False
+                raise OSError("independent initial uncertain head")
+    
+        monkeypatch.setattr(exporter, "write_json_atomic", write)
+        with pytest.raises(OSError):
+            exporter.publish_market_files(base, transport, database, state_root=state)
+        visible_head = head.read_bytes()
+    
+        def fail(_path):
+            raise OSError("independent repeated head directory fsync failure")
+    
+        monkeypatch.setattr(exporter, "_fsync_directory", fail)
+>       with pytest.raises(OSError):
+             ^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE OSError
+
+tests/test_unified_market_checkpoint_independent.py:576: Failed
+----------------------------- Captured stdout call -----------------------------
+UNIFIED_MARKET_COMMIT_UNCERTAIN_STOPPED
+UNIFIED_MARKET_EXPORT_FAILED_RETAINING_LAST_SUCCESS
+=============================== warnings summary ===============================
+../../../../siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_unified_market_checkpoint_independent.py::test_second_recovery_fsync_failure_cannot_transport_a_previously_uncertain_head
+1 failed, 32 deselected, 1 warning in 1.85s

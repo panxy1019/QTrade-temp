@@ -1,0 +1,28 @@
+[
+  {
+    "scope": "READONLY_ASGI_REPLAY_NO_AUTH_OR_QUEUE",
+    "method": "GET",
+    "path": "/research/factor-strategies/jobs/1cece3d0695616f629f540391fde7479",
+    "status": 200,
+    "bytes": 2193,
+    "sha256": "dac557ab571643a852c94c15f43048f5ccd99cf028bba12ac2408169491b0ecc",
+    "evidence_sha256": "77aa8fac6ebf764d52d204b8b1663c88cc1f7664d45a3311c6f81a3449ae82fa",
+    "headers": {
+      "cache-control": "no-store",
+      "content-type": "application/json"
+    }
+  },
+  {
+    "scope": "READONLY_ASGI_REPLAY_NO_AUTH_OR_QUEUE",
+    "method": "GET",
+    "path": "/research/factor-strategies/catalog",
+    "status": 200,
+    "bytes": 120443,
+    "sha256": "5a500456daffbed6cf80f50116851477e720683999481d6bf98498e54e204927",
+    "evidence_sha256": "3e26b7604886d92372816610dc84d794143f4b27062ddfd2b6c71cdcf7c0011e",
+    "headers": {
+      "cache-control": "no-store",
+      "content-type": "application/json"
+    }
+  }
+]

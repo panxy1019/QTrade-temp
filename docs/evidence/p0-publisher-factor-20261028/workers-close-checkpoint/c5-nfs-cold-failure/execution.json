@@ -1,0 +1,17 @@
+{
+  "artifacts": {
+    "after-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "before-mountinfo.raw": "484a3442423f3004b0e8fec186e40420abd86b997ac1133381f4ce17167ac99e",
+    "benchmark-report.json": "19b28e4e2060f920ef951f4c271059e0b2d9d9763c4db60089063023e1db6c2d",
+    "benchmark.py": "d848b126bec7fcfb6d708d98e6354f46ecf10be02cefa7a8ca32c313ca8a185a",
+    "cold-output-refs.json": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr.log": "d501a401a7ef04d11cb6f2fdeeb1311e9d3b694f205944ee9413368a50df779d",
+    "stdout.log": "e17dd92c97f3f0ef783ba9d9ccc37a5f1f14e32fa99e8d943b9dcc65c2c06d6b",
+    "warm-output-refs.json": "a1ec8e5d3116ecc701d070eab291dde48a67f8906df63ac051d6a84daf6682a2"
+  },
+  "exit_code": 1,
+  "helper_sha256": "d848b126bec7fcfb6d708d98e6354f46ecf10be02cefa7a8ca32c313ca8a185a",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-worker-integrated-nfs-20261028T065455Z",
+  "remote": "/root/qtrade-local/operator-evidence/market-worker-integrated-nfs-20261028T065455Z",
+  "source_evidence": "/root/qtrade-local/operator-evidence/market-worker-integrated-tests-20261028T064904Z"
+}

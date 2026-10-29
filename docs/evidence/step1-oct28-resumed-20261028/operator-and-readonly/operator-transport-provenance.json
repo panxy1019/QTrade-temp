@@ -1,0 +1,15 @@
+{
+  "created_at": "2026-10-28T09:40:17.504310+00:00",
+  "purpose": "SAME_9846_AUDITOR_WITH_STDIN_TRANSPORT_ONLY",
+  "original": "E:\\QTrade-temp\\capture-close-E-ro-20261028.py",
+  "original_sha256": "8b0200864423dd8878a823709a5295f91e07a565c171edc7eb47f9f3d9032564",
+  "new_file": "E:\\QTrade-temp\\cluster-evidence\\step1-oct28-resumed-20261028T094017503329Z\\capture-close-E-stdin.py",
+  "new_sha256": "8cbf3339db4350ab17e397899b802fa70ae0b3d69e51115d1df8cc753070d66b",
+  "changes": [
+    "Add local import path for authorized connect helper",
+    "Send identical Python code through SSH channel stdin instead of exec argument"
+  ],
+  "auditor_changed": false,
+  "production_file_writes": false,
+  "prior_failure": "E:/QTrade-temp/cluster-evidence/stock-public-20261028T093919Z-960f2e33/E-private-20261028T093927198225Z.error"
+}

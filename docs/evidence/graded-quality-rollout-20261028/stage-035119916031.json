@@ -1,0 +1,47 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "at": "2026-10-28T03:51:19.916000+00:00",
+  "action": "APPROVED_POLICY_AND_DIAGNOSTIC_STAGE",
+  "source_revision": "458552de1fea1faf77d02dcd9ec69251a0c364b7",
+  "scope_sha256": "bee913e4d976e9a03acd2994d0662edf6f1e2eb0f1a12792e82b475f8cb9d195",
+  "retry_sha256": "71a262a56839a3af7eea40d8e170a832f1c6129613ec08d8498850d30ccaff0b",
+  "scope_stock_count": 990,
+  "quality_sha256": "1a727c1441eae6551debd383636357fbb6e037751850acfa0a3905147849ddc5",
+  "case_counts": {
+    "DATA_GAP": 3,
+    "SUSPENDED": 12,
+    "UNKNOWN": 4
+  },
+  "recent_status": {
+    "available": true,
+    "observed_at": "2026-10-28T03:48:56.711869+00:00",
+    "window_start": "2026-10-23",
+    "window_end": "2026-10-27",
+    "progress": {
+      "mode": "BOUNDED_UNIVERSE_QUEUE_V2",
+      "scope_symbols": 990,
+      "completed_symbols": 480,
+      "unresolved_symbols": 510,
+      "unattempted_symbols": 510,
+      "due_retry_symbols": 0,
+      "waiting_retry_symbols": 0,
+      "next_retry_at": null,
+      "historical_pit_certified": false
+    },
+    "content_verified_symbols": 480,
+    "source_revision": "60c83131aefd667abadb84a360b7bf225893776a",
+    "coverage_sha256": "8ab25aa97063253e8c8212d6ef5bd5c81b6a05d47618f0a8b265a33ffeefcbf8",
+    "historical_available_at": null,
+    "historical_pit_certified": false
+  },
+  "owners_unchanged": true,
+  "old_consumers_not_yet_upgraded": true,
+  "whole_step1_accepted": false,
+  "evidence_sha256": "0d199166acce7ea3fed59abcc685aadc5afb0335c4d523d1e932bd04a51f9dec"
+}

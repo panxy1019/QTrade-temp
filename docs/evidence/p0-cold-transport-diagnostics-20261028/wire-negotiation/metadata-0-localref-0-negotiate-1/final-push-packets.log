@@ -1,0 +1,55 @@
+21:55:36.867803 pkt-line.c:85           packet: receive-pack> 4642edb82efb2a2694a41a58976ad8f28a4b5579 refs/heads/main\0report-status report-status-v2 delete-refs side-band-64k quiet atomic ofs-delta object-format=sha1 agent=git/2.53.0.windows.3-Windows
+21:55:36.868799 pkt-line.c:85           packet: receive-pack> 632e6ac5247085e5f0094c316268118e6f6cd69e refs/heads/qtrade-object-stage/synthetic-0001
+21:55:36.869301 pkt-line.c:85           packet: receive-pack> 0000
+21:55:36.868799 pkt-line.c:85           packet:         push< 4642edb82efb2a2694a41a58976ad8f28a4b5579 refs/heads/main\0report-status report-status-v2 delete-refs side-band-64k quiet atomic ofs-delta object-format=sha1 agent=git/2.53.0.windows.3-Windows
+21:55:36.869301 pkt-line.c:85           packet:         push< 632e6ac5247085e5f0094c316268118e6f6cd69e refs/heads/qtrade-object-stage/synthetic-0001
+21:55:36.869301 pkt-line.c:85           packet:         push< 0000
+21:55:36.962295 pkt-line.c:85           packet:  upload-pack> version 2
+21:55:36.963303 pkt-line.c:85           packet:  upload-pack> agent=git/2.53.0.windows.3-Windows
+21:55:36.963303 pkt-line.c:85           packet:  upload-pack> ls-refs=unborn
+21:55:36.963303 pkt-line.c:85           packet:  upload-pack> fetch=shallow wait-for-done
+21:55:36.963303 pkt-line.c:85           packet:  upload-pack> server-option
+21:55:36.963303 pkt-line.c:85           packet:  upload-pack> object-format=sha1
+21:55:36.963303 pkt-line.c:85           packet:  upload-pack> 0000
+21:55:36.963303 pkt-line.c:85           packet:        fetch< version 2
+21:55:36.964306 pkt-line.c:85           packet:        fetch< agent=git/2.53.0.windows.3-Windows
+21:55:36.964306 pkt-line.c:85           packet:        fetch< ls-refs=unborn
+21:55:36.964306 pkt-line.c:85           packet:        fetch< fetch=shallow wait-for-done
+21:55:36.964306 pkt-line.c:85           packet:        fetch< server-option
+21:55:36.964306 pkt-line.c:85           packet:        fetch< object-format=sha1
+21:55:36.964306 pkt-line.c:85           packet:        fetch< 0000
+21:55:36.964306 pkt-line.c:85           packet:        fetch> command=fetch
+21:55:36.964306 pkt-line.c:85           packet:        fetch> agent=git/2.53.0.windows.3-Windows
+21:55:36.964306 pkt-line.c:85           packet:        fetch> object-format=sha1
+21:55:36.964306 pkt-line.c:85           packet:        fetch> 0001
+21:55:36.964306 pkt-line.c:85           packet:        fetch> wait-for-done
+21:55:36.964306 pkt-line.c:85           packet:        fetch> have 6cd841275808ae43602ffe8e06bb781bda83626f
+21:55:36.964306 pkt-line.c:85           packet:        fetch> have 4642edb82efb2a2694a41a58976ad8f28a4b5579
+21:55:36.964306 pkt-line.c:85           packet:        fetch> 0000
+21:55:36.964306 pkt-line.c:85           packet:  upload-pack< command=fetch
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack< agent=git/2.53.0.windows.3-Windows
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack< object-format=sha1
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack< 0001
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack< wait-for-done
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack< have 6cd841275808ae43602ffe8e06bb781bda83626f
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack< have 4642edb82efb2a2694a41a58976ad8f28a4b5579
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack< 0000
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack> acknowledgments
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack> ACK 4642edb82efb2a2694a41a58976ad8f28a4b5579
+21:55:36.965807 pkt-line.c:85           packet:        fetch< acknowledgments
+21:55:36.965807 pkt-line.c:85           packet:  upload-pack> 0000
+21:55:36.966835 pkt-line.c:85           packet:        fetch< ACK 4642edb82efb2a2694a41a58976ad8f28a4b5579
+21:55:36.966835 pkt-line.c:85           packet:        fetch< 0000
+21:55:36.987999 pkt-line.c:85           packet:         push> 4642edb82efb2a2694a41a58976ad8f28a4b5579 6cd841275808ae43602ffe8e06bb781bda83626f refs/heads/main\0 report-status-v2 side-band-64k quiet object-format=sha1 agent=git/2.53.0.windows.3-Windows
+21:55:36.987999 pkt-line.c:85           packet:         push> 0000
+21:55:36.987999 pkt-line.c:85           packet: receive-pack< 4642edb82efb2a2694a41a58976ad8f28a4b5579 6cd841275808ae43602ffe8e06bb781bda83626f refs/heads/main\0 report-status-v2 side-band-64k quiet object-format=sha1 agent=git/2.53.0.windows.3-Windows
+21:55:36.987999 pkt-line.c:85           packet: receive-pack< 0000
+21:55:37.112043 pkt-line.c:85           packet: receive-pack> unpack ok
+21:55:37.112043 pkt-line.c:85           packet: receive-pack> ok refs/heads/main
+21:55:37.112043 pkt-line.c:85           packet: receive-pack> 0000
+21:55:37.113065 pkt-line.c:85           packet:     sideband< \1000eunpack ok0017ok refs/heads/main0000
+21:55:37.113065 pkt-line.c:85           packet:         push< unpack ok
+21:55:37.113065 pkt-line.c:85           packet:         push< ok refs/heads/main
+21:55:37.113065 pkt-line.c:85           packet:         push< 0000
+21:55:37.138626 pkt-line.c:85           packet: receive-pack> 0000
+21:55:37.138626 pkt-line.c:85           packet:     sideband< 0000

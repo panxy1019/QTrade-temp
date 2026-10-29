@@ -1,0 +1,26 @@
+{
+  "build_budget_seconds": 600,
+  "cleanup_kill_seconds": 2,
+  "cleanup_term_seconds": 2,
+  "commit": "07c3a429bfed433e49018cb0f78a52145d4bedeb",
+  "direct_fallback": false,
+  "go_archive_sha256": "1fc94b57134d51669c72173ad5d49fd62afb0f1db9bf3f798fd98ee423f8d730",
+  "goflags": "-mod=readonly",
+  "goproxy": "https://goproxy.cn",
+  "gosumdb": "sum.golang.org",
+  "local_free_bytes": 17359261696,
+  "nfs_free_bytes": 281091768320,
+  "production_changed": false,
+  "proxy_env_presence": {
+    "ALL_PROXY": false,
+    "HTTPS_PROXY": false,
+    "HTTP_PROXY": false,
+    "NO_PROXY": false,
+    "all_proxy": false,
+    "http_proxy": false,
+    "https_proxy": false,
+    "no_proxy": false
+  },
+  "service_started": false,
+  "source_archive_sha256": "8819e3e7817e46b7b3798f8f200ead208562e571563c2e040352378031abe9f2"
+}

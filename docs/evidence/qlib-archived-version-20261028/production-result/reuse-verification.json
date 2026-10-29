@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-27T17:53:58.156690+00:00",
+  "base_result_sha256": "4146de4b800c8cead77042ba68e442f393618bf9fa3b9166d16d07ed5df6e6b3",
+  "browser_verified": false,
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "data_binding_unchanged": true,
+  "evidence_sha256": "549edb16fc3db4b4032b8119e672be4be7c15436b35ac00ff9146512fd9e8398",
+  "external_order_transmission": false,
+  "headers": {
+    "Cache-Control": "no-store",
+    "Content-Type": "application/json",
+    "Date": "Tue, 27 Oct 2026 17:53:30 GMT",
+    "X-Vercel-Id": "sfo1::iad1::cqpzm-1793123639089-38fed57b7fc1"
+  },
+  "http_status": 200,
+  "kind": "ACTUAL_PUBLIC_ARCHIVED_SPECIFICATION_REUSE",
+  "live_trading_enabled": false,
+  "original_spec_equal": true,
+  "point_in_time": false,
+  "promotion": "NOT_ELIGIBLE",
+  "raw_body_bytes": 2621,
+  "raw_body_sha256": "3ab0bd1016ee6a1f516e50983b5910a06fe0d13dc7d53ec7cd463528a26d6530",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "state": "PASSED",
+  "template_sha256": "7629333ad2a7942b8c060c3794779a3936811df1fd3bf2260c1051c313a525d6",
+  "url": "https://q-trade-temp.vercel.app/api/research/experiments/578bb6107577406185782a08e1c499d7/template",
+  "whole_step1_accepted": false
+}

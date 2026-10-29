@@ -1,0 +1,8 @@
+{
+  "remote": "/root/qtrade-local/operator-evidence/market-current-independent-oracle-20261028T051529Z",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-current-independent-oracle-20261028T051529Z",
+  "exit_code": 0,
+  "oracle_source_sha256": "004ae036cd1af340cbc2eb35c1396838cfeebc833fbec69ceafdcba114c7c123",
+  "production_actions": false,
+  "report_sha256": "19535cc8b4445bdd8f77950a003a2c43b0c11d52e68a38d04d6282364b07581b"
+}

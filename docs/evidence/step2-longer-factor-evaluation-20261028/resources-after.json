@@ -1,0 +1,12 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "nfs": 284002615296,
+  "local": 19504263168,
+  "evidence_sha256": "d68ec6a352e5e38b8ced6ffc263d5635f393f8565bf239b667c4c8b561e7c52d"
+}

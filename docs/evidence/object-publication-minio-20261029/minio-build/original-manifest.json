@@ -1,0 +1,111 @@
+{
+  "binary_sha256": "ea71aa0735f6930c3ae3fcc27f0dc2d670f941043085d9a501cad323a393db2d",
+  "files": {
+    "README.md": {
+      "bytes": 4552,
+      "sha256": "c199fd2b758221effff85be7f341f780fef77bf63cbdb3277d12d2a52b7e2104"
+    },
+    "binary-build-info-owned-child.json": {
+      "bytes": 475,
+      "sha256": "eebe7f57d30f3fa38bb6e13d5537e77a99c5d82d8b29fe2e192a94ad547f83ab"
+    },
+    "binary-version-owned-child.json": {
+      "bytes": 342,
+      "sha256": "99a89749a86d208e76106fd20beb667927e5eba4f142b8ff58b2f40af966dd86"
+    },
+    "build-owned-child.json": {
+      "bytes": 542,
+      "sha256": "1c0845dde3c8b6b4e4a478624e8a07ef6c5bfd8848349bcae4df75d2e2165fc1"
+    },
+    "build-result.json": {
+      "bytes": 2543,
+      "sha256": "9ad742cd563bce4d0b94ed75301f6c0f3f90936b0ccbde5f6d59eec4e2472dc0"
+    },
+    "build_minio_protocol_mirror_fixture_20261029.py": {
+      "bytes": 7836,
+      "sha256": "17a239e8e98c935f9e54e7c69e3f0b44ca246ca889d0261150b3f8dd6f63166f"
+    },
+    "builder.private.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "builder.stdout.json": {
+      "bytes": 2311,
+      "sha256": "2e224bbcd9bd3ff4777cb3bbbb5202ca04fee89c88bb7cfca5b9c98fb03b81c0"
+    },
+    "dispatch-result.json": {
+      "bytes": 223,
+      "sha256": "1651707a839c7f1f7ad1f9fd6a6a5583fcf7f0eb4c95a16a45e61d45021004e5"
+    },
+    "dispatch.json": {
+      "bytes": 316,
+      "sha256": "9e33aa986ffce861f3600789f3fb45595eb3af6b2afcab29b8b0fdc9b9acd985"
+    },
+    "go-version-owned-child.json": {
+      "bytes": 344,
+      "sha256": "28962a22f5e98d04747b1d2a2038170f313da6de278c9977c10acc0397b13511"
+    },
+    "intent.json": {
+      "bytes": 812,
+      "sha256": "db223be79023e218084bb17b6bbabd36d54324472e7268176f80af2f2bcce1f2"
+    },
+    "module-verify-owned-child.json": {
+      "bytes": 354,
+      "sha256": "7949903123658ad8a3d43fbf6cf876f62cd191c9601f381c4a29ff27e8014df9"
+    },
+    "original-after.json": {
+      "bytes": 851,
+      "sha256": "069e6734be4c82fc09c14fe9d2d1603088971d45cbf84d2b9476f4ebcd4a5fd1"
+    },
+    "original-before.json": {
+      "bytes": 851,
+      "sha256": "069e6734be4c82fc09c14fe9d2d1603088971d45cbf84d2b9476f4ebcd4a5fd1"
+    },
+    "post-cleanup.json": {
+      "bytes": 205,
+      "sha256": "bd4fad8fa99b009f38d27788d4a9dc9d917b5b0db234e49bae24f3621811a50a"
+    },
+    "run_minio_mirror_build_20261029.py": {
+      "bytes": 2068,
+      "sha256": "4c71fae6796f6db8331f822693f85a70fb648606b63a495b9b37887f972c9ed9"
+    },
+    "source-after.json": {
+      "bytes": 142763,
+      "sha256": "204c0ed38ef579467f3e2313a08997db8fc69c7d72909a106d76bbd64c098464"
+    },
+    "source-before.json": {
+      "bytes": 142763,
+      "sha256": "204c0ed38ef579467f3e2313a08997db8fc69c7d72909a106d76bbd64c098464"
+    },
+    "status-1793206875.json": {
+      "bytes": 421,
+      "sha256": "cb2726161a78e3ad4a31ef227ca52da53efbc26cf549804b524524c0f7aa3d71"
+    }
+  },
+  "parent_readonly_evidence_refs": {
+    "build-failure.json": {
+      "bytes": 176,
+      "sha256": "2120476410ee149645cd46beb555fe274405aba5e3683d9e3fc615ad5858a7dc"
+    },
+    "build.log": {
+      "bytes": 3439,
+      "sha256": "7744b3510f7f83feb3466bce49cb57f2fbb142f303dc1e8575c68ebfa11e0ee5"
+    },
+    "local-official-connectivity.json": {
+      "bytes": 193,
+      "sha256": "dd65a8fc04c2fd1c5fc2ae127b0ca195ce001995061b6b3ce1699383cd098d91"
+    },
+    "mirror-connectivity.json": {
+      "bytes": 979,
+      "sha256": "64828d240433afc771cf3d21f8c92a266c27ac14c243058730e0dcacb7665521"
+    },
+    "proxy-presence-and-official-connectivity.json": {
+      "bytes": 1073,
+      "sha256": "1518c4244657369e7c4b5f59971d533f3bc35b13446d0fb4316696c94a5dbcb5"
+    }
+  },
+  "production_changed": false,
+  "remote_private_logs": "SHA_SIZE_ONLY_IN_BUILD_RESULT_NOT_COPIED",
+  "schema_version": "qtrade.minio-source-build-evidence-manifest.v1",
+  "service_started_by_builder": false
+}

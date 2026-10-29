@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/svsem-20261028T051154Z-53d7c6/operator.py", line 3, in <module>
+    import http.client
+  File "/usr/lib/python3.10/http/client.py", line 71, in <module>
+    import email.parser
+  File "/usr/lib/python3.10/email/parser.py", line 12, in <module>
+    from email.feedparser import FeedParser, BytesFeedParser
+  File "/usr/lib/python3.10/email/feedparser.py", line 24, in <module>
+    import re
+  File "/usr/lib/python3.10/re.py", line 127, in <module>
+    import functools
+  File "/usr/lib/python3.10/functools.py", line 18, in <module>
+    from collections import namedtuple
+  File "/usr/lib/python3.10/collections/__init__.py", line 36, in <module>
+    from operator import eq as _eq
+  File "/root/qtrade-local/operator-evidence/svsem-20261028T051154Z-53d7c6/operator.py", line 4, in <module>
+    import json
+  File "/usr/lib/python3.10/json/__init__.py", line 106, in <module>
+    from .decoder import JSONDecoder, JSONDecodeError
+  File "/usr/lib/python3.10/json/decoder.py", line 5, in <module>
+    from json import scanner
+  File "/usr/lib/python3.10/json/scanner.py", line 11, in <module>
+    NUMBER_RE = re.compile(
+AttributeError: partially initialized module 're' has no attribute 'compile' (most likely due to a circular import)

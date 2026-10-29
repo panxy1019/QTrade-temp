@@ -1,0 +1,67 @@
+{
+  "schema": "qtrade.r2-sdk-offline-author-validation.v1",
+  "source_sha256": "d26685bf8f95db48ef3db8d0c8d4716aaac56d68963fd2c302fa9b5c62c16202",
+  "tests_sha256": "16c2034f0782258d1058906c11adaa8d2175e39458650a573f2903c3f71bb1d0",
+  "fixed_author_passed": 86,
+  "fixed_author_skipped": 0,
+  "original_independent_counterexamples": 6,
+  "actual_cloud": "NOT_RUN_NO_ACCOUNT",
+  "actual_minio": "PENDING_PARENT_LOOPBACK",
+  "files": [
+    {
+      "name": "fixed-author-combined.xml",
+      "bytes": 12405,
+      "sha256": "31b851665084dd93e75d56aa3d9ea44c018f7df225d38f458ab829780afd19d7"
+    },
+    {
+      "name": "fixed-author-first.xml",
+      "bytes": 5893,
+      "sha256": "30f6a56f72a1c10241cae31b719db24634ce07bdf006e2786d82ef9174d78d54"
+    },
+    {
+      "name": "original-counterexamples-six.xml",
+      "bytes": 1346,
+      "sha256": "a05f52e2d98fd98f5b7e8e12648d174f4fc1b69d41df360e2237010096df89d8"
+    },
+    {
+      "name": "original-counterexamples.xml",
+      "bytes": 987,
+      "sha256": "a33a37db3d554e4534178e41a76f0e5d6ddd9db532923dc42057beaff172b636"
+    },
+    {
+      "name": "r2_object_store_fixed.py",
+      "bytes": 12296,
+      "sha256": "d26685bf8f95db48ef3db8d0c8d4716aaac56d68963fd2c302fa9b5c62c16202"
+    },
+    {
+      "name": "r2_object_store_original.py",
+      "bytes": 10114,
+      "sha256": "d878f6c2cee389f936acb737ff51dd2ff23e55d7fbf5a0866135692476da944d"
+    },
+    {
+      "name": "README-fixed-author-validation.md",
+      "bytes": 4795,
+      "sha256": "201a7cc466f0c540784afe3457e3bdef5fba4d58224451c4e86f8dc0b726f807"
+    },
+    {
+      "name": "README-original-findings.md",
+      "bytes": 3369,
+      "sha256": "f60281e31b67e853cf81f7554f3acf38b3feb357a55b000c6fc8c4c0dce9b840"
+    },
+    {
+      "name": "test_r2_object_store_fixed.py",
+      "bytes": 18374,
+      "sha256": "16c2034f0782258d1058906c11adaa8d2175e39458650a573f2903c3f71bb1d0"
+    },
+    {
+      "name": "test_r2_sdk_fixed_counterexamples.py",
+      "bytes": 3384,
+      "sha256": "6b4e3a09db35b44c169c51cc58b248df89cdc61f50676f4692f225b2f6f7c62f"
+    },
+    {
+      "name": "test_r2_sdk_independent_original.py",
+      "bytes": 6626,
+      "sha256": "c6b770aefec620b27ede8d85d436706bad05ef7d1a5b2af022d4018632e68788"
+    }
+  ]
+}

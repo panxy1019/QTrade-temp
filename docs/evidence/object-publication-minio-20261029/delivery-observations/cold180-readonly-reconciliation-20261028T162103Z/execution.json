@@ -1,0 +1,12 @@
+{
+  "captured_at": "2026-10-28T16:21:14.194167+00:00",
+  "public_write": false,
+  "rc": 0,
+  "remote_server_process_state_unknown": true,
+  "result": {
+    "elapsed_seconds": 10.128824351355433,
+    "public_write": false,
+    "remote_main": "5a0925f47e541726210a8879e2f2bed4ae2a62fd",
+    "state": "READONLY_DIRECT_MAIN"
+  }
+}

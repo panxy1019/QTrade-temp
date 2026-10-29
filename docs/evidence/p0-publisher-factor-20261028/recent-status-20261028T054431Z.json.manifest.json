@@ -1,0 +1,8 @@
+{
+  "raw_sha256": "0c7f03c084714ff9034f45f744d6f0ccd6218bd664efe1f4da25bd9558e40cca",
+  "raw_bytes": 128802,
+  "gzip_sha256": "f764763773244647b59075230c67fdc453192cf4ecb5fc6d91ed6da0820e6dc9",
+  "gzip_bytes": 50449,
+  "observed_at": "2026-10-28T05:44:31.734491+00:00",
+  "purpose": "READONLY_RECENT_STATUS_920_OF_990_NOT_HISTORICAL_PIT_CERTIFICATION"
+}

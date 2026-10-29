@@ -21,6 +21,7 @@ from typing import Any
 
 from qtrade.monitoring.data_freshness import AUTHORITY, Calendar, signed
 from qtrade.research.data_epoch import current_epoch
+from qtrade.research.data_quality_policy import load_policy, validate_policy
 from qtrade.research.data_versions import file_hash
 from qtrade.research.forward_prediction import next_execution
 from scripts.atomic_json import write_json_atomic, write_json_immutable
@@ -111,13 +112,22 @@ def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datet
         return outcome('WAITING_FOR_CURRENT_DAILY_INPUTS')
     job_root = root/'days'/day
     job_file = job_root/'request.json'
+    policy = load_policy(base)
+    if policy is not None:
+        validate_policy(policy, load_signed(previous/'dataset.json'),
+                        current['bindings']['observation_universe_version'], day, now)
+        detail['input_scope_policy_sha256'] = policy['evidence_sha256']
     if (collection_database is not None and not job_file.exists()
             and daily_tasks(base, load_signed(previous/'dataset.json'), day,
-                current['bindings']['observation_universe_version'], collection_database) is None):
+                current['bindings']['observation_universe_version'], collection_database,
+                policy) is None):
         return outcome('WAITING_FOR_CURRENT_DAILY_INPUTS')
     request = signed({**AUTHORITY, 'day': day, 'previous': previous.relative_to(base).as_posix(),
                       'previous_version': current['version_id'], 'previous_event_id': epoch,
                       'source_revision': revision})
+    if policy is not None:
+        request = signed({**{k: v for k, v in request.items() if k != 'evidence_sha256'},
+                          'input_scope_policy': policy})
     if job_file.exists():
         saved = load_signed(job_file)
         if saved != request:
@@ -134,9 +144,11 @@ def cycle(base: Path, database: Path, python: Path, revision: str, *, now: datet
     write_json_atomic(attempt_file, signed({**AUTHORITY, 'started_at': now.isoformat(),
         'not_before': (now+timedelta(minutes=5)).isoformat(), 'state': 'RUNNING'}))
     with exclusive(database.parent/'qlib-data-preparation.lock'):
+        policy_kwargs = {'input_scope_policy': policy} if policy is not None else {}
         prepared = prepare(base, previous, revision=revision, maximum=25,
             collection_database=collection_database, day=day,
-            universe_version=current.get('bindings', {}).get('observation_universe_version'))
+            universe_version=current.get('bindings', {}).get('observation_universe_version'),
+            **policy_kwargs)
     if prepared.get('state') == 'WAITING_FOR_CURRENT_DAILY_INPUTS':
         return outcome('WAITING_FOR_CURRENT_DAILY_INPUTS')
     detail['preparation'] = {k: prepared[k] for k in (

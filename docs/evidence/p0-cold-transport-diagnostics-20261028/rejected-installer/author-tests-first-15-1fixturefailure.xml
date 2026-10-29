@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="15" time="39.152" timestamp="2026-10-28T22:13:43.236806+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_success_installs_additive_pair_preserves_loose_refs_config_midx_and_pushes_complete" time="2.765" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_create_only_pack_then_dirsync_then_index_then_dirsync" time="1.987" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_identical_hit_does_not_rewrite_any_source_file_or_claim" time="2.332" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_old_manual_intent_cannot_be_rebound_to_reset_existing_claim" time="2.329" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_bad_candidate_rejected_before_source_write[pack]" time="2.512" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_bad_candidate_rejected_before_source_write[index]" time="2.244"><failure message="PermissionError: [Errno 13] Permission denied: 'E:\\QTrade-temp\\packcache-installer-author-fixtures-20261028T141600Z\\test_bad_candidate_rejected_be1\\candidate.idx'">fixture = (WindowsPath('E:/QTrade-temp/packcache-installer-author-fixtures-20261028T141600Z/test_bad_candidate_rejected_be1'), W...: {'kind': 'blob', 'bytes': 16440, 'sha256': 'b6daf61b5b8c43a33c0b91ce07468dd5beb12ca94df9986943d34fa41c1d5a15'}}), [])
+damage = 'index'
+
+    @pytest.mark.parametrize('damage',['pack','index','certificate','objectset'])
+    def test_bad_candidate_rejected_before_source_write(fixture,damage):
+        root,source,_,candidate,_=fixture
+        before=files(source)
+        if damage=='pack':candidate.pack.write_bytes(candidate.pack.read_bytes()+b'bad')
+&gt;       elif damage=='index':candidate.index.write_bytes(candidate.index.read_bytes()+b'bad')
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\test_publication_pack_cache_fixture_installer_20261028.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\pathlib\__init__.py:796: in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('E:/QTrade-temp/packcache-installer-author-fixtures-20261028T141600Z/test_bad_candidate_rejected_be1/candidate.idx')
+mode = 'wb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       PermissionError: [Errno 13] Permission denied: 'E:\\QTrade-temp\\packcache-installer-author-fixtures-20261028T141600Z\\test_bad_candidate_rejected_be1\\candidate.idx'
+
+C:\Python314\Lib\pathlib\__init__.py:771: PermissionError</failure></testcase><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_bad_candidate_rejected_before_source_write[certificate]" time="2.181" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_bad_candidate_rejected_before_source_write[objectset]" time="1.765" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_different_existing_final_content_is_never_overwritten" time="2.024" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_fault_between_visibility_points_keeps_original_objects_and_blocks_replay[PACK_LINKED]" time="3.355" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_fault_between_visibility_points_keeps_original_objects_and_blocks_replay[INDEX_LINKED]" time="3.479" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_partial_index_copy_never_becomes_active_index" time="2.685" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_directory_fsync_failure_is_uncertain_and_never_claims_success" time="2.775" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_real_native_reader_and_push_during_pack_only_visibility" time="4.107" /><testcase classname="test_publication_pack_cache_fixture_installer_20261028" name="test_nonfixture_and_source_redirection_reject_before_install" time="2.448" /></testsuite></testsuites>

@@ -1,0 +1,13 @@
+{
+  "directory": "E:\\QTrade-temp\\r2-sdk-independent-review-20261029T004200Z",
+  "files": {
+    "README-fixed-author-validation.md": "201a7cc466f0c540784afe3457e3bdef5fba4d58224451c4e86f8dc0b726f807",
+    "README-original-findings.md": "f60281e31b67e853cf81f7554f3acf38b3feb357a55b000c6fc8c4c0dce9b840",
+    "manifest.json": "5613b5f95822969c2d187c74cbfe0b42f54a861412cb31bc76dd7799c107cde5",
+    "original-counterexamples-six.xml": "a05f52e2d98fd98f5b7e8e12648d174f4fc1b69d41df360e2237010096df89d8",
+    "r2_object_store_fixed.py": "d26685bf8f95db48ef3db8d0c8d4716aaac56d68963fd2c302fa9b5c62c16202",
+    "r2_object_store_original.py": "d878f6c2cee389f936acb737ff51dd2ff23e55d7fbf5a0866135692476da944d",
+    "test_r2_sdk_fixed_counterexamples.py": "6b4e3a09db35b44c169c51cc58b248df89cdc61f50676f4692f225b2f6f7c62f",
+    "test_r2_sdk_independent_original.py": "c6b770aefec620b27ede8d85d436706bad05ef7d1a5b2af022d4018632e68788"
+  }
+}

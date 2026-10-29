@@ -1,0 +1,17 @@
+{
+  "observed_at": "2026-10-28T02:48:58.978415+00:00",
+  "scope": "LOCAL_SOURCE_NOT_DEPLOYED",
+  "files": {
+    "src/qtrade/research/data_quality.py": "4a4b64af91ac2c8c7f4e58f2e369b933ef83c06e3225b1bee69739b5e46ea1a3",
+    "src/qtrade/research/data_quality_policy.py": "bac55426366a24d0dbfdb928d5cdc5b52f72a309d734f7806b60a4f99bd2f496",
+    "scripts/build_data_quality_summary.py": "af1b0cf40494daef750e5847182b27c226d973d2b4ced46230b70d6574ba6d17",
+    "scripts/prepare_qlib_incremental.py": "70f0479e0c763975cede93b7a68abd24e07b6ad282abf451520b6232536b3320",
+    "scripts/run_qlib_data_service.py": "20966386f094acf611e23a6df600bae1b7f436c7f20fa147db82d6af2ab1dd2d",
+    "scripts/build_qlib_daily_version.py": "d69bd505743a36b7200a456b38108e48528dcde939e7128d80a85fd3d9e68529",
+    "scripts/collect_recent_status.py": "c5ac2109117cb4ec72c1d0fd6c26341220eed5ad4550f1146ac2df3604ddde2e",
+    "scripts/publish_research_snapshot.py": "82d8688da2f26d7ce3251b4e0961039e1d96cdc88014c0d43a9c6b98aae70996",
+    "src/qtrade/api/unified_data.py": "eadc757bb43f8f72e3843ef7452858fd0689dc9068773da61248ab5ce6880713",
+    "src/qtrade/api/unified_source.py": "1bd4a0e877e674df14b87cd875e4c67095bfb6f02dd113736bab1d0d5ce16294",
+    "web/src/components/DataQualitySummary.tsx": "4bd24c3fa25825de596a5c2f44dc8bfa15ccc9e5687e021975d3b769ab12354a"
+  }
+}

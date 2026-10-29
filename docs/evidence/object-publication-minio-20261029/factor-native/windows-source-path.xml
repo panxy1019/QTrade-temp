@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="3" tests="28" time="10.051" timestamp="2026-10-29T00:29:15.421373+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="tests.test_factor_strategy_backtest" name="test_all_four_scores_match_independent_price_oracle_and_next_session[0]" time="0.420" /><testcase classname="tests.test_factor_strategy_backtest" name="test_all_four_scores_match_independent_price_oracle_and_next_session[1]" time="0.391" /><testcase classname="tests.test_factor_strategy_backtest" name="test_all_four_scores_match_independent_price_oracle_and_next_session[2]" time="0.395" /><testcase classname="tests.test_factor_strategy_backtest" name="test_all_four_scores_match_independent_price_oracle_and_next_session[3]" time="0.418" /><testcase classname="tests.test_factor_strategy_backtest" name="test_future_diagnostic_label_change_does_not_change_any_score" time="0.656" /><testcase classname="tests.test_factor_strategy_backtest" name="test_null_label_does_not_remove_feature_score" time="0.524"><failure message="AssertionError: assert ('0.003296358308915864378401005' is None)">strategy_data = namespace(data=namespace(build=&lt;function contract.&lt;locals&gt;.build at 0x00000193398DBED0&gt;, evaluate=&lt;function contract.&lt;...ctor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-source-path/test_null_label_does_not_remov0/strategies.sqlite'))
+
+    def test_null_label_does_not_remove_feature_score(strategy_data):
+        setup = strategy_data
+        first = setup.data.instruments[0][2:]
+        _, scores, _, _ = score_case(setup, transform=lambda code, i, row:
+            None if code == first and i == 25 else row)
+        target = next(row for row in scores["rows"] if row["session"] == setup.data.days[24]
+                      and row["instrument"] == "SH" + first)
+&gt;       assert target["raw_diagnostic_label"] is None and target["score"] is not None
+E       AssertionError: assert ('0.003296358308915864378401005' is None)
+
+tests\test_factor_strategy_backtest.py:97: AssertionError</failure></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_late_feature_clock_excludes_observed_but_retrospective_discloses[available_at]" time="0.517"><failure message="AssertionError: assert ('0.008771929824561403508771930' is None)">strategy_data = namespace(data=namespace(build=&lt;function contract.&lt;locals&gt;.build at 0x0000019379BDD7A0&gt;, evaluate=&lt;function contract.&lt;...ctor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-source-path/test_late_feature_clock_exclud0/strategies.sqlite'))
+clock = 'available_at'
+
+    @pytest.mark.parametrize("clock", ["available_at", "observed_at"])
+    def test_late_feature_clock_excludes_observed_but_retrospective_discloses(strategy_data, clock):
+        setup = strategy_data
+        first = setup.data.instruments[0][2:]
+        def transform(code, i, row):
+            return {**row, clock: row["date"] + "T09:00:00+00:00"} if code == first and i == 20 else row
+        _, scores, _, _ = score_case(setup, transform=transform)
+        target = next(row for row in scores["rows"] if row["session"] == setup.data.days[20]
+                      and row["instrument"] == "SH" + first)
+&gt;       assert target["score"] is None and target["feature_reason"] == "DEPENDENCY_NOT_KNOWN_AT_DECISION"
+E       AssertionError: assert ('0.008771929824561403508771930' is None)
+
+tests\test_factor_strategy_backtest.py:112: AssertionError</failure></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_late_feature_clock_excludes_observed_but_retrospective_discloses[observed_at]" time="0.518"><failure message="AssertionError: assert ('0.008771929824561403508771930' is None)">strategy_data = namespace(data=namespace(build=&lt;function contract.&lt;locals&gt;.build at 0x0000019379BDFED0&gt;, evaluate=&lt;function contract.&lt;...ctor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-source-path/test_late_feature_clock_exclud1/strategies.sqlite'))
+clock = 'observed_at'
+
+    @pytest.mark.parametrize("clock", ["available_at", "observed_at"])
+    def test_late_feature_clock_excludes_observed_but_retrospective_discloses(strategy_data, clock):
+        setup = strategy_data
+        first = setup.data.instruments[0][2:]
+        def transform(code, i, row):
+            return {**row, clock: row["date"] + "T09:00:00+00:00"} if code == first and i == 20 else row
+        _, scores, _, _ = score_case(setup, transform=transform)
+        target = next(row for row in scores["rows"] if row["session"] == setup.data.days[20]
+                      and row["instrument"] == "SH" + first)
+&gt;       assert target["score"] is None and target["feature_reason"] == "DEPENDENCY_NOT_KNOWN_AT_DECISION"
+E       AssertionError: assert ('0.008771929824561403508771930' is None)
+
+tests\test_factor_strategy_backtest.py:112: AssertionError</failure></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_common_grid_is_excluded_without_compressing_history" time="0.537"><failure message="assert False&#10; +  where False = all(&lt;generator object test_missing_common_grid_is_excluded_without_compressing_history.&lt;locals&gt;.&lt;genexpr&gt; at 0x0000019379C77850&gt;)">strategy_data = namespace(data=namespace(build=&lt;function contract.&lt;locals&gt;.build at 0x0000019379BDCA90&gt;, evaluate=&lt;function contract.&lt;...ctor-backtest-adapter-20261028T162443Z-d9e1c094/pytest-source-path/test_missing_common_grid_is_ex0/strategies.sqlite'))
+
+    def test_missing_common_grid_is_excluded_without_compressing_history(strategy_data):
+        setup = strategy_data
+        first = setup.data.instruments[0][2:]
+        _, scores, _, _ = score_case(setup, transform=lambda code, i, row:
+            None if code == first and i == 10 else row)
+        missing = [r for r in scores["rows"] if r["instrument"] == "SH" + first]
+&gt;       assert all(r["score"] is None and r["feature_reason"] == "MISSING_COMMON_SESSION_CLOSE"
+                   for r in missing)
+E       assert False
+E        +  where False = all(&lt;generator object test_missing_common_grid_is_excluded_without_compressing_history.&lt;locals&gt;.&lt;genexpr&gt; at 0x0000019379C77850&gt;)
+
+tests\test_factor_strategy_backtest.py:136: AssertionError</failure></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_actual_ready_mutation_rejected" time="0.546" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$factor-nan-DISABLE_LOTS]" time="0.011" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$capacity-nan-MISSING]" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$capacity--1-INVALID]" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$buy_block-2-INVALID]" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$sell_block-nan-MISSING]" time="0.004" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_or_invalid_execution_constraints_fail_closed[$open-nan-NOT_EXPLICITLY_BLOCKED]" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_missing_quote_requires_explicit_both_side_block_and_zero_capacity" time="0.005" /><testcase classname="tests.test_factor_strategy_backtest" name="test_native_config_reuses_frozen_costs_and_holding_policy" time="0.481" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[kind-FACTOR_STRATEGY_REGISTER_V1]" time="0.460" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[job_id-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]" time="0.500" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[strategy_version-unknown]" time="0.495" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[live_trading_enabled-True]" time="0.490" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[actor-../../unsafe]" time="0.487" /><testcase classname="tests.test_factor_strategy_backtest" name="test_new_backtest_request_never_aliases_registration_or_live[source_revision-True]" time="0.460" /><testcase classname="tests.test_factor_strategy_backtest" name="test_runner_uses_existing_registered_job_and_owned_state_without_original_writes" time="0.000"><skipped type="pytest.skip" message="existing POSIX immutable writer">E:\QTrade-git\tests\test_factor_strategy_backtest.py:209: existing POSIX immutable writer</skipped></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_real_native_qlib_first_execution_uses_previous_score_and_real_fees[False]" time="0.435"><skipped type="pytest.skip" message="Native Qlib is absent; cannot claim execution acceptance">E:\QTrade-git\tests\test_factor_strategy_backtest.py:241: Native Qlib is absent; cannot claim execution acceptance</skipped></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_real_native_qlib_first_execution_uses_previous_score_and_real_fees[True]" time="0.433"><skipped type="pytest.skip" message="Native Qlib is absent; cannot claim execution acceptance">E:\QTrade-git\tests\test_factor_strategy_backtest.py:241: Native Qlib is absent; cannot claim execution acceptance</skipped></testcase><testcase classname="tests.test_factor_strategy_backtest" name="test_live_true_blocks_before_any_execution" time="0.001" /></testsuite></testsuites>

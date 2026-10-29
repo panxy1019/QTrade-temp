@@ -1,0 +1,32 @@
+{
+  "base_revision": "458552de1fea1faf77d02dcd9ec69251a0c364b7",
+  "candidate_files": {
+    "scripts/publish_unified_market.py": "c04b3a3ecb194f18e331924fbaa49f67f7f6b885911666e827048526e9697a78",
+    "src/qtrade/research/unified_market.py": "c06680d31508947154906faeb7b8ad261c42198d8df648ecbdad3e5262d51a55",
+    "src/qtrade/market_data/sina_incremental.py": "0fb0165a0deca5e6cddd9239f7bf6ca43e4eb4d05a07d578ee11c41afcca7a80",
+    "tests/test_unified_market.py": "6556303a4041d8acd6f94f77f1830f16cf019707b77632b0130cb7ff3fa6734c"
+  },
+  "runs": [
+    {
+      "label": "candidate-long-trace",
+      "exit_code": 1,
+      "root": "E:\\QTrade-temp\\export-collection-diagnosis-20261028T041431Z\\candidate-long-trace",
+      "test_base": "E:\\qtest-export-collection-trace-20261028T041431Z",
+      "junitxml": "E:\\QTrade-temp\\export-collection-diagnosis-20261028T041431Z\\candidate-long-trace.xml"
+    },
+    {
+      "label": "baseline-short",
+      "exit_code": 0,
+      "root": "E:\\QTrade-temp\\export-collection-diagnosis-20261028T041431Z\\baseline-short",
+      "test_base": "E:\\qtp28a",
+      "junitxml": "E:\\QTrade-temp\\export-collection-diagnosis-20261028T041431Z\\baseline-short.xml"
+    },
+    {
+      "label": "candidate-short",
+      "exit_code": 0,
+      "root": "E:\\QTrade-temp\\export-collection-diagnosis-20261028T041431Z\\candidate-short",
+      "test_base": "E:\\qtp28b",
+      "junitxml": "E:\\QTrade-temp\\export-collection-diagnosis-20261028T041431Z\\candidate-short.xml"
+    }
+  ]
+}

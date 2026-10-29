@@ -1,0 +1,7 @@
+{
+  "case": "actual_frozen_3000_entry_5987_shard_two_generations",
+  "error_class": "ValueError",
+  "safe_error_code": "OBJECT_PUBLICATION_INDEX_CATALOG_LINEAGE_MISMATCH",
+  "seconds": 1.0778916832059622,
+  "state": "FAILED"
+}

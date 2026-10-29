@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "<stdin>", line 64, in <module>
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/qlib/contrib/data/handler.py", line 4, in <module>
+    from qlib.contrib.data.loader import Alpha158DL, Alpha360DL
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/qlib/contrib/data/loader.py", line 1, in <module>
+    from qlib.data.dataset.loader import QlibDataLoader
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/qlib/data/dataset/__init__.py", line 1, in <module>
+    from ...utils.serial import Serializable
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/qlib/utils/serial.py", line 5, in <module>
+    import dill
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/dill/__init__.py", line 33, in <module>
+    from .session import (
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/site-packages/dill/session.py", line 25, in <module>
+    TEMPDIR = pathlib.PurePath(tempfile.gettempdir())
+                               ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/tempfile.py", line 316, in gettempdir
+    return _os.fsdecode(_gettempdir())
+                        ^^^^^^^^^^^^^
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/tempfile.py", line 309, in _gettempdir
+    tempdir = _get_default_tempdir()
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/qlib-env/lib/python3.11/tempfile.py", line 224, in _get_default_tempdir
+    raise FileNotFoundError(_errno.ENOENT,
+FileNotFoundError: [Errno 2] No usable temporary directory found in ['/tmp', '/var/tmp', '/usr/tmp', '/root']

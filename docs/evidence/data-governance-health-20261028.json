@@ -1,0 +1,204 @@
+{
+  "business_write_or_existing_restart": false,
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "context": {
+    "active": "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487",
+    "approval_sha256": "6f1ec61bda1a28d918dd331ad0e0ae6ea7ebcc39320f8e4dade424bf726bd238",
+    "data_event_id": "69c3430923515d90b93ccb6eba9d49ca667a606b8dcdb3701c59de449ae0bc6c",
+    "data_version": "09a67b135def5dee766ea23716e5405aeb060c28a93720402cb2ebf4542ee407",
+    "model_states": {
+      "29589b4486a09159eb3a07153c54fba609fbc80b52c168dd665cd46660be8487": "ACTIVE",
+      "2d78cc4cc257653a088b1a43bc1a65ec719c570680b9698eb05e48df1b7e0293": "RETIRED",
+      "68d9287efc49c24280ab8c6e4df5c69724c0e6e9876396e7312a6b771405a81c": "TRAINED",
+      "98d27455a7cb224ef3ecbd7cf850455f386fbb93baf8137a4d789e142ab91795": "STAGED",
+      "d6c232d1500297d0e090474ab172622f0f160a7a1277a6fbee221a8dec647707": "STAGED",
+      "e0036a4fa2656da757253b168fadb4d3b8c9960d98a9a3d4409e790e93164444": "TRAINED"
+    }
+  },
+  "current_day_close_or_whole_step1_accepted": false,
+  "evidence_sha256": "bfae194e5a1d2332857a88a31642046739eabe1fa2336b076cbc156124cec741",
+  "external_order_transmission": false,
+  "free_gib": 271.470703125,
+  "history_coverage_basis": "RECEIPT_METADATA_NOT_FRESH_FULL_RAW_PARQUET_REPLAY",
+  "history_progress": {
+    "all_requested_windows_examined": false,
+    "attempted_windows": 5,
+    "code_revision": "a69eb701e00516461e0f487dc25a2088c1e0dab3",
+    "evidence_sha256": "3c9d89e71d5cf1d758b129b2d16615ab96af14fd3564c86b20bb751294c55a22",
+    "frequency_summary": {
+      "5min": {
+        "content_qualified_scopes": 214,
+        "full_history_certified_scopes": 0,
+        "independent_source_reconciled_scopes": 0,
+        "planned_scopes": 1500,
+        "qualified_rows": 123264
+      },
+      "day": {
+        "content_qualified_scopes": 255,
+        "full_history_certified_scopes": 0,
+        "independent_source_reconciled_scopes": 0,
+        "planned_scopes": 1500,
+        "qualified_rows": 3060
+      }
+    },
+    "historical_pit_certified": false,
+    "priority_reason": null,
+    "qualified_rows": 126324,
+    "state": "PASS_FINISHED",
+    "updated_at": "2026-10-28T01:53:38.548425+00:00",
+    "window_states": {
+      "CONTENT_QUALIFIED_WITH_UNRESOLVED_GAPS": 469,
+      "LOGIN_FAILED": 3,
+      "QUALITY_REJECTED": 36,
+      "QUERY_TIMEOUT": 1,
+      "YIELDED_TO_CURRENT_COLLECTION": 46
+    }
+  },
+  "known_failed_latest": [
+    {
+      "attempts": 13,
+      "completed_end": null,
+      "frequency": "5min",
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "next_attempt_at": "2026-10-28T03:16:31+00:00",
+      "state": "FAILED",
+      "symbol": "002827",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "attempts": 16,
+      "completed_end": "2026-10-27T01:55:00+00:00",
+      "frequency": "5min",
+      "last_error": "MINUTE_WINDOW_GAP_REASON_UNKNOWN",
+      "next_attempt_at": "2026-10-28T04:17:02+00:00",
+      "state": "FAILED",
+      "symbol": "512580",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "attempts": 13,
+      "completed_end": null,
+      "frequency": "5min",
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "next_attempt_at": "2026-10-28T03:21:40+00:00",
+      "state": "FAILED",
+      "symbol": "600621",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "attempts": 13,
+      "completed_end": null,
+      "frequency": "5min",
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "next_attempt_at": "2026-10-28T03:23:44+00:00",
+      "state": "FAILED",
+      "symbol": "605258",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "attempts": 9,
+      "completed_end": null,
+      "frequency": "day",
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "next_attempt_at": "2026-10-27T17:06:17+00:00",
+      "state": "FAILED",
+      "symbol": "002827",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "attempts": 1,
+      "completed_end": "2026-10-27T07:00:00+00:00",
+      "frequency": "day",
+      "last_error": null,
+      "next_attempt_at": "2026-10-27T08:31:56+00:00",
+      "state": "SUCCEEDED",
+      "symbol": "512580",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "attempts": 9,
+      "completed_end": null,
+      "frequency": "day",
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "next_attempt_at": "2026-10-27T17:07:26+00:00",
+      "state": "FAILED",
+      "symbol": "600621",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "attempts": 9,
+      "completed_end": null,
+      "frequency": "day",
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "next_attempt_at": "2026-10-27T17:08:35+00:00",
+      "state": "FAILED",
+      "symbol": "605258",
+      "trading_day": "2026-10-27"
+    }
+  ],
+  "later_intraday_checked_at": "2026-10-28T01:55:01.973664+00:00",
+  "later_intraday_failed": [
+    {
+      "attempts": 5,
+      "completed_end": null,
+      "desired_end": "2026-10-28T01:50:00+00:00",
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "state": "FAILED",
+      "symbol": "002827"
+    },
+    {
+      "attempts": 5,
+      "completed_end": null,
+      "desired_end": "2026-10-28T01:50:00+00:00",
+      "last_error": "NO_COMPLETED_REQUESTED_BARS_REASON_UNKNOWN",
+      "state": "FAILED",
+      "symbol": "605258"
+    }
+  ],
+  "live_trading_enabled": false,
+  "observed_at": "2026-10-28T01:54:23.551949+00:00",
+  "original_ro_output_sha256": "3bc68771966411f5849eae3811cb6c9c5459ede7d1b7983795124b7d3d34838b",
+  "point_in_time": false,
+  "promotion": "NOT_ELIGIBLE",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "schema_version": "qtrade.data-governance-health-observation.v1",
+  "tasks_by_day": [
+    {
+      "frequency": "5min",
+      "n": 4,
+      "state": "FAILED",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "frequency": "5min",
+      "n": 1496,
+      "state": "SUCCEEDED",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "frequency": "day",
+      "n": 3,
+      "state": "FAILED",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "frequency": "day",
+      "n": 1497,
+      "state": "SUCCEEDED",
+      "trading_day": "2026-10-27"
+    },
+    {
+      "frequency": "5min",
+      "n": 5,
+      "state": "FAILED",
+      "trading_day": "2026-10-28"
+    },
+    {
+      "frequency": "5min",
+      "n": 1495,
+      "state": "SUCCEEDED",
+      "trading_day": "2026-10-28"
+    }
+  ]
+}

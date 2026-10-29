@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-28T17:14:51.138450+00:00",
+  "elapsed_seconds": 0.0751947071403265,
+  "error_class": "AssertionError",
+  "frozen_commit": "abe2986cd6e3f3faeb4984454498e4c67f1646d3",
+  "max_unified_change_commits": 20,
+  "network_fetch_push_or_service": false,
+  "readonly_git_environment": {
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "repository": "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/publication",
+  "schema_version": "qtrade.abe-catalog-lineage-readonly.v1",
+  "state": "BOUNDED_READONLY_FAILED"
+}

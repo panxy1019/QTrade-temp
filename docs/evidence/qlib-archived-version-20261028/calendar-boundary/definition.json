@@ -1,0 +1,92 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "cost_assumptions": {
+    "close_cost": 0.0013,
+    "deal_price": "open",
+    "freq": "day",
+    "impact_cost": 0.0,
+    "limit_threshold": [
+      "$buy_block",
+      "$sell_block"
+    ],
+    "min_cost": 5,
+    "open_cost": 0.0008,
+    "trade_unit": 100,
+    "volume_threshold": [
+      "cum",
+      "$capacity"
+    ]
+  },
+  "evidence_sha256": "d9b8db16d98d7bc2e1e886d59b62ea2185fba06a8946d9cfab6df0ef6414bf56",
+  "external_order_transmission": false,
+  "feature_count": 158,
+  "fitted_restore_verified": true,
+  "historical_pit_certified": false,
+  "limitations": [
+    "Current liquidity universe selected after the historical test; survivorship and screening bias",
+    "Post hoc historical out-of-sample evaluation, not preregistered or forward unseen evidence",
+    "Historical ST and exact daily limits unverified: conservative directional 4.5% adjusted-open gap blocks",
+    "STAR buys excluded because the baseline uses 100-share lots",
+    "Missing daily quotes are non-tradable, not a certified suspension-reason table",
+    "Vendor effective-date HFQ factors not independently reconciled to corporate actions",
+    "Daily open-price fills and previous-session 1% volume cap are approximations, not auction replay",
+    "COMMON_TRAIN_FITTED_FEATURE_NORMALIZATION_AND_FILLNA",
+    "STAR_EXCLUDED_FROM_TRAINING_RANKING_AND_EXECUTION",
+    "Historical ST/limit-price and halt reason not independently certified",
+    "Historical vendor revisions not point-in-time snapshots",
+    "Vendor HFQ multipliers not independently reconciled to corporate-action ledger",
+    "Current unknown daily inputs retain history but have no current price or signal",
+    "New same-vendor overlap/HFQ check is not independent corporate-action certification",
+    "New benchmark turnover unavailable; price-index volume only, not stock liquidity"
+  ],
+  "live_trading_enabled": false,
+  "metrics": {
+    "annual_return_net": 0.2758544076345786,
+    "annualized_volatility": 0.21075161929128888,
+    "benchmark_return": 0.19598266195330183,
+    "ic": 0.019318095787249814,
+    "icir": 0.13538603549051761,
+    "max_drawdown": -0.32813049676840556,
+    "mean_daily_turnover": 0.17655239529243094,
+    "rank_ic": 0.04695198812085558,
+    "rank_icir": 0.30976493617304685,
+    "sharpe_net": 1.2618586995303145,
+    "total_return_net": 0.9278588586995526
+  },
+  "model_id": "98d27455a7cb224ef3ecbd7cf850455f386fbb93baf8137a4d789e142ab91795",
+  "model_run_id": "archived-oct26-ridge-binding-check-20261028-95bb73b441089e26",
+  "name": "Alpha158 + Ridge",
+  "point_in_time": false,
+  "portfolio": {
+    "forbid_all_trade_at_limit": false,
+    "hold_thresh": 2,
+    "n_drop": 5,
+    "only_tradable": false,
+    "risk_degree": 0.95,
+    "topk": 50
+  },
+  "promotion": "NOT_ELIGIBLE",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "restore_proof_sha256": "262e9e7c9947c2456c4c32b03f4738df3366d89d192ff36ab6e195b6d21694e1",
+  "schema_version": "qtrade.online-model.v1",
+  "segments": {
+    "test": [
+      "2024-01-02",
+      "2026-10-26"
+    ],
+    "train": [
+      "2017-04-05",
+      "2021-12-28"
+    ],
+    "valid": [
+      "2022-01-04",
+      "2023-12-26"
+    ]
+  },
+  "source_snapshot_sha256": "d9b25863af0ba5fcfd99b8e2a88fc2a74720ab482a41422ce72347c2b30135e3",
+  "training_code_revision": "096387b8088e4361c9e5cd9cd2c165e21819fead",
+  "training_completed_at": "2026-10-27T17:44:38.872098+00:00",
+  "training_data_end": "2026-10-26",
+  "training_data_sha256": "4a4289533c73828efabd8fe386416a3f0dbbbe381310834d71095b2d5de0cf5f"
+}

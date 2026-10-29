@@ -86,6 +86,35 @@ def online_publication(source: Path) -> dict[str, Any]:
         return unavailable_catalog()
 
 
+def factor_strategy_publication(source: Path) -> dict[str, Any]:
+    """Optional bounded registration catalog cannot suppress market transport."""
+    from qtrade.research.factor_strategy_catalog import validate_catalog
+
+    try:
+        if source.is_symlink():
+            raise ValueError('FACTOR_CATALOG_ALIAS')
+        with source.open('rb') as handle:
+            raw = handle.read(1_000_001)
+        if len(raw) > 1_000_000:
+            raise ValueError('FACTOR_CATALOG_TOO_LARGE')
+        return validate_catalog(json.loads(raw))
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return signed({**AUTHORITY, 'schema_version': 'qtrade.factor-strategy-unavailable.v1',
+                       'state': 'NO_VERIFIED_FACTOR_STRATEGY_CATALOG'})
+
+
+def quality_publication(source: Path) -> dict[str, Any]:
+    from qtrade.research.data_quality import validate_quality
+
+    try:
+        if source.is_symlink() or source.stat().st_size > 1_500_000:
+            raise ValueError('QUALITY_PUBLICATION_TOO_LARGE')
+        return validate_quality(json.loads(source.read_bytes()), now=datetime.now(UTC))
+    except (OSError, ValueError, KeyError, TypeError):
+        # A quality side channel failure must not suppress unrelated market publication.
+        return signed({**AUTHORITY, 'state': 'NO_VERIFIED_QUALITY_PUBLICATION'})
+
+
 def etf_shadow_publication(source: Path) -> dict[str, Any]:
     from qtrade.research.etf_shadow_publication import validate_etf_shadow_publication
 
@@ -175,7 +204,8 @@ def build_snapshot(root: Path, experiment_root: Path) -> dict[str, Any]:
 
 
 def publish(root: Path, experiment_root: Path, publication: Path, *,
-            unified_market_database: Path | None = None) -> None:
+            unified_market_database: Path | None = None,
+            unified_market_state_root: Path | None = None) -> None:
     if not (publication / ".git").is_dir():
         raise ValueError("DEDICATED_PUBLICATION_REPOSITORY_REQUIRED")
     remote = subprocess.check_output(
@@ -187,7 +217,10 @@ def publish(root: Path, experiment_root: Path, publication: Path, *,
     current_files: list[str] = []
     from scripts.publish_unified_market import publish_market_files
 
-    current_files.extend(publish_market_files(root.parent, publication, unified_market_database))
+    market_arguments: dict[str, Any] = {} if unified_market_state_root is None else {
+        'state_root': unified_market_state_root}
+    current_files.extend(publish_market_files(root.parent, publication, unified_market_database,
+                                               **market_arguments))
     workflow_root = root.parent / "workflow/public"
     workflow_catalog = workflow_root / "workflow.json"
     if workflow_catalog.is_file():
@@ -215,6 +248,10 @@ def publish(root: Path, experiment_root: Path, publication: Path, *,
             current_files.append(relative)
         write_json_atomic(publication / "workflow.json", workflow)
         current_files.append("workflow.json")
+    write_json_atomic(publication/'factor-catalog.json',
+                      factor_strategy_publication(workflow_root/'factor-catalog.json'),
+                      compact=True)
+    current_files.append('factor-catalog.json')
     from qtrade.research.qlib_publication import build_publication
 
     calendar = json.loads((REPO / "configs/observer_calendar_2026.json").read_text())
@@ -300,6 +337,9 @@ def publish(root: Path, experiment_root: Path, publication: Path, *,
         unified = validate_publication(json.loads(raw_unified))
         write_json_atomic(publication / "unified.json", unified, compact=True)
         current_files.append("unified.json")
+    write_json_atomic(publication / 'quality.json', quality_publication(
+        root.parent / 'data-quality/public/quality.json'), compact=True)
+    current_files.append('quality.json')
     write_json_atomic(publication / "latest.json", snapshot)
     online_file = workflow_root/'online.json'
     write_json_atomic(publication/'online.json', online_publication(online_file))
@@ -387,6 +427,7 @@ def main() -> None:
     parser.add_argument("--publication", type=Path, required=True)
     parser.add_argument("--once", action="store_true")
     parser.add_argument('--unified-market-database', type=Path)
+    parser.add_argument('--unified-market-state-root', type=Path)
     parser.add_argument('--interval-seconds', type=int, default=300, choices=range(60, 301))
     args = parser.parse_args()
     if os.environ.get("LIVE_TRADING_ENABLED", "false").lower() != "false":
@@ -397,8 +438,10 @@ def main() -> None:
     while not stop.is_set():
         cycle_started = time.monotonic()
         try:
+            market_arguments = {} if args.unified_market_state_root is None else {
+                'unified_market_state_root': args.unified_market_state_root}
             publish(args.root, args.experiment_root, args.publication,
-                    unified_market_database=args.unified_market_database)
+                    unified_market_database=args.unified_market_database, **market_arguments)
             print("PUBLICATION_SUCCEEDED", flush=True)
         except Exception as error:
             write_json_atomic(

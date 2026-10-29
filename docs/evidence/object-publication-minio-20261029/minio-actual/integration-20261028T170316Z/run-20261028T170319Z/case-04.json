@@ -1,0 +1,5 @@
+{
+  "case": "negative_read_and_restart_never_resend_cas",
+  "seconds": 0.2067975141108036,
+  "state": "PASSED"
+}

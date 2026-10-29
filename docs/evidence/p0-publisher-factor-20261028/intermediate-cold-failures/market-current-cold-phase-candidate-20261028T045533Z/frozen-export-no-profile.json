@@ -1,0 +1,70 @@
+{
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "point_in_time": false,
+  "realtime_readiness": false,
+  "real_data_paper_readiness": false,
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "promotion": "NOT_ELIGIBLE",
+  "schema_version": "qtrade.market-export-benchmark.v1",
+  "checked_at": "2026-10-28T04:56:20.951264+00:00",
+  "source_revision": "uncommitted:6413b4cfbdd15d2dc6106f2faf3fc65ee2225145f98c587e8f4ae094d3355b42",
+  "controlled_snapshot_clock": "2026-10-28T04:23:39.263755+00:00",
+  "clock_scope": "FROZEN_BENCHMARK_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "controlled_seconds_limit": 45,
+  "production_seconds_limit_unchanged": 45,
+  "production_output_modified": false,
+  "metadata_chunk_limit": 600000,
+  "profiling_enabled": true,
+  "freeze_evidence_sha256": "75cb08efcdc1eeec775a579f4811ccce3ddccb2e2ab1e80f79781d8908da69d3",
+  "metrics_note": "INCLUSIVE_TIMERS_OVERLAP_AND_PARALLEL_WRITE_TIMES_SUM_NOT_WALL",
+  "results": [
+    {
+      "state": "FAILED",
+      "error_class": "ValueError",
+      "error_code": "UNIFIED_MARKET_TIME_BUDGET",
+      "pass_name": "cold",
+      "wall_seconds": 45.237964,
+      "profile": {
+        "json_loads": {
+          "calls": 212920,
+          "inclusive_seconds": 2.568549
+        },
+        "json_dumps": {
+          "calls": 22995,
+          "inclusive_seconds": 3.840027
+        },
+        "chunks": {
+          "calls": 1,
+          "inclusive_seconds": 0.704285
+        },
+        "store__batch_material": {
+          "calls": 4200,
+          "inclusive_seconds": 4.858322
+        },
+        "replay": {
+          "calls": 4200,
+          "inclusive_seconds": 11.136028
+        },
+        "load": {
+          "calls": 4200,
+          "inclusive_seconds": 28.041228
+        },
+        "validate_shard": {
+          "calls": 3597,
+          "inclusive_seconds": 5.629983
+        },
+        "write_object": {
+          "calls": 3597,
+          "inclusive_seconds": 81.630296
+        },
+        "persist_objects": {
+          "calls": 1,
+          "inclusive_seconds": 13.720585
+        }
+      },
+      "peak_rss_kib": 751364
+    }
+  ],
+  "evidence_sha256": "2634c8edd68115850cf6dc9784610cc28ee16f91d36e51f47871e617daf25867"
+}

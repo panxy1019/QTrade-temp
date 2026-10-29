@@ -1,0 +1,37 @@
+PHASE source_extract_verify
+PHASE full_READY_mirror files=18829 bytes=786448967
+PHASE READY_mirror_hash_verified
+PHASE actual_ASGI_local_Git_worker_started
+{
+  "returncode": 0,
+  "elapsed_seconds": 131.9615312051028,
+  "maxrss_kib": 1291940,
+  "command": [
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/bin/python",
+    "-P",
+    "-B",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/factor_api_queue_e2e_20261028.py",
+    "--mode",
+    "real-e2e",
+    "--source",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source",
+    "--owned",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a",
+    "--revision",
+    "45de5bd2455b9ed6bdaddc1646d69e148846e3da",
+    "--base",
+    "/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/step2-factor-api-queue-3bcecd4a",
+    "--database",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/db/workflow.sqlite",
+    "--archive",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/approved-factor-archive",
+    "--source-manifest",
+    "/root/qtrade-local/operator-evidence/factor-api-queue-e2e-20261028T132322Z-3bcecd4a/source-manifest.json"
+  ]
+}
+
+{"state": "PASS_ISOLATED_ASGI_LOCAL_GIT_OWNED_WORKER", "completed_at": "2026-10-28T13:29:32.969588+00:00", "revision": "45de5bd2455b9ed6bdaddc1646d69e148846e3da", "source_files": 3001, "elapsed_seconds": 130.17670727707446, "job_id": "1cece3d0695616f629f540391fde7479", "strategy_version": "03639b67de9d3644ecb03d950a63a1cef4eafee8ce15fca506af436e8ca6058a", "checks": ["real_ASGI_auth_origin_secure_cookie", "HTTP_identity_fields_size_fail_before_Git_write", "HTTP_to_native_GitQueue_HMAC_and_idempotent_commit", "HTTP_same_job_changed_spec_conflicts_without_mutation", "worker_rejects_forged_HMAC_and_unknown_schema", "owned_child_actual_Registry_signed_detail_and_no_model_activation"], "registration_receipt_sha256": "77aa8fac6ebf764d52d204b8b1663c88cc1f7664d45a3311c6f81a3449ae82fa", "git_head": "e9e04df7e2390474c8dd4336702466074cb62e2d", "http_exchange_count": 14, "source_before_after_exact": true, "parent_loopback_network_events": [{"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}, {"host": "127.0.0.1", "port": 41591}], "production_queue_accessed": false, "github_transport_verified": false, "tls_or_public_delivery_verified": false, "model_activation": false}
+
+/root/siton-data-ecd30b0dd03a4b6c86d4ad3b98458111/qtrade/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+

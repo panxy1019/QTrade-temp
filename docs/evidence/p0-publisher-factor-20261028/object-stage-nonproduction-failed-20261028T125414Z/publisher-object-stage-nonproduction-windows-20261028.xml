@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="7" failures="0" skipped="6" tests="16" time="8.181" timestamp="2026-10-28T20:34:48.136493+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_exact_pack_is_prebuilt_bounded_and_has_no_target_commit" time="1.074"><error message="failed on setup with &quot;ValueError: OBJECT_STAGE_GIT_FAILED_971b2768ce6e0c93&quot;">tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-749/test_exact_pack_is_prebuilt_bo0')
+
+    @pytest.fixture
+    def fixture(tmp_path):
+        source = tmp_path / 'ordinary'
+        source.mkdir(); run(source, ['init', '--template=', '-b', 'main'])
+        (source / 'latest.json').write_bytes(b'{"fixture":"old-public"}\n')
+        old = commit(source, 'fixture old public main')
+        remote = tmp_path / 'remote.git'; remote.mkdir(); run(remote, ['init', '--bare', '--template='])
+        run(remote, ['config', 'receive.unpackLimit', '0'])
+        (remote / 'qtrade-nonproduction-object-stage.json').write_bytes(h.canonical({
+            'schema_version': 'qtrade.local-bare-fixture.v1', 'production': False}))
+        run(source, ['push', str(remote), 'HEAD:refs/heads/main'])
+        rng = random.Random(17)
+        for _ in range(4):
+            raw = h.canonical({'schema': 'fixture.public.v1', 'payload': rng.randbytes(2048).hex(),
+                'live_trading_enabled': False, 'external_order_transmission': False})
+            p = source / 'unified-market/objects' / (h.sha(raw) + '.json')
+            p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(raw)
+        (source / 'unified-market.json').write_bytes(b'{"fixture":"complete-new-index"}\n')
+        new = commit(source, 'fixture complete new public index')
+        isolated = h.create_isolated_repository(tmp_path / 'isolated.git', (source / '.git/objects').resolve())
+        cert = certificate(source, new)
+&gt;       target = h.CertifiedTarget(isolated, cert)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:160: in __init__
+    require(git(repo, ['cat-file', '-t', commit]).strip() == b'commit', 'TARGET_COMMIT_REQUIRED')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:121: in git
+    require(process.returncode == 0, 'GIT_FAILED_' + sha(error)[:16])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = False, code = 'GIT_FAILED_971b2768ce6e0c93'
+
+    def require(value, code):
+        if not value:
+&gt;           raise ValueError('OBJECT_STAGE_' + code)
+E           ValueError: OBJECT_STAGE_GIT_FAILED_971b2768ce6e0c93
+
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:32: ValueError</error></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_source_refs_index_and_objects_are_not_changed_by_planning" time="1.004"><error message="failed on setup with &quot;ValueError: OBJECT_STAGE_GIT_FAILED_58cb984dae366223&quot;">tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-749/test_source_refs_index_and_obj0')
+
+    @pytest.fixture
+    def fixture(tmp_path):
+        source = tmp_path / 'ordinary'
+        source.mkdir(); run(source, ['init', '--template=', '-b', 'main'])
+        (source / 'latest.json').write_bytes(b'{"fixture":"old-public"}\n')
+        old = commit(source, 'fixture old public main')
+        remote = tmp_path / 'remote.git'; remote.mkdir(); run(remote, ['init', '--bare', '--template='])
+        run(remote, ['config', 'receive.unpackLimit', '0'])
+        (remote / 'qtrade-nonproduction-object-stage.json').write_bytes(h.canonical({
+            'schema_version': 'qtrade.local-bare-fixture.v1', 'production': False}))
+        run(source, ['push', str(remote), 'HEAD:refs/heads/main'])
+        rng = random.Random(17)
+        for _ in range(4):
+            raw = h.canonical({'schema': 'fixture.public.v1', 'payload': rng.randbytes(2048).hex(),
+                'live_trading_enabled': False, 'external_order_transmission': False})
+            p = source / 'unified-market/objects' / (h.sha(raw) + '.json')
+            p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(raw)
+        (source / 'unified-market.json').write_bytes(b'{"fixture":"complete-new-index"}\n')
+        new = commit(source, 'fixture complete new public index')
+        isolated = h.create_isolated_repository(tmp_path / 'isolated.git', (source / '.git/objects').resolve())
+        cert = certificate(source, new)
+&gt;       target = h.CertifiedTarget(isolated, cert)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:160: in __init__
+    require(git(repo, ['cat-file', '-t', commit]).strip() == b'commit', 'TARGET_COMMIT_REQUIRED')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:121: in git
+    require(process.returncode == 0, 'GIT_FAILED_' + sha(error)[:16])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = False, code = 'GIT_FAILED_58cb984dae366223'
+
+    def require(value, code):
+        if not value:
+&gt;           raise ValueError('OBJECT_STAGE_' + code)
+E           ValueError: OBJECT_STAGE_GIT_FAILED_58cb984dae366223
+
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:32: ValueError</error></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_uncertified_source_path_is_rejected" time="1.013"><error message="failed on setup with &quot;ValueError: OBJECT_STAGE_GIT_FAILED_0c20a5c807372c18&quot;">tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-749/test_uncertified_source_path_i0')
+
+    @pytest.fixture
+    def fixture(tmp_path):
+        source = tmp_path / 'ordinary'
+        source.mkdir(); run(source, ['init', '--template=', '-b', 'main'])
+        (source / 'latest.json').write_bytes(b'{"fixture":"old-public"}\n')
+        old = commit(source, 'fixture old public main')
+        remote = tmp_path / 'remote.git'; remote.mkdir(); run(remote, ['init', '--bare', '--template='])
+        run(remote, ['config', 'receive.unpackLimit', '0'])
+        (remote / 'qtrade-nonproduction-object-stage.json').write_bytes(h.canonical({
+            'schema_version': 'qtrade.local-bare-fixture.v1', 'production': False}))
+        run(source, ['push', str(remote), 'HEAD:refs/heads/main'])
+        rng = random.Random(17)
+        for _ in range(4):
+            raw = h.canonical({'schema': 'fixture.public.v1', 'payload': rng.randbytes(2048).hex(),
+                'live_trading_enabled': False, 'external_order_transmission': False})
+            p = source / 'unified-market/objects' / (h.sha(raw) + '.json')
+            p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(raw)
+        (source / 'unified-market.json').write_bytes(b'{"fixture":"complete-new-index"}\n')
+        new = commit(source, 'fixture complete new public index')
+        isolated = h.create_isolated_repository(tmp_path / 'isolated.git', (source / '.git/objects').resolve())
+        cert = certificate(source, new)
+&gt;       target = h.CertifiedTarget(isolated, cert)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:160: in __init__
+    require(git(repo, ['cat-file', '-t', commit]).strip() == b'commit', 'TARGET_COMMIT_REQUIRED')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:121: in git
+    require(process.returncode == 0, 'GIT_FAILED_' + sha(error)[:16])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = False, code = 'GIT_FAILED_0c20a5c807372c18'
+
+    def require(value, code):
+        if not value:
+&gt;           raise ValueError('OBJECT_STAGE_' + code)
+E           ValueError: OBJECT_STAGE_GIT_FAILED_0c20a5c807372c18
+
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:32: ValueError</error></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_wrong_content_certificate_rejected" time="1.050"><error message="failed on setup with &quot;ValueError: OBJECT_STAGE_GIT_FAILED_2ba5426017ed20d9&quot;">tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-749/test_wrong_content_certificate0')
+
+    @pytest.fixture
+    def fixture(tmp_path):
+        source = tmp_path / 'ordinary'
+        source.mkdir(); run(source, ['init', '--template=', '-b', 'main'])
+        (source / 'latest.json').write_bytes(b'{"fixture":"old-public"}\n')
+        old = commit(source, 'fixture old public main')
+        remote = tmp_path / 'remote.git'; remote.mkdir(); run(remote, ['init', '--bare', '--template='])
+        run(remote, ['config', 'receive.unpackLimit', '0'])
+        (remote / 'qtrade-nonproduction-object-stage.json').write_bytes(h.canonical({
+            'schema_version': 'qtrade.local-bare-fixture.v1', 'production': False}))
+        run(source, ['push', str(remote), 'HEAD:refs/heads/main'])
+        rng = random.Random(17)
+        for _ in range(4):
+            raw = h.canonical({'schema': 'fixture.public.v1', 'payload': rng.randbytes(2048).hex(),
+                'live_trading_enabled': False, 'external_order_transmission': False})
+            p = source / 'unified-market/objects' / (h.sha(raw) + '.json')
+            p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(raw)
+        (source / 'unified-market.json').write_bytes(b'{"fixture":"complete-new-index"}\n')
+        new = commit(source, 'fixture complete new public index')
+        isolated = h.create_isolated_repository(tmp_path / 'isolated.git', (source / '.git/objects').resolve())
+        cert = certificate(source, new)
+&gt;       target = h.CertifiedTarget(isolated, cert)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:160: in __init__
+    require(git(repo, ['cat-file', '-t', commit]).strip() == b'commit', 'TARGET_COMMIT_REQUIRED')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:121: in git
+    require(process.returncode == 0, 'GIT_FAILED_' + sha(error)[:16])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = False, code = 'GIT_FAILED_2ba5426017ed20d9'
+
+    def require(value, code):
+        if not value:
+&gt;           raise ValueError('OBJECT_STAGE_' + code)
+E           ValueError: OBJECT_STAGE_GIT_FAILED_2ba5426017ed20d9
+
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:32: ValueError</error></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_private_json_field_and_live_authority_rejected" time="0.000" /><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_unknown_fields_and_incomplete_target_certificate_rejected" time="1.048"><error message="failed on setup with &quot;ValueError: OBJECT_STAGE_GIT_FAILED_038a76dd3f0d3c4b&quot;">tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-749/test_unknown_fields_and_incomp0')
+
+    @pytest.fixture
+    def fixture(tmp_path):
+        source = tmp_path / 'ordinary'
+        source.mkdir(); run(source, ['init', '--template=', '-b', 'main'])
+        (source / 'latest.json').write_bytes(b'{"fixture":"old-public"}\n')
+        old = commit(source, 'fixture old public main')
+        remote = tmp_path / 'remote.git'; remote.mkdir(); run(remote, ['init', '--bare', '--template='])
+        run(remote, ['config', 'receive.unpackLimit', '0'])
+        (remote / 'qtrade-nonproduction-object-stage.json').write_bytes(h.canonical({
+            'schema_version': 'qtrade.local-bare-fixture.v1', 'production': False}))
+        run(source, ['push', str(remote), 'HEAD:refs/heads/main'])
+        rng = random.Random(17)
+        for _ in range(4):
+            raw = h.canonical({'schema': 'fixture.public.v1', 'payload': rng.randbytes(2048).hex(),
+                'live_trading_enabled': False, 'external_order_transmission': False})
+            p = source / 'unified-market/objects' / (h.sha(raw) + '.json')
+            p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(raw)
+        (source / 'unified-market.json').write_bytes(b'{"fixture":"complete-new-index"}\n')
+        new = commit(source, 'fixture complete new public index')
+        isolated = h.create_isolated_repository(tmp_path / 'isolated.git', (source / '.git/objects').resolve())
+        cert = certificate(source, new)
+&gt;       target = h.CertifiedTarget(isolated, cert)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:160: in __init__
+    require(git(repo, ['cat-file', '-t', commit]).strip() == b'commit', 'TARGET_COMMIT_REQUIRED')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:121: in git
+    require(process.returncode == 0, 'GIT_FAILED_' + sha(error)[:16])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = False, code = 'GIT_FAILED_038a76dd3f0d3c4b'
+
+    def require(value, code):
+        if not value:
+&gt;           raise ValueError('OBJECT_STAGE_' + code)
+E           ValueError: OBJECT_STAGE_GIT_FAILED_038a76dd3f0d3c4b
+
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:32: ValueError</error></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_oversized_exact_pack_rejected_before_transport" time="1.285"><error message="failed on setup with &quot;ValueError: OBJECT_STAGE_GIT_FAILED_21a5f5b94d9ae564&quot;">tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-749/test_oversized_exact_pack_reje0')
+
+    @pytest.fixture
+    def fixture(tmp_path):
+        source = tmp_path / 'ordinary'
+        source.mkdir(); run(source, ['init', '--template=', '-b', 'main'])
+        (source / 'latest.json').write_bytes(b'{"fixture":"old-public"}\n')
+        old = commit(source, 'fixture old public main')
+        remote = tmp_path / 'remote.git'; remote.mkdir(); run(remote, ['init', '--bare', '--template='])
+        run(remote, ['config', 'receive.unpackLimit', '0'])
+        (remote / 'qtrade-nonproduction-object-stage.json').write_bytes(h.canonical({
+            'schema_version': 'qtrade.local-bare-fixture.v1', 'production': False}))
+        run(source, ['push', str(remote), 'HEAD:refs/heads/main'])
+        rng = random.Random(17)
+        for _ in range(4):
+            raw = h.canonical({'schema': 'fixture.public.v1', 'payload': rng.randbytes(2048).hex(),
+                'live_trading_enabled': False, 'external_order_transmission': False})
+            p = source / 'unified-market/objects' / (h.sha(raw) + '.json')
+            p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(raw)
+        (source / 'unified-market.json').write_bytes(b'{"fixture":"complete-new-index"}\n')
+        new = commit(source, 'fixture complete new public index')
+        isolated = h.create_isolated_repository(tmp_path / 'isolated.git', (source / '.git/objects').resolve())
+        cert = certificate(source, new)
+&gt;       target = h.CertifiedTarget(isolated, cert)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:160: in __init__
+    require(git(repo, ['cat-file', '-t', commit]).strip() == b'commit', 'TARGET_COMMIT_REQUIRED')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:121: in git
+    require(process.returncode == 0, 'GIT_FAILED_' + sha(error)[:16])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = False, code = 'GIT_FAILED_21a5f5b94d9ae564'
+
+    def require(value, code):
+        if not value:
+&gt;           raise ValueError('OBJECT_STAGE_' + code)
+E           ValueError: OBJECT_STAGE_GIT_FAILED_21a5f5b94d9ae564
+
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:32: ValueError</error></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_unreachable_object_and_out_of_namespace_parameters_rejected" time="1.438"><error message="failed on setup with &quot;ValueError: OBJECT_STAGE_GIT_FAILED_a326e9434c046d4b&quot;">tmp_path = WindowsPath('C:/Users/panxy1019/AppData/Local/Temp/pytest-of-panxy1019/pytest-749/test_unreachable_object_and_ou0')
+
+    @pytest.fixture
+    def fixture(tmp_path):
+        source = tmp_path / 'ordinary'
+        source.mkdir(); run(source, ['init', '--template=', '-b', 'main'])
+        (source / 'latest.json').write_bytes(b'{"fixture":"old-public"}\n')
+        old = commit(source, 'fixture old public main')
+        remote = tmp_path / 'remote.git'; remote.mkdir(); run(remote, ['init', '--bare', '--template='])
+        run(remote, ['config', 'receive.unpackLimit', '0'])
+        (remote / 'qtrade-nonproduction-object-stage.json').write_bytes(h.canonical({
+            'schema_version': 'qtrade.local-bare-fixture.v1', 'production': False}))
+        run(source, ['push', str(remote), 'HEAD:refs/heads/main'])
+        rng = random.Random(17)
+        for _ in range(4):
+            raw = h.canonical({'schema': 'fixture.public.v1', 'payload': rng.randbytes(2048).hex(),
+                'live_trading_enabled': False, 'external_order_transmission': False})
+            p = source / 'unified-market/objects' / (h.sha(raw) + '.json')
+            p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(raw)
+        (source / 'unified-market.json').write_bytes(b'{"fixture":"complete-new-index"}\n')
+        new = commit(source, 'fixture complete new public index')
+        isolated = h.create_isolated_repository(tmp_path / 'isolated.git', (source / '.git/objects').resolve())
+        cert = certificate(source, new)
+&gt;       target = h.CertifiedTarget(isolated, cert)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:160: in __init__
+    require(git(repo, ['cat-file', '-t', commit]).strip() == b'commit', 'TARGET_COMMIT_REQUIRED')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:121: in git
+    require(process.returncode == 0, 'GIT_FAILED_' + sha(error)[:16])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = False, code = 'GIT_FAILED_a326e9434c046d4b'
+
+    def require(value, code):
+        if not value:
+&gt;           raise ValueError('OBJECT_STAGE_' + code)
+E           ValueError: OBJECT_STAGE_GIT_FAILED_a326e9434c046d4b
+
+E:\QTrade-temp\publisher_object_stage_nonproduction_20261028.py:32: ValueError</error></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_url_and_unsentinel_endpoint_rejected" time="0.007" /><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_json_duplicate_and_nan_rejected" time="0.000" /><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_actual_aux_protocol_keeps_main_complete_and_final_ordinary_push_excludes_blobs" time="0.000"><skipped type="pytest.skip" message="actual protocol requires POSIX owned session cleanup; Linux must run all">E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:152: actual protocol requires POSIX owned session cleanup; Linux must run all</skipped></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_original_complete_tree_can_stage_after_its_blobs" time="0.000"><skipped type="pytest.skip" message="actual protocol requires POSIX owned session cleanup; Linux must run all">E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:182: actual protocol requires POSIX owned session cleanup; Linux must run all</skipped></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_interrupted_pack_never_claims_success_or_exposes_partial_ref" time="0.000"><skipped type="pytest.skip" message="actual protocol requires POSIX owned session cleanup; Linux must run all">E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:194: actual protocol requires POSIX owned session cleanup; Linux must run all</skipped></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_ack_loss_is_uncertain_and_same_aux_ref_is_never_retried" time="0.000"><skipped type="pytest.skip" message="actual protocol requires POSIX owned session cleanup; Linux must run all">E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:205: actual protocol requires POSIX owned session cleanup; Linux must run all</skipped></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_non_fast_forward_or_existing_aux_ref_is_refused_without_force" time="0.000"><skipped type="pytest.skip" message="actual protocol requires POSIX owned session cleanup; Linux must run all">E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:216: actual protocol requires POSIX owned session cleanup; Linux must run all</skipped></testcase><testcase classname="test_publisher_object_stage_nonproduction_20261028" name="test_forged_main_destination_or_changed_pack_is_rejected_before_io" time="0.000"><skipped type="pytest.skip" message="actual protocol requires POSIX owned session cleanup; Linux must run all">E:\QTrade-temp\test_publisher_object_stage_nonproduction_20261028.py:226: actual protocol requires POSIX owned session cleanup; Linux must run all</skipped></testcase></testsuite></testsuites>

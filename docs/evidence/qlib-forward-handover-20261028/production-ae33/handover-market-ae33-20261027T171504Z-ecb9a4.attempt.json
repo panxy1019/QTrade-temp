@@ -1,0 +1,20 @@
+{
+  "args": [
+    "python",
+    "-B",
+    "-m",
+    "scripts.probe_unified_publication",
+    "--expected-production-revision",
+    "ae33a7c8c27ea721eb3be1e4430b562a44b67f91",
+    "--report",
+    "E:\\QTrade-temp\\cluster-evidence\\handover-market-ae33-20261027T171504Z-ecb9a4.json"
+  ],
+  "finished_at": "2026-10-27T17:15:20.251852+00:00",
+  "kind": "ACTUAL_POST_HANDOVER_MARKET_PROBE_ATTEMPT",
+  "report_exists": true,
+  "returncode": 0,
+  "started_at": "2026-10-27T17:15:04.585782+00:00",
+  "stderr": "",
+  "stdout": "{\"state\": \"FRESH_TRANSPORT\", \"production_revision\": \"ae33a7c8c27ea721eb3be1e4430b562a44b67f91\", \"index_id\": \"146b9e36d093a9da53d41c8b078a8c074c6b3b75ff1f6e1df9ff5d89d9c35069\", \"catalog_id\": \"a9cfc1ab5c45941cebed40071227ce36e9c7978149616a53bb8de191df0504b5\", \"fresh_publication\": true, \"transport_mode\": \"ACTUAL_HTTP_GET\", \"incremental_freshness\": {\"day\": {\"status\": \"PARTIAL\", \"ready_symbols\": 1497, \"required_symbols\": 1500, \"expected_end\": \"2026-10-27T15:00:00+08:00\"}, \"5min\": {\"status\": \"PARTIAL\", \"ready_symbols\": 1496, \"required_symbols\": 1500, \"expected_end\": \"2026-10-27T15:00:00+08:00\"}}}\r\n",
+  "whole_step1_accepted": false
+}

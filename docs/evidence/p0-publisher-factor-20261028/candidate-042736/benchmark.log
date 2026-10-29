@@ -1,0 +1,7 @@
+{"state": "FAILED", "error_class": "ValueError", "error_code": "UNIFIED_MARKET_TIME_BUDGET", "pass_name": "cold", "wall_seconds": 45.219848, "profile": {}, "peak_rss_kib": 804984}
+{"state": "SUCCEEDED", "statistics": {"source_bytes_read": 117379707, "cached_batches": 160, "replayed_batches": 2534, "selected_chunks": 66782, "selected_batches": 2694, "export_seconds": 36.781487, "total_bytes": 101622974, "total_files": 4488, "index_id": "dba92fe76766fe3126588eaef06d55084af1f2bfea3d7a05fff4c9bcec24d0fb", "cached_rows": 70520, "cache_estimated_bytes": 127999629, "quarantined_entries": 0}, "index_id": "dba92fe76766fe3126588eaef06d55084af1f2bfea3d7a05fff4c9bcec24d0fb", "all_entry_references_equal": true, "exact_equal_shards": 4488, "baseline_total_shards": 4488, "pass_name": "warm", "wall_seconds": 38.285377, "profile": {}, "peak_rss_kib": 808996}
+Traceback (most recent call last):
+  File "/root/qtrade-local/operator-evidence/market-export-decoded-candidate-20261028T042736Z/benchmark.py", line 47, in <module>
+    assert all(x['state']=='SUCCEEDED' for x in results),'FROZEN_EXPORT_NOT_ACCEPTED'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FROZEN_EXPORT_NOT_ACCEPTED

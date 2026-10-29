@@ -1,0 +1,39 @@
+{
+  "actual_browser_rendered": false,
+  "files": {
+    "factor-api-final-root-20261028.xml": {
+      "bytes": 7625,
+      "sha256": "e2be93bf559c77c6edfc968988496d0e9adc27e01407337203c6a454ee6f1d4b"
+    },
+    "factor-api-initial-20261028.xml": {
+      "bytes": 2610,
+      "sha256": "963243dc15b59988a99615e89f23ca64d7b3b4b787744d06e04178f034c17f57"
+    },
+    "factor-builder-final-build-20261028.log": {
+      "bytes": 1931,
+      "sha256": "7207d5de17d9b8b3913cc1ad438c94175f04ce01231fb9fb7653aad6fd79ea04"
+    },
+    "factor-builder-final-eslint-20261028.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "factor-builder-web-20-final-20261028.xml": {
+      "bytes": 5100,
+      "sha256": "ea27721c58a228fe71939869b24b546b1c784e54be7fd14b317823b2693dfe70"
+    },
+    "factor-builder-web-after-lint-20261028.xml": {
+      "bytes": 4875,
+      "sha256": "b1735378d3b753e461f6c295f9468d339a10f3393164f06bce44d26dc40cfeab"
+    },
+    "factor-builder-web-final-20261028.xml": {
+      "bytes": 4879,
+      "sha256": "5920f5b9eb86beaad82ba7b088eb50e1a4fd394a2ca4272cd2fbf6e41ccf71a6"
+    },
+    "source-sha256.json": {
+      "bytes": 1140,
+      "sha256": "2405ee2c98fef9c884b0ca7ebede5e51be8c2b6626d397cc8a3e4bae09ba1556"
+    }
+  },
+  "production_deployed": false,
+  "schema_version": "qtrade.interface-evidence-files.v1"
+}

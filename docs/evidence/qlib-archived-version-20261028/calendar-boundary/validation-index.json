@@ -1,0 +1,14 @@
+{
+  "archive": "workflow/jobs/1ed2fd215098f7e64421f9419584662f/output/validations/f76197221f81a89e76896848b85b0e81c623e0b162802143a2c3940ba9502474",
+  "classification": "PUBLIC_SOURCE_RESEARCH_OBSERVATION_ONLY",
+  "evidence_sha256": "62623fe212f1fcba34afb09be656577978659868cf4ebe6b72b1be3463e05a7c",
+  "external_order_transmission": false,
+  "live_trading_enabled": false,
+  "manifest_sha256": "fc01f61a1595578701d575c6742c4d94ffd3bd277af78ba7b615617b734981ed",
+  "model_id": "98d27455a7cb224ef3ecbd7cf850455f386fbb93baf8137a4d789e142ab91795",
+  "point_in_time": false,
+  "promotion": "NOT_ELIGIBLE",
+  "real_data_paper_readiness": false,
+  "realtime_readiness": false,
+  "validation_id": "f76197221f81a89e76896848b85b0e81c623e0b162802143a2c3940ba9502474"
+}

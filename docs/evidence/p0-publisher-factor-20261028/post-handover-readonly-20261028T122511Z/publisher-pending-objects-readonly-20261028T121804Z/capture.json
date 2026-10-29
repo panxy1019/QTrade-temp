@@ -1,0 +1,7 @@
+{
+  "helper_sha256": "d5ae780e7fc64a5327cb657f24ccc5fd0b7fd232c664122870363733aab67bcf",
+  "exit_code": 0,
+  "output_sha256": "7a02f5897ba0cc2e87bf94150bf19e98b643f0777a23d772f9274699d732777d",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "production_mutations": false
+}

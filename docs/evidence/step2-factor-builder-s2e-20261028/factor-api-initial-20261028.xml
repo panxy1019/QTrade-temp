@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="3" failures="0" skipped="0" tests="3" time="0.678" timestamp="2026-10-28T20:03:13.612022+08:00" hostname="DESKTOP-F1JPIV2"><testcase classname="" name="tests.test_factor_research_api" time="0.000"><error message="collection failure">ImportError while importing test module 'E:\QTrade-git\tests\test_factor_research_api.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_factor_research_api.py:9: in &lt;module&gt;
+    from test_qlib_workflow import client as client
+tests\test_qlib_workflow.py:12: in &lt;module&gt;
+    from qtrade.api import research_workflow as api
+E   ImportError: cannot import name 'research_workflow' from 'qtrade.api' (E:\Q\src\qtrade\api\__init__.py)</error></testcase><testcase classname="" name="tests.test_qlib_bound_research_integration" time="0.000"><error message="collection failure">ImportError while importing test module 'E:\QTrade-git\tests\test_qlib_bound_research_integration.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_qlib_bound_research_integration.py:10: in &lt;module&gt;
+    from test_qlib_strategy_contract import admitted as admitted
+tests\test_qlib_strategy_contract.py:9: in &lt;module&gt;
+    from qtrade.monitoring.data_freshness import AUTHORITY, signed
+E   ModuleNotFoundError: No module named 'qtrade.monitoring.data_freshness'</error></testcase><testcase classname="" name="tests.test_qlib_workflow" time="0.000"><error message="collection failure">ImportError while importing test module 'E:\QTrade-git\tests\test_qlib_workflow.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_qlib_workflow.py:12: in &lt;module&gt;
+    from qtrade.api import research_workflow as api
+E   ImportError: cannot import name 'research_workflow' from 'qtrade.api' (E:\Q\src\qtrade\api\__init__.py)</error></testcase></testsuite></testsuites>

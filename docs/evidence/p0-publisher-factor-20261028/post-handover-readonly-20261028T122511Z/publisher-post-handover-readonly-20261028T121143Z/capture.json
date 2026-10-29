@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "helper_sha256": "e2b5ac2ce6f305ebcd23da33500b0bc842c0f235d106fb5eb2f1ebe3fd7703c4",
+  "production_mutations": false,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 134000,
+  "stdout_sha256": "378e2995d589f568813a224fe249d1a446e18cc992a711c5d20cd340e1b7c98f"
+}

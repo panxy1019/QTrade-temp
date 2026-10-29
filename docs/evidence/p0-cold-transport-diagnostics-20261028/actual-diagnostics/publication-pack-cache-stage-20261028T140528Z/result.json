@@ -1,0 +1,12 @@
+{
+  "main_push_attempted": false,
+  "production_cache_installed": false,
+  "profile_returncode": 0,
+  "remote_root": "/root/qtrade-local/operator-evidence/publication-pack-cache-stage-20261028T140528Z",
+  "source_hashes": {
+    "profile_publication_pack_cache_cold_20261028.py": "ff1319715de4f9904a64790bb269800a3ae5a4ca2cc895fa5064bc276ba3e1a3",
+    "test_cold_pack_stream_20261028.py": "64a0090310e79d4b6b54e92fbd12f19d3fc7b56751656a02b4b3d389278d55bf"
+  },
+  "source_objects_written": false,
+  "test_returncode": 0
+}

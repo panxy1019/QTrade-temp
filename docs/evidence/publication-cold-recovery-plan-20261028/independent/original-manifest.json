@@ -1,0 +1,38 @@
+{
+  "created_at": "2026-10-28T14:58:18.641469+00:00",
+  "files": [
+    {
+      "bytes": 36443,
+      "file": "publication_cold_recovery_operator_20261028.py",
+      "original_path": "E:\\QTrade-temp\\publication-cold-recovery-final-20261028T145240Z-ad5676c1\\publication_cold_recovery_operator_20261028.py",
+      "sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa"
+    },
+    {
+      "bytes": 5228,
+      "file": "test_cold_recovery_independent_readonly_20261028.py",
+      "original_path": "E:\\QTrade-temp\\test_cold_recovery_independent_readonly_20261028.py",
+      "sha256": "5050ffbbacb9a85b76cee9af6e205ac48cc3e01985b9212187441ace2fba5b9e"
+    },
+    {
+      "bytes": 1523,
+      "file": "independent-offline-7.xml",
+      "original_path": "E:\\QTrade-temp\\cold-recovery-independent-tests-20261028T145700Z.xml",
+      "sha256": "b2b49cb756d46326f8ccba26e89424cbd80d25d218089d25ba03f24d4cb09c0f"
+    },
+    {
+      "bytes": 15475,
+      "file": "root-linux-exact-64.xml",
+      "original_path": "E:\\QTrade-temp\\publication-cold-recovery-final-20261028T145240Z-ad5676c1\\linux-actual\\linux-results.xml",
+      "sha256": "d8c68c1dffb9d4975faf95774b32cf155a9c23dc005b5fa66c99c13fc546bba8"
+    },
+    {
+      "bytes": 5867,
+      "file": "README.md",
+      "sha256": "3ddd99ee4408eeea3147a94e9c65bbc1316aab82f16fdbc11a70f4bad64be973"
+    }
+  ],
+  "final_source_sha256": "738c295d55d9b1a4081ca2547d2bfdad3ea59553d0102cc152bb34b3916917fa",
+  "human_cold_send_approval_created": false,
+  "real_processes_or_network_executed": false,
+  "schema": "qtrade.cold-recovery-independent-readonly-seal.v1"
+}

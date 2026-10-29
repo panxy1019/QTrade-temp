@@ -1,0 +1,3 @@
+PHASE longer_evaluation_started
+PHASE report_committed
+{"state": "COMPLETE", "reference": {"evaluation_id": "factor-eval-dd6a5c6d61a64044975646668eef4486", "specification_sha256": "df37905951d4c352b0a0397628f07158e36bd5b0edcae24339f221defb9116de", "report_manifest_sha256": "c0a86db641a9ab653d00f527bc557e5ceb84a0e7d866dd36d11df96c406453a9"}, "seconds": 70.21418100222945, "report_raw_bytes": 191719859, "peak_rss_kib": 1366820}

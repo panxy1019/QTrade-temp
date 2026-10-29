@@ -77,17 +77,132 @@ def completed_klines(
     calendar: Calendar, require_complete_session: bool = False,
 ) -> tuple[IncrementalBar, ...]:
     """Admit only the requested day; a missing bar never supplies a suspension reason."""
-    identity = instrument_id(symbol, security_type)
-    if observed_at.tzinfo is None or not calendar.is_open(requested_day):
+    identity, cutoff = _kline_context(symbol, security_type, frequency, requested_day,
+                                      observed_at, calendar)
+    return _decode_klines(raw, symbol, security_type, frequency, requested_day, identity, cutoff,
+                          require_complete_session)
+
+
+def _decode_klines(raw: bytes, symbol: str, security_type: str,
+                   frequency: Literal['day', '5min'], requested_day: date, identity: str,
+                   cutoff: datetime, require_complete_session: bool
+                   ) -> tuple[IncrementalBar, ...]:
+    if len(raw) > 2_000_000:
+        raise ValueError("BOUNDED_SOURCE_RESPONSE_TOO_LARGE")
+    return _completed_kline_rows(json.loads(raw), symbol, security_type, frequency,
+                                 requested_day, identity, cutoff, require_complete_session)
+
+
+class _CapturedKlineReader:
+    """One export's bounded immutable calendar/identity memo; never caches source admission."""
+
+    def __init__(self, calendar: Calendar):
+        self._calendar = calendar
+        self._identities: dict[tuple[str, str], str] = {}
+        self._days: dict[date, bool] = {}
+        self._cutoffs: dict[tuple[datetime, str], datetime] = {}
+
+    def identity(self, symbol: str, security_type: str) -> str:
+        key = (symbol, security_type)
+        if key not in self._identities:
+            value = instrument_id(symbol, security_type)
+            if len(self._identities) >= 4096:
+                return value
+            self._identities[key] = value
+        return self._identities[key]
+
+    def is_open(self, day: date) -> bool:
+        if day not in self._days:
+            value = self._calendar.is_open(day)
+            if len(self._days) >= 4096:
+                return value
+            self._days[day] = value
+        return self._days[day]
+
+    def expected(self, now: datetime, kind: str) -> datetime:
+        # The concrete Calendar's cutoff is constant throughout one Shanghai
+        # minute (including its 60-second lag). Custom calendars retain full calls.
+        if type(self._calendar) is not Calendar:
+            return self._calendar.expected(now, kind)
+        key = (now.astimezone(SHANGHAI).replace(second=0, microsecond=0), kind)
+        if key not in self._cutoffs:
+            value = self._calendar.expected(now, kind)
+            if len(self._cutoffs) >= 4096:
+                return value
+            self._cutoffs[key] = value
+        return self._cutoffs[key]
+
+    def parse(self, raw: bytes, *, symbol: str, security_type: str,
+              frequency: Literal['day', '5min'], requested_day: date, observed_at: datetime,
+              calendar: Calendar, require_complete_session: bool = False
+              ) -> tuple[IncrementalBar, ...]:
+        reader = self if calendar is self._calendar else None
+        identity, cutoff = _kline_context(symbol, security_type, frequency, requested_day,
+                                          observed_at, calendar, _reader=reader)
+        return _decode_klines(raw, symbol, security_type, frequency, requested_day, identity,
+                              cutoff, require_complete_session)
+
+
+def completed_kline_rows(
+    rows: list[dict[str, Any]], *, symbol: str, security_type: str,
+    frequency: Literal["day", "5min"], requested_day: date, observed_at: datetime,
+    calendar: Calendar, require_complete_session: bool = False,
+) -> tuple[IncrementalBar, ...]:
+    """Validate bounded constructed rows; captured responses must use completed_klines.
+
+    The market-shard validator constructs one row after bounding every numeric
+    string. It can reuse the same admission checks without a JSON round trip.
+    This entry point does not replace raw-response byte, JSON or source replay checks.
+    """
+    identity, cutoff = _kline_context(symbol, security_type, frequency, requested_day,
+                                      observed_at, calendar)
+    return _completed_kline_rows(rows, symbol, security_type, frequency, requested_day,
+                                 identity, cutoff, require_complete_session)
+
+
+class _ConstructedKlineRows:
+    """One shard's fixed context; rows still receive independent parser/quality checks."""
+
+    def __init__(self, symbol: str, security_type: str, frequency: Literal['day', '5min'],
+                 observed_at: datetime, calendar: Calendar):
+        self._symbol, self._security_type, self._frequency = symbol, security_type, frequency
+        self._observed_at, self._calendar = observed_at, calendar
+        self._contexts: dict[date, tuple[str, datetime]] = {}
+
+    def parse(self, rows: list[dict[str, Any]], requested_day: date
+              ) -> tuple[IncrementalBar, ...]:
+        if requested_day not in self._contexts:
+            self._contexts[requested_day] = _kline_context(
+                self._symbol, self._security_type, self._frequency, requested_day,
+                self._observed_at, self._calendar)
+        identity, cutoff = self._contexts[requested_day]
+        return _completed_kline_rows(rows, self._symbol, self._security_type, self._frequency,
+                                     requested_day, identity, cutoff, False)
+
+
+def _kline_context(symbol: str, security_type: str, frequency: str, requested_day: date,
+                   observed_at: datetime, calendar: Calendar, *,
+                   _reader: _CapturedKlineReader | None = None) -> tuple[str, datetime]:
+    identity = (_reader.identity(symbol, security_type) if _reader is not None else
+                instrument_id(symbol, security_type))
+    if observed_at.tzinfo is None or not (
+            _reader.is_open(requested_day) if _reader is not None
+            else calendar.is_open(requested_day)):
         raise ValueError("INVALID_INCREMENTAL_OBSERVATION_CLOCK_OR_DAY")
     if frequency not in {"day", "5min"}:
         raise ValueError("INVALID_INCREMENTAL_FREQUENCY")
-    cutoff = calendar.expected(observed_at, "daily" if frequency == "day" else "minute")
+    kind = 'daily' if frequency == 'day' else 'minute'
+    cutoff = (_reader.expected(observed_at, kind) if _reader is not None else
+              calendar.expected(observed_at, kind))
     if requested_day > cutoff.date():
         raise ValueError("REQUESTED_DAY_NOT_COMPLETE")
-    if len(raw) > 2_000_000:
-        raise ValueError("BOUNDED_SOURCE_RESPONSE_TOO_LARGE")
-    payload = json.loads(raw)
+    return identity, cutoff
+
+
+def _completed_kline_rows(
+    payload: Any, symbol: str, security_type: str, frequency: Literal["day", "5min"],
+    requested_day: date, identity: str, cutoff: datetime, require_complete_session: bool,
+) -> tuple[IncrementalBar, ...]:
     if not isinstance(payload, list) or not 1 <= len(payload) <= 1970:
         raise ValueError("INVALID_BOUNDED_KLINE_RESPONSE")
     result = []

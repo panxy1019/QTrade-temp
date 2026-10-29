@@ -1,0 +1,39 @@
+{
+  "artifacts": {
+    "benchmark.py": "1f7fc797bced5c03e80988537b5f08583c7e92fdd74559e0fae22de415bc04de",
+    "cold-output-refs.json": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645",
+    "cold-profile.json": "7e2aa2dfa8024f8bf3a0538b96a8e587f352c65b64f6b832e062668b3dc30a70",
+    "cold-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cold-stdout.log": "39fdec1312046e5344c896d48a4c2db5aaefb9f0a34da1676ed858d199723a40",
+    "cold-worker-643631.json": "c7736d4c5f78ef34b87bc9ef438a9f4a831b95d21ceb38847d084f94fa2da1c9",
+    "cold-worker-643632.json": "112cdaa2449dd5488ae2898730161d0a042eb78aae5408ade880be31a0be7342",
+    "preflight.json": "68950bc77914e90a173a09539e82f5288472898e5bbfd1bd1e1f3bb88b3bf62e",
+    "profile-report.json": "25b82b27dea034b9c181c0ee1decb140dc88446d983693387b49ab1aa42eab5f",
+    "profile_driver.py": "321fcd19a0f5d4e65dfbaa1de6783a2a183af1f91daf1d915ff615d96ca38c9b",
+    "profile_runtime.py": "181f75ba8ab541d771ec8d9333da5f9610a30dbbaf11fb90ea462d90a61449d9",
+    "profile_worker.py": "8cfc39e556122a0cf2841bafb7e4506d0f9abd5e8ccbef950a849b9ee432c87b",
+    "run_profile_stdin.py": "829de5fe9c50d02fae76949a379f6748ed5a3aea2623c00c48b8df0578926e2b",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout.log": "b8957362acc773b78ab60d62e33e7aac70c17f273a68843187a2f95e63a13e5b",
+    "transfer-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "transfer-stdout.log": "6ad1168b0257395abcb9db020b234a0c7e73d207fb5741968f97dc4c7db3e60e",
+    "warm-output-refs.json": "8b5fe61818b574d922de13d20732ebd6c323d1eba5ee072573e0771698229645",
+    "warm-profile.json": "6a35c61ace6a9e9e868de33e30aedace0dca8fdc6924bd20ff38b6ff47db16ae",
+    "warm-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "warm-stdout.log": "fba35444c00d315072af4698abbca8e9bd16714a2601a0e676ab51d98a0c248e",
+    "warm-worker-643941.json": "cfd165c9c5e28da8229626343298ce479856c3444b375ab0f79d2cce425de8ed",
+    "warm-worker-643942.json": "8efe60ba318dfefc720655f86ab0372620276ca8a76757dac4b9f9dceb3dbef4"
+  },
+  "exit_code": 0,
+  "helpers_sha256": {
+    "benchmark.py": "1f7fc797bced5c03e80988537b5f08583c7e92fdd74559e0fae22de415bc04de",
+    "profile_driver.py": "321fcd19a0f5d4e65dfbaa1de6783a2a183af1f91daf1d915ff615d96ca38c9b",
+    "profile_runtime.py": "181f75ba8ab541d771ec8d9333da5f9610a30dbbaf11fb90ea462d90a61449d9",
+    "profile_worker.py": "8cfc39e556122a0cf2841bafb7e4506d0f9abd5e8ccbef950a849b9ee432c87b"
+  },
+  "private_mount_raw_not_downloaded_or_committed": true,
+  "production_mutations": false,
+  "recorded_at": "2026-10-28T11:35:38.721593+00:00",
+  "remote": "/root/qtrade-local/operator-evidence/market-stage-profile-20261028T113018Z",
+  "transfer": "SSH_STDIN_HASH_VERIFIED_NEW_FILES_ONLY"
+}

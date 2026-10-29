@@ -1,0 +1,20 @@
+{
+  "scope": "LOCAL_CAPTURE_GIT_AND_NUMERICAL_REPLAY_ONLY",
+  "files": [
+    {
+      "file": "step2-real-daily-independent-review-20261028.md",
+      "sha256": "1536494971a6c5c2717993fab08319b97bfff1270f7fc2d514e550bebba44a3b",
+      "bytes": 2152
+    },
+    {
+      "file": "step2-real-daily-independent-review-20261028.json",
+      "sha256": "525171dadda14b4c7e99e58af241f5fa126b4d5737600920ec7aa32f4b306ee7",
+      "bytes": 44338
+    },
+    {
+      "file": "step2-real-daily-independent-review-20261028.py",
+      "sha256": "d44683ec44733b309fc3dbce820f0ec852434c2e09fddec7e0687f007170648f",
+      "bytes": 13952
+    }
+  ]
+}

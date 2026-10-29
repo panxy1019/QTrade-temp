@@ -1,0 +1,108 @@
+{
+  "run_id": "factor-contract-s2a-20261028T094016Z-01e1eb42",
+  "base_commit": "f036bca197272df4b1f885dfe8165a27b67c36cd",
+  "remote_root": "/root/qtrade-local/operator-evidence/factor-contract-s2a-20261028T094016Z-01e1eb42",
+  "remote_exit_status": 0,
+  "files": [
+    {
+      "file": "baseline.tar",
+      "sha256": "ada8d0263838f8b208650bd660af1ca4a07f319a3d0648b537542f52162f992b",
+      "bytes": 80343040
+    },
+    {
+      "file": "candidate-overlay.tar",
+      "sha256": "fa73526e67ccdedb9a53d6c3505e729b97df69e0846cb9ef860e2b78184d28d6",
+      "bytes": 92160
+    },
+    {
+      "file": "downloaded/final-status.json",
+      "sha256": "e85e928c95379e7fc10854c8c3a247415995dd66c3fb3e4ce6aeddd3876f4bfc",
+      "bytes": 838
+    },
+    {
+      "file": "downloaded/linux-junit.xml",
+      "sha256": "f291f1dcf25e514f58810206c570b74b87f73f78b539b42724702baf6dbda840",
+      "bytes": 18713
+    },
+    {
+      "file": "downloaded/linux-runtime.json",
+      "sha256": "31cb8965090168853e39eb91d4cc9ffcf848a81b799df5b14cf16b30e44b0d4d",
+      "bytes": 1391
+    },
+    {
+      "file": "downloaded/linux-stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "downloaded/linux-stdout.log",
+      "sha256": "efac5d073729b77dac362bb6db0dc77d4b254851730874899237ae81c7dd41a6",
+      "bytes": 181
+    },
+    {
+      "file": "downloaded/old-report-replay.json",
+      "sha256": "ef9fa1cd2e850e0acd63f71d5dfa0cb629fab4b656c9a8bebe22ca66675f76f0",
+      "bytes": 563
+    },
+    {
+      "file": "downloaded/old-report-stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "downloaded/old-report-stdout.log",
+      "sha256": "39029c3d8d406c70d05ece90027fce9532f64593c10df72da5ceb49784808554",
+      "bytes": 338
+    },
+    {
+      "file": "downloaded/postflight.json",
+      "sha256": "6a7bafeb20b7de1e932035d94608a56d65d339b476b1e00056e13501fb34a67e",
+      "bytes": 321
+    },
+    {
+      "file": "downloaded/preflight.json",
+      "sha256": "eab278f1f7247d66fa33406890c693c0e833a245cf239f02cb46389ef62b8c9a",
+      "bytes": 321
+    },
+    {
+      "file": "downloaded/source-after.json",
+      "sha256": "bda4c3ee7211dbbd28953c1272979a2eef5e2bd3cf9f074080905afa5316d07d",
+      "bytes": 392332
+    },
+    {
+      "file": "downloaded/source-before.json",
+      "sha256": "bda4c3ee7211dbbd28953c1272979a2eef5e2bd3cf9f074080905afa5316d07d",
+      "bytes": 392332
+    },
+    {
+      "file": "package-manifest.json",
+      "sha256": "d7d0f90951e9cb47737e8f0863e70c2be967c8981c52720e3fd353df8efbf6a6",
+      "bytes": 802206
+    },
+    {
+      "file": "prior-windows-evidence.tar",
+      "sha256": "c7157dd074261a2f7a6d3fb6c89eb2493bf853c555ff08d76b3d77c72c8d8097",
+      "bytes": 245760
+    },
+    {
+      "file": "remote-command-stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "remote-command-stdout.log",
+      "sha256": "6a446fcdbf463fa727d5840a660528213dbba7af7bcc0d02c76886917b670f22",
+      "bytes": 2172
+    },
+    {
+      "file": "remote-operator.py",
+      "sha256": "f7fa0359dd4e3953f53b6a5d6313ac35458c19017a71698a8b71c56c7b014233",
+      "bytes": 6008
+    },
+    {
+      "file": "upload-preflight.json",
+      "sha256": "c4c4a8b469cec14eab505cd6e7e89591c5e505a3a10e3f251c15eebe227c9064",
+      "bytes": 67
+    }
+  ]
+}

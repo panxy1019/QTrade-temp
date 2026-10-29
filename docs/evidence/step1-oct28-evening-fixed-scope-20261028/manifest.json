@@ -1,0 +1,120 @@
+{
+  "auditors_modified": false,
+  "files": {
+    "E-after-auto-promotion/E-binding-20261028T121125230464Z.json": {
+      "bytes": 2216,
+      "sha256": "114c02b33df50ae02311e76b890ed08458eaadc9349b7d64bbde5c754eae4daf"
+    },
+    "E-after-auto-promotion/E-private-20261028T121125230464Z.json": {
+      "bytes": 10437,
+      "sha256": "265049f705fc543a726833f38c6d2c3ed2131393e78df3a768b83b6c84499b64"
+    },
+    "E-after-auto-promotion/capture.json": {
+      "bytes": 4127,
+      "sha256": "0248980cf8affaa6f9c210d6509edb6b18cf169caa9c0e5f67fb3d0b984bf834"
+    },
+    "E-after-auto-promotion/deployment-after.json": {
+      "bytes": 239,
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72"
+    },
+    "E-after-auto-promotion/deployment-before.json": {
+      "bytes": 239,
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72"
+    },
+    "E-after-auto-promotion/publication.json": {
+      "bytes": 253277,
+      "sha256": "e68666b77962c3d75da2e7f983a82541ecb5d591e9fc2951e2c3a9bc26d188f9"
+    },
+    "E-after-auto-promotion/stock-forward.json": {
+      "bytes": 151440,
+      "sha256": "c1767bc93437b522fa0a37c84d5c29c87effd0dcd973ab71eca7fe1a6ffda261"
+    },
+    "E-before-auto-promotion/E-binding-20261028T120352880758Z.json": {
+      "bytes": 2073,
+      "sha256": "2fd74d8df4f8440cab90872e1af5352a3bf05bcbfc3b978e1bddcbd25abec657"
+    },
+    "E-before-auto-promotion/E-private-20261028T120352880758Z.json": {
+      "bytes": 11114,
+      "sha256": "b422eee6e6c4ef2ea788a1515272df1b67115655f1d195e130417294a85dbfad"
+    },
+    "E-before-auto-promotion/capture.json": {
+      "bytes": 4127,
+      "sha256": "fa01bf1c7b9759541b054ff78c918566a779749d4b547fd0df6509355d122764"
+    },
+    "E-before-auto-promotion/deployment-after.json": {
+      "bytes": 239,
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72"
+    },
+    "E-before-auto-promotion/deployment-before.json": {
+      "bytes": 239,
+      "sha256": "48a510a8bebd7e2019a0a7749ad019694d715014cd36863b57847f2ffc310a72"
+    },
+    "E-before-auto-promotion/publication.json": {
+      "bytes": 253277,
+      "sha256": "33a6cc3f10e12a5fe5603e5d52824f14da8497dc70baeee1ee8e73b35688e197"
+    },
+    "E-before-auto-promotion/stock-forward.json": {
+      "bytes": 151440,
+      "sha256": "096ce49809050b996a8cb1313186ccb40bfa5ec6c7667319675ce90446fb322f"
+    },
+    "readonly-C-D/C-and-D-reasons-20261028T121127Z.json": {
+      "bytes": 61783,
+      "sha256": "47f6e6e79c978dcd700174da4e0dcde860e3678c7e21abcd6445a85936ce5c99"
+    },
+    "readonly-C-D/D-fixed-scope-20261028T121508Z.json": {
+      "bytes": 6378,
+      "sha256": "963e95719755ba7ed68224d93693d0ebfc3ed73aab8c4700e8232e0ea0738143"
+    },
+    "readonly-C-D/D-header-diagnosis-20261028T121624Z.json": {
+      "bytes": 3130,
+      "sha256": "d57d664d98eefb1cab4ab64d578b1345b6b57326569942d457b8bb98c7d3204a"
+    },
+    "readonly-C-D/capture-D-fixed-scope.py": {
+      "bytes": 2861,
+      "sha256": "1826be40a20ddcd549a18b15f720d73401a004e4e7c36f948608485cfbb4ca92"
+    },
+    "readonly-C-D/capture-c-and-d-reasons.py": {
+      "bytes": 7525,
+      "sha256": "8e597ccfe5fe00fa3aeed20a6e685a8a9869812bec8caf1c9df998035ab8e965"
+    },
+    "readonly-C-D/capture-cd-prerequisites.py": {
+      "bytes": 1965,
+      "sha256": "d2d863f73591c4960284935b5f7ae87673d6caa12c073137cb634183e9d0212c"
+    },
+    "readonly-C-D/capture-close-E-stdin.py": {
+      "bytes": 7323,
+      "sha256": "8cbf3339db4350ab17e397899b802fa70ae0b3d69e51115d1df8cc753070d66b"
+    },
+    "readonly-C-D/cd-prerequisites-20261028T120341891072Z.json": {
+      "bytes": 1274905,
+      "sha256": "a49214926a82a75b8ebafd1c6ce970c84f3b538783aa460aa9985226f61df640"
+    },
+    "readonly-C-D/diagnose-D-header-ro.py": {
+      "bytes": 2947,
+      "sha256": "a29ee9f1971a3e429a0a00461f6e879ec7e45b7c90c9993aab2bb7fca89cddb8"
+    },
+    "readonly-C-D/promotion-and-scheduler-independent-check.json": {
+      "bytes": 1755,
+      "sha256": "41fbfc15b77cc4778b78f25a4106f192b324ba3842c7354b4375ea779df0ed8f"
+    },
+    "readonly-C-D/read-cd-prerequisites.py": {
+      "bytes": 4417,
+      "sha256": "8cda2d572f9ba1e3fdb79cb704c750d63c1644905b95c0a6b4ef327e07f21a17"
+    },
+    "readonly-C-D/remote-D-fixed-scope.py": {
+      "bytes": 1445,
+      "sha256": "dc64fbe404b91f1c100651fd03eb80d20ce77f6f360db464ae5cf61ef01ec83d"
+    },
+    "readonly-C-D/remote-c-and-d-reasons.py": {
+      "bytes": 6057,
+      "sha256": "43d8cd7a000874130ee91c5b7531ea46da692448375bc2c5bf421ea2f33358a9"
+    }
+  },
+  "jobs_enqueued": false,
+  "policy_changes": false,
+  "production_mutations": false,
+  "recorded_at": "2026-10-28T12:20:01.057239+00:00",
+  "schema_version": "qtrade.immutable-step1-evening-evidence.v1",
+  "state": "BLOCKED_FIXED_295_AND_RIDGE98_SCOPE",
+  "target_model_substituted": false
+}

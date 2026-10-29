@@ -1,0 +1,23 @@
+{
+  "scope": "INDEPENDENT_CHILD_INTEGRATION_FIXTURES_NO_PRODUCTION_ACTIONS",
+  "remote": "/root/qtrade-local/operator-evidence/market-worker-integrated-independent-20261028T065247Z",
+  "local": "E:\\QTrade-temp\\cluster-evidence\\market-worker-integrated-independent-20261028T065247Z",
+  "exit_code": 1,
+  "source_sha256": [
+    "c5c787943a720c48f4795fddbf1984d741e43453b7935df4357aa342e86fe9ab",
+    "3b87d24221e092f4cad2b5547cd792c666b04d69cabe046eb3055619aef2a92c"
+  ],
+  "test_sha256": "cc4b4cd5b2215d07c135ac0817bda34580eace7a178e958573049de5a02df572",
+  "head_archive_sha256": "2e1725e2b971b1a57e76433b18800633e1e08ebe9c51861f8325cbcf181a7061",
+  "artifacts": {
+    "driver-receipt.json": "d0ea3064f8ba09bc8ba58879c3c40a351c1bc2fbbc44a16b4c9cacc2cfd62278",
+    "driver.py": "bd179bda17d43d78f0f6c821534432367d6966149b5f0295f4ada6810dbdaf6a",
+    "publish_unified_market.py": "c5c787943a720c48f4795fddbf1984d741e43453b7935df4357aa342e86fe9ab",
+    "ssh.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ssh.stdout.log": "fb7667effde9564419333e59dae0c4242c04cdda8dd43d0dd331f4580bb888c8",
+    "tests.log": "c61b1d6e9a2138379acd277705c587a9a2398d98a493fe7faba2a0639d5b4a51",
+    "tests.xml": "df874091e574da3084743e37134c79fa6aadba8278cd775798dab9324b37f610",
+    "test_unified_market.py": "3b87d24221e092f4cad2b5547cd792c666b04d69cabe046eb3055619aef2a92c",
+    "test_workers.py": "cc4b4cd5b2215d07c135ac0817bda34580eace7a178e958573049de5a02df572"
+  }
+}

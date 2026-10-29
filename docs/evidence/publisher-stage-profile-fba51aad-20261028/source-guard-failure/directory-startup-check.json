@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-10-28T11:29:09.515204+00:00",
+  "exit": 0,
+  "stdout": "{\"exists\": true, \"files\": [{\"name\": \"benchmark.py\", \"bytes\": 8207}]}\n",
+  "stderr": "",
+  "scope": "ONLY_NEW_PROFILE_DIRECTORY",
+  "production_mutations": false
+}
